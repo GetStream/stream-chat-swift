@@ -540,7 +540,7 @@ class MessageUpdater: Worker {
         })
     }
     
-    func search(query: MessageSearchQuery, policy: UpdatePolicy = .merge, completion: ((Error?) -> Void)? = nil) {
+    func search(query: MessageSearchQuery, policy: UpdatePolicy = .merge, completion: ((Result<MessageSearchResultsPayload, Error>) -> Void)? = nil) {
         apiClient.request(endpoint: .search(query: query)) { result in
             switch result {
             case let .success(payload):
@@ -552,10 +552,14 @@ class MessageUpdater: Worker {
 
                     session.saveMessageSearch(payload: payload, for: query)
                 } completion: { error in
-                    completion?(error)
+                    if let error = error {
+                        completion?(.failure(error))
+                    } else {
+                        completion?(.success(payload))
+                    }
                 }
             case let .failure(error):
-                completion?(error)
+                completion?(.failure(error))
             }
         }
     }

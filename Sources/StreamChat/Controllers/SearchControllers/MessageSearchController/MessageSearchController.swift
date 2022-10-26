@@ -42,6 +42,8 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
     /// Filter hash this controller observes.
     let explicitFilterHash = UUID().uuidString
 
+    private var nextPageCursor: String?
+
     lazy var query: MessageSearchQuery = {
         // Filter is just a mock, explicit hash will override it
         var query = MessageSearchQuery(channelFilter: .exists(.cid), messageFilter: .queryText(""))
@@ -155,20 +157,16 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
         // would be much more complex to parse than this `if` statement
         if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty, let lastQuery = lastQuery {
             messageUpdater.clearSearchResults(for: lastQuery) { error in
+                self.nextPageCursor = nil
                 self.callback { completion?(error) }
             }
             return
         }
-        var query = MessageSearchQuery(
+        let query = MessageSearchQuery(
             channelFilter: .containMembers(userIds: [currentUserId]),
             messageFilter: .queryText(text)
         )
-        query.filterHash = explicitFilterHash
-        lastQuery = query
-        messageUpdater.search(query: query, policy: .replace) { error in
-            self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
-            self.callback { completion?(error) }
-        }
+        search(query: query, completion: completion)
     }
 
     private func resetMessagesObserver() {
@@ -202,7 +200,12 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
         // To respect sorting the user passed, we must reset messagesObserver
         resetMessagesObserver()
         
-        messageUpdater.search(query: query, policy: .replace) { error in
+        messageUpdater.search(query: query, policy: .replace) { result in
+            if case let .success(payload) = result {
+                self.updateNextPageCursor(with: payload)
+            }
+
+            let error = result.error
             self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
             self.callback { completion?(error) }
         }
@@ -225,10 +228,22 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
         }
 
         var updatedQuery = lastQuery
-        updatedQuery.pagination = Pagination(pageSize: limit, offset: messages.count)
-        messageUpdater.search(query: updatedQuery) { error in
-            self.callback { completion?(error) }
+        if let nextPage = nextPageCursor, !lastQuery.sort.isEmpty {
+            updatedQuery.pagination = Pagination(pageSize: limit, cursor: nextPage)
+        } else {
+            updatedQuery.pagination = Pagination(pageSize: limit, offset: messages.count)
         }
+
+        messageUpdater.search(query: updatedQuery) { result in
+            if case let .success(payload) = result {
+                self.updateNextPageCursor(with: payload)
+            }
+            self.callback { completion?(result.error) }
+        }
+    }
+
+    private func updateNextPageCursor(with payload: MessageSearchResultsPayload) {
+        nextPageCursor = payload.next
     }
 }
 

@@ -24,21 +24,33 @@ public struct Pagination: Encodable, Equatable {
     public let pageSize: Int
     /// An offset.
     public let offset: Int
-    
+    /// Next page cursor.
+    public let cursor: String?
+
     enum CodingKeys: String, CodingKey {
         case pageSize = "limit"
         case offset
+        case cursor = "next"
     }
     
     public init(pageSize: Int, offset: Int = 0) {
         self.pageSize = pageSize
         self.offset = offset
+        cursor = nil
+    }
+
+    public init(pageSize: Int, cursor: String?) {
+        self.pageSize = pageSize
+        self.cursor = cursor
+        offset = 0
     }
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(pageSize, forKey: .pageSize)
-        if offset != 0 {
+        if let cursor = cursor {
+            try container.encode(cursor, forKey: .cursor)
+        } else if offset != 0 {
             try container.encode(offset, forKey: .offset)
         }
     }

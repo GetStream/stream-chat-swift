@@ -76,7 +76,7 @@ final class MessageSearchController_Tests: XCTestCase {
         try client.databaseContainer.createMessage(id: messageId, searchQuery: controller.query)
         
         // Simulate network call response
-        env.messageUpdater?.search_completion?(nil)
+        env.messageUpdater?.search_completion?(.success(MessageSearchResultsPayload(results: [], next: nil)))
         // Release reference of completion so we can deallocate stuff
         env.messageUpdater?.search_completion = nil
         
@@ -132,7 +132,7 @@ final class MessageSearchController_Tests: XCTestCase {
         controller = nil
         
         // Simulate successful update
-        env.messageUpdater?.search_completion?(nil)
+        env.messageUpdater?.search_completion?(.success(MessageSearchResultsPayload(results: [], next: nil)))
         // Release reference of completion so we can deallocate stuff
         env.messageUpdater?.search_completion = nil
         
@@ -167,7 +167,7 @@ final class MessageSearchController_Tests: XCTestCase {
         try client.databaseContainer.createMessage(id: messageId, searchQuery: controller.query)
         
         // Simulate network call response
-        env.messageUpdater?.search_completion?(nil)
+        env.messageUpdater?.search_completion?(.success(MessageSearchResultsPayload(results: [], next: nil)))
         
         let message = try XCTUnwrap(client.databaseContainer.viewContext.message(id: messageId)?.asModel())
         
@@ -191,7 +191,7 @@ final class MessageSearchController_Tests: XCTestCase {
         try client.databaseContainer.createMessage(id: messageId, searchQuery: controller.query)
         
         // Simulate network call response
-        env.messageUpdater?.search_completion?(nil)
+        env.messageUpdater?.search_completion?(.success(MessageSearchResultsPayload(results: [], next: nil)))
         
         let message = try XCTUnwrap(client.databaseContainer.viewContext.message(id: messageId)?.asModel())
         
@@ -214,7 +214,7 @@ final class MessageSearchController_Tests: XCTestCase {
         try client.databaseContainer.createMessage(id: messageId, searchQuery: controller.query)
         
         // Simulate network call response
-        env.messageUpdater?.search_completion?(nil)
+        env.messageUpdater?.search_completion?(.success(MessageSearchResultsPayload(results: [], next: nil)))
         
         let message = try XCTUnwrap(client.databaseContainer.viewContext.message(id: messageId)?.asModel())
         
@@ -242,7 +242,7 @@ final class MessageSearchController_Tests: XCTestCase {
         try client.databaseContainer.createMessage(id: messageId, searchQuery: controller.query)
         
         // Simulate search call response
-        env.messageUpdater?.search_completion?(nil)
+        env.messageUpdater?.search_completion?(.success(MessageSearchResultsPayload(results: [], next: nil)))
         
         let message = try XCTUnwrap(client.databaseContainer.viewContext.message(id: messageId)?.asModel())
         
@@ -259,7 +259,7 @@ final class MessageSearchController_Tests: XCTestCase {
         try client.databaseContainer.createMessage(id: newMessageId, searchQuery: controller.query, clearAll: true)
         
         // Simulate network call response
-        env.messageUpdater?.search_completion?(nil)
+        env.messageUpdater?.search_completion?(.success(MessageSearchResultsPayload(results: [], next: nil)))
         
         let newMessage = try XCTUnwrap(client.databaseContainer.viewContext.message(id: newMessageId)?.asModel())
         
@@ -282,7 +282,7 @@ final class MessageSearchController_Tests: XCTestCase {
         }
         
         // Simulate network call response
-        env.messageUpdater?.search_completion?(testError)
+        env.messageUpdater?.search_completion?(.failure(testError))
         
         AssertAsync.willBeEqual(reportedError as? TestError, testError)
     }
@@ -299,7 +299,7 @@ final class MessageSearchController_Tests: XCTestCase {
         try client.databaseContainer.createMessage(id: .unique, searchQuery: controller.query)
         
         // Simulate network call response
-        env.messageUpdater?.search_completion?(nil)
+        env.messageUpdater?.search_completion?(.success(MessageSearchResultsPayload(results: [], next: nil)))
         
         // Assert message is reported
         AssertAsync.willBeEqual(controller.messages.count, 1)
@@ -341,7 +341,7 @@ final class MessageSearchController_Tests: XCTestCase {
         controller = nil
         
         // Simulate successful update
-        env.messageUpdater!.search_completion?(nil)
+        env.messageUpdater!.search_completion?(.success(MessageSearchResultsPayload(results: [], next: nil)))
         // Release reference of completion so we can deallocate stuff
         env.messageUpdater!.search_completion = nil
         
@@ -376,7 +376,7 @@ final class MessageSearchController_Tests: XCTestCase {
         try client.databaseContainer.createMessage(id: messageId, searchQuery: controller.query)
         
         // Simulate network call response
-        env.messageUpdater?.search_completion?(nil)
+        env.messageUpdater?.search_completion?(.success(MessageSearchResultsPayload(results: [], next: nil)))
         
         let message = try XCTUnwrap(client.databaseContainer.viewContext.message(id: messageId)?.asModel())
         
@@ -396,7 +396,7 @@ final class MessageSearchController_Tests: XCTestCase {
         try client.databaseContainer.createMessage(id: messageId, searchQuery: controller.query)
         
         // Simulate network call response
-        env.messageUpdater?.search_completion?(nil)
+        env.messageUpdater?.search_completion?(.success(MessageSearchResultsPayload(results: [], next: nil)))
         
         let message = try XCTUnwrap(client.databaseContainer.viewContext.message(id: messageId)?.asModel())
         XCTAssertEqual(controller.messages, [message])
@@ -418,7 +418,7 @@ final class MessageSearchController_Tests: XCTestCase {
         try client.databaseContainer.createMessage(id: messageId, searchQuery: controller.query)
         
         // Simulate network call response
-        env.messageUpdater?.search_completion?(nil)
+        env.messageUpdater?.search_completion?(.success(MessageSearchResultsPayload(results: [], next: nil)))
         
         let message = try XCTUnwrap(client.databaseContainer.viewContext.message(id: messageId)?.asModel())
         
@@ -446,7 +446,7 @@ final class MessageSearchController_Tests: XCTestCase {
         try client.databaseContainer.createMessage(id: messageId, searchQuery: controller.query)
         
         // Simulate search call response
-        env.messageUpdater?.search_completion?(nil)
+        env.messageUpdater?.search_completion?(.success(MessageSearchResultsPayload(results: [], next: nil)))
         
         let message = try XCTUnwrap(client.databaseContainer.viewContext.message(id: messageId)?.asModel())
         
@@ -463,7 +463,7 @@ final class MessageSearchController_Tests: XCTestCase {
         try client.databaseContainer.createMessage(id: newMessageId, searchQuery: controller.query, clearAll: true)
         
         // Simulate network call response
-        env.messageUpdater?.search_completion?(nil)
+        env.messageUpdater?.search_completion?(.success(MessageSearchResultsPayload(results: [], next: nil)))
         
         let newMessage = try XCTUnwrap(client.databaseContainer.viewContext.message(id: newMessageId)?.asModel())
         
@@ -499,7 +499,7 @@ final class MessageSearchController_Tests: XCTestCase {
         try client.databaseContainer.createMessages(ids: [messageId, olderMessageId], searchQuery: controller.query)
         
         // Simulate update call response
-        env.messageUpdater?.search_completion?(nil)
+        env.messageUpdater?.search_completion?(.success(MessageSearchResultsPayload(results: [], next: nil)))
         
         let message = try XCTUnwrap(client.databaseContainer.viewContext.message(id: messageId)?.asModel())
         let olderMessage = try XCTUnwrap(client.databaseContainer.viewContext.message(id: olderMessageId)?.asModel())
@@ -528,13 +528,13 @@ final class MessageSearchController_Tests: XCTestCase {
         }
         
         // Simulate network call response
-        env.messageUpdater?.search_completion?(testError)
+        env.messageUpdater?.search_completion?(.failure(testError))
         
         AssertAsync.willBeEqual(reportedError as? TestError, testError)
     }
     
     // MARK: - loadNextMessages
-    
+
     func test_loadNextMessages_propagatesError() {
         let testError = TestError()
         var reportedError: Error?
@@ -543,7 +543,9 @@ final class MessageSearchController_Tests: XCTestCase {
         controller.search(text: "test")
         
         // Simulate network call response
-        env.messageUpdater?.search_completion?(nil)
+        env.messageUpdater?.search_completion?(.success(MessageSearchResultsPayload(results: [
+            MessagePayload.Boxed(message: .dummy(messageId: "123", authorUserId: "456"))
+        ], next: nil)))
         
         // Call `loadNextMessages`
         controller.loadNextMessages { error in
@@ -558,7 +560,7 @@ final class MessageSearchController_Tests: XCTestCase {
         controller = nil
         
         // Simulate network call response
-        env.messageUpdater?.search_completion?(testError)
+        env.messageUpdater?.search_completion?(.failure(testError))
         // Release reference of completion so we can deallocate stuff
         env.messageUpdater?.search_completion = nil
         
@@ -566,34 +568,57 @@ final class MessageSearchController_Tests: XCTestCase {
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
     }
-    
+
+    func test_loadNextMessages_whenUsingSort_nextCursorPaginationIsUsed() throws {
+        let simulatedNextCursor = "sortNextCursor"
+        try simulateInitialSearch(query: .init(
+            channelFilter: .exists(.cid),
+            messageFilter: .queryText(""),
+            sort: [.init(key: .id, isAscending: true)]
+        ), responseNextCursor: simulatedNextCursor)
+
+        // Load next page
+        controller.loadNextMessages()
+
+        // Simulate network call response
+        env.messageUpdater?.search_completion?(.success(MessageSearchResultsPayload(results: [], next: nil)))
+
+        let pagination = env.messageUpdater?.search_query?.pagination
+
+        XCTAssertEqual(pagination?.cursor, simulatedNextCursor)
+        XCTAssertEqual(pagination?.offset, 0)
+    }
+
+    func test_loadNextMessages_whenNotUsingSort_offsetPaginationIsUsed() throws {
+        try simulateInitialSearch(query: .init(
+            channelFilter: .exists(.cid),
+            messageFilter: .queryText(""),
+            sort: []
+        ), responseNextCursor: "nonSortNextCursor")
+
+        // Load next page
+        controller.loadNextMessages()
+
+        // Simulate network call response
+        env.messageUpdater?.search_completion?(.success(MessageSearchResultsPayload(results: [], next: nil)))
+
+        let pagination = env.messageUpdater?.search_query?.pagination
+
+        XCTAssertEqual(pagination?.offset, 1)
+        XCTAssertNil(pagination?.cursor)
+    }
+
     func test_loadNextMessages_nextResultPage_isLoaded() throws {
         // Set the delegate
         let delegate = MessageSearchController_Delegate(expectedQueueId: controllerCallbackQueueID)
         controller.delegate = delegate
+
+        let message = try simulateInitialSearch(query: .init(
+            channelFilter: .exists(.cid),
+            messageFilter: .queryText(""),
+            sort: [.init(key: .id, isAscending: true)]
+        ), responseNextCursor: nil)
         
-        // Make a search
-        controller
-            .search(query: .init(
-                channelFilter: .exists(.cid),
-                messageFilter: .queryText(""),
-                sort: [.init(key: .id, isAscending: true)]
-            ))
-        
-        // Simulate DB update
-        // `ChatMessageSearchController` sorts the results by id
-        // We use random character and not `.unique` for messageId and name
-        // Since we'll generate a bigger id for next user's id and name
-        // so that insertion will be [0,1] and not [0,0]
-        let messageId = "a"
-        try client.databaseContainer.createMessage(id: messageId, searchQuery: controller.query)
-        
-        // Simulate update call response
-        env.messageUpdater?.search_completion?(nil)
-        
-        let message = try XCTUnwrap(client.databaseContainer.viewContext.message(id: messageId)?.asModel())
-        
-        AssertAsync.willBeEqual(controller.messages.count, 1)
         // Check if delegate method is called
         AssertAsync.willBeEqual(delegate.didChangeMessages_changes, [.insert(message, index: [0, 0])])
         
@@ -605,7 +630,7 @@ final class MessageSearchController_Tests: XCTestCase {
         try client.databaseContainer.createMessage(id: newMessageId, searchQuery: controller.query)
         
         // Simulate network call response
-        env.messageUpdater?.search_completion?(nil)
+        env.messageUpdater?.search_completion?(.success(MessageSearchResultsPayload(results: [], next: nil)))
         
         let newMessage = try XCTUnwrap(client.databaseContainer.viewContext.message(id: newMessageId)?.asModel())
         
@@ -613,7 +638,7 @@ final class MessageSearchController_Tests: XCTestCase {
         // Check if delegate method is called
         AssertAsync.willBeEqual(delegate.didChangeMessages_changes, [.insert(newMessage, index: [0, 1])])
     }
-    
+
     func test_loadNextMessages_nextResultsPage_cantBeCalledBeforeSearch() {
         var reportedError: Error?
         controller.loadNextMessages { error in
@@ -625,6 +650,28 @@ final class MessageSearchController_Tests: XCTestCase {
         
         // Assert an error is reported
         AssertAsync.willBeFalse(reportedError == nil)
+    }
+
+    @discardableResult
+    private func simulateInitialSearch(query: MessageSearchQuery, responseNextCursor: String?) throws -> ChatMessage {
+        // Make a search
+        controller.search(query: query)
+
+        // Simulate DB update
+        // `ChatMessageSearchController` sorts the results by id
+        // We use random character and not `.unique` for messageId and name
+        // Since we'll generate a bigger id for next user's id and name
+        // so that insertion will be [0,1] and not [0,0]
+        let messageId = "a"
+        try client.databaseContainer.createMessage(id: messageId, searchQuery: controller.query)
+
+        // Simulate update call response
+        env.messageUpdater?.search_completion?(.success(MessageSearchResultsPayload(results: [], next: responseNextCursor)))
+
+        let message = try XCTUnwrap(client.databaseContainer.viewContext.message(id: messageId)?.asModel())
+
+        AssertAsync.willBeEqual(controller.messages.count, 1)
+        return message
     }
 }
 
