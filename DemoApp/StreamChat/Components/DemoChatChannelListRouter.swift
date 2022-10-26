@@ -193,6 +193,40 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                 } ?? []
                 self.rootViewController.presentAlert(title: "Select a member", actions: actions)
             }),
+            .init(title: "Ban member", style: .default, handler: { [unowned self] _ in
+                let actions = channelController.channel?.lastActiveMembers.map { member in
+                    UIAlertAction(title: member.id, style: .default) { _ in
+                        channelController.client
+                            .memberController(userId: member.id, in: channelController.cid!)
+                            .ban() { error in
+                                if let error = error {
+                                    self.rootViewController.presentAlert(
+                                        title: "Couldn't ban user \(member.id) from channel \(cid)",
+                                        message: "\(error)"
+                                    )
+                                }
+                            }
+                    }
+                } ?? []
+                self.rootViewController.presentAlert(title: "Select a member", actions: actions)
+            }),
+            .init(title: "Unban member", style: .default, handler: { [unowned self] _ in
+                let actions = channelController.channel?.lastActiveMembers.map { member in
+                    UIAlertAction(title: member.id, style: .default) { _ in
+                        channelController.client
+                            .memberController(userId: member.id, in: channelController.cid!)
+                            .unban() { error in
+                                if let error = error {
+                                    self.rootViewController.presentAlert(
+                                        title: "Couldn't unban user \(member.id) from channel \(cid)",
+                                        message: "\(error)"
+                                    )
+                                }
+                            }
+                    }
+                } ?? []
+                self.rootViewController.presentAlert(title: "Select a member", actions: actions)
+            }),
             .init(title: "Freeze channel", style: .default, handler: { [unowned self] _ in
                 channelController.freezeChannel { error in
                     if let error = error {
