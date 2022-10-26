@@ -705,7 +705,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
         XCTAssertEqual(client.completeTokenWaiters_token, newToken)
         XCTAssertEqual(client.currentToken, newToken)
         XCTAssertEqual(client.currentUserId, existingUserId)
-        XCTAssertTrue(client.webSocketClient?.connectEndpoint?.isEqual(to: existingConnectEndpoint) == true)
+        AssertEqualEndpoint(client.webSocketClient?.connectEndpoint, existingConnectEndpoint)
         XCTAssertTrue(client.createBackgroundWorkers_called)
     }
 
@@ -730,7 +730,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
         XCTAssertEqual(client.currentToken, newToken)
         XCTAssertEqual(client.currentUserId, existingUserId)
         XCTAssertFalse(client.completeTokenWaiters_called)
-        XCTAssertTrue(client.webSocketClient?.connectEndpoint?.isEqual(to: existingConnectEndpoint) == true)
+        AssertEqualEndpoint(client.webSocketClient?.connectEndpoint, existingConnectEndpoint)
         XCTAssertFalse(client.createBackgroundWorkers_called)
     }
 
@@ -754,7 +754,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
         XCTAssertNil(client.completeTokenWaiters_token)
         XCTAssertEqual(client.currentToken, newToken)
         XCTAssertEqual(client.currentUserId, newUserId)
-        XCTAssertTrue(client.webSocketClient?.connectEndpoint?.isEqual(to: .webSocketConnect(userInfo: newUserInfo)) == true)
+        AssertEqualEndpoint(client.webSocketClient?.connectEndpoint, .webSocketConnect(userInfo: newUserInfo))
         XCTAssertTrue(client.createBackgroundWorkers_called)
     }
 
@@ -990,22 +990,6 @@ final class ChatClientUpdater_Tests: XCTestCase {
 private extension ChatClient {
     var testBackgroundWorkerId: Int? {
         backgroundWorkers.first { $0 is MessageSender || $0 is TestWorker }.map { ObjectIdentifier($0).hashValue }
-    }
-}
-
-private extension Endpoint<EmptyResponse> {
-    func isEqual(to rhs: Endpoint<EmptyResponse>) -> Bool {
-        guard let lhsPayload = (body as? [String: WebSocketConnectPayload])?.first?.value,
-              let rhsPayload = (rhs.body as? [String: WebSocketConnectPayload])?.first?.value else {
-            return false
-        }
-
-        return lhsPayload.userId == rhsPayload.userId &&
-            lhsPayload.serverDeterminesConnectionId == rhsPayload.serverDeterminesConnectionId &&
-            lhsPayload.userDetails.id == rhsPayload.userDetails.id &&
-            lhsPayload.userDetails.name == rhsPayload.userDetails.name &&
-            lhsPayload.userDetails.imageURL == rhsPayload.userDetails.imageURL &&
-            lhsPayload.userDetails.extraData == rhsPayload.userDetails.extraData
     }
 }
 
