@@ -10,7 +10,7 @@ The `ChatChannelListVC` is the UI component used to display a list of channels m
 
 :::note
 The Channel List screen is backed by the low-level `ChatChannelListController` component which fetches channels from the API and keeps the list in sync with the remote.
-Read more about about channel list query and how `ChatChannelListController` works [here](../controllers/channels.md).
+Read more about about channel list query and how `ChatChannelListController` works [here](../../client/controllers/channels.md).
 :::
 
 ## Basic Usage

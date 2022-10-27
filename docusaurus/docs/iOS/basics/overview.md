@@ -59,6 +59,14 @@ Starting **4.6.0**, and in order to improve the developer experience, dependenci
 (Does not apply to StreamChatSwiftUI's dependencies yet)
 :::
 
+## Choosing the right SDK
+
+When integrating with our chat platform, you get to choose which SDK you would like to integrate with.
+
+Our best options are either the Swift or SwiftUI SDKs. The Swift SDK is built using UIKit components, our SwiftUI SDK is built using SwiftUI components. We suggest you choose what is closest to your current App.
+
+Do note, integrating our SwiftUI SDK into a UIKit based app is fully supported. It could provide you and your development team an amazing opportunity to get started with SwiftUI in your codebase.
+
 ## Upgrade and Versioning Strategy
 
 The StreamChat Swift SDK adheres to the [semantic versioning](https://semver.org/) rules. 

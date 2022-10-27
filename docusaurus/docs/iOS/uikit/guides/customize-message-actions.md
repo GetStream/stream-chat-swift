@@ -7,7 +7,7 @@ The `ChatMessageActionsVC` is the ViewController responsible for displaying the 
 The standard message actions consist of:
 
 <img
-  src={require('../assets/actions-screenshot.png').default}
+  src={require('../../assets/actions-screenshot.png').default}
   width="300"
   align="right"
 />
@@ -31,7 +31,7 @@ Start by creating a new Swift file.
 
 *File -> New -> New File...*
 
-<img src={require("../assets/create-new-file.png").default}/>
+<img src={require("../../assets/create-new-file.png").default}/>
 
 Next, add the `imports` for the SDK.
 
