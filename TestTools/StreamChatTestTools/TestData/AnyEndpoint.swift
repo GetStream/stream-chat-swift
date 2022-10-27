@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import XCTest
 @testable import StreamChat
 
 public struct AnyEndpoint: Equatable {
@@ -30,4 +31,17 @@ public struct AnyEndpoint: Equatable {
             && lhs.body == rhs.body
             && lhs.payloadType == rhs.payloadType
     }
+}
+
+func AssertEqualEndpoint<A, B>(
+    _ lhs: Endpoint<A>?,
+    _ rhs: Endpoint<B>?,
+    file: StaticString = #filePath,
+    line: UInt = #line
+) {
+    guard let lhs = lhs, let rhs = rhs else {
+        XCTFail("Endpoints cannot be optional")
+        return
+    }
+    XCTAssertEqual(AnyEndpoint(lhs), AnyEndpoint(rhs))
 }

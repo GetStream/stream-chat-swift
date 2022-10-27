@@ -8,13 +8,14 @@ import Foundation
 public class ChatMessageController_Mock: ChatMessageController {
     /// Creates a new mock instance of `ChatMessageController`.
     public static func mock(
-        client: ChatClient? = nil,
         currentUserId: UserId = "ID",
         cid: ChannelId? = nil,
         messageId: String = "MockMessage"
     ) -> ChatMessageController_Mock {
-        let chatClient = client ?? ChatClient.mock()
-        chatClient.currentUserId = currentUserId
+        let chatClient = ChatClient_Mock.mock
+        if let authenticationRepository = chatClient.authenticationRepository as? AuthenticationRepository_Mock {
+            authenticationRepository.mockedCurrentUserId = currentUserId
+        }
         var channelId = cid
         if channelId == nil {
             channelId = try! .init(cid: "mock:channel")

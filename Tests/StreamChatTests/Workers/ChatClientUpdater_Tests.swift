@@ -9,6 +9,13 @@ import XCTest
 final class ChatClientUpdater_Tests: XCTestCase {
     // MARK: Disconnect
 
+    private var authenticationRepository: AuthenticationRepository_Mock?
+
+    override func tearDown() {
+        super.tearDown()
+        authenticationRepository = nil
+    }
+
     func test_disconnect_whenClientIsPassive() {
         // Create a passive client with user session.
         let client = mockClientWithUserSession(isActive: false)
@@ -289,7 +296,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
         var reloadUserIfNeededCompletionCalled = false
         var reloadUserIfNeededCompletionError: Error?
         updater.reloadUserIfNeeded(
-            userConnectionProvider: .static(updatedToken)
+            tokenProvider: staticToken(updatedToken)
         ) {
             reloadUserIfNeededCompletionCalled = true
             reloadUserIfNeededCompletionError = $0
@@ -374,7 +381,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
         var reloadUserIfNeededCompletionCalled = false
         var reloadUserIfNeededCompletionError: Error?
         updater.reloadUserIfNeeded(
-            userConnectionProvider: .static(updatedToken)
+            tokenProvider: staticToken(updatedToken)
         ) {
             reloadUserIfNeededCompletionCalled = true
             reloadUserIfNeededCompletionError = $0
@@ -445,7 +452,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
 
         // Simulate `reloadUserIfNeeded` call and catch the result.
         let error = try waitFor { completion in
-            updater.reloadUserIfNeeded(userConnectionProvider: .static(.unique()), completion: completion)
+            updater.reloadUserIfNeeded(tokenProvider: staticToken(.unique()), completion: completion)
         }
 
         // Assert `ClientError.ClientIsNotInActiveMode` is propagated.
@@ -462,7 +469,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
 
         // Simulate `reloadUserIfNeeded` call and catch the result.
         var error: Error?
-        updater.reloadUserIfNeeded(userConnectionProvider: .static(.unique())) {
+        updater.reloadUserIfNeeded(tokenProvider: staticToken(.unique())) {
             error = $0
         }
         
@@ -490,7 +497,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
         // Simulate `reloadUserIfNeeded` call and catch the result.
         let error: Error? = try waitFor { completion in
             updater.reloadUserIfNeeded(
-                userConnectionProvider: .static(.unique()),
+                tokenProvider: staticToken(.unique()),
                 completion: completion
             )
             
@@ -512,7 +519,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
         var reloadUserIfNeededCompletionCalled = false
         var reloadUserIfNeededCompletionError: Error?
         updater.reloadUserIfNeeded(
-            userConnectionProvider: .static(.unique())
+            tokenProvider: staticToken(.unique())
         ) {
             reloadUserIfNeededCompletionCalled = true
             reloadUserIfNeededCompletionError = $0
@@ -539,7 +546,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
         
         // Simulate `reloadUserIfNeeded` call.
         updater?.reloadUserIfNeeded(
-            userConnectionProvider: .init {
+            tokenProvider: .init {
                 tokenProviderCompletion = $0
             }
         )
@@ -583,7 +590,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
         var reloadUserIfNeededCompletionError: Error?
         updater.reloadUserIfNeeded(
             userInfo: .init(id: userId),
-            userConnectionProvider: .static(token)
+            tokenProvider: staticToken(token)
         ) {
             reloadUserIfNeededCompletionCalled = true
             reloadUserIfNeededCompletionError = $0
@@ -630,6 +637,265 @@ final class ChatClientUpdater_Tests: XCTestCase {
         }
     }
 
+    // MARK: Prepare environment
+
+    func test_prepareEnvironment_firstConnection() {
+        let userId = "user1"
+        let newUserInfo = UserInfo(id: userId)
+        let newToken = Token.unique(userId: userId)
+        let client = createClientInCleanState(existingToken: nil)
+
+        XCTAssertNil(client.currentToken)
+        XCTAssertNil(client.currentUserId)
+
+        // Simulate prepareEnvironment call
+        let error = prepareEnvironmentAndWait(userInfo: newUserInfo, newToken: newToken, client: client)
+
+        XCTAssertNil(error)
+        XCTAssertTrue(client.completeTokenWaiters_called)
+        XCTAssertEqual(client.completeTokenWaiters_token, newToken)
+        XCTAssertEqual(client.currentToken, newToken)
+        XCTAssertEqual(client.currentUserId, userId)
+        XCTAssertNotNil(client.webSocketClient?.connectEndpoint)
+        XCTAssertTrue(client.createBackgroundWorkers_called)
+    }
+
+    func test_prepareEnvironment_sameUser_noConnectEndpoint() {
+        let existingUserId = "user2"
+        let existingUserInfo = UserInfo(id: existingUserId)
+        let existingToken = Token.unique(userId: existingUserId)
+        let client = createClientInCleanState(existingToken: existingToken, isClientInActiveMode: true)
+
+        XCTAssertNil(client.webSocketClient?.connectEndpoint)
+        XCTAssertEqual(client.currentToken, existingToken)
+        XCTAssertEqual(client.currentUserId, existingUserId)
+
+        let newToken = Token.unique(userId: existingUserId)
+
+        // Simulate prepareEnvironment call
+        let error = prepareEnvironmentAndWait(userInfo: existingUserInfo, newToken: newToken, client: client)
+
+        XCTAssertNil(error)
+        XCTAssertTrue(client.completeTokenWaiters_called)
+        XCTAssertEqual(client.completeTokenWaiters_token, newToken)
+        XCTAssertEqual(client.currentToken, newToken)
+        XCTAssertEqual(client.currentUserId, existingUserId)
+        XCTAssertNotNil(client.webSocketClient?.connectEndpoint)
+        XCTAssertTrue(client.createBackgroundWorkers_called)
+    }
+
+    func test_prepareEnvironment_sameUser_existingConnectEndpoint() {
+        let existingUserId = "user2"
+        let existingUserInfo = UserInfo(id: existingUserId)
+        let existingToken = Token.unique(userId: existingUserId)
+        let client = createClientInCleanState(existingToken: existingToken, isClientInActiveMode: true)
+        let existingConnectEndpoint = Endpoint<EmptyResponse>.webSocketConnect(userInfo: existingUserInfo)
+        client.webSocketClient?.connectEndpoint = existingConnectEndpoint
+
+        XCTAssertEqual(client.currentToken, existingToken)
+        XCTAssertEqual(client.currentUserId, existingUserId)
+
+        let newToken = Token.unique(userId: existingUserId)
+
+        // Simulate prepareEnvironment call
+        let error = prepareEnvironmentAndWait(userInfo: existingUserInfo, newToken: newToken, client: client)
+
+        XCTAssertNil(error)
+        XCTAssertTrue(client.completeTokenWaiters_called)
+        XCTAssertEqual(client.completeTokenWaiters_token, newToken)
+        XCTAssertEqual(client.currentToken, newToken)
+        XCTAssertEqual(client.currentUserId, existingUserId)
+        AssertEqualEndpoint(client.webSocketClient?.connectEndpoint, existingConnectEndpoint)
+        XCTAssertTrue(client.createBackgroundWorkers_called)
+    }
+
+    func test_prepareEnvironment_sameUser_sameToken() {
+        let existingUserId = "user2"
+        let existingUserInfo = UserInfo(id: existingUserId)
+        let existingToken = Token.unique(userId: existingUserId)
+        let client = createClientInCleanState(existingToken: existingToken, isClientInActiveMode: true)
+        let existingConnectEndpoint = Endpoint<EmptyResponse>.webSocketConnect(userInfo: existingUserInfo)
+        client.webSocketClient?.connectEndpoint = existingConnectEndpoint
+
+        XCTAssertEqual(client.currentToken, existingToken)
+        XCTAssertEqual(client.currentUserId, existingUserId)
+
+        let newToken = existingToken
+
+        // Simulate prepareEnvironment call
+        let error = prepareEnvironmentAndWait(userInfo: existingUserInfo, newToken: newToken, client: client)
+
+        XCTAssertNil(error)
+        XCTAssertEqual(existingToken, newToken)
+        XCTAssertEqual(client.currentToken, newToken)
+        XCTAssertEqual(client.currentUserId, existingUserId)
+        XCTAssertFalse(client.completeTokenWaiters_called)
+        AssertEqualEndpoint(client.webSocketClient?.connectEndpoint, existingConnectEndpoint)
+        XCTAssertFalse(client.createBackgroundWorkers_called)
+    }
+
+    func test_prepareEnvironment_newUser_activeMode() {
+        let existingUserId = "userOld1"
+        let existingToken = Token.unique(userId: existingUserId)
+        let client = createClientInCleanState(existingToken: existingToken, isClientInActiveMode: true)
+
+        XCTAssertEqual(client.currentToken, existingToken)
+        XCTAssertEqual(client.currentUserId, existingUserId)
+
+        let newUserId = "user8"
+        let newUserInfo = UserInfo(id: newUserId)
+        let newToken = Token.unique(userId: newUserId)
+
+        // Simulate prepareEnvironment call
+        let error = prepareEnvironmentAndWait(userInfo: newUserInfo, newToken: newToken, client: client)
+
+        XCTAssertNil(error)
+        XCTAssertTrue(client.completeTokenWaiters_called)
+        XCTAssertNil(client.completeTokenWaiters_token)
+        XCTAssertEqual(client.currentToken, newToken)
+        XCTAssertEqual(client.currentUserId, newUserId)
+        AssertEqualEndpoint(client.webSocketClient?.connectEndpoint, .webSocketConnect(userInfo: newUserInfo))
+        XCTAssertTrue(client.createBackgroundWorkers_called)
+    }
+
+    func test_prepareEnvironment_newUser_notActiveMode() {
+        let existingUserId = "userOld2"
+        let existingToken = Token.unique(userId: existingUserId)
+        let client = createClientInCleanState(existingToken: existingToken, isClientInActiveMode: false)
+
+        XCTAssertEqual(client.currentToken, existingToken)
+        XCTAssertEqual(client.currentUserId, existingUserId)
+
+        let newUserId = "user9"
+        let newUserInfo = UserInfo(id: newUserId)
+        let newToken = Token.unique(userId: newUserId)
+
+        // Simulate prepareEnvironment call
+        let error = prepareEnvironmentAndWait(userInfo: newUserInfo, newToken: newToken, client: client)
+
+        XCTAssertTrue(error is ClientError.ClientIsNotInActiveMode)
+        XCTAssertTrue(client.completeTokenWaiters_called)
+        XCTAssertNil(client.completeTokenWaiters_token)
+        XCTAssertEqual(client.currentToken, newToken)
+        XCTAssertEqual(client.currentUserId, newUserId)
+        XCTAssertNil(client.webSocketClient?.connectEndpoint)
+        XCTAssertTrue(client.createBackgroundWorkers_called)
+    }
+
+    // MARK: Reload User if needed
+
+    func test_reloadUserIfNeeded_noProvider() {
+        let error = reloadUserIfNeededAndWait(userInfo: nil, tokenProvider: nil, client: createClientInCleanState(existingToken: nil))
+
+        XCTAssertTrue(error is ClientError.ConnectionWasNotInitiated)
+    }
+
+    func test_reloadUserIfNeeded_tokenProviderFailure() {
+        let testError = ClientError("tokenProviderFailure")
+        let provider: TokenProvider = { completion in
+            completion(.failure(testError))
+        }
+        let error = reloadUserIfNeededAndWait(userInfo: nil, tokenProvider: provider, client: createClientInCleanState(existingToken: nil))
+
+        XCTAssertEqual(error, testError)
+    }
+
+    func test_reloadUserIfNeeded_tokenProviderSuccess_prepareEnvironmentError() {
+        let existingUserId = "userOld2"
+        let existingToken = Token.unique(userId: existingUserId)
+        let client = createClientInCleanState(existingToken: existingToken, isClientInActiveMode: false)
+
+        let newUserId = "user9"
+        let newToken = Token.unique(userId: newUserId)
+
+        let provider: TokenProvider = { completion in
+            completion(.success(newToken))
+        }
+        let error = reloadUserIfNeededAndWait(userInfo: nil, tokenProvider: provider, client: client)
+
+        XCTAssertTrue(error is ClientError.ClientIsNotInActiveMode)
+    }
+
+    func test_reloadUserIfNeeded_tokenProviderSuccess_notActiveMode() {
+        let client = createClientInCleanState(existingToken: nil, isClientInActiveMode: false)
+        let newUserId = "user9"
+        let newToken = Token.unique(userId: newUserId)
+
+        let provider: TokenProvider = { completion in
+            completion(.success(newToken))
+        }
+        let error = reloadUserIfNeededAndWait(userInfo: nil, tokenProvider: provider, client: client)
+
+        guard case .disconnected = client.connectionStatus else {
+            XCTFail("Should be disconnected when is not in active mode")
+            return
+        }
+        XCTAssertTrue(error is ClientError.ClientIsNotInActiveMode)
+    }
+
+    func test_reloadUserIfNeeded_tokenProviderSuccess_noConnectionId() {
+        let webSocketClient = WebSocketClient_Mock()
+        let client = createClientInCleanState(existingToken: nil, isClientInActiveMode: true, webSocketClient: webSocketClient)
+        let newUserId = "user9"
+        let newToken = Token.unique(userId: newUserId)
+        XCTAssertNil(client.connectionId)
+
+        let provider: TokenProvider = { completion in
+            completion(.success(newToken))
+        }
+        let error = reloadUserIfNeededAndWait(
+            userInfo: nil,
+            tokenProvider: provider,
+            client: client,
+            completeConnectionIdWaitersWith: "connection-id"
+        )
+
+        XCTAssertNil(error)
+        XCTAssertTrue(webSocketClient.connect_called)
+    }
+
+    func test_reloadUserIfNeeded_tokenProviderSuccess_existingConnectionId() {
+        let webSocketClient = WebSocketClient_Mock()
+        let client = createClientInCleanState(existingToken: nil, isClientInActiveMode: true, webSocketClient: webSocketClient)
+        let newUserId = "user9"
+        let newToken = Token.unique(userId: newUserId)
+        client.connectionId = "something"
+
+        let provider: TokenProvider = { completion in
+            completion(.success(newToken))
+        }
+        let error = reloadUserIfNeededAndWait(userInfo: nil, tokenProvider: provider, client: client)
+
+        XCTAssertNil(error)
+        XCTAssertFalse(webSocketClient.connect_called)
+    }
+
+    private func reloadUserIfNeededAndWait(
+        userInfo: UserInfo?,
+        tokenProvider: TokenProvider?,
+        client: ChatClient,
+        completeConnectionIdWaitersWith connectionId: String? = nil
+    ) -> Error? {
+        let updater = ChatClientUpdater(client: client)
+        let expectation = self.expectation(description: "prepareEnvironment completes")
+        var receivedError: Error?
+        updater.reloadUserIfNeeded(
+            userInfo: userInfo,
+            tokenProvider: tokenProvider,
+            completion: { error in
+                receivedError = error
+                expectation.fulfill()
+            }
+        )
+
+        if let connectionId = connectionId {
+            client.completeConnectionIdWaiters(connectionId: connectionId)
+        }
+
+        waitForExpectations(timeout: 0.1)
+        return receivedError
+    }
+
     // MARK: - Private
 
     private func mockClientWithUserSession(
@@ -644,8 +910,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
         let client = ChatClient_Mock(config: config)
         client.connectUser(userInfo: .init(id: token.userId), token: token)
 
-        client.currentUserId = token.userId
-        client.currentToken = token
+        client.authenticationRepository.setToken(token: token)
 
         client.connectionId = .unique
         client.connectionStatus = .connected
@@ -657,6 +922,67 @@ final class ChatClientUpdater_Tests: XCTestCase {
 
         return client
     }
+
+    private func createClientInCleanState(
+        existingToken: Token?,
+        createBackgroundWorkers: Bool = false,
+        isClientInActiveMode: Bool = true,
+        webSocketClient: WebSocketClient_Mock? = nil
+    ) -> ChatClient_Mock {
+        var environment = ChatClient.Environment.mock
+
+        if let webSocketClient = webSocketClient {
+            environment = ChatClient.Environment(
+                apiClientBuilder: environment.apiClientBuilder,
+                webSocketClientBuilder: { _, _, _, _ in
+                    webSocketClient
+                },
+                databaseContainerBuilder: environment.databaseContainerBuilder,
+                requestEncoderBuilder: environment.requestEncoderBuilder,
+                requestDecoderBuilder: environment.requestDecoderBuilder,
+                eventDecoderBuilder: environment.eventDecoderBuilder,
+                notificationCenterBuilder: environment.notificationCenterBuilder,
+                clientUpdaterBuilder: environment.clientUpdaterBuilder,
+                authenticationRepositoryBuilder: environment.authenticationRepositoryBuilder,
+                syncRepositoryBuilder: environment.syncRepositoryBuilder,
+                messageRepositoryBuilder: environment.messageRepositoryBuilder,
+                offlineRequestsRepositoryBuilder: environment.offlineRequestsRepositoryBuilder
+            )
+        }
+
+        var config = ChatClientConfig(apiKeyString: .unique)
+        config.isClientInActiveMode = isClientInActiveMode
+        let client = ChatClient_Mock(config: config, environment: environment)
+
+        authenticationRepository = client.authenticationRepository as? AuthenticationRepository_Mock
+        XCTAssertNotNil(authenticationRepository)
+
+        if let existingToken = existingToken {
+            authenticationRepository?.setToken(token: existingToken)
+        }
+
+        XCTAssertNil(client.webSocketClient?.connectEndpoint)
+        XCTAssertEqual(client.backgroundWorkers.count, 0)
+
+        return client
+    }
+
+    private func prepareEnvironmentAndWait(userInfo: UserInfo?, newToken: Token, client: ChatClient) -> Error? {
+        let updater = ChatClientUpdater(client: client)
+        let expectation = self.expectation(description: "prepareEnvironment completes")
+        var receivedError: Error?
+        updater.prepareEnvironment(
+            userInfo: userInfo,
+            newToken: newToken,
+            completion: { error in
+                receivedError = error
+                expectation.fulfill()
+            }
+        )
+
+        waitForExpectations(timeout: 0.1)
+        return receivedError
+    }
 }
 
 // MARK: - Private
@@ -665,4 +991,8 @@ private extension ChatClient {
     var testBackgroundWorkerId: Int? {
         backgroundWorkers.first { $0 is MessageSender || $0 is TestWorker }.map { ObjectIdentifier($0).hashValue }
     }
+}
+
+private func staticToken(_ token: Token) -> TokenProvider {
+    { $0(.success(token)) }
 }

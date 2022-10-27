@@ -74,8 +74,6 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
     public var unreadCount: UnreadCount {
         currentUser?.unreadCount ?? .noUnread
     }
-
-    private lazy var chatClientUpdater = environment.chatClientUpdaterBuilder(client)
     
     /// The worker used to update the current user.
     private lazy var currentUserUpdater = environment.currentUserUpdaterBuilder(
@@ -145,9 +143,7 @@ public extension CurrentChatUserController {
     ///
     /// - Parameter completion: The completion to be called when the operation is completed.
     func reloadUserIfNeeded(completion: ((Error?) -> Void)? = nil) {
-        chatClientUpdater.reloadUserIfNeeded(
-            userConnectionProvider: client.userConnectionProvider
-        ) { error in
+        client.authenticationRepository.refreshToken { error in
             self.callback {
                 completion?(error)
             }
@@ -265,8 +261,6 @@ extension CurrentChatUserController {
         ) -> EntityDatabaseObserver<CurrentChatUser, CurrentUserDTO> = EntityDatabaseObserver.init
         
         var currentUserUpdaterBuilder = CurrentUserUpdater.init
-
-        var chatClientUpdaterBuilder = ChatClientUpdater.init
     }
 }
 

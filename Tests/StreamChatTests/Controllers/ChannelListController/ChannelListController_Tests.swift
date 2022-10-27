@@ -683,7 +683,8 @@ final class ChannelListController_Tests: XCTestCase {
         }
 
         // Prepare controller
-        client.currentUserId = userId
+
+        client.authenticationRepository.setToken(token: Token.unique(userId: userId))
         query = .init(filter: .and(
             [
                 .containMembers(userIds: [userId]),
@@ -1047,7 +1048,7 @@ final class ChannelListController_Tests: XCTestCase {
             .bottomToTop
         )
         
-        client.currentUserId = .unique
+        client.authenticationRepository.setToken(token: .unique())
         XCTAssertEqual(
             (try! client.channelController(createChannelWithId: .unique)).messageOrdering,
             .topToBottom
