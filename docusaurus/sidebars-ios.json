@@ -4,6 +4,7 @@
       "Basics": [
         "basics/overview",
         "basics/integration",
+        "basics/glossary",
         "basics/logs"
       ]
     },
@@ -11,16 +12,11 @@
       "UIKit": [
         "uikit/uikit-overview",
         "uikit/getting-started",
-        {
-          "Core Principles": [
-            "uikit/localization",
-            "uikit/theming",
-            "uikit/custom-components",
-            "uikit/data-formatting",
-            "uikit/extra-data",
-            "guides/offline-support"
-          ]
-        },
+        "uikit/localization",
+        "uikit/theming",
+        "uikit/custom-components",
+        "uikit/data-formatting",
+        "uikit/extra-data",
         {
           "Controllers and Delegates": [
             "uikit/controllers/controllers-overview",
@@ -100,49 +96,34 @@
       ]
     },
     {
-      "Advanced":
-      [
-        "advanced/assertions",
-        {
-          "Combine": [
-            "combine/combine-overview",
-            "combine/connection",
-            "combine/channels",
-            "combine/users",
-            "combine/messages",
-            "combine/events"
-          ]
-        }
+      "Combine": [
+        "combine/combine-overview",
+        "combine/connection",
+        "combine/channels",
+        "combine/users",
+        "combine/messages",
+        "combine/events"
       ]
+    },
+    {
+      "Advanced": ["advanced/assertions"]
     },
     {
       "Guides": [
         "guides/importance-of-synchronize",
         "guides/customize-message-actions",
         "guides/push-notifications",
+        "guides/offline-support",
         "guides/working-with-attachments",
         "guides/customize-message-composer",
         "guides/message-composer-custom-attachments",
         "guides/message-list-delivery-status",
         "guides/customize-message-delivery-status",
-        {
-          "Third Party Video": [
-            "guides/video-100ms",
-            "guides/video-agora"
-          ]
-        },
-        {
-          "Major version upgrades": [
-            "guides/migrating-from-3-to-4",
-            "guides/migrating-from-1.x-and-2.x"
-          ]
-        }
+        "guides/video-100ms",
+        "guides/video-agora",
+        "guides/migrating-from-3-to-4",
+        "guides/migrating-from-1.x-and-2.x"
       ]
-    },
-    {
-      "Reference": [
-        "basics/glossary"
-      ] 
     }
   ]
 }
