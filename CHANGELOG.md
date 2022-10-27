@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.23.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.23.0)
+_October 27, 2022_
+
 ## StreamChat
 ### ✅ Added
 - Added support for Stream's Image CDN v2 [#2339](https://github.com/GetStream/stream-chat-swift/pull/2339)
