@@ -26,6 +26,7 @@ jobs:
       GITHUB_EVENT: ${{ toJson(github.event) }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
+      IOS_SIMULATOR_DEVICE: "${{ matrix.device }} (${{ matrix.ios }})"
     steps:
     - uses: actions/checkout@v2.5.0
     - uses: ./.github/actions/bootstrap
