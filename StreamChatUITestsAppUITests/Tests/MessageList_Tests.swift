@@ -1069,7 +1069,7 @@ extension MessageList_Tests {
             userRobot.assertMessage(message)
         }
         AND("participant hard-deletes the message: '\(message)'") {
-            participantRobot.deleteMessage(hard: true)
+            participantRobot.wait(2).deleteMessage(hard: true)
         }
         THEN("the message is hard-deleted") {
             userRobot.assertHardDeletedMessage(withText: message)
