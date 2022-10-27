@@ -6,10 +6,10 @@ import Foundation
 @testable import StreamChat
 
 public extension AnyAttachmentPayload {
-    static let mockFile = try! Self(attachmentType: .file, localFileURL: .localYodaQuote)
-    static let mockFileWithLongName = try! Self(attachmentType: .file, localFileURL: .localYodaQuoteLongFileName)
-    static let mockImage = try! Self(attachmentType: .image, localFileURL: .localYodaImage)
-    static let mockVideo = try! Self(attachmentType: .video, localFileURL: .localYodaQuote)
+    static let mockFile = try! Self(localFileURL: .localYodaQuote, attachmentType: .file)
+    static let mockFileWithLongName = try! Self(localFileURL: .localYodaQuoteLongFileName, attachmentType: .file)
+    static let mockImage = try! Self(localFileURL: .localYodaImage, attachmentType: .image)
+    static let mockVideo = try! Self(localFileURL: .localYodaQuote, attachmentType: .video)
 }
 
 public extension AnyAttachmentPayload {

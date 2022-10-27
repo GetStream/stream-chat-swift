@@ -13,8 +13,8 @@ final class AnyAttachmentPayload_Tests: XCTestCase {
         let type: AttachmentType = .image
         let extraData = PhotoMetadata.random
         let anyPayload = try AnyAttachmentPayload(
-            attachmentType: type,
             localFileURL: url,
+            attachmentType: type,
             extraData: extraData
         )
         
@@ -34,8 +34,8 @@ final class AnyAttachmentPayload_Tests: XCTestCase {
         let type: AttachmentType = .video
         let extraData = PhotoMetadata.random
         let anyPayload = try AnyAttachmentPayload(
-            attachmentType: type,
             localFileURL: url,
+            attachmentType: type,
             extraData: extraData
         )
 
@@ -55,8 +55,8 @@ final class AnyAttachmentPayload_Tests: XCTestCase {
         let type: AttachmentType = .file
         let extraData = PhotoMetadata.random
         let anyPayload = try AnyAttachmentPayload(
-            attachmentType: type,
             localFileURL: url,
+            attachmentType: type,
             extraData: extraData
         )
 
@@ -74,8 +74,8 @@ final class AnyAttachmentPayload_Tests: XCTestCase {
         XCTAssertThrowsError(
             // Try to create uploadable attachment with custom type
             try AnyAttachmentPayload(
-                attachmentType: .init(rawValue: .unique),
-                localFileURL: .localYodaQuote
+                localFileURL: .localYodaQuote,
+                attachmentType: .init(rawValue: .unique)
             )
         ) { error in
             XCTAssertTrue(error is ClientError.UnsupportedUploadableAttachmentType)
@@ -88,8 +88,8 @@ final class AnyAttachmentPayload_Tests: XCTestCase {
         XCTAssertThrowsError(
             // Try to create uploadable attachment with invalid extra data
             try AnyAttachmentPayload(
-                attachmentType: .init(rawValue: .unique),
                 localFileURL: .localYodaQuote,
+                attachmentType: .init(rawValue: .unique),
                 extraData: String.unique
             )
         )

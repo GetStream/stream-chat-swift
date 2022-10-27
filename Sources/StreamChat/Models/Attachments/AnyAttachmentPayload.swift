@@ -69,12 +69,13 @@ public extension AnyAttachmentPayload {
     /// - Parameters:
     ///   - localFileURL: The local URL referencing to the file.
     ///   - attachmentType: The type of resulting attachment exposed on the message.
+    ///   - localMetadata: The metadata related to the local attachment.
     ///   - extraData: An extra data that should be added to attachment.
     /// - Throws: The error if `localFileURL` is not the file URL or if `extraData` can not be represented as
     /// a dictionary.
     init(
-        attachmentType: AttachmentType,
         localFileURL: URL,
+        attachmentType: AttachmentType,
         localMetadata: AnyAttachmentLocalMetadata? = nil,
         extraData: Encodable? = nil
     ) throws {

@@ -883,8 +883,8 @@ open class ComposerVC: _ViewController,
         }
         
         let attachment = try AnyAttachmentPayload(
-            attachmentType: type,
             localFileURL: url,
+            attachmentType: type,
             localMetadata: localMetadata
         )
         content.attachments.append(attachment)
