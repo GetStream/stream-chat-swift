@@ -117,7 +117,7 @@ let channelListVC = ChatChannelList.make(
 
 The code snippets above will also create the `ChatChannelListController` with the specified query. `ChannelListQuery` allows us to define the channels to fetch and their order. Here we are listing channels where the current user is a member. In this case, the query will load all the channels the user is a member of.
 
-Read more about channel list query and low-level channel list controller [here](./controllers/channels.md).
+Read more about channel list query and low-level channel list controller [here](../client/controllers/channels.md).
 
 :::note
 You can load test data for your application using the test data generator [here](https://generator.getstream.io/).

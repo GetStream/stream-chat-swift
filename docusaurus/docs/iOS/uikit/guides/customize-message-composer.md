@@ -2,8 +2,8 @@
 title: Customize Message Composer
 ---
 
-import ThemingNote from '../common-content/theming-note.md'
-import ComponentsNote from '../common-content/components-note.md'
+import ThemingNote from '../../common-content/theming-note.md'
+import ComponentsNote from '../../common-content/components-note.md'
 
 The `ComposerVC` is the component responsible to create new messages or change existing messages. The composer belongs to the `ChatMessageListVC` component that integrates the message list and the composer in one view. But if you are not using our `ChatMessageListVC` you can use the composer component in isolation with your own chat view as well. The `ComposerVC` manages all the logic and actions of the `ComposerView`, where the latter is only responsible for the composer's layout.
 
@@ -12,7 +12,7 @@ Since the `ComposerView` is responsible for the composer's layout, if you want t
 
 | Before  | After |
 | ------------- | ------------- |
-| <img src={require("../assets/composer-imessage-ui-before.png").default}/> | <img src={require("../assets/composer-imessage-ui-after.png").default}/> |
+| <img src={require("../../assets/composer-imessage-ui-before.png").default}/> | <img src={require("../../assets/composer-imessage-ui-after.png").default}/> |
 
 After changing the layout through the following steps you should have the result of the picture above.
 
@@ -97,7 +97,7 @@ class iMessageComposerView: ComposerView {
 
 | Before  | After |
 | ------------- | ------------- |
-| <img src={require("../assets/composer-imessage-ui-after.png").default}/> | <img src={require("../assets/composer-imessage-emoji.png").default}/> |
+| <img src={require("../../assets/composer-imessage-ui-after.png").default}/> | <img src={require("../../assets/composer-imessage-emoji.png").default}/> |
 
 Now, that we have our emoji button in the composer view, we need to setup an action for it and handle the logic of the new emoji picker. For this, we need to subclass the `ComposerVC` and override the `setUp()` function to add a new action and override `updateContent()` to hide the emoji button when the input text is empty.
 
@@ -208,7 +208,7 @@ Here we simply remove the shadow and customize the border style of the suggestio
 
 | Before  | After |
 | ------------- | ------------- |
-| <img src={require("../assets/composer-suggestionsVC-before.png").default} /> | <img src={require("../assets/composer-suggestionsVC-after.png").default} /> |
+| <img src={require("../../assets/composer-suggestionsVC-before.png").default} /> | <img src={require("../../assets/composer-suggestionsVC-after.png").default} /> |
 
 #### Customizing the Suggestions Cells
 If you want to further customize the suggestions UI and want to change the suggestions cells, the recommended way is to subclass the `ChatMentionSuggestionView` and `ChatCommandSuggestionView` components. Let's see an example of how we can change the user mention cell by remove the username and the "@" symbol:
@@ -232,7 +232,7 @@ Components.default.suggestionsMentionView = CustomMentionSuggestionView.self
 
 | Before  | After |
 | ------------- | ------------- |
-| <img src={require("../assets/composer-suggestionsVC-after.png").default} /> | <img src={require("../assets/composer-suggestionsVC-custom-cell.png").default} /> |
+| <img src={require("../../assets/composer-suggestionsVC-after.png").default} /> | <img src={require("../../assets/composer-suggestionsVC-custom-cell.png").default} /> |
 
 #### Bypassing how the Suggestions are Presented
 Finally, if you need to have complete control over how the suggestions are presented and not use our `ChatSuggestionsVC` component you can by overriding the following functions:
