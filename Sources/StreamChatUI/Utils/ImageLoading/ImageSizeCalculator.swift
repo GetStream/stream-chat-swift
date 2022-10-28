@@ -34,7 +34,7 @@ struct ImageSizeCalculator {
         }
 
         /// The formula to calculate the new resolution is based on the max pixels and
-        /// the original aspect ratio. To get the formula, a system of questions is needed.
+        /// the original aspect ratio. To get the formula, a system of equations is needed.
         ///
         /// { w * h = maxResolutionTotalPixels }
         /// { w / h = originalRatio }
