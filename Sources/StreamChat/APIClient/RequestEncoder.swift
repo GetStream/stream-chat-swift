@@ -147,18 +147,7 @@ struct DefaultRequestEncoder: RequestEncoder {
 
         let missingTokenError = ClientError.MissingToken("Failed to get `token`, request can't be created.")
 
-        var waiterToken: WaiterToken?
-        let timer = timerType
-            .schedule(timeInterval: waiterTimeout, queue: .global()) { [weak connectionDetailsProviderDelegate] in
-                // We complete with a success to account for the most probable case for the timeout: No connection.
-                // That way, when reaching the APIClient, we would properly report a connection error.
-                defer { completion(.success(request)) }
-                guard let waiterToken = waiterToken else { return }
-                connectionDetailsProviderDelegate?.invalidateTokenWaiter(waiterToken)
-            }
-
-        waiterToken = connectionDetailsProviderDelegate?.provideToken {
-            timer.cancel()
+        connectionDetailsProviderDelegate?.provideToken(timeout: waiterTimeout) {
             if let token = $0 {
                 var updatedRequest = request
 
@@ -195,18 +184,7 @@ struct DefaultRequestEncoder: RequestEncoder {
             "Failed to get `connectionId`, request can't be created."
         )
 
-        var waiterToken: WaiterToken?
-        let timer = timerType
-            .schedule(timeInterval: waiterTimeout, queue: .global()) { [weak connectionDetailsProviderDelegate] in
-                // We complete with a success to account for the most probable case for the timeout: No connection.
-                // That way, when reaching the APIClient, we would properly report a connection error.
-                defer { completion(.success(request)) }
-                guard let waiterToken = waiterToken else { return }
-                connectionDetailsProviderDelegate?.invalidateConnectionIdWaiter(waiterToken)
-            }
-
-        waiterToken = connectionDetailsProviderDelegate?.provideConnectionId {
-            timer.cancel()
+        connectionDetailsProviderDelegate?.provideConnectionId(timeout: waiterTimeout) {
             do {
                 if let connectionId = $0 {
                     var updatedRequest = request
@@ -302,10 +280,8 @@ private extension URL {
 
 typealias WaiterToken = String
 protocol ConnectionDetailsProviderDelegate: AnyObject {
-    @discardableResult
-    func provideConnectionId(completion: @escaping (_ connectionId: ConnectionId?) -> Void) -> WaiterToken
-    @discardableResult
-    func provideToken(completion: @escaping (Token?) -> Void) -> WaiterToken
+    func provideConnectionId(timeout: TimeInterval, completion: @escaping (_ connectionId: ConnectionId?) -> Void)
+    func provideToken(timeout: TimeInterval, completion: @escaping (_ token: Token?) -> Void)
     func invalidateTokenWaiter(_ waiter: WaiterToken)
     func invalidateConnectionIdWaiter(_ waiter: WaiterToken)
 }

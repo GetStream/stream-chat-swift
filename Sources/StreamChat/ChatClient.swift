@@ -786,34 +786,60 @@ extension ChatClient: ConnectionStateDelegate {
 
 /// `Client` provides connection details for the `RequestEncoder`s it creates.
 extension ChatClient: ConnectionDetailsProviderDelegate {
-    @discardableResult
-    func provideToken(completion: @escaping (_ token: Token?) -> Void) -> WaiterToken {
-        let waiterToken = String.newUniqueId
+    func provideToken(timeout: TimeInterval = 10, completion: @escaping (_ token: Token?) -> Void) {
         if let token = currentToken {
             completion(token)
-        } else {
-            _tokenWaiters.mutate {
-                $0[waiterToken] = completion
-            }
+            return
         }
-        return waiterToken
+
+        let waiterToken = String.newUniqueId
+        let completion = addTimeout(timeout: timeout, to: completion) { [weak self] in
+            self?.invalidateTokenWaiter(waiterToken)
+        }
+
+        _tokenWaiters.mutate {
+            $0[waiterToken] = completion
+        }
     }
 
-    @discardableResult
-    func provideConnectionId(completion: @escaping (String?) -> Void) -> WaiterToken {
-        let waiterToken = String.newUniqueId
+    func provideConnectionId(timeout: TimeInterval = 10, completion: @escaping (String?) -> Void) {
         if let connectionId = connectionId {
             completion(connectionId)
+            return
         } else if !config.isClientInActiveMode {
             // We're in passive mode
             // We will never have connectionId
             completion(nil)
-        } else {
-            _connectionIdWaiters.mutate {
-                $0[waiterToken] = completion
-            }
+            return
         }
-        return waiterToken
+
+        let waiterToken = String.newUniqueId
+        let completion = addTimeout(timeout: timeout, to: completion) { [weak self] in
+            self?.invalidateConnectionIdWaiter(waiterToken)
+        }
+
+        _connectionIdWaiters.mutate {
+            $0[waiterToken] = completion
+        }
+    }
+
+    private func addTimeout<T>(
+        timeout: TimeInterval,
+        to completion: @escaping (T?) -> Void,
+        onTimeout: @escaping () -> Void
+    ) -> (T?) -> Void {
+        var timer: TimerControl?
+        let completionCancellingTimer: (T?) -> Void = { value in
+            timer?.cancel()
+            completion(value)
+        }
+
+        timer = environment.timerType.schedule(timeInterval: timeout, queue: .global()) {
+            defer { completionCancellingTimer(nil) }
+            onTimeout()
+        }
+
+        return completionCancellingTimer
     }
 
     func invalidateTokenWaiter(_ waiter: WaiterToken) {
