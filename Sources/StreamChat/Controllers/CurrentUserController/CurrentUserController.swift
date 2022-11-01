@@ -62,6 +62,7 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
     
     /// The currently logged-in user. `nil` if the connection hasn't been fully established yet, or the connection
     /// wasn't successful.
+    /// Having a non-nil currentUser does not mean the user is authenticated. Make sure to call `connect()` before performing any API call.
     public var currentUser: CurrentChatUser? {
         startObservingIfNeeded()
         return currentUserObserver.item
