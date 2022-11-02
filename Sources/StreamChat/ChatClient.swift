@@ -685,7 +685,8 @@ extension ClientError {
     }
     
     public class MissingToken: ClientError {}
-    
+    class WaiterTimeout: ClientError {}
+
     public class ClientIsNotInActiveMode: ClientError {
         override public var localizedDescription: String {
             """
@@ -786,9 +787,9 @@ extension ChatClient: ConnectionStateDelegate {
 
 /// `Client` provides connection details for the `RequestEncoder`s it creates.
 extension ChatClient: ConnectionDetailsProviderDelegate {
-    func provideToken(timeout: TimeInterval = 10, completion: @escaping (_ token: Token?) -> Void) {
+    func provideToken(timeout: TimeInterval = 10, completion: @escaping (Result<Token, Error>) -> Void) {
         if let token = currentToken {
-            completion(token)
+            completion(.success(token))
             return
         }
 
@@ -802,14 +803,14 @@ extension ChatClient: ConnectionDetailsProviderDelegate {
         }
     }
 
-    func provideConnectionId(timeout: TimeInterval = 10, completion: @escaping (String?) -> Void) {
+    func provideConnectionId(timeout: TimeInterval = 10, completion: @escaping (Result<ConnectionId, Error>) -> Void) {
         if let connectionId = connectionId {
-            completion(connectionId)
+            completion(.success(connectionId))
             return
         } else if !config.isClientInActiveMode {
             // We're in passive mode
             // We will never have connectionId
-            completion(nil)
+            completion(.failure(ClientError.ClientIsNotInActiveMode()))
             return
         }
 
@@ -825,18 +826,22 @@ extension ChatClient: ConnectionDetailsProviderDelegate {
 
     private func addTimeout<T>(
         timeout: TimeInterval,
-        to completion: @escaping (T?) -> Void,
+        to completion: @escaping (Result<T, Error>) -> Void,
         onTimeout: @escaping () -> Void
     ) -> (T?) -> Void {
         var timer: TimerControl?
         let completionCancellingTimer: (T?) -> Void = { value in
             timer?.cancel()
-            completion(value)
+            if let value = value {
+                completion(.success(value))
+            } else {
+                completion(.failure(ClientError.WaiterTimeout()))
+            }
         }
 
         timer = environment.timerType.schedule(timeInterval: timeout, queue: .global()) {
-            defer { completionCancellingTimer(nil) }
             onTimeout()
+            completionCancellingTimer(nil)
         }
 
         return completionCancellingTimer

@@ -148,17 +148,20 @@ struct DefaultRequestEncoder: RequestEncoder {
         let missingTokenError = ClientError.MissingToken("Failed to get `token`, request can't be created.")
 
         connectionDetailsProviderDelegate?.provideToken(timeout: waiterTimeout) {
-            if let token = $0 {
+            switch $0 {
+            case let .success(token):
                 var updatedRequest = request
-
                 if token.userId.isAnonymousUser {
                     updatedRequest.setHTTPHeaders(.anonymousStreamAuth)
                 } else {
                     updatedRequest.setHTTPHeaders(.jwtStreamAuth, .authorization(token.rawValue))
                 }
-
                 completion(.success(updatedRequest))
-            } else {
+            case .failure(_ as ClientError.WaiterTimeout):
+                // We complete with a success to account for the most probable case for the timeout: No connection.
+                // That way, when reaching the APIClient, we would properly report a connection error.
+                completion(.success(request))
+            case .failure:
                 completion(.failure(missingTokenError))
             }
         }
@@ -186,11 +189,16 @@ struct DefaultRequestEncoder: RequestEncoder {
 
         connectionDetailsProviderDelegate?.provideConnectionId(timeout: waiterTimeout) {
             do {
-                if let connectionId = $0 {
+                switch $0 {
+                case let .success(connectionId):
                     var updatedRequest = request
                     updatedRequest.url = try updatedRequest.url?.appendingQueryItems(["connection_id": connectionId])
                     completion(.success(updatedRequest))
-                } else {
+                case .failure(_ as ClientError.WaiterTimeout):
+                    // We complete with a success to account for the most probable case for the timeout: No connection.
+                    // That way, when reaching the APIClient, we would properly report a connection error.
+                    completion(.success(request))
+                case .failure:
                     throw missingConnectionIdError
                 }
             } catch {
@@ -280,8 +288,8 @@ private extension URL {
 
 typealias WaiterToken = String
 protocol ConnectionDetailsProviderDelegate: AnyObject {
-    func provideConnectionId(timeout: TimeInterval, completion: @escaping (_ connectionId: ConnectionId?) -> Void)
-    func provideToken(timeout: TimeInterval, completion: @escaping (_ token: Token?) -> Void)
+    func provideConnectionId(timeout: TimeInterval, completion: @escaping (Result<ConnectionId, Error>) -> Void)
+    func provideToken(timeout: TimeInterval, completion: @escaping (Result<Token, Error>) -> Void)
     func invalidateTokenWaiter(_ waiter: WaiterToken)
     func invalidateConnectionIdWaiter(_ waiter: WaiterToken)
 }

@@ -127,10 +127,11 @@ class ChatClientUpdater {
         }
 
         // Set up a waiter for the new connection id to know when the connection process is finished
-        client.provideConnectionId { [weak client] connectionId in
-            if connectionId != nil {
+        client.provideConnectionId { [weak client] result in
+            switch result {
+            case .success:
                 completion?(nil)
-            } else {
+            case .failure:
                 // Try to get a concrete error
                 if case let .disconnected(source) = client?.webSocketClient?.connectionState {
                     completion?(ClientError.ConnectionNotSuccessful(with: source.serverError))
