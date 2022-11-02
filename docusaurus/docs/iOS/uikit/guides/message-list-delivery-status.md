@@ -2,7 +2,7 @@
 title: Message Delivery Status
 ---
 
-import Digraph  from '../common-content/digraph.jsx'
+import Digraph  from '../../common-content/digraph.jsx'
 
 For messages sent by the current user, the delivery status is shown in the message cell.
 
@@ -16,7 +16,7 @@ For group channels with more than 2 members, the number of members who have seen
 
 | Pending send | Sending failed | Sent | Read | Read by many |
 | ------------ | -------------- | ---- | ---- | ------------ |
-| <img src={require("../assets/message-delivery-state-pending-send.png").default}/> | <img src={require("../assets/message-delivery-state-sending-failed.png").default}/> | <img src={require("../assets/message-delivery-state-sent.png").default}/> | <img src={require("../assets/message-delivery-state-read.png").default}/> | <img src={require("../assets/message-delivery-state-read-group.png").default}/> |
+| <img src={require("../../assets/message-delivery-state-pending-send.png").default}/> | <img src={require("../../assets/message-delivery-state-sending-failed.png").default}/> | <img src={require("../../assets/message-delivery-state-sent.png").default}/> | <img src={require("../../assets/message-delivery-state-read.png").default}/> | <img src={require("../../assets/message-delivery-state-read-group.png").default}/> |
 
 ### Delivery Status Transitions
 

@@ -4,7 +4,6 @@
       "Basics": [
         "basics/overview",
         "basics/integration",
-        "basics/glossary",
         "basics/logs"
       ]
     },
@@ -12,19 +11,12 @@
       "UIKit": [
         "uikit/uikit-overview",
         "uikit/getting-started",
-        "uikit/localization",
-        "uikit/theming",
-        "uikit/custom-components",
-        "uikit/data-formatting",
-        "uikit/extra-data",
         {
-          "Controllers and Delegates": [
-            "uikit/controllers/controllers-overview",
-            "uikit/controllers/connection",
-            "uikit/controllers/channels",
-            "uikit/controllers/users",
-            "uikit/controllers/messages",
-            "uikit/controllers/events"
+          "Core Principles": [
+            "uikit/localization",
+            "uikit/theming",
+            "uikit/custom-components",
+            "uikit/data-formatting"
           ]
         },
         {
@@ -46,7 +38,17 @@
             "uikit/views/reactions"
           ]
         },
-        "uikit/navigation"
+        "uikit/navigation",
+        {
+        "Guides": [
+          "uikit/guides/customize-message-actions",
+          "uikit/guides/working-with-attachments",
+          "uikit/guides/customize-message-composer",
+          "uikit/guides/message-list-delivery-status",
+          "uikit/guides/customize-message-delivery-status"
+          ]
+        }
+
       ]
     },
     {
@@ -57,9 +59,7 @@
           "Core Principles": [
             "swiftui/localization",
             "swiftui/dependency-injection",
-            "swiftui/view-customizations",
-            "guides/push-notifications",
-            "guides/offline-support"
+            "swiftui/view-customizations"
           ]
         },
         {
@@ -96,34 +96,61 @@
       ]
     },
     {
-      "Combine": [
-        "combine/combine-overview",
-        "combine/connection",
-        "combine/channels",
-        "combine/users",
-        "combine/messages",
-        "combine/events"
+      "Client": [
+        "client/llc-client-overview",
+        "client/extra-data",
+        "client/offline-support",
+        "client/importance-of-synchronize",
+        "client/push-notifications",
+        {
+          "Controllers and Delegates": [
+            "client/controllers/controllers-overview",
+            "client/controllers/connection",
+            "client/controllers/channels",
+            "client/controllers/users",
+            "client/controllers/messages",
+            "client/controllers/events" 
+          ]
+        }
       ]
     },
     {
-      "Advanced": ["advanced/assertions"]
+      "Advanced":
+      [
+        "advanced/assertions",
+        {
+          "Combine": [
+            "combine/combine-overview",
+            "combine/connection",
+            "combine/channels",
+            "combine/users",
+            "combine/messages",
+            "combine/events"
+          ]
+        }
+      ]
     },
     {
       "Guides": [
-        "guides/importance-of-synchronize",
-        "guides/customize-message-actions",
-        "guides/push-notifications",
-        "guides/offline-support",
-        "guides/working-with-attachments",
-        "guides/customize-message-composer",
         "guides/message-composer-custom-attachments",
-        "guides/message-list-delivery-status",
-        "guides/customize-message-delivery-status",
-        "guides/video-100ms",
-        "guides/video-agora",
-        "guides/migrating-from-3-to-4",
-        "guides/migrating-from-1.x-and-2.x"
+        {
+          "Third Party Video": [
+            "guides/video-100ms",
+            "guides/video-agora"
+          ]
+        },
+        {
+          "Major version upgrades": [
+            "guides/migrating-from-3-to-4",
+            "guides/migrating-from-1.x-and-2.x"
+          ]
+        }
       ]
+    },
+    {
+      "Reference": [
+        "basics/glossary"
+      ] 
     }
   ]
 }

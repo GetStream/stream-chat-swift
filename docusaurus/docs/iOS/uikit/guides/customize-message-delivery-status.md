@@ -2,7 +2,7 @@
 title: Customize Message Delivery Status
 ---
 
-import ComponentsNote from '../common-content/components-note.md'
+import ComponentsNote from '../../common-content/components-note.md'
 
 This guide explains how to manipulate delivery status UI part, specifically:
 - how to show avatars of members who have seen the message
@@ -14,7 +14,7 @@ If message delivery status term is not familiar to you - check out [Message Deli
 
 ## UI component showing delivery status
 
-The UI component responsible for showing delivery status indicator is `ChatMessageDeliveryStatusView`. This component is shown inside `ChatMessageContentView` when the message view is configured with [layout options](../uikit/views/message-layout-options-resolver.md)  that include `deliveryStatusIndicator` option.
+The UI component responsible for showing delivery status indicator is `ChatMessageDeliveryStatusView`. This component is shown inside `ChatMessageContentView` when the message view is configured with [layout options](../views/message-layout-options-resolver.md)  that include `deliveryStatusIndicator` option.
 
 ```swift
 open class ChatMessageContentView: _View, ThemeProvider {
@@ -129,7 +129,7 @@ Run the app and see the outcome 🎉
 
 | Before  | After |
 | ------------- | ------------- |
-| <img src={require("../assets/customize-message-delivery-state-read-before.png").default}/> | <img src={require("../assets/customize-message-delivery-state-read-after.png").default}/> |
+| <img src={require("../../assets/customize-message-delivery-state-read-before.png").default}/> | <img src={require("../../assets/customize-message-delivery-state-read-after.png").default}/> |
 
 ### Handle taps
 
@@ -210,6 +210,6 @@ Components.default.messageLayoutOptionsResolver = CustomChatMessageLayoutOptions
 
 | Before  | After |
 | ------------- | ------------- |
-| <img src={require("../assets/hide-message-delivery-state-before.png").default}/> | <img src={require("../assets/hide-message-delivery-state-after.png").default}/> |
+| <img src={require("../../assets/hide-message-delivery-state-before.png").default}/> | <img src={require("../../assets/hide-message-delivery-state-after.png").default}/> |
 
 <ComponentsNote />

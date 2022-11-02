@@ -102,7 +102,7 @@ controller.synchronize { error in
 }
 ```
 
-Calling `synchronize` on the controller is the commonly used approach in `StreamChat` SDK (read more [here](../../guides/importance-of-synchronize.md)).
+Calling `synchronize` on the controller is the commonly used approach in `StreamChat` SDK (read more [here](../../client/importance-of-synchronize.md)).
 
 ## ChannelController
 
