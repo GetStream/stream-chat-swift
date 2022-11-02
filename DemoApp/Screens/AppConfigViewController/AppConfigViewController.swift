@@ -11,6 +11,8 @@ struct DemoAppConfig {
     var isHardDeleteEnabled: Bool
     /// A Boolean value to define if Atlantis will be started to proxy HTTP and WebSocket calls.
     var isAtlantisEnabled: Bool
+    /// A Boolean value to define if we should mimic token refresh scenarios
+    var isTokenRefreshEnabled: Bool
 }
 
 class AppConfig {
@@ -23,7 +25,8 @@ class AppConfig {
         // Default DemoAppConfig
         demoAppConfig = DemoAppConfig(
             isHardDeleteEnabled: false,
-            isAtlantisEnabled: false
+            isAtlantisEnabled: false,
+            isTokenRefreshEnabled: false
         )
     }
 }
