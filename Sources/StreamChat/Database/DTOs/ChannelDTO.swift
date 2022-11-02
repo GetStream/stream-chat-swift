@@ -352,6 +352,7 @@ extension ChannelDTO {
         ]
         
         request.predicate = NSCompoundPredicate(type: .and, subpredicates: subpredicates)
+        request.fetchLimit = query.pagination.pageSize
         return request
     }
     
