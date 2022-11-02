@@ -20,7 +20,7 @@ final class ConnectionDetailsProviderDelegate_Spy: ConnectionDetailsProviderDele
         tokenWaiters.removeAll()
     }
 
-    func provideConnectionId(completion: @escaping (ConnectionId?) -> Void) -> WaiterToken {
+    func provideConnectionId(timeout: TimeInterval, completion: @escaping (StreamChat.ConnectionId?) -> Void) {
         let waiterToken = String.newUniqueId
         _connectionWaiters.mutate {
             $0[waiterToken] = completion
@@ -29,10 +29,9 @@ final class ConnectionDetailsProviderDelegate_Spy: ConnectionDetailsProviderDele
         if let connectionId = connectionId {
             completion(connectionId)
         }
-        return waiterToken
     }
 
-    func provideToken(completion: @escaping (Token?) -> Void) -> WaiterToken {
+    func provideToken(timeout: TimeInterval, completion: @escaping (StreamChat.Token?) -> Void) {
         let waiterToken = String.newUniqueId
         _tokenWaiters.mutate {
             $0[waiterToken] = completion
@@ -41,7 +40,6 @@ final class ConnectionDetailsProviderDelegate_Spy: ConnectionDetailsProviderDele
         if let token = token {
             completion(token)
         }
-        return waiterToken
     }
 
     func invalidateTokenWaiter(_ waiter: WaiterToken) {}

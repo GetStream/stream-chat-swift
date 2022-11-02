@@ -39,12 +39,6 @@ class ChatClientUpdater {
 
         case .newToken:
             client.updateWebSocketEndpoint(with: newToken, userInfo: userInfo)
-
-            guard newToken != client.currentToken else {
-                completion(nil)
-                return
-            }
-
             client.updateUser(with: newToken, completeTokenWaiters: true, isFirstConnection: false)
             completion(nil)
 
