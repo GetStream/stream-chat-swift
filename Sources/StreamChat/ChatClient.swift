@@ -794,7 +794,7 @@ extension ChatClient: ConnectionDetailsProviderDelegate {
         }
 
         let waiterToken = String.newUniqueId
-        let completion = addTimeout(timeout: timeout, to: completion) { [weak self] in
+        let completion = addTimeout(timeout: timeout, noValueError: ClientError.MissingToken(), to: completion) { [weak self] in
             self?.invalidateTokenWaiter(waiterToken)
         }
 
@@ -815,7 +815,7 @@ extension ChatClient: ConnectionDetailsProviderDelegate {
         }
 
         let waiterToken = String.newUniqueId
-        let completion = addTimeout(timeout: timeout, to: completion) { [weak self] in
+        let completion = addTimeout(timeout: timeout, noValueError: ClientError.MissingConnectionId(), to: completion) { [weak self] in
             self?.invalidateConnectionIdWaiter(waiterToken)
         }
 
@@ -826,25 +826,28 @@ extension ChatClient: ConnectionDetailsProviderDelegate {
 
     private func addTimeout<T>(
         timeout: TimeInterval,
+        noValueError: Error,
         to completion: @escaping (Result<T, Error>) -> Void,
         onTimeout: @escaping () -> Void
     ) -> (T?) -> Void {
         var timer: TimerControl?
-        let completionCancellingTimer: (T?) -> Void = { value in
+        let completionCancellingTimer: (Result<T, Error>) -> Void = { result in
             timer?.cancel()
-            if let value = value {
-                completion(.success(value))
-            } else {
-                completion(.failure(ClientError.WaiterTimeout()))
-            }
+            completion(result)
         }
 
         timer = environment.timerType.schedule(timeInterval: timeout, queue: .global()) {
             onTimeout()
-            completionCancellingTimer(nil)
+            completionCancellingTimer(.failure(ClientError.WaiterTimeout()))
         }
 
-        return completionCancellingTimer
+        return { value in
+            if let value = value {
+                completionCancellingTimer(.success(value))
+            } else {
+                completionCancellingTimer(.failure(noValueError))
+            }
+        }
     }
 
     func invalidateTokenWaiter(_ waiter: WaiterToken) {

@@ -308,7 +308,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         XCTAssertEqual(receivedError, mockedError)
     }
 
-    func test_refreshToken_multipleCalls() throws {
+    func test_refreshToken_multipleCalls_theoreticApproach() throws {
         try setTokenProvider(mockedResult: .success(.unique()))
         retryStrategy.mock_nextRetryDelay.returns(0.1)
 
@@ -328,6 +328,38 @@ final class AuthenticationRepository_Tests: XCTestCase {
         waitForExpectations(timeout: 0.1)
 
         XCTAssertCall("nextRetryDelay()", on: retryStrategy, times: 3)
+        XCTAssertCall("resetConsecutiveFailures()", on: retryStrategy, times: 1)
+    }
+
+    func test_refreshToken_multipleCalls_forcingRealisticDispatch() throws {
+        try setTokenProvider(mockedResult: .success(.unique()))
+        retryStrategy.mock_nextRetryDelay.returns(0)
+
+        let expectation1 = expectation(description: "Refresh token")
+        repository.refreshToken { _ in
+            expectation1.fulfill()
+        }
+
+        retryStrategy.mock_nextRetryDelay.returns(0.1)
+
+        DispatchQueue.main.async {
+            (1...2).forEach { _ in
+                let expectation = self.expectation(description: "Refresh token")
+                self.repository.refreshToken { _ in
+                    expectation.fulfill()
+                }
+            }
+        }
+
+        AssertAsync.willBeTrue(clientUpdater.reloadUserIfNeeded_completion != nil)
+        let reloadUserCompletion = try XCTUnwrap(clientUpdater.reloadUserIfNeeded_completion)
+        let tokenProvider = try XCTUnwrap(clientUpdater.reloadUserIfNeeded_tokenProvider)
+        reloadUserCompletion(nil)
+        tokenProvider { _ in }
+
+        waitForExpectations(timeout: 0.1)
+
+        XCTAssertCall("nextRetryDelay()", on: retryStrategy, times: 1)
         XCTAssertCall("resetConsecutiveFailures()", on: retryStrategy, times: 1)
     }
 

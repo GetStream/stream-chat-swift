@@ -62,7 +62,6 @@ extension RequestEncoder {
 struct DefaultRequestEncoder: RequestEncoder {
     let baseURL: URL
     let apiKey: APIKey
-    let timerType: Timer.Type
 
     /// The most probable reason why a RequestEncoder can timeout when waiting for token or connectionId is because there's no connection.
     /// When returning an error, it will just fail without giving an opportunity to know if the timeout occurred because of a networking problem.
@@ -116,13 +115,8 @@ struct DefaultRequestEncoder: RequestEncoder {
     }
 
     init(baseURL: URL, apiKey: APIKey) {
-        self.init(baseURL: baseURL, apiKey: apiKey, timerType: DefaultTimer.self)
-    }
-
-    init(baseURL: URL, apiKey: APIKey, timerType: Timer.Type) {
         self.baseURL = baseURL
         self.apiKey = apiKey
-        self.timerType = timerType
     }
     
     // MARK: - Private

@@ -23,7 +23,7 @@ final class ConnectionDetailsProviderDelegate_Spy: ConnectionDetailsProviderDele
     func provideConnectionId(timeout: TimeInterval, completion: @escaping (Result<StreamChat.ConnectionId, Error>) -> Void) {
         let waiterToken = String.newUniqueId
         let valueCompletion: (StreamChat.ConnectionId?) -> Void = { value in
-            completion(value.map { .success($0) } ?? .failure(ClientError.WaiterTimeout()))
+            completion(value.map { .success($0) } ?? .failure(ClientError.MissingConnectionId()))
         }
         _connectionWaiters.mutate {
             $0[waiterToken] = valueCompletion
@@ -37,7 +37,7 @@ final class ConnectionDetailsProviderDelegate_Spy: ConnectionDetailsProviderDele
     func provideToken(timeout: TimeInterval, completion: @escaping (Result<StreamChat.Token, Error>) -> Void) {
         let waiterToken = String.newUniqueId
         let valueCompletion: (StreamChat.Token?) -> Void = { value in
-            completion(value.map { .success($0) } ?? .failure(ClientError.WaiterTimeout()))
+            completion(value.map { .success($0) } ?? .failure(ClientError.MissingToken()))
         }
         _tokenWaiters.mutate {
             $0[waiterToken] = valueCompletion
