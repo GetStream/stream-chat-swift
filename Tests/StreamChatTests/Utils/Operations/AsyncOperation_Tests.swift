@@ -169,26 +169,83 @@ final class AsyncOperation_Tests: XCTestCase {
             }
         }
     }
+
+    func test_simulateEarlyCancellation_shouldBehaveAsExpected() {
+        var operationBlockCalls = 0
+        let operation = retryLoopedOperation {
+            operationBlockCalls = $0
+        }
+
+        guard #available(iOS 13.0, *) else {
+            XCTFail("KVO Expectations require iOS 13.0+")
+            return
+        }
+
+        operation.start()
+        let operationCompletion = expectation(that: \AsyncOperation.isExecuting, on: operation, willEqual: false)
+        operation.cancel()
+        wait(for: [operationCompletion], timeout: 0.1)
+
+        // We want to make sure that upon an early cancellation, it does not continue executing
+        XCTAssertEqual(operationBlockCalls, 1)
+    }
+
+    func test_simulateTokenRefreshLoop_shouldBehaveAsExpected() {
+        var operationBlockCalls = 0
+        let operation = retryLoopedOperation {
+            operationBlockCalls = $0
+        }
+
+        guard #available(iOS 13.0, *) else {
+            XCTFail("KVO Expectations require iOS 13.0+")
+            return
+        }
+
+        operation.start()
+        let operationCompletion = expectation(that: \AsyncOperation.isExecuting, on: operation, willEqual: false)
+        operation.isFinished = true
+        wait(for: [operationCompletion], timeout: 0.1)
+
+        // We want to make sure that upon an early set of isFinished to true, it does not continue executing
+        XCTAssertEqual(operationBlockCalls, 1)
+    }
 }
 
 // MARK: Test Helpers
 
 extension AsyncOperation_Tests {
-    private func waitForOperationToFinish(_ operation: AsyncOperation) {
-        let expectation = expectation(description: "operation concludes")
-        let token = operation.observe(\.isFinished) { _, change in
-            guard !change.isPrior else { return }
-            expectation.fulfill()
-        }
+    private func retryLoopedOperation(onCallsUpdate: @escaping (Int) -> Void) -> AsyncOperation {
+        var operationBlockCalls = 0
+        let testLimit = 20
+        return AsyncOperation(maxRetries: 10) { selfOperation, completion in
+            if operationBlockCalls >= testLimit {
+                XCTFail("Should not reach its limit")
+                completion(.continue)
+                return
+            }
 
-        operation.start()
-
-        waitForExpectations(timeout: 10) { error in
-            if let error = error {
-                print(error)
-                XCTFail(error.localizedDescription)
+            DispatchQueue.main.async {
+                operationBlockCalls += 1
+                onCallsUpdate(operationBlockCalls)
+                selfOperation.resetRetries()
+                completion(.retry)
             }
         }
-        token.invalidate()
+    }
+
+    private func waitForOperationToFinish(_ operation: AsyncOperation) {
+        guard #available(iOS 13.0, *) else {
+            XCTFail()
+            return
+        }
+
+        _waitForOperationToFinish(operation)
+    }
+
+    @available(iOS 13.0, *)
+    private func _waitForOperationToFinish(_ operation: AsyncOperation) {
+        let expectation = expectation(that: \AsyncOperation.isFinished, on: operation, willEqual: true)
+        operation.start()
+        wait(for: [expectation], timeout: 10)
     }
 }
