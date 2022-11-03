@@ -319,7 +319,7 @@ final class ChatClient_Tests: XCTestCase {
         // Set a connection Id waiter and assert it's `nil`
         var providedConnectionId: ConnectionId?
         client.provideConnectionId {
-            providedConnectionId = $0
+            providedConnectionId = $0.value
         }
         XCTAssertNil(providedConnectionId)
         
@@ -337,7 +337,7 @@ final class ChatClient_Tests: XCTestCase {
             .webSocketClient(testEnv.webSocketClient!, didUpdateConnectionState: .connected(connectionId: connectionId))
         
         AssertAsync.willBeEqual(providedConnectionId, connectionId)
-        XCTAssertEqual(try waitFor { client.provideConnectionId(completion: $0) }, connectionId)
+        XCTAssertEqual(try waitFor { client.provideConnectionId(completion: $0) }.value, connectionId)
         
         // Simulate WebSocketConnection disconnecting and assert connectionId is reset
         testEnv.webSocketClient?.connectionStateDelegate?
@@ -345,7 +345,7 @@ final class ChatClient_Tests: XCTestCase {
         
         providedConnectionId = nil
         client.provideConnectionId {
-            providedConnectionId = $0
+            providedConnectionId = $0.value
         }
         AssertAsync.staysTrue(providedConnectionId == nil)
     }
@@ -365,7 +365,7 @@ final class ChatClient_Tests: XCTestCase {
         // Set a connection Id waiter and set `providedConnectionId` to a non-nil value
         var providedConnectionId: ConnectionId? = .unique
         client.provideConnectionId {
-            providedConnectionId = $0
+            providedConnectionId = $0.value
         }
         XCTAssertNotNil(providedConnectionId)
         
@@ -462,7 +462,7 @@ final class ChatClient_Tests: XCTestCase {
             // This is to simulate the case where 2 entities call this func
             // Like, calling `synchronize` in a delegate callback
             client.provideConnectionId {
-                providedConnectionId = $0
+                providedConnectionId = $0.value
             }
         }
         XCTAssertNil(providedConnectionId)
@@ -846,8 +846,8 @@ final class ChatClient_Tests: XCTestCase {
 
         let expectation = self.expectation(description: "Token waiter")
         var providedToken: Token?
-        client.provideToken { token in
-            providedToken = token
+        client.provideToken { result in
+            providedToken = result.value
             expectation.fulfill()
         }
 
@@ -875,8 +875,8 @@ final class ChatClient_Tests: XCTestCase {
 
         let expectation = self.expectation(description: "Token waiter")
         var providedToken: Token?
-        client.provideToken { token in
-            providedToken = token
+        client.provideToken { result in
+            providedToken = result.value
             expectation.fulfill()
         }
 
@@ -901,8 +901,8 @@ final class ChatClient_Tests: XCTestCase {
         XCTAssertNil(client.currentUserId)
         XCTAssertEqual(client.backgroundWorkers.count, 0)
 
-        client.provideToken { token in
-            if token != nil {
+        client.provideToken { result in
+            if result.value != nil {
                 XCTFail("Should not complete waiters")
             }
         }
@@ -997,8 +997,8 @@ final class ChatClient_Tests: XCTestCase {
 
         let expectation = self.expectation(description: "Complete existing waiter")
         var providedToken: Token?
-        client.provideToken { token in
-            providedToken = token
+        client.provideToken { result in
+            providedToken = result.value
             expectation.fulfill()
         }
 
@@ -1011,8 +1011,8 @@ final class ChatClient_Tests: XCTestCase {
 
         client.logout()
 
-        client.provideToken { token in
-            if token != nil {
+        client.provideToken { result in
+            if result.value != nil {
                 XCTFail("Should not complete waiters for new token")
             }
         }
@@ -1050,7 +1050,7 @@ final class ChatClient_Tests: XCTestCase {
         var providedConnectionId: ConnectionId? = .unique
         var connectionIdCallbackCalled = false
         client.provideConnectionId {
-            providedConnectionId = $0
+            providedConnectionId = $0.value
             connectionIdCallbackCalled = true
         }
         
