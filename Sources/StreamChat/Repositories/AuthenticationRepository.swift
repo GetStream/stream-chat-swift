@@ -137,16 +137,10 @@ class AuthenticationRepository {
             }
         }
 
-        tokenRetryTimer = timerType.schedule(
-            timeInterval: tokenExpirationRetryStrategy.getDelayAfterTheFailure(),
-            queue: .main
-        ) { [weak self] in
-            log.debug("Firing timer for a new token request", subsystems: .authentication)
-            self?.getToken(userInfo: nil, tokenProvider: tokenProviderCheckingSuccess, completion: completion)
-        }
+        scheduleTokenFetch(userInfo: nil, tokenProvider: tokenProviderCheckingSuccess, completion: completion)
     }
 
-    private func getToken(userInfo: UserInfo?, tokenProvider: @escaping TokenProvider, completion: @escaping (Error?) -> Void) {
+    private func scheduleTokenFetch(userInfo: UserInfo?, tokenProvider: @escaping TokenProvider, completion: @escaping (Error?) -> Void) {
         tokenRequestCompletions.append(completion)
         guard !isGettingToken else {
             log.debug("Trying to get a token while already getting one", subsystems: .authentication)
@@ -155,7 +149,20 @@ class AuthenticationRepository {
 
         isGettingToken = true
 
+        tokenRetryTimer = timerType.schedule(
+            timeInterval: tokenExpirationRetryStrategy.getDelayAfterTheFailure(),
+            queue: .main
+        ) { [weak self] in
+            log.debug("Firing timer for a new token request", subsystems: .authentication)
+            self?.getToken(userInfo: nil, tokenProvider: tokenProvider) { _ in
+                self?.isGettingToken = false
+            }
+        }
+    }
+
+    private func getToken(userInfo: UserInfo?, tokenProvider: @escaping TokenProvider, completion: @escaping (Error?) -> Void) {
         log.debug("Requesting a new token", subsystems: .authentication)
+        tokenRequestCompletions.append(completion)
         clientUpdater.reloadUserIfNeeded(userInfo: userInfo, tokenProvider: tokenProvider) { [weak self] error in
             if let error = error {
                 log.error("Error when getting token: \(error)", subsystems: .authentication)
@@ -164,7 +171,6 @@ class AuthenticationRepository {
             }
             let completionBlocks: [(Error?) -> Void]? = self?.tokenRequestCompletions
             completionBlocks?.forEach { $0(error) }
-            self?.isGettingToken = false
         }
     }
 

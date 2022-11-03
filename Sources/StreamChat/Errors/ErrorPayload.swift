@@ -31,6 +31,8 @@ public struct ErrorPayload: LocalizedError, Codable, CustomDebugStringConvertibl
 /// https://getstream.io/chat/docs/ios-swift/api_errors_response/
 private enum StreamCode {
     static let bouncedMessage = 73
+    /// Usually returned when trying to perform an API call without a token.
+    static let accessKeyInvalid = 2
     static let expiredToken = 40
     static let notYetValidToken = 41
     static let invalidTokenDate = 42
@@ -43,12 +45,12 @@ extension ErrorPayload {
         code == StreamCode.expiredToken
     }
 
-    /// Returns `true` if code is withing invalid token codes range.
+    /// Returns `true` if code is within invalid token codes range.
     var isInvalidTokenError: Bool {
-        ClosedRange.tokenInvalidErrorCodes ~= code
+        ClosedRange.tokenInvalidErrorCodes ~= code || code == StreamCode.accessKeyInvalid
     }
     
-    /// Returns `true` if status code is withing client error codes range.
+    /// Returns `true` if status code is within client error codes range.
     var isClientError: Bool {
         ClosedRange.clientErrorCodes ~= statusCode
     }
