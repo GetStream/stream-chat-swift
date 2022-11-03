@@ -182,12 +182,20 @@ final class AsyncOperation_Tests: XCTestCase {
         }
 
         operation.start()
-        let operationCompletion = expectation(that: \AsyncOperation.isExecuting, on: operation, willEqual: false)
+        let operationCompletion = expectation(description: "operation concludes")
+        let token = operation.observe(\.isExecuting) { _, change in
+            guard !change.isPrior else { return }
+            if operation.isExecuting == false {
+                operationCompletion.fulfill()
+            }
+        }
+
         operation.cancel()
         wait(for: [operationCompletion], timeout: 0.1)
 
         // We want to make sure that upon an early cancellation, it does not continue executing
         XCTAssertEqual(operationBlockCalls, 1)
+        token.invalidate()
     }
 
     func test_simulateTokenRefreshLoop_shouldBehaveAsExpected() {
@@ -202,12 +210,20 @@ final class AsyncOperation_Tests: XCTestCase {
         }
 
         operation.start()
-        let operationCompletion = expectation(that: \AsyncOperation.isExecuting, on: operation, willEqual: false)
+        let operationCompletion = expectation(description: "operation concludes")
+        let token = operation.observe(\.isExecuting) { _, change in
+            guard !change.isPrior else { return }
+            if operation.isExecuting == false {
+                operationCompletion.fulfill()
+            }
+        }
+
         operation.isFinished = true
         wait(for: [operationCompletion], timeout: 0.1)
 
         // We want to make sure that upon an early set of isFinished to true, it does not continue executing
         XCTAssertEqual(operationBlockCalls, 1)
+        token.invalidate()
     }
 }
 
@@ -244,8 +260,15 @@ extension AsyncOperation_Tests {
 
     @available(iOS 13.0, *)
     private func _waitForOperationToFinish(_ operation: AsyncOperation) {
-        let expectation = expectation(that: \AsyncOperation.isFinished, on: operation, willEqual: true)
+        let expectation = expectation(description: "operation concludes")
+        let token = operation.observe(\.isFinished) { _, change in
+            guard !change.isPrior else { return }
+            expectation.fulfill()
+        }
+
         operation.start()
-        wait(for: [expectation], timeout: 10)
+
+        waitForExpectations(timeout: 10)
+        token.invalidate()
     }
 }

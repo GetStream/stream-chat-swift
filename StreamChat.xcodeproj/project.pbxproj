@@ -1714,6 +1714,10 @@
 		C1E8AD58278C8A6F0041B775 /* SyncRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1E8AD55278C8A440041B775 /* SyncRepository.swift */; };
 		C1E8AD5E278EF5F30041B775 /* AsyncOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1E8AD5B278DDEC70041B775 /* AsyncOperation.swift */; };
 		C1E8AD5F278EF5F40041B775 /* AsyncOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1E8AD5B278DDEC70041B775 /* AsyncOperation.swift */; };
+		C1ED2BFF291401D4005AFA82 /* AppConfigViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6BEFF127862F9300E184B4 /* AppConfigViewController.swift */; };
+		C1ED2C00291401E7005AFA82 /* Token+Development.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B15A1329115E8D00C9CD80 /* Token+Development.swift */; };
+		C1ED2C01291401F7005AFA82 /* SwitchButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6BEFEF2786070800E184B4 /* SwitchButton.swift */; };
+		C1ED2C0229140202005AFA82 /* OptionsSelectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD75CB6A27886746005F5FF7 /* OptionsSelectorViewController.swift */; };
 		C1EE53A727BA53F300B1A6CA /* Endpoint_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1EE53A627BA53F300B1A6CA /* Endpoint_Tests.swift */; };
 		C1EE53A927BA662B00B1A6CA /* QueuedRequestDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1EE53A827BA662B00B1A6CA /* QueuedRequestDTO.swift */; };
 		C1EE53AA27BA662B00B1A6CA /* QueuedRequestDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1EE53A827BA662B00B1A6CA /* QueuedRequestDTO.swift */; };
@@ -9803,11 +9807,15 @@
 				A36F997A2818459C0078260D /* InternetConnectionMonitor_Mock.swift in Sources */,
 				84AD17E028F8582C008C69BF /* DemoUsers.swift in Sources */,
 				A34407BD27D8C33F0044F150 /* AppDelegate.swift in Sources */,
+				C1ED2C0229140202005AFA82 /* OptionsSelectorViewController.swift in Sources */,
 				84A33ABC28F86BBB00CEC8FD /* StreamChatWrapper+TestApp.swift in Sources */,
+				C1ED2BFF291401D4005AFA82 /* AppConfigViewController.swift in Sources */,
+				C1ED2C01291401F7005AFA82 /* SwitchButton.swift in Sources */,
 				84AD17DD28F85701008C69BF /* PushNotifications.swift in Sources */,
 				84AD17E128F85870008C69BF /* ChatUser+CustomFields.swift in Sources */,
 				84AD17DE28F8572F008C69BF /* UserDefaults+Shared.swift in Sources */,
 				8440860F28FBFEE10027849C /* DemoAppCoordinator+TestApp.swift in Sources */,
+				C1ED2C00291401E7005AFA82 /* Token+Development.swift in Sources */,
 				84AD17DC28F853B0008C69BF /* DemoAppCoordinator.swift in Sources */,
 				A3813B4E2825C8A30076E838 /* ThreadVC.swift in Sources */,
 				84AD17DF28F857A5008C69BF /* StreamChatWrapper.swift in Sources */,
