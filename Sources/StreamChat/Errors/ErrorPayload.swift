@@ -29,7 +29,7 @@ public struct ErrorPayload: LocalizedError, Codable, CustomDebugStringConvertibl
 }
 
 /// https://getstream.io/chat/docs/ios-swift/api_errors_response/
-private enum StreamCode {
+private enum StreamErrorCode {
     static let bouncedMessage = 73
     /// Usually returned when trying to perform an API call without a token.
     static let accessKeyInvalid = 2
@@ -42,12 +42,12 @@ private enum StreamCode {
 extension ErrorPayload {
     /// Returns `true` if the code determines that the token is expired.
     var isExpiredTokenError: Bool {
-        code == StreamCode.expiredToken
+        code == StreamErrorCode.expiredToken
     }
 
     /// Returns `true` if code is within invalid token codes range.
     var isInvalidTokenError: Bool {
-        ClosedRange.tokenInvalidErrorCodes ~= code || code == StreamCode.accessKeyInvalid
+        ClosedRange.tokenInvalidErrorCodes ~= code || code == StreamErrorCode.accessKeyInvalid
     }
     
     /// Returns `true` if status code is within client error codes range.
@@ -57,13 +57,13 @@ extension ErrorPayload {
     
     /// Returns `true` if internal status code is related to a moderation bouncing error.
     var isBouncedMessageError: Bool {
-        code == StreamCode.bouncedMessage
+        code == StreamErrorCode.bouncedMessage
     }
 }
 
 extension ClosedRange where Bound == Int {
     /// The error codes for token-related errors. Typically, a refreshed token is required to recover.
-    static let tokenInvalidErrorCodes: Self = StreamCode.expiredToken...StreamCode.invalidTokenSignature
+    static let tokenInvalidErrorCodes: Self = StreamErrorCode.expiredToken...StreamErrorCode.invalidTokenSignature
     
     /// The range of HTTP request status codes for client errors.
     static let clientErrorCodes: Self = 400...499

@@ -2,6 +2,9 @@
 // Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
+import Foundation
+import StreamChat
+
 extension StreamChatWrapper {
     func refreshingTokenProvider(initialToken: Token, tokenDurationInMinutes: Double) -> TokenProvider {
         { completion in
@@ -16,7 +19,7 @@ extension StreamChatWrapper {
                     expirationDate: Date().addingTimeInterval(timeInterval)
                 )
                 if generatedToken == nil {
-                    print("Unable to generate token. Falling back to initialToken")
+                    log.warning("Unable to generate token. Falling back to initialToken")
                 }
                 token = generatedToken ?? initialToken
                 #else
