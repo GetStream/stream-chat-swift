@@ -834,6 +834,183 @@ final class ChatClient_Tests: XCTestCase {
         }
     }
 
+    // MARK: Provide token
+
+    func test_provideToken_returnsValue_whenAlreadyHasToken() {
+        let client = ChatClient(config: inMemoryStorageConfig, environment: testEnv.environment)
+
+        let existingToken = Token.unique()
+        client.setToken(token: existingToken)
+
+        var result: Result<Token, Error>?
+        let expectation = self.expectation(description: "Provide Connection Id Completion")
+        client.provideToken(timeout: 0.1) {
+            result = $0
+            expectation.fulfill()
+        }
+
+        // Sync execution
+        XCTAssertNotNil(result)
+
+        // Force timeout
+        waitForExpectations(timeout: 0.1)
+
+        XCTAssertEqual(result?.value, existingToken)
+    }
+
+    func test_provideToken_returnsErrorOnTimeout() {
+        let client = ChatClient(config: inMemoryStorageConfig, environment: testEnv.environment)
+
+        var result: Result<Token, Error>?
+        let expectation = self.expectation(description: "Provide Token Completion")
+        client.provideToken(timeout: 0.1) {
+            result = $0
+            expectation.fulfill()
+        }
+        XCTAssertNil(result)
+
+        // Force timeout
+        VirtualTimeTimer.time.run()
+        waitForExpectations(timeout: 0.1)
+
+        XCTAssertTrue(result?.error is ClientError.WaiterTimeout)
+    }
+
+    func test_provideToken_returnsErrorOnMissingValue() {
+        let client = ChatClient(config: inMemoryStorageConfig, environment: testEnv.environment)
+
+        var result: Result<Token, Error>?
+        let expectation = self.expectation(description: "Provide Token Completion")
+        client.provideToken(timeout: 0.1) {
+            result = $0
+            expectation.fulfill()
+        }
+        XCTAssertNil(result)
+
+        // Complete with nil
+        client.completeTokenWaiters(token: nil)
+        waitForExpectations(timeout: 0.1)
+
+        XCTAssertTrue(result?.error is ClientError.MissingToken)
+    }
+
+    func test_provideToken_returnsValue_whenCompletingTokenWaiters() {
+        let client = ChatClient(config: inMemoryStorageConfig, environment: testEnv.environment)
+
+        var result: Result<Token, Error>?
+        let expectation = self.expectation(description: "Provide Token Completion")
+        client.provideToken(timeout: 0.1) {
+            result = $0
+            expectation.fulfill()
+        }
+        XCTAssertNil(result)
+
+        // Complete with token
+        let token = Token.unique()
+        client.completeTokenWaiters(token: token)
+        waitForExpectations(timeout: 0.1)
+
+        XCTAssertEqual(result?.value, token)
+    }
+
+    // MARK: Provide connection id
+
+    func test_provideConnectionId_returnsErrorOnActiveModeClient() {
+        let client = ChatClient(config: inactiveInMemoryStorageConfig, environment: testEnv.environment)
+
+        var result: Result<ConnectionId, Error>?
+        let expectation = self.expectation(description: "Provide Connection Id Completion")
+        client.provideConnectionId(timeout: 0.1) {
+            result = $0
+            expectation.fulfill()
+        }
+
+        // Sync execution
+        XCTAssertNotNil(result)
+
+        // Force timeout
+        waitForExpectations(timeout: 0.1)
+
+        XCTAssertTrue(result?.error is ClientError.ClientIsNotInActiveMode)
+    }
+
+    func test_provideConnectionId_returnsValue_whenAlreadyHasConnectionId() {
+        let client = ChatClient(config: inMemoryStorageConfig, environment: testEnv.environment)
+
+        let existingConnectionId = "connection-id"
+        client.webSocketClient(client.mockWebSocketClient, didUpdateConnectionState: .connected(connectionId: existingConnectionId))
+
+        var result: Result<ConnectionId, Error>?
+        let expectation = self.expectation(description: "Provide Connection Id Completion")
+        client.provideConnectionId(timeout: 0.1) {
+            result = $0
+            expectation.fulfill()
+        }
+
+        // Sync execution
+        XCTAssertNotNil(result)
+
+        // Force timeout
+        waitForExpectations(timeout: 0.1)
+
+        XCTAssertEqual(result?.value, existingConnectionId)
+    }
+
+    func test_provideConnectionId_returnsErrorOnTimeout() {
+        let client = ChatClient(config: inMemoryStorageConfig, environment: testEnv.environment)
+
+        var result: Result<ConnectionId, Error>?
+        let expectation = self.expectation(description: "Provide Connection Id Completion")
+        client.provideConnectionId(timeout: 0.1) {
+            result = $0
+            expectation.fulfill()
+        }
+        XCTAssertNil(result)
+
+        // Force timeout
+        VirtualTimeTimer.time.run()
+        waitForExpectations(timeout: 0.1)
+
+        XCTAssertTrue(result?.error is ClientError.WaiterTimeout)
+    }
+
+    func test_provideConnectionId_returnsErrorOnMissingValue() {
+        let client = ChatClient(config: inMemoryStorageConfig, environment: testEnv.environment)
+
+        var result: Result<ConnectionId, Error>?
+        let expectation = self.expectation(description: "Provide Connection Id Completion")
+        client.provideConnectionId(timeout: 0.1) {
+            result = $0
+            expectation.fulfill()
+        }
+        XCTAssertNil(result)
+
+        // Complete with nil
+        client.completeConnectionIdWaiters(connectionId: nil)
+        waitForExpectations(timeout: 0.1)
+
+        XCTAssertTrue(result?.error is ClientError.MissingConnectionId)
+    }
+
+    func test_provideConnectionId_returnsValue_whenCompletingConnectionIdWaiters() {
+        let client = ChatClient(config: inMemoryStorageConfig, environment: testEnv.environment)
+
+        var result: Result<ConnectionId, Error>?
+        let expectation = self.expectation(description: "Provide Connection Id Completion")
+        client.provideConnectionId(timeout: 0.1) {
+            result = $0
+            expectation.fulfill()
+        }
+        XCTAssertNil(result)
+
+        // Complete with connection id
+        let connectionId = "connection-id"
+        client.completeConnectionIdWaiters(connectionId: connectionId)
+        waitForExpectations(timeout: 0.1)
+
+        XCTAssertEqual(result?.value, connectionId)
+    }
+
     // MARK: Set token
 
     func test_setToken_savesToken_completesWaiters() throws {
