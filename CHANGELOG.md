@@ -17,6 +17,12 @@ _October 27, 2022_
 - Fix CurrentChatUserController+Combine initialValue hard coded to `.noUnread` instead of using the initial value from the current user data model [#2334](https://github.com/GetStream/stream-chat-swift/pull/2334)
 - Allow Message Search pagination when using sort parameters [#2347](https://github.com/GetStream/stream-chat-swift/pull/2347)
 - Fix TokenProvider sometimes being invoked two times when token is expired [#2337](https://github.com/GetStream/stream-chat-swift/pull/2347)
+- Add timeout for token/connectionId providers so that `ChatClient.connect()` completes even in edge cases where we cannot get the needed data [#2361](https://github.com/GetStream/stream-chat-swift/pull/2361)
+- Stop spamming the console with "Socket is not connected" error when token is being refreshed [#2361](https://github.com/GetStream/stream-chat-swift/pull/2361)
+- Update documentation around `CurrentUserController.currentUser` to state that a non-nil value does not mean there is a valid authentication [#2361](https://github.com/GetStream/stream-chat-swift/pull/2361)
+- Allow flow where `ChatClient.setToken()` is called before `ChatClient.connect()` [#2361](https://github.com/GetStream/stream-chat-swift/pull/2361)
+- Properly recover from a missing/expired token on the first execution of `TokenProvider` [#2361](https://github.com/GetStream/stream-chat-swift/pull/2361)
+- Fix data races created by `AsyncOperation` looped execution when refreshing tokens [#2361](https://github.com/GetStream/stream-chat-swift/pull/2361)
 
 ## StreamChatUI
 ### ✅ Added
