@@ -29,6 +29,7 @@ enum DemoAppConfiguration {
     static func setInternalConfiguration() {
         StreamRuntimeCheck.assertionsEnabled = isStreamInternalConfiguration
         StreamRuntimeCheck._isBackgroundMappingEnabled = isStreamInternalConfiguration
+        AppConfig.shared.demoAppConfig.isTokenRefreshEnabled = isStreamInternalConfiguration
 
         configureAtlantisIfNeeded()
     }

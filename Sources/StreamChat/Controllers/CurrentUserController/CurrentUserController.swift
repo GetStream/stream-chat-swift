@@ -62,6 +62,7 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
     
     /// The currently logged-in user. `nil` if the connection hasn't been fully established yet, or the connection
     /// wasn't successful.
+    /// Having a non-nil currentUser does not mean the user is authenticated. Make sure to call `connect()` before performing any API call.
     public var currentUser: CurrentChatUser? {
         startObservingIfNeeded()
         return currentUserObserver.item
@@ -108,13 +109,14 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
         // Unlike the other DataControllers, this one does not make a remote call when synchronising.
         // But we can assume that if we wait for the connection of the WebSocket, it means the local data
         // is in sync with the remote server, so we can set the state to remoteDataFetched.
-        client.provideConnectionId { connectionId in
+        client.provideConnectionId { [weak self] result in
             var error: ClientError?
-            if connectionId == nil {
+            if case .failure = result {
                 error = ClientError.ConnectionNotSuccessful()
             }
-            self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(error!)
-            self.callback { completion?(error) }
+
+            self?.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(error!)
+            self?.callback { completion?(error) }
         }
     }
     

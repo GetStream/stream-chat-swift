@@ -28,30 +28,42 @@ public struct ErrorPayload: LocalizedError, Codable, CustomDebugStringConvertibl
     }
 }
 
+/// https://getstream.io/chat/docs/ios-swift/api_errors_response/
+private enum StreamErrorCode {
+    static let bouncedMessage = 73
+    /// Usually returned when trying to perform an API call without a token.
+    static let accessKeyInvalid = 2
+    static let expiredToken = 40
+    static let notYetValidToken = 41
+    static let invalidTokenDate = 42
+    static let invalidTokenSignature = 43
+}
+
 extension ErrorPayload {
-    private enum ErrorCodes: Int {
-        case bouncedMessage = 73
+    /// Returns `true` if the code determines that the token is expired.
+    var isExpiredTokenError: Bool {
+        code == StreamErrorCode.expiredToken
     }
-    
-    /// Returns `true` if code is withing invalid token codes range.
+
+    /// Returns `true` if code is within invalid token codes range.
     var isInvalidTokenError: Bool {
-        ClosedRange.tokenInvalidErrorCodes ~= code
+        ClosedRange.tokenInvalidErrorCodes ~= code || code == StreamErrorCode.accessKeyInvalid
     }
     
-    /// Returns `true` if status code is withing client error codes range.
+    /// Returns `true` if status code is within client error codes range.
     var isClientError: Bool {
         ClosedRange.clientErrorCodes ~= statusCode
     }
     
     /// Returns `true` if internal status code is related to a moderation bouncing error.
     var isBouncedMessageError: Bool {
-        code == ErrorCodes.bouncedMessage.rawValue
+        code == StreamErrorCode.bouncedMessage
     }
 }
 
 extension ClosedRange where Bound == Int {
     /// The error codes for token-related errors. Typically, a refreshed token is required to recover.
-    static let tokenInvalidErrorCodes: Self = 40...43
+    static let tokenInvalidErrorCodes: Self = StreamErrorCode.expiredToken...StreamErrorCode.invalidTokenSignature
     
     /// The range of HTTP request status codes for client errors.
     static let clientErrorCodes: Self = 400...499

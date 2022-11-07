@@ -709,7 +709,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
         XCTAssertTrue(client.createBackgroundWorkers_called)
     }
 
-    func test_prepareEnvironment_sameUser_sameToken() {
+    func test_prepareEnvironment_sameUser_sameToken_noBackgroundWorkers() {
         let existingUserId = "user2"
         let existingUserInfo = UserInfo(id: existingUserId)
         let existingToken = Token.unique(userId: existingUserId)
@@ -729,7 +729,37 @@ final class ChatClientUpdater_Tests: XCTestCase {
         XCTAssertEqual(existingToken, newToken)
         XCTAssertEqual(client.currentToken, newToken)
         XCTAssertEqual(client.currentUserId, existingUserId)
+        XCTAssertTrue(client.completeTokenWaiters_called)
+        AssertEqualEndpoint(client.webSocketClient?.connectEndpoint, existingConnectEndpoint)
+        XCTAssertTrue(client.createBackgroundWorkers_called)
+    }
+
+    func test_prepareEnvironment_sameUser_sameToken_existingBackgroundWorkers() {
+        let existingUserId = "user2"
+        let existingUserInfo = UserInfo(id: existingUserId)
+        let existingToken = Token.unique(userId: existingUserId)
+        let client = createClientInCleanState(existingToken: existingToken, isClientInActiveMode: true)
+        let existingConnectEndpoint = Endpoint<EmptyResponse>.webSocketConnect(userInfo: existingUserInfo)
+        client.webSocketClient?.connectEndpoint = existingConnectEndpoint
+
+        XCTAssertEqual(client.currentToken, existingToken)
+        XCTAssertEqual(client.currentUserId, existingUserId)
+
+        let newToken = existingToken
+
+        // Simulate prepareEnvironment call to create background workers
+        prepareEnvironmentAndWait(userInfo: existingUserInfo, newToken: newToken, client: client)
+        client.cleanUp()
         XCTAssertFalse(client.completeTokenWaiters_called)
+
+        // Simulate prepareEnvironment call
+        let error = prepareEnvironmentAndWait(userInfo: existingUserInfo, newToken: newToken, client: client)
+
+        XCTAssertNil(error)
+        XCTAssertEqual(existingToken, newToken)
+        XCTAssertEqual(client.currentToken, newToken)
+        XCTAssertEqual(client.currentUserId, existingUserId)
+        XCTAssertTrue(client.completeTokenWaiters_called)
         AssertEqualEndpoint(client.webSocketClient?.connectEndpoint, existingConnectEndpoint)
         XCTAssertFalse(client.createBackgroundWorkers_called)
     }
@@ -967,6 +997,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
         return client
     }
 
+    @discardableResult
     private func prepareEnvironmentAndWait(userInfo: UserInfo?, newToken: Token, client: ChatClient) -> Error? {
         let updater = ChatClientUpdater(client: client)
         let expectation = self.expectation(description: "prepareEnvironment completes")

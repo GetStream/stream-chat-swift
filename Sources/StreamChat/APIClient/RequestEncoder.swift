@@ -62,7 +62,6 @@ extension RequestEncoder {
 struct DefaultRequestEncoder: RequestEncoder {
     let baseURL: URL
     let apiKey: APIKey
-    let timerType: Timer.Type
 
     /// The most probable reason why a RequestEncoder can timeout when waiting for token or connectionId is because there's no connection.
     /// When returning an error, it will just fail without giving an opportunity to know if the timeout occurred because of a networking problem.
@@ -116,13 +115,8 @@ struct DefaultRequestEncoder: RequestEncoder {
     }
 
     init(baseURL: URL, apiKey: APIKey) {
-        self.init(baseURL: baseURL, apiKey: apiKey, timerType: DefaultTimer.self)
-    }
-
-    init(baseURL: URL, apiKey: APIKey, timerType: Timer.Type) {
         self.baseURL = baseURL
         self.apiKey = apiKey
-        self.timerType = timerType
     }
     
     // MARK: - Private
@@ -147,29 +141,21 @@ struct DefaultRequestEncoder: RequestEncoder {
 
         let missingTokenError = ClientError.MissingToken("Failed to get `token`, request can't be created.")
 
-        var waiterToken: WaiterToken?
-        let timer = timerType
-            .schedule(timeInterval: waiterTimeout, queue: .global()) { [weak connectionDetailsProviderDelegate] in
-                // We complete with a success to account for the most probable case for the timeout: No connection.
-                // That way, when reaching the APIClient, we would properly report a connection error.
-                defer { completion(.success(request)) }
-                guard let waiterToken = waiterToken else { return }
-                connectionDetailsProviderDelegate?.invalidateTokenWaiter(waiterToken)
-            }
-
-        waiterToken = connectionDetailsProviderDelegate?.provideToken {
-            timer.cancel()
-            if let token = $0 {
+        connectionDetailsProviderDelegate?.provideToken(timeout: waiterTimeout) {
+            switch $0 {
+            case let .success(token):
                 var updatedRequest = request
-
                 if token.userId.isAnonymousUser {
                     updatedRequest.setHTTPHeaders(.anonymousStreamAuth)
                 } else {
                     updatedRequest.setHTTPHeaders(.jwtStreamAuth, .authorization(token.rawValue))
                 }
-
                 completion(.success(updatedRequest))
-            } else {
+            case .failure(_ as ClientError.WaiterTimeout):
+                // We complete with a success to account for the most probable case for the timeout: No connection.
+                // That way, when reaching the APIClient, we would properly report a connection error.
+                completion(.success(request))
+            case .failure:
                 completion(.failure(missingTokenError))
             }
         }
@@ -195,24 +181,18 @@ struct DefaultRequestEncoder: RequestEncoder {
             "Failed to get `connectionId`, request can't be created."
         )
 
-        var waiterToken: WaiterToken?
-        let timer = timerType
-            .schedule(timeInterval: waiterTimeout, queue: .global()) { [weak connectionDetailsProviderDelegate] in
-                // We complete with a success to account for the most probable case for the timeout: No connection.
-                // That way, when reaching the APIClient, we would properly report a connection error.
-                defer { completion(.success(request)) }
-                guard let waiterToken = waiterToken else { return }
-                connectionDetailsProviderDelegate?.invalidateConnectionIdWaiter(waiterToken)
-            }
-
-        waiterToken = connectionDetailsProviderDelegate?.provideConnectionId {
-            timer.cancel()
+        connectionDetailsProviderDelegate?.provideConnectionId(timeout: waiterTimeout) {
             do {
-                if let connectionId = $0 {
+                switch $0 {
+                case let .success(connectionId):
                     var updatedRequest = request
                     updatedRequest.url = try updatedRequest.url?.appendingQueryItems(["connection_id": connectionId])
                     completion(.success(updatedRequest))
-                } else {
+                case .failure(_ as ClientError.WaiterTimeout):
+                    // We complete with a success to account for the most probable case for the timeout: No connection.
+                    // That way, when reaching the APIClient, we would properly report a connection error.
+                    completion(.success(request))
+                case .failure:
                     throw missingConnectionIdError
                 }
             } catch {
@@ -302,10 +282,8 @@ private extension URL {
 
 typealias WaiterToken = String
 protocol ConnectionDetailsProviderDelegate: AnyObject {
-    @discardableResult
-    func provideConnectionId(completion: @escaping (_ connectionId: ConnectionId?) -> Void) -> WaiterToken
-    @discardableResult
-    func provideToken(completion: @escaping (Token?) -> Void) -> WaiterToken
+    func provideConnectionId(timeout: TimeInterval, completion: @escaping (Result<ConnectionId, Error>) -> Void)
+    func provideToken(timeout: TimeInterval, completion: @escaping (Result<Token, Error>) -> Void)
     func invalidateTokenWaiter(_ waiter: WaiterToken)
     func invalidateConnectionIdWaiter(_ waiter: WaiterToken)
 }

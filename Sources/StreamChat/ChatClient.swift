@@ -685,7 +685,8 @@ extension ClientError {
     }
     
     public class MissingToken: ClientError {}
-    
+    class WaiterTimeout: ClientError {}
+
     public class ClientIsNotInActiveMode: ClientError {
         override public var localizedDescription: String {
             """
@@ -786,34 +787,67 @@ extension ChatClient: ConnectionStateDelegate {
 
 /// `Client` provides connection details for the `RequestEncoder`s it creates.
 extension ChatClient: ConnectionDetailsProviderDelegate {
-    @discardableResult
-    func provideToken(completion: @escaping (_ token: Token?) -> Void) -> WaiterToken {
-        let waiterToken = String.newUniqueId
+    func provideToken(timeout: TimeInterval = 10, completion: @escaping (Result<Token, Error>) -> Void) {
         if let token = currentToken {
-            completion(token)
-        } else {
-            _tokenWaiters.mutate {
-                $0[waiterToken] = completion
-            }
+            completion(.success(token))
+            return
         }
-        return waiterToken
+
+        let waiterToken = String.newUniqueId
+        let completion = addTimeout(timeout: timeout, noValueError: ClientError.MissingToken(), to: completion) { [weak self] in
+            self?.invalidateTokenWaiter(waiterToken)
+        }
+
+        _tokenWaiters.mutate {
+            $0[waiterToken] = completion
+        }
     }
 
-    @discardableResult
-    func provideConnectionId(completion: @escaping (String?) -> Void) -> WaiterToken {
-        let waiterToken = String.newUniqueId
+    func provideConnectionId(timeout: TimeInterval = 10, completion: @escaping (Result<ConnectionId, Error>) -> Void) {
         if let connectionId = connectionId {
-            completion(connectionId)
+            completion(.success(connectionId))
+            return
         } else if !config.isClientInActiveMode {
             // We're in passive mode
             // We will never have connectionId
-            completion(nil)
-        } else {
-            _connectionIdWaiters.mutate {
-                $0[waiterToken] = completion
+            completion(.failure(ClientError.ClientIsNotInActiveMode()))
+            return
+        }
+
+        let waiterToken = String.newUniqueId
+        let completion = addTimeout(timeout: timeout, noValueError: ClientError.MissingConnectionId(), to: completion) { [weak self] in
+            self?.invalidateConnectionIdWaiter(waiterToken)
+        }
+
+        _connectionIdWaiters.mutate {
+            $0[waiterToken] = completion
+        }
+    }
+
+    private func addTimeout<T>(
+        timeout: TimeInterval,
+        noValueError: Error,
+        to completion: @escaping (Result<T, Error>) -> Void,
+        onTimeout: @escaping () -> Void
+    ) -> (T?) -> Void {
+        var timer: TimerControl?
+        let completionCancellingTimer: (Result<T, Error>) -> Void = { result in
+            timer?.cancel()
+            completion(result)
+        }
+
+        timer = environment.timerType.schedule(timeInterval: timeout, queue: .global()) {
+            onTimeout()
+            completionCancellingTimer(.failure(ClientError.WaiterTimeout()))
+        }
+
+        return { value in
+            if let value = value {
+                completionCancellingTimer(.success(value))
+            } else {
+                completionCancellingTimer(.failure(noValueError))
             }
         }
-        return waiterToken
     }
 
     func invalidateTokenWaiter(_ waiter: WaiterToken) {

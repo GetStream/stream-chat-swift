@@ -172,7 +172,8 @@ class APIClient {
         completion: @escaping (Result<Response, Error>) -> Void
     ) {
         if tokenRefreshConsecutiveFailures > maximumTokenRefreshAttempts {
-            return completion(.failure(ClientError.TooManyTokenRefreshAttempts()))
+            completion(.failure(ClientError.TooManyTokenRefreshAttempts()))
+            return
         }
 
         guard !isRefreshingToken else {

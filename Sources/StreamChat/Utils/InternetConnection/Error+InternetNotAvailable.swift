@@ -40,4 +40,8 @@ extension Error {
         }
         return false
     }
+
+    var isSocketNotConnectedError: Bool {
+        has(parameters: (NSPOSIXErrorDomain, 57))
+    }
 }

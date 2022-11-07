@@ -82,7 +82,11 @@ class URLSessionWebSocketEngine: NSObject, WebSocketEngine {
                 self.doRead()
                 
             case let .failure(error):
-                log.error("Failed receiving Web Socket Message with error: \(error)", subsystems: .webSocket)
+                if error.isSocketNotConnectedError {
+                    log.debug("Web Socket got disconnected with error: \(error)", subsystems: .webSocket)
+                } else {
+                    log.error("Failed receiving Web Socket Message with error: \(error)", subsystems: .webSocket)
+                }
             }
         }
     }
