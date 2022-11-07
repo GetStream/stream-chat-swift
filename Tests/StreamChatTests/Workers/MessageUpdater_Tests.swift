@@ -1062,10 +1062,10 @@ final class MessageUpdater_Tests: XCTestCase {
         messageRepository.getMessageResult = .success(.mock(id: messageId, cid: cid, text: "", author: .mock(id: currentUserId)))
 
         // Simulate `flagMessage` call.
-        var flagCompletionCalled = false
+        let expectation = self.expectation(description: "Flag message completion")
         messageUpdater.flagMessage(true, with: messageId, in: cid) { error in
             XCTAssertNil(error)
-            flagCompletionCalled = true
+            expectation.fulfill()
         }
 
         // Assert flag endpoint is called.
@@ -1088,6 +1088,8 @@ final class MessageUpdater_Tests: XCTestCase {
             flaggedMessageId: messageId
         )
         apiClient.test_simulateResponse(.success(flagMessagePayload))
+
+        waitForExpectations(timeout: 0.1)
 
         // Load the message.
         var messageDTO: MessageDTO? {

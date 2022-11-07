@@ -198,7 +198,7 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                     UIAlertAction(title: member.id, style: .default) { _ in
                         channelController.client
                             .memberController(userId: member.id, in: channelController.cid!)
-                            .ban() { error in
+                            .ban { error in
                                 if let error = error {
                                     self.rootViewController.presentAlert(
                                         title: "Couldn't ban user \(member.id) from channel \(cid)",
@@ -215,7 +215,7 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                     UIAlertAction(title: member.id, style: .default) { _ in
                         channelController.client
                             .memberController(userId: member.id, in: channelController.cid!)
-                            .unban() { error in
+                            .unban { error in
                                 if let error = error {
                                     self.rootViewController.presentAlert(
                                         title: "Couldn't unban user \(member.id) from channel \(cid)",

@@ -137,12 +137,21 @@ class AuthenticationRepository {
             }
         }
 
+        scheduleTokenFetch(userInfo: nil, tokenProvider: tokenProviderCheckingSuccess, completion: completion)
+    }
+
+    private func scheduleTokenFetch(userInfo: UserInfo?, tokenProvider: @escaping TokenProvider, completion: @escaping (Error?) -> Void) {
+        guard !isGettingToken else {
+            tokenRequestCompletions.append(completion)
+            return
+        }
+
         tokenRetryTimer = timerType.schedule(
             timeInterval: tokenExpirationRetryStrategy.getDelayAfterTheFailure(),
             queue: .main
         ) { [weak self] in
             log.debug("Firing timer for a new token request", subsystems: .authentication)
-            self?.getToken(userInfo: nil, tokenProvider: tokenProviderCheckingSuccess, completion: completion)
+            self?.getToken(userInfo: nil, tokenProvider: tokenProvider, completion: completion)
         }
     }
 
@@ -154,7 +163,6 @@ class AuthenticationRepository {
         }
 
         isGettingToken = true
-
         log.debug("Requesting a new token", subsystems: .authentication)
         clientUpdater.reloadUserIfNeeded(userInfo: userInfo, tokenProvider: tokenProvider) { [weak self] error in
             if let error = error {

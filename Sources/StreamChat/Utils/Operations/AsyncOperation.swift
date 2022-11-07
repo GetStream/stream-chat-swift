@@ -15,7 +15,7 @@ class AsyncOperation: BaseOperation {
     private var executedRetries = 0
 
     var canRetry: Bool {
-        executedRetries < maxRetries && !isCancelled
+        executedRetries < maxRetries && !isCancelled && !isFinished
     }
 
     init(maxRetries: Int = 0, executionBlock: @escaping (AsyncOperation, @escaping (_ output: Output) -> Void) -> Void) {
@@ -30,17 +30,25 @@ class AsyncOperation: BaseOperation {
         }
 
         isExecuting = true
-        executionBlock(self, handleResult)
+        execute()
+    }
+
+    private func execute() {
+        executionBlock(self) { [weak self] in
+            self?.handleResult($0)
+        }
     }
 
     private func handleResult(_ output: Output) {
-        if output == .retry && canRetry {
-            executedRetries += 1
-            executionBlock(self, handleResult)
-        } else {
+        let shouldRetry = output == .retry && canRetry
+        guard shouldRetry else {
             isExecuting = false
             isFinished = true
+            return
         }
+
+        executedRetries += 1
+        execute()
     }
 
     func resetRetries() {
