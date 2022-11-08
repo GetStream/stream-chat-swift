@@ -68,3 +68,17 @@ ChatChannelListView(
     selectedChannelId: "someChannelId"
 )
 ```
+
+
+## Opting out of the default navigation
+
+The `ChatChannelListView` uses a `NavigationView` at its root to enable the default navigation described above. You can opt out of using the default `NavigationView` and embed the `ChatChannelListView` in your custom navigation stack.
+
+In order to do that, you need to set the `embedInNavigationView` parameter to `false`, when creating the `ChatChannelListView`:
+
+```swift
+ChatChannelListView(
+    viewFactory: DemoAppFactory.shared,
+    embedInNavigationView: false
+)
+```
