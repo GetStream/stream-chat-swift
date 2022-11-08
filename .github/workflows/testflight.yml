@@ -25,11 +25,10 @@ jobs:
     - name: Deploy Demo app
       env:
         MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-        MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
         APPSTORE_API_KEY: ${{ secrets.APPSTORE_API_KEY }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        GITHUB_EVENT: ${{ toJson(github.event) }}
-      run: bundle exec fastlane testflight_build
+        GITHUB_PR_NUM: ${{ github.event.number }}
+      run: bundle exec fastlane uikit_testflight_build
     - uses: 8398a7/action-slack@v3
       with:
         status: ${{ job.status }}
