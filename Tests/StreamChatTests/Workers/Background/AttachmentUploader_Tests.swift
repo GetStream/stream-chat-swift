@@ -10,7 +10,7 @@ final class AttachmentUploader_Tests: XCTestCase {
     var webSocketClient: WebSocketClient_Mock!
     var apiClient: APIClient_Spy!
     var database: DatabaseContainer_Spy!
-    var uploader: AttachmentUploader!
+    var uploader: AttachmentQueueUploader!
 
     // MARK: - Setup
 
@@ -20,7 +20,7 @@ final class AttachmentUploader_Tests: XCTestCase {
         webSocketClient = WebSocketClient_Mock()
         apiClient = APIClient_Spy()
         database = DatabaseContainer_Spy()
-        uploader = AttachmentUploader(database: database, apiClient: apiClient)
+        uploader = AttachmentQueueUploader(database: database, apiClient: apiClient)
     }
 
     override func tearDown() {

@@ -117,16 +117,20 @@ public class ChatClient {
         encoder.connectionDetailsProviderDelegate = self
         
         let decoder = environment.requestDecoderBuilder()
+
+        let attachmentUploader = StreamAttachmentUploader(
+            cdnClient: config.customCDNClient ?? StreamCDNClient(
+                encoder: encoder,
+                decoder: decoder,
+                sessionConfiguration: urlSessionConfiguration
+            )
+        )
         
         let apiClient = environment.apiClientBuilder(
             urlSessionConfiguration,
             encoder,
             decoder,
-            config.customCDNClient ?? StreamCDNClient(
-                encoder: encoder,
-                decoder: decoder,
-                sessionConfiguration: urlSessionConfiguration
-            ),
+            attachmentUploader,
             { [weak self] completion in
                 guard let self = self else {
                     completion()
@@ -395,7 +399,7 @@ public class ChatClient {
             MessageSender(messageRepository: messageRepository, database: databaseContainer, apiClient: apiClient),
             NewUserQueryUpdater(database: databaseContainer, apiClient: apiClient),
             MessageEditor(messageRepository: messageRepository, database: databaseContainer, apiClient: apiClient),
-            AttachmentUploader(database: databaseContainer, apiClient: apiClient)
+            AttachmentQueueUploader(database: databaseContainer, apiClient: apiClient)
         ]
     }
 
@@ -495,7 +499,7 @@ extension ChatClient {
             _ sessionConfiguration: URLSessionConfiguration,
             _ requestEncoder: RequestEncoder,
             _ requestDecoder: RequestDecoder,
-            _ CDNClient: CDNClient,
+            _ attachmentUploader: AttachmentUploader,
             _ tokenRefresher: @escaping (@escaping () -> Void) -> Void,
             _ queueOfflineRequest: @escaping QueueOfflineRequestBlock
         ) -> APIClient = {
@@ -503,7 +507,7 @@ extension ChatClient {
                 sessionConfiguration: $0,
                 requestEncoder: $1,
                 requestDecoder: $2,
-                CDNClient: $3,
+                attachmentUploader: $3,
                 tokenRefresher: $4,
                 queueOfflineRequest: $5
             )

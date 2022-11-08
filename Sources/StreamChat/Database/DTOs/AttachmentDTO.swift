@@ -174,42 +174,6 @@ extension AttachmentDTO {
 
         return .init(type: attachmentType, payload: payload)
     }
-
-    func update(uploadedFileURL: URL) {
-        let attachment = asAnyModel()
-        let updatedPayload: AnyEncodable
-        
-        if let image = attachment.attachment(payloadType: ImageAttachmentPayload.self) {
-            var payload = image.payload
-            payload.imageURL = uploadedFileURL
-            updatedPayload = payload.asAnyEncodable
-        } else if let video = attachment.attachment(payloadType: VideoAttachmentPayload.self) {
-            var payload = video.payload
-            payload.videoURL = uploadedFileURL
-            updatedPayload = payload.asAnyEncodable
-        } else if let audio = attachment.attachment(payloadType: AudioAttachmentPayload.self) {
-            var payload = audio.payload
-            payload.audioURL = uploadedFileURL
-            updatedPayload = payload.asAnyEncodable
-        } else if let file = attachment.attachment(payloadType: FileAttachmentPayload.self) {
-            var payload = file.payload
-            payload.assetURL = uploadedFileURL
-            updatedPayload = payload.asAnyEncodable
-        } else {
-            log.assertionFailure(
-                "Attachment of type \(attachment.type) is not supposed to be updated with uploaded file URL."
-            )
-            return
-        }
-        
-        do {
-            data = try JSONEncoder.stream.encode(updatedPayload)
-        } catch {
-            log.assertionFailure(
-                "Failed to encode updated payload for attachment with id \(attachmentID) after uploading."
-            )
-        }
-    }
 }
 
 extension LocalAttachmentState {

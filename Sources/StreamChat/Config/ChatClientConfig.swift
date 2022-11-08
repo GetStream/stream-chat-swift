@@ -116,14 +116,7 @@ public struct ChatClientConfig {
     public var customCDNClient: CDNClient?
     
     /// Returns max possible attachment size in bytes.
-    /// The value is taken from custom `maxAttachmentSize` type custom `CDNClient` type.
-    public var maxAttachmentSize: Int64 {
-        if let customCDNClient = customCDNClient {
-            return type(of: customCDNClient).maxAttachmentSize
-        } else {
-            return StreamCDNClient.maxAttachmentSize
-        }
-    }
+    public var maxAttachmentSize: Int64 = 100 * 1024 * 1024
     
     /// Returns max number of attachments that can be attached to a message.
     ///

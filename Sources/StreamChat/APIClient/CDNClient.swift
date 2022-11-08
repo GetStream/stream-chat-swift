@@ -4,19 +4,30 @@
 
 import Foundation
 
-/// API client that handles working with content (e.g. uploading attachments)
-public protocol CDNClient {
-    /// Specifies maximum attachment size in bytes.
-    static var maxAttachmentSize: Int64 { get }
+/// The uploaded file information.
+public struct UploadedFile {
+    /// The original file remote url.
+    public let remoteURL: URL
+    /// The preview/thumbnail file remote url.
+    public let remotePreviewURL: URL?
 
+    public init(remoteURL: URL, remotePreviewURL: URL?) {
+        self.remoteURL = remoteURL
+        self.remotePreviewURL = remotePreviewURL
+    }
+}
+
+/// The CDN client is responsible to upload files to a CDN.
+public protocol CDNClient {
+    /// Uploads attachment as a multipart/form-data and returns only the uploaded remote file.
     /// - Parameters:
-    ///   - attachment: An attachment to upload
-    ///   - progress: A closure that broadcasts upload progress
-    ///   - completion: Returns uploading result on upload completion or failure
-    func uploadAttachment(
+    ///   - attachment: An attachment to upload.
+    ///   - progress: A closure that broadcasts upload progress.
+    ///   - completion: Returns the file uploaded information.
+    func upload(
         _ attachment: AnyChatMessageAttachment,
         progress: ((Double) -> Void)?,
-        completion: @escaping (Result<URL, Error>) -> Void
+        completion: @escaping (Result<UploadedFile, Error>) -> Void
     )
 }
 
@@ -39,16 +50,11 @@ class StreamCDNClient: CDNClient {
         session = URLSession(configuration: sessionConfiguration)
         self.decoder = decoder
     }
-      
-    /// Uploads attachment as a multipart/form-data
-    /// - Parameters:
-    ///   - attachment: An attachment to upload
-    ///   - progress: A closure that broadcasts upload progress
-    ///   - completion: Returns uploading result on upload completion or failure
-    func uploadAttachment(
+
+    func upload(
         _ attachment: AnyChatMessageAttachment,
-        progress: ((Double) -> Void)? = nil,
-        completion: @escaping (Result<URL, Error>) -> Void
+        progress: ((Double) -> Void)?,
+        completion: @escaping (Result<UploadedFile, Error>) -> Void
     ) {
         guard
             let uploadingState = attachment.uploadingState,
@@ -62,7 +68,7 @@ class StreamCDNClient: CDNClient {
             mimeType: uploadingState.file.type.mimeType
         )
         let endpoint = Endpoint<FileUploadPayload>.uploadAttachment(with: attachment.id.cid, type: attachment.type)
-        
+
         encoder.encodeRequest(for: endpoint) { [weak self] (requestResult) in
             var urlRequest: URLRequest
             do {
@@ -72,7 +78,7 @@ class StreamCDNClient: CDNClient {
                 completion(.failure(error))
                 return
             }
-            
+
             let data = multipartFormData.getMultipartFormData()
             urlRequest.addValue("multipart/form-data; boundary=\(MultipartFormData.boundary)", forHTTPHeaderField: "Content-Type")
             urlRequest.httpBody = data
@@ -81,7 +87,7 @@ class StreamCDNClient: CDNClient {
                 log.warning("Callback called while self is nil", subsystems: .httpRequests)
                 return
             }
-            
+
             let task = self.session.dataTask(with: urlRequest) { [decoder = self.decoder] (data, response, error) in
                 do {
                     let decodedResponse: FileUploadPayload = try decoder.decodeRequestResponse(
@@ -89,12 +95,18 @@ class StreamCDNClient: CDNClient {
                         response: response,
                         error: error
                     )
-                    completion(.success(decodedResponse.file))
+
+                    let uploadedFile = UploadedFile(
+                        remoteURL: decodedResponse.fileURL,
+                        remotePreviewURL: decodedResponse.previewURL
+                    )
+
+                    completion(.success(uploadedFile))
                 } catch {
                     completion(.failure(error))
                 }
             }
-            
+
             if let progressListener = progress {
                 let taskID = task.taskIdentifier
                 self._taskProgressObservers.mutate { observers in
@@ -109,7 +121,7 @@ class StreamCDNClient: CDNClient {
                     }
                 }
             }
-            
+
             task.resume()
         }
     }

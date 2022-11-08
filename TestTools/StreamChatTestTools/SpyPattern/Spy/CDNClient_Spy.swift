@@ -12,11 +12,11 @@ final class CDNClient_Spy: CDNClient, Spy {
     var uploadAttachmentProgress: Double?
     var uploadAttachmentResult: Result<URL, Error>?
 
-    func uploadAttachment(
+    func upload(
         _ attachment: AnyChatMessageAttachment,
         progress: ((Double) -> Void)?,
-        completion: @escaping (Result<URL, Error>) -> Void
-    ) {
+        completion: @escaping (Result<UploadedFile, Error>
+    ) -> Void) {
         record()
         if let uploadAttachmentProgress = uploadAttachmentProgress {
             progress?(uploadAttachmentProgress)

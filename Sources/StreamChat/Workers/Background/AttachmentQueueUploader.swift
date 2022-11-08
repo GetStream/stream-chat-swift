@@ -19,7 +19,7 @@ import Foundation
 /// - Upload attachments in order declared by `locallyCreatedAt`
 /// - Start uploading attachments when connection status changes (offline -> online)
 ///
-class AttachmentUploader: Worker {
+class AttachmentQueueUploader: Worker {
     @Atomic private var pendingAttachmentIDs: Set<AttachmentId> = []
 
     private let observer: ListDatabaseObserver<AttachmentDTO, AttachmentDTO>
@@ -66,13 +66,11 @@ class AttachmentUploader: Worker {
 
     private func uploadNextAttachment() {
         database.write { [weak self] session in
-            guard
-                let attachmentID = self?.pendingAttachmentIDs.first
-            else { return }
+            guard let attachmentID = self?.pendingAttachmentIDs.first else {
+                return
+            }
 
-            guard
-                let attachment = session.attachment(id: attachmentID)?.asAnyModel()
-            else {
+            guard let attachment = session.attachment(id: attachmentID)?.asAnyModel() else {
                 self?.removeAttachmentIDAndContinue(attachmentID)
                 return
             }
@@ -81,18 +79,17 @@ class AttachmentUploader: Worker {
                 attachment,
                 progress: {
                     self?.updateAttachmentIfNeeded(
-                        attachmentID,
-                        newState: .uploading(progress: $0)
+                        attachmentId: attachmentID,
+                        uploadedAttachment: nil,
+                        newState: .uploading(progress: $0),
+                        completion: {}
                     )
                 },
                 completion: { result in
                     self?.updateAttachmentIfNeeded(
-                        attachmentID,
+                        attachmentId: attachmentID,
+                        uploadedAttachment: result.value,
                         newState: result.error == nil ? .uploaded : .uploadingFailed,
-                        attachmentUpdates: { attachmentDTO in
-                            guard case let .success(url) = result else { return }
-                            attachmentDTO.update(uploadedFileURL: url)
-                        },
                         completion: {
                             self?.removeAttachmentIDAndContinue(attachmentID)
                         }
@@ -108,13 +105,13 @@ class AttachmentUploader: Worker {
     }
 
     private func updateAttachmentIfNeeded(
-        _ id: AttachmentId,
+        attachmentId: AttachmentId,
+        uploadedAttachment: UploadedAttachment?,
         newState: LocalAttachmentState,
-        attachmentUpdates: @escaping (AttachmentDTO) throws -> Void = { _ in },
         completion: @escaping () -> Void = {}
     ) {
         database.write({ [minSignificantUploadingProgressChange] session in
-            guard let attachmentDTO = session.attachment(id: id) else { return }
+            guard let attachmentDTO = session.attachment(id: attachmentId) else { return }
 
             var stateHasChanged: Bool {
                 guard
@@ -132,11 +129,13 @@ class AttachmentUploader: Worker {
             // Update attachment local state.
             attachmentDTO.localState = newState
 
-            // Apply further attachment updates.
-            try attachmentUpdates(attachmentDTO)
+            // Apply attachment payload updates.
+            if let payload = uploadedAttachment?.attachment.payload {
+                attachmentDTO.data = payload
+            }
         }, completion: {
             if let error = $0 {
-                log.error("Error changing localState for attachment with id \(id) to `\(newState)`: \(error)")
+                log.error("Error changing localState for attachment with id \(attachmentId) to `\(newState)`: \(error)")
             }
             completion()
         })
