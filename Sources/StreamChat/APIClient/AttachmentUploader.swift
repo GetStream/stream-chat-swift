@@ -73,12 +73,13 @@ public class StreamAttachmentUploader: AttachmentUploader {
         progress: ((Double) -> Void)?,
         completion: @escaping (Result<UploadedAttachment, Error>) -> Void
     ) {
-        cdnClient.upload(attachment, progress: progress) { result in
-            completion(result.map { uploadedFile in
-                UploadedAttachment(
+        cdnClient.uploadAttachment(attachment, progress: progress) { result in
+            completion(result.map { url in
+                let uploadedAttachment = UploadedAttachment(
                     originalAttachment: attachment,
-                    uploadedFile: uploadedFile
+                    uploadedFile: UploadedFile(remoteURL: url, remotePreviewURL: nil)
                 )
+                return uploadedAttachment
             })
         }
     }

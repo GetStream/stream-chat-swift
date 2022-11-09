@@ -116,7 +116,27 @@ public struct ChatClientConfig {
     public var customCDNClient: CDNClient?
     
     /// Returns max possible attachment size in bytes.
-    public var maxAttachmentSize: Int64 = 100 * 1024 * 1024
+    /// By default the value is taken from `CDNClient.maxAttachmentSize` type.
+    /// But it can be overridden by setting a value here.
+    public var maxAttachmentSize: Int64 {
+        // TODO: For v5 the maxAttachmentSize should be responsibility of the UI SDK.
+        // Since this is not even used in the StreamChat LLC SDK.
+        get {
+            if let overrideMaxAttachmentSize = self.overrideMaxAttachmentSize {
+                return overrideMaxAttachmentSize
+            } else if let customCDNClient = customCDNClient {
+                return type(of: customCDNClient).maxAttachmentSize
+            } else {
+                return StreamCDNClient.maxAttachmentSize
+            }
+        }
+        set {
+            overrideMaxAttachmentSize = newValue
+        }
+    }
+
+    /// Used to override the maxAttachmentSize, by setting the value in the config instead of relying on `CDNClient`.
+    private var overrideMaxAttachmentSize: Int64?
     
     /// Returns max number of attachments that can be attached to a message.
     ///

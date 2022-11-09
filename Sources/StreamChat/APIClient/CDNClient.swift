@@ -19,15 +19,17 @@ public struct UploadedFile {
 
 /// The CDN client is responsible to upload files to a CDN.
 public protocol CDNClient {
+    static var maxAttachmentSize: Int64 { get }
+
     /// Uploads attachment as a multipart/form-data and returns only the uploaded remote file.
     /// - Parameters:
     ///   - attachment: An attachment to upload.
     ///   - progress: A closure that broadcasts upload progress.
     ///   - completion: Returns the file uploaded information.
-    func upload(
+    func uploadAttachment(
         _ attachment: AnyChatMessageAttachment,
         progress: ((Double) -> Void)?,
-        completion: @escaping (Result<UploadedFile, Error>) -> Void
+        completion: @escaping (Result<URL, Error>) -> Void
     )
 }
 
@@ -51,10 +53,10 @@ class StreamCDNClient: CDNClient {
         self.decoder = decoder
     }
 
-    func upload(
+    func uploadAttachment(
         _ attachment: AnyChatMessageAttachment,
         progress: ((Double) -> Void)?,
-        completion: @escaping (Result<UploadedFile, Error>) -> Void
+        completion: @escaping (Result<URL, Error>) -> Void
     ) {
         guard
             let uploadingState = attachment.uploadingState,
@@ -101,7 +103,9 @@ class StreamCDNClient: CDNClient {
                         remotePreviewURL: decodedResponse.previewURL
                     )
 
-                    completion(.success(uploadedFile))
+                    // TODO: For v5, CDNClient should return the `UploadedFile` directly.
+                    // Especially if we want to support video thumbnails.
+                    completion(.success(uploadedFile.remoteURL))
                 } catch {
                     completion(.failure(error))
                 }
