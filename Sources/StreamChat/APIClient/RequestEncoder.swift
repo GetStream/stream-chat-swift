@@ -284,8 +284,6 @@ typealias WaiterToken = String
 protocol ConnectionDetailsProviderDelegate: AnyObject {
     func provideConnectionId(timeout: TimeInterval, completion: @escaping (Result<ConnectionId, Error>) -> Void)
     func provideToken(timeout: TimeInterval, completion: @escaping (Result<Token, Error>) -> Void)
-    func invalidateTokenWaiter(_ waiter: WaiterToken)
-    func invalidateConnectionIdWaiter(_ waiter: WaiterToken)
 }
 
 extension ClientError {

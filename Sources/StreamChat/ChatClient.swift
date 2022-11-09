@@ -73,12 +73,21 @@ public class ChatClient {
 
     // MARK: Repositories
 
+    private(set) lazy var connectionRepository = environment.connectionRepositoryBuilder(
+        config.isClientInActiveMode,
+        syncRepository,
+        webSocketClient,
+        apiClient,
+        environment.timerType
+    )
+
     private(set) lazy var authenticationRepository = environment.authenticationRepositoryBuilder(
         apiClient,
         databaseContainer,
-        clientUpdater,
+        connectionRepository,
         environment.tokenExpirationRetryStrategy,
-        environment.timerType
+        environment.timerType,
+        self
     )
 
     private(set) lazy var messageRepository = environment.messageRepositoryBuilder(
@@ -213,8 +222,6 @@ public class ChatClient {
             config.shouldShowShadowedMessages
         )
     }()
-    
-    private(set) lazy var clientUpdater = environment.clientUpdaterBuilder(self)
 
     /// The environment object containing all dependencies of this `Client` instance.
     private let environment: Environment
@@ -233,12 +240,6 @@ public class ChatClient {
     private let sessionHeaders: [String: String] = [
         "X-Stream-Client": SystemEnvironment.xStreamClientHeader
     ]
-    
-    /// The current connection id
-    @Atomic var connectionId: String?
-    
-    /// An array of requests waiting for the connection id
-    @Atomic private(set) var connectionIdWaiters: [String: (String?) -> Void] = [:]
 
     /// An array of requests waiting for the token
     @Atomic private(set) var tokenWaiters: [String: (Token?) -> Void] = [:]
@@ -371,7 +372,7 @@ public class ChatClient {
     /// Disconnects the chat client from the chat servers. No further updates from the servers
     /// are received.
     public func disconnect() {
-        clientUpdater.disconnect(source: .userInitiated) {
+        connectionRepository.disconnect(source: .userInitiated) {
             log.info("The `ChatClient` has been disconnected.", subsystems: .webSocket)
         }
         authenticationRepository.clearTokenProvider()
@@ -412,10 +413,7 @@ public class ChatClient {
     }
 
     func completeConnectionIdWaiters(connectionId: String?) {
-        _connectionIdWaiters.mutate { waiters in
-            waiters.forEach { $0.value(connectionId) }
-            waiters.removeAll()
-        }
+        connectionRepository.completeConnectionIdWaiters(connectionId: connectionId)
     }
 
     func completeTokenWaiters(token: Token?) {
@@ -568,7 +566,7 @@ extension ChatClient {
 
         var monitor: InternetConnectionMonitor?
 
-        var clientUpdaterBuilder = ChatClientUpdater.init
+        var connectionRepositoryBuilder = ConnectionRepository.init
 
         var backgroundTaskSchedulerBuilder: () -> BackgroundTaskScheduler? = {
             if Bundle.main.isAppExtension {
@@ -608,22 +606,8 @@ extension ChatClient {
             )
         }
 
-        var authenticationRepositoryBuilder: (
-            _ apiClient: APIClient,
-            _ apiClient: DatabaseContainer,
-            _ clientUpdater: ChatClientUpdater,
-            _ tokenExpirationRetryStrategy: RetryStrategy,
-            _ timerType: Timer.Type
-        ) -> AuthenticationRepository = {
-            AuthenticationRepository(
-                apiClient: $0,
-                databaseContainer: $1,
-                clientUpdater: $2,
-                tokenExpirationRetryStrategy: $3,
-                timerType: $4
-            )
-        }
-        
+        var authenticationRepositoryBuilder = AuthenticationRepository.init
+
         var syncRepositoryBuilder: (
             _ config: ChatClientConfig,
             _ activeChannelControllers: ThreadSafeWeakCollection<ChatChannelController>,
@@ -798,7 +782,7 @@ extension ChatClient: ConnectionDetailsProviderDelegate {
         }
 
         let waiterToken = String.newUniqueId
-        let completion = addTimeout(timeout: timeout, noValueError: ClientError.MissingToken(), to: completion) { [weak self] in
+        let completion = environment.timerType.addTimeout(timeout, to: completion, noValueError: ClientError.MissingToken()) { [weak self] in
             self?.invalidateTokenWaiter(waiterToken)
         }
 
@@ -808,60 +792,11 @@ extension ChatClient: ConnectionDetailsProviderDelegate {
     }
 
     func provideConnectionId(timeout: TimeInterval = 10, completion: @escaping (Result<ConnectionId, Error>) -> Void) {
-        if let connectionId = connectionId {
-            completion(.success(connectionId))
-            return
-        } else if !config.isClientInActiveMode {
-            // We're in passive mode
-            // We will never have connectionId
-            completion(.failure(ClientError.ClientIsNotInActiveMode()))
-            return
-        }
-
-        let waiterToken = String.newUniqueId
-        let completion = addTimeout(timeout: timeout, noValueError: ClientError.MissingConnectionId(), to: completion) { [weak self] in
-            self?.invalidateConnectionIdWaiter(waiterToken)
-        }
-
-        _connectionIdWaiters.mutate {
-            $0[waiterToken] = completion
-        }
-    }
-
-    private func addTimeout<T>(
-        timeout: TimeInterval,
-        noValueError: Error,
-        to completion: @escaping (Result<T, Error>) -> Void,
-        onTimeout: @escaping () -> Void
-    ) -> (T?) -> Void {
-        var timer: TimerControl?
-        let completionCancellingTimer: (Result<T, Error>) -> Void = { result in
-            timer?.cancel()
-            completion(result)
-        }
-
-        timer = environment.timerType.schedule(timeInterval: timeout, queue: .global()) {
-            onTimeout()
-            completionCancellingTimer(.failure(ClientError.WaiterTimeout()))
-        }
-
-        return { value in
-            if let value = value {
-                completionCancellingTimer(.success(value))
-            } else {
-                completionCancellingTimer(.failure(noValueError))
-            }
-        }
+        connectionRepository.provideConnectionId(timeout: timeout, completion: completion)
     }
 
     func invalidateTokenWaiter(_ waiter: WaiterToken) {
         _tokenWaiters.mutate {
-            $0[waiter] = nil
-        }
-    }
-
-    func invalidateConnectionIdWaiter(_ waiter: WaiterToken) {
-        _connectionIdWaiters.mutate {
             $0[waiter] = nil
         }
     }

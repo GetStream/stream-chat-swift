@@ -44,23 +44,23 @@ class AuthenticationRepository {
 
     private let apiClient: APIClient
     private let databaseContainer: DatabaseContainer
-    private let clientUpdater: ChatClientUpdater
+    private let connectionRepository: ConnectionRepository
     /// A timer that runs token refreshing job
     private var tokenRetryTimer: TimerControl?
-    /// Retry timing strategy for refreshing an expiried token
+    /// Retry timing strategy for refreshing an expired token
     private var tokenExpirationRetryStrategy: RetryStrategy
     private let timerType: Timer.Type
 
     init(
         apiClient: APIClient,
         databaseContainer: DatabaseContainer,
-        clientUpdater: ChatClientUpdater,
+        connectionRepository: ConnectionRepository,
         tokenExpirationRetryStrategy: RetryStrategy,
         timerType: Timer.Type
     ) {
         self.apiClient = apiClient
         self.databaseContainer = databaseContainer
-        self.clientUpdater = clientUpdater
+        self.connectionRepository = connectionRepository
         self.tokenExpirationRetryStrategy = tokenExpirationRetryStrategy
         self.timerType = timerType
 
@@ -140,6 +140,102 @@ class AuthenticationRepository {
         scheduleTokenFetch(userInfo: nil, tokenProvider: tokenProviderCheckingSuccess, completion: completion)
     }
 
+    private enum EnvironmentState {
+        case firstConnection
+        case newToken
+        case newUser
+    }
+
+    func prepareEnvironment(
+        userInfo: UserInfo?,
+        newToken: Token,
+        completion: @escaping (Error?) -> Void
+    ) {
+        let state: EnvironmentState
+        if currentUserId == nil {
+            state = .firstConnection
+        } else if newToken.userId == currentUserId {
+            state = .newToken
+        } else {
+            state = .newUser
+        }
+
+        switch state {
+        case .firstConnection:
+            client.updateWebSocketEndpoint(with: newToken, userInfo: userInfo)
+            client.updateUser(with: newToken, completeTokenWaiters: true, isFirstConnection: true)
+            completion(nil)
+
+        case .newToken:
+            client.updateWebSocketEndpoint(with: newToken, userInfo: userInfo)
+            client.updateUser(with: newToken, completeTokenWaiters: true, isFirstConnection: false)
+            completion(nil)
+
+        case .newUser:
+            client.switchToNewUser(with: newToken)
+
+            // Setting a new connection is not possible in connectionless mode.
+            guard client.config.isClientInActiveMode else {
+                completion(ClientError.ClientIsNotInActiveMode())
+                return
+            }
+
+            connectionRepository.disconnect(source: .userInitiated) { [weak client] in
+                guard let client = client else {
+                    completion(ClientError.ClientHasBeenDeallocated())
+                    return
+                }
+
+                client.clearCurrentUserData(completion: completion)
+                client.updateWebSocketEndpoint(with: newToken, userInfo: userInfo)
+            }
+        }
+    }
+
+    #warning("Rename???")
+    func reloadUserIfNeeded(
+        userInfo: UserInfo? = nil,
+        tokenProvider: TokenProvider?,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        guard let tokenProvider = tokenProvider else {
+            completion?(ClientError.ConnectionWasNotInitiated())
+            return
+        }
+
+        // Check if userIds match, and if token is expired. If userIds are the same, and token is not expired, don't perform this whole dance.
+        // BUTTTTTT we might need to call connect()
+
+        tokenProvider { [weak self, weak connectionRepository] in
+            switch $0 {
+            case let .success(newToken):
+                self?.prepareEnvironment(userInfo: userInfo, newToken: newToken) { error in
+                    // Errors thrown during `prepareEnvironment` cannot be recovered
+                    if let error = error {
+                        completion?(error)
+                        return
+                    }
+
+                    guard let self = self else {
+                        completion?(nil)
+                        return
+                    }
+
+                    // We manually change the `connectionStatus` for passive client
+                    // to `disconnected` when environment was prepared correctly
+                    // (e.g. current user session is successfully restored).
+                    if !self.client.config.isClientInActiveMode {
+                        self.client.connectionStatus = .disconnected(error: nil)
+                    }
+
+                    connectionRepository?.connect(userInfo: userInfo, completion: completion)
+                }
+            case let .failure(error):
+                completion?(error)
+            }
+        }
+    }
+
     private func scheduleTokenFetch(userInfo: UserInfo?, tokenProvider: @escaping TokenProvider, completion: @escaping (Error?) -> Void) {
         guard !isGettingToken else {
             tokenRequestCompletions.append(completion)
@@ -164,9 +260,8 @@ class AuthenticationRepository {
 
         isGettingToken = true
         log.debug("Requesting a new token", subsystems: .authentication)
-        clientUpdater.reloadUserIfNeeded(userInfo: userInfo, tokenProvider: tokenProvider) { [weak self] error in
+        reloadUserIfNeeded(userInfo: userInfo, tokenProvider: tokenProvider) { [weak self] error in
             guard let self = self else { return }
-
             if let error = error {
                 log.error("Error when getting token: \(error)", subsystems: .authentication)
             } else {
