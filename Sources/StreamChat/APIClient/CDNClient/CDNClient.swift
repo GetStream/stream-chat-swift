@@ -4,19 +4,6 @@
 
 import Foundation
 
-/// The uploaded file information.
-public struct UploadedFile {
-    /// The original file remote url.
-    public let remoteURL: URL
-    /// The preview/thumbnail file remote url.
-    public let remotePreviewURL: URL?
-
-    public init(remoteURL: URL, remotePreviewURL: URL?) {
-        self.remoteURL = remoteURL
-        self.remotePreviewURL = remotePreviewURL
-    }
-}
-
 /// The CDN client is responsible to upload files to a CDN.
 public protocol CDNClient {
     static var maxAttachmentSize: Int64 { get }
