@@ -28,14 +28,17 @@ jobs:
   automated-code-review:
     name: Automated Code Review
     runs-on: macos-12
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_PR_NUM: ${{ github.event.number }}
     if: ${{ github.event_name != 'push' }}
     steps:
       - uses: actions/checkout@v2.5.0
       - uses: ./.github/actions/bootstrap
       - name: Run Danger
         run: bundle exec danger
-        env:
-          GITHUB_TOKEN: ${{ secrets.DANGER_GITHUB_API_TOKEN }}
+      - name: Run Fastlane Linting
+        run: bundle exec fastlane rubocop
       - name: Run Linting
         run: ./Scripts/run-linter.sh
 
@@ -44,7 +47,7 @@ jobs:
     runs-on: macos-12
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      GITHUB_EVENT: ${{ toJson(github.event) }}
+      GITHUB_PR_NUM: ${{ github.event.number }}
     steps:
     - uses: actions/checkout@v2.5.0
       with:
@@ -56,8 +59,6 @@ jobs:
     - uses: ./.github/actions/bootstrap
       env:
         INSTALL_SONAR: true
-    - name: Run Fastlane Linting
-      run: bundle exec fastlane rubocop
     - name: Run LLC Tests (Debug)
       run: bundle exec fastlane test device:"${{ env.IOS_SIMULATOR_DEVICE }}"
       timeout-minutes: 30
@@ -96,7 +97,7 @@ jobs:
       timeout-minutes: 25
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        GITHUB_EVENT: ${{ toJson(github.event) }}
+        GITHUB_PR_NUM: ${{ github.event.number }}
         IOS_SIMULATOR_DEVICE: "iPhone 12 Pro (15.5)"
         XCODE_VERSION: "13.4.1"
     - name: Parse xcresult
@@ -134,7 +135,7 @@ jobs:
       timeout-minutes: 35
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        GITHUB_EVENT: ${{ toJson(github.event) }}
+        GITHUB_PR_NUM: ${{ github.event.number }}
         MATRIX_SIZE: ${{ strategy.job-total }}
     - name: Allure TestOps Upload
       if: env.LAUNCH_ID != '' && (success() || failure())
@@ -187,7 +188,7 @@ jobs:
     env:
       XCODE_VERSION: "13"
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      GITHUB_EVENT: ${{ toJson(github.event) }}
+      GITHUB_PR_NUM: ${{ github.event.number }}
     steps:
     - uses: actions/checkout@v2.5.0
     - uses: ./.github/actions/bootstrap
@@ -206,7 +207,7 @@ jobs:
     if: ${{ github.event_name != 'push' }}
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      GITHUB_EVENT: ${{ toJson(github.event) }}
+      GITHUB_PR_NUM: ${{ github.event.number }}
     steps:
     - uses: actions/checkout@v2.5.0
     - uses: ./.github/actions/bootstrap
@@ -241,7 +242,7 @@ jobs:
       timeout-minutes: 25
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        GITHUB_EVENT: ${{ toJson(github.event) }}
+        GITHUB_PR_NUM: ${{ github.event.number }}
 
   cocoapods-integration:
     name: Test Integration (CocoaPods)
@@ -255,4 +256,4 @@ jobs:
       timeout-minutes: 25
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        GITHUB_EVENT: ${{ toJson(github.event) }}
+        GITHUB_PR_NUM: ${{ github.event.number }}

@@ -24,6 +24,7 @@ jobs:
     runs-on: macos-12
     env:
       GITHUB_EVENT: ${{ toJson(github.event) }}
+      GITHUB_PR_NUM: ${{ github.event.number }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
       IOS_SIMULATOR_DEVICE: "${{ matrix.device }} (${{ matrix.ios }})"
@@ -73,7 +74,7 @@ jobs:
       timeout-minutes: 30
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        GITHUB_EVENT: ${{ toJson(github.event) }}
+        GITHUB_PR_NUM: ${{ github.event.number }}
         XCODE_VERSION: ${{ matrix.xcode }}
     - uses: test-summary/action@v1
       with:
@@ -89,3 +90,12 @@ jobs:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         MATRIX_CONTEXT: ${{ toJson(matrix) }}
       if: failure()
+
+  automated-code-review:
+    name: Automated Code Review
+    runs-on: macos-12
+    steps:
+    - uses: actions/checkout@v2.5.0
+    - uses: ./.github/actions/bootstrap
+    - run: bundle exec fastlane rubocop
+    - run: ./Scripts/run-linter.sh
