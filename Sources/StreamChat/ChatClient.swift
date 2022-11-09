@@ -118,7 +118,7 @@ public class ChatClient {
         
         let decoder = environment.requestDecoderBuilder()
 
-        let attachmentUploader = StreamAttachmentUploader(
+        let attachmentUploader = config.customAttachmentUploader ?? StreamAttachmentUploader(
             cdnClient: config.customCDNClient ?? StreamCDNClient(
                 encoder: encoder,
                 decoder: decoder,

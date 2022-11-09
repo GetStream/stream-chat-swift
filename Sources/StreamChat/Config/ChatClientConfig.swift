@@ -112,8 +112,12 @@ public struct ChatClientConfig {
     /// - Parameter apiKey: The API key of the chat app the `ChatClient` connects to.
     ///
     
-    /// Allows to inject a custom API client for uploading attachments, if not specified `StreamCDNClient` is used
+    /// Allows to inject a custom API client for uploading attachments, if not specified, `StreamCDNClient` is used.
     public var customCDNClient: CDNClient?
+
+    /// Allows to inject a custom attachment uploader. It can be used to have more
+    /// control than `CDNClient` to allow changing the attachment payload.
+    public var customAttachmentUploader: AttachmentUploader?
     
     /// Returns max possible attachment size in bytes.
     /// By default the value is taken from `CDNClient.maxAttachmentSize` type.
