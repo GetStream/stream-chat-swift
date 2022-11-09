@@ -245,13 +245,13 @@ final class ChatClient_Tests: XCTestCase {
         let config = inMemoryStorageConfig
 
         // Create an environment.
-        var clientUpdater: ChatClientUpdater?
+        var clientUpdater: ConnectionRepository?
         var env = ChatClient.Environment()
         env.clientUpdaterBuilder = {
             if let updater = clientUpdater {
                 return updater
             } else {
-                let updater = ChatClientUpdater(client: $0)
+                let updater = ConnectionRepository(client: $0)
                 clientUpdater = updater
                 return updater
             }

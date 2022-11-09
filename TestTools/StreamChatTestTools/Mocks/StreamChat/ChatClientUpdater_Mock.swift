@@ -5,7 +5,7 @@
 @testable import StreamChat
 
 /// Mock implementation of `ChatClientUpdater`
-final class ChatClientUpdater_Mock: ChatClientUpdater {
+final class ChatClientUpdater_Mock: ConnectionRepository {
     @Atomic var reloadUserIfNeeded_called = false {
         didSet {
             reloadUserIfNeeded_callsCount += 1

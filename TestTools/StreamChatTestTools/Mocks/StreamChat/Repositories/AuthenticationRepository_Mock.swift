@@ -22,7 +22,7 @@ class AuthenticationRepository_Mock: AuthenticationRepository, Spy {
 
     override init(apiClient: APIClient,
                   databaseContainer: DatabaseContainer,
-                  clientUpdater: ChatClientUpdater,
+                  clientUpdater: ConnectionRepository,
                   tokenExpirationRetryStrategy: RetryStrategy = DefaultRetryStrategy(),
                   timerType: StreamChat.Timer.Type = DefaultTimer.self) {
         super.init(apiClient: apiClient,

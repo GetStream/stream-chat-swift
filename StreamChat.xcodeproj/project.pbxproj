@@ -452,7 +452,7 @@
 		8819DFDE252622D900FD1A50 /* ModerationEndpoints_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8819DFDD252622D900FD1A50 /* ModerationEndpoints_Tests.swift */; };
 		8819DFE2252628CA00FD1A50 /* UserUpdater_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8819DFE1252628CA00FD1A50 /* UserUpdater_Tests.swift */; };
 		8819DFE625262B1500FD1A50 /* UserController_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8819DFE525262B1500FD1A50 /* UserController_Tests.swift */; };
-		88206FC425B18C88009D086A /* ChatClientUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88206FC325B18C88009D086A /* ChatClientUpdater.swift */; };
+		88206FC425B18C88009D086A /* ConnectionRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88206FC325B18C88009D086A /* ConnectionRepository.swift */; };
 		88206FE625B1AB34009D086A /* ChatClientUpdater_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88206FE525B1AB34009D086A /* ChatClientUpdater_Tests.swift */; };
 		8825333E258CE7AC00B77352 /* ChatMessageActionsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8825333D258CE7AC00B77352 /* ChatMessageActionsVC.swift */; };
 		8825334C258CE82500B77352 /* AlertsRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8825334B258CE82500B77352 /* AlertsRouter.swift */; };
@@ -1286,7 +1286,7 @@
 		C121E85F274544AE00023E4C /* UserUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8819DFCE2525F3C600FD1A50 /* UserUpdater.swift */; };
 		C121E860274544AE00023E4C /* ChannelMemberListUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 882C5755252C791400E60C44 /* ChannelMemberListUpdater.swift */; };
 		C121E861274544AE00023E4C /* ChannelMemberUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88F6DF90252C8845009A8AF0 /* ChannelMemberUpdater.swift */; };
-		C121E862274544AE00023E4C /* ChatClientUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88206FC325B18C88009D086A /* ChatClientUpdater.swift */; };
+		C121E862274544AE00023E4C /* ConnectionRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88206FC325B18C88009D086A /* ConnectionRepository.swift */; };
 		C121E863274544AE00023E4C /* EventSender.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A43CB226A9A54700302763 /* EventSender.swift */; };
 		C121E864274544AE00023E4C /* EventObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = F63CC36E24E591840052844D /* EventObserver.swift */; };
 		C121E865274544AE00023E4C /* MemberEventObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = F63CC37224E592D30052844D /* MemberEventObserver.swift */; };
@@ -2826,7 +2826,7 @@
 		8819DFE1252628CA00FD1A50 /* UserUpdater_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserUpdater_Tests.swift; sourceTree = "<group>"; };
 		8819DFE525262B1500FD1A50 /* UserController_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserController_Tests.swift; sourceTree = "<group>"; };
 		8819DFE825262EBA00FD1A50 /* UserUpdater_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserUpdater_Mock.swift; sourceTree = "<group>"; };
-		88206FC325B18C88009D086A /* ChatClientUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatClientUpdater.swift; sourceTree = "<group>"; };
+		88206FC325B18C88009D086A /* ConnectionRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionRepository.swift; sourceTree = "<group>"; };
 		88206FE525B1AB34009D086A /* ChatClientUpdater_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatClientUpdater_Tests.swift; sourceTree = "<group>"; };
 		8825333D258CE7AC00B77352 /* ChatMessageActionsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageActionsVC.swift; sourceTree = "<group>"; };
 		8825334B258CE82500B77352 /* AlertsRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertsRouter.swift; sourceTree = "<group>"; };
@@ -4434,7 +4434,6 @@
 				882C5755252C791400E60C44 /* ChannelMemberListUpdater.swift */,
 				88F6DF90252C8845009A8AF0 /* ChannelMemberUpdater.swift */,
 				79682C4524BC9DAF0071578E /* ChannelUpdater.swift */,
-				88206FC325B18C88009D086A /* ChatClientUpdater.swift */,
 				AD7DFC3525D2FA8100DD9DA3 /* CurrentUserUpdater.swift */,
 				F6778F9924F5144F005E7D22 /* EventNotificationCenter.swift */,
 				84A43CB226A9A54700302763 /* EventSender.swift */,
@@ -7436,6 +7435,7 @@
 			children = (
 				C135A1CA28F45F6B0058EFB6 /* AuthenticationRepository.swift */,
 				C1EE5AA228B63CA300DD5D27 /* CallRepository.swift */,
+				88206FC325B18C88009D086A /* ConnectionRepository.swift */,
 				C1B0B38527BFE8AB00C8207D /* MessageRepository.swift */,
 				C143788B27BBEBA000E23965 /* OfflineRequestsRepository.swift */,
 				C186BFAE27AADB410099CCA6 /* SyncOperations.swift */,
@@ -9545,7 +9545,7 @@
 				AD17CDF927E4DB2700E0D092 /* PushProvider.swift in Sources */,
 				C1EE5AA328B63CA300DD5D27 /* CallRepository.swift in Sources */,
 				AD7DFC3625D2FA8100DD9DA3 /* CurrentUserUpdater.swift in Sources */,
-				88206FC425B18C88009D086A /* ChatClientUpdater.swift in Sources */,
+				88206FC425B18C88009D086A /* ConnectionRepository.swift in Sources */,
 				7991D83B24F5427E00D21BA3 /* EphemeralValuesContainer.swift in Sources */,
 				79682C4B24BF37CB0071578E /* ChannelListPayload.swift in Sources */,
 				79D6CE3725F7C84600BE2EEC /* ChatChannelWatcherListController+SwiftUI.swift in Sources */,
@@ -10063,7 +10063,7 @@
 				C121E85F274544AE00023E4C /* UserUpdater.swift in Sources */,
 				C121E860274544AE00023E4C /* ChannelMemberListUpdater.swift in Sources */,
 				C121E861274544AE00023E4C /* ChannelMemberUpdater.swift in Sources */,
-				C121E862274544AE00023E4C /* ChatClientUpdater.swift in Sources */,
+				C121E862274544AE00023E4C /* ConnectionRepository.swift in Sources */,
 				C121E863274544AE00023E4C /* EventSender.swift in Sources */,
 				C121E864274544AE00023E4C /* EventObserver.swift in Sources */,
 				C121E865274544AE00023E4C /* MemberEventObserver.swift in Sources */,

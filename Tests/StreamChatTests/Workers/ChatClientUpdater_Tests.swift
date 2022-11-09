@@ -21,7 +21,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
         let client = mockClientWithUserSession(isActive: false)
 
         // Create an updater.
-        let updater = ChatClientUpdater(client: client)
+        let updater = ConnectionRepository(client: client)
 
         // Simulate `disconnect` call.
         let expectation = expectation(description: "`disconnect` completion")
@@ -46,7 +46,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
         let client = mockClientWithUserSession()
 
         // Create an updater.
-        let updater = ChatClientUpdater(client: client)
+        let updater = ConnectionRepository(client: client)
 
         // Simulate `disconnect` call.
         let expectation = expectation(description: "`disconnect` completion")
@@ -78,7 +78,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
         let client = mockClientWithUserSession()
 
         // Create an updater.
-        let updater = ChatClientUpdater(client: client)
+        let updater = ConnectionRepository(client: client)
 
         // Simulate `disconnect` call.
         updater.disconnect {}
@@ -112,7 +112,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
         let client = mockClientWithUserSession(isActive: false)
 
         // Create an updater.
-        let updater = ChatClientUpdater(client: client)
+        let updater = ConnectionRepository(client: client)
 
         // Simulate `connect` call.
         let error = try waitFor { completion in
@@ -128,7 +128,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
         let client = mockClientWithUserSession()
 
         // Create an updater.
-        let updater = ChatClientUpdater(client: client)
+        let updater = ConnectionRepository(client: client)
 
         // Simulate `connect` call.
         let error = try waitFor { completion in
@@ -148,7 +148,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
         let client = mockClientWithUserSession()
 
         // Create an updater.
-        let updater = ChatClientUpdater(client: client)
+        let updater = ConnectionRepository(client: client)
 
         // Disconnect client from web-socket.
         updater.disconnect {}
@@ -184,7 +184,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
             let client = mockClientWithUserSession()
 
             // Create an updater.
-            let updater = ChatClientUpdater(client: client)
+            let updater = ConnectionRepository(client: client)
 
             // Disconnect client from web-socket.
             updater.disconnect {}
@@ -231,7 +231,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
             let client = mockClientWithUserSession()
 
             // Create an updater.
-            var updater: ChatClientUpdater? = .init(client: client)
+            var updater: ConnectionRepository? = .init(client: client)
 
             // Disconnect client from web-socket.
             updater?.disconnect {}
@@ -287,7 +287,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
         client.trackChannelListController(channelListController)
         
         // Create an updater.
-        let updater = ChatClientUpdater(client: client)
+        let updater = ConnectionRepository(client: client)
         
         // Save current background worker ids.
         let oldWorkerIDs = client.testBackgroundWorkerId
@@ -372,7 +372,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
         client.trackChannelListController(channelListController)
         
         // Create an updater.
-        let updater = ChatClientUpdater(client: client)
+        let updater = ConnectionRepository(client: client)
         
         // Save current background worker ids.
         let oldWorkerIDs = client.testBackgroundWorkerId
@@ -448,7 +448,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
         let client = mockClientWithUserSession(isActive: false)
 
         // Create `ChatClientUpdater` instance.
-        let updater = ChatClientUpdater(client: client)
+        let updater = ConnectionRepository(client: client)
 
         // Simulate `reloadUserIfNeeded` call and catch the result.
         let error = try waitFor { completion in
@@ -465,7 +465,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
         let webSocketClient = client!.mockWebSocketClient
         
         // Create `ChatClientUpdater` instance.
-        let updater = ChatClientUpdater(client: client!)
+        let updater = ConnectionRepository(client: client!)
 
         // Simulate `reloadUserIfNeeded` call and catch the result.
         var error: Error?
@@ -488,7 +488,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
         let client = mockClientWithUserSession()
 
         // Create `ChatClientUpdater` instance.
-        let updater = ChatClientUpdater(client: client)
+        let updater = ConnectionRepository(client: client)
 
         // Update database to throw an error when flushed.
         let databaseFlushError = TestError()
@@ -513,7 +513,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
         let client = ChatClient_Mock(config: .init(apiKeyString: .unique))
 
         // Create `ChatClientUpdater` instance.
-        let updater = ChatClientUpdater(client: client)
+        let updater = ConnectionRepository(client: client)
 
         // Simulate `reloadUserIfNeeded` call.
         var reloadUserIfNeededCompletionCalled = false
@@ -542,7 +542,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
         var tokenProviderCompletion: ((Result<Token, Error>) -> Void)?
 
         // Create an updater.
-        var updater: ChatClientUpdater? = .init(client: client)
+        var updater: ConnectionRepository? = .init(client: client)
         
         // Simulate `reloadUserIfNeeded` call.
         updater?.reloadUserIfNeeded(
@@ -583,7 +583,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
         let token = Token(rawValue: .unique, userId: userId, expiration: nil)
         
         // Create an updater.
-        let updater = ChatClientUpdater(client: client)
+        let updater = ConnectionRepository(client: client)
        
         // Simulate `reloadUserIfNeeded` call.
         var reloadUserIfNeededCompletionCalled = false
@@ -906,7 +906,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
         client: ChatClient,
         completeConnectionIdWaitersWith connectionId: String? = nil
     ) -> Error? {
-        let updater = ChatClientUpdater(client: client)
+        let updater = ConnectionRepository(client: client)
         let expectation = self.expectation(description: "prepareEnvironment completes")
         var receivedError: Error?
         updater.reloadUserIfNeeded(
@@ -999,7 +999,7 @@ final class ChatClientUpdater_Tests: XCTestCase {
 
     @discardableResult
     private func prepareEnvironmentAndWait(userInfo: UserInfo?, newToken: Token, client: ChatClient) -> Error? {
-        let updater = ChatClientUpdater(client: client)
+        let updater = ConnectionRepository(client: client)
         let expectation = self.expectation(description: "prepareEnvironment completes")
         var receivedError: Error?
         updater.prepareEnvironment(
