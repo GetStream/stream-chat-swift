@@ -42,7 +42,7 @@ class StreamCDNClient: CDNClient {
 
     func uploadAttachment(
         _ attachment: AnyChatMessageAttachment,
-        progress: ((Double) -> Void)?,
+        progress: ((Double) -> Void)? = nil,
         completion: @escaping (Result<URL, Error>) -> Void
     ) {
         guard

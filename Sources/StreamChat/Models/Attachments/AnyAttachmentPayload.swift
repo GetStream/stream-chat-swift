@@ -90,6 +90,7 @@ public extension AnyAttachmentPayload {
             payload = ImageAttachmentPayload(
                 title: localFileURL.lastPathComponent,
                 imageRemoteURL: localFileURL,
+                imagePreviewRemoteURL: nil,
                 originalWidth: localMetadata?.originalResolution?.width,
                 originalHeight: localMetadata?.originalResolution?.height,
                 extraData: extraData

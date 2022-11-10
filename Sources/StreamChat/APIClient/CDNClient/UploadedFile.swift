@@ -6,9 +6,9 @@ import Foundation
 
 /// The uploaded file information.
 public struct UploadedFile {
-    /// The original file remote url.
+    /// The remote url.
     public let remoteURL: URL
-    /// The preview/thumbnail file remote url.
+    /// The preview/thumbnail  remote url.
     public let remotePreviewURL: URL?
 
     public init(remoteURL: URL, remotePreviewURL: URL?) {

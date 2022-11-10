@@ -1467,7 +1467,7 @@ extension ChatChannelController {
         completion: @escaping ((Result<URL, Error>) -> Void)
     ) {
         uploadAttachment(localFileURL: localFileURL, type: .file, progress: progress) { result in
-            completion(result.map(\.file.remoteURL))
+            completion(result.map(\.remoteURL))
         }
     }
 
@@ -1483,7 +1483,7 @@ extension ChatChannelController {
         completion: @escaping ((Result<URL, Error>) -> Void)
     ) {
         uploadAttachment(localFileURL: localFileURL, type: .image, progress: progress) { result in
-            completion(result.map(\.file.remoteURL))
+            completion(result.map(\.remoteURL))
         }
     }
 }

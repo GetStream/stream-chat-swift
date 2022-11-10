@@ -129,9 +129,31 @@ class AttachmentQueueUploader: Worker {
             // Update attachment local state.
             attachmentDTO.localState = newState
 
-            // Apply attachment payload updates.
-            if let payload = uploadedAttachment?.attachment.payload {
-                attachmentDTO.data = payload
+            if let uploadedAttachment = uploadedAttachment {
+                var attachment = uploadedAttachment.attachment
+                let remoteUrl = uploadedAttachment.remoteURL
+                let previewUrl = uploadedAttachment.remotePreviewURL
+
+                let attachmentUpdater = AnyAttachmentUpdater()
+
+                attachmentUpdater.update(&attachment, forPayload: ImageAttachmentPayload.self) { payload in
+                    payload.imageURL = remoteUrl
+                    payload.imagePreviewURL = previewUrl
+                }
+
+                attachmentUpdater.update(&attachment, forPayload: VideoAttachmentPayload.self) { payload in
+                    payload.videoURL = remoteUrl
+                }
+
+                attachmentUpdater.update(&attachment, forPayload: AudioAttachmentPayload.self) { payload in
+                    payload.audioURL = remoteUrl
+                }
+
+                attachmentUpdater.update(&attachment, forPayload: FileAttachmentPayload.self) { payload in
+                    payload.assetURL = remoteUrl
+                }
+
+                attachmentDTO.data = attachment.payload
             }
         }, completion: {
             if let error = $0 {

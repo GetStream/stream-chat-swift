@@ -9,47 +9,19 @@ public struct UploadedAttachment {
     /// The attachment which contains the payload details of the attachment.
     public var attachment: AnyChatMessageAttachment
 
-    /// The uploaded file remote information.
-    public var file: UploadedFile
+    /// The original file remote url.
+    public let remoteURL: URL
 
-    /// It will create the `UploadedAttachment` and update the urls of the originalAttachment with the `UploadedFile` info.
+    /// The preview file remote url.
+    public let remotePreviewURL: URL?
+
     public init(
-        originalAttachment: AnyChatMessageAttachment,
-        uploadedFile: UploadedFile
+        attachment: AnyChatMessageAttachment,
+        remoteURL: URL,
+        remotePreviewURL: URL? = nil
     ) {
-        file = uploadedFile
-
-        var updatedAttachment = originalAttachment
-        let updatedPayload: AnyEncodable
-
-        if let imageAttachment = originalAttachment.attachment(payloadType: ImageAttachmentPayload.self) {
-            var payload = imageAttachment.payload
-            payload.imageURL = file.remoteURL
-            if let previewURL = file.remotePreviewURL {
-                payload.imagePreviewURL = previewURL
-            }
-            updatedPayload = payload.asAnyEncodable
-        } else if let videoAttachment = originalAttachment.attachment(payloadType: VideoAttachmentPayload.self) {
-            var payload = videoAttachment.payload
-            payload.videoURL = file.remoteURL
-            updatedPayload = payload.asAnyEncodable
-        } else if let audioAttachment = originalAttachment.attachment(payloadType: AudioAttachmentPayload.self) {
-            var payload = audioAttachment.payload
-            payload.audioURL = file.remoteURL
-            updatedPayload = payload.asAnyEncodable
-        } else if let fileAttachment = originalAttachment.attachment(payloadType: FileAttachmentPayload.self) {
-            var payload = fileAttachment.payload
-            payload.assetURL = file.remoteURL
-            updatedPayload = payload.asAnyEncodable
-        } else {
-            updatedPayload = originalAttachment.payload.asAnyEncodable
-        }
-
-        do {
-            updatedAttachment.payload = try JSONEncoder.stream.encode(updatedPayload)
-            attachment = updatedAttachment
-        } catch {
-            attachment = originalAttachment
-        }
+        self.attachment = attachment
+        self.remoteURL = remoteURL
+        self.remotePreviewURL = remotePreviewURL
     }
 }

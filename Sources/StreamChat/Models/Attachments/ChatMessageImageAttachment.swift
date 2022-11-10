@@ -20,8 +20,8 @@ public struct ImageAttachmentPayload: AttachmentPayload {
     public var title: String?
     /// A link to the image.
     public var imageURL: URL
-    /// A link to the image preview.
-    public var imagePreviewURL: URL
+    /// A link to the thumbnail of the image.
+    public var imagePreviewURL: URL?
     /// The original width of the image in pixels.
     public var originalWidth: Double?
     /// The original height of the image in pixels.
@@ -51,7 +51,7 @@ public struct ImageAttachmentPayload: AttachmentPayload {
     ) {
         self.title = title
         imageURL = imageRemoteURL
-        imagePreviewURL = imagePreviewRemoteURL ?? imageRemoteURL
+        imagePreviewURL = imagePreviewRemoteURL
         self.originalWidth = originalWidth
         self.originalHeight = originalHeight
         self.extraData = extraData
@@ -67,7 +67,10 @@ extension ImageAttachmentPayload: Encodable {
         var values = extraData ?? [:]
         values[AttachmentCodingKeys.title.rawValue] = title.map { .string($0) }
         values[AttachmentCodingKeys.imageURL.rawValue] = .string(imageURL.absoluteString)
-        values[AttachmentCodingKeys.thumbURL.rawValue] = .string(imagePreviewURL.absoluteString)
+
+        if let imagePreviewURL = self.imagePreviewURL {
+            values[AttachmentCodingKeys.thumbURL.rawValue] = .string(imagePreviewURL.absoluteString)
+        }
 
         if let originalWidth = self.originalWidth, let originalHeight = self.originalHeight {
             values[AttachmentCodingKeys.originalWidth.rawValue] = .double(originalWidth)
@@ -95,7 +98,7 @@ extension ImageAttachmentPayload: Decodable {
                 container.decodeIfPresent(String.self, forKey: .name)
         )?.trimmingCharacters(in: .whitespacesAndNewlines)
 
-        let previewUrl = try container.decodeIfPresent(URL.self, forKey: .thumbURL) ?? imageURL
+        let thumbnailUrl = try container.decodeIfPresent(URL.self, forKey: .thumbURL)
 
         let originalWidth = try container.decodeIfPresent(Double.self, forKey: .originalWidth)
         let originalHeight = try container.decodeIfPresent(Double.self, forKey: .originalHeight)
@@ -103,7 +106,7 @@ extension ImageAttachmentPayload: Decodable {
         self.init(
             title: title,
             imageRemoteURL: imageURL,
-            imagePreviewRemoteURL: previewUrl,
+            imagePreviewRemoteURL: thumbnailUrl,
             originalWidth: originalWidth,
             originalHeight: originalHeight,
             extraData: try Self.decodeExtraData(from: decoder)
