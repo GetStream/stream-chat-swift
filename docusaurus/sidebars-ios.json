@@ -103,6 +103,7 @@
         "client/offline-support",
         "client/importance-of-synchronize",
         "client/push-notifications",
+        "client/custom-cdn",
         {
           "Controllers and Delegates": [
             "client/controllers/controllers-overview",
