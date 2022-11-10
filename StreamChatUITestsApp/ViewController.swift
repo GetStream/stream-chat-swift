@@ -36,23 +36,28 @@ final class ViewController: UIViewController {
     @objc func didTap() {
         // Setup chat client
         streamChat.setUpChat()
-        streamChat.connect(user: .credentials(.default), completion: { _ in})
+        streamChat.connectUser(completion: { _ in})
 
         // create UI
         let channelList = streamChat.makeChannelListViewController()
         router = channelList.router as? CustomChannelListRouter
+        
+        // create connection switch if needed
+        let switchControl = self.createIsConnectedSwitchIfNeeded()
 
-        router?.onChannelListViewWillAppear = { [weak self] channelListVC in
-            channelListVC.navigationItem.titleView = self?.createIsConnectedSwitchIfNeeded()
+        router?.onChannelListViewWillAppear = { channelListVC in
+            // show connection switch if needed
+            if let sw = switchControl {
+                channelListVC.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: sw)
+            }
         }
         router?.onChannelViewWillAppear = { [weak self] channelVC in
             guard let self = self else { return }
             self.channelController = channelVC.channelController
 
             // show connection switch if needed
-            let switchControl = self.createIsConnectedSwitchIfNeeded()
-            if let switchControl = switchControl {
-                channelVC.navigationItem.titleView = switchControl
+            if let sw = switchControl {
+                channelVC.navigationItem.rightBarButtonItems?.append(UIBarButtonItem(customView: sw))
             }
 
             // Show debug button on the right side
@@ -166,4 +171,73 @@ extension ViewController {
         return item
     }
 
+}
+
+extension StreamChatWrapper {
+    func connectUser(completion: @escaping (Error?) -> Void) {
+        let userCredentials = UserCredentials.default
+        let tokenProvider = mockTokenProvider(for: userCredentials)
+        client?.connectUser(
+            userInfo: userCredentials.userInfo,
+            tokenProvider: tokenProvider,
+            completion: completion
+        )
+    }
+    
+    func mockTokenProvider(for userCredentials: UserCredentials) -> TokenProvider {
+        return { completion in
+            if ProcessInfo.processInfo.arguments.contains("MOCK_JWT") {
+                let udid = ProcessInfo.processInfo.environment["SIMULATOR_UDID"] ?? ""
+                let urlString = "http://localhost:4567/jwt/\(udid)?api_key=\(apiKeyString)&user_name=\(userCredentials.id)"
+                guard let url = URL(string: urlString) else { return }
+                
+                var request = URLRequest(url: url)
+                request.httpMethod = "GET"
+                
+                URLSession.shared.dataTask(with: request) { result in
+                    switch result {
+                    case .success((_, let data)):
+                        guard let body = String(data: data, encoding: .utf8) else { return }
+                        let generatedToken = Token(stringLiteral: body)
+                        completion(.success(generatedToken))
+                    case .failure(let error):
+                        completion(.failure(error))
+                    }
+                }
+                .resume()
+            } else {
+                completion(.success(userCredentials.token))
+            }
+        }
+    }
+}
+
+extension URLSession {
+    
+    enum HTTPError: Error {
+        case transportError(Error)
+        case serverSideError(Int)
+    }
+    
+    typealias DataTaskResult = Result<(HTTPURLResponse, Data), Error>
+    
+    func dataTask(with request: URLRequest, completionHandler: @escaping (DataTaskResult) -> Void) -> URLSessionDataTask {
+        return self.dataTask(with: request) { (data, response, error) in
+            if let error = error {
+                completionHandler(Result.failure(HTTPError.transportError(error)))
+                return
+            }
+            
+            guard let response = response as? HTTPURLResponse else { return }
+            
+            guard (200...299).contains(response.statusCode) else {
+                completionHandler(Result.failure(HTTPError.serverSideError(response.statusCode)))
+                return
+            }
+            
+            guard let data = data else { return }
+
+            completionHandler(Result.success((response, data)))
+        }
+    }
 }

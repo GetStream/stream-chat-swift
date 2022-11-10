@@ -143,6 +143,19 @@ extension UserRobot {
         XCTAssertEqual(expectedCount, actualCount, file: file, line: line)
         return self
     }
+    
+    @discardableResult
+    func assertConnectionStatus(
+        _ status: ChannelListPage.ConnectionStatus,
+        timeout: Double = 15,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        let expectedStatus = status.rawValue
+        let actualStatus = ChannelListPage.connectionStatus.waitForText(expectedStatus, timeout: timeout).text
+        XCTAssertEqual(actualStatus, expectedStatus, file: file, line: line)
+        return self
+    }
 }
 
 // MARK: Message List

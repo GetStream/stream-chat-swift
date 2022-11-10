@@ -345,6 +345,7 @@
 		826B1C3528895AFD005DDF13 /* http_youtube_link.json in Resources */ = {isa = PBXBuildFile; fileRef = 826B1C3428895AFD005DDF13 /* http_youtube_link.json */; };
 		826B1C3728895BB5005DDF13 /* http_unsplash_link.json in Resources */ = {isa = PBXBuildFile; fileRef = 826B1C3628895BB5005DDF13 /* http_unsplash_link.json */; };
 		826B1C39288FD756005DDF13 /* http_truncate.json in Resources */ = {isa = PBXBuildFile; fileRef = 826B1C38288FD756005DDF13 /* http_truncate.json */; };
+		826EF2B1291C01C1005A9EEF /* Authentication_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 826EF2B0291C01C1005A9EEF /* Authentication_Tests.swift */; };
 		827DD1A0289D5B3300910AC5 /* MessageActionsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 827DD19F289D5B3300910AC5 /* MessageActionsVC.swift */; };
 		829762E028C7587500B953E8 /* PushNotification_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 829762DF28C7587500B953E8 /* PushNotification_Tests.swift */; };
 		829CD5C52848C2EA003C3877 /* ParticipantRobot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 829CD5C32848C25F003C3877 /* ParticipantRobot.swift */; };
@@ -2707,6 +2708,7 @@
 		826B1C3428895AFD005DDF13 /* http_youtube_link.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = http_youtube_link.json; sourceTree = "<group>"; };
 		826B1C3628895BB5005DDF13 /* http_unsplash_link.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = http_unsplash_link.json; sourceTree = "<group>"; };
 		826B1C38288FD756005DDF13 /* http_truncate.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = http_truncate.json; sourceTree = "<group>"; };
+		826EF2B0291C01C1005A9EEF /* Authentication_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Authentication_Tests.swift; sourceTree = "<group>"; };
 		827DD19F289D5B3300910AC5 /* MessageActionsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageActionsVC.swift; sourceTree = "<group>"; };
 		829762DF28C7587500B953E8 /* PushNotification_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotification_Tests.swift; sourceTree = "<group>"; };
 		8298C8E827D22C3E004082D3 /* UserRobot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRobot.swift; sourceTree = "<group>"; };
@@ -4711,15 +4713,16 @@
 			isa = PBXGroup;
 			children = (
 				A3600B3D283F63C700E1C930 /* Base TestCase */,
-				A33FA815282D595C00DC40E8 /* ChannelList_Tests.swift */,
+				A3B78F16282A670600348AD1 /* Message Delivery Status */,
 				82BA52EE27E1EF7B00951B87 /* MessageList_Tests.swift */,
+				A33FA815282D595C00DC40E8 /* ChannelList_Tests.swift */,
 				82A6F5BF27E2031000F4A2F6 /* Reactions_Tests.swift */,
 				8232B84E28635C4A0032C7DB /* Attachments_Tests.swift */,
 				A33FA817282E559A00DC40E8 /* SlowMode_Tests.swift */,
 				A3600B3B283F639700E1C930 /* StreamTestCase+Tags.swift */,
-				A3B78F16282A670600348AD1 /* Message Delivery Status */,
 				A3CB2B9F2858C06B00DCAE3E /* Ephemeral_Messages_Tests.swift */,
 				829762DF28C7587500B953E8 /* PushNotification_Tests.swift */,
+				826EF2B0291C01C1005A9EEF /* Authentication_Tests.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -9891,6 +9894,7 @@
 				825A32CD27DBB46F000402A9 /* ChannelListPage.swift in Sources */,
 				A36D1EA9283F755F008D6110 /* StreamTestCase.swift in Sources */,
 				A3B78F18282A675700348AD1 /* MessageDeliveryStatus+ChannelList_Tests.swift in Sources */,
+				826EF2B1291C01C1005A9EEF /* Authentication_Tests.swift in Sources */,
 				829762E028C7587500B953E8 /* PushNotification_Tests.swift in Sources */,
 				829CD5C72848C71B003C3877 /* Settings.swift in Sources */,
 				825A32CB27DBB463000402A9 /* MessageListPage.swift in Sources */,

@@ -52,4 +52,24 @@ public extension StreamMockServer {
         request.httpBody = json.jsonToString().data(using: .utf8)
         URLSession.shared.dataTask(with: request).resume()
     }
+    
+    func revokeJwt(duration: UInt32 = jwtTimeout) {
+        let udid = ProcessInfo.processInfo.environment["SIMULATOR_UDID"] ?? ""
+        let urlString = "\(MockServerConfiguration.httpHost):4567/jwt/revoke/\(udid)?duration=\(duration)"
+        guard let url = URL(string: urlString) else { return }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        URLSession.shared.dataTask(with: request).resume()
+    }
+    
+    func breakJwt(duration: UInt32 = jwtTimeout) {
+        let udid = ProcessInfo.processInfo.environment["SIMULATOR_UDID"] ?? ""
+        let urlString = "\(MockServerConfiguration.httpHost):4567/jwt/break/\(udid)?duration=\(duration)"
+        guard let url = URL(string: urlString) else { return }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        URLSession.shared.dataTask(with: request).resume()
+    }
 }

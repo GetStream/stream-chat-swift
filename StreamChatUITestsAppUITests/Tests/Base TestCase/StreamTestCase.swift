@@ -15,6 +15,7 @@ class StreamTestCase: XCTestCase {
     var participantRobot: ParticipantRobot!
     var server: StreamMockServer!
     var recordVideo = false
+    var mockServerEnabled = true
 
     override func setUpWithError() throws {
         continueAfterFailure = false
@@ -47,15 +48,17 @@ class StreamTestCase: XCTestCase {
 extension StreamTestCase {
 
     private func useMockServer() {
-        // Leverage web socket server
-        app.setLaunchArguments(.useMockServer)
-
-        // Configure web socket host
-        app.setEnvironmentVariables([
-            .websocketHost: "\(MockServerConfiguration.websocketHost)",
-            .httpHost: "\(MockServerConfiguration.httpHost)",
-            .port: "\(MockServerConfiguration.port)"
-        ])
+        if mockServerEnabled {
+            // Leverage web socket server
+            app.setLaunchArguments(.useMockServer)
+            
+            // Configure web socket host
+            app.setEnvironmentVariables([
+                .websocketHost: "\(MockServerConfiguration.websocketHost)",
+                .httpHost: "\(MockServerConfiguration.httpHost)",
+                .port: "\(MockServerConfiguration.port)"
+            ])
+        }
     }
     
     private func attachElementTree() {
