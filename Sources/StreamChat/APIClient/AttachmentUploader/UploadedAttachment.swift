@@ -12,16 +12,11 @@ public struct UploadedAttachment {
     /// The original file remote url.
     public let remoteURL: URL
 
-    /// The preview file remote url.
-    public let remotePreviewURL: URL?
-
     public init(
         attachment: AnyChatMessageAttachment,
-        remoteURL: URL,
-        remotePreviewURL: URL? = nil
+        remoteURL: URL
     ) {
         self.attachment = attachment
         self.remoteURL = remoteURL
-        self.remotePreviewURL = remotePreviewURL
     }
 }

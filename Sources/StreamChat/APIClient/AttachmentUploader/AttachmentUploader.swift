@@ -34,8 +34,7 @@ public class StreamAttachmentUploader: AttachmentUploader {
             completion(result.map { url in
                 let uploadedAttachment = UploadedAttachment(
                     attachment: attachment,
-                    remoteURL: url,
-                    remotePreviewURL: nil
+                    remoteURL: url
                 )
                 return uploadedAttachment
             })

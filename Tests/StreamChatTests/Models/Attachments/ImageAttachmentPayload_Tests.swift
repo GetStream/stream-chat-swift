@@ -32,7 +32,7 @@ final class ImageAttachmentPayload_Tests: XCTestCase {
         // Assert values are decoded correctly.
         XCTAssertEqual(payload.title, title)
         XCTAssertEqual(payload.imageURL, imageURL)
-        XCTAssertEqual(payload.imagePreviewURL, thumbURL)
+        XCTAssertEqual(payload.imageThumbnailURL, thumbURL)
         XCTAssertEqual(payload.originalWidth, originalWidth)
         XCTAssertEqual(payload.originalHeight, originalHeight)
         XCTAssertNil(payload.extraData)
@@ -65,7 +65,7 @@ final class ImageAttachmentPayload_Tests: XCTestCase {
         // Assert values are decoded correctly.
         XCTAssertEqual(payload.title, title)
         XCTAssertEqual(payload.imageURL, imageURL)
-        XCTAssertEqual(payload.imagePreviewURL, thumbURL)
+        XCTAssertEqual(payload.imageThumbnailURL, thumbURL)
         
         // Assert extra data can be decoded.
         let extraData = try XCTUnwrap(payload.extraData(ofType: ExtraData.self))
