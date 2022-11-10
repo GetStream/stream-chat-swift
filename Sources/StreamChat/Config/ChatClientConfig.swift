@@ -77,7 +77,7 @@ public struct ChatClientConfig {
     public var isClientInActiveMode: Bool
 
     /// If set to `true` the `ChatClient` will automatically establish a web-socket
-    /// connection to listen to the updates when `reloadUserIfNeeded` is called.
+    /// connection to listen to the updates when `refreshToken` is called.
     ///
     /// If set to `false` the connection won't be established automatically
     /// but has to be initiated manually by calling `connect`.
