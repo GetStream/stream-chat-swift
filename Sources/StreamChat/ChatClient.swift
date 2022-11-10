@@ -25,7 +25,9 @@ public class ChatClient {
     /// To observe changes in the connection status, create an instance of `CurrentChatUserController`, and use it to receive
     /// callbacks when the connection status changes.
     ///
-    public internal(set) var connectionStatus: ConnectionStatus = .initialized
+    public var connectionStatus: ConnectionStatus {
+        connectionRepository.connectionStatus
+    }
 
     /// The config object of the `ChatClient` instance.
     ///
@@ -81,14 +83,17 @@ public class ChatClient {
         environment.timerType
     )
 
-    private(set) lazy var authenticationRepository = environment.authenticationRepositoryBuilder(
-        apiClient,
-        databaseContainer,
-        connectionRepository,
-        environment.tokenExpirationRetryStrategy,
-        environment.timerType,
-        self
-    )
+    private(set) lazy var authenticationRepository: AuthenticationRepository = {
+        let repository = environment.authenticationRepositoryBuilder(
+            apiClient,
+            databaseContainer,
+            connectionRepository,
+            environment.tokenExpirationRetryStrategy,
+            environment.timerType
+        )
+        repository.delegate = self
+        return repository
+    }()
 
     private(set) lazy var messageRepository = environment.messageRepositoryBuilder(
         databaseContainer,
@@ -168,12 +173,6 @@ public class ChatClient {
             EventDecoder(),
             eventNotificationCenter
         )
-
-        if let currentUserId = currentUserId {
-            webSocketClient?.connectEndpoint = Endpoint<EmptyResponse>.webSocketConnect(
-                userInfo: UserInfo(id: currentUserId)
-            )
-        }
         
         webSocketClient?.connectionStateDelegate = self
         
@@ -240,9 +239,6 @@ public class ChatClient {
     private let sessionHeaders: [String: String] = [
         "X-Stream-Client": SystemEnvironment.xStreamClientHeader
     ]
-
-    /// An array of requests waiting for the token
-    @Atomic private(set) var tokenWaiters: [String: (Token?) -> Void] = [:]
 
     /// Creates a new instance of `ChatClient`.
     /// - Parameter config: The config object for the `Client`. See `ChatClientConfig` for all configuration options.
@@ -417,53 +413,26 @@ public class ChatClient {
     }
 
     func completeTokenWaiters(token: Token?) {
-        _tokenWaiters.mutate { waiters in
-            waiters.forEach { $0.value(token) }
-            waiters.removeAll()
-        }
+        authenticationRepository.completeTokenWaiters(token: token)
     }
-
-    // MARK: Authentication helpers
 
     /// Sets the user token to the client, this method is only needed to perform API calls
     /// without connecting as a user.
     /// You should only use this in special cases like a notification service or other background process
-    ///
-    /// - Important: Do not call this method if you will be connecting to chat.
     public func setToken(token: Token) {
-        authenticationRepository.setToken(token: token)
-        completeTokenWaiters(token: token)
+        authenticationRepository.setToken(token: token, completeTokenWaiters: true)
     }
 
-    /// Updates the user information using the new token
-    /// - Parameters:
-    ///   - token: The token for the new user
-    ///   - completeTokenWaiters: A boolean indicating if the token should be passed to the requests that are awaiting
-    ///   - isFirstConnection: A boolean indicating if this is the first connection in the lifecycle of the app
-    func updateUser(with token: Token, completeTokenWaiters: Bool, isFirstConnection: Bool) {
-        authenticationRepository.setToken(token: token)
-
-        if completeTokenWaiters {
-            self.completeTokenWaiters(token: token)
-        }
-
-        if isFirstConnection || backgroundWorkers.isEmpty {
-            createBackgroundWorkers()
+    /// Starts the process to  refresh the token
+    /// - Parameter completion: A block to be executed when the process is completed. Contains an error if something went wrong
+    private func refreshToken(completion: ((Error?) -> Void)?) {
+        authenticationRepository.refreshToken {
+            completion?($0)
         }
     }
+}
 
-    /// Cancels any hanging requests and switches to a new user
-    /// - Parameter token: The token for the new user
-    func switchToNewUser(with token: Token) {
-        completeTokenWaiters(token: nil)
-        updateUser(with: token, completeTokenWaiters: false, isFirstConnection: false)
-    }
-
-    /// Updates the WebSocket endpoint to use the passed token and user information for the connection
-    func updateWebSocketEndpoint(with token: Token, userInfo: UserInfo?) {
-        webSocketClient?.connectEndpoint = .webSocketConnect(userInfo: userInfo ?? .init(id: token.userId))
-    }
-
+extension ChatClient: AuthenticationRepositoryDelegate {
     /// Clears state related to the current user to leave the client ready for another user
     /// Will clear:
     ///     - Background workers
@@ -481,12 +450,37 @@ public class ChatClient {
         databaseContainer.removeAllData(force: true, completion: completion)
     }
 
-    /// Starts the process to  refresh the token
-    /// - Parameter completion: A block to be executed when the process is completed. Contains an error if something went wrong
-    private func refreshToken(completion: ((Error?) -> Void)?) {
-        authenticationRepository.refreshToken {
-            completion?($0)
+    func didFinishSettingUpAuthenticationEnvironment(for state: EnvironmentState) {
+        switch state {
+        case .firstConnection, .newUser:
+            createBackgroundWorkers()
+        case .newToken:
+            if backgroundWorkers.isEmpty {
+                createBackgroundWorkers()
+            }
         }
+    }
+}
+
+/// `APIClient` listens for `WebSocketClient` connection updates so it can forward the current connection id to
+/// its `RequestEncoder`.
+extension ChatClient: ConnectionStateDelegate {
+    func webSocketClient(_ client: WebSocketClient, didUpdateConnectionState state: WebSocketConnectionState) {
+        connectionRepository.handleConnectionUpdate(state: state, onInvalidToken: { [weak self] in
+            self?.refreshToken(completion: nil)
+        })
+        connectionRecoveryHandler?.webSocketClient(client, didUpdateConnectionState: state)
+    }
+}
+
+/// `Client` provides connection details for the `RequestEncoder`s it creates.
+extension ChatClient: ConnectionDetailsProviderDelegate {
+    func provideToken(timeout: TimeInterval = 10, completion: @escaping (Result<Token, Error>) -> Void) {
+        authenticationRepository.provideToken(timeout: timeout, completion: completion)
+    }
+
+    func provideConnectionId(timeout: TimeInterval = 10, completion: @escaping (Result<ConnectionId, Error>) -> Void) {
+        connectionRepository.provideConnectionId(timeout: timeout, completion: completion)
     }
 }
 
@@ -706,98 +700,6 @@ extension ClientError {
                 When using expiring tokens you need to provide a way to refresh it by passing `tokenProvider` when \
                 calling `ChatClient.connectUser()`.
             """
-        }
-    }
-}
-
-/// `APIClient` listens for `WebSocketClient` connection updates so it can forward the current connection id to
-/// its `RequestEncoder`.
-extension ChatClient: ConnectionStateDelegate {
-    func webSocketClient(_ client: WebSocketClient, didUpdateConnectionState state: WebSocketConnectionState) {
-        connectionStatus = .init(webSocketConnectionState: state)
-        
-        connectionRecoveryHandler?.webSocketClient(client, didUpdateConnectionState: state)
-        
-        // We should notify waiters if connectionId was obtained (i.e. state is .connected)
-        // or for .disconnected state except for disconnect caused by an expired token
-        let shouldNotifyConnectionIdWaiters: Bool
-        let connectionId: String?
-        switch state {
-        case let .connected(connectionId: id):
-            shouldNotifyConnectionIdWaiters = true
-            connectionId = id
-        case let .disconnected(source):
-            if let error = source.serverError,
-               error.isInvalidTokenError {
-                refreshToken(completion: nil)
-                shouldNotifyConnectionIdWaiters = false
-            } else {
-                shouldNotifyConnectionIdWaiters = true
-            }
-            connectionId = nil
-        case .initialized,
-             .connecting,
-             .disconnecting,
-             .waitingForConnectionId:
-            shouldNotifyConnectionIdWaiters = false
-            connectionId = nil
-        }
-        
-        updateConnectionId(
-            connectionId: connectionId,
-            shouldNotifyWaiters: shouldNotifyConnectionIdWaiters
-        )
-    }
-
-    /// Update connectionId and notify waiters if needed
-    /// - Parameters:
-    ///   - connectionId: new connectionId (if present)
-    ///   - shouldFailWaiters: Whether it's necessary to notify waiters or not
-    private func updateConnectionId(
-        connectionId: String?,
-        shouldNotifyWaiters: Bool
-    ) {
-        var connectionIdWaiters: [String: (String?) -> Void]!
-        _connectionId.mutate { mutableConnectionId in
-            mutableConnectionId = connectionId
-            _connectionIdWaiters.mutate { _connectionIdWaiters in
-                connectionIdWaiters = _connectionIdWaiters
-                if shouldNotifyWaiters {
-                    _connectionIdWaiters.removeAll()
-                }
-            }
-        }
-        if shouldNotifyWaiters {
-            connectionIdWaiters.forEach { $0.value(connectionId) }
-        }
-    }
-}
-
-/// `Client` provides connection details for the `RequestEncoder`s it creates.
-extension ChatClient: ConnectionDetailsProviderDelegate {
-    func provideToken(timeout: TimeInterval = 10, completion: @escaping (Result<Token, Error>) -> Void) {
-        if let token = currentToken {
-            completion(.success(token))
-            return
-        }
-
-        let waiterToken = String.newUniqueId
-        let completion = environment.timerType.addTimeout(timeout, to: completion, noValueError: ClientError.MissingToken()) { [weak self] in
-            self?.invalidateTokenWaiter(waiterToken)
-        }
-
-        _tokenWaiters.mutate {
-            $0[waiterToken] = completion
-        }
-    }
-
-    func provideConnectionId(timeout: TimeInterval = 10, completion: @escaping (Result<ConnectionId, Error>) -> Void) {
-        connectionRepository.provideConnectionId(timeout: timeout, completion: completion)
-    }
-
-    func invalidateTokenWaiter(_ waiter: WaiterToken) {
-        _tokenWaiters.mutate {
-            $0[waiter] = nil
         }
     }
 }

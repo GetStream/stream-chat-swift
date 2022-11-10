@@ -8,10 +8,17 @@ class ConnectionRepository {
     private let connectionQueue: DispatchQueue = DispatchQueue(label: "io.getstream.connection-repository", attributes: .concurrent)
     private var _connectionIdWaiters: [String: (String?) -> Void] = [:]
     private var _connectionId: ConnectionId?
+    private var _connectionStatus: ConnectionStatus = .initialized
 
     private var connectionIdWaiters: [String: (String?) -> Void] {
         get { connectionQueue.sync { _connectionIdWaiters } }
         set { connectionQueue.async(flags: .barrier) { self._connectionIdWaiters = newValue }}
+    }
+
+    /// The current connection status of the client
+    private(set) var connectionStatus: ConnectionStatus {
+        get { connectionQueue.sync { _connectionStatus } }
+        set { connectionQueue.async(flags: .barrier) { self._connectionStatus = newValue }}
     }
 
     /// The current connection id
@@ -20,7 +27,7 @@ class ConnectionRepository {
         set { connectionQueue.async(flags: .barrier) { self._connectionId = newValue }}
     }
 
-    private let isClientInActiveMode: Bool
+    let isClientInActiveMode: Bool
     private let syncRepository: SyncRepository
     private let webSocketClient: WebSocketClient?
     private let apiClient: APIClient
@@ -117,6 +124,53 @@ class ConnectionRepository {
         }
     }
 
+    /// Updates the WebSocket endpoint to use the passed token and user information for the connection
+    func updateWebSocketEndpoint(with token: Token, userInfo: UserInfo?) {
+        webSocketClient?.connectEndpoint = .webSocketConnect(userInfo: userInfo ?? .init(id: token.userId))
+    }
+
+    /// Updates the WebSocket endpoint to use the passed user id
+    func updateWebSocketEndpoint(with currentUserId: UserId) {
+        webSocketClient?.connectEndpoint = .webSocketConnect(userInfo: UserInfo(id: currentUserId))
+    }
+
+    func handleConnectionUpdate(
+        state: WebSocketConnectionState,
+        onInvalidToken: () -> Void
+    ) {
+        connectionStatus = .init(webSocketConnectionState: state)
+
+        // We should notify waiters if connectionId was obtained (i.e. state is .connected)
+        // or for .disconnected state except for disconnect caused by an expired token
+        let shouldNotifyConnectionIdWaiters: Bool
+        let connectionId: String?
+        switch state {
+        case let .connected(connectionId: id):
+            shouldNotifyConnectionIdWaiters = true
+            connectionId = id
+        case let .disconnected(source):
+            if let error = source.serverError,
+               error.isInvalidTokenError {
+                onInvalidToken()
+                shouldNotifyConnectionIdWaiters = false
+            } else {
+                shouldNotifyConnectionIdWaiters = true
+            }
+            connectionId = nil
+        case .initialized,
+             .connecting,
+             .disconnecting,
+             .waitingForConnectionId:
+            shouldNotifyConnectionIdWaiters = false
+            connectionId = nil
+        }
+
+        updateConnectionId(
+            connectionId: connectionId,
+            shouldNotifyWaiters: shouldNotifyConnectionIdWaiters
+        )
+    }
+
     func provideConnectionId(timeout: TimeInterval = 10, completion: @escaping (Result<ConnectionId, Error>) -> Void) {
         if let connectionId = connectionId {
             completion(.success(connectionId))
@@ -143,35 +197,29 @@ class ConnectionRepository {
         }
     }
 
-    func invalidateConnectionIdWaiter(_ waiter: WaiterToken) {
-        connectionIdWaiters[waiter] = nil
+    func forceConnectionStatusForInactiveModeIfNeeded() {
+        guard !isClientInActiveMode else { return }
+        connectionStatus = .disconnected(error: nil)
     }
-}
 
-extension Timer {
-    static func addTimeout<T>(
-        _ timeout: TimeInterval,
-        to block: @escaping (Result<T, Error>) -> Void,
-        noValueError: Error,
-        onTimeout: @escaping () -> Void
-    ) -> (T?) -> Void {
-        var timer: TimerControl?
-        let completionCancellingTimer: (Result<T, Error>) -> Void = { result in
-            timer?.cancel()
-            block(result)
-        }
-
-        timer = schedule(timeInterval: timeout, queue: .global()) {
-            onTimeout()
-            completionCancellingTimer(.failure(ClientError.WaiterTimeout()))
-        }
-
-        return { value in
-            if let value = value {
-                completionCancellingTimer(.success(value))
-            } else {
-                completionCancellingTimer(.failure(noValueError))
+    /// Update connectionId and notify waiters if needed
+    /// - Parameters:
+    ///   - connectionId: new connectionId (if present)
+    ///   - shouldFailWaiters: Whether it's necessary to notify waiters or not
+    private func updateConnectionId(
+        connectionId: String?,
+        shouldNotifyWaiters: Bool
+    ) {
+        connectionQueue.sync {
+            _connectionId = connectionId
+            if shouldNotifyWaiters {
+                _connectionIdWaiters.forEach { $0.value(connectionId) }
+                _connectionIdWaiters = [:]
             }
         }
+    }
+
+    private func invalidateConnectionIdWaiter(_ waiter: WaiterToken) {
+        connectionIdWaiters[waiter] = nil
     }
 }
