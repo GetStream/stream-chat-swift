@@ -21,6 +21,7 @@ class CurrentUserDTO: NSManagedObject {
     @NSManaged var devices: Set<DeviceDTO>
     @NSManaged var currentDevice: DeviceDTO?
     @NSManaged var channelMutes: Set<ChannelMuteDTO>
+    @NSManaged var isInvisible: Bool
     
     /// Returns a default fetch request for the current user.
     static var defaultFetchRequest: NSFetchRequest<CurrentUserDTO> {
@@ -71,6 +72,7 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
     func saveCurrentUser(payload: CurrentUserPayload) throws -> CurrentUserDTO {
         let dto = CurrentUserDTO.loadOrCreate(context: self)
         dto.user = try saveUser(payload: payload)
+        dto.isInvisible = payload.isInvisible
 
         let mutedUsers = try payload.mutedUsers.map { try saveUser(payload: $0.mutedUser) }
         dto.mutedUsers = Set(mutedUsers)
@@ -203,6 +205,7 @@ extension CurrentChatUser {
             name: user.name,
             imageURL: user.imageURL,
             isOnline: user.isOnline,
+            isInvisible: dto.isInvisible,
             isBanned: user.isBanned,
             userRole: UserRole(rawValue: user.userRoleRaw),
             createdAt: user.userCreatedAt.bridgeDate,

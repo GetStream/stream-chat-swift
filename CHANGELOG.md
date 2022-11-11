@@ -4,6 +4,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
+### ✅ Added
+- CurrentUser object now reports wether user has chosen to hide their online status with isInvisible property.
+
 ### 🐞 Fixed
 - Add timeout for token/connectionId providers so that `ChatClient.connect()` completes even in edge cases where we cannot get the needed data [#2361](https://github.com/GetStream/stream-chat-swift/pull/2361)
 - Stop spamming the console with "Socket is not connected" error when token is being refreshed [#2361](https://github.com/GetStream/stream-chat-swift/pull/2361)

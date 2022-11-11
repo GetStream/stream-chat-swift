@@ -52,12 +52,16 @@ public class CurrentChatUser: ChatUser {
     
     /// The unread counts for the current user.
     public let unreadCount: UnreadCount
+
+    /// The user has opted to hide their online status.
+    public let isInvisible: Bool
     
     init(
         id: String,
         name: String?,
         imageURL: URL?,
         isOnline: Bool,
+        isInvisible: Bool,
         isBanned: Bool,
         userRole: UserRole,
         createdAt: Date,
@@ -80,6 +84,7 @@ public class CurrentChatUser: ChatUser {
         self.flaggedUsers = flaggedUsers
         self.flaggedMessageIDs = flaggedMessageIDs
         self.unreadCount = unreadCount
+        self.isInvisible = isInvisible
         
         super.init(
             id: id,
