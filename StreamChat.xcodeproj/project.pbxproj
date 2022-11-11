@@ -1104,6 +1104,7 @@
 		ADB951B0291C22E900800554 /* UploadedAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB951AC291C22DB00800554 /* UploadedAttachment.swift */; };
 		ADB951B2291C3CE900800554 /* AnyAttachmentUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB951B1291C3CE900800554 /* AnyAttachmentUpdater.swift */; };
 		ADB951B3291C3CE900800554 /* AnyAttachmentUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB951B1291C3CE900800554 /* AnyAttachmentUpdater.swift */; };
+		ADB951B5291DD30400800554 /* AnyAttachmentUpdater_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB951B4291DD30400800554 /* AnyAttachmentUpdater_Tests.swift */; };
 		ADBBDA1F279F0CEA00E47B1C /* VideoDurationFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADBBDA1E279F0CEA00E47B1C /* VideoDurationFormatter.swift */; };
 		ADBBDA20279F0CEA00E47B1C /* VideoDurationFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADBBDA1E279F0CEA00E47B1C /* VideoDurationFormatter.swift */; };
 		ADBBDA22279F0CFA00E47B1C /* UploadingProgressFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADBBDA21279F0CFA00E47B1C /* UploadingProgressFormatter.swift */; };
@@ -3325,6 +3326,7 @@
 		ADB951A8291C1DDC00800554 /* AttachmentUploader_Spy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentUploader_Spy.swift; sourceTree = "<group>"; };
 		ADB951AC291C22DB00800554 /* UploadedAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadedAttachment.swift; sourceTree = "<group>"; };
 		ADB951B1291C3CE900800554 /* AnyAttachmentUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyAttachmentUpdater.swift; sourceTree = "<group>"; };
+		ADB951B4291DD30400800554 /* AnyAttachmentUpdater_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyAttachmentUpdater_Tests.swift; sourceTree = "<group>"; };
 		ADBBDA1E279F0CEA00E47B1C /* VideoDurationFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoDurationFormatter.swift; sourceTree = "<group>"; };
 		ADBBDA21279F0CFA00E47B1C /* UploadingProgressFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadingProgressFormatter.swift; sourceTree = "<group>"; };
 		ADBBDA27279F0E9B00E47B1C /* ChannelNameFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelNameFormatter.swift; sourceTree = "<group>"; };
@@ -5748,6 +5750,7 @@
 			isa = PBXGroup;
 			children = (
 				84CC56EA267B3D5900DF2784 /* AnyAttachmentPayload_Tests.swift */,
+				ADB951B4291DD30400800554 /* AnyAttachmentUpdater_Tests.swift */,
 				8875CF8D2587A7F200BBA6AC /* AttachmentId_Tests.swift */,
 				DA49717A254AE08500AC68C2 /* AttachmentTypes_Tests.swift */,
 				88089A0126529FD1007D3493 /* ChatMessageAttachment_Tests.swift */,
@@ -9805,6 +9808,7 @@
 				DAF1BED92506612F003CEDC0 /* MessageController+SwiftUI_Tests.swift in Sources */,
 				A3A52B6627EB61FC00311DFC /* EventPayload_Tests.swift in Sources */,
 				A32B6D9E2869DABD002B1312 /* GiphyAttachmentPayload_Tests.swift in Sources */,
+				ADB951B5291DD30400800554 /* AnyAttachmentUpdater_Tests.swift in Sources */,
 				C111B5B628CF3B1200C79D53 /* BackgroundListDatabaseObserver_Tests.swift in Sources */,
 				A3C7BAD327E4E05300BBF4FA /* MemberListFilterScope_Tests.swift in Sources */,
 				8A0D649D24E579F70017A3C0 /* GuestUserTokenPayload_Tests.swift in Sources */,
