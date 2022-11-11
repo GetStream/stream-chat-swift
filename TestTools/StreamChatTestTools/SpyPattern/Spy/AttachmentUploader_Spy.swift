@@ -1,23 +1,26 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+//  AttachmentUploader_Spy.swift
+//  StreamChat
+//
+//  Created by Nuno Vieira on 09/11/2022.
+//  Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
-import Foundation
 
-final class CDNClient_Spy: CDNClient, Spy {
+final class AttachmentUploader_Spy: AttachmentUploader, Spy {
     var recordedFunctions: [String] = []
 
-    static var maxAttachmentSize: Int64 { .max }
     var uploadAttachmentProgress: Double?
-    var uploadAttachmentResult: Result<URL, Error>?
+    var uploadAttachmentResult: Result<UploadedAttachment, Error>?
 
-    func uploadAttachment(
+    func upload(
         _ attachment: AnyChatMessageAttachment,
         progress: ((Double) -> Void)?,
-        completion: @escaping (Result<URL, Error>) -> Void
+        completion: @escaping (Result<UploadedAttachment, Error>) -> Void
     ) {
         record()
+
         if let uploadAttachmentProgress = uploadAttachmentProgress {
             progress?(uploadAttachmentProgress)
         }

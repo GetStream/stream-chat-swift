@@ -11,7 +11,7 @@ extension MessageAttachmentPayload {
         title: String = .unique,
         url: URL = URL(string: "https://getstream.io/some.jpg")!,
         imageURL: URL = URL(string: "https://getstream.io/some.jpg")!,
-        imagePreviewURL: URL = URL(string: "https://getstream.io/some_preview.jpg")!,
+        imageThumbnailURL: URL = URL(string: "https://getstream.io/some_preview.jpg")!,
         file: AttachmentFile = .init(type: .gif, size: 1024, mimeType: "image/gif")
     ) -> MessageAttachmentPayload {
         let data: Data = """
@@ -19,7 +19,7 @@ extension MessageAttachmentPayload {
             "type": "\(type.rawValue)",
             "image_url" : "\(imageURL.absoluteString)",
             "title" : "\(title)",
-            "thumb_url" : "\(imagePreviewURL.absoluteString)",
+            "thumb_url" : "\(imageThumbnailURL.absoluteString)",
             "url" : "\(url.absoluteString)",
             "file_size": \(file.size),
             "mime_type": "\(file.mimeType!)"

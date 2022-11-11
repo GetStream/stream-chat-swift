@@ -7,10 +7,8 @@ import Foundation
 /// A file upload response.
 struct FileUploadPayload: Decodable {
     let fileURL: URL
-    let previewURL: URL?
 
     enum CodingKeys: String, CodingKey {
         case fileURL = "file"
-        case previewURL = "thumb_url"
     }
 }

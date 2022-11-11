@@ -24,7 +24,6 @@ final class AnyAttachmentPayload_Tests: XCTestCase {
         XCTAssertEqual(anyPayload.localFileURL, url)
         XCTAssertEqual(payload.title, url.lastPathComponent)
         XCTAssertEqual(payload.imageURL, url)
-        XCTAssertEqual(payload.imageThumbnailURL, url)
         XCTAssertEqual(payload.extraData(), extraData)
     }
     

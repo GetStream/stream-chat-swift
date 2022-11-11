@@ -85,14 +85,7 @@ class StreamCDNClient: CDNClient {
                         error: error
                     )
 
-                    let uploadedFile = UploadedFile(
-                        remoteURL: decodedResponse.fileURL,
-                        remotePreviewURL: decodedResponse.previewURL
-                    )
-
-                    // TODO: For v5, CDNClient should return the `UploadedFile` directly.
-                    // Especially if we want to support video thumbnails.
-                    completion(.success(uploadedFile.remoteURL))
+                    completion(.success(decodedResponse.fileURL))
                 } catch {
                     completion(.failure(error))
                 }

@@ -1509,15 +1509,19 @@ final class ChannelUpdater_Tests: XCTestCase {
         var completionCalled = false
         channelUpdater.uploadFile(type: type, localFileURL: .localYodaImage, cid: cid) { result in
             do {
-                let url = try result.get()
-                XCTAssertEqual(url, .localYodaQuote)
+                let uploadedAttachment = try result.get()
+                XCTAssertEqual(uploadedAttachment.remoteURL, .localYodaQuote)
             } catch {
                 XCTFail("Error \(error)")
             }
             completionCalled = true
         }
-        
-        apiClient.uploadFile_completion?(.success(.localYodaQuote))
+
+        let attachment = UploadedAttachment(
+            attachment: ChatMessageImageAttachment.mock(id: .unique).asAnyAttachment,
+            remoteURL: .localYodaQuote
+        )
+        apiClient.uploadFile_completion?(.success(attachment))
         
         AssertAsync.willBeTrue(completionCalled)
     }
