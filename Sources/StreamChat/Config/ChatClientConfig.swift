@@ -113,10 +113,12 @@ public struct ChatClientConfig {
     ///
     
     /// Allows to inject a custom API client for uploading attachments, if not specified, `StreamCDNClient` is used.
+    /// If a custom `AttachmentUploader` is provided, the custom `CDNClient` won't be used. You should use 1 of them only.
     public var customCDNClient: CDNClient?
 
     /// Allows to inject a custom attachment uploader. It can be used to have more
     /// control than `CDNClient` to allow changing the attachment payload.
+    /// This overrides the custom `CDNClient`. You should use 1 of them only.
     public var customAttachmentUploader: AttachmentUploader?
     
     /// Returns max possible attachment size in bytes.

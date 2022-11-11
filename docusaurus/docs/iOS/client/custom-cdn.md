@@ -8,6 +8,10 @@ By default, files are uploaded to Stream's CDN, but you can also use your own CD
 
 - Providing an `AttachmentUploader` implementation. This one can be used for more fine-grain control, since you can change not only the URL but the attachment payload as well.
 
+:::note
+You should only pick 1 of the 2 options provided. Since using an `AttachmentUploader` will override the custom `CDNClient` implementation.
+:::
+
 ## Custom CDNClient implementation
 
 In case you simply want to change the url, here is an example of a custom `CDNClient` implementation.
@@ -132,7 +136,7 @@ final class CustomUploader: AttachmentUploader {
 }
 ```
 
-The `AnyAttachmentUpdater` is an helper component provided by Stream, to make it easier to update the underlying payload of a type-erased attachment. You should pass a reference of the attachment with `&` and say which payload to update depending on what type is the attachment.
+The `AnyAttachmentUpdater` is a helper component provided by Stream, to make it easier to update the underlying payload of a type-erased attachment. You should pass a reference of the attachment with `&` and say which payload to update depending on what type is the attachment.
 
 Finally, you should set your custom implementation in the `ChatClientConfig`:
 ```swift

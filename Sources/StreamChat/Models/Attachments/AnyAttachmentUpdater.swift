@@ -26,7 +26,7 @@ public struct AnyAttachmentUpdater {
                 attachment.payload = try JSONEncoder.stream.encode(payload.asAnyEncodable)
             }
         } catch {
-            log.debug(error.localizedDescription)
+            log.error(error.localizedDescription)
         }
     }
 }

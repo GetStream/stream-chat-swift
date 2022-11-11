@@ -12,7 +12,7 @@ public protocol CDNClient {
     /// - Parameters:
     ///   - attachment: An attachment to upload.
     ///   - progress: A closure that broadcasts upload progress.
-    ///   - completion: Returns the file uploaded information.
+    ///   - completion: Returns the uploaded file's information.
     func uploadAttachment(
         _ attachment: AnyChatMessageAttachment,
         progress: ((Double) -> Void)?,
