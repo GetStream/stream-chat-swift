@@ -53,8 +53,8 @@ open class ChatThreadVC: _ViewController,
 
     public var messageComposerBottomConstraint: NSLayoutConstraint?
 
-    /// A closure to filter replies and override the message list data source.
-    public var repliesFilter: ((ChatMessage) -> Bool)?
+    /// A closure to bypass the message list thread data source.
+    public var repliesBypass: (([ChatMessage]) -> [ChatMessage])?
 
     private var isLoadingPreviousMessages: Bool = false
 
@@ -63,7 +63,7 @@ open class ChatThreadVC: _ViewController,
     override open func setUp() {
         super.setUp()
 
-        repliesFilter = components.repliesFilter
+        repliesBypass = components.repliesBypass
 
         let notificationCenter = NotificationCenter.default
         notificationCenter.addObserver(
@@ -157,15 +157,15 @@ open class ChatThreadVC: _ViewController,
 
     // The replies data source.
     public var messages: [ChatMessage] {
+        get {
+            replies
+        }
         set {
-            if let repliesFilter = repliesFilter {
-                replies = newValue.filter(repliesFilter)
+            if let repliesBypass = repliesBypass {
+                replies = repliesBypass(newValue)
                 return
             }
             replies = newValue
-        }
-        get {
-            replies
         }
     }
 
@@ -334,8 +334,8 @@ open class ChatThreadVC: _ViewController,
 
         let messages = getRepliesWithThreadRootMessage(from: messageController)
         let newMessages: [ChatMessage]
-        if let repliesFilter = repliesFilter {
-            newMessages = messages.filter(repliesFilter)
+        if let repliesBypass = repliesBypass {
+            newMessages = repliesBypass(messages)
         } else {
             newMessages = messages
         }

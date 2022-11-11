@@ -63,15 +63,15 @@ open class ChatChannelVC: _ViewController,
         messageListVC.listView.isLastCellFullyVisible
     }
 
-    /// A closure to filter messages and override the message list data source.
-    public var messagesFilter: ((ChatMessage) -> Bool)?
+    /// A closure to bypass the message list channel data source.
+    public var messagesBypass: (([ChatMessage]) -> [ChatMessage])?
 
     private var isLoadingPreviousMessages: Bool = false
 
     override open func setUp() {
         super.setUp()
 
-        messagesFilter = components.messagesFilter
+        messagesBypass = components.messagesBypass
 
         let notificationCenter = NotificationCenter.default
         notificationCenter.addObserver(
@@ -162,15 +162,15 @@ open class ChatChannelVC: _ViewController,
 
     /// The messages data source.
     public var messages: [ChatMessage] {
+        get {
+            _messages
+        }
         set {
-            if let messagesFilter = messagesFilter {
-                _messages = newValue.filter(messagesFilter)
+            if let messagesBypass = messagesBypass {
+                _messages = messagesBypass(newValue)
                 return
             }
             _messages = newValue
-        }
-        get {
-            _messages
         }
     }
     
@@ -274,8 +274,8 @@ open class ChatChannelVC: _ViewController,
         }
 
         let newMessages: [ChatMessage]
-        if let messagesFilter = messagesFilter {
-            newMessages = channelController.messages.filter(messagesFilter)
+        if let messagesBypass = messagesBypass {
+            newMessages = messagesBypass(Array(channelController.messages))
         } else {
             newMessages = Array(channelController.messages)
         }

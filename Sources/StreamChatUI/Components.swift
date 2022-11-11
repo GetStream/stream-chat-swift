@@ -101,11 +101,11 @@ public struct Components {
     @available(iOSApplicationExtension, unavailable)
     public var messageListVC: ChatMessageListVC.Type = ChatMessageListVC.self
 
-    /// A closure to filter messages and override the message list channel data source.
-    public var messagesFilter: ((ChatMessage) -> Bool)?
+    /// A closure to bypass the message list channel data source.
+    public var messagesBypass: (([ChatMessage]) -> [ChatMessage])?
 
-    /// A closure to filter replies and override the message list thread data source.
-    public var repliesFilter: ((ChatMessage) -> Bool)?
+    /// A closure to bypass the message list thread data source.
+    public var repliesBypass: (([ChatMessage]) -> [ChatMessage])?
     
     /// The controller that handles `ChatMessageListVC <-> ChatMessagePopUp` transition.
     public var messageActionsTransitionController: ChatMessageActionsTransitionController.Type =
