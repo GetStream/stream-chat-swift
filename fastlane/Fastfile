@@ -6,7 +6,7 @@ require 'net/http'
 import 'Sonarfile'
 import 'Allurefile'
 
-xcode_version = ENV['XCODE_VERSION'] || '14.0.1'
+xcode_version = ENV['XCODE_VERSION'] || '14.1'
 xcode_project = 'StreamChat.xcodeproj'
 github_repo = ENV['GITHUB_REPOSITORY'] || 'GetStream/stream-chat-swift'
 stress_tests_cycles = 50
@@ -15,6 +15,7 @@ before_all do
   if is_ci
     setup_ci
     xcversion(version: "~> #{xcode_version}")
+    ENV['FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT'] = '180'
   end
 end
 
