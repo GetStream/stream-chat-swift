@@ -99,4 +99,23 @@ final class ChatThreadVC_Tests: XCTestCase {
         XCTAssertTrue(vc.messageListVC.listView is TestMessageListView)
         XCTAssertTrue(vc.messageComposerVC.composerView is TestComposerView)
     }
+
+    // MARK: - Replies Bypass
+
+    func test_repliesBypass_shouldOverrideThreadDataSource() {
+        /// Empty case
+        vc.repliesBypass = { _ in [] }
+        vc.messages = [.mock(), .mock(), .mock()]
+        XCTAssertEqual(vc.messages.count, 0)
+
+        /// Regular case
+        vc.repliesBypass = { messages in messages.filter(\.isBounced) }
+        vc.messages = [.mock(isBounced: false), .mock(isBounced: true), .mock(isBounced: true)]
+        XCTAssertEqual(vc.messages.count, 2)
+    }
+
+    func test_repliesBypass_whenDidChangeReplies_shouldOverrideNewSnapshot_shouldOverrideChanges() {
+        // vc.messageController(ChatMessageController_Mock.mock(), didChangeReplies: [])
+        XCTFail()
+    }
 }

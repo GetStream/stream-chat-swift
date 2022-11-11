@@ -549,6 +549,24 @@ final class ChatChannelVC_Tests: XCTestCase {
 
         AssertSnapshot(vc, variants: [.defaultLight])
     }
+
+    // MARK: - Messages Bypass
+
+    func test_messagesBypass_shouldOverrideChannelDataSource() {
+        /// Empty case
+        vc.messagesBypass = { _ in [] }
+        vc.messages = [.mock(), .mock(), .mock()]
+        XCTAssertEqual(vc.messages.count, 0)
+
+        /// Regular case
+        vc.messagesBypass = { messages in messages.filter(\.isBounced) }
+        vc.messages = [.mock(isBounced: false), .mock(isBounced: true), .mock(isBounced: true)]
+        XCTAssertEqual(vc.messages.count, 2)
+    }
+
+    func test_messagesBypass_whenDidChangeMessages_shouldOverrideNewSnapshot_shouldOverrideChanges() {
+        XCTFail()
+    }
 }
 
 private extension ChatChannelVC_Tests {
