@@ -1105,6 +1105,7 @@
 		ADB951B2291C3CE900800554 /* AnyAttachmentUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB951B1291C3CE900800554 /* AnyAttachmentUpdater.swift */; };
 		ADB951B3291C3CE900800554 /* AnyAttachmentUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB951B1291C3CE900800554 /* AnyAttachmentUpdater.swift */; };
 		ADB951B5291DD30400800554 /* AnyAttachmentUpdater_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB951B4291DD30400800554 /* AnyAttachmentUpdater_Tests.swift */; };
+		ADB951B7291DDCE600800554 /* StreamAttachmentUploader_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB951B6291DDCE600800554 /* StreamAttachmentUploader_Tests.swift */; };
 		ADBBDA1F279F0CEA00E47B1C /* VideoDurationFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADBBDA1E279F0CEA00E47B1C /* VideoDurationFormatter.swift */; };
 		ADBBDA20279F0CEA00E47B1C /* VideoDurationFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADBBDA1E279F0CEA00E47B1C /* VideoDurationFormatter.swift */; };
 		ADBBDA22279F0CFA00E47B1C /* UploadingProgressFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADBBDA21279F0CFA00E47B1C /* UploadingProgressFormatter.swift */; };
@@ -3327,6 +3328,7 @@
 		ADB951AC291C22DB00800554 /* UploadedAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadedAttachment.swift; sourceTree = "<group>"; };
 		ADB951B1291C3CE900800554 /* AnyAttachmentUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyAttachmentUpdater.swift; sourceTree = "<group>"; };
 		ADB951B4291DD30400800554 /* AnyAttachmentUpdater_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyAttachmentUpdater_Tests.swift; sourceTree = "<group>"; };
+		ADB951B6291DDCE600800554 /* StreamAttachmentUploader_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamAttachmentUploader_Tests.swift; sourceTree = "<group>"; };
 		ADBBDA1E279F0CEA00E47B1C /* VideoDurationFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoDurationFormatter.swift; sourceTree = "<group>"; };
 		ADBBDA21279F0CFA00E47B1C /* UploadingProgressFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadingProgressFormatter.swift; sourceTree = "<group>"; };
 		ADBBDA27279F0E9B00E47B1C /* ChannelNameFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelNameFormatter.swift; sourceTree = "<group>"; };
@@ -5532,6 +5534,7 @@
 				79DDF80F249CB92E002F4412 /* RequestDecoder_Tests.swift */,
 				7964F3BD249A5E6E002A09EC /* RequestEncoder_Tests.swift */,
 				649968D6264E693E000515AB /* StreamCDNClient_Tests.swift */,
+				ADB951B6291DDCE600800554 /* StreamAttachmentUploader_Tests.swift */,
 				A364D09327D0BF330029857A /* Endpoints */,
 			);
 			path = APIClient;
@@ -9825,6 +9828,7 @@
 				884C612A2594A7DB008B70DC /* AttachmentActionRequestBody_Tests.swift in Sources */,
 				84A1D2F026AB10DB00014712 /* EventDecoder_Tests.swift in Sources */,
 				BCE4831434E78C9538FA73F8 /* JSONDecoder_Tests.swift in Sources */,
+				ADB951B7291DDCE600800554 /* StreamAttachmentUploader_Tests.swift in Sources */,
 				BCE486580F913CFFDB3B5ECD /* JSONEncoder_Tests.swift in Sources */,
 				BCE48639FD7B6B05CD63A6AF /* FilterDecoding_Tests.swift in Sources */,
 				AC889AA728C74D1200EDA0B9 /* CallRepository_Tests.swift in Sources */,
