@@ -19,6 +19,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Properly recover from a missing/expired token on the first execution of `TokenProvider` [#2361](https://github.com/GetStream/stream-chat-swift/pull/2361)
 - Fix data races created by `AsyncOperation` looped execution when refreshing tokens [#2361](https://github.com/GetStream/stream-chat-swift/pull/2361)
 
+## StreamChatUI
+### 🐞 Fixed
+- Fix issue where cell content would not be updated when order changes in Channel List [#2371](https://github.com/GetStream/stream-chat-swift/pull/2371)
+
 # [4.23.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.23.0)
 _October 27, 2022_
 
