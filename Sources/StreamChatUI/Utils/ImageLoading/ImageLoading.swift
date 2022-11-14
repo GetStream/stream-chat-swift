@@ -22,6 +22,21 @@ public protocol ImageLoading: AnyObject {
         completion: ((_ result: Result<UIImage, Error>) -> Void)?
     ) -> Cancellable?
 
+    /// Load an image into an imageView from a given `ImageAttachmentPayload`.
+    /// - Parameters:
+    ///   - imageView: The image view where the image will be loaded.
+    ///   - attachmentPayload: The image attachment payload.
+    ///   - maxResolutionInPixels: The maximum number of pixels the loaded image should have.
+    ///   - completion: The completion when the loading is finished.
+    /// - Returns: A cancellable task.
+    @discardableResult
+    func loadImage(
+        into imageView: UIImageView,
+        from attachmentPayload: ImageAttachmentPayload?,
+        maxResolutionInPixels: Double,
+        completion: ((_ result: Result<UIImage, Error>) -> Void)?
+    ) -> Cancellable?
+
     /// Download an image from the given `URL`.
     /// - Parameters:
     ///   - request: The url and options information of an image download request.

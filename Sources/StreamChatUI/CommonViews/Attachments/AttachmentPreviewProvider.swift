@@ -19,7 +19,7 @@ extension ImageAttachmentPayload: AttachmentPreviewProvider {
     /// The view representing the attachment.
     public func previewView(components: Components) -> UIView {
         let view = components.imageAttachmentComposerPreview.init()
-        view.content = imagePreviewURL
+        view.content = imageURL
         return view
     }
 }

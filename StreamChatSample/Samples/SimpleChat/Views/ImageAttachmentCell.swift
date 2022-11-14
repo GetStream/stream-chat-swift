@@ -77,7 +77,7 @@ final class ImageAttachmentCell: UITableViewCell {
         
         activityInicator.startAnimating()
         Nuke.loadImage(
-            with: imageAttachment.imagePreviewURL,
+            with: imageAttachment.imageURL,
             into: attachmentImageView,
             completion: { [weak self] _ in
                 self?.activityInicator.stopAnimating()

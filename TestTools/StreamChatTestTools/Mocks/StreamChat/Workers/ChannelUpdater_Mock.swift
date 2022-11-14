@@ -92,7 +92,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
     @Atomic var uploadFile_localFileURL: URL?
     @Atomic var uploadFile_cid: ChannelId?
     @Atomic var uploadFile_progress: ((Double) -> Void)?
-    @Atomic var uploadFile_completion: ((Result<URL, Error>) -> Void)?
+    @Atomic var uploadFile_completion: ((Result<UploadedAttachment, Error>) -> Void)?
     
     @Atomic var loadPinnedMessages_cid: ChannelId?
     @Atomic var loadPinnedMessages_query: PinnedMessagesQuery?
@@ -342,13 +342,13 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         freezeChannel_cid = cid
         freezeChannel_completion = completion
     }
-    
+
     override func uploadFile(
         type: AttachmentType,
         localFileURL: URL,
         cid: ChannelId,
         progress: ((Double) -> Void)? = nil,
-        completion: @escaping ((Result<URL, Error>) -> Void)
+        completion: @escaping ((Result<UploadedAttachment, Error>) -> Void)
     ) {
         uploadFile_type = type
         uploadFile_localFileURL = localFileURL

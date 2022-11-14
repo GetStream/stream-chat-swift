@@ -2,8 +2,8 @@
 title: Message Composer Custom Attachments
 ---
 
-import ComponentsNote from '../common-content/components-note.md'
-import ThemingNote from '../common-content/theming-note.md'
+import ComponentsNote from '../../common-content/components-note.md'
+import ThemingNote from '../../common-content/theming-note.md'
 
 The `ComposerVC` can be customized in order to change the built-in attachments or can be extended to support your own custom attachments. By default the composer handles images, videos, giphy's and files, but you can create your own custom attachments. Some examples of common custom attachments are: location sharing, contact details, workouts and voice memos. You can read more about how attachments work in the [Working with Attachments](../../../ios/guides/working-with-attachments) guide.
 
@@ -22,7 +22,7 @@ Appearance.default.images.openAttachments = UIImage(systemName: "plus")
 
 | Before  | After |
 | ------------- | ------------- |
-| <img src={require("../assets/composer-custom-attachment-clip.png").default} width="100%"/> | <img src={require("../assets/composer-custom-attachment-plus.png").default} width="100%"/> |
+| <img src={require("../../assets/composer-custom-attachment-clip.png").default} width="100%"/> | <img src={require("../../assets/composer-custom-attachment-plus.png").default} width="100%"/> |
 
 <ThemingNote />
 
@@ -49,7 +49,7 @@ Components.default.messageComposerVC = CustomComposerVC.self
 
 | Before  | After |
 | ------------- | ------------- |
-| <img src={require("../assets/composer-custom-attachment-plus.png").default} width="100%"/> | <img src={require("../assets/composer-custom-attachment-plus-styled.png").default} width="100%"/> |
+| <img src={require("../../assets/composer-custom-attachment-plus.png").default} width="100%"/> | <img src={require("../../assets/composer-custom-attachment-plus-styled.png").default} width="100%"/> |
 
 <ComponentsNote />
 
@@ -98,7 +98,7 @@ Components.default.messageComposerVC = CustomComposerVC.self
 ```
 | Before  | After |
 | ------------- | ------------- |
-| <img src={require("../assets/composer-custom-action-before.png").default} width="100%"/> | <img src={require("../assets/composer-custom-action-after.png").default} width="100%"/> |
+| <img src={require("../../assets/composer-custom-action-before.png").default} width="100%"/> | <img src={require("../../assets/composer-custom-action-after.png").default} width="100%"/> |
 
 With the new action added, now if the user selects the Camera action it will present the native iOS Camera so the user can directly add a photo to the attachments.
 
@@ -257,7 +257,7 @@ extension ContactAttachmentPayload: AttachmentPreviewProvider {
 Both the function and the static property implementations are required to conform to `AttachmentPreviewProvider`. The `preferredAxis` is how the custom attachments should be displayed together, in a horizontal stack, or vertical stack. Finally, we need to return the `previewView()` for the contact attachment payload, so we return `ContactAttachmentView` and set the content of the view to `self`, which is of course the `ContactAttachmentPayload`.
 
 **Result:**
-<img src={require("../assets/composer-custom-contact-attachment.png").default} width="35%"/>
+<img src={require("../../assets/composer-custom-contact-attachment.png").default} width="35%"/>
 
 
 :::note
@@ -350,4 +350,4 @@ Creating `MyCustomMediaPickerView` is out of scope of this guide. This is just a
 
 With this kind of customization you can show your custom attachments picker view below the composer like this example design:
 
-<img src={require("../assets/composer-custom-input-view.png").default} width="35%"/>
+<img src={require("../../assets/composer-custom-input-view.png").default} width="35%"/>

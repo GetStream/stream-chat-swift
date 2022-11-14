@@ -23,12 +23,12 @@ final class APIClient_Spy: APIClient, Spy {
     /// The last endpoint `uploadFile` function was called with.
     @Atomic var uploadFile_attachment: AnyChatMessageAttachment?
     @Atomic var uploadFile_progress: ((Double) -> Void)?
-    @Atomic var uploadFile_completion: ((Result<URL, Error>) -> Void)?
+    @Atomic var uploadFile_completion: ((Result<UploadedAttachment, Error>) -> Void)?
     
     @Atomic var init_sessionConfiguration: URLSessionConfiguration
     @Atomic var init_requestEncoder: RequestEncoder
     @Atomic var init_requestDecoder: RequestDecoder
-    @Atomic var init_CDNClient: CDNClient
+    @Atomic var init_attachmentUploader: AttachmentUploader
     @Atomic var request_expectation: XCTestExpectation
 
     // Cleans up all recorded values
@@ -53,21 +53,21 @@ final class APIClient_Spy: APIClient, Spy {
         sessionConfiguration: URLSessionConfiguration,
         requestEncoder: RequestEncoder,
         requestDecoder: RequestDecoder,
-        CDNClient: CDNClient,
+        attachmentUploader: AttachmentUploader,
         tokenRefresher: ((@escaping () -> Void) -> Void)!,
         queueOfflineRequest: @escaping QueueOfflineRequestBlock
     ) {
         init_sessionConfiguration = sessionConfiguration
         init_requestEncoder = requestEncoder
         init_requestDecoder = requestDecoder
-        init_CDNClient = CDNClient
+        init_attachmentUploader = attachmentUploader
         request_expectation = .init()
 
         super.init(
             sessionConfiguration: sessionConfiguration,
             requestEncoder: requestEncoder,
             requestDecoder: requestDecoder,
-            CDNClient: CDNClient,
+            attachmentUploader: attachmentUploader,
             tokenRefresher: tokenRefresher,
             queueOfflineRequest: queueOfflineRequest
         )
@@ -106,7 +106,7 @@ final class APIClient_Spy: APIClient, Spy {
     override func uploadAttachment(
         _ attachment: AnyChatMessageAttachment,
         progress: ((Double) -> Void)?,
-        completion: @escaping (Result<URL, Error>) -> Void
+        completion: @escaping (Result<UploadedAttachment, Error>) -> Void
     ) {
         uploadFile_attachment = attachment
         uploadFile_progress = progress
@@ -140,7 +140,7 @@ extension APIClient_Spy {
             sessionConfiguration: .ephemeral,
             requestEncoder: DefaultRequestEncoder(baseURL: .unique(), apiKey: .init(.unique)),
             requestDecoder: DefaultRequestDecoder(),
-            CDNClient: CDNClient_Spy(),
+            attachmentUploader: AttachmentUploader_Spy(),
             tokenRefresher: { _ in },
             queueOfflineRequest: { _ in }
         )

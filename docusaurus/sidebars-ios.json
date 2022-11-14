@@ -44,6 +44,7 @@
           "uikit/guides/customize-message-actions",
           "uikit/guides/working-with-attachments",
           "uikit/guides/customize-message-composer",
+          "uikit/guides/message-composer-custom-attachments",
           "uikit/guides/message-list-delivery-status",
           "uikit/guides/customize-message-delivery-status"
           ]
@@ -102,6 +103,7 @@
         "client/offline-support",
         "client/importance-of-synchronize",
         "client/push-notifications",
+        "client/custom-cdn",
         {
           "Controllers and Delegates": [
             "client/controllers/controllers-overview",
@@ -132,7 +134,6 @@
     },
     {
       "Guides": [
-        "guides/message-composer-custom-attachments",
         {
           "Third Party Video": [
             "guides/video-100ms",

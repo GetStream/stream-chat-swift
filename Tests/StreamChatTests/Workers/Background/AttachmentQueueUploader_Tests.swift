@@ -6,11 +6,11 @@
 @testable import StreamChatTestTools
 import XCTest
 
-final class AttachmentUploader_Tests: XCTestCase {
+final class AttachmentQueueUploader_Tests: XCTestCase {
     var webSocketClient: WebSocketClient_Mock!
     var apiClient: APIClient_Spy!
     var database: DatabaseContainer_Spy!
-    var uploader: AttachmentUploader!
+    var queueUploader: AttachmentQueueUploader!
 
     // MARK: - Setup
 
@@ -20,14 +20,14 @@ final class AttachmentUploader_Tests: XCTestCase {
         webSocketClient = WebSocketClient_Mock()
         apiClient = APIClient_Spy()
         database = DatabaseContainer_Spy()
-        uploader = AttachmentUploader(database: database, apiClient: apiClient)
+        queueUploader = AttachmentQueueUploader(database: database, apiClient: apiClient)
     }
 
     override func tearDown() {
         apiClient.cleanUp()
 
         AssertAsync {
-            Assert.canBeReleased(&uploader)
+            Assert.canBeReleased(&queueUploader)
             Assert.canBeReleased(&webSocketClient)
             Assert.canBeReleased(&apiClient)
             Assert.canBeReleased(&database)
@@ -47,13 +47,14 @@ final class AttachmentUploader_Tests: XCTestCase {
         // Create message in the database.
         try database.createMessage(id: messageId, cid: cid, localState: .pendingSend)
 
-        let attachmentEnvelopes: [AnyAttachmentPayload] = [
+        let attachmentPayloads: [AnyAttachmentPayload] = [
             .mockFile,
             .mockImage,
-            .mockVideo
+            .mockVideo,
+            .mockAudio
         ]
 
-        for (index, envelope) in attachmentEnvelopes.enumerated() {
+        for (index, envelope) in attachmentPayloads.enumerated() {
             let attachmentId = AttachmentId(cid: cid, messageId: messageId, index: index)
             // Seed attachment in `.pendingUpload` state to the database.
             try database.writeSynchronously { session in
@@ -73,7 +74,7 @@ final class AttachmentUploader_Tests: XCTestCase {
                 attachmentModelId
             )
 
-            for progress in stride(from: 0, through: 1, by: 5 * uploader.minSignificantUploadingProgressChange) {
+            for progress in stride(from: 0, through: 1, by: 5 * queueUploader.minSignificantUploadingProgressChange) {
                 // Simulate progress in uploading process.
                 apiClient.uploadFile_progress?(progress)
                 // Assert uploading progress in reflected by attachment local state.
@@ -81,8 +82,9 @@ final class AttachmentUploader_Tests: XCTestCase {
             }
 
             // Simulate successful backend response with remote file URL.
-            let payload = FileUploadPayload(file: .unique())
-            apiClient.uploadFile_completion?(.success(payload.file))
+            let response = UploadedAttachment.dummy(attachment: attachment.asAnyModel(), remoteURL: .fakeFile)
+            let remoteUrl = response.remoteURL
+            apiClient.uploadFile_completion?(.success(response))
 
             switch envelope.type {
             case .image:
@@ -93,7 +95,7 @@ final class AttachmentUploader_Tests: XCTestCase {
                     // Assert attachment state eventually becomes `.uploaded`.
                     Assert.willBeEqual(imageModel?.uploadingState?.state, .uploaded)
                     // Assert `attachment.imageURL` is set.
-                    Assert.willBeEqual(originalURLString(imageModel?.imageURL), payload.file.absoluteString)
+                    Assert.willBeEqual(originalURLString(imageModel?.imageURL), remoteUrl.absoluteString)
                 }
             case .file:
                 var fileModel: ChatMessageFileAttachment? {
@@ -103,7 +105,7 @@ final class AttachmentUploader_Tests: XCTestCase {
                     // Assert attachment state eventually becomes `.uploaded`.
                     Assert.willBeEqual(fileModel?.uploadingState?.state, .uploaded)
                     // Assert `attachment.assetURL` is set.
-                    Assert.willBeEqual(originalURLString(fileModel?.assetURL), payload.file.absoluteString)
+                    Assert.willBeEqual(originalURLString(fileModel?.assetURL), remoteUrl.absoluteString)
                 }
             case .video:
                 var videoModel: ChatMessageVideoAttachment? {
@@ -113,7 +115,17 @@ final class AttachmentUploader_Tests: XCTestCase {
                     // Assert attachment state eventually becomes `.uploaded`.
                     Assert.willBeEqual(videoModel?.uploadingState?.state, .uploaded)
                     // Assert `attachment.assetURL` is set.
-                    Assert.willBeEqual(originalURLString(videoModel?.videoURL), payload.file.absoluteString)
+                    Assert.willBeEqual(originalURLString(videoModel?.videoURL), remoteUrl.absoluteString)
+                }
+            case .audio:
+                var audioModel: ChatMessageAudioAttachment? {
+                    attachment.asAnyModel().attachment(payloadType: AudioAttachmentPayload.self)
+                }
+                AssertAsync {
+                    // Assert attachment state eventually becomes `.uploaded`.
+                    Assert.willBeEqual(audioModel?.uploadingState?.state, .uploaded)
+                    // Assert `attachment.assetURL` is set.
+                    Assert.willBeEqual(originalURLString(audioModel?.audioURL), remoteUrl.absoluteString)
                 }
             default: throw TestError()
             }
@@ -177,7 +189,7 @@ final class AttachmentUploader_Tests: XCTestCase {
         )
 
         // Assert uploader can be released even though uploading is in progress.
-        AssertAsync.canBeReleased(&uploader)
+        AssertAsync.canBeReleased(&queueUploader)
     }
 }
 

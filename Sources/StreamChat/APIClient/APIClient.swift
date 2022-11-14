@@ -21,8 +21,8 @@ class APIClient {
     /// Used to queue requests that happen while we are offline
     let queueOfflineRequest: QueueOfflineRequestBlock
 
-    /// Client that handles the work related to content (e.g. attachments)
-    let cdnClient: CDNClient
+    /// The attachment uploader.
+    let attachmentUploader: AttachmentUploader
 
     /// Queue in charge of handling incoming requests
     private let operationQueue: OperationQueue = {
@@ -61,23 +61,18 @@ class APIClient {
     }
 
     /// Creates a new `APIClient`.
-    ///
-    /// - Parameters:
-    ///   - sessionConfiguration: The session configuration `APIClient` uses to create its `URLSession`.
-    ///   - requestEncoder: `APIClient` uses this object to encode `Endpoint` objects into `URLRequest`s.
-    ///   - requestDecoder: `APIClient` uses this object to decode the results of network requests.
     init(
         sessionConfiguration: URLSessionConfiguration,
         requestEncoder: RequestEncoder,
         requestDecoder: RequestDecoder,
-        CDNClient: CDNClient,
+        attachmentUploader: AttachmentUploader,
         tokenRefresher: @escaping (@escaping () -> Void) -> Void,
         queueOfflineRequest: @escaping QueueOfflineRequestBlock
     ) {
         encoder = requestEncoder
         decoder = requestDecoder
         session = URLSession(configuration: sessionConfiguration)
-        cdnClient = CDNClient
+        self.attachmentUploader = attachmentUploader
         self.tokenRefresher = tokenRefresher
         self.queueOfflineRequest = queueOfflineRequest
     }
@@ -265,11 +260,10 @@ class APIClient {
     func uploadAttachment(
         _ attachment: AnyChatMessageAttachment,
         progress: ((Double) -> Void)?,
-        completion: @escaping (Result<URL, Error>) -> Void
+        completion: @escaping (Result<UploadedAttachment, Error>) -> Void
     ) {
-        let cdnClient = self.cdnClient
         let uploadOperation = AsyncOperation(maxRetries: maximumRequestRetries) { [weak self] operation, done in
-            cdnClient.uploadAttachment(attachment, progress: progress) { result in
+            self?.attachmentUploader.upload(attachment, progress: progress) { result in
                 switch result {
                 case let .failure(error) where self?.isConnectionError(error) == true:
                     // Do not retry unless its a connection problem and we still have retries left

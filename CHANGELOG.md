@@ -4,6 +4,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
+### 🔄 Changed
+- `channelController.uploadFile()` and `channelController.uploadImage()` are deprecated in favour of `channelController.uploadAttachment()` [#2369](https://github.com/GetStream/stream-chat-swift/pull/2369) 
+- `imageAttachmentPayload.imagePreviewURL` is deprecated since it was misleading, it was basically using the original `imageURL` [#2369](https://github.com/GetStream/stream-chat-swift/pull/2369)
+
+### ✅ Added
+- Added new `AttachmentUploader` to allow changing attachment info with custom CDN [#2369](https://github.com/GetStream/stream-chat-swift/pull/2369)
+
 ### 🐞 Fixed
 - Add timeout for token/connectionId providers so that `ChatClient.connect()` completes even in edge cases where we cannot get the needed data [#2361](https://github.com/GetStream/stream-chat-swift/pull/2361)
 - Stop spamming the console with "Socket is not connected" error when token is being refreshed [#2361](https://github.com/GetStream/stream-chat-swift/pull/2361)

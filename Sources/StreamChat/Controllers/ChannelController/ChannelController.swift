@@ -1247,51 +1247,27 @@ public extension ChatChannelController {
             }
         }
     }
-    
-    /// Uploads the given file to CDN and returns the file URL.
+
+    /// Uploads the given file to CDN and returns an attachment and the remote url.
     /// - Parameters:
     ///   - localFileURL: Local URL of the file.
-    ///   - progress: Upload progress callback
-    ///   - completion: Completion to be called when upload finishes, or errors.  Will be called on a **callbackQueue** when the network request is finished.
-    func uploadFile(
+    ///   - type: The attachment type.
+    ///   - progress: Upload progress callback.
+    ///   - completion: Returns an uploaded attachment containing the remote url and the attachment metadata.
+    func uploadAttachment(
         localFileURL: URL,
+        type: AttachmentType,
         progress: ((Double) -> Void)? = nil,
-        completion: @escaping ((Result<URL, Error>) -> Void)
+        completion: @escaping ((Result<UploadedAttachment, Error>) -> Void)
     ) {
-        /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed { error in
                 completion(.failure(error ?? ClientError.ChannelNotCreatedYet()))
             }
             return
         }
-        
-        updater.uploadFile(type: .file, localFileURL: localFileURL, cid: cid, progress: progress) { result in
-            self.callback {
-                completion(result)
-            }
-        }
-    }
-    
-    /// Uploads the given image to CDN and returns the file URL.
-    /// - Parameters:
-    ///   - localFileURL: Local URL of the image.
-    ///   - progress: Upload progress callback
-    ///   - completion: Completion to be called when upload finishes, or errors.  Will be called on a **callbackQueue** when the network request is finished.
-    func uploadImage(
-        localFileURL: URL,
-        progress: ((Double) -> Void)? = nil,
-        completion: @escaping ((Result<URL, Error>) -> Void)
-    ) {
-        /// Perform action only if channel is already created on backend side and have a valid `cid`.
-        guard let cid = cid, isChannelAlreadyCreated else {
-            channelModificationFailed { error in
-                completion(.failure(error ?? ClientError.ChannelNotCreatedYet()))
-            }
-            return
-        }
-        
-        updater.uploadFile(type: .image, localFileURL: localFileURL, cid: cid, progress: progress) { result in
+
+        updater.uploadFile(type: type, localFileURL: localFileURL, cid: cid, progress: progress) { result in
             self.callback {
                 completion(result)
             }
@@ -1474,4 +1450,40 @@ extension ClientError {
 
 extension ClientError {
     class ChannelFeatureDisabled: ClientError {}
+}
+
+// MARK: - Deprecations
+
+extension ChatChannelController {
+    /// Uploads the given file to CDN and returns the file URL.
+    /// - Parameters:
+    ///   - localFileURL: Local URL of the file.
+    ///   - progress: Upload progress callback
+    ///   - completion: Completion to be called when upload finishes, or errors.
+    @available(*, deprecated, message: "use uploadAttachment() instead.")
+    func uploadFile(
+        localFileURL: URL,
+        progress: ((Double) -> Void)? = nil,
+        completion: @escaping ((Result<URL, Error>) -> Void)
+    ) {
+        uploadAttachment(localFileURL: localFileURL, type: .file, progress: progress) { result in
+            completion(result.map(\.remoteURL))
+        }
+    }
+
+    /// Uploads the given image to CDN and returns the file URL.
+    /// - Parameters:
+    ///   - localFileURL: Local URL of the image.
+    ///   - progress: Upload progress callback
+    ///   - completion: Completion to be called when upload finishes, or errors.
+    @available(*, deprecated, message: "use uploadAttachment() instead.")
+    func uploadImage(
+        localFileURL: URL,
+        progress: ((Double) -> Void)? = nil,
+        completion: @escaping ((Result<URL, Error>) -> Void)
+    ) {
+        uploadAttachment(localFileURL: localFileURL, type: .image, progress: progress) { result in
+            completion(result.map(\.remoteURL))
+        }
+    }
 }
