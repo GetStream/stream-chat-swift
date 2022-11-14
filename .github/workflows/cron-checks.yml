@@ -33,6 +33,7 @@ jobs:
     - uses: ./.github/actions/bootstrap
       env:
         INSTALL_ALLURE: true
+        INSTALL_XCPARSE: true
     - name: Setup iOS ${{ matrix.ios }} Runtime
       if: ${{ matrix.ios != 'latest' }}
       run: xcversion simulators --install='iOS ${{ matrix.ios }}'
@@ -57,6 +58,17 @@ jobs:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         MATRIX_CONTEXT: ${{ toJson(matrix) }}
       if: failure()
+    - name: Parse xcresult
+      if: failure()
+      run: xcparse logs fastlane/test_output/StreamChatUITestsApp.xcresult fastlane/test_output/logs/
+    - uses: actions/upload-artifact@v3
+      if: failure()
+      with:
+        name: Test Data
+        path: |
+          fastlane/recordings
+          fastlane/sinatra_log.txt
+          fastlane/test_output/logs/*/Diagnostics/StreamChatUITestsAppUITests-*/*/*.txt
 
   build-and-test-debug:
     name: Test LLC (Debug)
