@@ -330,18 +330,22 @@ open class ChatThreadVC: _ViewController,
     }
 
     private func updateMessages(with changes: [ListChange<ChatMessage>]) {
-        messageListVC.setPreviousMessagesSnapshot(self.messages)
-
         let messages = getRepliesWithThreadRootMessage(from: messageController)
+
         let newMessages: [ChatMessage]
+        let newChanges: [ListChange<ChatMessage>]
         if let repliesBypass = repliesBypass {
             newMessages = repliesBypass(messages)
+            let messageIds = Set(newMessages.map(\.id))
+            newChanges = changes.filter { messageIds.contains($0.item.id) }
         } else {
             newMessages = messages
+            newChanges = changes
         }
 
+        messageListVC.setPreviousMessagesSnapshot(self.messages)
         messageListVC.setNewMessagesSnapshot(newMessages)
-        messageListVC.updateMessages(with: changes)
+        messageListVC.updateMessages(with: newChanges)
     }
 
     private func getRepliesWithThreadRootMessage(from messageController: ChatMessageController) -> [ChatMessage] {

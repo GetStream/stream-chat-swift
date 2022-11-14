@@ -274,15 +274,19 @@ open class ChatChannelVC: _ViewController,
         }
 
         let newMessages: [ChatMessage]
-        if let messagesBypass = messagesBypass {
+        let newChanges: [ListChange<ChatMessage>]
+        if let messagesBypass = self.messagesBypass {
             newMessages = messagesBypass(Array(channelController.messages))
+            let messageIds = Set(newMessages.map(\.id))
+            newChanges = changes.filter { messageIds.contains($0.item.id) }
         } else {
             newMessages = Array(channelController.messages)
+            newChanges = changes
         }
 
         messageListVC.setPreviousMessagesSnapshot(messages)
         messageListVC.setNewMessagesSnapshot(newMessages)
-        messageListVC.updateMessages(with: changes)
+        messageListVC.updateMessages(with: newChanges)
     }
 
     open func channelController(
