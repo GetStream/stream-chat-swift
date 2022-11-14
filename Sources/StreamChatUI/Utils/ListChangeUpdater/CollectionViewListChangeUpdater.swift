@@ -2,7 +2,6 @@
 // Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
-import Foundation
 import StreamChat
 import UIKit
 
@@ -22,23 +21,6 @@ final class CollectionViewListChangeUpdater: ListChangeUpdater {
     ///   - changes: The provided changes reported by a list controller.
     ///   - completion: A callback when the changes are fully executed.
     func performUpdate<Item>(with changes: [ListChange<Item>], completion: ((_ finished: Bool) -> Void)? = nil) {
-        guard let indices = listChangeIndexPathResolver.resolve(
-            changes: changes
-        ) else {
-            collectionView?.reloadData()
-            completion?(true)
-            return
-        }
-
-        collectionView?.performBatchUpdates({
-            collectionView?.deleteItems(at: Array(indices.remove))
-            collectionView?.insertItems(at: Array(indices.insert))
-            collectionView?.reloadItems(at: Array(indices.update))
-            indices.move.forEach {
-                collectionView?.moveItem(at: $0.fromIndex, to: $0.toIndex)
-            }
-        }, completion: { finished in
-            completion?(finished)
-        })
+        performUpdate(on: collectionView, with: changes, pathResolver: listChangeIndexPathResolver, completion: completion)
     }
 }
