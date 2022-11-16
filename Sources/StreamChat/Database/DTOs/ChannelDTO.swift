@@ -311,6 +311,14 @@ extension NSManagedObjectContext {
         delete(dto)
     }
 
+    func deleteChannelMessages(cid: ChannelId) {
+        guard let channelDTO = ChannelDTO.load(cid: cid, context: self) else {
+            return
+        }
+        channelDTO.messages.removeAll()
+        channelDTO.oldestMessageAt = nil
+    }
+
     func cleanChannels(cids: Set<ChannelId>) {
         let channels = ChannelDTO.load(cids: Array(cids), context: self)
         for channelDTO in channels {

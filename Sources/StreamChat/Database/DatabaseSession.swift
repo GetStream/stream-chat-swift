@@ -264,6 +264,9 @@ protocol ChannelDatabaseSession {
     /// Removes channel list query from database.
     func delete(query: ChannelListQuery)
 
+    /// Removes all the messages from a channel.
+    func deleteChannelMessages(cid: ChannelId)
+
     /// Cleans a list of channels based on their id
     func cleanChannels(cids: Set<ChannelId>)
 
