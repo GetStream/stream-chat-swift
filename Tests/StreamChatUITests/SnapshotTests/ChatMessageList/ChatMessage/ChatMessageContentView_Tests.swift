@@ -207,28 +207,6 @@ final class ChatMessageContentView_Tests: XCTestCase {
           **bold** or __bold__
           ~~Linethrough~~Strikethroughs.
           `let property: Double = 10.0`
-
-          # Header 1
-          ## Header 2
-          ### Header 3
-          #### Header 4
-          ##### Header 5 #####
-          ###### Header 6 ######
-
-          [Links](https://getstream.io/)
-
-          > Blockquotes
-
-          - Bulleted
-          - Lists
-              - Including indented lists
-                  - Up to three levels
-          - Neat!
-
-          1. Ordered
-          1. Lists
-              1. Including indented lists
-                  - Up to three levels
         """
         
         let sentMessageFromCurrentUser: ChatMessage = .mock(
