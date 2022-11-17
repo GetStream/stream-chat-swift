@@ -12,6 +12,8 @@ public final class StreamMockServer {
     public static var httpResponseDelay: TimeInterval = 0.0
     // Waits for all HTTP and Websocket responses during given time interval, 10 by default
     public static var waitTimeout = 10.0
+    // Expires JWT after given timeout if `MOCK_JWT environment variable is provided
+    public static let jwtTimeout: UInt32 = 5
 
     public private(set) var server: HttpServer = HttpServer()
     private weak var globalSession: WebSocketSession?

@@ -71,7 +71,7 @@ lane :release do |options|
   data_hash[version_number.to_s] = "https://github.com/#{github_repo}/releases/download/#{version_number}/StreamChat-All.zip"
   File.write('../StreamChatArtifacts.json', JSON.dump(data_hash))
 
-  changes = touch_changelog(release_version: version_number)
+  changes = touch_changelog(release_version: version_number, github_repo: github_repo)
 
   # Make sure the podspecs actually build before pushing
   # Disabled now since `StreamChatUI` pod lints it against `StreamChat`s latest version instead of `develop` branch
