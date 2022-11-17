@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.24.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.24.0)
+_November 15, 2022_
+
 ## StreamChat
 ### 🔄 Changed
 - `channelController.uploadFile()` and `channelController.uploadImage()` are deprecated in favour of `channelController.uploadAttachment()` [#2369](https://github.com/GetStream/stream-chat-swift/pull/2369) 
