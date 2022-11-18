@@ -24,7 +24,11 @@ enum ChannelListPage {
     }
     
     static var connectionStatus: XCUIElement {
-        app.navigationBars.staticTexts.firstMatch
+        if ProcessInfo().operatingSystemVersion.majorVersion == 12 {
+            return app.navigationBars.otherElements.firstMatch
+        } else {
+            return app.navigationBars.staticTexts.firstMatch
+        }
     }
     
     enum ConnectionStatus: String {
