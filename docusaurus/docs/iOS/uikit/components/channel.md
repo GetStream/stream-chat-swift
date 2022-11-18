@@ -22,7 +22,7 @@ The following diagram shows the components hierarchy of `ChatChannelVC`:
 
 ### Overview
 
-- [`ChatChannelHeaderView`](../channel-header-view) is responsible to display the channel information in the `navigationItem.titleView`.
+- [`ChatChannelHeaderView`](../views/channel-header-view) is responsible to display the channel information in the `navigationItem.titleView`.
 - [`ChatMessageListVC`](../message-list) is the component that handles the rendering of the messages.
 - [`ComposerVC`](../message-composer) is the component that handles the creation of new messages.
 

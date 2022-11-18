@@ -22,6 +22,7 @@
         {
           "Core Components": [
             "uikit/components/channel-list",
+            "uikit/components/message-list",
             "uikit/components/channel",
             "uikit/components/thread",
             "uikit/components/message",

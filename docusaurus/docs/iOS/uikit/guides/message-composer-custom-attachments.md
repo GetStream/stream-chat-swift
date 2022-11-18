@@ -5,7 +5,7 @@ title: Message Composer Custom Attachments
 import ComponentsNote from '../../common-content/components-note.md'
 import ThemingNote from '../../common-content/theming-note.md'
 
-The `ComposerVC` can be customized in order to change the built-in attachments or can be extended to support your own custom attachments. By default the composer handles images, videos, giphy's and files, but you can create your own custom attachments. Some examples of common custom attachments are: location sharing, contact details, workouts and voice memos. You can read more about how attachments work in the [Working with Attachments](../../../ios/guides/working-with-attachments) guide.
+The `ComposerVC` can be customized in order to change the built-in attachments or can be extended to support your own custom attachments. By default the composer handles images, videos, giphy's and files, but you can create your own custom attachments. Some examples of common custom attachments are: location sharing, contact details, workouts and voice memos. You can read more about how attachments work in the [Working with Attachments](../../uikit/guides/working-with-attachments) guide.
 
 All the provided attachments are customizable in the composer in terms of style changes, layout changes or how they are presented. For example, you can change the clip button styling responsible for opening the attachments picker, you can replace the built-in attachments picker with your own, or even change all the flow and render the attachments picker in a subview instead of being presented in a view controller.
 
@@ -241,7 +241,7 @@ class ContactAttachmentView: _View, AppearanceProvider {
     }
 }
 ```
-The `ContactAttachmentView` must subclass from `_View` and implement the required lifecycle functions as described in the [Custom Components](../uikit/custom-components) page. The contact attachment view is a pretty simple one with just a vertical stack displaying the name of the contact at the top, and the number at the bottom. But in order for the composer to use this new attachment view we still need to let the composer know that the `ContactAttachmentPayload` is rendered by `ContactAttachmentView`. To do that we need to make `ContactAttachmentPayload` conform to `AttachmentPreviewProvider` protocol:
+The `ContactAttachmentView` must subclass from `_View` and implement the required lifecycle functions as described in the [Custom Components](../../custom-components) page. The contact attachment view is a pretty simple one with just a vertical stack displaying the name of the contact at the top, and the number at the bottom. But in order for the composer to use this new attachment view we still need to let the composer know that the `ContactAttachmentPayload` is rendered by `ContactAttachmentView`. To do that we need to make `ContactAttachmentPayload` conform to `AttachmentPreviewProvider` protocol:
 ```swift
 extension ContactAttachmentPayload: AttachmentPreviewProvider {
     static let preferredAxis: NSLayoutConstraint.Axis = .vertical
