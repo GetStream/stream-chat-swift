@@ -15,14 +15,14 @@ The following diagram shows the components hierarchy of `ChatThreadVC`:
     ChatThreadVC -> ChatThreadHeaderView
     ChatThreadVC -> ChatMessageListVC
     ChatThreadVC -> ComposerVC
-    ChatThreadHeaderView [href="../thread-header-view"]
+    ChatThreadHeaderView [href="../../views/thread-header-view"]
     ChatMessageListVC [href="../message-list"]
     ComposerVC [href="../message-composer"]
 ` }</Digraph>
 
 ### Overview
 
-- [`ChatThreadHeaderView`](../thread-header-view) is responsible to display the thread information in the `navigationItem.titleView`.
+- [`ChatThreadHeaderView`](../../views/thread-header-view) is responsible to display the thread information in the `navigationItem.titleView`.
 - [`ChatMessageListVC`](../message-list) is the component that handles the rendering of the replies.
 - [`ComposerVC`](../message-composer) is the component that handles the creation of new replies.
 

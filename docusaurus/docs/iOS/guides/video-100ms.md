@@ -365,7 +365,7 @@ You will show a custom UI for call messages in the message list that will look l
 
 ![Preview of how the custom message attachments UI will look like.](../assets/100ms-custom-message-attachments.png)
 
-In order to create custom messages for calls, you will leverage [the custom attachments functionality of the StreamChat SDK](https://getstream.io/chat/docs/sdk/ios/swiftui/components/attachments/). It takes three steps:
+In order to create custom messages for calls, you will leverage [the custom attachments functionality of the StreamChat SDK](../../swiftui/message-components/attachments/). It takes three steps:
 
 1. Create a custom view to show the call messages
 2. Detect when to show the custom call message (with a custom message resolver)

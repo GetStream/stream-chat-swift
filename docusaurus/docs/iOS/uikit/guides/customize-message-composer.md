@@ -16,7 +16,7 @@ Since the `ComposerView` is responsible for the composer's layout, if you want t
 
 After changing the layout through the following steps you should have the result of the picture above.
 
-First thing we need to do is to subclass the `ComposerView` and change it's layout. To have a better understand of how the `ComposerView`'s layout is structured it is recommended to read this page first, [here](../components/message-composer#composer-view).
+First thing we need to do is to subclass the `ComposerView` and change it's layout. To have a better understand of how the `ComposerView`'s layout is structured it is recommended to read this page first, [here](../../components/message-composer#composer-view).
 ```swift
 class iMessageComposerView: ComposerView {
     override func setUpLayout() {

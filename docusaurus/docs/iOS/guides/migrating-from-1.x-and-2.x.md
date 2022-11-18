@@ -34,4 +34,4 @@ None of the UI SDK components we had in v1.x / v2.x were carried over to StreamC
 
 # StreamChatCore v1.x / v2.x and StreamChatClient v2.x -> StreamChat v4
 
-Our low-level frameworks (`Client` + `Core`) were merged and renamed to `StreamChat`. If you use only our low-level frameworks, you can use our [Introduction page](../basics/getting-started) and [official docs](getstream.io/chat/docs/ios-swift) to get more familiar with the update API and better assess the impact of the changes on your codebase.
+Our low-level frameworks (`Client` + `Core`) were merged and renamed to `StreamChat`. If you use only our low-level frameworks, you can use our [Introduction page](../../basics/getting-started) and [official docs](https://getstream.io/chat/docs/ios-swift) to get more familiar with the update API and better assess the impact of the changes on your codebase.

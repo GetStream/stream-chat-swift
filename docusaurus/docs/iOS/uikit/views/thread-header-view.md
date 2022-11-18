@@ -5,7 +5,7 @@ title: ChatThreadHeaderView
 import ComponentsNote from '../../common-content/components-note.md'
 import Properties from '../../common-content/reference-docs/stream-chat-ui/chat-thread/chat-thread-header-view-properties.md'
 
-This component is responsible to display the information in the header of a thread. By default, it is rendered in the `navigationItem.titleView` of the [`ChatThreadVC`](../thread).
+This component is responsible to display the information in the header of a thread. By default, it is rendered in the `navigationItem.titleView` of the [`ChatThreadVC`](../../components/thread/).
 
 ### Customization
 

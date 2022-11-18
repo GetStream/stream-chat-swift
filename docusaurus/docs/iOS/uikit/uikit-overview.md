@@ -3,7 +3,7 @@ title: UIKit Overview
 slug: /uikit
 ---
 
-This is our UI components chat implementation using strictly UIKit.  If SwiftUI is what you are looking for, please start with our [SwiftUI overview](../swiftui/swiftui).
+This is our UI components chat implementation using strictly UIKit.  If SwiftUI is what you are looking for, please start with our [SwiftUI overview](../swiftui/).
 
 Our UIKit components use the [low-level client](../client) under the hood connecting your app to our Chat API. With the UIKit SDK you should have everything you need to build feature-rich and high-functioning chat user experiences.
 
