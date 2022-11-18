@@ -296,7 +296,7 @@ final class ChannelController_Tests: XCTestCase {
         try client.databaseContainer.writeSynchronously {
             try $0.saveChannel(payload: payload, query: nil, cache: nil)
         }
-        env.channelUpdater?.update_channelCreatedCallback?(channelId)
+        env.channelUpdater?.update_onChannelCreated?(channelId)
         env.channelUpdater?.update_completion?(.success(dummyPayload(with: .unique)))
 
         XCTAssertEqual(controller.channel?.cid, channelId)
@@ -318,7 +318,7 @@ final class ChannelController_Tests: XCTestCase {
         try client.databaseContainer.writeSynchronously {
             try $0.saveChannel(payload: payload, query: nil, cache: nil)
         }
-        env.channelUpdater?.update_channelCreatedCallback?(channelId)
+        env.channelUpdater?.update_onChannelCreated?(channelId)
         env.channelUpdater?.update_completion?(.success(dummyPayload(with: .unique)))
 
         XCTAssertEqual(controller.channel?.cid, channelId)
@@ -349,7 +349,7 @@ final class ChannelController_Tests: XCTestCase {
         // from NSURLSession-delegate (serial) queue
         let _: Bool = try waitFor { completion in
             DispatchQueue.global().async {
-                self.env.channelUpdater?.update_channelCreatedCallback?(self.channelId)
+                self.env.channelUpdater?.update_onChannelCreated?(self.channelId)
                 self.env.channelUpdater?.update_completion?(.success(self.dummyPayload(with: .unique)))
                 completion(true)
             }
@@ -1052,9 +1052,9 @@ final class ChannelController_Tests: XCTestCase {
 
         // Simulate `synchronize` call
         controller.synchronize()
-
-        // Simulate updater's channelCreatedCallback call
-        env.channelUpdater!.update_channelCreatedCallback!(channelId)
+        
+        // Simulate updater's onChannelCreated call
+        env.channelUpdater!.update_onChannelCreated!(channelId)
 
         // Simulate DB update
         var error = try waitFor {
@@ -1075,8 +1075,8 @@ final class ChannelController_Tests: XCTestCase {
 
         let newCid: ChannelId = .unique
 
-        // Simulate `channelCreatedCallback` call that will reset DB observers to observing data with new `cid`
-        env.channelUpdater!.update_channelCreatedCallback?(newCid)
+        // Simulate `onChannelCreated` call that will reset DB observers to observing data with new `cid`
+        env.channelUpdater!.update_onChannelCreated?(newCid)
 
         // Simulate DB update
         error = try waitFor {
@@ -1244,8 +1244,8 @@ final class ChannelController_Tests: XCTestCase {
         )
 
         // Simulate successful backend channel creation
-        env.channelUpdater!.update_channelCreatedCallback?(dummyChannel.channel.cid)
-
+        env.channelUpdater!.update_onChannelCreated?(dummyChannel.channel.cid)
+        
         // Simulate new channel creation in DB
         try client.databaseContainer.writeSynchronously { session in
             try session.saveChannel(payload: dummyChannel)
@@ -1294,8 +1294,8 @@ final class ChannelController_Tests: XCTestCase {
         controller.synchronize()
 
         // Simulate successful backend channel creation
-        env.channelUpdater!.update_channelCreatedCallback?(dummyChannel.channel.cid)
-
+        env.channelUpdater!.update_onChannelCreated?(dummyChannel.channel.cid)
+        
         // Simulate successful network call.
         env.channelUpdater!.update_completion?(.success(dummyPayload(with: .unique)))
 
@@ -1325,8 +1325,8 @@ final class ChannelController_Tests: XCTestCase {
         )
 
         // Simulate successful backend channel creation
-        env.channelUpdater!.update_channelCreatedCallback?(dummyChannel.channel.cid)
-
+        env.channelUpdater!.update_onChannelCreated?(dummyChannel.channel.cid)
+        
         // Simulate new channel creation in DB
         try client.databaseContainer.writeSynchronously { session in
             try session.saveChannel(payload: dummyChannel)
@@ -1380,7 +1380,7 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssert(error is ClientError.ChannelNotCreatedYet)
 
         // Simulate succsesfull backend channel creation
-        env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
+        env.channelUpdater!.update_onChannelCreated?(query.cid!)
 
         // Simulate `updateChannel` call and assert no error is returned
         error = try waitFor { [callbackQueueID] completion in
@@ -1456,7 +1456,7 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssert(error is ClientError.ChannelNotCreatedYet)
 
         // Simulate successful backend channel creation
-        env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
+        env.channelUpdater!.update_onChannelCreated?(query.cid!)
 
         // Simulate `muteChannel` call and assert no error is returned
         error = try waitFor { [callbackQueueID] completion in
@@ -1535,7 +1535,7 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssert(error is ClientError.ChannelNotCreatedYet)
 
         // Simulate successful backend channel creation
-        env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
+        env.channelUpdater!.update_onChannelCreated?(query.cid!)
 
         // Simulate `unmuteChannel` call and assert no error is returned
         error = try waitFor { [callbackQueueID] completion in
@@ -1614,7 +1614,7 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssert(error is ClientError.ChannelNotCreatedYet)
 
         // Simulate successful backend channel creation
-        env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
+        env.channelUpdater!.update_onChannelCreated?(query.cid!)
 
         // Simulate `deleteChannel` call and assert no error is returned
         error = try waitFor { [callbackQueueID] completion in
@@ -1692,7 +1692,7 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssert(error is ClientError.ChannelNotCreatedYet)
 
         // Simulate successful backend channel creation
-        env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
+        env.channelUpdater!.update_onChannelCreated?(query.cid!)
 
         // Simulate `truncateChannel` call and assert no error is returned
         error = try waitFor { [callbackQueueID] completion in
@@ -1770,7 +1770,7 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssert(error is ClientError.ChannelNotCreatedYet)
 
         // Simulate successful backend channel creation
-        env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
+        env.channelUpdater!.update_onChannelCreated?(query.cid!)
 
         // Simulate `hideChannel` call and assert no error is returned
         error = try waitFor { [callbackQueueID] completion in
@@ -1849,7 +1849,7 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssert(error is ClientError.ChannelNotCreatedYet)
 
         // Simulate successful backend channel creation
-        env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
+        env.channelUpdater!.update_onChannelCreated?(query.cid!)
 
         // Simulate `showChannel` call and assert no error is returned
         error = try waitFor { [callbackQueueID] completion in
@@ -2357,6 +2357,109 @@ final class ChannelController_Tests: XCTestCase {
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
 
+    // MARK: - Load messages around given message id.
+
+    func test_loadMessagesAround() throws {
+        // Create dummy channel with messages
+        let dummyChannel = dummyPayload(
+            with: channelId,
+            numberOfMessages: 10
+        )
+        let messageId: MessageId = .unique
+        let channelId = dummyChannel.channel.cid
+
+        // Simulate new channel creation in DB
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: dummyChannel)
+        }
+
+        var completionCalled = false
+        controller.loadMessagesAround(messageId: messageId, limit: 5) { error in
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+
+        env.channelUpdater?.update_onBeforeSavingChannel?(client.databaseContainer.viewContext)
+
+        let channel = try XCTUnwrap(client.databaseContainer.viewContext.channel(cid: channelId))
+
+        // Should have cleared all the previous messages
+        XCTAssertEqual(channel.messages.count, 0)
+
+        // Simulate successful update
+        let expectedMessages: [MessagePayload] = [
+            .dummy(),
+            .dummy(),
+            .dummy(),
+            .dummy(),
+            .dummy()
+        ]
+        env.channelUpdater?
+            .update_completion?(.success(dummyPayload(
+                with: .unique,
+                messages: expectedMessages
+            )))
+
+        // Assert correct `MessagesPagination` is created
+        let pagination = env!.channelUpdater?.update_channelQuery?.pagination
+        XCTAssertEqual(pagination?.pageSize, 5)
+        XCTAssertEqual(pagination?.parameter?.parameters as! [String: String], ["id_around": messageId])
+
+        // Should update the last fetched message id to make sure pagination starts from correct message.
+        XCTAssertNotNil(controller.lastFetchedMessageId)
+        XCTAssertEqual(controller.lastFetchedMessageId, expectedMessages.first?.id)
+
+        // Should not leak memory
+        weak var weakController = controller
+        controller = nil
+        env.channelUpdater!.update_completion = nil
+        AssertAsync.willBeTrue(completionCalled)
+        AssertAsync.canBeReleased(&weakController)
+    }
+
+    func test_loadMessagesAround_whenChannelNotYetCreated() throws {
+        controller = ChatChannelController(
+            channelQuery: .init(cid: channelId),
+            channelListQuery: nil,
+            client: client,
+            isChannelAlreadyCreated: false
+        )
+        let exp = expectation(description: "load message around completes")
+        controller.loadMessagesAround(messageId: .unique, limit: 5) { error in
+            XCTAssertNotNil(error)
+            exp.fulfill()
+        }
+
+        waitForExpectations(timeout: 0.5)
+    }
+
+    func test_loadMessagesAround_whenRequestFails() throws {
+        // Create dummy channel with messages
+        let dummyChannel = dummyPayload(
+            with: channelId,
+            numberOfMessages: 10
+        )
+        let messageId: MessageId = .unique
+        let channelId = dummyChannel.channel.cid
+
+        // Simulate new channel creation in DB
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: dummyChannel)
+        }
+
+        let exp = expectation(description: "should complete load messages around")
+        controller.loadMessagesAround(messageId: messageId, limit: 5) { error in
+            XCTAssertNotNil(error)
+            exp.fulfill()
+        }
+
+        env.channelUpdater?.update_completion?(.failure(ClientError("fake")))
+
+        XCTAssertNil(controller.lastFetchedMessageId)
+
+        waitForExpectations(timeout: 0.5)
+    }
+    
     // MARK: - Keystroke
 
     func test_keystroke() throws {
@@ -2817,7 +2920,7 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssert(error is ClientError.ChannelNotCreatedYet)
 
         // Simulate successful backend channel creation
-        env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
+        env.channelUpdater!.update_onChannelCreated?(query.cid!)
 
         // Simulate `addMembers` call and assert no error is returned
         error = try waitFor { [callbackQueueID] completion in
@@ -3058,7 +3161,7 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssert(error is ClientError.ChannelNotCreatedYet)
 
         // Simulate successful backend channel creation
-        env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
+        env.channelUpdater!.update_onChannelCreated?(query.cid!)
 
         // Simulate `removeMembers` call and assert no error is returned
         error = try waitFor { [callbackQueueID] completion in
@@ -3164,8 +3267,8 @@ final class ChannelController_Tests: XCTestCase {
         try client.databaseContainer.writeSynchronously { session in
             try session.saveChannel(payload: self.dummyPayload(with: query.cid!))
         }
-        env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
-
+        env.channelUpdater!.update_onChannelCreated?(query.cid!)
+        
         // Simulate `markRead` call and assert no error is returned
         error = try waitFor { [callbackQueueID] completion in
             controller.markRead { error in
@@ -3449,8 +3552,8 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssert(error is ClientError.ChannelNotCreatedYet)
 
         // Simulate successful backend channel creation
-        env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
-
+        env.channelUpdater!.update_onChannelCreated?(query.cid!)
+        
         // Simulate `enableSlowMode` call and assert no error is returned
         error = try waitFor { [callbackQueueID] completion in
             controller.enableSlowMode(cooldownDuration: .random(in: 1...120)) { error in
@@ -3469,8 +3572,8 @@ final class ChannelController_Tests: XCTestCase {
         setupControllerForNewChannel(query: query)
 
         // Simulate successful backend channel creation
-        env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
-
+        env.channelUpdater!.update_onChannelCreated?(query.cid!)
+        
         // Simulate `enableSlowMode` call with invalid cooldown and assert error is returned
         var error: Error? = try waitFor { [callbackQueueID] completion in
             controller.enableSlowMode(cooldownDuration: .random(in: 130...250)) { error in
@@ -3554,8 +3657,8 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssert(error is ClientError.ChannelNotCreatedYet)
 
         // Simulate successful backend channel creation
-        env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
-
+        env.channelUpdater!.update_onChannelCreated?(query.cid!)
+        
         // Simulate `disableSlowMode` call and assert no error is returned
         error = try waitFor { [callbackQueueID] completion in
             controller.disableSlowMode { error in
@@ -3701,8 +3804,8 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssert(error is ClientError.ChannelNotCreatedYet)
 
         // Simulate successful backend channel creation
-        env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
-
+        env.channelUpdater!.update_onChannelCreated?(query.cid!)
+        
         // Simulate `startWatching` call and assert no error is returned
         error = try waitFor { [callbackQueueID] completion in
             controller.startWatching(isInRecoveryMode: false) { error in
@@ -3853,8 +3956,8 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssert(error is ClientError.ChannelNotCreatedYet)
 
         // Simulate successful backend channel creation
-        env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
-
+        env.channelUpdater!.update_onChannelCreated?(query.cid!)
+        
         // Simulate `stopWatching` call and assert no error is returned
         error = try waitFor { [callbackQueueID] completion in
             controller.stopWatching { error in
@@ -3933,8 +4036,8 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssert(error is ClientError.ChannelNotCreatedYet)
 
         // Simulate successful backend channel creation
-        env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
-
+        env.channelUpdater!.update_onChannelCreated?(query.cid!)
+        
         // Simulate `freezeChannel` call and assert no error is returned
         error = try waitFor { [callbackQueueID] completion in
             controller.freezeChannel { error in
@@ -4016,8 +4119,8 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssert(error is ClientError.ChannelNotCreatedYet)
 
         // Simulate successful backend channel creation
-        env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
-
+        env.channelUpdater!.update_onChannelCreated?(query.cid!)
+        
         // Simulate `unfreezeChannel` call and assert no error is returned
         error = try waitFor { [callbackQueueID] completion in
             controller.unfreezeChannel { error in

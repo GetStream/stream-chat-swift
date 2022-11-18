@@ -18,8 +18,9 @@ class ChannelUpdater: Worker {
     /// - Parameters:
     ///   - channelQuery: The channel query used in the request
     ///   - isInRecoveryMode: Determines whether the SDK is in offline recovery mode
-    ///   - channelCreatedCallback: For some type of channels we need to obtain id from backend.
-    ///   This callback is called with the obtained `cid` before the channel payload is saved to the DB.
+    ///   - onChannelCreated: For some type of channels we need to obtain id from backend.
+    ///     This callback is called with the obtained `cid` before the channel payload is saved to the DB.
+    ///   - onBeforeSavingChannel: Hook to do some actions in the DB before saving the channel from the API response.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
     /// **Note**: If query messages pagination parameter is `nil` AKA updater is asked to fetch the first page of messages,
@@ -28,16 +29,20 @@ class ChannelUpdater: Worker {
     func update(
         channelQuery: ChannelQuery,
         isInRecoveryMode: Bool,
-        channelCreatedCallback: ((ChannelId) -> Void)? = nil,
+        onChannelCreated: ((ChannelId) -> Void)? = nil,
+        onBeforeSavingChannel: ((DatabaseSession) -> Void)? = nil,
         completion: ((Result<ChannelPayload, Error>) -> Void)? = nil
     ) {
         let isFirstPage = channelQuery.pagination?.parameter == nil
-        let isChannelCreate = channelCreatedCallback != nil
+        let isChannelCreate = onChannelCreated != nil
 
         let completion: (Result<ChannelPayload, Error>) -> Void = { [weak database] result in
             do {
                 let payload = try result.get()
-                channelCreatedCallback?(payload.channel.cid)
+                onChannelCreated?(payload.channel.cid)
+                database?.write { session in
+                    onBeforeSavingChannel?(session)
+                }
                 database?.write { session in
                     let channelDTO = session.channel(cid: payload.channel.cid)
                     channelDTO?.cleanMessagesThatFailedToBeEditedDueToModeration()

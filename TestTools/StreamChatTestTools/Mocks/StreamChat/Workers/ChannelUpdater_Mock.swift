@@ -8,7 +8,8 @@ import XCTest
 /// Mock implementation of ChannelUpdater
 final class ChannelUpdater_Mock: ChannelUpdater {
     @Atomic var update_channelQuery: ChannelQuery?
-    @Atomic var update_channelCreatedCallback: ((ChannelId) -> Void)?
+    @Atomic var update_onBeforeSavingChannel: ((DatabaseSession) -> Void)?
+    @Atomic var update_onChannelCreated: ((ChannelId) -> Void)?
     @Atomic var update_completion: ((Result<ChannelPayload, Error>) -> Void)?
     @Atomic var update_callCount = 0
 
@@ -106,7 +107,8 @@ final class ChannelUpdater_Mock: ChannelUpdater {
     // Cleans up all recorded values
     func cleanUp() {
         update_channelQuery = nil
-        update_channelCreatedCallback = nil
+        update_onChannelCreated = nil
+        update_onBeforeSavingChannel = nil
         update_completion = nil
 
         updateChannel_payload = nil
@@ -193,15 +195,16 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         createCall_cid = nil
         createCall_completion = nil
     }
-
     override func update(
         channelQuery: ChannelQuery,
         isInRecoveryMode: Bool,
-        channelCreatedCallback: ((ChannelId) -> Void)?,
-        completion: ((Result<ChannelPayload, Error>) -> Void)?
+        onChannelCreated: ((ChannelId) -> Void)? = nil,
+        onBeforeSavingChannel: ((DatabaseSession) -> Void)? = nil,
+        completion: ((Result<ChannelPayload, Error>) -> Void)? = nil
     ) {
         update_channelQuery = channelQuery
-        update_channelCreatedCallback = channelCreatedCallback
+        update_onChannelCreated = onChannelCreated
+        update_onBeforeSavingChannel = onBeforeSavingChannel
         update_completion = completion
         update_callCount += 1
     }

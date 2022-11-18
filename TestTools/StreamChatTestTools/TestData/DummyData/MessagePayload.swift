@@ -10,7 +10,7 @@ extension MessagePayload {
     /// Creates a dummy `MessagePayload` with the given `messageId` and `userId` of the author.
     static func dummy(
         type: MessageType? = nil,
-        messageId: MessageId,
+        messageId: MessageId = .unique,
         parentId: MessageId? = nil,
         showReplyInChannel: Bool = false,
         quotedMessageId: MessageId? = nil,
@@ -24,7 +24,7 @@ extension MessagePayload {
             .dummy(),
             .dummy()
         ],
-        authorUserId: UserId,
+        authorUserId: UserId = .unique,
         text: String = .unique,
         extraData: [String: RawJSON] = [:],
         latestReactions: [MessageReactionPayload] = [],

@@ -233,7 +233,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     )
 
     private var markingRead: Bool = false
-    private var lastFetchedMessageId: MessageId?
+    internal private(set) var lastFetchedMessageId: MessageId?
 
     /// A type-erased delegate.
     var multicastDelegate: MulticastDelegate<ChatChannelControllerDelegate> = .init() {
@@ -410,18 +410,19 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         updater.update(
             channelQuery: channelQuery,
             isInRecoveryMode: isInRecoveryMode,
-            channelCreatedCallback: channelCreatedCallback
-        ) { result in
-            switch result {
-            case let .success(value):
-                self.state = .remoteDataFetched
-                self.updateLastFetchedId(with: value)
-                self.callback { completion?(nil) }
-            case let .failure(error):
-                self.state = .remoteDataFetchFailed(ClientError(with: error))
-                self.callback { completion?(error) }
+            onChannelCreated: channelCreatedCallback,
+            completion: { result in
+                switch result {
+                case let .success(value):
+                    self.state = .remoteDataFetched
+                    self.updateLastFetchedId(with: value)
+                    self.callback { completion?(nil) }
+                case let .failure(error):
+                    self.state = .remoteDataFetchFailed(ClientError(with: error))
+                    self.callback { completion?(error) }
+                }
             }
-        }
+        )
 
         /// Setup observers if we know the channel `cid` (if it's missing, it'll be set in `set(cid:)`
         /// Otherwise they will be set up after channel creation, in `set(cid:)`.
@@ -767,12 +768,7 @@ public extension ChatChannelController {
             }
         })
     }
-
-    private func updateLastFetchedId(with payload: ChannelPayload) {
-        // Payload messages are ordered from oldest to newest
-        lastFetchedMessageId = payload.messages.first?.id
-    }
-
+    
     /// Loads next messages from backend.
     ///
     /// - Parameters:
@@ -805,6 +801,45 @@ public extension ChatChannelController {
         })
     }
 
+    /// Load messages around the given message id. Useful to jump to a message which is not loaded.
+    ///
+    /// Cleans the current messages of the channel and loads the message with the given id,
+    /// and the messages around it depending on the limit provided.
+    ///
+    /// Ex: If the limit is 25, will load the message and 12 on top and 12 below it. (25 total)
+    ///
+    /// - Parameters:
+    ///   - messageId: The message id of the message to jump to.
+    ///   - limit: The number of messages to load in total, including the message to jump to.
+    ///   - completion: Callback when the API call is completed.
+    func loadMessagesAround(messageId: MessageId, limit: Int? = nil, completion: ((Error?) -> Void)? = nil) {
+        guard let cid = self.cid, isChannelAlreadyCreated else {
+            channelModificationFailed(completion)
+            return
+        }
+
+        let limit = limit ?? channelQuery.pagination?.pageSize ?? .messagesPageSize
+        channelQuery.pagination = MessagesPagination(pageSize: limit, parameter: .around(messageId))
+
+        updater.update(
+            channelQuery: channelQuery,
+            isInRecoveryMode: false,
+            onBeforeSavingChannel: { session in
+                session.deleteChannelMessages(cid: cid)
+            },
+            completion: { result in
+                switch result {
+                case let .success(payload):
+                    self.updateLastFetchedId(with: payload)
+                    self.callback { completion?(nil) }
+                case let .failure(error):
+                    log.error("Not able to load message around messageId: \(messageId). Error: \(error)")
+                    self.callback { completion?(error) }
+                }
+            }
+        )
+    }
+     
     /// Sends the start typing event and schedule a timer to send the stop typing event.
     ///
     /// This method is meant to be called every time the user presses a key. The method will manage requests and timer as needed.
@@ -967,6 +1002,11 @@ public extension ChatChannelController {
         }
     }
 
+    private func updateLastFetchedId(with payload: ChannelPayload) {
+        // Payload messages are ordered from oldest to newest
+        lastFetchedMessageId = payload.messages.first?.id
+    }
+    
     /// Add users to the channel as members.
     ///
     /// - Parameters:

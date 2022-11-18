@@ -215,9 +215,9 @@ final class ChannelUpdater_Tests: XCTestCase {
         // Simulate `updateChannel` call
         let completionCalled = expectation(description: "completion called")
         channelUpdater
-            .update(channelQuery: query, isInRecoveryMode: false, channelCreatedCallback: callback) { _ in
+            .update(channelQuery: query, isInRecoveryMode: false, onChannelCreated: callback, completion: { _ in
                 completionCalled.fulfill()
-            }
+            })
 
         // Simulate API response with channel data
         let payload = dummyPayload(with: query.cid!)
@@ -225,7 +225,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         wait(for: [completionCalled], timeout: defaultTimeout)
 
-        // Assert `channelCreatedCallback` is called
+        // Assert `onChannelCreated` is called
         XCTAssertEqual(cid, query.cid)
         // Assert channel is saved to DB after
         AssertAsync.willBeTrue(channel != nil)
@@ -249,9 +249,9 @@ final class ChannelUpdater_Tests: XCTestCase {
         // Simulate `updateChannel` call
         let completionCalled = expectation(description: "completion called")
         channelUpdater
-            .update(channelQuery: query, isInRecoveryMode: true, channelCreatedCallback: callback) { _ in
+            .update(channelQuery: query, isInRecoveryMode: true, onChannelCreated: callback, completion: { _ in
                 completionCalled.fulfill()
-            }
+            })
 
         // Simulate API response with channel data
         let payload = dummyPayload(with: query.cid!)
@@ -259,7 +259,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         wait(for: [completionCalled], timeout: defaultTimeout)
 
-        // Assert `channelCreatedCallback` is called
+        // Assert `onChannelCreated` is called
         XCTAssertEqual(cid, query.cid)
         // Assert channel is saved to DB after
         AssertAsync.willBeTrue(channel != nil)
@@ -427,6 +427,53 @@ final class ChannelUpdater_Tests: XCTestCase {
         XCTAssertNotNil(channel)
         // Adds the message in the simulated response on top of the existing ones as we are paginating
         XCTAssertEqual(channel?.messages.count, 4)
+    }
+
+    func test_updateChannelQuery_whenSuccess_shouldCallOnBeforeSavingChannel() {
+        let query = ChannelQuery(cid: .unique)
+        let expUpdate = expectation(description: "update completes")
+        let expBeforeSaving = expectation(description: "should call before saving channel")
+
+        channelUpdater.update(
+            channelQuery: query,
+            isInRecoveryMode: false,
+            onBeforeSavingChannel: { _ in
+                expBeforeSaving.fulfill()
+            },
+            completion: { _ in
+                expUpdate.fulfill()
+            }
+        )
+
+        // Simulate API response with channel data
+        let cid = ChannelId(type: .messaging, id: .unique)
+        let payload = dummyPayload(with: cid, numberOfMessages: 2)
+        apiClient.test_simulateResponse(.success(payload))
+
+        waitForExpectations(timeout: 0.5)
+    }
+
+    func test_updateChannelQuery_whenError_shouldNotCallOnBeforeSavingChannel() {
+        let query = ChannelQuery(cid: .unique)
+        let expUpdate = expectation(description: "update completes")
+        let expBeforeSaving = expectation(description: "should not call before saving channel")
+        expBeforeSaving.isInverted = true
+
+        channelUpdater.update(
+            channelQuery: query,
+            isInRecoveryMode: false,
+            onBeforeSavingChannel: { _ in
+                expBeforeSaving.fulfill()
+            },
+            completion: { _ in
+                expUpdate.fulfill()
+            }
+        )
+
+        let error = Result<ChannelPayload, Error>.failure(ClientError("fake"))
+        apiClient.test_simulateResponse(error)
+
+        waitForExpectations(timeout: 0.5)
     }
 
     // MARK: - Messages
