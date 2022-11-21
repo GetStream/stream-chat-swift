@@ -364,27 +364,52 @@ public class ChatClient {
             completion: { completion?($0) }
         )
     }
-    
+
     /// Disconnects the chat client from the chat servers. No further updates from the servers
     /// are received.
+    @available(*, deprecated, message: "Use the asynchronous version of `disconnect` for increased safety")
     public func disconnect() {
+        disconnect {}
+    }
+
+    /// Disconnects the chat client from the chat servers. No further updates from the servers
+    /// are received.
+    public func disconnect(completion: @escaping () -> Void) {
         connectionRepository.disconnect(source: .userInitiated) {
             log.info("The `ChatClient` has been disconnected.", subsystems: .webSocket)
+            completion()
         }
         authenticationRepository.clearTokenProvider()
     }
-    
+
     /// Disconnects the chat client form the chat servers and removes all the local data related.
+    @available(*, deprecated, message: "Use the asynchronous version of `logout` for increased safety")
     public func logout() {
-        disconnect()
+        logout {}
+    }
+
+    /// Disconnects the chat client form the chat servers and removes all the local data related.
+    public func logout(completion: @escaping () -> Void) {
         authenticationRepository.logOutUser()
+
+        let group = DispatchGroup()
+        group.enter()
+        disconnect {
+            group.leave()
+        }
+
+        group.enter()
         databaseContainer.removeAllData(force: true) { error in
             if let error = error {
                 log.error("Logging out current user failed with error \(error)", subsystems: .all)
-                return
             } else {
                 log.debug("Logging out current user successfully.", subsystems: .all)
             }
+            group.leave()
+        }
+
+        group.notify(queue: .main) {
+            completion()
         }
     }
 
