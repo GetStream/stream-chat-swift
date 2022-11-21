@@ -31,8 +31,7 @@ By default, the logs will provide basic text to your console. Still, in the SDK,
 
 ```swift
 LogConfig.formatters = [
-    PrefixLogFormatter(prefixes: [.info: "ℹ️", .debug: "🛠", .warning: "⚠️", .error: "🚨"]),
-    PingPongEmojiFormatter()
+    PrefixLogFormatter(prefixes: [.info: "ℹ️", .debug: "🛠", .warning: "⚠️", .error: "🚨"])
 ]
 ```
 

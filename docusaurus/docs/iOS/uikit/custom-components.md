@@ -30,7 +30,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         ...
-        Components.default.messageContentView = MyCustomMessageView.self       
+        Components.default.messageContentView = MyCustomMessageView.self
         ...
     }
 }
@@ -77,7 +77,7 @@ Let's say, we want to change the appearance of avatars by adding a border. In th
 
 ```swift
 class BorderedAvatarView: ChatAvatarView {
-    
+
     override func setUpAppearance() {
         super.setUpAppearance()
 
@@ -142,7 +142,7 @@ First, we need to create a custom subclass of `ChatChannelListItemView`, which i
 ```swift
 class iMessageChannelListItemView: ChatChannelListItemView {
     /// Blue "dot" indicator visible for channels with unread messages
-    private lazy var customUnreadView = UIView()    
+    private lazy var customUnreadView = UIView()
 }
 ```
 
@@ -153,7 +153,7 @@ class iMessageChannelListItemView: ChatChannelListItemView {
 
     override func setUpAppearance() {
         super.setUpAppearance()
-`
+
         customUnreadView.backgroundColor = tintColor
         customUnreadView.layer.masksToBounds = true
         customUnreadView.layer.cornerRadius = 5

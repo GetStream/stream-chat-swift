@@ -60,7 +60,7 @@ class CustomChatMessageActionsVC: ChatMessageActionsVC {
 
         return channel.membership
     }
-  }
+}
 ```
 
 This code will query the message controller's dataStore and return the channel membership for the current user.

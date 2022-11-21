@@ -95,7 +95,7 @@ It uses [SwiftyMarkdown](https://github.com/SimonFairbairn/SwiftyMarkdown) libra
 Mardown support is enabled by default. You can disable it by setting the following flag to false in the `Appearance` config:
 
 ```swift
-Appearance.default.formatters.markdownFormatterEnabled = false
+Appearance.default.formatters.isMarkdownEnabled = false
 ```
 
 ## Customizing the markdown formatter
@@ -121,7 +121,7 @@ class CustomMarkdownFormatter: MarkdownFormatter {
     func containsMarkdown(_ string: String) -> Bool {
         // Your custom implementation
     }
-    
+
     func format(_ string: String) -> NSAttributedString {
         // Your custom implementation
     }

@@ -89,10 +89,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GITHUB_PR_NUM: ${{ github.event.number }}
         XCODE_VERSION: ${{ matrix.xcode }}
-    - uses: test-summary/action@v1
-      with:
-        paths: fastlane/test_output/report.junit
-      if: failure()
     - uses: 8398a7/action-slack@v3
       with:
         status: ${{ job.status }}
