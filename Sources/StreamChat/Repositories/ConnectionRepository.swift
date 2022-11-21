@@ -191,10 +191,7 @@ class ConnectionRepository {
     }
 
     func completeConnectionIdWaiters(connectionId: String?) {
-        connectionQueue.sync {
-            _connectionIdWaiters.forEach { $0.value(connectionId) }
-            _connectionIdWaiters = [:]
-        }
+        updateConnectionId(connectionId: connectionId, shouldNotifyWaiters: true)
     }
 
     func forceConnectionStatusForInactiveModeIfNeeded() {
@@ -210,13 +207,15 @@ class ConnectionRepository {
         connectionId: String?,
         shouldNotifyWaiters: Bool
     ) {
-        connectionQueue.sync {
+        let waiters: [String: (String?) -> Void] = connectionQueue.sync {
             _connectionId = connectionId
-            if shouldNotifyWaiters {
-                _connectionIdWaiters.forEach { $0.value(connectionId) }
-                _connectionIdWaiters = [:]
-            }
+            guard shouldNotifyWaiters else { return [:] }
+            let waiters = _connectionIdWaiters
+            _connectionIdWaiters = [:]
+            return waiters
         }
+
+        waiters.forEach { $0.value(connectionId) }
     }
 
     private func invalidateConnectionIdWaiter(_ waiter: WaiterToken) {
