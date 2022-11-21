@@ -97,11 +97,7 @@ class AuthenticationRepository {
     ///   - token: The token for the new user
     ///   - completeTokenWaiters: A boolean indicating if the token should be passed to the requests that are awaiting
     func setToken(token: Token, completeTokenWaiters: Bool) {
-        currentToken = token
-
-        if completeTokenWaiters {
-            self.completeTokenWaiters(token: token)
-        }
+        updateToken(token: token, notifyTokenWaiters: completeTokenWaiters)
     }
 
     /// Establishes a connection for a  user.
@@ -219,10 +215,19 @@ class AuthenticationRepository {
     }
 
     func completeTokenWaiters(token: Token?) {
-        tokenQueue.sync {
-            _tokenWaiters.forEach { $0.value(token) }
+        updateToken(token: token, notifyTokenWaiters: true)
+    }
+
+    private func updateToken(token: Token?, notifyTokenWaiters: Bool) {
+        let waiters: [String: (Token?) -> Void] = tokenQueue.sync {
+            _currentToken = token
+            guard notifyTokenWaiters else { return [:] }
+            let waiters = _tokenWaiters
             _tokenWaiters = [:]
+            return waiters
         }
+
+        waiters.forEach { $0.value(token) }
     }
 
     private func fetchCurrentUser() {
