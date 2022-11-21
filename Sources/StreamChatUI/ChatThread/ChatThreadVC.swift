@@ -258,6 +258,8 @@ open class ChatThreadVC: _ViewController,
         messageComposerVC.dismissSuggestions()
     }
 
+    open func chatMessageListVC(_ vc: ChatMessageListVC, didTapOnQuotedMessage quotedMessage: ChatMessage) {}
+
     // MARK: - ChatMessageControllerDelegate
 
     open func messageController(

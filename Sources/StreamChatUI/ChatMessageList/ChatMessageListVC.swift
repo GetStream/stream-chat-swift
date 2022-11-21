@@ -522,10 +522,8 @@ open class ChatMessageListVC: _ViewController,
         showThread(messageId: message.parentMessageId ?? message.id)
     }
 
-    open func messageContentViewDidTapOnQuotedMessage(_ indexPath: IndexPath?) {
-        log.info(
-            "Tapped a quoted message. To customize the behavior, override messageContentViewDidTapOnQuotedMessage."
-        )
+    open func messageContentViewDidTapOnQuotedMessage(_ quotedMessage: ChatMessage) {
+        delegate?.chatMessageListVC(self, didTapOnQuotedMessage: quotedMessage)
     }
 
     open func messageContentViewDidTapOnAvatarView(_ indexPath: IndexPath?) {

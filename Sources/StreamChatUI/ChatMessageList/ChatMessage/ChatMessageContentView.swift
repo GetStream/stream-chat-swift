@@ -21,10 +21,9 @@ public protocol ChatMessageContentViewDelegate: AnyObject {
     func messageContentViewDidTapOnThread(_ indexPath: IndexPath?)
 
     /// Gets called when quoted message view is tapped.
-    /// - Parameter indexPath: The index path of the cell displaying the content view. Equals to `nil` when
-    /// the content view is displayed outside the collection/table view.
-    func messageContentViewDidTapOnQuotedMessage(_ indexPath: IndexPath?)
-
+    /// - Parameter quotedMessage: The quoted message which was tapped.
+    func messageContentViewDidTapOnQuotedMessage(_ quotedMessage: ChatMessage)
+	
     /// Gets called when avatar view is tapped.
     /// - Parameter indexPath: The index path of the cell displaying the content view. Equals to `nil` when
     /// the content view is displayed outside the collection/table view.
@@ -655,7 +654,8 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
 
     /// Handles tap on `quotedMessageView` and forwards the action to the delegate.
     @objc open func handleTapOnQuotedMessage() {
-        delegate?.messageContentViewDidTapOnQuotedMessage(indexPath?())
+        guard let quotedMessage = quotedMessageView?.content?.message else { return }
+        delegate?.messageContentViewDidTapOnQuotedMessage(quotedMessage)
     }
 
     /// Handles tap on `avatarView` and forwards the action to the delegate.

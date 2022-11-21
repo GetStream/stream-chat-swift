@@ -23,7 +23,7 @@ class ChatMessageContentViewDelegate_Mock: ChatMessageContentViewDelegate {
         // TODO:
     }
 
-    func messageContentViewDidTapOnQuotedMessage(_ indexPath: IndexPath?) {
+    func messageContentViewDidTapOnQuotedMessage(_ quotedMessage: ChatMessage) {
         // TODO:
     }
 

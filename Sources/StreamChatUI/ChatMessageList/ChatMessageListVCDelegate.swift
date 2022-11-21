@@ -38,12 +38,21 @@ public protocol ChatMessageListVCDelegate: AnyObject {
 
     /// Tells the delegate when the user taps on the message list view.
     /// - Parameters:
-    ///   - vc: The message list  informing the delegate of this event.
+    ///   - vc: The message list informing the delegate of this event.
     ///   - messageListView: The message list view.
     ///   - gestureRecognizer: The tap gesture recognizer that triggered the event.
     func chatMessageListVC(
         _ vc: ChatMessageListVC,
         didTapOnMessageListView messageListView: ChatMessageListView,
         with gestureRecognizer: UITapGestureRecognizer
+    )
+
+    /// Tells the delegate when the user taps on a quoted message view.
+    /// - Parameters:
+    ///   - vc: The message list informing the delegate of this event.
+    ///   - quotedMessage: The quoted message.
+    func chatMessageListVC(
+        _ vc: ChatMessageListVC,
+        didTapOnQuotedMessage quotedMessage: ChatMessage
     )
 }

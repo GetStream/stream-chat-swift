@@ -243,6 +243,10 @@ open class ChatChannelVC: _ViewController,
         messageComposerVC.dismissSuggestions()
     }
 
+    open func chatMessageListVC(_ vc: ChatMessageListVC, didTapOnQuotedMessage quotedMessage: ChatMessage) {
+        jumpToMessage(quotedMessage)
+    }
+
     // MARK: - ChatChannelControllerDelegate
 
     open func channelController(
