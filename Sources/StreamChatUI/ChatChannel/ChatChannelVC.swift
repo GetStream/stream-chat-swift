@@ -186,22 +186,7 @@ open class ChatChannelVC: _ViewController,
         _ vc: ChatMessageListVC,
         willDisplayMessageAt indexPath: IndexPath
     ) {
-        guard messageListVC.listView.isTrackingOrDecelerating else {
-            return
-        }
-
-        if indexPath.row < messages.count - 10 {
-            return
-        }
-
-        guard !isLoadingPreviousMessages else {
-            return
-        }
-        isLoadingPreviousMessages = true
-
-        channelController.loadPreviousMessages { [weak self] _ in
-            self?.isLoadingPreviousMessages = false
-        }
+        // no-op
     }
 
     open func chatMessageListVC(
@@ -227,12 +212,39 @@ open class ChatChannelVC: _ViewController,
         }
     }
 
+    private var previousPosition: CGFloat = 0.0
+
     open func chatMessageListVC(_ vc: ChatMessageListVC, scrollViewDidScroll scrollView: UIScrollView) {
         if isLastMessageFullyVisible {
             channelController.markRead()
 
             messageListVC.scrollToLatestMessageButton.content = .noUnread
         }
+
+        let position = scrollView.contentOffset.y
+        if position > scrollView.contentSize.height - 200 - scrollView.frame.size.height {
+            guard !isLoadingPreviousMessages else {
+                return
+            }
+            isLoadingPreviousMessages = true
+
+            channelController.loadPreviousMessages { [weak self] _ in
+                self?.isLoadingPreviousMessages = false
+            }
+        }
+
+        if position < 200 && position < previousPosition {
+            guard !isLoadingNextMessages else {
+                return
+            }
+            isLoadingNextMessages = true
+
+            channelController.loadNextMessages { [weak self] _ in
+                self?.isLoadingNextMessages = false
+            }
+        }
+
+        previousPosition = position
     }
 
     open func chatMessageListVC(
