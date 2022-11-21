@@ -39,6 +39,8 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
     /// we skip adding the message to the UI until the user scrolls back
     /// to the bottom. This is to avoid message list jumps.
     internal var skippedMessages: Set<MessageId> = []
+    internal var isFirstPageLoaded = true
+
     /// This closure is to update the dataSource when DifferenceKit
     /// reports the data source should be updated.
     internal var onNewDataSource: (([ChatMessage]) -> Void)?
@@ -189,8 +191,10 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
         let isNewestChangeNotByCurrentUser = newestChange?.item.isSentByCurrentUser == false
         let isNewestChangeNotVisible = !isLastCellFullyVisible && !previousMessagesSnapshot.isEmpty
         let shouldSkipMessagesInsertions = isNewestChangeNotVisible && isNewestChangeInsertion && isNewestChangeNotByCurrentUser
+        // JUMPTODO: Use PageSize
+        let isInsertingNewPageAtTheBottom = changes.filter(\.isInsertion).count == 25 && newestChange != nil
 
-        if shouldSkipMessagesInsertions {
+        if shouldSkipMessagesInsertions && !isInsertingNewPageAtTheBottom {
             changes.filter(\.isInsertion).forEach {
                 skippedMessages.insert($0.item.id)
             }
@@ -211,7 +215,7 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
                     if newestChangeIsInsertionOrMove, let newMessage = newestChange?.item {
                         // Scroll to the bottom if the new message was sent by
                         // the current user, or moved by the current user
-                        if newMessage.isSentByCurrentUser {
+                        if newMessage.isSentByCurrentUser && self?.isFirstPageLoaded == true && changes.count < 3 {
                             self?.scrollToMostRecentMessage()
                         }
 
@@ -239,7 +243,7 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
 
             // If we are inserting messages at the bottom, update the previous cell
             // to hide the timestamp of the previous message if needed.
-            if self.isLastCellFullyVisible, self.newMessagesSnapshot.count > 1 {
+            if self.isLastCellFullyVisible && self.newMessagesSnapshot.count > 1 && isFirstPageLoaded {
                 let previousMessageIndexPath = IndexPath(item: 1, section: 0)
                 self.reloadRows(at: [previousMessageIndexPath], with: .none)
             }

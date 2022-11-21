@@ -182,8 +182,11 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// That is why we need to check both flag and valid `cid` before modifications.
     private var isChannelAlreadyCreated: Bool
 
-    /// A Boolean value that returns wether the previous messages have all been loaded or not.
+    /// A Boolean value that returns wether the oldest messages have all been loaded or not.
     public private(set) var hasLoadedAllPreviousMessages: Bool = false
+
+    /// A Boolean value that returns wether the newest messages have all been loaded or not.
+    public private(set) var hasLoadedAllNextMessages: Bool = true
 
     /// The identifier of a channel this controller observes.
     /// Will be `nil` when we want to create direct message channel and `id`
@@ -233,7 +236,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     )
 
     private var markingRead: Bool = false
-    internal private(set) var lastFetchedMessageId: MessageId?
+    internal private(set) var lastOldestMessageId: MessageId?
+    internal private(set) var lastNewestMessageId: MessageId?
 
     /// A type-erased delegate.
     var multicastDelegate: MulticastDelegate<ChatChannelControllerDelegate> = .init() {
@@ -406,6 +410,14 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             parameter: nil
         )
 
+        // If channel was left while jumping to messages, clean the channel messages.
+        hasLoadedAllNextMessages = channel?.lastMessageAt == messages.first?.createdAt
+        if !hasLoadedAllNextMessages, let cid = cid {
+            client.databaseContainer.write { session in
+                session.deleteChannelMessages(cid: cid)
+            }
+        }
+
         let channelCreatedCallback = isChannelAlreadyCreated ? nil : channelCreated(forwardErrorTo: setLocalStateBasedOnError)
         updater.update(
             channelQuery: channelQuery,
@@ -413,9 +425,13 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             onChannelCreated: channelCreatedCallback,
             completion: { result in
                 switch result {
-                case let .success(value):
+                case let .success(payload):
                     self.state = .remoteDataFetched
-                    self.updateLastFetchedId(with: value)
+                    self.updateLastFetchedId(with: payload)
+                    self.hasLoadedAllNextMessages = payload.channel.lastMessageAt == payload.messages.last?.createdAt
+                    if let pageSize = self.channelQuery.pagination?.pageSize {
+                        self.hasLoadedAllPreviousMessages = payload.messages.count < pageSize
+                    }
                     self.callback { completion?(nil) }
                 case let .failure(error):
                     self.state = .remoteDataFetchFailed(ClientError(with: error))
@@ -430,6 +446,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             setupEventObservers(for: cid)
             setLocalStateBasedOnError(startDatabaseObservers())
         }
+
+        hasLoadedAllNextMessages = channel?.lastMessageAt == messages.first?.createdAt
     }
 
     /// Sets new cid of the query if necessary, and resets event and database observers.
@@ -746,7 +764,7 @@ public extension ChatChannelController {
             self.messages.last { !$0.isLocalOnly }?.id
         }
 
-        guard let messageId = messageId ?? lastFetchedMessageId ?? lastLocalMessageId() else {
+        guard let messageId = messageId ?? lastOldestMessageId ?? lastLocalMessageId() else {
             log.error(ClientError.ChannelEmptyMessages().localizedDescription)
             callback { completion?(ClientError.ChannelEmptyMessages()) }
             return
@@ -788,7 +806,12 @@ public extension ChatChannelController {
             return
         }
 
-        guard let messageId = messageId ?? messages.first?.id else {
+        guard !hasLoadedAllNextMessages else {
+            completion?(nil)
+            return
+        }
+        
+        guard let messageId = messageId ?? lastNewestMessageId ?? messages.first?.id else {
             log.error(ClientError.ChannelEmptyMessages().localizedDescription)
             callback { completion?(ClientError.ChannelEmptyMessages()) }
             return
@@ -797,7 +820,14 @@ public extension ChatChannelController {
         channelQuery.pagination = MessagesPagination(pageSize: limit, parameter: .greaterThan(messageId))
 
         updater.update(channelQuery: channelQuery, isInRecoveryMode: false, completion: { result in
-            self.callback { completion?(result.error) }
+            switch result {
+            case let .success(payload):
+                self.hasLoadedAllNextMessages = payload.channel.lastMessageAt == payload.messages.last?.createdAt
+                self.updateLastFetchedId(with: payload)
+                self.callback { completion?(nil) }
+            case let .failure(error):
+                self.callback { completion?(error) }
+            }
         })
     }
 
@@ -831,6 +861,7 @@ public extension ChatChannelController {
                 switch result {
                 case let .success(payload):
                     self.updateLastFetchedId(with: payload)
+                    self.hasLoadedAllNextMessages = payload.channel.lastMessageAt == payload.messages.last?.createdAt
                     self.callback { completion?(nil) }
                 case let .failure(error):
                     log.error("Not able to load message around messageId: \(messageId). Error: \(error)")
@@ -1004,7 +1035,8 @@ public extension ChatChannelController {
 
     private func updateLastFetchedId(with payload: ChannelPayload) {
         // Payload messages are ordered from oldest to newest
-        lastFetchedMessageId = payload.messages.first?.id
+        lastOldestMessageId = payload.messages.first?.id
+        lastNewestMessageId = payload.messages.last?.id
     }
     
     /// Add users to the channel as members.

@@ -2406,8 +2406,8 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(pagination?.parameter?.parameters as! [String: String], ["id_around": messageId])
 
         // Should update the last fetched message id to make sure pagination starts from correct message.
-        XCTAssertNotNil(controller.lastFetchedMessageId)
-        XCTAssertEqual(controller.lastFetchedMessageId, expectedMessages.first?.id)
+        XCTAssertNotNil(controller.lastOldestMessageId)
+        XCTAssertEqual(controller.lastOldestMessageId, expectedMessages.first?.id)
 
         // Should not leak memory
         weak var weakController = controller
@@ -2455,7 +2455,7 @@ final class ChannelController_Tests: XCTestCase {
 
         env.channelUpdater?.update_completion?(.failure(ClientError("fake")))
 
-        XCTAssertNil(controller.lastFetchedMessageId)
+        XCTAssertNil(controller.lastOldestMessageId)
 
         waitForExpectations(timeout: 0.5)
     }

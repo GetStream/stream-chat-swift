@@ -81,7 +81,7 @@ open class ChatMessageListVC: _ViewController,
     open var isScrollToBottomButtonVisible: Bool {
         let isMoreContentThanOnePage = listView.contentSize.height > listView.bounds.height
 
-        return !listView.isLastCellFullyVisible && isMoreContentThanOnePage
+        return !listView.isLastCellFullyVisible && isMoreContentThanOnePage || !listView.isFirstPageLoaded
     }
 
     /// A formatter that converts the message date to textual representation.
@@ -397,6 +397,18 @@ open class ChatMessageListVC: _ViewController,
         navigationController?.present(alert, animated: true)
     }
 
+    /// Gets the IndexPath for the given message id. Returns `nil` if the message is not in the list.
+    public func getIndexPath(forMessageId messageId: MessageId) -> IndexPath? {
+        dataSource?.messages
+            .enumerated()
+            .first(where: {
+                $0.element.id == messageId
+            })
+            .map {
+                IndexPath(item: $0.offset, section: 0)
+            }
+    }
+
     // MARK: - UITableViewDataSource & UITableViewDelegate
 
     open func numberOfSections(in tableView: UITableView) -> Int {
@@ -458,7 +470,7 @@ open class ChatMessageListVC: _ViewController,
         setScrollToLatestMessageButton(visible: isScrollToBottomButtonVisible)
 
         // If the user scrolled to the bottom, update the UI for the skipped messages
-        if listView.isLastCellFullyVisible && !listView.skippedMessages.isEmpty {
+        if listView.isLastCellFullyVisible && !listView.skippedMessages.isEmpty && listView.isFirstPageLoaded {
             listView.reloadSkippedMessages()
         }
     }
