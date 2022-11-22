@@ -156,7 +156,7 @@ open class ChatChannelVC: _ViewController,
     }
 
     var messageWaitingToBeScrolledTo: ChatMessage?
-    var isJumpingToMessage = false
+    public var isJumpingToMessage = false
 
     /// Jump to a given message.
     /// In case the message is already loaded, it directly goes to it.
@@ -215,6 +215,15 @@ open class ChatChannelVC: _ViewController,
             with: AnyRandomAccessCollection(messages),
             appearance: appearance
         )
+    }
+
+    open func chatMessageListVCShouldJumpToFirstPage(
+        _ vc: ChatMessageListVC
+    ) {
+        isJumpingToMessage = true
+        channelController.reset { [weak self] _ in
+            self?.isJumpingToMessage = false
+        }
     }
 
     // MARK: - ChatMessageListVCDelegate

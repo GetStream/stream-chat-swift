@@ -55,4 +55,10 @@ public protocol ChatMessageListVCDelegate: AnyObject {
         _ vc: ChatMessageListVC,
         didTapOnQuotedMessage quotedMessage: ChatMessage
     )
+
+    func chatMessageListVCShouldJumpToFirstPage(
+        _ vc: ChatMessageListVC
+    )
+
+    var isJumpingToMessage: Bool { get }
 }

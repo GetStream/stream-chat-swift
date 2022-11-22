@@ -216,6 +216,12 @@ open class ChatMessageListVC: _ViewController,
 
     /// Action for `scrollToLatestMessageButton` that scroll to most recent message.
     @objc open func scrollToLatestMessage() {
+        guard listView.isFirstPageLoaded else {
+            delegate?.chatMessageListVCShouldJumpToFirstPage(self)
+            scrollToLatestMessageButton.isHidden = true
+            listView.reloadSkippedMessages()
+            return
+        }
         scrollToMostRecentMessage()
     }
 
@@ -226,6 +232,16 @@ open class ChatMessageListVC: _ViewController,
 
     /// Updates the table view data with given `changes`.
     open func updateMessages(with changes: [ListChange<ChatMessage>], completion: (() -> Void)? = nil) {
+        if let channelLastMessageAt = dataSource?.channel(for: self)?.lastMessageAt,
+           let newestChange = changes.first(where: { $0.item.createdAt == channelLastMessageAt }) {
+            if newestChange.item.isSentByCurrentUser && newestChange.isInsertion && !listView.isFirstPageLoaded && delegate?.isJumpingToMessage == false {
+                delegate?.chatMessageListVCShouldJumpToFirstPage(self)
+                scrollToLatestMessageButton.isHidden = true
+                listView.reloadSkippedMessages()
+                return
+            }
+        }
+
         // There is an issue on iOS 12 that when the message list has 0 or 1 message,
         // the UI is not updated for the next inserted messages.
         guard #available(iOS 13.0, *) else {

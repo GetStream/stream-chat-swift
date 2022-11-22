@@ -404,7 +404,12 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         synchronize(isInRecoveryMode: false, completion)
     }
 
-    private func synchronize(isInRecoveryMode: Bool, _ completion: ((_ error: Error?) -> Void)? = nil) {
+    // JUMPTODO: reset or load first page?
+    public func reset(_ completion: ((_ error: Error?) -> Void)? = nil) {
+        synchronize(forceEraseCurrentMessages: true, isInRecoveryMode: false, completion)
+    }
+
+    private func synchronize(forceEraseCurrentMessages: Bool = false, isInRecoveryMode: Bool, _ completion: ((_ error: Error?) -> Void)? = nil) {
         channelQuery.pagination = .init(
             pageSize: channelQuery.pagination?.pageSize ?? .messagesPageSize,
             parameter: nil
@@ -412,7 +417,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
         // If channel was left while jumping to messages, clean the channel messages.
         hasLoadedAllNextMessages = channel?.lastMessageAt == messages.first?.createdAt
-        if !hasLoadedAllNextMessages, let cid = cid {
+        if forceEraseCurrentMessages || !hasLoadedAllNextMessages, let cid = cid {
             client.databaseContainer.write { session in
                 session.deleteChannelMessages(cid: cid)
             }

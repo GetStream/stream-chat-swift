@@ -13,6 +13,8 @@ open class ChatThreadVC: _ViewController,
     ChatMessageListVCDelegate,
     ChatMessageControllerDelegate,
     EventsControllerDelegate {
+    public var isJumpingToMessage: Bool = false
+
     /// Controller for observing data changes within the channel
     open var channelController: ChatChannelController!
 
@@ -197,6 +199,10 @@ open class ChatThreadVC: _ViewController,
         layoutOptions.remove(.threadInfo)
 
         return layoutOptions
+    }
+
+    open func chatMessageListVCShouldJumpToFirstPage(_ vc: ChatMessageListVC) {
+        // JUMPTODO: Finish
     }
 
     open func loadPreviousMessages() {

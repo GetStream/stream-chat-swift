@@ -215,7 +215,8 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
                     if newestChangeIsInsertionOrMove, let newMessage = newestChange?.item {
                         // Scroll to the bottom if the new message was sent by
                         // the current user, or moved by the current user
-                        if newMessage.isSentByCurrentUser && self?.isFirstPageLoaded == true && changes.count < 3 {
+                        // JUMPTODO: Remove Changes.count < 4
+                        if newMessage.isSentByCurrentUser && self?.isFirstPageLoaded == true && changes.count < 4 {
                             self?.scrollToMostRecentMessage()
                         }
 
