@@ -165,14 +165,21 @@ class AuthenticationRepository {
         isGettingToken = true
         log.debug("Requesting a new token", subsystems: .authentication)
         clientUpdater.reloadUserIfNeeded(userInfo: userInfo, tokenProvider: tokenProvider) { [weak self] error in
+            guard let self = self else { return }
+
             if let error = error {
                 log.error("Error when getting token: \(error)", subsystems: .authentication)
             } else {
                 log.debug("Successfully retrieved token", subsystems: .authentication)
             }
-            let completionBlocks: [(Error?) -> Void]? = self?.tokenRequestCompletions
+
+            let completionBlocks: [(Error?) -> Void]? = self.tokenQueue.sync {
+                self._isGettingToken = false
+                let completions = self._tokenRequestCompletions
+                self._tokenRequestCompletions = []
+                return completions
+            }
             completionBlocks?.forEach { $0(error) }
-            self?.isGettingToken = false
         }
     }
 
