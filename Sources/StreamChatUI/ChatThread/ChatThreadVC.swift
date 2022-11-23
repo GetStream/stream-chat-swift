@@ -55,8 +55,6 @@ open class ChatThreadVC: _ViewController,
 
     public var messageComposerBottomConstraint: NSLayoutConstraint?
 
-    private var isLoadingPreviousMessages: Bool = false
-
     private var currentlyTypingUsers: Set<ChatUser> = []
 
     override open func setUp() {
@@ -159,6 +157,24 @@ open class ChatThreadVC: _ViewController,
         set {
             replies = newValue
         }
+    }
+
+    // JUMPTODO:
+
+    public var messagePendingScrolling: ChatMessage?
+
+    public var isLoadingNextMessages: Bool {
+        false
+    }
+
+    public var isLoadingPreviousMessages: Bool = false
+
+    public var hasLoadedAllPreviousMessages: Bool {
+        false
+    }
+
+    public var hasLoadedAllNextMessages: Bool {
+        false
     }
 
     // This property is a bit redundant after the difference kit changes. Should be removed in v5.

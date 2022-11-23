@@ -67,20 +67,6 @@ open class ChatChannelVC: _ViewController,
         isLastMessageFullyVisible && channelController.hasLoadedAllNextMessages
     }
 
-    /// Wether the channel is currently jumping to a message which is not loaded yet.
-    public var isJumpingToMessage = false
-
-    /// A message that is pending to be scrolled after the UI update.
-    ///
-    /// Ex: When jumping to a message, we want that message to appear in the UI, and only then scroll to it.
-    private var messagePendingScrolling: ChatMessage?
-
-    /// Weather the channel is currently loading previous (old) messages.
-    private var isLoadingPreviousMessages: Bool = false
-
-    /// Weather the channel is currently loading next (new) messages.
-    private var isLoadingNextMessages: Bool = false
-
     override open func setUp() {
         super.setUp()
 
@@ -177,16 +163,12 @@ open class ChatChannelVC: _ViewController,
             return
         }
 
-        isJumpingToMessage = true
-        messageListVC.listView.isFirstPageLoaded = false
         channelController.loadPageAroundMessageId(message.id) { [weak self] error in
-            self?.isJumpingToMessage = false
             if let error = error {
                 self?.loadingMessagesAroundFailed(withError: error)
                 return
             }
 
-            self?.messageListVC.listView.isFirstPageLoaded = self?.channelController.hasLoadedAllNextMessages ?? false
             self?.messagePendingScrolling = message
         }
     }
@@ -199,6 +181,28 @@ open class ChatChannelVC: _ViewController,
 
     public var messages: [ChatMessage] = []
 
+    public var messagePendingScrolling: ChatMessage?
+
+    public var isJumpingToMessage: Bool {
+        channelController.isJumpingToMessage
+    }
+
+    public var isLoadingNextMessages: Bool {
+        channelController.isLoadingNextMessages
+    }
+
+    public var isLoadingPreviousMessages: Bool {
+        channelController.isLoadingPreviousMessages
+    }
+
+    public var hasLoadedAllNextMessages: Bool {
+        channelController.hasLoadedAllNextMessages
+    }
+
+    public var hasLoadedAllPreviousMessages: Bool {
+        channelController.hasLoadedAllPreviousMessages
+    }
+    
     open func channel(for vc: ChatMessageListVC) -> ChatChannel? {
         channelController.channel
     }
@@ -228,10 +232,7 @@ open class ChatChannelVC: _ViewController,
     open func chatMessageListVCShouldJumpToFirstPage(
         _ vc: ChatMessageListVC
     ) {
-        isJumpingToMessage = true
-        channelController.loadFirstPage { [weak self] _ in
-            self?.isJumpingToMessage = false
-        }
+        channelController.loadFirstPage()
     }
 
     // MARK: - ChatMessageListVCDelegate
@@ -266,6 +267,7 @@ open class ChatChannelVC: _ViewController,
         }
     }
 
+    // JUMPTODO: This should be reusable
     private var previousPosition: CGFloat = 0.0
 
     open func chatMessageListVC(_ vc: ChatMessageListVC, scrollViewDidScroll scrollView: UIScrollView) {
@@ -283,28 +285,11 @@ open class ChatChannelVC: _ViewController,
 
         let position = scrollView.contentOffset.y
         if position > scrollView.contentSize.height - 250 - scrollView.frame.size.height {
-            guard !isLoadingPreviousMessages else {
-                return
-            }
-            isLoadingPreviousMessages = true
-
-            channelController.loadPreviousMessages { [weak self] _ in
-                self?.isLoadingPreviousMessages = false
-            }
+            channelController.loadPreviousMessages()
         }
 
-        if position >= 0 && position < 250 && position < previousPosition {
-            guard !isLoadingNextMessages else {
-                return
-            }
-
-            isLoadingNextMessages = true
-            messageListVC.listView.isFirstPageLoaded = false
-
-            channelController.loadNextMessages { [weak self] _ in
-                self?.messageListVC.listView.isFirstPageLoaded = self?.channelController.hasLoadedAllNextMessages ?? false
-                self?.isLoadingNextMessages = false
-            }
+        if position >= 0 && position < 100 && position < previousPosition {
+            channelController.loadNextMessages()
         }
 
         previousPosition = position
@@ -332,37 +317,14 @@ open class ChatChannelVC: _ViewController,
             channelController.markRead()
         }
 
-        // JUMPTODO: Extract this to open var, so that it can be overridable
+        // In order to not show an empty list when jumping to a message, ignore the remove updates.
         if isJumpingToMessage && changes.filter(\.isRemove).count == messages.count {
             return
         }
 
         messageListVC.setPreviousMessagesSnapshot(messages)
         messageListVC.setNewMessagesSnapshot(Array(channelController.messages))
-
-        // JUMPTODO: This should be reusable
-        let oldContentOffset = messageListVC.listView.contentOffset
-        let oldContentSize = messageListVC.listView.contentSize
-        let pageSize = channelController.channelQuery.pagination?.pageSize ?? .channelsPageSize
-        let isNewPageInsertedAtTheBottom = changes.map(\.isInsertion).count == pageSize && changes.first(where: {
-            $0.indexPath.item - messageListVC.listView.skippedMessages.count == 0
-        }) != nil
-        messageListVC.updateMessages(with: changes) { [weak self] in
-            // Only after updating the message to the UI we have the message around loaded
-            // So we check if we have a message waiting to be scrolled to here
-            if let message = self?.messagePendingScrolling,
-               let indexPath = self?.messageListVC.getIndexPath(forMessageId: message.id) {
-                self?.messageListVC.listView.scrollToRow(at: indexPath, at: .middle, animated: true)
-                self?.messagePendingScrolling = nil
-            }
-
-            // Calculate new content offset after loading next page
-            if !channelController.hasLoadedAllNextMessages && isNewPageInsertedAtTheBottom {
-                let newContentSize = self?.messageListVC.listView.contentSize ?? .zero
-                let newOffset = oldContentOffset.y + (newContentSize.height - oldContentSize.height)
-                self?.messageListVC.listView.contentOffset.y = newOffset
-            }
-        }
+        messageListVC.updateMessages(with: changes)
     }
 
     open func channelController(

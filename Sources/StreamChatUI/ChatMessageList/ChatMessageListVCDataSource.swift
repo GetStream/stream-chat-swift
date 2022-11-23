@@ -7,6 +7,24 @@ import StreamChat
 
 /// The object that acts as the data source of the message list.
 public protocol ChatMessageListVCDataSource: AnyObject {
+    /// Asks the data source if it is currently loading previous (old) messages.
+    var isLoadingPreviousMessages: Bool { get }
+
+    /// Asks the data source if all the previous (oldest) messages have been loaded.
+    var hasLoadedAllPreviousMessages: Bool { get }
+
+    /// Asks the data source if it is currently loading next (new) messages.
+    var isLoadingNextMessages: Bool { get }
+
+    /// Asks the data source if all the next (newest) messages have been loaded.
+    var hasLoadedAllNextMessages: Bool { get }
+
+    /// Asks the data source if it is currently jumping to a message which is not loaded yet.
+    var isJumpingToMessage: Bool { get }
+
+    /// Asks the data if there is currently a message pending to be scrolled after a message list update.
+    var messagePendingScrolling: ChatMessage? { get set }
+
     /// Asks the data source to return all the available messages.
     var messages: [ChatMessage] { get set }
 
