@@ -221,6 +221,7 @@ class AuthenticationRepository {
     private func updateToken(token: Token?, notifyTokenWaiters: Bool) {
         let waiters: [String: (Token?) -> Void] = tokenQueue.sync {
             _currentToken = token
+            _currentUserId = token?.userId
             guard notifyTokenWaiters else { return [:] }
             let waiters = _tokenWaiters
             _tokenWaiters = [:]

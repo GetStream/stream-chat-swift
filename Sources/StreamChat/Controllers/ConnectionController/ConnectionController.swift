@@ -93,8 +93,8 @@ public extension ChatConnectionController {
     /// called with an error.
     ///
     func connect(completion: ((Error?) -> Void)? = nil) {
-        connectionRepository.connect { error in
-            self.callback {
+        connectionRepository.connect { [weak self] error in
+            self?.callback {
                 completion?(error)
             }
         }
