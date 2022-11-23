@@ -432,7 +432,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
                 switch result {
                 case let .success(payload):
                     self.state = .remoteDataFetched
-                    self.updateLastFetchedId(with: payload)
+                    self.updateNewestFetchedMessageId(with: payload)
+                    self.updateOldestFetchedMessageId(with: payload)
                     self.hasLoadedAllNextMessages = payload.channel.lastMessageAt == payload.messages.last?.createdAt
                     if let pageSize = self.channelQuery.pagination?.pageSize {
                         self.hasLoadedAllPreviousMessages = payload.messages.count < pageSize
@@ -783,7 +784,7 @@ public extension ChatChannelController {
         updater.update(channelQuery: channelQuery, isInRecoveryMode: false, completion: { result in
             switch result {
             case let .success(payload):
-                self.updateLastFetchedId(with: payload)
+                self.updateOldestFetchedMessageId(with: payload)
                 self.hasLoadedAllPreviousMessages = payload.messages.count < limit
                 self.callback { completion?(nil) }
             case let .failure(error):
@@ -827,8 +828,8 @@ public extension ChatChannelController {
         updater.update(channelQuery: channelQuery, isInRecoveryMode: false, completion: { result in
             switch result {
             case let .success(payload):
+                self.updateNewestFetchedMessageId(with: payload)
                 self.hasLoadedAllNextMessages = payload.channel.lastMessageAt == payload.messages.last?.createdAt
-                self.updateLastFetchedId(with: payload)
                 self.callback { completion?(nil) }
             case let .failure(error):
                 self.callback { completion?(error) }
@@ -865,7 +866,8 @@ public extension ChatChannelController {
             completion: { result in
                 switch result {
                 case let .success(payload):
-                    self.updateLastFetchedId(with: payload)
+                    self.updateNewestFetchedMessageId(with: payload)
+                    self.updateOldestFetchedMessageId(with: payload)
                     self.hasLoadedAllNextMessages = payload.channel.lastMessageAt == payload.messages.last?.createdAt
                     self.callback { completion?(nil) }
                 case let .failure(error):
@@ -1038,9 +1040,15 @@ public extension ChatChannelController {
         }
     }
 
-    private func updateLastFetchedId(with payload: ChannelPayload) {
+    // JUMPTODO: Is it possible to reuse this on the LLC level as well, and share between multiple controllers?
+
+    private func updateOldestFetchedMessageId(with payload: ChannelPayload) {
         // Payload messages are ordered from oldest to newest
         lastOldestMessageId = payload.messages.first?.id
+    }
+
+    private func updateNewestFetchedMessageId(with payload: ChannelPayload) {
+        // Payload messages are ordered from oldest to newest
         lastNewestMessageId = payload.messages.last?.id
     }
     
