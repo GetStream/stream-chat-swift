@@ -285,8 +285,8 @@ final class CurrentUserController_Tests: XCTestCase {
     
     func test_updateUserData_callCurrentUserUpdater_withCorrectValues() {
         // Simulate `connectUser`
-        client.authenticationRepository.setToken(token: .unique())
-        
+        client.authenticationRepository.setMockToken()
+
         let expectedName = String.unique
         let expectedImageUrl = URL.unique()
         
@@ -304,7 +304,7 @@ final class CurrentUserController_Tests: XCTestCase {
     
     func test_updateUserData_propagatesError() throws {
         // Simulate `connectUser`
-        client.authenticationRepository.setToken(token: .unique())
+        client.authenticationRepository.setMockToken()
 
         var completionError: Error?
         controller.updateUserData(name: .unique, imageURL: .unique(), userExtraData: [:]) { [callbackQueueID] in
@@ -322,7 +322,7 @@ final class CurrentUserController_Tests: XCTestCase {
     
     func test_updateUserData_propagatesNilError() throws {
         // Simulate `connectUser`
-        client.authenticationRepository.setToken(token: .unique())
+        client.authenticationRepository.setMockToken()
 
         var completionIsCalled = false
         controller
@@ -353,6 +353,8 @@ final class CurrentUserController_Tests: XCTestCase {
     }
     
     func test_updateUser_whenCurrentUserDoesNotExist_shouldError() throws {
+        client.authenticationRepository.logOutUser()
+
         let error = try waitFor {
             controller.updateUserData(
                 name: .unique,
@@ -382,20 +384,22 @@ final class CurrentUserController_Tests: XCTestCase {
         DispatchQueue.global().async {
             self.controller.updateUserData()
         }
-        
-        // Sleep main thread for a little time
-        // to make sure background thread acquires lock (from Atomic, in EntityDatabaseObserver.item)
-        // if we don't sleep, main thread acquires lock first & no deadlock occurs
-        sleep(1)
-        
+
         // THEN
         // updateUser is called from main queue and actually finishes
+
+        // Delay execution for a bit to make sure background thread acquires lock
+        // (from Atomic, in EntityDatabaseObserver.item) if we don't sleep, main thread acquires lock first
+        // & no deadlock occurs
         let exp = expectation(description: "completion called")
-        controller.updateUserData() { _ in
-            exp.fulfill()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.controller.updateUserData() { _ in
+                exp.fulfill()
+            }
+            self.env.currentUserUpdater.updateUserData_completion?(nil)
         }
-        
-        wait(for: [exp], timeout: 5)
+
+        wait(for: [exp], timeout: 0.2)
     }
 
     // MARK: - Device endpoints
@@ -404,7 +408,7 @@ final class CurrentUserController_Tests: XCTestCase {
 
     func test_synchronizeDevices_whenRequestSuccess_completionCalledWithoutError() throws {
         // Simulate `connectUser`
-        client.authenticationRepository.setToken(token: .unique())
+        client.authenticationRepository.setMockToken()
 
         var completionError: Error?
         controller.synchronizeDevices { [callbackQueueID] in
@@ -420,7 +424,7 @@ final class CurrentUserController_Tests: XCTestCase {
 
     func test_synchronizeDevices_whenRequestFails_propagatesError() {
         // Simulate `connectUser`
-        client.authenticationRepository.setToken(token: .unique())
+        client.authenticationRepository.setMockToken()
 
         var completionError: Error?
         controller.synchronizeDevices { [callbackQueueID] in
@@ -437,6 +441,8 @@ final class CurrentUserController_Tests: XCTestCase {
     }
 
     func test_synchronizeDevices__whenCurrentUserDoesNotExist_propagatesError() throws {
+        client.authenticationRepository.logOutUser()
+
         let error = try waitFor {
             controller.synchronizeDevices(completion: $0)
         }
@@ -462,26 +468,28 @@ final class CurrentUserController_Tests: XCTestCase {
             self.controller.synchronizeDevices()
         }
         
-        // Sleep main thread for a little time
-        // to make sure background thread acquires lock (from Atomic, in EntityDatabaseObserver.item)
-        // if we don't sleep, main thread acquires lock first & no deadlock occurs
-        sleep(1)
-        
         // THEN
-        // updateUser is called from main queue and actually finishes
+        // synchronizeDevices is called from main queue and actually finishes
+
+        // Delay execution for a bit to make sure background thread acquires lock
+        // (from Atomic, in EntityDatabaseObserver.item) if we don't sleep, main thread acquires lock first
+        // & no deadlock occurs
         let exp = expectation(description: "completion called")
-        controller.synchronizeDevices() { _ in
-            exp.fulfill()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.controller.synchronizeDevices() { _ in
+                exp.fulfill()
+            }
+            self.env.currentUserUpdater.fetchDevices_completion?(nil)
         }
-        
-        wait(for: [exp], timeout: 5)
+
+        wait(for: [exp], timeout: 0.2)
     }
     
     // MARK: addDevice
     
     func test_addDevice_whenPushProviderIsAPN_callsCurrentUserUpdaterWithCorrectValues() {
         // Simulate `connectUser`
-        client.authenticationRepository.setToken(token: .unique())
+        client.authenticationRepository.setMockToken()
 
         let expectedDeviceToken = "test".data(using: .utf8)!
         
@@ -495,7 +503,7 @@ final class CurrentUserController_Tests: XCTestCase {
 
     func test_addDevice_whenPushProviderIsFirebase_callsCurrentUserUpdaterWithCorrectValues() {
         // Simulate `connectUser`
-        client.authenticationRepository.setToken(token: .unique())
+        client.authenticationRepository.setMockToken()
 
         let expectedDeviceId = "test"
 
@@ -509,7 +517,7 @@ final class CurrentUserController_Tests: XCTestCase {
     
     func test_addDevice_propagatesError() throws {
         // Simulate `connectUser`
-        client.authenticationRepository.setToken(token: .unique())
+        client.authenticationRepository.setMockToken()
 
         var completionError: Error?
         controller.addDevice(.firebase(token: "test")) { [callbackQueueID] in
@@ -527,7 +535,7 @@ final class CurrentUserController_Tests: XCTestCase {
     
     func test_addDevice_propagatesNilError() throws {
         // Simulate `connectUser`
-        client.authenticationRepository.setToken(token: .unique())
+        client.authenticationRepository.setMockToken()
 
         var completionIsCalled = false
         controller.addDevice(.firebase(token: "test")) { [callbackQueueID] error in
@@ -557,6 +565,8 @@ final class CurrentUserController_Tests: XCTestCase {
     }
     
     func test_addDevice_whenCurrentUserDoesNotExist_shouldError() throws {
+        client.authenticationRepository.logOutUser()
+
         let error = try waitFor {
             controller.addDevice(.firebase(token: "test"), completion: $0)
         }
@@ -581,27 +591,29 @@ final class CurrentUserController_Tests: XCTestCase {
         DispatchQueue.global().async {
             self.controller.addDevice(.apn(token: .init()))
         }
-        
-        // Sleep main thread for a little time
-        // to make sure background thread acquires lock (from Atomic, in EntityDatabaseObserver.item)
-        // if we don't sleep, main thread acquires lock first & no deadlock occurs
-        sleep(1)
-        
+
         // THEN
-        // updateUser is called from main queue and actually finishes
+        // addDevice is called from main queue and actually finishes
+
+        // Delay execution for a bit to make sure background thread acquires lock
+        // (from Atomic, in EntityDatabaseObserver.item) if we don't sleep, main thread acquires lock first
+        // & no deadlock occurs
         let exp = expectation(description: "completion called")
-        controller.addDevice(.apn(token: .init())) { _ in
-            exp.fulfill()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.controller.addDevice(.apn(token: .init())) { _ in
+                exp.fulfill()
+            }
+            self.env.currentUserUpdater.addDevice_completion?(nil)
         }
-        
-        wait(for: [exp], timeout: 5)
+
+        wait(for: [exp], timeout: 0.2)
     }
     
     // MARK: removeDevice
     
     func test_removeDevice_callCurrentUserUpdater_withCorrectValues() {
         // Simulate `connectUser`
-        client.authenticationRepository.setToken(token: .unique())
+        client.authenticationRepository.setMockToken()
 
         let expectedId = String.unique
         
@@ -614,7 +626,7 @@ final class CurrentUserController_Tests: XCTestCase {
     
     func test_removeDevice_propagatesError() throws {
         // Simulate `connectUser`
-        client.authenticationRepository.setToken(token: .unique())
+        client.authenticationRepository.setMockToken()
 
         let expectedId = String.unique
         
@@ -634,7 +646,7 @@ final class CurrentUserController_Tests: XCTestCase {
     
     func test_removeDevice_propagatesNilError() throws {
         // Simulate `connectUser`
-        client.authenticationRepository.setToken(token: .unique())
+        client.authenticationRepository.setMockToken()
 
         let expectedId = String.unique
         
@@ -666,6 +678,8 @@ final class CurrentUserController_Tests: XCTestCase {
     }
     
     func test_removeDevice_whenCurrentUserDoesNotExist_shouldError() throws {
+        client.authenticationRepository.logOutUser()
+
         let error = try waitFor {
             controller.removeDevice(id: .unique, completion: $0)
         }
@@ -690,20 +704,22 @@ final class CurrentUserController_Tests: XCTestCase {
         DispatchQueue.global().async {
             self.controller.removeDevice(id: .unique)
         }
-        
-        // Sleep main thread for a little time
-        // to make sure background thread acquires lock (from Atomic, in EntityDatabaseObserver.item)
-        // if we don't sleep, main thread acquires lock first & no deadlock occurs
-        sleep(1)
-        
+
         // THEN
         // updateUser is called from main queue and actually finishes
+
+        // Delay execution for a bit to make sure background thread acquires lock
+        // (from Atomic, in EntityDatabaseObserver.item) if we don't sleep, main thread acquires lock first
+        // & no deadlock occurs
         let exp = expectation(description: "completion called")
-        controller.removeDevice(id: .unique) { _ in
-            exp.fulfill()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.controller.removeDevice(id: .unique) { _ in
+                exp.fulfill()
+            }
+            self.env.currentUserUpdater.removeDevice_completion?(nil)
         }
-        
-        wait(for: [exp], timeout: 5)
+
+        wait(for: [exp], timeout: 0.2)
     }
     
     // MARK: - Reload user if needed
@@ -712,7 +728,7 @@ final class CurrentUserController_Tests: XCTestCase {
         let authenticationRepository = try XCTUnwrap(client.authenticationRepository as? AuthenticationRepository_Mock)
         for error in [nil, TestError()] {
             // Simulate `reloadUserIfNeeded` and capture the result.
-            authenticationRepository.refreshTokenError = error
+            authenticationRepository.refreshTokenResult = error.map { .failure($0) } ?? .success(())
 
             let expectation = self.expectation(description: "reloadCompletes")
             var reloadUserIfNeededCompletionError: Error?

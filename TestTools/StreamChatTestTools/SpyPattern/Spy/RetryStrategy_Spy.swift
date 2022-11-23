@@ -7,6 +7,11 @@ import Foundation
 
 /// Mock implementation of `RetryStrategy`.
 final class RetryStrategy_Spy: RetryStrategy, Spy {
+    enum Signature {
+        static let nextRetryDelay = "nextRetryDelay()"
+        static let resetConsecutiveFailures = "resetConsecutiveFailures()"
+    }
+
     var recordedFunctions: [String] = []
     var consecutiveFailuresCount: Int = 0
     
