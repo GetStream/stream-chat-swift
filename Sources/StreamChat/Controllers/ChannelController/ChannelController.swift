@@ -830,7 +830,7 @@ public extension ChatChannelController {
         })
     }
 
-    /// Load messages around the given message id. Useful to jump to a message which is not loaded.
+    /// Load messages around the given message id. Useful to jump to a message which is not loaded yet.
     ///
     /// Cleans the current messages of the channel and loads the message with the given id,
     /// and the messages around it depending on the limit provided.
@@ -841,7 +841,7 @@ public extension ChatChannelController {
     ///   - messageId: The message id of the message to jump to.
     ///   - limit: The number of messages to load in total, including the message to jump to.
     ///   - completion: Callback when the API call is completed.
-    func loadMessagesAround(messageId: MessageId, limit: Int? = nil, completion: ((Error?) -> Void)? = nil) {
+    func loadPageAroundMessageId(_ messageId: MessageId, limit: Int? = nil, completion: ((Error?) -> Void)? = nil) {
         guard let cid = self.cid, isChannelAlreadyCreated else {
             channelModificationFailed(completion)
             return

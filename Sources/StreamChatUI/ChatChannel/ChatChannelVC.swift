@@ -171,7 +171,7 @@ open class ChatChannelVC: _ViewController,
 
         isJumpingToMessage = true
         messageListVC.listView.isFirstPageLoaded = false
-        channelController.loadMessagesAround(messageId: message.id) { [weak self] error in
+        channelController.loadPageAroundMessageId(message.id) { [weak self] error in
             self?.isJumpingToMessage = false
             if let error = error {
                 self?.loadingMessagesAroundFailed(withError: error)
