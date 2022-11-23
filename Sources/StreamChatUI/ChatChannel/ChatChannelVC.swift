@@ -67,7 +67,18 @@ open class ChatChannelVC: _ViewController,
         isLastMessageFullyVisible && channelController.hasLoadedAllNextMessages
     }
 
+    /// Wether the channel is currently jumping to a message which is not loaded yet.
+    public var isJumpingToMessage = false
+
+    /// A message that is pending to be scrolled after the UI update.
+    ///
+    /// Ex: When jumping to a message, we want that message to appear in the UI, and only then scroll to it.
+    private var messagePendingScrolling: ChatMessage?
+
+    /// Weather the channel is currently loading previous (old) messages.
     private var isLoadingPreviousMessages: Bool = false
+
+    /// Weather the channel is currently loading next (new) messages.
     private var isLoadingNextMessages: Bool = false
 
     override open func setUp() {
@@ -155,9 +166,6 @@ open class ChatChannelVC: _ViewController,
         resignFirstResponder()
     }
 
-    var messageWaitingToBeScrolledTo: ChatMessage?
-    public var isJumpingToMessage = false
-
     /// Jump to a given message.
     /// In case the message is already loaded, it directly goes to it.
     /// If not, it will load the messages around it and go to that page.
@@ -179,7 +187,7 @@ open class ChatChannelVC: _ViewController,
             }
 
             self?.messageListVC.listView.isFirstPageLoaded = self?.channelController.hasLoadedAllNextMessages ?? false
-            self?.messageWaitingToBeScrolledTo = message
+            self?.messagePendingScrolling = message
         }
     }
 
@@ -342,10 +350,10 @@ open class ChatChannelVC: _ViewController,
         messageListVC.updateMessages(with: changes) { [weak self] in
             // Only after updating the message to the UI we have the message around loaded
             // So we check if we have a message waiting to be scrolled to here
-            if let message = self?.messageWaitingToBeScrolledTo,
+            if let message = self?.messagePendingScrolling,
                let indexPath = self?.messageListVC.getIndexPath(forMessageId: message.id) {
                 self?.messageListVC.listView.scrollToRow(at: indexPath, at: .middle, animated: true)
-                self?.messageWaitingToBeScrolledTo = nil
+                self?.messagePendingScrolling = nil
             }
 
             // Calculate new content offset after loading next page
