@@ -401,27 +401,22 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     }
 
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
-        synchronize(isInRecoveryMode: false, completion)
-    }
-
-    // JUMPTODO: reset or load first page?
-    public func reset(_ completion: ((_ error: Error?) -> Void)? = nil) {
-        synchronize(forceEraseCurrentMessages: true, isInRecoveryMode: false, completion)
-    }
-
-    private func synchronize(forceEraseCurrentMessages: Bool = false, isInRecoveryMode: Bool, _ completion: ((_ error: Error?) -> Void)? = nil) {
-        channelQuery.pagination = .init(
-            pageSize: channelQuery.pagination?.pageSize ?? .messagesPageSize,
-            parameter: nil
-        )
-
         // If channel was left while jumping to messages, clean the channel messages.
         hasLoadedAllNextMessages = channel?.lastMessageAt == messages.first?.createdAt
-        if forceEraseCurrentMessages || !hasLoadedAllNextMessages, let cid = cid {
+        if !hasLoadedAllNextMessages, let cid = cid {
             client.databaseContainer.write { session in
                 session.deleteChannelMessages(cid: cid)
             }
         }
+
+        synchronize(isInRecoveryMode: false, completion)
+    }
+
+    private func synchronize(isInRecoveryMode: Bool, _ completion: ((_ error: Error?) -> Void)? = nil) {
+        channelQuery.pagination = .init(
+            pageSize: channelQuery.pagination?.pageSize ?? .messagesPageSize,
+            parameter: nil
+        )
 
         let channelCreatedCallback = isChannelAlreadyCreated ? nil : channelCreated(forwardErrorTo: setLocalStateBasedOnError)
         updater.update(
@@ -452,8 +447,6 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             setupEventObservers(for: cid)
             setLocalStateBasedOnError(startDatabaseObservers())
         }
-
-        hasLoadedAllNextMessages = channel?.lastMessageAt == messages.first?.createdAt
     }
 
     /// Sets new cid of the query if necessary, and resets event and database observers.
@@ -842,7 +835,7 @@ public extension ChatChannelController {
     /// Cleans the current messages of the channel and loads the message with the given id,
     /// and the messages around it depending on the limit provided.
     ///
-    /// Ex: If the limit is 25, will load the message and 12 on top and 12 below it. (25 total)
+    /// Ex: If the limit is 25, it will load the message and 12 on top and 12 below it. (25 total)
     ///
     /// - Parameters:
     ///   - messageId: The message id of the message to jump to.
@@ -876,6 +869,18 @@ public extension ChatChannelController {
                 }
             }
         )
+    }
+
+    /// Cleans the current state and loads the first page again.
+    /// - Parameter completion: Callback when the API call is completed.
+    func loadFirstPage(_ completion: ((_ error: Error?) -> Void)? = nil) {
+        if let cid = cid {
+            client.databaseContainer.write { session in
+                session.deleteChannelMessages(cid: cid)
+            }
+        }
+
+        synchronize(isInRecoveryMode: false, completion)
     }
      
     /// Sends the start typing event and schedule a timer to send the stop typing event.

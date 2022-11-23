@@ -221,7 +221,7 @@ open class ChatChannelVC: _ViewController,
         _ vc: ChatMessageListVC
     ) {
         isJumpingToMessage = true
-        channelController.reset { [weak self] _ in
+        channelController.loadFirstPage { [weak self] _ in
             self?.isJumpingToMessage = false
         }
     }
