@@ -9,20 +9,19 @@ import UIKit
 // MARK: - Navigation
 
 extension DemoAppCoordinator {
-    func start(cid: ChannelId? = nil) {
+    func start(cid: ChannelId? = nil, completion: @escaping (Error?) -> Void) {
         if let user = UserDefaults.shared.currentUser {
-            showChat(for: .credentials(user), cid: cid, animated: false)
+            showChat(for: .credentials(user), cid: cid, animated: false, completion: completion)
         } else {
             showLogin(animated: false)
         }
     }
     
-    func showChat(for user: DemoUserType, cid: ChannelId?, animated: Bool) {
-        logIn(as: user)
+    func showChat(for user: DemoUserType, cid: ChannelId?, animated: Bool, completion: @escaping (Error?) -> Void) {
+        logIn(as: user, completion: completion)
         
         let chatVC = makeChatVC(for: user, startOn: cid) { [weak self] in
             guard let self = self else { return }
-            
             self.logOut()
         }
         
@@ -32,7 +31,11 @@ extension DemoAppCoordinator {
     
     func showLogin(animated: Bool) {
         let loginVC = makeLoginVC { [weak self] user in
-            self?.showChat(for: user, cid: nil, animated: true)
+            self?.showChat(for: user, cid: nil, animated: true) { error in
+                if let error = error {
+                    log.error("Something went wrong logging in: \(error)")
+                }
+            }
         }
         
         if let loginVC = loginVC {
@@ -127,25 +130,25 @@ extension DemoAppCoordinator {
 // MARK: - User Auth
 
 private extension DemoAppCoordinator {
-    func logIn(as user: DemoUserType) {
+    func logIn(as user: DemoUserType, completion: @escaping (Error?) -> Void) {
         // Store current user id
         UserDefaults.shared.currentUserId = user.staticUserId
 
         // App configuration used by our dev team
         DemoAppConfiguration.setInternalConfiguration()
 
-        chat.logIn(as: user)
+        chat.logIn(as: user, completion: completion)
     }
     
     func logOut() {
         // logout client
-        chat.logOut()
+        chat.logOut { [weak self] in
+            // clean user id
+            UserDefaults.shared.currentUserId = nil
 
-        // clean user id
-        UserDefaults.shared.currentUserId = nil
-
-        // show login screen
-        showLogin(animated: true)
+            // show login screen
+            self?.showLogin(animated: true)
+        }
     }
 }
 
