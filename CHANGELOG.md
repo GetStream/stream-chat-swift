@@ -12,8 +12,6 @@ _November 23, 2022_
 ### 🐞 Fixed
 - Avoid double completion calls when getting/fetching tokens [#2387](https://github.com/GetStream/stream-chat-swift/pull/2387)
 
-### 🔄 Changed
-
 # [4.24.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.24.0)
 _November 15, 2022_
 
