@@ -182,6 +182,40 @@ final class AuthenticationRepository_Tests: XCTestCase {
         waitForExpectations(timeout: 0.1)
     }
 
+    func test_connectUser_clearsTokenCompletionsQueueAfterSuccess() throws {
+        XCTAssertNil(repository.tokenProvider)
+        let originalTokenProvider: TokenProvider = { _ in }
+
+        var initialCompletionCalls = 0
+        let expectation1 = expectation(description: "Completion call 1")
+        repository.connectUser(
+            userInfo: nil,
+            tokenProvider: originalTokenProvider,
+            completion: { _ in
+                initialCompletionCalls += 1
+                expectation1.fulfill()
+            }
+        )
+
+        // Simulate call to token provider
+        try XCTUnwrap(clientUpdater.reloadUserIfNeeded_completion)(nil)
+        waitForExpectations(timeout: 0.1)
+
+        XCTAssertNotNil(repository.tokenProvider)
+
+        let expectation2 = expectation(description: "Completion call 2")
+        let newTokenProvider: TokenProvider = { _ in }
+        repository.connectUser(userInfo: nil, tokenProvider: newTokenProvider, completion: { _ in
+            expectation2.fulfill()
+        })
+
+        // Simulate call to token provider
+        try XCTUnwrap(clientUpdater.reloadUserIfNeeded_completion)(nil)
+        waitForExpectations(timeout: 0.1)
+
+        XCTAssertEqual(initialCompletionCalls, 1)
+    }
+
     // MARK: Connect guest user
 
     func test_connectGuestUser_callsClientUpdater_success() throws {
