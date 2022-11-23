@@ -18,6 +18,7 @@
         "APIClient_Tests\/test_runningARequestAndSwitchingToRecoveryMode()",
         "ChannelController_Tests\/test_createCall_propagatesResultFromUpdater()",
         "ChannelUpdater_Tests\/test_hideChannel_successfulResponse_isPropagatedToCompletion()",
+        "ChannelUpdater_Tests\/test_updateChannelQuery_successfulResponseData_areSavedToDB()",
         "MessageSender_Tests\/test_senderSendsMessage_inTheOrderTheyWereCreatedLocally()",
         "MessageSender_Tests\/test_senderSendsMessage_withPendingSendLocalState_and_uploadedOrEmptyAttachments()",
         "MessageSender_Tests\/test_senderSendsMessages_forMultipleChannelsInParalel_butStillInTheCorrectOrder()",
