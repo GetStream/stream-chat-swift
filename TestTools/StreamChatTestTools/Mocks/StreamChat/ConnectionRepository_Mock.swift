@@ -3,6 +3,7 @@
 //
 
 @testable import StreamChat
+import Foundation
 
 /// Mock implementation of `ChatClientUpdater`
 final class ConnectionRepository_Mock: ConnectionRepository, Spy {
