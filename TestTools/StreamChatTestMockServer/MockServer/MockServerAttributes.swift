@@ -29,7 +29,6 @@ public enum MockFile: String {
     case wsChatEvent = "ws_events"
     case wsChannelEvent = "ws_events_channel"
     case wsMemberEvent = "ws_events_member"
-    case wsUserEvent = "ws_events_user"
     case wsReaction = "ws_reaction"
     case wsHealthCheck = "ws_health_check"
     
