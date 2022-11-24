@@ -48,18 +48,18 @@ Every one of them is discussed in the next chapters, but here is an overview ove
 
 | Parameter                                                                       | Type                       | Default                          |
 | ------------------------------------------------------------------------------- | -------------------------- | -------------------------------- |
-| [messageListType](#messagelisttype)                                             | `MessageListType`          | `.messaging`                     |
-| [typingIndicatorPlacement](#typingindicatorplacement)                           | `TypingIndicatorPlacement` | `.bottomOverlay`                 |
-| [groupMessages](#groupmessages)                                                 | `Bool`                     | `true`                           |
-| [messageDisplayOptions](#messagedisplayoptions)                                 | `MessageDisplayOptions`    | `MessageDisplayOptions()`        |
-| [messagePaddings](#messagepaddings)                                             | `MessagePaddings`          | `MessagePaddings(horizontal: 8)` |
-| [dateIndicatorPlacement](#dateindicatorplacement)                               | `DateIndicatorPlacement`   | `.overlay`                       |
-| [pageSize](#pagesize)                                                           | `Int`                      | `50`                             |
-| [messagePopoverEnabled](#messagepopoverenabled)                                 | `Bool`                     | `true`                           |
-| [doubleTapOverlayEnabled](#doubletapoverlayenabled)                             | `Bool`                     | `false`                          |
-| [becomesFirstResponderOnOpen](#becomesfirstresponderonopen)                     | `Bool`                     | `false`                          |
-| [maxTimeIntervalBetweenMessagesInGroup](#maxtimeintervalbetweenmessagesingroup) | `TimeInterval`             | `60`                             |
-| [cacheSizeOnChatDismiss](#cachesizeonchatdismiss)                               | `Int`                      | `1024 * 1024 * 100`              |
+| [`messageListType`](#messagelisttype)                                             | `MessageListType`          | `.messaging`                     |
+| [`typingIndicatorPlacement`](#typingindicatorplacement)                           | `TypingIndicatorPlacement` | `.bottomOverlay`                 |
+| [`groupMessages`](#groupmessages)                                                 | `Bool`                     | `true`                           |
+| [`messageDisplayOptions`](#messagedisplayoptions)                                 | `MessageDisplayOptions`    | `MessageDisplayOptions()`        |
+| [`messagePaddings`](#messagepaddings)                                             | `MessagePaddings`          | `MessagePaddings(horizontal: 8)` |
+| [`dateIndicatorPlacement`](#dateindicatorplacement)                               | `DateIndicatorPlacement`   | `.overlay`                       |
+| [`pageSize`](#pagesize)                                                           | `Int`                      | `50`                             |
+| [`messagePopoverEnabled`](#messagepopoverenabled)                                 | `Bool`                     | `true`                           |
+| [`doubleTapOverlayEnabled`](#doubletapoverlayenabled)                             | `Bool`                     | `false`                          |
+| [`becomesFirstResponderOnOpen`](#becomesfirstresponderonopen)                     | `Bool`                     | `false`                          |
+| [`maxTimeIntervalBetweenMessagesInGroup`](#maxtimeintervalbetweenmessagesingroup) | `TimeInterval`             | `60`                             |
+| [`cacheSizeOnChatDismiss`](#cachesizeonchatdismiss)                               | `Int`                      | `1024 * 1024 * 100`              |
 
 The next sections will go through these values and discuss the impact they have when altered.
 
