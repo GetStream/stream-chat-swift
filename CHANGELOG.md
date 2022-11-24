@@ -9,6 +9,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### 🔄 Changed
 
+# [4.24.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.24.1)
+_November 23, 2022_
+
+## StreamChat
+### 🐞 Fixed
+- Avoid double completion calls when getting/fetching tokens [#2387](https://github.com/GetStream/stream-chat-swift/pull/2387)
+
 # [4.24.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.24.0)
 _November 15, 2022_
 
