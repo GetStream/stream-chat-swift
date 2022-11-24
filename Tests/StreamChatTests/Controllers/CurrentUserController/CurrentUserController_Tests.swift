@@ -353,8 +353,6 @@ final class CurrentUserController_Tests: XCTestCase {
     }
     
     func test_updateUser_whenCurrentUserDoesNotExist_shouldError() throws {
-        client.authenticationRepository.logOutUser()
-
         let error = try waitFor {
             controller.updateUserData(
                 name: .unique,
@@ -370,14 +368,7 @@ final class CurrentUserController_Tests: XCTestCase {
     func test_updateUser_doesNotDeadlock() throws {
         // GIVEN
         // Simulate saving current user to a database
-        try client.databaseContainer.writeSynchronously {
-            let currentUserPayload: CurrentUserPayload = .dummy(
-                userId: .unique,
-                role: .user,
-                unreadCount: .none
-            )
-            try $0.saveCurrentUser(payload: currentUserPayload)
-        }
+        client.authenticationRepository.setMockToken()
 
         // WHEN
         // updateUser is called from background queue
@@ -441,8 +432,6 @@ final class CurrentUserController_Tests: XCTestCase {
     }
 
     func test_synchronizeDevices__whenCurrentUserDoesNotExist_propagatesError() throws {
-        client.authenticationRepository.logOutUser()
-
         let error = try waitFor {
             controller.synchronizeDevices(completion: $0)
         }
@@ -453,15 +442,8 @@ final class CurrentUserController_Tests: XCTestCase {
     func test_synchronizeDevices_doesNotDeadlock() throws {
         // GIVEN
         // Simulate saving current user to a database
-        try client.databaseContainer.writeSynchronously {
-            let currentUserPayload: CurrentUserPayload = .dummy(
-                userId: .unique,
-                role: .user,
-                unreadCount: .none
-            )
-            try $0.saveCurrentUser(payload: currentUserPayload)
-        }
-        
+        client.authenticationRepository.setMockToken()
+
         // WHEN
         // updateUser is called from background queue
         DispatchQueue.global().async {
@@ -577,15 +559,8 @@ final class CurrentUserController_Tests: XCTestCase {
     func test_addDevice_doesNotDeadlock() throws {
         // GIVEN
         // Simulate saving current user to a database
-        try client.databaseContainer.writeSynchronously {
-            let currentUserPayload: CurrentUserPayload = .dummy(
-                userId: .unique,
-                role: .user,
-                unreadCount: .none
-            )
-            try $0.saveCurrentUser(payload: currentUserPayload)
-        }
-        
+        client.authenticationRepository.setMockToken()
+
         // WHEN
         // updateUser is called from background queue
         DispatchQueue.global().async {
@@ -690,15 +665,8 @@ final class CurrentUserController_Tests: XCTestCase {
     func test_removeDevice_doesNotDeadlock() throws {
         // GIVEN
         // Simulate saving current user to a database
-        try client.databaseContainer.writeSynchronously {
-            let currentUserPayload: CurrentUserPayload = .dummy(
-                userId: .unique,
-                role: .user,
-                unreadCount: .none
-            )
-            try $0.saveCurrentUser(payload: currentUserPayload)
-        }
-        
+        client.authenticationRepository.setMockToken()
+
         // WHEN
         // updateUser is called from background queue
         DispatchQueue.global().async {

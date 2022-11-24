@@ -28,11 +28,11 @@ class AuthenticationRepository_Mock: AuthenticationRepository, Spy {
     var completeWaitersToken: Token?
 
     override var currentUserId: UserId? {
-        return mockedCurrentUserId ?? super.currentUserId
+        return mockedCurrentUserId
     }
 
     override var currentToken: Token? {
-        return mockedToken ?? super.currentToken
+        return mockedToken
     }
 
     override init(apiClient: APIClient,
@@ -40,6 +40,7 @@ class AuthenticationRepository_Mock: AuthenticationRepository, Spy {
                   connectionRepository: ConnectionRepository,
                   tokenExpirationRetryStrategy: RetryStrategy = DefaultRetryStrategy(),
                   timerType: StreamChat.Timer.Type = DefaultTimer.self) {
+        // This is just to avoid private `fetchCurrentUser` method from crashing
         do {
             try databaseContainer.createCurrentUser()
             (databaseContainer as? DatabaseContainer_Spy)?.clear()
@@ -77,7 +78,7 @@ class AuthenticationRepository_Mock: AuthenticationRepository, Spy {
 
     override func setToken(token: Token, completeTokenWaiters: Bool) {
         record()
-        mockedToken = token
+        setMockToken(token)
     }
 
     override func clearTokenProvider() {
@@ -99,7 +100,13 @@ class AuthenticationRepository_Mock: AuthenticationRepository, Spy {
 }
 
 extension AuthenticationRepository {
-    func setMockToken() {
-        setToken(token: .unique(), completeTokenWaiters: false)
+    func setMockToken(_ token: Token = Token.unique()) {
+        guard let mock = self as? AuthenticationRepository_Mock else {
+            assertionFailure()
+            return
+        }
+
+        mock.mockedToken = token
+        mock.mockedCurrentUserId = token.userId
     }
 }
