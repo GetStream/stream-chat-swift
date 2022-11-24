@@ -16,7 +16,7 @@ import ComponentsNote from '../../common-content/components-note.md'
     ChatMessageLayoutOptionsResolver [href="../message-layout-options-resolver"]
     ChatAvatarView [href="../avatar"]
     ChatMessageListVC -> ChatMessageLayoutOptionsResolver
-    ChatMessageLayoutOptionsResolver -> ChatMessageListVC 
+    ChatMessageLayoutOptionsResolver -> ChatMessageListVC
     ChatMessageListVC -> ChatMessageListView
     ChatMessageListView -> ChatMessageContentView
     ChatMessageContentView -> ChatAvatarView
@@ -47,8 +47,8 @@ If you need to customize just one component of the message view, you can easily 
 
 ```swift
 class CustomMessageSquaredBubbleView: ChatMessageBubbleView {
-    override open func setUpAppearance() {
-        super.setUpAppearance()
+    override open func layoutSubviews() {
+        super.layoutSubviews()
 
         layer.cornerRadius = 0
     }
@@ -68,7 +68,7 @@ Components.default.messageBubbleView = CustomMessageSquaredBubbleView.self
 
 ### Simple Layout Changes
 
-The `ChatMessageLayoutOptions` are flags that the `ChatMessageLayoutOptionsResolver` injects in each message view depending on the message content (ie. Does the message contains reactions? Is it coming from the same user? Etc...). When rendering the message view, the layout options will be used to know which views to show or hide, and if the message cell can be reused since different layout options combinations will produce different reuse identifiers. 
+The `ChatMessageLayoutOptions` are flags that the `ChatMessageLayoutOptionsResolver` injects in each message view depending on the message content (ie. Does the message contains reactions? Is it coming from the same user? Etc...). When rendering the message view, the layout options will be used to know which views to show or hide, and if the message cell can be reused since different layout options combinations will produce different reuse identifiers.
 
 By customizing the `ChatMessageLayoutOptionsResolver` it is possible to do simple layout changes, like for example always showing the timestamp (by default if the messages are sent in the same minute, only the last one shows the timestamp).
 
@@ -184,7 +184,7 @@ In order to change the message layout we first need to understand how it is stru
 
 - `mainContainer` is a horizontal container that holds all top-hierarchy views inside the `ChatMessageContentView` - This includes the `AvatarView`, `Spacer` and `BubbleThreadMetaContainer`.
 - `bubbleThreadMetaContainer` is a vertical container that holds the `bubbleView` at the top and `metadataContainer` at the bottom by default. You can switch the positions for these elements or even add your own according to your needs.
-- `metadataContainer` is a horizontal container that holds  `authorNameLabel` , `timestampLabel` and `onlyVisibleForYouLabel`. 
+- `metadataContainer` is a horizontal container that holds  `authorNameLabel` , `timestampLabel` and `onlyVisibleForYouLabel`.
 - `bubbleView` is a view that embeds a `bubbleContentContainer` and is only responsible for the bubble styling. The `bubbleContentContainer` contains the `textView` and `quotedMessageView` if the message is a quote.
 
 :::note `bubbleView` vs `bubbleContentContainer`
@@ -193,7 +193,7 @@ In order to change the message layout we first need to understand how it is stru
 
 As an example on how we can restructure the layout of the message view we will do the following customization:
 
-![Custom Message Layout](../../assets/messagelist-layout-custom.png)  
+![Custom Message Layout](../../assets/messagelist-layout-custom.png)
 
 First, we need to customize the `ChatMessageLayoutOptionsResolver` and change the message layout options according to our needs. For this specific example, let's assume our message view layout needs to respect the following conditions:
 - Always include the avatar, timestamp and author name.
@@ -211,14 +211,14 @@ final class CustomMessageOptionsResolver: ChatMessageLayoutOptionsResolver {
     ) -> ChatMessageLayoutOptions {
         // Call super to get the default options.
         var options = super.optionsForMessage(at: indexPath, in: channel, with: messages, appearance: appearance)
-        
+
         // Remove all the options that we don't want to support.
         // By removing `.flipped` option, all messages will be rendered in the leading side.
         options.remove([.flipped, .bubble, .avatarSizePadding, .threadInfo, .reactions])
 
         // Insert the options that we want to support.
         options.insert([.avatar, .timestamp, .authorName])
-        
+
         return options
     }
 }
@@ -235,10 +235,10 @@ final class CustomChatMessageContentView: ChatMessageContentView {
         // To have the avatarView aligned at the top with rest of the elements,
         // we'll need to set the `mainContainer` alignment to leading.
         mainContainer.alignment = .leading
-        
+
         // Set inset to zero to align it with the message author
-        textView?.textContainerInset = .zero 
-        
+        textView?.textContainerInset = .zero
+
         // Reverse the order of the views in the `bubbleThreadMetaContainer`.
         // This will reverse the order of the `textView` and `metadataContainer`
         let subviews = bubbleThreadMetaContainer.subviews
@@ -314,7 +314,7 @@ final class CustomChatMessageContentView: ChatMessageContentView {
 
     override func layout(options: ChatMessageLayoutOptions) {
         super.layout(options: options)
-        
+
         /// We only want to add the share button if the option is present.
         if options.contains(.shareAttachments) {
             let button = createShareAttachmentsButton()
@@ -338,7 +338,7 @@ final class CustomChatMessageContentView: ChatMessageContentView {
         }
         return shareAttachmentsButton!
     }
-    
+
     /// Handling the tap on the share button.
     @objc private func handleTapOnShareButton(_ sender: UIButton) {
         guard let message = content else { return }
@@ -349,7 +349,7 @@ final class CustomChatMessageContentView: ChatMessageContentView {
         let videos = message.videoAttachments.map(\.videoURL)
         let audios = message.audioAttachments.map(\.audioURL)
         let links = message.linkAttachments.map(\.originalURL)
-        
+
         let allAttachments = [images, files, gifs, videos, audios, links].reduce([], +)
         onShareAttachments?(allAttachments)
     }

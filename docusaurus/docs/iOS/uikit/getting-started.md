@@ -98,7 +98,7 @@ To modally show the channel list screen, add the following code-snippet to your 
 ```swift
 let query = ChannelListQuery(filter: .containMembers(userIds: [userId]))
 let controller = ChatClient.shared.channelListController(query: query)
-let channelListVC = ChatChannelList.make(with: controller)
+let channelListVC = ChatChannelListVC.make(with: controller)
 let channelListNVC = UINavigationController(rootViewController: channelListVC)
 
 rootViewController.present(channelListNVC)
@@ -108,7 +108,7 @@ We also support loading the channel list screen from the storyboard by passing i
 
 ```swift
 let storyboard = UIStoryboard(name: "Main", bundle: /*bundle containing the storyboard*/)
-let channelListVC = ChatChannelList.make(
+let channelListVC = ChatChannelListVC.make(
     with: controller,
     storyboard: storyboard,
     storyboardId: "<# Storyboard ID Here #>"
@@ -129,7 +129,7 @@ You now have your very first Stream Chat app showing a list of Channels, but you
 
 ```swift
 do {
-    try client.controller(createChannelWithId: ChannelId(type: .livestream, id: UUID().uuidString), name: channelName)
+    let channelController = try ChatClient.shared.channelController(createChannelWithId: ChannelId(type: .livestream, id: UUID().uuidString), name: channelName)
 
     channelController.synchronize { error in
         if let error = error {
@@ -149,7 +149,7 @@ Your `ChannelId` has to be a unique ID and you can set this to anything, in this
 
 :::tip Using Synchronize
 
-After creating the channel `try client.controller(createChannelWithId: ChannelId(type: .livestream, id: UUID().uuidString), name: channelName)` it's important you call `synchronize()` after so the local and remote data is updated. You can read more about the importance of `synchronize()` [here](../../client/importance-of-synchronize)..
+After creating the channel `try ChatClient.shared.channelController(createChannelWithId: ChannelId(type: .livestream, id: UUID().uuidString), name: channelName)` it's important you call `synchronize()` after so the local and remote data is updated. You can read more about the importance of `synchronize()` [here](../../client/importance-of-synchronize)..
 
 :::
 

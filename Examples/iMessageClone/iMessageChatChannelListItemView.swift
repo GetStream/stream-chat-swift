@@ -13,7 +13,6 @@ final class iMessageChatChannelListItemView: ChatChannelListItemView {
               
         unreadView.backgroundColor = .systemBlue
         unreadView.layer.masksToBounds = true
-        unreadView.layer.cornerRadius = 5
         unreadView.clipsToBounds = true
         
         timestampLabel.font = .systemFont(ofSize: 15)

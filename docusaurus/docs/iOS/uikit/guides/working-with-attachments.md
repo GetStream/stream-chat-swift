@@ -37,7 +37,7 @@ This is the list of `Components`'s attributes used to map attachments to views
 
 You can implement `MyCustomAttachmentViewInjector` as a subclass of `FilesAttachmentViewInjector` or as a subclass of `AttachmentViewInjector`.
 
-In both cases you will implement at least these two methods: `contentViewDidLayout(options: ChatMessageLayoutOptions)` and `contentViewDidUpdateContent`. 
+In both cases you will implement at least these two methods: `contentViewDidLayout(options: ChatMessageLayoutOptions)` and `contentViewDidUpdateContent`.
 
 To keep this easy to read we are going to create two classes: `MyCustomAttachmentViewInjector` and `MyCustomAttachmentView`. The latter is your custom attachment view, you can implement it programmatically or with interface builder using xibs.
 
@@ -135,13 +135,13 @@ public struct WorkoutAttachmentPayload: AttachmentPayload {
 }
 ```
 
-Here we extended `AttachmentType` to include the `workout` type and afterwards we introduced a new struct to match the payload data that we expect. 
+Here we extended `AttachmentType` to include the `workout` type and afterwards we introduced a new struct to match the payload data that we expect.
 
 1. WorkoutAttachmentPayload.type is used to match message attachments to this struct
 1. All attachment fields are optional, this is highly recommended for all custom data
 1. We use CodingKeys to map JSON field names to struct fields
 
-Let's now create a custom view injector to handle the workout attachment. 
+Let's now create a custom view injector to handle the workout attachment.
 
 ```swift
 import Nuke
@@ -258,7 +258,7 @@ If needed you can also send a message with a workout attachment directly from Sw
 
 ```swift
 let controller = client.channelController(for: ChannelId(type: .messaging, id: "my-test-channel"))
-let attachment = WorkoutAttachmentPayload(workoutDistanceMeters: 150, workoutDurationSeconds: 42, workoutEnergyCal: 1000, imageURL: "https://path.to/some/great/picture.png")
+let attachment = WorkoutAttachmentPayload(imageURL: URL(string: "https://path.to/some/great/picture.png")!, workoutDistanceMeters: 150, workoutDurationSeconds: 42, workoutEnergyCal: 1000)
 
 controller.createNewMessage(text: "work-out-test", attachments: [.init(payload: attachment)]) { _ in
     print("test message was added")
@@ -304,12 +304,12 @@ class WorkoutAttachmentViewInjector: AttachmentViewInjector {
 
     override open func contentViewDidUpdateContent() {
         super.contentViewDidUpdateContent()
-        
+
         workoutView.workoutAttachment = attachments(payloadType: WorkoutAttachmentPayload.self).first
     }
 
     @objc func handleTapOnWorkoutAttachment() {
-        guard let workoutAttachmentDelegate = contentView.delegate as? WorkoutAttachmentViewDelegate {
+        guard let workoutAttachmentDelegate = contentView.delegate as? WorkoutAttachmentViewDelegate else {
             return
         }
 

@@ -12,27 +12,27 @@ final class SlackGalleryAttachmentViewInjector: GalleryAttachmentViewInjector {
 
 final class SlackChatMessageGalleryView: ChatMessageGalleryView {
     private lazy var stackView = ContainerStackView()
-    
-    override func setUpAppearance() {
-        super.setUpAppearance()
-        
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+
         (itemSpots + [moreItemsOverlay]).forEach {
             $0.layer.cornerRadius = 10
             $0.layer.masksToBounds = true
         }
     }
-    
+
     override func setUpLayout() {
         stackView.spacing = 15
         stackView.distribution = .equal
         stackView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(stackView)
-        
+
         itemSpots.forEach {
             stackView.addArrangedSubview($0)
             $0.heightAnchor.constraint(equalTo: $0.widthAnchor).isActive = true
         }
-        
+
         let lastSpot = itemSpots.last!
         addSubview(moreItemsOverlay)
         NSLayoutConstraint.activate([
@@ -41,7 +41,7 @@ final class SlackChatMessageGalleryView: ChatMessageGalleryView {
             moreItemsOverlay.topAnchor.constraint(equalTo: lastSpot.topAnchor),
             moreItemsOverlay.bottomAnchor.constraint(equalTo: lastSpot.bottomAnchor)
         ])
-        
+
         NSLayoutConstraint.activate([
             stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
             stackView.trailingAnchor.constraint(equalTo: trailingAnchor),

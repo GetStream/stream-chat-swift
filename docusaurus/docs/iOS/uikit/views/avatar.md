@@ -4,7 +4,7 @@ title: ChatAvatarView
 
 import ComponentsNote from '../../common-content/components-note.md'
 
-This component renders the user avatar. By default, a circular image is used. 
+This component renders the user avatar. By default, a circular image is used.
 
 ### Customization
 
@@ -20,18 +20,18 @@ Components.default.avatarView = MyChatAvatarView.self
 
 ### Square Avatar
 
-First, create a subclass of `ChatAvatarView` and set it according to your needs. 
+First, create a subclass of `ChatAvatarView` and set it according to your needs.
 
 ```swift
 final class SquareAvatarView: ChatAvatarView {
-    override func setUpAppearance() {
-        super.setUpAppearance()
+    override func layoutSubviews() {
+        super.layoutSubviews()
         imageView.layer.cornerRadius = 3
     }
 }
-``` 
+```
 
-Next, you need to set this custom view to `Components` in the context where your customization takes place. 
+Next, you need to set this custom view to `Components` in the context where your customization takes place.
 
 ```swift
 Components.default.avatarView = SquareAvatarView.self

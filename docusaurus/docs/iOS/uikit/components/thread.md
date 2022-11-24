@@ -39,7 +39,7 @@ threadVC.messageController = ChatClient.shared.messageController(
     messageId: messageId
 )
 
-navigationController?.show(threadVC)
+navigationController?.show(threadVC, sender: self)
 ```
 
 <SingletonNote />
