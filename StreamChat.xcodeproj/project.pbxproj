@@ -332,6 +332,10 @@
 		80C6027B25157E4D00A6B714 /* View+AlertTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80C6027A25157E4D00A6B714 /* View+AlertTextField.swift */; };
 		80D880432546553500908B7B /* ChatScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80D880422546553500908B7B /* ChatScrollView.swift */; };
 		8210AA2827FC916B005F0B32 /* ChannelList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8210AA2727FC916B005F0B32 /* ChannelList.swift */; };
+		8223EE7A2937A099006138B9 /* http_add_member.json in Resources */ = {isa = PBXBuildFile; fileRef = 8223EE792937A099006138B9 /* http_add_member.json */; };
+		8223EE7C2937A0E9006138B9 /* http_channel_creation.json in Resources */ = {isa = PBXBuildFile; fileRef = 8223EE7B2937A0E9006138B9 /* http_channel_creation.json */; };
+		8223EE7E2937A1F5006138B9 /* http_channel_removal.json in Resources */ = {isa = PBXBuildFile; fileRef = 8223EE7D2937A1F5006138B9 /* http_channel_removal.json */; };
+		8223EE802937A21E006138B9 /* ws_message.json in Resources */ = {isa = PBXBuildFile; fileRef = 8223EE7F2937A21E006138B9 /* ws_message.json */; };
 		822F265727D8F75D00E454FB /* UserRobot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8298C8E827D22C3E004082D3 /* UserRobot.swift */; };
 		822F266027D9FDB500E454FB /* URLProtocol_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DDF816249CE38B002F4412 /* URLProtocol_Mock.swift */; };
 		822F266227D9FE5E00E454FB /* RequestRecorderURLProtocol_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DDF817249CE38B002F4412 /* RequestRecorderURLProtocol_Mock.swift */; };
@@ -821,7 +825,6 @@
 		A3BD4850281AC16C0090D511 /* ChannelVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3BD484F281AC16C0090D511 /* ChannelVC.swift */; };
 		A3BD486B281FD4500090D511 /* OHHTTPStubs in Frameworks */ = {isa = PBXBuildFile; productRef = A3BD486A281FD4500090D511 /* OHHTTPStubs */; };
 		A3BEB6AF27F3235600D6D80D /* Bundle+Target.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3BEB6AE27F3235600D6D80D /* Bundle+Target.swift */; };
-		A3C049D42840BDA700E25E38 /* ws_events_user.json in Resources */ = {isa = PBXBuildFile; fileRef = A3C049C82840BDA700E25E38 /* ws_events_user.json */; };
 		A3C049D52840BDA700E25E38 /* http_events.json in Resources */ = {isa = PBXBuildFile; fileRef = A3C049C92840BDA700E25E38 /* http_events.json */; };
 		A3C049D62840BDA700E25E38 /* http_reaction.json in Resources */ = {isa = PBXBuildFile; fileRef = A3C049CA2840BDA700E25E38 /* http_reaction.json */; };
 		A3C049D72840BDA700E25E38 /* ws_events_member.json in Resources */ = {isa = PBXBuildFile; fileRef = A3C049CB2840BDA700E25E38 /* ws_events_member.json */; };
@@ -2694,6 +2697,10 @@
 		80C6027A25157E4D00A6B714 /* View+AlertTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+AlertTextField.swift"; sourceTree = "<group>"; };
 		80D880422546553500908B7B /* ChatScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatScrollView.swift; sourceTree = "<group>"; };
 		8210AA2727FC916B005F0B32 /* ChannelList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelList.swift; sourceTree = "<group>"; };
+		8223EE792937A099006138B9 /* http_add_member.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = http_add_member.json; sourceTree = "<group>"; };
+		8223EE7B2937A0E9006138B9 /* http_channel_creation.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = http_channel_creation.json; sourceTree = "<group>"; };
+		8223EE7D2937A1F5006138B9 /* http_channel_removal.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = http_channel_removal.json; sourceTree = "<group>"; };
+		8223EE7F2937A21E006138B9 /* ws_message.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ws_message.json; sourceTree = "<group>"; };
 		8224FD85280EC09800B32D43 /* HttpServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpServer.swift; sourceTree = "<group>"; };
 		8232B84E28635C4A0032C7DB /* Attachments_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Attachments_Tests.swift; sourceTree = "<group>"; };
 		82390E7A28C609A700829581 /* push_notification.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = push_notification.json; sourceTree = "<group>"; };
@@ -3124,7 +3131,6 @@
 		A3BD484F281AC16C0090D511 /* ChannelVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelVC.swift; sourceTree = "<group>"; };
 		A3BEB6AE27F3235600D6D80D /* Bundle+Target.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+Target.swift"; sourceTree = "<group>"; };
 		A3BEB6B227F3245E00D6D80D /* XCTestCase+MockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+MockData.swift"; sourceTree = "<group>"; };
-		A3C049C82840BDA700E25E38 /* ws_events_user.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = ws_events_user.json; sourceTree = "<group>"; };
 		A3C049C92840BDA700E25E38 /* http_events.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = http_events.json; sourceTree = "<group>"; };
 		A3C049CA2840BDA700E25E38 /* http_reaction.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = http_reaction.json; sourceTree = "<group>"; };
 		A3C049CB2840BDA700E25E38 /* ws_events_member.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = ws_events_member.json; sourceTree = "<group>"; };
@@ -6470,11 +6476,14 @@
 				826B1C38288FD756005DDF13 /* http_truncate.json */,
 				A3C049D22840BDA700E25E38 /* ws_events_channel.json */,
 				A3C049CB2840BDA700E25E38 /* ws_events_member.json */,
-				A3C049C82840BDA700E25E38 /* ws_events_user.json */,
 				A3C049D12840BDA700E25E38 /* ws_events.json */,
 				A3C049CF2840BDA700E25E38 /* ws_health_check.json */,
 				A3C049CE2840BDA700E25E38 /* ws_reaction.json */,
 				82390E7A28C609A700829581 /* push_notification.json */,
+				8223EE792937A099006138B9 /* http_add_member.json */,
+				8223EE7B2937A0E9006138B9 /* http_channel_creation.json */,
+				8223EE7D2937A1F5006138B9 /* http_channel_removal.json */,
+				8223EE7F2937A21E006138B9 /* ws_message.json */,
 			);
 			path = JSONs;
 			sourceTree = "<group>";
@@ -8521,20 +8530,23 @@
 			buildActionMask = 2147483647;
 			files = (
 				A3C049DB2840BDA700E25E38 /* ws_health_check.json in Resources */,
+				8223EE802937A21E006138B9 /* ws_message.json in Resources */,
 				A3C049DF2840BDA700E25E38 /* http_channels.json in Resources */,
 				826B1C3728895BB5005DDF13 /* http_unsplash_link.json in Resources */,
 				A3C049DE2840BDA700E25E38 /* ws_events_channel.json in Resources */,
 				A3C049D52840BDA700E25E38 /* http_events.json in Resources */,
 				A3C049DD2840BDA700E25E38 /* ws_events.json in Resources */,
-				A3C049D42840BDA700E25E38 /* ws_events_user.json in Resources */,
 				82390E7B28C609A700829581 /* push_notification.json in Resources */,
 				A3C049DA2840BDA700E25E38 /* ws_reaction.json in Resources */,
 				A3C049D72840BDA700E25E38 /* ws_events_member.json in Resources */,
+				8223EE7A2937A099006138B9 /* http_add_member.json in Resources */,
 				826B1C3528895AFD005DDF13 /* http_youtube_link.json in Resources */,
 				82E43AC128637651007BB6CD /* http_attachment.json in Resources */,
 				A3C049D82840BDA700E25E38 /* http_message.json in Resources */,
 				A3B68B07284503AD00DF4321 /* http_message_ephemeral.json in Resources */,
+				8223EE7C2937A0E9006138B9 /* http_channel_creation.json in Resources */,
 				A3C049D62840BDA700E25E38 /* http_reaction.json in Resources */,
+				8223EE7E2937A1F5006138B9 /* http_channel_removal.json in Resources */,
 				A3C049D92840BDA700E25E38 /* http_member.json in Resources */,
 				826B1C39288FD756005DDF13 /* http_truncate.json in Resources */,
 			);
