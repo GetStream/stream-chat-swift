@@ -37,6 +37,10 @@ class CustomComposerVC: ComposerVC {
 
         // The subviews of composer belong to the `composerView`
         composerView.attachmentButton.backgroundColor = UIColor.systemGray5
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
         composerView.attachmentButton.layer.cornerRadius = 4
     }
 }
@@ -69,7 +73,7 @@ class CustomComposerVC: ComposerVC {
     lazy var cameraPicker: UIImagePickerController = {
         let picker = UIImagePickerController()
         picker.sourceType = .camera
-        // ComposerVC already confirms to `UIImagePickerControllerDelegate` 
+        // ComposerVC already confirms to `UIImagePickerControllerDelegate`
         // and will handle the result from the picker automatically
         picker.delegate = self
         return picker
@@ -83,11 +87,11 @@ class CustomComposerVC: ComposerVC {
                 self?.showCameraPicker()
             }
         )
-        // Here we return the super actions to get 
+        // Here we return the super actions to get
         // the default actions and add our new one
         return super.attachmentsPickerActions + [showCameraPickerAction]
     }
-    
+
     func showCameraPicker() {
         self.present(cameraPicker, animated: true)
     }
@@ -202,11 +206,10 @@ class ContactAttachmentView: _View, AppearanceProvider {
         super.setUpAppearance()
 
         backgroundColor = UIColor.systemGray6
-        layer.cornerRadius = 15
         layer.masksToBounds = true
         layer.borderWidth = 1
         layer.borderColor = appearance.colorPalette.border.cgColor
-        
+
         contactNameLabel.textColor = appearance.colorPalette.subtitleText
         contactNameLabel.font = appearance.fonts.subheadlineBold
 
@@ -214,6 +217,11 @@ class ContactAttachmentView: _View, AppearanceProvider {
         contactPhoneNumberLabel.font = appearance.fonts.bodyBold
 
         contactStackView.axis = .vertical
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        layer.cornerRadius = 15
     }
 
     override func setUpLayout() {

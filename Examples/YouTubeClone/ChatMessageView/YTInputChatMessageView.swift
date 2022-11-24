@@ -10,9 +10,13 @@ import UIKit
 final class YTInputChatMessageView: InputChatMessageView {
     override func setUpAppearance() {
         super.setUpAppearance()
-        
+
         // Remove the border from the container
-        container.layer.cornerRadius = 0
         container.layer.borderWidth = 0
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        container.layer.cornerRadius = 0
     }
 }

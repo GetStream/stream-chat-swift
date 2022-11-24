@@ -6,8 +6,8 @@ import StreamChatUI
 import UIKit
 
 final class SlackChatChannelListItemView: ChatChannelListItemView {
-    override func setUpAppearance() {
-        super.setUpAppearance()
+    override func layoutSubviews() {
+        super.layoutSubviews()
         avatarView.layer.cornerRadius = 4
     }
 

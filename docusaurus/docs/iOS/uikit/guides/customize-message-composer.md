@@ -36,9 +36,9 @@ class iMessageComposerView: ComposerView {
         attachmentButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
         attachmentButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
     }
-    
-    override func setUpAppearance() {
-        super.setUpAppearance()
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
 
         // Adjust the input corner radius to make the input rounder
         inputMessageView.container.layer.cornerRadius = 18
@@ -121,7 +121,7 @@ class iMessageComposerVC: ComposerVC {
 
     @objc func showEmojiPicker(sender: UIButton) {
 
-        // For the sake of making the guide simple, 
+        // For the sake of making the guide simple,
         // we use an alert controller to select emojis.
         let sheetAlertController = UIAlertController(
             title: "Emoji Picker",
@@ -192,8 +192,12 @@ class CustomChatSuggestionsVC: ChatSuggestionsVC {
 
         collectionView.layer.borderWidth = 1
         collectionView.layer.borderColor = appearance.colorPalette.border.cgColor
-        collectionView.layer.cornerRadius = 10
         view.layer.shadowOpacity = 0.0
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        collectionView.layer.cornerRadius = 10
     }
 }
 ```

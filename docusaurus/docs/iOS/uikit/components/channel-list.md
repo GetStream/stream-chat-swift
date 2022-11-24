@@ -136,10 +136,14 @@ class CustomChatChannelListVC: ChatChannelListVC {
         super.setUpAppearance()
 
         channelListErrorView.backgroundColor = .red
-        channelListErrorView.layer.cornerRadius = 20
         channelListErrorView.titleLabel.text = "Data unavailable"
         channelListErrorView.titleLabel.textColor = .black
         channelListErrorView.retryButton.setImage(.init(systemName: "hourglass.circle"), for: .normal)
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        channelListErrorView.layer.cornerRadius = 20
     }
 }
 ```
