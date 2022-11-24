@@ -1,0 +1,38 @@
+name: Mock Server
+
+on:
+  schedule:
+    # Runs "At 00:00 on Monday"
+    - cron: '0 0 * * 1'
+
+  pull_request: # FIXME
+    branches:
+      - '**'
+
+env:
+  HOMEBREW_NO_INSTALL_CLEANUP: 1 # Disable cleanup for homebrew, we don't need it on CI
+
+jobs:
+  sync:
+    name: Sync
+    runs-on: macos-12
+    steps:
+    - uses: actions/checkout@v3.1.0
+    - uses: actions/setup-python@v4.3.0
+      with:
+        python-version: 3.8
+        cache: 'pip'
+    - uses: ./.github/actions/bootstrap
+      env:
+        SYNC_MOCK_SERVER: true
+    - run: bundle exec fastlane sync_mock_server
+    - uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        text: "You shall not pass!"
+        job_name: "${{ github.workflow }}: ${{ github.job }}"
+        fields: message,commit,author,action,workflow,job,took
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        MATRIX_CONTEXT: ${{ toJson(matrix) }}
+      if: failure()
