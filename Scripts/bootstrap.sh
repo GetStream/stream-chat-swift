@@ -2,6 +2,7 @@
 # Usage: ./bootstrap.sh
 # This script will:
 #   - install Mint and bootstrap its dependencies
+#   - install Vale
 #   - link git hooks
 #   - install required ruby gems
 #   - install sonar dependencies if `INSTALL_SONAR` environment variable is provided
@@ -35,6 +36,9 @@ puts "Create symlink for pre-commit hooks"
 ln -sf ../../hooks/pre-commit.sh .git/hooks/pre-commit
 chmod +x .git/hooks/pre-commit
 chmod +x ./hooks/git-format-staged
+
+puts "Install Vale if needed"
+brew install vale
 
 puts "Install bundle dependencies"
 bundle install
