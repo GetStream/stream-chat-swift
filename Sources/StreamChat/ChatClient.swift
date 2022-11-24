@@ -462,8 +462,6 @@ extension ChatClient: AuthenticationRepositoryDelegate {
     }
 }
 
-/// `APIClient` listens for `WebSocketClient` connection updates so it can forward the current connection id to
-/// its `RequestEncoder`.
 extension ChatClient: ConnectionStateDelegate {
     func webSocketClient(_ client: WebSocketClient, didUpdateConnectionState state: WebSocketConnectionState) {
         connectionRepository.handleConnectionUpdate(state: state, onInvalidToken: { [weak self] in

@@ -170,13 +170,7 @@ class AuthenticationRepository {
         log.assert(delegate != nil, "Delegate should not be nil at this point")
 
         switch state {
-        case .firstConnection:
-            connectionRepository.updateWebSocketEndpoint(with: newToken, userInfo: userInfo)
-            setToken(token: newToken, completeTokenWaiters: true)
-            delegate?.didFinishSettingUpAuthenticationEnvironment(for: state)
-            completion(nil)
-
-        case .newToken:
+        case .firstConnection, .newToken:
             connectionRepository.updateWebSocketEndpoint(with: newToken, userInfo: userInfo)
             setToken(token: newToken, completeTokenWaiters: true)
             delegate?.didFinishSettingUpAuthenticationEnvironment(for: state)
