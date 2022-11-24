@@ -219,7 +219,7 @@ public enum UserDetails {
 
 public enum Attachments {
     public static let image = "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg"
-    public static let video = "https://download.samplelib.com/mp4/sample-5s.mp4"
+    public static let video = "https://sample-videos.com/video123/mp4/240/big_buck_bunny_240p_1mb.mp4"
     public static let file = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
 }
 
