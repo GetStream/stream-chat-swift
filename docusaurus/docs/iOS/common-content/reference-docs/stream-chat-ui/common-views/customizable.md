@@ -34,7 +34,7 @@ Main point of customization for the view functionality.
 func setUp()
 ```
 
-**It's called zero or one time(s) during the view's lifetime.** Calling super implementation is required.
+**It's called zero or one time during the view's lifetime.** Calling super implementation is required.
 
 ### setUpAppearance()
 
@@ -55,7 +55,7 @@ Main point of customization for the view layout.
 func setUpLayout()
 ```
 
-**It's called zero or one time(s) during the view's lifetime.** Calling super is recommended but not required
+**It's called zero or one time during the view's lifetime.** Calling super is recommended but not required
 if you provide a complete layout for all subviews.
 
 ### updateContent()

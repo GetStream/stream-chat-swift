@@ -2,7 +2,7 @@
 title: SwipeableViewDelegate
 ---
 
-Delegate responsible for easily assigning swipe action buttons to collectionView cells.
+Delegate responsible for easily assigning swipe action buttons to `collectionView` cells.
 
 ``` swift
 public protocol SwipeableViewDelegate: AnyObject 
@@ -16,8 +16,8 @@ public protocol SwipeableViewDelegate: AnyObject
 
 ### swipeableViewWillShowActionViews(for:​)
 
-Prepares the receiver that showing of actionViews will ocur.
-use this method to for example close other actionViews in your collectionView/tableView.
+Prepares the receiver that showing of `actionViews` will occur.
+use this method to for example close other `actionViews` in your collectionView/tableView.
 
 ``` swift
 func swipeableViewWillShowActionViews(for indexPath: IndexPath)
@@ -25,7 +25,7 @@ func swipeableViewWillShowActionViews(for indexPath: IndexPath)
 
 #### Parameters
 
-  - indexPath: IndexPath of `collectionViewCell` which asks for action buttons.
+  - `indexPath`: IndexPath of `collectionViewCell` which asks for action buttons.
 
 ### swipeableViewActionViews(for:​)
 
@@ -42,4 +42,4 @@ in `UICollectionViewDataSource.cellForItemAtIndexPath` function.
 
 #### Parameters
 
-  - indexPath: IndexPath of `collectionViewCell` which asks for action buttons.
+  - `indexPath`: IndexPath of `collectionViewCell` which asks for action buttons.

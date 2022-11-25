@@ -17,7 +17,7 @@ public let name: String?
 
 ### `imageURL`
 
-Image (avatar) url for this channel.
+Image (avatar) URL for this channel.
 
 ``` swift
 public let imageURL: URL?

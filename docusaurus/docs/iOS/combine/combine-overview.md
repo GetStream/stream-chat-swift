@@ -13,7 +13,7 @@ Each controller exposes publishers based on the kind of data they control and al
 When using combine extensions of the controllers, you need to call the `synchronize` method on your controller instance before starting to observe the publishers.
 This is done to avoid the side-effects from initialization and to make sure that the controller is ready to be used.
 
-i.e. a channel controller needs to watch a channel before its publisher can emit changes.
+for example a channel controller needs to watch a channel before its publisher can emit changes.
 
 It's a best practice to pass the synchronize a completion block to handle error cases. However, error handling is optional, and you can use synchronize as a fire and forget method.
 

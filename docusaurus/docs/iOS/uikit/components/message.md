@@ -68,7 +68,7 @@ Components.default.messageBubbleView = CustomMessageSquaredBubbleView.self
 
 ### Simple Layout Changes
 
-The `ChatMessageLayoutOptions` are flags that the `ChatMessageLayoutOptionsResolver` injects in each message view depending on the message content (ie. Does the message contains reactions? Is it coming from the same user? Etc...). When rendering the message view, the layout options will be used to know which views to show or hide, and if the message cell can be reused since different layout options combinations will produce different reuse identifiers.
+The `ChatMessageLayoutOptions` are flags that the `ChatMessageLayoutOptionsResolver` injects in each message view depending on the message content (For example Does the message contains reactions? Is it coming from the same user? Etc...). When rendering the message view, the layout options will be used to know which views to show or hide, and if the message cell can be reused since different layout options combinations will produce different reuse identifiers.
 
 By customizing the `ChatMessageLayoutOptionsResolver` it is possible to do simple layout changes, like for example always showing the timestamp (by default if the messages are sent in the same minute, only the last one shows the timestamp).
 
@@ -110,7 +110,7 @@ Components.default.messageLayoutOptionsResolver = CustomMessageLayoutOptionsReso
 
 ### Date Separators
 
-The SDK groups each message from the same day and shows the day which these messages belong to, since by default each message only has the time it was sent, not the day. The StreamChat SDK provides two options out-of-the-box on how to render the grouped messages date separator that can be configured in the `Components` config:
+The SDK groups each message from the same day and shows the day which these messages belong to, since by default each message only has the time it was sent, not the day. The StreamChat SDK provides two options out-of-the-box on how to render the grouped messages date separator that can be configured in the `Components` configuration:
 
 ```swift
 Components.default.messageListDateOverlayEnabled
@@ -272,7 +272,7 @@ extension ChatMessageLayoutOption {
     static let shareAttachments: Self = "shareAttachments"
 }
 ```
-The `ChatMessageLayoutOption` has a similar usage of an enum but it is not an enum. Instead, it is a struct that holds a string raw value. The advantage of this approach is that it is extendable while the enum is not.
+The `ChatMessageLayoutOption` has a similar usage of an `enum` but it is not an `enum`. Instead, it is a struct that holds a string raw value. The advantage of this approach is that it is extendable while the `enum` is not.
 
 The next step is to subclass the `ChatMessageLayoutOptionsResolver` so that we can add the new `.shareAttachments` option if the message has attachments:
 ```swift

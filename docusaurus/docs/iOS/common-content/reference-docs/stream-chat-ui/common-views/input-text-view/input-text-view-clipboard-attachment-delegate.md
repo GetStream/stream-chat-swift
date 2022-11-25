@@ -24,5 +24,5 @@ func inputTextView(_ inputTextView: InputTextView, didPasteImage image: UIImage)
 
 #### Parameters
 
-  - inputTextView: The `InputTextView` in which the image was pasted
-  - image: The `UIImage`
+  - `inputTextView`: The `InputTextView` in which the image was pasted
+  - `image`: The `UIImage`

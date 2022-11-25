@@ -136,8 +136,8 @@ func editMessage(text: String, completion: ((Error?) -> Void)? = nil)
 
 #### Parameters
 
-  - text: The updated message text.
-  - completion: The completion. Will be called on a **callbackQueue** when the network request is finished. If request fails, the completion will be called with an error.
+  - `text`: The updated message text.
+  - `completion`: The completion. Will be called on a **`callbackQueue`** when the network request is finished. If request fails, the completion will be called with an error.
 
 ### `deleteMessage(completion:)`
 
@@ -149,7 +149,7 @@ func deleteMessage(completion: ((Error?) -> Void)? = nil)
 
 #### Parameters
 
-  - completion: The completion. Will be called on a **callbackQueue** when the network request is finished. If request fails, the completion will be called with an error.
+  - `completion`: The completion. Will be called on a **`callbackQueue`** when the network request is finished. If request fails, the completion will be called with an error.
 
 ### `createNewReply(text:pinning:attachments:mentionedUserIds:showReplyInChannel:isSilent:quotedMessageId:extraData:completion:)`
 
@@ -171,13 +171,13 @@ func createNewReply(
 
 #### Parameters
 
-  - text: Text of the message.
-  - pinning: Pins the new message. `nil` if should not be pinned.
-  - attachments: An array of the attachments for the message. `Note`: can be built-in types, custom attachment types conforming to `AttachmentEnvelope` protocol and `ChatMessageAttachmentSeed`s.
-  - showReplyInChannel: Set this flag to `true` if you want the message to be also visible in the channel, not only in the response thread.
-  - quotedMessageId: An id of the message new message quotes. (inline reply)
-  - extraData: Additional extra data of the message object.
-  - completion: Called when saving the message to the local DB finishes.
+  - `text`: Text of the message.
+  - `pinning`: Pins the new message. `nil` if should not be pinned.
+  - `attachments`: An array of the attachments for the message. `Note`: can be built-in types, custom attachment types conforming to `AttachmentEnvelope` protocol and `ChatMessageAttachmentSeed`s.
+  - `showReplyInChannel`: Set this flag to `true` if you want the message to be also visible in the channel, not only in the response thread.
+  - `quotedMessageId`: An id of the message new message quotes. (inline reply)
+  - `extraData`: Additional extra data of the message object.
+  - `completion`: Called when saving the message to the local DB finishes.
 
 ### `loadPreviousReplies(before:limit:completion:)`
 
@@ -193,9 +193,9 @@ func loadPreviousReplies(
 
 #### Parameters
 
-  - messageId: ID of the last fetched message. You will get messages `older` than the provided ID. In case no replies are fetched you will get the first `limit` number of replies.
-  - limit: Limit for page size.
-  - completion: The completion. Will be called on a **callbackQueue** when the network request is finished. If request fails, the completion will be called with an error.
+  - `messageId`: ID of the last fetched message. You will get messages `older` than the provided ID. In case no replies are fetched you will get the first `limit` number of replies.
+  - `limit`: Limit for page size.
+  - `completion`: The completion. Will be called on a **`callbackQueue`** when the network request is finished. If request fails, the completion will be called with an error.
 
 ### `loadNextReplies(after:limit:completion:)`
 
@@ -211,9 +211,9 @@ func loadNextReplies(
 
 #### Parameters
 
-  - messageId: ID of the current first message. You will get messages `newer` then the provided ID.
-  - limit: Limit for page size.
-  - completion: The completion. Will be called on a **callbackQueue** when the network request is finished. If request fails, the completion will be called with an error.
+  - `messageId`: ID of the current first message. You will get messages `newer` then the provided ID.
+  - `limit`: Limit for page size.
+  - `completion`: The completion. Will be called on a **`callbackQueue`** when the network request is finished. If request fails, the completion will be called with an error.
 
 ### `flag(completion:)`
 
@@ -225,11 +225,11 @@ func flag(completion: ((Error?) -> Void)? = nil)
 
 #### Parameters
 
-  - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+  - `completion`: The completion. Will be called on a **`callbackQueue`** when the network request is finished.
 
 ### `unflag(completion:)`
 
-Unflags the message this controller manages.
+Un-flags the message this controller manages.
 
 ``` swift
 func unflag(completion: ((Error?) -> Void)? = nil) 
@@ -237,7 +237,7 @@ func unflag(completion: ((Error?) -> Void)? = nil)
 
 #### Parameters
 
-  - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+  - `completion`: The completion. Will be called on a **`callbackQueue`** when the network request is finished.
 
 ### `addReaction(_:score:enforceUnique:extraData:completion:)`
 
@@ -255,11 +255,11 @@ func addReaction(
 
 #### Parameters
 
-  - type: The reaction type.
-  - score: The reaction score.
-  - enforceUnique: If set to `true`, new reaction will replace all reactions the user has (if any) on this message.
-  - extraData: The reaction extra data.
-  - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+  - `type`: The reaction type.
+  - `score`: The reaction score.
+  - `enforceUnique`: If set to `true`, new reaction will replace all reactions the user has (if any) on this message.
+  - `extraData`: The reaction extra data.
+  - `completion`: The completion. Will be called on a **`callbackQueue`** when the network request is finished.
 
 ### `deleteReaction(_:completion:)`
 
@@ -274,8 +274,8 @@ func deleteReaction(
 
 #### Parameters
 
-  - type: The reaction type.
-  - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+  - `type`: The reaction type.
+  - `completion`: The completion. Will be called on a **`callbackQueue`** when the network request is finished.
 
 ### `pin(_:completion:)`
 
@@ -287,8 +287,8 @@ func pin(_ pinning: MessagePinning, completion: ((Error?) -> Void)? = nil)
 
 #### Parameters
 
-  - pinning: The pinning expiration information. It supports setting an infinite expiration, setting a date, or the amount of time a message is pinned.
-  - completion: A completion block with an error if the request was failed.
+  - `pinning`: The pinning expiration information. It supports setting an infinite expiration, setting a date, or the amount of time a message is pinned.
+  - `completion`: A completion block with an error if the request was failed.
 
 ### `unpin(completion:)`
 
@@ -300,11 +300,11 @@ func unpin(completion: ((Error?) -> Void)? = nil)
 
 #### Parameters
 
-  - completion: A completion block with an error if the request was failed.
+  - `completion`: A completion block with an error if the request was failed.
 
 ### `restartFailedAttachmentUploading(with:completion:)`
 
-Updates local state of attachment with provided `id` to be enqueued by attachment uploader.
+Updates local state of attachment with provided `id` to be queued by attachment uploader.
 
 ``` swift
 func restartFailedAttachmentUploading(
@@ -315,12 +315,12 @@ func restartFailedAttachmentUploading(
 
 #### Parameters
 
-  - id: The attachment identifier.
-  - completion: The completion. Will be called on a **callbackQueue** when the database operation is finished. If operation fails, the completion will be called with an error.
+  - `id`: The attachment identifier.
+  - `completion`: The completion. Will be called on a **`callbackQueue`** when the database operation is finished. If operation fails, the completion will be called with an error.
 
 ### `resendMessage(completion:)`
 
-Changes local message from `.sendingFailed` to `.pendingSend` so it is enqueued by message sender worker.
+Changes local message from `.sendingFailed` to `.pendingSend` so it is queued by message sender worker.
 
 ``` swift
 func resendMessage(completion: ((Error?) -> Void)? = nil) 
@@ -328,7 +328,7 @@ func resendMessage(completion: ((Error?) -> Void)? = nil)
 
 #### Parameters
 
-  - completion: The completion. Will be called on a **callbackQueue** when the database operation is finished. If operation fails, the completion will be called with an error.
+  - `completion`: The completion. Will be called on a **`callbackQueue`** when the database operation is finished. If operation fails, the completion will be called with an error.
 
 ### `dispatchEphemeralMessageAction(_:completion:)`
 
@@ -340,5 +340,5 @@ func dispatchEphemeralMessageAction(_ action: AttachmentAction, completion: ((Er
 
 #### Parameters
 
-  - action: The action to take.
-  - completion: The completion. Will be called on a **callbackQueue** when the operation is finished. If operation fails, the completion is called with the error.
+  - `action`: The action to take.
+  - `completion`: The completion. Will be called on a **`callbackQueue`** when the operation is finished. If operation fails, the completion is called with the error.

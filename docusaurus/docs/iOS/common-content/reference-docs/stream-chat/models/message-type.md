@@ -25,7 +25,7 @@ case regular
 ### `ephemeral`
 
 A temporary message which is only delivered to one user. It is not stored in the channel history. Ephemeral messages
-are normally used by commands (e.g. /giphy) to prompt messages or request for actions.
+are normally used by commands (for example /giphy) to prompt messages or request for actions.
 
 ``` swift
 case ephemeral

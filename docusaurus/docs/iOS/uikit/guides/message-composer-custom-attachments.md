@@ -15,7 +15,7 @@ The composer also makes it really easy to be extended and support your own custo
 
 ### Change the button icon
 
-By default the attachments button icon is a clip. You can easily change this by setting your own icon in the `Appearance` config:
+By default the attachments button icon is a clip. You can easily change this by setting your own icon in the `Appearance` configuration:
 ```swift
 Appearance.default.images.openAttachments = UIImage(systemName: "plus")
 ```
@@ -46,7 +46,7 @@ class CustomComposerVC: ComposerVC {
 }
 ```
 
-Then, set the custom component in the `Components` config:
+Then, set the custom component in the `Components` configuration:
 ```swift
 Components.default.messageComposerVC = CustomComposerVC.self
 ```
@@ -311,7 +311,7 @@ Creating `MyCustomMediaPickerController` and `MyCustomMediaPickerControllerDeleg
 :::
 
 ### Show the media picker in a different view
-In case you want to bypass the action sheet when tapping the attachments button, you can, by overriding the `showAttachmentsPicker(sender: UIButton)` and do an implementation from scratch on how you want to present the attachments picker. For example, let's see how you could show the attachments picker as a view replacing the keyboard by using the `inputView` of the composer's textField:
+In case you want to bypass the action sheet when tapping the attachments button, you can, by overriding the `showAttachmentsPicker(sender: UIButton)` and do an implementation from scratch on how you want to present the attachments picker. For example, let's see how you could show the attachments picker as a view replacing the keyboard by using the `inputView` of the composer's `textField`:
 ```swift
 class CustomComposerVC: ComposerVC {
 

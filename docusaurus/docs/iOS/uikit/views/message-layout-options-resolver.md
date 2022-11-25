@@ -7,13 +7,13 @@ import Properties from '../../common-content/reference-docs/stream-chat-ui/chat-
 
 The `ChatMessageLayoutOptionsResolver` object is responsible for assigning layout options to a message in a specific position inside a list. Layout options are stored in the `ChatMessageLayoutOptions` struct type.
 
-Layout options are used by the message view to determining how the message should be rendered (ie. render the message with its reactions, message is leading a group of messages, ...).
+Layout options are used by the message view to determining how the message should be rendered (for example render the message with its reactions, message is leading a group of messages, ...).
 
 The SDK comes with a built-in resolver which follows the layout rules set by Stream Chat design, this can be customized by writing your own resolver.
 
 ## Customization
 
-You can change how your messages are rendered by the message view component by selecting your own set of layout options. For instance, StreamChat groups messages by user and shows the avatar and user name at the end of the group. If in your application you want the avatar to be repeated for all messages (like Youtube does) you need to implement your own `ChatMessageLayoutOptionsResolver` class and register it.
+You can change how your messages are rendered by the message view component by selecting your own set of layout options. For instance, StreamChat groups messages by user and shows the avatar and user name at the end of the group. If in your application you want the avatar to be repeated for all messages (like YouTube does) you need to implement your own `ChatMessageLayoutOptionsResolver` class and register it.
 
 ```swift
 import StreamChat

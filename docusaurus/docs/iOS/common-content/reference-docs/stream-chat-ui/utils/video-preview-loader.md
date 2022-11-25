@@ -24,5 +24,5 @@ func loadPreviewForVideo(at url: URL, completion: @escaping (Result<UIImage, Err
 
 #### Parameters
 
-  - url: A video URL.
-  - completion: A completion that is called when a preview is loaded. Must be invoked on main queue.
+  - `url`: A video URL.
+  - `completion`: A completion that is called when a preview is loaded. Must be invoked on main queue.

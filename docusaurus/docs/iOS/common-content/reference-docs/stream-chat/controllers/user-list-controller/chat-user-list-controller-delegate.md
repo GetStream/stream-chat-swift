@@ -47,5 +47,5 @@ func controller(
 
 #### Parameters
 
-  - controller: The controller emitting the change callback.
-  - changes: The change to the list of users.
+  - `controller`: The controller emitting the change callback.
+  - `changes`: The change to the list of users.

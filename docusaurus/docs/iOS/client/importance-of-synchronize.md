@@ -6,7 +6,7 @@ title: The Importance of Synchronize
 
  Controllers are lightweight objects and they only fetch data when needed. When a controller is created, it doesn't fetch local or remote data until it needs it.
 
-`synchronize()` makes sure StreamChat's local database and backend is in sync. It queries the backend for the latest state of the Channel and updates the database. In addition, `synchronize()` call starts actually obversing the Channel for changes, so you will start getting live updates of the changes to the Channel, including it's messages.
+`synchronize()` makes sure StreamChat's local database and backend is in sync. It queries the backend for the latest state of the Channel and updates the database. In addition, `synchronize()` call starts actually observing the Channel for changes, so you will start getting live updates of the changes to the Channel, including it's messages.
 
 If you only need the local data, you can just access it after creation, like so:
 

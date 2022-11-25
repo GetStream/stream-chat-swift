@@ -61,10 +61,10 @@ ChatClient.shared.connectUser(
 
 ### Leveraging Multi-Bundle configuration
 
-If you're interested in leveraging different push configurations per each build type of your app (eg `AppStore`, `Staging`) or similar, you can do so via adding the new `multi-bundle` push configuration in `Push Notifications` tab in your Stream Dashboard.
+If you're interested in leveraging different push configurations per each build type of your app (for example `AppStore`, `Staging`) or similar, you can do so via adding the new `multi-bundle` push configuration in `Push Notifications` tab in your Stream Dashboard.
 ![Push Notifications](../assets/push_notifications_dashboard.jpg)
 
-You can add new multi-bundle configuration by tapping on `New Configuration` under `Push Notifications` tab and by selecting your preferred push notification provider (eg. `APN`, `Firebase`, ..).
+You can add new multi-bundle configuration by tapping on `New Configuration` under `Push Notifications` tab and by selecting your preferred push notification provider (for example `APN`, `Firebase`, ..).
 
 Once created, fill in the following details:
 * `Name of your configuration` - this name will be used in `addDevice` registration call.
@@ -164,7 +164,7 @@ class SampleNotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
         }
 
         /// initialize ChatClient and connect the user
-        let config = ChatClientConfig(apiKey: .init("<# Api Key Here #>"))
+        let config = ChatClientConfig(apiKey: .init("<# API Key Here #>"))
         ChatClient.shared = ChatClient(config: config)
 
         let token = Token(stringLiteral: "<# User Token Here #>")
@@ -193,7 +193,7 @@ class SampleNotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
     }
 ```
 
-Make sure to set your class as `UNUserNotificationCenter` delegate while your application is loading (ie. `AppDelegate` or `SceneDelegate`)
+Make sure to set your class as `UNUserNotificationCenter` delegate while your application is loading (for example `AppDelegate` or `SceneDelegate`)
 
 ```swift
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
@@ -292,7 +292,7 @@ class NotificationService: UNNotificationServiceExtension {
 ```
 Let's summarize the most important steps:
 
-- The `ChatClient` is initialized with Api Key and Token, `connectUser` must not be used in a service extension
+- The `ChatClient` is initialized with API Key and Token, `connectUser` must not be used in a service extension
 - `chatHandler.handleNotification` completion block receives a `ChatPushNotificationContent`
 - `ChatPushNotificationContent` is handled for the message case, in that case it will contain a regular `ChatMessage` model
 
@@ -423,7 +423,7 @@ To share data we need to create a shared container between the main app and the 
 
 Note that the App Group is turned into red when you didn’t add it to your App Identifier yet. You can do this by logging into your account at https://developer.apple.com/account/resources/identifiers
 
-Make sure to use the same group for both targets (app and extension). When you have both configured, you need to adjust your `ChatClient` setup code and add this to the config object:
+Make sure to use the same group for both targets (app and extension). When you have both configured, you need to adjust your `ChatClient` setup code and add this to the configuration object:
 
 ```swift
 var config = ChatClientConfig(apiKey: .init("<# Your API Key Here #>"))

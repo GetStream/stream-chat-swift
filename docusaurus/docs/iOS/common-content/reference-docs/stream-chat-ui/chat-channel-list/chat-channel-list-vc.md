@@ -194,7 +194,7 @@ open func deleteButtonPressedForCell(at indexPath: IndexPath)
 
 #### Parameters
 
-  - indexPath: IndexPath of given cell to fetch the content of it.
+  - `indexPath`: IndexPath of given cell to fetch the content of it.
 
 ### `moreButtonPressedForCell(at:)`
 
@@ -206,7 +206,7 @@ open func moreButtonPressedForCell(at indexPath: IndexPath)
 
 #### Parameters
 
-  - indexPath: IndexPath of given cell to fetch the content of it.
+  - `indexPath`: IndexPath of given cell to fetch the content of it.
 
 ### `controllerWillChangeChannels(_:)`
 

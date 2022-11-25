@@ -135,7 +135,7 @@ public mutating func editMessage(_ message: ChatMessage)
 
 #### Parameters
 
-  - message: The message that the composer will edit.
+  - `message`: The message that the composer will edit.
 
 ### `quoteMessage(_:)`
 
@@ -147,4 +147,4 @@ public mutating func quoteMessage(_ message: ChatMessage)
 
 #### Parameters
 
-  - message: The message that the composer will quote.
+  - `message`: The message that the composer will quote.

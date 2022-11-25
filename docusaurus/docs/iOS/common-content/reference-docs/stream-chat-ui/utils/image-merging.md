@@ -21,8 +21,8 @@ func merge(
 
 #### Parameters
 
-  - images: The images to combine
-  - orientation: The orientation to be used for combining the images
+  - `images`: The images to combine
+  - `orientation`: The orientation to be used for combining the images
 
 #### Returns
 

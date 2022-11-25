@@ -131,7 +131,7 @@ open func muteActionItem() -> ChatMessageActionItem
 
 ### `unmuteActionItem()`
 
-Returns `ChatMessageActionItem` for unmute action.
+Returns `ChatMessageActionItem` for un-mute action.
 
 ``` swift
 open func unmuteActionItem() -> ChatMessageActionItem 

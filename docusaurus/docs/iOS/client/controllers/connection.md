@@ -8,7 +8,7 @@ title: Connection Controllers
 
 ## Connection Delegate
 
-Classes that conform to the `ChatConnectionControllerDelegate` protocol will receive changes to the connection status (ie. online, offline, connecting, ...).
+Classes that conform to the `ChatConnectionControllerDelegate` protocol will receive changes to the connection status (for example online, offline, connecting, ...).
 
 ```swift
 /// The controller observed a change in connection status.

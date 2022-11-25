@@ -26,7 +26,7 @@ uploading.
 
 #### Parameters
 
-  - payload: The payload to have the message attachment with.
+  - `payload`: The payload to have the message attachment with.
 
 ### `init(localFileURL:attachmentType:extraData:)`
 
@@ -54,9 +54,9 @@ available on `ChatMessage` with the `uploadingState` reflecting the file uploadi
 
 #### Parameters
 
-  - localFileURL: The local URL referencing to the file.
-  - attachmentType: The type of resulting attachment exposed on the message.
-  - extraData: An extra data that should be added to attachment.
+  - `localFileURL`: The local URL referencing to the file.
+  - `attachmentType`: The type of resulting attachment exposed on the message.
+  - `extraData`: An extra data that should be added to attachment.
 
 #### Throws
 

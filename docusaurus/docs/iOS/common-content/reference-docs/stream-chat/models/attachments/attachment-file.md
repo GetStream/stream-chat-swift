@@ -24,9 +24,9 @@ public init(type: AttachmentFileType, size: Int64, mimeType: String?)
 
 #### Parameters
 
-  - type: a file type.
-  - size: a file size.
-  - mimeType: a mime type.
+  - `type`: a file type.
+  - `size`: a file size.
+  - `mimeType`: a mime type.
 
 ### `init(url:)`
 

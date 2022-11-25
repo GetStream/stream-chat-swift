@@ -57,7 +57,7 @@ open weak var messageContentView: ChatMessageContentView?
 
 ### `messageContentViewSuperview`
 
-`messageContentView`'s initial superview.
+`messageContentView`'s initial `superview`.
 
 ``` swift
 open weak var messageContentViewSuperview: UIView?

@@ -12,7 +12,7 @@ public protocol ConnectionEvent: Event
 
 ## Requirements
 
-### connectionId
+### `connectionId`
 
 ``` swift
 var connectionId: String 

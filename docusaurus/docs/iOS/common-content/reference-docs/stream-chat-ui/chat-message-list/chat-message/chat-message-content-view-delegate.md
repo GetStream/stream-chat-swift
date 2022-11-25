@@ -27,7 +27,7 @@ func messageContentViewDidTapOnErrorIndicator(_ indexPath: IndexPath?)
 
 #### Parameters
 
-  - indexPath: The index path of the cell displaying the content view. Equals to `nil` when the content view is displayed outside the collection/table view.
+  - `indexPath`: The index path of the cell displaying the content view. Equals to `nil` when the content view is displayed outside the collection/table view.
 
 ### messageContentViewDidTapOnThread(\_:​)
 
@@ -39,7 +39,7 @@ func messageContentViewDidTapOnThread(_ indexPath: IndexPath?)
 
 #### Parameters
 
-  - indexPath: The index path of the cell displaying the content view. Equals to `nil` when the content view is displayed outside the collection/table view.
+  - `indexPath`: The index path of the cell displaying the content view. Equals to `nil` when the content view is displayed outside the collection/table view.
 
 ### messageContentViewDidTapOnQuotedMessage(\_:​)
 
@@ -51,7 +51,7 @@ func messageContentViewDidTapOnQuotedMessage(_ indexPath: IndexPath?)
 
 #### Parameters
 
-  - indexPath: The index path of the cell displaying the content view. Equals to `nil` when the content view is displayed outside the collection/table view.
+  - `indexPath`: The index path of the cell displaying the content view. Equals to `nil` when the content view is displayed outside the collection/table view.
 
 ### messageContentViewDidTapOnAvatarView(\_:​)
 
@@ -63,4 +63,4 @@ func messageContentViewDidTapOnAvatarView(_ indexPath: IndexPath?)
 
 #### Parameters
 
-  - indexPath: The index path of the cell displaying the content view. Equals to `nil` when the content view is displayed outside the collection/table view.
+  - `indexPath`: The index path of the cell displaying the content view. Equals to `nil` when the content view is displayed outside the collection/table view.

@@ -11,7 +11,7 @@ Each controller exposes API functionality and supports delegation, controllers t
 Controllers expose functionality via event subscriptions and API calls. In most cases you need to call the `synchronize` method on your controller instance. This is done to 
 avoid side-effects from initialization and to make sure that the controller is ready to be used.
 
-ie. a channel controller needs to watch a channel before it's delegate can receive calls.
+for example a channel controller needs to watch a channel before it's delegate can receive calls.
 
 It's a best practice to pass synchronize a completion block to handle error cases. However, error handling is optional and you can use synchronize as a fire and forget method.
 

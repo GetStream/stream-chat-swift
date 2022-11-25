@@ -1,7 +1,7 @@
 
 ### `text`
 
-General textColor, should be something that contrasts great with your `background` Color
+General `textColor`, should be something that contrasts great with your `background` Color
 
 ``` swift
 public var text: UIColor = .streamBlack
@@ -54,7 +54,7 @@ public var unselectedColorForColor: (UIColor) -> UIColor
 
 ### `background`
 
-General background of the application. Should be something that is in constrast with `text` color.
+General background of the application. Should be something that is in contrast with `text` color.
 
 ``` swift
 public var background: UIColor = .streamWhiteSnow

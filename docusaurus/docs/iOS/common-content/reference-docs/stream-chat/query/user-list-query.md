@@ -29,9 +29,9 @@ public init(
 
 #### Parameters
 
-  - filter: a users filter. Empty filter will return all users.
-  - sort: a sorting list for users.
-  - pageSize: a page size for pagination.
+  - `filter`: a users filter. Empty filter will return all users.
+  - `sort`: a sorting list for users.
+  - `pageSize`: a page size for pagination.
 
 ## Properties
 

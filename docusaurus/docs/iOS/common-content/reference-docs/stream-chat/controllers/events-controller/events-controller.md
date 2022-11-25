@@ -58,7 +58,7 @@ public func eventPublisher<T: Event>(_ eventType: T.Type) -> AnyPublisher<T, Nev
 
 #### Parameters
 
-  - eventType: An event type that will be observed.
+  - `eventType`: An event type that will be observed.
 
 #### Returns
 

@@ -24,9 +24,9 @@ public init(with error: Error? = nil, _ file: StaticString = #file, _ line: UInt
 
 #### Parameters
 
-  - error: an external error.
-  - file: a file name source of an error.
-  - line: a line source of an error.
+  - `error`: an external error.
+  - `file`: a file name source of an error.
+  - `line`: a line source of an error.
 
 ### `init(_:_:_:)`
 
@@ -38,9 +38,9 @@ public init(_ message: String, _ file: StaticString = #file, _ line: UInt = #lin
 
 #### Parameters
 
-  - message: an error message.
-  - file: a file name source of an error.
-  - line: a line source of an error.
+  - `message`: an error message.
+  - `file`: a file name source of an error.
+  - `line`: a line source of an error.
 
 ## Properties
 

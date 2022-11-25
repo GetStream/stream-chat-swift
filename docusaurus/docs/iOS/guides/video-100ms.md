@@ -6,7 +6,7 @@ title: 100ms Video integration guide
 
 Video calls have become an integral part of daily life since the pandemic hit. Today, we will take a look at how you can use the 100ms service to integrate video calls into the Stream Chat SDK.
 
-100ms is an infrastructure provider for services like video, audio, and live streaming. They offer native SDKs for mobile platforms and the web that allow for simple integration with very few lines of code. They cover a wide range of use-cases such as video conferencing, Telehealth, classrooms, and many more.
+100ms is an infrastructure provider for services like video, audio, and live streaming. They offer native SDKs for mobile platforms and the web that allow for simple integration with very few lines of code. They cover a wide range of use-cases such as video conferencing, telehealth, classrooms, and many more.
 
 There are a few necessary steps to follow to integrate video calling capabilities with the Stream Chat SDK, but we will go over each phase of the process to come up with a functional and reusable solution that allows your end-users to communicate with one another through a seamless video experience.
 
@@ -31,7 +31,7 @@ If you want to avoid starting from the very beginning, our [SwiftUI tutorial](ht
 
 First, let’s go over a quick introduction to [100ms](https://www.100ms.live). It is a service that allows you to do video conferencing, audio, and more. Their aim is to provide you with a wide range of extensible features, all while allowing you to get started quickly with minimum effort.
 
-To get started, you must [set up an account](https://dashboard.100ms.live/register) for the platform – click the **Try For Free** button for a trial to use for this tutorial. You can sign up with either a Google or Github account, or you can use any other email address. You will receive an email asking you to confirm your credentials.
+To get started, you must [set up an account](https://dashboard.100ms.live/register) for the platform - click the **Try For Free** button for a trial to use for this tutorial. You can sign up with either a Google or GitHub account, or you can use any other email address. You will receive an email asking you to confirm your credentials.
 
 Next, you’ll get a quick tour of how to create your own video conference. Here is an outline of the steps you must take:
 
@@ -40,11 +40,11 @@ Next, you’ll get a quick tour of how to create your own video conference. Here
 2. Add a few more details
    Enter everything that is valid for you
 3. Choose a subdomain
-   Create a subdomain that is suitable for your use case and select the closest region (e.g. in our case, “integrationguide” and “EU” make the most sense, resulting in the domain: **integrationguide.app.100ms.live**)
+   Create a subdomain that is suitable for your use case and select the closest region (for example in our case, "integrationguide" and “EU” make the most sense, resulting in the domain: **integrationguide.app.100ms.live**)
 4. Your app is ready
    You can join the room if you want to see a sample (not necessary)
 
-From here, click the **Go to Dashboard** button at the bottom. After completing the quick introductory tour, your account and app will be ready to continue. Nice job!
+From here, click the **Go to Dashboard** button at the bottom. After completing the quick introductory tour, your account and app will be ready to continue. Nice job.
 
 You will come back to the Dashboard later, but we will move on to other steps next.
 
@@ -82,7 +82,7 @@ So, let's focus on the iOS implementation.
 
 The integration requires a bit of setup, which is why you will create most of the necessary files right now. This will give a good overview of the overall architecture; you will add more to these files throughout the course of this integration guide.
 
-Before starting, you need to import the 100ms SDK into the project via CocoaPods. (Note that Swift Package Manager (SPM) is also supported, but the support seems to be subpar so far.) Follow the [100ms Cocoapods integration guide](https://www.100ms.live/docs/ios/v2/features/Integration#cocoapods) to include the required dependency in your `Podfile`.
+Before starting, you need to import the 100ms SDK into the project via CocoaPods. (Note that Swift Package Manager (SPM) is also supported, but the support seems to be subpar so far.) Follow the [100ms CocoaPods integration guide](https://www.100ms.live/docs/ios/v2/features/Integration#cocoapods) to include the required dependency in your `Podfile`.
 
 For the implementation, you will need an object that conforms to the `ViewFactory` of the `StreamChatSwiftUI` SDK. This will be used to tailor the SDK to your needs, so create a new Swift file called `CustomFactory`. Now, you only need to add a `chatClient` object to it (we will do all the other work later). This is what it should look like for now:
 
@@ -130,13 +130,13 @@ class CallViewModel: ObservableObject {
 
 If you need a refresher on MVVM architecture, [there is a nice article here](https://www.hackingwithswift.com/books/ios-swiftui/introducing-mvvm-into-your-swiftui-project).
 
-We used the `HMSVideoTrack` type here, which is taken directly from the 100ms SDK (`HMSSDK`) that we import at the top of the file. This type is basically what its name suggests — a video track of a call participant. You will need the `@Published` properties later when you assemble the UI.
+We used the `HMSVideoTrack` type here, which is taken directly from the 100ms SDK (`HMSSDK`) that we import at the top of the file. This type is basically what its name suggests - a video track of a call participant. You will need the `@Published` properties later when you assemble the UI.
 
 Speaking of UI, create a SwiftUI view called `VideoView` to fill in during the next chapter.
 
 ## 4. Create a Basic Layout UI
 
-You saw the UI in the video at the beginning of this guide. It’s not a complicated setup, and luckily, the SDKs provide a lot of assistance. But there’s still work to be done, so let’s get to it!
+You saw the UI in the video at the beginning of this guide. It’s not a complicated setup, and luckily, the SDKs provide a lot of assistance. But there’s still work to be done, so let’s get to it.
 
 ### Create the Video Call View
 
@@ -504,8 +504,8 @@ This finishes up all the UI that was necessary to create. The next step is to ad
 
 There are two use cases you need to cover for sending and editing messages:
 
-1. **Starting a call** — which will send a message to the channel with the necessary info for anybody to join it.
-2. **Ending a call** — which will edit the original message specifying that nobody can join anymore and the call has ended.
+1. **Starting a call** - which will send a message to the channel with the necessary info for anybody to join it.
+2. **Ending a call** - which will edit the original message specifying that nobody can join anymore and the call has ended.
 
 ### Starting a Call and Sending the Message
 
@@ -530,12 +530,12 @@ extension ChatClient {
 We create a call with a given ID (that is randomly generated) in a channel with the `channelId` (of type `ChannelId`). Inside the SDK function of the `channelController` is called.
 
 :::note
-The only supported type for a call as of now is `"video"` so we hardcode this in the extension of the `ChatClient`.
+The only supported type for a call as of now is `"video"` so we hardcoded this in the extension of the `ChatClient`.
 :::
 
 In order to initiate a call in the `CallViewModel` there is a few steps to take. First, it's necessary to make sure a valid `channelId` is present. Then the `createCall` function that was just created on the `chatClient` can be called. The room ID will be a randomly created `UUID` from the client-side, but can also be created from the backend directly.
 
-After we made sure that a valid room ID was received (and it is set on the viewModel), the `chatClient` can be used to get a `channelController` that you can use to call `createNewMessage`.
+After we made sure that a valid room ID was received (and it is set on the `viewModel`), the `chatClient` can be used to get a `channelController` that you can use to call `createNewMessage`.
 
 Finally, you can start the call screen by setting `isCallScreenShown` to `true`.
 
@@ -857,7 +857,7 @@ You need to fix that by going to the `VideoView` and locating the button with th
 // leave call
 ```
 
-Replace that with the the code:
+Replace that with the code:
 
 ```swift
 viewModel.leaveCall {
@@ -877,6 +877,6 @@ For the purpose of simplification, we have not offered audio calls in this guide
 
 The 100ms SDK works really well in this case and allows you to quickly set up and use a video call service in your apps without complicated processes and manual work that needs to be done.
 
-In case you have any more questions about this video integration or the work with other SDKs, feel free to [reach out to the team](https://getstream.io/contact/). We are happy to help and support you!
+In case you have any more questions about this video integration or the work with other SDKs, feel free to [reach out to the team](https://getstream.io/contact/). We are happy to help and support you.
 
-Thank you for following along with this article!
+Thank you for following along with this article.

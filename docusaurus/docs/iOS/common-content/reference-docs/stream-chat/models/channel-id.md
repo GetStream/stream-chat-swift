@@ -26,8 +26,8 @@ public init(type: ChannelType, id: String)
 
 #### Parameters
 
-  - type: A type of the channel the `ChannelId` represents.
-  - id: An id of the channel the `ChannelId` represents.
+  - `type`: A type of the channel the `ChannelId` represents.
+  - `id`: An id of the channel the `ChannelId` represents.
 
 ### `init(cid:)`
 

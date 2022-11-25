@@ -4,7 +4,7 @@ title: Custom CDN
 
 By default, files are uploaded to Stream's CDN, but you can also use your own CDN. Currently, there are two options to provide your custom file uploading logic.
 
-- Providing a `CDNClient` implementation. This is the simplest one and it is useful if you are only interested in changing the CDN Url and do not want to update the attachment payload.
+- Providing a `CDNClient` implementation. This is the simplest one and it is useful if you are only interested in changing the CDN URL and do not want to update the attachment payload.
 
 - Providing an `AttachmentUploader` implementation. This one can be used for more fine-grain control, since you can change not only the URL but the attachment payload as well.
 
@@ -12,9 +12,9 @@ By default, files are uploaded to Stream's CDN, but you can also use your own CD
 You should only pick 1 of the 2 options provided. Since using an `AttachmentUploader` will override the custom `CDNClient` implementation.
 :::
 
-## Custom CDNClient implementation
+## Custom `CDNClient` implementation
 
-In case you simply want to change the url, here is an example of a custom `CDNClient` implementation.
+In case you simply want to change the URL, here is an example of a custom `CDNClient` implementation.
 
 ```swift
 // Example of your Upload API

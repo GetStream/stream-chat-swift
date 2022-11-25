@@ -5,7 +5,7 @@ title: Migrating from 3.x to 4.x
 The major version bump is due to the presence of several breaking changes. We believe they are easy to take care of in the upgrade process and improve the design of the library.
 
 ---
-Please don't hesitate to contact us by sending an email to support@getstream.io or opening a ticket in our [github repo](https://github.com/GetStream/stream-chat-swift). We'll help you during your migration process and any issues you might face.
+Please don't hesitate to contact us by sending an email to support@getstream.io or opening a ticket in our [GitHub repository](https://github.com/GetStream/stream-chat-swift). We'll help you during your migration process and any issues you might face.
 
 ---
 
@@ -218,7 +218,7 @@ The `.file` and `.image` attachments are the only built-in attachment types that
 #### Custom Attachments
 
 To add a custom attachments to the message the custom type has to be created first.
-This is true for both `v3.2` and `v4.x` however there're some differences so let's see what they are:
+This is true for both `v3.2` and `v4.x` however there are some differences so let's see what they are:
 
 `Version 3.x`
 ```swift
@@ -462,7 +462,7 @@ if let productAttachment = productAttachments.first {
 `Version 4.x`
 
 - custom attachments are directly accessible on `ChatMessage`
-- custom payload fields are are directly on attachment thanks to `dynamicMemberLookup`
+- custom payload fields are directly on attachment thanks to `dynamicMemberLookup`
 - attachment `id` is not-optional 🎉
 
 ```swift

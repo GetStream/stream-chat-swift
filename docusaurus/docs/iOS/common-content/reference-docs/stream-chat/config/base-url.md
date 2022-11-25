@@ -24,13 +24,13 @@ public init(url: URL)
 
 #### Parameters
 
-  - url: an URL
+  - `url`: an URL
 
 ## Properties
 
 ### `usEast`
 
-The base url for StreamChat data center located in the US East Cost.
+The base URL for StreamChat data center located in the US East Cost.
 
 ``` swift
 public static let usEast = BaseURL(urlString: "https://chat-proxy-us-east.stream-io-api.com/")!
@@ -38,7 +38,7 @@ public static let usEast = BaseURL(urlString: "https://chat-proxy-us-east.stream
 
 ### `dublin`
 
-The base url for StreamChat data center located in Dublin.
+The base URL for StreamChat data center located in Dublin.
 
 ``` swift
 public static let dublin = BaseURL(urlString: "https://chat-proxy-dublin.stream-io-api.com/")!
@@ -46,7 +46,7 @@ public static let dublin = BaseURL(urlString: "https://chat-proxy-dublin.stream-
 
 ### `singapore`
 
-The base url for StreamChat data center located in Singapore.
+The base URL for StreamChat data center located in Singapore.
 
 ``` swift
 public static let singapore = BaseURL(urlString: "https://chat-proxy-singapore.stream-io-api.com/")!
@@ -54,7 +54,7 @@ public static let singapore = BaseURL(urlString: "https://chat-proxy-singapore.s
 
 ### `sydney`
 
-The base url for StreamChat data center located in Sydney.
+The base URL for StreamChat data center located in Sydney.
 
 ``` swift
 public static let sydney = BaseURL(urlString: "https://chat-proxy-sydney.stream-io-api.com/")!

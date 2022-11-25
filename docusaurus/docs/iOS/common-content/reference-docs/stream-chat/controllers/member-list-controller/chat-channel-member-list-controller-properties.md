@@ -75,7 +75,7 @@ public func setDelegate<Delegate: ChatChannelMemberListControllerDelegate>(_ del
 
 #### Parameters
 
-  - delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object alive if you want keep receiving updates.
+  - `delegate`: The object used as a delegate. It's referenced weakly, so you need to keep the object alive if you want keep receiving updates.
 
 ### `loadNextMembers(limit:completion:)`
 
@@ -90,4 +90,4 @@ func loadNextMembers(
 
 #### Parameters
 
-  - limit: The page size.
+  - `limit`: The page size.

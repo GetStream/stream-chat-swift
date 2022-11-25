@@ -24,7 +24,7 @@ public init(stringLiteral value: StringLiteralType)
 
 #### Parameters
 
-  - value: The JWT string value. It must be in valid format and contain `user_id` in payload.
+  - `value`: The JWT string value. It must be in valid format and contain `user_id` in payload.
 
 ### `init(rawValue:)`
 
@@ -36,7 +36,7 @@ public init(rawValue: String) throws
 
 #### Parameters
 
-  - rawValue: The token string in JWT format.
+  - `rawValue`: The token string in JWT format.
 
 #### Throws
 

@@ -13,7 +13,7 @@ static let healthCheck: Self = "health.check"
 
 ### `userPresenceChanged`
 
-When a user presence changed, e.g. online, offline, away.
+When a user presence changed, for example online, offline, away.
 
 ``` swift
 static let userPresenceChanged: Self = "user.presence.changed"

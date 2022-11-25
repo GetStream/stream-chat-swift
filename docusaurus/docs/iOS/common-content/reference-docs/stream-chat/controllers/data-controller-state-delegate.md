@@ -3,7 +3,7 @@ title: DataControllerStateDelegate
 ---
 
 A delegate protocol some Controllers use to propagate the information about controller `state` changes. You can use it to let
-users know a certain activity is happening in the background, i.e. using a non-blocking activity indicator.
+users know a certain activity is happening in the background, for example using a non-blocking activity indicator.
 
 ``` swift
 public protocol DataControllerStateDelegate: AnyObject 
@@ -33,5 +33,5 @@ func controller(_ controller: DataController, didChangeState state: DataControll
 
 #### Parameters
 
-  - controller: The controller the change is related to.
-  - state: The new state of the controller.
+  - `controller`: The controller the change is related to.
+  - `state`: The new state of the controller.

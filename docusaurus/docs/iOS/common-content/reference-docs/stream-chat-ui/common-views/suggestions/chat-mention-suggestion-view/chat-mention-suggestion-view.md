@@ -66,7 +66,7 @@ open private(set) lazy var mentionSymbolImageView = UIImageView()
 
 ### `textContainer`
 
-ContainerStackView which holds username and userTag labels in vertical axis by default.
+ContainerStackView which holds username and `userTag` labels in vertical axis by default.
 
 ``` swift
 open private(set) lazy var textContainer = ContainerStackView()

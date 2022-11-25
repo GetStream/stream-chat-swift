@@ -66,7 +66,7 @@ This lifecycle is where you can customize the appearance of the component, like 
 Here is where you should do customize the layout of the component, for example, changing the position of the views, padding, margins or even remove some child views. All the UI Components of the SDK use **AutoLayout** to layout the views, but our SDK provides a `ContainerStackView` component to make the customization easier. The `ContainerStackView` works very much like a `UIStackView`, in fact, it has almost the same API, but it is better suitable for our needs in terms of customizability. Just like the other lifecycle methods, you can call `super.setUpLayout()` depending on if you want to make the layout of the component from scratch or just want to change some parts of the component.
 
 ### `updateContent()`
-Finally, this last lifecycle is called whenever the data of the component changes. Here is where you can change the logic of the component, change how the data is displayed or formatted. In the Stream SDK all of the components have a `content` propery that represents the data of the component. The rule of thumb to use this lifecycle is that if the change you want to do depends on the data of the component, then you should use this lifecycle method, even, for example, to do layout changes that are impacted by the content.
+Finally, this last lifecycle is called whenever the data of the component changes. Here is where you can change the logic of the component, change how the data is displayed or formatted. In the Stream SDK all of the components have a `content` property that represents the data of the component. The rule of thumb to use this lifecycle is that if the change you want to do depends on the data of the component, then you should use this lifecycle method, even, for example, to do layout changes that are impacted by the content.
 
 In addition to this, view components expose their content with the `content` property. For instance the `MessageContent` component `content`'s property holds the `ChatMessage` object.
 
@@ -106,7 +106,7 @@ And that's it 🎉 as you can see all avatars across the UI are now with a borde
 
 #### Change Avatar only in one view
 
-In the previous example we saw that when we customized the avatar view, it changed every UI component that uses an avatar view. All the components in the `Components` config are shared components, but it is also possible to customize a shared component of a specific view only. Let's imagine that we want to apply the previous customization of a bordered avatar view, but only in the quoted reply view:
+In the previous example we saw that when we customized the avatar view, it changed every UI component that uses an avatar view. All the components in the `Components` configuration are shared components, but it is also possible to customize a shared component of a specific view only. Let's imagine that we want to apply the previous customization of a bordered avatar view, but only in the quoted reply view:
 
 ```swift
 class CustomQuotedChatMessageView: QuotedChatMessageView {

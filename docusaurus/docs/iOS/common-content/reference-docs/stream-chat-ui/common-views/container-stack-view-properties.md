@@ -52,7 +52,7 @@ public func replaceArrangedSubviews(with subviews: [UIView])
 
 #### Parameters
 
-  - subviews: The new arranged subviews.
+  - `subviews`: The new arranged subviews.
 
 ### `addArrangedSubviews(_:)`
 
@@ -65,7 +65,7 @@ public func addArrangedSubviews(_ subviews: [UIView])
 
 #### Parameters
 
-  - subviews: The collection of subviews to be added to the arranged subviews.
+  - `subviews`: The collection of subviews to be added to the arranged subviews.
 
 ### `addArrangedSubview(_:respectsLayoutMargins:)`
 
@@ -77,8 +77,8 @@ public func addArrangedSubview(_ subview: UIView, respectsLayoutMargins: Bool? =
 
 #### Parameters
 
-  - subview: The subview to be added.
-  - respectsLayoutMargins: A Boolean value that determines if the subview should preserve it's layout margins.
+  - `subview`: The subview to be added.
+  - `respectsLayoutMargins`: A Boolean value that determines if the subview should preserve it's layout margins.
 
 ### `insertArrangedSubview(_:at:respectsLayoutMargins:)`
 
@@ -90,9 +90,9 @@ public func insertArrangedSubview(_ subview: UIView, at index: Int, respectsLayo
 
 #### Parameters
 
-  - subview: The subview to be added.
-  - index: The position where the subview will be added in the arranged subviews.
-  - respectsLayoutMargins: A Boolean value that determines if the subview should preserve it's layout margins.
+  - `subview`: The subview to be added.
+  - `index`: The position where the subview will be added in the arranged subviews.
+  - `respectsLayoutMargins`: A Boolean value that determines if the subview should preserve it's layout margins.
 
 ### `removeAllArrangedSubviews()`
 
@@ -112,11 +112,11 @@ public func removeArrangedSubview(_ subview: UIView)
 
 #### Parameters
 
-  - subview: The subview to be removed.
+  - `subview`: The subview to be removed.
 
 ### `updateConstraints()`
 
-The updateConstraints is overridden so we can re-layout the constraints whenever the layout is invalidated.
+The `updateConstraints` is overridden so we can re-layout the constraints whenever the layout is invalidated.
 
 ``` swift
 override public func updateConstraints() 

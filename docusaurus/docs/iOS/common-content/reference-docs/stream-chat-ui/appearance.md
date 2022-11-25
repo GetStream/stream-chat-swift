@@ -28,13 +28,13 @@ public var asObservableObject: ObservableObject
 
 ### `colorPalette`
 
-A color pallete to provide basic set of colors for the Views.
+A color palette to provide basic set of colors for the Views.
 
 ``` swift
 public var colorPalette 
 ```
 
-By providing different object or changing individal colors, you can change the look of the views.
+By providing different object or changing individual colors, you can change the look of the views.
 
 ### `fonts`
 
@@ -44,7 +44,7 @@ A set of fonts to be used in the Views.
 public var fonts 
 ```
 
-By providing different object or changing individal fonts, you can change the look of the views.
+By providing different object or changing individual fonts, you can change the look of the views.
 
 ### `images`
 
@@ -54,7 +54,7 @@ A set of images to be used.
 public var images 
 ```
 
-By providing different object or changing individal images, you can change the look of the views.
+By providing different object or changing individual images, you can change the look of the views.
 
 ### `localizationProvider`
 

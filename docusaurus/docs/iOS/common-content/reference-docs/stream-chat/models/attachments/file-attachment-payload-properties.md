@@ -51,7 +51,7 @@ public func extraData<T: Decodable>(ofType: T.Type = T.self) -> T?
 
 #### Parameters
 
-  - ofType: The type an extra data should be decoded as.
+  - `ofType`: The type an extra data should be decoded as.
 
 #### Returns
 

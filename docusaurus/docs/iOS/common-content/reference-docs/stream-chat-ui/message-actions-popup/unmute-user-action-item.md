@@ -2,7 +2,7 @@
 title: UnmuteUserActionItem
 ---
 
-Instance of `ChatMessageActionItem` for unmuting user.
+Instance of `ChatMessageActionItem` for un-muting user.
 
 ``` swift
 public struct UnmuteUserActionItem: ChatMessageActionItem 
@@ -27,8 +27,8 @@ public init(
 
 #### Parameters
 
-  - action: Action to be triggered when `UnmuteUserActionItem` is tapped.
-  - appearance: `Appearance` that is used to configure UI properties.
+  - `action`: Action to be triggered when `UnmuteUserActionItem` is tapped.
+  - `appearance`: `Appearance` that is used to configure UI properties.
 
 ## Properties
 

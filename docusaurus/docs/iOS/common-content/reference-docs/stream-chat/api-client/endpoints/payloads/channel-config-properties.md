@@ -97,7 +97,7 @@ public let maxMessageLength: Int
 
 ### `commands`
 
-An array of commands, e.g. /giphy.
+An array of commands, for example /giphy.
 
 ``` swift
 public let commands: [Command]

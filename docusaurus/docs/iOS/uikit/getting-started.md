@@ -143,7 +143,7 @@ do {
 
 You can access `createChannelWithId:` function on the `ChannelController` which allows you to pass some parameters and create your very first channel.
 
-The channel `type` is an enum that describes what the channel's intention is.
+The channel `type` is an `enum` that describes what the channel's intention is.
 
 Your `ChannelId` has to be a unique ID and you can set this to anything, in this example we're using the `UUID()` provided by Apple. Finally, you can pass through the name of the channel which is a `String` and also some additional parameters if required.
 
@@ -153,7 +153,7 @@ After creating the channel `try ChatClient.shared.channelController(createChanne
 
 :::
 
-Your `ChatChannelListVC` is updated and will display the newly created channel, congratulations!
+Your `ChatChannelListVC` is updated and will display the newly created channel, congratulations.
 
 :::tip Enabling Logs
 

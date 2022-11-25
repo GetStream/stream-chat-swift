@@ -27,8 +27,8 @@ func chatMessageListVC(
 
 #### Parameters
 
-  - vc: The message list informing the delegate of this event.
-  - indexPath: An index path locating the row in the message list.
+  - `vc`: The message list informing the delegate of this event.
+  - `indexPath`: An index path locating the row in the message list.
 
 ### chatMessageListVC(\_:​scrollViewDidScroll:​)
 
@@ -43,8 +43,8 @@ func chatMessageListVC(
 
 #### Parameters
 
-  - vc: The message list informing the delegate of this event.
-  - scrollView: The scroll view that belongs to the message list.
+  - `vc`: The message list informing the delegate of this event.
+  - `scrollView`: The scroll view that belongs to the message list.
 
 ### chatMessageListVC(\_:​didTapOnAction:​for:​)
 
@@ -60,6 +60,6 @@ func chatMessageListVC(
 
 #### Parameters
 
-  - vc: The message list informing the delegate of this event.
-  - actionItem: The action performed on the given message.
-  - message: The given message.
+  - `vc`: The message list informing the delegate of this event.
+  - `actionItem`: The action performed on the given message.
+  - `message`: The given message.

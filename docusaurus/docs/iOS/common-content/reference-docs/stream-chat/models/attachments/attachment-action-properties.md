@@ -17,7 +17,7 @@ public let value: String
 
 ### `style`
 
-A style, e.g. primary button.
+A style, for example primary button.
 
 ``` swift
 public let style: ActionStyle
@@ -25,7 +25,7 @@ public let style: ActionStyle
 
 ### `type`
 
-A type, e.g. button.
+A type, for example button.
 
 ``` swift
 public let type: ActionType

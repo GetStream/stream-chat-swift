@@ -2,7 +2,7 @@
 title: ChannelType
 ---
 
-An enum describing possible types of a channel.
+An `enum` describing possible types of a channel.
 
 ``` swift
 public enum ChannelType: Codable, Hashable 

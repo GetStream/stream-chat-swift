@@ -63,7 +63,7 @@ open private(set) lazy var collectionView: ChatSuggestionsCollectionView = compo
 
 ### `containerView`
 
-The container view where collectionView is embedded.
+The container view where `collectionView` is embedded.
 
 ``` swift
 open private(set) lazy var containerView: UIView = UIView().withoutAutoresizingMaskConstraints

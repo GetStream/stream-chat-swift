@@ -46,4 +46,4 @@ callback methods (delegate, `Combine` publishers, etc.) to inform about the chan
 
 #### Parameters
 
-  - completion: Called when the controller has finished fetching remote data. If the data fetching fails, the `error` variable contains more details about the problem.
+  - `completion`: Called when the controller has finished fetching remote data. If the data fetching fails, the `error` variable contains more details about the problem.

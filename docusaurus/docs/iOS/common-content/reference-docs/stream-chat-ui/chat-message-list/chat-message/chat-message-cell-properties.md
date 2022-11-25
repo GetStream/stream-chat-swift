@@ -55,5 +55,5 @@ public func setMessageContentIfNeeded(
 
 #### Parameters
 
-  - contentViewClass: The type of message content view.
-  - attachmentViewInjectorType: The type of attachment injector.
+  - `contentViewClass`: The type of message content view.
+  - `attachmentViewInjectorType`: The type of attachment injector.

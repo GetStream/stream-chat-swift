@@ -24,5 +24,5 @@ func scrollOverlay(_ overlay: ChatMessageListScrollOverlayView, textForItemAt in
 
 #### Parameters
 
-  - overlay: A view requesting date
-  - indexPath: An index path that should be used to get the date
+  - `overlay`: A view requesting date
+  - `indexPath`: An index path that should be used to get the date

@@ -91,7 +91,7 @@ let streamChat = StreamChat(chatClient: chatClient, appearance: appearance, util
 
 ### Accessing Chat Context Functionalities Through Injectable Variables
 
-If you build your own view components and you want to use the chat context providing options, you can do so in a way that's very similar to SwiftUI's environment. You need to define the corresponding keypath of the functionality you need anywhere in your code.
+If you build your own view components and you want to use the chat context providing options, you can do so in a way that's very similar to SwiftUI's environment. You need to define the corresponding `keypath` of the functionality you need anywhere in your code.
 
 ```swift
 @Injected(\.chatClient) var chatClient

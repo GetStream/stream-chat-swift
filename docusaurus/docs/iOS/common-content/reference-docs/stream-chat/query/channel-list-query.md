@@ -30,10 +30,10 @@ public init(
 
 #### Parameters
 
-  - filter: a channels filter.
-  - sort: a sorting list for channels.
-  - pageSize: a page size for pagination.
-  - messagesLimit: a number of messages for the channel to be retrieved.
+  - `filter`: a channels filter.
+  - `sort`: a sorting list for channels.
+  - `pageSize`: a page size for pagination.
+  - `messagesLimit`: a number of messages for the channel to be retrieved.
 
 ## Properties
 

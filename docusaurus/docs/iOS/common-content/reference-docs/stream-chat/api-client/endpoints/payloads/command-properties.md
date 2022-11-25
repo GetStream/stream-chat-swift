@@ -23,7 +23,7 @@ public let set: String
 
 ### `args`
 
-Args for the command.
+Arguments for the command.
 
 ``` swift
 public let args: String

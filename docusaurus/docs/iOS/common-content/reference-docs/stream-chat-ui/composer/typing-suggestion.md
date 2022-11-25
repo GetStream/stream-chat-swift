@@ -20,8 +20,8 @@ public init(text: String, locationRange: NSRange)
 
 #### Parameters
 
-  - text: A String representing the currently typing text.
-  - locationRange: A NSRange that stores the location of the typing suggestion in relation with the whole input.
+  - `text`: A String representing the currently typing text.
+  - `locationRange`: A `NSRange` that stores the location of the typing suggestion in relation with the whole input.
 
 ## Properties
 
@@ -35,7 +35,7 @@ public let text: String
 
 ### `locationRange`
 
-A NSRange that stores the location of the typing suggestion in relation with the whole input.
+A `NSRange` that stores the location of the typing suggestion in relation with the whole input.
 
 ``` swift
 public let locationRange: NSRange

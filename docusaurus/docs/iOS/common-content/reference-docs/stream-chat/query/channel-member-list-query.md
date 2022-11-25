@@ -29,10 +29,10 @@ public init(
 
 #### Parameters
 
-  - cid: The channel identifier.
-  - filter: The members filter. Empty filter will return all users.
-  - sort: The sorting for members list.
-  - pageSize: The page size for pagination.
+  - `cid`: The channel identifier.
+  - `filter`: The members filter. Empty filter will return all users.
+  - `sort`: The sorting for members list.
+  - `pageSize`: The page size for pagination.
 
 ## Properties
 

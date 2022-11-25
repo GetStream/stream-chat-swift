@@ -2,7 +2,7 @@
 title: AttachmentAction.ActionType
 ---
 
-An attachment action type, e.g. button.
+An attachment action type, for example button.
 
 ``` swift
 public enum ActionType: String, Codable 

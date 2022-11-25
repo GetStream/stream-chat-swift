@@ -29,7 +29,7 @@ public var localStorageFolderURL: URL?
 
 ### `baseURL`
 
-The datacenter `ChatClient` uses for connecting.
+The data center `ChatClient` uses for connecting.
 
 ``` swift
 public var baseURL: BaseURL = .usEast
@@ -65,8 +65,8 @@ public var localCaching
 ### `isClientInActiveMode`
 
 Flag for setting a ChatClient instance in connection-less mode.
-A connection-less client is not able to connect to websocket and will not
-receive websocket events. It can still observe and mutate database.
+A connection-less client is not able to connect to web socket and will not
+receive web socket events. It can still observe and mutate database.
 This flag is automatically set to `false` for app extensions
 **Warning**:​ There should be at max 1 active client at the same time, else it can lead to undefined behavior.
 
@@ -95,14 +95,14 @@ Is `true` by default.
 
 ### `staysConnectedInBackground`
 
-If set to `true`, the `ChatClient` will try to stay connected while app is backgrounded.
-If set to `false`, websocket disconnects immediately when app is backgrounded.
+If set to `true`, the `ChatClient` will try to stay connected while app is in the background.
+If set to `false`, web socket disconnects immediately when app is in the background.
 
 ``` swift
 public var staysConnectedInBackground = true
 ```
 
-This flag aims to reduce unnecessary reconnections while quick app switches,
+This flag aims to reduce unnecessary reconnect attempts while quick app switches,
 like when a user just checks a notification or another app.
 `ChatClient` starts a background task to keep the connection alive,
 and disconnects when background task expires.
@@ -125,7 +125,7 @@ Allows to inject a custom API client for uploading attachments, if not specified
 
 #### Parameters
 
-  - apiKey: The API key of the chat app the `ChatClient` connects to.
+  - `apiKey`: The API key of the chat app the `ChatClient` connects to.
 
 ### `maxAttachmentSize`
 

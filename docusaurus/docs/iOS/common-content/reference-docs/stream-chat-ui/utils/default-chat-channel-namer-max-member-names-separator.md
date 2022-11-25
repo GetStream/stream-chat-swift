@@ -15,7 +15,7 @@ The priority order is:
 
   - Assigned name of the channel, if not empty
 
-  - If the channel is direct message (implicit cid):
+  - If the channel is direct message (implicit `cid`):
     
       - Name generated from cached members of the channel
 
@@ -23,7 +23,7 @@ The priority order is:
 
 Examples:
 
-  - If channel has some name, ie. `Channel 1`, this returns `Channel 1`
+  - If channel has some name, for example `Channel 1`, this returns `Channel 1`
 
   - If channel has no name and is not direct message, this returns channel ID of the channel
 
@@ -39,8 +39,8 @@ Examples:
 
 ## Parameters
 
-  - maxMemberNames: Maximum number of visible members in Channel defaults to `2`
-  - separator: Separator of the members, defaults to `y`
+  - `maxMemberNames`: Maximum number of visible members in Channel defaults to `2`
+  - `separator`: Separator of the members, defaults to `y`
 
 ## Returns
 

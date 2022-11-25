@@ -1,7 +1,7 @@
 
 ### `isInteractionEnabled`
 
-A boolean value that checks if actions are available on the message (e.g. `edit`, `delete`, `resend`, etc.).
+A boolean value that checks if actions are available on the message (for example `edit`, `delete`, `resend`, etc.).
 
 ``` swift
 var isInteractionEnabled: Bool 

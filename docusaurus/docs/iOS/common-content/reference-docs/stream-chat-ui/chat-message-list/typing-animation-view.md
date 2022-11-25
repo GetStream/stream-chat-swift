@@ -53,7 +53,7 @@ open var dotSpacing: CGFloat = 2
 ### `viewWidthConstant`
 
 Defines the width of the view
-It is computed by multiplying the dotLayer width with spacing and number of dots.
+It is computed by multiplying the `dotLayer` width with spacing and number of dots.
 Also because we use the replicator layer, we mustn't forgot to remove the last spacing, otherwise it has trailing margin.
 
 ``` swift

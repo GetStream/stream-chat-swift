@@ -77,7 +77,7 @@ open func isEnabled(for level: LogLevel) -> Bool
 
 #### Parameters
 
-  - level: Log level to be checked
+  - `level`: Log level to be checked
 
 #### Returns
 
@@ -93,7 +93,7 @@ open func process(logDetails: LogDetails)
 
 #### Parameters
 
-  - logDetails: Log details to be processed.
+  - `logDetails`: Log details to be processed.
 
 ### `applyFormatters(logDetails:message:)`
 
@@ -106,8 +106,8 @@ open func applyFormatters(logDetails: LogDetails, message: String) -> String
 
 #### Parameters
 
-  - logDetails: Log details to be passed on to formatters.
-  - message: Log message to be formatted
+  - `logDetails`: Log details to be passed on to formatters.
+  - `message`: Log message to be formatted
 
 #### Returns
 

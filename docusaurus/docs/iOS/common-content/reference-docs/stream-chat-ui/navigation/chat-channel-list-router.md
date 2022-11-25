@@ -25,7 +25,7 @@ open func showCurrentUserProfile()
 
 ### `showChannel(for:)`
 
-Shows the view controller with messages for the provided cid.
+Shows the view controller with messages for the provided `cid`.
 
 ``` swift
 open func showChannel(for cid: ChannelId) 
@@ -33,7 +33,7 @@ open func showChannel(for cid: ChannelId)
 
 #### Parameters
 
-  - cid: `ChannelId` of the channel the should be presented.
+  - `cid`: `ChannelId` of the channel the should be presented.
 
 ### `didTapMoreButton(for:)`
 
@@ -45,7 +45,7 @@ open func didTapMoreButton(for cid: ChannelId)
 
 #### Parameters
 
-  - cid: `ChannelId` of a channel swipe acton was used on
+  - `cid`: `ChannelId` of a channel swipe action was used on
 
 ### `didTapDeleteButton(for:)`
 
@@ -57,4 +57,4 @@ open func didTapDeleteButton(for cid: ChannelId)
 
 #### Parameters
 
-  - cid: `ChannelId` of a channel swipe acton was used on
+  - `cid`: `ChannelId` of a channel swipe action was used on

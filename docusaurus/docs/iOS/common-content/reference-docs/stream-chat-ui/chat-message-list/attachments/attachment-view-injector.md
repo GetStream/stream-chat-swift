@@ -23,7 +23,7 @@ public required init(_ contentView: ChatMessageContentView)
 
 #### Parameters
 
-  - contentView: The target view used for injecting the views of this injector.
+  - `contentView`: The target view used for injecting the views of this injector.
 
 ### `init?(coder:)`
 

@@ -2,7 +2,7 @@
 title: ListChange
 ---
 
-This enum describes the changes of the given collections of items.
+This `enum` describes the changes of the given collections of items.
 
 ``` swift
 public enum ListChange<Item> 

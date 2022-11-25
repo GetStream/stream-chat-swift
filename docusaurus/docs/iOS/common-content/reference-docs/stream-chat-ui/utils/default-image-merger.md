@@ -39,7 +39,7 @@ open func mergeTopToBottom(images: [UIImage]) -> UIImage?
 
 #### Parameters
 
-  - images: The images
+  - `images`: The images
 
 #### Returns
 
@@ -55,7 +55,7 @@ open func mergeSideToSide(images: [UIImage]) -> UIImage?
 
 #### Parameters
 
-  - images: The images
+  - `images`: The images
 
 #### Returns
 

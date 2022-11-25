@@ -2,7 +2,7 @@
 title: EntityChange
 ---
 
-This enum describes the changes to a certain item when observing it.
+This `enum` describes the changes to a certain item when observing it.
 
 ``` swift
 public enum EntityChange<Item> 

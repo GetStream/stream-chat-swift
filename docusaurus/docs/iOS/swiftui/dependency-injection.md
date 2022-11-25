@@ -22,7 +22,7 @@ In some cases, you might also need to extend our DI mechanism with your own type
 @Injected(\.customType) var customType
 ```  
 
-In order to achieve this, you first need to define your own `InjectionKey`, and define it's currentValue, which basically creates the new instance of your type.
+In order to achieve this, you first need to define your own `InjectionKey`, and define it's `currentValue`, which basically creates the new instance of your type.
 
 ```swift
 class CustomType {

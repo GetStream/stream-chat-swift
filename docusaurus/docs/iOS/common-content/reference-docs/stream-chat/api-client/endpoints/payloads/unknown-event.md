@@ -67,7 +67,7 @@ func payload<T: CustomEventPayload>(ofType: T.Type) -> T?
 
 #### Parameters
 
-  - ofType: The type of payload the custom fields should be treated as.
+  - `ofType`: The type of payload the custom fields should be treated as.
 
 #### Returns
 

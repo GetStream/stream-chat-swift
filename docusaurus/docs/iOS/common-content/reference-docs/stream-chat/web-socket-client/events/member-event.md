@@ -14,13 +14,13 @@ public protocol MemberEvent: Event
 
 ## Requirements
 
-### memberUserId
+### `memberUserId`
 
 ``` swift
 var memberUserId: UserId 
 ```
 
-### cid
+### `cid`
 
 ``` swift
 var cid: ChannelId 

@@ -12,7 +12,7 @@ This protocol is used to make a transparent "border" around online indicator in 
 
 ## Requirements
 
-### maskingPath
+### `maskingPath`
 
 Path used to mask space in super view.
 

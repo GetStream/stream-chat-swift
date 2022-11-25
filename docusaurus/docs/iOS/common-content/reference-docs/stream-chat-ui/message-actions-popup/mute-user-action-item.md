@@ -27,8 +27,8 @@ public init(
 
 #### Parameters
 
-  - action: Action to be triggered when `MuteUserActionItem` is tapped.
-  - appearance: `Appearance` that is used to configure UI properties.
+  - `action`: Action to be triggered when `MuteUserActionItem` is tapped.
+  - `appearance`: `Appearance` that is used to configure UI properties.
 
 ## Properties
 

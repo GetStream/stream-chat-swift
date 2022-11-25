@@ -1,7 +1,7 @@
 
 ### `cid`
 
-The cid of the channel the attachment belongs to.
+The `cid` of the channel the attachment belongs to.
 
 ``` swift
 public let cid: ChannelId

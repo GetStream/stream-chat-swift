@@ -73,7 +73,7 @@ open var channelController: ChatChannelController?
 
 ### `channelConfig`
 
-The channel config. If it's a new channel, an empty config should be created. (Not yet supported right now)
+The channel configuration. If it's a new channel, an empty configuration should be created. (Not yet supported right now)
 
 ``` swift
 public var channelConfig: ChannelConfig? 
@@ -235,7 +235,7 @@ open func createNewMessage(text: String)
 
 #### Parameters
 
-  - text: The text content of the message.
+  - `text`: The text content of the message.
 
 ### `editMessage(withId:newText:)`
 
@@ -247,8 +247,8 @@ open func editMessage(withId id: MessageId, newText: String)
 
 #### Parameters
 
-  - id: The id of the editing message.
-  - newText: The new text content of the message.
+  - `id`: The id of the editing message.
+  - `newText`: The new text content of the message.
 
 ### `typingMention(in:)`
 
@@ -260,7 +260,7 @@ open func typingMention(in textView: UITextView) -> (String, NSRange)?
 
 #### Parameters
 
-  - textView: The text view of the message input view where the user is typing.
+  - `textView`: The text view of the message input view where the user is typing.
 
 #### Returns
 
@@ -276,7 +276,7 @@ open func typingCommand(in textView: UITextView) -> String?
 
 #### Parameters
 
-  - textView: The text view of the message input view where the user is typing.
+  - `textView`: The text view of the message input view where the user is typing.
 
 #### Returns
 
@@ -292,7 +292,7 @@ open func showCommandSuggestions(for typingCommand: String)
 
 #### Parameters
 
-  - typingCommand: The potential command that the current user is typing.
+  - `typingCommand`: The potential command that the current user is typing.
 
 ### `queryForMentionSuggestionsSearch(typingMention:)`
 
@@ -308,7 +308,7 @@ user searching logic.
 
 #### Parameters
 
-  - typingMention: The potential user mention the current user is typing.
+  - `typingMention`: The potential user mention the current user is typing.
 
 #### Returns
 
@@ -324,8 +324,8 @@ open func showMentionSuggestions(for typingMention: String, mentionRange: NSRang
 
 #### Parameters
 
-  - typingMention: The potential user mention the current user is typing.
-  - mentionRange: The position where the current user is typing a mention to it can be replaced with the suggestion.
+  - `typingMention`: The potential user mention the current user is typing.
+  - `mentionRange`: The position where the current user is typing a mention to it can be replaced with the suggestion.
 
 ### `mentionText(for:)`
 
@@ -361,8 +361,8 @@ open func addAttachmentToContent(from url: URL, type: AttachmentType) throws
 
 #### Parameters
 
-  - url: The URL of the attachment
-  - type: The type of the attachment
+  - `url`: The URL of the attachment
+  - `type`: The type of the attachment
 
 ### `textViewDidChange(_:)`
 

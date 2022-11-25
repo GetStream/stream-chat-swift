@@ -244,7 +244,7 @@ public var playerView: PlayerView.Type = PlayerView.self
 
 ### `messageListVC`
 
-The View Controller used to display content of the message, i.e. in the channel detail message list.
+The View Controller used to display content of the message, for example in the channel detail message list.
 
 ``` swift
 @available(iOSApplicationExtension, unavailable)
@@ -320,7 +320,7 @@ public var videoPlaybackControlView: VideoPlaybackControlView.Type =
 
 ### `messageContentView`
 
-The view used to display content of the message, i.e. in the channel detail message list.
+The view used to display content of the message, for example in the channel detail message list.
 
 ``` swift
 public var messageContentView: ChatMessageContentView.Type = ChatMessageContentView.self
@@ -362,7 +362,7 @@ The injector used to inject link attachment views.
 
 ### `giphyAttachmentInjector`
 
-The injector used for injecting giphy attachment views
+The injector used for injecting Giphy attachment views
 
 ``` swift
 public var giphyAttachmentInjector: AttachmentViewInjector.Type = GiphyAttachmentViewInjector.self
@@ -485,7 +485,7 @@ public var imageUploadingOverlay: ChatMessageGalleryView.UploadingOverlay.Type =
 
 ### `giphyAttachmentView`
 
-The view that shows giphy attachment with actions.
+The view that shows Giphy attachment with actions.
 
 ``` swift
 public var giphyAttachmentView: ChatMessageInteractiveAttachmentView.Type = ChatMessageInteractiveAttachmentView.self
@@ -732,7 +732,7 @@ public var suggestionsCollectionView: ChatSuggestionsCollectionView.Type = ChatS
 
 ### `suggestionsMentionCollectionViewCell`
 
-A view cell that displays the the suggested mention.
+A view cell that displays the suggested mention.
 
 ``` swift
 public var suggestionsMentionCollectionViewCell: ChatMentionSuggestionCollectionViewCell.Type =

@@ -4,7 +4,7 @@ title: Logs
 
 **By default, logs are disabled.**
 
-Using the Stream Chat SDK is straightforward, and you should have something running very quickly. If you like, you can view the logging provided by the SDK. When loging is enabled, we print most log messages to the console from information, warnings and errors. This also includes logs provided by the Stream Chat API.
+Using the Stream Chat SDK is straightforward, and you should have something running very quickly. If you like, you can view the logging provided by the SDK. When logging is enabled, we print most log messages to the console from information, warnings and errors. This also includes logs provided by the Stream Chat API.
 
 ![Screenshot shows Xcode with the customized logs in the console](../assets/log-messages.png)
 

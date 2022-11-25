@@ -35,11 +35,11 @@ public func callAsFunction(
 
 #### Parameters
 
-  - level: Log level for this message
-  - functionName: Function of the caller
-  - fileName: File of the caller
-  - lineNumber: Line number of the caller
-  - message: Message to be logged
+  - `level`: Log level for this message
+  - `functionName`: Function of the caller
+  - `fileName`: File of the caller
+  - `lineNumber`: Line number of the caller
+  - `message`: Message to be logged
 
 ### `log(_:functionName:fileName:lineNumber:message:)`
 
@@ -58,11 +58,11 @@ public func log(
 
 #### Parameters
 
-  - level: Log level for this message
-  - functionName: Function of the caller
-  - fileName: File of the caller
-  - lineNumber: Line number of the caller
-  - message: Message to be logged
+  - `level`: Log level for this message
+  - `functionName`: Function of the caller
+  - `fileName`: File of the caller
+  - `lineNumber`: Line number of the caller
+  - `message`: Message to be logged
 
 ### `info(_:functionName:fileName:lineNumber:)`
 
@@ -79,10 +79,10 @@ public func info(
 
 #### Parameters
 
-  - message: Message to be logged
-  - functionName: Function of the caller
-  - fileName: File of the caller
-  - lineNumber: Line number of the caller
+  - `message`: Message to be logged
+  - `functionName`: Function of the caller
+  - `fileName`: File of the caller
+  - `lineNumber`: Line number of the caller
 
 ### `debug(_:functionName:fileName:lineNumber:)`
 
@@ -99,10 +99,10 @@ public func debug(
 
 #### Parameters
 
-  - message: Message to be logged
-  - functionName: Function of the caller
-  - fileName: File of the caller
-  - lineNumber: Line number of the caller
+  - `message`: Message to be logged
+  - `functionName`: Function of the caller
+  - `fileName`: File of the caller
+  - `lineNumber`: Line number of the caller
 
 ### `warning(_:functionName:fileName:lineNumber:)`
 
@@ -119,10 +119,10 @@ public func warning(
 
 #### Parameters
 
-  - message: Message to be logged
-  - functionName: Function of the caller
-  - fileName: File of the caller
-  - lineNumber: Line number of the caller
+  - `message`: Message to be logged
+  - `functionName`: Function of the caller
+  - `fileName`: File of the caller
+  - `lineNumber`: Line number of the caller
 
 ### `error(_:functionName:fileName:lineNumber:)`
 
@@ -139,10 +139,10 @@ public func error(
 
 #### Parameters
 
-  - message: Message to be logged
-  - functionName: Function of the caller
-  - fileName: File of the caller
-  - lineNumber: Line number of the caller
+  - `message`: Message to be logged
+  - `functionName`: Function of the caller
+  - `fileName`: File of the caller
+  - `lineNumber`: Line number of the caller
 
 ### `assert(_:_:functionName:fileName:lineNumber:)`
 
@@ -161,8 +161,8 @@ public func assert(
 
 #### Parameters
 
-  - condition: The condition to test.
-  - message: A custom message to log if `condition` is evaluated to false.
+  - `condition`: The condition to test.
+  - `message`: A custom message to log if `condition` is evaluated to false.
 
 ### `assertionFailure(_:functionName:fileName:lineNumber:)`
 

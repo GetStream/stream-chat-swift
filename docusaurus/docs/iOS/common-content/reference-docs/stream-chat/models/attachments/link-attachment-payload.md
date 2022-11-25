@@ -56,7 +56,7 @@ public var text: String?
 
 ### `author`
 
-An author, usually the link origin. (e.g. `YouTube`, `Spotify`)
+An author, usually the link origin. (for example `YouTube`, `Spotify`)
 
 ``` swift
 public var author: String?

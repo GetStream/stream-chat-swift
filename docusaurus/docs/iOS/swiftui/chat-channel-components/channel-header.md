@@ -96,7 +96,7 @@ struct CustomChatChannelHeader: ToolbarContent {
 }
 ```
 
-The custom header implementation exposes an onTapTrailing callback, that will be called when the trailing button is tapped (e.g. for displaying an edit view). The implementation of this button will be done in a `ViewModifier`, since the `ToolbarContent` can't keep `@State` variables.
+The custom header implementation exposes an onTapTrailing callback, that will be called when the trailing button is tapped (for example for displaying an edit view). The implementation of this button will be done in a `ViewModifier`, since the `ToolbarContent` can't keep `@State` variables.
 
 The next step is to provide a new implementation of the `ChatChannelHeaderViewModifier`. In this case, you need to provide handling for the `onTapTrailing` method from the `CustomChatChannelHeader`. To do this, you introduce a new `@State` variable in the modifier and change its state to true when the button is tapped.
 
@@ -156,7 +156,7 @@ These are all the steps needed to provide your own navigation header in the chat
 
 In many chat apps, the navigation bar contains a link to a screen that contains information about the chat, such as its participants, list of the pinned messages, files, media, etc, as well as a possibility to add members to the chat. This view is displayed by default if you tap on the right navigation bar button in the channel header.
 
-If you want to use this screen in your custom navigation bar (or anywhere else), you can simply initalize the `ChatChannelInfoView` with a channel.
+If you want to use this screen in your custom navigation bar (or anywhere else), you can simply initialize the `ChatChannelInfoView` with a channel.
 
 In order for it to be integrated in the same context as above, your `CustomChatChannelHeader` would now look like this:
 

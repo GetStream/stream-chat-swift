@@ -14,7 +14,7 @@ open class ChatMessageComposerSuggestionsCommandDataSource: NSObject, UICollecti
 
 ### `init(with:collectionView:)`
 
-Data Source Initialiser
+Data Source initializer
 
 ``` swift
 public init(with commands: [Command], collectionView: ChatSuggestionsCollectionView) 
@@ -22,8 +22,8 @@ public init(with commands: [Command], collectionView: ChatSuggestionsCollectionV
 
 #### Parameters
 
-  - commands: The list of commands.
-  - collectionView: The collection view of the commands.
+  - `commands`: The list of commands.
+  - `collectionView`: The collection view of the commands.
 
 ## Properties
 
@@ -43,7 +43,7 @@ open var commands: [Command]
 
 ### `components`
 
-The current types to override ui components.
+The current types to override UI components.
 
 ``` swift
 open var components: Components 
@@ -51,7 +51,7 @@ open var components: Components
 
 ### `appearance`
 
-The current types to override ui components.
+The current types to override UI components.
 
 ``` swift
 open var appearance: Appearance 

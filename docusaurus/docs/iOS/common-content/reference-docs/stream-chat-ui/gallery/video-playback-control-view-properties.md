@@ -118,7 +118,7 @@ Is invoked when current track reached the end.
 
 ### `handleTapOnPlayPauseButton()`
 
-Is invoked when playback button is touched up inide.
+Is invoked when playback button is touched up inside.
 
 ``` swift
 @objc open func handleTapOnPlayPauseButton() 

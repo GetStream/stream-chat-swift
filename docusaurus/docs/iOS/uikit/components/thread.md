@@ -46,7 +46,7 @@ navigationController?.show(threadVC, sender: self)
 
 ## UI Customization
 
-You can customize how the `ChatThreadVC` looks by subclassing it and swap the component in `Components` config:
+You can customize how the `ChatThreadVC` looks by subclassing it and swap the component in `Components` configuration:
 
 ```swift
 Components.default.threadVC = CustomChatThreadVC.self

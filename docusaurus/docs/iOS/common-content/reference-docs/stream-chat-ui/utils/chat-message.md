@@ -6,7 +6,7 @@ title: ChatMessage
 
 ### `isInteractionEnabled`
 
-A boolean value that checks if actions are available on the message (e.g. `edit`, `delete`, `resend`, etc.).
+A boolean value that checks if actions are available on the message (for example `edit`, `delete`, `resend`, etc.).
 
 ``` swift
 var isInteractionEnabled: Bool 
@@ -78,4 +78,4 @@ var shouldRenderAsJumbomoji: Bool
 
 By default, any string which comprises of ONLY emojis of length 3 or less is displayed as large emoji
 
-Note that for messages sent with attachments, large emojis aren's rendered
+Note that for messages sent with attachments, large emojis aren't rendered

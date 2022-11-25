@@ -24,5 +24,5 @@ func eventsController(_ controller: EventsController, didReceiveEvent event: Eve
 
 #### Parameters
 
-  - controller: The events controller listening for the events.
-  - event: The observed event.
+  - `controller`: The events controller listening for the events.
+  - `event`: The observed event.

@@ -10,7 +10,7 @@ public protocol GalleryItemPreview
 
 ## Requirements
 
-### attachmentId
+### `attachmentId`
 
 Attachment identifier.
 
@@ -18,7 +18,7 @@ Attachment identifier.
 var attachmentId: AttachmentId? 
 ```
 
-### imageView
+### `imageView`
 
 `UIImageView` that is displayed the attachment preview.
 

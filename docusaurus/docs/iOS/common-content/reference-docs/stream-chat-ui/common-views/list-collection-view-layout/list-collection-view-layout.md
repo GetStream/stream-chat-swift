@@ -25,7 +25,7 @@ open class var separatorKind: String
 ### `separatorHeight`
 
 The height of the cell separator view. This changes the `minimumLineSpacing` to properly display the separator height.
-By default it is the hair height, one physical pixel (1 / displayScale). If a value is set, it will change the default.
+By default it is the hair height, one physical pixel `(1 / displayScale)`. If a value is set, it will change the default.
 The changes will apply after the layout it has been invalidated.
 
 ``` swift

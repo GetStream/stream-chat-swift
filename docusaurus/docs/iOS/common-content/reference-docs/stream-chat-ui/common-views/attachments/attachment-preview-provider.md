@@ -16,7 +16,7 @@ The view representing the attachment.
 func previewView(components: Components) -> UIView
 ```
 
-### preferredAxis
+### `preferredAxis`
 
 The preferred axis to be used for attachment previews in attachments view.
 

@@ -6,7 +6,7 @@ A list of names and terms used in the framework and documentation.
 
 ---
 
-- **Client** or **ChatClient**: The root object of the SDK representing the chat service. Typically, an app contains just one instance of `ChatClient`. However, it's possible to have multiple instances if your use case requires it (i.e. more than one window with different workspaces in a Slack-like app).
+- **Client** or **ChatClient**: The root object of the SDK representing the chat service. Typically, an app contains just one instance of `ChatClient`. However, it's possible to have multiple instances if your use case requires it (for example more than one window with different workspaces in a Slack-like app).
 
 - **User:** A user entity in a chat app. It's uniquely identified by a `UserId`. Users can't be created directly from the Swift SDK. They must be created by your backend service.
 

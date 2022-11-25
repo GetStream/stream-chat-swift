@@ -62,7 +62,7 @@ public func setDelegate<Delegate: ChatMessageSearchControllerDelegate>(_ delegat
 
 #### Parameters
 
-  - delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object alive if you want keep receiving updates.
+  - `delegate`: The object used as a delegate. It's referenced weakly, so you need to keep the object alive if you want keep receiving updates.
 
 ### `search(text:completion:)`
 
@@ -79,8 +79,8 @@ The delegate function `didChangeMessages` will also be called.
 
 #### Parameters
 
-  - text: The message text.
-  - completion: Called when the controller has finished fetching remote data. If the data fetching fails, the error variable contains more details about the problem.
+  - `text`: The message text.
+  - `completion`: Called when the controller has finished fetching remote data. If the data fetching fails, the error variable contains more details about the problem.
 
 ### `search(query:completion:)`
 
@@ -99,8 +99,8 @@ The delegate function `didChangeMessages` will also be called.
 
 #### Parameters
 
-  - query: Search query.
-  - completion: Called when the controller has finished fetching remote data. If the data fetching fails, the error variable contains more details about the problem.
+  - `query`: Search query.
+  - `completion`: Called when the controller has finished fetching remote data. If the data fetching fails, the error variable contains more details about the problem.
 
 ### `loadNextMessages(limit:completion:)`
 
@@ -115,4 +115,4 @@ public func loadNextMessages(
 
 #### Parameters
 
-  - limit: Limit for page size.
+  - `limit`: Limit for page size.

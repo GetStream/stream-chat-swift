@@ -59,9 +59,9 @@ open func showMessageActionsPopUp(
 
 #### Parameters
 
-  - messageContentView: The source content view of the selected message. It's used to get the information about the source frame for the zoom-like transition.
-  - messageActionsController: The `ChatMessageActionsVC` object which will presented as a part of the pop up.
-  - messageReactionsController: The `ChatMessageReactionsVC` object which will presented as a part of the pop up.
+  - `messageContentView`: The source content view of the selected message. It's used to get the information about the source frame for the zoom-like transition.
+  - `messageActionsController`: The `ChatMessageActionsVC` object which will presented as a part of the pop up.
+  - `messageReactionsController`: The `ChatMessageReactionsVC` object which will presented as a part of the pop up.
 
 ### `showLinkPreview(link:)`
 
@@ -74,7 +74,7 @@ Handles opening of a link URL.
 
 #### Parameters
 
-  - url: The URL of the link to preview.
+  - `url`: The URL of the link to preview.
 
 ### `showFilePreview(fileURL:)`
 
@@ -86,7 +86,7 @@ open func showFilePreview(fileURL: URL?)
 
 #### Parameters
 
-  - fileURL: The URL of the file to preview.
+  - `fileURL`: The URL of the file to preview.
 
 ### `showThread(messageId:cid:client:)`
 
@@ -103,9 +103,9 @@ Shows the detail View Controller of a message thread.
 
 #### Parameters
 
-  - messageId: The id if the parent message of the thread.
-  - cid: The `cid` of the channel the message belongs to.
-  - client: The current `ChatClient` instance.
+  - `messageId`: The id if the parent message of the thread.
+  - `cid`: The `cid` of the channel the message belongs to.
+  - `client`: The current `ChatClient` instance.
 
 ### `showGallery(message:initialAttachmentId:previews:)`
 
@@ -121,9 +121,9 @@ open func showGallery(
 
 #### Parameters
 
-  - message: The id of the message the attachment belongs to.
-  - initialAttachment: The attachment to present.
-  - previews: All previewable attachments of the message. This is used for swiping right-left when a single message has multiple previewable attachments.
+  - `message`: The id of the message the attachment belongs to.
+  - `initialAttachment`: The attachment to present.
+  - `previews`: All previewable attachments of the message. This is used for swiping right-left when a single message has multiple previewable attachments.
 
 ### `animationController(forPresented:presenting:source:)`
 
