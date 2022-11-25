@@ -68,4 +68,4 @@ public func isEnabled(for channel: ChatChannel) -> Bool
 
 #### Parameters
 
-  - channel: a channel.
+  - `channel`: a channel.

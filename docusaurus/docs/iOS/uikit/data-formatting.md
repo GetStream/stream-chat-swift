@@ -44,9 +44,9 @@ class CustomUserLastActivityFormatter: UserLastActivityFormatter {
 }
 ```
 
-Finally, set the custom formatter in the `Appearance` config:
+Finally, set the custom formatter in the `Appearance` configuration:
 ```swift
-// Set the custom formatter in the Appearance config
+// Set the custom formatter in the Appearance configuration
 Appearance.default.formatters.userLastActivity = CustomUserLastActivityFormatter()
 ```
 
@@ -83,7 +83,7 @@ The SDK offers markdown formatting out of the box for channel messages.
 It supports the most common Markdown syntax:
 - _italic_
 - **bold**
-- ~~strikethrough~~
+- ~~strike through~~
 - `code`
 - headings and subheadings
 - links, etc.
@@ -92,7 +92,7 @@ It uses [SwiftyMarkdown](https://github.com/SimonFairbairn/SwiftyMarkdown) libra
 
 <center><img src={require("../assets/markdown-formatting.png").default} width="60%" height="60%"/></center>
 
-Mardown support is enabled by default. You can disable it by setting the following flag to false in the `Appearance` config:
+Markdown support is enabled by default. You can disable it by setting the following flag to false in the `Appearance` configuration:
 
 ```swift
 Appearance.default.formatters.isMarkdownEnabled = false
@@ -128,7 +128,7 @@ class CustomMarkdownFormatter: MarkdownFormatter {
 }
 ```
 
-Set the `markdownFormatter` property in the `Appearance` config and you are done:
+Set the `markdownFormatter` property in the `Appearance` configuration and you are done:
 
 ```swift
 Appearance.default.formatters.markdownFormatter = CustomMarkdownFormatter()

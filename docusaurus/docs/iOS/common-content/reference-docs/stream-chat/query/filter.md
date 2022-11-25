@@ -30,9 +30,9 @@ Learn more about how to create simple, advanced, and custom filters in our [chea
 
 #### Parameters
 
-  - operator: An operator which should be used for the filter. The operator string must start with `$`.
-  - key: The "left-hand" side of the filter. Specifies the name of the field the filter should match.
-  - value: The "right-hand" side of the filter. Specifies the value the filter should match.
+  - `operator`: An operator which should be used for the filter. The operator string must start with `$`.
+  - `key`: The "left-hand" side of the filter. Specifies the name of the field the filter should match.
+  - `value`: The "right-hand" side of the filter. Specifies the value the filter should match.
 
 ### `init(from:)`
 
@@ -189,7 +189,7 @@ static func exists<Value: Encodable>(_ key: FilterKey<Scope, Value>, exists: Boo
 
 #### Parameters
 
-  - exists: `true`(default value) if the filter matches values that exist. `false` if the filter should match values that don't exist.
+  - `exists`: `true`(default value) if the filter matches values that exist. `false` if the filter should match values that don't exist.
 
 ### `contains(_:value:)`
 

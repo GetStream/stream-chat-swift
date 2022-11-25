@@ -10,7 +10,7 @@ The `ChatChannelListVC` is the UI component used to display a list of channels m
 
 :::note
 The Channel List screen is backed by the low-level `ChatChannelListController` component which fetches channels from the API and keeps the list in sync with the remote.
-Read more about about channel list query and how `ChatChannelListController` works [here](../../client/controllers/channels.md).
+Read more about channel list query and how `ChatChannelListController` works [here](../../client/controllers/channels.md).
 :::
 
 ## Basic Usage
@@ -113,7 +113,7 @@ class ViewController: ChatChannelListVC {
 
 ### Channel List States
 
-You can opt to show an empty, error and loading view by setting the following flag to true in the `Components` config:
+You can opt to show an empty, error and loading view by setting the following flag to true in the `Components` configuration:
 
 ```swift
 Components.default.isChatChannelListStatesEnabled = true
@@ -214,7 +214,7 @@ The channel list component uses the `ChannelListController` to fetch the list of
 
 ## Channel List Query
 
-The `ChannelListQuery` is the structure used for specifiying the query parameters for fetching the list of channels from Stream backend.
+The `ChannelListQuery` is the structure used to specify the query parameters for fetching the list of channels from Stream backend.
 It has 4 parameters in it's `init`:
 
 ```swift
@@ -249,7 +249,7 @@ let filter = Filter<ChannelListFilterScope>.and([.equal(.team, to: "read"),
 ### Sorting
 
 Sorting parameter is used to sort the list of channels returned. By default, Channel List will be sorted by their last message date (or channel creation date, if the channel is empty).
-Most commonly, you don't need to specify any sorting, StreamChat SDK handles this. If you'd like, you can create custom sortings, such as:
+Most commonly, you don't need to specify any sorting, StreamChat SDK handles this. If you'd like, you can create a custom sorting, such as:
 ```swift
 // Sorting for always showing most crowded channels first
 let sorting: [Sorting<ChannelListSortingKey>] = [.init(key: .memberCount, isAscending: true),
@@ -258,7 +258,7 @@ let sorting: [Sorting<ChannelListSortingKey>] = [.init(key: .memberCount, isAsce
 
 ### PageSize
 
-Page size is used to specify how many channels the initial page will show. You can specify an integer value for advanced usecases. Most commonly, you don't need to touch this.
+Page size is used to specify how many channels the initial page will show. You can specify an integer value for advanced use-cases. Most commonly, you don't need to touch this.
 
 ### Message Limit
 

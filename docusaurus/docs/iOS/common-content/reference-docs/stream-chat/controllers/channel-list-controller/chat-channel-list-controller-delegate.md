@@ -59,7 +59,7 @@ func controllerWillChangeChannels(_ controller: ChatChannelListController)
 
 #### Parameters
 
-  - controller: The controller emitting the change callback.
+  - `controller`: The controller emitting the change callback.
 
 ### controller(\_:​didChangeChannels:​)
 
@@ -74,8 +74,8 @@ func controller(
 
 #### Parameters
 
-  - controller: The controller emitting the change callback.
-  - changes: The change to the list of channels.\\
+  - `controller`: The controller emitting the change callback.
+  - `changes`: The change to the list of channels.\\
 
 ### controller(\_:​shouldAddNewChannelToList:​)
 
@@ -91,8 +91,8 @@ func controller(
 
 #### Parameters
 
-  - controller: The controller,
-  - shouldAddNewChannelToList: The newly inserted `ChatChannel` instance. This instance is not linked to the controller's query.
+  - `controller`: The controller,
+  - `shouldAddNewChannelToList`: The newly inserted `ChatChannel` instance. This instance is not linked to the controller's query.
 
 #### Returns
 
@@ -112,8 +112,8 @@ func controller(
 
 #### Parameters
 
-  - controller: The controller,
-  - shouldListUpdatedChannel: The newly updated `ChatChannel` instance.
+  - `controller`: The controller,
+  - `shouldListUpdatedChannel`: The newly updated `ChatChannel` instance.
 
 #### Returns
 

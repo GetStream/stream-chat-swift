@@ -84,7 +84,7 @@ public func setDelegate<Delegate: ChatChannelMemberControllerDelegate>(_ delegat
 
 #### Parameters
 
-  - delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object alive if you want keep receiving updates.
+  - `delegate`: The object used as a delegate. It's referenced weakly, so you need to keep the object alive if you want keep receiving updates.
 
 ### `ban(for:reason:completion:)`
 
@@ -100,13 +100,13 @@ func ban(
 
 #### Parameters
 
-  - timeoutInMinutes: The \# of minutes the user should be banned for.
-  - reason: The ban reason.
-  - completion: The completion. Will be called on a **callbackQueue** when the network request is finished. If request fails, the completion will be called with an error.
+  - `timeoutInMinutes`: The \# of minutes the user should be banned for.
+  - `reason`: The ban reason.
+  - `completion`: The completion. Will be called on a **`callbackQueue`** when the network request is finished. If request fails, the completion will be called with an error.
 
 ### `unban(completion:)`
 
-Unbans the channel member.
+Un-bans the channel member.
 
 ``` swift
 func unban(completion: ((Error?) -> Void)? = nil) 

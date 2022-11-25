@@ -32,7 +32,7 @@ final class CustomMessageListRouter: ChatMessageListRouter {
 }
 ```
 
-Then, you should replace your customer router in the `Components` config:
+Then, you should replace your customer router in the `Components` configuration:
 
 ```swift
 Components.default.messageListRouter = CustomMessageListRouter.self

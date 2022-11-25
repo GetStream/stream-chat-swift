@@ -12,7 +12,7 @@ This protocol is not meant to be adopted by your custom types.
 
 ## Requirements
 
-### callbackQueue
+### `callbackQueue`
 
 The queue which is used to perform callback calls
 

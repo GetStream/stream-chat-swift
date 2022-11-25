@@ -17,7 +17,7 @@ public var name: String?
 
 ### `imageURL`
 
-Image (avatar) url for this user.
+Image (avatar) URL for this user.
 
 ``` swift
 public var imageURL: URL?

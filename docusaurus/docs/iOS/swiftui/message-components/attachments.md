@@ -7,7 +7,7 @@ title: Message Attachments
 The SwiftUI SDK supports the following types of attachments:
 
 - Images
-- Giphys
+- Giphy files
 - Videos
 - Links
 - Files

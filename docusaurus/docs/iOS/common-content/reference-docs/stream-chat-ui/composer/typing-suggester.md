@@ -38,7 +38,7 @@ public func typingSuggestion(in textView: UITextView) -> TypingSuggestion?
 
 #### Parameters
 
-  - textView: The `UITextView` the user is currently typing.
+  - `textView`: The `UITextView` the user is currently typing.
 
 #### Returns
 

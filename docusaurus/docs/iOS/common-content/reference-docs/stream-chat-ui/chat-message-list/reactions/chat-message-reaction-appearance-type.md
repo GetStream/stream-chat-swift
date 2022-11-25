@@ -10,13 +10,13 @@ public protocol ChatMessageReactionAppearanceType
 
 ## Requirements
 
-### smallIcon
+### `smallIcon`
 
 ``` swift
 var smallIcon: UIImage 
 ```
 
-### largeIcon
+### `largeIcon`
 
 ``` swift
 var largeIcon: UIImage 

@@ -30,11 +30,11 @@ public init(
 
 #### Parameters
 
-  - cid: a channel cid.
-  - pageSize: a page size for pagination.
-  - paginationParameter: the pagination configuration.
-  - membersLimit: a number of members for the channel  to be retrieved.
-  - watchersLimit: a number of watchers for the channel to be retrieved.
+  - `cid`: a channel `cid`.
+  - `pageSize`: a page size for pagination.
+  - `paginationParameter`: the pagination configuration.
+  - `membersLimit`: a number of members for the channel  to be retrieved.
+  - `watchersLimit`: a number of watchers for the channel to be retrieved.
 
 ## Properties
 

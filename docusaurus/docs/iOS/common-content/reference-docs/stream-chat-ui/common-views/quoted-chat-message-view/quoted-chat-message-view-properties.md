@@ -106,7 +106,7 @@ override open func updateContent()
 
 ### `setAvatar(imageUrl:)`
 
-Sets the avatar image from a url or sets the placeholder image if the url is `nil`.
+Sets the avatar image from a URL or sets the placeholder image if the URL is `nil`.
 
 ``` swift
 open func setAvatar(imageUrl: URL?) 
@@ -114,7 +114,7 @@ open func setAvatar(imageUrl: URL?)
 
 #### Parameters
 
-  - imageUrl: The url of the image.
+  - `imageUrl`: The URL of the image.
 
 ### `setAvatarAlignment(_:)`
 
@@ -126,7 +126,7 @@ open func setAvatarAlignment(_ alignment: QuotedAvatarAlignment)
 
 #### Parameters
 
-  - alignment: The avatar alignment of the author of the quoted message.
+  - `alignment`: The avatar alignment of the author of the quoted message.
 
 ### `setAttachmentPreview(for:)`
 
@@ -140,7 +140,7 @@ open func setAttachmentPreview(for message: ChatMessage)
 
 #### Parameters
 
-  - message: The message that contains all the attachments.
+  - `message`: The message that contains all the attachments.
 
 ### `setAttachmentPreviewImage(url:)`
 
@@ -152,7 +152,7 @@ open func setAttachmentPreviewImage(url: URL?)
 
 #### Parameters
 
-  - url: The URL from which the image is to be loaded
+  - `url`: The URL from which the image is to be loaded
 
 ### `showAttachmentPreview()`
 

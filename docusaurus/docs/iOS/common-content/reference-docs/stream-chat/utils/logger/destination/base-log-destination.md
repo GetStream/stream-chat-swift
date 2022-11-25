@@ -41,17 +41,17 @@ public required init(
 
 #### Parameters
 
-  - identifier: Identifier for this destination. Will be shown on the logs if `showIdentifier` is `true`
-  - level: Output level for this destination. Messages will only be shown if their output level is higher than this.
-  - showDate: Toggle for showing date in logs
-  - dateFormatter: DateFormatter instance for formatting the date in logs. Defaults to ISO8601 formatter.
-  - formatters: Log formatters to be applied in order before logs are outputted. Defaults to empty (no formatters). Please see `LogFormatter` for more info.
-  - showLevel: Toggle for showing log level in logs
-  - showIdentifier: Toggle for showing identifier in logs
-  - showThreadName: Toggle for showing thread name in logs
-  - showFileName: Toggle for showing file name in logs
-  - showLineNumber: Toggle for showing line number in logs
-  - showFunctionName: Toggle for showing function name in logs
+  - `identifier`: Identifier for this destination. Will be shown on the logs if `showIdentifier` is `true`
+  - `level`: Output level for this destination. Messages will only be shown if their output level is higher than this.
+  - `showDate`: Toggle for showing date in logs
+  - `dateFormatter`: DateFormatter instance for formatting the date in logs. Defaults to ISO8601 formatter.
+  - `formatters`: Log formatters to be applied in order before logs are outputted. Defaults to empty (no formatters). Please see `LogFormatter` for more info.
+  - `showLevel`: Toggle for showing log level in logs
+  - `showIdentifier`: Toggle for showing identifier in logs
+  - `showThreadName`: Toggle for showing thread name in logs
+  - `showFileName`: Toggle for showing file name in logs
+  - `showLineNumber`: Toggle for showing line number in logs
+  - `showFunctionName`: Toggle for showing function name in logs
 
 ## Properties
 
@@ -133,7 +133,7 @@ open func isEnabled(for level: LogLevel) -> Bool
 
 #### Parameters
 
-  - level: Log level to be checked
+  - `level`: Log level to be checked
 
 #### Returns
 
@@ -149,7 +149,7 @@ open func process(logDetails: LogDetails)
 
 #### Parameters
 
-  - logDetails: Log details to be processed.
+  - `logDetails`: Log details to be processed.
 
 ### `applyFormatters(logDetails:message:)`
 
@@ -162,8 +162,8 @@ open func applyFormatters(logDetails: LogDetails, message: String) -> String
 
 #### Parameters
 
-  - logDetails: Log details to be passed on to formatters.
-  - message: Log message to be formatted
+  - `logDetails`: Log details to be passed on to formatters.
+  - `message`: Log message to be formatted
 
 #### Returns
 

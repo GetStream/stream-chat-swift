@@ -3,9 +3,9 @@ title: Overview
 slug: /
 ---
 
-Building on top of the the Stream Chat API, the Stream Chat iOS component libraries include everything you need to build feature-rich and high-functioning chat user experiences out of the box.
+Building on top of the Stream Chat API, the Stream Chat iOS component libraries include everything you need to build feature-rich and high-functioning chat user experiences out of the box.
 
-We have a component libraries available for both UIKit and SwiftUI. Each library includes an extensive set of performant and customizable UI components which allow you to get started quickly with little to no plumbing required. The libraries supports:
+We have a component libraries available for both UIKit and SwiftUI. Each library includes an extensive set of fast performing and customizable UI components which allow you to get started quickly with little to no plumbing required. The libraries supports:
 
 - Rich media messages
 - Reactions
@@ -40,14 +40,14 @@ This SDK tries to keep the list of external dependencies to a minimum, these are
 #### StreamChatUI
 
 - [Nuke](https://github.com/kean/Nuke) for loading images  
-- [SwiftyGif](https://github.com/kirualex/SwiftyGif) for high performance GIF rendering
+- [SwiftyGif](https://github.com/kirualex/SwiftyGif) for high performance gif rendering
 - StreamChat the low-level client to Stream Chat API
 
 #### StreamChatSwiftUI
 
 - [Nuke](https://github.com/kean/Nuke) for loading images  
 - [NukeUI](https://github.com/kean/Nuke) for loading images  
-- [Gifu](https://github.com/kaishin/Gifu) for high performance GIF rendering
+- [Gifu](https://github.com/kaishin/Gifu) for high performance gif rendering
 - StreamChat the low-level client to Stream Chat API
 
 #### StreamChat
@@ -80,9 +80,9 @@ Occasionally, the SDK can include visual changes (whitespace, color changes, siz
 
 ### How Should I Specify My Dependency Version? 
 
-You should either use a fixed version, or an optimitistic operator (a.k.a. squiggly arrow), with **all three versions specified**.
+You should either use a fixed version, or an optimistic operator (a.k.a. squiggly arrow), with **all three versions specified**.
 
-Eg. with CocoaPods:
+For example with CocoaPods:
 
 ```ruby 
 pod 'StreamChat', '~> 4.0.0'

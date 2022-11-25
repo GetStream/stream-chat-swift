@@ -17,7 +17,7 @@ public func mutate(_ changes: (_ value: inout T) -> Void)
 
 #### Parameters
 
-  - changes: a block with changes. It should return a new value.
+  - `changes`: a block with changes. It should return a new value.
 
 ### `callAsFunction(_:)`
 

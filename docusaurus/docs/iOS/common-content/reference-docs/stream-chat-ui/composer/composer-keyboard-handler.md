@@ -27,8 +27,8 @@ public init(
 
 #### Parameters
 
-  - composerParentVC: The parent view controller of the composer.
-  - composerBottomConstraint: The bottom constraint of the composer.
+  - `composerParentVC`: The parent view controller of the composer.
+  - `composerBottomConstraint`: The bottom constraint of the composer.
 
 ## Properties
 

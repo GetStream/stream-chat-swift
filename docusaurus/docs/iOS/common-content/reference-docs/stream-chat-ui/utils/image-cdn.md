@@ -28,13 +28,13 @@ func cachingKey(forImage url: URL) -> String
 
 #### Parameters
 
-  - imageURL: URL of the image that should be customised (filtered).
+  - `imageURL`: URL of the image that should be customised (filtered).
 
 #### Returns
 
 String to be used as an image cache key.
 
-### urlRequest(forImage:​)
+### `urlRequest(forImage:​)`
 
 Prepare and return a `URLRequest` for the given image `URL`
 This function can be used to inject custom headers for image loading request.
@@ -55,5 +55,5 @@ Use view size in points for `preferredSize`, point to pixel ratio (scale) of the
 
 #### Parameters
 
-  - originalURL: URL of the image to get the thumbnail for.
-  - preferredSize: The requested thumbnail size.
+  - `originalURL`: URL of the image to get the thumbnail for.
+  - `preferredSize`: The requested thumbnail size.

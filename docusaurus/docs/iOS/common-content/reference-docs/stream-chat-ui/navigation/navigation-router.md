@@ -28,7 +28,7 @@ public required init(rootViewController: Controller)
 
 #### Parameters
 
-  - rootViewController: The view controller used as the root VC.
+  - `rootViewController`: The view controller used as the root VC.
 
 ## Properties
 

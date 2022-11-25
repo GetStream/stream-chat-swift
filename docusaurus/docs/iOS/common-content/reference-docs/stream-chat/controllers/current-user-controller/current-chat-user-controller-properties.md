@@ -71,7 +71,7 @@ override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = ni
 
 #### Parameters
 
-  - completion: Called when the controller has finished fetching the local data and the client connection is established.
+  - `completion`: Called when the controller has finished fetching the local data and the client connection is established.
 
 ### `reloadUserIfNeeded(completion:)`
 
@@ -87,7 +87,7 @@ database will be flushed.
 
 #### Parameters
 
-  - completion: The completion to be called when the operation is completed.
+  - `completion`: The completion to be called when the operation is completed.
 
 ### `updateUserData(name:imageURL:userExtraData:completion:)`
 
@@ -106,10 +106,10 @@ By default all data is `nil`, and it won't be updated unless a value is provided
 
 #### Parameters
 
-  - name: Optionally provide a new name to be updated.
-  - imageURL: Optionally provide a new image to be updated.
-  - userExtraData: Optionally provide new user extra data to be updated.
-  - completion: Called when user is successfuly updated, or with error.
+  - `name`: Optionally provide a new name to be updated.
+  - `imageURL`: Optionally provide a new image to be updated.
+  - `userExtraData`: Optionally provide new user extra data to be updated.
+  - `completion`: Called when user is successfully updated, or with error.
 
 ### `synchronizeDevices(completion:)`
 
@@ -121,7 +121,7 @@ func synchronizeDevices(completion: ((Error?) -> Void)? = nil)
 
 #### Parameters
 
-  - completion: Called when the devices are synced successfully, or with error.
+  - `completion`: Called when the devices are synced successfully, or with error.
 
 ### `addDevice(token:completion:)`
 
@@ -134,8 +134,8 @@ func addDevice(token: Data, completion: ((Error?) -> Void)? = nil)
 
 #### Parameters
 
-  - token: Device token, obtained via `didRegisterForRemoteNotificationsWithDeviceToken` function in `AppDelegate`.
-  - completion: Called when device is successfully registered, or with error.
+  - `token`: Device token, obtained via `didRegisterForRemoteNotificationsWithDeviceToken` function in `AppDelegate`.
+  - `completion`: Called when device is successfully registered, or with error.
 
 ### `removeDevice(id:completion:)`
 
@@ -148,8 +148,8 @@ func removeDevice(id: String, completion: ((Error?) -> Void)? = nil)
 
 #### Parameters
 
-  - id: Device id to be removed. You can obtain registered devices via `currentUser.devices`. If `currentUser.devices` is not up-to-date, please make an `synchronize` call.
-  - completion: Called when device is successfully deregistered, or with error.
+  - `id`: Device id to be removed. You can obtain registered devices via `currentUser.devices`. If `currentUser.devices` is not up-to-date, please make an `synchronize` call.
+  - `completion`: Called when device is successfully deregistered, or with error.
 
 ### `setDelegate(_:)`
 

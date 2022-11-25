@@ -14,7 +14,7 @@ public protocol CustomEventPayload: Codable, Hashable
 
 ## Requirements
 
-### eventType
+### `eventType`
 
 A type all events holding this payload have.
 

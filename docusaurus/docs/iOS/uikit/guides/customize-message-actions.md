@@ -16,7 +16,7 @@ The standard message actions consist of:
 - Delete Message
 - Resend Message
 - Mute Action
-- Unmute Action
+- Un-mute Action
 - Inline Reply
 - Thread Reply
 - Copy Message
@@ -63,7 +63,7 @@ class CustomChatMessageActionsVC: ChatMessageActionsVC {
 }
 ```
 
-This code will query the message controller's dataStore and return the channel membership for the current user.
+This code will query the message controller's `dataStore` and return the channel membership for the current user.
 
 The final step in our subclass is to return the array of `MessageActions`.
 
@@ -135,7 +135,7 @@ class CustomChatMessageActionsVC: ChatMessageActionsVC {
 
 And of course, you can change this to suit your requirements.
 
-The final step is to create an extension to create the `isAdmin` bool flag on the membership.
+The final step is to create an extension to create the `isAdmin` boolean flag on the membership.
 
 ```swift
 extension ChatChannelMember {

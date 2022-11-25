@@ -2,7 +2,7 @@
 title: AttachmentAction
 ---
 
-An attachment action, e.g. send, shuffle.
+An attachment action, for example send, shuffle.
 
 ``` swift
 public struct AttachmentAction: Codable, Hashable 
@@ -30,11 +30,11 @@ public init(
 
 #### Parameters
 
-  - name: a name.
-  - value: a value.
-  - style: a style.
-  - type: a type.
-  - text: a text.
+  - `name`: a name.
+  - `value`: a value.
+  - `style`: a style.
+  - `type`: a type.
+  - `text`: a text.
 
 ## Properties
 
@@ -56,7 +56,7 @@ public let value: String
 
 ### `style`
 
-A style, e.g. primary button.
+A style, for example primary button.
 
 ``` swift
 public let style: ActionStyle
@@ -64,7 +64,7 @@ public let style: ActionStyle
 
 ### `type`
 
-A type, e.g. button.
+A type, for example button.
 
 ``` swift
 public let type: ActionType

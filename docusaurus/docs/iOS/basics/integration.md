@@ -41,7 +41,7 @@ You can learn more about [our Module Stable XCFrameworks here](#xcframeworks)
 </details>
 
 
-After introducing the desired url, Xcode will look for the Packages available in the repository and automatically select the latest version tagged. Press next and Xcode will download the dependency.
+After introducing the desired URL, Xcode will look for the Packages available in the repository and automatically select the latest version tagged. Press next and Xcode will download the dependency.
 
 ![Screenshot shows an Xcode screen selecting a dependency version and an Xcode screen downloading that dependency](../assets/spm-01.png)
 
@@ -53,7 +53,7 @@ Based on the repository you select you can find 3 different targets: StreamChat,
 
 ![Screenshot shows an Xcode screen with dependency targets to be selected](../assets/spm-02.png)
 
-After you press finish, it's done!
+After you press finish, it's done.
 
 :::caution
 Because StreamChat SDKs have to be distributed with its resources, the minimal Swift version requirement for this installation method is 5.3. If you need to support older Swift version, please install it using CocoaPods.
@@ -170,7 +170,7 @@ The previous command will create pre-built XCFrameworks built from our source co
 
 Open the `Carthage/Build` folder that has been created in the root of your project, and drag and drop the frameworks you want to use. Those should be added to the "Frameworks, Libraries, and Embedded Content" section under General settings:
 
-![Screenshot shows XCFrameworks being draged into Xcode](../assets/carthage-drag.png)
+![Screenshot shows XCFrameworks being dragged into Xcode](../assets/carthage-drag.png)
 
 Make sure you select **Embed & Sign** under "Embed" options if you are adding Stream libraries to an app target. If not, use **Do Not Embed**
 

@@ -39,7 +39,7 @@ Xcode is failing to compile due to `Segmentation fault: 11` when used here.
 
 ### `isOnlineIndicatorVisible`
 
-Bool to determine if the indicator should be shown.
+Boolean to determine if the indicator should be shown.
 
 ``` swift
 open var isOnlineIndicatorVisible: Bool = false 
@@ -75,4 +75,4 @@ open func setUpMask(indicatorVisible: Bool)
 
 #### Parameters
 
-  - visible: Bool to determine if the indicator should be shown. The avatar view won't be masked if the indicator is not visible.
+  - `visible`: Boolean to determine if the indicator should be shown. The avatar view won't be masked if the indicator is not visible.

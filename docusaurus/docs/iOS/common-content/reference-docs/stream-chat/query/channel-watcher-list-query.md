@@ -26,8 +26,8 @@ public init(cid: ChannelId, pagination: Pagination = .init(pageSize: .channelWat
 
 #### Parameters
 
-  - cid: The channel identifier.
-  - pagination: Pagination parameters for fetching watchers. Defaults to fetching first 30 watchers.
+  - `cid`: The channel identifier.
+  - `pagination`: Pagination parameters for fetching watchers. Defaults to fetching first 30 watchers.
 
 ## Properties
 

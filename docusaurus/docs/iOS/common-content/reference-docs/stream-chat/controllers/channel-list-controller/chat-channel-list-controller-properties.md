@@ -84,7 +84,7 @@ public func setDelegate<Delegate: ChatChannelListControllerDelegate>(_ delegate:
 
 #### Parameters
 
-  - delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object alive if you want keep receiving updates.
+  - `delegate`: The object used as a delegate. It's referenced weakly, so you need to keep the object alive if you want keep receiving updates.
 
 ### `loadNextChannels(limit:completion:)`
 
@@ -99,8 +99,8 @@ public func loadNextChannels(
 
 #### Parameters
 
-  - limit: Limit for page size.
-  - completion: The completion. Will be called on a **callbackQueue** when the network request is finished. If request fails, the completion will be called with an error.
+  - `limit`: Limit for page size.
+  - `completion`: The completion. Will be called on a **`callbackQueue`** when the network request is finished. If request fails, the completion will be called with an error.
 
 ### `markAllRead(completion:)`
 

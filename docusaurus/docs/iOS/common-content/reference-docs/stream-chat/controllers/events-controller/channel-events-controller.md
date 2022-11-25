@@ -33,5 +33,5 @@ public func sendEvent<T: CustomEventPayload>(_ payload: T, completion: ((Error?)
 
 #### Parameters
 
-  - payload: A custom event payload to be sent.
-  - completion: A completion.
+  - `payload`: A custom event payload to be sent.
+  - `completion`: A completion.

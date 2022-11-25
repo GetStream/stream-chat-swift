@@ -34,7 +34,7 @@ The diagram below shows how message delivery state changes.
 When user taps send button in message composer, the message is saved to local database and queued for sending. When it happens, message appears in the channel in `pending send` delivery status.
 
 #### Pending send -> Sending failed
-When message sending fails (e.g. because of missing Internet connection), a transition from `pending send` to `sending failed` state happens. In that case, delivery status gets hidden and error indicator appears.
+When message sending fails (for example because of missing Internet connection), a transition from `pending send` to `sending failed` state happens. In that case, delivery status gets hidden and error indicator appears.
 
 #### Sending failed -> Pending send
 If message sending has failed the long-pressing the message shows a pop-up with **Resend** action available. When user initiates message resend, the `sending failed` -> `pending send` transition happens.

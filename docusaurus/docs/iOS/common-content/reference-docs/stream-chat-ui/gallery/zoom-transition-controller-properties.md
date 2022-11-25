@@ -41,7 +41,7 @@ public private(set) lazy var interactionController
 
 ### `isInteractive`
 
-Indiicates whether the current transition is interactive or not.
+Indicates whether the current transition is interactive or not.
 
 ``` swift
 public var isInteractive: Bool = false

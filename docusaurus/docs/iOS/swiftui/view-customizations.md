@@ -57,7 +57,7 @@ associatedtype NoChannels: View
 func makeNoChannelsView() -> NoChannels
 ```
 
-In order to improve the build time, you would need to specify the associated type with a typealias, like this:
+In order to improve the build time, you would need to specify the associated type with a `typealias`, like this:
 
 ```swift
 typealias NoChannels = CustomNoChannelsView

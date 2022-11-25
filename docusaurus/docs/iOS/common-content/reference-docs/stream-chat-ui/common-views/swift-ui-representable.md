@@ -24,7 +24,7 @@ static func asView(_ content: ViewContent) -> SwiftUIViewRepresentable<Self>
 
 #### Parameters
 
-  - content: Content of the view. Its value is automatically updated when it's changed
+  - `content`: Content of the view. Its value is automatically updated when it's changed
 
 ### `asView(_:)`
 
@@ -36,7 +36,7 @@ static func asView(_ content: ViewContent) -> SwiftUIViewControllerRepresentable
 
 #### Parameters
 
-  - content: Content of the view controller. Its value is automatically updated when it's changed
+  - `content`: Content of the view controller. Its value is automatically updated when it's changed
 
 ## Requirements
 

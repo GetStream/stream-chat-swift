@@ -2,7 +2,7 @@
 title: FilterOperator
 ---
 
-An enum with possible operators to use in filters.
+An `enum` with possible operators to use in filters.
 
 ``` swift
 public enum FilterOperator: String 

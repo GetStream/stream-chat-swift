@@ -131,7 +131,7 @@ public func makeChannelListDividerItem() -> some View {
 
 If you want your list to not have a divider whatsoever, you can simply return an `EmptyView` here.
 
-## Changing the Top Bar
+## Changing the top bar
 
 By default, the SwiftUI SDK shows a search bar at the top of the channel list. This component lets you search through messages matching the search term inside the channels. When you tap on a search result, the corresponding channel is opened, automatically scrolling to the searched message.
 

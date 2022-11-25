@@ -9,7 +9,7 @@ In StreamChat, Users are identified by user ids, and corresponding User (JWT) to
 ### User Ids
 
 User Ids are arbitrary strings you assign to identify your users. The restrictions for valid user ids can include:
-- any “wordly” character: either a letter of Latin alphabet or a digit or an underscore _. Non-Latin letters (like cyrillic or hindi) do not belong to this group.
+- any “word” character: either a letter of Latin alphabet or a digit or an underscore _. Non-Latin letters (like Cyrillic or Hindi) do not belong to this group.
 - any number of '@' and '-' characters.
 
 ### User Tokens
@@ -26,7 +26,7 @@ The tokens be created with an expiration date, or be revoked. For more informati
 
 There are different types of user tokens in StreamChat:
 - What we call "Regular" user: a user that is not anonymous (so it has a user id) and not a guest (so it has more permissions). They must be authenticated with a JWT token generated with your app's secret key.
-- Guest user: identified with a unique identifier, but they don't require server-side authentication. They're ideal for support and livestream use cases, where you need to identify but don't required signup. 
+- Guest user: identified with a unique identifier, but they don't require server-side authentication. They're ideal for support and livestream use cases, where you need to identify but don't required sign-up. 
 - Anonymous user: created without a unique identifier, can only read livestream chats. They're useful for livestream chats to let a user read a chat before they create an account.
 
 #### Regular User
@@ -72,7 +72,7 @@ let tokenProvider = TokenProvider.development(userId: "USER_ID")
 
 #### Guest Tokens
 
-Guest users need a unique identifier, but they don't require server-side authentication. They're ideal for support and livestream use cases, where you need to identify but don't required signup. 
+Guest users need a unique identifier, but they don't require server-side authentication. They're ideal for support and livestream use cases, where you need to identify but don't required sign-up. 
 
 ```swift
 let tokenProvider = TokenProvider.guest(userId: "USER_ID")
@@ -110,7 +110,7 @@ let tokenProvider = TokenProvider.closure { chatClient, completion in
 let config = ChatClientConfig(apiKey: <# Your API Key Here #>)
 let chatClient = ChatClient(config: config, tokenProvider: tokenProvider)
 ```
-and `ChatClient` will handle the rest, it'll call your closure whenever it needs a valid token. Your closure will be called once per app lifecycle to acquire a valid token (since StreamChat doesn't store JWT tokens) and it'll call the closure whenever the backend reports the token is invalid (ie when expired or revoked).
+and `ChatClient` will handle the rest, it'll call your closure whenever it needs a valid token. Your closure will be called once per app lifecycle to acquire a valid token (since StreamChat doesn't store JWT tokens) and it'll call the closure whenever the backend reports the token is invalid (for example when expired or revoked).
 
 Since the hosting app "owns" the login/logout logic, whenever a new user logs in, you should call:
 ```swift
@@ -118,7 +118,7 @@ chatClient.currentUserController().reloadUserIfNeeded()
 ```
 to make sure `ChatClient` calls your `tokenProvider` closure and acquires a new token for the newly logged-in user.
 
-You don't need to "logout" in the common sense. Deallocating `ChatClient` instances for the currently logged-in user means the user will disconnect. If you want to keep your "ChatClient" instance (eg you're using a singleton for it) you can call:
+You don't need to "logout" in the common sense. De-allocating `ChatClient` instances for the currently logged-in user means the user will disconnect. If you want to keep your "ChatClient" instance (for example you're using a singleton for it) you can call:
 ```swift
 chatClient.connectionController().disconnect()
 ```
@@ -145,9 +145,9 @@ For all functions available on this controller, please check [CurrentUserControl
 
 #### Observing Unread Count for Current User
 
-The most typical usecase for this controller is to observe the unread count for the current user, to be displayed in a badge on UI.
+The most typical use-case for this controller is to observe the unread count for the current user, to be displayed in a badge on UI.
 
-##### Delegatation (UIKit)
+##### Using the delegate pattern (UIKit)
 ```swift
 class YourViewController: CurrentChatUserControllerDelegate {
 

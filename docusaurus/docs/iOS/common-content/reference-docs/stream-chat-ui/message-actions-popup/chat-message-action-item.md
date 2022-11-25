@@ -42,7 +42,7 @@ Icon of `ChatMessageActionItem`.
 var icon: UIImage 
 ```
 
-### isPrimary
+### `isPrimary`
 
 Marks whether `ChatMessageActionItem` is primary.
 Based on this property, some UI properties can be made.
@@ -52,7 +52,7 @@ Default value is `false`.
 var isPrimary: Bool 
 ```
 
-### isDestructive
+### `isDestructive`
 
 Marks whether `ChatMessageActionItem` is destructive.
 Based on this property, some UI properties can be made.

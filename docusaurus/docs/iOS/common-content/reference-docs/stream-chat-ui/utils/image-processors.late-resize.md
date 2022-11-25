@@ -26,7 +26,7 @@ public init(sizeProvider: @escaping () -> CGSize)
 
 #### Parameters
 
-  - sizeProvider: Closure to obtain size after the image is loaded.
+  - `sizeProvider`: Closure to obtain size after the image is loaded.
 
 ## Properties
 

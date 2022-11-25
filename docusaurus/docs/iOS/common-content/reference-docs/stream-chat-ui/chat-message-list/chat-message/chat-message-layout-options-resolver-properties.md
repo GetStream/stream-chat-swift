@@ -24,10 +24,10 @@ open func optionsForMessage(
 
 #### Parameters
 
-  - indexPath: The index path of the cell displaying the message.
-  - channel: The channel message is related to.
-  - messages: The list of messages in the channel.
-  - appearance: The appearance theme in use.
+  - `indexPath`: The index path of the cell displaying the message.
+  - `channel`: The channel message is related to.
+  - `messages`: The list of messages in the channel.
+  - `appearance`: The appearance theme in use.
 
 #### Returns
 
@@ -54,8 +54,8 @@ time delta between messages is bigger than `minTimeIntervalBetweenMessagesInGrou
 
 #### Parameters
 
-  - messageIndexPath: The index path of the target message.
-  - messages: The list of loaded channel messages.
+  - `messageIndexPath`: The index path of the target message.
+  - `messages`: The list of loaded channel messages.
 
 #### Returns
 

@@ -1,7 +1,7 @@
 
 ### `content`
 
-Content of the attachment llist - Array of `ChatMessageFileAttachment`
+Content of the attachment list - Array of `ChatMessageFileAttachment`
 
 ``` swift
 open var content: [ChatMessageFileAttachment] = [] 

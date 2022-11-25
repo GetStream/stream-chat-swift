@@ -12,7 +12,7 @@ To make subclassing and customization simple, almost all view components in `Str
 ```swift
 /// Main point of customization for the view functionality.
 ///
-/// **It's called zero or one time(s) during the view's lifetime.** Calling super implementation is required.
+/// **It's called zero or one time during the view's lifetime.** Calling super implementation is required.
 func setUp()
 
 /// Main point of customization for the view appearance.
@@ -23,7 +23,7 @@ func setUpAppearance()
 
 /// Main point of customization for the view layout.
 ///
-/// **It's called zero or one time(s) during the view's lifetime.** Calling super is recommended but not required
+/// **It's called zero or one time during the view's lifetime.** Calling super is recommended but not required
 /// if you provide a complete layout for all subviews.
 func setUpLayout()
 

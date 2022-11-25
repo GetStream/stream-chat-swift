@@ -66,7 +66,7 @@ If the same image is used in multiple places, changing the image in the `Appeara
 
 Appearance style properties are organized in three groups:
 
-### colorPalette
+### `colorPalette`
 
 A color palette to provide basic set of colors for all UI components. The full reference can be found [here](../common-content/reference-docs/stream-chat-ui/appearance.color-palette.md)
 

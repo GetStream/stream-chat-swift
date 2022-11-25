@@ -27,7 +27,7 @@ public static func expirationDate(_ date: Date) -> Self
 
 #### Parameters
 
-  - date: The date when the message will be unpinned.
+  - `date`: The date when the message will be unpinned.
 
 ### `expirationTime(_:)`
 

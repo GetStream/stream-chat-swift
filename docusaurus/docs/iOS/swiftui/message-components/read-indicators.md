@@ -24,4 +24,4 @@ public func makeMessageReadIndicatorView(
 }
 ```
 
-In this method, you receive the channel and the message as parameters. You can use the channel to extract the users who have read the message. In order to do this, call the `readUsers(currentUserId:message:)` method of the channel. If you need more information about the reads (e.g. last read date), you can access the `reads` property of the channel.
+In this method, you receive the channel and the message as parameters. You can use the channel to extract the users who have read the message. In order to do this, call the `readUsers(currentUserId:message:)` method of the channel. If you need more information about the reads (for example last read date), you can access the `reads` property of the channel.

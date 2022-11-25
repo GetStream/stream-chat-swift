@@ -209,7 +209,7 @@ open func didSelectMessageCell(at indexPath: IndexPath)
 
 #### Parameters
 
-  - indexPath: The index path that the message was selected.
+  - `indexPath`: The index path that the message was selected.
 
 ### `showThread(messageId:)`
 
@@ -229,7 +229,7 @@ open func showTypingIndicator(typingUsers: [ChatUser])
 
 #### Parameters
 
-  - typingUsers: typing users gotten from `channelController`
+  - `typingUsers`: typing users gotten from `channelController`
 
 ### `hideTypingIndicator()`
 

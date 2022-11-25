@@ -39,4 +39,4 @@ Components.default.avatarView = SquareAvatarView.self
 
 | Default avatars | Square avatars |
 | ------------- | ------------- |
-| ![Chat with default message alignment](../../assets/message-layout-default.png)  | ![Chat with square avatart](../../assets/message-layout-squared-avatar.png)  |
+| ![Chat with default message alignment](../../assets/message-layout-default.png)  | ![Chat with square avatar](../../assets/message-layout-squared-avatar.png)  |

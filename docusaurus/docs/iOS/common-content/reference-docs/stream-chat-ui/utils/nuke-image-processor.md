@@ -2,7 +2,7 @@
 title: NukeImageProcessor
 ---
 
-This class provides resizing operations for `UIImage`. It internally uses `Nuke` porcessors to implement operations on images.
+This class provides resizing operations for `UIImage`. It internally uses `Nuke` processors to implement operations on images.
 
 ``` swift
 open class NukeImageProcessor: ImageProcessor 

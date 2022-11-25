@@ -19,7 +19,7 @@ has a `Payload` instance under the hood OR if it’s a `Data` that can be decode
 
 #### Parameters
 
-  - payloadType: The payload type the current type-erased attachment payload should be treated as.
+  - `payloadType`: The payload type the current type-erased attachment payload should be treated as.
 
 #### Returns
 

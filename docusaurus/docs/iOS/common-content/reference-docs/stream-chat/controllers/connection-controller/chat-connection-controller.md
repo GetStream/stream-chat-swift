@@ -78,7 +78,7 @@ When the connection is established, `ChatClient` starts receiving chat updates.
 
 #### Parameters
 
-  - completion: Called when the connection is established. If the connection fails, the completion is called with an error.
+  - `completion`: Called when the connection is established. If the connection fails, the completion is called with an error.
 
 ### `disconnect()`
 
@@ -99,4 +99,4 @@ func setDelegate<Delegate: ChatConnectionControllerDelegate>(_ delegate: Delegat
 
 #### Parameters
 
-  - delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object alive if you want keep receiving updates.
+  - `delegate`: The object used as a delegate. It's referenced weakly, so you need to keep the object alive if you want keep receiving updates.

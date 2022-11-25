@@ -38,7 +38,7 @@ public func setDelegate<Delegate: ChatUserSearchControllerDelegate>(_ delegate: 
 
 #### Parameters
 
-  - delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object alive if you want keep receiving updates.
+  - `delegate`: The object used as a delegate. It's referenced weakly, so you need to keep the object alive if you want keep receiving updates.
 
 ### `search(term:completion:)`
 
@@ -55,8 +55,8 @@ The delegate function `didChangeUsers` will also be called.
 
 #### Parameters
 
-  - term: Search term. If empty string or `nil`, all users are fetched.
-  - completion: Called when the controller has finished fetching remote data. If the data fetching fails, the error variable contains more details about the problem.
+  - `term`: Search term. If empty string or `nil`, all users are fetched.
+  - `completion`: Called when the controller has finished fetching remote data. If the data fetching fails, the error variable contains more details about the problem.
 
 ### `search(query:completion:)`
 
@@ -73,8 +73,8 @@ The delegate function `didChangeUsers` will also be called.
 
 #### Parameters
 
-  - query: Search query.
-  - completion: Called when the controller has finished fetching remote data. If the data fetching fails, the error variable contains more details about the problem.
+  - `query`: Search query.
+  - `completion`: Called when the controller has finished fetching remote data. If the data fetching fails, the error variable contains more details about the problem.
 
 ### `loadNextUsers(limit:completion:)`
 
@@ -89,4 +89,4 @@ public func loadNextUsers(
 
 #### Parameters
 
-  - limit: Limit for page size.
+  - `limit`: Limit for page size.

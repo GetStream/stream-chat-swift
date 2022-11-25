@@ -48,7 +48,7 @@ public var previewURL: URL
 
 ### `actions`
 
-Actions when gif is not sent yet. (e.g. `Shuffle`)
+Actions when gif is not sent yet. (for example `Shuffle`)
 
 ``` swift
 public var actions: [AttachmentAction]

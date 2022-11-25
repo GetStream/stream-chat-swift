@@ -2,7 +2,7 @@
 title: GalleryVC
 ---
 
-A viewcontroller to showcase and slide through multiple attachments
+A `viewcontroller` to showcase and slide through multiple attachments
 (images and videos by default).
 
 ``` swift
@@ -27,7 +27,7 @@ open class GalleryVC:
 Content to display.
 
 ``` swift
-open var content: Content! 
+open var content: Content!
 ```
 
 ### `items`
@@ -40,7 +40,7 @@ open var items: [AnyChatMessageAttachment]
 
 ### `lastSeenDateFormatter`
 
-Returns the date formater function used to represent when the user was last seen online
+Returns the date formatter function used to represent when the user was last seen online
 
 ``` swift
 open var lastSeenDateFormatter: (Date) -> String? 
@@ -165,7 +165,7 @@ open private(set) lazy var shareButton: UIButton = components
 
 ### `topBarTopConstraint`
 
-A constaint between `topBarView.topAnchor` and `view.topAnchor`.
+A constraint between `topBarView.topAnchor` and `view.topAnchor`.
 
 ``` swift
 open private(set) var topBarTopConstraint: NSLayoutConstraint?
@@ -173,7 +173,7 @@ open private(set) var topBarTopConstraint: NSLayoutConstraint?
 
 ### `bottomBarBottomConstraint`
 
-A constaint between `bottomBarView.bottomAnchor` and `view.bottomAnchor`.
+A constraint between `bottomBarView.bottomAnchor` and `view.bottomAnchor`.
 
 ``` swift
 open private(set) var bottomBarBottomConstraint: NSLayoutConstraint?
@@ -335,7 +335,7 @@ open func shareItem(at indexPath: IndexPath) -> Any?
 
 #### Parameters
 
-  - indexPath: An index path.
+  - `indexPath`: An index path.
 
 #### Returns
 
@@ -351,7 +351,7 @@ open func cellReuseIdentifierForItem(at indexPath: IndexPath) -> String?
 
 #### Parameters
 
-  - indexPath: An index path.
+  - `indexPath`: An index path.
 
 #### Returns
 

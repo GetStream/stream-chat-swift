@@ -17,7 +17,7 @@ public class CurrentChatUser: ChatUser
 
 ### `devices`
 
-A list of devices associcated with the user.
+A list of devices associated with the user.
 
 ``` swift
 public let devices: [Device]

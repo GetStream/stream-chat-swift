@@ -31,8 +31,8 @@ public init(key: Key, isAscending: Bool = false)
 
 #### Parameters
 
-  - key: a sorting key.
-  - isAscending: a direction of the sorting.
+  - `key`: a sorting key.
+  - `isAscending`: a direction of the sorting.
 
 ## Properties
 

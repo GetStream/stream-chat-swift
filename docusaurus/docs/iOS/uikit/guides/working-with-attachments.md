@@ -39,7 +39,7 @@ You can implement `MyCustomAttachmentViewInjector` as a subclass of `FilesAttach
 
 In both cases you will implement at least these two methods: `contentViewDidLayout(options: ChatMessageLayoutOptions)` and `contentViewDidUpdateContent`.
 
-To keep this easy to read we are going to create two classes: `MyCustomAttachmentViewInjector` and `MyCustomAttachmentView`. The latter is your custom attachment view, you can implement it programmatically or with interface builder using xibs.
+To keep this easy to read we are going to create two classes: `MyCustomAttachmentViewInjector` and `MyCustomAttachmentView`. The latter is your custom attachment view, you can implement it programmatically or with interface builder using XIBs.
 
 ```swift
 import StreamChat
@@ -89,7 +89,7 @@ Stream chat allows you to create your own types of attachments as well. The step
 
 1. Extend `AttachmentType` to include the custom type
 1. Create a new `AttachmentPayload` struct to handle your custom attachment data
-1. Create a typealias for `ChatMessageAttachment<AttachmentPayload>` which will be used for the content of the view
+1. Create a `typealias` for `ChatMessageAttachment<AttachmentPayload>` which will be used for the content of the view
 1. Create a new `AttachmentViewInjector`
 1. Configure the SDK to use your view injector class to render custom attachments
 

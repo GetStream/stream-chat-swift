@@ -2,7 +2,7 @@
 title: Swipe Actions for the Channel List
 ---
 
-## Changing the Swipe Actions Ui
+## Changing the Swipe Actions UI
 
 When the user swipes left on a channel in the channel list, there are additional actions that can be performed on that channel. By default, one of them is the deleting of a conversation, while the other one is about performing other actions.
 
@@ -10,7 +10,7 @@ The SwiftUI SDK allows you to either use the same view, with additional actions 
 
 ### Adding Additional Actions
 
-First, we will explore how you can extend the existing channel actions view with your own actions. The default actions provided by the SDK are leaving group, muting/unmuting group and users, as well as deleting the conversation. 
+First, we will explore how you can extend the existing channel actions view with your own actions. The default actions provided by the SDK are leaving group, muting/un-muting group and users, as well as deleting the conversation. 
 
 Let's now add additional action that will freeze the channel. In order to do this, we need to create our own view factory, which will provide its own implementation of the `supportedMoreChannelActions` method of the SDK. This method returns an array of the channel actions displayed when the ellipsis button is tapped in the swiped state of a channel.
 
@@ -60,9 +60,9 @@ func supportedMoreChannelActions(
 
 Let's explore the code sample above in more details. First, we take the currently default actions provided by the SDK. If you don't want to use them as basis, you can create a new list of actions from scratch. 
 
-Next, we create the freeze action, which creates a channel controller, and executes the `freezeChannel` method of the low-level chat client. In the completion handler, we provide the onError and onDismiss actions, depending on the result of the freeze action. These are the default ones, which either close the actions view on success, or display an alert in case of a failure. You can add additional logic here if needed.  
+Next, we create the freeze action, which creates a channel controller, and executes the `freezeChannel` method of the low-level chat client. In the completion handler, we provide the `onError` and `onDismiss` actions, depending on the result of the freeze action. These are the default ones, which either close the actions view on success, or display an alert in case of a failure. You can add additional logic here if needed.
 
-We can optionally specify a confirmation popup, where the end-users are asked if they really want to perform the action. The `ConfrimationPopup` struct has title, message and button title. If you don't create one and pass nil, the popup will not be displayed and the action will be performed immediately. Apart from the confirmation popup, you can also specify the title and icon shown in the menu of actions, as well as whether the action is destrutive.
+We can optionally specify a confirmation popup, where the end-users are asked if they really want to perform the action. The `ConfrimationPopup` struct has title, message and button title. If you don't create one and pass nil, the popup will not be displayed and the action will be performed immediately. Apart from the confirmation popup, you can also specify the title and icon shown in the menu of actions, as well as whether the action is destructive.
 
 Finally, we need to inject the `CustomFactory` in our view hierarchy.
 
@@ -76,7 +76,7 @@ var body: some Scene {
 
 ### Swapping the Whole View
 
-If the user interface or logic don't match your app's requirements, you can easily create your own view and inject it in the place of the SDK's default one. In order to do that, similarly to other places in the SDK, you just need to implement the corresponding method of the `ViewFactory` in your own custom implementation. In this case, that's the `makeMoreChannelActionsView` method.
+If the user interface or logic don't match your app's requirements, you can easily create your own view and inject it in the place of the SDKs default one. In order to do that, similarly to other places in the SDK, you just need to implement the corresponding method of the `ViewFactory` in your own custom implementation. In this case, that's the `makeMoreChannelActionsView` method.
 
 ```swift
 func makeMoreChannelActionsView(

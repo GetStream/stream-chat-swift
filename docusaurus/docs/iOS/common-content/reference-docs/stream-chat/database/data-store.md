@@ -24,7 +24,7 @@ If the data doesn't exist locally, it's recommended to use controllers to fetch 
 
 #### Parameters
 
-  - id: An id of a user.
+  - `id`: An id of a user.
 
 #### Returns
 
@@ -60,7 +60,7 @@ If the data doesn't exist locally, it's recommended to use controllers to fetch 
 
 #### Parameters
 
-  - cid: An cid of a channel.
+  - `cid`: An `cid` of a channel.
 
 #### Returns
 
@@ -80,7 +80,7 @@ If the data doesn't exist locally, it's recommended to use controllers to fetch 
 
 #### Parameters
 
-  - id: An id of a message.
+  - `id`: An id of a message.
 
 #### Returns
 

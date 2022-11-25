@@ -62,7 +62,7 @@ When the connection is established, `ChatClient` starts receiving chat updates.
 
 #### Parameters
 
-  - completion: Called when the connection is established. If the connection fails, the completion is called with an error.
+  - `completion`: Called when the connection is established. If the connection fails, the completion is called with an error.
 
 ### `disconnect()`
 

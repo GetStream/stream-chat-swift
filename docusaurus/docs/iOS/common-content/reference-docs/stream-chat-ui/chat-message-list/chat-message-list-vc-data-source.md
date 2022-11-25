@@ -24,7 +24,7 @@ func channel(for vc: ChatMessageListVC) -> ChatChannel?
 
 #### Parameters
 
-  - vc: The message list requesting the channel.
+  - `vc`: The message list requesting the channel.
 
 ### numberOfMessages(in:​)
 
@@ -36,7 +36,7 @@ func numberOfMessages(in vc: ChatMessageListVC) -> Int
 
 #### Parameters
 
-  - vc: The message list requesting the number of messages.
+  - `vc`: The message list requesting the number of messages.
 
 ### chatMessageListVC(\_:​messageAt:​)
 
@@ -51,8 +51,8 @@ func chatMessageListVC(
 
 #### Parameters
 
-  - vc: The message list requesting the message.
-  - indexPath: An index path locating the row in the message list.
+  - `vc`: The message list requesting the message.
+  - `indexPath`: An index path locating the row in the message list.
 
 ### chatMessageListVC(\_:​messageLayoutOptionsAt:​)
 
@@ -67,5 +67,5 @@ func chatMessageListVC(
 
 #### Parameters
 
-  - vc: The message list requesting the layout options.
-  - indexPath: An index path locating the row in the message list.
+  - `vc`: The message list requesting the layout options.
+  - `indexPath`: An index path locating the row in the message list.

@@ -24,7 +24,7 @@ public init(mimeType: String)
 
 #### Parameters
 
-  - mimeType: a mime type.
+  - `mimeType`: a mime type.
 
 ### `init(ext:)`
 
@@ -36,7 +36,7 @@ public init(ext: String)
 
 #### Parameters
 
-  - ext: a file extension.
+  - `ext`: a file extension.
 
 ## Enumeration Cases
 

@@ -2,7 +2,7 @@
 title: NukeImageLoader
 ---
 
-The class which is resposible for loading images from URLs.
+The class which is responsible for loading images from URLs.
 Internally uses `Nuke`'s shared object of `ImagePipeline` to load the image.
 
 ``` swift

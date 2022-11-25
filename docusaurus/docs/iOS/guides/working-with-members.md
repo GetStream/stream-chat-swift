@@ -113,7 +113,7 @@ let memberListController = chatClient.memberListController(
 ) 
 ```
 
-## Pagination aSnd Ordering
+## Pagination and Ordering
 
 Since there potentially can be large amount of members in a channel, querying members supports pagination.
 By default members are ordered from oldest to newest and can be paginated using offset-based pagination:

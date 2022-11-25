@@ -96,7 +96,7 @@ case deletedAt = "deleted_at"
 
 ### `config`
 
-A channel config.
+A channel configuration.
 
 ``` swift
 case config

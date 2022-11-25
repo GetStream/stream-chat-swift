@@ -54,9 +54,9 @@ open func reuseIdentifier(
 
 #### Parameters
 
-  - contentViewClass: The type of message content view.
-  - attachmentViewInjectorType: The type of attachment injector.
-  - layoutOptions: The message content view layout options.
+  - `contentViewClass`: The type of message content view.
+  - `attachmentViewInjectorType`: The type of attachment injector.
+  - `layoutOptions`: The message content view layout options.
 
 #### Returns
 
@@ -72,7 +72,7 @@ open func reuseIdentifier(for cell: ChatMessageCell?) -> String?
 
 #### Parameters
 
-  - cell: The cell to calculate reuse identifier for.
+  - `cell`: The cell to calculate reuse identifier for.
 
 #### Returns
 
@@ -94,9 +94,9 @@ open func dequeueReusableCell(
 
 #### Parameters
 
-  - contentViewClass: The type of content view the cell will be displaying.
-  - layoutOptions: The option set describing content view layout.
-  - indexPath: The cell index path.
+  - `contentViewClass`: The type of content view the cell will be displaying.
+  - `layoutOptions`: The option set describing content view layout.
+  - `indexPath`: The cell index path.
 
 #### Returns
 

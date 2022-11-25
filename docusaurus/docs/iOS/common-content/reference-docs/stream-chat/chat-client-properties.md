@@ -20,7 +20,7 @@ callbacks when the connection status changes.
 
 ### `config`
 
-The config object of the `ChatClient` instance.
+The configuration object of the `ChatClient` instance.
 
 ``` swift
 public let config: ChatClientConfig
@@ -62,9 +62,9 @@ public func connectUser(
 
 #### Parameters
 
-  - userInfo: User info that is passed to the `connect` endpoint for user creation
-  - token: Authorization token for the user.
-  - completion: The completion that will be called once the **first** user session for the given token is setup.
+  - `functionName`: User info that is passed to the `connect` endpoint for user creation
+  - `token`: Authorization token for the user.
+  - `completion`: The completion that will be called once the **first** user session for the given token is setup.
 
 ### `connectGuestUser(userInfo:completion:)`
 
@@ -79,9 +79,9 @@ public func connectGuestUser(
 
 #### Parameters
 
-  - userInfo: User info that is passed to the `connect` endpoint for user creation
-  - extraData: Extra data for user that is passed to the `connect` endpoint for user creation.
-  - completion: The completion that will be called once the **first** user session for the given token is setup.
+  - `functionName`: User info that is passed to the `connect` endpoint for user creation
+  - `extraData`: Extra data for user that is passed to the `connect` endpoint for user creation.
+  - `completion`: The completion that will be called once the **first** user session for the given token is setup.
 
 ### `connectAnonymousUser(completion:)`
 
@@ -93,7 +93,7 @@ public func connectAnonymousUser(completion: ((Error?) -> Void)? = nil)
 
 #### Parameters
 
-  - completion: The completion that will be called once the **first** user session for the given token is setup.
+  - `completion`: The completion that will be called once the **first** user session for the given token is setup.
 
 ### `disconnect()`
 
@@ -114,8 +114,8 @@ func channelController(for cid: ChannelId, messageOrdering: MessageOrdering = .t
 
 #### Parameters
 
-  - cid: The id of the channel this controller represents.
-  - messageOrdering: Describes the ordering the messages are presented.
+  - `cid`: The id of the channel this controller represents.
+  - `messageOrdering`: Describes the ordering the messages are presented.
 
 #### Returns
 
@@ -134,8 +134,8 @@ func channelController(
 
 #### Parameters
 
-  - channelQuery: The ChannelQuery this controller represents
-  - messageOrdering: Describes the ordering the messages are presented.
+  - `channelQuery`: The ChannelQuery this controller represents
+  - `messageOrdering`: Describes the ordering the messages are presented.
 
 #### Returns
 
@@ -164,15 +164,15 @@ it can be faster and more convenient to use `channelController(for cid: ChannelI
 
 #### Parameters
 
-  - cid: The `ChannelId` for the new channel.
-  - name: The new channel name.
-  - imageURL: The new channel avatar URL.
-  - team: Team for new channel.
-  - members: Ds for the new channel members.
-  - isCurrentUserMember: If set to `true` the current user will be included into the channel. Is `true` by default.
-  - messageOrdering: Describes the ordering the messages are presented.
-  - invites: IDs for the new channel invitees.
-  - extraData: Extra data for the new channel.
+  - `cid`: The `ChannelId` for the new channel.
+  - `name`: The new channel name.
+  - `imageURL`: The new channel avatar URL.
+  - `team`: Team for new channel.
+  - `members`: IDs for the new channel members.
+  - `isCurrentUserMember`: If set to `true` the current user will be included into the channel. Is `true` by default.
+  - `messageOrdering`: Describes the ordering the messages are presented.
+  - `invites`: IDs for the new channel invitees.
+  - `extraData`: Extra data for the new channel.
 
 #### Throws
 
@@ -206,14 +206,14 @@ it can be faster and more convenient to use `channelController(for cid: ChannelI
 
 #### Parameters
 
-  - members: Members for the new channel. Must not be empty.
-  - type: The type of the channel.
-  - isCurrentUserMember: If set to `true` the current user will be included into the channel. Is `true` by default.
-  - messageOrdering: Describes the ordering the messages are presented.
-  - name: The new channel name.
-  - imageURL: The new channel avatar URL.
-  - team: Team for the new channel.
-  - extraData: Extra data for the new channel.
+  - `members`: Members for the new channel. Must not be empty.
+  - `type`: The type of the channel.
+  - `isCurrentUserMember`: If set to `true` the current user will be included into the channel. Is `true` by default.
+  - `messageOrdering`: Describes the ordering the messages are presented.
+  - `name`: The new channel name.
+  - `imageURL`: The new channel avatar URL.
+  - `team`: Team for the new channel.
+  - `extraData`: Extra data for the new channel.
 
 #### Throws
 
@@ -234,7 +234,7 @@ public func channelListController(query: ChannelListQuery) -> ChatChannelListCon
 
 #### Parameters
 
-  - query: The query specify the filter and sorting of the channels the controller should fetch.
+  - `query`: The query specify the filter and sorting of the channels the controller should fetch.
 
 #### Returns
 
@@ -250,7 +250,7 @@ public func watcherListController(query: ChannelWatcherListQuery) -> ChatChannel
 
 #### Parameters
 
-  - query: The query specifying the pagination options for watchers the controller should fetch.
+  - `query`: The query specifying the pagination options for watchers the controller should fetch.
 
 #### Returns
 
@@ -291,7 +291,7 @@ func channelEventsController(for cid: ChannelId) -> ChannelEventsController
 
 #### Parameters
 
-  - cid: A channel identifier.
+  - `cid`: A channel identifier.
 
 #### Returns
 
@@ -319,8 +319,8 @@ func memberController(userId: UserId, in cid: ChannelId) -> ChatChannelMemberCon
 
 #### Parameters
 
-  - userId: The user identifier.
-  - cid: The channel identifier.
+  - `userId`: The user identifier.
+  - `cid`: The channel identifier.
 
 #### Returns
 
@@ -338,7 +338,7 @@ public func memberListController(
 
 #### Parameters
 
-  - query: The query specify the filter and sorting options for members the controller should fetch.
+  - `query`: The query specify the filter and sorting options for members the controller should fetch.
 
 #### Returns
 
@@ -354,8 +354,8 @@ func messageController(cid: ChannelId, messageId: MessageId) -> ChatMessageContr
 
 #### Parameters
 
-  - cid: The channel identifier the message relates to.
-  - messageId: The message identifier.
+  - `cid`: The channel identifier the message relates to.
+  - `messageId`: The message identifier.
 
 #### Returns
 
@@ -371,7 +371,7 @@ func messageSearchController() -> ChatMessageSearchController
 
 #### Parameters
 
-  - query: The query specify the filter of the messages the controller should fetch.
+  - `query`: The query specify the filter of the messages the controller should fetch.
 
 #### Returns
 
@@ -387,7 +387,7 @@ public func userSearchController() -> ChatUserSearchController
 
 #### Parameters
 
-  - query: The query specify the filter and sorting of the users the controller should fetch.
+  - `query`: The query specify the filter and sorting of the users the controller should fetch.
 
 #### Returns
 
@@ -403,7 +403,7 @@ func userController(userId: UserId) -> ChatUserController
 
 #### Parameters
 
-  - userId: The user identifier.
+  - `userId`: The user identifier.
 
 #### Returns
 
@@ -419,7 +419,7 @@ public func userListController(query: UserListQuery = .init()) -> ChatUserListCo
 
 #### Parameters
 
-  - query: The query specify the filter and sorting of the users the controller should fetch.
+  - `query`: The query specify the filter and sorting of the users the controller should fetch.
 
 #### Returns
 

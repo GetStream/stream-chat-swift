@@ -13,7 +13,7 @@ The message composer is the component that allows you to send messages consistin
 
 ## Applying a Custom Modifier
 
-If you want to customize the background, paddings and other styling properties of the composer view, you can apply a custom modifier by implementing the method `makeComposerViewModifier` in the `ViewFactory`. Here's an example that changes the background of the composer view.
+If you want to customize the background, padding and other styling properties of the composer view, you can apply a custom modifier by implementing the method `makeComposerViewModifier` in the `ViewFactory`. Here's an example that changes the background of the composer view.
 
 ```swift
 func makeComposerViewModifier() -> some ViewModifier {
@@ -52,9 +52,9 @@ The method provides the following parameters:
 
 You can also swap the leading composer view with your own implementation. This might be useful if you want to change the behaviour of the attachment picker (provide a different one), or even just hide the component.
 
-In order to do this, you need to implement the `makeLeadingComposerView`, which receives a binding of the `PickerTypeState`. Having the `PickerTypeState` as a parameter allows you to control the visibility of the attachment picker view. The `PickerTypeState` has two states - expanded and collapsed. If the state is collapsed, the composer is in the minimal mode (only the text input and leading and trailing areas are shown). If the enum state is expanded, it has associated value with it, which is of type `AttachmentPickerType`. This defines the type of picker which is currently displayed in the attachment picker view. The possible states are `none` (nothing is selected), `media` (media picker is selected), `giphy` (giphy commands picker is shown) and custom (for your own custom pickers).
+In order to do this, you need to implement the `makeLeadingComposerView`, which receives a binding of the `PickerTypeState`. Having the `PickerTypeState` as a parameter allows you to control the visibility of the attachment picker view. The `PickerTypeState` has two states - expanded and collapsed. If the state is collapsed, the composer is in the minimal mode (only the text input and leading and trailing areas are shown). If the `enum` state is expanded, it has associated value with it, which is of type `AttachmentPickerType`. This defines the type of picker which is currently displayed in the attachment picker view. The possible states are `none` (nothing is selected), `media` (media picker is selected), `giphy` (giphy commands picker is shown) and custom (for your own custom pickers).
 
-Apart from the `PickerTypeState`, you also receive the `ChannelConfig` as a parameter. This config allows you to control the display of some elements from the channel response from the backend, such as enabling / disabling of the attachments, max message length, typing indicators, etc. More details about the available settings in the channel config can be found [here](https://getstream.io/chat/docs/ios-swift/channel_features/?language=swift).
+Apart from the `PickerTypeState`, you also receive the `ChannelConfig` as a parameter. This configuration allows you to control the display of some elements from the channel response from the backend, such as enabling / disabling of the attachments, max message length, typing indicators, etc. More details about the available settings in the channel configuration can be found [here](https://getstream.io/chat/docs/ios-swift/channel_features/?language=swift).
 
 Here's an example on how to provide a view for the leading composer view:
 
@@ -264,7 +264,7 @@ func makeAttachmentSourcePickerView(
 }
 ```
 
-The `CustomAttachmentSourcePickerView` is an HStack of the default `AttachmentPickerButton`s for photos, files and camera. In addition to those, a new one is added for the contacts, which is of type custom. Note here that you don't have to use all attachment types. You can just remove any of those (for example files), if you don't want your composer to have such support. With this, our contacts view will be available as a selection in the attachment source picker view.
+The `CustomAttachmentSourcePickerView` is an `HStack` of the default `AttachmentPickerButton`s for photos, files and camera. In addition to those, a new one is added for the contacts, which is of type custom. Note here that you don't have to use all attachment types. You can just remove any of those (for example files), if you don't want your composer to have such support. With this, our contacts view will be available as a selection in the attachment source picker view.
 
 ```swift
 struct CustomAttachmentSourcePickerView: View {

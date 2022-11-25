@@ -47,7 +47,7 @@ open func handleTapOnAttachment(with id: AttachmentId)
 
 #### Parameters
 
-  - id: Attachment identifier.
+  - `id`: Attachment identifier.
 
 ### `handleUploadingAttachmentAction(_:)`
 

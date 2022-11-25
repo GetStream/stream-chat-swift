@@ -8,10 +8,10 @@ The type that describes a message reaction type.
 public struct MessageReactionType: RawRepresentable, Codable, Hashable, ExpressibleByStringLiteral 
 ```
 
-The reaction has underlaying type `String` what gives the flexibility to choose the way how the reaction
+The reaction has underlying type `String` what gives the flexibility to choose the way how the reaction
 will be displayed in the application.
 
-Common examples are: "like", "love", "smile", etc.
+Common examples are: `like`, `love`, `smile`, etc.
 
 ## Inheritance
 

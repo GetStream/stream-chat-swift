@@ -82,7 +82,7 @@ public private(set) lazy var trailingContainer = ContainerStackView()
 
 ### `inputMessageView`
 
-A view to to input content of the new message.
+A view to input content of the new message.
 
 ``` swift
 public private(set) lazy var inputMessageView: InputChatMessageView = components

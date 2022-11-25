@@ -146,7 +146,7 @@ Luckily, the `CustomChatMessageDeliveryStatusView` is a `UIControl` so it can be
 // 1.
 final class CustomChatMessageDeliveryStatusView: ChatMessageDeliveryStatusView {
     override func updateContent() {
-        ...    
+        ... 
         // Allow interaction when message is in `read` state.
         isUserInteractionEnabled = readBy.count > 0
     }

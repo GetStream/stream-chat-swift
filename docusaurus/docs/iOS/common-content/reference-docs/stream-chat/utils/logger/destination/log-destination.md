@@ -20,7 +20,7 @@ var identifier: String
 var level: LogLevel 
 ```
 
-### dateFormatter
+### `dateFormatter`
 
 ``` swift
 var dateFormatter: DateFormatter 
@@ -32,31 +32,31 @@ var dateFormatter: DateFormatter
 var formatters: [LogFormatter] 
 ```
 
-### showDate
+### `showDate`
 
 ``` swift
 var showDate: Bool 
 ```
 
-### showLevel
+### `showLevel`
 
 ``` swift
 var showLevel: Bool 
 ```
 
-### showIdentifier
+### `showIdentifier`
 
 ``` swift
 var showIdentifier: Bool 
 ```
 
-### showThreadName
+### `showThreadName`
 
 ``` swift
 var showThreadName: Bool 
 ```
 
-### showFileName
+### `showFileName`
 
 ``` swift
 var showFileName: Bool 

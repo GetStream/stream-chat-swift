@@ -56,7 +56,7 @@ open func loadChannelAvatar(from url: URL)
 
 #### Parameters
 
-  - url: The `imageURL` of the channel
+  - `url`: The `imageURL` of the channel
 
 ### `loadDirectMessageChannelAvatar(channel:)`
 
@@ -68,7 +68,7 @@ open func loadDirectMessageChannelAvatar(channel: ChatChannel)
 
 #### Parameters
 
-  - channel: The channel
+  - `channel`: The channel
 
 ### `loadMergedAvatars(channel:)`
 
@@ -80,7 +80,7 @@ open func loadMergedAvatars(channel: ChatChannel)
 
 #### Parameters
 
-  - channel: The channel
+  - `channel`: The channel
 
 ### `loadAvatarsFrom(urls:channelId:completion:)`
 
@@ -97,9 +97,9 @@ open func loadAvatarsFrom(
 
 #### Parameters
 
-  - urls: The avatar urls
-  - channelId: The channelId of the channel
-  - completion: Completion that gets called with an array of `UIImage`s when all the avatars are loaded
+  - `urls`: The avatar URLs
+  - `channelId`: The id of the channel
+  - `completion`: Completion that gets called with an array of `UIImage`s when all the avatars are loaded
 
 ### `createMergedAvatar(from:)`
 
@@ -111,7 +111,7 @@ open func createMergedAvatar(from avatars: [UIImage]) -> UIImage?
 
 #### Parameters
 
-  - avatars: The individual avatars
+  - `avatars`: The individual avatars
 
 #### Returns
 

@@ -42,7 +42,7 @@ var appearance: Appearance
 
 ### appearanceDidRegister()
 
-This function is called afther the appearance is registered.
+This function is called after the appearance is registered.
 
 ``` swift
 func appearanceDidRegister()

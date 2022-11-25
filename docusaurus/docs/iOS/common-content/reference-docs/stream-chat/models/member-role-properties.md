@@ -15,7 +15,7 @@ static let member
 
 ### `moderator`
 
-Allows the member to perform moderation, e.g. ban users, add/remove users, etc.
+Allows the member to perform moderation, for example ban users, add/remove users, etc.
 
 ``` swift
 static let moderator 

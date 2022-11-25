@@ -2,7 +2,7 @@
 title: ChannelConfig
 ---
 
-A channel config.
+A channel configuration.
 
 ``` swift
 public struct ChannelConfig: Codable 
@@ -112,7 +112,7 @@ public let maxMessageLength: Int
 
 ### `commands`
 
-An array of commands, e.g. /giphy.
+An array of commands, for example /giphy.
 
 ``` swift
 public let commands: [Command]

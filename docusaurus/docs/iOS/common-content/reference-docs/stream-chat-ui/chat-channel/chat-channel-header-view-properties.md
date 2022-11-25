@@ -9,7 +9,7 @@ open var channelController: ChatChannelController?
 
 ### `lastSeenDateFormatter`
 
-Returns the date formater function used to represent when the user was last seen online
+Returns the date formatter function used to represent when the user was last seen online
 
 ``` swift
 open var lastSeenDateFormatter: (Date) -> String? 

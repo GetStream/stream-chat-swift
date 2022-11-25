@@ -44,7 +44,7 @@ public lazy var dateFormatter: DateFormatter
 ### `maxContentWidthMultiplier`
 
 Specifies the max possible width of `mainContainer`.
-Should be in \[0...1\] range, where 1 makes the container fill the entire superview's width.
+Should be in \[0...1\] range, where 1 makes the container fill the entire `superview`'s width.
 
 ``` swift
 open var maxContentWidthMultiplier: CGFloat 
@@ -290,7 +290,7 @@ open func setUpLayoutIfNeeded(
 
 #### Parameters
 
-  - options: The options describing the layout of the content view.
+  - `options`: The options describing the layout of the content view.
 
 ### `layout(options:)`
 
@@ -302,7 +302,7 @@ open func layout(options: ChatMessageLayoutOptions)
 
 #### Parameters
 
-  - options: The options describing the layout of the content view.
+  - `options`: The options describing the layout of the content view.
 
 ### `updateContent()`
 

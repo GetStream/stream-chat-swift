@@ -2,7 +2,7 @@
 title: CDNClient
 ---
 
-API client that handles working with content (e.g. uploading attachments)
+API client that handles working with content (for example uploading attachments)
 
 ``` swift
 public protocol CDNClient 
@@ -28,7 +28,8 @@ func uploadAttachment(
     )
 ```
 
-  - Parameters:
-      - attachment: An attachment to upload
-      - progress: A closure that broadcasts upload progress
-      - completion: Returns uploading result on upload completion or failure
+#### Parameters
+
+- `attachment`: An attachment to upload
+- `progress`: A closure that broadcasts upload progress
+- `completion`: Returns uploading result on upload completion or failure

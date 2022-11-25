@@ -28,7 +28,7 @@ func makeMessageRepliesView(
 }
 ```
 
-Note that this method swaps the whole view, including the navigation link. This gives you a chance to present the thread in different ways (e.g. push navigation - like the default behaviour, sheet, full screen cover, etc). 
+Note that this method swaps the whole view, including the navigation link. This gives you a chance to present the thread in different ways (for example push navigation - like the default behaviour, sheet, full screen cover, etc). 
 
 ### Changing the Thread Header
 

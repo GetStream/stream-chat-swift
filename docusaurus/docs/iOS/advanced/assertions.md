@@ -18,7 +18,7 @@ Independently of the value of this flag, a message will always be printed in the
 
 :::note
 When enabling Stream assertions, the default behavior of assertions still apply:
-- In playgrounds and -Onone builds (the default for Xcode’s Debug configuration): If the condition evaluates to false, stop program execution in a debuggable state after printing the message.
+- In playgrounds and -Onone builds (the default for Xcode’s Debug configuration): If the condition evaluates to false, stop program execution in a state ready for the debugger after printing the message.
 - In -O builds (the default for Xcode’s Release configuration), the condition is not evaluated, and there are no effects.
 - In -Ounchecked builds, the condition is not evaluated, but the optimizer may assume that it always evaluates to true. Failure to satisfy that assumption is a serious programming error.
 

@@ -65,7 +65,7 @@ So, let's focus on the iOS implementation.
 
 The integration requires a bit of setup which is why you will create most of the necessary files right now. This will provide a solid overview of the overall architecture and you will fill up the files more and more over the course of following this integration guide.
 
-Before starting, you need to import the Agora SDK into the project. The recommended way is to use Swift Package Manager (SPM) for it. [Follow the guide on their GitHub repo](https://github.com/AgoraIO/AgoraRtcEngine_iOS/) to add the dependency to your project.
+Before starting, you need to import the Agora SDK into the project. The recommended way is to use Swift Package Manager (SPM) for it. [Follow the guide on their GitHub repository](https://github.com/AgoraIO/AgoraRtcEngine_iOS/) to add the dependency to your project.
 
 For the implementation, you will need an object that conforms to the `ViewFactory` of the `StreamChatSwiftUI` SDK. This will be used to tailor the SDK to your needs so you will create a new Swift file called `CustomFactory`. You now only need to add a `chatClient` object to it and we will do all other work later. This is what it should look like for now:
 
@@ -129,7 +129,7 @@ There are a few methods already defined which have no logic inside. You will gra
 
 ## 4. Layout basic UI
 
-You saw the UI in the video at the beginning of this guide. It’s not a complicated setup, and luckily, the SDKs provide a lot of assistance. But there’s still work to be done, so let’s get to it!
+You saw the UI in the video at the beginning of this guide. It’s not a complicated setup, and luckily, the SDKs provide a lot of assistance. But there’s still work to be done, so let’s get to it.
 
 You’ll start off with creating the view for calls, that shows some UI elements and the participants. Let’s have a look first at what it is made up of:
 
@@ -285,7 +285,7 @@ struct VideoCanvas: UIViewRepresentable {
 
 It is important to have a reference to the `containerView` because that is needed to assign it to the _agora_ SDK’s video view.
 
-With that, head over to the `CallViewModel` and give it a new property (e.g. right below the previously added `remoteVideoViewController`):
+With that, head over to the `CallViewModel` and give it a new property (for example right below the previously added `remoteVideoViewController`):
 
 ```swift
 var localCanvas = VideoCanvas()
@@ -662,7 +662,7 @@ In the extensions you made to `String` there is the `callInitiator` key. This is
 
 <br />
 
-In order to accommodate that, create a new Swift file and call it `CallRole`. It will be an enum that tracks the state of the current user and your logic will adapt to that.
+In order to accommodate that, create a new Swift file and call it `CallRole`. It will be an `enum` that tracks the state of the current user and your logic will adapt to that.
 
 Fill the file with the following code:
 
@@ -708,7 +708,7 @@ Code-wise this is all that is needed. However there is one more setting that nee
 
 Executing the code above now would not do anything. It will return an error that the user is not allowed to perform this task. And that makes sense, as regular channel members are not allowed to update channel data by default.
 
-The Stream Chat SDK offers a fine-grained [roles and permissions system](https://getstream.io/chat/docs/other-rest/user_permissions/) that allows you to finetune which member is allowed to perform which actions. This is a safety measure to only give allowance to execute the tasks necessary for the respective user.
+The Stream Chat SDK offers a fine-grained [roles and permissions system](https://getstream.io/chat/docs/other-rest/user_permissions/) that allows you to fine tune which member is allowed to perform which actions. This is a safety measure to only give allowance to execute the tasks necessary for the respective user.
 
 It is easy to update those however and allow our users to perform the update channel action that the code above does. Head over to the [Stream Dashboard](https://dashboard.getstream.io/) and select your app.
 
@@ -940,7 +940,7 @@ func rtcEngine(_ engine: AgoraRtcEngineKit, didOfflineOfUid uid: UInt, reason: A
 }
 ```
 
-There’s more functionality you can implement, but this is all you need to have fully functional video calls in your application. Congratulations!
+There’s more functionality you can implement, but this is all you need to have fully functional video calls in your application. Congratulations.
 
 ## Summary
 
@@ -950,6 +950,6 @@ This is just a suggested solution and you can of course use a pure `UIKit` solut
 
 Also, it is worth noting that the architecture allows for quick exchange of _agora_ as a solution provider and use of other ones because the code is separated out into modular pieces. This guide is aimed to show you the flexibility of the StreamChat SDK that makes the integration easy and straightforward.
 
-In case you have any more questions about this video integration or the work with other SDKs, feel free to [reach out to the team](https://getstream.io/contact/) and we’re happy to help and support you!
+In case you have any more questions about this video integration or the work with other SDKs, feel free to [reach out to the team](https://getstream.io/contact/) and we’re happy to help and support you.
 
-Thank you for following along with this article!
+Thank you for following along with this article.

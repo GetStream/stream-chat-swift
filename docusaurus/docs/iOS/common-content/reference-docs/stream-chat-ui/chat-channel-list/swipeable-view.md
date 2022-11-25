@@ -24,7 +24,7 @@ open private(set) lazy var panGestureRecognizer: UIPanGestureRecognizer
 
 ### `isOpen`
 
-Returns whether the swipe action items are expanded or shrinked.
+Returns whether the swipe action items are expanded or shrunk.
 
 ``` swift
 open var isOpen: Bool 
@@ -130,7 +130,7 @@ public func gestureRecognizer(
 
 ### `close()`
 
-Closes the stackView with buttons.
+Closes the `stackView` with buttons.
 
 ``` swift
 public func close() 

@@ -11,7 +11,7 @@ Offline support comes in 4 different aspects:
 
 ### Connection Recovery:
 
-It is really important to make sure that the app properly reconnects after a downtime, independently of what was the cause of it. It can happen that you backgrounded the app, you lost connection or maybe it was killed by yourself or the system.
+It is really important to make sure that the app properly reconnects after a downtime, independently of what was the cause of it. It can happen that you put the app in the background, you lost connection or maybe it was killed by yourself or the system.
 
 We are listening to the app's lifecycle to make sure we perform the right set of actions to bring you up online as soon as possible.
 

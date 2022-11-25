@@ -8,7 +8,7 @@ import SingletonNote from '../../common-content/chat-client.md'
 
 `ChatChannelListController` is the component responsible for managing the list of channels matching the given query. The main responsibilities are:
 - exposing the list of channels matching the query
-- allowing to paginate the channel list (initially, only the 1st page of channels is fetched)
+- allowing to paginate the channel list (initially, only the first page of channels is fetched)
 - keeping the list of channels in sync with the remote by dynamically linking/unlinking channels that start/stop matching the query
 
 Here is the code snippet showing how to instantiate `ChatChannelListController` showing the channels the current user is a member of:

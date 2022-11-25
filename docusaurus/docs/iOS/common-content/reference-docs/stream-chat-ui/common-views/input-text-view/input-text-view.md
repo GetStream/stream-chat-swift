@@ -34,7 +34,7 @@ open var isPastingImagesEnabled: Bool = true
 
 ### `placeholderLabel`
 
-Label used as placeholder for textView when it's empty.
+Label used as placeholder for `textView` when it's empty.
 
 ``` swift
 open private(set) lazy var placeholderLabel: UILabel = UILabel()
@@ -45,7 +45,7 @@ open private(set) lazy var placeholderLabel: UILabel = UILabel()
 ### `text`
 
 ``` swift
-override open var text: String! 
+override open var text: String!
 ```
 
 ### `minimumHeight`
@@ -118,7 +118,7 @@ open func replaceSelectedText(_ text: String)
 
 #### Parameters
 
-  - text: A string to replace the text in the caret position.
+  - `text`: A string to replace the text in the caret position.
 
 ### `textDidChangeProgrammatically()`
 

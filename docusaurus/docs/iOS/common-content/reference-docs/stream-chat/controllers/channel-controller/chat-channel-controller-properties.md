@@ -185,7 +185,7 @@ public func setDelegate<Delegate: ChatChannelControllerDelegate>(_ delegate: Del
 
 #### Parameters
 
-  - delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object alive if you want keep receiving updates.
+  - `delegate`: The object used as a delegate. It's referenced weakly, so you need to keep the object alive if you want keep receiving updates.
 
 ### `updateChannel(name:imageURL:team:members:invites:extraData:completion:)`
 
@@ -205,11 +205,11 @@ func updateChannel(
 
 #### Parameters
 
-  - team: New team.
-  - members: New members.
-  - invites: New invites.
-  - extraData: New `ExtraData`.
-  - completion: The completion. Will be called on a **callbackQueue** when the network request is finished. If request fails, the completion will be called with an error.
+  - `team`: New team.
+  - `members`: New members.
+  - `invites`: New invites.
+  - `extraData`: New `ExtraData`.
+  - `completion`: The completion. Will be called on a **`callbackQueue`** when the network request is finished. If request fails, the completion will be called with an error.
 
 ### `muteChannel(completion:)`
 
@@ -221,11 +221,11 @@ func muteChannel(completion: ((Error?) -> Void)? = nil)
 
 #### Parameters
 
-  - completion: The completion. Will be called on a **callbackQueue** when the network request is finished. If request fails, the completion will be called with an error.
+  - `completion`: The completion. Will be called on a **`callbackQueue`** when the network request is finished. If request fails, the completion will be called with an error.
 
 ### `unmuteChannel(completion:)`
 
-Unmutes the channel this controller manages.
+Un-mutes the channel this controller manages.
 
 ``` swift
 func unmuteChannel(completion: ((Error?) -> Void)? = nil) 
@@ -233,7 +233,7 @@ func unmuteChannel(completion: ((Error?) -> Void)? = nil)
 
 #### Parameters
 
-  - completion: The completion. Will be called on a **callbackQueue** when the network request is finished. If request fails, the completion will be called with an error.
+  - `completion`: The completion. Will be called on a **`callbackQueue`** when the network request is finished. If request fails, the completion will be called with an error.
 
 ### `deleteChannel(completion:)`
 
@@ -245,7 +245,7 @@ func deleteChannel(completion: ((Error?) -> Void)? = nil)
 
 #### Parameters
 
-  - completion: The completion. Will be called on a **callbackQueue** when the network request is finished. If request fails, the completion will be called with an error.
+  - `completion`: The completion. Will be called on a **`callbackQueue`** when the network request is finished. If request fails, the completion will be called with an error.
 
 ### `truncateChannel(completion:)`
 
@@ -259,11 +259,11 @@ Removes all of the messages of the channel but doesn't affect the channel data o
 
 #### Parameters
 
-  - completion: The completion. Will be called on a **callbackQueue** when the network request is finished. If request fails, the completion will be called with an error.
+  - `completion`: The completion. Will be called on a **`callbackQueue`** when the network request is finished. If request fails, the completion will be called with an error.
 
 ### `hideChannel(clearHistory:completion:)`
 
-Hide the channel this controller manages from queryChannels for the user until a message is added.
+Hide the channel this controller manages from `queryChannels` for the user until a message is added.
 
 ``` swift
 func hideChannel(clearHistory: Bool = false, completion: ((Error?) -> Void)? = nil) 
@@ -271,8 +271,8 @@ func hideChannel(clearHistory: Bool = false, completion: ((Error?) -> Void)? = n
 
 #### Parameters
 
-  - clearHistory: Flag to remove channel history (**false** by default)
-  - completion: The completion. Will be called on a **callbackQueue** when the network request is finished. If request fails, the completion will be called with an error.
+  - `clearHistory`: Flag to remove channel history (**false** by default)
+  - `completion`: The completion. Will be called on a **`callbackQueue`** when the network request is finished. If request fails, the completion will be called with an error.
 
 ### `showChannel(completion:)`
 
@@ -284,7 +284,7 @@ func showChannel(completion: ((Error?) -> Void)? = nil)
 
 #### Parameters
 
-  - completion: The completion. Will be called on a **callbackQueue** when the network request is finished. If request fails, the completion will be called with an error.
+  - `completion`: The completion. Will be called on a **`callbackQueue`** when the network request is finished. If request fails, the completion will be called with an error.
 
 ### `loadPreviousMessages(before:limit:completion:)`
 
@@ -300,9 +300,9 @@ func loadPreviousMessages(
 
 #### Parameters
 
-  - messageId: ID of the last fetched message. You will get messages `older` than the provided ID.
-  - limit: Limit for page size.
-  - completion: The completion. Will be called on a **callbackQueue** when the network request is finished. If request fails, the completion will be called with an error.
+  - `messageId`: ID of the last fetched message. You will get messages `older` than the provided ID.
+  - `limit`: Limit for page size.
+  - `completion`: The completion. Will be called on a **`callbackQueue`** when the network request is finished. If request fails, the completion will be called with an error.
 
 ### `loadNextMessages(after:limit:completion:)`
 
@@ -318,9 +318,9 @@ func loadNextMessages(
 
 #### Parameters
 
-  - messageId: ID of the current first message. You will get messages `newer` than the provided ID.
-  - limit: Limit for page size.
-  - completion: The completion. Will be called on a **callbackQueue** when the network request is finished. If request fails, the completion will be called with an error.
+  - `messageId`: ID of the current first message. You will get messages `newer` than the provided ID.
+  - `limit`: Limit for page size.
+  - `completion`: The completion. Will be called on a **`callbackQueue`** when the network request is finished. If request fails, the completion will be called with an error.
 
 ### `sendKeystrokeEvent(completion:)`
 
@@ -334,7 +334,7 @@ This method is meant to be called every time the user presses a key. The method 
 
 #### Parameters
 
-  - completion: a completion block with an error if the request was failed.
+  - `completion`: a completion block with an error if the request was failed.
 
 ### `sendStartTypingEvent(completion:)`
 
@@ -350,7 +350,7 @@ method and call it every time the user presses a key. The controller will manage
 
 #### Parameters
 
-  - completion: a completion block with an error if the request was failed.
+  - `completion`: a completion block with an error if the request was failed.
 
 ### `sendStopTypingEvent(completion:)`
 
@@ -366,7 +366,7 @@ method and call it every time the user presses a key. The controller will manage
 
 #### Parameters
 
-  - completion: a completion block with an error if the request was failed.
+  - `completion`: a completion block with an error if the request was failed.
 
 ### `createNewMessage(text:pinning:isSilent:attachments:mentionedUserIds:quotedMessageId:extraData:completion:)`
 
@@ -389,13 +389,13 @@ func createNewMessage(
 
 #### Parameters
 
-  - text: Text of the message.
-  - pinning: Pins the new message. `nil` if should not be pinned.
-  - isSilent: A flag indicating whether the message is a silent message. Silent messages are special messages that don't increase the unread messages count nor mark a channel as unread.
-  - attachments: An array of the attachments for the message. `Note`: can be built-in types, custom attachment types conforming to `AttachmentEnvelope` protocol and `ChatMessageAttachmentSeed`s.
-  - quotedMessageId: An id of the message new message quotes. (inline reply)
-  - extraData: Additional extra data of the message object.
-  - completion: Called when saving the message to the local DB finishes.
+  - `text`: Text of the message.
+  - `pinning`: Pins the new message. `nil` if should not be pinned.
+  - `isSilent`: A flag indicating whether the message is a silent message. Silent messages are special messages that don't increase the unread messages count nor mark a channel as unread.
+  - `attachments`: An array of the attachments for the message. `Note`: can be built-in types, custom attachment types conforming to `AttachmentEnvelope` protocol and `ChatMessageAttachmentSeed`s.
+  - `quotedMessageId`: An id of the message new message quotes. (inline reply)
+  - `extraData`: Additional extra data of the message object.
+  - `completion`: Called when saving the message to the local DB finishes.
 
 ### `addMembers(userIds:completion:)`
 
@@ -407,8 +407,8 @@ func addMembers(userIds: Set<UserId>, completion: ((Error?) -> Void)? = nil)
 
 #### Parameters
 
-  - users: Users Id to add to a channel.
-  - completion: The completion. Will be called on a **callbackQueue** when the network request is finished. If request fails, the completion will be called with an error.
+  - `users`: Users Id to add to a channel.
+  - `completion`: The completion. Will be called on a **`callbackQueue`** when the network request is finished. If request fails, the completion will be called with an error.
 
 ### `removeMembers(userIds:completion:)`
 
@@ -420,8 +420,8 @@ func removeMembers(userIds: Set<UserId>, completion: ((Error?) -> Void)? = nil)
 
 #### Parameters
 
-  - users: Users Id to add to a channel.
-  - completion: The completion. Will be called on a **callbackQueue** when the network request is finished. If request fails, the completion will be called with an error.
+  - `users`: Users Id to add to a channel.
+  - `completion`: The completion. Will be called on a **`callbackQueue`** when the network request is finished. If request fails, the completion will be called with an error.
 
 ### `inviteMembers(userIds:completion:)`
 
@@ -433,8 +433,8 @@ func inviteMembers(userIds: Set<UserId>, completion: ((Error?) -> Void)? = nil)
 
 #### Parameters
 
-  - userIds: Set of ids of users to be invited to the channel
-  - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+  - `userIds`: Set of ids of users to be invited to the channel
+  - `completion`: Called when the API call is finished. Called with `Error` if the remote update fails.
 
 ### `acceptInvite(message:completion:)`
 
@@ -446,10 +446,10 @@ func acceptInvite(message: String? = nil, completion: ((Error?) -> Void)? = nil)
 
 #### Parameters
 
-  - cid: The channel identifier.
-  - userId: userId
-  - message: message
-  - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+  - `cid`: The channel identifier.
+  - `userId`: `userId`
+  - `message`: message
+  - `completion`: Called when the API call is finished. Called with `Error` if the remote update fails.
 
 ### `rejectInvite(completion:)`
 
@@ -461,8 +461,8 @@ func rejectInvite(completion: ((Error?) -> Void)? = nil)
 
 #### Parameters
 
-  - cid: The channel identifier.
-  - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+  - `cid`: The channel identifier.
+  - `completion`: Called when the API call is finished. Called with `Error` if the remote update fails.
 
 ### `markRead(completion:)`
 
@@ -474,7 +474,7 @@ func markRead(completion: ((Error?) -> Void)? = nil)
 
 #### Parameters
 
-  - completion: The completion. Will be called on a **callbackQueue** when the network request is finished. If request fails, the completion will be called with an error.
+  - `completion`: The completion. Will be called on a **`callbackQueue`** when the network request is finished. If request fails, the completion will be called with an error.
 
 ### `enableSlowMode(cooldownDuration:completion:)`
 
@@ -490,8 +490,8 @@ For more information, please check [documentation](https://getstream.io/chat/doc
 
 #### Parameters
 
-  - cooldownDuration: Duration of the time interval users have to wait between messages. Specified in seconds. Should be between 1-120.
-  - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+  - `cooldownDuration`: Duration of the time interval users have to wait between messages. Specified in seconds. Should be between 1-120.
+  - `completion`: Called when the API call is finished. Called with `Error` if the remote update fails.
 
 ### `disableSlowMode(completion:)`
 
@@ -505,7 +505,7 @@ For more information, please check [documentation](https://getstream.io/chat/doc
 
 #### Parameters
 
-  - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+  - `completion`: Called when the API call is finished. Called with `Error` if the remote update fails.
 
 ### `freezeChannel(completion:)`
 
@@ -520,7 +520,7 @@ For more information, see https://getstream.io/chat/docs/ios-swift/freezing\_cha
 
 #### Parameters
 
-  - completion: The completion. Will be called on a **callbackQueue** when the network request is finished. If request fails, the completion will be called with an error.
+  - `completion`: The completion. Will be called on a **`callbackQueue`** when the network request is finished. If request fails, the completion will be called with an error.
 
 ### `unfreezeChannel(completion:)`
 
@@ -535,7 +535,7 @@ For more information, see https://getstream.io/chat/docs/ios-swift/freezing\_cha
 
 #### Parameters
 
-  - completion: The completion. Will be called on a **callbackQueue** when the network request is finished. If request fails, the completion will be called with an error.
+  - `completion`: The completion. Will be called on a **`callbackQueue`** when the network request is finished. If request fails, the completion will be called with an error.
 
 ### `eventsController()`
 

@@ -24,7 +24,7 @@ It is also possible to replace the screen that is shown when there are no messag
 
 In order to change the background of the Message List the `makeMessageListBackground` function in the `ViewFactory` can be overridden. A more detailed explanation together with an example can be found in the [Message List Background](#message-list-background) section.
 
-Another option is to create a custom `ViewModifier` that is applied to the message list using the `makeMessageListModifier` function in the `ViewFactory`. This offers a lot of freedom and more details, togther with an example implementatino can be found in the [Custom modifier for the Message List](#custom-modifier-for-the-message-list) section.
+Another option is to create a custom `ViewModifier` that is applied to the message list using the `makeMessageListModifier` function in the `ViewFactory`. This offers a lot of freedom and more details, together with an example implementation can be found in the [Custom modifier for the Message List](#custom-modifier-for-the-message-list) section.
 
 ## Message List Configuration
 
@@ -44,28 +44,28 @@ This code snippet is normally located in the `AppDelegate.swift` file inside of 
 
 This does **not** do any customization as it only uses the default parameters from the `MessageListConfig`. Due to the fact that there are default parameters for every option it is easy to only specify the customization options that are needed in the specific use-case.
 
-Every one of them is discussed in the next chapters, but here is an overview over all the options that are configureable in the `MessageListConfig` together with their types and default values (click on the parameter name to jump directly to the section where they are explained in more detail):
+Every one of them is discussed in the next chapters, but here is an overview over all the options that are configurable in the `MessageListConfig` together with their types and default values (click on the parameter name to jump directly to the section where they are explained in more detail):
 
 | Parameter                                                                       | Type                       | Default                          |
 | ------------------------------------------------------------------------------- | -------------------------- | -------------------------------- |
-| [messageListType](#messagelisttype)                                             | `MessageListType`          | `.messaging`                     |
-| [typingIndicatorPlacement](#typingindicatorplacement)                           | `TypingIndicatorPlacement` | `.bottomOverlay`                 |
-| [groupMessages](#groupmessages)                                                 | `Bool`                     | `true`                           |
-| [messageDisplayOptions](#messagedisplayoptions)                                 | `MessageDisplayOptions`    | `MessageDisplayOptions()`        |
-| [messagePaddings](#messagepaddings)                                             | `MessagePaddings`          | `MessagePaddings(horizontal: 8)` |
-| [dateIndicatorPlacement](#dateindicatorplacement)                               | `DateIndicatorPlacement`   | `.overlay`                       |
-| [pageSize](#pagesize)                                                           | `Int`                      | `50`                             |
-| [messagePopoverEnabled](#messagepopoverenabled)                                 | `Bool`                     | `true`                           |
-| [doubleTapOverlayEnabled](#doubletapoverlayenabled)                             | `Bool`                     | `false`                          |
-| [becomesFirstResponderOnOpen](#becomesfirstresponderonopen)                     | `Bool`                     | `false`                          |
-| [maxTimeIntervalBetweenMessagesInGroup](#maxtimeintervalbetweenmessagesingroup) | `TimeInterval`             | `60`                             |
-| [cacheSizeOnChatDismiss](#cachesizeonchatdismiss)                               | `Int`                      | `1024 * 1024 * 100`              |
+| [`messageListType`](#messagelisttype)                                             | `MessageListType`          | `.messaging`                     |
+| [`typingIndicatorPlacement`](#typingindicatorplacement)                           | `TypingIndicatorPlacement` | `.bottomOverlay`                 |
+| [`groupMessages`](#groupmessages)                                                 | `Bool`                     | `true`                           |
+| [`messageDisplayOptions`](#messagedisplayoptions)                                 | `MessageDisplayOptions`    | `MessageDisplayOptions()`        |
+| [`messagePaddings`](#messagepaddings)                                             | `MessagePaddings`          | `MessagePaddings(horizontal: 8)` |
+| [`dateIndicatorPlacement`](#dateindicatorplacement)                               | `DateIndicatorPlacement`   | `.overlay`                       |
+| [`pageSize`](#pagesize)                                                           | `Int`                      | `50`                             |
+| [`messagePopoverEnabled`](#messagepopoverenabled)                                 | `Bool`                     | `true`                           |
+| [`doubleTapOverlayEnabled`](#doubletapoverlayenabled)                             | `Bool`                     | `false`                          |
+| [`becomesFirstResponderOnOpen`](#becomesfirstresponderonopen)                     | `Bool`                     | `false`                          |
+| [`maxTimeIntervalBetweenMessagesInGroup`](#maxtimeintervalbetweenmessagesingroup) | `TimeInterval`             | `60`                             |
+| [`cacheSizeOnChatDismiss`](#cachesizeonchatdismiss)                               | `Int`                      | `1024 * 1024 * 100`              |
 
 The next sections will go through these values and discuss the impact they have when altered.
 
 ### messageListType
 
-The `MessageListType` enum has four cases:
+The `MessageListType` `enum` has four cases:
 
 - `.messaging`
 - `.team`
@@ -100,7 +100,7 @@ let utils = Utils(
 streamChat = StreamChat(chatClient: chatClient, utils: utils)
 ```
 
-### groupMessages
+### `groupMessages`
 
 The SDK offers the option to group messages of a user together to show them in a more compact way. The `groupMessages` parameter specifies if this behavior is wanted or not.
 
@@ -112,7 +112,7 @@ The default value is `true`, an example for both looks can be seen below:
 To identify which messages to group together the SDK uses the `maxTimeIntervalBetweenMessagesInGroup` parameter that is also part of the `MessageListConfig`. For more details on this parameter the [`maxTimeIntervalBetweenMessagesInGroup`](#maxtimeintervalbetweenmessagesingroup) section is provided.
 :::
 
-### messageDisplayOptions
+### `messageDisplayOptions`
 
 The `messageDisplayOptions` parameter allows to customize the overall behavior and appearance of messages in the message list.
 
@@ -120,18 +120,18 @@ For more details on what you can change and customize with the `MessageDisplayOp
 
 It has the following parameters:
 
-- **showAvatars**: `Bool`
-- **showAvatarsInGroups**: `Bool`
-- **showMessageDate**: `Bool`
-- **showAuthorName**: `Bool`
-- **animateChanges**: `Bool`
-- **dateLabelSize**: `CGFloat`
-- **lastInGroupHeaderSize**: `CGFloat`
-- **minimumSwipeGestureDistance**: `CGFloat`
-- **currentUserMessageTransition**: `AnyTransition`
-- **otherUserMessageTransition**: `AnyTransition`
-- **shouldAnimateReactions**: `Bool`
-- **messageLinkDisplayResolver**: `(ChatMessage) -> [NSAttributedString.Key: Any]`
+- **`showAvatars`**: `Bool`
+- **`showAvatarsInGroups`**: `Bool`
+- **`showMessageDate`**: `Bool`
+- **`showAuthorName`**: `Bool`
+- **`animateChanges`**: `Bool`
+- **`dateLabelSize`**: `CGFloat`
+- **`lastInGroupHeaderSize`**: `CGFloat`
+- **`minimumSwipeGestureDistance`**: `CGFloat`
+- **`currentUserMessageTransition`**: `AnyTransition`
+- **`otherUserMessageTransition`**: `AnyTransition`
+- **`shouldAnimateReactions`**: `Bool`
+- **`messageLinkDisplayResolver`**: `(ChatMessage) -> [NSAttributedString.Key: Any]`
 
 In order to set the `messageDisplayOptions` in the `MessageListConfig` here is an example (with an empty `MessageDisplayOptions` object):
 
@@ -145,11 +145,11 @@ let utils = Utils(messageListConfig: messageListConfig)
 streamChat = StreamChat(chatClient: chatClient, utils: utils)
 ```
 
-### messagePaddings
+### `messagePaddings`
 
-The `messagePaddings` parameter is intended to be able to specify horizontal padding (left & right) to all messages. This can be done by intialization of a `MessagePaddings` object with the only parameter being `horizontal`. The default value it has is `8` and any other `CGFloat` can be specified.
+The `messagePaddings` parameter is intended to be able to specify horizontal padding (left & right) to all messages. This can be done by initialisation of a `MessagePaddings` object with the only parameter being `horizontal`. The default value it has is `8` and any other `CGFloat` can be specified.
 
-An example of how to set the padding to e.g. a value of `40` can be found here:
+An example of how to set the padding to for example a value of `40` can be found here:
 
 ```swift
 let messageListConfig = MessageListConfig(
@@ -173,7 +173,7 @@ The date indicator describes an element that displays the date in the message li
 
 This feature can be configured via the `dateIndicatorPlacement` in the `MessageListConfig`. With the floating overlay option (`.overlay`), the date indicator is shown for a short time whenever a new message appears and during scrolling. On the other hand, in order to always show the date between messages, similarly to Apple Messages and WhatsApp, the `.messageList` option should be used. Both options can be turned off by using the `.none` option.
 
-The default option is `.overlay`. In order to change that e.g. to the `messageList` option, this code can be used:
+The default option is `.overlay`. In order to change that for example to the `messageList` option, this code can be used:
 
 ```swift
 let messageListConfig = MessageListConfig(
@@ -185,13 +185,13 @@ let utils = Utils(messageListConfig: messageListConfig)
 let streamChat = StreamChat(chatClient: chatClient, utils: utils)
 ```
 
-### pageSize
+### `pageSize`
 
 The `pageSize` parameter specifies how many messages are loaded by the SDK in a chunk before requesting new messages. The default value of `50` specifies that 50 messages are loaded when entering the channel. When the user scrolls to previous messages and the first 50 are passed the next chunk of 50 messages are loaded again.
 
 This value can be changed to any other `Int`. It should be considered, however, that there might be performance and networking considerations to take into account when changing up this value.
 
-In order to change this value e.g. to have a `pageSize` of `100`, this code can be used:
+In order to change this value for example to have a `pageSize` of `100`, this code can be used:
 
 ```swift
 let messageListConfig = MessageListConfig(
@@ -207,7 +207,7 @@ streamChat = StreamChat(chatClient: chatClient, utils: utils)
 
 The `messagePopoverEnabled` parameter allows for an easy configuration option to allow to have things like reactions, threads, and other options available when users long-press a message. These options are available when the value is set to `true` (the default) and are disabled when set to `false`.
 
-When set to `true` the following example shows when a user is long-pressing a GIF inside of the message list (works the same with any other type of message):
+When set to `true` the following example shows when a user is long-pressing a gif inside of the message list (works the same with any other type of message):
 
 ![When the messagePopoverEnabled parameter is set to true a long-press on a message of any type opens this menu.](../../assets/message-popover-enabled.png)
 
@@ -253,7 +253,7 @@ Here, the different options are shown when a user enters a channel:
 
 ![The state of entering the chat channel screen when either of the two options for becomesFirstResponderOnOpen are set.](../../assets/becomes-first-responder-on-open.png)
 
-In order to set this option e.g. to `true`, the following code can be used:
+In order to set this option for example to `true`, the following code can be used:
 
 ```swift
 let messageListConfig = MessageListConfig(
@@ -269,7 +269,7 @@ streamChat = StreamChat(chatClient: chatClient, utils: utils)
 
 The messages in the message list are grouped based on the `maxTimeIntervalBetweenMessagesInGroup` value in the `MessageListConfig` (if the [`groupMessages`](#groupmessages) option is set to `true`). It specifies a `TimeInterval` which determines how far apart messages can maximally be to be grouped together.
 
-The default value of this property is 60 seconds, which means messages that are 60 seconds (or less) apart, will be grouped together. Messages that are farther apart are not grouped together and appear as standalone messages. An example for that can be seen in the [groupMessages](#groupmessages) section.
+The default value of this property is 60 seconds, which means messages that are 60 seconds (or less) apart, will be grouped together. Messages that are farther apart are not grouped together and appear as standalone messages. An example for that can be seen in the [`groupMessages`](#groupmessages) section.
 
 To change it up from the default value (`60` seconds) a different value (in this case: `20` seconds) can be specified like this:
 
@@ -326,7 +326,7 @@ Here's how that custom implementation looks compared to the default one:
 ![Comparison of the default look of the empty message list and the custom example shown in the code above.](../../assets/empty-message-list.png)
 
 :::info
-Reminder: the custom `ViewFactory` needs to be injected into e.g. the `ChatChannelListView`. If unsure how to do that, there is a more detailed explanation in the [Getting started](../../getting-started) page.
+Reminder: the custom `ViewFactory` needs to be injected into for example the `ChatChannelListView`. If unsure how to do that, there is a more detailed explanation in the [Getting started](../../getting-started) page.
 :::
 
 ## Message List Background

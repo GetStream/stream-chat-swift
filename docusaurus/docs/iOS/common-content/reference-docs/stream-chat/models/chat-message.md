@@ -354,7 +354,7 @@ func attachment(with id: AttachmentId) -> AnyChatMessageAttachment?
 
 #### Parameters
 
-  - id: Attachment identifier.
+  - `id`: Attachment identifier.
 
 #### Returns
 

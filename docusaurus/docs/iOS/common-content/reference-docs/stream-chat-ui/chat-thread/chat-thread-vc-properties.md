@@ -64,7 +64,7 @@ open private(set) lazy var messageComposerVC
 
 ### `headerView`
 
-The header view of the thread that by default is the titleView of the navigation bar.
+The header view of the thread that by default is the `titleView` of the navigation bar.
 
 ``` swift
 open lazy var headerView: ChatThreadHeaderView = components

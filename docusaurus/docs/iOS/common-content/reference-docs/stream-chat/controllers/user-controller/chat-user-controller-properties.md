@@ -25,7 +25,7 @@ public var observableObject: ObservableObject
 
 ### `userId`
 
-The identifier of tge user this controller observes.
+The identifier of the user this controller observes.
 
 ``` swift
 public let userId: UserId
@@ -76,7 +76,7 @@ public func setDelegate<Delegate: ChatUserControllerDelegate>(_ delegate: Delega
 
 #### Parameters
 
-  - delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object alive if you want keep receiving updates.
+  - `delegate`: The object used as a delegate. It's referenced weakly, so you need to keep the object alive if you want keep receiving updates.
 
 ### `mute(completion:)`
 
@@ -88,11 +88,11 @@ func mute(completion: ((Error?) -> Void)? = nil)
 
 #### Parameters
 
-  - completion: The completion. Will be called on a **callbackQueue** when the network request is finished. If request fails, the completion will be called with an error.
+  - `completion`: The completion. Will be called on a **`callbackQueue`** when the network request is finished. If request fails, the completion will be called with an error.
 
 ### `unmute(completion:)`
 
-Unmutes the user this controller manages.
+Un-mutes the user this controller manages.
 
 ``` swift
 func unmute(completion: ((Error?) -> Void)? = nil) 
@@ -100,7 +100,7 @@ func unmute(completion: ((Error?) -> Void)? = nil)
 
 #### Parameters
 
-  - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+  - `completion`: The completion. Will be called on a **`callbackQueue`** when the network request is finished.
 
 ### `flag(completion:)`
 
@@ -112,11 +112,11 @@ func flag(completion: ((Error?) -> Void)? = nil)
 
 #### Parameters
 
-  - completion: The completion. Will be called on a **callbackQueue** when the network request is finished. If request fails, the completion will be called with an error.
+  - `completion`: The completion. Will be called on a **`callbackQueue`** when the network request is finished. If request fails, the completion will be called with an error.
 
 ### `unflag(completion:)`
 
-Unflags the user this controller manages.
+Un-flags the user this controller manages.
 
 ``` swift
 func unflag(completion: ((Error?) -> Void)? = nil) 

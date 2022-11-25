@@ -2,7 +2,7 @@
 title: CurrentChatUserAvatarView
 ---
 
-A UIControl subclass that is designed to show the avatar of the currently logged in user.
+A `UIControl` subclass that is designed to show the avatar of the currently logged in user.
 
 ``` swift
 open class CurrentChatUserAvatarView: _Control, ThemeProvider 

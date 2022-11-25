@@ -85,7 +85,7 @@ override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = ni
 
 #### Parameters
 
-  - completion: The completion. Will be called on a **callbackQueue** when the network request is finished. If request fails, the completion will be called with an error.
+  - `completion`: The completion. Will be called on a **`callbackQueue`** when the network request is finished. If request fails, the completion will be called with an error.
 
 ### `setDelegate(_:)`
 
@@ -97,7 +97,7 @@ public func setDelegate<Delegate: ChatChannelWatcherListControllerDelegate>(_ de
 
 #### Parameters
 
-  - delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object alive if you want keep receiving updates.
+  - `delegate`: The object used as a delegate. It's referenced weakly, so you need to keep the object alive if you want keep receiving updates.
 
 ### `loadNextWatchers(limit:completion:)`
 
@@ -109,5 +109,5 @@ func loadNextWatchers(limit: Int = .channelWatchersPageSize, completion: ((Error
 
 #### Parameters
 
-  - limit: Limit for page size. Offset is defined automatically by the controller.
-  - completion: The completion. Will be called on a **callbackQueue** when the network request is finished. If request fails, the completion will be called with an error.
+  - `limit`: Limit for page size. Offset is defined automatically by the controller.
+  - `completion`: The completion. Will be called on a **`callbackQueue`** when the network request is finished. If request fails, the completion will be called with an error.

@@ -24,4 +24,4 @@ open func showMessageDeletionConfirmationAlert(confirmed: @escaping (Bool) -> Vo
 
 #### Parameters
 
-  - confirmed: Completion closure with a `Bool` parameter indicating whether the deletion has been confirmed or not.
+  - `confirmed`: Completion closure with a `Bool` parameter indicating whether the deletion has been confirmed or not.

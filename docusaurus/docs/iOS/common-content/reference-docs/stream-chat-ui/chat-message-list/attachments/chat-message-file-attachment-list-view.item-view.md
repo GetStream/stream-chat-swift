@@ -63,7 +63,7 @@ open private(set) lazy var loadingIndicator = components
 
 ### `actionIconImageView`
 
-imageView indicating action for the file attachment. (Download / Retry upload...)
+`imageView` indicating action for the file attachment. (Download / Retry upload...)
 
 ``` swift
 open private(set) lazy var actionIconImageView = UIImageView().withoutAutoresizingMaskConstraints
@@ -78,7 +78,7 @@ open private(set) lazy var mainContainerStackView: ContainerStackView = Containe
 
 ### `spinnerAndSizeStack`
 
-Stack containing loading indicator and label with fileSize.
+Stack containing loading indicator and label with file size.
 
 ``` swift
 open private(set) lazy var spinnerAndSizeStack: ContainerStackView = ContainerStackView()
@@ -87,7 +87,7 @@ open private(set) lazy var spinnerAndSizeStack: ContainerStackView = ContainerSt
 
 ### `fileNameAndSizeStack`
 
-Stack containing file name and and the size of the file.
+Stack containing file name and the size of the file.
 
 ``` swift
 open private(set) lazy var fileNameAndSizeStack: ContainerStackView = ContainerStackView()

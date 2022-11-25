@@ -2,7 +2,7 @@
 title: AttachmentAction.ActionStyle
 ---
 
-An attachment action style, e.g. primary button.
+An attachment action style, for example primary button.
 
 ``` swift
 public enum ActionStyle: String, Codable 
