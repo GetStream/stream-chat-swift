@@ -81,7 +81,7 @@ open class ChatMessageListVC: _ViewController,
     open var isScrollToBottomButtonVisible: Bool {
         let isMoreContentThanOnePage = listView.contentSize.height > listView.bounds.height
 
-        return !listView.isLastCellFullyVisible && isMoreContentThanOnePage || dataSource?.hasLoadedAllNextMessages == false
+        return !listView.isLastCellFullyVisible && isMoreContentThanOnePage || dataSource?.isFirstPageLoaded == false
     }
 
     /// A formatter that converts the message date to textual representation.
@@ -216,7 +216,7 @@ open class ChatMessageListVC: _ViewController,
 
     /// Action for `scrollToLatestMessageButton` that scroll to most recent message.
     @objc open func scrollToLatestMessage() {
-        guard dataSource?.hasLoadedAllNextMessages == true else {
+        guard dataSource?.isFirstPageLoaded == true else {
             jumpToFirstPage()
             return
         }
@@ -474,7 +474,7 @@ open class ChatMessageListVC: _ViewController,
         setScrollToLatestMessageButton(visible: isScrollToBottomButtonVisible)
 
         // If the user scrolled to the bottom, update the UI for the skipped messages
-        if listView.isLastCellFullyVisible && !listView.skippedMessages.isEmpty && dataSource?.hasLoadedAllNextMessages == true {
+        if listView.isLastCellFullyVisible && !listView.skippedMessages.isEmpty && dataSource?.isFirstPageLoaded == true {
             listView.reloadSkippedMessages()
         }
     }
@@ -673,8 +673,12 @@ private extension ChatMessageListVC {
     // MARK: - Message Updates Helpers
 
     func handleMessageUpdates(with changes: [ListChange<ChatMessage>], completion: (() -> Void)?) {
-        let isLoadingNextMessages = dataSource?.isLoadingNextMessages == true
-        let hasLoadedAllNextMessages = dataSource?.hasLoadedAllNextMessages == true
+        let pageSize = dataSource?.pageSize ?? .channelsPageSize
+        let numberOfSkippedMessages = listView.skippedMessages.count
+        let isInsertionAtTheBottom = changes.first(where: { $0.indexPath.item - numberOfSkippedMessages == 0 }) != nil
+        let isLoadingNextMessages = changes.map(\.isInsertion).count == pageSize && isInsertionAtTheBottom
+
+        let isFirstPageLoaded = dataSource?.isFirstPageLoaded == true
         let isJumpingToMessage = dataSource?.isJumpingToMessage == true
 
         let newestChange = changes.first(where: { $0.indexPath.item == 0 })
@@ -687,7 +691,7 @@ private extension ChatMessageListVC {
         // notify that the first page needs to be loaded.
         if let channelLastMessageAt = dataSource?.channel(for: self)?.lastMessageAt,
            let newestChange = changes.first(where: { $0.item.createdAt == channelLastMessageAt }) {
-            if newestChange.item.isSentByCurrentUser && newestChange.isInsertion && !hasLoadedAllNextMessages && !isJumpingToMessage {
+            if newestChange.item.isSentByCurrentUser && newestChange.isInsertion && !isFirstPageLoaded && !isJumpingToMessage {
                 jumpToFirstPage()
                 return
             }
@@ -706,7 +710,7 @@ private extension ChatMessageListVC {
             self?.scrollPendingMessageIfNeeded()
 
             // Calculate new content offset after loading next page
-            let shouldAdjustContentOffset = !hasLoadedAllNextMessages && isLoadingNextMessages
+            let shouldAdjustContentOffset = !isFirstPageLoaded && isLoadingNextMessages
             if shouldAdjustContentOffset {
                 self?.adjustContentOffset(oldContentOffset: oldContentOffset, oldContentSize: oldContentSize)
             }
@@ -716,7 +720,7 @@ private extension ChatMessageListVC {
                 if newestChangeIsInsertionOrMove, let newMessage = newestChange?.item {
                     // Scroll to the bottom if the new message was sent by
                     // the current user, or moved by the current user
-                    if newMessage.isSentByCurrentUser && hasLoadedAllNextMessages && !isJumpingToMessage {
+                    if newMessage.isSentByCurrentUser && isFirstPageLoaded && !isJumpingToMessage {
                         self?.scrollToMostRecentMessage()
                     }
 
@@ -730,7 +734,7 @@ private extension ChatMessageListVC {
 
                 self?.reloadPreviousMessagesForVisibleRemoves(with: changes)
 
-                if hasLoadedAllNextMessages {
+                if isFirstPageLoaded {
                     self?.reloadPreviousMessageWhenInsertingNewMessage()
                 }
             }

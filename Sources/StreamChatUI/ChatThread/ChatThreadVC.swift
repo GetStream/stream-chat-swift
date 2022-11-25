@@ -13,8 +13,6 @@ open class ChatThreadVC: _ViewController,
     ChatMessageListVCDelegate,
     ChatMessageControllerDelegate,
     EventsControllerDelegate {
-    public var isJumpingToMessage: Bool = false
-
     /// Controller for observing data changes within the channel
     open var channelController: ChatChannelController!
 
@@ -163,18 +161,19 @@ open class ChatThreadVC: _ViewController,
 
     public var messagePendingScrolling: ChatMessage?
 
-    public var isLoadingNextMessages: Bool {
-        false
-    }
-
+    // JUMPTODO: Remove
     public var isLoadingPreviousMessages: Bool = false
 
-    public var hasLoadedAllPreviousMessages: Bool {
+    public var isFirstPageLoaded: Bool {
         false
     }
 
-    public var hasLoadedAllNextMessages: Bool {
+    public var isJumpingToMessage: Bool {
         false
+    }
+
+    public var pageSize: Int {
+        25
     }
 
     // This property is a bit redundant after the difference kit changes. Should be removed in v5.
@@ -218,10 +217,11 @@ open class ChatThreadVC: _ViewController,
     }
 
     open func chatMessageListVCShouldLoadFirstPage(_ vc: ChatMessageListVC) {
-        // JUMPTODO: Finish
+        // JUMPTODO:
     }
 
     open func loadPreviousMessages() {
+        // JUMPTODO:
         guard !isLoadingPreviousMessages else {
             return
         }

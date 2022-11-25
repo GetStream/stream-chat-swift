@@ -403,18 +403,6 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
                     log.debug("didUpdateMessages: \(changes.map(\.debugDescription))")
 
                     $0.channelController(self, didUpdateMessages: changes)
-
-                    // We only say that we finished loading next/previous message after the didUpdateMessages
-                    // callback so that we can perform specific logic inside didUpdateMessages callback
-                    let numberOfInsertions = changes.map(\.isInsertion).count
-                    let pageSize = self.channelQuery.pagination?.pageSize ?? .channelsPageSize
-                    let isNewPageInserted = numberOfInsertions == pageSize
-                    if isNewPageInserted && self.isLoadingNextMessages {
-                        self.isLoadingNextMessages = false
-                    }
-                    if isNewPageInserted && self.isLoadingPreviousMessages {
-                        self.isLoadingPreviousMessages = false
-                    }
                 }
             }
 
@@ -798,13 +786,13 @@ public extension ChatChannelController {
         isLoadingPreviousMessages = true
         channelQuery.pagination = MessagesPagination(pageSize: limit, parameter: .lessThan(messageId))
         updater.update(channelQuery: channelQuery, isInRecoveryMode: false, completion: { result in
+            self.isLoadingPreviousMessages = false
             switch result {
             case let .success(payload):
                 self.updateOldestFetchedMessageId(with: payload)
                 self.hasLoadedAllPreviousMessages = payload.messages.count < limit
                 self.callback { completion?(nil) }
             case let .failure(error):
-                self.isLoadingPreviousMessages = false
                 self.callback { completion?(error) }
             }
         })
@@ -842,13 +830,13 @@ public extension ChatChannelController {
         isLoadingNextMessages = true
         channelQuery.pagination = MessagesPagination(pageSize: limit, parameter: .greaterThan(messageId))
         updater.update(channelQuery: channelQuery, isInRecoveryMode: false, completion: { result in
+            self.isLoadingNextMessages = false
             switch result {
             case let .success(payload):
                 self.updateNewestFetchedMessageId(with: payload)
                 self.hasLoadedAllNextMessages = payload.channel.lastMessageAt == payload.messages.last?.createdAt
                 self.callback { completion?(nil) }
             case let .failure(error):
-                self.isLoadingNextMessages = false
                 self.callback { completion?(error) }
             }
         })

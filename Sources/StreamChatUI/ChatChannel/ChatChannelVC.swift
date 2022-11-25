@@ -187,20 +187,12 @@ open class ChatChannelVC: _ViewController,
         channelController.isJumpingToMessage
     }
 
-    public var isLoadingNextMessages: Bool {
-        channelController.isLoadingNextMessages
-    }
-
-    public var isLoadingPreviousMessages: Bool {
-        channelController.isLoadingPreviousMessages
-    }
-
-    public var hasLoadedAllNextMessages: Bool {
+    public var isFirstPageLoaded: Bool {
         channelController.hasLoadedAllNextMessages
     }
 
-    public var hasLoadedAllPreviousMessages: Bool {
-        channelController.hasLoadedAllPreviousMessages
+    public var pageSize: Int {
+        channelController.channelQuery.pagination?.pageSize ?? 0
     }
     
     open func channel(for vc: ChatMessageListVC) -> ChatChannel? {
