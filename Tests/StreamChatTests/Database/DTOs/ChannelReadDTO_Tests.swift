@@ -323,11 +323,12 @@ private class MessageListObserver {
         )
     }
 
-    init(cid: ChannelId, context: NSManagedObjectContext) {
+    init(cid: ChannelId, context: NSManagedObjectContext, pageSize: Int = .messagesPageSize) {
         databaseObserver = .init(
             context: context,
             fetchRequest: MessageDTO.messagesFetchRequest(
                 for: cid,
+                pageSize: pageSize,
                 deletedMessagesVisibility: .alwaysVisible,
                 shouldShowShadowedMessages: false
             ),

@@ -371,11 +371,13 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
                 shouldShowShadowedMessages = self.client.databaseContainer.viewContext.shouldShowShadowedMessages
             }
 
+            let pageSize = channelQuery.pagination?.pageSize ?? .messagesPageSize
             let observer = ListDatabaseObserverWrapper(
                 isBackground: StreamRuntimeCheck._isBackgroundMappingEnabled,
                 database: client.databaseContainer,
                 fetchRequest: MessageDTO.messagesFetchRequest(
                     for: cid,
+                    pageSize: pageSize,
                     sortAscending: sortAscending,
                     deletedMessagesVisibility: deletedMessageVisibility ?? .visibleForCurrentUser,
                     shouldShowShadowedMessages: shouldShowShadowedMessages ?? false

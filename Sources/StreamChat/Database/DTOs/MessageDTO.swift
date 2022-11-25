@@ -281,6 +281,7 @@ class MessageDTO: NSManagedObject {
     /// Returns a fetch request for messages from the channel with the provided `cid`.
     static func messagesFetchRequest(
         for cid: ChannelId,
+        pageSize: Int,
         sortAscending: Bool = false,
         deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility,
         shouldShowShadowedMessages: Bool
@@ -292,12 +293,15 @@ class MessageDTO: NSManagedObject {
             deletedMessagesVisibility: deletedMessagesVisibility,
             shouldShowShadowedMessages: shouldShowShadowedMessages
         )
+        request.fetchLimit = pageSize
+        request.fetchBatchSize = pageSize
         return request
     }
 
     /// Returns a fetch request for replies for the specified `parentMessageId`.
     static func repliesFetchRequest(
         for messageId: MessageId,
+        pageSize: Int,
         sortAscending: Bool = false,
         deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility,
         shouldShowShadowedMessages: Bool
@@ -309,6 +313,8 @@ class MessageDTO: NSManagedObject {
             deletedMessagesVisibility: deletedMessagesVisibility,
             shouldShowShadowedMessages: shouldShowShadowedMessages
         )
+        request.fetchLimit = pageSize
+        request.fetchBatchSize = pageSize
         return request
     }
 

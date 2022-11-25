@@ -618,10 +618,12 @@ private extension ChatMessageController {
                 .deletedMessagesVisibility ?? .visibleForCurrentUser
             let shouldShowShadowedMessages = self.client.databaseContainer.viewContext.shouldShowShadowedMessages ?? false
 
+            let pageSize: Int = .messagesPageSize
             let observer = self.environment.repliesObserverBuilder(
                 self.client.databaseContainer.viewContext,
                 MessageDTO.repliesFetchRequest(
                     for: self.messageId,
+                    pageSize: pageSize,
                     sortAscending: sortAscending,
                     deletedMessagesVisibility: deletedMessageVisibility,
                     shouldShowShadowedMessages: shouldShowShadowedMessages
