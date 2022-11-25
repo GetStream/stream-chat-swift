@@ -217,7 +217,7 @@ open class ChatThreadVC: _ViewController,
         return layoutOptions
     }
 
-    open func chatMessageListVCShouldJumpToFirstPage(_ vc: ChatMessageListVC) {
+    open func chatMessageListVCShouldLoadFirstPage(_ vc: ChatMessageListVC) {
         // JUMPTODO: Finish
     }
 

@@ -229,7 +229,7 @@ open class ChatChannelVC: _ViewController,
         )
     }
 
-    open func chatMessageListVCShouldJumpToFirstPage(
+    open func chatMessageListVCShouldLoadFirstPage(
         _ vc: ChatMessageListVC
     ) {
         channelController.loadFirstPage()

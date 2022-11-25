@@ -56,8 +56,11 @@ public protocol ChatMessageListVCDelegate: AnyObject {
         didTapOnQuotedMessage quotedMessage: ChatMessage
     )
 
-    // JUMPTODO:
-    func chatMessageListVCShouldJumpToFirstPage(
+    /// Tells the delegate that it should load the first page.
+    ///
+    /// Ex: The user tapped on scroll to the bottom or sent a new message when the first page is not currently in the UI.
+    /// - Parameter vc: The message list informing the delegate of this event.
+    func chatMessageListVCShouldLoadFirstPage(
         _ vc: ChatMessageListVC
     )
 }

@@ -217,9 +217,7 @@ open class ChatMessageListVC: _ViewController,
     /// Action for `scrollToLatestMessageButton` that scroll to most recent message.
     @objc open func scrollToLatestMessage() {
         guard dataSource?.hasLoadedAllNextMessages == true else {
-            delegate?.chatMessageListVCShouldJumpToFirstPage(self)
-            scrollToLatestMessageButton.isHidden = true
-            listView.reloadSkippedMessages()
+            jumpToFirstPage()
             return
         }
         scrollToMostRecentMessage()
@@ -690,9 +688,7 @@ private extension ChatMessageListVC {
         if let channelLastMessageAt = dataSource?.channel(for: self)?.lastMessageAt,
            let newestChange = changes.first(where: { $0.item.createdAt == channelLastMessageAt }) {
             if newestChange.item.isSentByCurrentUser && newestChange.isInsertion && !hasLoadedAllNextMessages && !isJumpingToMessage {
-                delegate?.chatMessageListVCShouldJumpToFirstPage(self)
-                scrollToLatestMessageButton.isHidden = true
-                listView.reloadSkippedMessages()
+                jumpToFirstPage()
                 return
             }
         }
@@ -789,5 +785,11 @@ private extension ChatMessageListVC {
         visibleRemoves.forEach {
             listView.reloadRows(at: [$0.indexPath], with: .none)
         }
+    }
+
+    func jumpToFirstPage() {
+        delegate?.chatMessageListVCShouldLoadFirstPage(self)
+        scrollToLatestMessageButton.isHidden = true
+        listView.reloadSkippedMessages()
     }
 }
