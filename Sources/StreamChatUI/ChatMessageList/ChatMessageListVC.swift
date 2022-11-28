@@ -479,6 +479,10 @@ open class ChatMessageListVC: _ViewController,
         }
     }
 
+    open func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+        setScrollToLatestMessageButton(visible: isScrollToBottomButtonVisible)
+    }
+
     // MARK: - ChatMessageListScrollOverlayDataSource
 
     open func scrollOverlay(
