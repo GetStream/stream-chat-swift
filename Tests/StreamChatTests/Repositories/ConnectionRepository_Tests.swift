@@ -154,7 +154,7 @@ final class ConnectionRepository_Tests: XCTestCase {
         XCTAssertNil(repository.connectionId)
 
         let expectation = self.expectation(description: "connect completes")
-        repository.disconnect { expectation.fulfill() }
+        repository.disconnect(source: .userInitiated) { expectation.fulfill() }
 
         waitForExpectations(timeout: 0.1)
 
@@ -176,7 +176,7 @@ final class ConnectionRepository_Tests: XCTestCase {
         )
 
         let expectation = self.expectation(description: "connect completes")
-        repository.disconnect { expectation.fulfill() }
+        repository.disconnect(source: .userInitiated) { expectation.fulfill() }
 
         waitForExpectations(timeout: 0.1)
 
@@ -190,7 +190,7 @@ final class ConnectionRepository_Tests: XCTestCase {
         XCTAssertNotNil(repository.connectionId)
 
         let expectation = self.expectation(description: "connect completes")
-        repository.disconnect { expectation.fulfill() }
+        repository.disconnect(source: .userInitiated) { expectation.fulfill() }
 
         let disconnectCompletion = try XCTUnwrap(webSocketClient.disconnect_completion)
         disconnectCompletion()

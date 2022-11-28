@@ -330,22 +330,6 @@ final class AuthenticationRepository_Tests: XCTestCase {
 
     // Prepare environment on a successful token retrieval
 
-    private class AuthenticationRepositoryDelegateMock: AuthenticationRepositoryDelegate {
-        var newState: EnvironmentState?
-        var clearDataCalls: Int = 0
-        var newStateCalls: Int = 0
-
-        func didFinishSettingUpAuthenticationEnvironment(for state: EnvironmentState) {
-            newStateCalls += 1
-            newState = state
-        }
-
-        func clearCurrentUserData(completion: @escaping (Error?) -> Void) {
-            clearDataCalls += 1
-            completion(nil)
-        }
-    }
-
     func test_connectUser_prepareEnvironment_firstConnection() {
         let delegate = AuthenticationRepositoryDelegateMock()
         let userId = "user1"
@@ -651,6 +635,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         XCTAssertEqual(receivedError, mockedError)
     }
 
+    // Theoretic approach: Calling refresh token 3 times on the same thread, without any delay
     func test_refreshToken_multipleCalls_theoreticApproach() throws {
         // Adding delay otherwise all the execution is 100% sync and we cannot simulate the scenario
         try setTokenProvider(mockedResult: .success(.unique()), delay: .milliseconds(10))
@@ -671,6 +656,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         XCTAssertCall(RetryStrategy_Spy.Signature.resetConsecutiveFailures, on: retryStrategy, times: 1)
     }
 
+    // Realistic approach: Calling refresh token 3 times. The 2nd and 3rd times are called in the following runloop
     func test_refreshToken_multipleCalls_forcingRealisticDispatch() throws {
         // Adding delay otherwise all the execution is 100% sync and we cannot simulate the scenario
         try setTokenProvider(mockedResult: .success(.unique()), delay: .milliseconds(10))
@@ -844,5 +830,21 @@ final class AuthenticationRepository_Tests: XCTestCase {
 
         waitForExpectations(timeout: 0.1)
         connectionRepository.cleanUp()
+    }
+}
+
+private class AuthenticationRepositoryDelegateMock: AuthenticationRepositoryDelegate {
+    var newState: EnvironmentState?
+    var clearDataCalls: Int = 0
+    var newStateCalls: Int = 0
+
+    func didFinishSettingUpAuthenticationEnvironment(for state: EnvironmentState) {
+        newStateCalls += 1
+        newState = state
+    }
+
+    func clearCurrentUserData(completion: @escaping (Error?) -> Void) {
+        clearDataCalls += 1
+        completion(nil)
     }
 }

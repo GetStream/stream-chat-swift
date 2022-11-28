@@ -378,19 +378,11 @@ final class CurrentUserController_Tests: XCTestCase {
 
         // THEN
         // updateUser is called from main queue and actually finishes
-
-        // Delay execution for a bit to make sure background thread acquires lock
-        // (from Atomic, in EntityDatabaseObserver.item) if we don't sleep, main thread acquires lock first
-        // & no deadlock occurs
-        let exp = expectation(description: "completion called")
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            self.controller.updateUserData() { _ in
-                exp.fulfill()
-            }
+        delayExecution(of: { completion in
+            self.controller.updateUserData(completion: completion)
+        }, onCompletion: {
             self.env.currentUserUpdater.updateUserData_completion?(nil)
-        }
-
-        wait(for: [exp], timeout: 0.2)
+        })
     }
 
     // MARK: - Device endpoints
@@ -452,19 +444,11 @@ final class CurrentUserController_Tests: XCTestCase {
         
         // THEN
         // synchronizeDevices is called from main queue and actually finishes
-
-        // Delay execution for a bit to make sure background thread acquires lock
-        // (from Atomic, in EntityDatabaseObserver.item) if we don't sleep, main thread acquires lock first
-        // & no deadlock occurs
-        let exp = expectation(description: "completion called")
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            self.controller.synchronizeDevices() { _ in
-                exp.fulfill()
-            }
+        delayExecution(of: { completion in
+            self.controller.synchronizeDevices(completion: completion)
+        }, onCompletion: {
             self.env.currentUserUpdater.fetchDevices_completion?(nil)
-        }
-
-        wait(for: [exp], timeout: 0.2)
+        })
     }
     
     // MARK: addDevice
@@ -569,19 +553,11 @@ final class CurrentUserController_Tests: XCTestCase {
 
         // THEN
         // addDevice is called from main queue and actually finishes
-
-        // Delay execution for a bit to make sure background thread acquires lock
-        // (from Atomic, in EntityDatabaseObserver.item) if we don't sleep, main thread acquires lock first
-        // & no deadlock occurs
-        let exp = expectation(description: "completion called")
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            self.controller.addDevice(.apn(token: .init())) { _ in
-                exp.fulfill()
-            }
+        delayExecution(of: { completion in
+            self.controller.addDevice(.apn(token: .init()), completion: completion)
+        }, onCompletion: {
             self.env.currentUserUpdater.addDevice_completion?(nil)
-        }
-
-        wait(for: [exp], timeout: 0.2)
+        })
     }
     
     // MARK: removeDevice
@@ -675,19 +651,11 @@ final class CurrentUserController_Tests: XCTestCase {
 
         // THEN
         // updateUser is called from main queue and actually finishes
-
-        // Delay execution for a bit to make sure background thread acquires lock
-        // (from Atomic, in EntityDatabaseObserver.item) if we don't sleep, main thread acquires lock first
-        // & no deadlock occurs
-        let exp = expectation(description: "completion called")
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            self.controller.removeDevice(id: .unique) { _ in
-                exp.fulfill()
-            }
+        delayExecution(of: { completion in
+            self.controller.removeDevice(id: .unique, completion: completion)
+        }, onCompletion: {
             self.env.currentUserUpdater.removeDevice_completion?(nil)
-        }
-
-        wait(for: [exp], timeout: 0.2)
+        })
     }
     
     // MARK: - Reload user if needed
@@ -760,6 +728,21 @@ final class CurrentUserController_Tests: XCTestCase {
         
         // THEN
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+    }
+
+    // Delay execution for a bit to make sure background thread acquires lock
+    // (from Atomic, in EntityDatabaseObserver.item) if we don't sleep, main thread acquires lock first
+    // & no deadlock occurs
+    private func delayExecution(of function: @escaping (((Error?) -> Void)?) -> Void, onCompletion: (() -> Void)?) {
+        let exp = expectation(description: "completion called")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            function() { _ in
+                exp.fulfill()
+            }
+            onCompletion?()
+        }
+
+        wait(for: [exp], timeout: 0.2)
     }
 }
 
