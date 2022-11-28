@@ -454,7 +454,7 @@ class ChannelUpdater: Worker {
         localFileURL: URL,
         cid: ChannelId,
         progress: ((Double) -> Void)? = nil,
-        completion: @escaping ((Result<URL, Error>) -> Void)
+        completion: @escaping ((Result<UploadedAttachment, Error>) -> Void)
     ) {
         do {
             let attachmentFile = try AttachmentFile(url: localFileURL)

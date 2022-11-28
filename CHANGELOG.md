@@ -8,12 +8,39 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - CurrentUser object now reports wether user has chosen to hide their online status with isInvisible property.
 
 ### 🐞 Fixed
+- Avoid double completion calls when getting/fetching tokens [#2387](https://github.com/GetStream/stream-chat-swift/pull/2387)
+
+### 🔄 Changed
+
+# [4.24.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.24.1)
+_November 23, 2022_
+
+## StreamChat
+### 🐞 Fixed
+- Avoid double completion calls when getting/fetching tokens [#2387](https://github.com/GetStream/stream-chat-swift/pull/2387)
+
+# [4.24.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.24.0)
+_November 15, 2022_
+
+## StreamChat
+### 🔄 Changed
+- `channelController.uploadFile()` and `channelController.uploadImage()` are deprecated in favour of `channelController.uploadAttachment()` [#2369](https://github.com/GetStream/stream-chat-swift/pull/2369) 
+- `imageAttachmentPayload.imagePreviewURL` is deprecated since it was misleading, it was basically using the original `imageURL` [#2369](https://github.com/GetStream/stream-chat-swift/pull/2369)
+
+### ✅ Added
+- Added new `AttachmentUploader` to allow changing attachment info with custom CDN [#2369](https://github.com/GetStream/stream-chat-swift/pull/2369)
+
+### 🐞 Fixed
 - Add timeout for token/connectionId providers so that `ChatClient.connect()` completes even in edge cases where we cannot get the needed data [#2361](https://github.com/GetStream/stream-chat-swift/pull/2361)
 - Stop spamming the console with "Socket is not connected" error when token is being refreshed [#2361](https://github.com/GetStream/stream-chat-swift/pull/2361)
 - Update documentation around `CurrentUserController.currentUser` to state that a non-nil value does not mean there is a valid authentication [#2361](https://github.com/GetStream/stream-chat-swift/pull/2361)
 - Allow flow where `ChatClient.setToken()` is called before `ChatClient.connect()` [#2361](https://github.com/GetStream/stream-chat-swift/pull/2361)
 - Properly recover from a missing/expired token on the first execution of `TokenProvider` [#2361](https://github.com/GetStream/stream-chat-swift/pull/2361)
 - Fix data races created by `AsyncOperation` looped execution when refreshing tokens [#2361](https://github.com/GetStream/stream-chat-swift/pull/2361)
+
+## StreamChatUI
+### 🐞 Fixed
+- Fix issue where cell content would not be updated when order changes in Channel List [#2371](https://github.com/GetStream/stream-chat-swift/pull/2371)
 
 # [4.23.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.23.0)
 _October 27, 2022_

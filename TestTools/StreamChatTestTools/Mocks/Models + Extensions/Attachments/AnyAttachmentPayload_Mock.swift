@@ -10,6 +10,7 @@ public extension AnyAttachmentPayload {
     static let mockFileWithLongName = try! Self(localFileURL: .localYodaQuoteLongFileName, attachmentType: .file)
     static let mockImage = try! Self(localFileURL: .localYodaImage, attachmentType: .image)
     static let mockVideo = try! Self(localFileURL: .localYodaQuote, attachmentType: .video)
+    static let mockAudio = try! Self(localFileURL: .localYodaQuote, attachmentType: .audio)
 }
 
 public extension AnyAttachmentPayload {

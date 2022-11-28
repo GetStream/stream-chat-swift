@@ -30,7 +30,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         ...
-        Components.default.messageContentView = MyCustomMessageView.self       
+        Components.default.messageContentView = MyCustomMessageView.self
         ...
     }
 }
@@ -70,14 +70,13 @@ Finally, this last lifecycle is called whenever the data of the component change
 
 In addition to this, view components expose their content with the `content` property. For instance the `MessageContent` component `content`'s property holds the `ChatMessage` object.
 
-
 ## Example: Custom Avatar
 
 Let's say, we want to change the appearance of avatars by adding a border. In this case, since it is a pretty simple example, we only need to change the appearance of the component:
 
 ```swift
 class BorderedAvatarView: ChatAvatarView {
-    
+
     override func setUpAppearance() {
         super.setUpAppearance()
 
@@ -88,6 +87,7 @@ class BorderedAvatarView: ChatAvatarView {
 ```
 
 Then, we have to tell the SDK to use our custom subclass instead of the default type:
+
 ```swift
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
@@ -118,7 +118,9 @@ class CustomQuotedChatMessageView: QuotedChatMessageView {
     }
 }
 ```
+
 Then, set the custom component:
+
 ```swift
 Components.default.quotedMessageView = CustomQuotedChatMessageView.self
 ```
@@ -142,21 +144,21 @@ First, we need to create a custom subclass of `ChatChannelListItemView`, which i
 ```swift
 class iMessageChannelListItemView: ChatChannelListItemView {
     /// Blue "dot" indicator visible for channels with unread messages
-    private lazy var customUnreadView = UIView()    
+    private lazy var customUnreadView = UIView()
 }
 ```
 
 Then, we just follow the structure defined by the lifecycle methods and apply the proper customization for each step:
+
 ```swift
 class iMessageChannelListItemView: ChatChannelListItemView {
     private lazy var customUnreadView = UIView()
 
     override func setUpAppearance() {
         super.setUpAppearance()
-`
+
         customUnreadView.backgroundColor = tintColor
         customUnreadView.layer.masksToBounds = true
-        customUnreadView.layer.cornerRadius = 5
         customUnreadView.clipsToBounds = true
     }
 
@@ -186,6 +188,7 @@ class iMessageChannelListItemView: ChatChannelListItemView {
 ```
 
 Finally, don't forget to change the `Components` configuration:
+
 ```swift
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {

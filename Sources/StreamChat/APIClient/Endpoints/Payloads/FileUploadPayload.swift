@@ -6,6 +6,9 @@ import Foundation
 
 /// A file upload response.
 struct FileUploadPayload: Decodable {
-    /// An uploaded file URL.
-    let file: URL
+    let fileURL: URL
+
+    enum CodingKeys: String, CodingKey {
+        case fileURL = "file"
+    }
 }

@@ -80,7 +80,7 @@ As you can see if you want to use the `ComposerVC` in your custom message list v
 
 ### Customization
 
-The `ComposerVC` and `ComposerView` are highly customizable in both styling and functionality. In case you want to change the styling, adding new views, and new functionality you can take a look at the [Customize Message Composer](../../../guides/customize-message-composer) guide. If you want to introduce a new custom attachment and make the composer support it, please read the [Message Composer Custom Attachments](../../../guides/working-with-attachments) guide.
+The `ComposerVC` and `ComposerView` are highly customizable in both styling and functionality. In case you want to change the styling, adding new views, and new functionality you can take a look at the [Customize Message Composer](../../guides/customize-message-composer) guide. If you want to introduce a new custom attachment and make the composer support it, please read the [Message Composer Custom Attachments](../../guides/working-with-attachments) guide.
 
 ### Properties
 
@@ -90,7 +90,7 @@ The complete list of all the `ComposerVC`'s components.
 
 ## Composer View
 
-The `ComposerView` class holds all the composer subviews and implements the composer layout. The composer layout is built with multiple `ContainerStackView`'s, which are very similar how `UIStackView`'s work, you can read more about them [here](../uikit/custom-components#setuplayout). This makes it very customizable since to change the layout you only need to move/remove/add views from different containers.
+The `ComposerView` class holds all the composer subviews and implements the composer layout. The composer layout is built with multiple `ContainerStackView`'s, which are very similar how `UIStackView`'s work, you can read more about them [here](../../uikit/custom-components#setuplayout). This makes it very customizable since to change the layout you only need to move/remove/add views from different containers.
 
 In the picture below you can see all the containers and main views of the composer:
 

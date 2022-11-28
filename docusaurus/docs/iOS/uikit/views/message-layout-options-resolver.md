@@ -28,7 +28,7 @@ final class YTMessageLayoutOptionsResolver: ChatMessageLayoutOptionsResolver {
         appearance: Appearance
     ) -> ChatMessageLayoutOptions {
         var options = super.optionsForMessage(at: indexPath, in: channel, with: messages, appearance: appearance)
-        
+
         // Remove the message options that are not needed in our case
         options.remove([
             .flipped,
@@ -42,10 +42,10 @@ final class YTMessageLayoutOptionsResolver: ChatMessageLayoutOptionsResolver {
             .onlyVisibleForYouIndicator,
             .errorIndicator
         ])
-        
+
         // Always show the avatar, timestamp and author name for each message
         options.insert([.avatar, .timestamp, .authorName])
-        
+
         return options
     }
 }
@@ -72,11 +72,11 @@ Describes the layout for a message based on its content and position in the mess
 ### Left-aligning All Messages
 
 By default Stream Chat aligns messages from other users on the left and messages from other users on the right, you can left-align all messages by creating your custom left-aligned `MessageLayoutOptionsResolver` like this:
- 
+
  ```swift
  class LeftAlignedMessageLayoutOptionsResolver: ChatMessageLayoutOptionsResolver {
      override func optionsForMessage(at indexPath: IndexPath, in channel: ChatChannel, with messages: AnyRandomAccessCollection<ChatMessage>, appearance: Appearance) -> ChatMessageLayoutOptions {
-         // Get options for the message at given indexpath to change it. 
+         // Get options for the message at given indexpath to change it.
          var options = super.optionsForMessage(at: indexPath, in: channel, with: messages, appearance: appearance)
          // First it's needed to disable the flipping of sides when messages is sent from current user
          options.remove(.flipped)
@@ -110,7 +110,7 @@ class NoBubblesMessageLayoutOptionsResolver: ChatMessageLayoutOptionsResolver {
         return options
     }
 }
-``` 
+```
 
 ```swift
 Components.default.messageLayoutOptionsResolver = NoBubblesMessageLayoutOptionsResolver()
@@ -122,8 +122,8 @@ Components.default.messageLayoutOptionsResolver = NoBubblesMessageLayoutOptionsR
 
 ### Disabling Message Groups
 
-The default behaviour of `ChatMessageLayoutOptionsResolver` is to check whether messages are grouped or not. 
-The `isLastInSequence` property enables this operation when grouping messages. 
+The default behaviour of `ChatMessageLayoutOptionsResolver` is to check whether messages are grouped or not.
+The `isLastInSequence` property enables this operation when grouping messages.
 
 ```swift
 
@@ -135,16 +135,19 @@ class NotGroupedMessageLayoutOptionsResolver: ChatMessageLayoutOptionsResolver {
         options.insert(.continuousBubble)
         options.insert(.timestamp)
         options.insert(.avatar)
-        
+
+        let messageIndex = messages.index(messages.startIndex, offsetBy: indexPath.item)
+        let message = messages[messageIndex]
+
         // Let's add authorName to the message when it's not send by current user.
         if !message.isSentByCurrentUser && !channel.isDirectMessageChannel {
             options.insert(.authorName)
         }
-        
+
         return options
     }
 }
-``` 
+```
 
 ```swift
 Components.default.messageLayoutOptionsResolver = NotGroupedMessageLayoutOptionsResolver()

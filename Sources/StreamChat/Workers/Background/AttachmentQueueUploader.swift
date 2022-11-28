@@ -19,10 +19,12 @@ import Foundation
 /// - Upload attachments in order declared by `locallyCreatedAt`
 /// - Start uploading attachments when connection status changes (offline -> online)
 ///
-class AttachmentUploader: Worker {
+class AttachmentQueueUploader: Worker {
     @Atomic private var pendingAttachmentIDs: Set<AttachmentId> = []
 
     private let observer: ListDatabaseObserver<AttachmentDTO, AttachmentDTO>
+
+    private let attachmentUpdater = AnyAttachmentUpdater()
 
     var minSignificantUploadingProgressChange: Double = 0.05
 
@@ -66,13 +68,11 @@ class AttachmentUploader: Worker {
 
     private func uploadNextAttachment() {
         database.write { [weak self] session in
-            guard
-                let attachmentID = self?.pendingAttachmentIDs.first
-            else { return }
+            guard let attachmentID = self?.pendingAttachmentIDs.first else {
+                return
+            }
 
-            guard
-                let attachment = session.attachment(id: attachmentID)?.asAnyModel()
-            else {
+            guard let attachment = session.attachment(id: attachmentID)?.asAnyModel() else {
                 self?.removeAttachmentIDAndContinue(attachmentID)
                 return
             }
@@ -81,18 +81,17 @@ class AttachmentUploader: Worker {
                 attachment,
                 progress: {
                     self?.updateAttachmentIfNeeded(
-                        attachmentID,
-                        newState: .uploading(progress: $0)
+                        attachmentId: attachmentID,
+                        uploadedAttachment: nil,
+                        newState: .uploading(progress: $0),
+                        completion: {}
                     )
                 },
                 completion: { result in
                     self?.updateAttachmentIfNeeded(
-                        attachmentID,
+                        attachmentId: attachmentID,
+                        uploadedAttachment: result.value,
                         newState: result.error == nil ? .uploaded : .uploadingFailed,
-                        attachmentUpdates: { attachmentDTO in
-                            guard case let .success(url) = result else { return }
-                            attachmentDTO.update(uploadedFileURL: url)
-                        },
                         completion: {
                             self?.removeAttachmentIDAndContinue(attachmentID)
                         }
@@ -108,13 +107,13 @@ class AttachmentUploader: Worker {
     }
 
     private func updateAttachmentIfNeeded(
-        _ id: AttachmentId,
+        attachmentId: AttachmentId,
+        uploadedAttachment: UploadedAttachment?,
         newState: LocalAttachmentState,
-        attachmentUpdates: @escaping (AttachmentDTO) throws -> Void = { _ in },
         completion: @escaping () -> Void = {}
     ) {
-        database.write({ [minSignificantUploadingProgressChange] session in
-            guard let attachmentDTO = session.attachment(id: id) else { return }
+        database.write({ [minSignificantUploadingProgressChange, weak self] session in
+            guard let attachmentDTO = session.attachment(id: attachmentId) else { return }
 
             var stateHasChanged: Bool {
                 guard
@@ -132,14 +131,42 @@ class AttachmentUploader: Worker {
             // Update attachment local state.
             attachmentDTO.localState = newState
 
-            // Apply further attachment updates.
-            try attachmentUpdates(attachmentDTO)
+            if let uploadedAttachment = uploadedAttachment {
+                var attachment = uploadedAttachment.attachment
+                let remoteUrl = uploadedAttachment.remoteURL
+
+                self?.updateRemoteUrl(of: &attachment, with: remoteUrl)
+
+                attachmentDTO.data = attachment.payload
+            }
         }, completion: {
             if let error = $0 {
-                log.error("Error changing localState for attachment with id \(id) to `\(newState)`: \(error)")
+                log.error("Error changing localState for attachment with id \(attachmentId) to `\(newState)`: \(error)")
             }
             completion()
         })
+    }
+
+    /// Update the remove url for each attachment payload type. Every other payload
+    /// update should be handled by the ``AttachmentUploader``.
+    private func updateRemoteUrl(of attachment: inout AnyChatMessageAttachment, with url: URL) {
+        let attachmentUpdater = AnyAttachmentUpdater()
+
+        attachmentUpdater.update(&attachment, forPayload: ImageAttachmentPayload.self) { payload in
+            payload.imageURL = url
+        }
+
+        attachmentUpdater.update(&attachment, forPayload: VideoAttachmentPayload.self) { payload in
+            payload.videoURL = url
+        }
+
+        attachmentUpdater.update(&attachment, forPayload: AudioAttachmentPayload.self) { payload in
+            payload.audioURL = url
+        }
+
+        attachmentUpdater.update(&attachment, forPayload: FileAttachmentPayload.self) { payload in
+            payload.assetURL = url
+        }
     }
 }
 

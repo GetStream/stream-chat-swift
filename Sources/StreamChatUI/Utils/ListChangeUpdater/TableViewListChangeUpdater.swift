@@ -2,7 +2,6 @@
 // Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
-import Foundation
 import StreamChat
 import UIKit
 
@@ -22,23 +21,6 @@ final class TableViewListChangeUpdater: ListChangeUpdater {
     ///   - changes: The provided changes reported by a list controller.
     ///   - completion: A callback when the changes are fully executed.
     func performUpdate<Item>(with changes: [ListChange<Item>], completion: ((_ finished: Bool) -> Void)? = nil) {
-        guard let indices = listChangeIndexPathResolver.resolve(
-            changes: changes
-        ) else {
-            tableView?.reloadData()
-            completion?(true)
-            return
-        }
-
-        tableView?.performBatchUpdates({
-            tableView?.deleteRows(at: Array(indices.remove), with: .none)
-            tableView?.insertRows(at: Array(indices.insert), with: .none)
-            tableView?.reloadRows(at: Array(indices.update), with: .none)
-            indices.move.forEach {
-                tableView?.moveRow(at: $0.fromIndex, to: $0.toIndex)
-            }
-        }, completion: { finished in
-            completion?(finished)
-        })
+        performUpdate(on: tableView, with: changes, pathResolver: listChangeIndexPathResolver, completion: completion)
     }
 }

@@ -4,15 +4,15 @@
 
 import Foundation
 
-/// API client that handles working with content (e.g. uploading attachments)
+/// The CDN client is responsible to upload files to a CDN.
 public protocol CDNClient {
-    /// Specifies maximum attachment size in bytes.
     static var maxAttachmentSize: Int64 { get }
 
+    /// Uploads attachment as a multipart/form-data and returns only the uploaded remote file.
     /// - Parameters:
-    ///   - attachment: An attachment to upload
-    ///   - progress: A closure that broadcasts upload progress
-    ///   - completion: Returns uploading result on upload completion or failure
+    ///   - attachment: An attachment to upload.
+    ///   - progress: A closure that broadcasts upload progress.
+    ///   - completion: Returns the uploaded file's information.
     func uploadAttachment(
         _ attachment: AnyChatMessageAttachment,
         progress: ((Double) -> Void)?,
@@ -39,12 +39,7 @@ class StreamCDNClient: CDNClient {
         session = URLSession(configuration: sessionConfiguration)
         self.decoder = decoder
     }
-      
-    /// Uploads attachment as a multipart/form-data
-    /// - Parameters:
-    ///   - attachment: An attachment to upload
-    ///   - progress: A closure that broadcasts upload progress
-    ///   - completion: Returns uploading result on upload completion or failure
+
     func uploadAttachment(
         _ attachment: AnyChatMessageAttachment,
         progress: ((Double) -> Void)? = nil,
@@ -62,7 +57,7 @@ class StreamCDNClient: CDNClient {
             mimeType: uploadingState.file.type.mimeType
         )
         let endpoint = Endpoint<FileUploadPayload>.uploadAttachment(with: attachment.id.cid, type: attachment.type)
-        
+
         encoder.encodeRequest(for: endpoint) { [weak self] (requestResult) in
             var urlRequest: URLRequest
             do {
@@ -72,7 +67,7 @@ class StreamCDNClient: CDNClient {
                 completion(.failure(error))
                 return
             }
-            
+
             let data = multipartFormData.getMultipartFormData()
             urlRequest.addValue("multipart/form-data; boundary=\(MultipartFormData.boundary)", forHTTPHeaderField: "Content-Type")
             urlRequest.httpBody = data
@@ -81,7 +76,7 @@ class StreamCDNClient: CDNClient {
                 log.warning("Callback called while self is nil", subsystems: .httpRequests)
                 return
             }
-            
+
             let task = self.session.dataTask(with: urlRequest) { [decoder = self.decoder] (data, response, error) in
                 do {
                     let decodedResponse: FileUploadPayload = try decoder.decodeRequestResponse(
@@ -89,12 +84,13 @@ class StreamCDNClient: CDNClient {
                         response: response,
                         error: error
                     )
-                    completion(.success(decodedResponse.file))
+
+                    completion(.success(decodedResponse.fileURL))
                 } catch {
                     completion(.failure(error))
                 }
             }
-            
+
             if let progressListener = progress {
                 let taskID = task.taskIdentifier
                 self._taskProgressObservers.mutate { observers in
@@ -109,7 +105,7 @@ class StreamCDNClient: CDNClient {
                     }
                 }
             }
-            
+
             task.resume()
         }
     }

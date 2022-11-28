@@ -23,6 +23,22 @@ enum ChannelListPage {
             format: "identifier LIKE 'titleLabel' AND label LIKE '\(withName)'")).firstMatch
     }
     
+    static var connectionStatus: XCUIElement {
+        if ProcessInfo().operatingSystemVersion.majorVersion == 12 {
+            return app.navigationBars.otherElements.firstMatch
+        } else {
+            return app.navigationBars.staticTexts.firstMatch
+        }
+    }
+    
+    enum ConnectionStatus: String {
+        case initialized
+        case connecting
+        case connected
+        case disconnecting
+        case disconnected
+    }
+    
     enum Attributes {
         static func name(in cell: XCUIElement) -> XCUIElement {
             cell.staticTexts["titleLabel"]

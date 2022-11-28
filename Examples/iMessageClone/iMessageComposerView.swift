@@ -37,9 +37,9 @@ final class iMessageComposerView: ComposerView {
         emojiButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
         emojiButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
     }
-    
-    override func setUpAppearance() {
-        super.setUpAppearance()
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
 
         // Adjust the input corner radius since width is now bigger
         inputMessageView.container.layer.cornerRadius = 18

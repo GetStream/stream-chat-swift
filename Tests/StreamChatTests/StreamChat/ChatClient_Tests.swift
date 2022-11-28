@@ -598,7 +598,7 @@ final class ChatClient_Tests: XCTestCase {
         XCTAssert(client.backgroundWorkers.contains { $0 is MessageSender })
         XCTAssert(client.backgroundWorkers.contains { $0 is NewUserQueryUpdater })
         XCTAssert(client.backgroundWorkers.contains { $0 is MessageEditor })
-        XCTAssert(client.backgroundWorkers.contains { $0 is AttachmentUploader })
+        XCTAssert(client.backgroundWorkers.contains { $0 is AttachmentQueueUploader })
         XCTAssertNotNil(client.connectionRecoveryHandler)
         
         AssertAsync.canBeReleased(&client)
@@ -1298,7 +1298,7 @@ private class TestEnvironment {
                     sessionConfiguration: $0,
                     requestEncoder: $1,
                     requestDecoder: $2,
-                    CDNClient: $3,
+                    attachmentUploader: $3,
                     tokenRefresher: $4,
                     queueOfflineRequest: $5
                 )

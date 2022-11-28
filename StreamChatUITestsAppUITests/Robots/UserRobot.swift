@@ -58,6 +58,13 @@ final class UserRobot: Robot {
         cells.allElementsBoundByIndex[channelCellIndex].safeTap()
         return self
     }
+    
+    @discardableResult
+    public func waitForJwtToExpire() -> Self {
+        let sleepTime = UInt32(StreamMockServer.jwtTimeout * 1000000)
+        usleep(sleepTime)
+        return self
+    }
 }
 
 // MARK: Message List

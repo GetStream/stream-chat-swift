@@ -112,18 +112,37 @@ public struct ChatClientConfig {
     /// - Parameter apiKey: The API key of the chat app the `ChatClient` connects to.
     ///
     
-    /// Allows to inject a custom API client for uploading attachments, if not specified `StreamCDNClient` is used
+    /// Allows to inject a custom API client for uploading attachments, if not specified, `StreamCDNClient` is used.
+    /// If a custom `AttachmentUploader` is provided, the custom `CDNClient` won't be used. You should use 1 of them only.
     public var customCDNClient: CDNClient?
+
+    /// Allows to inject a custom attachment uploader. It can be used to have more
+    /// control than `CDNClient` to allow changing the attachment payload.
+    /// This overrides the custom `CDNClient`. You should use 1 of them only.
+    public var customAttachmentUploader: AttachmentUploader?
     
     /// Returns max possible attachment size in bytes.
-    /// The value is taken from custom `maxAttachmentSize` type custom `CDNClient` type.
+    /// By default the value is taken from `CDNClient.maxAttachmentSize` type.
+    /// But it can be overridden by setting a value here.
     public var maxAttachmentSize: Int64 {
-        if let customCDNClient = customCDNClient {
-            return type(of: customCDNClient).maxAttachmentSize
-        } else {
-            return StreamCDNClient.maxAttachmentSize
+        // TODO: For v5 the maxAttachmentSize should be responsibility of the UI SDK.
+        // Since this is not even used in the StreamChat LLC SDK.
+        get {
+            if let overrideMaxAttachmentSize = self.overrideMaxAttachmentSize {
+                return overrideMaxAttachmentSize
+            } else if let customCDNClient = customCDNClient {
+                return type(of: customCDNClient).maxAttachmentSize
+            } else {
+                return StreamCDNClient.maxAttachmentSize
+            }
+        }
+        set {
+            overrideMaxAttachmentSize = newValue
         }
     }
+
+    /// Used to override the maxAttachmentSize, by setting the value in the config instead of relying on `CDNClient`.
+    private var overrideMaxAttachmentSize: Int64?
     
     /// Returns max number of attachments that can be attached to a message.
     ///

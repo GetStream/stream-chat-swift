@@ -16,7 +16,7 @@ Since the `ComposerView` is responsible for the composer's layout, if you want t
 
 After changing the layout through the following steps you should have the result of the picture above.
 
-First thing we need to do is to subclass the `ComposerView` and change it's layout. To have a better understand of how the `ComposerView`'s layout is structured it is recommended to read this page first, [here](../components/message-composer#composer-view).
+First thing we need to do is to subclass the `ComposerView` and change it's layout. To have a better understand of how the `ComposerView`'s layout is structured it is recommended to read this page first, [here](../../components/message-composer#composer-view).
 ```swift
 class iMessageComposerView: ComposerView {
     override func setUpLayout() {
@@ -36,9 +36,9 @@ class iMessageComposerView: ComposerView {
         attachmentButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
         attachmentButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
     }
-    
-    override func setUpAppearance() {
-        super.setUpAppearance()
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
 
         // Adjust the input corner radius to make the input rounder
         inputMessageView.container.layer.cornerRadius = 18
@@ -121,7 +121,7 @@ class iMessageComposerVC: ComposerVC {
 
     @objc func showEmojiPicker(sender: UIButton) {
 
-        // For the sake of making the guide simple, 
+        // For the sake of making the guide simple,
         // we use an alert controller to select emojis.
         let sheetAlertController = UIAlertController(
             title: "Emoji Picker",
@@ -192,8 +192,12 @@ class CustomChatSuggestionsVC: ChatSuggestionsVC {
 
         collectionView.layer.borderWidth = 1
         collectionView.layer.borderColor = appearance.colorPalette.border.cgColor
-        collectionView.layer.cornerRadius = 10
         view.layer.shadowOpacity = 0.0
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        collectionView.layer.cornerRadius = 10
     }
 }
 ```

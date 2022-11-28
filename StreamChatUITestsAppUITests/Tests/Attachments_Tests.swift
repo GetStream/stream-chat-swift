@@ -28,6 +28,8 @@ final class Attachments_Tests: StreamTestCase {
     func test_participantUploadsImage() throws {
         linkToScenario(withId: 29)
         
+        try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12, "Flaky on iOS 12")
+        
         GIVEN("user opens the channel") {
             userRobot.login().openChannel()
         }
@@ -42,6 +44,8 @@ final class Attachments_Tests: StreamTestCase {
     func test_participantUploadsVideo() throws {
         linkToScenario(withId: 31)
         
+        try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12, "Flaky on iOS 12")
+        
         GIVEN("user opens the channel") {
             userRobot.login().openChannel()
         }
@@ -52,19 +56,4 @@ final class Attachments_Tests: StreamTestCase {
             userRobot.assertVideo(isPresent: true)
         }
     }
-    
-    func test_participantUploadsFile() throws {
-        linkToScenario(withId: 33)
-        
-        GIVEN("user opens the channel") {
-            userRobot.login().openChannel()
-        }
-        WHEN("participant uploads a file") {
-            participantRobot.uploadAttachment(type: .file, waitBeforeSending: 2)
-        }
-        THEN("user can see uploaded file") {
-            userRobot.assertFile(isPresent: true)
-        }
-    }
-    
 }

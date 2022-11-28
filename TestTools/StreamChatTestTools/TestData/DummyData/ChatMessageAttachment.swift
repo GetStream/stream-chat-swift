@@ -6,7 +6,7 @@ import Foundation
 @testable import StreamChat
 
 extension AnyChatMessageAttachment {
-    static func sample(
+    static func dummy(
         id: AttachmentId = .unique,
         type: AttachmentType = .image,
         payload: Data = "payload".data(using: .utf8)!,

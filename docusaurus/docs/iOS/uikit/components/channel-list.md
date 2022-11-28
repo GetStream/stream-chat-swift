@@ -40,7 +40,7 @@ present(navigationVC, animated: true)
 
 To push the channel list to existed navigation controller:
 ```swift
-navigationController?.push(channelListVC, animated: true)
+navigationController?.pushViewController(channelListVC, animated: true)
 ```
 
 To show the channel list as a tab:
@@ -58,7 +58,7 @@ let channelListNVC = UINavigationController(rootViewController: channelListVC)
 let splitVC = UISplitViewController()
 splitVC.preferredDisplayMode = .oneBesideSecondary
 splitVC.viewControllers = [
-    channelListNVC, 
+    channelListNVC,
     /*optionally provide a controller shown as a detail till user opens a channel*/
 ]
 ```
@@ -67,10 +67,10 @@ To show the channel list as a child:
 ```swift
 class ParentVC: UIViewController {
     let containerView: UIView
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         let navigationVC = UINavigationController(rootViewController: channelListVC)
         addChild(navigationVC)
         navigationVC.view.translatesAutoresizingMaskIntoConstraints = false
@@ -116,7 +116,7 @@ class ViewController: ChatChannelListVC {
 You can opt to show an empty, error and loading view by setting the following flag to true in the `Components` config:
 
 ```swift
-Components.isChatChannelListStatesEnabled = true
+Components.default.isChatChannelListStatesEnabled = true
 ```
 
 This feature is disabled by default, having just the standard loading indicator for the loading state. By enabling this feature, the StreamChat SDK will handle the channel list view states automatically for you.
@@ -136,10 +136,14 @@ class CustomChatChannelListVC: ChatChannelListVC {
         super.setUpAppearance()
 
         channelListErrorView.backgroundColor = .red
-        channelListErrorView.layer.cornerRadius = 20
         channelListErrorView.titleLabel.text = "Data unavailable"
         channelListErrorView.titleLabel.textColor = .black
         channelListErrorView.retryButton.setImage(.init(systemName: "hourglass.circle"), for: .normal)
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        channelListErrorView.layer.cornerRadius = 20
     }
 }
 ```
@@ -188,9 +192,9 @@ You can set your custom views for the channel list states when configuring your 
 // In Components.swift:
 
 public var channelListEmptyView: ChatChannelListEmptyView.Type = ChatChannelListEmptyView.self
-    
+
 public var channelListErrorView: ChatChannelListErrorView.Type = ChatChannelListErrorView.self
-    
+
 public var chatChannelListLoadingView: ChatChannelListLoadingView.Type = ChatChannelListLoadingView.self
 ```
 
@@ -199,7 +203,7 @@ public var chatChannelListLoadingView: ChatChannelListLoadingView.Type = ChatCha
 This component uses the [`ChannelListRouter`](../../common-content/reference-docs/stream-chat-ui/navigation/chat-channel-list-router.md) navigation component, you can customize this by providing your own.
 
 ```swift
-Components.channelListRouter = CustomChannelListRouter.self
+Components.default.channelListRouter = CustomChannelListRouter.self
 ```
 
 <ComponentsNote />

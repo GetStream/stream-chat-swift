@@ -1,5 +1,8 @@
 require 'sinatra'
 require 'fileutils'
+require 'stream-chat'
+
+jwt = { expiration_timeout: {}, generation_error_timeout: {} }
 
 post '/push/:udid/:bundle_id' do
   push_data_file = 'push_payload.json'
@@ -34,4 +37,29 @@ post '/record_video/:udid/:test_name' do
   else
     puts `xcrun simctl io #{params['udid']} recordVideo --codec h264 --force #{video_file} &`
   end
+end
+
+get '/jwt/:udid' do
+  time = Time.now.to_i
+  if time < jwt[:generation_error_timeout][params['udid']].to_i
+    halt(500, 'Intentional error')
+  elsif time < jwt[:expiration_timeout][params['udid']].to_i
+    'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoibHVrZV9za3l3YWxrZXIiLCJleHAiOjE2NjgwMTIzNTN9.UJ-LDHZFDP10sqpZU9bzPAChgersjDfqKjoi5Plg8qI'
+  else
+    client = StreamChat::Client.new(params[:api_key], ENV.fetch('STREAM_DEMO_APP_SECRET'))
+    expiration = time + 5
+    client.create_token(params[:user_name], expiration)
+  end
+end
+
+post '/jwt/revoke/:udid' do
+  jwt[:expiration_timeout] = install_jwt_timeout(udid: params['udid'], duration: params['duration'])
+end
+
+post '/jwt/break/:udid' do
+  jwt[:generation_error_timeout] = install_jwt_timeout(udid: params['udid'], duration: params['duration'])
+end
+
+def install_jwt_timeout(udid:, duration:)
+  { params['udid'] => Time.now.to_i + params['duration'].to_i }
 end

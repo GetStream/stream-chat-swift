@@ -20,8 +20,6 @@ public struct ImageAttachmentPayload: AttachmentPayload {
     public var title: String?
     /// A link to the image.
     public var imageURL: URL
-    /// A link to the image preview.
-    public var imagePreviewURL: URL
     /// The original width of the image in pixels.
     public var originalWidth: Double?
     /// The original height of the image in pixels.
@@ -37,10 +35,37 @@ public struct ImageAttachmentPayload: AttachmentPayload {
             .flatMap { try? JSONEncoder.stream.encode($0) }
             .flatMap { try? JSONDecoder.stream.decode(T.self, from: $0) }
     }
-    
+
     /// Creates `ImageAttachmentPayload` instance.
     ///
     /// Use this initializer if the attachment is already uploaded and you have the remote URLs.
+    public init(
+        title: String?,
+        imageRemoteURL: URL,
+        originalWidth: Double? = nil,
+        originalHeight: Double? = nil,
+        extraData: [String: RawJSON]? = nil
+    ) {
+        self.title = title
+        imageURL = imageRemoteURL
+        self.originalWidth = originalWidth
+        self.originalHeight = originalHeight
+        self.extraData = extraData
+    }
+
+    @available(*, deprecated, renamed: "imageURL")
+    /// By default, Stream does not provide a thumbnail url.
+    /// Since it uses the original image with query parameters to resize it.
+    /// This property was actually misleading, since it was just using the `imageURL` internally.
+    public var imagePreviewURL: URL {
+        get { imageURL }
+        set { imageURL = newValue }
+    }
+
+    /// Creates `ImageAttachmentPayload` instance.
+    ///
+    /// Use this initializer if the attachment is already uploaded and you have the remote URLs.
+    @available(*, deprecated, renamed: "init(title:imageRemoteURL:imagePreviewRemoteURL:originalWidth:originalHeight:extraData:)")
     public init(
         title: String?,
         imageRemoteURL: URL,
@@ -51,7 +76,6 @@ public struct ImageAttachmentPayload: AttachmentPayload {
     ) {
         self.title = title
         imageURL = imageRemoteURL
-        imagePreviewURL = imagePreviewRemoteURL ?? imageRemoteURL
         self.originalWidth = originalWidth
         self.originalHeight = originalHeight
         self.extraData = extraData
@@ -94,15 +118,12 @@ extension ImageAttachmentPayload: Decodable {
                 container.decodeIfPresent(String.self, forKey: .name)
         )?.trimmingCharacters(in: .whitespacesAndNewlines)
 
-        let previewUrl = try container.decodeIfPresent(URL.self, forKey: .thumbURL) ?? imageURL
-
         let originalWidth = try container.decodeIfPresent(Double.self, forKey: .originalWidth)
         let originalHeight = try container.decodeIfPresent(Double.self, forKey: .originalHeight)
 
         self.init(
             title: title,
             imageRemoteURL: imageURL,
-            imagePreviewRemoteURL: previewUrl,
             originalWidth: originalWidth,
             originalHeight: originalHeight,
             extraData: try Self.decodeExtraData(from: decoder)

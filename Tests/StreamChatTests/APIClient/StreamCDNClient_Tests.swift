@@ -24,7 +24,7 @@ final class StreamCDNClient_Tests: XCTestCase {
 
         // Simulate file uploading
         client.uploadAttachment(
-            .sample(
+            .dummy(
                 id: attachmentId,
                 uploadingState: .init(
                     localFileURL: .localYodaImage,
@@ -50,7 +50,7 @@ final class StreamCDNClient_Tests: XCTestCase {
         // Create a request and assert the result is failure
         let result = try waitFor {
             client.uploadAttachment(
-                .sample(
+                .dummy(
                     uploadingState: .init(
                         localFileURL: .localYodaImage,
                         state: .pendingUpload,
@@ -81,13 +81,13 @@ final class StreamCDNClient_Tests: XCTestCase {
         // Set up a decoder response
         // ⚠️ Watch out: the user is different there, so we can distinguish between the incoming data
         // to the encoder, and the outgoing data).
-        let payload = FileUploadPayload(file: .unique())
+        let payload = FileUploadPayload(fileURL: .unique())
         decoder.decodeRequestResponse = .success(payload)
         
         // Create a request and wait for the completion block
         let result = try waitFor {
             client.uploadAttachment(
-                .sample(
+                .dummy(
                     uploadingState: .init(
                         localFileURL: .localYodaImage,
                         state: .pendingUpload,
@@ -104,7 +104,7 @@ final class StreamCDNClient_Tests: XCTestCase {
         XCTAssertEqual(decoder.decodeRequestResponse_response?.statusCode, 234)
         
         // Check the outgoing data is from the decoder
-        XCTAssertEqual(try result.get(), payload.file)
+        XCTAssertEqual(try result.get(), payload.fileURL)
     }
     
     func test_uploadFileFailure() throws {
@@ -129,7 +129,7 @@ final class StreamCDNClient_Tests: XCTestCase {
         // Create a request and wait for the completion block
         let result = try waitFor {
             client.uploadAttachment(
-                .sample(
+                .dummy(
                     uploadingState: .init(
                         localFileURL: .localYodaImage,
                         state: .pendingUpload,
@@ -156,7 +156,7 @@ final class StreamCDNClient_Tests: XCTestCase {
         let builder = TestBuilder()
         let client = builder.make()
         
-        let attachment = AnyChatMessageAttachment.sample(
+        let attachment = AnyChatMessageAttachment.dummy(
             uploadingState: .init(
                 localFileURL: .localYodaImage,
                 state: .pendingUpload,
@@ -180,7 +180,7 @@ final class StreamCDNClient_Tests: XCTestCase {
 
         // Simulate file uploading.
         client.uploadAttachment(
-            .sample(
+            .dummy(
                 uploadingState: .init(
                     localFileURL: .localYodaImage,
                     state: .pendingUpload,
