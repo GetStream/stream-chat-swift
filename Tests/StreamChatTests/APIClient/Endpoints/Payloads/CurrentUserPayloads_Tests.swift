@@ -42,5 +42,6 @@ final class CurrentUserPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.mutedChannels[0].mutedChannel.cid.rawValue, "messaging:B1DFF9C5-E6A6-4BFA-9375-DC5E8C6852FF")
         XCTAssertEqual(payload.mutedChannels[0].createdAt, "2021-03-22T10:23:52.516225Z".toDate())
         XCTAssertEqual(payload.mutedChannels[0].updatedAt, "2021-03-22T10:23:52.516225Z".toDate())
+        XCTAssertEqual(payload.isInvisible, true)
     }
 }
