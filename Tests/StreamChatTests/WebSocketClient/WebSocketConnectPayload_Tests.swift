@@ -52,7 +52,8 @@ final class WebSocketConnectPayload_Tests: XCTestCase {
             "user_details": [
                 "id": payload.userDetails.id,
                 "name": payload.userDetails.name!,
-                "color": "blue"
+                "color": "blue",
+                "invisible": false
             ]
         ]
         AssertJSONEqual(serialized, expected)
