@@ -6,10 +6,15 @@ import Foundation
 
 /// A model containing user info that's used to connect to chat's backend
 public struct UserInfo {
+    /// The id of the user.
     public let id: UserId
+    /// The name of the user.
     public let name: String?
+    /// The avatar url of the user.
     public let imageURL: URL?
+    /// Wether the user wants to share his online status or not.
     public let isInvisible: Bool
+    /// Custom extra data of the user.
     public let extraData: [String: RawJSON]
 
     public init(

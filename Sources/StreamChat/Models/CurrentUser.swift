@@ -53,7 +53,7 @@ public class CurrentChatUser: ChatUser {
     /// The unread counts for the current user.
     public let unreadCount: UnreadCount
 
-    /// The user has opted to hide their online status.
+    /// A Boolean value indicating if the user has opted to hide their online status.
     public let isInvisible: Bool
     
     init(
