@@ -743,6 +743,43 @@ final class ChatClient_Tests: XCTestCase {
         }
     }
 
+    func test_connectUserWithDevelopmentToken_setsTokenProvider_andInitiatesConnection() {
+        for error in [nil, TestError()] {
+            // GIVEN
+            let client = ChatClient(
+                config: inMemoryStorageConfig,
+                environment: testEnv.environment
+            )
+
+            // WHEN
+            let token = Token.development(userId: .unique)
+            var connectCompletionCalled = false
+            var connectCompletionError: Error?
+            client.connectUser(
+                userInfo: .init(id: .unique),
+                token: token,
+                completion: {
+                    connectCompletionCalled = true
+                    connectCompletionError = $0
+                }
+            )
+
+            // THEN
+            var providedToken: Token?
+            testEnv.authenticationRepository?.tokenProvider? { providedToken = try? $0.get() }
+            XCTAssertEqual(providedToken, token)
+
+            XCTAssertEqual(testEnv.clientUpdater!.reloadUserIfNeeded_callsCount, 1)
+
+            // WHEN
+            testEnv.clientUpdater?.reloadUserIfNeeded_completion!(error)
+
+            // THEN
+            XCTAssertEqual(connectCompletionError as? TestError, error)
+            XCTAssertTrue(connectCompletionCalled)
+        }
+    }
+
     func test_connectUserWithExpiringStaticToken_returnsMissingTokenProviderError() {
         // GIVEN
         let client = ChatClient(
@@ -802,7 +839,7 @@ final class ChatClient_Tests: XCTestCase {
         }
     }
     
-    func test_connectAnonymoususer_setsTokenProvider_andInitiatesConnection() {
+    func test_connectAnonymousUser_setsTokenProvider_andInitiatesConnection() {
         for error in [nil, TestError()] {
             // GIVEN
             let client = ChatClient(
