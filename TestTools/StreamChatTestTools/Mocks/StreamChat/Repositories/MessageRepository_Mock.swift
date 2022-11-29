@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-final class MessageRepository_Spy: MessageRepository, Spy {
+final class MessageRepository_Mock: MessageRepository, Spy {
     var recordedFunctions: [String] = []
     var sendMessageIds: [MessageId] {
         Array(sendMessageCalls.keys)

@@ -7,7 +7,7 @@
 import XCTest
 
 final class OfflineRequestsRepository_Tests: XCTestCase {
-    var messageRepository: MessageRepository_Spy!
+    var messageRepository: MessageRepository_Mock!
     var repository: OfflineRequestsRepository!
     var database: DatabaseContainer_Spy!
     var apiClient: APIClient_Spy!
@@ -16,7 +16,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         let client = ChatClient.mock
         database = client.mockDatabaseContainer
         apiClient = client.mockAPIClient
-        messageRepository = MessageRepository_Spy(database: database, apiClient: apiClient)
+        messageRepository = MessageRepository_Mock(database: database, apiClient: apiClient)
         repository = OfflineRequestsRepository(messageRepository: messageRepository, database: database, apiClient: apiClient)
     }
 

@@ -502,7 +502,7 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
         // Simulate connection update
         handler.webSocketClient(mockChatClient.mockWebSocketClient, didUpdateConnectionState: .connected(connectionId: "124"))
 
-        XCTAssertCall("resetConsecutiveFailures()", on: mockRetryStrategy, times: 1)
+        XCTAssertCall(RetryStrategy_Spy.Signature.resetConsecutiveFailures, on: mockRetryStrategy, times: 1)
         XCTAssertCall("syncLocalState(completion:)", on: mockChatClient.mockSyncRepository, times: 1)
     }
 
@@ -516,7 +516,7 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
         handler.webSocketClient(mockChatClient.mockWebSocketClient, didUpdateConnectionState: status)
 
         // getDelayAfterTheFailure() calls nextRetryDelay() & incrementConsecutiveFailures() internally
-        XCTAssertNotCall("nextRetryDelay()", on: mockRetryStrategy)
+        XCTAssertNotCall(RetryStrategy_Spy.Signature.nextRetryDelay, on: mockRetryStrategy)
         XCTAssertNotCall("incrementConsecutiveFailures()", on: mockRetryStrategy)
         XCTAssertNotCall("syncLocalState(completion:)", on: mockChatClient.mockSyncRepository)
     }
@@ -535,7 +535,7 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
         handler.webSocketClient(mockChatClient.mockWebSocketClient, didUpdateConnectionState: status)
 
         // getDelayAfterTheFailure() calls nextRetryDelay() & incrementConsecutiveFailures() internally
-        XCTAssertCall("nextRetryDelay()", on: mockRetryStrategy, times: 1)
+        XCTAssertCall(RetryStrategy_Spy.Signature.nextRetryDelay, on: mockRetryStrategy, times: 1)
         XCTAssertCall("incrementConsecutiveFailures()", on: mockRetryStrategy, times: 1)
         XCTAssertNotCall("syncLocalState(completion:)", on: mockChatClient.mockSyncRepository)
     }
