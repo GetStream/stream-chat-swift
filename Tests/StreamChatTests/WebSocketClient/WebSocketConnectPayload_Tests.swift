@@ -19,6 +19,7 @@ final class WebSocketConnectPayload_Tests: XCTestCase {
                     id: "tommaso",
                     name: "tommaso",
                     imageURL: imageURL,
+                    isInvisible: true,
                     extraData: custom
                 )
             )
@@ -31,7 +32,8 @@ final class WebSocketConnectPayload_Tests: XCTestCase {
                 "id": payload.userDetails.id,
                 "name": payload.userDetails.name!,
                 "image": "https://path/to/image",
-                "color": "blue"
+                "color": "blue",
+                "invisible": true
             ]
         ]
         AssertJSONEqual(serialized, expected)

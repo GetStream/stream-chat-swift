@@ -12,6 +12,7 @@ final class WebSocketConnectEndpoint_Tests: XCTestCase {
             id: .unique,
             name: .unique,
             imageURL: .unique(),
+            isInvisible: true,
             extraData: [:]
         )
         
