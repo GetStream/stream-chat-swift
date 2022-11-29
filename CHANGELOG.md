@@ -5,12 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChat
 ### ✅ Added
-- CurrentUser object now reports wether user has chosen to hide their online status with isInvisible property.
-
-### 🐞 Fixed
-- Avoid double completion calls when getting/fetching tokens [#2387](https://github.com/GetStream/stream-chat-swift/pull/2387)
-
-### 🔄 Changed
+- Add support for hiding connection status with `isInvisible` [#2373](https://github.com/GetStream/stream-chat-swift/pull/2373)
 
 # [4.24.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.24.1)
 _November 23, 2022_
