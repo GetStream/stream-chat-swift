@@ -314,7 +314,9 @@ final class ConnectionRepository_Tests: XCTestCase {
             )
 
             let expectation = shouldNotify ? self.expectation(description: "ConnectionId waiters complete") : nil
-            repository.provideConnectionId { result in
+            repository.provideConnectionId { [weak repository] result in
+                guard repository != nil else { return }
+
                 if result.error is ClientError.WaiterTimeout {
                     XCTFail("\(webSocketState) should not reach timeout")
                 } else if let expectation = expectation {
