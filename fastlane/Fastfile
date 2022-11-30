@@ -621,11 +621,10 @@ end
 
 lane :sync_mock_server do
   sh('python3 sync_mock_server.py')
-  next unless is_ci
+  # next unless is_ci
 
-  branch_name = "ci/sync-mock-server-#{Time.now.to_i}"
   commit_message = '[CI] Sync Mock Server'
-  sh("git checkout -b #{branch_name}")
+  sh("git checkout -b ci/sync-mock-server-#{Time.now.to_i}")
   sh('git add -A')
   sh("git commit -m '#{commit_message}'")
   push_to_git_remote(tags: false)
@@ -634,7 +633,6 @@ lane :sync_mock_server do
     api_token: ENV.fetch('GITHUB_TOKEN', nil),
     repo: github_repo,
     title: commit_message,
-    head: branch_name,
     base: 'develop',
     body: 'This PR was created automatically by CI.'
   )
