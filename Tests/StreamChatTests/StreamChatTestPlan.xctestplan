@@ -45,7 +45,6 @@
         "MessageUpdater_Tests\/test_flagMessage_happyPath()",
         "SyncRepository_Tests\/test_cancelRecoveryFlow_cancelsAllOperations()",
         "WebSocketClient_Tests\/test_whenHealthCheckEventComes_itGetProcessedSilentlyWithoutBatching()",
-        "AuthenticationRepository_Tests\/test_refreshToken_multipleCalls_theoreticApproach()",
         "WebSocketClient_Tests\/test_changingConnectEndpointAndReconnecting()"
       ],
       "target" : {
