@@ -1,1 +1,3 @@
 lizard
+websockets
+requests
