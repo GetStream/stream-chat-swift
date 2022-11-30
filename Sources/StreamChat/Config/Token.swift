@@ -57,7 +57,7 @@ public extension Token {
     ///
     /// Is used by `anonymous` token provider.
     static var anonymous: Self {
-        .init(rawValue: "", userId: .anonymous, expiration: .distantFuture)
+        .init(rawValue: "", userId: .anonymous, expiration: nil)
     }
 
     /// The token which can be used during the development.
@@ -72,7 +72,7 @@ public extension Token {
 
         let jwt = [header, payload, devSignature].joined(separator: ".")
             
-        return .init(rawValue: jwt, userId: userId, expiration: .distantFuture)
+        return .init(rawValue: jwt, userId: userId, expiration: nil)
     }
 }
 
