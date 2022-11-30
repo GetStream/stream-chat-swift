@@ -71,31 +71,34 @@ class CurrentUserUpdater: Worker {
                 try session.saveCurrentDevice(deviceId)
             }) { completion?($0) }
         }
-        
-        // We already have the device saved
-        if let currentUserDTO = database.viewContext.currentUser,
-           currentUserDTO.devices.first(where: { $0.id == deviceId }) != nil {
-            saveCurrentDevice(deviceId: deviceId, completion: completion)
-            return
-        }
-        apiClient
-            .request(
-                endpoint: .addDevice(
-                    userId: currentUserId,
-                    deviceId: deviceId,
-                    pushProvider: pushProvider,
-                    providerName: providerName
-                ),
-                completion: { result in
-                    if let error = result.error {
-                        log.debug("Device token \(deviceId) failed to be registered on Stream's backend.\n Reason: \(error.localizedDescription)")
-                        completion?(error)
-                        return
+
+        let backgroundContext = database.backgroundReadOnlyContext
+        backgroundContext.perform { [weak self] in
+            if let currentUserDTO = backgroundContext.currentUser,
+               currentUserDTO.devices.first(where: { $0.id == deviceId }) != nil {
+                saveCurrentDevice(deviceId: deviceId, completion: completion)
+                return
+            }
+
+            self?.apiClient
+                .request(
+                    endpoint: .addDevice(
+                        userId: currentUserId,
+                        deviceId: deviceId,
+                        pushProvider: pushProvider,
+                        providerName: providerName
+                    ),
+                    completion: { result in
+                        if let error = result.error {
+                            log.debug("Device token \(deviceId) failed to be registered on Stream's backend.\n Reason: \(error.localizedDescription)")
+                            completion?(error)
+                            return
+                        }
+                        log.debug("Device token \(deviceId) was successfully registered on Stream's backend.")
+                        saveCurrentDevice(deviceId: deviceId, completion: completion)
                     }
-                    log.debug("Device token \(deviceId) was successfully registered on Stream's backend.")
-                    saveCurrentDevice(deviceId: deviceId, completion: completion)
-                }
-            )
+                )
+        }
     }
     
     /// Removes a registered device from the current user.
