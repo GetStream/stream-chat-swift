@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### ✅ Added
 - Add support for hiding connection status with `isInvisible` [#2373](https://github.com/GetStream/stream-chat-swift/pull/2373)
 
+### 🐞 Fixed
+- Fix connecting user with non-expiring tokens [#2393](https://github.com/GetStream/stream-chat-swift/pull/2393)
+
 # [4.24.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.24.1)
 _November 23, 2022_
 
