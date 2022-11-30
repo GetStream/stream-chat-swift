@@ -31,6 +31,14 @@ class AppConfig {
     }
 }
 
+class UserConfig {
+    var isInvisible = false
+
+    static var shared = UserConfig()
+
+    private init() {}
+}
+
 class AppConfigViewController: UITableViewController {
     var demoAppConfig: DemoAppConfig {
         get { AppConfig.shared.demoAppConfig }
@@ -61,6 +69,7 @@ class AppConfigViewController: UITableViewController {
         case info([DemoAppInfoOption])
         case demoApp([DemoAppConfigOption])
         case chatClient([ChatClientConfigOption])
+        case user([UserConfigOption])
 
         var numberOfOptions: Int {
             switch self {
@@ -69,6 +78,8 @@ class AppConfigViewController: UITableViewController {
             case let .demoApp(options):
                 return options.count
             case let .chatClient(options):
+                return options.count
+            case let .user(options):
                 return options.count
             }
         }
@@ -81,6 +92,8 @@ class AppConfigViewController: UITableViewController {
                 return "Chat Client Configuration"
             case .info:
                 return "General Info"
+            case .user:
+                return "User Info"
             }
         }
     }
@@ -109,10 +122,15 @@ class AppConfigViewController: UITableViewController {
         case deletedMessagesVisibility
     }
 
+    enum UserConfigOption: String, CaseIterable {
+        case isInvisible
+    }
+
     let options: [ConfigOption] = [
         .info(DemoAppInfoOption.allCases),
         .demoApp(DemoAppConfigOption.allCases),
-        .chatClient(ChatClientConfigOption.allCases)
+        .chatClient(ChatClientConfigOption.allCases),
+        .user(UserConfigOption.allCases)
     ]
 
     override func viewDidLoad() {
@@ -147,6 +165,9 @@ class AppConfigViewController: UITableViewController {
 
         case let .chatClient(options):
             configureChatClientOptionsCell(cell, at: indexPath, options: options)
+
+        case let .user(options):
+            configureUserOptionsCell(cell, at: indexPath, options: options)
         }
 
         return cell
@@ -156,7 +177,7 @@ class AppConfigViewController: UITableViewController {
         guard let cell = tableView.cellForRow(at: indexPath) else { return }
 
         switch options[indexPath.section] {
-        case .info:
+        case .info, .user:
             break
 
         case let .demoApp(options):
@@ -258,6 +279,24 @@ class AppConfigViewController: UITableViewController {
             break
         case .deletedMessagesVisibility:
             makeDeletedMessagesVisibilitySelectorVC()
+        }
+    }
+
+    // MARK: User Options
+
+    private func configureUserOptionsCell(
+        _ cell: UITableViewCell,
+        at indexPath: IndexPath,
+        options: [UserConfigOption]
+    ) {
+        let option = options[indexPath.row]
+        cell.textLabel?.text = option.rawValue
+
+        switch option {
+        case .isInvisible:
+            cell.accessoryView = makeSwitchButton(UserConfig.shared.isInvisible) { newValue in
+                UserConfig.shared.isInvisible = newValue
+            }
         }
     }
 

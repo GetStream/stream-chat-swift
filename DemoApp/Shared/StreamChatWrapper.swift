@@ -43,16 +43,23 @@ extension StreamChatWrapper {
     func connect(user: DemoUserType, completion: @escaping (Error?) -> Void) {
         switch user {
         case let .credentials(userCredentials):
+            let userInfo = UserInfo(
+                id: userCredentials.userInfo.id,
+                name: userCredentials.userInfo.name,
+                imageURL: userCredentials.userInfo.imageURL,
+                isInvisible: UserConfig.shared.isInvisible,
+                extraData: userCredentials.userInfo.extraData
+            )
             guard AppConfig.shared.demoAppConfig.isTokenRefreshEnabled else {
                 client?.connectUser(
-                    userInfo: userCredentials.userInfo,
+                    userInfo: userInfo,
                     token: userCredentials.token,
                     completion: completion
                 )
                 return
             }
             client?.connectUser(
-                userInfo: userCredentials.userInfo,
+                userInfo: userInfo,
                 tokenProvider: refreshingTokenProvider(initialToken: userCredentials.token, tokenDurationInMinutes: 60),
                 completion: completion
             )
