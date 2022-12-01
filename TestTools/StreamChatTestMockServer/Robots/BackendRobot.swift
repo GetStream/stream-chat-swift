@@ -21,7 +21,7 @@ public class BackendRobot {
 
     @discardableResult
     public func setReadEvents(to value: Bool) -> Self {
-        let id = server.currentChannelId.isEmpty ? "general" : server.currentChannelId
+        let id = server.currentChannelId.isEmpty ? server.getFirstChannelId() : server.currentChannelId
         guard var config = server.config(forChannelId: id) else {
             return self
         }
@@ -32,7 +32,7 @@ public class BackendRobot {
 
     @discardableResult
     public func setCooldown(enabled value: Bool, duration: Int) -> Self {
-        let id = server.currentChannelId.isEmpty ? "general" : server.currentChannelId
+        let id = server.currentChannelId.isEmpty ? server.getFirstChannelId() : server.currentChannelId
         server.setCooldown(enabled: value, duration: duration, inChannelWithId: id)
         return self
     }
