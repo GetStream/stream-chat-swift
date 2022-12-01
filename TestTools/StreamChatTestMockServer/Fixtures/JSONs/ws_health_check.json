@@ -1,44 +1,2953 @@
 {
-  "created_at" : "2021-04-23T06:05:31.659292606Z",
-  "me" : {
-    "id" : "luke_skywalker",
-    "banned" : false,
-    "roles" : [],
-    "unread_channels" : 0,
-    "mutes" : [],
-    "last_active" : "2021-04-23T06:05:31.656574549Z",
-    "created_at" : "2020-12-07T11:36:47.059906Z",
-    "devices" : [
-      {
-        "disabled" : true,
-        "id" : "e72f903a3ef67e279bea2da9565ede048e63a75223d3b592ee80612aa8a2e249",
-        "push_provider" : "apn",
-        "disabled_reason" : "BadDeviceToken",
-        "user_id" : "luke_skywalker",
-        "created_at" : "2020-12-17T11:33:46.940946Z"
-      },
-      {
-        "disabled" : true,
-        "id" : "60729e8d570b72beb7a1d2072530b9f7ab4a7292f2ea145e0671186111410bab",
-        "push_provider" : "apn",
-        "disabled_reason" : "BadDeviceToken",
-        "user_id" : "luke_skywalker",
-        "created_at" : "2020-12-17T11:10:00.204968Z"
-      }
-    ],
-    "invisible" : false,
-    "unread_count" : 0,
-    "channel_mutes" : [],
-    "image" : ".\/static\/media\/photo-1541271696563-3be2f555fc4e.4e84f363.jpeg",
-    "updated_at" : "2021-04-22T18:57:47.14206Z",
-    "language" : "",
-    "role" : "admin",
-    "total_unread_count" : 0,
-    "online" : true,
-    "name" : "luke_skywalker"
-  },
-  "type" : "health.check",
-  "connection_id" : "60782eca-0a05-154b-0000-000000a85747",
-  "cid" : "*"
+    "cid": "*",
+    "connection_id": "6315fb82-0a05-16b1-0000-000016513d0d",
+    "created_at": "2022-12-01T13:39:20.892850376Z",
+    "me": {
+        "banned": false,
+        "birthland": "Tatooine",
+        "channel_mutes": [
+            {
+                "channel": {
+                    "cid": "messaging:069E5B1A-B2DF-452B-8EE1-7F1766471DA3",
+                    "config": {
+                        "automod": "AI",
+                        "automod_behavior": "block",
+                        "automod_thresholds": {
+                            "explicit": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "spam": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "toxic": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            }
+                        },
+                        "blocklist": "profanity_en_2020_v1",
+                        "blocklist_behavior": "block",
+                        "commands": [
+                            {
+                                "args": "[text]",
+                                "description": "Post a random gif to the channel",
+                                "name": "giphy",
+                                "set": "fun_set"
+                            }
+                        ],
+                        "connect_events": true,
+                        "created_at": "2021-03-01T19:26:18.406502Z",
+                        "custom_events": true,
+                        "max_message_length": 5000,
+                        "message_retention": "infinite",
+                        "mutes": true,
+                        "name": "messaging",
+                        "push_notifications": true,
+                        "quotes": true,
+                        "reactions": true,
+                        "read_events": true,
+                        "reminders": false,
+                        "replies": true,
+                        "search": true,
+                        "typing_events": true,
+                        "updated_at": "2022-06-22T11:15:43.22284Z",
+                        "uploads": true,
+                        "url_enrichment": true
+                    },
+                    "created_at": "2021-06-23T16:36:46.109805Z",
+                    "created_by": {
+                        "banned": false,
+                        "birthland": "Tatooine",
+                        "created_at": "2020-12-07T11:36:47.059906Z",
+                        "extraData": {},
+                        "extra_data": {},
+                        "id": "luke_skywalker",
+                        "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                        "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                        "last_active": "2022-12-01T13:37:07.160445Z",
+                        "name": "Luke Skywalker",
+                        "online": false,
+                        "role": "user",
+                        "someTest": "Test",
+                        "testing": false,
+                        "testing-this": 3.14,
+                        "updated_at": "2022-12-01T13:39:20.8785Z",
+                        "yetAnotherField": "40"
+                    },
+                    "disabled": false,
+                    "frozen": false,
+                    "id": "069E5B1A-B2DF-452B-8EE1-7F1766471DA3",
+                    "last_message_at": "2021-06-26T17:55:11.338592Z",
+                    "member_count": 1,
+                    "name": "BCD",
+                    "type": "messaging",
+                    "updated_at": "2021-08-01T08:14:29.768649Z"
+                },
+                "created_at": "2021-08-01T08:14:37.899201Z",
+                "updated_at": "2021-08-01T08:14:37.899201Z",
+                "user": {
+                    "banned": false,
+                    "birthland": "Tatooine",
+                    "created_at": "2020-12-07T11:36:47.059906Z",
+                    "extraData": {},
+                    "extra_data": {},
+                    "id": "luke_skywalker",
+                    "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "last_active": "2022-12-01T13:37:07.160445Z",
+                    "name": "Luke Skywalker",
+                    "online": true,
+                    "role": "user",
+                    "someTest": "Test",
+                    "testing": false,
+                    "testing-this": 3.14,
+                    "updated_at": "2022-12-01T13:39:20.8785Z",
+                    "yetAnotherField": "40"
+                }
+            },
+            {
+                "channel": {
+                    "cid": "messaging:164DAB80-8",
+                    "config": {
+                        "automod": "AI",
+                        "automod_behavior": "block",
+                        "automod_thresholds": {
+                            "explicit": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "spam": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "toxic": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            }
+                        },
+                        "blocklist": "profanity_en_2020_v1",
+                        "blocklist_behavior": "block",
+                        "commands": [
+                            {
+                                "args": "[text]",
+                                "description": "Post a random gif to the channel",
+                                "name": "giphy",
+                                "set": "fun_set"
+                            }
+                        ],
+                        "connect_events": true,
+                        "created_at": "2021-03-01T19:26:18.406502Z",
+                        "custom_events": true,
+                        "max_message_length": 5000,
+                        "message_retention": "infinite",
+                        "mutes": true,
+                        "name": "messaging",
+                        "push_notifications": true,
+                        "quotes": true,
+                        "reactions": true,
+                        "read_events": true,
+                        "reminders": false,
+                        "replies": true,
+                        "search": true,
+                        "typing_events": true,
+                        "updated_at": "2022-06-22T11:15:43.22284Z",
+                        "uploads": true,
+                        "url_enrichment": true
+                    },
+                    "created_at": "2021-11-17T19:58:26.920958Z",
+                    "created_by": {
+                        "banned": false,
+                        "birthland": "Tatooine",
+                        "created_at": "2020-12-07T11:36:47.059906Z",
+                        "extraData": {},
+                        "extra_data": {},
+                        "id": "luke_skywalker",
+                        "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                        "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                        "last_active": "2022-12-01T13:37:07.160445Z",
+                        "name": "Luke Skywalker",
+                        "online": false,
+                        "role": "user",
+                        "someTest": "Test",
+                        "testing": false,
+                        "testing-this": 3.14,
+                        "updated_at": "2022-12-01T13:39:20.8785Z",
+                        "yetAnotherField": "40"
+                    },
+                    "disabled": false,
+                    "frozen": false,
+                    "id": "164DAB80-8",
+                    "last_message_at": "2022-01-06T14:57:57.755Z",
+                    "member_count": 1,
+                    "name": "Po",
+                    "type": "messaging",
+                    "updated_at": "2022-01-07T06:23:30.603971Z"
+                },
+                "created_at": "2022-01-07T09:13:10.834315Z",
+                "updated_at": "2022-01-07T09:13:12.525247Z",
+                "user": {
+                    "banned": false,
+                    "birthland": "Tatooine",
+                    "created_at": "2020-12-07T11:36:47.059906Z",
+                    "extraData": {},
+                    "extra_data": {},
+                    "id": "luke_skywalker",
+                    "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "last_active": "2022-12-01T13:37:07.160445Z",
+                    "name": "Luke Skywalker",
+                    "online": true,
+                    "role": "user",
+                    "someTest": "Test",
+                    "testing": false,
+                    "testing-this": 3.14,
+                    "updated_at": "2022-12-01T13:39:20.8785Z",
+                    "yetAnotherField": "40"
+                }
+            },
+            {
+                "channel": {
+                    "cid": "messaging:1659055774",
+                    "config": {
+                        "automod": "AI",
+                        "automod_behavior": "block",
+                        "automod_thresholds": {
+                            "explicit": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "spam": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "toxic": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            }
+                        },
+                        "blocklist": "profanity_en_2020_v1",
+                        "blocklist_behavior": "block",
+                        "commands": [
+                            {
+                                "args": "[text]",
+                                "description": "Post a random gif to the channel",
+                                "name": "giphy",
+                                "set": "fun_set"
+                            }
+                        ],
+                        "connect_events": true,
+                        "created_at": "2021-03-01T19:26:18.406502Z",
+                        "custom_events": true,
+                        "max_message_length": 5000,
+                        "message_retention": "infinite",
+                        "mutes": true,
+                        "name": "messaging",
+                        "push_notifications": true,
+                        "quotes": true,
+                        "reactions": true,
+                        "read_events": true,
+                        "reminders": false,
+                        "replies": true,
+                        "search": true,
+                        "typing_events": true,
+                        "updated_at": "2022-06-22T11:15:43.22284Z",
+                        "uploads": true,
+                        "url_enrichment": true
+                    },
+                    "created_at": "2022-07-29T00:49:34.511213Z",
+                    "created_by": {
+                        "banned": false,
+                        "birthland": "Tatooine",
+                        "created_at": "2020-12-07T11:36:47.059906Z",
+                        "extraData": {},
+                        "extra_data": {},
+                        "id": "luke_skywalker",
+                        "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                        "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                        "last_active": "2022-12-01T13:37:07.160445Z",
+                        "name": "Luke Skywalker",
+                        "online": false,
+                        "role": "user",
+                        "someTest": "Test",
+                        "testing": false,
+                        "testing-this": 3.14,
+                        "updated_at": "2022-12-01T13:39:20.8785Z",
+                        "yetAnotherField": "40"
+                    },
+                    "disabled": false,
+                    "frozen": false,
+                    "id": "1659055774",
+                    "last_message_at": "2022-08-28T13:14:13.951559Z",
+                    "member_count": 1,
+                    "name": "HoopStars ",
+                    "type": "messaging",
+                    "updated_at": "2022-07-29T00:49:34.511214Z"
+                },
+                "created_at": "2022-08-25T22:56:04.137191Z",
+                "updated_at": "2022-08-25T22:56:04.137191Z",
+                "user": {
+                    "banned": false,
+                    "birthland": "Tatooine",
+                    "created_at": "2020-12-07T11:36:47.059906Z",
+                    "extraData": {},
+                    "extra_data": {},
+                    "id": "luke_skywalker",
+                    "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "last_active": "2022-12-01T13:37:07.160445Z",
+                    "name": "Luke Skywalker",
+                    "online": true,
+                    "role": "user",
+                    "someTest": "Test",
+                    "testing": false,
+                    "testing-this": 3.14,
+                    "updated_at": "2022-12-01T13:39:20.8785Z",
+                    "yetAnotherField": "40"
+                }
+            },
+            {
+                "channel": {
+                    "cid": "messaging:1659055952",
+                    "config": {
+                        "automod": "AI",
+                        "automod_behavior": "block",
+                        "automod_thresholds": {
+                            "explicit": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "spam": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "toxic": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            }
+                        },
+                        "blocklist": "profanity_en_2020_v1",
+                        "blocklist_behavior": "block",
+                        "commands": [
+                            {
+                                "args": "[text]",
+                                "description": "Post a random gif to the channel",
+                                "name": "giphy",
+                                "set": "fun_set"
+                            }
+                        ],
+                        "connect_events": true,
+                        "created_at": "2021-03-01T19:26:18.406502Z",
+                        "custom_events": true,
+                        "max_message_length": 5000,
+                        "message_retention": "infinite",
+                        "mutes": true,
+                        "name": "messaging",
+                        "push_notifications": true,
+                        "quotes": true,
+                        "reactions": true,
+                        "read_events": true,
+                        "reminders": false,
+                        "replies": true,
+                        "search": true,
+                        "typing_events": true,
+                        "updated_at": "2022-06-22T11:15:43.22284Z",
+                        "uploads": true,
+                        "url_enrichment": true
+                    },
+                    "created_at": "2022-07-29T00:52:32.796765Z",
+                    "created_by": {
+                        "banned": false,
+                        "birthland": "Tatooine",
+                        "created_at": "2020-12-07T11:36:47.059906Z",
+                        "extraData": {},
+                        "extra_data": {},
+                        "id": "luke_skywalker",
+                        "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                        "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                        "last_active": "2022-12-01T13:37:07.160445Z",
+                        "name": "Luke Skywalker",
+                        "online": false,
+                        "role": "user",
+                        "someTest": "Test",
+                        "testing": false,
+                        "testing-this": 3.14,
+                        "updated_at": "2022-12-01T13:39:20.8785Z",
+                        "yetAnotherField": "40"
+                    },
+                    "disabled": false,
+                    "frozen": false,
+                    "id": "1659055952",
+                    "last_message_at": "2022-07-29T10:32:50.08203Z",
+                    "member_count": 1,
+                    "name": "yesss",
+                    "type": "messaging",
+                    "updated_at": "2022-07-29T11:00:09.062491Z"
+                },
+                "created_at": "2022-08-30T01:43:56.902044Z",
+                "updated_at": "2022-08-30T01:43:56.902044Z",
+                "user": {
+                    "banned": false,
+                    "birthland": "Tatooine",
+                    "created_at": "2020-12-07T11:36:47.059906Z",
+                    "extraData": {},
+                    "extra_data": {},
+                    "id": "luke_skywalker",
+                    "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "last_active": "2022-12-01T13:37:07.160445Z",
+                    "name": "Luke Skywalker",
+                    "online": true,
+                    "role": "user",
+                    "someTest": "Test",
+                    "testing": false,
+                    "testing-this": 3.14,
+                    "updated_at": "2022-12-01T13:39:20.8785Z",
+                    "yetAnotherField": "40"
+                }
+            },
+            {
+                "channel": {
+                    "cid": "messaging:2702E769-0",
+                    "config": {
+                        "automod": "AI",
+                        "automod_behavior": "block",
+                        "automod_thresholds": {
+                            "explicit": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "spam": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "toxic": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            }
+                        },
+                        "blocklist": "profanity_en_2020_v1",
+                        "blocklist_behavior": "block",
+                        "commands": [
+                            {
+                                "args": "[text]",
+                                "description": "Post a random gif to the channel",
+                                "name": "giphy",
+                                "set": "fun_set"
+                            }
+                        ],
+                        "connect_events": true,
+                        "created_at": "2021-03-01T19:26:18.406502Z",
+                        "custom_events": true,
+                        "max_message_length": 5000,
+                        "message_retention": "infinite",
+                        "mutes": true,
+                        "name": "messaging",
+                        "push_notifications": true,
+                        "quotes": true,
+                        "reactions": true,
+                        "read_events": true,
+                        "reminders": false,
+                        "replies": true,
+                        "search": true,
+                        "typing_events": true,
+                        "updated_at": "2022-06-22T11:15:43.22284Z",
+                        "uploads": true,
+                        "url_enrichment": true
+                    },
+                    "created_at": "2021-08-27T18:21:37.5435Z",
+                    "created_by": {
+                        "banned": false,
+                        "birthland": "Tatooine",
+                        "created_at": "2020-12-07T11:36:47.059906Z",
+                        "extraData": {},
+                        "extra_data": {},
+                        "id": "luke_skywalker",
+                        "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                        "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                        "last_active": "2022-12-01T13:37:07.160445Z",
+                        "name": "Luke Skywalker",
+                        "online": false,
+                        "role": "user",
+                        "someTest": "Test",
+                        "testing": false,
+                        "testing-this": 3.14,
+                        "updated_at": "2022-12-01T13:39:20.8785Z",
+                        "yetAnotherField": "40"
+                    },
+                    "disabled": false,
+                    "frozen": false,
+                    "id": "2702E769-0",
+                    "last_message_at": "2021-10-20T18:36:02.018Z",
+                    "member_count": 1,
+                    "name": "Yay!",
+                    "type": "messaging",
+                    "updated_at": "2021-08-27T18:21:37.5435Z"
+                },
+                "created_at": "2021-09-24T14:52:54.394053Z",
+                "updated_at": "2021-09-24T14:52:54.394053Z",
+                "user": {
+                    "banned": false,
+                    "birthland": "Tatooine",
+                    "created_at": "2020-12-07T11:36:47.059906Z",
+                    "extraData": {},
+                    "extra_data": {},
+                    "id": "luke_skywalker",
+                    "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "last_active": "2022-12-01T13:37:07.160445Z",
+                    "name": "Luke Skywalker",
+                    "online": true,
+                    "role": "user",
+                    "someTest": "Test",
+                    "testing": false,
+                    "testing-this": 3.14,
+                    "updated_at": "2022-12-01T13:39:20.8785Z",
+                    "yetAnotherField": "40"
+                }
+            },
+            {
+                "channel": {
+                    "callActive": true,
+                    "cid": "messaging:2BA018EE-D",
+                    "config": {
+                        "automod": "AI",
+                        "automod_behavior": "block",
+                        "automod_thresholds": {
+                            "explicit": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "spam": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "toxic": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            }
+                        },
+                        "blocklist": "profanity_en_2020_v1",
+                        "blocklist_behavior": "block",
+                        "commands": [
+                            {
+                                "args": "[text]",
+                                "description": "Post a random gif to the channel",
+                                "name": "giphy",
+                                "set": "fun_set"
+                            }
+                        ],
+                        "connect_events": true,
+                        "created_at": "2021-03-01T19:26:18.406502Z",
+                        "custom_events": true,
+                        "max_message_length": 5000,
+                        "message_retention": "infinite",
+                        "mutes": true,
+                        "name": "messaging",
+                        "push_notifications": true,
+                        "quotes": true,
+                        "reactions": true,
+                        "read_events": true,
+                        "reminders": false,
+                        "replies": true,
+                        "search": true,
+                        "typing_events": true,
+                        "updated_at": "2022-06-22T11:15:43.22284Z",
+                        "uploads": true,
+                        "url_enrichment": true
+                    },
+                    "cooldown": 20,
+                    "created_at": "2022-04-13T16:34:45.280814Z",
+                    "created_by": {
+                        "AdditionalProperties": {},
+                        "banned": false,
+                        "birthland": "Polis Massa",
+                        "created_at": "2020-12-07T11:37:33.78879Z",
+                        "dashboard_user": true,
+                        "id": "leia_organa",
+                        "image": "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png",
+                        "last_active": "2022-11-30T18:53:55.789944Z",
+                        "name": "Leia Organa",
+                        "online": false,
+                        "role": "user",
+                        "updated_at": "2022-08-09T14:55:13.310023Z"
+                    },
+                    "disabled": false,
+                    "frozen": false,
+                    "id": "2BA018EE-D",
+                    "last_message_at": "0001-01-01T00:00:00Z",
+                    "member_count": 4,
+                    "name": "Empty 3",
+                    "truncated_at": "2022-06-22T10:21:53.412566Z",
+                    "truncated_by": {
+                        "AdditionalProperties": {},
+                        "banned": false,
+                        "birthland": "Polis Massa",
+                        "created_at": "2020-12-07T11:37:33.78879Z",
+                        "dashboard_user": true,
+                        "id": "leia_organa",
+                        "image": "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png",
+                        "last_active": "2022-11-30T18:53:55.789944Z",
+                        "name": "Leia Organa",
+                        "online": false,
+                        "role": "user",
+                        "updated_at": "2022-08-09T14:55:13.310023Z"
+                    },
+                    "type": "messaging",
+                    "updated_at": "2022-06-22T10:21:53.417136Z"
+                },
+                "created_at": "2022-06-07T15:00:56.397652Z",
+                "updated_at": "2022-06-07T15:00:56.397652Z",
+                "user": {
+                    "banned": false,
+                    "birthland": "Tatooine",
+                    "created_at": "2020-12-07T11:36:47.059906Z",
+                    "extraData": {},
+                    "extra_data": {},
+                    "id": "luke_skywalker",
+                    "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "last_active": "2022-12-01T13:37:07.160445Z",
+                    "name": "Luke Skywalker",
+                    "online": true,
+                    "role": "user",
+                    "someTest": "Test",
+                    "testing": false,
+                    "testing-this": 3.14,
+                    "updated_at": "2022-12-01T13:39:20.8785Z",
+                    "yetAnotherField": "40"
+                }
+            },
+            {
+                "channel": {
+                    "cid": "messaging:2E9EEBF8-2",
+                    "config": {
+                        "automod": "AI",
+                        "automod_behavior": "block",
+                        "automod_thresholds": {
+                            "explicit": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "spam": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "toxic": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            }
+                        },
+                        "blocklist": "profanity_en_2020_v1",
+                        "blocklist_behavior": "block",
+                        "commands": [
+                            {
+                                "args": "[text]",
+                                "description": "Post a random gif to the channel",
+                                "name": "giphy",
+                                "set": "fun_set"
+                            }
+                        ],
+                        "connect_events": true,
+                        "created_at": "2021-03-01T19:26:18.406502Z",
+                        "custom_events": true,
+                        "max_message_length": 5000,
+                        "message_retention": "infinite",
+                        "mutes": true,
+                        "name": "messaging",
+                        "push_notifications": true,
+                        "quotes": true,
+                        "reactions": true,
+                        "read_events": true,
+                        "reminders": false,
+                        "replies": true,
+                        "search": true,
+                        "typing_events": true,
+                        "updated_at": "2022-06-22T11:15:43.22284Z",
+                        "uploads": true,
+                        "url_enrichment": true
+                    },
+                    "created_at": "2022-11-21T17:36:48.124743Z",
+                    "created_by": {
+                        "banned": false,
+                        "birthland": "Tatooine",
+                        "created_at": "2020-12-07T11:36:47.059906Z",
+                        "extraData": {},
+                        "extra_data": {},
+                        "id": "luke_skywalker",
+                        "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                        "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                        "last_active": "2022-12-01T13:37:07.160445Z",
+                        "name": "Luke Skywalker",
+                        "online": false,
+                        "role": "user",
+                        "someTest": "Test",
+                        "testing": false,
+                        "testing-this": 3.14,
+                        "updated_at": "2022-12-01T13:39:20.8785Z",
+                        "yetAnotherField": "40"
+                    },
+                    "disabled": false,
+                    "frozen": false,
+                    "id": "2E9EEBF8-2",
+                    "last_message_at": "2022-11-25T09:08:33.228179Z",
+                    "member_count": 2,
+                    "name": "Hii",
+                    "type": "messaging",
+                    "updated_at": "2022-11-21T17:36:48.124743Z"
+                },
+                "created_at": "2022-11-25T09:03:53.685059Z",
+                "updated_at": "2022-11-25T09:03:53.685059Z",
+                "user": {
+                    "banned": false,
+                    "birthland": "Tatooine",
+                    "created_at": "2020-12-07T11:36:47.059906Z",
+                    "extraData": {},
+                    "extra_data": {},
+                    "id": "luke_skywalker",
+                    "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "last_active": "2022-12-01T13:37:07.160445Z",
+                    "name": "Luke Skywalker",
+                    "online": true,
+                    "role": "user",
+                    "someTest": "Test",
+                    "testing": false,
+                    "testing-this": 3.14,
+                    "updated_at": "2022-12-01T13:39:20.8785Z",
+                    "yetAnotherField": "40"
+                }
+            },
+            {
+                "channel": {
+                    "cid": "messaging:3DA8E295-9451-4DDF-81D4-7CA1F2CD1058",
+                    "config": {
+                        "automod": "AI",
+                        "automod_behavior": "block",
+                        "automod_thresholds": {
+                            "explicit": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "spam": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "toxic": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            }
+                        },
+                        "blocklist": "profanity_en_2020_v1",
+                        "blocklist_behavior": "block",
+                        "commands": [
+                            {
+                                "args": "[text]",
+                                "description": "Post a random gif to the channel",
+                                "name": "giphy",
+                                "set": "fun_set"
+                            }
+                        ],
+                        "connect_events": true,
+                        "created_at": "2021-03-01T19:26:18.406502Z",
+                        "custom_events": true,
+                        "max_message_length": 5000,
+                        "message_retention": "infinite",
+                        "mutes": true,
+                        "name": "messaging",
+                        "push_notifications": true,
+                        "quotes": true,
+                        "reactions": true,
+                        "read_events": true,
+                        "reminders": false,
+                        "replies": true,
+                        "search": true,
+                        "typing_events": true,
+                        "updated_at": "2022-06-22T11:15:43.22284Z",
+                        "uploads": true,
+                        "url_enrichment": true
+                    },
+                    "created_at": "2022-07-25T09:09:11.188514Z",
+                    "created_by": {
+                        "banned": false,
+                        "birthland": "Tatooine",
+                        "created_at": "2020-12-07T11:36:47.059906Z",
+                        "extraData": {},
+                        "extra_data": {},
+                        "id": "luke_skywalker",
+                        "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                        "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                        "last_active": "2022-12-01T13:37:07.160445Z",
+                        "name": "Luke Skywalker",
+                        "online": false,
+                        "role": "user",
+                        "someTest": "Test",
+                        "testing": false,
+                        "testing-this": 3.14,
+                        "updated_at": "2022-12-01T13:39:20.8785Z",
+                        "yetAnotherField": "40"
+                    },
+                    "disabled": false,
+                    "frozen": false,
+                    "id": "3DA8E295-9451-4DDF-81D4-7CA1F2CD1058",
+                    "last_message_at": "2022-09-07T10:06:43.489547Z",
+                    "member_count": 3,
+                    "name": "MyChnnel",
+                    "truncated_at": "2022-09-06T09:32:18.354233Z",
+                    "truncated_by": {
+                        "banned": false,
+                        "birthland": "Tatooine",
+                        "created_at": "2020-12-07T11:36:47.059906Z",
+                        "extraData": {},
+                        "extra_data": {},
+                        "id": "luke_skywalker",
+                        "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                        "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                        "last_active": "2022-12-01T13:37:07.160445Z",
+                        "name": "Luke Skywalker",
+                        "online": false,
+                        "role": "user",
+                        "someTest": "Test",
+                        "testing": false,
+                        "testing-this": 3.14,
+                        "updated_at": "2022-12-01T13:39:20.8785Z",
+                        "yetAnotherField": "40"
+                    },
+                    "type": "messaging",
+                    "updated_at": "2022-09-06T09:32:18.362529Z"
+                },
+                "created_at": "2022-09-07T10:05:57.346179Z",
+                "updated_at": "2022-09-07T10:05:57.346179Z",
+                "user": {
+                    "banned": false,
+                    "birthland": "Tatooine",
+                    "created_at": "2020-12-07T11:36:47.059906Z",
+                    "extraData": {},
+                    "extra_data": {},
+                    "id": "luke_skywalker",
+                    "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "last_active": "2022-12-01T13:37:07.160445Z",
+                    "name": "Luke Skywalker",
+                    "online": true,
+                    "role": "user",
+                    "someTest": "Test",
+                    "testing": false,
+                    "testing-this": 3.14,
+                    "updated_at": "2022-12-01T13:39:20.8785Z",
+                    "yetAnotherField": "40"
+                }
+            },
+            {
+                "channel": {
+                    "cid": "messaging:46599131-A4EC-4C62-86D1-B3CFFA476784",
+                    "config": {
+                        "automod": "AI",
+                        "automod_behavior": "block",
+                        "automod_thresholds": {
+                            "explicit": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "spam": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "toxic": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            }
+                        },
+                        "blocklist": "profanity_en_2020_v1",
+                        "blocklist_behavior": "block",
+                        "commands": [
+                            {
+                                "args": "[text]",
+                                "description": "Post a random gif to the channel",
+                                "name": "giphy",
+                                "set": "fun_set"
+                            }
+                        ],
+                        "connect_events": true,
+                        "created_at": "2021-03-01T19:26:18.406502Z",
+                        "custom_events": true,
+                        "max_message_length": 5000,
+                        "message_retention": "infinite",
+                        "mutes": true,
+                        "name": "messaging",
+                        "push_notifications": true,
+                        "quotes": true,
+                        "reactions": true,
+                        "read_events": true,
+                        "reminders": false,
+                        "replies": true,
+                        "search": true,
+                        "typing_events": true,
+                        "updated_at": "2022-06-22T11:15:43.22284Z",
+                        "uploads": true,
+                        "url_enrichment": true
+                    },
+                    "created_at": "2022-05-19T09:34:02.720266Z",
+                    "created_by": {
+                        "banned": false,
+                        "birthland": "Tatooine",
+                        "created_at": "2020-12-07T11:36:47.059906Z",
+                        "extraData": {},
+                        "extra_data": {},
+                        "id": "luke_skywalker",
+                        "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                        "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                        "last_active": "2022-12-01T13:37:07.160445Z",
+                        "name": "Luke Skywalker",
+                        "online": false,
+                        "role": "user",
+                        "someTest": "Test",
+                        "testing": false,
+                        "testing-this": 3.14,
+                        "updated_at": "2022-12-01T13:39:20.8785Z",
+                        "yetAnotherField": "40"
+                    },
+                    "disabled": false,
+                    "frozen": false,
+                    "id": "46599131-A4EC-4C62-86D1-B3CFFA476784",
+                    "last_message_at": "2022-06-19T22:09:02.035884Z",
+                    "member_count": 1,
+                    "name": "Channel4659",
+                    "type": "messaging",
+                    "updated_at": "2022-05-19T09:34:02.720267Z"
+                },
+                "created_at": "2022-06-01T12:40:15.931768Z",
+                "updated_at": "2022-06-01T12:40:15.931768Z",
+                "user": {
+                    "banned": false,
+                    "birthland": "Tatooine",
+                    "created_at": "2020-12-07T11:36:47.059906Z",
+                    "extraData": {},
+                    "extra_data": {},
+                    "id": "luke_skywalker",
+                    "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "last_active": "2022-12-01T13:37:07.160445Z",
+                    "name": "Luke Skywalker",
+                    "online": true,
+                    "role": "user",
+                    "someTest": "Test",
+                    "testing": false,
+                    "testing-this": 3.14,
+                    "updated_at": "2022-12-01T13:39:20.8785Z",
+                    "yetAnotherField": "40"
+                }
+            },
+            {
+                "channel": {
+                    "cid": "messaging:4AEB6574-8",
+                    "config": {
+                        "automod": "AI",
+                        "automod_behavior": "block",
+                        "automod_thresholds": {
+                            "explicit": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "spam": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "toxic": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            }
+                        },
+                        "blocklist": "profanity_en_2020_v1",
+                        "blocklist_behavior": "block",
+                        "commands": [
+                            {
+                                "args": "[text]",
+                                "description": "Post a random gif to the channel",
+                                "name": "giphy",
+                                "set": "fun_set"
+                            }
+                        ],
+                        "connect_events": true,
+                        "created_at": "2021-03-01T19:26:18.406502Z",
+                        "custom_events": true,
+                        "max_message_length": 5000,
+                        "message_retention": "infinite",
+                        "mutes": true,
+                        "name": "messaging",
+                        "push_notifications": true,
+                        "quotes": true,
+                        "reactions": true,
+                        "read_events": true,
+                        "reminders": false,
+                        "replies": true,
+                        "search": true,
+                        "typing_events": true,
+                        "updated_at": "2022-06-22T11:15:43.22284Z",
+                        "uploads": true,
+                        "url_enrichment": true
+                    },
+                    "created_at": "2021-08-11T08:26:27.161257Z",
+                    "created_by": {
+                        "banned": false,
+                        "birthland": "Tatooine",
+                        "created_at": "2020-12-07T11:36:47.059906Z",
+                        "extraData": {},
+                        "extra_data": {},
+                        "id": "luke_skywalker",
+                        "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                        "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                        "last_active": "2022-12-01T13:37:07.160445Z",
+                        "name": "Luke Skywalker",
+                        "online": false,
+                        "role": "user",
+                        "someTest": "Test",
+                        "testing": false,
+                        "testing-this": 3.14,
+                        "updated_at": "2022-12-01T13:39:20.8785Z",
+                        "yetAnotherField": "40"
+                    },
+                    "disabled": false,
+                    "frozen": false,
+                    "id": "4AEB6574-8",
+                    "member_count": 1,
+                    "name": "Channel Issue",
+                    "type": "messaging",
+                    "updated_at": "2021-08-11T08:26:27.161257Z"
+                },
+                "created_at": "2021-11-02T17:13:21.975584Z",
+                "updated_at": "2021-11-02T17:13:21.975584Z",
+                "user": {
+                    "banned": false,
+                    "birthland": "Tatooine",
+                    "created_at": "2020-12-07T11:36:47.059906Z",
+                    "extraData": {},
+                    "extra_data": {},
+                    "id": "luke_skywalker",
+                    "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "last_active": "2022-12-01T13:37:07.160445Z",
+                    "name": "Luke Skywalker",
+                    "online": true,
+                    "role": "user",
+                    "someTest": "Test",
+                    "testing": false,
+                    "testing-this": 3.14,
+                    "updated_at": "2022-12-01T13:39:20.8785Z",
+                    "yetAnotherField": "40"
+                }
+            },
+            {
+                "channel": {
+                    "cid": "messaging:69F3DBEB-6",
+                    "config": {
+                        "automod": "AI",
+                        "automod_behavior": "block",
+                        "automod_thresholds": {
+                            "explicit": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "spam": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "toxic": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            }
+                        },
+                        "blocklist": "profanity_en_2020_v1",
+                        "blocklist_behavior": "block",
+                        "commands": [
+                            {
+                                "args": "[text]",
+                                "description": "Post a random gif to the channel",
+                                "name": "giphy",
+                                "set": "fun_set"
+                            }
+                        ],
+                        "connect_events": true,
+                        "created_at": "2021-03-01T19:26:18.406502Z",
+                        "custom_events": true,
+                        "max_message_length": 5000,
+                        "message_retention": "infinite",
+                        "mutes": true,
+                        "name": "messaging",
+                        "push_notifications": true,
+                        "quotes": true,
+                        "reactions": true,
+                        "read_events": true,
+                        "reminders": false,
+                        "replies": true,
+                        "search": true,
+                        "typing_events": true,
+                        "updated_at": "2022-06-22T11:15:43.22284Z",
+                        "uploads": true,
+                        "url_enrichment": true
+                    },
+                    "created_at": "2021-10-22T16:38:47.429439Z",
+                    "created_by": null,
+                    "deleted_at": "2021-11-08T09:13:21.033555Z",
+                    "disabled": false,
+                    "frozen": false,
+                    "id": "69F3DBEB-6",
+                    "truncated_at": "2021-11-08T09:13:21.033555Z",
+                    "type": "messaging",
+                    "updated_at": "2021-10-22T16:38:47.42944Z"
+                },
+                "created_at": "2021-10-27T09:48:28.563965Z",
+                "updated_at": "2021-10-27T09:48:28.563965Z",
+                "user": {
+                    "banned": false,
+                    "birthland": "Tatooine",
+                    "created_at": "2020-12-07T11:36:47.059906Z",
+                    "extraData": {},
+                    "extra_data": {},
+                    "id": "luke_skywalker",
+                    "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "last_active": "2022-12-01T13:37:07.160445Z",
+                    "name": "Luke Skywalker",
+                    "online": true,
+                    "role": "user",
+                    "someTest": "Test",
+                    "testing": false,
+                    "testing-this": 3.14,
+                    "updated_at": "2022-12-01T13:39:20.8785Z",
+                    "yetAnotherField": "40"
+                }
+            },
+            {
+                "channel": {
+                    "cid": "messaging:74BDB78B-B",
+                    "config": {
+                        "automod": "AI",
+                        "automod_behavior": "block",
+                        "automod_thresholds": {
+                            "explicit": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "spam": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "toxic": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            }
+                        },
+                        "blocklist": "profanity_en_2020_v1",
+                        "blocklist_behavior": "block",
+                        "commands": [
+                            {
+                                "args": "[text]",
+                                "description": "Post a random gif to the channel",
+                                "name": "giphy",
+                                "set": "fun_set"
+                            }
+                        ],
+                        "connect_events": true,
+                        "created_at": "2021-03-01T19:26:18.406502Z",
+                        "custom_events": true,
+                        "max_message_length": 5000,
+                        "message_retention": "infinite",
+                        "mutes": true,
+                        "name": "messaging",
+                        "push_notifications": true,
+                        "quotes": true,
+                        "reactions": true,
+                        "read_events": true,
+                        "reminders": false,
+                        "replies": true,
+                        "search": true,
+                        "typing_events": true,
+                        "updated_at": "2022-06-22T11:15:43.22284Z",
+                        "uploads": true,
+                        "url_enrichment": true
+                    },
+                    "created_at": "2022-04-13T14:57:58.56171Z",
+                    "created_by": {
+                        "AdditionalProperties": {},
+                        "banned": false,
+                        "birthland": "Polis Massa",
+                        "created_at": "2020-12-07T11:37:33.78879Z",
+                        "dashboard_user": true,
+                        "id": "leia_organa",
+                        "image": "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png",
+                        "last_active": "2022-11-30T18:53:55.789944Z",
+                        "name": "Leia Organa",
+                        "online": false,
+                        "role": "user",
+                        "updated_at": "2022-08-09T14:55:13.310023Z"
+                    },
+                    "disabled": false,
+                    "frozen": false,
+                    "id": "74BDB78B-B",
+                    "last_message_at": "2022-11-30T00:16:05.890193Z",
+                    "member_count": 3,
+                    "name": "Why",
+                    "type": "messaging",
+                    "updated_at": "2022-04-13T14:57:58.561711Z"
+                },
+                "created_at": "2022-11-30T06:50:01.515921Z",
+                "updated_at": "2022-11-30T06:50:02.889672Z",
+                "user": {
+                    "banned": false,
+                    "birthland": "Tatooine",
+                    "created_at": "2020-12-07T11:36:47.059906Z",
+                    "extraData": {},
+                    "extra_data": {},
+                    "id": "luke_skywalker",
+                    "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "last_active": "2022-12-01T13:37:07.160445Z",
+                    "name": "Luke Skywalker",
+                    "online": true,
+                    "role": "user",
+                    "someTest": "Test",
+                    "testing": false,
+                    "testing-this": 3.14,
+                    "updated_at": "2022-12-01T13:39:20.8785Z",
+                    "yetAnotherField": "40"
+                }
+            },
+            {
+                "channel": {
+                    "cid": "messaging:83592679-E",
+                    "config": {
+                        "automod": "AI",
+                        "automod_behavior": "block",
+                        "automod_thresholds": {
+                            "explicit": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "spam": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "toxic": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            }
+                        },
+                        "blocklist": "profanity_en_2020_v1",
+                        "blocklist_behavior": "block",
+                        "commands": [
+                            {
+                                "args": "[text]",
+                                "description": "Post a random gif to the channel",
+                                "name": "giphy",
+                                "set": "fun_set"
+                            }
+                        ],
+                        "connect_events": true,
+                        "created_at": "2021-03-01T19:26:18.406502Z",
+                        "custom_events": true,
+                        "max_message_length": 5000,
+                        "message_retention": "infinite",
+                        "mutes": true,
+                        "name": "messaging",
+                        "push_notifications": true,
+                        "quotes": true,
+                        "reactions": true,
+                        "read_events": true,
+                        "reminders": false,
+                        "replies": true,
+                        "search": true,
+                        "typing_events": true,
+                        "updated_at": "2022-06-22T11:15:43.22284Z",
+                        "uploads": true,
+                        "url_enrichment": true
+                    },
+                    "created_at": "2021-11-23T11:24:27.956288Z",
+                    "created_by": {
+                        "banned": false,
+                        "birthland": "Tatooine",
+                        "created_at": "2020-12-07T11:36:47.059906Z",
+                        "extraData": {},
+                        "extra_data": {},
+                        "id": "luke_skywalker",
+                        "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                        "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                        "last_active": "2022-12-01T13:37:07.160445Z",
+                        "name": "Luke Skywalker",
+                        "online": false,
+                        "role": "user",
+                        "someTest": "Test",
+                        "testing": false,
+                        "testing-this": 3.14,
+                        "updated_at": "2022-12-01T13:39:20.8785Z",
+                        "yetAnotherField": "40"
+                    },
+                    "disabled": false,
+                    "frozen": false,
+                    "id": "83592679-E",
+                    "last_message_at": "2021-11-23T11:24:33.211Z",
+                    "member_count": 1,
+                    "name": "Test",
+                    "type": "messaging",
+                    "updated_at": "2021-11-23T11:24:27.956288Z"
+                },
+                "created_at": "2021-11-25T10:00:47.833029Z",
+                "updated_at": "2021-11-25T10:00:47.833029Z",
+                "user": {
+                    "banned": false,
+                    "birthland": "Tatooine",
+                    "created_at": "2020-12-07T11:36:47.059906Z",
+                    "extraData": {},
+                    "extra_data": {},
+                    "id": "luke_skywalker",
+                    "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "last_active": "2022-12-01T13:37:07.160445Z",
+                    "name": "Luke Skywalker",
+                    "online": true,
+                    "role": "user",
+                    "someTest": "Test",
+                    "testing": false,
+                    "testing-this": 3.14,
+                    "updated_at": "2022-12-01T13:39:20.8785Z",
+                    "yetAnotherField": "40"
+                }
+            },
+            {
+                "channel": {
+                    "cid": "messaging:9A5902ED-D80C-44F8-A692-75A2C918E5FE",
+                    "config": {
+                        "automod": "AI",
+                        "automod_behavior": "block",
+                        "automod_thresholds": {
+                            "explicit": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "spam": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "toxic": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            }
+                        },
+                        "blocklist": "profanity_en_2020_v1",
+                        "blocklist_behavior": "block",
+                        "commands": [
+                            {
+                                "args": "[text]",
+                                "description": "Post a random gif to the channel",
+                                "name": "giphy",
+                                "set": "fun_set"
+                            }
+                        ],
+                        "connect_events": true,
+                        "created_at": "2021-03-01T19:26:18.406502Z",
+                        "custom_events": true,
+                        "max_message_length": 5000,
+                        "message_retention": "infinite",
+                        "mutes": true,
+                        "name": "messaging",
+                        "push_notifications": true,
+                        "quotes": true,
+                        "reactions": true,
+                        "read_events": true,
+                        "reminders": false,
+                        "replies": true,
+                        "search": true,
+                        "typing_events": true,
+                        "updated_at": "2022-06-22T11:15:43.22284Z",
+                        "uploads": true,
+                        "url_enrichment": true
+                    },
+                    "created_at": "2021-10-21T21:28:27.500577Z",
+                    "created_by": {
+                        "banned": false,
+                        "birthland": "Tatooine",
+                        "created_at": "2020-12-07T11:36:47.059906Z",
+                        "extraData": {},
+                        "extra_data": {},
+                        "id": "luke_skywalker",
+                        "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                        "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                        "last_active": "2022-12-01T13:37:07.160445Z",
+                        "name": "Luke Skywalker",
+                        "online": false,
+                        "role": "user",
+                        "someTest": "Test",
+                        "testing": false,
+                        "testing-this": 3.14,
+                        "updated_at": "2022-12-01T13:39:20.8785Z",
+                        "yetAnotherField": "40"
+                    },
+                    "disabled": false,
+                    "frozen": false,
+                    "id": "9A5902ED-D80C-44F8-A692-75A2C918E5FE",
+                    "last_message_at": "2021-10-21T21:28:36.102Z",
+                    "member_count": 1,
+                    "name": "mar",
+                    "type": "messaging",
+                    "updated_at": "2021-10-21T21:28:27.500577Z"
+                },
+                "created_at": "2021-10-26T13:50:49.10375Z",
+                "updated_at": "2021-10-26T13:50:49.10375Z",
+                "user": {
+                    "banned": false,
+                    "birthland": "Tatooine",
+                    "created_at": "2020-12-07T11:36:47.059906Z",
+                    "extraData": {},
+                    "extra_data": {},
+                    "id": "luke_skywalker",
+                    "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "last_active": "2022-12-01T13:37:07.160445Z",
+                    "name": "Luke Skywalker",
+                    "online": true,
+                    "role": "user",
+                    "someTest": "Test",
+                    "testing": false,
+                    "testing-this": 3.14,
+                    "updated_at": "2022-12-01T13:39:20.8785Z",
+                    "yetAnotherField": "40"
+                }
+            },
+            {
+                "channel": {
+                    "cid": "messaging:A66151CE-AF17-430E-A722-08C44A3CD2F3",
+                    "config": {
+                        "automod": "AI",
+                        "automod_behavior": "block",
+                        "automod_thresholds": {
+                            "explicit": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "spam": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "toxic": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            }
+                        },
+                        "blocklist": "profanity_en_2020_v1",
+                        "blocklist_behavior": "block",
+                        "commands": [
+                            {
+                                "args": "[text]",
+                                "description": "Post a random gif to the channel",
+                                "name": "giphy",
+                                "set": "fun_set"
+                            }
+                        ],
+                        "connect_events": true,
+                        "created_at": "2021-03-01T19:26:18.406502Z",
+                        "custom_events": true,
+                        "max_message_length": 5000,
+                        "message_retention": "infinite",
+                        "mutes": true,
+                        "name": "messaging",
+                        "push_notifications": true,
+                        "quotes": true,
+                        "reactions": true,
+                        "read_events": true,
+                        "reminders": false,
+                        "replies": true,
+                        "search": true,
+                        "typing_events": true,
+                        "updated_at": "2022-06-22T11:15:43.22284Z",
+                        "uploads": true,
+                        "url_enrichment": true
+                    },
+                    "created_at": "2022-06-17T08:16:54.18334Z",
+                    "created_by": {
+                        "banned": false,
+                        "birthland": "Tatooine",
+                        "created_at": "2020-12-07T11:36:47.059906Z",
+                        "extraData": {},
+                        "extra_data": {},
+                        "id": "luke_skywalker",
+                        "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                        "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                        "last_active": "2022-12-01T13:37:07.160445Z",
+                        "name": "Luke Skywalker",
+                        "online": false,
+                        "role": "user",
+                        "someTest": "Test",
+                        "testing": false,
+                        "testing-this": 3.14,
+                        "updated_at": "2022-12-01T13:39:20.8785Z",
+                        "yetAnotherField": "40"
+                    },
+                    "disabled": false,
+                    "frozen": false,
+                    "id": "A66151CE-AF17-430E-A722-08C44A3CD2F3",
+                    "last_message_at": "2022-06-29T15:49:54.207118Z",
+                    "name": "Test",
+                    "type": "messaging",
+                    "updated_at": "2022-06-17T08:16:54.18334Z"
+                },
+                "created_at": "2022-06-29T21:22:06.182196Z",
+                "updated_at": "2022-06-29T21:22:06.182196Z",
+                "user": {
+                    "banned": false,
+                    "birthland": "Tatooine",
+                    "created_at": "2020-12-07T11:36:47.059906Z",
+                    "extraData": {},
+                    "extra_data": {},
+                    "id": "luke_skywalker",
+                    "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "last_active": "2022-12-01T13:37:07.160445Z",
+                    "name": "Luke Skywalker",
+                    "online": true,
+                    "role": "user",
+                    "someTest": "Test",
+                    "testing": false,
+                    "testing-this": 3.14,
+                    "updated_at": "2022-12-01T13:39:20.8785Z",
+                    "yetAnotherField": "40"
+                }
+            },
+            {
+                "channel": {
+                    "cid": "messaging:A6B0C388-4",
+                    "config": {
+                        "automod": "AI",
+                        "automod_behavior": "block",
+                        "automod_thresholds": {
+                            "explicit": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "spam": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "toxic": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            }
+                        },
+                        "blocklist": "profanity_en_2020_v1",
+                        "blocklist_behavior": "block",
+                        "commands": [
+                            {
+                                "args": "[text]",
+                                "description": "Post a random gif to the channel",
+                                "name": "giphy",
+                                "set": "fun_set"
+                            }
+                        ],
+                        "connect_events": true,
+                        "created_at": "2021-03-01T19:26:18.406502Z",
+                        "custom_events": true,
+                        "max_message_length": 5000,
+                        "message_retention": "infinite",
+                        "mutes": true,
+                        "name": "messaging",
+                        "push_notifications": true,
+                        "quotes": true,
+                        "reactions": true,
+                        "read_events": true,
+                        "reminders": false,
+                        "replies": true,
+                        "search": true,
+                        "typing_events": true,
+                        "updated_at": "2022-06-22T11:15:43.22284Z",
+                        "uploads": true,
+                        "url_enrichment": true
+                    },
+                    "created_at": "2022-06-26T10:43:56.984004Z",
+                    "created_by": {
+                        "banned": false,
+                        "birthland": "Tatooine",
+                        "created_at": "2020-12-07T11:36:47.059906Z",
+                        "extraData": {},
+                        "extra_data": {},
+                        "id": "luke_skywalker",
+                        "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                        "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                        "last_active": "2022-12-01T13:37:07.160445Z",
+                        "name": "Luke Skywalker",
+                        "online": false,
+                        "role": "user",
+                        "someTest": "Test",
+                        "testing": false,
+                        "testing-this": 3.14,
+                        "updated_at": "2022-12-01T13:39:20.8785Z",
+                        "yetAnotherField": "40"
+                    },
+                    "disabled": false,
+                    "frozen": false,
+                    "id": "A6B0C388-4",
+                    "member_count": 1,
+                    "name": "Fgfg",
+                    "type": "messaging",
+                    "updated_at": "2022-06-26T10:43:56.984005Z"
+                },
+                "created_at": "2022-10-20T02:17:26.887978Z",
+                "updated_at": "2022-10-20T02:17:26.887978Z",
+                "user": {
+                    "banned": false,
+                    "birthland": "Tatooine",
+                    "created_at": "2020-12-07T11:36:47.059906Z",
+                    "extraData": {},
+                    "extra_data": {},
+                    "id": "luke_skywalker",
+                    "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "last_active": "2022-12-01T13:37:07.160445Z",
+                    "name": "Luke Skywalker",
+                    "online": true,
+                    "role": "user",
+                    "someTest": "Test",
+                    "testing": false,
+                    "testing-this": 3.14,
+                    "updated_at": "2022-12-01T13:39:20.8785Z",
+                    "yetAnotherField": "40"
+                }
+            },
+            {
+                "channel": {
+                    "cid": "messaging:B4F7CD19-DEF0-42CB-93CA-573D03B12B17",
+                    "config": {
+                        "automod": "AI",
+                        "automod_behavior": "block",
+                        "automod_thresholds": {
+                            "explicit": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "spam": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "toxic": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            }
+                        },
+                        "blocklist": "profanity_en_2020_v1",
+                        "blocklist_behavior": "block",
+                        "commands": [
+                            {
+                                "args": "[text]",
+                                "description": "Post a random gif to the channel",
+                                "name": "giphy",
+                                "set": "fun_set"
+                            }
+                        ],
+                        "connect_events": true,
+                        "created_at": "2021-03-01T19:26:18.406502Z",
+                        "custom_events": true,
+                        "max_message_length": 5000,
+                        "message_retention": "infinite",
+                        "mutes": true,
+                        "name": "messaging",
+                        "push_notifications": true,
+                        "quotes": true,
+                        "reactions": true,
+                        "read_events": true,
+                        "reminders": false,
+                        "replies": true,
+                        "search": true,
+                        "typing_events": true,
+                        "updated_at": "2022-06-22T11:15:43.22284Z",
+                        "uploads": true,
+                        "url_enrichment": true
+                    },
+                    "created_at": "2022-01-06T11:42:17.568549Z",
+                    "created_by": {
+                        "banned": false,
+                        "birthland": "Tatooine",
+                        "created_at": "2020-12-07T11:36:47.059906Z",
+                        "extraData": {},
+                        "extra_data": {},
+                        "id": "luke_skywalker",
+                        "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                        "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                        "last_active": "2022-12-01T13:37:07.160445Z",
+                        "name": "Luke Skywalker",
+                        "online": false,
+                        "role": "user",
+                        "someTest": "Test",
+                        "testing": false,
+                        "testing-this": 3.14,
+                        "updated_at": "2022-12-01T13:39:20.8785Z",
+                        "yetAnotherField": "40"
+                    },
+                    "disabled": false,
+                    "frozen": false,
+                    "id": "B4F7CD19-DEF0-42CB-93CA-573D03B12B17",
+                    "image": "https://us-east.stream-io-cdn.com/102399/images/81325a3a-3263-407e-ae09-81a17b30ae60.22116CC2-CA17-43A6-9D4D-4C8A733C8477.jpeg?Key-Pair-Id=APKAIHG36VEWPDULE23Q&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly91cy1lYXN0LnN0cmVhbS1pby1jZG4uY29tLzEwMjM5OS9pbWFnZXMvODEzMjVhM2EtMzI2My00MDdlLWFlMDktODFhMTdiMzBhZTYwLjIyMTE2Q0MyLUNBMTctNDNBNi05RDRELTRDOEE3MzNDODQ3Ny5qcGVnP2Nyb3A9KiZoPSomcmVzaXplPSomcm89MCZ3PSoiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE2NDMwMDg3MDZ9fX1dfQ__&Signature=g2NhvS4LlY2nPX6OaQWCTV4iciVy6yNyaKQfcWp2h3m47yl41Gxdt8T3BNcy1mwWKKcRwdf0n6CPH8lJDPVNOBWRUgLVNxbtJnlSfLSKlPnoq5MGTZxPZzw9iXpsf1S-Cp9SwP~43hpgG0SLqmm49wloQM79XkUSYpMRrxw0JGSPBrdcPRnhvFLuCzn0vOdieHGix7nig-mckxd5SPni7XZ5AGnAYi0iUP0o5dG10f5KJiOVW7YVI2UjDt7mpUIku7YLifhwi7d5xCvrakYVvAyP3vpFUNqD9xSnO1bZIHCPZ~mLMMetEeuq8bxDUVDhoSMM6sWyfS4FyI7xHWZzRA__&crop=*&h=*&resize=*&ro=0&w=*",
+                    "last_message_at": "2022-01-06T13:09:17.048Z",
+                    "name": "DD",
+                    "type": "messaging",
+                    "updated_at": "2022-01-10T07:18:26.806496Z"
+                },
+                "created_at": "2022-01-07T09:33:51.863665Z",
+                "updated_at": "2022-01-07T09:33:51.863665Z",
+                "user": {
+                    "banned": false,
+                    "birthland": "Tatooine",
+                    "created_at": "2020-12-07T11:36:47.059906Z",
+                    "extraData": {},
+                    "extra_data": {},
+                    "id": "luke_skywalker",
+                    "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "last_active": "2022-12-01T13:37:07.160445Z",
+                    "name": "Luke Skywalker",
+                    "online": true,
+                    "role": "user",
+                    "someTest": "Test",
+                    "testing": false,
+                    "testing-this": 3.14,
+                    "updated_at": "2022-12-01T13:39:20.8785Z",
+                    "yetAnotherField": "40"
+                }
+            },
+            {
+                "channel": {
+                    "cid": "messaging:D2141564-7",
+                    "config": {
+                        "automod": "AI",
+                        "automod_behavior": "block",
+                        "automod_thresholds": {
+                            "explicit": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "spam": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "toxic": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            }
+                        },
+                        "blocklist": "profanity_en_2020_v1",
+                        "blocklist_behavior": "block",
+                        "commands": [
+                            {
+                                "args": "[text]",
+                                "description": "Post a random gif to the channel",
+                                "name": "giphy",
+                                "set": "fun_set"
+                            }
+                        ],
+                        "connect_events": true,
+                        "created_at": "2021-03-01T19:26:18.406502Z",
+                        "custom_events": true,
+                        "max_message_length": 5000,
+                        "message_retention": "infinite",
+                        "mutes": true,
+                        "name": "messaging",
+                        "push_notifications": true,
+                        "quotes": true,
+                        "reactions": true,
+                        "read_events": true,
+                        "reminders": false,
+                        "replies": true,
+                        "search": true,
+                        "typing_events": true,
+                        "updated_at": "2022-06-22T11:15:43.22284Z",
+                        "uploads": true,
+                        "url_enrichment": true
+                    },
+                    "cooldown": 20,
+                    "created_at": "2022-06-08T10:18:28.145905Z",
+                    "created_by": {
+                        "banned": false,
+                        "birthland": "Corellia",
+                        "created_at": "2020-12-07T11:37:34.230369Z",
+                        "extraData": {},
+                        "id": "han_solo",
+                        "image": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
+                        "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
+                        "last_active": "2022-11-30T19:56:29.766070067Z",
+                        "name": "Han Solo",
+                        "online": false,
+                        "role": "user",
+                        "updated_at": "2022-03-21T15:23:04.466699Z"
+                    },
+                    "disabled": false,
+                    "frozen": false,
+                    "id": "D2141564-7",
+                    "last_message_at": "2022-11-23T12:40:18.093042Z",
+                    "member_count": 5,
+                    "name": "Release 4.16.0",
+                    "truncated_at": "2022-06-08T12:07:02.0061Z",
+                    "truncated_by": {
+                        "banned": false,
+                        "birthland": "Stewjon",
+                        "created_at": "2020-12-07T11:37:36.857282Z",
+                        "extraData": {},
+                        "id": "obi-wan_kenobi",
+                        "image": "https://vignette.wikia.nocookie.net/starwars/images/4/4e/ObiWanHS-SWE.jpg",
+                        "image_url": "https://vignette.wikia.nocookie.net/starwars/images/4/4e/ObiWanHS-SWE.jpg",
+                        "last_active": "2022-11-21T19:53:09.609062Z",
+                        "name": "Obi-Wan Kenobi",
+                        "online": false,
+                        "role": "user",
+                        "updated_at": "2022-02-03T11:36:31.119149Z"
+                    },
+                    "type": "messaging",
+                    "updated_at": "2022-06-09T15:29:04.122036Z"
+                },
+                "created_at": "2022-06-08T16:31:49.183522Z",
+                "updated_at": "2022-06-08T16:31:49.183522Z",
+                "user": {
+                    "banned": false,
+                    "birthland": "Tatooine",
+                    "created_at": "2020-12-07T11:36:47.059906Z",
+                    "extraData": {},
+                    "extra_data": {},
+                    "id": "luke_skywalker",
+                    "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "last_active": "2022-12-01T13:37:07.160445Z",
+                    "name": "Luke Skywalker",
+                    "online": true,
+                    "role": "user",
+                    "someTest": "Test",
+                    "testing": false,
+                    "testing-this": 3.14,
+                    "updated_at": "2022-12-01T13:39:20.8785Z",
+                    "yetAnotherField": "40"
+                }
+            },
+            {
+                "channel": {
+                    "cid": "messaging:E83E89F2-9",
+                    "config": {
+                        "automod": "AI",
+                        "automod_behavior": "block",
+                        "automod_thresholds": {
+                            "explicit": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "spam": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "toxic": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            }
+                        },
+                        "blocklist": "profanity_en_2020_v1",
+                        "blocklist_behavior": "block",
+                        "commands": [
+                            {
+                                "args": "[text]",
+                                "description": "Post a random gif to the channel",
+                                "name": "giphy",
+                                "set": "fun_set"
+                            }
+                        ],
+                        "connect_events": true,
+                        "created_at": "2021-03-01T19:26:18.406502Z",
+                        "custom_events": true,
+                        "max_message_length": 5000,
+                        "message_retention": "infinite",
+                        "mutes": true,
+                        "name": "messaging",
+                        "push_notifications": true,
+                        "quotes": true,
+                        "reactions": true,
+                        "read_events": true,
+                        "reminders": false,
+                        "replies": true,
+                        "search": true,
+                        "typing_events": true,
+                        "updated_at": "2022-06-22T11:15:43.22284Z",
+                        "uploads": true,
+                        "url_enrichment": true
+                    },
+                    "created_at": "2022-03-02T13:01:39.139683Z",
+                    "created_by": {
+                        "banned": false,
+                        "birthland": "Tatooine",
+                        "created_at": "2020-12-07T11:36:47.059906Z",
+                        "extraData": {},
+                        "extra_data": {},
+                        "id": "luke_skywalker",
+                        "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                        "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                        "last_active": "2022-12-01T13:37:07.160445Z",
+                        "name": "Luke Skywalker",
+                        "online": false,
+                        "role": "user",
+                        "someTest": "Test",
+                        "testing": false,
+                        "testing-this": 3.14,
+                        "updated_at": "2022-12-01T13:39:20.8785Z",
+                        "yetAnotherField": "40"
+                    },
+                    "disabled": false,
+                    "frozen": false,
+                    "id": "E83E89F2-9",
+                    "last_message_at": "2022-09-07T11:33:02.638857Z",
+                    "member_count": 3,
+                    "name": "Performance Test",
+                    "type": "messaging",
+                    "updated_at": "2022-03-02T13:01:39.139683Z"
+                },
+                "created_at": "2022-06-16T16:42:58.531184Z",
+                "updated_at": "2022-06-16T16:42:58.531184Z",
+                "user": {
+                    "banned": false,
+                    "birthland": "Tatooine",
+                    "created_at": "2020-12-07T11:36:47.059906Z",
+                    "extraData": {},
+                    "extra_data": {},
+                    "id": "luke_skywalker",
+                    "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "last_active": "2022-12-01T13:37:07.160445Z",
+                    "name": "Luke Skywalker",
+                    "online": true,
+                    "role": "user",
+                    "someTest": "Test",
+                    "testing": false,
+                    "testing-this": 3.14,
+                    "updated_at": "2022-12-01T13:39:20.8785Z",
+                    "yetAnotherField": "40"
+                }
+            },
+            {
+                "channel": {
+                    "cid": "messaging:F27695DA-F",
+                    "config": {
+                        "automod": "AI",
+                        "automod_behavior": "block",
+                        "automod_thresholds": {
+                            "explicit": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "spam": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "toxic": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            }
+                        },
+                        "blocklist": "profanity_en_2020_v1",
+                        "blocklist_behavior": "block",
+                        "commands": [
+                            {
+                                "args": "[text]",
+                                "description": "Post a random gif to the channel",
+                                "name": "giphy",
+                                "set": "fun_set"
+                            }
+                        ],
+                        "connect_events": true,
+                        "created_at": "2021-03-01T19:26:18.406502Z",
+                        "custom_events": true,
+                        "max_message_length": 5000,
+                        "message_retention": "infinite",
+                        "mutes": true,
+                        "name": "messaging",
+                        "push_notifications": true,
+                        "quotes": true,
+                        "reactions": true,
+                        "read_events": true,
+                        "reminders": false,
+                        "replies": true,
+                        "search": true,
+                        "typing_events": true,
+                        "updated_at": "2022-06-22T11:15:43.22284Z",
+                        "uploads": true,
+                        "url_enrichment": true
+                    },
+                    "created_at": "2022-04-13T14:56:40.086212Z",
+                    "created_by": {
+                        "AdditionalProperties": {},
+                        "banned": false,
+                        "birthland": "Polis Massa",
+                        "created_at": "2020-12-07T11:37:33.78879Z",
+                        "dashboard_user": true,
+                        "id": "leia_organa",
+                        "image": "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png",
+                        "last_active": "2022-11-30T18:53:55.789944Z",
+                        "name": "Leia Organa",
+                        "online": false,
+                        "role": "user",
+                        "updated_at": "2022-08-09T14:55:13.310023Z"
+                    },
+                    "disabled": false,
+                    "frozen": false,
+                    "id": "F27695DA-F",
+                    "last_message_at": "2022-06-16T21:47:05.693242Z",
+                    "member_count": 4,
+                    "name": "Watch me",
+                    "type": "messaging",
+                    "updated_at": "2022-05-18T12:49:53.085597Z"
+                },
+                "created_at": "2022-06-07T15:11:51.638351Z",
+                "updated_at": "2022-06-07T15:11:51.638351Z",
+                "user": {
+                    "banned": false,
+                    "birthland": "Tatooine",
+                    "created_at": "2020-12-07T11:36:47.059906Z",
+                    "extraData": {},
+                    "extra_data": {},
+                    "id": "luke_skywalker",
+                    "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "last_active": "2022-12-01T13:37:07.160445Z",
+                    "name": "Luke Skywalker",
+                    "online": true,
+                    "role": "user",
+                    "someTest": "Test",
+                    "testing": false,
+                    "testing-this": 3.14,
+                    "updated_at": "2022-12-01T13:39:20.8785Z",
+                    "yetAnotherField": "40"
+                }
+            },
+            {
+                "channel": {
+                    "cid": "messaging:!members-6ppsP1_rrcZmNpbRMMLqm3GvkvfKuCUoFLXU578ie94",
+                    "config": {
+                        "automod": "AI",
+                        "automod_behavior": "block",
+                        "automod_thresholds": {
+                            "explicit": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "spam": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "toxic": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            }
+                        },
+                        "blocklist": "profanity_en_2020_v1",
+                        "blocklist_behavior": "block",
+                        "commands": [
+                            {
+                                "args": "[text]",
+                                "description": "Post a random gif to the channel",
+                                "name": "giphy",
+                                "set": "fun_set"
+                            }
+                        ],
+                        "connect_events": true,
+                        "created_at": "2021-03-01T19:26:18.406502Z",
+                        "custom_events": true,
+                        "max_message_length": 5000,
+                        "message_retention": "infinite",
+                        "mutes": true,
+                        "name": "messaging",
+                        "push_notifications": true,
+                        "quotes": true,
+                        "reactions": true,
+                        "read_events": true,
+                        "reminders": false,
+                        "replies": true,
+                        "search": true,
+                        "typing_events": true,
+                        "updated_at": "2022-06-22T11:15:43.22284Z",
+                        "uploads": true,
+                        "url_enrichment": true
+                    },
+                    "created_at": "2021-06-22T18:11:12.398279Z",
+                    "created_by": null,
+                    "deleted_at": "2021-10-21T13:31:40.772867Z",
+                    "disabled": false,
+                    "frozen": false,
+                    "id": "!members-6ppsP1_rrcZmNpbRMMLqm3GvkvfKuCUoFLXU578ie94",
+                    "truncated_at": "2021-10-21T13:31:40.772867Z",
+                    "type": "messaging",
+                    "updated_at": "2021-06-22T18:11:12.398279Z"
+                },
+                "created_at": "2021-09-07T16:11:29.622436Z",
+                "updated_at": "2021-09-07T16:11:33.33425Z",
+                "user": {
+                    "banned": false,
+                    "birthland": "Tatooine",
+                    "created_at": "2020-12-07T11:36:47.059906Z",
+                    "extraData": {},
+                    "extra_data": {},
+                    "id": "luke_skywalker",
+                    "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "last_active": "2022-12-01T13:37:07.160445Z",
+                    "name": "Luke Skywalker",
+                    "online": true,
+                    "role": "user",
+                    "someTest": "Test",
+                    "testing": false,
+                    "testing-this": 3.14,
+                    "updated_at": "2022-12-01T13:39:20.8785Z",
+                    "yetAnotherField": "40"
+                }
+            },
+            {
+                "channel": {
+                    "cid": "messaging:!members-91oMUXD99daxcsAn7nYuaWGN-RHg1AuHWwihGXyCAEQ",
+                    "config": {
+                        "automod": "AI",
+                        "automod_behavior": "block",
+                        "automod_thresholds": {
+                            "explicit": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "spam": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "toxic": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            }
+                        },
+                        "blocklist": "profanity_en_2020_v1",
+                        "blocklist_behavior": "block",
+                        "commands": [
+                            {
+                                "args": "[text]",
+                                "description": "Post a random gif to the channel",
+                                "name": "giphy",
+                                "set": "fun_set"
+                            }
+                        ],
+                        "connect_events": true,
+                        "created_at": "2021-03-01T19:26:18.406502Z",
+                        "custom_events": true,
+                        "max_message_length": 5000,
+                        "message_retention": "infinite",
+                        "mutes": true,
+                        "name": "messaging",
+                        "push_notifications": true,
+                        "quotes": true,
+                        "reactions": true,
+                        "read_events": true,
+                        "reminders": false,
+                        "replies": true,
+                        "search": true,
+                        "typing_events": true,
+                        "updated_at": "2022-06-22T11:15:43.22284Z",
+                        "uploads": true,
+                        "url_enrichment": true
+                    },
+                    "created_at": "2021-03-19T15:17:30.520971Z",
+                    "created_by": {
+                        "banned": false,
+                        "birthland": "Tatooine",
+                        "created_at": "2020-12-07T11:36:47.059906Z",
+                        "extraData": {},
+                        "extra_data": {},
+                        "id": "luke_skywalker",
+                        "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                        "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                        "last_active": "2022-12-01T13:37:07.160445Z",
+                        "name": "Luke Skywalker",
+                        "online": false,
+                        "role": "user",
+                        "someTest": "Test",
+                        "testing": false,
+                        "testing-this": 3.14,
+                        "updated_at": "2022-12-01T13:39:20.8785Z",
+                        "yetAnotherField": "40"
+                    },
+                    "disabled": false,
+                    "frozen": true,
+                    "id": "!members-91oMUXD99daxcsAn7nYuaWGN-RHg1AuHWwihGXyCAEQ",
+                    "last_message_at": "2022-06-15T05:55:39.399721Z",
+                    "member_count": 2,
+                    "truncated_at": "2022-06-01T07:14:14.444177Z",
+                    "type": "messaging",
+                    "updated_at": "2021-11-09T11:16:28.037835Z"
+                },
+                "created_at": "2022-06-08T06:43:55.861996Z",
+                "updated_at": "2022-06-08T06:43:55.861996Z",
+                "user": {
+                    "banned": false,
+                    "birthland": "Tatooine",
+                    "created_at": "2020-12-07T11:36:47.059906Z",
+                    "extraData": {},
+                    "extra_data": {},
+                    "id": "luke_skywalker",
+                    "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "last_active": "2022-12-01T13:37:07.160445Z",
+                    "name": "Luke Skywalker",
+                    "online": true,
+                    "role": "user",
+                    "someTest": "Test",
+                    "testing": false,
+                    "testing-this": 3.14,
+                    "updated_at": "2022-12-01T13:39:20.8785Z",
+                    "yetAnotherField": "40"
+                }
+            },
+            {
+                "channel": {
+                    "cid": "messaging:!members-DKVL2zRdc_V71nKurj_p5YdzJZ31xQI0H1mY-GHQgpw",
+                    "config": {
+                        "automod": "AI",
+                        "automod_behavior": "block",
+                        "automod_thresholds": {
+                            "explicit": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "spam": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "toxic": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            }
+                        },
+                        "blocklist": "profanity_en_2020_v1",
+                        "blocklist_behavior": "block",
+                        "commands": [
+                            {
+                                "args": "[text]",
+                                "description": "Post a random gif to the channel",
+                                "name": "giphy",
+                                "set": "fun_set"
+                            }
+                        ],
+                        "connect_events": true,
+                        "created_at": "2021-03-01T19:26:18.406502Z",
+                        "custom_events": true,
+                        "max_message_length": 5000,
+                        "message_retention": "infinite",
+                        "mutes": true,
+                        "name": "messaging",
+                        "push_notifications": true,
+                        "quotes": true,
+                        "reactions": true,
+                        "read_events": true,
+                        "reminders": false,
+                        "replies": true,
+                        "search": true,
+                        "typing_events": true,
+                        "updated_at": "2022-06-22T11:15:43.22284Z",
+                        "uploads": true,
+                        "url_enrichment": true
+                    },
+                    "created_at": "2022-01-04T11:46:40.285178Z",
+                    "created_by": {
+                        "banned": false,
+                        "birthland": "Tatooine",
+                        "created_at": "2020-12-07T11:36:47.059906Z",
+                        "extraData": {},
+                        "extra_data": {},
+                        "id": "luke_skywalker",
+                        "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                        "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                        "last_active": "2022-12-01T13:37:07.160445Z",
+                        "name": "Luke Skywalker",
+                        "online": false,
+                        "role": "user",
+                        "someTest": "Test",
+                        "testing": false,
+                        "testing-this": 3.14,
+                        "updated_at": "2022-12-01T13:39:20.8785Z",
+                        "yetAnotherField": "40"
+                    },
+                    "disabled": false,
+                    "frozen": false,
+                    "id": "!members-DKVL2zRdc_V71nKurj_p5YdzJZ31xQI0H1mY-GHQgpw",
+                    "last_message_at": "2022-02-27T16:17:11.346606Z",
+                    "member_count": 1,
+                    "type": "messaging",
+                    "updated_at": "2022-01-04T11:46:40.285178Z"
+                },
+                "created_at": "2022-01-05T07:51:51.586179Z",
+                "updated_at": "2022-01-05T07:51:51.586179Z",
+                "user": {
+                    "banned": false,
+                    "birthland": "Tatooine",
+                    "created_at": "2020-12-07T11:36:47.059906Z",
+                    "extraData": {},
+                    "extra_data": {},
+                    "id": "luke_skywalker",
+                    "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "last_active": "2022-12-01T13:37:07.160445Z",
+                    "name": "Luke Skywalker",
+                    "online": true,
+                    "role": "user",
+                    "someTest": "Test",
+                    "testing": false,
+                    "testing-this": 3.14,
+                    "updated_at": "2022-12-01T13:39:20.8785Z",
+                    "yetAnotherField": "40"
+                }
+            },
+            {
+                "channel": {
+                    "cid": "messaging:!members-igKiz7y4EjED6O3jRZKgpOlopEjMDPMkkXgEpDmsyME",
+                    "config": {
+                        "automod": "AI",
+                        "automod_behavior": "block",
+                        "automod_thresholds": {
+                            "explicit": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "spam": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "toxic": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            }
+                        },
+                        "blocklist": "profanity_en_2020_v1",
+                        "blocklist_behavior": "block",
+                        "commands": [
+                            {
+                                "args": "[text]",
+                                "description": "Post a random gif to the channel",
+                                "name": "giphy",
+                                "set": "fun_set"
+                            }
+                        ],
+                        "connect_events": true,
+                        "created_at": "2021-03-01T19:26:18.406502Z",
+                        "custom_events": true,
+                        "max_message_length": 5000,
+                        "message_retention": "infinite",
+                        "mutes": true,
+                        "name": "messaging",
+                        "push_notifications": true,
+                        "quotes": true,
+                        "reactions": true,
+                        "read_events": true,
+                        "reminders": false,
+                        "replies": true,
+                        "search": true,
+                        "typing_events": true,
+                        "updated_at": "2022-06-22T11:15:43.22284Z",
+                        "uploads": true,
+                        "url_enrichment": true
+                    },
+                    "created_at": "2021-04-15T11:41:24.253738Z",
+                    "created_by": {
+                        "banned": false,
+                        "birthland": "Tatooine",
+                        "created_at": "2020-12-07T11:36:47.059906Z",
+                        "extraData": {},
+                        "extra_data": {},
+                        "id": "luke_skywalker",
+                        "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                        "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                        "last_active": "2022-12-01T13:37:07.160445Z",
+                        "name": "Luke Skywalker",
+                        "online": false,
+                        "role": "user",
+                        "someTest": "Test",
+                        "testing": false,
+                        "testing-this": 3.14,
+                        "updated_at": "2022-12-01T13:39:20.8785Z",
+                        "yetAnotherField": "40"
+                    },
+                    "disabled": false,
+                    "frozen": true,
+                    "id": "!members-igKiz7y4EjED6O3jRZKgpOlopEjMDPMkkXgEpDmsyME",
+                    "last_message_at": "2022-02-22T19:17:30.604863Z",
+                    "member_count": 2,
+                    "truncated_at": "2022-02-22T19:17:30.603863Z",
+                    "type": "messaging",
+                    "updated_at": "2022-02-22T19:17:30.60954Z"
+                },
+                "created_at": "2022-02-01T21:33:42.21921Z",
+                "updated_at": "2022-02-01T21:33:42.21921Z",
+                "user": {
+                    "banned": false,
+                    "birthland": "Tatooine",
+                    "created_at": "2020-12-07T11:36:47.059906Z",
+                    "extraData": {},
+                    "extra_data": {},
+                    "id": "luke_skywalker",
+                    "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "last_active": "2022-12-01T13:37:07.160445Z",
+                    "name": "Luke Skywalker",
+                    "online": true,
+                    "role": "user",
+                    "someTest": "Test",
+                    "testing": false,
+                    "testing-this": 3.14,
+                    "updated_at": "2022-12-01T13:39:20.8785Z",
+                    "yetAnotherField": "40"
+                }
+            },
+            {
+                "channel": {
+                    "cid": "messaging:!members-UknlmyLz66nOlQ4XQy58WPvxdVchvWgzL44UZcU9chY",
+                    "config": {
+                        "automod": "AI",
+                        "automod_behavior": "block",
+                        "automod_thresholds": {
+                            "explicit": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "spam": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "toxic": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            }
+                        },
+                        "blocklist": "profanity_en_2020_v1",
+                        "blocklist_behavior": "block",
+                        "commands": [
+                            {
+                                "args": "[text]",
+                                "description": "Post a random gif to the channel",
+                                "name": "giphy",
+                                "set": "fun_set"
+                            }
+                        ],
+                        "connect_events": true,
+                        "created_at": "2021-03-01T19:26:18.406502Z",
+                        "custom_events": true,
+                        "max_message_length": 5000,
+                        "message_retention": "infinite",
+                        "mutes": true,
+                        "name": "messaging",
+                        "push_notifications": true,
+                        "quotes": true,
+                        "reactions": true,
+                        "read_events": true,
+                        "reminders": false,
+                        "replies": true,
+                        "search": true,
+                        "typing_events": true,
+                        "updated_at": "2022-06-22T11:15:43.22284Z",
+                        "uploads": true,
+                        "url_enrichment": true
+                    },
+                    "created_at": "2021-07-09T14:01:01.672139Z",
+                    "created_by": {
+                        "banned": false,
+                        "birthland": "Tatooine",
+                        "created_at": "2020-12-07T11:36:47.059906Z",
+                        "extraData": {},
+                        "extra_data": {},
+                        "id": "luke_skywalker",
+                        "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                        "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                        "last_active": "2022-12-01T13:37:07.160445Z",
+                        "name": "Luke Skywalker",
+                        "online": false,
+                        "role": "user",
+                        "someTest": "Test",
+                        "testing": false,
+                        "testing-this": 3.14,
+                        "updated_at": "2022-12-01T13:39:20.8785Z",
+                        "yetAnotherField": "40"
+                    },
+                    "disabled": false,
+                    "frozen": false,
+                    "id": "!members-UknlmyLz66nOlQ4XQy58WPvxdVchvWgzL44UZcU9chY",
+                    "last_message_at": "2022-01-03T09:48:55.041Z",
+                    "member_count": 1,
+                    "type": "messaging",
+                    "updated_at": "2021-07-09T14:01:01.67214Z"
+                },
+                "created_at": "2021-12-09T12:45:11.055391Z",
+                "updated_at": "2021-12-09T12:45:11.055391Z",
+                "user": {
+                    "banned": false,
+                    "birthland": "Tatooine",
+                    "created_at": "2020-12-07T11:36:47.059906Z",
+                    "extraData": {},
+                    "extra_data": {},
+                    "id": "luke_skywalker",
+                    "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "last_active": "2022-12-01T13:37:07.160445Z",
+                    "name": "Luke Skywalker",
+                    "online": true,
+                    "role": "user",
+                    "someTest": "Test",
+                    "testing": false,
+                    "testing-this": 3.14,
+                    "updated_at": "2022-12-01T13:39:20.8785Z",
+                    "yetAnotherField": "40"
+                }
+            },
+            {
+                "channel": {
+                    "cid": "messaging:!members-ZaJnE9fSvNmhutfWE4Is4WMYkqe_zAT5lrXPLZgaRk8",
+                    "config": {
+                        "automod": "AI",
+                        "automod_behavior": "block",
+                        "automod_thresholds": {
+                            "explicit": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "spam": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "toxic": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            }
+                        },
+                        "blocklist": "profanity_en_2020_v1",
+                        "blocklist_behavior": "block",
+                        "commands": [
+                            {
+                                "args": "[text]",
+                                "description": "Post a random gif to the channel",
+                                "name": "giphy",
+                                "set": "fun_set"
+                            }
+                        ],
+                        "connect_events": true,
+                        "created_at": "2021-03-01T19:26:18.406502Z",
+                        "custom_events": true,
+                        "max_message_length": 5000,
+                        "message_retention": "infinite",
+                        "mutes": true,
+                        "name": "messaging",
+                        "push_notifications": true,
+                        "quotes": true,
+                        "reactions": true,
+                        "read_events": true,
+                        "reminders": false,
+                        "replies": true,
+                        "search": true,
+                        "typing_events": true,
+                        "updated_at": "2022-06-22T11:15:43.22284Z",
+                        "uploads": true,
+                        "url_enrichment": true
+                    },
+                    "created_at": "2021-04-15T11:40:48.413059Z",
+                    "created_by": {
+                        "banned": false,
+                        "birthland": "Tatooine",
+                        "created_at": "2020-12-07T11:36:47.059906Z",
+                        "extraData": {},
+                        "extra_data": {},
+                        "id": "luke_skywalker",
+                        "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                        "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                        "last_active": "2022-12-01T13:37:07.160445Z",
+                        "name": "Luke Skywalker",
+                        "online": false,
+                        "role": "user",
+                        "someTest": "Test",
+                        "testing": false,
+                        "testing-this": 3.14,
+                        "updated_at": "2022-12-01T13:39:20.8785Z",
+                        "yetAnotherField": "40"
+                    },
+                    "disabled": false,
+                    "frozen": false,
+                    "id": "!members-ZaJnE9fSvNmhutfWE4Is4WMYkqe_zAT5lrXPLZgaRk8",
+                    "last_message_at": "2022-11-29T17:08:08.437793Z",
+                    "member_count": 2,
+                    "truncated_at": "2021-06-01T03:41:03.468756Z",
+                    "type": "messaging",
+                    "updated_at": "2021-04-15T11:40:48.413059Z"
+                },
+                "created_at": "2022-04-07T08:38:05.888869Z",
+                "updated_at": "2022-04-07T08:38:05.888869Z",
+                "user": {
+                    "banned": false,
+                    "birthland": "Tatooine",
+                    "created_at": "2020-12-07T11:36:47.059906Z",
+                    "extraData": {},
+                    "extra_data": {},
+                    "id": "luke_skywalker",
+                    "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "last_active": "2022-12-01T13:37:07.160445Z",
+                    "name": "Luke Skywalker",
+                    "online": true,
+                    "role": "user",
+                    "someTest": "Test",
+                    "testing": false,
+                    "testing-this": 3.14,
+                    "updated_at": "2022-12-01T13:39:20.8785Z",
+                    "yetAnotherField": "40"
+                }
+            },
+            {
+                "channel": {
+                    "cid": "messaging:messaging",
+                    "config": {
+                        "automod": "AI",
+                        "automod_behavior": "block",
+                        "automod_thresholds": {
+                            "explicit": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "spam": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            },
+                            "toxic": {
+                                "block": 0.9,
+                                "flag": 0.85
+                            }
+                        },
+                        "blocklist": "profanity_en_2020_v1",
+                        "blocklist_behavior": "block",
+                        "commands": [
+                            {
+                                "args": "[text]",
+                                "description": "Post a random gif to the channel",
+                                "name": "giphy",
+                                "set": "fun_set"
+                            }
+                        ],
+                        "connect_events": true,
+                        "created_at": "2021-03-01T19:26:18.406502Z",
+                        "custom_events": true,
+                        "max_message_length": 5000,
+                        "message_retention": "infinite",
+                        "mutes": true,
+                        "name": "messaging",
+                        "push_notifications": true,
+                        "quotes": true,
+                        "reactions": true,
+                        "read_events": true,
+                        "reminders": false,
+                        "replies": true,
+                        "search": true,
+                        "typing_events": true,
+                        "updated_at": "2022-06-22T11:15:43.22284Z",
+                        "uploads": true,
+                        "url_enrichment": true
+                    },
+                    "created_at": "2021-05-26T03:40:32.779987Z",
+                    "created_by": null,
+                    "deleted_at": "2021-10-20T21:13:17.382366Z",
+                    "disabled": false,
+                    "frozen": false,
+                    "id": "messaging",
+                    "truncated_at": "2021-10-20T21:13:17.382366Z",
+                    "type": "messaging",
+                    "updated_at": "2021-05-26T03:46:17.227545Z"
+                },
+                "created_at": "2021-08-31T06:34:57.840832Z",
+                "updated_at": "2021-09-24T14:53:56.545869Z",
+                "user": {
+                    "banned": false,
+                    "birthland": "Tatooine",
+                    "created_at": "2020-12-07T11:36:47.059906Z",
+                    "extraData": {},
+                    "extra_data": {},
+                    "id": "luke_skywalker",
+                    "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "last_active": "2022-12-01T13:37:07.160445Z",
+                    "name": "Luke Skywalker",
+                    "online": true,
+                    "role": "user",
+                    "someTest": "Test",
+                    "testing": false,
+                    "testing-this": 3.14,
+                    "updated_at": "2022-12-01T13:39:20.8785Z",
+                    "yetAnotherField": "40"
+                }
+            }
+        ],
+        "created_at": "2020-12-07T11:36:47.059906Z",
+        "devices": [
+            {
+                "created_at": "2022-11-30T19:01:20.02154Z",
+                "id": "asdads",
+                "push_provider": "firebase",
+                "user_id": "luke_skywalker"
+            },
+            {
+                "created_at": "2022-11-30T18:45:29.086078Z",
+                "id": "test",
+                "push_provider": "firebase",
+                "user_id": "luke_skywalker"
+            },
+            {
+                "created_at": "2022-11-30T10:09:55.85861Z",
+                "id": "800409f1ba61a9d86d8b1b913109768e9fe3116362e8fb7be59ad1801ee4d1287c71bed55d12ec74ead159a249b7e000fc90adedfec362045a5a4af7415fc706dd258a2d71fa6665bc0917d822e60bfe",
+                "push_provider": "apn",
+                "push_provider_name": "APN-Configuration",
+                "user_id": "luke_skywalker"
+            },
+            {
+                "created_at": "2022-11-29T17:54:12.447502Z",
+                "id": "1e03f9267fd0c7402a7ece505289a14c840351ea6db5ab070a78b5929d2c1708",
+                "push_provider": "apn",
+                "push_provider_name": "APN-Configuration",
+                "user_id": "luke_skywalker"
+            },
+            {
+                "created_at": "2022-11-28T08:36:25.645226Z",
+                "id": "80f35395c93678d0eb1caa52e6167c3f967d25d45cf01d6de02b2ef8ea35fafff3f60d5aeeee378ccf2730339eeb951bb578d892fce919f92b62b52c525b87993f303834d3a6e18d3e781a61471bfeeb",
+                "push_provider": "apn",
+                "push_provider_name": "APN-Configuration",
+                "user_id": "luke_skywalker"
+            },
+            {
+                "created_at": "2022-11-26T18:42:34.496303Z",
+                "id": "80a73e9c738e24e61c0f49ce9ae8544f1fa76e9b24e21b4b347d9fe42bd1809a78b06840b1a552c9572981c2f0dbce1365193866fcc9ceb82e758b5e667293150875c03f0cff0d858701cc5639746ed1",
+                "push_provider": "apn",
+                "push_provider_name": "APN-Configuration",
+                "user_id": "luke_skywalker"
+            },
+            {
+                "created_at": "2022-11-25T09:03:26.393609Z",
+                "id": "80abff9a4f4139f10b7234f6bc4f26f2f2e922bd66abc444dc9e951fe7eccce0d27cc8e1e4db69c48d4d01b6e6266a6eb33bea1e8b51b5c5fe5961c71db11ebd59a895e801b84f21d193d241db0ea25b",
+                "push_provider": "apn",
+                "push_provider_name": "APN-Configuration",
+                "user_id": "luke_skywalker"
+            },
+            {
+                "created_at": "2022-11-24T01:29:05.972838Z",
+                "id": "29f1b40dc49247452c2d2a7f9488bfb8e09b61b0df187e6e363e736cd88cb036",
+                "push_provider": "apn",
+                "push_provider_name": "APN-Configuration",
+                "user_id": "luke_skywalker"
+            },
+            {
+                "created_at": "2022-11-22T08:41:27.831027Z",
+                "id": "8038fd5c30235c03f39841bb1eb65c0bb9e62be1d2ad6b404ec743dddb86e497e76f4ae190399674df44454a443bd3f77ead757a1269176771e55928b7340a5fca9b76c14ab233172f9ce954152e71d0",
+                "push_provider": "apn",
+                "push_provider_name": "APN-Configuration",
+                "user_id": "luke_skywalker"
+            },
+            {
+                "created_at": "2022-11-21T11:50:49.642704Z",
+                "id": "9f65cc01097904363d65cb944d13960208a709831dea525d3a9d5931ffe9c6b8",
+                "push_provider": "apn",
+                "push_provider_name": "APN-Configuration",
+                "user_id": "luke_skywalker"
+            },
+            {
+                "created_at": "2022-11-15T12:17:21.215308Z",
+                "id": "6411bc463fbbc2f00304ac0f0d80036281396bf9fd3d38240d22dfd660eed398",
+                "push_provider": "apn",
+                "push_provider_name": "APN-Configuration",
+                "user_id": "luke_skywalker"
+            },
+            {
+                "created_at": "2022-11-12T08:06:41.78525Z",
+                "id": "8093ce2e9242703636e55df71bd47083c0c338da14fabc69231c517e902a4808422a77118c1b777a02580dea4e193de248d188977a032efaf1d21f5baad1b9577c180d1a41c5a29de849fcca56e2da2b",
+                "push_provider": "apn",
+                "push_provider_name": "APN-Configuration",
+                "user_id": "luke_skywalker"
+            },
+            {
+                "created_at": "2022-11-11T21:41:51.522613Z",
+                "id": "1ea12457b8eede4ff3422f4f8007b4979956c713d8a2dc429d5ed84884beafd1",
+                "push_provider": "apn",
+                "push_provider_name": "APN-Configuration",
+                "user_id": "luke_skywalker"
+            },
+            {
+                "created_at": "2022-11-10T13:33:16.784703Z",
+                "id": "acd361502aeaea3373f42a285aa6d8d5bb0cc2501a0628ae5cb5e040198cf276",
+                "push_provider": "apn",
+                "push_provider_name": "APN-Configuration",
+                "user_id": "luke_skywalker"
+            },
+            {
+                "created_at": "2022-11-08T18:35:33.330781Z",
+                "id": "04d347ab40f7a2eb466701a66419dd063aa1263f9eea844b4474a2bd0f3387d8",
+                "push_provider": "apn",
+                "user_id": "luke_skywalker"
+            },
+            {
+                "created_at": "2022-11-03T13:17:32.959761Z",
+                "id": "80254c17c415032af86dde2b2191ab127abba52753b5e69bfd0e4fe5a8e00bb9b19a37e943bb88fb773466d9e32f12fb98e5b2bf06c0c1af91473ec7ec06f0f58372c358e38ae1d4df5d0ddbc5a9ede7",
+                "push_provider": "apn",
+                "push_provider_name": "APN-Configuration",
+                "user_id": "luke_skywalker"
+            },
+            {
+                "created_at": "2022-11-02T20:18:28.998467Z",
+                "id": "80deaa458ad402ed7d88eea68ff2a7935177f4358665369f85c4e01414f9b4058e1eb95153c3ed49db99db6af70eb8d361ee8218eb940208f59105c8d7af43c8aa983c568fd5947ce025dd71bde1a4bf",
+                "push_provider": "apn",
+                "push_provider_name": "APN-Configuration",
+                "user_id": "luke_skywalker"
+            },
+            {
+                "created_at": "2022-10-30T03:51:11.407954Z",
+                "id": "80ebe3eba8eb77178170d91c07857a7619787535283d6e0862466426a8e68c23275357b62a2a0c8255f7f20712384445f0ef7ea9b37238a3152e797ec431a243a5211e5a1c785aff3106f475ce9ae38e",
+                "push_provider": "apn",
+                "push_provider_name": "APN-Configuration",
+                "user_id": "luke_skywalker"
+            },
+            {
+                "created_at": "2022-10-18T00:11:01.952802Z",
+                "id": "8168c1af104d75f734f4b8b7ed73f559eca068d47925aca238fd95f6fab7985e",
+                "push_provider": "apn",
+                "push_provider_name": "APN-Configuration",
+                "user_id": "luke_skywalker"
+            },
+            {
+                "created_at": "2022-10-16T19:39:09.522331Z",
+                "id": "801c4bd02743b4fe0b2047b31286f88885842ed32f7feb9b3005d83f87aed13258c2b640706a596a43334d3927c0ea92475967642cfee9ab15f7011022b1edf24b8ec4dd5a672aa12c5c07d4ae019d02",
+                "push_provider": "apn",
+                "push_provider_name": "APN-Configuration",
+                "user_id": "luke_skywalker"
+            },
+            {
+                "created_at": "2022-08-25T18:44:37.220933Z",
+                "id": "b19bfd50c0ce4785d1496b93a3101ed48c14e8e9ad468fa130f7330200201a2b",
+                "push_provider": "apn",
+                "push_provider_name": "APN-Configuration",
+                "user_id": "luke_skywalker"
+            },
+            {
+                "created_at": "2022-08-15T23:45:42.742719Z",
+                "id": "1b566ba68977d04a0d7f618db1d80314a65735321cc72c507a83d738baff8756",
+                "push_provider": "apn",
+                "push_provider_name": "APN-Configuration",
+                "user_id": "luke_skywalker"
+            },
+            {
+                "created_at": "2022-08-12T19:27:45.169612Z",
+                "id": "9724b6982041b3c84ec4f2106ad3f83e2b3924914c479380a6a2561f0c60a512",
+                "push_provider": "apn",
+                "user_id": "luke_skywalker"
+            },
+            {
+                "created_at": "2022-08-10T10:23:41.922863Z",
+                "id": "179184f865b17fe4f4f49f70c197a24bb1c26259da1daa1b8b24a33dd4a00762",
+                "push_provider": "apn",
+                "push_provider_name": "APN-Configuration",
+                "user_id": "luke_skywalker"
+            },
+            {
+                "created_at": "2022-08-09T10:39:08.992593Z",
+                "id": "aa22703405b109a70189a7521fff2012176276804ffd7a0f3995d84cd6b50653",
+                "push_provider": "apn",
+                "user_id": "luke_skywalker"
+            }
+        ],
+        "extraData": {},
+        "extra_data": {},
+        "id": "luke_skywalker",
+        "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+        "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+        "invisible": false,
+        "language": "",
+        "last_active": "2022-12-01T13:37:07.160445Z",
+        "mutes": [
+            {
+                "created_at": "2021-05-18T11:30:10.964509Z",
+                "target": {
+                    "banned": false,
+                    "birthland": "Affa",
+                    "created_at": "2020-12-07T11:37:35.550588Z",
+                    "dashboard_ban_channel_cid": "messaging:55DE2AA9-4",
+                    "extraData": {},
+                    "id": "c-3po",
+                    "image": "https://vignette.wikia.nocookie.net/starwars/images/3/3f/C-3PO_TLJ_Card_Trader_Award_Card.png",
+                    "image_url": "https://vignette.wikia.nocookie.net/starwars/images/3/3f/C-3PO_TLJ_Card_Trader_Award_Card.png",
+                    "name": "C-3PO",
+                    "online": false,
+                    "role": "user",
+                    "updated_at": "2022-06-29T13:32:45.340252Z"
+                },
+                "updated_at": "2021-05-18T11:30:10.964509Z",
+                "user": {
+                    "banned": false,
+                    "birthland": "Tatooine",
+                    "created_at": "2020-12-07T11:36:47.059906Z",
+                    "extraData": {},
+                    "extra_data": {},
+                    "id": "luke_skywalker",
+                    "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "name": "Luke Skywalker",
+                    "online": true,
+                    "role": "user",
+                    "someTest": "Test",
+                    "testing": false,
+                    "testing-this": 3.14,
+                    "updated_at": "2022-12-01T13:39:20.8785Z",
+                    "yetAnotherField": "40"
+                }
+            },
+            {
+                "created_at": "2022-05-19T01:23:21.63851Z",
+                "target": {
+                    "banned": false,
+                    "birthland": "Tatooine",
+                    "created_at": "2020-12-07T11:36:47.059906Z",
+                    "extraData": {},
+                    "extra_data": {},
+                    "id": "luke_skywalker",
+                    "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "name": "Luke Skywalker",
+                    "online": false,
+                    "role": "user",
+                    "someTest": "Test",
+                    "testing": false,
+                    "testing-this": 3.14,
+                    "updated_at": "2022-12-01T13:39:20.8785Z",
+                    "yetAnotherField": "40"
+                },
+                "updated_at": "2022-05-19T01:23:21.63851Z",
+                "user": {
+                    "banned": false,
+                    "birthland": "Tatooine",
+                    "created_at": "2020-12-07T11:36:47.059906Z",
+                    "extraData": {},
+                    "extra_data": {},
+                    "id": "luke_skywalker",
+                    "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+                    "name": "Luke Skywalker",
+                    "online": true,
+                    "role": "user",
+                    "someTest": "Test",
+                    "testing": false,
+                    "testing-this": 3.14,
+                    "updated_at": "2022-12-01T13:39:20.8785Z",
+                    "yetAnotherField": "40"
+                }
+            }
+        ],
+        "name": "Luke Skywalker",
+        "online": true,
+        "role": "user",
+        "someTest": "Test",
+        "testing": false,
+        "testing-this": 3.14,
+        "total_unread_count": 0,
+        "unread_channels": 0,
+        "unread_count": 0,
+        "updated_at": "2022-12-01T13:39:20.8785Z",
+        "yetAnotherField": "40"
+    },
+    "type": "health.check"
 }
-

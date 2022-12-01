@@ -48,30 +48,11 @@
             "url_enrichment": true
         },
         "created_at": "2022-12-01T13:39:20.934411Z",
-        "created_by": {
-            "banned": false,
-            "birthland": "Tatooine",
-            "created_at": "2020-12-07T11:36:47.059906Z",
-            "extraData": {},
-            "extra_data": {},
-            "id": "luke_skywalker",
-            "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
-            "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
-            "last_active": "2022-12-01T13:37:07.160445Z",
-            "name": "Luke Skywalker",
-            "online": false,
-            "role": "user",
-            "someTest": "Test",
-            "testing": false,
-            "testing-this": 3.14,
-            "updated_at": "2022-12-01T13:39:20.8785Z",
-            "yetAnotherField": "40"
-        },
+        "created_by": null,
+        "deleted_at": "2022-12-01T13:39:21.781314Z",
         "disabled": false,
         "frozen": false,
         "id": "8f651d7e-717d-11ed-914f-005056a296bd",
-        "last_message_at": "0001-01-01T00:00:00Z",
-        "member_count": 4,
         "members": [
             {
                 "banned": false,
@@ -172,8 +153,7 @@
                 "user_id": "leia_organa"
             }
         ],
-        "name": "Sync Mock Server",
-        "truncated_at": "2022-12-01T13:39:21.728957Z",
+        "truncated_at": "2022-12-01T13:39:21.781314Z",
         "truncated_by": {
             "banned": false,
             "birthland": "Tatooine",
@@ -196,46 +176,5 @@
         "type": "messaging",
         "updated_at": "2022-12-01T13:39:21.735052Z"
     },
-    "duration": "39.07ms",
-    "message": {
-        "attachments": [],
-        "cid": "messaging:8f651d7e-717d-11ed-914f-005056a296bd",
-        "created_at": "2022-12-01T13:39:21.728958Z",
-        "html": "<p>Channel truncated</p>\n",
-        "id": "8fe1dbca-717d-11ed-914f-005056a296bd",
-        "latest_reactions": [],
-        "mentioned_users": [],
-        "own_reactions": [],
-        "pin_expires": null,
-        "pinned": false,
-        "pinned_at": null,
-        "pinned_by": null,
-        "reaction_counts": {},
-        "reaction_scores": {},
-        "reply_count": 0,
-        "shadowed": false,
-        "silent": false,
-        "text": "Channel truncated",
-        "type": "system",
-        "updated_at": "2022-12-01T13:39:21.728958Z",
-        "user": {
-            "banned": false,
-            "birthland": "Tatooine",
-            "created_at": "2020-12-07T11:36:47.059906Z",
-            "extraData": {},
-            "extra_data": {},
-            "id": "luke_skywalker",
-            "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
-            "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
-            "last_active": "2022-12-01T13:37:07.160445Z",
-            "name": "Luke Skywalker",
-            "online": false,
-            "role": "user",
-            "someTest": "Test",
-            "testing": false,
-            "testing-this": 3.14,
-            "updated_at": "2022-12-01T13:39:20.8785Z",
-            "yetAnotherField": "40"
-        }
-    }
+    "duration": "16.24ms"
 }
