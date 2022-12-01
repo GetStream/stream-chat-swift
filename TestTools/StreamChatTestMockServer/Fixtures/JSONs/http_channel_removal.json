@@ -1,6 +1,6 @@
 {
     "channel": {
-        "cid": "messaging:5d287b44-717d-11ed-9c0f-005056963352",
+        "cid": "messaging:8f651d7e-717d-11ed-914f-005056a296bd",
         "config": {
             "automod": "AI",
             "automod_behavior": "block",
@@ -47,20 +47,20 @@
             "uploads": true,
             "url_enrichment": true
         },
-        "created_at": "2022-12-01T13:37:56.814426Z",
+        "created_at": "2022-12-01T13:39:20.934411Z",
         "created_by": null,
-        "deleted_at": "2022-12-01T13:37:58.11299Z",
+        "deleted_at": "2022-12-01T13:39:21.781314Z",
         "disabled": false,
         "frozen": false,
-        "id": "5d287b44-717d-11ed-9c0f-005056963352",
+        "id": "8f651d7e-717d-11ed-914f-005056a296bd",
         "members": [
             {
                 "banned": false,
                 "channel_role": "channel_member",
-                "created_at": "2022-12-01T13:37:56.818535Z",
+                "created_at": "2022-12-01T13:39:20.938535Z",
                 "role": "member",
                 "shadow_banned": false,
-                "updated_at": "2022-12-01T13:37:56.818535Z",
+                "updated_at": "2022-12-01T13:39:20.938535Z",
                 "user": {
                     "banned": false,
                     "birthland": "Serenno",
@@ -81,10 +81,10 @@
             {
                 "banned": false,
                 "channel_role": "channel_member",
-                "created_at": "2022-12-01T13:37:56.818535Z",
+                "created_at": "2022-12-01T13:39:20.938535Z",
                 "role": "member",
                 "shadow_banned": false,
-                "updated_at": "2022-12-01T13:37:56.818535Z",
+                "updated_at": "2022-12-01T13:39:20.938535Z",
                 "user": {
                     "banned": false,
                     "birthland": "Corellia",
@@ -104,10 +104,10 @@
             {
                 "banned": false,
                 "channel_role": "channel_member",
-                "created_at": "2022-12-01T13:37:56.818535Z",
+                "created_at": "2022-12-01T13:39:20.938535Z",
                 "role": "owner",
                 "shadow_banned": false,
-                "updated_at": "2022-12-01T13:37:56.818535Z",
+                "updated_at": "2022-12-01T13:39:20.938535Z",
                 "user": {
                     "banned": false,
                     "birthland": "Tatooine",
@@ -119,12 +119,12 @@
                     "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
                     "last_active": "2022-12-01T13:37:07.160445Z",
                     "name": "Luke Skywalker",
-                    "online": true,
+                    "online": false,
                     "role": "user",
                     "someTest": "Test",
                     "testing": false,
                     "testing-this": 3.14,
-                    "updated_at": "2022-12-01T13:37:56.598944Z",
+                    "updated_at": "2022-12-01T13:39:20.8785Z",
                     "yetAnotherField": "40"
                 },
                 "user_id": "luke_skywalker"
@@ -132,10 +132,10 @@
             {
                 "banned": false,
                 "channel_role": "channel_member",
-                "created_at": "2022-12-01T13:37:57.435849Z",
+                "created_at": "2022-12-01T13:39:21.326087Z",
                 "role": "member",
                 "shadow_banned": false,
-                "updated_at": "2022-12-01T13:37:57.435849Z",
+                "updated_at": "2022-12-01T13:39:21.326087Z",
                 "user": {
                     "AdditionalProperties": {},
                     "banned": false,
@@ -153,7 +153,7 @@
                 "user_id": "leia_organa"
             }
         ],
-        "truncated_at": "2022-12-01T13:37:58.11299Z",
+        "truncated_at": "2022-12-01T13:39:21.781314Z",
         "truncated_by": {
             "banned": false,
             "birthland": "Tatooine",
@@ -165,16 +165,16 @@
             "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
             "last_active": "2022-12-01T13:37:07.160445Z",
             "name": "Luke Skywalker",
-            "online": true,
+            "online": false,
             "role": "user",
             "someTest": "Test",
             "testing": false,
             "testing-this": 3.14,
-            "updated_at": "2022-12-01T13:37:56.598944Z",
+            "updated_at": "2022-12-01T13:39:20.8785Z",
             "yetAnotherField": "40"
         },
         "type": "messaging",
-        "updated_at": "2022-12-01T13:37:58.031802Z"
+        "updated_at": "2022-12-01T13:39:21.735052Z"
     },
-    "duration": "15.73ms"
+    "duration": "16.24ms"
 }

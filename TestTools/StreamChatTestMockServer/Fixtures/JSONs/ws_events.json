@@ -1,9 +1,9 @@
 {
-    "channel_id": "5d287b44-717d-11ed-9c0f-005056963352",
+    "channel_id": "D6950940-C",
     "channel_type": "messaging",
-    "cid": "messaging:5d287b44-717d-11ed-9c0f-005056963352",
-    "created_at": "2022-12-01T13:37:57.107653772Z",
-    "type": "typing.start",
+    "cid": "messaging:D6950940-C",
+    "created_at": "2022-12-01T13:39:21.036949474Z",
+    "type": "user.watching.start",
     "user": {
         "banned": false,
         "birthland": "Tatooine",
@@ -20,7 +20,8 @@
         "someTest": "Test",
         "testing": false,
         "testing-this": 3.14,
-        "updated_at": "2022-12-01T13:37:56.598944Z",
+        "updated_at": "2022-12-01T13:39:20.8785Z",
         "yetAnotherField": "40"
-    }
+    },
+    "watcher_count": 1
 }
