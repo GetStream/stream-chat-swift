@@ -1,7 +1,5 @@
-import websockets
+import aiohttp
 import asyncio
-import requests
-import urllib3
 import json
 import uuid
 import os
@@ -20,6 +18,7 @@ mock_server_fixtures_path = '../TestTools/StreamChatTestMockServer/Fixtures/JSON
 test_tools_fixtures_path = '../TestTools/StreamChatTestTools/Fixtures/Images'
 
 def connect_endpoint():
+  print('Connecting to websocket...')
   payload = json.dumps({
     'user_id': stream_user_id,
     'user_details': {
@@ -33,7 +32,8 @@ def connect_endpoint():
   query_params = ['api_key=' + stream_demo_api_key, 'json=' + payload]
   return stream_wss_url + '?' + '&'.join(query_params)
 
-def request_channels(connection_id):
+async def request_channels(session, connection_id):
+  print('Requesting channel list...')
   payload = json.dumps({
     'filter_conditions': {
       'members': {
@@ -47,22 +47,41 @@ def request_channels(connection_id):
   }).replace(' ', '')
   query_params = ['api_key=' + stream_demo_api_key, 'connection_id=' + connection_id, 'payload=' + payload]
   endpoint = stream_channels_url_path + '?' + '&'.join(query_params)
-  channels = requests.get(endpoint, headers=stream_headers, verify=False).json()
-  return channels
+  async with session.get(endpoint, headers=stream_headers) as response:
+    save_json(await response.json(), filename='http_channels.json')
 
-def send_typing_event(type, channel_id):
+async def send_typing_event(session, ws, channel_id):
+  print('Sending typing event...')
   payload = json.dumps({
     'event': {
-      'type': 'typing.' + type
+      'type': 'typing.start'
     }
   })
   endpoint = stream_messaging_url_path + '/' + channel_id + '/event?api_key=' + stream_demo_api_key
-  return requests.post(endpoint, data=payload, headers=stream_headers, verify=False).json()
+  async with session.post(endpoint, data=payload, headers=stream_headers) as response:
+    save_json(await response.json(), filename='http_events.json')
+    save_json((await ws.receive()).json(), filename='ws_events.json')
 
 def random_uuid():
   return str(uuid.uuid1())
 
-def send_message(text, message_id, channel_id):
+async def send_regular_message(session, ws, channel_id):
+  message_id = await send_message(session=session, text='Test', channel_id=channel_id, filename='http_message.json')
+  save_json((await ws.receive()).json(), filename='ws_message.json')
+  return message_id
+
+async def send_ephemeral_message(session, channel_id):
+  await send_message(session=session, text='/giphy Test', channel_id=channel_id, filename='http_message_ephemeral.json')
+
+async def send_youtube_link(session, channel_id):
+  await send_message(session=session, text='https://youtube.com/watch?v=xOX7MsrbaPY', channel_id=channel_id, filename='http_youtube_link.json')
+
+async def send_unsplash_link(session, channel_id):
+  await send_message(session=session, text='https://unsplash.com/photos/1_2d3MRbI9c', channel_id=channel_id, filename='http_unsplash_link.json')
+
+async def send_message(session, text, channel_id, filename):
+  print('Sending message: "' + text + '"...')
+  message_id = random_uuid()
   payload = json.dumps({
     'message': {
       'id': message_id,
@@ -73,14 +92,17 @@ def send_message(text, message_id, channel_id):
     }
   })
   endpoint = stream_messaging_url_path + '/' + channel_id + '/message?api_key=' + stream_demo_api_key
-  return requests.post(endpoint, data=payload, headers=stream_headers, verify=False).json()
+  async with session.post(endpoint, data=payload, headers=stream_headers) as response:
+    save_json(await response.json(), filename=filename)
+    return message_id
 
 def save_json(json_data, filename):
   with open(os.path.abspath(mock_server_fixtures_path) + '/' + filename, 'w', encoding='utf-8') as f:
     json.dump(json_data, f, sort_keys=True, ensure_ascii=False, indent=4)
-    print('✅ ' + filename)
+    print('✅ ' + filename + '\n')
 
-def create_channel(channel_id, connection_id):
+async def create_channel(session, connection_id):
+  print('Creating channel...')
   payload = json.dumps({
     'data': {
       'members': [stream_user_id, 'han_solo', 'count_dooku'],
@@ -93,15 +115,21 @@ def create_channel(channel_id, connection_id):
       'limit': 25
     }
   })
+  channel_id = random_uuid()
   query_params = ['api_key=' + stream_demo_api_key, 'connection_id=' + connection_id]
   endpoint = stream_messaging_url_path + '/' + channel_id + '/query?' + '&'.join(query_params)
-  return requests.post(endpoint, data=payload, headers=stream_headers, verify=False).json()
+  async with session.post(endpoint, data=payload, headers=stream_headers) as response:
+    save_json(await response.json(), filename='http_channel_creation.json')
+    return channel_id
 
-def remove_channel(channel_id):
+async def remove_channel(session, channel_id):
+  print('Deleting channel...')
   endpoint = stream_messaging_url_path + '/' + channel_id + '?api_key=' + stream_demo_api_key
-  return requests.delete(endpoint, headers=stream_headers, verify=False).json()
+  async with session.delete(endpoint, headers=stream_headers) as response:
+    save_json(await response.json(), filename='http_channel_removal.json')
 
-def add_reaction(message_id):
+async def add_reaction(session, ws, message_id):
+  print('Adding reaction...')
   payload = json.dumps({
     'enforce_unique': False,
     'reaction': {
@@ -110,14 +138,19 @@ def add_reaction(message_id):
     }
   })
   endpoint = stream_messages_url_path + '/' + message_id + '/reaction?api_key=' + stream_demo_api_key
-  return requests.post(endpoint, data=payload, headers=stream_headers, verify=False).json()
+  async with session.post(endpoint, data=payload, headers=stream_headers) as response:
+    save_json(await response.json(), filename='http_reaction.json')
+    save_json((await ws.receive()).json(), filename='ws_reaction.json')
 
-def send_attachment(channel_id):
+async def send_attachment(session, channel_id):
+  print('Sending image attachment...')
   image = open(os.path.abspath(test_tools_fixtures_path) + '/yoda.jpg', 'rb')
   endpoint = stream_messaging_url_path + '/' + channel_id + '/image?api_key=' + stream_demo_api_key
-  return requests.post(endpoint, files={'file':image}, headers=stream_headers, verify=False).json()
+  async with session.post(endpoint, data={'file':image}, headers=stream_headers) as response:
+    save_json(await response.json(), filename='http_attachment.json')
 
-def truncate_channel_with_messsage(channel_id):
+async def truncate_channel_with_messsage(session, channel_id):
+  print('Truncating channel with message...')
   payload = json.dumps({
     'hard_delete': True,
     'skip_push': False,
@@ -130,78 +163,47 @@ def truncate_channel_with_messsage(channel_id):
     }
   })
   endpoint = stream_messaging_url_path + '/' + channel_id + '/truncate?api_key=' + stream_demo_api_key
-  return requests.post(endpoint, data=payload, headers=stream_headers, verify=False).json()
+  async with session.post(endpoint, data=payload, headers=stream_headers) as response:
+    save_json(await response.json(), filename='http_truncate.json')
 
-def add_member_to_channel(channel_id):
+async def add_member_to_channel(session, ws, channel_id):
+  print('Adding member to channel...')
   payload = json.dumps({
     'add_members': ['leia_organa'],
     'hide_history': False
   })
   endpoint = stream_messaging_url_path + '/' + channel_id + '?api_key=' + stream_demo_api_key
-  return requests.post(endpoint, data=payload, headers=stream_headers, verify=False).json()
+  async with session.post(endpoint, data=payload, headers=stream_headers) as response:
+    save_json(await response.json(), filename='http_add_member.json')
+    save_json((await ws.receive()).json(), filename='ws_events_member.json')
+    save_json((await ws.receive()).json(), filename='ws_events_channel.json')
 
-async def chat_session():
-  async with websockets.connect(connect_endpoint(), extra_headers=stream_headers) as ws:
-    health_check = json.loads(await ws.recv())
-    save_json(health_check, filename='ws_health_check.json')
+async def establish_websocket_connection(ws):
+  health_check = (await ws.receive()).json()
+  save_json(health_check, filename='ws_health_check.json')
+  return health_check['connection_id']
 
-    connection_id = health_check['connection_id']
-    channel_id = random_uuid()
+async def chat():
+  session = aiohttp.ClientSession()
+  async with session.ws_connect(url=connect_endpoint(), headers=stream_headers) as ws:
+    connection_id = await establish_websocket_connection(ws)
+    channel_id = await create_channel(session, connection_id)
+    await request_channels(session, connection_id)
 
-    channel_creation = create_channel(channel_id, connection_id)
-    save_json(channel_creation, filename='http_channel_creation.json')
+    await ws.receive() # type: notification.added_to_channel
+    await ws.receive() # type: user.watching.start
 
-    channels = request_channels(connection_id)
-    save_json(channels, filename='http_channels.json')
+    await send_typing_event(session, ws, channel_id)
+    message_id = await send_regular_message(session, ws, channel_id)
+    await add_reaction(session, ws, message_id)
+    await add_member_to_channel(session, ws, channel_id)
+    await send_attachment(session, channel_id)
+    await send_ephemeral_message(session, channel_id)
+    await send_youtube_link(session, channel_id)
+    await send_unsplash_link(session, channel_id)
+    await truncate_channel_with_messsage(session, channel_id)
+    await remove_channel(session, channel_id)
+    await ws.close()
+  await session.close()
 
-    await ws.recv() # type: notification.added_to_channel
-    await ws.recv() # type: user.watching.start
-
-    http_event = send_typing_event('start', channel_id)
-    save_json(http_event, filename='http_events.json')
-
-    ws_typing_event = json.loads(await ws.recv())
-    save_json(ws_typing_event, filename='ws_events.json')
-
-    message_id = random_uuid()
-    http_message = send_message('Test', message_id=message_id, channel_id=channel_id)
-    save_json(http_message, filename='http_message.json')
-
-    ws_message = json.loads(await ws.recv())
-    save_json(ws_message, filename='ws_message.json')
-
-    http_reaction = add_reaction(message_id)
-    save_json(http_reaction, filename='http_reaction.json')
-
-    ws_reaction = json.loads(await ws.recv())
-    save_json(ws_reaction, filename='ws_reaction.json')
-
-    http_add_member = add_member_to_channel(channel_id)
-    save_json(http_add_member, filename='http_add_member.json')
-
-    ws_add_member = json.loads(await ws.recv())
-    save_json(ws_add_member, filename='ws_events_member.json')
-
-    ws_update_channel = json.loads(await ws.recv())
-    save_json(ws_update_channel, filename='ws_events_channel.json')
-
-    http_attachment = send_attachment(channel_id)
-    save_json(http_attachment, filename='http_attachment.json')
-
-    http_message_ephemeral = send_message('/giphy Test', message_id=random_uuid(), channel_id=channel_id)
-    save_json(http_message_ephemeral, filename='http_message_ephemeral.json')
-
-    youtube_link = send_message('https://youtube.com/watch?v=xOX7MsrbaPY', message_id=random_uuid(), channel_id=channel_id)
-    save_json(youtube_link, filename='http_youtube_link.json')
-
-    unsplash_link = send_message('https://unsplash.com/photos/1_2d3MRbI9c', message_id=random_uuid(), channel_id=channel_id)
-    save_json(unsplash_link, filename='http_unsplash_link.json')
-
-    channel_truncation = truncate_channel_with_messsage(channel_id)
-    save_json(channel_truncation, filename='http_truncate.json')
-
-    channel_removal = remove_channel(channel_id)
-    save_json(channel_removal, filename='http_channel_removal.json')
-
-urllib3.disable_warnings()
-asyncio.run(chat_session())
+asyncio.run(chat())

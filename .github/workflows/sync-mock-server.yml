@@ -2,8 +2,8 @@ name: Mock Server
 
 on:
   schedule:
-    # Runs "At 00:00 on Monday"
-    - cron: '0 0 * * 1'
+    # Runs "At 00:00 on day-of-month 1 and 15"
+    - cron: '0 0 1,15 * *'
 
 env:
   HOMEBREW_NO_INSTALL_CLEANUP: 1 # Disable cleanup for homebrew, we don't need it on CI
@@ -22,6 +22,7 @@ jobs:
       env:
         SYNC_MOCK_SERVER: true
     - run: bundle exec fastlane sync_mock_server
+      timeout-minutes: 5
       env:
         GITHUB_TOKEN: ${{ secrets.DANGER_GITHUB_API_TOKEN }}
     - uses: 8398a7/action-slack@v3

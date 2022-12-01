@@ -1,3 +1,2 @@
 lizard
-websockets
-requests
+aiohttp
