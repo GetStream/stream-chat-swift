@@ -394,6 +394,19 @@ public extension StreamMockServer {
         try? XCTUnwrap(waitForChannelWithId(id))
     }
     
+    func getFirstChannelId() -> String {
+        let endTime = TestData.waitingEndTime
+        while channelList.isEmpty && endTime > TestData.currentTimeInterval {}
+        guard
+            let channels = channelList[JSONKey.channels] as? [[String: Any]],
+            let firstChannel = channels.first?[JSONKey.channel] as? [String: Any],
+            let id = firstChannel[channelKey.id.rawValue] as? String
+        else {
+            return ""
+        }
+        return id
+    }
+    
     func removeChannel(_ id: String) {
         let deletedChannel = try? XCTUnwrap(findChannelById(id))
         guard var channels = channelList[JSONKey.channels] as? [[String: Any]] else { return }
