@@ -1,15 +1,15 @@
 {
-    "channel_id": "1b8efd16-717d-11ed-bf47-0050569a5423",
+    "channel_id": "5d287b44-717d-11ed-9c0f-005056963352",
     "channel_type": "messaging",
-    "cid": "messaging:1b8efd16-717d-11ed-bf47-0050569a5423",
-    "created_at": "2022-12-01T13:36:06.98882407Z",
+    "cid": "messaging:5d287b44-717d-11ed-9c0f-005056963352",
+    "created_at": "2022-12-01T13:37:57.444900743Z",
     "member": {
         "banned": false,
         "channel_role": "channel_member",
-        "created_at": "2022-12-01T13:36:06.979998Z",
+        "created_at": "2022-12-01T13:37:57.435849Z",
         "role": "member",
         "shadow_banned": false,
-        "updated_at": "2022-12-01T13:36:06.979998Z",
+        "updated_at": "2022-12-01T13:37:57.435849Z",
         "user": {
             "AdditionalProperties": {},
             "banned": false,
