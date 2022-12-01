@@ -91,6 +91,21 @@ class AuthenticationRepository {
         }
     }
 
+    /// Fetches the user saved in the database, if exists
+    func fetchCurrentUser() {
+        var currentUserId: UserId?
+
+        let context = databaseContainer.viewContext
+        if Thread.isMainThread {
+            currentUserId = context.currentUser?.user.id
+        } else {
+            context.performAndWait {
+                currentUserId = context.currentUser?.user.id
+            }
+        }
+        self.currentUserId = currentUserId
+    }
+
     /// Sets the user token. This method is only needed to perform API calls without connecting as a user.
     /// You should only use this in special cases like a notification service or other background process
     /// - Parameters:
@@ -223,20 +238,6 @@ class AuthenticationRepository {
         }
 
         waiters.forEach { $0.value(token) }
-    }
-
-    private func fetchCurrentUser() {
-        var currentUserId: UserId?
-
-        let context = databaseContainer.viewContext
-        if Thread.isMainThread {
-            currentUserId = context.currentUser?.user.id
-        } else {
-            context.performAndWait {
-                currentUserId = context.currentUser?.user.id
-            }
-        }
-        self.currentUserId = currentUserId
     }
 
     private func scheduleTokenFetch(userInfo: UserInfo?, tokenProvider: @escaping TokenProvider, completion: @escaping (Error?) -> Void) {

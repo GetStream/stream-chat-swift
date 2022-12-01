@@ -40,19 +40,16 @@ class AuthenticationRepository_Mock: AuthenticationRepository, Spy {
                   connectionRepository: ConnectionRepository,
                   tokenExpirationRetryStrategy: RetryStrategy = DefaultRetryStrategy(),
                   timerType: StreamChat.Timer.Type = DefaultTimer.self) {
-        // This is just to avoid private `fetchCurrentUser` method from crashing
-        do {
-            try databaseContainer.createCurrentUser()
-            (databaseContainer as? DatabaseContainer_Spy)?.clear()
-        } catch {
-            log.assertionFailure("Should be able to create a user")
-        }
-
         super.init(apiClient: apiClient,
                    databaseContainer: databaseContainer,
                    connectionRepository: connectionRepository,
                    tokenExpirationRetryStrategy: tokenExpirationRetryStrategy,
                    timerType: timerType)
+    }
+
+    override func fetchCurrentUser() {
+        record()
+        // Nothing to do here
     }
 
     override func refreshToken(completion: @escaping (Error?) -> Void) {

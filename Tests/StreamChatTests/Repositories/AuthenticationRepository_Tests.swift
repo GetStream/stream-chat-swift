@@ -64,6 +64,37 @@ final class AuthenticationRepository_Tests: XCTestCase {
         XCTAssertEqual(repository.currentUserId, databaseUserId)
     }
 
+    func test_fetchCurrentUser_currentUserId_isNil_whenNoPreviousSession() {
+        // Log out to make sure things are clean
+        repository.logOutUser()
+        XCTAssertNil(repository.currentUserId)
+
+        repository.fetchCurrentUser()
+
+        // Stays nil as there is no user saved
+        XCTAssertNil(repository.currentUserId)
+    }
+
+    func test_fetchCurrentUser_currentUserId_isFetchedWhenInitializing() throws {
+        let databaseUserId = "the-id"
+        try database.createCurrentUser(id: databaseUserId)
+        repository = AuthenticationRepository(
+            apiClient: apiClient,
+            databaseContainer: database,
+            connectionRepository: connectionRepository,
+            tokenExpirationRetryStrategy: retryStrategy,
+            timerType: DefaultTimer.self
+        )
+
+        // Log out to make sure things are clean
+        repository.logOutUser()
+        XCTAssertNil(repository.currentUserId)
+
+        repository.fetchCurrentUser()
+
+        XCTAssertEqual(repository.currentUserId, databaseUserId)
+    }
+
     func test_setToken_tokenIsUpdated() {
         XCTAssertNil(repository.currentToken)
 
