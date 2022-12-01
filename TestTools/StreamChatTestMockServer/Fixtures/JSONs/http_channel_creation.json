@@ -1,6 +1,6 @@
 {
     "channel": {
-        "cid": "messaging:8f651d7e-717d-11ed-914f-005056a296bd",
+        "cid": "messaging:cdb8de30-717d-11ed-9cd9-00505696881b",
         "config": {
             "automod": "AI",
             "automod_behavior": "block",
@@ -47,7 +47,7 @@
             "uploads": true,
             "url_enrichment": true
         },
-        "created_at": "2022-12-01T13:39:20.934411Z",
+        "created_at": "2022-12-01T13:41:05.775192Z",
         "created_by": {
             "banned": false,
             "birthland": "Tatooine",
@@ -57,9 +57,9 @@
             "id": "luke_skywalker",
             "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
             "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
-            "last_active": "2022-12-01T13:37:07.160445Z",
+            "last_active": "2022-12-01T13:41:05.497629204Z",
             "name": "Luke Skywalker",
-            "online": false,
+            "online": true,
             "role": "user",
             "someTest": "Test",
             "testing": false,
@@ -70,7 +70,7 @@
         "disabled": false,
         "frozen": false,
         "hidden": false,
-        "id": "8f651d7e-717d-11ed-914f-005056a296bd",
+        "id": "cdb8de30-717d-11ed-9cd9-00505696881b",
         "member_count": 3,
         "name": "Sync Mock Server",
         "own_capabilities": [
@@ -100,17 +100,17 @@
             "upload-file"
         ],
         "type": "messaging",
-        "updated_at": "2022-12-01T13:39:20.934411Z"
+        "updated_at": "2022-12-01T13:41:05.775192Z"
     },
-    "duration": "42.96ms",
+    "duration": "52.96ms",
     "members": [
         {
             "banned": false,
             "channel_role": "channel_member",
-            "created_at": "2022-12-01T13:39:20.938535Z",
+            "created_at": "2022-12-01T13:41:05.780391Z",
             "role": "member",
             "shadow_banned": false,
-            "updated_at": "2022-12-01T13:39:20.938535Z",
+            "updated_at": "2022-12-01T13:41:05.780391Z",
             "user": {
                 "banned": false,
                 "birthland": "Serenno",
@@ -131,10 +131,10 @@
         {
             "banned": false,
             "channel_role": "channel_member",
-            "created_at": "2022-12-01T13:39:20.938535Z",
+            "created_at": "2022-12-01T13:41:05.780391Z",
             "role": "member",
             "shadow_banned": false,
-            "updated_at": "2022-12-01T13:39:20.938535Z",
+            "updated_at": "2022-12-01T13:41:05.780391Z",
             "user": {
                 "banned": false,
                 "birthland": "Corellia",
@@ -154,10 +154,10 @@
         {
             "banned": false,
             "channel_role": "channel_member",
-            "created_at": "2022-12-01T13:39:20.938535Z",
+            "created_at": "2022-12-01T13:41:05.780391Z",
             "role": "owner",
             "shadow_banned": false,
-            "updated_at": "2022-12-01T13:39:20.938535Z",
+            "updated_at": "2022-12-01T13:41:05.780391Z",
             "user": {
                 "banned": false,
                 "birthland": "Tatooine",
@@ -167,9 +167,9 @@
                 "id": "luke_skywalker",
                 "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
                 "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
-                "last_active": "2022-12-01T13:37:07.160445Z",
+                "last_active": "2022-12-01T13:41:05.497629204Z",
                 "name": "Luke Skywalker",
-                "online": false,
+                "online": true,
                 "role": "user",
                 "someTest": "Test",
                 "testing": false,
@@ -183,10 +183,10 @@
     "membership": {
         "banned": false,
         "channel_role": "channel_member",
-        "created_at": "2022-12-01T13:39:20.938535Z",
+        "created_at": "2022-12-01T13:41:05.780391Z",
         "role": "owner",
         "shadow_banned": false,
-        "updated_at": "2022-12-01T13:39:20.938535Z",
+        "updated_at": "2022-12-01T13:41:05.780391Z",
         "user": {
             "banned": false,
             "birthland": "Tatooine",
@@ -196,9 +196,9 @@
             "id": "luke_skywalker",
             "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
             "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
-            "last_active": "2022-12-01T13:37:07.160445Z",
+            "last_active": "2022-12-01T13:41:05.497629204Z",
             "name": "Luke Skywalker",
-            "online": false,
+            "online": true,
             "role": "user",
             "someTest": "Test",
             "testing": false,
@@ -211,7 +211,7 @@
     "pinned_messages": [],
     "read": [
         {
-            "last_read": "2022-12-01T13:39:20.9555237Z",
+            "last_read": "2022-12-01T13:41:05.798903733Z",
             "unread_messages": 0,
             "user": {
                 "banned": false,
@@ -230,7 +230,7 @@
             }
         },
         {
-            "last_read": "2022-12-01T13:39:20.9555237Z",
+            "last_read": "2022-12-01T13:41:05.798903733Z",
             "unread_messages": 0,
             "user": {
                 "banned": false,
@@ -248,7 +248,7 @@
             }
         },
         {
-            "last_read": "2022-12-01T13:39:20.9555237Z",
+            "last_read": "2022-12-01T13:41:05.798903733Z",
             "unread_messages": 0,
             "user": {
                 "banned": false,
@@ -259,9 +259,9 @@
                 "id": "luke_skywalker",
                 "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
                 "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
-                "last_active": "2022-12-01T13:37:07.160445Z",
+                "last_active": "2022-12-01T13:41:05.497629204Z",
                 "name": "Luke Skywalker",
-                "online": false,
+                "online": true,
                 "role": "user",
                 "someTest": "Test",
                 "testing": false,
