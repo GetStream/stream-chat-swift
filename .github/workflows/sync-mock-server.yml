@@ -5,6 +5,10 @@ on:
     # Runs "At 00:00 on day-of-month 1 and 15"
     - cron: '0 0 1,15 * *'
 
+  pull_request:
+    branches:
+      - '**' # FIXME
+
 env:
   HOMEBREW_NO_INSTALL_CLEANUP: 1 # Disable cleanup for homebrew, we don't need it on CI
 
