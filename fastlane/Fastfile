@@ -619,6 +619,27 @@ private_lane :update_testplan_on_ci do |options|
   update_testplan(path: options[:path], env_vars: { key: 'CI', value: 'TRUE' }) if is_ci
 end
 
+lane :sync_mock_server do
+  sh('python3 sync_mock_server.py')
+  next unless is_ci
+
+  branch_name = "ci/sync-mock-server-#{Time.now.to_i}"
+  commit_message = '[CI] Sync Mock Server'
+  sh("git checkout -b #{branch_name}")
+  sh('git add -A')
+  sh("git commit -m '#{commit_message}'")
+  push_to_git_remote(tags: false)
+
+  create_pull_request(
+    api_token: ENV.fetch('GITHUB_TOKEN', nil),
+    repo: github_repo,
+    title: commit_message,
+    head: branch_name,
+    base: 'develop',
+    body: 'This PR was created automatically by CI.'
+  )
+end
+
 desc 'Run fastlane linting'
 lane :rubocop do
   next unless is_check_required(sources: sources_matrix[:ruby])
@@ -633,9 +654,9 @@ end
 
 lane :sources_matrix do
   {
-    e2e: ['Sources', 'StreamChatUITestsAppUITests', 'StreamChatUITestsApp'],
-    unit: ['Sources', 'Tests', xcode_project],
-    ui: ['Sources', 'Tests/StreamChatUITests', xcode_project],
+    e2e: ['Sources', 'StreamChatUITestsAppUITests', 'StreamChatUITestsApp', 'TestTools/StreamChatTestMockServer'],
+    unit: ['Sources', 'Tests/StreamChatTests', 'Tests/Shared', 'TestTools/StreamChatTestTools', xcode_project],
+    ui: ['Sources', 'Tests/StreamChatUITests', 'Tests/Shared', xcode_project],
     emerge: ['Sources'],
     sample_apps: ['Sources', 'Examples', 'DemoApp', 'StreamChatSample', xcode_project],
     integration: ['Sources', 'Integration', xcode_project],
