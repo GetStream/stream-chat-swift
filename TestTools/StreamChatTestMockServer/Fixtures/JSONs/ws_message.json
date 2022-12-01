@@ -2,7 +2,7 @@
     "channel_id": "4E9F8BA7-0",
     "channel_type": "messaging",
     "cid": "messaging:4E9F8BA7-0",
-    "created_at": "2022-12-01T13:41:05.930976818Z",
+    "created_at": "2022-12-01T13:42:41.665022695Z",
     "type": "user.watching.start",
     "user": {
         "banned": false,
@@ -13,7 +13,7 @@
         "id": "luke_skywalker",
         "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
         "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
-        "last_active": "2022-12-01T13:41:05.497629204Z",
+        "last_active": "2022-12-01T13:42:41.310796897Z",
         "name": "Luke Skywalker",
         "online": true,
         "role": "user",

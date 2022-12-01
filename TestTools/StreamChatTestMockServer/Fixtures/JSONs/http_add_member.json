@@ -1,6 +1,6 @@
 {
     "channel": {
-        "cid": "messaging:cdb8de30-717d-11ed-9cd9-00505696881b",
+        "cid": "messaging:06e70b46-717e-11ed-9032-0050568827b8",
         "config": {
             "automod": "AI",
             "automod_behavior": "block",
@@ -47,7 +47,7 @@
             "uploads": true,
             "url_enrichment": true
         },
-        "created_at": "2022-12-01T13:41:05.775192Z",
+        "created_at": "2022-12-01T13:42:41.523396Z",
         "created_by": {
             "banned": false,
             "birthland": "Tatooine",
@@ -57,7 +57,7 @@
             "id": "luke_skywalker",
             "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
             "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
-            "last_active": "2022-12-01T13:41:05.497629204Z",
+            "last_active": "2022-12-01T13:42:41.310796897Z",
             "name": "Luke Skywalker",
             "online": true,
             "role": "user",
@@ -70,8 +70,8 @@
         "disabled": false,
         "frozen": false,
         "hidden": false,
-        "id": "cdb8de30-717d-11ed-9cd9-00505696881b",
-        "last_message_at": "2022-12-01T13:41:06.217516Z",
+        "id": "06e70b46-717e-11ed-9032-0050568827b8",
+        "last_message_at": "2022-12-01T13:42:41.959018Z",
         "member_count": 4,
         "name": "Sync Mock Server",
         "own_capabilities": [
@@ -101,17 +101,17 @@
             "upload-file"
         ],
         "type": "messaging",
-        "updated_at": "2022-12-01T13:41:05.775192Z"
+        "updated_at": "2022-12-01T13:42:41.523396Z"
     },
-    "duration": "25.37ms",
+    "duration": "23.67ms",
     "members": [
         {
             "banned": false,
             "channel_role": "channel_member",
-            "created_at": "2022-12-01T13:41:05.780391Z",
+            "created_at": "2022-12-01T13:42:41.527287Z",
             "role": "member",
             "shadow_banned": false,
-            "updated_at": "2022-12-01T13:41:05.780391Z",
+            "updated_at": "2022-12-01T13:42:41.527287Z",
             "user": {
                 "banned": false,
                 "birthland": "Serenno",
@@ -132,10 +132,10 @@
         {
             "banned": false,
             "channel_role": "channel_member",
-            "created_at": "2022-12-01T13:41:05.780391Z",
+            "created_at": "2022-12-01T13:42:41.527287Z",
             "role": "member",
             "shadow_banned": false,
-            "updated_at": "2022-12-01T13:41:05.780391Z",
+            "updated_at": "2022-12-01T13:42:41.527287Z",
             "user": {
                 "banned": false,
                 "birthland": "Corellia",
@@ -155,10 +155,10 @@
         {
             "banned": false,
             "channel_role": "channel_member",
-            "created_at": "2022-12-01T13:41:05.780391Z",
+            "created_at": "2022-12-01T13:42:41.527287Z",
             "role": "owner",
             "shadow_banned": false,
-            "updated_at": "2022-12-01T13:41:05.780391Z",
+            "updated_at": "2022-12-01T13:42:41.527287Z",
             "user": {
                 "banned": false,
                 "birthland": "Tatooine",
@@ -168,7 +168,7 @@
                 "id": "luke_skywalker",
                 "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
                 "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
-                "last_active": "2022-12-01T13:41:05.497629204Z",
+                "last_active": "2022-12-01T13:42:41.310796897Z",
                 "name": "Luke Skywalker",
                 "online": true,
                 "role": "user",
@@ -183,10 +183,10 @@
         {
             "banned": false,
             "channel_role": "channel_member",
-            "created_at": "2022-12-01T13:41:06.359918Z",
+            "created_at": "2022-12-01T13:42:42.100472Z",
             "role": "member",
             "shadow_banned": false,
-            "updated_at": "2022-12-01T13:41:06.359918Z",
+            "updated_at": "2022-12-01T13:42:42.100472Z",
             "user": {
                 "AdditionalProperties": {},
                 "banned": false,
