@@ -7,6 +7,7 @@
 #   - install sonar dependencies if `INSTALL_SONAR` environment variable is provided
 #   - install allure dependencies if `INSTALL_ALLURE` environment variable is provided
 #   - install xcparse if `INSTALL_XCPARSE` environment variable is provided
+#   - install pythond dependencies if `SYNC_MOCK_SERVER` environment variable is provided
 # You should have homebrew installed.
 # If you get `zsh: permission denied: ./bootstrap.sh` error, please run `chmod +x bootstrap.sh` first
 
@@ -71,4 +72,8 @@ fi
 
 if [[ ${INSTALL_XCPARSE-default} == true ]]; then
   brew install chargepoint/xcparse/xcparse
+fi
+
+if [[ ${SYNC_MOCK_SERVER-default} == true ]]; then
+  pip install -r requirements.txt
 fi
