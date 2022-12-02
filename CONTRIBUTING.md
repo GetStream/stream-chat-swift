@@ -40,3 +40,17 @@ We accumulate changes and release them in batches, unless high priority.
 We make sure to put staged changes (on default branch but not released in a version) as "Upcoming" in [CHANGELOG](https://github.com/GetStream/stream-chat-swift/blob/main/CHANGELOG.md).
 
 If possible, we deprecate stuff before removing them directly. Deprecated stuff will be removed after a minor release, and will include a migration/upgrade guide.
+
+## Local linting of documentation
+
+In case you modify any of our documentation, we require some of our docs to pass a linting step.
+
+To run our doc linting locally:
+
+```shell
+$ brew install vale
+# from the root of our repository
+$ vale docusaurus
+```
+
+
