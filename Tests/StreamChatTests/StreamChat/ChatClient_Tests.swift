@@ -258,15 +258,21 @@ final class ChatClient_Tests: XCTestCase {
         XCTAssert(testEnv.apiClient?.init_requestEncoder is RequestEncoder_Spy)
     }
     
-    func test_disconnect_flushesRequestsQueue() {
+    func test_disconnect_flushesRequestsQueue() throws {
         // Create a chat client
         let client = ChatClient(
             config: inMemoryStorageConfig,
             environment: testEnv.environment
         )
-        
+        let connectionRepository = try XCTUnwrap(client.connectionRepository as? ConnectionRepository_Mock)
+        connectionRepository.disconnectResult = .success(())
+
         // Disconnect chat client
-        client.disconnect()
+        let expectation = self.expectation(description: "disconnect completes")
+        client.disconnect {
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: defaultTimeout)
         
         // Assert client is not recreated
         XCTAssertTrue(testEnv.apiClient! === client.apiClient)
@@ -276,16 +282,22 @@ final class ChatClient_Tests: XCTestCase {
         XCTAssertEqual(testEnv.connectionRepository!.disconnectSource, .userInitiated)
     }
     
-    func test_logout_disconnectsAndRemovesLocalData() {
+    func test_logout_disconnectsAndRemovesLocalData() throws {
         // GIVEN
         let client = ChatClient(
             config: inMemoryStorageConfig,
             environment: testEnv.environment
         )
-        
+        let connectionRepository = try XCTUnwrap(client.connectionRepository as? ConnectionRepository_Mock)
+        connectionRepository.disconnectResult = .success(())
+
         // WHEN
-        client.logout()
-        
+        let expectation = self.expectation(description: "logout completes")
+        client.logout {
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: defaultTimeout)
+
         // THEN
         XCTAssertCall(ConnectionRepository_Mock.Signature.disconnect, on: testEnv.connectionRepository!)
         XCTAssertTrue(testEnv.databaseContainer!.removeAllData_called)
@@ -592,8 +604,13 @@ final class ChatClient_Tests: XCTestCase {
         let client = ChatClient(config: inMemoryStorageConfig, environment: testEnv.environment)
         let authenticationRepository = try XCTUnwrap(client.authenticationRepository as? AuthenticationRepository_Mock)
         let connectionRepository = try XCTUnwrap(client.connectionRepository as? ConnectionRepository_Mock)
+        connectionRepository.disconnectResult = .success(())
 
-        client.disconnect()
+        let expectation = self.expectation(description: "disconnect completes")
+        client.disconnect {
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertCall(ConnectionRepository_Mock.Signature.disconnect, on: connectionRepository)
         XCTAssertCall(AuthenticationRepository_Mock.Signature.clearTokenProvider, on: authenticationRepository)
@@ -604,8 +621,13 @@ final class ChatClient_Tests: XCTestCase {
         let authenticationRepository = try XCTUnwrap(client.authenticationRepository as? AuthenticationRepository_Mock)
         let connectionRepository = try XCTUnwrap(client.connectionRepository as? ConnectionRepository_Mock)
         let databaseContainer = try XCTUnwrap(client.databaseContainer as? DatabaseContainer_Spy)
+        connectionRepository.disconnectResult = .success(())
 
-        client.logout()
+        let expectation = self.expectation(description: "logout completes")
+        client.logout {
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertCall(ConnectionRepository_Mock.Signature.disconnect, on: connectionRepository)
         XCTAssertCall(AuthenticationRepository_Mock.Signature.clearTokenProvider, on: authenticationRepository)
