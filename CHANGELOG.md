@@ -4,6 +4,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
+### 🔄 Changed
+- `logOut` and `disconnect` methods are now asynchronous. Its sync versions are deprecated [#2386](https://github.com/GetStream/stream-chat-swift/pull/2386)
+
 ### ✅ Added
 - Add support for hiding connection status with `isInvisible` [#2373](https://github.com/GetStream/stream-chat-swift/pull/2373)
 
