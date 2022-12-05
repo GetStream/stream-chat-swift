@@ -7,7 +7,7 @@
 import XCTest
 
 final class MessageSender_Tests: XCTestCase {
-    var messageRepository: MessageRepository_Spy!
+    var messageRepository: MessageRepository_Mock!
     var webSocketClient: WebSocketClient_Mock!
     var apiClient: APIClient_Spy!
     var database: DatabaseContainer_Spy!
@@ -22,7 +22,7 @@ final class MessageSender_Tests: XCTestCase {
         webSocketClient = WebSocketClient_Mock()
         apiClient = APIClient_Spy()
         database = DatabaseContainer_Spy()
-        messageRepository = MessageRepository_Spy(database: database, apiClient: apiClient)
+        messageRepository = MessageRepository_Mock(database: database, apiClient: apiClient)
         sender = MessageSender(messageRepository: messageRepository, database: database, apiClient: apiClient)
         
         cid = .unique

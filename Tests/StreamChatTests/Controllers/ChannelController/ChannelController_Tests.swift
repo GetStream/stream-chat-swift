@@ -4082,7 +4082,7 @@ final class ChannelController_Tests: XCTestCase {
         setupControllerForNewChannel(query: query)
         
         // Simulate `uploadFile` call and assert error is returned
-        var error: Error? = try waitFor { [callbackQueueID] completion in
+        let error: Error? = try waitFor { [callbackQueueID] completion in
             controller.uploadAttachment(localFileURL: .localYodaImage, type: .image) { result in
                 AssertTestQueue(withId: callbackQueueID)
                 completion(result.error)

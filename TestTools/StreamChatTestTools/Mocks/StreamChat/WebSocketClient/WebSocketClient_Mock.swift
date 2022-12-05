@@ -21,26 +21,46 @@ final class WebSocketClient_Mock: WebSocketClient {
     var disconnect_called: Bool { disconnect_calledCounter > 0 }
     var disconnect_completion: (() -> Void)?
 
-    override init(
-        sessionConfiguration: URLSessionConfiguration,
-        requestEncoder: RequestEncoder,
-        eventDecoder: AnyEventDecoder,
-        eventNotificationCenter: EventNotificationCenter,
-        environment: WebSocketClient.Environment = .mock
+
+    var mockedConnectionState: WebSocketConnectionState?
+
+    override var connectionState: WebSocketConnectionState {
+        return mockedConnectionState ?? super.connectionState
+    }
+
+    init(
+        sessionConfiguration: URLSessionConfiguration = .ephemeral,
+        requestEncoder: RequestEncoder = DefaultRequestEncoder(baseURL: .unique(), apiKey: .init(.unique)),
+        eventDecoder: AnyEventDecoder = EventDecoder(),
+        eventNotificationCenter: EventNotificationCenter = EventNotificationCenter_Mock(database: DatabaseContainer_Spy()),
+        pingController: WebSocketPingController? = nil,
+        webSocketEngine: WebSocketEngine? = nil,
+        eventBatcher: EventBatcher? = nil
     ) {
+        var environment = WebSocketClient.Environment.mock
+        if let pingController = pingController {
+            environment.createPingController = { _, _ in pingController }
+        }
+
+        if let webSocketEngine = webSocketEngine {
+            environment.createEngine = { _, _, _ in webSocketEngine }
+        }
+
+        if let eventBatcher = eventBatcher {
+            environment.eventBatcherBuilder = { _ in eventBatcher }
+        }
+
         init_sessionConfiguration = sessionConfiguration
         init_requestEncoder = requestEncoder
         init_eventDecoder = eventDecoder
         init_eventNotificationCenter = eventNotificationCenter
         init_environment = environment
 
-        super.init(
-            sessionConfiguration: sessionConfiguration,
-            requestEncoder: requestEncoder,
-            eventDecoder: eventDecoder,
-            eventNotificationCenter: eventNotificationCenter,
-            environment: environment
-        )
+        super.init(sessionConfiguration: sessionConfiguration,
+                  requestEncoder: requestEncoder,
+                  eventDecoder: eventDecoder,
+                  eventNotificationCenter: eventNotificationCenter,
+                  environment: environment)
     }
 
     override func connect() {
@@ -58,17 +78,6 @@ final class WebSocketClient_Mock: WebSocketClient {
     
     var mockEventsBatcher: EventBatcher_Mock {
         eventsBatcher as! EventBatcher_Mock
-    }
-}
-
-extension WebSocketClient_Mock {
-    convenience init() {
-        self.init(
-            sessionConfiguration: .ephemeral,
-            requestEncoder: DefaultRequestEncoder(baseURL: .unique(), apiKey: .init(.unique)),
-            eventDecoder: EventDecoder(),
-            eventNotificationCenter: EventNotificationCenter_Mock(database: DatabaseContainer_Spy())
-        )
     }
 }
 

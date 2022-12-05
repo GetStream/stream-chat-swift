@@ -126,7 +126,8 @@ extension ChatClient {
                         deletedMessagesVisibility: $4,
                         shouldShowShadowedMessages: $5
                     )
-                }
+                },
+                authenticationRepositoryBuilder: AuthenticationRepository_Mock.init
             )
         )
     }
@@ -153,16 +154,16 @@ extension ChatClient {
         databaseContainer as! DatabaseContainer_Spy
     }
     
-    var mockSyncRepository: SyncRepository_Spy {
-        syncRepository as! SyncRepository_Spy
+    var mockSyncRepository: SyncRepository_Mock {
+        syncRepository as! SyncRepository_Mock
     }
     
-    var mockMessageRepository: MessageRepository_Spy {
-        messageRepository as! MessageRepository_Spy
+    var mockMessageRepository: MessageRepository_Mock {
+        messageRepository as! MessageRepository_Mock
     }
     
-    var mockOfflineRequestsRepository: OfflineRequestsRepository_Spy {
-        offlineRequestsRepository as! OfflineRequestsRepository_Spy
+    var mockOfflineRequestsRepository: OfflineRequestsRepository_Mock {
+        offlineRequestsRepository as! OfflineRequestsRepository_Mock
     }
 
     func simulateProvidedConnectionId(connectionId: ConnectionId?) {
@@ -203,11 +204,10 @@ extension ChatClient.Environment {
             requestDecoderBuilder: DefaultRequestDecoder.init,
             eventDecoderBuilder: EventDecoder.init,
             notificationCenterBuilder: EventNotificationCenter.init,
-            clientUpdaterBuilder: ChatClientUpdater_Mock.init,
             authenticationRepositoryBuilder: AuthenticationRepository_Mock.init,
-            syncRepositoryBuilder: SyncRepository_Spy.init,
-            messageRepositoryBuilder: MessageRepository_Spy.init,
-            offlineRequestsRepositoryBuilder: OfflineRequestsRepository_Spy.init
+            syncRepositoryBuilder: SyncRepository_Mock.init,
+            messageRepositoryBuilder: MessageRepository_Mock.init,
+            offlineRequestsRepositoryBuilder: OfflineRequestsRepository_Mock.init
         )
     }
 

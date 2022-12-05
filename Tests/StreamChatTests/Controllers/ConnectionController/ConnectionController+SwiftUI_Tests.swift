@@ -52,6 +52,10 @@ final class ChatConnectionControllerMock: ChatConnectionController {
     }
     
     init() {
-        super.init(client: .mock)
+        super.init(
+            connectionRepository: ConnectionRepository_Mock(),
+            webSocketClient: WebSocketClient_Mock(),
+            client: ChatClient_Mock(config: ChatClientConfig(apiKeyString: ""))
+        )
     }
 }

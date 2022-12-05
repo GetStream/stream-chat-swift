@@ -10,7 +10,7 @@ final class SyncRepository_Tests: XCTestCase {
     var _activeChannelControllers: ThreadSafeWeakCollection<ChatChannelController>!
     var _activeChannelListControllers: ThreadSafeWeakCollection<ChatChannelListController>!
     var client: ChatClient_Mock!
-    var offlineRequestsRepository: OfflineRequestsRepository_Spy!
+    var offlineRequestsRepository: OfflineRequestsRepository_Mock!
     var database: DatabaseContainer_Spy!
     var apiClient: APIClient_Spy!
 
@@ -28,8 +28,8 @@ final class SyncRepository_Tests: XCTestCase {
         var config = ChatClientConfig(apiKeyString: .unique)
         config.isLocalStorageEnabled = true
         client = ChatClient_Mock(config: config)
-        let messageRepository = MessageRepository_Spy(database: client.databaseContainer, apiClient: client.apiClient)
-        offlineRequestsRepository = OfflineRequestsRepository_Spy(
+        let messageRepository = MessageRepository_Mock(database: client.databaseContainer, apiClient: client.apiClient)
+        offlineRequestsRepository = OfflineRequestsRepository_Mock(
             messageRepository: messageRepository,
             database: client.databaseContainer,
             apiClient: client.apiClient
@@ -686,7 +686,7 @@ extension SyncRepository_Tests {
             callback(result)
         }
 
-        waitForExpectations(timeout: 0.5, handler: nil)
+        waitForExpectations(timeout: 1, handler: nil)
         XCTAssertCall("exitRecoveryMode()", on: apiClient)
     }
     
