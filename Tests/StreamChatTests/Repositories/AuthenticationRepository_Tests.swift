@@ -146,8 +146,9 @@ final class AuthenticationRepository_Tests: XCTestCase {
     }
 
     func test_setToken_tokenIsUpdated_doesNotCallTokenWaiters_whenNotRequired() {
+        var completionExecuted = false
         repository.provideToken { _ in
-            XCTFail()
+            completionExecuted = true
         }
 
         XCTAssertNil(repository.currentToken)
@@ -156,6 +157,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
 
         repository.setToken(token: newToken, completeTokenWaiters: false)
         XCTAssertEqual(repository.currentToken, newToken)
+        XCTAssertFalse(completionExecuted)
     }
 
     // MARK: Connect user
