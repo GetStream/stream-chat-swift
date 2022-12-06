@@ -8,6 +8,9 @@ import XCTest
 
 /// Mock implementation of APIClient allowing easy control and simulation of responses.
 final class APIClient_Spy: APIClient, Spy {
+    enum Signature {
+        static let flushRequestsQueue = "flushRequestsQueue()"
+    }
     var recordedFunctions: [String] = []
 
     /// The last endpoint `request` function was called with.

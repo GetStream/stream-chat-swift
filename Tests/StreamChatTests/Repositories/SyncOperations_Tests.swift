@@ -8,7 +8,7 @@ import XCTest
 
 final class SyncOperations_Tests: XCTestCase {
     var client: ChatClient_Mock!
-    var syncRepository: SyncRepository_Spy!
+    var syncRepository: SyncRepository_Mock!
     var database: DatabaseContainer_Spy!
 
     override func setUp() {

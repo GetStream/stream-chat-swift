@@ -11,7 +11,7 @@ final class MessageUpdater_Tests: XCTestCase {
     var webSocketClient: WebSocketClient_Mock!
     var apiClient: APIClient_Spy!
     var database: DatabaseContainer_Spy!
-    var messageRepository: MessageRepository_Spy!
+    var messageRepository: MessageRepository_Mock!
     var messageUpdater: MessageUpdater!
     
     // MARK: Setup
@@ -22,7 +22,7 @@ final class MessageUpdater_Tests: XCTestCase {
         webSocketClient = WebSocketClient_Mock()
         apiClient = APIClient_Spy()
         database = DatabaseContainer_Spy()
-        messageRepository = MessageRepository_Spy(database: database, apiClient: apiClient)
+        messageRepository = MessageRepository_Mock(database: database, apiClient: apiClient)
         messageUpdater = MessageUpdater(
             isLocalStorageEnabled: true,
             messageRepository: messageRepository,
