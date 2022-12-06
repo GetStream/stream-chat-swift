@@ -14,6 +14,8 @@ final class Attachments_Tests: StreamTestCase {
     func test_uploadImage() throws {
         linkToScenario(withId: 28)
         
+        try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12, "Flaky on iOS 12")
+        
         GIVEN("user opens the channel") {
             userRobot.login().openChannel()
         }
