@@ -225,6 +225,9 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         try database.writeSynchronously {
             try $0.saveCurrentUser(payload: userPayload)
         }
+
+        // Mock successful API response
+        apiClient.test_mockResponseResult(.success(EmptyResponse()))
         
         // Call addDevice
         currentUserUpdater.addDevice(
@@ -244,7 +247,8 @@ final class CurrentUserUpdater_Tests: XCTestCase {
             pushProvider: pushProvider,
             providerName: providerName
         )
-        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+
+        AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
     
     func test_addDevice_forwardsNetworkError() throws {
@@ -254,6 +258,10 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         try database.writeSynchronously {
             try $0.saveCurrentUser(payload: userPayload)
         }
+
+        // Mock failure API response
+        let error = TestError()
+        apiClient.test_mockResponseResult(Result<EmptyResponse, Error>.failure(error))
         
         // Call addDevice
         var completionCalledError: Error?
@@ -265,9 +273,6 @@ final class CurrentUserUpdater_Tests: XCTestCase {
             completionCalledError = $0
         }
 
-        // Simulate API error
-        let error = TestError()
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
         apiClient.cleanUp()
         
         // Assert the completion is called with the error
@@ -285,6 +290,9 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         // Simulate the DB failing with `TestError`
         let testError = TestError()
         database.write_errorResponse = testError
+
+        // Mock successful API response
+        apiClient.test_mockResponseResult(.success(EmptyResponse()))
         
         // Call fetchDevices
         var completionCalledError: Error?
@@ -295,10 +303,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         ) {
             completionCalledError = $0
         }
-        
-        // Simulate successful API response
-        apiClient.test_simulateResponse(.success(EmptyResponse()))
-        
+
         // Check returned error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
@@ -321,6 +326,9 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         assert(currentUser?.devices.count == 1)
         assert(currentUser?.currentDevice == nil)
 
+        // Mock successful API response
+        apiClient.test_mockResponseResult(.success(EmptyResponse()))
+
         // Call addDevice
         currentUserUpdater.addDevice(
             deviceId: "test",
@@ -331,15 +339,41 @@ final class CurrentUserUpdater_Tests: XCTestCase {
             XCTAssertNil($0)
         }
         
-        // Simulate API response with devices data
-        apiClient.test_simulateResponse(.success(EmptyResponse()))
-        
         AssertAsync {
             // Assert the new device is added to devices
             Assert.willBeEqual(currentUser?.devices.count, 2)
             // Assert that currentDevice is set
             Assert.willBeTrue(currentUser?.currentDevice != nil)
         }
+    }
+
+    func test_addDevice_whenCallingFromBackgroundThread_doesNotCrash() throws {
+        let userPayload: CurrentUserPayload = .dummy(userId: .unique, role: .user)
+        let deviceId = "test"
+        let pushProvider = PushProvider.apn
+        let providerName = "APN Configuration"
+
+        try database.writeSynchronously {
+            try $0.saveCurrentUser(payload: userPayload)
+        }
+
+        // Mock successful API response
+        apiClient.test_mockResponseResult(.success(EmptyResponse()))
+
+        let exp = expectation(description: "should complete addDevice call")
+
+        DispatchQueue.global().async {
+            self.currentUserUpdater.addDevice(
+                deviceId: deviceId,
+                pushProvider: pushProvider,
+                providerName: providerName,
+                currentUserId: userPayload.id
+            ) { _ in
+                exp.fulfill()
+            }
+        }
+
+        waitForExpectations(timeout: defaultTimeout)
     }
     
     // MARK: removeDevice

@@ -16,6 +16,7 @@ final class APIClient_Spy: APIClient, Spy {
     /// The last endpoint `request` function was called with.
     @Atomic var request_endpoint: AnyEndpoint?
     @Atomic var request_completion: Any?
+    @Atomic private var request_result: Any?
     @Atomic var request_allRecordedCalls: [(endpoint: AnyEndpoint, completion: Any?)] = []
 
     /// The last endpoint `recoveryRequest` function was called with.
@@ -86,12 +87,19 @@ final class APIClient_Spy: APIClient, Spy {
         let completion = recoveryRequest_completion as? ((Result<Response, Error>) -> Void)
         completion?(response)
     }
+
+    func test_mockResponseResult<Response: Decodable>(_ responseResult: Result<Response, Error>) {
+        request_result = responseResult
+    }
     
     override func request<Response>(
         endpoint: Endpoint<Response>,
         completion: @escaping (Result<Response, Error>) -> Void
     ) where Response: Decodable {
         request_endpoint = AnyEndpoint(endpoint)
+        if let result = request_result as? Result<Response, Error> {
+            completion(result)
+        }
         request_completion = completion
         _request_allRecordedCalls.mutate { $0.append((request_endpoint!, request_completion!)) }
         request_expectation.fulfill()
