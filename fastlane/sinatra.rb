@@ -47,7 +47,7 @@ get '/jwt/:udid' do
     'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoibHVrZV9za3l3YWxrZXIiLCJleHAiOjE2NjgwMTIzNTN9.UJ-LDHZFDP10sqpZU9bzPAChgersjDfqKjoi5Plg8qI'
   else
     client = StreamChat::Client.new(params[:api_key], ENV.fetch('STREAM_DEMO_APP_SECRET'))
-    expiration = time + 5
+    expiration = time + 10
     client.create_token(params[:user_name], expiration)
   end
 end

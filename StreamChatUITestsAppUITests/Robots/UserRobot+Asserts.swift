@@ -147,7 +147,7 @@ extension UserRobot {
     @discardableResult
     func assertConnectionStatus(
         _ status: ChannelListPage.ConnectionStatus,
-        timeout: Double = 15,
+        timeout: Double = 30,
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> Self {

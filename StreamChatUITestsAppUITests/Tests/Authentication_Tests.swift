@@ -101,7 +101,7 @@ final class Authentication_Tests: StreamTestCase {
         AND("server returns an error") {}
         AND("JWT generation recovers on server side") {}
         THEN("app requests a token refresh a second time") {
-            userRobot.assertConnectionStatus(.connected, timeout: 30)
+            userRobot.assertConnectionStatus(.connected, timeout: 60)
         }
     }
 }
