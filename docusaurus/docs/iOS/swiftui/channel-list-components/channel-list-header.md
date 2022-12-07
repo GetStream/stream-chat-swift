@@ -39,6 +39,10 @@ func navigationBarDisplayMode() -> NavigationBarItem.TitleDisplayMode {
 
 In most cases, you will need to customize the navigation bar even further - either by adding branding information, like logo and text, or even additional buttons that will either push a new view, display a modal sheet or an alert.
 
+:::info
+In case you want to see a more detailed tutorial on how to customize the channel list header, you can see [this article on our blog](https://getstream.io/blog/customize-chat-channel-list-with-swiftui/#add-a-custom-made-channel-list-header).
+:::
+
 In order to do this, you will need to perform a few steps. First, you need to create your own header, conforming to SwiftUI's `ToolbarContent` protocol. Let's create a header that will show title and two buttons, one opening a sheet and the other pushing a new view.
 
 ```swift
