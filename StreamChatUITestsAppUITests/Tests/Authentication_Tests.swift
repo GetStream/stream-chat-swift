@@ -11,6 +11,7 @@ final class Authentication_Tests: StreamTestCase {
         mockServerEnabled = false
         app.setLaunchArguments(.jwt)
         try super.setUpWithError()
+        throw XCTSkip("[CIS-2309] JWT authentication issues")
     }
     
     func test_tokenExpiriesBeforeUserLogsIn() {
