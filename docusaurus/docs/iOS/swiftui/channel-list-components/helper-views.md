@@ -8,23 +8,23 @@ While the channels are loaded, a loading view is displayed, with a simple animat
 
 ```swift
 class CustomFactory: ViewFactory {
-    
+
     @Injected(\.chatClient) public var chatClient
-    
+
     private init() {}
-    
+
     public static let shared = CustomFactory()
-    
+
     func makeLoadingView() -> some View {
         VStack {
             Text("This is custom loading view")
             ProgressView()
         }
     }
-}    
+}
 ```
- 
- Afterwards, you will need to inject the newly created `CustomFactory` into our view hierarchy.
+
+Afterwards, you will need to inject the newly created `CustomFactory` into our view hierarchy.
 
 ```swift
 var body: some Scene {
@@ -48,6 +48,10 @@ func makeNoChannelsView() -> some View {
 }
 ```
 
+:::info
+We also have a more in-detail [article on customization of the channel list](https://getstream.io/blog/customize-chat-channel-list-with-swiftui/) and you can find an example of how to provide a no channels available view [here](https://getstream.io/blog/customize-chat-channel-list-with-swiftui/#how-to-customize-the-no-channels-view).
+:::
+
 ## Changing the Background of the Channel List
 
 You can change the background of the channel list to be any SwiftUI `View` (`Color`, `LinearGradient`, `Image` etc.). In order to do this, you will need to implement the `makeChannelListBackground` in the `ViewFactory`.
@@ -59,7 +63,7 @@ func makeChannelListBackground(colors: ColorPalette) -> some View {
 }
 ```
 
-In this method, you receive the `colors` used in the SDK, but you can ignore them if you want to use custom colors that are not setup via the SDK. 
+In this method, you receive the `colors` used in the SDK, but you can ignore them if you want to use custom colors that are not setup via the SDK.
 
 ## Changing the Chat Channel List Item
 
@@ -189,12 +193,12 @@ func makeChannelListModifier() -> some ViewModifier {
 }
 
 struct VerticalPaddingViewModifier: ViewModifier {
-    
+
     public func body(content: Content) -> some View {
         content
             .padding(.vertical, 8)
     }
-    
+
 }
 ```
 
