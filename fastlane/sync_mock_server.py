@@ -48,7 +48,10 @@ async def request_channels(session, connection_id):
   query_params = ['api_key=' + stream_demo_api_key, 'connection_id=' + connection_id, 'payload=' + payload]
   endpoint = stream_channels_url_path + '?' + '&'.join(query_params)
   async with session.get(endpoint, headers=stream_headers) as response:
-    save_json(await response.json(), filename='http_channels.json')
+    channels = await response.json()
+    first_channel = channels['channels'][0]
+    channels['channels'] = [first_channel]
+    save_json(channels, filename='http_channels.json')
 
 async def send_typing_event(session, ws, channel_id):
   print('Sending typing event...')
@@ -60,7 +63,13 @@ async def send_typing_event(session, ws, channel_id):
   endpoint = stream_messaging_url_path + '/' + channel_id + '/event?api_key=' + stream_demo_api_key
   async with session.post(endpoint, data=payload, headers=stream_headers) as response:
     save_json(await response.json(), filename='http_events.json')
-    save_json((await ws.receive()).json(), filename='ws_events.json')
+
+    ws_typing_event_received = False
+    while not ws_typing_event_received: # multiple 'user.watching.start' events are received before the 'typing.start' event
+      ws_response = (await ws.receive()).json()
+      ws_typing_event_received = ws_response['type'] == 'typing.start'
+
+    save_json(ws_response, filename='ws_events.json')
 
 def random_uuid():
   return str(uuid.uuid1())
@@ -180,6 +189,8 @@ async def add_member_to_channel(session, ws, channel_id):
 
 async def establish_websocket_connection(ws):
   health_check = (await ws.receive()).json()
+  for key in ['channel_mutes', 'mutes', 'devices']:
+    health_check['me'][key] = []
   save_json(health_check, filename='ws_health_check.json')
   return health_check['connection_id']
 
@@ -189,10 +200,6 @@ async def chat():
       connection_id = await establish_websocket_connection(ws)
       channel_id = await create_channel(session, connection_id)
       await request_channels(session, connection_id)
-
-      await ws.receive() # type: notification.added_to_channel
-      await ws.receive() # type: user.watching.start
-
       await send_typing_event(session, ws, channel_id)
       message_id = await send_regular_message(session, ws, channel_id)
       await add_reaction(session, ws, message_id)
