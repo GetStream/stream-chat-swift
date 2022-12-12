@@ -10,7 +10,7 @@ import UIKit
 
 extension DemoAppCoordinator {
     
-    func start(cid: ChannelId? = nil) {
+    func start(cid: ChannelId? = nil, completion: @escaping (Error?) -> Void) {
         if let cid = cid {
             navigateToChannel(with: cid)
         } else {
@@ -18,6 +18,7 @@ extension DemoAppCoordinator {
             let navigationController = UINavigationController(rootViewController: viewController)
             set(rootViewController: navigationController, animated: false)
         }
+        completion(nil)
     }
     
     private func navigateToChannel(with cid: ChannelId) {
