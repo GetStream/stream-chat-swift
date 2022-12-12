@@ -36,7 +36,13 @@ final class DemoAppCoordinator: NSObject {
                 return
             }
 
-            self?.start(cid: cid)
+            self?.start(cid: cid) { error in
+                if let error = error {
+                    log.error("Error showing channel from notification \(error)")
+                } else {
+                    log.debug("Successfully showing channel from notification")
+                }
+            }
         }
     }
     

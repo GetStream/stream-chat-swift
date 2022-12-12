@@ -2,6 +2,7 @@
 // Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
+import StreamChat
 import UIKit
 
 extension UIColor {
@@ -68,6 +69,12 @@ extension SceneDelegate {
             chat: chat,
             pushNotifications: pushNotifications
         )
-        coordinator.start()
+        coordinator.start { error in
+            if let error = error {
+                log.error("Error starting app \(error)")
+            } else {
+                log.debug("Successfully started app")
+            }
+        }
     }
 }
