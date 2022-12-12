@@ -153,7 +153,7 @@ extension UserRobot {
     ) -> Self {
         let expectedStatus = status.rawValue
         let actualStatus = ChannelListPage.connectionStatus.waitForText(expectedStatus, timeout: timeout).text
-        XCTAssertEqual(actualStatus, expectedStatus, file: file, line: line)
+        XCTAssertEqual(expectedStatus, actualStatus, file: file, line: line)
         return self
     }
 }
