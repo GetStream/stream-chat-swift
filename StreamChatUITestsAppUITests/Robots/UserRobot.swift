@@ -21,8 +21,6 @@ final class UserRobot: Robot {
     @discardableResult
     func login() -> Self {
         StartPage.startButton.safeTap()
-        sleep(2)
-        print(app.debugDescription)
         return self
     }
     
