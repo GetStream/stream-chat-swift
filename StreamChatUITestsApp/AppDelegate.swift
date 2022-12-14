@@ -4,6 +4,7 @@
 
 import UIKit
 import UserNotifications
+import StreamChat
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -47,7 +48,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             chat: chat,
             pushNotifications: pushNotifications
         )
-        coordinator.start()
+        coordinator.start { error in
+            if let error = error {
+                log.error("Error starting app \(error)")
+            } else {
+                log.debug("Successfully started app")
+            }
+        }
     }
     
     func disableAnimations() {

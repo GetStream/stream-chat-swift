@@ -70,7 +70,7 @@ extension StreamChatWrapper {
         }
     }
 
-    func logIn(as user: DemoUserType) {
+    func logIn(as user: DemoUserType, completion: @escaping (Error?) -> Void) {
         // Setup Stream Chat
         setUpChat()
 
@@ -81,10 +81,11 @@ extension StreamChatWrapper {
             } else {
                 self?.onRemotePushRegistration?()
             }
+            completion($0)
         }
     }
 
-    func logOut() {
+    func logOut(completion: @escaping () -> Void) {
         guard let client = self.client else {
             logClientNotInstantiated()
             return
@@ -98,7 +99,7 @@ extension StreamChatWrapper {
             }
         }
 
-        client.logout()
+        client.logout(completion: completion)
         
         self.client = nil
     }
