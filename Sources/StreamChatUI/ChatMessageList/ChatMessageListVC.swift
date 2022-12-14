@@ -274,7 +274,7 @@ open class ChatMessageListVC: _ViewController,
             let messageContentView = cell.messageContentView,
             let message = messageContentView.content,
             message.isInteractionEnabled == true,
-            let cid = message.cid
+            let cid = dataSource?.channel(for: self)?.cid
         else { return }
 
         let messageController = client.messageController(
