@@ -9,6 +9,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### ✅ Added
 - Add support for hiding connection status with `isInvisible` [#2373](https://github.com/GetStream/stream-chat-swift/pull/2373)
+- Add `.withAttachments` in `MessageSearchFilterScope` to filter messages with attachments only [#2417](https://github.com/GetStream/stream-chat-swift/pull/2417)
+- Add `.withoutAttachments` in `MessageSearchFilterScope` to filter messages without any attachments [#2417](https://github.com/GetStream/stream-chat-swift/pull/2417)
 
 ### 🐞 Fixed
 - Fix connecting user with non-expiring tokens (ex: development token) [#2393](https://github.com/GetStream/stream-chat-swift/pull/2393)
