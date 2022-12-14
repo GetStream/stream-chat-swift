@@ -11,6 +11,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix connecting user with non-expiring tokens (ex: development token) [#2393](https://github.com/GetStream/stream-chat-swift/pull/2393)
 - Fix crash when calling `addDevice()` from background thread [#2398](https://github.com/GetStream/stream-chat-swift/pull/2398)
 
+## StreamChatUI
+### 🐞 Fixed
+- Fix message actions popup in cached thread replies [#2415](https://github.com/GetStream/stream-chat-swift/pull/2415)
+
 # [4.24.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.24.1)
 _November 23, 2022_
 

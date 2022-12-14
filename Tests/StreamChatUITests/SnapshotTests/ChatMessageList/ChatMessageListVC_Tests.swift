@@ -3,7 +3,7 @@
 //
 
 @testable import StreamChat
-import StreamChatTestTools
+@testable import StreamChatTestTools
 @testable import StreamChatUI
 import XCTest
 
@@ -100,22 +100,122 @@ final class ChatMessageListVC_Tests: XCTestCase {
         XCTAssertEqual(mockedListView.reloadRowsCallCount, 0)
     }
 
-    class ChatMessageListView_Mock: ChatMessageListView {
-        var mockIsLastCellFullyVisible = false
-        override var isLastCellFullyVisible: Bool {
-            mockIsLastCellFullyVisible
-        }
+    func test_didSelectMessageCell_shouldShowActionsPopup() {
+        let sut = ChatMessageListVC()
+        sut.components = .mock
+        sut.components.messageListView = ChatMessageListView_Mock.self
+        sut.client = ChatClient(config: ChatClientConfig(apiKey: .init(.unique)))
 
-        var reloadSkippedMessagesCallCount = 0
-        override func reloadSkippedMessages() {
-            reloadSkippedMessagesCallCount += 1
-        }
+        let mockedListView = sut.listView as! ChatMessageListView_Mock
+        mockedListView.mockedCellForRow = .init()
+        mockedListView.mockedCellForRow?.mockedMessage = .mock()
 
-        var reloadRowsCallCount = 0
-        var reloadRowsCalledWith: [IndexPath] = []
-        override func reloadRows(at indexPaths: [IndexPath], with animation: UITableView.RowAnimation) {
-            reloadRowsCallCount += 1
-            reloadRowsCalledWith = indexPaths
+        let mockedRouter = ChatMessageListRouter_Mock(rootViewController: UIViewController())
+        sut.router = mockedRouter
+
+        let dataSource = ChatMessageListVCDataSource_Mock()
+        dataSource.mockedChannel = .mock(cid: .unique)
+        sut.dataSource = dataSource
+
+        sut.didSelectMessageCell(at: IndexPath(item: 0, section: 0))
+
+        XCTAssertEqual(mockedRouter.showMessageActionsPopUpCallCount, 1)
+    }
+
+    // message.cid should be available from local cache, but right now, some how is not available for thread replies
+    // so the workaround is to get the cid from the data source.
+    func test_didSelectMessageCell_whenMessageCidIsNil_shouldStillShowActionsPopup() throws {
+        let sut = ChatMessageListVC()
+        sut.components = .mock
+        sut.components.messageListView = ChatMessageListView_Mock.self
+        let mockedClient = ChatClient.mock
+        sut.client = mockedClient
+
+        // Make message without a CID
+        var messageDTOWithoutCid: MessageDTO!
+        try mockedClient.databaseContainer.writeSynchronously { session in
+            let messagePayload = self.dummyMessagePayload(cid: nil)
+            let channel = try session.saveChannel(payload: .dummy(), isPaginatedPayload: false)
+            messageDTOWithoutCid = try session.saveMessage(
+                payload: messagePayload,
+                channelDTO: channel,
+                syncOwnReactions: false,
+                cache: nil
+            )
+            messageDTOWithoutCid.channel = nil
         }
+        let mockedMessageWithoutCid = try messageDTOWithoutCid.asModel()
+
+        let mockedListView = sut.listView as! ChatMessageListView_Mock
+        mockedListView.mockedCellForRow = .init()
+        mockedListView.mockedCellForRow?.mockedMessage = mockedMessageWithoutCid
+
+        let mockedRouter = ChatMessageListRouter_Mock(rootViewController: UIViewController())
+        sut.router = mockedRouter
+
+        let dataSource = ChatMessageListVCDataSource_Mock()
+        dataSource.mockedChannel = .mock(cid: .unique)
+        sut.dataSource = dataSource
+
+        sut.didSelectMessageCell(at: IndexPath(item: 0, section: 0))
+
+        XCTAssertEqual(mockedRouter.showMessageActionsPopUpCallCount, 1)
+        XCTAssertEqual(mockedMessageWithoutCid.cid, nil)
+    }
+}
+
+class ChatMessageListView_Mock: ChatMessageListView {
+    var mockIsLastCellFullyVisible = false
+    override var isLastCellFullyVisible: Bool {
+        mockIsLastCellFullyVisible
+    }
+
+    var reloadSkippedMessagesCallCount = 0
+    override func reloadSkippedMessages() {
+        reloadSkippedMessagesCallCount += 1
+    }
+
+    var reloadRowsCallCount = 0
+    var reloadRowsCalledWith: [IndexPath] = []
+    override func reloadRows(at indexPaths: [IndexPath], with animation: UITableView.RowAnimation) {
+        reloadRowsCallCount += 1
+        reloadRowsCalledWith = indexPaths
+    }
+
+    var mockedCellForRow: ChatMessageCell_Mock?
+
+    override func cellForRow(at indexPath: IndexPath) -> UITableViewCell? {
+        mockedCellForRow
+    }
+}
+
+class ChatMessageCell_Mock: ChatMessageCell {
+    var mockedMessage: ChatMessage?
+
+    override var messageContentView: ChatMessageContentView? {
+        let view = ChatMessageContentView()
+        view.content = mockedMessage
+        return view
+    }
+}
+
+class ChatMessageListVCDataSource_Mock: ChatMessageListVCDataSource {
+    var mockedChannel: ChatChannel?
+    func channel(for vc: ChatMessageListVC) -> ChatChannel? {
+        mockedChannel
+    }
+
+    var messages: [StreamChat.ChatMessage] = []
+
+    func numberOfMessages(in vc: StreamChatUI.ChatMessageListVC) -> Int {
+        messages.count
+    }
+
+    func chatMessageListVC(_ vc: StreamChatUI.ChatMessageListVC, messageAt indexPath: IndexPath) -> StreamChat.ChatMessage? {
+        messages[indexPath.item]
+    }
+
+    func chatMessageListVC(_ vc: StreamChatUI.ChatMessageListVC, messageLayoutOptionsAt indexPath: IndexPath) -> StreamChatUI.ChatMessageLayoutOptions {
+        .init()
     }
 }
