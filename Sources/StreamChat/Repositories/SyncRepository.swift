@@ -334,6 +334,6 @@ class SyncRepository {
 
 private extension Date {
     var numberOfDaysUntilNow: Int {
-        Calendar.current.dateComponents([.day], from: self).day ?? 0
+        Calendar.current.dateComponents([.day], from: self, to: Date()).day ?? 0
     }
 }
