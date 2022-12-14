@@ -71,7 +71,7 @@ class SyncRepository {
     
     func syncLocalState(completion: @escaping () -> Void) {
         cancelRecoveryFlow()
-        
+
         getUser { [weak self] in
             guard let currentUser = $0 else {
                 log.error("Current user must exist", subsystems: .offlineSupport)
