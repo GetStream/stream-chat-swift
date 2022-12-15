@@ -36,11 +36,8 @@ final class ViewController: UIViewController {
     @objc func didTap() {
         // Setup chat client
         streamChat.setUpChat()
-        streamChat.connectUser(completion: { [weak self] _ in
-            DispatchQueue.main.async {
-                self?.showChannelList()
-            }
-        })
+        streamChat.connectUser(completion: { _ in })
+        showChannelList()
     }
 
     private func showChannelList() {
