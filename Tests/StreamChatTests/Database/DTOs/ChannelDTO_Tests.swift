@@ -889,6 +889,18 @@ final class ChannelDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedChannels.count, 1)
         XCTAssertEqual(loadedChannels.first?.cid, channel1Id.rawValue)
     }
+
+    func test_channelWithChannelListQuery_shouldUseLimitAndBatchSize() {
+        let query = ChannelListQuery(
+            filter: .and([.less(.createdAt, than: .unique), .exists(.deletedAt, exists: false)]),
+            pageSize: 25
+        )
+
+        let fetchRequest = ChannelDTO.channelListFetchRequest(query: query)
+
+        XCTAssertEqual(fetchRequest.fetchBatchSize, 25)
+        XCTAssertEqual(fetchRequest.fetchLimit, 25)
+    }
     
     func test_channelListQuery_withSorting() {
         // Create two channels queries with different sortings.
