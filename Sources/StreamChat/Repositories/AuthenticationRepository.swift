@@ -18,8 +18,20 @@ protocol AuthenticationRepositoryDelegate: AnyObject {
 }
 
 class AuthenticationRepository {
+    private enum Constants {
+        /// Maximum amount of consecutive token refresh attempts before failing
+        static let maximumTokenRefreshAttempts = 10
+    }
+
     private let tokenQueue: DispatchQueue = DispatchQueue(label: "io.getstream.auth-repository", attributes: .concurrent)
-    private var _isGettingToken: Bool = false
+    private var _isGettingToken: Bool = false {
+        didSet {
+            guard oldValue != _isGettingToken else { return }
+            _isGettingToken ? apiClient.enterTokenFetchMode() : apiClient.exitTokenFetchMode()
+        }
+    }
+
+    private var _consecutiveRefreshFailures: Int = 0
     private var _currentUserId: UserId?
     private var _currentToken: Token?
     private var _tokenProvider: TokenProvider?
@@ -29,6 +41,11 @@ class AuthenticationRepository {
     private var isGettingToken: Bool {
         get { tokenQueue.sync { _isGettingToken } }
         set { tokenQueue.async(flags: .barrier) { self._isGettingToken = newValue }}
+    }
+
+    private var consecutiveRefreshFailures: Int {
+        get { tokenQueue.sync { _consecutiveRefreshFailures } }
+        set { tokenQueue.async(flags: .barrier) { self._consecutiveRefreshFailures = newValue }}
     }
 
     private(set) var currentUserId: UserId? {
@@ -65,8 +82,6 @@ class AuthenticationRepository {
     private let apiClient: APIClient
     private let databaseContainer: DatabaseContainer
     private let connectionRepository: ConnectionRepository
-    /// A timer that runs token refreshing job
-    private var tokenRetryTimer: TimerControl?
     /// Retry timing strategy for refreshing an expired token
     private var tokenExpirationRetryStrategy: RetryStrategy
     private let timerType: Timer.Type
@@ -121,7 +136,7 @@ class AuthenticationRepository {
     ///   - tokenProvider:  The block to be used to get a token.
     func connectUser(userInfo: UserInfo?, tokenProvider: @escaping TokenProvider, completion: @escaping (Error?) -> Void) {
         self.tokenProvider = tokenProvider
-        getToken(userInfo: userInfo, tokenProvider: tokenProvider, completion: completion)
+        scheduleTokenFetch(isRetry: false, userInfo: userInfo, tokenProvider: tokenProvider, completion: completion)
     }
 
     /// Establishes a connection for a guest user.
@@ -156,16 +171,7 @@ class AuthenticationRepository {
             return
         }
 
-        let tokenProviderCheckingSuccess: TokenProvider = { [weak self] completion in
-            tokenProvider { result in
-                if case .success = result {
-                    self?.tokenExpirationRetryStrategy.resetConsecutiveFailures()
-                }
-                completion(result)
-            }
-        }
-
-        scheduleTokenFetch(userInfo: nil, tokenProvider: tokenProviderCheckingSuccess, completion: completion)
+        scheduleTokenFetch(isRetry: false, userInfo: nil, tokenProvider: tokenProvider, completion: completion)
     }
 
     func prepareEnvironment(
@@ -240,24 +246,24 @@ class AuthenticationRepository {
         waiters.forEach { $0.value(token) }
     }
 
-    private func scheduleTokenFetch(userInfo: UserInfo?, tokenProvider: @escaping TokenProvider, completion: @escaping (Error?) -> Void) {
-        guard !isGettingToken else {
+    private func scheduleTokenFetch(isRetry: Bool, userInfo: UserInfo?, tokenProvider: @escaping TokenProvider, completion: @escaping (Error?) -> Void) {
+        guard !isGettingToken || isRetry else {
             tokenRequestCompletions.append(completion)
             return
         }
 
-        tokenRetryTimer = timerType.schedule(
+        timerType.schedule(
             timeInterval: tokenExpirationRetryStrategy.getDelayAfterTheFailure(),
             queue: .main
         ) { [weak self] in
             log.debug("Firing timer for a new token request", subsystems: .authentication)
-            self?.getToken(userInfo: nil, tokenProvider: tokenProvider, completion: completion)
+            self?.getToken(isRetry: isRetry, userInfo: nil, tokenProvider: tokenProvider, completion: completion)
         }
     }
 
-    private func getToken(userInfo: UserInfo?, tokenProvider: @escaping TokenProvider, completion: @escaping (Error?) -> Void) {
+    private func getToken(isRetry: Bool, userInfo: UserInfo?, tokenProvider: @escaping TokenProvider, completion: @escaping (Error?) -> Void) {
         tokenRequestCompletions.append(completion)
-        guard !isGettingToken else {
+        guard !isGettingToken || isRetry else {
             log.debug("Trying to get a token while already getting one", subsystems: .authentication)
             return
         }
@@ -276,9 +282,15 @@ class AuthenticationRepository {
                 self._isGettingToken = false
                 let completions = self._tokenRequestCompletions
                 self._tokenRequestCompletions = []
+                self._consecutiveRefreshFailures = 0
                 return completions
             }
             completionBlocks?.forEach { $0(error) }
+        }
+
+        guard consecutiveRefreshFailures < Constants.maximumTokenRefreshAttempts else {
+            onCompletion(ClientError.TooManyFailedTokenRefreshAttempts())
+            return
         }
 
         let onTokenReceived: (Token) -> Void = { [weak self, weak connectionRepository] token in
@@ -297,13 +309,28 @@ class AuthenticationRepository {
             }
         }
 
+        let retryFetchIfPossible: () -> Void = { [weak self] in
+            guard let self = self else { return }
+            guard self.consecutiveRefreshFailures < Constants.maximumTokenRefreshAttempts else {
+                onCompletion(ClientError.TooManyFailedTokenRefreshAttempts())
+                return
+            }
+
+            self.consecutiveRefreshFailures += 1
+            self.scheduleTokenFetch(isRetry: true, userInfo: userInfo, tokenProvider: tokenProvider, completion: completion)
+        }
+
         log.debug("Requesting a new token", subsystems: .authentication)
-        tokenProvider { result in
+        tokenProvider { [weak self] result in
             switch result {
-            case let .success(newToken):
+            case let .success(newToken) where !newToken.isExpired:
                 onTokenReceived(newToken)
+                self?.tokenExpirationRetryStrategy.resetConsecutiveFailures()
+            case .success:
+                retryFetchIfPossible()
             case let .failure(error):
-                onCompletion(error)
+                log.info("Failed fetching token with error: \(error)")
+                retryFetchIfPossible()
             }
         }
     }
@@ -332,5 +359,16 @@ class AuthenticationRepository {
 
     private func invalidateTokenWaiter(_ waiter: WaiterToken) {
         tokenWaiters[waiter] = nil
+    }
+}
+
+extension ClientError {
+    public class TooManyFailedTokenRefreshAttempts: ClientError {
+        override public var localizedDescription: String {
+            """
+                Token fetch has failed more than 10 times.
+                Please make sure that your `tokenProvider` is correctly functioning.
+            """
+        }
     }
 }
