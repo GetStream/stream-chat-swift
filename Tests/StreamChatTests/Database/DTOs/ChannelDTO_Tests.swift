@@ -439,18 +439,42 @@ final class ChannelDTO_Tests: XCTestCase {
         }
     }
 
-    func test_defaultSortingAt_updates_whenLastMessageAtChanges() throws {
+    func test_defaultSortingAt_shouldBeEqualToLastMessageAt() throws {
         let channelId: ChannelId = .unique
-        
         try database.createChannel(cid: channelId)
-        
         try database.writeSynchronously {
             let channel = try XCTUnwrap($0.channel(cid: channelId))
-            channel.lastMessageAt = .unique(after: channel.lastMessageAt ?? channel.createdAt)
+            channel.lastMessageAt = .unique
         }
         
         let channel = try XCTUnwrap(database.viewContext.channel(cid: channelId))
-        XCTAssertEqual(channel.lastMessageAt, channel.defaultSortingAt)
+        XCTAssertEqual(channel.defaultSortingAt, channel.lastMessageAt)
+    }
+
+    func test_defaultSortingAt_whenMissingLastMessageAt_shouldBeEqualToCreatedAt() throws {
+        let channelId: ChannelId = .unique
+        try database.createChannel(cid: channelId)
+        try database.writeSynchronously {
+            let channel = try XCTUnwrap($0.channel(cid: channelId))
+            channel.createdAt = .unique
+            channel.lastMessageAt = nil
+        }
+
+        let channel = try XCTUnwrap(database.viewContext.channel(cid: channelId))
+        XCTAssertEqual(channel.defaultSortingAt, channel.createdAt)
+    }
+
+    func test_defaultSortingAt_whenLastMessageAtEqualDistantPast_shouldBeEqualToCreatedAt() throws {
+        let channelId: ChannelId = .unique
+        try database.createChannel(cid: channelId)
+        try database.writeSynchronously {
+            let channel = try XCTUnwrap($0.channel(cid: channelId))
+            channel.createdAt = .unique
+            channel.lastMessageAt = .distantPast.bridgeDate
+        }
+
+        let channel = try XCTUnwrap(database.viewContext.channel(cid: channelId))
+        XCTAssertEqual(channel.defaultSortingAt, channel.createdAt)
     }
 
     func test_channelPayload_nilMembershipRemovesExistingMembership() throws {

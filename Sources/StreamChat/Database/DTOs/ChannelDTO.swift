@@ -84,7 +84,12 @@ class ChannelDTO: NSManagedObject {
 
         // Update the date for sorting every time new message in this channel arrive.
         // This will ensure that the channel list is updated/sorted when new message arrives.
-        let lastDate = lastMessageAt ?? createdAt
+        // Note: If a channel is truncated, the server will update the lastMessageAt to a minimum value, and not remove it.
+        // So if lastMessageAt is nil or is equal to distantPast, e need to use the createdAt.
+        var lastDate = lastMessageAt ?? createdAt
+        if lastDate.bridgeDate <= .distantPast {
+            lastDate = createdAt
+        }
         if lastDate != defaultSortingAt {
             defaultSortingAt = lastDate
         }
