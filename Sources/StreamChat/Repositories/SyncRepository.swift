@@ -24,6 +24,10 @@ enum SyncError: Error {
 /// This class is in charge of the synchronization of our local storage with the remote.
 /// When executing a sync, it will remove outdated elements, and will refresh the content to always show the latest data.
 class SyncRepository {
+    private enum Constants {
+        static let maximumDaysSinceLastSync = 30
+    }
+
     /// Do not call the sync endpoint more than once every six seconds
     private let syncCooldown: TimeInterval = 6.0
     /// Maximum number of retries for each operation step.
@@ -67,7 +71,7 @@ class SyncRepository {
     
     func syncLocalState(completion: @escaping () -> Void) {
         cancelRecoveryFlow()
-        
+
         getUser { [weak self] in
             guard let currentUser = $0 else {
                 log.error("Current user must exist", subsystems: .offlineSupport)
@@ -200,6 +204,17 @@ class SyncRepository {
         isRecovery: Bool,
         completion: @escaping (Result<[ChannelId], SyncError>) -> Void
     ) {
+        guard lastSyncAt.numberOfDaysUntilNow < Constants.maximumDaysSinceLastSync else {
+            updateLastSyncAt(with: Date()) { error in
+                if let error = error {
+                    completion(.failure(error))
+                } else {
+                    completion(.success([]))
+                }
+            }
+            return
+        }
+
         // In recovery mode, `/sync` should always be called.
         // Otherwise, the cooldown is checked.
         guard isRecovery || Date().timeIntervalSince(lastSyncAt) > syncCooldown else {
@@ -242,15 +257,13 @@ class SyncRepository {
             case let .success(payload):
                 log.info("Processing pending events. Count \(payload.eventPayloads.count)", subsystems: .offlineSupport)
                 self?.processMissingEventsPayload(payload) {
-                    self?.updateUserValue({
-                        $0?.lastSynchedEventDate = (payload.eventPayloads.last?.createdAt ?? date).bridgeDate
-                    }) { error in
+                    self?.updateLastSyncAt(with: payload.eventPayloads.last?.createdAt ?? date, completion: { error in
                         if let error = error {
                             completion(.failure(error))
                         } else {
                             completion(.success(channelIds))
                         }
-                    }
+                    })
                 }
             case let .failure(error):
                 log.error("Failed synching events: \(error).", subsystems: .offlineSupport)
@@ -261,7 +274,14 @@ class SyncRepository {
                 // Backend responds with 400 if there were more than 1000 events to return
                 // Cleaning local channels data and refetching it from scratch
                 log.info("/sync returned too many events. Continuing...", subsystems: .offlineSupport)
-                completion(.success([]))
+
+                self?.updateLastSyncAt(with: Date()) { error in
+                    if let error = error {
+                        completion(.failure(error))
+                    } else {
+                        completion(.success([]))
+                    }
+                }
             }
         }
 
@@ -270,6 +290,12 @@ class SyncRepository {
         } else {
             apiClient.request(endpoint: endpoint, completion: requestCompletion)
         }
+    }
+
+    private func updateLastSyncAt(with date: Date, completion: @escaping (SyncError?) -> Void) {
+        updateUserValue({
+            $0?.lastSynchedEventDate = date.bridgeDate
+        }, completion: completion)
     }
 
     private func processMissingEventsPayload(_ payload: MissingEventsPayload, completion: @escaping () -> Void) {
@@ -303,5 +329,11 @@ class SyncRepository {
     func queueOfflineRequest(endpoint: DataEndpoint) {
         guard config.isLocalStorageEnabled else { return }
         offlineRequestsRepository.queueOfflineRequest(endpoint: endpoint)
+    }
+}
+
+private extension Date {
+    var numberOfDaysUntilNow: Int {
+        Calendar.current.dateComponents([.day], from: self, to: Date()).day ?? 0
     }
 }

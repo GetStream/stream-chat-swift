@@ -66,9 +66,20 @@ public extension Filter where Scope: AnyMessageSearchFilterScope {
     static func queryText(_ text: String) -> Filter<Scope> {
         .query(.text, text: text)
     }
-    
+
+    // Filter messages with the given attachment types.
     static func withAttachments(_ types: Set<AttachmentType>) -> Filter<Scope> {
         .in(.hasAttachmentsOfType, values: .init(types))
+    }
+
+    // Filter messages which contain attachments.
+    static var withAttachments: Filter<Scope> {
+        .exists(FilterKey<Scope, String>(stringLiteral: "attachments"))
+    }
+
+    // Filter messages that don't contain attachments.
+    static var withoutAttachments: Filter<Scope> {
+        .exists(FilterKey<Scope, String>(stringLiteral: "attachments"), exists: false)
     }
 }
 

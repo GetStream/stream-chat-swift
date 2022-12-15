@@ -297,7 +297,27 @@ final class SyncRepository_Tests: XCTestCase {
     }
 
     // MARK: - Sync existing channels events
-    
+
+    func test_syncExistingChannelsEvents_whenMoreThan30DaysHavePassed_shouldNotProceedToSync() throws {
+        try prepareForSyncLocalStorage(
+            createUser: true,
+            lastSynchedEventDate: Date().addingTimeInterval(-60 * 60 * 24 * 31),
+            createChannel: false
+        )
+
+        let result = getSyncExistingChannelEventsResult()
+
+        guard let value = result.value else {
+            XCTFail("Should return an empty array")
+            return
+        }
+
+        // Should update lastSyncAt
+        XCTAssertNearlySameDate(database.viewContext.currentUser?.lastSynchedEventDate?.bridgeDate, Date())
+        XCTAssertEqual(value, [])
+        XCTAssertNil(apiClient.request_endpoint)
+    }
+
     func test_syncExistingChannelsEvents_whenCooldownHasNotPassed_noNeedToSync() throws {
         try prepareForSyncLocalStorage(
             createUser: true,
@@ -311,6 +331,8 @@ final class SyncRepository_Tests: XCTestCase {
             XCTFail("Should return .noNeedToSync")
             return
         }
+
+        XCTAssertNil(apiClient.request_endpoint)
     }
 
     func test_syncExistingChannelsEvents_localStorageEnabled_noChannels() throws {
@@ -328,6 +350,7 @@ final class SyncRepository_Tests: XCTestCase {
         }
 
         XCTAssertEqual(value, [])
+        XCTAssertNil(apiClient.request_endpoint)
     }
 
     func test_syncExistingChannelsEvents_someChannels_noUser() throws {
@@ -342,6 +365,7 @@ final class SyncRepository_Tests: XCTestCase {
             XCTFail("Should return .noNeedToSync")
             return
         }
+        XCTAssertNil(apiClient.request_endpoint)
     }
 
     func test_syncExistingChannelsEvents_someChannels_userNoLastSyncAt() throws {
@@ -358,6 +382,7 @@ final class SyncRepository_Tests: XCTestCase {
             XCTFail("Should return .noNeedToSync")
             return
         }
+        XCTAssertNil(apiClient.request_endpoint)
     }
 
     func test_syncExistingChannelsEvents_someChannels_lastSyncAt_TooEarly() throws {
@@ -373,14 +398,18 @@ final class SyncRepository_Tests: XCTestCase {
             XCTFail("Should return .noNeedToSync")
             return
         }
+
+        XCTAssertNil(apiClient.request_endpoint)
     }
 
     func test_syncExistingChannelsEvents_someChannels_apiFailure() throws {
+        let mockedLastSyncAt = Date().addingTimeInterval(-3600)
+        let mockedCid = ChannelId.unique
         try database.createCurrentUser(id: "123")
         try database.writeSynchronously { session in
-            session.currentUser?.lastSynchedEventDate = DBDate().addingTimeInterval(-3600)
+            session.currentUser?.lastSynchedEventDate = mockedLastSyncAt.bridgeDate
             let query = ChannelListQuery(filter: .exists(.cid))
-            try session.saveChannel(payload: .dummy(cid: .unique), query: query, cache: nil)
+            try session.saveChannel(payload: .dummy(cid: mockedCid), query: query, cache: nil)
         }
 
         let result = getSyncExistingChannelEventsResult(requestResult: .failure(ClientError("something went wrong")))
@@ -390,14 +419,20 @@ final class SyncRepository_Tests: XCTestCase {
             return
         }
         XCTAssertEqual(clientError.localizedDescription, "something went wrong")
+        XCTAssertEqual(
+            apiClient.request_endpoint,
+            AnyEndpoint(Endpoint<MissingEventsPayload>.missingEvents(since: mockedLastSyncAt, cids: [mockedCid]))
+        )
     }
 
     func test_syncExistingChannelsEvents_someChannels_tooManyEventsError() throws {
+        let mockedLastSyncAt = Date().addingTimeInterval(-3600)
+        let mockedCid = ChannelId.unique
         try database.createCurrentUser(id: "123")
         try database.writeSynchronously { session in
-            session.currentUser?.lastSynchedEventDate = DBDate().addingTimeInterval(-3600)
+            session.currentUser?.lastSynchedEventDate = mockedLastSyncAt.bridgeDate
             let query = ChannelListQuery(filter: .exists(.cid))
-            try session.saveChannel(payload: .dummy(cid: .unique), query: query, cache: nil)
+            try session.saveChannel(payload: .dummy(cid: mockedCid), query: query, cache: nil)
         }
 
         let expectedError = ErrorPayload(code: 1, message: "Too many events", statusCode: 400)
@@ -409,11 +444,19 @@ final class SyncRepository_Tests: XCTestCase {
         }
 
         XCTAssertEqual(value, [])
+        XCTAssertEqual(
+            apiClient.request_endpoint,
+            AnyEndpoint(Endpoint<MissingEventsPayload>.missingEvents(since: mockedLastSyncAt, cids: [mockedCid]))
+        )
+
+        // Should update lastSyncAt
+        XCTAssertNearlySameDate(database.viewContext.currentUser?.lastSynchedEventDate?.bridgeDate, Date())
     }
 
     func test_syncExistingChannelsEvents_someChannels_apiSuccess_shouldStoreEvents() throws {
-        try database.createCurrentUser(id: "123")
+        let mockedLastSyncAt = Date().addingTimeInterval(-3600)
         let cid = try ChannelId(cid: "messaging:A2F4393C-D656-46B8-9A43-6148E9E62D7F")
+        try database.createCurrentUser(id: "123")
         try database.writeSynchronously { session in
             session.currentUser?.lastSynchedEventDate = DBDate().addingTimeInterval(-3600)
             let query = ChannelListQuery(filter: .exists(.cid))
@@ -437,6 +480,10 @@ final class SyncRepository_Tests: XCTestCase {
         XCTAssertEqual(channelIds.count, 1)
         XCTAssertEqual(channelIds.first, cid)
         XCTAssertEqual(lastSyncAtValue, payload.eventPayloads.last?.createdAt)
+        XCTAssertEqual(
+            apiClient.request_endpoint,
+            AnyEndpoint(Endpoint<MissingEventsPayload>.missingEvents(since: mockedLastSyncAt, cids: [cid]))
+        )
     }
 
     private func getSyncExistingChannelEventsResult(requestResult: Result<MissingEventsPayload, Error>? = nil)
