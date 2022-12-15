@@ -110,6 +110,32 @@ lane :release do |options|
   UI.success("Successfully started release #{version_number}")
 end
 
+lane :merge_release_to_main do
+  ensure_git_status_clean
+  sh('git checkout main')
+  sh('git pull')
+
+  # Grep all remote release branches and ensure there's only one
+  release_branches = sh(command: 'git branch -a', log: false).delete(' ').split("\n").grep(%r(origin/.*release/))
+  UI.user_error!("Expected 1 release branch, found #{release_branches.size}") if release_branches.size != 1
+
+  # Merge release branch to main. For more info, read: https://notion.so/iOS-Branching-Strategy-37c10127dc26493e937769d44b1d6d9a
+  sh("git merge #{release_branches.first} --ff-only")
+  UI.user_error!('Not pushing changes') unless prompt(text: 'Will push changes. All looking good?', boolean: true)
+  sh('git push')
+  UI.important('Please, wait for the `Publish new release` workflow to pass on GitHub Actions: ' \
+               "https://github.com/#{github_repo}/actions/workflows/publish-release.yml")
+end
+
+lane :merge_main_to_develop do
+  ensure_git_status_clean
+  sh('git checkout develop')
+  sh('git pull')
+  sh('git merge main')
+  UI.user_error!('Not pushing changes') unless prompt(text: 'Will push changes. All looking good?', boolean: true)
+  sh('git push')
+end
+
 desc 'Completes an SDK Release'
 lane :publish_release do |options|
   version = options[:version] || ''
