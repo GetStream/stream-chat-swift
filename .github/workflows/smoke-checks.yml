@@ -22,7 +22,7 @@ concurrency:
 
 env:
   HOMEBREW_NO_INSTALL_CLEANUP: 1 # Disable cleanup for homebrew, we don't need it on CI
-  IOS_SIMULATOR_DEVICE: "iPhone 14 Pro (16.1)"
+  IOS_SIMULATOR_DEVICE: "iPhone 14 Pro (16.2)"
 
 jobs:
   automated-code-review:
@@ -185,13 +185,13 @@ jobs:
     runs-on: macos-12
     if: ${{ github.event_name != 'push' }}
     env:
-      XCODE_VERSION: "13"
+      XCODE_VERSION: "13.4.1"
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_PR_NUM: ${{ github.event.number }}
     steps:
     - uses: actions/checkout@v3.1.0
     - uses: ./.github/actions/bootstrap
-    - name: List Xcode versions xcversion sees
+    - name: List Xcode versions xcodes sees
       run: mdfind "kMDItemCFBundleIdentifier = 'com.apple.dt.Xcode'"
     - name: Build LLC (Xcode 13)
       run: bundle exec fastlane test device:"iPhone 13" build_for_testing:true

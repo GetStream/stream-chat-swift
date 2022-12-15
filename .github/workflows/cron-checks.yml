@@ -37,7 +37,7 @@ jobs:
         INSTALL_XCPARSE: true
     - name: Setup iOS ${{ matrix.ios }} Runtime
       if: ${{ matrix.ios != 'latest' }}
-      run: xcversion simulators --install='iOS ${{ matrix.ios }}'
+      run: sudo xcodes runtimes install 'iOS ${{ matrix.ios }}'
     - name: Launch Allure TestOps
       run: bundle exec fastlane allure_launch cron:true
     - name: Run UI Tests (Debug)
@@ -75,7 +75,7 @@ jobs:
     name: Test LLC (Debug)
     strategy:
       matrix:
-        xcode: [13.1, 13.4.1, 14.1]
+        xcode: [13.1, 13.4.1, 14.2]
         os: [macos-12]
       fail-fast: false
     runs-on: ${{ matrix.os }}
