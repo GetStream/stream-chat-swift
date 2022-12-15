@@ -1,5 +1,5 @@
 {
-    "duration": "60.31ms",
+    "duration": "132.36ms",
     "message": {
         "args": "Test",
         "attachments": [
@@ -31,67 +31,67 @@
                     "fixed_height": {
                         "frames": "",
                         "height": "200",
-                        "size": "601316",
-                        "url": "https://media1.giphy.com/media/2h21RRciwqJsk7JGNB/200.gif?cid=c4b03675gqnkmr890z0db24vb1b5k8umv02b8tiev67phnya&rid=200.gif&ct=g",
-                        "width": "267"
+                        "size": "1296840",
+                        "url": "https://media3.giphy.com/media/l3vRnL5DwJ18ZOeZ2/200.gif?cid=c4b03675uslry3a6lo00e19bursxtvmp5woa99i363433g3o&rid=200.gif&ct=g",
+                        "width": "358"
                     },
                     "fixed_height_downsampled": {
                         "frames": "",
                         "height": "200",
-                        "size": "153885",
-                        "url": "https://media1.giphy.com/media/2h21RRciwqJsk7JGNB/200_d.gif?cid=c4b03675gqnkmr890z0db24vb1b5k8umv02b8tiev67phnya&rid=200_d.gif&ct=g",
-                        "width": "267"
+                        "size": "162873",
+                        "url": "https://media3.giphy.com/media/l3vRnL5DwJ18ZOeZ2/200_d.gif?cid=c4b03675uslry3a6lo00e19bursxtvmp5woa99i363433g3o&rid=200_d.gif&ct=g",
+                        "width": "358"
                     },
                     "fixed_height_still": {
                         "frames": "",
                         "height": "200",
-                        "size": "25585",
-                        "url": "https://media1.giphy.com/media/2h21RRciwqJsk7JGNB/200_s.gif?cid=c4b03675gqnkmr890z0db24vb1b5k8umv02b8tiev67phnya&rid=200_s.gif&ct=g",
-                        "width": "267"
+                        "size": "27138",
+                        "url": "https://media3.giphy.com/media/l3vRnL5DwJ18ZOeZ2/200_s.gif?cid=c4b03675uslry3a6lo00e19bursxtvmp5woa99i363433g3o&rid=200_s.gif&ct=g",
+                        "width": "358"
                     },
                     "fixed_width": {
                         "frames": "",
-                        "height": "150",
-                        "size": "380478",
-                        "url": "https://media1.giphy.com/media/2h21RRciwqJsk7JGNB/200w.gif?cid=c4b03675gqnkmr890z0db24vb1b5k8umv02b8tiev67phnya&rid=200w.gif&ct=g",
+                        "height": "112",
+                        "size": "503200",
+                        "url": "https://media3.giphy.com/media/l3vRnL5DwJ18ZOeZ2/200w.gif?cid=c4b03675uslry3a6lo00e19bursxtvmp5woa99i363433g3o&rid=200w.gif&ct=g",
                         "width": "200"
                     },
                     "fixed_width_downsampled": {
                         "frames": "",
-                        "height": "150",
-                        "size": "100521",
-                        "url": "https://media1.giphy.com/media/2h21RRciwqJsk7JGNB/200w_d.gif?cid=c4b03675gqnkmr890z0db24vb1b5k8umv02b8tiev67phnya&rid=200w_d.gif&ct=g",
+                        "height": "112",
+                        "size": "63992",
+                        "url": "https://media3.giphy.com/media/l3vRnL5DwJ18ZOeZ2/200w_d.gif?cid=c4b03675uslry3a6lo00e19bursxtvmp5woa99i363433g3o&rid=200w_d.gif&ct=g",
                         "width": "200"
                     },
                     "fixed_width_still": {
                         "frames": "",
-                        "height": "150",
-                        "size": "16285",
-                        "url": "https://media1.giphy.com/media/2h21RRciwqJsk7JGNB/200w_s.gif?cid=c4b03675gqnkmr890z0db24vb1b5k8umv02b8tiev67phnya&rid=200w_s.gif&ct=g",
+                        "height": "112",
+                        "size": "12151",
+                        "url": "https://media3.giphy.com/media/l3vRnL5DwJ18ZOeZ2/200w_s.gif?cid=c4b03675uslry3a6lo00e19bursxtvmp5woa99i363433g3o&rid=200w_s.gif&ct=g",
                         "width": "200"
                     },
                     "original": {
-                        "frames": "25",
-                        "height": "360",
-                        "size": "2167012",
-                        "url": "https://media1.giphy.com/media/2h21RRciwqJsk7JGNB/giphy.gif?cid=c4b03675gqnkmr890z0db24vb1b5k8umv02b8tiev67phnya&rid=giphy.gif&ct=g",
-                        "width": "480"
+                        "frames": "55",
+                        "height": "266",
+                        "size": "3015891",
+                        "url": "https://media3.giphy.com/media/l3vRnL5DwJ18ZOeZ2/giphy.gif?cid=c4b03675uslry3a6lo00e19bursxtvmp5woa99i363433g3o&rid=giphy.gif&ct=g",
+                        "width": "476"
                     }
                 },
-                "thumb_url": "https://media1.giphy.com/media/2h21RRciwqJsk7JGNB/giphy.gif?cid=c4b03675gqnkmr890z0db24vb1b5k8umv02b8tiev67phnya&rid=giphy.gif&ct=g",
+                "thumb_url": "https://media3.giphy.com/media/l3vRnL5DwJ18ZOeZ2/giphy.gif?cid=c4b03675uslry3a6lo00e19bursxtvmp5woa99i363433g3o&rid=giphy.gif&ct=g",
                 "title": "Test",
-                "title_link": "https://giphy.com/gifs/travisband-covid-travis-dougie-payne-2h21RRciwqJsk7JGNB",
+                "title_link": "https://giphy.com/gifs/apprenticenbc-2016-nbc-l3vRnL5DwJ18ZOeZ2",
                 "type": "giphy"
             }
         ],
-        "cid": "messaging:9a1ff262-7177-11ed-abf0-1eebe666108a",
+        "cid": "messaging:0891b286-7c0d-11ed-9b95-00505696a460",
         "command": "giphy",
         "command_info": {
             "name": "Giphy"
         },
-        "created_at": "2022-12-01T12:56:43.375448Z",
+        "created_at": "2022-12-15T00:11:34.513061Z",
         "html": "<p>/giphy Test</p>\n",
-        "id": "9ae91f70-7177-11ed-abf0-1eebe666108a",
+        "id": "08e2bf28-7c0d-11ed-9b95-00505696a460",
         "latest_reactions": [],
         "mentioned_users": [],
         "own_reactions": [],
@@ -106,7 +106,7 @@
         "silent": false,
         "text": "/giphy Test",
         "type": "ephemeral",
-        "updated_at": "2022-12-01T12:56:43.375448Z",
+        "updated_at": "2022-12-15T00:11:34.513061Z",
         "user": {
             "banned": false,
             "birthland": "Tatooine",
@@ -116,14 +116,14 @@
             "id": "luke_skywalker",
             "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
             "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
-            "last_active": "2022-12-01T12:52:06.268565062Z",
+            "last_active": "2022-12-15T00:11:33.832959298Z",
             "name": "Luke Skywalker",
             "online": true,
             "role": "user",
             "someTest": "Test",
             "testing": false,
             "testing-this": 3.14,
-            "updated_at": "2022-12-01T12:00:05.562108Z",
+            "updated_at": "2022-12-14T20:38:09.900357Z",
             "yetAnotherField": "40"
         }
     }
