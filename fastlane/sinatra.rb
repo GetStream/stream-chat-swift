@@ -54,12 +54,14 @@ end
 
 post '/jwt/revoke/:udid' do
   jwt[:expiration_timeout] = install_jwt_timeout(udid: params['udid'], duration: params['duration'])
+  halt(200)
 end
 
 post '/jwt/break/:udid' do
   jwt[:generation_error_timeout] = install_jwt_timeout(udid: params['udid'], duration: params['duration'])
+  halt(200)
 end
 
 def install_jwt_timeout(udid:, duration:)
-  { params['udid'] => Time.now.to_i + params['duration'].to_i }
+  { udid => Time.now.to_i + duration.to_i }
 end

@@ -36,12 +36,15 @@ final class ViewController: UIViewController {
     @objc func didTap() {
         // Setup chat client
         streamChat.setUpChat()
-        streamChat.connectUser(completion: { _ in})
+        streamChat.connectUser(completion: { _ in })
+        showChannelList()
+    }
 
+    private func showChannelList() {
         // create UI
         let channelList = streamChat.makeChannelListViewController()
         router = channelList.router as? CustomChannelListRouter
-        
+
         // create connection switch if needed
         let switchControl = self.createIsConnectedSwitchIfNeeded()
 

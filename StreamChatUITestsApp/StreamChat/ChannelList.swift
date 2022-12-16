@@ -48,5 +48,6 @@ final class ChannelList: ChatChannelListVC, ChatConnectionControllerDelegate {
         case .disconnected:
             title = "disconnected"
         }
+        navigationItem.titleView?.accessibilityIdentifier = title
     }
 }

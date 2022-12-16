@@ -23,12 +23,8 @@ enum ChannelListPage {
             format: "identifier LIKE 'titleLabel' AND label LIKE '\(withName)'")).firstMatch
     }
     
-    static var connectionStatus: XCUIElement {
-        if ProcessInfo().operatingSystemVersion.majorVersion == 12 {
-            return app.navigationBars.otherElements.firstMatch
-        } else {
-            return app.navigationBars.staticTexts.firstMatch
-        }
+    static func connectionLabel(withStatus: ChannelListPage.ConnectionStatus) -> XCUIElement {
+        app.navigationBars.matching(NSPredicate(format: "identifier LIKE '\(withStatus.rawValue)'")).firstMatch
     }
     
     enum ConnectionStatus: String {
