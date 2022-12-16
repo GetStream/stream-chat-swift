@@ -3,7 +3,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+## StreamChat
+### 🐞 Fixed
+- Fix reactions not insantly updating when enforce unique is true [#2421](https://github.com/GetStream/stream-chat-swift/pull/2421)
+
+## StreamChatUI
+### ✅ Added
+- Add `Components.default.isUniqueReactionsEnabled` to easily configure unique reactions [#2421](https://github.com/GetStream/stream-chat-swift/pull/2421)
+### 🐞 Fixed
+- Fix Reaction Picker not updating when reaction added with enforce unique [#2421](https://github.com/GetStream/stream-chat-swift/pull/2421)
 
 # [4.25.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.25.0)
 _December 15, 2022_
