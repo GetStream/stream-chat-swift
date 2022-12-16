@@ -3,6 +3,7 @@
 //
 
 import StreamChat
+import StreamChatUI
 import UIKit
 
 /// The Demo App Configuration.
@@ -68,6 +69,7 @@ class AppConfigViewController: UITableViewController {
     enum ConfigOption {
         case info([DemoAppInfoOption])
         case demoApp([DemoAppConfigOption])
+        case components([ComponentsConfigOption])
         case chatClient([ChatClientConfigOption])
         case user([UserConfigOption])
 
@@ -76,6 +78,8 @@ class AppConfigViewController: UITableViewController {
             case let .info(options):
                 return options.count
             case let .demoApp(options):
+                return options.count
+            case let .components(options):
                 return options.count
             case let .chatClient(options):
                 return options.count
@@ -88,6 +92,8 @@ class AppConfigViewController: UITableViewController {
             switch self {
             case .demoApp:
                 return "Demo App Configuration"
+            case .components:
+                return "Components Configuration"
             case .chatClient:
                 return "Chat Client Configuration"
             case .info:
@@ -115,6 +121,10 @@ class AppConfigViewController: UITableViewController {
         case isAtlantisEnabled
     }
 
+    enum ComponentsConfigOption: String, CaseIterable {
+        case isUniqueReactionsEnabled
+    }
+
     enum ChatClientConfigOption: String, CaseIterable {
         case isLocalStorageEnabled
         case staysConnectedInBackground
@@ -129,6 +139,7 @@ class AppConfigViewController: UITableViewController {
     let options: [ConfigOption] = [
         .info(DemoAppInfoOption.allCases),
         .demoApp(DemoAppConfigOption.allCases),
+        .components(ComponentsConfigOption.allCases),
         .chatClient(ChatClientConfigOption.allCases),
         .user(UserConfigOption.allCases)
     ]
@@ -163,6 +174,9 @@ class AppConfigViewController: UITableViewController {
         case let .demoApp(options):
             configureDemoAppOptionsCell(cell, at: indexPath, options: options)
 
+        case let .components(options):
+            configureComponentsOptionsCell(cell, at: indexPath, options: options)
+
         case let .chatClient(options):
             configureChatClientOptionsCell(cell, at: indexPath, options: options)
 
@@ -177,7 +191,7 @@ class AppConfigViewController: UITableViewController {
         guard let cell = tableView.cellForRow(at: indexPath) else { return }
 
         switch options[indexPath.section] {
-        case .info, .user:
+        case .info, .user, .components:
             break
 
         case let .demoApp(options):
@@ -296,6 +310,24 @@ class AppConfigViewController: UITableViewController {
         case .isInvisible:
             cell.accessoryView = makeSwitchButton(UserConfig.shared.isInvisible) { newValue in
                 UserConfig.shared.isInvisible = newValue
+            }
+        }
+    }
+
+    // MARK: Components Options
+
+    private func configureComponentsOptionsCell(
+        _ cell: UITableViewCell,
+        at indexPath: IndexPath,
+        options: [ComponentsConfigOption]
+    ) {
+        let option = options[indexPath.row]
+        cell.textLabel?.text = option.rawValue
+
+        switch option {
+        case .isUniqueReactionsEnabled:
+            cell.accessoryView = makeSwitchButton(Components.default.isUniqueReactionsEnabled) { newValue in
+                Components.default.isUniqueReactionsEnabled = newValue
             }
         }
     }

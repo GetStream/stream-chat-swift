@@ -269,6 +269,10 @@ public struct Components {
         $0.type.rawValue < $1.type.rawValue
     }
 
+    /// A boolean value that determines whether if the reaction types are unique per user.
+    /// By default it is false, so each user can have multiple reaction types.
+    public var isUniqueReactionsEnabled: Bool = false
+
     // MARK: - Thread components
 
     /// The view controller used to display the detail of a message thread.
