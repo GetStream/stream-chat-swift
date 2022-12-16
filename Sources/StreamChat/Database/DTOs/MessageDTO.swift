@@ -5,6 +5,18 @@
 import CoreData
 import Foundation
 
+/// A reaction is represented by a String with the following format: "userId/messageId/reactionType"
+typealias ReactionString = String
+extension ReactionString {
+    var reactionUserId: String {
+        split(separator: "/").first.map(String.init) ?? ""
+    }
+
+    var reactionType: String {
+        split(separator: "/").last.map(String.init) ?? ""
+    }
+}
+
 @objc(MessageDTO)
 class MessageDTO: NSManagedObject {
     @NSManaged fileprivate var localMessageStateRaw: String?
@@ -28,8 +40,8 @@ class MessageDTO: NSManagedObject {
     @NSManaged var reactionScores: [String: Int]
     @NSManaged var reactionCounts: [String: Int]
 
-    @NSManaged var latestReactions: [String]
-    @NSManaged var ownReactions: [String]
+    @NSManaged var latestReactions: [ReactionString]
+    @NSManaged var ownReactions: [ReactionString]
     
     @NSManaged var translations: [String: String]?
 
@@ -765,6 +777,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         to messageId: MessageId,
         type: MessageReactionType,
         score: Int,
+        enforceUnique: Bool,
         extraData: [String: RawJSON],
         localState: LocalReactionState?
     ) throws -> MessageReactionDTO {
@@ -784,10 +797,29 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             cache: nil
         )
 
+        // If enforceUnique is true erase all the other reactions from the current user and decrement the scores/counts.
+        if enforceUnique {
+            let previousOwnReactionTypes = message.ownReactions.map(\.reactionType)
+            previousOwnReactionTypes.forEach { type in
+                message.reactionScores[type]? -= score
+                message.reactionCounts[type]? -= 1
+            }
+
+            message.ownReactions = []
+            message.latestReactions.removeAll { $0.reactionUserId == currentUserDTO.user.id }
+        }
+
         // make sure we update the reactionScores for the message in a way that works for new or updated reactions
         let scoreDiff = Int64(score) - dto.score
         let newScore = max(0, message.reactionScores[type.rawValue] ?? Int(dto.score) + Int(scoreDiff))
         message.reactionScores[type.rawValue] = newScore
+
+        // Update reaction counts
+        if let reactionCount = message.reactionCounts[type.rawValue] {
+            message.reactionCounts[type.rawValue] = reactionCount + 1
+        } else {
+            message.reactionCounts[type.rawValue] = 1
+        }
 
         dto.score = Int64(score)
         dto.extraData = try JSONEncoder.default.encode(extraData)

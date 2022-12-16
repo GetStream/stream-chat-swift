@@ -1896,6 +1896,90 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertTrue(message?.currentUserReactions.contains { $0.type.rawValue == reactionType.rawValue } == true)
     }
 
+    func test_addReaction_whenEnforceUnique() throws {
+        let userId = "user_id"
+        let messageId = "message_id"
+        prepareEnvironment(createdUserId: userId, createdMessageId: messageId)
+
+        // Mock own reactions
+        let ownReactions = [1, 2, 3]
+        ownReactions.forEach {
+            let reactionType = MessageReactionType(rawValue: "reaction-type-\($0)")
+            let reactionId = makeReactionId(userId: userId, messageId: messageId, type: reactionType)
+            try? database.writeSynchronously { session in
+                let message = session.message(id: messageId)
+                message?.ownReactions.append(reactionId)
+                message?.latestReactions.append(reactionId)
+            }
+        }
+
+        // Mock other user reactions
+        let otherUserReactions = ["other1", "other2"]
+        otherUserReactions.forEach { reactionId in
+            try? database.writeSynchronously { session in
+                let message = session.message(id: messageId)
+                message?.latestReactions.append(reactionId)
+            }
+        }
+
+        // Mock reaction scores and counts
+        try? database.writeSynchronously { session in
+            let message = session.message(id: messageId)
+            message?.reactionScores = [
+                "other-type": 3,
+                "reaction-type-1": 3,
+                "reaction-type-2": 3,
+                "reaction-type-3": 3
+            ]
+            message?.reactionCounts = [
+                "other-type": 3,
+                "reaction-type-1": 4,
+                "reaction-type-2": 4,
+                "reaction-type-3": 4
+            ]
+        }
+
+        var message: MessageDTO? { self.database.viewContext.message(id: messageId) }
+
+        XCTAssertEqual(message?.ownReactions.count, 3)
+        XCTAssertEqual(message?.latestReactions.count, 5)
+
+        let reactionType: MessageReactionType = "reaction-type-4"
+        let result = runAddReaction(messageId: messageId, type: reactionType, localState: .sending, enforceUnique: true)
+        XCTAssertNil(result.error)
+        let reactionAdded = try XCTUnwrap(result.value)
+
+        XCTAssertEqual(message?.ownReactions, [reactionAdded])
+        XCTAssertEqual(Set(message?.latestReactions ?? []), Set([reactionAdded, "other1", "other2"]))
+        XCTAssertEqual(message?.reactionScores, [
+            "other-type": 3,
+            "reaction-type-1": 2,
+            "reaction-type-2": 2,
+            "reaction-type-3": 2,
+            "reaction-type-4": 1
+        ])
+        XCTAssertEqual(message?.reactionCounts, [
+            "other-type": 3,
+            "reaction-type-1": 3,
+            "reaction-type-2": 3,
+            "reaction-type-3": 3,
+            "reaction-type-4": 1
+        ])
+    }
+
+    func test_reactionStringExtensions_reactionType_reactionUserId() {
+        let userId = "user_id"
+        let messageId = "message_id"
+        let type: MessageReactionType = "fake"
+        prepareEnvironment(createdUserId: userId, createdMessageId: messageId)
+
+        let reactionId = makeReactionId(userId: userId, messageId: messageId, type: type)
+        let result = runAddReaction(messageId: messageId, type: type, localState: .sending)
+
+        XCTAssertEqual(result.value?.reactionType, "fake")
+        XCTAssertEqual(result.value?.reactionUserId, "user_id")
+    }
+
     private func message(with id: MessageId) -> ChatMessage? {
         var message: ChatMessage?
         try? database.writeSynchronously { session in
@@ -1937,13 +2021,21 @@ final class MessageDTO_Tests: XCTestCase {
     private func runAddReaction(
         messageId: MessageId,
         type: MessageReactionType,
-        localState: LocalReactionState? = nil
+        localState: LocalReactionState? = nil,
+        enforceUnique: Bool = false
     ) -> Result<String, ClientError> {
         do {
             var reactionId: String!
             try database.writeSynchronously { database in
-                reactionId = try database.addReaction(to: messageId, type: type, score: 1, extraData: [:], localState: localState)
-                    .id
+                let reaction = try database.addReaction(
+                    to: messageId,
+                    type: type,
+                    score: 1,
+                    enforceUnique: enforceUnique,
+                    extraData: [:],
+                    localState: localState
+                )
+                reactionId = reaction.id
             }
             return .success(reactionId)
         } catch {

@@ -126,6 +126,7 @@ protocol MessageDatabaseSession {
         to messageId: MessageId,
         type: MessageReactionType,
         score: Int,
+        enforceUnique: Bool,
         extraData: [String: RawJSON],
         localState: LocalReactionState?
     ) throws -> MessageReactionDTO
