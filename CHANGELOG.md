@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.25.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.25.0)
+_December 15, 2022_
+
 ## StreamChat
 ### 🔄 Changed
 - `logOut` and `disconnect` methods are now asynchronous. Its sync versions are deprecated [#2386](https://github.com/GetStream/stream-chat-swift/pull/2386)
