@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.25.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.25.0)
+_December 15, 2022_
+
 ## StreamChat
 ### 🔄 Changed
 - `logOut` and `disconnect` methods are now asynchronous. Its sync versions are deprecated [#2386](https://github.com/GetStream/stream-chat-swift/pull/2386)
@@ -11,6 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add support for hiding connection status with `isInvisible` [#2373](https://github.com/GetStream/stream-chat-swift/pull/2373)
 - Add `.withAttachments` in `MessageSearchFilterScope` to filter messages with attachments only [#2417](https://github.com/GetStream/stream-chat-swift/pull/2417)
 - Add `.withoutAttachments` in `MessageSearchFilterScope` to filter messages without any attachments [#2417](https://github.com/GetStream/stream-chat-swift/pull/2417)
+- Add retries mechanism to AuthenticationRepository [#2414](https://github.com/GetStream/stream-chat-swift/pull/2414)
 
 ### 🐞 Fixed
 - Fix connecting user with non-expiring tokens (ex: development token) [#2393](https://github.com/GetStream/stream-chat-swift/pull/2393)

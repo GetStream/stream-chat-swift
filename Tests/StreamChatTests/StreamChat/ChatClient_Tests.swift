@@ -310,9 +310,13 @@ final class ChatClient_Tests: XCTestCase {
 
         // Create a new chat client
         var client: ChatClient! = ChatClient(config: config)
-        
-        client.connectAnonymousUser()
-        
+
+        let expectation = self.expectation(description: "Connect completes")
+        client.connectAnonymousUser { _ in
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: defaultTimeout)
+
         // Check all the mandatory background workers are initialized
         XCTAssert(client.backgroundWorkers.contains { $0 is MessageSender })
         XCTAssert(client.backgroundWorkers.contains { $0 is NewUserQueryUpdater })

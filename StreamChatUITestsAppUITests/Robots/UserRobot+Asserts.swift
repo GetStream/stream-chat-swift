@@ -151,9 +151,8 @@ extension UserRobot {
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> Self {
-        let expectedStatus = status.rawValue
-        let actualStatus = ChannelListPage.connectionStatus.waitForText(expectedStatus, timeout: timeout).text
-        XCTAssertEqual(actualStatus, expectedStatus, file: file, line: line)
+        let correctStatus = ChannelListPage.connectionLabel(withStatus: status).wait(timeout: timeout).exists
+        XCTAssertTrue(correctStatus, file: file, line: line)
         return self
     }
 }

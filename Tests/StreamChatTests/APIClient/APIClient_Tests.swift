@@ -416,38 +416,6 @@ final class APIClient_Tests: XCTestCase {
         XCTEnsureRequestsWereExecuted(times: 2)
     }
     
-    func test_requestFailedWithExpiredToken_retriesRequestUntilReachingMaximumAttempts() throws {
-        var tokenRefresherWasCalled = false
-        createClient(tokenRefresher: { completion in
-            tokenRefresherWasCalled = true
-            completion()
-        })
-        
-        let encoderError = ClientError.ExpiredToken()
-        decoder.decodeRequestResponse = .failure(encoderError)
-
-        var result: Result<TestUser, Error>?
-        waitUntil(timeout: 0.5) { done in
-            apiClient.request(
-                endpoint: Endpoint<TestUser>.mock(),
-                completion: {
-                    result = $0; done()
-                }
-            )
-        }
-
-        XCTAssertTrue(tokenRefresherWasCalled)
-
-        guard let result = result, case let .failure(error) = result else {
-            XCTFail()
-            return
-        }
-
-        XCTAssertTrue(error is ClientError.TooManyTokenRefreshAttempts)
-        // 1 request + 10 refresh attempts
-        XCTEnsureRequestsWereExecuted(times: 11)
-    }
-
     // MARK: - Flush
 
     func test_flushRequestsQueue_whenThereAreOperationsOngoing_shouldStopQueuedOnes() {

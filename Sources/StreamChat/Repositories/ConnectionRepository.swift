@@ -149,14 +149,14 @@ class ConnectionRepository {
         case let .connected(connectionId: id):
             shouldNotifyConnectionIdWaiters = true
             connectionId = id
-        case let .disconnected(source):
-            if let error = source.serverError,
-               error.isInvalidTokenError {
-                onInvalidToken()
-                shouldNotifyConnectionIdWaiters = false
-            } else {
-                shouldNotifyConnectionIdWaiters = true
-            }
+
+        case let .disconnecting(source) where source.serverError?.isInvalidTokenError == true,
+             let .disconnected(source) where source.serverError?.isInvalidTokenError == true:
+            onInvalidToken()
+            shouldNotifyConnectionIdWaiters = false
+            connectionId = nil
+        case .disconnected:
+            shouldNotifyConnectionIdWaiters = true
             connectionId = nil
         case .initialized,
              .connecting,

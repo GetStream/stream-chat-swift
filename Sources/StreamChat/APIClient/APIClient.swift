@@ -14,7 +14,7 @@ class APIClient {
     
     /// `APIClient` uses this object to decode the results of network requests.
     let decoder: RequestDecoder
-    
+
     /// Used for reobtaining tokens when they expire and API client receives token expiration error
     let tokenRefresher: (@escaping () -> Void) -> Void
 
@@ -45,12 +45,6 @@ class APIClient {
 
     /// Shows whether the token is being refreshed at the moment
     @Atomic private var isRefreshingToken: Bool = false
-    
-    /// Amount of consecutive token refresh attempts
-    @Atomic private var tokenRefreshConsecutiveFailures: Int = 0
-
-    /// Maximum amount of consecutive token refresh attempts before failing
-    let maximumTokenRefreshAttempts = 10
 
     /// Maximum amount of times a request can be retried
     private let maximumRequestRetries = 3
@@ -166,11 +160,6 @@ class APIClient {
         endpoint: Endpoint<Response>,
         completion: @escaping (Result<Response, Error>) -> Void
     ) {
-        if tokenRefreshConsecutiveFailures > maximumTokenRefreshAttempts {
-            completion(.failure(ClientError.TooManyTokenRefreshAttempts()))
-            return
-        }
-
         guard !isRefreshingToken else {
             completion(.failure(ClientError.RefreshingToken()))
             return
@@ -207,7 +196,6 @@ class APIClient {
                         response: response,
                         error: error
                     )
-                    self.tokenRefreshConsecutiveFailures = 0
                     completion(.success(decodedResponse))
                 } catch {
                     if error is ClientError.ExpiredToken == false {
@@ -236,18 +224,11 @@ class APIClient {
             completion(ClientError.RefreshingToken())
             return
         }
-        isRefreshingToken = true
 
-        // We stop the queue so no more operations are triggered during the refresh
-        operationQueue.isSuspended = true
-
-        // Increase the amount of consecutive failures
-        _tokenRefreshConsecutiveFailures.mutate { $0 += 1 }
+        enterTokenFetchMode()
 
         tokenRefresher { [weak self] in
-            self?.isRefreshingToken = false
-            // We restart the queue now that token refresh is completed
-            self?.operationQueue.isSuspended = false
+            self?.exitTokenFetchMode()
             completion(ClientError.TokenRefreshed())
         }
     }
@@ -297,6 +278,18 @@ class APIClient {
         // Once recovery is done, regular requests can go through again.
         log.debug("Leaving recovery mode", subsystems: .offlineSupport)
         isInRecoveryMode = false
+        operationQueue.isSuspended = false
+    }
+
+    func enterTokenFetchMode() {
+        // We stop the queue so no more operations are triggered during the refresh
+        isRefreshingToken = true
+        operationQueue.isSuspended = true
+    }
+
+    func exitTokenFetchMode() {
+        // We restart the queue now that token refresh is completed
+        isRefreshingToken = false
         operationQueue.isSuspended = false
     }
 }
