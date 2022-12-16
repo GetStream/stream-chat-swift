@@ -90,12 +90,6 @@ extension ClientError {
     class RefreshingToken: ClientError {}
     class TokenRefreshed: ClientError {}
     class ConnectionError: ClientError {}
-    class TooManyTokenRefreshAttempts: ClientError {
-        override var localizedDescription: String {
-            "Authentication failed on expired tokens after too many refresh attempts, please check that your user tokens are created correctly."
-        }
-    }
-
     class ResponseBodyEmpty: ClientError {
         override var localizedDescription: String { "Response body is empty." }
     }

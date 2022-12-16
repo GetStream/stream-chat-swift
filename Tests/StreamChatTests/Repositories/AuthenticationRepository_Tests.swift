@@ -27,6 +27,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
             tokenExpirationRetryStrategy: retryStrategy,
             timerType: DefaultTimer.self
         )
+        retryStrategy.mock_nextRetryDelay.returns(0.01)
     }
 
     func test_concurrentAccess() {
@@ -167,7 +168,11 @@ final class AuthenticationRepository_Tests: XCTestCase {
 
         // Token Provider Failure
         let testError = TestError()
-        let provider: TokenProvider = { $0(.failure(testError)) }
+        var tokenCalls = 0
+        let provider: TokenProvider = {
+            tokenCalls += 1
+            $0(.failure(testError))
+        }
 
         let completionExpectation = expectation(description: "Connect completion")
         var receivedError: Error?
@@ -179,11 +184,49 @@ final class AuthenticationRepository_Tests: XCTestCase {
         })
 
         XCTAssertNotNil(repository.tokenProvider)
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
         XCTAssertNil(repository.currentToken)
         XCTAssertEqual(receivedError, testError)
+        XCTAssertEqual(tokenCalls, 10)
         XCTAssertNotCall(ConnectionRepository_Mock.Signature.connect, on: connectionRepository)
         XCTAssertNotCall(ConnectionRepository_Mock.Signature.forceConnectionInactiveMode, on: connectionRepository)
+    }
+
+    func test_connectUser_failsGettingToken8Times_retriesA9thTime_success() throws {
+        let userInfo = UserInfo(id: "123")
+
+        // Token Provider Failure
+        let testError = TestError()
+        let providedToken = Token.unique()
+        var tokenCalls = 0
+        let provider: TokenProvider = {
+            tokenCalls += 1
+            if tokenCalls > 8 {
+                $0(.success(providedToken))
+            } else {
+                $0(.failure(testError))
+            }
+        }
+
+        // Simulate Success on Connection Repository
+        connectionRepository.connectResult = .success(())
+
+        let completionExpectation = expectation(description: "Connect completion")
+        var receivedError: Error?
+        XCTAssertNil(repository.tokenProvider)
+
+        repository.connectUser(userInfo: userInfo, tokenProvider: provider, completion: { error in
+            receivedError = error
+            completionExpectation.fulfill()
+        })
+
+        XCTAssertNotNil(repository.tokenProvider)
+        waitForExpectations(timeout: defaultTimeout)
+        XCTAssertEqual(repository.currentToken, providedToken)
+        XCTAssertNil(receivedError)
+        XCTAssertEqual(tokenCalls, 9)
+        XCTAssertCall(ConnectionRepository_Mock.Signature.connect, on: connectionRepository)
+        XCTAssertCall(ConnectionRepository_Mock.Signature.forceConnectionInactiveMode, on: connectionRepository)
     }
 
     func test_connectUser_isNotGettingToken_tokenProviderSuccess_connectFailure() throws {
@@ -516,6 +559,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
 
         // Token Provider Failure
         let apiError = TestError()
+        apiClient.test_mockResponseResult(Result<GuestUserTokenPayload, Error>.failure(apiError))
 
         let completionExpectation = expectation(description: "Connect completion")
         var receivedError: Error?
@@ -526,11 +570,8 @@ final class AuthenticationRepository_Tests: XCTestCase {
             completionExpectation.fulfill()
         })
 
-        let requestCompletion = try XCTUnwrap(apiClient.request_completion as? ((Result<GuestUserTokenPayload, Error>) -> Void))
-        requestCompletion(.failure(apiError))
-
         XCTAssertNotNil(repository.tokenProvider)
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: 10000)
         XCTAssertNil(repository.currentToken)
         XCTAssertEqual(receivedError, apiError)
         let request = try XCTUnwrap(apiClient.request_endpoint)
@@ -549,6 +590,9 @@ final class AuthenticationRepository_Tests: XCTestCase {
         let testError = TestError()
         connectionRepository.connectResult = .failure(testError)
 
+        // API Result
+        apiClient.test_mockResponseResult(Result<GuestUserTokenPayload, Error>.success(GuestUserTokenPayload(user: CurrentUserPayload.dummy(userId: "", role: .user), token: apiToken)))
+
         let completionExpectation = expectation(description: "Connect completion")
         var receivedError: Error?
         XCTAssertNil(repository.tokenProvider)
@@ -557,9 +601,6 @@ final class AuthenticationRepository_Tests: XCTestCase {
             receivedError = error
             completionExpectation.fulfill()
         })
-
-        let requestCompletion = try XCTUnwrap(apiClient.request_completion as? ((Result<GuestUserTokenPayload, Error>) -> Void))
-        requestCompletion(.success(GuestUserTokenPayload(user: CurrentUserPayload.dummy(userId: "", role: .user), token: apiToken)))
 
         XCTAssertNotNil(repository.tokenProvider)
         waitForExpectations(timeout: 0.1)
@@ -580,6 +621,9 @@ final class AuthenticationRepository_Tests: XCTestCase {
         // Simulate Success on Connection Repository
         connectionRepository.connectResult = .success(())
 
+        // API Result
+        apiClient.test_mockResponseResult(Result<GuestUserTokenPayload, Error>.success(GuestUserTokenPayload(user: CurrentUserPayload.dummy(userId: "", role: .user), token: apiToken)))
+
         let completionExpectation = expectation(description: "Connect completion")
         var receivedError: Error?
         XCTAssertNil(repository.tokenProvider)
@@ -588,9 +632,6 @@ final class AuthenticationRepository_Tests: XCTestCase {
             receivedError = error
             completionExpectation.fulfill()
         })
-
-        let requestCompletion = try XCTUnwrap(apiClient.request_completion as? ((Result<GuestUserTokenPayload, Error>) -> Void))
-        requestCompletion(.success(GuestUserTokenPayload(user: CurrentUserPayload.dummy(userId: "", role: .user), token: apiToken)))
 
         XCTAssertNotNil(repository.tokenProvider)
         waitForExpectations(timeout: 0.1)
@@ -826,7 +867,6 @@ final class AuthenticationRepository_Tests: XCTestCase {
 
     private func refreshTokenAndWaitForResponse(mockedError: Error?) throws -> Error? {
         XCTAssertNotNil(repository.tokenProvider)
-        retryStrategy.mock_nextRetryDelay.returns(0.1)
 
         connectionRepository.connectResult = mockedError.map { .failure($0) } ?? .success(())
 
@@ -842,6 +882,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
     }
 
     private func setTokenProvider(mockedResult: Result<Token, Error>, delay: DispatchTimeInterval? = nil) throws {
+        retryStrategy.mock_nextRetryDelay.returns(0)
         let tokenProvider: TokenProvider = { completion in
             if let delay = delay {
                 DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
@@ -863,6 +904,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
 
         waitForExpectations(timeout: 0.1)
         connectionRepository.cleanUp()
+        retryStrategy.clear()
     }
 }
 

@@ -309,15 +309,16 @@ class AuthenticationRepository {
             }
         }
 
-        let retryFetchIfPossible: () -> Void = { [weak self] in
+        let retryFetchIfPossible: (Error?) -> Void = { [weak self] error in
             guard let self = self else { return }
+            self.consecutiveRefreshFailures += 1
             guard self.consecutiveRefreshFailures < Constants.maximumTokenRefreshAttempts else {
-                onCompletion(ClientError.TooManyFailedTokenRefreshAttempts())
+                onCompletion(error ?? ClientError.TooManyFailedTokenRefreshAttempts())
                 return
             }
 
-            self.consecutiveRefreshFailures += 1
-            self.scheduleTokenFetch(isRetry: true, userInfo: userInfo, tokenProvider: tokenProvider, completion: completion)
+            // We don't need to pass the completion again, as it is already present in `tokenRequestCompletions`
+            self.scheduleTokenFetch(isRetry: true, userInfo: userInfo, tokenProvider: tokenProvider, completion: { _ in })
         }
 
         log.debug("Requesting a new token", subsystems: .authentication)
@@ -327,10 +328,10 @@ class AuthenticationRepository {
                 onTokenReceived(newToken)
                 self?.tokenExpirationRetryStrategy.resetConsecutiveFailures()
             case .success:
-                retryFetchIfPossible()
+                retryFetchIfPossible(nil)
             case let .failure(error):
                 log.info("Failed fetching token with error: \(error)")
-                retryFetchIfPossible()
+                retryFetchIfPossible(error)
             }
         }
     }
