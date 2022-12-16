@@ -571,7 +571,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         })
 
         XCTAssertNotNil(repository.tokenProvider)
-        waitForExpectations(timeout: 10000)
+        waitForExpectations(timeout: defaultTimeout)
         XCTAssertNil(repository.currentToken)
         XCTAssertEqual(receivedError, apiError)
         let request = try XCTUnwrap(apiClient.request_endpoint)
@@ -591,7 +591,13 @@ final class AuthenticationRepository_Tests: XCTestCase {
         connectionRepository.connectResult = .failure(testError)
 
         // API Result
-        apiClient.test_mockResponseResult(Result<GuestUserTokenPayload, Error>.success(GuestUserTokenPayload(user: CurrentUserPayload.dummy(userId: "", role: .user), token: apiToken)))
+        apiClient.test_mockResponseResult(
+            Result<GuestUserTokenPayload, Error>.success(GuestUserTokenPayload(
+                user: CurrentUserPayload.dummy(userId: "", role: .user),
+                token: apiToken
+            )
+            )
+        )
 
         let completionExpectation = expectation(description: "Connect completion")
         var receivedError: Error?
@@ -622,7 +628,13 @@ final class AuthenticationRepository_Tests: XCTestCase {
         connectionRepository.connectResult = .success(())
 
         // API Result
-        apiClient.test_mockResponseResult(Result<GuestUserTokenPayload, Error>.success(GuestUserTokenPayload(user: CurrentUserPayload.dummy(userId: "", role: .user), token: apiToken)))
+        apiClient.test_mockResponseResult(
+            Result<GuestUserTokenPayload, Error>.success(GuestUserTokenPayload(
+                user: CurrentUserPayload.dummy(userId: "", role: .user),
+                token: apiToken
+            )
+            )
+        )
 
         let completionExpectation = expectation(description: "Connect completion")
         var receivedError: Error?
