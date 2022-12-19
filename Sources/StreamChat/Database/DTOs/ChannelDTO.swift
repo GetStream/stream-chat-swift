@@ -84,7 +84,12 @@ class ChannelDTO: NSManagedObject {
 
         // Update the date for sorting every time new message in this channel arrive.
         // This will ensure that the channel list is updated/sorted when new message arrives.
-        let lastDate = lastMessageAt ?? createdAt
+        // Note: If a channel is truncated, the server will update the lastMessageAt to a minimum value, and not remove it.
+        // So, if lastMessageAt is nil or is equal to distantPast, we need to fallback to createdAt.
+        var lastDate = lastMessageAt ?? createdAt
+        if lastDate.bridgeDate <= .distantPast {
+            lastDate = createdAt
+        }
         if lastDate != defaultSortingAt {
             defaultSortingAt = lastDate
         }
@@ -352,6 +357,8 @@ extension ChannelDTO {
         ]
         
         request.predicate = NSCompoundPredicate(type: .and, subpredicates: subpredicates)
+        request.fetchLimit = query.pagination.pageSize
+        request.fetchBatchSize = query.pagination.pageSize
         return request
     }
     

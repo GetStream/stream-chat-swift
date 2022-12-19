@@ -439,18 +439,42 @@ final class ChannelDTO_Tests: XCTestCase {
         }
     }
 
-    func test_defaultSortingAt_updates_whenLastMessageAtChanges() throws {
+    func test_defaultSortingAt_shouldBeEqualToLastMessageAt() throws {
         let channelId: ChannelId = .unique
-        
         try database.createChannel(cid: channelId)
-        
         try database.writeSynchronously {
             let channel = try XCTUnwrap($0.channel(cid: channelId))
-            channel.lastMessageAt = .unique(after: channel.lastMessageAt ?? channel.createdAt)
+            channel.lastMessageAt = .unique
         }
         
         let channel = try XCTUnwrap(database.viewContext.channel(cid: channelId))
-        XCTAssertEqual(channel.lastMessageAt, channel.defaultSortingAt)
+        XCTAssertEqual(channel.defaultSortingAt, channel.lastMessageAt)
+    }
+
+    func test_defaultSortingAt_whenMissingLastMessageAt_shouldBeEqualToCreatedAt() throws {
+        let channelId: ChannelId = .unique
+        try database.createChannel(cid: channelId)
+        try database.writeSynchronously {
+            let channel = try XCTUnwrap($0.channel(cid: channelId))
+            channel.createdAt = .unique
+            channel.lastMessageAt = nil
+        }
+
+        let channel = try XCTUnwrap(database.viewContext.channel(cid: channelId))
+        XCTAssertEqual(channel.defaultSortingAt, channel.createdAt)
+    }
+
+    func test_defaultSortingAt_whenLastMessageAtEqualDistantPast_shouldBeEqualToCreatedAt() throws {
+        let channelId: ChannelId = .unique
+        try database.createChannel(cid: channelId)
+        try database.writeSynchronously {
+            let channel = try XCTUnwrap($0.channel(cid: channelId))
+            channel.createdAt = .unique
+            channel.lastMessageAt = .distantPast.bridgeDate
+        }
+
+        let channel = try XCTUnwrap(database.viewContext.channel(cid: channelId))
+        XCTAssertEqual(channel.defaultSortingAt, channel.createdAt)
     }
 
     func test_channelPayload_nilMembershipRemovesExistingMembership() throws {
@@ -888,6 +912,18 @@ final class ChannelDTO_Tests: XCTestCase {
         
         XCTAssertEqual(loadedChannels.count, 1)
         XCTAssertEqual(loadedChannels.first?.cid, channel1Id.rawValue)
+    }
+
+    func test_channelWithChannelListQuery_shouldUseLimitAndBatchSize() {
+        let query = ChannelListQuery(
+            filter: .and([.less(.createdAt, than: .unique), .exists(.deletedAt, exists: false)]),
+            pageSize: 25
+        )
+
+        let fetchRequest = ChannelDTO.channelListFetchRequest(query: query)
+
+        XCTAssertEqual(fetchRequest.fetchBatchSize, 25)
+        XCTAssertEqual(fetchRequest.fetchLimit, 25)
     }
     
     func test_channelListQuery_withSorting() {
