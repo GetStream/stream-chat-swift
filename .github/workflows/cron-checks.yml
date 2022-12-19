@@ -4,6 +4,9 @@ on:
   schedule:
     # Runs "At 03:00 every night"
     - cron: '0 3 * * *'
+  push:
+    branches:
+      - '**'
 
 env:
   HOMEBREW_NO_INSTALL_CLEANUP: 1 # Disable cleanup for homebrew, we don't need it on CI
@@ -71,40 +74,40 @@ jobs:
           fastlane/sinatra_log.txt
           fastlane/test_output/logs/*/Diagnostics/StreamChatUITestsAppUITests-*/*/*.txt
 
-  build-and-test-debug:
-    name: Test LLC (Debug)
-    strategy:
-      matrix:
-        xcode: [13.1, 13.4.1, 14.1]
-        os: [macos-12]
-      fail-fast: false
-    runs-on: ${{ matrix.os }}
-    steps:
-    - uses: actions/checkout@v3.1.0
-    - uses: ./.github/actions/bootstrap
-    - name: Run LLC Tests (Debug)
-      run: bundle exec fastlane test device:"iPhone 8"
-      timeout-minutes: 30
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        GITHUB_PR_NUM: ${{ github.event.number }}
-        XCODE_VERSION: ${{ matrix.xcode }}
-    - uses: 8398a7/action-slack@v3
-      with:
-        status: ${{ job.status }}
-        text: "You shall not pass!"
-        job_name: "${{ github.workflow }}: ${{ github.job }}"
-        fields: message,commit,author,action,workflow,job,took
-      env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        MATRIX_CONTEXT: ${{ toJson(matrix) }}
-      if: failure()
+  # build-and-test-debug:
+  #   name: Test LLC (Debug)
+  #   strategy:
+  #     matrix:
+  #       xcode: [13.1, 13.4.1, 14.1]
+  #       os: [macos-12]
+  #     fail-fast: false
+  #   runs-on: ${{ matrix.os }}
+  #   steps:
+  #   - uses: actions/checkout@v3.1.0
+  #   - uses: ./.github/actions/bootstrap
+  #   - name: Run LLC Tests (Debug)
+  #     run: bundle exec fastlane test device:"iPhone 8"
+  #     timeout-minutes: 30
+  #     env:
+  #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #       GITHUB_PR_NUM: ${{ github.event.number }}
+  #       XCODE_VERSION: ${{ matrix.xcode }}
+  #   - uses: 8398a7/action-slack@v3
+  #     with:
+  #       status: ${{ job.status }}
+  #       text: "You shall not pass!"
+  #       job_name: "${{ github.workflow }}: ${{ github.job }}"
+  #       fields: message,commit,author,action,workflow,job,took
+  #     env:
+  #       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+  #       MATRIX_CONTEXT: ${{ toJson(matrix) }}
+  #     if: failure()
 
-  automated-code-review:
-    name: Automated Code Review
-    runs-on: macos-12
-    steps:
-    - uses: actions/checkout@v3.1.0
-    - uses: ./.github/actions/bootstrap
-    - run: bundle exec fastlane rubocop
-    - run: ./Scripts/run-linter.sh
+  # automated-code-review:
+  #   name: Automated Code Review
+  #   runs-on: macos-12
+  #   steps:
+  #   - uses: actions/checkout@v3.1.0
+  #   - uses: ./.github/actions/bootstrap
+  #   - run: bundle exec fastlane rubocop
+  #   - run: ./Scripts/run-linter.sh
