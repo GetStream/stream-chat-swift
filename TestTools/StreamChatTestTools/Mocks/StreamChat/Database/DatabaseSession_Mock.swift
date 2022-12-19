@@ -40,6 +40,7 @@ extension DatabaseSession_Mock {
         to messageId: MessageId,
         type: MessageReactionType,
         score: Int,
+        enforceUnique: Bool,
         extraData: [String: RawJSON],
         localState: LocalReactionState?
     ) throws -> MessageReactionDTO {
@@ -48,6 +49,7 @@ extension DatabaseSession_Mock {
             to: messageId,
             type: type,
             score: score,
+            enforceUnique: enforceUnique,
             extraData: extraData,
             localState: localState
         )

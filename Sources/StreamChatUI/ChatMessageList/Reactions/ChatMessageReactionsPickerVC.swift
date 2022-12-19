@@ -66,7 +66,7 @@ open class ChatMessageReactionsPickerVC: _ViewController, ThemeProvider, ChatMes
         let shouldRemove = message.currentUserReactions.contains { $0.type == reaction }
         shouldRemove
             ? messageController.deleteReaction(reaction, completion: completion)
-            : messageController.addReaction(reaction, completion: completion)
+            : messageController.addReaction(reaction, enforceUnique: components.isUniqueReactionsEnabled, completion: completion)
     }
     
     // MARK: - MessageControllerDelegate

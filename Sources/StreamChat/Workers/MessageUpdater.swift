@@ -334,6 +334,7 @@ class MessageUpdater: Worker {
                     to: messageId,
                     type: type,
                     score: score,
+                    enforceUnique: enforceUnique,
                     extraData: extraData,
                     localState: .sending
                 )

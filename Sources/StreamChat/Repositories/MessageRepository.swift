@@ -233,7 +233,7 @@ class MessageRepository {
         completion: (() -> Void)? = nil
     ) {
         database.write {
-            _ = try $0.addReaction(to: messageId, type: type, score: score, extraData: [:], localState: .deletingFailed)
+            _ = try $0.addReaction(to: messageId, type: type, score: score, enforceUnique: false, extraData: [:], localState: .deletingFailed)
         } completion: { error in
             if let error = error {
                 log.error("Error adding reaction for message with id \(messageId): \(error)")

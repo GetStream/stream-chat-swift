@@ -447,7 +447,7 @@ final class MessageRepositoryTests: XCTestCase {
                 syncOwnReactions: false,
                 cache: nil
             )
-            _ = try session.addReaction(to: messageId, type: reactionType, score: 1, extraData: [:], localState: nil)
+            _ = try session.addReaction(to: messageId, type: reactionType, score: 1, enforceUnique: false, extraData: [:], localState: nil)
         }
 
         // We undo reaction
