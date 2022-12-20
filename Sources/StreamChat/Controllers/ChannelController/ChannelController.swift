@@ -860,6 +860,10 @@ public extension ChatChannelController {
             return
         }
 
+        guard !isJumpingToMessage else {
+            return
+        }
+
         isJumpingToMessage = true
 
         let limit = limit ?? channelQuery.pagination?.pageSize ?? .messagesPageSize

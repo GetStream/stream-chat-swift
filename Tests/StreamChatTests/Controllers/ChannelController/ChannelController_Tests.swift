@@ -264,7 +264,7 @@ final class ChannelController_Tests: XCTestCase {
 
     /// This test simulates a bug where the `channel` and `messages` fields were not updated if
     /// they weren't touched before calling synchronize.
-    func test_fieldsAreFetched_evenAfterCallingSynchronize() throws {
+    func test_synchronize_fieldsAreFetched_evenAfterCallingSynchronize() throws {
         // Simulate synchronize call
         controller.synchronize()
 
@@ -283,7 +283,7 @@ final class ChannelController_Tests: XCTestCase {
 
     /// This test simulates a bug where the `channel` and `messages` fields were not updated if
     /// they weren't touched before calling synchronize.
-    func test_newChannelController_fieldsAreFetched_evenAfterCallingSynchronize() throws {
+    func test_synchronize_newChannelController_fieldsAreFetched_evenAfterCallingSynchronize() throws {
         setupControllerForNewChannel(query: .init(cid: channelId))
 
         // Simulate synchronize call
@@ -305,7 +305,7 @@ final class ChannelController_Tests: XCTestCase {
 
     /// This test simulates a bug where the `channel` and `messages` fields were not updated if
     /// they weren't touched before calling synchronize.
-    func test_newMessageChannelController_fieldsAreFetched_evenAfterCallingSynchronize() throws {
+    func test_synchronize_newMessageChannelController_fieldsAreFetched_evenAfterCallingSynchronize() throws {
         setupControllerForNewMessageChannel(cid: channelId)
 
         // Simulate synchronize call
@@ -327,7 +327,7 @@ final class ChannelController_Tests: XCTestCase {
 
     /// This test simulates a bug where the `channel` and `messages` fields were not updated if
     /// they weren't touched before calling synchronize.
-    func test_newDMChannelController_fieldsAreFetched_evenAfterCallingSynchronize() throws {
+    func test_synchronize_newDMChannelController_fieldsAreFetched_evenAfterCallingSynchronize() throws {
         setupControllerForNewDirectMessageChannel(
             currentUserId: .unique,
             otherUserId: .unique
@@ -375,22 +375,9 @@ final class ChannelController_Tests: XCTestCase {
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
 
-    func test_failedMessageKeepsOrdering_whenLocalTimeIsNotSynced() throws {
-        let userId: UserId = .unique
-        let channelId: ChannelId = .unique
-
-        // Create current user
-        try client.databaseContainer.createCurrentUser(id: userId)
-
-        // Setup controller
-        setupControllerForNewMessageChannel(cid: channelId)
-
-        // Save channel with some messages
-        let channelPayload: ChannelPayload = dummyPayload(with: channelId, numberOfMessages: 5)
-        let originalLastMessageAt: Date = channelPayload.channel.lastMessageAt ?? channelPayload.channel.createdAt
-        try client.databaseContainer.writeSynchronously {
-            try $0.saveChannel(payload: channelPayload)
-        }
+    func test_synchronize_whenHasNotLoadedAllNextMessages_thenDeleteAllChannelMessagesBeforeCallingChannelUpdater() {
+        XCTFail()
+    }
 
         // Get sorted messages (we'll use their createdAt later)
         let sortedMessages = channelPayload.messages.sorted(by: { $0.createdAt > $1.createdAt })
@@ -428,24 +415,12 @@ final class ChannelController_Tests: XCTestCase {
         var channel = try XCTUnwrap(client.databaseContainer.viewContext.channel(cid: channelId))
         XCTAssertNearlySameDate(channel.lastMessageAt?.bridgeDate, originalLastMessageAt)
 
-        // Create a new message payload that's newer than `channel.lastMessageAt`
-        let newerMessagePayload: MessagePayload = .dummy(
-            messageId: .unique,
-            authorUserId: userId,
-            createdAt: .unique(after: channelPayload.channel.lastMessageAt!)
-        )
-        // Save the message payload and check `channel.lastMessageAt` is updated
-        try client.databaseContainer.writeSynchronously {
-            try $0.saveMessage(payload: newerMessagePayload, for: channelId, syncOwnReactions: true, cache: nil)
-        }
-        channel = try XCTUnwrap(client.databaseContainer.viewContext.channel(cid: channelId))
-        XCTAssertEqual(channel.lastMessageAt?.bridgeDate, newerMessagePayload.createdAt)
+    func test_synchronize_whenLastMessageAtEqualsToMostRecentMessage_thenAllNextMessagesWereLoaded() {
+        XCTFail()
+    }
 
-        // Check if the message ordering is correct
-        // First message should be the newest message
-        XCTAssertEqual(controller.messages[0].id, newerMessagePayload.id)
-        // Third message is the failed one
-        XCTAssertEqual(controller.messages[2].id, oldMessageId)
+    func test_synchronize_whenMessagesCountLowerThanPageSize_thenAllPreviousMessagesWereLoaded() {
+        XCTFail()
     }
 
     // MARK: - Creating `ChannelController` tests
@@ -586,6 +561,77 @@ final class ChannelController_Tests: XCTestCase {
         } catch {
             XCTAssert(error is ClientError.ChannelEmptyMembers)
         }
+    }
+
+    func test_channelControllerForNewChannel_failedMessageKeepsOrdering_whenLocalTimeIsNotSynced() throws {
+        let userId: UserId = .unique
+        let channelId: ChannelId = .unique
+
+        // Create current user
+        try client.databaseContainer.createCurrentUser(id: userId)
+
+        // Setup controller
+        setupControllerForNewMessageChannel(cid: channelId)
+
+        // Save channel with some messages
+        let channelPayload: ChannelPayload = dummyPayload(with: channelId, numberOfMessages: 5)
+        let originalLastMessageAt: Date = channelPayload.channel.lastMessageAt ?? channelPayload.channel.createdAt
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveChannel(payload: channelPayload)
+        }
+
+        // Get sorted messages (we'll use their createdAt later)
+        let sortedMessages = channelPayload.messages.sorted(by: { $0.createdAt > $1.createdAt })
+
+        // Create a new message payload that's older than `channel.lastMessageAt`
+        // but newer than 2nd to last message
+        let oldMessageCreatedAt = Date.unique(
+            before: sortedMessages[0].createdAt,
+            after: sortedMessages[1].createdAt
+        )
+        var oldMessageId: MessageId?
+        // Save the message payload and check `channel.lastMessageAt` is not updated by older message
+        try client.databaseContainer.writeSynchronously {
+            let dto = try $0.createNewMessage(
+                in: channelId,
+                text: .unique,
+                pinning: nil,
+                command: nil,
+                arguments: nil,
+                parentMessageId: nil,
+                attachments: [],
+                mentionedUserIds: [],
+                showReplyInChannel: false,
+                isSilent: false,
+                quotedMessageId: nil,
+                createdAt: oldMessageCreatedAt,
+                extraData: [:]
+            )
+            // Simulate sending failed for this message
+            dto.localMessageState = .sendingFailed
+            oldMessageId = dto.id
+        }
+        var channel = try XCTUnwrap(client.databaseContainer.viewContext.channel(cid: channelId))
+        XCTAssertNearlySameDate(channel.lastMessageAt?.bridgeDate, originalLastMessageAt)
+
+        // Create a new message payload that's newer than `channel.lastMessageAt`
+        let newerMessagePayload: MessagePayload = .dummy(
+            messageId: .unique,
+            authorUserId: userId,
+            createdAt: .unique(after: channelPayload.channel.lastMessageAt!)
+        )
+        // Save the message payload and check `channel.lastMessageAt` is updated
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveMessage(payload: newerMessagePayload, for: channelId, syncOwnReactions: true, cache: nil)
+        }
+        channel = try XCTUnwrap(client.databaseContainer.viewContext.channel(cid: channelId))
+        XCTAssertEqual(channel.lastMessageAt?.bridgeDate, newerMessagePayload.createdAt)
+
+        // Check if the message ordering is correct
+        // First message should be the newest message
+        XCTAssertEqual(controller.messages[0].id, newerMessagePayload.id)
+        // Third message is the failed one
+        XCTAssertEqual(controller.messages[2].id, oldMessageId)
     }
 
     func test_channelControllerForNewDirectMessagesChannel_throwsError_ifCurrentUserDoesNotExist() {
@@ -2255,6 +2301,10 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(receivedError, error)
     }
 
+    func test_loadPreviousMessages_whenIsLoadingPreviousMessages_shouldNotCallChannelUpdater() throws {
+        XCTFail()
+    }
+    
     // MARK: - `loadNextMessages`
 
     func test_loadNextMessages_callsChannelUpdate() throws {
@@ -2315,8 +2365,8 @@ final class ChannelController_Tests: XCTestCase {
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
     }
-
-    func test_loadNextMessages_throwsError_on_emptyMessages() throws {
+    
+    func test_loadNextMessages_returnsError_on_emptyMessages() throws {
         // Simulate `loadNextMessages` call and assert error is returned
         let error: Error? = try waitFor { [callbackQueueID] completion in
             controller.loadNextMessages { error in
@@ -2368,6 +2418,18 @@ final class ChannelController_Tests: XCTestCase {
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
 
+    func test_loadNextMessages_whenHasLoadedAllNextMessages_shouldNotCallChannelUpdater() throws {
+        XCTFail()
+    }
+
+    func test_loadNextMessages_whenIsLoadingNextMessages_shouldNotCallChannelUpdater() throws {
+        XCTFail()
+    }
+
+    func test_loadNextMessages_whenLastMessageAtEqualsToMostRecentMessage_thenAllNextMessagesWereLoaded() {
+        XCTFail()
+    }
+
     // MARK: - Load messages around given message id.
 
     func test_loadPageAroundMessageId() throws {
@@ -2397,6 +2459,9 @@ final class ChannelController_Tests: XCTestCase {
         // Should have cleared all the previous messages
         XCTAssertEqual(channel.messages.count, 0)
 
+        // Should set is jumping to message
+        XCTAssertEqual(controller.isJumpingToMessage, true)
+
         // Simulate successful update
         let expectedMessages: [MessagePayload] = [
             .dummy(),
@@ -2416,15 +2481,23 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(pagination?.pageSize, 5)
         XCTAssertEqual(pagination?.parameter?.parameters as! [String: String], ["id_around": messageId])
 
-        // Should update the last fetched message id to make sure pagination starts from correct message.
+        // Should update the oldest fetched message id to make sure
+        // pagination oldest messages starts from correct message.
         XCTAssertNotNil(controller.lastOldestMessageId)
         XCTAssertEqual(controller.lastOldestMessageId, expectedMessages.first?.id)
+
+        // Should update the newest fetched message id to make sure
+        // pagination newest messages starts from correct message.
+        XCTAssertNotNil(controller.lastNewestMessageId)
+        XCTAssertEqual(controller.lastNewestMessageId, expectedMessages.last?.id)
 
         // Should not leak memory
         weak var weakController = controller
         controller = nil
         env.channelUpdater!.update_completion = nil
+
         AssertAsync.willBeTrue(completionCalled)
+        AssertAsync.willBeFalse(controller.isJumpingToMessage)
         AssertAsync.canBeReleased(&weakController)
     }
 
@@ -2468,6 +2541,20 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertNil(controller.lastOldestMessageId)
 
         waitForExpectations(timeout: 0.5)
+    }
+
+    func test_loadPageAroundMessageId_whenIsJumpingToMessage_shouldNotCallChannelUpdater() {
+        XCTFail()
+    }
+
+    func test_loadPageAroundMessageId_whenLastMessageAtEqualsToMostRecentMessage_thenAllNextMessagesWereLoaded() {
+        XCTFail()
+    }
+
+    // MARK: - loadFirstPage
+
+    func test_loadFirstPage_shouldDeleteChannelMessages_thenShouldSynchronize() {
+        XCTFail()
     }
     
     // MARK: - Keystroke

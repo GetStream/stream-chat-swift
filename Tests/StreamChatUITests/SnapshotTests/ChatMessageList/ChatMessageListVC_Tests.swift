@@ -29,7 +29,9 @@ final class ChatMessageListVC_Tests: XCTestCase {
         )
     }
 
-    func test_scrollViewDidScroll_whenLastCellIsFullyVisible_andSkippedMessagesNotEmpty_thenReloadsSkippedMessages() {
+    func test_scrollViewDidScroll_whenLastCellIsFullyVisible_andSkippedMessagesNotEmpty_andIsFirstPageLoaded_thenReloadsSkippedMessages() {
+        XCTFail()
+
         let sut = ChatMessageListVC()
         sut.components = .mock
         sut.components.messageListView = ChatMessageListView_Mock.self
@@ -71,33 +73,8 @@ final class ChatMessageListVC_Tests: XCTestCase {
         XCTAssertEqual(mockedListView.reloadSkippedMessagesCallCount, 0)
     }
 
-    func test_updateMessages_whenLastCellIsFullyVisible_shouldReloadPreviousCell() {
-        let sut = ChatMessageListVC()
-        sut.components = .mock
-        sut.components.messageListView = ChatMessageListView_Mock.self
-
-        let mockedListView = sut.listView as! ChatMessageListView_Mock
-        mockedListView.mockIsLastCellFullyVisible = true
-        mockedListView.newMessagesSnapshot = [ChatMessage.mock(), ChatMessage.mock()]
-
-        sut.updateMessages(with: [])
-
-        XCTAssertEqual(mockedListView.reloadRowsCallCount, 1)
-        XCTAssertEqual(mockedListView.reloadRowsCalledWith, [IndexPath(item: 1, section: 0)])
-    }
-
-    func test_updateMessages_whenLastCellIsFullyVisible_whenMessagesCountBelowTwo_shouldNotReloadPreviousCell() {
-        let sut = ChatMessageListVC()
-        sut.components = .mock
-        sut.components.messageListView = ChatMessageListView_Mock.self
-
-        let mockedListView = sut.listView as! ChatMessageListView_Mock
-        mockedListView.mockIsLastCellFullyVisible = true
-        mockedListView.newMessagesSnapshot = [ChatMessage.mock()]
-
-        sut.updateMessages(with: [])
-
-        XCTAssertEqual(mockedListView.reloadRowsCallCount, 0)
+    func test_scrollViewDidScroll_whenFirstPageNotLoaded_thenDoesNotReloadsSkippedMessages() {
+        XCTFail()
     }
 
     func test_didSelectMessageCell_shouldShowActionsPopup() {
@@ -203,6 +180,119 @@ final class ChatMessageListVC_Tests: XCTestCase {
         let messageDiff1 = ChatMessage.mock(id: "1", text: "same", attachments: [attachmentWith4Comments])
         let messageDiff2 = ChatMessage.mock(id: "1", text: "same", attachments: [attachmentWith5Comments])
         XCTAssertFalse(messageDiff1.isContentEqual(to: messageDiff2))
+    func test_isScrollToBottomVisible_whenLastCellNotVisible_whenMoreContentThanOnePage_whenFirstPageIsLoaded_returnsTrue() {
+        XCTFail()
+    }
+
+    func test_isScrollToBottomVisible_whenLastCellNotVisible_whenMoreContentThanOnePage_whenFirstPageNotLoaded_returnsTrue() {
+        XCTFail()
+    }
+
+    func test_isScrollToBottomVisible_whenLastCellIsVisible_whenMoreContentThanOnePage_whenFirstPageNotLoaded_returnsTrue() {
+        XCTFail()
+    }
+
+    func test_isScrollToBottomVisible_whenLastCellIsVisible_whenMoreContentThanOnePage_whenFirstPageIsLoaded_returnsFalse() {
+        XCTFail()
+    }
+
+    func test_isScrollToBottomVisible_whenLastCellIsVisible_whenNoMoreContent_whenFirstPageIsLoaded_returnsFalse() {
+        XCTFail()
+    }
+
+    func test_isScrollToBottomVisible_whenLastCellIsVisible_whenNoMoreContent_whenFirstPageNotLoaded_returnsTrue() {
+        XCTFail()
+    }
+
+    func test_getIndexPath_returnsIndexPathForGivenMessageId() {
+        XCTFail()
+    }
+
+    func test_jumptToFirstPage() {
+        XCTFail()
+    }
+
+    func test_scrollToLatestMessage_whenFirstPageIsLoaded_scrollToMessage() {
+        XCTFail()
+    }
+
+    func test_scrollToLatestMessage_whenFirstPageNotLoaded_shouldJumpToFirstPage() {
+        XCTFail()
+    }
+
+    // MARK: Handling message updates
+
+    func test_updateMessages_whenLastCellIsFullyVisible_shouldReloadPreviousCell() {
+        let sut = ChatMessageListVC()
+        sut.components = .mock
+        sut.components.messageListView = ChatMessageListView_Mock.self
+
+        let mockedListView = sut.listView as! ChatMessageListView_Mock
+        mockedListView.mockIsLastCellFullyVisible = true
+        mockedListView.newMessagesSnapshot = [ChatMessage.mock(), ChatMessage.mock()]
+
+        sut.updateMessages(with: [])
+
+        XCTAssertEqual(mockedListView.reloadRowsCallCount, 1)
+        XCTAssertEqual(mockedListView.reloadRowsCalledWith, [IndexPath(item: 1, section: 0)])
+    }
+
+    func test_updateMessages_whenLastCellIsFullyVisible_whenMessagesCountBelowTwo_shouldNotReloadPreviousCell() {
+        let sut = ChatMessageListVC()
+        sut.components = .mock
+        sut.components.messageListView = ChatMessageListView_Mock.self
+
+        let mockedListView = sut.listView as! ChatMessageListView_Mock
+        mockedListView.mockIsLastCellFullyVisible = true
+        mockedListView.newMessagesSnapshot = [ChatMessage.mock()]
+
+        sut.updateMessages(with: [])
+
+        XCTAssertEqual(mockedListView.reloadRowsCallCount, 0)
+    }
+
+    func test_updateMessages_whenNewMessageInsertedByCurrentUser_whenFirstPageNotLoader_whenNotJumpingToMessage_shouldLoadFirstPage() {
+        XCTFail()
+    }
+
+    func test_updateMessages_whenOtherUsersInsertingMessages_whenInsertionsNotVisible_whenNotLoadingNextMessages_shouldSkipMessages() {
+        XCTFail()
+    }
+
+    func test_updateMessages_whenOtherUsersInsertingMessages_whenInsertionsNotVisible_whenIsLoadingNextMessages_shouldNotSkipMessages() {
+        XCTFail()
+    }
+
+    func test_updateMessages_whenOtherUsersInsertingMessages_whenInsertionsVisible_shouldNotSkipMessages() {
+        XCTFail()
+    }
+
+    func test_updateMessages_whenNewestMessageInsertedByCurrentUser_shouldScrollToMostRecentMessage() {
+        XCTFail()
+    }
+
+    func test_updateMessages_whenNewestMessageMovedByCurrentUser_shouldScrollToMostRecentMessage() {
+        XCTFail()
+    }
+
+    func test_updateMessages_whenNewestMessageInsertedByCurrentUser_whenFirstPageNotLoaded_shouldNotScrollToMostRecentMessage() {
+        XCTFail()
+    }
+
+    func test_updateMessages_whenNewestMessageInsertedByCurrentUser_whenIsJumpingToMessage_shouldNotScrollToMostRecentMessage() {
+        XCTFail()
+    }
+
+    func test_updateMessages_whenNewestChangeIsAMove_shouldReloadNewestIndexPath() {
+        XCTFail()
+    }
+
+    func test_updateMessages_whenInsertingNewMessages_whenFirstPageIsLoaded_shouldReloadPreviousMessage() {
+        XCTFail()
+    }
+
+    func test_updateMessages_shouldReloadCellsForVisibleRemoves() {
+        XCTFail()
     }
 }
 

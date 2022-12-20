@@ -549,6 +549,46 @@ final class ChatChannelVC_Tests: XCTestCase {
 
         AssertSnapshot(vc, variants: [.defaultLight])
     }
+
+    // MARK: Channel read
+
+    func test_shouldMarkChannelRead_whenIsLastMessageFullyVisible_whenHasLoadedAllNextMessages_thenReturnsTrue() {
+        XCTFail()
+    }
+
+    func test_shouldMarkChannelRead_whenNotLastMessageFullyVisible_thenReturnsFalse() {
+        XCTFail()
+    }
+
+    func test_shouldMarkChannelRead_whenHasNotLoadedAllNextMessages_thenReturnsFalse() {
+        XCTFail()
+    }
+
+    func test_viewDidAppear_whenShouldMarkChannelRead_thenMarkRead() {
+        XCTFail()
+    }
+
+    func test_scrollViewDidScroll_whenShouldMarkChannelRead_thenMarkRead() {
+        XCTFail()
+    }
+
+    func test_didUpdateMessages_whenShouldMarkChannelRead_thenMarkRead() {
+        XCTFail()
+    }
+
+    // MARK: Jumping to message
+
+    func test_didTapOnQuotedMessage_thenJumpToMessage() {
+        XCTFail()
+    }
+
+    func test_jumpToMessage_whenMessageAlreadyInUI_shouldScrollToItsIndexPath_shouldNotCallChannelController() {
+        XCTFail()
+    }
+
+    func test_jumpToMessage_whenMessageNotLoaded_shouldCallChannelController_shouldSetMessagePendingScrolling() {
+        XCTFail()
+    }
 }
 
 private extension ChatChannelVC_Tests {

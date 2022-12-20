@@ -165,16 +165,12 @@ open class ChatChannelVC: _ViewController,
 
         channelController.loadPageAroundMessageId(message.id) { [weak self] error in
             if let error = error {
-                self?.loadingMessagesAroundFailed(withError: error)
+                log.error("Loading message around failed with error: \(error)")
                 return
             }
 
             self?.messagePendingScrolling = message
         }
-    }
-
-    open func loadingMessagesAroundFailed(withError error: Error) {
-        log.error("Loading message around failed with error: \(error)")
     }
 
     // MARK: - ChatMessageListVCDataSource
