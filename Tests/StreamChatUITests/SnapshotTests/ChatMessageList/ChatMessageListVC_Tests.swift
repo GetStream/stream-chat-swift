@@ -242,6 +242,20 @@ class ChatMessageCell_Mock: ChatMessageCell {
 }
 
 class ChatMessageListVCDataSource_Mock: ChatMessageListVCDataSource {
+    var pageSize: Int {
+        25
+    }
+
+    var isFirstPageLoaded: Bool {
+        false
+    }
+
+    var isJumpingToMessage: Bool {
+        false
+    }
+
+    var messagePendingScrolling: StreamChat.ChatMessage?
+
     var mockedChannel: ChatChannel?
     func channel(for vc: ChatMessageListVC) -> ChatChannel? {
         mockedChannel

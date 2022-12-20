@@ -427,6 +427,22 @@ final class ChatMessageContentView_Tests: XCTestCase {
         XCTAssertEqual(shouldInteract, true)
         XCTAssertEqual(chatMessageViewContentDelegate.messageContentViewDidTapOnMentionedUserCallCount, 0)
     }
+
+    func test_handleTapOnQuotedMessage() {
+        let quotedMessage = ChatMessage.mock()
+        let messageWithQuotedMessage: ChatMessage = .mock(quotedMessage: quotedMessage)
+
+        let chatMessageViewContentDelegate = ChatMessageContentViewDelegate_Mock()
+        let view = contentView(
+            message: messageWithQuotedMessage
+        )
+        view.delegate = chatMessageViewContentDelegate
+
+        view.handleTapOnQuotedMessage()
+
+        XCTAssertEqual(chatMessageViewContentDelegate.tappedQuotedMessage, quotedMessage)
+        XCTAssertEqual(chatMessageViewContentDelegate.messageContentViewDidTapOnQuotedMessageCallCount, 1)
+    }
 }
 
 // MARK: - Helpers

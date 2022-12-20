@@ -654,7 +654,7 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
 
     /// Handles tap on `quotedMessageView` and forwards the action to the delegate.
     @objc open func handleTapOnQuotedMessage() {
-        guard let quotedMessage = quotedMessageView?.content?.message else { return }
+        guard let quotedMessage = content?.quotedMessage else { return }
         delegate?.messageContentViewDidTapOnQuotedMessage(quotedMessage)
     }
 
