@@ -817,14 +817,14 @@ public extension ChatChannelController {
             channelModificationFailed(completion)
             return
         }
-
-        guard !hasLoadedAllNextMessages && !isLoadingNextMessages else {
-            return
-        }
         
         guard let messageId = messageId ?? lastNewestMessageId ?? messages.first?.id else {
             log.error(ClientError.ChannelEmptyMessages().localizedDescription)
             callback { completion?(ClientError.ChannelEmptyMessages()) }
+            return
+        }
+
+        guard !hasLoadedAllNextMessages && !isLoadingNextMessages else {
             return
         }
 

@@ -80,6 +80,14 @@ extension MessagePayload {
             translations: translations
         )
     }
+
+    static func multipleDummies(amount: Int) -> [MessagePayload] {
+        var messages: [MessagePayload] = []
+        for messageIndex in stride(from: 0, to: amount, by: 1) {
+            messages.append(MessagePayload.dummy(messageId: "\(messageIndex)", authorUserId: .unique))
+        }
+        return messages
+    }
 }
 
 extension MessagePayload {

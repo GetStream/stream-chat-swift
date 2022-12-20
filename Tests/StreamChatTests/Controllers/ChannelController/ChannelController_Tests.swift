@@ -2007,16 +2007,10 @@ final class ChannelController_Tests: XCTestCase {
 
         // Since the messages have been all loaded already, the second call
         // to load the previous message should not make any request
-        var secondLoadCompletionCalled = false
-        controller.loadPreviousMessages(before: messageId, limit: pageSize) { error in
-            XCTAssertNil(error)
-            secondLoadCompletionCalled = true
-        }
+        controller.loadPreviousMessages(before: messageId, limit: pageSize)
 
         // Wait for the first load to be completed
         AssertAsync.willBeTrue(firstLoadCompletionCalled)
-        // Wait for the second load to be completed
-        AssertAsync.willBeTrue(secondLoadCompletionCalled)
         // Make sure the channel updater is only called the first time
         AssertAsync.willBeEqual(env.channelUpdater?.update_callCount, 1)
     }
@@ -2151,10 +2145,8 @@ final class ChannelController_Tests: XCTestCase {
             expectation.fulfill()
         }
 
-        let messages: [MessagePayload] = [
-            MessagePayload.dummy(messageId: "2", authorUserId: .unique),
-            MessagePayload.dummy(messageId: "1", authorUserId: .unique)
-        ]
+        // Generate messages bigger than pageSize (25)
+        let messages: [MessagePayload] = MessagePayload.multipleDummies(amount: 30)
         let payload = ChannelPayload.dummy(messages: messages)
         env.channelUpdater?.update_completion?(.success(payload))
 
@@ -2188,16 +2180,9 @@ final class ChannelController_Tests: XCTestCase {
             expectation.fulfill()
         }
 
-        let messages: [MessagePayload] = [
-            MessagePayload.dummy(messageId: "6", authorUserId: .unique),
-            MessagePayload.dummy(messageId: "2", quotedMessage: .dummy(messageId: "3", authorUserId: .unique), authorUserId: .unique),
-            MessagePayload.dummy(messageId: "1", quotedMessage: .dummy(messageId: "30", authorUserId: .unique), authorUserId: .unique)
-        ]
-        let payload = ChannelPayload.dummy(messages: messages, pinnedMessages: [
-            MessagePayload.dummy(messageId: "25", authorUserId: .unique),
-            MessagePayload.dummy(messageId: "5", authorUserId: .unique),
-            MessagePayload.dummy(messageId: "4", quotedMessage: .dummy(messageId: "3", authorUserId: .unique), authorUserId: .unique)
-        ])
+        // Generate messages bigger than pageSize (25)
+        let messages: [MessagePayload] = MessagePayload.multipleDummies(amount: 30)
+        let payload = ChannelPayload.dummy(messages: messages)
         env.channelUpdater?.update_completion?(.success(payload))
 
         waitForExpectations(timeout: defaultTimeout)
@@ -2219,7 +2204,7 @@ final class ChannelController_Tests: XCTestCase {
             XCTFail("Missing pagination parameter")
             return
         }
-        XCTAssertEqual(paginationMessageId, "6")
+        XCTAssertEqual(paginationMessageId, messages.first?.id)
         XCTAssertEqual(receivedError, error)
     }
 
@@ -2273,6 +2258,19 @@ final class ChannelController_Tests: XCTestCase {
     // MARK: - `loadNextMessages`
 
     func test_loadNextMessages_callsChannelUpdate() throws {
+        let expectation = self.expectation(description: "synchronize completes")
+        controller.synchronize { error in
+            XCTAssertNil(error)
+            expectation.fulfill()
+        }
+
+        // Generate messages lower than pageSize (25)
+        let messages: [MessagePayload] = MessagePayload.multipleDummies(amount: 20)
+        let payload = ChannelPayload.dummy(messages: messages)
+        env.channelUpdater?.update_completion?(.success(payload))
+
+        waitForExpectations(timeout: 0.5)
+
         var error: Error?
         var messageId: MessageId?
 
@@ -2330,6 +2328,19 @@ final class ChannelController_Tests: XCTestCase {
     }
 
     func test_loadNextMessages_callsChannelUpdaterWithError() throws {
+        let expectation = self.expectation(description: "synchronize completes")
+        controller.synchronize { error in
+            XCTAssertNil(error)
+            expectation.fulfill()
+        }
+
+        // Generate messages bigger than pageSize (25)
+        let messages: [MessagePayload] = MessagePayload.multipleDummies(amount: 30)
+        let payload = ChannelPayload.dummy(messages: messages)
+        env.channelUpdater?.update_completion?(.success(payload))
+
+        waitForExpectations(timeout: 0.5)
+
         var error: Error?
         var messageId: MessageId?
 
@@ -2440,7 +2451,6 @@ final class ChannelController_Tests: XCTestCase {
             numberOfMessages: 10
         )
         let messageId: MessageId = .unique
-        let channelId = dummyChannel.channel.cid
 
         // Simulate new channel creation in DB
         try client.databaseContainer.writeSynchronously { session in

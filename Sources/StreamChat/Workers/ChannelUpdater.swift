@@ -40,8 +40,10 @@ class ChannelUpdater: Worker {
             do {
                 let payload = try result.get()
                 onChannelCreated?(payload.channel.cid)
-                database?.write { session in
-                    onBeforeSavingChannel?(session)
+                if let onBeforeSavingChannel = onBeforeSavingChannel {
+                    database?.write { session in
+                        onBeforeSavingChannel(session)
+                    }
                 }
                 database?.write { session in
                     let channelDTO = session.channel(cid: payload.channel.cid)
