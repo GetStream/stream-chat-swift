@@ -680,7 +680,7 @@ private extension ChatMessageListVC {
         let pageSize = dataSource?.pageSize ?? .channelsPageSize
         let numberOfSkippedMessages = listView.skippedMessages.count
         let isInsertionAtTheBottom = changes.first(where: { $0.indexPath.item - numberOfSkippedMessages == 0 }) != nil
-        let isLoadingNextMessages = changes.map(\.isInsertion).count == pageSize && isInsertionAtTheBottom
+        let isLoadingNextMessages = changes.filter(\.isInsertion).count == pageSize && isInsertionAtTheBottom
 
         let isFirstPageLoaded = dataSource?.isFirstPageLoaded == true
         let isJumpingToMessage = dataSource?.isJumpingToMessage == true
