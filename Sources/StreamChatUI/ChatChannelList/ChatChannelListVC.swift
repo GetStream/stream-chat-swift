@@ -87,6 +87,11 @@ open class ChatChannelListVC: _ViewController,
     /// updates when the channel list is not visible in the window.
     private(set) var skippedRendering = false
 
+    /// A component responsible to handle when to load new channels.
+    private lazy var viewPaginationHandler: ViewPaginationHandling = {
+        ScrollViewPaginationHandler(scrollView: collectionView)
+    }()
+
     /// Create a new `ChatChannelListViewController`
     /// - Parameters:
     ///   - controller: Your created `ChatChannelListController` with required query
@@ -145,6 +150,11 @@ open class ChatChannelListVC: _ViewController,
             self?.controller.synchronize()
             self?.channelListErrorView.hide()
         }
+
+        viewPaginationHandler.bottomThreshold = 400
+        viewPaginationHandler.onNewBottomPage = { [weak self] in
+            self?.loadMoreChannels()
+        }
     }
 
     override open func viewWillAppear(_ animated: Bool) {
@@ -161,19 +171,7 @@ open class ChatChannelListVC: _ViewController,
         willDisplay cell: UICollectionViewCell,
         forItemAt indexPath: IndexPath
     ) {
-        if controller.state != .remoteDataFetched {
-            return
-        }
-
-        guard collectionView.isTrackingOrDecelerating else {
-            return
-        }
-
-        if indexPath.row < collectionView.numberOfItems(inSection: 0) - 10 {
-            return
-        }
-
-        loadMoreChannels()
+        // no-op
     }
 
     override open func setUpLayout() {

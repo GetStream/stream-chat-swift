@@ -68,7 +68,7 @@ open class ChatChannelVC: _ViewController,
     }
 
     /// A component responsible to handle when to load new or old messages.
-    private lazy var paginationHandler: ViewPaginationHandling = {
+    private lazy var viewPaginationHandler: ViewPaginationHandling = {
         InvertedScrollViewPaginationHandler.make(scrollView: messageListVC.listView)
     }()
 
@@ -104,10 +104,10 @@ open class ChatChannelVC: _ViewController,
         messages = Array(channelController.messages)
 
         // Handle pagination
-        paginationHandler.onNewTopPage = { [weak self] in
+        viewPaginationHandler.onNewTopPage = { [weak self] in
             self?.channelController.loadPreviousMessages()
         }
-        paginationHandler.onNewBottomPage = { [weak self] in
+        viewPaginationHandler.onNewBottomPage = { [weak self] in
             self?.channelController.loadNextMessages()
         }
     }
