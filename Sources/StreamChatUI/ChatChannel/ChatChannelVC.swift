@@ -67,6 +67,11 @@ open class ChatChannelVC: _ViewController,
         isLastMessageFullyVisible && channelController.hasLoadedAllNextMessages
     }
 
+    /// A component responsible to handle when to load new or old messages.
+    private lazy var paginationHandler: ViewPaginationHandling = {
+        InvertedScrollViewPaginationHandler.make(scrollView: messageListVC.listView)
+    }()
+
     override open func setUp() {
         super.setUp()
 
@@ -97,6 +102,14 @@ open class ChatChannelVC: _ViewController,
 
         // Initial messages data
         messages = Array(channelController.messages)
+
+        // Handle pagination
+        paginationHandler.onNewTopPage = { [weak self] in
+            self?.channelController.loadPreviousMessages()
+        }
+        paginationHandler.onNewBottomPage = { [weak self] in
+            self?.channelController.loadNextMessages()
+        }
     }
 
     private func setChannelControllerToComposerIfNeeded(cid: ChannelId?) {
@@ -255,32 +268,12 @@ open class ChatChannelVC: _ViewController,
         }
     }
 
-    // JUMPTODO: This should be reusable
-    private var previousPosition: CGFloat = 0.0
-
     open func chatMessageListVC(_ vc: ChatMessageListVC, scrollViewDidScroll scrollView: UIScrollView) {
         if shouldMarkChannelRead {
             channelController.markRead()
 
             messageListVC.scrollToLatestMessageButton.content = .noUnread
         }
-
-        // JUMPTODO: This should be reusable
-
-        guard scrollView.isTrackingOrDecelerating else {
-            return
-        }
-
-        let position = scrollView.contentOffset.y
-        if position > scrollView.contentSize.height - 250 - scrollView.frame.size.height {
-            channelController.loadPreviousMessages()
-        }
-
-        if position >= 0 && position < 100 && position < previousPosition {
-            channelController.loadNextMessages()
-        }
-
-        previousPosition = position
     }
 
     open func chatMessageListVC(
