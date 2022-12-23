@@ -144,7 +144,6 @@ open class ChatMessageListVC: _ViewController,
         scrollToLatestMessageButton.trailingAnchor.pin(equalTo: view.layoutMarginsGuide.trailingAnchor).isActive = true
         scrollToLatestMessageButton.widthAnchor.pin(equalTo: scrollToLatestMessageButton.heightAnchor).isActive = true
         scrollToLatestMessageButton.heightAnchor.pin(equalToConstant: 40).isActive = true
-        setScrollToLatestMessageButton(visible: false, animated: false)
 
         if isDateOverlayEnabled {
             view.addSubview(dateOverlayView)
@@ -205,12 +204,19 @@ open class ChatMessageListVC: _ViewController,
     }
 
     /// Set the visibility of `scrollToLatestMessageButton`.
+    @available(*, deprecated, message: "use updateScrollToBottomButtonVisibility(animated:) instead.")
     open func setScrollToLatestMessageButton(visible: Bool, animated: Bool = true) {
-        if visible { scrollToLatestMessageButton.isVisible = true }
+        updateScrollToBottomButtonVisibility()
+    }
+
+    /// Set the visibility of `scrollToLatestMessageButton`.
+    open func updateScrollToBottomButtonVisibility(animated: Bool = true) {
+        let isVisible = isScrollToBottomButtonVisible
+        if isVisible { scrollToLatestMessageButton.isVisible = true }
         Animate(isAnimated: animated, {
-            self.scrollToLatestMessageButton.alpha = visible ? 1 : 0
+            self.scrollToLatestMessageButton.alpha = isVisible ? 1 : 0
         }, completion: { _ in
-            if !visible { self.scrollToLatestMessageButton.isVisible = false }
+            if !isVisible { self.scrollToLatestMessageButton.isVisible = false }
         })
     }
 
@@ -471,7 +477,7 @@ open class ChatMessageListVC: _ViewController,
     open func scrollViewDidScroll(_ scrollView: UIScrollView) {
         delegate?.chatMessageListVC(self, scrollViewDidScroll: scrollView)
 
-        setScrollToLatestMessageButton(visible: isScrollToBottomButtonVisible)
+        updateScrollToBottomButtonVisibility()
 
         // If the user scrolled to the bottom, update the UI for the skipped messages
         if listView.isLastCellFullyVisible && !listView.skippedMessages.isEmpty && dataSource?.isFirstPageLoaded == true {
@@ -480,7 +486,7 @@ open class ChatMessageListVC: _ViewController,
     }
 
     open func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
-        setScrollToLatestMessageButton(visible: isScrollToBottomButtonVisible)
+        updateScrollToBottomButtonVisibility()
     }
 
     // MARK: - ChatMessageListScrollOverlayDataSource
@@ -710,6 +716,8 @@ private extension ChatMessageListVC {
         let oldContentSize = listView.contentSize
 
         listView.updateMessages(with: changes) { [weak self] in
+
+            self?.updateScrollToBottomButtonVisibility()
 
             self?.scrollPendingMessageIfNeeded()
 
