@@ -4,6 +4,8 @@
 
 import UIKit
 
+// JUMPTODO: 1. Tests and Rebase
+
 /// For inverted scroll views, we switch the top with the bottom and vice-versa.
 class InvertedScrollViewPaginationHandler: ViewPaginationHandling {
     private let scrollViewPaginationHandler: ScrollViewPaginationHandler

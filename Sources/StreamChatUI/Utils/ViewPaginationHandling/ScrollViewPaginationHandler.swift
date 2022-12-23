@@ -4,6 +4,8 @@
 
 import UIKit
 
+// JUMPTODO: 1. Tests and Rebase
+
 /// A component responsible to handle when to load new pages in a scrollView.
 class ScrollViewPaginationHandler: ViewPaginationHandling {
     private weak var scrollView: UIScrollView?
@@ -11,7 +13,7 @@ class ScrollViewPaginationHandler: ViewPaginationHandling {
     private var previousPosition: CGFloat = 0.0
 
     var topThreshold: Int = 100
-    var bottomThreshold: Int = 250
+    var bottomThreshold: Int = 400
 
     var onNewTopPage: (() -> Void)?
     var onNewBottomPage: (() -> Void)?
@@ -29,12 +31,14 @@ class ScrollViewPaginationHandler: ViewPaginationHandling {
             return
         }
 
+        let bottomThreshold = CGFloat(bottomThreshold)
         let position = scrollView.contentOffset.y
-        if position > scrollView.contentSize.height - CGFloat(bottomThreshold) - scrollView.frame.size.height {
+        if position > scrollView.contentSize.height - bottomThreshold - scrollView.frame.size.height {
             onNewBottomPage?()
         }
 
-        if position >= 0 && position <= CGFloat(topThreshold) && position <= max(0, previousPosition) {
+        let topThreshold = CGFloat(topThreshold)
+        if position >= 0 && position <= topThreshold && position <= max(0, previousPosition) {
             onNewTopPage?()
         }
 
