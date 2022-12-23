@@ -49,7 +49,7 @@ if [[ ${XCODE_ACTIONS-default} == default ]]; then
   brew install mint
 
   puts "Bootstrap Mint dependencies"
-  mint bootstrap
+  mint bootstrap --link
 
   # Copy internal Xcode scheme to the right folder for
   puts "Adding DemoApp-StreamDevelopers.xcscheme to the Xcode project"
