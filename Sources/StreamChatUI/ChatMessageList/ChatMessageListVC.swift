@@ -688,8 +688,9 @@ private extension ChatMessageListVC {
         let isInsertionAtTheBottom = changes.first(where: { $0.indexPath.item - numberOfSkippedMessages == 0 }) != nil
         let isLoadingNextMessages = changes.filter(\.isInsertion).count == pageSize && isInsertionAtTheBottom
 
-        let isFirstPageLoaded = dataSource?.isFirstPageLoaded == true
-        let isJumpingToMessage = dataSource?.isJumpingToMessage == true
+        // Computed properties so that we get the most updated result even after the diffing updates.
+        var isFirstPageLoaded: Bool { dataSource?.isFirstPageLoaded == true }
+        var isJumpingToMessage: Bool { dataSource?.isJumpingToMessage == true }
 
         let newestChange = changes.first(where: { $0.indexPath.item == 0 })
         let isNewestChangeInsertion = newestChange?.isInsertion == true
