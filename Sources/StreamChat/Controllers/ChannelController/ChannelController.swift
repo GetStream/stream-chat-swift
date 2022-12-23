@@ -186,7 +186,13 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     public private(set) var hasLoadedAllPreviousMessages: Bool = false
 
     /// A Boolean value that returns wether the newest messages have all been loaded or not.
-    public private(set) var hasLoadedAllNextMessages: Bool = true
+    public var hasLoadedAllNextMessages: Bool {
+        // We use channel.previewMessage?.createdAt and not the channel.lastMessageAt
+        // because the channel.lastMessageAt also accounts for thread replies at the moment.
+        // Right now, the previewMessage, since it is always the most recent message of the channel
+        // is a good candidate to determine if the first page is loaded (if all recent messages have been loaded).
+        channel?.previewMessage?.createdAt == messages.first?.createdAt
+    }
 
     /// A Boolean value that returns wether the channel is currently loading previous (old) messages.
     public private(set) var isLoadingPreviousMessages: Bool = false
@@ -413,7 +419,6 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
         // If channel was left while jumping to messages, clean the channel messages.
-        hasLoadedAllNextMessages = channel?.lastMessageAt == messages.first?.createdAt
         if !hasLoadedAllNextMessages, let cid = cid {
             client.databaseContainer.write { session in
                 session.deleteChannelMessages(cid: cid)
@@ -440,7 +445,6 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
                     self.state = .remoteDataFetched
                     self.updateNewestFetchedMessageId(with: payload)
                     self.updateOldestFetchedMessageId(with: payload)
-                    self.hasLoadedAllNextMessages = payload.channel.lastMessageAt == payload.messages.last?.createdAt
                     if let pageSize = self.channelQuery.pagination?.pageSize {
                         self.hasLoadedAllPreviousMessages = payload.messages.count < pageSize
                     }
@@ -835,7 +839,6 @@ public extension ChatChannelController {
             switch result {
             case let .success(payload):
                 self.updateNewestFetchedMessageId(with: payload)
-                self.hasLoadedAllNextMessages = payload.channel.lastMessageAt == payload.messages.last?.createdAt
                 self.callback { completion?(nil) }
             case let .failure(error):
                 self.callback { completion?(error) }
@@ -881,7 +884,6 @@ public extension ChatChannelController {
                 case let .success(payload):
                     self.updateNewestFetchedMessageId(with: payload)
                     self.updateOldestFetchedMessageId(with: payload)
-                    self.hasLoadedAllNextMessages = payload.channel.lastMessageAt == payload.messages.last?.createdAt
                     self.callback { completion?(nil) }
                 case let .failure(error):
                     log.error("Not able to load message around messageId: \(messageId). Error: \(error)")
