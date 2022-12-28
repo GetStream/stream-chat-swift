@@ -32,7 +32,26 @@ extension ChatMessageListView {
 
 extension ChatMessage: Differentiable {
     public func isContentEqual(to source: ChatMessage) -> Bool {
-        id == source.id
+        let isAttachmentsEqual: (ChatMessage, ChatMessage) -> Bool = {
+            $0.giphyAttachments.map(\.previewURL) == $1.giphyAttachments.map(\.previewURL)
+                && $0.imageAttachments.map(\.uploadingState) == $1.imageAttachments.map(\.uploadingState)
+                && $0.videoAttachments.map(\.uploadingState) == $1.videoAttachments.map(\.uploadingState)
+                && $0.fileAttachments.map(\.uploadingState) == $1.fileAttachments.map(\.uploadingState)
+                && $0.audioAttachments.map(\.uploadingState) == $1.audioAttachments.map(\.uploadingState)
+                && $0.linkAttachments.map(\.uploadingState) == $1.linkAttachments.map(\.uploadingState)
+        }
+
+        let isQuotedMessageEqual: (ChatMessage?, ChatMessage?) -> Bool = {
+            if let quotedMessage = $0, let sourceQuotedMessage = $1 {
+                return quotedMessage.id == sourceQuotedMessage.id
+                    && quotedMessage.text == sourceQuotedMessage.text
+                    && isAttachmentsEqual(quotedMessage, sourceQuotedMessage)
+            }
+
+            return $0?.id == $1?.id
+        }
+
+        return id == source.id
             && text == source.text
             && type == source.type
             && command == source.command
@@ -41,7 +60,6 @@ extension ChatMessage: Differentiable {
             && showReplyInChannel == source.showReplyInChannel
             && replyCount == source.replyCount
             && extraData == source.extraData
-            && quotedMessage == source.quotedMessage
             && isShadowed == source.isShadowed
             && currentUserReactions.count == source.currentUserReactions.count
             && reactionCounts == source.reactionCounts
@@ -50,11 +68,7 @@ extension ChatMessage: Differentiable {
             && localState == source.localState
             && isFlaggedByCurrentUser == source.isFlaggedByCurrentUser
             && readBy.count == source.readBy.count
-            && giphyAttachments.map(\.previewURL) == source.giphyAttachments.map(\.previewURL)
-            && imageAttachments.map(\.uploadingState) == source.imageAttachments.map(\.uploadingState)
-            && videoAttachments.map(\.uploadingState) == source.videoAttachments.map(\.uploadingState)
-            && fileAttachments.map(\.uploadingState) == source.fileAttachments.map(\.uploadingState)
-            && audioAttachments.map(\.uploadingState) == source.audioAttachments.map(\.uploadingState)
-            && linkAttachments.map(\.uploadingState) == source.linkAttachments.map(\.uploadingState)
+            && isQuotedMessageEqual(quotedMessage, source.quotedMessage)
+            && isAttachmentsEqual(self, source)
     }
 }
