@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 #if swift(>=5.3)
@@ -20,12 +20,12 @@ struct ChannelListView: View {
     @State private var showAddChannelAlert: Bool = false
     /// Binding for showing `sheet`s
     @State private var activeSheet: ActiveSheet?
-    
+
     /// Definition of alert shown when add channel button is pressed.
     var addChannelAlert: TextAlert {
         let id = UUID().uuidString
         let defaultName = "Channel" + id.prefix(4)
-        
+
         return TextAlert(title: "Create channel", placeholder: defaultName) { name in
             do {
                 let controller = try self.channelList.controller.client.channelController(
@@ -88,9 +88,9 @@ struct ChannelListView: View {
         /// Synchronize local data with remote.
         .onAppear(perform: { self.channelList.controller.synchronize() })
     }
-    
+
     // MARK: - Views
-    
+
     /// `ActionSheet` with many actions that can be taken on the `channelController` such
     /// as `updateChannel`, `muteChannel`, `unmuteChannel`, ``showChannel`, and `hideChannel`.
     /// Will appear on long pressing the channel cell.
@@ -104,7 +104,7 @@ struct ChannelListView: View {
             .cancel()
         ])
     }
-    
+
     /// Add channel button. To create new channel we need to get a new `ChannelController`
     /// with `chatClient.channelController(createChannelWithId: ...)`
     /// and call `synchronize()` on it.
@@ -115,7 +115,7 @@ struct ChannelListView: View {
             Image(systemName: "plus.bubble").imageScale(.large)
         }
     }
-    
+
     /// Channel cell container view.
     private func channelView(for index: Int) -> some View {
         HStack {
@@ -139,7 +139,7 @@ struct ChannelListView: View {
             unreadCountCircle(for: channel(index))
         }
     }
-    
+
     /// Button that will open `UserListView`.
     var usersButton: some View {
         Button(action: {
@@ -148,7 +148,7 @@ struct ChannelListView: View {
             Image(systemName: "person.3.fill").imageScale(.large)
         }
     }
-    
+
     /// `UserLisView` for users matching the query.
     var userListView: some View {
         let controller = channelList.controller.client.userListController()
@@ -160,7 +160,7 @@ struct ChannelListView: View {
             }
         )
     }
-    
+
     /// Button that will open `SettingsView`.
     var showSettingsButton: some View {
         Button(action: {
@@ -169,7 +169,7 @@ struct ChannelListView: View {
             Image(systemName: "gear").imageScale(.large)
         }
     }
-    
+
     /// Unread count number in circle.
     func unreadCountCircle(for channel: ChatChannel) -> AnyView {
         if channel.isUnread {
@@ -185,11 +185,11 @@ struct ChannelListView: View {
             return AnyView(EmptyView())
         }
     }
-    
+
     /// Formatted channel details.
     private func channelDetails(for index: Int) -> Text {
         let channel = self.channel(index)
-        
+
         if let typingUsersInfo = createTypingUserString(for: channel) {
             return Text(typingUsersInfo)
         } else if let latestMessage = channel.latestMessages.first {
@@ -199,37 +199,37 @@ struct ChannelListView: View {
             return Text("No messages")
         }
     }
-    
+
     // MARK: - Actions
-    
+
     /// Pagination. Load next channels if last item is reached.
     private func loadNextIfNecessary(encounteredIndex: Int) {
         guard encounteredIndex == channelList.channels.count - 1 else { return }
         channelList.controller.loadNextChannels()
     }
-    
+
     /// Delete channel action for swipe-to-delete.
     private func deleteChannel(for indexSet: IndexSet) {
         indexSet.forEach { index in
             channelList.controller.client.channelController(for: self.channel(index).cid).deleteChannel()
         }
     }
-    
+
     // MARK: - Helpers
-    
+
     private func channel(_ index: Int) -> ChatChannel {
         channelList.channels[index]
     }
-    
+
     private func chatView(for index: Int) -> ChatView {
         let channelController = channelList.controller.client.channelController(
             for: channelList.channels[index].cid,
             messageOrdering: .bottomToTop
         )
-        
+
         return ChatView(channel: channelController.observableObject)
     }
-    
+
     private func openDirectMessages(with userId: UserId) {
         // TODO: Show a `ChatView` with the controller that creates new 1-1 channel.
     }
@@ -241,7 +241,7 @@ extension ChannelId: Identifiable {}
 
 enum ActiveSheet: Identifiable {
     case settings, users
-    
+
     var id: Int {
         hashValue
     }

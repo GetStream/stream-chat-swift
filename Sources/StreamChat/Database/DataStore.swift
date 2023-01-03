@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -17,12 +17,12 @@ extension DataStoreProvider {
 /// `DataStore` provide access to all locally available model objects based on their id.
 public struct DataStore {
     let database: DatabaseContainer
-    
+
     // Technically, we need only `database` but we use a `Client` instance to get the extra data types from it.
     init(client: ChatClient) {
         database = client.databaseContainer
     }
-    
+
     /// Loads a user model with a matching `id` from the **local data store**.
     ///
     /// If the data doesn't exist locally, it's recommended to use controllers to fetch data from remote servers.
@@ -36,7 +36,7 @@ public struct DataStore {
     public func user(id: UserId) -> ChatUser? {
         try? database.viewContext.user(id: id)?.asModel()
     }
-    
+
     /// Loads a current user model with a matching `id` from the **local data store**.
     ///
     /// If the data doesn't exist locally, it's recommended to use controllers to fetch data from remote servers.
@@ -62,7 +62,7 @@ public struct DataStore {
     public func channel(cid: ChannelId) -> ChatChannel? {
         try? database.viewContext.channel(cid: cid)?.asModel()
     }
-    
+
     /// Loads a message model with a matching `id` from the **local data store**.
     ///
     /// If the data doesn't exist locally, it's recommended to use controllers to fetch data from remote servers.

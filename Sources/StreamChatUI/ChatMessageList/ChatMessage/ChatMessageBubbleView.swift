@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -35,7 +35,7 @@ open class ChatMessageBubbleView: _View, AppearanceProvider, SwiftUIRepresentabl
 
     override open func updateContent() {
         super.updateContent()
-        
+
         layer.maskedCorners = content?.roundedCorners ?? .all
         backgroundColor = content?.backgroundColor ?? .clear
     }

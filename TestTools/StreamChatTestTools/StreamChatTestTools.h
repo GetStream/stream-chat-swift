@@ -2,7 +2,7 @@
 //  StreamChatTestTools.h
 //  StreamChatTestTools
 //
-//  Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>

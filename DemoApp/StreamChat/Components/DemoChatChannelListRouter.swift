@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -15,7 +15,7 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
 
     var channelPresentingStyle: ChannelPresentingStyle = .push
     var onLogout: (() -> Void)?
-    
+
     lazy var streamModalTransitioningDelegate = StreamModalTransitioningDelegate()
 
     func showCreateNewChannelFlow() {
@@ -25,7 +25,7 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
             rootNavigationController?.pushViewController(chatViewController, animated: true)
         }
     }
-    
+
     override func showCurrentUserProfile() {
         rootViewController.presentAlert(title: nil, actions: [
             .init(title: "Logout", style: .destructive, handler: { [weak self] _ in
@@ -61,7 +61,7 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
             rootNavigationController?.show(tabBarController, sender: self)
         }
     }
-    
+
     // swiftlint:disable function_body_length
     override func didTapMoreButton(for cid: ChannelId) {
         let channelController = rootViewController.controller.client.channelController(for: cid)
@@ -361,7 +361,7 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
     }
 
     // swiftlint:enable function_body_length
-    
+
     override func didTapDeleteButton(for cid: ChannelId) {
         rootViewController.controller.client.channelController(for: cid).deleteChannel { error in
             if let error = error {
@@ -369,10 +369,10 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
             }
         }
     }
-    
+
     func showHiddenChannels() {
         let client = rootViewController.controller.client
-        
+
         let vc = HiddenChannelListVC()
         vc.router = self
         vc.controller = client.channelListController(
@@ -381,7 +381,7 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                 .equal(.hidden, to: true)
             ]))
         )
-        
+
         rootNavigationController?.pushViewController(vc, animated: true)
     }
 }

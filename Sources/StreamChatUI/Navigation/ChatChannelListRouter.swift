@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -9,7 +9,7 @@ import UIKit
 @available(iOSApplicationExtension, unavailable)
 open class ChatChannelListRouter: NavigationRouter<ChatChannelListVC>, ComponentsProvider {
     let modalTransitioningDelegate = StreamModalTransitioningDelegate()
-    
+
     /// Shows the view controller with the profile of the current user.
     open func showCurrentUserProfile() {
         log.info(
@@ -30,7 +30,7 @@ open class ChatChannelListRouter: NavigationRouter<ChatChannelListVC>, Component
             for: cid,
             channelListQuery: rootViewController.controller.query
         )
-        
+
         if let splitVC = rootViewController.splitViewController {
             splitVC.showDetailViewController(UINavigationController(rootViewController: vc), sender: self)
         } else if let navigationVC = rootViewController.navigationController {
@@ -54,7 +54,7 @@ open class ChatChannelListRouter: NavigationRouter<ChatChannelListVC>, Component
             """
         )
     }
-    
+
     /// Called when a user tapped `Delete` swipe action on a channel
     ///
     /// - Parameter cid: `ChannelId` of a channel swipe acton was used on

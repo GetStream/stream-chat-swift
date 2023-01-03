@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -21,7 +21,7 @@ final class ChannelListSortingKey_Tests: XCTestCase {
             .hasUnread,
             .unreadCount
         ]
-        
+
         // Iterate over keys...
         for key in sortingKeys {
             switch key {

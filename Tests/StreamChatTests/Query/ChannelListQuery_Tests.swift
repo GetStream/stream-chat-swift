@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -14,7 +14,7 @@ final class ChannelListQuery_Tests: XCTestCase {
         let pageSize = Int.channelsPageSize
         let messagesLimit = Int.messagesPageSize
         let membersLimit = Int.channelMembersPageSize
-        
+
         // Create ChannelListQuery
         var query = ChannelListQuery(
             filter: filter,
@@ -24,7 +24,7 @@ final class ChannelListQuery_Tests: XCTestCase {
             membersLimit: membersLimit
         )
         query.options = .watch
-        
+
         let expectedData: [String: Any] = [
             "limit": pageSize,
             "message_limit": messagesLimit,
@@ -33,10 +33,10 @@ final class ChannelListQuery_Tests: XCTestCase {
             "filter_conditions": ["cid": ["$eq": cid.rawValue]],
             "watch": true
         ]
-        
+
         let expectedJSON = try JSONSerialization.data(withJSONObject: expectedData, options: [])
         let encodedJSON = try JSONEncoder.default.encode(query)
-        
+
         // Assert ChannelListQuery encoded correctly
         AssertJSONEqual(expectedJSON, encodedJSON)
     }

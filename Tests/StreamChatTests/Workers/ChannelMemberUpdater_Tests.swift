@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -10,21 +10,21 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
     var webSocketClient: WebSocketClient_Mock!
     var apiClient: APIClient_Spy!
     var database: DatabaseContainer_Spy!
-    
+
     var updater: ChannelMemberUpdater!
-    
+
     // MARK: Setup
-    
+
     override func setUp() {
         super.setUp()
-        
+
         webSocketClient = WebSocketClient_Mock()
         apiClient = APIClient_Spy()
         database = DatabaseContainer_Spy()
-        
+
         updater = .init(database: database, apiClient: apiClient)
     }
-    
+
     override func tearDown() {
         apiClient.cleanUp()
         AssertAsync {
@@ -36,7 +36,7 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
 
         super.tearDown()
     }
-    
+
     // MARK: - Ban user
 
     func test_banMember_makesCorrectAPICall() {
@@ -87,13 +87,13 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
         // Assert the completion is called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
-    
+
     // MARK: - Unban user
 
     func test_unbanMember_makesCorrectAPICall() {
         let userId: UserId = .unique
         let cid: ChannelId = .unique
-        
+
         // Simulate `unbanMember` call
         updater.unbanMember(userId, in: cid)
 

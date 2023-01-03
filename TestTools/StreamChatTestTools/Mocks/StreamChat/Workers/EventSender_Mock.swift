@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -10,7 +10,7 @@ final class EventSender_Mock: EventSender {
     @Atomic var sendEvent_payload: Any?
     @Atomic var sendEvent_cid: ChannelId?
     @Atomic var sendEvent_completion: ((Error?) -> Void)?
-    
+
     override func sendEvent<Payload: CustomEventPayload>(
         _ payload: Payload,
         to cid: ChannelId,
@@ -20,7 +20,7 @@ final class EventSender_Mock: EventSender {
         sendEvent_cid = cid
         sendEvent_completion = completion
     }
-    
+
     func cleanUp() {
         sendEvent_payload = nil
         sendEvent_cid = nil

@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import SwiftUI
@@ -12,7 +12,7 @@ struct ImageView: View {
     }
 
     @ObservedObject private var image = FetchImage()
-    
+
     var body: some View {
         ZStack {
             Circle()

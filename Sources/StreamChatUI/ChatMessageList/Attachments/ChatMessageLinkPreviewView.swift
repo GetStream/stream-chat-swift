@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -23,7 +23,7 @@ open class ChatMessageLinkPreviewView: _Control, ThemeProvider {
         .withoutAutoresizingMaskConstraints
         .withBidirectionalLanguagesSupport
         .withAccessibilityIdentifier(identifier: "authorLabel")
-    
+
     /// Label showing `title`.
     public private(set) lazy var titleLabel = UILabel()
         .withoutAutoresizingMaskConstraints
@@ -42,7 +42,7 @@ open class ChatMessageLinkPreviewView: _Control, ThemeProvider {
 
     /// Constraint for `authorLabel`.
     open var authorOnImageConstraint: NSLayoutConstraint?
-    
+
     /// Constraint for `imagePreview`'s height.
     open var imagePreviewHeightConstraint: NSLayoutConstraint?
 
@@ -52,18 +52,18 @@ open class ChatMessageLinkPreviewView: _Control, ThemeProvider {
         imagePreview.contentMode = .scaleAspectFill
         imagePreview.layer.cornerRadius = 8
         imagePreview.clipsToBounds = true
-        
+
         authorBackground.layer.cornerRadius = 15
         authorBackground.layer.maskedCorners = [.layerMaxXMinYCorner]
         authorBackground.clipsToBounds = true
         authorBackground.backgroundColor = appearance.colorPalette.highlightedAccentBackground1
-        
+
         authorLabel.font = appearance.fonts.bodyBold
         authorLabel.adjustsFontForContentSizeCategory = true
-        
+
         titleLabel.font = appearance.fonts.subheadlineBold
         titleLabel.adjustsFontForContentSizeCategory = true
-        
+
         bodyTextView.backgroundColor = .clear
         bodyTextView.font = appearance.fonts.subheadline
         bodyTextView.adjustsFontForContentSizeCategory = true
@@ -72,14 +72,14 @@ open class ChatMessageLinkPreviewView: _Control, ThemeProvider {
         bodyTextView.textContainer.maximumNumberOfLines = 3
         bodyTextView.textContainer.lineBreakMode = .byTruncatingTail
     }
-    
+
     override open func setUp() {
         super.setUp()
 
         imagePreview.isUserInteractionEnabled = false
         authorBackground.isUserInteractionEnabled = false
         textStack.isUserInteractionEnabled = false
-        
+
         bodyTextView.isEditable = false
         bodyTextView.isScrollEnabled = false
     }
@@ -90,11 +90,11 @@ open class ChatMessageLinkPreviewView: _Control, ThemeProvider {
         addSubview(imagePreview)
         addSubview(authorBackground)
         addSubview(textStack)
-        
+
         imagePreview.pin(anchors: [.leading, .top, .trailing], to: self)
         imagePreviewHeightConstraint = imagePreview.heightAnchor.pin(equalTo: imagePreview.widthAnchor, multiplier: 0.5)
         imagePreviewHeightConstraint?.isActive = true
-        
+
         textStack.addArrangedSubviews([titleLabel, bodyTextView])
         textStack.axis = .vertical
         textStack.alignment = .leading
@@ -106,7 +106,7 @@ open class ChatMessageLinkPreviewView: _Control, ThemeProvider {
         authorBackground.bottomAnchor.pin(equalTo: imagePreview.bottomAnchor).isActive = true
         imagePreview.trailingAnchor.pin(greaterThanOrEqualToSystemSpacingAfter: authorBackground.trailingAnchor).isActive = true
         authorBackground.embed(authorLabel, insets: NSDirectionalEdgeInsets(top: 8, leading: 8, bottom: 4, trailing: 12))
-    
+
         authorLabel.setContentCompressionResistancePriority(.streamRequire, for: .vertical)
         titleLabel.setContentCompressionResistancePriority(.streamRequire, for: .vertical)
         bodyTextView.setContentHuggingPriority(.streamLow, for: .horizontal)

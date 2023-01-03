@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -8,16 +8,16 @@ import CoreData
 final class ChannelMemberListQueryDTO: NSManagedObject {
     /// Unique identifier of the query.
     @NSManaged var queryHash: String
-    
+
     /// Serialized `Filter` JSON which can be used in cases the query needs to be repeated.
     @NSManaged var filterJSONData: Data?
-    
+
     /// The channel the query works with.
     @NSManaged var channel: ChannelDTO
-        
+
     /// A set of members matching the query.
     @NSManaged var members: Set<MemberDTO>
-        
+
     static func load(queryHash: String, context: NSManagedObjectContext) -> ChannelMemberListQueryDTO? {
         load(
             keyPath: #keyPath(ChannelMemberListQueryDTO.queryHash),
@@ -25,12 +25,12 @@ final class ChannelMemberListQueryDTO: NSManagedObject {
             context: context
         ).first
     }
-    
+
     static func loadOrCreate(queryHash: String, context: NSManagedObjectContext) -> ChannelMemberListQueryDTO {
         if let existing = load(queryHash: queryHash, context: context) {
             return existing
         }
-        
+
         let request = fetchRequest(
             keyPath: #keyPath(ChannelMemberListQueryDTO.queryHash),
             equalTo: queryHash
@@ -45,12 +45,12 @@ extension NSManagedObjectContext: MemberListQueryDatabaseSession {
     func channelMemberListQuery(queryHash: String) -> ChannelMemberListQueryDTO? {
         ChannelMemberListQueryDTO.load(queryHash: queryHash, context: self)
     }
-    
+
     func saveQuery(_ query: ChannelMemberListQuery) throws -> ChannelMemberListQueryDTO {
         guard let channelDTO = channel(cid: query.cid) else {
             throw ClientError.ChannelDoesNotExist(cid: query.cid)
         }
-        
+
         let dto = ChannelMemberListQueryDTO.loadOrCreate(queryHash: query.queryHash, context: self)
         dto.channel = channelDTO
 
@@ -62,9 +62,9 @@ extension NSManagedObjectContext: MemberListQueryDatabaseSession {
         } catch {
             log.error("Failed encoding query Filter data with error: \(error). Using 'none' filter instead.")
         }
-        
+
         dto.filterJSONData = jsonData
-        
+
         return dto
     }
 }

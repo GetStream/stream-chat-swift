@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -11,11 +11,11 @@ final class MessageSender_Tests: XCTestCase {
     var webSocketClient: WebSocketClient_Mock!
     var apiClient: APIClient_Spy!
     var database: DatabaseContainer_Spy!
-    
+
     var sender: MessageSender!
-    
+
     var cid: ChannelId!
-    
+
     override func setUp() {
         super.setUp()
 
@@ -24,13 +24,13 @@ final class MessageSender_Tests: XCTestCase {
         database = DatabaseContainer_Spy()
         messageRepository = MessageRepository_Mock(database: database, apiClient: apiClient)
         sender = MessageSender(messageRepository: messageRepository, database: database, apiClient: apiClient)
-        
+
         cid = .unique
-        
+
         try! database.createCurrentUser()
         try! database.createChannel(cid: cid)
     }
-    
+
     override func tearDown() {
         apiClient.cleanUp()
         messageRepository.clear()
@@ -51,7 +51,7 @@ final class MessageSender_Tests: XCTestCase {
 
         super.tearDown()
     }
-    
+
     func test_senderSendsMessage_withPendingSendLocalState_and_uploadedOrEmptyAttachments() throws {
         let message1Id: MessageId = .unique
         var message2Id: MessageId!
@@ -127,10 +127,10 @@ final class MessageSender_Tests: XCTestCase {
         }
         XCTAssertCall("sendMessage(with:completion:)", on: messageRepository, times: 2)
     }
-    
+
     func test_sender_sendsMessage_withUploadedAttachments() throws {
         var messageId: MessageId!
-        
+
         try database.writeSynchronously { session in
             let message = try session.createNewMessage(
                 in: self.cid,
@@ -147,14 +147,14 @@ final class MessageSender_Tests: XCTestCase {
             message.localMessageState = .pendingSend
             messageId = message.id
         }
-        
+
         AssertAsync.willBeTrue(messageRepository.sendMessageIds.contains(where: { $0 == messageId }))
         XCTAssertCall("sendMessage(with:completion:)", on: messageRepository, times: 1)
     }
-    
+
     func test_sender_sendsMessage_withBothNotUploadableAttachmentAndUploadedAttachments() throws {
         var messageId: MessageId!
-        
+
         try database.writeSynchronously { session in
             let message = try session.createNewMessage(
                 in: self.cid,
@@ -171,7 +171,7 @@ final class MessageSender_Tests: XCTestCase {
             message.localMessageState = .pendingSend
             messageId = message.id
         }
-        
+
         AssertAsync.staysTrue(messageRepository.sendMessageIds.isEmpty)
 
         // Simulate attachment seed uploaded
@@ -247,12 +247,12 @@ final class MessageSender_Tests: XCTestCase {
         // Check the 3rd API call
         AssertAsync.willBeEqual(messageRepository.sendMessageCalls.first?.key, message3Id)
     }
-    
+
     func test_senderSendsMessages_forMultipleChannelsInParalel_butStillInTheCorrectOrder() throws {
         let cidA = cid!
         let cidB = ChannelId.unique
         try database.createChannel(cid: cidB)
-        
+
         var channelA_message1: MessageId!
         var channelA_message2: MessageId!
 
@@ -271,7 +271,7 @@ final class MessageSender_Tests: XCTestCase {
             )
             messageA1.localMessageState = .pendingSend
             channelA_message1 = messageA1.id
-            
+
             let messageA2 = try session.createNewMessage(
                 in: cidA,
                 text: "Channel A message 2",
@@ -293,7 +293,7 @@ final class MessageSender_Tests: XCTestCase {
             )
             messageB1.localMessageState = .pendingSend
             channelB_message1 = messageB1.id
-            
+
             let messageB2 = try session.createNewMessage(
                 in: cidB,
                 text: "Channel B message 2",
@@ -305,7 +305,7 @@ final class MessageSender_Tests: XCTestCase {
             messageB2.localMessageState = .pendingSend
             channelB_message2 = messageB2.id
         }
-        
+
         // Wait for 2 repository calls to be made
         AssertAsync.willBeEqual(messageRepository.sendMessageCalls.count, 2)
         XCTAssertTrue(messageRepository.sendMessageCalls.keys.contains(channelA_message1))
@@ -316,7 +316,7 @@ final class MessageSender_Tests: XCTestCase {
             let message = ChatMessage.mock(id: $0.key, cid: cid, text: "Message sent", author: .unique)
             $0.value(.success(message))
         }
-                
+
         // Wait for 2 more repository calls to be made
         AssertAsync.willBeEqual(messageRepository.sendMessageCalls.count, 4)
         XCTAssertTrue(messageRepository.sendMessageCalls.keys.contains(channelA_message2))
@@ -330,16 +330,16 @@ final class MessageSender_Tests: XCTestCase {
     }
 
     // MARK: - Life cycle tests
-    
+
     func test_sender_doesNotRetainItself() throws {
         let messageId: MessageId = .unique
-        
+
         // Create a message with pending state
         try database.createMessage(id: messageId, cid: cid, text: "Message pending send", localState: .pendingSend)
-        
+
         // Wait for the repository call
         AssertAsync.willBeTrue(messageRepository.sendMessageCalls.count == 1)
-        
+
         // Assert sender can be released even though network response hasn't come yet
         AssertAsync.canBeReleased(&sender)
     }

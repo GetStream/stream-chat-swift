@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -12,16 +12,16 @@ open class CloseButton: _Button, AppearanceProvider {
             updateContentIfNeeded()
         }
     }
-    
+
     override open func setUpAppearance() {
         super.setUpAppearance()
-        
+
         setImage(appearance.images.close, for: .normal)
     }
-    
+
     override open func updateContent() {
         super.updateContent()
-        
+
         if isHighlighted {
             tintColor = appearance.colorPalette.highlightedColorForColor(
                 appearance.colorPalette.text

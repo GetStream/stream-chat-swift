@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChatTestHelpers
@@ -18,7 +18,7 @@ final class DefaultMarkdownFormatter_Tests: XCTestCase {
         sut = nil
         try super.tearDownWithError()
     }
-    
+
     func test_containsMarkdown_whenCheckOnAStringWithNoMarkdown_thenReturnsFalse() {
         // GIVEN
         let stringWithNoMarkdown = "Hello, This is a test String"
@@ -29,7 +29,7 @@ final class DefaultMarkdownFormatter_Tests: XCTestCase {
         // THEN
         XCTAssertEqual(false, containsMarkdown)
     }
-    
+
     func test_containsMarkdown_whenCheckForItalicEmphasis_thenReturnsTrue() {
         // GIVEN
         let stringWithItalicMarkdown1 = "Hello, This is a *test* String"
@@ -68,7 +68,7 @@ final class DefaultMarkdownFormatter_Tests: XCTestCase {
         // THEN
         XCTAssertEqual(true, containsStrikethroughMarkdown)
     }
-    
+
     func test_containsMarkdown_whenCheckForCodeEmphasis_thenReturnsTrue() {
         // GIVEN
         let stringWithCodeMarkdown = "Hello, This is a `test` String"
@@ -79,7 +79,7 @@ final class DefaultMarkdownFormatter_Tests: XCTestCase {
         // THEN
         XCTAssertEqual(true, containsCodeMarkdown)
     }
-    
+
     func test_containsMarkdown_whenCheckForHeadings_thenReturnsTrue() {
         // GIVEN
         let stringWithHeadingsMarkdown1 = "# Hello, This is a test String"
@@ -107,13 +107,13 @@ final class DefaultMarkdownFormatter_Tests: XCTestCase {
         XCTAssertEqual(true, containsHeadingsMarkdown3)
         XCTAssertEqual(true, containsHeadingsMarkdown4)
     }
-    
+
     func test_containsMarkdown_whenCheckForLinks_thenReturnsTrue() {
         // GIVEN
         let stringWithLinkMarkdown1 = "Hello, [Stream Chat](https://getstream.io/) is awesome!"
         let stringWithLinkMarkdown2 = """
            Hello, [Stream Chat][1] is awesome!
-                                      
+
            [1]: https://getstream.io/
         """
 
@@ -125,7 +125,7 @@ final class DefaultMarkdownFormatter_Tests: XCTestCase {
         XCTAssertEqual(true, containsLinkMarkdown1)
         XCTAssertEqual(true, containsLinkMarkdown2)
     }
-    
+
     func test_containsMarkdown_whenCheckForBlockquotes_thenReturnsTrue() {
         // GIVEN
         let stringWithBlockquotesMarkdown = "> Hello, This is a test String"
@@ -136,7 +136,7 @@ final class DefaultMarkdownFormatter_Tests: XCTestCase {
         // THEN
         XCTAssertEqual(true, containsBlockquotesMarkdown)
     }
-    
+
     func test_containsMarkdown_whenCheckForUnorderedLists_thenReturnsTrue() {
         // GIVEN
         let stringWithUnorderedListsMarkdown = """
@@ -152,7 +152,7 @@ final class DefaultMarkdownFormatter_Tests: XCTestCase {
         // THEN
         XCTAssertEqual(true, containsUnorderedListsMarkdown)
     }
-    
+
     func test_containsMarkdown_whenCheckForOrderedLists_thenReturnsTrue() {
         // GIVEN
         let stringWithOrderedListsMarkdown = """
@@ -168,7 +168,7 @@ final class DefaultMarkdownFormatter_Tests: XCTestCase {
         // THEN
         XCTAssertEqual(true, containsOrderedListsMarkdown)
     }
-    
+
     func test_format_whenStringContainsItalicMarkdown_thenAttributedStringIncludesItalicTrait() {
         // GIVEN
         let stringWithMarkdown = "Hello, This is a *test* String"
@@ -185,26 +185,26 @@ final class DefaultMarkdownFormatter_Tests: XCTestCase {
             }
         }
     }
-    
+
     func test_format_whenStringContainsManyMarkdowns_thenAttributedStringIncludesAllAttibutes() {
         // GIVEN
         let stringWithMarkdown =
             """
             # Swift
-            
+
             Swift is a new ~~programming~~ language for iOS, macOS, watchOS, and tvOS **app development**. Here is an example of its syntax:
-            
+
             `let property: Double = 10.0`
-            
+
             Swift has different keywords for defining types such as:
             - class
             - struct
             - enum
             - actor
-            
+
             For more information you can visit [this link](https://docs.swift.org/swift-book/).
             """
-        
+
         let expectedHeading1AttributedSubstring = "Swift"
         let expectedStrikethroughAttributedSubstring = "programming"
         let expectedBoldAttributedSubstring = "app development"
@@ -222,7 +222,7 @@ final class DefaultMarkdownFormatter_Tests: XCTestCase {
             length: attributedString.length
         )) { attributes, range, _ in
             let fontAttribute = attributes[.font] as? UIFont
-            
+
             if let headerAttribute = fontAttribute,
                headerAttribute.fontDescriptor.pointSize == UIFont.preferredFont(forTextStyle: .title1).pointSize {
                 XCTAssertEqual(expectedHeading1AttributedSubstring, attributedString.attributedSubstring(from: range).string)

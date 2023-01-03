@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -36,7 +36,7 @@ public class BackendRobot {
         server.setCooldown(enabled: value, duration: duration, inChannelWithId: id)
         return self
     }
-    
+
     @discardableResult
     public func generateChannels(
         count: Int,
@@ -51,15 +51,15 @@ public class BackendRobot {
     ) -> Self  {
         var json = server.channelList
         guard let sampleChannel = (json[JSONKey.channels] as? [[String: Any]])?.first else { return self }
-        
+
         let userSources = TestData.toJson(.httpChatEvent)[JSONKey.event] as? [String: Any]
-        
+
         let members = server.mockMembers(
             userSources: userSources,
             sampleChannel: sampleChannel,
             memberDetails: memberDetails
         )
-        
+
         let author = server.setUpUser(source: userSources, details: authorDetails)
         let channels = server.mockChannels(
             count: count,
@@ -69,7 +69,7 @@ public class BackendRobot {
             members: members,
             sampleChannel: sampleChannel
         )
-        
+
         json[JSONKey.channels] = channels
         server.channelList = json
         return self

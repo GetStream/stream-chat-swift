@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -61,28 +61,28 @@ class CreateChatViewController: UIViewController {
             infoLabelStackView.isLayoutMarginsRelativeArrangement = true
         }
     }
-    
+
     @IBOutlet var alertView: UIView!
     @IBOutlet var alertImage: UIImageView!
     @IBOutlet var alertText: UILabel!
     let alertLayoutGuide = UILayoutGuide()
-    
+
     var composerView: DemoComposerVC!
     var messageComposerBottomConstraint: NSLayoutConstraint?
-    
+
     var searchController: ChatUserSearchController!
-    
+
     var users: [ChatUser] {
         searchController.userArray
     }
-    
+
     var selectedUserIds: Set<String> {
         Set(searchField.tokens.compactMap { ($0.representedObject as? ChatUser)?.id })
     }
-    
+
     var operation: DispatchWorkItem?
     let throttleTime = 1000
-    
+
     lazy var formatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.timeStyle = .short
@@ -90,34 +90,34 @@ class CreateChatViewController: UIViewController {
         formatter.doesRelativeDateFormatting = true
         return formatter
     }()
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         // Remove the back button title
         let backButton = UIBarButtonItem()
         backButton.title = ""
         backButton.tintColor = .label
         navigationController?.navigationBar.topItem?.backBarButtonItem = backButton
-        
+
         tableView.delegate = self
         tableView.dataSource = self
-        
+
         tableView.bounces = true
-        
+
         // An old trick to force the table view to hide empty lines
         tableView.tableFooterView = UIView()
-        
+
         searchField.allowsDeletingTokens = true
         searchField.addTarget(self, action: #selector(searchFieldDidTapReturn(_:)), for: .primaryActionTriggered)
-        
+
         searchController.delegate = self
-        
+
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(openCreateGroupChat))
         createGroupStack.addGestureRecognizer(tapGestureRecognizer)
-        
+
         // ComposerView
-        
+
         composerView = DemoComposerVC()
         composerView.view.translatesAutoresizingMaskIntoConstraints = false
         addChild(composerView) // , targetView: view)
@@ -128,25 +128,25 @@ class CreateChatViewController: UIViewController {
             .isActive = true
         messageComposerBottomConstraint = composerView.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         messageComposerBottomConstraint?.isActive = true
-        
+
         // AlertLayoutGuide
         view.addLayoutGuide(alertLayoutGuide)
-        
+
         NSLayoutConstraint.activate([
             alertLayoutGuide.topAnchor.constraint(equalTo: searchFieldStack.bottomAnchor),
             alertLayoutGuide.bottomAnchor.constraint(equalTo: composerView.view.topAnchor),
             alertLayoutGuide.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             alertLayoutGuide.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            
+
             alertView.leadingAnchor.constraint(equalTo: alertLayoutGuide.leadingAnchor),
             alertView.trailingAnchor.constraint(equalTo: alertLayoutGuide.trailingAnchor),
             alertView.centerYAnchor.constraint(equalTo: alertLayoutGuide.centerYAnchor),
-            
+
             activityIndicator.centerYAnchor.constraint(equalTo: alertLayoutGuide.centerYAnchor),
-            
+
             mainStackView.bottomAnchor.constraint(equalTo: composerView.view.topAnchor)
         ])
-        
+
         // Empty initial search to get all users
         searchController.search(term: nil) { error in
             if error != nil {
@@ -155,7 +155,7 @@ class CreateChatViewController: UIViewController {
         }
         infoLabel.text = "On the platform"
         update(for: .loading)
-        
+
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(keyboardWillChangeFrame),
@@ -163,7 +163,7 @@ class CreateChatViewController: UIViewController {
             object: nil
         )
     }
-    
+
     func update(for state: State) {
         switch state {
         case .error:
@@ -203,18 +203,18 @@ class CreateChatViewController: UIViewController {
             alertText.text = "No chats here yet..."
         }
     }
-    
+
     @objc func keyboardWillChangeFrame(notification: NSNotification) {
         guard
             let frame = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue,
             let duration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? Double,
             let curve = notification.userInfo![UIResponder.keyboardAnimationCurveUserInfoKey] as? UInt
         else { return }
-        
+
         let localFrame = view.convert(frame, from: nil)
         // message composer follows keyboard
         messageComposerBottomConstraint?.constant = -(view.bounds.height - localFrame.minY)
-        
+
         UIView.animate(
             withDuration: duration,
             delay: 0.0,
@@ -224,20 +224,20 @@ class CreateChatViewController: UIViewController {
             }
         )
     }
-    
+
     @objc func searchFieldDidTapReturn(_ sender: UISearchTextField) {
         sender.resignFirstResponder()
     }
-    
+
     @IBAction func searchFieldDidChange(_ sender: UISearchTextField) {
         update(for: .loading)
-        
+
         if let text = sender.text, !text.isEmpty {
             infoLabel.text = "Matches for \"\(text)\""
         } else {
             infoLabel.text = "On the platform"
         }
-        
+
         operation?.cancel()
         operation = DispatchWorkItem { [weak self] in
             self?.searchController.search(term: sender.text) { error in
@@ -246,14 +246,14 @@ class CreateChatViewController: UIViewController {
                 }
             }
         }
-        
+
         DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(throttleTime), execute: operation!)
     }
-    
+
     @IBAction func addPersonTapped(_ sender: Any) {
         update(for: .searching)
     }
-    
+
     @objc func openCreateGroupChat() {
         let storyboard = UIStoryboard(name: "Main", bundle: .main)
         if let createGroupController = storyboard.instantiateViewController(withIdentifier: "CreateGroupViewController") as? CreateGroupViewController {
@@ -268,7 +268,7 @@ class CreateChatViewController: UIViewController {
 extension CreateChatViewController: ChatUserSearchControllerDelegate {
     func controller(_ controller: ChatUserSearchController, didChangeUsers changes: [ListChange<ChatUser>]) {
         tableView.beginUpdates()
-        
+
         for change in changes {
             switch change {
             case let .insert(_, index: index):
@@ -281,10 +281,10 @@ extension CreateChatViewController: ChatUserSearchControllerDelegate {
                 tableView.deleteRows(at: [index], with: .automatic)
             }
         }
-        
+
         tableView.endUpdates()
     }
-    
+
     func controller(_ controller: DataController, didChangeState state: DataController.State) {
         if case .remoteDataFetched = state {
             print("\(users.count) users found")
@@ -297,41 +297,41 @@ extension CreateChatViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         users.count
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "UserCredentialsCell", for: indexPath) as? UserCredentialsCell else {
             return UITableViewCell()
         }
         let user = users[indexPath.row]
-        
+
         if let imageURL = user.imageURL {
             Nuke.loadImage(with: imageURL, into: cell.avatarView)
         }
         cell.avatarView.backgroundColor = view.tintColor
         cell.nameLabel.text = user.name ?? user.id
-        
+
         if let lastActive = user.lastActiveAt {
             cell.descriptionLabel.text = "Last seen: " + formatter.string(from: lastActive)
         } else {
             cell.descriptionLabel.text = "Never seen"
         }
-        
+
         if selectedUserIds.contains(user.id) {
             cell.accessoryImageView.image = UIImage(systemName: "checkmark.circle.fill")
         } else {
             cell.accessoryImageView.image = nil
         }
-        
+
         cell.user = user
-        
+
         return cell
     }
-    
+
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         defer {
             tableView.deselectRow(at: indexPath, animated: true)
         }
-        
+
         guard let cell = tableView.cellForRow(at: indexPath) as? UserCredentialsCell else {
             return
         }
@@ -340,7 +340,7 @@ extension CreateChatViewController: UITableViewDelegate, UITableViewDataSource {
             // De-select user by tapping functionality was removed due to designer feedback
             return
         }
-        
+
         // Select user
         cell.accessoryImageView.image = UIImage(systemName: "checkmark.circle.fill")
         let token = UISearchToken(
@@ -349,7 +349,7 @@ extension CreateChatViewController: UITableViewDelegate, UITableViewDataSource {
         )
         token.representedObject = cell.user
         searchField.replaceTextualPortion(of: searchField.textualRange, with: token, at: searchField.tokens.count)
-        
+
         update(for: .selected)
         let client = searchController.client
         do {
@@ -364,17 +364,17 @@ extension CreateChatViewController: UITableViewDelegate, UITableViewDataSource {
             print(error.localizedDescription)
         }
     }
-    
+
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         72
     }
-    
+
     public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         let bottomEdge = scrollView.contentOffset.y + scrollView.bounds.height
         guard bottomEdge >= scrollView.contentSize.height else { return }
         searchController.loadNextUsers()
     }
-    
+
     public func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         // Hide keyboard on scroll
         view.endEditing(true)

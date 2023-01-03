@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -43,7 +43,7 @@ final class ChatUserAvatarView_Tests: XCTestCase {
                 backgroundColor = .systemPink
                 widthAnchor.constraint(equalTo: heightAnchor, multiplier: 1).isActive = true
             }
-            
+
             var maskingPath: CGPath? {
                 UIBezierPath(rect: frame.insetBy(dx: -frame.width / 4, dy: -frame.height / 4)).cgPath
             }

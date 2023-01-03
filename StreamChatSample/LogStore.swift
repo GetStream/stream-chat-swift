@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -7,9 +7,9 @@ import StreamChat
 
 class LogStore: BaseLogDestination {
     @Atomic var logs = ""
-    
+
     static var shared: LogStore!
-    
+
     required init(
         identifier: String,
         level: LogLevel,
@@ -38,14 +38,14 @@ class LogStore: BaseLogDestination {
             showLineNumber: showLineNumber,
             showFunctionName: showFunctionName
         )
-        
+
         Self.shared = self
     }
-    
+
     static func registerShared() {
         LogConfig.destinationTypes.append(LogStore.self)
     }
-    
+
     override func write(message: String) {
         _logs { $0 += message }
     }

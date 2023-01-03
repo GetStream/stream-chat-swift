@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import UIKit
@@ -19,10 +19,10 @@ open class ChatChannelListLoadingViewCellContentView: _View, ThemeProvider, Skel
 
     open private(set) lazy var timestampLabel: UILabel = UILabel()
         .withoutAutoresizingMaskConstraints
-    
+
     open private(set) lazy var mainContainer: ContainerStackView = ContainerStackView()
         .withoutAutoresizingMaskConstraints
-    
+
     open private(set) lazy var rightContainer: ContainerStackView = ContainerStackView(
         axis: .vertical,
         spacing: 4
@@ -34,31 +34,31 @@ open class ChatChannelListLoadingViewCellContentView: _View, ThemeProvider, Skel
 
     open private(set) lazy var bottomContainer: ContainerStackView = ContainerStackView(alignment: .center, spacing: 8)
         .withoutAutoresizingMaskConstraints
-    
+
     private let avatarViewLayer = CAGradientLayer()
     private let titleLabelLayer = CAGradientLayer()
     private let subtitleLabelLayer = CAGradientLayer()
     private let timestampLabelLayer = CAGradientLayer()
-    
+
     override open func setUp() {
         super.setUp()
-        
+
         titleLabel.text = "Placeholder"
         subtitleLabel.text = "subtitle placeholder"
         timestampLabel.text = "00:00"
-        
+
         avatarViewLayer.startPoint = CGPoint(x: 0, y: 0.5)
         avatarViewLayer.endPoint = CGPoint(x: 1, y: 0.5)
         avatarView.presenceAvatarView.avatarView.imageView.layer.addSublayer(avatarViewLayer)
-        
+
         titleLabelLayer.startPoint = CGPoint(x: 0, y: 0.5)
         titleLabelLayer.endPoint = CGPoint(x: 1, y: 0.5)
         titleLabel.layer.addSublayer(titleLabelLayer)
-        
+
         subtitleLabelLayer.startPoint = CGPoint(x: 0, y: 0.5)
         subtitleLabelLayer.endPoint = CGPoint(x: 1, y: 0.5)
         subtitleLabel.layer.addSublayer(subtitleLabelLayer)
-        
+
         timestampLabelLayer.startPoint = CGPoint(x: 0, y: 0.5)
         timestampLabelLayer.endPoint = CGPoint(x: 1, y: 0.5)
         timestampLabel.layer.addSublayer(timestampLabelLayer)
@@ -66,20 +66,20 @@ open class ChatChannelListLoadingViewCellContentView: _View, ThemeProvider, Skel
         let avatarGroup = makeAnimationGroup()
         avatarGroup.beginTime = 0.0
         avatarViewLayer.add(avatarGroup, forKey: "backgroundColor")
-        
+
         let titleGroup = makeAnimationGroup(previousGroup: avatarGroup)
         titleLabelLayer.add(titleGroup, forKey: "backgroundColor")
-        
+
         let subtitleGroup = makeAnimationGroup(previousGroup: avatarGroup)
         subtitleLabelLayer.add(subtitleGroup, forKey: "backgroundColor")
-        
+
         let timestampGroup = makeAnimationGroup(previousGroup: subtitleGroup)
         timestampLabelLayer.add(timestampGroup, forKey: "backgroundColor")
     }
-    
+
     override open func setUpLayout() {
         super.setUpLayout()
-        
+
         topContainer.addArrangedSubviews([
             titleLabel.flexible(axis: .horizontal)
         ])
@@ -87,7 +87,7 @@ open class ChatChannelListLoadingViewCellContentView: _View, ThemeProvider, Skel
         bottomContainer.addArrangedSubviews([
             subtitleLabel.flexible(axis: .horizontal), timestampLabel
         ])
-        
+
         rightContainer.addArrangedSubviews([
             topContainer, bottomContainer
         ])
@@ -101,17 +101,17 @@ open class ChatChannelListLoadingViewCellContentView: _View, ThemeProvider, Skel
             avatarView,
             rightContainer
         ])
-        
+
         mainContainer.alignment = .center
-        
+
         timestampLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
-        
+
         embed(mainContainer, insets: .init(top: 8, leading: 8, bottom: 8, trailing: 8))
     }
-    
+
     override open func layoutSubviews() {
         super.layoutSubviews()
-        
+
         avatarViewLayer.frame = avatarView.bounds
         avatarViewLayer.cornerRadius = titleLabel.bounds.height / 2
 

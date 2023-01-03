@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -37,7 +37,7 @@ extension Endpoint {
             body: body
         )
     }
-    
+
     /// Builds the endpoint to remove a device from the user.
     /// The `userId` parameter must belong to the currently authorized user.
     /// - Parameters:
@@ -54,7 +54,7 @@ extension Endpoint {
             body: nil
         )
     }
-    
+
     /// Builds the endpoint to query devices registered to a user
     /// The `userId` parameter must belong to the currently authorized user.
     /// - Parameters:

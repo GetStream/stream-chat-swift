@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import UIKit
@@ -24,35 +24,35 @@ open class ChatMessageListScrollOverlayView: _View, ThemeProvider {
     open lazy var dateSeparatorView: ChatMessageListDateSeparatorView = components
         .messageListDateSeparatorView.init()
         .withoutAutoresizingMaskConstraints
-            
+
     /// The data source used to get the content to display.
     public weak var dataSource: ChatMessageListScrollOverlayDataSource?
-    
+
     /// The list view that is listened for being scrolled.
     public weak var listView: UITableView? {
         didSet {
             listView?.accessibilityIdentifier = "listView"
             contentOffsetObservation = listView?.observe(\.contentOffset) { [weak self] tb, _ in
                 guard let self = self else { return }
-                
+
                 // To display correct date we use bottom edge of scroll overlay
                 let refPoint = CGPoint(
                     x: self.center.x,
                     y: self.frame.maxY
                 )
-                
+
                 // If we cannot find any indexPath for `cell` we try to use max visible indexPath (we have bottom to top) layout
                 guard
                     let refPointInListView = self.superview?.convert(refPoint, to: tb),
                     let indexPath = tb.indexPathForRow(at: refPointInListView) ?? tb.indexPathsForVisibleRows?.max()
                 else { return }
-                
+
                 let overlayText = self.dataSource?.scrollOverlay(self, textForItemAt: indexPath)
-                
+
                 // If we have no date we have no reason to display `dateView`
                 self.isHidden = (overlayText ?? "").isEmpty
                 self.content = overlayText
-                
+
                 // Apple's naming is quite weird as actually this property should rather be named `isScrolling`
                 // as it stays true when user stops dragging and scrollView is decelerating and becomes false
                 // when scrollView stops decelerating
@@ -65,26 +65,26 @@ open class ChatMessageListScrollOverlayView: _View, ThemeProvider {
                     self.setAlpha(0)
                 }
             }
-            
+
             oldValue?.panGestureRecognizer.removeTarget(self, action: #selector(scrollStateChanged))
             listView?.panGestureRecognizer.addTarget(self, action: #selector(scrollStateChanged))
         }
     }
-    
+
     private var contentOffsetObservation: NSKeyValueObservation?
-    
+
     override open func setUpLayout() {
         super.setUpLayout()
-        
+
         embed(dateSeparatorView)
     }
-    
+
     override open func updateContent() {
         super.updateContent()
 
         dateSeparatorView.content = content
     }
-    
+
     /// Is invoked when a pan gesture state is changed.
     @objc open func scrollStateChanged(_ sender: UIPanGestureRecognizer) {
         switch sender.state {
@@ -100,7 +100,7 @@ open class ChatMessageListScrollOverlayView: _View, ThemeProvider {
         default: break
         }
     }
-    
+
     /// Updates the alpha of the overlay.
     open func setAlpha(_ alpha: CGFloat) {
         Animate(isAnimated: true) {

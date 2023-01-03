@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -9,12 +9,12 @@ import XCTest
 
 final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
     private var appearance: Appearance = Appearance()
-    
+
     // MARK: - Flipped
 
     func test_optionsForMessage_whenMessageIsSentByCurrentUser_includesFlipped() {
         let sut = createOptionsResolver()
-        
+
         // Create a message sent NOT by the current user
         let messageSentByCurrentUser: ChatMessage = .mock(
             id: .unique,
@@ -38,7 +38,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
 
     func test_optionsForMessage_whenMessageIsSentNotByCurrentUser_doesNotIncludeFlipped() {
         let sut = createOptionsResolver()
-        
+
         // Create a message sent by another current user
         let messageSentNotByCurrentUser: ChatMessage = .mock(
             id: .unique,
@@ -64,7 +64,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
 
     func test_optionsForMessage_includesBubbleByDefault() {
         let sut = createOptionsResolver()
-        
+
         let channelHistory: [(ChatMessage, Bool)] = .directMessagesHistory(
             minTimeIntervalBetweenMessagesInGroup: sut.maxTimeIntervalBetweenMessagesInGroup
         )
@@ -87,7 +87,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
 
     func test_optionsForMessage_whenMessageIsLastInSequence_doesNotIncludeContinuousBubble() {
         let sut = createOptionsResolver()
-        
+
         for isSentByCurrentUser in [true, false] {
             // Create message
             let message: ChatMessage = .mock(
@@ -155,7 +155,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
 
     func test_optionsForMessage_whenMessageBelongsToThread_includesContinuousBubble() {
         let sut = createOptionsResolver()
-        
+
         // Create non-deleted thread root message
         let messageThreadRoot: ChatMessage = .mock(
             id: .unique,
@@ -311,7 +311,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
 
     func test_optionsForMessage_whenMessageIsNotLastInSequence_doesNotIncludeTimestamp() {
         let sut = createOptionsResolver()
-        
+
         // Create a user
         let user: ChatUser = .mock(id: .unique)
 
@@ -355,7 +355,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
 
     func test_optionsForMessage_whenMessageIsNotSentByCurrentUser_doesNotIncludeOnlyVisibleToYouIndicator() {
         let sut = createOptionsResolver()
-        
+
         // Create ephemeral message sent by another user
         let messageSentByAnotherUser: ChatMessage = .mock(
             id: .unique,
@@ -379,7 +379,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
 
     func test_optionsForMessage_whenMessageSentByCurrentUserIsEphemeral_includesOnlyVisibleToYouIndicator() {
         let sut = createOptionsResolver()
-        
+
         // Create ephemeral message sent by current user
         let ephemeralMessageSentByCurrentUser: ChatMessage = .mock(
             id: .unique,
@@ -401,10 +401,10 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         // Assert `.onlyVisibleToYouIndicator` is included
         XCTAssertTrue(layoutOptions.contains(.onlyVisibleToYouIndicator))
     }
-    
+
     func test_optionsForMessage_whenMessageSentByTheCurrentUserIsDeleted_includesOnlyVisibleToYouIndicator() {
         let sut = createOptionsResolver(deletedMessagesVisibility: .visibleForCurrentUser)
-        
+
         // Create ephemeral message sent by current user
         let deletedMessageSentByCurrentUser: ChatMessage = .mock(
             id: .unique,
@@ -415,7 +415,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             deletedAt: .unique,
             isSentByCurrentUser: true
         )
-        
+
         // Calculate layout options for the message
         let layoutOptions = sut.optionsForMessage(
             at: .init(item: 0, section: 0),
@@ -427,7 +427,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         // Assert `.onlyVisibleToYouIndicator` is included
         XCTAssertTrue(layoutOptions.contains(.onlyVisibleToYouIndicator))
     }
-    
+
     func test_optionsForMessage_whenMessageSentByTheCurrentUserIsDeleted_doesNotIncludeOnlyVisibleToYouIndicator() {
         // Create ephemeral message sent by current user
         let deletedMessageSentByCurrentUser: ChatMessage = .mock(
@@ -442,7 +442,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
 
         for deletedMessagesVisibility in [ChatClientConfig.DeletedMessageVisibility.alwaysVisible, .alwaysHidden] {
             let sut = createOptionsResolver(deletedMessagesVisibility: deletedMessagesVisibility)
-            
+
             // Calculate layout options for the message
             let layoutOptions = sut.optionsForMessage(
                 at: .init(item: 0, section: 0),
@@ -460,7 +460,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
 
     func test_optionsForMessage_whenMessageIsEphemeral_doesNotIncludeText() {
         let sut = createOptionsResolver()
-        
+
         // Create ephemeral message
         let ephemeralMessage: ChatMessage = .mock(
             id: .unique,
@@ -508,7 +508,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
 
     func test_optionsForMessage_whenMessageHasText_includesText() {
         let sut = createOptionsResolver()
-        
+
         // Create non-ephemeral non-deleted message with text
         let message: ChatMessage = .mock(
             id: .unique,
@@ -533,7 +533,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
 
     func test_optionsForMessage_whenDeletedMessageSentByAnotherUserIsLastInSequence_includesAvatar() {
         let sut = createOptionsResolver()
-        
+
         // Create deleted message last in sequence by another user
         let deletedMessage: ChatMessage = .mock(
             id: .unique,
@@ -558,7 +558,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
 
     func test_optionsForMessage_whenMessageIsSentByCurrentUser_doesNotIncludeAvatar() {
         let sut = createOptionsResolver()
-        
+
         // Create non-deleted message sent by current user that ends the sequence
         let messageSentByCurrentUser: ChatMessage = .mock(
             id: .unique,
@@ -582,7 +582,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
 
     func test_optionsForMessage_whenMessageSentByAnotherUserIsNotLastInSequence_doesNotIncludeAvatar() {
         let sut = createOptionsResolver()
-        
+
         // Create a user
         let anotherUser: ChatUser = .mock(id: .unique)
 
@@ -659,9 +659,9 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         // Assert `.avatar` is included
         XCTAssertTrue(layoutOptions.contains(.avatar))
     }
-    
+
     // MARK: - Author name
-    
+
     func test_optionsForMessage_whenDeletedMessageSentByAnotherUserIsLastInSequence_includesAuthorName() {
         let sut = createOptionsResolver()
 
@@ -1290,7 +1290,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         // Assert `.errorIndicator` is not included
         XCTAssertFalse(layoutOptions.contains(.errorIndicator))
     }
-    
+
     func test_optionsForMessage_whenMessageIsSystem() {
         let sut = createOptionsResolver()
 
@@ -1314,9 +1314,9 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         // Assert only `.text` AND `.centered` is included in the options
         XCTAssertTrue(layoutOptions == [.text, .centered])
     }
-    
+
     // MARK: - isMessageLastInSequence
-    
+
     func test_isMessageLastInSequence() {
         let sut = createOptionsResolver()
 
@@ -1340,20 +1340,20 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             )
         }
     }
-    
+
     func test_isMessageLastInSequence_whenTheNextMessageFromTheSameUserIsErrorMessage_returnsTrue() {
         let sut = createOptionsResolver()
 
         let cid: ChannelId = .unique
         let author: ChatUser = .mock(id: .unique)
-        
+
         let messageFollowedByErrorMessage: ChatMessage = .mock(
             id: .unique,
             cid: cid,
             text: .unique,
             author: author
         )
-        
+
         let deletedMessage: ChatMessage = .mock(
             id: .unique,
             cid: cid,
@@ -1362,7 +1362,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             author: author,
             createdAt: messageFollowedByErrorMessage.createdAt.addingTimeInterval(1)
         )
-        
+
         XCTAssertTrue(
             sut.isMessageLastInSequence(
                 messageIndexPath: .init(item: 1, section: 0),
@@ -1370,20 +1370,20 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             )
         )
     }
-    
+
     func test_isMessageLastInSequence_whenNextMessageFromSameUserIsEphemeral_returnsTrue() {
         let sut = createOptionsResolver()
 
         let cid: ChannelId = .unique
         let author: ChatUser = .mock(id: .unique)
-        
+
         let messageFollowedByEphemeralMessage: ChatMessage = .mock(
             id: .unique,
             cid: cid,
             text: .unique,
             author: author
         )
-        
+
         let ephemeralMessage: ChatMessage = .mock(
             id: .unique,
             cid: cid,
@@ -1392,7 +1392,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             author: author,
             createdAt: messageFollowedByEphemeralMessage.createdAt.addingTimeInterval(1)
         )
-        
+
         XCTAssertTrue(
             sut.isMessageLastInSequence(
                 messageIndexPath: .init(item: 1, section: 0),
@@ -1400,20 +1400,20 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             )
         )
     }
-    
+
     func test_isMessageLastInSequence_whenNextMessageFromSameUserIsSystem_returnsTrue() {
         let sut = createOptionsResolver()
 
         let cid: ChannelId = .unique
         let author: ChatUser = .mock(id: .unique)
-        
+
         let messageFollowedBySystemMessage: ChatMessage = .mock(
             id: .unique,
             cid: cid,
             text: .unique,
             author: author
         )
-        
+
         let systemMessage: ChatMessage = .mock(
             id: .unique,
             cid: cid,
@@ -1422,7 +1422,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             author: author,
             createdAt: messageFollowedBySystemMessage.createdAt.addingTimeInterval(1)
         )
-        
+
         XCTAssertTrue(
             sut.isMessageLastInSequence(
                 messageIndexPath: .init(item: 1, section: 0),
@@ -1430,9 +1430,9 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             )
         )
     }
-    
+
     // MARK: - showOnlyVisibleToYouIndicator
-    
+
     func test_showOnlyVisibleToYouIndicator_whenMessageIsSentByAnotherUser_returnsFalse() {
         let sut = createOptionsResolver()
 
@@ -1445,13 +1445,13 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             deletedAt: .unique,
             isSentByCurrentUser: false
         )
-        
+
         XCTAssertFalse(sut.showOnlyVisibleToYouIndicator(for: message))
     }
 
     func test_showOnlyVisibleToYouIndicator_whenMessageIsEphemeralAndSentByCurrentUser_returnsTrue() {
         let sut = createOptionsResolver()
-        
+
         let message: ChatMessage = .mock(
             id: .unique,
             cid: .unique,
@@ -1460,7 +1460,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             author: .mock(id: .unique),
             isSentByCurrentUser: true
         )
-        
+
         XCTAssertTrue(sut.showOnlyVisibleToYouIndicator(for: message))
     }
 
@@ -1476,10 +1476,10 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             deletedAt: .unique,
             isSentByCurrentUser: true
         )
-        
+
         XCTAssertTrue(sut.showOnlyVisibleToYouIndicator(for: message))
     }
-    
+
     func test_showOnlyVisibleToYouIndicator_whenMessageIsDeletedAndSentByCurrentUser_returnsFalse() {
         let message: ChatMessage = .mock(
             id: .unique,
@@ -1489,17 +1489,17 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             deletedAt: .unique,
             isSentByCurrentUser: true
         )
-        
+
         for deletedMessagesVisibility in [ChatClientConfig.DeletedMessageVisibility.alwaysVisible, .alwaysHidden] {
             let sut = createOptionsResolver(deletedMessagesVisibility: deletedMessagesVisibility)
-            
+
             XCTAssertFalse(sut.showOnlyVisibleToYouIndicator(for: message))
         }
     }
-    
+
     func test_showOnlyVisibleToYouIndicator_whenMessageNotDeletedAndSentByCurrentUser_returnsFalse() {
         let sut = createOptionsResolver(deletedMessagesVisibility: .visibleForCurrentUser)
-        
+
         for type in [MessageType.regular, .reply, .system, .error] {
             let message: ChatMessage = .mock(
                 id: .unique,
@@ -1510,21 +1510,21 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
                 deletedAt: .unique,
                 isSentByCurrentUser: true
             )
-            
+
             XCTAssertFalse(sut.showOnlyVisibleToYouIndicator(for: message))
         }
     }
-    
+
     // MARK: - Delivery status
-    
+
     func test_optionsForMessage_whenMessageIsSentByAnotherUser_doesNotIncludeDeliveryStatusIndicator() {
         let sut = createOptionsResolver()
-        
+
         let channel: ChatChannel = .mock(
             cid: .unique,
             config: .mock(readEventsEnabled: true)
         )
-        
+
         let messageSentByAnotherUser: ChatMessage = .mock(
             id: .unique,
             cid: .unique,
@@ -1532,25 +1532,25 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             author: .mock(id: .unique),
             isSentByCurrentUser: false
         )
-        
+
         let layoutOptions = sut.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: channel,
             with: .init([messageSentByAnotherUser]),
             appearance: appearance
         )
-        
+
         XCTAssertFalse(layoutOptions.contains(.deliveryStatusIndicator))
     }
-    
+
     func test_optionsForMessage_whenMessageIsDeleted_doesNotIncludeDeliveryStatusIndicator() {
         let sut = createOptionsResolver()
-        
+
         let channel: ChatChannel = .mock(
             cid: .unique,
             config: .mock(readEventsEnabled: true)
         )
-        
+
         let deletedMessage: ChatMessage = .mock(
             id: .unique,
             cid: .unique,
@@ -1560,26 +1560,26 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             deletedAt: .unique,
             isSentByCurrentUser: true
         )
-        
+
         let layoutOptions = sut.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: channel,
             with: .init([deletedMessage]),
             appearance: appearance
         )
-        
+
         // Assert `.deliveryStatusIndicator` is not included
         XCTAssertFalse(layoutOptions.contains(.deliveryStatusIndicator))
     }
-    
+
     func test_optionsForMessage_whenLastMessageActionIsFailed_doesNotIncludeDeliveryStatusIndicator() {
         let sut = createOptionsResolver()
-        
+
         let channel: ChatChannel = .mock(
             cid: .unique,
             config: .mock(readEventsEnabled: true)
         )
-        
+
         for failedState: LocalMessageState in [.sendingFailed, .syncingFailed, .deletingFailed] {
             let messageWithFailedState: ChatMessage = .mock(
                 id: .unique,
@@ -1590,26 +1590,26 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
                 localState: failedState,
                 isSentByCurrentUser: true
             )
-            
+
             let layoutOptions = sut.optionsForMessage(
                 at: .init(item: 0, section: 0),
                 in: channel,
                 with: .init([messageWithFailedState]),
                 appearance: appearance
             )
-            
+
             XCTAssertFalse(layoutOptions.contains(.deliveryStatusIndicator))
         }
     }
-    
+
     func test_optionsForMessage_whenHasPendingLocalState_includesDeliveryStatusIndicator() {
         let sut = createOptionsResolver()
-        
+
         let channel: ChatChannel = .mock(
             cid: .unique,
             config: .mock(readEventsEnabled: true)
         )
-        
+
         for pendingState: LocalMessageState in [.pendingSend, .sending, .pendingSync, .syncing, .deleting] {
             let messageInPendingState: ChatMessage = .mock(
                 id: .unique,
@@ -1620,26 +1620,26 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
                 localState: pendingState,
                 isSentByCurrentUser: true
             )
-            
+
             let layoutOptions = sut.optionsForMessage(
                 at: .init(item: 0, section: 0),
                 in: channel,
                 with: .init([messageInPendingState]),
                 appearance: appearance
             )
-            
+
             XCTAssertTrue(layoutOptions.contains(.deliveryStatusIndicator))
         }
     }
-    
+
     func test_optionsForMessage_whenMessageExistsRemotelyAndReadEventsEnabled_includesDeliveryStatusIndicator() {
         let sut = createOptionsResolver()
-        
+
         let channel: ChatChannel = .mock(
             cid: .unique,
             config: .mock(readEventsEnabled: true)
         )
-        
+
         let message: ChatMessage = .mock(
             id: .unique,
             cid: channel.cid,
@@ -1649,17 +1649,17 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             localState: nil,
             isSentByCurrentUser: true
         )
-        
+
         let layoutOptions = sut.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: channel,
             with: .init([message]),
             appearance: appearance
         )
-        
+
         XCTAssertTrue(layoutOptions.contains(.deliveryStatusIndicator))
     }
-    
+
     func test_optionsForMessage_whenMessageExistsRemotelyAndReadEventsDisabled_doesNotIncludeDeliveryStatusIndicator() {
         let sut = createOptionsResolver()
 
@@ -1667,7 +1667,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             cid: .unique,
             config: .mock(readEventsEnabled: false)
         )
-        
+
         let message: ChatMessage = .mock(
             id: .unique,
             cid: channel.cid,
@@ -1677,17 +1677,17 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             localState: nil,
             isSentByCurrentUser: true
         )
-        
+
         let layoutOptions = sut.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: channel,
             with: .init([message]),
             appearance: appearance
         )
-        
+
         XCTAssertFalse(layoutOptions.contains(.deliveryStatusIndicator))
     }
-    
+
     func test_optionsForMessage_whenMessageIsEphemeral_doesNotIncludeDeliveryStatusIndicator() {
         let sut = createOptionsResolver()
 
@@ -1695,7 +1695,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             cid: .unique,
             config: .mock(readEventsEnabled: true)
         )
-        
+
         let ephemeralMessage: ChatMessage = .mock(
             id: .unique,
             cid: channel.cid,
@@ -1706,25 +1706,25 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             localState: nil,
             isSentByCurrentUser: true
         )
-        
+
         let layoutOptions = sut.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: channel,
             with: .init([ephemeralMessage]),
             appearance: appearance
         )
-        
+
         XCTAssertFalse(layoutOptions.contains(.deliveryStatusIndicator))
     }
-    
+
     // MARK: - Helpers
-    
+
     private func createOptionsResolver(
         deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility = .alwaysVisible
     ) -> ChatMessageLayoutOptionsResolver {
         var config = ChatClientConfig(apiKey: .init(.unique))
         config.deletedMessagesVisibility = deletedMessagesVisibility
-        
+
         let resolver = ChatMessageLayoutOptionsResolver()
         resolver.config = config
         return resolver

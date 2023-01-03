@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -9,7 +9,7 @@ struct MissingEventsPayload: Decodable {
     private enum CodingKeys: String, CodingKey {
         case eventPayloads = "events"
     }
-    
+
     let eventPayloads: [EventPayload]
 
     init(eventPayloads: [EventPayload]) {

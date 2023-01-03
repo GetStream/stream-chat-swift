@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -48,7 +48,7 @@ public extension StreamMockServer {
             }
         }
     }
-    
+
     func configureChannelEndpoints() {
         server.register(MockEndpoint.query) { [weak self] request in
             let channelId = try XCTUnwrap(request.params[EndpointQuery.channelId])
@@ -96,19 +96,19 @@ public extension StreamMockServer {
         }
         return channels[index]
     }
-    
+
     func waitForChannelQueryUpdate(timeout: Double = StreamMockServer.waitTimeout) {
         let endTime = Date().timeIntervalSince1970 * 1000 + timeout * 1000
         while !channelQueryEndpointWasCalled
                 && endTime > Date().timeIntervalSince1970 * 1000 {}
     }
-    
+
     func waitForChannelsUpdate(timeout: Double = StreamMockServer.waitTimeout) {
         let endTime = Date().timeIntervalSince1970 * 1000 + timeout * 1000
         while !channelsEndpointWasCalled
                 && endTime > Date().timeIntervalSince1970 * 1000 {}
     }
-    
+
     private func updateChannel(withId id: String) {
         var json = channelList
         var channels = json[JSONKey.channels] as? [[String: Any]]
@@ -132,11 +132,11 @@ public extension StreamMockServer {
             channelList = json
         }
     }
-    
+
     private func updateChannels() {
         var json = channelList
         guard var channels = json[JSONKey.channels] as? [[String: Any]] else { return }
-        
+
         for (index, channel) in channels.enumerated() {
             let channelDetails = channel[channelPayloadKey.channel.rawValue] as? [String: Any]
             if let channelId = channelDetails?[channelKey.id.rawValue] as? String {
@@ -149,7 +149,7 @@ public extension StreamMockServer {
         json[JSONKey.channels] = channels
         channelList = json
     }
-    
+
     private func limitChannels(_ request: HttpRequest) -> HttpResponse {
         guard
             let payloadQuery = request.queryParams.first(where: { $0.0 == JSONKey.payload }),
@@ -158,33 +158,33 @@ public extension StreamMockServer {
         else {
             return .ok(.json(channelList))
         }
-        
+
         let offset = payload[Pagination.CodingKeys.offset.rawValue] as? Int ?? 0
-        
+
         var limitedChannelList = channelList
         let channels = limitedChannelList[JSONKey.channels] as? [[String: Any]] ?? []
         let channelCount = channels.count - 1
-        
+
         if !allChannelsWereLoaded && channelCount > limit {
             allChannelsWereLoaded = (channelCount - limit - offset < 0)
             let startWith = offset > channelCount ? channelCount : offset
             let endWith = offset + limit < channelCount ? offset + limit - 1 : channelCount
             limitedChannelList[JSONKey.channels] = Array(channels[startWith...endWith])
         }
-        
+
         return .ok(.json(limitedChannelList))
     }
-    
+
     private func mockChannelQuery(_ request: HttpRequest) -> HttpResponse {
         let json = TestData.toJson(request.body)
         let messages = json[JSONKey.messages] as? [String: Any]
-        
+
         guard let id = request.params[EndpointQuery.channelId] else { return .badRequest(nil) }
         guard var channel = findChannelById(id) else { return .badRequest(nil) }
         guard let limit = messages?[MessagesPagination.CodingKeys.pageSize.rawValue] as? Int else {
             return .ok(.json(channel))
         }
-        
+
         channel[channelPayloadKey.messages.rawValue] = mockMessagePagination(
             messageList: findMessagesByChannelId(id),
             limit: limit,
@@ -205,7 +205,7 @@ public extension StreamMockServer {
 
         return updateChannelMembers(request, ids: type.ids, eventType: type.eventType)
     }
-    
+
     // TODO: CIS-2230
     private func handleSyncRequest() -> HttpResponse? {
         .ok(.json([JSONKey.events: []]))
@@ -274,7 +274,7 @@ public extension StreamMockServer {
         var members: [[String: Any]] = []
         let channelMembers = sampleChannel[channelPayloadKey.members.rawValue] as? [[String: Any]]
         guard var sampleMember = channelMembers?.first else { return members }
-        
+
         for member in memberDetails {
             sampleMember[JSONKey.user] = setUpUser(source: userSources, details: member)
             sampleMember[JSONKey.userId] = member[userKey.id.rawValue]
@@ -282,7 +282,7 @@ public extension StreamMockServer {
         }
         return members
     }
-    
+
     func mockChannels(
         count: Int,
         messagesCount: Int,
@@ -293,10 +293,10 @@ public extension StreamMockServer {
     ) -> [[String: Any]] {
         var channels: [[String: Any]] = []
         guard count > 0 else { return channels }
-        
+
         var membership = sampleChannel[channelPayloadKey.membership.rawValue] as? [String: Any]
         membership?[JSONKey.user] = author
-        
+
         for channelIndex in 1...count {
             var newChannel = sampleChannel
             var messages: [[String: Any]?] = []
@@ -308,7 +308,7 @@ public extension StreamMockServer {
                 memberCount: members.count,
                 channelIndex: channelIndex
             )
-            
+
             if messagesCount > 0 {
                 for messageIndex in 1...messagesCount {
                     let channelId = channelDetails?[channelKey.id.rawValue] as? String
@@ -321,7 +321,7 @@ public extension StreamMockServer {
                         replyCount: replyCount
                     )
                     messages.append(newMessage)
-                    
+
                     if replyCount > 0 {
                         for replyIndex in 1...replyCount {
                             generateMessage(
@@ -335,15 +335,15 @@ public extension StreamMockServer {
                     }
                 }
             }
-            
+
             newChannel[channelPayloadKey.messages.rawValue] = messages
             newChannel[channelPayloadKey.channel.rawValue] = channelDetails
             channels.append(newChannel)
         }
-        
+
         return channels
     }
-    
+
     @discardableResult
     private func generateMessage(
         withIndex index: Int,
@@ -369,7 +369,7 @@ public extension StreamMockServer {
         parentId == nil ? saveMessage(message) : saveReply(message)
         return message
     }
-    
+
     private func mockChannelDetails(
         channel: [String: Any],
         author: [String: Any]?,
@@ -389,11 +389,11 @@ public extension StreamMockServer {
         channelDetails?[channelKey.updatedAt.rawValue] = timestamp
         return channelDetails
     }
-    
+
     private func findChannelById(_ id: String) -> [String: Any]? {
         try? XCTUnwrap(waitForChannelWithId(id))
     }
-    
+
     func getFirstChannelId() -> String {
         let endTime = TestData.waitingEndTime
         while channelList.isEmpty && endTime > TestData.currentTimeInterval {}
@@ -406,41 +406,41 @@ public extension StreamMockServer {
         }
         return id
     }
-    
+
     func removeChannel(_ id: String) {
         let deletedChannel = try? XCTUnwrap(findChannelById(id))
         guard var channels = channelList[JSONKey.channels] as? [[String: Any]] else { return }
-        
+
         if let deletedIndex = channels.firstIndex(where: { (channel) -> Bool in
             (channel[channelKey.id.rawValue] as? String) == (deletedChannel?[channelKey.id.rawValue] as? String)
         }) {
             channels.remove(at: deletedIndex)
         }
-        
+
         channelList[JSONKey.channels] = channels
     }
-    
+
     private func truncateChannel(_ id: String, truncatedAt: String, truncatedBy: [String: Any]?) {
         let channelMessages = findMessagesByChannelId(id)
         for message in channelMessages {
             removeMessage(message)
         }
-        
+
         var channel = findChannelById(id)
         var channelDetails = channel?[JSONKey.channel] as? [String: Any]
         channelDetails?[JSONKey.Channel.truncatedBy] = truncatedBy
         channelDetails?[channelKey.truncatedAt.rawValue] = truncatedAt
-        
+
         channel?[JSONKey.channel] = channelDetails
         channel?[JSONKey.messages] = []
-        
+
         if var channels = channelList[JSONKey.channels] as? [[String: Any]?] {
             removeChannel(id)
             channels.append(channel)
             channelList[JSONKey.channels] = channels
         }
     }
-    
+
     private func waitForChannelWithId(_ id: String) -> [String: Any]? {
         let endTime = TestData.waitingEndTime
         var newChannelList: [[String: Any]] = []
@@ -453,7 +453,7 @@ public extension StreamMockServer {
         }
         return newChannelList.first
     }
-    
+
     private func channelTruncation(_ request: HttpRequest) -> HttpResponse? {
         waitForChannelQueryUpdate()
         guard let channelId = request.params[EndpointQuery.channelId] else { return .badRequest(nil) }
@@ -463,26 +463,26 @@ public extension StreamMockServer {
         let channelDetails = findChannelById(channelId)?[JSONKey.channel] as? [String: Any]
         let truncatedby = channelDetails?[channelKey.createdBy.rawValue] as? [String: Any]
         let truncatedAt = TestData.currentDate
-        
+
         truncateChannel(
             channelId,
             truncatedAt: truncatedAt,
             truncatedBy: truncatedby
         )
-        
+
         channel?[channelKey.id.rawValue] = channelId
         channel?[channelKey.cid.rawValue] = "\(ChannelType.messaging.rawValue):\(channelId)"
         channel?[JSONKey.Channel.truncatedBy] = truncatedby
         channel?[channelKey.truncatedAt.rawValue] = truncatedAt
         channel?[channelKey.name.rawValue] = channelDetails?[channelKey.name.rawValue]
-        
+
         websocketEvent(
             .channelTruncated,
             user: truncatedby,
             channelId: channelId,
             channel: channel
         )
-        
+
         if let message = TestData.toJson(request.body)[JSONKey.message] as? [String: Any] {
             truncatedMessage = json[JSONKey.message] as? [String: Any]
             truncatedMessage?[messageKey.id.rawValue] = message[messageKey.id.rawValue]
@@ -502,7 +502,7 @@ public extension StreamMockServer {
         } else {
             truncatedMessage = nil
         }
-        
+
         json[JSONKey.message] = truncatedMessage
         json[JSONKey.channel] = channel
         return .ok(.json(json))

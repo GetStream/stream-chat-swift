@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import UIKit
@@ -10,10 +10,10 @@ import StreamChat
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     private let pushNotifications = PushNotifications()
-    
+
     var window: UIWindow?
     private var coordinator: DemoAppCoordinator!
-    
+
     // Stream Chat
     var chat: StreamChatWrapper {
         StreamChatWrapper.shared
@@ -34,7 +34,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window = window
         makeCoordinator(in: window)
     }
-    
+
     func makeCoordinator(in window: UIWindow) {
         // Hook on registration for push notifications.
         // This closure is called once the chat user is connected.
@@ -56,12 +56,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
     }
-    
+
     func disableAnimations() {
         UIApplication.shared.keyWindow?.layer.speed = 2
         UIView.setAnimationsEnabled(false)
     }
-    
+
     func registerForPushNotifications() {
         if #available(iOS 14, *) {
             UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { [weak self] granted, _ in
@@ -70,7 +70,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
     }
-    
+
     func getNotificationSettings() {
         UNUserNotificationCenter.current().getNotificationSettings { settings in
             guard settings.authorizationStatus == .authorized else { return }

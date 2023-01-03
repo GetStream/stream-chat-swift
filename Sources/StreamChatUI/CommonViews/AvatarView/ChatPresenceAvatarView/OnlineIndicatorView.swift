@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -29,11 +29,11 @@ open class OnlineIndicatorView: _View, AppearanceProvider, MaskProviding {
 
     override open func layoutSubviews() {
         super.layoutSubviews()
-        
+
         layer.cornerRadius = bounds.width / 2
         layer.masksToBounds = true
     }
-    
+
     open var maskingPath: CGPath? {
         UIBezierPath(ovalIn: frame.insetBy(dx: -frame.width / 4, dy: -frame.height / 4)).cgPath
     }

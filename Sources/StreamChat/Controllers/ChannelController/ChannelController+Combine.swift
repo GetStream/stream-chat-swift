@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Combine
@@ -11,22 +11,22 @@ extension ChatChannelController {
     public var statePublisher: AnyPublisher<DataController.State, Never> {
         basePublishers.state.keepAlive(self)
     }
-    
+
     /// A publisher emitting a new value every time the channel changes.
     public var channelChangePublisher: AnyPublisher<EntityChange<ChatChannel>, Never> {
         basePublishers.channelChange.keepAlive(self)
     }
-    
+
     /// A publisher emitting a new value every time the list of the messages matching the query changes.
     public var messagesChangesPublisher: AnyPublisher<[ListChange<ChatMessage>], Never> {
         basePublishers.messagesChanges.keepAlive(self)
     }
-    
+
     /// A publisher emitting a new value every time member event received.
     public var memberEventPublisher: AnyPublisher<MemberEvent, Never> {
         basePublishers.memberEvent.keepAlive(self)
     }
-    
+
     /// A publisher emitting a new value every time typing users change.
     public var typingUsersPublisher: AnyPublisher<Set<ChatUser>, Never> {
         basePublishers.typingUsers.keepAlive(self)
@@ -38,26 +38,26 @@ extension ChatChannelController {
     class BasePublishers {
         /// The wrapper controller
         unowned let controller: ChatChannelController
-        
+
         /// A backing subject for `statePublisher`.
         let state: CurrentValueSubject<DataController.State, Never>
-        
+
         /// A backing subject for `channelChangePublisher`.
         let channelChange: PassthroughSubject<EntityChange<ChatChannel>, Never> = .init()
-        
+
         /// A backing subject for `messagesChangesPublisher`.
         let messagesChanges: PassthroughSubject<[ListChange<ChatMessage>], Never> = .init()
-        
+
         /// A backing subject for `memberEventPublisher`.
         let memberEvent: PassthroughSubject<MemberEvent, Never> = .init()
-        
+
         /// A backing subject for `typingUsersPublisher`.
         let typingUsers: PassthroughSubject<Set<ChatUser>, Never> = .init()
-                
+
         init(controller: ChatChannelController) {
             self.controller = controller
             state = .init(controller.state)
-            
+
             controller.multicastDelegate.add(additionalDelegate: self)
         }
     }
@@ -86,7 +86,7 @@ extension ChatChannelController.BasePublishers: ChatChannelControllerDelegate {
     func channelController(_ channelController: ChatChannelController, didReceiveMemberEvent event: MemberEvent) {
         memberEvent.send(event)
     }
-    
+
     func channelController(
         _ channelController: ChatChannelController,
         didChangeTypingUsers typingUsers: Set<ChatUser>

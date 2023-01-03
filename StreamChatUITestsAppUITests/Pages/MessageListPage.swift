@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -10,7 +10,7 @@ import StreamChat
 // swiftlint:disable convenience_type
 
 class MessageListPage {
-    
+
     static var cells: XCUIElementQuery {
         app.cells.matching(NSPredicate(format: "identifier LIKE 'ChatMessageCell'"))
     }
@@ -18,27 +18,27 @@ class MessageListPage {
     static var list: XCUIElement {
         app.tables.firstMatch
     }
-    
+
     static var typingIndicator: XCUIElement {
         app.otherElements["TypingIndicatorView"].staticTexts.firstMatch
     }
-    
+
     static var scrollToBottomButton: XCUIElement {
         app.buttons["ScrollToLatestMessageButton"]
     }
-    
+
     enum NavigationBar {
-        
+
         static var header: XCUIElement { app.otherElements["ChatChannelHeaderView"] }
-        
+
         static var chatAvatar: XCUIElement {
             app.otherElements["ChatAvatarView"].images.firstMatch
         }
-        
+
         static var chatName: XCUIElement {
             app.staticTexts.firstMatch
         }
-        
+
         static var participants: XCUIElement {
             app.staticTexts.lastMatch!
         }
@@ -65,13 +65,13 @@ class MessageListPage {
             // Show member info
             static var showMemberInfo: XCUIElement { alert.buttons["Show Members"] }
             static var dismissMemberInfo: XCUIElement { app.alerts["Members"].buttons["Cancel"] }
-            
+
             // Truncate channel
             static var truncateWithMessage: XCUIElement { alert.buttons["Truncate channel with message"] }
             static var truncateWithoutMessage: XCUIElement { alert.buttons["Truncate channel w/o message"] }
         }
     }
-    
+
     enum Composer {
         static var sendButton: XCUIElement { app.buttons["SendButton"] }
         static var confirmButton: XCUIElement { app.buttons["ConfirmButton"] }
@@ -83,16 +83,16 @@ class MessageListPage {
         static var placeholder: XCUIElement { textView.staticTexts.firstMatch }
         static var selectAllButton: XCUIElement { app.menuItems.matching(NSPredicate(format: "label LIKE 'Select All'")).firstMatch }
     }
-    
+
     enum Reactions {
         static var lol: XCUIElement { reaction(label: "reaction lol big") }
         static var like: XCUIElement { reaction(label: "reaction thumbsup big") }
         static var love: XCUIElement { reaction(label: "reaction love big") }
         static var sad: XCUIElement { reaction(label: "reaction thumbsdown big") }
         static var wow: XCUIElement { reaction(label: "reaction wut big") }
-        
+
         private static var id = "ChatMessageReactionItemView"
-        
+
         private static func reaction(label: String) -> XCUIElement {
             let predicate = NSPredicate(
                 format: "identifier LIKE '\(id)' AND label LIKE '\(label)'"
@@ -100,7 +100,7 @@ class MessageListPage {
             return app.buttons.matching(predicate).firstMatch
         }
     }
-    
+
     enum ContextMenu {
         case reactions
         case reply
@@ -160,28 +160,28 @@ class MessageListPage {
             static var unblock: XCUIElement { app.otherElements["UnblockUserActionItem"] }
         }
     }
-    
+
     enum Attributes {
         static func reactionButton(in messageCell: XCUIElement) -> XCUIElement {
             messageCell.buttons["ChatMessageReactionItemView"]
         }
-        
+
         static func threadReplyCountButton(in messageCell: XCUIElement) -> XCUIElement {
             messageCell.buttons["threadReplyCountButton"]
         }
-        
+
         static func time(in messageCell: XCUIElement) -> XCUIElement {
             messageCell.staticTexts["timestampLabel"]
         }
-        
+
         static func author(messageCell: XCUIElement) -> XCUIElement {
             messageCell.staticTexts["authorNameLabel"]
         }
-        
+
         static func text(in messageCell: XCUIElement) -> XCUIElement {
             messageCell.textViews["textView"].firstMatch
         }
-        
+
         static func quotedText(_ text: String, in messageCell: XCUIElement) -> XCUIElement {
             messageCell.textViews.matching(NSPredicate(format: "value LIKE '\(text)'")).firstMatch
         }
@@ -189,11 +189,11 @@ class MessageListPage {
         static func text(_ text: String, in messageCell: XCUIElement) -> XCUIElement {
             messageCell.textViews.matching(NSPredicate(format: "value LIKE '\(text)'")).firstMatch
         }
-        
+
         static func deletedIcon(in messageCell: XCUIElement) -> XCUIElement {
             messageCell.images["onlyVisibleToYouImageView"]
         }
-        
+
         static func deletedLabel(in messageCell: XCUIElement) -> XCUIElement {
             messageCell.staticTexts["onlyVisibleToYouLabel"]
         }
@@ -213,19 +213,19 @@ class MessageListPage {
             }
             return messageCell.images[identifier]
         }
-        
+
         static func giphyButtons(in messageCell: XCUIElement) -> XCUIElementQuery {
             messageCell.buttons.matching(NSPredicate(format: "identifier LIKE 'ActionButton'"))
         }
-        
+
         static func giphySendButton(in messageCell: XCUIElement) -> XCUIElement {
             attachmentActionButton(in: messageCell, label: "Send")
         }
-        
+
         static func giphyShuffleButton(in messageCell: XCUIElement) -> XCUIElement {
             attachmentActionButton(in: messageCell, label: "Shuffle")
         }
-        
+
         static func giphyCancelButton(in messageCell: XCUIElement) -> XCUIElement {
             attachmentActionButton(in: messageCell, label: "Cancel")
         }
@@ -233,77 +233,77 @@ class MessageListPage {
         static func giphyLabel(in messageCell: XCUIElement) -> XCUIElement {
             messageCell.staticTexts["GIPHY"]
         }
-        
+
         private static func attachmentActionButton(in messageCell: XCUIElement, label: String) -> XCUIElement {
             giphyButtons(in: messageCell).matching(NSPredicate(format: "label LIKE '\(label)'")).firstMatch
         }
-        
+
         static var deletedMessagePlaceholder: String {
             L10n.Message.deletedMessagePlaceholder
         }
-        
+
         static func images(in messageCell: XCUIElement) -> XCUIElementQuery {
             messageCell.images.matching(NSPredicate(format: "identifier LIKE 'imageView'"))
         }
-        
+
         static func fullscreenImage() -> XCUIElement {
             app.cells["ImageAttachmentGalleryCell"].images.firstMatch
         }
-        
+
         static func fileNames(in messageCell: XCUIElement) -> XCUIElementQuery {
             messageCell.staticTexts.matching(NSPredicate(format: "identifier LIKE 'fileNameLabel'"))
         }
-        
+
         static func videoPlayer() -> XCUIElement {
             app.otherElements["PlayerView"]
         }
-        
+
         enum LinkPreview {
             static func link(in messageCell: XCUIElement) -> XCUIElement {
                 messageCell.links["textView"].links.firstMatch
             }
-            
+
             static func image(in messageCell: XCUIElement) -> XCUIElement {
                 messageCell.images["imagePreview"]
             }
-            
+
             static func serviceName(in messageCell: XCUIElement) -> XCUIElement {
                 messageCell.staticTexts["authorLabel"]
             }
-            
+
             static func title(in messageCell: XCUIElement) -> XCUIElement {
                 messageCell.staticTexts["titleLabel"]
             }
-            
+
             static func description(in messageCell: XCUIElement) -> XCUIElement {
                 messageCell.textViews["bodyTextView"]
             }
         }
     }
-    
+
     enum PopUpButtons {
         static var cancel: XCUIElement {
             app.buttons.matching(NSPredicate(format: "label LIKE 'Cancel'")).firstMatch
         }
-        
+
         static var delete: XCUIElement {
             app.buttons.matching(NSPredicate(format: "label LIKE 'Delete'")).firstMatch
         }
     }
-    
+
     enum AttachmentMenu {
         static var fileButton: XCUIElement {
             app.buttons.matching(NSPredicate(format: "label LIKE 'File'")).firstMatch
         }
-        
+
         static var photoOrVideoButton: XCUIElement {
             app.buttons.matching(NSPredicate(format: "label LIKE 'Photo or Video'")).firstMatch
         }
-        
+
         static var cancelButton: XCUIElement {
             app.buttons.matching(NSPredicate(format: "label LIKE 'Cancel'")).firstMatch
         }
-        
+
         static var images: XCUIElementQuery {
             if ProcessInfo().operatingSystemVersion.majorVersion > 13 {
                 return app.scrollViews.images
@@ -312,29 +312,29 @@ class MessageListPage {
             }
         }
     }
-    
+
     enum ComposerCommands {
         static var cells: XCUIElementQuery {
             app.cells.matching(NSPredicate(format: "identifier LIKE 'ChatCommandSuggestionCollectionViewCell'"))
         }
-        
+
         static var headerTitle: XCUIElement {
             app.otherElements["ChatSuggestionsHeaderView"].staticTexts.firstMatch
         }
-        
+
         static var headerImage: XCUIElement {
             app.otherElements["ChatSuggestionsHeaderView"].images.firstMatch
         }
-        
+
         static var giphyImage: XCUIElement {
             app.images["command_giphy"]
         }
     }
-    
+
     enum ComposerMentions {
         static var cells: XCUIElementQuery {
             app.cells.matching(NSPredicate(format: "identifier LIKE 'ChatMentionSuggestionCollectionViewCell'"))
         }
     }
-    
+
 }

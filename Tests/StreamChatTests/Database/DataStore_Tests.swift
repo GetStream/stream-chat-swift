@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -8,26 +8,26 @@ import XCTest
 
 final class DataStore_Tests: XCTestCase {
     var _client: ChatClient!
-    
+
     override func setUp() {
         super.setUp()
         _client = ChatClient.mock
     }
-    
+
     override func tearDown() {
         AssertAsync.canBeReleased(&_client)
         (_client as? ChatClient_Mock)?.cleanUp()
         _client = nil
         super.tearDown()
     }
-    
+
     func test_userIsLoaded() throws {
         let userId: UserId = .unique
         XCTAssertNil(dataStore.user(id: userId))
         try _client.databaseContainer.createUser(id: userId)
         XCTAssertNotNil(dataStore.user(id: userId))
     }
-    
+
     func test_currentUserIsLoaded() throws {
         XCTAssertNil(dataStore.currentUser())
         try _client.databaseContainer.createCurrentUser()
@@ -40,7 +40,7 @@ final class DataStore_Tests: XCTestCase {
         try _client.databaseContainer.createChannel(cid: cid)
         XCTAssertNotNil(dataStore.channel(cid: cid))
     }
-    
+
     func test_messageIsLoaded() throws {
         let id: MessageId = .unique
         XCTAssertNil(dataStore.message(id: id))

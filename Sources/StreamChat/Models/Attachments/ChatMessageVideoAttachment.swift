@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -24,7 +24,7 @@ public struct VideoAttachmentPayload: AttachmentPayload {
     public var file: AttachmentFile
     /// An extra data.
     public var extraData: [String: RawJSON]?
-    
+
     /// Decodes extra data as an instance of the given type.
     /// - Parameter ofType: The type an extra data should be decoded as.
     /// - Returns: Extra data of the given type or `nil` if decoding fails.
@@ -33,7 +33,7 @@ public struct VideoAttachmentPayload: AttachmentPayload {
             .flatMap { try? JSONEncoder.stream.encode($0) }
             .flatMap { try? JSONDecoder.stream.decode(T.self, from: $0) }
     }
-    
+
     /// Creates `VideoAttachmentPayload` instance.
     ///
     /// Use this initializer if the attachment is already uploaded and you have the remote URLs.
@@ -65,7 +65,7 @@ extension VideoAttachmentPayload: Encodable {
 extension VideoAttachmentPayload: Decodable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: AttachmentCodingKeys.self)
-        
+
         self.init(
             title: try container.decodeIfPresent(String.self, forKey: .title),
             videoRemoteURL: try container.decode(URL.self, forKey: .assetURL),

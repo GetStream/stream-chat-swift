@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import XCTest
@@ -64,7 +64,7 @@ final class MessageDeliveryStatus_Tests: StreamTestCase {
                 .login()
                 .setConnectivity(to: .off)
                 .openChannel()
-                
+
         }
         WHEN("user sends a new message") {
             userRobot.sendMessage(failedMessage, waitForAppearance: false)
@@ -131,7 +131,7 @@ final class MessageDeliveryStatus_Tests: StreamTestCase {
 
     func test_readByDecremented_whenParticipantIsRemoved() {
         linkToScenario(withId: 145)
-    
+
         let participantOne = participantRobot.currentUserId
 
         GIVEN("user opens the channel") {

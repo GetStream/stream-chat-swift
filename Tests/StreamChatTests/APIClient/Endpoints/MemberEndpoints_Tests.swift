@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -13,7 +13,7 @@ final class MemberEndpoints_Tests: XCTestCase {
             filter: .equal(.id, to: "Luke"),
             sort: [.init(key: .createdAt)]
         )
-        
+
         let expectedEndpoint = Endpoint<ChannelMemberListPayload>(
             path: .members,
             method: .get,
@@ -21,10 +21,10 @@ final class MemberEndpoints_Tests: XCTestCase {
             requiresConnectionId: false,
             body: ["payload": query]
         )
-        
+
         // Build endpoint.
         let endpoint: Endpoint<ChannelMemberListPayload> = .channelMembers(query: query)
-        
+
         // Assert endpoint is built correctly.
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
         XCTAssertEqual("members", endpoint.path.value)

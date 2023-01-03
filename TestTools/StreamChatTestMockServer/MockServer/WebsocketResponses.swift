@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -31,13 +31,13 @@ public extension StreamMockServer {
         json[eventKey.channelType.rawValue] = ChannelType.messaging.rawValue
         json[eventKey.parentId.rawValue] = parentMessageId
         json[eventKey.cid.rawValue] = "\(ChannelType.messaging.rawValue):\(channelId)"
-        
+
         if let channel = channel { json[JSONKey.channel] = channel }
-        
+
         writeText(json.jsonToString())
         return self
     }
-    
+
     /// Manages the lifecycle of the messages over a websocket connection
     ///
     /// - Parameters:
@@ -62,11 +62,11 @@ public extension StreamMockServer {
         intercept: ((inout [String: Any]?) -> [String: Any]?)? = nil
     ) -> Self {
         guard let messageId = messageId else { return self }
-        
+
         let mockFile = messageType == .ephemeral ? MockFile.ephemeralMessage : MockFile.message
         var json = TestData.getMockResponse(fromFile: mockFile).json
         var mockedMessage: [String: Any]?
-        
+
         switch eventType {
         case .messageNew:
             mockedMessage = mockMessage(
@@ -121,27 +121,27 @@ public extension StreamMockServer {
             parentMessage?[messageKey.replyCount.rawValue] = previousReplyCount + 1
             saveMessage(parentMessage)
         }
-        
+
         if let channelId = channelId {
             json[JSONKey.channelId] = channelId
             json[JSONKey.channelType] = ChannelType.messaging.rawValue
             json[JSONKey.cid] = "\(ChannelType.messaging.rawValue):\(channelId)"
         }
-        
+
         if let channel = channel { json[JSONKey.channel] = channel }
-        
+
         json[JSONKey.user] = user
         json[JSONKey.message] = mockedMessage
         json[messageKey.createdAt.rawValue] = TestData.currentDate
         json[messageKey.type.rawValue] = eventType.rawValue
         if hardDelete { json[eventKey.hardDelete.rawValue] = true }
-        
+
         writeText(json.jsonToString())
         if eventType == .messageNew { latestWebsocketMessage = text ?? "" }
-        
+
         return self
     }
-    
+
     /// Manages the lifecycle of the reactions over a websocket connection
     ///
     /// - Parameters:
@@ -163,7 +163,7 @@ public extension StreamMockServer {
         let cid = messageDetails?[messageKey.cid.rawValue] as? String
         let channelId = cid?.split(separator: ":").last
         let timestamp = TestData.currentDate
-        
+
         message = mockMessageWithReaction(
             messageDetails,
             fromUser: user,
@@ -171,7 +171,7 @@ public extension StreamMockServer {
             timestamp: timestamp,
             deleted: eventType == .reactionDeleted
         )
-        
+
         reaction = mockReaction(
             reaction,
             fromUser: user,
@@ -179,7 +179,7 @@ public extension StreamMockServer {
             reactionType: type?.rawValue,
             timestamp: timestamp
         )
-        
+
         json[JSONKey.channelId] = channelId
         json[JSONKey.cid] = cid
         json[JSONKey.message] = message
@@ -187,7 +187,7 @@ public extension StreamMockServer {
         json[reactionKey.user.rawValue] = user
         json[reactionKey.createdAt.rawValue] = TestData.currentDate
         json[reactionKey.type.rawValue] = eventType.rawValue
-        
+
         saveMessage(message)
         writeText(json.jsonToString())
         return self
@@ -217,7 +217,7 @@ public extension StreamMockServer {
 
         // updated config with current values
         updateConfig(in: &json, withId: channelId)
-        
+
         json[JSONKey.channelId] = channelId
         json[JSONKey.cid] = "\(ChannelType.messaging.rawValue):\(channelId)"
         json[JSONKey.channelType] = ChannelType.messaging.rawValue

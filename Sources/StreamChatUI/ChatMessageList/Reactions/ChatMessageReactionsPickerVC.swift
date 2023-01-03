@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -58,7 +58,7 @@ open class ChatMessageReactionsPickerVC: _ViewController, ThemeProvider, ChatMes
     // toggleReaction toggles on/off the reaction for the message
     open func toggleReaction(_ reaction: MessageReactionType) {
         guard let message = messageController.message else { return }
-        
+
         let completion: (Error?) -> Void = { [weak self] _ in
             self?.dismiss(animated: true)
         }
@@ -68,9 +68,9 @@ open class ChatMessageReactionsPickerVC: _ViewController, ThemeProvider, ChatMes
             ? messageController.deleteReaction(reaction, completion: completion)
             : messageController.addReaction(reaction, enforceUnique: components.isUniqueReactionsEnabled, completion: completion)
     }
-    
+
     // MARK: - MessageControllerDelegate
-    
+
     open func messageController(
         _ controller: ChatMessageController,
         didChangeMessage change: EntityChange<ChatMessage>

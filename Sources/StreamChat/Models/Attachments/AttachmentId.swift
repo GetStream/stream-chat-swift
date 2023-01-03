@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -30,7 +30,7 @@ public struct AttachmentId: Hashable {
 
 extension AttachmentId: RawRepresentable {
     static let separator: String = "/"
-    
+
     public init?(rawValue: String) {
         let components = rawValue.components(separatedBy: Self.separator)
         guard

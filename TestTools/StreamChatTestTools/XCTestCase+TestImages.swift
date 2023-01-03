@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import XCTest
@@ -10,7 +10,7 @@ public extension XCTestCase {
         public static let vader: (url: URL, image: UIImage) = {
             getImage(withName: "vader")
         }()
-        
+
         public static let yoda: (url: URL, image: UIImage) = {
             getImage(withName: "yoda")
         }()
@@ -22,7 +22,7 @@ public extension XCTestCase {
         public static let chewbacca: (url: URL, image: UIImage) = {
             getImage(withName: "chewbacca")
         }()
-        
+
         private static func getImage(withName name: String, fileExtension: String = "jpg") -> (url: URL, image: UIImage) {
             let imageURL = Bundle.testTools.url(forResource: name, withExtension: fileExtension)!
             let image = UIImage(contentsOfFile: imageURL.path)!

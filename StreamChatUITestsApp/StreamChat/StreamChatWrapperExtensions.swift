@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -49,7 +49,7 @@ extension StreamChatWrapper {
         }
         #endif
     }
-    
+
     func makeChannelListViewController() -> ChannelList {
         // UI
         let query = ChannelListQuery(filter: .containMembers(userIds: [UserCredentials.default.id]))
@@ -57,5 +57,5 @@ extension StreamChatWrapper {
         let channelList = ChannelList.make(with: controller)
         return channelList
     }
-    
+
 }

@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -12,10 +12,10 @@ final class DataController_Tests: XCTestCase {
         let controller = DataController()
         let delegateQueueId = UUID()
         let delegate = DataController_Delegate(expectedQueueId: delegateQueueId)
-        
+
         controller.stateMulticastDelegate.add(additionalDelegate: delegate)
         controller.callbackQueue = DispatchQueue.testQueue(withId: delegateQueueId)
-        
+
         // Check if state is `initialized` initially.
         XCTAssertEqual(delegate.state, .initialized)
 

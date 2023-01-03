@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -30,13 +30,13 @@ class CurrentUserUpdater: Worker {
             completion?(nil)
             return
         }
-        
+
         let payload = UserUpdateRequestBody(
             name: name,
             imageURL: imageURL,
             extraData: userExtraData
         )
-        
+
         apiClient
             .request(endpoint: .updateUser(id: currentUserId, payload: payload)) { [weak self] in
                 switch $0 {
@@ -50,7 +50,7 @@ class CurrentUserUpdater: Worker {
                 }
             }
     }
-    
+
     /// Registers a device for push notifications to the current user.
     /// `setUser` must be called before calling this.
     /// - Parameters:
@@ -100,7 +100,7 @@ class CurrentUserUpdater: Worker {
                 )
         }
     }
-    
+
     /// Removes a registered device from the current user.
     /// `setUser` must be called before calling this.
     /// - Parameters:
@@ -126,7 +126,7 @@ class CurrentUserUpdater: Worker {
                 }
             )
     }
-    
+
     /// Updates the registered devices for the current user from backend.
     /// - Parameters:
     ///     - currentUserId: The current user identifier.
@@ -145,7 +145,7 @@ class CurrentUserUpdater: Worker {
             }
         }
     }
-    
+
     /// Marks all channels for a user as read.
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func markAllRead(completion: ((Error?) -> Void)? = nil) {

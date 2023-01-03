@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -23,18 +23,18 @@ open class DefaultMarkdownFormatter: MarkdownFormatter {
             static let fontName: String = "CourierNewPSMT"
         }
     }
-    
+
     private let markdownRegexPattern: String =
         "((?:\\`(.*?)\\`)|(?:\\*{1,2}(.*?)\\*{1,2})|(?:\\~{2}(.*?)\\~{2})|(?:\\_{1,2}(.*?)\\_{1,2})|^(>){1}|(#){1,6}|(=){3,10}|(-){1,3}|(\\d{1,3}\\.)|(?:\\[(.*?)\\])(?:\\((.*?)\\))|(?:\\[(.*?)\\])(?:\\[(.*?)\\])|(\\]\\:))+"
-    
+
     open func containsMarkdown(_ string: String) -> Bool {
         guard let regex = try? NSRegularExpression(pattern: markdownRegexPattern, options: .anchorsMatchLines) else {
             return false
         }
-        
+
         return regex.numberOfMatches(in: string, range: .init(location: 0, length: string.utf16.count)) > 0
     }
-    
+
     open func format(_ string: String) -> NSAttributedString {
         let markdownFormatter = SwiftyMarkdown(string: string)
         markdownFormatter.code.fontName = Attributes.Code.fontName

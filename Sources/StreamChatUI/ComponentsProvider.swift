@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -49,7 +49,7 @@ public extension ComponentsProvider where Self: UIResponder {
 
 private extension UIResponder {
     static var anyComponentsKey: UInt8 = 0
-    
+
     var anyComponents: Any? {
         get { objc_getAssociatedObject(self, &Self.anyComponentsKey) }
         set { objc_setAssociatedObject(self, &Self.anyComponentsKey, newValue, .OBJC_ASSOCIATION_RETAIN) }

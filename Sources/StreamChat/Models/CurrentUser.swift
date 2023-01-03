@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -8,12 +8,12 @@ import Foundation
 extension UserId {
     /// The prefix used for anonymous user ids
     private static let anonymousIdPrefix = "__anonymous__"
-    
+
     /// Creates a new anonymous User id.
     static var anonymous: UserId {
         anonymousIdPrefix + UUID().uuidString
     }
-    
+
     var isAnonymousUser: Bool {
         hasPrefix(Self.anonymousIdPrefix)
     }
@@ -25,19 +25,19 @@ extension UserId {
 public class CurrentChatUser: ChatUser {
     /// A list of devices associcated with the user.
     public let devices: [Device]
-    
+
     /// The current device of the user. `nil` if no current device is assigned.
     public let currentDevice: Device?
-    
+
     /// A set of users muted by the user.
     public let mutedUsers: Set<ChatUser>
-    
+
     /// A set of users flagged by the user.
     ///
     /// - Note: Please be aware that the value of this field is not persisted on the server,
     /// and is valid only locally for the current session.
     public let flaggedUsers: Set<ChatUser>
-    
+
     /// A set of message ids flagged by the user.
     ///
     /// - Note: Please be aware that the value of this field is not persisted on the server,
@@ -49,13 +49,13 @@ public class CurrentChatUser: ChatUser {
     /// - Important: The `mutedChannels` property is loaded and evaluated lazily to maintain high performance.
     public var mutedChannels: Set<ChatChannel> { _mutedChannels }
     @CoreDataLazy private var _mutedChannels: Set<ChatChannel>
-    
+
     /// The unread counts for the current user.
     public let unreadCount: UnreadCount
 
     /// A Boolean value indicating if the user has opted to hide their online status.
     public let isInvisible: Bool
-    
+
     init(
         id: String,
         name: String?,
@@ -85,7 +85,7 @@ public class CurrentChatUser: ChatUser {
         self.flaggedMessageIDs = flaggedMessageIDs
         self.unreadCount = unreadCount
         self.isInvisible = isInvisible
-        
+
         super.init(
             id: id,
             name: name,

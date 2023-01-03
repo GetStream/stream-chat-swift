@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -10,7 +10,7 @@ import XCTest
 final class ChatMessageActionsVC_Tests: XCTestCase {
     private var vc: ChatMessageActionsVC!
     private var chatMessageController: ChatMessageController_Mock!
-    
+
     override func setUp() {
         super.setUp()
 
@@ -25,14 +25,14 @@ final class ChatMessageActionsVC_Tests: XCTestCase {
             state: .remoteDataFetched
         )
     }
-    
+
     override func tearDown() {
         vc = nil
         chatMessageController = nil
-        
+
         super.tearDown()
     }
-    
+
     func test_emptyAppearance() {
         chatMessageController = .mock()
         vc.messageController = chatMessageController
@@ -42,7 +42,7 @@ final class ChatMessageActionsVC_Tests: XCTestCase {
     func test_defaultAppearance() {
         AssertSnapshot(vc.embedded())
     }
-    
+
     func test_appearanceCustomization_usingAppearance() {
         var appearance = Appearance()
         appearance.colorPalette.border = .cyan
@@ -51,7 +51,7 @@ final class ChatMessageActionsVC_Tests: XCTestCase {
 
         AssertSnapshot(vc.embedded())
     }
-    
+
     func test_appearanceCustomization_usingSubclassing() {
         class TestView: ChatMessageActionsVC {
             override var messageActions: [ChatMessageActionItem] {
@@ -64,7 +64,7 @@ final class ChatMessageActionsVC_Tests: XCTestCase {
         vc.channelConfig = .mock()
         AssertSnapshot(vc.embedded())
     }
-    
+
     func test_usesCorrectComponentsTypes_whenCustomTypesDefined() {
         // Create new config to edit types...
         var components = vc.components
@@ -87,7 +87,7 @@ final class ChatMessageActionsVC_Tests: XCTestCase {
 
         XCTAssertFalse(vc.messageActions.contains(where: { $0 is MuteUserActionItem }))
     }
-    
+
     func test_messageActions_whenQuotesEnabled_containsQuoteAction() {
         vc.channelConfig = .mock(quotesEnabled: true)
 
@@ -112,7 +112,7 @@ private extension UIViewController {
             view.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor),
             view.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor)
         ])
-        
+
         return viewController
     }
 }

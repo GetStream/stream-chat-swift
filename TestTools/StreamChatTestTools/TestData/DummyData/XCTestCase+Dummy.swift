@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -10,7 +10,7 @@ extension XCTestCase {
     static let channelUpdateDate = Date.unique
 
     // MARK: - Dummy data with extra data
-    
+
     var dummyCurrentUser: CurrentUserPayload {
         CurrentUserPayload(
             id: "dummyCurrentUser",
@@ -26,11 +26,11 @@ extension XCTestCase {
             extraData: [:]
         )
     }
-    
+
     var dummyUser: UserPayload {
         dummyUser(id: .unique)
     }
-    
+
     func dummyUser(id: String) -> UserPayload {
         UserPayload(
             id: id,
@@ -47,7 +47,7 @@ extension XCTestCase {
             extraData: [:]
         )
     }
-    
+
     func dummyMessagePayload(
         id: MessageId = .unique,
         cid: ChannelId? = nil,
@@ -76,7 +76,7 @@ extension XCTestCase {
             attachments: []
         )
     }
-    
+
     func dummyPinnedMessagePayload(
         createdAt: Date = XCTestCase.channelCreatedDate.addingTimeInterval(.random(in: 50...99))
     ) -> MessagePayload {
@@ -107,11 +107,11 @@ extension XCTestCase {
             pinExpires: .unique
         )
     }
-    
+
     var dummyChannelRead: ChannelReadPayload {
         ChannelReadPayload(user: dummyCurrentUser, lastReadAt: Date(timeIntervalSince1970: 1), unreadMessagesCount: 10)
     }
-    
+
     func dummyPayload(
         with channelId: ChannelId,
         numberOfMessages: Int = 1,
@@ -157,9 +157,9 @@ extension XCTestCase {
                 payloadMessages += [dummyMessagePayload()]
             }
         }
-        
+
         let lastMessageAt: Date? = payloadMessages.map(\.createdAt).max()
-        
+
         let payload: ChannelPayload =
             .init(
                 channel: .init(
@@ -192,10 +192,10 @@ extension XCTestCase {
                 channelReads: [dummyChannelRead],
                 isHidden: false
             )
-        
+
         return payload
     }
-    
+
     var dummyMessageWithNoExtraData: MessagePayload {
         MessagePayload(
             id: .unique,
@@ -219,11 +219,11 @@ extension XCTestCase {
             attachments: []
         )
     }
-    
+
     var dummyChannelReadWithNoExtraData: ChannelReadPayload {
         ChannelReadPayload(user: dummyUser, lastReadAt: .unique, unreadMessagesCount: .random(in: 0...10))
     }
-    
+
     func dummyPayloadWithNoExtraData(with channelId: ChannelId) -> ChannelPayload {
         let member: MemberPayload =
             .init(
@@ -246,7 +246,7 @@ extension XCTestCase {
                 createdAt: .unique,
                 updatedAt: .unique
             )
-        
+
         let payload: ChannelPayload =
             .init(
                 channel: .init(
@@ -302,7 +302,7 @@ extension XCTestCase {
                 channelReads: [dummyChannelReadWithNoExtraData],
                 isHidden: nil
             )
-        
+
         return payload
     }
 }
@@ -311,7 +311,7 @@ private extension MemberPayload {
     static var unique: MemberPayload {
         withLastActivity(at: .unique)
     }
-    
+
     static func withLastActivity(at date: Date) -> MemberPayload {
         let userId = String.unique
         return .init(

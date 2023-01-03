@@ -1,21 +1,21 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import XCTest
 
 final class Reactions_Tests: StreamTestCase {
-    
+
     override func setUpWithError() throws {
         try super.setUpWithError()
         addTags([.coreFeatures])
     }
-    
+
     func test_addsReaction() throws {
         linkToScenario(withId: 41)
-        
+
         let message = "test message"
-        
+
         GIVEN("user opens the channel") {
             userRobot.login().openChannel()
         }
@@ -29,12 +29,12 @@ final class Reactions_Tests: StreamTestCase {
             userRobot.assertReaction(isPresent: true)
         }
     }
-    
+
     func test_deletesReaction() throws {
         linkToScenario(withId: 45)
-        
+
         let message = "test message"
-        
+
         GIVEN("user opens the channel") {
             userRobot.login().openChannel()
         }
@@ -53,12 +53,12 @@ final class Reactions_Tests: StreamTestCase {
             userRobot.assertReaction(isPresent: false)
         }
     }
-    
+
     func test_reactionIsAdded_whenReactingToParticipantsMessage() throws {
         linkToScenario(withId: 42)
-        
+
         let message = "test message"
-        
+
         GIVEN("user opens the channel") {
             userRobot.login().openChannel()
         }
@@ -74,12 +74,12 @@ final class Reactions_Tests: StreamTestCase {
             userRobot.assertReaction(isPresent: true)
         }
     }
-    
+
     func test_removesReaction_whenUnReactingToParticipantsMessage() throws {
         linkToScenario(withId: 46)
-        
+
         let message = "test message"
-        
+
         GIVEN("user opens the channel") {
             userRobot.login().openChannel()
         }
@@ -98,12 +98,12 @@ final class Reactions_Tests: StreamTestCase {
             userRobot.assertReaction(isPresent: false)
         }
     }
-    
+
     func test_reactionIsAddedByParticipant_whenReactingToUsersMessage() throws {
         linkToScenario(withId: 43)
-        
+
         let message = "test message"
-        
+
         GIVEN("user opens the channel") {
             userRobot.login().openChannel()
         }
@@ -122,9 +122,9 @@ final class Reactions_Tests: StreamTestCase {
 
     func test_reactionIsRemovedByParticipant_whenUnReactingToUsersMessage() throws {
         linkToScenario(withId: 47)
-        
+
         let message = "test message"
-        
+
         GIVEN("user opens the channel") {
             userRobot.login().openChannel()
         }
@@ -144,12 +144,12 @@ final class Reactions_Tests: StreamTestCase {
             userRobot.assertReaction(isPresent: false)
         }
     }
-    
+
     func test_reactionIsAddedByParticipant_whenReactingToOwnMessage() throws {
         linkToScenario(withId: 44)
-        
+
         let message = "test message"
-        
+
         GIVEN("user opens the channel") {
             userRobot.login().openChannel()
         }
@@ -163,12 +163,12 @@ final class Reactions_Tests: StreamTestCase {
             userRobot.assertReaction(isPresent: true)
         }
     }
-    
+
     func test_reactionIsRemovedByParticipant_whenUnReactingToOwnMessage() throws {
         linkToScenario(withId: 48)
-        
+
         let message = "test message"
-        
+
         GIVEN("user opens the channel") {
             userRobot.login().openChannel()
         }
@@ -186,10 +186,10 @@ final class Reactions_Tests: StreamTestCase {
             userRobot.assertReaction(isPresent: false)
         }
     }
-    
+
     func test_addReactionWhileOffline() {
         linkToScenario(withId: 94)
-        
+
         let message = "test message"
 
         GIVEN("user opens the channel") {

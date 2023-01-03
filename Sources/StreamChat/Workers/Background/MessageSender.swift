@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -30,7 +30,7 @@ class MessageSender: Worker {
             .messagesPendingSendFetchRequest(),
         itemCreator: { $0 }
     )
-    
+
     private let sendingDispatchQueue: DispatchQueue = .init(
         label: "co.getStream.ChatClient.MessageSenderQueue",
         qos: .userInitiated,
@@ -44,13 +44,13 @@ class MessageSender: Worker {
         super.init(database: database, apiClient: apiClient)
         // We need to initialize the observer synchronously
         _ = observer
-        
+
         // The rest can be done on a background queue
         sendingDispatchQueue.async { [weak self] in
             self?.observer.onChange = { self?.handleChanges(changes: $0) }
             do {
                 try self?.observer.startObserving()
-                
+
                 // Send the existing unsent message first. We can simulate callback from the observer and ignore
                 // the index path completely.
                 if let changes = self?.observer.items.map({ ListChange.insert($0, index: .init(item: 0, section: 0)) }) {
@@ -61,7 +61,7 @@ class MessageSender: Worker {
             }
         }
     }
-    
+
     func handleChanges(changes: [ListChange<MessageDTO>]) {
         // Convert changes to a dictionary of requests by their cid
         var newRequests: [ChannelId: [MessageSendingQueue.SendRequest]] = [:]
@@ -85,10 +85,10 @@ class MessageSender: Worker {
                 break
             }
         }
-        
+
         // If there are requests, add them to proper queues
         guard !newRequests.isEmpty else { return }
-        
+
         _sendingQueueByCid.mutate { sendingQueueByCid in
             newRequests.forEach { cid, requests in
                 if sendingQueueByCid[cid] == nil {
@@ -97,7 +97,7 @@ class MessageSender: Worker {
                         dispatchQueue: sendingDispatchQueue
                     )
                 }
-                
+
                 sendingQueueByCid[cid]?.scheduleSend(requests: requests)
             }
         }
@@ -113,11 +113,11 @@ private class MessageSendingQueue {
         self.messageRepository = messageRepository
         self.dispatchQueue = dispatchQueue
     }
-    
+
     /// We use Set because the message Id is the main identifier. Thanks to this, it's possible to schedule message for sending
     /// multiple times without having to worry about that.
     @Atomic private(set) var requests: Set<SendRequest> = []
-    
+
     /// Schedules sending of the message. All already scheduled messages with `createdLocallyAt` older than these ones will
     /// be sent first.
     func scheduleSend(requests: [SendRequest]) {
@@ -126,12 +126,12 @@ private class MessageSendingQueue {
             wasEmpty = mutableRequests.isEmpty
             mutableRequests.formUnion(requests)
         }
-        
+
         if wasEmpty {
             sendNextMessage()
         }
     }
-    
+
     /// Gets the oldest message from the queue and tries to send it.
     private func sendNextMessage() {
         dispatchQueue.async { [weak self] in
@@ -145,7 +145,7 @@ private class MessageSendingQueue {
             }
         }
     }
-    
+
     private func removeRequestAndContinue(_ request: SendRequest) {
         _requests.mutate { $0.remove(request) }
         sendNextMessage()
@@ -160,7 +160,7 @@ extension MessageSendingQueue {
         static func == (lhs: Self, rhs: Self) -> Bool {
             lhs.messageId == rhs.messageId
         }
-        
+
         func hash(into hasher: inout Hasher) {
             hasher.combine(messageId)
         }

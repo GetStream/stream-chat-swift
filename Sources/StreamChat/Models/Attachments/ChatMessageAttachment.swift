@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -66,7 +66,7 @@ public extension AnyChatMessageAttachment {
             Payload.type == type || type == .unknown,
             let concretePayload = try? JSONDecoder.stream.decode(Payload.self, from: payload)
         else { return nil }
-        
+
         return .init(
             id: id,
             type: type,

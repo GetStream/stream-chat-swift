@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -136,7 +136,7 @@ open class ChatMessageReactionAuthorViewCell: _CollectionViewCell, ThemeProvider
         let isCurrentUser = content.currentUserId == reactionAuthor.id
 
         authorNameLabel.text = isCurrentUser ? L10n.you : reactionAuthor.name
-        
+
         reactionBubbleView.tailDirection = isCurrentUser ? .toTrailing : .toLeading
         reactionItemView.content = .init(
             useBigIcon: false,

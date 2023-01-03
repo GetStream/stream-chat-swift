@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -17,7 +17,7 @@ final class ChatPushNotificationContent_Tests: XCTestCase {
     var testMessage: ChatMessage!
     var exampleMessageNotificationContent: UNMutableNotificationContent!
     var exampleMessagePayload: MessagePayload.Boxed!
-    
+
     override func setUp() {
         super.setUp()
 
@@ -33,13 +33,13 @@ final class ChatPushNotificationContent_Tests: XCTestCase {
         var env = ChatClient.Environment()
         env.databaseContainerBuilder = { _, _, _, _, _, _ in self.database }
         env.apiClientBuilder = { _, _, _, _, _, _ in self.apiClient }
-        
+
         clientWithOffline = ChatClient_Mock(
             config: configOffline,
             workerBuilders: [],
             environment: env
         )
-        
+
         let cid: ChannelId = .unique
         let msgID: MessageId = .unique
 
@@ -99,7 +99,7 @@ final class ChatPushNotificationContent_Tests: XCTestCase {
         let handler = ChatRemoteNotificationHandler(client: clientWithOffline, content: content)
         XCTAssertTrue(handler.handleNotification(completion: { _ in }))
     }
-    
+
     func test_callsCompletion_whenHandled() throws {
         let handler = ChatRemoteNotificationHandler(client: clientWithOffline, content: exampleMessageNotificationContent)
         let expectation = XCTestExpectation(description: "Receive a message content")
@@ -116,7 +116,7 @@ final class ChatPushNotificationContent_Tests: XCTestCase {
         apiClient.test_simulateResponse(Result<MessagePayload.Boxed, Error>.success(exampleMessagePayload))
         wait(for: [expectation], timeout: defaultTimeout)
     }
-    
+
     func test_callsCompletion_whenProcessingUnknownEvent() throws {
         let content = UNMutableNotificationContent()
         content.userInfo["stream"] = [
@@ -129,7 +129,7 @@ final class ChatPushNotificationContent_Tests: XCTestCase {
 
         XCTAssertTrue(handler.handleNotification(completion: { notification in
             expectation.fulfill()
-            
+
             guard case .unknown = notification else {
                 XCTFail()
                 return

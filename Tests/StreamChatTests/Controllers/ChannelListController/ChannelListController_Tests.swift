@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -9,21 +9,21 @@ import XCTest
 
 final class ChannelListController_Tests: XCTestCase {
     fileprivate var env: TestEnvironment!
-    
+
     var client: ChatClient!
-    
+
     var query: ChannelListQuery!
-    
+
     var controller: ChatChannelListController!
     var controllerCallbackQueueID: UUID!
     /// Workaround for unwrapping **controllerCallbackQueueID!** in each closure that captures it
     private var callbackQueueID: UUID { controllerCallbackQueueID }
-    
+
     var database: DatabaseContainer_Spy { client.databaseContainer as! DatabaseContainer_Spy }
-    
+
     override func setUp() {
         super.setUp()
-        
+
         env = TestEnvironment()
         client = ChatClient.mock()
         query = .init(filter: .in(.members, values: [.unique]))
@@ -31,95 +31,95 @@ final class ChannelListController_Tests: XCTestCase {
         controllerCallbackQueueID = UUID()
         controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
     }
-    
+
     override func tearDown() {
         query = nil
         controllerCallbackQueueID = nil
-        
+
         database.shouldCleanUpTempDBFiles = true
 
         controller = nil
         client.mockAPIClient.cleanUp()
         client = nil
         env.channelListUpdater?.cleanUp()
-        
+
         AssertAsync {
             Assert.canBeReleased(&controller)
             Assert.canBeReleased(&client)
             Assert.canBeReleased(&env)
         }
-        
+
         super.tearDown()
     }
-    
+
     func test_clientAndQueryAreCorrect() {
         let controller = client.channelListController(query: query)
         XCTAssert(controller.client === client)
         XCTAssertEqual(controller.query.filter.filterHash, query.filter.filterHash)
     }
-    
+
     // MARK: - Synchronize tests
-    
+
     func test_synchronize_changesControllerState() {
         // Check if controller is inactive initially.
         assert(controller.state == .initialized)
-        
+
         // Simulate `synchronize` call
         controller.synchronize()
-        
+
         // Simulate successful network call.
         env.channelListUpdater?.update_completion?(.success([]))
-        
+
         // Check if state changed after successful network call.
         XCTAssertEqual(controller.state, .remoteDataFetched)
     }
-    
+
     func test_channelsAccess_changesControllerState() {
         // Check if controller is inactive initially.
         assert(controller.state == .initialized)
-        
+
         // Start DB observing
         _ = controller.channels
-        
+
         // Check if state changed after channels access
         XCTAssertEqual(controller.state, .localDataFetched)
     }
-    
+
     func test_synchronize_changesControllerStateOnError() {
         // Check if controller is inactive initially.
         assert(controller.state == .initialized)
-        
+
         // Simulate `synchronize` call
         controller.synchronize()
-        
+
         // Simulate failed network call.
         let error = TestError()
         env.channelListUpdater?.update_completion?(.failure(error))
-        
+
         // Check if state changed after failed network call.
         XCTAssertEqual(controller.state, .remoteDataFetchFailed(ClientError(with: error)))
     }
-    
+
     func test_changesAreReported_beforeCallingSynchronize() throws {
         // Save a new channel to DB
         client.databaseContainer.write { session in
             try session.saveChannel(payload: self.dummyPayload(with: .unique), query: self.query, cache: nil)
         }
-        
+
         // Assert the channel is loaded
         AssertAsync.willBeFalse(controller.channels.isEmpty)
     }
-    
+
     func test_channelsAreFetched_beforeCallingSynchronize() throws {
         // Save three channels to DB
         let cidMatchingQuery = ChannelId.unique
         let cidMatchingQueryDeleted = ChannelId.unique
         let cidNotMatchingQuery = ChannelId.unique
-        
+
         try client.databaseContainer.writeSynchronously { session in
             // Insert a channel matching the query
             try session.saveChannel(payload: self.dummyPayload(with: cidMatchingQuery), query: self.query, cache: nil)
-            
+
             // Insert a deleted channel matching the query
             let dto = try session.saveChannel(
                 payload: self.dummyPayload(with: cidMatchingQueryDeleted),
@@ -127,19 +127,19 @@ final class ChannelListController_Tests: XCTestCase {
                 cache: nil
             )
             dto.deletedAt = .unique
-            
+
             // Insert a channel not matching the query
             try session.saveChannel(payload: self.dummyPayload(with: cidNotMatchingQuery), query: nil, cache: nil)
         }
-        
+
         // Assert the existing channel is loaded
         XCTAssertEqual(controller.channels.map(\.cid), [cidMatchingQuery])
     }
-    
+
     func test_synchronize_callsChannelQueryUpdater() {
         let queueId = UUID()
         controller.callbackQueue = .testQueue(withId: queueId)
-        
+
         // Simulate `synchronize` calls and catch the completion
         var completionCalled = false
         controller.synchronize { error in
@@ -147,37 +147,37 @@ final class ChannelListController_Tests: XCTestCase {
             AssertTestQueue(withId: queueId)
             completionCalled = true
         }
-        
+
         // Keep a weak ref so we can check if it's actually deallocated
         weak var weakController = controller
-        
+
         // (Try to) deallocate the controller
         // by not keeping any references to it
         controller = nil
-        
+
         // Assert the updater is called with the query
         XCTAssertEqual(env.channelListUpdater!.update_queries.first?.filter.filterHash, query.filter.filterHash)
         // Completion shouldn't be called yet
         XCTAssertFalse(completionCalled)
-        
+
         // Simulate successful update
         env.channelListUpdater?.update_completion?(.success([]))
         // Release reference of completion so we can deallocate stuff
         env.channelListUpdater?.update_completion = nil
-        
+
         // Completion should be called
         AssertAsync.willBeTrue(completionCalled)
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
     }
-    
+
     func test_synchronize_initialPageSize_isCorrect() {
         let pageSize = Int.random(in: 1...42)
         query = .init(filter: .in(.members, values: [.unique]), pageSize: pageSize)
         controller = ChatChannelListController(query: query, client: client, environment: env.environment)
         let queueId = UUID()
         controller.callbackQueue = .testQueue(withId: queueId)
-        
+
         // Simulate `synchronize` calls and catch the completion
         var completionCalled = false
         controller.synchronize { error in
@@ -185,34 +185,34 @@ final class ChannelListController_Tests: XCTestCase {
             AssertTestQueue(withId: queueId)
             completionCalled = true
         }
-        
+
         // Keep a weak ref so we can check if it's actually deallocated
         weak var weakController = controller
-        
+
         // (Try to) deallocate the controller
         // by not keeping any references to it
         controller = nil
-        
+
         // Assert the updater is called with the correct pageSize
         XCTAssertEqual(env.channelListUpdater!.update_queries.first?.pagination.pageSize, pageSize)
         // Completion shouldn't be called yet
         XCTAssertFalse(completionCalled)
-        
+
         // Simulate successful update
         env.channelListUpdater!.update_completion?(.success([]))
         // Release reference of completion so we can deallocate stuff
         env.channelListUpdater!.update_completion = nil
-        
+
         // Completion should be called
         AssertAsync.willBeTrue(completionCalled)
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
     }
-    
+
     func test_synchronize_callsChannelQueryUpdater_inOfflineMode() {
         let queueId = UUID()
         controller.callbackQueue = .testQueue(withId: queueId)
-        
+
         // Simulate `synchronize` calls and catch the completion
         var completionCalled = false
         controller.synchronize { error in
@@ -220,30 +220,30 @@ final class ChannelListController_Tests: XCTestCase {
             AssertTestQueue(withId: queueId)
             completionCalled = true
         }
-        
+
         // Keep a weak ref so we can check if it's actually deallocated
         weak var weakController = controller
-        
+
         // (Try to) deallocate the controller
         // by not keeping any references to it
         controller = nil
-        
+
         // Assert the updater is called with the query
         XCTAssertEqual(env.channelListUpdater?.update_queries.first?.filter.filterHash, query.filter.filterHash)
         // Completion shouldn't be called yet
         XCTAssertFalse(completionCalled)
-        
+
         // Simulate successful update
         env.channelListUpdater?.update_completion?(.success([]))
         // Release reference of completion so we can deallocate stuff
         env.channelListUpdater?.update_completion = nil
-        
+
         // Completion should be called
         AssertAsync.willBeTrue(completionCalled)
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
     }
-    
+
     func test_synchronize_propagatesErrorFromUpdater() {
         let queueId = UUID()
         controller.callbackQueue = .testQueue(withId: queueId)
@@ -253,27 +253,27 @@ final class ChannelListController_Tests: XCTestCase {
             completionCalledError = $0
             AssertTestQueue(withId: queueId)
         }
-        
+
         // Simulate failed udpate
         let testError = TestError()
         env.channelListUpdater?.update_completion?(.failure(testError))
-        
+
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
-    
+
     /// This test simulates a bug where the `channels` field was not updated if it wasn't
     /// touched before calling synchronize.
     func test_channelsAreFetched_afterCallingSynchronize() throws {
         // Simulate `synchronize` call
         controller.synchronize()
-        
+
         // Create a channel in the DB matching the query
         let channelId = ChannelId.unique
         try client.databaseContainer.writeSynchronously {
             try $0.saveChannel(payload: .dummy(cid: channelId), query: self.query, cache: nil)
         }
-        
+
         // Simulate successful network call.
         env.channelListUpdater?.update_completion?(.success([]))
 
@@ -282,11 +282,11 @@ final class ChannelListController_Tests: XCTestCase {
     }
 
     // MARK: - Change propagation tests
-    
+
     func test_changesInTheDatabase_arePropagated() throws {
         // Simulate `synchronize` call
         controller.synchronize()
-        
+
         // Simulate changes in the DB:
         // 1. Add the channel to the DB
         let cid: ChannelId = .unique
@@ -295,68 +295,16 @@ final class ChannelListController_Tests: XCTestCase {
                 try session.saveChannel(payload: self.dummyPayload(with: cid), query: self.query, cache: nil)
             }, completion: $0)
         }
-        
+
         // Assert the resulting value is updated
         AssertAsync.willBeEqual(controller.channels.map(\.cid), [cid])
     }
-    
+
     func test_newChannel_callsListHook_whenSynchronized() throws {
         // Simulate `synchronize` call and catch the completion
         var synchronized = false
         controller.synchronize { _ in synchronized = true }
-        
-        // Add the channel to the DB
-        let cid: ChannelId = .unique
-        let channelPayload = dummyPayload(with: cid)
-        var channel: ChatChannel!
-        try database.writeSynchronously { session in
-            let dto = try session.saveChannel(payload: channelPayload, query: self.query, cache: nil)
-            channel = try dto.asModel()
-        }
-        
-        // Simulate successful response from backend
-        env.channelListUpdater?.update_completion?(.success([channel]))
-        
-        AssertAsync {
-            // Assert synchronized completion is invoked
-            Assert.willBeTrue(synchronized)
-            // Assert the resulting value is updated
-            Assert.willBeEqual(self.controller.channels.map(\.cid), [cid])
-        }
-        
-        let newCid: ChannelId = .unique
-        
-        // Create and assign delegate
-        let delegate = TestLinkDelegate(shouldListNewChannel: { channel in
-            channel.cid != newCid
-        }, shouldListUpdatedChannel: { _ in
-            false
-        })
-        controller.delegate = delegate
-        
-        // Insert a new channel to DB
-        try database.writeSynchronously { session in
-            try session.saveChannel(payload: .dummy(cid: newCid), query: nil, cache: nil)
-        }
-        
-        // Assert the resulting value is not inserted
-        AssertAsync.willBeEqual(controller.channels.map(\.cid), [cid])
-        
-        // Insert a new channel to DB
-        let insertedCid = ChannelId.unique
-        try database.writeSynchronously { session in
-            try session.saveChannel(payload: .dummy(cid: insertedCid), query: nil, cache: nil)
-        }
-        
-        // Assert the resulting value is inserted
-        AssertAsync.willBeEqual(controller.channels.map(\.cid.rawValue).sorted(), [cid.rawValue, insertedCid.rawValue].sorted())
-    }
-    
-    func test_updatedChannel_callsLinkHook_whenSynchronized() throws {
-        // Simulate `synchronize` call and catch the completion
-        var synchronized = false
-        controller.synchronize { _ in synchronized = true }
-        
+
         // Add the channel to the DB
         let cid: ChannelId = .unique
         let channelPayload = dummyPayload(with: cid)
@@ -368,17 +316,69 @@ final class ChannelListController_Tests: XCTestCase {
 
         // Simulate successful response from backend
         env.channelListUpdater?.update_completion?(.success([channel]))
-        
+
         AssertAsync {
             // Assert synchronized completion is invoked
             Assert.willBeTrue(synchronized)
             // Assert the resulting value is updated
             Assert.willBeEqual(self.controller.channels.map(\.cid), [cid])
         }
-        
+
+        let newCid: ChannelId = .unique
+
+        // Create and assign delegate
+        let delegate = TestLinkDelegate(shouldListNewChannel: { channel in
+            channel.cid != newCid
+        }, shouldListUpdatedChannel: { _ in
+            false
+        })
+        controller.delegate = delegate
+
+        // Insert a new channel to DB
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: .dummy(cid: newCid), query: nil, cache: nil)
+        }
+
+        // Assert the resulting value is not inserted
+        AssertAsync.willBeEqual(controller.channels.map(\.cid), [cid])
+
+        // Insert a new channel to DB
+        let insertedCid = ChannelId.unique
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: .dummy(cid: insertedCid), query: nil, cache: nil)
+        }
+
+        // Assert the resulting value is inserted
+        AssertAsync.willBeEqual(controller.channels.map(\.cid.rawValue).sorted(), [cid.rawValue, insertedCid.rawValue].sorted())
+    }
+
+    func test_updatedChannel_callsLinkHook_whenSynchronized() throws {
+        // Simulate `synchronize` call and catch the completion
+        var synchronized = false
+        controller.synchronize { _ in synchronized = true }
+
+        // Add the channel to the DB
+        let cid: ChannelId = .unique
+        let channelPayload = dummyPayload(with: cid)
+        var channel: ChatChannel!
+        try database.writeSynchronously { session in
+            let dto = try session.saveChannel(payload: channelPayload, query: self.query, cache: nil)
+            channel = try dto.asModel()
+        }
+
+        // Simulate successful response from backend
+        env.channelListUpdater?.update_completion?(.success([channel]))
+
+        AssertAsync {
+            // Assert synchronized completion is invoked
+            Assert.willBeTrue(synchronized)
+            // Assert the resulting value is updated
+            Assert.willBeEqual(self.controller.channels.map(\.cid), [cid])
+        }
+
         let shouldBeInsertedCid: ChannelId = .unique
         let shouldBeExcludedCid: ChannelId = .unique
-        
+
         // Create and assign delegate
         let delegate = TestLinkDelegate(shouldListNewChannel: { _ in
             false
@@ -386,25 +386,25 @@ final class ChannelListController_Tests: XCTestCase {
             channel.cid == shouldBeInsertedCid
         })
         controller.delegate = delegate
-        
+
         // Insert 2 channels to cid
         try database.writeSynchronously { session in
             try session.saveChannel(payload: .dummy(cid: shouldBeInsertedCid), query: nil, cache: nil)
             try session.saveChannel(payload: .dummy(cid: shouldBeExcludedCid), query: nil, cache: nil)
         }
-        
+
         // Assert that 2 new channels are not linked
         AssertAsync.willBeEqual(controller.channels.map(\.cid), [cid])
-        
+
         // Update `shouldBeExcludedCid`
         try database.writeSynchronously { session in
             let dto = try XCTUnwrap(session.channel(cid: shouldBeExcludedCid))
             dto.updatedAt = .unique
         }
-        
+
         // Assert that updated channel is not linked
         AssertAsync.willBeEqual(controller.channels.map(\.cid), [cid])
-        
+
         // Update `shouldBeInsertedCid`
         try database.writeSynchronously { session in
             let dto = try XCTUnwrap(session.channel(cid: shouldBeInsertedCid))
@@ -417,12 +417,12 @@ final class ChannelListController_Tests: XCTestCase {
             [cid.rawValue, shouldBeInsertedCid.rawValue].sorted()
         )
     }
-    
+
     func test_updatedChannel_callsUnlinkHook_whenSynchronized() throws {
         // Simulate `synchronize` call and catch the completion
         var synchronized = false
         controller.synchronize { _ in synchronized = true }
-        
+
         // Add the channel to the DB
         let cid: ChannelId = .unique
         let channelPayload = dummyPayload(with: cid)
@@ -434,14 +434,14 @@ final class ChannelListController_Tests: XCTestCase {
 
         // Simulate successful response from backend
         env.channelListUpdater?.update_completion?(.success([channel]))
-        
+
         AssertAsync {
             // Assert synchronized completion is invoked
             Assert.willBeTrue(synchronized)
             // Assert the resulting value is updated
             Assert.willBeEqual(self.controller.channels.map(\.cid), [cid])
         }
-        
+
         // Create and assign delegate
         let delegate = TestLinkDelegate(
             shouldListNewChannel: { _ in false },
@@ -450,17 +450,17 @@ final class ChannelListController_Tests: XCTestCase {
             }
         )
         controller.delegate = delegate
-        
+
         // Update linked channel
         try database.writeSynchronously { session in
             let channelDTO = session.channel(cid: cid)
             channelDTO?.updatedAt = .unique
         }
-        
+
         // Assert that new channel is unlinked
         AssertAsync.willBeEqual(controller.channels.map(\.cid), [])
     }
-    
+
     func test_unlinkedChannels_doNotTriggerHooks_whenNotSynchronized() throws {
         // Create and assign delegate, catch
         var delegateCalled = false
@@ -472,26 +472,26 @@ final class ChannelListController_Tests: XCTestCase {
             return false
         })
         controller.delegate = delegate
-        
+
         // Save a channel not-linked to the current query
         let cid: ChannelId = .unique
         try database.writeSynchronously { session in
             try session.saveChannel(payload: self.dummyPayload(with: cid), query: nil, cache: nil)
         }
-        
+
         AssertAsync {
             // Assert hooks are not called
             Assert.staysFalse(delegateCalled)
             // Assert channels stay empty
             Assert.willBeEqual(self.controller.channels.map(\.cid), [])
         }
-        
+
         // Update a channel not linked to the current query
         try database.writeSynchronously { session in
             let dto = try XCTUnwrap(session.channel(cid: cid))
             dto.updatedAt = .unique
         }
-        
+
         AssertAsync {
             // Assert hooks are not called
             Assert.staysFalse(delegateCalled)
@@ -499,17 +499,17 @@ final class ChannelListController_Tests: XCTestCase {
             Assert.willBeEqual(self.controller.channels.map(\.cid), [])
         }
     }
-    
+
     func test_linkedChannels_doesTriggerUnlinkHook_whenNotSynchronized() throws {
         // Save a channel linked to the current query
         let cid: ChannelId = .unique
         try database.writeSynchronously { session in
             try session.saveChannel(payload: self.dummyPayload(with: cid), query: self.query, cache: nil)
         }
-        
+
         // Assert channel is linked
         AssertAsync.willBeEqual(controller.channels.map(\.cid), [cid])
-        
+
         // Create and assign delegate excluding a channel from a query
         let delegate = TestLinkDelegate(shouldListNewChannel: { _ in
             true
@@ -517,17 +517,17 @@ final class ChannelListController_Tests: XCTestCase {
             channel.cid != cid
         })
         controller.delegate = delegate
-        
+
         // Update a channel linked to the current query
         try database.writeSynchronously { session in
             let dto = try XCTUnwrap(session.channel(cid: cid))
             dto.updatedAt = .unique
         }
-        
+
         // Assert linked channel is unlisted
         AssertAsync.willBeEqual(controller.channels.map(\.cid), [])
     }
-    
+
     func test_hiddenChannel_isExcluded_whenFilterDoesntContainHiddenKey() throws {
         // Add 2 channels to the DB
         let cid: ChannelId = .unique
@@ -536,21 +536,21 @@ final class ChannelListController_Tests: XCTestCase {
             let dto = try session.saveChannel(payload: self.dummyPayload(with: .unique), query: self.query, cache: nil)
             dto.isHidden = true
         }
-        
+
         // Simulate `synchronize` call
         controller.synchronize()
-        
+
         // Assert only non-hidden one is tracked
         XCTAssertEqual(controller.channels.map(\.cid), [cid])
         // Assert tracked channels are not hidden
         XCTAssertEqual(controller.channels.first?.isHidden, false)
     }
-    
+
     func test_hiddenChannel_isIncluded_whenFilterContainsHiddenKey() throws {
         // Create controller with hidden filter
         query = .init(filter: .equal(.hidden, to: true))
         controller = .init(query: query, client: client)
-        
+
         // Add 2 channels to the DB
         let cid: ChannelId = .unique
         try database.writeSynchronously { session in
@@ -558,10 +558,10 @@ final class ChannelListController_Tests: XCTestCase {
             let dto = try session.saveChannel(payload: self.dummyPayload(with: cid), query: self.query, cache: nil)
             dto.isHidden = true
         }
-        
+
         // Simulate `synchronize` call
         controller.synchronize()
-        
+
         // Assert only hidden channel is tracked
         XCTAssertEqual(controller.channels.map(\.cid), [cid])
         // Assert tracked channels are hidden
@@ -693,35 +693,35 @@ final class ChannelListController_Tests: XCTestCase {
         ))
         controller = ChatChannelListController(query: query, client: client, filter: filter, environment: env.environment)
     }
-    
+
     // MARK: - Delegate tests
-    
+
     func test_settingDelegate_leadsToFetchingLocalData() {
         let delegate = ChannelListController_Delegate(expectedQueueId: controllerCallbackQueueID)
-           
+
         // Check initial state
         XCTAssertEqual(controller.state, .initialized)
-           
+
         controller.delegate = delegate
-           
+
         // Assert state changed
         AssertAsync.willBeEqual(controller.state, .localDataFetched)
     }
-    
+
     func test_delegate_isNotifiedAboutStateChanges() throws {
         // Set the delegate
         let delegate = ChannelListController_Delegate(expectedQueueId: controllerCallbackQueueID)
         controller.delegate = delegate
-        
+
         // Assert delegate is notified about state changes
         AssertAsync.willBeEqual(delegate.state, .localDataFetched)
 
         // Synchronize
         controller.synchronize()
-            
+
         // Simulate network call response
         env.channelListUpdater?.update_completion?(.success([]))
-        
+
         // Assert delegate is notified about state changes
         AssertAsync.willBeEqual(delegate.state, .remoteDataFetched)
     }
@@ -730,11 +730,11 @@ final class ChannelListController_Tests: XCTestCase {
         // Set the delegate
         let delegate = ChannelListController_Delegate(expectedQueueId: controllerCallbackQueueID)
         controller.delegate = delegate
-        
+
         // Assert the delegate is assigned correctly. We should test this because of the type-erasing we
         // do in the controller.
         XCTAssert(controller.delegate === delegate)
-  
+
         // Simulate DB update
         let cid: ChannelId = .unique
         try client.databaseContainer.writeSynchronously { session in
@@ -742,7 +742,7 @@ final class ChannelListController_Tests: XCTestCase {
         }
 
         let channel = try XCTUnwrap(client.databaseContainer.viewContext.channel(cid: cid)).asModel()
-        
+
         AssertAsync {
             Assert.willBeTrue(delegate.willChangeChannels_called)
             Assert.willBeEqual(delegate.didChangeChannels_changes, [.insert(channel, index: [0, 0])])
@@ -778,11 +778,11 @@ final class ChannelListController_Tests: XCTestCase {
                 XCTAssertTrue(willChangeCallbackCalled)
                 didChangeCallbackCalled = true
             }
-            
+
             func controller(_ controller: ChatChannelListController, shouldListUpdatedChannel channel: ChatChannel) -> Bool {
                 true
             }
-            
+
             func controller(_ controller: ChatChannelListController, shouldAddNewChannelToList channel: ChatChannel) -> Bool {
                 true
             }
@@ -803,9 +803,9 @@ final class ChannelListController_Tests: XCTestCase {
             Assert.willBeTrue(delegate.didChangeCallbackCalled)
         }
     }
-    
+
     // MARK: - Channels pagination
-    
+
     func test_loadNextChannels_callsChannelListUpdater() {
         var completionCalled = false
         let limit = 42
@@ -814,34 +814,34 @@ final class ChannelListController_Tests: XCTestCase {
             XCTAssertNil(error)
             completionCalled = true
         }
-        
+
         // Completion shouldn't be called yet
         XCTAssertFalse(completionCalled)
-        
+
         // Assert correct `Pagination` is created
         XCTAssertEqual(
             env!.channelListUpdater?.update_queries.first?.pagination,
             .init(pageSize: limit, offset: controller.channels.count)
         )
-        
+
         // Keep a weak ref so we can check if it's actually deallocated
         weak var weakController = controller
-        
+
         // (Try to) deallocate the controller
         // by not keeping any references to it
         controller = nil
-        
+
         // Simulate successful update
         env!.channelListUpdater?.update_completion?(.success([]))
         // Release reference of completion so we can deallocate stuff
         env.channelListUpdater?.update_completion = nil
-        
+
         // Completion should be called
         AssertAsync.willBeTrue(completionCalled)
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
     }
-    
+
     func test_loadNextChannels_callsChannelUpdaterWithError() {
         // Simulate `loadNextChannels` call and catch the completion
         var completionCalledError: Error?
@@ -849,48 +849,48 @@ final class ChannelListController_Tests: XCTestCase {
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0
         }
-        
+
         // Simulate failed update
         let testError = TestError()
         env.channelListUpdater?.update_completion?(.failure(testError))
-        
+
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
-    
+
     func test_loadNextChannels_defaultPageSize_isCorrect() {
         var completionCalled = false
-        
+
         let pageSize = Int.random(in: 1...42)
         query = .init(filter: .in(.members, values: [.unique]), pageSize: pageSize)
         controller = ChatChannelListController(query: query, client: client, environment: env.environment)
-        
+
         controller.loadNextChannels { error in
             XCTAssertNil(error)
             completionCalled = true
         }
-        
+
         // Completion shouldn't be called yet
         XCTAssertFalse(completionCalled)
-        
+
         // Assert correct `Pagination` is created
         XCTAssertEqual(
             env!.channelListUpdater?.update_queries.first?.pagination,
             .init(pageSize: pageSize, offset: controller.channels.count)
         )
-        
+
         // Keep a weak ref so we can check if it's actually deallocated
         weak var weakController = controller
-        
+
         // (Try to) deallocate the controller
         // by not keeping any references to it
         controller = nil
-        
+
         // Simulate successful update
         env!.channelListUpdater?.update_completion?(.success([]))
         // Release reference of completion so we can deallocate stuff
         env.channelListUpdater!.update_completion = nil
-        
+
         // Completion should be called
         AssertAsync.willBeTrue(completionCalled)
         // `weakController` should be deallocated too
@@ -976,9 +976,9 @@ final class ChannelListController_Tests: XCTestCase {
 
         XCTAssertEqual(receivedError, error)
     }
-    
+
     // MARK: - Mark all read
-    
+
     func test_markAllRead_callsChannelListUpdater() {
         // Simulate `markRead` call and catch the completion
         var completionCalled = false
@@ -987,27 +987,27 @@ final class ChannelListController_Tests: XCTestCase {
             XCTAssertNil(error)
             completionCalled = true
         }
-        
+
         // Keep a weak ref so we can check if it's actually deallocated
         weak var weakController = controller
-        
+
         // (Try to) deallocate the controller
         // by not keeping any references to it
         controller = nil
-        
+
         XCTAssertFalse(completionCalled)
-        
+
         // Simulate successfull udpate
         env.channelListUpdater!.markAllRead_completion?(nil)
         // Release reference of completion so we can deallocate stuff
         env.channelListUpdater!.markAllRead_completion = nil
-        
+
         // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
     }
-    
+
     func test_markAllRead_propagatesErrorFromUpdater() {
         // Simulate `markRead` call and catch the completion
         var completionCalledError: Error?
@@ -1015,17 +1015,17 @@ final class ChannelListController_Tests: XCTestCase {
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0
         }
-        
+
         // Simulate failed udpate
         let testError = TestError()
         env.channelListUpdater!.markAllRead_completion?(testError)
-        
+
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
-    
+
     // MARK: - List Ordering initial value
-    
+
     func test_inits_propagate_desiredMessageOrdering() {
         XCTAssertEqual(
             client.channelController(for: .unique).messageOrdering,
@@ -1035,7 +1035,7 @@ final class ChannelListController_Tests: XCTestCase {
             client.channelController(for: .unique, messageOrdering: .bottomToTop).messageOrdering,
             .bottomToTop
         )
-        
+
         XCTAssertEqual(
             client.channelController(for: ChannelQuery(cid: .unique)).messageOrdering,
             .topToBottom
@@ -1047,7 +1047,7 @@ final class ChannelListController_Tests: XCTestCase {
             ).messageOrdering,
             .bottomToTop
         )
-        
+
         client.authenticationRepository.setMockToken()
         XCTAssertEqual(
             (try! client.channelController(createChannelWithId: .unique)).messageOrdering,
@@ -1062,7 +1062,7 @@ final class ChannelListController_Tests: XCTestCase {
             ).messageOrdering,
             .bottomToTop
         )
-        
+
         XCTAssertEqual(
             (
                 try! client.channelController(
@@ -1099,7 +1099,7 @@ final class ChannelListController_Tests: XCTestCase {
 
 private class TestEnvironment {
     @Atomic var channelListUpdater: ChannelListUpdater_Spy?
-    
+
     lazy var environment: ChatChannelListController.Environment =
         .init(channelQueryUpdaterBuilder: { [unowned self] in
             self.channelListUpdater = ChannelListUpdater_Spy(

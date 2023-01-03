@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -64,7 +64,7 @@ open class ComposerView: _View, ThemeProvider {
         .cooldownView.init()
         .withoutAutoresizingMaskConstraints
         .withAccessibilityIdentifier(identifier: "cooldownView")
-    
+
     /// A button to confirm when editing a message.
     public private(set) lazy var confirmButton: UIButton = components
         .confirmButton.init()
@@ -111,7 +111,7 @@ open class ComposerView: _View, ThemeProvider {
 
     override open func setUpAppearance() {
         super.setUpAppearance()
-        
+
         backgroundColor = appearance.colorPalette.background
         layer.shadowColor = UIColor.systemGray.cgColor
         layer.shadowOpacity = 1
@@ -123,7 +123,7 @@ open class ComposerView: _View, ThemeProvider {
         titleLabel.font = appearance.fonts.bodyBold
         titleLabel.adjustsFontForContentSizeCategory = true
     }
-    
+
     override open func setUpLayout() {
         super.setUpLayout()
         embed(container)
@@ -149,7 +149,7 @@ open class ComposerView: _View, ThemeProvider {
         centerContainer.addArrangedSubview(inputMessageView)
         centerContainer.addArrangedSubview(trailingContainer)
         centerContainer.layoutMargins = .zero
-        
+
         trailingContainer.alignment = .center
         trailingContainer.spacing = 0
         trailingContainer.distribution = .equal

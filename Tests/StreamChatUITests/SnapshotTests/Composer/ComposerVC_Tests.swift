@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -112,50 +112,50 @@ final class ComposerVC_Tests: XCTestCase {
         XCTAssertEqual(searchUsers([user], by: "françois"), [user])
         XCTAssertEqual(searchUsers([user], by: "franc"), [user])
     }
-    
+
     func test_attachmentsPreview_withFourAttachments_addedSameTime() {
         let composerVC = ComposerVC()
         composerVC.appearance = Appearance.default
-        
+
         composerVC.content = .initial()
         composerVC.content.attachments = [.mockFile, .mockFile, .mockFile, .mockFile]
-        
+
         AssertSnapshot(composerVC)
     }
-    
+
     func test_attachmentsPreview_withFourAttachments_addedOneAfterThree() {
         let composerVC = ComposerVC()
         composerVC.appearance = Appearance.default
-        
+
         composerVC.content = .initial()
         composerVC.content.attachments = [.mockFile, .mockFile, .mockFile]
-        
+
         composerVC.content.attachments.append(.mockFile)
-        
+
         AssertSnapshot(composerVC)
     }
-    
+
     func test_attachmentsPreview_withFourAttachments_addedTwoAfterTwo() {
         let composerVC = ComposerVC()
         composerVC.appearance = Appearance.default
-        
+
         composerVC.content = .initial()
         composerVC.content.attachments = [.mockFile, .mockFile]
-        
+
         composerVC.content.attachments.append(contentsOf: [.mockFile, .mockFile])
-        
+
         AssertSnapshot(composerVC)
     }
-    
+
     func test_attachmentsPreview_withFourAttachments_addedThreeAfterOne() {
         let composerVC = ComposerVC()
         composerVC.appearance = Appearance.default
-        
+
         composerVC.content = .initial()
         composerVC.content.attachments = [.mockFile]
-        
+
         composerVC.content.attachments.append(contentsOf: [.mockFile, .mockFile, .mockFile])
-        
+
         AssertSnapshot(composerVC)
     }
 
@@ -178,11 +178,11 @@ final class ComposerVC_Tests: XCTestCase {
 
         AssertSnapshot(composerVC, variants: [.defaultLight])
     }
-    
+
     func test_commandWithNonEmptyArgs_hasSendButtonDisabled() {
         let composerVC = ComposerVC()
         composerVC.appearance = Appearance.default
-        
+
         composerVC.content = .initial()
         composerVC.content.addCommand(.init(
             name: "ARGNEEDED",
@@ -190,14 +190,14 @@ final class ComposerVC_Tests: XCTestCase {
             set: "special",
             args: "[text]"
         ))
-        
+
         AssertSnapshot(composerVC)
     }
-    
+
     func test_commandWithEmptyArgs_hasSendButtonEnabled() {
         let composerVC = ComposerVC()
         composerVC.appearance = Appearance.default
-        
+
         composerVC.content = .initial()
         composerVC.content.addCommand(.init(
             name: "NOARGNEEDED",
@@ -205,18 +205,18 @@ final class ComposerVC_Tests: XCTestCase {
             set: "special",
             args: ""
         ))
-        
+
         AssertSnapshot(composerVC)
     }
-    
+
     func test_whenSuggestionsLookupIsLocal_onlyChannelMembersAreShown() {
         final class ComposerContainerVC: UIViewController {
             var composerVC: ComposerVC!
             var textWithMention = ""
-            
+
             override func viewDidLoad() {
                 super.viewDidLoad()
-                
+
                 view.backgroundColor = .white
                 addChildViewController(composerVC, targetView: view)
                 composerVC.view.pin(anchors: [.leading, .trailing, .bottom], to: view)
@@ -224,25 +224,25 @@ final class ComposerVC_Tests: XCTestCase {
 
             override func viewWillAppear(_ animated: Bool) {
                 super.viewWillAppear(animated)
-                
+
                 composerVC.content.text = textWithMention
             }
         }
-        
+
         let member: ChatChannelMember = .mock(
             id: "1",
             name: "Yoda (member)",
             imageURL: nil
         )
-        
+
         let watcher: ChatUser = .mock(
             id: "2",
             name: "Yoda (watcher)",
             imageURL: nil
         )
-        
+
         let mockUserSearchController = ChatUserSearchController_Mock.mock()
-        
+
         let mockChannelController = ChatChannelController_Mock.mock()
         mockChannelController.client.authenticationRepository.setMockToken()
         mockChannelController.channel_mock = .mock(
@@ -250,18 +250,18 @@ final class ComposerVC_Tests: XCTestCase {
             lastActiveMembers: [member],
             lastActiveWatchers: [watcher]
         )
-        
+
         let composerVC = ComposerVC()
         composerVC.userSearchController = mockUserSearchController
         composerVC.channelController = mockChannelController
-        
+
         let containerVC = ComposerContainerVC()
         containerVC.composerVC = composerVC
         containerVC.textWithMention = "@Yo"
-        
+
         AssertSnapshot(containerVC, variants: [.defaultLight])
     }
-    
+
     func test_channelWithSlowModeActive_messageIsSent_SlowModeIsOnWithCountdownShown() {
         // GIVEN
         let composerVC = ComposerVC()
@@ -269,10 +269,10 @@ final class ComposerVC_Tests: XCTestCase {
         composerVC.appearance = Appearance.default
         composerVC.content.text = "Test text"
         composerVC.viewDidLoad()
-        
+
         // WHEN
         composerVC.cooldownTracker.start(with: 120)
-        
+
         // THEN
         AssertSnapshot(composerVC)
     }

@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -55,7 +55,7 @@ class AttachmentQueueUploader: Worker {
 
     private func handleChanges(changes: [ListChange<AttachmentDTO>]) {
         guard !changes.isEmpty else { return }
-        
+
         var wasEmpty: Bool!
         _pendingAttachmentIDs.mutate { pendingAttachmentIDs in
             wasEmpty = pendingAttachmentIDs.isEmpty

@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -16,10 +16,10 @@ final class ChannelWatcherListQuery_Tests: XCTestCase {
                 offset: .random(in: 10...100)
             )
         )
-        
+
         // Encode the query.
         let json = try JSONEncoder.default.encode(query)
-        
+
         // Assert query is encoded correctly.
         AssertJSONEqual(json, [
             "state": true,
@@ -27,14 +27,14 @@ final class ChannelWatcherListQuery_Tests: XCTestCase {
             "watchers": ["limit": query.pagination.pageSize, "offset": query.pagination.offset]
         ])
     }
-    
+
     func test_defaultPageSizeIsUsed_ifNotSpecified() throws {
         // Create the query.
         let query = ChannelWatcherListQuery(cid: .unique)
-        
+
         // Encode the query.
         let json = try JSONEncoder.default.encode(query)
-        
+
         // Assert query is encoded correctly.
         AssertJSONEqual(json, [
             "state": true,

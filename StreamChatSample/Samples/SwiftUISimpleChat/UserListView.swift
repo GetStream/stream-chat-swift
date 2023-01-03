@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 #if swift(>=5.3)
@@ -16,7 +16,7 @@ struct UserListView: View {
     @State private var showActionSheet: ChatUser?
     /// The callback that is called when a user is selected.
     let didSelectUser: (UserId) -> Void
-    
+
     var body: some View {
         VStack {
             /// Loading indicator will appear when there is no users in local storage and `synchronize()` is in progress.
@@ -43,7 +43,7 @@ struct UserListView: View {
         .actionSheet(item: $showActionSheet, content: actionSheet)
         .onAppear { userList.controller.synchronize() }
     }
-    
+
     /// View with user name and mute icon if user is muted.
     private func userView(for user: ChatUser) -> some View {
         let isUserMuted = (
@@ -59,7 +59,7 @@ struct UserListView: View {
             }
         }
     }
-    
+
     /// `ActionSheet` with actions that can be taken on the `userController`(`mute`, `unmute`)
     /// Will appear on long pressing the user cell.
     private func actionSheet(for user: ChatUser) -> ActionSheet {
@@ -70,7 +70,7 @@ struct UserListView: View {
             .cancel()
         ])
     }
-    
+
     /// Pagination. Load next channels if last item is reached.
     private func loadNextIfNecessary(encounteredIndex: Int) {
         guard encounteredIndex == userList.users.count - 1 else { return }

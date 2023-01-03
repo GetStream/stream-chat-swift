@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -16,7 +16,7 @@ extension String.StringInterpolation {
         }
         appendLiteral(prettyPrintedString)
     }
-    
+
     mutating func appendInterpolation(_ value: EventPayload) {
         var description = "\n-----\(type(of: value))-----\n"
         let mirror = Mirror(reflecting: value)

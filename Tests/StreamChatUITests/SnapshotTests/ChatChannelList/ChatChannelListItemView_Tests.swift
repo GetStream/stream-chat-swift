@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -12,16 +12,16 @@ final class ChatChannelListItemView_Tests: XCTestCase {
         id: "yoda",
         name: "Yoda"
     )
-    
+
     // MARK: - Appearance
-    
+
     func test_emptyState() {
         // Make sure the view is empty if there was content before.
         let view = channelItemView(content: .init(channel: .mock(cid: .unique), currentUserId: .unique))
         view.content = nil
         AssertSnapshot(view)
     }
-    
+
     func test_appearance_pendingPreviewMessageFromCurrentUser_readsEnabled() {
         let pendingSendMessage: ChatMessage = .mock(
             id: .unique,
@@ -32,7 +32,7 @@ final class ChatChannelListItemView_Tests: XCTestCase {
             localState: .pendingSend,
             isSentByCurrentUser: true
         )
-        
+
         let view = channelItemView(
             content: .init(
                 channel: channel(
@@ -42,10 +42,10 @@ final class ChatChannelListItemView_Tests: XCTestCase {
                 currentUserId: currentUser.id
             )
         )
-        
+
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
-    
+
     func test_appearance_pendingPreviewMessageFromCurrentUser_readsDisabled() {
         let pendingSendMessage: ChatMessage = .mock(
             id: .unique,
@@ -56,7 +56,7 @@ final class ChatChannelListItemView_Tests: XCTestCase {
             localState: .pendingSend,
             isSentByCurrentUser: true
         )
-        
+
         let view = channelItemView(
             content: .init(
                 channel: channel(
@@ -66,10 +66,10 @@ final class ChatChannelListItemView_Tests: XCTestCase {
                 currentUserId: currentUser.id
             )
         )
-        
+
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
-    
+
     func test_appearance_sentPreviewMessageFromCurrentUser_readsEnabled() {
         let sentMessage: ChatMessage = .mock(
             id: .unique,
@@ -80,7 +80,7 @@ final class ChatChannelListItemView_Tests: XCTestCase {
             localState: nil,
             isSentByCurrentUser: true
         )
-        
+
         let view = channelItemView(
             content: .init(
                 channel: channel(
@@ -90,10 +90,10 @@ final class ChatChannelListItemView_Tests: XCTestCase {
                 currentUserId: currentUser.id
             )
         )
-        
+
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
-    
+
     func test_appearance_sentPreviewMessageFromCurrentUser_readsDisabled() {
         let sentMessage: ChatMessage = .mock(
             id: .unique,
@@ -104,7 +104,7 @@ final class ChatChannelListItemView_Tests: XCTestCase {
             localState: nil,
             isSentByCurrentUser: true
         )
-        
+
         let view = channelItemView(
             content: .init(
                 channel: channel(
@@ -114,10 +114,10 @@ final class ChatChannelListItemView_Tests: XCTestCase {
                 currentUserId: currentUser.id
             )
         )
-        
+
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
-    
+
     func test_appearance_readPreviewMessageFromCurrentUser_readsEnabled() {
         let readMessage: ChatMessage = .mock(
             id: .unique,
@@ -132,7 +132,7 @@ final class ChatChannelListItemView_Tests: XCTestCase {
                 .mock(id: .unique)
             ]
         )
-        
+
         let view = channelItemView(
             content: .init(
                 channel: channel(
@@ -142,10 +142,10 @@ final class ChatChannelListItemView_Tests: XCTestCase {
                 currentUserId: currentUser.id
             )
         )
-        
+
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
-    
+
     func test_appearance_readPreviewMessageFromCurrentUser_readsDisabled() {
         let readMessage: ChatMessage = .mock(
             id: .unique,
@@ -160,7 +160,7 @@ final class ChatChannelListItemView_Tests: XCTestCase {
                 .mock(id: .unique)
             ]
         )
-        
+
         let view = channelItemView(
             content: .init(
                 channel: channel(
@@ -170,10 +170,10 @@ final class ChatChannelListItemView_Tests: XCTestCase {
                 currentUserId: currentUser.id
             )
         )
-        
+
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
-    
+
     func test_appearance_failedPreviewMessageFromCurrentUser_readsEnabled() {
         let readMessage: ChatMessage = .mock(
             id: .unique,
@@ -184,7 +184,7 @@ final class ChatChannelListItemView_Tests: XCTestCase {
             localState: .sendingFailed,
             isSentByCurrentUser: true
         )
-        
+
         let view = channelItemView(
             content: .init(
                 channel: channel(
@@ -194,10 +194,10 @@ final class ChatChannelListItemView_Tests: XCTestCase {
                 currentUserId: currentUser.id
             )
         )
-        
+
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
-    
+
     func test_appearance_failedPreviewMessageFromCurrentUser_readsDisabled() {
         let readMessage: ChatMessage = .mock(
             id: .unique,
@@ -208,7 +208,7 @@ final class ChatChannelListItemView_Tests: XCTestCase {
             localState: .sendingFailed,
             isSentByCurrentUser: true
         )
-        
+
         let view = channelItemView(
             content: .init(
                 channel: channel(
@@ -218,10 +218,10 @@ final class ChatChannelListItemView_Tests: XCTestCase {
                 currentUserId: currentUser.id
             )
         )
-        
+
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
-    
+
     func test_appearance_readPreviewMessageFromAnotherUser_readEnabled() {
         let readMessage: ChatMessage = .mock(
             id: .unique,
@@ -236,7 +236,7 @@ final class ChatChannelListItemView_Tests: XCTestCase {
                 .mock(id: .unique)
             ]
         )
-        
+
         let view = channelItemView(
             content: .init(
                 channel: channel(
@@ -246,10 +246,10 @@ final class ChatChannelListItemView_Tests: XCTestCase {
                 currentUserId: currentUser.id
             )
         )
-        
+
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
-    
+
     func test_appearance_systemPreviewMessage() {
         let systemMessage: ChatMessage = .mock(
             id: .unique,
@@ -261,7 +261,7 @@ final class ChatChannelListItemView_Tests: XCTestCase {
             localState: nil,
             isSentByCurrentUser: true
         )
-        
+
         let view = channelItemView(
             content: .init(
                 channel: channel(
@@ -271,15 +271,15 @@ final class ChatChannelListItemView_Tests: XCTestCase {
                 currentUserId: currentUser.id
             )
         )
-        
+
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
-    
+
     func test_appearanceCustomization_usingAppearance() {
         var appearance = Appearance()
         appearance.fonts.bodyBold = .italicSystemFont(ofSize: 20)
         appearance.colorPalette.subtitleText = .cyan
-        
+
         let view = channelItemView(
             content: .init(
                 channel: channel(readEventsEnabled: true),
@@ -287,41 +287,41 @@ final class ChatChannelListItemView_Tests: XCTestCase {
             ),
             appearance: appearance
         )
-        
+
         AssertSnapshot(view)
     }
-        
+
     func test_appearanceCustomization_usingSubclassing() {
         class TestView: ChatChannelListItemView {
             lazy var footnoteLabel = UILabel()
                 .withoutAutoresizingMaskConstraints
                 .withAdjustingFontForContentSizeCategory
                 .withBidirectionalLanguagesSupport
-            
+
             override func setUpAppearance() {
                 super.setUpAppearance()
                 titleLabel.textColor = .cyan
                 subtitleLabel.textColor = .blue
-                
+
                 footnoteLabel.adjustsFontForContentSizeCategory = true
                 footnoteLabel.font = .preferredFont(forTextStyle: .caption1)
             }
-            
+
             override func setUpLayout() {
                 super.setUpLayout()
                 topContainer.addArrangedSubview(timestampLabel)
                 bottomContainer.addArrangedSubview(unreadCountView)
-                
+
                 addSubview(footnoteLabel)
                 footnoteLabel.leadingAnchor.constraint(equalTo: avatarView.leadingAnchor).isActive = true
                 footnoteLabel.topAnchor.constraint(equalTo: avatarView.bottomAnchor, constant: 8).isActive = true
-                
+
                 avatarView
                     .bottomAnchor
                     .constraint(equalTo: layoutMarginsGuide.bottomAnchor, constant: -20)
                     .isActive = true
             }
-            
+
             override func updateContent() {
                 super.updateContent()
                 unreadCountView.content = .mock(messages: 3)
@@ -330,12 +330,12 @@ final class ChatChannelListItemView_Tests: XCTestCase {
                     .format(content!.channel.createdAt)
             }
         }
-        
+
         let view = TestView().withoutAutoresizingMaskConstraints
-        
+
         view.addSizeConstraints()
         view.components = .mock
-        
+
         view.content = .init(
             channel: channel(
                 previewMessage: .mock(
@@ -364,17 +364,17 @@ final class ChatChannelListItemView_Tests: XCTestCase {
         XCTAssertEqual(itemView.subtitleText, itemView.subtitleLabel.text)
         XCTAssertEqual(itemView.timestampText, itemView.timestampLabel.text)
     }
-    
+
     // MARK: - Title
-    
+
     func test_titleText_isNil_whenChannelIsNil() {
         let itemView = ChatChannelListItemView()
         itemView.content = nil
         itemView.updateContent()
-        
+
         XCTAssertNil(itemView.titleText)
     }
-    
+
     func test_titleText_whenChannelNameIsSet() {
         let userId: UserId = .unique
 
@@ -383,22 +383,22 @@ final class ChatChannelListItemView_Tests: XCTestCase {
             name: "Channel Name",
             membership: .mock(id: userId)
         )
-        
+
         let itemView = ChatChannelListItemView()
         itemView.content = .init(channel: channel, currentUserId: nil)
-        
+
         XCTAssertEqual(itemView.titleText, channel.name)
     }
-    
+
     // MARK: - Subtitle
-    
+
     func test_subtitleText_isNil_whenChannelIsNil() {
         let itemView = ChatChannelListItemView()
         itemView.content = nil
-        
+
         XCTAssertNil(itemView.subtitleText)
     }
-    
+
     func test_subtitleText_whenOneUserIsTyping() {
         let channel: ChatChannel = .mock(
             cid: .unique,
@@ -409,16 +409,16 @@ final class ChatChannelListItemView_Tests: XCTestCase {
                 )
             ]
         )
-        
+
         let itemView = ChatChannelListItemView()
         itemView.content = .init(channel: channel, currentUserId: nil)
-        
+
         XCTAssertEqual(
             itemView.subtitleText,
             "Member " + L10n.Channel.Item.typingSingular
         )
     }
-    
+
     func test_subtitleText_whenTwoUsersAreTyping() {
         let channel: ChatChannel = .mock(
             cid: .unique,
@@ -433,19 +433,19 @@ final class ChatChannelListItemView_Tests: XCTestCase {
                 )
             ]
         )
-        
+
         let itemView = ChatChannelListItemView()
         itemView.content = .init(channel: channel, currentUserId: nil)
-        
+
         XCTAssertEqual(
             itemView.subtitleText,
             "MemberOne, MemberTwo " + L10n.Channel.Item.typingPlural
         )
     }
-    
+
     func test_subtitleText_whenPreviewMessageIsSentByAnotherUserWithName() {
         let authorName = "Author name"
-        
+
         let previewMessage: ChatMessage = .mock(
             id: .unique,
             cid: .unique,
@@ -456,21 +456,21 @@ final class ChatChannelListItemView_Tests: XCTestCase {
             ),
             isSentByCurrentUser: false
         )
-                
+
         let channel: ChatChannel = .mock(
             cid: .unique,
             previewMessage: previewMessage
         )
-        
+
         let itemView = ChatChannelListItemView()
         itemView.content = .init(channel: channel, currentUserId: nil)
-        
+
         XCTAssertEqual(
             itemView.subtitleText,
             "\(authorName): \(previewMessage.text)"
         )
     }
-    
+
     func test_subtitleText_whenPreviewMessageIsSentByAnotherUserWithoutName() {
         let previewMessage: ChatMessage = .mock(
             id: .unique,
@@ -482,21 +482,21 @@ final class ChatChannelListItemView_Tests: XCTestCase {
             ),
             isSentByCurrentUser: false
         )
-                
+
         let channel: ChatChannel = .mock(
             cid: .unique,
             previewMessage: previewMessage
         )
-        
+
         let itemView = ChatChannelListItemView()
         itemView.content = .init(channel: channel, currentUserId: nil)
-        
+
         XCTAssertEqual(
             itemView.subtitleText,
             "\(previewMessage.author.id): \(previewMessage.text)"
         )
     }
-    
+
     func test_subtitleText_whenPreviewMessageIsSentByCurrentUser() {
         let ownMessage: ChatMessage = .mock(
             id: .unique,
@@ -505,7 +505,7 @@ final class ChatChannelListItemView_Tests: XCTestCase {
             author: .mock(id: .unique),
             isSentByCurrentUser: true
         )
-        
+
         let itemView = channelItemView(
             content: .init(
                 channel: channel(
@@ -515,10 +515,10 @@ final class ChatChannelListItemView_Tests: XCTestCase {
                 currentUserId: .unique
             )
         )
-        
+
         XCTAssertEqual(itemView.subtitleText, "\(L10n.you): \(ownMessage.text)")
     }
-    
+
     func test_subtitleText_whenPreviewMessageIsSystem() {
         let systemMessage: ChatMessage = .mock(
             id: .unique,
@@ -527,7 +527,7 @@ final class ChatChannelListItemView_Tests: XCTestCase {
             type: .system,
             author: .mock(id: .unique)
         )
-        
+
         let itemView = channelItemView(
             content: .init(
                 channel: channel(
@@ -537,24 +537,24 @@ final class ChatChannelListItemView_Tests: XCTestCase {
                 currentUserId: .unique
             )
         )
-        
+
         XCTAssertEqual(itemView.subtitleText, systemMessage.text)
     }
-    
+
     func test_subtitleText_whenNoPreviewMessage() {
         let channel: ChatChannel = .mock(cid: .unique)
-        
+
         let itemView = ChatChannelListItemView()
         itemView.content = .init(channel: channel, currentUserId: nil)
-        
+
         XCTAssertEqual(
             itemView.subtitleText,
             L10n.Channel.Item.emptyMessages
         )
     }
-    
+
     // MARK: - Timestamp
-    
+
     func test_timestampText_isNil_whenPreviewMessageIsNil() {
         let channel: ChatChannel = .mock(
             cid: .unique,
@@ -562,10 +562,10 @@ final class ChatChannelListItemView_Tests: XCTestCase {
         )
         let itemView = ChatChannelListItemView()
         itemView.content = .init(channel: channel, currentUserId: nil)
-        
+
         XCTAssertNil(itemView.timestampText)
     }
-    
+
     func test_timestampText_whenPreviewMessageExists() {
         let channel: ChatChannel = .mock(
             cid: .unique,
@@ -580,15 +580,15 @@ final class ChatChannelListItemView_Tests: XCTestCase {
 
         let itemView = ChatChannelListItemView()
         itemView.content = .init(channel: channel, currentUserId: nil)
-        
+
         XCTAssertEqual(
             itemView.timestampText,
             "12:00 AM"
         )
     }
-    
+
     // MARK: - Delivery status
-    
+
     func test_previewMessageDeliveryStatus_whenPreviewMessageIsNil() {
         let itemView = channelItemView(
             content: .init(
@@ -599,10 +599,10 @@ final class ChatChannelListItemView_Tests: XCTestCase {
                 currentUserId: .unique
             )
         )
-        
+
         XCTAssertNil(itemView.previewMessageDeliveryStatus)
     }
-    
+
     func test_previewMessageDeliveryStatus_whenPreviewMessageIsFromAnotherUser() {
         let messageFromAnotherUser: ChatMessage = .mock(
             id: .unique,
@@ -612,7 +612,7 @@ final class ChatChannelListItemView_Tests: XCTestCase {
             localState: nil,
             isSentByCurrentUser: false
         )
-        
+
         let itemView = channelItemView(
             content: .init(
                 channel: channel(
@@ -622,10 +622,10 @@ final class ChatChannelListItemView_Tests: XCTestCase {
                 currentUserId: .unique
             )
         )
-        
+
         XCTAssertNil(itemView.previewMessageDeliveryStatus)
     }
-    
+
     func test_previewMessageDeliveryStatus_whenPreviewMessageFromCurrentUserIsFailed() {
         let messageFromAnotherUser: ChatMessage = .mock(
             id: .unique,
@@ -635,7 +635,7 @@ final class ChatChannelListItemView_Tests: XCTestCase {
             localState: .sendingFailed,
             isSentByCurrentUser: true
         )
-        
+
         let itemView = channelItemView(
             content: .init(
                 channel: channel(
@@ -645,10 +645,10 @@ final class ChatChannelListItemView_Tests: XCTestCase {
                 currentUserId: .unique
             )
         )
-        
+
         XCTAssertEqual(itemView.previewMessageDeliveryStatus, .failed)
     }
-    
+
     func test_previewMessageDeliveryStatus_whenPreviewMessageFromCurrentUserIsPending() {
         let ownMessage: ChatMessage = .mock(
             id: .unique,
@@ -658,7 +658,7 @@ final class ChatChannelListItemView_Tests: XCTestCase {
             localState: .pendingSend,
             isSentByCurrentUser: true
         )
-        
+
         let itemView = channelItemView(
             content: .init(
                 channel: channel(
@@ -668,10 +668,10 @@ final class ChatChannelListItemView_Tests: XCTestCase {
                 currentUserId: .unique
             )
         )
-        
+
         XCTAssertEqual(itemView.previewMessageDeliveryStatus, .pending)
     }
-    
+
     func test_previewMessageDeliveryStatus_whenPreviewMessageFromCurrentUserIsSentAndEnabledReads() {
         let ownSentMessage: ChatMessage = .mock(
             id: .unique,
@@ -682,7 +682,7 @@ final class ChatChannelListItemView_Tests: XCTestCase {
             isSentByCurrentUser: true,
             readBy: []
         )
-        
+
         let itemView = channelItemView(
             content: .init(
                 channel: channel(
@@ -692,10 +692,10 @@ final class ChatChannelListItemView_Tests: XCTestCase {
                 currentUserId: .unique
             )
         )
-        
+
         XCTAssertEqual(itemView.previewMessageDeliveryStatus, .sent)
     }
-    
+
     func test_previewMessageDeliveryStatus_whenPreviewMessageFromCurrentUserIsSentAndDisabledReads() {
         let ownSentMessage: ChatMessage = .mock(
             id: .unique,
@@ -705,7 +705,7 @@ final class ChatChannelListItemView_Tests: XCTestCase {
             localState: nil,
             isSentByCurrentUser: true
         )
-        
+
         let itemView = channelItemView(
             content: .init(
                 channel: channel(
@@ -715,10 +715,10 @@ final class ChatChannelListItemView_Tests: XCTestCase {
                 currentUserId: .unique
             )
         )
-        
+
         XCTAssertNil(itemView.previewMessageDeliveryStatus)
     }
-    
+
     func test_previewMessageDeliveryStatus_whenPreviewMessageFromCurrentUserIsReadAndEnabledReads() {
         let ownReadMessage: ChatMessage = .mock(
             id: .unique,
@@ -729,7 +729,7 @@ final class ChatChannelListItemView_Tests: XCTestCase {
             isSentByCurrentUser: true,
             readBy: [.mock(id: .unique)]
         )
-        
+
         let itemView = channelItemView(
             content: .init(
                 channel: channel(
@@ -739,10 +739,10 @@ final class ChatChannelListItemView_Tests: XCTestCase {
                 currentUserId: .unique
             )
         )
-        
+
         XCTAssertEqual(itemView.previewMessageDeliveryStatus, .read)
     }
-    
+
     func test_previewMessageDeliveryStatus_whenPreviewMessageFromCurrentUserIsReadAndDisabledReads() {
         let ownReadMessage: ChatMessage = .mock(
             id: .unique,
@@ -753,7 +753,7 @@ final class ChatChannelListItemView_Tests: XCTestCase {
             isSentByCurrentUser: true,
             readBy: [.mock(id: .unique)]
         )
-        
+
         let itemView = channelItemView(
             content: .init(
                 channel: channel(
@@ -763,12 +763,12 @@ final class ChatChannelListItemView_Tests: XCTestCase {
                 currentUserId: .unique
             )
         )
-        
+
         XCTAssertNil(itemView.previewMessageDeliveryStatus)
     }
-    
+
     // MARK: - Helpers
-    
+
     private func channelItemView(
         content: ChatChannelListItemView.Content?,
         components: Components = .mock,
@@ -781,7 +781,7 @@ final class ChatChannelListItemView_Tests: XCTestCase {
         view.addSizeConstraints()
         return view
     }
-    
+
     private func channel(
         previewMessage: ChatMessage? = nil,
         readEventsEnabled: Bool

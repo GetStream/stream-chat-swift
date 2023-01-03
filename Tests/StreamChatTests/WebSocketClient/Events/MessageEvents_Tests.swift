@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -20,7 +20,7 @@ final class MessageEvents_Tests: XCTestCase {
         super.tearDown()
         eventDecoder = nil
     }
-    
+
     func test_new() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MessageNew")
         let event = try eventDecoder.decode(from: json) as? MessageNewEventDTO
@@ -31,7 +31,7 @@ final class MessageEvents_Tests: XCTestCase {
         XCTAssertEqual(event?.watcherCount, 7)
         XCTAssertEqual(event?.unreadCount, .init(channels: 1, messages: 1))
     }
-    
+
     func test_new_withMissingFields() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MessageNew+MissingFields")
         let event = try eventDecoder.decode(from: json) as? MessageNewEventDTO
@@ -42,7 +42,7 @@ final class MessageEvents_Tests: XCTestCase {
         XCTAssertNil(event?.watcherCount)
         XCTAssertNil(event?.unreadCount)
     }
-    
+
     func test_updated() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MessageUpdated")
         let event = try eventDecoder.decode(from: json) as? MessageUpdatedEventDTO
@@ -51,7 +51,7 @@ final class MessageEvents_Tests: XCTestCase {
         XCTAssertEqual(event?.message.id, messageId)
         XCTAssertEqual(event?.createdAt.description, "2020-07-17 13:46:10 +0000")
     }
-    
+
     func test_messageDeletedEvent_clientSide() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MessageDeleted")
         let event = try eventDecoder.decode(from: json) as? MessageDeletedEventDTO
@@ -60,7 +60,7 @@ final class MessageEvents_Tests: XCTestCase {
         XCTAssertEqual(event?.message.id, messageId)
         XCTAssertEqual(event?.createdAt.description, "2020-07-17 13:49:48 +0000")
     }
-    
+
     func test_messageDeletedEvent_serverSide() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MessageDeleted+MissingUser")
         let event = try eventDecoder.decode(from: json) as? MessageDeletedEventDTO
@@ -81,7 +81,7 @@ final class MessageEvents_Tests: XCTestCase {
         let event = try eventDecoder.decode(from: json) as? MessageDeletedEventDTO
         XCTAssertEqual(event?.hardDelete, true)
     }
-    
+
     func test_read() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MessageRead")
         let event = try eventDecoder.decode(from: json) as? MessageReadEventDTO
@@ -90,7 +90,7 @@ final class MessageEvents_Tests: XCTestCase {
         XCTAssertEqual(event?.createdAt.description, "2020-07-17 13:55:56 +0000")
         XCTAssertEqual(event?.unreadCount, .init(channels: 3, messages: 21))
     }
-    
+
     func test_read_withoutUnreadCount() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MessageRead+MissingUnreadCount")
         let event = try eventDecoder.decode(from: json) as? MessageReadEventDTO

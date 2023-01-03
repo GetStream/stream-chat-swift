@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -9,7 +9,7 @@ import XCTest
 final class MessageEndpoints_Tests: XCTestCase {
     func test_getMessage_buildsCorrectly() {
         let messageId: MessageId = .unique
-        
+
         let expectedEndpoint = Endpoint<MessagePayload.Boxed>(
             path: .message(messageId),
             method: .get,
@@ -17,18 +17,18 @@ final class MessageEndpoints_Tests: XCTestCase {
             requiresConnectionId: false,
             body: nil
         )
-        
+
         // Build endpoint
         let endpoint: Endpoint<MessagePayload.Boxed> = .getMessage(messageId: messageId)
-        
+
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
         XCTAssertEqual("messages/\(messageId)", endpoint.path.value)
     }
-    
+
     func test_deleteMessage_whenHardDeleteDisabled_buildsCorrectly() {
         let messageId: MessageId = .unique
-        
+
         let expectedEndpoint = Endpoint<MessagePayload.Boxed>(
             path: .message(messageId),
             method: .delete,
@@ -38,10 +38,10 @@ final class MessageEndpoints_Tests: XCTestCase {
                 "hard": false
             ]
         )
-        
+
         // Build endpoint
         let endpoint: Endpoint<MessagePayload.Boxed> = .deleteMessage(messageId: messageId, hard: false)
-        
+
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
         XCTAssertEqual("messages/\(messageId)", endpoint.path.value)
@@ -67,7 +67,7 @@ final class MessageEndpoints_Tests: XCTestCase {
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
         XCTAssertEqual("messages/\(messageId)", endpoint.path.value)
     }
-    
+
     func test_editMessage_buildsCorrectly() {
         let payload = MessageRequestBody(
             id: .unique,
@@ -75,7 +75,7 @@ final class MessageEndpoints_Tests: XCTestCase {
             text: .unique,
             extraData: [:]
         )
-        
+
         let expectedEndpoint = Endpoint<EmptyResponse>(
             path: .message(payload.id),
             method: .post,
@@ -83,19 +83,19 @@ final class MessageEndpoints_Tests: XCTestCase {
             requiresConnectionId: false,
             body: ["message": payload]
         )
-        
+
         // Build endpoint
         let endpoint: Endpoint<EmptyResponse> = .editMessage(payload: payload)
-        
+
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
         XCTAssertEqual("messages/\(payload.id)", endpoint.path.value)
     }
-    
+
     func test_loadReplies_buildsCorrectly() {
         let messageId: MessageId = .unique
         let pagination: MessagesPagination = .init(pageSize: 10)
-        
+
         let expectedEndpoint = Endpoint<MessageRepliesPayload>(
             path: .replies(messageId),
             method: .get,
@@ -103,10 +103,10 @@ final class MessageEndpoints_Tests: XCTestCase {
             requiresConnectionId: false,
             body: pagination
         )
-        
+
         // Build endpoint
         let endpoint: Endpoint<MessageRepliesPayload> = .loadReplies(messageId: messageId, pagination: pagination)
-        
+
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
         XCTAssertEqual("messages/\(messageId)/replies", endpoint.path.value)
@@ -127,13 +127,13 @@ final class MessageEndpoints_Tests: XCTestCase {
         XCTAssertEqual(endpoint.requiresConnectionId, false)
         XCTAssertEqual(endpoint.body?.asAnyEncodable, pagination.asAnyEncodable)
     }
-    
+
     func test_addReaction_buildsCorrectly() {
         let messageId: MessageId = .unique
         let reaction: MessageReactionType = .init(rawValue: "like")
         let score = 5
         let extraData: [String: RawJSON] = [:]
-        
+
         let expectedEndpoint = Endpoint<EmptyResponse>(
             path: .addReaction(messageId),
             method: .post,
@@ -144,7 +144,7 @@ final class MessageEndpoints_Tests: XCTestCase {
                 reaction: ReactionRequestPayload(type: reaction, score: score, extraData: extraData)
             )
         )
-        
+
         // Build endpoint.
         let endpoint: Endpoint<EmptyResponse> = .addReaction(
             reaction,
@@ -153,16 +153,16 @@ final class MessageEndpoints_Tests: XCTestCase {
             extraData: extraData,
             messageId: messageId
         )
-        
+
         // Assert endpoint is built correctly.
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
         XCTAssertEqual("messages/\(messageId)/reaction", endpoint.path.value)
     }
-    
+
     func test_deleteReaction_buildsCorrectly() {
         let messageId: MessageId = .unique
         let reaction: MessageReactionType = .init(rawValue: "like")
-        
+
         let expectedEndpoint = Endpoint<EmptyResponse>(
             path: .deleteReaction(messageId, reaction),
             method: .delete,
@@ -170,10 +170,10 @@ final class MessageEndpoints_Tests: XCTestCase {
             requiresConnectionId: false,
             body: nil
         )
-        
+
         // Build endpoint.
         let endpoint: Endpoint<EmptyResponse> = .deleteReaction(reaction, messageId: messageId)
-        
+
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
         XCTAssertEqual("messages/\(messageId)/reaction/\(reaction.rawValue)", endpoint.path.value)
@@ -213,11 +213,11 @@ final class MessageEndpoints_Tests: XCTestCase {
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
         XCTAssertEqual("messages/\(messageId)/action", endpoint.path.value)
     }
-    
+
     func test_translate_buildsCorrectly() {
         let messageId: MessageId = .unique
         let language = TranslationLanguage.allCases.randomElement()!
-        
+
         let expectedEndpoint = Endpoint<MessagePayload.Boxed>(
             path: .translateMessage(messageId),
             method: .post,
@@ -225,9 +225,9 @@ final class MessageEndpoints_Tests: XCTestCase {
             requiresConnectionId: false,
             body: ["language": language.languageCode]
         )
-        
+
         let endpoint: Endpoint<MessagePayload.Boxed> = .translate(messageId: messageId, to: language)
-        
+
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
         XCTAssertEqual("messages/\(messageId)/translate", endpoint.path.value)

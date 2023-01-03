@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -9,19 +9,19 @@ import XCTest
 
 final class ChannelController_Tests: XCTestCase {
     fileprivate var env: TestEnvironment!
-    
+
     var client: ChatClient!
-    
+
     var channelId: ChannelId!
-    
+
     var controller: ChatChannelController!
     var controllerCallbackQueueID: UUID!
     /// Workaround for unwrapping **controllerCallbackQueueID!** in each closure that captures it
     private var callbackQueueID: UUID { controllerCallbackQueueID }
-    
+
     override func setUp() {
         super.setUp()
-        
+
         env = TestEnvironment()
         client = ChatClient.mock
         channelId = ChannelId.unique
@@ -34,7 +34,7 @@ final class ChannelController_Tests: XCTestCase {
         controllerCallbackQueueID = UUID()
         controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
     }
-    
+
     override func tearDown() {
         env?.channelUpdater?.cleanUp()
         env?.eventSender?.cleanUp()
@@ -52,27 +52,27 @@ final class ChannelController_Tests: XCTestCase {
     }
 
     // MARK: - Init tests
-    
+
     func test_init_assignsValuesCorrectly() {
         let channelQuery = ChannelQuery(cid: channelId)
         let channelListQuery = ChannelListQuery(filter: .containMembers(userIds: [.unique]))
-        
+
         let controller = ChatChannelController(
             channelQuery: channelQuery,
             channelListQuery: channelListQuery,
             client: client
         )
-        
+
         XCTAssertEqual(controller.channelQuery.cid, channelId)
         XCTAssertEqual(controller.channelListQuery, channelListQuery)
         XCTAssert(controller.client === client)
     }
 
     // MARK: - Channel
-    
+
     func test_channel_accessible_initially() throws {
         let payload = dummyPayload(with: channelId)
-        
+
         // Save two channels to DB (only one matching the query) and wait for completion
         try client.databaseContainer.writeSynchronously { session in
             // Channel with the id matching the query
@@ -80,14 +80,14 @@ final class ChannelController_Tests: XCTestCase {
             // Other channel
             try session.saveChannel(payload: self.dummyPayload(with: .unique))
         }
-        
+
         // Assert the channel and messages are loaded
         XCTAssertEqual(controller.channel?.cid, channelId)
         XCTAssertEqual(Set(controller.messages.map(\.id)), Set(payload.messages.map(\.id)))
     }
 
     // MARK: - Channel config feature tests
-       
+
     func test_readFeatures_onNilChannel_returnsFalse() {
         XCTAssertFalse(controller.areReactionsEnabled)
         XCTAssertFalse(controller.areRepliesEnabled)
@@ -104,7 +104,7 @@ final class ChannelController_Tests: XCTestCase {
         }
         XCTAssertTrue(controller.areReadEventsEnabled)
     }
-    
+
     func test_readAreReadEventsEnabled_whenFalse_returnsFalse() throws {
         let payload = dummyPayload(with: channelId, channelConfig: ChannelConfig(readEventsEnabled: false))
         try client.databaseContainer.writeSynchronously { session in
@@ -112,7 +112,7 @@ final class ChannelController_Tests: XCTestCase {
         }
         XCTAssertFalse(controller.areReadEventsEnabled)
     }
-    
+
     func test_readAreTypingEventsEnabled_whenTrue_returnsTrue() throws {
         let payload = dummyPayload(with: channelId, channelConfig: ChannelConfig(typingEventsEnabled: true))
         try client.databaseContainer.writeSynchronously { session in
@@ -120,7 +120,7 @@ final class ChannelController_Tests: XCTestCase {
         }
         XCTAssertTrue(controller.areTypingEventsEnabled)
     }
-    
+
     func test_readAreTypingEventsEnabled_whenFalse_returnsFalse() throws {
         let payload = dummyPayload(with: channelId, channelConfig: ChannelConfig(typingEventsEnabled: false))
         try client.databaseContainer.writeSynchronously { session in
@@ -128,7 +128,7 @@ final class ChannelController_Tests: XCTestCase {
         }
         XCTAssertFalse(controller.areTypingEventsEnabled)
     }
-    
+
     func test_readAreReactionsEnabled_whenTrue_returnsTrue() throws {
         let payload = dummyPayload(with: channelId, channelConfig: ChannelConfig(reactionsEnabled: true))
         try client.databaseContainer.writeSynchronously { session in
@@ -136,7 +136,7 @@ final class ChannelController_Tests: XCTestCase {
         }
         XCTAssertTrue(controller.areReactionsEnabled)
     }
-    
+
     func test_readAreReactionsEnabled_whenFalse_returnsFalse() throws {
         let payload = dummyPayload(with: channelId, channelConfig: ChannelConfig(reactionsEnabled: false))
         try client.databaseContainer.writeSynchronously { session in
@@ -144,7 +144,7 @@ final class ChannelController_Tests: XCTestCase {
         }
         XCTAssertFalse(controller.areReactionsEnabled)
     }
-    
+
     func test_readAreRepliesEnabled_whenTrue_returnsTrue() throws {
         let payload = dummyPayload(with: channelId, channelConfig: ChannelConfig(repliesEnabled: true))
         try client.databaseContainer.writeSynchronously { session in
@@ -152,7 +152,7 @@ final class ChannelController_Tests: XCTestCase {
         }
         XCTAssertTrue(controller.areRepliesEnabled)
     }
-    
+
     func test_readAreRepliesEnabled_whenFalse_returnsFalse() throws {
         let payload = dummyPayload(with: channelId, channelConfig: ChannelConfig(repliesEnabled: false))
         try client.databaseContainer.writeSynchronously { session in
@@ -160,7 +160,7 @@ final class ChannelController_Tests: XCTestCase {
         }
         XCTAssertFalse(controller.areRepliesEnabled)
     }
-    
+
     func test_readAreQuotesEnabled_whenTrue_returnsTrue() throws {
         let payload = dummyPayload(with: channelId, channelConfig: ChannelConfig(quotesEnabled: true))
         try client.databaseContainer.writeSynchronously { session in
@@ -168,7 +168,7 @@ final class ChannelController_Tests: XCTestCase {
         }
         XCTAssertTrue(controller.areQuotesEnabled)
     }
-    
+
     func test_readAreQuotesEnabled_whenFalse_returnsFalse() throws {
         let payload = dummyPayload(with: channelId, channelConfig: ChannelConfig(quotesEnabled: false))
         try client.databaseContainer.writeSynchronously { session in
@@ -176,7 +176,7 @@ final class ChannelController_Tests: XCTestCase {
         }
         XCTAssertFalse(controller.areQuotesEnabled)
     }
-    
+
     func test_readAreUploadsEnabled_whenTrue_returnsTrue() throws {
         let payload = dummyPayload(with: channelId, channelConfig: ChannelConfig(uploadsEnabled: true))
         try client.databaseContainer.writeSynchronously { session in
@@ -184,7 +184,7 @@ final class ChannelController_Tests: XCTestCase {
         }
         XCTAssertTrue(controller.areUploadsEnabled)
     }
-    
+
     func test_readAreUploadsEnabled_whenFalse_returnsFalse() throws {
         let payload = dummyPayload(with: channelId, channelConfig: ChannelConfig(uploadsEnabled: false))
         try client.databaseContainer.writeSynchronously { session in
@@ -192,41 +192,41 @@ final class ChannelController_Tests: XCTestCase {
         }
         XCTAssertFalse(controller.areUploadsEnabled)
     }
-    
+
     // MARK: - Synchronize tests
-    
+
     func test_synchronize_changesControllerState() throws {
         // Check if controller has initialized state initially.
         XCTAssertEqual(controller.state, .initialized)
-        
+
         // Simulate `synchronize` call.
         controller.synchronize()
-        
+
         // Save channel to database.
         try client.mockDatabaseContainer.createChannel(cid: channelId)
-        
+
         // Simulate successful network call.
         env.channelUpdater?.update_completion?(.success(dummyPayload(with: .unique)))
-        
+
         // Check if state changed after successful network call.
         AssertAsync.willBeEqual(controller.state, .remoteDataFetched)
     }
-    
+
     func test_synchronize_changesControllerStateOnError() {
         // Check if controller has `initialized` state initially.
         assert(controller.state == .initialized)
-        
+
         // Simulate `synchronize` call
         controller.synchronize()
 
         // Simulate failed network call.
         let error = TestError()
         env.channelUpdater?.update_completion?(.failure(error))
-        
+
         // Check if state changed after failed network call.
         XCTAssertEqual(controller.state, .remoteDataFetchFailed(ClientError(with: error)))
     }
-    
+
     func test_synchronize_callsChannelUpdater() throws {
         // Simulate `synchronize` calls and catch the completion
         var completionCalled = false
@@ -235,48 +235,48 @@ final class ChannelController_Tests: XCTestCase {
             AssertTestQueue(withId: callbackQueueID)
             completionCalled = true
         }
-        
+
         // Keep a weak ref so we can check if it's actually deallocated
         weak var weakController = controller
-        
+
         // (Try to) deallocate the controller
         // by not keeping any references to it
         controller = nil
-        
+
         // Assert the updater is called with the query
         XCTAssertEqual(env.channelUpdater!.update_channelQuery?.cid, channelId)
         // Completion shouldn't be called yet
         XCTAssertFalse(completionCalled)
-        
+
         // Save channel to database.
         try client.mockDatabaseContainer.createChannel(cid: channelId)
-        
+
         // Simulate successful update
         env.channelUpdater!.update_completion?(.success(dummyPayload(with: .unique)))
         // Release reference of completion so we can deallocate stuff
         env.channelUpdater!.update_completion = nil
-        
+
         // Completion should be called
         AssertAsync.willBeTrue(completionCalled)
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
     }
-    
+
     /// This test simulates a bug where the `channel` and `messages` fields were not updated if
     /// they weren't touched before calling synchronize.
     func test_fieldsAreFetched_evenAfterCallingSynchronize() throws {
         // Simulate synchronize call
         controller.synchronize()
-        
+
         let payload = dummyPayload(with: channelId)
         assert(!payload.messages.isEmpty)
-        
+
         // Simulate successful updater response
         try client.databaseContainer.writeSynchronously {
             try $0.saveChannel(payload: payload, query: nil, cache: nil)
         }
         env.channelUpdater?.update_completion?(.success(dummyPayload(with: .unique)))
-        
+
         XCTAssertEqual(controller.channel?.cid, channelId)
         XCTAssertEqual(controller.messages.count, payload.messages.count)
     }
@@ -285,20 +285,20 @@ final class ChannelController_Tests: XCTestCase {
     /// they weren't touched before calling synchronize.
     func test_newChannelController_fieldsAreFetched_evenAfterCallingSynchronize() throws {
         setupControllerForNewChannel(query: .init(cid: channelId))
-        
+
         // Simulate synchronize call
         controller.synchronize()
-        
+
         let payload = dummyPayload(with: channelId)
         assert(!payload.messages.isEmpty)
-        
+
         // Simulate successful updater response
         try client.databaseContainer.writeSynchronously {
             try $0.saveChannel(payload: payload, query: nil, cache: nil)
         }
         env.channelUpdater?.update_channelCreatedCallback?(channelId)
         env.channelUpdater?.update_completion?(.success(dummyPayload(with: .unique)))
-        
+
         XCTAssertEqual(controller.channel?.cid, channelId)
         XCTAssertEqual(controller.messages.count, payload.messages.count)
     }
@@ -307,24 +307,24 @@ final class ChannelController_Tests: XCTestCase {
     /// they weren't touched before calling synchronize.
     func test_newMessageChannelController_fieldsAreFetched_evenAfterCallingSynchronize() throws {
         setupControllerForNewMessageChannel(cid: channelId)
-        
+
         // Simulate synchronize call
         controller.synchronize()
-        
+
         let payload = dummyPayload(with: channelId)
         assert(!payload.messages.isEmpty)
-        
+
         // Simulate successful updater response
         try client.databaseContainer.writeSynchronously {
             try $0.saveChannel(payload: payload, query: nil, cache: nil)
         }
         env.channelUpdater?.update_channelCreatedCallback?(channelId)
         env.channelUpdater?.update_completion?(.success(dummyPayload(with: .unique)))
-        
+
         XCTAssertEqual(controller.channel?.cid, channelId)
         XCTAssertEqual(controller.messages.count, payload.messages.count)
     }
-    
+
     /// This test simulates a bug where the `channel` and `messages` fields were not updated if
     /// they weren't touched before calling synchronize.
     func test_newDMChannelController_fieldsAreFetched_evenAfterCallingSynchronize() throws {
@@ -332,18 +332,18 @@ final class ChannelController_Tests: XCTestCase {
             currentUserId: .unique,
             otherUserId: .unique
         )
-        
+
         // Simulate synchronize call
         controller.synchronize()
-        
+
         let payload = dummyPayload(with: channelId)
         assert(!payload.messages.isEmpty)
-        
+
         // Simulate successful updater response
         try client.databaseContainer.writeSynchronously {
             try $0.saveChannel(payload: payload, query: nil, cache: nil)
         }
-        
+
         // We call these callbacks on a queue other than main queue
         // to simulate the actual scenario where callbacks will be called
         // from NSURLSession-delegate (serial) queue
@@ -354,7 +354,7 @@ final class ChannelController_Tests: XCTestCase {
                 completion(true)
             }
         }
-        
+
         XCTAssertEqual(controller.channel?.cid, channelId)
         XCTAssertEqual(controller.messages.count, payload.messages.count)
     }
@@ -366,35 +366,35 @@ final class ChannelController_Tests: XCTestCase {
             completionCalledError = $0
             AssertTestQueue(withId: callbackQueueID)
         }
-        
+
         // Simulate failed update
         let testError = TestError()
         env.channelUpdater!.update_completion?(.failure(testError))
-        
+
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
-    
+
     func test_failedMessageKeepsOrdering_whenLocalTimeIsNotSynced() throws {
         let userId: UserId = .unique
         let channelId: ChannelId = .unique
-        
+
         // Create current user
         try client.databaseContainer.createCurrentUser(id: userId)
-        
+
         // Setup controller
         setupControllerForNewMessageChannel(cid: channelId)
-        
+
         // Save channel with some messages
         let channelPayload: ChannelPayload = dummyPayload(with: channelId, numberOfMessages: 5)
         let originalLastMessageAt: Date = channelPayload.channel.lastMessageAt ?? channelPayload.channel.createdAt
         try client.databaseContainer.writeSynchronously {
             try $0.saveChannel(payload: channelPayload)
         }
-        
+
         // Get sorted messages (we'll use their createdAt later)
         let sortedMessages = channelPayload.messages.sorted(by: { $0.createdAt > $1.createdAt })
-        
+
         // Create a new message payload that's older than `channel.lastMessageAt`
         // but newer than 2nd to last message
         let oldMessageCreatedAt = Date.unique(
@@ -438,7 +438,7 @@ final class ChannelController_Tests: XCTestCase {
         }
         channel = try XCTUnwrap(client.databaseContainer.viewContext.channel(cid: channelId))
         XCTAssertEqual(channel.lastMessageAt?.bridgeDate, newerMessagePayload.createdAt)
-        
+
         // Check if the message ordering is correct
         // First message should be the newest message
         XCTAssertEqual(controller.messages[0].id, newerMessagePayload.id)
@@ -489,7 +489,7 @@ final class ChannelController_Tests: XCTestCase {
             Assert.canBeReleased(&client)
             Assert.canBeReleased(&env)
         }
-        
+
         let clientWithoutCurrentUser = ChatClient(config: .init(apiKeyString: .unique))
 
         for isCurrentUserMember in [true, false] {
@@ -592,7 +592,7 @@ final class ChannelController_Tests: XCTestCase {
             Assert.canBeReleased(&self.client)
             Assert.canBeReleased(&env)
         }
-        
+
         let client = ChatClient(config: .init(apiKeyString: .unique))
 
         for isCurrentUserMember in [true, false] {
@@ -632,7 +632,7 @@ final class ChannelController_Tests: XCTestCase {
 
         XCTAssertEqual(controller.channelQuery.channelPayload?.members, members.union([currentUserId]))
     }
-    
+
     func test_channelController_returnsNilCID_forNewDirectMessageChannel() throws {
         // Simulate currently logged-in user
         let currentUserId: UserId = .unique
@@ -645,13 +645,13 @@ final class ChannelController_Tests: XCTestCase {
             imageURL: .unique(),
             extraData: [:]
         )
-        
+
         // Assert cid is nil
         XCTAssertNil(controller.cid)
     }
-    
+
     // MARK: - Channel change propagation tests
-    
+
     func test_channelChanges_arePropagated() throws {
         // Simulate changes in the DB:
         _ = try waitFor {
@@ -659,11 +659,11 @@ final class ChannelController_Tests: XCTestCase {
                 try session.saveChannel(payload: self.dummyPayload(with: self.channelId), query: nil, cache: nil)
             }, completion: $0)
         }
-        
+
         // Assert the resulting value is updated
         AssertAsync.willBeEqual(controller.channel?.cid, channelId)
         AssertAsync.willBeTrue(controller.channel?.isFrozen)
-        
+
         // Simulate channel changes
         _ = try waitFor {
             client.databaseContainer.write({ session in
@@ -672,23 +672,23 @@ final class ChannelController_Tests: XCTestCase {
                 channelDTO.isFrozen = false
             }, completion: $0)
         }
-        
+
         AssertAsync.willBeTrue(controller.channel?.isFrozen == false)
     }
-    
+
     func test_messageChanges_arePropagated() throws {
         let payload = dummyPayload(with: channelId)
-        
+
         // Simulate changes in the DB:
         _ = try waitFor {
             client.databaseContainer.write({ session in
                 try session.saveChannel(payload: payload)
             }, completion: $0)
         }
-        
+
         // Simulate `synchronize` call
         controller.synchronize()
-        
+
         // Simulate an incoming message
         let newMessageId: MessageId = .unique
         let newMessagePayload: MessagePayload = .dummy(
@@ -701,7 +701,7 @@ final class ChannelController_Tests: XCTestCase {
                 try session.saveMessage(payload: newMessagePayload, for: self.channelId, syncOwnReactions: true, cache: nil)
             }, completion: $0)
         }
-        
+
         // Assert the new message is presented
         AssertAsync.willBeTrue(controller.messages.contains { $0.id == newMessageId })
     }
@@ -712,52 +712,52 @@ final class ChannelController_Tests: XCTestCase {
             cid: channelId,
             withMessages: false
         )
-        
+
         controller = client.channelController(
             for: channelId,
             messageOrdering: .topToBottom
         )
-        
+
         // Insert two messages
         let message1: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
         let message2: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
-        
+
         try client.databaseContainer.writeSynchronously {
             try $0.saveMessage(payload: message1, for: self.channelId, syncOwnReactions: true, cache: nil)
             try $0.saveMessage(payload: message2, for: self.channelId, syncOwnReactions: true, cache: nil)
         }
-        
+
         // Check the order of messages is correct
         let topToBottomIds = [message1, message2].sorted { $0.createdAt > $1.createdAt }.map(\.id)
         XCTAssertEqual(controller.messages.map(\.id), topToBottomIds)
     }
-    
+
     func test_messagesOrdering_bottomToTop_HaveCorrectOrder() throws {
         // Create a channel
         try client.databaseContainer.createChannel(
             cid: channelId,
             withMessages: false
         )
-        
+
         controller = client.channelController(
             for: channelId,
             messageOrdering: .bottomToTop
         )
-        
+
         // Insert two messages
         let message1: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
         let message2: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
-        
+
         try client.databaseContainer.writeSynchronously {
             try $0.saveMessage(payload: message1, for: self.channelId, syncOwnReactions: true, cache: nil)
             try $0.saveMessage(payload: message2, for: self.channelId, syncOwnReactions: true, cache: nil)
         }
-        
+
         // Check the order of messages is correct
         let bottomToTopIds = [message1, message2].sorted { $0.createdAt < $1.createdAt }.map(\.id)
         XCTAssertEqual(controller.messages.map(\.id), bottomToTopIds)
     }
-    
+
     func test_threadReplies_areNotShownInChannel() throws {
         // Create a channel
         try client.databaseContainer.createChannel(cid: channelId, withMessages: false)
@@ -765,11 +765,11 @@ final class ChannelController_Tests: XCTestCase {
             for: channelId,
             messageOrdering: .topToBottom
         )
-        
+
         // Insert two messages
         let message1: MessagePayload = .dummy(messageId: "msg1-" + .unique, authorUserId: .unique)
         let message2: MessagePayload = .dummy(messageId: "msg2-" + .unique, authorUserId: .unique)
-        
+
         // Insert reply that should be shown in channel.
         let reply1: MessagePayload = .dummy(
             messageId: "reply1-" + .unique,
@@ -777,7 +777,7 @@ final class ChannelController_Tests: XCTestCase {
             showReplyInChannel: true,
             authorUserId: .unique
         )
-        
+
         // Insert reply that should be visible only in thread.
         let reply2: MessagePayload = .dummy(
             messageId: "reply2-" + .unique,
@@ -785,19 +785,19 @@ final class ChannelController_Tests: XCTestCase {
             showReplyInChannel: false,
             authorUserId: .unique
         )
-        
+
         try client.databaseContainer.writeSynchronously {
             try $0.saveMessage(payload: message1, for: self.channelId, syncOwnReactions: true, cache: nil)
             try $0.saveMessage(payload: message2, for: self.channelId, syncOwnReactions: true, cache: nil)
             try $0.saveMessage(payload: reply1, for: self.channelId, syncOwnReactions: true, cache: nil)
             try $0.saveMessage(payload: reply2, for: self.channelId, syncOwnReactions: true, cache: nil)
         }
-        
+
         // Check the relevant reply is shown in channel
         let messagesWithReply = [message1, message2, reply1].sorted { $0.createdAt > $1.createdAt }.map(\.id)
         XCTAssertEqual(controller.messages.map(\.id), messagesWithReply)
     }
-    
+
     func test_threadEphemeralMessages_areNotShownInChannel() throws {
         // Create a channel
         try client.databaseContainer.createChannel(cid: channelId, withMessages: false)
@@ -805,10 +805,10 @@ final class ChannelController_Tests: XCTestCase {
             for: channelId,
             messageOrdering: .topToBottom
         )
-        
+
         // Insert a message
         let message1: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
-        
+
         // Insert ephemeral message in message1's thread
         let ephemeralMessage: MessagePayload = .dummy(
             type: .ephemeral,
@@ -816,12 +816,12 @@ final class ChannelController_Tests: XCTestCase {
             parentId: message1.id,
             authorUserId: .unique
         )
-        
+
         try client.databaseContainer.writeSynchronously {
             try $0.saveMessage(payload: message1, for: self.channelId, syncOwnReactions: true, cache: nil)
             try $0.saveMessage(payload: ephemeralMessage, for: self.channelId, syncOwnReactions: true, cache: nil)
         }
-        
+
         // Check the relevant ephemeral message is not shown in channel
         XCTAssertEqual(controller.messages.map(\.id), [message1].map(\.id))
     }
@@ -930,105 +930,105 @@ final class ChannelController_Tests: XCTestCase {
         // Both outgoing and incoming messages should be visible
         XCTAssertEqual(Set(controller.messages.map(\.id)), Set([outgoingDeletedMessage.id, incomingDeletedMessage.id]))
     }
-    
+
     func test_shadowedMessages_whenVisible() throws {
         // Simulate the config setting
         client.databaseContainer.viewContext.shouldShowShadowedMessages = true
-        
+
         let currentUserID: UserId = .unique
-        
+
         // Create current user
         try client.databaseContainer.createCurrentUser(id: currentUserID)
-        
+
         // Create a channel
         try client.databaseContainer.createChannel(cid: channelId, withMessages: false)
-        
+
         // Create incoming shadowed message
         let shadowedMessage: MessagePayload = .dummy(
             messageId: .unique,
             authorUserId: .unique,
             isShadowed: true
         )
-        
+
         // Create incoming non-shadowed message
         let nonShadowedMessage: MessagePayload = .dummy(
             messageId: .unique,
             authorUserId: .unique,
             isShadowed: false
         )
-        
+
         try client.databaseContainer.writeSynchronously {
             try $0.saveMessage(payload: shadowedMessage, for: self.channelId, syncOwnReactions: true, cache: nil)
             try $0.saveMessage(payload: nonShadowedMessage, for: self.channelId, syncOwnReactions: true, cache: nil)
         }
-        
+
         // Both messages should be visible
         XCTAssertEqual(Set(controller.messages.map(\.id)), Set([nonShadowedMessage.id, shadowedMessage.id]))
     }
-    
+
     func test_shadowedMessages_defaultBehavior_isToHide() throws {
         let currentUserID: UserId = .unique
-        
+
         // Create current user
         try client.databaseContainer.createCurrentUser(id: currentUserID)
-        
+
         // Create a channel
         try client.databaseContainer.createChannel(cid: channelId, withMessages: false)
-        
+
         // Create incoming shadowed message
         let shadowedMessage: MessagePayload = .dummy(
             messageId: .unique,
             authorUserId: .unique,
             isShadowed: true
         )
-        
+
         // Create incoming non-shadowed message
         let nonShadowedMessage: MessagePayload = .dummy(
             messageId: .unique,
             authorUserId: .unique,
             isShadowed: false
         )
-        
+
         try client.databaseContainer.writeSynchronously {
             try $0.saveMessage(payload: shadowedMessage, for: self.channelId, syncOwnReactions: true, cache: nil)
             try $0.saveMessage(payload: nonShadowedMessage, for: self.channelId, syncOwnReactions: true, cache: nil)
         }
-        
+
         // Only non-shadowed message should be visible
         XCTAssertEqual(Set(controller.messages.map(\.id)), Set([nonShadowedMessage.id]))
     }
 
     // MARK: - Delegate tests
-    
+
     func test_settingDelegate_leadsToFetchingLocalData() {
         let delegate = ChannelController_Delegate(expectedQueueId: controllerCallbackQueueID)
-           
+
         // Check initial state
         XCTAssertEqual(controller.state, .initialized)
-           
+
         controller.delegate = delegate
-           
+
         // Assert state changed
         AssertAsync.willBeEqual(controller.state, .localDataFetched)
     }
-    
+
     func test_delegate_isNotifiedAboutStateChanges() throws {
         // Set the delegate
         let delegate = ChannelController_Delegate(expectedQueueId: controllerCallbackQueueID)
         controller.delegate = delegate
-        
+
         // Assert delegate is notified about state changes
         AssertAsync.willBeEqual(delegate.state, .localDataFetched)
 
         // Synchronize
         controller.synchronize()
-            
+
         // Save channel to database.
         try client.mockDatabaseContainer.createChannel(cid: channelId)
-        
+
         // Simulate network call response
         env.channelUpdater?.update_completion?(.success(dummyPayload(with: .unique)))
-        
+
         // Assert delegate is notified about state changes
         AssertAsync.willBeEqual(delegate.state, .remoteDataFetched)
     }
@@ -1050,7 +1050,7 @@ final class ChannelController_Tests: XCTestCase {
 
         // Simulate `synchronize` call
         controller.synchronize()
-        
+
         // Simulate updater's channelCreatedCallback call
         env.channelUpdater!.update_channelCreatedCallback!(channelId)
 
@@ -1093,34 +1093,34 @@ final class ChannelController_Tests: XCTestCase {
             Assert.willBeEqual(delegate.didUpdateMessages_messages, [.insert(newMessage, index: [0, 0])])
         }
     }
-    
+
     func test_channelMemberEvents_areForwardedToDelegate() throws {
         let delegate = ChannelController_Delegate(expectedQueueId: controllerCallbackQueueID)
         controller.delegate = delegate
-        
+
         // Simulate `synchronize()` call
         controller.synchronize()
-        
+
         // Send notification with event happened in the observed channel
         let event = TestMemberEvent(cid: controller.channelQuery.cid!, memberUserId: .unique)
         let notification = Notification(newEventReceived: event, sender: self)
         client.webSocketClient!.eventNotificationCenter.post(notification)
-        
+
         // Assert the event is received
         AssertAsync.willBeEqual(delegate.didReceiveMemberEvent_event as? TestMemberEvent, event)
     }
-    
+
     func test_channelTypingEvents_areForwardedToDelegate() throws {
         let userId: UserId = .unique
         // Create channel in the database
         try client.databaseContainer.createChannel(cid: channelId)
         // Create user in the database
         try client.databaseContainer.createUser(id: userId)
-        
+
         // Set the queue for delegate calls
         let delegate = ChannelController_Delegate(expectedQueueId: controllerCallbackQueueID)
         controller.delegate = delegate
-        
+
         // Simulate `synchronize()` call
         controller.synchronize()
 
@@ -1130,25 +1130,25 @@ final class ChannelController_Tests: XCTestCase {
             let user = try XCTUnwrap(session.user(id: userId))
             channel.currentlyTypingUsers.insert(user)
         }
-        
+
         // Load the user
         let typingUser = try XCTUnwrap(client.databaseContainer.viewContext.user(id: userId)).asModel()
 
         // Assert the delegate receives typing user
         AssertAsync.willBeEqual(delegate.didChangeTypingUsers_typingUsers, [typingUser])
     }
-    
+
     func test_delegateMethodsAreCalled() throws {
         let delegate = ChannelController_Delegate(expectedQueueId: controllerCallbackQueueID)
         controller.delegate = delegate
-        
+
         // Assert the delegate is assigned correctly. We should test this because of the type-erasing we
         // do in the controller.
         XCTAssert(controller.delegate === delegate)
-        
+
         // Simulate `synchronize()` call
         controller.synchronize()
-        
+
         // Simulate DB update
         let error = try waitFor {
             client.databaseContainer.write({ session in
@@ -1159,21 +1159,21 @@ final class ChannelController_Tests: XCTestCase {
         let channel = try XCTUnwrap(client.databaseContainer.viewContext.channel(cid: channelId)).asModel()
         XCTAssertEqual(channel.latestMessages.count, 1)
         let message: ChatMessage = try XCTUnwrap(channel.latestMessages.first)
-        
+
         AssertAsync {
             Assert.willBeEqual(delegate.didUpdateChannel_channel, .create(channel))
             Assert.willBeEqual(delegate.didUpdateMessages_messages, [.insert(message, index: [0, 0])])
         }
     }
-    
+
     func test_channelUpdateDelegate_isCalled_whenChannelReadsAreUpdated() throws {
         let delegate = ChannelController_Delegate(expectedQueueId: controllerCallbackQueueID)
         controller.delegate = delegate
-        
+
         let userId: UserId = .unique
-        
+
         let originalReadDate: Date = .unique
-        
+
         // Create a channel in the DB
         try client.databaseContainer.writeSynchronously {
             try $0.saveChannel(payload: self.dummyPayload(with: self.channelId), query: nil, cache: nil)
@@ -1188,17 +1188,17 @@ final class ChannelController_Tests: XCTestCase {
                 cache: nil
             )
         }
-        
+
         XCTAssertEqual(
             controller.channel?.reads.first(where: { $0.user.id == userId })?.lastReadAt,
             originalReadDate
         )
-        
+
         // Simulate `synchronize()` call
         controller.synchronize()
-        
+
         let newReadDate: Date = .unique
-        
+
         // Update the read
         try client.databaseContainer.writeSynchronously {
             let read = try XCTUnwrap($0.loadChannelRead(cid: self.channelId, userId: userId))
@@ -1210,27 +1210,27 @@ final class ChannelController_Tests: XCTestCase {
             controller.channel?.reads.first(where: { $0.user.id == userId })?.lastReadAt,
             newReadDate
         )
-        
+
         AssertAsync.willBeEqual(delegate.didUpdateChannel_channel, .update(controller.channel!))
     }
-    
+
     // MARK: - New direct message channel creation tests
-    
+
     func test_controller_reportsInitialValues_forDMChannel_ifChannelDoesntExistLocally() throws {
         // Create mock users
         let currentUserId = UserId.unique
         let otherUserId = UserId.unique
-        
+
         // Create controller for the non-existent new DM channel
         setupControllerForNewDirectMessageChannel(currentUserId: currentUserId, otherUserId: otherUserId)
-        
+
         // Create and set delegate
         let delegate = ChannelController_Delegate(expectedQueueId: controllerCallbackQueueID)
         controller.delegate = delegate
-        
+
         // Simulate synchronize
         controller.synchronize()
-        
+
         // Create dummy channel with messages
         let dummyChannel = dummyPayload(
             with: .unique,
@@ -1240,32 +1240,32 @@ final class ChannelController_Tests: XCTestCase {
                 .dummy(user: .dummy(userId: otherUserId))
             ]
         )
-        
+
         // Simulate successful backend channel creation
         env.channelUpdater!.update_channelCreatedCallback?(dummyChannel.channel.cid)
-        
+
         // Simulate new channel creation in DB
         try client.databaseContainer.writeSynchronously { session in
             try session.saveChannel(payload: dummyChannel)
         }
-        
+
         // Simulate successful network call
         env.channelUpdater!.update_completion?(.success(dummyPayload(with: .unique)))
-        
+
         // Assert that initial reported values are correct
         XCTAssertEqual(controller.channel?.cid, dummyChannel.channel.cid)
         XCTAssertEqual(controller.messages.count, dummyChannel.messages.count)
-        
+
         // Assert the delegate is called for initial values
         XCTAssertEqual(delegate.didUpdateChannel_channel?.item.cid, dummyChannel.channel.cid)
         XCTAssertEqual(delegate.didUpdateMessages_messages?.count, dummyChannel.messages.count)
     }
-    
+
     func test_controller_reportsInitialValues_forDMChannel_ifChannelExistsLocally() throws {
         // Create mock users
         let currentUserId = UserId.unique
         let otherUserId = UserId.unique
-        
+
         // Create dummy channel with messages
         let dummyChannel = dummyPayload(
             with: .unique,
@@ -1275,28 +1275,28 @@ final class ChannelController_Tests: XCTestCase {
                 .dummy(user: .dummy(userId: otherUserId))
             ]
         )
-        
+
         // Simulate new channel creation in DB
         try client.databaseContainer.writeSynchronously { session in
             try session.saveChannel(payload: dummyChannel)
         }
-        
+
         // Create controller for the existing new DM channel
         setupControllerForNewDirectMessageChannel(currentUserId: currentUserId, otherUserId: otherUserId)
-        
+
         // Create and set delegate
         let delegate = ChannelController_Delegate(expectedQueueId: controllerCallbackQueueID)
         controller.delegate = delegate
-        
+
         // Simulate synchronize
         controller.synchronize()
-        
+
         // Simulate successful backend channel creation
         env.channelUpdater!.update_channelCreatedCallback?(dummyChannel.channel.cid)
-        
+
         // Simulate successful network call.
         env.channelUpdater!.update_completion?(.success(dummyPayload(with: .unique)))
-        
+
         // Since initially the controller doesn't know it's final `cid`, it can't report correct initial values.
         // That's why we simulate delegate callbacks for initial values.
         // Assert that delegate gets initial values as callback
@@ -1305,39 +1305,39 @@ final class ChannelController_Tests: XCTestCase {
             Assert.willBeEqual(delegate.didUpdateMessages_messages?.count, dummyChannel.messages.count)
         }
     }
-    
+
     // MARK: - New channel creation tests
-    
+
     func test_controller_reportsInitialValues_forNewChannel_ifChannelDoesntExistLocally() throws {
         // Create controller for the non-existent new DM channel
         setupControllerForNewMessageChannel(cid: channelId)
-        
+
         // Simulate synchronize
         controller.synchronize()
-        
+
         // Create dummy channel with messages
         let dummyChannel = dummyPayload(
             with: channelId,
             numberOfMessages: 10,
             members: [.dummy()]
         )
-        
+
         // Simulate successful backend channel creation
         env.channelUpdater!.update_channelCreatedCallback?(dummyChannel.channel.cid)
-        
+
         // Simulate new channel creation in DB
         try client.databaseContainer.writeSynchronously { session in
             try session.saveChannel(payload: dummyChannel)
         }
-        
+
         // Simulate successful network call
         env.channelUpdater!.update_completion?(.success(dummyPayload(with: .unique)))
-        
+
         // Assert that initial reported values are correct
         XCTAssertEqual(controller.channel?.cid, dummyChannel.channel.cid)
         XCTAssertEqual(controller.messages.count, dummyChannel.messages.count)
     }
-    
+
     func test_controller_reportsInitialValues_forNewChannel_ifChannelExistsLocally() throws {
         // Create dummy channel with messages
         let dummyChannel = dummyPayload(
@@ -1345,24 +1345,24 @@ final class ChannelController_Tests: XCTestCase {
             numberOfMessages: 10,
             members: [.dummy()]
         )
-        
+
         // Simulate new channel creation in DB
         try client.databaseContainer.writeSynchronously { session in
             try session.saveChannel(payload: dummyChannel)
         }
-        
+
         // Create controller for the existing new DM channel
         setupControllerForNewMessageChannel(cid: channelId)
-        
+
         // Unlike new DM ChannelController, this ChannelController knows it's final `cid` so it should be able to fetch initial values
         // from DB, without the `synchronize` call
         // Assert that initial reported values are correct
         XCTAssertEqual(controller.channel?.cid, dummyChannel.channel.cid)
         XCTAssertEqual(controller.messages.count, dummyChannel.messages.count)
     }
-    
+
     // MARK: - Updating channel
-    
+
     func test_updateChannel_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
         let query = ChannelQuery(channelPayload: .unique)
@@ -1399,28 +1399,28 @@ final class ChannelController_Tests: XCTestCase {
             XCTAssertNil(error)
             completionCalled = true
         }
-        
+
         // Keep a weak ref so we can check if it's actually deallocated
         weak var weakController = controller
-        
+
         // (Try to) deallocate the controller
         // by not keeping any references to it
         controller = nil
-        
+
         // Assert payload is passed to `channelUpdater`, completion is not called yet
         XCTAssertNotNil(env.channelUpdater!.updateChannel_payload)
-        
+
         // Simulate successful update
         env.channelUpdater!.updateChannel_completion?(nil)
         // Release reference of completion so we can deallocate stuff
         env.channelUpdater!.updateChannel_completion = nil
-        
+
         // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
     }
-    
+
     func test_updateChannel_propagesErrorFromUpdater() {
         // Simulate `updateChannel` call and catch the completion
         var completionCalledError: Error?
@@ -1428,17 +1428,17 @@ final class ChannelController_Tests: XCTestCase {
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0
         }
-        
+
         // Simulate failed update
         let testError = TestError()
         env.channelUpdater!.updateChannel_completion?(testError)
-        
+
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
 
     // MARK: - Muting channel
-    
+
     func test_muteChannel_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
         let query = ChannelQuery(channelPayload: .unique)
@@ -1476,30 +1476,30 @@ final class ChannelController_Tests: XCTestCase {
             XCTAssertNil(error)
             completionCalled = true
         }
-        
+
         // Keep a weak ref so we can check if it's actually deallocated
         weak var weakController = controller
-        
+
         // (Try to) deallocate the controller
         // by not keeping any references to it
         controller = nil
-        
+
         // Assert cid and muted state are passed to `channelUpdater`, completion is not called yet
         XCTAssertEqual(env.channelUpdater!.muteChannel_cid, channelId)
         XCTAssertEqual(env.channelUpdater!.muteChannel_mute, true)
         XCTAssertFalse(completionCalled)
-        
+
         // Simulate successful update
         env.channelUpdater!.muteChannel_completion?(nil)
         // Release reference of completion so we can deallocate stuff
         env.channelUpdater!.muteChannel_completion = nil
-        
+
         // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
     }
-    
+
     func test_muteChannel_propagatesErrorFromUpdater() {
         // Simulate `muteChannel` call and catch the completion
         var completionCalledError: Error?
@@ -1507,17 +1507,17 @@ final class ChannelController_Tests: XCTestCase {
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0
         }
-        
+
         // Simulate failed update
         let testError = TestError()
         env.channelUpdater!.muteChannel_completion?(testError)
-        
+
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
 
     // MARK: - Unmuting channel
-    
+
     func test_unmuteChannel_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
         let query = ChannelQuery(channelPayload: .unique)
@@ -1555,30 +1555,30 @@ final class ChannelController_Tests: XCTestCase {
             XCTAssertNil(error)
             completionCalled = true
         }
-        
+
         // Keep a weak ref so we can check if it's actually deallocated
         weak var weakController = controller
-        
+
         // (Try to) deallocate the controller
         // by not keeping any references to it
         controller = nil
-        
+
         // Assert cid and muted state are passed to `channelUpdater`, completion is not called yet
         XCTAssertEqual(env.channelUpdater!.muteChannel_cid, channelId)
         XCTAssertEqual(env.channelUpdater!.muteChannel_mute, false)
         XCTAssertFalse(completionCalled)
-        
+
         // Simulate successful update
         env.channelUpdater!.muteChannel_completion?(nil)
         // Release reference of completion so we can deallocate stuff
         env.channelUpdater!.muteChannel_completion = nil
-        
+
         // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
     }
-    
+
     func test_unmuteChannel_propagatesErrorFromUpdater() {
         // Simulate `unmuteChannel` call and catch the completion
         var completionCalledError: Error?
@@ -1586,17 +1586,17 @@ final class ChannelController_Tests: XCTestCase {
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0
         }
-        
+
         // Simulate failed update
         let testError = TestError()
         env.channelUpdater!.muteChannel_completion?(testError)
-        
+
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
 
     // MARK: - Deleting channel
-    
+
     func test_deleteChannel_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
         let query = ChannelQuery(channelPayload: .unique)
@@ -1634,29 +1634,29 @@ final class ChannelController_Tests: XCTestCase {
             XCTAssertNil(error)
             completionCalled = true
         }
-        
+
         // Keep a weak ref so we can check if it's actually deallocated
         weak var weakController = controller
-        
+
         // (Try to) deallocate the controller
         // by not keeping any references to it
         controller = nil
-        
+
         // Completion shouldn't be called yet
         XCTAssertFalse(completionCalled)
         XCTAssertEqual(env.channelUpdater?.deleteChannel_cid, channelId)
-        
+
         // Simulate successful update
         env.channelUpdater?.deleteChannel_completion?(nil)
         // Release reference of completion so we can deallocate stuff
         env.channelUpdater!.deleteChannel_completion = nil
-        
+
         // Completion should be called
         AssertAsync.willBeTrue(completionCalled)
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
     }
-    
+
     func test_deleteChannel_callsChannelUpdaterWithError() {
         // Simulate `muteChannel` call and catch the completion
         var completionCalledError: Error?
@@ -1664,15 +1664,15 @@ final class ChannelController_Tests: XCTestCase {
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0
         }
-        
+
         // Simulate failed update
         let testError = TestError()
         env.channelUpdater!.deleteChannel_completion?(testError)
-        
+
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
-    
+
     // MARK: - Truncating channel
 
     func test_truncateChannel_failsForNewChannels() throws {
@@ -1790,30 +1790,30 @@ final class ChannelController_Tests: XCTestCase {
             XCTAssertNil(error)
             completionCalled = true
         }
-        
+
         // Keep a weak ref so we can check if it's actually deallocated
         weak var weakController = controller
-        
+
         // (Try to) deallocate the controller
         // by not keeping any references to it
         controller = nil
-        
+
         // Completion shouldn't be called yet
         XCTAssertFalse(completionCalled)
         XCTAssertEqual(env.channelUpdater?.hideChannel_cid, channelId)
         XCTAssertEqual(env.channelUpdater?.hideChannel_clearHistory, false)
-        
+
         // Simulate successful update
         env.channelUpdater?.hideChannel_completion?(nil)
         // Release reference of completion so we can deallocate stuff
         env.channelUpdater!.hideChannel_completion = nil
-        
+
         // Completion should be called
         AssertAsync.willBeTrue(completionCalled)
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
     }
-    
+
     func test_hideChannel_callsChannelUpdaterWithError() {
         // Simulate `hideChannel` call and catch the completion
         var completionCalledError: Error?
@@ -1821,15 +1821,15 @@ final class ChannelController_Tests: XCTestCase {
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0
         }
-        
+
         // Simulate failed update
         let testError = TestError()
         env.channelUpdater!.hideChannel_completion?(testError)
-        
+
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
-    
+
     // MARK: - Showing channel
 
     func test_showChannel_failsForNewChannels() throws {
@@ -1869,14 +1869,14 @@ final class ChannelController_Tests: XCTestCase {
             XCTAssertNil(error)
             completionCalled = true
         }
-        
+
         // Keep a weak ref so we can check if it's actually deallocated
         weak var weakController = controller
-        
+
         // (Try to) deallocate the controller
         // by not keeping any references to it
         controller = nil
-        
+
         // Completion shouldn't be called yet
         XCTAssertFalse(completionCalled)
         XCTAssertEqual(env.channelUpdater?.showChannel_cid, channelId)
@@ -1885,13 +1885,13 @@ final class ChannelController_Tests: XCTestCase {
         env.channelUpdater?.showChannel_completion?(nil)
         // Release reference of completion so we can deallocate stuff
         env.channelUpdater!.showChannel_completion = nil
-        
+
         // Completion should be called
         AssertAsync.willBeTrue(completionCalled)
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
     }
-    
+
     func test_showChannel_callsChannelUpdaterWithError() {
         // Simulate `showChannel` call and catch the completion
         var completionCalledError: Error?
@@ -1899,44 +1899,44 @@ final class ChannelController_Tests: XCTestCase {
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0
         }
-        
+
         // Simulate failed update
         let testError = TestError()
         env.channelUpdater!.showChannel_completion?(testError)
-        
+
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
-    
+
     // MARK: - `loadPreviousMessages`
-    
+
     func test_loadPreviousMessages_callsChannelUpdater() throws {
         var error: Error?
         var messageId: MessageId?
-        
+
         // Create new channel with message in DB
         error = try waitFor {
             client.databaseContainer.write({ session in
                 messageId = try self.setupChannelWithMessage(session)
             }, completion: $0)
         }
-        
+
         XCTAssertNil(error)
-        
+
         var completionCalled = false
         controller.loadPreviousMessages(before: messageId, limit: 25) { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
             XCTAssertNil(error)
             completionCalled = true
         }
-        
+
         // Keep a weak ref so we can check if it's actually deallocated
         weak var weakController = controller
-        
+
         // (Try to) deallocate the controller
         // by not keeping any references to it
         controller = nil
-        
+
         // Completion shouldn't be called yet
         XCTAssertFalse(completionCalled)
         // Assert correct `MessagesPagination` is created
@@ -1944,7 +1944,7 @@ final class ChannelController_Tests: XCTestCase {
             env!.channelUpdater?.update_channelQuery?.pagination,
             MessagesPagination(pageSize: 25, parameter: .lessThan(messageId!))
         )
-        
+
         // Simulate successful update
         env.channelUpdater?
             .update_completion?(.success(dummyPayload(
@@ -1953,7 +1953,7 @@ final class ChannelController_Tests: XCTestCase {
             )))
         // Release reference of completion so we can deallocate stuff
         env.channelUpdater!.update_completion = nil
-        
+
         // Completion should be called
         AssertAsync.willBeTrue(completionCalled)
         // `weakController` should be deallocated too
@@ -2102,7 +2102,7 @@ final class ChannelController_Tests: XCTestCase {
         // Assert that more messages will be loaded
         AssertAsync.willBeEqual(controller.hasLoadedAllPreviousMessages, false)
     }
-    
+
     func test_loadPreviousMessages_throwsError_on_emptyMessages() throws {
         // Simulate `loadPreviousMessages` call and assert error is returned
         let error: Error? = try waitFor { [callbackQueueID] completion in
@@ -2113,31 +2113,31 @@ final class ChannelController_Tests: XCTestCase {
         }
         XCTAssert(error is ClientError.ChannelEmptyMessages)
     }
-    
+
     func test_loadPreviousMessages_callsChannelUpdaterWithError() throws {
         var error: Error?
         var messageId: MessageId?
-        
+
         // Create new channel with message in DB
         error = try waitFor {
             client.databaseContainer.write({ session in
                 messageId = try self.setupChannelWithMessage(session)
             }, completion: $0)
         }
-        
+
         XCTAssertNil(error)
-        
+
         // Simulate `loadPreviousMessages` call and catch the completion
         var completionCalledError: Error?
         controller.loadPreviousMessages(before: messageId) { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0
         }
-        
+
         // Simulate failed update
         let testError = TestError()
         env.channelUpdater!.update_completion?(.failure(testError))
-        
+
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
@@ -2267,36 +2267,36 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(paginationMessageId, newestId)
         XCTAssertEqual(receivedError, error)
     }
-    
+
     // MARK: - `loadNextMessages`
-    
+
     func test_loadNextMessages_callsChannelUpdate() throws {
         var error: Error?
         var messageId: MessageId?
-        
+
         // Create new channel with message in DB
         error = try waitFor {
             client.databaseContainer.write({ session in
                 messageId = try self.setupChannelWithMessage(session)
             }, completion: $0)
         }
-        
+
         XCTAssertNil(error)
-        
+
         var completionCalled = false
         controller.loadNextMessages(after: messageId, limit: 25) { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
             XCTAssertNil(error)
             completionCalled = true
         }
-        
+
         // Keep a weak ref so we can check if it's actually deallocated
         weak var weakController = controller
-        
+
         // (Try to) deallocate the controller
         // by not keeping any references to it
         controller = nil
-        
+
         // Completion shouldn't be called yet
         XCTAssertFalse(completionCalled)
         // Assert correct `MessagesPagination` is created
@@ -2304,18 +2304,18 @@ final class ChannelController_Tests: XCTestCase {
             env!.channelUpdater?.update_channelQuery?.pagination,
             MessagesPagination(pageSize: 25, parameter: .greaterThan(messageId!))
         )
-        
+
         // Simulate successful update
         env.channelUpdater?.update_completion?(.success(dummyPayload(with: .unique)))
         // Release reference of completion so we can deallocate stuff
         env.channelUpdater!.update_completion = nil
-        
+
         // Completion should be called
         AssertAsync.willBeTrue(completionCalled)
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
     }
-    
+
     func test_loadNextMessages_throwsError_on_emptyMessages() throws {
         // Simulate `loadNextMessages` call and assert error is returned
         let error: Error? = try waitFor { [callbackQueueID] completion in
@@ -2326,37 +2326,37 @@ final class ChannelController_Tests: XCTestCase {
         }
         XCTAssert(error is ClientError.ChannelEmptyMessages)
     }
-    
+
     func test_loadNextMessages_callsChannelUpdaterWithError() throws {
         var error: Error?
         var messageId: MessageId?
-        
+
         // Create new channel with message in DB
         error = try waitFor {
             client.databaseContainer.write({ session in
                 messageId = try self.setupChannelWithMessage(session)
             }, completion: $0)
         }
-        
+
         XCTAssertNil(error)
-        
+
         // Simulate `loadPreviousMessages` call and catch the completion
         var completionCalledError: Error?
         controller.loadNextMessages(after: messageId) { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0
         }
-        
+
         // Simulate failed update
         let testError = TestError()
         env.channelUpdater!.update_completion?(.failure(testError))
-        
+
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
-    
+
     // MARK: - Keystroke
-    
+
     func test_keystroke() throws {
         let payload = dummyPayload(with: channelId, channelConfig: ChannelConfig(typingEventsEnabled: true))
         try client.databaseContainer.writeSynchronously { session in
@@ -2366,68 +2366,68 @@ final class ChannelController_Tests: XCTestCase {
         controller.sendKeystrokeEvent {
             XCTAssertNil($0)
         }
-        
+
         // Simulate `keystroke` call and catch the completion
         var completionCalledError: Error?
         controller.sendKeystrokeEvent { completionCalledError = $0 }
-        
+
         // Keep a weak ref so we can check if it's actually deallocated
         weak var weakController = controller
-        
+
         // (Try to) deallocate the controller
         // by not keeping any references to it
         controller = nil
-        
+
         // Check keystroke cid.
         XCTAssertEqual(env.eventSender!.keystroke_cid, channelId)
-        
+
         // Simulate failed update
         let testError = TestError()
         env.eventSender!.keystroke_completion!(testError)
         // Release reference of completion so we can deallocate stuff
         env.eventSender!.keystroke_completion = nil
-        
+
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
     }
-    
+
     func test_keystroke_withParentMessageId() throws {
         let payload = dummyPayload(with: channelId, channelConfig: ChannelConfig(typingEventsEnabled: true))
         try client.databaseContainer.writeSynchronously { session in
             try session.saveChannel(payload: payload)
         }
-        
+
         let parentMessageId = MessageId.unique
-        
+
         // Simulate `keystroke` call and catch the completion
         var completionCalledError: Error?
         controller.sendKeystrokeEvent(parentMessageId: parentMessageId) { completionCalledError = $0 }
-        
+
         // Keep a weak ref so we can check if it's actually deallocated
         weak var weakController = controller
-        
+
         // (Try to) deallocate the controller
         // by not keeping any references to it
         controller = nil
-        
+
         // Check keystroke cid and parentMessageId.
         XCTAssertEqual(env.eventSender!.keystroke_cid, channelId)
         XCTAssertEqual(env.eventSender!.keystroke_parentMessageId, parentMessageId)
-        
+
         // Simulate failed update
         let testError = TestError()
         env.eventSender!.keystroke_completion!(testError)
         // Release reference of completion so we can deallocate stuff
         env.eventSender!.keystroke_completion = nil
-        
+
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
     }
-    
+
     func test_startTyping() throws {
         let payload = dummyPayload(with: channelId, channelConfig: ChannelConfig(typingEventsEnabled: true))
         try client.databaseContainer.writeSynchronously { session in
@@ -2437,68 +2437,68 @@ final class ChannelController_Tests: XCTestCase {
         controller.sendStartTypingEvent {
             XCTAssertNil($0)
         }
-        
+
         // Simulate `startTyping` call and catch the completion
         var completionCalledError: Error?
         controller.sendStartTypingEvent { completionCalledError = $0 }
-        
+
         // Keep a weak ref so we can check if it's actually deallocated
         weak var weakController = controller
-        
+
         // (Try to) deallocate the controller
         // by not keeping any references to it
         controller = nil
-        
+
         // Check `startTyping` cid.
         XCTAssertEqual(env.eventSender!.startTyping_cid, channelId)
-        
+
         // Simulate failed update
         let testError = TestError()
         env.eventSender!.startTyping_completion!(testError)
         // Release reference of completion so we can deallocate stuff
         env.eventSender!.startTyping_completion = nil
-        
+
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
     }
-    
+
     func test_startTyping_withParentMessageId() throws {
         let payload = dummyPayload(with: channelId, channelConfig: ChannelConfig(typingEventsEnabled: true))
         try client.databaseContainer.writeSynchronously { session in
             try session.saveChannel(payload: payload)
         }
-        
+
         let parentMessageId = MessageId.unique
-        
+
         // Simulate `startTyping` call and catch the completion
         var completionCalledError: Error?
         controller.sendStartTypingEvent(parentMessageId: parentMessageId) { completionCalledError = $0 }
-        
+
         // Keep a weak ref so we can check if it's actually deallocated
         weak var weakController = controller
-        
+
         // (Try to) deallocate the controller
         // by not keeping any references to it
         controller = nil
-        
+
         // Check `startTyping` cid and parentMessageId.
         XCTAssertEqual(env.eventSender!.startTyping_cid, channelId)
         XCTAssertEqual(env.eventSender!.startTyping_parentMessageId, parentMessageId)
-        
+
         // Simulate failed update
         let testError = TestError()
         env.eventSender!.startTyping_completion!(testError)
         // Release reference of completion so we can deallocate stuff
         env.eventSender!.startTyping_completion = nil
-        
+
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
     }
-    
+
     func test_stopTyping() throws {
         let payload = dummyPayload(with: channelId, channelConfig: ChannelConfig(typingEventsEnabled: true))
         try client.databaseContainer.writeSynchronously { session in
@@ -2508,68 +2508,68 @@ final class ChannelController_Tests: XCTestCase {
         controller.sendStopTypingEvent {
             XCTAssertNil($0)
         }
-        
+
         // Simulate `stopTyping` call and catch the completion
         var completionCalledError: Error?
         controller.sendStopTypingEvent { completionCalledError = $0 }
-        
+
         // Keep a weak ref so we can check if it's actually deallocated
         weak var weakController = controller
-        
+
         // (Try to) deallocate the controller
         // by not keeping any references to it
         controller = nil
-        
+
         // Check `stopTyping` cid.
         XCTAssertEqual(env.eventSender!.stopTyping_cid, channelId)
-        
+
         // Simulate failed update
         let testError = TestError()
         env.eventSender!.stopTyping_completion!(testError)
         // Release reference of completion so we can deallocate stuff
         env.eventSender!.stopTyping_completion = nil
-        
+
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
     }
-    
+
     func test_stopTyping_withParentMessageId() throws {
         let payload = dummyPayload(with: channelId, channelConfig: ChannelConfig(typingEventsEnabled: true))
         try client.databaseContainer.writeSynchronously { session in
             try session.saveChannel(payload: payload)
         }
-        
+
         let parentMessageId = MessageId.unique
-        
+
         // Simulate `stopTyping` call and catch the completion
         var completionCalledError: Error?
         controller.sendStopTypingEvent(parentMessageId: parentMessageId) { completionCalledError = $0 }
-        
+
         // Keep a weak ref so we can check if it's actually deallocated
         weak var weakController = controller
-        
+
         // (Try to) deallocate the controller
         // by not keeping any references to it
         controller = nil
-        
+
         // Check `stopTyping` cid and parentMessageId.
         XCTAssertEqual(env.eventSender!.stopTyping_cid, channelId)
         XCTAssertEqual(env.eventSender!.stopTyping_parentMessageId, parentMessageId)
-        
+
         // Simulate failed update
         let testError = TestError()
         env.eventSender!.stopTyping_completion!(testError)
         // Release reference of completion so we can deallocate stuff
         env.eventSender!.stopTyping_completion = nil
-        
+
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
     }
-    
+
     func test_sendKeystrokeEvent_whenTypingEventsAreDisabled_doesNothing() throws {
         let payload = dummyPayload(with: channelId, channelConfig: ChannelConfig(typingEventsEnabled: false))
         try client.databaseContainer.writeSynchronously { session in
@@ -2584,11 +2584,11 @@ final class ChannelController_Tests: XCTestCase {
                 completion($0)
             }
         }
-        
+
         XCTAssertTrue(completionCalled)
         XCTAssertNil(error)
     }
-    
+
     func test_sendStartTypingEvent_whenTypingEventsAreDisabled_errors() throws {
         let payload = dummyPayload(with: channelId, channelConfig: ChannelConfig(typingEventsEnabled: false))
         try client.databaseContainer.writeSynchronously { session in
@@ -2603,18 +2603,18 @@ final class ChannelController_Tests: XCTestCase {
                 completion($0)
             }
         }
-        
+
         XCTAssertTrue(completionCalled)
         XCTAssertNotNil(error)
-        
+
         guard let channelFeatureError = error as? ClientError.ChannelFeatureDisabled else {
             XCTFail()
             return
         }
-        
+
         XCTAssertEqual(channelFeatureError.localizedDescription, "Channel feature: typing events is disabled for this channel.")
     }
-    
+
     func test_sendStopTypingEvent_whenTypingEventsAreDisabled_errors() throws {
         let payload = dummyPayload(with: channelId, channelConfig: ChannelConfig(typingEventsEnabled: false))
         try client.databaseContainer.writeSynchronously { session in
@@ -2629,18 +2629,18 @@ final class ChannelController_Tests: XCTestCase {
                 completion($0)
             }
         }
-        
+
         XCTAssertTrue(completionCalled)
         XCTAssertNotNil(error)
-        
+
         guard let channelFeatureError = error as? ClientError.ChannelFeatureDisabled else {
             XCTFail()
             return
         }
-        
+
         XCTAssertEqual(channelFeatureError.localizedDescription, "Channel feature: typing events is disabled for this channel.")
     }
-    
+
     func test_keystroke_keepsControllerAlive() throws {
         // Save channel with typing events enabled to database
         try client.mockDatabaseContainer.writeSynchronously {
@@ -2651,18 +2651,18 @@ final class ChannelController_Tests: XCTestCase {
                 )
             )
         }
-        
+
         // Simulate `sendKeystrokeEvent` call.
         controller.sendKeystrokeEvent()
-        
+
         // Create a weak ref and release a controller.
         weak var weakController = controller
         controller = nil
-        
+
         // Assert controller is kept alive
         AssertAsync.staysTrue(weakController != nil)
     }
-    
+
     func test_startTyping_keepsControllerAlive() throws {
         // Save channel with typing events enabled to database
         try client.mockDatabaseContainer.writeSynchronously {
@@ -2673,18 +2673,18 @@ final class ChannelController_Tests: XCTestCase {
                 )
             )
         }
-        
+
         // Simulate `sendStartTypingEvent` call.
         controller.sendStartTypingEvent()
-        
+
         // Create a weak ref and release a controller.
         weak var weakController = controller
         controller = nil
-        
+
         // Assert controller is kept alive
         AssertAsync.staysTrue(weakController != nil)
     }
-    
+
     func test_stopTyping_keepsControllerAlive() throws {
         // Save channel with typing events enabled to database
         try client.mockDatabaseContainer.writeSynchronously {
@@ -2695,23 +2695,23 @@ final class ChannelController_Tests: XCTestCase {
                 )
             )
         }
-        
+
         // Simulate `sendStopTypingEvent` call.
         controller.sendStopTypingEvent()
-        
+
         // Create a weak ref and release a controller.
         weak var weakController = controller
         controller = nil
-        
+
         // Assert controller is kept alive
         AssertAsync.staysTrue(weakController != nil)
     }
-    
+
     // MARK: - Message sending
-    
+
     func test_createNewMessage_callsChannelUpdater() {
         let newMessageId: MessageId = .unique
-        
+
         // New message values
         let text: String = .unique
         let extraData: [String: RawJSON] = [:]
@@ -2722,7 +2722,7 @@ final class ChannelController_Tests: XCTestCase {
         ]
         let quotedMessageId: MessageId = .unique
         let pin = MessagePinning(expirationDate: .unique)
-        
+
         // Simulate `createNewMessage` calls and catch the completion
         var completionCalled = false
         controller.createNewMessage(
@@ -2736,14 +2736,14 @@ final class ChannelController_Tests: XCTestCase {
             AssertResultSuccess(result, newMessageId)
             completionCalled = true
         }
-        
+
         // Keep a weak ref so we can check if it's actually deallocated
         weak var weakController = controller
-        
+
         // (Try to) deallocate the controller
         // by not keeping any references to it
         controller = nil
-        
+
         // Completion shouldn't be called yet
         XCTAssertFalse(completionCalled)
         XCTAssertEqual(env.channelUpdater?.createNewMessage_cid, channelId)
@@ -2754,23 +2754,23 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(env.channelUpdater?.createNewMessage_attachments, attachments)
         XCTAssertEqual(env.channelUpdater?.createNewMessage_quotedMessageId, quotedMessageId)
         XCTAssertEqual(env.channelUpdater?.createNewMessage_pinning?.expirationDate, pin.expirationDate!)
-        
+
         // Simulate successful update
         env.channelUpdater?.createNewMessage_completion?(.success(newMessageId))
         // Release reference of completion so we can deallocate stuff
         env.channelUpdater!.createNewMessage_completion = nil
-        
+
         // Completion should be called
         AssertAsync.willBeTrue(completionCalled)
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
     }
-    
+
     func test_createNewMessage_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
         let query = ChannelQuery(channelPayload: .unique)
         setupControllerForNewChannel(query: query)
-        
+
         // Simulate `createNewMessage` call and assert error is returned
         let result: Result<MessageId, Error> = try waitFor { [callbackQueueID] completion in
             controller.createNewMessage(
@@ -2783,7 +2783,7 @@ final class ChannelController_Tests: XCTestCase {
                 completion(result)
             }
         }
-        
+
         if case let .failure(error) = result {
             XCTAssert(error is ClientError.ChannelNotCreatedYet)
         } else {
@@ -2792,7 +2792,7 @@ final class ChannelController_Tests: XCTestCase {
     }
 
     // MARK: - Adding members
-    
+
     func test_addMembers_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
         let query = ChannelQuery(channelPayload: .unique)
@@ -2825,7 +2825,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_addMembers_callsChannelUpdater() {
         let members: Set<UserId> = [.unique]
-        
+
         // Simulate `addMembers` call and catch the completion
         var completionCalled = false
         controller.addMembers(userIds: members) { [callbackQueueID] error in
@@ -2833,53 +2833,53 @@ final class ChannelController_Tests: XCTestCase {
             XCTAssertNil(error)
             completionCalled = true
         }
-        
+
         // Keep a weak ref so we can check if it's actually deallocated
         weak var weakController = controller
-        
+
         // (Try to) deallocate the controller
         // by not keeping any references to it
         controller = nil
-        
+
         // Assert cid and members state are passed to `channelUpdater`, completion is not called yet
         XCTAssertEqual(env.channelUpdater!.addMembers_cid, channelId)
         XCTAssertEqual(env.channelUpdater!.addMembers_userIds, members)
         XCTAssertFalse(completionCalled)
-        
+
         // Simulate successful update
         env.channelUpdater!.addMembers_completion?(nil)
         // Release reference of completion so we can deallocate stuff
         env.channelUpdater!.addMembers_completion = nil
-        
+
         // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
     }
-    
+
     func test_addMembers_propagatesErrorFromUpdater() {
         let members: Set<UserId> = [.unique]
-        
+
         // Simulate `addMembers` call and catch the completion
         var completionCalledError: Error?
         controller.addMembers(userIds: members) { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0
         }
-        
+
         // Simulate failed update
         let testError = TestError()
         env.channelUpdater!.addMembers_completion?(testError)
-        
+
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
-    
+
     // MARK: - Inviting members
-    
+
     func test_inviteMembers_callsChannelUpdater() {
         let members: Set<UserId> = [.unique, .unique]
-        
+
         // Simulate `inviteMembers` call and catch the completion
         var completionCalled = false
         controller.inviteMembers(userIds: members) { [callbackQueueID] error in
@@ -2887,51 +2887,51 @@ final class ChannelController_Tests: XCTestCase {
             XCTAssertNil(error)
             completionCalled = true
         }
-        
+
         // Keep a weak ref so we can check if it's actually deallocated
         weak var weakController = controller
-        
+
         // (Try to) deallocate the controller
         // by not keeping any references to it
         controller = nil
-        
+
         // Assert cid and members state are passed to `channelUpdater`, completion is not called yet
         XCTAssertEqual(env.channelUpdater!.inviteMembers_cid, channelId)
         XCTAssertEqual(env.channelUpdater!.inviteMembers_userIds, members)
         XCTAssertFalse(completionCalled)
-        
+
         // Simulate successful update
         env.channelUpdater!.inviteMembers_completion?(nil)
         // Release reference of completion so we can deallocate stuff
         env.channelUpdater!.inviteMembers_completion = nil
-        
+
         // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
     }
-    
+
     func test_inviteMembers_propagatesErrorFromUpdater() {
         let members: Set<UserId> = [.unique, .unique]
-        
+
         // Simulate `inviteMembers` call and catch the completion
         var completionCalledError: Error?
         controller.inviteMembers(userIds: members) { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0
         }
-        
+
         // Simulate failed update
         let testError = TestError()
         env.channelUpdater!.inviteMembers_completion?(testError)
-        
+
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
         controller = nil
     }
-    
+
     // MARK: - Accepting invites
-    
+
     func test_acceptInvite_callsChannelUpdater() {
         // Simulate `acceptInvite` call and catch the completion
         var completionCalled = false
@@ -2941,30 +2941,30 @@ final class ChannelController_Tests: XCTestCase {
             XCTAssertNil(error)
             completionCalled = true
         }
-        
+
         // Keep a weak ref so we can check if it's actually deallocated
         weak var weakController = controller
-        
+
         // (Try to) deallocate the controller
         // by not keeping any references to it
         controller = nil
-        
+
         // Assert cid and members state are passed to `channelUpdater`, completion is not called yet
         XCTAssertEqual(env.channelUpdater!.acceptInvite_cid, channelId)
         XCTAssertEqual(env.channelUpdater!.acceptInvite_message, message)
         XCTAssertFalse(completionCalled)
-        
+
         // Simulate successful update
         env.channelUpdater!.acceptInvite_completion?(nil)
         // Release reference of completion so we can deallocate stuff
         env.channelUpdater!.acceptInvite_completion = nil
-        
+
         // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
     }
-    
+
     func test_acceptInvite_propagatesErrorFromUpdater() {
         // Simulate `inviteMembers` call and catch the completion
         var completionCalledError: Error?
@@ -2972,18 +2972,18 @@ final class ChannelController_Tests: XCTestCase {
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0
         }
-        
+
         // Simulate failed update
         let testError = TestError()
         env.channelUpdater!.acceptInvite_completion?(testError)
-        
+
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
         controller = nil
     }
-    
+
     // MARK: - Accepting invites
-    
+
     func test_rejectInvite_callsChannelUpdater() {
         // Simulate `acceptInvite` call and catch the completion
         var completionCalled = false
@@ -2992,29 +2992,29 @@ final class ChannelController_Tests: XCTestCase {
             XCTAssertNil(error)
             completionCalled = true
         }
-        
+
         // Keep a weak ref so we can check if it's actually deallocated
         weak var weakController = controller
-        
+
         // (Try to) deallocate the controller
         // by not keeping any references to it
         controller = nil
-        
+
         // Assert cid and members state are passed to `channelUpdater`, completion is not called yet
         XCTAssertEqual(env.channelUpdater!.rejectInvite_cid, channelId)
         XCTAssertFalse(completionCalled)
-        
+
         // Simulate successful update
         env.channelUpdater!.rejectInvite_completion?(nil)
         // Release reference of completion so we can deallocate stuff
         env.channelUpdater!.rejectInvite_completion = nil
-        
+
         // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
     }
-    
+
     func test_rejectInvite_propagatesErrorFromUpdater() {
         // Simulate `inviteMembers` call and catch the completion
         var completionCalledError: Error?
@@ -3022,18 +3022,18 @@ final class ChannelController_Tests: XCTestCase {
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0
         }
-        
+
         // Simulate failed update
         let testError = TestError()
         env.channelUpdater!.rejectInvite_completion?(testError)
-        
+
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
         controller = nil
     }
-    
+
     // MARK: - Removing members
-    
+
     func test_removeMembers_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
         let query = ChannelQuery(channelPayload: .unique)
@@ -3066,7 +3066,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_removeMembers_callsChannelUpdater() {
         let members: Set<UserId> = [.unique]
-        
+
         // Simulate `removeMembers` call and catch the completion
         var completionCalled = false
         controller.removeMembers(userIds: members) { [callbackQueueID] error in
@@ -3074,48 +3074,48 @@ final class ChannelController_Tests: XCTestCase {
             XCTAssertNil(error)
             completionCalled = true
         }
-        
+
         // Keep a weak ref so we can check if it's actually deallocated
         weak var weakController = controller
-        
+
         // (Try to) deallocate the controller
         // by not keeping any references to it
         controller = nil
-        
+
         // Assert cid and members state are passed to `channelUpdater`, completion is not called yet
         XCTAssertEqual(env.channelUpdater!.removeMembers_cid, channelId)
         XCTAssertEqual(env.channelUpdater!.removeMembers_userIds, members)
         XCTAssertFalse(completionCalled)
-        
+
         // Simulate successful update
         env.channelUpdater!.removeMembers_completion?(nil)
         // Release reference of completion so we can deallocate stuff
         env.channelUpdater!.removeMembers_completion = nil
-        
+
         // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
     }
-    
+
     func test_removeMembers_propagatesErrorFromUpdater() {
         let members: Set<UserId> = [.unique]
-        
+
         // Simulate `removeMembers` call and catch the completion
         var completionCalledError: Error?
         controller.removeMembers(userIds: members) { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0
         }
-        
+
         // Simulate failed update
         let testError = TestError()
         env.channelUpdater!.removeMembers_completion?(testError)
-        
+
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
-    
+
     // MARK: - Mark read
 
     func test_markRead_whenReadEventsAreDisabled_errors() throws {
@@ -3129,12 +3129,12 @@ final class ChannelController_Tests: XCTestCase {
                 completion(error)
             }
         }
-        
+
         guard let channelFeatureError = error as? ClientError.ChannelFeatureDisabled else {
             XCTFail()
             return
         }
-        
+
         XCTAssertEqual(channelFeatureError.localizedDescription, "Channel feature: read events is disabled for this channel.")
     }
 
@@ -3142,7 +3142,7 @@ final class ChannelController_Tests: XCTestCase {
         //  Create `ChannelController` for new channel
         let query = ChannelQuery(channelPayload: .unique)
         setupControllerForNewChannel(query: query)
-        
+
         // Simulate `markRead` call and assert error is returned
         var error: Error? = try waitFor { [callbackQueueID] completion in
             controller.markRead { error in
@@ -3157,7 +3157,7 @@ final class ChannelController_Tests: XCTestCase {
             try session.saveChannel(payload: self.dummyPayload(with: query.cid!))
         }
         env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
-        
+
         // Simulate `markRead` call and assert no error is returned
         error = try waitFor { [callbackQueueID] completion in
             controller.markRead { error in
@@ -3166,10 +3166,10 @@ final class ChannelController_Tests: XCTestCase {
             }
             env.channelUpdater!.markRead_completion?(nil)
         }
-        
+
         XCTAssertNil(error)
     }
-    
+
     func test_markRead_whenChannelIsEmpty_doesNothing() throws {
         // GIVEN
         let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
@@ -3183,13 +3183,13 @@ final class ChannelController_Tests: XCTestCase {
             messages: [],
             channelReads: []
         )
-                
+
         try client.databaseContainer.writeSynchronously { session in
             try session.saveCurrentUser(payload: currentUser)
-            
+
             try session.saveChannel(payload: emptyChannel)
         }
-        
+
         client.setToken(token: .unique(userId: currentUser.id))
 
         // WHEN
@@ -3199,14 +3199,14 @@ final class ChannelController_Tests: XCTestCase {
             XCTAssertNil(error)
             completionCalled = true
         }
-        
+
         // THEN
         AssertAsync {
             Assert.willBeTrue(completionCalled)
             Assert.staysTrue(self.env.channelUpdater?.markRead_cid == nil)
         }
     }
-    
+
     func test_markRead_whenCurrentUserIsMissing_doesNothing() throws {
         // GIVEN
         let lastMessage: MessagePayload = .dummy(
@@ -3214,7 +3214,7 @@ final class ChannelController_Tests: XCTestCase {
             authorUserId: .unique,
             cid: channelId
         )
-        
+
         let channel: ChannelPayload = .dummy(
             channel: .dummy(
                 cid: channelId,
@@ -3223,11 +3223,11 @@ final class ChannelController_Tests: XCTestCase {
             ),
             messages: [lastMessage]
         )
-        
+
         try client.databaseContainer.writeSynchronously { session in
             try session.saveChannel(payload: channel)
         }
-        
+
         // WHEN
         var completionCalled = false
         controller.markRead { [callbackQueueID] error in
@@ -3235,14 +3235,14 @@ final class ChannelController_Tests: XCTestCase {
             XCTAssertNil(error)
             completionCalled = true
         }
-        
+
         // THEN
         AssertAsync {
             Assert.willBeTrue(completionCalled)
             Assert.staysTrue(self.env.channelUpdater?.markRead_cid == nil)
         }
     }
-    
+
     func test_markRead_whenCurrentUserReadIsMissing_doesNothing() throws {
         // GIVEN
         let lastMessage: MessagePayload = .dummy(
@@ -3250,7 +3250,7 @@ final class ChannelController_Tests: XCTestCase {
             authorUserId: .unique,
             cid: channelId
         )
-        
+
         let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
 
         let channel: ChannelPayload = .dummy(
@@ -3262,13 +3262,13 @@ final class ChannelController_Tests: XCTestCase {
             messages: [lastMessage],
             channelReads: []
         )
-                
+
         try client.databaseContainer.writeSynchronously { session in
             try session.saveCurrentUser(payload: currentUser)
-            
+
             try session.saveChannel(payload: channel)
         }
-        
+
         client.setToken(token: .unique(userId: currentUser.id))
 
         // WHEN
@@ -3278,14 +3278,14 @@ final class ChannelController_Tests: XCTestCase {
             XCTAssertNil(error)
             completionCalled = true
         }
-        
+
         // THEN
         AssertAsync {
             Assert.willBeTrue(completionCalled)
             Assert.staysTrue(self.env.channelUpdater?.markRead_cid == nil)
         }
     }
-    
+
     func test_markRead_whenChannelIsRead_doesNothing() throws {
         // GIVEN
         let lastMessage: MessagePayload = .dummy(
@@ -3293,7 +3293,7 @@ final class ChannelController_Tests: XCTestCase {
             authorUserId: .unique,
             cid: channelId
         )
-        
+
         let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
 
         let channel: ChannelPayload = .dummy(
@@ -3307,13 +3307,13 @@ final class ChannelController_Tests: XCTestCase {
                 )
             ]
         )
-                
+
         try client.databaseContainer.writeSynchronously { session in
             try session.saveCurrentUser(payload: currentUser)
-            
+
             try session.saveChannel(payload: channel)
         }
-        
+
         client.setToken(token: .unique(userId: currentUser.id))
 
         // WHEN
@@ -3323,14 +3323,14 @@ final class ChannelController_Tests: XCTestCase {
             XCTAssertNil(error)
             completionCalled = true
         }
-        
+
         // THEN
         AssertAsync {
             Assert.willBeTrue(completionCalled)
             Assert.staysTrue(self.env.channelUpdater?.markRead_cid == nil)
         }
     }
-    
+
     func test_markRead_whenLastMessageInUnread_callsChannelUpdater() throws {
         // GIVEN
         let lastMessage: MessagePayload = .dummy(
@@ -3338,7 +3338,7 @@ final class ChannelController_Tests: XCTestCase {
             authorUserId: .unique,
             cid: channelId
         )
-        
+
         let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
 
         let channel: ChannelPayload = .dummy(
@@ -3352,12 +3352,12 @@ final class ChannelController_Tests: XCTestCase {
                 )
             ]
         )
-                
+
         try client.databaseContainer.writeSynchronously { session in
             try session.saveCurrentUser(payload: currentUser)
             try session.saveChannel(payload: channel)
         }
-        
+
         client.setToken(token: .unique(userId: currentUser.id))
 
         // WHEN
@@ -3367,19 +3367,19 @@ final class ChannelController_Tests: XCTestCase {
             XCTAssertNil(error)
             completionCalled = true
         }
-        
+
         // THEN
         XCTAssertEqual(env.channelUpdater!.markRead_cid, channelId)
         XCTAssertEqual(env.channelUpdater!.markRead_userId, currentUser.id)
         env.channelUpdater!.markRead_completion?(nil)
-        
+
         AssertAsync.willBeTrue(completionCalled)
     }
-    
+
     func test_markRead_propagatesErrorFromUpdater() throws {
         let payload = dummyPayload(with: channelId, numberOfMessages: 3)
         let dummyUserPayload: CurrentUserPayload = .dummy(userId: payload.channelReads.first!.user.id, role: .user)
-        
+
         try client.databaseContainer.writeSynchronously { session in
             try session.saveCurrentUser(payload: dummyUserPayload)
             try session.saveChannel(payload: payload)
@@ -3394,15 +3394,15 @@ final class ChannelController_Tests: XCTestCase {
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0
         }
-        
+
         // Simulate failed update
         let testError = TestError()
         env.channelUpdater!.markRead_completion?(testError)
-        
+
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
-    
+
     func test_markRead_keepsControllerAlive() throws {
         // GIVEN
         let channel = dummyPayload(with: channelId, numberOfMessages: 3)
@@ -3413,24 +3413,24 @@ final class ChannelController_Tests: XCTestCase {
             try session.saveCurrentUser(payload: currentUser)
             try session.saveChannel(payload: channel)
         }
-        
+
         controller.markRead { _ in }
-        
+
         // WHEN
         weak var weakController = controller
         controller = nil
-        
+
         // Assert controller is kept alive
         AssertAsync.staysTrue(weakController != nil)
     }
-    
+
     // MARK: - Enable slow mode (cooldown)
-    
+
     func test_enableSlowMode_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
         let query = ChannelQuery(channelPayload: .unique)
         setupControllerForNewChannel(query: query)
-        
+
         // Simulate `enableSlowMode` call and assert error is returned
         var error: Error? = try waitFor { [callbackQueueID] completion in
             controller.enableSlowMode(cooldownDuration: .random(in: 1...120)) { error in
@@ -3439,10 +3439,10 @@ final class ChannelController_Tests: XCTestCase {
             }
         }
         XCTAssert(error is ClientError.ChannelNotCreatedYet)
-        
+
         // Simulate successful backend channel creation
         env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
-        
+
         // Simulate `enableSlowMode` call and assert no error is returned
         error = try waitFor { [callbackQueueID] completion in
             controller.enableSlowMode(cooldownDuration: .random(in: 1...120)) { error in
@@ -3451,18 +3451,18 @@ final class ChannelController_Tests: XCTestCase {
             }
             env.channelUpdater!.enableSlowMode_completion?(nil)
         }
-        
+
         XCTAssertNil(error)
     }
-    
+
     func test_enableSlowMode_failsForInvalidCooldown() throws {
         //  Create `ChannelController` for new channel
         let query = ChannelQuery(channelPayload: .unique)
         setupControllerForNewChannel(query: query)
-        
+
         // Simulate successful backend channel creation
         env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
-        
+
         // Simulate `enableSlowMode` call with invalid cooldown and assert error is returned
         var error: Error? = try waitFor { [callbackQueueID] completion in
             controller.enableSlowMode(cooldownDuration: .random(in: 130...250)) { error in
@@ -3471,7 +3471,7 @@ final class ChannelController_Tests: XCTestCase {
             }
         }
         XCTAssert(error is ClientError.InvalidCooldownDuration)
-        
+
         // Simulate `enableSlowMode` call with another invalid cooldown and assert error is returned
         error = try waitFor { [callbackQueueID] completion in
             controller.enableSlowMode(cooldownDuration: .random(in: -100...0)) { error in
@@ -3481,7 +3481,7 @@ final class ChannelController_Tests: XCTestCase {
         }
         XCTAssert(error is ClientError.InvalidCooldownDuration)
     }
-    
+
     func test_enableSlowMode_callsChannelUpdater() {
         // Simulate `enableSlowMode` call and catch the completion
         var completionCalled = false
@@ -3490,29 +3490,29 @@ final class ChannelController_Tests: XCTestCase {
             XCTAssertNil(error)
             completionCalled = true
         }
-        
+
         // Keep a weak ref so we can check if it's actually deallocated
         weak var weakController = controller
-        
+
         // (Try to) deallocate the controller
         // by not keeping any references to it
         controller = nil
-        
+
         // Assert cid is passed to `channelUpdater`, completion is not called yet
         XCTAssertEqual(env.channelUpdater!.enableSlowMode_cid, channelId)
         XCTAssertFalse(completionCalled)
-        
+
         // Simulate successful update
         env.channelUpdater!.enableSlowMode_completion?(nil)
         // Release reference of completion so we can deallocate stuff
         env.channelUpdater!.enableSlowMode_completion = nil
-        
+
         // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
     }
-    
+
     func test_enableSlowMode_propagatesErrorFromUpdater() {
         // Simulate `enableSlowMode` call and catch the completion
         var completionCalledError: Error?
@@ -3520,22 +3520,22 @@ final class ChannelController_Tests: XCTestCase {
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0
         }
-        
+
         // Simulate failed update
         let testError = TestError()
         env.channelUpdater!.enableSlowMode_completion?(testError)
-        
+
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
-    
+
     // MARK: - Disable slow mode (cooldown)
-    
+
     func test_disableSlowMode_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
         let query = ChannelQuery(channelPayload: .unique)
         setupControllerForNewChannel(query: query)
-        
+
         // Simulate `disableSlowMode` call and assert error is returned
         var error: Error? = try waitFor { [callbackQueueID] completion in
             controller.disableSlowMode { error in
@@ -3544,10 +3544,10 @@ final class ChannelController_Tests: XCTestCase {
             }
         }
         XCTAssert(error is ClientError.ChannelNotCreatedYet)
-        
+
         // Simulate successful backend channel creation
         env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
-        
+
         // Simulate `disableSlowMode` call and assert no error is returned
         error = try waitFor { [callbackQueueID] completion in
             controller.disableSlowMode { error in
@@ -3556,10 +3556,10 @@ final class ChannelController_Tests: XCTestCase {
             }
             env.channelUpdater!.enableSlowMode_completion?(nil)
         }
-        
+
         XCTAssertNil(error)
     }
-    
+
     func test_disableSlowMode_callsChannelUpdater() {
         // Simulate `disableSlowMode` call and catch the completion
         var completionCalled = false
@@ -3568,31 +3568,31 @@ final class ChannelController_Tests: XCTestCase {
             XCTAssertNil(error)
             completionCalled = true
         }
-        
+
         // Keep a weak ref so we can check if it's actually deallocated
         weak var weakController = controller
-        
+
         // (Try to) deallocate the controller
         // by not keeping any references to it
         controller = nil
-        
+
         // Assert cid is passed to `channelUpdater`, completion is not called yet
         XCTAssertEqual(env.channelUpdater!.enableSlowMode_cid, channelId)
         // Assert that passed cooldown duration is 0
         XCTAssertEqual(env.channelUpdater!.enableSlowMode_cooldownDuration, 0)
         XCTAssertFalse(completionCalled)
-        
+
         // Simulate successful update
         env.channelUpdater!.enableSlowMode_completion?(nil)
         // Release reference of completion so we can deallocate stuff
         env.channelUpdater!.enableSlowMode_completion = nil
-        
+
         // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
     }
-    
+
     func test_disableSlowMode_propagatesErrorFromUpdater() {
         // Simulate `disableSlowMode` call and catch the completion
         var completionCalledError: Error?
@@ -3600,89 +3600,89 @@ final class ChannelController_Tests: XCTestCase {
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0
         }
-        
+
         // Simulate failed update
         let testError = TestError()
         env.channelUpdater!.enableSlowMode_completion?(testError)
-        
+
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
-    
+
     func test_currentCooldownTime_whenSlowModeIsActive_andLastMessageFromCurrentUserExists_thenCooldownTimeIsGreaterThanZero(
     ) throws {
         // GIVEN
         let user: UserPayload = dummyCurrentUser
         let message: MessagePayload = .dummy(messageId: .unique, authorUserId: user.id, createdAt: Date())
         let channelPayload = dummyPayload(with: channelId, messages: [message], cooldownDuration: 5)
-        
+
         try client.databaseContainer.createCurrentUser(id: user.id)
-        
+
         try client.databaseContainer.writeSynchronously { session in
             try session.saveChannel(payload: channelPayload)
         }
-        
+
         // WHEN
         let currentCooldownTime = controller.currentCooldownTime()
-        
+
         // THEN
         XCTAssertGreaterThan(currentCooldownTime, 0)
     }
-    
+
     func test_currentCooldownTime_whenSlowModeIsNotActive_thenCooldownTimeIsZero() throws {
         // GIVEN
         let user: UserPayload = dummyCurrentUser
         let channelPayload = dummyPayload(with: channelId, cooldownDuration: 0)
-        
+
         try client.databaseContainer.createCurrentUser(id: user.id)
-        
+
         try client.databaseContainer.writeSynchronously { session in
             try session.saveChannel(payload: channelPayload)
         }
-        
+
         // WHEN
         let currentCooldownTime = controller.currentCooldownTime()
-        
+
         // THEN
         XCTAssertEqual(currentCooldownTime, 0)
     }
-    
+
     func test_currentCooldownTime_doesNotReturnNegativeValues() throws {
         // GIVEN
         let user: UserPayload = dummyCurrentUser
-        
+
         let message: MessagePayload = .dummy(
             messageId: .unique,
             authorUserId: user.id,
             createdAt: Date().addingTimeInterval(-20)
         )
-        
+
         let channelPayload = dummyPayload(
             with: channelId,
             messages: [message],
             cooldownDuration: 5
         )
-        
+
         try client.databaseContainer.createCurrentUser(id: user.id)
-        
+
         try client.databaseContainer.writeSynchronously { session in
             try session.saveChannel(payload: channelPayload)
         }
-        
+
         // WHEN
         let currentCooldownTime = controller.currentCooldownTime()
-        
+
         // THEN
         XCTAssertEqual(currentCooldownTime, 0)
     }
-    
+
     // MARK: - Start watching
-    
+
     func test_startWatching_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
         let query = ChannelQuery(channelPayload: .unique)
         setupControllerForNewChannel(query: query)
-        
+
         // Simulate `startWatching` call and assert error is returned
         var error: Error? = try waitFor { [callbackQueueID] completion in
             controller.startWatching(isInRecoveryMode: false) { error in
@@ -3691,10 +3691,10 @@ final class ChannelController_Tests: XCTestCase {
             }
         }
         XCTAssert(error is ClientError.ChannelNotCreatedYet)
-        
+
         // Simulate successful backend channel creation
         env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
-        
+
         // Simulate `startWatching` call and assert no error is returned
         error = try waitFor { [callbackQueueID] completion in
             controller.startWatching(isInRecoveryMode: false) { error in
@@ -3703,10 +3703,10 @@ final class ChannelController_Tests: XCTestCase {
             }
             env.channelUpdater!.startWatching_completion?(nil)
         }
-        
+
         XCTAssertNil(error)
     }
-    
+
     func test_startWatching_callsChannelUpdater() {
         // Simulate `startWatching` call and catch the completion
         var completionCalled = false
@@ -3715,23 +3715,23 @@ final class ChannelController_Tests: XCTestCase {
             XCTAssertNil(error)
             completionCalled = true
         }
-        
+
         // Keep a weak ref so we can check if it's actually deallocated
         weak var weakController = controller
-        
+
         // (Try to) deallocate the controller
         // by not keeping any references to it
         controller = nil
-        
+
         // Assert cid is passed to `channelUpdater`, completion is not called yet
         XCTAssertEqual(env.channelUpdater!.startWatching_cid, channelId)
         XCTAssertFalse(completionCalled)
-        
+
         // Simulate successful update
         env.channelUpdater!.startWatching_completion?(nil)
         // Release reference of completion so we can deallocate stuff
         env.channelUpdater!.startWatching_completion = nil
-        
+
         AssertAsync {
             // Assert completion is called
             Assert.willBeTrue(completionCalled)
@@ -3739,7 +3739,7 @@ final class ChannelController_Tests: XCTestCase {
             Assert.canBeReleased(&weakController)
         }
     }
-    
+
     func test_startWatching_propagatesErrorFromUpdater() {
         // Simulate `startWatching` call and catch the completion
         var completionCalledError: Error?
@@ -3747,11 +3747,11 @@ final class ChannelController_Tests: XCTestCase {
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0
         }
-        
+
         // Simulate failed update
         let testError = TestError()
         env.channelUpdater!.startWatching_completion?(testError)
-        
+
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
@@ -3827,14 +3827,14 @@ final class ChannelController_Tests: XCTestCase {
         waitForExpectations(timeout: 0.5, handler: nil)
         return receivedError
     }
-    
+
     // MARK: - Stop watching
-    
+
     func test_stopWatching_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
         let query = ChannelQuery(channelPayload: .unique)
         setupControllerForNewChannel(query: query)
-        
+
         // Simulate `stopWatching` call and assert error is returned
         var error: Error? = try waitFor { [callbackQueueID] completion in
             controller.stopWatching { error in
@@ -3843,10 +3843,10 @@ final class ChannelController_Tests: XCTestCase {
             }
         }
         XCTAssert(error is ClientError.ChannelNotCreatedYet)
-        
+
         // Simulate successful backend channel creation
         env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
-        
+
         // Simulate `stopWatching` call and assert no error is returned
         error = try waitFor { [callbackQueueID] completion in
             controller.stopWatching { error in
@@ -3855,10 +3855,10 @@ final class ChannelController_Tests: XCTestCase {
             }
             env.channelUpdater!.stopWatching_completion?(nil)
         }
-        
+
         XCTAssertNil(error)
     }
-    
+
     func test_stopWatching_callsChannelUpdater() {
         // Simulate `stopWatching` call and catch the completion
         var completionCalled = false
@@ -3867,23 +3867,23 @@ final class ChannelController_Tests: XCTestCase {
             XCTAssertNil(error)
             completionCalled = true
         }
-        
+
         // Keep a weak ref so we can check if it's actually deallocated
         weak var weakController = controller
-        
+
         // (Try to) deallocate the controller
         // by not keeping any references to it
         controller = nil
-        
+
         // Assert cid is passed to `channelUpdater`, completion is not called yet
         XCTAssertEqual(env.channelUpdater!.stopWatching_cid, channelId)
         XCTAssertFalse(completionCalled)
-        
+
         // Simulate successful update
         env.channelUpdater!.stopWatching_completion?(nil)
         // Release reference of completion so we can deallocate stuff
         env.channelUpdater!.stopWatching_completion = nil
-        
+
         AssertAsync {
             // Assert completion is called
             Assert.willBeTrue(completionCalled)
@@ -3891,7 +3891,7 @@ final class ChannelController_Tests: XCTestCase {
             Assert.canBeReleased(&weakController)
         }
     }
-    
+
     func test_stopWatching_propagatesErrorFromUpdater() {
         // Simulate `stopWatching` call and catch the completion
         var completionCalledError: Error?
@@ -3899,22 +3899,22 @@ final class ChannelController_Tests: XCTestCase {
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0
         }
-        
+
         // Simulate failed update
         let testError = TestError()
         env.channelUpdater!.stopWatching_completion?(testError)
-        
+
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
-    
+
     // MARK: - Freeze channel
-    
+
     func test_freezeChannel_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
         let query = ChannelQuery(channelPayload: .unique)
         setupControllerForNewChannel(query: query)
-        
+
         // Simulate `freezeChannel` call and assert error is returned
         var error: Error? = try waitFor { [callbackQueueID] completion in
             controller.freezeChannel { error in
@@ -3923,10 +3923,10 @@ final class ChannelController_Tests: XCTestCase {
             }
         }
         XCTAssert(error is ClientError.ChannelNotCreatedYet)
-        
+
         // Simulate successful backend channel creation
         env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
-        
+
         // Simulate `freezeChannel` call and assert no error is returned
         error = try waitFor { [callbackQueueID] completion in
             controller.freezeChannel { error in
@@ -3935,10 +3935,10 @@ final class ChannelController_Tests: XCTestCase {
             }
             env.channelUpdater!.freezeChannel_completion?(nil)
         }
-        
+
         XCTAssertNil(error)
     }
-    
+
     func test_freezeChannel_callsChannelUpdater() {
         // Simulate `freezeChannel` call and catch the completion
         var completionCalled = false
@@ -3947,26 +3947,26 @@ final class ChannelController_Tests: XCTestCase {
             XCTAssertNil(error)
             completionCalled = true
         }
-        
+
         // Keep a weak ref so we can check if it's actually deallocated
         weak var weakController = controller
-        
+
         // (Try to) deallocate the controller
         // by not keeping any references to it
         controller = nil
-        
+
         // Assert cid is passed to `channelUpdater`, completion is not called yet
         XCTAssertEqual(env.channelUpdater!.freezeChannel_cid, channelId)
         XCTAssertFalse(completionCalled)
-        
+
         // Assert that `frozen: true` is passed as payload
         XCTAssertEqual(env.channelUpdater!.freezeChannel_freeze, true)
-        
+
         // Simulate successful update
         env.channelUpdater!.freezeChannel_completion?(nil)
         // Release reference of completion so we can deallocate stuff
         env.channelUpdater!.freezeChannel_completion = nil
-        
+
         AssertAsync {
             // Assert completion is called
             Assert.willBeTrue(completionCalled)
@@ -3974,7 +3974,7 @@ final class ChannelController_Tests: XCTestCase {
             Assert.canBeReleased(&weakController)
         }
     }
-    
+
     func test_freezeChannel_propagatesErrorFromUpdater() {
         // Simulate `freezeChannel` call and catch the completion
         var completionCalledError: Error?
@@ -3982,22 +3982,22 @@ final class ChannelController_Tests: XCTestCase {
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0
         }
-        
+
         // Simulate failed update
         let testError = TestError()
         env.channelUpdater!.freezeChannel_completion?(testError)
-        
+
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
-    
+
     // MARK: - Unfreeze channel
-    
+
     func test_unfreezeChannel_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
         let query = ChannelQuery(channelPayload: .unique)
         setupControllerForNewChannel(query: query)
-        
+
         // Simulate `unfreezeChannel` call and assert error is returned
         var error: Error? = try waitFor { [callbackQueueID] completion in
             controller.unfreezeChannel { error in
@@ -4006,10 +4006,10 @@ final class ChannelController_Tests: XCTestCase {
             }
         }
         XCTAssert(error is ClientError.ChannelNotCreatedYet)
-        
+
         // Simulate successful backend channel creation
         env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
-        
+
         // Simulate `unfreezeChannel` call and assert no error is returned
         error = try waitFor { [callbackQueueID] completion in
             controller.unfreezeChannel { error in
@@ -4018,10 +4018,10 @@ final class ChannelController_Tests: XCTestCase {
             }
             env.channelUpdater!.freezeChannel_completion?(nil)
         }
-        
+
         XCTAssertNil(error)
     }
-    
+
     func test_unfreezeChannel_callsChannelUpdater() {
         // Simulate `unfreezeChannel` call and catch the completion
         var completionCalled = false
@@ -4030,26 +4030,26 @@ final class ChannelController_Tests: XCTestCase {
             XCTAssertNil(error)
             completionCalled = true
         }
-        
+
         // Keep a weak ref so we can check if it's actually deallocated
         weak var weakController = controller
-        
+
         // (Try to) deallocate the controller
         // by not keeping any references to it
         controller = nil
-        
+
         // Assert cid is passed to `channelUpdater`, completion is not called yet
         XCTAssertEqual(env.channelUpdater!.freezeChannel_cid, channelId)
         XCTAssertFalse(completionCalled)
-        
+
         // Assert that `frozen: false` is passed as payload
         XCTAssertEqual(env.channelUpdater!.freezeChannel_freeze, false)
-        
+
         // Simulate successful update
         env.channelUpdater!.freezeChannel_completion?(nil)
         // Release reference of completion so we can deallocate stuff
         env.channelUpdater!.freezeChannel_completion = nil
-        
+
         AssertAsync {
             // Assert completion is called
             Assert.willBeTrue(completionCalled)
@@ -4057,7 +4057,7 @@ final class ChannelController_Tests: XCTestCase {
             Assert.canBeReleased(&weakController)
         }
     }
-    
+
     func test_unfreezeChannel_propagatesErrorFromUpdater() {
         // Simulate `freezeChannel` call and catch the completion
         var completionCalledError: Error?
@@ -4065,22 +4065,22 @@ final class ChannelController_Tests: XCTestCase {
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0
         }
-        
+
         // Simulate failed update
         let testError = TestError()
         env.channelUpdater!.freezeChannel_completion?(testError)
-        
+
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
-    
+
     // MARK: - UploadAttachment
-    
+
     func test_uploadAttachment_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
         let query = ChannelQuery(channelPayload: .unique)
         setupControllerForNewChannel(query: query)
-        
+
         // Simulate `uploadFile` call and assert error is returned
         let error: Error? = try waitFor { [callbackQueueID] completion in
             controller.uploadAttachment(localFileURL: .localYodaImage, type: .image) { result in
@@ -4090,7 +4090,7 @@ final class ChannelController_Tests: XCTestCase {
         }
         XCTAssert(error is ClientError.ChannelNotCreatedYet)
     }
-    
+
     func test_uploadAttachment_callsChannelUpdater() {
         // Simulate `uploadFile` call and catch the completion
         var completionCalled = false
@@ -4099,25 +4099,25 @@ final class ChannelController_Tests: XCTestCase {
             XCTAssertNil(result.error)
             completionCalled = true
         }
-        
+
         // Keep a weak ref so we can check if it's actually deallocated
         weak var weakController = controller
-        
+
         // (Try to) deallocate the controller
         // by not keeping any references to it
         controller = nil
-        
+
         // Assert cid is passed to `channelUpdater`, completion is not called yet
         XCTAssertEqual(env.channelUpdater!.uploadFile_cid, channelId)
         // Assert correct type is passed
         XCTAssertEqual(env.channelUpdater?.uploadFile_type, .image)
         XCTAssertFalse(completionCalled)
-        
+
         // Simulate successful update
         env.channelUpdater!.uploadFile_completion?(.success(.dummy()))
         // Release reference of completion so we can deallocate stuff
         env.channelUpdater!.uploadFile_completion = nil
-        
+
         AssertAsync {
             // Assert completion is called
             Assert.willBeTrue(completionCalled)
@@ -4125,7 +4125,7 @@ final class ChannelController_Tests: XCTestCase {
             Assert.canBeReleased(&weakController)
         }
     }
-    
+
     func test_uploadAttachment_propagatesErrorFromUpdater() {
         // Simulate `uploadFile` call and catch the completion
         var completionCalledError: Error?
@@ -4133,22 +4133,22 @@ final class ChannelController_Tests: XCTestCase {
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0.error
         }
-        
+
         // Simulate failed update
         let testError = TestError()
         env.channelUpdater!.uploadFile_completion?(.failure(testError))
-        
+
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
-    
+
     // MARK: - Load pinned messages
-    
+
     func test_loadPinnedMessages_failsForNewChannel() throws {
         //  Create `ChannelController` for new channel
         let query = ChannelQuery(channelPayload: .unique)
         setupControllerForNewChannel(query: query)
-        
+
         // Simulate `loadPinnedMessages` call and assert error is returned
         let error: Error? = try waitFor { [callbackQueueID] completion in
             controller.loadPinnedMessages { result in
@@ -4156,23 +4156,23 @@ final class ChannelController_Tests: XCTestCase {
                 completion(result.error)
             }
         }
-        
+
         // Assert `ClientError.ChannelNotCreatedYet` is propagated to completion
         XCTAssert(error is ClientError.ChannelNotCreatedYet)
     }
-    
+
     func test_loadPinnedMessages_callsChannelUpdater() {
         let pageSize = 10
         let pagination = PinnedMessagesPagination.aroundMessage(.unique)
-        
+
         // Simulate `loadPinnedMessages` call
         controller.loadPinnedMessages(pageSize: pageSize, pagination: pagination) { _ in }
-        
+
         // Assert call is propagated to updater
         XCTAssertEqual(env.channelUpdater!.loadPinnedMessages_cid, controller.cid)
         XCTAssertEqual(env.channelUpdater!.loadPinnedMessages_query, .init(pageSize: pageSize, pagination: pagination))
     }
-    
+
     func test_loadPinnedMessages_propagatesErrorFromUpdater() {
         // Simulate `loadPinnedMessages` call and catch the completion
         var completionError: Error?
@@ -4180,26 +4180,26 @@ final class ChannelController_Tests: XCTestCase {
             AssertTestQueue(withId: callbackQueueID)
             completionError = $0.error
         }
-        
+
         // Simulate failed update
         let testError = TestError()
         env.channelUpdater!.loadPinnedMessages_completion!(.failure(testError))
-        
+
         // Error is propagated to completion
         AssertAsync.willBeEqual(completionError as? TestError, testError)
     }
-    
+
     func test_loadPinnedMessages_keepsControllerAlive() {
         // Simulate `loadPinnedMessages` call
         controller.loadPinnedMessages { _ in }
-        
+
         // Keep a weak ref so we can check if it's actually deallocated
         weak var weakController = controller
-        
+
         // (Try to) deallocate the controller
         // by not keeping any references to it
         controller = nil
-        
+
         // Assert controller is kept alive
         AssertAsync.staysTrue(weakController != nil)
     }
@@ -4221,9 +4221,9 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssert(client.activeChannelControllers.count == 1)
         XCTAssert(client.activeChannelControllers.allObjects.first === controller)
     }
-    
+
     // MARK: Test creation of a call
-    
+
     func test_createCall_failsWhenChannelIsNotAlreadyCreated() {
         let controller = ChatChannelController(
             channelQuery: ChannelQuery(cid: channelId),
@@ -4231,41 +4231,41 @@ final class ChannelController_Tests: XCTestCase {
             client: ChatClient.mock,
             isChannelAlreadyCreated: false
         )
-        
+
         let id: String = .unique
         let type: String = "video"
         var completionError: Error?
         controller.createCall(id: id, type: type) { result in
             completionError = result.error
         }
-        
+
         AssertAsync.willBeTrue(completionError != nil)
     }
-    
+
     func test_createCall_propagatesErrorFromUpdater() {
         let id: String = .unique
         let type: String = "video"
         var completionError: Error?
-        
+
         // Set completion handler
         controller.createCall(id: id, type: type) { result in
             completionError = result.error
         }
-        
+
         // Simulate failed update
         let testError = TestError()
         env.channelUpdater!.createCall_completion!(.failure(testError))
-        
+
         // Error is propagated to completion
         AssertAsync.willBeEqual(completionError as? TestError, testError)
     }
-    
+
     func test_createCall_propagatesResultFromUpdater() {
         let id: String = .unique
         let provider: String = "agora"
         let token: String = .unique
         let type: String = "video"
-        
+
         var resultingCallWithToken: CallWithToken?
         let mockCallWithToken = CallWithToken(
             call: Call(
@@ -4276,15 +4276,15 @@ final class ChannelController_Tests: XCTestCase {
             ),
             token: token
         )
-        
+
         // Set completion handler
         controller.createCall(id: id, type: type) { result in
             resultingCallWithToken = result.value
         }
-        
+
         // Simulate successful completion
         env.channelUpdater!.createCall_completion!(.success(mockCallWithToken))
-        
+
         // Result is propagated to completion
         AssertAsync.willBeEqual(resultingCallWithToken, mockCallWithToken)
     }

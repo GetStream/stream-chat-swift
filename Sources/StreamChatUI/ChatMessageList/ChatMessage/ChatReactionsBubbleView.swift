@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -46,7 +46,7 @@ open class ChatReactionsBubbleView: ChatReactionBubbleBaseView {
     open var maskingPath: UIBezierPath {
         bubblePath(withRadiiIncreasedBy: 4)
     }
-    
+
     /// Bubble's background color.
     open var fillColor: UIColor? {
         tailDirection.map {
@@ -64,7 +64,7 @@ open class ChatReactionsBubbleView: ChatReactionBubbleBaseView {
                 appearance.colorPalette.background2
         }
     }
-    
+
     /// The center of bubble's body.
     open var bubbleBodyCenter: CGPoint {
         bounds

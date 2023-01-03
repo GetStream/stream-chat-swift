@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -19,7 +19,7 @@ public struct ChatClientConfig {
     /// The API key can be obtained by registering on [our website](https://getstream.io/chat/\).
     ///
     public let apiKey: APIKey
-    
+
     /// The security application group ID to use for the local storage. This is needed if you want to share offline storage between
     /// your chat application and extensions. More information is available [here](https://developer.apple.com/documentation/bundleresources/entitlements/com_apple_security_application-groups)
     /// and [here](https://developer.apple.com/library/archive/documentation/Miscellaneous/Reference/EntitlementKeyReference/Chapters/EnablingAppSandbox.html#//apple_ref/doc/uid/TP40011195-CH4-SW19)
@@ -54,21 +54,21 @@ public struct ChatClientConfig {
 
     /// The datacenter `ChatClient` uses for connecting.
     public var baseURL: BaseURL = .default
-    
+
     /// Determines whether `ChatClient` caches the data locally. This makes it possible to browse the existing chat data also
     /// when the internet connection is not available.
     public var isLocalStorageEnabled: Bool = true
-    
+
     /// If set to `true`, `ChatClient` resets the local cache on the start.
     ///
     /// You should set `shouldFlushLocalStorageOnStart = true` every time the changes in your code makes the local cache invalid.
     ///
     ///
     public var shouldFlushLocalStorageOnStart: Bool = false
-    
+
     /// Advanced settings for the local caching and model serialization.
     public var localCaching = LocalCaching()
-    
+
     /// Flag for setting a ChatClient instance in connection-less mode.
     /// A connection-less client is not able to connect to websocket and will not
     /// receive websocket events. It can still observe and mutate database.
@@ -89,7 +89,7 @@ public struct ChatClientConfig {
         message: "This flag has no effect anymore. The flow for setting and for connecting the user has been unified to the `connectUser` set of methods."
     )
     public var shouldConnectAutomatically = true
-    
+
     /// If set to `true`, the `ChatClient` will try to stay connected while app is backgrounded.
     /// If set to `false`, websocket disconnects immediately when app is backgrounded.
     ///
@@ -106,12 +106,12 @@ public struct ChatClientConfig {
     ///
     /// Default value is `true`
     public var staysConnectedInBackground = true
-    
+
     /// Creates a new instance of `ChatClientConfig`.
     ///
     /// - Parameter apiKey: The API key of the chat app the `ChatClient` connects to.
     ///
-    
+
     /// Allows to inject a custom API client for uploading attachments, if not specified, `StreamCDNClient` is used.
     /// If a custom `AttachmentUploader` is provided, the custom `CDNClient` won't be used. You should use 1 of them only.
     public var customCDNClient: CDNClient?
@@ -120,7 +120,7 @@ public struct ChatClientConfig {
     /// control than `CDNClient` to allow changing the attachment payload.
     /// This overrides the custom `CDNClient`. You should use 1 of them only.
     public var customAttachmentUploader: AttachmentUploader?
-    
+
     /// Returns max possible attachment size in bytes.
     /// By default the value is taken from `CDNClient.maxAttachmentSize` type.
     /// But it can be overridden by setting a value here.
@@ -143,7 +143,7 @@ public struct ChatClientConfig {
 
     /// Used to override the maxAttachmentSize, by setting the value in the config instead of relying on `CDNClient`.
     private var overrideMaxAttachmentSize: Int64?
-    
+
     /// Returns max number of attachments that can be attached to a message.
     ///
     /// The current limit is `10`.
@@ -170,7 +170,7 @@ public struct ChatClientConfig {
     /// Specifies the visibility of deleted messages.
     /// By default, all deleted messages are visible with their content hidden.
     public var deletedMessagesVisibility: DeletedMessageVisibility = .alwaysVisible
-    
+
     /// Specifies whether `shadowed` messages should be shown in Message list.
     /// For more information, please check "Shadow Bans" docs.
     public var shouldShowShadowedMessages = false
@@ -203,7 +203,7 @@ extension ChatClientConfig {
         /// `ChatChannel` specific local caching and model serialization settings.
         public var chatChannel = ChatChannel()
     }
-    
+
     /// `ChatChannel` specific local caching and model serialization settings.
     public struct ChatChannel: Equatable {
         /// Limit the max number of watchers included in `ChatChannel.lastActiveWatchers`.
@@ -222,7 +222,7 @@ extension ChatClientConfig {
 public struct APIKey: Equatable {
     /// The string representation of the API key
     public let apiKeyString: String
-    
+
     /// Creates a new `APIKey` from the provided string. Fails, if the string is empty.
     ///
     /// - Warning: The `apiKeyString` must be a non-empty value, otherwise an assertion failure is raised.

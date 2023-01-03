@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -14,7 +14,7 @@ open class AttachmentViewInjector {
     /// Says whether a message content should start filling all available width.
     /// Is `true` by default.
     open var fillAllAvailableWidth: Bool = true
-    
+
     /// Called after `contentView.prepareForReuse` is called.
     open func contentViewDidPrepareForReuse() {}
 

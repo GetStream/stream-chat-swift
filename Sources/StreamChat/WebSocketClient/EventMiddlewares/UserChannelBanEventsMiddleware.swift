@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -13,25 +13,25 @@ struct UserChannelBanEventsMiddleware: EventMiddleware {
                 guard let memberDTO = session.member(userId: userBannedEvent.user.id, cid: userBannedEvent.cid) else {
                     throw ClientError.MemberDoesNotExist(userId: userBannedEvent.user.id, cid: userBannedEvent.cid)
                 }
-                
+
                 memberDTO.isBanned = true
                 memberDTO.banExpiresAt = userBannedEvent.expiredAt?.bridgeDate
-                
+
             case let userUnbannedEvent as UserUnbannedEventDTO:
                 guard let memberDTO = session.member(userId: userUnbannedEvent.user.id, cid: userUnbannedEvent.cid) else {
                     throw ClientError.MemberDoesNotExist(userId: userUnbannedEvent.user.id, cid: userUnbannedEvent.cid)
                 }
-                
+
                 memberDTO.isBanned = false
                 memberDTO.banExpiresAt = nil
-                
+
             default:
                 break
             }
         } catch {
             log.error("Error handling `\(type(of: event))` event: \(error)")
         }
-        
+
         return event
     }
 }

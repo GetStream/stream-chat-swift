@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -14,7 +14,7 @@ final class YTMessageLayoutOptionsResolver: ChatMessageLayoutOptionsResolver {
         appearance: Appearance
     ) -> ChatMessageLayoutOptions {
         var options = super.optionsForMessage(at: indexPath, in: channel, with: messages, appearance: appearance)
-        
+
         // Remove the message options that are not needed in our case
         options.remove([
             .flipped,
@@ -28,10 +28,10 @@ final class YTMessageLayoutOptionsResolver: ChatMessageLayoutOptionsResolver {
             .onlyVisibleToYouIndicator,
             .errorIndicator
         ])
-        
+
         // Insert the message options that are needed
         options.insert([.avatar, .timestamp, .authorName])
-        
+
         return options
     }
 }

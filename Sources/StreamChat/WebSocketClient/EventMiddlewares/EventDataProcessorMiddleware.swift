@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -10,7 +10,7 @@ struct EventDataProcessorMiddleware: EventMiddleware {
         guard let payload = (event as? EventDTO)?.payload else {
             return event
         }
-        
+
         do {
             try session.saveEvent(payload: payload)
             log.debug("Event data saved to db: \(payload)")

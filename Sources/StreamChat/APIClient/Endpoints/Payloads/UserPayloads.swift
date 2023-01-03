@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -113,7 +113,7 @@ class UserRequestBody: Encodable {
         self.imageURL = imageURL
         self.extraData = extraData
     }
-    
+
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: UserPayloadsCodingKeys.self)
         try container.encode(id, forKey: .id)
@@ -128,11 +128,11 @@ class UserRequestBody: Encodable {
 /// An object describing the incoming user JSON payload.
 struct UserUpdateResponse: Decodable {
     let user: UserPayload
-    
+
     enum CodingKeys: String, CodingKey {
         case users
     }
-    
+
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let users = try container.decode([String: UserPayload].self, forKey: .users)
@@ -143,7 +143,7 @@ struct UserUpdateResponse: Decodable {
         }
         self.user = user
     }
-    
+
     init(user: UserPayload) {
         self.user = user
     }
@@ -154,13 +154,13 @@ struct UserUpdateRequestBody: Encodable {
     let name: String?
     let imageURL: URL?
     let extraData: [String: RawJSON]?
-    
+
     init(name: String? = nil, imageURL: URL? = nil, extraData: [String: RawJSON]? = nil) {
         self.name = name
         self.imageURL = imageURL
         self.extraData = extraData
     }
-    
+
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: UserPayloadsCodingKeys.self)
         try container.encodeIfPresent(name, forKey: .name)

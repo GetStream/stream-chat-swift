@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import UIKit
@@ -24,7 +24,7 @@ extension UITableView {
     func register<Cell: UITableViewCell>(_ type: Cell.Type) {
         register(type, forCellReuseIdentifier: type.reuseIdentifier)
     }
-    
+
     /// Dequeues a `UITableView` cell with a generic type and indexPath
     /// - Parameters:
     ///   - type: A generic cell type
@@ -44,7 +44,7 @@ extension UICollectionView {
     func register<Cell: UICollectionViewCell>(_ type: Cell.Type) {
         register(type, forCellWithReuseIdentifier: type.reuseIdentifier)
     }
-    
+
     /// Dequeues a UICollectionView Cell with a generic type and indexPath
     /// - Parameters:
     ///   - type: A generic cell type

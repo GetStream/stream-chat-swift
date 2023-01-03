@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import XCTest
@@ -11,7 +11,7 @@ final class SlowMode_Tests: StreamTestCase {
     let anotherNewMessage = "Another new message"
     let replyMessage = "reply message"
     let editedMessage = "edited message"
-    
+
     override func setUpWithError() throws {
         try super.setUpWithError()
         addTags([.slowMode])
@@ -33,7 +33,7 @@ final class SlowMode_Tests: StreamTestCase {
             userRobot.assertCooldownIsShown()
         }
     }
-    
+
     func test_slowModeIsActiveAndCooldownIsShown_whenAMessageIsReplied() {
         linkToScenario(withId: 188)
 
@@ -59,7 +59,7 @@ final class SlowMode_Tests: StreamTestCase {
             userRobot.assertQuotedMessage(replyText: replyMessage, quotedText: message)
         }
     }
-    
+
     func test_newMessageCantBeSent_whenSlowModeIsActiveAndCooldownIsShown() {
         linkToScenario(withId: 190)
 
@@ -82,7 +82,7 @@ final class SlowMode_Tests: StreamTestCase {
             userRobot.assertSendButtonIsNotShown()
         }
     }
-    
+
     func test_aMessageCantBeReplied_whenSlowModeIsActiveAndCooldownIsShown() {
         linkToScenario(withId: 191)
 
@@ -105,7 +105,7 @@ final class SlowMode_Tests: StreamTestCase {
             userRobot.assertSendButtonIsNotShown()
         }
     }
-    
+
     func test_slowModeContinuesActiveAndCooldownIsShownInThreadMessage_whenSlowModeIsActiveAndCooldownIsShownInChannel() {
         linkToScenario(withId: 192)
 
@@ -128,10 +128,10 @@ final class SlowMode_Tests: StreamTestCase {
             userRobot.assertSendButtonIsNotShown()
         }
     }
-    
+
     func test_slowModeIsNotActiveAndCooldownIsNotShown_whenAMessageIsEdited() {
         linkToScenario(withId: 195)
-        
+
         GIVEN("user opens a channel") {
             backendRobot
                 .generateChannels(count: 1, messagesCount: 1)

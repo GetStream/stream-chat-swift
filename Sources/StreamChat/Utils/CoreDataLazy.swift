@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -14,10 +14,10 @@ import Foundation
 class CoreDataLazy<T> {
     /// When the cached value is reset, this closure is used to lazily get a new value which is then cached again.
     var computeValue: (() -> T)!
-    
+
     /// The context on whose queue is the `computeValue` closure evaluated.
     weak var context: NSManagedObjectContext?
-    
+
     /// The persistent store identifier by the time this wrapper is initialized.
     /// This is used to detect when there are lingering models in the memory, which will cause a crash when tried to materialize.
     var persistentStoreIdentifier: String?
@@ -33,7 +33,7 @@ class CoreDataLazy<T> {
 
         // We need to make the changes inside the `mutate` block to ensure the wrapper is thread-safe.
         __cached.mutate { value in
-            
+
             if let value = value {
                 returnValue = value
                 return
@@ -43,7 +43,7 @@ class CoreDataLazy<T> {
                 log.assert(self.computeValue != nil, "You must set the `computeValue` closure before accessing the cached value.")
                 returnValue = self.computeValue()
             }
-            
+
             if let context = context {
                 guard persistentStoreIdentifier == context.persistentStoreCoordinator?.persistentStores.first?.identifier else {
                     let message = """
@@ -60,13 +60,13 @@ class CoreDataLazy<T> {
                 // evaluated using `context.performAndWait {}`.
                 perform()
             }
-            
+
             value = returnValue
         }
-        
+
         return returnValue
     }
-    
+
     /// A tuple container the closure which evaluates the lazy value, and the managed object context on which the closure should be performed.
     var projectedValue: (() -> T, NSManagedObjectContext?) {
         get {
@@ -84,7 +84,7 @@ class CoreDataLazy<T> {
             }
         }
     }
-    
+
     /// The previously evaluated value. `nil` if the wrapper hasn't been evaluated yet.
     @Atomic private var _cached: T?
 }

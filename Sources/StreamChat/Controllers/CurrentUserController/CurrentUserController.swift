@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -20,9 +20,9 @@ public extension ChatClient {
 public class CurrentChatUserController: DataController, DelegateCallable, DataStoreProvider {
     /// The `ChatClient` instance this controller belongs to.
     public let client: ChatClient
-    
+
     private let environment: Environment
-    
+
     var _basePublishers: Any?
     /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
     /// publishers. Instead of creating custom `Publisher` types, we use `CurrentValueSubject` and `PassthroughSubject` internally,
@@ -59,7 +59,7 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
 
     /// A type-erased delegate.
     var multicastDelegate: MulticastDelegate<CurrentChatUserControllerDelegate> = .init()
-    
+
     /// The currently logged-in user. `nil` if the connection hasn't been fully established yet, or the connection
     /// wasn't successful.
     /// Having a non-nil currentUser does not mean the user is authenticated. Make sure to call `connect()` before performing any API call.
@@ -75,7 +75,7 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
     public var unreadCount: UnreadCount {
         currentUser?.unreadCount ?? .noUnread
     }
-    
+
     /// The worker used to update the current user.
     private lazy var currentUserUpdater = environment.currentUserUpdaterBuilder(
         client.databaseContainer,
@@ -100,7 +100,7 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
     ///   and the client connection is established.
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
         startObservingIfNeeded()
-        
+
         if case let .localDataFetchFailed(error) = state {
             callback { completion?(error) }
             return
@@ -119,10 +119,10 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
             self?.callback { completion?(error) }
         }
     }
-    
+
     private func startObservingIfNeeded() {
         guard state == .initialized else { return }
-        
+
         do {
             try currentUserObserver.startObserving()
             state = .localDataFetched
@@ -171,7 +171,7 @@ public extension CurrentChatUserController {
             completion?(ClientError.CurrentUserDoesNotExist())
             return
         }
-        
+
         currentUserUpdater.updateUserData(
             currentUserId: currentUserId,
             name: name,
@@ -218,7 +218,7 @@ public extension CurrentChatUserController {
             }
         }
     }
-    
+
     /// Removes a registered device from the current user.
     /// `connectUser` must be called before calling this.
     /// - Parameters:
@@ -230,14 +230,14 @@ public extension CurrentChatUserController {
             completion?(ClientError.CurrentUserDoesNotExist())
             return
         }
-        
+
         currentUserUpdater.removeDevice(id: id, currentUserId: currentUserId) { error in
             self.callback {
                 completion?(error)
             }
         }
     }
-    
+
     /// Marks all channels for a user as read.
     ///
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
@@ -261,7 +261,7 @@ extension CurrentChatUserController {
             _ itemCreator: @escaping (CurrentUserDTO) throws -> CurrentChatUser,
             _ fetchedResultsControllerType: NSFetchedResultsController<CurrentUserDTO>.Type
         ) -> EntityDatabaseObserver<CurrentChatUser, CurrentUserDTO> = EntityDatabaseObserver.init
-        
+
         var currentUserUpdaterBuilder = CurrentUserUpdater.init
     }
 }
@@ -298,14 +298,14 @@ private extension CurrentChatUserController {
 public protocol CurrentChatUserControllerDelegate: AnyObject {
     /// The controller observed a change in the `UnreadCount`.
     func currentUserController(_ controller: CurrentChatUserController, didChangeCurrentUserUnreadCount: UnreadCount)
-    
+
     /// The controller observed a change in the `CurrentChatUser` entity.
     func currentUserController(_ controller: CurrentChatUserController, didChangeCurrentUser: EntityChange<CurrentChatUser>)
 }
 
 public extension CurrentChatUserControllerDelegate {
     func currentUserController(_ controller: CurrentChatUserController, didChangeCurrentUserUnreadCount: UnreadCount) {}
-    
+
     func currentUserController(_ controller: CurrentChatUserController, didChangeCurrentUser: EntityChange<CurrentChatUser>) {}
 }
 

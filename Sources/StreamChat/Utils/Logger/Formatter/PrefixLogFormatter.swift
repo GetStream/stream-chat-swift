@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -9,11 +9,11 @@ import Foundation
 /// `prefixes: [.info: "ℹ️", .debug: "🛠", .error: "❌", .fault: "🚨"]`
 public class PrefixLogFormatter: LogFormatter {
     private let prefixes: [LogLevel: String]
-    
+
     public init(prefixes: [LogLevel: String]) {
         self.prefixes = prefixes
     }
-    
+
     public func format(logDetails: LogDetails, message: String) -> String {
         prefixes[logDetails.level, default: ""] + " " + message
     }

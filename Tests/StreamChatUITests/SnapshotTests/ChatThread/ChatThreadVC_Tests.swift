@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import SnapshotTesting
@@ -12,7 +12,7 @@ final class ChatThreadVC_Tests: XCTestCase {
     var vc: ChatThreadVC!
     var channelControllerMock: ChatChannelController_Mock!
     var messageControllerMock: ChatMessageController_Mock!
-    
+
     override func setUp() {
         super.setUp()
         vc = ChatThreadVC()
@@ -28,7 +28,7 @@ final class ChatThreadVC_Tests: XCTestCase {
         channelControllerMock = nil
         messageControllerMock = nil
     }
-    
+
     func test_emptyAppearance() {
         channelControllerMock.simulateInitial(
             channel: .mock(cid: .unique),
@@ -48,7 +48,7 @@ final class ChatThreadVC_Tests: XCTestCase {
             variants: [.defaultLight]
         )
     }
-    
+
     func test_defaultAppearance() {
         channelControllerMock.simulateInitial(
             channel: .mock(cid: .unique),
@@ -77,11 +77,11 @@ final class ChatThreadVC_Tests: XCTestCase {
             variants: [.defaultLight]
         )
     }
-    
+
     func test_childControllersUseComponentsTakenFromResponderChain() {
         // Declare custom message list used by `ChatMessageListVC`
         class TestMessageListView: ChatMessageListView {}
-        
+
         // Declare custom composer view used by `ComposerVC`
         class TestComposerView: ComposerView {}
 
@@ -91,10 +91,10 @@ final class ChatThreadVC_Tests: XCTestCase {
         components.messageComposerView = TestComposerView.self
         vc.components = components
         vc.messageListVC.components = components
-        
+
         // Simulate view loading
         _ = vc.view
-        
+
         // Assert child controllers have subviews of injected view types
         XCTAssertTrue(vc.messageListVC.listView is TestMessageListView)
         XCTAssertTrue(vc.messageComposerVC.composerView is TestComposerView)

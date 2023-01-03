@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -46,7 +46,7 @@ final class ChannelMuteDTO_Tests: XCTestCase {
         let currentUser: CurrentChatUser = try XCTUnwrap(database.viewContext.currentUser?.asModel())
         XCTAssertEqual(currentUser.mutedChannels, [channel])
     }
-    
+
     func test_saveChannelMute_whenThereIsNoCurrentUser_throws() throws {
         // GIVEN
         let mute: MutedChannelPayload = .init(
@@ -55,14 +55,14 @@ final class ChannelMuteDTO_Tests: XCTestCase {
             createdAt: .unique,
             updatedAt: .unique
         )
-        
+
         // WHEN
         XCTAssertThrowsError(try database.viewContext.saveChannelMute(payload: mute)) { error in
             // THEN
             XCTAssertTrue(error is ClientError.CurrentUserDoesNotExist)
         }
     }
-    
+
     func test_saveChannelMute_whenMuteDoesNotExist_createsIt() throws {
         // GIVEN
         let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
@@ -73,18 +73,18 @@ final class ChannelMuteDTO_Tests: XCTestCase {
             createdAt: .unique,
             updatedAt: .unique
         )
-        
+
         var loadedMuteDTO: ChannelMuteDTO? {
             ChannelMuteDTO.load(cid: mute.mutedChannel.cid, context: database.viewContext)
         }
         XCTAssertNil(loadedMuteDTO)
-        
+
         // WHEN
         try database.writeSynchronously { session in
             try session.saveCurrentUser(payload: currentUser)
             try session.saveChannelMute(payload: mute)
         }
-        
+
         // THEN
         let muteDTO = try XCTUnwrap(loadedMuteDTO)
         XCTAssertEqual(muteDTO.createdAt.bridgeDate, mute.createdAt)
@@ -92,7 +92,7 @@ final class ChannelMuteDTO_Tests: XCTestCase {
         XCTAssertEqual(muteDTO.currentUser.user.id, currentUser.id)
         XCTAssertEqual(muteDTO.channel.cid, channel.cid.rawValue)
     }
-    
+
     func test_saveChannelMute_whenMuteExists_updatesIt() throws {
         // GIVEN
         let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
@@ -103,12 +103,12 @@ final class ChannelMuteDTO_Tests: XCTestCase {
             createdAt: .unique,
             updatedAt: .unique
         )
-        
+
         try database.writeSynchronously { session in
             try session.saveCurrentUser(payload: currentUser)
             try session.saveChannelMute(payload: initialMute)
         }
-        
+
         // WHEN
         let updatedMute: MutedChannelPayload = .init(
             mutedChannel: channel,
@@ -119,7 +119,7 @@ final class ChannelMuteDTO_Tests: XCTestCase {
         try database.writeSynchronously { session in
             try session.saveChannelMute(payload: updatedMute)
         }
-        
+
         // THEN
         let muteDTO = try XCTUnwrap(
             ChannelMuteDTO.load(cid: initialMute.mutedChannel.cid, context: database.viewContext)

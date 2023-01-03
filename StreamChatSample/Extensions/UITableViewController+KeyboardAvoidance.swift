@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import UIKit
@@ -21,19 +21,19 @@ extension UITableViewController {
             object: nil
         )
     }
-    
+
     func adjustContentInsetsIfNeeded() {
         guard presentedViewController == nil else {
             return
         }
-        
+
         var contentInset = tableView.contentInset
         contentInset.bottom = topHeight
         contentInset.top = bottomHeight
         tableView.contentInset = contentInset
         tableView.scrollIndicatorInsets = contentInset
     }
-    
+
     private var topHeight: CGFloat {
         if navigationController?.navigationBar.isTranslucent ?? false {
             var top = navigationController?.navigationBar.frame.height ?? 0.0
@@ -48,10 +48,10 @@ extension UITableViewController {
         guard let keyboardView = inputAccessoryView?.superview else {
             return 0
         }
-        
+
         return view.frame.intersection(keyboardView.frame).height
     }
-    
+
     private enum AssociatedKeys {
         static var keyboardHeight = "keyboardHeight"
     }
@@ -87,14 +87,14 @@ extension UITableViewController {
         let animationCurveRawNSN = notification.userInfo?[UIResponder.keyboardAnimationCurveUserInfoKey] as? NSNumber
         let animationCurveRaw = animationCurveRawNSN?.uintValue ?? UIView.AnimationOptions.curveEaseInOut.rawValue
         let animationCurve = UIView.AnimationOptions(rawValue: animationCurveRaw)
-        
+
         guard keyboardFrameInView.height != keyboardHeight else {
             return
         }
 
         let offset = keyboardFrameInView.height - keyboardHeight
         keyboardHeight = keyboardFrameInView.height
-        
+
         UIView.animate(withDuration: animationDuration, delay: 0, options: animationCurve, animations: {
             // Update contentOffset with new keyboard size
             var contentOffset = self.tableView.contentOffset

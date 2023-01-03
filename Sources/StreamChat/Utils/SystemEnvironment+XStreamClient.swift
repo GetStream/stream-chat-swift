@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -44,12 +44,12 @@ extension SystemEnvironment {
         return macModelIdentifier
         #endif
     }
-    
+
     #if os(macOS)
     private static var macModelIdentifier: String = {
         let service = IOServiceGetMatchingService(kIOMasterPortDefault, IOServiceMatching("IOPlatformExpertDevice"))
         var model = "MacOS device"
-        
+
         if let modelData = IORegistryEntryCreateCFProperty(service, "model" as CFString, kCFAllocatorDefault, 0)
             .takeRetainedValue() as? Data,
             let deviceModelString = String(data: modelData, encoding: .utf8)?.trimmingCharacters(in: .controlCharacters) {

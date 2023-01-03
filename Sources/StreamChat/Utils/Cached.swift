@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -12,26 +12,26 @@ import Foundation
 class Cached<T> {
     /// When the cached value is reset, this closure is used to lazily get a new value which is then cached again.
     @Atomic var computeValue: (() -> T)!
-    
+
     var wrappedValue: T {
         var returnValue: T!
-        
+
         // We need to make the changes inside the `mutate` block to ensure `Cached` is thread-safe.
         __cached.mutate { value in
             if let value = value {
                 returnValue = value
                 return
             }
-            
+
             log.assert(computeValue != nil, "You must set the `computeValue` closure before accessing the cached value.")
-            
+
             value = computeValue()
             returnValue = value
         }
-        
+
         return returnValue
     }
-    
+
     var projectedValue: (() -> T) {
         get {
             log.assert(computeValue != nil, "You must set the `computeValue` closure before accessing it.")
@@ -39,9 +39,9 @@ class Cached<T> {
         }
         set { computeValue = newValue }
     }
-    
+
     @Atomic private var _cached: T?
-    
+
     /// Resets the current cached value. When someone access the `wrappedValue`, the `computeValue` closure is used
     /// to get a new value.
     func reset() {

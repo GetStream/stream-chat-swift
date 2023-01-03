@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import UIKit
@@ -9,35 +9,35 @@ open class CooldownView: _View, AppearanceProvider {
     public struct Content {
         public var cooldown: Int
     }
-    
+
     open var content: Content? {
         didSet { updateContentIfNeeded() }
     }
-    
+
     public private(set) lazy var cooldownLabel: UILabel = UILabel()
         .withoutAutoresizingMaskConstraints
         .withAccessibilityIdentifier(identifier: "cooldownLabel")
-    
+
     override open func updateContent() {
         super.updateContent()
-        
+
         cooldownLabel.text = content.map { "\($0.cooldown)" }
     }
-    
+
     override open func layoutSubviews() {
         super.layoutSubviews()
-        
+
         layer.cornerRadius = min(bounds.width, bounds.height) / 2
     }
-    
+
     override open func setUpLayout() {
         super.setUpLayout()
-        
+
         embed(cooldownLabel, insets: .init(top: 6, leading: 10, bottom: 6, trailing: 10))
         cooldownLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         widthAnchor.pin(greaterThanOrEqualTo: heightAnchor).isActive = true
     }
-    
+
     override open func setUpAppearance() {
         super.setUpAppearance()
 

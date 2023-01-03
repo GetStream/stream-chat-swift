@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -20,7 +20,7 @@ struct VirtualTimeTimer: StreamChat.Timer {
             callback: { _ in onFire() }
         )
     }
-    
+
     static func scheduleRepeating(
         timeInterval: TimeInterval,
         queue: DispatchQueue,
@@ -32,7 +32,7 @@ struct VirtualTimeTimer: StreamChat.Timer {
             callback: { _ in onFire() }
         )
     }
-    
+
     static func currentTime() -> Date {
         Date(timeIntervalSinceReferenceDate: time.currentTime)
     }

@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -41,13 +41,13 @@ public extension ChatChannelController {
 public class ChannelEventsController: EventsController {
     // A channel identifier provider.
     private let cidProvider: () -> ChannelId?
-    
+
     // A channel identifier. Returns `nil` if channel has not yet created.
     public var cid: ChannelId? { cidProvider() }
-    
+
     // An event sender.
     private let eventSender: EventSender
-    
+
     /// Creates a instance of `ChannelEventsController` type.
     /// - Parameters:
     ///   - cid: A channel identifier.
@@ -60,7 +60,7 @@ public class ChannelEventsController: EventsController {
     ) {
         self.cidProvider = cidProvider
         self.eventSender = eventSender
-        
+
         super.init(notificationCenter: notificationCenter)
     }
 
@@ -74,18 +74,18 @@ public class ChannelEventsController: EventsController {
             callback { completion?(ClientError.ChannelNotCreatedYet()) }
             return
         }
-        
+
         eventSender.sendEvent(payload, to: cid) { error in
             self.callback { completion?(error) }
         }
     }
-    
+
     override func shouldProcessEvent(_ event: Event) -> Bool {
         guard let cid = cid else { return false }
-        
+
         let channelEvent = event as? ChannelSpecificEvent
         let unknownEvent = event as? UnknownChannelEvent
-        
+
         return channelEvent?.cid == cid || unknownEvent?.cid == cid
     }
 }

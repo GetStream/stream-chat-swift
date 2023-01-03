@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -8,10 +8,10 @@ import Foundation
 class APIClient {
     /// The URL session used for all requests.
     let session: URLSession
-    
+
     /// `APIClient` uses this object to encode `Endpoint` objects into `URLRequest`s.
     let encoder: RequestEncoder
-    
+
     /// `APIClient` uses this object to decode the results of network requests.
     let decoder: RequestDecoder
 
@@ -308,7 +308,7 @@ extension URLRequest {
 extension Array where Element == URLQueryItem {
     var prettyPrinted: String {
         var message = ""
-        
+
         forEach { item in
             if let value = item.value,
                value.hasPrefix("{"),
@@ -318,11 +318,11 @@ extension Array where Element == URLQueryItem {
                 message += "- \(item.description)\n"
             }
         }
-        
+
         if message.isEmpty {
             message = "<Empty>"
         }
-        
+
         return message
     }
 }

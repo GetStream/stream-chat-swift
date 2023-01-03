@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -29,7 +29,7 @@ class EventPayload: Decodable {
         case parentId = "parent_id"
         case hardDelete = "hard_delete"
     }
-    
+
     let eventType: EventType
     let connectionId: String?
     let cid: ChannelId?
@@ -88,7 +88,7 @@ class EventPayload: Decodable {
         self.parentId = parentId
         self.hardDelete = hardDelete
     }
-    
+
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         eventType = try container.decode(EventType.self, forKey: .eventType)
@@ -112,7 +112,7 @@ class EventPayload: Decodable {
         parentId = try container.decodeIfPresent(MessageId.self, forKey: .parentId)
         hardDelete = try container.decodeIfPresent(Bool.self, forKey: .hardDelete) ?? false
     }
-    
+
     func event() throws -> Event {
         try eventType.event(from: self)
     }
@@ -159,7 +159,7 @@ extension EventPayload {
         guard let value = self[keyPath: keyPath] else {
             throw ClientError.EventDecoding(missingValue: keyPath.stringValue, for: eventType)
         }
-        
+
         return value
     }
 }

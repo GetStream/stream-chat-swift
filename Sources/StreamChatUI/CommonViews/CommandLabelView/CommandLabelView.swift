@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -30,7 +30,7 @@ open class CommandLabelView: _View, AppearanceProvider, SwiftUIRepresentable {
     public private(set) lazy var iconView: UIImageView = UIImageView()
         .withoutAutoresizingMaskConstraints
         .withAccessibilityIdentifier(identifier: "iconView")
-    
+
     override open var intrinsicContentSize: CGSize {
         container.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
     }
@@ -52,11 +52,11 @@ open class CommandLabelView: _View, AppearanceProvider, SwiftUIRepresentable {
 
         nameLabel.adjustsFontForContentSizeCategory = true
         nameLabel.textAlignment = .center
-        
+
         iconView.image = appearance.images.commands
             .tinted(with: appearance.colorPalette.staticColorText)
     }
-    
+
     override open func setUpLayout() {
         super.setUpLayout()
 
@@ -69,13 +69,13 @@ open class CommandLabelView: _View, AppearanceProvider, SwiftUIRepresentable {
         container.addArrangedSubview(nameLabel)
         iconView.isHidden = false
         nameLabel.isHidden = false
-        
+
         iconView.contentMode = .scaleAspectFit
     }
-    
+
     override open func updateContent() {
         super.updateContent()
-        
+
         nameLabel.text = content?.name.uppercased()
     }
 }

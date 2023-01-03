@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -36,7 +36,7 @@ open class AlertsRouter: NavigationRouter<UIViewController> {
 
         rootViewController.present(alert, animated: true)
     }
-    
+
     /// Shows an alert with confirmation for message flag.
     ///
     /// - Parameters:
@@ -48,7 +48,7 @@ open class AlertsRouter: NavigationRouter<UIViewController> {
             message: L10n.Message.Actions.Flag.confirmationMessage,
             preferredStyle: .alert
         )
-        
+
         alert.addAction(
             UIAlertAction(
                 title: L10n.Alert.Actions.cancel,
@@ -63,7 +63,7 @@ open class AlertsRouter: NavigationRouter<UIViewController> {
                 handler: { _ in confirmed(true) }
             )
         )
-        
+
         rootViewController.present(alert, animated: true)
     }
 }

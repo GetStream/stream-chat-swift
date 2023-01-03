@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -28,7 +28,7 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
     open var message: ChatMessage? {
         messageController.message
     }
-    
+
     /// The `AlertsRouter` instance responsible for presenting alerts.
     open lazy var alertsRouter = components
         .alertsRouter
@@ -39,7 +39,7 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
     open private(set) lazy var messageActionsContainerStackView = ContainerStackView()
         .withoutAutoresizingMaskConstraints
         .withAccessibilityIdentifier(identifier: "messageActionsContainerStackView")
-    
+
     /// Class used for buttons in `messageActionsContainerView`.
     open var actionButtonClass: ChatMessageActionControl.Type { ChatMessageActionControl.self }
 
@@ -56,7 +56,7 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
         messageActionsContainerStackView.isLayoutMarginsRelativeArrangement = true
         messageActionsContainerStackView.layoutMargins = .zero
     }
-    
+
     override open func setUpAppearance() {
         super.setUpAppearance()
         messageActionsContainerStackView.layer.cornerRadius = 16
@@ -75,13 +75,13 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
             actionView.accessibilityIdentifier = "\(type(of: $0))"
         }
     }
-    
+
     open var messageActionsForAlertMenu: [ChatMessageActionItem] {
         var actions = messageActions
-        
+
         actions.removeAll(where: { $0 is DeleteActionItem })
         actions.append(deleteWithoutWarningActionItem())
-        
+
         return actions
     }
 
@@ -96,7 +96,7 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
         switch message.localState {
         case nil:
             var actions: [ChatMessageActionItem] = []
-            
+
             if channelConfig.quotesEnabled {
                 actions.append(inlineReplyActionItem())
             }
@@ -112,7 +112,7 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
 
             } else {
                 actions += [flagActionItem()]
-                
+
                 if channelConfig.mutesEnabled {
                     let isMuted = currentUser.mutedUsers.contains(message.author)
                     actions.append(isMuted ? unmuteActionItem() : muteActionItem())
@@ -131,7 +131,7 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
             return []
         }
     }
-    
+
     /// Returns `ChatMessageActionItem` for edit action
     open func editActionItem() -> ChatMessageActionItem {
         EditActionItem(
@@ -139,7 +139,7 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
             appearance: appearance
         )
     }
-    
+
     /// Returns `ChatMessageActionItem` for delete action
     open func deleteActionItem() -> ChatMessageActionItem {
         DeleteActionItem(
@@ -156,13 +156,13 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
             appearance: appearance
         )
     }
-    
+
     /// Returns `ChatMessageActionItem` for delete action without warning
     open func deleteWithoutWarningActionItem() -> ChatMessageActionItem {
         DeleteActionItem(
             action: { [weak self] _ in
                 guard let self = self else { return }
-                
+
                 self.messageController.deleteMessage { _ in
                     self.delegate?.chatMessageActionsVCDidFinish(self)
                 }
@@ -170,7 +170,7 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
             appearance: appearance
         )
     }
-    
+
     /// Returns `ChatMessageActionItem` for resend action.
     open func resendActionItem() -> ChatMessageActionItem {
         ResendActionItem(
@@ -183,7 +183,7 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
             appearance: appearance
         )
     }
-    
+
     /// Returns `ChatMessageActionItem` for mute action.
     open func muteActionItem() -> ChatMessageActionItem {
         MuteUserActionItem(
@@ -200,7 +200,7 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
             appearance: appearance
         )
     }
-    
+
     /// Returns `ChatMessageActionItem` for unmute action.
     open func unmuteActionItem() -> ChatMessageActionItem {
         UnmuteUserActionItem(
@@ -217,7 +217,7 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
             appearance: appearance
         )
     }
-    
+
     /// Returns `ChatMessageActionItem` for inline reply action.
     open func inlineReplyActionItem() -> ChatMessageActionItem {
         InlineReplyActionItem(
@@ -225,7 +225,7 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
             appearance: appearance
         )
     }
-    
+
     /// Returns `ChatMessageActionItem` for thread reply action.
     open func threadReplyActionItem() -> ChatMessageActionItem {
         ThreadReplyActionItem(
@@ -233,7 +233,7 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
             appearance: appearance
         )
     }
-    
+
     /// Returns `ChatMessageActionItem` for copy action.
     open func copyActionItem() -> ChatMessageActionItem {
         CopyActionItem(
@@ -246,7 +246,7 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
             appearance: appearance
         )
     }
-    
+
     /// Returns `ChatMessageActionItem` for flag action.
     open func flagActionItem() -> ChatMessageActionItem {
         FlagActionItem(
@@ -254,7 +254,7 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
                 guard let self = self else { return }
                 self.alertsRouter.showMessageFlagConfirmationAlert { confirmed in
                     guard confirmed else { return }
-                    
+
                     self.messageController.flag { _ in
                         self.delegate?.chatMessageActionsVCDidFinish(self)
                     }

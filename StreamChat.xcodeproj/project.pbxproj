@@ -11004,7 +11004,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Sources/StreamChatUI/Info.plist";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 Stream.io Inc. All rights reserved.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -11036,7 +11036,7 @@
 				ENABLE_TESTABILITY = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Sources/StreamChatUI/Info.plist";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 Stream.io Inc. All rights reserved.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -11068,7 +11068,7 @@
 				ENABLE_TESTABILITY = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Sources/StreamChatUI/Info.plist";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 Stream.io Inc. All rights reserved.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -11452,7 +11452,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Sources/StreamChat/Info.plist";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Stream.io Inc. All rights reserved.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -11486,7 +11486,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Sources/StreamChat/Info.plist";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Stream.io Inc. All rights reserved.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -11513,7 +11513,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				INFOPLIST_FILE = "$(SRCROOT)/Tests/Info.plist";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Stream.io Inc. All rights reserved.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Stream.io Inc. All rights reserved.";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -11539,7 +11539,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				INFOPLIST_FILE = "$(SRCROOT)/Tests/Info.plist";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Stream.io Inc. All rights reserved.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Stream.io Inc. All rights reserved.";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -11889,7 +11889,7 @@
 				ENABLE_TESTING_SEARCH_PATHS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TestTools/StreamChatTestMockServer/Info.plist;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Stream.io Inc. All rights reserved.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -11923,7 +11923,7 @@
 				ENABLE_TESTING_SEARCH_PATHS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TestTools/StreamChatTestMockServer/Info.plist;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Stream.io Inc. All rights reserved.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -11957,7 +11957,7 @@
 				ENABLE_TESTING_SEARCH_PATHS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TestTools/StreamChatTestMockServer/Info.plist;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Stream.io Inc. All rights reserved.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -12067,7 +12067,7 @@
 				ENABLE_TESTABILITY = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Sources/StreamChat/Info.plist";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Stream.io Inc. All rights reserved.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -12094,7 +12094,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				INFOPLIST_FILE = "$(SRCROOT)/Tests/Info.plist";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Stream.io Inc. All rights reserved.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Stream.io Inc. All rights reserved.";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

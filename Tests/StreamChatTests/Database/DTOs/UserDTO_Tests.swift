@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -8,31 +8,31 @@ import XCTest
 
 final class UserDTO_Tests: XCTestCase {
     var database: DatabaseContainer_Spy!
-    
+
     override func setUp() {
         super.setUp()
         database = DatabaseContainer_Spy()
     }
-    
+
     override func tearDown() {
         AssertAsync.canBeReleased(&database)
         database = nil
         super.tearDown()
     }
-    
+
     func test_userPayload_isStoredAndLoadedFromDB() throws {
         let userId = UUID().uuidString
-        
+
         let payload: UserPayload = .dummy(userId: userId)
-        
+
         // Asynchronously save the payload to the db
         try database.writeSynchronously { session in
             try session.saveUser(payload: payload)
         }
-        
+
         // Load the user from the db and check the fields are correct
         let loadedUserDTO = try XCTUnwrap(database.viewContext.user(id: userId))
-        
+
         AssertAsync {
             Assert.willBeEqual(payload.id, loadedUserDTO.id)
             Assert.willBeEqual(payload.name, loadedUserDTO.name)
@@ -53,7 +53,7 @@ final class UserDTO_Tests: XCTestCase {
 
     func test_defaultExtraDataIsUsed_whenExtraDataDecodingFails() throws {
         let userId: UserId = .unique
-        
+
         let payload: UserPayload = .init(
             id: userId,
             name: .unique,
@@ -68,31 +68,31 @@ final class UserDTO_Tests: XCTestCase {
             teams: [],
             extraData: [:]
         )
-        
+
         try database.writeSynchronously { session in
             // Save the user
             let userDTO = try! session.saveUser(payload: payload)
             // Make the extra data JSON invalid
             userDTO.extraData = #"{"invalid": json}"#.data(using: .utf8)!
         }
-        
+
         let loadedUser: ChatUser? = try? database.viewContext.user(id: userId)?.asModel()
         XCTAssertEqual(loadedUser?.extraData, [:])
     }
-    
+
     func test_DTO_asModel() throws {
         let userId = UUID().uuidString
-        
+
         let payload: UserPayload = .dummy(userId: userId, extraData: ["k": .string("v")])
-        
+
         // Asynchronously save the payload to the db
         try database.writeSynchronously { session in
             try session.saveUser(payload: payload)
         }
-        
+
         // Load the user from the db and check the fields are correct
         let loadedUserModel: ChatUser = try XCTUnwrap(database.viewContext.user(id: userId)?.asModel())
-        
+
         AssertAsync {
             Assert.willBeEqual(payload.id, loadedUserModel.id)
             Assert.willBeEqual(payload.name, loadedUserModel.name)
@@ -107,24 +107,24 @@ final class UserDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.extraData, loadedUserModel.extraData)
         }
     }
-    
+
     func test_DTO_asPayload() throws {
         let userId = UUID().uuidString
-        
+
         let payload: UserPayload = .dummy(userId: userId, extraData: ["k": .string("v")])
-        
+
         // Asynchronously save the payload to the db
         try database.writeSynchronously { session in
             try! session.saveUser(payload: payload)
         }
-        
+
         // Load the user from the db and check the fields are correct
         let loadedUserPayload = database.viewContext.user(id: userId)?.asRequestBody()
-        
+
         XCTAssertEqual(payload.id, loadedUserPayload?.id)
         XCTAssertEqual(payload.extraData, loadedUserPayload?.extraData)
     }
-    
+
     func test_DTO_resetsItsEphemeralValues() throws {
         // Create a new user and set it's online status to `true`
         let userId: UserId = .unique
@@ -132,16 +132,16 @@ final class UserDTO_Tests: XCTestCase {
             let dto = try $0.saveUser(payload: UserPayload.dummy(userId: userId))
             dto.isOnline = true
         }
-        
+
         // Reset ephemeral values
         try database.writeSynchronously {
             $0.user(id: userId)?.resetEphemeralValues()
         }
-        
+
         // Check the online status is `false`
         XCTAssertEqual(database.viewContext.user(id: userId)?.isOnline, false)
     }
-    
+
     func test_DTO_updateFromSamePayload_doNotProduceChanges() throws {
         // Arrange: Store random user payload to db
         let userId = UUID().uuidString
@@ -156,34 +156,34 @@ final class UserDTO_Tests: XCTestCase {
         // Assert: DTO should not contain any changes
         XCTAssertFalse(user.hasPersistentChangedValues)
     }
-    
+
     func test_userWithUserListQuery_isSavedAndLoaded() {
         let query = UserListQuery(filter: .query(.name, text: "a"))
-        
+
         // Create user
         let payload1 = dummyUser
         let id1 = payload1.id
-        
+
         let payload2 = dummyUser
-        
+
         // Save the channels to DB, but only user 1 is associated with the query
         try! database.writeSynchronously { session in
             try session.saveUser(payload: payload1, query: query, cache: nil)
             try session.saveUser(payload: payload2)
         }
-        
+
         let fetchRequest = UserDTO.userListFetchRequest(query: query)
         var loadedUsers: [UserDTO] {
             try! database.viewContext.fetch(fetchRequest)
         }
-        
+
         XCTAssertEqual(loadedUsers.count, 1)
         XCTAssertEqual(loadedUsers.first?.id, id1)
     }
 
     func test_userListQueryWithoutFilter_matchesAllUsers() throws {
         let query = UserListQuery()
-        
+
         // Save 4 users to the DB
         try database.writeSynchronously { session in
             try session.saveUser(payload: self.dummyUser(id: .unique))
@@ -191,12 +191,12 @@ final class UserDTO_Tests: XCTestCase {
             try session.saveUser(payload: self.dummyUser(id: .unique))
             try session.saveUser(payload: self.dummyUser(id: .unique))
         }
-        
+
         let fetchRequest = UserDTO.userListFetchRequest(query: query)
         var loadedUsers: [UserDTO] {
             try! database.viewContext.fetch(fetchRequest)
         }
-        
+
         XCTAssertEqual(loadedUsers.count, 4)
     }
 
@@ -216,7 +216,7 @@ final class UserDTO_Tests: XCTestCase {
         let lastActiveDates = [payload1, payload2, payload3, payload4]
             .compactMap(\.lastActiveAt)
             .sorted(by: { $0 > $1 })
-        
+
         let ids = [payload1, payload2, payload3, payload4]
             .map(\.id)
             .sorted(by: { $0 > $1 })
@@ -236,11 +236,11 @@ final class UserDTO_Tests: XCTestCase {
 
         var usersWithLastActiveAtSorting: [UserDTO] { try! database.viewContext.fetch(fetchRequestWithLastActiveAtSorting) }
         var usersWithIdSorting: [UserDTO] { try! database.viewContext.fetch(fetchRequestWithIdSorting) }
-        
+
         // Check the lastActiveAt sorting.
         XCTAssertEqual(usersWithLastActiveAtSorting.count, 4)
         XCTAssertEqual(usersWithLastActiveAtSorting.map(\.lastActivityAt?.bridgeDate), lastActiveDates)
-        
+
         // Check the id sorting.
         XCTAssertEqual(usersWithIdSorting.count, 4)
         XCTAssertEqual(usersWithIdSorting.map(\.id), ids)
@@ -269,7 +269,7 @@ final class UserDTO_Tests: XCTestCase {
             userListSortingKey.sortDescriptor(isAscending: true),
             NSSortDescriptor(key: "isBanned", ascending: true)
         )
-        
+
         userListSortingKey = .role
         XCTAssertEqual(encoder.encodedString(userListSortingKey), "role")
         XCTAssertEqual(

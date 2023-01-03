@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import UIKit
@@ -9,7 +9,7 @@ class MainButton: UIButton {
         super.updateConstraints()
         translatesAutoresizingMaskIntoConstraints = false
     }
-    
+
     override func layoutSubviews() {
         super.layoutSubviews()
         clipsToBounds = true

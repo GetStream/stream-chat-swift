@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -17,7 +17,7 @@ struct MutedChannelPayload: Decodable {
     let user: UserPayload
     let createdAt: Date
     let updatedAt: Date
-    
+
     init(
         mutedChannel: ChannelDetailPayload,
         user: UserPayload,
@@ -29,7 +29,7 @@ struct MutedChannelPayload: Decodable {
         self.createdAt = createdAt
         self.updatedAt = updatedAt
     }
-    
+
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         mutedChannel = try container.decode(ChannelDetailPayload.self, forKey: .mutedChannel)

@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -36,7 +36,7 @@ open class ChatMessageListVC: _ViewController,
     open lazy var router: ChatMessageListRouter = components
         .messageListRouter
         .init(rootViewController: self)
-    
+
     /// Strong reference of message actions view controller to allow performing async operations.
     private var messageActionsVC: ChatMessageActionsVC?
 
@@ -102,20 +102,20 @@ open class ChatMessageListVC: _ViewController,
     /// need to recalculate the cell height every time. This improve the scrolling
     /// experience since the content size calculation is more precise.
     private var cellHeightsCache: [MessageId: CGFloat] = [:]
-    
+
     override open func setUp() {
         super.setUp()
 
         listView.onNewDataSource = { [weak self] messages in
             self?.dataSource?.messages = messages
         }
-        
+
         components.messageLayoutOptionsResolver.config = client.config
-        
+
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress))
         longPress.minimumPressDuration = 0.33
         listView.addGestureRecognizer(longPress)
-        
+
         let tapOnList = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
         tapOnList.cancelsTouchesInView = false
         tapOnList.delegate = self
@@ -123,7 +123,7 @@ open class ChatMessageListVC: _ViewController,
 
         scrollToLatestMessageButton.addTarget(self, action: #selector(scrollToLatestMessage), for: .touchUpInside)
     }
-    
+
     override open func setUpLayout() {
         super.setUpLayout()
 
@@ -138,7 +138,7 @@ open class ChatMessageListVC: _ViewController,
         typingIndicatorView.heightAnchor.pin(equalToConstant: typingIndicatorViewHeight).isActive = true
         typingIndicatorView.pin(anchors: [.leading, .trailing], to: view)
         typingIndicatorView.bottomAnchor.pin(equalTo: listView.bottomAnchor).isActive = true
-        
+
         view.addSubview(scrollToLatestMessageButton)
         listView.bottomAnchor.pin(equalToSystemSpacingBelow: scrollToLatestMessageButton.bottomAnchor).isActive = true
         scrollToLatestMessageButton.trailingAnchor.pin(equalTo: view.layoutMarginsGuide.trailingAnchor).isActive = true
@@ -158,9 +158,9 @@ open class ChatMessageListVC: _ViewController,
 
     override open func setUpAppearance() {
         super.setUpAppearance()
-        
+
         view.backgroundColor = appearance.colorPalette.background
-        
+
         listView.backgroundColor = appearance.colorPalette.background
     }
 
@@ -177,7 +177,7 @@ open class ChatMessageListVC: _ViewController,
 
         view.layoutIfNeeded()
     }
-    
+
     /// Returns layout options for the message on given `indexPath`.
     ///
     /// Layout options are used to determine the layout of the message.
@@ -203,7 +203,7 @@ open class ChatMessageListVC: _ViewController,
             components: components
         )
     }
-    
+
     /// Set the visibility of `scrollToLatestMessageButton`.
     open func setScrollToLatestMessageButton(visible: Bool, animated: Bool = true) {
         if visible { scrollToLatestMessageButton.isVisible = true }
@@ -213,7 +213,7 @@ open class ChatMessageListVC: _ViewController,
             if !visible { self.scrollToLatestMessageButton.isVisible = false }
         })
     }
-    
+
     /// Action for `scrollToLatestMessageButton` that scroll to most recent message.
     @objc open func scrollToLatestMessage() {
         scrollToMostRecentMessage()
@@ -314,7 +314,7 @@ open class ChatMessageListVC: _ViewController,
             client: client
         )
     }
-    
+
     /// Shows typing Indicator.
     /// - Parameter typingUsers: typing users gotten from `channelController`
     open func showTypingIndicator(typingUsers: [ChatUser]) {
@@ -329,7 +329,7 @@ open class ChatMessageListVC: _ViewController,
 
         typingIndicatorView.isHidden = false
     }
-    
+
     /// Hides typing Indicator.
     open func hideTypingIndicator() {
         guard isTypingEventsEnabled, typingIndicatorView.isVisible else { return }
@@ -346,13 +346,13 @@ open class ChatMessageListVC: _ViewController,
         guard isDateSeparatorEnabled else {
             return false
         }
-        
+
         let previousIndexPath = IndexPath(row: indexPath.row + 1, section: indexPath.section)
         guard let previousMessage = dataSource?.chatMessageListVC(self, messageAt: previousIndexPath) else {
             // If previous message doesn't exist show the separator as well.
             return true
         }
-        
+
         // Only show the separator if the previous message has a different day.
         let isDifferentDay = !Calendar.current.isDate(
             message.createdAt,
@@ -497,11 +497,11 @@ open class ChatMessageListVC: _ViewController,
         guard let indexPath = indexPath else {
             return log.error("IndexPath is not available")
         }
-        
+
         guard let message = dataSource?.chatMessageListVC(self, messageAt: indexPath) else {
             return log.error("DataSource not found for the message list.")
         }
-        
+
         if message.isBounced {
             showActions(forDebouncedMessage: message)
             return
@@ -527,7 +527,7 @@ open class ChatMessageListVC: _ViewController,
             "Tapped a quoted message. To customize the behavior, override messageContentViewDidTapOnQuotedMessage."
         )
     }
-	
+
     open func messageContentViewDidTapOnAvatarView(_ indexPath: IndexPath?) {
         guard let indexPath = indexPath else {
             return log.error("IndexPath is not available")
@@ -539,7 +539,7 @@ open class ChatMessageListVC: _ViewController,
 
         router.showUser(message.author)
     }
-    
+
     /// This method is triggered when delivery status indicator on the message at the given index path is tapped.
     /// - Parameter indexPath: The index path of the message cell.
     open func messageContentViewDidTapOnDeliveryStatusIndicator(_ indexPath: IndexPath?) {
