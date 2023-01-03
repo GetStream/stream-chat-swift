@@ -81,11 +81,11 @@ open class FileAttachmentView: _View, AppearanceProvider {
 
         NSLayoutConstraint.activate([
             heightAnchor.pin(equalToConstant: height),
-
+            
             fileIconImageView.leadingAnchor.pin(equalTo: layoutMarginsGuide.leadingAnchor),
             fileIconImageView.topAnchor.pin(equalTo: layoutMarginsGuide.topAnchor),
             fileIconImageView.bottomAnchor.pin(equalTo: layoutMarginsGuide.bottomAnchor),
-
+            
             fileNameAndSizeStack.leadingAnchor.pin(
                 equalToSystemSpacingAfter: fileIconImageView.trailingAnchor,
                 multiplier: 2
