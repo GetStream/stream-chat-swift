@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -15,7 +15,7 @@ public typealias ChatMessageAudioAttachment = ChatMessageAttachment<AudioAttachm
 public struct AudioAttachmentPayload: AttachmentPayload {
     /// An attachment type all `MediaAttachmentPayload` instances conform to. Is set to `.audio`.
     public static let type: AttachmentType = .audio
-    
+
     /// A title, usually the name of the audio.
     public var title: String?
     /// A link to the audio.
@@ -24,7 +24,7 @@ public struct AudioAttachmentPayload: AttachmentPayload {
     public var file: AttachmentFile
     /// An extra data.
     public var extraData: [String: RawJSON]?
-    
+
     /// Decodes extra data as an instance of the given type.
     /// - Parameter ofType: The type an extra data should be decoded as.
     /// - Returns: Extra data of the given type or `nil` if decoding fails.
@@ -33,7 +33,7 @@ public struct AudioAttachmentPayload: AttachmentPayload {
             .flatMap { try? JSONEncoder.stream.encode($0) }
             .flatMap { try? JSONDecoder.stream.decode(T.self, from: $0) }
     }
-    
+
     /// Creates `AudioAttachmentPayload` instance.
     ///
     /// Use this initializer if the attachment is already uploaded and you have the remote URLs.
@@ -65,7 +65,7 @@ extension AudioAttachmentPayload: Encodable {
 extension AudioAttachmentPayload: Decodable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: AttachmentCodingKeys.self)
-        
+
         self.init(
             title: try container.decodeIfPresent(String.self, forKey: .title),
             audioRemoteURL: try container.decode(URL.self, forKey: .assetURL),

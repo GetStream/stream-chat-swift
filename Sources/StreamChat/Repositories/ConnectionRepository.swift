@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -96,7 +96,7 @@ class ConnectionRepository {
     ) {
         apiClient.flushRequestsQueue()
         syncRepository.cancelRecoveryFlow()
-        
+
         // Disconnecting is not possible in connectionless mode (duh)
         guard isClientInActiveMode else {
             log.error(ClientError.ClientIsNotInActiveMode().localizedDescription)
@@ -120,7 +120,7 @@ class ConnectionRepository {
 
             // Remove all waiters for connectionId
             self?.completeConnectionIdWaiters(connectionId: nil)
-            
+
             completion()
         }
     }

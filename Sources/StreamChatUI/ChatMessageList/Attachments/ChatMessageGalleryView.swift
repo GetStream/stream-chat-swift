@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -11,7 +11,7 @@ open class ChatMessageGalleryView: _View, ThemeProvider {
     public var content: [UIView] = [] {
         didSet { updateContentIfNeeded() }
     }
-    
+
     // Previews indices locations:
     // When one item available:
     // -------
@@ -65,17 +65,17 @@ open class ChatMessageGalleryView: _View, ThemeProvider {
     public private(set) lazy var moreItemsOverlay = UILabel()
         .withoutAutoresizingMaskConstraints
         .withAccessibilityIdentifier(identifier: "MoreItems")
-    
+
     /// Container holding all previews.
     public private(set) lazy var previewsContainerView = ContainerStackView()
         .withoutAutoresizingMaskConstraints
         .withAccessibilityIdentifier(identifier: "previewsContainerView")
-    
+
     /// Left container for previews.
     public private(set) lazy var leftPreviewsContainerView = ContainerStackView()
         .withoutAutoresizingMaskConstraints
         .withAccessibilityIdentifier(identifier: "leftPreviewsContainerView")
-    
+
     /// Right container for previews.
     public private(set) lazy var rightPreviewsContainerView = ContainerStackView()
         .withoutAutoresizingMaskConstraints
@@ -85,7 +85,7 @@ open class ChatMessageGalleryView: _View, ThemeProvider {
 
     override open func setUpLayout() {
         super.setUpLayout()
-        
+
         previewsContainerView.axis = .horizontal
         previewsContainerView.distribution = .equal
         previewsContainerView.alignment = .fill
@@ -93,32 +93,32 @@ open class ChatMessageGalleryView: _View, ThemeProvider {
         previewsContainerView.isLayoutMarginsRelativeArrangement = true
         previewsContainerView.directionalLayoutMargins = .init(top: 2, leading: 2, bottom: 2, trailing: 2)
         embed(previewsContainerView)
-        
+
         leftPreviewsContainerView.spacing = 2
         leftPreviewsContainerView.axis = .vertical
         leftPreviewsContainerView.distribution = .equal
         leftPreviewsContainerView.alignment = .fill
         previewsContainerView.addArrangedSubview(leftPreviewsContainerView)
-        
+
         leftPreviewsContainerView.addArrangedSubview(itemSpots[0])
         leftPreviewsContainerView.addArrangedSubview(itemSpots[2])
-        
+
         rightPreviewsContainerView.spacing = 2
         rightPreviewsContainerView.axis = .vertical
         rightPreviewsContainerView.distribution = .equal
         rightPreviewsContainerView.alignment = .fill
         previewsContainerView.addArrangedSubview(rightPreviewsContainerView)
-        
+
         rightPreviewsContainerView.addArrangedSubview(itemSpots[1])
         rightPreviewsContainerView.addArrangedSubview(itemSpots[3])
-        
+
         addSubview(moreItemsOverlay)
         moreItemsOverlay.pin(to: itemSpots[3])
     }
 
     override open func setUpAppearance() {
         super.setUpAppearance()
-        
+
         moreItemsOverlay.font = appearance.fonts.title
         moreItemsOverlay.adjustsFontForContentSizeCategory = true
         moreItemsOverlay.textAlignment = .center
@@ -128,18 +128,18 @@ open class ChatMessageGalleryView: _View, ThemeProvider {
 
     override open func updateContent() {
         super.updateContent()
-        
+
         // Clear all spots
         itemSpots
             .flatMap(\.subviews)
             .forEach { $0.removeFromSuperview() }
-        
+
         // Prevents layout issue. Can be removed when CIS-981 is fixed.
         guard !content.isEmpty else {
             previewsContainerView.isHidden = true
             return
         }
-        
+
         // Add previews to the spots
         if content.count == 3 {
             itemSpots[0].embed(content[0])
@@ -148,12 +148,12 @@ open class ChatMessageGalleryView: _View, ThemeProvider {
         } else {
             zip(itemSpots, content).forEach { $0.embed($1) }
         }
-        
+
         // Show taken spots, hide empty ones
         itemSpots.forEach { spot in
             spot.isHidden = spot.subviews.isEmpty
         }
-        
+
         rightPreviewsContainerView.isHidden = rightPreviewsContainerView.subviews
             .allSatisfy(\.isHidden)
         leftPreviewsContainerView.isHidden = leftPreviewsContainerView.subviews

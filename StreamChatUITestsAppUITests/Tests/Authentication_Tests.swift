@@ -1,18 +1,18 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import XCTest
 
 // Requires running a standalone Sinatra server
 final class Authentication_Tests: StreamTestCase {
-    
+
     override func setUpWithError() throws {
         mockServerEnabled = false
         app.setLaunchArguments(.jwt)
         try super.setUpWithError()
     }
-    
+
     func test_tokenExpiriesBeforeUserLogsIn() {
         linkToScenario(withId: 650)
 
@@ -26,10 +26,10 @@ final class Authentication_Tests: StreamTestCase {
             userRobot.assertConnectionStatus(.connected)
         }
     }
-    
+
     func test_tokenExpiriesAfterUserLoggedIn() {
         linkToScenario(withId: 651)
-        
+
         GIVEN("user logs in") {
             userRobot
                 .login()
@@ -42,7 +42,7 @@ final class Authentication_Tests: StreamTestCase {
             userRobot.assertConnectionStatus(.connected)
         }
     }
-    
+
     func test_tokenExpiriesWhenUserIsInBackground() {
         linkToScenario(withId: 652)
 
@@ -64,7 +64,7 @@ final class Authentication_Tests: StreamTestCase {
             userRobot.assertConnectionStatus(.connected)
         }
     }
-    
+
     func test_tokenExpiriesWhileUserIsOffline() {
         linkToScenario(withId: 653)
 
@@ -87,10 +87,10 @@ final class Authentication_Tests: StreamTestCase {
             userRobot.assertConnectionStatus(.connected)
         }
     }
-    
+
     func test_tokenGenerationFails() {
         linkToScenario(withId: 654)
-        
+
         GIVEN("JWT generation breaks on server side") {
             server.breakJwt()
         }

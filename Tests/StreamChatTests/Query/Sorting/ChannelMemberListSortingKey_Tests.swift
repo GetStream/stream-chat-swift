@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -12,7 +12,7 @@ final class ChannelMemberListSortingKey_Tests: XCTestCase {
         // Put all `ChannelMemberListSortingKey`s in an array
         // We don't use `CaseIterable` since we only need this for tests
         let sortingKeys: [ChannelMemberListSortingKey] = [.createdAt, .name]
-        
+
         // Iterate over keys...
         for key in sortingKeys {
             switch key {

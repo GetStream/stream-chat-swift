@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -27,7 +27,7 @@ open class DefaultChatReactionPickerBubbleView: ChatReactionPickerBubbleView {
         super.setUpAppearance()
         contentViewBackground.layer.borderWidth = 1
     }
-    
+
     override open func setUpLayout() {
         addSubview(tailBehind)
         contentViewBackground.addSubview(contentView)
@@ -61,7 +61,7 @@ open class DefaultChatReactionPickerBubbleView: ChatReactionPickerBubbleView {
             .init(top: 8, leading: 16, bottom: 8, trailing: 16) :
             .init(top: 4, leading: 4, bottom: 4, trailing: 4)
     }
-    
+
     open var contentBackgroundColor: UIColor {
         guard let content = content else { return .clear }
 
@@ -105,11 +105,11 @@ open class DefaultChatReactionPickerBubbleView: ChatReactionPickerBubbleView {
             let borderColor = content.style.isIncoming ?
                 appearance.colorPalette.border :
                 appearance.colorPalette.border
-            
+
             let innerColor = content.style.isIncoming ?
                 appearance.colorPalette.background2 :
                 appearance.colorPalette.popoverBackground
-            
+
             return .tail(
                 options: .small(flipped: content.style.isIncoming),
                 colors: .init(
@@ -141,7 +141,7 @@ open class DefaultChatReactionPickerBubbleView: ChatReactionPickerBubbleView {
             )
         }
     }
-    
+
     /// Returns color resolved with current `traitCollection`.
     /// This is needed when a `cgColor` is used which can not be resolved by the view itself.
     private func resolvedColor(_ color: UIColor) -> UIColor {

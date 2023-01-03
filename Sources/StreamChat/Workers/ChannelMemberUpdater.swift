@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -24,7 +24,7 @@ class ChannelMemberUpdater: Worker {
             completion?($0.error)
         }
     }
-    
+
     /// Unbans the user in the channel.
     /// - Parameters:
     ///   - userId: The user identifier to unban.

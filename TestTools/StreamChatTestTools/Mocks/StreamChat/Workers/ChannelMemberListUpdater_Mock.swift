@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -9,7 +9,7 @@ import XCTest
 final class ChannelMemberListUpdater_Mock: ChannelMemberListUpdater {
     @Atomic var load_query: ChannelMemberListQuery?
     @Atomic var load_completion: ((Error?) -> Void)?
-    
+
     func cleanUp() {
         load_query = nil
         load_completion = nil

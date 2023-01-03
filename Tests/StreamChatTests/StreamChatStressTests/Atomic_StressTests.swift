@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -12,10 +12,10 @@ final class Atomic_Tests: StressTestCase {
     func test_Atomic_asPropertyWrapper() {
         stringAtomicValue = nil
         XCTAssertEqual(stringAtomicValue, nil)
-        
+
         stringAtomicValue = "Luke"
         XCTAssertEqual(stringAtomicValue, "Luke")
-        
+
         _stringAtomicValue { value in
             XCTAssertEqual(value, "Luke")
             value = nil
@@ -46,11 +46,11 @@ final class Atomic_Tests: StressTestCase {
 extension Atomic_Tests {
     /// Increase `numberOfTestCycles` significantly to properly stress-test `Atomic`.
     var numberOfTestCycles: Int { 50 }
-    
+
     func test_Atomic_usedWithCollection() {
         let updateGroup = DispatchGroup()
         let atomicValue = Atomic<[String: Int]>(wrappedValue: [:])
-        
+
         for idx in 0..<numberOfTestCycles {
             updateGroup.enter()
             DispatchQueue.random.async {
@@ -62,10 +62,10 @@ extension Atomic_Tests {
 
         XCTAssertEqual(atomicValue.wrappedValue.count, numberOfTestCycles)
     }
-    
+
     func test_Atomic_whenSetAndGetCalledSimultaneously() {
         let atomicValue = Atomic<[String: Int]>(wrappedValue: [:])
-        
+
         let group = DispatchGroup()
         for idx in 0..<numberOfTestCycles {
             group.enter()
@@ -73,7 +73,7 @@ extension Atomic_Tests {
                 atomicValue { $0["\(idx)"] = idx }
                 group.leave()
             }
-            
+
             for _ in 0...5 {
                 group.enter()
                 DispatchQueue.random.async {
@@ -82,20 +82,20 @@ extension Atomic_Tests {
                 }
             }
         }
-        
+
         group.wait()
         XCTAssertEqual(atomicValue.wrappedValue.count, numberOfTestCycles)
     }
-    
+
     func test_Atomic_whenCalledFromMainThred() {
         let value = Atomic<[String: Int]>(wrappedValue: [:])
-        
+
         for idx in 0..<numberOfTestCycles {
             value { $0["\(idx)"] = idx }
             value.wrappedValue = ["random": 2020]
             _ = value.wrappedValue
         }
-        
+
         XCTAssertEqual(value.wrappedValue, ["random": 2020])
     }
 }

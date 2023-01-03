@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -18,23 +18,23 @@ final class ChatChannel_Tests: XCTestCase {
                 mentions: 1
             )
         ]
-        
+
         for unreadCount in counts {
             let channel: ChatChannel = .mock(
                 cid: .unique,
                 unreadCount: unreadCount
             )
-            
+
             XCTAssertTrue(channel.isUnread)
         }
     }
-    
+
     func test_isUnread_whenUnreadCountIsZero_returnsFalse() {
         let channel: ChatChannel = .mock(
             cid: .unique,
             unreadCount: .noUnread
         )
-        
+
         XCTAssertFalse(channel.isUnread)
     }
 

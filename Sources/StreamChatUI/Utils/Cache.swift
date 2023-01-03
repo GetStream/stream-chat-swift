@@ -1,12 +1,12 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
 
 final class Cache<Key: Hashable, Value> {
     private let wrapped: NSCache<WrappedKey, Entry>
-    
+
     init(countLimit: Int = 0) {
         wrapped = .init()
         wrapped.countLimit = countLimit
@@ -22,7 +22,7 @@ final class Cache<Key: Hashable, Value> {
             insert(value, forKey: key)
         }
     }
-    
+
     func insert(_ value: Value, forKey key: Key) {
         wrapped.setObject(.init(value: value), forKey: .init(key))
     }
@@ -34,7 +34,7 @@ final class Cache<Key: Hashable, Value> {
     func removeValue(forKey key: Key) {
         wrapped.removeObject(forKey: .init(key))
     }
-    
+
     func removeAllObjects() {
         wrapped.removeAllObjects()
     }
@@ -56,7 +56,7 @@ private extension Cache {
             return value.key == key
         }
     }
-    
+
     final class Entry {
         let value: Value
 

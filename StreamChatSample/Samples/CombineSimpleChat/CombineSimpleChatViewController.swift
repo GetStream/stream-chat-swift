@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Combine
@@ -16,7 +16,7 @@ import UIKit
 @available(iOS 13, *)
 final class CombineSimpleChatViewController: UITableViewController, UITextViewDelegate {
     // MARK: - Properties
-    
+
     ///
     /// # channelController
     ///
@@ -33,7 +33,7 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
             subscribeToCombinePublishers()
         }
     }
-    
+
     // MARK: - Combine
 
     ///
@@ -42,7 +42,7 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
     ///  Holds the cancellable objects created from subscribing to the combine publishers inside `channelController`.
     ///
     private lazy var cancellables: Set<AnyCancellable> = []
-    
+
     ///
     /// # subscribeToCombinePublishers
     ///
@@ -56,7 +56,7 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
         let initialChannel = Just(channelController.channel)
             .compactMap { $0 }
             .map { EntityChange<ChatChannel>.update($0) }
-        
+
         ///
         /// This subscription updates the view controller's `title` and its `navigationItem.prompt` to display the count of channel
         /// members and the count of online members or typing users if any.
@@ -81,17 +81,17 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
             }
             .receive(on: RunLoop.main)
             .share()
-        
+
         updatedChannel
             .map { $0.name ?? $0.cid.description }
             .assign(to: \.title, on: self)
             .store(in: &cancellables)
-        
+
         updatedChannel
             .map { createTypingUserString(for: $0) ?? createMemberInfoString(for: $0) }
             .assign(to: \.navigationItem.prompt, on: self)
             .store(in: &cancellables)
-        
+
         ///
         /// `messagesChangesPublisher` will send updates related to `messages` changes.
         /// This subscription will update `tableView` with received changes.
@@ -102,9 +102,9 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
             /// Apply changes to tableView.
             .sink { [weak self] changes in
                 let tableView = self?.tableView
-                
+
                 tableView?.beginUpdates()
-                
+
                 for change in changes {
                     switch change {
                     case let .insert(_, index: index):
@@ -117,11 +117,11 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
                         tableView?.deleteRows(at: [index], with: .automatic)
                     }
                 }
-                
+
                 tableView?.endUpdates()
             }
             .store(in: &cancellables)
-        
+
         ///
         /// This subscription updates UI with typing users after receiving changes from `typingUsersPublisher`.
         ///
@@ -135,7 +135,7 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
                 }
             }
             .store(in: &cancellables)
-        
+
         ///
         /// This dummy subscription prints received member events from `memberEventPublisher`.
         ///
@@ -145,7 +145,7 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
                 print("Member: \(event)")
             }
             .store(in: &cancellables)
-        
+
         ///
         /// `statePublisher` will send changes related to `State` of `ChannelController`,
         /// You can use it for presenting some loading indicator.
@@ -163,7 +163,7 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
             }
             .store(in: &cancellables)
     }
-    
+
     // MARK: - UITableViewDataSource
 
     ///
@@ -171,7 +171,7 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
     /// called when the `UITableView` needs information which will be given by the
     /// `channelController` object.
     ///
-    
+
     ///
     /// # numberOfRowsInSection
     ///
@@ -182,7 +182,7 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         channelController.messages.count
     }
-    
+
     ///
     /// # cellForRowAt
     ///
@@ -192,9 +192,9 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
     ///
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let message = channelController.messages[indexPath.row]
-        
+
         let cell: UITableViewCell
-        
+
         switch message.type {
         case .deleted:
             cell = messageCellWithAuthor(nil, messageText: "❌ the message was deleted")
@@ -203,12 +203,12 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
         default:
             cell = messageCellWithAuthor(message.author.name ?? message.author.id, messageText: message.text)
         }
-        
+
         cell.backgroundColor = message.localState == nil ? .white : .lightGray
-        
+
         return cell
     }
-    
+
     // MARK: - UITableViewDelegate
 
     ///
@@ -216,7 +216,7 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
     ///  happened in the `UITableView`  which will cause some action
     /// done by the `channelController` object.
     ///
-    
+
     ///
     /// # willDisplay
     ///
@@ -227,12 +227,12 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
         let lastSection = tableView.numberOfSections - 1
         let lastRow = tableView.numberOfRows(inSection: indexPath.section) - 1
         let lastIndexPath = IndexPath(row: lastRow, section: lastSection)
-        
+
         if indexPath == lastIndexPath {
             channelController?.loadNextMessages()
         }
     }
-    
+
     ///
     /// # canEditRowAt
     ///
@@ -242,7 +242,7 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         channelController.messages[indexPath.row].isDeleted == false
     }
-    
+
     ///
     /// # willBeginEditingRowAt
     ///
@@ -253,7 +253,7 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
     override func tableView(_ tableView: UITableView, willBeginEditingRowAt indexPath: IndexPath) {
         tableView.cellForRow(at: indexPath)?.swipeActionsContainer?.transform = tableView.transform
     }
-    
+
     ///
     /// # trailingSwipeActionsConfigurationForRowAt
     ///
@@ -266,29 +266,29 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
         guard let cid = channelController.cid else {
             fatalError("channelController will always have cid if channel created and we have messages available.")
         }
-        
+
         let message = channelController.messages[indexPath.row]
-        
+
         let messageController = channelController.client.messageController(
             cid: cid,
             messageId: message.id
         )
-        
+
         let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { _, _, _ in
             messageController.deleteMessage()
         }
-        
+
         let editAction = UIContextualAction(style: .normal, title: "Edit") { [weak self] _, _, _ in
             self?.showTextEditingAlert(for: message.text) {
                 messageController.editMessage(text: $0)
             }
         }
-        
+
         let configuration = UISwipeActionsConfiguration(actions: [deleteAction, editAction])
         configuration.performsFirstActionWithFullSwipe = true
         return configuration
     }
-    
+
     ///
     /// # contextMenuConfigurationForRowAt
     ///
@@ -305,27 +305,27 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
         guard let cid = channelController.cid else {
             return nil
         }
-        
+
         let message = channelController.messages[indexPath.row]
-        
+
         var actions = [UIAction]()
-        
+
         let currentUserId = channelController.client.currentUserId
         let isMessageFromCurrentUser = message.author.id == currentUserId
-        
+
         if isMessageFromCurrentUser {
             let messageController = channelController.client.messageController(
                 cid: cid,
                 messageId: message.id
             )
-            
+
             // Edit message
             actions.append(UIAction(title: "Edit", image: UIImage(systemName: "pencil")) { [weak self] _ in
                 self?.showTextEditingAlert(for: message.text) {
                     messageController.editMessage(text: $0)
                 }
             })
-            
+
             // Delete message
             actions.append(UIAction(
                 title: "Delete",
@@ -336,7 +336,7 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
             })
         } else {
             let memberController = channelController.client.memberController(userId: message.author.id, in: cid)
-            
+
             // Ban / Unban user
             if message.author.isBanned {
                 actions.append(UIAction(
@@ -355,20 +355,20 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
                 })
             }
         }
-        
+
         view.endEditing(true)
-        
+
         let menu = UIMenu(title: "Select an action:", children: actions)
-        
+
         return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in menu }
     }
-    
+
     // MARK: - Button Actions
 
     ///
     /// The methods below are called when the user presses some button in the interface to send a message or open the channel menu.
     ///
-    
+
     ///
     /// # sendMessageButtonTapped
     ///
@@ -381,10 +381,10 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
         }
 
         channelController?.createNewMessage(text: text)
-        
+
         composerView.textView.text = ""
     }
-    
+
     ///
     /// # showChannelActionsAlert
     ///
@@ -394,11 +394,11 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
     ///
     @objc func showChannelActionsAlert() {
         let alert = UIAlertController(title: "Member Actions", message: "", preferredStyle: .actionSheet)
-                
+
         alert.addAction(.init(title: "Edit members", style: .default, handler: { [weak self] _ in
             self?.showMemberSettings()
         }))
-        
+
         alert.addAction(.init(title: "Delete the channel", style: .default, handler: { [unowned self] _ in
             self.channelController?.deleteChannel {
                 guard let error = $0 else {
@@ -407,12 +407,12 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
                 self.alert(title: "Error", message: "Error deleting channel: \(error)")
             }
         }))
-        
+
         alert.addAction(.init(title: "Cancel", style: .cancel, handler: nil))
-        
+
         present(alert, animated: true)
     }
-    
+
     private func showMemberSettings() {
         guard
             let cid = channelController.channel?.cid,
@@ -421,14 +421,14 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
                 withIdentifier: "CombineSimpleChannelMembersViewController"
             ) as? CombineSimpleChannelMembersViewController
         else { return }
-        
+
         channelMembersViewController.memberListController = channelController.client.memberListController(
             query: .init(cid: cid)
         )
-        
+
         show(channelMembersViewController, sender: self)
     }
-    
+
     // MARK: - UITextViewDelegate
 
     ///
@@ -436,7 +436,7 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
     /// protocol and will be called when some event happened in the `ComposerView`'s `UITextView`  which will
     /// cause some action done by the `channelController` object.
     ///
-    
+
     ///
     /// # textViewDidChange
     ///
@@ -447,7 +447,7 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
     func textViewDidChange(_ textView: UITextView) {
         channelController.sendKeystrokeEvent()
     }
-    
+
     ///
     /// # textViewDidChange
     ///
@@ -469,14 +469,14 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
         guard presentedViewController?.isBeingDismissed != false else {
             return nil
         }
-        
+
         composerView.layoutMargins = view.layoutMargins
         composerView.directionalLayoutMargins = systemMinimumLayoutMargins
         composerView.textView.delegate = self
-        
+
         return composerView
     }
-    
+
     private func showTextEditingAlert(for text: String, completion: @escaping (_ editedText: String) -> Void) {
         let alert = UIAlertController(title: "Edit message text", message: nil, preferredStyle: .alert)
 
@@ -490,31 +490,31 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
 
         present(alert, animated: true)
     }
-    
+
     // MARK: - UIViewController
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         setupTableView()
-        
+
         tableView.reloadData()
-        
+
         composerView.sendButton.addTarget(self, action: #selector(sendMessageButtonTapped), for: .touchUpInside)
-        
+
         navigationItem.rightBarButtonItem = UIBarButtonItem(
             title: "⋮",
             style: .plain,
             target: self,
             action: #selector(showChannelActionsAlert)
         )
-        
+
         navigationItem.rightBarButtonItem?.setTitleTextAttributes(
             [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 24)],
             for: .normal
         )
     }
-    
+
     override var canBecomeFirstResponder: Bool {
         true
     }
@@ -528,7 +528,7 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
         super.viewWillDisappear(animated)
         stopAvoidingKeyboard()
     }
-    
+
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         adjustContentInsetsIfNeeded()
@@ -556,7 +556,7 @@ private extension UITableViewCell {
             let swipeViewType = NSClassFromString("UISwipeActionPullView"),
             superview.isKind(of: swipeContainerViewType)
         else { return nil }
-        
+
         return superview.subviews.first { $0.isKind(of: swipeViewType) }
     }
 }

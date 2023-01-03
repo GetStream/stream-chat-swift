@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -14,7 +14,7 @@ class CurrentUserPayload: UserPayload {
     let mutedChannels: [MutedChannelPayload]
     /// Unread channel and message counts
     let unreadCount: UnreadCount?
-    
+
     init(
         id: String,
         name: String?,
@@ -37,7 +37,7 @@ class CurrentUserPayload: UserPayload {
         self.mutedUsers = mutedUsers
         self.mutedChannels = mutedChannels
         self.unreadCount = unreadCount
-        
+
         super.init(
             id: id,
             name: name,
@@ -53,7 +53,7 @@ class CurrentUserPayload: UserPayload {
             extraData: extraData
         )
     }
-    
+
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: UserPayloadsCodingKeys.self)
         devices = try container.decodeIfPresent([DevicePayload].self, forKey: .devices) ?? []
@@ -72,7 +72,7 @@ struct MutedUserPayload: Decodable {
         case created = "created_at"
         case updated = "updated_at"
     }
-    
+
     let mutedUser: UserPayload
     let created: Date
     let updated: Date
@@ -90,7 +90,7 @@ struct MutedUsersResponse: Decodable {
         case mutedUser = "mute"
         case currentUser = "own_user"
     }
-    
+
     /// A muted user.
     public let mutedUser: MutedUserPayload
     /// The current user.

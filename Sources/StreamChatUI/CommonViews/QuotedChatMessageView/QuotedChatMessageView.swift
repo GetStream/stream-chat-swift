@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import AVKit
@@ -132,7 +132,7 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
 
         containerView.addArrangedSubview(authorAvatarView)
         containerView.addArrangedSubview(contentContainerView)
-        
+
         contentContainerView.addArrangedSubview(attachmentPreviewView)
         contentContainerView.addArrangedSubview(textView)
 
@@ -237,7 +237,7 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
             textView.text = message.text.isEmpty ? videoPayload.title : message.text
         }
     }
-    
+
     /// Sets the image from the given URL into `attachmentPreviewView.image`
     /// - Parameter url: The URL from which the image is to be loaded
     open func setAttachmentPreviewImage(url: URL?) {
@@ -247,12 +247,12 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
             with: ImageLoaderOptions(resize: .init(attachmentPreviewSize))
         )
     }
-    
+
     /// Set the image from the given URL into `attachmentPreviewImage.image`
     /// - Parameter url: The URL from which to generate the image on the video
     open func setVideoAttachmentPreviewImage(url: URL?) {
         guard let url = url else { return }
-        
+
         components.videoLoader.loadPreviewForVideo(at: url) { [weak self] in
             switch $0 {
             case let .success(preview):

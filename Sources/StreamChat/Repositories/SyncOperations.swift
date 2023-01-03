@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -11,7 +11,7 @@ final class SyncContext {
     var synchedChannelIds: Set<ChannelId> = Set()
     var watchedAndSynchedChannelIds: Set<ChannelId> = Set()
     var unwantedChannelIds: Set<ChannelId> = Set()
-    
+
     init(lastSyncAt: Date) {
         self.lastSyncAt = lastSyncAt
     }
@@ -96,7 +96,7 @@ final class RefetchChannelListQueryOperation: AsyncOperation {
                 done(.continue)
                 return
             }
-            
+
             let query = controller.query
 
             log.info("3 & 4. Refetching channel lists queries & Cleaning up local message history", subsystems: .offlineSupport)

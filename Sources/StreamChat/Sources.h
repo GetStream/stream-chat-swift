@@ -2,8 +2,7 @@
 //  StreamChat.h
 //  StreamChat_v3
 //
-//  Created by Vojta on 26/05/2020.
-//  Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>

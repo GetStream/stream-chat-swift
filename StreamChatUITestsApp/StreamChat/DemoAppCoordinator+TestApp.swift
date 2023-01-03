@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -9,7 +9,7 @@ import UIKit
 // MARK: - Navigation
 
 extension DemoAppCoordinator {
-    
+
     func start(cid: ChannelId? = nil, completion: @escaping (Error?) -> Void) {
         if let cid = cid {
             navigateToChannel(with: cid)
@@ -20,7 +20,7 @@ extension DemoAppCoordinator {
         }
         completion(nil)
     }
-    
+
     private func navigateToChannel(with cid: ChannelId) {
         if let channelList = self.window.rootViewController as? ChannelList {
             channelList.router.showChannel(for: cid)
@@ -32,5 +32,5 @@ extension DemoAppCoordinator {
             viewController.router?.showChannel(for: cid)
         }
     }
-    
+
 }

@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -13,7 +13,7 @@ public protocol GalleryContentViewDelegate: ChatMessageContentViewDelegate {
         didTapAttachmentPreview attachmentId: AttachmentId,
         previews: [GalleryItemPreview]
     )
-    
+
     /// Called when action button is clicked for uploading attachment.
     func galleryMessageContentView(
         at indexPath: IndexPath?,
@@ -28,7 +28,7 @@ open class GalleryAttachmentViewInjector: AttachmentViewInjector {
         .components
         .galleryView.init()
         .withoutAutoresizingMaskConstraints
-    
+
     /// A gallery view width * height ratio.
     ///
     /// If `nil` is returned, aspect ratio will not be applied and gallery view will
@@ -39,10 +39,10 @@ open class GalleryAttachmentViewInjector: AttachmentViewInjector {
 
     override open func contentViewDidLayout(options: ChatMessageLayoutOptions) {
         super.contentViewDidLayout(options: options)
-        
+
         contentView.bubbleView?.clipsToBounds = true
         contentView.bubbleContentContainer.insertArrangedSubview(galleryView, at: 0, respectsLayoutMargins: false)
-        
+
         // We need to apply corners to the left and right containers because the previewsContainerView
         // is applying extra layout margins and the rounded corners wouldn't match the margins.
         let leftCorners: CACornerMask = [.layerMinXMaxYCorner, .layerMinXMinYCorner]
@@ -62,15 +62,15 @@ open class GalleryAttachmentViewInjector: AttachmentViewInjector {
                 .isActive = true
         }
     }
-    
+
     override open func contentViewDidUpdateContent() {
         super.contentViewDidUpdateContent()
-        
+
         let videos = attachments(payloadType: VideoAttachmentPayload.self)
         let images = attachments(payloadType: ImageAttachmentPayload.self)
         galleryView.content = videos.map(preview) + images.map(preview)
     }
-    
+
     /// Is invoked when attachment preview is tapped.
     /// - Parameter id: Attachment identifier.
     open func handleTapOnAttachment(with id: AttachmentId) {
@@ -80,7 +80,7 @@ open class GalleryAttachmentViewInjector: AttachmentViewInjector {
             previews: galleryView.content.compactMap { $0 as? GalleryItemPreview }
         )
     }
-    
+
     /// Is invoked when action button on attachment uploading overlay is tapped.
     /// - Parameter id: Attachment identifier.
     open func handleUploadingAttachmentAction(_ attachmentId: AttachmentId) {
@@ -95,42 +95,42 @@ private extension GalleryAttachmentViewInjector {
     var delegate: GalleryContentViewDelegate? {
         contentView.delegate as? GalleryContentViewDelegate
     }
-    
+
     func preview(for videoAttachment: ChatMessageVideoAttachment) -> UIView {
         let preview = contentView
             .components
             .videoAttachmentGalleryPreview
             .init()
             .withoutAutoresizingMaskConstraints
-        
+
         preview.didTapOnAttachment = { [weak self] in
             self?.handleTapOnAttachment(with: $0.id)
         }
-        
+
         preview.didTapOnUploadingActionButton = { [weak self] in
             self?.handleUploadingAttachmentAction($0.id)
         }
-        
+
         preview.content = videoAttachment
 
         return preview
     }
-    
+
     func preview(for imageAttachment: ChatMessageImageAttachment) -> UIView {
         let preview = contentView
             .components
             .imageAttachmentGalleryPreview
             .init()
             .withoutAutoresizingMaskConstraints
-        
+
         preview.didTapOnAttachment = { [weak self] in
             self?.handleTapOnAttachment(with: $0.id)
         }
-        
+
         preview.didTapOnUploadingActionButton = { [weak self] in
             self?.handleUploadingAttachmentAction($0.id)
         }
-        
+
         preview.content = imageAttachment
 
         return preview

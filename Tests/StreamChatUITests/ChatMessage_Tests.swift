@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -18,10 +18,10 @@ final class ChatMessage_Tests: XCTestCase {
             author: ChatUser.mock(id: .anonymous),
             threadParticipants: []
         )
-        
+
         XCTAssertNil(message.lastActiveThreadParticipant)
     }
-    
+
     func test_lastActiveThreadParticipant_whenManyParticipants_returnsLastActive() {
         let message = ChatMessage.mock(
             id: .anonymous,
@@ -40,10 +40,10 @@ final class ChatMessage_Tests: XCTestCase {
                 )
             ]
         )
-        
+
         XCTAssertEqual(message.lastActiveThreadParticipant?.name, "Second")
     }
-    
+
     func test_lastActiveThreadParticipant_whenLastActiveIsNotPresent_sortsByUpdatedAt() {
         let message = ChatMessage.mock(
             id: .anonymous,
@@ -71,7 +71,7 @@ final class ChatMessage_Tests: XCTestCase {
                 )
             ]
         )
-        
+
         XCTAssertEqual(message.lastActiveThreadParticipant?.name, "Second")
     }
 

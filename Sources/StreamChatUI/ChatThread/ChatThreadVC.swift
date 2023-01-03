@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -18,7 +18,7 @@ open class ChatThreadVC: _ViewController,
 
     /// Controller for observing data changes within the parent thread message.
     open var messageController: ChatMessageController!
-    
+
     /// Controller for observing typing events for this thread.
     open lazy var channelEventsController: ChannelEventsController = client.channelEventsController(for: messageController.cid)
 
@@ -89,13 +89,13 @@ open class ChatThreadVC: _ViewController,
                let message = messageController?.message {
                 messageComposerVC.content.threadMessage = message
             }
-            
+
             guard let message = message else {
                 return
             }
-            
+
             let repliesContainsFailedEditedMessages = message.latestReplies.contains(where: { $0.failedToBeEditedDueToModeration == true })
-            
+
             // Replies are only loaded when we don't have all available or when a reply has a stale state.
             if message.latestReplies.count != message.replyCount || repliesContainsFailedEditedMessages {
                 self.loadPreviousMessages()
@@ -219,7 +219,7 @@ open class ChatThreadVC: _ViewController,
         if indexPath.row < messages.count - 10 {
             return
         }
-        
+
         loadPreviousMessages()
     }
 
@@ -289,9 +289,9 @@ open class ChatThreadVC: _ViewController,
     ) {
         updateMessages(with: changes)
     }
-    
+
     // MARK: - EventsControllerDelegate
-    
+
     open func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
         switch event {
         case let event as TypingEvent:
@@ -301,7 +301,7 @@ open class ChatThreadVC: _ViewController,
             } else {
                 currentlyTypingUsers.remove(event.user)
             }
-            
+
             if currentlyTypingUsers.isEmpty {
                 messageListVC.hideTypingIndicator()
             } else {

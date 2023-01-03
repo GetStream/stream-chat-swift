@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -34,7 +34,7 @@ public class ChatClient {
     /// This value can't be mutated and can only be set when initializing a new `ChatClient` instance.
     ///
     public let config: ChatClientConfig
-    
+
     /// A `Worker` represents a single atomic piece of functionality.
     ///
     /// `ChatClient` initializes a set of background workers that keep observing the current state of the system and perform
@@ -99,7 +99,7 @@ public class ChatClient {
         databaseContainer,
         apiClient
     )
-    
+
     private(set) lazy var offlineRequestsRepository = environment.offlineRequestsRepositoryBuilder(
         messageRepository,
         databaseContainer,
@@ -124,12 +124,12 @@ public class ChatClient {
     private(set) lazy var callRepository: CallRepository = {
         environment.callRepositoryBuilder(apiClient)
     }()
-    
+
     /// The `APIClient` instance `Client` uses to communicate with Stream REST API.
     lazy var apiClient: APIClient = {
         var encoder = environment.requestEncoderBuilder(config.baseURL.restAPIBaseURL, config.apiKey)
         encoder.connectionDetailsProviderDelegate = self
-        
+
         let decoder = environment.requestDecoderBuilder()
 
         let attachmentUploader = config.customAttachmentUploader ?? StreamAttachmentUploader(
@@ -139,7 +139,7 @@ public class ChatClient {
                 sessionConfiguration: urlSessionConfiguration
             )
         )
-        
+
         let apiClient = environment.apiClientBuilder(
             urlSessionConfiguration,
             encoder,
@@ -160,12 +160,12 @@ public class ChatClient {
         )
         return apiClient
     }()
-    
+
     /// The `WebSocketClient` instance `Client` uses to communicate with Stream WS servers.
     lazy var webSocketClient: WebSocketClient? = {
         var encoder = environment.requestEncoderBuilder(config.baseURL.webSocketBaseURL, config.apiKey)
         encoder.connectionDetailsProviderDelegate = self
-                
+
         // Create a WebSocketClient.
         let webSocketClient = environment.webSocketClientBuilder?(
             urlSessionConfiguration,
@@ -173,12 +173,12 @@ public class ChatClient {
             EventDecoder(),
             eventNotificationCenter
         )
-        
+
         webSocketClient?.connectionStateDelegate = self
-        
+
         return webSocketClient
     }()
-    
+
     /// The `DatabaseContainer` instance `Client` uses to store and cache data.
     private(set) lazy var databaseContainer: DatabaseContainer = {
         do {
@@ -186,14 +186,14 @@ public class ChatClient {
                 guard let storeURL = config.localStorageFolderURL else {
                     throw ClientError.MissingLocalStorageURL()
                 }
-                
+
                 // Create the folder if needed
                 try FileManager.default.createDirectory(
                     at: storeURL,
                     withIntermediateDirectories: true,
                     attributes: nil
                 )
-                
+
                 let dbFileURL = storeURL.appendingPathComponent(config.apiKey.apiKeyString)
                 return environment.databaseContainerBuilder(
                     .onDisk(databaseFileURL: dbFileURL),
@@ -204,14 +204,14 @@ public class ChatClient {
                     config.shouldShowShadowedMessages
                 )
             }
-            
+
         } catch is ClientError.MissingLocalStorageURL {
             log.assertionFailure("The URL provided in ChatClientConfig can't be `nil`. Falling back to the in-memory option.")
-            
+
         } catch {
             log.error("Failed to initialize the local storage with error: \(error). Falling back to the in-memory option.")
         }
-        
+
         return environment.databaseContainerBuilder(
             .inMemory,
             config.shouldFlushLocalStorageOnStart,
@@ -234,7 +234,7 @@ public class ChatClient {
         configuration.timeoutIntervalForRequest = config.timeoutIntervalForRequest
         return configuration
     }
-    
+
     /// Stream-specific request headers.
     private let sessionHeaders: [String: String] = [
         "X-Stream-Client": SystemEnvironment.xStreamClientHeader
@@ -246,17 +246,17 @@ public class ChatClient {
         config: ChatClientConfig
     ) {
         var environment = Environment()
-        
+
         if !config.isClientInActiveMode {
             environment.webSocketClientBuilder = nil
         }
-        
+
         self.init(
             config: config,
             environment: environment
         )
     }
-    
+
     /// Creates a new instance of Stream Chat `Client`.
     ///
     /// - Parameters:
@@ -272,7 +272,7 @@ public class ChatClient {
 
         setupConnectionRecoveryHandler(with: environment)
     }
-    
+
     deinit {
         completeConnectionIdWaiters(connectionId: nil)
         completeTokenWaiters(token: nil)
@@ -293,7 +293,7 @@ public class ChatClient {
             config.staysConnectedInBackground
         )
     }
-    
+
     /// Connects the client with the given user.
     ///
     /// - Parameters:
@@ -313,7 +313,7 @@ public class ChatClient {
             completion: { completion?($0) }
         )
     }
-    
+
     /// Connects the client with the given user.
     ///
     /// - Parameters:
@@ -354,7 +354,7 @@ public class ChatClient {
     ) {
         authenticationRepository.connectGuestUser(userInfo: userInfo, completion: { completion?($0) })
     }
-    
+
     /// Connects anonymous user
     /// - Parameter completion: The completion that will be called once the **first** user session for the given token is setup.
     public func connectAnonymousUser(completion: ((Error?) -> Void)? = nil) {
@@ -527,7 +527,7 @@ extension ChatClient {
                 queueOfflineRequest: $5
             )
         }
-        
+
         var webSocketClientBuilder: ((
             _ sessionConfiguration: URLSessionConfiguration,
             _ requestEncoder: RequestEncoder,
@@ -541,7 +541,7 @@ extension ChatClient {
                 eventNotificationCenter: $3
             )
         }
-        
+
         var databaseContainerBuilder: (
             _ kind: DatabaseContainer.Kind,
             _ shouldFlushOnStart: Bool,
@@ -559,14 +559,14 @@ extension ChatClient {
                 shouldShowShadowedMessages: $5
             )
         }
-        
+
         var requestEncoderBuilder: (_ baseURL: URL, _ apiKey: APIKey) -> RequestEncoder = DefaultRequestEncoder.init
         var requestDecoderBuilder: () -> RequestDecoder = DefaultRequestDecoder.init
-        
+
         var eventDecoderBuilder: () -> EventDecoder = EventDecoder.init
-        
+
         var notificationCenterBuilder = EventNotificationCenter.init
-        
+
         var internetConnection: (_ center: NotificationCenter, _ monitor: InternetConnectionMonitor) -> InternetConnection = {
             InternetConnection(notificationCenter: $0, monitor: $1)
         }
@@ -598,11 +598,11 @@ extension ChatClient {
                 #endif
             }
         }
-        
+
         var timerType: Timer.Type = DefaultTimer.self
-        
+
         var tokenExpirationRetryStrategy: RetryStrategy = DefaultRetryStrategy()
-        
+
         var connectionRecoveryHandlerBuilder: (
             _ webSocketClient: WebSocketClient,
             _ eventNotificationCenter: EventNotificationCenter,
@@ -650,14 +650,14 @@ extension ChatClient {
         ) -> CallRepository = {
             CallRepository(apiClient: $0)
         }
-        
+
         var messageRepositoryBuilder: (
             _ database: DatabaseContainer,
             _ apiClient: APIClient
         ) -> MessageRepository = {
             MessageRepository(database: $0, apiClient: $1)
         }
-        
+
         var offlineRequestsRepositoryBuilder: (
             _ messageRepository: MessageRepository,
             _ database: DatabaseContainer,
@@ -676,7 +676,7 @@ extension ClientError {
     public class MissingLocalStorageURL: ClientError {
         override public var localizedDescription: String { "The URL provided in ChatClientConfig is `nil`." }
     }
-    
+
     public class ConnectionNotSuccessful: ClientError {
         override public var localizedDescription: String {
             """
@@ -688,7 +688,7 @@ extension ClientError {
             """
         }
     }
-    
+
     public class MissingToken: ClientError {}
     class WaiterTimeout: ClientError {}
 
@@ -700,7 +700,7 @@ extension ClientError {
             """
         }
     }
-    
+
     public class ConnectionWasNotInitiated: ClientError {
         override public var localizedDescription: String {
             """
@@ -709,7 +709,7 @@ extension ClientError {
             """
         }
     }
-    
+
     public class ClientHasBeenDeallocated: ClientError {
         override public var localizedDescription: String {
             "ChatClient has been deallocated, make sure to keep at least one strong reference to it."

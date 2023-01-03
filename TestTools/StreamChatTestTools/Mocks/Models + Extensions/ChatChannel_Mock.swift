@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -115,7 +115,7 @@ public extension ChatChannel {
             underlyingContext: nil
         )
     }
-    
+
     /// Creates a new `ChatChannel` object for  from the provided data.
     static func mockDMChannel(
         name: String? = nil,
@@ -168,7 +168,7 @@ public extension ChatChannel {
             underlyingContext: nil
         )
     }
-    
+
     /// Creates a new `ChatChannel` object for  from the provided data.
     static func mockNonDMChannel(
         name: String? = nil,

@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -9,16 +9,16 @@ import Foundation
 public struct UnknownChannelEvent: Event, Hashable {
     /// An event type.
     public let type: EventType
-    
+
     /// A channel identifier the event is observed in.
     public let cid: ChannelId
-    
+
     /// A user identifier the event is sent by.
     public let userId: UserId
-    
+
     /// An event creation date.
     public let createdAt: Date
-    
+
     /// A dictionary containing the entire event JSON.
     public let payload: [String: RawJSON]
 }
@@ -28,7 +28,7 @@ public struct UnknownChannelEvent: Event, Hashable {
 extension UnknownChannelEvent: Decodable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: EventPayload.CodingKeys.self)
-        
+
         self.init(
             type: try container.decode(EventType.self, forKey: .eventType),
             cid: try container.decode(ChannelId.self, forKey: .cid),
@@ -54,7 +54,7 @@ public extension UnknownChannelEvent {
             let payloadData = try? JSONEncoder.default.encode(payload),
             let payload = try? JSONDecoder.default.decode(T.self, from: payloadData)
         else { return nil }
-        
+
         return payload
     }
 }

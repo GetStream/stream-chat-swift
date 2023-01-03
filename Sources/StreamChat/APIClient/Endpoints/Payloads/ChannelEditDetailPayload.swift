@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -32,7 +32,7 @@ struct ChannelEditDetailPayload: Encodable {
         self.invites = invites
         self.extraData = extraData
     }
-    
+
     init(
         type: ChannelType,
         name: String?,
@@ -67,7 +67,7 @@ struct ChannelEditDetailPayload: Encodable {
         if !allMembers.isEmpty {
             try container.encode(allMembers, forKey: .members)
         }
-        
+
         try container.encodeIfPresent(name, forKey: .name)
         try container.encodeIfPresent(imageURL, forKey: .imageURL)
 

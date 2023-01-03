@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -12,13 +12,13 @@ final class ChatChannelUnreadCountView_Tests: XCTestCase {
         let view = ChatChannelUnreadCountView().withoutAutoresizingMaskConstraints
         AssertSnapshot(view)
     }
-    
+
     func test_defaultAppearance() {
         let view = ChatChannelUnreadCountView().withoutAutoresizingMaskConstraints
-        
+
         view.content = .mock(messages: 10)
         AssertSnapshot(view, suffix: "2digits")
-        
+
         view.content = .mock(messages: 100)
         AssertSnapshot(view, suffix: "3digits")
     }

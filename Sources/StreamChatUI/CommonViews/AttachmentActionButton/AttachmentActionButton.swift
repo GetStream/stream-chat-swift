@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -13,44 +13,44 @@ open class AttachmentActionButton: _Button, AppearanceProvider {
         case restart
         case cancel
     }
-    
+
     /// The content this button displays
     open var content: Content? {
         didSet { updateContentIfNeeded() }
     }
-    
+
     /// The button size. It's 24x24 by default
     open var size: CGSize {
         .init(width: 24, height: 24)
     }
-    
+
     override open func setUpLayout() {
         super.setUpLayout()
-        
+
         contentEdgeInsets = .init(top: 6, left: 6, bottom: 6, right: 6)
         pin(anchors: [.width], to: size.width)
         pin(anchors: [.height], to: size.height)
     }
-    
+
     override open func setUpAppearance() {
         super.setUpAppearance()
-        
+
         imageView?.contentMode = .scaleAspectFit
     }
-    
+
     override open func layoutSubviews() {
         super.layoutSubviews()
-        
+
         layer.cornerRadius = min(bounds.width, bounds.height) / 2
     }
-    
+
     override open func updateContent() {
         super.updateContent()
-        
+
         backgroundColor = content.map { _ in
             appearance.colorPalette.background4.withAlphaComponent(0.6)
         }
-        
+
         let image: UIImage? = content.flatMap {
             switch $0 {
             case .uploaded:

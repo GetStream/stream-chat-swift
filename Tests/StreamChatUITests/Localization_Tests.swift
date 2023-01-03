@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -10,7 +10,7 @@ import XCTest
 final class Localization_Tests: XCTestCase {
     /// Testing bundle which should be empty.
     private var testBundle: Bundle!
-    
+
     override func setUp() {
         super.setUp()
         testBundle = Bundle(for: Self.self)
@@ -19,13 +19,13 @@ final class Localization_Tests: XCTestCase {
             self.testBundle.localizedString(forKey: key, value: nil, table: "TestLocalizable")
         }
     }
-    
+
     func test_localizationProviderAssignment_ChangesLocalizationForBundle() {
         // Setup some component which shows localization
         let channel: ChatChannel = .mock(cid: .unique)
         let itemView = ChatChannelListItemView()
         itemView.content = .init(channel: channel, currentUserId: nil)
-        
+
         // Test if the text is from bundle with different localization text for same language.
         XCTAssertEqual(
             itemView.subtitleText,

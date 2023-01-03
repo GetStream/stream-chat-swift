@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -7,13 +7,13 @@ import UIKit
 
 final class BannerShowingConnectionDelegate {
     // MARK: - Private Properties
-    
+
     private let view: UIView
     private let bannerView = BannerView()
     private let bannerAppearanceDuration: TimeInterval = 0.5
-    
+
     // MARK: -
-    
+
     init(showUnder view: UIView) {
         self.view = view
         setupViews()
@@ -48,12 +48,12 @@ private extension BannerShowingConnectionDelegate {
         bannerView.alpha = 0
         bannerView.update(text: "Connecting...")
     }
-    
+
     func attachToTopViewIfNeeded() {
         guard bannerView.superview != view else { return }
-        
+
         view.addSubview(bannerView)
-        
+
         bannerView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate(
             [
@@ -63,16 +63,16 @@ private extension BannerShowingConnectionDelegate {
             ]
         )
     }
-    
+
     func showBanner() {
         attachToTopViewIfNeeded()
         animateBannerAlpha(to: 1)
     }
-    
+
     func hideBanner() {
         animateBannerAlpha(to: 0)
     }
-    
+
     func animateBannerAlpha(to value: CGFloat) {
         UIView.animate(withDuration: bannerAppearanceDuration) {
             self.bannerView.alpha = value

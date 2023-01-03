@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -8,7 +8,7 @@ import Foundation
 struct UserWatchingEventMiddleware: EventMiddleware {
     func handle(event: Event, session: DatabaseSession) -> Event? {
         guard let userWatchingEvent = event as? UserWatchingEventDTO else { return event }
-        
+
         do {
             guard let channelDTO = session.channel(cid: userWatchingEvent.cid) else {
                 let currentUserId = session.currentUser?.user.id
@@ -27,11 +27,11 @@ struct UserWatchingEventMiddleware: EventMiddleware {
             }
 
             channelDTO.watcherCount = Int64(userWatchingEvent.watcherCount)
-            
+
             guard let userDTO = session.user(id: userWatchingEvent.user.id) else {
                 throw ClientError.UserDoesNotExist(userId: userWatchingEvent.user.id)
             }
-            
+
             if userWatchingEvent.isStarted {
                 channelDTO.watchers.insert(userDTO)
             } else {

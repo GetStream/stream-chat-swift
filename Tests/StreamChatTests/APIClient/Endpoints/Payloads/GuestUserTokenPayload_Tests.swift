@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -34,7 +34,7 @@ final class GuestUserTokenPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.user.role, .guest)
         XCTAssertTrue(payload.user.isOnline)
     }
-    
+
     func test_guestUserCustomExtraData_isSerialized() throws {
         let payload = try JSONDecoder.default.decode(GuestUserTokenPayload.self, from: guestUserCustomExtraDataJSON)
 

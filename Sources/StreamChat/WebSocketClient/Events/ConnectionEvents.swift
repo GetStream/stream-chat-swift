@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -10,18 +10,18 @@ public protocol ConnectionEvent: Event {
 
 public class HealthCheckEvent: ConnectionEvent, EventDTO {
     public let connectionId: String
-    
+
     let payload: EventPayload
-    
+
     init(from eventResponse: EventPayload) throws {
         guard let connectionId = eventResponse.connectionId else {
             throw ClientError.EventDecoding(missingValue: "connectionId", for: Self.self)
         }
-        
+
         self.connectionId = connectionId
         payload = eventResponse
     }
-    
+
     init(connectionId: String) {
         self.connectionId = connectionId
         payload = EventPayload(
@@ -39,10 +39,10 @@ public class HealthCheckEvent: ConnectionEvent, EventDTO {
 public struct ConnectionStatusUpdated: Event {
     /// The current connection status of `Client`
     public let connectionStatus: ConnectionStatus
-    
+
     // Underlying WebSocketConnectionState
     let webSocketConnectionState: WebSocketConnectionState
-    
+
     init(webSocketConnectionState: WebSocketConnectionState) {
         connectionStatus = .init(webSocketConnectionState: webSocketConnectionState)
         self.webSocketConnectionState = webSocketConnectionState

@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -38,13 +38,13 @@ final class WebSocketConnectPayload_Tests: XCTestCase {
         ]
         AssertJSONEqual(serialized, expected)
     }
-    
+
     func test_EncodesWebSocket_whenConnectPayloadHasNoImage() throws {
         let custom: [String: RawJSON] = [
             "color": .string("blue")
         ]
         let payload = WebSocketConnectPayload(userInfo: .init(id: "tommaso", name: "tommaso", imageURL: nil, extraData: custom))
-        
+
         let serialized = try JSONEncoder.stream.encode(payload)
         let expected: [String: Any] = [
             "user_id": payload.userDetails.id,

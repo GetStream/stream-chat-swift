@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -100,7 +100,7 @@ extension StreamChatWrapper {
         }
 
         client.logout(completion: completion)
-        
+
         self.client = nil
     }
 }

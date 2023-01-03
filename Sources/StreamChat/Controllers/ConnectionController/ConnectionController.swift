@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -32,7 +32,7 @@ public class ChatConnectionController: Controller, DelegateCallable, DataStorePr
         _basePublishers = BasePublishers(controller: self)
         return _basePublishers as? BasePublishers ?? .init(controller: self)
     }
-    
+
     /// The current connection status of the client.
     ///
     /// To observe changes of the connection status, set your class as a delegate of this controller or use the provided
@@ -41,7 +41,7 @@ public class ChatConnectionController: Controller, DelegateCallable, DataStorePr
     public var connectionStatus: ConnectionStatus {
         client.connectionStatus
     }
-    
+
     /// The connection event observer for the connection status updates.
     private var connectionEventObserver: ConnectionEventObserver?
 
@@ -66,7 +66,7 @@ public class ChatConnectionController: Controller, DelegateCallable, DataStorePr
         self.client = client
         connectionEventObserver = setupObserver()
     }
-    
+
     private func setupObserver() -> ConnectionEventObserver? {
         guard let webSocketClient = webSocketClient else { return nil }
         let observer = ConnectionEventObserver(

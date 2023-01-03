@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -11,12 +11,12 @@ import XCTest
 final class ChatFileAttachmentListView_Tests: XCTestCase {
     private var fileAttachmentListView: ChatMessageFileAttachmentListView!
     private var vc: UIViewController!
-    
+
     override func setUp() {
         super.setUp()
         fileAttachmentListView = ChatMessageFileAttachmentListView().withoutAutoresizingMaskConstraints
     }
-    
+
     override func tearDown() {
         fileAttachmentListView = nil
 
@@ -42,7 +42,7 @@ final class ChatFileAttachmentListView_Tests: XCTestCase {
         ]
         AssertSnapshot(fileAttachmentListView, variants: [.defaultLight])
     }
-    
+
     func test_appearance_five_attachments() {
         fileAttachmentListView.content = [
             .mock(
@@ -75,7 +75,7 @@ final class ChatFileAttachmentListView_Tests: XCTestCase {
         ]
         AssertSnapshot(fileAttachmentListView, variants: [.defaultLight])
     }
-    
+
     func test_appearanceCustomization_usingSubclassing() {
         class TestView: ChatMessageFileAttachmentListView {
             override func setUpLayout() {
@@ -87,7 +87,7 @@ final class ChatFileAttachmentListView_Tests: XCTestCase {
         }
 
         let fileAttachmentListView = TestView().withoutAutoresizingMaskConstraints
-        
+
         fileAttachmentListView.content = [
             .mock(
                 id: .unique

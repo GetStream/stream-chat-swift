@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -110,11 +110,11 @@ extension AppearanceProvider where Self: _View {
 open class _View: UIView, Customizable, AccessibilityView {
     // Flag for preventing multiple lifecycle methods calls.
     fileprivate var isInitialized: Bool = false
-    
+
     override open func didMoveToSuperview() {
         super.didMoveToSuperview()
         guard !isInitialized, superview != nil else { return }
-        
+
         isInitialized = true
 
         setAccessibilityIdentifier()
@@ -123,7 +123,7 @@ open class _View: UIView, Customizable, AccessibilityView {
         setUpAppearance()
         updateContent()
     }
-    
+
     open func setUp() { /* default empty implementation */ }
     open func setUpAppearance() { setNeedsLayout() }
     open func setUpLayout() { setNeedsLayout() }
@@ -152,11 +152,11 @@ open class _View: UIView, Customizable, AccessibilityView {
 open class _CollectionViewCell: UICollectionViewCell, Customizable, AccessibilityView {
     // Flag for preventing multiple lifecycle methods calls.
     private var isInitialized: Bool = false
-    
+
     override open func didMoveToSuperview() {
         super.didMoveToSuperview()
         guard !isInitialized, superview != nil else { return }
-        
+
         isInitialized = true
 
         setAccessibilityIdentifier()
@@ -165,7 +165,7 @@ open class _CollectionViewCell: UICollectionViewCell, Customizable, Accessibilit
         setUpAppearance()
         updateContent()
     }
-    
+
     open func setUp() { /* default empty implementation */ }
     open func setUpAppearance() { setNeedsLayout() }
     open func setUpLayout() { setNeedsLayout() }
@@ -236,11 +236,11 @@ open class _CollectionReusableView: UICollectionReusableView, Customizable, Acce
 open class _Control: UIControl, Customizable, AccessibilityView {
     // Flag for preventing multiple lifecycle methods calls.
     private var isInitialized: Bool = false
-    
+
     override open func didMoveToSuperview() {
         super.didMoveToSuperview()
         guard !isInitialized, superview != nil else { return }
-        
+
         isInitialized = true
 
         setAccessibilityIdentifier()
@@ -249,7 +249,7 @@ open class _Control: UIControl, Customizable, AccessibilityView {
         setUpAppearance()
         updateContent()
     }
-    
+
     open func setUp() { /* default empty implementation */ }
     open func setUpAppearance() { setNeedsLayout() }
     open func setUpLayout() { setNeedsLayout() }
@@ -278,11 +278,11 @@ open class _Control: UIControl, Customizable, AccessibilityView {
 open class _Button: UIButton, Customizable, AccessibilityView {
     // Flag for preventing multiple lifecycle methods calls.
     private var isInitialized: Bool = false
-    
+
     override open func didMoveToSuperview() {
         super.didMoveToSuperview()
         guard !isInitialized, superview != nil else { return }
-        
+
         isInitialized = true
 
         setAccessibilityIdentifier()
@@ -291,7 +291,7 @@ open class _Button: UIButton, Customizable, AccessibilityView {
         setUpAppearance()
         updateContent()
     }
-    
+
     open func setUp() { /* default empty implementation */ }
     open func setUpAppearance() { setNeedsLayout() }
     open func setUpLayout() { setNeedsLayout() }
@@ -320,11 +320,11 @@ open class _Button: UIButton, Customizable, AccessibilityView {
 open class _NavigationBar: UINavigationBar, Customizable, AccessibilityView {
     // Flag for preventing multiple lifecycle methods calls.
     private var isInitialized: Bool = false
-    
+
     override open func didMoveToSuperview() {
         super.didMoveToSuperview()
         guard !isInitialized, superview != nil else { return }
-        
+
         isInitialized = true
 
         setAccessibilityIdentifier()
@@ -333,7 +333,7 @@ open class _NavigationBar: UINavigationBar, Customizable, AccessibilityView {
         setUpAppearance()
         updateContent()
     }
-    
+
     open func setUp() { /* default empty implementation */ }
     open func setUpAppearance() { setNeedsLayout() }
     open func setUpLayout() { setNeedsLayout() }
@@ -365,24 +365,24 @@ open class _ViewController: UIViewController, Customizable {
         // To prevent responder chain from being cutoff during `ViewController` lifecycle we fallback to parent.
         super.next ?? parent
     }
-    
+
     override open func viewDidLoad() {
         super.viewDidLoad()
-        
+
         setUp()
         setUpLayout()
         setUpAppearance()
         updateContent()
     }
-    
+
     /**
      A function that will be called on first launch of the `View` it's a function that can be used
      for any initial setup work required by the `View` such as setting delegates or data sources
-     
+
      `setUp()` is an important function within the ViewController lifecycle
      Its responsibility is to set the delegates and also call `synchronize()`
      this will make sure your local & remote data is in sync.
-     
+
      - Important: If you override this method without calling `super.setUp()`, it's essential
      to make sure `synchronize()` is called.
      */

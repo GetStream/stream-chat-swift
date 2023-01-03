@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -11,11 +11,11 @@ struct ChannelListPayload: Decodable {
 
 struct ChannelPayload {
     let channel: ChannelDetailPayload
-    
+
     let watcherCount: Int?
-    
+
     let watchers: [UserPayload]?
-    
+
     let members: [MemberPayload]
 
     let membership: MemberPayload?
@@ -23,9 +23,9 @@ struct ChannelPayload {
     let messages: [MessagePayload]
 
     let pinnedMessages: [MessagePayload]
-    
+
     let channelReads: [ChannelReadPayload]
-    
+
     let isHidden: Bool?
 }
 
@@ -33,7 +33,7 @@ extension ChannelPayload {
     /// Returns the newest message from `messages` in O(1) assuming messages are sorted by `createdAt`.
     var newestMessage: MessagePayload? {
         guard let first = messages.first, let last = messages.last else { return nil }
-        
+
         return first.createdAt > last.createdAt ? first : last
     }
 }
@@ -50,10 +50,10 @@ extension ChannelPayload: Decodable {
         case watcherCount = "watcher_count"
         case hidden
     }
-    
+
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        
+
         self.init(
             channel: try container.decode(ChannelDetailPayload.self, forKey: .channel),
             watcherCount: try container.decodeIfPresent(Int.self, forKey: .watcherCount),
@@ -70,16 +70,16 @@ extension ChannelPayload: Decodable {
 
 struct ChannelDetailPayload {
     let cid: ChannelId
-    
+
     let name: String?
-    
+
     let imageURL: URL?
-    
+
     let extraData: [String: RawJSON]
 
     /// A channel type.
     let typeRawValue: String
-    
+
     /// The last message date.
     let lastMessageAt: Date?
     /// A channel created date.
@@ -90,7 +90,7 @@ struct ChannelDetailPayload {
     let updatedAt: Date
     /// A channel truncated date.
     let truncatedAt: Date?
-    
+
     /// A creator of the channel.
     let createdBy: UserPayload?
     /// A config.
@@ -100,24 +100,24 @@ struct ChannelDetailPayload {
     let ownCapabilities: [String]?
     /// Checks if the channel is frozen.
     let isFrozen: Bool
-    
+
     /// Checks if the channel is hidden.
     /// Backend only sends this field for `QueryChannel` and `QueryChannels` API calls,
     /// but not for events.
     /// Missing `hidden` field doesn't mean `false` for this reason.
     let isHidden: Bool?
-    
+
     let members: [MemberPayload]?
-    
+
     let memberCount: Int
-    
+
     /// A list of users to invite in the channel.
     let invitedMembers: [MemberPayload] = [] // TODO?
-    
+
     /// The team the channel belongs to. You need to enable multi-tenancy if you want to use this, else it'll be nil.
     /// Refer to [docs](https://getstream.io/chat/docs/multi_tenant_chat/?language=swift) for more info.
     let team: TeamId?
-    
+
     /// Cooldown duration for the channel, if it's in slow mode.
     /// This value will be 0 if the channel is not in slow mode.
     let cooldownDuration: Int
@@ -126,7 +126,7 @@ struct ChannelDetailPayload {
 extension ChannelDetailPayload: Decodable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: ChannelCodingKeys.self)
-         
+
         let extraData: [String: RawJSON]
         if var payload = try? [String: RawJSON](from: decoder) {
             payload.removeValues(forKeys: ChannelCodingKeys.allCases.map(\.rawValue))
@@ -134,7 +134,7 @@ extension ChannelDetailPayload: Decodable {
         } else {
             extraData = [:]
         }
-        
+
         self.init(
             cid: try container.decode(ChannelId.self, forKey: .cid),
             name: try container.decodeIfPresent(String.self, forKey: .name),
@@ -170,7 +170,7 @@ struct ChannelReadPayload: Decodable {
         case lastReadAt = "last_read"
         case unreadMessagesCount = "unread_messages"
     }
-    
+
     /// A user (see `User`).
     let user: UserPayload
     /// A last read date by the user.
@@ -198,7 +198,7 @@ public class ChannelConfig: Codable {
         case createdAt = "created_at"
         case updatedAt = "updated_at"
     }
-    
+
     /// If users are allowed to add reactions to messages. Enabled by default.
     public let reactionsEnabled: Bool
     /// Controls if typing indicators are shown. Enabled by default.
@@ -229,7 +229,7 @@ public class ChannelConfig: Codable {
     public let createdAt: Date
     /// A channel updated date.
     public let updatedAt: Date
-        
+
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         reactionsEnabled = try container.decode(Bool.self, forKey: .reactionsEnabled)
@@ -249,11 +249,11 @@ public class ChannelConfig: Codable {
         // and it'll be removed soon.
         // TODO: Remove this line of code when backend stops sending the `flag` command
         self.commands = commands.filter { $0.name != "flag" }
-        
+
         createdAt = try container.decode(Date.self, forKey: .createdAt)
         updatedAt = try container.decode(Date.self, forKey: .updatedAt)
     }
-    
+
     internal required init(
         reactionsEnabled: Bool = false,
         typingEventsEnabled: Bool = false,

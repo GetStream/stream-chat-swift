@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -21,10 +21,10 @@ extension ChatClient {
 public class ChatUserSearchController: DataController, DelegateCallable, DataStoreProvider {
     /// The `ChatClient` instance this controller belongs to.
     public let client: ChatClient
-    
+
     /// Copy of last search query made, used for getting next page.
     private(set) var query: UserListQuery?
-    
+
     /// The users matching the last query of this controller.
     private var _users: [ChatUser] = []
     public var userArray: [ChatUser] {
@@ -42,19 +42,19 @@ public class ChatUserSearchController: DataController, DelegateCallable, DataSto
             client.databaseContainer,
             client.apiClient
         )
-    
+
     /// A type-erased delegate.
     var multicastDelegate: MulticastDelegate<ChatUserSearchControllerDelegate> = .init() {
         didSet {
             stateMulticastDelegate.set(mainDelegate: multicastDelegate.mainDelegate)
             stateMulticastDelegate.set(additionalDelegates: multicastDelegate.additionalDelegates)
-            
+
             setLocalDataFetchedStateIfNeeded()
         }
     }
-    
+
     private let environment: Environment
-    
+
     init(client: ChatClient, environment: Environment = .init()) {
         self.client = client
         self.environment = environment
@@ -74,7 +74,7 @@ public class ChatUserSearchController: DataController, DelegateCallable, DataSto
     public func search(term: String?, completion: ((_ error: Error?) -> Void)? = nil) {
         fetch(.search(term: term), completion: completion)
     }
-    
+
     /// Searches users for the given query.
     ///
     /// When this function is called, `users` property of this controller will refresh with new users matching the term.
@@ -89,7 +89,7 @@ public class ChatUserSearchController: DataController, DelegateCallable, DataSto
     public func search(query: UserListQuery, completion: ((_ error: Error?) -> Void)? = nil) {
         fetch(query, completion: completion)
     }
-    
+
     /// Loads next users from backend.
     ///
     /// - Parameters:
@@ -105,10 +105,10 @@ public class ChatUserSearchController: DataController, DelegateCallable, DataSto
             completion?(ClientError("You should make a search before calling for next page."))
             return
         }
-        
+
         var updatedQuery = lastQuery
         updatedQuery.pagination = Pagination(pageSize: limit, offset: userArray.count)
-        
+
         fetch(updatedQuery, completion: completion)
     }
 }
@@ -125,7 +125,7 @@ private extension ChatUserSearchController {
         // This is needed to make the delegate fire about state changes at the same time with the same
         // values as it was when query was persisted.
         setLocalDataFetchedStateIfNeeded()
-        
+
         userQueryUpdater.fetch(userListQuery: query) { [weak self] result in
             switch result {
             case let .success(page):
@@ -134,13 +134,13 @@ private extension ChatUserSearchController {
                         loadedPage: loadedUsers,
                         updatePolicy: query.pagination?.offset == 0 ? .replace : .merge
                     )
-                    
+
                     self?.query = query
                     if let listChanges = listChanges, let users = self?.userList(after: listChanges) {
                         self?._users = users
                     }
                     self?.state = .remoteDataFetched
-                    
+
                     self?.callback {
                         self?.multicastDelegate.invoke {
                             guard let self = self, let listChanges = listChanges else { return }
@@ -155,7 +155,7 @@ private extension ChatUserSearchController {
             }
         }
     }
-    
+
     /// Saves the given payload to the database and returns database independent models.
     ///
     /// - Parameters:
@@ -163,17 +163,17 @@ private extension ChatUserSearchController {
     ///   - completion: The completion that will be called with user models when database write is completed.
     func save(page: UserListPayload, completion: @escaping ([ChatUser]) -> Void) {
         var loadedUsers: [ChatUser] = []
-        
+
         client.databaseContainer.write({ session in
             loadedUsers = page
                 .users
                 .compactMap { try? session.saveUser(payload: $0).asModel() }
-            
+
         }, completion: { _ in
             completion(loadedUsers)
         })
     }
-    
+
     /// Creates the list of changes based on current list, the new page, and the policy.
     ///
     /// - Parameters:
@@ -186,21 +186,21 @@ private extension ChatUserSearchController {
             let deletions = userArray.enumerated().reversed().map { (index, user) in
                 ListChange.remove(user, index: .init(item: index, section: 0))
             }
-            
+
             let insertions = loadedPage.enumerated().map { (index, user) in
                 ListChange.insert(user, index: .init(item: index, section: 0))
             }
-            
+
             return deletions + insertions
         case .merge:
             let insertions = loadedPage.enumerated().map { (index, user) in
                 ListChange.insert(user, index: .init(item: index + userArray.count, section: 0))
             }
-            
+
             return insertions
         }
     }
-    
+
     /// Applies the given changes to the current list of users and returns the updated list.
     ///
     /// - Parameter changes: The changes to apply.
@@ -208,7 +208,7 @@ private extension ChatUserSearchController {
     ///
     func userList(after changes: [ListChange<ChatUser>]) -> [ChatUser] {
         var users = _users
-        
+
         for change in changes {
             switch change {
             case let .insert(user, indexPath):
@@ -219,14 +219,14 @@ private extension ChatUserSearchController {
                 log.assertionFailure("Unsupported list change observed: \(change)")
             }
         }
-        
+
         return users
     }
-    
+
     /// Sets state to `localDataFetched` if current state is `initialized`.
     func setLocalDataFetchedStateIfNeeded() {
         guard state == .initialized else { return }
-            
+
         state = .localDataFetched
     }
 }
@@ -237,7 +237,7 @@ extension ChatUserSearchController {
             _ database: DatabaseContainer,
             _ apiClient: APIClient
         ) -> UserListUpdater = UserListUpdater.init
-        
+
         var createUserListDatabaseObserver: (
             _ context: NSManagedObjectContext,
             _ fetchRequest: NSFetchRequest<UserDTO>,

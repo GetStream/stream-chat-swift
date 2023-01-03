@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -13,11 +13,11 @@ final class ChatChannelListCollectionViewCell_Tests: XCTestCase {
     func test_isHighlighted() {
         let view = ChatChannelListCollectionViewCell().withoutAutoresizingMaskConstraints
         view.executeLifecycleMethods()
-        
+
         XCTAssertEqual(view.appearance.colorPalette.background, view.itemView.backgroundColor)
-        
+
         view.isHighlighted = true
-        
+
         XCTAssertEqual(view.appearance.colorPalette.highlightedBackground, view.itemView.backgroundColor)
     }
 }

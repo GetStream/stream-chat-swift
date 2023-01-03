@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -12,19 +12,19 @@ final class MessageEditor_Tests: XCTestCase {
     var database: DatabaseContainer_Spy!
     var messageRepository: MessageRepository_Mock!
     var editor: MessageEditor!
-    
+
     // MARK: - Setup
-    
+
     override func setUp() {
         super.setUp()
-        
+
         webSocketClient = WebSocketClient_Mock()
         apiClient = APIClient_Spy()
         database = DatabaseContainer_Spy()
         messageRepository = MessageRepository_Mock(database: database, apiClient: apiClient)
         editor = MessageEditor(messageRepository: messageRepository, database: database, apiClient: apiClient)
     }
-    
+
     override func tearDown() {
         apiClient.cleanUp()
         messageRepository.clear()
@@ -44,21 +44,21 @@ final class MessageEditor_Tests: XCTestCase {
 
         super.tearDown()
     }
-    
+
     // MARK: - Tests
-    
+
     func test_editorSyncsMessage_withPendingSyncLocalState() throws {
         let currentUserId: UserId = .unique
         let message1Id: MessageId = .unique
         let message2Id: MessageId = .unique
-        
+
         // Create current user in the database
         try database.createCurrentUser(id: currentUserId)
-        
+
         // Create 2 messages in the DB, only message 1 has `.pendingSync` local state
         try database.createMessage(id: message1Id, authorId: currentUserId, localState: .pendingSync)
         try database.createMessage(id: message2Id, authorId: currentUserId, localState: nil)
-        
+
         let message1Payload: MessageRequestBody = try XCTUnwrap(
             database.viewContext.message(id: message1Id)?
                 .asRequestBody()
@@ -80,14 +80,14 @@ final class MessageEditor_Tests: XCTestCase {
 
         XCTAssertCall("updateMessage(withID:localState:isBounced:completion:)", on: messageRepository, times: 1)
     }
-    
+
     func test_editor_changesMessageStates_whenSyncingSucceeds() throws {
         let currentUserId: UserId = .unique
         let messageId: MessageId = .unique
-       
+
         // Create current user in the database
         try database.createCurrentUser(id: currentUserId)
-        
+
         // Create a messages in the DB in `.pendingSync` state
         try database.createMessage(id: messageId, authorId: currentUserId, localState: .pendingSync)
 
@@ -97,48 +97,48 @@ final class MessageEditor_Tests: XCTestCase {
 
         // Wait for the API call to be initiated
         AssertAsync.willBeTrue(apiClient.request_endpoint != nil)
-        
+
         // Simulate successfull API response
         let callback = apiClient.request_completion as! (Result<EmptyResponse, Error>) -> Void
         callback(.success(.init()))
-        
+
         // Check the state is eventually changed to `nil`
         AssertAsync.willBeEqual(messageRepository.updatedMessageLocalState, nil)
         XCTAssertCall("updateMessage(withID:localState:isBounced:completion:)", on: messageRepository, times: 2)
     }
-    
+
     func test_editor_changesMessageStates_whenSyncingFails() throws {
         let currentUserId: UserId = .unique
         let messageId: MessageId = .unique
-        
+
         // Create current user in the database
         try database.createCurrentUser(id: currentUserId)
-        
+
         // Create a messages in the DB in `.pendingSync` state
         try database.createMessage(id: messageId, authorId: currentUserId, localState: .pendingSync)
-        
+
         // Check the state is eventually changed to `syncing`
         AssertAsync.willBeEqual(messageRepository.updatedMessageLocalState, .syncing)
         XCTAssertCall("updateMessage(withID:localState:isBounced:completion:)", on: messageRepository, times: 1)
 
         // Wait for the API call to be initiated
         AssertAsync.willBeTrue(apiClient.request_endpoint != nil)
-        
+
         // Simulate API response with the error
         apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(TestError()))
-        
+
         // Check the state is eventually changed to `syncingFailed`
         AssertAsync.willBeEqual(messageRepository.updatedMessageLocalState, .syncingFailed)
         XCTAssertCall("updateMessage(withID:localState:isBounced:completion:)", on: messageRepository, times: 2)
     }
-    
+
     func test_editor_doesNotRetainItself() throws {
         let currentUserId: UserId = .unique
         let messageId: MessageId = .unique
-        
+
         // Create current user in the database
         try database.createCurrentUser(id: currentUserId)
-        
+
         // Create a messages in the DB in `.pendingSync` state
         try database.createMessage(id: messageId, authorId: currentUserId, localState: .pendingSync)
 
@@ -148,7 +148,7 @@ final class MessageEditor_Tests: XCTestCase {
             // API call is initiated
             Assert.willBeTrue(self.apiClient.request_endpoint != nil)
         }
-        
+
         XCTAssertCall("updateMessage(withID:localState:isBounced:completion:)", on: messageRepository, times: 1)
         // Assert editor can be released even though response hasn't come yet
         AssertAsync.canBeReleased(&editor)

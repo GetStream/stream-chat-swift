@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -8,13 +8,13 @@ struct MemberContainerPayload: Decodable {
     let member: MemberPayload?
     let invite: MemberInvitePayload?
     let memberRole: MemberRolePayload?
-    
+
     init(from decoder: Decoder) throws {
         member = try? .init(from: decoder)
         invite = try? .init(from: decoder)
         memberRole = try? .init(from: decoder)
     }
-    
+
     init(
         member: MemberPayload?,
         invite: MemberInvitePayload?,
@@ -62,7 +62,7 @@ struct MemberPayload: Decodable {
     let inviteAcceptedAt: Date?
     /// A date when an invited was rejected.
     let inviteRejectedAt: Date?
-    
+
     init(
         user: UserPayload?,
         userId: String,
@@ -117,7 +117,7 @@ struct MemberInvitePayload: Decodable {
         case inviteAcceptedAt = "invite_accepted_at"
         case inviteRejectedAt = "invite_rejected_at"
     }
-    
+
     let role: MemberRole
     /// Checks if he was invited.
     let isInvited: Bool?

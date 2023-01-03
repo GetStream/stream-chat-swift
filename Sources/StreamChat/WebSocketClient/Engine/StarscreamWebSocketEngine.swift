@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -9,39 +9,39 @@ class StarscreamWebSocketProvider: WebSocketEngine {
     var request: URLRequest { webSocket.request }
     var callbackQueue: DispatchQueue { webSocket.callbackQueue }
     weak var delegate: WebSocketEngineDelegate?
-        
+
     required init(request: URLRequest, sessionConfiguration: URLSessionConfiguration, callbackQueue: DispatchQueue) {
         // Starscream doesn't support taking session configuration as a parameter se we need to copy
         // the headers manually.
         let requestHeaders = request.allHTTPHeaderFields ?? [:]
         let sessionHeaders = sessionConfiguration.httpAdditionalHeaders as? [String: String] ?? [:]
-            
+
         let allHeaders = requestHeaders.merging(sessionHeaders, uniquingKeysWith: { fromRequest, _ in
             // In case of duplicity, use the request header value
             fromRequest
         })
-            
+
         var request = request
         request.allHTTPHeaderFields = allHeaders
-            
+
         webSocket = WebSocket(request: request)
         webSocket.delegate = self
         webSocket.callbackQueue = callbackQueue
     }
-        
+
     func connect() {
         webSocket.connect()
     }
-        
+
     func disconnect() {
         webSocket.disconnect()
     }
-        
+
     func sendPing() {
         webSocket.write(ping: Data([]))
     }
 }
-    
+
 extension StarscreamWebSocketProvider: WebSocketDelegate {
     func didReceive(event: WebSocketEvent, client: WebSocket) {
         switch event {

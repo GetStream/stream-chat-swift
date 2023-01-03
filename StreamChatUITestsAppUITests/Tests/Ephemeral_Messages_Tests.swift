@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import XCTest
@@ -8,7 +8,7 @@ final class Ephemeral_Messages_Tests: StreamTestCase {
 
     func test_userObservesAnimatedGiphy_whenUserAddsGiphyMessage() throws {
         linkToScenario(withId: 67)
-        
+
         try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12,
                       "[CIS-2054] Giphy is not loaded")
 
@@ -27,7 +27,7 @@ final class Ephemeral_Messages_Tests: StreamTestCase {
 
     func test_userObservesAnimatedGiphy_whenParticipantAddsGiphyMessage() throws {
         linkToScenario(withId: 68)
-        
+
         try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12,
                       "[CIS-2054] Giphy is not loaded")
 
@@ -72,7 +72,7 @@ final class Ephemeral_Messages_Tests: StreamTestCase {
                 .assertMessageHasTimestamp(at: 1)
         }
     }
-    
+
     func test_channelListNotModified_whenEphemeralMessageShown() {
         linkToScenario(withId: 187)
 
@@ -91,7 +91,7 @@ final class Ephemeral_Messages_Tests: StreamTestCase {
             userRobot.assertLastMessageInChannelPreview("No messages")
         }
     }
-    
+
     func test_deliveryStatusHidden_whenEphemeralMessageShown() {
         linkToScenario(withId: 182)
 
@@ -109,7 +109,7 @@ final class Ephemeral_Messages_Tests: StreamTestCase {
                 .assertMessageReadCount(readBy: 0)
         }
     }
-    
+
     func test_deliveryStatusHidden_whenEphemeralMessageShownInThread() {
         linkToScenario(withId: 183)
 
@@ -128,10 +128,10 @@ final class Ephemeral_Messages_Tests: StreamTestCase {
                 .assertMessageReadCount(readBy: 0)
         }
     }
-    
+
     func test_userObservesAnimatedGiphy_afterAddingGiphyThroughComposerMenu() throws {
         linkToScenario(withId: 278)
-        
+
         try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12,
                       "[CIS-2054] Giphy is not loaded")
 

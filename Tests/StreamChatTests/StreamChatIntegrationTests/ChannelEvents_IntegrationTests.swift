@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -47,7 +47,7 @@ final class ChannelEventsIntegration_Tests: XCTestCase {
         let unwrappedEvent = try XCTUnwrap(event)
         let completionCalled = expectation(description: "completion called")
         client.eventNotificationCenter.process(unwrappedEvent) { completionCalled.fulfill() }
-        
+
         wait(for: [completionCalled], timeout: 1)
 
         AssertAsync {

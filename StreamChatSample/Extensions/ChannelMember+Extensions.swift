@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -21,14 +21,14 @@ func createMemberOnlineStatusInfoString(for member: ChatChannelMember) -> String
 func createMemberNameAndStatusInfoString(for member: ChatChannelMember, isCurrentUser: Bool) -> String {
     let name = member.name ?? "No name"
     let banIcon = member.isBanned ? "🚫" : ""
-    
+
     let nameInfo: String
     if isCurrentUser {
         nameInfo = "\(name) (You)"
     } else {
         nameInfo = name
     }
-    
+
     return [nameInfo, banIcon].joined(separator: " ")
 }
 

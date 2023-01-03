@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -23,7 +23,7 @@ public extension Appearance {
                 return UIImage.circleImage
             }
         }
-        
+
         // MARK: - General
 
         public var loadingIndicator: UIImage = loadImageSafely(with: "loading_indicator")
@@ -69,12 +69,12 @@ public extension Appearance {
         }()
 
         // MARK: - Message Receipts
-        
+
         public var messageDeliveryStatusSending: UIImage = loadImageSafely(with: "message_receipt_sending")
         public var messageDeliveryStatusSent: UIImage = loadImageSafely(with: "message_receipt_sent")
         public var messageDeliveryStatusRead: UIImage = loadImageSafely(with: "message_receipt_read")
         public var messageDeliveryStatusFailed: UIImage = loadImageSafely(with: "message_receipt_failed")
-        
+
         // MARK: - Reactions
 
         public var reactionLoveSmall: UIImage = loadImageSafely(with: "reaction_love_small")
@@ -228,10 +228,10 @@ public extension Appearance {
             }
             set { _fileAttachmentActionIcons = newValue }
         }
-        
+
         public var camera: UIImage = loadImageSafely(with: "camera")
         public var bigPlay: UIImage = loadImageSafely(with: "play_big")
-        
+
         public var play: UIImage = loadImageSafely(with: "play")
         public var pause: UIImage = loadImageSafely(with: "pause")
 

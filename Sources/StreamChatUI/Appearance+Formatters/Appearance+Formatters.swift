@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -26,10 +26,10 @@ public extension Appearance {
 
         /// A formatter that generates a name for the given channel.
         public var channelName: ChannelNameFormatter = DefaultChannelNameFormatter()
-        
+
         /// A formatter used for text Markdown
         public var markdownFormatter: MarkdownFormatter = DefaultMarkdownFormatter()
-        
+
         /// A boolean value that determines whether Markdown is active for messages to be formatted.
         public var isMarkdownEnabled = true
     }

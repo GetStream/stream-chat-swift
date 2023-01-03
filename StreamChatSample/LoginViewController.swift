@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import SwiftUI
@@ -12,17 +12,17 @@ class LoginViewController: UITableViewController {
     @IBOutlet var uiKitAndDelegatesCell: UITableViewCell!
     @IBOutlet var uiKitAndCombineCell: UITableViewCell!
     @IBOutlet var swiftUICell: UITableViewCell!
-    
+
     @IBOutlet var streamDesignCell: UITableViewCell!
-    
+
     func logIn() -> ChatClient {
         var config = ChatClientConfig(apiKey: APIKey(Configuration.apiKey))
         config.isLocalStorageEnabled = Configuration.isLocalStorageEnabled
         config.shouldFlushLocalStorageOnStart = Configuration.shouldFlushLocalStorageOnStart
         config.baseURL = Configuration.baseURL
-        
+
         let chatClient = ChatClient(config: config)
-        
+
         let completion: (Error?) -> Void = {
             guard let error = $0 else { return }
             DispatchQueue.main.async {
@@ -32,7 +32,7 @@ class LoginViewController: UITableViewController {
                 }
             }
         }
-        
+
         if let token = Configuration.token {
             chatClient.connectUser(
                 userInfo: .init(id: Configuration.userId),
@@ -48,7 +48,7 @@ class LoginViewController: UITableViewController {
                 completion: completion
             )
         }
-        
+
         return chatClient
     }
 }
@@ -60,18 +60,18 @@ extension LoginViewController {
         tableView.deselectRow(at: indexPath, animated: true)
 
         let chatClient = logIn()
-        
+
         let channelListController = chatClient.channelListController(
             query: ChannelListQuery(
                 filter: .containMembers(userIds: [chatClient.currentUserId!]),
                 pageSize: 25
             )
         )
-        
+
         switch tableView.cellForRow(at: indexPath) {
         case uiKitAndDelegatesCell:
             let storyboard = UIStoryboard(name: "SimpleChat", bundle: nil)
-            
+
             guard
                 let initial = storyboard.instantiateInitialViewController() as? SplitViewController,
                 let navigation = initial.viewControllers.first as? UINavigationController,
@@ -79,7 +79,7 @@ extension LoginViewController {
             else {
                 return
             }
-            
+
             channels.channelListController = channelListController
 
             UIView.transition(with: view.window!, duration: 0.5, options: .transitionFlipFromLeft, animations: {
@@ -88,7 +88,7 @@ extension LoginViewController {
         case uiKitAndCombineCell:
             if #available(iOS 13, *) {
                 let storyboard = UIStoryboard(name: "CombineSimpleChat", bundle: nil)
-                
+
                 guard
                     let initial = storyboard.instantiateInitialViewController() as? SplitViewController,
                     let navigation = initial.viewControllers.first as? UINavigationController,
@@ -96,7 +96,7 @@ extension LoginViewController {
                 else {
                     return
                 }
-                
+
                 channels.channelListController = channelListController
 
                 UIView.transition(with: view.window!, duration: 0.5, options: .transitionFlipFromLeft, animations: {
@@ -124,9 +124,9 @@ extension LoginViewController {
             alert(title: "Swift 5.3 required", message: "The app needs to be compiled with Swift 5.3 or above.")
             #endif
         case streamDesignCell:
-            
+
             let channelList = ChatChannelListVC.make(with: channelListController)
-   
+
             let navigation = channelList.components.navigationVC.init(
                 rootViewController: channelList
             )

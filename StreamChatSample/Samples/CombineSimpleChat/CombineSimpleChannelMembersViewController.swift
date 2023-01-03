@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Combine
@@ -16,7 +16,7 @@ import UIKit
 @available(iOS 13, *)
 class CombineSimpleChannelMembersViewController: UITableViewController {
     // MARK: - Properties
-    
+
     ///
     /// # memberListController
     ///
@@ -34,9 +34,9 @@ class CombineSimpleChannelMembersViewController: UITableViewController {
             memberListController.synchronize()
         }
     }
-    
+
     // MARK: - Combine
-    
+
     ///
     /// # cancellables
     ///
@@ -66,7 +66,7 @@ class CombineSimpleChannelMembersViewController: UITableViewController {
                 print("State changed: \(state)")
             }
             .store(in: &cancellables)
-        
+
         ///
         /// `membersChangesPublisher` will send changes related to `member` changes.
         /// This subscription will update `tableView` with received changes.
@@ -77,9 +77,9 @@ class CombineSimpleChannelMembersViewController: UITableViewController {
             /// Apply changes to tableView.
             .sink { [weak self] changes in
                 let tableView = self?.tableView
-                
+
                 tableView?.beginUpdates()
-                
+
                 for change in changes {
                     switch change {
                     case let .insert(_, index: index):
@@ -92,19 +92,19 @@ class CombineSimpleChannelMembersViewController: UITableViewController {
                         tableView?.deleteRows(at: [index], with: .automatic)
                     }
                 }
-                
+
                 tableView?.endUpdates()
             }
             .store(in: &cancellables)
     }
-    
+
     // MARK: - UITableViewDataSource
 
     ///
     /// The methods below are part of the `UITableViewDataSource` protocol and will be called when the `UITableView`
     /// needs information which will be given by the `memberListController` object.
     ///
-    
+
     ///
     /// # numberOfRowsInSection
     ///
@@ -127,7 +127,7 @@ class CombineSimpleChannelMembersViewController: UITableViewController {
         let cid = memberListController.query.cid
         let member = memberListController.members[indexPath.row]
         let client = memberListController.client
-        
+
         guard
             let me = memberListController.members.first(where: { $0.id == memberListController.client.currentUserId }),
             me.memberRole != .member,
@@ -141,7 +141,7 @@ class CombineSimpleChannelMembersViewController: UITableViewController {
                 _ = channelController
             }
         }
-        
+
         let banAction = UIContextualAction(
             style: .normal,
             title: member.isBanned ? "Unban" : "Ban"
@@ -152,19 +152,19 @@ class CombineSimpleChannelMembersViewController: UITableViewController {
                 completion(error == nil)
                 _ = memberController
             }
-            
+
             if member.isBanned {
                 memberController.unban(completion: actionCompletion)
             } else {
                 memberController.ban(completion: actionCompletion)
             }
         }
-        
+
         let configuration = UISwipeActionsConfiguration(actions: [removeAction, banAction])
         configuration.performsFirstActionWithFullSwipe = true
         return configuration
     }
-    
+
     ///
     /// # cellForRowAt
     ///
@@ -175,9 +175,9 @@ class CombineSimpleChannelMembersViewController: UITableViewController {
         let member = memberListController.members[indexPath.row]
         return memberCell(member, isCurrentUser: member.id == memberListController.client.currentUserId)
     }
-    
+
     // MARK: - UITableViewDelegate
-    
+
     ///
     /// # willDisplay
     ///
@@ -190,29 +190,29 @@ class CombineSimpleChannelMembersViewController: UITableViewController {
             memberListController.loadNextMembers()
         }
     }
-    
+
     // MARK: - UI Code
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         title = "Members"
-        
+
         navigationItem.rightBarButtonItem = .init(
             barButtonSystemItem: .add,
             target: self,
             action: #selector(addNewMember)
         )
-        
+
         tableView.tableFooterView = UIView()
     }
-    
+
     @objc private func addNewMember() {
         guard
             let usersViewController = UIStoryboard.combineSimpleChat
             .instantiateViewController(withIdentifier: "CombineSimpleUsersViewController") as? CombineSimpleUsersViewController
         else { return }
-        
+
         usersViewController.userListController = memberListController.client.userListController(
             query: .init(sort: [.init(key: .lastActivityAt)])
         )
@@ -220,14 +220,14 @@ class CombineSimpleChannelMembersViewController: UITableViewController {
         usersViewController.didSelectUser = { [weak self] userId in
             self?.dismiss(animated: true) {
                 guard let self = self else { return }
-                
+
                 let channelController = self.memberListController.client.channelController(for: self.memberListController.query.cid)
                 channelController.addMembers(userIds: [userId]) { [channelController] _ in
                     _ = channelController
                 }
             }
         }
-        
+
         present(usersViewController, animated: true)
     }
 }

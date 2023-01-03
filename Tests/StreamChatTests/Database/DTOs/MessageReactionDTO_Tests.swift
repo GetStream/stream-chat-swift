@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -9,33 +9,33 @@ import XCTest
 
 final class MessageReactionDTO_Tests: XCTestCase {
     var database: DatabaseContainer!
-    
+
     // MARK: - Setup
-    
+
     override func setUp() {
         super.setUp()
         database = DatabaseContainer_Spy()
     }
-    
+
     override func tearDown() {
         AssertAsync.canBeReleased(&database)
         database = nil
         super.tearDown()
     }
-    
+
     // MARK: - Save
-    
+
     func test_messageReactionPayload_withDefaultExtraData_isStoredAndLoadedFromDB() throws {
         // Create message reaction payload with `DefaultExtraData`.
         let payload: MessageReactionPayload = .dummy(
             messageId: .unique,
             user: dummyUser
         )
-        
+
         // Assert message reaction is saved and loaded correctly.
         try assert_messageReaction_isStoredAndLoadedFromDB(payload)
     }
-    
+
     func test_messageReactionPayload_withCustomExtraData_isStoredAndLoadedFromDB() throws {
         // Create message reaction payload with `CustomExtraData`.
         let payload: MessageReactionPayload = .dummy(
@@ -43,18 +43,18 @@ final class MessageReactionDTO_Tests: XCTestCase {
             user: dummyUser,
             extraData: ["mood": .string(.unique)]
         )
-        
+
         // Assert message reaction is saved and loaded correctly.
         try assert_messageReaction_isStoredAndLoadedFromDB(payload)
     }
-    
+
     func test_saveReaction_throwsMessageDoesNotExist_ifThereIsNoMessage() {
         // Create message reaction payload with `DefaultExtraData`.
         let payload: MessageReactionPayload = .dummy(
             messageId: .unique,
             user: dummyUser
         )
-        
+
         // Assert saving message reaction with the message throws `MessageDoesNotExist` error.
         XCTAssertThrowsError(
             try database.writeSynchronously { session in
@@ -64,9 +64,9 @@ final class MessageReactionDTO_Tests: XCTestCase {
             XCTAssertTrue(error is ClientError.MessageDoesNotExist)
         }
     }
-    
+
     // MARK: - Convert
-    
+
     func test_asModel_buildsCorrectModel() throws {
         // Create message reaction payload with `DefaultExtraData`.
         let payload: MessageReactionPayload = .dummy(
@@ -74,15 +74,15 @@ final class MessageReactionDTO_Tests: XCTestCase {
             user: dummyUser,
             extraData: ["k": .string("v")]
         )
-        
+
         // Save message to the database.
         try database.createMessage(id: payload.messageId)
-        
+
         // Save message reaction to the database and corrupt extra data.
         try database.writeSynchronously { session in
             try session.saveReaction(payload: payload, cache: nil)
         }
-        
+
         // Load saved message reaction and build the model.
         let model: ChatMessageReaction = try XCTUnwrap(
             database.viewContext.reaction(
@@ -100,24 +100,24 @@ final class MessageReactionDTO_Tests: XCTestCase {
         XCTAssertEqual(model.extraData, payload.extraData)
         XCTAssertEqual(model.author.id, payload.user.id)
     }
-    
+
     func test_asModel_defaultExtraDataIsUsed_whenExtraDataDecodingFails() throws {
         // Create message reaction payload with `DefaultExtraData`.
         let payload: MessageReactionPayload = .dummy(
             messageId: .unique,
             user: dummyUser
         )
-        
+
         // Save message to the database.
         try database.createMessage(id: payload.messageId)
-        
+
         try database.writeSynchronously { session in
             // Save message reaction to the database.
             let dto = try session.saveReaction(payload: payload, cache: nil)
             // Corrupt extra data.
             dto.extraData = #"{"invalid": json}"#.data(using: .utf8)!
         }
-        
+
         // Load saved message reaction.
         let model: ChatMessageReaction = try XCTUnwrap(
             database.viewContext.reaction(
@@ -126,7 +126,7 @@ final class MessageReactionDTO_Tests: XCTestCase {
                 type: payload.type
             )
         ).asModel()
-        
+
         // Assert model is built up with default extra data.
         XCTAssertEqual(model.extraData, [:])
         // Assert other fields have correct values.
@@ -136,24 +136,24 @@ final class MessageReactionDTO_Tests: XCTestCase {
         XCTAssertEqual(model.score, payload.score)
         XCTAssertEqual(model.author.id, payload.user.id)
     }
-    
+
     // MARK: - Delete
-    
+
     func test_deleteReaction_worksCorrectly() throws {
         // Create message reaction payload with `DefaultExtraData`.
         let payload: MessageReactionPayload = .dummy(
             messageId: .unique,
             user: dummyUser
         )
-        
+
         // Save message to the database.
         try database.createMessage(id: payload.messageId)
-        
+
         // Save message reaction to the database.
         try database.writeSynchronously { session in
             try session.saveReaction(payload: payload, cache: nil)
         }
-        
+
         // Delete message reaction from the database.
         try database.writeSynchronously { session in
             // Load message reaction.
@@ -164,18 +164,18 @@ final class MessageReactionDTO_Tests: XCTestCase {
                     type: payload.type
                 )
             )
-            
+
             // Delete message reaction.
             session.delete(reaction: dto)
         }
-        
+
         // Load reaction.
         let dto = database.viewContext.reaction(
             messageId: payload.messageId,
             userId: payload.user.id,
             type: payload.type
         )
-        
+
         // Assert dto is `nil`.
         XCTAssertNil(dto)
     }
@@ -255,7 +255,7 @@ final class MessageReactionDTO_Tests: XCTestCase {
     }
 
     // MARK: - Private
-    
+
     private func assert_messageReaction_isStoredAndLoadedFromDB(
         _ payload: MessageReactionPayload,
         createMessageInTheDatabase: Bool = true
@@ -264,12 +264,12 @@ final class MessageReactionDTO_Tests: XCTestCase {
         if createMessageInTheDatabase {
             try database.createMessage(id: payload.messageId)
         }
-        
+
         // Save message reaction to the database.
         try database.writeSynchronously { session in
             try session.saveReaction(payload: payload, cache: nil)
         }
-        
+
         // Load saved message reaction.
         let dto = try XCTUnwrap(
             database.viewContext.reaction(
@@ -278,7 +278,7 @@ final class MessageReactionDTO_Tests: XCTestCase {
                 type: payload.type
             )
         )
-        
+
         // Encode extra data.
         let encoder = JSONEncoder.default
         let reactionExtraData = try encoder.encode(payload.extraData)
@@ -291,7 +291,7 @@ final class MessageReactionDTO_Tests: XCTestCase {
         XCTAssertEqual(dto.score, Int64(payload.score))
         XCTAssertEqual(dto.extraData, reactionExtraData)
         XCTAssertEqual(dto.message.id, payload.messageId)
-        
+
         // Assert reaction author has valid fields.
         XCTAssertEqual(dto.user.id, payload.user.id)
         XCTAssertEqual(dto.user.extraData, userExtraData)

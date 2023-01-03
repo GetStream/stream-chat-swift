@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -21,7 +21,7 @@ final class DemoChatMessageLayoutOptionsResolver: ChatMessageLayoutOptionsResolv
         guard indexPath.item < messages.count else {
             return options
         }
-        
+
         let messageIndex = messages.index(messages.startIndex, offsetBy: indexPath.item)
         let message = messages[messageIndex]
         if message.isPinned {

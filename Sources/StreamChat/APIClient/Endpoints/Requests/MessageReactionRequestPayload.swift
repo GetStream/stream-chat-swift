@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -10,7 +10,7 @@ struct MessageReactionRequestPayload: Encodable {
         case enforceUnique = "enforce_unique"
         case reaction
     }
-    
+
     let enforceUnique: Bool
     let reaction: ReactionRequestPayload
 

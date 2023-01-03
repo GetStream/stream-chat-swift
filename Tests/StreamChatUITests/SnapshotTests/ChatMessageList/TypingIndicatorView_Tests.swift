@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -13,27 +13,27 @@ final class TypingIndicatorViewTests: XCTestCase {
         // Disable animations.
         UIView.setAnimationsEnabled(false)
     }
-    
+
     func test_defaultAppearance() {
         let view = TypingIndicatorView().withoutAutoresizingMaskConstraints
         view.content = "Luke Skywalker is typing"
         AssertSnapshot(view)
     }
-    
+
     func test_appearanceCustomization_usingAppearance() {
         var appearance = Appearance()
-  
+
         appearance.colorPalette.overlayBackground = .brown
         appearance.fonts.body = .italicSystemFont(ofSize: 20)
         appearance.colorPalette.subtitleText = .green
-      
+
         let view = TypingIndicatorView().withoutAutoresizingMaskConstraints
         view.appearance = appearance
         view.content = "Luke Skywalker is typing"
 
         AssertSnapshot(view)
     }
-    
+
     func test_appearanceCustomization_usingSubclassing() {
         class CustomTitleView: TypingIndicatorView {
             lazy var customLabel = UILabel()

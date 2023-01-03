@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -14,7 +14,7 @@ import UIKit
 ///
 class SimpleUsersViewController: UITableViewController, ChatUserListControllerDelegate {
     // MARK: - Properties
-    
+
     ///
     /// # userListController
     ///
@@ -32,9 +32,9 @@ class SimpleUsersViewController: UITableViewController, ChatUserListControllerDe
             userListController.synchronize()
         }
     }
-    
+
     // MARK: - Actions
-    
+
     ///
     /// # openDirectMessagesChat
     ///
@@ -42,7 +42,7 @@ class SimpleUsersViewController: UITableViewController, ChatUserListControllerDe
     /// After user selection it will dismiss current controller and show direct message chat with the selected user.
     ///
     var didSelectUser: ((UserId) -> Void)?
-    
+
     ///
     /// # handleLongPress
     ///
@@ -73,7 +73,7 @@ class SimpleUsersViewController: UITableViewController, ChatUserListControllerDe
 
         present(actionSheet, animated: true)
     }
-    
+
     // MARK: - ChatUserControllerDelegate
 
     ///
@@ -81,7 +81,7 @@ class SimpleUsersViewController: UITableViewController, ChatUserListControllerDe
     /// events happen in the user list. In order for these updates to
     /// happen, `userListController.delegate` must be equal `self` and `userListController.synchronize()` must be called.
     ///
-    
+
     ///
     /// # didChangeUsers
     ///
@@ -92,7 +92,7 @@ class SimpleUsersViewController: UITableViewController, ChatUserListControllerDe
         didChangeUsers changes: [ListChange<ChatUser>]
     ) {
         tableView.beginUpdates()
-        
+
         for change in changes {
             switch change {
             case let .insert(_, index: index):
@@ -105,10 +105,10 @@ class SimpleUsersViewController: UITableViewController, ChatUserListControllerDe
                 tableView.deleteRows(at: [index], with: .automatic)
             }
         }
-        
+
         tableView.endUpdates()
     }
-    
+
     // MARK: - UITableViewDataSource
 
     ///
@@ -116,7 +116,7 @@ class SimpleUsersViewController: UITableViewController, ChatUserListControllerDe
     /// `UITableView` needs information which will be given by the
     /// `userListController` object.
     ///
-    
+
     ///
     /// # numberOfRowsInSection
     ///
@@ -135,15 +135,15 @@ class SimpleUsersViewController: UITableViewController, ChatUserListControllerDe
     ///
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let user = userListController.users[indexPath.row]
-        
+
         var cell = tableView.dequeueReusableCell(withIdentifier: "Cell")
-        
+
         if cell == nil {
             cell = UITableViewCell(style: .default, reuseIdentifier: "Cell")
         }
-        
+
         cell!.textLabel?.text = user.name
-        
+
         let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
         /// Check if user is muted.
         let isUserMuted = (
@@ -155,12 +155,12 @@ class SimpleUsersViewController: UITableViewController, ChatUserListControllerDe
             imageView.image = UIImage(systemName: "speaker.slash.fill")
         }
         cell!.accessoryView = imageView
-        
+
         return cell!
     }
-    
+
     // MARK: - UITableViewDelegate
-    
+
     ///
     /// # willDisplay
     ///
@@ -174,7 +174,7 @@ class SimpleUsersViewController: UITableViewController, ChatUserListControllerDe
             userListController.loadNextUsers()
         }
     }
-    
+
     ///
     /// # didSelectRowAt
     ///
@@ -183,14 +183,14 @@ class SimpleUsersViewController: UITableViewController, ChatUserListControllerDe
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         didSelectUser?(userListController.users[indexPath.row].id)
     }
-    
+
     // MARK: - UI Code
-    
+
     private lazy var longPressRecognizer = UILongPressGestureRecognizer(
         target: self,
         action: #selector(handleLongPress)
     )
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.addGestureRecognizer(longPressRecognizer)
@@ -200,7 +200,7 @@ class SimpleUsersViewController: UITableViewController, ChatUserListControllerDe
             action: #selector(dismissHandler)
         )
     }
-    
+
     @objc func dismissHandler() {
         dismiss(animated: true, completion: nil)
     }

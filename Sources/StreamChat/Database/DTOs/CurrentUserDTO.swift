@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -9,7 +9,7 @@ import Foundation
 class CurrentUserDTO: NSManagedObject {
     @NSManaged var unreadChannelsCount: Int64
     @NSManaged var unreadMessagesCount: Int64
-    
+
     /// Contains the timestamp when last sync process was finished.
     /// The date later serves as reference date for the last event synced using `/sync` endpoint
     @NSManaged var lastSynchedEventDate: DBDate?
@@ -22,7 +22,7 @@ class CurrentUserDTO: NSManagedObject {
     @NSManaged var currentDevice: DeviceDTO?
     @NSManaged var channelMutes: Set<ChannelMuteDTO>
     @NSManaged var isInvisible: Bool
-    
+
     /// Returns a default fetch request for the current user.
     static var defaultFetchRequest: NSFetchRequest<CurrentUserDTO> {
         let request = NSFetchRequest<CurrentUserDTO>(entityName: CurrentUserDTO.entityName)
@@ -40,15 +40,15 @@ extension CurrentUserDTO {
     fileprivate static func load(context: NSManagedObjectContext) -> CurrentUserDTO? {
         let request = NSFetchRequest<CurrentUserDTO>(entityName: CurrentUserDTO.entityName)
         let result = load(by: request, context: context)
-        
+
         log.assert(
             result.count <= 1,
             "The database is corrupted. There is more than 1 entity of the type `CurrentUserDTO` in the DB."
         )
-        
+
         return result.first
     }
-    
+
     /// If the `CurrentUserDTO` entity exists in the context, fetches and returns it. Otherwise create a new `CurrentUserDTO`.
     ///
     /// - Parameter context: The context used to fetch/create `CurrentUserDTO`
@@ -62,7 +62,7 @@ extension CurrentUserDTO {
         if let existing = result.first {
             return existing
         }
-        
+
         let new = NSEntityDescription.insertNewObject(into: context, for: request)
         return new
     }
@@ -82,78 +82,78 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
         )
         dto.channelMutes.subtracting(channelMutes).forEach { delete($0) }
         dto.channelMutes = channelMutes
-        
+
         if let unreadCount = payload.unreadCount {
             try saveCurrentUserUnreadCount(count: unreadCount)
         }
-        
+
         _ = try saveCurrentUserDevices(payload.devices, clearExisting: true)
-        
+
         return dto
     }
-    
+
     func saveCurrentUserUnreadCount(count: UnreadCount) throws {
         guard let dto = currentUser else {
             throw ClientError.CurrentUserDoesNotExist()
         }
-                
+
         dto.unreadChannelsCount = Int64(clamping: count.channels)
         dto.unreadMessagesCount = Int64(clamping: count.messages)
     }
-    
+
     func saveCurrentUserDevices(_ devices: [DevicePayload], clearExisting: Bool) throws -> [DeviceDTO] {
         guard let currentUser = currentUser else {
             throw ClientError.CurrentUserDoesNotExist()
         }
-        
+
         if clearExisting {
             currentUser.devices.removeAll()
             if !devices.contains(where: { $0.id == currentUser.currentDevice?.id }) {
                 currentUser.currentDevice = nil
             }
         }
-        
+
         let deviceDTOs = devices.map { device -> DeviceDTO in
             let dto = DeviceDTO.loadOrCreate(id: device.id, context: self)
             dto.createdAt = device.createdAt?.bridgeDate
             dto.user = currentUser
             return dto
         }
-        
+
         return deviceDTOs
     }
-    
+
     func saveCurrentDevice(_ deviceId: String) throws {
         guard let currentUser = currentUser else {
             throw ClientError.CurrentUserDoesNotExist()
         }
-        
+
         let dto = DeviceDTO.loadOrCreate(id: deviceId, context: self)
         dto.user = currentUser
         currentUser.currentDevice = dto
     }
-    
+
     func deleteDevice(id: String) {
         if let dto = DeviceDTO.load(id: id, context: self) {
             delete(dto)
         }
     }
-    
+
     private static let currentUserKey = "io.getStream.chat.core.context.current_user_key"
     private static let removeAllDataToken = "io.getStream.chat.core.context.remove_all_data_token"
-    
+
     var currentUser: CurrentUserDTO? {
         // we already have cached value in `userInfo` so all setup is complete
         // so we can just return cached value
         if let currentUser = userInfo[Self.currentUserKey] as? CurrentUserDTO {
             return currentUser
         }
-        
+
         // we do not have cached value in `userInfo` so we try to load current user from DB
         if let currentUser = CurrentUserDTO.load(context: self) {
             // if we have current user we save it to `userInfo` so we do not have to load it again
             userInfo[Self.currentUserKey] = currentUser
-            
+
             // When all data is removed it should this code's responsibility to clear `userInfo`
             userInfo[Self.removeAllDataToken] = NotificationCenter.default.addObserver(
                 forName: DatabaseContainer.WillRemoveAllDataNotification,
@@ -162,10 +162,10 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
             ) { [userInfo] _ in
                 userInfo[Self.currentUserKey] = nil
             }
-            
+
             return currentUser
         }
-        
+
         // we really don't have current user
         return nil
     }

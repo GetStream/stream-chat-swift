@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -14,10 +14,10 @@ final class GuestUserTokenRequestPayload_Tests: XCTestCase {
             imageURL: .unique(),
             extraData: [:]
         )
-        
+
         try verify(payload, isEncodedAs: ["id": payload.userId, "name": payload.name!, "image": payload.imageURL!])
     }
-    
+
     func test_guestUserTokenRequestPayload_isEncodedCorrectly_withCustomExtraData() throws {
         let company = "getstream.io"
         let payload = GuestUserTokenRequestPayload(
@@ -26,7 +26,7 @@ final class GuestUserTokenRequestPayload_Tests: XCTestCase {
             imageURL: .unique(),
             extraData: ["company": .string(company)]
         )
-        
+
         try verify(
             payload,
             isEncodedAs: ["id": payload.userId, "name": payload.name!, "image": payload.imageURL!, "company": company]

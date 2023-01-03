@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -32,7 +32,7 @@ public struct Pagination: Encodable, Equatable {
         case offset
         case cursor = "next"
     }
-    
+
     public init(pageSize: Int, offset: Int = 0) {
         self.pageSize = pageSize
         self.offset = offset
@@ -44,7 +44,7 @@ public struct Pagination: Encodable, Equatable {
         self.cursor = cursor
         offset = 0
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(pageSize, forKey: .pageSize)
@@ -61,24 +61,24 @@ public struct MessagesPagination: Encodable, Equatable {
     let pageSize: Int?
     /// Parameter for pagination.
     let parameter: PaginationParameter?
-    
+
     /// Failable initializer for attempts of creating invalid pagination.
     init?(pageSize: Int? = nil, parameter: PaginationParameter? = nil) {
         guard pageSize != nil, parameter != nil else { return nil }
         self.pageSize = pageSize
         self.parameter = parameter
     }
-    
+
     /// Initializer with required page size.
     init(pageSize: Int, parameter: PaginationParameter? = nil) {
         self.pageSize = pageSize
         self.parameter = parameter
     }
-    
+
     enum CodingKeys: String, CodingKey {
         case pageSize = "limit"
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(pageSize, forKey: .pageSize)
@@ -94,16 +94,16 @@ public enum PaginationParameter: Encodable, Hashable {
         case lessThan = "id_lt"
         case lessThanOrEqual = "id_lte"
     }
-    
+
     /// Filter on ids greater than the given value.
     case greaterThan(_ id: String)
-    
+
     /// Filter on ids greater than or equal to the given value.
     case greaterThanOrEqual(_ id: String)
-    
+
     /// Filter on ids smaller than the given value.
     case lessThan(_ id: String)
-    
+
     /// Filter on ids smaller than or equal to the given value.
     case lessThanOrEqual(_ id: String)
 
@@ -120,10 +120,10 @@ public enum PaginationParameter: Encodable, Hashable {
             return ["id_lte": id]
         }
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
+
         switch self {
         case let .greaterThan(id):
             try container.encode(id, forKey: .greaterThan)
@@ -135,7 +135,7 @@ public enum PaginationParameter: Encodable, Hashable {
             try container.encode(id, forKey: .lessThanOrEqual)
         }
     }
-    
+
     public static func == (lhs: Self, rhs: Self) -> Bool {
         switch (lhs, rhs) {
         case let (.greaterThan(value1), .greaterThan(value2)),

@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -14,15 +14,15 @@ final class ChatMessagePopupVC_Tests: XCTestCase {
     private var message: ChatMessage!
     private var reactionsController: ChatMessageReactionsPickerVC!
     private var actionsController: ChatMessageActionsVC!
-    
+
     private class TestChatMessagePopupVC: ChatMessagePopupVC {
         // `actionsController` and `reactionsController` are visible only after animation
         // therefore we set them to be visible by default
         override func viewWillAppear(_ animated: Bool) {
             super.viewWillAppear(animated)
-            
+
             blurView.alpha = 1
-            
+
             reactionsController?.view.alpha = 1
             reactionsController?.view.transform = .identity
 
@@ -30,7 +30,7 @@ final class ChatMessagePopupVC_Tests: XCTestCase {
             actionsController?.view.transform = .identity
         }
     }
-    
+
     override func setUp() {
         super.setUp()
 
@@ -47,7 +47,7 @@ final class ChatMessagePopupVC_Tests: XCTestCase {
             attachmentViewInjectorType: nil
         )
         messageContentView.content = message
-        
+
         vc = TestChatMessagePopupVC()
         vc.messageBubbleViewInsets.right = 70
         vc.messageContentView = messageContentView
@@ -58,7 +58,7 @@ final class ChatMessagePopupVC_Tests: XCTestCase {
             withHorizontalFittingPriority: .streamRequire,
             verticalFittingPriority: .streamLow
         )
-        
+
         let chatMessageController = ChatMessageController_Mock.mock()
         chatMessageController.startObserversIfNeeded_mock = {}
         chatMessageController.simulateInitial(
@@ -74,16 +74,16 @@ final class ChatMessagePopupVC_Tests: XCTestCase {
         actionsController.channelConfig = .mock()
         vc.actionsController = actionsController
     }
-    
+
     override func tearDown() {
         message = nil
         reactionsController = nil
         actionsController = nil
         vc = nil
-        
+
         super.tearDown()
     }
-    
+
     func test_defaultAppearance_when_largeLongMessage() {
         vc.messageContentView.content = .mock(
             id: .unique,
@@ -98,7 +98,7 @@ final class ChatMessagePopupVC_Tests: XCTestCase {
         )
         AssertSnapshot(vc, variants: [.defaultDark, .defaultLight])
     }
-    
+
     func test_appearanceCustomization_usingAppearance() {
         var config = Appearance()
         config.colorPalette.border = .cyan
@@ -107,7 +107,7 @@ final class ChatMessagePopupVC_Tests: XCTestCase {
 
         AssertSnapshot(vc, variants: [.defaultDark, .defaultLight])
     }
-    
+
     func test_appearanceCustomization_usingSubclassing() {
         class TestView: TestChatMessagePopupVC {
             override var blurView: UIView {

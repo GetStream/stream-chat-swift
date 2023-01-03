@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import SwiftUI
@@ -50,7 +50,7 @@ struct AlertWrapper<Content: View>: UIViewControllerRepresentable {
                 self.alert.action($0)
             }
         }
-        
+
         if !isPresented, uiViewController.presentedViewController == context.coordinator.alertController {
             uiViewController.dismiss(animated: true)
         }

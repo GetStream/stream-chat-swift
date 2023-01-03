@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -25,10 +25,10 @@ extension MessageAttachmentPayload {
             "mime_type": "\(file.mimeType!)"
         }
         """.data(using: .utf8)!
-        
+
         return try! JSONDecoder.default.decode(MessageAttachmentPayload.self, from: data)
     }
-    
+
     var decodedImagePayload: ImageAttachmentPayload? {
         let data = try! JSONEncoder.stream.encode(payload)
         return try? JSONDecoder.stream.decode(ImageAttachmentPayload.self, from: data)
@@ -38,7 +38,7 @@ extension MessageAttachmentPayload {
         let data = try! JSONEncoder.stream.encode(payload)
         return try? JSONDecoder.stream.decode(FileAttachmentPayload.self, from: data)
     }
-    
+
     var decodedGiphyPayload: GiphyAttachmentPayload? {
         let data = try! JSONEncoder.stream.encode(payload)
         return try? JSONDecoder.stream.decode(GiphyAttachmentPayload.self, from: data)
@@ -48,7 +48,7 @@ extension MessageAttachmentPayload {
         let data = try! JSONEncoder.stream.encode(payload)
         return try? JSONDecoder.stream.decode(LinkAttachmentPayload.self, from: data)
     }
-    
+
     var decodedVideoPayload: VideoAttachmentPayload? {
         let data = try! JSONEncoder.stream.encode(payload)
         return try? JSONDecoder.stream.decode(VideoAttachmentPayload.self, from: data)
@@ -125,7 +125,7 @@ extension MessageAttachmentPayload {
             ])
         )
     }
-    
+
     static func video(
         title: String = .unique,
         videoURL: URL = URL(string: "https://getstream.io/video.mov")!,

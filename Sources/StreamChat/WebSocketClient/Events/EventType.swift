@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -19,9 +19,9 @@ public struct EventType: RawRepresentable, Codable, Hashable, ExpressibleByStrin
 
 public extension EventType {
     static let healthCheck: Self = "health.check"
-    
+
     // MARK: User Events
-    
+
     /// When a user presence changed, e.g. online, offline, away.
     static let userPresenceChanged: Self = "user.presence.changed"
     /// When a user was updated.
@@ -38,9 +38,9 @@ public extension EventType {
     static let userBanned: Self = "user.banned"
     /// When a user was unbanned.
     static let userUnbanned: Self = "user.unbanned"
-    
+
     // MARK: Channel Events
-    
+
     /// When a channel was updated.
     static let channelCreated: Self = "channel.created"
     /// When a channel was updated.
@@ -55,7 +55,7 @@ public extension EventType {
     static let channelTruncated: Self = "channel.truncated"
 
     // MARK: Message Events
-    
+
     /// When a new message was added on a channel.
     static let messageNew: Self = "message.new"
     /// When a message was updated.
@@ -64,23 +64,23 @@ public extension EventType {
     static let messageDeleted: Self = "message.deleted"
     /// When a channel was marked as read.
     static let messageRead: Self = "message.read"
-    
+
     /// When a member was added to a channel.
     static let memberAdded: Self = "member.added"
     /// When a member was updated.
     static let memberUpdated: Self = "member.updated"
     /// When a member was removed from a channel.
     static let memberRemoved: Self = "member.removed"
-    
+
     // MARK: Reactions
-    
+
     /// When a message reaction was added.
     static let reactionNew: Self = "reaction.new"
     /// When a message reaction updated.
     static let reactionUpdated: Self = "reaction.updated"
     /// When a message reaction deleted.
     static let reactionDeleted: Self = "reaction.deleted"
-    
+
     /// When a message was added to a channel (when clients that are not currently watching the channel).
     static let notificationMessageNew: Self = "notification.message_new"
     /// When the total count of unread messages (across all channels the user is a member) changes
@@ -90,22 +90,22 @@ public extension EventType {
     static let notificationMutesUpdated: Self = "notification.mutes_updated"
     /// When someone else from channel has muted someone.
     static let notificationChannelMutesUpdated: Self = "notification.channel_mutes_updated"
-    
+
     /// When a user is added to a channel.
     static let notificationAddedToChannel: Self = "notification.added_to_channel"
-    
+
     /// When a user is invited to a channel
     static let notificationInvited: Self = "notification.invited"
-    
+
     /// When a user accepted a channel invitation
     static let notificationInviteAccepted: Self = "notification.invite_accepted"
-    
+
     /// When a user rejected a channel invitation
     static let notificationInviteRejected: Self = "notification.invite_rejected"
 
     /// When a user was removed from a channel.
     static let notificationRemovedFromChannel: Self = "notification.removed_from_channel"
-    
+
     /// When a channel was deleted
     static let notificationChannelDeleted: Self = "notification.channel_deleted"
 }
@@ -114,7 +114,7 @@ extension EventType {
     func event(from response: EventPayload) throws -> Event {
         switch self {
         case .healthCheck: return try HealthCheckEvent(from: response)
-        
+
         case .userPresenceChanged: return try UserPresenceChangedEventDTO(from: response)
         case .userUpdated: return try UserUpdatedEventDTO(from: response)
         case .userStartWatching, .userStopWatching: return try UserWatchingEventDTO(from: response)
@@ -130,27 +130,27 @@ extension EventType {
         case .channelHidden: return try ChannelHiddenEventDTO(from: response)
         case .channelTruncated: return try ChannelTruncatedEventDTO(from: response)
         case .channelVisible: return try ChannelVisibleEventDTO(from: response)
-            
+
         case .messageNew: return try MessageNewEventDTO(from: response)
         case .messageUpdated: return try MessageUpdatedEventDTO(from: response)
         case .messageDeleted: return try MessageDeletedEventDTO(from: response)
         case .messageRead: return try MessageReadEventDTO(from: response)
-        
+
         case .memberAdded: return try MemberAddedEventDTO(from: response)
         case .memberUpdated: return try MemberUpdatedEventDTO(from: response)
         case .memberRemoved: return try MemberRemovedEventDTO(from: response)
-            
+
         case .reactionNew: return try ReactionNewEventDTO(from: response)
         case .reactionUpdated: return try ReactionUpdatedEventDTO(from: response)
         case .reactionDeleted: return try ReactionDeletedEventDTO(from: response)
-        
+
         case .notificationMessageNew: return try NotificationMessageNewEventDTO(from: response)
-        
+
         case .notificationMarkRead:
             return response.channel == nil
                 ? try NotificationMarkAllReadEventDTO(from: response)
                 : try NotificationMarkReadEventDTO(from: response)
-            
+
         case .notificationMutesUpdated: return try NotificationMutesUpdatedEventDTO(from: response)
         case .notificationAddedToChannel: return try NotificationAddedToChannelEventDTO(from: response)
         case .notificationRemovedFromChannel: return try NotificationRemovedFromChannelEventDTO(from: response)
@@ -178,7 +178,7 @@ extension ClientError {
             super.init("Event with \(type) cannot be decoded as system event.")
         }
     }
-    
+
     class UnknownUserEvent: ClientError {
         init(_ type: EventType) {
             super.init("Event with \(type) cannot be decoded as system event.")

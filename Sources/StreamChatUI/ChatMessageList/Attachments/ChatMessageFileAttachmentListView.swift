@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -11,10 +11,10 @@ open class ChatMessageFileAttachmentListView: _View, ComponentsProvider {
     open var content: [ChatMessageFileAttachment] = [] {
         didSet { updateContentIfNeeded() }
     }
-    
+
     /// Closure what should happen on tapping the given attachment.
     open var didTapOnAttachment: ((ChatMessageFileAttachment) -> Void)?
-    
+
     /// Container which holds one or multiple attachment views in self.
     open private(set) lazy var containerStackView: ContainerStackView = ContainerStackView()
         .withoutAutoresizingMaskConstraints
@@ -24,7 +24,7 @@ open class ChatMessageFileAttachmentListView: _View, ComponentsProvider {
         directionalLayoutMargins = .init(top: 4, leading: 4, bottom: 4, trailing: 4)
         addSubview(containerStackView)
         containerStackView.pin(to: layoutMarginsGuide)
-        
+
         containerStackView.axis = .vertical
         containerStackView.spacing = 4
     }

@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -39,7 +39,7 @@ open class ListCollectionViewLayout: UICollectionViewFlowLayout {
             height: estimatedItemSize.height
         )
     }
-    
+
     /// Partly taken from: https://github.com/Instagram/IGListKit/issues/571#issuecomment-386960195
     override open func invalidateLayout(with context: UICollectionViewLayoutInvalidationContext) {
         if let indexPaths = context.invalidatedItemIndexPaths {

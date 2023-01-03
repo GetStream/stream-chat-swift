@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -19,7 +19,7 @@ public class DataController: Controller {
         /// The controller failed to fetch remote data.
         case remoteDataFetchFailed(ClientError)
     }
-    
+
     /// The current state of the controller.
     public internal(set) var state: State = .initialized {
         didSet {
@@ -39,7 +39,7 @@ public class DataController: Controller {
             return false
         }
     }
-    
+
     /// Synchronize local data with remote.
     ///
     /// **Asynchronously** fetches the latest version of the data from the servers. Once the remote fetch is completed,
@@ -58,7 +58,7 @@ public class DataController: Controller {
 
     /// The queue which is used to perform callback calls. The default value is `.main`.
     public var callbackQueue: DispatchQueue = .main
-    
+
     /// The delegate use for controller state update callbacks.
     internal var stateMulticastDelegate: MulticastDelegate<DataControllerStateDelegate> = .init()
 }
@@ -83,7 +83,7 @@ public extension DataControllerStateDelegate {
 protocol DelegateCallable {
     associatedtype Delegate
     func callback(_ action: @escaping () -> Void)
-    
+
     /// The multicast delegate wrapper for all delegates of the controller
     var multicastDelegate: MulticastDelegate<Delegate> { get }
 }

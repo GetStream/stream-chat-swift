@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -12,16 +12,16 @@ final class ChatMessageListVC_Tests: XCTestCase {
         // GIVEN
         var config = ChatClientConfig(apiKey: .init(.unique))
         config.deletedMessagesVisibility = .alwaysHidden
-        
+
         let sut = ChatMessageListVC()
         sut.client = ChatClient(config: config)
         sut.components = .mock
-        
+
         XCTAssertNil(sut.components.messageLayoutOptionsResolver.config)
-        
+
         // WHEN
         sut.setUp()
-        
+
         // THEN
         XCTAssertEqual(
             sut.components.messageLayoutOptionsResolver.config?.deletedMessagesVisibility,

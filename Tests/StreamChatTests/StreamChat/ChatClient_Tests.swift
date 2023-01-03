@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -11,7 +11,7 @@ final class ChatClient_Tests: XCTestCase {
     var userId: UserId!
     private var testEnv: TestEnvironment!
     private var time: VirtualTime!
-    
+
     // A helper providing ChatClientConfig with in-memory DB option
     var inMemoryStorageConfig: ChatClientConfig {
         var config = ChatClientConfig()
@@ -20,14 +20,14 @@ final class ChatClient_Tests: XCTestCase {
         config.baseURL = BaseURL(urlString: .unique)!
         return config
     }
-    
+
     // Helper for providing config with in-memory DB option and passive (inactive) mode
     lazy var inactiveInMemoryStorageConfig: ChatClientConfig = {
         var config = inMemoryStorageConfig
         config.isClientInActiveMode = false
         return config
     }()
-    
+
     override func setUp() {
         super.setUp()
         userId = .unique
@@ -35,7 +35,7 @@ final class ChatClient_Tests: XCTestCase {
         time = VirtualTime()
         VirtualTimeTimer.time = time
     }
-    
+
     override func tearDown() {
         testEnv.apiClient?.cleanUp()
         testEnv.connectionRepository?.cleanUp()
@@ -45,11 +45,11 @@ final class ChatClient_Tests: XCTestCase {
         userId = nil
         super.tearDown()
     }
-    
+
     var workerBuilders: [WorkerBuilder] = [
         NewUserQueryUpdater.init
     ]
-    
+
     var expectedIdentifier: String {
         #if canImport(StreamChatSwiftUI)
         "swiftui"
@@ -59,9 +59,9 @@ final class ChatClient_Tests: XCTestCase {
         "swift"
         #endif
     }
-    
+
     // MARK: - Database stack tests
-    
+
     func test_clientDatabaseStackInitialization_whenLocalStorageEnabled_respectsConfigValues() {
         // Prepare a config with the local storage
         let storeFolderURL = URL.newTemporaryDirectoryURL()
@@ -69,7 +69,7 @@ final class ChatClient_Tests: XCTestCase {
         config.isLocalStorageEnabled = true
         config.shouldFlushLocalStorageOnStart = true
         config.localStorageFolderURL = storeFolderURL
-        
+
         config.localCaching.chatChannel.lastActiveMembersLimit = .unique
         config.localCaching.chatChannel.lastActiveWatchersLimit = .unique
 
@@ -82,7 +82,7 @@ final class ChatClient_Tests: XCTestCase {
         var localCachingSettings: ChatClientConfig.LocalCaching?
         var deleteMessagesVisibility: ChatClientConfig.DeletedMessageVisibility?
         var shouldShowShadowedMessages: Bool?
-        
+
         // Create env object with custom database builder
         var env = ChatClient.Environment()
         env.connectionRepositoryBuilder = ConnectionRepository_Mock.init
@@ -97,7 +97,7 @@ final class ChatClient_Tests: XCTestCase {
                 shouldShowShadowedMessages = showShadowedMessages
                 return DatabaseContainer_Spy()
             }
-        
+
         // Create a `Client` and assert that a DB file is created on the provided URL + APIKey path
         _ = ChatClient(
             config: config,
@@ -114,14 +114,14 @@ final class ChatClient_Tests: XCTestCase {
         XCTAssertEqual(deleteMessagesVisibility, config.deletedMessagesVisibility)
         XCTAssertEqual(shouldShowShadowedMessages, config.shouldShowShadowedMessages)
     }
-    
+
     func test_clientDatabaseStackInitialization_whenLocalStorageDisabled() {
         // Prepare a config with the in-memory storage
         var config = ChatClientConfig()
         config.isLocalStorageEnabled = false
-        
+
         var usedDatabaseKind: DatabaseContainer.Kind?
-        
+
         // Create env object with custom database builder
         var env = ChatClient.Environment()
         env.connectionRepositoryBuilder = ConnectionRepository_Mock.init
@@ -129,16 +129,16 @@ final class ChatClient_Tests: XCTestCase {
             usedDatabaseKind = kind
             return DatabaseContainer_Spy()
         }
-        
+
         // Create a `Client` and assert the correct DB kind is used
         _ = ChatClient(
             config: config,
             environment: env
         )
-        
+
         XCTAssertEqual(usedDatabaseKind, .inMemory)
     }
-    
+
     /// When the initialization of a local DB fails for some reason (i.e. incorrect URL),
     /// use a DB in the in-memory configuration
     func test_clientDatabaseStackInitialization_useInMemoryWhenOnDiskFails() {
@@ -146,7 +146,7 @@ final class ChatClient_Tests: XCTestCase {
         var config = ChatClientConfig()
         config.isLocalStorageEnabled = true
         config.localStorageFolderURL = nil
-        
+
         var usedDatabaseKinds: [DatabaseContainer.Kind] = []
 
         // Create env object and store all `kinds it's called with.
@@ -156,22 +156,22 @@ final class ChatClient_Tests: XCTestCase {
             usedDatabaseKinds.append(kind)
             return DatabaseContainer_Spy()
         }
-        
+
         // Create a chat client and assert `Client` tries to initialize the local DB, and when it fails, it falls back
         // to the in-memory option.
         _ = ChatClient(
             config: config,
             environment: env
         )
-        
+
         XCTAssertEqual(
             usedDatabaseKinds,
             [.inMemory]
         )
     }
-    
+
     // MARK: - WebSocketClient tests
-    
+
     func test_webSocketClientConfiguration() throws {
         // Use in-memory store
         // Create a new chat client
@@ -179,12 +179,12 @@ final class ChatClient_Tests: XCTestCase {
             config: inMemoryStorageConfig,
             environment: testEnv.environment
         )
-        
+
         client.connectAnonymousUser()
 
         // Simulate access to `webSocketClient` so it is initialized
         _ = client.webSocketClient
-        
+
         // Assert the init parameters are correct
         let webSocket = testEnv.webSocketClient
         assertMandatoryHeaderFields(webSocket?.init_sessionConfiguration)
@@ -192,14 +192,14 @@ final class ChatClient_Tests: XCTestCase {
         XCTAssert(webSocket?.init_requestEncoder is RequestEncoder_Spy)
         XCTAssert(webSocket?.init_eventNotificationCenter.database === client.databaseContainer)
         XCTAssertNotNil(webSocket?.init_eventDecoder)
-        
+
         // EventDataProcessorMiddleware must be always first
         XCTAssert(webSocket?.init_eventNotificationCenter.middlewares[0] is EventDataProcessorMiddleware)
-        
+
         // Assert Client sets itself as delegate for the request encoder
         XCTAssert(webSocket?.init_requestEncoder.connectionDetailsProviderDelegate === client)
     }
-    
+
     func test_webSocketClient_hasAllMandatoryMiddlewares() throws {
         // Use in-memory store
         // Create a new chat client, which in turn creates a webSocketClient
@@ -210,10 +210,10 @@ final class ChatClient_Tests: XCTestCase {
 
         // Simulate access to `webSocketClient` so it is initialized
         _ = client.webSocketClient
-        
+
         // Assert that mandatory middlewares exists
         let middlewares = try XCTUnwrap(testEnv.webSocketClient?.init_eventNotificationCenter.middlewares)
-        
+
         // Assert `EventDataProcessorMiddleware` exists
         XCTAssert(middlewares.contains(where: { $0 is EventDataProcessorMiddleware }))
         // Assert `TypingStartCleanupMiddleware` exists
@@ -240,9 +240,9 @@ final class ChatClient_Tests: XCTestCase {
         // Assert `EventDTOConverterMiddleware` is the last one
         XCTAssertTrue(middlewares.last is EventDTOConverterMiddleware)
     }
-    
+
     // MARK: - APIClient tests
-    
+
     func test_apiClientConfiguration() throws {
         // Create a new chat client
         let client = ChatClient(
@@ -252,12 +252,12 @@ final class ChatClient_Tests: XCTestCase {
 
         // Simulate access to `apiClient` so it is initialized
         _ = client.apiClient
-        
+
         assertMandatoryHeaderFields(testEnv.apiClient?.init_sessionConfiguration)
         XCTAssert(testEnv.apiClient?.init_requestDecoder is RequestDecoder_Spy)
         XCTAssert(testEnv.apiClient?.init_requestEncoder is RequestEncoder_Spy)
     }
-    
+
     func test_disconnect_flushesRequestsQueue() throws {
         // Create a chat client
         let client = ChatClient(
@@ -273,7 +273,7 @@ final class ChatClient_Tests: XCTestCase {
             expectation.fulfill()
         }
         waitForExpectations(timeout: defaultTimeout)
-        
+
         // Assert client is not recreated
         XCTAssertTrue(testEnv.apiClient! === client.apiClient)
         // Assert `disconnect` on updater is triggered
@@ -281,7 +281,7 @@ final class ChatClient_Tests: XCTestCase {
         // Assert source is user initiated
         XCTAssertEqual(testEnv.connectionRepository!.disconnectSource, .userInitiated)
     }
-    
+
     func test_logout_disconnectsAndRemovesLocalData() throws {
         // GIVEN
         let client = ChatClient(
@@ -302,9 +302,9 @@ final class ChatClient_Tests: XCTestCase {
         XCTAssertCall(ConnectionRepository_Mock.Signature.disconnect, on: testEnv.connectionRepository!)
         XCTAssertTrue(testEnv.databaseContainer!.removeAllData_called)
     }
-    
+
     // MARK: - Background workers tests
-    
+
     func test_productionClientIsInitalizedWithAllMandatoryBackgroundWorkers() {
         let config = inMemoryStorageConfig
 
@@ -323,14 +323,14 @@ final class ChatClient_Tests: XCTestCase {
         XCTAssert(client.backgroundWorkers.contains { $0 is MessageEditor })
         XCTAssert(client.backgroundWorkers.contains { $0 is AttachmentQueueUploader })
         XCTAssertNotNil(client.connectionRecoveryHandler)
-        
+
         AssertAsync.canBeReleased(&client)
     }
-    
+
     func test_backgroundWorkersConfiguration() {
         // Set up mocks for APIClient, WSClient and Database
         let config = ChatClientConfig(apiKey: .init(.unique))
-        
+
         // Create a Client instance and check the workers are initialized properly
         let client = ChatClient(
             config: config,
@@ -344,7 +344,7 @@ final class ChatClient_Tests: XCTestCase {
 
         XCTAssertNotNil(client.connectionRecoveryHandler)
     }
-    
+
     // MARK: - Init
 
     func test_currentUserIsFetched_whenInitIsFinished_noMatterOnWhichThread() throws {
@@ -389,7 +389,7 @@ final class ChatClient_Tests: XCTestCase {
             XCTAssertNil(error)
         }
     }
-    
+
     // MARK: - Connect Token Provider
 
     func test_connectUser_tokenProvider_callsAuthenticationRepository_propagatesError() throws {
@@ -732,30 +732,30 @@ final class ChatClient_Tests: XCTestCase {
     }
 
     // MARK: - Passive (not active) Client tests
-    
+
     func test_passiveClient_doesNotHaveWorkers() {
         // Create Client with inactive flag set
         let client = ChatClient(config: inactiveInMemoryStorageConfig)
 
         // Simulate `createBackgroundWorkers`.
         client.createBackgroundWorkers()
-        
+
         // Assert that no background worker is initialized
         XCTAssert(client.backgroundWorkers.isEmpty)
     }
-    
+
     func test_passiveClient_doesNotHaveWSClient() {
         // Create Client with inactive flag set
         let client = ChatClient(config: inactiveInMemoryStorageConfig)
-        
+
         // Assert the wsClient is not initialized
         XCTAssertNil(client.webSocketClient)
     }
-    
+
     func test_passiveClient_provideConnectionId_returnsImmediately() {
         // Create Client with inactive flag set
         let client = ChatClient(config: inactiveInMemoryStorageConfig)
-        
+
         // Set a connection Id waiter
         var providedConnectionId: ConnectionId? = .unique
         var connectionIdCallbackCalled = false
@@ -763,42 +763,42 @@ final class ChatClient_Tests: XCTestCase {
             providedConnectionId = $0.value
             connectionIdCallbackCalled = true
         }
-        
+
         AssertAsync.willBeTrue(connectionIdCallbackCalled)
         // Assert that `nil` id is provided by waiter
         XCTAssertNil(providedConnectionId)
     }
-    
+
     func test_sessionHeaders_xStreamClient_correctValue() {
         // Given
         let client = ChatClient(
             config: inMemoryStorageConfig,
             environment: testEnv.environment
         )
-        
+
         // When
         client.connectAnonymousUser()
-        
+
         // Then
         guard let sessionHeaders = client.apiClient.session.configuration.httpAdditionalHeaders,
               let streamHeader = sessionHeaders["X-Stream-Client"] as? String else {
             return XCTFail("X-Stream-Client key should exist as a HTTP additional header.")
         }
-        
+
         XCTAssertEqual(streamHeader, SystemEnvironment.xStreamClientHeader)
     }
 }
 
 final class TestWorker: Worker {
     let id = UUID()
-    
+
     var init_database: DatabaseContainer?
     var init_apiClient: APIClient?
-    
+
     override init(database: DatabaseContainer, apiClient: APIClient) {
         init_database = database
         init_apiClient = apiClient
-        
+
         super.init(database: database, apiClient: apiClient)
     }
 }
@@ -812,15 +812,15 @@ private class TestEnvironment {
 
     @Atomic var requestEncoder: RequestEncoder_Spy?
     @Atomic var requestDecoder: RequestDecoder_Spy?
-    
+
     @Atomic var eventDecoder: EventDecoder?
-    
+
     @Atomic var notificationCenter: EventNotificationCenter?
 
     @Atomic var connectionRepository: ConnectionRepository_Mock?
-    
+
     @Atomic var backgroundTaskScheduler: BackgroundTaskScheduler_Mock?
-    
+
     @Atomic var internetConnection: InternetConnection_Mock?
     var monitor: InternetConnectionMonitor_Mock?
 
@@ -918,7 +918,7 @@ extension ChatClient_Tests {
             XCTFail("Config is `nil`", file: file, line: line)
             return
         }
-        
+
         let headers = config.httpAdditionalHeaders as? [String: String] ?? [:]
         XCTAssertEqual(
             headers["X-Stream-Client"],
@@ -932,7 +932,7 @@ private struct Queue<Element> {
     mutating func push(_ element: Element) {
         _storage.mutate { $0.append(element) }
     }
-    
+
     mutating func pop() -> Element? {
         var first: Element?
         _storage.mutate { storage in

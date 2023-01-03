@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -13,7 +13,7 @@ open class ChatMessageGiphyView: _View, ComponentsProvider {
             updateContentIfNeeded()
         }
     }
-    
+
     private var dataTask: URLSessionDataTask? {
         didSet { oldValue?.cancel() }
     }

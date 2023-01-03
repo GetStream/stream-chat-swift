@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import UIKit
@@ -16,7 +16,7 @@ open class ChatChannelListLoadingView: _View, ThemeProvider, UITableViewDataSour
         super.setUp()
 
         isUserInteractionEnabled = false
-        
+
         tableView.dataSource = self
         tableView.isScrollEnabled = false
         tableView.register(
@@ -24,18 +24,18 @@ open class ChatChannelListLoadingView: _View, ThemeProvider, UITableViewDataSour
             forCellReuseIdentifier: ChatChannelListLoadingViewCell.reuseIdentifier
         )
     }
-    
+
     override open func setUpLayout() {
         super.setUpLayout()
-        
+
         addSubview(tableView)
         tableView.pin(anchors: [.leading, .trailing, .bottom], to: self)
         tableView.pin(anchors: [.top], to: safeAreaLayoutGuide)
     }
-    
+
     override open func updateContent() {
         super.updateContent()
-        
+
         tableView.visibleCells.forEach { $0.layoutSubviews() }
     }
 

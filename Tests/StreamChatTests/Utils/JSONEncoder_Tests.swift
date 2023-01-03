@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -91,7 +91,7 @@ final class JSONEncoderTests: XCTestCase {
             dateString: "2018-07-28T08:47:42Z"
         )
     }
-    
+
     func test_encodes_whenEncodingDateBefore1970() {
         checkDateIsEncodingFromComponents(
             year: 1936,

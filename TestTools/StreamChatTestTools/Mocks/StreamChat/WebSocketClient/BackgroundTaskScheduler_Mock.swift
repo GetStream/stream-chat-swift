@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -13,7 +13,7 @@ final class BackgroundTaskScheduler_Mock: BackgroundTaskScheduler {
         isAppActive_called = true
         return isAppActive_returns
     }
-    
+
     var beginBackgroundTask_called: Bool = false
     var beginBackgroundTask_expirationHandler: (() -> Void)?
     var beginBackgroundTask_returns: Bool = true
@@ -39,7 +39,7 @@ final class BackgroundTaskScheduler_Mock: BackgroundTaskScheduler {
         startListeningForAppStateUpdates_onBackground = onEnteringBackground
         startListeningForAppStateUpdates_onForeground = onEnteringForeground
     }
-    
+
     var stopListeningForAppStateUpdates_called: Bool = false
     func stopListeningForAppStateUpdates() {
         stopListeningForAppStateUpdates_called = true
@@ -51,7 +51,7 @@ extension BackgroundTaskScheduler_Mock {
         isAppActive_returns = false
         startListeningForAppStateUpdates_onBackground?()
     }
-    
+
     func simulateAppGoingToForeground() {
         isAppActive_returns = true
         startListeningForAppStateUpdates_onForeground?()

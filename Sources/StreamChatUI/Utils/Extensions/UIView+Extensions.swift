@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import UIKit
@@ -17,25 +17,25 @@ extension UIView {
             subview.bottomAnchor.pin(equalTo: bottomAnchor, constant: -insets.bottom)
         ])
     }
-    
+
     func pin(anchors: [LayoutAnchorName] = [.top, .leading, .bottom, .trailing], to view: UIView) {
         anchors
             .map { $0.makeConstraint(fromView: self, toView: view) }
             .forEach { $0.isActive = true }
     }
-    
+
     func pin(anchors: [LayoutAnchorName] = [.top, .leading, .bottom, .trailing], to layoutGuide: UILayoutGuide) {
         anchors
             .compactMap { $0.makeConstraint(fromView: self, toLayoutGuide: layoutGuide) }
             .forEach { $0.isActive = true }
     }
-    
+
     func pin(anchors: [LayoutAnchorName] = [.width, .height], to constant: CGFloat) {
         anchors
             .compactMap { $0.makeConstraint(fromView: self, constant: constant) }
             .forEach { $0.isActive = true }
     }
-    
+
     var withoutAutoresizingMaskConstraints: Self {
         translatesAutoresizingMaskIntoConstraints = false
         return self
@@ -50,7 +50,7 @@ extension UIView {
         get { !isHidden }
         set { isHidden = !newValue }
     }
-    
+
     func setAnimatedly(hidden: Bool) {
         Animate({
             self.alpha = hidden ? 0.0 : 1.0
@@ -59,7 +59,7 @@ extension UIView {
             self.isHidden = hidden
         }
     }
-    
+
     /// Returns `UIView` that is flexible along defined `axis`.
     static func spacer(axis: NSLayoutConstraint.Axis) -> UIView {
         UIView().flexible(axis: axis)
@@ -79,7 +79,7 @@ enum LayoutAnchorName {
     case top
     case trailing
     case width
-    
+
     func makeConstraint(fromView: UIView, toView: UIView, constant: CGFloat = 0) -> NSLayoutConstraint {
         switch self {
         case .bottom:
@@ -108,7 +108,7 @@ enum LayoutAnchorName {
             return fromView.widthAnchor.pin(equalTo: toView.widthAnchor, constant: constant)
         }
     }
-    
+
     func makeConstraint(fromView: UIView, toLayoutGuide: UILayoutGuide, constant: CGFloat = 0) -> NSLayoutConstraint? {
         switch self {
         case .bottom:
@@ -136,7 +136,7 @@ enum LayoutAnchorName {
             return nil
         }
     }
-    
+
     func makeConstraint(fromView: UIView, constant: CGFloat) -> NSLayoutConstraint? {
         switch self {
         case .height:

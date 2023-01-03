@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Combine
@@ -16,7 +16,7 @@ import UIKit
 @available(iOS 13, *)
 class CombineSimpleUsersViewController: UITableViewController, ChatUserListControllerDelegate {
     // MARK: - Properties
-    
+
     ///
     /// # userListController
     ///
@@ -32,9 +32,9 @@ class CombineSimpleUsersViewController: UITableViewController, ChatUserListContr
             userListController.synchronize()
         }
     }
-    
+
     // MARK: - Combine
-    
+
     ///
     /// # cancellables
     ///
@@ -64,7 +64,7 @@ class CombineSimpleUsersViewController: UITableViewController, ChatUserListContr
                 print("State changed: \(state)")
             }
             .store(in: &cancellables)
-        
+
         ///
         /// `usersChangesPublisher` will send changes related to `users` changes.
         /// This subscription will update `tableView` with received changes.
@@ -75,9 +75,9 @@ class CombineSimpleUsersViewController: UITableViewController, ChatUserListContr
             /// Apply changes to tableView.
             .sink { [weak self] changes in
                 let tableView = self?.tableView
-                
+
                 tableView?.beginUpdates()
-                
+
                 for change in changes {
                     switch change {
                     case let .insert(_, index: index):
@@ -90,14 +90,14 @@ class CombineSimpleUsersViewController: UITableViewController, ChatUserListContr
                         tableView?.deleteRows(at: [index], with: .automatic)
                     }
                 }
-                
+
                 tableView?.endUpdates()
             }
             .store(in: &cancellables)
     }
-    
+
     // MARK: - Actions
-    
+
     ///
     /// # openDirectMessagesChat
     ///
@@ -105,7 +105,7 @@ class CombineSimpleUsersViewController: UITableViewController, ChatUserListContr
     /// After user selection it will dismiss current controller and show direct message chat with the selected user.
     ///
     var didSelectUser: ((UserId) -> Void)?
-    
+
     ///
     /// # handleLongPress
     ///
@@ -136,7 +136,7 @@ class CombineSimpleUsersViewController: UITableViewController, ChatUserListContr
 
         present(actionSheet, animated: true)
     }
-    
+
     // MARK: - UITableViewDataSource
 
     ///
@@ -144,7 +144,7 @@ class CombineSimpleUsersViewController: UITableViewController, ChatUserListContr
     /// needs information which will be given by the
     /// `userListController` object.
     ///
-    
+
     ///
     /// # numberOfRowsInSection
     ///
@@ -163,15 +163,15 @@ class CombineSimpleUsersViewController: UITableViewController, ChatUserListContr
     ///
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let user = userListController.users[indexPath.row]
-        
+
         var cell = tableView.dequeueReusableCell(withIdentifier: "Cell")
-        
+
         if cell == nil {
             cell = UITableViewCell(style: .default, reuseIdentifier: "Cell")
         }
-        
+
         cell!.textLabel?.text = user.name
-        
+
         let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
         /// Check if user is muted.
         let isUserMuted = (
@@ -183,12 +183,12 @@ class CombineSimpleUsersViewController: UITableViewController, ChatUserListContr
             imageView.image = UIImage(systemName: "speaker.slash.fill")
         }
         cell!.accessoryView = imageView
-        
+
         return cell!
     }
-    
+
     // MARK: - UITableViewDelegate
-    
+
     ///
     /// # willDisplay
     ///
@@ -202,7 +202,7 @@ class CombineSimpleUsersViewController: UITableViewController, ChatUserListContr
             userListController.loadNextUsers()
         }
     }
-    
+
     ///
     /// # didSelectRowAt
     ///
@@ -211,14 +211,14 @@ class CombineSimpleUsersViewController: UITableViewController, ChatUserListContr
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         didSelectUser?(userListController.users[indexPath.row].id)
     }
-    
+
     // MARK: - UI Code
-    
+
     private lazy var longPressRecognizer = UILongPressGestureRecognizer(
         target: self,
         action: #selector(handleLongPress)
     )
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.addGestureRecognizer(longPressRecognizer)
@@ -228,7 +228,7 @@ class CombineSimpleUsersViewController: UITableViewController, ChatUserListContr
             action: #selector(dismissHandler)
         )
     }
-    
+
     @objc func dismissHandler() {
         dismiss(animated: true, completion: nil)
     }

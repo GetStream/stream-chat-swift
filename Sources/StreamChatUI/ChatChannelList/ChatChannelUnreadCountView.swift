@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -44,7 +44,7 @@ open class ChatChannelUnreadCountView: _View, ThemeProvider, SwiftUIRepresentabl
         // The width shouldn't be smaller than height because we want to show it as a circle for small numbers
         widthAnchor.pin(greaterThanOrEqualTo: heightAnchor, multiplier: 1).isActive = true
     }
-    
+
     override open func updateContent() {
         isHidden = content.messages == 0
         unreadCountLabel.text = String(content.messages)

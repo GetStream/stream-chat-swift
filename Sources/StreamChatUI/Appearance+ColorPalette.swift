@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import UIKit
@@ -57,7 +57,7 @@ public extension Appearance {
         public var alternativeActiveTint: UIColor = .streamAccentGreen
         public var inactiveTint: UIColor = .streamGray
         public var alternativeInactiveTint: UIColor = .streamGrayGainsboro
-        
+
         public var accentPrimary: UIColor = .streamAccentPrimary
     }
 }
@@ -67,7 +67,7 @@ public extension Appearance {
 // implementing dark mode support.
 private extension UIColor {
     static let streamAccentPrimary = mode(0x005fff, 0x337eff)
-    
+
     /// This is color palette used by design team.
     /// If you see any color not from this list in figma, point it out to anyone in design team.
     static let streamBlack = mode(0x000000, 0xffffff)
@@ -84,7 +84,7 @@ private extension UIColor {
     static let streamAccentRed = mode(0xff3742, 0xff3742)
     static let streamAccentGreen = mode(0x20e070, 0x20e070)
     static let streamGrayDisabledText = mode(0x72767e, 0x72767e)
-    
+
     // Currently we are not using the correct shadow color from figma's color palette. This is to avoid
     // an issue with snapshots inconsistency between Intel vs M1. We can't use shadows with transparency.
     // So we apply a light gray color to fake the transparency.

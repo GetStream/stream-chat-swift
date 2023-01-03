@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -18,10 +18,10 @@ class TypingStartCleanupMiddleware: EventMiddleware {
     let excludedUserIds: () -> Set<UserId>
     /// A timer type.
     var timer: Timer.Type = DefaultTimer.self
-    
+
     /// A list of timers per user id.
     @Atomic private var typingEventTimeoutTimerControls: [UserId: TimerControl] = [:]
-    
+
     /// Creates a new `TypingStartCleanupMiddleware`
     ///
     /// - Parameter excludedUsers: A set of users for which the `typingStart` event shouldn't be cleaned up automatically.

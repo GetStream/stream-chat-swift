@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -8,13 +8,13 @@ import Foundation
 public struct ChatChannelRead {
     /// The last time the user has read the channel.
     public let lastReadAt: Date
-    
+
     /// Number of unread messages the user has in this channel.
     public let unreadMessagesCount: Int
-    
+
     /// The user who read the channel.
     public let user: ChatUser
-    
+
     init(
         lastReadAt: Date,
         unreadMessagesCount: Int,

@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -13,7 +13,7 @@ final class ChatChannelAvatarView_SwiftUI_Tests: XCTestCase {
     func test_injectedSwiftUIView() {
         struct CustomChatChannelAvatarView: ChatChannelAvatarView.SwiftUIView {
             @ObservedObject var dataSource: ChatChannelAvatarView.ObservedObject<Self>
-            
+
             init(dataSource: ChatChannelAvatarView.ObservedObject<Self>) {
                 self.dataSource = dataSource
             }

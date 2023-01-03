@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -93,7 +93,7 @@ class MessageRepository {
                 messageDTO.localMessageState = nil
                 messageDTO.isBounced = false
             }
-            
+
             messageModel = try? messageDTO.asModel()
         }, completion: {
             if let error = $0 {
@@ -102,28 +102,28 @@ class MessageRepository {
             completion(messageModel)
         })
     }
-    
+
     private func handleSendingMessageError(
         _ error: Error,
         messageId: MessageId,
         completion: @escaping (Result<ChatMessage, MessageRepositoryError>) -> Void
     ) {
         log.error("Sending the message with id \(messageId) failed with error: \(error)")
-        
+
         let isBounced = (error as? ClientError)?.isBouncedMessageError ?? false
-        
+
         markMessageAsFailedToSend(id: messageId, isBounced: isBounced) {
             completion(.failure(.failedToSendMessage))
         }
     }
-    
+
     private func markMessageAsFailedToSend(id: MessageId, isBounced: Bool? = nil, completion: @escaping () -> Void) {
         database.write({
             let dto = $0.message(id: id)
             if dto?.localMessageState == .sending {
                 dto?.localMessageState = .sendingFailed
             }
-            
+
             if let isBounced = isBounced {
                 dto?.isBounced = isBounced
             }
@@ -193,9 +193,9 @@ class MessageRepository {
     func updateMessage(withID id: MessageId, localState: LocalMessageState?, isBounced: Bool? = nil, completion: @escaping () -> Void) {
         database.write({
             let dto = $0.message(id: id)
-            
+
             dto?.localMessageState = localState
-            
+
             if let isBounced = isBounced {
                 dto?.isBounced = isBounced
             }

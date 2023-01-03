@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import SnapshotTesting
@@ -38,11 +38,11 @@ func AssertSnapshot(
     function: String = #function
 ) {
     let viewController = isEmbeddedInNavigationController ? UINavigationController(rootViewController: vc) : vc
-    
+
     // Test the variants in multiple orders to make sure there's
     // no layout issues when transitioning between multiple traits.
     let variantsToTest = record ? variants : variants + variants.reversed()
-    
+
     variantsToTest.forEach { variant in
         assertSnapshot(
             matching: viewController,
@@ -81,7 +81,7 @@ func AssertSnapshot(
     // Test the variants in multiple orders to make sure there's
     // no layout issues when transitioning between multiple traits.
     let variantsToTest = record ? variants : variants + variants.reversed()
-    
+
     variantsToTest.forEach { variant in
         assertSnapshot(
             matching: view,
@@ -150,7 +150,7 @@ func AssertSnapshot<View: SwiftUI.View>(
     // Test the variants in multiple orders to make sure there's
     // no layout issues when transitioning between multiple traits.
     let variantsToTest = record ? variants : variants + variants.reversed()
-    
+
     variantsToTest.forEach { variant in
         assertSnapshot(
             matching: view,
@@ -168,7 +168,7 @@ func AssertSnapshot<View: SwiftUI.View>(
 @available(iOS 13, *)
 struct SnapshotContainer<Content: View>: View {
     let content: Content
-    
+
     var body: some View {
         VStack {
             Spacer()

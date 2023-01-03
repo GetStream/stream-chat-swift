@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -30,7 +30,7 @@ private typealias IndentationType = Difference.IndentationType
 private struct Differ {
     private let indentationType: IndentationType
     private let skipPrintingOnDiffCount: Bool
-    
+
     init(
         indentationType: IndentationType,
         skipPrintingOnDiffCount: Bool
@@ -38,23 +38,23 @@ private struct Differ {
         self.indentationType = indentationType
         self.skipPrintingOnDiffCount = skipPrintingOnDiffCount
     }
-    
+
     func diff<T>(_ expected: T, _ received: T) -> [String] {
         let lines = diffLines(expected, received, level: 0)
         return buildLineContents(lines: lines)
     }
-    
+
     fileprivate func diffLines<T>(_ expected: T, _ received: T, level: Int = 0) -> [Line] {
         let expectedMirror = Mirror(reflecting: expected)
         let receivedMirror = Mirror(reflecting: received)
-        
+
         guard !expectedMirror.children.isEmpty, !receivedMirror.children.isEmpty else {
             if String(dumping: received) != String(dumping: expected) {
                 return handleChildless(expected, expectedMirror, received, receivedMirror, level)
             }
             return []
         }
-        
+
         let hasDiffNumOfChildren = expectedMirror.children.count != receivedMirror.children.count
         switch (expectedMirror.displayStyle, receivedMirror.displayStyle) {
         case (.collection?, .collection?) where hasDiffNumOfChildren,
@@ -96,7 +96,7 @@ private struct Differ {
         default:
             break
         }
-        
+
         var resultLines = [Line]()
         let zipped = zip(expectedMirror.children, receivedMirror.children)
         zipped.enumerated().forEach { (index, zippedValues) in
@@ -134,7 +134,7 @@ private struct Differ {
         }
         return resultLines
     }
-    
+
     fileprivate func handleChildless<T>(
         _ expected: T,
         _ expectedMirror: Mirror,
@@ -147,7 +147,7 @@ private struct Differ {
         guard !expectedMirror.canBeEmpty else {
             return [generateDifferentCountBlock(expected, expectedMirror, received, receivedMirror, indentationLevel)]
         }
-        
+
         let receivedPrintable: String
         let expectedPrintable: String
         // Received mirror has a different number of arguments to expected
@@ -165,7 +165,7 @@ private struct Differ {
         }
         return generateExpectedReceiveLines(expectedPrintable, receivedPrintable, indentationLevel)
     }
-    
+
     private func generateDifferentCountBlock<T>(
         _ expected: T,
         _ expectedMirror: Mirror,
@@ -186,7 +186,7 @@ private struct Differ {
             children: generateExpectedReceiveLines(expectedPrintable, receivedPrintable, indentationLevel + 1)
         )
     }
-    
+
     private func generateExpectedReceiveLines(
         _ expected: String,
         _ received: String,
@@ -197,7 +197,7 @@ private struct Differ {
             Line(contents: "Expected: \(expected)", indentationLevel: indentationLevel, canBeOrdered: false)
         ]
     }
-    
+
     private func buildLineContents(lines: [Line]) -> [String] {
         let linesContents = lines.map { line in line.generateContents(indentationType: indentationType) }
         // In the case of this being a top level failure (e.g. both mirrors have no children, like comparing two
@@ -242,9 +242,9 @@ private struct Line {
     let indentationLevel: Int
     let children: [Line]
     let canBeOrdered: Bool
-    
+
     var hasChildren: Bool { !children.isEmpty }
-    
+
     init(
         contents: String,
         indentationLevel: Int,
@@ -256,7 +256,7 @@ private struct Line {
         self.children = children
         self.canBeOrdered = canBeOrdered
     }
-    
+
     func generateContents(indentationType: IndentationType) -> String {
         let indentationString = indentation(level: indentationLevel, indentationType: indentationType)
         let childrenContents = children
@@ -268,7 +268,7 @@ private struct Line {
             .joined()
         return "\(indentationString)\(contents)\n" + childrenContents
     }
-    
+
     private func indentation(level: Int, indentationType: IndentationType) -> String {
         (0..<level).reduce("") { acc, _ in acc + "\(indentationType.rawValue)" }
     }
@@ -280,7 +280,7 @@ private extension String {
         dump(object, to: &self)
         self = withoutDumpArtifacts
     }
-    
+
     // Removes the artifacts of using dumping initialiser to improve readability
     private var withoutDumpArtifacts: String {
         replacingOccurrences(of: "- ", with: "")
@@ -305,7 +305,7 @@ private extension Mirror {
         default: return ""
         }
     }
-    
+
     // Used to show "different count" message if mirror has no children,
     // as some displayStyles can have 0 children.
     var canBeEmpty: Bool {
@@ -356,7 +356,7 @@ public func dumpDiff<T: Equatable>(
     guard expected != received else {
         return
     }
-    
+
     diff(
         expected,
         received,

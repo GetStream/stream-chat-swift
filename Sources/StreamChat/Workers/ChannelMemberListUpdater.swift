@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -16,7 +16,7 @@ class ChannelMemberListUpdater: Worker {
                 completion?(error)
                 return
             }
-            
+
             let membersEndpoint: Endpoint<ChannelMemberListPayload> = .channelMembers(query: query)
             self?.apiClient.request(endpoint: membersEndpoint) { membersResult in
                 switch membersResult {
@@ -45,7 +45,7 @@ private extension ChannelMemberListUpdater {
             exists ? completion(nil) : self?.fetchAndSaveChannel(with: cid, completion: completion)
         }
     }
-    
+
     func fetchAndSaveChannel(with cid: ChannelId, completion: @escaping (Error?) -> Void) {
         let query = ChannelQuery(cid: cid)
         apiClient.request(endpoint: .updateChannel(query: query)) { [weak self] in
@@ -64,7 +64,7 @@ private extension ChannelMemberListUpdater {
             }
         }
     }
-    
+
     func checkChannelExistsLocally(with cid: ChannelId, completion: @escaping (Bool) -> Void) {
         let context = database.backgroundReadOnlyContext
         context.perform {

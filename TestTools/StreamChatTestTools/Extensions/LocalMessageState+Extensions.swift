@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -11,7 +11,7 @@ extension LocalMessageState {
         .syncingFailed,
         .deletingFailed
     ]
-    
+
     static let pendingStates: [Self] = [
         .pendingSend,
         .sending,

@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -19,23 +19,23 @@ final class EventPayload_Tests: XCTestCase {
         super.tearDown()
         eventDecoder = nil
     }
-    
+
     func test_eventJSON_isSerialized_withDefaultExtraData() throws {
         let payload = try JSONDecoder.default.decode(EventPayload.self, from: eventJSON)
         XCTAssertNotNil(payload.channel)
     }
-    
+
     func test_event_whenTypeIsUnknownAndCIDIsMissing_throwsUnknownUserEventError() throws {
         // Create event payload with custom event type.
         let payload = EventPayload(eventType: IdeaEventPayload.eventType)
-        
+
         // Try to parse system event from payload
         XCTAssertThrowsError(try payload.event()) { error in
             // Assert `ClientError.UnknownUserEvent` is thrown
             XCTAssertTrue(error is ClientError.UnknownUserEvent)
         }
     }
-    
+
     func test_event_whenTypeIsUnknownAndCIDIsPresent_throwsUnknownChannelEventError() throws {
         // Create event payload with custom event type and cid
         let cid: ChannelId = try .init(cid: "club:123")
@@ -47,7 +47,7 @@ final class EventPayload_Tests: XCTestCase {
             XCTAssertTrue(error is ClientError.UnknownChannelEvent)
         }
     }
-    
+
     func test_asEvents_decodesAndReturnsEventsInCorrectOrderWithoutFailedToBeDecoded() throws {
         // Create known and unkown events payloads
         let knownEventPayload1 = EventPayload(

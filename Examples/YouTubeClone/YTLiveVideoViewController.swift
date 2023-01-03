@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import AVKit
@@ -9,32 +9,32 @@ import UIKit
 final class YTLiveVideoViewController: UIViewController {
     private let url =
         URL(string: "https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_adv_example_hevc/master.m3u8")!
-    
+
     @IBOutlet private var videoView: UIView!
     @IBOutlet private var chatView: UIView!
     @IBOutlet private var playPauseButton: UIButton!
     @IBOutlet private var videoViewHeightConstraint: NSLayoutConstraint!
-    
+
     private var isPlaying = false
-    
+
     private lazy var chatViewController: UIViewController = {
         let chatController = YTLiveChatViewController()
         return chatController
     }()
-    
+
     private lazy var videoPlayer: AVPlayer = {
         let asset = AVAsset(url: url)
         let playerItem = AVPlayerItem(asset: asset)
         return AVPlayer(playerItem: playerItem)
     }()
-    
+
     private lazy var playerLayer: AVPlayerLayer = {
         AVPlayerLayer(player: videoPlayer)
     }()
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         videoPlayer.play()
         isPlaying = true
         playPauseButton.tintColor = .white
@@ -46,15 +46,15 @@ final class YTLiveVideoViewController: UIViewController {
             chatViewController.view.widthAnchor.constraint(equalTo: chatView.widthAnchor),
             chatViewController.view.trailingAnchor.constraint(equalTo: chatView.trailingAnchor)
         ])
-        
+
         videoView.layer.addSublayer(playerLayer)
         videoView.bringSubviewToFront(playPauseButton)
         setupUIAccordingToOrientation()
     }
-    
+
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        
+
         // Adjust the frame of the layer
         playerLayer.frame = videoView.bounds
         playerLayer.videoGravity = .resizeAspect
@@ -65,7 +65,7 @@ final class YTLiveVideoViewController: UIViewController {
             self.setupUIAccordingToOrientation()
         }
     }
-    
+
     @IBAction private func playPauseButtonTapped(_ sender: Any) {
         if isPlaying {
             videoPlayer.pause()
@@ -74,12 +74,12 @@ final class YTLiveVideoViewController: UIViewController {
             videoPlayer.play()
             playPauseButton.setImage(UIImage(systemName: "pause.fill"), for: .normal)
         }
-        
+
         isPlaying.toggle()
     }
-    
+
     // MARK: - Private Helpers
-    
+
     private func setupUIAccordingToOrientation() {
         if UIDevice.current.orientation.isLandscape {
             videoViewHeightConstraint.isActive = false

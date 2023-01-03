@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -11,7 +11,7 @@ final class MissingEventsPayload_Tests: XCTestCase {
         let json = XCTestCase.mockData(fromJSONFile: "MissingEventsPayload")
         let payload = try JSONDecoder.default.decode(MissingEventsPayload.self, from: json)
         XCTAssertEqual(payload.eventPayloads.count, 1)
-        
+
         let expectedUser = UserPayload(
             id: "broken-waterfall-5",
             name: "Broken Waterfall",
@@ -25,7 +25,7 @@ final class MissingEventsPayload_Tests: XCTestCase {
             isBanned: false,
             extraData: [:]
         )
-        
+
         let event = try XCTUnwrap(payload.eventPayloads.first)
         XCTAssertEqual(event.eventType, .messageNew)
         XCTAssertEqual(event.cid?.rawValue, "messaging:A2F4393C-D656-46B8-9A43-6148E9E62D7F")
@@ -57,7 +57,7 @@ final class MissingEventsPayload_Tests: XCTestCase {
         XCTAssertEqual(messageUser.isOnline, expectedUser.isOnline)
         XCTAssertEqual(messageUser.isInvisible, expectedUser.isInvisible)
         XCTAssertEqual(messageUser.extraData, expectedUser.extraData)
-        
+
         let eventUser = try XCTUnwrap(event.user)
         XCTAssertEqual(eventUser.id, expectedUser.id)
         XCTAssertEqual(eventUser.role, expectedUser.role)

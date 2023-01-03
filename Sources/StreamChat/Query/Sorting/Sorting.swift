@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -19,17 +19,17 @@ public struct Sorting<Key: SortingKey>: Encodable, CustomStringConvertible {
     public let key: Key
     /// A sorting direction.
     public let direction: Int
-    
+
     private enum CodingKeys: String, CodingKey {
         case key = "field"
         case direction
     }
-    
+
     /// True if the sorting in ascending order, otherwise false.
     public var isAscending: Bool { direction == 1 }
-    
+
     public var description: String { "\(key):\(direction)" }
-    
+
     /// Init sorting options.
     ///
     /// - Parameters:

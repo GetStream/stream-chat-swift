@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -15,18 +15,18 @@ final class ChatChannelListVC_Tests: XCTestCase {
     var mockedRouter: ChatChannelListRouterMock { vc.router as! ChatChannelListRouterMock }
 
     var channels: [ChatChannel] = []
-    
+
     // Workaround for setting mockedCurrentUserController to userAvatarView.
     class TestChatChannelListVC: ChatChannelListVC {
         var mockedCurrentUserController: CurrentChatUserController_Mock?
-        
+
         override func setUp() {
             super.setUp()
             userAvatarView.components = .mock
             userAvatarView.controller = mockedCurrentUserController
         }
     }
-    
+
     override func setUp() {
         super.setUp()
 
@@ -42,7 +42,7 @@ final class ChatChannelListVC_Tests: XCTestCase {
         testVC.mockedCurrentUserController = mockedCurrentUserController
         vc = testVC
         vc.controller = mockedChannelListController
-        
+
         var components = Components.mock
         components.channelListRouter = ChatChannelListRouterMock.self
         vc.components = components
@@ -55,7 +55,7 @@ final class ChatChannelListVC_Tests: XCTestCase {
         view = nil
         mockedChannelListController = nil
         mockedCurrentUserController = nil
-        
+
         super.tearDown()
     }
 
@@ -65,7 +65,7 @@ final class ChatChannelListVC_Tests: XCTestCase {
         mockedChannelListController.simulate(state: .remoteDataFetched)
         AssertSnapshot(vc, isEmbeddedInNavigationController: true)
     }
-    
+
     func test_defaultAppearance() {
         mockedChannelListController.simulate(
             channels: channels,
@@ -120,7 +120,7 @@ final class ChatChannelListVC_Tests: XCTestCase {
 
         let vc = TestView()
         vc.controller = mockedChannelListController
-        
+
         var components = Components.mock
         components.channelCellSeparator = TestSeparatorView.self
         vc.components = components
@@ -131,25 +131,25 @@ final class ChatChannelListVC_Tests: XCTestCase {
         )
         AssertSnapshot(vc, isEmbeddedInNavigationController: true, variants: .onlyUserInterfaceStyles)
     }
-    
+
     func test_makeChatChannelListVC() {
         let mockedController = ChatChannelListController_Mock.mock()
         let mockChatChannelListVC = TestChatChannelListVC.make(with: mockedController)
-        
+
         XCTAssertNotNil(mockChatChannelListVC)
         XCTAssert(mockChatChannelListVC.isKind(of: ChatChannelListVC.self))
     }
-    
+
     func test_router_openCurrentUserProfile() {
         vc.executeLifecycleMethods()
-        
+
         vc.userAvatarView.simulateEvent(.touchUpInside)
         XCTAssertTrue(mockedRouter.openCurrentUserProfileCalled)
     }
-    
+
     func test_router_openChat() {
         vc.executeLifecycleMethods()
-        
+
         let channel = ChatChannel.mock(
             cid: .unique,
             name: "Channel",
@@ -160,7 +160,7 @@ final class ChatChannelListVC_Tests: XCTestCase {
             channels: [channel],
             state: .remoteDataFetched
         )
-                
+
         vc.collectionView(vc.collectionView, didSelectItemAt: IndexPath(item: 0, section: 0))
         XCTAssertEqual(mockedRouter.openChat_channelId, vc.controller.channels.first?.cid)
     }
@@ -178,27 +178,27 @@ final class ChatChannelListVC_Tests: XCTestCase {
 
         XCTAssert(channelListVC.collectionViewLayout is OtherCollectionLayout)
     }
-    
+
     func test_didChangeState_whenRemoteDataFetchedAndChannelsAreEmpty_thenEmptyViewIsShown() {
         // GIVEN
         let emptyViewHidden = false
         vc.components.isChatChannelListStatesEnabled = true
-        
+
         // WHEN
         vc.controller(vc.controller, didChangeState: .remoteDataFetched)
-        
+
         // THEN
         XCTAssertEqual(emptyViewHidden, vc.emptyView.isHidden)
     }
-    
+
     func test_didChangeState_whenRemoteDataFetchedFailed_thenErrorViewIsShown() {
         // GIVEN
         let errorViewHidden = false
         vc.components.isChatChannelListStatesEnabled = true
-        
+
         // WHEN
         vc.controller(vc.controller, didChangeState: .remoteDataFetchFailed(ClientError()))
-        
+
         // THEN
         XCTAssertEqual(errorViewHidden, vc.channelListErrorView.isHidden)
     }
@@ -345,7 +345,7 @@ final class ChatChannelListVC_Tests: XCTestCase {
         channelListVC.controller = mockedChannelListController
         channelListVC.shouldMockViewIfLoaded = false
         XCTAssertEqual(channelListVC.skippedRendering, false)
-        
+
         channelListVC.controller(mockedChannelListController, didChangeChannels: [])
 
         XCTAssertEqual(channelListVC.mockedCollectionView.performBatchUpdatesCallCount, 0)

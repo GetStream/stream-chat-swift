@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -10,10 +10,10 @@ open class BaseLogDestination: LogDestination {
     open var identifier: String
     open var level: LogLevel
     open var subsystems: LogSubsystem
-    
+
     open var dateFormatter: DateFormatter
     open var formatters: [LogFormatter]
-    
+
     open var showDate: Bool
     open var showLevel: Bool
     open var showIdentifier: Bool
@@ -21,7 +21,7 @@ open class BaseLogDestination: LogDestination {
     open var showFileName: Bool
     open var showLineNumber: Bool
     open var showFunctionName: Bool
-    
+
     /// Initialize the log destination with given parameters.
     ///
     /// - Parameters:
@@ -64,12 +64,12 @@ open class BaseLogDestination: LogDestination {
         self.showLineNumber = showLineNumber
         self.showFunctionName = showFunctionName
     }
-    
+
     open func isEnabled(level: LogLevel) -> Bool {
         assertionFailure("`isEnabled(level:)` is deprecated, please use `isEnabled(level:subsystem:)`")
         return true
     }
-    
+
     /// Checks if this destination is enabled for the given level and subsystems.
     /// - Parameter level: Log level to be checked
     /// - Parameter subsystems: Log subsystems to be checked
@@ -77,44 +77,44 @@ open class BaseLogDestination: LogDestination {
     open func isEnabled(level: LogLevel, subsystems: LogSubsystem) -> Bool {
         level.rawValue >= self.level.rawValue && self.subsystems.contains(subsystems)
     }
-    
+
     /// Process the log details before outputting the log.
     /// - Parameter logDetails: Log details to be processed.
     open func process(logDetails: LogDetails) {
         var extendedDetails: String = ""
-        
+
         if showDate {
             extendedDetails += "\(dateFormatter.string(from: logDetails.date)) "
         }
-        
+
         if showLevel {
             extendedDetails += "[\(String(describing: logDetails.level).uppercased())] "
         }
-        
+
         if showIdentifier {
             extendedDetails += "[\(logDetails.loggerIdentifier)-\(identifier)] "
         }
-        
+
         if showThreadName {
             extendedDetails += logDetails.threadName
         }
-        
+
         if showFileName {
             let fileName = (String(describing: logDetails.fileName) as NSString).lastPathComponent
             extendedDetails += "[\(fileName)\(showLineNumber ? ":\(logDetails.lineNumber)" : "")] "
         } else if showLineNumber {
             extendedDetails += "[\(logDetails.lineNumber)] "
         }
-        
+
         if showFunctionName {
             extendedDetails += "[\(logDetails.functionName)] "
         }
-        
+
         let extendedMessage = "\(extendedDetails)> \(logDetails.message)"
         let formattedMessage = applyFormatters(logDetails: logDetails, message: extendedMessage)
         write(message: formattedMessage)
     }
-    
+
     /// Apply formatters to the log message to be outputted
     /// Be aware that formatters are order dependent.
     /// - Parameters:
@@ -124,7 +124,7 @@ open class BaseLogDestination: LogDestination {
     open func applyFormatters(logDetails: LogDetails, message: String) -> String {
         formatters.reduce(message) { $1.format(logDetails: logDetails, message: $0) }
     }
-    
+
     /// Writes a given message to the desired output.
     /// By minimum, subclasses should implement this function, since it handles outputting the message.
     open func write(message: String) {

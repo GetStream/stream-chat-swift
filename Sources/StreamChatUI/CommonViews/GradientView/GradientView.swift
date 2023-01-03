@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import UIKit
@@ -16,14 +16,14 @@ open class GradientView: _View {
             case topLeftBottomRight
             case custom(startPoint: CGPoint, endPoint: CGPoint)
         }
-        
+
         /// The gradient direction.
         public var direction: Direction
         /// The gradient colors.
         public var colors: [UIColor]
         /// The gradient color locations.
         public var locations: [CGFloat]?
-        
+
         public init(
             direction: Direction,
             colors: [UIColor],
@@ -34,24 +34,24 @@ open class GradientView: _View {
             self.locations = locations
         }
     }
-    
+
     /// The gradient to draw
     open var content: Content? {
         didSet { updateContentIfNeeded() }
     }
-    
+
     override open class var layerClass: AnyClass {
         CAGradientLayer.self
     }
-    
+
     /// Returns the layer casted to gradient layer.
     open var gradientLayer: CAGradientLayer? {
         layer as? CAGradientLayer
     }
-    
+
     override open func updateContent() {
         super.updateContent()
-        
+
         gradientLayer?.colors = content?.colors.map(\.cgColor)
         gradientLayer?.startPoint = content?.direction.startPoint ?? .zero
         gradientLayer?.endPoint = content?.direction.endPoint ?? .zero
@@ -74,7 +74,7 @@ extension GradientView.Content.Direction {
             return startPoint
         }
     }
-    
+
     var endPoint: CGPoint {
         switch self {
         case .topRightBottomLeft:

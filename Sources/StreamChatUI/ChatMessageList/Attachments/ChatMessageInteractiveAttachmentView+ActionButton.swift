@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -47,7 +47,7 @@ extension ChatMessageInteractiveAttachmentView {
                 for: .selected
             )
         }
-        
+
         override open func tintColorDidChange() {
             super.tintColorDidChange()
 

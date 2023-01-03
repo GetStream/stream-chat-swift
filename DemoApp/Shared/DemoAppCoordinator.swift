@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -19,7 +19,7 @@ final class DemoAppCoordinator: NSObject {
         self.window = window
         self.chat = chat
         self.pushNotifications = pushNotifications
-        
+
         super.init()
 
         handlePushNotificationResponse()
@@ -45,7 +45,7 @@ final class DemoAppCoordinator: NSObject {
             }
         }
     }
-    
+
     func set(rootViewController: UIViewController, animated: Bool) {
         if animated {
             UIView.transition(with: window, duration: 0.3, options: .transitionFlipFromLeft) {

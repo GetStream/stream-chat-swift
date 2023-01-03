@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -9,7 +9,7 @@ import UIKit
 final class iMessageChatChannelListViewController: ChatChannelListVC {
     init() {
         super.init(nibName: nil, bundle: nil)
-        
+
         let channelListController = ChatClient
             .shared
             .channelListController(
@@ -24,9 +24,9 @@ final class iMessageChatChannelListViewController: ChatChannelListVC {
 
     override func setUpAppearance() {
         super.setUpAppearance()
-        
+
         title = "Messages"
-        
+
         userAvatarView.isHidden = true
         navigationItem.searchController = UISearchController()
         navigationController?.navigationBar.prefersLargeTitles = true
@@ -36,7 +36,7 @@ final class iMessageChatChannelListViewController: ChatChannelListVC {
             target: self,
             action: #selector(editButtonTapped)
         )
-        
+
         view.directionalLayoutMargins.leading = 24
     }
 
@@ -61,8 +61,8 @@ final class iMessageChatChannelListViewController: ChatChannelListVC {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     // MARK: - Helpers
-    
+
     @objc private func editButtonTapped() {}
 }

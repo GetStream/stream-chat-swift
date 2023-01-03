@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -9,7 +9,7 @@ import UIKit
 open class ChatMessageListUnreadCountView: ChatChannelUnreadCountView {
     override open func setUpAppearance() {
         super.setUpAppearance()
-        
+
         backgroundColor = tintColor
     }
 }

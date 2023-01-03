@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -10,10 +10,10 @@ import XCTest
 
 final class ChatMessageLinkPreviewView_Tests: XCTestCase {
     private var linkPreviewView: ChatMessageLinkPreviewView!
-    
+
     override func setUp() {
         super.setUp()
-        
+
         linkPreviewView = ChatMessageLinkPreviewView()
             .withoutAutoresizingMaskConstraints
         linkPreviewView.pin(anchors: [.width], to: 200)
@@ -28,17 +28,17 @@ final class ChatMessageLinkPreviewView_Tests: XCTestCase {
         )
         linkPreviewView.components = .mock
     }
-    
+
     override func tearDown() {
         linkPreviewView = nil
 
         super.tearDown()
     }
-    
+
     func test_appearance() {
         AssertSnapshot(linkPreviewView)
     }
-    
+
     func test_appearance_whenNoAuthor() {
         linkPreviewView.content = .mock(
             id: .unique,
@@ -51,7 +51,7 @@ final class ChatMessageLinkPreviewView_Tests: XCTestCase {
 
         AssertSnapshot(linkPreviewView)
     }
-    
+
     func test_appearance_whenNoTitle() {
         linkPreviewView.content = .mock(
             id: .unique,
@@ -64,7 +64,7 @@ final class ChatMessageLinkPreviewView_Tests: XCTestCase {
 
         AssertSnapshot(linkPreviewView)
     }
-    
+
     func test_appearance_whenNoTitleAndText() {
         linkPreviewView.content = .mock(
             id: .unique,
@@ -76,7 +76,7 @@ final class ChatMessageLinkPreviewView_Tests: XCTestCase {
 
         AssertSnapshot(linkPreviewView)
     }
-    
+
     func test_appearance_whenNoImagePreview() {
         linkPreviewView.content = .mock(
             id: .unique,
@@ -90,7 +90,7 @@ final class ChatMessageLinkPreviewView_Tests: XCTestCase {
 
         AssertSnapshot(linkPreviewView)
     }
-    
+
     func test_appearance_whenLongTexts() {
         let mockContent = repeatElement("Text", count: 5)
             .joined(separator: "\n")
@@ -106,12 +106,12 @@ final class ChatMessageLinkPreviewView_Tests: XCTestCase {
 
         AssertSnapshot(linkPreviewView)
     }
-    
+
     func test_appearanceCustomization_usingAppearance() {
         var appearance = Appearance()
         appearance.fonts.subheadline = appearance.fonts.subheadlineBold
         linkPreviewView.appearance = appearance
-        
+
         AssertSnapshot(linkPreviewView)
     }
 
@@ -123,7 +123,7 @@ final class ChatMessageLinkPreviewView_Tests: XCTestCase {
                 textStack.spacing = 20
             }
         }
-        
+
         let linkPreviewView = TestView()
             .withoutAutoresizingMaskConstraints
         linkPreviewView.pin(anchors: [.width], to: 200)

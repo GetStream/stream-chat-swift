@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -17,7 +17,7 @@ final class MessagePayload_Tests: XCTestCase {
     func test_messagePayload_isSerialized_withDefaultExtraData() throws {
         let box = try JSONDecoder.stream.decode(MessagePayload.Boxed.self, from: messageJSON)
         let payload = box.message
-        
+
         XCTAssertEqual(payload.id, "7baa1533-3294-4c0c-9a62-c9d0928bf733")
         XCTAssertEqual(payload.type.rawValue, "regular")
         XCTAssertEqual(payload.user.id, "broken-waterfall-5")
@@ -86,11 +86,11 @@ final class MessagePayload_Tests: XCTestCase {
         XCTAssertEqual(payload.pinnedBy?.id, "broken-waterfall-5")
         XCTAssertEqual(payload.quotedMessageId, "4C0CC2DA-8AB5-421F-808E-50DC7E40653D")
     }
-    
+
     func test_messagePayload_isSerialized_withCustomExtraData() throws {
         let box = try JSONDecoder.default.decode(MessagePayload.Boxed.self, from: messageJSON)
         let payload = box.message
-        
+
         XCTAssertEqual(payload.id, "7baa1533-3294-4c0c-9a62-c9d0928bf733")
         XCTAssertEqual(payload.type.rawValue, "regular")
         XCTAssertEqual(payload.user.id, "broken-waterfall-5")
@@ -140,7 +140,7 @@ final class MessageRequestBody_Tests: XCTestCase {
             pinExpires: "2021-05-15T06:43:08.776Z".toDate(),
             extraData: ["secret_note": .string("Anakin is Vader ;-)")]
         )
-        
+
         let serializedJSON = try JSONEncoder.stream.encode(payload)
         let expected: [String: Any] = [
             "id": payload.id,
@@ -159,7 +159,7 @@ final class MessageRequestBody_Tests: XCTestCase {
         let expectedJSON = try JSONSerialization.data(withJSONObject: expected, options: [])
         AssertJSONEqual(serializedJSON, expectedJSON)
     }
-    
+
     /// Check whether the message body is serialized when `isSilent` is not provided in `init`
     func test_isSerializedWithoutSilent() throws {
         let payload: MessageRequestBody = .init(
@@ -176,7 +176,7 @@ final class MessageRequestBody_Tests: XCTestCase {
             pinExpires: "2021-05-15T06:43:08.776Z".toDate(),
             extraData: ["secret_note": .string("Anakin is Vader ;-)")]
         )
-        
+
         let serializedJSON = try JSONEncoder.stream.encode(payload)
         let expected: [String: Any] = [
             "id": payload.id,
@@ -193,7 +193,7 @@ final class MessageRequestBody_Tests: XCTestCase {
             "pin_expires": "2021-05-15T06:43:08.776Z"
         ]
         let expectedJSON = try JSONSerialization.data(withJSONObject: expected, options: [])
-        
+
         AssertJSONEqual(serializedJSON, expectedJSON)
     }
 }
@@ -202,7 +202,7 @@ final class MessageRepliesPayload_Tests: XCTestCase {
     func test_isSerialized() throws {
         let mockJSON = XCTestCase.mockData(fromJSONFile: "Messages")
         let payload = try JSONDecoder.default.decode(MessageRepliesPayload.self, from: mockJSON)
-        
+
         // Assert 2 messages successfully decoded.
         XCTAssertTrue(payload.messages.count == 2)
     }

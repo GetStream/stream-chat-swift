@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -17,7 +17,7 @@ class CustomActionsVC: ChatMessageActionsVC {
 final class SlackChatChannelListViewController: ChatChannelListVC {
     init() {
         super.init(nibName: nil, bundle: nil)
-        
+
         let channelListController = ChatClient
             .shared
             .channelListController(
@@ -29,7 +29,7 @@ final class SlackChatChannelListViewController: ChatChannelListVC {
             )
         controller = channelListController
     }
-    
+
     override var preferredStatusBarStyle: UIStatusBarStyle {
         .lightContent
     }
@@ -43,10 +43,10 @@ final class SlackChatChannelListViewController: ChatChannelListVC {
 
     override func setUpAppearance() {
         super.setUpAppearance()
-        
+
         navigationItem.rightBarButtonItem = nil
     }
-    
+
     override func setUpLayout() {
         let titleView = UIView()
         titleView.backgroundColor = Colors.primary
@@ -57,7 +57,7 @@ final class SlackChatChannelListViewController: ChatChannelListVC {
             titleView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             titleView.topAnchor.constraint(equalTo: view.topAnchor)
         ])
-        
+
         let titleLabel = UILabel()
         titleLabel.text = "Direct Messages"
         titleLabel.font = .systemFont(ofSize: 20, weight: .bold)
@@ -70,9 +70,9 @@ final class SlackChatChannelListViewController: ChatChannelListVC {
             titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 15),
             titleLabel.bottomAnchor.constraint(equalTo: titleView.bottomAnchor, constant: -15)
         ])
-        
+
         collectionView.contentInset.top = 50
-        
+
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(collectionView)
         NSLayoutConstraint.activate([
@@ -81,7 +81,7 @@ final class SlackChatChannelListViewController: ChatChannelListVC {
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
-        
+
         let jumpView = JumpView()
         jumpView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(jumpView)
@@ -90,7 +90,7 @@ final class SlackChatChannelListViewController: ChatChannelListVC {
             jumpView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
             jumpView.topAnchor.constraint(equalTo: titleView.bottomAnchor, constant: 10)
         ])
-        
+
         let createChannelView = UIView()
         createChannelView.backgroundColor = Colors.primary
         createChannelView.layer.masksToBounds = true
@@ -113,12 +113,12 @@ final class SlackChatChannelListViewController: ChatChannelListVC {
             createChannelButton.trailingAnchor.constraint(equalTo: createChannelView.trailingAnchor, constant: -5)
         ])
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: animated)
     }
-    
+
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

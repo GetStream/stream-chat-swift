@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -23,27 +23,27 @@ final class SimpleChannelImageAttachmentsListController: UITableViewController, 
     /// which created this instance. It can be used to create other controllers.
     ///
     var messageSearchController: ChatMessageSearchController!
-    
+
     /// The channel identifier used in message search query to filter only messages from a specifci
     /// channel
     var cid: ChannelId!
-    
+
     /// The image attachments taken from messages loaded via a search query.
     private var imageAttachments: [ChatMessageImageAttachment] = [] {
         didSet { tableView.reloadData() }
     }
-    
+
     // MARK: - Lifecycle
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         tableView.register(ImageAttachmentCell.self, forCellReuseIdentifier: ImageAttachmentCell.reuseIdentifier)
-        
+
         // When new messages are loaded, the message search controller
         // notifies the delegate about search results changes.
         messageSearchController.delegate = self
-        
+
         // The message seach query is created. Search results will contain
         // only messags related to the channel with the given `cid`
         // and only those ones that contain image attachments.
@@ -52,22 +52,22 @@ final class SimpleChannelImageAttachmentsListController: UITableViewController, 
             messageFilter: .withAttachments([.image]),
             pageSize: 5
         )
-        
+
         // The controller starts searching the query and loads
         // the first page of results.
         messageSearchController.search(query: query)
     }
-    
+
     // MARK: - UITableViewDelegate, UITableViewDatasource
-    
+
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         100
     }
-    
+
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         imageAttachments.count
     }
-    
+
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(
             withIdentifier: ImageAttachmentCell.reuseIdentifier,
@@ -75,19 +75,19 @@ final class SimpleChannelImageAttachmentsListController: UITableViewController, 
         ) as? ImageAttachmentCell else {
             return UITableViewCell()
         }
-        
+
         cell.imageAttachment = imageAttachments[indexPath.row]
         return cell
     }
-    
+
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         guard indexPath.row == imageAttachments.count - 1 else { return }
-        
+
         messageSearchController.loadNextMessages()
     }
-    
+
     // MARK: - ChatMessageSearchControllerDelegate
-    
+
     ///
     /// The methods below are part of the `ChatMessageSearchControllerDelegate` protocol and
     /// get's called when search results change (e.g. when new message page is loaded)

@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -11,7 +11,7 @@ public struct ErrorPayload: LocalizedError, Codable, CustomDebugStringConvertibl
         case message
         case statusCode = "StatusCode"
     }
-    
+
     /// An error code.
     public let code: Int
     /// A message.
@@ -22,7 +22,7 @@ public struct ErrorPayload: LocalizedError, Codable, CustomDebugStringConvertibl
     public var errorDescription: String? {
         "Error #\(code): \(message)"
     }
-    
+
     public var debugDescription: String {
         "ServerErrorPayload(code: \(code), message: \"\(message)\", statusCode: \(statusCode)))."
     }
@@ -49,12 +49,12 @@ extension ErrorPayload {
     var isInvalidTokenError: Bool {
         ClosedRange.tokenInvalidErrorCodes ~= code || code == StreamErrorCode.accessKeyInvalid
     }
-    
+
     /// Returns `true` if status code is within client error codes range.
     var isClientError: Bool {
         ClosedRange.clientErrorCodes ~= statusCode
     }
-    
+
     /// Returns `true` if internal status code is related to a moderation bouncing error.
     var isBouncedMessageError: Bool {
         code == StreamErrorCode.bouncedMessage
@@ -64,7 +64,7 @@ extension ErrorPayload {
 extension ClosedRange where Bound == Int {
     /// The error codes for token-related errors. Typically, a refreshed token is required to recover.
     static let tokenInvalidErrorCodes: Self = StreamErrorCode.expiredToken...StreamErrorCode.invalidTokenSignature
-    
+
     /// The range of HTTP request status codes for client errors.
     static let clientErrorCodes: Self = 400...499
 }
@@ -75,7 +75,7 @@ public struct ErrorPayloadDetail: LocalizedError, Codable, Equatable {
         case code
         case messages
     }
-    
+
     /// An error code.
     public let code: Int
     /// An array of  message strings that better describe the error detail.

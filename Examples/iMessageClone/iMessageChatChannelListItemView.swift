@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChatUI
@@ -7,20 +7,20 @@ import UIKit
 
 final class iMessageChatChannelListItemView: ChatChannelListItemView {
     private lazy var unreadView = UIView()
-    
+
     override func setUpAppearance() {
         super.setUpAppearance()
-              
+
         unreadView.backgroundColor = .systemBlue
         unreadView.layer.masksToBounds = true
         unreadView.clipsToBounds = true
-        
+
         timestampLabel.font = .systemFont(ofSize: 15)
         timestampLabel.textColor = .gray
-        
+
         subtitleLabel.numberOfLines = 2
     }
-    
+
     override func setUpLayout() {
         super.setUpLayout()
 
@@ -73,7 +73,7 @@ final class iMessageChatChannelListItemView: ChatChannelListItemView {
             mainContainer.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8)
         ])
     }
-    
+
     override func updateContent() {
         super.updateContent()
 

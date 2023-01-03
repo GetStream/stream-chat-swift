@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import UIKit
@@ -21,20 +21,20 @@ class ComposerView: UIView {
     var calculatedHeight: CGFloat {
         textView.contentSize.height + safeAreaInsets.bottom + 20
     }
-    
+
     override var intrinsicContentSize: CGSize {
         CGSize(width: super.intrinsicContentSize.width, height: calculatedHeight)
     }
-    
+
     override func awakeFromNib() {
         super.awakeFromNib()
         translatesAutoresizingMaskIntoConstraints = false
-        
+
         addObserver(self, forKeyPath: "safeAreaInsets", options: .new, context: nil)
     }
-    
+
     // swiftlint:disable block_based_kvo
-    
+
     override func observeValue(
         forKeyPath keyPath: String?,
         of object: Any?,
@@ -47,6 +47,6 @@ class ComposerView: UIView {
             invalidateIntrinsicContentSize()
         }
     }
-    
+
     // swiftlint:enable block_based_kvo
 }

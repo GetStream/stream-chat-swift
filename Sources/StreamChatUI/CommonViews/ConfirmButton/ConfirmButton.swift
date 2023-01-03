@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -12,7 +12,7 @@ open class ConfirmButton: _Button, AppearanceProvider {
 
         let normalStateImage = appearance.images.confirmCheckmark
         setImage(normalStateImage, for: .normal)
-        
+
         let buttonColor: UIColor = appearance.colorPalette.inactiveTint
         let disabledStateImage = appearance.images.confirmCheckmark.tinted(with: buttonColor)
         setImage(disabledStateImage, for: .disabled)

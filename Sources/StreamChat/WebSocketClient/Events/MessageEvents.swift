@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -8,22 +8,22 @@ import Foundation
 public struct MessageNewEvent: ChannelSpecificEvent, HasUnreadCount {
     /// The user who sent a message.
     public let user: ChatUser
-    
+
     /// The message that was sent.
     public let message: ChatMessage
-    
+
     /// The channel identifier the message was sent to.
     public var cid: ChannelId { channel.cid }
-    
+
     /// The channel a message was sent to.
     public let channel: ChatChannel
-    
+
     /// The event timestamp.
     public let createdAt: Date
-    
+
     /// The # of channel watchers.
     public let watcherCount: Int?
-    
+
     /// The unread counts.
     public let unreadCount: UnreadCount?
 }
@@ -36,7 +36,7 @@ class MessageNewEventDTO: EventDTO {
     let watcherCount: Int?
     let unreadCount: UnreadCount?
     let payload: EventPayload
-    
+
     init(from response: EventPayload) throws {
         user = try response.value(at: \.user)
         cid = try response.value(at: \.cid)
@@ -46,14 +46,14 @@ class MessageNewEventDTO: EventDTO {
         unreadCount = try? response.value(at: \.unreadCount)
         payload = response
     }
-    
+
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard
             let userDTO = session.user(id: user.id),
             let messageDTO = session.message(id: message.id),
             let channelDTO = session.channel(cid: cid)
         else { return nil }
-        
+
         return try? MessageNewEvent(
             user: userDTO.asModel(),
             message: messageDTO.asModel(),
@@ -69,16 +69,16 @@ class MessageNewEventDTO: EventDTO {
 public struct MessageUpdatedEvent: ChannelSpecificEvent {
     /// The use who updated the message.
     public let user: ChatUser
-    
+
     /// The channel identifier the message is sent to.
     public var cid: ChannelId { channel.cid }
-    
+
     /// The channel a message is sent to.
     public let channel: ChatChannel
-    
+
     /// The updated message.
     public let message: ChatMessage
-    
+
     /// The event timestamp.
     public let createdAt: Date
 }
@@ -89,7 +89,7 @@ class MessageUpdatedEventDTO: EventDTO {
     let message: MessagePayload
     let createdAt: Date
     let payload: EventPayload
-    
+
     init(from response: EventPayload) throws {
         user = try response.value(at: \.user)
         cid = try response.value(at: \.cid)
@@ -97,14 +97,14 @@ class MessageUpdatedEventDTO: EventDTO {
         createdAt = try response.value(at: \.createdAt)
         payload = response
     }
-    
+
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard
             let userDTO = session.user(id: user.id),
             let messageDTO = session.message(id: message.id),
             let channelDTO = session.channel(cid: cid)
         else { return nil }
-        
+
         return try? MessageUpdatedEvent(
             user: userDTO.asModel(),
             channel: channelDTO.asModel(),
@@ -118,16 +118,16 @@ class MessageUpdatedEventDTO: EventDTO {
 public struct MessageDeletedEvent: ChannelSpecificEvent {
     /// The user who deleted the message.
     public let user: ChatUser?
-    
+
     /// The channel identifier a message was deleted from.
     public var cid: ChannelId { channel.cid }
-    
+
     /// The channel a message was deleted from.
     public let channel: ChatChannel
-    
+
     /// The deleted message.
     public let message: ChatMessage
-    
+
     /// The event timestamp.
     public let createdAt: Date
 
@@ -142,7 +142,7 @@ class MessageDeletedEventDTO: EventDTO {
     let createdAt: Date
     let payload: EventPayload
     let hardDelete: Bool
-    
+
     init(from response: EventPayload) throws {
         user = try? response.value(at: \.user)
         cid = try response.value(at: \.cid)
@@ -151,7 +151,7 @@ class MessageDeletedEventDTO: EventDTO {
         payload = response
         hardDelete = response.hardDelete
     }
-    
+
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard
             let messageDTO = session.message(id: message.id),
@@ -176,16 +176,16 @@ public typealias ChannelReadEvent = MessageReadEvent
 public struct MessageReadEvent: ChannelSpecificEvent {
     /// The user who read the channel.
     public let user: ChatUser
-    
+
     /// The identifier of the read channel.
     public var cid: ChannelId { channel.cid }
-    
+
     /// The read channel.
     public let channel: ChatChannel
-    
+
     /// The event timestamp.
     public let createdAt: Date
-    
+
     /// The unread counts of the current user.
     public let unreadCount: UnreadCount?
 }
@@ -196,7 +196,7 @@ class MessageReadEventDTO: EventDTO {
     let createdAt: Date
     let unreadCount: UnreadCount?
     let payload: EventPayload
-    
+
     init(from response: EventPayload) throws {
         user = try response.value(at: \.user)
         cid = try response.value(at: \.cid)
@@ -204,13 +204,13 @@ class MessageReadEventDTO: EventDTO {
         unreadCount = try? response.value(at: \.unreadCount)
         payload = response
     }
-    
+
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard
             let userDTO = session.user(id: user.id),
             let channelDTO = session.channel(cid: cid)
         else { return nil }
-        
+
         return try? MessageReadEvent(
             user: userDTO.asModel(),
             channel: channelDTO.asModel(),

@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -30,7 +30,7 @@ extension NSFetchRequestGettable where Self: NSManagedObject {
     static func fetchRequest(id: String) -> NSFetchRequest<Self> {
         fetchRequest(keyPath: idKey, equalTo: id)
     }
-    
+
     static func fetchRequest(keyPath: String, equalTo value: String) -> NSFetchRequest<Self> {
         let request = NSFetchRequest<Self>(entityName: entityName)
         request.predicate = NSPredicate(format: "%K == %@", keyPath, value)
@@ -44,13 +44,13 @@ extension NSManagedObject {
     static func load<T: NSManagedObject>(by id: String, context: NSManagedObjectContext) -> [T] {
         load(keyPath: idKey, equalTo: id, context: context)
     }
-    
+
     static func load<T: NSManagedObject>(keyPath: String, equalTo value: String, context: NSManagedObjectContext) -> [T] {
         let request = NSFetchRequest<T>(entityName: entityName)
         request.predicate = NSPredicate(format: "%K == %@", keyPath, value)
         return load(by: request, context: context)
     }
-    
+
     static func load<T: NSManagedObject>(by request: NSFetchRequest<T>, context: NSManagedObjectContext) -> [T] {
         request.entity = NSEntityDescription.entity(forEntityName: T.entityName, in: context)!
         do {
@@ -76,7 +76,7 @@ class FetchCache {
             self.cache[request] = objectIds
         }
     }
-    
+
     fileprivate func get<T>(_ request: NSFetchRequest<T>) -> [NSManagedObjectID]? where T: NSFetchRequestResult {
         guard let request = request as? NSFetchRequest<NSFetchRequestResult> else {
             log.assertionFailure("Request should have a generic type conforming to NSFetchRequestResult")
@@ -88,7 +88,7 @@ class FetchCache {
         }
         return objectIDs
     }
-    
+
     static func clear() {
         Self.shared.clear()
     }
