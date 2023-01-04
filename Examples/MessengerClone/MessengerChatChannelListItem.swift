@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -12,7 +12,7 @@ struct MessengerChatChannelListItem: ChatChannelListItemView.SwiftUIView {
     init(dataSource: ChatChannelListItemView.ObservedObject<MessengerChatChannelListItem>) {
         self.dataSource = dataSource
     }
-    
+
     var body: some View {
         HStack {
             components
@@ -33,7 +33,7 @@ struct MessengerChatChannelListItem: ChatChannelListItemView.SwiftUIView {
                 .font(.system(.footnote))
                 .foregroundColor(Color.gray)
             }
-            
+
             Spacer()
         }
         .padding()

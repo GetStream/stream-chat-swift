@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -14,7 +14,7 @@ public typealias ChatMessageGiphyAttachment = ChatMessageAttachment<GiphyAttachm
 public struct GiphyAttachmentPayload: AttachmentPayload {
     /// An attachment type all `GiphyAttachmentPayload` instances conform to. Is set to `.giphy`.
     public static let type: AttachmentType = .giphy
-    
+
     /// A  title, usually the search request used to find the gif.
     public var title: String
     /// A link to gif file.
@@ -47,7 +47,7 @@ extension GiphyAttachmentPayload: Encodable {
 
         try container.encode(title, forKey: .title)
         try container.encode(previewURL, forKey: .thumbURL)
-        
+
         // Encode giphy attachment specific keys
         var giphyAttachmentContainer = encoder.container(keyedBy: GiphyAttachmentSpecificCodingKeys.self)
         try giphyAttachmentContainer.encode(actions, forKey: .actions)
@@ -61,7 +61,7 @@ extension GiphyAttachmentPayload: Decodable {
         let container = try decoder.container(keyedBy: AttachmentCodingKeys.self)
         // Used for decoding giphy attachment specific keys
         let giphyAttachmentContainer = try decoder.container(keyedBy: GiphyAttachmentSpecificCodingKeys.self)
-        
+
         self.init(
             title: try container.decode(String.self, forKey: .title),
             previewURL: try container.decode(URL.self, forKey: .thumbURL),

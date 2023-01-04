@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -18,7 +18,7 @@ final class NotificationsEvents_Tests: XCTestCase {
         super.tearDown()
         eventDecoder = nil
     }
-    
+
     func test_messageNew() throws {
         let json = XCTestCase.mockData(fromJSONFile: "NotificationMessageNew")
         let event = try eventDecoder.decode(from: json) as? NotificationMessageNewEventDTO
@@ -28,7 +28,7 @@ final class NotificationsEvents_Tests: XCTestCase {
         XCTAssertEqual(event?.createdAt.description, "2020-07-21 14:47:57 +0000")
         XCTAssertEqual(event?.unreadCount, .init(channels: 3, messages: 3))
     }
-    
+
     func test_notificationMessageNew_withMissingFields() throws {
         let json = XCTestCase.mockData(fromJSONFile: "NotificationMessageNew+MissingFields")
         let event = try eventDecoder.decode(from: json) as? NotificationMessageNewEventDTO
@@ -38,14 +38,14 @@ final class NotificationsEvents_Tests: XCTestCase {
         XCTAssertEqual(event?.createdAt.description, "2020-07-21 14:47:57 +0000")
         XCTAssertNil(event?.unreadCount)
     }
-    
+
     func test_markAllRead() throws {
         let json = XCTestCase.mockData(fromJSONFile: "NotificationMarkAllRead")
         let event = try eventDecoder.decode(from: json) as? NotificationMarkAllReadEventDTO
         XCTAssertEqual(event?.user.id, "steep-moon-9")
         XCTAssertEqual(event?.unreadCount, .init(channels: 3, messages: 21))
     }
-    
+
     func test_markRead() throws {
         let json = XCTestCase.mockData(fromJSONFile: "NotificationMarkRead")
         let event = try eventDecoder.decode(from: json) as? NotificationMarkReadEventDTO
@@ -53,14 +53,14 @@ final class NotificationsEvents_Tests: XCTestCase {
         XCTAssertEqual(event?.user.id, "steep-moon-9")
         XCTAssertEqual(event?.unreadCount, .init(channels: 8, messages: 55))
     }
-    
+
     func test_channelSomeMutedChannels() throws {
         let json = XCTestCase.mockData(fromJSONFile: "NotificationChannelMutesUpdatedWithSomeMutedChannels")
         let event = try eventDecoder.decode(from: json) as? NotificationChannelMutesUpdatedEventDTO
         XCTAssertEqual(event?.currentUser.id, "luke_skywalker")
         XCTAssertEqual(event?.payload.currentUser?.mutedChannels.isEmpty, false)
     }
-    
+
     func test_channelNoMutedChannels() throws {
         let json = XCTestCase.mockData(fromJSONFile: "NotificationChannelMutesUpdatedWithNoMutedChannels")
         let event = try eventDecoder.decode(from: json) as? NotificationChannelMutesUpdatedEventDTO
@@ -79,7 +79,7 @@ final class NotificationsEvents_Tests: XCTestCase {
         )
         XCTAssertEqual(event?.unreadCount, .init(channels: 9, messages: 790))
     }
-    
+
     func test_notificationAddedToChannelEventDTO_withMissingFields() throws {
         let json = XCTestCase.mockData(fromJSONFile: "NotificationAddedToChannel+MissingFields")
         let event = try eventDecoder.decode(from: json) as? NotificationAddedToChannelEventDTO
@@ -90,13 +90,13 @@ final class NotificationsEvents_Tests: XCTestCase {
         )
         XCTAssertNil(event?.unreadCount)
     }
-    
+
     func test_removedFromChannel() throws {
         let json = XCTestCase.mockData(fromJSONFile: "NotificationRemovedFromChannel")
         let event = try eventDecoder.decode(from: json) as? NotificationRemovedFromChannelEventDTO
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "91DC91CC-0"))
     }
-    
+
     func test_channelDeleted() throws {
         let json = XCTestCase.mockData(fromJSONFile: "NotificationChannelDeleted")
         let event = try eventDecoder.decode(from: json) as? NotificationChannelDeletedEventDTO
@@ -107,11 +107,11 @@ final class NotificationsEvents_Tests: XCTestCase {
     }
 
     // MARK: DTO -> Event
-    
+
     func test_notificationMessageNewEventDTO_toDomainEvent() throws {
         // Create database session
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
-        
+
         // Create event payload
         let cid: ChannelId = .unique
         let eventPayload = EventPayload(
@@ -123,10 +123,10 @@ final class NotificationsEvents_Tests: XCTestCase {
             unreadCount: .init(channels: .unique, messages: .unique),
             createdAt: .unique
         )
-        
+
         // Create event DTO
         let dto = try NotificationMessageNewEventDTO(from: eventPayload)
-        
+
         // Assert event creation fails due to missing dependencies in database
         XCTAssertNil(dto.toDomainEvent(session: session))
 
@@ -142,11 +142,11 @@ final class NotificationsEvents_Tests: XCTestCase {
         XCTAssertEqual(event.unreadCount, eventPayload.unreadCount)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
-    
+
     func test_notificationMarkAllReadEventDTO_toDomainEvent() throws {
         // Create database session
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
-        
+
         // Create event payload
         let eventPayload = EventPayload(
             eventType: .notificationMarkRead,
@@ -154,13 +154,13 @@ final class NotificationsEvents_Tests: XCTestCase {
             unreadCount: .init(channels: 12, messages: 34),
             createdAt: .unique
         )
-        
+
         // Create event DTO
         let dto = try NotificationMarkAllReadEventDTO(from: eventPayload)
-        
+
         // Assert event creation fails due to missing dependencies in database
         XCTAssertNil(dto.toDomainEvent(session: session))
-        
+
         // Save event to database
         try session.saveUser(payload: eventPayload.user!)
 
@@ -170,11 +170,11 @@ final class NotificationsEvents_Tests: XCTestCase {
         XCTAssertEqual(event.unreadCount, eventPayload.unreadCount)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
-    
+
     func test_notificationMarkReadEventDTO_toDomainEvent() throws {
         // Create database session
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
-        
+
         // Create event payload
         let eventPayload = EventPayload(
             eventType: .notificationMarkRead,
@@ -183,13 +183,13 @@ final class NotificationsEvents_Tests: XCTestCase {
             unreadCount: .init(channels: .unique, messages: .unique),
             createdAt: .unique
         )
-        
+
         // Create event DTO
         let dto = try NotificationMarkReadEventDTO(from: eventPayload)
-        
+
         // Assert event creation fails due to missing dependencies in database
         XCTAssertNil(dto.toDomainEvent(session: session))
-        
+
         // Save event to database
         try session.saveUser(payload: eventPayload.user!)
 
@@ -200,24 +200,24 @@ final class NotificationsEvents_Tests: XCTestCase {
         XCTAssertEqual(event.unreadCount, eventPayload.unreadCount)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
-    
+
     func test_notificationMutesUpdatedEventDTO_toDomainEvent() throws {
         // Create database session
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
-        
+
         // Create event payload
         let eventPayload = EventPayload(
             eventType: .notificationMutesUpdated,
             currentUser: .dummy(userId: .unique, role: .admin),
             createdAt: .unique
         )
-        
+
         // Create event DTO
         let dto = try NotificationMutesUpdatedEventDTO(from: eventPayload)
-        
+
         // Assert event creation fails due to missing dependencies in database
         XCTAssertNil(dto.toDomainEvent(session: session))
-        
+
         // Save event to database
         _ = try session.saveCurrentUser(payload: eventPayload.currentUser!)
 
@@ -226,11 +226,11 @@ final class NotificationsEvents_Tests: XCTestCase {
         XCTAssertEqual(event.currentUser.id, eventPayload.currentUser?.id)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
-    
+
     func test_notificationAddedToChannelEventDTO_toDomainEvent() throws {
         // Create database session
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
-        
+
         // Create event payload
         let eventPayload = EventPayload(
             eventType: .notificationAddedToChannel,
@@ -239,13 +239,13 @@ final class NotificationsEvents_Tests: XCTestCase {
             unreadCount: .init(channels: 13, messages: 53),
             createdAt: .unique
         )
-        
+
         // Create event DTO
         let dto = try NotificationAddedToChannelEventDTO(from: eventPayload)
-        
+
         // Assert event creation fails due to missing dependencies in database
         XCTAssertNil(dto.toDomainEvent(session: session))
-        
+
         // Save event to database
         _ = try session.saveChannel(payload: eventPayload.channel!, query: nil, cache: nil)
         _ = try session.saveMember(
@@ -261,11 +261,11 @@ final class NotificationsEvents_Tests: XCTestCase {
         XCTAssertEqual(event.unreadCount, eventPayload.unreadCount)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
-    
+
     func test_notificationRemovedFromChannelEventDTO_toDomainEvent() throws {
         // Create database session
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
-        
+
         // Create event payload
         let eventPayload = EventPayload(
             eventType: .notificationRemovedFromChannel,
@@ -274,13 +274,13 @@ final class NotificationsEvents_Tests: XCTestCase {
             memberContainer: .init(member: .dummy(), invite: nil, memberRole: nil),
             createdAt: .unique
         )
-        
+
         // Create event DTO
         let dto = try NotificationRemovedFromChannelEventDTO(from: eventPayload)
-        
+
         // Assert event creation fails due to missing dependencies in database
         XCTAssertNil(dto.toDomainEvent(session: session))
-        
+
         // Save event to database
         try session.saveUser(payload: eventPayload.user!)
         try session.saveMember(
@@ -295,24 +295,24 @@ final class NotificationsEvents_Tests: XCTestCase {
         XCTAssertEqual(event.member.id, eventPayload.memberContainer?.member?.user!.id)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
-    
+
     func test_notificationChannelMutesUpdatedEventDTO_toDomainEvent() throws {
         // Create database session
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
-        
+
         // Create event payload
         let eventPayload = EventPayload(
             eventType: .notificationChannelMutesUpdated,
             currentUser: .dummy(userId: .unique, role: .admin),
             createdAt: .unique
         )
-        
+
         // Create event DTO
         let dto = try NotificationChannelMutesUpdatedEventDTO(from: eventPayload)
-        
+
         // Assert event creation fails due to missing dependencies in database
         XCTAssertNil(dto.toDomainEvent(session: session))
-        
+
         // Save event to database
         _ = try session.saveCurrentUser(payload: eventPayload.currentUser!)
 
@@ -321,11 +321,11 @@ final class NotificationsEvents_Tests: XCTestCase {
         XCTAssertEqual(event.currentUser.id, eventPayload.currentUser?.id)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
-    
+
     func test_notificationInvitedEventDTO_toDomainEvent() throws {
         // Create database session
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
-        
+
         // Create event payload
         let eventPayload = EventPayload(
             eventType: .notificationInvited,
@@ -334,13 +334,13 @@ final class NotificationsEvents_Tests: XCTestCase {
             memberContainer: .init(member: .dummy(), invite: nil, memberRole: nil),
             createdAt: .unique
         )
-        
+
         // Create event DTO
         let dto = try NotificationInvitedEventDTO(from: eventPayload)
-        
+
         // Assert event creation fails due to missing dependencies in database
         XCTAssertNil(dto.toDomainEvent(session: session))
-        
+
         // Save event to database
         try session.saveUser(payload: eventPayload.user!)
         try session.saveMember(
@@ -355,11 +355,11 @@ final class NotificationsEvents_Tests: XCTestCase {
         XCTAssertEqual(event.member.id, eventPayload.memberContainer?.member?.user!.id)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
-    
+
     func test_notificationInviteAcceptedEventDTO_toDomainEvent() throws {
         // Create database session
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
-        
+
         // Create event payload
         let eventPayload = EventPayload(
             eventType: .notificationInviteAccepted,
@@ -368,13 +368,13 @@ final class NotificationsEvents_Tests: XCTestCase {
             channel: .dummy(cid: .unique),
             createdAt: .unique
         )
-        
+
         // Create event DTO
         let dto = try NotificationInviteAcceptedEventDTO(from: eventPayload)
-        
+
         // Assert event creation fails due to missing dependencies in database
         XCTAssertNil(dto.toDomainEvent(session: session))
-        
+
         // Save event to database
         try session.saveUser(payload: eventPayload.user!)
         _ = try session.saveChannel(payload: eventPayload.channel!, query: nil, cache: nil)
@@ -390,11 +390,11 @@ final class NotificationsEvents_Tests: XCTestCase {
         XCTAssertEqual(event.member.id, eventPayload.memberContainer?.member?.user!.id)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
-    
+
     func test_notificationInviteRejectedEventDTO_toDomainEvent() throws {
         // Create database session
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
-        
+
         // Create event payload
         let eventPayload = EventPayload(
             eventType: .notificationInviteRejected,
@@ -403,13 +403,13 @@ final class NotificationsEvents_Tests: XCTestCase {
             channel: .dummy(cid: .unique),
             createdAt: .unique
         )
-        
+
         // Create event DTO
         let dto = try NotificationInviteRejectedEventDTO(from: eventPayload)
-        
+
         // Assert event creation fails due to missing dependencies in database
         XCTAssertNil(dto.toDomainEvent(session: session))
-        
+
         // Save event to database
         try session.saveUser(payload: eventPayload.user!)
         _ = try session.saveChannel(payload: eventPayload.channel!, query: nil, cache: nil)
@@ -425,11 +425,11 @@ final class NotificationsEvents_Tests: XCTestCase {
         XCTAssertEqual(event.member.id, eventPayload.memberContainer?.member?.user!.id)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
-    
+
     func test_notificationChannelDeletedEventDTO_toDomainEvent() throws {
         // Create database session
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
-        
+
         // Create event payload
         let eventPayload = EventPayload(
             eventType: .notificationChannelDeleted,
@@ -437,7 +437,7 @@ final class NotificationsEvents_Tests: XCTestCase {
             channel: .dummy(cid: .unique),
             createdAt: .unique
         )
-        
+
         // Save event to database
         _ = try session.saveChannel(payload: eventPayload.channel!, query: nil, cache: nil)
 

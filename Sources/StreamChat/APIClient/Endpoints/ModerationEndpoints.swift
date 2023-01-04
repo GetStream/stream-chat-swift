@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -10,7 +10,7 @@ extension Endpoint {
     static func muteUser(_ userId: UserId) -> Endpoint<EmptyResponse> {
         muteUser(true, with: userId)
     }
-    
+
     static func unmuteUser(_ userId: UserId) -> Endpoint<EmptyResponse> {
         muteUser(false, with: userId)
     }
@@ -38,7 +38,7 @@ extension Endpoint {
             )
         )
     }
-    
+
     static func unbanMember(_ userId: UserId, cid: ChannelId) -> Endpoint<EmptyResponse> {
         .init(
             path: .banMember,

@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -54,7 +54,7 @@ final class ChatClient_Mock: ChatClient {
             (authenticationRepository as? AuthenticationRepository_Mock)?.mockedCurrentUserId = newValue
         }
     }
-    
+
     override func createBackgroundWorkers() {
         createBackgroundWorkers_called = true
 
@@ -141,27 +141,27 @@ extension ChatClient {
             environment: .mock
         )
     }
-    
+
     var mockAPIClient: APIClient_Spy {
         apiClient as! APIClient_Spy
     }
-    
+
     var mockWebSocketClient: WebSocketClient_Mock {
         webSocketClient as! WebSocketClient_Mock
     }
-    
+
     var mockDatabaseContainer: DatabaseContainer_Spy {
         databaseContainer as! DatabaseContainer_Spy
     }
-    
+
     var mockSyncRepository: SyncRepository_Mock {
         syncRepository as! SyncRepository_Mock
     }
-    
+
     var mockMessageRepository: MessageRepository_Mock {
         messageRepository as! MessageRepository_Mock
     }
-    
+
     var mockOfflineRequestsRepository: OfflineRequestsRepository_Mock {
         offlineRequestsRepository as! OfflineRequestsRepository_Mock
     }
@@ -218,7 +218,7 @@ extension ChatClient.Environment {
                 webSocketEnvironment.eventBatcherBuilder = {
                     Batcher<Event>(period: 0, handler: $0)
                 }
-                
+
                 return WebSocketClient(
                     sessionConfiguration: $0,
                     requestEncoder: $1,

@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -9,12 +9,12 @@ struct DevicePayload: Decodable, Equatable {
         case id
         case createdAt = "created_at"
     }
-    
+
     /// Device identifier.
     let id: DeviceId
     /// Date the device was created for the user.
     let createdAt: Date?
-    
+
     init(id: DeviceId, createdAt: Date? = .init()) {
         self.id = id
         self.createdAt = createdAt

@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -14,26 +14,26 @@ class SettingsViewController: UITableViewController {
     @IBOutlet var webSocketsConnectionSwitch: UISwitch!
     @IBOutlet var userNameLabel: UILabel!
     @IBOutlet var userSecondaryLabel: UILabel!
-    
+
     var currentUserController: CurrentChatUserController! {
         didSet {
             currentUserController.delegate = self
         }
     }
-    
+
     lazy var connectionController: ChatConnectionController = {
         currentUserController.client.connectionController()
     }()
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         updateUserCell(with: currentUserController.currentUser)
         currentUserController.synchronize()
     }
-    
+
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        
+
         switch tableView.cellForRow(at: indexPath) {
         case logoutCell:
             logout()
@@ -43,7 +43,7 @@ class SettingsViewController: UITableViewController {
             break
         }
     }
-    
+
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let userUpdateVC = segue.destination as? UserUpdateViewController {
             userUpdateVC.currentUserController = currentUserController
@@ -58,12 +58,12 @@ extension SettingsViewController {
         if let user = user {
             userNameLabel.text = user.name ?? ""
             userNameLabel.text! += " (\(user.id))"
-            
+
             let unreadCount = user.unreadCount
             userSecondaryLabel.text = "Unread messages: \(unreadCount.messages) - Unread channels: \(unreadCount.channels)"
         }
     }
-    
+
     func logout() {
         connectionController.disconnect()
         moveToStoryboard(.main, options: .transitionFlipFromRight)
@@ -76,7 +76,7 @@ extension SettingsViewController {
     @IBAction func pushNotificationsSwitchValueChanged(_ sender: Any) {
         // TODO: Enable/Disable push notifications
     }
-    
+
     @IBAction func webSocketsConnectionSwitchValueChanged(_ sender: Any) {
         if webSocketsConnectionSwitch.isOn {
             webSocketsConnectionSwitch.isEnabled = false
@@ -117,7 +117,7 @@ extension SettingsViewController: CurrentChatUserControllerDelegate {
 struct SettingsView: UIViewControllerRepresentable {
     typealias UIViewControllerType = SettingsViewController
     let currentUserController: CurrentChatUserController
-    
+
     func makeUIViewController(context: Context) -> SettingsViewController {
         let navigationViewController = UIStoryboard.settings.instantiateInitialViewController()!
         if let settingsViewController = navigationViewController.children.first as? SettingsViewController {
@@ -126,6 +126,6 @@ struct SettingsView: UIViewControllerRepresentable {
         }
         return SettingsViewController()
     }
-    
+
     func updateUIViewController(_ uiViewController: SettingsViewController, context: Context) {}
 }

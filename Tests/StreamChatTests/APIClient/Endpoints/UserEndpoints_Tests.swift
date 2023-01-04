@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -12,7 +12,7 @@ final class UserEndpoints_Tests: XCTestCase {
             filter: .equal(.id, to: .unique),
             sort: [.init(key: .lastActivityAt)]
         )
-        
+
         let expectedEndpoint = Endpoint<UserListPayload>(
             path: .users,
             method: .get,
@@ -20,21 +20,21 @@ final class UserEndpoints_Tests: XCTestCase {
             requiresConnectionId: true,
             body: ["payload": query]
         )
-        
+
         // Build endpoint
         let endpoint: Endpoint<UserListPayload> = .users(query: query)
-        
+
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
         XCTAssertEqual("users", endpoint.path.value)
     }
-    
+
     func test_updateCurrentUser_buildsCorrectly() {
         let userId = UserId.unique
         let payload: UserUpdateRequestBody = .init(
             name: .unique, imageURL: .unique(), extraData: ["company": .string(.unique)]
         )
-        
+
         let users: [String: AnyEncodable] = [
             "id": AnyEncodable(userId),
             "set": AnyEncodable(payload)
@@ -42,7 +42,7 @@ final class UserEndpoints_Tests: XCTestCase {
         let body: [String: AnyEncodable] = [
             "users": AnyEncodable([users])
         ]
-        
+
         let expectedEndpoint = Endpoint<UserUpdateResponse>(
             path: .users,
             method: .patch,
@@ -50,9 +50,9 @@ final class UserEndpoints_Tests: XCTestCase {
             requiresConnectionId: false,
             body: body
         )
-        
+
         let endpoint: Endpoint<UserUpdateResponse> = .updateUser(id: userId, payload: payload)
-        
+
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
         XCTAssertEqual("users", endpoint.path.value)
     }

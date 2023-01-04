@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -23,20 +23,20 @@ final class InternetConnection_Mock: InternetConnection {
 /// Mock implementation of `InternetConnectionMonitor`
 final class InternetConnectionMonitor_Mock: InternetConnectionMonitor {
     weak var delegate: InternetConnectionDelegate?
-    
+
     var status: InternetConnection.Status = .unknown {
         didSet {
             delegate?.internetConnectionStatusDidChange(status: status)
         }
     }
-    
+
     var isStarted = false
-    
+
     func start() {
         isStarted = true
         status = .available(.great)
     }
-    
+
     func stop() {
         isStarted = false
         status = .unknown

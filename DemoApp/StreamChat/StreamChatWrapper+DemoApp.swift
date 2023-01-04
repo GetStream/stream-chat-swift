@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -36,7 +36,7 @@ extension StreamChatWrapper {
                 : localizedString
         }
     }
-    
+
     func configureUI() {
         // Customize UI configuration
         Components.default.messageListDateSeparatorEnabled = true

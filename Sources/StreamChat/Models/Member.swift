@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -8,20 +8,20 @@ import Foundation
 public class ChatChannelMember: ChatUser {
     /// The role of the user within the channel.
     public let memberRole: MemberRole
-    
+
     /// The date the user was added to the channel.
     public let memberCreatedAt: Date
-    
+
     /// The date the membership was updated for the last time.
     public let memberUpdatedAt: Date
-    
+
     /// Returns `true` if the member has been invited to the channel.
     public let isInvited: Bool
-    
+
     /// If the member accepted a channel invitation, this field contains date of when the invitation was accepted,
     /// otherwise it's `nil`.
     public let inviteAcceptedAt: Date?
-    
+
     /// If the member rejected a channel invitation, this field contains date of when the invitation was rejected,
     /// otherwise it's `nil`.
     public let inviteRejectedAt: Date?
@@ -75,7 +75,7 @@ public class ChatChannelMember: ChatUser {
         self.isBannedFromChannel = isBannedFromChannel
         self.isShadowBannedFromChannel = isShadowBannedFromChannel
         self.banExpiresAt = banExpiresAt
-        
+
         super.init(
             id: id,
             name: name,
@@ -97,11 +97,11 @@ public class ChatChannelMember: ChatUser {
 /// There are some predefined types but any type can be introduced and sent by the backend.
 public struct MemberRole: RawRepresentable, Codable, Hashable, ExpressibleByStringLiteral {
     public let rawValue: String
-    
+
     public init(rawValue: String) {
         self.rawValue = rawValue
     }
-    
+
     public init(stringLiteral value: String) {
         self.init(rawValue: value)
     }

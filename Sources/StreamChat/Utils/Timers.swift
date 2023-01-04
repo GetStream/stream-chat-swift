@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -14,7 +14,7 @@ protocol Timer {
     /// - Returns: `TimerControl` where you can cancel the timer.
     @discardableResult
     static func schedule(timeInterval: TimeInterval, queue: DispatchQueue, onFire: @escaping () -> Void) -> TimerControl
-    
+
     /// Schedules a new repeating timer.
     ///
     /// - Parameters:
@@ -27,7 +27,7 @@ protocol Timer {
         queue: DispatchQueue,
         onFire: @escaping () -> Void
     ) -> RepeatingTimerControl
-    
+
     /// Returns the current date and time.
     static func currentTime() -> Date
 }
@@ -68,7 +68,7 @@ extension Timer {
 protocol RepeatingTimerControl {
     /// Resumes the timer.
     func resume()
-    
+
     /// Pauses the timer.
     func suspend()
 }
@@ -93,7 +93,7 @@ struct DefaultTimer: Timer {
         queue.asyncAfter(deadline: .now() + timeInterval, execute: worker)
         return worker
     }
-    
+
     static func scheduleRepeating(
         timeInterval: TimeInterval,
         queue: DispatchQueue,
@@ -108,16 +108,16 @@ private class RepeatingTimer: RepeatingTimerControl {
         case suspended
         case resumed
     }
-    
+
     private var state: State = .suspended
     private let timer: DispatchSourceTimer
-    
+
     init(timeInterval: TimeInterval, queue: DispatchQueue, onFire: @escaping () -> Void) {
         timer = DispatchSource.makeTimerSource(queue: queue)
         timer.schedule(deadline: .now() + .milliseconds(Int(timeInterval)), repeating: timeInterval, leeway: .seconds(1))
         timer.setEventHandler(handler: onFire)
     }
-    
+
     deinit {
         timer.setEventHandler {}
         timer.cancel()
@@ -125,21 +125,21 @@ private class RepeatingTimer: RepeatingTimerControl {
         // triggers a crash. This is documented here https://forums.developer.apple.com/thread/15902
         resume()
     }
-    
+
     func resume() {
         if state == .resumed {
             return
         }
-        
+
         state = .resumed
         timer.resume()
     }
-    
+
     func suspend() {
         if state == .suspended {
             return
         }
-        
+
         state = .suspended
         timer.suspend()
     }

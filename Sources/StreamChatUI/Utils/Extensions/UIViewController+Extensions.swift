@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import UIKit
@@ -11,14 +11,14 @@ extension UIViewController {
         superview.addSubview(child.view)
         child.didMove(toParent: self)
     }
-    
+
     /// Adds `child` as a child view controller to `self` and as an arranged subview of `ContainerView`.
     func addChildViewController(_ child: UIViewController, targetView superview: ContainerStackView) {
         addChild(child)
         superview.addArrangedSubview(child.view)
         child.didMove(toParent: self)
     }
-    
+
     func addChildViewController(_ child: UIViewController, embedIn superview: UIView) {
         addChild(child)
         child.view.translatesAutoresizingMaskIntoConstraints = false

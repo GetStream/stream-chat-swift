@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -18,20 +18,20 @@ final class EventDecoder_Tests: XCTestCase {
         super.tearDown()
         eventDecoder = nil
     }
-    
+
     // MARK: System events
-    
+
     func test_decode_whenValidSystemEventPayloadComes_returnsDecodedSystemEvent() throws {
         // Load valid system event JSON.
         let json = XCTestCase.mockData(fromJSONFile: "NotificationAddedToChannel")
-        
+
         // Decode an event.
         let event = try eventDecoder.decode(from: json)
-        
+
         // Assert system event is decoded.
         XCTAssertTrue(event is NotificationAddedToChannelEventDTO)
     }
-    
+
     func test_decode_whenInvalidSystemEventPayloadComes_throwsEventDecodingError() throws {
         // Create invalid system event JSON
         let json = """
@@ -39,15 +39,15 @@ final class EventDecoder_Tests: XCTestCase {
             "type" : "\(EventType.notificationInvited.rawValue)"
         }
         """.data(using: .utf8)!
-        
+
         // Assert decoding error is thrown.
         XCTAssertThrowsError(try eventDecoder.decode(from: json)) { error in
             XCTAssertTrue(error is ClientError.EventDecoding)
         }
     }
-    
+
     // MARK: Custom events
-    
+
     func test_decode_whenValidCustomEventPayloadComes_returnsUnknownChannelEvent() throws {
         // Create custom event fields
         let userId: UserId = .unique
@@ -82,19 +82,19 @@ final class EventDecoder_Tests: XCTestCase {
             "idea" : "\(ideaPayload.idea)"
         }
         """.data(using: .utf8)!
-        
+
         // Assert event is decoded.
         let event = try eventDecoder.decode(from: json)
         // Assert `UnknownChannelEvent` event with expected payload is decoded
         let unkownEvent = try XCTUnwrap(event as? UnknownChannelEvent)
-        
+
         // Assert event has correct fields.
         XCTAssertEqual(unkownEvent.cid, cid)
         XCTAssertEqual(unkownEvent.userId, userId)
         XCTAssertEqual(unkownEvent.createdAt, createdAt.toDate())
         XCTAssertEqual(unkownEvent.payload(ofType: IdeaEventPayload.self), ideaPayload)
     }
-    
+
     func test_decode_whenValidCustomEventPayloadComes_returnsUnknownUserEvent() throws {
         // Create custom event fields
         let userId: UserId = .unique
@@ -124,18 +124,18 @@ final class EventDecoder_Tests: XCTestCase {
             "idea" : "\(ideaPayload.idea)"
         }
         """.data(using: .utf8)!
-        
+
         // Assert event is decoded.
         let event = try eventDecoder.decode(from: json)
         // Assert `UnknownUserEvent` event with expected payload is decoded
         let unkownEvent = try XCTUnwrap(event as? UnknownUserEvent)
-        
+
         // Assert event has correct fields.
         XCTAssertEqual(unkownEvent.userId, userId)
         XCTAssertEqual(unkownEvent.createdAt, createdAt.toDate())
         XCTAssertEqual(unkownEvent.payload(ofType: IdeaEventPayload.self), ideaPayload)
     }
-    
+
     func test_decode_whenInvalidCustomEventPayloadComes_throwsDecodingError() {
         // Create invalid custom channel event JSON
         let json = """
@@ -143,7 +143,7 @@ final class EventDecoder_Tests: XCTestCase {
             "type" : "\(IdeaEventPayload.eventType.rawValue)"
         }
         """.data(using: .utf8)!
-        
+
         // Assert error is thrown.
         XCTAssertThrowsError(try eventDecoder.decode(from: json)) { error in
             XCTAssertTrue(error is DecodingError)

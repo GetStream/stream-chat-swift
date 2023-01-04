@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -7,7 +7,7 @@ import Foundation
 /// The type describing a value that can be used as a sorting when paginating pinned messages.
 public struct PinnedMessagesSortingKey: RawRepresentable, Hashable, SortingKey {
     public let rawValue: String
-    
+
     public init(rawValue: String) {
         self.rawValue = rawValue
     }

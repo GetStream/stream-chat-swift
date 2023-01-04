@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -9,7 +9,7 @@ import XCTest
 
 final class CurrentUserPayload_Tests: XCTestCase {
     let currentUserJSON = XCTestCase.mockData(fromJSONFile: "CurrentUser")
-    
+
     func test_currentUserJSON_customRoleIsDecodedCorrectly() throws {
         let json = XCTestCase.mockData(fromJSONFile: "CurrentUserCustomRole")
         let payload = try JSONDecoder.default.decode(CurrentUserPayload.self, from: json)

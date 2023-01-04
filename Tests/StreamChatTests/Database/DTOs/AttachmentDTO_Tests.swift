@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -8,12 +8,12 @@ import XCTest
 
 final class AttachmentDTO_Tests: XCTestCase {
     var database: DatabaseContainer!
-    
+
     override func setUp() {
         super.setUp()
         database = DatabaseContainer_Spy()
     }
-    
+
     override func tearDown() {
         AssertAsync.canBeReleased(&database)
         database = nil
@@ -32,7 +32,7 @@ final class AttachmentDTO_Tests: XCTestCase {
         try database.writeSynchronously { session in
             try session.saveAttachment(payload: attachment, id: attachmentId)
         }
-        
+
         // Load the attachment from the database.
         let loadedAttachment = try XCTUnwrap(database.viewContext.attachment(id: attachmentId))
 
@@ -51,11 +51,11 @@ final class AttachmentDTO_Tests: XCTestCase {
 
         XCTAssertEqual(imageAttachmentModel.payload, imagePayload)
     }
-    
+
     func test_giphyAttachmentWithActionsPayload_isStoredAndLoadedFromDB() throws {
         let cid: ChannelId = .unique
         let messageId: MessageId = .unique
-        
+
         let giphyWithActionsJSON = XCTestCase.mockData(fromJSONFile: "AttachmentPayloadGiphyWithActions")
         let attachment = try JSONDecoder.default.decode(MessageAttachmentPayload.self, from: giphyWithActionsJSON)
         let attachmentId = AttachmentId(cid: cid, messageId: messageId, index: 0)
@@ -66,7 +66,7 @@ final class AttachmentDTO_Tests: XCTestCase {
         try database.writeSynchronously { session in
             try session.saveAttachment(payload: attachment, id: attachmentId)
         }
-        
+
         // Load the attachment from the database.
         let loadedAttachment = try XCTUnwrap(database.viewContext.attachment(id: attachmentId))
 
@@ -85,11 +85,11 @@ final class AttachmentDTO_Tests: XCTestCase {
 
         XCTAssertEqual(giphyAttachmentWithActionsPayload.payload, giphyPayload)
     }
-    
+
     func test_giphyAttachmentWithoutActionsPayload_isStoredAndLoadedFromDB() throws {
         let cid: ChannelId = .unique
         let messageId: MessageId = .unique
-        
+
         let giphyWithoutActionsJSON = XCTestCase.mockData(
             fromFile: "AttachmentPayloadGiphyWithoutActions",
             bundle: .testTools
@@ -103,7 +103,7 @@ final class AttachmentDTO_Tests: XCTestCase {
         try database.writeSynchronously { session in
             try session.saveAttachment(payload: attachment, id: attachmentId)
         }
-        
+
         // Load the attachment from the database.
         let loadedAttachment = try XCTUnwrap(database.viewContext.attachment(id: attachmentId))
 
@@ -122,7 +122,7 @@ final class AttachmentDTO_Tests: XCTestCase {
 
         XCTAssertEqual(giphyAttachmentWithoutActionsPayload.payload, giphyPayload)
     }
-    
+
     func test_uploadableAttachmentEnvelope_isStoredAndLoadedFromDB() throws {
         let cid: ChannelId = .unique
         let messageId: MessageId = .unique
@@ -202,9 +202,9 @@ final class AttachmentDTO_Tests: XCTestCase {
         // Create channel in DB
         let cid: ChannelId = .unique
         try database.createChannel(cid: cid, withMessages: false)
-        
+
         let payload: MessageAttachmentPayload = .dummy()
-        
+
         // Try to save an attachment and catch an error
         let error = try waitFor {
             database.write({ session in
@@ -212,7 +212,7 @@ final class AttachmentDTO_Tests: XCTestCase {
                 try session.saveAttachment(payload: payload, id: id)
             }, completion: $0)
         }
-        
+
         // Assert correct error is thrown
         XCTAssertTrue(error is ClientError.MessageDoesNotExist)
     }

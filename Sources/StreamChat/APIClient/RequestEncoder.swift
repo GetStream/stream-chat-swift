@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -10,7 +10,7 @@ protocol RequestEncoder {
     ///
     /// Trying to encode an `Endpoint` with the `requiresConnectionId` set to `true` without setting the delegate
     var connectionDetailsProviderDelegate: ConnectionDetailsProviderDelegate? { get set }
-    
+
     /// Asynchronously creates a new `URLRequest` with the data from the `Endpoint`. It also adds all required data
     /// like an api key, etc.
     ///
@@ -21,7 +21,7 @@ protocol RequestEncoder {
         for endpoint: Endpoint<ResponsePayload>,
         completion: @escaping (Result<URLRequest, Error>) -> Void
     )
-    
+
     /// Creates a new `RequestEncoder`.
     ///
     /// - Parameters:
@@ -44,16 +44,16 @@ extension RequestEncoder {
             "Use the asynchronous version of `encodeRequest` for endpoints with `requiresConnectionId` set to `true.`",
             subsystems: .httpRequests
         )
-        
+
         var result: Result<URLRequest, Error>?
         encodeRequest(for: endpoint) { result = $0 }
-        
+
         log.assert(
             result != nil,
             "`encodeRequest` with `requiresConnectionId == false` should return immediately.",
             subsystems: .httpRequests
         )
-        
+
         return try result!.get()
     }
 }
@@ -73,27 +73,27 @@ struct DefaultRequestEncoder: RequestEncoder {
     /// otherwise we have a connection problem, which is handled as described above.
     private let waiterTimeout: TimeInterval = 10
     weak var connectionDetailsProviderDelegate: ConnectionDetailsProviderDelegate?
-    
+
     func encodeRequest<ResponsePayload: Decodable>(
         for endpoint: Endpoint<ResponsePayload>,
         completion: @escaping (Result<URLRequest, Error>) -> Void
     ) {
         var request: URLRequest
-        
+
         do {
             // Prepare the URL
             var url = try encodeRequestURL(for: endpoint)
             url = try url.appendingQueryItems(["api_key": apiKey.apiKeyString])
-            
+
             // Create a request
             request = URLRequest(url: url)
             request.httpMethod = endpoint.method.rawValue
-            
+
             // Encode endpoint-specific query items
             if let queryItems = endpoint.queryItems {
                 try encodeJSONToQueryItems(request: &request, data: queryItems)
             }
-            
+
             try encodeRequestBody(request: &request, endpoint: endpoint)
         } catch {
             completion(.failure(error))
@@ -118,7 +118,7 @@ struct DefaultRequestEncoder: RequestEncoder {
         self.baseURL = baseURL
         self.apiKey = apiKey
     }
-    
+
     // MARK: - Private
 
     private func addAuthorizationHeader<T: Decodable>(
@@ -200,22 +200,22 @@ struct DefaultRequestEncoder: RequestEncoder {
             }
         }
     }
-    
+
     private func encodeRequestURL<T: Decodable>(for endpoint: Endpoint<T>) throws -> URL {
         var urlComponents = URLComponents()
         urlComponents.scheme = baseURL.scheme
         urlComponents.host = baseURL.host
         urlComponents.path = baseURL.path
         urlComponents.port = baseURL.port
-        
+
         guard var url = urlComponents.url else {
             throw ClientError.InvalidURL("URL can't be created using components: \(urlComponents)")
         }
-        
+
         url = url.appendingPathComponent(endpoint.path.value)
         return url
     }
-    
+
     private func encodeRequestBody<T: Decodable>(request: inout URLRequest, endpoint: Endpoint<T>) throws {
         switch endpoint.method {
         case .get, .delete:
@@ -230,13 +230,13 @@ struct DefaultRequestEncoder: RequestEncoder {
             }
         }
     }
-    
+
     private func encodeJSONToQueryItems(request: inout URLRequest, data: Encodable) throws {
         let data = try (data as? Data) ?? JSONEncoder.stream.encode(AnyEncodable(data))
         guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
             throw ClientError.InvalidJSON("Data is not a valid JSON: \(String(data: data, encoding: .utf8) ?? "nil")")
         }
-        
+
         let bodyQueryItems = json.compactMap { (key, value) -> URLQueryItem? in
             // If the `value` is a JSON, encode it like that
             if let jsonValue = value as? [String: Any] {
@@ -250,12 +250,12 @@ struct DefaultRequestEncoder: RequestEncoder {
                     )
                 }
             }
-            
+
             return URLQueryItem(name: key, value: String(describing: value))
         }
-        
+
         log.assert(request.url != nil, "Request URL must not be `nil`.", subsystems: .httpRequests)
-        
+
         request.url = try request.url!.appendingQueryItems(bodyQueryItems)
     }
 }
@@ -267,12 +267,12 @@ private extension URL {
         }
         let existingQueryItems = components.queryItems ?? []
         components.queryItems = existingQueryItems + items
-        
+
         // Manually replace all occurrences of "+" in the query because it can be understood as a placeholder
         // value for a space. We want to keep it as "+" so we have to manually percent-encode it.
         components.percentEncodedQuery = components.percentEncodedQuery?
             .replacingOccurrences(of: "+", with: "%2B")
-        
+
         guard let newURL = components.url else {
             throw ClientError.InvalidURL("Can't create a new `URL` after appending query items: \(items).")
         }

@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -16,7 +16,7 @@ class UserUpdater: Worker {
             completion?($0.error)
         }
     }
-    
+
     /// Unmutes the user with the provided `userId`.
     /// - Parameters:
     ///   - userId: The user identifier.
@@ -27,7 +27,7 @@ class UserUpdater: Worker {
             completion?($0.error)
         }
     }
-    
+
     /// Makes a single user query call to the backend and updates the local storage with the results.
     ///
     /// - Parameters:
@@ -45,12 +45,12 @@ class UserUpdater: Worker {
                         ))
                         return
                     }
-                
+
                     guard let user = payload.users.first else {
                         completion?(ClientError.UserDoesNotExist(userId: userId))
                         return
                     }
-                
+
                     self.database.write({ session in
                         try session.saveUser(payload: user)
                     }, completion: { error in
@@ -64,7 +64,7 @@ class UserUpdater: Worker {
                 }
             }
     }
-    
+
     /// Flags or unflags the user with the provided `userId` depending on `flag` value.
     /// - Parameters:
     ///   - flag: The indicator saying whether the user should be flagged or unflagged.
@@ -78,7 +78,7 @@ class UserUpdater: Worker {
             case let .success(payload):
                 self.database.write({ session in
                     let userDTO = try session.saveUser(payload: payload.flaggedUser)
-                    
+
                     let currentUserDTO = session.currentUser
                     if flag {
                         currentUserDTO?.flaggedUsers.insert(userDTO)

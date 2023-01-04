@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -8,27 +8,27 @@ import Foundation
 public enum ChannelType: Codable, Hashable {
     /// Sensible defaults in case you want to build livestream chat like Instagram Livestream or Periscope.
     case livestream
-    
+
     /// Configured for apps such as WhatsApp or Facebook Messenger.
     case messaging
-    
+
     /// If you want to build your own version of Slack or something similar, start here.
     case team
-    
+
     /// Good defaults for building something like your own version of Twitch.
     case gaming
-    
+
     /// Good defaults for building something like your own version of Intercom or Drift.
     case commerce
-    
+
     /// The type of the channel is custom.
     ///
     /// Only small letters, underscore and numbers should be used
     case custom(String)
-    
+
     /// A channel type title.
     public var title: String { rawValue.capitalized }
-    
+
     /// A raw value of the channel type.
     public var rawValue: String {
         switch self {
@@ -42,7 +42,7 @@ public enum ChannelType: Codable, Hashable {
             return value
         }
     }
-    
+
     /// Init a channel type with a string raw value.
     ///
     /// - Parameter rawValue: a string raw value of a channel type.
@@ -58,22 +58,22 @@ public enum ChannelType: Codable, Hashable {
             self = .custom(rawValue)
         }
     }
-    
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         let value = try container.decode(String.self)
         self.init(rawValue: value)
-        
+
         if case let .custom(value) = self {
             Self.assertCustomTypeValue(value)
         }
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         try container.encode(rawValue)
     }
-    
+
     /// Check that custom types have valid `rawValue`
     private static func assertCustomTypeValue(_ value: String) {
         let allowedCharacters = CharacterSet.lowercaseLetters

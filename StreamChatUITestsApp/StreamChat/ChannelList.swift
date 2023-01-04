@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -14,27 +14,27 @@ final class ChannelList: ChatChannelListVC, ChatConnectionControllerDelegate {
         super.viewWillAppear(animated)
         (router as? CustomChannelListRouter)?.channelListWillAppear(self)
     }
-    
+
     override func setUp() {
         super.setUp()
-        
+
         connectionController.delegate = self
         updateTitle(with: connectionController.connectionStatus)
     }
-    
+
     override func setUpAppearance() {
         super.setUpAppearance()
-        
+
         updateTitle(with: connectionController.connectionStatus)
     }
-    
+
     func connectionController(
         _ controller: ChatConnectionController,
         didUpdateConnectionStatus status: ConnectionStatus
     ) {
         updateTitle(with: status)
     }
-    
+
     private func updateTitle(with status: ConnectionStatus) {
         switch status {
         case .initialized:

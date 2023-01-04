@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -68,11 +68,11 @@ final class DeviceEndpoints_Tests: XCTestCase {
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
         XCTAssertEqual("devices", endpoint.path.value)
     }
-    
+
     func test_removeDevice_buildsCorrectly() {
         let userId: UserId = .unique
         let deviceId: String = .unique
-        
+
         let expectedEndpoint: Endpoint<EmptyResponse> = .init(
             path: .devices,
             method: .delete,
@@ -80,18 +80,18 @@ final class DeviceEndpoints_Tests: XCTestCase {
             requiresConnectionId: false,
             body: nil
         )
-        
+
         // Build endpoint
         let endpoint: Endpoint<EmptyResponse> = .removeDevice(userId: userId, deviceId: deviceId)
-        
+
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
         XCTAssertEqual("devices", endpoint.path.value)
     }
-    
+
     func test_devices_buildsCorrectly() {
         let userId: UserId = .unique
-        
+
         let expectedEndpoint: Endpoint<DeviceListPayload> = .init(
             path: .devices,
             method: .get,
@@ -99,10 +99,10 @@ final class DeviceEndpoints_Tests: XCTestCase {
             requiresConnectionId: false,
             body: nil
         )
-        
+
         // Build endpoint
         let endpoint: Endpoint<DeviceListPayload> = .devices(userId: userId)
-        
+
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
         XCTAssertEqual("devices", endpoint.path.value)

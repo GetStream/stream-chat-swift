@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -24,15 +24,15 @@ public final class DatabaseContainer_Spy: DatabaseContainer, Spy {
 
     /// Every time a write session finishes this counter is increased
     @Atomic var writeSessionCounter: Int = 0
-    
+
     /// If set to `true` and the mock will remove its database files once deinited.
     var shouldCleanUpTempDBFiles = false
-    
+
     public convenience init(localCachingSettings: ChatClientConfig.LocalCaching? = nil) {
         self.init(kind: .onDisk(databaseFileURL: .newTemporaryFileURL()), localCachingSettings: localCachingSettings)
         shouldCleanUpTempDBFiles = true
     }
-    
+
     override public init(
         kind: DatabaseContainer.Kind,
         shouldFlushOnStart: Bool = false,
@@ -55,7 +55,7 @@ public final class DatabaseContainer_Spy: DatabaseContainer, Spy {
             shouldShowShadowedMessages: shouldShowShadowedMessages
         )
     }
-    
+
     deinit {
         // Remove the database file if the container requests that
         if shouldCleanUpTempDBFiles, case let .onDisk(databaseFileURL: url) = init_kind {
@@ -70,7 +70,7 @@ public final class DatabaseContainer_Spy: DatabaseContainer, Spy {
             }
         }
     }
-    
+
     override public func removeAllData(force: Bool = true, completion: ((Error?) -> Void)? = nil) {
         removeAllData_called = true
 
@@ -81,18 +81,18 @@ public final class DatabaseContainer_Spy: DatabaseContainer, Spy {
 
         super.removeAllData(force: force, completion: completion)
     }
-    
+
     override public func recreatePersistentStore(completion: ((Error?) -> Void)? = nil) {
         recreatePersistentStore_called = true
-        
+
         if let error = recreatePersistentStore_errorResponse {
             completion?(error)
             return
         }
-        
+
         super.recreatePersistentStore(completion: completion)
     }
-    
+
     override public func write(_ actions: @escaping (DatabaseSession) throws -> Void, completion: @escaping (Error?) -> Void) {
         record()
         let wrappedActions: ((DatabaseSession) throws -> Void) = { session in
@@ -101,7 +101,7 @@ public final class DatabaseContainer_Spy: DatabaseContainer, Spy {
             self.isWriteSessionInProgress = false
             self._writeSessionCounter { $0 += 1 }
         }
-        
+
         if let error = write_errorResponse {
             super.write(wrappedActions, completion: { _ in
                 completion(error)
@@ -110,7 +110,7 @@ public final class DatabaseContainer_Spy: DatabaseContainer, Spy {
             super.write(wrappedActions, completion: completion)
         }
     }
-    
+
     override public func resetEphemeralValues() {
         record()
         resetEphemeralValues_called = true
@@ -148,7 +148,7 @@ extension DatabaseContainer {
             try session.saveCurrentUser(payload: payload)
         }
     }
-    
+
     /// Synchronously creates a new ChannelDTO in the DB with the given cid.
     func createChannel(
         cid: ChannelId = .unique,
@@ -174,7 +174,7 @@ extension DatabaseContainer {
                 dto.messages.forEach { context.delete($0) }
                 dto.oldestMessageAt = Date.distantPast.bridgeDate
             }
-            
+
             if withQuery {
                 let filter: Filter<ChannelListFilterScope> = .equal(.name, to: "luke:skywalker")
                 let queryDTO = NSEntityDescription.insertNewObject(
@@ -187,7 +187,7 @@ extension DatabaseContainer {
             }
         }
     }
-    
+
     func createChannelListQuery(
         filter: Filter<ChannelListFilterScope> = .query(.cid, text: .unique)
     ) throws {
@@ -201,7 +201,7 @@ extension DatabaseContainer {
             dto.filterJSONData = try JSONEncoder.default.encode(filter)
         }
     }
-    
+
     func createUserListQuery(filter: Filter<UserListFilterScope> = .query(.id, text: .unique)) throws {
         try writeSynchronously { session in
             let dto = NSEntityDescription
@@ -213,13 +213,13 @@ extension DatabaseContainer {
             dto.filterJSONData = try JSONEncoder.default.encode(filter)
         }
     }
-    
+
     func createMemberListQuery(query: ChannelMemberListQuery) throws {
         try writeSynchronously { session in
             try session.saveQuery(query)
         }
     }
-    
+
     /// Synchronously creates a new MessageDTO in the DB with the given id.
     func createMessage(
         id: MessageId = .unique,
@@ -249,7 +249,7 @@ extension DatabaseContainer {
                 XCTFail("Failed to fetch channel when creating message")
                 return
             }
-            
+
             let message: MessagePayload = .dummy(
                 type: type,
                 messageId: id,
@@ -268,12 +268,12 @@ extension DatabaseContainer {
                 reactionScores: reactionScores,
                 reactionCounts: reactionCounts
             )
-            
+
             let messageDTO = try session.saveMessage(payload: message, channelDTO: channelDTO, syncOwnReactions: true, cache: nil)
             messageDTO.localMessageState = localState
             messageDTO.reactionCounts = reactionCounts.mapKeys(\.rawValue)
             messageDTO.reactionScores = reactionScores.mapKeys(\.rawValue)
-            
+
             for idx in 0..<numberOfReplies {
                 let reply: MessagePayload = .dummy(
                     type: .reply,
@@ -283,13 +283,13 @@ extension DatabaseContainer {
                     text: "Reply \(idx)",
                     extraData: extraData
                 )
-                
+
                 let replyDTO = try session.saveMessage(payload: reply, for: cid, syncOwnReactions: true, cache: nil)
                 messageDTO.replies.insert(replyDTO)
             }
         }
     }
-    
+
     func createMessage(
         id: MessageId = .unique,
         cid: ChannelId = .unique,
@@ -301,21 +301,21 @@ extension DatabaseContainer {
                 let searchDTO = session.saveQuery(query: searchQuery)
                 searchDTO.messages.removeAll()
             }
-            
+
             let channelPayload = XCTestCase().dummyPayload(with: cid)
-            
+
             try session.saveChannel(payload: channelPayload)
-            
+
             let message: MessagePayload = .dummy(
                 messageId: id,
                 authorUserId: .unique,
                 channel: channelPayload.channel
             )
-            
+
             try session.saveMessage(payload: message, for: searchQuery, cache: nil)
         }
     }
-    
+
     func createMessages(
         ids: [MessageId] = [.unique],
         cid: ChannelId = .unique,
@@ -327,23 +327,23 @@ extension DatabaseContainer {
                 let searchDTO = session.saveQuery(query: searchQuery)
                 searchDTO.messages.removeAll()
             }
-            
+
             let channelPayload = XCTestCase().dummyPayload(with: cid)
-            
+
             try session.saveChannel(payload: channelPayload)
-            
+
             try ids.forEach {
                 let message: MessagePayload = .dummy(
                     messageId: $0,
                     authorUserId: .unique,
                     channel: channelPayload.channel
                 )
-                
+
                 try session.saveMessage(payload: message, for: searchQuery, cache: nil)
             }
         }
     }
-    
+
     func createMember(
         userId: UserId = .unique,
         role: MemberRole = .member,

@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -13,7 +13,7 @@ final class CommandLabelView_Tests: XCTestCase {
         let view = CommandLabelView().withoutAutoresizingMaskConstraints
         AssertSnapshot(view)
     }
-    
+
     func test_defaultAppearance() {
         let view = CommandLabelView().withoutAutoresizingMaskConstraints
         view.content = Command(name: "Giphy", description: "Send animated gifs", set: "", args: "")

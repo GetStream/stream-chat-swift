@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -16,7 +16,7 @@ final class MessageReactionDTO: NSManagedObject {
     @NSManaged var createdAt: DBDate?
     @NSManaged var updatedAt: DBDate?
     @NSManaged var extraData: Data?
-    
+
     @NSManaged var message: MessageDTO
     @NSManaged var user: UserDTO
 
@@ -68,7 +68,7 @@ extension MessageReactionDTO {
         ])
         return load(by: request, context: context)
     }
-    
+
     static func loadOrCreate(
         message: MessageDTO,
         type: MessageReactionType,
@@ -116,7 +116,7 @@ extension NSManagedObjectContext {
         guard let messageDTO = message(id: payload.messageId) else {
             throw ClientError.MessageDoesNotExist(messageId: payload.messageId)
         }
-        
+
         let dto = MessageReactionDTO.loadOrCreate(
             message: messageDTO,
             type: payload.type,
@@ -131,7 +131,7 @@ extension NSManagedObjectContext {
         dto.extraData = try JSONEncoder.default.encode(payload.extraData)
         dto.localState = nil
         dto.version = nil
-        
+
         return dto
     }
 
@@ -154,7 +154,7 @@ extension MessageReactionDTO {
     func asModel() throws -> ChatMessageReaction {
         guard isValid else { throw InvalidModel(self) }
         let decodedExtraData: [String: RawJSON]
-        
+
         if let extraData = self.extraData, !extraData.isEmpty {
             do {
                 decodedExtraData = try JSONDecoder.default.decode([String: RawJSON].self, from: extraData)

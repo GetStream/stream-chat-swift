@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -19,7 +19,7 @@ final class MessageUpdater_Mock: MessageUpdater {
     @Atomic var editMessage_text: String?
     @Atomic var editMessage_completion: ((Error?) -> Void)?
     @Atomic var editMessage_extraData: [String: RawJSON]?
-    
+
     @Atomic var createNewReply_cid: ChannelId?
     @Atomic var createNewReply_text: String?
     @Atomic var createNewReply_command: String?
@@ -33,7 +33,7 @@ final class MessageUpdater_Mock: MessageUpdater {
     @Atomic var createNewReply_pinning: MessagePinning?
     @Atomic var createNewReply_extraData: [String: RawJSON]?
     @Atomic var createNewReply_completion: ((Result<MessageId, Error>) -> Void)?
-    
+
     @Atomic var loadReplies_cid: ChannelId?
     @Atomic var loadReplies_messageId: MessageId?
     @Atomic var loadReplies_pagination: MessagesPagination?
@@ -44,19 +44,19 @@ final class MessageUpdater_Mock: MessageUpdater {
     @Atomic var loadReactions_pagination: Pagination?
     @Atomic var loadReactions_completion: ((Result<[ChatMessageReaction], Error>) -> Void)?
     @Atomic var loadReactions_result: Result<[ChatMessageReaction], Error>?
-    
+
     @Atomic var flagMessage_flag: Bool?
     @Atomic var flagMessage_messageId: MessageId?
     @Atomic var flagMessage_cid: ChannelId?
     @Atomic var flagMessage_completion: ((Error?) -> Void)?
-    
+
     @Atomic var addReaction_type: MessageReactionType?
     @Atomic var addReaction_score: Int?
     @Atomic var addReaction_enforceUnique: Bool?
     @Atomic var addReaction_extraData: [String: RawJSON]?
     @Atomic var addReaction_messageId: MessageId?
     @Atomic var addReaction_completion: ((Error?) -> Void)?
-    
+
     @Atomic var deleteReaction_type: MessageReactionType?
     @Atomic var deleteReaction_messageId: MessageId?
     @Atomic var deleteReaction_completion: ((Error?) -> Void)?
@@ -78,18 +78,18 @@ final class MessageUpdater_Mock: MessageUpdater {
     @Atomic var dispatchEphemeralMessageAction_messageId: MessageId?
     @Atomic var dispatchEphemeralMessageAction_action: AttachmentAction?
     @Atomic var dispatchEphemeralMessageAction_completion: ((Error?) -> Void)?
-    
+
     @Atomic var search_query: MessageSearchQuery?
     @Atomic var search_policy: UpdatePolicy?
     @Atomic var search_completion: ((Result<MessageSearchResultsPayload, Error>) -> Void)?
-    
+
     @Atomic var clearSearchResults_query: MessageSearchQuery?
     @Atomic var clearSearchResults_completion: ((Error?) -> Void)?
-    
+
     @Atomic var translate_messageId: MessageId?
     @Atomic var translate_language: TranslationLanguage?
     @Atomic var translate_completion: ((Error?) -> Void)?
-    
+
     // Cleans up all recorded values
     func cleanUp() {
         getMessage_cid = nil
@@ -102,7 +102,7 @@ final class MessageUpdater_Mock: MessageUpdater {
         editMessage_messageId = nil
         editMessage_text = nil
         editMessage_completion = nil
-        
+
         createNewReply_cid = nil
         createNewReply_text = nil
         createNewReply_command = nil
@@ -114,7 +114,7 @@ final class MessageUpdater_Mock: MessageUpdater {
         createNewReply_isSilent = nil
         createNewReply_extraData = nil
         createNewReply_completion = nil
-        
+
         loadReplies_cid = nil
         loadReplies_messageId = nil
         loadReplies_pagination = nil
@@ -125,18 +125,18 @@ final class MessageUpdater_Mock: MessageUpdater {
         loadReactions_pagination = nil
         loadReactions_completion = nil
         loadReactions_result = nil
-        
+
         flagMessage_flag = nil
         flagMessage_messageId = nil
         flagMessage_cid = nil
         flagMessage_completion = nil
-        
+
         addReaction_type = nil
         addReaction_score = nil
         addReaction_extraData = nil
         addReaction_messageId = nil
         addReaction_completion = nil
-        
+
         deleteReaction_type = nil
         deleteReaction_messageId = nil
         deleteReaction_completion = nil
@@ -158,25 +158,25 @@ final class MessageUpdater_Mock: MessageUpdater {
         dispatchEphemeralMessageAction_messageId = nil
         dispatchEphemeralMessageAction_action = nil
         dispatchEphemeralMessageAction_completion = nil
-        
+
         search_query = nil
         search_policy = nil
         search_completion = nil
-        
+
         clearSearchResults_query = nil
         clearSearchResults_completion = nil
-        
+
         translate_messageId = nil
         translate_language = nil
         translate_completion = nil
     }
-    
+
     override func getMessage(cid: ChannelId, messageId: MessageId, completion: ((Result<ChatMessage, Error>) -> Void)? = nil) {
         getMessage_cid = cid
         getMessage_messageId = messageId
         getMessage_completion = completion
     }
-    
+
     override func deleteMessage(messageId: MessageId, hard: Bool, completion: ((Error?) -> Void)? = nil) {
         deleteMessage_messageId = messageId
         deleteMessage_hard = hard
@@ -199,7 +199,7 @@ final class MessageUpdater_Mock: MessageUpdater {
         resendMessage_messageId = messageId
         resendMessage_completion = completion
     }
-    
+
     override func createNewReply(
         in cid: ChannelId,
         text: String,
@@ -229,7 +229,7 @@ final class MessageUpdater_Mock: MessageUpdater {
         createNewReply_extraData = extraData
         createNewReply_completion = completion
     }
-    
+
     override func loadReplies(
         cid: ChannelId,
         messageId: MessageId,
@@ -256,14 +256,14 @@ final class MessageUpdater_Mock: MessageUpdater {
             completion?(loadReactionsResult)
         }
     }
-    
+
     override func flagMessage(_ flag: Bool, with messageId: MessageId, in cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
         flagMessage_flag = flag
         flagMessage_messageId = messageId
         flagMessage_cid = cid
         flagMessage_completion = completion
     }
-    
+
     override func addReaction(
         _ type: MessageReactionType,
         score: Int,
@@ -279,7 +279,7 @@ final class MessageUpdater_Mock: MessageUpdater {
         addReaction_enforceUnique = enforceUnique
         addReaction_completion = completion
     }
-    
+
     override func deleteReaction(
         _ type: MessageReactionType,
         messageId: MessageId,
@@ -308,7 +308,7 @@ final class MessageUpdater_Mock: MessageUpdater {
         restartFailedAttachmentUploading_id = id
         restartFailedAttachmentUploading_completion = completion
     }
-    
+
     override func dispatchEphemeralMessageAction(
         cid: ChannelId,
         messageId: MessageId,
@@ -320,7 +320,7 @@ final class MessageUpdater_Mock: MessageUpdater {
         dispatchEphemeralMessageAction_action = action
         dispatchEphemeralMessageAction_completion = completion
     }
-    
+
     override func search(
         query: MessageSearchQuery,
         policy: UpdatePolicy = .merge,
@@ -330,7 +330,7 @@ final class MessageUpdater_Mock: MessageUpdater {
         search_policy = policy
         search_completion = completion
     }
-    
+
     override func clearSearchResults(
         for query: MessageSearchQuery,
         completion: ((Error?) -> Void)? = nil
@@ -338,7 +338,7 @@ final class MessageUpdater_Mock: MessageUpdater {
         clearSearchResults_query = query
         clearSearchResults_completion = completion
     }
-    
+
     override func translate(
         messageId: MessageId,
         to language: TranslationLanguage,

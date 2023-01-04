@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -26,10 +26,10 @@ public protocol EventsControllerDelegate: AnyObject {
 public class EventsController: Controller, DelegateCallable {
     // An underlaying observer listening for events.
     private var observer: EventObserver!
-    
+
     /// A callback queue on which delegate methods are invoked.
     public var callbackQueue: DispatchQueue = .main
-    
+
     var _basePublishers: Any?
     /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
     /// publishers. Instead of creating custom `Publisher` types, we use `CurrentValueSubject` and `PassthroughSubject` internally,
@@ -42,16 +42,16 @@ public class EventsController: Controller, DelegateCallable {
         _basePublishers = BasePublishers(controller: self)
         return _basePublishers as? BasePublishers ?? .init(controller: self)
     }
-    
+
     /// A backing object used to deliver updates to main and additional delegates.
     var multicastDelegate = MulticastDelegate<EventsControllerDelegate>()
-    
+
     /// A delegate the controller notifies about the updates.
     public var delegate: EventsControllerDelegate? {
         get { multicastDelegate.mainDelegate }
         set { multicastDelegate.set(mainDelegate: newValue) }
     }
-            
+
     /// Create a new instance of `EventsController`.
     ///
     /// - Parameter notificationCenter: A notification center that is listened for events.
@@ -66,7 +66,7 @@ public class EventsController: Controller, DelegateCallable {
                 }
 
                 guard self.shouldProcessEvent(event) else { return }
-                
+
                 self.delegateCallback { [weak self] in
                     guard let self = self else {
                         log.warning("Callback called while self is nil")
@@ -78,7 +78,7 @@ public class EventsController: Controller, DelegateCallable {
             }
         )
     }
-    
+
     /// A function that acts as a filter for incoming events.
     ///
     /// - Parameter event: An event to make a decision about.

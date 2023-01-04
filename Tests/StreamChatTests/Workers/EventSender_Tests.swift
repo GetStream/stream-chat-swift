@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -10,15 +10,15 @@ final class EventSender_Tests: XCTestCase {
     var apiClient: APIClient_Spy!
     var database: DatabaseContainer!
     var sender: EventSender!
-    
+
     override func setUp() {
         super.setUp()
-        
+
         apiClient = APIClient_Spy()
         database = DatabaseContainer_Spy()
         sender = EventSender(database: database, apiClient: apiClient)
     }
-    
+
     override func tearDown() {
         apiClient.cleanUp()
         AssertAsync {
@@ -28,21 +28,21 @@ final class EventSender_Tests: XCTestCase {
 
         super.tearDown()
     }
-    
+
     // MARK: - Send event
-    
+
     func test_sendEvent_makesCorrectAPICall() {
         let payload: IdeaEventPayload = .unique
         let cid: ChannelId = .unique
-        
+
         // Simulate `sendEvent` call
         sender.sendEvent(payload, to: cid)
-        
+
         // Assert correct endpoint is called
         let referenceEndpoint: Endpoint<EmptyResponse> = .sendEvent(payload, cid: cid)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
-    
+
     func test_sendEvent_propagatesSuccessfulResponse() {
         // Simulate `sendEvent` call
         var completionCalled = false

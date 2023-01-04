@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -23,19 +23,19 @@ open class LinkAttachmentViewInjector: AttachmentViewInjector {
         .linkPreviewView
         .init()
         .withoutAutoresizingMaskConstraints
-    
+
     override open func contentViewDidLayout(options: ChatMessageLayoutOptions) {
         contentView.bubbleView?.clipsToBounds = true
         contentView.bubbleContentContainer.addArrangedSubview(linkPreviewView, respectsLayoutMargins: true)
-        
+
         linkPreviewView.addTarget(self, action: #selector(handleTapOnAttachment), for: .touchUpInside)
     }
-    
+
     override open func contentViewDidUpdateContent() {
         linkPreviewView.content = contentView.content?.linkAttachments.first
         contentView.bubbleView?.backgroundColor = contentView.appearance.colorPalette.highlightedAccentBackground1
     }
-    
+
     /// Triggered when `attachment` is tapped.
     @objc open func handleTapOnAttachment() {
         guard

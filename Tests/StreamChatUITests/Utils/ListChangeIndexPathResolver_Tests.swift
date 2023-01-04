@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -91,7 +91,7 @@ final class ListChangeIndexPathResolver_Tests: XCTestCase {
 
     func test_resolve_whenAllWithSameIndex_hasConflicts_returnsNil() {
         let listChangeIndexPathResolver = ListChangeIndexPathResolver()
-        
+
         let changes: [ListChange<Int>] = [
             .update(0, index: .init(row: 0, section: 0)),
             .move(

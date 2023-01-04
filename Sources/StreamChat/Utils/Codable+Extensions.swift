@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -9,41 +9,41 @@ import Foundation
 final class StreamJSONDecoder: JSONDecoder {
     let iso8601formatter: ISO8601DateFormatter
     let dateCache: NSCache<NSString, NSDate>
-    
+
     override convenience init() {
         let iso8601formatter = ISO8601DateFormatter()
         iso8601formatter.formatOptions = [.withFractionalSeconds, .withInternetDateTime]
-        
+
         let dateCache = NSCache<NSString, NSDate>()
         dateCache.countLimit = 5000 // We cache at most 5000 dates, which gives good enough performance
-        
+
         self.init(dateFormatter: iso8601formatter, dateCache: dateCache)
     }
-    
+
     init(dateFormatter: ISO8601DateFormatter, dateCache: NSCache<NSString, NSDate>) {
         iso8601formatter = dateFormatter
         self.dateCache = dateCache
-        
+
         super.init()
-        
+
         dateDecodingStrategy = .custom { [weak self] decoder throws -> Date in
             let container = try decoder.singleValueContainer()
             let dateString: String = try container.decode(String.self)
-            
+
             if let date = self?.dateCache.object(forKey: dateString as NSString) {
                 return date.bridgeDate
             }
-            
+
             if let date = self?.iso8601formatter.date(from: dateString) {
                 self?.dateCache.setObject(date.bridgeDate, forKey: dateString as NSString)
                 return date
             }
-            
+
             if let date = DateFormatter.Stream.rfc3339Date(from: dateString) {
                 self?.dateCache.setObject(date.bridgeDate, forKey: dateString as NSString)
                 return date
             }
-            
+
             // Fail
             throw DecodingError.dataCorruptedError(in: container, debugDescription: "Invalid date: \(dateString)")
         }
@@ -53,7 +53,7 @@ final class StreamJSONDecoder: JSONDecoder {
 extension JSONDecoder {
     /// A default `JSONDecoder`.
     static var `default`: JSONDecoder = stream
-    
+
     /// A Stream Chat JSON decoder.
     static let stream: StreamJSONDecoder = {
         StreamJSONDecoder()
@@ -67,14 +67,14 @@ extension JSONEncoder {
     static var `default`: JSONEncoder = stream
     /// A default gzip `JSONEncoder`.
     static var defaultGzip: JSONEncoder = streamGzip
-    
+
     /// A Stream Chat JSON encoder.
     static let stream: JSONEncoder = {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .stream
         return encoder
     }()
-    
+
     /// A Stream Chat JSON encoder with a gzipped content.
     static let streamGzip: JSONEncoder = {
         let encoder = JSONEncoder()
@@ -120,7 +120,7 @@ extension DateFormatter {
             let removedTimezoneWrapperString = uppercaseString.replacingOccurrences(of: RFC3339TimezoneWrapper, with: "-0000")
             return gmtDateFormatters.lazy.compactMap { $0.date(from: removedTimezoneWrapperString) }.first
         }
-        
+
         /// Creates and returns an RFC 3339 formatted string representation of the specified date.
         ///
         /// - Parameter date: The date to be represented.
@@ -171,7 +171,7 @@ extension DateFormatter {
 
 struct AnyEncodable: Encodable {
     let encodable: Encodable
-    
+
     init(_ encodable: Encodable) {
         self.encodable = encodable
     }

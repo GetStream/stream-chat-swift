@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -13,13 +13,13 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
         public let channel: ChatChannel
         /// Current user ID needed to filter out when showing typing indicator.
         public let currentUserId: UserId?
-        
+
         public init(channel: ChatChannel, currentUserId: UserId?) {
             self.channel = channel
             self.currentUserId = currentUserId
         }
     }
-    
+
     /// The data this view component shows.
     public var content: Content? {
         didSet { updateContentIfNeeded() }
@@ -33,7 +33,7 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
     open private(set) lazy var mainContainer: ContainerStackView = ContainerStackView()
         .withoutAutoresizingMaskConstraints
         .withAccessibilityIdentifier(identifier: "mainContainer")
-    
+
     /// This container embeded by `mainContainer` containing `topContainer` and `bottomContainer`.
     open private(set) lazy var rightContainer: ContainerStackView = ContainerStackView(
         axis: .vertical,
@@ -53,35 +53,35 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
     open private(set) lazy var bottomContainer: ContainerStackView = ContainerStackView(alignment: .center, spacing: 4)
         .withoutAutoresizingMaskConstraints
         .withAccessibilityIdentifier(identifier: "bottomContainer")
-    
+
     /// The `UILabel` instance showing the channel name.
     open private(set) lazy var titleLabel: UILabel = UILabel()
         .withoutAutoresizingMaskConstraints
         .withAdjustingFontForContentSizeCategory
         .withBidirectionalLanguagesSupport
         .withAccessibilityIdentifier(identifier: "titleLabel")
-    
+
     /// The `UILabel` instance showing the last message or typing users if any.
     open private(set) lazy var subtitleLabel: UILabel = UILabel()
         .withoutAutoresizingMaskConstraints
         .withAdjustingFontForContentSizeCategory
         .withBidirectionalLanguagesSupport
         .withAccessibilityIdentifier(identifier: "subtitleLabel")
-    
+
     /// The `UILabel` instance showing the time of the last sent message.
     open private(set) lazy var timestampLabel: UILabel = UILabel()
         .withoutAutoresizingMaskConstraints
         .withAdjustingFontForContentSizeCategory
         .withBidirectionalLanguagesSupport
         .withAccessibilityIdentifier(identifier: "timestampLabel")
-    
+
     /// The view used to show channels avatar.
     open private(set) lazy var avatarView: ChatChannelAvatarView = components
         .channelAvatarView
         .init()
         .withoutAutoresizingMaskConstraints
         .withAccessibilityIdentifier(identifier: "avatarView")
-    
+
     /// The view showing number of unread messages in channel if any.
     open private(set) lazy var unreadCountView: ChatChannelUnreadCountView = components
         .channelUnreadCountView.init()
@@ -106,13 +106,13 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
             guard previewMessage.type != .system else {
                 return previewMessage.text
             }
-            
+
             let authorName = previewMessage.isSentByCurrentUser
                 ? L10n.you
                 : previewMessage.author.name ?? previewMessage.author.id
-            
+
             let text = previewMessage.textContent ?? previewMessage.text
-            
+
             return "\(authorName): \(text)"
         } else {
             return L10n.Channel.Item.emptyMessages
@@ -127,20 +127,20 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
             return nil
         }
     }
-    
+
     /// The delivery status to be shown for the channel's preview message.
     open var previewMessageDeliveryStatus: MessageDeliveryStatus? {
         guard
             let content = content,
             let deliveryStatus = content.channel.previewMessage?.deliveryStatus
         else { return nil }
-        
+
         switch deliveryStatus {
         case .pending, .failed:
             return deliveryStatus
         case .sent, .read:
             guard content.channel.config.readEventsEnabled else { return nil }
-            
+
             return deliveryStatus
         default:
             return nil
@@ -152,7 +152,7 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
         .messageDeliveryStatusCheckmarkView.init()
         .withoutAutoresizingMaskConstraints
         .withAccessibilityIdentifier(identifier: "previewMessageDeliveryStatusView")
-    
+
     override open func setUpAppearance() {
         super.setUpAppearance()
         backgroundColor = appearance.colorPalette.background
@@ -161,7 +161,7 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
 
         subtitleLabel.textColor = appearance.colorPalette.subtitleText
         subtitleLabel.font = appearance.fonts.footnote
-        
+
         timestampLabel.textColor = appearance.colorPalette.subtitleText
         timestampLabel.font = appearance.fonts.footnote
     }
@@ -177,7 +177,7 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
         /// |            | subtitleLabel        | timestampLabel |
         /// |----------------------------------------------------|
         /// ```
-        
+
         topContainer.addArrangedSubviews([
             titleLabel.flexible(axis: .horizontal), unreadCountView
         ])
@@ -185,7 +185,7 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
         bottomContainer.addArrangedSubviews([
             subtitleLabel.flexible(axis: .horizontal), timestampLabel
         ])
-        
+
         rightContainer.addArrangedSubviews([
             topContainer, bottomContainer
         ])
@@ -199,15 +199,15 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
             avatarView,
             rightContainer
         ])
-        
+
         mainContainer.alignment = .center
         mainContainer.isLayoutMarginsRelativeArrangement = true
-        
+
         timestampLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
-        
+
         embed(mainContainer)
     }
-    
+
     override open func updateContent() {
         titleLabel.text = titleText
         subtitleLabel.text = subtitleText
@@ -217,13 +217,13 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
 
         unreadCountView.content = content?.channel.unreadCount ?? .noUnread
         unreadCountView.invalidateIntrinsicContentSize()
-        
+
         let checkmarkContent = previewMessageDeliveryStatus.map {
             ChatMessageDeliveryStatusCheckmarkView.Content(deliveryStatus: $0)
         }
         previewMessageDeliveryStatusView.content = checkmarkContent
         previewMessageDeliveryStatusView.isHidden = checkmarkContent == nil
-        
+
         if let status = checkmarkContent?.deliveryStatus {
             bottomContainer.insertArrangedSubview(
                 previewMessageDeliveryStatusView,

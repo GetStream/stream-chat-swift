@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -20,10 +20,10 @@ extension ChatClient {
 public class ChatChannelWatcherListController: DataController, DelegateCallable, DataStoreProvider {
     /// The query specifying sorting and filtering for the list of channel watchers.
     @Atomic public private(set) var query: ChannelWatcherListQuery
-    
+
     /// The `ChatClient` instance this controller belongs to.
     public let client: ChatClient
-    
+
     /// The channel watchers matching the query.
     /// To observe the watcher list changes, set your class as a delegate of this controller or use the provided
     /// `Combine` publishers.
@@ -31,7 +31,7 @@ public class ChatChannelWatcherListController: DataController, DelegateCallable,
         startObservingIfNeeded()
         return watchersObserver.items
     }
-    
+
     var _basePublishers: Any?
     /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
     /// publishers. Instead of creating custom `Publisher` types, we use `CurrentValueSubject` and `PassthroughSubject` internally,
@@ -44,29 +44,29 @@ public class ChatChannelWatcherListController: DataController, DelegateCallable,
         _basePublishers = BasePublishers(controller: self)
         return _basePublishers as? BasePublishers ?? .init(controller: self)
     }
-    
+
     /// The type-erased delegate.
     var multicastDelegate: MulticastDelegate<ChatChannelWatcherListControllerDelegate> = .init() {
         didSet {
             stateMulticastDelegate.set(mainDelegate: multicastDelegate.mainDelegate)
             stateMulticastDelegate.set(additionalDelegates: multicastDelegate.additionalDelegates)
-            
+
             startObservingIfNeeded()
         }
     }
-    
+
     /// The observer used to observe the changes in the database.
     private lazy var watchersObserver: ListDatabaseObserver<ChatUser, UserDTO> = createWatchersObserver()
-    
+
     /// The worker used to fetch the remote data and communicate with servers.
     private lazy var updater: ChannelUpdater = self.environment.channelUpdaterBuilder(
         client.callRepository,
         client.databaseContainer,
         client.apiClient
     )
-    
+
     private let environment: Environment
-    
+
     /// Creates a new `ChatChannelWatcherListController`
     /// - Parameters:
     ///   - query: The query used for filtering and sorting the channel watchers.
@@ -77,24 +77,24 @@ public class ChatChannelWatcherListController: DataController, DelegateCallable,
         self.query = query
         self.environment = environment
     }
-    
+
     /// Synchronizes the channel's watchers with the backend.
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
         startObservingIfNeeded()
-        
+
         if case let .localDataFetchFailed(error) = state {
             callback { completion?(error) }
             return
         }
-        
+
         updater.channelWatchers(query: query) { error in
             self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
             self.callback { completion?(error) }
         }
     }
-    
+
     private func createWatchersObserver() -> ListDatabaseObserver<ChatUser, UserDTO> {
         let observer = environment.watcherListObserverBuilder(
             client.databaseContainer.viewContext,
@@ -102,7 +102,7 @@ public class ChatChannelWatcherListController: DataController, DelegateCallable,
             { try $0.asModel() as ChatUser },
             NSFetchedResultsController<UserDTO>.self
         )
-        
+
         observer.onChange = { [weak self] changes in
             self?.delegateCallback { [weak self] in
                 guard let self = self else {
@@ -112,13 +112,13 @@ public class ChatChannelWatcherListController: DataController, DelegateCallable,
                 $0.channelWatcherListController(self, didChangeWatchers: changes)
             }
         }
-        
+
         return observer
     }
-    
+
     private func startObservingIfNeeded() {
         guard state == .initialized else { return }
-        
+
         do {
             try watchersObserver.startObserving()
             state = .localDataFetched
@@ -136,7 +136,7 @@ extension ChatChannelWatcherListController {
             _ database: DatabaseContainer,
             _ apiClient: APIClient
         ) -> ChannelUpdater = ChannelUpdater.init
-        
+
         var watcherListObserverBuilder: (
             _ context: NSManagedObjectContext,
             _ fetchRequest: NSFetchRequest<UserDTO>,
@@ -148,7 +148,7 @@ extension ChatChannelWatcherListController {
 
 extension ChatChannelWatcherListController {
     /// Set the delegate of `ChatChannelWatcherListController` to observe the changes in the system.
-    
+
     public var delegate: ChatChannelWatcherListControllerDelegate? {
         get { multicastDelegate.mainDelegate }
         set { multicastDelegate.set(mainDelegate: newValue) }

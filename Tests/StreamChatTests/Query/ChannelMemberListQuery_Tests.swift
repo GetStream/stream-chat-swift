@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -28,7 +28,7 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
             "limit": 30
         ])
     }
-    
+
     func test_hash_isCalculatedCorrectly() {
         // Create the query.
         let query = ChannelMemberListQuery(
@@ -36,17 +36,17 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
             filter: .equal(.id, to: "luke"),
             sort: [.init(key: .createdAt, isAscending: true)]
         )
-        
+
         let expectedHash = [
             query.cid.rawValue,
             query.filter!.filterHash,
             query.sort.map(\.description).joined()
         ].joined(separator: "-")
-        
+
         // Assert queryHash is calculated correctly.
         XCTAssertEqual(query.queryHash, expectedHash)
     }
-    
+
     func test_emptySorting_isNotEncoded() throws {
         // Create the query without any sort options.
         let query = ChannelMemberListQuery(
@@ -65,7 +65,7 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
             "limit": 30
         ])
     }
-    
+
     func test_defaultPageSizeIsUsed_ifNotSpecified() throws {
         // Create the query with default params.
         let query = ChannelMemberListQuery(
@@ -84,7 +84,7 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
             "limit": Int.channelMembersPageSize
         ])
     }
-    
+
     func test_singleMemberQuery_worksCorrectly() throws {
         let userId: UserId = .unique
         let cid: ChannelId = .unique
@@ -94,39 +94,39 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
 
         let expected = ChannelMemberListQuery(cid: cid, filter: .equal("id", to: userId))
         let expectedJSON = try JSONEncoder.default.encode(expected)
-    
+
         // Assert queries match
         AssertJSONEqual(actualJSON, expectedJSON)
     }
-    
+
     // MARK: - Sort by `createdAt`
-    
+
     func test_sortingByCreatedAt_ascending() throws {
         // Declare some channel member payloads
         let member1: MemberPayload = .dummy()
         let member2: MemberPayload = .dummy(
             createdAt: member1.createdAt.addingTimeInterval(10)
         )
-        
+
         // Declare channel payload
         let channel: ChannelDetailPayload = .dummy(
             cid: .unique,
             members: [member1, member2]
         )
-        
+
         // Declare channel list query sorting by `createdAt` ascending
         let memberListQuery = ChannelMemberListQuery(
             cid: channel.cid,
             sort: [.init(key: .createdAt, isAscending: true)]
         )
-        
+
         // Create database container
         let database = DatabaseContainer_Spy(kind: .inMemory)
-        
+
         try database.writeSynchronously { session in
             // Save channel to database
             try session.saveChannel(payload: channel, query: nil, cache: nil)
-            
+
             // Save members to database in random order and link to query
             try channel.members?.shuffled().forEach {
                 try session.saveMember(
@@ -137,45 +137,45 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
                 )
             }
         }
-        
+
         // Fetch channel members matching the query
         let fetchedMembers = try database.viewContext.fetch(
             MemberDTO.members(matching: memberListQuery)
         )
-        
+
         // Assert members order is correct
         XCTAssertEqual(
             [member1.user!.id, member2.user!.id],
             fetchedMembers.map(\.user.id)
         )
     }
-    
+
     func test_sortingByCreatedAt_descending() throws {
         // Declare some channel member payloads
         let member1: MemberPayload = .dummy()
         let member2: MemberPayload = .dummy(
             createdAt: member1.createdAt.addingTimeInterval(10)
         )
-        
+
         // Declare channel payload
         let channel: ChannelDetailPayload = .dummy(
             cid: .unique,
             members: [member1, member2]
         )
-        
+
         // Declare channel list query sorting by `createdAt` descending
         let memberListQuery = ChannelMemberListQuery(
             cid: channel.cid,
             sort: [.init(key: .createdAt, isAscending: false)]
         )
-        
+
         // Create database container
         let database = DatabaseContainer_Spy(kind: .inMemory)
-        
+
         try database.writeSynchronously { session in
             // Save channel to database
             try session.saveChannel(payload: channel, query: nil, cache: nil)
-            
+
             // Save members to database in random order and link to query
             try channel.members?.shuffled().forEach {
                 try session.saveMember(
@@ -186,45 +186,45 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
                 )
             }
         }
-        
+
         // Fetch channel members matching the query
         let fetchedMembers = try database.viewContext.fetch(
             MemberDTO.members(matching: memberListQuery)
         )
-        
+
         // Assert members order is correct
         XCTAssertEqual(
             [member2.user!.id, member1.user!.id],
             fetchedMembers.map(\.user.id)
         )
     }
-    
+
     // MARK: - Sort by `name`
-    
+
     func test_sortingByName_ascending() throws {
         // Declare some channel member payloads
         let member1: MemberPayload = .dummy(user: .dummy(userId: .unique, name: "A"))
         let member2: MemberPayload = .dummy(user: .dummy(userId: .unique, name: "B"))
-        
+
         // Declare channel payload
         let channel: ChannelDetailPayload = .dummy(
             cid: .unique,
             members: [member1, member2]
         )
-        
+
         // Declare channel list query sorting by `name` ascending
         let memberListQuery = ChannelMemberListQuery(
             cid: channel.cid,
             sort: [.init(key: .name, isAscending: true)]
         )
-        
+
         // Create database container
         let database = DatabaseContainer_Spy(kind: .inMemory)
-        
+
         try database.writeSynchronously { session in
             // Save channel to database
             try session.saveChannel(payload: channel, query: nil, cache: nil)
-            
+
             // Save members to database in random order and link to query
             try channel.members?.shuffled().forEach {
                 try session.saveMember(
@@ -235,19 +235,19 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
                 )
             }
         }
-        
+
         // Fetch channel members matching the query
         let fetchedMembers = try database.viewContext.fetch(
             MemberDTO.members(matching: memberListQuery)
         )
-        
+
         // Assert members order is correct
         XCTAssertEqual(
             [member1.user!.id, member2.user!.id],
             fetchedMembers.map(\.user.id)
         )
     }
-    
+
     func test_sortingByName_descending() throws {
         // Declare some channel member payloads
         let member1: MemberPayload = .dummy(
@@ -261,13 +261,13 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
             user: .dummy(userId: .unique, name: "B"),
             createdAt: member1.createdAt.addingTimeInterval(-10)
         )
-        
+
         // Declare channel payload
         let channel: ChannelDetailPayload = .dummy(
             cid: .unique,
             members: [member1, member2, member3]
         )
-        
+
         // Declare channel list query sorting by `name` and `createdAt`
         let memberListQuery = ChannelMemberListQuery(
             cid: channel.cid,
@@ -276,14 +276,14 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
                 .init(key: .createdAt, isAscending: true)
             ]
         )
-        
+
         // Create database container
         let database = DatabaseContainer_Spy(kind: .inMemory)
-        
+
         try database.writeSynchronously { session in
             // Save channel to database
             try session.saveChannel(payload: channel, query: nil, cache: nil)
-            
+
             // Save members to database in random order and link to query
             try channel.members?.shuffled().forEach {
                 try session.saveMember(
@@ -294,21 +294,21 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
                 )
             }
         }
-        
+
         // Fetch channel members matching the query
         let fetchedMembers = try database.viewContext.fetch(
             MemberDTO.members(matching: memberListQuery)
         )
-        
+
         // Assert members order is correct
         XCTAssertEqual(
             [member1.user!.id, member3.user!.id, member2.user!.id],
             fetchedMembers.map(\.user.id)
         )
     }
-    
+
     // MARK: - Sort by multiple options
-    
+
     func test_sortingByNameThenCreatedAt() throws {
         // Declare some channel member payloads
         let member1: MemberPayload = .dummy(
@@ -322,7 +322,7 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
             user: .dummy(userId: .unique, name: "B"),
             createdAt: member1.createdAt.addingTimeInterval(-10)
         )
-        
+
         // Declare channel payload
         let channel: ChannelDetailPayload = .dummy(
             cid: .unique,
@@ -332,7 +332,7 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
                 member3
             ]
         )
-        
+
         // Declare channel list query sorting by `name` and `createdAt`
         let memberListQuery = ChannelMemberListQuery(
             cid: channel.cid,
@@ -341,14 +341,14 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
                 .init(key: .createdAt, isAscending: true)
             ]
         )
-        
+
         // Create database container
         let database = DatabaseContainer_Spy(kind: .inMemory)
-        
+
         try database.writeSynchronously { session in
             // Save channel to database
             try session.saveChannel(payload: channel, query: nil, cache: nil)
-            
+
             // Save members to database in random order and link to query
             try channel.members?.shuffled().forEach {
                 try session.saveMember(
@@ -359,13 +359,13 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
                 )
             }
         }
-        
+
         // Fetch channel members matching the query
         let fetchedMemberIDs = try database
             .viewContext
             .fetch(MemberDTO.members(matching: memberListQuery))
             .compactMap { try? $0.asModel().id }
-        
+
         // Assert members order is correct
         XCTAssertEqual(
             [member1.user!.id, member3.user!.id, member2.user!.id],

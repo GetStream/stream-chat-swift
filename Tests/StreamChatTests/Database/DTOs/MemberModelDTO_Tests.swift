@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -8,22 +8,22 @@ import XCTest
 
 final class MemberModelDTO_Tests: XCTestCase {
     var database: DatabaseContainer!
-    
+
     override func setUp() {
         super.setUp()
         database = DatabaseContainer_Spy()
     }
-    
+
     override func tearDown() {
         AssertAsync.canBeReleased(&database)
         database = nil
         super.tearDown()
     }
-    
+
     func test_memberPayload_isStoredAndLoadedFromDB() throws {
         let userId = UUID().uuidString
         let channelId = ChannelId(type: .init(rawValue: "messsaging"), id: UUID().uuidString)
-        
+
         let userPayload: UserPayload = .init(
             id: userId,
             name: .unique,
@@ -38,7 +38,7 @@ final class MemberModelDTO_Tests: XCTestCase {
             teams: ["RED", "GREEN"],
             extraData: ["k": .string("v")]
         )
-        
+
         let payload: MemberPayload = .init(
             user: userPayload,
             userId: userPayload.id,
@@ -49,12 +49,12 @@ final class MemberModelDTO_Tests: XCTestCase {
             isBanned: true,
             isShadowBanned: true
         )
-        
+
         // Asynchronously save the payload to the db
         try database.writeSynchronously { session in
             try! session.saveMember(payload: payload, channelId: channelId)
         }
-        
+
         // Load the member from the db and check it's the same member
         var loadedMember: ChatChannelMember? {
             try? database.viewContext.member(userId: userId, cid: channelId)?.asModel()
@@ -79,11 +79,11 @@ final class MemberModelDTO_Tests: XCTestCase {
             Assert.willBeEqual(Set(payload.user!.teams), loadedMember?.teams)
         }
     }
-    
+
     func test_defaultExtraDataIsUsed_whenExtraDataDecodingFails() throws {
         let userId: UserId = .unique
         let channelId: ChannelId = .unique
-        
+
         let userPayload: UserPayload = .init(
             id: userId,
             name: .unique,
@@ -97,7 +97,7 @@ final class MemberModelDTO_Tests: XCTestCase {
             isBanned: true,
             extraData: .init()
         )
-        
+
         let payload: MemberPayload = .init(
             user: userPayload,
             userId: userPayload.id,
@@ -105,18 +105,18 @@ final class MemberModelDTO_Tests: XCTestCase {
             createdAt: .unique,
             updatedAt: .unique
         )
-        
+
         try database.writeSynchronously { session in
             // Save the member
             let memberDTO = try! session.saveMember(payload: payload, channelId: channelId)
             // Make the extra data JSON invalid
             memberDTO.user.extraData = #"{"invalid": json}"#.data(using: .utf8)!
         }
-        
+
         let loadedMember: ChatChannelMember? = try? database.viewContext.member(userId: userId, cid: channelId)?.asModel()
         XCTAssertEqual(loadedMember?.extraData, [:])
     }
-    
+
     func test_saveMember_savesQuery_and_linksMember_ifQueryIsProvided() throws {
         let userId: UserId = .unique
         let cid: ChannelId = .unique
@@ -130,7 +130,7 @@ final class MemberModelDTO_Tests: XCTestCase {
             try session.saveChannel(payload: self.dummyPayload(with: cid))
             try session.saveMember(payload: member, channelId: cid, query: query, cache: nil)
         }
-        
+
         // Assert query and member exists in the database and linked.
         let loadedQuery = try XCTUnwrap(database.viewContext.channelMemberListQuery(queryHash: query.queryHash))
         let loadedMember = try XCTUnwrap(database.viewContext.member(userId: userId, cid: cid))

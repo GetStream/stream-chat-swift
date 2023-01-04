@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -18,7 +18,7 @@ open class MixedAttachmentViewInjector: AttachmentViewInjector {
     override open func contentViewDidUpdateContent() {
         injectors.forEach { $0.contentViewDidUpdateContent() }
     }
-    
+
     override open func contentViewDidPrepareForReuse() {
         injectors.forEach { $0.contentViewDidPrepareForReuse() }
     }

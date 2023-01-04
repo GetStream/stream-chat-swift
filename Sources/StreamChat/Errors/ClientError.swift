@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -10,24 +10,24 @@ public class ClientError: Error, CustomStringConvertible {
         public let file: String
         public let line: Int
     }
-    
+
     /// The file and line number which emitted the error.
     public let location: Location?
-    
+
     private var message: String?
-    
+
     /// An underlying error.
     public let underlyingError: Error?
-    
+
     var errorDescription: String? { underlyingError.map(String.init(describing:)) }
-    
+
     /// Retrieve the localized description for this error.
     public var localizedDescription: String { message ?? errorDescription ?? "" }
-    
+
     public private(set) lazy var description = "Error \(type(of: self)) in \(location?.file ?? ""):\(location?.line ?? 0)"
         + (localizedDescription.isEmpty ? "" : " -> ")
         + localizedDescription
-    
+
     /// A client error based on an external general error.
     /// - Parameters:
     ///   - error: an external error.
@@ -37,7 +37,7 @@ public class ClientError: Error, CustomStringConvertible {
         underlyingError = error
         location = .init(file: "\(file)", line: Int(line))
     }
-    
+
     /// An error based on a message.
     /// - Parameters:
     ///   - message: an error message.
@@ -53,7 +53,7 @@ public class ClientError: Error, CustomStringConvertible {
 extension ClientError {
     /// An unexpected error.
     public class Unexpected: ClientError {}
-    
+
     /// An unknown error.
     public class Unknown: ClientError {}
 }
@@ -77,7 +77,7 @@ extension ClientError {
     var isInvalidTokenError: Bool {
         (underlyingError as? ErrorPayload)?.isInvalidTokenError == true
     }
-    
+
     var isBouncedMessageError: Bool {
         (underlyingError as? ErrorPayload)?.isBouncedMessageError == true
     }

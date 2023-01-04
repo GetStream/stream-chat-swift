@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -79,7 +79,7 @@ open class ChatChannelVC: _ViewController,
         messageListVC.delegate = self
         messageListVC.dataSource = self
         messageListVC.client = client
-        
+
         messageComposerVC.userSearchController = userSuggestionSearchController
 
         setChannelControllerToComposerIfNeeded(cid: channelController.cid)
@@ -127,7 +127,7 @@ open class ChatChannelVC: _ViewController,
         if let cid = channelController.cid {
             headerView.channelController = client.channelController(for: cid)
         }
-        
+
         navigationItem.titleView = headerView
         navigationItem.largeTitleDisplayMode = .never
     }
@@ -153,7 +153,7 @@ open class ChatChannelVC: _ViewController,
     // MARK: - ChatMessageListVCDataSource
 
     public var messages: [ChatMessage] = []
-    
+
     open func channel(for vc: ChatMessageListVC) -> ChatChannel? {
         channelController.channel
     }

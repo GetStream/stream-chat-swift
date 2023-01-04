@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -15,39 +15,39 @@ class InputViewController<InputType: LosslessStringConvertible>: UITableViewCont
         textField.clearButtonMode = .whileEditing
         return textField
     }()
-    
+
     private var initialValue: InputType
     private var currentTextValue: String
-    
+
     var onChange: ((InputType) -> Void)?
-    
+
     init(title: String, initialValue: InputType) {
         self.initialValue = initialValue
         currentTextValue = String(initialValue)
         super.init(nibName: nil, bundle: nil)
         self.title = title
     }
-    
+
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.tableFooterView = UIView()
     }
-    
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         inputTextField.becomeFirstResponder()
     }
-    
+
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         save()
     }
-    
+
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -64,13 +64,13 @@ class InputViewController<InputType: LosslessStringConvertible>: UITableViewCont
         cell.accessoryView = inputTextField
         return cell
     }
-    
+
     @objc func textFieldDidChangeValue(sender: UITextField) {
         if let newValue = sender.text {
             currentTextValue = newValue
         }
     }
-    
+
     private func save() {
         guard let newValue = InputType(currentTextValue) else {
             alert(title: "Invalid Input!", message: "\(currentTextValue) is not a valid value.")

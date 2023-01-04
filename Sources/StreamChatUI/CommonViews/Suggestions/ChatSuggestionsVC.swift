@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -17,24 +17,24 @@ open class ChatSuggestionsVC: _ViewController,
             updateContentIfNeeded()
         }
     }
-    
+
     /// The number of visible commands without scrolling.
     open var numberOfVisibleRows: CGFloat = 4
-    
+
     /// A closure to observer when an item is selected.
     public var didSelectItemAt: ((Int) -> Void)?
-    
+
     /// Property to check if the suggestions view controller is currently presented.
     public var isPresented: Bool {
         view.superview != nil
     }
-    
+
     /// The collection view of the commands.
     open private(set) lazy var collectionView: ChatSuggestionsCollectionView = components
         .suggestionsCollectionView
         .init(layout: components.suggestionsCollectionViewLayout.init())
         .withoutAutoresizingMaskConstraints
-    
+
     /// The container view where collectionView is embedded.
     open private(set) lazy var containerView: UIView = UIView().withoutAutoresizingMaskConstraints
 
@@ -49,9 +49,9 @@ open class ChatSuggestionsVC: _ViewController,
         constraint.isActive = true
         return constraint
     }()
-    
+
     private var collectionViewHeightObserver: NSKeyValueObservation?
-    
+
     override open func setUp() {
         super.setUp()
 
@@ -81,11 +81,11 @@ open class ChatSuggestionsVC: _ViewController,
             options: [.new],
             changeHandler: { [weak self] collectionView, change in
                 guard let self = self, let newSize = change.newValue else { return }
-                
+
                 // NOTE: The defaultRowHeight height value will be used only once to set visibleCells
                 // once again, not looping it to 0 value so this controller can resize again.
                 let cellHeight = collectionView.visibleCells.first?.bounds.height ?? self.defaultRowHeight
-                
+
                 let newHeight = min(newSize.height, cellHeight * self.numberOfVisibleRows)
                 self.heightConstraints.constant = newHeight
             }
@@ -94,7 +94,7 @@ open class ChatSuggestionsVC: _ViewController,
 
     override open func updateContent() {
         super.updateContent()
-        
+
         collectionView.dataSource = dataSource
         collectionView.reloadData()
     }
@@ -106,20 +106,20 @@ open class ChatSuggestionsVC: _ViewController,
 
 open class ChatMessageComposerSuggestionsCommandDataSource: NSObject, UICollectionViewDataSource {
     open var collectionView: ChatSuggestionsCollectionView
-    
+
     /// The list of commands.
     open var commands: [Command]
-    
+
     /// The current types to override ui components.
     open var components: Components {
         collectionView.components
     }
-    
+
     /// The current types to override ui components.
     open var appearance: Appearance {
         collectionView.appearance
     }
-    
+
     /// Data Source Initialiser
     ///
     /// - Parameters:
@@ -193,18 +193,18 @@ open class ChatMessageComposerSuggestionsMentionDataSource: NSObject,
     ChatUserSearchControllerDelegate {
     /// internal cache for users
     private(set) var usersCache: [ChatUser]
-    
+
     /// The collection view of the mentions.
     open var collectionView: ChatSuggestionsCollectionView
-    
+
     /// The search controller to search for mentions.
     open var searchController: ChatUserSearchController
-    
+
     /// The types to override ui components.
     var components: Components {
         collectionView.components
     }
-    
+
     /// Data Source Initialiser
     /// - Parameters:
     ///   - collectionView: The collection view of the mentions.

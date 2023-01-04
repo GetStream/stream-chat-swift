@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -24,7 +24,7 @@ final class CustomDataHashMap_Tests: XCTestCase {
     func test_channelDetailJSONDecodeWithoutAnyCustomData() throws {
         try! assertEmptyCustomData(ChannelDetailPayload.self, "ChannelPayload")
     }
-    
+
     func test_channelDetailJSONDecodeWithCustomData() throws {
         try! assertCustomData(ChannelDetailPayload.self, "ChannelPayloadWithCustom")
     }
@@ -32,15 +32,15 @@ final class CustomDataHashMap_Tests: XCTestCase {
     func test_messageJSONDecodeWithoutAnyCustomData() throws {
         try! assertEmptyCustomData(MessagePayload.self, "MessagePayload")
     }
-    
+
     func test_messageJSONDecodeWithCustomData() throws {
         try! assertCustomData(MessagePayload.self, "MessagePayloadWithCustom")
     }
-    
+
     func test_messageReactionJSONDecodeWithoutAnyCustomData() throws {
         try! assertEmptyCustomData(MessageReactionPayload.self, "MessageReactionPayload")
     }
-    
+
     func test_messageReactionJSONDecodeWithCustomData() throws {
         try! assertCustomData(MessageReactionPayload.self, "MessageReactionPayloadWithCustom")
     }
@@ -48,15 +48,15 @@ final class CustomDataHashMap_Tests: XCTestCase {
     func test_userJSONDecodeWithoutAnyCustomData() throws {
         try! assertEmptyCustomData(UserPayload.self, "UserPayload")
     }
-    
+
     func test_userJSONDecodeWithCustomData() throws {
         try! assertCustomData(UserPayload.self, "UserPayloadWithCustom")
     }
-    
+
     func test_currentUserJSONDecodeWithoutAnyCustomData() throws {
         try! assertEmptyCustomData(CurrentUserPayload.self, "CurrentUserPayload")
     }
-    
+
     func test_currentUserJSONDecodeWithCustomData() throws {
         try! assertCustomData(CurrentUserPayload.self, "CurrentUserPayloadWithCustom")
     }

@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChatTestTools
@@ -75,7 +75,7 @@ final class UIViewController_Extensions_Tests: iOS13TestCase {
         XCTAssertEqual(parentNavItem.title, title)
         XCTAssertEqual(parentNavItem.titleView, titleView)
     }
-    
+
     func test_parentNavigationItemProperties_arePreserved() {
         let vc = UIViewController()
 
@@ -165,7 +165,7 @@ final class UIViewController_Extensions_Tests: iOS13TestCase {
         if #available(iOS 14.0, *) {
             navigationItem.backButtonDisplayMode = backButtonDisplayMode
         }
-        
+
         navigationItem.backBarButtonItem = backBarButtonItem
         navigationItem.backButtonTitle = backButtonTitle
         navigationItem.compactAppearance = compactAppearance

@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -10,19 +10,19 @@ final class UserListUpdater_Mock: UserListUpdater {
     @Atomic var update_queries: [UserListQuery] = []
     @Atomic var update_policy: UpdatePolicy?
     @Atomic var update_completion: ((Error?) -> Void)?
-    
+
     @Atomic var fetch_queries: [UserListQuery] = []
     @Atomic var fetch_completion: ((Result<UserListPayload, Error>) -> Void)?
-    
+
     func cleanUp() {
         update_queries.removeAll()
         update_policy = nil
         update_completion = nil
-        
+
         fetch_queries.removeAll()
         fetch_completion = nil
     }
-        
+
     override func update(
         userListQuery: UserListQuery,
         policy: UpdatePolicy = .merge,
@@ -32,7 +32,7 @@ final class UserListUpdater_Mock: UserListUpdater {
         update_policy = policy
         update_completion = completion
     }
-    
+
     override func fetch(
         userListQuery: UserListQuery,
         completion: @escaping (Result<UserListPayload, Error>) -> Void

@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -10,7 +10,7 @@ import UIKit
 public enum AttachmentValidationError: Error {
     /// The size of the attachment exceeds the max file size
     case maxFileSizeExceeded
-    
+
     /// The number of attachments reached the limit.
     case maxAttachmentsCountPerMessageExceeded(limit: Int)
 }
@@ -85,7 +85,7 @@ open class ComposerVC: _ViewController,
         public var isInsideThread: Bool { threadMessage != nil }
         /// A boolean that checks if the composer recognised already a command.
         public var hasCommand: Bool { command != nil }
-        
+
         /// A boolean that checks if slow mode is on.
         public var isSlowModeOn: Bool {
             cooldownTime > 0
@@ -197,7 +197,7 @@ open class ComposerVC: _ViewController,
                 cooldownTime: cooldownTime
             )
         }
-        
+
         public mutating func slowMode(cooldown: Int) {
             self = .init(
                 text: text,
@@ -212,7 +212,7 @@ open class ComposerVC: _ViewController,
                 cooldownTime: cooldown
             )
         }
-        
+
         public mutating func resetSlowMode() {
             self = .init(
                 text: text,
@@ -235,7 +235,7 @@ open class ComposerVC: _ViewController,
             updateContentIfNeeded()
         }
     }
-    
+
     open var cooldownTracker: CooldownTracker = CooldownTracker(timer: ScheduledStreamTimer(interval: 1))
 
     /// A symbol that is used to recognise when the user is mentioning a user.
@@ -297,7 +297,7 @@ open class ComposerVC: _ViewController,
     open private(set) lazy var suggestionsVC: ChatSuggestionsVC = components
         .suggestionsVC
         .init()
-    
+
     /// The view controller that shows the suggestions when the user is typing.
     open private(set) lazy var attachmentsVC: AttachmentsPreviewVC = components
         .messageComposerAttachmentsVC
@@ -311,7 +311,7 @@ open class ComposerVC: _ViewController,
         picker.delegate = self
         return picker
     }()
-    
+
     /// The View Controller for taking a picture.
     open private(set) lazy var cameraVC: UIViewController = {
         let camera = UIImagePickerController()
@@ -332,9 +332,9 @@ open class ComposerVC: _ViewController,
 
     override open func setUp() {
         super.setUp()
-        
+
         composerView.inputMessageView.textView.delegate = self
-        
+
         // Set the delegate for handling the pasting of UIImages in the text view
         composerView.inputMessageView.textView.clipboardAttachmentDelegate = self
 
@@ -349,17 +349,17 @@ open class ComposerVC: _ViewController,
             action: #selector(clearContent(sender:)),
             for: .touchUpInside
         )
-        
+
         channelController?.delegate = self
-        
+
         setupAttachmentsView()
-        
+
         cooldownTracker.onChange = { [weak self] currentTime in
             guard currentTime != 0 && self?.content.state != .edit else {
                 self?.content.resetSlowMode()
                 return
             }
-            
+
             self?.content.slowMode(cooldown: currentTime)
         }
     }
@@ -370,10 +370,10 @@ open class ComposerVC: _ViewController,
         view.addSubview(composerView)
         composerView.pin(to: view)
     }
-    
+
     override open func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+
         resumeCurrentCooldown()
     }
 
@@ -425,15 +425,15 @@ open class ComposerVC: _ViewController,
         default:
             log.warning("The composer state \(content.state.description) was not handled.")
         }
-        
+
         composerView.cooldownView.content = .init(cooldown: content.cooldownTime)
 
         composerView.sendButton.isEnabled = !content.isEmpty
         composerView.confirmButton.isEnabled = !content.isEmpty
-        
+
         let isAttachmentButtonHidden = !isAttachmentsEnabled || content.hasCommand || !composerView.shrinkInputButton.isHidden
         let isCommandsButtonHidden = !isCommandsEnabled || content.hasCommand || !composerView.shrinkInputButton.isHidden
-        
+
         Animate {
             self.composerView.attachmentButton.isHidden = isAttachmentButtonHidden
             self.composerView.commandsButton.isHidden = isCommandsButtonHidden
@@ -443,7 +443,7 @@ open class ComposerVC: _ViewController,
             quotingMessage: content.quotingMessage,
             command: content.command
         )
-        
+
         attachmentsVC.content = content.attachments.map {
             if let provider = $0.payload as? AttachmentPreviewProvider {
                 return provider
@@ -477,7 +477,7 @@ open class ComposerVC: _ViewController,
             showMentionSuggestions(for: typingMention, mentionRange: mentionRange)
             return
         }
-        
+
         // If we have files in attachments, do not allow images to be pasted in the text view.
         // This is due to the limitation of UI(files and images cannot be shown together)
         let filesExistInAttachments = content.attachments.contains(where: { $0.type == .file })
@@ -485,16 +485,16 @@ open class ComposerVC: _ViewController,
 
         dismissSuggestions()
     }
-    
+
     open func setupAttachmentsView() {
         addChildViewController(attachmentsVC, embedIn: composerView.inputMessageView.attachmentsViewContainer)
         attachmentsVC.didTapRemoveItemButton = { [weak self] index in
             self?.content.attachments.remove(at: index)
         }
     }
-    
+
     // MARK: - Actions
-    
+
     @objc open func publishMessage(sender: UIButton) {
         let text: String
         if let command = content.command {
@@ -505,36 +505,36 @@ open class ComposerVC: _ViewController,
 
         if let editingMessage = content.editingMessage {
             editMessage(withId: editingMessage.id, newText: text)
-            
+
             // This is just a temporary solution. This will be handled on the LLC level
             // in CIS-883
             channelController?.sendStopTypingEvent()
             content.clear()
         } else {
             createNewMessage(text: text)
-            
+
             if !content.hasCommand, let cooldownDuration = channelController?.channel?.cooldownDuration {
                 cooldownTracker.start(with: cooldownDuration)
             }
-            
+
             content.clear()
         }
     }
-    
+
     /// Shows a photo/media picker.
     open func showMediaPicker() {
         present(mediaPickerVC, animated: true)
     }
-    
+
     /// Shows a document picker.
     open func showFilePicker() {
         present(filePickerVC, animated: true)
     }
-    
+
     open func showCamera() {
         present(cameraVC, animated: true)
     }
-    
+
     /// Returns actions for attachments picker.
     open var attachmentsPickerActions: [UIAlertAction] {
         let showFilePickerAction = UIAlertAction(
@@ -542,33 +542,33 @@ open class ComposerVC: _ViewController,
             style: .default,
             handler: { [weak self] _ in self?.showFilePicker() }
         )
-        
+
         let showMediaPickerAction = UIAlertAction(
             title: L10n.Composer.Picker.media,
             style: .default,
             handler: { [weak self] _ in self?.showMediaPicker() }
         )
-        
+
         let showCameraAction = UIAlertAction(
             title: L10n.Composer.Picker.camera,
             style: .default,
             handler: { [weak self] _ in self?.showCamera() }
         )
-        
+
         let cancelAction = UIAlertAction(
             title: L10n.Composer.Picker.cancel,
             style: .cancel
         )
-        
+
         let isCameraAvailable = UIImagePickerController.isSourceTypeAvailable(.camera)
-        
+
         if isCameraAvailable {
             return [showCameraAction, showMediaPickerAction, showFilePickerAction, cancelAction]
         }
-        
+
         return [showMediaPickerAction, showFilePickerAction, cancelAction]
     }
-    
+
     /// Action that handles tap on attachments button in composer.
     @objc open func showAttachmentsPicker(sender: UIButton) {
         presentAlert(
@@ -578,7 +578,7 @@ open class ComposerVC: _ViewController,
             sourceView: sender
         )
     }
-    
+
     @objc open func shrinkInput(sender: UIButton) {
         Animate {
             self.composerView.shrinkInputButton.isHidden = true
@@ -594,7 +594,7 @@ open class ComposerVC: _ViewController,
             }
         }
     }
-    
+
     @objc open func showAvailableCommands(sender: UIButton) {
         if suggestionsVC.isPresented {
             dismissSuggestions()
@@ -602,7 +602,7 @@ open class ComposerVC: _ViewController,
             showCommandSuggestions(for: "")
         }
     }
-    
+
     @objc open func clearContent(sender: UIButton) {
         content.clear()
     }
@@ -611,7 +611,7 @@ open class ComposerVC: _ViewController,
     /// - Parameter text: The text content of the message.
     open func createNewMessage(text: String) {
         guard let cid = channelController?.cid else { return }
-        
+
         // If the user included some mentions via suggestions,
         // but then removed them from text, we should remove them from
         // the content we'll send
@@ -687,10 +687,10 @@ open class ComposerVC: _ViewController,
     /// - Parameter typingCommand: The potential command that the current user is typing.
     open func showCommandSuggestions(for typingCommand: String) {
         let availableCommands = channelController?.channel?.config.commands ?? []
-        
+
         // Don't show the commands suggestion VC if there are no commands
         guard availableCommands.isEmpty == false else { return }
-        
+
         var commandHints: [Command] = availableCommands
 
         if !typingCommand.isEmpty {
@@ -727,7 +727,7 @@ open class ComposerVC: _ViewController,
 
         showSuggestions()
     }
-    
+
     /// Returns the query to be used for searching users for the given typing mention.
     ///
     /// This function is called in `showMentionSuggestions` to retrieve the query
@@ -757,7 +757,7 @@ open class ComposerVC: _ViewController,
         guard let currentUserId = channelController?.client.currentUserId else {
             return
         }
-        
+
         var usersCache: [ChatUser] = []
 
         if mentionAllAppUsers {
@@ -804,7 +804,7 @@ open class ComposerVC: _ViewController,
 
         showSuggestions()
     }
-    
+
     /// Provides the mention text for composer text field, when the user selects a mention suggestion.
     open func mentionText(for user: ChatUser) -> String {
         if let name = user.name, !name.isEmpty {
@@ -846,7 +846,7 @@ open class ComposerVC: _ViewController,
     ) throws {
         try addAttachmentToContent(from: url, type: type, info: [:])
     }
-    
+
     /// Creates and adds an attachment from the given URL to the `content`
     /// - Parameters:
     ///   - url: The URL of the attachment
@@ -861,14 +861,14 @@ open class ComposerVC: _ViewController,
             log.assertionFailure("Channel controller must be set at this point")
             return
         }
-        
+
         let maxAttachmentsCount = chatConfig.maxAttachmentCountPerMessage
         guard content.attachments.count < maxAttachmentsCount else {
             throw AttachmentValidationError.maxAttachmentsCountPerMessageExceeded(
                 limit: maxAttachmentsCount
             )
         }
-        
+
         let fileSize = try AttachmentFile(url: url).size
         guard fileSize < chatConfig.maxAttachmentSize else {
             throw AttachmentValidationError.maxFileSizeExceeded
@@ -881,7 +881,7 @@ open class ComposerVC: _ViewController,
                 height: Double(image.size.height)
             )
         }
-        
+
         let attachment = try AnyAttachmentPayload(
             localFileURL: url,
             attachmentType: type,
@@ -889,7 +889,7 @@ open class ComposerVC: _ViewController,
         )
         content.attachments.append(attachment)
     }
-    
+
     /// Shows an alert for the error thrown when adding attachment to a composer.
     /// - Parameters:
     ///   - attachmentURL: The attachment's file URL.
@@ -909,7 +909,7 @@ open class ComposerVC: _ViewController,
             log.assertionFailure(error.localizedDescription)
         }
     }
-    
+
     /// Resumes the cooldown if the channel has currently an active cooldown.
     public func resumeCurrentCooldown() {
         if let currentCooldownTime = channelController?.currentCooldownTime() {
@@ -929,7 +929,7 @@ open class ComposerVC: _ViewController,
             self.composerView.shrinkInputButton.isHidden = textView.text.isEmpty || self.content
                 .hasCommand || !isLeadingActionsVisible
         }
-        
+
         // This guard removes the possibility of having a loop when updating the `UITextView`.
         // The aim is that `UITextView.text` is always in sync with `Content.text`.
         // With this in place we have bidirectional binding since if we update `Content.text`
@@ -949,7 +949,7 @@ open class ComposerVC: _ViewController,
     }
 
     // MARK: - UIImagePickerControllerDelegate
-    
+
     open func imagePickerController(
         _ picker: UIImagePickerController,
         didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
@@ -991,9 +991,9 @@ open class ComposerVC: _ViewController,
             }
         }
     }
-    
+
     // MARK: - UIDocumentPickerViewControllerDelegate
-    
+
     open func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         for fileURL in urls {
             var attachmentType = AttachmentType(fileExtension: fileURL.pathExtension)
@@ -1014,25 +1014,25 @@ open class ComposerVC: _ViewController,
             }
         }
     }
-    
+
     /// Shows an alert saying that attachment's size exceeds the limit.
     open func showAttachmentExceedsMaxSizeAlert() {
         presentAlert(message: L10n.Attachment.maxSizeExceeded)
     }
-    
+
     /// Shows an alert saying that the max # of attachments per message is exceeded.
     open func showAttachmentsCountExceedingLimitAlert(_ limit: Int) {
         presentAlert(message: L10n.Attachment.maxCountExceeded(limit))
     }
-    
+
     // MARK: - InputTextViewClipboardAttachmentDelegate
-    
+
     open func inputTextView(_ inputTextView: InputTextView, didPasteImage image: UIImage) {
         guard let imageUrl = try? image.temporaryLocalFileUrl() else {
             log.error("Could not create temporary local file from image")
             return
         }
-        
+
         let type: AttachmentType = .image
         do {
             try addAttachmentToContent(
@@ -1048,9 +1048,9 @@ open class ComposerVC: _ViewController,
             )
         }
     }
-    
+
     // MARK: - Private
-    
+
     private func presentAlert(
         title: String? = nil,
         message: String? = nil,
@@ -1063,7 +1063,7 @@ open class ComposerVC: _ViewController,
         let alert = UIAlertController(title: title, message: message, preferredStyle: preferredStyle)
         alert.popoverPresentationController?.sourceView = sourceView
         actions.forEach(alert.addAction)
-        
+
         present(alert, animated: true)
     }
 }

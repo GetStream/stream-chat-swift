@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -21,13 +21,13 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
                 message: event.message,
                 session: session
             )
-        
+
         case let event as MessageDeletedEventDTO:
             decrementUnreadCountIfNeeded(
                 event: event,
                 session: session
             )
-            
+
         case let event as MessageReadEventDTO:
             resetChannelRead(for: event.cid, userId: event.user.id, lastReadAt: event.createdAt, session: session)
 
@@ -39,14 +39,14 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
                 read.lastReadAt = event.createdAt.bridgeDate
                 read.unreadMessageCount = 0
             }
-            
+
         default:
             break
         }
 
         return event
     }
-    
+
     private func resetChannelRead(
         for cid: ChannelId,
         userId: UserId,
@@ -55,7 +55,7 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
     ) {
         session.markChannelAsRead(cid: cid, userId: userId, at: lastReadAt)
     }
-    
+
     private func incrementUnreadCountIfNeeded(
         for cid: ChannelId,
         message: MessagePayload,
@@ -64,11 +64,11 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
         guard let currentUser = session.currentUser else {
             return log.error("Current user is missing", subsystems: .webSocket)
         }
-        
+
         guard let channelRead = session.loadChannelRead(cid: cid, userId: currentUser.user.id) else {
             return log.error("Channel read is missing", subsystems: .webSocket)
         }
-        
+
         if let skipReason = unreadCountUpdateSkippingReason(
             currentUser: currentUser,
             channelRead: channelRead,
@@ -79,15 +79,15 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
                 subsystems: .webSocket
             )
         }
-        
+
         log.debug(
             "Message \(message.id) increments unread counts for channel \(cid)",
             subsystems: .webSocket
         )
-        
+
         channelRead.unreadMessageCount += 1
     }
-    
+
     private func decrementUnreadCountIfNeeded(
         event: MessageDeletedEventDTO,
         session: DatabaseSession
@@ -95,11 +95,11 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
         guard let currentUser = session.currentUser else {
             return log.error("Current user is missing", subsystems: .webSocket)
         }
-        
+
         guard let channelRead = session.loadChannelRead(cid: event.cid, userId: currentUser.user.id) else {
             return log.error("Channel read is missing", subsystems: .webSocket)
         }
-        
+
         if let skipReason = !event.hardDelete
             ? .messageIsSoftDeleted
             : unreadCountUpdateSkippingReason(
@@ -112,15 +112,15 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
                 subsystems: .webSocket
             )
         }
-        
+
         log.debug(
             "Message \(event.message.id) decrements unread counts for channel \(event.cid)",
             subsystems: .webSocket
         )
-        
+
         channelRead.unreadMessageCount = max(0, channelRead.unreadMessageCount - 1)
     }
-        
+
     private func unreadCountUpdateSkippingReason(
         currentUser: CurrentUserDTO,
         channelRead: ChannelReadDTO,
@@ -129,7 +129,7 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
         if channelRead.channel.mute != nil {
             return .channelIsMuted
         }
-        
+
         if message.user.id == currentUser.user.id {
             return .messageIsOwn
         }
@@ -137,23 +137,23 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
         if currentUser.mutedUsers.contains(where: { message.user.id == $0.id }) {
             return .authorIsMuted
         }
-        
+
         if message.isSilent {
             return .messageIsSilent
         }
-        
+
         if message.parentId != nil && !message.showReplyInChannel {
             return .messageIsThreadReply
         }
-        
+
         if message.type == .system {
             return .messageIsSystem
         }
-        
+
         if message.createdAt <= channelRead.lastReadAt.bridgeDate {
             return .messageIsSeen
         }
-        
+
         return nil
     }
 }

@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -12,16 +12,16 @@ public struct ChannelWatcherListQuery: Encodable {
     private enum CodingKeys: String, CodingKey {
         case watchers
     }
-    
+
     /// A pagination for watchers (see `Pagination`).
     public var pagination: Pagination
-    
+
     /// `ChannelId` this query handles.
     public var cid: ChannelId
-    
+
     /// Query options. We want to get the current state and watch the channel automatically.
     private let options: QueryOptions = [.watch, .state]
-    
+
     /// Creates new `ChannelWatcherListQuery` instance.
     /// - Parameters:
     ///   - cid: The channel identifier.
@@ -30,7 +30,7 @@ public struct ChannelWatcherListQuery: Encodable {
         self.cid = cid
         self.pagination = pagination
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try options.encode(to: encoder)

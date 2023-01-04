@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 #if swift(>=5.3)
@@ -53,7 +53,7 @@ struct ChatView: View {
         /// Initialize the `ChannelController`
         .onAppear(perform: { self.channel.controller.synchronize() })
     }
-    
+
     func messageList() -> some View {
         ChatScrollView {
             ScrollViewReader { scrollView in
@@ -71,11 +71,11 @@ struct ChatView: View {
             }
         }
     }
-    
+
     func messageView(for message: ChatMessage) -> some View {
         let username = message.author.name ?? message.author.id
         let text: Text
-        
+
         switch message.type {
         case .deleted:
             text = Text("❌ the message was deleted")
@@ -84,7 +84,7 @@ struct ChatView: View {
         default:
             text = (Text(username).bold().foregroundColor(.forUsername(username)) + Text(" \(message.text)"))
         }
-        
+
         return text
             .padding()
             .contextMenu {
@@ -97,13 +97,13 @@ struct ChatView: View {
                 }
             }
     }
-    
+
     func messageContextMenu(for message: ChatMessage) -> some View {
         VStack {
             if let cid = channel.controller.cid {
                 let currentUserId = channel.controller.client.currentUserId
                 let isMessageFromCurrentUser = message.author.id == currentUserId
-                
+
                 if isMessageFromCurrentUser {
                     let messageController = channel.controller.client.messageController(
                         cid: cid,
@@ -114,14 +114,14 @@ struct ChatView: View {
                         Text("Edit")
                         Image(systemName: "pencil")
                     }
-                    
+
                     Button(action: { messageController.deleteMessage() }) {
                         Text("Delete")
                         Image(systemName: "trash")
                     }
                 } else {
                     let memberController = channel.controller.client.memberController(userId: message.author.id, in: cid)
-                    
+
                     if message.author.isBanned {
                         Button(action: { memberController.unban() }) {
                             Text("Unban")
@@ -137,7 +137,7 @@ struct ChatView: View {
             }
         }
     }
-    
+
     /// New message view with `TextEditor`.
     func composerView() -> some View {
         let textBinding = Binding(
@@ -149,7 +149,7 @@ struct ChatView: View {
                 }
             }
         )
-        
+
         return HStack {
             ZStack {
                 if text.isEmpty {
@@ -163,7 +163,7 @@ struct ChatView: View {
                         .padding(.all, 8)
                         .opacity(0)
                 }
-                
+
                 TextEditor(text: textBinding).background(Color.clear).onAppear {
                     UITextView.appearance().backgroundColor = .clear
                 }
@@ -173,13 +173,13 @@ struct ChatView: View {
             }
         }.padding()
     }
-    
+
     /// Send new message or edit message request if you are in editing state.
     func send() {
         guard let channelId = channel.channel?.cid else {
             return
         }
-        
+
         if let editingMessage = self.editingMessage {
             let controller = channel.controller.client.messageController(cid: channelId, messageId: editingMessage.id)
             controller.editMessage(text: text)
@@ -187,10 +187,10 @@ struct ChatView: View {
         } else {
             channel.controller.createNewMessage(text: text)
         }
-        
+
         text = ""
     }
-    
+
     /// ActionSheet for channel action or message actions depending on `editingMessage` value.
     /// This is done due to `SwiftUI` limitations: it's not possible to have multiple `.actionSheet` modifiers.
     func actionSheet() -> ActionSheet {
@@ -208,7 +208,7 @@ struct ChatView: View {
             .cancel()
         ])
     }
-    
+
     /// `MemberListView` for channel memebers.
     var memberList: some View {
         let controller = channel.controller.client.memberListController(query: .init(cid: channel.channel!.cid))
@@ -219,11 +219,11 @@ struct ChatView: View {
         let messageSearch = channel.controller.client.messageSearchController()
         return SearchMessagesView(messagesSearch: messageSearch.observableObject)
     }
-    
+
     private func didKeystroke() {
         channel.controller.sendKeystrokeEvent()
     }
-    
+
     private func didStopTyping() {
         channel.controller.sendStopTypingEvent()
     }

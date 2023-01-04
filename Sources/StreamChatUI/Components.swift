@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -24,7 +24,7 @@ public struct Components {
 
     /// A `UIView` subclass which serves as container for `typingIndicator` and `UILabel` describing who is currently typing
     public var typingIndicatorView: TypingIndicatorView.Type = TypingIndicatorView.self
-    
+
     /// A `UIView` subclass with animated 3 dots for indicating that user is typing.
     public var typingAnimationView: TypingAnimationView.Type = TypingAnimationView.self
 
@@ -42,7 +42,7 @@ public struct Components {
 
     /// A button used for sending a message, or any type of content.
     public var sendButton: UIButton.Type = SendButton.self
-    
+
     /// A view for showing a cooldown when Slow Mode is active.
     public var cooldownView: CooldownView.Type = CooldownView.self
 
@@ -63,7 +63,7 @@ public struct Components {
 
     /// A button for closing, dismissing or clearing information.
     public var closeButton: UIButton.Type = CloseButton.self
-    
+
     /// A button for sharing an information.
     public var shareButton: UIButton.Type = ShareButton.self
 
@@ -72,25 +72,25 @@ public struct Components {
 
     /// An object responsible for message layout options calculations in `ChatMessageListVC/ChatThreadVC`.
     public var messageLayoutOptionsResolver: ChatMessageLayoutOptionsResolver = .init()
-    
+
     /// The view that shows a loading indicator.
     public var loadingIndicator: ChatLoadingIndicator.Type = ChatLoadingIndicator.self
-    
+
     /// Object with set of function for handling images from CDN
     public var imageCDN: ImageCDN = StreamImageCDN()
-    
+
     /// Object which is responsible for loading images
     public var imageLoader: ImageLoading = NukeImageLoader()
-    
+
     /// Object responsible for providing resizing operations for `UIImage`
     public var imageProcessor: ImageProcessor = NukeImageProcessor()
-    
+
     /// The object responsible for loading video attachments.
     public var videoLoader: VideoLoading = StreamVideoLoader()
-    
+
     /// The view that shows a gradient.
     public var gradientView: GradientView.Type = GradientView.self
-    
+
     /// The view that shows a playing video.
     public var playerView: PlayerView.Type = PlayerView.self
 
@@ -100,7 +100,7 @@ public struct Components {
     /// Used in both the Channel and Thread view controllers.
     @available(iOSApplicationExtension, unavailable)
     public var messageListVC: ChatMessageListVC.Type = ChatMessageListVC.self
-    
+
     /// The controller that handles `ChatMessageListVC <-> ChatMessagePopUp` transition.
     public var messageActionsTransitionController: ChatMessageActionsTransitionController.Type =
         ChatMessageActionsTransitionController.self
@@ -133,11 +133,11 @@ public struct Components {
 
     /// The view controller responsible to render image and video attachments.
     public var galleryVC: GalleryVC.Type = GalleryVC.self
-    
+
     /// The view used to control the player for currently visible vide attachment.
     public var videoPlaybackControlView: VideoPlaybackControlView.Type =
         VideoPlaybackControlView.self
-    
+
     /// The view used to display content of the message, i.e. in the channel detail message list.
     public var messageContentView: ChatMessageContentView.Type = ChatMessageContentView.self
 
@@ -173,7 +173,7 @@ public struct Components {
 
     /// The button for taking an action on attachment being uploaded.
     public var attachmentActionButton: AttachmentActionButton.Type = AttachmentActionButton.self
-    
+
     /// The view that shows error indicator in `messageContentView`.
     public var messageErrorIndicator: ChatMessageErrorIndicator.Type = ChatMessageErrorIndicator.self
 
@@ -184,26 +184,26 @@ public struct Components {
     /// The view that shows a single file attachment.
     public var fileAttachmentView: ChatMessageFileAttachmentListView.ItemView.Type =
         ChatMessageFileAttachmentListView.ItemView.self
-    
+
     /// The view that shows a link preview in message cell.
     public var linkPreviewView: ChatMessageLinkPreviewView.Type =
         ChatMessageLinkPreviewView.self
-    
+
     /// The view that shows message's image and video attachments.
     public var galleryView: ChatMessageGalleryView.Type = ChatMessageGalleryView.self
-    
+
     /// The view that shows an image attachment preview inside message cell.
     public var imageAttachmentGalleryPreview: ChatMessageGalleryView.ImagePreview.Type = ChatMessageGalleryView.ImagePreview.self
-    
+
     /// The view that shows an image attachment in full-screen gallery.
     public var imageAttachmentGalleryCell: ImageAttachmentGalleryCell.Type = ImageAttachmentGalleryCell.self
-    
+
     /// The view that shows a video attachment in full-screen gallery.
     public var videoAttachmentGalleryCell: VideoAttachmentGalleryCell.Type = VideoAttachmentGalleryCell.self
-    
+
     /// The view that shows a video attachment preview inside a message.
     public var videoAttachmentGalleryPreview: VideoAttachmentGalleryPreview.Type = VideoAttachmentGalleryPreview.self
-    
+
     /// The view that shows an overlay with uploading progress for image attachment that is being uploaded.
     public var imageUploadingOverlay: ChatMessageGalleryView.UploadingOverlay.Type = ChatMessageGalleryView.UploadingOverlay.self
 
@@ -219,24 +219,24 @@ public struct Components {
 
     /// The view that shows a badge on `giphyAttachmentView`.
     public var giphyBadgeView: ChatMessageGiphyView.GiphyBadge.Type = ChatMessageGiphyView.GiphyBadge.self
-    
+
     /// The button that indicates unread messages at the bottom of the message list and scroll to the latest message on tap.
     public var scrollToLatestMessageButton: ScrollToLatestMessageButton.Type = ScrollToLatestMessageButton.self
 
     /// The view that shows a number of unread messages on the Scroll-To-Latest-Message button in the Message List.
     public var messageListUnreadCountView: ChatMessageListUnreadCountView.Type =
         ChatMessageListUnreadCountView.self
-    
+
     /// The view that shows messages delivery status.
     public var messageDeliveryStatusView: ChatMessageDeliveryStatusView.Type =
         ChatMessageDeliveryStatusView.self
-    
+
     /// The view that shows messages delivery status checkmark in channel preview and in message view.
     public var messageDeliveryStatusCheckmarkView: ChatMessageDeliveryStatusCheckmarkView.Type =
         ChatMessageDeliveryStatusCheckmarkView.self
 
     // MARK: - Reactions
-    
+
     /// The Reaction picker VC.
     public var reactionPickerVC: ChatMessageReactionsPickerVC.Type = ChatMessageReactionsPickerVC.self
 
@@ -301,7 +301,7 @@ public struct Components {
 
     /// The view in the channel cell that shows channel actions on swipe.
     public var channelActionsView: SwipeableView.Type = SwipeableView.self
-    
+
     /// The view that shows channel information.
     public var channelContentView: ChatChannelListItemView.Type = ChatChannelListItemView.self
 
@@ -310,16 +310,16 @@ public struct Components {
 
     /// The view that shows a number of unread messages in channel.
     public var channelUnreadCountView: ChatChannelUnreadCountView.Type = ChatChannelUnreadCountView.self
-    
+
     /// The view that is displayed when there are no channels on the list, i.e. when is on empty state.
     public var channelListEmptyView: ChatChannelListEmptyView.Type = ChatChannelListEmptyView.self
-    
+
     /// View that shows that some error occurred on ChatChannelList.
     public var channelListErrorView: ChatChannelListErrorView.Type = ChatChannelListErrorView.self
-    
+
     /// View that shows when loading the Channel list.
     public var chatChannelListLoadingView: ChatChannelListLoadingView.Type = ChatChannelListLoadingView.self
-    
+
     /// A boolean value that determines whether the Channel list default loading states (empty, error and loading views) are handled by the Stream SDK. It is false by default.
     /// If it is false, it does not show empty or error views and just shows a spinner indicator for the loading state. If set to true, the empty, error and shimmer loading views are shown instead.
     public var isChatChannelListStatesEnabled = false
@@ -344,13 +344,13 @@ public struct Components {
     /// A view that displays image attachment preview in composer.
     public var imageAttachmentComposerPreview: ImageAttachmentComposerPreview
         .Type = ImageAttachmentComposerPreview.self
-    
+
     /// A view that displays the video attachment preview in composer.
     public var videoAttachmentComposerPreview: VideoAttachmentComposerPreview
         .Type = VideoAttachmentComposerPreview.self
 
     // MARK: - Composer suggestion components
-    
+
     /// A view controller that shows suggestions of commands or mentions.
     public var suggestionsVC: ChatSuggestionsVC.Type = ChatSuggestionsVC.self
 
@@ -385,7 +385,7 @@ public struct Components {
     /// The header view of the suggestion collection view.
     public var suggestionsHeaderView: ChatSuggestionsHeaderView.Type =
         ChatSuggestionsHeaderView.self
-    
+
     /// A type for the view used as avatar when picking users to mention.
     public var mentionAvatarView: ChatUserAvatarView.Type = ChatUserAvatarView.self
 
@@ -408,7 +408,7 @@ public struct Components {
 
     /// The router responsible for presenting alerts.
     public var alertsRouter: AlertsRouter.Type = AlertsRouter.self
-    
+
     public init() {}
 }
 

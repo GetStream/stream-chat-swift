@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -56,12 +56,10 @@ open class ChatMessageInteractiveAttachmentView: _View, ThemeProvider {
             preview.trailingAnchor.pin(equalTo: trailingAnchor),
             preview.topAnchor.pin(equalTo: topAnchor),
             preview.heightAnchor.pin(equalTo: preview.widthAnchor),
-            
             separator.topAnchor.pin(equalTo: preview.bottomAnchor),
             separator.leadingAnchor.pin(equalTo: leadingAnchor),
             separator.trailingAnchor.pin(equalTo: trailingAnchor),
             separator.heightAnchor.pin(equalToConstant: 1),
-            
             actionsStackView.topAnchor.pin(equalTo: separator.bottomAnchor),
             actionsStackView.leadingAnchor.pin(equalTo: leadingAnchor),
             actionsStackView.trailingAnchor.pin(equalTo: trailingAnchor),
@@ -73,7 +71,7 @@ open class ChatMessageInteractiveAttachmentView: _View, ThemeProvider {
         preview.content = content
 
         actionsStackView.removeAllArrangedSubviews()
-        
+
         (content?.actions ?? [])
             .map(createActionButton)
             .forEach(actionsStackView.addArrangedSubview)

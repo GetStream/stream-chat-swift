@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -12,12 +12,12 @@ final class TypingStartCleanupMiddleware_Tests: XCTestCase {
     // The database is not really used in the middleware but it's a requirement by the protocol
     // to provide a database session
     var database: DatabaseContainer!
-    
+
     override func setUp() {
         super.setUp()
 
         currentUser = .mock(id: "Luke")
-        
+
         time = VirtualTime()
         VirtualTimeTimer.time = time
 

@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -14,12 +14,12 @@ final class ChatConnectionController_Tests: XCTestCase {
     private var controller: ChatConnectionController!
     private var controllerCallbackQueueID: UUID!
     private var callbackQueueID: UUID { controllerCallbackQueueID }
-    
+
     // MARK: - Setup
 
     override func setUp() {
         super.setUp()
-        
+
         client = ChatClient.mock
         webSocketClient = WebSocketClient_Mock(eventNotificationCenter: client.eventNotificationCenter)
         connectionRepository = ConnectionRepository_Mock()
@@ -31,7 +31,7 @@ final class ChatConnectionController_Tests: XCTestCase {
         controllerCallbackQueueID = UUID()
         controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
     }
-    
+
     override func tearDown() {
         controllerCallbackQueueID = nil
         client.mockAPIClient.cleanUp()
@@ -43,38 +43,38 @@ final class ChatConnectionController_Tests: XCTestCase {
 
         super.tearDown()
     }
-    
+
     // MARK: Controller
 
     func test_initialState_whenLocalDataIsFetched() throws {
         // Assert client is assigned correctly
         XCTAssertTrue(controller.client === client)
-        
+
         // Check the initial connection status.
         XCTAssertEqual(controller.connectionStatus, .initialized)
     }
-    
+
     // MARK: - Delegate
-    
+
     func test_delegate_isAssignedCorrectly() {
         // Set the delegate
         let delegate = ConnectionController_Delegate(expectedQueueId: callbackQueueID)
         controller.delegate = delegate
-        
+
         // Assert the delegate is assigned correctly
         XCTAssert(controller.delegate === delegate)
     }
-    
+
     func test_delegate_isReferencedWeakly() {
         // Create the delegate
         var delegate: ConnectionController_Delegate? = .init(expectedQueueId: callbackQueueID)
-        
+
         // Set the delegate
         controller.delegate = delegate
-        
+
         // Stop keeping a delegate alive
         delegate = nil
-        
+
         // Assert delegate is deallocated
         XCTAssertNil(controller.delegate)
     }
@@ -83,10 +83,10 @@ final class ChatConnectionController_Tests: XCTestCase {
         // Set the delegate
         let delegate = ConnectionController_Delegate(expectedQueueId: callbackQueueID)
         controller.delegate = delegate
-        
+
         // Assert no connection status changes received so far
         XCTAssertTrue(delegate.didUpdateConnectionStatus_statuses.isEmpty)
-        
+
         // Simulate connection status updates.
         client.webSocketClient?.simulateConnectionStatus(.connecting)
         client.webSocketClient?.simulateConnectionStatus(.connected(connectionId: .unique))

@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -10,7 +10,7 @@ class WebSocketConnectPayload: Encodable {
         case userDetails = "user_details"
         case serverDeterminesConnectionId = "server_determines_connection_id"
     }
-    
+
     let userId: UserId
     let userDetails: UserWebSocketPayload
     let serverDeterminesConnectionId: Bool

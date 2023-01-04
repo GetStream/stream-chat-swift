@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -7,15 +7,15 @@ import Foundation
 /// The type is designed to pre-process some incoming `Event` via middlewares before being published
 class EventNotificationCenter: NotificationCenter {
     private(set) var middlewares: [EventMiddleware] = []
-    
+
     /// The database used when evaluating middlewares.
     let database: DatabaseContainer
-    
+
     // We post events on a queue different from database.writable context
     // queue to prevent a deadlock happening when @CoreDataLazy (with `context.performAndWait` inside)
     // model is accessed in event handlers.
     var eventPostingQueue = DispatchQueue(label: "io.getstream.event-notification-center")
-    
+
     init(database: DatabaseContainer) {
         self.database = database
         super.init()
@@ -46,7 +46,7 @@ class EventNotificationCenter: NotificationCenter {
                 completion?()
                 return
             }
-            
+
             self.eventPostingQueue.async {
                 eventsToPost.forEach { self.post(Notification(newEventReceived: $0, sender: self)) }
                 completion?()

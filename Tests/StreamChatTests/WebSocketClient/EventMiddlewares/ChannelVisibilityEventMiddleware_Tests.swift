@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -67,10 +67,10 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
         // Assert `ChannelTruncatedEvent` is forwarded even though database error happened.
         XCTAssertTrue(forwardedEvent is ChannelVisibleEventDTO)
     }
-    
+
     func test_middlewareCanSeePendingEntities() throws {
         let cid = ChannelId.unique
-        
+
         // Create the event
         let event = try ChannelHiddenEventDTO(from: .init(
             eventType: .channelHidden,
@@ -79,14 +79,14 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
             createdAt: .unique,
             isChannelHistoryCleared: false
         ) as EventPayload)
-        
+
         // Open a database session to simulate EventNotificationCenter
         try database.writeSynchronously {
             try $0.saveChannel(payload: .dummy(cid: cid), query: nil, cache: nil)
             // Handle the event
             _ = self.middleware.handle(event: event, session: $0)
         }
-        
+
         // Check if the channel was found and marked as hidden
         XCTAssertEqual(database.viewContext.channel(cid: cid)?.isHidden, true)
     }
@@ -178,10 +178,10 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
         XCTAssertEqual(channelDTO.truncatedAt?.bridgeDate, originalTruncatedAt)
         XCTAssert(forwardedEvent is ChannelVisibleEventDTO)
     }
-    
+
     func test_messageNewEvent_resetsHiddenAtValue() throws {
         let cid: ChannelId = .unique
-        
+
         // Create the event
         let event = try MessageNewEventDTO(
             from: .init(
@@ -192,18 +192,18 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
                 createdAt: .unique
             ) as EventPayload
         )
-        
+
         // Create a channel in the DB with `isHidden` set to true
         try database.writeSynchronously { session in
             let dto = try session.saveChannel(payload: XCTestCase().dummyPayload(with: cid))
             dto.isHidden = true
         }
-        
+
         // Simulate incoming event
         _ = middleware.handle(event: event, session: database.viewContext)
-        
+
         let channelDTO = try XCTUnwrap(database.viewContext.channel(cid: cid))
-        
+
         // Assert the `isHidden` value is reset
         XCTAssertFalse(channelDTO.isHidden)
     }

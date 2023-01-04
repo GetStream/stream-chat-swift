@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -34,10 +34,10 @@ extension ChatClient {
 public class ChatChannelListController: DataController, DelegateCallable, DataStoreProvider {
     /// The query specifying and filtering the list of channels.
     public let query: ChannelListQuery
-    
+
     /// The `ChatClient` instance this controller belongs to.
     public let client: ChatClient
-    
+
     /// The channels matching the query of this controller.
     ///
     /// To observe changes of the channels, set your class as a delegate of this controller or use the provided
@@ -47,7 +47,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         startChannelListObserverIfNeeded()
         return channelListObserver.items
     }
-    
+
     /// The worker used to fetch the remote data and communicate with servers.
     private lazy var worker: ChannelListUpdater = self.environment
         .channelQueryUpdaterBuilder(
@@ -63,7 +63,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         didSet {
             stateMulticastDelegate.set(mainDelegate: multicastDelegate.mainDelegate)
             stateMulticastDelegate.set(additionalDelegates: multicastDelegate.additionalDelegates)
-            
+
             // After setting delegate local changes will be fetched and observed.
             startChannelListObserverIfNeeded()
         }
@@ -132,10 +132,10 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         _basePublishers = BasePublishers(controller: self)
         return _basePublishers as? BasePublishers ?? .init(controller: self)
     }
-    
+
     private let filter: ((ChatChannel) -> Bool)?
     private let environment: Environment
-    
+
     /// Creates a new `ChannelListController`.
     ///
     /// - Parameters:
@@ -155,12 +155,12 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         super.init()
         client.trackChannelListController(self)
     }
-    
+
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
         startChannelListObserverIfNeeded()
         updateChannelList(completion)
     }
-    
+
     private func updateChannelList(
         _ completion: ((_ error: Error?) -> Void)? = nil
     ) {
@@ -179,7 +179,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
             }
         }
     }
-    
+
     /// If the `state` of the controller is `initialized`, this method calls `startObserving` on the
     /// `channelListObserver` to fetch the local data and start observing the changes. It also changes
     /// `state` based on the result.
@@ -225,7 +225,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         }
         return true
     }
-    
+
     private func handleUnlinkedChannels(_ changes: [ListChange<ChatChannel>]) {
         guard state == .remoteDataFetched else {
             log.debug("Ignoring inserted/updated unlinked channels due to query \(query) not being synced.")
@@ -243,7 +243,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         }
         link(channels: channels)
     }
-    
+
     private func handleLinkedChannels(_ changes: [ListChange<ChatChannel>]) {
         let channels = changes.compactMap { change -> ChatChannel? in
             switch change {
@@ -255,7 +255,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         }
         unlink(channels: channels)
     }
-    
+
     private func link(channels: [ChatChannel]) {
         guard !channels.isEmpty else { return }
         client.databaseContainer.write { session in
@@ -263,7 +263,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
                 log.debug("Channel list query has not yet created \(self.query)")
                 return
             }
-            
+
             for channel in channels {
                 guard let channelDTO = session.channel(cid: channel.cid) else {
                     log.error("Channel \(channel.cid) cannot be found in database.")
@@ -275,14 +275,14 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
             let cids = channels.map(\.cid)
             self?.worker.startWatchingChannels(withIds: cids) {
                 guard let error = $0 else { return }
-                
+
                 log.warning(
                     "Failed to start watching linked channels: \(cids), error: \(error.localizedDescription)"
                 )
             }
         }
     }
-    
+
     private func unlink(channels: [ChatChannel]) {
         guard !channels.isEmpty else { return }
         client.databaseContainer.write { session in
@@ -290,7 +290,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
                 log.debug("Channel list query has not yet created \(self.query)")
                 return
             }
-            
+
             for channel in channels {
                 guard let channelDTO = session.channel(cid: channel.cid) else {
                     log.error("Channel \(channel.cid) cannot be found in database.")
@@ -410,7 +410,7 @@ public protocol ChatChannelListControllerDelegate: DataControllerStateDelegate {
         _ controller: ChatChannelListController,
         didChangeChannels changes: [ListChange<ChatChannel>]
     )
-    
+
     /// **⚠️ This method is deprecated:** Please use `filter` when initializing a `ChatChannelListController`
     ///
     /// (We are not using @available annotations because they do not get emitted in protocol conformances)

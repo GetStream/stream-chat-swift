@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -11,12 +11,12 @@ import XCTest
 final class ChatFileAttachmentListViewItemView_Tests: XCTestCase {
     private var fileAttachmentView: ChatMessageFileAttachmentListView.ItemView!
     private var vc: UIViewController!
-    
+
     override func setUp() {
         super.setUp()
         fileAttachmentView = ChatMessageFileAttachmentListView.ItemView().withoutAutoresizingMaskConstraints
     }
-    
+
     override func tearDown() {
         fileAttachmentView = nil
 
@@ -45,7 +45,7 @@ final class ChatFileAttachmentListViewItemView_Tests: XCTestCase {
                 super.setUpLayout()
                 mainContainerStackView.spacing = 100
             }
-            
+
             override func setUpAppearance() {
                 super.setUpAppearance()
                 actionIconImageView.tintColor = .green

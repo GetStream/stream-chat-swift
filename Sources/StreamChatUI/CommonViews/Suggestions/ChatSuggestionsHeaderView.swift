@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -10,7 +10,7 @@ open class ChatSuggestionsHeaderView: _View, AppearanceProvider {
     /// The image icon of the commands header view.
     open private(set) lazy var commandImageView: UIImageView = UIImageView()
         .withoutAutoresizingMaskConstraints
-    
+
     /// The text label of the commands header view.
     open private(set) lazy var headerLabel: UILabel = UILabel()
         .withoutAutoresizingMaskConstraints

@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -34,7 +34,7 @@ final class MemberController_Tests: XCTestCase {
         userId = nil
         cid = nil
         controllerCallbackQueueID = nil
-        
+
         env.memberUpdater?.cleanUp()
         env.memberListUpdater?.cleanUp()
         AssertAsync {
@@ -92,10 +92,10 @@ final class MemberController_Tests: XCTestCase {
 
         // Assert controller is in `localDataFetched` state.
         XCTAssertEqual(controller.state, .localDataFetched)
-        
+
         // Keep a weak ref so we can check if it's actually deallocated
         weak var weakController = controller
-        
+
         // (Try to) deallocate the controller
         // by not keeping any references to it
         controller = nil
@@ -169,19 +169,19 @@ final class MemberController_Tests: XCTestCase {
         XCTAssertEqual(env.memberListUpdater!.load_query!.cid, controller.cid)
         XCTAssertNotNil(env.memberListUpdater!.load_completion)
     }
-    
+
     /// This test simulates a bug where the `member` field was not updated if it wasn't
     /// touched before calling synchronize.
     func test_memberIsFetched_evenAfterCallingSynchronize() throws {
         // Simulate `synchronize` call.
         controller.synchronize()
-        
+
         // Create a user in the DB
         try client.databaseContainer.createMember(userId: userId, cid: cid)
-        
+
         // Simulate updater callback
         env.memberListUpdater?.load_completion?(nil)
-        
+
         // Assert the user is loaded
         XCTAssertEqual(controller.member?.id, userId)
     }
@@ -270,7 +270,7 @@ final class MemberController_Tests: XCTestCase {
         // Assert delegate is notified about state changes
         AssertAsync.willBeEqual(delegate.state, .remoteDataFetched)
     }
-    
+
     func test_delegate_isNotifiedAboutMemberUpdates() throws {
         // Set the delegate
         let delegate = ChannelMemberController_Delegate(expectedQueueId: callbackQueueID)
@@ -302,7 +302,7 @@ final class MemberController_Tests: XCTestCase {
             Assert.willBeEqual(delegate.didUpdateMember_change?.fieldChange(\.id), .update(self.userId))
             Assert.willBeEqual(delegate.didUpdateMember_change?.fieldChange(\.memberRole), .update(updatedRole))
         }
-        
+
         // Simulate database flush
         let exp = expectation(description: "removeAllData called")
         client.databaseContainer.removeAllData { error in
@@ -312,7 +312,7 @@ final class MemberController_Tests: XCTestCase {
             exp.fulfill()
         }
         wait(for: [exp], timeout: 1)
-        
+
         // Assert `remove` entity change is received by the delegate
         AssertAsync {
             Assert.willBeEqual(delegate.didUpdateMember_change?.fieldChange(\.id), .remove(self.userId))
@@ -349,10 +349,10 @@ final class MemberController_Tests: XCTestCase {
             XCTAssertNil(error)
             completionIsCalled = true
         }
-        
+
         // Keep a weak ref so we can check if it's actually deallocated
         weak var weakController = controller
-        
+
         // (Try to) deallocate the controller
         // by not keeping any references to it
         controller = nil
@@ -371,7 +371,7 @@ final class MemberController_Tests: XCTestCase {
     func test_ban_callsMemberUpdater_withCorrectValues() {
         let timeout = 10
         let reason: String = .unique
-        
+
         // Simulate `ban` call.
         controller.ban(for: timeout, reason: reason)
 
@@ -410,10 +410,10 @@ final class MemberController_Tests: XCTestCase {
             XCTAssertNil(error)
             completionIsCalled = true
         }
-        
+
         // Keep a weak ref so we can check if it's actually deallocated
         weak var weakController = controller
-        
+
         // (Try to) deallocate the controller
         // by not keeping any references to it
         controller = nil

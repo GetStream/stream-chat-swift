@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -10,16 +10,16 @@ import XCTest
 
 final class ChatMessageGalleryView_Tests: XCTestCase {
     private var galleryView: ChatMessageGalleryView!
-    
+
     override func setUp() {
         super.setUp()
-        
+
         galleryView = ChatMessageGalleryView()
             .withoutAutoresizingMaskConstraints
         galleryView.components = .mock
         galleryView.pin(anchors: [.width, .height], to: 200)
     }
-    
+
     override func tearDown() {
         galleryView = nil
 
@@ -30,35 +30,35 @@ final class ChatMessageGalleryView_Tests: XCTestCase {
         let attachments: [ChatMessageImageAttachment] = [
             .mock(id: .unique, imageURL: TestImages.yoda.url)
         ]
-        
+
         galleryView.content = attachments.map(preview)
 
         AssertSnapshot(galleryView, variants: [.defaultLight])
     }
-    
+
     func test_appearance_whenTwoImages() {
         let attachments: [ChatMessageImageAttachment] = [
             .mock(id: .unique, imageURL: TestImages.yoda.url),
             .mock(id: .unique, imageURL: TestImages.vader.url)
         ]
-        
+
         galleryView.content = attachments.map(preview)
 
         AssertSnapshot(galleryView, variants: [.defaultLight])
     }
-    
+
     func test_appearance_whenThreeImages() {
         let attachments: [ChatMessageImageAttachment] = [
             .mock(id: .unique, imageURL: TestImages.yoda.url),
             .mock(id: .unique, imageURL: TestImages.vader.url),
             .mock(id: .unique, imageURL: TestImages.yoda.url)
         ]
-        
+
         galleryView.content = attachments.map(preview)
 
         AssertSnapshot(galleryView, variants: [.defaultLight])
     }
-    
+
     func test_appearance_whenFourImages() {
         let attachments: [ChatMessageImageAttachment] = [
             .mock(id: .unique, imageURL: TestImages.yoda.url),
@@ -66,12 +66,12 @@ final class ChatMessageGalleryView_Tests: XCTestCase {
             .mock(id: .unique, imageURL: TestImages.yoda.url),
             .mock(id: .unique, imageURL: TestImages.vader.url)
         ]
-        
+
         galleryView.content = attachments.map(preview)
 
         AssertSnapshot(galleryView, variants: [.defaultLight])
     }
-    
+
     func test_appearance_whenMoreThanFourImages() {
         let attachments: [ChatMessageImageAttachment] = [
             .mock(id: .unique, imageURL: TestImages.yoda.url),
@@ -81,12 +81,12 @@ final class ChatMessageGalleryView_Tests: XCTestCase {
             .mock(id: .unique, imageURL: TestImages.yoda.url),
             .mock(id: .unique, imageURL: TestImages.vader.url)
         ]
-        
+
         galleryView.content = attachments.map(preview)
 
         AssertSnapshot(galleryView, variants: [.defaultDark, .defaultLight])
     }
-    
+
     func test_appearanceCustomization_usingAppearance() {
         var appearance = Appearance()
         appearance.colorPalette.background5 = UIColor.purple.withAlphaComponent(0.5)
@@ -95,7 +95,7 @@ final class ChatMessageGalleryView_Tests: XCTestCase {
         galleryView.components = .mock
         galleryView.appearance = appearance
         galleryView.pin(anchors: [.width, .height], to: 200)
-        
+
         let attachments: [ChatMessageImageAttachment] = [
             .mock(id: .unique, imageURL: TestImages.yoda.url),
             .mock(id: .unique, imageURL: TestImages.vader.url),
@@ -104,7 +104,7 @@ final class ChatMessageGalleryView_Tests: XCTestCase {
             .mock(id: .unique, imageURL: TestImages.yoda.url),
             .mock(id: .unique, imageURL: TestImages.vader.url)
         ]
-        
+
         galleryView.content = attachments.map(preview)
 
         AssertSnapshot(galleryView, variants: [.defaultLight])
@@ -114,26 +114,26 @@ final class ChatMessageGalleryView_Tests: XCTestCase {
         class TestView: ChatMessageGalleryView {
             override func setUpLayout() {
                 super.setUpLayout()
-                
+
                 previewsContainerView.spacing = 10
             }
         }
-    
+
         let galleryView = TestView()
             .withoutAutoresizingMaskConstraints
         galleryView.pin(anchors: [.width, .height], to: 200)
         galleryView.components = .mock
-        
+
         let attachments: [ChatMessageImageAttachment] = [
             .mock(id: .unique, imageURL: TestImages.yoda.url),
             .mock(id: .unique, imageURL: TestImages.vader.url)
         ]
-        
+
         galleryView.content = attachments.map(preview)
-        
+
         AssertSnapshot(galleryView, variants: [.defaultLight])
     }
-    
+
     private func preview(for attachment: ChatMessageImageAttachment) -> UIView {
         let preview = ChatMessageGalleryView.ImagePreview().withoutAutoresizingMaskConstraints
         preview.content = attachment

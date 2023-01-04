@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -13,28 +13,28 @@ final class UserRobot: Robot {
     let contextMenu = MessageListPage.ContextMenu.self
     let debugAlert = MessageListPage.Alert.Debug.self
     private var server: StreamMockServer
-    
+
     init(_ server: StreamMockServer) {
         self.server = server
     }
-    
+
     @discardableResult
     func login() -> Self {
         StartPage.startButton.safeTap()
         return self
     }
-    
+
     @discardableResult
     func logout() -> Self {
         ChannelListPage.userAvatar.safeTap()
         return self
     }
-    
+
     @discardableResult
     func openChannel(channelCellIndex: Int = 0) -> Self {
         let minExpectedCount = channelCellIndex + 1
         let cells = ChannelListPage.cells.waitCount(minExpectedCount)
-        
+
         // TODO: CIS-1737
         if !cells.firstMatch.exists {
             for _ in 0...10 {
@@ -48,17 +48,17 @@ final class UserRobot: Robot {
                 if cells.firstMatch.exists { break }
             }
         }
-        
+
         XCTAssertGreaterThanOrEqual(
             cells.count,
             minExpectedCount,
             "Channel cell is not found at index #\(channelCellIndex)"
         )
-        
+
         cells.allElementsBoundByIndex[channelCellIndex].safeTap()
         return self
     }
-    
+
     @discardableResult
     public func waitForJwtToExpire() -> Self {
         let sleepTime = UInt32(StreamMockServer.jwtTimeout * 1000000)
@@ -76,7 +76,7 @@ extension UserRobot {
         messageCell(withIndex: messageCellIndex).safePress(forDuration: 1)
         return self
     }
-    
+
     @discardableResult
     func typeText(_ text: String, obtainKeyboardFocus: Bool = true) -> Self {
         if obtainKeyboardFocus {
@@ -86,7 +86,7 @@ extension UserRobot {
         }
         return self
     }
-    
+
     @discardableResult
     func sendMessage(_ text: String,
                      at messageCellIndex: Int? = nil,
@@ -94,29 +94,29 @@ extension UserRobot {
                      file: StaticString = #filePath,
                      line: UInt = #line) -> Self {
         server.channelsEndpointWasCalled = false
-        
+
         typeText(text)
         composer.sendButton.safeTap()
-        
+
         if waitForAppearance {
             server.waitForWebsocketMessage(withText: text)
             server.waitForHttpMessage(withText: text)
-            
+
             let cell = messageCell(withIndex: messageCellIndex, file: file, line: line).wait()
             let textView = attributes.text(in: cell)
             _ = textView.waitForText(text)
         }
-        
+
         return self
     }
-    
+
     @discardableResult
     func attemptToSendMessageWhileInSlowMode(_ text: String) -> Self {
         composer.inputField.obtainKeyboardFocus().typeText(text)
         composer.cooldown.safeTap()
         return self
     }
-    
+
     @discardableResult
     func deleteMessage(messageCellIndex: Int = 0, hard: Bool = false) -> Self {
         openContextMenu(messageCellIndex: messageCellIndex)
@@ -125,7 +125,7 @@ extension UserRobot {
         MessageListPage.PopUpButtons.delete.wait().safeTap()
         return self
     }
-    
+
     @discardableResult
     func editMessage(_ newText: String, messageCellIndex: Int = 0) -> Self {
         composer.inputField.obtainKeyboardFocus()
@@ -136,7 +136,7 @@ extension UserRobot {
         composer.confirmButton.safeTap()
         return self
     }
-    
+
     @discardableResult
     func clearComposer() -> Self {
         if !composer.textView.text.isEmpty {
@@ -146,7 +146,7 @@ extension UserRobot {
         }
         return self
     }
-    
+
     @discardableResult
     private func reactionAction(
         reactionType: TestData.Reactions,
@@ -154,7 +154,7 @@ extension UserRobot {
         messageCellIndex: Int
     ) -> Self {
         openContextMenu(messageCellIndex: messageCellIndex)
-        
+
         var reaction: XCUIElement {
             switch reactionType {
             case .love:
@@ -170,10 +170,10 @@ extension UserRobot {
             }
         }
         reaction.wait().safeTap()
-        
+
         return self
     }
-    
+
     @discardableResult
     func addReaction(type: TestData.Reactions, messageCellIndex: Int = 0) -> Self {
         reactionAction(
@@ -182,7 +182,7 @@ extension UserRobot {
             messageCellIndex: messageCellIndex
         )
     }
-    
+
     @discardableResult
     func deleteReaction(type: TestData.Reactions, messageCellIndex: Int = 0) -> Self {
         reactionAction(
@@ -198,7 +198,7 @@ extension UserRobot {
         option.element.wait().safeTap()
         return self
     }
-    
+
     @discardableResult
     func replyToMessage(_ text: String,
                         messageCellIndex: Int = 0,
@@ -213,7 +213,7 @@ extension UserRobot {
                     line: line)
         return self
     }
-    
+
     @discardableResult
     func openThread(messageCellIndex: Int = 0) -> Self {
         let messageCell = messageCell(withIndex: messageCellIndex)
@@ -226,37 +226,37 @@ extension UserRobot {
         ThreadPage.alsoSendInChannelCheckbox.wait()
         return self
     }
-    
+
     @discardableResult
     func tapOnMessage(at messageCellIndex: Int? = 0) -> Self {
         let messageCell = messageCell(withIndex: messageCellIndex)
         return tapOnMessage(messageCell)
     }
-    
+
     @discardableResult
     func tapOnMessage(_ messageCell: XCUIElement) -> Self {
         messageCell.waitForHitPoint().safeTap()
         return self
     }
-    
+
     @discardableResult
     func tapOnMessageList() -> Self {
         MessageListPage.list.safeTap()
         return self
     }
-    
+
     @discardableResult
     func tapOnScrollToBottomButton() -> Self {
         MessageListPage.scrollToBottomButton.safeTap()
         return self
     }
-    
+
     @discardableResult
     func tapOnPushNotification() -> Self {
         SpringBoard.notificationBanner.wait().safeTap()
         return self
     }
-    
+
     @discardableResult
     func replyToMessageInThread(
         _ text: String,
@@ -280,13 +280,13 @@ extension UserRobot {
                     line: line)
         return self
     }
-    
+
     @discardableResult
     func tapOnBackButton() -> Self {
         app.back()
         return self
     }
-    
+
     @discardableResult
     func leaveChatFromChannelList() -> Self {
         ChannelListPage.userAvatar.wait().safeTap()
@@ -299,7 +299,7 @@ extension UserRobot {
             .tapOnBackButton()
             .tapOnBackButton()
     }
-    
+
     @discardableResult
     func scrollMessageListDown() -> Self {
         MessageListPage.list.swipeUp()
@@ -317,7 +317,7 @@ extension UserRobot {
         MessageListPage.list.swipeDown(velocity: .slow)
         return self
     }
-    
+
     @discardableResult
     func openComposerCommands() -> Self {
         if MessageListPage.ComposerCommands.cells.count == 0 {
@@ -325,7 +325,7 @@ extension UserRobot {
         }
         return self
     }
-    
+
     @discardableResult
     func sendGiphy(text: String = "Test", useComposerCommand: Bool = false, send: Bool = true) -> Self {
         if useComposerCommand {
@@ -338,14 +338,14 @@ extension UserRobot {
         if send { tapOnSendGiphyButton() }
         return self
     }
-    
+
     @discardableResult
     func replyWithGiphy(useComposerCommand: Bool = false, messageCellIndex: Int = 0) -> Self {
         return self
             .selectOptionFromContextMenu(option: .reply, forMessageAtIndex: messageCellIndex)
             .sendGiphy(useComposerCommand: useComposerCommand)
     }
-    
+
     @discardableResult
     func replyWithGiphyInThread(
         useComposerCommand: Bool = false,
@@ -361,14 +361,14 @@ extension UserRobot {
         }
         return sendGiphy(useComposerCommand: useComposerCommand)
     }
-    
+
     @discardableResult
     func tapOnSendGiphyButton(messageCellIndex: Int = 0) -> Self {
         let messageCell = messageCell(withIndex: messageCellIndex)
         MessageListPage.Attributes.giphySendButton(in: messageCell).wait().safeTap()
         return self
     }
-    
+
     @discardableResult
     func uploadImage(count: Int = 1, send: Bool = true) -> Self {
         for i in 1...count {
@@ -379,7 +379,7 @@ extension UserRobot {
         if send { sendMessage("", waitForAppearance: false) }
         return self
     }
-    
+
     @discardableResult
     func mentionParticipant(manually: Bool = false) -> Self {
         let text = "@\(UserDetails.hanSoloId)"
@@ -421,7 +421,7 @@ extension UserRobot {
         debugAlert.selectMember(withUserId: userId).firstMatch.safeTap()
         return self
     }
-    
+
     @discardableResult
     func truncateChannel(withMessage: Bool) -> Self {
         tapOnDebugMenu()
@@ -461,10 +461,10 @@ extension UserRobot {
     func setIsLocalStorageEnabled(to state: SwitchState) -> Self {
         setSwitchState(Settings.isLocalStorageEnabled.element, state: state)
     }
-    
+
     @discardableResult
     func setStaysConnectedInBackground(to state: SwitchState) -> Self {
         setSwitchState(Settings.staysConnectedInBackground.element, state: state)
     }
-    
+
 }

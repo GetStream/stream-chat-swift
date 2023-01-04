@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -9,7 +9,7 @@ import UIKit
 extension ChatClient {
     /// The channel name that we want to use for the livestream chat
     static let livestreamChannelName = "ytlivestream"
-    
+
     /// The singleton instance of `ChatClient`
     static let shared: ChatClient = {
         var components = Components()
@@ -21,13 +21,13 @@ extension ChatClient {
         components.scrollToLatestMessageButton = YTScrollToLatestMessageButton.self
         components.sendButton = YTSendButton.self
         components.inputMessageView = YTInputChatMessageView.self
-        
+
         components.messageLayoutOptionsResolver = YTMessageLayoutOptionsResolver()
 
         Components.default = components
 
         let config = ChatClientConfig(apiKey: APIKey("bmrrcjf5bhzt"))
-        
+
         let client = ChatClient(config: config)
         client.connectUser(
             userInfo: .init(id: "sagar"),

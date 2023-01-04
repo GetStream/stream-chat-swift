@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -32,7 +32,7 @@ final class TypingEvent_Tests: XCTestCase {
         XCTAssertEqual(event.cid, cid)
         XCTAssertEqual(event.user.id, userId)
     }
-    
+
     func test_parseTypingStoptEvent() throws {
         let json = XCTestCase.mockData(fromJSONFile: "UserStopTyping")
         guard let event = try eventDecoder.decode(from: json) as? TypingEventDTO else {
@@ -56,7 +56,7 @@ final class TypingEvent_Tests: XCTestCase {
         XCTAssertTrue(event.isTyping)
         XCTAssertTrue(event.isThread)
     }
-    
+
     func test_parseTypingStoptEventInThread() throws {
         let json = XCTestCase.mockData(fromJSONFile: "UserStopTypingThread")
         guard let event = try eventDecoder.decode(from: json) as? TypingEventDTO else {
@@ -67,13 +67,13 @@ final class TypingEvent_Tests: XCTestCase {
         XCTAssertFalse(event.isTyping)
         XCTAssertTrue(event.isThread)
     }
-    
+
     // MARK: DTO -> Event
-    
+
     func test_startTypingEventDTO_toDomainEvent() throws {
         // Create database session
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
-        
+
         // Create event payload
         let eventPayload = EventPayload(
             eventType: .userStartTyping,
@@ -82,16 +82,16 @@ final class TypingEvent_Tests: XCTestCase {
             createdAt: .unique,
             parentId: .unique
         )
-        
+
         // Create event DTO
         let dto = try TypingEventDTO(from: eventPayload)
-        
+
         // Assert event creation fails due to missing dependencies
         XCTAssertNil(dto.toDomainEvent(session: session))
-        
+
         // Save event payload to database
         try session.saveUser(payload: eventPayload.user!)
-        
+
         // Assert event can be created from DTO and has correct fields
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? TypingEvent)
         XCTAssertEqual(event.cid, eventPayload.cid)
@@ -101,11 +101,11 @@ final class TypingEvent_Tests: XCTestCase {
         XCTAssertEqual(event.isThread, true)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
-    
+
     func test_stopTypingEventDTO_toDomainEvent() throws {
         // Create database session
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
-        
+
         // Create event payload
         let eventPayload = EventPayload(
             eventType: .userStopTyping,
@@ -113,16 +113,16 @@ final class TypingEvent_Tests: XCTestCase {
             user: .dummy(userId: .unique),
             createdAt: .unique
         )
-        
+
         // Create event DTO
         let dto = try TypingEventDTO(from: eventPayload)
-        
+
         // Assert event creation fails due to missing dependencies
         XCTAssertNil(dto.toDomainEvent(session: session))
-        
+
         // Save event payload to database
         try session.saveUser(payload: eventPayload.user!)
-        
+
         // Assert event can be created from DTO and has correct fields
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? TypingEvent)
         XCTAssertEqual(event.cid, eventPayload.cid)

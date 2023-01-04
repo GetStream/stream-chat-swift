@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Combine
@@ -44,7 +44,7 @@ public extension SwiftUIRepresentable where Self: UIViewController {
 public struct SwiftUIViewRepresentable<View: UIView & SwiftUIRepresentable>: UIViewRepresentable {
     private let view: View.Type
     private let content: View.ViewContent
-    
+
     init(
         view: View.Type,
         content: View.ViewContent
@@ -52,11 +52,11 @@ public struct SwiftUIViewRepresentable<View: UIView & SwiftUIRepresentable>: UIV
         self.view = view
         self.content = content
     }
-    
+
     public func makeUIView(context: Context) -> View {
         view.init()
     }
-    
+
     public func updateUIView(_ uiView: View, context: Context) {
         uiView.content = content
     }
@@ -70,7 +70,7 @@ public struct SwiftUIViewControllerRepresentable<
 >: UIViewControllerRepresentable {
     private let viewController: ViewController.Type
     private let content: ViewController.ViewContent
-    
+
     init(
         viewController: ViewController.Type,
         content: ViewController.ViewContent
@@ -78,12 +78,12 @@ public struct SwiftUIViewControllerRepresentable<
         self.viewController = viewController
         self.content = content
     }
-    
+
     public func makeUIViewController(context: Context) -> ViewController {
         let controller = ViewController()
         controller.content = content
         return controller
     }
-    
+
     public func updateUIViewController(_ uiViewController: ViewController, context: Context) {}
 }

@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -11,30 +11,30 @@ extension ChatMessageFileAttachmentListView {
         public var content: ChatMessageFileAttachment? {
             didSet { updateContentIfNeeded() }
         }
-        
+
         /// Closure what should happen on tapping the given attachment.
         open var didTapOnAttachment: ((ChatMessageFileAttachment) -> Void)?
-        
+
         /// Label which shows name of the file, usually with extension (file.pdf)
         open private(set) lazy var fileNameLabel = UILabel()
             .withoutAutoresizingMaskConstraints
             .withBidirectionalLanguagesSupport
             .withAdjustingFontForContentSizeCategory
             .withAccessibilityIdentifier(identifier: "fileNameLabel")
-        
+
         /// Label indicating size of the file.
         open private(set) lazy var fileSizeLabel = UILabel()
             .withoutAutoresizingMaskConstraints
             .withBidirectionalLanguagesSupport
             .withAdjustingFontForContentSizeCategory
             .withAccessibilityIdentifier(identifier: "fileSizeLabel")
-        
+
         /// Animated indicator showing progress of uploading of a file.
         open private(set) lazy var loadingIndicator = components
             .loadingIndicator
             .init()
             .withoutAutoresizingMaskConstraints
-        
+
         /// imageView indicating action for the file attachment. (Download / Retry upload...)
         open private(set) lazy var actionIconImageView = UIImageView()
             .withoutAutoresizingMaskConstraints
@@ -43,7 +43,7 @@ extension ChatMessageFileAttachmentListView {
         open private(set) lazy var mainContainerStackView: ContainerStackView = ContainerStackView()
             .withoutAutoresizingMaskConstraints
             .withAccessibilityIdentifier(identifier: "mainContainerStackView")
-        
+
         /// Stack containing loading indicator and label with fileSize.
         open private(set) lazy var spinnerAndSizeStack: ContainerStackView = ContainerStackView()
             .withoutAutoresizingMaskConstraints
@@ -84,18 +84,18 @@ extension ChatMessageFileAttachmentListView {
             super.setUpLayout()
             addSubview(mainContainerStackView)
             mainContainerStackView.pin(to: layoutMarginsGuide)
-            
+
             spinnerAndSizeStack.addArrangedSubviews([loadingIndicator, fileSizeLabel])
             fileNameAndSizeStack.addArrangedSubviews([fileNameLabel, spinnerAndSizeStack])
             mainContainerStackView.addArrangedSubviews([fileIconImageView, fileNameAndSizeStack, actionIconImageView])
-            
+
             spinnerAndSizeStack.axis = .horizontal
             spinnerAndSizeStack.alignment = .leading
-            
+
             fileNameAndSizeStack.axis = .vertical
             fileNameAndSizeStack.alignment = .leading
             fileNameAndSizeStack.spacing = 3
-            
+
             mainContainerStackView.axis = .horizontal
             mainContainerStackView.alignment = .center
         }
@@ -115,7 +115,7 @@ extension ChatMessageFileAttachmentListView {
             default:
                 fileSizeLabel.text = content?.uploadingState?.fileUploadingProgress
             }
-        
+
             if let state = content?.uploadingState?.state {
                 actionIconImageView.image = appearance.fileAttachmentActionIcon(for: state)
             } else {

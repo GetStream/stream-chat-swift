@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -16,20 +16,20 @@ final class RequestRecorderURLProtocol_Mock: URLProtocol {
     @Atomic private static var latestRequest: URLRequest?
 
     static let testSessionHeaderKey = "RequestRecorderURLProtocolMock_test_session_id"
-    
+
     /// Starts a new recording session. Adds a unique identifier to the configuration headers and listens only
     /// for the request with this id.
     static func startTestSession(with configuration: inout URLSessionConfiguration) {
         reset()
         let newSessionId = UUID().uuidString
         currentSessionId = newSessionId
-        
+
         configuration.protocolClasses?.insert(Self.self, at: 0)
         var existingHeaders = configuration.httpAdditionalHeaders ?? [:]
         existingHeaders[Self.testSessionHeaderKey] = newSessionId
         configuration.httpAdditionalHeaders = existingHeaders
     }
-    
+
     /// Returns the latest network request this URLProtocol recorded.
     ///
     /// If no request has been made since the last time this function was invoked, it synchronously
@@ -39,12 +39,12 @@ final class RequestRecorderURLProtocol_Mock: URLProtocol {
     static func waitForRequest(timeout: TimeInterval) -> URLRequest? {
         defer { reset() }
         guard latestRequest == nil else { return latestRequest }
-        
+
         latestRequestExpectation = .init(description: "Wait for incoming request.")
         _ = XCTWaiter.wait(for: [latestRequestExpectation!], timeout: timeout)
         return latestRequest
     }
-    
+
     /// Cleans up existing waiters and recorded requests. We have to explictly reset the state because URLProtocols
     /// work with static variables.
     static func reset() {
@@ -52,21 +52,21 @@ final class RequestRecorderURLProtocol_Mock: URLProtocol {
         latestRequest = nil
         latestRequestExpectation = nil
     }
-    
+
     override class func canInit(with request: URLRequest) -> Bool {
         guard let sessionId = currentSessionId else { return false }
-        
+
         if sessionId == request.value(forHTTPHeaderField: testSessionHeaderKey) {
             record(request: request)
         }
         return false
     }
-    
+
     override class func canonicalRequest(for request: URLRequest) -> URLRequest {
         // Overriding this function is required by the superclass.
         request
     }
-    
+
     private static func record(request: URLRequest) {
         guard latestRequest == nil else {
             log.info("Request for \(String(describing: currentSessionId)) already recoded. Skipping.")
@@ -75,13 +75,13 @@ final class RequestRecorderURLProtocol_Mock: URLProtocol {
         latestRequest = request
         latestRequestExpectation?.fulfill()
     }
-    
+
     // MARK: Instance methods
-    
+
     override func startLoading() {
         // Required by the superclass.
     }
-    
+
     override func stopLoading() {
         // Required by the superclass.
     }

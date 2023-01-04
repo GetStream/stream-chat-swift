@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -10,49 +10,49 @@ import Foundation
 public struct ChatChannel {
     /// The `ChannelId` of the channel.
     public let cid: ChannelId
-    
+
     /// Name for this channel.
     public let name: String?
-    
+
     /// Image (avatar) url for this channel.
     public let imageURL: URL?
-    
+
     /// The date of the last message in the channel.
     public let lastMessageAt: Date?
-    
+
     /// The date when the channel was created.
     public let createdAt: Date
-    
+
     /// The date when the channel was updated.
     public let updatedAt: Date
-    
+
     /// If the channel was deleted, this field contains the date of the deletion.
     public let deletedAt: Date?
-    
+
     /// If the channel was truncated, this field contains the date of the truncation.
     public let truncatedAt: Date?
-    
+
     /// Flag for representing hidden state for the channel.
     public let isHidden: Bool
-    
+
     /// The user which created the channel.
     public let createdBy: ChatUser?
-    
+
     /// A configuration struct of the channel. It contains additional information about the channel settings.
     public let config: ChannelConfig
 
     /// The list of actions that the current user can perform in a channel.
     public let ownCapabilities: Set<ChannelCapability>
-    
+
     /// Returns `true` if the channel is frozen.
     ///
     /// It's not possible to send new messages to a frozen channel.
     ///
     public let isFrozen: Bool
-    
+
     /// The total number of members in the channel.
     public let memberCount: Int
-    
+
     /// A list of members of this channel.
     ///
     /// Array is sorted and the most recently active members will be first.
@@ -64,14 +64,14 @@ public struct ChatChannel {
     ///
     public var lastActiveMembers: [ChatChannelMember] { _lastActiveMembers }
     @CoreDataLazy private var _lastActiveMembers: [ChatChannelMember]
-    
+
     /// A list of currently typing users.
     public var currentlyTypingUsers: Set<ChatUser> { _currentlyTypingUsers }
     @CoreDataLazy private var _currentlyTypingUsers: Set<ChatUser>
-    
+
     /// If the current user is a member of the channel, this variable contains the details about the membership.
     public let membership: ChatChannelMember?
-    
+
     /// A list of users and/or channel members currently actively watching the channel.
     ///
     /// Array is sorted and the most recently active watchers will be first.
@@ -86,21 +86,21 @@ public struct ChatChannel {
 
     /// The total number of online members watching this channel.
     public let watcherCount: Int
-    
+
     /// The team the channel belongs to.
     ///
     /// You need to enable multi-tenancy if you want to use this otherwise it is always nil
     /// Refer to [docs](https://getstream.io/chat/docs/multi_tenant_chat/?language=swift) for more info.
     ///
     public let team: TeamId?
-    
+
     /// The unread counts for the channel.
     public var unreadCount: ChannelUnreadCount { _unreadCount }
     @CoreDataLazy private var _unreadCount: ChannelUnreadCount
-    
+
     /// An option to enable ban users.
 //    public let banEnabling: BanEnabling
-    
+
     /// Latest messages present on the channel. The first item of the array, is the most recent message.
     ///
     /// This field contains only the latest messages of the channel. You can get all existing messages in the channel by creating
@@ -112,13 +112,13 @@ public struct ChatChannel {
     public var latestMessages: [ChatMessage] { _latestMessages }
     // stream:annotation "Move to async"
     @CoreDataLazy(forceLazy: true) private var _latestMessages: [ChatMessage]
-    
+
     /// Latest message present on the channel sent by current user even if sent on a thread.
     ///
     /// - Important: The `lastMessageFromCurrentUser` property is loaded and evaluated lazily to maintain high performance.
     public var lastMessageFromCurrentUser: ChatMessage? { _lastMessageFromCurrentUser }
     @CoreDataLazy private var _lastMessageFromCurrentUser: ChatMessage?
-    
+
     /// Pinned messages present on the channel.
     ///
     /// This field contains only the pinned messages of the channel. You can get all existing messages in the channel by creating
@@ -128,7 +128,7 @@ public struct ChatChannel {
     public var pinnedMessages: [ChatMessage] { _pinnedMessages }
     // stream:annotation "Move to async"
     @CoreDataLazy(forceLazy: true) private var _pinnedMessages: [ChatMessage]
-    
+
     /// Read states of the users for this channel.
     ///
     /// You can use this information to show to your users information about what messages were read by certain users.
@@ -146,16 +146,16 @@ public struct ChatChannel {
     public var isMuted: Bool { muteDetails != nil }
 
     @CoreDataLazy private var _muteDetails: MuteDetails?
-    
+
     /// Cooldown duration for the channel, if it's in slow mode.
     /// This value will be 0 if the channel is not in slow mode.
     /// This value is in seconds.
     /// For more information, please check [documentation](https://getstream.io/chat/docs/javascript/slow_mode/?language=swift).
     public let cooldownDuration: Int
-    
+
     /// Additional data associated with the channel.
     public let extraData: [String: RawJSON]
-    
+
     /// The channel message is supposed to be shown in channel preview.
     ///
     /// - Important: The `previewMessage` can differ from `latestMessages.first` (or even not be included into `latestMessages`)
@@ -163,15 +163,15 @@ public struct ChatChannel {
     public var previewMessage: ChatMessage? { _previewMessage }
     // stream:annotation "Move to async?"
     @CoreDataLazy(forceLazy: true) private var _previewMessage: ChatMessage?
-    
+
     // MARK: - Internal
-    
+
     /// A helper variable to cache the result of the filter for only banned members.
     //  lazy var bannedMembers: Set<ChatChannelMember> = Set(self.members.filter { $0.isBanned })
-    
+
     /// A list of users to invite in the channel.
 //    let invitedMembers: Set<ChatChannelMember> // TODO: Why is this not public?
-    
+
     init(
         cid: ChannelId,
         name: String?,
@@ -224,7 +224,7 @@ public struct ChatChannel {
         self.cooldownDuration = cooldownDuration
         self.extraData = extraData
         self.truncatedAt = truncatedAt
-        
+
         $_unreadCount = (unreadCount, underlyingContext)
         $_latestMessages = (latestMessages, underlyingContext)
         $_lastMessageFromCurrentUser = (lastMessageFromCurrentUser, underlyingContext)
@@ -240,18 +240,18 @@ public struct ChatChannel {
 extension ChatChannel {
     /// The type of the channel.
     public var type: ChannelType { cid.type }
-    
+
     /// Returns `true` if the channel was deleted.
     public var isDeleted: Bool { deletedAt != nil }
-    
+
     /// Checks if read events evadable for the current user.
 //    public var readEventsEnabled: Bool { /* config.readEventsEnabled && members.contains(Member.current) */ fatalError() }
-    
+
     /// Returns `true` when the channel is a direct-message channel.
     /// A "direct message" channel is created when client sends only the user id's for the channel and not an explicit `cid`,
     /// so backend creates a `cid` based on member's `id`s
     public var isDirectMessageChannel: Bool { cid.id.hasPrefix("!members") }
-    
+
     /// Returns `true` if the channel has one or more unread messages for the current user.
     public var isUnread: Bool { unreadCount != .noUnread }
 }
@@ -264,7 +264,7 @@ extension ChatChannel: Hashable {
     public static func == (lhs: ChatChannel, rhs: ChatChannel) -> Bool {
         lhs.cid == rhs.cid
     }
-    
+
     public func hash(into hasher: inout Hasher) {
         hasher.combine(cid)
     }
@@ -274,10 +274,10 @@ extension ChatChannel: Hashable {
 public struct ChannelUnreadCount: Decodable, Equatable {
     /// The default value representing no unread messages.
     public static let noUnread = ChannelUnreadCount(messages: 0, mentions: 0)
-    
+
     /// The total number of unread messages in the channel.
     public let messages: Int
-    
+
     /// The number of unread messages that mention the current user.
     public let mentions: Int
 }

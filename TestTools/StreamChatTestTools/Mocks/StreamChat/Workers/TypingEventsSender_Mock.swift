@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -24,28 +24,28 @@ final class TypingEventsSender_Mock: TypingEventsSender {
         keystroke_parentMessageId = parentMessageId
         keystroke_completion = completion
     }
-    
+
     override func startTyping(in cid: ChannelId, parentMessageId: MessageId?, completion: ((Error?) -> Void)? = nil) {
         startTyping_cid = cid
         startTyping_parentMessageId = parentMessageId
         startTyping_completion = completion
     }
-    
+
     override func stopTyping(in cid: ChannelId, parentMessageId: MessageId?, completion: ((Error?) -> Void)? = nil) {
         stopTyping_cid = cid
         stopTyping_parentMessageId = parentMessageId
         stopTyping_completion = completion
     }
-    
+
     func cleanUp() {
         keystroke_cid = nil
         keystroke_parentMessageId = nil
         keystroke_completion = nil
-        
+
         startTyping_cid = nil
         startTyping_parentMessageId = nil
         startTyping_completion = nil
-        
+
         stopTyping_cid = nil
         stopTyping_parentMessageId = nil
         stopTyping_completion = nil

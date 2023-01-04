@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -20,13 +20,13 @@ public extension ChatClient {
 public class ChatMessageController: DataController, DelegateCallable, DataStoreProvider {
     /// The `ChatClient` instance this controller belongs to.
     public let client: ChatClient
-    
+
     /// The identified of the channel the message belongs to.
     public let cid: ChannelId
-    
+
     /// The identified of the message this controllers represents.
     public let messageId: MessageId
-    
+
     /// The message object this controller represents.
     ///
     /// To observe changes of the message, set your class as a delegate of this controller or use the provided
@@ -36,7 +36,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         startObserversIfNeeded()
         return messageObserver.item
     }
-    
+
     /// The replies to the message the controller represents.
     ///
     /// To observe changes of the replies, set your class as a delegate of this controller or use the provided
@@ -67,7 +67,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
 
     /// A Boolean value that returns wether the reactions have all been loaded or not.
     public internal(set) var hasLoadedAllReactions = false
-    
+
     /// Describes the ordering the replies are presented.
     ///
     /// - Important: ⚠️ Changing this value doesn't trigger delegate methods. You should reload your UI manually after changing
@@ -78,14 +78,14 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         didSet {
             if state != .initialized {
                 _repliesObserver.reset()
-                
+
                 do {
                     try repliesObserver?.startObserving()
                 } catch {
                     log.error("Failed to perform fetch request with error: \(error). This is an internal error.")
                     state = .localDataFetchFailed(ClientError(with: error))
                 }
-                
+
                 log.warning(
                     "Changing `listOrdering` will update data inside controller, but you have to update your UI manually "
                         + "to see changes."
@@ -93,15 +93,15 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
             }
         }
     }
-    
+
     /// The id of the last fetched reply
     private var lastFetchedMessageId: MessageId?
-    
+
     /// A Boolean value that returns wether pagination is finished
     public private(set) var hasLoadedAllPreviousReplies: Bool = false
 
     private let environment: Environment
-    
+
     var _basePublishers: Any?
     /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
     /// publishers. Instead of creating custom `Publisher` types, we use `CurrentValueSubject` and `PassthroughSubject` internally,
@@ -114,17 +114,17 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         _basePublishers = BasePublishers(controller: self)
         return _basePublishers as? BasePublishers ?? .init(controller: self)
     }
-    
+
     /// A type-erased multicast delegate.
     var multicastDelegate: MulticastDelegate<ChatMessageControllerDelegate> = .init() {
         didSet {
             stateMulticastDelegate.set(mainDelegate: multicastDelegate.mainDelegate)
             stateMulticastDelegate.set(additionalDelegates: multicastDelegate.additionalDelegates)
-            
+
             startObserversIfNeeded()
         }
     }
-    
+
     /// The observer used to listen to message updates
     private lazy var messageObserver = createMessageObserver()
         .onChange { [weak self] change in
@@ -137,11 +137,11 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
                 $0.messageController(self, didChangeMessage: change)
             }
         }
-    
+
     /// The observer used to listen replies updates.
     /// It will be reset on `listOrdering` changes.
     @Cached private var repliesObserver: ListDatabaseObserver<ChatMessage, MessageDTO>?
-    
+
     /// The worker used to fetch the remote data and communicate with servers.
     private lazy var messageUpdater: MessageUpdater = environment.messageUpdaterBuilder(
         client.config.isLocalStorageEnabled,
@@ -168,14 +168,14 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
 
     override public func synchronize(_ completion: ((Error?) -> Void)? = nil) {
         startObserversIfNeeded()
-        
+
         messageUpdater.getMessage(cid: cid, messageId: messageId) { result in
             let error = result.error
             self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
             self.callback { completion?(error) }
         }
     }
-    
+
     /// If the `state` of the controller is `initialized`, this method calls `startObserving` on
     /// `messageObserver`, `repliesObserver` and `reactionsObserver` to fetch the local data and start observing the changes.
     /// It also changes `state` based on the result.
@@ -215,7 +215,7 @@ public extension ChatMessageController {
             }
         }
     }
-    
+
     /// Deletes the message this controller manages.
     ///
     /// - Parameters:
@@ -232,7 +232,7 @@ public extension ChatMessageController {
             }
         }
     }
-    
+
     /// Creates a new reply message locally and schedules it for send.
     ///
     /// - Parameters:
@@ -277,7 +277,7 @@ public extension ChatMessageController {
             }
         }
     }
-    
+
     /// Loads previous messages from the backend.
     ///
     /// - Parameters:
@@ -300,9 +300,9 @@ public extension ChatMessageController {
         let lastLocalMessageId: () -> MessageId? = {
             self.replies.last { !$0.isLocalOnly }?.id
         }
-        
+
         let lastMessageId = messageId ?? lastFetchedMessageId ?? lastLocalMessageId()
-        
+
         messageUpdater.loadReplies(
             cid: cid,
             messageId: self.messageId,
@@ -318,7 +318,7 @@ public extension ChatMessageController {
             }
         }
     }
-    
+
     /// Loads new messages from the backend.
     ///
     /// - Parameters:
@@ -337,7 +337,7 @@ public extension ChatMessageController {
             callback { completion?(ClientError.MessageEmptyReplies()) }
             return
         }
-    
+
         messageUpdater.loadReplies(
             cid: cid,
             messageId: self.messageId,
@@ -419,7 +419,7 @@ public extension ChatMessageController {
             }
         }
     }
-    
+
     /// Flags the message this controller manages.
     ///
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
@@ -431,7 +431,7 @@ public extension ChatMessageController {
             }
         }
     }
-    
+
     /// Unflags the message this controller manages.
     ///
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
@@ -443,7 +443,7 @@ public extension ChatMessageController {
             }
         }
     }
-    
+
     /// Adds new reaction to the message this controller manages.
     /// - Parameters:
     ///   - type: The reaction type.
@@ -470,7 +470,7 @@ public extension ChatMessageController {
             }
         }
     }
-    
+
     /// Deletes the reaction from the message this controller manages.
     /// - Parameters:
     ///   - type: The reaction type.
@@ -508,7 +508,7 @@ public extension ChatMessageController {
             }
         }
     }
-    
+
     /// Updates local state of attachment with provided `id` to be enqueued by attachment uploader.
     /// - Parameters:
     ///   - id: The attachment identifier.
@@ -524,7 +524,7 @@ public extension ChatMessageController {
             }
         }
     }
-    
+
     /// Changes local message from `.sendingFailed` to `.pendingSend` so it is enqueued by message sender worker.
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the database operation is finished.
     ///                         If operation fails, the completion will be called with an error.
@@ -535,7 +535,7 @@ public extension ChatMessageController {
             }
         }
     }
-    
+
     /// Executes the provided action on the message this controller manages.
     /// - Parameters:
     ///   - action: The action to take.
@@ -548,7 +548,7 @@ public extension ChatMessageController {
             }
         }
     }
-    
+
     /// Translates the message to the given language.
     /// The translated message will be returned via `didChangeMessage` delegate callback.
     /// Translation will be in `message.translations[language]`
@@ -575,14 +575,14 @@ extension ChatMessageController {
             _ itemCreator: @escaping (MessageDTO) throws -> ChatMessage,
             _ fetchedResultsControllerType: NSFetchedResultsController<MessageDTO>.Type
         ) -> EntityDatabaseObserver<ChatMessage, MessageDTO> = EntityDatabaseObserver.init
-        
+
         var repliesObserverBuilder: (
             _ context: NSManagedObjectContext,
             _ fetchRequest: NSFetchRequest<MessageDTO>,
             _ itemCreator: @escaping (MessageDTO) throws -> ChatMessage,
             _ fetchedResultsControllerType: NSFetchedResultsController<MessageDTO>.Type
         ) -> ListDatabaseObserver<ChatMessage, MessageDTO> = ListDatabaseObserver.init
-        
+
         var messageUpdaterBuilder: (
             _ isLocalStorageEnabled: Bool,
             _ messageRepository: MessageRepository,
@@ -602,10 +602,10 @@ private extension ChatMessageController {
             { try $0.asModel() },
             NSFetchedResultsController<MessageDTO>.self
         )
-        
+
         return observer
     }
-    
+
     func setRepliesObserver() {
         _repliesObserver.computeValue = { [weak self] in
             guard let self = self else {
@@ -666,7 +666,7 @@ public protocol ChatMessageControllerDelegate: DataControllerStateDelegate {
 
 public extension ChatMessageControllerDelegate {
     func messageController(_ controller: ChatMessageController, didChangeMessage change: EntityChange<ChatMessage>) {}
-    
+
     func messageController(_ controller: ChatMessageController, didChangeReplies changes: [ListChange<ChatMessage>]) {}
 
     func messageController(_ controller: ChatMessageController, didChangeReactions reactions: [ChatMessageReaction]) {}
@@ -679,14 +679,14 @@ public protocol _ChatMessageControllerDelegate: DataControllerStateDelegate {
         _ controller: ChatMessageController,
         didChangeMessage change: EntityChange<ChatMessage>
     )
-    
+
     /// The controller observed changes in the replies of the observed `ChatMessage`.
     func messageController(
         _ controller: ChatMessageController,
         didChangeReplies changes: [ListChange<ChatMessage>]
     )
 }
- 
+
 public extension ChatMessageController {
     /// Set the delegate of `ChatMessageController` to observe the changes in the system.
     var delegate: ChatMessageControllerDelegate? {

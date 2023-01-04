@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -11,7 +11,7 @@ struct MultipartFormData {
         UInt32.random(in: 0...UInt32.max),
         UInt32.random(in: 0...UInt32.max)
     )
-    
+
     let data: Data
     let fileName: String
     let mimeType: String?

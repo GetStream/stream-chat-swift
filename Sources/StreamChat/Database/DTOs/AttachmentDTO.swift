@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -38,9 +38,9 @@ class AttachmentDTO: NSManagedObject {
     @NSManaged var localURL: URL?
     /// An attachment raw `Data`.
     @NSManaged var data: Data
-    
+
     // MARK: - Relationships
-    
+
     @NSManaged var message: MessageDTO
 
     override func willSave() {
@@ -56,16 +56,16 @@ class AttachmentDTO: NSManagedObject {
             message.id = message.id
         }
     }
-    
+
     static func load(id: AttachmentId, context: NSManagedObjectContext) -> AttachmentDTO? {
         load(by: id.rawValue, context: context).first
     }
-    
+
     static func loadOrCreate(id: AttachmentId, context: NSManagedObjectContext) -> AttachmentDTO {
         if let existing = load(id: id, context: context) {
             return existing
         }
-        
+
         let request = fetchRequest(id: id.rawValue)
         let new = NSEntityDescription.insertNewObject(into: context, for: request)
         new.attachmentID = id
@@ -84,7 +84,7 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
     func attachment(id: AttachmentId) -> AttachmentDTO? {
         AttachmentDTO.load(id: id, context: self)
     }
-    
+
     func saveAttachment(
         payload: MessageAttachmentPayload,
         id: AttachmentId
@@ -94,17 +94,17 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
         }
 
         let dto = AttachmentDTO.loadOrCreate(id: id, context: self)
-        
+
         dto.attachmentType = payload.type
         dto.data = try JSONEncoder.default.encode(payload.payload)
         dto.message = messageDTO
-        
+
         dto.localURL = nil
         dto.localState = nil
-        
+
         return dto
     }
-    
+
     func createNewAttachment(
         attachment: AnyAttachmentPayload,
         id: AttachmentId
@@ -114,7 +114,7 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
         }
 
         let dto = AttachmentDTO.loadOrCreate(id: id, context: self)
-        
+
         dto.attachmentType = attachment.type
 
         dto.localURL = attachment.localFileURL
@@ -122,7 +122,7 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
 
         dto.data = try JSONEncoder.stream.encode(attachment.payload.asAnyEncodable)
         dto.message = messageDTO
-        
+
         return dto
     }
 }
@@ -160,7 +160,7 @@ extension AttachmentDTO {
             uploadingState: uploadingState
         )
     }
-    
+
     /// Snapshots the current state of `AttachmentDTO` and returns its representation for used in API calls.
     /// It's possible to introduce custom attachment types outside the SDK.
     /// That is why `RawJSON` object is used for sending it to backend because SDK doesn't know the structure of custom attachment.
@@ -233,7 +233,7 @@ extension ClientError {
     }
 
     class AttachmentDecoding: ClientError {}
-    
+
     class AttachmentUploading: ClientError {
         init(id: AttachmentId) {
             super.init(

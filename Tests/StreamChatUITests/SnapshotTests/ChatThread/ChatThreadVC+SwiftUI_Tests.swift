@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -11,7 +11,7 @@ import XCTest
 @available(iOS 13.0, *)
 final class ChatThreadView_Tests: iOS13TestCase {
     var chatThreadView: SwiftUIViewControllerRepresentable<ChatThreadVC>!
-    
+
     var channelControllerMock: ChatChannelController_Mock!
     var messageControllerMock: ChatMessageController_Mock!
 
@@ -75,7 +75,7 @@ final class ChatThreadView_Tests: iOS13TestCase {
                     state: .localDataFetched
                 )
             }
-            
+
             var body: some View {
                 NavigationView {
                     ChatThreadVC.asView(

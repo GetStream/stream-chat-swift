@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -42,7 +42,7 @@ final class MemberEvents_IntegrationTests: XCTestCase {
 
         let completionCalled = expectation(description: "completion called")
         client.eventNotificationCenter.process(unwrappedEvent) { completionCalled.fulfill() }
-        
+
         wait(for: [completionCalled], timeout: 1)
 
         AssertAsync {
@@ -62,9 +62,9 @@ final class MemberEvents_IntegrationTests: XCTestCase {
         let unwrappedEvent = try XCTUnwrap(event)
         let completionCalled = expectation(description: "completion called")
         client.eventNotificationCenter.process(unwrappedEvent) { completionCalled.fulfill() }
-        
+
         wait(for: [completionCalled], timeout: 1)
-        
+
         AssertAsync {
             Assert.willNotBeNil(
                 self.client.databaseContainer.viewContext.member(

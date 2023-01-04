@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -33,13 +33,13 @@ open class TypingIndicatorView: _View, ThemeProvider {
 
     override open func setUp() {
         super.setUp()
-        
+
         typingAnimationView.startAnimating()
     }
 
     override open func setUpLayout() {
         super.setUpLayout()
-        
+
         addSubview(componentContainerView)
         componentContainerView.pin(anchors: [.leading, .trailing], to: layoutMarginsGuide)
         componentContainerView.pin(anchors: [.top, .bottom], to: self)
@@ -55,7 +55,7 @@ open class TypingIndicatorView: _View, ThemeProvider {
 
     override open func setUpAppearance() {
         super.setUpAppearance()
-        
+
         backgroundColor = appearance.colorPalette.overlayBackground
         informationLabel.textColor = appearance.colorPalette.subtitleText
         informationLabel.font = appearance.fonts.body
@@ -63,7 +63,7 @@ open class TypingIndicatorView: _View, ThemeProvider {
 
     override open func updateContent() {
         super.updateContent()
-        
+
         informationLabel.text = content
     }
 }

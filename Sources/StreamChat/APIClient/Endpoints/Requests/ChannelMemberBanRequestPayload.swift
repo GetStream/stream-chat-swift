@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -13,13 +13,13 @@ struct ChannelMemberBanRequestPayload: Encodable {
         case timeoutInMinutes = "timeout"
         case reason
     }
-    
+
     let userId: String
     let channelType: ChannelType
     let channelId: String
     let timeoutInMinutes: Int?
     let reason: String?
-    
+
     init(
         userId: UserId,
         cid: ChannelId,

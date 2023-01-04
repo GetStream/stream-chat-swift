@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -15,7 +15,7 @@ final class WebSocketConnectEndpoint_Tests: XCTestCase {
             isInvisible: true,
             extraData: [:]
         )
-        
+
         let expectedEndpoint = Endpoint<EmptyResponse>(
             path: .connect,
             method: .get,
@@ -23,10 +23,10 @@ final class WebSocketConnectEndpoint_Tests: XCTestCase {
             requiresConnectionId: false,
             body: ["json": WebSocketConnectPayload(userInfo: userInfo)]
         )
-        
+
         // Build endpoint
         let endpoint: Endpoint<EmptyResponse> = .webSocketConnect(userInfo: userInfo)
-        
+
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
         XCTAssertEqual("connect", endpoint.path.value)

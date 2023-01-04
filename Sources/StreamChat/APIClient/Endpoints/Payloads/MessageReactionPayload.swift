@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -15,7 +15,7 @@ struct MessageReactionPayload: Decodable {
         case user
         case userId = "user_id"
     }
-    
+
     let type: MessageReactionType
     let score: Int
     let messageId: String
@@ -41,7 +41,7 @@ struct MessageReactionPayload: Decodable {
         self.user = user
         self.extraData = extraData
     }
-    
+
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let extraData: [String: RawJSON]
@@ -52,7 +52,7 @@ struct MessageReactionPayload: Decodable {
         } else {
             extraData = [:]
         }
-        
+
         self.init(
             type: try container.decode(MessageReactionType.self, forKey: .type),
             score: try container.decode(Int.self, forKey: .score),

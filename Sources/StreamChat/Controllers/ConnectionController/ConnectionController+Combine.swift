@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Combine
@@ -18,14 +18,14 @@ extension ChatConnectionController {
     class BasePublishers {
         /// The wrapper controller
         unowned let controller: ChatConnectionController
-        
+
         /// A backing subject for `connectionStatusPublisher`.
         let connectionStatus: CurrentValueSubject<ConnectionStatus, Never>
-                
+
         init(controller: ChatConnectionController) {
             self.controller = controller
             connectionStatus = .init(controller.connectionStatus)
-            
+
             controller.multicastDelegate.add(additionalDelegate: self)
         }
     }

@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -190,7 +190,7 @@ final class QuotedChatMessageView_Tests: XCTestCase {
                 components.quotedMessageView.asView(content)
             }
         }
-        
+
         // TODO: We have to replace default as the components are not injected in SwiftUI views.
         Components.default = .mock
         let view = CustomView(

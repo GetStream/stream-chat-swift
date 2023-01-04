@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import UIKit
@@ -10,7 +10,7 @@ open class ZoomDismissalInteractionController: NSObject, UIViewControllerInterac
     public weak var transitionContext: UIViewControllerContextTransitioning?
     /// Current transition's animator.
     public var animator: UIViewControllerAnimatedTransitioning?
-    
+
     /// Update interactive dismissal.
     open func handlePan(with gestureRecognizer: UIPanGestureRecognizer) {
         guard
@@ -28,12 +28,12 @@ open class ZoomDismissalInteractionController: NSObject, UIViewControllerInterac
         let translatedPoint = gestureRecognizer.translation(in: fromVC.view)
 
         let verticalDelta: CGFloat = max(translatedPoint.y, 0.0)
-        
+
         let fromVCAlpha = backgroundAlpha(for: fromVC.view, delta: verticalDelta)
         let scale = self.scale(in: fromVC.view, delta: verticalDelta)
-        
+
         fromVC.view.alpha = fromVCAlpha
-        
+
         transitionImageView.transform = CGAffineTransform(scaleX: scale, y: scale)
 
         let newCenterX = fromImageView.center.x + translatedPoint.x
@@ -41,7 +41,7 @@ open class ZoomDismissalInteractionController: NSObject, UIViewControllerInterac
             .height * (1 - scale) / 2.0
         let newCenter = CGPoint(x: newCenterX, y: newCenterY)
         transitionImageView.center = newCenter
-        
+
         transitionContext.updateInteractiveTransition(1 - scale)
 
         guard gestureRecognizer.state == .ended else { return }
@@ -62,7 +62,7 @@ open class ZoomDismissalInteractionController: NSObject, UIViewControllerInterac
                     toImageView.isHidden = false
                     transitionImageView.removeFromSuperview()
                     animator.transitionImageView = nil
-                    
+
                     transitionContext.cancelInteractiveTransition()
                     transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
                 }
@@ -76,29 +76,29 @@ open class ZoomDismissalInteractionController: NSObject, UIViewControllerInterac
     open func backgroundAlpha(for view: UIView, delta: CGFloat) -> CGFloat {
         let maximumDelta = view.bounds.height / 4.0
         let deltaAsPercentageOfMaximum = min(abs(delta) / maximumDelta, 1.0)
-        
+
         return 1.0 - deltaAsPercentageOfMaximum
     }
-    
+
     /// Returns scale for `view` based on `delta`.
     open func scale(in view: UIView, delta: CGFloat) -> CGFloat {
         let initialScale: CGFloat = 1.0
         let finalScale: CGFloat = 0.5
         let totalAvailableScale = initialScale - finalScale
-        
+
         let maximumDelta = view.bounds.height / 2.0
         let deltaAsPercentageOfMaximun = min(abs(delta) / maximumDelta, 1.0)
-        
+
         return initialScale - (deltaAsPercentageOfMaximun * totalAvailableScale)
     }
-    
+
     open func startInteractiveTransition(_ transitionContext: UIViewControllerContextTransitioning) {
         self.transitionContext = transitionContext
 
         guard
             let animator = self.animator as? ZoomAnimator
         else { return }
-        
+
         animator.prepareZoomOutTransition(using: transitionContext)
     }
 }

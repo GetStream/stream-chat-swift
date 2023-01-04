@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -16,7 +16,7 @@ public protocol ChatMessageReactionAppearanceType {
 public struct ChatMessageReactionAppearance: ChatMessageReactionAppearanceType {
     public let smallIcon: UIImage
     public let largeIcon: UIImage
-    
+
     public init(
         smallIcon: UIImage,
         largeIcon: UIImage

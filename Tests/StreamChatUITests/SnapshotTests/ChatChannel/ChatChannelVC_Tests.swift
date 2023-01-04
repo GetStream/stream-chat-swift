@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -11,7 +11,7 @@ final class ChatChannelVC_Tests: XCTestCase {
     var vc: ChatChannelVC!
     fileprivate var mockComposer: ComposerVC_Mock!
     var channelControllerMock: ChatChannelController_Mock!
-    
+
     override func setUp() {
         super.setUp()
         var components = Components.mock
@@ -30,7 +30,7 @@ final class ChatChannelVC_Tests: XCTestCase {
         vc = nil
         channelControllerMock = nil
     }
-    
+
     func test_emptyAppearance() {
         channelControllerMock.simulateInitial(
             channel: .mock(cid: .unique),
@@ -39,7 +39,7 @@ final class ChatChannelVC_Tests: XCTestCase {
         )
         AssertSnapshot(vc, isEmbeddedInNavigationController: true)
     }
-    
+
     func test_defaultAppearance() {
         channelControllerMock.simulateInitial(
             channel: .mock(cid: .unique),
@@ -56,20 +56,20 @@ final class ChatChannelVC_Tests: XCTestCase {
             variants: [.defaultLight]
         )
     }
-    
+
     func test_deletedMessagesWithAttachmentsAppearance() {
         let imageAttachment = ChatMessageImageAttachment.mock(
             id: .unique,
             imageURL: TestImages.yoda.url
         ).asAnyAttachment
-        
+
         let linkAttachment = ChatMessageLinkAttachment.mock(
             id: .unique,
             originalURL: URL(string: "https://www.yoda.com")!,
             assetURL: .unique(),
             previewURL: TestImages.yoda.url
         ).asAnyAttachment
-        
+
         channelControllerMock.simulateInitial(
             channel: .mock(cid: .unique),
             messages: [
@@ -150,7 +150,7 @@ final class ChatChannelVC_Tests: XCTestCase {
         var components = Components.mock
         components.messageComposerVC = ComposerVC_Mock.self
         vc.components = components
-        
+
         let composer = vc.messageComposerVC as! ComposerVC_Mock
         composer.callUpdateContent = false
 
@@ -184,11 +184,11 @@ final class ChatChannelVC_Tests: XCTestCase {
             isEmbeddedInNavigationController: true
         )
     }
-    
+
     func test_childControllersUseComponentsTakenFromResponderChain() {
         // Declare custom message list used by `ChatMessageListVC`
         class TestMessageListView: ChatMessageListView {}
-        
+
         // Declare custom composer view used by `ComposerVC`
         class TestComposerView: ComposerView {}
 
@@ -198,10 +198,10 @@ final class ChatChannelVC_Tests: XCTestCase {
         components.messageComposerView = TestComposerView.self
         vc.components = components
         vc.messageListVC.components = components
-        
+
         // Simulate view loading
         _ = vc.view
-        
+
         // Assert child controllers have subviews of injected view types
         XCTAssertTrue(vc.messageListVC.listView is TestMessageListView)
         XCTAssertTrue(vc.messageComposerVC.composerView is TestComposerView)
@@ -273,13 +273,13 @@ final class ChatChannelVC_Tests: XCTestCase {
     }
 
     // MARK: - Message grouping
-    
+
     private var maxTimeInterval: TimeInterval { 60 }
-    
+
     func test_whenTimeIntervalBetween2MessagesFromTheCurrentUserIs1minOrLess_messagesAreGrouped() {
         let channel: ChatChannel = .mock(cid: .unique)
         let user: ChatUser = .mock(id: .unique)
-        
+
         let closingGroupMessage: ChatMessage = .mock(
             id: .unique,
             cid: channel.cid,
@@ -303,7 +303,7 @@ final class ChatChannelVC_Tests: XCTestCase {
             createdAt: groupMessage.createdAt.addingTimeInterval(-maxTimeInterval),
             isSentByCurrentUser: true
         )
-        
+
         channelControllerMock.simulateInitial(
             channel: channel,
             messages: [
@@ -316,11 +316,11 @@ final class ChatChannelVC_Tests: XCTestCase {
 
         AssertSnapshot(vc, variants: [.defaultLight])
     }
-    
+
     func test_whenTimeIntervalBetween2MessagesFromTheCurrentUserIsMoreThan1min_messagesAreNotGrouped() {
         let channel: ChatChannel = .mock(cid: .unique)
         let user: ChatUser = .mock(id: .unique)
-        
+
         let message1: ChatMessage = .mock(
             id: .unique,
             cid: channel.cid,
@@ -336,7 +336,7 @@ final class ChatChannelVC_Tests: XCTestCase {
             createdAt: message1.createdAt.addingTimeInterval(-2 * maxTimeInterval),
             isSentByCurrentUser: true
         )
-        
+
         channelControllerMock.simulateInitial(
             channel: channel,
             messages: [
@@ -348,11 +348,11 @@ final class ChatChannelVC_Tests: XCTestCase {
 
         AssertSnapshot(vc, variants: [.defaultLight])
     }
-    
+
     func test_whenTimeIntervalBetween2MessagesFromAnotherUserIs1minOrLess_messagesAreGrouped() {
         let channel: ChatChannel = .mock(cid: .unique)
         let user: ChatUser = .mock(id: .unique)
-        
+
         let closingGroupMessage: ChatMessage = .mock(
             id: .unique,
             cid: channel.cid,
@@ -373,7 +373,7 @@ final class ChatChannelVC_Tests: XCTestCase {
             author: user,
             createdAt: groupMessage.createdAt.addingTimeInterval(-maxTimeInterval)
         )
-        
+
         channelControllerMock.simulateInitial(
             channel: channel,
             messages: [
@@ -383,14 +383,14 @@ final class ChatChannelVC_Tests: XCTestCase {
             ],
             state: .localDataFetched
         )
-        
+
         AssertSnapshot(vc, variants: [.defaultLight])
     }
-    
+
     func test_whenTimeIntervalBetween2MessagesFromAnotherUserIsMoreThan1min_messagesAreNotGrouped() {
         let channel: ChatChannel = .mock(cid: .unique)
         let user: ChatUser = .mock(id: .unique)
-        
+
         let message1: ChatMessage = .mock(
             id: .unique,
             cid: channel.cid,
@@ -404,7 +404,7 @@ final class ChatChannelVC_Tests: XCTestCase {
             author: user,
             createdAt: message1.createdAt.addingTimeInterval(-2 * maxTimeInterval)
         )
-        
+
         channelControllerMock.simulateInitial(
             channel: channel,
             messages: [
@@ -416,11 +416,11 @@ final class ChatChannelVC_Tests: XCTestCase {
 
         AssertSnapshot(vc, variants: [.defaultLight])
     }
-    
+
     func test_whenMessageFromCurrentUserIsFollowedByErrorMessage_messagesAreNotGrouped() {
         let channel: ChatChannel = .mock(cid: .unique)
         let user: ChatUser = .mock(id: .unique)
-        
+
         let errorMessage: ChatMessage = .mock(
             id: .unique,
             cid: channel.cid,
@@ -437,7 +437,7 @@ final class ChatChannelVC_Tests: XCTestCase {
             createdAt: errorMessage.createdAt.addingTimeInterval(-(maxTimeInterval / 2)),
             isSentByCurrentUser: true
         )
-        
+
         channelControllerMock.simulateInitial(
             channel: channel,
             messages: [
@@ -449,11 +449,11 @@ final class ChatChannelVC_Tests: XCTestCase {
 
         AssertSnapshot(vc, variants: [.defaultLight])
     }
-    
+
     func test_whenMessageFromCurrentUserIsFollowedBySystemMessage_messagesAreNotGrouped() {
         let channel: ChatChannel = .mock(cid: .unique)
         let user: ChatUser = .mock(id: .unique)
-        
+
         let systemMessage: ChatMessage = .mock(
             id: .unique,
             cid: channel.cid,
@@ -470,7 +470,7 @@ final class ChatChannelVC_Tests: XCTestCase {
             createdAt: systemMessage.createdAt.addingTimeInterval(-(maxTimeInterval / 2)),
             isSentByCurrentUser: true
         )
-        
+
         channelControllerMock.simulateInitial(
             channel: channel,
             messages: [
@@ -482,11 +482,11 @@ final class ChatChannelVC_Tests: XCTestCase {
 
         AssertSnapshot(vc, variants: [.defaultLight])
     }
-    
+
     func test_whenMessageFromCurrentUserIsFollowedByEphemeralMessage_messagesAreNotGrouped() {
         let channel: ChatChannel = .mock(cid: .unique)
         let user: ChatUser = .mock(id: .unique)
-        
+
         let ephemeralMessage: ChatMessage = .mock(
             id: .unique,
             cid: channel.cid,
@@ -537,7 +537,7 @@ final class ChatChannelVC_Tests: XCTestCase {
             createdAt: ephemeralMessage.createdAt.addingTimeInterval(-(maxTimeInterval / 2)),
             isSentByCurrentUser: true
         )
-        
+
         channelControllerMock.simulateInitial(
             channel: channel,
             messages: [
@@ -596,7 +596,7 @@ private class ChatChannelHeaderViewMock: ChatChannelHeaderView {
     override var currentUserId: UserId? {
         .unique
     }
-    
+
     override func setUp() {
         super.setUp()
 
@@ -609,28 +609,28 @@ private class ChatChannelHeaderViewMock: ChatChannelHeaderView {
 class ComposerVC_Mock: ComposerVC {
     var mockChannelController: ChatChannelController_Mock?
     var callUpdateContent: Bool = true
-    
+
     var updateContentCallCount = 0
-    
+
     override var isCommandsEnabled: Bool {
         true
     }
-    
+
     override var isAttachmentsEnabled: Bool {
         true
     }
-    
+
     override func updateContent() {
         if callUpdateContent {
             super.updateContent()
         }
-        
+
         updateContentCallCount += 1
     }
-    
+
     override func setUp() {
         super.setUp()
-        
+
         super.channelController = mockChannelController
     }
 }

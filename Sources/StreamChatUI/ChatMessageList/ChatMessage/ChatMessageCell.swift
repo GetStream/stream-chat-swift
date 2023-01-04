@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -23,20 +23,20 @@ public class ChatMessageCell: _TableViewCell, ComponentsProvider {
         .messageListDateSeparatorView.init()
         .withoutAutoresizingMaskConstraints
         .withAccessibilityIdentifier(identifier: "dateSeparatorView")
-    
+
     /// The message content view the cell is showing.
     public private(set) var messageContentView: ChatMessageContentView?
-    
+
     /// The minimum spacing below the cell.
     public var minimumSpacingBelow: CGFloat = 2 {
         didSet { updateBottomSpacing() }
     }
-    
+
     override public func setUp() {
         super.setUp()
         selectionStyle = .none
     }
-    
+
     override public func setUpLayout() {
         super.setUpLayout()
 
@@ -46,7 +46,7 @@ public class ChatMessageCell: _TableViewCell, ComponentsProvider {
         containerStackView.addArrangedSubview(dateSeparatorView)
         messageContentView.map { containerStackView.addArrangedSubview($0) }
         contentView.addSubview(containerStackView)
-        
+
         containerStackView.pin(
             anchors: [.leading, .top, .trailing, .bottom],
             to: contentView
@@ -56,13 +56,13 @@ public class ChatMessageCell: _TableViewCell, ComponentsProvider {
             anchors: [.leading, .trailing],
             to: containerStackView
         )
-        
+
         updateBottomSpacing()
     }
-    
+
     override public func setUpAppearance() {
         super.setUpAppearance()
-        
+
         backgroundColor = .clear
         backgroundView = nil
     }
@@ -99,10 +99,10 @@ public class ChatMessageCell: _TableViewCell, ComponentsProvider {
             attachmentViewInjectorType: attachmentViewInjectorType
         )
     }
-    
+
     private func updateBottomSpacing() {
         guard let contentView = messageContentView else { return }
-        
+
         contentView.mainContainer.layoutMargins.bottom = max(
             contentView.mainContainer.layoutMargins.bottom,
             minimumSpacingBelow

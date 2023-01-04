@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -42,7 +42,7 @@ public final class StreamMockServer {
             return false
         }
     }
-    
+
     public func stop() {
         server.stop()
     }
@@ -56,11 +56,11 @@ public final class StreamMockServer {
         configureMessagingEndpoints()
         configureAttachmentEndpoints()
     }
-    
+
     public func writeText(_ text: String) {
         globalSession?.writeText(text)
     }
-    
+
     private func configureWebsockets() {
         server[MockEndpoint.connect] = websocket(connected: { [weak self] session in
             self?.globalSession = session
@@ -69,7 +69,7 @@ public final class StreamMockServer {
             self?.globalSession = nil
         })
     }
-    
+
     private func healthCheck() {
         writeText(TestData.getMockResponse(fromFile: .wsHealthCheck))
     }

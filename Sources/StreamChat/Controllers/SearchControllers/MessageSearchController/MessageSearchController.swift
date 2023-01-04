@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -26,12 +26,12 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
     init(client: ChatClient, environment: Environment = .init()) {
         self.client = client
         self.environment = environment
-        
+
         super.init()
-        
+
         setMessagesObserver()
     }
-    
+
     deinit {
         let query = self.query
         client.databaseContainer.write { session in
@@ -71,22 +71,22 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
             client.databaseContainer,
             client.apiClient
         )
-    
+
     /// Used for observing the database for changes.
     @Cached private var messagesObserver: ListDatabaseObserver<ChatMessage, MessageDTO>?
-    
+
     private func startObserversIfNeeded() {
         guard state == .initialized else { return }
         do {
             try messagesObserver?.startObserving()
-            
+
             state = .localDataFetched
         } catch {
             log.error("Failed to perform fetch request with error: \(error). This is an internal error.")
             state = .localDataFetchFailed(ClientError(with: error))
         }
     }
-    
+
     private func setMessagesObserver() {
         _messagesObserver.computeValue = { [unowned self] in
             let observer = ListDatabaseObserver(
@@ -105,7 +105,7 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
                     $0.controller(self, didChangeMessages: changes)
                 }
             }
-            
+
             return observer
         }
     }
@@ -175,7 +175,7 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
         _messagesObserver.reset()
         startObserversIfNeeded()
     }
-    
+
     /// Searches messages for the given query.
     ///
     /// When this function is called, `messages` property of this
@@ -194,12 +194,12 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
     public func search(query: MessageSearchQuery, completion: ((_ error: Error?) -> Void)? = nil) {
         var query = query
         query.filterHash = explicitFilterHash
-        
+
         lastQuery = query
-        
+
         // To respect sorting the user passed, we must reset messagesObserver
         resetMessagesObserver()
-        
+
         messageUpdater.search(query: query, policy: .replace) { result in
             if case let .success(payload) = result {
                 self.updateNextPageCursor(with: payload)

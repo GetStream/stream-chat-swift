@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -21,10 +21,10 @@ extension ChatClient {
 public class ChatChannelMemberListController: DataController, DelegateCallable, DataStoreProvider {
     /// The query specifying sorting and filtering for the list of channel members.
     @Atomic public private(set) var query: ChannelMemberListQuery
-    
+
     /// The `ChatClient` instance this controller belongs to.
     public let client: ChatClient
-    
+
     /// The channel members matching the query.
     /// To observe the member list changes, set your class as a delegate of this controller or use the provided
     /// `Combine` publishers.
@@ -32,23 +32,23 @@ public class ChatChannelMemberListController: DataController, DelegateCallable, 
         startObservingIfNeeded()
         return memberListObserver.items
     }
-    
+
     /// The worker used to fetch the remote data and communicate with servers.
     private lazy var memberListUpdater = createMemberListUpdater()
 
     /// The observer used to observe the changes in the database.
     private lazy var memberListObserver = createMemberListObserver()
-    
+
     /// The type-erased delegate.
     var multicastDelegate: MulticastDelegate<ChatChannelMemberListControllerDelegate> = .init() {
         didSet {
             stateMulticastDelegate.set(mainDelegate: multicastDelegate.mainDelegate)
             stateMulticastDelegate.set(additionalDelegates: multicastDelegate.additionalDelegates)
-            
+
             startObservingIfNeeded()
         }
     }
-    
+
     var _basePublishers: Any?
     /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
     /// publishers. Instead of creating custom `Publisher` types, we use `CurrentValueSubject` and `PassthroughSubject` internally,
@@ -61,9 +61,9 @@ public class ChatChannelMemberListController: DataController, DelegateCallable, 
         _basePublishers = BasePublishers(controller: self)
         return _basePublishers as? BasePublishers ?? .init(controller: self)
     }
-    
+
     private let environment: Environment
-    
+
     /// Creates a new `ChatChannelMemberListController`
     /// - Parameters:
     ///   - query: The query used for filtering and sorting the channel members.
@@ -74,28 +74,28 @@ public class ChatChannelMemberListController: DataController, DelegateCallable, 
         self.query = query
         self.environment = environment
     }
-    
+
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
         startObservingIfNeeded()
-        
+
         if case let .localDataFetchFailed(error) = state {
             callback { completion?(error) }
             return
         }
-        
+
         memberListUpdater.load(query) { error in
             self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
             self.callback { completion?(error) }
         }
     }
-    
+
     private func createMemberListUpdater() -> ChannelMemberListUpdater {
         environment.memberListUpdaterBuilder(
             client.databaseContainer,
             client.apiClient
         )
     }
-    
+
     private func createMemberListObserver() -> ListDatabaseObserver<ChatChannelMember, MemberDTO> {
         let observer = environment.memberListObserverBuilder(
             client.databaseContainer.viewContext,
@@ -103,7 +103,7 @@ public class ChatChannelMemberListController: DataController, DelegateCallable, 
             { try $0.asModel() },
             NSFetchedResultsController<MemberDTO>.self
         )
-        
+
         observer.onChange = { [weak self] changes in
             self?.delegateCallback { [weak self] in
                 guard let self = self else {
@@ -114,13 +114,13 @@ public class ChatChannelMemberListController: DataController, DelegateCallable, 
                 $0.memberListController(self, didChangeMembers: changes)
             }
         }
-        
+
         return observer
     }
-    
+
     private func startObservingIfNeeded() {
         guard state == .initialized else { return }
-        
+
         do {
             try memberListObserver.startObserving()
             state = .localDataFetched

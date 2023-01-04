@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -16,19 +16,19 @@ extension DemoAppCoordinator {
             showLogin(animated: false)
         }
     }
-    
+
     func showChat(for user: DemoUserType, cid: ChannelId?, animated: Bool, completion: @escaping (Error?) -> Void) {
         logIn(as: user, completion: completion)
-        
+
         let chatVC = makeChatVC(for: user, startOn: cid) { [weak self] in
             guard let self = self else { return }
             self.logOut()
         }
-        
+
         set(rootViewController: chatVC, animated: animated)
         DemoAppConfiguration.showPerformanceTracker()
     }
-    
+
     func showLogin(animated: Bool) {
         let loginVC = makeLoginVC { [weak self] user in
             self?.showChat(for: user, cid: nil, animated: true) { error in
@@ -37,7 +37,7 @@ extension DemoAppCoordinator {
                 }
             }
         }
-        
+
         if let loginVC = loginVC {
             set(rootViewController: loginVC, animated: animated)
         }
@@ -54,10 +54,10 @@ extension DemoAppCoordinator {
             loginVC.onUserSelection = onUserSelection
             return loginNVC
         }
-        
+
         return nil
     }
-    
+
     func makeChatVC(for user: DemoUserType, startOn cid: ChannelId?, onLogout: @escaping () -> Void) -> UIViewController {
         // Construct channel list query
         let channelListQuery: ChannelListQuery
@@ -91,7 +91,7 @@ extension DemoAppCoordinator {
         }
         return channelListNVC
     }
-    
+
     func makeChannelListVC(
         controller: ChatChannelListController,
         selectedChannel: ChatChannel?,
@@ -103,7 +103,7 @@ extension DemoAppCoordinator {
         channelListVC.components.isChatChannelListStatesEnabled = true
         return channelListVC
     }
-    
+
     func makeChannelVC(controller: ChatChannelController) -> UIViewController {
         let channelVC = DemoChatChannelVC()
         channelVC.channelController = controller
@@ -139,7 +139,7 @@ private extension DemoAppCoordinator {
 
         chat.logIn(as: user, completion: completion)
     }
-    
+
     func logOut() {
         // logout client
         chat.logOut { [weak self] in
@@ -155,7 +155,7 @@ private extension DemoAppCoordinator {
 private extension DemoUserType {
     var staticUserId: UserId? {
         guard case let .credentials(user) = self else { return nil }
-        
+
         return user.id
     }
 }

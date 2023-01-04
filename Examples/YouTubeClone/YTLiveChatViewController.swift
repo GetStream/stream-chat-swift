@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -12,10 +12,10 @@ final class YTLiveChatViewController: ChatChannelVC {
         channelController = ChatChannelController.liveStreamChannelController
         super.setUp()
     }
-    
+
     override func setUpAppearance() {
         super.setUpAppearance()
-        
+
         navigationController?.isNavigationBarHidden = true
     }
 }

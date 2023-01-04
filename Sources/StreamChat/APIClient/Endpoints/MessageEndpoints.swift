@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -14,7 +14,7 @@ extension Endpoint {
             body: nil
         )
     }
-    
+
     static func deleteMessage(messageId: MessageId, hard: Bool) -> Endpoint<MessagePayload.Boxed> {
         .init(
             path: .deleteMessage(messageId),
@@ -24,7 +24,7 @@ extension Endpoint {
             body: ["hard": hard]
         )
     }
-    
+
     static func editMessage(payload: MessageRequestBody)
         -> Endpoint<EmptyResponse> {
         .init(
@@ -35,7 +35,7 @@ extension Endpoint {
             body: ["message": payload]
         )
     }
-    
+
     static func loadReplies(messageId: MessageId, pagination: MessagesPagination)
         -> Endpoint<MessageRepliesPayload> {
         .init(
@@ -56,7 +56,7 @@ extension Endpoint {
             body: pagination
         )
     }
-    
+
     static func addReaction(
         _ type: MessageReactionType,
         score: Int,
@@ -80,7 +80,7 @@ extension Endpoint {
             body: body
         )
     }
-    
+
     static func deleteReaction(_ type: MessageReactionType, messageId: MessageId) -> Endpoint<EmptyResponse> {
         .init(
             path: .deleteReaction(messageId, type),
@@ -108,11 +108,11 @@ extension Endpoint {
             )
         )
     }
-    
+
     static func search(query: MessageSearchQuery) -> Endpoint<MessageSearchResultsPayload> {
         .init(path: .search, method: .get, queryItems: nil, requiresConnectionId: false, body: ["payload": query])
     }
-    
+
     static func translate(messageId: MessageId, to language: TranslationLanguage) -> Endpoint<MessagePayload.Boxed> {
         .init(
             path: .translateMessage(messageId),

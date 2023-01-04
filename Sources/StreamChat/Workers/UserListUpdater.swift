@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -32,13 +32,13 @@ class UserListUpdater: Worker {
                         completion?(nil)
                     }
                 }
-                
+
             case let .failure(error):
                 completion?(error)
             }
         }
     }
-    
+
     /// Makes a users query call to the backend and returns the results via completion.
     ///
     /// - Parameters:

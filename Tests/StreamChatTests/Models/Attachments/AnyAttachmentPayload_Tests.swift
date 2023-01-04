@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -17,7 +17,7 @@ final class AnyAttachmentPayload_Tests: XCTestCase {
             attachmentType: type,
             extraData: extraData
         )
-        
+
         // Assert any payload fields are correct.
         let payload = try XCTUnwrap(anyPayload.payload as? ImageAttachmentPayload)
         XCTAssertEqual(anyPayload.type, type)
@@ -26,7 +26,7 @@ final class AnyAttachmentPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.imageURL, url)
         XCTAssertEqual(payload.extraData(), extraData)
     }
-    
+
     func test_whenInitWithVideoAttachmentType_payloadIsVideo() throws {
         // Create any video payload.
         let url: URL = .localYodaImage

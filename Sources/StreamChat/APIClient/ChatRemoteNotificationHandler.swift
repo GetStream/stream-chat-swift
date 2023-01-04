@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -9,7 +9,7 @@ import UserNotifications
 public class MessageNotificationContent {
     public let message: ChatMessage
     public let channel: ChatChannel?
-    
+
     init(message: ChatMessage, channel: ChatChannel?) {
         self.message = message
         self.channel = channel
@@ -19,7 +19,7 @@ public class MessageNotificationContent {
 public class ReactionNotificationContent {
     public let message: ChatMessage
     public let channel: ChatChannel?
-    
+
     public init(message: ChatMessage, channel: ChatChannel?) {
         self.message = message
         self.channel = channel
@@ -28,7 +28,7 @@ public class ReactionNotificationContent {
 
 public class UnknownNotificationContent {
     public let content: UNNotificationContent
-    
+
     public init(content: UNNotificationContent) {
         self.content = content
     }
@@ -97,7 +97,7 @@ public class ChatRemoteNotificationHandler {
         guard chatCategoryIdentifiers.contains(content.categoryIdentifier) else {
             return false
         }
-        
+
         getContent(completion: completion)
         return true
     }
@@ -110,7 +110,7 @@ public class ChatRemoteNotificationHandler {
         guard let type = dict["type"] else {
             return completion(.unknown(UnknownNotificationContent(content: content)))
         }
-        
+
         if EventType(rawValue: type) == .messageNew {
             guard let cid = dict["cid"], let id = dict["id"], let channelId = try? ChannelId(cid: cid) else {
                 completion(.unknown(UnknownNotificationContent(content: content)))

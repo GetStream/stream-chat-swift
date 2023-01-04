@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -44,7 +44,7 @@ extension Array where Element == ChatChannel {
                 createdAt: .init(timeIntervalSince1970: 1_611_951_528_000)
             )
         )
-        
+
         let channelWithMultipleMessages = ChatChannel.mock(
             cid: .init(type: .messaging, id: "test_channel4"),
             name: "Channel 4",

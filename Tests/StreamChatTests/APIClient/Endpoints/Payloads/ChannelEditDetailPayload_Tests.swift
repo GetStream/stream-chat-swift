@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -14,7 +14,7 @@ final class ChannelEditDetailPayload_Tests: XCTestCase {
         let imageURL: URL = .unique()
         let team: String = .unique
         let invite: UserId = .unique
-        
+
         // Create ChannelEditDetailPayload
         let payload = ChannelEditDetailPayload(
             cid: cid,
@@ -40,7 +40,7 @@ final class ChannelEditDetailPayload_Tests: XCTestCase {
         // Assert ChannelEditDetailPayload encoded correctly
         AssertJSONEqual(encodedJSON, expectedJSON)
     }
-    
+
     func test_apiPath() {
         // Create payload without id specified
         let payload1: ChannelEditDetailPayload = .init(
@@ -52,10 +52,10 @@ final class ChannelEditDetailPayload_Tests: XCTestCase {
             invites: [],
             extraData: [:]
         )
-        
+
         // Assert only type is part of path
         XCTAssertEqual(payload1.apiPath, "\(payload1.type)")
-        
+
         // Create payload with id and type specified
         let cid: ChannelId = .unique
         let payload2: ChannelEditDetailPayload = .init(
@@ -67,7 +67,7 @@ final class ChannelEditDetailPayload_Tests: XCTestCase {
             invites: [],
             extraData: [:]
         )
-        
+
         // Assert type and id are part of path
         XCTAssertEqual(payload2.apiPath, "\(payload2.type.rawValue)/\(payload2.id!)")
     }

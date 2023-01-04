@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -74,7 +74,7 @@ open class InputChatMessageView: _View, ComponentsProvider, AppearanceProvider {
         container.layer.borderWidth = 1
         container.layer.borderColor = appearance.colorPalette.border.cgColor
     }
-    
+
     override open func setUpLayout() {
         addSubview(container)
         container.pin(to: layoutMarginsGuide)

@@ -24,7 +24,7 @@ class MessageUpdater: Worker {
     func getMessage(cid: ChannelId, messageId: MessageId, completion: ((Result<ChatMessage, Error>) -> Void)? = nil) {
         repository.getMessage(cid: cid, messageId: messageId, completion: completion)
     }
-    
+
     /// Deletes the message.
     ///
     /// If the message with a provided `messageId` has `pendingSend` or `sendingFailed` state
@@ -40,7 +40,7 @@ class MessageUpdater: Worker {
     ///   - completion: The completion. Will be called with an error if smth goes wrong, otherwise - will be called with `nil`.
     func deleteMessage(messageId: MessageId, hard: Bool, completion: ((Error?) -> Void)? = nil) {
         var shouldDeleteOnBackend = true
-        
+
         database.write({ [isLocalStorageEnabled] session in
             guard let messageDTO = session.message(id: messageId) else {
                 // Even though the message does not exist locally
@@ -48,7 +48,7 @@ class MessageUpdater: Worker {
                 // to try to delete the message on the backend.
                 return
             }
-            
+
             // Hard Deleting is necessary for bounced messages, since these messages are never stored on the cloud
             // an apiClient request to delete them would never be triggered.
             let shouldBeHardDeleted = hard || messageDTO.failedToBeSentDueToModeration
@@ -57,12 +57,12 @@ class MessageUpdater: Worker {
                 || messageDTO.failedToBeSentDueToModeration
             
             messageDTO.isHardDeleted = shouldBeHardDeleted
-            
+
             if messageDTO.existsOnlyLocally && shouldAllowLocallyStoredMessagesToBeDeleted {
                 messageDTO.type = MessageType.deleted.rawValue
                 messageDTO.deletedAt = DBDate()
                 shouldDeleteOnBackend = false
-                
+
                 // Ensures bounced message deletion updates the channel preview. Bounced messages are not stored on the backend,
                 // so there would be no incoming websocket payload event `.messageDeleted` to trigger that update.
                 if let channelDTO = messageDTO.previewOfChannel, let channelId = try? ChannelId(cid: channelDTO.cid) {
@@ -76,7 +76,7 @@ class MessageUpdater: Worker {
                 completion?(error)
                 return
             }
-            
+
             apiClient?.request(endpoint: .deleteMessage(messageId: messageId, hard: hard)) { result in
                 switch result {
                 case let .success(response):
@@ -92,7 +92,7 @@ class MessageUpdater: Worker {
             }
         })
     }
-    
+
     /// Edits a new message in the local DB and sets its local state to `.pendingSync`
     /// The message should exist locally and have current user as a sender
     ///  - Parameters:
@@ -108,7 +108,7 @@ class MessageUpdater: Worker {
     ) {
         database.write({ session in
             let messageDTO = try session.messageEditableByCurrentUser(messageId)
-            
+
             let encodedExtraData = extraData.map { try? JSONEncoder.default.encode($0) } ?? messageDTO.extraData
 
             let updateQuotingMessages = {
@@ -185,10 +185,10 @@ class MessageUpdater: Worker {
                 createdAt: nil,
                 extraData: extraData
             )
-            
+
             newMessageDTO.localMessageState = .pendingSend
             newMessageId = newMessageDTO.id
-            
+
         }) { error in
             if let messageId = newMessageId, error == nil {
                 completion?(.success(messageId))
@@ -197,7 +197,7 @@ class MessageUpdater: Worker {
             }
         }
     }
-    
+
     /// Loads replies for the given message.
     ///
     ///  - Parameters:
@@ -219,7 +219,7 @@ class MessageUpdater: Worker {
                     if let channelDTO = session.channel(cid: cid) {
                         channelDTO.cleanMessagesThatFailedToBeEditedDueToModeration()
                     }
-                    
+
                     session.saveMessages(messagesPayload: payload, for: cid, syncOwnReactions: true)
                 }, completion: { error in
                     if let error = error {
@@ -263,7 +263,7 @@ class MessageUpdater: Worker {
             }
         }
     }
-    
+
     /// Flags or unflags the message with the provided `messageId` depending on `flag` value.
     /// If the message doesn't exist locally it will be fetched and saved locally first first.
     ///
@@ -278,7 +278,7 @@ class MessageUpdater: Worker {
                 completion?(error)
                 return
             }
-            
+
             let endpoint: Endpoint<FlagMessagePayload> = .flagMessage(flag, with: messageId)
             self.apiClient.request(endpoint: endpoint) { result in
                 switch result {
@@ -287,7 +287,7 @@ class MessageUpdater: Worker {
                         guard let messageDTO = session.message(id: payload.flaggedMessageId) else {
                             throw ClientError.MessageDoesNotExist(messageId: messageId)
                         }
-                        
+
                         let currentUserDTO = session.currentUser
                         if flag {
                             currentUserDTO?.flaggedMessages.insert(messageDTO)
@@ -303,7 +303,7 @@ class MessageUpdater: Worker {
             }
         }
     }
-    
+
     /// Adds a new reaction to the message.
     /// - Parameters:
     ///   - type: The reaction type.
@@ -355,7 +355,7 @@ class MessageUpdater: Worker {
             completion?(error)
         }
     }
-    
+
     /// Deletes the message reaction left by the current user.
     /// - Parameters:
     ///   - type: The reaction type.
@@ -542,7 +542,7 @@ class MessageUpdater: Worker {
             completion?(error)
         })
     }
-    
+
     func search(query: MessageSearchQuery, policy: UpdatePolicy = .merge, completion: ((Result<MessageSearchResultsPayload, Error>) -> Void)? = nil) {
         apiClient.request(endpoint: .search(query: query)) { result in
             switch result {
@@ -566,7 +566,7 @@ class MessageUpdater: Worker {
             }
         }
     }
-    
+
     func clearSearchResults(for query: MessageSearchQuery, completion: ((Error?) -> Void)? = nil) {
         database.write { session in
             let dto = session.saveQuery(query: query)
@@ -575,7 +575,7 @@ class MessageUpdater: Worker {
             completion?(error)
         }
     }
-    
+
     func translate(messageId: MessageId, to language: TranslationLanguage, completion: ((Error?) -> Void)? = nil) {
         apiClient.request(endpoint: .translate(messageId: messageId, to: language), completion: { result in
             switch result {
@@ -607,7 +607,7 @@ private extension MessageUpdater {
             )
         }
     }
-    
+
     func checkMessageExistsLocally(_ messageId: MessageId, completion: @escaping (Bool) -> Void) {
         let context = database.backgroundReadOnlyContext
         context.perform {
@@ -623,7 +623,7 @@ extension ClientError {
             super.init("There is no `MessageDTO` instance in the DB matching id: \(messageId).")
         }
     }
-    
+
     class MessageEditing: ClientError {
         init(messageId: String, reason: String) {
             super.init("Message with id: \(messageId) can't be edited (\(reason)")

@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -47,7 +47,7 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
 
     override open func didMoveToSuperview() {
         super.didMoveToSuperview()
-        
+
         guard !isInitialized, superview != nil else { return }
 
         isInitialized = true
@@ -56,20 +56,20 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
         setUpLayout()
         setUpAppearance()
     }
-    
+
     open func setUp() {
         keyboardDismissMode = .onDrag
         rowHeight = UITableView.automaticDimension
         separatorStyle = .none
         transform = .mirrorY
     }
-    
+
     open func setUpAppearance() { /* default empty implementation */ }
     open func setUpLayout() { /* default empty implementation */ }
     open func updateContent() { /* default empty implementation */ }
 
     // MARK: Public API
-    
+
     /// Calculates the cell reuse identifier for the given options.
     /// - Parameters:
     ///   - contentViewClass: The type of message content view.
@@ -89,7 +89,7 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
         ]
         return components.joined(separator: "_")
     }
-    
+
     /// Returns the reuse identifier of the given cell.
     /// - Parameter cell: The cell to calculate reuse identifier for.
     /// - Returns: The reuse identifier.
@@ -99,7 +99,7 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
             let messageContentView = cell.messageContentView,
             let layoutOptions = messageContentView.layoutOptions
         else { return nil }
-        
+
         return reuseIdentifier(
             contentViewClass: type(of: messageContentView),
             attachmentViewInjectorType: messageContentView.attachmentViewInjector.map { type(of: $0) },
@@ -126,7 +126,7 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
             attachmentViewInjectorType: attachmentViewInjectorType,
             layoutOptions: layoutOptions
         )
-        
+
         // There is no public API to find out
         // if the given `identifier` is registered.
         if !identifiers.contains(reuseIdentifier) {
@@ -134,7 +134,7 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
 
             register(ChatMessageCell.self, forCellReuseIdentifier: reuseIdentifier)
         }
-        
+
         let cell = dequeueReusableCell(with: ChatMessageCell.self, for: indexPath, reuseIdentifier: reuseIdentifier)
 
         cell.setMessageContentIfNeeded(
@@ -142,17 +142,17 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
             attachmentViewInjectorType: attachmentViewInjectorType,
             options: layoutOptions
         )
-        
+
         cell.messageContentView?.indexPath = { [weak cell, weak self] in
             guard let cell = cell else { return nil }
             return self?.indexPath(for: cell)
         }
-        
+
         cell.contentView.transform = .mirrorY
 
         return cell
     }
-    
+
     /// Scrolls to most recent message
     open func scrollToMostRecentMessage(animated: Bool = true) {
         let rowsRange = 0..<numberOfRows(inSection: 0)
@@ -163,22 +163,22 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
            rowsRange.contains(prevMessageIndexPath.row) {
             scrollToRow(at: prevMessageIndexPath, at: .top, animated: animated)
         }
-        
+
         if rowsRange.contains(lastMessageIndexPath.row) {
             scrollToRow(at: lastMessageIndexPath, at: .top, animated: animated)
         }
     }
-    
+
     /// A Boolean that returns true if the bottom cell is fully visible.
     /// Which is also means that the collection view is fully scrolled to the boom.
     open var isLastCellFullyVisible: Bool {
         guard numberOfRows(inSection: 0) > 0 else { return false }
-        
+
         let cellRect = rectForRow(at: .init(row: 0, section: 0))
-        
+
         return cellRect.minY >= contentOffset.y
     }
-    
+
     /// Updates the table view data with given `changes`.
     open func updateMessages(
         with changes: [ListChange<ChatMessage>],

@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -18,34 +18,34 @@ final class MemberEvents_Tests: XCTestCase {
         super.tearDown()
         eventDecoder = nil
     }
-    
+
     func test_added() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MemberAdded")
         let event = try eventDecoder.decode(from: json) as? MemberAddedEventDTO
         XCTAssertEqual(event?.member.userId, "steep-moon-9")
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "new_channel_9125"))
     }
-    
+
     func test_updated() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MemberUpdated")
         let event = try eventDecoder.decode(from: json) as? MemberUpdatedEventDTO
         XCTAssertEqual(event?.member.userId, "count_dooku")
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "!members-jkE22mnWM5tjzHPBurvjoVz0spuz4FULak93veyK0lY"))
     }
-    
+
     func test_removed() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MemberRemoved")
         let event = try eventDecoder.decode(from: json) as? MemberRemovedEventDTO
         XCTAssertEqual(event?.user.id, "r2-d2")
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "!members-jkE22mnWM5tjzHPBurvjoVz0spuz4FULak93veyK0lY"))
     }
-    
+
     // MARK: DTO -> Event
-    
+
     func test_memberAddedEventDTO_toDomainEvent() throws {
         // Create database session
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
-        
+
         // Create event payload
         let eventPayload = EventPayload(
             eventType: .memberAdded,
@@ -58,13 +58,13 @@ final class MemberEvents_Tests: XCTestCase {
             ),
             createdAt: .unique
         )
-        
+
         // Create event DTO
         let dto = try MemberAddedEventDTO(from: eventPayload)
-        
+
         // Assert event creation fails due to missing dependencies in database
         XCTAssertNil(dto.toDomainEvent(session: session))
-        
+
         // Save event to database
         try session.saveUser(payload: eventPayload.user!)
         try session.saveMember(payload: eventPayload.memberContainer!.member!, channelId: eventPayload.cid!)
@@ -77,11 +77,11 @@ final class MemberEvents_Tests: XCTestCase {
         XCTAssertEqual(event.member.memberRole, eventPayload.memberContainer?.member?.role)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
-    
+
     func test_memberUpdatedEventDTO_toDomainEvent() throws {
         // Create database session
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
-        
+
         // Create event payload
         let eventPayload = EventPayload(
             eventType: .memberUpdated,
@@ -94,13 +94,13 @@ final class MemberEvents_Tests: XCTestCase {
             ),
             createdAt: .unique
         )
-        
+
         // Create event DTO
         let dto = try MemberUpdatedEventDTO(from: eventPayload)
-        
+
         // Assert event creation fails due to missing dependencies in database
         XCTAssertNil(dto.toDomainEvent(session: session))
-        
+
         // Save event to database
         try session.saveUser(payload: eventPayload.user!)
         try session.saveMember(payload: eventPayload.memberContainer!.member!, channelId: eventPayload.cid!)
@@ -113,11 +113,11 @@ final class MemberEvents_Tests: XCTestCase {
         XCTAssertEqual(event.member.memberRole, eventPayload.memberContainer?.member?.role)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
-    
+
     func test_memberRemovedEventDTO_toDomainEvent() throws {
         // Create database session
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
-        
+
         // Create event payload
         let eventPayload = EventPayload(
             eventType: .memberRemoved,
@@ -125,13 +125,13 @@ final class MemberEvents_Tests: XCTestCase {
             user: .dummy(userId: .unique),
             createdAt: .unique
         )
-        
+
         // Create event DTO
         let dto = try MemberRemovedEventDTO(from: eventPayload)
-        
+
         // Assert event creation fails due to missing dependencies in database
         XCTAssertNil(dto.toDomainEvent(session: session))
-        
+
         // Save event to database
         try session.saveUser(payload: eventPayload.user!)
 

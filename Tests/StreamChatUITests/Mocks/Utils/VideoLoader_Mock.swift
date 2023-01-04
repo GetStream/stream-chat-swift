@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import AVKit
@@ -15,7 +15,7 @@ final class VideoLoader_Mock: VideoLoading {
     func loadPreviewForVideo(at url: URL, completion: @escaping (Result<UIImage, Error>) -> Void) {
         loadPreviewForVideoMockFunc.call(with: (url, completion))
     }
-    
+
     func videoAsset(at url: URL) -> AVURLAsset {
         videoAssetMockFunc.call(with: url)
         return .init(url: url)

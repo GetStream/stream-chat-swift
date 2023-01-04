@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -15,19 +15,19 @@ final class DemoChatMessageActionsVC: ChatMessageActionsVC {
             if message?.isBounced == false {
                 actions.append(pinMessageActionItem())
             }
-            
+
             if AppConfig.shared.demoAppConfig.isHardDeleteEnabled {
                 actions.append(hardDeleteActionItem())
             }
         }
-        
+
         if message?.isBounced == false {
             actions.append(translateActionItem())
         }
-        
+
         return actions
     }
-    
+
     func pinMessageActionItem() -> PinMessageActionItem {
         PinMessageActionItem(
             title: message?.isPinned == false ? "Pin to Conversation" : "Unpin from Conservation",
@@ -81,13 +81,13 @@ final class DemoChatMessageActionsVC: ChatMessageActionsVC {
             appearance: appearance
         )
     }
-    
+
     struct PinMessageActionItem: ChatMessageActionItem {
         var title: String
         var isDestructive: Bool { false }
         let icon: UIImage
         let action: (ChatMessageActionItem) -> Void
-        
+
         init(
             title: String,
             action: @escaping (ChatMessageActionItem) -> Void,

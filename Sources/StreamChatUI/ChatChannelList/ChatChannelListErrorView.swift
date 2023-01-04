@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import UIKit
@@ -13,12 +13,12 @@ open class ChatChannelListErrorView: _View, ThemeProvider {
     open private(set) lazy var retryButton: UIButton = UIButton().withoutAutoresizingMaskConstraints
     /// Spacing view so the button has some spacing with bidirectional language support.
     open private(set) lazy var spacer: UIView = UIView().withoutAutoresizingMaskConstraints
-    
+
     open var refreshButtonAction: (() -> Void)?
-    
+
     /// Value of `channelListErrorView` height constraint.
     open var channelListErrorViewHeight: CGFloat { 88 }
-    
+
     override open func setUp() {
         super.setUp()
 
@@ -50,18 +50,18 @@ open class ChatChannelListErrorView: _View, ThemeProvider {
     @objc open func didTapRetryButton() {
         refreshButtonAction?()
     }
-    
+
     /// Shows the error view.
     open func show() {
         center = .init(x: center.x, y: center.y + channelListErrorViewHeight)
         isHidden = false
-        
+
         UIView.animate(withDuration: 0.5) {
             self.center = .init(x: self.center.x, y: self.center.y - self.channelListErrorViewHeight)
             self.layoutSubviews()
         }
     }
-    
+
     /// Hides the error view.
     open func hide() {
         if isHidden { return }

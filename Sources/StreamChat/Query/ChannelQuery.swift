@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -27,7 +27,7 @@ public struct ChannelQuery: Encodable {
     public var options: QueryOptions = .all
     /// ChannelCreatePayload that is needed only when creating channel
     let channelPayload: ChannelEditDetailPayload?
-    
+
     /// `ChannelId` this query handles.
     /// If `id` part is missing then it's impossible to create valid `ChannelId`.
     public var cid: ChannelId? {
@@ -51,7 +51,7 @@ public struct ChannelQuery: Encodable {
         id = cid.id
         type = cid.type
         channelPayload = nil
-        
+
         pagination = MessagesPagination(pageSize: pageSize, parameter: paginationParameter)
         self.membersLimit = membersLimit
         self.watchersLimit = watchersLimit
@@ -90,7 +90,7 @@ public struct ChannelQuery: Encodable {
 
         // Only needed for channel creation
         try container.encodeIfPresent(channelPayload, forKey: .data)
-        
+
         try pagination.map { try container.encode($0, forKey: .messages) }
         try membersLimit.map { try container.encode(Pagination(pageSize: $0), forKey: .members) }
         try watchersLimit.map { try container.encode(Pagination(pageSize: $0), forKey: .watchers) }
@@ -106,7 +106,7 @@ struct ChannelInvitePayload: Encodable {
     struct Message: Encodable {
         let message: String?
     }
-    
+
     private enum CodingKeys: String, CodingKey {
         case accept = "accept_invite"
         case reject = "reject_invite"

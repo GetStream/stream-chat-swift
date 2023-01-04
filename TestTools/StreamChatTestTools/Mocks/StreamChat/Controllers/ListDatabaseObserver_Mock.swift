@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -8,7 +8,7 @@ import XCTest
 
 final class ListDatabaseObserver_Mock<Item, DTO: NSManagedObject>: ListDatabaseObserver<Item, DTO> {
     var synchronizeError: Error?
-    
+
     override func startObserving() throws {
         if let error = synchronizeError {
             throw error
@@ -16,7 +16,7 @@ final class ListDatabaseObserver_Mock<Item, DTO: NSManagedObject>: ListDatabaseO
             try super.startObserving()
         }
     }
-    
+
     var items_mock: LazyCachedMapCollection<Item>?
     override var items: LazyCachedMapCollection<Item> {
         items_mock ?? super.items

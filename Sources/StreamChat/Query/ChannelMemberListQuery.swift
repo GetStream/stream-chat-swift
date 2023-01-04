@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -16,35 +16,35 @@ public extension FilterKey where Scope: AnyMemberListFilterScope {
     /// A filter key for matching moderators of a channel.
     /// Supported operators: `equal`, `notEqual`
     static var isModerator: FilterKey<Scope, Bool> { "is_moderator" }
-    
+
     /// Filter key matching the id of the user
     /// Supported operators: `equal`, `notEqual`, `in`, `notIn`
     static var id: FilterKey<Scope, String> { "id" }
-    
+
     /// Filter key matching the name of the user
     /// Supported operators: `equal`, `notEqual`, `in`, `notIn`, `autocomplete`, `query`
     static var name: FilterKey<Scope, String> { "name" }
-    
+
     /// Filter key matching the banned status
     /// Supported operators: `equal`
     static var banned: FilterKey<Scope, Bool> { "banned" }
-    
+
     /// Filter key matching the invite status
     /// Supported operators: `equal`
     static var invite: FilterKey<Scope, InviteFilterValue> { "invite" }
-    
+
     /// Filter key matching the joined status
     /// Supported operators: `equal`
     static var joined: FilterKey<Scope, Bool> { "joined" }
-    
+
     /// Filter key matching the time that the member was created
     /// Supported operators: `equal`, `greaterThan`, `lessThan`, `greaterOrEqual`, `lessOrEqual`, `notEqual`
     static var createdAt: FilterKey<Scope, Date> { "created_at" }
-    
+
     /// Filter key matching the time the member was last updated
     /// Supported operators: `equal`, `greaterThan`, `lessThan`, `greaterOrEqual`, `lessOrEqual`, `notEqual`
     static var updatedAt: FilterKey<Scope, Date> { "updated_at" }
-    
+
     /// Filter key matching the time the user was last active
     /// Supported operators: `equal`, `greaterThan`, `lessThan`, `greaterOrEqual`, `lessOrEqual`, `notEqual`
     static var lastActiveAt: FilterKey<Scope, Date> { "last_active" }
@@ -58,7 +58,7 @@ public struct ChannelMemberListQuery: Encodable {
         case channelId = "id"
         case channelType = "type"
     }
-    
+
     /// A channel identifier the members should be fetched for.
     public let cid: ChannelId
     /// A filter for the query (see `Filter`).
@@ -67,7 +67,7 @@ public struct ChannelMemberListQuery: Encodable {
     public let sort: [Sorting<ChannelMemberListSortingKey>]
     /// A pagination.
     public var pagination: Pagination
-    
+
     /// Creates new `ChannelMemberListQuery` instance.
     /// - Parameters:
     ///   - cid: The channel identifier.
@@ -85,19 +85,19 @@ public struct ChannelMemberListQuery: Encodable {
         self.sort = sort
         pagination = Pagination(pageSize: pageSize)
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
+
         if let filter = filter {
             try container.encode(filter, forKey: .filter)
         } else {
             try container.encode(EmptyObject(), forKey: .filter)
         }
-        
+
         try container.encode(cid.id, forKey: .channelId)
         try container.encode(cid.type, forKey: .channelType)
-        
+
         try pagination.encode(to: encoder)
         if !sort.isEmpty { try container.encode(sort, forKey: .sort) }
     }

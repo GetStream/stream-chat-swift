@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -30,7 +30,7 @@ public struct Annotation {
     /// Position of the label describing the property name,
     /// see `DescriptionPosition` enumeration and sample test `test_generateDocs_channelListItemView_namedLabelsWithPointers`
     let descriptionLabelPosition: DescriptionPosition?
-    
+
     init(
         view: UIView,
         lineColor: UIColor = .blue,
@@ -71,7 +71,7 @@ func generateDocs<View: UIView>(
 ) {
     let container = UIView().withoutAutoresizingMaskConstraints
     container.backgroundColor = .clear
-    
+
     container.addSubview(view.withoutAutoresizingMaskConstraints)
     view.centerYAnchor.constraint(equalTo: container.centerYAnchor).isActive = true
     view.centerXAnchor.constraint(equalTo: container.centerXAnchor).isActive = true
@@ -84,7 +84,7 @@ func generateDocs<View: UIView>(
     // The annotations should be created after the view has been added to the container
     // Because in some views the views are recreated and loose the original reference
     let annotations: [Annotation] = annotations(view)
-    
+
     container.layoutIfNeeded()
     for annotation in annotations {
         // Create labels describing the properties if needed
@@ -97,7 +97,7 @@ func generateDocs<View: UIView>(
                 textColor: annotation.textColor
             )
         }
-        
+
         // Highlight the given view/container if needed
         if let highlightColor = annotation.highlightColor {
             annotation.view.backgroundColor = highlightColor
@@ -114,22 +114,22 @@ private func createLineAndLabelWithPropertyName(
     textColor: UIColor?
 ) {
     let lineDistance: CGFloat = 50
-    
+
     for (view, position) in subviewsWithPosition {
         view.layer.borderWidth = 1
         view.layer.borderColor = lineColor.cgColor
-        
+
         let translated = view.convert(view.bounds, to: container)
         var end: CGPoint
-        
+
         let mirror = Mirror(reflecting: parentView)
         let mirroredView = mirror.children.first { $0.value as? UIView === view }
-        
+
         let propertyDescription = mirroredView!.label!.deletingPrefix("$__lazy_storage_$_")
-        
+
         // Get fontSize and size of the text to adjust position of the label:
         let descriptionLabelSize = (propertyDescription as NSString).size(withAttributes: [.font: UILabel().font!])
-        
+
         switch position {
         case .top:
             end = addLine(
@@ -198,10 +198,10 @@ private func createLineAndLabelWithPropertyName(
         }
 
         let descriptionLabel = UILabel(frame: .init(origin: end, size: .zero))
-        
+
         descriptionLabel.text = mirroredView?.label?.deletingPrefix("$__lazy_storage_$_") ?? "Should never happen"
         descriptionLabel.sizeToFit()
-        
+
         container.addSubview(descriptionLabel)
         if let textColor = textColor {
             descriptionLabel.textColor = textColor
@@ -219,7 +219,7 @@ private func addLine(fromPoint start: CGPoint, toPoint end: CGPoint, in containe
     line.fillColor = color.cgColor
     line.lineWidth = 0.5
     container.layer.addSublayer(line)
-    
+
     return end
 }
 

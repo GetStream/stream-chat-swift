@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -9,7 +9,7 @@ import XCTest
 public let eventKey = EventPayload.CodingKeys.self
 
 public extension StreamMockServer {
-    
+
     func configureEventEndpoints() {
         server.register(MockEndpoint.event) { [weak self] request in
             let channelId = try XCTUnwrap(request.params[EndpointQuery.channelId])
@@ -42,7 +42,7 @@ public extension StreamMockServer {
         json[JSONKey.event] = event
         return .ok(.json(json))
     }
-    
+
     private func sendEvent(_ eventType: EventType, channelId: String) -> HttpResponse {
         sendEvent(eventType.rawValue, channelId: channelId)
     }

@@ -13,12 +13,12 @@ final class MessageUpdater_Tests: XCTestCase {
     var database: DatabaseContainer_Spy!
     var messageRepository: MessageRepository_Mock!
     var messageUpdater: MessageUpdater!
-    
+
     // MARK: Setup
 
     override func setUp() {
         super.setUp()
-        
+
         webSocketClient = WebSocketClient_Mock()
         apiClient = APIClient_Spy()
         database = DatabaseContainer_Spy()
@@ -55,26 +55,26 @@ final class MessageUpdater_Tests: XCTestCase {
     }
 
     // MARK: Edit message
-    
+
     func test_editMessage_propagates_CurrentUserDoesNotExist_Error() throws {
         // Simulate `editMessage(messageId:, text:)` call
         let completionError = try waitFor {
             messageUpdater.editMessage(messageId: .unique, text: .unique, completion: $0)
         }
-        
+
         // Assert `CurrentUserDoesNotExist` is received
         XCTAssertTrue(completionError is ClientError.CurrentUserDoesNotExist)
     }
-    
+
     func test_editMessage_propagates_MessageDoesNotExist_Error() throws {
         // Create current user is the database
         try database.createCurrentUser()
-        
+
         // Simulate `editMessage(messageId:, text:)` call
         let completionError = try waitFor {
             messageUpdater.editMessage(messageId: .unique, text: .unique, completion: $0)
         }
-        
+
         // Assert `MessageDoesNotExist` is received
         XCTAssertTrue(completionError is ClientError.MessageDoesNotExist)
     }
@@ -135,20 +135,20 @@ final class MessageUpdater_Tests: XCTestCase {
             XCTAssertEqual(editedMessage.updatedAt, quotingMessage.updatedAt)
         }
     }
-    
+
     func test_editMessage_propogatesMessageEditingError_ifLocalStateIsInvalidForEditing() throws {
         let invalidStates: [LocalMessageState] = [
             .deleting,
             .sending,
             .syncing
         ]
-        
+
         for state in invalidStates {
             let currentUserId: UserId = .unique
             let messageId: MessageId = .unique
             let initialText: String = .unique
             let updatedText: String = .unique
-            
+
             // Flush the database
             let exp = expectation(description: "removeAllData completion")
             database.removeAllData { error in
@@ -158,25 +158,25 @@ final class MessageUpdater_Tests: XCTestCase {
                 exp.fulfill()
             }
             wait(for: [exp], timeout: 1)
-            
+
             // Create current user is the database
             try database.createCurrentUser(id: currentUserId)
-            
+
             // Create a new message in the database
             try database.createMessage(id: messageId, authorId: currentUserId, text: initialText, localState: state)
-            
+
             // Edit created message with new text
             let completionError = try waitFor {
                 messageUpdater.editMessage(messageId: messageId, text: updatedText, completion: $0)
             }
-            
+
             // Load the message
             let message = try XCTUnwrap(database.viewContext.message(id: messageId))
             let extraData = try XCTUnwrap(
                 message.extraData
                     .map { try? JSONDecoder.default.decode([String: RawJSON].self, from: $0) }
             )
-            
+
             // Assert `MessageEditing` error is received
             XCTAssertTrue(completionError is ClientError.MessageEditing)
             // Assert message stays in the same state
@@ -264,39 +264,39 @@ final class MessageUpdater_Tests: XCTestCase {
         // Assert message's extra data is updated
         XCTAssertEqual(encodedExtraData, extraData)
     }
-    
+
     // MARK: Delete message
-    
+
     func test_deleteMessage_sendsCorrectAPICall_ifMessageDoesNotExistLocally() throws {
         let messageId: MessageId = .unique
-        
+
         // Create current user in the database
         try database.createCurrentUser()
-        
+
         // Simulate `deleteMessage(messageId:)` call
         messageUpdater.deleteMessage(messageId: messageId, hard: false)
-        
+
         // Assert correct endpoint is called
         let expectedEndpoint: Endpoint<MessagePayload.Boxed> = .deleteMessage(messageId: messageId, hard: false)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
-    
+
     func test_deleteMessage_propogatesRequestError() throws {
         let messageId: MessageId = .unique
-        
+
         // Create current user in the database
         try database.createCurrentUser()
-        
+
         // Simulate `deleteMessage(messageId:)` call
         var completionCalledError: Error?
         messageUpdater.deleteMessage(messageId: messageId, hard: false) {
             completionCalledError = $0
         }
-        
+
         // Assert correct endpoint is called
         let expectedEndpoint: Endpoint<MessagePayload.Boxed> = .deleteMessage(messageId: messageId, hard: false)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
-        
+
         // Simulate API response with error
         let testError = TestError()
         let response: Result<MessagePayload.Boxed, Error> = .failure(testError)
@@ -305,21 +305,21 @@ final class MessageUpdater_Tests: XCTestCase {
         // Assert completion is called without any error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
-    
+
     func test_deleteMessage_propogatesDatabaseError_beforeAPICall() throws {
         // Update database container to throw the error on write
         let databaseError = TestError()
         database.write_errorResponse = databaseError
-        
+
         // Simulate `deleteMessage(messageId:)` call
         let completionError = try waitFor {
             messageUpdater.deleteMessage(messageId: .unique, hard: false, completion: $0)
         }
-        
+
         // Assert database error is propogated
         XCTAssertEqual(completionError as? TestError, databaseError)
     }
-    
+
     func test_deleteMessage_propogatesDatabaseError_afterAPICall() throws {
         let messageId: MessageId = .unique
 
@@ -333,15 +333,15 @@ final class MessageUpdater_Tests: XCTestCase {
             completionCalledError = $0
             expectation.fulfill()
         }
-        
+
         // Assert correct endpoint is called
         let expectedEndpoint: Endpoint<MessagePayload.Boxed> = .deleteMessage(messageId: messageId, hard: false)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
-        
+
         // Update database container to throw the error on write
         let databaseError = TestError()
         messageRepository.saveSuccessfullyDeletedMessageError = databaseError
-        
+
         // Simulate API response with success
         let response: Result<MessagePayload.Boxed, Error> =
             .success(.init(message: .dummy(messageId: .unique, authorUserId: .unique)))
@@ -368,7 +368,7 @@ final class MessageUpdater_Tests: XCTestCase {
                 exp.fulfill()
             }
             wait(for: [exp], timeout: 1)
-            
+
             // Create current user in the database
             try database.createCurrentUser(id: currentUserId)
 
@@ -474,7 +474,7 @@ final class MessageUpdater_Tests: XCTestCase {
         XCTAssertEqual(message.type, MessageType.deleted.rawValue)
         XCTAssertNil(apiClient.request_endpoint)
     }
-    
+
     func test_deleteMessage_updatesMessageStateCorrectly() throws {
         let currentUserId: UserId = .unique
         let messageId: MessageId = .unique
@@ -483,7 +483,7 @@ final class MessageUpdater_Tests: XCTestCase {
             (.success(.init(message: .dummy(messageId: messageId, authorUserId: currentUserId))), nil),
             (.failure(TestError()), .deletingFailed)
         ]
-        
+
         for (networkResult, expectedState) in pairs {
             messageRepository.clear()
 
@@ -496,10 +496,10 @@ final class MessageUpdater_Tests: XCTestCase {
                 exp.fulfill()
             }
             wait(for: [exp], timeout: 1)
-            
+
             // Create current user in the database
             try database.createCurrentUser(id: currentUserId)
-            
+
             // Create message authored by current user in the database
             try database.createMessage(id: messageId, authorId: currentUserId)
 
@@ -609,7 +609,7 @@ final class MessageUpdater_Tests: XCTestCase {
         let messageAfterHardDelete = database.viewContext.message(id: messageId)
         XCTAssertEqual(messageAfterHardDelete?.isHardDeleted, false)
     }
-    
+
     func test_deleteBouncedMessage_isDeletedLocally_whenLocalStateIsSendingFailed() throws {
         let currentUserId: UserId = .unique
         let messageId: MessageId = .unique
@@ -629,11 +629,11 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Create message authored by current user in the database
         try database.createMessage(id: messageId, authorId: currentUserId)
-        
+
         // Simulate message on a state where it failed to be sent due to moderation
         try database.writeSynchronously { session in
             guard let messageDTO = session.message(id: messageId) else { return }
-            
+
             messageDTO.isBounced = true
             messageDTO.localMessageState = .sendingFailed
         }
@@ -643,17 +643,17 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Load the message
         let message = try XCTUnwrap(database.viewContext.message(id: messageId))
-        
+
         // Assert Bounced Message Gets marked as failedToBeSentDueToModeration as expected
         AssertAsync.willBeEqual(message.failedToBeSentDueToModeration, true)
 
         // Assert Bounced Message Gets locally deleted
         AssertAsync.willBeEqual(message.type, MessageType.deleted.rawValue)
-        
+
         // The message is marked has being hard deleted
         XCTAssertEqual(message.isHardDeleted, true)
     }
-    
+
     func test_deleteBouncedMessage_isNotDeletedLocally_whenLocalStateIsNotSendingFailed() throws {
         let currentUserId: UserId = .unique
         let messageId: MessageId = .unique
@@ -673,11 +673,11 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Create message authored by current user in the database
         try database.createMessage(id: messageId, authorId: currentUserId)
-        
+
         // Simulate message on a state where it failed to be sent due to moderation
         try database.writeSynchronously { session in
             guard let messageDTO = session.message(id: messageId) else { return }
-            
+
             messageDTO.isBounced = true
         }
 
@@ -686,14 +686,14 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Load the message
         let message = try XCTUnwrap(database.viewContext.message(id: messageId))
-        
+
         // Assert Bounced Message is not marked as failedToBeSentDueToModeration
         AssertAsync.willBeEqual(message.failedToBeSentDueToModeration, false)
 
         // Assert Bounced Message Does not get deleted locally
         AssertAsync.willBeEqual(message.type, MessageType.regular.rawValue)
     }
-    
+
     func test_deleteBouncedMessage_updatesChannelPreviewCorrectly() throws {
         let firstMessageId: MessageId = .unique
         let secondMessageId: MessageId = .unique
@@ -709,40 +709,40 @@ final class MessageUpdater_Tests: XCTestCase {
             exp.fulfill()
         }
         waitForExpectations(timeout: 0.1)
-        
+
         let firstPreviewMessage: MessagePayload = .dummy(
             type: .regular,
             messageId: firstMessageId,
             authorUserId: .unique
         )
-        
+
         let secondPreviewMessage: MessagePayload = .dummy(
             type: .regular,
             messageId: secondMessageId,
             authorUserId: .unique
         )
-        
+
         let channelPayload: ChannelPayload = .dummy(
             channel: emptyChannelPayload.channel,
             messages: [firstPreviewMessage, secondPreviewMessage]
         )
-        
+
         // Save channel information to database and mark message as failedToBeSentDueToModeration
         try database.writeSynchronously { session in
             try session.saveChannel(payload: channelPayload)
-            
+
             guard let messageDTO = session.message(id: secondMessageId) else { return }
-            
+
             messageDTO.isBounced = true
             messageDTO.localMessageState = .sendingFailed
         }
-        
+
         // Load the message
         let message = try XCTUnwrap(database.viewContext.message(id: secondMessageId))
-        
+
         // Assert message is marked as failedToBeSentDueToModeration
         XCTAssertTrue(message.failedToBeSentDueToModeration)
-        
+
         // Delete second message
         let expectation = expectation(description: "deleteMessage completes")
         messageUpdater.deleteMessage(messageId: secondMessageId, hard: false) { _ in
@@ -751,13 +751,13 @@ final class MessageUpdater_Tests: XCTestCase {
 
         waitForExpectations(timeout: 0.1)
         let channelDTO = try XCTUnwrap(database.viewContext.channel(cid: cid))
-        
+
         // Assert channel preview is updated with the previous message
         XCTAssertEqual(channelDTO.previewMessage?.id, firstPreviewMessage.id)
     }
-    
+
     // MARK: Get message
-    
+
     func test_getMessage_shouldForwardSuccess() {
         let cid: ChannelId = .unique
         let messageId: MessageId = .unique
@@ -795,15 +795,15 @@ final class MessageUpdater_Tests: XCTestCase {
     }
 
     // MARK: - Create new reply
-    
+
     func test_createNewReply_savesMessageToDatabase() throws {
         // Prepare the current user and channel first
         let cid: ChannelId = .unique
         let currentUserId: UserId = .unique
-        
+
         try database.createCurrentUser(id: currentUserId)
         try database.createChannel(cid: cid)
-        
+
         // New reply message values
         let text: String = .unique
         let parentMessageId: MessageId = .unique
@@ -850,9 +850,9 @@ final class MessageUpdater_Tests: XCTestCase {
         func id(for envelope: AnyAttachmentPayload) -> AttachmentId {
             .init(cid: cid, messageId: newMessageId, index: attachmentEnvelopes.firstIndex(of: envelope)!)
         }
-        
+
         let message: ChatMessage = try XCTUnwrap(database.viewContext.message(id: newMessageId)?.asModel())
-        
+
         XCTAssertEqual(message.text, text)
         XCTAssertEqual(message.command, command)
         XCTAssertEqual(message.arguments, arguments)
@@ -871,19 +871,19 @@ final class MessageUpdater_Tests: XCTestCase {
         XCTAssertEqual(message.isSilent, isSilent)
         XCTAssertEqual(message.mentionedUsers.map(\.id), mentionedUserIds)
     }
-    
+
     func test_createNewMessage_propagatesErrorWhenSavingFails() throws {
         // Prepare the current user and channel first
         let cid: ChannelId = .unique
         let currentUserId: UserId = .unique
-        
+
         try database.createCurrentUser(id: currentUserId)
         try database.createChannel(cid: cid)
 
         // Simulate the DB failing with `TestError`
         let testError = TestError()
         database.write_errorResponse = testError
-        
+
         let result: Result<MessageId, Error> = try waitFor { completion in
             messageUpdater.createNewReply(
                 in: .unique,
@@ -900,19 +900,19 @@ final class MessageUpdater_Tests: XCTestCase {
                 extraData: [:]
             ) { completion($0) }
         }
-        
+
         AssertResultFailure(result, testError)
     }
-    
+
     // MARK: Load replies
-    
+
     func test_loadReplies_makesCorrectAPICall() {
         let messageId: MessageId = .unique
         let pagination: MessagesPagination = .init(pageSize: 25)
-        
+
         // Simulate `loadReplies` call
         messageUpdater.loadReplies(cid: .unique, messageId: messageId, pagination: pagination)
-        
+
         // Assert correct endpoint is called
         let expectedEndpoint: Endpoint<MessageRepliesPayload> = .loadReplies(
             messageId: messageId,
@@ -920,22 +920,22 @@ final class MessageUpdater_Tests: XCTestCase {
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
-    
+
     func test_loadReplies_propagatesRequestError() {
         // Simulate `loadReplies` call
         var completionCalledError: Error?
         messageUpdater.loadReplies(cid: .unique, messageId: .unique, pagination: .init(pageSize: 25)) {
             completionCalledError = $0.error
         }
-        
+
         // Simulate API response with failure
         let error = TestError()
         apiClient.test_simulateResponse(Result<MessageRepliesPayload, Error>.failure(error))
-        
+
         // Assert the completion is called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
-    
+
     func test_loadReplies_propagatesDatabaseError() throws {
         let repliesPayload: MessageRepliesPayload = .init(messages: [.dummy(messageId: .unique, authorUserId: .unique)])
         let cid = ChannelId.unique
@@ -946,46 +946,46 @@ final class MessageUpdater_Tests: XCTestCase {
         // Update database container to throw the error on write
         let testError = TestError()
         database.write_errorResponse = testError
-        
+
         // Simulate `loadReplies` call
         var completionCalledError: Error?
         messageUpdater.loadReplies(cid: cid, messageId: .unique, pagination: .init(pageSize: 25)) {
             completionCalledError = $0.error
         }
-        
+
         // Simulate API response with success
         apiClient.test_simulateResponse(Result<MessageRepliesPayload, Error>.success(repliesPayload))
-        
+
         // Assert database error is propagated
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
-    
+
     func test_loadReplies_savesMessagesToDatabase() throws {
         let currentUserId: UserId = .unique
         let messageId: MessageId = .unique
         let cid: ChannelId = .unique
-        
+
         // Create current user in the database
         try database.createCurrentUser(id: currentUserId)
-        
+
         // Create channel in the database
         try database.createChannel(cid: cid)
-        
+
         // Simulate `loadReplies` call
         var completionCalled = false
         messageUpdater.loadReplies(cid: cid, messageId: .unique, pagination: .init(pageSize: 25)) { _ in
             completionCalled = true
         }
-        
+
         // Simulate API response with success
         let repliesPayload: MessageRepliesPayload = .init(
             messages: [.dummy(messageId: messageId, authorUserId: .unique)]
         )
         apiClient.test_simulateResponse(Result<MessageRepliesPayload, Error>.success(repliesPayload))
-        
+
         // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)
-        
+
         // Assert fetched message is saved to the database
         XCTAssertNotNil(database.viewContext.message(id: messageId))
     }
@@ -1079,20 +1079,20 @@ final class MessageUpdater_Tests: XCTestCase {
         XCTAssertNotNil(database.viewContext.reaction(messageId: messageId, userId: currentUserId, type: "like"))
         XCTAssertNotNil(database.viewContext.reaction(messageId: messageId, userId: currentUserId, type: "dislike"))
     }
-    
+
     // MARK: - Flag message
-    
+
     func test_flagMessage_happyPath() throws {
         let currentUserId: UserId = .unique
         let messageId: MessageId = .unique
         let cid: ChannelId = .unique
-        
+
         // Create current user in the database
         try database.createCurrentUser(id: currentUserId)
-        
+
         // Load current user.
         let currentUserDTO = try XCTUnwrap(database.viewContext.currentUser)
-        
+
         // Create channel in the database.
         try database.createChannel(cid: cid)
 
@@ -1119,7 +1119,7 @@ final class MessageUpdater_Tests: XCTestCase {
                 cache: nil
             )
         }
-        
+
         // Simulate flag API response.
         let flagMessagePayload = FlagMessagePayload(
             currentUser: .dummy(userId: currentUserId, role: .user),
@@ -1165,7 +1165,7 @@ final class MessageUpdater_Tests: XCTestCase {
             Assert.willBeEqual(messageDTO?.flaggedBy, nil)
         }
     }
-    
+
     func test_flagMessage_propagatesError() {
         let messageId: MessageId = .unique
         let cid: ChannelId = .unique
@@ -1186,97 +1186,97 @@ final class MessageUpdater_Tests: XCTestCase {
     func test_flagMessage_propagatesFlagNetworkError() throws {
         let messageId: MessageId = .unique
         let cid: ChannelId = .unique
-        
+
         // Save message to the database.
         try database.createMessage(id: messageId)
-        
+
         // Simulate `flagMessage` call and catch the error.
         var completionCalledError: Error?
         messageUpdater.flagMessage(true, with: messageId, in: cid) {
             completionCalledError = $0
         }
-        
+
         // Assert flag endpoint is called.
         let flagEndpoint: Endpoint<FlagMessagePayload> = .flagMessage(true, with: messageId)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(flagEndpoint))
-        
+
         // Simulate flag API response with failure.
         let networkError = TestError()
         apiClient.test_simulateResponse(Result<FlagMessagePayload, Error>.failure(networkError))
-        
+
         // Assert the flag database error is propogated.
         AssertAsync.willBeEqual(completionCalledError as? TestError, networkError)
     }
-    
+
     func test_flagMessage_propagatesFlagDatabaseError() throws {
         let currentUserId: UserId = .unique
         let messageId: MessageId = .unique
         let cid: ChannelId = .unique
-        
+
         // Save message to the database.
         try database.createMessage(id: messageId)
-        
+
         // Update database to throw the error on write.
         let databaseError = TestError()
         database.write_errorResponse = databaseError
-        
+
         // Simulate `flagMessage` call and catch the error.
         var completionCalledError: Error?
         messageUpdater.flagMessage(true, with: messageId, in: cid) {
             completionCalledError = $0
         }
-        
+
         // Assert flag endpoint is called.
         let flagEndpoint: Endpoint<FlagMessagePayload> = .flagMessage(true, with: messageId)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(flagEndpoint))
-        
+
         // Simulate flag API response with success.
         let payload = FlagMessagePayload(
             currentUser: .dummy(userId: currentUserId, role: .user),
             flaggedMessageId: messageId
         )
         apiClient.test_simulateResponse(.success(payload))
-        
+
         // Assert the flag database error is propogated.
         AssertAsync.willBeEqual(completionCalledError as? TestError, databaseError)
     }
-    
+
     func test_flagMessage_propagatesMessageDoesNotExistError() throws {
         let currentUserId: UserId = .unique
         let messageId: MessageId = .unique
         let cid: ChannelId = .unique
-        
+
         // Save message to the database.
         try database.createMessage(id: messageId)
-        
+
         // Simulate `flagMessage` call and catch the error.
         var completionCalledError: Error?
         messageUpdater.flagMessage(true, with: messageId, in: cid) {
             completionCalledError = $0
         }
-        
+
         // Assert flag endpoint is called.
         let flagEndpoint: Endpoint<FlagMessagePayload> = .flagMessage(true, with: messageId)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(flagEndpoint))
-        
+
         // Delete the message from the database.
         try database.writeSynchronously {
             let session = $0 as! NSManagedObjectContext
             let messageDTO = try XCTUnwrap(session.message(id: messageId))
             session.delete(messageDTO)
         }
-        
+
         // Simulate flag API response with success.
         let payload = FlagMessagePayload(
             currentUser: .dummy(userId: currentUserId, role: .user),
             flaggedMessageId: messageId
         )
         apiClient.test_simulateResponse(.success(payload))
-        
+
         // Assert `MessageDoesNotExist` error is propogated.
         AssertAsync.willBeTrue(completionCalledError is ClientError.MessageDoesNotExist)
     }
-    
+
     // MARK: - Add reaction
 
     func setupReactionData(userId: UserId = .unique) throws -> MessageId {
@@ -1305,7 +1305,7 @@ final class MessageUpdater_Tests: XCTestCase {
             dbCall.fulfill()
             XCTAssertNil(error)
         }
-        
+
         // wait for the db call to be done
         wait(for: [dbCall], timeout: 0.5)
 
@@ -1475,7 +1475,7 @@ final class MessageUpdater_Tests: XCTestCase {
 
         XCTAssertEqual(reactionReloaded.localState, .sendingFailed)
     }
-    
+
     // MARK: - Delete reaction
 
     func test_deleteReaction_makesCorrectAPICall() throws {
@@ -1884,7 +1884,7 @@ final class MessageUpdater_Tests: XCTestCase {
     }
 
     // MARK: - Restart failed attachment uploading
-    
+
     func test_restartFailedAttachmentUploading_propagatesAttachmentDoesNotExistError() throws {
         let error = try waitFor {
             messageUpdater.restartFailedAttachmentUploading(with: .unique, completion: $0)
@@ -2020,10 +2020,10 @@ final class MessageUpdater_Tests: XCTestCase {
 
     func test_resendMessage_propagatesMessageEditingError() throws {
         let currentUserId: UserId = .unique
-        
+
         // Create current user is the database
         try database.createCurrentUser(id: currentUserId)
-        
+
         let invalidStates: [LocalMessageState] = [
             .deleting,
             .deletingFailed,
@@ -2033,18 +2033,18 @@ final class MessageUpdater_Tests: XCTestCase {
             .syncing,
             .syncingFailed
         ]
-        
+
         for state in invalidStates {
             let messageId: MessageId = .unique
-            
+
             // Create a new message in the database in `sendingFailed` state
             try database.createMessage(id: messageId, authorId: currentUserId, localState: state)
-            
+
             // Try to resend the message
             let completionError = try waitFor {
                 messageUpdater.resendMessage(with: messageId, completion: $0)
             }
-            
+
             // Assert `MessageEditing` error is received
             XCTAssertTrue(completionError is ClientError.MessageEditing)
         }
@@ -2097,7 +2097,7 @@ final class MessageUpdater_Tests: XCTestCase {
     }
 
     // MARK: - Dispatch ephemeral message action
-    
+
     func test_dispatchEphemeralMessageAction_cancel_happyPath() throws {
         let cid: ChannelId = .unique
         let messageId: MessageId = .unique
@@ -2140,26 +2140,26 @@ final class MessageUpdater_Tests: XCTestCase {
         XCTAssertEqual(message.type, MessageType.ephemeral.rawValue)
         XCTAssertNotNil(message.deletedAt)
     }
-    
+
     func test_dispatchEphemeralMessageAction_cancel_changesPreviewMessage() throws {
         let cid: ChannelId = .unique
         let messageId: MessageId = .unique
         let currentUserId: UserId = .unique
-        
+
         // Create current user is the database
         try database.createCurrentUser(id: currentUserId)
         // Create channel is the database
         try database.createChannel(cid: cid, withMessages: true)
         // Create a new `ephemeral` message in the database
         try database.createMessage(id: messageId, authorId: currentUserId, type: .ephemeral)
-        
+
         // Set ephemeral message as channel's previewMessage
         try database.writeSynchronously { session in
             let message = try XCTUnwrap(session.message(id: messageId))
             let channel = try XCTUnwrap(session.channel(cid: cid))
             channel.previewMessage = message
         }
-        
+
         let cancelAction = AttachmentAction(
             name: .unique,
             value: "cancel",
@@ -2167,7 +2167,7 @@ final class MessageUpdater_Tests: XCTestCase {
             type: .button,
             text: .unique
         )
-        
+
         // Simulate `dispatchEphemeralMessageAction`
         let completionError = try waitFor {
             messageUpdater.dispatchEphemeralMessageAction(
@@ -2177,12 +2177,12 @@ final class MessageUpdater_Tests: XCTestCase {
                 completion: $0
             )
         }
-        
+
         // Assert error is `nil`
         XCTAssertNil(completionError)
         // Assert `apiClient` is not invoked, message is updated locally.
         XCTAssertNil(apiClient.request_endpoint)
-        
+
         // Load message
         let message = try XCTUnwrap(database.viewContext.message(id: messageId))
         // Assert `previewMessage` of the channel is updated
@@ -2449,34 +2449,34 @@ final class MessageUpdater_Tests: XCTestCase {
         // Assert database error is propagated.
         AssertAsync.willBeEqual(completionCalledError as? TestError, databaseError)
     }
-    
+
     // MARK: - Translate message
-    
+
     func test_translate_makesCorrectAPICall() throws {
         let messageId: MessageId = .unique
         let language = TranslationLanguage.allCases.randomElement()!
-        
+
         // Make translate call
         messageUpdater.translate(messageId: messageId, to: language)
-        
+
         // Assert correct endpoint is called.
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(.translate(messageId: messageId, to: language)))
     }
-    
+
     func test_translate_propagatesSuccessfulResponse() throws {
         let messageId: MessageId = .unique
         let language = TranslationLanguage.allCases.randomElement()!
         let cid: ChannelId = .unique
-        
+
         try database.createChannel(cid: cid)
-        
+
         // Make translate call
         var completionCalled = false
         messageUpdater.translate(messageId: messageId, to: language) { error in
             completionCalled = true
             XCTAssertNil(error)
         }
-        
+
         // Simulate successful response
         apiClient.test_simulateResponse(
             Result<MessagePayload.Boxed, Error>.success(
@@ -2489,14 +2489,14 @@ final class MessageUpdater_Tests: XCTestCase {
                 )
             )
         )
-        
+
         AssertAsync.willBeTrue(completionCalled)
     }
-    
+
     func test_translate_propagatesRequestError() throws {
         let messageId: MessageId = .unique
         let language = TranslationLanguage.allCases.randomElement()!
-        
+
         // Make translate call
         var completionCalled = false
         let testError = TestError()
@@ -2504,33 +2504,33 @@ final class MessageUpdater_Tests: XCTestCase {
             completionCalled = true
             XCTAssertEqual(error as? TestError, testError)
         }
-        
+
         // Simulate failure response
         apiClient.test_simulateResponse(
             Result<MessagePayload.Boxed, Error>.failure(testError)
         )
-        
+
         AssertAsync.willBeTrue(completionCalled)
     }
-    
+
     func test_translate_propagatesDatabaseError() throws {
         let messageId: MessageId = .unique
         let language = TranslationLanguage.allCases.randomElement()!
         let cid: ChannelId = .unique
-        
+
         try database.createChannel(cid: cid)
-        
+
         // Update database container to throw the error on write
         let testError = TestError()
         database.write_errorResponse = testError
-        
+
         // Make translate call
         var completionCalled = false
         messageUpdater.translate(messageId: messageId, to: language) { error in
             completionCalled = true
             XCTAssertEqual(error as? TestError, testError)
         }
-        
+
         // Simulate successful response
         apiClient.test_simulateResponse(
             Result<MessagePayload.Boxed, Error>.success(
@@ -2543,7 +2543,7 @@ final class MessageUpdater_Tests: XCTestCase {
                 )
             )
         )
-        
+
         AssertAsync.willBeTrue(completionCalled)
     }
 }

@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -9,14 +9,14 @@ import UIKit
 open class ImageAttachmentComposerPreview: _View, ThemeProvider {
     open var width: CGFloat = 100
     open var height: CGFloat = 100
-    
+
     /// Local URL of the image preview to show.
     public var content: URL? {
         didSet {
             updateContentIfNeeded()
         }
     }
-    
+
     /// The image view that displays the image of the attachment.
     open private(set) lazy var imageView: UIImageView = UIImageView()
         .withoutAutoresizingMaskConstraints
@@ -32,13 +32,13 @@ open class ImageAttachmentComposerPreview: _View, ThemeProvider {
 
     override open func setUpLayout() {
         super.setUpLayout()
-        
+
         embed(imageView)
 
         widthAnchor.pin(equalToConstant: width).isActive = true
         heightAnchor.pin(equalToConstant: height).isActive = true
     }
-    
+
     override open func updateContent() {
         super.updateContent()
 

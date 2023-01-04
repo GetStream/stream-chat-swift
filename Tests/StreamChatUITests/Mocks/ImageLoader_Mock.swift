@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChatUI
@@ -18,7 +18,7 @@ final class ImageLoader_Mock: ImageLoading {
 
         return nil
     }
-    
+
     func downloadImage(
         with request: ImageDownloadRequest,
         completion: @escaping ((Result<UIImage, Error>) -> Void)

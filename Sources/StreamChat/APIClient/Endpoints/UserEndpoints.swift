@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -15,7 +15,7 @@ extension Endpoint {
             body: ["payload": query]
         )
     }
-    
+
     static func updateUser(
         id: UserId,
         payload: UserUpdateRequestBody

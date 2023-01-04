@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -12,7 +12,7 @@ extension ChatMessageGalleryView {
         }
 
         public var didTapActionButton: (() -> Void)?
-        
+
         open var minBottomContainerHeight: CGFloat = 24
 
         /// The number formatter that converts the uploading progress percentage to textual representation.
@@ -20,12 +20,12 @@ extension ChatMessageGalleryView {
             appearance.formatters.uploadingProgress
 
         // MARK: - Subviews
-        
+
         public private(set) lazy var actionButton: AttachmentActionButton = components
             .attachmentActionButton.init()
             .withoutAutoresizingMaskConstraints
             .withAccessibilityIdentifier(identifier: "actionButton")
-        
+
         public private(set) lazy var loadingIndicator: ChatLoadingIndicator = components
             .loadingIndicator.init()
             .withoutAutoresizingMaskConstraints
@@ -36,7 +36,7 @@ extension ChatMessageGalleryView {
             .withBidirectionalLanguagesSupport
             .withAdjustingFontForContentSizeCategory
             .withAccessibilityIdentifier(identifier: "uploadingProgressLabel")
-        
+
         public private(set) lazy var bottomContainer = ContainerStackView()
             .withoutAutoresizingMaskConstraints
             .withAccessibilityIdentifier(identifier: "bottomContainer")
@@ -51,7 +51,7 @@ extension ChatMessageGalleryView {
 
         override open func setUp() {
             super.setUp()
-            
+
             actionButton.addTarget(
                 self,
                 action: #selector(handleTapOnActionButton(_:)),
@@ -61,22 +61,22 @@ extension ChatMessageGalleryView {
 
         override open func setUpAppearance() {
             super.setUpAppearance()
-            
+
             uploadingProgressLabel.numberOfLines = 0
             uploadingProgressLabel.textColor = appearance.colorPalette.textInverted
             uploadingProgressLabel.font = appearance.fonts.footnote
-            
+
             bottomContainer.backgroundColor = appearance.colorPalette.background4
         }
 
         override open func setUpLayout() {
             super.setUpLayout()
-            
+
             loadingIndicator.pin(anchors: [.width, .height], to: 16)
 
             addSubview(actionButton)
             actionButton.pin(anchors: [.top, .trailing], to: layoutMarginsGuide)
-           
+
             addSubview(bottomContainer)
             bottomContainer.directionalLayoutMargins = .init(top: 4, leading: 4, bottom: 4, trailing: 4)
             bottomContainer.addArrangedSubview(loadingIndicator, respectsLayoutMargins: true)
@@ -95,7 +95,7 @@ extension ChatMessageGalleryView {
 
         override open func updateContent() {
             super.updateContent()
-            
+
             backgroundColor = content.flatMap {
                 switch $0.state {
                 case .uploaded:
@@ -104,7 +104,7 @@ extension ChatMessageGalleryView {
                     return appearance.colorPalette.background3
                 }
             }
-            
+
             actionButton.content = content.flatMap {
                 switch $0.state {
                 case .pendingUpload, .uploading, .unknown:
@@ -117,7 +117,7 @@ extension ChatMessageGalleryView {
                 }
             }
             actionButton.isHidden = actionButton.content == nil
-            
+
             uploadingProgressLabel.text = content.flatMap {
                 switch $0.state {
                 case let .uploading(progress):
@@ -138,12 +138,12 @@ extension ChatMessageGalleryView {
             default:
                 loadingIndicator.isVisible = false
             }
-            
+
             bottomContainer.isHidden = bottomContainer.subviews.allSatisfy(\.isHidden)
         }
 
         // MARK: - Actions
-        
+
         @objc open func handleTapOnActionButton(_ button: AttachmentActionButton) {
             didTapActionButton?()
         }

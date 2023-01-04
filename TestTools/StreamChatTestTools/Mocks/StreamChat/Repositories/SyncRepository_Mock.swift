@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -23,7 +23,7 @@ final class SyncRepository_Mock: SyncRepository, Spy {
                   database: database,
                   apiClient: APIClient_Spy())
     }
-    
+
     override init(config: ChatClientConfig, activeChannelControllers: ThreadSafeWeakCollection<ChatChannelController>, activeChannelListControllers: ThreadSafeWeakCollection<ChatChannelListController>, offlineRequestsRepository: OfflineRequestsRepository, eventNotificationCenter: EventNotificationCenter, database: DatabaseContainer, apiClient: APIClient) {
         super.init(config: config, activeChannelControllers: activeChannelControllers, activeChannelListControllers: activeChannelListControllers, offlineRequestsRepository: offlineRequestsRepository, eventNotificationCenter: eventNotificationCenter, database: database, apiClient: apiClient)
     }
@@ -35,7 +35,7 @@ final class SyncRepository_Mock: SyncRepository, Spy {
     override func syncExistingChannelsEvents(completion: @escaping (Result<[ChannelId], SyncError>) -> Void) {
         record()
     }
-    
+
     override func cancelRecoveryFlow() {
         record()
     }

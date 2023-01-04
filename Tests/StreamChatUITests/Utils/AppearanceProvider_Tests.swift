@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -14,17 +14,17 @@ final class AppearanceProvider_Tests: XCTestCase {
         var appearance = Appearance()
         // Set some random color to check if the appearance is passed down
         appearance.colorPalette.alternativeActiveTint = testColor
-        
+
         parentView.addSubview(subView)
         parentView.appearance = appearance
-        
+
         // We can only compare string descriptions, which should be good enough
         XCTAssertEqual(
             String(describing: subView.appearance.colorPalette.alternativeActiveTint),
             String(describing: appearance.colorPalette.alternativeActiveTint)
         )
     }
-    
+
     func test_components_passedDown_ignoringNonProviders() {
         let parentView = TestAppearanceView()
         let intermediateView = UIView()
@@ -43,7 +43,7 @@ final class AppearanceProvider_Tests: XCTestCase {
             String(describing: appearance.colorPalette.alternativeActiveTint)
         )
     }
-    
+
     func test_components_passedDown_withoutProviders() {
         let parentView = UIView()
         let subView = TestAppearanceView()
@@ -81,10 +81,10 @@ private class TestAppearanceView: UIView, AppearanceProvider {}
 
 private class TestAppearanceViewController: UIViewController, AppearanceProvider {
     let subView = TestAppearanceView()
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         view.addSubview(subView)
     }
 }

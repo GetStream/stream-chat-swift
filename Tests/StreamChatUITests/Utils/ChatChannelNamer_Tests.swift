@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -12,7 +12,7 @@ final class ChatChannelNamer_Tests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        
+
         defaultMembers = [
             .mock(
                 id: .unique,
@@ -127,7 +127,7 @@ final class ChatChannelNamer_Tests: XCTestCase {
 
         XCTAssertEqual(nameForChannel, "Darth Maul, Darth Vader and 1 more")
     }
-    
+
     func test_defaultChannelNamer_whenChannelHasNoName_AndNotDM_returnsNil() {
         // Create channel ID, channel and currentUserId
         let channelID: String = .unique

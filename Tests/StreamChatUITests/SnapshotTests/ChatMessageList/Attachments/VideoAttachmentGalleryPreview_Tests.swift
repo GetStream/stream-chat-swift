@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -11,11 +11,11 @@ final class VideoAttachmentGalleryPreview_Tests: XCTestCase {
     func test_whenContentIsSet_videoLoadingComponentIsInvoked() throws {
         // Create mock components
         let components: Components = .mock
-                
+
         // Create a cell and inject components
         let view = VideoAttachmentGalleryPreview()
         view.components = components
-        
+
         // Assign the content
         let url = URL.localYodaImage
         view.content = ChatMessageVideoAttachment(
@@ -29,10 +29,10 @@ final class VideoAttachmentGalleryPreview_Tests: XCTestCase {
             ),
             uploadingState: nil
         )
-        
+
         // Add cell to view heirarchy to trigger lifecycle methods
         UIView().addSubview(view)
-        
+
         // Assert injected loader is invoked with correct values
         XCTAssertEqual(components.mockVideoLoader.loadPreviewForVideoMockFunc.calls.map(\.0), [url])
     }
