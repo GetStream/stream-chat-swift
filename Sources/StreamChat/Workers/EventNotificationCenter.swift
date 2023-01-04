@@ -16,6 +16,9 @@ class EventNotificationCenter: NotificationCenter {
     // model is accessed in event handlers.
     var eventPostingQueue = DispatchQueue(label: "io.getstream.event-notification-center")
 
+    // Contains the ids of the new messages that are going to be added during the ongoing process
+    private(set) var newMessageIds: Set<MessageId> = Set()
+
     init(database: DatabaseContainer) {
         self.database = database
         super.init()
@@ -36,11 +39,21 @@ class EventNotificationCenter: NotificationCenter {
         }
         log.debug(processingEventsDebugMessage(), subsystems: .webSocket)
 
+        let messageIds: [MessageId] = events.compactMap {
+            ($0 as? MessageNewEventDTO)?.message.id ?? ($0 as? NotificationMessageNewEventDTO)?.message.id
+        }
+
         var eventsToPost = [Event]()
         database.write({ session in
+            self.newMessageIds = Set(messageIds.compactMap {
+                !session.messageExists(id: $0) ? $0 : nil
+            })
+
             eventsToPost = events.compactMap {
-                self.middlewares.process(event: $0, session: session)
+                self.middlewares.process(event: $0, session: session, notificationCenter: self)
             }
+
+            self.newMessageIds = []
         }, completion: { _ in
             guard postNotifications else {
                 completion?()

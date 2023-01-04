@@ -30,7 +30,7 @@ class TypingStartCleanupMiddleware: EventMiddleware {
         self.emitEvent = emitEvent
     }
 
-    func handle(event: Event, session: DatabaseSession) -> Event? {
+    func handle(event: Event, session: DatabaseSession, notificationCenter: EventNotificationCenter) -> Event? {
         // Skip other events and typing events from `excludedUserIds`.
         guard let typingEvent = event as? TypingEventDTO, excludedUserIds().contains(typingEvent.user.id) == false else {
             return event

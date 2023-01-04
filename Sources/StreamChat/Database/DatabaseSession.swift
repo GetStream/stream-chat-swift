@@ -146,6 +146,9 @@ protocol MessageDatabaseSession {
     /// Fetches `MessageDTO` with the given `id` from the DB. Returns `nil` if no `MessageDTO` matching the `id` exists.
     func message(id: MessageId) -> MessageDTO?
 
+    /// Checks if a message exists without fetching the object
+    func messageExists(id: MessageId) -> Bool
+
     /// Fetches preview message for channel  from the database.
     func preview(for cid: ChannelId) -> MessageDTO?
 
