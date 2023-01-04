@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -10,7 +10,7 @@ struct CallTokenPayload: Decodable, Equatable {
         case agoraUid = "agora_uid"
         case agoraAppId = "agora_app_id"
     }
-    
+
     /// The call token.
     let token: String
     /// The UID related to this token (Agora only).

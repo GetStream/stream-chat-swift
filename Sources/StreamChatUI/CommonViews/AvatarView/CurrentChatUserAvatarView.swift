@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -19,12 +19,12 @@ open class CurrentChatUserAvatarView: _Control, ThemeProvider {
             updateContentIfNeeded()
         }
     }
-    
+
     /// The view that shows the current user's avatar.
     open private(set) lazy var avatarView: ChatAvatarView = components
         .avatarView.init()
         .withoutAutoresizingMaskConstraints
-    
+
     override open func setUpAppearance() {
         super.setUpAppearance()
         backgroundColor = .clear
@@ -35,12 +35,12 @@ open class CurrentChatUserAvatarView: _Control, ThemeProvider {
         get { super.isEnabled }
         set { super.isEnabled = newValue; updateContentIfNeeded() }
     }
-    
+
     override open var isHighlighted: Bool {
         get { super.isHighlighted }
         set { super.isHighlighted = newValue; updateContentIfNeeded() }
     }
-    
+
     override open var isSelected: Bool {
         get { super.isSelected }
         set { super.isSelected = newValue; updateContentIfNeeded() }
@@ -61,7 +61,7 @@ open class CurrentChatUserAvatarView: _Control, ThemeProvider {
         avatarView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         avatarView.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
     }
-    
+
     @objc override open func updateContent() {
         let currentUserImageUrl = controller?.currentUser?.imageURL
         let placeholderImage = appearance.images.userAvatarPlaceholder1
@@ -74,7 +74,7 @@ open class CurrentChatUserAvatarView: _Control, ThemeProvider {
                 placeholder: placeholderImage
             )
         )
-        
+
         alpha = state == .normal ? 1 : 0.5
     }
 }

@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -8,7 +8,7 @@ import Foundation
 public struct UserPresenceChangedEvent: Event {
     /// The user the status changed for
     public let user: ChatUser
-    
+
     /// The event timestamp
     public let createdAt: Date?
 }
@@ -17,16 +17,16 @@ class UserPresenceChangedEventDTO: EventDTO {
     let user: UserPayload
     let createdAt: Date
     let payload: EventPayload
-    
+
     init(from response: EventPayload) throws {
         user = try response.value(at: \.user)
         createdAt = try response.value(at: \.createdAt)
         payload = response
     }
-    
+
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard let userDTO = session.user(id: user.id) else { return nil }
-        
+
         return try? UserPresenceChangedEvent(
             user: userDTO.asModel(),
             createdAt: createdAt
@@ -38,7 +38,7 @@ class UserPresenceChangedEventDTO: EventDTO {
 public struct UserUpdatedEvent: Event {
     /// The updated user
     public let user: ChatUser
-    
+
     /// The event timestamp
     public let createdAt: Date?
 }
@@ -47,16 +47,16 @@ class UserUpdatedEventDTO: EventDTO {
     let user: UserPayload
     let createdAt: Date
     let payload: EventPayload
-    
+
     init(from response: EventPayload) throws {
         user = try response.value(at: \.user)
         createdAt = try response.value(at: \.createdAt)
         payload = response
     }
-    
+
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard let userDTO = session.user(id: user.id) else { return nil }
-        
+
         return try? UserUpdatedEvent(
             user: userDTO.asModel(),
             createdAt: createdAt
@@ -70,16 +70,16 @@ class UserUpdatedEventDTO: EventDTO {
 public struct UserWatchingEvent: ChannelSpecificEvent {
     /// The channel identifier a user started/stopped watching
     public let cid: ChannelId
-    
+
     /// The event timestamp
     public let createdAt: Date
-    
+
     /// The user who started/stopped watching a channel
     public let user: ChatUser
-    
+
     /// The # of channel watchers
     public let watcherCount: Int
-    
+
     /// The flag saying if watching was started or stopped
     public let isStarted: Bool
 }
@@ -91,7 +91,7 @@ class UserWatchingEventDTO: EventDTO {
     let watcherCount: Int
     let isStarted: Bool
     let payload: EventPayload
-    
+
     init(from response: EventPayload) throws {
         cid = try response.value(at: \.cid)
         user = try response.value(at: \.user)
@@ -100,10 +100,10 @@ class UserWatchingEventDTO: EventDTO {
         isStarted = response.eventType == .userStartWatching
         payload = response
     }
-    
+
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard let userDTO = session.user(id: user.id) else { return nil }
-        
+
         return try? UserWatchingEvent(
             cid: cid,
             createdAt: createdAt,
@@ -120,7 +120,7 @@ class UserWatchingEventDTO: EventDTO {
 public struct UserGloballyBannedEvent: Event {
     /// The banned user
     public let user: ChatUser
-    
+
     /// The event timestamp
     public let createdAt: Date
 }
@@ -129,16 +129,16 @@ struct UserGloballyBannedEventDTO: EventDTO {
     let user: UserPayload
     let createdAt: Date
     let payload: EventPayload
-    
+
     init(from response: EventPayload) throws {
         user = try response.value(at: \.user)
         createdAt = try response.value(at: \.createdAt)
         payload = response
     }
-    
+
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard let userDTO = session.user(id: user.id) else { return nil }
-        
+
         return try? UserGloballyBannedEvent(
             user: userDTO.asModel(),
             createdAt: createdAt
@@ -150,19 +150,19 @@ struct UserGloballyBannedEventDTO: EventDTO {
 public struct UserBannedEvent: ChannelSpecificEvent {
     /// The channel identifer user is banned at.
     public let cid: ChannelId
-    
+
     /// The banned user.
     public let user: ChatUser
-    
+
     /// The identifier of a user who initiated a ban.
     public let ownerId: UserId
-    
+
     /// The event timestamp
     public let createdAt: Date?
-    
+
     /// The ban reason.
     public let reason: String?
-    
+
     /// The ban expiration date.
     public let expiredAt: Date?
 }
@@ -175,7 +175,7 @@ class UserBannedEventDTO: EventDTO {
     let reason: String?
     let expiredAt: Date?
     let payload: EventPayload
-    
+
     init(from response: EventPayload) throws {
         cid = try response.value(at: \.cid)
         user = try response.value(at: \.user)
@@ -185,10 +185,10 @@ class UserBannedEventDTO: EventDTO {
         expiredAt = response.banExpiredAt
         payload = response
     }
-    
+
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard let userDTO = session.user(id: user.id) else { return nil }
-        
+
         return try? UserBannedEvent(
             cid: cid,
             user: userDTO.asModel(),
@@ -204,7 +204,7 @@ class UserBannedEventDTO: EventDTO {
 public struct UserGloballyUnbannedEvent: Event {
     /// The unbanned user.
     public let user: ChatUser
-    
+
     /// The event timestamp
     public let createdAt: Date
 }
@@ -213,16 +213,16 @@ struct UserGloballyUnbannedEventDTO: EventDTO {
     let user: UserPayload
     let createdAt: Date
     let payload: EventPayload
-    
+
     init(from response: EventPayload) throws {
         user = try response.value(at: \.user)
         createdAt = try response.value(at: \.createdAt)
         payload = response
     }
-    
+
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard let userDTO = session.user(id: user.id) else { return nil }
-        
+
         return try? UserGloballyUnbannedEvent(
             user: userDTO.asModel(),
             createdAt: createdAt
@@ -234,10 +234,10 @@ struct UserGloballyUnbannedEventDTO: EventDTO {
 public struct UserUnbannedEvent: ChannelSpecificEvent {
     /// The channel identifer user is unbanned at.
     public let cid: ChannelId
-    
+
     /// The unbanned user.
     public let user: ChatUser
-    
+
     /// The event timestamp
     public let createdAt: Date?
 }
@@ -247,17 +247,17 @@ class UserUnbannedEventDTO: EventDTO {
     let user: UserPayload
     let createdAt: Date
     let payload: EventPayload
-    
+
     init(from response: EventPayload) throws {
         cid = try response.value(at: \.cid)
         user = try response.value(at: \.user)
         createdAt = try response.value(at: \.createdAt)
         payload = response
     }
-    
+
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard let userDTO = session.user(id: user.id) else { return nil }
-        
+
         return try? UserUnbannedEvent(
             cid: cid,
             user: userDTO.asModel(),

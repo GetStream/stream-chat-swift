@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -10,7 +10,7 @@ struct MissingEventsRequestBody: Encodable {
         case lastSyncedAt = "last_sync_at"
         case cids = "channel_cids"
     }
-    
+
     let lastSyncedAt: Date
     let cids: [ChannelId]
 }

@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -9,33 +9,33 @@ import XCTest
 @available(iOS 13, *)
 final class MessageController_SwiftUI_Tests: iOS13TestCase {
     var messageController: ChatMessageController_Mock!
-    
+
     override func setUp() {
         super.setUp()
         messageController = ChatMessageController_Mock.mock()
     }
-    
+
     override func tearDown() {
         AssertAsync.canBeReleased(&messageController)
         messageController = nil
         super.tearDown()
     }
-    
+
     func test_controllerInitialValuesAreLoaded() {
         messageController.state_mock = .localDataFetched
         messageController.message_mock = .unique
         messageController.replies_mock = [.unique]
-        
+
         let observableObject = messageController.observableObject
-        
+
         XCTAssertEqual(observableObject.state, messageController.state)
         XCTAssertEqual(observableObject.message, messageController.message)
         XCTAssertEqual(observableObject.replies, messageController.replies)
     }
-    
+
     func test_observableObject_reactsToDelegateMessageChangeCallback() {
         let observableObject = messageController.observableObject
-        
+
         // Simulate message change
         let newMessage: ChatMessage = .unique
         messageController.message_mock = newMessage
@@ -45,13 +45,13 @@ final class MessageController_SwiftUI_Tests: iOS13TestCase {
                 didChangeMessage: .create(newMessage)
             )
         }
-        
+
         AssertAsync.willBeEqual(observableObject.message, newMessage)
     }
-    
+
     func test_observableObject_reactsToDelegateRepliesChangesCallback() {
         let observableObject = messageController.observableObject
-        
+
         // Simulate replies changes
         let newReply: ChatMessage = .unique
         messageController.replies_mock = [newReply]
@@ -61,7 +61,7 @@ final class MessageController_SwiftUI_Tests: iOS13TestCase {
                 didChangeReplies: [.insert(newReply, index: .init())]
             )
         }
-        
+
         AssertAsync.willBeEqual(Array(observableObject.replies), [newReply])
     }
 
@@ -87,7 +87,7 @@ final class MessageController_SwiftUI_Tests: iOS13TestCase {
 
         AssertAsync.willBeEqual(Array(observableObject.reactions), [newReaction])
     }
-    
+
     func test_observableObject_reactsToDelegateStateChangesCallback() {
         let observableObject = messageController.observableObject
         // Simulate state change
@@ -99,7 +99,7 @@ final class MessageController_SwiftUI_Tests: iOS13TestCase {
                 didChangeState: newState
             )
         }
-        
+
         AssertAsync.willBeEqual(observableObject.state, newState)
     }
 }

@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -66,7 +66,7 @@ final class AttachmentQueueUploader_Tests: XCTestCase {
 
             // Assert attachment is in `.pendingUpload` state.
             XCTAssertEqual(attachment.localState, .pendingUpload)
-            
+
             let attachmentModelId = try XCTUnwrap(attachment.asAnyModel()).id
             // Wait attachment uploading begins.
             AssertAsync.willBeEqual(

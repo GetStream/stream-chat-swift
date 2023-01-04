@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -9,7 +9,7 @@ public enum Message {
     public static func message(withInvalidCommand command: String) -> String {
         "Sorry, command \(command) doesn't exist. Try posting your message without the starting /"
     }
-    
+
     public static var blockedByModerationPolicies: String {
         "Message was blocked by moderation policies"
     }
@@ -25,16 +25,16 @@ public enum MockFile: String {
     case httpChannels = "http_channels"
     case httpAttachment = "http_attachment"
     case httpTruncate = "http_truncate"
-    
+
     case wsChatEvent = "ws_events"
     case wsChannelEvent = "ws_events_channel"
     case wsMemberEvent = "ws_events_member"
     case wsReaction = "ws_reaction"
     case wsHealthCheck = "ws_health_check"
-    
+
     case youtube = "http_youtube_link"
     case unsplash = "http_unsplash_link"
-    
+
     case pushNotification = "push_notification"
 
     var filePath: String {
@@ -97,7 +97,7 @@ public enum JSONKey {
         public static let removeMembers = "remove_members"
         public static let truncatedBy = "truncated_by"
     }
-    
+
     public enum AttachmentAction {
         public static let send = "send"
         public static let shuffle = "shuffle"
@@ -148,7 +148,7 @@ public enum UserDetails {
         userKey.name.rawValue: "Luke Skywalker",
         userKey.imageURL.rawValue: "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg"
     ]
-    
+
     public static let countDooku = [
         userKey.id.rawValue: "count_dooku",
         userKey.name.rawValue: "Count Dooku",

@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -15,12 +15,12 @@ public class ChatChannelListController_Mock: ChatChannelListController, Spy {
     public static func mock(client: ChatClient? = nil) -> ChatChannelListController_Mock {
         .init(query: .init(filter: .equal(.memberCount, to: 0)), client: client ?? .mock())
     }
-    
+
     public private(set) var channels_mock: [ChatChannel]?
     override public var channels: LazyCachedMapCollection<ChatChannel> {
         channels_mock.map { $0.lazyCachedMap { $0 } } ?? super.channels
     }
-    
+
     public private(set) var state_mock: State?
     override public var state: DataController.State {
         get { state_mock ?? super.state }
@@ -47,7 +47,7 @@ public extension ChatChannelListController_Mock {
         channels_mock = channels
         state_mock = state
     }
-    
+
     /// Simulates changes in the channels array. Observers are notified with the provided `changes` value.
     func simulate(channels: [ChatChannel], changes: [ListChange<ChatChannel>]) {
         channels_mock = channels
@@ -55,7 +55,7 @@ public extension ChatChannelListController_Mock {
             $0.controller(self, didChangeChannels: changes)
         }
     }
-    
+
     /// Simulates changes of `state`. Observers are notified with the new value.
     func simulate(state: DataController.State) {
         state_mock = state

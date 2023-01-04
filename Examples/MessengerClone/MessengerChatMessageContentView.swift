@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -10,18 +10,18 @@ struct MessengerChatMessageContentView: ChatMessageContentView.SwiftUIView {
     @EnvironmentObject var appearance: Appearance.ObservableObject
     @EnvironmentObject var components: Components.ObservableObject
     @ObservedObject var dataSource: ChatMessageContentView.ObservedObject<Self>
-    
+
     private let dateFormatter: DateFormatter = {
         let df = DateFormatter()
         df.dateStyle = .medium
         df.timeStyle = .short
         return df
     }()
-    
+
     init(dataSource: ChatMessageContentView.ObservedObject<MessengerChatMessageContentView>) {
         self.dataSource = dataSource
     }
-    
+
     var body: some View {
         if let message = dataSource.content {
             VStack {

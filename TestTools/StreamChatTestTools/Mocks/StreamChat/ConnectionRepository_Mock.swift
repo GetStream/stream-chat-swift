@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -66,7 +66,7 @@ final class ConnectionRepository_Mock: ConnectionRepository, Spy {
             completion?(result.error)
         }
     }
-    
+
     override func disconnect(
         source: WebSocketConnectionState.DisconnectionSource = .userInitiated,
         completion: @escaping () -> Void

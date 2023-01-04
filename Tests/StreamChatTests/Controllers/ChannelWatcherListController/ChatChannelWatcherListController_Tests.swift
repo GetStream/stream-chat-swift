@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -182,7 +182,7 @@ final class ChatChannelWatcherListController_Tests: XCTestCase {
 
         // Simulate the updater callback
         env.watcherListUpdater?.channelWatchers_completion?(nil)
-        
+
         XCTAssertEqual(controller.watchers.map(\.id), [watcherId])
     }
 

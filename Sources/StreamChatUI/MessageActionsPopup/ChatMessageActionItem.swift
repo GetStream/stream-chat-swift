@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -35,7 +35,7 @@ public struct InlineReplyActionItem: ChatMessageActionItem {
     public var title: String { L10n.Message.Actions.inlineReply }
     public let icon: UIImage
     public let action: (ChatMessageActionItem) -> Void
-    
+
     /// Init of `InlineReplyActionItem`.
     /// - Parameters:
     ///     - action: Action to be triggered when `InlineReplyActionItem` is tapped.
@@ -54,7 +54,7 @@ public struct ThreadReplyActionItem: ChatMessageActionItem {
     public var title: String { L10n.Message.Actions.threadReply }
     public let icon: UIImage
     public let action: (ChatMessageActionItem) -> Void
-    
+
     /// Init of `ThreadReplyActionItem`.
     /// - Parameters:
     ///     - action: Action to be triggered when `ThreadReplyActionItem` is tapped.
@@ -73,7 +73,7 @@ public struct EditActionItem: ChatMessageActionItem {
     public var title: String { L10n.Message.Actions.edit }
     public let icon: UIImage
     public let action: (ChatMessageActionItem) -> Void
-    
+
     /// Init of `EditActionItem`.
     /// - Parameters:
     ///     - action: Action to be triggered when `EditActionItem` is tapped.
@@ -92,7 +92,7 @@ public struct CopyActionItem: ChatMessageActionItem {
     public var title: String { L10n.Message.Actions.copy }
     public let icon: UIImage
     public let action: (ChatMessageActionItem) -> Void
-    
+
     /// Init of `CopyActionItem`
     /// - Parameters:
     ///     - action: Action to be triggered when `CopyActionItem` is tapped.
@@ -111,7 +111,7 @@ public struct UnblockUserActionItem: ChatMessageActionItem {
     public var title: String { L10n.Message.Actions.userUnblock }
     public let icon: UIImage
     public let action: (ChatMessageActionItem) -> Void
-    
+
     /// Init of `UnblockUserActionItem`.
     /// - Parameters:
     ///     - action: Action to be triggered when `UnblockUserActionItem` is tapped.
@@ -130,7 +130,7 @@ public struct BlockUserActionItem: ChatMessageActionItem {
     public var title: String { L10n.Message.Actions.userBlock }
     public let icon: UIImage
     public let action: (ChatMessageActionItem) -> Void
-    
+
     /// Init of `BlockUserActionItem`.
     /// - Parameters:
     ///     - action: Action to be triggered when `BlockUserActionItem` is tapped.
@@ -149,7 +149,7 @@ public struct MuteUserActionItem: ChatMessageActionItem {
     public var title: String { L10n.Message.Actions.userMute }
     public let icon: UIImage
     public let action: (ChatMessageActionItem) -> Void
-    
+
     /// Init of `MuteUserActionItem`.
     /// - Parameters:
     ///     - action: Action to be triggered when `MuteUserActionItem` is tapped.
@@ -168,7 +168,7 @@ public struct UnmuteUserActionItem: ChatMessageActionItem {
     public var title: String { L10n.Message.Actions.userUnmute }
     public let icon: UIImage
     public let action: (ChatMessageActionItem) -> Void
-    
+
     /// Init of `UnmuteUserActionItem`.
     /// - Parameters:
     ///     - action: Action to be triggered when `UnmuteUserActionItem` is tapped.
@@ -188,7 +188,7 @@ public struct DeleteActionItem: ChatMessageActionItem {
     public var isDestructive: Bool { true }
     public let icon: UIImage
     public let action: (ChatMessageActionItem) -> Void
-    
+
     /// Init of `DeleteActionItem`.
     /// - Parameters:
     ///     - action: Action to be triggered when `DeleteActionItem` is tapped.
@@ -208,7 +208,7 @@ public struct ResendActionItem: ChatMessageActionItem {
     public var isPrimary: Bool { true }
     public let icon: UIImage
     public let action: (ChatMessageActionItem) -> Void
-    
+
     /// Init of `ResendActionItem`.
     /// - Parameters:
     ///     - action: Action to be triggered when `ResendActionItem` is tapped.
@@ -227,7 +227,7 @@ public struct FlagActionItem: ChatMessageActionItem {
     public var title: String { L10n.Message.Actions.flag }
     public let icon: UIImage
     public let action: (ChatMessageActionItem) -> Void
-    
+
     /// Init of `FlagActionItem`.
     /// - Parameters:
     ///     - action: Action to be triggered when `FlagActionItem` is tapped.

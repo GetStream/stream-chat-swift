@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -67,10 +67,10 @@ open class ChatMentionSuggestionView: _View, ThemeProvider {
     override open func updateContent() {
         usernameLabel.text = content?.name
         usernameLabel.isHidden = usernameLabel.text?.isEmpty ?? true
-        
+
         usernameTagLabel.text = content.map { "@" + $0.id }
         usernameTagLabel.isHidden = usernameTagLabel.text?.isEmpty ?? true
-        
+
         avatarView.content = content
     }
 

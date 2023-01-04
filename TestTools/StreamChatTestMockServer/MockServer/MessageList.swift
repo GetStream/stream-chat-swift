@@ -1,15 +1,15 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
 import XCTest
 
 public extension StreamMockServer {
-    
+
     func saveMessage(_ message: [String: Any]?) {
         guard let newMessage = message else { return }
-        
+
         let newMessageId = newMessage[messageKey.id.rawValue] as? String
         if let messageIndex = messageList.firstIndex(where: { (message) -> Bool in
             let existedMessageId = message[messageKey.id.rawValue] as? String
@@ -20,10 +20,10 @@ public extension StreamMockServer {
             messageList.append(newMessage)
         }
     }
-    
+
     func saveReply(_ message: [String: Any]?) {
         guard let newMessage = message else { return }
-        
+
         let newMessageId = newMessage[messageKey.id.rawValue] as? String
         if let messageIndex = threadList.firstIndex(where: { (message) -> Bool in
             let existedMessageId = message[messageKey.id.rawValue] as? String
@@ -34,40 +34,40 @@ public extension StreamMockServer {
             threadList.append(newMessage)
         }
     }
-    
+
     var firstMessage: [String: Any]? {
         try? XCTUnwrap(waitForMessageList().first)
     }
-    
+
     var lastMessage: [String: Any]? {
         try? XCTUnwrap(waitForMessageList().last)
     }
-    
+
     func findMessageByIndex(_ index: Int) -> [String: Any]? {
         try? XCTUnwrap(waitForMessageList()[index])
     }
-    
+
     func findMessageById(_ id: String) -> [String: Any]? {
         try? XCTUnwrap(waitForMessageWithId(id))
     }
-    
+
     func findMessageByUserId(_ userId: String) -> [String: Any]? {
         try? XCTUnwrap(waitForMessageWithUserId(userId))
     }
-    
+
     func findMessagesByParentId(_ parentId: String) -> [[String: Any]] {
         _ = waitForMessageWithId(parentId)
         return (messageList + threadList).filter {
             ($0[messageKey.parentId.rawValue] as? String) == parentId
         }
     }
-    
+
     func findMessagesByChannelId(_ channelId: String) -> [[String: Any]] {
         return messageList.filter {
             String(describing: $0[messageKey.cid.rawValue]).contains(":\(channelId)")
         }
     }
-    
+
     func removeMessage(_ deletedMessage: [String: Any]?) {
         if let deletedIndex = messageList.firstIndex(where: { (message) -> Bool in
             (message[messageKey.id.rawValue] as? String) == (deletedMessage?[messageKey.id.rawValue] as? String)
@@ -75,19 +75,19 @@ public extension StreamMockServer {
             messageList.remove(at: deletedIndex)
         }
     }
-    
+
     func removeMessage(id: String) {
         let deletedMessage = try? XCTUnwrap(waitForMessageWithId(id))
         removeMessage(deletedMessage)
     }
-    
+
     @discardableResult
     private func waitForMessageList() -> [[String: Any]] {
         let endTime = TestData.waitingEndTime
         while messageList.isEmpty && endTime > TestData.currentTimeInterval {}
         return messageList
     }
-    
+
     private func waitForMessageWithId(_ id: String) -> [String: Any]? {
         let endTime = TestData.waitingEndTime
         var newMessageList: [[String: Any]] = []
@@ -98,7 +98,7 @@ public extension StreamMockServer {
         }
         return newMessageList.first
     }
-    
+
     private func waitForMessageWithUserId(_ userId: String) -> [String: Any]? {
         let endTime = TestData.waitingEndTime
         var newMessageList: [[String: Any]] = []
@@ -110,7 +110,7 @@ public extension StreamMockServer {
         }
         return newMessageList.first
     }
-    
+
     func waitForWebsocketMessage(withText text: String,
                                  timeout: Double = StreamMockServer.waitTimeout) {
         let endTime = Date().timeIntervalSince1970 * 1000 + timeout * 1000
@@ -119,7 +119,7 @@ public extension StreamMockServer {
             print("Waiting for websocket message with text: '\(text)'")
         }
     }
-    
+
     func waitForHttpMessage(withText text: String,
                             timeout: Double = StreamMockServer.waitTimeout) {
         let endTime = Date().timeIntervalSince1970 * 1000 + timeout * 1000
@@ -128,7 +128,7 @@ public extension StreamMockServer {
             print("Waiting for http message with text: '\(text)'")
         }
     }
-    
+
     func mockMessagePagination(
         messageList: [[String: Any]],
         limit: Int,

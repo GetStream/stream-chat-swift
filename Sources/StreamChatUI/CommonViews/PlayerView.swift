@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import AVKit
@@ -10,17 +10,17 @@ import UIKit
 open class PlayerView: _View {
     /// A player this view is following.
     open private(set) lazy var player = AVPlayer()
-    
+
     override open func setUp() {
         super.setUp()
-        
+
         playerLayer?.player = player
     }
-    
+
     public var playerLayer: AVPlayerLayer? {
         layer as? AVPlayerLayer
     }
-    
+
     override public static var layerClass: AnyClass {
         AVPlayerLayer.self
     }

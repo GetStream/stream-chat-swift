@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -9,10 +9,10 @@ import Foundation
 public enum EntityChange<Item> {
     /// The item was created or the recent changes to it make it match the predicate of the observer.
     case create(_ item: Item)
-    
+
     /// The item was updated.
     case update(_ item: Item)
-    
+
     /// The item was deleted or it no longer matches the predicate of the observer.
     case remove(_ item: Item)
 }
@@ -43,7 +43,7 @@ extension EntityChange {
             return item
         }
     }
-    
+
     /// Returns `EntityChange` of the same type but for the specific field
     func fieldChange<Value>(_ path: KeyPath<Item, Value>) -> EntityChange<Value> {
         let field = item[keyPath: path]
@@ -79,11 +79,11 @@ extension EntityChange {
 class EntityDatabaseObserver<Item, DTO: NSManagedObject> {
     /// The observed item. `nil` of no item matches the predicate or the item was deleted.
     @Cached var item: Item?
-    
+
     /// Called with the aggregated changes after the internal `NSFetchResultsController` calls `controllerDidChangeContent`
     /// on its delegate.
     private var listeners: [(EntityChange<Item>) -> Void] = []
-    
+
     /// Acts like the `NSFetchedResultsController`'s delegate and aggregates the reported changes into easily consumable form.
     private(set) lazy var changeAggregator = ListChangeAggregator<DTO, Item>(itemCreator: itemCreator)
         .onChange { [weak self] listChanges in
@@ -97,17 +97,17 @@ class EntityDatabaseObserver<Item, DTO: NSManagedObject> {
                 self.listeners.forEach { $0(entityChange) }
             }
         }
-    
+
     /// Used for observing the changes in the DB.
     private(set) var frc: NSFetchedResultsController<DTO>!
-    
+
     let itemCreator: (DTO) throws -> Item
     let request: NSFetchRequest<DTO>
     let context: NSManagedObjectContext
-    
+
     /// When called, release the notification observers
     var releaseNotificationObservers: (() -> Void)?
-    
+
     /// Creates a new `ListObserver`.
     ///
     /// Please note that no updates are reported until you call `startUpdating`.
@@ -136,17 +136,17 @@ class EntityDatabaseObserver<Item, DTO: NSManagedObject> {
             sectionNameKeyPath: nil,
             cacheName: nil
         )
-        
+
         // We want item to report nil until `startObserving` is called
         _item.computeValue = { nil }
-        
+
         listenForRemoveAllDataNotifications()
     }
-    
+
     deinit {
         releaseNotificationObservers?()
     }
-    
+
     /// Starts observing the changes in the database. The current items in the list are synchronously available in the
     /// `item` variable, after this function returns.
     ///
@@ -159,7 +159,7 @@ class EntityDatabaseObserver<Item, DTO: NSManagedObject> {
                 fetchedObjects.count <= 1,
                 "EntityDatabaseObserver predicate must match exactly 0 or 1 entities. Matched: \(fetchedObjects)"
             )
-            
+
             return fetchedObjects.first.flatMap { dto in
                 var result: Item?
                 context.performAndWait {
@@ -168,18 +168,18 @@ class EntityDatabaseObserver<Item, DTO: NSManagedObject> {
                 return result
             }
         }
-        
+
         try frc.performFetch()
         frc.delegate = changeAggregator
-        
+
         _item.reset()
     }
-    
+
     /// Listens for `Will/DidRemoveAllData` notifications from the context and simulates the callback when the notifications
     /// are received.
     private func listenForRemoveAllDataNotifications() {
         let notificationCenter = NotificationCenter.default
-        
+
         // When `WillRemoveAllDataNotification` is received, we need to simulate the callback from change observer, like all
         // existing entities are being removed. At this point, these entities still existing in the context, and it's safe to
         // access and serialize them.
@@ -192,10 +192,10 @@ class EntityDatabaseObserver<Item, DTO: NSManagedObject> {
             // cause a race condition when the notification observers are not removed at the right time.
             guard let self = self else { return }
             guard let fetchResultsController = self.frc as? NSFetchedResultsController<NSFetchRequestResult> else { return }
-            
+
             // Simulate ChangeObserver callbacks like all data are being removed
             self.changeAggregator.controllerWillChangeContent(fetchResultsController)
-            
+
             self.frc.fetchedObjects?.enumerated().forEach { index, item in
                 self.changeAggregator.controller(
                     fetchResultsController,
@@ -205,18 +205,18 @@ class EntityDatabaseObserver<Item, DTO: NSManagedObject> {
                     newIndexPath: nil
                 )
             }
-            
+
             // Publish the changes
             self.changeAggregator.controllerDidChangeContent(fetchResultsController)
-            
+
             // Remove delegate so it doesn't get further removal updates
             self.frc.delegate = nil
-            
+
             // Remove the cached item since it's now deleted, technically
             self._item.computeValue = { nil }
             self._item.reset()
         }
-        
+
         // When `DidRemoveAllDataNotification` is received, we need to reset the FRC. At this point, the entities are removed but
         // the FRC doesn't know about it yet. Resetting the FRC removes the content of `FRC.fetchedObjects`.
         let didRemoveAllDataNotificationObserver = notificationCenter.addObserver(
@@ -227,7 +227,7 @@ class EntityDatabaseObserver<Item, DTO: NSManagedObject> {
             // Technically, this should rather be `unowned`, however, `deinit` is not always called on the main thread which can
             // cause a race condition when the notification observers are not removed at the right time.
             guard let self = self else { return }
-            
+
             // Reset FRC which causes the current `frc.fetchedObjects` to be reloaded
             do {
                 try self.startObserving()
@@ -235,7 +235,7 @@ class EntityDatabaseObserver<Item, DTO: NSManagedObject> {
                 log.error("Error when starting observing: \(error)")
             }
         }
-        
+
         releaseNotificationObservers = { [weak notificationCenter] in
             notificationCenter?.removeObserver(willRemoveAllDataNotificationObserver)
             notificationCenter?.removeObserver(didRemoveAllDataNotificationObserver)
@@ -250,7 +250,7 @@ extension EntityDatabaseObserver {
         listeners.append(listener)
         return self
     }
-    
+
     /// A builder-function that adds new listener for the specific `Item` field
     /// and returns the updated `EntityDatabaseObserver` instance
     ///
@@ -266,10 +266,10 @@ extension EntityDatabaseObserver {
     ) -> EntityDatabaseObserver {
         // The value that stores the last received `EntityChange<Value>` and is captured by ref by the closure
         var lastChange: EntityChange<Value>?
-        
+
         return onChange {
             let change = $0.fieldChange(keyPath)
-            
+
             if change != lastChange {
                 listener(change)
                 lastChange = change

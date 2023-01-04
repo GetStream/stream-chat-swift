@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -50,7 +50,7 @@ class ChannelListUpdater: Worker {
                     query: updatedQuery,
                     initialActions: { session in
                         guard let queryDTO = session.channelListQuery(filterHash: updatedQuery.filter.filterHash) else { return }
-                        
+
                         let localQueryCIDs = Set(queryDTO.channels.compactMap { try? ChannelId(cid: $0.cid) })
                         let remoteQueryCIDs = Set(channelListPayload.channels.map(\.channel.cid))
 
@@ -127,7 +127,7 @@ class ChannelListUpdater: Worker {
             completion: completion
         )
     }
-    
+
     /// Marks all channels for a user as read.
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func markAllRead(completion: ((Error?) -> Void)? = nil) {

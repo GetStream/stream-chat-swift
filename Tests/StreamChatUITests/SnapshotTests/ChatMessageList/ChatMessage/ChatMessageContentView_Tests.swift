@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -19,7 +19,7 @@ final class ChatMessageContentView_Tests: XCTestCase {
 
     func test_appearance() {
         let components = Components.mock
-        
+
         // Iterate over messages and layouts.
         for (message, layout) in testMessagesAndLayouts {
             // Create message content view with the provided `message` and `layout`.
@@ -63,7 +63,7 @@ final class ChatMessageContentView_Tests: XCTestCase {
             layout: failedMessage.layout(isLastInGroup: true),
             components: components
         )
-        
+
         // Add view to view heirarchy to trigger lifecycle methods.
         UIView().addSubview(view)
 
@@ -98,7 +98,7 @@ final class ChatMessageContentView_Tests: XCTestCase {
         // Assert message content view is rendered correctly.
         AssertSnapshot(view)
     }
-    
+
     func test_appearanceForSystemMessage() {
         // Create a system message
         let systemMessage: ChatMessage = .mock(
@@ -110,7 +110,7 @@ final class ChatMessageContentView_Tests: XCTestCase {
             createdAt: createdAt,
             isSentByCurrentUser: false
         )
-        
+
         let appearance = Appearance.default
 
         let view = contentView(
@@ -122,7 +122,7 @@ final class ChatMessageContentView_Tests: XCTestCase {
         // Assert message content view is rendered correctly.
         AssertSnapshot(view)
     }
-    
+
     func test_appearanceForErrorMessage() {
         // Create a system message
         let systemMessage: ChatMessage = .mock(
@@ -134,25 +134,25 @@ final class ChatMessageContentView_Tests: XCTestCase {
             createdAt: createdAt,
             isSentByCurrentUser: false
         )
-        
+
         let appearance = Appearance.default
-        
+
         let view = contentView(
             message: systemMessage,
             layout: systemMessage.layout(isLastInGroup: true),
             appearance: appearance
         )
-        
+
         // Assert message content view is rendered correctly.
         AssertSnapshot(view)
     }
-    
+
     func test_appearance_whenMessageFromTheCurrentUserIsPendingSend() {
         let channelWithReadsEnabled: ChatChannel = .mock(
             cid: .unique,
             config: .mock(readEventsEnabled: true)
         )
-        
+
         let pendingSendMessageFromCurrentUser: ChatMessage = .mock(
             id: .unique,
             cid: channelWithReadsEnabled.cid,
@@ -162,21 +162,21 @@ final class ChatMessageContentView_Tests: XCTestCase {
             localState: .sending,
             isSentByCurrentUser: true
         )
-        
+
         let view = contentView(
             message: pendingSendMessageFromCurrentUser,
             channel: channelWithReadsEnabled
         )
-        
+
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
-    
+
     func test_appearance_whenMessageFromTheCurrentUserIsSent() {
         let channelWithReadsEnabled: ChatChannel = .mock(
             cid: .unique,
             config: .mock(readEventsEnabled: true)
         )
-        
+
         let sentMessageFromCurrentUser: ChatMessage = .mock(
             id: .unique,
             cid: channelWithReadsEnabled.cid,
@@ -187,28 +187,28 @@ final class ChatMessageContentView_Tests: XCTestCase {
             isSentByCurrentUser: true,
             readBy: []
         )
-        
+
         let view = contentView(
             message: sentMessageFromCurrentUser,
             channel: channelWithReadsEnabled
         )
-        
+
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
-    
+
     func test_appearance_whenMessageWithMarkdownFromTheCurrentUserIsSent() {
         let channelWithReadsEnabled: ChatChannel = .mock(
             cid: .unique,
             config: .mock(readEventsEnabled: true)
         )
-        
+
         let messageWithMarkdown = """
           *italics* or _italics_
           **bold** or __bold__
           ~~Linethrough~~Strikethroughs.
           `let property: Double = 10.0`
         """
-        
+
         let sentMessageFromCurrentUser: ChatMessage = .mock(
             id: .unique,
             cid: channelWithReadsEnabled.cid,
@@ -219,22 +219,22 @@ final class ChatMessageContentView_Tests: XCTestCase {
             isSentByCurrentUser: true,
             readBy: []
         )
-        
+
         let view = contentView(
             message: sentMessageFromCurrentUser,
             channel: channelWithReadsEnabled
         )
-        
+
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
-    
+
     func test_appearance_whenMessageFromTheCurrentUserIsRead_inDirectMesssagesChannel() {
         let dmChannelWithReadsEnabled: ChatChannel = .mock(
             cid: .unique,
             config: .mock(readEventsEnabled: true),
             memberCount: 2
         )
-        
+
         let sentMessageFromCurrentUser: ChatMessage = .mock(
             id: .unique,
             cid: dmChannelWithReadsEnabled.cid,
@@ -245,22 +245,22 @@ final class ChatMessageContentView_Tests: XCTestCase {
             isSentByCurrentUser: true,
             readBy: [.mock(id: .unique)]
         )
-        
+
         let view = contentView(
             message: sentMessageFromCurrentUser,
             channel: dmChannelWithReadsEnabled
         )
-        
+
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
-    
+
     func test_appearance_whenMessageFromTheCurrentUserIsRead_inGroupChannel() {
         let groupChannelWithReadsEnabled: ChatChannel = .mock(
             cid: .unique,
             config: .mock(readEventsEnabled: true),
             memberCount: 5
         )
-        
+
         let sentMessageFromCurrentUser: ChatMessage = .mock(
             id: .unique,
             cid: groupChannelWithReadsEnabled.cid,
@@ -271,12 +271,12 @@ final class ChatMessageContentView_Tests: XCTestCase {
             isSentByCurrentUser: true,
             readBy: [.mock(id: .unique)]
         )
-        
+
         let view = contentView(
             message: sentMessageFromCurrentUser,
             channel: groupChannelWithReadsEnabled
         )
-        
+
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
 
@@ -311,7 +311,7 @@ final class ChatMessageContentView_Tests: XCTestCase {
             layout: testMessage.layout(isLastInGroup: true),
             components: components
         )
-        
+
         // Add view to view heirarchy to trigger lifecycle methods.
         UIView().addSubview(view)
 
@@ -320,17 +320,17 @@ final class ChatMessageContentView_Tests: XCTestCase {
         XCTAssertNotNil(reactionBubbleView)
         XCTAssert(reactionBubbleView is CustomChatReactionsBubbleView)
     }
-    
+
     func test_appearance_whenMessageWithAMentionedUserIsSent() {
         let channelWithReadsEnabled: ChatChannel = .mock(
             cid: .unique,
             config: .mock(readEventsEnabled: true)
         )
-        
+
         let mentionedUser = myFriend
         mentionedUser.name = "MyFriend"
         let messageWithMention = "Hello @\(mentionedUser.name ?? "")!, how are you?"
-        
+
         let sentMessageFromCurrentUser: ChatMessage = .mock(
             id: .unique,
             cid: channelWithReadsEnabled.cid,
@@ -342,12 +342,12 @@ final class ChatMessageContentView_Tests: XCTestCase {
             isSentByCurrentUser: true,
             readBy: []
         )
-        
+
         let view = contentView(
             message: sentMessageFromCurrentUser,
             channel: channelWithReadsEnabled
         )
-        
+
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
 
@@ -625,7 +625,7 @@ private extension ChatMessageContentView_Tests {
             with: .init([message]),
             appearance: appearance
         )
-        
+
         let view = ChatMessageContentView().withoutAutoresizingMaskConstraints
         view.widthAnchor.constraint(equalToConstant: contentViewWidth).isActive = true
         view.appearance = appearance
@@ -642,7 +642,7 @@ extension ChatMessage {
         guard type != .system && type != .error else {
             return [.centered, .text]
         }
-        
+
         var options: ChatMessageLayoutOptions = [
             .bubble
         ]

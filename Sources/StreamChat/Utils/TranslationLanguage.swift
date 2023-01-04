@@ -1,16 +1,16 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
 
 public struct TranslationLanguage: Hashable {
     let languageCode: String
-    
+
     public init(languageCode: String) {
         self.languageCode = languageCode
     }
-    
+
     init?(locale: Locale) {
         guard let languageCode = locale.languageCode else { return nil }
         let regionCode = locale.regionCode ?? ""
@@ -74,7 +74,7 @@ public extension TranslationLanguage {
     static let ukrainian: TranslationLanguage = TranslationLanguage(languageCode: "uk")
     static let urdu: TranslationLanguage = TranslationLanguage(languageCode: "ur")
     static let vietnamese: TranslationLanguage = TranslationLanguage(languageCode: "vi")
-    
+
     static var allCases: [Self] = [
         .afrikaans,
         .albanian,

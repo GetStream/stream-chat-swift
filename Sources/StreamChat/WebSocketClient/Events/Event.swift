@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -18,7 +18,7 @@ extension Event {
 protocol EventDTO: Event {
     /// The entire event payload.
     var payload: EventPayload { get }
-    
+
     /// Converts event DTO to event with evaluated models.
     ///
     /// If some model is missing in database `nil` is returned.

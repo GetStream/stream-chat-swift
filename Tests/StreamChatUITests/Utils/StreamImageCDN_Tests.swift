@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -21,30 +21,30 @@ final class StreamImageCDN_Tests: XCTestCase {
 
     func test_cachingKey_shouldRemoveUnwantedQueryParameters() {
         let streamCDN = StreamImageCDN()
-        
+
         let url = URL(string: "\(baseUrl)/image.jpg?name=Luke&father=Anakin")!
         let filteredUrl = "\(baseUrl)/image.jpg"
         let key = streamCDN.cachingKey(forImageUrl: url)
-        
+
         XCTAssertEqual(key, filteredUrl)
     }
-    
+
     func test_cachingKey_shouldFilterWantedQueryParameters() {
         let streamCDN = StreamImageCDN()
-        
+
         let url = URL(string: "\(baseUrl)/image.jpg?name=Luke&w=128&h=128&crop=center&resize=crop&ro=0")!
         let filteredUrl = "\(baseUrl)/image.jpg?w=128&h=128&crop=center&resize=crop"
         let key = streamCDN.cachingKey(forImageUrl: url)
-        
+
         XCTAssertEqual(key, filteredUrl)
     }
-    
+
     func test_cachingKey_whenThereIsNoQueryParameters() {
         let streamCDN = StreamImageCDN()
-        
+
         let url = URL(string: "\(baseUrl)/image.jpg")!
         let key = streamCDN.cachingKey(forImageUrl: url)
-        
+
         XCTAssertEqual(key, "\(baseUrl)/image.jpg")
     }
 

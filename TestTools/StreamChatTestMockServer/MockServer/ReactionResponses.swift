@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -9,7 +9,7 @@ import XCTest
 public let reactionKey = MessageReactionPayload.CodingKeys.self
 
 public extension StreamMockServer {
-    
+
     func configureReactionEndpoints() {
         server.register(MockEndpoint.reaction) { [weak self] request in
             let messageId = try XCTUnwrap(request.params[EndpointQuery.messageId])
@@ -59,7 +59,7 @@ public extension StreamMockServer {
     ) -> [String: Any]? {
         var mockedMessage = message
         let messageId = mockedMessage?[messageKey.id.rawValue]
-        
+
         if deleted {
             mockedMessage?[messageKey.latestReactions.rawValue] = []
             mockedMessage?[messageKey.ownReactions.rawValue] = []
@@ -71,7 +71,7 @@ public extension StreamMockServer {
                var reaction_scores = mockedMessage?[messageKey.reactionScores.rawValue] as? [String: Any] else {
                    return mockedMessage
                }
-            
+
             var isCurrentUser = false
             var newReaction: [String: Any] = [:]
             newReaction[reactionKey.messageId.rawValue] = messageId
@@ -79,30 +79,30 @@ public extension StreamMockServer {
             newReaction[reactionKey.createdAt.rawValue] = timestamp
             newReaction[reactionKey.updatedAt.rawValue] = timestamp
             newReaction[MessageReactionRequestPayload.CodingKeys.enforceUnique.rawValue] = false
-            
+
             if let reactionType = reactionType {
                 newReaction[reactionKey.type.rawValue] = reactionType
                 reaction_counts[reactionType] = 1
                 reaction_scores[reactionType] = 1
             }
-            
+
             if let userId = user?[userKey.id.rawValue] as? String {
                 newReaction[reactionKey.user.rawValue] = user
                 newReaction[reactionKey.userId.rawValue] = userId
                 isCurrentUser = (userId == UserDetails.lukeSkywalker[userKey.id.rawValue])
             }
-            
+
             latest_reactions.append(newReaction)
-            
+
             mockedMessage?[messageKey.ownReactions.rawValue] = isCurrentUser ? latest_reactions : []
             mockedMessage?[messageKey.latestReactions.rawValue] = latest_reactions
             mockedMessage?[messageKey.reactionCounts.rawValue] = reaction_counts
             mockedMessage?[messageKey.reactionScores.rawValue] = reaction_scores
         }
-        
+
         return mockedMessage
     }
-    
+
     private func reactionResponse(
         messageId: String,
         reactionType: String?,
@@ -113,7 +113,7 @@ public extension StreamMockServer {
         let message = findMessageById(messageId)
         let timestamp = TestData.currentDate
         let user = setUpUser(source: message, details: UserDetails.lukeSkywalker)
-        
+
         let mockedMessage = mockMessageWithReaction(
             message,
             fromUser: user,
@@ -123,7 +123,7 @@ public extension StreamMockServer {
         )
         json[JSONKey.message] = mockedMessage
         saveMessage(mockedMessage)
-        
+
         json[JSONKey.reaction] = mockReaction(
             reaction,
             fromUser: user,
@@ -131,13 +131,13 @@ public extension StreamMockServer {
             reactionType: reactionType,
             timestamp: timestamp
         )
-        
+
         websocketReaction(
             type: TestData.Reactions(rawValue: String(describing: reactionType)),
             eventType: eventType,
             user: user
         )
-        
+
         return .ok(.json(json))
     }
 }

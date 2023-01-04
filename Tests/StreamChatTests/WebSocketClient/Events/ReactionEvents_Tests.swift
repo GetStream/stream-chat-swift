@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -22,7 +22,7 @@ final class ReactionEvents_Tests: XCTestCase {
         super.tearDown()
         eventDecoder = nil
     }
-    
+
     func test_new() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ReactionNew")
         let event = try eventDecoder.decode(from: json) as? ReactionNewEventDTO
@@ -36,7 +36,7 @@ final class ReactionEvents_Tests: XCTestCase {
         XCTAssertEqual(reactionPayload?.messageId, messageId)
         XCTAssertEqual(reactionPayload?.user.id, userId)
     }
-    
+
     func test_updated() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ReactionUpdated")
         let event = try eventDecoder.decode(from: json) as? ReactionUpdatedEventDTO
@@ -50,7 +50,7 @@ final class ReactionEvents_Tests: XCTestCase {
         XCTAssertEqual(reactionPayload?.messageId, messageId)
         XCTAssertEqual(reactionPayload?.user.id, userId)
     }
-    
+
     func test_deleted() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ReactionDeleted")
         let event = try eventDecoder.decode(from: json) as? ReactionDeletedEventDTO

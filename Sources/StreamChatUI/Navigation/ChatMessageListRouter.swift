@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -17,7 +17,7 @@ open class ChatMessageListRouter:
     open private(set) lazy var messagePopUpTransitionController: ChatMessageActionsTransitionController = components
         .messageActionsTransitionController
         .init(messageListVC: rootViewController as? ChatMessageListVC)
-    
+
     /// Feedback generator used when presenting actions controller on selected message
     open var impactFeedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
 
@@ -52,7 +52,7 @@ open class ChatMessageListRouter:
         popup.transitioningDelegate = messagePopUpTransitionController
 
         messagePopUpTransitionController.selectedMessageId = messageContentView.content?.id
-        
+
         rootViewController.present(popup, animated: true)
     }
 
@@ -70,7 +70,7 @@ open class ChatMessageListRouter:
         else {
             return
         }
-        
+
         let messageController = client.messageController(
             cid: cid,
             messageId: message.id
@@ -121,7 +121,7 @@ open class ChatMessageListRouter:
     open func showFilePreview(fileURL: URL?) {
         let preview = components.filePreviewVC.init()
         preview.content = fileURL
-        
+
         let navigation = UINavigationController(rootViewController: preview)
         rootViewController.present(navigation, animated: true)
     }
@@ -164,7 +164,7 @@ open class ChatMessageListRouter:
         guard
             let preview = previews.first(where: { $0.attachmentId == initialAttachmentId })
         else { return }
-        
+
         let galleryVC = components.galleryVC.init()
         galleryVC.modalPresentationStyle = .overFullScreen
         galleryVC.transitioningDelegate = self
@@ -174,7 +174,7 @@ open class ChatMessageListRouter:
                 .firstIndex(of: initialAttachmentId) ?? 0
         )
         galleryVC.transitionController = zoomTransitionController
-        
+
         zoomTransitionController.presentedVCImageView = { [weak galleryVC] in
             galleryVC?.imageViewToAnimateWhenDismissing
         }
@@ -184,7 +184,7 @@ open class ChatMessageListRouter:
                 indexNotFoundAssertion()
                 return nil
             }
-            
+
             return previews.first(where: { $0.attachmentId == id })?.imageView ?? previews.last?.imageView
         }
         zoomTransitionController.fromImageView = preview.imageView
@@ -215,11 +215,11 @@ open class ChatMessageListRouter:
             source: source
         )
     }
-    
+
     open func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         zoomTransitionController.animationController(forDismissed: dismissed)
     }
-    
+
     open func interactionControllerForDismissal(using animator: UIViewControllerAnimatedTransitioning)
         -> UIViewControllerInteractiveTransitioning? {
         zoomTransitionController.interactionControllerForDismissal(using: animator)

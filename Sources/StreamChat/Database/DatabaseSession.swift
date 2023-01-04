@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -20,14 +20,14 @@ protocol UserDatabaseSession {
     /// if the save fails.
     @discardableResult
     func saveQuery(query: UserListQuery) throws -> UserListQueryDTO?
-    
+
     /// Load user list query with the given hash.
     /// - Returns: The query hash.
     func userListQuery(filterHash: String) -> UserListQueryDTO?
-    
+
     /// Fetches `UserDTO` with the given `id` from the DB. Returns `nil` if no `UserDTO` matching the `id` exists.
     func user(id: UserId) -> UserDTO?
-    
+
     /// Removes the specified query from DB.
     func deleteQuery(_ query: UserListQuery)
 }
@@ -41,18 +41,18 @@ protocol CurrentUserDatabaseSession {
     /// Updates the `CurrentUserDTO` with the provided unread.
     /// If there is no current user, the error will be thrown.
     func saveCurrentUserUnreadCount(count: UnreadCount) throws
-    
+
     /// Updates the `CurrentUserDTO.devices` with the provided `DevicesPayload`
     /// If there's no current user set, an error will be thrown.
     @discardableResult
     func saveCurrentUserDevices(_ devices: [DevicePayload], clearExisting: Bool) throws -> [DeviceDTO]
-    
+
     /// Saves the `currentDevice` for current user.
     func saveCurrentDevice(_ deviceId: String) throws
-    
+
     /// Removes the device with the given id from DB.
     func deleteDevice(id: DeviceId)
-    
+
     /// Returns `CurrentUserDTO` from the DB. Returns `nil` if no `CurrentUserDTO` exists.
     var currentUser: CurrentUserDTO? { get }
 }
@@ -105,7 +105,7 @@ protocol MessageDatabaseSession {
         syncOwnReactions: Bool,
         cache: PreWarmedCache?
     ) throws -> MessageDTO
-    
+
     /// Saves the provided message payload to the DB. Return's the matching `MessageDTO` if the save was successful.
     /// Throws an error if the save fails.
     ///
@@ -130,7 +130,7 @@ protocol MessageDatabaseSession {
         extraData: [String: RawJSON],
         localState: LocalReactionState?
     ) throws -> MessageReactionDTO
-    
+
     func removeReaction(from messageId: MessageId, type: MessageReactionType, on version: String?) throws -> MessageReactionDTO?
 
     /// Pins the provided message
@@ -142,17 +142,17 @@ protocol MessageDatabaseSession {
     /// Unpins the provided message
     /// - Parameter message: The DTO to be unpinned
     func unpin(message: MessageDTO)
-    
+
     /// Fetches `MessageDTO` with the given `id` from the DB. Returns `nil` if no `MessageDTO` matching the `id` exists.
     func message(id: MessageId) -> MessageDTO?
-    
+
     /// Fetches preview message for channel  from the database.
     func preview(for cid: ChannelId) -> MessageDTO?
-    
+
     /// Deletes the provided dto from a database
     /// - Parameter message: The DTO to be deleted
     func delete(message: MessageDTO)
-    
+
     /// Fetches `MessageReactionDTO` for the given `messageId`, `userId`, and `type` from the DB.
     /// Returns `nil` if there is no matching `MessageReactionDTO`.
     func reaction(messageId: MessageId, userId: UserId, type: MessageReactionType) -> MessageReactionDTO?
@@ -166,7 +166,7 @@ protocol MessageDatabaseSession {
     /// else returns saved `MessageReactionDTO` entity.
     @discardableResult
     func saveReaction(payload: MessageReactionPayload, cache: PreWarmedCache?) throws -> MessageReactionDTO
-    
+
     /// Deletes the provided dto from a database
     /// - Parameter reaction: The DTO to be deleted
     func delete(reaction: MessageReactionDTO)
@@ -210,7 +210,7 @@ extension MessageDatabaseSession {
 
 protocol MessageSearchDatabaseSession {
     func saveQuery(query: MessageSearchQuery) -> MessageSearchQueryDTO
-    
+
     func deleteQuery(_ query: MessageSearchQuery)
 }
 
@@ -221,7 +221,7 @@ protocol ChannelDatabaseSession {
         payload: ChannelListPayload,
         query: ChannelListQuery?
     ) -> [ChannelDTO]
-    
+
     /// Creates a new `ChannelDTO` object in the database with the given `payload` and `query`.
     @discardableResult
     func saveChannel(
@@ -230,7 +230,7 @@ protocol ChannelDatabaseSession {
         isPaginatedPayload: Bool,
         cache: PreWarmedCache?
     ) throws -> ChannelDTO
-    
+
     /// Creates a new `ChannelDTO` object in the database with the given `payload` and `query`.
     @discardableResult
     func saveChannel(
@@ -238,21 +238,21 @@ protocol ChannelDatabaseSession {
         query: ChannelListQuery?,
         cache: PreWarmedCache?
     ) throws -> ChannelDTO
-    
+
     /// Loads channel list query with the given filter hash from the database.
     /// - Parameter filterHash: The filter hash.
     func channelListQuery(filterHash: String) -> ChannelListQueryDTO?
-    
+
     /// Loads all channel list queries from the database.
     /// - Returns: The array of channel list queries.
     func loadAllChannelListQueries() -> [ChannelListQueryDTO]
-    
+
     @discardableResult
     func saveQuery(query: ChannelListQuery) -> ChannelListQueryDTO
-    
+
     /// Fetches `ChannelDTO` with the given `cid` from the database.
     func channel(cid: ChannelId) -> ChannelDTO?
-    
+
     /// Removes channel list query from database.
     func delete(query: ChannelListQuery)
 
@@ -271,17 +271,17 @@ protocol ChannelReadDatabaseSession {
         for cid: ChannelId,
         cache: PreWarmedCache?
     ) throws -> ChannelReadDTO
-    
+
     /// Fetches `ChannelReadDTO` with the given `cid` and `userId` from the DB.
     /// Returns `nil` if no `ChannelReadDTO` matching the `cid` and `userId`  exists.
     func loadChannelRead(cid: ChannelId, userId: UserId) -> ChannelReadDTO?
-    
+
     /// Fetches `ChannelReadDTO`entities for the given `userId` from the DB.
     func loadChannelReads(for userId: UserId) -> [ChannelReadDTO]
-    
+
     /// Sets the channel `cid` as read for `userId`
     func markChannelAsRead(cid: ChannelId, userId: UserId, at: Date)
-    
+
     /// Removes the read object of the given user in the given channel if it exists.
     /// - Parameters:
     ///   - cid: The channel identifier which should be marked as unread.
@@ -312,7 +312,7 @@ protocol MemberDatabaseSession {
         channelId: ChannelId,
         query: ChannelMemberListQuery?
     ) -> [MemberDTO]
-    
+
     /// Fetches `MemberDTO`entity for the given `userId` and `cid`.
     func member(userId: UserId, cid: ChannelId) -> MemberDTO?
 }
@@ -320,7 +320,7 @@ protocol MemberDatabaseSession {
 protocol MemberListQueryDatabaseSession {
     /// Fetches `MemberListQueryDatabaseSession` entity for the given `filterHash`.
     func channelMemberListQuery(queryHash: String) -> ChannelMemberListQueryDTO?
-    
+
     /// Creates a new `MemberListQueryDatabaseSession` object in the database based in the given `ChannelMemberListQuery`.
     @discardableResult
     func saveQuery(_ query: ChannelMemberListQuery) throws -> ChannelMemberListQueryDTO
@@ -337,7 +337,7 @@ protocol AttachmentDatabaseSession {
         payload: MessageAttachmentPayload,
         id: AttachmentId
     ) throws -> AttachmentDTO
-    
+
     /// Creates a new `AttachmentDTO` object in the database from the given model for the message
     /// with the given `messageId` in the channel with the given `cid`.
     @discardableResult
@@ -368,12 +368,12 @@ extension DatabaseSession {
     func saveChannel(payload: ChannelPayload, isPaginatedPayload: Bool) throws -> ChannelDTO {
         try saveChannel(payload: payload, query: nil, isPaginatedPayload: isPaginatedPayload, cache: nil)
     }
-    
+
     @discardableResult
     func saveUser(payload: UserPayload) throws -> UserDTO {
         try saveUser(payload: payload, query: nil, cache: nil)
     }
-    
+
     @discardableResult
     func saveMember(
         payload: MemberPayload,
@@ -381,32 +381,32 @@ extension DatabaseSession {
     ) throws -> MemberDTO {
         try saveMember(payload: payload, channelId: channelId, query: nil, cache: nil)
     }
-    
+
     // MARK: - Event
-    
+
     func saveEvent(payload: EventPayload) throws {
         // Save a user data.
         if let userPayload = payload.user {
             try saveUser(payload: userPayload)
         }
-        
+
         // Member events are handled in `MemberEventMiddleware`
-        
+
         // Save a channel detail data.
         if let channelDetailPayload = payload.channel {
             try saveChannel(payload: channelDetailPayload, query: nil, cache: nil)
         }
-        
+
         if let currentUserPayload = payload.currentUser {
             try saveCurrentUser(payload: currentUserPayload)
         }
-        
+
         if let unreadCount = payload.unreadCount {
             try saveCurrentUserUnreadCount(count: unreadCount)
         }
-        
+
         try saveMessageIfNeeded(from: payload)
-        
+
         // handle reaction events for messages that already exist in the database and for this user
         // this is needed because WS events do not contain message.own_reactions
         if let currentUser = self.currentUser, currentUser.user.id == payload.user?.id {
@@ -435,24 +435,24 @@ extension DatabaseSession {
                 log.warning("Failed to update message reaction in the database, error: \(error)")
             }
         }
-        
+
         updateChannelPreview(from: payload)
     }
-    
+
     func saveMessageIfNeeded(from payload: EventPayload) throws {
         guard let messagePayload = payload.message else {
             // Event does not contain message
             return
         }
-        
+
         guard let cid = payload.cid, let channelDTO = channel(cid: cid) else {
             // Channel does not exist locally
             return
         }
-        
+
         let messageExistsLocally = message(id: messagePayload.id) != nil
         let messageMustBeCreated = payload.eventType.shouldCreateMessageInDatabase
-        
+
         guard messageExistsLocally || messageMustBeCreated else {
             // Message does not exits locally and should not be saved
             return
@@ -480,20 +480,20 @@ extension DatabaseSession {
             }
         }
     }
-    
+
     func updateChannelPreview(from payload: EventPayload) {
         guard let cid = payload.cid, let channelDTO = channel(cid: cid) else { return }
-        
+
         switch payload.eventType {
         case .messageNew, .notificationMessageNew:
             channelDTO.previewMessage = preview(for: cid)
-            
+
         case .messageDeleted where channelDTO.previewMessage?.id == payload.message?.id:
             channelDTO.previewMessage = preview(for: cid)
-            
+
         case .channelHidden where payload.isChannelHistoryCleared == true:
             channelDTO.previewMessage = preview(for: cid)
-            
+
         case .channelTruncated:
             // We're not using `preview(for: cid)` here because the channel
             // with updated `truncatedAt` is not saved to persistent store yet.
@@ -502,7 +502,7 @@ extension DatabaseSession {
             // and returning the preview message which has been truncated and therefore can't longer
             // be used as a preview.
             channelDTO.previewMessage = payload.message.flatMap { message(id: $0.id) }
-            
+
         default:
             break
         }

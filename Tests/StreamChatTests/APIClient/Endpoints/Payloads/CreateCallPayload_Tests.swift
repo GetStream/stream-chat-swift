@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -18,7 +18,7 @@ final class CreateCallPayload_Tests: XCTestCase {
         let roomName: String = .unique
         let agoraUid: UInt = 10
         let agoraAppId: String = .unique
-        
+
         let expectedPayload = CreateCallPayload(
             call: CallPayload(
                 id: id,
@@ -52,10 +52,10 @@ final class CreateCallPayload_Tests: XCTestCase {
             "agora_app_id": agoraAppId
         ]
         let mockJson = try JSONSerialization.data(withJSONObject: mockData)
-        
+
         // WHEN
         let payload = try JSONDecoder.default.decode(CreateCallPayload.self, from: mockJson)
-        
+
         // THEN
         XCTAssertEqual(expectedPayload, payload)
     }

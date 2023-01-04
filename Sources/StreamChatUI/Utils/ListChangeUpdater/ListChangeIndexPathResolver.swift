@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -11,24 +11,24 @@ final class ListChangeIndexPathResolver {
     struct IndexPathMove: Hashable, CustomStringConvertible {
         var fromIndex: IndexPath
         var toIndex: IndexPath
-        
+
         init(_ from: IndexPath, _ to: IndexPath) {
             fromIndex = from
             toIndex = to
         }
-        
+
         var description: String {
             "(from: \(fromIndex), to: \(toIndex))"
         }
     }
-    
+
     typealias Indexes = (
         move: Set<IndexPathMove>,
         insert: Set<IndexPath>,
         remove: Set<IndexPath>,
         update: Set<IndexPath>
     )
-    
+
     /// Maps `ListChange`s to index paths and checks if there is any conflict.
     /// - Parameters:
     ///   - changes: changes
@@ -42,7 +42,7 @@ final class ListChangeIndexPathResolver {
         var insertIndexes = Set<IndexPath>()
         var removeIndexes = Set<IndexPath>()
         var updateIndexes = Set<IndexPath>()
-        
+
         for change in changes {
             switch change {
             case let .insert(_, index):
@@ -75,7 +75,7 @@ final class ListChangeIndexPathResolver {
             log.warning("ListChange conflicts found: \(indexes)")
             return nil
         }
-        
+
         return indexes
     }
 }

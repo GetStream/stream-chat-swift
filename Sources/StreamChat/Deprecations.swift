@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -59,7 +59,7 @@ public extension MemberRemovedEvent {
 public extension MessageNewEvent {
     @available(*, deprecated, message: "`user: ChatUser` is now accessible. Please, switch to `user.id`")
     var userId: UserId { user.id }
-    
+
     @available(*, deprecated, message: "`message: ChatMessage` is now accessible. Please, switch to `message.id`")
     var messageId: UserId { message.id }
 }
@@ -67,10 +67,10 @@ public extension MessageNewEvent {
 public extension MessageUpdatedEvent {
     @available(*, deprecated, message: "`user: ChatUser` is now accessible. Please, switch to `user.id`")
     var userId: UserId { user.id }
-    
+
     @available(*, deprecated, message: "`message: ChatMessage` is now accessible. Please, switch to `message.id`")
     var messageId: UserId { message.id }
-    
+
     @available(*, deprecated, message: "Use message.updatedAt")
     var updatedAt: Date { message.updatedAt }
 }
@@ -82,13 +82,13 @@ public extension MessageDeletedEvent {
             log.warning("The `message.deleted` event is triggered server-side and has no `user`. Empty `userId` will be returned.")
             return ""
         }
-        
+
         return user.id
     }
-    
+
     @available(*, deprecated, message: "`message: ChatMessage` is now accessible. Please, switch to `message.id`")
     var messageId: UserId { message.id }
-    
+
     @available(*, deprecated, message: "Use message.deletedAt")
     var deletedAt: Date { message.deletedAt ?? createdAt }
 }
@@ -96,7 +96,7 @@ public extension MessageDeletedEvent {
 public extension MessageReadEvent {
     @available(*, deprecated, message: "`user: ChatUser` is now accessible. Please, switch to `user.id`")
     var userId: UserId { user.id }
-    
+
     @available(*, deprecated, message: "Please, switch to `createdAt`")
     var readAt: Date { createdAt }
 }
@@ -104,7 +104,7 @@ public extension MessageReadEvent {
 public extension NotificationMessageNewEvent {
     @available(*, deprecated, message: "`message: ChatMessage` is now accessible. Please, switch to `message.author.id`")
     var userId: UserId { message.author.id }
-    
+
     @available(*, deprecated, message: "`message: ChatMessage` is now accessible. Please, switch to `message.id`")
     var messageId: MessageId { message.id }
 }
@@ -112,7 +112,7 @@ public extension NotificationMessageNewEvent {
 public extension NotificationMarkAllReadEvent {
     @available(*, deprecated, message: "`user: ChatUser` is now accessible. Please, switch to `user.id`")
     var userId: UserId { user.id }
-    
+
     @available(*, deprecated, message: "Please, switch to `createdAt`")
     var readAt: Date { createdAt }
 }
@@ -120,7 +120,7 @@ public extension NotificationMarkAllReadEvent {
 public extension NotificationMarkReadEvent {
     @available(*, deprecated, message: "`user: ChatUser` is now accessible. Please, switch to `user.id`")
     var userId: UserId { user.id }
-    
+
     @available(*, deprecated, message: "Please, switch to `createdAt`")
     var readAt: Date { createdAt }
 }
@@ -158,13 +158,13 @@ public extension NotificationInviteRejectedEvent {
 public extension ReactionNewEvent {
     @available(*, deprecated, message: "`user: ChatUser` is now accessible. Please, switch to `user.id`")
     var userId: UserId { user.id }
-    
+
     @available(*, deprecated, message: "`message: ChatMessage` is now accessible. Please, switch to `message.id`")
     var messageId: UserId { message.id }
 
     @available(*, deprecated, message: "`reaction: ChatMessageReaction` is now accessible. Please, switch to `reaction.type`")
     var reactionType: MessageReactionType { reaction.type }
-    
+
     @available(*, deprecated, message: "`reaction: ChatMessageReaction` is now accessible. Please, switch to `reaction.score`")
     var reactionScore: Int { reaction.score }
 }
@@ -172,16 +172,16 @@ public extension ReactionNewEvent {
 public extension ReactionUpdatedEvent {
     @available(*, deprecated, message: "`user: ChatUser` is now accessible. Please, switch to `user.id`")
     var userId: UserId { user.id }
-    
+
     @available(*, deprecated, message: "`message: ChatMessage` is now accessible. Please, switch to `message.id`")
     var messageId: UserId { message.id }
 
     @available(*, deprecated, message: "`reaction: ChatMessageReaction` is now accessible. Please, switch to `reaction.type`")
     var reactionType: MessageReactionType { reaction.type }
-    
+
     @available(*, deprecated, message: "`reaction: ChatMessageReaction` is now accessible. Please, switch to `reaction.score`")
     var reactionScore: Int { reaction.score }
-    
+
     @available(*, deprecated, message: "`reaction: ChatMessageReaction` is now accessible. Please, switch to `reaction.updatedAt`")
     var updatedAt: Date { reaction.updatedAt }
 }
@@ -189,13 +189,13 @@ public extension ReactionUpdatedEvent {
 public extension ReactionDeletedEvent {
     @available(*, deprecated, message: "`user: ChatUser` is now accessible. Please, switch to `user.id`")
     var userId: UserId { user.id }
-    
+
     @available(*, deprecated, message: "`message: ChatMessage` is now accessible. Please, switch to `message.id`")
     var messageId: UserId { message.id }
 
     @available(*, deprecated, message: "`reaction: ChatMessageReaction` is now accessible. Please, switch to `reaction.type`")
     var reactionType: MessageReactionType { reaction.type }
-    
+
     @available(*, deprecated, message: "`reaction: ChatMessageReaction` is now accessible. Please, switch to `reaction.score`")
     var reactionScore: Int { reaction.score }
 }

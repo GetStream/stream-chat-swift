@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -25,10 +25,10 @@ extension ChatClient {
         components.galleryAttachmentInjector = SlackGalleryAttachmentViewInjector.self
         components.messagePopupVC = SlackReactionsMessagePopupVC.self
         components.messageActionsTransitionController = SlackReactionsMessageActionsTransitionController.self
-        
+
         Appearance.default = appearance
         Components.default = components
-        
+
         var config = ChatClientConfig(apiKey: APIKey("q95x9hkbyd6p"))
         config.isLocalStorageEnabled = true
         let client = ChatClient(

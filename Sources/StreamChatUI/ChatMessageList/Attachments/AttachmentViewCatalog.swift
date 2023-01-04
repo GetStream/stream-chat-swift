@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -16,9 +16,9 @@ open class AttachmentViewCatalog {
         components: Components
     ) -> AttachmentViewInjector.Type? {
         if message.isDeleted { return nil }
-        
+
         let attachmentCounts = message.attachmentCounts
-        
+
         if attachmentCounts.keys.contains(.image) || attachmentCounts.keys.contains(.video) {
             if attachmentCounts.keys.contains(.file) {
                 return components.mixedAttachmentInjector

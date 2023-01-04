@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -20,12 +20,12 @@ public struct BaseURL: CustomStringConvertible {
 
     /// The base url for StreamChat data center located in Sydney.
     public static let sydney = BaseURL(urlString: "https://chat-proxy-sydney.stream-io-api.com/")!
-    
+
     let restAPIBaseURL: URL
     let webSocketBaseURL: URL
-    
+
     public var description: String { restAPIBaseURL.absoluteString }
-    
+
     /// Create a base URL from an URL string.
     ///
     /// - Parameter urlString: a Stream Chat server location url string.
@@ -33,13 +33,13 @@ public struct BaseURL: CustomStringConvertible {
         guard let url = URL(string: urlString) else { return nil }
         self.init(url: url)
     }
-    
+
     /// Init with a custom server URL.
     ///
     /// - Parameter url: an URL
     public init(url: URL) {
         var urlString = url.absoluteString
-        
+
         // Remove a scheme prefix.
         for prefix in ["https:", "http:", "wss:", "ws:"] {
             if urlString.hasPrefix(prefix) {
@@ -47,7 +47,7 @@ public struct BaseURL: CustomStringConvertible {
                 break
             }
         }
-        
+
         urlString = urlString.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
 
         // Leverages mocked web socket server when running the UI tests.

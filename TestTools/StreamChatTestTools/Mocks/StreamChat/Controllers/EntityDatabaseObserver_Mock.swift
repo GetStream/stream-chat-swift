@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -9,7 +9,7 @@ import XCTest
 final class EntityDatabaseObserver_Mock<Item, DTO: NSManagedObject>: EntityDatabaseObserver<Item, DTO> {
     var synchronizeError: Error?
     var startObservingCalled: Bool = false
-    
+
     override func startObserving() throws {
         if let error = synchronizeError {
             throw error
@@ -18,7 +18,7 @@ final class EntityDatabaseObserver_Mock<Item, DTO: NSManagedObject>: EntityDatab
             try super.startObserving()
         }
     }
-    
+
     var item_mock: Item?
     override var item: Item? {
         item_mock ?? super.item

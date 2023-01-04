@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -8,31 +8,31 @@ import Foundation
 public enum FilterOperator: String {
     /// Matches values that are equal to a specified value.
     case equal = "$eq"
-    
+
     /// Matches all values that are not equal to a specified value.
     case notEqual = "$ne"
-    
+
     /// Matches values that are greater than a specified value.
     case greater = "$gt"
-    
+
     /// Matches values that are greater than a specified value.
     case greaterOrEqual = "$gte"
-    
+
     /// Matches values that are less than a specified value.
     case less = "$lt"
-    
+
     /// Matches values that are less than or equal to a specified value.
     case lessOrEqual = "$lte"
-    
+
     /// Matches any of the values specified in an array.
     case `in` = "$in"
-    
+
     /// Matches none of the values specified in an array.
     case notIn = "$nin"
-    
+
     /// Matches values by performing text search with the specified value.
     case query = "$q"
-    
+
     /// Matches values with the specified prefix.
     case autocomplete = "$autocomplete"
 
@@ -41,13 +41,13 @@ public enum FilterOperator: String {
 
     /// Matches all the values specified in an array.
     case and = "$and"
-    
+
     /// Matches at least one of the values specified in an array.
     case or = "$or"
-    
+
     /// Matches none of the values specified in an array.
     case nor = "$nor"
-    
+
     /// Matches if the key array contains the given value.
     case contains = "$contains"
 }
@@ -91,14 +91,14 @@ extension Optional: FilterValue where Wrapped == TeamId {}
 public struct Filter<Scope: FilterScope> {
     /// An operator used for the filter.
     public let `operator`: String
-    
+
     /// The "left-hand" side of the filter. Specifies the name of the field the filter should match. Some operators like
     /// `and` or `or`, don't require the key value to be present.
     public let key: String?
-    
+
     /// The "right-hand" side of the filter. Specifies the value the filter should match.
     public let value: FilterValue
-    
+
     /// Creates a new instance of `Filter`.
     ///
     /// Learn more about how to create simple, advanced, and custom filters in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#query-filters).
@@ -125,7 +125,7 @@ extension Filter {
     init<Value: FilterValue>(operator: FilterOperator, key: FilterKey<Scope, Value>, value: FilterValue) {
         self.init(operator: `operator`.rawValue, key: key.rawValue, value: value)
     }
-    
+
     init(operator: FilterOperator, value: FilterValue) {
         self.init(operator: `operator`.rawValue, key: nil, value: value)
     }
@@ -136,12 +136,12 @@ public extension Filter {
     static func and(_ filters: [Filter]) -> Filter {
         .init(operator: .and, value: filters)
     }
-    
+
     /// Combines the provided filters and matches the values matched by at least one of the filters.
     static func or(_ filters: [Filter]) -> Filter {
         .init(operator: .or, value: filters)
     }
-    
+
     /// Combines the provided filters and matches the values not matched by all the filters.
     static func nor(_ filters: [Filter]) -> Filter {
         .init(operator: .nor, value: filters)
@@ -157,11 +157,11 @@ public extension Filter {
 public struct FilterKey<Scope: FilterScope, Value: FilterValue>: ExpressibleByStringLiteral, RawRepresentable {
     /// The raw value of the key. This value should match the "encodable" key for the given object.
     public let rawValue: String
-    
+
     public init(stringLiteral value: String) {
         rawValue = value
     }
-    
+
     public init(rawValue value: String) {
         rawValue = value
     }
@@ -172,52 +172,52 @@ public extension Filter {
     static func equal<Value: Encodable>(_ key: FilterKey<Scope, Value>, to value: Value) -> Filter {
         .init(operator: .equal, key: key, value: value)
     }
-    
+
     /// Matches all values that are not equal to a specified value.
     static func notEqual<Value: Encodable>(_ key: FilterKey<Scope, Value>, to value: Value) -> Filter {
         .init(operator: .notEqual, key: key, value: value)
     }
-    
+
     /// Matches values that are greater than a specified value.
     static func greater<Value: Encodable>(_ key: FilterKey<Scope, Value>, than value: Value) -> Filter {
         .init(operator: .greater, key: key, value: value)
     }
-    
+
     /// Matches values that are greater than a specified value.
     static func greaterOrEqual<Value: Encodable>(_ key: FilterKey<Scope, Value>, than value: Value) -> Filter {
         .init(operator: .greaterOrEqual, key: key, value: value)
     }
-    
+
     /// Matches values that are less than a specified value.
     static func less<Value: Encodable>(_ key: FilterKey<Scope, Value>, than value: Value) -> Filter {
         .init(operator: .less, key: key, value: value)
     }
-    
+
     /// Matches values that are less than or equal to a specified value.
     static func lessOrEqual<Value: Encodable>(_ key: FilterKey<Scope, Value>, than value: Value) -> Filter {
         .init(operator: .lessOrEqual, key: key, value: value)
     }
-    
+
     /// Matches any of the values specified in an array.
     static func `in`<Value: Encodable>(_ key: FilterKey<Scope, Value>, values: [Value]) -> Filter {
         .init(operator: .in, key: key, value: values)
     }
-    
+
     /// Matches none of the values specified in an array.
     static func notIn<Value: Encodable>(_ key: FilterKey<Scope, Value>, values: [Value]) -> Filter {
         .init(operator: .notIn, key: key, value: values)
     }
-    
+
     /// Matches values by performing text search with the specified value.
     static func query<Value: Encodable>(_ key: FilterKey<Scope, Value>, text: String) -> Filter {
         .init(operator: .query, key: key, value: text)
     }
-    
+
     /// Matches values with the specified prefix.
     static func autocomplete<Value: Encodable>(_ key: FilterKey<Scope, Value>, text: String) -> Filter {
         .init(operator: .autocomplete, key: key, value: text)
     }
-    
+
     /// Matches values that exist/don't exist based on the specified boolean value.
     ///
     /// - Parameter exists: `true`(default value) if the filter matches values that exist. `false` if the
@@ -226,7 +226,7 @@ public extension Filter {
     static func exists<Value: Encodable>(_ key: FilterKey<Scope, Value>, exists: Bool = true) -> Filter {
         .init(operator: .exists, key: key, value: exists)
     }
-    
+
     /// Matches if the key contains the given value.
     static func contains<Value: Encodable>(_ key: FilterKey<Scope, Value>, value: String) -> Filter {
         .init(operator: .contains, key: key, value: value)
@@ -243,12 +243,12 @@ extension Filter {
 extension Filter: CustomStringConvertible {
     public var description: String {
         let key = self.key ?? "*"
-        
+
         guard let `operator` = FilterOperator(rawValue: self.operator) else {
             // The operator doesn't match any of the known operators
             return "\(key) \(self.operator) \(value)"
         }
-        
+
         switch `operator` {
         case .equal:
             return "\(key) == \(value)"
@@ -294,13 +294,13 @@ extension Filter: Codable {
             //  { $<operator>: [ <filter 1>, <filter 2> ] }
             try [self.operator: AnyEncodable(value)].encode(to: encoder)
             return
-            
+
         } else if let key = self.key {
             // Normal filters are encoded in the following form:
             //  { key: { $<operator>: <value> } }
             try [key: [self.operator: AnyEncodable(value)]].encode(to: encoder)
             return
-            
+
         } else {
             throw EncodingError.invalidValue(
                 self,
@@ -311,7 +311,7 @@ extension Filter: Codable {
             )
         }
     }
-    
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: ArbitraryKey.self)
         for key in container.allKeys {
@@ -320,7 +320,7 @@ extension Filter: Codable {
                 let filters = try container.decode([Filter].self, forKey: key)
                 self.init(operator: key.stringValue, key: nil, value: filters)
                 return
-                
+
             } else {
                 // The right side should be FilterRightSide
                 let rightSide = try container.decode(FilterRightSide.self, forKey: key)
@@ -366,7 +366,7 @@ extension String {
 private struct FilterRightSide: Decodable {
     let `operator`: String
     let value: FilterValue
-    
+
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: ArbitraryKey.self)
         guard container.allKeys.count == 1 else {
@@ -376,7 +376,7 @@ private struct FilterRightSide: Decodable {
                 debugDescription: "FilterRightSide keys count should be only 1"
             )
         }
-        
+
         let key = container.allKeys.first!
         guard key.stringValue.hasPrefix("$") else {
             throw DecodingError.dataCorruptedError(
@@ -385,10 +385,10 @@ private struct FilterRightSide: Decodable {
                 debugDescription: "FilterRightSide does not contain $ operator"
             )
         }
-        
+
         self.operator = container.allKeys.first!.stringValue
         var value: FilterValue?
-        
+
         if let dateValue = try? container.decode(Date.self, forKey: key) {
             value = dateValue
         } else if let stringValue = try? container.decode(String.self, forKey: key) {
@@ -406,7 +406,7 @@ private struct FilterRightSide: Decodable {
         } else if let doubleArray = try? container.decode([Double].self, forKey: key) {
             value = doubleArray
         }
-        
+
         if let value = value {
             self.value = value
         } else {

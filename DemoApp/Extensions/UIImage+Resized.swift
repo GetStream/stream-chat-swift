@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -23,7 +23,7 @@ extension UIImage {
 
         UIGraphicsBeginImageContextWithOptions(newSize, false, 1.0)
         draw(in: rect)
-  
+
         return UIGraphicsGetImageFromCurrentImageContext()!
     }
 }

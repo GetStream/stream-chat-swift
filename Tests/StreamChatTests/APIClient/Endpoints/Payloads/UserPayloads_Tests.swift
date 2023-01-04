@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -9,7 +9,7 @@ import XCTest
 final class UserPayload_Tests: XCTestCase {
     let currentUserJSON = XCTestCase.mockData(fromJSONFile: "CurrentUser")
     let otherUserJSON = XCTestCase.mockData(fromJSONFile: "OtherUser")
-    
+
     func test_currentUserJSON_isSerialized_withDefaultExtraData() throws {
         let payload = try JSONDecoder.default.decode(UserPayload.self, from: currentUserJSON)
         XCTAssertEqual(payload.id, "broken-waterfall-5")
@@ -26,7 +26,7 @@ final class UserPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.isOnline, true)
         XCTAssertEqual(payload.teams.count, 3)
     }
-    
+
     func test_currentUserJSON_isSerialized_withCustomExtraData() throws {
         let payload = try JSONDecoder.default.decode(UserPayload.self, from: currentUserJSON)
         XCTAssertEqual(payload.id, "broken-waterfall-5")
@@ -37,10 +37,10 @@ final class UserPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.role, .user)
         XCTAssertEqual(payload.isOnline, true)
         XCTAssertEqual(payload.teams.count, 3)
-        
+
         XCTAssertEqual(payload.extraData, ["secret_note": .string("Anaking is Vader!")])
     }
-    
+
     func test_otherUserJSON_isSerialized_withDefaultExtraData() throws {
         let payload = try JSONDecoder.default.decode(UserPayload.self, from: otherUserJSON)
         XCTAssertEqual(payload.id, "bitter-cloud-0")
@@ -68,14 +68,14 @@ final class UserRequestBody_Tests: XCTestCase {
             imageURL: .unique(),
             extraData: [:]
         )
-        
+
         let serialized = try JSONEncoder.stream.encode(payload)
         let expected: [String: Any] = [
             "id": payload.id,
             "name": payload.name!,
             "image": payload.imageURL!.absoluteString
         ]
-        
+
         AssertJSONEqual(serialized, expected)
     }
 }
@@ -89,16 +89,16 @@ final class UserUpdateRequestBody_Tests: XCTestCase {
             imageURL: .unique(),
             extraData: ["secret_note": .string(value)]
         )
-        
+
         let expected: [String: Any] = [
             "name": payload.name!,
             "image": payload.imageURL!.absoluteString,
             "secret_note": value
         ]
-        
+
         let encodedJSON = try JSONEncoder.default.encode(payload)
         let expectedJSON = try JSONSerialization.data(withJSONObject: expected, options: [])
-        
+
         AssertJSONEqual(encodedJSON, expectedJSON)
     }
 }
@@ -123,7 +123,7 @@ final class UserUpdateResponse_Tests: XCTestCase {
         XCTAssertEqual(user.extraData, ["secret_note": .string("Anaking is Vader!")])
         XCTAssertEqual(user.teams.count, 3)
     }
-    
+
     func test_currentUserUpdateResponseJSON_whenMissingUser_failsSerialization() {
         let currentUserUpdateResponseJSON = XCTestCase.mockData(
             fromFile: "UserUpdateResponse+MissingUser",

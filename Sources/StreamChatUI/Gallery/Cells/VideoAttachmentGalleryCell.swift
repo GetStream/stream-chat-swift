@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import AVKit
@@ -10,44 +10,44 @@ import UIKit
 open class VideoAttachmentGalleryCell: GalleryCollectionViewCell {
     /// A cell reuse identifier.
     open class var reuseId: String { String(describing: self) }
-    
+
     /// A player that handles the video content.
     public var player: AVPlayer {
         playerView.player
     }
-    
+
     /// Image view to be used for zoom in/out animation.
     open private(set) lazy var animationPlaceholderImageView: UIImageView = UIImageView()
         .withoutAutoresizingMaskConstraints
-    
+
     /// A view that displays currently playing video.
     open private(set) lazy var playerView: PlayerView = components
         .playerView.init()
         .withoutAutoresizingMaskConstraints
-    
+
     override open func setUpAppearance() {
         super.setUpAppearance()
-        
+
         animationPlaceholderImageView.clipsToBounds = true
         animationPlaceholderImageView.contentMode = .scaleAspectFit
     }
-    
+
     override open func setUpLayout() {
         super.setUpLayout()
-        
+
         scrollView.addSubview(animationPlaceholderImageView)
         animationPlaceholderImageView.pin(anchors: [.height, .width], to: contentView)
-        
+
         animationPlaceholderImageView.addSubview(playerView)
         playerView.pin(to: animationPlaceholderImageView)
         playerView.pin(anchors: [.height, .width], to: animationPlaceholderImageView)
     }
-    
+
     override open func updateContent() {
         super.updateContent()
-        
+
         let videoAttachment = content?.attachment(payloadType: VideoAttachmentPayload.self)
-        
+
         let newAssetURL = videoAttachment?.videoURL
         let currentAssetURL = (player.currentItem?.asset as? AVURLAsset)?.url
 
@@ -56,7 +56,7 @@ open class VideoAttachmentGalleryCell: GalleryCollectionViewCell {
                 AVPlayerItem(asset: components.videoLoader.videoAsset(at: $0))
             }
             player.replaceCurrentItem(with: playerItem)
-            
+
             if let url = newAssetURL {
                 components.videoLoader.loadPreviewForVideo(at: url) { [weak self] in
                     switch $0 {
@@ -69,7 +69,7 @@ open class VideoAttachmentGalleryCell: GalleryCollectionViewCell {
             }
         }
     }
-    
+
     override open func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         animationPlaceholderImageView
     }

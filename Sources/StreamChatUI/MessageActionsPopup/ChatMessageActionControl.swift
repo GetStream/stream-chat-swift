@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -46,7 +46,7 @@ open class ChatMessageActionControl: _Control, AppearanceProvider {
         containerStackView.insetsLayoutMarginsFromSafeArea = false
         addTarget(self, action: #selector(touchUpInsideHandler(_:)), for: .touchUpInside)
     }
-    
+
     override open func setUpLayout() {
         super.setUpLayout()
         embed(containerStackView)
@@ -58,10 +58,10 @@ open class ChatMessageActionControl: _Control, AppearanceProvider {
 
     override open func tintColorDidChange() {
         super.tintColorDidChange()
-        
+
         updateContentIfNeeded()
     }
-    
+
     override open func updateContent() {
         let imageTintСolor: UIColor
         let titleTextColor: UIColor
@@ -87,7 +87,7 @@ open class ChatMessageActionControl: _Control, AppearanceProvider {
             backgroundColor = appearance.colorPalette.background
         }
     }
-    
+
     /// Triggered when `ChatMessageActionControl` is tapped.
     @objc open func touchUpInsideHandler(_ sender: Any) {
         guard let content = content else { return log.assertionFailure("Content is unexpectedly nil") }

@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 #if swift(>=5.3)
@@ -17,7 +17,7 @@ struct MemberListView: View {
     @StateObject var memberList: ChatChannelMemberListController.ObservableObject
     /// The trigger that controls `UserListView` visability.
     @State private var isShowingUserList = false
-    
+
     var body: some View {
         VStack {
             /// Loading indicator will appear when there are no members in local storage and `synchronize()` is in progress.
@@ -42,7 +42,7 @@ struct MemberListView: View {
         /// Show user list view.
         .sheet(isPresented: $isShowingUserList, content: { userList })
     }
-    
+
     /// The user list used to add new channel members.
     private var userList: some View {
         UserListView(
@@ -54,7 +54,7 @@ struct MemberListView: View {
             }
         )
     }
-    
+
     /// Button for user list navigation.
     private var userListButton: some View {
         Button(
@@ -63,11 +63,11 @@ struct MemberListView: View {
             Image(systemName: "plus")
         }
     }
-    
+
     /// View for member.
     private func memberView(for member: ChatChannelMember) -> some View {
         let isCurrentUser = member.id == memberList.controller.client.currentUserId
-        
+
         return HStack {
             VStack(alignment: .leading) {
                 Text(createMemberNameAndStatusInfoString(for: member, isCurrentUser: isCurrentUser))
@@ -79,9 +79,9 @@ struct MemberListView: View {
                         .foregroundColor(member.isOnline ? .blue : .gray)
                 }
             }
-            
+
             Spacer()
-            
+
             if let role = createMemberRoleString(for: member) {
                 Text(role)
             }
@@ -92,20 +92,20 @@ struct MemberListView: View {
             }
         }
     }
-    
+
     /// Pagination. Load next members if last item is reached.
     private func loadNextIfNecessary(encounteredIndex: Int) {
         guard encounteredIndex == memberList.members.count - 1 else { return }
         memberList.controller.loadNextMembers()
     }
-    
+
     /// Adds new channel member.
     private func addNewChannelMember(with userId: UserId, completion: @escaping () -> Void) {
         channel.controller.addMembers(userIds: [userId]) { _ in
             completion()
         }
     }
-    
+
     /// Bans/unbans the channel member.
     private func revertBan(for member: ChatChannelMember) {
         let memberController = memberList.controller.client.memberController(
@@ -116,14 +116,14 @@ struct MemberListView: View {
         let actionCompletion: (Error?) -> Void = { [memberController] _ in
             _ = memberController
         }
-        
+
         if member.isBanned {
             memberController.unban(completion: actionCompletion)
         } else {
             memberController.ban(completion: actionCompletion)
         }
     }
-    
+
     func canTakeAnAction(on member: ChatChannelMember) -> Bool {
         guard
             // Verify current user is a channel member.
@@ -133,10 +133,10 @@ struct MemberListView: View {
             // Verify selected member is not a current user.
             currentUser.id != member.id
         else { return false }
-        
+
         return true
     }
-    
+
     /// Creates the context menu with allowed actions.
     func memberContextMenu(for member: ChatChannelMember) -> some View {
         VStack {

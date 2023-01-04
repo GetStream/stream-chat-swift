@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -19,7 +19,7 @@ open class ChatPresenceAvatarView: _View, ComponentsProvider {
     open private(set) lazy var onlineIndicatorView: UIView = components
         .onlineIndicatorView.init()
         .withoutAutoresizingMaskConstraints
-    
+
     /// Bool to determine if the indicator should be shown.
     open var isOnlineIndicatorVisible: Bool = false {
         didSet {
@@ -38,7 +38,7 @@ open class ChatPresenceAvatarView: _View, ComponentsProvider {
         embed(avatarView)
         // Add online indicator view
         addSubview(onlineIndicatorView)
-        
+
         onlineIndicatorView.topAnchor
             .pin(equalTo: topAnchor, constant: 1)
             .isActive = true
@@ -49,13 +49,13 @@ open class ChatPresenceAvatarView: _View, ComponentsProvider {
             .pin(equalTo: widthAnchor, multiplier: 0.2)
             .isActive = true
     }
-    
+
     override open func layoutSubviews() {
         super.layoutSubviews()
-        
+
         setUpMask(indicatorVisible: isOnlineIndicatorVisible)
     }
-    
+
     /// Creates space for indicator view in avatar view by masking path provided by the indicator view.
     /// - Parameter visible: Bool to determine if the indicator should be shown. The avatar view won't be masked if the indicator is not visible.
     open func setUpMask(indicatorVisible: Bool) {
@@ -63,7 +63,7 @@ open class ChatPresenceAvatarView: _View, ComponentsProvider {
             indicatorVisible,
             let path = (onlineIndicatorView as? MaskProviding)?.maskingPath?.mutableCopy()
         else { return avatarView.layer.mask = nil }
-        
+
         path.addRect(bounds)
         let maskLayer = CAShapeLayer()
         maskLayer.path = path

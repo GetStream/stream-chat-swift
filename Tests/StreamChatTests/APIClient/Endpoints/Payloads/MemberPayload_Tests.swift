@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -9,17 +9,17 @@ import XCTest
 final class MemberPayload_Tests: XCTestCase {
     let memberJSON = XCTestCase.mockData(fromJSONFile: "Member")
     let memberRoleJSON = XCTestCase.mockData(fromJSONFile: "MemberRole")
-    
+
     func test_memberJSON_isSerialized() throws {
         let payload = try JSONDecoder.default.decode(MemberPayload.self, from: memberJSON)
-        
+
         XCTAssertEqual(payload.role, .owner)
         XCTAssertEqual(payload.createdAt, "2020-06-05T12:53:09.862721Z".toDate())
         XCTAssertEqual(payload.updatedAt, "2020-06-05T12:53:09.862721Z".toDate())
         XCTAssertEqual(payload.banExpiresAt, "2021-03-08T15:42:31.355923Z".toDate())
         XCTAssertEqual(payload.isBanned, true)
         XCTAssertEqual(payload.isShadowBanned, true)
-        
+
         XCTAssertNotNil(payload.user)
         XCTAssertEqual(payload.user!.id, "broken-waterfall-5")
         XCTAssertEqual(payload.user!.isBanned, false)
@@ -34,7 +34,7 @@ final class MemberPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.user!.role, .user)
         XCTAssertEqual(payload.user!.isOnline, true)
     }
-    
+
     func test_memberJSON_channelRole_isCustomRole() throws {
         let payload = try JSONDecoder.default.decode(MemberPayload.self, from: memberRoleJSON)
         XCTAssertEqual(payload.role, "custom_role")

@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -12,7 +12,7 @@ final class VideoAttachmentPayload_Tests: XCTestCase {
         let title: String = .unique
         let videoURL: URL = .localYodaImage
         let file = AttachmentFile(type: .mp4, size: 10 * 1024 * 1024, mimeType: "video/mp4")
-        
+
         // Create JSON with the given values.
         let json = """
         {
@@ -22,28 +22,28 @@ final class VideoAttachmentPayload_Tests: XCTestCase {
             "mime_type": "\(file.mimeType!)"
         }
         """.data(using: .utf8)!
-        
+
         // Decode attachment from JSON.
         let payload = try JSONDecoder.stream.decode(VideoAttachmentPayload.self, from: json)
-        
+
         // Assert default values are decoded correctly.
         XCTAssertEqual(payload.title, title)
         XCTAssertEqual(payload.videoURL, videoURL)
         XCTAssertEqual(payload.file, file)
         XCTAssertNil(payload.extraData)
     }
-    
+
     func test_decodingExtraData() throws {
         struct ExtraData: Codable {
             let comment: String
         }
-        
+
         // Create attachment field values.
         let title: String = .unique
         let videoURL: URL = .localYodaImage
         let file = AttachmentFile(type: .mp4, size: 10 * 1024 * 1024, mimeType: "video/mp4")
         let comment: String = .unique
-        
+
         // Create JSON with the given values.
         let json = """
         {
@@ -54,15 +54,15 @@ final class VideoAttachmentPayload_Tests: XCTestCase {
             "comment": "\(comment)"
         }
         """.data(using: .utf8)!
-        
+
         // Decode attachment from JSON.
         let payload = try JSONDecoder.stream.decode(VideoAttachmentPayload.self, from: json)
-        
+
         // Assert default values are decoded correctly.
         XCTAssertEqual(payload.title, title)
         XCTAssertEqual(payload.videoURL, videoURL)
         XCTAssertEqual(payload.file, file)
-        
+
         // Assert extra data can be decoded.
         let extraData = try XCTUnwrap(payload.extraData(ofType: ExtraData.self))
         XCTAssertEqual(extraData.comment, comment)

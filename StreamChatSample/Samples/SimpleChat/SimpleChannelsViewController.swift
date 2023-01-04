@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Combine
@@ -15,7 +15,7 @@ import UIKit
 ///
 class SimpleChannelsViewController: UITableViewController, ChatChannelListControllerDelegate {
     // MARK: - Properties
-    
+
     ///
     /// # channelListController
     ///
@@ -33,7 +33,7 @@ class SimpleChannelsViewController: UITableViewController, ChatChannelListContro
             channelListController.synchronize()
         }
     }
-    
+
     ///
     /// # chatClient
     ///
@@ -42,7 +42,7 @@ class SimpleChannelsViewController: UITableViewController, ChatChannelListContro
     var chatClient: ChatClient {
         channelListController.client
     }
-    
+
     // MARK: - ChannelControllerDelegate
 
     ///
@@ -50,7 +50,7 @@ class SimpleChannelsViewController: UITableViewController, ChatChannelListContro
     /// when events happen in the channel list. In order for these updates to
     /// happen, `channelListController.delegate` must be equal `self` and `channelListController.synchronize()` must be called.
     ///
-    
+
     ///
     /// # didChangeChannels
     ///
@@ -61,7 +61,7 @@ class SimpleChannelsViewController: UITableViewController, ChatChannelListContro
         didChangeChannels changes: [ListChange<ChatChannel>]
     ) {
         tableView.beginUpdates()
-        
+
         for change in changes {
             switch change {
             case let .insert(_, index: index):
@@ -74,18 +74,18 @@ class SimpleChannelsViewController: UITableViewController, ChatChannelListContro
                 tableView.deleteRows(at: [index], with: .automatic)
             }
         }
-        
+
         tableView.endUpdates()
     }
-    
+
     func controller(_ controller: ChatChannelListController, shouldAddNewChannelToList channel: ChatChannel) -> Bool {
         true
     }
-    
+
     func controller(_ controller: ChatChannelListController, shouldListUpdatedChannel channel: ChatChannel) -> Bool {
         true
     }
-    
+
     // MARK: - UITableViewDataSource
 
     ///
@@ -93,7 +93,7 @@ class SimpleChannelsViewController: UITableViewController, ChatChannelListContro
     /// `UITableView` needs information which will be given by the
     /// `channelListController` object.
     ///
-    
+
     ///
     /// # numberOfRowsInSection
     ///
@@ -104,7 +104,7 @@ class SimpleChannelsViewController: UITableViewController, ChatChannelListContro
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         channelListController.channels.count
     }
-    
+
     ///
     /// # cellForRowAt
     ///
@@ -113,7 +113,7 @@ class SimpleChannelsViewController: UITableViewController, ChatChannelListContro
     ///
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let channel = channelListController.channels[indexPath.row]
-        
+
         let subtitle: String
         if let typingUsersInfo = createTypingUserString(for: channel) {
             subtitle = typingUsersInfo
@@ -123,14 +123,14 @@ class SimpleChannelsViewController: UITableViewController, ChatChannelListContro
         } else {
             subtitle = "No messages"
         }
-    
+
         return channelCellWithName(
             createChannelTitle(for: channel, chatClient.currentUserId),
             subtitle: subtitle,
             unreadCount: channel.unreadCount.messages
         )
     }
-    
+
     // MARK: - UITableViewDelegate
 
     ///
@@ -138,7 +138,7 @@ class SimpleChannelsViewController: UITableViewController, ChatChannelListContro
     /// when some event happened in the `UITableView`  which will cause some action
     /// done by the `channelController` object.
     ///
-    
+
     ///
     /// # willDisplay
     ///
@@ -152,7 +152,7 @@ class SimpleChannelsViewController: UITableViewController, ChatChannelListContro
             channelListController.loadNextChannels()
         }
     }
-    
+
     ///
     /// # commit editingStyle
     ///
@@ -171,14 +171,14 @@ class SimpleChannelsViewController: UITableViewController, ChatChannelListContro
             return
         }
     }
-    
+
     // MARK: - Actions
 
     ///
     /// The methods below are called when the user presses some button to open the settings screen or create a channel,
     /// or long presses a channel cell in the table view.
     ///
-    
+
     ///
     /// # handleSettingsButton
     ///
@@ -193,7 +193,7 @@ class SimpleChannelsViewController: UITableViewController, ChatChannelListContro
         else {
             return
         }
-        
+
         settingsViewController.currentUserController = chatClient.currentUserController()
         present(navigationViewController, animated: true)
     }
@@ -207,7 +207,7 @@ class SimpleChannelsViewController: UITableViewController, ChatChannelListContro
     @objc func handleAddChannelButton(_ sender: Any) {
         let id = UUID().uuidString
         let defaultName = "Channel" + id.prefix(4)
-        
+
         alertTextField(title: "Create channel", placeholder: defaultName) { name in
             do {
                 let controller = try self.chatClient.channelController(
@@ -222,7 +222,7 @@ class SimpleChannelsViewController: UITableViewController, ChatChannelListContro
             }
         }
     }
-    
+
     ///
     /// # handleUsersButton
     ///
@@ -233,10 +233,10 @@ class SimpleChannelsViewController: UITableViewController, ChatChannelListContro
             let usersViewController = UIStoryboard.simpleChat
             .instantiateViewController(withIdentifier: "SimpleUsersViewController") as? SimpleUsersViewController
         else { return }
-        
+
         usersViewController.userListController = chatClient
             .userListController(query: .init(sort: [.init(key: .lastActivityAt)]))
-        
+
         /// Push direct message chat screen with selected user.
         /// If there were no chat with this user previously it will be created.
         func pushDirectMessageChat(for userIds: UserId) {
@@ -252,19 +252,19 @@ class SimpleChannelsViewController: UITableViewController, ChatChannelListContro
                 self.navigationController?.pushViewController(chatVC, animated: true)
             }
         }
-        
+
         /// `openDirectMessagesChat` closure that is passed to `SimpleUsersViewController`.
         /// After user selection it will dismiss user list screen and show direct message chat with the selected user.
         let openDirectMessagesChat: ((UserId) -> Void)? = { [weak self] userId in
             guard let self = self else { return }
             self.dismiss(animated: true, completion: { pushDirectMessageChat(for: userId) })
         }
-        
+
         usersViewController.didSelectUser = openDirectMessagesChat
         let navigationController = UINavigationController(rootViewController: usersViewController)
         present(navigationController, animated: true, completion: nil)
     }
-    
+
     ///
     /// # handleLongPress
     ///
@@ -308,9 +308,9 @@ class SimpleChannelsViewController: UITableViewController, ChatChannelListContro
 
         present(actionSheet, animated: true)
     }
-    
+
     // MARK: - Segues
-    
+
     ///
     /// # prepareForSegue
     ///
@@ -323,24 +323,24 @@ class SimpleChannelsViewController: UITableViewController, ChatChannelListContro
             if let indexPath = tableView.indexPathForSelectedRow,
                let controller = (segue.destination as? UINavigationController)?.topViewController as? SimpleChatViewController {
                 let channel = channelListController.channels[indexPath.row]
-                
+
                 /// pass down reference to `ChannelController`.
                 controller.channelController = chatClient.channelController(for: channel.cid)
-                
+
                 controller.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
                 controller.navigationItem.leftItemsSupplementBackButton = true
                 detailViewController = controller
             }
         }
     }
-    
+
     // MARK: - UI code
 
     ///
     /// From here on, you'll see mostly UI code that's not related to the `ChannelListController` usage.
     ///
     var detailViewController: SimpleChatViewController?
-    
+
     private lazy var longPressRecognizer = UILongPressGestureRecognizer(
         target: self,
         action: #selector(handleLongPress)
@@ -348,7 +348,7 @@ class SimpleChannelsViewController: UITableViewController, ChatChannelListContro
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         // Do any additional setup after loading the view.
         navigationItem.leftBarButtonItem = UIBarButtonItem(
             title: "Settings",
@@ -356,14 +356,14 @@ class SimpleChannelsViewController: UITableViewController, ChatChannelListContro
             target: self,
             action: #selector(handleSettingsButton)
         )
-        
+
         let usersButton = UIBarButtonItem(
             title: "Users",
             style: .plain,
             target: self,
             action: #selector(handleUsersButton)
         )
-        
+
         let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(handleAddChannelButton(_:)))
         navigationItem.rightBarButtonItems = [usersButton, addButton]
         if let split = splitViewController {

@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -23,7 +23,7 @@ final class ChannelListFilterScope_Tests: XCTestCase {
         XCTAssertEqual(Key<Bool>.frozen.rawValue, ChannelCodingKeys.frozen.rawValue)
         XCTAssertEqual(Key<Int>.memberCount.rawValue, ChannelCodingKeys.memberCount.rawValue)
         XCTAssertEqual(Key<TeamId>.team.rawValue, ChannelCodingKeys.team.rawValue)
-        
+
         // FilterKeys without corresponding ChannelCodingKeys
         XCTAssertEqual(Key<UserId>.createdBy.rawValue, "created_by_id")
         XCTAssertEqual(Key<Bool>.joined.rawValue, "joined")
@@ -41,7 +41,7 @@ final class ChannelListFilterScope_Tests: XCTestCase {
             Filter<ChannelListFilterScope>.in(.members, values: ids)
         )
     }
-    
+
     func test_noTeam_helper() {
         XCTAssertEqual(
             Filter<ChannelListFilterScope>.noTeam,

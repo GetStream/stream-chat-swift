@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -8,16 +8,16 @@ import Foundation
 public struct ReactionNewEvent: ChannelSpecificEvent {
     /// The use who added a reaction.
     public let user: ChatUser
-    
+
     /// The channel identifier the message lives in.
     public let cid: ChannelId
-    
+
     /// The message a reaction is added to.
     public let message: ChatMessage
-    
+
     /// The reaction added.
     public let reaction: ChatMessageReaction
-    
+
     /// The event timestamp.
     public let createdAt: Date
 }
@@ -29,7 +29,7 @@ class ReactionNewEventDTO: EventDTO {
     let reaction: MessageReactionPayload
     let createdAt: Date
     let payload: EventPayload
-    
+
     init(from response: EventPayload) throws {
         user = try response.value(at: \.user)
         cid = try response.value(at: \.cid)
@@ -38,7 +38,7 @@ class ReactionNewEventDTO: EventDTO {
         createdAt = try response.value(at: \.createdAt)
         payload = response
     }
-    
+
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard
             let userDTO = session.user(id: user.id),
@@ -49,7 +49,7 @@ class ReactionNewEventDTO: EventDTO {
                 type: reaction.type
             )
         else { return nil }
-        
+
         return try? ReactionNewEvent(
             user: userDTO.asModel(),
             cid: cid,
@@ -64,16 +64,16 @@ class ReactionNewEventDTO: EventDTO {
 public struct ReactionUpdatedEvent: ChannelSpecificEvent {
     /// The use who updated a reaction.
     public let user: ChatUser
-    
+
     /// The channel identifier the message lives in.
     public let cid: ChannelId
-    
+
     /// The message a reaction is added to.
     public let message: ChatMessage
-    
+
     /// The updated reaction.
     public let reaction: ChatMessageReaction
-    
+
     /// The event timestamp.
     public let createdAt: Date
 }
@@ -85,7 +85,7 @@ class ReactionUpdatedEventDTO: EventDTO {
     let reaction: MessageReactionPayload
     let createdAt: Date
     let payload: EventPayload
-    
+
     init(from response: EventPayload) throws {
         user = try response.value(at: \.user)
         cid = try response.value(at: \.cid)
@@ -94,7 +94,7 @@ class ReactionUpdatedEventDTO: EventDTO {
         createdAt = try response.value(at: \.createdAt)
         payload = response
     }
-    
+
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard
             let userDTO = session.user(id: user.id),
@@ -105,7 +105,7 @@ class ReactionUpdatedEventDTO: EventDTO {
                 type: reaction.type
             )
         else { return nil }
-        
+
         return try? ReactionUpdatedEvent(
             user: userDTO.asModel(),
             cid: cid,
@@ -120,16 +120,16 @@ class ReactionUpdatedEventDTO: EventDTO {
 public struct ReactionDeletedEvent: ChannelSpecificEvent {
     /// The use who deleted a reaction.
     public let user: ChatUser
-    
+
     /// The channel identifier the message lives in.
     public let cid: ChannelId
-    
+
     /// The message a reaction is deleted from.
     public let message: ChatMessage
-    
+
     /// The deleted reaction.
     public let reaction: ChatMessageReaction
-    
+
     /// The event timestamp.
     public let createdAt: Date
 }
@@ -141,7 +141,7 @@ class ReactionDeletedEventDTO: EventDTO {
     let reaction: MessageReactionPayload
     let createdAt: Date
     let payload: EventPayload
-    
+
     init(from response: EventPayload) throws {
         user = try response.value(at: \.user)
         cid = try response.value(at: \.cid)
@@ -150,7 +150,7 @@ class ReactionDeletedEventDTO: EventDTO {
         createdAt = try response.value(at: \.createdAt)
         payload = response
     }
-    
+
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard
             let userDTO = session.user(id: user.id),
@@ -161,7 +161,7 @@ class ReactionDeletedEventDTO: EventDTO {
                 type: reaction.type
             )
         else { return nil }
-        
+
         return try? ReactionDeletedEvent(
             user: userDTO.asModel(),
             cid: cid,

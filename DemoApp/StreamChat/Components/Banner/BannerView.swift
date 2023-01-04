@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChatUI
@@ -7,26 +7,26 @@ import UIKit
 
 final class BannerView: UIView {
     private let label = UILabel()
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         commonInit()
     }
-    
+
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     func update(text: String) {
         label.text = text
     }
-    
+
     private func commonInit() {
         setUpLayout()
         defaultAppearance()
     }
-    
+
     private func setUpLayout() {
         addSubview(label)
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -39,7 +39,7 @@ final class BannerView: UIView {
             ]
         )
     }
-    
+
     private func defaultAppearance() {
         backgroundColor = Appearance.default.colorPalette.border2.withAlphaComponent(0.9)
         label.textAlignment = .center

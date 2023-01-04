@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import UIKit
@@ -186,17 +186,17 @@ extension StreamChatWrapper {
             completion: completion
         )
     }
-    
+
     func mockTokenProvider(for userCredentials: UserCredentials) -> TokenProvider {
         return { completion in
             if ProcessInfo.processInfo.arguments.contains("MOCK_JWT") {
                 let udid = ProcessInfo.processInfo.environment["SIMULATOR_UDID"] ?? ""
                 let urlString = "http://localhost:4567/jwt/\(udid)?api_key=\(apiKeyString)&user_name=\(userCredentials.id)"
                 guard let url = URL(string: urlString) else { return }
-                
+
                 var request = URLRequest(url: url)
                 request.httpMethod = "GET"
-                
+
                 URLSession.shared.dataTask(with: request) { result in
                     switch result {
                     case .success((_, let data)):
@@ -216,28 +216,28 @@ extension StreamChatWrapper {
 }
 
 extension URLSession {
-    
+
     enum HTTPError: Error {
         case transportError(Error)
         case serverSideError(Int)
     }
-    
+
     typealias DataTaskResult = Result<(HTTPURLResponse, Data), Error>
-    
+
     func dataTask(with request: URLRequest, completionHandler: @escaping (DataTaskResult) -> Void) -> URLSessionDataTask {
         return self.dataTask(with: request) { (data, response, error) in
             if let error = error {
                 completionHandler(Result.failure(HTTPError.transportError(error)))
                 return
             }
-            
+
             guard let response = response as? HTTPURLResponse else { return }
-            
+
             guard (200...299).contains(response.statusCode) else {
                 completionHandler(Result.failure(HTTPError.serverSideError(response.statusCode)))
                 return
             }
-            
+
             guard let data = data else { return }
 
             completionHandler(Result.success((response, data)))

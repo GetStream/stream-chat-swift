@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -9,7 +9,7 @@ import UIKit
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
-    
+
     func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
@@ -18,15 +18,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             PrefixLogFormatter(prefixes: [.info: "ℹ️", .debug: "🛠", .warning: "⚠️", .error: "🚨"]),
             PingPongEmojiFormatter()
         ]
-        
+
         LogConfig.showThreadName = false
         LogConfig.showDate = false
         LogConfig.showFunctionName = false
-        
+
         LogConfig.level = .warning
-        
+
         LogStore.registerShared()
-        
+
         setUpAppearance()
 
         return true
@@ -52,7 +52,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // after application:didFinishLaunchingWithOptions.
         // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
     }
-    
+
     private func setUpAppearance() {
         Components.default.channelListRouter = MyChatChannelListRouter.self
         UICollectionView.appearance().backgroundColor = .white

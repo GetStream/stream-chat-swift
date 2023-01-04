@@ -1,21 +1,21 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import XCTest
 
 final class Attachments_Tests: StreamTestCase {
-    
+
     override func setUpWithError() throws {
         try super.setUpWithError()
         addTags([.coreFeatures])
     }
-    
+
     func test_uploadImage() throws {
         linkToScenario(withId: 28)
-        
+
         try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12, "Flaky on iOS 12")
-        
+
         GIVEN("user opens the channel") {
             userRobot.login().openChannel()
         }
@@ -26,12 +26,12 @@ final class Attachments_Tests: StreamTestCase {
             userRobot.assertImage(isPresent: true)
         }
     }
-    
+
     func test_participantUploadsImage() throws {
         linkToScenario(withId: 29)
-        
+
         try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12, "Flaky on iOS 12")
-        
+
         GIVEN("user opens the channel") {
             userRobot.login().openChannel()
         }
@@ -42,12 +42,12 @@ final class Attachments_Tests: StreamTestCase {
             userRobot.assertImage(isPresent: true)
         }
     }
-    
+
     func test_participantUploadsVideo() throws {
         linkToScenario(withId: 31)
-        
+
         try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12, "Flaky on iOS 12")
-        
+
         GIVEN("user opens the channel") {
             userRobot.login().openChannel()
         }

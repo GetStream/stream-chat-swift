@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -8,25 +8,25 @@ import Foundation
 public enum PinnedMessagesPagination: Hashable {
     /// When used, the backend returns messages around the message with the given id.
     case aroundMessage(_ messageId: MessageId)
-    
+
     /// When used, the backend returns messages pinned earlier then the message with the given id.
     ///
     /// When `inclusive == true` the results include the message with the given id.
     case before(_ messageId: MessageId, inclusive: Bool)
-    
+
     /// When used, the backend returns messages pinned earlier then the message with the given id.
     ///
     /// When `inclusive == true` the results include the message with the given id.
     case after(_ messageId: MessageId, inclusive: Bool)
-    
+
     /// When used, the backend returns messages pinned at around the given timestamp.
     case aroundTimestamp(_ timestamp: Date)
-    
+
     /// When used, the backend returns messages pinned earlier than the given timestamp.
     ///
     /// When `inclusive == true` the results include the message pinned at the given timestamp.
     case earlier(_ timestamp: Date, inclusive: Bool)
-    
+
     /// When used, the backend returns messages pinned later than the given timestamp.
     ///
     /// When `inclusive == true` the results include the message pinned at the given timestamp.
@@ -48,10 +48,10 @@ extension PinnedMessagesPagination: Encodable {
         case pinned_at_before
         case pinned_at_before_or_equal
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
+
         switch self {
         case let .aroundMessage(messageId):
             try container.encode(messageId, forKey: .id_around)

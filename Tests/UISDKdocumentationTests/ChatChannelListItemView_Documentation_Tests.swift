@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -10,15 +10,15 @@ import XCTest
 
 class ChatChannelListItemView_Documentation_Tests: XCTestCase {
     // Example of usage for generating UISDK documentation:
-    
+
     func test_generateDocs_example_channelListItemView_namedLabelsWithPointers() {
         // Create a view to annotate and create documentation for.
         let view = ChatChannelListItemView().withoutAutoresizingMaskConstraints
-        
+
         // Create the necessary datasource and assign it to the view.
         let channel = ChatChannel.documentationMock(cid: .unique, unreadCount: .mock(messages: 10))
         view.content = .init(channel: channel, currentUserId: nil)
-        
+
         // Generate the docs for the given view:
         generateDocs(
             for: view, // The whole view which we want to annotate

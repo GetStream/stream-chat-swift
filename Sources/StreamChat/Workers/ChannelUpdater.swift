@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -68,7 +68,7 @@ class ChannelUpdater: Worker {
             apiClient.request(endpoint: endpoint, completion: completion)
         }
     }
-    
+
     /// Updates specific channel with new data.
     /// - Parameters:
     ///   - channelPayload: New channel data..
@@ -78,7 +78,7 @@ class ChannelUpdater: Worker {
             completion?($0.error)
         }
     }
-    
+
     /// Mutes/unmutes the specific channel.
     /// - Parameters:
     ///   - cid: The channel identifier.
@@ -89,7 +89,7 @@ class ChannelUpdater: Worker {
             completion?($0.error)
         }
     }
-    
+
     /// Deletes the specific channel.
     /// - Parameters:
     ///   - cid: The channel identifier.
@@ -131,7 +131,7 @@ class ChannelUpdater: Worker {
             truncate(cid: cid, skipPush: skipPush, hardDelete: hardDelete, completion: completion)
             return
         }
-        
+
         let context = database.backgroundReadOnlyContext
         context.perform { [weak self] in
             guard let user = context.currentUser?.user.asRequestBody() else {
@@ -163,7 +163,7 @@ class ChannelUpdater: Worker {
             )
         }
     }
-    
+
     private func truncate(
         cid: ChannelId,
         skipPush: Bool = false,
@@ -206,7 +206,7 @@ class ChannelUpdater: Worker {
             }
         }
     }
-    
+
     /// Removes hidden status for the specific channel.
     /// - Parameters:
     ///   - channel: The channel you want to show.
@@ -216,7 +216,7 @@ class ChannelUpdater: Worker {
             completion?($0.error)
         }
     }
-    
+
     /// Creates a new message in the local DB and sets its local state to `.pendingSend`.
     ///
     /// - Parameters:
@@ -259,10 +259,10 @@ class ChannelUpdater: Worker {
                 createdAt: nil,
                 extraData: extraData
             )
-            
+
             newMessageDTO.localMessageState = .pendingSend
             newMessageId = newMessageDTO.id
-            
+
         }) { error in
             if let messageId = newMessageId, error == nil {
                 completion?(.success(messageId))
@@ -271,7 +271,7 @@ class ChannelUpdater: Worker {
             }
         }
     }
-    
+
     /// Add users to the channel as members.
     /// - Parameters:
     ///   - cid: The Id of the channel where you want to add the users.
@@ -283,7 +283,7 @@ class ChannelUpdater: Worker {
             completion?($0.error)
         }
     }
-    
+
     /// Remove users to the channel as members.
     /// - Parameters:
     ///   - cid: The Id of the channel where you want to remove the users.
@@ -294,7 +294,7 @@ class ChannelUpdater: Worker {
             completion?($0.error)
         }
     }
-    
+
     /// Invite members to a channel. They can then accept or decline the invitation
     /// - Parameters:
     ///   - cid: The channel identifier
@@ -309,7 +309,7 @@ class ChannelUpdater: Worker {
             completion?($0.error)
         }
     }
-    
+
     /// Accept invitation to a channel
     /// - Parameters:
     ///   - cid: A channel identifier of a channel a user was invited to.
@@ -337,7 +337,7 @@ class ChannelUpdater: Worker {
             completion?($0.error)
         }
     }
-    
+
     /// Marks a channel as read
     /// - Parameters:
     ///   - cid: Channel id of the channel to be marked as read
@@ -366,7 +366,7 @@ class ChannelUpdater: Worker {
             completion?($0.error)
         }
     }
-    
+
     /// Start watching a channel
     ///
     /// Watching a channel is defined as observing notifications about this channel.
@@ -389,7 +389,7 @@ class ChannelUpdater: Worker {
             apiClient.request(endpoint: endpoint, completion: completion)
         }
     }
-    
+
     /// Stop watching a channel
     ///
     /// Watching a channel is defined as observing notifications about this channel.
@@ -402,7 +402,7 @@ class ChannelUpdater: Worker {
             completion?($0.error)
         }
     }
-    
+
     /// Queries the watchers of a channel.
     ///
     /// For more information about channel watchers, please check [documentation](https://getstream.io/chat/docs/ios/watch_channel/?language=swift)
@@ -433,7 +433,7 @@ class ChannelUpdater: Worker {
             }
         }
     }
-    
+
     /// Freezes/Unfreezes the channel.
     ///
     /// Freezing a channel will disallow sending new messages and sending / deleting reactions.
@@ -448,7 +448,7 @@ class ChannelUpdater: Worker {
             completion?($0.error)
         }
     }
-    
+
     func uploadFile(
         type: AttachmentType,
         localFileURL: URL,
@@ -473,7 +473,7 @@ class ChannelUpdater: Worker {
             completion(.failure(ClientError.InvalidAttachmentFileURL(localFileURL)))
         }
     }
-    
+
     /// Loads messages pinned in the given channel based on the provided query.
     ///
     /// - Parameters:
@@ -502,7 +502,7 @@ class ChannelUpdater: Worker {
             }
         }
     }
-    
+
     func createCall(in cid: ChannelId, callId: String, type: String, completion: @escaping (Result<CallWithToken, Error>) -> Void) {
         callRepository.createCall(in: cid, callId: callId, type: type, completion: completion)
     }

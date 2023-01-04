@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -10,7 +10,7 @@ final class FlagUserPayload_Tests: XCTestCase {
     func test_json_isDeserialized_withDefaultExtraData() throws {
         let json = XCTestCase.mockData(fromJSONFile: "FlagUserPayload+DefaultExtraData")
         let payload = try JSONDecoder.default.decode(FlagUserPayload.self, from: json)
-        
+
         // Assert current user payload is deserialized correctly.
         let currentUser = payload.currentUser
         XCTAssertEqual(currentUser.id, "broken-waterfall-5")
@@ -19,7 +19,7 @@ final class FlagUserPayload_Tests: XCTestCase {
             currentUser.imageURL,
             URL(string: "https://s3.amazonaws.com/eventmobi-test-assets/eventsbyids/8024/people/100no-pic.png")
         )
-        
+
         // Assert flagged user payload is deserialized correctly.
         let flaggedUser = payload.flaggedUser
         XCTAssertEqual(flaggedUser.id, "steep-moon-9")
@@ -30,7 +30,7 @@ final class FlagUserPayload_Tests: XCTestCase {
     func test_json_isDeserialized_withCustomData() throws {
         let json = XCTestCase.mockData(fromJSONFile: "FlagUserPayload+CustomExtraData")
         let payload = try JSONDecoder.default.decode(FlagUserPayload.self, from: json)
-            
+
         // Assert current user payload is deserialized correctly.
         let currentUser = payload.currentUser
         XCTAssertEqual(currentUser.id, "broken-waterfall-5")

@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -7,7 +7,7 @@ import Foundation
 /// A type used to send custom event payload to backend.
 struct CustomEventRequestBody<Payload: CustomEventPayload>: Encodable {
     let payload: Payload
-    
+
     func encode(to encoder: Encoder) throws {
         let data = try JSONEncoder.default.encode(payload)
         var json = try JSONDecoder.default.decode([String: RawJSON].self, from: data)

@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -13,23 +13,23 @@ open class ChatCommandSuggestionView: _View, AppearanceProvider {
             updateContentIfNeeded()
         }
     }
-    
+
     /// A view that displays the command image icon.
     open private(set) lazy var commandImageView: UIImageView = UIImageView()
         .withoutAutoresizingMaskConstraints
-    
+
     /// A view that displays the name of the command.
     open private(set) lazy var commandNameLabel: UILabel = UILabel()
         .withoutAutoresizingMaskConstraints
         .withAdjustingFontForContentSizeCategory
         .withBidirectionalLanguagesSupport
-    
+
     /// A view that display the command name and the possible arguments.
     open private(set) lazy var commandNameSubtitleLabel: UILabel = UILabel()
         .withoutAutoresizingMaskConstraints
         .withAdjustingFontForContentSizeCategory
         .withBidirectionalLanguagesSupport
-    
+
     /// A view container that holds the name and subtitle labels.
     open private(set) lazy var textContainer = ContainerStackView()
         .withoutAutoresizingMaskConstraints

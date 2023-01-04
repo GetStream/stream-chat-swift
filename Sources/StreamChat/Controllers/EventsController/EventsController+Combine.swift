@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Combine
@@ -11,7 +11,7 @@ extension EventsController {
     public var allEventsPublisher: AnyPublisher<Event, Never> {
         basePublishers.events.keepAlive(self)
     }
-    
+
     /// Returns a publisher emitting a new value every time event of the given type is observed.
     /// - Parameter eventType: An event type that will be observed.
     /// - Returns: A publisher emitting a new value every time event of the given type is observed.
@@ -20,14 +20,14 @@ extension EventsController {
             .compactMap { $0 as? T }
             .eraseToAnyPublisher()
     }
-    
+
     /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
     /// publishers. Instead of creating custom `Publisher` types, we use `CurrentValueSubject` and `PassthroughSubject` internally,
     /// and expose the published values by mapping them to a read-only `AnyPublisher` type.
     class BasePublishers {
         /// A backing subject for `allEventsPublisher`.
         let events = PassthroughSubject<Event, Never>()
-                
+
         /// Creates a new `BasePublishers` instance with the provided controller.
         init(controller: EventsController) {
             controller.multicastDelegate.add(additionalDelegate: self)

@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -27,7 +27,7 @@ final class EventObserver_Tests: XCTestCase {
         notificationCenter = nil
         eventToDeliver = nil
         observer = nil
-        
+
         super.tearDown()
     }
 

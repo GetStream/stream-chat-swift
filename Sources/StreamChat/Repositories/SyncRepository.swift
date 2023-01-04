@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -64,11 +64,11 @@ class SyncRepository {
         self.database = database
         self.apiClient = apiClient
     }
-    
+
     deinit {
         cancelRecoveryFlow()
     }
-    
+
     func syncLocalState(completion: @escaping () -> Void) {
         cancelRecoveryFlow()
 
@@ -78,7 +78,7 @@ class SyncRepository {
                 completion()
                 return
             }
-            
+
             guard let lastSyncAt = currentUser.lastSynchedEventDate?.bridgeDate else {
                 log.info("It's the first session of the current user, skipping recovery flow", subsystems: .offlineSupport)
                 self?.updateUserValue({ $0?.lastSynchedEventDate = DBDate() }) { _ in
@@ -86,7 +86,7 @@ class SyncRepository {
                 }
                 return
             }
-            
+
             self?.syncLocalState(lastSyncAt: lastSyncAt, completion: completion)
         }
     }
@@ -113,7 +113,7 @@ class SyncRepository {
         // Get the existing channelIds
         let activeChannelIds = activeChannelControllers.allObjects.compactMap(\.cid)
         operations.append(GetChannelIdsOperation(database: database, context: context, activeChannelIds: activeChannelIds))
-        
+
         // 1. Call `/sync` endpoint and get missing events for all locally existed channels
         operations.append(SyncEventsOperation(syncRepository: self, context: context))
 
@@ -171,7 +171,7 @@ class SyncRepository {
                 completion(.failure(.noNeedToSync))
                 return
             }
-            
+
             self?.getChannelIds { channelIds in
                 self?.syncChannelsEvents(
                     channelIds: channelIds,
@@ -182,7 +182,7 @@ class SyncRepository {
             }
         }
     }
-    
+
     func cancelRecoveryFlow() {
         operationQueue.cancelAllOperations()
         apiClient.exitRecoveryMode()
@@ -245,12 +245,12 @@ class SyncRepository {
         completion: @escaping (Result<[ChannelId], SyncError>) -> Void
     ) {
         log.info("Synching events for existing channels since \(date)", subsystems: .offlineSupport)
-        
+
         guard !channelIds.isEmpty else {
             completion(.success([]))
             return
         }
-        
+
         let endpoint: Endpoint<MissingEventsPayload> = .missingEvents(since: date, cids: channelIds)
         let requestCompletion: (Result<MissingEventsPayload, Error>) -> Void = { [weak self] result in
             switch result {

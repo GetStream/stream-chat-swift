@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -36,7 +36,7 @@ final class GuestEndpoints_Tests: XCTestCase {
         )
         XCTAssertEqual("guest", actualEndpoint.path.value)
     }
-    
+
     func test_token_buildsCorrectly_withCustomExtraData() {
         let payload = GuestUserTokenRequestPayload(
             userId: .unique,

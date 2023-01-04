@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -20,7 +20,7 @@ import Foundation
 ///
 class MessageEditor: Worker {
     @Atomic private var pendingMessageIDs: Set<MessageId> = []
-    
+
     private let observer: ListDatabaseObserver<MessageDTO, MessageDTO>
     private let messageRepository: MessageRepository
 
@@ -32,10 +32,10 @@ class MessageEditor: Worker {
         )
         self.messageRepository = messageRepository
         super.init(database: database, apiClient: apiClient)
-        
+
         startObserving()
     }
-    
+
     // MARK: - Private
 
     private func startObserving() {
@@ -48,10 +48,10 @@ class MessageEditor: Worker {
             log.error("Failed to start MessageEditor worker. \(error)")
         }
     }
-    
+
     private func handleChanges(changes: [ListChange<MessageDTO>]) {
         guard !changes.isEmpty else { return }
-        
+
         _pendingMessageIDs.mutate { pendingMessageIDs in
             let wasEmpty = pendingMessageIDs.isEmpty
             changes.pendingEditMessageIDs.forEach { pendingMessageIDs.insert($0) }
@@ -64,7 +64,7 @@ class MessageEditor: Worker {
     private func processNextMessage() {
         database.write { [weak self, weak messageRepository] session in
             guard let messageId = self?.pendingMessageIDs.first else { return }
-            
+
             guard
                 let dto = session.message(id: messageId),
                 dto.localMessageState == .pendingSync
@@ -72,14 +72,14 @@ class MessageEditor: Worker {
                 self?.removeMessageIDAndContinue(messageId)
                 return
             }
-            
+
             let requestBody = dto.asRequestBody() as MessageRequestBody
             messageRepository?.updateMessage(withID: messageId, localState: .syncing) {
                 self?.apiClient.request(endpoint: .editMessage(payload: requestBody)) {
                     let newMessageState: LocalMessageState? = $0.error == nil ? nil : .syncingFailed
-                    
+
                     let isBounced = ($0.error as? ClientError)?.isBouncedMessageError ?? false
-                    
+
                     messageRepository?.updateMessage(
                         withID: messageId,
                         localState: newMessageState,
@@ -91,7 +91,7 @@ class MessageEditor: Worker {
             }
         }
     }
-    
+
     private func removeMessageIDAndContinue(_ messageId: MessageId) {
         _pendingMessageIDs.mutate { $0.remove(messageId) }
         processNextMessage()

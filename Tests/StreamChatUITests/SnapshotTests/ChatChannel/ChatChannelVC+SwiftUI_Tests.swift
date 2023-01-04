@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -18,7 +18,7 @@ final class ChatChannelView_Tests: iOS13TestCase {
         super.setUp()
         Components.default.messageComposerVC = ComposerVC_Mock.self
         mockedChannelController = ChatChannelController_Mock.mock()
-        
+
         chatChannel = ChatChannelVC.asView(mockedChannelController)
     }
 

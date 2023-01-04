@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -31,20 +31,20 @@ struct DefaultRequestDecoder: RequestDecoder {
             default:
                 log.error(error, subsystems: .httpRequests)
             }
-            
+
             throw error
         }
-        
+
         guard let httpResponse = response as? HTTPURLResponse else {
             throw ClientError.Unexpected("Expecting `HTTPURLResponse` but received: \(response?.description ?? "nil").")
         }
-        
+
         guard let data = data, !data.isEmpty else {
             throw ClientError.ResponseBodyEmpty()
         }
-        
+
         log.debug("URL request response: \(httpResponse), data:\n\(data.debugPrettyPrintedJSON))", subsystems: .httpRequests)
-        
+
         guard httpResponse.statusCode < 300 else {
             let serverError: ErrorPayload
             do {
@@ -62,7 +62,7 @@ struct DefaultRequestDecoder: RequestDecoder {
                 log.info("Request failed because of an experied token.", subsystems: .httpRequests)
                 throw ClientError.ExpiredToken()
             }
-            
+
             log
                 .error(
                     "API request failed with status code: \(httpResponse.statusCode), code: \(serverError.code) response:\n\(data.debugPrettyPrintedJSON))",
@@ -93,7 +93,7 @@ extension ClientError {
     class ResponseBodyEmpty: ClientError {
         override var localizedDescription: String { "Response body is empty." }
     }
-    
+
     static let temporaryErrors: Set<Int> = [
         NSURLErrorCancelled,
         NSURLErrorNetworkConnectionLost,

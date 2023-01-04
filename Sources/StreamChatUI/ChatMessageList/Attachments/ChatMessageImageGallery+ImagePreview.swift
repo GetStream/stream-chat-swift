@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -9,7 +9,7 @@ import UIKit
 public protocol GalleryItemPreview {
     /// Attachment identifier.
     var attachmentId: AttachmentId? { get }
-    
+
     /// `UIImageView` that is displayed the attachment preview.
     var imageView: UIImageView { get }
 }
@@ -20,7 +20,7 @@ extension ChatMessageGalleryView {
         public var content: ChatMessageImageAttachment? {
             didSet { updateContentIfNeeded() }
         }
-        
+
         public var attachmentId: AttachmentId? {
             content?.id
         }
@@ -64,13 +64,13 @@ extension ChatMessageGalleryView {
 
         override open func setUp() {
             super.setUp()
-            
+
             let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapOnAttachment(_:)))
             addGestureRecognizer(tapRecognizer)
-            
+
             uploadingOverlay.didTapActionButton = { [weak self] in
                 guard let self = self, let attachment = self.content else { return }
-                
+
                 self.didTapOnUploadingActionButton?(attachment)
             }
         }

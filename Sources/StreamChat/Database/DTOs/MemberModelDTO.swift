@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -9,7 +9,7 @@ class MemberDTO: NSManagedObject {
     // Because we need to have a unique identifier of a member in the db, we use the combination of the related
     // user' id and the channel the member belongs to.
     @NSManaged fileprivate(set) var id: String
-    
+
     // This value is optional only temprorary until this is fixed https://getstream.slack.com/archives/CE5N802GP/p1592925726015900
     @NSManaged var channelRoleRaw: String?
     @NSManaged var memberCreatedAt: DBDate
@@ -18,16 +18,16 @@ class MemberDTO: NSManagedObject {
     @NSManaged var banExpiresAt: DBDate?
     @NSManaged var isBanned: Bool
     @NSManaged var isShadowBanned: Bool
-    
+
     @NSManaged var inviteAcceptedAt: DBDate?
     @NSManaged var inviteRejectedAt: DBDate?
     @NSManaged var isInvited: Bool
-    
+
     // MARK: - Relationships
-    
+
     @NSManaged var user: UserDTO
     @NSManaged var queries: Set<ChannelMemberListQueryDTO>
-    
+
     private static func createId(userId: String, channeldId: ChannelId) -> String {
         channeldId.rawValue + userId
     }
@@ -43,7 +43,7 @@ extension MemberDTO {
         request.predicate = NSPredicate(format: "id == %@", Self.createId(userId: userId, channeldId: cid))
         return request
     }
-    
+
     /// Returns a fetch request for the DTOs matching the provided `query`.
     static func members(matching query: ChannelMemberListQuery) -> NSFetchRequest<MemberDTO> {
         let request = NSFetchRequest<MemberDTO>(entityName: MemberDTO.entityName)
@@ -62,7 +62,7 @@ extension MemberDTO {
     static func load(memberId: String, context: NSManagedObjectContext) -> MemberDTO? {
         load(by: memberId, context: context).first
     }
-    
+
     /// If a User with the given id exists in the context, fetches and returns it. Otherwise create a new
     /// `UserDTO` with the given id.
     ///
@@ -84,13 +84,13 @@ extension MemberDTO {
         if let existing = load(memberId: memberId, context: context) {
             return existing
         }
-        
+
         let request = fetchRequest(id: memberId)
         let new = NSEntityDescription.insertNewObject(into: context, for: request)
         new.id = memberId
         return new
     }
-    
+
     static func loadLastActiveMembers(cid: ChannelId, context: NSManagedObjectContext) -> [MemberDTO] {
         let request = NSFetchRequest<MemberDTO>(entityName: MemberDTO.entityName)
         request.predicate = NSPredicate(format: "channel.cid == %@", cid.rawValue)
@@ -111,17 +111,17 @@ extension NSManagedObjectContext {
         cache: PreWarmedCache?
     ) throws -> MemberDTO {
         let dto = MemberDTO.loadOrCreate(userId: payload.userId, channelId: channelId, context: self, cache: cache)
-        
+
         // Save user-part of member first
         if let userPayload = payload.user {
             dto.user = try saveUser(payload: userPayload)
         }
-        
+
         // Save member specific data
         if let role = payload.role {
             dto.channelRoleRaw = role.rawValue
         }
-        
+
         dto.memberCreatedAt = payload.createdAt.bridgeDate
         dto.memberUpdatedAt = payload.updatedAt.bridgeDate
         dto.isBanned = payload.isBanned ?? false
@@ -130,19 +130,19 @@ extension NSManagedObjectContext {
         dto.isInvited = payload.isInvited ?? false
         dto.inviteAcceptedAt = payload.inviteAcceptedAt?.bridgeDate
         dto.inviteRejectedAt = payload.inviteRejectedAt?.bridgeDate
-        
+
         if let query = query {
             let queryDTO = try saveQuery(query)
             queryDTO.members.insert(dto)
         }
-        
+
         if let channelDTO = channel(cid: channelId) {
             channelDTO.members.insert(dto)
         }
-        
+
         return dto
     }
-    
+
     func member(userId: UserId, cid: ChannelId) -> MemberDTO? {
         MemberDTO.load(userId: userId, channelId: cid, context: self)
     }
@@ -174,7 +174,7 @@ extension ChatChannelMember {
         }
 
         let role = dto.channelRoleRaw.flatMap { MemberRole(rawValue: $0) } ?? .member
-        
+
         return ChatChannelMember(
             id: dto.user.id,
             name: dto.user.name,

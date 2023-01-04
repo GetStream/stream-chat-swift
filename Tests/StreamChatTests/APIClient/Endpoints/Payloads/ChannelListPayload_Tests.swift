@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -62,20 +62,20 @@ final class ChannelListPayload_Tests: XCTestCase {
             saveChannelListPayload(decodedPayload, database: databaseContainer)
         }
     }
-    
+
     func createHugeChannelList() -> ChannelListPayload {
         let userCount = 600
         let channelCount = 20
         let messageCount = 25
         let channelReadCount = 20
-        
+
         let users = (0..<max(userCount, 30)).map { userIndex in UserPayload.dummy(userId: "\(userIndex)") }
         let channels = (0..<channelCount).map { channelIndex -> ChannelPayload in
             let channelUsers = users.shuffled().prefix(30)
-            
+
             let channelCreatedDate = Date.unique
             let lastMessageDate = Date.unique(after: channelCreatedDate)
-            
+
             let cid = ChannelId(type: .messaging, id: "\(channelIndex)")
             let channelOwner = channelUsers.randomElement()!
             let channelDetail = ChannelDetailPayload(
@@ -131,7 +131,7 @@ final class ChannelListPayload_Tests: XCTestCase {
                 team: .unique,
                 cooldownDuration: .random(in: 0...120)
             )
-            
+
             let messages = (0..<messageCount).map { messageIndex -> MessagePayload in
                 let messageId = "\(channelIndex)-\(messageIndex)"
                 let messageCreatedDate = Date.unique(after: channelCreatedDate)
@@ -188,7 +188,7 @@ final class ChannelListPayload_Tests: XCTestCase {
                     pinExpires: nil
                 )
             }
-            
+
             return ChannelPayload(
                 channel: channelDetail,
                 watcherCount: 0,
@@ -213,7 +213,7 @@ final class ChannelListPayload_Tests: XCTestCase {
                 isHidden: false
             )
         }
-        
+
         return ChannelListPayload(channels: channels)
     }
 }
@@ -232,10 +232,10 @@ final class ChannelPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.members.count, 4)
         XCTAssertEqual(payload.isHidden, true)
         XCTAssertEqual(payload.watchers?.first?.id, "cilvia")
-        
+
         XCTAssertEqual(payload.messages.count, 25)
         let firstMessage = payload.messages.first(where: { $0.id == "broken-waterfall-5-7aede36b-b89f-4f45-baff-c40c7c1875d9" })!
-        
+
         XCTAssertEqual(firstMessage.type, MessageType.regular)
         XCTAssertEqual(firstMessage.user.id, "broken-waterfall-5")
         XCTAssertEqual(firstMessage.createdAt, "2020-06-09T08:10:40.800912Z".toDate())
@@ -252,7 +252,7 @@ final class ChannelPayload_Tests: XCTestCase {
         XCTAssertFalse(firstMessage.isSilent)
 
         XCTAssertEqual(payload.pinnedMessages.map(\.id), ["broken-waterfall-5-7aede36b-b89f-4f45-baff-c40c7c1875d9"])
-        
+
         let channel = payload.channel
         XCTAssertEqual(channel.cid, try! ChannelId(cid: "messaging:general"))
         XCTAssertEqual(channel.createdAt, "2019-05-10T14:03:49.505006Z".toDate())
@@ -263,18 +263,18 @@ final class ChannelPayload_Tests: XCTestCase {
         XCTAssertEqual(channel.updatedAt, "2019-05-10T14:03:49.505006Z".toDate())
         XCTAssertEqual(channel.cooldownDuration, 10)
         XCTAssertEqual(channel.team, "GREEN")
-        
+
         XCTAssertEqual(channel.name, "The water cooler")
         XCTAssertEqual(
             channel.imageURL?.absoluteString,
             "https://images.unsplash.com/photo-1512138664757-360e0aad5132?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2851&q=80"
         )
-        
+
         let firstChannelRead = payload.channelReads.first!
         XCTAssertEqual(firstChannelRead.lastReadAt, "2020-06-10T07:43:11.812841984Z".toDate())
         XCTAssertEqual(firstChannelRead.unreadMessagesCount, 0)
         XCTAssertEqual(firstChannelRead.user.id, "broken-waterfall-5")
-        
+
         let config = channel.config
         XCTAssertEqual(config.reactionsEnabled, true)
         XCTAssertEqual(config.typingEventsEnabled, true)
@@ -298,7 +298,7 @@ final class ChannelPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.membership?.user?.id, "broken-waterfall-5")
         XCTAssertEqual(payload.channel.ownCapabilities?.count, 27)
     }
-    
+
     func test_newestMessage_whenMessagesAreSortedDesc() throws {
         // GIVEN
         let earlierMessage: MessagePayload = .dummy(
@@ -306,13 +306,13 @@ final class ChannelPayload_Tests: XCTestCase {
             authorUserId: .unique,
             createdAt: .init()
         )
-        
+
         let laterMessage: MessagePayload = .dummy(
             messageId: .unique,
             authorUserId: .unique,
             createdAt: earlierMessage.createdAt.addingTimeInterval(10)
         )
-        
+
         // WHEN
         let payload: ChannelPayload = .dummy(
             messages: [
@@ -320,11 +320,11 @@ final class ChannelPayload_Tests: XCTestCase {
                 earlierMessage
             ]
         )
-        
+
         // THEN
         XCTAssertEqual(payload.newestMessage?.id, laterMessage.id)
     }
-    
+
     func test_newestMessage_whenMessagesAreSortedAsc() throws {
         // GIVEN
         let earlierMessage: MessagePayload = .dummy(
@@ -332,13 +332,13 @@ final class ChannelPayload_Tests: XCTestCase {
             authorUserId: .unique,
             createdAt: .init()
         )
-        
+
         let laterMessage: MessagePayload = .dummy(
             messageId: .unique,
             authorUserId: .unique,
             createdAt: earlierMessage.createdAt.addingTimeInterval(10)
         )
-        
+
         // WHEN
         let payload: ChannelPayload = .dummy(
             messages: [
@@ -346,7 +346,7 @@ final class ChannelPayload_Tests: XCTestCase {
                 laterMessage
             ]
         )
-        
+
         // THEN
         XCTAssertEqual(payload.newestMessage?.id, laterMessage.id)
     }

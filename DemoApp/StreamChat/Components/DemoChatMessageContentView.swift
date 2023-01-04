@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -20,7 +20,7 @@ final class DemoChatMessageContentView: ChatMessageContentView {
             bubbleThreadFootnoteContainer.insertArrangedSubview(pinInfoLabel!, at: 0)
         }
     }
-    
+
     override func updateContent() {
         super.updateContent()
 
@@ -33,7 +33,7 @@ final class DemoChatMessageContentView: ChatMessageContentView {
             textView?.text = turkishTranslation
             timestampLabel?.text?.append(" - Translated to Turkish")
         }
-        
+
         if content?.isPinned == true, let pinInfoLabel = pinInfoLabel {
             pinInfoLabel.text = "📌 Pinned"
             if let pinDetails = content?.pinDetails {

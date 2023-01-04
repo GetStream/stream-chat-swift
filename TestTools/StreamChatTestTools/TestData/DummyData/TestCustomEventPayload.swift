@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -7,7 +7,7 @@ import StreamChat
 
 struct IdeaEventPayload: CustomEventPayload {
     static let eventType: EventType = "new_idea"
-    
+
     let idea: String
 }
 

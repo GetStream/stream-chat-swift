@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -14,7 +14,7 @@ import UIKit
 ///
 class SimpleChannelMembersViewController: UITableViewController, ChatChannelMemberListControllerDelegate {
     // MARK: - Properties
-    
+
     ///
     /// # memberListController
     ///
@@ -33,7 +33,7 @@ class SimpleChannelMembersViewController: UITableViewController, ChatChannelMemb
             memberListController.synchronize()
         }
     }
-    
+
     // MARK: - ChatChannelMemberListControllerDelegate
 
     ///
@@ -41,7 +41,7 @@ class SimpleChannelMembersViewController: UITableViewController, ChatChannelMemb
     /// protocol and will be called when events happen in the channel member list. In order for these updates to
     /// happen, `memberListController.delegate` must be equal `self` and `memberListController.synchronize()` must be called.
     ///
-    
+
     ///
     /// # didChangeMembers
     ///
@@ -53,7 +53,7 @@ class SimpleChannelMembersViewController: UITableViewController, ChatChannelMemb
         didChangeMembers changes: [ListChange<ChatChannelMember>]
     ) {
         tableView.beginUpdates()
-        
+
         for change in changes {
             switch change {
             case let .insert(_, index: index):
@@ -66,17 +66,17 @@ class SimpleChannelMembersViewController: UITableViewController, ChatChannelMemb
                 tableView.deleteRows(at: [index], with: .automatic)
             }
         }
-        
+
         tableView.endUpdates()
     }
-    
+
     // MARK: - UITableViewDataSource
 
     ///
     /// The methods below are part of the `UITableViewDataSource` protocol and will be called when the `UITableView`
     /// needs information which will be given by the `memberListController` object.
     ///
-    
+
     ///
     /// # numberOfRowsInSection
     ///
@@ -99,7 +99,7 @@ class SimpleChannelMembersViewController: UITableViewController, ChatChannelMemb
         let cid = memberListController.query.cid
         let member = memberListController.members[indexPath.row]
         let client = memberListController.client
-        
+
         guard
             let me = memberListController.members.first(where: { $0.id == memberListController.client.currentUserId }),
             me.memberRole != .member,
@@ -113,7 +113,7 @@ class SimpleChannelMembersViewController: UITableViewController, ChatChannelMemb
                 _ = channelController
             }
         }
-        
+
         let banAction = UIContextualAction(
             style: .normal,
             title: member.isBanned ? "Unban" : "Ban"
@@ -124,19 +124,19 @@ class SimpleChannelMembersViewController: UITableViewController, ChatChannelMemb
                 completion(error == nil)
                 _ = memberController
             }
-            
+
             if member.isBanned {
                 memberController.unban(completion: actionCompletion)
             } else {
                 memberController.ban(completion: actionCompletion)
             }
         }
-        
+
         let configuration = UISwipeActionsConfiguration(actions: [removeAction, banAction])
         configuration.performsFirstActionWithFullSwipe = true
         return configuration
     }
-    
+
     ///
     /// # cellForRowAt
     ///
@@ -147,9 +147,9 @@ class SimpleChannelMembersViewController: UITableViewController, ChatChannelMemb
         let member = memberListController.members[indexPath.row]
         return memberCell(member, isCurrentUser: member.id == memberListController.client.currentUserId)
     }
-    
+
     // MARK: - UITableViewDelegate
-    
+
     ///
     /// # willDisplay
     ///
@@ -162,29 +162,29 @@ class SimpleChannelMembersViewController: UITableViewController, ChatChannelMemb
             memberListController.loadNextMembers()
         }
     }
-    
+
     // MARK: - UI Code
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         title = "Members"
-        
+
         navigationItem.rightBarButtonItem = .init(
             barButtonSystemItem: .add,
             target: self,
             action: #selector(addNewMember)
         )
-        
+
         tableView.tableFooterView = UIView()
     }
-    
+
     @objc private func addNewMember() {
         guard
             let usersViewController = UIStoryboard.simpleChat
             .instantiateViewController(withIdentifier: "SimpleUsersViewController") as? SimpleUsersViewController
         else { return }
-        
+
         usersViewController.userListController = memberListController.client.userListController(
             query: .init(sort: [.init(key: .lastActivityAt)])
         )
@@ -192,14 +192,14 @@ class SimpleChannelMembersViewController: UITableViewController, ChatChannelMemb
         usersViewController.didSelectUser = { [weak self] userId in
             self?.dismiss(animated: true) {
                 guard let self = self else { return }
-                
+
                 let channelController = self.memberListController.client.channelController(for: self.memberListController.query.cid)
                 channelController.addMembers(userIds: [userId]) { [channelController] _ in
                     _ = channelController
                 }
             }
         }
-        
+
         present(usersViewController, animated: true)
     }
 }

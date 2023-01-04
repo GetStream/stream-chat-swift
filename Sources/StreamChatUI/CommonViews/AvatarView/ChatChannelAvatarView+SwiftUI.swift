@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Combine
@@ -23,14 +23,14 @@ extension ChatChannelAvatarView {
     /// SwiftUI wrapper of `ChatChannelAvatarView`.
     public class SwiftUIWrapper<Content: SwiftUIView>: ChatChannelAvatarView, ObservableObject {
         var hostingController: UIViewController?
-        
+
         override public var intrinsicContentSize: CGSize {
             hostingController?.view.intrinsicContentSize ?? super.intrinsicContentSize
         }
 
         override public func setUp() {
             super.setUp()
-    
+
             let view = Content(dataSource: self)
                 .environmentObject(components.asObservableObject)
                 .environmentObject(appearance.asObservableObject)

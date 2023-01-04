@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -93,7 +93,7 @@ class MessagePayload: Decodable {
     /// Only message payload from `getMessage` endpoint contains channel data. It's a convenience workaround for having to
     /// make an extra call do get channel details.
     let channel: ChannelDetailPayload?
-    
+
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: MessagePayloadsCodingKeys.self)
         id = try container.decode(String.self, forKey: .id)
@@ -148,7 +148,7 @@ class MessagePayload: Decodable {
         // Translations are only available for messages returned via `message.translate()`
         translations = (try container.decodeIfPresent(MessageTranslationsPayload.self, forKey: .i18n))?.translated
     }
-    
+
     init(
         id: String,
         cid: ChannelId? = nil,
@@ -264,7 +264,7 @@ struct MessageRequestBody: Encodable {
         self.pinExpires = pinExpires
         self.extraData = extraData
     }
-    
+
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: MessagePayloadsCodingKeys.self)
         try container.encode(id, forKey: .id)
@@ -281,11 +281,11 @@ struct MessageRequestBody: Encodable {
         if !attachments.isEmpty {
             try container.encode(attachments, forKey: .attachments)
         }
-        
+
         if !mentionedUserIds.isEmpty {
             try container.encode(mentionedUserIds, forKey: .mentionedUsers)
         }
-        
+
         try extraData.encode(to: encoder)
     }
 }
@@ -315,7 +315,7 @@ public struct Command: Codable, Hashable {
     public let set: String
     /// Args for the command.
     public let args: String
-    
+
     public init(name: String = "", description: String = "", set: String = "", args: String = "") {
         self.name = name
         self.description = description

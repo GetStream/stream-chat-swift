@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -11,58 +11,58 @@ final class WebSocketEngine_Mock: WebSocketEngine {
     var isConnected: Bool = false
     var callbackQueue: DispatchQueue
     weak var delegate: WebSocketEngineDelegate?
-    
+
     /// How many times was `connect()` called
     @Atomic var connect_calledCount = 0
-    
+
     /// How many times was `disconnect()` called
     @Atomic var disconnect_calledCount = 0
-    
+
     /// How many times was `sendPing()` called
     @Atomic var sendPing_calledCount = 0
-    
+
     convenience init() {
         self.init(request: .init(url: URL(string: "test_url")!), sessionConfiguration: .ephemeral, callbackQueue: .main)
     }
-    
+
     required init(request: URLRequest, sessionConfiguration: URLSessionConfiguration, callbackQueue: DispatchQueue) {
         self.request = request
         self.sessionConfiguration = sessionConfiguration
         self.callbackQueue = callbackQueue
     }
-    
+
     func connect() {
         connect_calledCount += 1
     }
-    
+
     func disconnect() {
         disconnect_calledCount += 1
     }
-    
+
     func sendPing() {
         sendPing_calledCount += 1
     }
-    
+
     // MARK: - Functions to simulate behavior
-    
+
     func simulateConnectionSuccess() {
         isConnected = true
         delegate?.webSocketDidConnect()
     }
-    
+
     func simulateMessageReceived(_ json: [String: Any] = [:]) {
         let data = try! JSONSerialization.data(withJSONObject: json, options: [])
         simulateMessageReceived(data)
     }
-    
+
     func simulateMessageReceived(_ data: Data) {
         delegate?.webSocketDidReceiveMessage(String(data: data, encoding: .utf8)!)
     }
-    
+
     func simulatePong() {
         simulateMessageReceived(.healthCheckEvent(userId: .unique, connectionId: .unique))
     }
-    
+
     func simulateDisconnect(_ error: WebSocketEngineError? = nil) {
         isConnected = false
         delegate?.webSocketDidDisconnect(error: error)

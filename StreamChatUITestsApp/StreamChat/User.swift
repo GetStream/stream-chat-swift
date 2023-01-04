@@ -1,12 +1,12 @@
 //
-// Copyright © 2021 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
 import StreamChat
 
 extension UserCredentials {
-    
+
     static var `default`: UserCredentials {
         UserCredentials(id: "luke_skywalker",
                         name: "Luke Skywalker",

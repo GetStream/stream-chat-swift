@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -9,42 +9,42 @@ import Foundation
 class ChannelReadDTO: NSManagedObject {
     @NSManaged var lastReadAt: DBDate
     @NSManaged var unreadMessageCount: Int32
-    
+
     // MARK: - Relationships
-    
+
     @NSManaged var channel: ChannelDTO
     @NSManaged var user: UserDTO
-    
+
     override func willSave() {
         super.willSave()
-        
+
         // When the read is updated, we need to propagate this change up to holding channel
         if hasPersistentChangedValues, !channel.hasChanges, !channel.isDeleted {
             // this will not change object, but mark it as dirty, triggering updates
             channel.cid = channel.cid
         }
     }
-    
+
     static func fetchRequest(userId: String) -> NSFetchRequest<ChannelReadDTO> {
         let request = NSFetchRequest<ChannelReadDTO>(entityName: ChannelReadDTO.entityName)
         request.predicate = NSPredicate(format: "user.id == %@", userId)
         return request
     }
-    
+
     static func fetchRequest(for cid: ChannelId, userId: String) -> NSFetchRequest<ChannelReadDTO> {
         let request = NSFetchRequest<ChannelReadDTO>(entityName: ChannelReadDTO.entityName)
         request.predicate = NSPredicate(format: "channel.cid == %@ && user.id == %@", cid.rawValue, userId)
         return request
     }
-    
+
     static func load(userId: String, context: NSManagedObjectContext) -> [ChannelReadDTO] {
         load(by: fetchRequest(userId: userId), context: context)
     }
-    
+
     static func load(cid: ChannelId, userId: String, context: NSManagedObjectContext) -> ChannelReadDTO? {
         load(by: fetchRequest(for: cid, userId: userId), context: context).first
     }
-    
+
     static func loadOrCreate(
         cid: ChannelId,
         userId: String,
@@ -55,13 +55,13 @@ class ChannelReadDTO: NSManagedObject {
         if let existing = load(by: request, context: context).first {
             return existing
         }
-        
+
         let new = NSEntityDescription.insertNewObject(into: context, for: request)
         new.channel = ChannelDTO.loadOrCreate(cid: cid, context: context, cache: cache)
         new.user = UserDTO.loadOrCreate(id: userId, context: context, cache: cache)
         return new
     }
-    
+
     /// Snapshots the current state of `ChannelReadDTO` and returns an immutable model object from it.
     func asModel() throws -> ChatChannelRead { try .create(fromDTO: self) }
 }
@@ -75,23 +75,23 @@ extension NSManagedObjectContext {
         cache: PreWarmedCache?
     ) throws -> ChannelReadDTO {
         let dto = ChannelReadDTO.loadOrCreate(cid: cid, userId: payload.user.id, context: self, cache: cache)
-        
+
         dto.user = try saveUser(payload: payload.user)
-        
+
         dto.lastReadAt = payload.lastReadAt.bridgeDate
         dto.unreadMessageCount = Int32(payload.unreadMessagesCount)
-        
+
         return dto
     }
-    
+
     func markChannelAsRead(cid: ChannelId, userId: UserId, at: Date) {
         if let read = loadChannelRead(cid: cid, userId: userId) {
             let previousLastReadAt = read.lastReadAt
-            
+
             // We have a read object saved, we can update it
             read.lastReadAt = at.bridgeDate
             read.unreadMessageCount = 0
-            
+
             // Mark messages authored by the current user sent within `previousLastReadAt...at` window
             // as seen by the channel member with `userId`.
             markMessagesFromCurrentUserAsRead(
@@ -106,7 +106,7 @@ extension NSManagedObjectContext {
             read.user = member.user
             read.lastReadAt = at.bridgeDate
             read.unreadMessageCount = 0
-            
+
             // Mark all locally existed messages authored by the current user
             // as seen by the channel member with `userId`.
             markMessagesFromCurrentUserAsRead(
@@ -123,21 +123,21 @@ extension NSManagedObjectContext {
             )
         }
     }
-    
+
     func markChannelAsUnread(cid: ChannelId, by userId: UserId) {
         guard let read = loadChannelRead(cid: cid, userId: userId) else { return }
-                
+
         delete(read)
     }
 
     func loadChannelRead(cid: ChannelId, userId: String) -> ChannelReadDTO? {
         ChannelReadDTO.load(cid: cid, userId: userId, context: self)
     }
-    
+
     func loadChannelReads(for userId: UserId) -> [ChannelReadDTO] {
         ChannelReadDTO.load(userId: userId, context: self)
     }
-    
+
     private func markMessagesFromCurrentUserAsRead(
         for read: ChannelReadDTO,
         previousReadAt: DBDate
@@ -146,14 +146,14 @@ extension NSManagedObjectContext {
             // Current user is not accounted in his own message reads.
             return
         }
-        
+
         let messages = MessageDTO.loadCurrentUserMessages(
             in: read.channel.cid,
             createdAtFrom: previousReadAt.bridgeDate,
             createdAtThrough: read.lastReadAt.bridgeDate,
             context: self
         )
-        
+
         for message in messages {
             message.reads.insert(read)
         }

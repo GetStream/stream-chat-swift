@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -8,7 +8,7 @@ import UIKit
 public protocol AttachmentPreviewProvider {
     /// The view representing the attachment.
     func previewView(components: Components) -> UIView
-    
+
     /// The preferred axis to be used for attachment previews in attachments view.
     static var preferredAxis: NSLayoutConstraint.Axis { get }
 }

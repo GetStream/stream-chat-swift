@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -9,11 +9,11 @@ import StreamChat
 open class ChatMessageLayoutOptionsResolver {
     /// The maximum time interval between 2 consecutive messages sent by the same user to treat them as a single message group.
     public let maxTimeIntervalBetweenMessagesInGroup: TimeInterval
-    
+
     // TODO: Propagate via `init` in v5, make it non-optional.
     /// The config of the `ChatClient` used.
     public internal(set) var config: ChatClientConfig?
-    
+
     /// Creates new `ChatMessageLayoutOptionsResolver`.
     ///
     /// - Parameter maxTimeIntervalBetweenMessagesInGroup: The maximum time interval between 2 consecutive messages sent by the same user to treat them as a single message group (`60 sec` by default).
@@ -47,7 +47,7 @@ open class ChatMessageLayoutOptionsResolver {
             messageIndexPath: indexPath,
             messages: messages
         )
-        
+
         var options: ChatMessageLayoutOptions = []
 
         // The text should be centered without a bubble for system or error messages
@@ -84,11 +84,11 @@ open class ChatMessageLayoutOptionsResolver {
         if isLastInSequence && !message.isSentByCurrentUser && channel.memberCount > 2 {
             options.insert(.authorName)
         }
-        
+
         guard message.isDeleted == false else {
             return options
         }
-        
+
         if hasQuotedMessage(message) {
             options.insert(.quotedMessage)
         }
@@ -180,14 +180,14 @@ open class ChatMessageLayoutOptionsResolver {
             nextMessage.type != .ephemeral,
             nextMessage.type != .system
         else { return true }
-        
+
         let delay = nextMessage.createdAt.timeIntervalSince(message.createdAt)
 
         // If the message next to the current one is sent with delay > maxTimeIntervalBetweenMessagesInGroup,
         // the current message ends the sequence.
         return delay > maxTimeIntervalBetweenMessagesInGroup
     }
-    
+
     /// Determines whether to populate `onlyVisibleToYouIndicator` for the given message.
     /// - Parameter message: The message.
     /// - Returns: `true` if `onlyVisibleToYouIndicator` layout option should be included for the given message.
@@ -195,7 +195,7 @@ open class ChatMessageLayoutOptionsResolver {
         guard message.isSentByCurrentUser else {
             return false
         }
-        
+
         switch message.type {
         case .ephemeral:
             return true
@@ -204,13 +204,13 @@ open class ChatMessageLayoutOptionsResolver {
                 log.assertionFailure("The `config` property must be assiged at this point.")
                 return false
             }
-            
+
             return config.deletedMessagesVisibility == .visibleForCurrentUser
         default:
             return false
         }
     }
-    
+
     /// Makes a decision to show the delivery status for the given message in the given channel.
     ///
     /// - Parameters:
@@ -219,7 +219,7 @@ open class ChatMessageLayoutOptionsResolver {
     /// - Returns: `true` if delivery status should be shown.
     open func canShowDeliveryStatus(for message: ChatMessage, in channel: ChatChannel) -> Bool {
         guard let status = message.deliveryStatus else { return false }
-        
+
         switch status {
         case .pending:
             return true

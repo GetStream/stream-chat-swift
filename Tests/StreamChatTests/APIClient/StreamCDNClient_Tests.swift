@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -10,7 +10,7 @@ final class StreamCDNClient_Tests: XCTestCase {
     func test_uploadFileEncoderIsCalledWithEndpoint() throws {
         let builder = TestBuilder()
         let client = builder.make()
-        
+
         // Setup mock encoder response (it's not actually used, we just need to return something)
         let request = URLRequest(url: .unique())
         builder.encoder.encodeRequest = .success(request)
@@ -39,7 +39,7 @@ final class StreamCDNClient_Tests: XCTestCase {
         // Check the encoder is called with the correct endpoint
         XCTAssertEqual(builder.encoder.encodeRequest_endpoints.first, AnyEndpoint(testEndpoint))
     }
-    
+
     func test_uploadFileEncoderFailingToEncode() throws {
         let builder = TestBuilder()
         let client = builder.make()
@@ -64,7 +64,7 @@ final class StreamCDNClient_Tests: XCTestCase {
 
         XCTAssertEqual(result.error as? TestError, testError)
     }
-    
+
     func test_uploadFileSuccess() throws {
         let builder = TestBuilder()
         let decoder = builder.decoder
@@ -73,17 +73,17 @@ final class StreamCDNClient_Tests: XCTestCase {
         // Create a test request and set it as a response from the encoder
         let testRequest = URLRequest(url: .unique())
         builder.encoder.encodeRequest = .success(testRequest)
-        
+
         // Set up a successful mock network response for the request
         let mockResponseData = try JSONEncoder.stream.encode(["file": URL.unique()])
         URLProtocol_Mock.mockResponse(request: testRequest, statusCode: 234, responseBody: mockResponseData)
-        
+
         // Set up a decoder response
         // ⚠️ Watch out: the user is different there, so we can distinguish between the incoming data
         // to the encoder, and the outgoing data).
         let payload = FileUploadPayload(fileURL: .unique())
         decoder.decodeRequestResponse = .success(payload)
-        
+
         // Create a request and wait for the completion block
         let result = try waitFor {
             client.uploadAttachment(
@@ -98,20 +98,20 @@ final class StreamCDNClient_Tests: XCTestCase {
                 completion: $0
             )
         }
-        
+
         // Check the incoming data to the encoder is the URLResponse and data from the network
         XCTAssertEqual(decoder.decodeRequestResponse_data, mockResponseData)
         XCTAssertEqual(decoder.decodeRequestResponse_response?.statusCode, 234)
-        
+
         // Check the outgoing data is from the decoder
         XCTAssertEqual(try result.get(), payload.fileURL)
     }
-    
+
     func test_uploadFileFailure() throws {
         let builder = TestBuilder()
         let client = builder.make()
         let decoder = builder.decoder
-        
+
         // Create a test request and set it as a response from the encoder
         let testRequest = URLRequest(url: .unique())
         builder.encoder.encodeRequest = .success(testRequest)
@@ -155,7 +155,7 @@ final class StreamCDNClient_Tests: XCTestCase {
     func test_callingUploadFile_createsNetworkRequest() throws {
         let builder = TestBuilder()
         let client = builder.make()
-        
+
         let attachment = AnyChatMessageAttachment.dummy(
             uploadingState: .init(
                 localFileURL: .localYodaImage,
@@ -163,9 +163,9 @@ final class StreamCDNClient_Tests: XCTestCase {
                 file: .init(type: .jpeg, size: 0, mimeType: nil)
             )
         )
-        
+
         let uploadingState = try XCTUnwrap(attachment.uploadingState)
-        
+
         let multipartFormData = MultipartFormData(
             try Data(contentsOf: .localYodaImage),
             fileName: uploadingState.localFileURL.lastPathComponent,

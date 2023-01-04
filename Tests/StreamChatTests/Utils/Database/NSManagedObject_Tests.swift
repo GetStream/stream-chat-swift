@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -10,7 +10,7 @@ final class NSManagedObject_Tests: XCTestCase {
     func test_entityName_default() {
         XCTAssertEqual(EntityWithDefaultName.entityName, "EntityWithDefaultName")
     }
-    
+
     func test_entityName_custom() {
         XCTAssertEqual(EntityWithCustomName.entityName, "CustomName")
     }

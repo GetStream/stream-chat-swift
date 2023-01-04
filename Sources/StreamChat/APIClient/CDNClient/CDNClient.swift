@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -29,7 +29,7 @@ class StreamCDNClient: CDNClient {
     private let session: URLSession
     /// Keeps track of uploading tasks progress
     @Atomic private var taskProgressObservers: [Int: NSKeyValueObservation] = [:]
-    
+
     init(
         encoder: RequestEncoder,
         decoder: RequestDecoder,

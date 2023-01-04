@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -142,13 +142,13 @@ extension AttachmentPayload {
         guard case let .dictionary(payload) = try RawJSON(from: decoder) else {
             throw ClientError.AttachmentDecoding("Failed to decode extra data.")
         }
-        
+
         let customPayload = payload.removingValues(
             forKeys:
             AttachmentCodingKeys.allCases.map(\.rawValue) +
                 AttachmentFile.CodingKeys.allCases.map(\.rawValue)
         )
-        
+
         return customPayload.isEmpty ? nil : customPayload
     }
 }

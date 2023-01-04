@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -24,7 +24,7 @@ public enum ChannelListSortingKey: String, SortingKey {
     case hasUnread
     /// Sort channels by their unread count.
     case unreadCount
-    
+
     private var canUseAsSortDescriptor: Bool {
         switch self {
         case .createdAt: return true
@@ -37,11 +37,11 @@ public enum ChannelListSortingKey: String, SortingKey {
         case .default: return true
         }
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         let value: String
-        
+
         switch self {
         case .default: value = "updated_at"
         case .createdAt: value = "created_at"
@@ -52,7 +52,7 @@ public enum ChannelListSortingKey: String, SortingKey {
         case .hasUnread: value = "has_unread"
         case .unreadCount: value = "unread_count"
         }
-        
+
         try container.encode(value)
     }
 }
@@ -62,7 +62,7 @@ extension ChannelListSortingKey {
         let dateKeyPath: KeyPath<ChannelDTO, DBDate> = \ChannelDTO.defaultSortingAt
         return .init(keyPath: dateKeyPath, ascending: false)
     }()
-    
+
     func sortDescriptor(isAscending: Bool) -> NSSortDescriptor? {
         canUseAsSortDescriptor ? .init(key: rawValue, ascending: isAscending) : nil
     }
@@ -75,7 +75,7 @@ extension Array where Element == Sorting<ChannelListSortingKey> {
         guard !contains(where: { $0.key == .cid }), !isEmpty else {
             return self
         }
-        
+
         return self + [.init(key: .cid)]
     }
 }

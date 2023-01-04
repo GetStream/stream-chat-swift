@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -42,7 +42,7 @@ open class TypingAnimationView: _View, AppearanceProvider {
         dotLayer.backgroundColor = appearance.colorPalette.text.cgColor
         replicatorLayer.frame = bounds
     }
-        
+
     open func startAnimating() {
         let opacityAnimation = CABasicAnimation(keyPath: "opacity")
         opacityAnimation.fromValue = opacityFromValue

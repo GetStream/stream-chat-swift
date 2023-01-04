@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -48,7 +48,7 @@ public struct AttachmentAction: Codable, Hashable {
     public let type: ActionType
     /// A text.
     public let text: String
-    
+
     /// Init an attachment action.
     /// - Parameters:
     ///   - name: a name.
@@ -72,7 +72,7 @@ public struct AttachmentAction: Codable, Hashable {
 
     /// Check if the action is cancel button.
     public var isCancel: Bool { value.lowercased() == "cancel" }
-    
+
     /// An attachment action type, e.g. button.
     public enum ActionType: String, Codable {
         case button
@@ -138,7 +138,7 @@ public struct AttachmentFile: Codable, Hashable {
         case mimeType = "mime_type"
         case size = "file_size"
     }
-    
+
     /// An attachment file type (see `AttachmentFileType`).
     public let type: AttachmentFileType
     /// A size of the file.
@@ -178,17 +178,17 @@ public struct AttachmentFile: Codable, Hashable {
             mimeType: fileType.mimeType
         )
     }
-    
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         mimeType = try? container.decodeIfPresent(String.self, forKey: .mimeType)
-        
+
         if let mimeType = mimeType {
             type = AttachmentFileType(mimeType: mimeType)
         } else {
             type = .generic
         }
-        
+
         if let size = try? container.decodeIfPresent(Int64.self, forKey: .size) {
             self.size = size
         } else if let floatSize = try? container.decodeIfPresent(Float64.self, forKey: .size) {
@@ -197,7 +197,7 @@ public struct AttachmentFile: Codable, Hashable {
             size = 0
         }
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(size, forKey: .size)
@@ -252,14 +252,14 @@ public enum AttachmentFileType: String, Codable, Equatable, CaseIterable {
         "image/bmp": .bmp,
         "image/webp": .webp
     ]
-    
+
     /// Init an attachment file type by mime type.
     ///
     /// - Parameter mimeType: a mime type.
     public init(mimeType: String) {
         self = AttachmentFileType.mimeTypes[mimeType, default: .generic]
     }
-    
+
     /// Init an attachment file type by a file extension.
     ///
     /// - Parameter ext: a file extension.
@@ -281,7 +281,7 @@ public enum AttachmentFileType: String, Codable, Equatable, CaseIterable {
 
         self = AttachmentFileType(rawValue: ext) ?? .generic
     }
-    
+
     /// Returns a mime type for the file type.
     public var mimeType: String {
         if self == .jpeg {

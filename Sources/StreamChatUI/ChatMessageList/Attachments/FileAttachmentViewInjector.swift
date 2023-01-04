@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -17,14 +17,14 @@ public class FilesAttachmentViewInjector: AttachmentViewInjector {
             .components
             .fileAttachmentListView
             .init()
-        
+
         attachmentListView.didTapOnAttachment = { [weak self] attachment in
             guard
                 let delegate = self?.contentView.delegate as? FileActionContentViewDelegate
             else { return }
             delegate.didTapOnAttachment(attachment, at: self?.contentView.indexPath?())
         }
-        
+
         return attachmentListView.withoutAutoresizingMaskConstraints
     }()
 

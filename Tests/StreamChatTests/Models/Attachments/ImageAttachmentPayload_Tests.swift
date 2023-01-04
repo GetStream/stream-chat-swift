@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -14,7 +14,7 @@ final class ImageAttachmentPayload_Tests: XCTestCase {
         let thumbURL: URL = .unique()
         let originalWidth: Double = 3200
         let originalHeight: Double = 2600
-        
+
         // Create JSON with the given values.
         let json = """
         {
@@ -25,10 +25,10 @@ final class ImageAttachmentPayload_Tests: XCTestCase {
             "original_height": \(originalHeight)
         }
         """.data(using: .utf8)!
-        
+
         // Decode attachment from JSON.
         let payload = try JSONDecoder.stream.decode(ImageAttachmentPayload.self, from: json)
-        
+
         // Assert values are decoded correctly.
         XCTAssertEqual(payload.title, title)
         XCTAssertEqual(payload.imageURL, imageURL)
@@ -36,18 +36,18 @@ final class ImageAttachmentPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.originalHeight, originalHeight)
         XCTAssertNil(payload.extraData)
     }
-    
+
     func test_decodingExtraData() throws {
         struct ExtraData: Codable {
             let comment: String
         }
-        
+
         // Create attachment field values.
         let title: String = .unique
         let imageURL: URL = .unique()
         let thumbURL: URL = .unique()
         let comment: String = .unique
-        
+
         // Create JSON with the given values.
         let json = """
         {
@@ -57,14 +57,14 @@ final class ImageAttachmentPayload_Tests: XCTestCase {
             "comment": "\(comment)"
         }
         """.data(using: .utf8)!
-        
+
         // Decode attachment from JSON.
         let payload = try JSONDecoder.stream.decode(ImageAttachmentPayload.self, from: json)
-        
+
         // Assert values are decoded correctly.
         XCTAssertEqual(payload.title, title)
         XCTAssertEqual(payload.imageURL, imageURL)
-        
+
         // Assert extra data can be decoded.
         let extraData = try XCTUnwrap(payload.extraData(ofType: ExtraData.self))
         XCTAssertEqual(extraData.comment, comment)

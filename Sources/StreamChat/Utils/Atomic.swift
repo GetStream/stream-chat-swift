@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -35,10 +35,10 @@ public class Atomic<T> {
             mutate { $0 = newValue }
         }
     }
-    
+
     private let lock = NSRecursiveLock()
     private var _wrappedValue: T
-    
+
     /// Update the value safely.
     /// - Parameter changes: a block with changes. It should return a new value.
     public func mutate(_ changes: (_ value: inout T) -> Void) {
@@ -46,13 +46,13 @@ public class Atomic<T> {
         changes(&_wrappedValue)
         lock.unlock()
     }
-    
+
     /// Update the value safely.
     /// - Parameter changes: a block with changes. It should return a new value.
     public func callAsFunction(_ changes: (_ value: inout T) -> Void) {
         mutate(changes)
     }
-    
+
     public init(wrappedValue: T) {
         _wrappedValue = wrappedValue
     }

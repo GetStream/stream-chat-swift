@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -14,7 +14,7 @@ public class ChatChannelController_Mock: ChatChannelController {
             client: .mock(config: chatClientConfig)
         )
     }
-    
+
     public static func mock(
         channelQuery: ChannelQuery,
         channelListQuery: ChannelListQuery?,
@@ -34,12 +34,12 @@ public class ChatChannelController_Mock: ChatChannelController {
             client: client
         )
     }
-    
+
     public var channel_mock: ChatChannel?
     override public var channel: ChatChannel? {
         channel_mock ?? super.channel
     }
-    
+
     public var messages_mock: [ChatMessage]?
     override public var messages: LazyCachedMapCollection<ChatMessage> {
         messages_mock.map { $0.lazyCachedMap { $0 } } ?? super.messages
@@ -64,7 +64,7 @@ public extension ChatChannelController_Mock {
         messages_mock = messages
         state_mock = state
     }
-    
+
     /// Simulates a change of the `channel` value. Observers are notified with the provided `change` value. If `typingUsers`
     /// value is explicitly provided, `didChangeTypingUsers` is called, too.
     func simulate(
@@ -80,7 +80,7 @@ public extension ChatChannelController_Mock {
             }
         }
     }
-    
+
     /// Simulates changes in the `messages` array. Observers are notified with the provided `changes` value.
     func simulate(messages: [ChatMessage], changes: [ListChange<ChatMessage>]) {
         messages_mock = messages
@@ -88,14 +88,14 @@ public extension ChatChannelController_Mock {
             $0.channelController(self, didUpdateMessages: changes)
         }
     }
-    
+
     /// Simulates a received member event.
     func simulate(memberEvent: MemberEvent) {
         delegateCallback {
             $0.channelController(self, didReceiveMemberEvent: memberEvent)
         }
     }
-    
+
     /// Simulates changes of `state`. Observers are notified with the new value.
     func simulate(state: DataController.State) {
         state_mock = state

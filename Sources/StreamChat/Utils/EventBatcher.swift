@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -8,19 +8,19 @@ import Foundation
 protocol EventBatcher {
     typealias Batch = [Event]
     typealias BatchHandler = (_ batch: Batch, _ completion: @escaping () -> Void) -> Void
-    
+
     /// The current batch of events.
     var currentBatch: Batch { get }
-    
+
     /// Creates new batch processor.
     init(period: TimeInterval, timerType: Timer.Type, handler: @escaping BatchHandler)
-    
+
     /// Adds the item to the current batch of events. If it's the first event also schedules batch processing
     /// that will happen when `period` has passed.
     ///
     /// - Parameter event: The event to add to the current batch.
     func append(_ event: Event)
-    
+
     /// Ignores `period` and passes the current batch of events to handler as soon as possible.
     func processImmediately(completion: @escaping () -> Void)
 }
@@ -40,7 +40,7 @@ final class Batcher<Item> {
     private let queue = DispatchQueue(label: "io.getstream.Batch.\(Item.self)")
     /// The current batch of items.
     private(set) var currentBatch: [Item] = []
-    
+
     init(
         period: TimeInterval,
         timerType: Timer.Type = DefaultTimer.self,
@@ -50,13 +50,13 @@ final class Batcher<Item> {
         self.timerType = timerType
         self.handler = handler
     }
-    
+
     func append(_ item: Item) {
         timerType.schedule(timeInterval: 0, queue: queue) { [weak self] in
             self?.currentBatch.append(item)
-            
+
             guard let self = self, self.batchProcessingTimer == nil else { return }
-            
+
             self.batchProcessingTimer = self.timerType.schedule(
                 timeInterval: self.period,
                 queue: self.queue,
@@ -64,13 +64,13 @@ final class Batcher<Item> {
             )
         }
     }
-    
+
     func processImmediately(completion: @escaping () -> Void) {
         timerType.schedule(timeInterval: 0, queue: queue) { [weak self] in
             self?.process(completion: completion)
         }
     }
-    
+
     private func process(completion: (() -> Void)? = nil) {
         handler(currentBatch) { completion?() }
         currentBatch.removeAll()

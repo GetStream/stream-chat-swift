@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -14,7 +14,7 @@ extension Endpoint {
             body: nil
         )
     }
-    
+
     static func createCall(cid: ChannelId, callId: String, type: String) -> Endpoint<CreateCallPayload> {
         .init(
             path: .createCall(cid.apiPath),

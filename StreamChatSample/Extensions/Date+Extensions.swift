@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -20,7 +20,7 @@ extension Date {
                 let dayAgo = calendar.date(byAdding: .day, value: -1, to: now),
                 let weekAgo = calendar.date(byAdding: .day, value: -7, to: now)
             else { return nil }
-            
+
             if minuteAgo < self {
                 let diff = calendar.dateComponents([.second], from: self, to: now).second ?? 0
                 return "\(diff) sec ago"

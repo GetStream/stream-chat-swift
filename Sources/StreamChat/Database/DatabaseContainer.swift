@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -11,7 +11,7 @@ class DatabaseContainer: NSPersistentContainer {
         /// The database lives only in memory. This option is used typically for anonymous users, when the local
         /// persistence is not enabled, or in tests.
         case inMemory
-        
+
         /// The database file is stored on the disk and is persisted between application launches.
         case onDisk(databaseFileURL: URL)
     }
@@ -48,7 +48,7 @@ class DatabaseContainer: NSPersistentContainer {
         }
         return context
     }()
-    
+
     /// This is the same thing as `viewContext` only it doesn’t run on main thread.
     /// It’s just an optimization for removing as much as possible from the main thread.
     ///
@@ -68,15 +68,15 @@ class DatabaseContainer: NSPersistentContainer {
         }
         return context
     }()
-    
+
     private var loggerNotificationObserver: NSObjectProtocol?
     private let localCachingSettings: ChatClientConfig.LocalCaching?
     private let deletedMessageVisibility: ChatClientConfig.DeletedMessageVisibility?
     private let shouldShowShadowedMessages: Bool?
-    
+
     /// All `NSManagedObjectContext`s this container owns.
     private lazy var allContext: [NSManagedObjectContext] = [viewContext, backgroundReadOnlyContext, writableContext]
-    
+
     /// Creates a new `DatabaseContainer` instance.
     ///
     /// The full initialization of the container is asynchronous. Use `completion` to be notified when the container
@@ -103,15 +103,15 @@ class DatabaseContainer: NSPersistentContainer {
         let bundle = bundle ?? Bundle(for: DatabaseContainer.self)
         let modelURL = bundle.url(forResource: modelName, withExtension: "momd")!
         let model = NSManagedObjectModel(contentsOf: modelURL)!
-        
+
         self.localCachingSettings = localCachingSettings
         deletedMessageVisibility = deletedMessagesVisibility
         self.shouldShowShadowedMessages = shouldShowShadowedMessages
 
         super.init(name: modelName, managedObjectModel: model)
-        
+
         setUpPersistentStoreDescription(with: kind)
-        
+
         let persistentStoreCreatedCompletion: (Error?) -> Void = { [weak self] error in
             if let error = error {
                 log.error("Failed to initialize the local storage with error: \(error). Falling back to the in-memory option.")
@@ -132,13 +132,13 @@ class DatabaseContainer: NSPersistentContainer {
                 self?.resetEphemeralValues()
             }
         }
-                
+
         if shouldFlushOnStart {
             recreatePersistentStore(completion: persistentStoreCreatedCompletion)
         } else {
             setupPersistentStore(completion: persistentStoreCreatedCompletion)
         }
-        
+
         viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
         viewContext.automaticallyMergesChangesFromParent = true
         if Thread.current.isMainThread {
@@ -152,21 +152,21 @@ class DatabaseContainer: NSPersistentContainer {
                 viewContext.shouldShowShadowedMessages = shouldShowShadowedMessages
             }
         }
-        
+
         FetchCache.clear()
-        
+
         setupLoggerForDatabaseChanges()
     }
-    
+
     deinit {
         if let observer = loggerNotificationObserver {
             NotificationCenter.default.removeObserver(observer)
         }
     }
-    
+
     private func setUpPersistentStoreDescription(with kind: Kind) {
         let description = NSPersistentStoreDescription()
-        
+
         switch kind {
         case .inMemory:
             // So, it seems that on iOS 13, we have to use SQLite store with /dev/null URL, but on iOS 11 & 12
@@ -177,24 +177,24 @@ class DatabaseContainer: NSPersistentContainer {
             } else {
                 description.type = NSInMemoryStoreType
             }
-            
+
         case let .onDisk(databaseFileURL: databaseFileURL):
             description.url = databaseFileURL
         }
-        
+
         persistentStoreDescriptions = [description]
     }
-    
+
     /// Use this method to safely mutate the content of the database. This method is asynchronous.
     ///
     /// - Parameter actions: A block that performs the actual mutation.
     func write(_ actions: @escaping (DatabaseSession) throws -> Void) {
         write(actions, completion: { _ in })
     }
-    
+
     // This 👆 overload shouldn't be needed, but when a default parameter for completion 👇 is used,
     // the compiler gets confused and incorrectly evaluates `write { /* changes */ }`.
-    
+
     /// Use this method to safely mutate the content of the database. This method is asynchronous.
     ///
     /// - Parameters:
@@ -222,10 +222,10 @@ class DatabaseContainer: NSPersistentContainer {
                 } else {
                     log.debug("Context has no changes. Skipping save.", subsystems: .database)
                 }
-                
+
                 log.debug("Database session succesfully saved.", subsystems: .database)
                 completion(nil)
-                
+
             } catch {
                 log.error("Failed to save data to DB. Error: \(error)", subsystems: .database)
                 FetchCache.clear()
@@ -233,7 +233,7 @@ class DatabaseContainer: NSPersistentContainer {
             }
         }
     }
-    
+
     /// Removes all data from the local storage.
     ///
     /// Invoking this method will cause `WillRemoveAllDataNotification` being send by all contexts of the container.
@@ -249,10 +249,10 @@ class DatabaseContainer: NSPersistentContainer {
         if !force {
             fatalError("Non-force flush is not implemented yet.")
         }
-        
+
         writableContext.perform {
             self.sendNotificationForAllContexts(name: Self.WillRemoveAllDataNotification)
-            
+
             // If the current persistent store is a SQLite store, this method will reset and recreate it.
             self.recreatePersistentStore { error in
                 self.sendNotificationForAllContexts(name: Self.DidRemoveAllDataNotification)
@@ -260,7 +260,7 @@ class DatabaseContainer: NSPersistentContainer {
             }
         }
     }
-    
+
     private func sendNotificationForAllContexts(name: Notification.Name) {
         // Make sure the notifications are sent synchronously on the main thread to give enough time to notification
         // listeners to react on it.
@@ -280,7 +280,7 @@ class DatabaseContainer: NSPersistentContainer {
                 queue: nil
             ) { log.debug("Data saved to DB: \(String(describing: $0.userInfo))", subsystems: .database) }
     }
-    
+
     /// Tries to load a persistent store.
     ///
     /// If it fails, for example because of non-matching models, it removes the store, recreates is, and tries to load it again.
@@ -295,7 +295,7 @@ class DatabaseContainer: NSPersistentContainer {
             }
         }
     }
-    
+
     /// Removes the loaded persistent store and tries to recreate it.
     func recreatePersistentStore(completion: ((Error?) -> Void)? = nil) {
         log.assert(
@@ -303,12 +303,12 @@ class DatabaseContainer: NSPersistentContainer {
             "DatabaseContainer always assumes 1 persistent store description. Existing descriptions: \(persistentStoreDescriptions)",
             subsystems: .database
         )
-        
+
         guard let storeDescription = persistentStoreDescriptions.first else {
             completion?(ClientError("No persistent store descriptions available."))
             return
         }
-        
+
         log.debug("Removing DB persistent store", subsystems: .database)
 
         // Remove all loaded persistent stores first
@@ -320,9 +320,9 @@ class DatabaseContainer: NSPersistentContainer {
             completion?(error)
             return
         }
-        
+
         log.debug("Removing DB file", subsystems: .database)
-        
+
         // If the store was SQLite store, remove the actual DB file
         if storeDescription.type == NSSQLiteStoreType,
            let storeURL = storeDescription.url,
@@ -334,9 +334,9 @@ class DatabaseContainer: NSPersistentContainer {
                 return
             }
         }
-        
+
         log.debug("Reloading persistent store", subsystems: .database)
-        
+
         loadPersistentStores { _, error in
             if let error = error {
                 log.error("Persistent store reload error: \(error)")
@@ -346,7 +346,7 @@ class DatabaseContainer: NSPersistentContainer {
             completion?(error)
         }
     }
-    
+
     /// Iterates over all items and if the DTO conforms to `EphemeralValueContainers` calls `resetEphemeralValues()` on
     /// every object.
     func resetEphemeralValues() {

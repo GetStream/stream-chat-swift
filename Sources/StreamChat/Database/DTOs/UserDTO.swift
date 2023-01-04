@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -18,7 +18,7 @@ class UserDTO: NSManagedObject {
     @NSManaged var userCreatedAt: DBDate
     @NSManaged var userRoleRaw: String
     @NSManaged var userUpdatedAt: DBDate
-    
+
     @NSManaged var flaggedBy: CurrentUserDTO?
 
     @NSManaged var members: Set<MemberDTO>?
@@ -69,7 +69,7 @@ extension UserDTO {
     static func load(id: String, context: NSManagedObjectContext) -> UserDTO? {
         load(by: id, context: context).first
     }
-    
+
     /// If a User with the given id exists in the context, fetches and returns it. Otherwise creates a new
     /// `UserDTO` with the given id.
     ///
@@ -85,14 +85,14 @@ extension UserDTO {
         if let existing = load(id: id, context: context) {
             return existing
         }
-        
+
         let request = fetchRequest(id: id)
         let new = NSEntityDescription.insertNewObject(into: context, for: request)
         new.id = id
         new.teams = []
         return new
     }
-    
+
     static func loadLastActiveWatchers(cid: ChannelId, context: NSManagedObjectContext) -> [UserDTO] {
         let request = NSFetchRequest<UserDTO>(entityName: UserDTO.entityName)
         request.sortDescriptors = [
@@ -109,7 +109,7 @@ extension NSManagedObjectContext: UserDatabaseSession {
     func user(id: UserId) -> UserDTO? {
         UserDTO.load(id: id, context: self)
     }
-    
+
     func saveUser(
         payload: UserPayload,
         query: UserListQuery?,
@@ -157,7 +157,7 @@ extension NSManagedObjectContext: UserDatabaseSession {
 extension UserDTO {
     /// Snapshots the current state of `UserDTO` and returns an immutable model object from it.
     func asModel() throws -> ChatUser { try .create(fromDTO: self) }
-    
+
     /// Snapshots the current state of `UserDTO` and returns its representation for used in API calls.
     func asRequestBody() -> UserRequestBody {
         let extraData: [String: RawJSON]
@@ -177,16 +177,16 @@ extension UserDTO {
 extension UserDTO {
     static func userListFetchRequest(query: UserListQuery) -> NSFetchRequest<UserDTO> {
         let request = NSFetchRequest<UserDTO>(entityName: UserDTO.entityName)
-        
+
         // Fetch results controller requires at least one sorting descriptor.
         let sortDescriptors = query.sort.compactMap { $0.key.sortDescriptor(isAscending: $0.isAscending) }
         request.sortDescriptors = sortDescriptors.isEmpty ? [UserListSortingKey.defaultSortDescriptor] : sortDescriptors
-        
+
         // If a filter exists, use is for the predicate. Otherwise, `nil` filter matches all users.
         if let filterHash = query.filter?.filterHash {
             request.predicate = NSPredicate(format: "ANY queries.filterHash == %@", filterHash)
         }
-        
+
         return request
     }
 
@@ -196,7 +196,7 @@ extension UserDTO {
         request.predicate = NSPredicate(format: "queries.@count == 0")
         return request
     }
-    
+
     static func watcherFetchRequest(cid: ChannelId) -> NSFetchRequest<UserDTO> {
         let request = NSFetchRequest<UserDTO>(entityName: UserDTO.entityName)
         request.sortDescriptors = [UserListSortingKey.defaultSortDescriptor]

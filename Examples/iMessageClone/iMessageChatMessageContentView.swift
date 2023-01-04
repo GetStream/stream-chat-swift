@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -26,7 +26,7 @@ final class iMessageChatMessageContentView: ChatMessageContentView {
         textView.font = appearance.fonts.body
         return textView
     }
-    
+
     override func updateContent() {
         super.updateContent()
 
