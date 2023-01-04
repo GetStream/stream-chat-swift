@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -52,7 +52,9 @@ class MessageUpdater: Worker {
             // Hard Deleting is necessary for bounced messages, since these messages are never stored on the cloud
             // an apiClient request to delete them would never be triggered.
             let shouldBeHardDeleted = hard || messageDTO.failedToBeSentDueToModeration
-            let shouldAllowLocallyStoredMessagesToBeDeleted = !isLocalStorageEnabled || messageDTO.failedToBeSentDueToModeration
+            let shouldAllowLocallyStoredMessagesToBeDeleted = !isLocalStorageEnabled
+                || messageDTO.localMessageState == .pendingSend
+                || messageDTO.failedToBeSentDueToModeration
             
             messageDTO.isHardDeleted = shouldBeHardDeleted
             
