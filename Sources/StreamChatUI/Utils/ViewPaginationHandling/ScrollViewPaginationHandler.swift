@@ -1,10 +1,8 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import UIKit
-
-// JUMPTODO: 1. Tests and Rebase
 
 /// A component responsible to handle when to load new pages in a scrollView.
 class ScrollViewPaginationHandler: ViewPaginationHandling {
@@ -18,7 +16,7 @@ class ScrollViewPaginationHandler: ViewPaginationHandling {
     var onNewTopPage: (() -> Void)?
     var onNewBottomPage: (() -> Void)?
 
-    init(scrollView: UIScrollView?) {
+    init(scrollView: UIScrollView) {
         self.scrollView = scrollView
 
         observation = self.scrollView?.observe(\.contentOffset, changeHandler: { [weak self] scrollView, _ in

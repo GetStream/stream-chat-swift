@@ -391,7 +391,6 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             }
 
             let pageSize = channelQuery.pagination?.pageSize ?? .messagesPageSize
-            let pageSize = channelQuery.pagination?.pageSize ?? .messagesPageSize
             let observer = ListDatabaseObserverWrapper(
                 isBackground: StreamRuntimeCheck._isBackgroundMappingEnabled,
                 database: client.databaseContainer,

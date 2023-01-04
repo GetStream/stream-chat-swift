@@ -1,10 +1,8 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import UIKit
-
-// JUMPTODO: 1. Tests and Rebase
 
 /// For inverted scroll views, we switch the top with the bottom and vice-versa.
 class InvertedScrollViewPaginationHandler: ViewPaginationHandling {
