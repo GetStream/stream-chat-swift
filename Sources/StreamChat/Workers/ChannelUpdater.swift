@@ -31,7 +31,7 @@ class ChannelUpdater: Worker {
         channelCreatedCallback: ((ChannelId) -> Void)? = nil,
         completion: ((Result<ChannelPayload, Error>) -> Void)? = nil
     ) {
-        let clearMessageHistory = channelQuery.pagination?.parameter == nil
+        let isFirstPage = channelQuery.pagination?.parameter == nil
         let isChannelCreate = channelCreatedCallback != nil
 
         let completion: (Result<ChannelPayload, Error>) -> Void = { [weak database] result in
@@ -43,7 +43,7 @@ class ChannelUpdater: Worker {
                         channelDTO.cleanMessagesThatFailedToBeEditedDueToModeration()
                     }
                     
-                    if clearMessageHistory, let channelDTO = session.channel(cid: payload.channel.cid) {
+                    if isFirstPage, let channelDTO = session.channel(cid: payload.channel.cid) {
                         channelDTO.messages = channelDTO.messages.filter { $0.localMessageState?.isLocalOnly == true }
                     }
 
