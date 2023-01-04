@@ -546,7 +546,7 @@ final class ChannelDTO_Tests: XCTestCase {
         XCTAssertNearlySameDate(channel?.oldestMessageAt?.bridgeDate, payload.messages.map(\.createdAt).min())
     }
 
-    func test_channelPayload_whenMessagesNewerThanCurrentOldestMessage_whenIsNotAPaginatedResponse_oldestMessageAtIsNotUpdated() throws {
+    func test_channelPayload_whenMessagesNewerThanCurrentOldestMessage_oldestMessageAtIsNotUpdated() throws {
         let channelId: ChannelId = .unique
         let oldMessageCreatedAt = Date.unique
         let payload = dummyPayload(with: channelId, messages: [
@@ -554,7 +554,7 @@ final class ChannelDTO_Tests: XCTestCase {
         ])
 
         try database.writeSynchronously { session in
-            try session.saveChannel(payload: payload, isPaginatedPayload: false)
+            try session.saveChannel(payload: payload)
         }
 
         let newerMessageCreatedAt = oldMessageCreatedAt.addingTimeInterval(300)
@@ -563,49 +563,13 @@ final class ChannelDTO_Tests: XCTestCase {
         ])
 
         try database.writeSynchronously { session in
-            try session.saveChannel(payload: newerPayload, isPaginatedPayload: false)
-        }
-
-        let channel: ChannelDTO? = database.viewContext.channel(cid: channelId)
-        XCTAssertEqual(channel?.oldestMessageAt?.bridgeDate, newerMessageCreatedAt)
-    }
-
-    func test_channelPayload_whenMessagesNewerThanCurrentOldestMessage_whenIsAPaginatedResponse_oldestMessageAtIsUpdated() throws {
-        let channelId: ChannelId = .unique
-        let oldMessageCreatedAt = Date.unique
-        let payload = dummyPayload(with: channelId, messages: [
-            .dummy(messageId: .unique, authorUserId: .unique, createdAt: oldMessageCreatedAt)
-        ])
-
-        try database.writeSynchronously { session in
-            try session.saveChannel(payload: payload, isPaginatedPayload: true)
-        }
-
-        let newerMessageCreatedAt = oldMessageCreatedAt.addingTimeInterval(300)
-        let newerPayload = dummyPayload(with: channelId, messages: [
-            .dummy(messageId: .unique, authorUserId: .unique, createdAt: newerMessageCreatedAt)
-        ])
-
-        try database.writeSynchronously { session in
-            try session.saveChannel(payload: newerPayload, isPaginatedPayload: true)
+            try session.saveChannel(payload: newerPayload)
         }
 
         let channel: ChannelDTO? = database.viewContext.channel(cid: channelId)
         XCTAssertEqual(channel?.oldestMessageAt?.bridgeDate, oldMessageCreatedAt)
     }
-
-    func test_channelPayload_whenSavingAPayloadWithoutMessage_oldestMessageAtIsNotUpdated() throws {
-        let channelId: ChannelId = .unique
-        let payload = dummyPayload(with: channelId, messages: [])
-
-        try database.writeSynchronously { session in
-            try session.saveChannel(payload: payload, isPaginatedPayload: false)
-        }
-
-        let channel: ChannelDTO? = database.viewContext.channel(cid: channelId)
-        XCTAssertNil(channel?.oldestMessageAt?.bridgeDate)
-    }
-
+    
     func test_channelPayload_truncatedMessagesAreIgnored() throws {
         // Save a channel payload with 100 messages
         let channelId: ChannelId = .unique
