@@ -8,6 +8,7 @@ import XCTest
 
 final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
     var middleware: ChannelReadUpdaterMiddleware!
+    fileprivate var center: EventNotificationCenter_Mock!
     fileprivate var database: DatabaseContainer_Spy!
 
     var channelPayload: ChannelPayload!
@@ -25,6 +26,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
     override func setUp() {
         super.setUp()
         database = DatabaseContainer_Spy()
+        center = EventNotificationCenter_Mock(database: database)
         middleware = ChannelReadUpdaterMiddleware()
 
         currentUserPayload = .dummy(userId: .unique, role: .user)
@@ -55,8 +57,8 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
     }
 
     override func tearDown() {
-        AssertAsync.canBeReleased(&database)
         database = nil
+        AssertAsync.canBeReleased(&database)
         currentUserPayload = nil
         anotherUserPayload = nil
         currentUserReadPayload = nil
@@ -102,7 +104,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         )
 
         try database.writeSynchronously { session in
-            _ = self.middleware.handle(event: event, session: session)
+            _ = self.middleware.handle(event: event, session: session, notificationCenter: self.center)
         }
 
         // THEN
@@ -133,7 +135,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         )
 
         try database.writeSynchronously { session in
-            _ = self.middleware.handle(event: event, session: session)
+            _ = self.middleware.handle(event: event, session: session, notificationCenter: self.center)
         }
 
         // THEN
@@ -170,7 +172,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         )
 
         try database.writeSynchronously { session in
-            _ = self.middleware.handle(event: event, session: session)
+            _ = self.middleware.handle(event: event, session: session, notificationCenter: self.center)
         }
 
         // THEN
@@ -200,7 +202,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         )
 
         try database.writeSynchronously { session in
-            _ = self.middleware.handle(event: event, session: session)
+            _ = self.middleware.handle(event: event, session: session, notificationCenter: self.center)
         }
 
         // THEN
@@ -230,7 +232,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         )
 
         try database.writeSynchronously { session in
-            _ = self.middleware.handle(event: event, session: session)
+            _ = self.middleware.handle(event: event, session: session, notificationCenter: self.center)
         }
 
         // THEN
@@ -262,7 +264,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         )
 
         try database.writeSynchronously { session in
-            _ = self.middleware.handle(event: event, session: session)
+            _ = self.middleware.handle(event: event, session: session, notificationCenter: self.center)
         }
 
         // THEN
@@ -292,7 +294,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         )
 
         try database.writeSynchronously { session in
-            _ = self.middleware.handle(event: event, session: session)
+            _ = self.middleware.handle(event: event, session: session, notificationCenter: self.center)
         }
 
         // THEN
@@ -321,7 +323,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         )
 
         try database.writeSynchronously { session in
-            _ = self.middleware.handle(event: event, session: session)
+            _ = self.middleware.handle(event: event, session: session, notificationCenter: self.center)
         }
 
         // THEN
@@ -351,7 +353,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         )
 
         try database.writeSynchronously { session in
-            _ = self.middleware.handle(event: event, session: session)
+            _ = self.middleware.handle(event: event, session: session, notificationCenter: self.center)
         }
 
         // THEN
@@ -383,7 +385,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         )
 
         try database.writeSynchronously { session in
-            _ = self.middleware.handle(event: event, session: session)
+            _ = self.middleware.handle(event: event, session: session, notificationCenter: self.center)
         }
 
         // THEN
@@ -426,7 +428,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         )
 
         try database.writeSynchronously { session in
-            _ = self.middleware.handle(event: messageNewEvent, session: session)
+            _ = self.middleware.handle(event: messageNewEvent, session: session, notificationCenter: self.center)
         }
 
         // THEN
@@ -455,7 +457,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         )
 
         try database.writeSynchronously { session in
-            _ = self.middleware.handle(event: messageNewEvent, session: session)
+            _ = self.middleware.handle(event: messageNewEvent, session: session, notificationCenter: self.center)
         }
 
         // THEN
@@ -490,7 +492,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         )
 
         try database.writeSynchronously { session in
-            _ = self.middleware.handle(event: messageNewEvent, session: session)
+            _ = self.middleware.handle(event: messageNewEvent, session: session, notificationCenter: self.center)
         }
 
         // THEN
@@ -518,7 +520,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         )
 
         try database.writeSynchronously { session in
-            _ = self.middleware.handle(event: messageNewEvent, session: session)
+            _ = self.middleware.handle(event: messageNewEvent, session: session, notificationCenter: self.center)
         }
 
         // THEN
@@ -548,7 +550,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         )
 
         try database.writeSynchronously { session in
-            _ = self.middleware.handle(event: messageNewEvent, session: session)
+            _ = self.middleware.handle(event: messageNewEvent, session: session, notificationCenter: self.center)
         }
 
         // THEN
@@ -576,7 +578,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         )
 
         try database.writeSynchronously { session in
-            _ = self.middleware.handle(event: messageNewEvent, session: session)
+            _ = self.middleware.handle(event: messageNewEvent, session: session, notificationCenter: self.center)
         }
 
         // THEN
@@ -604,7 +606,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         )
 
         try database.writeSynchronously { session in
-            _ = self.middleware.handle(event: messageNewEvent, session: session)
+            _ = self.middleware.handle(event: messageNewEvent, session: session, notificationCenter: self.center)
         }
 
         // THEN
@@ -633,7 +635,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         )
 
         try database.writeSynchronously { session in
-            _ = self.middleware.handle(event: messageNewEvent, session: session)
+            _ = self.middleware.handle(event: messageNewEvent, session: session, notificationCenter: self.center)
         }
 
         // THEN
@@ -663,7 +665,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         )
 
         try database.writeSynchronously { session in
-            _ = self.middleware.handle(event: messageNewEvent, session: session)
+            _ = self.middleware.handle(event: messageNewEvent, session: session, notificationCenter: self.center)
         }
 
         // THEN
@@ -715,7 +717,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             try database.writeSynchronously { session in
                 // Let the middleware handle the event
                 // Middleware should mutate the loadedChannel's read
-                handledEvent = self.middleware.handle(event: oldMessageNewEvent, session: session)
+                handledEvent = self.middleware.handle(event: oldMessageNewEvent, session: session, notificationCenter: self.center)
             }
 
             XCTAssertEqual(handledEvent?.asEquatable, oldMessageNewEvent.asEquatable)
@@ -737,7 +739,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             try database.writeSynchronously { session in
                 // Let the middleware handle the event
                 // Middleware should mutate the loadedChannel's read
-                handledEvent = self.middleware.handle(event: messageNewEvent, session: session)
+                handledEvent = self.middleware.handle(event: messageNewEvent, session: session, notificationCenter: self.center)
             }
 
             XCTAssertEqual(handledEvent?.asEquatable, messageNewEvent.asEquatable)
@@ -782,7 +784,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
         // Let the middleware handle the event
         // Middleware should mutate the loadedChannel's read
-        let handledEvent = middleware.handle(event: messageReadEvent, session: database.viewContext)
+        let handledEvent = middleware.handle(event: messageReadEvent, session: database.viewContext, notificationCenter: center)
 
         XCTAssertEqual(handledEvent?.asEquatable, messageReadEvent.asEquatable)
 
@@ -831,7 +833,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
         // Let the middleware handle the event
         // Middleware should create a read event for the member
-        let handledEvent = middleware.handle(event: messageReadEvent, session: database.viewContext)
+        let handledEvent = middleware.handle(event: messageReadEvent, session: database.viewContext, notificationCenter: center)
 
         XCTAssertEqual(handledEvent?.asEquatable, messageReadEvent.asEquatable)
 
@@ -899,7 +901,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let notificationMarkReadEvent = try NotificationMarkReadEventDTO(from: eventPayload)
 
         // Let the middleware handle the event
-        let handledEvent = middleware.handle(event: notificationMarkReadEvent, session: database.viewContext)
+        let handledEvent = middleware.handle(event: notificationMarkReadEvent, session: database.viewContext, notificationCenter: center)
 
         XCTAssertEqual(handledEvent?.asEquatable, notificationMarkReadEvent.asEquatable)
 
@@ -949,7 +951,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
         // Let the middleware handle the event
         // Middleware should create a read event for the member
-        let handledEvent = middleware.handle(event: messageReadEvent, session: database.viewContext)
+        let handledEvent = middleware.handle(event: messageReadEvent, session: database.viewContext, notificationCenter: center)
 
         XCTAssertEqual(handledEvent?.asEquatable, messageReadEvent.asEquatable)
 
@@ -994,7 +996,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let notificationMarkAllReadEvent = try NotificationMarkAllReadEventDTO(from: eventPayload)
 
         // Let the middleware handle the event
-        let handledEvent = middleware.handle(event: notificationMarkAllReadEvent, session: database.viewContext)
+        let handledEvent = middleware.handle(event: notificationMarkAllReadEvent, session: database.viewContext, notificationCenter: center)
 
         XCTAssertEqual(handledEvent?.asEquatable, notificationMarkAllReadEvent.asEquatable)
 
@@ -1030,7 +1032,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let startTypingEvent = TypingEventDTO.startTyping(cid: channelId, userId: payload.members.first!.user!.id)
 
         // Let the middleware handle the event
-        let handledEvent = middleware.handle(event: startTypingEvent, session: database.viewContext)
+        let handledEvent = middleware.handle(event: startTypingEvent, session: database.viewContext, notificationCenter: center)
 
         XCTAssertEqual(handledEvent?.asEquatable, startTypingEvent.asEquatable)
 

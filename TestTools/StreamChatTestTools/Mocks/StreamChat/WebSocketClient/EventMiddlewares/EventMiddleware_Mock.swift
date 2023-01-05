@@ -13,7 +13,7 @@ final class EventMiddleware_Mock: EventMiddleware {
         self.closure = closure
     }
 
-    func handle(event: Event, session: DatabaseSession) -> Event? {
+    func handle(event: Event, session: DatabaseSession, notificationCenter: EventNotificationCenter) -> Event? {
         closure(event, session)
     }
 }

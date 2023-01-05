@@ -8,17 +8,19 @@ import XCTest
 
 final class EventDataProcessorMiddleware_Tests: XCTestCase {
     var middleware: EventDataProcessorMiddleware!
+    fileprivate var center: EventNotificationCenter_Mock!
     fileprivate var database: DatabaseContainer_Spy!
 
     override func setUp() {
         super.setUp()
         database = DatabaseContainer_Spy()
+        center = EventNotificationCenter_Mock(database: database)
         middleware = EventDataProcessorMiddleware()
     }
 
     override func tearDown() {
-        AssertAsync.canBeReleased(&database)
         database = nil
+        AssertAsync.canBeReleased(&database)
         super.tearDown()
     }
 
@@ -41,7 +43,7 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
         let testEvent = TestEvent(payload: eventPayload)
 
         // Let the middleware handle the event
-        let outputEvent = middleware.handle(event: testEvent, session: database.viewContext)
+        let outputEvent = middleware.handle(event: testEvent, session: database.viewContext, notificationCenter: center)
 
         // Assert the channel data is saved and the event is forwarded
         var loadedChannel: ChatChannel? {
@@ -90,7 +92,7 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
 
         // Simulate `ReactionDeletedEvent` event.
         let event = try ReactionDeletedEventDTO(from: eventPayload)
-        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext, notificationCenter: center)
 
         // Load the message.
         message = try XCTUnwrap(
@@ -133,7 +135,7 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
         let event = try ReactionUpdatedEventDTO(from: eventPayload)
 
         // Simulate `ReactionUpdatedEvent` event.
-        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext, notificationCenter: center)
 
         // Load the message.
         let message = try XCTUnwrap(
@@ -184,7 +186,7 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
         let event = try ReactionNewEventDTO(from: eventPayload)
 
         // Simulate `ReactionNewEvent` event.
-        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext, notificationCenter: center)
 
         // Load the message.
         let message = try XCTUnwrap(
@@ -219,7 +221,7 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
         session.errorToReturn = TestError()
 
         // Let the middleware handle the event
-        let outputEvent = middleware.handle(event: testEvent, session: session)
+        let outputEvent = middleware.handle(event: testEvent, session: session, notificationCenter: center)
 
         // Assert the event is not forwarded
         XCTAssertNil(outputEvent)
@@ -232,7 +234,7 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
         let testEvent = TestEvent()
 
         // Let the middleware handle the event
-        let outputEvent = middleware.handle(event: testEvent, session: database.viewContext)
+        let outputEvent = middleware.handle(event: testEvent, session: database.viewContext, notificationCenter: center)
 
         // Assert the event is forwarded
         XCTAssertEqual(outputEvent?.asEquatable, testEvent.asEquatable)

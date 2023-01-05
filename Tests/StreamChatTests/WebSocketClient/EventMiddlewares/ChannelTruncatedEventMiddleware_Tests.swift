@@ -8,6 +8,7 @@ import XCTest
 
 final class ChannelTruncatedEventMiddleware_Tests: XCTestCase {
     var database: DatabaseContainer_Spy!
+    var center: EventNotificationCenter_Mock!
     var middleware: ChannelTruncatedEventMiddleware!
 
     // MARK: - Set up
@@ -16,12 +17,13 @@ final class ChannelTruncatedEventMiddleware_Tests: XCTestCase {
         super.setUp()
 
         database = DatabaseContainer_Spy()
+        center = EventNotificationCenter_Mock(database: database)
         middleware = .init()
     }
 
     override func tearDown() {
-        AssertAsync.canBeReleased(&database)
         database = nil
+        AssertAsync.canBeReleased(&database)
         super.tearDown()
     }
 
@@ -31,7 +33,7 @@ final class ChannelTruncatedEventMiddleware_Tests: XCTestCase {
         let event = TestEvent()
 
         // Handle non-reaction event
-        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext, notificationCenter: center)
 
         // Assert event is forwarded as it is
         XCTAssertEqual(forwardedEvent as! TestEvent, event)
@@ -52,7 +54,7 @@ final class ChannelTruncatedEventMiddleware_Tests: XCTestCase {
 
         // Simulate and handle channel truncated event.
         let event = try ChannelTruncatedEventDTO(from: eventPayload)
-        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext, notificationCenter: center)
 
         // Assert `ChannelTruncatedEvent` is forwarded even though database error happened.
         XCTAssertTrue(forwardedEvent is ChannelTruncatedEventDTO)
@@ -77,7 +79,7 @@ final class ChannelTruncatedEventMiddleware_Tests: XCTestCase {
         assert(database.viewContext.channel(cid: cid)?.truncatedAt == nil)
 
         // Simulate incoming event
-        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext, notificationCenter: center)
 
         // Assert the `truncatedAt` value is updated
         let truncatedAt = database.viewContext.channel(cid: cid)?.truncatedAt as? Date
