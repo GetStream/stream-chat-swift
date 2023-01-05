@@ -614,25 +614,12 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessagesCount)
     }
 
-    func test_messageNewEvent_whenMessageIsRegular_incrementsUnreadMessagesCount() throws {
+    func test_messageNewEvent_whenMessageIsRegular_incrementsUnreadMessagesCount_messageNotInDatabase() throws {
         // WHEN
-        let regularMessage: MessagePayload = .dummy(
-            messageId: .unique,
-            parentId: nil,
-            authorUserId: anotherUserPayload.id,
-            createdAt: currentUserReadPayload.lastReadAt.addingTimeInterval(1),
-            isSilent: false
-        )
+        let messageNewEvent = try newMessageEvent(type: .regular)
 
-        let messageNewEvent = try MessageNewEventDTO(
-            from: .init(
-                eventType: .messageNew,
-                cid: channelPayload.channel.cid,
-                user: anotherUserPayload,
-                message: regularMessage,
-                createdAt: regularMessage.createdAt
-            )
-        )
+        // Mark id as new message
+        center.newMessageIdsMock = [messageNewEvent.message.id]
 
         try database.writeSynchronously { session in
             _ = self.middleware.handle(event: messageNewEvent, session: session, notificationCenter: self.center)
@@ -643,26 +630,28 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessagesCount + 1)
     }
 
-    func test_messageNewEvent_whenMessageIsThreadReplySentToMainChannel_incrementsUnreadMessagesCount() throws {
+    func test_messageNewEvent_whenMessageIsRegular_incrementsUnreadMessagesCount_messageAlreadyInDatabase() throws {
         // WHEN
-        let threadReplyPayload: MessagePayload = .dummy(
-            type: .reply,
-            messageId: .unique,
-            parentId: .unique,
-            showReplyInChannel: true,
-            authorUserId: anotherUserPayload.id,
-            createdAt: currentUserReadPayload.lastReadAt.addingTimeInterval(1)
-        )
+        let messageNewEvent = try newMessageEvent(type: .regular)
 
-        let messageNewEvent = try MessageNewEventDTO(
-            from: .init(
-                eventType: .messageNew,
-                cid: channelPayload.channel.cid,
-                user: anotherUserPayload,
-                message: threadReplyPayload,
-                createdAt: threadReplyPayload.createdAt
-            )
-        )
+        // Mark id as already parsed message
+        center.newMessageIdsMock = []
+
+        try database.writeSynchronously { session in
+            _ = self.middleware.handle(event: messageNewEvent, session: session, notificationCenter: self.center)
+        }
+
+        // THEN
+        let read = try XCTUnwrap(currentUserReadDTO)
+        XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessagesCount)
+    }
+
+    func test_messageNewEvent_whenMessageIsThreadReplySentToMainChannel_incrementsUnreadMessagesCount_messageNotInDatabase() throws {
+        // WHEN
+        let messageNewEvent = try newMessageEvent(type: .reply)
+
+        // Mark id as new message
+        center.newMessageIdsMock = [messageNewEvent.message.id]
 
         try database.writeSynchronously { session in
             _ = self.middleware.handle(event: messageNewEvent, session: session, notificationCenter: self.center)
@@ -671,6 +660,22 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         // THEN
         let read = try XCTUnwrap(currentUserReadDTO)
         XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessagesCount + 1)
+    }
+
+    func test_messageNewEvent_whenMessageIsThreadReplySentToMainChannel_incrementsUnreadMessagesCount_messageAlreadyInDatabase() throws {
+        // WHEN
+        let messageNewEvent = try newMessageEvent(type: .reply)
+
+        // Mark id as already parsed message
+        center.newMessageIdsMock = []
+
+        try database.writeSynchronously { session in
+            _ = self.middleware.handle(event: messageNewEvent, session: session, notificationCenter: self.center)
+        }
+
+        // THEN
+        let read = try XCTUnwrap(currentUserReadDTO)
+        XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessagesCount)
     }
 
     func test_notificationMessageNewEvent_increasesChannelReadUnreadCount() throws {
@@ -1041,5 +1046,27 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             Assert.staysEqual(loadedChannel?.reads.first?.unreadMessagesCount, payload.channelReads.first?.unreadMessagesCount)
             Assert.staysEqual(loadedChannel?.reads.first?.lastReadAt, payload.channelReads.first?.lastReadAt)
         }
+    }
+
+    private func newMessageEvent(type: MessageType) throws -> MessageNewEventDTO {
+        let regularMessage: MessagePayload = .dummy(
+            type: type,
+            messageId: .unique,
+            parentId: type == .reply ? .unique : nil,
+            showReplyInChannel: type == .reply,
+            authorUserId: anotherUserPayload.id,
+            createdAt: currentUserReadPayload.lastReadAt.addingTimeInterval(1),
+            isSilent: false
+        )
+
+        return try MessageNewEventDTO(
+            from: .init(
+                eventType: .messageNew,
+                cid: channelPayload.channel.cid,
+                user: anotherUserPayload,
+                message: regularMessage,
+                createdAt: regularMessage.createdAt
+            )
+        )
     }
 }
