@@ -3,7 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
 ### 🔄 Changed
+- Fix UserInfo not being updated on connect [#2438](https://github.com/GetStream/stream-chat-swift/pull/2438)
 
 # [4.25.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.25.1)
 _January 06, 2023_

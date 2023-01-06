@@ -25,6 +25,7 @@ final class ConnectionRepository_Mock: ConnectionRepository, Spy {
     var disconnectResult: Result<Void, Error>?
 
     var updateWebSocketEndpointToken: Token?
+    var updateWebSocketEndpointUserInfo: UserInfo?
     var completeWaitersConnectionId: ConnectionId?
     var connectionUpdateState: WebSocketConnectionState?
     var simulateInvalidTokenOnConnectionUpdate = false
@@ -85,6 +86,7 @@ final class ConnectionRepository_Mock: ConnectionRepository, Spy {
 
     override func updateWebSocketEndpoint(with token: Token, userInfo: UserInfo?) {
         updateWebSocketEndpointToken = token
+        updateWebSocketEndpointUserInfo = userInfo
         record()
     }
 

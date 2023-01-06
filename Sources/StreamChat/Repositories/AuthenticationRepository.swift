@@ -1,5 +1,5 @@
 //
-// Copyright © 2022 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -257,7 +257,7 @@ class AuthenticationRepository {
             queue: .main
         ) { [weak self] in
             log.debug("Firing timer for a new token request", subsystems: .authentication)
-            self?.getToken(isRetry: isRetry, userInfo: nil, tokenProvider: tokenProvider, completion: completion)
+            self?.getToken(isRetry: isRetry, userInfo: userInfo, tokenProvider: tokenProvider, completion: completion)
         }
     }
 
