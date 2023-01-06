@@ -741,6 +741,12 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             )
             let messageNewEvent = try NotificationMessageNewEventDTO(from: eventPayload)
 
+            guard let messageId = eventPayload.message?.id else {
+                XCTFail("Should have a message")
+                return
+            }
+            center.newMessageIdsMock = [messageId]
+
             try database.writeSynchronously { session in
                 // Let the middleware handle the event
                 // Middleware should mutate the loadedChannel's read
