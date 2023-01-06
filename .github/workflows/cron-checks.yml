@@ -5,6 +5,12 @@ on:
     # Runs "At 03:00 every night"
     - cron: '0 3 * * *'
 
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   HOMEBREW_NO_INSTALL_CLEANUP: 1 # Disable cleanup for homebrew, we don't need it on CI
 
