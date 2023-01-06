@@ -29,6 +29,7 @@ public final class StreamMockServer {
     public var latestHttpMessage = ""
     public let forbiddenWords: Set<String> = ["wth"]
     public var pushNotificationPayload: [String: Any] = [:]
+    public var userDetails: [String: Any]? = [:]
 
     public init() {}
 
@@ -62,12 +63,17 @@ public final class StreamMockServer {
     }
 
     private func configureWebsockets() {
-        server[MockEndpoint.connect] = websocket(connected: { [weak self] session in
+        let websocket = websocket(connected: { [weak self] session in
             self?.globalSession = session
             self?.healthCheck()
         }, disconnected: { [weak self] _ in
             self?.globalSession = nil
         })
+        
+        server.register(MockEndpoint.connect) { [weak self] request in
+            self?.userDetails = request.queryParams.first { $0.0 == "json" }?.1.removingPercentEncoding?.json
+            return websocket(request)
+        }
     }
 
     private func healthCheck() {

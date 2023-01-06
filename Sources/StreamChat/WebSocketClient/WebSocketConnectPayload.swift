@@ -5,7 +5,7 @@
 import Foundation
 
 class WebSocketConnectPayload: Encodable {
-    private enum CodingKeys: String, CodingKey {
+    enum CodingKeys: String, CodingKey {
         case userId = "user_id"
         case userDetails = "user_details"
         case serverDeterminesConnectionId = "server_determines_connection_id"
@@ -23,7 +23,7 @@ class WebSocketConnectPayload: Encodable {
 }
 
 struct UserWebSocketPayload: Encodable {
-    private enum CodingKeys: String, CodingKey, CaseIterable {
+    enum CodingKeys: String, CodingKey, CaseIterable {
         case id
         case name
         case isInvisible = "invisible"
