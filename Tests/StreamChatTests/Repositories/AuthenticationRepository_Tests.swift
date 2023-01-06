@@ -1,5 +1,5 @@
 //
-// Copyright © 2023 Stream.io Inc. All rights reserved.
+// Copyright © 2022 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -225,6 +225,8 @@ final class AuthenticationRepository_Tests: XCTestCase {
         XCTAssertEqual(repository.currentToken, providedToken)
         XCTAssertNil(receivedError)
         XCTAssertEqual(tokenCalls, 9)
+        XCTAssertEqual(connectionRepository.updateWebSocketEndpointUserInfo, userInfo)
+        XCTAssertEqual(connectionRepository.updateWebSocketEndpointToken, providedToken)
         XCTAssertCall(ConnectionRepository_Mock.Signature.connect, on: connectionRepository)
         XCTAssertCall(ConnectionRepository_Mock.Signature.forceConnectionInactiveMode, on: connectionRepository)
     }
@@ -279,6 +281,8 @@ final class AuthenticationRepository_Tests: XCTestCase {
         XCTAssertNotNil(repository.tokenProvider)
         waitForExpectations(timeout: 0.1)
         XCTAssertEqual(repository.currentToken, providedToken)
+        XCTAssertEqual(connectionRepository.updateWebSocketEndpointUserInfo, userInfo)
+        XCTAssertEqual(connectionRepository.updateWebSocketEndpointToken, providedToken)
         XCTAssertCall(ConnectionRepository_Mock.Signature.connect, on: connectionRepository)
         XCTAssertCall(ConnectionRepository_Mock.Signature.forceConnectionInactiveMode, on: connectionRepository)
         XCTAssertNil(receivedError)
@@ -314,6 +318,8 @@ final class AuthenticationRepository_Tests: XCTestCase {
         waitForExpectations(timeout: 0.2)
 
         XCTAssertEqual(repository.currentToken, providedToken)
+        XCTAssertEqual(connectionRepository.updateWebSocketEndpointUserInfo, userInfo)
+        XCTAssertEqual(connectionRepository.updateWebSocketEndpointToken, providedToken)
         XCTAssertCall(ConnectionRepository_Mock.Signature.connect, on: connectionRepository, times: 1)
         XCTAssertCall(ConnectionRepository_Mock.Signature.forceConnectionInactiveMode, on: connectionRepository, times: 1)
     }
@@ -419,6 +425,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         XCTAssertEqual(repository.currentUserId, userId)
         XCTAssertEqual(repository.currentToken, newToken)
         XCTAssertEqual(connectionRepository.updateWebSocketEndpointToken, newToken)
+        XCTAssertEqual(connectionRepository.updateWebSocketEndpointUserInfo, newUserInfo)
         XCTAssertCall(ConnectionRepository_Mock.Signature.updateWebSocketEndpointTokenInfo, on: connectionRepository)
         XCTAssertEqual(delegate.newStateCalls, 1)
         XCTAssertEqual(delegate.clearDataCalls, 0)
@@ -445,6 +452,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         XCTAssertEqual(repository.currentUserId, existingUserId)
         XCTAssertEqual(repository.currentToken, newToken)
         XCTAssertEqual(connectionRepository.updateWebSocketEndpointToken, newToken)
+        XCTAssertEqual(connectionRepository.updateWebSocketEndpointUserInfo, existingUserInfo)
         XCTAssertCall(ConnectionRepository_Mock.Signature.updateWebSocketEndpointTokenInfo, on: connectionRepository)
         XCTAssertEqual(delegate.newStateCalls, 1)
         XCTAssertEqual(delegate.clearDataCalls, 0)
@@ -471,6 +479,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         XCTAssertEqual(existingToken, newToken)
         XCTAssertEqual(repository.currentUserId, existingUserId)
         XCTAssertEqual(repository.currentToken, newToken)
+        XCTAssertEqual(connectionRepository.updateWebSocketEndpointUserInfo, existingUserInfo)
         XCTAssertEqual(connectionRepository.updateWebSocketEndpointToken, newToken)
         XCTAssertCall(ConnectionRepository_Mock.Signature.updateWebSocketEndpointTokenInfo, on: connectionRepository)
         XCTAssertEqual(delegate.newStateCalls, 1)
@@ -509,6 +518,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         XCTAssertNil(error)
         XCTAssertEqual(repository.currentUserId, newUserId)
         XCTAssertEqual(repository.currentToken, newToken)
+        XCTAssertEqual(connectionRepository.updateWebSocketEndpointUserInfo, newUserInfo)
         XCTAssertEqual(connectionRepository.updateWebSocketEndpointToken, newToken)
         XCTAssertCall(ConnectionRepository_Mock.Signature.updateWebSocketEndpointTokenInfo, on: connectionRepository)
         XCTAssertEqual(delegate.newStateCalls, 1)
@@ -546,6 +556,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         XCTAssertTrue(error is ClientError.ClientIsNotInActiveMode)
         XCTAssertEqual(repository.currentUserId, newUserId)
         XCTAssertEqual(repository.currentToken, newToken)
+        XCTAssertNil(connectionRepository.updateWebSocketEndpointUserInfo)
         XCTAssertNotCall(ConnectionRepository_Mock.Signature.updateWebSocketEndpointTokenInfo, on: connectionRepository)
         XCTAssertEqual(delegate.newStateCalls, 1)
         XCTAssertEqual(delegate.clearDataCalls, 0)
@@ -613,6 +624,8 @@ final class AuthenticationRepository_Tests: XCTestCase {
         XCTAssertEqual(repository.currentToken, apiToken)
         let request = try XCTUnwrap(apiClient.request_endpoint)
         XCTAssertEqual(request.path, .guest)
+        XCTAssertEqual(connectionRepository.updateWebSocketEndpointToken, apiToken)
+        XCTAssertEqual(connectionRepository.updateWebSocketEndpointUserInfo, userInfo)
         XCTAssertCall(ConnectionRepository_Mock.Signature.connect, on: connectionRepository)
         XCTAssertCall(ConnectionRepository_Mock.Signature.forceConnectionInactiveMode, on: connectionRepository)
         XCTAssertEqual(receivedError, testError)
@@ -650,6 +663,8 @@ final class AuthenticationRepository_Tests: XCTestCase {
         XCTAssertEqual(repository.currentToken, apiToken)
         let request = try XCTUnwrap(apiClient.request_endpoint)
         XCTAssertEqual(request.path, .guest)
+        XCTAssertEqual(connectionRepository.updateWebSocketEndpointToken, apiToken)
+        XCTAssertEqual(connectionRepository.updateWebSocketEndpointUserInfo, userInfo)
         XCTAssertCall(ConnectionRepository_Mock.Signature.connect, on: connectionRepository)
         XCTAssertCall(ConnectionRepository_Mock.Signature.forceConnectionInactiveMode, on: connectionRepository)
         XCTAssertNil(receivedError)
@@ -701,13 +716,16 @@ final class AuthenticationRepository_Tests: XCTestCase {
     }
 
     func test_refreshToken_success() throws {
-        try setTokenProvider(mockedResult: .success(.unique()))
+        let token = Token.unique()
+        try setTokenProvider(mockedResult: .success(token))
 
         let receivedError = try refreshTokenAndWaitForResponse(mockedError: nil)
 
         XCTAssertCall(RetryStrategy_Spy.Signature.nextRetryDelay, on: retryStrategy)
         XCTAssertCall(RetryStrategy_Spy.Signature.resetConsecutiveFailures, on: retryStrategy)
         XCTAssertNil(receivedError)
+        XCTAssertEqual(connectionRepository.updateWebSocketEndpointToken, token)
+        XCTAssertNil(connectionRepository.updateWebSocketEndpointUserInfo)
     }
 
     func test_refreshToken_failure() throws {
@@ -723,8 +741,9 @@ final class AuthenticationRepository_Tests: XCTestCase {
 
     // Theoretic approach: Calling refresh token 3 times on the same thread, without any delay
     func test_refreshToken_multipleCalls_theoreticApproach() throws {
+        let token = Token.unique()
         // Adding delay otherwise all the execution is 100% sync and we cannot simulate the scenario
-        try setTokenProvider(mockedResult: .success(.unique()), delay: .milliseconds(10))
+        try setTokenProvider(mockedResult: .success(token), delay: .milliseconds(10))
         retryStrategy.mock_nextRetryDelay.returns(0.01)
 
         connectionRepository.connectResult = .success(())
@@ -740,12 +759,15 @@ final class AuthenticationRepository_Tests: XCTestCase {
 
         XCTAssertCall(RetryStrategy_Spy.Signature.nextRetryDelay, on: retryStrategy, times: 3)
         XCTAssertCall(RetryStrategy_Spy.Signature.resetConsecutiveFailures, on: retryStrategy, times: 1)
+        XCTAssertEqual(connectionRepository.updateWebSocketEndpointToken, token)
+        XCTAssertNil(connectionRepository.updateWebSocketEndpointUserInfo)
     }
 
     // Realistic approach: Calling refresh token 3 times. The 2nd and 3rd times are called in the following runloop
     func test_refreshToken_multipleCalls_forcingRealisticDispatch() throws {
+        let token = Token.unique()
         // Adding delay otherwise all the execution is 100% sync and we cannot simulate the scenario
-        try setTokenProvider(mockedResult: .success(.unique()), delay: .milliseconds(10))
+        try setTokenProvider(mockedResult: .success(token), delay: .milliseconds(10))
         retryStrategy.mock_nextRetryDelay.returns(0)
 
         connectionRepository.connectResult = .success(())
@@ -772,6 +794,8 @@ final class AuthenticationRepository_Tests: XCTestCase {
 
         XCTAssertCall(RetryStrategy_Spy.Signature.nextRetryDelay, on: retryStrategy, times: 1)
         XCTAssertCall(RetryStrategy_Spy.Signature.resetConsecutiveFailures, on: retryStrategy, times: 1)
+        XCTAssertEqual(connectionRepository.updateWebSocketEndpointToken, token)
+        XCTAssertNil(connectionRepository.updateWebSocketEndpointUserInfo)
     }
 
     // MARK: Provide Token
@@ -934,4 +958,11 @@ private class AuthenticationRepositoryDelegateMock: AuthenticationRepositoryDele
         clearDataCalls += 1
         completion(nil)
     }
+}
+
+extension UserInfo: Equatable {}
+
+public func == (lhs: UserInfo, rhs: UserInfo) -> Bool {
+    lhs.id == rhs.id && lhs.name == rhs.name
+        && lhs.isInvisible == rhs.isInvisible && lhs.imageURL == rhs.imageURL
 }
