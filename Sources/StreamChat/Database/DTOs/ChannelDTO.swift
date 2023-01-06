@@ -532,11 +532,10 @@ private extension ChannelDTO {
     /// is older than the current `ChannelDTO.oldestMessageAt`, unless the current `ChannelDTO.oldestMessageAt`
     /// is the default one, which is by default a very old date, so are sure the first messages are always fetched.
     func updateOldestMessageAt(payload: ChannelPayload) {
-        if let payloadOldestMessageAt = payload.messages.map(\.createdAt).min() {
-            let isOlderThanCurrentOldestMessage = payloadOldestMessageAt < (oldestMessageAt?.bridgeDate ?? Date.distantFuture)
-            if isOlderThanCurrentOldestMessage {
-                oldestMessageAt = payloadOldestMessageAt.bridgeDate
-            }
+        guard let payloadOldestMessageAt = payload.messages.map(\.createdAt).min() else { return }
+        let isOlderThanCurrentOldestMessage = payloadOldestMessageAt < (oldestMessageAt?.bridgeDate ?? Date.distantFuture)
+        if isOlderThanCurrentOldestMessage {
+            oldestMessageAt = payloadOldestMessageAt.bridgeDate
         }
     }
     
