@@ -10,13 +10,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix reactions not insantly updating when enforce unique is true [#2421](https://github.com/GetStream/stream-chat-swift/pull/2421)
 - Fix not being able to delete messages in `pendingSend` state [#2432](https://github.com/GetStream/stream-chat-swift/pull/2432)
 - Fix innacuracies in for channel unread count [#2433](https://github.com/GetStream/stream-chat-swift/pull/2433)
-- Fix UserInfo not being updated on connect [#2438](https://github.com/GetStream/stream-chat-swift/pull/2438)
 
 ## StreamChatUI
 ### ✅ Added
 - Add `Components.default.isUniqueReactionsEnabled` to easily configure unique reactions [#2421](https://github.com/GetStream/stream-chat-swift/pull/2421)
 ### 🐞 Fixed
 - Fix Reaction Picker not updating when reaction added with enforce unique [#2421](https://github.com/GetStream/stream-chat-swift/pull/2421)
+
+# [4.25.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.25.1)
+_January 06, 2023_
+
+## StreamChat
+### 🔄 Changed
+- Fix UserInfo not being updated on connect [#2438](https://github.com/GetStream/stream-chat-swift/pull/2438)
 
 # [4.25.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.25.0)
 _December 15, 2022_
