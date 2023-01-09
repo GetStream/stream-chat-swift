@@ -4,6 +4,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
+### 🔄 Changed
+- Offline mode now only fetches the first page of the Channel List and Message List. This is a short coming right now until we support offline pagination. [#2434](https://github.com/GetStream/stream-chat-swift/pull/2434)
+
 ### 🐞 Fixed
 - Fix Channel List pagination gaps [#2420](https://github.com/GetStream/stream-chat-swift/pull/2420)
 - Fix truncated channels being moved to the bottom of the channel list [#2420](https://github.com/GetStream/stream-chat-swift/pull/2420)
