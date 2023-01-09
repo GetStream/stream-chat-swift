@@ -44,7 +44,12 @@ extension Filter where Scope: AnyChannelListFilterScope {
 // We don't want to expose `members` publicly because it can't be used with any other operator
 // then `$in`. We expose it publicly via the `containMembers` filter helper.
 extension FilterKey where Scope: AnyChannelListFilterScope {
-    static var members: FilterKey<Scope, UserId> { "members" }
+    static var members: FilterKey<Scope, UserId> {
+        .init(
+            payloadKey: ChannelPayload.CodingKeys.members,
+            dtoKey: #keyPath(ChannelDTO.members.user.id)
+        )
+    }
 }
 
 /// Filter values to be used with `.invite` FilterKey.
@@ -52,6 +57,10 @@ public enum InviteFilterValue: String, FilterValue {
     case pending
     case accepted
     case rejected
+
+    public var description: String {
+        rawValue
+    }
 }
 
 /// Filter keys for channel list.

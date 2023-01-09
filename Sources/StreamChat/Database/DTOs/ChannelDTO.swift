@@ -352,9 +352,13 @@ extension ChannelDTO {
         // We can't pass bools directly to NSPredicate so we have to use integers
         let isHidden = NSPredicate(format: "isHidden == %i", query.filter.hiddenFilterValue == true ? 1 : 0)
 
-        let subpredicates = [
+        var subpredicates = [
             matchingQuery, notDeleted, isHidden
         ]
+
+        if let filterPredicate = query.filter.predicate {
+            subpredicates.append(filterPredicate)
+        }
 
         request.predicate = NSCompoundPredicate(type: .and, subpredicates: subpredicates)
         request.fetchLimit = query.pagination.pageSize

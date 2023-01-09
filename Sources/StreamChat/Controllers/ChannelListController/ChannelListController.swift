@@ -199,6 +199,11 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     }
 
     private func channelBelongsToController(_ channel: ChatChannel, change: ListChange<ChatChannel>) -> Bool {
+        // WIPNOTE: Filter is still useful, since if customers add extra data, it should be filtered here.
+        // So for really complex queries, filter might still be needed, but less often for sure.
+        // OR: Another crazy idea, is to convert extraData from Binary Data to a String, which will contain a dictionary.
+        // In this case we use CONTAINS predicate to check, for example, if "type": "custom" exists in extraData dictionary.
+        // But this is probably too complex, and the filter is probably enough, for sure as a first iteration.
         if let filter = filter {
             return filter(channel)
         }
@@ -218,12 +223,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
             }
         }
 
-        do {
-            return try deprecatedFallback() ?? channel.meets(query.filter)
-        } catch {
-            log.error("Unable to resolve complex filter. Please pass a `filter` block when intializing ChatChannelListController")
-        }
-        return true
+        return deprecatedFallback() ?? false
     }
 
     private func handleUnlinkedChannels(_ changes: [ListChange<ChatChannel>]) {

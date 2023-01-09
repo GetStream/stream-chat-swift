@@ -63,7 +63,7 @@ public protocol FilterScope {}
 ///
 /// Only types representing text, numbers, booleans, dates, and other filters can be on the "right-hand" side of `Filter`.
 ///
-public protocol FilterValue: Encodable {}
+public protocol FilterValue: Encodable, CustomStringConvertible {}
 
 // Built-in `FilterValue` conformances for supported types
 
@@ -79,15 +79,38 @@ extension Array: FilterValue where Element: FilterValue {}
 extension Filter: FilterValue {}
 
 extension ChannelId: FilterValue {}
-extension ChannelType: FilterValue {}
-extension UserRole: FilterValue {}
-extension AttachmentType: FilterValue {}
-extension Optional: FilterValue where Wrapped == TeamId {}
+extension ChannelType: FilterValue {
+    public var description: String {
+        rawValue
+    }
+}
+
+extension UserRole: FilterValue {
+    public var description: String {
+        rawValue
+    }
+}
+
+extension AttachmentType: FilterValue {
+    public var description: String {
+        rawValue
+    }
+}
+
+extension Optional: CustomStringConvertible where Wrapped == TeamId {}
+
+extension Optional: FilterValue where Wrapped == TeamId {
+    public var description: String {
+        switch self {
+        case .none:
+            return "nil"
+        case let .some(wrapped):
+            return wrapped
+        }
+    }
+}
 
 /// Filter is used to specify the details about which elements should be returned from a specific query.
-///
-/// Learn more about how to create simple, advanced, and custom filters in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#query-filters).
-///
 public struct Filter<Scope: FilterScope> {
     /// An operator used for the filter.
     public let `operator`: String
@@ -95,13 +118,13 @@ public struct Filter<Scope: FilterScope> {
     /// The "left-hand" side of the filter. Specifies the name of the field the filter should match. Some operators like
     /// `and` or `or`, don't require the key value to be present.
     public let key: String?
+    let autoKey: FilterAutoKey?
 
     /// The "right-hand" side of the filter. Specifies the value the filter should match.
     public let value: FilterValue
 
     /// Creates a new instance of `Filter`.
     ///
-    /// Learn more about how to create simple, advanced, and custom filters in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#query-filters).
     ///
     /// - Important: Creating filters directly using the initializer is an advanced operation and should be done only in
     /// specific cases.
@@ -116,6 +139,15 @@ public struct Filter<Scope: FilterScope> {
         self.operator = `operator`
         self.key = key
         self.value = value
+        autoKey = nil
+    }
+
+    init(operator: String, autoKey: FilterAutoKey?, value: FilterValue) {
+        log.assert(`operator`.hasPrefix("$"), "A filter operator must have `$` prefix.")
+        self.operator = `operator`
+        key = autoKey?.payloadKey.stringValue
+        self.value = value
+        self.autoKey = autoKey
     }
 }
 
@@ -123,7 +155,11 @@ public struct Filter<Scope: FilterScope> {
 /// built-in helpers we provide.
 extension Filter {
     init<Value: FilterValue>(operator: FilterOperator, key: FilterKey<Scope, Value>, value: FilterValue) {
-        self.init(operator: `operator`.rawValue, key: key.rawValue, value: value)
+        if let autoKey = key.autoKey {
+            self.init(operator: `operator`.rawValue, autoKey: autoKey, value: value)
+        } else {
+            self.init(operator: `operator`.rawValue, key: key.rawValue, value: value)
+        }
     }
 
     init(operator: FilterOperator, value: FilterValue) {
@@ -148,22 +184,46 @@ public extension Filter {
     }
 }
 
+struct FilterAutoKey {
+    let payloadKey: CodingKey
+    let dtoKey: String
+    let value: CVarArg? // isModerator is actually role == admin
+
+    init(_ payloadKey: CodingKey, _ dtoKey: String) {
+        self.payloadKey = payloadKey
+        self.dtoKey = dtoKey
+        value = nil
+    }
+
+    init(_ payloadKey: CodingKey, _ dtoKey: String, value: CVarArg?) {
+        self.payloadKey = payloadKey
+        self.dtoKey = dtoKey
+        self.value = value
+    }
+}
+
 /// A helper struct that represents a key of a filter.
 ///
 /// It allows tagging a key with a scope and a type of the value the key is related to.
-///
-/// Learn more about how to create filter keys for your custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#query-filters).
-///
 public struct FilterKey<Scope: FilterScope, Value: FilterValue>: ExpressibleByStringLiteral, RawRepresentable {
     /// The raw value of the key. This value should match the "encodable" key for the given object.
     public let rawValue: String
 
+    let autoKey: FilterAutoKey?
+
     public init(stringLiteral value: String) {
         rawValue = value
+        autoKey = nil
     }
 
     public init(rawValue value: String) {
         rawValue = value
+        autoKey = nil
+    }
+
+    init(payloadKey: CodingKey, dtoKey: String, value: CVarArg? = nil) {
+        rawValue = payloadKey.stringValue
+        autoKey = .init(payloadKey, dtoKey, value: value)
     }
 }
 

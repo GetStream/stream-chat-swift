@@ -15,7 +15,13 @@ public class MemberListFilterScope: UserListFilterScope, AnyMemberListFilterScop
 public extension FilterKey where Scope: AnyMemberListFilterScope {
     /// A filter key for matching moderators of a channel.
     /// Supported operators: `equal`, `notEqual`
-    static var isModerator: FilterKey<Scope, Bool> { "is_moderator" }
+    static var isModerator: FilterKey<Scope, Bool> {
+        .init(
+            payloadKey: MemberPayload.CodingKeys.role,
+            dtoKey: #keyPath(MemberDTO.channelRoleRaw),
+            value: MemberRole.moderator.rawValue
+        )
+    }
 
     /// Filter key matching the id of the user
     /// Supported operators: `equal`, `notEqual`, `in`, `notIn`
