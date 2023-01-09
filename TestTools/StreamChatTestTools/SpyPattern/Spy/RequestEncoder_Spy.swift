@@ -14,6 +14,7 @@ final class RequestEncoder_Spy: RequestEncoder, Spy {
     weak var connectionDetailsProviderDelegate: ConnectionDetailsProviderDelegate?
 
     var encodeRequest: Result<URLRequest, Error>? = .success(URLRequest(url: .unique()))
+    var onEncodeRequestCall: (() -> Void)?
     var encodeRequest_endpoints: [AnyEndpoint] = []
     var encodeRequest_completion: ((Result<URLRequest, Error>) -> Void)?
 
@@ -22,6 +23,7 @@ final class RequestEncoder_Spy: RequestEncoder, Spy {
         completion: @escaping (Result<URLRequest, Error>) -> Void
     ) where ResponsePayload: Decodable {
         record()
+        onEncodeRequestCall?()
         encodeRequest_endpoints.append(AnyEndpoint(endpoint))
         encodeRequest_completion = completion
 
