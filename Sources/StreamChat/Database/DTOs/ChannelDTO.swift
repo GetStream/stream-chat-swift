@@ -22,7 +22,7 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var lastMessageAt: DBDate?
 
     // The oldest message of the channel we have locally coming from a regular channel query.
-    // This property only lives locally, and it is useful to filter out older pinned messages
+    // This property only lives locally, and it is useful to filter out older pinned/quoted messages
     // that do not belong to the regular channel query.
     @NSManaged var oldestMessageAt: DBDate?
 
@@ -528,9 +528,9 @@ extension ChannelDTO {
 // MARK: - Private Helpers
 
 private extension ChannelDTO {
-    /// Updates the `oldestMessageAt` of the channel. It should only updates if the current `messages: [Message]`
-    /// is older than the current `ChannelDTO.oldestMessageAt`, unless the current `ChannelDTO.oldestMessageAt`
-    /// is the default one, which is by default a very old date, so are sure the first messages are always fetched.
+    /// Updates the `oldestMessageAt` of the channel. It should only update if the current `oldestMessageAt` is not older already.
+    /// This property is useful to filter out older pinned/quoted messages that do not belong to the regular channel query,
+    /// but are already in the database.
     func updateOldestMessageAt(payload: ChannelPayload) {
         guard let payloadOldestMessageAt = payload.messages.map(\.createdAt).min() else { return }
         let isOlderThanCurrentOldestMessage = payloadOldestMessageAt < (oldestMessageAt?.bridgeDate ?? Date.distantFuture)
