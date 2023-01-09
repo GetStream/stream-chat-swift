@@ -135,7 +135,7 @@ final class ChatMessageListVC_Tests: XCTestCase {
         var messageDTOWithoutCid: MessageDTO!
         try mockedClient.databaseContainer.writeSynchronously { session in
             let messagePayload = self.dummyMessagePayload(cid: nil)
-            let channel = try session.saveChannel(payload: .dummy(), isPaginatedPayload: false)
+            let channel = try session.saveChannel(payload: .dummy())
             messageDTOWithoutCid = try session.saveMessage(
                 payload: messagePayload,
                 channelDTO: channel,
