@@ -6,7 +6,7 @@ import Foundation
 
 /// A middleware which saves the incoming data from the Event to the database.
 struct EventDataProcessorMiddleware: EventMiddleware {
-    func handle(event: Event, session: DatabaseSession, notificationCenter: EventNotificationCenter) -> Event? {
+    func handle(event: Event, session: DatabaseSession) -> Event? {
         guard let payload = (event as? EventDTO)?.payload else {
             return event
         }

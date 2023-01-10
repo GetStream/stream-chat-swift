@@ -6,7 +6,7 @@ import Foundation
 
 /// The middleware listens for `UserWatchingEvent`s and updates `ChannelDTO`s accordingly.
 struct UserWatchingEventMiddleware: EventMiddleware {
-    func handle(event: Event, session: DatabaseSession, notificationCenter: EventNotificationCenter) -> Event? {
+    func handle(event: Event, session: DatabaseSession) -> Event? {
         guard let userWatchingEvent = event as? UserWatchingEventDTO else { return event }
 
         do {

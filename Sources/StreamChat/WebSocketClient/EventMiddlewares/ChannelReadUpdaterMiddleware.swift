@@ -6,22 +6,26 @@ import Foundation
 
 /// A middleware which updates a channel's read events as websocket events arrive.
 struct ChannelReadUpdaterMiddleware: EventMiddleware {
-    func handle(event: Event, session: DatabaseSession, notificationCenter: EventNotificationCenter) -> Event? {
+    private var newProcessedMessageIds: () -> Set<MessageId>?
+
+    init(newProcessedMessageIds: @escaping () -> Set<MessageId>?) {
+        self.newProcessedMessageIds = newProcessedMessageIds
+    }
+
+    func handle(event: Event, session: DatabaseSession) -> Event? {
         switch event {
         case let event as MessageNewEventDTO:
             incrementUnreadCountIfNeeded(
                 for: event.cid,
                 message: event.message,
-                session: session,
-                notificationCenter: notificationCenter
+                session: session
             )
 
         case let event as NotificationMessageNewEventDTO:
             incrementUnreadCountIfNeeded(
                 for: event.channel.cid,
                 message: event.message,
-                session: session,
-                notificationCenter: notificationCenter
+                session: session
             )
 
         case let event as MessageDeletedEventDTO:
@@ -61,8 +65,7 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
     private func incrementUnreadCountIfNeeded(
         for cid: ChannelId,
         message: MessagePayload,
-        session: DatabaseSession,
-        notificationCenter: EventNotificationCenter
+        session: DatabaseSession
     ) {
         guard let currentUser = session.currentUser else {
             return log.error("Current user is missing", subsystems: .webSocket)
@@ -70,7 +73,7 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
 
         // If the message exists in the database before processing the current batch of events, it means it was
         // already processed and we don't have to increase the unread count
-        guard notificationCenter.newMessageIds.contains(message.id) else {
+        guard (newProcessedMessageIds() ?? []).contains(message.id) else {
             return log.debug("Not incrementing count for \(message.id) as this message has already been processed")
         }
 

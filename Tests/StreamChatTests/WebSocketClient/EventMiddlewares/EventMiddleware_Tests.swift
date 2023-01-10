@@ -14,8 +14,7 @@ final class EventMiddleware_Tests: XCTestCase {
     }
 
     func test_middlewareEvaluation() throws {
-        var database: DatabaseContainer! = DatabaseContainer_Spy()
-        let center = EventNotificationCenter_Mock(database: database)
+        let database: DatabaseContainer! = DatabaseContainer_Spy()
         let usedSession = database.viewContext
 
         let chain: [EventMiddleware] = [
@@ -38,7 +37,7 @@ final class EventMiddleware_Tests: XCTestCase {
         ]
 
         // Evaluate the middlewares and record the event
-        let result = chain.process(event: IntBasedEvent(value: 0), session: usedSession, notificationCenter: center)
+        let result = chain.process(event: IntBasedEvent(value: 0), session: usedSession)
 
         // Check the evaluation result is correct
         XCTAssertEqual(result as! IntBasedEvent, IntBasedEvent(value: 3))

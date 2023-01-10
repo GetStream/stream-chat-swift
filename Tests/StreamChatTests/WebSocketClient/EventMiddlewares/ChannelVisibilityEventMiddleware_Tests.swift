@@ -33,7 +33,7 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
         let event = TestEvent()
 
         // Handle non-reaction event
-        let forwardedEvent = middleware.handle(event: event, session: database.viewContext, notificationCenter: center)
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         // Assert event is forwarded as it is
         XCTAssertEqual(forwardedEvent as! TestEvent, event)
@@ -52,7 +52,7 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
             createdAt: .unique,
             isChannelHistoryCleared: false
         ) as EventPayload)
-        var forwardedEvent = middleware.handle(event: hiddenEvent, session: database.viewContext, notificationCenter: center)
+        var forwardedEvent = middleware.handle(event: hiddenEvent, session: database.viewContext)
 
         // Assert `ChannelTruncatedEvent` is forwarded even though database error happened.
         XCTAssertTrue(forwardedEvent is ChannelHiddenEventDTO)
@@ -64,7 +64,7 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
             user: .dummy(userId: .unique),
             createdAt: .unique
         ) as EventPayload)
-        forwardedEvent = middleware.handle(event: visibleEvent, session: database.viewContext, notificationCenter: center)
+        forwardedEvent = middleware.handle(event: visibleEvent, session: database.viewContext)
 
         // Assert `ChannelTruncatedEvent` is forwarded even though database error happened.
         XCTAssertTrue(forwardedEvent is ChannelVisibleEventDTO)
@@ -86,7 +86,7 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
         try database.writeSynchronously {
             try $0.saveChannel(payload: .dummy(cid: cid), query: nil, cache: nil)
             // Handle the event
-            _ = self.middleware.handle(event: event, session: $0, notificationCenter: self.center)
+            _ = self.middleware.handle(event: event, session: $0)
         }
 
         // Check if the channel was found and marked as hidden
@@ -111,7 +111,7 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
         assert(database.viewContext.channel(cid: cid)?.isHidden == false)
 
         // Simulate incoming event
-        let forwardedEvent = middleware.handle(event: event, session: database.viewContext, notificationCenter: center)
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         let channelDTO = try XCTUnwrap(database.viewContext.channel(cid: cid))
 
@@ -141,7 +141,7 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
         assert(database.viewContext.channel(cid: cid)?.truncatedAt == nil)
 
         // Simulate incoming event
-        let forwardedEvent = middleware.handle(event: event, session: database.viewContext, notificationCenter: center)
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         let channelDTO = try XCTUnwrap(database.viewContext.channel(cid: cid))
         // Assert the `truncatedAt` value is not touched
@@ -169,7 +169,7 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
         }
 
         // Simulate incoming event
-        let forwardedEvent = middleware.handle(event: event, session: database.viewContext, notificationCenter: center)
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         let channelDTO = try XCTUnwrap(database.viewContext.channel(cid: cid))
 
@@ -202,7 +202,7 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
         }
 
         // Simulate incoming event
-        _ = middleware.handle(event: event, session: database.viewContext, notificationCenter: center)
+        _ = middleware.handle(event: event, session: database.viewContext)
 
         let channelDTO = try XCTUnwrap(database.viewContext.channel(cid: cid))
 

@@ -33,7 +33,7 @@ final class ChannelUserTypingStateUpdaterMiddleware_Tests: XCTestCase {
         let event = TestEvent()
 
         // Handle non-typing event
-        let forwardedEvent = middleware.handle(event: event, session: database.viewContext, notificationCenter: center)
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         // Assert event is forwarded as it is
         XCTAssertEqual(forwardedEvent as! TestEvent, event)
@@ -55,7 +55,7 @@ final class ChannelUserTypingStateUpdaterMiddleware_Tests: XCTestCase {
 
         // Simulate typing event
         let event = TypingEventDTO.startTyping(cid: cid, userId: userId)
-        let forwardedEvent = middleware.handle(event: event, session: database.viewContext, notificationCenter: center)
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         // Assert `TypingEvent` is forwarded even though database error happened
         XCTAssertEqual(forwardedEvent as! TypingEventDTO, event)
@@ -79,7 +79,7 @@ final class ChannelUserTypingStateUpdaterMiddleware_Tests: XCTestCase {
 
         // Simulate start typing event
         let event = TypingEventDTO.startTyping(cid: cid, userId: userId)
-        let forwardedEvent = middleware.handle(event: event, session: database.viewContext, notificationCenter: center)
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         channel = try self.channel(with: cid)
         // Assert `TypingEvent` is forwarded as it is
@@ -109,7 +109,7 @@ final class ChannelUserTypingStateUpdaterMiddleware_Tests: XCTestCase {
 
         // Simulate stop typing events
         let event = TypingEventDTO.stopTyping(cid: cid, userId: userId)
-        let forwardedEvent = middleware.handle(event: event, session: database.viewContext, notificationCenter: center)
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         // Assert `TypingEvent` is forwarded as it is
         XCTAssertEqual(forwardedEvent as! TypingEventDTO, event)
@@ -137,7 +137,7 @@ final class ChannelUserTypingStateUpdaterMiddleware_Tests: XCTestCase {
 
         // Simulate CleanUpTypingEvent
         let event = CleanUpTypingEvent(cid: cid, userId: userId)
-        let forwardedEvent = middleware.handle(event: event, session: database.viewContext, notificationCenter: center)
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         // Assert `CleanUpTypingEvent` is forwarded as it is
         XCTAssertEqual(forwardedEvent as! CleanUpTypingEvent, event)

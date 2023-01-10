@@ -58,7 +58,9 @@ public class ChatClient {
                 excludedUserIds: { [weak self] in Set([self?.currentUserId].compactMap { $0 }) },
                 emitEvent: { [weak center] in center?.process($0) }
             ),
-            ChannelReadUpdaterMiddleware(),
+            ChannelReadUpdaterMiddleware(
+                newProcessedMessageIds: { [weak center] in center?.newMessageIds }
+            ),
             UserTypingStateUpdaterMiddleware(),
             ChannelTruncatedEventMiddleware(),
             MemberEventMiddleware(),

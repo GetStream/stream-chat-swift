@@ -33,7 +33,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         let event = TestEvent()
 
         // Handle non-member event
-        let forwardedEvent = middleware.handle(event: event, session: database.viewContext, notificationCenter: center)
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         // Assert event is forwarded as it is
         XCTAssertEqual(forwardedEvent as! TestEvent, event)
@@ -57,7 +57,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
 
         // Simulate and handle reaction event.
         let event = try MemberAddedEventDTO(from: eventPayload)
-        let forwardedEvent = middleware.handle(event: event, session: database.viewContext, notificationCenter: center)
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         // Assert `MemberAddedEvent` is forwarded even though database error happened.
         XCTAssertTrue(forwardedEvent is MemberAddedEventDTO)
@@ -87,7 +87,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         let channelListObserver = TestChannelListObserver(database: database)
 
         // Simulate `MemberAddedEvent` event.
-        let forwardedEvent = middleware.handle(event: event, session: database.viewContext, notificationCenter: center)
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         // Load the channel.
         let channel = try XCTUnwrap(
@@ -141,7 +141,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         XCTAssertEqual(memberListQueryDTO?.members.map(\.user.id), [existingMember.user!.id])
 
         // Simulate `MemberAddedEventDTO` event.
-        _ = middleware.handle(event: event, session: database.viewContext, notificationCenter: center)
+        _ = middleware.handle(event: event, session: database.viewContext)
 
         // Assert the new member is linked to the query
         XCTAssertEqual(memberListQueryDTO?.members.count, 2)
@@ -169,7 +169,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         let event = try MemberAddedEventDTO(from: eventPayload)
 
         // WHEN
-        _ = middleware.handle(event: event, session: mockSession, notificationCenter: center)
+        _ = middleware.handle(event: event, session: mockSession)
 
         // THEN
         XCTAssertEqual(mockSession.markChannelAsReadParams?.cid, event.cid)
@@ -195,7 +195,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
 
         // Simulate and handle reaction event.
         let event = try MemberRemovedEventDTO(from: eventPayload)
-        let forwardedEvent = middleware.handle(event: event, session: database.viewContext, notificationCenter: center)
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         // Assert `MemberRemovedEvent` is forwarded even though database error happened.
         XCTAssertTrue(forwardedEvent is MemberRemovedEventDTO)
@@ -254,7 +254,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         let event = try MemberRemovedEventDTO(from: eventPayload)
 
         // Simulate `MemberRemovedEvent` event.
-        let forwardedEvent = middleware.handle(event: event, session: database.viewContext, notificationCenter: center)
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         // Load the channel again
         channel = try XCTUnwrap(
@@ -301,7 +301,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
             createdAt: .unique
         )
         let event = try MemberRemovedEventDTO(from: eventPayload)
-        _ = middleware.handle(event: event, session: mockSession, notificationCenter: center)
+        _ = middleware.handle(event: event, session: mockSession)
 
         // THEN
         XCTAssertEqual(mockSession.markChannelAsUnreadParams?.cid, event.cid)
@@ -326,7 +326,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
 
         // Simulate and handle reaction event.
         let event = try MemberUpdatedEventDTO(from: eventPayload)
-        let forwardedEvent = middleware.handle(event: event, session: database.viewContext, notificationCenter: center)
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         // Assert `MemberUpdatedEvent` is forwarded even though database error happened.
         XCTAssertTrue(forwardedEvent is MemberUpdatedEventDTO)
@@ -363,7 +363,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         let event = try MemberUpdatedEventDTO(from: eventPayload)
 
         // Simulate `MemberUpdatedEvent` event.
-        let forwardedEvent = middleware.handle(event: event, session: database.viewContext, notificationCenter: center)
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         // Load the channel again
         channel = try XCTUnwrap(
@@ -416,7 +416,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         let channelListObserver = TestChannelListObserver(database: database)
 
         // Simulate `NotificationAddedToChannelEvent` event.
-        let forwardedEvent = middleware.handle(event: event, session: database.viewContext, notificationCenter: center)
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         // Assert membership is not nil
         XCTAssertNotNil(channel)
@@ -472,7 +472,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         XCTAssertEqual(memberListQueryDTO?.members.map(\.user.id), [existingMember.user!.id])
 
         // Simulate `NotificationAddedToChannelEvent` event.
-        _ = middleware.handle(event: event, session: database.viewContext, notificationCenter: center)
+        _ = middleware.handle(event: event, session: database.viewContext)
 
         // Assert the new member is linked to the query
         XCTAssertEqual(memberListQueryDTO?.members.count, 2)
@@ -512,7 +512,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         let event = try NotificationRemovedFromChannelEventDTO(from: eventPayload)
 
         // Simulate `NotificationRemovedFromChannelEvent` event.
-        _ = middleware.handle(event: event, session: database.viewContext, notificationCenter: center)
+        _ = middleware.handle(event: event, session: database.viewContext)
 
         // Assert membership is nil
         XCTAssertNotNil(channel)
@@ -557,7 +557,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         let channelListObserver = TestChannelListObserver(database: database)
 
         // Simulate `NotificationAddedToChannelEvent` event.
-        let forwardedEvent = middleware.handle(event: event, session: database.viewContext, notificationCenter: center)
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         // Assert membership is not nil
         XCTAssertNotNil(channel)
@@ -608,7 +608,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         XCTAssertEqual(memberListQueryDTO?.members.map(\.user.id), [existingMember.user!.id])
 
         // Simulate `NotificationInvitedEventDTO` event.
-        _ = middleware.handle(event: event, session: database.viewContext, notificationCenter: center)
+        _ = middleware.handle(event: event, session: database.viewContext)
 
         // Assert the new member is linked to the query
         XCTAssertEqual(memberListQueryDTO?.members.count, 2)
@@ -650,7 +650,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         let channelListObserver = TestChannelListObserver(database: database)
 
         // Simulate `NotificationAddedToChannelEvent` event.
-        let forwardedEvent = middleware.handle(event: event, session: database.viewContext, notificationCenter: center)
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         // Assert membership is not nil
         XCTAssertNotNil(channel)
@@ -700,7 +700,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         let channelListObserver = TestChannelListObserver(database: database)
 
         // Simulate `NotificationAddedToChannelEvent` event.
-        let forwardedEvent = middleware.handle(event: event, session: database.viewContext, notificationCenter: center)
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         // Assert membership is not nil
         XCTAssertNotNil(channel)
