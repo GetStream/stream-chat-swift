@@ -191,6 +191,10 @@ extension DatabaseSession_Mock {
         underlyingSession.message(id: id)
     }
 
+    func messageExists(id: MessageId) -> Bool {
+        underlyingSession.messageExists(id: id)
+    }
+
     func delete(message: MessageDTO) {
         underlyingSession.delete(message: message)
     }

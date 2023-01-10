@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix not being able to delete messages in `pendingSend` state [#2432](https://github.com/GetStream/stream-chat-swift/pull/2432)
 - Fix messages intermittently disappearing when first opening the channel [#2434](https://github.com/GetStream/stream-chat-swift/pull/2434)
 - Fix first page not being loaded from the cache when using a lower `messagesLimit` in Channel List Query [#2434](https://github.com/GetStream/stream-chat-swift/pull/2434)
+- Fix inaccuracies in for channel unread count [#2433](https://github.com/GetStream/stream-chat-swift/pull/2433)
 
 ## StreamChatUI
 ### ✅ Added

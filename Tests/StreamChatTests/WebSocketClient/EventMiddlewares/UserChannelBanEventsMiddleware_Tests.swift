@@ -8,6 +8,7 @@ import XCTest
 
 final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
     var database: DatabaseContainer_Spy!
+    var center: EventNotificationCenter_Mock!
     var middleware: UserChannelBanEventsMiddleware!
 
     // MARK: - Set up
@@ -16,12 +17,13 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
         super.setUp()
 
         database = DatabaseContainer_Spy()
+        center = EventNotificationCenter_Mock(database: database)
         middleware = .init()
     }
 
     override func tearDown() {
-        AssertAsync.canBeReleased(&database)
         database = nil
+        AssertAsync.canBeReleased(&database)
         super.tearDown()
     }
 
@@ -31,7 +33,7 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
         let event = TestEvent()
 
         // Handle non-banned event
-        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext, notificationCenter: center)
 
         // Assert event is forwarded as it is
         XCTAssertEqual(forwardedEvent as! TestEvent, event)
@@ -53,7 +55,7 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
 
         // Simulate and handle banned event.
         let event = try UserBannedEventDTO(from: eventPayload)
-        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext, notificationCenter: center)
 
         // Assert `UserBannedEvent` is forwarded even though database error happened.
         XCTAssertTrue(forwardedEvent is UserBannedEventDTO)
@@ -73,7 +75,7 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
 
         // Simulate and handle banned event.
         let event = try UserUnbannedEventDTO(from: eventPayload)
-        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext, notificationCenter: center)
 
         // Assert `UserUnbannedEvent` is forwarded even though database error happened.
         XCTAssertTrue(forwardedEvent is UserUnbannedEventDTO)
@@ -102,7 +104,7 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
         XCTAssertEqual(member.banExpiresAt, nil)
 
         // Simulate `UserBannedEvent` event.
-        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext, notificationCenter: center)
 
         // Assert the member ban information is updated
         XCTAssertEqual(member.isBanned, true)
@@ -147,7 +149,7 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
         XCTAssertNotEqual(member.banExpiresAt, nil)
 
         // Simulate `UserUnbannedEvent` event.
-        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext, notificationCenter: center)
 
         // Assert the member ban information is updated
         XCTAssertEqual(member.isBanned, false)

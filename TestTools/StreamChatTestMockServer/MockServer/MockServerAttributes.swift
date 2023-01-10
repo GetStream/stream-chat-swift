@@ -141,12 +141,14 @@ public enum UserDetails {
         userKey.name.rawValue: hanSoloName,
         userKey.imageURL.rawValue: "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png"
     ]
-
+    
+    public static let lukeSkywalkerName = "Luke Skywalker"
     public static let lukeSkywalkerId = "luke_skywalker"
+    public static let lukeSkywalkerImageURL = "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg"
     public static let lukeSkywalker = [
         userKey.id.rawValue: lukeSkywalkerId,
-        userKey.name.rawValue: "Luke Skywalker",
-        userKey.imageURL.rawValue: "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg"
+        userKey.name.rawValue: lukeSkywalkerName,
+        userKey.imageURL.rawValue: lukeSkywalkerImageURL
     ]
 
     public static let countDooku = [

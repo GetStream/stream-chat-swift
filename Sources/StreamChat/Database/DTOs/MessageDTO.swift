@@ -750,6 +750,17 @@ extension NSManagedObjectContext: MessageDatabaseSession {
 
     func message(id: MessageId) -> MessageDTO? { .load(id: id, context: self) }
 
+    func messageExists(id: MessageId) -> Bool {
+        let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
+        request.predicate = NSPredicate(format: "id == %@", id)
+        do {
+            let count = try count(for: request)
+            return count != 0
+        } catch {
+            return false
+        }
+    }
+
     func delete(message: MessageDTO) {
         delete(message)
     }

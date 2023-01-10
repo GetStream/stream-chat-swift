@@ -350,6 +350,7 @@
 		826B1C3728895BB5005DDF13 /* http_unsplash_link.json in Resources */ = {isa = PBXBuildFile; fileRef = 826B1C3628895BB5005DDF13 /* http_unsplash_link.json */; };
 		826B1C39288FD756005DDF13 /* http_truncate.json in Resources */ = {isa = PBXBuildFile; fileRef = 826B1C38288FD756005DDF13 /* http_truncate.json */; };
 		826EF2B1291C01C1005A9EEF /* Authentication_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 826EF2B0291C01C1005A9EEF /* Authentication_Tests.swift */; };
+		8279706F29689680006741A3 /* UserDetails_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8279706E29689680006741A3 /* UserDetails_Tests.swift */; };
 		827DD1A0289D5B3300910AC5 /* MessageActionsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 827DD19F289D5B3300910AC5 /* MessageActionsVC.swift */; };
 		829762E028C7587500B953E8 /* PushNotification_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 829762DF28C7587500B953E8 /* PushNotification_Tests.swift */; };
 		829CD5C52848C2EA003C3877 /* ParticipantRobot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 829CD5C32848C25F003C3877 /* ParticipantRobot.swift */; };
@@ -2718,6 +2719,7 @@
 		826B1C3628895BB5005DDF13 /* http_unsplash_link.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = http_unsplash_link.json; sourceTree = "<group>"; };
 		826B1C38288FD756005DDF13 /* http_truncate.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = http_truncate.json; sourceTree = "<group>"; };
 		826EF2B0291C01C1005A9EEF /* Authentication_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Authentication_Tests.swift; sourceTree = "<group>"; };
+		8279706E29689680006741A3 /* UserDetails_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDetails_Tests.swift; sourceTree = "<group>"; };
 		827DD19F289D5B3300910AC5 /* MessageActionsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageActionsVC.swift; sourceTree = "<group>"; };
 		829762DF28C7587500B953E8 /* PushNotification_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotification_Tests.swift; sourceTree = "<group>"; };
 		8298C8E827D22C3E004082D3 /* UserRobot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRobot.swift; sourceTree = "<group>"; };
@@ -4732,6 +4734,7 @@
 				A3CB2B9F2858C06B00DCAE3E /* Ephemeral_Messages_Tests.swift */,
 				829762DF28C7587500B953E8 /* PushNotification_Tests.swift */,
 				826EF2B0291C01C1005A9EEF /* Authentication_Tests.swift */,
+				8279706E29689680006741A3 /* UserDetails_Tests.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -9913,6 +9916,7 @@
 				A3B78F1A282A6A8F00348AD1 /* UserRobot+Asserts.swift in Sources */,
 				825A32CD27DBB46F000402A9 /* ChannelListPage.swift in Sources */,
 				A36D1EA9283F755F008D6110 /* StreamTestCase.swift in Sources */,
+				8279706F29689680006741A3 /* UserDetails_Tests.swift in Sources */,
 				A3B78F18282A675700348AD1 /* MessageDeliveryStatus+ChannelList_Tests.swift in Sources */,
 				826EF2B1291C01C1005A9EEF /* Authentication_Tests.swift in Sources */,
 				829762E028C7587500B953E8 /* PushNotification_Tests.swift in Sources */,
