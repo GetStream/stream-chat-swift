@@ -319,6 +319,7 @@ extension NSManagedObjectContext {
             channelDTO.members.removeAll()
             channelDTO.pinnedMessages.removeAll()
             channelDTO.reads.removeAll()
+            channelDTO.oldestMessageAt = nil
         }
     }
 
