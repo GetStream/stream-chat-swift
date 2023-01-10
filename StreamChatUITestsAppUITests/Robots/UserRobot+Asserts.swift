@@ -886,3 +886,36 @@ extension UserRobot {
         return self
     }
 }
+
+// MARK: UserDetails
+
+extension UserRobot {
+    
+    @discardableResult
+    func assertUserDetails(_ details: [String: Any]?) -> Self {
+        let userDetails = details?[WebSocketConnectPayload.CodingKeys.userDetails.rawValue] as? [String: Any]
+        
+        let serverDeterminesConnectionId = details?[WebSocketConnectPayload.CodingKeys.serverDeterminesConnectionId.rawValue] as? Bool
+        XCTAssertEqual(true, serverDeterminesConnectionId)
+        
+        let userId = details?[WebSocketConnectPayload.CodingKeys.userId.rawValue] as? String
+        XCTAssertEqual(UserDetails.lukeSkywalkerId, userId)
+        
+        let id = userDetails?[UserWebSocketPayload.CodingKeys.id.rawValue] as? String
+        XCTAssertEqual(UserDetails.lukeSkywalkerId, id)
+        
+        let isInvisible = userDetails?[UserWebSocketPayload.CodingKeys.isInvisible.rawValue] as? Bool
+        XCTAssertEqual(false, isInvisible)
+        
+        let name = userDetails?[UserWebSocketPayload.CodingKeys.name.rawValue] as? String
+        XCTAssertEqual(UserDetails.lukeSkywalkerName, name)
+        
+        let imageURL = userDetails?[UserWebSocketPayload.CodingKeys.imageURL.rawValue] as? String
+        XCTAssertEqual(UserDetails.lukeSkywalkerImageURL, imageURL)
+        
+        let birthland = userDetails?["birthland"] as? String
+        XCTAssertEqual("Tatooine", birthland)
+        
+        return self
+    }
+}
