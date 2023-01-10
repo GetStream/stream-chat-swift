@@ -33,7 +33,7 @@ public struct LazyCachedMapCollection<Element>: RandomAccessCollection {
         // In v5 we should deprecate LazyCachedMapCollection since it is very error prone
         // And customers should not have access to these helper data structures
         // This is not great, but we need to make sure that when mapping DTOs to models
-        // that these DTOs are access on their managed object contexts
+        // that these DTOs are accessed on their managed object contexts
         generator = { index in
             var element: Element!
             if let context = context {
