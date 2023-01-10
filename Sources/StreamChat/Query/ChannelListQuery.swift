@@ -172,7 +172,7 @@ public struct ChannelListQuery: Encodable {
         filter: Filter<ChannelListFilterScope>,
         sort: [Sorting<ChannelListSortingKey>] = [],
         pageSize: Int = .channelsPageSize,
-        messagesLimit: Int = .messagesPageSize,
+        messagesLimit: Int = 1,
         membersLimit: Int = .channelMembersPageSize
     ) {
         self.filter = filter

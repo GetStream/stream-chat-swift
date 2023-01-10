@@ -226,6 +226,13 @@ open class ChatMessageListVC: _ViewController,
 
     /// Updates the table view data with given `changes`.
     open func updateMessages(with changes: [ListChange<ChatMessage>], completion: (() -> Void)? = nil) {
+        let reloadSeparators = { [weak self] in
+            UIView.performWithoutAnimation {
+                self?.listView.reloadItems(at: self?.separatorsNeedingToReload ?? [])
+                self?.separatorsNeedingToReload = []
+            }
+        }
+
         // There is an issue on iOS 12 that when the message list has 0 or 1 message,
         // the UI is not updated for the next inserted messages.
         guard #available(iOS 13.0, *) else {
@@ -236,11 +243,17 @@ open class ChatMessageListVC: _ViewController,
                 return
             }
 
-            listView.updateMessages(with: changes, completion: completion)
+            listView.updateMessages(with: changes) {
+                reloadSeparators()
+                completion?()
+            }
             return
         }
 
-        listView.updateMessages(with: changes, completion: completion)
+        listView.updateMessages(with: changes) {
+            reloadSeparators()
+            completion?()
+        }
     }
 
     /// Handles tap action on the table view.
@@ -337,6 +350,9 @@ open class ChatMessageListVC: _ViewController,
         typingIndicatorView.isHidden = true
     }
 
+    var visibleDateSeparators: [String: IndexPath] = [:]
+    var separatorsNeedingToReload: [IndexPath] = []
+
     /// Check if the current message being displayed should show the date separator.
     /// - Parameters:
     ///   - message: The message being displayed.
@@ -347,10 +363,21 @@ open class ChatMessageListVC: _ViewController,
             return false
         }
 
+        let shouldShow: Bool
+
+        let currentMessageDateFormatted = dateSeparatorFormatter.format(message.createdAt)
+        // TODO: Create a formatter just to check the difference between dates using DD/MM/YYYY,
+        // then use this format to store in the visibleDateSeparators and compare isDifferentDay
+        let day = Calendar.current.component(.day, from: message.createdAt)
+        let month = Calendar.current.component(.month, from: message.createdAt)
+        let year = Calendar.current.component(.year, from: message.createdAt)
+
         let previousIndexPath = IndexPath(row: indexPath.row + 1, section: indexPath.section)
         guard let previousMessage = dataSource?.chatMessageListVC(self, messageAt: previousIndexPath) else {
             // If previous message doesn't exist show the separator as well.
-            return true
+            shouldShow = true
+            visibleDateSeparators[currentMessageDateFormatted] = indexPath
+            return shouldShow
         }
 
         // Only show the separator if the previous message has a different day.
@@ -359,7 +386,16 @@ open class ChatMessageListVC: _ViewController,
             equalTo: previousMessage.createdAt,
             toGranularity: .day
         )
-        return isDifferentDay
+        shouldShow = isDifferentDay
+
+        if shouldShow {
+            if let indexPathForVisibleSeparator = visibleDateSeparators[currentMessageDateFormatted] {
+                separatorsNeedingToReload.append(indexPathForVisibleSeparator)
+            }
+            visibleDateSeparators[currentMessageDateFormatted] = indexPath
+        }
+
+        return shouldShow
     }
 
     /// Show the actions that can be performed in a debounced message.
