@@ -28,12 +28,13 @@ public struct LazyCachedMapCollection<Element>: RandomAccessCollection {
     public init<Collection: RandomAccessCollection, SourceElement>(
         source: Collection,
         map: @escaping (SourceElement) -> Element,
-        context: NSManagedObjectContext?
+        context: NSManagedObjectContext? = nil
     ) where Collection.Element == SourceElement, Collection.Index == Index {
         // In v5 we should deprecate LazyCachedMapCollection since it is very error prone
         // And customers should not have access to these helper data structures
         // This is not great, but we need to make sure that when mapping DTOs to models
-        // that these DTOs are accessed on their managed object contexts
+        // that these DTOs are accessed on their managed object contexts.
+        // So we need to pass the NSManagedObjectContext to the generator.
         generator = { index in
             var element: Element!
             if let context = context {
@@ -89,7 +90,10 @@ extension LazyCachedMapCollection: Equatable where Element: Equatable {
 
 extension RandomAccessCollection where Index == Int {
     /// Lazily apply transformation to sequence
-    public func lazyCachedMap<T>(_ transformation: @escaping (Element) -> T, context: NSManagedObjectContext?) -> LazyCachedMapCollection<T> {
+    public func lazyCachedMap<T>(
+        _ transformation: @escaping (Element) -> T,
+        context: NSManagedObjectContext? = nil
+    ) -> LazyCachedMapCollection<T> {
         .init(source: self, map: transformation, context: context)
     }
 }
