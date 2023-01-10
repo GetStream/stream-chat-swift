@@ -106,7 +106,7 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
 
     private var _items: [Item] = []
     var items: LazyCachedMapCollection<Item> {
-        queue.sync { LazyCachedMapCollection(source: _items, map: { $0 }) }
+        queue.sync { LazyCachedMapCollection(source: _items, map: { $0 }, context: self.frc.managedObjectContext) }
     }
 
     private var _isInitialized: Bool = false

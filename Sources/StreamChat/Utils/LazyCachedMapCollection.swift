@@ -2,6 +2,7 @@
 // Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
+import CoreData
 import Foundation
 
 /// Read-only collection that applies transformation to element on first access.
@@ -26,9 +27,24 @@ public struct LazyCachedMapCollection<Element>: RandomAccessCollection {
 
     public init<Collection: RandomAccessCollection, SourceElement>(
         source: Collection,
-        map: @escaping (SourceElement) -> Element
+        map: @escaping (SourceElement) -> Element,
+        context: NSManagedObjectContext?
     ) where Collection.Element == SourceElement, Collection.Index == Index {
-        generator = { map(source[$0]) }
+        // In v5 we should deprecate LazyCachedMapCollection since it is very error prone
+        // And customers should not have access to these helper data structures
+        // This is not great, but we need to make sure that when mapping DTOs to models
+        // that these DTOs are access on their managed object contexts
+        generator = { index in
+            var element: Element!
+            if let context = context {
+                context.performAndWait {
+                    element = map(source[index])
+                }
+            } else {
+                element = map(source[index])
+            }
+            return element
+        }
 
         /// This is just an internal test to see how we behave when the DB models are immediately mapped instead of being lazily mapped
         if !StreamRuntimeCheck._isBackgroundMappingEnabled {
@@ -73,8 +89,8 @@ extension LazyCachedMapCollection: Equatable where Element: Equatable {
 
 extension RandomAccessCollection where Index == Int {
     /// Lazily apply transformation to sequence
-    public func lazyCachedMap<T>(_ transformation: @escaping (Element) -> T) -> LazyCachedMapCollection<T> {
-        .init(source: self, map: transformation)
+    public func lazyCachedMap<T>(_ transformation: @escaping (Element) -> T, context: NSManagedObjectContext?) -> LazyCachedMapCollection<T> {
+        .init(source: self, map: transformation, context: context)
     }
 }
 

@@ -236,9 +236,9 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
             guard let frc = self?.frc,
                   let itemCreator = self?.itemCreator,
                   let context = self?.context else { return [] }
-            var result = LazyCachedMapCollection<Item>()
+            var result: LazyCachedMapCollection<Item>!
             context.performAndWait {
-                result = (frc.fetchedObjects ?? []).lazyCachedMap { dto in
+                result = .init(source: frc.fetchedObjects ?? [], map: { dto in
                     // `itemCreator` returns non-optional value, so we can use implicitly unwrapped optional
                     var resultItem: Item!
                     do {
@@ -247,7 +247,7 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
                         log.assertionFailure("Unable to convert a DB entity to model: \(error.localizedDescription)")
                     }
                     return resultItem
-                }
+                }, context: context)
             }
             return result
         }
