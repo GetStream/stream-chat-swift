@@ -1019,6 +1019,7 @@
 		AD45333225D153A500CD9D47 /* ConnectionController_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD45333125D153A500CD9D47 /* ConnectionController_Tests.swift */; };
 		AD45333A25D153CF00CD9D47 /* ConnectionController+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD45333925D153CF00CD9D47 /* ConnectionController+SwiftUI_Tests.swift */; };
 		AD45334E25D153E500CD9D47 /* ConnectionController+Combine_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD45334D25D153E500CD9D47 /* ConnectionController+Combine_Tests.swift */; };
+		AD45C476296DE4E200BC5E94 /* LazyCachedMapCollection+init.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD45C475296DE4E200BC5E94 /* LazyCachedMapCollection+init.swift */; };
 		AD470C9C26C6D8C60090759A /* ChatMessageListVCDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD470C9B26C6D8C60090759A /* ChatMessageListVCDataSource.swift */; };
 		AD470C9E26C6D9030090759A /* ChatMessageListVCDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD470C9D26C6D9030090759A /* ChatMessageListVCDelegate.swift */; };
 		AD472EF825C425FB00A96E70 /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = AD472EF725C425FB00A96E70 /* SnapshotTesting */; };
@@ -3275,6 +3276,7 @@
 		AD45333125D153A500CD9D47 /* ConnectionController_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionController_Tests.swift; sourceTree = "<group>"; };
 		AD45333925D153CF00CD9D47 /* ConnectionController+SwiftUI_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConnectionController+SwiftUI_Tests.swift"; sourceTree = "<group>"; };
 		AD45334D25D153E500CD9D47 /* ConnectionController+Combine_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConnectionController+Combine_Tests.swift"; sourceTree = "<group>"; };
+		AD45C475296DE4E200BC5E94 /* LazyCachedMapCollection+init.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LazyCachedMapCollection+init.swift"; sourceTree = "<group>"; };
 		AD46C4DA25C431C500B405F8 /* ChatChannelListVC_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelListVC_Tests.swift; sourceTree = "<group>"; };
 		AD470C9B26C6D8C60090759A /* ChatMessageListVCDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageListVCDataSource.swift; sourceTree = "<group>"; };
 		AD470C9D26C6D9030090759A /* ChatMessageListVCDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageListVCDelegate.swift; sourceTree = "<group>"; };
@@ -5292,6 +5294,7 @@
 				A3F65E3227EB6F63003F6256 /* AssertNetworkRequest.swift */,
 				A311B42C27E8BB7400CFCF6D /* StreamChatTestTools.swift */,
 				792E3DDE25CACFA80040B0C2 /* XCTestCase+TestImages.swift */,
+				AD45C475296DE4E200BC5E94 /* LazyCachedMapCollection+init.swift */,
 				A311B43D27E8BCA300CFCF6D /* DatabaseModels */,
 				A3C3BC7627E8AA7400224761 /* Extensions */,
 				A364D08727CFBA3F0029857A /* Mocks */,
@@ -9222,6 +9225,7 @@
 				A344078E27D753530044F150 /* CurrentChatUserController_Mock.swift in Sources */,
 				A311B43A27E8BC8400CFCF6D /* UserListController_Delegate.swift in Sources */,
 				A3C3BC7227E8AA4300224761 /* DecodableEntity.swift in Sources */,
+				AD45C476296DE4E200BC5E94 /* LazyCachedMapCollection+init.swift in Sources */,
 				A3C3BC6527E8AA0A00224761 /* Int+Unique.swift in Sources */,
 				A3C3BC6327E8AA0A00224761 /* AttachmentId+Unique.swift in Sources */,
 				A3C3BC3827E87F5100224761 /* BackgroundTaskScheduler_Mock.swift in Sources */,
