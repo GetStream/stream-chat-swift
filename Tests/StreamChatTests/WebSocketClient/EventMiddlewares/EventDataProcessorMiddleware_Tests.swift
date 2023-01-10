@@ -8,13 +8,11 @@ import XCTest
 
 final class EventDataProcessorMiddleware_Tests: XCTestCase {
     var middleware: EventDataProcessorMiddleware!
-    fileprivate var center: EventNotificationCenter_Mock!
     fileprivate var database: DatabaseContainer_Spy!
 
     override func setUp() {
         super.setUp()
         database = DatabaseContainer_Spy()
-        center = EventNotificationCenter_Mock(database: database)
         middleware = EventDataProcessorMiddleware()
     }
 

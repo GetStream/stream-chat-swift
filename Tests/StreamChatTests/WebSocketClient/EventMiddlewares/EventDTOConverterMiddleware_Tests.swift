@@ -9,19 +9,16 @@ import XCTest
 
 final class EventDTOConverterMiddleware_Tests: XCTestCase {
     var middleware: EventDTOConverterMiddleware!
-    var center: EventNotificationCenter_Mock!
     var database: DatabaseContainer_Spy!
 
     override func setUp() {
         middleware = .init()
         database = DatabaseContainer_Spy(kind: .inMemory)
-        center = EventNotificationCenter_Mock(database: database)
         super.setUp()
     }
 
     override func tearDown() {
         middleware = nil
-        center = nil
         database = nil
         super.tearDown()
     }

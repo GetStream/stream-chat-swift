@@ -14,7 +14,7 @@ final class EventMiddleware_Tests: XCTestCase {
     }
 
     func test_middlewareEvaluation() throws {
-        let database: DatabaseContainer! = DatabaseContainer_Spy()
+        var database: DatabaseContainer! = DatabaseContainer_Spy()
         let usedSession = database.viewContext
 
         let chain: [EventMiddleware] = [
@@ -41,5 +41,7 @@ final class EventMiddleware_Tests: XCTestCase {
 
         // Check the evaluation result is correct
         XCTAssertEqual(result as! IntBasedEvent, IntBasedEvent(value: 3))
+
+        AssertAsync.canBeReleased(&database)
     }
 }

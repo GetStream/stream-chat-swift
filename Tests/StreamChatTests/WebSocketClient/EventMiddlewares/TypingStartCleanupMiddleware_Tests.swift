@@ -12,7 +12,6 @@ final class TypingStartCleanupMiddleware_Tests: XCTestCase {
     // The database is not really used in the middleware but it's a requirement by the protocol
     // to provide a database session
     var database: DatabaseContainer_Spy!
-    var center: EventNotificationCenter_Mock!
 
     override func setUp() {
         super.setUp()
@@ -23,12 +22,10 @@ final class TypingStartCleanupMiddleware_Tests: XCTestCase {
         VirtualTimeTimer.time = time
 
         database = DatabaseContainer_Spy()
-        center = EventNotificationCenter_Mock(database: database)
     }
 
     override func tearDown() {
         database = nil
-        center = nil
         AssertAsync.canBeReleased(&database)
         currentUser = nil
         VirtualTimeTimer.invalidate()

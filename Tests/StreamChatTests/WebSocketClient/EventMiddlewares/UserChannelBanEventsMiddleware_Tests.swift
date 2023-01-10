@@ -8,7 +8,6 @@ import XCTest
 
 final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
     var database: DatabaseContainer_Spy!
-    var center: EventNotificationCenter_Mock!
     var middleware: UserChannelBanEventsMiddleware!
 
     // MARK: - Set up
@@ -17,7 +16,6 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
         super.setUp()
 
         database = DatabaseContainer_Spy()
-        center = EventNotificationCenter_Mock(database: database)
         middleware = .init()
     }
 
