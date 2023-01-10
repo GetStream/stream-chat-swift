@@ -11,8 +11,9 @@ protocol EventMiddleware {
     /// - Parameters:
     ///   - event: The incoming `Event`.
     ///   - session: The database session the middleware works with.
+    ///   - notificationCenter: The center that received the events.
     /// - Returns: The original `event` passed via params OR `nil` if the incoming event was consumed by the middleware.
-    func handle(event: Event, session: DatabaseSession) -> Event?
+    func handle(event: Event, session: DatabaseSession, notificationCenter: EventNotificationCenter) -> Event?
 }
 
 extension Array where Element == EventMiddleware {
@@ -22,13 +23,14 @@ extension Array where Element == EventMiddleware {
     /// - Parameters:
     ///   - event: The event to be pre-processed.
     ///   - session: The database session used when evaluating the middlewares.
+    ///   - notificationCenter: The center that received the events.
     /// - Returns: The processed event. It will return `nil` if the event was consumed by some middleware.
-    func process(event: Event, session: DatabaseSession) -> Event? {
+    func process(event: Event, session: DatabaseSession, notificationCenter: EventNotificationCenter) -> Event? {
         var output: Event? = event
 
         for middleware in self {
             guard let input = output else { break }
-            output = middleware.handle(event: input, session: session)
+            output = middleware.handle(event: input, session: session, notificationCenter: notificationCenter)
         }
 
         return output

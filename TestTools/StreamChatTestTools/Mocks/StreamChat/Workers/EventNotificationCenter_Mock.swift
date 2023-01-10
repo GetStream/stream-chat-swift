@@ -7,6 +7,13 @@ import Foundation
 
 /// Mock implementation of `EventNotificationCenter`
 final class EventNotificationCenter_Mock: EventNotificationCenter {
+
+    override var newMessageIds: Set<MessageId> {
+        newMessageIdsMock ?? super.newMessageIds
+    }
+
+    var newMessageIdsMock: Set<MessageId>?
+
     lazy var mock_process = MockFunc<([Event], Bool, (() -> Void)?), Void>.mock(for: process)
 
     override func process(
