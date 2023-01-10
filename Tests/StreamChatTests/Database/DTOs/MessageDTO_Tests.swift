@@ -2754,6 +2754,30 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(channelUpdatesCount, 1)
     }
 
+    func test_messagesFetchRequest_shouldHaveFetchLimitAndBatchSize() {
+        let fetchRequest = MessageDTO.messagesFetchRequest(
+            for: .unique,
+            pageSize: 20,
+            deletedMessagesVisibility: .alwaysHidden,
+            shouldShowShadowedMessages: false
+        )
+
+        XCTAssertEqual(fetchRequest.fetchBatchSize, 20)
+        XCTAssertEqual(fetchRequest.fetchLimit, 20)
+    }
+
+    func test_repliesFetchRequest_shouldHaveFetchLimitAndBatchSize() {
+        let fetchRequest = MessageDTO.repliesFetchRequest(
+            for: .unique,
+            pageSize: 20,
+            deletedMessagesVisibility: .alwaysHidden,
+            shouldShowShadowedMessages: false
+        )
+
+        XCTAssertEqual(fetchRequest.fetchBatchSize, 20)
+        XCTAssertEqual(fetchRequest.fetchLimit, 20)
+    }
+
     // MARK: Helpers:
 
     private func checkChannelMessagesPredicateCount(

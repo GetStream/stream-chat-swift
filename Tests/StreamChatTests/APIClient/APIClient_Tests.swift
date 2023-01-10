@@ -234,8 +234,18 @@ final class APIClient_Tests: XCTestCase {
             // If token refresh never completes, it will never complete the request
         })
 
-        let encoderError = ClientError.ExpiredToken()
-        decoder.decodeRequestResponse = .failure(encoderError)
+        let decoderExp = expectation(description: "should call decoder twice")
+        decoderExp.expectedFulfillmentCount = 2
+        decoder.decodeRequestResponse = .failure(ClientError.ExpiredToken())
+        decoder.onDecodeRequestResponseCall = {
+            decoderExp.fulfill()
+        }
+
+        let encoderExp = expectation(description: "should call encoder twice")
+        encoderExp.expectedFulfillmentCount = 2
+        encoder.onEncodeRequestCall = {
+            encoderExp.fulfill()
+        }
 
         // We run two operations at the same time. None of them will complete
         apiClient.request(endpoint: Endpoint<TestUser>.mock(), completion: { _ in
@@ -245,8 +255,7 @@ final class APIClient_Tests: XCTestCase {
             XCTFail()
         })
 
-        AssertAsync.willBeEqual(decoder.numberOfCalls(on: "decodeRequestResponse(data:response:error:)"), 2)
-        AssertAsync.willBeEqual(encoder.numberOfCalls(on: "encodeRequest(for:completion:)"), 2)
+        waitForExpectations(timeout: defaultTimeout)
     }
 
     // MARK: - Request retries

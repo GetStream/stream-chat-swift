@@ -4,11 +4,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
+### 🔄 Changed
+- Offline mode now only fetches the first page of the Channel List and Message List. This is a short coming right now until we support offline pagination. [#2434](https://github.com/GetStream/stream-chat-swift/pull/2434)
+
 ### 🐞 Fixed
 - Fix Channel List pagination gaps [#2420](https://github.com/GetStream/stream-chat-swift/pull/2420)
 - Fix truncated channels being moved to the bottom of the channel list [#2420](https://github.com/GetStream/stream-chat-swift/pull/2420)
 - Fix reactions not insantly updating when enforce unique is true [#2421](https://github.com/GetStream/stream-chat-swift/pull/2421)
 - Fix not being able to delete messages in `pendingSend` state [#2432](https://github.com/GetStream/stream-chat-swift/pull/2432)
+- Fix messages intermittently disappearing when first opening the channel [#2434](https://github.com/GetStream/stream-chat-swift/pull/2434)
+- Fix first page not being loaded from the cache when using a lower `messagesLimit` in Channel List Query [#2434](https://github.com/GetStream/stream-chat-swift/pull/2434)
 - Fix inaccuracies in for channel unread count [#2433](https://github.com/GetStream/stream-chat-swift/pull/2433)
 
 ## StreamChatUI
@@ -21,7 +26,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 _January 06, 2023_
 
 ## StreamChat
-### 🔄 Changed
+### 🐞 Fixed
 - Fix UserInfo not being updated on connect [#2438](https://github.com/GetStream/stream-chat-swift/pull/2438)
 
 # [4.25.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.25.0)

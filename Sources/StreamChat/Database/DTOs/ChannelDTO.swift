@@ -22,7 +22,7 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var lastMessageAt: DBDate?
 
     // The oldest message of the channel we have locally coming from a regular channel query.
-    // This property only lives locally, and it is useful to filter out older pinned messages
+    // This property only lives locally, and it is useful to filter out older pinned/quoted messages
     // that do not belong to the regular channel query.
     @NSManaged var oldestMessageAt: DBDate?
 
@@ -165,7 +165,7 @@ extension NSManagedObjectContext {
         }
 
         return payload.channels.compactMapLoggingError { channelPayload in
-            try saveChannel(payload: channelPayload, query: query, isPaginatedPayload: false, cache: cache)
+            try saveChannel(payload: channelPayload, query: query, cache: cache)
         }
     }
 
@@ -247,7 +247,6 @@ extension NSManagedObjectContext {
     func saveChannel(
         payload: ChannelPayload,
         query: ChannelListQuery?,
-        isPaginatedPayload: Bool,
         cache: PreWarmedCache?
     ) throws -> ChannelDTO {
         let dto = try saveChannel(payload: payload.channel, query: query, cache: cache)
@@ -266,7 +265,7 @@ extension NSManagedObjectContext {
             dto.previewMessage = preview(for: payload.channel.cid)
         }
 
-        dto.updateOldestMessageAt(payload: payload, isPaginatedPayload: isPaginatedPayload)
+        dto.updateOldestMessageAt(payload: payload)
 
         try payload.pinnedMessages.forEach {
             _ = try saveMessage(payload: $0, channelDTO: dto, syncOwnReactions: true, cache: cache)
@@ -430,7 +429,7 @@ extension ChatChannel {
                 return .noUnread
             }
         }
-
+        
         let fetchMessages: () -> [ChatMessage] = {
             guard dto.isValid else { return [] }
             return MessageDTO
@@ -530,23 +529,17 @@ extension ChannelDTO {
 // MARK: - Private Helpers
 
 private extension ChannelDTO {
-    /// Updates the `oldestMessageAt` of the channel. It should only updates if the current `messages: [Message]`
-    /// is older than the current `ChannelDTO.oldestMessageAt`.
-    /// If the response is not paginated, we need to reset `oldestMessageAt` to the oldest message in the payload.
-    func updateOldestMessageAt(payload: ChannelPayload, isPaginatedPayload: Bool) {
+    /// Updates the `oldestMessageAt` of the channel. It should only update if the current `oldestMessageAt` is not older already.
+    /// This property is useful to filter out older pinned/quoted messages that do not belong to the regular channel query,
+    /// but are already in the database.
+    func updateOldestMessageAt(payload: ChannelPayload) {
         guard let payloadOldestMessageAt = payload.messages.map(\.createdAt).min() else { return }
-
-        guard isPaginatedPayload else {
-            oldestMessageAt = payloadOldestMessageAt.bridgeDate
-            return
-        }
-
         let isOlderThanCurrentOldestMessage = payloadOldestMessageAt < (oldestMessageAt?.bridgeDate ?? Date.distantFuture)
         if isOlderThanCurrentOldestMessage {
             oldestMessageAt = payloadOldestMessageAt.bridgeDate
         }
     }
-
+    
     /// Returns `true` if the payload holds messages sent after the current channel preview.
     func needsPreviewUpdate(_ payload: ChannelPayload) -> Bool {
         guard let preview = previewMessage else {

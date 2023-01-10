@@ -14,6 +14,7 @@ final class RequestDecoder_Spy: RequestDecoder, Spy {
     var decodeRequestResponse_data: Data?
     var decodeRequestResponse_response: HTTPURLResponse?
     var decodeRequestResponse_error: Error?
+    var onDecodeRequestResponseCall: (() -> Void)?
 
     func decodeRequestResponse<ResponseType>(
         data: Data?,
@@ -21,6 +22,7 @@ final class RequestDecoder_Spy: RequestDecoder, Spy {
         error: Error?
     ) throws -> ResponseType where ResponseType: Decodable {
         record()
+        onDecodeRequestResponseCall?()
         decodeRequestResponse_data = data
         decodeRequestResponse_response = response as? HTTPURLResponse
         decodeRequestResponse_error = error

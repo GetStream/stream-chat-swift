@@ -232,7 +232,7 @@ class MessageDTO: NSManagedObject {
 
         let messageTypePredicate = NSCompoundPredicate(format: "type IN %@", validTypes)
 
-        // Some quoted/pinned messages might be in the local database, but should not be fetched
+        // Some pinned messages might be in the local database, but should not be fetched
         // if they do not belong to the regular channel query.
         let ignoreOlderMessagesPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [
             .init(format: "channel.oldestMessageAt == nil"),
@@ -281,6 +281,7 @@ class MessageDTO: NSManagedObject {
     /// Returns a fetch request for messages from the channel with the provided `cid`.
     static func messagesFetchRequest(
         for cid: ChannelId,
+        pageSize: Int,
         sortAscending: Bool = false,
         deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility,
         shouldShowShadowedMessages: Bool
@@ -292,12 +293,15 @@ class MessageDTO: NSManagedObject {
             deletedMessagesVisibility: deletedMessagesVisibility,
             shouldShowShadowedMessages: shouldShowShadowedMessages
         )
+        request.fetchLimit = pageSize
+        request.fetchBatchSize = pageSize
         return request
     }
 
     /// Returns a fetch request for replies for the specified `parentMessageId`.
     static func repliesFetchRequest(
         for messageId: MessageId,
+        pageSize: Int,
         sortAscending: Bool = false,
         deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility,
         shouldShowShadowedMessages: Bool
@@ -309,6 +313,8 @@ class MessageDTO: NSManagedObject {
             deletedMessagesVisibility: deletedMessagesVisibility,
             shouldShowShadowedMessages: shouldShowShadowedMessages
         )
+        request.fetchLimit = pageSize
+        request.fetchBatchSize = pageSize
         return request
     }
 

@@ -230,7 +230,6 @@ protocol ChannelDatabaseSession {
     func saveChannel(
         payload: ChannelPayload,
         query: ChannelListQuery?,
-        isPaginatedPayload: Bool,
         cache: PreWarmedCache?
     ) throws -> ChannelDTO
 
@@ -368,8 +367,8 @@ protocol DatabaseSession: UserDatabaseSession,
 
 extension DatabaseSession {
     @discardableResult
-    func saveChannel(payload: ChannelPayload, isPaginatedPayload: Bool) throws -> ChannelDTO {
-        try saveChannel(payload: payload, query: nil, isPaginatedPayload: isPaginatedPayload, cache: nil)
+    func saveChannel(payload: ChannelPayload) throws -> ChannelDTO {
+        try saveChannel(payload: payload, query: nil, cache: nil)
     }
 
     @discardableResult
