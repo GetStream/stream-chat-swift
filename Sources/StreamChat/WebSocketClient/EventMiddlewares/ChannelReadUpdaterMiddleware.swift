@@ -6,9 +6,9 @@ import Foundation
 
 /// A middleware which updates a channel's read events as websocket events arrive.
 struct ChannelReadUpdaterMiddleware: EventMiddleware {
-    private var newProcessedMessageIds: () -> Set<MessageId>?
+    private var newProcessedMessageIds: () -> Set<MessageId>
 
-    init(newProcessedMessageIds: @escaping () -> Set<MessageId>?) {
+    init(newProcessedMessageIds: @escaping () -> Set<MessageId>) {
         self.newProcessedMessageIds = newProcessedMessageIds
     }
 
@@ -73,7 +73,7 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
 
         // If the message exists in the database before processing the current batch of events, it means it was
         // already processed and we don't have to increase the unread count
-        guard (newProcessedMessageIds() ?? []).contains(message.id) else {
+        guard newProcessedMessageIds().contains(message.id) else {
             return log.debug("Not incrementing count for \(message.id) as this message has already been processed")
         }
 

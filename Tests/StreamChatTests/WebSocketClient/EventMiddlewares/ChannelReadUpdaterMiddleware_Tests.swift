@@ -28,7 +28,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         database = DatabaseContainer_Spy()
         center = EventNotificationCenter_Mock(database: database)
         middleware = ChannelReadUpdaterMiddleware(newProcessedMessageIds: { [weak center] in
-            center?.newMessageIds
+            center?.newMessageIds ?? []
         })
 
         currentUserPayload = .dummy(userId: .unique, role: .user)

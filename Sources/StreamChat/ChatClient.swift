@@ -59,7 +59,7 @@ public class ChatClient {
                 emitEvent: { [weak center] in center?.process($0) }
             ),
             ChannelReadUpdaterMiddleware(
-                newProcessedMessageIds: { [weak center] in center?.newMessageIds }
+                newProcessedMessageIds: { [weak center] in center?.newMessageIds ?? [] }
             ),
             UserTypingStateUpdaterMiddleware(),
             ChannelTruncatedEventMiddleware(),
