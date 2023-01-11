@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.26.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.26.0)
+_January 11, 2023_
+
 ## StreamChat
 ### 🔄 Changed
 - Offline mode now only fetches the first page of the Channel List and Message List. This is a short coming right now until we support offline pagination. [#2434](https://github.com/GetStream/stream-chat-swift/pull/2434)
