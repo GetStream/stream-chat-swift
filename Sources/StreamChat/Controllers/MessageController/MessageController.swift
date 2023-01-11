@@ -27,6 +27,9 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     /// The identified of the message this controllers represents.
     public let messageId: MessageId
 
+    /// The amount of replies fetched per page.
+    public var repliesPageSize: Int = .messagesPageSize
+
     /// The message object this controller represents.
     ///
     /// To observe changes of the message, set your class as a delegate of this controller or use the provided
@@ -283,13 +286,13 @@ public extension ChatMessageController {
     /// - Parameters:
     ///   - messageId: ID of the last fetched message. You will get messages `older` than the provided ID.
     ///     In case no replies are fetched you will get the first `limit` number of replies.
-    ///   - limit: Limit for page size.
+    ///   - limit: Limit for page size. By default it is 25.
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
     ///
     func loadPreviousReplies(
         before messageId: MessageId? = nil,
-        limit: Int = 25,
+        limit: Int? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
         if hasLoadedAllPreviousReplies {
@@ -303,14 +306,16 @@ public extension ChatMessageController {
 
         let lastMessageId = messageId ?? lastFetchedMessageId ?? lastLocalMessageId()
 
+        let pageSize = limit ?? repliesPageSize
+
         messageUpdater.loadReplies(
             cid: cid,
             messageId: self.messageId,
-            pagination: MessagesPagination(pageSize: limit, parameter: lastMessageId.map { PaginationParameter.lessThan($0) })
+            pagination: MessagesPagination(pageSize: pageSize, parameter: lastMessageId.map { PaginationParameter.lessThan($0) })
         ) { result in
             switch result {
             case let .success(payload):
-                self.hasLoadedAllPreviousReplies = payload.messages.count < limit
+                self.hasLoadedAllPreviousReplies = payload.messages.count < pageSize
                 self.updateLastFetchedReplyId(with: payload)
                 self.callback { completion?(nil) }
             case let .failure(error):
@@ -618,10 +623,12 @@ private extension ChatMessageController {
                 .deletedMessagesVisibility ?? .visibleForCurrentUser
             let shouldShowShadowedMessages = self.client.databaseContainer.viewContext.shouldShowShadowedMessages ?? false
 
+            let pageSize: Int = self.repliesPageSize
             let observer = self.environment.repliesObserverBuilder(
                 self.client.databaseContainer.viewContext,
                 MessageDTO.repliesFetchRequest(
                     for: self.messageId,
+                    pageSize: pageSize,
                     sortAscending: sortAscending,
                     deletedMessagesVisibility: deletedMessageVisibility,
                     shouldShowShadowedMessages: shouldShowShadowedMessages

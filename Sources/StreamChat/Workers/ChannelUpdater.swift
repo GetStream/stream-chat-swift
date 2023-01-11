@@ -41,12 +41,12 @@ class ChannelUpdater: Worker {
                 database?.write { session in
                     let channelDTO = session.channel(cid: payload.channel.cid)
                     channelDTO?.cleanMessagesThatFailedToBeEditedDueToModeration()
-
+                    
                     if isFirstPage, let channelDTO = channelDTO {
                         channelDTO.messages = channelDTO.messages.filter { $0.localMessageState?.isLocalOnly == true }
                     }
 
-                    try session.saveChannel(payload: payload, isPaginatedPayload: !isFirstPage)
+                    try session.saveChannel(payload: payload)
                 } completion: { error in
                     if let error = error {
                         completion?(.failure(error))
@@ -424,7 +424,7 @@ class ChannelUpdater: Worker {
                     }
                     // In any case (backend reported another page of watchers or no watchers)
                     // we should save the payload as it's the latest state of the channel
-                    try session.saveChannel(payload: payload, isPaginatedPayload: false)
+                    try session.saveChannel(payload: payload)
                 } completion: { error in
                     completion?(error)
                 }
