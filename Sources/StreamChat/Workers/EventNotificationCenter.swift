@@ -50,7 +50,7 @@ class EventNotificationCenter: NotificationCenter {
             })
 
             eventsToPost = events.compactMap {
-                self.middlewares.process(event: $0, session: session, notificationCenter: self)
+                self.middlewares.process(event: $0, session: session)
             }
 
             self.newMessageIds = []

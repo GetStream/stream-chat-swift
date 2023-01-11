@@ -12,7 +12,6 @@ final class TypingStartCleanupMiddleware_Tests: XCTestCase {
     // The database is not really used in the middleware but it's a requirement by the protocol
     // to provide a database session
     var database: DatabaseContainer_Spy!
-    var center: EventNotificationCenter_Mock!
 
     override func setUp() {
         super.setUp()
@@ -23,12 +22,10 @@ final class TypingStartCleanupMiddleware_Tests: XCTestCase {
         VirtualTimeTimer.time = time
 
         database = DatabaseContainer_Spy()
-        center = EventNotificationCenter_Mock(database: database)
     }
 
     override func tearDown() {
         database = nil
-        center = nil
         AssertAsync.canBeReleased(&database)
         currentUser = nil
         VirtualTimeTimer.invalidate()
@@ -49,7 +46,7 @@ final class TypingStartCleanupMiddleware_Tests: XCTestCase {
 
         // Handle a new TypingStart event for the current user and collect resulting events
         let typingStartEvent = TypingEventDTO.startTyping(userId: currentUser.id)
-        let forwardedEvent = middleware!.handle(event: typingStartEvent, session: database.viewContext, notificationCenter: center)
+        let forwardedEvent = middleware!.handle(event: typingStartEvent, session: database.viewContext)
         XCTAssertEqual(forwardedEvent?.asEquatable, typingStartEvent.asEquatable)
 
         // Simulate time passed for the `typingStartTimeout` period
@@ -82,7 +79,7 @@ final class TypingStartCleanupMiddleware_Tests: XCTestCase {
 
         let startTyping = TypingEventDTO.startTyping(cid: cid, userId: otherUser.id)
         // Handle a new TypingStart event for the current user and collect resulting events
-        let forwardedEvent = middleware!.handle(event: startTyping, session: database.viewContext, notificationCenter: center)
+        let forwardedEvent = middleware!.handle(event: startTyping, session: database.viewContext)
         // Assert `TypingStart` event is propagated synchronously
         XCTAssertEqual(forwardedEvent?.asEquatable, startTyping.asEquatable)
 

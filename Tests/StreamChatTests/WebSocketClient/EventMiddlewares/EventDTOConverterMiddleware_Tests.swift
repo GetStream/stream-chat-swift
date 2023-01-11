@@ -9,19 +9,16 @@ import XCTest
 
 final class EventDTOConverterMiddleware_Tests: XCTestCase {
     var middleware: EventDTOConverterMiddleware!
-    var center: EventNotificationCenter_Mock!
     var database: DatabaseContainer_Spy!
 
     override func setUp() {
         middleware = .init()
         database = DatabaseContainer_Spy(kind: .inMemory)
-        center = EventNotificationCenter_Mock(database: database)
         super.setUp()
     }
 
     override func tearDown() {
         middleware = nil
-        center = nil
         database = nil
         super.tearDown()
     }
@@ -46,7 +43,7 @@ final class EventDTOConverterMiddleware_Tests: XCTestCase {
         eventDTO.toDomainEvent_returnValue = EventDTOMock()
 
         // Feed event DTO to middleware
-        let result = middleware.handle(event: eventDTO, session: database.viewContext, notificationCenter: center)
+        let result = middleware.handle(event: eventDTO, session: database.viewContext)
 
         // Assert the session is forwarded to `toDomainEvent` func
         XCTAssertEqual(eventDTO.toDomainEvent_session as! NSManagedObjectContext, database.viewContext)
@@ -66,7 +63,7 @@ final class EventDTOConverterMiddleware_Tests: XCTestCase {
         )
 
         // Feed event to middleware
-        let result = middleware.handle(event: event, session: database.viewContext, notificationCenter: center)
+        let result = middleware.handle(event: event, session: database.viewContext)
 
         // Assert
         XCTAssertEqual(result as! UnknownChannelEvent, event)

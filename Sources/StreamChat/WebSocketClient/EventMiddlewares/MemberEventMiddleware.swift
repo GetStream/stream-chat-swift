@@ -6,7 +6,7 @@ import Foundation
 
 /// The middleware listens for `MemberEvent`s and updates `ChannelDTO`s accordingly.
 struct MemberEventMiddleware: EventMiddleware {
-    func handle(event: Event, session: DatabaseSession, notificationCenter: EventNotificationCenter) -> Event? {
+    func handle(event: Event, session: DatabaseSession) -> Event? {
         do {
             switch event {
             case let event as MemberUpdatedEventDTO:

@@ -6,7 +6,7 @@ import Foundation
 
 /// The middleware listens for `UserChannelBanEventMiddleware` events and updates `MemberDTO` accordingly.
 struct UserChannelBanEventsMiddleware: EventMiddleware {
-    func handle(event: Event, session: DatabaseSession, notificationCenter: EventNotificationCenter) -> Event? {
+    func handle(event: Event, session: DatabaseSession) -> Event? {
         do {
             switch event {
             case let userBannedEvent as UserBannedEventDTO:
