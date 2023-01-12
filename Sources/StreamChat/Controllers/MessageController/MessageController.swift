@@ -300,18 +300,22 @@ public extension ChatMessageController {
             return
         }
 
-        let lastLocalMessageId: () -> MessageId? = {
-            self.replies.last { !$0.isLocalOnly }?.id
-        }
-
-        let lastMessageId = messageId ?? lastFetchedMessageId ?? lastLocalMessageId()
-
         let pageSize = limit ?? repliesPageSize
+        let pagination: MessagesPagination
+
+        if let lastMessageId = messageId ?? lastFetchedMessageId {
+            pagination = MessagesPagination(
+                pageSize: pageSize,
+                parameter: .lessThan(lastMessageId)
+            )
+        } else {
+            pagination = MessagesPagination(pageSize: pageSize)
+        }
 
         messageUpdater.loadReplies(
             cid: cid,
             messageId: self.messageId,
-            pagination: MessagesPagination(pageSize: pageSize, parameter: lastMessageId.map { PaginationParameter.lessThan($0) })
+            pagination: pagination
         ) { result in
             switch result {
             case let .success(payload):

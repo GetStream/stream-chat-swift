@@ -1082,7 +1082,7 @@ final class MessageController_Tests: XCTestCase {
         XCTAssertEqual(env.messageUpdater.loadReplies_pagination, .init(pageSize: 25))
     }
 
-    func test_loadPreviousReplies_noMessageIdPassed_noLastMessageFetched_usesLastMessageFromDB() {
+    func test_loadPreviousReplies_noMessageIdPassed_noLastMessageFetched_fetchWithoutParemeter() {
         // Create observers
         controller.synchronize()
 
@@ -1115,10 +1115,8 @@ final class MessageController_Tests: XCTestCase {
             completion: nil
         )
 
-        XCTAssertEqual(
-            env.messageUpdater.loadReplies_pagination?.parameter,
-            .lessThan("last message")
-        )
+        XCTAssertEqual(env.messageUpdater.loadReplies_pagination, .init(pageSize: 21))
+        XCTAssertEqual(env.messageUpdater.loadReplies_pagination?.parameter, nil)
     }
 
     func test_loadPreviousReplies_noMessageIdPassed_usesLastFetchedId() {
