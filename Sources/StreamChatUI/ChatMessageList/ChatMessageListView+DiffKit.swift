@@ -50,11 +50,6 @@ extension ChatMessage: Differentiable {
             && localState == source.localState
             && isFlaggedByCurrentUser == source.isFlaggedByCurrentUser
             && readBy.count == source.readBy.count
-            && giphyAttachments.map(\.previewURL) == source.giphyAttachments.map(\.previewURL)
-            && imageAttachments.map(\.uploadingState) == source.imageAttachments.map(\.uploadingState)
-            && videoAttachments.map(\.uploadingState) == source.videoAttachments.map(\.uploadingState)
-            && fileAttachments.map(\.uploadingState) == source.fileAttachments.map(\.uploadingState)
-            && audioAttachments.map(\.uploadingState) == source.audioAttachments.map(\.uploadingState)
-            && linkAttachments.map(\.uploadingState) == source.linkAttachments.map(\.uploadingState)
+            && allAttachments == source.allAttachments
     }
 }
