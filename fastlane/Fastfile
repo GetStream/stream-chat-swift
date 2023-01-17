@@ -11,11 +11,11 @@ xcode_project = 'StreamChat.xcodeproj'
 github_repo = ENV['GITHUB_REPOSITORY'] || 'GetStream/stream-chat-swift'
 stress_tests_cycles = 50
 
-before_all do
+before_all do |lane|
   if is_ci
     setup_ci
-    xcodes(version: xcode_version, select_for_current_build_only: true)
     ENV['FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT'] = '180'
+    xcodes(version: xcode_version, select_for_current_build_only: true) unless lane == :publish_release
   end
 end
 
@@ -142,7 +142,7 @@ lane :publish_release do |options|
   UI.user_error!('You need to pass the version of the release') unless version.length > 0
 
   # Create XCFrameworks
-  xcodes(version: xcode_version, select_for_current_build_only: true)
+  xcversion(version: xcode_version)
   sh('cd .. && make frameworks')
 
   changes = read_changelog(version: version)
