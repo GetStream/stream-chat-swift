@@ -3,7 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+## StreamChatUI
+### 🐞 Fixed
+- Fix message cell not updated when custom attachment data is different [#2454](https://github.com/GetStream/stream-chat-swift/pull/2454)
 
 # [4.26.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.26.0)
 _January 11, 2023_

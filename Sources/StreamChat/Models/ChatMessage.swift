@@ -259,6 +259,11 @@ public extension ChatMessage {
         reactionCounts.values.reduce(0, +)
     }
 
+    /// Returns all the attachments with the payload type-erased.
+    var allAttachments: [AnyChatMessageAttachment] {
+        _attachments
+    }
+
     /// Returns all the attachments with the payload of the provided type.
     ///
     /// - Important: Attachments are loaded lazily and cached to maintain high performance.
