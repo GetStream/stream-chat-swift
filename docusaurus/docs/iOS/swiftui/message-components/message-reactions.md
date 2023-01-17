@@ -37,6 +37,18 @@ let appearance = Appearance(colors: colors)
 streamChat = StreamChat(chatClient: chatClient, appearance: appearance)
 ```
 
+By default, the reactions are sorted by their raw value in an alphabetical order. You can change this logic by adding your own implementation of the `sortReactions` closure in the `Utils` class.
+
+Here's an example how to achieve this:
+```
+let customReactionSort: (MessageReactionType, MessageReactionType) -> Bool = { lhs, rhs in
+    // Your custom sorting logic here
+    lhs.rawValue < rhs.rawValue
+}
+let utils = Utils(sortReactions: customReactionSort)
+streamChat = StreamChat(chatClient: chatClient, utils: utils)
+```
+
 ## Changing the Message Reactions View
 
 Alternatively, you can completely swap the `ReactionsContainer` view with your own implementation. In order to do that, you need to implement the `makeMessageReactionView` method from the `ViewFactory`, which is called with the message as a parameter. 
