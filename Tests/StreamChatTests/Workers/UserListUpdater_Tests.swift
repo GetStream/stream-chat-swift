@@ -106,7 +106,7 @@ final class UserListUpdater_Tests: XCTestCase {
         let payload = UserListPayload(users: [dummyUser1])
         apiClient.test_simulateResponse(.success(payload))
 
-        wait(for: [exp], timeout: 0.5)
+        wait(for: [exp], timeout: defaultTimeout)
 
         XCTAssertNil(weakListUpdater)
     }

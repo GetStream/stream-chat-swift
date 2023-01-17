@@ -58,7 +58,7 @@ final class ConnectionRepository_Tests: XCTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertTrue(receivedError is ClientError.ClientIsNotInActiveMode)
     }
@@ -74,7 +74,7 @@ final class ConnectionRepository_Tests: XCTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertNil(receivedError)
         XCTAssertFalse(webSocketClient.connect_called)
@@ -94,7 +94,7 @@ final class ConnectionRepository_Tests: XCTestCase {
         webSocketClient.mockedConnectionState = .waitingForConnectionId
         repository.completeConnectionIdWaiters(connectionId: nil)
 
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
 
         let error = try XCTUnwrap(receivedError as? ClientError.ConnectionNotSuccessful)
         XCTAssertNil(error.underlyingError)
@@ -120,7 +120,7 @@ final class ConnectionRepository_Tests: XCTestCase {
         webSocketClient.mockedConnectionState = .disconnected(source: .serverInitiated(error: invalidTokenError))
         repository.completeConnectionIdWaiters(connectionId: nil)
 
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
 
         let error = try XCTUnwrap(receivedError as? ClientError.ConnectionNotSuccessful)
         XCTAssertEqual(error.underlyingError, invalidTokenError)
@@ -141,7 +141,7 @@ final class ConnectionRepository_Tests: XCTestCase {
         let connectionId = "con123"
         repository.completeConnectionIdWaiters(connectionId: connectionId)
 
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertNil(receivedError)
         XCTAssertEqual(webSocketClient.connect_calledCounter, 1)
@@ -156,7 +156,7 @@ final class ConnectionRepository_Tests: XCTestCase {
         let expectation = self.expectation(description: "connect completes")
         repository.disconnect(source: .userInitiated) { expectation.fulfill() }
 
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertFalse(webSocketClient.disconnect_called)
         XCTAssertCall(APIClient_Spy.Signature.flushRequestsQueue, on: apiClient)
@@ -178,7 +178,7 @@ final class ConnectionRepository_Tests: XCTestCase {
         let expectation = self.expectation(description: "connect completes")
         repository.disconnect(source: .userInitiated) { expectation.fulfill() }
 
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertFalse(webSocketClient.disconnect_called)
         XCTAssertCall(APIClient_Spy.Signature.flushRequestsQueue, on: apiClient)
@@ -195,7 +195,7 @@ final class ConnectionRepository_Tests: XCTestCase {
         let disconnectCompletion = try XCTUnwrap(webSocketClient.disconnect_completion)
         disconnectCompletion()
 
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertTrue(webSocketClient.disconnect_called)
         XCTAssertNil(repository.connectionId)
@@ -329,7 +329,7 @@ final class ConnectionRepository_Tests: XCTestCase {
             repository.handleConnectionUpdate(state: webSocketState, onInvalidToken: {})
 
             if shouldNotify {
-                waitForExpectations(timeout: 0.1)
+                waitForExpectations(timeout: defaultTimeout)
             }
         }
     }
@@ -375,7 +375,7 @@ final class ConnectionRepository_Tests: XCTestCase {
             expectation.fulfill()
         })
 
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
     }
 
     func test_handleConnectionUpdate_shouldNOTExecuteInvalidTokenBlock_whenNOTNeeded() {
@@ -398,7 +398,7 @@ final class ConnectionRepository_Tests: XCTestCase {
 
         var result: Result<ConnectionId, Error>?
         let expectation = self.expectation(description: "Provide Connection Id Completion")
-        repository.provideConnectionId(timeout: 0.1) {
+        repository.provideConnectionId(timeout: defaultTimeout) {
             result = $0
             expectation.fulfill()
         }
@@ -406,7 +406,7 @@ final class ConnectionRepository_Tests: XCTestCase {
         // Sync execution
         XCTAssertNotNil(result)
 
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertEqual(result?.value, existingConnectionId)
     }
@@ -420,7 +420,7 @@ final class ConnectionRepository_Tests: XCTestCase {
         }
         XCTAssertNil(result)
 
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertTrue(result?.error is ClientError.WaiterTimeout)
     }
@@ -428,7 +428,7 @@ final class ConnectionRepository_Tests: XCTestCase {
     func test_connectionId_returnsErrorOnMissingValue() {
         var result: Result<ConnectionId, Error>?
         let expectation = self.expectation(description: "Provide Token Completion")
-        repository.provideConnectionId(timeout: 0.1) {
+        repository.provideConnectionId(timeout: defaultTimeout) {
             result = $0
             expectation.fulfill()
         }
@@ -436,7 +436,7 @@ final class ConnectionRepository_Tests: XCTestCase {
 
         // Complete with nil
         repository.completeConnectionIdWaiters(connectionId: nil)
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertTrue(result?.error is ClientError.MissingConnectionId)
     }
@@ -444,7 +444,7 @@ final class ConnectionRepository_Tests: XCTestCase {
     func test_connectionId_returnsValue_whenCompletingTokenWaiters() {
         var result: Result<ConnectionId, Error>?
         let expectation = self.expectation(description: "Provide Token Completion")
-        repository.provideConnectionId(timeout: 0.1) {
+        repository.provideConnectionId(timeout: defaultTimeout) {
             result = $0
             expectation.fulfill()
         }
@@ -453,7 +453,7 @@ final class ConnectionRepository_Tests: XCTestCase {
         // Complete with connection id
         let connectionId = "connection-id"
         repository.completeConnectionIdWaiters(connectionId: connectionId)
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertEqual(result?.value, connectionId)
     }
@@ -475,7 +475,7 @@ final class ConnectionRepository_Tests: XCTestCase {
     func test_completeConnectionIdWaiters_valid_connectionId_completesWaiters() {
         var result: Result<ConnectionId, Error>?
         let expectation = self.expectation(description: "Provide Connection Id Completion")
-        repository.provideConnectionId(timeout: 0.1) {
+        repository.provideConnectionId(timeout: defaultTimeout) {
             result = $0
             expectation.fulfill()
         }
@@ -484,7 +484,7 @@ final class ConnectionRepository_Tests: XCTestCase {
         let connectionId = "connection-id"
         repository.completeConnectionIdWaiters(connectionId: connectionId)
 
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertEqual(result?.value, connectionId)
         XCTAssertEqual(repository.connectionId, connectionId)

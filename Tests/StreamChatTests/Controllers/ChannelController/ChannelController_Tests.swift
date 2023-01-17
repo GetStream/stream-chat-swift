@@ -2156,7 +2156,7 @@ final class ChannelController_Tests: XCTestCase {
         let payload = ChannelPayload.dummy(messages: messages)
         env.channelUpdater?.update_completion?(.success(payload))
 
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
 
         let expectation2 = self.expectation(description: "loadPreviousMessage completes")
         var receivedError: Error?
@@ -2168,7 +2168,7 @@ final class ChannelController_Tests: XCTestCase {
         let error = TestError()
         env.channelUpdater!.update_completion?(.failure(error))
 
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
 
         let paginationParameter = env.channelUpdater?.update_channelQuery?.pagination?.parameter
         guard case let .lessThan(paginationMessageId) = paginationParameter else {
@@ -2198,7 +2198,7 @@ final class ChannelController_Tests: XCTestCase {
         ])
         env.channelUpdater?.update_completion?(.success(payload))
 
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
 
         let expectation2 = self.expectation(description: "loadPreviousMessage completes")
         var receivedError: Error?
@@ -2210,7 +2210,7 @@ final class ChannelController_Tests: XCTestCase {
         let error = TestError()
         env.channelUpdater!.update_completion?(.failure(error))
 
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
 
         let paginationParameter = env.channelUpdater?.update_channelQuery?.pagination?.parameter
         guard case let .lessThan(paginationMessageId) = paginationParameter else {
@@ -2255,7 +2255,7 @@ final class ChannelController_Tests: XCTestCase {
         let error = TestError()
         env.channelUpdater!.update_completion?(.failure(error))
 
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
 
         let paginationParameter = env.channelUpdater?.update_channelQuery?.pagination?.parameter
         guard case let .lessThan(paginationMessageId) = paginationParameter else {
@@ -3824,7 +3824,7 @@ final class ChannelController_Tests: XCTestCase {
 
         requestBlock(env.channelUpdater)
 
-        waitForExpectations(timeout: 0.5, handler: nil)
+        waitForExpectations(timeout: defaultTimeout, handler: nil)
         return receivedError
     }
 

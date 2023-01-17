@@ -53,7 +53,7 @@ final class CooldownTracker_Tests: XCTestCase {
         timer.onChange?()
 
         // THEN
-        waitForExpectations(timeout: 0.5)
+        waitForExpectations(timeout: defaultTimeout)
         XCTAssertEqual(cooldownTime, currentTimeChanged)
     }
 
@@ -77,7 +77,7 @@ final class CooldownTracker_Tests: XCTestCase {
         timer.onChange?()
 
         // THEN
-        waitForExpectations(timeout: 0.5)
+        waitForExpectations(timeout: defaultTimeout)
         XCTAssertEqual(durationChanged, 2)
         XCTAssertEqual(timer.stopCallCount, 0)
     }
@@ -102,7 +102,7 @@ final class CooldownTracker_Tests: XCTestCase {
         timer.onChange?()
 
         // THEN
-        waitForExpectations(timeout: 0.5)
+        waitForExpectations(timeout: defaultTimeout)
         XCTAssertEqual(durationChanged, 0)
         XCTAssertEqual(timer.stopCallCount, 1)
     }

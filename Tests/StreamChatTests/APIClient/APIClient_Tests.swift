@@ -268,7 +268,7 @@ final class APIClient_Tests: XCTestCase {
         apiClient.request(endpoint: Endpoint<TestUser>.mock(), completion: { _ in
             expectation.fulfill()
         })
-        waitForExpectations(timeout: 0.5, handler: nil)
+        waitForExpectations(timeout: defaultTimeout, handler: nil)
 
         // Retries until the maximum amount
         XCTEnsureRequestsWereExecuted(times: 4)
@@ -294,7 +294,7 @@ final class APIClient_Tests: XCTestCase {
         decoder.decodeRequestResponse = .success(TestUser(name: .unique))
         apiClient.exitRecoveryMode()
 
-        waitForExpectations(timeout: 0.5, handler: nil)
+        waitForExpectations(timeout: defaultTimeout, handler: nil)
         XCTEnsureRequestsWereExecuted(times: 2)
     }
 
@@ -343,7 +343,7 @@ final class APIClient_Tests: XCTestCase {
             completion: { receivedResult = $0; expectation.fulfill() }
         )
 
-        waitForExpectations(timeout: 0.5, handler: nil)
+        waitForExpectations(timeout: defaultTimeout, handler: nil)
         // Should retry up to 3 times
         XCTAssertCall("upload(_:progress:completion:)", on: attachmentUploader, times: 4)
         XCTAssertEqual(receivedProgress, mockedProgress)
@@ -366,7 +366,7 @@ final class APIClient_Tests: XCTestCase {
             completion: { receivedResult = $0; expectation.fulfill() }
         )
 
-        waitForExpectations(timeout: 0.5, handler: nil)
+        waitForExpectations(timeout: defaultTimeout, handler: nil)
         // Should only try 1
         XCTAssertCall("upload(_:progress:completion:)", on: attachmentUploader, times: 1)
         XCTAssertEqual(receivedProgress, mockedProgress)
@@ -409,7 +409,7 @@ final class APIClient_Tests: XCTestCase {
                 result = $0
             }
         )
-        wait(for: [tokenRefreshIsCalled], timeout: 0.5)
+        wait(for: [tokenRefreshIsCalled], timeout: defaultTimeout)
 
         let testUser = TestUser(name: "test")
         decoder.decodeRequestResponse = .success(testUser)
@@ -444,7 +444,7 @@ final class APIClient_Tests: XCTestCase {
             }
         )
 
-        wait(for: [tokenRefreshIsCalled], timeout: 0.5)
+        wait(for: [tokenRefreshIsCalled], timeout: defaultTimeout)
         // The queue is now paused waiting for a token refresh response
 
         // 1. We add 5 more requests to the queue
@@ -507,7 +507,7 @@ final class APIClient_Tests: XCTestCase {
             }
         }
 
-        waitForExpectations(timeout: 0.5, handler: nil)
+        waitForExpectations(timeout: defaultTimeout, handler: nil)
         XCTEnsureRequestsWereExecuted(times: 5)
     }
 
@@ -524,7 +524,7 @@ final class APIClient_Tests: XCTestCase {
             })
         }
 
-        waitForExpectations(timeout: 0.5, handler: nil)
+        waitForExpectations(timeout: defaultTimeout, handler: nil)
         XCTAssertEqual(Logger_Spy.assertionFailureCalls, 5)
         XCTAssertCall("encodeRequest(for:completion:)", on: encoder, times: 5)
         XCTAssertCall("decodeRequestResponse(data:response:error:)", on: decoder, times: 5)
@@ -553,7 +553,7 @@ final class APIClient_Tests: XCTestCase {
             }
         }
 
-        waitForExpectations(timeout: 0.5, handler: nil)
+        waitForExpectations(timeout: defaultTimeout, handler: nil)
         XCTEnsureRequestsWereExecuted(times: 5)
     }
 
@@ -588,7 +588,7 @@ final class APIClient_Tests: XCTestCase {
             }
         }
 
-        wait(for: [tokenRefreshIsCalled3Times], timeout: 0.5)
+        wait(for: [tokenRefreshIsCalled3Times], timeout: defaultTimeout)
 
         // 3 tries, token failure was returned until now
         // -> 1 unique | 3 total
@@ -603,7 +603,7 @@ final class APIClient_Tests: XCTestCase {
 
         complete3rdTokenRefresh()
 
-        waitForExpectations(timeout: 0.5, handler: nil)
+        waitForExpectations(timeout: defaultTimeout, handler: nil)
 
         // Request 1: 3 token failures + 1 success = 4
         // Requests 2-5: 1 success each = 4
