@@ -67,7 +67,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         let payload = dummyPayload(with: cid, numberOfMessages: 2)
         apiClient.test_simulateResponse(.success(payload))
 
-        waitForExpectations(timeout: 0.5)
+        waitForExpectations(timeout: defaultTimeout)
 
         let channel = database.viewContext.channel(cid: cid)
         XCTAssertNotNil(channel)
@@ -89,7 +89,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         let payload = dummyPayload(with: cid, numberOfMessages: 2)
         apiClient.test_simulateRecoveryResponse(.success(payload))
 
-        waitForExpectations(timeout: 0.5)
+        waitForExpectations(timeout: defaultTimeout)
 
         // Assert the data is stored in the DB
         let channel = database.viewContext.channel(cid: cid)
@@ -125,7 +125,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         let payload = dummyPayload(with: cid, numberOfMessages: 2)
         apiClient.test_simulateResponse(.success(payload))
 
-        waitForExpectations(timeout: 0.5)
+        waitForExpectations(timeout: defaultTimeout)
 
         // Assert the data is stored in the DB
         let channel = database.viewContext.channel(cid: cid)
@@ -161,7 +161,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         let payload = dummyPayload(with: cid, numberOfMessages: 2)
         apiClient.test_simulateRecoveryResponse(.success(payload))
 
-        waitForExpectations(timeout: 0.5)
+        waitForExpectations(timeout: defaultTimeout)
 
         // Assert the data is stored in the DB
         let channel = database.viewContext.channel(cid: cid)
@@ -295,7 +295,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         let payload = dummyPayload(with: cid, numberOfMessages: 1)
         apiClient.test_simulateResponse(.success(payload))
 
-        waitForExpectations(timeout: 0.5, handler: nil)
+        waitForExpectations(timeout: defaultTimeout, handler: nil)
 
         let channel = database.viewContext.channel(cid: cid)
         XCTAssertNotNil(channel)
@@ -333,7 +333,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         let payload = dummyPayload(with: cid, numberOfMessages: 1)
         apiClient.test_simulateRecoveryResponse(.success(payload))
 
-        waitForExpectations(timeout: 0.5, handler: nil)
+        waitForExpectations(timeout: defaultTimeout, handler: nil)
 
         let channel = database.viewContext.channel(cid: cid)
         XCTAssertNotNil(channel)
@@ -377,7 +377,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         let payload = dummyPayload(with: cid, numberOfMessages: 1)
         apiClient.test_simulateResponse(.success(payload))
 
-        waitForExpectations(timeout: 0.5, handler: nil)
+        waitForExpectations(timeout: defaultTimeout, handler: nil)
 
         let channel = database.viewContext.channel(cid: cid)
         XCTAssertNotNil(channel)
@@ -421,7 +421,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         let payload = dummyPayload(with: cid, numberOfMessages: 1)
         apiClient.test_simulateRecoveryResponse(.success(payload))
 
-        waitForExpectations(timeout: 0.5, handler: nil)
+        waitForExpectations(timeout: defaultTimeout, handler: nil)
 
         let channel = database.viewContext.channel(cid: cid)
         XCTAssertNotNil(channel)

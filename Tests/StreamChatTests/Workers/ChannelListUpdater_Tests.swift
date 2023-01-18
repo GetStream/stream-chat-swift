@@ -146,7 +146,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         let payload = ChannelListPayload(channels: [dummyPayload(with: cid)])
         apiClient.test_simulateRecoveryResponse(.success(payload))
 
-        waitForExpectations(timeout: 0.5, handler: nil)
+        waitForExpectations(timeout: defaultTimeout, handler: nil)
 
         let requests = apiClient.recoveryRequest_allRecordedCalls
         XCTAssertEqual(requests.count, 1)
@@ -184,7 +184,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         )
         apiClient.test_simulateRecoveryResponse(.success(payload))
 
-        waitForExpectations(timeout: 0.5, handler: nil)
+        waitForExpectations(timeout: defaultTimeout, handler: nil)
 
         let requests = apiClient.recoveryRequest_allRecordedCalls
         XCTAssertEqual(requests.count, 1)
@@ -243,7 +243,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         })
         apiClient.test_simulateRecoveryResponse(.success(payload))
 
-        waitForExpectations(timeout: 0.5, handler: nil)
+        waitForExpectations(timeout: defaultTimeout, handler: nil)
 
         // EXPECTED RESULTS:
         // syncedId1 -> Not present in remote query, but synched:               Unwanted    -
@@ -383,7 +383,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         apiClient.test_simulateResponse(.success(payload))
 
         // Then
-        wait(for: [exp], timeout: 0.5)
+        wait(for: [exp], timeout: defaultTimeout)
         let expectedQuery = ChannelListQuery(filter: .in(.cid, values: cids))
         let expectedEndpoint: Endpoint<ChannelListPayload> = .channels(query: expectedQuery)
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), apiClient.request_endpoint)
@@ -407,7 +407,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         apiClient.test_simulateResponse(Result<ChannelListPayload, Error>.failure(error))
 
         // Then
-        wait(for: [exp], timeout: 0.5)
+        wait(for: [exp], timeout: defaultTimeout)
         let expectedQuery = ChannelListQuery(filter: .in(.cid, values: cids))
         let expectedEndpoint: Endpoint<ChannelListPayload> = .channels(query: expectedQuery)
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), apiClient.request_endpoint)

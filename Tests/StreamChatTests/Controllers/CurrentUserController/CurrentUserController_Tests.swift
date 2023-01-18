@@ -84,7 +84,7 @@ final class CurrentUserController_Tests: XCTestCase {
         // Assert unread-count is correct
         XCTAssertEqual(controller.unreadCount, expectedUnreadCount)
 
-        waitForExpectations(timeout: 0.5, handler: nil)
+        waitForExpectations(timeout: defaultTimeout, handler: nil)
     }
 
     func test_synchronize_changesState_and_propagatesObserverErrorOnCallbackQueue() {
@@ -674,7 +674,7 @@ final class CurrentUserController_Tests: XCTestCase {
                 expectation.fulfill()
             }
 
-            waitForExpectations(timeout: 0.1)
+            waitForExpectations(timeout: defaultTimeout)
 
             // Assert `error` is propagated.
             XCTAssertEqual(reloadUserIfNeededCompletionError as? TestError, error)
@@ -742,7 +742,7 @@ final class CurrentUserController_Tests: XCTestCase {
             onCompletion?()
         }
 
-        wait(for: [exp], timeout: 0.2)
+        wait(for: [exp], timeout: defaultTimeout)
     }
 }
 

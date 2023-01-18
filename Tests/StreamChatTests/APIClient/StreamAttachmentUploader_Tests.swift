@@ -36,7 +36,7 @@ final class StreamAttachmentUploader_Tests: XCTestCase {
             expUploadComplete.fulfill()
         }
 
-        waitForExpectations(timeout: 0.5)
+        waitForExpectations(timeout: defaultTimeout)
     }
 
     func test_upload_whenError() {
@@ -59,6 +59,6 @@ final class StreamAttachmentUploader_Tests: XCTestCase {
             exp.fulfill()
         }
 
-        waitForExpectations(timeout: 0.5)
+        waitForExpectations(timeout: defaultTimeout)
     }
 }

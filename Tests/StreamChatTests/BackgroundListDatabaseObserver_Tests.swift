@@ -68,7 +68,7 @@ final class BackgroundListDatabaseObserver_Tests: XCTestCase {
         observer.changeAggregator.onWillChange?()
         observer.changeAggregator.onDidChange?([])
 
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
 
         XCTAssert(observer.frc.delegate === observer.changeAggregator)
     }
@@ -130,7 +130,7 @@ final class BackgroundListDatabaseObserver_Tests: XCTestCase {
         }
         // We wait for the startObserving to call onDidChange
         try observer.startObserving()
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
 
         let onDidChangeExpectation = expectation(description: "onDidChange")
 
@@ -150,7 +150,7 @@ final class BackgroundListDatabaseObserver_Tests: XCTestCase {
             item.testValue = testValue
         }
 
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertEqual(receivedChangesId?.first?.item, testValue)
 
@@ -213,6 +213,6 @@ final class BackgroundListDatabaseObserver_Tests: XCTestCase {
             startObservingDidChangeExpectation.fulfill()
         }
         // We wait for the startObserving to call onDidChange
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
     }
 }
