@@ -82,6 +82,10 @@ Starting **4.6.0**, and in order to improve the developer experience, dependenci
 
 Learn more about our dependencies [here](https://getstream.io/chat/docs/sdk/ios/#dependencies)
 
+## Using Objective-C
+
+You can still integrate our SDKs if your project is using Objective-C. In that case, any customizations would need to be done by subclassing our components in Swift, and then use those directly from the Objective-C code.
+
 ---
 
 ## We are hiring
