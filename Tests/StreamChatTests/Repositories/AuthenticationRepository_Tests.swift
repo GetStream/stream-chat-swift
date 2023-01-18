@@ -143,7 +143,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         repository.setToken(token: newToken, completeTokenWaiters: true)
 
         XCTAssertEqual(repository.currentToken, newToken)
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
     }
 
     func test_setToken_tokenIsUpdated_doesNotCallTokenWaiters_whenNotRequired() {
@@ -252,7 +252,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         })
 
         XCTAssertNotNil(repository.tokenProvider)
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
         XCTAssertEqual(repository.currentToken, providedToken)
         XCTAssertCall(ConnectionRepository_Mock.Signature.connect, on: connectionRepository)
         XCTAssertCall(ConnectionRepository_Mock.Signature.forceConnectionInactiveMode, on: connectionRepository)
@@ -279,7 +279,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         })
 
         XCTAssertNotNil(repository.tokenProvider)
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
         XCTAssertEqual(repository.currentToken, providedToken)
         XCTAssertEqual(connectionRepository.updateWebSocketEndpointUserInfo, userInfo)
         XCTAssertEqual(connectionRepository.updateWebSocketEndpointToken, providedToken)
@@ -315,7 +315,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         XCTAssertNotNil(repository.tokenProvider)
         XCTAssertEqual(expectations.count, 4)
 
-        waitForExpectations(timeout: 0.2)
+        waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertEqual(repository.currentToken, providedToken)
         XCTAssertEqual(connectionRepository.updateWebSocketEndpointUserInfo, userInfo)
@@ -337,14 +337,14 @@ final class AuthenticationRepository_Tests: XCTestCase {
         })
         XCTAssertNotNil(repository.tokenProvider)
 
-        wait(for: [originalProviderCalled], timeout: 0.1)
+        wait(for: [originalProviderCalled], timeout: defaultTimeout)
 
         let expectation = self.expectation(description: "Correct token provider call")
         let newTokenProvider: TokenProvider = { _ in
             expectation.fulfill()
         }
         repository.connectUser(userInfo: nil, tokenProvider: newTokenProvider, completion: { _ in })
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
     }
 
     func test_connectUser_clearsTokenCompletionsQueueAfterSuccess() throws {
@@ -366,7 +366,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
             expectation1.fulfill()
         })
 
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertEqual(initialCompletionCalls, 1)
         XCTAssertEqual(delegate.newStateCalls, 1)
@@ -383,7 +383,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
             expectation2.fulfill()
         })
 
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertEqual(initialCompletionCalls, 1)
         XCTAssertEqual(newTokenCompletionCalls, 1)
@@ -400,7 +400,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
             expectation3.fulfill()
         })
 
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertEqual(initialCompletionCalls, 1)
         XCTAssertEqual(newTokenCompletionCalls, 1)
@@ -620,7 +620,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         })
 
         XCTAssertNotNil(repository.tokenProvider)
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
         XCTAssertEqual(repository.currentToken, apiToken)
         let request = try XCTUnwrap(apiClient.request_endpoint)
         XCTAssertEqual(request.path, .guest)
@@ -659,7 +659,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         })
 
         XCTAssertNotNil(repository.tokenProvider)
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
         XCTAssertEqual(repository.currentToken, apiToken)
         let request = try XCTUnwrap(apiClient.request_endpoint)
         XCTAssertEqual(request.path, .guest)
@@ -711,7 +711,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
             receivedError = error
             expectation.fulfill()
         }
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
         XCTAssertTrue(receivedError is ClientError.MissingTokenProvider)
     }
 
@@ -755,7 +755,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
             }
         }
 
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertCall(RetryStrategy_Spy.Signature.nextRetryDelay, on: retryStrategy, times: 3)
         XCTAssertCall(RetryStrategy_Spy.Signature.resetConsecutiveFailures, on: retryStrategy, times: 1)
@@ -790,7 +790,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
             }
         }
 
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertCall(RetryStrategy_Spy.Signature.nextRetryDelay, on: retryStrategy, times: 1)
         XCTAssertCall(RetryStrategy_Spy.Signature.resetConsecutiveFailures, on: retryStrategy, times: 1)
@@ -806,7 +806,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
 
         var result: Result<Token, Error>?
         let expectation = self.expectation(description: "Provide Connection Id Completion")
-        repository.provideToken(timeout: 0.1) {
+        repository.provideToken(timeout: defaultTimeout) {
             result = $0
             expectation.fulfill()
         }
@@ -814,7 +814,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         // Sync execution
         XCTAssertNotNil(result)
 
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertEqual(result?.value, existingToken)
     }
@@ -828,7 +828,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         }
         XCTAssertNil(result)
 
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertTrue(result?.error is ClientError.WaiterTimeout)
     }
@@ -836,7 +836,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
     func test_provideToken_returnsErrorOnMissingValue() {
         var result: Result<Token, Error>?
         let expectation = self.expectation(description: "Provide Token Completion")
-        repository.provideToken(timeout: 0.1) {
+        repository.provideToken(timeout: defaultTimeout) {
             result = $0
             expectation.fulfill()
         }
@@ -844,7 +844,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
 
         // Complete with nil
         repository.completeTokenWaiters(token: nil)
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertTrue(result?.error is ClientError.MissingToken)
     }
@@ -852,7 +852,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
     func test_provideToken_returnsValue_whenCompletingTokenWaiters() {
         var result: Result<Token, Error>?
         let expectation = self.expectation(description: "Provide Token Completion")
-        repository.provideToken(timeout: 0.1) {
+        repository.provideToken(timeout: defaultTimeout) {
             result = $0
             expectation.fulfill()
         }
@@ -861,7 +861,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         // Complete with token
         let token = Token.unique()
         repository.completeTokenWaiters(token: token)
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertEqual(result?.value, token)
     }
@@ -889,7 +889,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         })
 
         XCTAssertNotNil(repository.tokenProvider)
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
 
         if connectionRepository.isClientInActiveMode {
             XCTAssertCall(ConnectionRepository_Mock.Signature.connect, on: connectionRepository)
@@ -938,7 +938,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
             isFirstTime = false
         })
 
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
         connectionRepository.cleanUp()
         retryStrategy.clear()
     }

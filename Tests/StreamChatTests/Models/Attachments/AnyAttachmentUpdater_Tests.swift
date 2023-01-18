@@ -27,7 +27,7 @@ final class AnyAttachmentUpdater_Tests: XCTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: 0.5)
+        waitForExpectations(timeout: defaultTimeout)
 
         let imageAttachment = attachment.attachment(payloadType: ImageAttachmentPayload.self)
 

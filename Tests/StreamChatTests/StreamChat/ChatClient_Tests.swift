@@ -405,7 +405,7 @@ final class ChatClient_Tests: XCTestCase {
             receivedError = $0
             expectation.fulfill()
         }
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertCall(AuthenticationRepository_Mock.Signature.connectTokenProvider, on: authenticationRepository)
         XCTAssertEqual(receivedError, testError)
@@ -423,7 +423,7 @@ final class ChatClient_Tests: XCTestCase {
             receivedError = $0
             expectation.fulfill()
         }
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertCall(AuthenticationRepository_Mock.Signature.connectTokenProvider, on: authenticationRepository)
         XCTAssertNil(receivedError)
@@ -444,7 +444,7 @@ final class ChatClient_Tests: XCTestCase {
             receivedError = $0
             expectation.fulfill()
         }
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertCall(AuthenticationRepository_Mock.Signature.connectTokenProvider, on: authenticationRepository)
         XCTAssertEqual(receivedError, testError)
@@ -462,7 +462,7 @@ final class ChatClient_Tests: XCTestCase {
             receivedError = $0
             expectation.fulfill()
         }
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertCall(AuthenticationRepository_Mock.Signature.connectTokenProvider, on: authenticationRepository)
         XCTAssertNil(receivedError)
@@ -481,7 +481,7 @@ final class ChatClient_Tests: XCTestCase {
             receivedError = $0
             expectation.fulfill()
         }
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertNotCall(AuthenticationRepository_Mock.Signature.connectTokenProvider, on: authenticationRepository)
         XCTAssertTrue(receivedError is ClientError.MissingTokenProvider)
@@ -500,7 +500,7 @@ final class ChatClient_Tests: XCTestCase {
             receivedError = $0
             expectation.fulfill()
         }
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertCall(AuthenticationRepository_Mock.Signature.connectTokenProvider, on: authenticationRepository)
         XCTAssertNil(receivedError)
@@ -520,7 +520,7 @@ final class ChatClient_Tests: XCTestCase {
             receivedError = $0
             expectation.fulfill()
         }
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertCall(AuthenticationRepository_Mock.Signature.connectTokenProvider, on: authenticationRepository)
         XCTAssertEqual(receivedError, mockedError)
@@ -541,7 +541,7 @@ final class ChatClient_Tests: XCTestCase {
             receivedError = $0
             expectation.fulfill()
         }
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertCall(AuthenticationRepository_Mock.Signature.connectGuest, on: authenticationRepository)
         XCTAssertEqual(receivedError, testError)
@@ -559,7 +559,7 @@ final class ChatClient_Tests: XCTestCase {
             receivedError = $0
             expectation.fulfill()
         }
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertCall(AuthenticationRepository_Mock.Signature.connectGuest, on: authenticationRepository)
         XCTAssertNil(receivedError)
@@ -579,7 +579,7 @@ final class ChatClient_Tests: XCTestCase {
             receivedError = $0
             expectation.fulfill()
         }
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertCall(AuthenticationRepository_Mock.Signature.connectTokenProvider, on: authenticationRepository)
         XCTAssertEqual(receivedError, testError)
@@ -596,7 +596,7 @@ final class ChatClient_Tests: XCTestCase {
             receivedError = $0
             expectation.fulfill()
         }
-        waitForExpectations(timeout: 0.1)
+        waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertCall(AuthenticationRepository_Mock.Signature.connectTokenProvider, on: authenticationRepository)
         XCTAssertNil(receivedError)

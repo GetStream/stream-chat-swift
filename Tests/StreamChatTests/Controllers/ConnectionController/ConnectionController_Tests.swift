@@ -114,7 +114,7 @@ final class ChatConnectionController_Tests: XCTestCase {
             // Assert the `chatClientUpdater` is called.
             XCTAssertCall(ConnectionRepository_Mock.Signature.connect, on: connectionRepository)
 
-            waitForExpectations(timeout: 0.1)
+            waitForExpectations(timeout: defaultTimeout)
 
             // Assert `error` is propagated.
             XCTAssertEqual(connectCompletionError as? TestError, error)

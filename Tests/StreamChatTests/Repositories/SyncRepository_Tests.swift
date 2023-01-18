@@ -75,7 +75,7 @@ final class SyncRepository_Tests: XCTestCase {
         repository.syncLocalState {
             expectation.fulfill()
         }
-        waitForExpectations(timeout: 0.5, handler: nil)
+        waitForExpectations(timeout: defaultTimeout, handler: nil)
 
         let lastSyncAt = try XCTUnwrap(lastSyncAtValue)
         XCTAssertTrue(Calendar.current.isDateInToday(lastSyncAt))
@@ -106,7 +106,7 @@ final class SyncRepository_Tests: XCTestCase {
         repository.syncLocalState {
             expectation.fulfill()
         }
-        waitForExpectations(timeout: 0.5, handler: nil)
+        waitForExpectations(timeout: defaultTimeout, handler: nil)
 
         let lastSyncAt = try XCTUnwrap(lastSyncAtValue)
         XCTAssertTrue(Calendar.current.isDateInToday(lastSyncAt))
@@ -504,7 +504,7 @@ final class SyncRepository_Tests: XCTestCase {
             callback(result)
         }
 
-        waitForExpectations(timeout: 0.5, handler: nil)
+        waitForExpectations(timeout: defaultTimeout, handler: nil)
         return receivedResult
     }
 
@@ -622,7 +622,7 @@ final class SyncRepository_Tests: XCTestCase {
         mock = nil
 
         // THEN
-        waitForExpectations(timeout: 0.5, handler: nil)
+        waitForExpectations(timeout: defaultTimeout, handler: nil)
     }
 
     func test_cancelRecoveryFlow_cancelsAllOperations() throws {

@@ -16,7 +16,7 @@ final class AsyncOperation_Tests: XCTestCase {
 
         operation.start()
 
-        waitForExpectations(timeout: 0.5) { error in
+        waitForExpectations(timeout: defaultTimeout) { error in
             if error != nil {
                 XCTFail(error.debugDescription)
             }
@@ -191,7 +191,7 @@ final class AsyncOperation_Tests: XCTestCase {
         }
 
         operation.cancel()
-        wait(for: [operationCompletion], timeout: 0.1)
+        wait(for: [operationCompletion], timeout: defaultTimeout)
 
         // We want to make sure that upon an early cancellation, it does not continue executing
         XCTAssertEqual(operationBlockCalls, 1)
@@ -219,7 +219,7 @@ final class AsyncOperation_Tests: XCTestCase {
         }
 
         operation.isFinished = true
-        wait(for: [operationCompletion], timeout: 0.1)
+        wait(for: [operationCompletion], timeout: defaultTimeout)
 
         // We want to make sure that upon an early set of isFinished to true, it does not continue executing
         XCTAssertEqual(operationBlockCalls, 1)

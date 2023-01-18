@@ -61,7 +61,7 @@ final class MessageRepositoryTests: XCTestCase {
         try createMessage(id: id, localState: .pendingSend)
         repository.sendMessage(with: id) { _ in }
 
-        wait(for: [apiClient.request_expectation], timeout: 0.5)
+        wait(for: [apiClient.request_expectation], timeout: defaultTimeout)
 
         var currentMessageState: LocalMessageState?
         try database.writeSynchronously { session in
@@ -81,12 +81,12 @@ final class MessageRepositoryTests: XCTestCase {
             expectation.fulfill()
         }
 
-        wait(for: [apiClient.request_expectation], timeout: 0.5)
+        wait(for: [apiClient.request_expectation], timeout: defaultTimeout)
 
         let error = NSError(domain: "", code: 1, userInfo: nil)
         (apiClient.request_completion as? (Result<MessagePayload.Boxed, Error>) -> Void)?(.failure(error))
 
-        wait(for: [expectation], timeout: 0.5)
+        wait(for: [expectation], timeout: defaultTimeout)
 
         var currentMessageState: LocalMessageState?
         try database.writeSynchronously { session in
@@ -107,12 +107,12 @@ final class MessageRepositoryTests: XCTestCase {
             expectation.fulfill()
         }
 
-        wait(for: [apiClient.request_expectation], timeout: 0.5)
+        wait(for: [apiClient.request_expectation], timeout: defaultTimeout)
 
         let payload = MessagePayload.Boxed(message: .dummy(messageId: id, authorUserId: .anonymous))
         (apiClient.request_completion as? (Result<MessagePayload.Boxed, Error>) -> Void)?(.success(payload))
 
-        wait(for: [expectation], timeout: 0.5)
+        wait(for: [expectation], timeout: defaultTimeout)
 
         var currentMessageState: LocalMessageState?
         try database.writeSynchronously { session in
@@ -205,7 +205,7 @@ final class MessageRepositoryTests: XCTestCase {
             result = $0
             expectation.fulfill()
         }
-        waitForExpectations(timeout: 0.5, handler: nil)
+        waitForExpectations(timeout: defaultTimeout, handler: nil)
         return result
     }
 
@@ -219,7 +219,7 @@ final class MessageRepositoryTests: XCTestCase {
         repository.saveSuccessfullyEditedMessage(for: id) {
             expectation.fulfill()
         }
-        waitForExpectations(timeout: 0.5, handler: nil)
+        waitForExpectations(timeout: defaultTimeout, handler: nil)
 
         let dbMessage = message(for: id)
         XCTAssertNotNil(dbMessage)
@@ -340,7 +340,7 @@ final class MessageRepositoryTests: XCTestCase {
         repository.updateMessage(withID: id, localState: state) {
             expectation.fulfill()
         }
-        waitForExpectations(timeout: 0.5, handler: nil)
+        waitForExpectations(timeout: defaultTimeout, handler: nil)
     }
 
     // MARK: saveSuccessfullyDeletedMessage
@@ -406,7 +406,7 @@ final class MessageRepositoryTests: XCTestCase {
             error = $0
             expectation.fulfill()
         }
-        waitForExpectations(timeout: 0.5, handler: nil)
+        waitForExpectations(timeout: defaultTimeout, handler: nil)
         return error
     }
 
@@ -425,7 +425,7 @@ final class MessageRepositoryTests: XCTestCase {
         repository.undoReactionAddition(on: "message_id", type: "type") {
             expectation.fulfill()
         }
-        waitForExpectations(timeout: 0.5, handler: nil)
+        waitForExpectations(timeout: defaultTimeout, handler: nil)
 
         // We are making sure the completion is executed even if the reaction is not there
         XCTAssertTrue(true)
@@ -455,7 +455,7 @@ final class MessageRepositoryTests: XCTestCase {
         repository.undoReactionAddition(on: messageId, type: reactionType) {
             expectation.fulfill()
         }
-        waitForExpectations(timeout: 0.5, handler: nil)
+        waitForExpectations(timeout: defaultTimeout, handler: nil)
 
         var reactionState: LocalReactionState?
         try database.writeSynchronously { session in
@@ -474,7 +474,7 @@ final class MessageRepositoryTests: XCTestCase {
         repository.undoReactionDeletion(on: "message_id", type: "type", score: 10) {
             expectation.fulfill()
         }
-        waitForExpectations(timeout: 0.5, handler: nil)
+        waitForExpectations(timeout: defaultTimeout, handler: nil)
 
         // We are making sure the completion is executed even if the reaction is not there
         XCTAssertTrue(true)
@@ -503,7 +503,7 @@ final class MessageRepositoryTests: XCTestCase {
         repository.undoReactionDeletion(on: messageId, type: reactionType, score: 10) {
             expectation.fulfill()
         }
-        waitForExpectations(timeout: 0.5, handler: nil)
+        waitForExpectations(timeout: defaultTimeout, handler: nil)
 
         var reactionState: LocalReactionState?
         var reactionScore: Int64?
@@ -547,7 +547,7 @@ extension MessageRepositoryTests {
             result = $0
             expectation.fulfill()
         }
-        waitForExpectations(timeout: 0.5, handler: nil)
+        waitForExpectations(timeout: defaultTimeout, handler: nil)
         return result
     }
 }
