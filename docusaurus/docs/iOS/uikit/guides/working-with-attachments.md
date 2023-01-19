@@ -148,7 +148,6 @@ Here we extended `AttachmentType` to include the `workout` type and afterwards w
 Let's now create a custom view injector to handle the workout attachment.
 
 ```swift
-import Nuke
 import StreamChat
 import StreamChatUI
 import UIKit
