@@ -49,6 +49,10 @@ import UIKit
 class MyCustomAttachmentViewInjector: AttachmentViewInjector {
     let attachmentView = MyCustomAttachmentView()
 
+    var message: ChatMessage? {
+        contentView.content
+    }
+
     override func contentViewDidLayout(options: ChatMessageLayoutOptions) {
         super.contentViewDidLayout(options: options)
 
@@ -58,7 +62,7 @@ class MyCustomAttachmentViewInjector: AttachmentViewInjector {
     override func contentViewDidUpdateContent() {
         super.contentViewDidUpdateContent()
 
-        attachmentView.fileAttachment = attachments(payloadType: FileAttachmentPayload.self).first
+        attachmentView.fileAttachment = message?.attachments(payloadType: FileAttachmentPayload.self).first
     }
 }
 
@@ -119,7 +123,7 @@ public typealias ChatMessageWorkoutAttachment = ChatMessageAttachment<WorkoutAtt
 public struct WorkoutAttachmentPayload: AttachmentPayload {
     public static var type: AttachmentType = .workout
 
-    var imageURL: URL
+    var imageURL: URL?
     var workoutDistanceMeters: Int?
     var workoutType: String?
     var workoutDurationSeconds: Int?
@@ -149,17 +153,17 @@ import StreamChat
 import StreamChatUI
 import UIKit
 
-class WorkoutAttachmentView: UIView {
+class WorkoutAttachmentView: UIView, ComponentsProvider {
     var workoutAttachment: ChatMessageWorkoutAttachment? {
         didSet {
             update()
         }
     }
 
-    let imageView = UIImageView()
-    let distanceLabel = UILabel()
-    let durationLabel = UILabel()
-    let energyLabel = UILabel()
+    lazy var imageView = UIImageView()
+    lazy var distanceLabel = UILabel()
+    lazy var durationLabel = UILabel()
+    lazy var energyLabel = UILabel()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -204,21 +208,20 @@ class WorkoutAttachmentView: UIView {
 
     func update() {
         if let attachment = workoutAttachment {
-            Nuke.loadImage(with: attachment.imageURL, into: imageView)
+            components.imageLoader.loadImage(into: imageView, from: attachment.imageURL)
             distanceLabel.text = "you walked \(attachment.workoutDistanceMeters ?? 0) meters!"
             durationLabel.text = "it took you \(attachment.workoutDurationSeconds ?? 0) seconds!"
             energyLabel.text = "you burned \(attachment.workoutEnergyCal ?? 0) calories!"
-        } else {
-            imageView.image = nil
-            distanceLabel.text = nil
-            durationLabel.text = nil
-            energyLabel.text = nil
         }
     }
 }
 
 open class WorkoutAttachmentViewInjector: AttachmentViewInjector {
     let workoutView = WorkoutAttachmentView()
+
+    var message: ChatMessage? {
+        contentView.content
+    }
 
     override open func contentViewDidLayout(options: ChatMessageLayoutOptions) {
         super.contentViewDidLayout(options: options)
@@ -229,7 +232,7 @@ open class WorkoutAttachmentViewInjector: AttachmentViewInjector {
     override open func contentViewDidUpdateContent() {
         super.contentViewDidUpdateContent()
 
-        workoutView.workoutAttachment = attachments(payloadType: WorkoutAttachmentPayload.self).first
+        workoutView.workoutAttachment = message?.attachments(payloadType: WorkoutAttachmentPayload.self).first
     }
 }
 ```
@@ -258,11 +261,9 @@ If needed you can also send a message with a workout attachment directly from Sw
 
 ```swift
 let controller = client.channelController(for: ChannelId(type: .messaging, id: "my-test-channel"))
-let attachment = WorkoutAttachmentPayload(imageURL: URL(string: "https://path.to/some/great/picture.png")!, workoutDistanceMeters: 150, workoutDurationSeconds: 42, workoutEnergyCal: 1000)
+let attachment = WorkoutAttachmentPayload(imageURL: URL(string: "https://path.to/some/great/picture.png"), workoutDistanceMeters: 150, workoutDurationSeconds: 42, workoutEnergyCal: 1000)
 
-controller.createNewMessage(text: "work-out-test", attachments: [.init(payload: attachment)]) { _ in
-    print("test message was added")
-}
+controller.createNewMessage(text: "work-out-test", attachments: [.init(payload: attachment)])
 ```
 
 In case you need to interact with your custom attachment, there are a couple of steps required:
@@ -322,3 +323,150 @@ Finally, don't forget to assign the custom message list if you didn't yet:
 ```swift
 Components.default.messageListVC = CustomChatMessageListVC.self
 ```
+
+### Tracking custom attachment upload progress
+In the previous examples, we assumed that you already have the custom attachment URL available. But, you can also upload the custom attachment through the Stream's SDK and observe the uploading progress.
+
+The simplest approach is to upload through the `channelController.uploadAttachment()` method. With this method, you can observe the progress, but the limitation is that at this time, the message is not yet sent, so this approach is good if you want to show the upload progress before creating the message. Here is an example:
+
+```swift
+let controller = client.channelController(for: ChannelId(type: .messaging, id: "my-test-channel"))
+controller.uploadAttachment(
+    localFileURL: localFileUrlFromUsersDevice,
+    type: .workout,
+    progress: { value in
+        // Update here the upload progress
+        someProgressView.update(with: value)
+    },
+    completion: { [weak self] result in
+        // Don't forget to handle the error case
+        guard let uploadedAttachment = try? result.get() else { return }
+        let attachment = WorkoutAttachmentPayload(
+            imageURL: uploadedAttachment.remoteURL, 
+            workoutDistanceMeters: 150, 
+            workoutDurationSeconds: 42, 
+            workoutEnergyCal: 1000
+        )
+        self?.controller.createNewMessage(text: "work-out-test", attachments: [.init(payload: attachment)])
+    }
+)
+```
+
+In case you want to show the upload progress in the message cell, like it is shown in the Stream's native components, there is a couple of steps to go through:
+1. Implement an `UploadedAttachmentPostProcessor` and inject it in `ChatClientConfig`. This is needed to update the remote URL once the attachment is successfully uploaded.
+2. Create the custom attachment payload using `AnyAttachmentPayload(localFileURL:customPayload)` initializer and create the message instantly.
+3. Observe the `AttachmentUploadingState` in your custom view. The message is updated whenever the attachment progress changes, and each attachment has this data available in `attachment.uploadingState`.
+
+Below is the full example on how to show the uploading progress in the message cell:
+
+```swift
+// Step 1
+public class CustomUploadedAttachmentPostProcessor: UploadedAttachmentPostProcessor {
+    // This component is an helper class to update the payload of type-erased attachments.
+    let attachmentUpdater = AnyAttachmentUpdater()
+
+    public func process(uploadedAttachment: UploadedAttachment) -> UploadedAttachment {
+        var attachment = uploadedAttachment.attachment
+
+        attachmentUpdater.update(&attachment, forPayload: WorkoutAttachmentPayload.self) { payload in
+            payload.imageURL = uploadedAttachment.remoteURL
+        }
+
+        return UploadedAttachment(attachment: attachment, remoteURL: uploadedAttachment.remoteURL)
+    }
+}
+
+// Don't forget to inject it in the client config
+config.uploadedAttachmentPostProcessor = CustomUploadedAttachmentPostProcessor()
+
+// Step 2
+let controller = client.channelController(for: ChannelId(type: .messaging, id: "my-test-channel"))
+let workoutPayload = WorkoutAttachmentPayload(
+    imageURL: nil,
+    workoutDistanceMeters: 150,
+    workoutDurationSeconds: 42,
+    workoutEnergyCal: 1000
+)
+let workoutAttachment = AnyAttachmentPayload(
+    localFileURL: localFileUrlFromUsersDevice, 
+    customPayload: workoutPayload
+)
+controller.createNewMessage(text: "work-out-test", attachments: [.init(payload: attachment)])
+
+// Step 3
+class WorkoutAttachmentView: UIView, ComponentsProvider {
+    var workoutAttachment: ChatMessageWorkoutAttachment? {
+        didSet {
+            update()
+        }
+    }
+
+    lazy var uploadingOverlayView = UploadingOverlayView()
+    lazy var imageView = UIImageView()
+    lazy var distanceLabel = UILabel()
+    lazy var durationLabel = UILabel()
+    lazy var energyLabel = UILabel()
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupView()
+    }
+
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        setupView()
+    }
+
+    func setupView() {
+        distanceLabel.backgroundColor = .yellow
+        distanceLabel.numberOfLines = 0
+
+        durationLabel.backgroundColor = .green
+        durationLabel.numberOfLines = 0
+
+        energyLabel.backgroundColor = .red
+        energyLabel.numberOfLines = 0
+
+        uploadingOverlayView.translatesAutoresizingMaskIntoConstraints = false
+
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.contentMode = .scaleAspectFit
+        addSubview(imageView)
+        addSubview(uploadingOverlayView)
+
+        let container = ContainerStackView(arrangedSubviews: [distanceLabel, durationLabel, energyLabel])
+        container.translatesAutoresizingMaskIntoConstraints = false
+        container.distribution = .equal
+        addSubview(container)
+
+        NSLayoutConstraint.activate([
+            imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor),
+            imageView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            imageView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            imageView.topAnchor.constraint(equalTo: topAnchor),
+            imageView.bottomAnchor.constraint(equalTo: container.topAnchor),
+            uploadingOverlayView.leadingAnchor.constraint(equalTo: imageView.leadingAnchor),
+            uploadingOverlayView.trailingAnchor.constraint(equalTo: imageView.trailingAnchor),
+            uploadingOverlayView.topAnchor.constraint(equalTo: imageView.topAnchor),
+            uploadingOverlayView.bottomAnchor.constraint(equalTo: imageView.bottomAnchor),
+
+            container.leadingAnchor.constraint(equalTo: leadingAnchor),
+            container.trailingAnchor.constraint(equalTo: trailingAnchor),
+            container.bottomAnchor.constraint(equalTo: bottomAnchor)
+        ])
+    }
+
+    func update() {
+        if let attachment = workoutAttachment {
+            // The uploadingOverlayView is used to show the uploading progress but you can use your own view.
+            uploadingOverlayView.content = attachment.uploadingState
+            components.imageLoader.loadImage(into: imageView, from: attachment.imageURL)
+            distanceLabel.text = "you walked \(attachment.workoutDistanceMeters ?? 0) meters!"
+            durationLabel.text = "it took you \(attachment.workoutDurationSeconds ?? 0) seconds!"
+            energyLabel.text = "you burned \(attachment.workoutEnergyCal ?? 0) calories!"
+        }
+    }
+}
+```
+
+As you can see, in the Step 3, the custom view is pretty much the same as the one from the previous examples, we only added an `UploadingOverlayView` to show the progress of the attachment. But, in order for this to work, it is required to do Step 1 and Step 2.
