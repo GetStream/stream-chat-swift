@@ -3,7 +3,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### ✅ Added
+- Add `UploadedAttachmentPostProcessor` in `ChatClientConfig` to allow changing custom attachment payloads after an attachment has been uploaded [#2457](https://github.com/GetStream/stream-chat-swift/pull/2457)
+- Add `AnyAttachmentPayload(localFileURL:customPayload:)` initializer to allow creating custom attachments without a remote URL [#2457](https://github.com/GetStream/stream-chat-swift/pull/2457)
+
 ## StreamChatUI
+### 🔄 Changed
+- Renames `ChatMessageGalleryView.UploadingOverlay` -> `UploadingOverlayView`
+- Renames `Components.default.imageUploadingOverlay` -> `Components.default.uploadingOverlayView`
+
 ### 🐞 Fixed
 - Fix message cell not updated when custom attachment data is different [#2454](https://github.com/GetStream/stream-chat-swift/pull/2454)
 
