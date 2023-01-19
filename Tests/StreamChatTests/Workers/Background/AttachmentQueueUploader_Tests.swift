@@ -20,7 +20,7 @@ final class AttachmentQueueUploader_Tests: XCTestCase {
         webSocketClient = WebSocketClient_Mock()
         apiClient = APIClient_Spy()
         database = DatabaseContainer_Spy()
-        queueUploader = AttachmentQueueUploader(database: database, apiClient: apiClient)
+        queueUploader = AttachmentQueueUploader(database: database, apiClient: apiClient, attachmentPostProcessor: nil)
     }
 
     override func tearDown() {
