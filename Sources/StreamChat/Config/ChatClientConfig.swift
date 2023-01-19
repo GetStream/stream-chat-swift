@@ -121,6 +121,9 @@ public struct ChatClientConfig {
     /// This overrides the custom `CDNClient`. You should use 1 of them only.
     public var customAttachmentUploader: AttachmentUploader?
 
+    /// A component that can be used to change an attachment which was successfully uploaded.
+    public var uploadedAttachmentPostProcessor: UploadedAttachmentPostProcessor?
+
     /// Returns max possible attachment size in bytes.
     /// By default the value is taken from `CDNClient.maxAttachmentSize` type.
     /// But it can be overridden by setting a value here.

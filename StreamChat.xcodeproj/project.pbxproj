@@ -1029,6 +1029,8 @@
 		AD540AE2260CECA10082D802 /* QuotedChatMessageView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD540AE1260CECA10082D802 /* QuotedChatMessageView_Tests.swift */; };
 		AD552E0128F46CE700199A6F /* ImageLoaderOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD552E0028F46CE700199A6F /* ImageLoaderOptions.swift */; };
 		AD552E0228F46CE700199A6F /* ImageLoaderOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD552E0028F46CE700199A6F /* ImageLoaderOptions.swift */; };
+		AD57979E2978C4F7006CC435 /* UploadedAttachmentPostProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD57979D2978C4F7006CC435 /* UploadedAttachmentPostProcessor.swift */; };
+		AD57979F2978C4F7006CC435 /* UploadedAttachmentPostProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD57979D2978C4F7006CC435 /* UploadedAttachmentPostProcessor.swift */; };
 		AD6A248A280DA890003BA1E4 /* PushDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6A2489280DA88F003BA1E4 /* PushDevice.swift */; };
 		AD6A248B280DA890003BA1E4 /* PushDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6A2489280DA88F003BA1E4 /* PushDevice.swift */; };
 		AD6BEFF02786070800E184B4 /* SwitchButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6BEFEF2786070800E184B4 /* SwitchButton.swift */; };
@@ -3283,6 +3285,7 @@
 		AD53DCDE27271D850019290C /* MessageReactionsPayload.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = MessageReactionsPayload.json; sourceTree = "<group>"; };
 		AD540AE1260CECA10082D802 /* QuotedChatMessageView_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuotedChatMessageView_Tests.swift; sourceTree = "<group>"; };
 		AD552E0028F46CE700199A6F /* ImageLoaderOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLoaderOptions.swift; sourceTree = "<group>"; };
+		AD57979D2978C4F7006CC435 /* UploadedAttachmentPostProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadedAttachmentPostProcessor.swift; sourceTree = "<group>"; };
 		AD6A2489280DA88F003BA1E4 /* PushDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushDevice.swift; sourceTree = "<group>"; };
 		AD6BEFEF2786070800E184B4 /* SwitchButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchButton.swift; sourceTree = "<group>"; };
 		AD6BEFF127862F9300E184B4 /* AppConfigViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfigViewController.swift; sourceTree = "<group>"; };
@@ -7124,6 +7127,7 @@
 			children = (
 				ADE40042291B1A510000C98B /* AttachmentUploader.swift */,
 				ADB951A0291BD7CC00800554 /* UploadedAttachment.swift */,
+				AD57979D2978C4F7006CC435 /* UploadedAttachmentPostProcessor.swift */,
 			);
 			path = AttachmentUploader;
 			sourceTree = "<group>";
@@ -9339,6 +9343,7 @@
 				84D5BC6F277B619D00A65C75 /* PinnedMessagesSortingKey.swift in Sources */,
 				C1FC2FA22742579D0062530F /* WSCompression.swift in Sources */,
 				CFE616BD28348ACD00AE2ABF /* ScheduledStreamTimer.swift in Sources */,
+				AD57979E2978C4F7006CC435 /* UploadedAttachmentPostProcessor.swift in Sources */,
 				84DCB853269F569A006CDF32 /* EventsController+SwiftUI.swift in Sources */,
 				88381E65258258C20047A6A3 /* FileUploadPayload.swift in Sources */,
 				7978FBBF26E1667C002CA2DF /* MessageSearchController.swift in Sources */,
@@ -10105,6 +10110,7 @@
 				C121E875274544AF00023E4C /* UserListQueryDTO.swift in Sources */,
 				C1EFF3F4285E459C0057B91B /* IdentifiableModel.swift in Sources */,
 				C121E876274544AF00023E4C /* CurrentUserDTO.swift in Sources */,
+				AD57979F2978C4F7006CC435 /* UploadedAttachmentPostProcessor.swift in Sources */,
 				C121E877274544AF00023E4C /* MemberModelDTO.swift in Sources */,
 				C121E878274544AF00023E4C /* ChannelDTO.swift in Sources */,
 				C173538F27D9F804008AC412 /* KeyedDecodingContainer+Array.swift in Sources */,

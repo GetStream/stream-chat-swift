@@ -192,7 +192,7 @@ extension LocalAttachmentState {
         }
     }
 
-    var progress: Double {
+    public var progress: Double {
         switch self {
         case let .uploading(progress):
             return progress

@@ -38,7 +38,7 @@ public extension AnyAttachmentPayload {
     /// Creates an instance of `AnyAttachmentPayload` with the given payload.
     ///
     /// - Important: This initializer should only be used for attachments already uploaded or not requiring uploading.
-    /// Please use `init(localFileURL:` initializer for attachments requiring uploading.
+    /// Please use `init(localFileURL:customPayload:)` initializer for custom attachments requiring uploading.
     ///
     /// If attached to the new message the attachment with the given payload will be immediately
     /// available on `ChatMessage` with the `uploadingState == nil` since it doesn't require prior
@@ -50,6 +50,27 @@ public extension AnyAttachmentPayload {
             type: Payload.type,
             payload: payload,
             localFileURL: nil
+        )
+    }
+
+    /// Creates an instance of `AnyAttachmentPayload` with the given custom payload and local file url.
+    /// Use this initialiser if you want to create a custom attachment which will be lazily uploaded after creating a message.
+    /// You can track the progress of the attachment upload in your custom `AttachmentViewInjector`.
+    ///
+    /// - Important: You will need to inject a `ChatClientConfig.uploadedAttachmentPostProcessor` and update the url of your
+    ///   custom attachment with the given remote url. You should read docs on how to properly do this.
+    ///
+    /// - Parameters:
+    ///   - localFileURL: The local file url in the user's device.
+    ///   - customPayload: The custom attachment payload.
+    init<Payload: AttachmentPayload>(
+        localFileURL: URL,
+        customPayload: Payload
+    ) {
+        self.init(
+            type: Payload.type,
+            payload: customPayload,
+            localFileURL: localFileURL
         )
     }
 
