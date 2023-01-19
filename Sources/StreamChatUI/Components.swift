@@ -205,7 +205,7 @@ public struct Components {
     public var videoAttachmentGalleryPreview: VideoAttachmentGalleryPreview.Type = VideoAttachmentGalleryPreview.self
 
     /// The view that shows an overlay with uploading progress for image attachment that is being uploaded.
-    public var imageUploadingOverlay: ChatMessageGalleryView.UploadingOverlay.Type = ChatMessageGalleryView.UploadingOverlay.self
+    public var uploadingOverlayView: UploadingOverlayView.Type = UploadingOverlayView.self
 
     /// The view that shows giphy attachment with actions.
     public var giphyAttachmentView: ChatMessageInteractiveAttachmentView.Type = ChatMessageInteractiveAttachmentView.self
@@ -410,12 +410,14 @@ public struct Components {
     public var alertsRouter: AlertsRouter.Type = AlertsRouter.self
 
     public init() {}
-}
+    
+    public static var `default` = Self()
 
-// MARK: - Components + Default
+    // MARK: Deprecations
 
-public extension Components {
-    static var `default` = Self()
+    /// The view that shows an overlay with uploading progress for image attachment that is being uploaded.
+    @available(*, deprecated, renamed: "uploadingOverlayView")
+    public var imageUploadingOverlay: UploadingOverlayView.Type = UploadingOverlayView.self
 }
 
 // MARK: Deprecations

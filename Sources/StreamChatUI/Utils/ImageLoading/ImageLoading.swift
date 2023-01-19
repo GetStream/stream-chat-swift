@@ -135,7 +135,7 @@ public extension ImageLoading {
     func loadImage(
         into imageView: UIImageView,
         from url: URL?,
-        with options: ImageLoaderOptions,
+        with options: ImageLoaderOptions = ImageLoaderOptions(),
         completion: ((_ result: Result<UIImage, Error>) -> Void)? = nil
     ) -> Cancellable? {
         loadImage(into: imageView, from: url, with: options, completion: completion)
