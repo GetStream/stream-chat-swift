@@ -49,7 +49,7 @@ public struct AttachmentUploadingState: Hashable {
 
 // MARK: - Type erasure/recovery
 
-public typealias AnyChatMessageAttachment = ChatMessageAttachment<Data>
+public typealias AnyChatMessageAttachment = ChatMessageAttachment<Any>
 
 public extension AnyChatMessageAttachment {
     /// Converts type-erased attachment to the attachment with the concrete payload.
@@ -62,10 +62,20 @@ public extension AnyChatMessageAttachment {
     func attachment<Payload: AttachmentPayload>(
         payloadType: Payload.Type
     ) -> ChatMessageAttachment<Payload>? {
-        guard
-            Payload.type == type || type == .unknown,
-            let concretePayload = try? JSONDecoder.stream.decode(Payload.self, from: payload)
-        else { return nil }
+        guard Payload.type == type || type == .unknown else {
+            return nil
+        }
+
+        var concretePayload: Payload?
+        if let payload = (payload as? Payload) {
+            concretePayload = payload
+        } else if let payload = (payload as? Data) {
+            concretePayload = try? JSONDecoder.stream.decode(Payload.self, from: payload)
+        }
+
+        guard let concretePayload = concretePayload else {
+            return nil
+        }
 
         return .init(
             id: id,
@@ -76,14 +86,13 @@ public extension AnyChatMessageAttachment {
     }
 }
 
-// swiftlint:disable force_try
 public extension ChatMessageAttachment where Payload: AttachmentPayload {
     /// Returns an attachment matching `self` but payload casted to `Any`.
     var asAnyAttachment: AnyChatMessageAttachment {
         AnyChatMessageAttachment(
             id: id,
             type: type,
-            payload: try! JSONEncoder.stream.encode(payload),
+            payload: payload,
             uploadingState: uploadingState
         )
     }

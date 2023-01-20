@@ -114,7 +114,7 @@ class AttachmentQueueUploader: Worker {
         newState: LocalAttachmentState,
         completion: @escaping () -> Void = {}
     ) {
-        database.write({ [minSignificantUploadingProgressChange, weak self] session in
+        database.write({ [minSignificantUploadingProgressChange] session in
             guard let attachmentDTO = session.attachment(id: attachmentId) else { return }
 
             var stateHasChanged: Bool {
@@ -133,12 +133,10 @@ class AttachmentQueueUploader: Worker {
             // Update attachment local state.
             attachmentDTO.localState = newState
 
-            if var uploadedAttachment = uploadedAttachment {
-                self?.updateRemoteUrl(of: &uploadedAttachment)
-                if let processedAttachment = self?.attachmentPostProcessor?.process(uploadedAttachment: uploadedAttachment) {
-                    uploadedAttachment = processedAttachment
-                }
-                attachmentDTO.data = uploadedAttachment.attachment.payload
+            if let uploadedAttachment = uploadedAttachment,
+               var attachmentPayload = uploadedAttachment.attachment.payload as? (any AttachmentPayload) {
+                attachmentPayload.updateRemoteUrl(uploadedAttachment.remoteURL)
+                attachmentDTO.data = try JSONEncoder.stream.encode(attachmentPayload.asAnyEncodable)
             }
         }, completion: {
             if let error = $0 {
@@ -146,30 +144,6 @@ class AttachmentQueueUploader: Worker {
             }
             completion()
         })
-    }
-
-    /// Update the remove url for each attachment payload type. Every other payload
-    /// update should be handled by the ``AttachmentUploader``.
-    private func updateRemoteUrl(of uploadedAttachment: inout UploadedAttachment) {
-        var attachment = uploadedAttachment.attachment
-
-        attachmentUpdater.update(&attachment, forPayload: ImageAttachmentPayload.self) { payload in
-            payload.imageURL = uploadedAttachment.remoteURL
-        }
-
-        attachmentUpdater.update(&attachment, forPayload: VideoAttachmentPayload.self) { payload in
-            payload.videoURL = uploadedAttachment.remoteURL
-        }
-
-        attachmentUpdater.update(&attachment, forPayload: AudioAttachmentPayload.self) { payload in
-            payload.audioURL = uploadedAttachment.remoteURL
-        }
-
-        attachmentUpdater.update(&attachment, forPayload: FileAttachmentPayload.self) { payload in
-            payload.assetURL = uploadedAttachment.remoteURL
-        }
-
-        uploadedAttachment.attachment = attachment
     }
 }
 

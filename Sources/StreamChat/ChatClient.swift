@@ -273,6 +273,17 @@ public class ChatClient {
         self.environment = environment
 
         setupConnectionRecoveryHandler(with: environment)
+
+        AttachmentDTO.register(FileAttachmentPayload.self)
+        AttachmentDTO.register(ImageAttachmentPayload.self)
+        AttachmentDTO.register(AudioAttachmentPayload.self)
+        AttachmentDTO.register(VideoAttachmentPayload.self)
+        AttachmentDTO.register(GiphyAttachmentPayload.self)
+        AttachmentDTO.register(LinkAttachmentPayload.self)
+    }
+
+    public func registerCustomAttachment<Payload: AttachmentPayload>(with payloadType: Payload.Type) {
+        AttachmentDTO.register(payloadType)
     }
 
     deinit {

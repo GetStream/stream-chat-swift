@@ -6,9 +6,22 @@ import Foundation
 
 /// A protocol an attachment payload type has to conform in order it can be
 /// attached to/exposed on the message.
-public protocol AttachmentPayload: Codable {
+public protocol AttachmentPayload: Codable, Equatable {
     /// A type of resulting attachment.
     static var type: AttachmentType { get }
+
+    /// Update the url of the attachment with the remote one.
+    /// This function will be called once an attachment has successfully uploaded.
+    /// - Parameter url: The remote url of the attachment.
+    mutating func updateRemoteUrl(_ url: URL)
+}
+
+public extension AttachmentPayload {
+    mutating func updateRemoteUrl(_ url: URL) {
+        // Implement this function to update the remote URL of the attachment.
+        // This function will be called when the attachment was successfully uploaded,
+        // in case the attachment was added to a message lazily.
+    }
 }
 
 /// A type-erased type that wraps either a local file URL that has to be uploaded
@@ -105,7 +118,7 @@ public extension AnyAttachmentPayload {
             .flatMap { try JSONEncoder.stream.encode($0.asAnyEncodable) }
             .flatMap { try JSONDecoder.stream.decode([String: RawJSON].self, from: $0) }
 
-        let payload: AttachmentPayload
+        let payload: any AttachmentPayload
         switch attachmentType {
         case .image:
             payload = ImageAttachmentPayload(

@@ -151,12 +151,24 @@ private extension AttachmentDTO {
 }
 
 extension AttachmentDTO {
+    static var decoders: [AttachmentType: (Data) throws -> Any] = [:]
+
+    static func register<Payload: AttachmentPayload>(_ payloadType: Payload.Type) {
+        decoders[Payload.type] = { data in
+            try JSONDecoder.stream.decode(Payload.self, from: data)
+        }
+    }
+
     /// Snapshots the current state of `AttachmentDTO` and returns an immutable model object from it.
     func asAnyModel() -> AnyChatMessageAttachment {
-        .init(
+        // If a decoder is registered, we decode here. This is mandatory for attachments which are updated automatically
+        // when the remote url is available. As a fallback, it will use Data, and will only be parsed in
+        // the attachment model using `attachment(payloadType:)` function.
+        let payload = (try? Self.decoders[attachmentType]?(data)) ?? data
+        return .init(
             id: attachmentID,
             type: attachmentType,
-            payload: data,
+            payload: payload,
             uploadingState: uploadingState
         )
     }

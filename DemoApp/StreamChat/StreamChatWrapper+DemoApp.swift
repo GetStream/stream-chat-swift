@@ -6,6 +6,21 @@ import Foundation
 import StreamChat
 import StreamChatUI
 
+extension AttachmentType {
+    static var workout: Self = "workout"
+}
+
+struct WorkoutAttachmentPayload: AttachmentPayload {
+    static var type: AttachmentType = .workout
+
+    var imageURL: URL?
+    var caloriesBurned: Int
+
+    mutating func updateRemoteUrl(_ url: URL) {
+        imageURL = url
+    }
+}
+
 extension StreamChatWrapper {
     // Instantiates chat client
     func setUpChat() {
@@ -22,6 +37,7 @@ extension StreamChatWrapper {
 
         // Create Client
         client = ChatClient(config: config)
+        client?.registerCustomAttachment(with: WorkoutAttachmentPayload.self)
 
         // Customize UI
         configureUI()

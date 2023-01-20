@@ -27,6 +27,10 @@ public struct ImageAttachmentPayload: AttachmentPayload {
     /// An extra data.
     public var extraData: [String: RawJSON]?
 
+    public mutating func updateRemoteUrl(_ url: URL) {
+        imageURL = url
+    }
+
     /// Decodes extra data as an instance of the given type.
     /// - Parameter ofType: The type an extra data should be decoded as.
     /// - Returns: Extra data of the given type or `nil` if decoding fails.

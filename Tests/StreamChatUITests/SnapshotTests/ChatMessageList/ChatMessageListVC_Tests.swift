@@ -180,13 +180,10 @@ final class ChatMessageListVC_Tests: XCTestCase {
             let attachmentWithCommentsPayload = AnyAttachmentPayload(
                 payload: CustomAttachment(comments: comments)
             )
-            let attachmentWithCommentsData = try JSONEncoder.stream.encode(
-                attachmentWithCommentsPayload.payload.asAnyEncodable
-            )
             return AnyChatMessageAttachment(
                 id: attachmentId,
                 type: .unknown,
-                payload: attachmentWithCommentsData,
+                payload: attachmentWithCommentsPayload,
                 uploadingState: nil
             )
         }

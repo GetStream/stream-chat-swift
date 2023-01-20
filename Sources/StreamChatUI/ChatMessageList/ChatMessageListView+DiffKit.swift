@@ -50,6 +50,35 @@ extension ChatMessage: Differentiable {
             && localState == source.localState
             && isFlaggedByCurrentUser == source.isFlaggedByCurrentUser
             && readBy.count == source.readBy.count
-            && allAttachments == source.allAttachments
+            && allAttachments.map(\.uploadingState) == source.allAttachments.map(\.uploadingState)
+            && areEqual(allAttachments.map(\.payload), source.allAttachments.map(\.payload))
+    }
+
+    private func areEqual(_ first: Any, _ second: Any) -> Bool {
+        if let equatableOne = first as? any Equatable, let equatableTwo = second as? any Equatable {
+            return equatableOne.isEqual(equatableTwo)
+        }
+        
+        if let arrayFirst = first as? [any Equatable], let secondArray = second as? [any Equatable] {
+            return zip(arrayFirst, secondArray).allSatisfy { areEqual($0, $1) }
+        }
+
+        return false
+    }
+}
+
+private extension Equatable {
+    func isEqual(_ other: any Equatable) -> Bool {
+        guard let other = other as? Self else {
+            return other.isExactlyEqual(self)
+        }
+        return self == other
+    }
+
+    private func isExactlyEqual(_ other: any Equatable) -> Bool {
+        guard let other = other as? Self else {
+            return false
+        }
+        return self == other
     }
 }

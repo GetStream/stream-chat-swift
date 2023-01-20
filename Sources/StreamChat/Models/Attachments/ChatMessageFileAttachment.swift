@@ -43,6 +43,10 @@ public struct FileAttachmentPayload: AttachmentPayload {
         self.file = file
         self.extraData = extraData
     }
+
+    public mutating func updateRemoteUrl(_ url: URL) {
+        assetURL = url
+    }
 }
 
 extension FileAttachmentPayload: Hashable {}
