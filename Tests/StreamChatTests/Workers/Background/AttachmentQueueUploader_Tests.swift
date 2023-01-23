@@ -129,11 +129,6 @@ final class AttachmentQueueUploader_Tests: XCTestCase {
                 }
             default: throw TestError()
             }
-
-            // In ChatMessageDefaultAttachment we have private func `fixedURL` that modifies `http` part of the URL
-            func originalURLString(_ url: URL?) -> String? {
-                url?.absoluteString.replacingOccurrences(of: "https://", with: "")
-            }
         }
     }
 
@@ -191,8 +186,79 @@ final class AttachmentQueueUploader_Tests: XCTestCase {
         // Assert uploader can be released even though uploading is in progress.
         AssertAsync.canBeReleased(&queueUploader)
     }
+
+    func test_uploader_whenPostProcessorAvailable_shouldChangeTheAttachmentPayload() throws {
+        struct FakePostProcessor: UploadedAttachmentPostProcessor {
+            let attachmentPayloadUpdater = AnyAttachmentUpdater()
+
+            func process(uploadedAttachment: UploadedAttachment) -> UploadedAttachment {
+                var attachment = uploadedAttachment.attachment
+
+                attachmentPayloadUpdater.update(&attachment, forPayload: ImageAttachmentPayload.self) { payload in
+                    payload.title = "New Title"
+                    payload.extraData = ["test": 123]
+                }
+
+                return UploadedAttachment(attachment: attachment, remoteURL: uploadedAttachment.remoteURL)
+            }
+        }
+
+        queueUploader = AttachmentQueueUploader(
+            database: database,
+            apiClient: apiClient,
+            attachmentPostProcessor: FakePostProcessor()
+        )
+
+        let cid: ChannelId = .unique
+        let messageId: MessageId = .unique
+
+        // Create channel in the database.
+        try database.createChannel(cid: cid, withMessages: false)
+        // Create message in the database.
+        try database.createMessage(id: messageId, cid: cid, localState: .pendingSend)
+
+        // Create the attachment in the database
+        let attachmentPayload: AnyAttachmentPayload = .mockImage
+        let attachmentId = AttachmentId(cid: cid, messageId: messageId, index: 1)
+        try database.writeSynchronously { session in
+            try session.createNewAttachment(attachment: attachmentPayload, id: attachmentId)
+        }
+
+        // Load attachment from the database.
+        let attachment = try XCTUnwrap(database.viewContext.attachment(id: attachmentId))
+
+        // Assert attachment is in `.pendingUpload` state.
+        XCTAssertEqual(attachment.localState, .pendingUpload)
+
+        let attachmentModelId = try XCTUnwrap(attachment.asAnyModel()).id
+        // Wait attachment uploading begins.
+        AssertAsync.willBeEqual(
+            apiClient.uploadFile_attachment?.id,
+            attachmentModelId
+        )
+
+        // Simulate successful backend response with remote file URL.
+        let response = UploadedAttachment.dummy(attachment: attachment.asAnyModel(), remoteURL: .fakeFile)
+        let remoteUrl = response.remoteURL
+        apiClient.uploadFile_completion?(.success(response))
+
+        var imageModel: ChatMessageImageAttachment? {
+            attachment.asAnyModel().attachment(payloadType: ImageAttachmentPayload.self)
+        }
+        AssertAsync {
+            Assert.willBeEqual(imageModel?.uploadingState?.state, .uploaded)
+            Assert.willBeEqual(originalURLString(imageModel?.imageURL), remoteUrl.absoluteString)
+            Assert.willBeEqual(imageModel?.title, "New Title")
+            Assert.willBeEqual(imageModel?.extraData, ["test": 123])
+        }
+    }
 }
 
 private extension URL {
     static let fakeFile = Self(string: "file://fake/path/to/file.txt")!
+}
+
+// In ChatMessageDefaultAttachment we have private func `fixedURL` that modifies `http` part of the URL
+private func originalURLString(_ url: URL?) -> String? {
+    url?.absoluteString.replacingOccurrences(of: "https://", with: "")
 }
