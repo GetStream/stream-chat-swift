@@ -326,7 +326,7 @@ Components.default.messageListVC = CustomChatMessageListVC.self
 ### Tracking custom attachment upload progress
 In the previous examples, we assumed that you already have the custom attachment remote URL available. But, you can also upload the custom attachment through the Stream's SDK and observe the uploading progress.
 
-The simplest approach is to upload through the `channelController.uploadAttachment()`. Using this function you can observe the progress, but the limitation is that at this time, the message is not yet sent, so this approach is good if you want to show the upload progress before creating the message. Here is an example:
+The simplest approach is to upload the attachment through the `channelController.uploadAttachment()`. Using this function you can observe the progress, but the limitation is that at this time, the message is not yet sent, so this approach is good if you want to show the upload progress before creating the message. Here is an example:
 
 ```swift
 let controller = client.channelController(for: ChannelId(type: .messaging, id: "my-test-channel"))
@@ -351,7 +351,7 @@ controller.uploadAttachment(
 )
 ```
 
-In case you want to show the upload progress in the message cell, like it is shown in the Stream's native components, there is a couple of steps to go through:
+In case you want to show the upload progress in the message cell, like it is shown in the Stream's native components, there are a couple of steps to go through:
 1. Implement an `UploadedAttachmentPostProcessor` and inject it in `ChatClientConfig`. This is needed to update the remote URL once the attachment is successfully uploaded.
 2. Create the custom attachment payload using `AnyAttachmentPayload(localFileURL:customPayload)` initializer and create the message instantly.
 3. Observe the `AttachmentUploadingState` in your custom view. The message is updated whenever the attachment progress changes, and the progress can be read by the `attachment.uploadingState` property.
@@ -361,7 +361,7 @@ Below is a full example on how to show the uploading progress in the message cel
 ```swift
 // Step 1
 public class CustomUploadedAttachmentPostProcessor: UploadedAttachmentPostProcessor {
-    // This component is an helper class to update the payload of type-erased attachments.
+    // This component is a helper class to update the payload of type-erased attachments.
     let attachmentUpdater = AnyAttachmentUpdater()
 
     public func process(uploadedAttachment: UploadedAttachment) -> UploadedAttachment {
