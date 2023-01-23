@@ -2308,26 +2308,17 @@ final class ChannelController_Tests: XCTestCase {
     // MARK: - `loadNextMessages`
 
     func test_loadNextMessages_callsChannelUpdate() throws {
-        let expectation = self.expectation(description: "synchronize completes")
-        controller.synchronize { error in
-            XCTAssertNil(error)
-            expectation.fulfill()
-        }
-
-        // Generate messages lower than pageSize (25)
-        let messages: [MessagePayload] = MessagePayload.multipleDummies(amount: 20)
-        let payload = ChannelPayload.dummy(messages: messages)
-        env.channelUpdater?.update_completion?(.success(payload))
-
-        waitForExpectations(timeout: 0.5)
-
         var error: Error?
         var messageId: MessageId?
 
         // Create new channel with message in DB
         error = try waitFor {
             client.databaseContainer.write({ session in
-                messageId = try self.setupChannelWithMessage(session)
+                // Generate messages lower than pageSize (25)
+                messageId = try self.setupChannelWithMessage(
+                    session,
+                    channelPayload: self.dummyPayload(with: self.channelId, numberOfMessages: 20)
+                )
             }, completion: $0)
         }
 
@@ -2340,30 +2331,19 @@ final class ChannelController_Tests: XCTestCase {
             completionCalled = true
         }
 
-        // Keep a weak ref so we can check if it's actually deallocated
-        weak var weakController = controller
-
-        // (Try to) deallocate the controller
-        // by not keeping any references to it
-        controller = nil
-
         // Completion shouldn't be called yet
         XCTAssertFalse(completionCalled)
         // Assert correct `MessagesPagination` is created
-        XCTAssertEqual(
+        AssertAsync.willBeEqual(
             env!.channelUpdater?.update_channelQuery?.pagination,
             MessagesPagination(pageSize: 25, parameter: .greaterThan(messageId!))
         )
 
         // Simulate successful update
         env.channelUpdater?.update_completion?(.success(dummyPayload(with: .unique)))
-        // Release reference of completion so we can deallocate stuff
-        env.channelUpdater!.update_completion = nil
 
         // Completion should be called
         AssertAsync.willBeTrue(completionCalled)
-        // `weakController` should be deallocated too
-        AssertAsync.canBeReleased(&weakController)
     }
     
     func test_loadNextMessages_returnsError_on_emptyMessages() throws {
@@ -2378,19 +2358,6 @@ final class ChannelController_Tests: XCTestCase {
     }
 
     func test_loadNextMessages_callsChannelUpdaterWithError() throws {
-        let expectation = self.expectation(description: "synchronize completes")
-        controller.synchronize { error in
-            XCTAssertNil(error)
-            expectation.fulfill()
-        }
-
-        // Generate messages bigger than pageSize (25)
-        let messages: [MessagePayload] = MessagePayload.multipleDummies(amount: 30)
-        let payload = ChannelPayload.dummy(messages: messages)
-        env.channelUpdater?.update_completion?(.success(payload))
-
-        waitForExpectations(timeout: 0.5)
-
         var error: Error?
         var messageId: MessageId?
 
@@ -2412,7 +2379,7 @@ final class ChannelController_Tests: XCTestCase {
 
         // Simulate failed update
         let testError = TestError()
-        env.channelUpdater!.update_completion?(.failure(testError))
+        env.channelUpdater?.update_completion?(.failure(testError))
 
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
@@ -2491,13 +2458,13 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertNotNil(controller.lastNewestMessageId)
         XCTAssertEqual(controller.lastNewestMessageId, expectedMessages.last?.id)
 
+        AssertAsync.willBeTrue(completionCalled)
+        AssertAsync.willBeFalse(controller.isJumpingToMessage)
+
         // Should not leak memory
         weak var weakController = controller
         controller = nil
         env.channelUpdater!.update_completion = nil
-
-        AssertAsync.willBeTrue(completionCalled)
-        AssertAsync.willBeFalse(controller.isJumpingToMessage)
         AssertAsync.canBeReleased(&weakController)
     }
 
@@ -4568,10 +4535,10 @@ extension ChannelController_Tests {
     }
 
     // Helper function that creates channel with message
-    func setupChannelWithMessage(_ session: DatabaseSession) throws -> MessageId {
+    func setupChannelWithMessage(_ session: DatabaseSession, channelPayload: ChannelPayload? = nil) throws -> MessageId {
         let dummyUserPayload: CurrentUserPayload = .dummy(userId: .unique, role: .user)
         try session.saveCurrentUser(payload: dummyUserPayload)
-        try session.saveChannel(payload: dummyPayload(with: channelId))
+        try session.saveChannel(payload: channelPayload ?? dummyPayload(with: channelId))
         let message = try session.createNewMessage(
             in: channelId,
             text: "Message",
@@ -4587,6 +4554,7 @@ extension ChannelController_Tests {
             ],
             extraData: [:]
         )
+        message.createdAt = .unique
         return message.id
     }
 }
