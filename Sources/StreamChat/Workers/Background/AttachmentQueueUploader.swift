@@ -148,7 +148,7 @@ class AttachmentQueueUploader: Worker {
         })
     }
 
-    /// Update the remove url for each attachment payload type. Every other payload
+    /// Update the remote url for each attachment payload type. Every other payload
     /// update should be handled by the ``AttachmentUploader``.
     private func updateRemoteUrl(of uploadedAttachment: inout UploadedAttachment) {
         var attachment = uploadedAttachment.attachment
