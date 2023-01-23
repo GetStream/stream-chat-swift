@@ -375,7 +375,7 @@ public class CustomUploadedAttachmentPostProcessor: UploadedAttachmentPostProces
     }
 }
 
-// Don't forget to inject it in the client config
+// Don't forget to inject it in the ChatClientConfig when creating your ChatClient
 config.uploadedAttachmentPostProcessor = CustomUploadedAttachmentPostProcessor()
 
 // Step 2
@@ -467,5 +467,7 @@ class WorkoutAttachmentView: UIView, ComponentsProvider {
     }
 }
 ```
+
+For step 2, you can put this snippet in your custom composer when the user inserts a new attachment. You can read [here](../guides/message-composer-custom-attachments.md) on how to customize the message composer to support custom attachments.
 
 As you can see, in the Step 3, the custom view is pretty much the same as the one from the previous examples, we only added an `UploadingOverlayView` to show the progress of the attachment. But, in order for this to work, it is required to do Step 1 and Step 2.

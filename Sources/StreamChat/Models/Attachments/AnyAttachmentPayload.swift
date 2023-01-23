@@ -58,7 +58,7 @@ public extension AnyAttachmentPayload {
     /// You can track the progress of the attachment upload in your custom `AttachmentViewInjector`.
     ///
     /// - Important: You will need to inject a `ChatClientConfig.uploadedAttachmentPostProcessor` and update the url of your
-    ///   custom attachment with the given remote url. You should read docs on how to properly do this.
+    ///   custom attachment with the given remote url. You should read the docs on how to properly do this here: https://getstream.io/chat/docs/sdk/ios/uikit/guides/working-with-attachments/#tracking-custom-attachment-upload-progress.
     ///
     /// - Parameters:
     ///   - localFileURL: The local file url in the user's device.
