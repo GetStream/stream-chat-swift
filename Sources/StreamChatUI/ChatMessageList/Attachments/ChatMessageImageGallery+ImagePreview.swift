@@ -50,7 +50,7 @@ extension ChatMessageGalleryView {
             .withAccessibilityIdentifier(identifier: "loadingIndicator")
 
         public private(set) lazy var uploadingOverlay = components
-            .imageUploadingOverlay
+            .uploadingOverlayView
             .init()
             .withoutAutoresizingMaskConstraints
             .withAccessibilityIdentifier(identifier: "uploadingOverlay")

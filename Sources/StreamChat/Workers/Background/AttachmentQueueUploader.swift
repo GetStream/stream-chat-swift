@@ -23,17 +23,19 @@ class AttachmentQueueUploader: Worker {
     @Atomic private var pendingAttachmentIDs: Set<AttachmentId> = []
 
     private let observer: ListDatabaseObserver<AttachmentDTO, AttachmentDTO>
-
+    private let attachmentPostProcessor: UploadedAttachmentPostProcessor?
     private let attachmentUpdater = AnyAttachmentUpdater()
 
     var minSignificantUploadingProgressChange: Double = 0.05
 
-    override init(database: DatabaseContainer, apiClient: APIClient) {
+    init(database: DatabaseContainer, apiClient: APIClient, attachmentPostProcessor: UploadedAttachmentPostProcessor?) {
         observer = .init(
             context: database.backgroundReadOnlyContext,
             fetchRequest: AttachmentDTO.pendingUploadFetchRequest(),
             itemCreator: { $0 }
         )
+        
+        self.attachmentPostProcessor = attachmentPostProcessor
 
         super.init(database: database, apiClient: apiClient)
 
@@ -131,13 +133,12 @@ class AttachmentQueueUploader: Worker {
             // Update attachment local state.
             attachmentDTO.localState = newState
 
-            if let uploadedAttachment = uploadedAttachment {
-                var attachment = uploadedAttachment.attachment
-                let remoteUrl = uploadedAttachment.remoteURL
-
-                self?.updateRemoteUrl(of: &attachment, with: remoteUrl)
-
-                attachmentDTO.data = attachment.payload
+            if var uploadedAttachment = uploadedAttachment {
+                self?.updateRemoteUrl(of: &uploadedAttachment)
+                if let processedAttachment = self?.attachmentPostProcessor?.process(uploadedAttachment: uploadedAttachment) {
+                    uploadedAttachment = processedAttachment
+                }
+                attachmentDTO.data = uploadedAttachment.attachment.payload
             }
         }, completion: {
             if let error = $0 {
@@ -147,26 +148,28 @@ class AttachmentQueueUploader: Worker {
         })
     }
 
-    /// Update the remove url for each attachment payload type. Every other payload
+    /// Update the remote url for each attachment payload type. Every other payload
     /// update should be handled by the ``AttachmentUploader``.
-    private func updateRemoteUrl(of attachment: inout AnyChatMessageAttachment, with url: URL) {
-        let attachmentUpdater = AnyAttachmentUpdater()
+    private func updateRemoteUrl(of uploadedAttachment: inout UploadedAttachment) {
+        var attachment = uploadedAttachment.attachment
 
         attachmentUpdater.update(&attachment, forPayload: ImageAttachmentPayload.self) { payload in
-            payload.imageURL = url
+            payload.imageURL = uploadedAttachment.remoteURL
         }
 
         attachmentUpdater.update(&attachment, forPayload: VideoAttachmentPayload.self) { payload in
-            payload.videoURL = url
+            payload.videoURL = uploadedAttachment.remoteURL
         }
 
         attachmentUpdater.update(&attachment, forPayload: AudioAttachmentPayload.self) { payload in
-            payload.audioURL = url
+            payload.audioURL = uploadedAttachment.remoteURL
         }
 
         attachmentUpdater.update(&attachment, forPayload: FileAttachmentPayload.self) { payload in
-            payload.assetURL = url
+            payload.assetURL = uploadedAttachment.remoteURL
         }
+
+        uploadedAttachment.attachment = attachment
     }
 }
 

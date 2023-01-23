@@ -93,4 +93,19 @@ final class AnyAttachmentPayload_Tests: XCTestCase {
             )
         )
     }
+
+    func test_whenInitWithCustomPayload() throws {
+        struct CustomPayload: AttachmentPayload {
+            static var type: AttachmentType = .init(rawValue: "custom")
+
+            var calories = 0
+        }
+
+        let sut = AnyAttachmentPayload(localFileURL: .localYodaImage, customPayload: CustomPayload(calories: 20))
+        let payload = try XCTUnwrap(sut.payload as? CustomPayload)
+
+        XCTAssertEqual(sut.localFileURL, .localYodaImage)
+        XCTAssertEqual(sut.type, "custom")
+        XCTAssertEqual(payload.calories, 20)
+    }
 }

@@ -30,7 +30,7 @@ open class VideoAttachmentGalleryPreview: _View, ThemeProvider {
 
     /// An uploading overlay that shows video uploading progress
     open private(set) lazy var uploadingOverlay = components
-        .imageUploadingOverlay.init()
+        .uploadingOverlayView.init()
         .withoutAutoresizingMaskConstraints
 
     /// A button displaying `play` icon.
