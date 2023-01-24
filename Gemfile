@@ -17,7 +17,7 @@ gem 'rubocop-performance'
 gem 'rubocop-require_tools'
 gem 'sinatra'
 gem 'slather'
-gem 'stream-chat-ruby'
+gem 'stream-chat-ruby', '3.0.0'
 gem 'xcode-install'
 gem 'xctest_list'
 
