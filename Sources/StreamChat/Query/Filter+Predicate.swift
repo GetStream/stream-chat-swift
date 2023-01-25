@@ -9,7 +9,11 @@ extension Filter {
         guard let op = FilterOperator(rawValue: self.operator) else { return nil }
 
         let unableToResolve: () -> NSPredicate? = {
-            let message = ""
+            let message = """
+            The filter passed to the query could not be resolved at runtime.
+            Please check the documentation at: https://getstream.io/chat/docs/sdk/ios/client/controllers/channels/#%EF%B8%8F-when-the-filter-cannot-be-auto-resolved
+            Otherwise you can have issues when multiples channel list controllers are alive at the same time
+            """
             log.assertionFailure(message)
             return nil
         }

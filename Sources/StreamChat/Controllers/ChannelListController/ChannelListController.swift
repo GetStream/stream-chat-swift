@@ -18,6 +18,8 @@ extension ChatClient {
     /// When passing `filter`, make sure the runtime logic matches the one expected by the filter passed in the query object.
     /// If they don't match, there can be jumps when loading the list.
     ///
+    /// Find more information about the `filter` block here: https://getstream.io/chat/docs/sdk/ios/client/controllers/channels/#%EF%B8%8F-when-the-filter-cannot-be-auto-resolved
+    ///
     /// - Parameters:
     ///   - query: The query specify the filter and sorting of the channels the controller should fetch.
     ///   - filter: A block that determines whether the channels belongs to this controller.

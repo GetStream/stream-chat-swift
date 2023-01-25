@@ -54,15 +54,34 @@ let compoundFilter: Filter<ChannelListFilterScope> = .and([
 
 The `query.sort` is an array of sorting options. Sorting options are applied based on their order in the array so the first option has the highest impact while the others are used mainly as a tiebreakers. By default, the channel list is sorted by `updated_at`.
 
+:::note
+If your query is filtering based on custom data, please [make sure you pass a filter block when creating a controller](#%EF%B8%8F-when-the-filter-cannot-be-auto-resolved).
+:::
+
 ### 2. Create a controller
 
-The controller can be created using `ChatClient`:
+The controller can be created using an instance of `ChatClient`:
 ```swift
-let controller = ChatClient.shared.channelListController(query: query, filter: { channel in
-    // the filtering logic goes here.
-    return true
+let client = ChatClient.shared
+let controller = client.channelListController(query: query)
+```
+
+The filter passed in `query.filter` is going to be used to filter out the channels that do not belong to the list when receiving updates.
+
+#### :warning: When the filter cannot be auto-resolved:
+
+In certain edge cases, it can be that we cannot resolve at runtime the filter you passed in the query. In that case, you will either see an assertion or a log in the console pointing you to this documentation.
+
+We have a fallback that can be used when this happens. The method that is used to create a `ChatChannelListController` also accepts a `filter` block
+```swift
+let client = ChatClient.shared
+let controller = client.channelListController(query: query, filter: { channel in
+    // The filtering logic goes here.
+    return true/false
 })
 ```
+
+This logic on the block should match the one in  `query.filter`
 
 The `filter` closure is needed to dynamically link/unlink channels to the list during the controller's lifecycle to keep the list in sync with the remote:
 
@@ -71,11 +90,7 @@ When `filter` returns `true`, the new/updated channel is linked/stays linked to 
 When `filter` returns `false`, the new/updated channel is not linked/is unlinked from the channel list.
 
 :::note
-It is expected that the logic on the `filter` closure matches the one in `query.filter`.
-:::
-
-:::note
-Given the complex nature of `Filter`, having generic logic capable of using `query.filter` at runtime to determine if a channel meets the criteria is extremely expensive and complex. Instead, having a block that checks for the particular needs of the use case is much cheaper.
+It is expected that the logic on the `filter` closure matches exactly the one in `query.filter`.
 :::
 
 ### 3. Set the delegate
