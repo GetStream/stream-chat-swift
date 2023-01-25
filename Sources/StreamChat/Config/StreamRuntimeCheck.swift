@@ -14,4 +14,9 @@ public enum StreamRuntimeCheck {
     ///
     ///  Enables background mapping of DB models
     public static var _isBackgroundMappingEnabled = false
+
+    /// For *internal use* only
+    ///
+    ///  Enables query filter to predicate auto-resolving
+    public static var _isFilterAutoResolvingEnabled = true
 }
