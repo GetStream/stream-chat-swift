@@ -46,4 +46,8 @@ public enum ChannelCodingKeys: String, CodingKey, CaseIterable {
     /// Cooldown duration for the channel, if it's in slow mode.
     /// This value will be 0 if the channel is not in slow mode.
     case cooldownDuration = "cooldown"
+
+    // For FilterKey
+    /// The id of the user who created the channel.
+    case createdById = "created_by_id"
 }

@@ -39,6 +39,10 @@ enum MessagePayloadsCodingKeys: String, CodingKey, CaseIterable {
     case mml
     case imageLabels = "image_labels"
     case shadowed
+
+    // For FilterKey
+    case authorId = "user.id"
+    case attachmentsType = "attachments.type"
 }
 
 extension MessagePayload {

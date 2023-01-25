@@ -57,9 +57,33 @@ public protocol AnyMessageSearchFilterScope {}
 public struct MessageSearchFilterScope: FilterScope, AnyMessageSearchFilterScope {}
 
 public extension FilterKey where Scope: AnyMessageSearchFilterScope {
-    static var text: FilterKey<Scope, String> { "text" }
-    static var authorId: FilterKey<Scope, UserId> { "user.id" }
-    static var hasAttachmentsOfType: FilterKey<Scope, AttachmentType> { "attachments.type" }
+    static var text: FilterKey<Scope, String> {
+        .init(
+            payloadKey: MessagePayloadsCodingKeys.text,
+            dtoKey: #keyPath(MessageDTO.text)
+        )
+    }
+
+    static var authorId: FilterKey<Scope, UserId> {
+        .init(
+            payloadKey: MessagePayloadsCodingKeys.authorId,
+            dtoKey: #keyPath(MessageDTO.user.id)
+        )
+    }
+
+    static var hasAttachmentsOfType: FilterKey<Scope, AttachmentType> {
+        .init(
+            payloadKey: MessagePayloadsCodingKeys.attachmentsType,
+            dtoKey: #keyPath(MessageDTO.attachments.type)
+        )
+    }
+
+    fileprivate static var attachments: FilterKey<Scope, AttachmentType> {
+        .init(
+            payloadKey: MessagePayloadsCodingKeys.attachments,
+            dtoKey: #keyPath(MessageDTO.attachments)
+        )
+    }
 }
 
 public extension Filter where Scope: AnyMessageSearchFilterScope {
@@ -74,12 +98,12 @@ public extension Filter where Scope: AnyMessageSearchFilterScope {
 
     // Filter messages which contain attachments.
     static var withAttachments: Filter<Scope> {
-        .exists(FilterKey<Scope, String>(stringLiteral: "attachments"))
+        .exists(.attachments)
     }
 
     // Filter messages that don't contain attachments.
     static var withoutAttachments: Filter<Scope> {
-        .exists(FilterKey<Scope, String>(stringLiteral: "attachments"), exists: false)
+        .exists(.attachments, exists: false)
     }
 }
 
