@@ -1160,6 +1160,8 @@
 		ADD2A99828FF227D00A83305 /* ImageSizeCalculator_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD2A99528FF227800A83305 /* ImageSizeCalculator_Tests.swift */; };
 		ADD2A99A28FF4F4B00A83305 /* StreamCDN.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD2A99928FF4F4B00A83305 /* StreamCDN.swift */; };
 		ADD2A99B28FF4F4B00A83305 /* StreamCDN.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD2A99928FF4F4B00A83305 /* StreamCDN.swift */; };
+		ADDD3CB829690AE8004516B2 /* Filter+Predicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDD3CB729690AE8004516B2 /* Filter+Predicate.swift */; };
+		ADDD3CB929690AE8004516B2 /* Filter+Predicate.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDD3CB729690AE8004516B2 /* Filter+Predicate.swift */; };
 		ADDFDE2B2779EC8A003B3B07 /* Atlantis in Frameworks */ = {isa = PBXBuildFile; productRef = ADDFDE2A2779EC8A003B3B07 /* Atlantis */; };
 		ADE40043291B1A510000C98B /* AttachmentUploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADE40042291B1A510000C98B /* AttachmentUploader.swift */; };
 		ADE40044291B1A510000C98B /* AttachmentUploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADE40042291B1A510000C98B /* AttachmentUploader.swift */; };
@@ -1805,8 +1807,7 @@
 		C1FC2FA02742579D0062530F /* FoundationSecurity.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C74F5273936D900F93B34 /* FoundationSecurity.swift */; };
 		C1FC2FA12742579D0062530F /* Engine.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C7508273936DA00F93B34 /* Engine.swift */; };
 		C1FC2FA22742579D0062530F /* WSCompression.swift in Sources */ = {isa = PBXBuildFile; fileRef = C13C7504273936D900F93B34 /* WSCompression.swift */; };
-		C1FFD9F927ECC7C7008A6848 /* Filter+ChatChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1FFD9F827ECC7C7008A6848 /* Filter+ChatChannel.swift */; };
-		C1FFD9FA27ECC7C7008A6848 /* Filter+ChatChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1FFD9F827ECC7C7008A6848 /* Filter+ChatChannel.swift */; };
+		C1FC97B8297E9E150065BE5B /* Filter+Predicate_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1FC97B7297E9E150065BE5B /* Filter+Predicate_Tests.swift */; };
 		CF01EB7B288A2B7200B426B8 /* ChatChannelListLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF01EB7A288A2B7200B426B8 /* ChatChannelListLoadingView.swift */; };
 		CF01EB7C288A2B7200B426B8 /* ChatChannelListLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF01EB7A288A2B7200B426B8 /* ChatChannelListLoadingView.swift */; };
 		CF14397D2886374900898ECA /* ChatChannelListLoadingViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF14397C2886374900898ECA /* ChatChannelListLoadingViewCell.swift */; };
@@ -3373,6 +3374,7 @@
 		ADD2A99528FF227800A83305 /* ImageSizeCalculator_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageSizeCalculator_Tests.swift; sourceTree = "<group>"; };
 		ADD2A99928FF4F4B00A83305 /* StreamCDN.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamCDN.swift; sourceTree = "<group>"; };
 		ADD5A9E725DE8AF6006DC88A /* ChatSuggestionsVC_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatSuggestionsVC_Tests.swift; sourceTree = "<group>"; };
+		ADDD3CB729690AE8004516B2 /* Filter+Predicate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Filter+Predicate.swift"; sourceTree = "<group>"; };
 		ADE40042291B1A510000C98B /* AttachmentUploader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentUploader.swift; sourceTree = "<group>"; };
 		ADE88A132949453200C0F084 /* ChatMessageListRouter_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageListRouter_Mock.swift; sourceTree = "<group>"; };
 		ADEA7F21261D2F8C00CA2289 /* chewbacca.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = chewbacca.jpg; sourceTree = "<group>"; };
@@ -3516,7 +3518,7 @@
 		C1EE5AA228B63CA300DD5D27 /* CallRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallRepository.swift; sourceTree = "<group>"; };
 		C1EFF3F2285E459C0057B91B /* IdentifiableModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifiableModel.swift; sourceTree = "<group>"; };
 		C1EFF3F728633B5D0057B91B /* IdentifiableModel_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifiableModel_Tests.swift; sourceTree = "<group>"; };
-		C1FFD9F827ECC7C7008A6848 /* Filter+ChatChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Filter+ChatChannel.swift"; sourceTree = "<group>"; };
+		C1FC97B7297E9E150065BE5B /* Filter+Predicate_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Filter+Predicate_Tests.swift"; sourceTree = "<group>"; };
 		CF01EB7A288A2B7200B426B8 /* ChatChannelListLoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelListLoadingView.swift; sourceTree = "<group>"; };
 		CF14397C2886374900898ECA /* ChatChannelListLoadingViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelListLoadingViewCell.swift; sourceTree = "<group>"; };
 		CF14397F288637AD00898ECA /* ChatChannelListLoadingViewCellContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelListLoadingViewCellContentView.swift; sourceTree = "<group>"; };
@@ -4251,7 +4253,7 @@
 				792A4F422480107A00EAF71D /* ChannelQuery.swift */,
 				79C5CBF025F66E9700D98001 /* ChannelWatcherListQuery.swift */,
 				792A4F432480107A00EAF71D /* Filter.swift */,
-				C1FFD9F827ECC7C7008A6848 /* Filter+ChatChannel.swift */,
+				ADDD3CB729690AE8004516B2 /* Filter+Predicate.swift */,
 				7978FBB926E15A58002CA2DF /* MessageSearchQuery.swift */,
 				792A4F442480107A00EAF71D /* Pagination.swift */,
 				792A4F4A248010A600EAF71D /* QueryOptions.swift */,
@@ -5989,6 +5991,7 @@
 				DA6AC7F22538724F009C1B39 /* Pagination_Tests.swift */,
 				A3C7BAD427E4E11D00BBF4FA /* UserListFilterScope_Tests.swift */,
 				DA8407292525EB2F005A0F62 /* UserListQuery_Tests.swift */,
+				C1FC97B7297E9E150065BE5B /* Filter+Predicate_Tests.swift */,
 				A364D0B827D12A790029857A /* PinnedMessages */,
 				A364D0B927D12A900029857A /* Sorting */,
 			);
@@ -9401,6 +9404,7 @@
 				C14A46532845043300EF498E /* ThreadSafeWeakCollection.swift in Sources */,
 				792A4F472480107A00EAF71D /* Filter.swift in Sources */,
 				C1FC2F912742579D0062530F /* FoundationHTTPServerHandler.swift in Sources */,
+				ADDD3CB829690AE8004516B2 /* Filter+Predicate.swift in Sources */,
 				22692C8F25D18097007C41D0 /* ChatMessageGiphyAttachment.swift in Sources */,
 				792A4F4B248010A600EAF71D /* QueryOptions.swift in Sources */,
 				792FCB4B24A3D52A000290C7 /* DatabaseSession.swift in Sources */,
@@ -9481,7 +9485,6 @@
 				7908829C2546D95A00896F03 /* FlagMessagePayload.swift in Sources */,
 				DA0BB1612513B5F200CAEFBD /* StringInterpolation+Extensions.swift in Sources */,
 				64C8C86E26934C6100329F82 /* UserInfo.swift in Sources */,
-				C1FFD9F927ECC7C7008A6848 /* Filter+ChatChannel.swift in Sources */,
 				C1FC2F962742579D0062530F /* Transport.swift in Sources */,
 				C1FC2F9A2742579D0062530F /* WSEngine.swift in Sources */,
 				799C9479247E3DEA001F1104 /* StreamChatModel.xcdatamodeld in Sources */,
@@ -9726,6 +9729,7 @@
 				8A0C3BC924C0BBAB00CAFD19 /* UserEvents_Tests.swift in Sources */,
 				A34ECB4627F5C9C200A804C1 /* MessageEvents_IntegrationTests.swift in Sources */,
 				F62BE78325062FC400D13B86 /* SyncEndpoint_Tests.swift in Sources */,
+				C1FC97B8297E9E150065BE5B /* Filter+Predicate_Tests.swift in Sources */,
 				88EA9AE825471EF4007EE76B /* MessageReactionRequestPayload_Tests.swift in Sources */,
 				64C80615262EDA9600B1F7AD /* ChatMessage_Tests.swift in Sources */,
 				F63CC37524E592DD0052844D /* MemberEventObserver_Tests.swift in Sources */,
@@ -10217,6 +10221,7 @@
 				C121E8CE274544B100023E4C /* Sorting.swift in Sources */,
 				C121E8CF274544B100023E4C /* ChannelListSortingKey.swift in Sources */,
 				C121E8D0274544B100023E4C /* UserListSortingKey.swift in Sources */,
+				ADDD3CB929690AE8004516B2 /* Filter+Predicate.swift in Sources */,
 				C121E8D1274544B100023E4C /* ChannelMemberListSortingKey.swift in Sources */,
 				C121E8D2274544B100023E4C /* ClientError.swift in Sources */,
 				C143789127BC03EE00E23965 /* EndpointPath.swift in Sources */,
@@ -10273,7 +10278,6 @@
 				C121E8FE274544B200023E4C /* StringHTTPHandler.swift in Sources */,
 				C121E8FF274544B200023E4C /* FoundationHTTPServerHandler.swift in Sources */,
 				C121E900274544B200023E4C /* Framer.swift in Sources */,
-				C1FFD9FA27ECC7C7008A6848 /* Filter+ChatChannel.swift in Sources */,
 				C121E901274544B200023E4C /* Compression.swift in Sources */,
 				C121E902274544B200023E4C /* WSCompression.swift in Sources */,
 				C121E903274544B200023E4C /* WebSocket.swift in Sources */,

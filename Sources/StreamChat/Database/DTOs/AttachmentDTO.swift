@@ -15,7 +15,7 @@ class AttachmentDTO: NSManagedObject {
     }
 
     /// An attachment type.
-    @NSManaged private var type: String?
+    @NSManaged var type: String?
     var attachmentType: AttachmentType {
         get { AttachmentType(rawValue: type ?? AttachmentType.unknown.rawValue) }
         set { type = newValue.rawValue }

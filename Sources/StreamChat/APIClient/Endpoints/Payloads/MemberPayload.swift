@@ -27,7 +27,7 @@ struct MemberContainerPayload: Decodable {
 }
 
 struct MemberPayload: Decodable {
-    private enum CodingKeys: String, CodingKey {
+    enum CodingKeys: String, CodingKey {
         case user
         case userId = "user_id"
         case role = "channel_role"

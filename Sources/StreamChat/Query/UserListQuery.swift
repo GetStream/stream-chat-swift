@@ -14,46 +14,111 @@ public class UserListFilterScope: FilterScope, AnyUserListFilterScope {}
 /// Non extra-data-specific filer keys for channel list.
 public extension FilterKey where Scope: AnyUserListFilterScope {
     /// A filter key for matching the `id` value.
-    static var id: FilterKey<Scope, UserId> { "id" }
+    static var id: FilterKey<Scope, UserId> {
+        .init(
+            payloadKey: UserPayloadsCodingKeys.id,
+            dtoKey: #keyPath(UserDTO.id)
+        )
+    }
 
     /// A filter key for matching the `name` value.
-    static var name: FilterKey<Scope, String> { "name" }
+    static var name: FilterKey<Scope, String> {
+        .init(
+            payloadKey: UserPayloadsCodingKeys.name,
+            dtoKey: #keyPath(UserDTO.name)
+        )
+    }
 
     /// A filter key for matching the `image` value.
-    static var imageURL: FilterKey<Scope, URL> { "image" }
+    static var imageURL: FilterKey<Scope, URL> {
+        .init(
+            payloadKey: UserPayloadsCodingKeys.imageURL,
+            dtoKey: #keyPath(UserDTO.imageURL)
+        )
+    }
 
     /// A filter key for matching the `role` value.
-    static var role: FilterKey<Scope, UserRole> { "role" }
+    static var role: FilterKey<Scope, UserRole> {
+        .init(
+            payloadKey: UserPayloadsCodingKeys.role,
+            dtoKey: #keyPath(UserDTO.userRoleRaw)
+        )
+    }
 
     /// A filter key for matching the `isOnline` value.
-    static var isOnline: FilterKey<Scope, Bool> { "online" }
+    static var isOnline: FilterKey<Scope, Bool> {
+        .init(
+            payloadKey: UserPayloadsCodingKeys.isOnline,
+            dtoKey: #keyPath(UserDTO.isOnline)
+        )
+    }
 
     /// A filter key for matching the `isBanned` value.
-    static var isBanned: FilterKey<Scope, Bool> { "banned" }
+    static var isBanned: FilterKey<Scope, Bool> {
+        .init(
+            payloadKey: UserPayloadsCodingKeys.isBanned,
+            dtoKey: #keyPath(UserDTO.isBanned)
+        )
+    }
 
     /// A filter key for matching the `createdAt` value.
-    static var createdAt: FilterKey<Scope, Date> { "created_at" }
+    static var createdAt: FilterKey<Scope, Date> {
+        .init(
+            payloadKey: UserPayloadsCodingKeys.createdAt,
+            dtoKey: #keyPath(UserDTO.userCreatedAt)
+        )
+    }
 
     /// A filter key for matching the `updatedAt` value.
-    static var updatedAt: FilterKey<Scope, Date> { "updated_at" }
+    static var updatedAt: FilterKey<Scope, Date> {
+        .init(
+            payloadKey: UserPayloadsCodingKeys.updatedAt,
+            dtoKey: #keyPath(UserDTO.userUpdatedAt)
+        )
+    }
 
     /// A filter key for matching the `lastActiveAt` value.
-    static var lastActiveAt: FilterKey<Scope, Date> { "last_active" }
+    static var lastActiveAt: FilterKey<Scope, Date> {
+        .init(
+            payloadKey: UserPayloadsCodingKeys.lastActiveAt,
+            dtoKey: #keyPath(UserDTO.lastActivityAt)
+        )
+    }
 
     /// A filter key for matching the `isInvisible` value.
-    static var isInvisible: FilterKey<Scope, Bool> { "invisible" }
+    static var isInvisible: FilterKey<Scope, Bool> {
+        .init(
+            payloadKey: UserPayloadsCodingKeys.isInvisible,
+            dtoKey: #keyPath(UserDTO.currentUser.isInvisible)
+        )
+    }
 
     /// A filter key for matching the `unreadChannelsCount` value.
-    static var unreadChannelsCount: FilterKey<Scope, Int> { "unread_channels" }
+    static var unreadChannelsCount: FilterKey<Scope, Int> {
+        .init(
+            payloadKey: UserPayloadsCodingKeys.unreadChannelsCount,
+            dtoKey: #keyPath(UserDTO.currentUser.unreadChannelsCount)
+        )
+    }
 
     /// A filter key for matching the `unreadMessagesCount` value.
-    static var unreadMessagesCount: FilterKey<Scope, Int> { "total_unread_count" }
+    static var unreadMessagesCount: FilterKey<Scope, Int> {
+        .init(
+            payloadKey: UserPayloadsCodingKeys.unreadMessagesCount,
+            dtoKey: #keyPath(UserDTO.currentUser.unreadMessagesCount)
+        )
+    }
 
     /// A filter key for matching the `isAnonymous` value.
     static var isAnonymous: FilterKey<Scope, Bool> { "anon" }
 
     /// A filter key for matching the `teams` value.
-    static var teams: FilterKey<Scope, TeamId> { "teams" }
+    static var teams: FilterKey<Scope, TeamId> {
+        .init(
+            payloadKey: UserPayloadsCodingKeys.teams,
+            dtoKey: #keyPath(UserDTO.teams)
+        )
+    }
 }
 
 /// A query is used for querying specific users from backend.

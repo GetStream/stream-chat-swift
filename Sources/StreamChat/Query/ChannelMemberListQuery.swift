@@ -19,7 +19,12 @@ public extension FilterKey where Scope: AnyMemberListFilterScope {
 
     /// Filter key matching the id of the user
     /// Supported operators: `equal`, `notEqual`, `in`, `notIn`
-    static var id: FilterKey<Scope, String> { "id" }
+    static var id: FilterKey<Scope, String> {
+        .init(
+            payloadKey: MemberPayload.CodingKeys.userId,
+            dtoKey: #keyPath(MemberDTO.id)
+        )
+    }
 
     /// Filter key matching the name of the user
     /// Supported operators: `equal`, `notEqual`, `in`, `notIn`, `autocomplete`, `query`
@@ -27,7 +32,12 @@ public extension FilterKey where Scope: AnyMemberListFilterScope {
 
     /// Filter key matching the banned status
     /// Supported operators: `equal`
-    static var banned: FilterKey<Scope, Bool> { "banned" }
+    static var banned: FilterKey<Scope, Bool> {
+        .init(
+            payloadKey: MemberPayload.CodingKeys.isBanned,
+            dtoKey: #keyPath(MemberDTO.isBanned)
+        )
+    }
 
     /// Filter key matching the invite status
     /// Supported operators: `equal`
@@ -39,11 +49,21 @@ public extension FilterKey where Scope: AnyMemberListFilterScope {
 
     /// Filter key matching the time that the member was created
     /// Supported operators: `equal`, `greaterThan`, `lessThan`, `greaterOrEqual`, `lessOrEqual`, `notEqual`
-    static var createdAt: FilterKey<Scope, Date> { "created_at" }
+    static var createdAt: FilterKey<Scope, Date> {
+        .init(
+            payloadKey: MemberPayload.CodingKeys.createdAt,
+            dtoKey: #keyPath(MemberDTO.memberCreatedAt)
+        )
+    }
 
     /// Filter key matching the time the member was last updated
     /// Supported operators: `equal`, `greaterThan`, `lessThan`, `greaterOrEqual`, `lessOrEqual`, `notEqual`
-    static var updatedAt: FilterKey<Scope, Date> { "updated_at" }
+    static var updatedAt: FilterKey<Scope, Date> {
+        .init(
+            payloadKey: MemberPayload.CodingKeys.updatedAt,
+            dtoKey: #keyPath(MemberDTO.memberUpdatedAt)
+        )
+    }
 
     /// Filter key matching the time the user was last active
     /// Supported operators: `equal`, `greaterThan`, `lessThan`, `greaterOrEqual`, `lessOrEqual`, `notEqual`

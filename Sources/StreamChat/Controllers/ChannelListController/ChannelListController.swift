@@ -218,12 +218,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
             }
         }
 
-        do {
-            return try deprecatedFallback() ?? channel.meets(query.filter)
-        } catch {
-            log.error("Unable to resolve complex filter. Please pass a `filter` block when intializing ChatChannelListController")
-        }
-        return true
+        return deprecatedFallback() ?? false
     }
 
     private func handleUnlinkedChannels(_ changes: [ListChange<ChatChannel>]) {
