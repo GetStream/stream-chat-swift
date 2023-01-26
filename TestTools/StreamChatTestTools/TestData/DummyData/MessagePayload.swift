@@ -29,7 +29,7 @@ extension MessagePayload {
         extraData: [String: RawJSON] = [:],
         latestReactions: [MessageReactionPayload] = [],
         ownReactions: [MessageReactionPayload] = [],
-        createdAt: Date? = nil,
+        createdAt: Date? = .unique,
         deletedAt: Date? = nil,
         updatedAt: Date = .unique,
         channel: ChannelDetailPayload? = nil,
