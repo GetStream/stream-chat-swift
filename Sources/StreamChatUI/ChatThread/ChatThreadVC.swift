@@ -146,6 +146,18 @@ open class ChatThreadVC: _ViewController,
         keyboardHandler.stop()
     }
 
+    // TODO: Jump to message
+    open func loadPreviousMessages() {
+        guard !isLoadingPreviousMessages else {
+            return
+        }
+        isLoadingPreviousMessages = true
+
+        messageController.loadPreviousReplies { [weak self] _ in
+            self?.isLoadingPreviousMessages = false
+        }
+    }
+
     // MARK: - ChatMessageListVCDataSource
 
     public var messages: [ChatMessage] {
@@ -155,25 +167,6 @@ open class ChatThreadVC: _ViewController,
         set {
             replies = newValue
         }
-    }
-
-    // JUMPTODO:
-
-    public var messagePendingScrolling: ChatMessage?
-
-    // JUMPTODO: Remove
-    public var isLoadingPreviousMessages: Bool = false
-
-    public var isFirstPageLoaded: Bool {
-        false
-    }
-
-    public var isJumpingToMessage: Bool {
-        false
-    }
-
-    public var pageSize: Int {
-        25
     }
 
     // This property is a bit redundant after the difference kit changes. Should be removed in v5.
@@ -216,21 +209,30 @@ open class ChatThreadVC: _ViewController,
         return layoutOptions
     }
 
-    open func chatMessageListVCShouldLoadFirstPage(_ vc: ChatMessageListVC) {
-        // JUMPTODO:
+    // MARK: Missing jump to message implementation
+
+    // TODO: Jump to message
+    public var messagePendingScrolling: ChatMessage?
+
+    // TODO: Jump to message
+    public var isLoadingPreviousMessages: Bool = false
+
+    // TODO: Jump to message
+    public var isFirstPageLoaded: Bool {
+        false
     }
 
-    open func loadPreviousMessages() {
-        // JUMPTODO:
-        guard !isLoadingPreviousMessages else {
-            return
-        }
-        isLoadingPreviousMessages = true
-
-        messageController.loadPreviousReplies { [weak self] _ in
-            self?.isLoadingPreviousMessages = false
-        }
+    // TODO: Jump to message
+    public var isJumpingToMessage: Bool {
+        false
     }
+
+    public var pageSize: Int {
+        messageController.repliesPageSize
+    }
+
+    // TODO: Jump to message
+    open func chatMessageListVCShouldLoadFirstPage(_ vc: ChatMessageListVC) {}
 
     // MARK: - ChatMessageListVCDelegate
 
