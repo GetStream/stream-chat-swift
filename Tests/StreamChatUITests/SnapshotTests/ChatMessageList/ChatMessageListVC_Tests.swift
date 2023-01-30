@@ -145,13 +145,13 @@ final class ChatMessageListVC_Tests: XCTestCase {
     func test_messageIsContentEqual_whenCustomAttachmentDataDifferent_returnsFalse() throws {
         struct CustomAttachment: AttachmentPayload {
             static var type: AttachmentType = .unknown
-
+            
             var comments: Int
             init(comments: Int) {
                 self.comments = comments
             }
         }
-
+        
         let attachmentId = AttachmentId.unique
         let makeCustomAttachmentWithComments: (Int) throws -> AnyChatMessageAttachment = { comments in
             let attachmentWithCommentsPayload = AnyAttachmentPayload(
@@ -167,19 +167,21 @@ final class ChatMessageListVC_Tests: XCTestCase {
                 uploadingState: nil
             )
         }
-
+        
         let attachmentWith4Comments = try makeCustomAttachmentWithComments(4)
         let attachmentWith5Comments = try makeCustomAttachmentWithComments(5)
-
+        
         // When attachments are the same, should be equal
         let messageSame1 = ChatMessage.mock(id: "1", text: "same", attachments: [attachmentWith4Comments])
         let messageSame2 = ChatMessage.mock(id: "1", text: "same", attachments: [attachmentWith4Comments])
         XCTAssert(messageSame1.isContentEqual(to: messageSame2))
-
+        
         // When attachments are different, should not be equal
         let messageDiff1 = ChatMessage.mock(id: "1", text: "same", attachments: [attachmentWith4Comments])
         let messageDiff2 = ChatMessage.mock(id: "1", text: "same", attachments: [attachmentWith5Comments])
         XCTAssertFalse(messageDiff1.isContentEqual(to: messageDiff2))
+    }
+
     func test_isScrollToBottomVisible_whenLastCellNotVisible_whenMoreContentThanOnePage_whenFirstPageIsLoaded_returnsTrue() {
         XCTFail()
     }

@@ -6,6 +6,7 @@ import Foundation
 @testable import StreamChat
 
 public class ChatChannelController_Mock: ChatChannelController {
+
     /// Creates a new mock instance of `ChatChannelController`.
     public static func mock(chatClientConfig: ChatClientConfig? = nil) -> ChatChannelController_Mock {
         .init(
@@ -33,6 +34,11 @@ public class ChatChannelController_Mock: ChatChannelController {
             channelListQuery: nil,
             client: client
         )
+    }
+
+    public var hasLoadedAllNextMessages_mock: Bool? = true
+    public override var hasLoadedAllNextMessages: Bool {
+        hasLoadedAllNextMessages_mock ?? super.hasLoadedAllNextMessages
     }
 
     public var channel_mock: ChatChannel?

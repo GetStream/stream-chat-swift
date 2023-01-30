@@ -144,6 +144,7 @@ open class ChatMessageListVC: _ViewController,
         scrollToLatestMessageButton.trailingAnchor.pin(equalTo: view.layoutMarginsGuide.trailingAnchor).isActive = true
         scrollToLatestMessageButton.widthAnchor.pin(equalTo: scrollToLatestMessageButton.heightAnchor).isActive = true
         scrollToLatestMessageButton.heightAnchor.pin(equalToConstant: 40).isActive = true
+        scrollToLatestMessageButton.isHidden = true
 
         if isDateOverlayEnabled {
             view.addSubview(dateOverlayView)
