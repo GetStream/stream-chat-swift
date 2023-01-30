@@ -219,7 +219,7 @@ open class ChatThreadVC: _ViewController,
 
     // TODO: Jump to message
     public var isFirstPageLoaded: Bool {
-        false
+        true
     }
 
     // TODO: Jump to message
