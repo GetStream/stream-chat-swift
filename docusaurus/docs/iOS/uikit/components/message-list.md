@@ -98,11 +98,11 @@ extension ChannelViewController: ChatMessageListVCDataSource {
         messageLayoutOptionsAt indexPath: IndexPath
     ) -> ChatMessageLayoutOptions {
         guard let channel = channelController.channel else { return [] }
-        return components.messageLayoutOptionsResolver.optionsForMessage(
+        return messageListVC.components.messageLayoutOptionsResolver.optionsForMessage(
             at: indexPath,
             in: channel,
             with: AnyRandomAccessCollection(channelController.messages),
-            appearance: appearance
+            appearance: messageListVC.appearance
         )
     }
 }
