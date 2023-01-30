@@ -82,10 +82,16 @@ extension StreamTestCase {
     private func startMockServer() {
         server = StreamMockServer()
         server.configure()
-        let result = server.start(port: in_port_t(MockServerConfiguration.port))
-        if !result {
-            XCTFail("Mock server failed on start")
+        
+        for _ in 0...3 {
+            let serverHasStarted = server.start(port: in_port_t(MockServerConfiguration.port))
+            if serverHasStarted {
+                return
+            }
+            server.stop()
         }
+        
+        XCTFail("Mock server failed on start")
     }
 
     private func startVideo() {
