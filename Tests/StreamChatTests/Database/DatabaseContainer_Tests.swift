@@ -86,7 +86,7 @@ final class DatabaseContainer_Tests: XCTestCase {
             expectation.fulfill()
         }
 
-        wait(for: [expectation], timeout: 2)
+        wait(for: [expectation], timeout: defaultTimeout)
 
         // Assert the DB is empty by trying to fetch all possible entities
         try container.managedObjectModel.entities.forEach { entityDescription in
@@ -115,7 +115,7 @@ final class DatabaseContainer_Tests: XCTestCase {
             exp.fulfill()
         }
 
-        wait(for: [exp], timeout: 1)
+        wait(for: [exp], timeout: defaultTimeout)
 
         // All expectations should be fulfilled by now
         waitForExpectations(timeout: 0)

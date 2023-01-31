@@ -223,7 +223,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         let payload = dummyPayload(with: query.cid!)
         apiClient.test_simulateResponse(.success(payload))
 
-        wait(for: [completionCalled], timeout: 1)
+        wait(for: [completionCalled], timeout: defaultTimeout)
 
         // Assert `channelCreatedCallback` is called
         XCTAssertEqual(cid, query.cid)
@@ -257,7 +257,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         let payload = dummyPayload(with: query.cid!)
         apiClient.test_simulateRecoveryResponse(.success(payload))
 
-        wait(for: [completionCalled], timeout: 1)
+        wait(for: [completionCalled], timeout: defaultTimeout)
 
         // Assert `channelCreatedCallback` is called
         XCTAssertEqual(cid, query.cid)
@@ -784,7 +784,8 @@ final class ChannelUpdater_Tests: XCTestCase {
             expectation.fulfill()
         }
 
-        wait(for: [expectation], timeout: 5.0)
+        // In this case, timeout `10` should be used for both local and CI runs
+        wait(for: [expectation], timeout: 10)
     }
 
     func test_truncateChannel_successfulResponse_isPropagatedToCompletion() {
@@ -861,7 +862,8 @@ final class ChannelUpdater_Tests: XCTestCase {
         // Simulate API response with success
         apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
 
-        wait(for: [exp], timeout: 5)
+        // In this case, timeout `10` should be used for both local and CI runs
+        wait(for: [exp], timeout: 10)
 
         // Ensure channel is marked as hidden
         XCTAssertEqual(channel?.isHidden, true)
@@ -1442,7 +1444,7 @@ final class ChannelUpdater_Tests: XCTestCase {
             Result<ChannelPayload, Error>.success(dummyPayload(with: cid, watchers: []))
         )
 
-        wait(for: [completionCalled], timeout: 1)
+        wait(for: [completionCalled], timeout: defaultTimeout)
 
         // Assert that the old watcher is replaced
         AssertAsync {

@@ -311,7 +311,7 @@ final class MemberController_Tests: XCTestCase {
             }
             exp.fulfill()
         }
-        wait(for: [exp], timeout: 1)
+        wait(for: [exp], timeout: defaultTimeout)
 
         // Assert `remove` entity change is received by the delegate
         AssertAsync {

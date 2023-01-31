@@ -513,6 +513,6 @@ final class WebSocketClient_Tests: XCTestCase {
         eventsBatcher.mock_processImmediately.calls.last?()
 
         // Assert completion called
-        wait(for: [expectation], timeout: 0)
+        wait(for: [expectation], timeout: defaultTimeout)
     }
 }

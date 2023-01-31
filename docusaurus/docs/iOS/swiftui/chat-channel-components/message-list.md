@@ -60,6 +60,7 @@ Every one of them is discussed in the next chapters, but here is an overview ove
 | [`becomesFirstResponderOnOpen`](#becomesfirstresponderonopen)                     | `Bool`                     | `false`                          |
 | [`maxTimeIntervalBetweenMessagesInGroup`](#maxtimeintervalbetweenmessagesingroup) | `TimeInterval`             | `60`                             |
 | [`cacheSizeOnChatDismiss`](#cachesizeonchatdismiss)                               | `Int`                      | `1024 * 1024 * 100`              |
+| [`showNewMessagesSeparator`](#shownewmessagesseparator)                           | `Bool`                     | `false`                          |
 
 The next sections will go through these values and discuss the impact they have when altered.
 
@@ -302,6 +303,30 @@ let messageListConfig = MessageListConfig(
 let utils = Utils(messageListConfig: messageListConfig)
 streamChat = StreamChat(chatClient: chatClient, utils: utils)
 ```
+
+### showNewMessagesSeparator
+
+The `showNewMessagesSeparator` controls the visibility of the separator for new messages. By default, this value is `false`, and no separator is shown. 
+
+If you set it to true, when you open a channel with unread messages, a header will be shown at the top of the oldest unread message, displaying the number of unread messages. The default implementation clears the header when it disappears off the screen.
+
+You can modify this behaviour, as well as the user interface of the separator, by implementing the `makeNewMessagesIndicatorView` in the `ViewFactory`:
+
+```swift
+func makeNewMessagesIndicatorView(
+    newMessagesStartId: Binding<String?>,
+    count: Int
+) -> some View {
+    CustomNewMessagesIndicator(
+        newMessagesStartId: newMessagesStartId,
+        count: count
+    )
+}
+```
+
+In this method, the `newMessagesStartId` is provided, which is the id of the oldest unread message (where the header starts). You can attach an `onDisappear` modifier and set this value to `nil` if you want to clear this view when it disappears from the screen.
+
+Additionally, the method has another parameter `count`, which contains the number of unread messages. 
 
 ## No Messages View
 

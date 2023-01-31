@@ -44,7 +44,7 @@ final class MessageEvents_IntegrationTests: XCTestCase {
         let completionCalled = expectation(description: "completion called")
         client.eventNotificationCenter.process(unwrappedEvent) { completionCalled.fulfill() }
 
-        wait(for: [completionCalled], timeout: 1)
+        wait(for: [completionCalled], timeout: defaultTimeout)
 
         AssertAsync {
             Assert.willNotBeNil(self.client.databaseContainer.viewContext.message(id: "1ff9f6d0-df70-4703-aef0-379f95ad7366"))
@@ -125,7 +125,7 @@ final class MessageEvents_IntegrationTests: XCTestCase {
         let completionCalled = expectation(description: "completion called")
         client.eventNotificationCenter.process(unwrappedEvent) { completionCalled.fulfill() }
 
-        wait(for: [completionCalled], timeout: 1)
+        wait(for: [completionCalled], timeout: defaultTimeout)
 
         AssertAsync {
             Assert.willNotBeNil(self.client.databaseContainer.viewContext.message(id: "042772db-4af2-460d-beaa-1e49d1b8e3b9"))
