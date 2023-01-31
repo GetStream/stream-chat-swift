@@ -207,12 +207,10 @@ class DatabaseContainer: NSPersistentContainer {
                 FetchCache.clear()
                 try actions(self.writableContext)
                 FetchCache.clear()
-                // If you touch ManagedObject and update one of it properties to same value
-                // Object will be marked as `updated` even it hasn't changed.
-                // By reseting such objects we remove updates that are not updates.
+
                 for object in self.writableContext.updatedObjects {
                     if object.changedValues().isEmpty {
-                        self.writableContext.refresh(object, mergeChanges: false)
+                        self.writableContext.refresh(object, mergeChanges: true)
                     }
                 }
 

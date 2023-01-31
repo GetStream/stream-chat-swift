@@ -313,10 +313,8 @@ class MessageDTO: NSManagedObject {
             deletedMessagesVisibility: deletedMessagesVisibility,
             shouldShowShadowedMessages: shouldShowShadowedMessages
         )
-        // TODO: Commented out until we enable mergeChanges: true when updating RefreshedObjects
-        // Ticket: https://github.com/GetStream/ios-issues-tracking/issues/262
-//        request.fetchLimit = pageSize
-//        request.fetchBatchSize = pageSize
+        request.fetchLimit = pageSize
+        request.fetchBatchSize = pageSize
         return request
     }
 
