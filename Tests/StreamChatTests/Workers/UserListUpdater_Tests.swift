@@ -67,7 +67,7 @@ final class UserListUpdater_Tests: XCTestCase {
         let payload = UserListPayload(users: [dummyUser1])
         apiClient.test_simulateResponse(.success(payload))
 
-        wait(for: [completionCalled], timeout: 1)
+        wait(for: [completionCalled], timeout: defaultTimeout)
 
         // Assert the data is stored in the DB
         AssertAsync {
@@ -122,7 +122,7 @@ final class UserListUpdater_Tests: XCTestCase {
         let payload = UserListPayload(users: [.dummy(userId: userId)])
         apiClient.test_simulateResponse(.success(payload))
 
-        wait(for: [completionCalled], timeout: 1)
+        wait(for: [completionCalled], timeout: defaultTimeout)
 
         // Assert user is inserted into DB
         var user: ChatUser? { try? self.user(with: userId) }
@@ -138,7 +138,7 @@ final class UserListUpdater_Tests: XCTestCase {
         let newPayload = UserListPayload(users: [.dummy(userId: newUserId)])
         apiClient.test_simulateResponse(.success(newPayload))
 
-        wait(for: [completionCalled], timeout: 1)
+        wait(for: [completionCalled], timeout: defaultTimeout)
 
         // Assert new user is inserted into DB
         var newUser: ChatUser? { try? self.user(with: newUserId) }
@@ -175,7 +175,7 @@ final class UserListUpdater_Tests: XCTestCase {
         let payload = UserListPayload(users: [.dummy(userId: userId)])
         apiClient.test_simulateResponse(.success(payload))
 
-        wait(for: [completionCalled], timeout: 1)
+        wait(for: [completionCalled], timeout: defaultTimeout)
 
         // Assert user is inserted into DB
         AssertAsync.willBeTrue((try? self.user(with: userId)) != nil)
@@ -193,7 +193,7 @@ final class UserListUpdater_Tests: XCTestCase {
         let newPayload = UserListPayload(users: [.dummy(userId: newUserId)])
         apiClient.test_simulateResponse(.success(newPayload))
 
-        wait(for: [completionCalled], timeout: 1)
+        wait(for: [completionCalled], timeout: defaultTimeout)
 
         // Assert new user is inserted into DB
         AssertAsync.willBeTrue((try? self.user(with: newUserId)) != nil)

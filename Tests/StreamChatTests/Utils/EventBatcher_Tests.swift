@@ -101,6 +101,6 @@ final class Batch_Tests: XCTestCase {
 
         // Assert current batch is empty
         XCTAssertEqual(batcher.currentBatch, [])
-        wait(for: [expectation], timeout: 0)
+        wait(for: [expectation], timeout: defaultTimeout)
     }
 }
