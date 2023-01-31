@@ -405,9 +405,10 @@ The final step that we need to do is to provide a new view that the message list
 
 ```swift
 func makeCustomAttachmentViewType(
-        for message: ChatMessage,
-        isFirst: Bool,
-        availableWidth: CGFloat
+    for message: ChatMessage,
+    isFirst: Bool,
+    availableWidth: CGFloat,
+    scrolledId: Binding<String?>
 ) -> some View {
     let contactAttachments = message.attachments(payloadType: ContactAttachmentPayload.self)
     return VStack {
