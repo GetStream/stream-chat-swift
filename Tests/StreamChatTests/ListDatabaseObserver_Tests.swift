@@ -104,16 +104,22 @@ final class ListDatabaseObserver_Tests: XCTestCase {
         XCTAssertTrue(testFRC.test_performFetchCalled)
     }
 
-    func test_updateNotReported_whenSamePropertyAssigned() throws {
+    func test_updateStillReported_whenSamePropertyAssigned() throws {
         // For this test, we need an actual NSFetchedResultsController, not the test one
-        let observer = ListDatabaseObserver<TestManagedObject, TestManagedObject>(
+        let observer = ListDatabaseObserver<String, TestManagedObject>(
             context: database.viewContext,
             fetchRequest: fetchRequest,
-            itemCreator: { $0 }
+            itemCreator: { $0.testId }
         )
 
-        var receivedChanges: [ListChange<TestManagedObject>]?
-        observer.onChange = { receivedChanges = $0 }
+        let onDidChangeExpectation = expectation(description: "onDidChange")
+        onDidChangeExpectation.expectedFulfillmentCount = 2
+
+        var receivedChanges: [ListChange<String>] = []
+        observer.onChange = {
+            receivedChanges.append(contentsOf: $0)
+            onDidChangeExpectation.fulfill()
+        }
 
         // Call startObserving to set everything up
         try observer.startObserving()
@@ -128,17 +134,16 @@ final class ListDatabaseObserver_Tests: XCTestCase {
             item.testValue = testValue
         }
 
-        XCTAssertEqual(receivedChanges?.first?.item.testId, testValue)
-
-        let oldChanges = receivedChanges
-
         // Assign the same testValue to the same entity
         try database.writeSynchronously { _ in
             item.testValue = testValue
         }
 
-        // Assert no new change is reported
-        AssertAsync.staysEqual(receivedChanges, oldChanges)
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertEqual(receivedChanges.count, 2)
+        XCTAssertEqual(receivedChanges.first?.isInsertion, true)
+        XCTAssertEqual(receivedChanges.last?.isUpdate, true)
     }
 
     func test_allItemsAreRemoved_whenDatabaseContainerRemovesAllData() throws {

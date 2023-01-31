@@ -115,6 +115,54 @@ final class BackgroundListDatabaseObserver_Tests: XCTestCase {
         XCTAssertFalse(testFRC.test_performFetchCalled)
     }
 
+    func test_updateStillReported_whenSamePropertyAssigned() throws {
+        // For this test, we need an actual NSFetchedResultsController, not the test one
+        let observer = BackgroundListDatabaseObserver<String, TestManagedObject>(
+            context: database.backgroundReadOnlyContext,
+            fetchRequest: fetchRequest,
+            itemCreator: { $0.testId }
+        )
+
+        // Call startObserving to set everything up
+        let startObservingDidChangeExpectation = expectation(description: "startObservingDidChange")
+        observer.onDidChange = { _ in
+            startObservingDidChangeExpectation.fulfill()
+        }
+        // We wait for the startObserving to call onDidChange
+        try observer.startObserving()
+        waitForExpectations(timeout: defaultTimeout)
+
+        let onDidChangeExpectation = expectation(description: "onDidChange")
+        onDidChangeExpectation.expectedFulfillmentCount = 2
+
+        var receivedChanges: [ListChange<String>] = []
+        observer.onDidChange = {
+            receivedChanges.append(contentsOf: $0)
+            onDidChangeExpectation.fulfill()
+        }
+
+        // Insert the test object
+        let testValue = String.unique
+        var item: TestManagedObject!
+        try database.writeSynchronously { _ in
+            let context = self.database.writableContext
+            item = NSEntityDescription.insertNewObject(forEntityName: "TestManagedObject", into: context) as? TestManagedObject
+            item.testId = testValue
+            item.testValue = testValue
+        }
+
+        // Assign the same testValue to the same entity
+        try database.writeSynchronously { _ in
+            item.testValue = testValue
+        }
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertEqual(receivedChanges.count, 2)
+        XCTAssertEqual(receivedChanges.first?.isInsertion, true)
+        XCTAssertEqual(receivedChanges.last?.isUpdate, true)
+    }
+
     func test_allItemsAreRemoved_whenDatabaseContainerRemovesAllData() throws {
         // Simulate objects fetched by FRC
         let objects = [
