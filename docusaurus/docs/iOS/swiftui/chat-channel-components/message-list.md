@@ -308,7 +308,7 @@ streamChat = StreamChat(chatClient: chatClient, utils: utils)
 
 The `showNewMessagesSeparator` controls the visibility of the separator for new messages. By default, this value is `false` and no separator is shown. 
 
-If you set it to true, when you open a channel with unread messages, there will be a header shown at the top of the oldest unread message, displaying the number of unread messages. The default implementation clears the header when it disappears off screen.
+If you set it to true, when you open a channel with unread messages, a header will be shown at the top of the oldest unread message, displaying the number of unread messages. The default implementation clears the header when it disappears off the screen.
 
 You can modify this behaviour, as well as the user interface of the separator, by implementing the `makeNewMessagesIndicatorView` in the `ViewFactory`:
 
