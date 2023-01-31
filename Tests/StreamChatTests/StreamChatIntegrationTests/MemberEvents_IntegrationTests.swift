@@ -43,7 +43,7 @@ final class MemberEvents_IntegrationTests: XCTestCase {
         let completionCalled = expectation(description: "completion called")
         client.eventNotificationCenter.process(unwrappedEvent) { completionCalled.fulfill() }
 
-        wait(for: [completionCalled], timeout: 1)
+        wait(for: [completionCalled], timeout: defaultTimeout)
 
         AssertAsync {
             Assert.willNotBeNil(
@@ -63,7 +63,7 @@ final class MemberEvents_IntegrationTests: XCTestCase {
         let completionCalled = expectation(description: "completion called")
         client.eventNotificationCenter.process(unwrappedEvent) { completionCalled.fulfill() }
 
-        wait(for: [completionCalled], timeout: 1)
+        wait(for: [completionCalled], timeout: defaultTimeout)
 
         AssertAsync {
             Assert.willNotBeNil(
