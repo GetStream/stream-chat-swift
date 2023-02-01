@@ -63,7 +63,7 @@ open class ChatChannelVC: _ViewController,
     }
 
     /// A boolean value indicating wether it should mark the channel read.
-    open var shouldMarkChannelRead: Bool {
+    public var shouldMarkChannelRead: Bool {
         isLastMessageFullyVisible && channelController.hasLoadedAllNextMessages
     }
 
