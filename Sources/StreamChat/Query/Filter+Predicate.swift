@@ -22,8 +22,7 @@ extension Filter {
 
         let makeComparablePredicate: (_ compareToken: String) -> NSPredicate? = { compareToken in
             guard let key = dtoKey else { return unableToResolve() }
-            let valueToUse: CVarArg = autoKey?.value ?? value.description
-            return NSPredicate(format: "\(key) \(compareToken) %@", valueToUse)
+            return NSPredicate(format: "\(key) \(compareToken) %@", argumentArray: [value])
         }
 
         let makeCompoundPredicate: (_ logicalType: NSCompoundPredicate.LogicalType) -> NSPredicate? = { logicalType in
@@ -31,6 +30,12 @@ extension Filter {
             let predicates = value.compactMap(\.predicate)
             guard !predicates.isEmpty else { return unableToResolve() }
             return NSCompoundPredicate(type: logicalType, subpredicates: predicates)
+        }
+
+        let makeInPredicate: () -> NSPredicate? = {
+            guard let key = dtoKey else { return unableToResolve() }
+            guard let valueArray = value as? [FilterValue] else { return unableToResolve() }
+            return NSPredicate(format: "ANY %@ IN \(key)", valueArray)
         }
 
         switch op {
@@ -47,6 +52,7 @@ extension Filter {
         case .lessOrEqual:
             return makeComparablePredicate("<=")
         case .in:
+//            return makeInPredicate()
             guard let key = dtoKey else { return unableToResolve() }
             guard let valueArray = value as? [FilterValue] else { return unableToResolve() }
             return NSCompoundPredicate(
@@ -56,9 +62,8 @@ extension Filter {
                 }
             )
         case .notIn:
-            guard let key = dtoKey else { return unableToResolve() }
-            guard let valueArray = value as? NSArray else { return unableToResolve() }
-            return NSCompoundPredicate(format: "NONE \(key) IN %@", valueArray)
+            guard let inPredicate = makeInPredicate() else { return unableToResolve() }
+            return NSCompoundPredicate(notPredicateWithSubpredicate: inPredicate)
         case .contains:
             return makeComparablePredicate("IN")
         case .exists:
@@ -78,11 +83,10 @@ extension Filter {
             guard !predicates.isEmpty else { return unableToResolve() }
             return NSCompoundPredicate(type: .and, subpredicates: predicates)
         case .query:
-            guard let key = dtoKey else { return unableToResolve() }
-            let valueToUse: CVarArg = autoKey?.value ?? value.description
-            return NSPredicate(format: "\(key) CONTAINS %@", valueToUse)
-        case .autocomplete:
             return unableToResolve()
+        case .autocomplete:
+            guard let key = dtoKey else { return unableToResolve() }
+            return NSPredicate(format: "\(key) BEGINSWITH[cd] %@", argumentArray: [value])
         }
     }
 }

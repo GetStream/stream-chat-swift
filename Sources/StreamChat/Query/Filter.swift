@@ -123,6 +123,7 @@ public struct Filter<Scope: FilterScope> {
     /// The "right-hand" side of the filter. Specifies the value the filter should match.
     public let value: FilterValue
 
+    #warning("Document autoKey")
     /// Creates a new instance of `Filter`.
     ///
     ///
@@ -187,19 +188,19 @@ public extension Filter {
 struct FilterAutoKey {
     let payloadKey: CodingKey
     let dtoKey: String
-    let value: CVarArg? // isModerator is actually role == admin
+//    let value: CVarArg? // isModerator is actually role == admin
 
     init(_ payloadKey: CodingKey, _ dtoKey: String) {
         self.payloadKey = payloadKey
         self.dtoKey = dtoKey
-        value = nil
+//        value = nil
     }
 
-    init(_ payloadKey: CodingKey, _ dtoKey: String, value: CVarArg?) {
-        self.payloadKey = payloadKey
-        self.dtoKey = dtoKey
-        self.value = value
-    }
+//    init(_ payloadKey: CodingKey, _ dtoKey: String) {
+//        self.payloadKey = payloadKey
+//        self.dtoKey = dtoKey
+    ////        self.value = value
+//    }
 }
 
 /// A helper struct that represents a key of a filter.
@@ -220,9 +221,9 @@ public struct FilterKey<Scope: FilterScope, Value: FilterValue>: ExpressibleBySt
         autoKey = nil
     }
 
-    init(payloadKey: CodingKey, dtoKey: String, value: CVarArg? = nil) {
+    init(payloadKey: CodingKey, dtoKey: String) {
         rawValue = payloadKey.stringValue
-        autoKey = .init(payloadKey, dtoKey, value: value)
+        autoKey = .init(payloadKey, dtoKey)
     }
 }
 
@@ -300,6 +301,7 @@ extension Filter {
 }
 
 extension Filter: CustomStringConvertible {
+    // Who uses this?
     public var description: String {
         let key = self.key ?? "*"
 

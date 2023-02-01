@@ -2,6 +2,7 @@
 // Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
+import CoreData
 @testable import StreamChat
 @testable import StreamChatTestTools
 import XCTest
@@ -10,29 +11,29 @@ final class Filter_Predicate_Tests: XCTestCase {
     func test_filterProduceTheRightPredicate() {
         // ChannelListFilterScope
         assertPredicate(Filter<ChannelListFilterScope>.containMembers(userIds: ["12", "34"]), "ANY members.user.id == \"12\" AND ANY members.user.id == \"34\"")
-        assertPredicate(Filter<ChannelListFilterScope>.nonEmpty, "lastMessageAt > \"1970-01-01 00:00:00 +0000\"")
-        assertPredicate(Filter<ChannelListFilterScope>.noTeam, "team == \"nil\"")
+        assertPredicate(Filter<ChannelListFilterScope>.nonEmpty, "lastMessageAt > CAST(-978307200.000000, \"NSDate\")")
+        assertPredicate(Filter<ChannelListFilterScope>.noTeam, "team == <null>")
 
         // MessageSearchFilterScope
-        assertPredicate(Filter<MessageSearchFilterScope>.queryText("hello"), "text CONTAINS \"hello\"")
-        assertPredicate(Filter<MessageSearchFilterScope>.withAttachments([.file]), "ANY attachments.type == \"file\"")
+        XCTAssertNil(Filter<MessageSearchFilterScope>.queryText("hello").predicate)
+        assertPredicate(Filter<MessageSearchFilterScope>.withAttachments([.file]), "ANY attachments.type == file")
         assertPredicate(Filter<MessageSearchFilterScope>.withAttachments, "attachments != nil")
         assertPredicate(Filter<MessageSearchFilterScope>.withoutAttachments, "attachments == nil")
 
         // UserListFilterScope
-        assertPredicate(Filter<UserListFilterScope>.equal(.createdAt, to: Date(timeIntervalSince1970: 0)), "userCreatedAt == \"1970-01-01 00:00:00 +0000\"")
+        assertPredicate(Filter<UserListFilterScope>.equal(.createdAt, to: Date(timeIntervalSince1970: 0)), "userCreatedAt == CAST(-978307200.000000, \"NSDate\")")
 
         // Basic Filter operators
         assertPredicate(Filter<ChannelListFilterScope>.equal(.id, to: "123"), "id == \"123\"")
-        assertPredicate(Filter<ChannelListFilterScope>.notEqual(.hidden, to: true), "isHidden != \"true\"")
-        assertPredicate(Filter<ChannelListFilterScope>.greater(.memberCount, than: 2), "memberCount > \"2\"")
-        assertPredicate(Filter<ChannelListFilterScope>.greaterOrEqual(.memberCount, than: 4), "memberCount >= \"4\"")
-        assertPredicate(Filter<ChannelListFilterScope>.less(.memberCount, than: 3), "memberCount < \"3\"")
-        assertPredicate(Filter<ChannelListFilterScope>.lessOrEqual(.memberCount, than: 53), "memberCount <= \"53\"")
+        assertPredicate(Filter<ChannelListFilterScope>.notEqual(.hidden, to: true), "isHidden != 1")
+        assertPredicate(Filter<ChannelListFilterScope>.greater(.memberCount, than: 2), "memberCount > 2")
+        assertPredicate(Filter<ChannelListFilterScope>.greaterOrEqual(.memberCount, than: 4), "memberCount >= 4")
+        assertPredicate(Filter<ChannelListFilterScope>.less(.memberCount, than: 3), "memberCount < 3")
+        assertPredicate(Filter<ChannelListFilterScope>.lessOrEqual(.memberCount, than: 53), "memberCount <= 53")
         assertPredicate(Filter<ChannelListFilterScope>.in(.members, values: ["12", "34"]), "ANY members.user.id == \"12\" AND ANY members.user.id == \"34\"")
         assertPredicate(Filter<ChannelListFilterScope>.notIn(.members, values: ["33", "44"]), "NOT ANY members.user.id IN {\"33\", \"44\"}")
-        assertPredicate(Filter<ChannelListFilterScope>.query(.name, text: "Hi"), "name CONTAINS \"Hi\"")
-        XCTAssertNil(Filter<ChannelListFilterScope>.autocomplete(.name, text: "Hi").predicate)
+        XCTAssertNil(Filter<ChannelListFilterScope>.query(.name, text: "Hi").predicate)
+        assertPredicate(Filter<ChannelListFilterScope>.autocomplete(.name, text: "Hi"), "name BEGINSWITH[cd] \"Hi\"")
         assertPredicate(Filter<ChannelListFilterScope>.exists(.hidden), "isHidden != nil")
         assertPredicate(Filter<ChannelListFilterScope>.exists(.hidden, exists: false), "isHidden == nil")
         #warning("Correct?")
@@ -53,6 +54,164 @@ final class Filter_Predicate_Tests: XCTestCase {
             .equal(.name, to: "Hi"),
             .exists(.hidden)
         ]), "(NOT name == \"Hi\") AND (NOT isHidden != nil)")
+    }
+
+    func test_channelListPredicateResults() throws {
+        let database = DatabaseContainer_Spy()
+
+        func assert(
+            _ queryFilter: Filter<ChannelListFilterScope>,
+            ids: [String],
+            predicate: String,
+            file: StaticString = #filePath,
+            line: UInt = #line
+        ) {
+            let request = NSFetchRequest<ChannelDTO>(entityName: ChannelDTO.entityName)
+            request.predicate = queryFilter.predicate
+            let objects = NSManagedObject.load(by: request, context: database.viewContext)
+
+            let sortedReceivedIds = objects.map(\.cid).sorted()
+            let sortedExpectedIds = ids.sorted()
+            XCTAssertEqual(sortedExpectedIds, sortedReceivedIds, file: file, line: line)
+            assertPredicate(queryFilter, predicate, file: file, line: line)
+        }
+
+        let channel1 = ChannelPayload.dummy(
+            channel: .dummy(
+                cid: .init(type: .team, id: "c1")
+            ),
+            members: [.dummy(user: .dummy(userId: "12")), .dummy(user: .dummy(userId: "34"))]
+        )
+
+        let channel2 = ChannelPayload.dummy(
+            channel: .dummy(
+                cid: .init(type: .team, id: "c2"),
+                name: "C2Hello",
+                lastMessageAt: Date()
+            ),
+            members: [.dummy(user: .dummy(userId: "34"))]
+        )
+
+        let channel3 = ChannelPayload.dummy(
+            channel: .dummy(
+                cid: .init(type: .team, id: "c3"),
+                team: "Team3"
+            ),
+            members: [.dummy(user: .dummy(userId: "12"))]
+        )
+
+        let channel4 = ChannelPayload.dummy(
+            channel: .dummy(
+                cid: .init(type: .team, id: "c4"),
+                team: "Teame"
+            ),
+            members: [.dummy(user: .dummy(userId: "12")), .dummy(user: .dummy(userId: "56"))]
+        )
+
+        try database.writeSynchronously { session in
+            try [channel1, channel2, channel3, channel4].forEach {
+                try session.saveChannel(payload: $0)
+            }
+        }
+
+        // Things don't work as expected
+        // https://stackoverflow.com/questions/14471910/nspredicate-aggregate-operations-with-none
+        let request = NSFetchRequest<ChannelDTO>(entityName: ChannelDTO.entityName)
+        request.predicate = NSPredicate(format: "NONE members.user.id == \"12\"")
+//        request.predicate = NSPredicate(format: "cid IN %@", ["team:c1", "team:c2"])
+        let objects = NSManagedObject.load(by: request, context: database.viewContext)
+        let sortedReceivedIds = objects.map(\.cid).sorted()
+        let sortedExpectedIds = ["team:c1"].sorted()
+        XCTAssertEqual(sortedExpectedIds, sortedReceivedIds)
+
+        assert(
+            Filter<ChannelListFilterScope>.containMembers(userIds: ["12", "34"]),
+            ids: ["team:c1"],
+            predicate: "ANY members.user.id == \"12\" AND ANY members.user.id == \"34\""
+        )
+        assert(
+            Filter<ChannelListFilterScope>.containMembers(userIds: ["12"]),
+            ids: ["team:c1", "team:c3"],
+            predicate: "ANY members.user.id == \"12\" AND ANY members.user.id == \"34\""
+        )
+        assert(
+            Filter<ChannelListFilterScope>.nonEmpty,
+            ids: ["team:c2"],
+            predicate: "lastMessageAt > CAST(-978307200.000000, \"NSDate\")"
+        )
+        assert(
+            Filter<ChannelListFilterScope>.noTeam,
+            ids: ["team:c1", "team:c2"],
+            predicate: "team == <null>"
+        )
+        assert(
+            Filter<ChannelListFilterScope>.equal(.cid, to: ChannelId(type: .team, id: "c1")),
+            ids: ["team:c1"],
+            predicate: "cid == team:c1"
+        )
+        assert(
+            Filter<ChannelListFilterScope>.notEqual(.name, to: "C2Hello"),
+            ids: ["team:c1", "team:c3"],
+            predicate: "name != \"C2Hello\""
+        )
+        assert(
+            Filter<ChannelListFilterScope>.greater(.lastMessageAt, than: Date(timeIntervalSince1970: 0)),
+            ids: ["team:c2"],
+            predicate: "lastMessageAt > CAST(-978307200.000000, \"NSDate\")"
+        )
+        assert(
+            Filter<ChannelListFilterScope>.greaterOrEqual(.memberCount, than: 10),
+            ids: [],
+            predicate: "memberCount >= 10"
+        )
+        assert(
+            Filter<ChannelListFilterScope>.less(.memberCount, than: 2),
+            ids: ["team:c1", "team:c2", "team:c3"],
+            predicate: "memberCount < 2"
+        )
+        assert(
+            Filter<ChannelListFilterScope>.lessOrEqual(.memberCount, than: 1),
+            ids: ["team:c1", "team:c2", "team:c3"],
+            predicate: "memberCount <= 1"
+        )
+        assert(
+            Filter<ChannelListFilterScope>.in(.members, values: ["12"]),
+            ids: ["team:c1", "team:c3"],
+            predicate: "ANY members.user.id == \"12\""
+        )
+        assert(
+            Filter<ChannelListFilterScope>.in(.members, values: ["34"]),
+            ids: ["team:c1", "team:c2"],
+            predicate: "ANY members.user.id == \"34\""
+        )
+        assert(
+            Filter<ChannelListFilterScope>.notIn(.members, values: ["12"]),
+            ids: ["team:c2"],
+            predicate: "NOT ANY members.user.id IN {\"12\"}"
+        )
+        assert(
+            Filter<ChannelListFilterScope>.query(.team, text: "112"),
+            ids: ["team:c1", "team:c2", "team:c3"],
+            predicate: ""
+        ) // Query's predicate returns nil
+        assert(
+            Filter<ChannelListFilterScope>.autocomplete(.cid, text: "Téam"),
+            ids: ["team:c1", "team:c2", "team:c3"],
+            predicate: ""
+        )
+        assert(
+            Filter<ChannelListFilterScope>.exists(.lastMessageAt),
+            ids: ["team:c1", "team:c2", "team:c3"],
+            predicate: ""
+        )
+        assert(
+            Filter<ChannelListFilterScope>.exists(.lastMessageAt, exists: false),
+            ids: ["team:c1", "team:c2", "team:c3"],
+            predicate: ""
+        )
+//        assert(Filter<ChannelListFilterScope>.contains(.team, value: "Team3"),
+//               ids: ["team:c1", "team:c2", "team:c3"],
+//               predicate: "")
     }
 
     func test_correctFilterPayloadKeys() {
@@ -278,6 +437,6 @@ final class Filter_Predicate_Tests: XCTestCase {
             return
         }
 
-        XCTAssertEqual(predicate.predicateFormat, stringFormat, file: file, line: line)
+        XCTAssertEqual(stringFormat, predicate.predicateFormat, file: file, line: line)
     }
 }

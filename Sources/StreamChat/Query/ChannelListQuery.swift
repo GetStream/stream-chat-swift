@@ -44,6 +44,7 @@ extension Filter where Scope: AnyChannelListFilterScope {
 // We don't want to expose `members` publicly because it can't be used with any other operator
 // then `$in`. We expose it publicly via the `containMembers` filter helper.
 extension FilterKey where Scope: AnyChannelListFilterScope {
+    #warning("id vs object")
     static var members: FilterKey<Scope, UserId> {
         .init(
             payloadKey: ChannelPayload.CodingKeys.members,
@@ -74,6 +75,7 @@ public extension FilterKey where Scope: AnyChannelListFilterScope {
         )
     }
 
+    #warning("Not present in our DB Object. Still needed?")
     /// A filter key for matching the `id` value.
     /// Supported operators: `in`, `equal`
     /// - Warning: Querying by the channel Identifier should be done using the `cid` field as much as possible to optimize API performance.
@@ -186,23 +188,28 @@ public extension FilterKey where Scope: AnyChannelListFilterScope {
         )
     }
 
+    #warning("Not present in the payload nor in the DB object")
     /// Filter for checking whether current user is joined the channel or not (through invite or directly)
     /// Supported operators: `equal`
     static var joined: FilterKey<Scope, Bool> { "joined" }
 
+    #warning("Not present in the payload nor in the DB object")
     /// Filter for checking whether current user has muted the channel
     /// Supported operators: `equal`
     static var muted: FilterKey<Scope, Bool> { "muted" }
 
+    #warning("Not sure")
     /// Filter for checking the status of the invite
     /// Supported operators: `equal`
     static var invite: FilterKey<Scope, InviteFilterValue> { "invite" }
 
+    #warning("Not sure")
     /// Filter for checking the `name` property of a user who is a member of the channel
     /// Supported operators: `equal`, `notEqual`, `autocomplete`
     /// - Warning: This filter is considerably expensive for the backend so avoid using this when possible.
     static var memberName: FilterKey<Scope, String> { "member.user.name" }
 
+    #warning("Not sure")
     /// Filter for the time of the last message in the channel. If the channel has no messages, then the time the channel was created.
     /// Supported operators: `equal`, `greaterThan`, `lessThan`, `greaterOrEqual`, `lessOrEqual`, `notEqual`
     static var lastUpdatedAt: FilterKey<Scope, Date> { "last_updated" }

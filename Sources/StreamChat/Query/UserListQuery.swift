@@ -109,6 +109,7 @@ public extension FilterKey where Scope: AnyUserListFilterScope {
         )
     }
 
+    #warning("Not present in our DB Object")
     /// A filter key for matching the `isAnonymous` value.
     static var isAnonymous: FilterKey<Scope, Bool> { "anon" }
 

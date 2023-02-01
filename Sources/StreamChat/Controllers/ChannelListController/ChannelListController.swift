@@ -201,6 +201,8 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     }
 
     private func channelBelongsToController(_ channel: ChatChannel, change: ListChange<ChatChannel>) -> Bool {
+        // Filter is still useful, since if customers add extra data, it should be filtered here.
+        // So for really complex queries, filter might still be needed.
         if let filter = filter {
             return filter(channel)
         }

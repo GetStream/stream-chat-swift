@@ -13,9 +13,16 @@ public class MemberListFilterScope: UserListFilterScope, AnyMemberListFilterScop
 
 /// Non extra-data-specific filer keys for member list.
 public extension FilterKey where Scope: AnyMemberListFilterScope {
+    #warning("Tricky! Test filter generation for BE as well as predicate generation")
     /// A filter key for matching moderators of a channel.
     /// Supported operators: `equal`, `notEqual`
-    static var isModerator: FilterKey<Scope, Bool> { "is_moderator" }
+    static var isModerator: FilterKey<Scope, Bool> {
+        .init(
+            payloadKey: MemberPayload.CodingKeys.role,
+            dtoKey: #keyPath(MemberDTO.channelRoleRaw)
+//            value: MemberRole.moderator.rawValue
+        )
+    }
 
     /// Filter key matching the id of the user
     /// Supported operators: `equal`, `notEqual`, `in`, `notIn`
@@ -26,6 +33,7 @@ public extension FilterKey where Scope: AnyMemberListFilterScope {
         )
     }
 
+    #warning("Not present in payload nor in DB")
     /// Filter key matching the name of the user
     /// Supported operators: `equal`, `notEqual`, `in`, `notIn`, `autocomplete`, `query`
     static var name: FilterKey<Scope, String> { "name" }
@@ -39,10 +47,12 @@ public extension FilterKey where Scope: AnyMemberListFilterScope {
         )
     }
 
+    #warning("How to match?")
     /// Filter key matching the invite status
     /// Supported operators: `equal`
     static var invite: FilterKey<Scope, InviteFilterValue> { "invite" }
 
+    #warning("Not present in payload nor in DB")
     /// Filter key matching the joined status
     /// Supported operators: `equal`
     static var joined: FilterKey<Scope, Bool> { "joined" }
@@ -65,6 +75,7 @@ public extension FilterKey where Scope: AnyMemberListFilterScope {
         )
     }
 
+    #warning("Not present in payload nor in DB")
     /// Filter key matching the time the user was last active
     /// Supported operators: `equal`, `greaterThan`, `lessThan`, `greaterOrEqual`, `lessOrEqual`, `notEqual`
     static var lastActiveAt: FilterKey<Scope, Date> { "last_active" }
