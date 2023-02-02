@@ -638,16 +638,6 @@ final class ChatChannelVC_Tests: XCTestCase {
         vc.channelController(channelControllerMock, didUpdateMessages: [])
         XCTAssertEqual(channelControllerMock.markReadCallCount, 0)
     }
-
-    // MARK: Jumping to message
-
-    func test_jumpToMessage_whenMessageAlreadyInUI_shouldScrollToItsIndexPath_shouldNotCallChannelController() {
-        XCTFail()
-    }
-
-    func test_jumpToMessage_whenMessageNotLoaded_shouldCallChannelController_shouldSetMessagePendingScrolling() {
-        XCTFail()
-    }
 }
 
 private extension ChatChannelVC_Tests {

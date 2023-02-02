@@ -57,7 +57,7 @@ public protocol ChatMessageListVCDelegate: AnyObject {
     func chatMessageListVC(
         _ vc: ChatMessageListVC,
         shouldLoadPageAroundMessage message: ChatMessage,
-        completion: @escaping ((Error?) -> Void)
+        _ completion: @escaping ((Error?) -> Void)
     )
 
     /// Tells the delegate that it should load the first page.

@@ -210,7 +210,7 @@ open class ChatChannelVC: _ViewController,
     public func chatMessageListVC(
         _ vc: ChatMessageListVC,
         shouldLoadPageAroundMessage message: ChatMessage,
-        completion: @escaping ((Error?) -> Void)
+        _ completion: @escaping ((Error?) -> Void)
     ) {
         channelController.loadPageAroundMessageId(message.id, completion: completion)
     }

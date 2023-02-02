@@ -227,15 +227,16 @@ open class ChatMessageListVC: _ViewController,
 
     /// Action for `scrollToLatestMessageButton` that scroll to most recent message.
     @objc open func scrollToLatestMessage() {
-        guard dataSource?.isFirstPageLoaded == true else {
-            jumpToFirstPage()
-            return
-        }
         scrollToMostRecentMessage()
     }
 
     /// Scrolls to most recent message
     open func scrollToMostRecentMessage(animated: Bool = true) {
+        guard dataSource?.isFirstPageLoaded == true else {
+            jumpToFirstPage()
+            return
+        }
+
         listView.scrollToMostRecentMessage(animated: animated)
     }
 
@@ -431,6 +432,13 @@ open class ChatMessageListVC: _ViewController,
 
             self?.messagePendingScrolling = message
         }
+    }
+
+    /// Jump to the first page of the message list.
+    internal func jumpToFirstPage() {
+        delegate?.chatMessageListVCShouldLoadFirstPage(self)
+        scrollToLatestMessageButton.isHidden = true
+        listView.reloadSkippedMessages()
     }
 
     /// Gets the IndexPath for the given message id. Returns `nil` if the message is not in the list.
@@ -709,14 +717,15 @@ private extension ChatMessageListVC {
     // MARK: - Message Updates Helpers
 
     func handleMessageUpdates(with changes: [ListChange<ChatMessage>], completion: (() -> Void)?) {
+        guard let channel = dataSource?.channel(for: self) else { return }
         let pageSize = dataSource?.pageSize ?? .channelsPageSize
         let numberOfSkippedMessages = listView.skippedMessages.count
         let isInsertionAtTheBottom = changes.first(where: { $0.indexPath.item - numberOfSkippedMessages == 0 }) != nil
         let isLoadingNextMessages = changes.filter(\.isInsertion).count == pageSize && isInsertionAtTheBottom
 
         // Computed properties so that we get the most updated result even after the diffing updates.
-        var isFirstPageLoaded: Bool { dataSource?.isFirstPageLoaded == true }
-        var isJumpingToMessage: Bool { dataSource?.isJumpingToMessage == true }
+        let isFirstPageLoaded: Bool = channel.previewMessage?.createdAt == listView.previousMessagesSnapshot.first?.createdAt
+        let isJumpingToMessage: Bool = dataSource?.isJumpingToMessage == true
 
         let newestChange = changes.first(where: { $0.indexPath.item == 0 })
         let isNewestChangeInsertion = newestChange?.isInsertion == true
@@ -726,7 +735,7 @@ private extension ChatMessageListVC {
 
         // If a new message was inserted by the current user while the first page is not yet loaded,
         // notify that the first page needs to be loaded.
-        if let channelLastMessageAt = dataSource?.channel(for: self)?.lastMessageAt,
+        if let channelLastMessageAt = channel.lastMessageAt,
            let newestChange = changes.first(where: { $0.item.createdAt == channelLastMessageAt }) {
             if newestChange.item.isSentByCurrentUser && newestChange.isInsertion && !isFirstPageLoaded && !isJumpingToMessage {
                 jumpToFirstPage()
@@ -755,12 +764,15 @@ private extension ChatMessageListVC {
             }
 
             UIView.performWithoutAnimation {
+                let isFirstPageLoaded: Bool = self?.dataSource?.isFirstPageLoaded == true
+                let isJumpingToMessage: Bool = self?.dataSource?.isJumpingToMessage == true
+
                 let newestChangeIsInsertionOrMove = isNewestChangeInsertion || newestChange?.isMove == true
                 if newestChangeIsInsertionOrMove, let newMessage = newestChange?.item {
                     // Scroll to the bottom if the new message was sent by
                     // the current user, or moved by the current user
                     if newMessage.isSentByCurrentUser && isFirstPageLoaded && !isJumpingToMessage {
-                        self?.scrollToMostRecentMessage()
+                        self?.listView.scrollToMostRecentMessage()
                     }
 
                     // When a Giphy moves to the bottom, we need to also trigger a reload
@@ -828,11 +840,5 @@ private extension ChatMessageListVC {
         visibleRemoves.forEach {
             listView.reloadRows(at: [$0.indexPath], with: .none)
         }
-    }
-
-    func jumpToFirstPage() {
-        delegate?.chatMessageListVCShouldLoadFirstPage(self)
-        scrollToLatestMessageButton.isHidden = true
-        listView.reloadSkippedMessages()
     }
 }

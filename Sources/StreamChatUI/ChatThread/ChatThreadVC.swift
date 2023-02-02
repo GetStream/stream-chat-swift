@@ -232,7 +232,7 @@ open class ChatThreadVC: _ViewController,
     public func chatMessageListVC(
         _ vc: ChatMessageListVC,
         shouldLoadPageAroundMessage message: ChatMessage,
-        completion: @escaping ((Error?) -> Void)
+        _ completion: @escaping ((Error?) -> Void)
     ) {}
 
     // TODO: Jump to message
