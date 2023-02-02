@@ -47,13 +47,17 @@ public protocol ChatMessageListVCDelegate: AnyObject {
         with gestureRecognizer: UITapGestureRecognizer
     )
 
-    /// Tells the delegate when the user taps on a quoted message view.
+    /// Tells the delegate that it should load the page around the given message id.
+    ///
+    /// Ex: The user tapped on a quoted message which is not locally available.
     /// - Parameters:
     ///   - vc: The message list informing the delegate of this event.
-    ///   - quotedMessage: The quoted message.
+    ///   - messageId: The id of the message to load the page around it.
+    ///   - onSuccess: Call this closure when the page is successfully loaded.
     func chatMessageListVC(
         _ vc: ChatMessageListVC,
-        didTapOnQuotedMessage quotedMessage: ChatMessage
+        shouldLoadPageAroundMessage message: ChatMessage,
+        completion: @escaping ((Error?) -> Void)
     )
 
     /// Tells the delegate that it should load the first page.

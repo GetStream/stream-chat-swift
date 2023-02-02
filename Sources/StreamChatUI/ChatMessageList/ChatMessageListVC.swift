@@ -93,6 +93,10 @@ open class ChatMessageListVC: _ViewController,
         components.messageListDateOverlayEnabled
     }
 
+    /// A message pending to be scrolled after a message list update.
+    /// (Used for jumping to a message)
+    private(set) var messagePendingScrolling: ChatMessage?
+
     /// A boolean value that determines wether date separators should be shown between each message.
     open var isDateSeparatorEnabled: Bool {
         components.messageListDateSeparatorEnabled
@@ -408,6 +412,27 @@ open class ChatMessageListVC: _ViewController,
         navigationController?.present(alert, animated: true)
     }
 
+    /// Jump to a given message.
+    /// In case the message is already loaded, it directly goes to it.
+    /// If not, it will load the messages around it and go to that page.
+    ///
+    /// - Parameter message: The message which the message list should go to.
+    public func jumpToMessage(_ message: ChatMessage) {
+        if let indexPath = getIndexPath(forMessageId: message.id) {
+            listView.scrollToRow(at: indexPath, at: .middle, animated: true)
+            return
+        }
+
+        delegate?.chatMessageListVC(self, shouldLoadPageAroundMessage: message) { [weak self] error in
+            if let error = error {
+                log.error("Loading message around failed with error: \(error)")
+                return
+            }
+
+            self?.messagePendingScrolling = message
+        }
+    }
+
     /// Gets the IndexPath for the given message id. Returns `nil` if the message is not in the list.
     public func getIndexPath(forMessageId messageId: MessageId) -> IndexPath? {
         dataSource?.messages
@@ -550,7 +575,7 @@ open class ChatMessageListVC: _ViewController,
     }
 
     open func messageContentViewDidTapOnQuotedMessage(_ quotedMessage: ChatMessage) {
-        delegate?.chatMessageListVC(self, didTapOnQuotedMessage: quotedMessage)
+        jumpToMessage(quotedMessage)
     }
 
     open func messageContentViewDidTapOnAvatarView(_ indexPath: IndexPath?) {
@@ -771,10 +796,10 @@ private extension ChatMessageListVC {
     func scrollPendingMessageIfNeeded() {
         // Only after updating the message to the UI we have the message around loaded
         // So we check if we have a message waiting to be scrolled to here
-        if let message = dataSource?.messagePendingScrolling,
+        if let message = messagePendingScrolling,
            let indexPath = getIndexPath(forMessageId: message.id) {
             listView.scrollToRow(at: indexPath, at: .middle, animated: true)
-            dataSource?.messagePendingScrolling = nil
+            messagePendingScrolling = nil
         }
     }
 

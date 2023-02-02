@@ -212,9 +212,6 @@ open class ChatThreadVC: _ViewController,
     // MARK: Missing jump to message implementation
 
     // TODO: Jump to message
-    public var messagePendingScrolling: ChatMessage?
-
-    // TODO: Jump to message
     public var isLoadingPreviousMessages: Bool = false
 
     // TODO: Jump to message
@@ -230,6 +227,13 @@ open class ChatThreadVC: _ViewController,
     public var pageSize: Int {
         messageController.repliesPageSize
     }
+
+    // TODO: Jump to message
+    public func chatMessageListVC(
+        _ vc: ChatMessageListVC,
+        shouldLoadPageAroundMessage message: ChatMessage,
+        completion: @escaping ((Error?) -> Void)
+    ) {}
 
     // TODO: Jump to message
     open func chatMessageListVCShouldLoadFirstPage(_ vc: ChatMessageListVC) {}
@@ -281,8 +285,6 @@ open class ChatThreadVC: _ViewController,
     ) {
         messageComposerVC.dismissSuggestions()
     }
-
-    open func chatMessageListVC(_ vc: ChatMessageListVC, didTapOnQuotedMessage quotedMessage: ChatMessage) {}
 
     // MARK: - ChatMessageControllerDelegate
 

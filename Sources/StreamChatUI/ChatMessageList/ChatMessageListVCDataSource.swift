@@ -16,9 +16,6 @@ public protocol ChatMessageListVCDataSource: AnyObject {
     /// Asks the data source if it is currently jumping to a message which is not loaded yet.
     var isJumpingToMessage: Bool { get }
 
-    /// Asks the data if there is currently a message pending to be scrolled after a message list update.
-    var messagePendingScrolling: ChatMessage? { get set }
-
     /// Asks the data source to return all the available messages.
     var messages: [ChatMessage] { get set }
 

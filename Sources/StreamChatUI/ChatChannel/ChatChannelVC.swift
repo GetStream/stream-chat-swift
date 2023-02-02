@@ -165,32 +165,9 @@ open class ChatChannelVC: _ViewController,
         resignFirstResponder()
     }
 
-    /// Jump to a given message.
-    /// In case the message is already loaded, it directly goes to it.
-    /// If not, it will load the messages around it and go to that page.
-    ///
-    /// - Parameter message: The message which the message list should go to.
-    open func jumpToMessage(_ message: ChatMessage) {
-        if let indexPath = messageListVC.getIndexPath(forMessageId: message.id) {
-            messageListVC.listView.scrollToRow(at: indexPath, at: .middle, animated: true)
-            return
-        }
-
-        channelController.loadPageAroundMessageId(message.id) { [weak self] error in
-            if let error = error {
-                log.error("Loading message around failed with error: \(error)")
-                return
-            }
-
-            self?.messagePendingScrolling = message
-        }
-    }
-
     // MARK: - ChatMessageListVCDataSource
 
     public var messages: [ChatMessage] = []
-
-    public var messagePendingScrolling: ChatMessage?
 
     public var isJumpingToMessage: Bool {
         channelController.isJumpingToMessage
@@ -228,6 +205,14 @@ open class ChatChannelVC: _ViewController,
             with: AnyRandomAccessCollection(messages),
             appearance: appearance
         )
+    }
+
+    public func chatMessageListVC(
+        _ vc: ChatMessageListVC,
+        shouldLoadPageAroundMessage message: ChatMessage,
+        completion: @escaping ((Error?) -> Void)
+    ) {
+        channelController.loadPageAroundMessageId(message.id, completion: completion)
     }
 
     open func chatMessageListVCShouldLoadFirstPage(
@@ -282,10 +267,6 @@ open class ChatChannelVC: _ViewController,
         with gestureRecognizer: UITapGestureRecognizer
     ) {
         messageComposerVC.dismissSuggestions()
-    }
-
-    open func chatMessageListVC(_ vc: ChatMessageListVC, didTapOnQuotedMessage quotedMessage: ChatMessage) {
-        jumpToMessage(quotedMessage)
     }
 
     // MARK: - ChatChannelControllerDelegate
