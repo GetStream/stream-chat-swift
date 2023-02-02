@@ -51,6 +51,11 @@ public class ChatChannelController_Mock: ChatChannelController {
         messages_mock.map { $0.lazyCachedMap { $0 } } ?? super.messages
     }
 
+    public var markReadCallCount = 0
+    public override func markRead(completion: ((Error?) -> Void)?) {
+        markReadCallCount += 1
+    }
+
     public private(set) var state_mock: State?
     override public var state: DataController.State {
         get { state_mock ?? super.state }

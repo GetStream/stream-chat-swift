@@ -17,6 +17,7 @@ final class ChatChannelVC_Tests: XCTestCase {
         var components = Components.mock
         components.channelHeaderView = ChatChannelHeaderViewMock.self
         components.messageComposerVC = ComposerVC_Mock.self
+        components.messageListView = ChatMessageListView_Mock.self
         vc = ChatChannelVC()
         vc.components = components
         channelControllerMock = ChatChannelController_Mock.mock()
@@ -553,34 +554,92 @@ final class ChatChannelVC_Tests: XCTestCase {
     // MARK: Channel read
 
     func test_shouldMarkChannelRead_whenIsLastMessageFullyVisible_whenHasLoadedAllNextMessages_thenReturnsTrue() {
-        XCTFail()
+        let mockedListView = makeMockMessageListView()
+        mockedListView.mockIsLastCellFullyVisible = true
+        channelControllerMock.hasLoadedAllNextMessages_mock = true
+
+        XCTAssertTrue(vc.shouldMarkChannelRead)
     }
 
     func test_shouldMarkChannelRead_whenNotLastMessageFullyVisible_thenReturnsFalse() {
-        XCTFail()
+        let mockedListView = makeMockMessageListView()
+        mockedListView.mockIsLastCellFullyVisible = false
+        channelControllerMock.hasLoadedAllNextMessages_mock = true
+
+        XCTAssertFalse(vc.shouldMarkChannelRead)
     }
 
     func test_shouldMarkChannelRead_whenHasNotLoadedAllNextMessages_thenReturnsFalse() {
-        XCTFail()
+        let mockedListView = makeMockMessageListView()
+        mockedListView.mockIsLastCellFullyVisible = true
+        channelControllerMock.hasLoadedAllNextMessages_mock = false
+
+        XCTAssertFalse(vc.shouldMarkChannelRead)
+    }
+
+    func test_shouldMarkChannelRead_whenNotLastMessageFullyVisible_whenHasNotLoadedAllNextMessages_thenReturnsFalse() {
+        let mockedListView = makeMockMessageListView()
+        mockedListView.mockIsLastCellFullyVisible = false
+        channelControllerMock.hasLoadedAllNextMessages_mock = false
+
+        XCTAssertFalse(vc.shouldMarkChannelRead)
     }
 
     func test_viewDidAppear_whenShouldMarkChannelRead_thenMarkRead() {
-        XCTFail()
+        let mockedListView = makeMockMessageListView()
+        mockedListView.mockIsLastCellFullyVisible = true
+        channelControllerMock.hasLoadedAllNextMessages_mock = true
+
+        vc.viewDidAppear(false)
+        XCTAssertEqual(channelControllerMock.markReadCallCount, 1)
+    }
+
+    func test_viewDidAppear_whenShouldNotMarkChannelRead_thenDoesNotMarkRead() {
+        let mockedListView = makeMockMessageListView()
+        mockedListView.mockIsLastCellFullyVisible = false
+        channelControllerMock.hasLoadedAllNextMessages_mock = false
+
+        vc.viewDidAppear(false)
+        XCTAssertEqual(channelControllerMock.markReadCallCount, 0)
     }
 
     func test_scrollViewDidScroll_whenShouldMarkChannelRead_thenMarkRead() {
-        XCTFail()
+        let mockedListView = makeMockMessageListView()
+        mockedListView.mockIsLastCellFullyVisible = true
+        channelControllerMock.hasLoadedAllNextMessages_mock = true
+
+        vc.chatMessageListVC(vc.messageListVC, scrollViewDidScroll: UIScrollView())
+        XCTAssertEqual(channelControllerMock.markReadCallCount, 1)
+    }
+
+    func test_scrollViewDidScroll_whenShouldNotMarkChannelRead_thenDoesNotMarkRead() {
+        let mockedListView = makeMockMessageListView()
+        mockedListView.mockIsLastCellFullyVisible = false
+        channelControllerMock.hasLoadedAllNextMessages_mock = false
+
+        vc.chatMessageListVC(vc.messageListVC, scrollViewDidScroll: UIScrollView())
+        XCTAssertEqual(channelControllerMock.markReadCallCount, 0)
     }
 
     func test_didUpdateMessages_whenShouldMarkChannelRead_thenMarkRead() {
-        XCTFail()
+        let mockedListView = makeMockMessageListView()
+        mockedListView.mockIsLastCellFullyVisible = true
+        channelControllerMock.hasLoadedAllNextMessages_mock = true
+
+        vc.channelController(channelControllerMock, didUpdateMessages: [])
+        XCTAssertEqual(channelControllerMock.markReadCallCount, 1)
+    }
+
+    func test_didUpdateMessages_whenShouldNotMarkChannelRead_thenDoesNotMarkRead() {
+        let mockedListView = makeMockMessageListView()
+        mockedListView.mockIsLastCellFullyVisible = false
+        channelControllerMock.hasLoadedAllNextMessages_mock = false
+
+        vc.channelController(channelControllerMock, didUpdateMessages: [])
+        XCTAssertEqual(channelControllerMock.markReadCallCount, 0)
     }
 
     // MARK: Jumping to message
-
-    func test_didTapOnQuotedMessage_thenJumpToMessage() {
-        XCTFail()
-    }
 
     func test_jumpToMessage_whenMessageAlreadyInUI_shouldScrollToItsIndexPath_shouldNotCallChannelController() {
         XCTFail()
@@ -629,6 +688,11 @@ private extension ChatChannelVC_Tests {
             deletedAt: Date(),
             isSentByCurrentUser: isSentByCurrentUser
         )
+    }
+
+    func makeMockMessageListView() -> ChatMessageListView_Mock {
+        vc.messageListVC.components.messageListView = ChatMessageListView_Mock.self
+        return vc.messageListVC.listView as! ChatMessageListView_Mock
     }
 }
 
