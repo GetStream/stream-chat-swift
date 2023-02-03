@@ -29,10 +29,6 @@ extension ChatClient {
         let config = ChatClientConfig(apiKey: APIKey("bmrrcjf5bhzt"))
 
         let client = ChatClient(config: config)
-        client.connectUser(
-            userInfo: .init(id: "sagar"),
-            token: .development(userId: "sagar")
-        )
         return client
     }()
 }
