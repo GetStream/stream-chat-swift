@@ -14,7 +14,7 @@ final class SplashViewController: UIViewController {
     private lazy var activityIndicatorView: UIActivityIndicatorView = .init(style: .large)
     private lazy var cancellationLabel: UILabel = {
         let label = UILabel()
-        label.text = "No connected use found.\nTap the button below to try connect the user with id \(userInfo.id)."
+        label.text = "No connected user found.\nTap the button below to try connect the user with id \(userInfo.id)."
         label.font = .preferredFont(forTextStyle: .callout)
         label.textAlignment = .center
         label.textColor = .black
