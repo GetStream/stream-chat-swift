@@ -72,9 +72,7 @@ class CreateChatViewController: UIViewController {
 
     var searchController: ChatUserSearchController!
 
-    var users: [ChatUser] {
-        searchController.userArray
-    }
+    var users: [ChatUser] = []
 
     var selectedUserIds: Set<String> {
         Set(searchField.tokens.compactMap { ($0.representedObject as? ChatUser)?.id })
@@ -285,6 +283,7 @@ extension CreateChatViewController: ChatUserSearchControllerDelegate {
     func controller(_ controller: DataController, didChangeState state: DataController.State) {
         if case .remoteDataFetched = state {
             print("\(users.count) users found")
+            users = searchController.userArray
             update(for: users.isEmpty ? .noUsers : .searching)
         }
     }
