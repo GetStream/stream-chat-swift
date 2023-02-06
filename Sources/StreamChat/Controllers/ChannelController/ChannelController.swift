@@ -34,11 +34,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
     /// A Boolean value that returns wether the newest messages have all been loaded or not.
     public var hasLoadedAllNextMessages: Bool {
-        // We use channel.previewMessage?.createdAt and not the channel.lastMessageAt
-        // because the channel.lastMessageAt also accounts for thread replies at the moment.
-        // Right now, the previewMessage, since it is always the most recent message of the channel
-        // is a good candidate to determine if the first page is loaded (if all recent messages have been loaded).
-        channel?.previewMessage?.createdAt == messages.first?.createdAt
+        channel?.lastChannelMessageAt == messages.first?.createdAt
     }
 
     /// A Boolean value that returns wether the channel is currently loading previous (old) messages.

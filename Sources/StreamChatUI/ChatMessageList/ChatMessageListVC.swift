@@ -722,10 +722,7 @@ private extension ChatMessageListVC {
         let numberOfSkippedMessages = listView.skippedMessages.count
         let isInsertionAtTheBottom = changes.first(where: { $0.indexPath.item - numberOfSkippedMessages == 0 }) != nil
         let isLoadingNextMessages = changes.filter(\.isInsertion).count == pageSize && isInsertionAtTheBottom
-
-        // Computed properties so that we get the most updated result even after the diffing updates.
-        let isFirstPageLoaded: Bool = channel.previewMessage?.createdAt == listView.previousMessagesSnapshot.first?.createdAt
-        let isJumpingToMessage: Bool = dataSource?.isJumpingToMessage == true
+        let isFirstPageLoaded: Bool = dataSource?.isFirstPageLoaded == true
 
         let newestChange = changes.first(where: { $0.indexPath.item == 0 })
         let isNewestChangeInsertion = newestChange?.isInsertion == true
