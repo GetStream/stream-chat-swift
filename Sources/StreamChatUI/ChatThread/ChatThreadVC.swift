@@ -219,11 +219,6 @@ open class ChatThreadVC: _ViewController,
         true
     }
 
-    // TODO: Jump to message
-    public var isJumpingToMessage: Bool {
-        false
-    }
-
     public var pageSize: Int {
         messageController.repliesPageSize
     }

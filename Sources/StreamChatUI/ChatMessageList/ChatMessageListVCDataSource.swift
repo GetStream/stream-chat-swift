@@ -13,9 +13,6 @@ public protocol ChatMessageListVCDataSource: AnyObject {
     /// Asks the data source if the first page is currently loaded.
     var isFirstPageLoaded: Bool { get }
 
-    /// Asks the data source if it is currently jumping to a message which is not loaded yet.
-    var isJumpingToMessage: Bool { get }
-
     /// Asks the data source to return all the available messages.
     var messages: [ChatMessage] { get set }
 

@@ -169,10 +169,6 @@ open class ChatChannelVC: _ViewController,
 
     public var messages: [ChatMessage] = []
 
-    public var isJumpingToMessage: Bool {
-        channelController.isJumpingToMessage
-    }
-
     public var isFirstPageLoaded: Bool {
         channelController.hasLoadedAllNextMessages
     }
@@ -280,7 +276,7 @@ open class ChatChannelVC: _ViewController,
         }
 
         // In order to not show an empty list when jumping to a message, ignore the remove updates.
-        if isJumpingToMessage && changes.filter(\.isRemove).count == messages.count {
+        if !isFirstPageLoaded && changes.filter(\.isRemove).count == messages.count {
             return
         }
 

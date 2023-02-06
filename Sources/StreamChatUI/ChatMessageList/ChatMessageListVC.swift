@@ -227,16 +227,16 @@ open class ChatMessageListVC: _ViewController,
 
     /// Action for `scrollToLatestMessageButton` that scroll to most recent message.
     @objc open func scrollToLatestMessage() {
-        scrollToMostRecentMessage()
-    }
-
-    /// Scrolls to most recent message
-    open func scrollToMostRecentMessage(animated: Bool = true) {
         guard dataSource?.isFirstPageLoaded == true else {
             jumpToFirstPage()
             return
         }
 
+        scrollToMostRecentMessage()
+    }
+
+    /// Scrolls to most recent message
+    open func scrollToMostRecentMessage(animated: Bool = true) {
         listView.scrollToMostRecentMessage(animated: animated)
     }
 
@@ -717,10 +717,11 @@ private extension ChatMessageListVC {
     // MARK: - Message Updates Helpers
 
     func handleMessageUpdates(with changes: [ListChange<ChatMessage>], completion: (() -> Void)?) {
-        guard let channel = dataSource?.channel(for: self) else { return }
         let pageSize = dataSource?.pageSize ?? .channelsPageSize
         let numberOfSkippedMessages = listView.skippedMessages.count
         let isInsertionAtTheBottom = changes.first(where: { $0.indexPath.item - numberOfSkippedMessages == 0 }) != nil
+        // We can't rely on the `channelController.isLoadingNextMessages`
+        // because at this stage the request is already completed
         let isLoadingNextMessages = changes.filter(\.isInsertion).count == pageSize && isInsertionAtTheBottom
         let isFirstPageLoaded: Bool = dataSource?.isFirstPageLoaded == true
 
@@ -729,16 +730,6 @@ private extension ChatMessageListVC {
         let isNewestChangeNotByCurrentUser = newestChange?.item.isSentByCurrentUser == false
         let isNewestChangeNotVisible = !listView.isLastCellFullyVisible && !listView.previousMessagesSnapshot.isEmpty
         let shouldSkipMessagesInsertions = isNewestChangeNotVisible && isNewestChangeInsertion && isNewestChangeNotByCurrentUser
-
-        // If a new message was inserted by the current user while the first page is not yet loaded,
-        // notify that the first page needs to be loaded.
-        if let channelLastMessageAt = channel.lastMessageAt,
-           let newestChange = changes.first(where: { $0.item.createdAt == channelLastMessageAt }) {
-            if newestChange.item.isSentByCurrentUser && newestChange.isInsertion && !isFirstPageLoaded && !isJumpingToMessage {
-                jumpToFirstPage()
-                return
-            }
-        }
 
         if shouldSkipMessagesInsertions && !isLoadingNextMessages {
             addSkippedMessages(with: changes)
@@ -761,15 +752,12 @@ private extension ChatMessageListVC {
             }
 
             UIView.performWithoutAnimation {
-                let isFirstPageLoaded: Bool = self?.dataSource?.isFirstPageLoaded == true
-                let isJumpingToMessage: Bool = self?.dataSource?.isJumpingToMessage == true
-
                 let newestChangeIsInsertionOrMove = isNewestChangeInsertion || newestChange?.isMove == true
                 if newestChangeIsInsertionOrMove, let newMessage = newestChange?.item {
                     // Scroll to the bottom if the new message was sent by
                     // the current user, or moved by the current user
-                    if newMessage.isSentByCurrentUser && isFirstPageLoaded && !isJumpingToMessage {
-                        self?.listView.scrollToMostRecentMessage()
+                    if newMessage.isSentByCurrentUser && isFirstPageLoaded {
+                        self?.scrollToMostRecentMessage()
                     }
 
                     // When a Giphy moves to the bottom, we need to also trigger a reload
