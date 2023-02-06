@@ -162,14 +162,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     }
 
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
-        // If channel was left while jumping to messages, clean the channel messages.
-        if !hasLoadedAllNextMessages, let cid = cid {
-            client.databaseContainer.write { session in
-                session.deleteChannelMessages(cid: cid)
-            }
-        }
-
-        synchronize(isInRecoveryMode: false, completion)
+        let isFirstPageLoaded = hasLoadedAllNextMessages
+        synchronize(isInRecoveryMode: false, resetCurrentMessages: !isFirstPageLoaded, completion)
     }
 
     // MARK: - Channel features
@@ -501,13 +495,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// Cleans the current state and loads the first page again.
     /// - Parameter completion: Callback when the API call is completed.
     public func loadFirstPage(_ completion: ((_ error: Error?) -> Void)? = nil) {
-        if let cid = cid {
-            client.databaseContainer.write { session in
-                session.deleteChannelMessages(cid: cid)
-            }
-        }
-
-        synchronize(isInRecoveryMode: false, completion)
+        synchronize(isInRecoveryMode: false, resetCurrentMessages: true, completion)
     }
 
     /// Sends the start typing event and schedule a timer to send the stop typing event.
@@ -1054,7 +1042,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         if cid != nil, isChannelAlreadyCreated {
             startWatching(isInRecoveryMode: true, completion: completion)
         } else {
-            synchronize(isInRecoveryMode: true, completion)
+            synchronize(isInRecoveryMode: true, resetCurrentMessages: false, completion)
         }
     }
 }
@@ -1088,17 +1076,23 @@ public enum MessageOrdering {
 // MARK: - Helpers
 
 private extension ChatChannelController {
-    func synchronize(isInRecoveryMode: Bool, _ completion: ((_ error: Error?) -> Void)? = nil) {
+    func synchronize(isInRecoveryMode: Bool, resetCurrentMessages: Bool, _ completion: ((_ error: Error?) -> Void)? = nil) {
         channelQuery.pagination = .init(
             pageSize: channelQuery.pagination?.pageSize ?? .messagesPageSize,
             parameter: nil
         )
 
         let channelCreatedCallback = isChannelAlreadyCreated ? nil : channelCreated(forwardErrorTo: setLocalStateBasedOnError)
+        let deleteChannelMessages: (DatabaseSession) -> Void = { [weak self] session in
+            guard let cid = self?.channelQuery.cid else { return }
+            session.deleteChannelMessages(cid: cid)
+        }
+
         updater.update(
             channelQuery: channelQuery,
             isInRecoveryMode: isInRecoveryMode,
             onChannelCreated: channelCreatedCallback,
+            onBeforeSavingChannel: resetCurrentMessages ? deleteChannelMessages : nil,
             completion: { result in
                 switch result {
                 case let .success(payload):
