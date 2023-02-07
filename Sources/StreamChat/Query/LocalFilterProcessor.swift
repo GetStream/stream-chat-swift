@@ -68,10 +68,9 @@ struct LocalFilterProcessor<
             }
             return result
         case .query:
-            //            return "\(key) QUERY \(value)"
-            return []
+            return [] // No operation
         case .autocomplete:
-            return mappedValues.filter { $0.value.contains(anyValue) }.map(\.item)
+            return mappedValues.filter { $0.value.autocomplete(anyValue) }.map(\.item)
         case .exists:
             return mappedValues.filter { $0.value.contains(anyValue) }.map(\.item)
         case .contains:

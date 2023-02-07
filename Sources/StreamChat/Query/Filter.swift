@@ -509,6 +509,14 @@ public struct AnyFilterValue: Equatable, Comparable, Hashable {
             return false
         }
     }
+
+    public func autocomplete(_ filterValue: AnyFilterValue) -> Bool {
+        if let stringValue = value as? String, let lookingFor = filterValue.value as? String {
+            return stringValue.hasPrefix(lookingFor)
+        } else {
+            return false
+        }
+    }
 }
 
 extension FilterValue {
