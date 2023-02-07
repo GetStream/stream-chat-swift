@@ -502,11 +502,6 @@ class ChatMessageCell_Mock: ChatMessageCell {
 }
 
 class ChatMessageListVCDataSource_Mock: ChatMessageListVCDataSource {
-    var mockedPageSize: Int = 25
-    var pageSize: Int {
-        mockedPageSize
-    }
-
     var mockedIsFirstPageLoaded: Bool = true
     var isFirstPageLoaded: Bool {
         mockedIsFirstPageLoaded

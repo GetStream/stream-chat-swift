@@ -717,24 +717,17 @@ open class ChatMessageListVC: _ViewController,
 
 private extension ChatMessageListVC {
     func handleMessageUpdates(with changes: [ListChange<ChatMessage>], completion: (() -> Void)?) {
-        let isFirstPageLoaded: Bool = dataSource?.isFirstPageLoaded == true
-        let isLoadingNextMessages = isLoadingNextMessages(changes: changes)
         let newestChange = changes.first(where: { $0.indexPath.item == 0 })
-        let shouldSkipMessagesInsertions = shouldSkipMessagesInsertions(
-            newestChange: newestChange,
-            isLoadingNextMessages: isLoadingNextMessages
-        )
 
-        if shouldSkipMessagesInsertions {
-            addSkippedMessages(with: changes)
-        }
+        addSkippedMessagesIfNeeded(with: changes, newestChange: newestChange)
 
         // The old content offset and size should be stored before updating the list view.
         let oldContentOffset = listView.contentOffset
         let oldContentSize = listView.contentSize
+
         listView.updateMessages(with: changes) { [weak self] in
             // Calculate new content offset after loading next page
-            let shouldAdjustContentOffset = !isFirstPageLoaded && isLoadingNextMessages
+            let shouldAdjustContentOffset = oldContentOffset.y < 0
             if shouldAdjustContentOffset {
                 self?.adjustContentOffset(oldContentOffset: oldContentOffset, oldContentSize: oldContentSize)
             }
@@ -753,24 +746,24 @@ private extension ChatMessageListVC {
         }
     }
 
-    // We can't rely on the `channelController.isLoadingNextMessages`
-    // because at this stage the request is already completed. So right now,
-    // this is the only way to know the changes come from loading a nextPage.
-    func isLoadingNextMessages(changes: [ListChange<ChatMessage>]) -> Bool {
-        let pageSize = dataSource?.pageSize ?? .channelsPageSize
-        let numberOfSkippedMessages = listView.skippedMessages.count
-        let isInsertionAtTheBottom = changes.first(where: { $0.indexPath.item - numberOfSkippedMessages == 0 }) != nil
-        return changes.filter(\.isInsertion).count == pageSize && isInsertionAtTheBottom && dataSource?.messages.count != pageSize
-    }
-
-    func shouldSkipMessagesInsertions(newestChange: ListChange<ChatMessage>?, isLoadingNextMessages: Bool) -> Bool {
+    func addSkippedMessagesIfNeeded(with changes: [ListChange<ChatMessage>], newestChange: ListChange<ChatMessage>?) {
+        let insertions = changes.filter(\.isInsertion)
+        let isFirstPageLoaded = dataSource?.isFirstPageLoaded == true
         let isNewestChangeInsertion = newestChange?.isInsertion == true
         let isNewestChangeNotByCurrentUser = newestChange?.item.isSentByCurrentUser == false
         let isNewestChangeNotVisible = !listView.isLastCellFullyVisible && !listView.previousMessagesSnapshot.isEmpty
-        return isNewestChangeNotVisible && isNewestChangeInsertion && isNewestChangeNotByCurrentUser && !isLoadingNextMessages
-    }
+        let hasMultipleInsertions = insertions.count > 1
+        let shouldSkipMessages =
+            isFirstPageLoaded
+                && isNewestChangeNotVisible
+                && isNewestChangeInsertion
+                && isNewestChangeNotByCurrentUser
+                && !hasMultipleInsertions
 
-    func addSkippedMessages(with changes: [ListChange<ChatMessage>]) {
+        guard shouldSkipMessages else {
+            return
+        }
+
         changes.filter(\.isInsertion).forEach {
             listView.skippedMessages.insert($0.item.id)
         }

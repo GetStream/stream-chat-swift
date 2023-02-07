@@ -219,10 +219,6 @@ open class ChatThreadVC: _ViewController,
         true
     }
 
-    public var pageSize: Int {
-        messageController.repliesPageSize
-    }
-
     // TODO: Jump to message
     public func chatMessageListVC(
         _ vc: ChatMessageListVC,

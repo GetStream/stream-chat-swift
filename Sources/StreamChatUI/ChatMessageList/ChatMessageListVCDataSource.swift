@@ -7,9 +7,6 @@ import StreamChat
 
 /// The object that acts as the data source of the message list.
 public protocol ChatMessageListVCDataSource: AnyObject {
-    /// Asks the data source for the page size when loading more messages.
-    var pageSize: Int { get }
-
     /// Asks the data source if the first page is currently loaded.
     var isFirstPageLoaded: Bool { get }
 
