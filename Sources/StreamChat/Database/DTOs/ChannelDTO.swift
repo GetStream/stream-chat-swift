@@ -268,8 +268,8 @@ extension NSManagedObjectContext {
 
         try payload.messages.forEach { _ = try saveMessage(payload: $0, channelDTO: dto, syncOwnReactions: true, cache: cache) }
 
-        if dto.needsPreviewUpdate(payload) {
-            dto.previewMessage = preview(for: payload.channel.cid)
+        if dto.needsPreviewUpdate(payload), let newPreview = preview(for: payload.channel.cid) {
+            dto.previewMessage = newPreview
         }
 
         dto.updateOldestMessageAt(payload: payload)

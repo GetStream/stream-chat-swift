@@ -206,7 +206,8 @@ class MessageDTO: NSManagedObject {
             channelMessagesPredicate(
                 for: cid,
                 deletedMessagesVisibility: .alwaysHidden,
-                shouldShowShadowedMessages: includeShadowedMessages
+                shouldShowShadowedMessages: includeShadowedMessages,
+                filterNewerMessages: false
             ),
             .init(format: "type != %@", MessageType.ephemeral.rawValue),
             .init(format: "type != %@", MessageType.error.rawValue)
@@ -217,7 +218,8 @@ class MessageDTO: NSManagedObject {
     static func channelMessagesPredicate(
         for cid: String,
         deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility,
-        shouldShowShadowedMessages: Bool
+        shouldShowShadowedMessages: Bool,
+        filterNewerMessages: Bool = true
     ) -> NSCompoundPredicate {
         let channelMessagePredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [
             .init(format: "showReplyInChannel == 1"),
@@ -241,22 +243,24 @@ class MessageDTO: NSManagedObject {
             .init(format: "createdAt >= channel.oldestMessageAt")
         ])
 
-        // Used for paginating newer messages while jumping to a mid-page.
-        // We want to avoid new messages being inserted in the UI if we are in a mid-page.
-        let ignoreNewerMessagesPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [
-            .init(format: "channel.newestMessageAt == nil"),
-            .init(format: "createdAt <= channel.newestMessageAt")
-        ])
-
         var subpredicates = [
             channelPredicate(with: cid),
             channelMessagePredicate,
             messageTypePredicate,
             nonTruncatedMessagesPredicate(),
             ignoreOlderMessagesPredicate,
-            ignoreNewerMessagesPredicate,
             deletedMessagesPredicate(deletedMessagesVisibility: deletedMessagesVisibility)
         ]
+
+        if filterNewerMessages {
+            // Used for paginating newer messages while jumping to a mid-page.
+            // We want to avoid new messages being inserted in the UI if we are in a mid-page.
+            let ignoreNewerMessagesPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [
+                .init(format: "channel.newestMessageAt == nil"),
+                .init(format: "createdAt <= channel.newestMessageAt")
+            ])
+            subpredicates.append(ignoreNewerMessagesPredicate)
+        }
 
         if !shouldShowShadowedMessages {
             let ignoreShadowedMessages = NSPredicate(format: "isShadowed == NO")
@@ -703,10 +707,10 @@ extension NSManagedObjectContext: MessageDatabaseSession {
 
         // Refetch channel preview if the current preview has changed.
         //
-        // The current messsage can stop being a valid preview e.g.
+        // The current message can stop being a valid preview e.g.
         // if it didn't pass moderation and obtained `error` type.
-        if payload.id == channelDTO.previewMessage?.id {
-            channelDTO.previewMessage = preview(for: cid)
+        if payload.id == channelDTO.previewMessage?.id, let preview = preview(for: cid), payload.id == preview.id {
+            channelDTO.previewMessage = preview
         }
 
         return dto
