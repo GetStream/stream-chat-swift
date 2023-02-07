@@ -54,6 +54,9 @@ class ChannelUpdater: Worker {
                     }
 
                     try session.saveChannel(payload: payload)
+
+                    channelDTO?.updatePaginationCursors(for: payload, with: channelQuery.pagination)
+
                 } completion: { error in
                     if let error = error {
                         completion?(.failure(error))

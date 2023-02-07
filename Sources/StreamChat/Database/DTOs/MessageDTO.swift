@@ -241,12 +241,20 @@ class MessageDTO: NSManagedObject {
             .init(format: "createdAt >= channel.oldestMessageAt")
         ])
 
+        // Used for paginating newer messages while jumping to a mid-page.
+        // We want to avoid new messages being inserted in the UI if we are in a mid-page.
+        let ignoreNewerMessagesPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [
+            .init(format: "channel.newestMessageAt == nil"),
+            .init(format: "createdAt <= channel.newestMessageAt")
+        ])
+
         var subpredicates = [
             channelPredicate(with: cid),
             channelMessagePredicate,
             messageTypePredicate,
             nonTruncatedMessagesPredicate(),
             ignoreOlderMessagesPredicate,
+            ignoreNewerMessagesPredicate,
             deletedMessagesPredicate(deletedMessagesVisibility: deletedMessagesVisibility)
         ]
 

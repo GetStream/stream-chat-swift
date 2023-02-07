@@ -31,9 +31,11 @@ class ChannelDTO: NSManagedObject {
     // that do not belong to the regular channel query.
     @NSManaged var oldestMessageAt: DBDate?
 
-    //
+    // Used for paginating newer messages while jumping to a mid-page.
+    // We want to avoid new messages being inserted in the UI if we are in a mid-page.
+    @NSManaged var newestMessageAt: DBDate?
+
     // This field is also used to implement the `clearHistory` option when hiding the channel.
-    //
     @NSManaged var truncatedAt: DBDate?
 
     @NSManaged var isHidden: Bool
@@ -570,6 +572,29 @@ extension ChannelDTO {
         let isOlderThanCurrentOldestMessage = payloadOldestMessageAt < (oldestMessageAt?.bridgeDate ?? Date.distantFuture)
         if isOlderThanCurrentOldestMessage {
             oldestMessageAt = payloadOldestMessageAt.bridgeDate
+        }
+    }
+
+    /// When fetching messages pages in Channel Query we use `oldestMessageAt` and `newestMessageAt` as cursors.
+    func updatePaginationCursors(for payload: ChannelPayload, with pagination: MessagesPagination?) {
+        switch pagination?.parameter {
+        // When loading previous (old) pages
+        case .lessThan, .lessThanOrEqual:
+            oldestMessageAt = payload.messages.first?.createdAt.bridgeDate
+                
+        // When loading next (new) pages
+        case .greaterThan, .greaterThanOrEqual:
+            newestMessageAt = payload.messages.last?.createdAt.bridgeDate
+
+        // When jumping to a mid-page
+        case .around:
+            oldestMessageAt = payload.messages.first?.createdAt.bridgeDate
+            newestMessageAt = payload.messages.last?.createdAt.bridgeDate
+
+        // When loading first page
+        case .none:
+            oldestMessageAt = payload.messages.first?.createdAt.bridgeDate
+            newestMessageAt = nil
         }
     }
     
