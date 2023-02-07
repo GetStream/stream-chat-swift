@@ -225,7 +225,7 @@ public class ChatClient {
     }()
 
     /// Used as a bridge to communicate between the host app and the notification extension. Holds the state for the app lifecycle.
-    private(set) lazy var extensionLifecycle = NotificationExtensionLifecycle(appGroupIdentifier: config.applicationGroupIdentifier)
+    private(set) lazy var extensionLifecycle = environment.extensionLifecycleBuilder(config.applicationGroupIdentifier)
 
     /// The environment object containing all dependencies of this `Client` instance.
     private let environment: Environment
@@ -569,6 +569,8 @@ extension ChatClient {
                 shouldShowShadowedMessages: $5
             )
         }
+
+        var extensionLifecycleBuilder = NotificationExtensionLifecycle.init
 
         var requestEncoderBuilder: (_ baseURL: URL, _ apiKey: APIKey) -> RequestEncoder = DefaultRequestEncoder.init
         var requestDecoderBuilder: () -> RequestDecoder = DefaultRequestDecoder.init

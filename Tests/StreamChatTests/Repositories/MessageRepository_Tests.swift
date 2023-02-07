@@ -276,7 +276,7 @@ final class MessageRepositoryTests: XCTestCase {
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
 
-    func test_getMessage_propogatesDatabaseError() throws {
+    func test_getMessage_propagatesDatabaseError() throws {
         let messagePayload: MessagePayload.Boxed = .init(
             message: .dummy(messageId: .unique, authorUserId: .unique)
         )
@@ -302,7 +302,7 @@ final class MessageRepositoryTests: XCTestCase {
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
 
-    func test_getMessage_savesMessageToDatabase() throws {
+    func test_getMessage_savesMessageToDatabase_whenStoreIsTrue() throws {
         let currentUserId: UserId = .unique
         let messageId: MessageId = .unique
         let cid: ChannelId = .unique
@@ -315,7 +315,7 @@ final class MessageRepositoryTests: XCTestCase {
 
         // Simulate `getMessage(cid:, messageId:)` call
         var completionCalled = false
-        repository.getMessage(cid: cid, messageId: messageId) { _ in
+        repository.getMessage(cid: cid, messageId: messageId, store: true) { _ in
             completionCalled = true
         }
 
@@ -330,6 +330,36 @@ final class MessageRepositoryTests: XCTestCase {
 
         // Assert fetched message is saved to the database
         XCTAssertNotNil(database.viewContext.message(id: messageId))
+    }
+
+    func test_getMessage_doesNotSaveMessageToDatabase_whenStoreIsFalse() throws {
+        let currentUserId: UserId = .unique
+        let messageId: MessageId = .unique
+        let cid: ChannelId = .unique
+
+        // Create current user in the database
+        try database.createCurrentUser(id: currentUserId)
+
+        // Create channel in the database
+        try database.createChannel(cid: cid)
+
+        // Simulate `getMessage(cid:, messageId:)` call
+        var completionCalled = false
+        repository.getMessage(cid: cid, messageId: messageId, store: false) { _ in
+            completionCalled = true
+        }
+
+        // Simulate API response with success
+        let messagePayload: MessagePayload.Boxed = .init(
+            message: .dummy(messageId: messageId, authorUserId: currentUserId)
+        )
+        apiClient.test_simulateResponse(Result<MessagePayload.Boxed, Error>.success(messagePayload))
+
+        // Assert completion is called
+        AssertAsync.willBeTrue(completionCalled)
+
+        // Assert fetched message is saved to the database
+        XCTAssertNil(database.viewContext.message(id: messageId))
     }
 
     // MARK: markMessage

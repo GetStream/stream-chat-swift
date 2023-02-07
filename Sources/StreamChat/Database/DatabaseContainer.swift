@@ -374,9 +374,7 @@ extension NSManagedObjectContext {
     func discardChanges(for object: NSManagedObject) {
         refresh(object, mergeChanges: false)
     }
-}
 
-extension NSManagedObjectContext {
     func discardCurrentChanges() {
         insertedObjects.forEach { discardChanges(for: $0) }
         updatedObjects.forEach { discardChanges(for: $0) }

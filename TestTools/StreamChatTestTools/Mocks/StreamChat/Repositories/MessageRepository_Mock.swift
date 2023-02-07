@@ -48,7 +48,7 @@ final class MessageRepository_Mock: MessageRepository, Spy {
         completion()
     }
 
-    override func getMessage(cid: ChannelId, messageId: MessageId, completion: ((Result<ChatMessage, Error>) -> Void)? = nil) {
+    override func getMessage(cid: ChannelId, messageId: MessageId, store: Bool = true, completion: ((Result<ChatMessage, Error>) -> Void)? = nil) {
         record()
         getMessageResult.map { completion?($0) }
     }
