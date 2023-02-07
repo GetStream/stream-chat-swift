@@ -13,10 +13,9 @@ When reactions are added to a message, a view displaying the added reactions is 
 The simplest way to customize the message reactions view is to replace its reaction icons. Those are available under the `availableReactions` property in the Images class, which is part of the Appearance class in the StreamChat object. The `availableReactions` property is a dictionary, which contains mappings between `MessageReactionType` and its corresponding `ChatMessageReactionAppearanceType`, which consists of small and large icon for a reaction. If you change these properties, make sure to inject the updated `Images` class in the StreamChat object.
 
 ```swift
-let customReactions = [.init(rawValue: "custom"): ChatMessageReactionAppearance(
-                        smallIcon: reactionCustomSmall,
-                        largeIcon: reactionCustomBig
-                      )]
+let customReactions: [MessageReactionType: ChatMessageReactionAppearance] = [
+    .init(rawValue: "custom"): .init(smallIcon: smallIcon, largeIcon: largeIcon)
+]
 var images = Images()
 images.availableReactions = customReactions
 let appearance = Appearance(images: images)
