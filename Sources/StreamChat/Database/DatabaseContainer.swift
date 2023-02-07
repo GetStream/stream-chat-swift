@@ -212,7 +212,7 @@ class DatabaseContainer: NSPersistentContainer {
                 // By reseting such objects we remove updates that are not updates.
                 for object in self.writableContext.updatedObjects {
                     if object.changedValues().isEmpty {
-                        self.writableContext.refresh(object, mergeChanges: false)
+                        self.writableContext.discardChanges(for: object)
                     }
                 }
 
@@ -366,5 +366,20 @@ class DatabaseContainer: NSPersistentContainer {
                 log.error("Error resetting ephemeral values: \(error)", subsystems: .database)
             }
         }
+    }
+}
+
+extension NSManagedObjectContext {
+    /// Discards any changes on the passed object that are pending to be saved.
+    func discardChanges(for object: NSManagedObject) {
+        refresh(object, mergeChanges: false)
+    }
+}
+
+extension NSManagedObjectContext {
+    func discardCurrentChanges() {
+        insertedObjects.forEach { discardChanges(for: $0) }
+        updatedObjects.forEach { discardChanges(for: $0) }
+        deletedObjects.forEach { discardChanges(for: $0) }
     }
 }

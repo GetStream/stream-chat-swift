@@ -224,6 +224,9 @@ public class ChatClient {
         )
     }()
 
+    /// Used as a bridge to communicate between the host app and the notification extension. Holds the state for the app lifecycle.
+    private(set) lazy var extensionLifecycle = NotificationExtensionLifecycle(appGroupIdentifier: config.applicationGroupIdentifier)
+
     /// The environment object containing all dependencies of this `Client` instance.
     private let environment: Environment
 
@@ -290,6 +293,7 @@ public class ChatClient {
             webSocketClient,
             eventNotificationCenter,
             syncRepository,
+            extensionLifecycle,
             environment.backgroundTaskSchedulerBuilder(),
             environment.internetConnection(eventNotificationCenter, environment.internetMonitor),
             config.staysConnectedInBackground
@@ -613,6 +617,7 @@ extension ChatClient {
             _ webSocketClient: WebSocketClient,
             _ eventNotificationCenter: EventNotificationCenter,
             _ syncRepository: SyncRepository,
+            _ extensionLifecycle: NotificationExtensionLifecycle,
             _ backgroundTaskScheduler: BackgroundTaskScheduler?,
             _ internetConnection: InternetConnection,
             _ keepConnectionAliveInBackground: Bool
@@ -621,11 +626,12 @@ extension ChatClient {
                 webSocketClient: $0,
                 eventNotificationCenter: $1,
                 syncRepository: $2,
-                backgroundTaskScheduler: $3,
-                internetConnection: $4,
+                extensionLifecycle: $3,
+                backgroundTaskScheduler: $4,
+                internetConnection: $5,
                 reconnectionStrategy: DefaultRetryStrategy(),
                 reconnectionTimerType: DefaultTimer.self,
-                keepConnectionAliveInBackground: $5
+                keepConnectionAliveInBackground: $6
             )
         }
 

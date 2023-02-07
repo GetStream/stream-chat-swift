@@ -1706,6 +1706,8 @@
 		C1616DB128DC4D7F00FF993B /* UserGloballyUnbanned.json in Resources */ = {isa = PBXBuildFile; fileRef = C1616DAF28DC4D7F00FF993B /* UserGloballyUnbanned.json */; };
 		C1616DB228DC4D7F00FF993B /* UserGloballyBanned.json in Resources */ = {isa = PBXBuildFile; fileRef = C1616DB028DC4D7F00FF993B /* UserGloballyBanned.json */; };
 		C1616DB428DC9F0B00FF993B /* ChannelCreated.json in Resources */ = {isa = PBXBuildFile; fileRef = C1616DB328DC9F0B00FF993B /* ChannelCreated.json */; };
+		C163ECFB299155D0006D6124 /* NotificationExtension+Lifecycle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C163ECFA299155D0006D6124 /* NotificationExtension+Lifecycle.swift */; };
+		C163ECFC299155D0006D6124 /* NotificationExtension+Lifecycle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C163ECFA299155D0006D6124 /* NotificationExtension+Lifecycle.swift */; };
 		C171041E2768C34E008FB3F2 /* Array+SafeSubscript.swift in Sources */ = {isa = PBXBuildFile; fileRef = C171041D2768C34E008FB3F2 /* Array+SafeSubscript.swift */; };
 		C171041F2768C34E008FB3F2 /* Array+SafeSubscript.swift in Sources */ = {isa = PBXBuildFile; fileRef = C171041D2768C34E008FB3F2 /* Array+SafeSubscript.swift */; };
 		C173538E27D9F804008AC412 /* KeyedDecodingContainer+Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = C173538D27D9F804008AC412 /* KeyedDecodingContainer+Array.swift */; };
@@ -3460,6 +3462,7 @@
 		C1616DAF28DC4D7F00FF993B /* UserGloballyUnbanned.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = UserGloballyUnbanned.json; sourceTree = "<group>"; };
 		C1616DB028DC4D7F00FF993B /* UserGloballyBanned.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = UserGloballyBanned.json; sourceTree = "<group>"; };
 		C1616DB328DC9F0B00FF993B /* ChannelCreated.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = ChannelCreated.json; sourceTree = "<group>"; };
+		C163ECFA299155D0006D6124 /* NotificationExtension+Lifecycle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NotificationExtension+Lifecycle.swift"; sourceTree = "<group>"; };
 		C171041D2768C34E008FB3F2 /* Array+SafeSubscript.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+SafeSubscript.swift"; sourceTree = "<group>"; };
 		C173538D27D9F804008AC412 /* KeyedDecodingContainer+Array.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyedDecodingContainer+Array.swift"; sourceTree = "<group>"; };
 		C174E0F5284DFA5A0040B936 /* IdentifiablePayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifiablePayload.swift; sourceTree = "<group>"; };
@@ -4252,6 +4255,7 @@
 				C173538D27D9F804008AC412 /* KeyedDecodingContainer+Array.swift */,
 				79D5CDD027EA1BA100BE7D8B /* TranslationLanguage.swift */,
 				C14D27B52869EEE40063F6F2 /* Array+CompactMapLoggingError.swift */,
+				C163ECFA299155D0006D6124 /* NotificationExtension+Lifecycle.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -9345,6 +9349,7 @@
 				DAE566E724FFD22300E39431 /* ChannelController+SwiftUI.swift in Sources */,
 				88DA57202631AC3100FA8C53 /* ChannelMuteDTO.swift in Sources */,
 				C1FC2F9E2742579D0062530F /* FoundationTransport.swift in Sources */,
+				C163ECFB299155D0006D6124 /* NotificationExtension+Lifecycle.swift in Sources */,
 				CFA41B6727DA952100427602 /* SystemEnvironment+XStreamClient.swift in Sources */,
 				792CA62624CEE93700D70A5E /* ChannelListUpdater.swift in Sources */,
 				882C5756252C791400E60C44 /* ChannelMemberListUpdater.swift in Sources */,
@@ -10160,6 +10165,7 @@
 				C121E88F274544AF00023E4C /* CurrentUser.swift in Sources */,
 				C121E890274544AF00023E4C /* Device.swift in Sources */,
 				C121E891274544AF00023E4C /* Member.swift in Sources */,
+				C163ECFC299155D0006D6124 /* NotificationExtension+Lifecycle.swift in Sources */,
 				C121E892274544B000023E4C /* User.swift in Sources */,
 				C121E893274544B000023E4C /* UserInfo.swift in Sources */,
 				C121E894274544B000023E4C /* ChatMessage.swift in Sources */,
