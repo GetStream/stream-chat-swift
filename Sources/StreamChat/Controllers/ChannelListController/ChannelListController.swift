@@ -203,6 +203,12 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
             return filter(channel)
         }
 
+        if LocalFilterProcessor(filter: query.filter).execute([channel]).isEmpty {
+            // Doesn't match the filter
+        } else {
+            // Channel matches the filter
+        }
+
         // Given that at the moment some delegate methods are not yet removed, but some integrators are still using
         // those, we need to keep using them for now.
         // This block should be removed once `shouldAddNewChannelToList` and `shouldListUpdatedChannel` methods are

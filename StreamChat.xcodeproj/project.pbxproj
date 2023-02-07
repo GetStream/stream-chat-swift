@@ -36,6 +36,10 @@
 		22C2359A259CA87B00DC805A /* Animation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22C23599259CA87B00DC805A /* Animation.swift */; };
 		22CAFA7625CAE278005935D9 /* RawJSON_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22CAFA7525CAE278005935D9 /* RawJSON_Tests.swift */; };
 		22FF4365256E943F00133910 /* ChatSuggestionsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22FF4364256E943F00133910 /* ChatSuggestionsVC.swift */; };
+		403F57572992B59400CB9628 /* LocalFilterProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 403F57562992B59400CB9628 /* LocalFilterProcessor.swift */; };
+		403F57582992B59400CB9628 /* LocalFilterProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 403F57562992B59400CB9628 /* LocalFilterProcessor.swift */; };
+		403F575A2992B67000CB9628 /* LocalFilterProcessor_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 403F57592992B67000CB9628 /* LocalFilterProcessor_Tests.swift */; };
+		403F575B2992B67000CB9628 /* LocalFilterProcessor_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 403F57592992B67000CB9628 /* LocalFilterProcessor_Tests.swift */; };
 		4068ECD2298D06BB0032D57A /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4068ECD0298D06720032D57A /* SplashViewController.swift */; };
 		4068ECD3298D06BB0032D57A /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4068ECD0298D06720032D57A /* SplashViewController.swift */; };
 		4068ECD4298D06BC0032D57A /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4068ECD0298D06720032D57A /* SplashViewController.swift */; };
@@ -2358,6 +2362,8 @@
 		22C23599259CA87B00DC805A /* Animation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Animation.swift; sourceTree = "<group>"; };
 		22CAFA7525CAE278005935D9 /* RawJSON_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RawJSON_Tests.swift; sourceTree = "<group>"; };
 		22FF4364256E943F00133910 /* ChatSuggestionsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatSuggestionsVC.swift; sourceTree = "<group>"; };
+		403F57562992B59400CB9628 /* LocalFilterProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalFilterProcessor.swift; sourceTree = "<group>"; };
+		403F57592992B67000CB9628 /* LocalFilterProcessor_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalFilterProcessor_Tests.swift; sourceTree = "<group>"; };
 		4068ECD0298D06720032D57A /* SplashViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashViewController.swift; sourceTree = "<group>"; };
 		430156DB26B1862C0006E7EA /* CustomDataHashMap_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomDataHashMap_Tests.swift; sourceTree = "<group>"; };
 		430156DD26B188A70006E7EA /* MessagePayload.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = MessagePayload.json; sourceTree = "<group>"; };
@@ -4271,6 +4277,7 @@
 				DA8407052524F84F005A0F62 /* UserListQuery.swift */,
 				842F9747277A1CBE0060A489 /* PinnedMessages */,
 				DA640FB72535CF6600D32944 /* Sorting */,
+				403F57562992B59400CB9628 /* LocalFilterProcessor.swift */,
 			);
 			path = Query;
 			sourceTree = "<group>";
@@ -6004,6 +6011,7 @@
 				DA8407292525EB2F005A0F62 /* UserListQuery_Tests.swift */,
 				A364D0B827D12A790029857A /* PinnedMessages */,
 				A364D0B927D12A900029857A /* Sorting */,
+				403F57592992B67000CB9628 /* LocalFilterProcessor_Tests.swift */,
 			);
 			path = Query;
 			sourceTree = "<group>";
@@ -9491,6 +9499,7 @@
 				F6ED5F76250278D7005D7327 /* SyncEndpoint.swift in Sources */,
 				AD52A2192804850700D0157E /* ChannelConfigDTO.swift in Sources */,
 				797A756824814F0D003CF16D /* Bundle+Extensions.swift in Sources */,
+				403F57572992B59400CB9628 /* LocalFilterProcessor.swift in Sources */,
 				792B805024D95B5D00C2963E /* Cached.swift in Sources */,
 				7908829C2546D95A00896F03 /* FlagMessagePayload.swift in Sources */,
 				DA0BB1612513B5F200CAEFBD /* StringInterpolation+Extensions.swift in Sources */,
@@ -9742,6 +9751,7 @@
 				F62BE78325062FC400D13B86 /* SyncEndpoint_Tests.swift in Sources */,
 				88EA9AE825471EF4007EE76B /* MessageReactionRequestPayload_Tests.swift in Sources */,
 				64C80615262EDA9600B1F7AD /* ChatMessage_Tests.swift in Sources */,
+				403F575A2992B67000CB9628 /* LocalFilterProcessor_Tests.swift in Sources */,
 				F63CC37524E592DD0052844D /* MemberEventObserver_Tests.swift in Sources */,
 				792FCB4724A33CC2000290C7 /* EventDataProcessorMiddleware_Tests.swift in Sources */,
 				797EEA4A24FFC37600C81203 /* ConnectionStatus_Tests.swift in Sources */,
@@ -10082,6 +10092,7 @@
 				C121E84D274544AE00023E4C /* DeviceEndpoints.swift in Sources */,
 				C121E84E274544AE00023E4C /* ChannelEndpoints.swift in Sources */,
 				C121E84F274544AE00023E4C /* UserEndpoints.swift in Sources */,
+				403F575B2992B67000CB9628 /* LocalFilterProcessor_Tests.swift in Sources */,
 				C121E850274544AE00023E4C /* SyncEndpoint.swift in Sources */,
 				84D5BC70277B61A000A65C75 /* PinnedMessagesSortingKey.swift in Sources */,
 				C121E851274544AE00023E4C /* MessageEndpoints.swift in Sources */,
@@ -10106,6 +10117,7 @@
 				C121E862274544AE00023E4C /* ConnectionRepository.swift in Sources */,
 				C121E863274544AE00023E4C /* EventSender.swift in Sources */,
 				C121E864274544AE00023E4C /* EventObserver.swift in Sources */,
+				403F57582992B59400CB9628 /* LocalFilterProcessor.swift in Sources */,
 				C121E865274544AE00023E4C /* MemberEventObserver.swift in Sources */,
 				43D3F10028410B4800B74921 /* Call.swift in Sources */,
 				C121E866274544AE00023E4C /* MessageSender.swift in Sources */,
