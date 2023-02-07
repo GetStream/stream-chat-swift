@@ -42,7 +42,7 @@ extension Filter where Scope: AnyChannelListFilterScope {
 }
 
 // We don't want to expose `members` publicly because it can't be used with any other operator
-// then `$in`. We expose it publicly via the `containMembers` filter helper.
+// than `$in`. We expose it publicly via the `containMembers` filter helper.
 extension FilterKey where Scope: AnyChannelListFilterScope {
     static var members: FilterKey<Scope, UserId> { "members" }
 }
