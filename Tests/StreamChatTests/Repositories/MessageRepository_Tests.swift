@@ -358,7 +358,7 @@ final class MessageRepositoryTests: XCTestCase {
         // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)
 
-        // Assert fetched message is saved to the database
+        // Assert fetched message is NOT saved to the database
         XCTAssertNil(database.viewContext.message(id: messageId))
     }
 

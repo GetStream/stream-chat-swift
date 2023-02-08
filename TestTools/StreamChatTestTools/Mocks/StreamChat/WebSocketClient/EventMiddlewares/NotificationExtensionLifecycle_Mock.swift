@@ -15,7 +15,7 @@ final class NotificationExtensionLifecycle_Mock: NotificationExtensionLifecycle 
     var receivedIsReceivingEvents: Bool?
 
     override var isAppReceivingWebSocketEvents: Bool {
-        mockIsAppReceivingWebSocketEvents ?? super.isAppReceivingWebSocketEvents
+        mockIsAppReceivingWebSocketEvents ?? false
     }
 
     override func setAppState(isReceivingEvents: Bool) {

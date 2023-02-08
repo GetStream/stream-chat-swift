@@ -120,7 +120,7 @@ final class ChatPushNotificationContent_Tests: XCTestCase {
         let handler = ChatRemoteNotificationHandler(client: clientWithOffline, content: content)
         XCTAssertTrue(handler.handleNotification(completion: { _ in }))
         // Should only store the fetched message if the host app is not listening to events
-        XCTAssertTrue(messageRepository.receivedGetMessageStore == false)
+        XCTAssert(messageRepository.receivedGetMessageStore == false)
     }
 
     func test_contentHandled_newMessage_appIsNotReceivingWebSocketEvents() {
@@ -137,7 +137,7 @@ final class ChatPushNotificationContent_Tests: XCTestCase {
         let handler = ChatRemoteNotificationHandler(client: clientWithOffline, content: content)
         XCTAssertTrue(handler.handleNotification(completion: { _ in }))
         // Should only store the fetched message if the host app is not listening to events
-        XCTAssertTrue(messageRepository.receivedGetMessageStore == true)
+        XCTAssert(messageRepository.receivedGetMessageStore == true)
     }
 
     func test_callsCompletion_whenHandled() throws {

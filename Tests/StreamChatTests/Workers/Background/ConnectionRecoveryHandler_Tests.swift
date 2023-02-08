@@ -505,7 +505,7 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
 
         XCTAssertCall(RetryStrategy_Spy.Signature.resetConsecutiveFailures, on: mockRetryStrategy, times: 1)
         XCTAssertCall("syncLocalState(completion:)", on: mockChatClient.mockSyncRepository, times: 1)
-        XCTAssertTrue(mockChatClient.mockExtensionLifecycle.receivedIsReceivingEvents == true)
+        XCTAssert(mockChatClient.mockExtensionLifecycle.receivedIsReceivingEvents == true)
     }
 
     func test_webSocketStateUpdate_disconnected_userInitiated() {
@@ -521,7 +521,7 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
         XCTAssertNotCall(RetryStrategy_Spy.Signature.nextRetryDelay, on: mockRetryStrategy)
         XCTAssertNotCall("incrementConsecutiveFailures()", on: mockRetryStrategy)
         XCTAssertNotCall("syncLocalState(completion:)", on: mockChatClient.mockSyncRepository)
-        XCTAssertTrue(mockChatClient.mockExtensionLifecycle.receivedIsReceivingEvents == false)
+        XCTAssert(mockChatClient.mockExtensionLifecycle.receivedIsReceivingEvents == false)
     }
 
     func test_webSocketStateUpdate_disconnected_systemInitiated() {
@@ -541,7 +541,7 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
         XCTAssertCall(RetryStrategy_Spy.Signature.nextRetryDelay, on: mockRetryStrategy, times: 1)
         XCTAssertCall("incrementConsecutiveFailures()", on: mockRetryStrategy, times: 1)
         XCTAssertNotCall("syncLocalState(completion:)", on: mockChatClient.mockSyncRepository)
-        XCTAssertTrue(mockChatClient.mockExtensionLifecycle.receivedIsReceivingEvents == false)
+        XCTAssert(mockChatClient.mockExtensionLifecycle.receivedIsReceivingEvents == false)
     }
 
     func test_webSocketStateUpdate_initialized() {
