@@ -40,6 +40,14 @@
 		4068ECD3298D06BB0032D57A /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4068ECD0298D06720032D57A /* SplashViewController.swift */; };
 		4068ECD4298D06BC0032D57A /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4068ECD0298D06720032D57A /* SplashViewController.swift */; };
 		4068ECD5298D06BC0032D57A /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4068ECD0298D06720032D57A /* SplashViewController.swift */; };
+		407B6A242993CE2A006711E4 /* AnyEquatable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 407B6A232993CE2A006711E4 /* AnyEquatable.swift */; };
+		407B6A252993CE2A006711E4 /* AnyEquatable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 407B6A232993CE2A006711E4 /* AnyEquatable.swift */; };
+		407B6A2A2993CFC0006711E4 /* AnyEquatable_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 407B6A292993CFC0006711E4 /* AnyEquatable_Tests.swift */; };
+		407B6A2B2993CFC0006711E4 /* AnyEquatable_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 407B6A292993CFC0006711E4 /* AnyEquatable_Tests.swift */; };
+		407B6A302993D830006711E4 /* AnyComparable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 407B6A2F2993D830006711E4 /* AnyComparable.swift */; };
+		407B6A312993D830006711E4 /* AnyComparable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 407B6A2F2993D830006711E4 /* AnyComparable.swift */; };
+		407B6A332993D900006711E4 /* AnyComparable_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 407B6A322993D900006711E4 /* AnyComparable_Tests.swift */; };
+		407B6A342993D900006711E4 /* AnyComparable_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 407B6A322993D900006711E4 /* AnyComparable_Tests.swift */; };
 		430156DC26B1862C0006E7EA /* CustomDataHashMap_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 430156DB26B1862C0006E7EA /* CustomDataHashMap_Tests.swift */; };
 		430156F226B4523A0006E7EA /* WebSocketConnectPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 430156F126B4523A0006E7EA /* WebSocketConnectPayload_Tests.swift */; };
 		43016E1626B734410054E805 /* ChatUser+CustomFields.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43016E1526B734410054E805 /* ChatUser+CustomFields.swift */; };
@@ -2359,6 +2367,10 @@
 		22CAFA7525CAE278005935D9 /* RawJSON_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RawJSON_Tests.swift; sourceTree = "<group>"; };
 		22FF4364256E943F00133910 /* ChatSuggestionsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatSuggestionsVC.swift; sourceTree = "<group>"; };
 		4068ECD0298D06720032D57A /* SplashViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashViewController.swift; sourceTree = "<group>"; };
+		407B6A232993CE2A006711E4 /* AnyEquatable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyEquatable.swift; sourceTree = "<group>"; };
+		407B6A292993CFC0006711E4 /* AnyEquatable_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyEquatable_Tests.swift; sourceTree = "<group>"; };
+		407B6A2F2993D830006711E4 /* AnyComparable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyComparable.swift; sourceTree = "<group>"; };
+		407B6A322993D900006711E4 /* AnyComparable_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyComparable_Tests.swift; sourceTree = "<group>"; };
 		430156DB26B1862C0006E7EA /* CustomDataHashMap_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomDataHashMap_Tests.swift; sourceTree = "<group>"; };
 		430156DD26B188A70006E7EA /* MessagePayload.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = MessagePayload.json; sourceTree = "<group>"; };
 		430156DF26B1891E0006E7EA /* MessagePayloadWithCustom.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = MessagePayloadWithCustom.json; sourceTree = "<group>"; };
@@ -4252,6 +4264,8 @@
 				C173538D27D9F804008AC412 /* KeyedDecodingContainer+Array.swift */,
 				79D5CDD027EA1BA100BE7D8B /* TranslationLanguage.swift */,
 				C14D27B52869EEE40063F6F2 /* Array+CompactMapLoggingError.swift */,
+				407B6A232993CE2A006711E4 /* AnyEquatable.swift */,
+				407B6A2F2993D830006711E4 /* AnyComparable.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -6049,6 +6063,8 @@
 				79CD959324F9381700E87377 /* MulticastDelegate_Tests.swift */,
 				CF1F1D442824243F002E2977 /* CooldownTracker_Tests.swift */,
 				C14A46552845064E00EF498E /* ThreadSafeWeakCollection_Tests.swift */,
+				407B6A292993CFC0006711E4 /* AnyEquatable_Tests.swift */,
+				407B6A322993D900006711E4 /* AnyComparable_Tests.swift */,
 				A364D0BD27D12C600029857A /* Database */,
 				A3F65E3B27EB7357003F6256 /* EquatableEvent */,
 				A364D0C127D12EC30029857A /* Operations */,
@@ -9402,6 +9418,7 @@
 				7964F3B9249A314D002A09EC /* BaseLogDestination.swift in Sources */,
 				C1FC2F942742579D0062530F /* Security.swift in Sources */,
 				AD52A21C2804851600D0157E /* CommandDTO.swift in Sources */,
+				407B6A242993CE2A006711E4 /* AnyEquatable.swift in Sources */,
 				792AF91624D812440010097B /* EntityDatabaseObserver.swift in Sources */,
 				C1FC2F9D2742579D0062530F /* FoundationHTTPHandler.swift in Sources */,
 				C186BFAF27AADB410099CCA6 /* SyncOperations.swift in Sources */,
@@ -9519,6 +9536,7 @@
 				C1FC2F932742579D0062530F /* Framer.swift in Sources */,
 				C14D27B62869EEE40063F6F2 /* Array+CompactMapLoggingError.swift in Sources */,
 				79682C4A24BF37C80071578E /* MessagePayloads.swift in Sources */,
+				407B6A302993D830006711E4 /* AnyComparable.swift in Sources */,
 				8AAB1C6624CB39F2009B783F /* UnreadCount.swift in Sources */,
 				79877A282498E50D00015F8B /* UserDTO.swift in Sources */,
 				DBCAFE2425C44B920015AD58 /* LazyCachedMapCollection.swift in Sources */,
@@ -9717,6 +9735,7 @@
 				791D3D9026776BE400E3A0F9 /* ChannelMemberListSortingKey_Tests.swift in Sources */,
 				A382131E2805C8AC0068D30E /* TestsEnvironmentSetup.swift in Sources */,
 				A34ECB4C27F5CA5E00A804C1 /* ReactionEvents_IntegrationTests.swift in Sources */,
+				407B6A332993D900006711E4 /* AnyComparable_Tests.swift in Sources */,
 				882C5766252C7F7000E60C44 /* ChannelMemberListUpdater_Tests.swift in Sources */,
 				DA4EE5A1252B443400CB26D4 /* NewUserQueryUpdater_Tests.swift in Sources */,
 				C1EFF3F828633B5D0057B91B /* IdentifiableModel_Tests.swift in Sources */,
@@ -9778,6 +9797,7 @@
 				F6D61D9D2510B57F00EB0624 /* NSManagedObject_Tests.swift in Sources */,
 				79D6CE9525F7D72E00BE2EEC /* ChatChannelWatcherListController_Tests.swift in Sources */,
 				A34ECB5027F5CAF200A804C1 /* PinnedMessagesQuery_IntegrationTests.swift in Sources */,
+				407B6A2A2993CFC0006711E4 /* AnyEquatable_Tests.swift in Sources */,
 				79896D66250A6D1800BA8F1C /* ChannelReadUpdaterMiddleware_Tests.swift in Sources */,
 				AC82033C28C61F640002EFDD /* CreateCallPayload_Tests.swift in Sources */,
 				796CBC6525FBAD12003299B0 /* Member_Tests.swift in Sources */,
@@ -10036,6 +10056,7 @@
 				79D5CDD527EA1BE300BE7D8B /* MessageTranslationsPayload.swift in Sources */,
 				C121E825274544AD00023E4C /* BackgroundTaskScheduler.swift in Sources */,
 				C121E826274544AD00023E4C /* WebSocketClient.swift in Sources */,
+				407B6A342993D900006711E4 /* AnyComparable_Tests.swift in Sources */,
 				C135A1CC28F45F6B0058EFB6 /* AuthenticationRepository.swift in Sources */,
 				C121E827274544AD00023E4C /* WebSocketPingController.swift in Sources */,
 				C121E828274544AD00023E4C /* RetryStrategy.swift in Sources */,
@@ -10174,6 +10195,7 @@
 				C121E89C274544B000023E4C /* DataController.swift in Sources */,
 				AD17CDFA27E4DB2700E0D092 /* PushProvider.swift in Sources */,
 				C121E89D274544B000023E4C /* UserSearchController.swift in Sources */,
+				407B6A312993D830006711E4 /* AnyComparable.swift in Sources */,
 				C121E89E274544B000023E4C /* MessageSearchController.swift in Sources */,
 				C121E89F274544B000023E4C /* MessageSearchController+Combine.swift in Sources */,
 				C121E8A0274544B000023E4C /* MessageSearchController+SwiftUI.swift in Sources */,
@@ -10187,6 +10209,7 @@
 				C121E8A7274544B000023E4C /* MemberListController.swift in Sources */,
 				C121E8A8274544B000023E4C /* MemberListController+SwiftUI.swift in Sources */,
 				C121E8A9274544B000023E4C /* MemberListController+Combine.swift in Sources */,
+				407B6A2B2993CFC0006711E4 /* AnyEquatable_Tests.swift in Sources */,
 				C121E8AA274544B000023E4C /* ChatChannelWatcherListController.swift in Sources */,
 				C143788E27BBEBB900E23965 /* OfflineRequestsRepository.swift in Sources */,
 				C121E8AB274544B000023E4C /* ChatChannelWatcherListController+Combine.swift in Sources */,
@@ -10239,6 +10262,7 @@
 				C121E8D4274544B100023E4C /* NSManagedObject+Extensions.swift in Sources */,
 				C121E8D5274544B100023E4C /* NSManagedObjectContext+Extensions.swift in Sources */,
 				C121E8D6274544B100023E4C /* InternetConnection.swift in Sources */,
+				407B6A252993CE2A006711E4 /* AnyEquatable.swift in Sources */,
 				C121E8D7274544B100023E4C /* Reachability_Vendor.swift in Sources */,
 				C121E8D8274544B100023E4C /* Error+InternetNotAvailable.swift in Sources */,
 				C121E8D9274544B100023E4C /* LogFormatter.swift in Sources */,
