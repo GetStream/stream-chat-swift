@@ -356,6 +356,15 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                         )
                     }
                 }
+            }),
+            .init(title: "Send message with skip push", style: .default, handler: { [unowned self] _ in
+                self.rootViewController.presentAlert(title: "Enter the message text", textFieldPlaceholder: "Send message") { message in
+                    guard let message = message, !message.isEmpty else {
+                        self.rootViewController.presentAlert(title: "Message is not valid")
+                        return
+                    }
+                    channelController.createNewMessage(text: message, skipPush: true)
+                }
             })
         ])
     }

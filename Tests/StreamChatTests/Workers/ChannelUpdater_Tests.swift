@@ -479,6 +479,7 @@ final class ChannelUpdater_Tests: XCTestCase {
                 attachments: attachmentEnvelopes,
                 mentionedUserIds: [currentUserId],
                 quotedMessageId: nil,
+                skipPush: true,
                 extraData: extraData
             ) { result in
                 do {
@@ -494,10 +495,12 @@ final class ChannelUpdater_Tests: XCTestCase {
             .init(cid: cid, messageId: newMessageId, index: attachmentEnvelopes.firstIndex(of: envelope)!)
         }
 
-        let message: ChatMessage = try XCTUnwrap(
-            database.viewContext.message(id: newMessageId)?.asModel()
+        let messageDTO: MessageDTO = try XCTUnwrap(
+            database.viewContext.message(id: newMessageId)
         )
+        XCTAssertEqual(messageDTO.skipPush, true)
 
+        let message = try messageDTO.asModel()
         XCTAssertEqual(message.text, text)
         XCTAssertEqual(message.command, command)
         XCTAssertEqual(message.arguments, arguments)
@@ -549,6 +552,7 @@ final class ChannelUpdater_Tests: XCTestCase {
                 arguments: .unique,
                 mentionedUserIds: [.unique],
                 quotedMessageId: nil,
+                skipPush: false,
                 extraData: [:]
             ) { completion($0) }
         }

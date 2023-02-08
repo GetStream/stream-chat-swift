@@ -80,6 +80,7 @@ protocol MessageDatabaseSession {
         isSilent: Bool,
         quotedMessageId: MessageId?,
         createdAt: Date?,
+        skipPush: Bool,
         extraData: [String: RawJSON]
     ) throws -> MessageDTO
 
@@ -189,6 +190,7 @@ extension MessageDatabaseSession {
         pinning: MessagePinning?,
         quotedMessageId: MessageId?,
         isSilent: Bool = false,
+        skipPush: Bool,
         attachments: [AnyAttachmentPayload] = [],
         mentionedUserIds: [UserId] = [],
         extraData: [String: RawJSON] = [:]
@@ -206,6 +208,7 @@ extension MessageDatabaseSession {
             isSilent: isSilent,
             quotedMessageId: quotedMessageId,
             createdAt: nil,
+            skipPush: skipPush,
             extraData: extraData
         )
     }

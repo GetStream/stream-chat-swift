@@ -206,6 +206,7 @@
         <attribute name="reactionScores" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData"/>
         <attribute name="replyCount" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="showReplyInChannel" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="skipPush" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="text" attributeType="String"/>
         <attribute name="translations" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformer"/>
         <attribute name="type" attributeType="String"/>

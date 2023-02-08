@@ -74,7 +74,13 @@ private extension NSManagedObject_Validation_Tests {
         try database.createCurrentUser()
         try database.createChannel(cid: channelId)
         try database.writeSynchronously { session in
-            message = try session.createNewMessage(in: channelId, text: "Hello", pinning: nil, quotedMessageId: nil)
+            message = try session.createNewMessage(
+                in: channelId,
+                text: "Hello",
+                pinning: nil,
+                quotedMessageId: nil,
+                skipPush: false
+            )
         }
         return message
     }

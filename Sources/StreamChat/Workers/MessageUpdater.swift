@@ -150,6 +150,7 @@ class MessageUpdater: Worker {
     ///   - showReplyInChannel: Set this flag to `true` if you want the message to be also visible in the channel, not only
     ///   in the response thread.
     ///   - quotedMessageId: An id of the message new message quotes. (inline reply)
+    ///   - skipPush: If true, skips sending push notification to channel members.
     ///   - extraData: Additional extra data of the message object.
     ///   - completion: Called when saving the message to the local DB finishes.
     ///
@@ -165,6 +166,7 @@ class MessageUpdater: Worker {
         showReplyInChannel: Bool,
         isSilent: Bool,
         quotedMessageId: MessageId?,
+        skipPush: Bool,
         extraData: [String: RawJSON],
         completion: ((Result<MessageId, Error>) -> Void)? = nil
     ) {
@@ -183,6 +185,7 @@ class MessageUpdater: Worker {
                 isSilent: isSilent,
                 quotedMessageId: quotedMessageId,
                 createdAt: nil,
+                skipPush: skipPush,
                 extraData: extraData
             )
 

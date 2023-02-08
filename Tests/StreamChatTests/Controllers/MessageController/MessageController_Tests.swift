@@ -979,6 +979,7 @@ final class MessageController_Tests: XCTestCase {
         let extraData: [String: RawJSON] = [:]
         let attachments: [AnyAttachmentPayload] = [.mockFile, .mockImage, .init(payload: TestAttachmentPayload.unique)]
         let pin = MessagePinning(expirationDate: .unique)
+        let skipPush = true
 
         // Simulate `createNewReply` calls and catch the completion
         var completionCalled = false
@@ -988,6 +989,7 @@ final class MessageController_Tests: XCTestCase {
             attachments: attachments,
             showReplyInChannel: showReplyInChannel,
             quotedMessageId: quotedMessageId,
+            skipPush: skipPush,
             extraData: extraData
         ) { [callbackQueueID] result in
             AssertTestQueue(withId: callbackQueueID)
@@ -1012,6 +1014,7 @@ final class MessageController_Tests: XCTestCase {
         XCTAssertEqual(env.messageUpdater.createNewReply_showReplyInChannel, showReplyInChannel)
         XCTAssertEqual(env.messageUpdater.createNewReply_extraData, extraData)
         XCTAssertEqual(env.messageUpdater.createNewReply_attachments, attachments)
+        XCTAssertEqual(env.messageUpdater.createNewReply_skipPush, skipPush)
         XCTAssertEqual(env.messageUpdater.createNewReply_quotedMessageId, quotedMessageId)
 
         // Simulate successful update
