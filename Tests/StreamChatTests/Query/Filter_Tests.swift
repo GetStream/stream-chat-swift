@@ -115,4 +115,19 @@ final class Filter_Tests: XCTestCase {
             XCTAssertEqual(filter, decoded)
         }
     }
+
+    func test_operators_keyValueMapperIsPropagatedCorrectlyToResultedFilter() {
+        XCTAssertNotNil(Filter<FilterTestScope>.equal(.testKey, to: "").keyToValueMapper)
+        XCTAssertNotNil(Filter<FilterTestScope>.notEqual(.testKey, to: "").keyToValueMapper)
+        XCTAssertNotNil(Filter<FilterTestScope>.greater(.testKeyInt, than: 1).keyToValueMapper)
+        XCTAssertNotNil(Filter<FilterTestScope>.greaterOrEqual(.testKeyInt, than: 1).keyToValueMapper)
+        XCTAssertNotNil(Filter<FilterTestScope>.less(.testKeyInt, than: 1).keyToValueMapper)
+        XCTAssertNotNil(Filter<FilterTestScope>.lessOrEqual(.testKeyInt, than: 1).keyToValueMapper)
+        XCTAssertNotNil(Filter<FilterTestScope>.in(.testKeyArrayString, values: ["d"]).keyToValueMapper)
+        XCTAssertNotNil(Filter<FilterTestScope>.notIn(.testKeyArrayString, values: ["d"]).keyToValueMapper)
+        XCTAssertNotNil(Filter<FilterTestScope>.query(.testKey, text: "test").keyToValueMapper)
+        XCTAssertNotNil(Filter<FilterTestScope>.autocomplete(.testKey, text: "test").keyToValueMapper)
+        XCTAssertNotNil(Filter<FilterTestScope>.exists(.testKeyBool, exists: false).keyToValueMapper)
+        XCTAssertNotNil(Filter<FilterTestScope>.contains(.testKeyArrayString, value: "c").keyToValueMapper)
+    }
 }

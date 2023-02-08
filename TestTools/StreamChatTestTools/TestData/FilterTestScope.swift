@@ -8,15 +8,15 @@ import XCTest
 struct FilterTestScope: FilterScope {}
 
 extension FilterKey where Scope == FilterTestScope {
-    static var testKey: FilterKey<Scope, String> { "test_key" }
-    static var testKeyInt: FilterKey<Scope, Int> { "test_key_Int" }
-    static var testKeyDate: FilterKey<Scope, Date> { "test_key_Date" }
-    static var testKeyDouble: FilterKey<Scope, Double> { "test_key_Double" }
-    static var testKeyBool: FilterKey<Scope, Bool> { "test_key_Bool" }
+    static var testKey: FilterKey<Scope, String> { .init(rawValue: "test_key") { _ in return "test_key" } }
+    static var testKeyInt: FilterKey<Scope, Int> { .init(rawValue: "test_key_Int") { _ in return 10 } }
+    static var testKeyDate: FilterKey<Scope, Date> { .init(rawValue: "test_key_Date") { _ in return Date(timeIntervalSince1970: 0) } }
+    static var testKeyDouble: FilterKey<Scope, Double> { .init(rawValue: "test_key_Double") { _ in return 11.0 } }
+    static var testKeyBool: FilterKey<Scope, Bool> { .init(rawValue: "test_key_Bool") { _ in return true } }
 
-    static var testKeyArrayString: FilterKey<Scope, String> { "test_key_ArrayString" }
-    static var testKeyArrayInt: FilterKey<Scope, Int> { "test_key_ArrayInt" }
-    static var testKeyArrayDouble: FilterKey<Scope, Double> { "test_key_ArrayDouble" }
+    static var testKeyArrayString: FilterKey<Scope, String> { .init(rawValue: "test_key_ArrayString") { _ in return ["a", "b", "c"] } }
+    static var testKeyArrayInt: FilterKey<Scope, Int> { .init(rawValue: "test_key_ArrayInt") { _ in return [1, 2, 3] } }
+    static var testKeyArrayDouble: FilterKey<Scope, Double> { .init(rawValue: "test_key_ArrayDouble") { _ in return [4.0, 5.0, 6.0] } }
 }
 
 extension Filter: Equatable {
