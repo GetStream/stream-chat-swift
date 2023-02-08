@@ -5,7 +5,7 @@
 import Foundation
 
 /// A file upload response.
-struct FileUploadPayload: Decodable {
+struct FileUploadPayload: Decodable, Hashable {
     let fileURL: URL
 
     enum CodingKeys: String, CodingKey {

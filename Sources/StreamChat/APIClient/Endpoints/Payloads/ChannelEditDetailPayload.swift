@@ -4,7 +4,7 @@
 
 import Foundation
 
-struct ChannelEditDetailPayload: Encodable {
+struct ChannelEditDetailPayload: Encodable, Hashable {
     let id: String?
     let name: String?
     let imageURL: URL?

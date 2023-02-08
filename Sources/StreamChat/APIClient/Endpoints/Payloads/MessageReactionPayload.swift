@@ -5,7 +5,7 @@
 import Foundation
 
 /// The type describes the incoming message-reaction JSON.
-struct MessageReactionPayload: Decodable {
+struct MessageReactionPayload: Decodable, Hashable {
     enum CodingKeys: String, CodingKey, CaseIterable {
         case type
         case score

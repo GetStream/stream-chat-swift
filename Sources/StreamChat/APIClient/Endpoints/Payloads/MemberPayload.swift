@@ -4,7 +4,7 @@
 
 import Foundation
 
-struct MemberContainerPayload: Decodable {
+struct MemberContainerPayload: Decodable, Hashable {
     let member: MemberPayload?
     let invite: MemberInvitePayload?
     let memberRole: MemberRolePayload?
@@ -26,7 +26,7 @@ struct MemberContainerPayload: Decodable {
     }
 }
 
-struct MemberPayload: Decodable {
+struct MemberPayload: Decodable, Hashable {
     private enum CodingKeys: String, CodingKey {
         case user
         case userId = "user_id"
@@ -110,7 +110,7 @@ struct MemberPayload: Decodable {
     }
 }
 
-struct MemberInvitePayload: Decodable {
+struct MemberInvitePayload: Decodable, Hashable {
     private enum CodingKeys: String, CodingKey {
         case role
         case isInvited = "invited"
@@ -127,6 +127,6 @@ struct MemberInvitePayload: Decodable {
     let inviteRejectedAt: Date?
 }
 
-struct MemberRolePayload: Decodable {
+struct MemberRolePayload: Decodable, Hashable {
     let role: MemberRole
 }
