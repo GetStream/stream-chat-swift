@@ -5,7 +5,7 @@
 import Foundation
 
 /// The type describes the incoming JSON from `/members` endpoint.
-struct ChannelMemberListPayload: Decodable {
+struct ChannelMemberListPayload: Decodable, Hashable {
     /// A list of channel members for the specific `ChannelMemberListQuery`.
     let members: [MemberPayload]
 }

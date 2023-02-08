@@ -63,10 +63,31 @@ class CurrentUserPayload: UserPayload {
 
         try super.init(from: decoder)
     }
+
+    override func hash(
+        into hasher: inout Hasher
+    ) {
+        hasher.combine(devices)
+        hasher.combine(mutedUsers)
+        hasher.combine(mutedChannels)
+        unreadCount.map { hasher.combine($0) }
+        super.hash(into: &hasher)
+    }
+
+    static func == (
+        lhs: CurrentUserPayload,
+        rhs: CurrentUserPayload
+    ) -> Bool {
+        lhs.devices == rhs.devices
+            && lhs.mutedUsers == rhs.mutedUsers
+            && lhs.mutedChannels == rhs.mutedChannels
+            && lhs.unreadCount == rhs.unreadCount
+            && (lhs as UserPayload) == (rhs as UserPayload)
+    }
 }
 
 /// An object describing the incoming muted-user JSON payload.
-struct MutedUserPayload: Decodable {
+struct MutedUserPayload: Decodable, Hashable {
     private enum CodingKeys: String, CodingKey {
         case mutedUser = "target"
         case created = "created_at"
@@ -78,7 +99,7 @@ struct MutedUserPayload: Decodable {
     let updated: Date
 }
 
-extension MutedUserPayload: Equatable {
+extension MutedUserPayload {
     static func == (lhs: MutedUserPayload, rhs: MutedUserPayload) -> Bool {
         lhs.mutedUser.id == rhs.mutedUser.id && lhs.created == rhs.created
     }

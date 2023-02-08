@@ -5,7 +5,7 @@
 import Foundation
 
 /// An object describing the incoming muted-user JSON payload.
-struct MutedChannelPayload: Decodable {
+struct MutedChannelPayload: Decodable, Hashable {
     private enum CodingKeys: String, CodingKey {
         case mutedChannel = "channel"
         case user

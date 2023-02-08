@@ -5,7 +5,7 @@
 import Foundation
 
 /// The type describes the incoming JSON from `/sync` endpoint
-struct MissingEventsPayload: Decodable {
+struct MissingEventsPayload: Decodable, Hashable {
     private enum CodingKeys: String, CodingKey {
         case eventPayloads = "events"
     }
