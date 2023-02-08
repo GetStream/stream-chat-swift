@@ -4,7 +4,7 @@
 
 import Foundation
 
-struct CallTokenPayload: Decodable, Equatable {
+struct CallTokenPayload: Decodable, Hashable {
     private enum CodingKeys: String, CodingKey {
         case token
         case agoraUid = "agora_uid"
@@ -25,11 +25,11 @@ struct CallTokenPayload: Decodable, Equatable {
     }
 }
 
-struct AgoraPayload: Decodable, Equatable {
+struct AgoraPayload: Decodable, Hashable {
     let channel: String
 }
 
-struct HMSPayload: Decodable, Equatable {
+struct HMSPayload: Decodable, Hashable {
     private enum CodingKeys: String, CodingKey {
         case roomId = "room_id"
         case roomName = "room_name"
@@ -39,14 +39,14 @@ struct HMSPayload: Decodable, Equatable {
     let roomName: String
 }
 
-struct CallPayload: Decodable, Equatable {
+struct CallPayload: Decodable, Hashable {
     let id: String
     let provider: String
     let agora: AgoraPayload?
     let hms: HMSPayload?
 }
 
-struct CreateCallPayload: Decodable, Equatable {
+struct CreateCallPayload: Decodable, Hashable {
     private enum CodingKeys: String, CodingKey {
         case token
         case agoraUid = "agora_uid"

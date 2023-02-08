@@ -44,12 +44,12 @@ enum MessagePayloadsCodingKeys: String, CodingKey, CaseIterable {
 extension MessagePayload {
     /// A object describing the incoming JSON format for message payload. Unfortunately, our backend is not consistent
     /// in this and the payload has the form: `{ "message": <message payload> }` rather than `{ <message payload> }`
-    struct Boxed: Decodable {
+    struct Boxed: Decodable, Hashable {
         let message: MessagePayload
     }
 }
 
-struct MessageSearchResultsPayload: Decodable {
+struct MessageSearchResultsPayload: Decodable, Hashable {
     let results: [MessagePayload.Boxed]
     let next: String?
 }
@@ -290,17 +290,94 @@ struct MessageRequestBody: Encodable {
     }
 }
 
+// MARK: - Hashable & Equatable
+
+extension MessagePayload: Hashable {
+    func hash(
+        into hasher: inout Hasher
+    ) {
+        hasher.combine(id)
+        cid.map { hasher.combine($0) }
+        hasher.combine(type)
+        hasher.combine(user)
+        hasher.combine(createdAt)
+        hasher.combine(updatedAt)
+        deletedAt.map { hasher.combine($0) }
+        hasher.combine(text)
+        command.map { hasher.combine($0) }
+        args.map { hasher.combine($0) }
+        parentId.map { hasher.combine($0) }
+        hasher.combine(showReplyInChannel)
+        quotedMessage.map { hasher.combine($0) }
+        quotedMessageId.map { hasher.combine($0) }
+        hasher.combine(mentionedUsers)
+        hasher.combine(threadParticipants)
+        hasher.combine(replyCount)
+        hasher.combine(extraData)
+        hasher.combine(latestReactions)
+        hasher.combine(ownReactions)
+        hasher.combine(reactionScores)
+        hasher.combine(reactionCounts)
+        hasher.combine(attachments)
+        hasher.combine(isSilent)
+        hasher.combine(isShadowed)
+        translations.map { hasher.combine($0) }
+        hasher.combine(pinned)
+        pinnedBy.map { hasher.combine($0) }
+        pinnedAt.map { hasher.combine($0) }
+        pinExpires.map { hasher.combine($0) }
+        channel.map { hasher.combine($0) }
+    }
+
+    static func == (
+        lhs: MessagePayload,
+        rhs: MessagePayload
+    ) -> Bool {
+        lhs.id == rhs.id
+            && lhs.cid == rhs.cid
+            && lhs.type == rhs.type
+            && lhs.user == rhs.user
+            && lhs.createdAt == rhs.createdAt
+            && lhs.updatedAt == rhs.updatedAt
+            && lhs.deletedAt == rhs.deletedAt
+            && lhs.text == rhs.text
+            && lhs.command == rhs.command
+            && lhs.args == rhs.args
+            && lhs.parentId == rhs.parentId
+            && lhs.showReplyInChannel == rhs.showReplyInChannel
+            && lhs.quotedMessage == rhs.quotedMessage
+            && lhs.quotedMessageId == rhs.quotedMessageId
+            && lhs.mentionedUsers == rhs.mentionedUsers
+            && lhs.threadParticipants == rhs.threadParticipants
+            && lhs.replyCount == rhs.replyCount
+            && lhs.extraData == rhs.extraData
+            && lhs.latestReactions == rhs.latestReactions
+            && lhs.ownReactions == rhs.ownReactions
+            && lhs.reactionScores == rhs.reactionScores
+            && lhs.reactionCounts == rhs.reactionCounts
+            && lhs.attachments == rhs.attachments
+            && lhs.isSilent == rhs.isSilent
+            && lhs.isShadowed == rhs.isShadowed
+            && lhs.translations == rhs.translations
+            && lhs.pinned == rhs.pinned
+            && lhs.pinnedBy == rhs.pinnedBy
+            && lhs.pinnedAt == rhs.pinnedAt
+            && lhs.pinExpires == rhs.pinExpires
+            && lhs.channel == rhs.channel
+    }
+}
+
 /// An object describing pinned messages JSON payload.
 typealias PinnedMessagesPayload = MessageListPayload
 
 /// An object describing the message list JSON payload.
 typealias MessageRepliesPayload = MessageListPayload
 
-struct MessageListPayload: Decodable {
+struct MessageListPayload: Decodable, Hashable {
     let messages: [MessagePayload]
 }
 
-struct MessageReactionsPayload: Decodable {
+struct MessageReactionsPayload: Decodable, Hashable {
     let reactions: [MessageReactionPayload]
 }
 
