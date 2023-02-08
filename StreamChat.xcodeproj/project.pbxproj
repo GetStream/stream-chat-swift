@@ -4285,6 +4285,7 @@
 				DA8407052524F84F005A0F62 /* UserListQuery.swift */,
 				842F9747277A1CBE0060A489 /* PinnedMessages */,
 				DA640FB72535CF6600D32944 /* Sorting */,
+				407B6A202993CD01006711E4 /* Matcher.swift */,
 			);
 			path = Query;
 			sourceTree = "<group>";
@@ -9481,6 +9482,7 @@
 				799BE2EA248A8C9D00DAC8A0 /* RetryStrategy.swift in Sources */,
 				DA84070C25250581005A0F62 /* UserListPayload.swift in Sources */,
 				79877A272498E50D00015F8B /* MemberModelDTO.swift in Sources */,
+				407B6A272993CF12006711E4 /* AnyHashable.swift in Sources */,
 				ADB951B2291C3CE900800554 /* AnyAttachmentUpdater.swift in Sources */,
 				79617CB125F236B600D54E61 /* UserWatchingEventMiddleware.swift in Sources */,
 				ADB951A1291BD7CC00800554 /* UploadedAttachment.swift in Sources */,
@@ -9768,6 +9770,7 @@
 				799F611B2530B62C007F218C /* ChannelListQuery_Tests.swift in Sources */,
 				792921C524C0479700116BBB /* ChannelListUpdater_Tests.swift in Sources */,
 				A3F65E3727EB7161003F6256 /* WebSocketClient_Tests.swift in Sources */,
+				407B6A2D2993D3AF006711E4 /* AnyHashable_Tests.swift in Sources */,
 				F61D7C3524FFA6FD00188A0E /* MessageUpdater_Tests.swift in Sources */,
 				C143789527BE65AE00E23965 /* QueuedRequestDTO_Tests.swift in Sources */,
 				79B5517824E5969700CE9FEC /* UserPayloads_Tests.swift in Sources */,
@@ -10141,6 +10144,7 @@
 				C121E870274544AF00023E4C /* MessageReactionDTO.swift in Sources */,
 				C121E871274544AF00023E4C /* MessageDTO.swift in Sources */,
 				C121E872274544AF00023E4C /* AttachmentDTO.swift in Sources */,
+				407B6A2E2993D3AF006711E4 /* AnyHashable_Tests.swift in Sources */,
 				C121E874274544AF00023E4C /* UserDTO.swift in Sources */,
 				C186BFB027AADB410099CCA6 /* SyncOperations.swift in Sources */,
 				C121E875274544AF00023E4C /* UserListQueryDTO.swift in Sources */,
@@ -10165,6 +10169,7 @@
 				C121E882274544AF00023E4C /* ChatMessageLinkAttachment.swift in Sources */,
 				C18F5B532840BD2C00527915 /* DBDate.swift in Sources */,
 				C121E883274544AF00023E4C /* ChatMessageGiphyAttachment.swift in Sources */,
+				407B6A222993CD01006711E4 /* Matcher.swift in Sources */,
 				CFE616BC28348AC800AE2ABF /* StreamTimer.swift in Sources */,
 				C121E884274544AF00023E4C /* ChatMessageFileAttachment.swift in Sources */,
 				C121E885274544AF00023E4C /* ChatMessageVideoAttachment.swift in Sources */,
