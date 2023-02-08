@@ -16,16 +16,6 @@ public class MessageNotificationContent {
     }
 }
 
-public class ReactionNotificationContent {
-    public let message: ChatMessage
-    public let channel: ChatChannel?
-
-    public init(message: ChatMessage, channel: ChatChannel?) {
-        self.message = message
-        self.channel = channel
-    }
-}
-
 public class UnknownNotificationContent {
     public let content: UNNotificationContent
 
@@ -36,7 +26,6 @@ public class UnknownNotificationContent {
 
 public enum ChatPushNotificationContent {
     case message(MessageNotificationContent)
-    case reaction(ReactionNotificationContent)
     case unknown(UnknownNotificationContent)
 }
 
