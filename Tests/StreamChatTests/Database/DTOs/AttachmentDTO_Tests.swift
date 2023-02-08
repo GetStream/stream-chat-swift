@@ -270,6 +270,7 @@ final class AttachmentDTO_Tests: XCTestCase {
                 pinning: nil,
                 quotedMessageId: nil,
                 isSilent: false,
+                skipPush: false,
                 attachments: [.init(payload: TestAttachmentPayload.unique)],
                 extraData: [:]
             )

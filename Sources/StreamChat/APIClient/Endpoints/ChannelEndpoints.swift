@@ -103,14 +103,18 @@ extension Endpoint {
         )
     }
 
-    static func sendMessage(cid: ChannelId, messagePayload: MessageRequestBody)
+    static func sendMessage(cid: ChannelId, messagePayload: MessageRequestBody, skipPush: Bool)
         -> Endpoint<MessagePayload.Boxed> {
-        .init(
+        let body: [String: AnyEncodable] = [
+            "message": AnyEncodable(messagePayload),
+            "skip_push": AnyEncodable(skipPush)
+        ]
+        return .init(
             path: .sendMessage(cid),
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
-            body: ["message": messagePayload]
+            body: body
         )
     }
 

@@ -134,6 +134,7 @@ extension DatabaseSession_Mock {
         isSilent: Bool,
         quotedMessageId: MessageId?,
         createdAt: Date?,
+        skipPush: Bool,
         extraData: [String: RawJSON]
     ) throws -> MessageDTO {
         try throwErrorIfNeeded()
@@ -151,6 +152,7 @@ extension DatabaseSession_Mock {
             isSilent: isSilent,
             quotedMessageId: quotedMessageId,
             createdAt: createdAt,
+            skipPush: skipPush,
             extraData: extraData
         )
     }

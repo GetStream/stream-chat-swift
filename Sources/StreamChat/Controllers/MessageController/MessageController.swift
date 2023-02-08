@@ -247,6 +247,7 @@ public extension ChatMessageController {
     ///   - showReplyInChannel: Set this flag to `true` if you want the message to be also visible in the channel, not only
     ///   in the response thread.
     ///   - quotedMessageId: An id of the message new message quotes. (inline reply)
+    ///   - skipPush: If true, skips sending push notification to channel members.
     ///   - extraData: Additional extra data of the message object.
     ///   - completion: Called when saving the message to the local DB finishes.
     ///
@@ -258,6 +259,7 @@ public extension ChatMessageController {
         showReplyInChannel: Bool = false,
         isSilent: Bool = false,
         quotedMessageId: MessageId? = nil,
+        skipPush: Bool = false,
         extraData: [String: RawJSON] = [:],
         completion: ((Result<MessageId, Error>) -> Void)? = nil
     ) {
@@ -273,6 +275,7 @@ public extension ChatMessageController {
             showReplyInChannel: showReplyInChannel,
             isSilent: isSilent,
             quotedMessageId: quotedMessageId,
+            skipPush: skipPush,
             extraData: extraData
         ) { result in
             self.callback {

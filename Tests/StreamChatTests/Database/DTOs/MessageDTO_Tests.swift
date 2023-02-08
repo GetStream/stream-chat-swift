@@ -772,6 +772,7 @@ final class MessageDTO_Tests: XCTestCase {
                 isSilent: messageIsSilent,
                 quotedMessageId: nil,
                 createdAt: nil,
+                skipPush: false,
                 extraData: messageExtraData
             ).id
         }
@@ -880,6 +881,7 @@ final class MessageDTO_Tests: XCTestCase {
                     isSilent: false,
                     quotedMessageId: nil,
                     createdAt: nil,
+                    skipPush: false,
                     extraData: [:]
                 )
                 message1Id = message1DTO.id
@@ -899,6 +901,7 @@ final class MessageDTO_Tests: XCTestCase {
                     isSilent: false,
                     quotedMessageId: nil,
                     createdAt: nil,
+                    skipPush: false,
                     extraData: [:]
                 )
                 // Reset the `locallyCreateAt` value of the second message to simulate the message was sent
@@ -992,14 +995,18 @@ final class MessageDTO_Tests: XCTestCase {
                 isSilent: false,
                 quotedMessageId: nil,
                 createdAt: nil,
+                skipPush: true,
                 extraData: [:]
             )
             newMessageId = messageDTO.id
         }
 
         let loadedChannel: ChatChannel = try XCTUnwrap(database.viewContext.channel(cid: cid)).asModel()
-        let loadedMessage: ChatMessage = try XCTUnwrap(database.viewContext.message(id: newMessageId)).asModel()
 
+        let messageDTO: MessageDTO = try XCTUnwrap(database.viewContext.message(id: newMessageId))
+        XCTAssertEqual(messageDTO.skipPush, true)
+
+        let loadedMessage: ChatMessage = try messageDTO.asModel()
         XCTAssertEqual(loadedMessage.text, newMessageText)
         XCTAssertEqual(loadedMessage.command, newMessageCommand)
         XCTAssertEqual(loadedMessage.arguments, newMessageArguments)
@@ -1051,6 +1058,7 @@ final class MessageDTO_Tests: XCTestCase {
                 isSilent: false,
                 quotedMessageId: nil,
                 createdAt: nil,
+                skipPush: false,
                 extraData: [:]
             )
             messageId = messageDTO.id
@@ -1093,6 +1101,7 @@ final class MessageDTO_Tests: XCTestCase {
                 isSilent: false,
                 quotedMessageId: nil,
                 createdAt: nil,
+                skipPush: false,
                 extraData: [:]
             )
             threadReplyId = replyShownInChannelDTO.id
@@ -1148,6 +1157,7 @@ final class MessageDTO_Tests: XCTestCase {
                 isSilent: false,
                 quotedMessageId: nil,
                 createdAt: nil,
+                skipPush: false,
                 extraData: [:]
             )
         }
@@ -1172,6 +1182,7 @@ final class MessageDTO_Tests: XCTestCase {
                     isSilent: false,
                     quotedMessageId: nil,
                     createdAt: nil,
+                    skipPush: false,
                     extraData: [:]
                 )
             }, completion: completion)
@@ -1210,6 +1221,7 @@ final class MessageDTO_Tests: XCTestCase {
                     isSilent: false,
                     quotedMessageId: nil,
                     createdAt: nil,
+                    skipPush: false,
                     extraData: [:]
                 )
             }, completion: completion)
@@ -1246,6 +1258,7 @@ final class MessageDTO_Tests: XCTestCase {
                 pinning: MessagePinning(expirationDate: .unique),
                 quotedMessageId: nil,
                 isSilent: false,
+                skipPush: false,
                 extraData: [:]
             )
             newMessageId = messageDTO.id
@@ -1290,6 +1303,7 @@ final class MessageDTO_Tests: XCTestCase {
                 isSilent: false,
                 quotedMessageId: nil,
                 createdAt: nil,
+                skipPush: false,
                 extraData: [:]
             )
             // Get reply messageId
@@ -1973,7 +1987,6 @@ final class MessageDTO_Tests: XCTestCase {
         let type: MessageReactionType = "fake"
         prepareEnvironment(createdUserId: userId, createdMessageId: messageId)
 
-        let reactionId = makeReactionId(userId: userId, messageId: messageId, type: type)
         let result = runAddReaction(messageId: messageId, type: type, localState: .sending)
 
         XCTAssertEqual(result.value?.reactionType, "fake")

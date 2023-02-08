@@ -70,6 +70,7 @@ final class MessageSender_Tests: XCTestCase {
                 pinning: nil,
                 quotedMessageId: nil,
                 isSilent: false,
+                skipPush: false,
                 extraData: [:]
             )
             message1.localMessageState = .pendingSend
@@ -81,6 +82,7 @@ final class MessageSender_Tests: XCTestCase {
                 pinning: nil,
                 quotedMessageId: nil,
                 isSilent: false,
+                skipPush: false,
                 attachments: [
                     .mockFile,
                     .mockImage,
@@ -98,6 +100,7 @@ final class MessageSender_Tests: XCTestCase {
                 pinning: nil,
                 quotedMessageId: nil,
                 isSilent: false,
+                skipPush: false,
                 attachments: [],
                 extraData: [:]
             )
@@ -138,6 +141,7 @@ final class MessageSender_Tests: XCTestCase {
                 pinning: nil,
                 quotedMessageId: nil,
                 isSilent: false,
+                skipPush: false,
                 attachments: [
                     .init(payload: TestAttachmentPayload.unique),
                     .init(payload: TestAttachmentPayload.unique)
@@ -162,6 +166,7 @@ final class MessageSender_Tests: XCTestCase {
                 pinning: nil,
                 quotedMessageId: nil,
                 isSilent: false,
+                skipPush: false,
                 attachments: [
                     .mockImage,
                     .init(payload: TestAttachmentPayload.unique)
@@ -199,6 +204,7 @@ final class MessageSender_Tests: XCTestCase {
                 pinning: nil,
                 quotedMessageId: nil,
                 isSilent: false,
+                skipPush: false,
                 extraData: [:]
             )
             message1.localMessageState = .pendingSend
@@ -210,6 +216,7 @@ final class MessageSender_Tests: XCTestCase {
                 pinning: nil,
                 quotedMessageId: nil,
                 isSilent: false,
+                skipPush: false,
                 extraData: [:]
             )
             message2.localMessageState = .pendingSend
@@ -221,6 +228,7 @@ final class MessageSender_Tests: XCTestCase {
                 pinning: nil,
                 quotedMessageId: nil,
                 isSilent: false,
+                skipPush: false,
                 extraData: [:]
             )
             message3.localMessageState = .pendingSend
@@ -267,6 +275,7 @@ final class MessageSender_Tests: XCTestCase {
                 pinning: nil,
                 quotedMessageId: nil,
                 isSilent: false,
+                skipPush: false,
                 extraData: [:]
             )
             messageA1.localMessageState = .pendingSend
@@ -278,6 +287,7 @@ final class MessageSender_Tests: XCTestCase {
                 pinning: nil,
                 quotedMessageId: nil,
                 isSilent: false,
+                skipPush: false,
                 extraData: [:]
             )
             messageA2.localMessageState = .pendingSend
@@ -289,6 +299,7 @@ final class MessageSender_Tests: XCTestCase {
                 pinning: nil,
                 quotedMessageId: nil,
                 isSilent: false,
+                skipPush: false,
                 extraData: [:]
             )
             messageB1.localMessageState = .pendingSend
@@ -300,6 +311,7 @@ final class MessageSender_Tests: XCTestCase {
                 pinning: nil,
                 quotedMessageId: nil,
                 isSilent: false,
+                skipPush: false,
                 extraData: [:]
             )
             messageB2.localMessageState = .pendingSend

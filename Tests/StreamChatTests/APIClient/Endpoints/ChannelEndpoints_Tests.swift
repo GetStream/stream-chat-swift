@@ -229,11 +229,14 @@ final class ChannelEndpoints_Tests: XCTestCase {
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
-            body: ["message": messageBody]
+            body: [
+                "message": AnyEncodable(messageBody),
+                "skip_push": AnyEncodable(true)
+            ]
         )
 
         // Build endpoint
-        let endpoint: Endpoint<MessagePayload.Boxed> = .sendMessage(cid: cid, messagePayload: messageBody)
+        let endpoint: Endpoint<MessagePayload.Boxed> = .sendMessage(cid: cid, messagePayload: messageBody, skipPush: true)
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))

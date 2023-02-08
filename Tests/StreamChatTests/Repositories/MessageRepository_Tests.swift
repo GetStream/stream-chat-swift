@@ -123,6 +123,27 @@ final class MessageRepositoryTests: XCTestCase {
         XCTAssertNotNil(result?.value)
     }
 
+    func test_sendMessage_skipPush() throws {
+        let id = MessageId.unique
+        try createMessage(id: id, localState: .pendingSend, skipPush: true)
+        let expectation = self.expectation(description: "Send Message completes")
+        repository.sendMessage(with: id) { _ in
+            expectation.fulfill()
+        }
+
+        wait(for: [apiClient.request_expectation], timeout: defaultTimeout)
+
+        let payload = MessagePayload.Boxed(message: .dummy(messageId: id, authorUserId: .anonymous))
+        (apiClient.request_completion as? (Result<MessagePayload.Boxed, Error>) -> Void)?(.success(payload))
+
+        wait(for: [expectation], timeout: defaultTimeout)
+
+        let expectedEndpoint = try XCTUnwrap(apiClient.request_endpoint)
+        let requestBody = try expectedEndpoint.bodyAsDictionary()
+        let skipPush = try XCTUnwrap(requestBody["skip_push"] as? Bool)
+        XCTAssertTrue(skipPush)
+    }
+
     // MARK: saveSuccessfullySentMessage
 
     func test_saveSuccessfullySentMessage_noChannel() {
@@ -521,7 +542,7 @@ final class MessageRepositoryTests: XCTestCase {
 
 extension MessageRepositoryTests {
     @discardableResult
-    private func createMessage(id: MessageId, localState: LocalMessageState) throws -> MessageDTO {
+    private func createMessage(id: MessageId, localState: LocalMessageState, skipPush: Bool = false) throws -> MessageDTO {
         try database.createCurrentUser()
         try database.createChannel(cid: cid)
         var message: MessageDTO!
@@ -532,6 +553,7 @@ extension MessageRepositoryTests {
                 pinning: nil,
                 quotedMessageId: nil,
                 isSilent: false,
+                skipPush: skipPush,
                 extraData: [:]
             )
             message.id = id
