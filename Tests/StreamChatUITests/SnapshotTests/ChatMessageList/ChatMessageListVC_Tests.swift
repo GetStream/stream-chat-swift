@@ -486,8 +486,9 @@ class ChatMessageListView_Mock: ChatMessageListView {
         scrollToMostRecentMessageCallCount += 1
     }
 
+    var updateMessagesCompletion: (() -> Void)?
     override func updateMessages(with changes: [ListChange<ChatMessage>], completion: (() -> Void)? = nil) {
-        completion?()
+        updateMessagesCompletion = completion
     }
 }
 

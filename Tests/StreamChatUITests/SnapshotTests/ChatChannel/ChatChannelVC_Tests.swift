@@ -621,21 +621,23 @@ final class ChatChannelVC_Tests: XCTestCase {
         XCTAssertEqual(channelControllerMock.markReadCallCount, 0)
     }
 
-    func test_didUpdateMessages_whenShouldMarkChannelRead_thenMarkRead() {
+    func test_didUpdateMessagesComplete_whenShouldMarkChannelRead_thenMarkRead() {
         let mockedListView = makeMockMessageListView()
         mockedListView.mockIsLastCellFullyVisible = true
         channelControllerMock.hasLoadedAllNextMessages_mock = true
 
         vc.channelController(channelControllerMock, didUpdateMessages: [])
+        mockedListView.updateMessagesCompletion?()
         XCTAssertEqual(channelControllerMock.markReadCallCount, 1)
     }
 
-    func test_didUpdateMessages_whenShouldNotMarkChannelRead_thenDoesNotMarkRead() {
+    func test_didUpdateMessagesComplete_whenShouldNotMarkChannelRead_thenDoesNotMarkRead() {
         let mockedListView = makeMockMessageListView()
         mockedListView.mockIsLastCellFullyVisible = false
         channelControllerMock.hasLoadedAllNextMessages_mock = false
 
         vc.channelController(channelControllerMock, didUpdateMessages: [])
+        mockedListView.updateMessagesCompletion?()
         XCTAssertEqual(channelControllerMock.markReadCallCount, 0)
     }
 }

@@ -267,10 +267,6 @@ open class ChatChannelVC: _ViewController,
         _ channelController: ChatChannelController,
         didUpdateMessages changes: [ListChange<ChatMessage>]
     ) {
-        if shouldMarkChannelRead {
-            channelController.markRead()
-        }
-
         // In order to not show an empty list when jumping to a message, ignore the remove updates.
         if !isFirstPageLoaded && changes.filter(\.isRemove).count == messages.count {
             return
@@ -278,7 +274,11 @@ open class ChatChannelVC: _ViewController,
 
         messageListVC.setPreviousMessagesSnapshot(messages)
         messageListVC.setNewMessagesSnapshot(Array(channelController.messages))
-        messageListVC.updateMessages(with: changes)
+        messageListVC.updateMessages(with: changes) { [weak self] in
+            if self?.shouldMarkChannelRead == true {
+                self?.channelController.markRead()
+            }
+        }
     }
 
     open func channelController(
