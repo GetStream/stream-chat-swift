@@ -22,7 +22,7 @@ class MessageUpdater: Worker {
     ///   - messageId: The message identifier.
     ///   - completion: The completion. Will be called with an error if something goes wrong, otherwise - will be called with `nil`.
     func getMessage(cid: ChannelId, messageId: MessageId, completion: ((Result<ChatMessage, Error>) -> Void)? = nil) {
-        repository.getMessage(cid: cid, messageId: messageId, completion: completion)
+        repository.getMessage(cid: cid, messageId: messageId, store: true, completion: completion)
     }
 
     /// Deletes the message.
