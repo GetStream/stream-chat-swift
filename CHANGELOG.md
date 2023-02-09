@@ -9,7 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add `AnyAttachmentPayload(localFileURL:customPayload:)` initializer to allow creating custom attachments without a remote URL [#2457](https://github.com/GetStream/stream-chat-swift/pull/2457)
 - Add skip push support when sending a message [#2486](https://github.com/GetStream/stream-chat-swift/pull/2486)
 
-### 💥 Removed
+### 🔄 Changed
 - Remove unused ReactionNotificationContent [#2485](https://github.com/GetStream/stream-chat-swift/pull/2485)
 
 ## StreamChatUI
