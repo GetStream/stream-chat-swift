@@ -11,13 +11,17 @@ open class ChatChannelVC: _ViewController,
     ThemeProvider,
     ChatMessageListVCDataSource,
     ChatMessageListVCDelegate,
-    ChatChannelControllerDelegate {
+    ChatChannelControllerDelegate,
+    EventsControllerDelegate {
     /// Controller for observing data changes within the channel.
     open var channelController: ChatChannelController!
 
     /// User search controller for suggestion users when typing in the composer.
     open lazy var userSuggestionSearchController: ChatUserSearchController =
         channelController.client.userSearchController()
+
+    /// A controller for observing web socket events.
+    public lazy var eventsController: EventsController = client.eventsController()
 
     /// The size of the channel avatar.
     open var channelAvatarSize: CGSize {
@@ -74,6 +78,8 @@ open class ChatChannelVC: _ViewController,
 
     override open func setUp() {
         super.setUp()
+
+        eventsController.delegate = self
 
         let notificationCenter = NotificationCenter.default
         notificationCenter.addObserver(
@@ -305,6 +311,19 @@ open class ChatChannelVC: _ViewController,
             messageListVC.showTypingIndicator(typingUsers: typingUsersWithoutCurrentUser)
         }
     }
+
+    // MARK: - EventsControllerDelegate
+
+    open func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
+        if let newMessageEvent = event as? MessageNewEvent {
+            let newMessage = newMessageEvent.message
+            if !isFirstPageLoaded && newMessage.isSentByCurrentUser && !newMessage.isPartOfThread {
+                channelController.loadFirstPage()
+            }
+        }
+    }
+
+    // MARK: - Moving to foreground
 
     // When app becomes active, and channel is open, recreate the database observers and reload
     // the data source so that any missed database updates from the NotificationService are refreshed.

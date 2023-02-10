@@ -637,22 +637,11 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             skipPush: skipPush,
             skipEnrichUrl: skipEnrichUrl,
             extraData: extraData
-            ) { result in
-                self.callback {
-                    completion?(result)
-                }
+        ) { result in
+            self.callback {
+                completion?(result)
             }
         }
-
-        let isFirstPageLoaded = hasLoadedAllNextMessages
-        if !isFirstPageLoaded {
-            loadFirstPage { _ in
-                createNewMessage()
-            }
-            return
-        }
-
-        createNewMessage()
     }
 
     /// Add users to the channel as members.
