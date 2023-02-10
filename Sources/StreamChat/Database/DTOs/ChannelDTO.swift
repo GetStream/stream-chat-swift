@@ -564,6 +564,11 @@ extension ChannelDTO {
         }
     }
 
+    /// This is useful for example when truncating a channel
+    func resetUpdateLastChannelMessageAt() {
+        lastChannelMessageAt = nil
+    }
+
     /// Updates the `oldestMessageAt` of the channel. It should only update if the current `oldestMessageAt` is not older already.
     /// This property is useful to filter out older pinned/quoted messages that do not belong to the regular channel query,
     /// but are already in the database.

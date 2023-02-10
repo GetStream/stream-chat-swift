@@ -184,6 +184,12 @@ class ChannelUpdater: Worker {
         apiClient.request(endpoint: .truncateChannel(cid: cid, skipPush: skipPush, hardDelete: hardDelete, message: requestBody)) {
             if let error = $0.error {
                 log.error(error)
+            } else {
+                self.database.write {
+                    if let channel = $0.channel(cid: cid) {
+                        channel.resetUpdateLastChannelMessageAt()
+                    }
+                }
             }
             completion?($0.error)
         }
