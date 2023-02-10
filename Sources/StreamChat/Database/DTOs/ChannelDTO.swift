@@ -577,27 +577,27 @@ extension ChannelDTO {
 
     /// When fetching messages pages in Channel Query we use `oldestMessageAt` and `newestMessageAt` as cursors.
     func updatePaginationCursors(for payload: ChannelPayload, with pagination: MessagesPagination?) {
-        let oldestMessage = payload.messages.first
-        let newestMessage = payload.messages.last
+        let oldestMessageAt = payload.messages.first?.createdAt.bridgeDate
+        let newestMessageAt = payload.messages.last?.createdAt.bridgeDate
 
         switch pagination?.parameter {
         // When loading previous (old) pages
         case .lessThan, .lessThanOrEqual:
-            oldestMessageAt = oldestMessage?.createdAt.bridgeDate
+            self.oldestMessageAt = oldestMessageAt
                 
         // When loading next (new) pages
         case .greaterThan, .greaterThanOrEqual:
-            newestMessageAt = newestMessage?.createdAt.bridgeDate
+            self.newestMessageAt = newestMessageAt
 
         // When jumping to a mid-page
         case .around:
-            oldestMessageAt = oldestMessage?.createdAt.bridgeDate
-            newestMessageAt = newestMessage?.createdAt.bridgeDate
+            self.oldestMessageAt = oldestMessageAt
+            self.newestMessageAt = newestMessageAt
 
         // When loading first page
         case .none:
-            oldestMessageAt = oldestMessage?.createdAt.bridgeDate
-            newestMessageAt = nil
+            self.oldestMessageAt = oldestMessageAt
+            self.newestMessageAt = nil
         }
     }
     
