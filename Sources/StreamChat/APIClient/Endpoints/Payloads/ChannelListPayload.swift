@@ -4,12 +4,12 @@
 
 import Foundation
 
-struct ChannelListPayload: Decodable, Hashable {
+struct ChannelListPayload: Decodable {
     /// A list of channels response (see `ChannelQuery`).
     let channels: [ChannelPayload]
 }
 
-struct ChannelPayload: Hashable {
+struct ChannelPayload {
     let channel: ChannelDetailPayload
 
     let watcherCount: Int?
@@ -68,7 +68,7 @@ extension ChannelPayload: Decodable {
     }
 }
 
-struct ChannelDetailPayload: Hashable {
+struct ChannelDetailPayload {
     let cid: ChannelId
 
     let name: String?
@@ -164,7 +164,7 @@ extension ChannelDetailPayload: Decodable {
     }
 }
 
-struct ChannelReadPayload: Decodable, Hashable {
+struct ChannelReadPayload: Decodable {
     private enum CodingKeys: String, CodingKey {
         case user
         case lastReadAt = "last_read"
@@ -286,50 +286,5 @@ public class ChannelConfig: Codable {
         self.commands = commands
         self.createdAt = createdAt
         self.updatedAt = updatedAt
-    }
-}
-
-// MARK: - Hashable & Equatable
-
-extension ChannelConfig: Hashable {
-    public func hash(
-        into hasher: inout Hasher
-    ) {
-        hasher.combine(reactionsEnabled)
-        hasher.combine(typingEventsEnabled)
-        hasher.combine(readEventsEnabled)
-        hasher.combine(connectEventsEnabled)
-        hasher.combine(uploadsEnabled)
-        hasher.combine(repliesEnabled)
-        hasher.combine(quotesEnabled)
-        hasher.combine(searchEnabled)
-        hasher.combine(mutesEnabled)
-        hasher.combine(urlEnrichmentEnabled)
-        hasher.combine(messageRetention)
-        hasher.combine(maxMessageLength)
-        hasher.combine(commands)
-        hasher.combine(createdAt)
-        hasher.combine(updatedAt)
-    }
-
-    public static func == (
-        lhs: ChannelConfig,
-        rhs: ChannelConfig
-    ) -> Bool {
-        lhs.reactionsEnabled == rhs.reactionsEnabled
-            && lhs.typingEventsEnabled == rhs.typingEventsEnabled
-            && lhs.readEventsEnabled == rhs.readEventsEnabled
-            && lhs.connectEventsEnabled == rhs.connectEventsEnabled
-            && lhs.uploadsEnabled == rhs.uploadsEnabled
-            && lhs.repliesEnabled == rhs.repliesEnabled
-            && lhs.quotesEnabled == rhs.quotesEnabled
-            && lhs.searchEnabled == rhs.searchEnabled
-            && lhs.mutesEnabled == rhs.mutesEnabled
-            && lhs.urlEnrichmentEnabled == rhs.urlEnrichmentEnabled
-            && lhs.messageRetention == rhs.messageRetention
-            && lhs.maxMessageLength == rhs.maxMessageLength
-            && lhs.commands == rhs.commands
-            && lhs.createdAt == rhs.createdAt
-            && lhs.updatedAt == rhs.updatedAt
     }
 }

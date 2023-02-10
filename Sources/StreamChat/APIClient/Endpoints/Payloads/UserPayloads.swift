@@ -4,7 +4,7 @@
 
 import Foundation
 
-enum UserPayloadsCodingKeys: String, CodingKey, CaseIterable, Hashable {
+enum UserPayloadsCodingKeys: String, CodingKey, CaseIterable {
     case id
     case name
     case imageURL = "image"
@@ -28,7 +28,7 @@ enum UserPayloadsCodingKeys: String, CodingKey, CaseIterable, Hashable {
 // MARK: - GET users
 
 /// An object describing the incoming user JSON payload.
-class UserPayload: Decodable, Hashable {
+class UserPayload: Decodable {
     let id: String
     let name: String?
     let imageURL: URL?
@@ -97,41 +97,6 @@ class UserPayload: Decodable, Hashable {
             )
             extraData = [:]
         }
-    }
-
-    func hash(
-        into hasher: inout Hasher
-    ) {
-        hasher.combine(id)
-        name.map { hasher.combine($0) }
-        imageURL.map { hasher.combine($0) }
-        hasher.combine(role)
-        hasher.combine(createdAt)
-        hasher.combine(updatedAt)
-        lastActiveAt.map { hasher.combine($0) }
-        hasher.combine(isOnline)
-        hasher.combine(isInvisible)
-        hasher.combine(isBanned)
-        hasher.combine(teams)
-        hasher.combine(extraData)
-    }
-
-    static func == (
-        lhs: UserPayload,
-        rhs: UserPayload
-    ) -> Bool {
-        lhs.id == rhs.id
-            && lhs.name == rhs.name
-            && lhs.imageURL == rhs.imageURL
-            && lhs.role == rhs.role
-            && lhs.createdAt == rhs.createdAt
-            && lhs.updatedAt == rhs.updatedAt
-            && lhs.lastActiveAt == rhs.lastActiveAt
-            && lhs.isOnline == rhs.isOnline
-            && lhs.isInvisible == rhs.isInvisible
-            && lhs.isBanned == rhs.isBanned
-            && lhs.teams == rhs.teams
-            && lhs.extraData == rhs.extraData
     }
 }
 

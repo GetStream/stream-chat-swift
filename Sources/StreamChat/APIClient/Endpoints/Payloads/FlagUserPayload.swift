@@ -5,7 +5,7 @@
 import Foundation
 
 /// The type describes the incoming JSON from `moderation/(un)flag` user endpoint.
-struct FlagUserPayload: Decodable, Hashable {
+struct FlagUserPayload: Decodable {
     private enum CodingKeys: String, CodingKey {
         case flag
         case currentUser = "user"

@@ -5,7 +5,7 @@
 import Foundation
 
 /// A struct containing information about unread counts of channels and messages.
-public struct UnreadCount: Decodable, Hashable {
+public struct UnreadCount: Decodable, Equatable {
     private enum CodingKeys: String, CodingKey {
         case currentUserUnreadCount = "me"
         case userUnreadCount = "user"

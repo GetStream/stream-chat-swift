@@ -5,7 +5,7 @@
 import Foundation
 
 /// A type that describes attachment JSON payload.
-struct MessageAttachmentPayload: Hashable {
+struct MessageAttachmentPayload {
     private enum CodingKeys: String, CodingKey {
         case type
         case ogURL = "og_scrape_url"
