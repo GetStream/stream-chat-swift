@@ -4,7 +4,7 @@
 
 import Foundation
 
-public struct MessageTranslationsPayload: Decodable, Hashable {
+public struct MessageTranslationsPayload: Decodable {
     private static let translatedSuffix = "_text"
 
     private struct CodingKeys: CodingKey, Hashable {

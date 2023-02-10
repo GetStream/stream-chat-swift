@@ -118,57 +118,6 @@ class EventPayload: Decodable {
     }
 }
 
-// MARK: - Hashable & Equatable
-
-extension EventPayload: Hashable {
-    internal func hash(
-        into hasher: inout Hasher
-    ) {
-        hasher.combine(eventType)
-        connectionId.map { hasher.combine($0) }
-        cid.map { hasher.combine($0) }
-        currentUser.map { hasher.combine($0) }
-        user.map { hasher.combine($0) }
-        createdBy.map { hasher.combine($0) }
-        memberContainer.map { hasher.combine($0) }
-        channel.map { hasher.combine($0) }
-        message.map { hasher.combine($0) }
-        reaction.map { hasher.combine($0) }
-        watcherCount.map { hasher.combine($0) }
-        unreadCount.map { hasher.combine($0) }
-        createdAt.map { hasher.combine($0) }
-        isChannelHistoryCleared.map { hasher.combine($0) }
-        banReason.map { hasher.combine($0) }
-        banExpiredAt.map { hasher.combine($0) }
-        parentId.map { hasher.combine($0) }
-        hasher.combine(hardDelete)
-    }
-
-    internal static func == (
-        lhs: EventPayload,
-        rhs: EventPayload
-    ) -> Bool {
-        lhs.eventType == rhs.eventType
-            && lhs.connectionId == rhs.connectionId
-            && lhs.cid == rhs.cid
-            && lhs.currentUser == rhs.currentUser
-            && lhs.user == rhs.user
-            && lhs.createdBy == rhs.createdBy
-            && lhs.memberContainer == rhs.memberContainer
-            && lhs.channel == rhs.channel
-            && lhs.message == rhs.message
-            && lhs.reaction == rhs.reaction
-            && lhs.watcherCount == rhs.watcherCount
-            && lhs.unreadCount == rhs.unreadCount
-            && lhs.createdAt == rhs.createdAt
-            && lhs.isChannelHistoryCleared == rhs.isChannelHistoryCleared
-            && lhs.banReason == rhs.banReason
-            && lhs.banExpiredAt == rhs.banExpiredAt
-            && lhs.parentId == rhs.parentId
-            && lhs.hardDelete == rhs.hardDelete
-    }
-}
-
 /// Extension to make decoding error messages better.
 /// The error message:
 /// ```

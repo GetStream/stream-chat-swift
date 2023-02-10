@@ -9,7 +9,6 @@ import XCTest
 
 final class CurrentUserPayload_Tests: XCTestCase {
     let currentUserJSON = XCTestCase.mockData(fromJSONFile: "CurrentUser")
-    let currentUserCustomRoleJSON = XCTestCase.mockData(fromJSONFile: "CurrentUserCustomRole")
 
     func test_currentUserJSON_customRoleIsDecodedCorrectly() throws {
         let json = XCTestCase.mockData(fromJSONFile: "CurrentUserCustomRole")
@@ -44,14 +43,5 @@ final class CurrentUserPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.mutedChannels[0].createdAt, "2021-03-22T10:23:52.516225Z".toDate())
         XCTAssertEqual(payload.mutedChannels[0].updatedAt, "2021-03-22T10:23:52.516225Z".toDate())
         XCTAssertEqual(payload.isInvisible, true)
-    }
-
-    func test_isEqual_worksAsExpectedAndPropagatesToSuperWithoutCausingLoops() throws {
-        let payloadA = try JSONDecoder.default.decode(CurrentUserPayload.self, from: currentUserJSON)
-        let payloadB = try JSONDecoder.default.decode(CurrentUserPayload.self, from: currentUserJSON)
-        let payloadC = try JSONDecoder.default.decode(CurrentUserPayload.self, from: currentUserCustomRoleJSON)
-
-        XCTAssertEqual(payloadA, payloadB)
-        XCTAssertNotEqual(payloadA, payloadC)
     }
 }

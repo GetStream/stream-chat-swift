@@ -99,8 +99,6 @@ public struct Filter<Scope: FilterScope> {
     /// The "right-hand" side of the filter. Specifies the value the filter should match.
     public let value: FilterValue
 
-    public let keyToValueMapper: ((Any) -> FilterValue?)?
-
     /// Creates a new instance of `Filter`.
     ///
     /// Learn more about how to create simple, advanced, and custom filters in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#query-filters).
@@ -113,29 +111,23 @@ public struct Filter<Scope: FilterScope> {
     ///   - key: The "left-hand" side of the filter. Specifies the name of the field the filter should match.
     ///   - value: The "right-hand" side of the filter. Specifies the value the filter should match.
     ///
-    public init(
-        operator: String,
-        key: String?,
-        value: FilterValue,
-        keyToValueMapper: ((Any) -> FilterValue?)? = nil
-    ) {
+    public init(operator: String, key: String?, value: FilterValue) {
         log.assert(`operator`.hasPrefix("$"), "A filter operator must have `$` prefix.")
         self.operator = `operator`
         self.key = key
         self.value = value
-        self.keyToValueMapper = keyToValueMapper
     }
 }
 
 /// Internal initializers used by the DSL. This doesn't have to exposed publicly because customers use the
 /// built-in helpers we provide.
 extension Filter {
-    init<Value: FilterValue>(operator: FilterOperator, key: FilterKey<Scope, Value>, value: FilterValue, keyToValueMapper: ((Any) -> FilterValue?)?) {
-        self.init(operator: `operator`.rawValue, key: key.rawValue, value: value, keyToValueMapper: keyToValueMapper)
+    init<Value: FilterValue>(operator: FilterOperator, key: FilterKey<Scope, Value>, value: FilterValue) {
+        self.init(operator: `operator`.rawValue, key: key.rawValue, value: value)
     }
 
     init(operator: FilterOperator, value: FilterValue) {
-        self.init(operator: `operator`.rawValue, key: nil, value: value, keyToValueMapper: nil)
+        self.init(operator: `operator`.rawValue, key: nil, value: value)
     }
 }
 
@@ -165,73 +157,65 @@ public extension Filter {
 public struct FilterKey<Scope: FilterScope, Value: FilterValue>: ExpressibleByStringLiteral, RawRepresentable {
     /// The raw value of the key. This value should match the "encodable" key for the given object.
     public let rawValue: String
-    public let keyToValueMapper: ((Any) -> FilterValue?)?
 
     public init(stringLiteral value: String) {
         rawValue = value
-        keyToValueMapper = nil
     }
 
     public init(rawValue value: String) {
         rawValue = value
-        keyToValueMapper = nil
-    }
-
-    public init(rawValue value: String, keyToValueMapper: ((Any) -> FilterValue?)? = nil) {
-        rawValue = value
-        self.keyToValueMapper = keyToValueMapper
     }
 }
 
 public extension Filter {
     /// Matches values that are equal to a specified value.
     static func equal<Value: Encodable>(_ key: FilterKey<Scope, Value>, to value: Value) -> Filter {
-        .init(operator: .equal, key: key, value: value, keyToValueMapper: key.keyToValueMapper)
+        .init(operator: .equal, key: key, value: value)
     }
 
     /// Matches all values that are not equal to a specified value.
     static func notEqual<Value: Encodable>(_ key: FilterKey<Scope, Value>, to value: Value) -> Filter {
-        .init(operator: .notEqual, key: key, value: value, keyToValueMapper: key.keyToValueMapper)
+        .init(operator: .notEqual, key: key, value: value)
     }
 
     /// Matches values that are greater than a specified value.
     static func greater<Value: Encodable>(_ key: FilterKey<Scope, Value>, than value: Value) -> Filter {
-        .init(operator: .greater, key: key, value: value, keyToValueMapper: key.keyToValueMapper)
+        .init(operator: .greater, key: key, value: value)
     }
 
     /// Matches values that are greater than a specified value.
     static func greaterOrEqual<Value: Encodable>(_ key: FilterKey<Scope, Value>, than value: Value) -> Filter {
-        .init(operator: .greaterOrEqual, key: key, value: value, keyToValueMapper: key.keyToValueMapper)
+        .init(operator: .greaterOrEqual, key: key, value: value)
     }
 
     /// Matches values that are less than a specified value.
     static func less<Value: Encodable>(_ key: FilterKey<Scope, Value>, than value: Value) -> Filter {
-        .init(operator: .less, key: key, value: value, keyToValueMapper: key.keyToValueMapper)
+        .init(operator: .less, key: key, value: value)
     }
 
     /// Matches values that are less than or equal to a specified value.
     static func lessOrEqual<Value: Encodable>(_ key: FilterKey<Scope, Value>, than value: Value) -> Filter {
-        .init(operator: .lessOrEqual, key: key, value: value, keyToValueMapper: key.keyToValueMapper)
+        .init(operator: .lessOrEqual, key: key, value: value)
     }
 
     /// Matches any of the values specified in an array.
     static func `in`<Value: Encodable>(_ key: FilterKey<Scope, Value>, values: [Value]) -> Filter {
-        .init(operator: .in, key: key, value: values, keyToValueMapper: key.keyToValueMapper)
+        .init(operator: .in, key: key, value: values)
     }
 
     /// Matches none of the values specified in an array.
     static func notIn<Value: Encodable>(_ key: FilterKey<Scope, Value>, values: [Value]) -> Filter {
-        .init(operator: .notIn, key: key, value: values, keyToValueMapper: key.keyToValueMapper)
+        .init(operator: .notIn, key: key, value: values)
     }
 
     /// Matches values by performing text search with the specified value.
     static func query<Value: Encodable>(_ key: FilterKey<Scope, Value>, text: String) -> Filter {
-        .init(operator: .query, key: key, value: text, keyToValueMapper: key.keyToValueMapper)
+        .init(operator: .query, key: key, value: text)
     }
 
     /// Matches values with the specified prefix.
     static func autocomplete<Value: Encodable>(_ key: FilterKey<Scope, Value>, text: String) -> Filter {
-        .init(operator: .autocomplete, key: key, value: text, keyToValueMapper: key.keyToValueMapper)
+        .init(operator: .autocomplete, key: key, value: text)
     }
 
     /// Matches values that exist/don't exist based on the specified boolean value.
@@ -240,12 +224,12 @@ public extension Filter {
     /// filter should match values that don't exist.
     ///
     static func exists<Value: Encodable>(_ key: FilterKey<Scope, Value>, exists: Bool = true) -> Filter {
-        .init(operator: .exists, key: key, value: exists, keyToValueMapper: key.keyToValueMapper)
+        .init(operator: .exists, key: key, value: exists)
     }
 
     /// Matches if the key contains the given value.
     static func contains<Value: Encodable>(_ key: FilterKey<Scope, Value>, value: String) -> Filter {
-        .init(operator: .contains, key: key, value: value, keyToValueMapper: key.keyToValueMapper)
+        .init(operator: .contains, key: key, value: value)
     }
 }
 
@@ -432,16 +416,5 @@ private struct FilterRightSide: Decodable {
                 debugDescription: "The data can't be decoded as `FilterValue`."
             )
         }
-    }
-}
-
-extension Filter: Equatable {
-    public static func == (
-        lhs: Filter<Scope>,
-        rhs: Filter<Scope>
-    ) -> Bool {
-        lhs.operator == rhs.operator
-            && lhs.key == rhs.key
-            && lhs.value.eraseToAnyFilterValue() == rhs.value.eraseToAnyFilterValue()
     }
 }

@@ -4,7 +4,7 @@
 
 import Foundation
 
-struct DevicePayload: Decodable, Hashable {
+struct DevicePayload: Decodable, Equatable {
     private enum CodingKeys: String, CodingKey {
         case id
         case createdAt = "created_at"
