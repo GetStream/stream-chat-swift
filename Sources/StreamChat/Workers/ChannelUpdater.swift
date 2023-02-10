@@ -226,6 +226,7 @@ class ChannelUpdater: Worker {
     ///   - isSilent: A flag indicating whether the message is a silent message. Silent messages are special messages that don't increase the unread messages count nor mark a channel as unread.
     ///   - attachments: An array of the attachments for the message.
     ///   - quotedMessageId: An id of the message new message quotes. (inline reply)
+    ///   - skipPush: If true, skips sending push notification to channel members.
     ///   - extraData: Additional extra data of the message object.
     ///   - completion: Called when saving the message to the local DB finishes.
     ///
@@ -239,6 +240,7 @@ class ChannelUpdater: Worker {
         attachments: [AnyAttachmentPayload] = [],
         mentionedUserIds: [UserId],
         quotedMessageId: MessageId?,
+        skipPush: Bool,
         extraData: [String: RawJSON],
         completion: ((Result<MessageId, Error>) -> Void)? = nil
     ) {
@@ -257,6 +259,7 @@ class ChannelUpdater: Worker {
                 isSilent: isSilent,
                 quotedMessageId: quotedMessageId,
                 createdAt: nil,
+                skipPush: skipPush,
                 extraData: extraData
             )
 

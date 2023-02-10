@@ -20,7 +20,6 @@ extension ChatMessageImageAttachment {
             payload: .init(
                 title: title,
                 imageRemoteURL: imageURL,
-                imagePreviewRemoteURL: imageURL,
                 extraData: extraData
             ),
             uploadingState: localState.map {

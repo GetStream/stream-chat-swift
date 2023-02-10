@@ -899,6 +899,7 @@ public extension ChatChannelController {
     ///     `Note`: can be built-in types, custom attachment types conforming to `AttachmentEnvelope` protocol
     ///     and `ChatMessageAttachmentSeed`s.
     ///   - quotedMessageId: An id of the message new message quotes. (inline reply)
+    ///   - skipPush: If true, skips sending push notification to channel members.
     ///   - extraData: Additional extra data of the message object.
     ///   - completion: Called when saving the message to the local DB finishes.
     ///
@@ -909,6 +910,7 @@ public extension ChatChannelController {
         attachments: [AnyAttachmentPayload] = [],
         mentionedUserIds: [UserId] = [],
         quotedMessageId: MessageId? = nil,
+        skipPush: Bool = false,
         extraData: [String: RawJSON] = [:],
         completion: ((Result<MessageId, Error>) -> Void)? = nil
     ) {
@@ -933,6 +935,7 @@ public extension ChatChannelController {
             attachments: attachments,
             mentionedUserIds: mentionedUserIds,
             quotedMessageId: quotedMessageId,
+            skipPush: skipPush,
             extraData: extraData
         ) { result in
             self.callback {

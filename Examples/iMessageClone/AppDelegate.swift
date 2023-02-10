@@ -14,11 +14,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
-        window = UIWindow(frame: UIScreen.main.bounds)
-        window?.makeKeyAndVisible()
-        window?.rootViewController = UINavigationController(
-            rootViewController: iMessageChatChannelListViewController()
+        let window = UIWindow(frame: UIScreen.main.bounds)
+        window.rootViewController = UINavigationController(
+            rootViewController: SplashViewController { [unowned window] in
+                window.rootViewController = UINavigationController(
+                    rootViewController: iMessageChatChannelListViewController()
+                )
+            }
         )
+        window.makeKeyAndVisible()
+        self.window = window
 
         return true
     }

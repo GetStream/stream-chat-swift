@@ -65,7 +65,7 @@ public struct ImageAttachmentPayload: AttachmentPayload {
     /// Creates `ImageAttachmentPayload` instance.
     ///
     /// Use this initializer if the attachment is already uploaded and you have the remote URLs.
-    @available(*, deprecated, renamed: "init(title:imageRemoteURL:imagePreviewRemoteURL:originalWidth:originalHeight:extraData:)")
+    @available(*, deprecated, renamed: "init(title:imageRemoteURL:originalWidth:originalHeight:extraData:)")
     public init(
         title: String?,
         imageRemoteURL: URL,

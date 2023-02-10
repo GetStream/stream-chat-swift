@@ -16,11 +16,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     ) -> Bool {
         UINavigationBar.appearance().tintColor = .black
 
-        window = UIWindow(frame: UIScreen.main.bounds)
-        window?.makeKeyAndVisible()
-        window?.rootViewController = UINavigationController(
-            rootViewController: SlackChatChannelListViewController()
-        )
+        let window = UIWindow(frame: UIScreen.main.bounds)
+        window.rootViewController = SplashViewController { [unowned window] in
+            window.rootViewController = UINavigationController(
+                rootViewController: SlackChatChannelListViewController()
+            )
+        }
+        window.makeKeyAndVisible()
+        self.window = window
 
         return true
     }

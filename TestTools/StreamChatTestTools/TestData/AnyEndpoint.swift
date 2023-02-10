@@ -31,6 +31,14 @@ public struct AnyEndpoint: Equatable {
             && lhs.body == rhs.body
             && lhs.payloadType == rhs.payloadType
     }
+
+    func bodyAsDictionary() throws -> [String: Any] {
+        let data = try JSONEncoder().encode(body)
+        guard let requestBody = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+            throw NSError(domain: "com.getstream.io.any-endpoint", code: 1)
+        }
+        return requestBody
+    }
 }
 
 func AssertEqualEndpoint<A, B>(

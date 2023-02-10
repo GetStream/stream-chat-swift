@@ -372,6 +372,7 @@ lane :test_e2e_mock do |options|
   scan(scan_options.merge(clean: true, build_for_testing: build_for_testing))
 
   if build_for_testing
+    prepare_simulator(device: device, reset: true)
     parallelize_tests_on_ci(
       scan: scan_options,
       derived_data: lane_context[SharedValues::SCAN_DERIVED_DATA_PATH],

@@ -1,36 +1,29 @@
 {
-    "duration": "23.28ms",
+    "duration": "21.65ms",
     "message": {
         "attachments": [],
-        "cid": "messaging:0891b286-7c0d-11ed-9b95-00505696a460",
-        "created_at": "2022-12-15T00:11:34.204601Z",
+        "cid": "messaging:4abcbcf4-a1c5-11ed-8ebe-0050569848b4",
+        "created_at": "2023-02-01T00:13:47.96534Z",
         "html": "<p>Test</p>\n",
-        "id": "08ac9984-7c0d-11ed-9b95-00505696a460",
+        "id": "4b0e5a14-a1c5-11ed-8ebe-0050569848b4",
         "latest_reactions": [
             {
-                "created_at": "2022-12-15T00:11:34.25171Z",
-                "message_id": "08ac9984-7c0d-11ed-9b95-00505696a460",
+                "created_at": "2023-02-01T00:13:48.068416Z",
+                "message_id": "4b0e5a14-a1c5-11ed-8ebe-0050569848b4",
                 "score": 1,
                 "type": "like",
-                "updated_at": "2022-12-15T00:11:34.25171Z",
+                "updated_at": "2023-02-01T00:13:48.068416Z",
                 "user": {
                     "banned": false,
                     "birthland": "Tatooine",
                     "created_at": "2020-12-07T11:36:47.059906Z",
-                    "extraData": {},
-                    "extra_data": {},
                     "id": "luke_skywalker",
                     "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
-                    "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
-                    "last_active": "2022-12-15T00:11:33.832959298Z",
+                    "last_active": "2023-02-01T00:10:43.545108777Z",
                     "name": "Luke Skywalker",
                     "online": true,
                     "role": "user",
-                    "someTest": "Test",
-                    "testing": false,
-                    "testing-this": 3.14,
-                    "updated_at": "2022-12-14T20:38:09.900357Z",
-                    "yetAnotherField": "40"
+                    "updated_at": "2023-01-31T22:13:34.049443Z"
                 },
                 "user_id": "luke_skywalker"
             }
@@ -38,29 +31,22 @@
         "mentioned_users": [],
         "own_reactions": [
             {
-                "created_at": "2022-12-15T00:11:34.25171Z",
-                "message_id": "08ac9984-7c0d-11ed-9b95-00505696a460",
+                "created_at": "2023-02-01T00:13:48.068416Z",
+                "message_id": "4b0e5a14-a1c5-11ed-8ebe-0050569848b4",
                 "score": 1,
                 "type": "like",
-                "updated_at": "2022-12-15T00:11:34.25171Z",
+                "updated_at": "2023-02-01T00:13:48.068416Z",
                 "user": {
                     "banned": false,
                     "birthland": "Tatooine",
                     "created_at": "2020-12-07T11:36:47.059906Z",
-                    "extraData": {},
-                    "extra_data": {},
                     "id": "luke_skywalker",
                     "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
-                    "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
-                    "last_active": "2022-12-15T00:11:33.832959298Z",
+                    "last_active": "2023-02-01T00:10:43.545108777Z",
                     "name": "Luke Skywalker",
                     "online": true,
                     "role": "user",
-                    "someTest": "Test",
-                    "testing": false,
-                    "testing-this": 3.14,
-                    "updated_at": "2022-12-14T20:38:09.900357Z",
-                    "yetAnotherField": "40"
+                    "updated_at": "2023-01-31T22:13:34.049443Z"
                 },
                 "user_id": "luke_skywalker"
             }
@@ -80,51 +66,37 @@
         "silent": false,
         "text": "Test",
         "type": "regular",
-        "updated_at": "2022-12-15T00:11:34.25871302Z",
+        "updated_at": "2023-02-01T00:13:48.07575154Z",
         "user": {
             "banned": false,
             "birthland": "Tatooine",
             "created_at": "2020-12-07T11:36:47.059906Z",
-            "extraData": {},
-            "extra_data": {},
             "id": "luke_skywalker",
             "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
-            "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
-            "last_active": "2022-12-15T00:11:33.832959298Z",
+            "last_active": "2023-02-01T00:10:43.545108777Z",
             "name": "Luke Skywalker",
             "online": true,
             "role": "user",
-            "someTest": "Test",
-            "testing": false,
-            "testing-this": 3.14,
-            "updated_at": "2022-12-14T20:38:09.900357Z",
-            "yetAnotherField": "40"
+            "updated_at": "2023-01-31T22:13:34.049443Z"
         }
     },
     "reaction": {
-        "created_at": "2022-12-15T00:11:34.25171Z",
-        "message_id": "08ac9984-7c0d-11ed-9b95-00505696a460",
+        "created_at": "2023-02-01T00:13:48.068416Z",
+        "message_id": "4b0e5a14-a1c5-11ed-8ebe-0050569848b4",
         "score": 1,
         "type": "like",
-        "updated_at": "2022-12-15T00:11:34.25171Z",
+        "updated_at": "2023-02-01T00:13:48.068416Z",
         "user": {
             "banned": false,
             "birthland": "Tatooine",
             "created_at": "2020-12-07T11:36:47.059906Z",
-            "extraData": {},
-            "extra_data": {},
             "id": "luke_skywalker",
             "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
-            "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
-            "last_active": "2022-12-15T00:11:33.832959298Z",
+            "last_active": "2023-02-01T00:10:43.545108777Z",
             "name": "Luke Skywalker",
             "online": true,
             "role": "user",
-            "someTest": "Test",
-            "testing": false,
-            "testing-this": 3.14,
-            "updated_at": "2022-12-14T20:38:09.900357Z",
-            "yetAnotherField": "40"
+            "updated_at": "2023-01-31T22:13:34.049443Z"
         },
         "user_id": "luke_skywalker"
     }
