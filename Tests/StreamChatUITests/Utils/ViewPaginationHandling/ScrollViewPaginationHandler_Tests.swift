@@ -38,6 +38,23 @@ final class ScrollViewPaginationHandler_Tests: XCTestCase {
         waitForExpectations(timeout: defaultTimeout)
     }
 
+    func test_whenScrollViewContentSizeIsZero_onNewBottomPageIsNotCalled() {
+        let exp = expectation(description: "on new bottom page closure is called")
+        exp.isInverted = true
+        let scrollView = MockScrollView()
+        scrollView.contentSize.height = 0
+
+        let sut = ScrollViewPaginationHandler(scrollView: scrollView)
+        sut.bottomThreshold = 100
+        sut.onNewBottomPage = {
+            exp.fulfill()
+        }
+
+        scrollView.contentOffset = .init(x: 0, y: 910)
+
+        waitForExpectations(timeout: defaultTimeout)
+    }
+
     func test_whenScrollViewContentOffsetNotInBottomThreshold_onNewBottomPageIsNotCalled() {
         let exp = expectation(description: "on new bottom page closure is not called")
         exp.isInverted = true
@@ -58,6 +75,7 @@ final class ScrollViewPaginationHandler_Tests: XCTestCase {
     func test_whenScrollViewContentOffsetReachesZero_onNewTopPageIsCalled() {
         let exp = expectation(description: "on new top page closure is called")
         let scrollView = MockScrollView()
+        scrollView.contentSize = .init(width: 50, height: 50)
 
         let sut = ScrollViewPaginationHandler(scrollView: scrollView)
         sut.onNewTopPage = {
@@ -128,12 +146,44 @@ final class ScrollViewPaginationHandler_Tests: XCTestCase {
         waitForExpectations(timeout: defaultTimeout)
     }
 
-    func test_whenScrollViewIsTrackingOrDecelerating_onNewBottomPageNotCalled() {}
+    func test_whenScrollViewContentSizeIsZero_onNewTopPageNotCalled() {
+        let exp = expectation(description: "on new top page closure is called")
+        exp.isInverted = true
+        let scrollView = MockScrollView()
+        scrollView.contentSize = .init(width: 0, height: 0)
+
+        let sut = ScrollViewPaginationHandler(scrollView: scrollView)
+        sut.onNewTopPage = {
+            exp.fulfill()
+        }
+
+        scrollView.contentOffset = .zero
+
+        waitForExpectations(timeout: defaultTimeout)
+    }
+
+    func test_whenScrollViewIsTrackingOrDecelerating_onNewBottomPageNotCalled() {
+        let exp = expectation(description: "on new top page closure is called")
+        exp.isInverted = true
+        let scrollView = MockScrollView()
+        scrollView.contentSize.height = 100
+        scrollView.isTrackingOrDeceleratingMocked = false
+
+        let sut = ScrollViewPaginationHandler(scrollView: scrollView)
+        sut.onNewBottomPage = {
+            exp.fulfill()
+        }
+
+        scrollView.contentOffset = .init(x: 0, y: 100)
+
+        waitForExpectations(timeout: defaultTimeout)
+    }
 
     func test_whenScrollViewNotIsTrackingOrDecelerating_onNewTopPageNotCalled() {
         let exp = expectation(description: "on new top page closure is called")
         exp.isInverted = true
         let scrollView = MockScrollView()
+        scrollView.contentSize = .init(width: 0, height: 50)
         scrollView.isTrackingOrDeceleratingMocked = false
 
         let sut = ScrollViewPaginationHandler(scrollView: scrollView)

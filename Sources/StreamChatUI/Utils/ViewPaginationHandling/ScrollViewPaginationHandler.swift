@@ -25,7 +25,7 @@ class ScrollViewPaginationHandler: ViewPaginationHandling {
     }
 
     private func onChanged(_ scrollView: UIScrollView) {
-        guard scrollView.isTrackingOrDecelerating else {
+        guard scrollView.isTrackingOrDecelerating && scrollView.contentSize.height > 0 else {
             return
         }
 
