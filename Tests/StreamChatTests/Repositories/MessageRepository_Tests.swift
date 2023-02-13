@@ -254,7 +254,7 @@ final class MessageRepositoryTests: XCTestCase {
         let messageId: MessageId = .unique
 
         // Simulate `getMessage(cid:, messageId:)` call
-        repository.getMessage(cid: cid, messageId: messageId)
+        repository.getMessage(cid: cid, messageId: messageId, store: true)
 
         // Assert correct endpoint is called
         let expectedEndpoint: Endpoint<MessagePayload.Boxed> = .getMessage(messageId: messageId)
@@ -264,7 +264,7 @@ final class MessageRepositoryTests: XCTestCase {
     func test_getMessage_propogatesRequestError() {
         // Simulate `getMessage(cid:, messageId:)` call
         var completionCalledError: Error?
-        repository.getMessage(cid: .unique, messageId: .unique) {
+        repository.getMessage(cid: .unique, messageId: .unique, store: true) {
             completionCalledError = $0.error
         }
 
@@ -291,7 +291,7 @@ final class MessageRepositoryTests: XCTestCase {
 
         // Simulate `getMessage(cid:, messageId:)` call
         var completionCalledError: Error?
-        repository.getMessage(cid: channelId, messageId: messagePayload.message.id) {
+        repository.getMessage(cid: channelId, messageId: messagePayload.message.id, store: true) {
             completionCalledError = $0.error
         }
 
