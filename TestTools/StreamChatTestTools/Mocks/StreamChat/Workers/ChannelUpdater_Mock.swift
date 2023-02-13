@@ -8,7 +8,6 @@ import XCTest
 /// Mock implementation of ChannelUpdater
 final class ChannelUpdater_Mock: ChannelUpdater {
     @Atomic var update_channelQuery: ChannelQuery?
-    @Atomic var update_onBeforeSavingChannel: ((DatabaseSession) -> Void)?
     @Atomic var update_onChannelCreated: ((ChannelId) -> Void)?
     @Atomic var update_completion: ((Result<ChannelPayload, Error>) -> Void)?
     @Atomic var update_callCount = 0
@@ -108,7 +107,6 @@ final class ChannelUpdater_Mock: ChannelUpdater {
     func cleanUp() {
         update_channelQuery = nil
         update_onChannelCreated = nil
-        update_onBeforeSavingChannel = nil
         update_completion = nil
 
         updateChannel_payload = nil
@@ -199,12 +197,10 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         channelQuery: ChannelQuery,
         isInRecoveryMode: Bool,
         onChannelCreated: ((ChannelId) -> Void)? = nil,
-        onBeforeSavingChannel: ((DatabaseSession) -> Void)? = nil,
         completion: ((Result<ChannelPayload, Error>) -> Void)? = nil
     ) {
         update_channelQuery = channelQuery
         update_onChannelCreated = onChannelCreated
-        update_onBeforeSavingChannel = onBeforeSavingChannel
         update_completion = completion
         update_callCount += 1
     }

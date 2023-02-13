@@ -21,11 +21,6 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var updatedAt: DBDate
     @NSManaged var lastMessageAt: DBDate?
 
-    // The lastMessageAt from the server includes the replies as well.
-    // This property is the same but excluding replies.
-    // It should be updated using `updateLastChannelMessageAt()` function.
-    @NSManaged private(set) var lastChannelMessageAt: DBDate?
-
     // The oldest message of the channel we have locally coming from a regular channel query.
     // This property only lives locally, and it is useful to filter out older pinned/quoted messages
     // that do not belong to the regular channel query.
@@ -34,6 +29,9 @@ class ChannelDTO: NSManagedObject {
     // Used for paginating newer messages while jumping to a mid-page.
     // We want to avoid new messages being inserted in the UI if we are in a mid-page.
     @NSManaged var newestMessageAt: DBDate?
+
+    // A boolean value that returns true if the channel has is newest page loaded.
+    @NSManaged var isFirstPageLoaded: Bool
 
     // This field is also used to implement the `clearHistory` option when hiding the channel.
     @NSManaged var truncatedAt: DBDate?
@@ -273,7 +271,6 @@ extension NSManagedObjectContext {
         }
 
         dto.updateOldestMessageAt(payload: payload)
-        dto.updateLastChannelMessageAt(payload: payload)
 
         try payload.pinnedMessages.forEach {
             _ = try saveMessage(payload: $0, channelDTO: dto, syncOwnReactions: true, cache: cache)
@@ -502,7 +499,6 @@ extension ChatChannel {
             name: dto.name,
             imageURL: dto.imageURL,
             lastMessageAt: dto.lastMessageAt?.bridgeDate,
-            lastChannelMessageAt: dto.lastChannelMessageAt?.bridgeDate,
             createdAt: dto.createdAt.bridgeDate,
             updatedAt: dto.updatedAt.bridgeDate,
             deletedAt: dto.deletedAt?.bridgeDate,
@@ -545,33 +541,6 @@ extension ChannelDTO {
             $0.isBounced = false
             $0.localMessageState = nil
         }
-    }
-
-    /// We only update lastChannelMessageAt if the new message is not a reply or is not shown in the main channel
-    func updateLastChannelMessageAt(forNewMessage message: MessageDTO, date: DBDate) {
-        let isNewerThanCurrentNewestMessage = date.bridgeDate > (lastChannelMessageAt?.bridgeDate ?? Date.distantPast)
-        let isMessage = message.type == MessageType.regular.rawValue || message.type == MessageType.reply.rawValue
-        let isMessageInMainChannel = message.parentMessageId == nil || message.showReplyInChannel
-        // We can't use message.command, since this is only populated by the server
-        let messageHasCommand = message.text.hasPrefix("/")
-        guard isMessage && isMessageInMainChannel && isNewerThanCurrentNewestMessage && !messageHasCommand else {
-            return
-        }
-        lastChannelMessageAt = date
-    }
-
-    /// When we fetch a channel, the last message is the `messages` property, is the most recent channel message.
-    func updateLastChannelMessageAt(payload: ChannelPayload) {
-        guard let payloadNewestMessageAt = payload.messages.map(\.createdAt).max() else { return }
-        let isNewerThanCurrentNewestMessage = payloadNewestMessageAt > (lastChannelMessageAt?.bridgeDate ?? Date.distantPast)
-        if isNewerThanCurrentNewestMessage {
-            lastChannelMessageAt = payloadNewestMessageAt.bridgeDate
-        }
-    }
-
-    /// This is useful for example when truncating a channel
-    func resetUpdateLastChannelMessageAt() {
-        lastChannelMessageAt = nil
     }
 
     /// Updates the `oldestMessageAt` of the channel. It should only update if the current `oldestMessageAt` is not older already.

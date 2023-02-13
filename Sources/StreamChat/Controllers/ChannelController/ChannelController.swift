@@ -81,11 +81,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
     /// A Boolean value that returns wether the newest messages have all been loaded or not.
     public var hasLoadedAllNextMessages: Bool {
-        let lastChannelMessageAt = channel?.lastChannelMessageAt
-        guard let lastRegularMessage = messages.first(where: { $0.type == .regular || $0.type == .reply }) else {
-            return true
-        }
-        return lastChannelMessageAt == lastRegularMessage.createdAt
+        channelQuery.pagination?.parameter == nil
     }
 
     /// A Boolean value that returns wether the channel is currently loading previous (old) messages.
@@ -170,8 +166,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     }
 
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
-        let isFirstPageLoaded = hasLoadedAllNextMessages
-        synchronize(isInRecoveryMode: false, resetCurrentMessages: !isFirstPageLoaded, completion)
+        synchronize(isInRecoveryMode: false, completion)
     }
 
     // MARK: - Channel features
@@ -374,13 +369,13 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///
     /// - Parameters:
     ///   - messageId: ID of the last fetched message. You will get messages `older` than the provided ID.
-    ///   - limit: Limit for page size.
+    ///   - limit: Limit for page size. By default it is 25.
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
     ///
     public func loadPreviousMessages(
         before messageId: MessageId? = nil,
-        limit: Int = 25,
+        limit: Int? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
@@ -403,8 +398,10 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        isLoadingPreviousMessages = true
+        let limit = limit ?? channelQuery.pagination?.pageSize ?? .messagesPageSize
         channelQuery.pagination = MessagesPagination(pageSize: limit, parameter: .lessThan(messageId))
+
+        isLoadingPreviousMessages = true
         updater.update(channelQuery: channelQuery, isInRecoveryMode: false, completion: { result in
             self.isLoadingPreviousMessages = false
             switch result {
@@ -422,13 +419,13 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///
     /// - Parameters:
     ///   - messageId: ID of the current first message. You will get messages `newer` than the provided ID.
-    ///   - limit: Limit for page size.
+    ///   - limit: Limit for page size. By default it is 25.
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
     ///
     public func loadNextMessages(
         after messageId: MessageId? = nil,
-        limit: Int = 25,
+        limit: Int? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
@@ -447,13 +444,18 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        isLoadingNextMessages = true
+        let limit = limit ?? channelQuery.pagination?.pageSize ?? .messagesPageSize
         channelQuery.pagination = MessagesPagination(pageSize: limit, parameter: .greaterThan(messageId))
+
+        isLoadingNextMessages = true
         updater.update(channelQuery: channelQuery, isInRecoveryMode: false, completion: { result in
             self.isLoadingNextMessages = false
             switch result {
             case let .success(payload):
                 self.updateNewestFetchedMessageId(with: payload)
+                if payload.messages.count < limit {
+                    self.channelQuery.pagination = nil
+                }
                 self.callback { completion?(nil) }
             case let .failure(error):
                 self.callback { completion?(error) }
@@ -473,7 +475,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///   - limit: The number of messages to load in total, including the message to jump to.
     ///   - completion: Callback when the API call is completed.
     public func loadPageAroundMessageId(_ messageId: MessageId, limit: Int? = nil, completion: ((Error?) -> Void)? = nil) {
-        guard let cid = self.cid, isChannelAlreadyCreated else {
+        guard isChannelAlreadyCreated else {
             channelModificationFailed(completion)
             return
         }
@@ -483,9 +485,6 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         updater.update(
             channelQuery: channelQuery,
             isInRecoveryMode: false,
-            onBeforeSavingChannel: { session in
-                session.deleteChannelMessages(cid: cid)
-            },
             completion: { result in
                 switch result {
                 case let .success(payload):
@@ -503,7 +502,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// Cleans the current state and loads the first page again.
     /// - Parameter completion: Callback when the API call is completed.
     public func loadFirstPage(_ completion: ((_ error: Error?) -> Void)? = nil) {
-        synchronize(isInRecoveryMode: false, resetCurrentMessages: true, completion)
+        synchronize(isInRecoveryMode: false, completion)
     }
 
     /// Sends the start typing event and schedule a timer to send the stop typing event.
@@ -1039,7 +1038,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         if cid != nil, isChannelAlreadyCreated {
             startWatching(isInRecoveryMode: true, completion: completion)
         } else {
-            synchronize(isInRecoveryMode: true, resetCurrentMessages: false, completion)
+            synchronize(isInRecoveryMode: true, completion)
         }
     }
 }
@@ -1073,23 +1072,17 @@ public enum MessageOrdering {
 // MARK: - Helpers
 
 private extension ChatChannelController {
-    func synchronize(isInRecoveryMode: Bool, resetCurrentMessages: Bool, _ completion: ((_ error: Error?) -> Void)? = nil) {
+    func synchronize(isInRecoveryMode: Bool, _ completion: ((_ error: Error?) -> Void)? = nil) {
         channelQuery.pagination = .init(
             pageSize: channelQuery.pagination?.pageSize ?? .messagesPageSize,
             parameter: nil
         )
 
         let channelCreatedCallback = isChannelAlreadyCreated ? nil : channelCreated(forwardErrorTo: setLocalStateBasedOnError)
-        let deleteChannelMessages: (DatabaseSession) -> Void = { [weak self] session in
-            guard let cid = self?.channelQuery.cid else { return }
-            session.deleteChannelMessages(cid: cid)
-        }
-
         updater.update(
             channelQuery: channelQuery,
             isInRecoveryMode: isInRecoveryMode,
             onChannelCreated: channelCreatedCallback,
-            onBeforeSavingChannel: resetCurrentMessages ? deleteChannelMessages : nil,
             completion: { result in
                 switch result {
                 case let .success(payload):

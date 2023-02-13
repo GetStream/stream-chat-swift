@@ -20,7 +20,6 @@ class ChannelUpdater: Worker {
     ///   - isInRecoveryMode: Determines whether the SDK is in offline recovery mode
     ///   - onChannelCreated: For some type of channels we need to obtain id from backend.
     ///     This callback is called with the obtained `cid` before the channel payload is saved to the DB.
-    ///   - onBeforeSavingChannel: Hook to do some actions in the DB before saving the channel from the API response.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
     /// **Note**: If query messages pagination parameter is `nil` AKA updater is asked to fetch the first page of messages,
@@ -30,21 +29,29 @@ class ChannelUpdater: Worker {
         channelQuery: ChannelQuery,
         isInRecoveryMode: Bool,
         onChannelCreated: ((ChannelId) -> Void)? = nil,
-        onBeforeSavingChannel: ((DatabaseSession) -> Void)? = nil,
         completion: ((Result<ChannelPayload, Error>) -> Void)? = nil
     ) {
         let isFirstPage = channelQuery.pagination?.parameter == nil
+        var isJumpingToMessage: Bool {
+            switch channelQuery.pagination?.parameter {
+            case .around: return true
+            default: return false
+            }
+        }
         let isChannelCreate = onChannelCreated != nil
 
         let completion: (Result<ChannelPayload, Error>) -> Void = { [weak database] result in
             do {
                 let payload = try result.get()
                 onChannelCreated?(payload.channel.cid)
-                if let onBeforeSavingChannel = onBeforeSavingChannel {
-                    database?.write { session in
-                        onBeforeSavingChannel(session)
+
+                database?.write { session in
+                    guard let channelDTO = session.channel(cid: payload.channel.cid) else { return }
+                    if isJumpingToMessage || (isFirstPage && !channelDTO.isFirstPageLoaded) {
+                        session.deleteChannelMessages(cid: payload.channel.cid)
                     }
                 }
+                
                 database?.write { session in
                     let channelDTO = session.channel(cid: payload.channel.cid)
                     channelDTO?.cleanMessagesThatFailedToBeEditedDueToModeration()
@@ -52,6 +59,8 @@ class ChannelUpdater: Worker {
                     if isFirstPage, let channelDTO = channelDTO {
                         channelDTO.messages = channelDTO.messages.filter { $0.localMessageState?.isLocalOnly == true }
                     }
+
+                    channelDTO?.isFirstPageLoaded = isFirstPage
 
                     try session.saveChannel(payload: payload)
 
@@ -184,12 +193,6 @@ class ChannelUpdater: Worker {
         apiClient.request(endpoint: .truncateChannel(cid: cid, skipPush: skipPush, hardDelete: hardDelete, message: requestBody)) {
             if let error = $0.error {
                 log.error(error)
-            } else {
-                self.database.write {
-                    if let channel = $0.channel(cid: cid) {
-                        channel.resetUpdateLastChannelMessageAt()
-                    }
-                }
             }
             completion?($0.error)
         }

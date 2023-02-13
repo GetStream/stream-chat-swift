@@ -559,7 +559,6 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         let newLastMessageAt = max(channelDTO.lastMessageAt?.bridgeDate ?? createdAt, createdAt).bridgeDate
         channelDTO.lastMessageAt = newLastMessageAt
         channelDTO.defaultSortingAt = newLastMessageAt
-        channelDTO.updateLastChannelMessageAt(forNewMessage: message, date: newLastMessageAt)
 
         if let parentMessageId = parentMessageId,
            let parentMessageDTO = MessageDTO.load(id: parentMessageId, context: self) {
@@ -664,8 +663,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         )
 
         channelDTO.lastMessageAt = max(channelDTO.lastMessageAt?.bridgeDate ?? payload.createdAt, payload.createdAt).bridgeDate
-        channelDTO.updateLastChannelMessageAt(forNewMessage: dto, date: dto.createdAt)
-
+        
         dto.channel = channelDTO
 
         dto.latestReactions = payload

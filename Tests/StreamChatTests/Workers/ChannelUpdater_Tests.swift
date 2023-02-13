@@ -429,51 +429,28 @@ final class ChannelUpdater_Tests: XCTestCase {
         XCTAssertEqual(channel?.messages.count, 4)
     }
 
-    func test_updateChannelQuery_whenSuccess_shouldCallOnBeforeSavingChannel() {
-        let query = ChannelQuery(cid: .unique)
-        let expUpdate = expectation(description: "update completes")
-        let expBeforeSaving = expectation(description: "should call before saving channel")
-
-        channelUpdater.update(
-            channelQuery: query,
-            isInRecoveryMode: false,
-            onBeforeSavingChannel: { _ in
-                expBeforeSaving.fulfill()
-            },
-            completion: { _ in
-                expUpdate.fulfill()
-            }
-        )
-
-        // Simulate API response with channel data
-        let cid = ChannelId(type: .messaging, id: .unique)
-        let payload = dummyPayload(with: cid, numberOfMessages: 2)
-        apiClient.test_simulateResponse(.success(payload))
-
-        waitForExpectations(timeout: 0.5)
+    func test_updateChannelQuery_updatesPaginationCursors() {
+        XCTFail()
     }
 
-    func test_updateChannelQuery_whenError_shouldNotCallOnBeforeSavingChannel() {
-        let query = ChannelQuery(cid: .unique)
-        let expUpdate = expectation(description: "update completes")
-        let expBeforeSaving = expectation(description: "should not call before saving channel")
-        expBeforeSaving.isInverted = true
+    func test_updateChannelQuery_whenPaginationIsNil_thenIsFirstPageLoaded() {
+        XCTFail()
+    }
 
-        channelUpdater.update(
-            channelQuery: query,
-            isInRecoveryMode: false,
-            onBeforeSavingChannel: { _ in
-                expBeforeSaving.fulfill()
-            },
-            completion: { _ in
-                expUpdate.fulfill()
-            }
-        )
+    func test_updateChannelQuery_whenPaginationNotNil_thenFirstPageNotLoaded() {
+        XCTFail()
+    }
 
-        let error = Result<ChannelPayload, Error>.failure(ClientError("fake"))
-        apiClient.test_simulateResponse(error)
+    func test_updateChannelQuery_whenIsJumpingToMessage_thenDeletesChannelMessagesFromDB() {
+        XCTFail()
+    }
 
-        waitForExpectations(timeout: 0.5)
+    func test_updateChannelQuery_whenChannelWasLeftInMidPage_thenDeletesChannelMessagesFromDB() {
+        XCTFail()
+    }
+
+    func test_updateChannelQuery_whenRequestFails_shouldNotDeleteChannelMessagesFromDB() {
+        XCTFail()
     }
 
     // MARK: - Messages

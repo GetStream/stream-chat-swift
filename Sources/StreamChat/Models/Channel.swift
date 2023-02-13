@@ -20,9 +20,6 @@ public struct ChatChannel {
     /// The date of the last message in the channel.
     public let lastMessageAt: Date?
 
-    /// The date of the last message in the channel excluding replies.
-    public let lastChannelMessageAt: Date?
-
     /// The date when the channel was created.
     public let createdAt: Date
 
@@ -180,7 +177,6 @@ public struct ChatChannel {
         name: String?,
         imageURL: URL?,
         lastMessageAt: Date? = nil,
-        lastChannelMessageAt: Date? = nil,
         createdAt: Date = .init(),
         updatedAt: Date = .init(),
         deletedAt: Date? = nil,
@@ -212,7 +208,6 @@ public struct ChatChannel {
         self.name = name
         self.imageURL = imageURL
         self.lastMessageAt = lastMessageAt
-        self.lastChannelMessageAt = lastChannelMessageAt
         self.createdAt = createdAt
         self.updatedAt = updatedAt
         self.deletedAt = deletedAt
