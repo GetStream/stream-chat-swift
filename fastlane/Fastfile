@@ -357,9 +357,8 @@ lane :test_e2e_mock do |options|
 
   start_sinatra
 
-  ios = options[:ios]
-  device = ios && ios != 'latest' ? "#{options[:device]} (#{ios})" : options[:device]
-  build_for_testing = is_ci && options[:cron].nil?
+  device = options[:ios] && options[:ios] != 'latest' ? "#{options[:device]} (#{options[:ios]})" : options[:device]
+  prepare_simulator(device: device, reset: true) if is_ci
 
   scan_options = {
     project: xcode_project,
@@ -369,10 +368,11 @@ lane :test_e2e_mock do |options|
     devices: device,
     number_of_retries: 3 # TODO: CIS-1737
   }
+
+  build_for_testing = is_ci && options[:cron].nil?
   scan(scan_options.merge(clean: true, build_for_testing: build_for_testing))
 
   if build_for_testing
-    prepare_simulator(device: device, reset: true)
     parallelize_tests_on_ci(
       scan: scan_options,
       derived_data: lane_context[SharedValues::SCAN_DERIVED_DATA_PATH],
