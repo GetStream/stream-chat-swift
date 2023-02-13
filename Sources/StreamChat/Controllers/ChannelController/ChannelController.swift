@@ -81,7 +81,11 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
     /// A Boolean value that returns wether the newest messages have all been loaded or not.
     public var hasLoadedAllNextMessages: Bool {
-        channel?.lastChannelMessageAt == messages.first?.createdAt
+        let lastChannelMessageAt = channel?.lastChannelMessageAt
+        guard let lastRegularMessage = messages.first(where: { $0.type == .regular || $0.type == .reply }) else {
+            return true
+        }
+        return lastChannelMessageAt == lastRegularMessage.createdAt
     }
 
     /// A Boolean value that returns wether the channel is currently loading previous (old) messages.

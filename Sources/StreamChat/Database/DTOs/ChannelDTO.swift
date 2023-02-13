@@ -550,9 +550,14 @@ extension ChannelDTO {
     /// We only update lastChannelMessageAt if the new message is not a reply or is not shown in the main channel
     func updateLastChannelMessageAt(forNewMessage message: MessageDTO, date: DBDate) {
         let isNewerThanCurrentNewestMessage = date.bridgeDate > (lastChannelMessageAt?.bridgeDate ?? Date.distantPast)
-        if (message.parentMessageId == nil || message.showReplyInChannel) && isNewerThanCurrentNewestMessage {
-            lastChannelMessageAt = date
+        let isMessage = message.type == MessageType.regular.rawValue || message.type == MessageType.reply.rawValue
+        let isMessageInMainChannel = message.parentMessageId == nil || message.showReplyInChannel
+        // We can't use message.command, since this is only populated by the server
+        let messageHasCommand = message.text.hasPrefix("/")
+        guard isMessage && isMessageInMainChannel && isNewerThanCurrentNewestMessage && !messageHasCommand else {
+            return
         }
+        lastChannelMessageAt = date
     }
 
     /// When we fetch a channel, the last message is the `messages` property, is the most recent channel message.
