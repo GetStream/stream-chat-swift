@@ -2978,7 +2978,7 @@ final class ChannelController_Tests: XCTestCase {
     // MARK: - Message sending
 
     func test_createNewMessage_callsChannelUpdater() {
-        let newMessageId: MessageId = .unique
+        let newMessage = ChatMessage.mock()
 
         // New message values
         let text: String = .unique
@@ -3005,7 +3005,7 @@ final class ChannelController_Tests: XCTestCase {
             extraData: extraData
         ) { [callbackQueueID] result in
             AssertTestQueue(withId: callbackQueueID)
-            AssertResultSuccess(result, newMessageId)
+            AssertResultSuccess(result, newMessage.id)
             completionCalled = true
         }
 
@@ -3030,7 +3030,7 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(env.channelUpdater?.createNewMessage_pinning?.expirationDate, pin.expirationDate!)
 
         // Simulate successful update
-        env.channelUpdater?.createNewMessage_completion?(.success(newMessageId))
+        env.channelUpdater?.createNewMessage_completion?(.success(newMessage))
         // Release reference of completion so we can deallocate stuff
         env.channelUpdater!.createNewMessage_completion = nil
 
@@ -3063,6 +3063,23 @@ final class ChannelController_Tests: XCTestCase {
         } else {
             XCTFail("Expected .failure but received \(result)")
         }
+    }
+
+    func test_createNewMessage_sendsNewMessagePendingEvent() throws {
+        let exp = expectation(description: "should complete create new message")
+
+        controller.createNewMessage(
+            text: .unique
+        ) { _ in
+            exp.fulfill()
+        }
+
+        env.channelUpdater?.createNewMessage_completion?(.success(.unique))
+
+        wait(for: [exp], timeout: defaultTimeout)
+
+        let event = try XCTUnwrap(client.mockedEventNotificationCenter.mock_process.calls.first?.0.first)
+        XCTAssertTrue(event is NewMessagePendingEvent)
     }
 
     // MARK: - Adding members

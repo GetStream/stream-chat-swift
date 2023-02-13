@@ -66,6 +66,13 @@ public class ChatChannelController_Mock: ChatChannelController {
     override public func synchronize(_ completion: ((Error?) -> Void)? = nil) {
         synchronize_completion = completion
     }
+
+    public var loadFirstPageCallCount = 0
+    public var loadFirstPage_result: Error?
+    public override func loadFirstPage(_ completion: ((Error?) -> Void)? = nil) {
+        loadFirstPageCallCount += 1
+        completion?(loadFirstPage_result)
+    }
 }
 
 public extension ChatChannelController_Mock {

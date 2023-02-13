@@ -492,7 +492,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         ]
 
         // Create new message
-        let newMessageId: MessageId = try waitFor { completion in
+        let newMessage: ChatMessage = try waitFor { completion in
             channelUpdater.createNewMessage(
                 in: cid,
                 text: text,
@@ -508,8 +508,8 @@ final class ChannelUpdater_Tests: XCTestCase {
                 extraData: extraData
             ) { result in
                 do {
-                    let newMessageId = try result.get()
-                    completion(newMessageId)
+                    let newMessage = try result.get()
+                    completion(newMessage)
                 } catch {
                     XCTFail("Saving the message failed. \(error)")
                 }
@@ -517,11 +517,11 @@ final class ChannelUpdater_Tests: XCTestCase {
         }
 
         func id(for envelope: AnyAttachmentPayload) -> AttachmentId {
-            .init(cid: cid, messageId: newMessageId, index: attachmentEnvelopes.firstIndex(of: envelope)!)
+            .init(cid: cid, messageId: newMessage.id, index: attachmentEnvelopes.firstIndex(of: envelope)!)
         }
 
         let messageDTO: MessageDTO = try XCTUnwrap(
-            database.viewContext.message(id: newMessageId)
+            database.viewContext.message(id: newMessage.id)
         )
         XCTAssertEqual(messageDTO.skipPush, true)
         XCTAssertEqual(messageDTO.skipEnrichUrl, true)
@@ -569,7 +569,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         let testError = TestError()
         database.write_errorResponse = testError
 
-        let result: Result<MessageId, Error> = try waitFor { completion in
+        let result: Result<ChatMessage, Error> = try waitFor { completion in
             channelUpdater.createNewMessage(
                 in: .unique,
                 text: .unique,

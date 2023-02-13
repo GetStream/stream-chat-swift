@@ -40,7 +40,7 @@
         <attribute name="deletedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="extraData" attributeType="Binary"/>
         <attribute name="imageURL" optional="YES" attributeType="URI"/>
-        <attribute name="isFirstPageLoaded" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="isFirstPageLoaded" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
         <attribute name="isFrozen" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="isHidden" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="lastMessageAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>

@@ -551,6 +551,58 @@ final class ChatChannelVC_Tests: XCTestCase {
         AssertSnapshot(vc, variants: [.defaultLight])
     }
 
+    func test_didReceiveNewMessagePendingEvent_whenFirstPageNotLoaded_whenMessageSentByCurrentUser_whenMessageNotPartOfThread_thenLoadsFirstPage() {
+        channelControllerMock.hasLoadedAllNextMessages_mock = false
+        let message = ChatMessage.mock(
+            parentMessageId: nil,
+            isSentByCurrentUser: true
+        )
+        
+        let pendingEvent = NewMessagePendingEvent(message: message)
+        vc.eventsController(vc.eventsController, didReceiveEvent: pendingEvent)
+
+        XCTAssertEqual(channelControllerMock.loadFirstPageCallCount, 1)
+    }
+
+    func test_didReceiveNewMessagePendingEvent_whenIsFirstPageLoaded_thenDoestNotLoadFirstPage() {
+        channelControllerMock.hasLoadedAllNextMessages_mock = true
+        let message = ChatMessage.mock(
+            parentMessageId: nil,
+            isSentByCurrentUser: true
+        )
+
+        let pendingEvent = NewMessagePendingEvent(message: message)
+        vc.eventsController(vc.eventsController, didReceiveEvent: pendingEvent)
+
+        XCTAssertEqual(channelControllerMock.loadFirstPageCallCount, 0)
+    }
+
+    func test_didReceiveNewMessagePendingEvent_whenMessageSentByOtherUser_thenDoestNotLoadFirstPage() {
+        channelControllerMock.hasLoadedAllNextMessages_mock = false
+        let message = ChatMessage.mock(
+            parentMessageId: nil,
+            isSentByCurrentUser: false
+        )
+
+        let pendingEvent = NewMessagePendingEvent(message: message)
+        vc.eventsController(vc.eventsController, didReceiveEvent: pendingEvent)
+
+        XCTAssertEqual(channelControllerMock.loadFirstPageCallCount, 0)
+    }
+
+    func test_didReceiveNewMessagePendingEvent_whenMessageIsPartOfThread_thenDoestNotLoadFirstPage() {
+        channelControllerMock.hasLoadedAllNextMessages_mock = false
+        let message = ChatMessage.mock(
+            parentMessageId: .unique,
+            isSentByCurrentUser: true
+        )
+
+        let pendingEvent = NewMessagePendingEvent(message: message)
+        vc.eventsController(vc.eventsController, didReceiveEvent: pendingEvent)
+
+        XCTAssertEqual(channelControllerMock.loadFirstPageCallCount, 0)
+    }
+
     // MARK: Channel read
 
     func test_shouldMarkChannelRead_whenIsLastMessageFullyVisible_whenHasLoadedAllNextMessages_thenReturnsTrue() {

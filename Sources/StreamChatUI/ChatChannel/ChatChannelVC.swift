@@ -315,8 +315,8 @@ open class ChatChannelVC: _ViewController,
     // MARK: - EventsControllerDelegate
 
     open func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
-        if let newMessageEvent = event as? MessageNewEvent {
-            let newMessage = newMessageEvent.message
+        if let newMessagePendingEvent = event as? NewMessagePendingEvent {
+            let newMessage = newMessagePendingEvent.message
             if !isFirstPageLoaded && newMessage.isSentByCurrentUser && !newMessage.isPartOfThread {
                 channelController.loadFirstPage()
             }
