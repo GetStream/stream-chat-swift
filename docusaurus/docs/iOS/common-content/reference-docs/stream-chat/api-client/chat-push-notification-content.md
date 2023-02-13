@@ -14,12 +14,6 @@ public enum ChatPushNotificationContent
 case message(MessageNotificationContent)
 ```
 
-### `reaction`
-
-``` swift
-case reaction(ReactionNotificationContent)
-```
-
 ### `unknown`
 
 ``` swift
