@@ -102,7 +102,7 @@ final class ChannelListController_Tests: XCTestCase {
 
     func test_changesAreReported_beforeCallingSynchronize() throws {
         // Save a new channel to DB
-        client.databaseContainer.writeSynchronously { session in
+        try client.databaseContainer.writeSynchronously { session in
             try session.saveChannel(payload: self.dummyPayload(with: .unique, members: [.dummy(user: .dummy(userId: self.memberId))]), query: self.query, cache: nil)
         }
 
@@ -791,7 +791,7 @@ final class ChannelListController_Tests: XCTestCase {
         controller.callbackQueue = .main
         controller.delegate = delegate
 
-        client.databaseContainer.writeSynchronously { session in
+        try client.databaseContainer.writeSynchronously { session in
             try session.saveChannel(payload: self.dummyPayload(with: cid, members: [.dummy(user: .dummy(userId: self.memberId))]), query: self.query, cache: nil)
         }
 
