@@ -42,9 +42,9 @@ extension Filter where Scope: AnyChannelListFilterScope {
 }
 
 // We don't want to expose `members` publicly because it can't be used with any other operator
-// then `$in`. We expose it publicly via the `containMembers` filter helper.
+// than `$in`. We expose it publicly via the `containMembers` filter helper.
 extension FilterKey where Scope: AnyChannelListFilterScope {
-    static var members: FilterKey<Scope, UserId> { "members" }
+    static var members: FilterKey<Scope, UserId> { .init(rawValue: "members", keyPathValueProvider: { "members.user.id" }) }
 }
 
 /// Filter values to be used with `.invite` FilterKey.
@@ -58,66 +58,67 @@ public enum InviteFilterValue: String, FilterValue {
 public extension FilterKey where Scope: AnyChannelListFilterScope {
     /// A filter key for matching the `cid` value.
     /// Supported operators: `in`, `equal`
-    static var cid: FilterKey<Scope, ChannelId> { "cid" }
+    static var cid: FilterKey<Scope, ChannelId> { .init(rawValue: "cid", keyPathValueProvider: { "cid" }) }
 
     /// A filter key for matching the `id` value.
     /// Supported operators: `in`, `equal`
     /// - Warning: Querying by the channel Identifier should be done using the `cid` field as much as possible to optimize API performance.
     /// As the full channel ID, `cid`s are indexed everywhere in Stream database where `id` is not.
-    static var id: FilterKey<Scope, String> { "id" }
+    static var id: FilterKey<Scope, String> { .init(rawValue: "id", keyPathValueProvider: { "cid" }) }
 
     /// A filter key for matching the `name` value.
-    static var name: FilterKey<Scope, String> { "name" }
+    static var name: FilterKey<Scope, String> { .init(rawValue: "name", keyPathValueProvider: { "name" }) }
 
     /// A filter key for matching the `image` value.
-    static var imageURL: FilterKey<Scope, URL> { "image" }
+    static var imageURL: FilterKey<Scope, URL> { .init(rawValue: "image", keyPathValueProvider: { "imageURL" }) }
 
     /// A filter key for matching the `type` value.
     /// Supported operators: `in`, `equal`
-    static var type: FilterKey<Scope, ChannelType> { "type" }
+    static var type: FilterKey<Scope, ChannelType> { .init(rawValue: "type", keyPathValueProvider: { "typeRawValue" }) }
 
     /// A filter key for matching the `lastMessageAt` value.
     /// Supported operators: `equal`, `greaterThan`, `lessThan`, `greaterOrEqual`, `lessOrEqual`, `notEqual`
-    static var lastMessageAt: FilterKey<Scope, Date> { "last_message_at" }
+    static var lastMessageAt: FilterKey<Scope, Date> { .init(rawValue: "last_message_at", keyPathValueProvider: { "lastMessageAt" }) }
 
     /// A filter key for matching the `createdBy` value.
     /// Supported operators: `equal`
-    static var createdBy: FilterKey<Scope, UserId> { "created_by_id" }
-
+    static var createdBy: FilterKey<Scope, UserId> { .init(rawValue: "created_by_id", keyPathValueProvider: { "createdBy.id" }) }
     /// A filter key for matching the `createdAt` value.
     /// Supported operators: `equal`, `greaterThan`, `lessThan`, `greaterOrEqual`, `lessOrEqual`, `notEqual`
-    static var createdAt: FilterKey<Scope, Date> { "created_at" }
+    static var createdAt: FilterKey<Scope, Date> { .init(rawValue: "created_at", keyPathValueProvider: { "createdAt" }) }
 
     /// A filter key for matching the `updatedAt` value.
     /// Supported operators: `equal`, `greaterThan`, `lessThan`, `greaterOrEqual`, `lessOrEqual`, `notEqual`
-    static var updatedAt: FilterKey<Scope, Date> { "updated_at" }
+    static var updatedAt: FilterKey<Scope, Date> { .init(rawValue: "updated_at", keyPathValueProvider: { "updatedAt" }) }
 
     /// A filter key for matching the `deletedAt` value.
     /// Supported operators: `equal`, `greaterThan`, `lessThan`, `greaterOrEqual`, `lessOrEqual`, `notEqual`
-    static var deletedAt: FilterKey<Scope, Date> { "deleted_at" }
+    static var deletedAt: FilterKey<Scope, Date> { .init(rawValue: "deleted_at", keyPathValueProvider: { "deletedAt" }) }
 
     /// A filter key for querying hidden channels.
     /// Supported operators: `equal`
-    static var hidden: FilterKey<Scope, Bool> { "hidden" }
+    // TODO: should it be using the ChannelPayload.isHidden or ChannelPayload.channel.isHidden
+    static var hidden: FilterKey<Scope, Bool> { .init(rawValue: "hidden", keyPathValueProvider: { "isHidden" }) }
 
     /// A filter key for matching the `frozen` value.
     /// Supported operators: `equal`
-    static var frozen: FilterKey<Scope, Bool> { "frozen" }
+    static var frozen: FilterKey<Scope, Bool> { .init(rawValue: "frozen", keyPathValueProvider: { "isFrozen" }) }
 
     /// A filter key for matching the `memberCount` value.
     /// Supported operators: `equal`, `greaterThan`, `lessThan`, `greaterOrEqual`, `lessOrEqual`, `notEqual`
-    static var memberCount: FilterKey<Scope, Int> { "member_count" }
+    static var memberCount: FilterKey<Scope, Int> { .init(rawValue: "member_count", keyPathValueProvider: { "memberCount" }) }
 
     /// A filter key for matching the `team` value.
     /// Supported operators: `equal`
-    static var team: FilterKey<Scope, TeamId?> { "team" }
+    static var team: FilterKey<Scope, TeamId?> { .init(rawValue: "team", keyPathValueProvider: { "team" }) }
 
     /// Filter for checking whether current user is joined the channel or not (through invite or directly)
     /// Supported operators: `equal`
-    static var joined: FilterKey<Scope, Bool> { "joined" }
+    static var joined: FilterKey<Scope, Bool> { .init(rawValue: "joined") }
 
     /// Filter for checking whether current user has muted the channel
     /// Supported operators: `equal`
+    ///
     static var muted: FilterKey<Scope, Bool> { "muted" }
 
     /// Filter for checking the status of the invite
@@ -127,11 +128,12 @@ public extension FilterKey where Scope: AnyChannelListFilterScope {
     /// Filter for checking the `name` property of a user who is a member of the channel
     /// Supported operators: `equal`, `notEqual`, `autocomplete`
     /// - Warning: This filter is considerably expensive for the backend so avoid using this when possible.
-    static var memberName: FilterKey<Scope, String> { "member.user.name" }
+    ///
+    static var memberName: FilterKey<Scope, String> { .init(rawValue: "member.user.name", keyPathValueProvider: { "members.user.name" }) }
 
     /// Filter for the time of the last message in the channel. If the channel has no messages, then the time the channel was created.
     /// Supported operators: `equal`, `greaterThan`, `lessThan`, `greaterOrEqual`, `lessOrEqual`, `notEqual`
-    static var lastUpdatedAt: FilterKey<Scope, Date> { "last_updated" }
+    static var lastUpdatedAt: FilterKey<Scope, Date> { .init(rawValue: "last_updated", keyPathValueProvider: { "lastMessageAt" }) }
 }
 
 /// A query is used for querying specific channels from backend.

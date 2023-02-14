@@ -99,6 +99,8 @@ public struct Filter<Scope: FilterScope> {
     /// The "right-hand" side of the filter. Specifies the value the filter should match.
     public let value: FilterValue
 
+    public let keyPathValueProvider: (() -> String)?
+
     /// Creates a new instance of `Filter`.
     ///
     /// Learn more about how to create simple, advanced, and custom filters in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#query-filters).
@@ -111,23 +113,47 @@ public struct Filter<Scope: FilterScope> {
     ///   - key: The "left-hand" side of the filter. Specifies the name of the field the filter should match.
     ///   - value: The "right-hand" side of the filter. Specifies the value the filter should match.
     ///
-    public init(operator: String, key: String?, value: FilterValue) {
+    public init(
+        operator: String,
+        key: String?,
+        value: FilterValue,
+        keyPathValueProvider: (() -> String)? = nil
+    ) {
         log.assert(`operator`.hasPrefix("$"), "A filter operator must have `$` prefix.")
         self.operator = `operator`
         self.key = key
         self.value = value
+        self.keyPathValueProvider = keyPathValueProvider
     }
 }
 
 /// Internal initializers used by the DSL. This doesn't have to exposed publicly because customers use the
 /// built-in helpers we provide.
 extension Filter {
-    init<Value: FilterValue>(operator: FilterOperator, key: FilterKey<Scope, Value>, value: FilterValue) {
-        self.init(operator: `operator`.rawValue, key: key.rawValue, value: value)
+    init<Value: FilterValue>(
+        operator: FilterOperator,
+        key: FilterKey<Scope, Value>,
+        value: FilterValue,
+        keyPathValueProvider: (() -> String)?
+    ) {
+        self.init(
+            operator: `operator`.rawValue,
+            key: key.rawValue,
+            value: value,
+            keyPathValueProvider: keyPathValueProvider
+        )
     }
 
-    init(operator: FilterOperator, value: FilterValue) {
-        self.init(operator: `operator`.rawValue, key: nil, value: value)
+    init(
+        operator: FilterOperator,
+        value: FilterValue
+    ) {
+        self.init(
+            operator: `operator`.rawValue,
+            key: nil,
+            value: value,
+            keyPathValueProvider: nil
+        )
     }
 }
 
@@ -157,65 +183,126 @@ public extension Filter {
 public struct FilterKey<Scope: FilterScope, Value: FilterValue>: ExpressibleByStringLiteral, RawRepresentable {
     /// The raw value of the key. This value should match the "encodable" key for the given object.
     public let rawValue: String
+    public let keyPathValueProvider: (() -> String)?
 
     public init(stringLiteral value: String) {
         rawValue = value
+        keyPathValueProvider = nil
     }
 
     public init(rawValue value: String) {
         rawValue = value
+        keyPathValueProvider = nil
+    }
+
+    public init(
+        rawValue value: String,
+        keyPathValueProvider: (() -> String)? = nil
+    ) {
+        rawValue = value
+        self.keyPathValueProvider = keyPathValueProvider
     }
 }
 
 public extension Filter {
     /// Matches values that are equal to a specified value.
     static func equal<Value: Encodable>(_ key: FilterKey<Scope, Value>, to value: Value) -> Filter {
-        .init(operator: .equal, key: key, value: value)
+        .init(
+            operator: .equal,
+            key: key,
+            value: value,
+            keyPathValueProvider: key.keyPathValueProvider
+        )
     }
 
     /// Matches all values that are not equal to a specified value.
     static func notEqual<Value: Encodable>(_ key: FilterKey<Scope, Value>, to value: Value) -> Filter {
-        .init(operator: .notEqual, key: key, value: value)
+        .init(
+            operator: .notEqual,
+            key: key,
+            value: value,
+            keyPathValueProvider: key.keyPathValueProvider
+        )
     }
 
     /// Matches values that are greater than a specified value.
     static func greater<Value: Encodable>(_ key: FilterKey<Scope, Value>, than value: Value) -> Filter {
-        .init(operator: .greater, key: key, value: value)
+        .init(
+            operator: .greater,
+            key: key,
+            value: value,
+            keyPathValueProvider: key.keyPathValueProvider
+        )
     }
 
     /// Matches values that are greater than a specified value.
     static func greaterOrEqual<Value: Encodable>(_ key: FilterKey<Scope, Value>, than value: Value) -> Filter {
-        .init(operator: .greaterOrEqual, key: key, value: value)
+        .init(
+            operator: .greaterOrEqual,
+            key: key,
+            value: value,
+            keyPathValueProvider: key.keyPathValueProvider
+        )
     }
 
     /// Matches values that are less than a specified value.
     static func less<Value: Encodable>(_ key: FilterKey<Scope, Value>, than value: Value) -> Filter {
-        .init(operator: .less, key: key, value: value)
+        .init(
+            operator: .less,
+            key: key,
+            value: value,
+            keyPathValueProvider: key.keyPathValueProvider
+        )
     }
 
     /// Matches values that are less than or equal to a specified value.
     static func lessOrEqual<Value: Encodable>(_ key: FilterKey<Scope, Value>, than value: Value) -> Filter {
-        .init(operator: .lessOrEqual, key: key, value: value)
+        .init(
+            operator: .lessOrEqual,
+            key: key,
+            value: value,
+            keyPathValueProvider: key.keyPathValueProvider
+        )
     }
 
     /// Matches any of the values specified in an array.
     static func `in`<Value: Encodable>(_ key: FilterKey<Scope, Value>, values: [Value]) -> Filter {
-        .init(operator: .in, key: key, value: values)
+        .init(
+            operator: .in,
+            key: key,
+            value: values,
+            keyPathValueProvider: key.keyPathValueProvider
+        )
     }
 
     /// Matches none of the values specified in an array.
     static func notIn<Value: Encodable>(_ key: FilterKey<Scope, Value>, values: [Value]) -> Filter {
-        .init(operator: .notIn, key: key, value: values)
+        .init(
+            operator: .notIn,
+            key: key,
+            value: values,
+            keyPathValueProvider: key.keyPathValueProvider
+        )
     }
 
     /// Matches values by performing text search with the specified value.
     static func query<Value: Encodable>(_ key: FilterKey<Scope, Value>, text: String) -> Filter {
-        .init(operator: .query, key: key, value: text)
+        .init(
+            operator: .query,
+            key: key,
+            value: text,
+            keyPathValueProvider: key.keyPathValueProvider
+        )
     }
 
     /// Matches values with the specified prefix.
     static func autocomplete<Value: Encodable>(_ key: FilterKey<Scope, Value>, text: String) -> Filter {
-        .init(operator: .autocomplete, key: key, value: text)
+        .init(
+            operator: .autocomplete,
+            key: key,
+            value: text,
+            keyPathValueProvider: key.keyPathValueProvider
+        )
     }
 
     /// Matches values that exist/don't exist based on the specified boolean value.
@@ -224,12 +311,22 @@ public extension Filter {
     /// filter should match values that don't exist.
     ///
     static func exists<Value: Encodable>(_ key: FilterKey<Scope, Value>, exists: Bool = true) -> Filter {
-        .init(operator: .exists, key: key, value: exists)
+        .init(
+            operator: .exists,
+            key: key,
+            value: exists,
+            keyPathValueProvider: key.keyPathValueProvider
+        )
     }
 
     /// Matches if the key contains the given value.
     static func contains<Value: Encodable>(_ key: FilterKey<Scope, Value>, value: String) -> Filter {
-        .init(operator: .contains, key: key, value: value)
+        .init(
+            operator: .contains,
+            key: key,
+            value: value,
+            keyPathValueProvider: key.keyPathValueProvider
+        )
     }
 }
 
