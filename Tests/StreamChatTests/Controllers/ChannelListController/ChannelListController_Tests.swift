@@ -1119,12 +1119,7 @@ final class ChannelListController_Tests: XCTestCase {
         // Simulate `synchronize` call
         controller.synchronize()
 
-        AssertAsync.willBeEqual(
-            controller.channels.map(\.cid),
-            [],
-            file: file,
-            line: line
-        )
+        XCTAssertEqual(controller.channels.map(\.cid), [], file: file, line: line)
 
         // Simulate changes in the DB:
         _ = try waitFor { [unowned client] in
@@ -1136,7 +1131,7 @@ final class ChannelListController_Tests: XCTestCase {
         }
 
         // Assert the resulting value is updated
-        AssertAsync.willBeEqual(
+        XCTAssertEqual(
             controller.channels.map(\.cid.rawValue).sorted(),
             expectedResult().map(\.rawValue).sorted(),
             file: file,
