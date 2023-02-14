@@ -23,7 +23,7 @@ extension Filter where Scope == ChannelListFilterScope {
         switch `operator` {
         case .equal, .notEqual, .greater, .greaterOrEqual, .less, .lessOrEqual:
             return comparingPredicate(`operator`)
-        case .in, .notIn, .autocomplete, .contains:
+        case .in, .notIn, .autocomplete, .contains, .exists:
             return collectionPredicate(`operator`)
         case .and, .or, .nor:
             return logicalPredicate(`operator`)
@@ -181,6 +181,23 @@ extension Filter where Scope == ChannelListFilterScope {
                 format: "%K CONTAINS %@",
                 argumentArray: [keyPathValueProvider(), needle]
             )
+        case .exists where value is Bool:
+            guard
+                let boolValue = value as? Bool
+            else {
+                return nil
+            }
+            if boolValue {
+                return NSPredicate(
+                    format: "%K != nil",
+                    argumentArray: [keyPathValueProvider()]
+                )
+            } else {
+                return NSPredicate(
+                    format: "%K == nil",
+                    argumentArray: [keyPathValueProvider()]
+                )
+            }
         default:
             log.debug("Unhandled operator \(`operator`) and filterValue \(value)")
             return nil

@@ -146,6 +146,7 @@ extension XCTestCase {
         ),
         ownCapabilities: [String] = [],
         channelExtraData: [String: RawJSON] = [:],
+        createdAt: Date = XCTestCase.channelCreatedDate,
         truncatedAt: Date? = nil,
         cooldownDuration: Int? = nil
     ) -> ChannelPayload {
@@ -169,7 +170,7 @@ extension XCTestCase {
                     extraData: channelExtraData,
                     typeRawValue: channelId.type.rawValue,
                     lastMessageAt: lastMessageAt,
-                    createdAt: XCTestCase.channelCreatedDate,
+                    createdAt: createdAt,
                     deletedAt: nil,
                     updatedAt: .unique,
                     truncatedAt: truncatedAt,
