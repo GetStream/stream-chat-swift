@@ -121,10 +121,10 @@ class CallViewModel: ObservableObject {
 		// The channelId is needed for editing and sending messages
 	var channelId: ChannelId?
 
-		// Leave a call and use a potential completionHandler
-		func leaveCall(completionHandler: @escaping () -> Void) {
-				// fill later
-		}
+	// Leave a call and use a potential completionHandler
+	func leaveCall(completionHandler: @escaping () -> Void) {
+			// fill later
+	}
 }
 ```
 
@@ -223,7 +223,7 @@ ZStack {
 				Image(systemName: viewModel.isAudioMuted ? "speaker.slash.circle" : "speaker.circle")
 					.resizable()
 					.foregroundColor(viewModel.isAudioMuted ? .gray : .primary)
-					.frame(width: buttonWidth, height: buttonWidth)
+					.frame(width: buttonSize, height: buttonSize)
 			}
 
 			Button {
@@ -232,17 +232,17 @@ ZStack {
 				Image(systemName: viewModel.isVideoMuted ? "video.slash" : "video.circle")
 					.resizable()
 					.foregroundColor(viewModel.isVideoMuted ? .gray : .primary)
-					.frame(width: buttonWidth, height: buttonWidth)
+					.frame(width: buttonSize, height: buttonSize)
 			}
 
 			Button {
 				// end call
-				presentationMode.wrappedValue.dismiss()
+				dismiss()
 			} label: {
 				Image(systemName: "phone.circle.fill")
 					.resizable()
 					.foregroundColor(.red)
-					.frame(width: buttonWidth, height: buttonWidth)
+					.frame(width: buttonSize, height: buttonSize)
 			}
 		}
 		.padding()
@@ -277,7 +277,7 @@ public struct CustomChatChannelHeader: ToolbarContent {
 	@Injected(\.chatClient) var chatClient
 
 	// Parameters received upon creation
-	@ObservedObject var viewModel: GeneralViewModel
+	@ObservedObject var viewModel: CallViewModel
 	public var channel: ChatChannel
 	@Binding var isCallShown: Bool
 	public var onTapTrailing: () -> ()
@@ -323,7 +323,7 @@ Create that below the definition of the `CustomChannelHeader`:
 struct CustomChannelHeaderModifier: ChatChannelHeaderViewModifier {
 
 	var channel: ChatChannel
-	@ObservedObject var viewModel: GeneralViewModel
+	@ObservedObject var viewModel: CallViewModel
 
 	func body(content: Content) -> some View {
 		content.toolbar {
