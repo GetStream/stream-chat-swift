@@ -101,6 +101,19 @@ public struct Filter<Scope: FilterScope> {
 
     let keyPathString: String?
 
+    init(
+        operator: String,
+        key: String?,
+        value: FilterValue,
+        keyPathString: String?
+    ) {
+        log.assert(`operator`.hasPrefix("$"), "A filter operator must have `$` prefix.")
+        self.operator = `operator`
+        self.key = key
+        self.value = value
+        self.keyPathString = keyPathString
+    }
+
     /// Creates a new instance of `Filter`.
     ///
     /// Learn more about how to create simple, advanced, and custom filters in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#query-filters).
@@ -112,18 +125,19 @@ public struct Filter<Scope: FilterScope> {
     ///   - operator: An operator which should be used for the filter. The operator string must start with `$`.
     ///   - key: The "left-hand" side of the filter. Specifies the name of the field the filter should match.
     ///   - value: The "right-hand" side of the filter. Specifies the value the filter should match.
+    ///   - keyPathString: the "right-hand" of the filter when it's being executed on the local storage. It should be a valid keyPath to the related DAO object.
     ///
     public init(
         operator: String,
         key: String?,
-        value: FilterValue,
-        keyPathString: String? = nil
+        value: FilterValue
     ) {
-        log.assert(`operator`.hasPrefix("$"), "A filter operator must have `$` prefix.")
-        self.operator = `operator`
-        self.key = key
-        self.value = value
-        self.keyPathString = keyPathString
+        self.init(
+            operator: `operator`,
+            key: key,
+            value: value,
+            keyPathString: nil
+        )
     }
 }
 
@@ -151,8 +165,7 @@ extension Filter {
         self.init(
             operator: `operator`.rawValue,
             key: nil,
-            value: value,
-            keyPathString: nil
+            value: value
         )
     }
 }
