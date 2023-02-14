@@ -114,12 +114,12 @@ public extension FilterKey where Scope: AnyChannelListFilterScope {
 
     /// Filter for checking whether current user is joined the channel or not (through invite or directly)
     /// Supported operators: `equal`
-    static var joined: FilterKey<Scope, Bool> { .init(rawValue: "joined") }
+    static var joined: FilterKey<Scope, Bool> { .init(rawValue: "joined", keyPathValueProvider: { "membership" }) }
 
     /// Filter for checking whether current user has muted the channel
     /// Supported operators: `equal`
     ///
-    static var muted: FilterKey<Scope, Bool> { "muted" }
+    static var muted: FilterKey<Scope, Bool> { .init(rawValue: "muted", keyPathValueProvider: { "mute" }) }
 
     /// Filter for checking the status of the invite
     /// Supported operators: `equal`

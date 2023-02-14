@@ -33,6 +33,29 @@ final class ChannelListFilterScope_Tests: XCTestCase {
         XCTAssertEqual(Key<Date>.lastUpdatedAt.rawValue, "last_updated")
     }
 
+    func test_filterKeys_haveExpectedKeyPathValueMapper() {
+        XCTAssertEqual(Key<ChannelId>.cid.keyPathValueProvider?(), "cid")
+        XCTAssertEqual(Key<String>.id.keyPathValueProvider?(), "cid")
+        XCTAssertEqual(Key<String>.name.keyPathValueProvider?(), "name")
+        XCTAssertEqual(Key<URL>.imageURL.keyPathValueProvider?(), "imageURL")
+        XCTAssertEqual(Key<ChannelType>.type.keyPathValueProvider?(), "typeRawValue")
+        XCTAssertEqual(Key<Date>.lastMessageAt.keyPathValueProvider?(), "lastMessageAt")
+        XCTAssertEqual(Key<Date>.createdAt.keyPathValueProvider?(), "createdAt")
+        XCTAssertEqual(Key<UserId>.createdBy.keyPathValueProvider?(), "createdBy.id")
+        XCTAssertEqual(Key<Date>.updatedAt.keyPathValueProvider?(), "updatedAt")
+        XCTAssertEqual(Key<Date>.deletedAt.keyPathValueProvider?(), "deletedAt")
+        XCTAssertEqual(Key<Bool>.hidden.keyPathValueProvider?(), "isHidden")
+        XCTAssertEqual(Key<Bool>.frozen.keyPathValueProvider?(), "isFrozen")
+        XCTAssertEqual(Key<Int>.memberCount.keyPathValueProvider?(), "memberCount")
+        XCTAssertEqual(Key<TeamId>.team.keyPathValueProvider?(), "team")
+        XCTAssertEqual(Key<UserId>.members.keyPathValueProvider?(), "members.user.id")
+        XCTAssertEqual(Key<String>.memberName.keyPathValueProvider?(), "members.user.name")
+        XCTAssertEqual(Key<Date>.lastUpdatedAt.keyPathValueProvider?(), "lastMessageAt")
+        XCTAssertEqual(Key<Bool>.joined.keyPathValueProvider?(), "membership")
+        XCTAssertEqual(Key<Bool>.muted.keyPathValueProvider?(), "mute")
+        XCTAssertNil(Key<InviteFilterValue>.invite.keyPathValueProvider)
+    }
+
     func test_containMembersHelper() {
         // Check the `containMembers` helper translates to `members $in [ids]`
         let ids: [UserId] = [.unique, .unique]

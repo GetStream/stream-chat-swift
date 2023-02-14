@@ -15,6 +15,21 @@ extension ChatChannel {
 }
 
 extension Filter where Scope == ChannelListFilterScope {
+    /// If it can be translated, this will return
+    /// an NSPredicate instance that is equivalent
+    /// to the current filter.
+    ///
+    /// For now it's limited to ChannelList as it's not
+    /// needed anywhere else
+    ///
+    /// The predicate will be automatically be used
+    /// by the ChannelDTO to create the
+    /// fetchRequest.
+    ///
+    /// - Important:
+    /// The behaviour of the ChannelDTO, to include or not
+    /// the predicate in the fetchRequest, it's controlled by
+    /// `StreamRuntimeCheck.isChannelLocalFilteringEnabled`
     var predicate: NSPredicate? {
         guard let `operator` = FilterOperator(rawValue: `operator`) else {
             return nil

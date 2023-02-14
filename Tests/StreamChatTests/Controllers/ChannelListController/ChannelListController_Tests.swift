@@ -1102,6 +1102,9 @@ final class ChannelListController_Tests: XCTestCase {
         file: StaticString = #file,
         line: UInt = #line
     ) throws {
+        /// Ensure that runtimeCheck is enabled
+        StreamRuntimeCheck.isChannelLocalFilteringEnabled = true
+
         let query = ChannelListQuery(
             filter: filter()
         )
