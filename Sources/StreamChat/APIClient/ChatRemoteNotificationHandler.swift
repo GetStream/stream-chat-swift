@@ -73,6 +73,7 @@ public class ChatRemoteNotificationHandler {
     let database: DatabaseContainer
     let syncRepository: SyncRepository
     let messageRepository: MessageRepository
+    let extensionLifecycle: NotificationExtensionLifecycle
 
     public init(client: ChatClient, content: UNNotificationContent) {
         self.client = client
@@ -80,6 +81,7 @@ public class ChatRemoteNotificationHandler {
         database = client.databaseContainer
         syncRepository = client.syncRepository
         messageRepository = client.messageRepository
+        extensionLifecycle = client.extensionLifecycle
     }
 
     public func handleNotification(completion: @escaping (ChatPushNotificationContent) -> Void) -> Bool {
@@ -119,7 +121,11 @@ public class ChatRemoteNotificationHandler {
 
     private func getMessageAndSync(cid: ChannelId, messageId: String, completion: @escaping (ChatMessage?, ChatChannel?) -> Void) {
         let database = self.database
-        messageRepository.getMessage(cid: cid, messageId: messageId) { [weak self] result in
+        messageRepository.getMessage(
+            cid: cid,
+            messageId: messageId,
+            store: !extensionLifecycle.isAppReceivingWebSocketEvents
+        ) { [weak self] result in
             guard case let .success(message) = result else {
                 completion(nil, nil)
                 return

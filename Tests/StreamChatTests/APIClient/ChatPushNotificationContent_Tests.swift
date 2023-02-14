@@ -11,6 +11,8 @@ final class ChatPushNotificationContent_Tests: XCTestCase {
     var webSocketClient: WebSocketClient_Mock!
     var apiClient: APIClient_Spy!
     var database: DatabaseContainer_Spy!
+    var messageRepository: MessageRepository_Mock!
+    var extensionLifecycle: NotificationExtensionLifecycle_Mock!
     var currentUserUpdater: CurrentUserUpdater!
     var clientWithOffline: ChatClient!
     let apiKey: APIKey = .init("123")
@@ -29,10 +31,14 @@ final class ChatPushNotificationContent_Tests: XCTestCase {
         webSocketClient = WebSocketClient_Mock()
         apiClient = APIClient_Spy()
         database = DatabaseContainer_Spy()
+        messageRepository = MessageRepository_Mock(database: database, apiClient: apiClient)
+        extensionLifecycle = NotificationExtensionLifecycle_Mock(appGroupIdentifier: "test")
 
         var env = ChatClient.Environment()
         env.databaseContainerBuilder = { _, _, _, _, _, _ in self.database }
         env.apiClientBuilder = { _, _, _, _, _, _ in self.apiClient }
+        env.extensionLifecycleBuilder = { _ in self.extensionLifecycle }
+        env.messageRepositoryBuilder = { _, _ in self.messageRepository }
 
         clientWithOffline = ChatClient_Mock(
             config: configOffline,
@@ -100,10 +106,45 @@ final class ChatPushNotificationContent_Tests: XCTestCase {
         XCTAssertTrue(handler.handleNotification(completion: { _ in }))
     }
 
+    func test_contentHandled_newMessage_appIsReceivingWebSocketEvents() {
+        extensionLifecycle.mockIsAppReceivingWebSocketEvents = true
+
+        let content = UNMutableNotificationContent()
+        let payload = [
+            "type": "message.new",
+            "cid": "a:b",
+            "id": "42"
+        ]
+        content.userInfo["stream"] = payload
+        content.categoryIdentifier = "stream.chat"
+        let handler = ChatRemoteNotificationHandler(client: clientWithOffline, content: content)
+        XCTAssertTrue(handler.handleNotification(completion: { _ in }))
+        // Should only store the fetched message if the host app is not listening to events
+        XCTAssert(messageRepository.receivedGetMessageStore == false)
+    }
+
+    func test_contentHandled_newMessage_appIsNotReceivingWebSocketEvents() {
+        extensionLifecycle.mockIsAppReceivingWebSocketEvents = false
+
+        let content = UNMutableNotificationContent()
+        let payload = [
+            "type": "message.new",
+            "cid": "a:b",
+            "id": "42"
+        ]
+        content.userInfo["stream"] = payload
+        content.categoryIdentifier = "stream.chat"
+        let handler = ChatRemoteNotificationHandler(client: clientWithOffline, content: content)
+        XCTAssertTrue(handler.handleNotification(completion: { _ in }))
+        // Should only store the fetched message if the host app is not listening to events
+        XCTAssert(messageRepository.receivedGetMessageStore == true)
+    }
+
     func test_callsCompletion_whenHandled() throws {
         let handler = ChatRemoteNotificationHandler(client: clientWithOffline, content: exampleMessageNotificationContent)
         let expectation = XCTestExpectation(description: "Receive a message content")
 
+        messageRepository.getMessageResult = .success(ChatMessage.mock())
         XCTAssertTrue(handler.handleNotification(completion: { notification in
             expectation.fulfill()
 
