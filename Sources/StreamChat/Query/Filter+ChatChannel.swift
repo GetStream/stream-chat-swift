@@ -21,27 +21,27 @@ extension Filter where Scope == ChannelListFilterScope {
     /// the predicate in the fetchRequest, it's controlled by
     /// `StreamRuntimeCheck.isChannelLocalFilteringEnabled`
     var predicate: NSPredicate? {
-        guard let `operator` = FilterOperator(rawValue: `operator`) else {
+        guard let op = FilterOperator(rawValue: `operator`) else {
             return nil
         }
 
-        switch `operator` {
+        switch op {
         case .equal, .notEqual, .greater, .greaterOrEqual, .less, .lessOrEqual:
-            return comparingPredicate(`operator`)
+            return comparingPredicate(op)
         case .in, .notIn, .autocomplete, .contains, .exists:
-            return collectionPredicate(`operator`)
+            return collectionPredicate(op)
         case .and, .or, .nor:
-            return logicalPredicate(`operator`)
+            return logicalPredicate(op)
         default:
-            log.debug("Unhandled operator \(`operator`) and filterValue \(value)")
+            log.debug("Unhandled operator \(op) and filterValue \(value)")
             return nil
         }
     }
 
     private func logicalPredicate(
-        _ operator: FilterOperator
+        _ op: FilterOperator
     ) -> NSPredicate? {
-        switch `operator` {
+        switch op {
         case .and where value is [Filter<Scope>]:
             guard let filters = value as? [Filter<Scope>] else {
                 return nil
@@ -74,58 +74,58 @@ extension Filter where Scope == ChannelListFilterScope {
     }
 
     private func comparingPredicate(
-        _ operator: FilterOperator
+        _ op: FilterOperator
     ) -> NSPredicate? {
-        guard key != nil, let keyPathValueProvider = keyPathValueProvider else {
+        guard key != nil, let keyPathString = keyPathString else {
             return nil
         }
 
-        switch `operator` {
+        switch op {
         case .equal:
             return NSPredicate(
                 format: "%@ == %K",
-                argumentArray: [value, keyPathValueProvider()]
+                argumentArray: [value, keyPathString]
             )
         case .notEqual:
             return NSPredicate(
                 format: "%@ != %K",
-                argumentArray: [value, keyPathValueProvider()]
+                argumentArray: [value, keyPathString]
             )
         case .greater:
             return NSPredicate(
                 format: "%K > %@",
-                argumentArray: [keyPathValueProvider(), value]
+                argumentArray: [keyPathString, value]
             )
         case .greaterOrEqual:
             return NSPredicate(
                 format: "%K >= %@",
-                argumentArray: [keyPathValueProvider(), value]
+                argumentArray: [keyPathString, value]
             )
         case .less:
             return NSPredicate(
                 format: "%K < %@",
-                argumentArray: [keyPathValueProvider(), value]
+                argumentArray: [keyPathString, value]
             )
         case .lessOrEqual:
             return NSPredicate(
                 format: "%K <= %@",
-                argumentArray: [keyPathValueProvider(), value]
+                argumentArray: [keyPathString, value]
             )
         default:
-            log.debug("Unhandled operator \(`operator`) and filterValue \(value)")
+            log.debug("Unhandled operator \(op) and filterValue \(value)")
             return nil
         }
     }
 
     private func collectionPredicate(
-        _ operator: FilterOperator
+        _ op: FilterOperator
     ) -> NSPredicate? {
-        guard key != nil, let keyPathValueProvider = keyPathValueProvider
+        guard key != nil, let keyPathString = keyPathString
         else {
             return nil
         }
 
-        switch `operator` {
+        switch op {
         case .in where value is [FilterValue]:
             guard let filterArray = (value as? [FilterValue]) else {
                 return nil
@@ -134,7 +134,7 @@ extension Filter where Scope == ChannelListFilterScope {
                 andPredicateWithSubpredicates: filterArray.map { subValue in
                     NSPredicate(
                         format: "%@ IN %K",
-                        argumentArray: [subValue, keyPathValueProvider()]
+                        argumentArray: [subValue, keyPathString]
                     )
                 }
             )
@@ -148,7 +148,7 @@ extension Filter where Scope == ChannelListFilterScope {
                     andPredicateWithSubpredicates: filterArray.map { subValue in
                         NSPredicate(
                             format: "%@ IN %K",
-                            argumentArray: [subValue, keyPathValueProvider()]
+                            argumentArray: [subValue, keyPathString]
                         )
                     }
                 )
@@ -160,7 +160,7 @@ extension Filter where Scope == ChannelListFilterScope {
             }
             return NSPredicate(
                 format: "%K BEGINSWITH[c] %@",
-                argumentArray: [keyPathValueProvider(), prefix]
+                argumentArray: [keyPathString, prefix]
             )
         case .contains where value is String:
             guard let needle = value as? String else {
@@ -168,7 +168,7 @@ extension Filter where Scope == ChannelListFilterScope {
             }
             return NSPredicate(
                 format: "%K CONTAINS %@",
-                argumentArray: [keyPathValueProvider(), needle]
+                argumentArray: [keyPathString, needle]
             )
         case .exists where value is Bool:
             guard let boolValue = value as? Bool else {
@@ -177,16 +177,16 @@ extension Filter where Scope == ChannelListFilterScope {
             if boolValue {
                 return NSPredicate(
                     format: "%K != nil",
-                    argumentArray: [keyPathValueProvider()]
+                    argumentArray: [keyPathString]
                 )
             } else {
                 return NSPredicate(
                     format: "%K == nil",
-                    argumentArray: [keyPathValueProvider()]
+                    argumentArray: [keyPathString]
                 )
             }
         default:
-            log.debug("Unhandled operator \(`operator`) and filterValue \(value)")
+            log.debug("Unhandled operator \(op) and filterValue \(value)")
             return nil
         }
     }

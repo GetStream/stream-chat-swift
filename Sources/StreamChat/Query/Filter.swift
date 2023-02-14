@@ -99,7 +99,7 @@ public struct Filter<Scope: FilterScope> {
     /// The "right-hand" side of the filter. Specifies the value the filter should match.
     public let value: FilterValue
 
-    public let keyPathValueProvider: (() -> String)?
+    let keyPathString: String?
 
     /// Creates a new instance of `Filter`.
     ///
@@ -117,13 +117,13 @@ public struct Filter<Scope: FilterScope> {
         operator: String,
         key: String?,
         value: FilterValue,
-        keyPathValueProvider: (() -> String)? = nil
+        keyPathString: String? = nil
     ) {
         log.assert(`operator`.hasPrefix("$"), "A filter operator must have `$` prefix.")
         self.operator = `operator`
         self.key = key
         self.value = value
-        self.keyPathValueProvider = keyPathValueProvider
+        self.keyPathString = keyPathString
     }
 }
 
@@ -134,13 +134,13 @@ extension Filter {
         operator: FilterOperator,
         key: FilterKey<Scope, Value>,
         value: FilterValue,
-        keyPathValueProvider: (() -> String)?
+        keyPathString: String?
     ) {
         self.init(
             operator: `operator`.rawValue,
             key: key.rawValue,
             value: value,
-            keyPathValueProvider: keyPathValueProvider
+            keyPathString: keyPathString
         )
     }
 
@@ -152,7 +152,7 @@ extension Filter {
             operator: `operator`.rawValue,
             key: nil,
             value: value,
-            keyPathValueProvider: nil
+            keyPathString: nil
         )
     }
 }
@@ -183,24 +183,24 @@ public extension Filter {
 public struct FilterKey<Scope: FilterScope, Value: FilterValue>: ExpressibleByStringLiteral, RawRepresentable {
     /// The raw value of the key. This value should match the "encodable" key for the given object.
     public let rawValue: String
-    public let keyPathValueProvider: (() -> String)?
+    let keyPathString: String?
 
     public init(stringLiteral value: String) {
         rawValue = value
-        keyPathValueProvider = nil
+        keyPathString = nil
     }
 
     public init(rawValue value: String) {
         rawValue = value
-        keyPathValueProvider = nil
+        keyPathString = nil
     }
 
-    public init(
+    init(
         rawValue value: String,
-        keyPathValueProvider: (() -> String)? = nil
+        keyPathString: String
     ) {
         rawValue = value
-        self.keyPathValueProvider = keyPathValueProvider
+        self.keyPathString = keyPathString
     }
 }
 
@@ -211,7 +211,7 @@ public extension Filter {
             operator: .equal,
             key: key,
             value: value,
-            keyPathValueProvider: key.keyPathValueProvider
+            keyPathString: key.keyPathString
         )
     }
 
@@ -221,7 +221,7 @@ public extension Filter {
             operator: .notEqual,
             key: key,
             value: value,
-            keyPathValueProvider: key.keyPathValueProvider
+            keyPathString: key.keyPathString
         )
     }
 
@@ -231,7 +231,7 @@ public extension Filter {
             operator: .greater,
             key: key,
             value: value,
-            keyPathValueProvider: key.keyPathValueProvider
+            keyPathString: key.keyPathString
         )
     }
 
@@ -241,7 +241,7 @@ public extension Filter {
             operator: .greaterOrEqual,
             key: key,
             value: value,
-            keyPathValueProvider: key.keyPathValueProvider
+            keyPathString: key.keyPathString
         )
     }
 
@@ -251,7 +251,7 @@ public extension Filter {
             operator: .less,
             key: key,
             value: value,
-            keyPathValueProvider: key.keyPathValueProvider
+            keyPathString: key.keyPathString
         )
     }
 
@@ -261,7 +261,7 @@ public extension Filter {
             operator: .lessOrEqual,
             key: key,
             value: value,
-            keyPathValueProvider: key.keyPathValueProvider
+            keyPathString: key.keyPathString
         )
     }
 
@@ -271,7 +271,7 @@ public extension Filter {
             operator: .in,
             key: key,
             value: values,
-            keyPathValueProvider: key.keyPathValueProvider
+            keyPathString: key.keyPathString
         )
     }
 
@@ -281,7 +281,7 @@ public extension Filter {
             operator: .notIn,
             key: key,
             value: values,
-            keyPathValueProvider: key.keyPathValueProvider
+            keyPathString: key.keyPathString
         )
     }
 
@@ -291,7 +291,7 @@ public extension Filter {
             operator: .query,
             key: key,
             value: text,
-            keyPathValueProvider: key.keyPathValueProvider
+            keyPathString: key.keyPathString
         )
     }
 
@@ -301,7 +301,7 @@ public extension Filter {
             operator: .autocomplete,
             key: key,
             value: text,
-            keyPathValueProvider: key.keyPathValueProvider
+            keyPathString: key.keyPathString
         )
     }
 
@@ -315,7 +315,7 @@ public extension Filter {
             operator: .exists,
             key: key,
             value: exists,
-            keyPathValueProvider: key.keyPathValueProvider
+            keyPathString: key.keyPathString
         )
     }
 
@@ -325,7 +325,7 @@ public extension Filter {
             operator: .contains,
             key: key,
             value: value,
-            keyPathValueProvider: key.keyPathValueProvider
+            keyPathString: key.keyPathString
         )
     }
 }
