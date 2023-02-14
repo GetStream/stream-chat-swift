@@ -355,7 +355,7 @@ extension ChannelDTO {
             matchingQuery, notDeleted, isHidden
         ]
 
-        if let filterPredicate = query.filter.predicate {
+        if StreamRuntimeCheck.isChannelLocalFilteringEnabled, let filterPredicate = query.filter.predicate {
             subpredicates.append(filterPredicate)
         }
 

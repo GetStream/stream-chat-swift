@@ -14,4 +14,8 @@ public enum StreamRuntimeCheck {
     ///
     ///  Enables background mapping of DB models
     public static var _isBackgroundMappingEnabled = false
+
+    /// Enable/Disable local filtering for Channel lists. It is used when
+    /// receiving a channel via the WebSocket
+    public static var isChannelLocalFilteringEnabled = true
 }
