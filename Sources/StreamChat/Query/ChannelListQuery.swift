@@ -118,7 +118,6 @@ public extension FilterKey where Scope: AnyChannelListFilterScope {
 
     /// Filter for checking whether current user has muted the channel
     /// Supported operators: `equal`
-    ///
     static var muted: FilterKey<Scope, Bool> { .init(rawValue: "muted", keyPathValueProvider: { "mute" }) }
 
     /// Filter for checking the status of the invite
@@ -128,7 +127,6 @@ public extension FilterKey where Scope: AnyChannelListFilterScope {
     /// Filter for checking the `name` property of a user who is a member of the channel
     /// Supported operators: `equal`, `notEqual`, `autocomplete`
     /// - Warning: This filter is considerably expensive for the backend so avoid using this when possible.
-    ///
     static var memberName: FilterKey<Scope, String> { .init(rawValue: "member.user.name", keyPathValueProvider: { "members.user.name" }) }
 
     /// Filter for the time of the last message in the channel. If the channel has no messages, then the time the channel was created.

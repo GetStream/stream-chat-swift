@@ -53,28 +53,23 @@ extension Filter where Scope == ChannelListFilterScope {
     ) -> NSPredicate? {
         switch `operator` {
         case .and where value is [Filter<Scope>]:
-            guard
-                let filters = value as? [Filter<Scope>]
-            else {
+            guard let filters = value as? [Filter<Scope>] else {
                 return nil
             }
+
             let result = NSCompoundPredicate(
                 andPredicateWithSubpredicates: filters.compactMap(\.predicate)
             )
             return result
         case .or where value is [Filter<Scope>]:
-            guard
-                let filters = value as? [Filter<Scope>]
-            else {
+            guard let filters = value as? [Filter<Scope>] else {
                 return nil
             }
             return NSCompoundPredicate(
                 orPredicateWithSubpredicates: filters.compactMap(\.predicate)
             )
         case .nor where value is [Filter<Scope>]:
-            guard
-                let filters = value as? [Filter<Scope>]
-            else {
+            guard let filters = value as? [Filter<Scope>] else {
                 return nil
             }
             return NSCompoundPredicate(
@@ -91,10 +86,7 @@ extension Filter where Scope == ChannelListFilterScope {
     private func comparingPredicate(
         _ operator: FilterOperator
     ) -> NSPredicate? {
-        guard
-            key != nil,
-            let keyPathValueProvider = keyPathValueProvider
-        else {
+        guard key != nil, let keyPathValueProvider = keyPathValueProvider else {
             return nil
         }
 
@@ -138,18 +130,14 @@ extension Filter where Scope == ChannelListFilterScope {
     private func collectionPredicate(
         _ operator: FilterOperator
     ) -> NSPredicate? {
-        guard
-            key != nil,
-            let keyPathValueProvider = keyPathValueProvider
+        guard key != nil, let keyPathValueProvider = keyPathValueProvider
         else {
             return nil
         }
 
         switch `operator` {
         case .in where value is [FilterValue]:
-            guard
-                let filterArray = (value as? [FilterValue])
-            else {
+            guard let filterArray = (value as? [FilterValue]) else {
                 return nil
             }
             return NSCompoundPredicate(
@@ -162,9 +150,7 @@ extension Filter where Scope == ChannelListFilterScope {
             )
 
         case .notIn where value is [FilterValue]:
-            guard
-                let filterArray = (value as? [FilterValue])
-            else {
+            guard let filterArray = (value as? [FilterValue]) else {
                 return nil
             }
             return NSCompoundPredicate(
@@ -177,9 +163,7 @@ extension Filter where Scope == ChannelListFilterScope {
             )
 
         case .autocomplete where value is String:
-            guard
-                let prefix = value as? String
-            else {
+            guard let prefix = value as? String else {
                 return nil
             }
             return NSPredicate(
@@ -187,9 +171,7 @@ extension Filter where Scope == ChannelListFilterScope {
                 argumentArray: [keyPathValueProvider(), prefix]
             )
         case .contains where value is String:
-            guard
-                let needle = value as? String
-            else {
+            guard let needle = value as? String else {
                 return nil
             }
             return NSPredicate(
@@ -197,9 +179,7 @@ extension Filter where Scope == ChannelListFilterScope {
                 argumentArray: [keyPathValueProvider(), needle]
             )
         case .exists where value is Bool:
-            guard
-                let boolValue = value as? Bool
-            else {
+            guard let boolValue = value as? Bool else {
                 return nil
             }
             if boolValue {
