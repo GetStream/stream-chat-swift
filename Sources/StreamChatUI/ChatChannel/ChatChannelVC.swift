@@ -210,6 +210,11 @@ open class ChatChannelVC: _ViewController,
         shouldLoadPageAroundMessage message: ChatMessage,
         _ completion: @escaping ((Error?) -> Void)
     ) {
+        // For now, we don't support jumping to a message which is inside a thread only
+        if message.isPartOfThread && !message.showReplyInChannel {
+            return
+        }
+
         channelController.loadPageAroundMessageId(message.id, completion: completion)
     }
 

@@ -603,6 +603,25 @@ final class ChatChannelVC_Tests: XCTestCase {
         XCTAssertEqual(channelControllerMock.loadFirstPageCallCount, 0)
     }
 
+    func test_shouldLoadFirstPage_thenLoadFirstPage() {
+        vc.chatMessageListVCShouldLoadFirstPage(vc.messageListVC)
+        XCTAssertEqual(channelControllerMock.loadFirstPageCallCount, 1)
+    }
+
+    func test_shouldLoadPageAroundMessage_thenLoadPageAroundMessageId() {
+        vc.chatMessageListVC(vc.messageListVC, shouldLoadPageAroundMessage: .mock()) { _ in }
+        XCTAssertEqual(channelControllerMock.loadPageAroundMessageIdCallCount, 1)
+    }
+
+    func test_shouldLoadPageAroundMessage_whenMessageIsInsideThread_thenDontPageAroundMessageId() {
+        let messageInsideThread = ChatMessage.mock(
+            parentMessageId: .unique,
+            showReplyInChannel: false
+        )
+        vc.chatMessageListVC(vc.messageListVC, shouldLoadPageAroundMessage: messageInsideThread) { _ in }
+        XCTAssertEqual(channelControllerMock.loadPageAroundMessageIdCallCount, 0)
+    }
+
     // MARK: Channel read
 
     func test_shouldMarkChannelRead_whenIsLastMessageFullyVisible_whenHasLoadedAllNextMessages_thenReturnsTrue() {

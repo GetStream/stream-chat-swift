@@ -73,6 +73,15 @@ public class ChatChannelController_Mock: ChatChannelController {
         loadFirstPageCallCount += 1
         completion?(loadFirstPage_result)
     }
+
+    public var loadPageAroundMessageIdCallCount = 0
+    public override func loadPageAroundMessageId(
+        _ messageId: MessageId,
+        limit: Int? = nil,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        loadPageAroundMessageIdCallCount += 1
+    }
 }
 
 public extension ChatChannelController_Mock {
