@@ -144,12 +144,14 @@ extension Filter where Scope == ChannelListFilterScope {
                 return nil
             }
             return NSCompoundPredicate(
-                andPredicateWithSubpredicates: filterArray.map { subValue in
-                    NSPredicate(
-                        format: "NOT(%@ IN %K)",
-                        argumentArray: [subValue, keyPathValueProvider()]
-                    )
-                }
+                notPredicateWithSubpredicate: NSCompoundPredicate(
+                    andPredicateWithSubpredicates: filterArray.map { subValue in
+                        NSPredicate(
+                            format: "%@ IN %K",
+                            argumentArray: [subValue, keyPathValueProvider()]
+                        )
+                    }
+                )
             )
 
         case .autocomplete where value is String:

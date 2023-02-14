@@ -1255,8 +1255,8 @@ final class ChannelListController_Tests: XCTestCase {
         try assertFilterPredicate(
             .notIn(.members, values: [memberId1, memberId2]),
             channelsInDB: [
-                .dummy(channel: .dummy(cid: cid1, members: [.dummy(), .dummy()])),
-                .dummy(channel: .dummy(cid: cid2, members: [.dummy()])),
+                .dummy(channel: .dummy(cid: cid1, members: [.dummy(user: .dummy(userId: memberId1))])),
+                .dummy(channel: .dummy(cid: cid2, members: [.dummy(user: .dummy(userId: memberId2))])),
                 .dummy(channel: .dummy(members: [.dummy(user: .dummy(userId: memberId1)), .dummy(user: .dummy(userId: memberId2))]))
             ],
             expectedResult: [cid1, cid2]
