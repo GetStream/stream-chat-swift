@@ -70,7 +70,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     }
 
     private(set) lazy var channelListObserver: ListDatabaseObserverWrapper<ChatChannel, ChannelDTO> = {
-        let request = ChannelDTO.channelListFetchRequest(query: self.query)
+        let request = ChannelDTO.channelListFetchRequest(query: self.query, chatClientConfig: client.config)
         let observer = self.environment.createChannelListDatabaseObserver(
             StreamRuntimeCheck._isBackgroundMappingEnabled,
             client.databaseContainer,

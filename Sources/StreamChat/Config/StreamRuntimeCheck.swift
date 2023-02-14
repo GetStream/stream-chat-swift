@@ -14,9 +14,4 @@ public enum StreamRuntimeCheck {
     ///
     ///  Enables background mapping of DB models
     public static var _isBackgroundMappingEnabled = false
-
-    /// Enable/Disable local filtering for Channel lists. When enabled,
-    /// the `ChannelDTO` will include the filter's predicate (if available)
-    /// in the fetchRequest.
-    public static var isChannelLocalFilteringEnabled = true
 }

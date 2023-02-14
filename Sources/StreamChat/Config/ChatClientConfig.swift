@@ -182,6 +182,11 @@ public struct ChatClientConfig {
     /// It controls how long (in seconds) a network task should wait for additional data to arrive before giving up
     public var timeoutIntervalForRequest: TimeInterval = 30
 
+    /// Enable/Disable local filtering for Channel lists. When enabled,
+    /// the `ChannelDTO` will include the filter's predicate (if available)
+    /// in the fetchRequest.
+    public var isChannelLocalFilteringEnabled: Bool = true
+
     public init(apiKey: APIKey) {
         self.apiKey = apiKey
         isClientInActiveMode = !Bundle.main.isAppExtension

@@ -1102,8 +1102,10 @@ final class ChannelListController_Tests: XCTestCase {
         file: StaticString = #file,
         line: UInt = #line
     ) throws {
-        /// Ensure that runtimeCheck is enabled
-        StreamRuntimeCheck.isChannelLocalFilteringEnabled = true
+        /// Ensure that isChannelLocalFilteringEnabled is enabled
+        var config = ChatClientConfig(apiKeyString: .unique)
+        config.isChannelLocalFilteringEnabled = true
+        client = ChatClient.mock(config: config)
 
         let query = ChannelListQuery(
             filter: filter()

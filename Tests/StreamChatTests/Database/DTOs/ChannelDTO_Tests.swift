@@ -873,7 +873,7 @@ final class ChannelDTO_Tests: XCTestCase {
             try session.saveChannel(payload: payload2)
         }
 
-        let fetchRequest = ChannelDTO.channelListFetchRequest(query: query)
+        let fetchRequest = ChannelDTO.channelListFetchRequest(query: query, chatClientConfig: .init(apiKeyString: .unique))
         var loadedChannels: [ChannelDTO] {
             try! database.viewContext.fetch(fetchRequest)
         }
@@ -888,7 +888,7 @@ final class ChannelDTO_Tests: XCTestCase {
             pageSize: 25
         )
 
-        let fetchRequest = ChannelDTO.channelListFetchRequest(query: query)
+        let fetchRequest = ChannelDTO.channelListFetchRequest(query: query, chatClientConfig: .init(apiKeyString: .unique))
 
         XCTAssertEqual(fetchRequest.fetchBatchSize, 25)
         XCTAssertEqual(fetchRequest.fetchLimit, 25)
@@ -926,9 +926,9 @@ final class ChannelDTO_Tests: XCTestCase {
         }
 
         // A fetch request with a default sorting.
-        let fetchRequestWithDefaultSorting = ChannelDTO.channelListFetchRequest(query: queryWithDefaultSorting)
+        let fetchRequestWithDefaultSorting = ChannelDTO.channelListFetchRequest(query: queryWithDefaultSorting, chatClientConfig: .init(apiKeyString: .unique))
         // A fetch request with a sorting by `updatedAt`.
-        let fetchRequestWithUpdatedAtSorting = ChannelDTO.channelListFetchRequest(query: queryWithUpdatedAtSorting)
+        let fetchRequestWithUpdatedAtSorting = ChannelDTO.channelListFetchRequest(query: queryWithUpdatedAtSorting, chatClientConfig: .init(apiKeyString: .unique))
 
         var channelsWithDefaultSorting: [ChannelDTO] { try! database.viewContext.fetch(fetchRequestWithDefaultSorting) }
         var channelsWithUpdatedAtSorting: [ChannelDTO] { try! database.viewContext.fetch(fetchRequestWithUpdatedAtSorting) }
@@ -1012,7 +1012,7 @@ final class ChannelDTO_Tests: XCTestCase {
             hidden1.isHidden = true
         }
 
-        let fetchRequest = ChannelDTO.channelListFetchRequest(query: query)
+        let fetchRequest = ChannelDTO.channelListFetchRequest(query: query, chatClientConfig: .init(apiKeyString: .unique))
         let loadedChannels: [ChannelDTO] = try database.viewContext.fetch(fetchRequest)
 
         XCTAssertEqual(loadedChannels.count, 2)

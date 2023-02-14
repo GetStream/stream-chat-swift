@@ -333,7 +333,8 @@ extension NSManagedObjectContext {
 
 extension ChannelDTO {
     static func channelListFetchRequest(
-        query: ChannelListQuery
+        query: ChannelListQuery,
+        chatClientConfig: ChatClientConfig
     ) -> NSFetchRequest<ChannelDTO> {
         let request = NSFetchRequest<ChannelDTO>(entityName: ChannelDTO.entityName)
 
@@ -355,7 +356,7 @@ extension ChannelDTO {
             matchingQuery, notDeleted, isHidden
         ]
 
-        if StreamRuntimeCheck.isChannelLocalFilteringEnabled, let filterPredicate = query.filter.predicate {
+        if chatClientConfig.isChannelLocalFilteringEnabled, let filterPredicate = query.filter.predicate {
             subpredicates.append(filterPredicate)
         }
 
