@@ -14,6 +14,7 @@ final class MessageRepository_Mock: MessageRepository, Spy {
     var sendMessageResult: Result<ChatMessage, MessageRepositoryError>?
     var sendMessageCalls: [MessageId: (Result<ChatMessage, MessageRepositoryError>) -> Void] = [:]
     var getMessageResult: Result<ChatMessage, Error>?
+    var receivedGetMessageStore: Bool?
     var saveSuccessfullyDeletedMessageError: Error?
     let lock = NSLock()
     var updatedMessageLocalState: LocalMessageState?
@@ -48,8 +49,9 @@ final class MessageRepository_Mock: MessageRepository, Spy {
         completion()
     }
 
-    override func getMessage(cid: ChannelId, messageId: MessageId, completion: ((Result<ChatMessage, Error>) -> Void)? = nil) {
+    override func getMessage(cid: ChannelId, messageId: MessageId, store: Bool = true, completion: ((Result<ChatMessage, Error>) -> Void)? = nil) {
         record()
+        receivedGetMessageStore = store
         getMessageResult.map { completion?($0) }
     }
 

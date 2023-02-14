@@ -26,6 +26,7 @@ final class DefaultConnectionRecoveryHandler: ConnectionRecoveryHandler {
     private let webSocketClient: WebSocketClient
     private let eventNotificationCenter: EventNotificationCenter
     private let syncRepository: SyncRepository
+    private let extensionLifecycle: NotificationExtensionLifecycle
     private let backgroundTaskScheduler: BackgroundTaskScheduler?
     private let internetConnection: InternetConnection
     private let reconnectionTimerType: Timer.Type
@@ -39,6 +40,7 @@ final class DefaultConnectionRecoveryHandler: ConnectionRecoveryHandler {
         webSocketClient: WebSocketClient,
         eventNotificationCenter: EventNotificationCenter,
         syncRepository: SyncRepository,
+        extensionLifecycle: NotificationExtensionLifecycle,
         backgroundTaskScheduler: BackgroundTaskScheduler?,
         internetConnection: InternetConnection,
         reconnectionStrategy: RetryStrategy,
@@ -48,6 +50,7 @@ final class DefaultConnectionRecoveryHandler: ConnectionRecoveryHandler {
         self.webSocketClient = webSocketClient
         self.eventNotificationCenter = eventNotificationCenter
         self.syncRepository = syncRepository
+        self.extensionLifecycle = extensionLifecycle
         self.backgroundTaskScheduler = backgroundTaskScheduler
         self.internetConnection = internetConnection
         self.reconnectionStrategy = reconnectionStrategy
@@ -152,12 +155,14 @@ extension DefaultConnectionRecoveryHandler {
             cancelReconnectionTimer()
 
         case .connected:
+            extensionLifecycle.setAppState(isReceivingEvents: true)
             reconnectionStrategy.resetConsecutiveFailures()
             syncRepository.syncLocalState {
                 log.info("Local state sync completed", subsystems: .offlineSupport)
             }
 
         case .disconnected:
+            extensionLifecycle.setAppState(isReceivingEvents: false)
             scheduleReconnectionTimerIfNeeded()
         case .initialized, .waitingForConnectionId, .disconnecting:
             break
