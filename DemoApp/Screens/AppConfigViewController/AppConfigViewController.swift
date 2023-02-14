@@ -278,8 +278,8 @@ class AppConfigViewController: UITableViewController {
             cell.accessoryType = .disclosureIndicator
 
         case .isChannelLocalFilteringEnabled:
-            cell.accessoryView = makeSwitchButton(StreamRuntimeCheck.isChannelLocalFilteringEnabled) { newValue in
-                StreamRuntimeCheck.isChannelLocalFilteringEnabled = newValue
+            cell.accessoryView = makeSwitchButton(chatClientConfig.isChannelLocalFilteringEnabled) { [weak self] newValue in
+                self?.chatClientConfig.isChannelLocalFilteringEnabled = newValue
             }
         }
     }
