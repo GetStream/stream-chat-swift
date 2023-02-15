@@ -55,8 +55,25 @@ let compoundFilter: Filter<ChannelListFilterScope> = .and([
 The `query.sort` is an array of sorting options. Sorting options are applied based on their order in the array so the first option has the highest impact while the others are used mainly as a tiebreakers. By default, the channel list is sorted by `updated_at`.
 
 ### 2. Create a controller
-
+#### With auto Channel Filtering
 The controller can be created using `ChatClient`:
+```swift
+let controller = ChatClient.shared.channelListController(query: query)
+```
+The behaviour is controlled from the `ChatClientConfig` and more specifically the `isChannelAutomaticFilteringEnabled` flag. 
+
+When the flag is enabled (`true`), then the new/updated channels are being filtered automatically, by matching the `query.filter`.
+By default, the SDK will handle filtering the channels as they get updated and will only return to the controller **only** the channels that match the provider `query.filter`. 
+This means, that the controller always receives channels that match its `query.filter` and then the controller is responsible for deciding if the channels need to be linked/unlinked.
+
+When the flag is disabled (`false`), then the new/updated channels won't be filtered as the arrive, and the controller will be responsible for filtering them first and confirm that they
+match its `query.filter` and then decide if the filtered channels need to be linked/unlinked.
+
+:::warning
+Custom filters are not currently supported. If you are already defining and using your own filters, then the initialization option `With Channel filtering closure` will be a better fit more your needs.
+:::
+
+#### With Channel filtering closure
 ```swift
 let controller = ChatClient.shared.channelListController(query: query, filter: { channel in
     // the filtering logic goes here.
@@ -76,6 +93,10 @@ It is expected that the logic on the `filter` closure matches the one in `query.
 
 :::note
 Given the complex nature of `Filter`, having generic logic capable of using `query.filter` at runtime to determine if a channel meets the criteria is extremely expensive and complex. Instead, having a block that checks for the particular needs of the use case is much cheaper.
+:::
+
+:::note
+`isChannelAutomaticFilteringEnabled` can be combined with the filter closure and allow easier handling for complicated filters (for example, when the filter contains extra data properties)
 :::
 
 ### 3. Set the delegate
