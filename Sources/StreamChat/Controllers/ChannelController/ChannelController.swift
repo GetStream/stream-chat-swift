@@ -81,14 +81,17 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
     /// A Boolean value that returns wether the newest messages have all been loaded or not.
     public var hasLoadedAllNextMessages: Bool {
-        channelQuery.pagination?.parameter == nil
+        !isJumpingToMessage
     }
 
-    /// A Boolean value that returns wether the channel is currently loading previous (old) messages.
+    /// A Boolean value that returns whether the channel is currently loading previous (old) messages.
     public private(set) var isLoadingPreviousMessages: Bool = false
 
-    /// A Boolean value that returns wether the channel is currently loading next (new) messages.
+    /// A Boolean value that returns whether the channel is currently loading next (new) messages.
     public private(set) var isLoadingNextMessages: Bool = false
+
+    /// A Boolean value that returns whether the channel is currently in a mid-page.
+    public private(set) var isJumpingToMessage: Bool = false
 
     /// The pagination cursor for loading previous (old) messages.
     internal private(set) var lastOldestMessageId: MessageId?
@@ -454,8 +457,9 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             case let .success(payload):
                 self.updateNewestFetchedMessageId(with: payload)
                 if payload.messages.count < limit {
-                    self.channelQuery.pagination = nil
+                    self.isJumpingToMessage = false
                 }
+
                 self.callback { completion?(nil) }
             case let .failure(error):
                 self.callback { completion?(error) }
@@ -479,6 +483,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             channelModificationFailed(completion)
             return
         }
+
+        isJumpingToMessage = true
 
         let limit = limit ?? channelQuery.pagination?.pageSize ?? .messagesPageSize
         channelQuery.pagination = MessagesPagination(pageSize: limit, parameter: .around(messageId))
@@ -1080,6 +1086,8 @@ private extension ChatChannelController {
             pageSize: channelQuery.pagination?.pageSize ?? .messagesPageSize,
             parameter: nil
         )
+
+        isJumpingToMessage = false
 
         let channelCreatedCallback = isChannelAlreadyCreated ? nil : channelCreated(forwardErrorTo: setLocalStateBasedOnError)
         updater.update(
