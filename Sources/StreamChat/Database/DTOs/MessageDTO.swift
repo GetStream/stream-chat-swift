@@ -469,6 +469,18 @@ extension MessageDTO {
         set { localMessageStateRaw = newValue?.rawValue }
     }
 
+    var isLocalOnly: Bool {
+        if let localMessageState = self.localMessageState {
+            return localMessageState.isWaitingToBeSentToServer
+        }
+
+        if type == MessageType.ephemeral.rawValue {
+            return true
+        }
+
+        return false
+    }
+
     /// When a message that has been synced gets edited but is bounced by the moderation API it will return true to this state.
     var failedToBeEditedDueToModeration: Bool {
         localMessageState == .syncingFailed && isBounced == true

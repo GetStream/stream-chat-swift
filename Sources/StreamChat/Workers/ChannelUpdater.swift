@@ -57,7 +57,7 @@ class ChannelUpdater: Worker {
                     channelDTO?.cleanMessagesThatFailedToBeEditedDueToModeration()
                     
                     if isFirstPage, let channelDTO = channelDTO {
-                        channelDTO.messages = channelDTO.messages.filter { $0.localMessageState?.isLocalOnly == true }
+                        channelDTO.messages = channelDTO.messages.filter { $0.isLocalOnly }
                     }
 
                     channelDTO?.isFirstPageLoaded = !isJumpingToMessage

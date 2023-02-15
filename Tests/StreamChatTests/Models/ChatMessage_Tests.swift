@@ -296,7 +296,7 @@ final class ChatMessage_Tests: XCTestCase {
         XCTAssertEqual(message.deliveryStatus, .read)
     }
 
-    func test_isLocalOnly_returnsTheCorrectValue() {
+    func test_isWaitingToBeSentToServer_returnsTheCorrectValue() {
         let stateToLocalOnly: [LocalMessageState: Bool] = [
             .pendingSync: true,
             .syncing: true,
@@ -309,7 +309,34 @@ final class ChatMessage_Tests: XCTestCase {
         ]
 
         stateToLocalOnly.forEach { state, value in
-            XCTAssertEqual(state.isLocalOnly, value)
+            XCTAssertEqual(state.isWaitingToBeSentToServer, value)
         }
+    }
+
+    func test_isLocalOnly_whenLocalStateIsWaitingToBeSentToServer_returnsTrue() {
+        let message: ChatMessage = .mock(
+            type: .regular,
+            localState: .pendingSync
+        )
+
+        XCTAssertEqual(message.isLocalOnly, true)
+    }
+
+    func test_isLocalOnly_whenLocalStateIsNil_whenTypeIsEphemeral_returnsTrue() {
+        let message: ChatMessage = .mock(
+            type: .ephemeral,
+            localState: nil
+        )
+
+        XCTAssertEqual(message.isLocalOnly, true)
+    }
+
+    func test_isLocalOnly_whenLocalStateIsNil_whenTypeNotEphemeral_returnsFalse() {
+        let message: ChatMessage = .mock(
+            type: .regular,
+            localState: nil
+        )
+
+        XCTAssertEqual(message.isLocalOnly, false)
     }
 }

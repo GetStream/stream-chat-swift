@@ -349,9 +349,15 @@ public extension ChatMessage {
     }
 
     var isLocalOnly: Bool {
-        // If we don't have local state it means the message does not have any pending actions and its state is
-        // replicated in both server and local.
-        localState?.isLocalOnly ?? false
+        if let localState = self.localState {
+            return localState.isWaitingToBeSentToServer
+        }
+
+        if type == .ephemeral {
+            return true
+        }
+
+        return false
     }
 }
 
@@ -422,7 +428,7 @@ public enum LocalMessageState: String {
     /// Deleting of the message failed after multiple of tries. The system is not trying to delete this message anymore.
     case deletingFailed
 
-    var isLocalOnly: Bool {
+    var isWaitingToBeSentToServer: Bool {
         switch self {
         case .pendingSync, .syncing, .syncingFailed, .pendingSend, .sending, .sendingFailed:
             return true

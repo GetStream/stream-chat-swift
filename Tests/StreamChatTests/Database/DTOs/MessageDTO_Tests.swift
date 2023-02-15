@@ -2779,6 +2779,8 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(channelUpdatesCount, 1)
     }
 
+    // MARK: - fetchLimit and batchSzie
+
     func test_messagesFetchRequest_shouldHaveFetchLimitAndBatchSize() {
         let fetchRequest = MessageDTO.messagesFetchRequest(
             for: .unique,
@@ -2803,7 +2805,40 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(fetchRequest.fetchLimit, 20)
     }
 
+    // MARK: - isLocalOnly
+
+    func test_isLocalOnly_whenLocalMessageStateIsWaitingToBeSentToServer_returnsTrue() throws {
+        let message = try createMessage(with: .dummy(channel: .dummy()))
+        message.localMessageState = .pendingSync
+
+        XCTAssertEqual(message.isLocalOnly, true)
+    }
+
+    func test_isLocalOnly_whenLocalMessageStateIsNil_whenTypeIsEphemeral_returnsTrue() throws {
+        let message = try createMessage(with: .dummy(channel: .dummy()))
+        message.localMessageState = nil
+        message.type = MessageType.ephemeral.rawValue
+
+        XCTAssertEqual(message.isLocalOnly, true)
+    }
+
+    func test_isLocalOnly_whenLocalMessageStateIsNil_whenTypeNotEphemeral_returnsFalse() throws {
+        let message = try createMessage(with: .dummy(channel: .dummy()))
+        message.localMessageState = nil
+        message.type = MessageType.regular.rawValue
+
+        XCTAssertEqual(message.isLocalOnly, false)
+    }
+
     // MARK: Helpers:
+
+    private func createMessage(with message: MessagePayload) throws -> MessageDTO {
+        let context = database.viewContext
+        _ = try context.saveCurrentUser(payload: .dummy(userPayload: message.user))
+        return try XCTUnwrap(
+            context.saveMessage(payload: message, for: message.channel?.cid, cache: nil)
+        )
+    }
 
     private func checkChannelMessagesPredicateCount(
         channelId: ChannelId,
