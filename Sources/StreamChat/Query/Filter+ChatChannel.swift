@@ -19,7 +19,7 @@ extension Filter where Scope == ChannelListFilterScope {
     /// - Important:
     /// The behaviour of the ChannelDTO, to include or not
     /// the predicate in the fetchRequest, it's controlled by
-    /// `ChatClientConfig.isChannelLocalFilteringEnabled`
+    /// `ChatClientConfig.isChannelAutomaticFilteringEnabled`
     var predicate: NSPredicate? {
         guard let op = FilterOperator(rawValue: `operator`) else {
             return nil

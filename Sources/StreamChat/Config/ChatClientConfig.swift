@@ -185,7 +185,7 @@ public struct ChatClientConfig {
     /// Enable/Disable local filtering for Channel lists. When enabled,
     /// the `ChannelDTO` will include the filter's predicate (if available)
     /// in the fetchRequest.
-    public var isChannelLocalFilteringEnabled: Bool = true
+    public var isChannelAutomaticFilteringEnabled: Bool = true
 
     public init(apiKey: APIKey) {
         self.apiKey = apiKey

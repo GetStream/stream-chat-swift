@@ -1102,9 +1102,9 @@ final class ChannelListController_Tests: XCTestCase {
         file: StaticString = #file,
         line: UInt = #line
     ) throws {
-        /// Ensure that isChannelLocalFilteringEnabled is enabled
+        /// Ensure that isChannelAutomaticFilteringEnabled is enabled
         var config = ChatClientConfig(apiKeyString: .unique)
-        config.isChannelLocalFilteringEnabled = true
+        config.isChannelAutomaticFilteringEnabled = true
         client = ChatClient.mock(config: config)
 
         let query = ChannelListQuery(

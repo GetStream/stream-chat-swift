@@ -356,7 +356,7 @@ extension ChannelDTO {
             matchingQuery, notDeleted, isHidden
         ]
 
-        if chatClientConfig.isChannelLocalFilteringEnabled, let filterPredicate = query.filter.predicate {
+        if chatClientConfig.isChannelAutomaticFilteringEnabled, let filterPredicate = query.filter.predicate {
             subpredicates.append(filterPredicate)
         }
 
