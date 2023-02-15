@@ -1248,15 +1248,17 @@ final class ChannelListController_Tests: XCTestCase {
         let memberId2 = UserId.unique
         let cid1 = ChannelId.unique
         let cid2 = ChannelId.unique
+        let cid3 = ChannelId.unique
 
         try assertFilterPredicate(
             .notIn(.members, values: [memberId1, memberId2]),
             channelsInDB: [
                 .dummy(channel: .dummy(cid: cid1, members: [.dummy(user: .dummy(userId: memberId1))])),
                 .dummy(channel: .dummy(cid: cid2, members: [.dummy(user: .dummy(userId: memberId2))])),
+                .dummy(channel: .dummy(cid: cid3)),
                 .dummy(channel: .dummy(members: [.dummy(user: .dummy(userId: memberId1)), .dummy(user: .dummy(userId: memberId2))]))
             ],
-            expectedResult: [cid1, cid2]
+            expectedResult: [cid1, cid2, cid3]
         )
     }
 
