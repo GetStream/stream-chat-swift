@@ -11,7 +11,7 @@ final class ChannelListController_Tests: XCTestCase {
     fileprivate var env: TestEnvironment!
 
     var client: ChatClient!
-
+    var memberId: UserId = .unique
     var query: ChannelListQuery!
 
     var controller: ChatChannelListController!
@@ -26,7 +26,7 @@ final class ChannelListController_Tests: XCTestCase {
 
         env = TestEnvironment()
         client = ChatClient.mock()
-        query = .init(filter: .in(.members, values: [.unique]))
+        query = .init(filter: .in(.members, values: [memberId]))
         controller = ChatChannelListController(query: query, client: client, environment: env.environment)
         controllerCallbackQueueID = UUID()
         controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
@@ -102,8 +102,8 @@ final class ChannelListController_Tests: XCTestCase {
 
     func test_changesAreReported_beforeCallingSynchronize() throws {
         // Save a new channel to DB
-        client.databaseContainer.write { session in
-            try session.saveChannel(payload: self.dummyPayload(with: .unique), query: self.query, cache: nil)
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: self.dummyPayload(with: .unique, members: [.dummy(user: .dummy(userId: self.memberId))]), query: self.query, cache: nil)
         }
 
         // Assert the channel is loaded
@@ -118,11 +118,11 @@ final class ChannelListController_Tests: XCTestCase {
 
         try client.databaseContainer.writeSynchronously { session in
             // Insert a channel matching the query
-            try session.saveChannel(payload: self.dummyPayload(with: cidMatchingQuery), query: self.query, cache: nil)
+            try session.saveChannel(payload: self.dummyPayload(with: cidMatchingQuery, members: [.dummy(user: .dummy(userId: self.memberId))]), query: self.query, cache: nil)
 
             // Insert a deleted channel matching the query
             let dto = try session.saveChannel(
-                payload: self.dummyPayload(with: cidMatchingQueryDeleted),
+                payload: self.dummyPayload(with: cidMatchingQueryDeleted, members: [.dummy(user: .dummy(userId: self.memberId))]),
                 query: self.query,
                 cache: nil
             )
@@ -271,7 +271,7 @@ final class ChannelListController_Tests: XCTestCase {
         // Create a channel in the DB matching the query
         let channelId = ChannelId.unique
         try client.databaseContainer.writeSynchronously {
-            try $0.saveChannel(payload: .dummy(cid: channelId), query: self.query, cache: nil)
+            try $0.saveChannel(payload: .dummy(cid: channelId, members: [.dummy(user: .dummy(userId: self.memberId))]), query: self.query, cache: nil)
         }
 
         // Simulate successful network call.
@@ -292,7 +292,7 @@ final class ChannelListController_Tests: XCTestCase {
         let cid: ChannelId = .unique
         _ = try waitFor {
             client.databaseContainer.write({ session in
-                try session.saveChannel(payload: self.dummyPayload(with: cid), query: self.query, cache: nil)
+                try session.saveChannel(payload: self.dummyPayload(with: cid, members: [.dummy(user: .dummy(userId: self.memberId))]), query: self.query, cache: nil)
             }, completion: $0)
         }
 
@@ -307,7 +307,7 @@ final class ChannelListController_Tests: XCTestCase {
 
         // Add the channel to the DB
         let cid: ChannelId = .unique
-        let channelPayload = dummyPayload(with: cid)
+        let channelPayload = dummyPayload(with: cid, members: [.dummy(user: .dummy(userId: memberId))])
         var channel: ChatChannel!
         try database.writeSynchronously { session in
             let dto = try session.saveChannel(payload: channelPayload, query: self.query, cache: nil)
@@ -336,7 +336,7 @@ final class ChannelListController_Tests: XCTestCase {
 
         // Insert a new channel to DB
         try database.writeSynchronously { session in
-            try session.saveChannel(payload: .dummy(cid: newCid), query: nil, cache: nil)
+            try session.saveChannel(payload: .dummy(cid: newCid, members: [.dummy(user: .dummy(userId: self.memberId))]), query: nil, cache: nil)
         }
 
         // Assert the resulting value is not inserted
@@ -345,7 +345,7 @@ final class ChannelListController_Tests: XCTestCase {
         // Insert a new channel to DB
         let insertedCid = ChannelId.unique
         try database.writeSynchronously { session in
-            try session.saveChannel(payload: .dummy(cid: insertedCid), query: nil, cache: nil)
+            try session.saveChannel(payload: .dummy(cid: insertedCid, members: [.dummy(user: .dummy(userId: self.memberId))]), query: nil, cache: nil)
         }
 
         // Assert the resulting value is inserted
@@ -359,7 +359,7 @@ final class ChannelListController_Tests: XCTestCase {
 
         // Add the channel to the DB
         let cid: ChannelId = .unique
-        let channelPayload = dummyPayload(with: cid)
+        let channelPayload = dummyPayload(with: cid, members: [.dummy(user: .dummy(userId: memberId))])
         var channel: ChatChannel!
         try database.writeSynchronously { session in
             let dto = try session.saveChannel(payload: channelPayload, query: self.query, cache: nil)
@@ -389,8 +389,8 @@ final class ChannelListController_Tests: XCTestCase {
 
         // Insert 2 channels to cid
         try database.writeSynchronously { session in
-            try session.saveChannel(payload: .dummy(cid: shouldBeInsertedCid), query: nil, cache: nil)
-            try session.saveChannel(payload: .dummy(cid: shouldBeExcludedCid), query: nil, cache: nil)
+            try session.saveChannel(payload: .dummy(cid: shouldBeInsertedCid, members: [.dummy(user: .dummy(userId: self.memberId))]), query: nil, cache: nil)
+            try session.saveChannel(payload: .dummy(cid: shouldBeExcludedCid, members: [.dummy(user: .dummy(userId: self.memberId))]), query: nil, cache: nil)
         }
 
         // Assert that 2 new channels are not linked
@@ -425,7 +425,7 @@ final class ChannelListController_Tests: XCTestCase {
 
         // Add the channel to the DB
         let cid: ChannelId = .unique
-        let channelPayload = dummyPayload(with: cid)
+        let channelPayload = dummyPayload(with: cid, members: [.dummy(user: .dummy(userId: memberId))])
         var channel: ChatChannel!
         try database.writeSynchronously { session in
             let dto = try session.saveChannel(payload: channelPayload, query: self.query, cache: nil)
@@ -504,7 +504,7 @@ final class ChannelListController_Tests: XCTestCase {
         // Save a channel linked to the current query
         let cid: ChannelId = .unique
         try database.writeSynchronously { session in
-            try session.saveChannel(payload: self.dummyPayload(with: cid), query: self.query, cache: nil)
+            try session.saveChannel(payload: self.dummyPayload(with: cid, members: [.dummy(user: .dummy(userId: self.memberId))]), query: self.query, cache: nil)
         }
 
         // Assert channel is linked
@@ -532,8 +532,8 @@ final class ChannelListController_Tests: XCTestCase {
         // Add 2 channels to the DB
         let cid: ChannelId = .unique
         try database.writeSynchronously { session in
-            try session.saveChannel(payload: self.dummyPayload(with: cid), query: self.query, cache: nil)
-            let dto = try session.saveChannel(payload: self.dummyPayload(with: .unique), query: self.query, cache: nil)
+            try session.saveChannel(payload: self.dummyPayload(with: cid, members: [.dummy(user: .dummy(userId: self.memberId))]), query: self.query, cache: nil)
+            let dto = try session.saveChannel(payload: self.dummyPayload(with: .unique, members: [.dummy(user: .dummy(userId: self.memberId))]), query: self.query, cache: nil)
             dto.isHidden = true
         }
 
@@ -571,15 +571,14 @@ final class ChannelListController_Tests: XCTestCase {
     // MARK: - Change propagation tests with filter block
 
     func test_addingANewChannelThatMatchesFilter_shouldLinkItToQuery_shouldWatchIt() throws {
-        let userId = UserId.unique
         var filterCalls = 0
-        prepareControllerWithOwnerFilter(userId: userId, onFilterCall: { filterCalls += 1 })
+        prepareControllerWithOwnerFilter(userId: memberId, onFilterCall: { filterCalls += 1 })
 
         // Simulate `synchronize` call
         let expectation = self.expectation(description: "Synchronize completion")
         controller.synchronize { _ in expectation.fulfill() }
         let originalCid: ChannelId = .unique
-        try addOrUpdateChannel(cid: originalCid, ownerId: userId, query: query)
+        try addOrUpdateChannel(cid: originalCid, ownerId: memberId, query: query)
 
         // Simulate successful response from backend
         env.channelListUpdater?.update_completion?(.success([]))
@@ -590,7 +589,7 @@ final class ChannelListController_Tests: XCTestCase {
         let ownedCid: ChannelId = .unique
         let unownedCid: ChannelId = .unique
         try [ownedCid, unownedCid].forEach { cid in
-            try addOrUpdateChannel(cid: cid, ownerId: cid == ownedCid ? userId : "other", query: nil)
+            try addOrUpdateChannel(cid: cid, ownerId: cid == ownedCid ? memberId : "other", query: nil)
         }
 
         // The original channel + the owned that was just added
@@ -606,15 +605,14 @@ final class ChannelListController_Tests: XCTestCase {
     }
 
     func test_updatingAChannelThatIsLinkedToTheQuery_shouldUnlinkIt() throws {
-        let userId = UserId.unique
         var filterCalls = 0
-        prepareControllerWithOwnerFilter(userId: userId, onFilterCall: { filterCalls += 1 })
+        prepareControllerWithOwnerFilter(userId: memberId, onFilterCall: { filterCalls += 1 })
 
         // Simulate `synchronize` call
         let expectation = self.expectation(description: "Synchronize completion")
         controller.synchronize { _ in expectation.fulfill() }
         let originalCid: ChannelId = .unique
-        try addOrUpdateChannel(cid: originalCid, ownerId: userId, query: query)
+        try addOrUpdateChannel(cid: originalCid, ownerId: memberId, query: query)
 
         // Simulate successful response from backend
         env.channelListUpdater?.update_completion?(.success([]))
@@ -634,15 +632,14 @@ final class ChannelListController_Tests: XCTestCase {
     }
 
     func test_updatingAChannelThatIsNotLinkedToTheQuery_shouldLinkIt() throws {
-        let userId = UserId.unique
         var filterCalls = 0
-        prepareControllerWithOwnerFilter(userId: userId, onFilterCall: { filterCalls += 1 })
+        prepareControllerWithOwnerFilter(userId: memberId, onFilterCall: { filterCalls += 1 })
 
         // Simulate `synchronize` call
         let expectation = self.expectation(description: "Synchronize completion")
         controller.synchronize { _ in expectation.fulfill() }
         let originalCid: ChannelId = .unique
-        try addOrUpdateChannel(cid: originalCid, ownerId: userId, query: query)
+        try addOrUpdateChannel(cid: originalCid, ownerId: memberId, query: query)
 
         // Simulate successful response from backend
         env.channelListUpdater?.update_completion?(.success([]))
@@ -659,7 +656,7 @@ final class ChannelListController_Tests: XCTestCase {
         XCTAssertFalse(controller.channels.contains { $0.cid == originallyUnownedCid })
 
         // Simulate update on the channel not matching the query, to make it match it
-        try addOrUpdateChannel(cid: originallyUnownedCid, ownerId: userId, query: nil)
+        try addOrUpdateChannel(cid: originallyUnownedCid, ownerId: memberId, query: nil)
 
         // The updated channel should be evaluated, and added
         AssertAsync.willBeEqual(controller.channels.count, 2)
@@ -670,7 +667,7 @@ final class ChannelListController_Tests: XCTestCase {
 
     private func addOrUpdateChannel(cid: ChannelId, ownerId: String, query: ChannelListQuery?) throws {
         try database.writeSynchronously { session in
-            let payload = self.dummyPayload(with: cid, channelExtraData: ["owner_id": .string(ownerId)])
+            let payload = self.dummyPayload(with: cid, members: [.dummy(user: .dummy(userId: self.memberId))], channelExtraData: ["owner_id": .string(ownerId)])
             try session.saveChannel(payload: payload, query: query, cache: nil)
         }
     }
@@ -738,7 +735,7 @@ final class ChannelListController_Tests: XCTestCase {
         // Simulate DB update
         let cid: ChannelId = .unique
         try client.databaseContainer.writeSynchronously { session in
-            try session.saveChannel(payload: self.dummyPayload(with: cid), query: self.query, cache: nil)
+            try session.saveChannel(payload: self.dummyPayload(with: cid, members: [.dummy(user: .dummy(userId: self.memberId))]), query: self.query, cache: nil)
         }
 
         let channel = try XCTUnwrap(client.databaseContainer.viewContext.channel(cid: cid)).asModel()
@@ -794,8 +791,8 @@ final class ChannelListController_Tests: XCTestCase {
         controller.callbackQueue = .main
         controller.delegate = delegate
 
-        client.databaseContainer.write { session in
-            try session.saveChannel(payload: self.dummyPayload(with: cid), query: self.query, cache: nil)
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: self.dummyPayload(with: cid, members: [.dummy(user: .dummy(userId: self.memberId))]), query: self.query, cache: nil)
         }
 
         AssertAsync {
@@ -1094,6 +1091,294 @@ final class ChannelListController_Tests: XCTestCase {
         XCTAssert(controller.client === client)
         XCTAssert(client.activeChannelListControllers.count == 1)
         XCTAssert(client.activeChannelListControllers.allObjects.first === controller)
+    }
+
+    // MARK: Predicates
+
+    private func assertFilterPredicate(
+        _ filter: @autoclosure () -> Filter<ChannelListFilterScope>,
+        channelsInDB: @escaping @autoclosure () -> [ChannelPayload],
+        expectedResult: @autoclosure () -> [ChannelId],
+        file: StaticString = #file,
+        line: UInt = #line
+    ) throws {
+        /// Ensure that isChannelAutomaticFilteringEnabled is enabled
+        var config = ChatClientConfig(apiKeyString: .unique)
+        config.isChannelAutomaticFilteringEnabled = true
+        client = ChatClient.mock(config: config)
+
+        let query = ChannelListQuery(
+            filter: filter()
+        )
+        controller = ChatChannelListController(
+            query: query,
+            client: client,
+            environment: env.environment
+        )
+        controllerCallbackQueueID = UUID()
+        controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
+
+        // Simulate `synchronize` call
+        controller.synchronize()
+
+        XCTAssertEqual(controller.channels.map(\.cid), [], file: file, line: line)
+
+        // Simulate changes in the DB:
+        _ = try waitFor { [unowned client] in
+            client?.databaseContainer.write({ [query] session in
+                try channelsInDB().forEach { payload in
+                    try session.saveChannel(payload: payload, query: query, cache: nil)
+                }
+            }, completion: $0)
+        }
+
+        // Assert the resulting value is updated
+        XCTAssertEqual(
+            controller.channels.map(\.cid.rawValue).sorted(),
+            expectedResult().map(\.rawValue).sorted(),
+            file: file,
+            line: line
+        )
+    }
+
+    func test_filterPredicate_equal_containsExpectedItems() throws {
+        let cid = ChannelId.unique
+
+        try assertFilterPredicate(
+            .equal(.name, to: "test"),
+            channelsInDB: [
+                .dummy(channel: .dummy(cid: cid, name: "test")),
+                .dummy(channel: .dummy(name: "test2")),
+                .dummy(channel: .dummy(name: "test3")),
+                .dummy(channel: .dummy(name: "4test"))
+            ],
+            expectedResult: [cid]
+        )
+    }
+
+    func test_filterPredicate_notEqual_containsExpectedItems() throws {
+        let cid = ChannelId.unique
+
+        try assertFilterPredicate(
+            .notEqual(.name, to: "test"),
+            channelsInDB: [
+                .dummy(channel: .dummy(name: "test")),
+                .dummy(channel: .dummy(cid: cid, name: "test2"))
+            ],
+            expectedResult: [cid]
+        )
+    }
+
+    func test_filterPredicate_greater_containsExpectedItems() throws {
+        let cid = ChannelId.unique
+
+        try assertFilterPredicate(
+            .greater(.memberCount, than: 1),
+            channelsInDB: [
+                .dummy(channel: .dummy(cid: cid, members: [.dummy(), .dummy()])),
+                .dummy(channel: .dummy(members: [.dummy()])),
+                .dummy(channel: .dummy(members: []))
+            ],
+            expectedResult: [cid]
+        )
+    }
+
+    func test_filterPredicate_greaterOrEqual_containsExpectedItems() throws {
+        let cid1 = ChannelId.unique
+        let cid2 = ChannelId.unique
+
+        try assertFilterPredicate(
+            .greaterOrEqual(.memberCount, than: 1),
+            channelsInDB: [
+                .dummy(channel: .dummy(cid: cid1, members: [.dummy(), .dummy()])),
+                .dummy(channel: .dummy(cid: cid2, members: [.dummy()])),
+                .dummy(channel: .dummy(members: []))
+            ],
+            expectedResult: [cid1, cid2]
+        )
+    }
+
+    func test_filterPredicate_less_containsExpectedItems() throws {
+        let cid = ChannelId.unique
+
+        try assertFilterPredicate(
+            .less(.memberCount, than: 1),
+            channelsInDB: [
+                .dummy(channel: .dummy(members: [.dummy(), .dummy()])),
+                .dummy(channel: .dummy(members: [.dummy()])),
+                .dummy(channel: .dummy(cid: cid, members: []))
+            ],
+            expectedResult: [cid]
+        )
+    }
+
+    func test_filterPredicate_lessOrEqual_containsExpectedItems() throws {
+        let cid1 = ChannelId.unique
+        let cid2 = ChannelId.unique
+
+        try assertFilterPredicate(
+            .lessOrEqual(.memberCount, than: 1),
+            channelsInDB: [
+                .dummy(channel: .dummy(members: [.dummy(), .dummy()])),
+                .dummy(channel: .dummy(cid: cid1, members: [.dummy()])),
+                .dummy(channel: .dummy(cid: cid2, members: []))
+            ],
+            expectedResult: [cid1, cid2]
+        )
+    }
+
+    func test_filterPredicate_in_containsExpectedItems() throws {
+        let memberId1 = UserId.unique
+        let memberId2 = UserId.unique
+        let cid = ChannelId.unique
+
+        try assertFilterPredicate(
+            .in(.members, values: [memberId1, memberId2]),
+            channelsInDB: [
+                .dummy(channel: .dummy(members: [.dummy(), .dummy()])),
+                .dummy(channel: .dummy(members: [.dummy()])),
+                .dummy(channel: .dummy(cid: cid, members: [.dummy(user: .dummy(userId: memberId1)), .dummy(user: .dummy(userId: memberId2))]))
+            ],
+            expectedResult: [cid]
+        )
+    }
+
+    func test_filterPredicate_notIn_containsExpectedItems() throws {
+        let memberId1 = UserId.unique
+        let memberId2 = UserId.unique
+        let cid1 = ChannelId.unique
+        let cid2 = ChannelId.unique
+        let cid3 = ChannelId.unique
+
+        try assertFilterPredicate(
+            .notIn(.members, values: [memberId1, memberId2]),
+            channelsInDB: [
+                .dummy(channel: .dummy(cid: cid1, members: [.dummy(user: .dummy(userId: memberId1))])),
+                .dummy(channel: .dummy(cid: cid2, members: [.dummy(user: .dummy(userId: memberId2))])),
+                .dummy(channel: .dummy(cid: cid3)),
+                .dummy(channel: .dummy(members: [.dummy(user: .dummy(userId: memberId1)), .dummy(user: .dummy(userId: memberId2))]))
+            ],
+            expectedResult: [cid1, cid2, cid3]
+        )
+    }
+
+    func test_filterPredicate_autocomplete_containsExpectedItems() throws {
+        let cid1 = ChannelId.unique
+        let cid2 = ChannelId.unique
+
+        try assertFilterPredicate(
+            .autocomplete(.name, text: "team"),
+            channelsInDB: [
+                .dummy(channel: .dummy(cid: cid1, name: "teamStream")),
+                .dummy(channel: .dummy(cid: cid2, name: "TeAm_original")),
+                .dummy(channel: .dummy(name: "random"))
+            ],
+            expectedResult: [cid1, cid2]
+        )
+    }
+
+    func test_filterPredicate_contains_containsExpectedItems() throws {
+        let cid1 = ChannelId.unique
+        let cid2 = ChannelId.unique
+
+        try assertFilterPredicate(
+            .contains(.name, value: "te"),
+            channelsInDB: [
+                .dummy(channel: .dummy(name: "streamtEam")),
+                .dummy(channel: .dummy(name: "originalTeam")),
+                .dummy(channel: .dummy(cid: cid1, name: "basketball_team")),
+                .dummy(channel: .dummy(cid: cid2, name: "teamDream")),
+                .dummy(channel: .dummy(name: "TEAM"))
+            ],
+            expectedResult: [cid1, cid2]
+        )
+    }
+
+    func test_filterPredicate_and_containsExpectedItems() throws {
+        let memberId1 = UserId.unique
+        let memberId2 = UserId.unique
+        let cid = ChannelId.unique
+
+        try assertFilterPredicate(
+            .and([
+                .in(.members, values: [memberId1, memberId2]),
+                .contains(.name, value: "team")
+            ]),
+            channelsInDB: [
+                .dummy(channel: .dummy(name: "streamtEam")),
+                .dummy(channel: .dummy(name: "originalTeam")),
+                .dummy(channel: .dummy(name: "basketball_team", members: [.dummy(user: .dummy(userId: memberId2))])),
+                .dummy(channel: .dummy(cid: cid, name: "teamDream", members: [.dummy(user: .dummy(userId: memberId1)), .dummy(user: .dummy(userId: memberId2))])),
+                .dummy(channel: .dummy(name: "TEAM"))
+            ],
+            expectedResult: [cid]
+        )
+    }
+
+    func test_filterPredicate_or_containsExpectedItems() throws {
+        let memberId1 = UserId.unique
+        let memberId2 = UserId.unique
+        let cid1 = ChannelId.unique
+        let cid2 = ChannelId.unique
+        let cid3 = ChannelId.unique
+
+        try assertFilterPredicate(
+            .or([
+                .in(.members, values: [memberId1, memberId2]),
+                .contains(.name, value: "team")
+            ]),
+            channelsInDB: [
+                .dummy(channel: .dummy(cid: cid1, name: "streamOriginal", members: [.dummy(user: .dummy(userId: memberId1)), .dummy(user: .dummy(userId: memberId2))])),
+                .dummy(channel: .dummy(name: "originalTeam")),
+                .dummy(channel: .dummy(cid: cid2, name: "teamDream", members: [.dummy(user: .dummy(userId: memberId1)), .dummy(user: .dummy(userId: memberId2))])),
+                .dummy(channel: .dummy(cid: cid3, name: "team"))
+            ],
+            expectedResult: [cid1, cid2, cid3]
+        )
+    }
+
+    func test_filterPredicate_nor_containsExpectedItems() throws {
+        let memberId1 = UserId.unique
+        let memberId2 = UserId.unique
+        let cid = ChannelId.unique
+
+        try assertFilterPredicate(
+            .nor([
+                .in(.members, values: [memberId1, memberId2]),
+                .contains(.name, value: "team")
+            ]),
+            channelsInDB: [
+                .dummy(channel: .dummy(name: "streamOriginal", members: [.dummy(user: .dummy(userId: memberId1)), .dummy(user: .dummy(userId: memberId2))])),
+                .dummy(channel: .dummy(cid: cid, name: "originalTeam")),
+                .dummy(channel: .dummy(name: "teamDream", members: [.dummy(user: .dummy(userId: memberId1)), .dummy(user: .dummy(userId: memberId2))])),
+                .dummy(channel: .dummy(name: "team"))
+            ],
+            expectedResult: [cid]
+        )
+    }
+
+    func test_filterPredicate_customFilterKey_cannotMatchTheCustomFilterKeySoItIgnoresIt() throws {
+        let memberId1 = UserId.unique
+        let memberId2 = UserId.unique
+        let cid = ChannelId.unique
+
+        try assertFilterPredicate(
+            .and([
+                .in(.members, values: [memberId1, memberId2]),
+                .equal("myBooleanValue", to: true)
+            ]),
+            channelsInDB: [
+                .dummy(
+                    channel: .dummy(
+                        cid: cid,
+                        name: "streamOriginal",
+                        extraData: ["myBooleanValue": false],
+                        members: [.dummy(user: .dummy(userId: memberId1)), .dummy(user: .dummy(userId: memberId2))]
+                    )
+                )
+            ],
+            expectedResult: [cid]
+        )
     }
 }
 

@@ -130,6 +130,7 @@ class AppConfigViewController: UITableViewController {
         case staysConnectedInBackground
         case shouldShowShadowedMessages
         case deletedMessagesVisibility
+        case isChannelAutomaticFilteringEnabled
     }
 
     enum UserConfigOption: String, CaseIterable {
@@ -275,6 +276,11 @@ class AppConfigViewController: UITableViewController {
         case .deletedMessagesVisibility:
             cell.detailTextLabel?.text = chatClientConfig.deletedMessagesVisibility.description
             cell.accessoryType = .disclosureIndicator
+
+        case .isChannelAutomaticFilteringEnabled:
+            cell.accessoryView = makeSwitchButton(chatClientConfig.isChannelAutomaticFilteringEnabled) { [weak self] newValue in
+                self?.chatClientConfig.isChannelAutomaticFilteringEnabled = newValue
+            }
         }
     }
 
@@ -293,6 +299,8 @@ class AppConfigViewController: UITableViewController {
             break
         case .deletedMessagesVisibility:
             makeDeletedMessagesVisibilitySelectorVC()
+        case .isChannelAutomaticFilteringEnabled:
+            break
         }
     }
 

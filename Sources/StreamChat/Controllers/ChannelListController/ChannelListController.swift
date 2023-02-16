@@ -70,7 +70,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     }
 
     private(set) lazy var channelListObserver: ListDatabaseObserverWrapper<ChatChannel, ChannelDTO> = {
-        let request = ChannelDTO.channelListFetchRequest(query: self.query)
+        let request = ChannelDTO.channelListFetchRequest(query: self.query, chatClientConfig: client.config)
         let observer = self.environment.createChannelListDatabaseObserver(
             StreamRuntimeCheck._isBackgroundMappingEnabled,
             client.databaseContainer,
@@ -218,12 +218,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
             }
         }
 
-        do {
-            return try deprecatedFallback() ?? channel.meets(query.filter)
-        } catch {
-            log.error("Unable to resolve complex filter. Please pass a `filter` block when intializing ChatChannelListController")
-        }
-        return true
+        return deprecatedFallback() ?? true
     }
 
     private func handleUnlinkedChannels(_ changes: [ListChange<ChatChannel>]) {
