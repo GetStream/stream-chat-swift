@@ -19,13 +19,17 @@ jobs:
     name: Test E2E UI (Debug)
     strategy:
       matrix:
-        ios: [12.4, 13.7, 14.5, 15.4, latest]
-        device: ["iPhone 8"]
         include:
           - ios: latest
-            device: "iPhone SE (3rd generation)"
-          - ios: latest
-            device: "iPad Air (5th generation)"
+            device: "iPhone 14 Pro Max"
+          - ios: 15.4
+            device: "iPhone 8"
+          - ios: 14.5
+            device: "iPhone SE (2nd generation)"
+          - ios: 13.7
+            device: "iPad Air (3rd generation)"
+          - ios: 12.4
+            device: "iPhone X"
       fail-fast: false
     runs-on: macos-12
     env:
@@ -43,6 +47,7 @@ jobs:
         INSTALL_XCPARSE: true
     - name: Setup iOS ${{ matrix.ios }} Runtime
       if: ${{ matrix.ios != 'latest' }}
+      timeout-minutes: 60
       run: sudo xcodes runtimes install 'iOS ${{ matrix.ios }}'
     - name: Launch Allure TestOps
       run: bundle exec fastlane allure_launch cron:true

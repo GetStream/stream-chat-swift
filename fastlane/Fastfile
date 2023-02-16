@@ -15,7 +15,7 @@ before_all do |lane|
   if is_ci
     setup_ci
     ENV['FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT'] = '180'
-    xcodes(version: xcode_version, select_for_current_build_only: true) unless lane == :publish_release
+    xcodes(version: xcode_version, select_for_current_build_only: true) unless [:publish_release, :allure_launch].include?(lane)
   end
 end
 

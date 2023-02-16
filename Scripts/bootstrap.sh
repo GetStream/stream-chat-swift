@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck source=/dev/null
 # Usage: ./bootstrap.sh
 # This script will:
 #   - install Mint and bootstrap its dependencies
@@ -27,6 +28,8 @@ fi
 set -Eeuo pipefail
 
 trap "echo ; echo ❌ The Bootstrap script failed to finish without error. See the log above to debug. ; echo" ERR
+
+source ./Githubfile
 
 puts "Create git/hooks folder if needed"
 mkdir -p .git/hooks
@@ -70,12 +73,12 @@ fi
 
 if [[ ${INSTALL_ALLURE-default} == true ]]; then
   puts "Install allurectl"
-  DOWNLOAD_URL="https://github.com/allure-framework/allurectl/releases/download/2.2.1/allurectl_darwin_amd64"
+  DOWNLOAD_URL="https://github.com/allure-framework/allurectl/releases/download/${ALLURECTL_VERSION}/allurectl_darwin_amd64"
   curl -sL "${DOWNLOAD_URL}" -o ./fastlane/allurectl
   chmod +x ./fastlane/allurectl
 
   puts "Install xcresults"
-  DOWNLOAD_URL="https://github.com/eroshenkoam/xcresults/releases/download/1.12.0/xcresults"
+  DOWNLOAD_URL="https://github.com/eroshenkoam/xcresults/releases/download/${XCRESULTS_VERSION}/xcresults"
   curl -sL "${DOWNLOAD_URL}" -o ./fastlane/xcresults
   chmod +x ./fastlane/xcresults
 fi
