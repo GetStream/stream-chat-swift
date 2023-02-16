@@ -55,49 +55,73 @@ let compoundFilter: Filter<ChannelListFilterScope> = .and([
 The `query.sort` is an array of sorting options. Sorting options are applied based on their order in the array so the first option has the highest impact while the others are used mainly as a tiebreakers. By default, the channel list is sorted by `updated_at`.
 
 ### 2. Create a controller
-#### With auto Channel Filtering
-The controller can be created using `ChatClient`:
+The simplest way to create a controller is by using the static method `channelListController(query:)` on your `ChatClient`.
 ```swift
 let controller = ChatClient.shared.channelListController(query: query)
 ```
-The behaviour is controlled from the `ChatClientConfig` and more specifically the `isChannelAutomaticFilteringEnabled` flag. 
+By default, the SDK will automatically handle filtering the channels as they get created. Whenever there is a web socket event that a channel has been created, the SDK will only insert it in the channel list if it matches the query.
 
-When the flag is enabled (`true`), then the new/updated channels are being filtered automatically, by matching the `query.filter`.
-By default, the SDK will handle filtering the channels as they get updated and will only return to the controller **only** the channels that match the provider `query.filter`. 
-This means, that the controller always receives channels that match its `query.filter` and then the controller is responsible for deciding if the channels need to be linked/unlinked.
-
-When the flag is disabled (`false`), then the new/updated channels won't be filtered as the arrive, and the controller will be responsible for filtering them first and confirm that they
-match its `query.filter` and then decide if the filtered channels need to be linked/unlinked.
-
-:::warning
-Custom filters are not currently supported. If you are already defining and using your own filters, then the initialization option `With Channel filtering closure` will be a better fit more your needs.
+:::note
+In cases though, where the query provided contains, extra data or custom filters, **the SDK may not be able to automatically match the filter query**. In this case, you will need to provide a filtering closure.
 :::
 
-#### With Channel filtering closure
+#### Filtering with extra data
+First we need to disable the Channel auto-filtering. We can do that by turning the `isChannelAutomaticFilteringEnabled` in your `ChatClient` configuration, to `false`.
+```swift
+extension ChatClient {
+    static let shared: ChatClient = {
+        // You can grab your API Key from https://getstream.io/dashboard/
+        var config = ChatClientConfig(apiKeyString: "<# Your API Key Here #>")
+        config.isChannelAutomaticFilteringEnabled = false
+
+        // Create an instance of the `ChatClient` with the given config
+        let client = ChatClient(config: config)
+
+        return client
+    }()
+}
+```
+Then, we will need to provide to our ChannelController a filtering closure. We can achieve this with the code below:
 ```swift
 let controller = ChatClient.shared.channelListController(query: query, filter: { channel in
-    // the filtering logic goes here.
-    return true
+    // We are filtering for channels that:
+    // 1. The current is user is a member
+    // 2. A value exists for the extraData key `myCustomBooleanKey` and this value is `true`
+    return channel.membership != nil 
+        && channel.extraData["myCustomBooleanKey"] as? Bool == true
 })
 ```
+#### Filtering with custom filters
+In the case where you have defined and use your own filters and the Channel auto-filtering doesn't work as you expected it to, you can provide your own filtering logic. Similarly with the extra data filtering, we should firstly disable the Channel auto-filtering, by turning `isChannelAutomaticFilteringEnabled` in your `ChatClient` configuration, to `false`.
+```swift
+extension ChatClient {
+    static let shared: ChatClient = {
+        // You can grab your API Key from https://getstream.io/dashboard/
+        var config = ChatClientConfig(apiKeyString: "<# Your API Key Here #>")
+        config.isChannelAutomaticFilteringEnabled = false
 
-The `filter` closure is needed to dynamically link/unlink channels to the list during the controller's lifecycle to keep the list in sync with the remote:
+        // Create an instance of the `ChatClient` with the given config
+        let client = ChatClient(config: config)
 
-When `filter` returns `true`, the new/updated channel is linked/stays linked to the channel list
+        return client
+    }()
+}
+```
+Then, we will need to provide to our ChannelController a filtering closure. We can achieve this with the code below:
+```swift
+// We want to filter for channels where the current user has read at least one message
+let currentUserId = ...
 
-When `filter` returns `false`, the new/updated channel is not linked/is unlinked from the channel list.
+// We first build the query
+let query = ChannelListQuery(filter: .in(FilterKey<ChannelListFilterScope, UserId>(rawValue: "reads.user.id"), values: [currentUserId]))
 
-:::note
-It is expected that the logic on the `filter` closure matches the one in `query.filter`.
-:::
-
-:::note
-Given the complex nature of `Filter`, having generic logic capable of using `query.filter` at runtime to determine if a channel meets the criteria is extremely expensive and complex. Instead, having a block that checks for the particular needs of the use case is much cheaper.
-:::
-
-:::note
-`isChannelAutomaticFilteringEnabled` can be combined with the filter closure and allow easier handling for complicated filters (for example, when the filter contains extra data properties)
-:::
+// Then we use the created query to create the ChannelListController
+let controller = ChatClient.shared.channelListController(query: query, filter: { channel in
+    return channel.reads.first(where: { read in 
+        read.user.id == currentUserId
+    }) != nil
+})
+```
 
 ### 3. Set the delegate
 

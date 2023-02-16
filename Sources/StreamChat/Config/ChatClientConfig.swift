@@ -35,10 +35,10 @@ public struct ChatClientConfig {
     }()
 
     static func initLocalStorageFolderURL(groupIdentifier: String?) -> URL? {
-        #if os(macOS)
+#if os(macOS)
         let urls = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)
         return urls.first.map { $0.appendingPathComponent("io.getstream.StreamChat") }
-        #else
+#else
         if let groupIdentifier = groupIdentifier {
             if let url = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: groupIdentifier) {
                 return url
@@ -49,7 +49,7 @@ public struct ChatClientConfig {
                 )
         }
         return FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
-        #endif
+#endif
     }
 
     /// The datacenter `ChatClient` uses for connecting.
@@ -85,8 +85,8 @@ public struct ChatClientConfig {
     /// Is `true` by default.
     @available(
         *,
-        deprecated,
-        message: "This flag has no effect anymore. The flow for setting and for connecting the user has been unified to the `connectUser` set of methods."
+         deprecated,
+         message: "This flag has no effect anymore. The flow for setting and for connecting the user has been unified to the `connectUser` set of methods."
     )
     public var shouldConnectAutomatically = true
 
@@ -183,8 +183,8 @@ public struct ChatClientConfig {
     public var timeoutIntervalForRequest: TimeInterval = 30
 
     /// Enable/Disable local filtering for Channel lists. When enabled,
-    /// the `ChannelDTO` will include the filter's predicate (if available)
-    /// in the fetchRequest.
+    /// whenever a new channel is created,/updated the SDK will try to
+    /// match the channel list filter automatically in the fetchRequest.
     public var isChannelAutomaticFilteringEnabled: Bool = true
 
     public init(apiKey: APIKey) {
