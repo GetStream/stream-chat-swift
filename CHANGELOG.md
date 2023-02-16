@@ -11,8 +11,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add support for automatically filtering channels in the Channel List [#2488](https://github.com/GetStream/stream-chat-swift/pull/2488)
 - Add `isChannelAutomaticFilteringEnabled` in `ChatClientConfig` to allow changing whether the Channels in ChannelList will be automatically filtered [#2488](https://github.com/GetStream/stream-chat-swift/pull/2488)
 
-### 🔄 Changed
-- Remove unused ReactionNotificationContent [#2485](https://github.com/GetStream/stream-chat-swift/pull/2485)
 
 ### 🔄 Changed
 - Remove unused ReactionNotificationContent [#2485](https://github.com/GetStream/stream-chat-swift/pull/2485)
