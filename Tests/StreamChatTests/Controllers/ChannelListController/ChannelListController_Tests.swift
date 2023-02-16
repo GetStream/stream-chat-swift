@@ -1356,6 +1356,30 @@ final class ChannelListController_Tests: XCTestCase {
             expectedResult: [cid]
         )
     }
+
+    func test_filterPredicate_customFilterKey_cannotMatchTheCustomFilterKeySoItIgnoresIt() throws {
+        let memberId1 = UserId.unique
+        let memberId2 = UserId.unique
+        let cid = ChannelId.unique
+
+        try assertFilterPredicate(
+            .and([
+                .in(.members, values: [memberId1, memberId2]),
+                .equal("myBooleanValue", to: true)
+            ]),
+            channelsInDB: [
+                .dummy(
+                    channel: .dummy(
+                        cid: cid,
+                        name: "streamOriginal",
+                        extraData: ["myBooleanValue": false],
+                        members: [.dummy(user: .dummy(userId: memberId1)), .dummy(user: .dummy(userId: memberId2))]
+                    )
+                )
+            ],
+            expectedResult: [cid]
+        )
+    }
 }
 
 private class TestEnvironment {

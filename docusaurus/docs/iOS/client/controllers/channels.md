@@ -55,17 +55,36 @@ let compoundFilter: Filter<ChannelListFilterScope> = .and([
 The `query.sort` is an array of sorting options. Sorting options are applied based on their order in the array so the first option has the highest impact while the others are used mainly as a tiebreakers. By default, the channel list is sorted by `updated_at`.
 
 ### 2. Create a controller
-The simplest way to create a controller is by using the static method `channelListController(query:)` on your `ChatClient`.
+The simplest way to create a controller is by using the method `channelListController(query:)` on your `ChatClient`.
 ```swift
 let controller = ChatClient.shared.channelListController(query: query)
 ```
 By default, the SDK will automatically handle filtering the channels as they get created. Whenever there is a web socket event that a channel has been created, the SDK will only insert it in the channel list if it matches the query.
 
 :::note
-In cases though, where the query provided contains, extra data or custom filters, **the SDK may not be able to automatically match the filter query**. In this case, you will need to provide a filtering closure.
+In cases, though, where the query provided contains extra data or custom filters, **the SDK may not be able to automatically match the filter query**. In this case, you will need to provide a filtering closure.
 :::
 
 #### Filtering with extra data
+Currently the SDK doesn't support filtering on values in the extra data dictionary. In this case, we will need to evaluate manually the part of the query that checks the dictionary. In the code below you can see an example:
+:::note
+Notice how we are only evaluating manually, the part of the query regarding the `myCustomBooleanKey`. The rest of the query has been already evaluated by the SDK and the results have been partially filtered.
+:::
+```swift
+let controller = ChatClient.shared.channelListController(query: .and([
+    .containMembers(userIds: [currentUserId]),
+    .equal(.type, to: .messaging),
+    .equals("myCustomBooleanKey", value: true)
+]), filter: { channel in
+    // The channel is guaranteed to:
+    // 1. contain a member with id the currentUserId
+    // 2. have type == `.messaging` 
+    // We are filtering for channels that a value exists for the extraData 
+    // key `myCustomBooleanKey` and this value is `true`
+    return channel.extraData["myCustomBooleanKey"] as? Bool == true
+})
+```
+#### Manual Filtering
 First we need to disable the Channel auto-filtering. We can do that by turning the `isChannelAutomaticFilteringEnabled` in your `ChatClient` configuration, to `false`.
 ```swift
 extension ChatClient {
@@ -73,53 +92,28 @@ extension ChatClient {
         // You can grab your API Key from https://getstream.io/dashboard/
         var config = ChatClientConfig(apiKeyString: "<# Your API Key Here #>")
         config.isChannelAutomaticFilteringEnabled = false
-
         // Create an instance of the `ChatClient` with the given config
         let client = ChatClient(config: config)
-
         return client
     }()
 }
 ```
 Then, we will need to provide to our ChannelController a filtering closure. We can achieve this with the code below:
 ```swift
-let controller = ChatClient.shared.channelListController(query: query, filter: { channel in
-    // We are filtering for channels that:
-    // 1. The current is user is a member
-    // 2. A value exists for the extraData key `myCustomBooleanKey` and this value is `true`
-    return channel.membership != nil 
+let controller = ChatClient.shared.channelListController(query: .and([
+    .containMembers(userIds: [currentUserId]),
+    .equal(.type, to: .messaging),
+    .equals("myCustomBooleanKey", value: true)
+]), filter: { channel in
+    // As we have disabled the auto-filtering, the SDK will not try to match
+    // the channels in the filter and instead will forward them to the 
+    // filter closure where we are expected to apply our custom 
+    // filtering logic.
+    // 
+    // In this case, we need to evaluate manually all parts of the filter.
+    return channel.members.map(\user.id).contains(currentUserId) 
+        && channel.type == .messaging,
         && channel.extraData["myCustomBooleanKey"] as? Bool == true
-})
-```
-#### Filtering with custom filters
-In the case where you have defined and use your own filters and the Channel auto-filtering doesn't work as you expected it to, you can provide your own filtering logic. Similarly with the extra data filtering, we should firstly disable the Channel auto-filtering, by turning `isChannelAutomaticFilteringEnabled` in your `ChatClient` configuration, to `false`.
-```swift
-extension ChatClient {
-    static let shared: ChatClient = {
-        // You can grab your API Key from https://getstream.io/dashboard/
-        var config = ChatClientConfig(apiKeyString: "<# Your API Key Here #>")
-        config.isChannelAutomaticFilteringEnabled = false
-
-        // Create an instance of the `ChatClient` with the given config
-        let client = ChatClient(config: config)
-
-        return client
-    }()
-}
-```
-Then, we will need to provide to our ChannelController a filtering closure. We can achieve this with the code below:
-```swift
-// We want to filter for channels where the current user has read at least one message
-let currentUserId = ...
-
-// We first build the query
-let query = ChannelListQuery(filter: .in(FilterKey<ChannelListFilterScope, UserId>(rawValue: "reads.user.id"), values: [currentUserId]))
-
-// Then we use the created query to create the ChannelListController
-let controller = ChatClient.shared.channelListController(query: query, filter: { channel in
-    return channel.reads.first(where: { read in 
-        read.user.id == currentUserId
-    }) != nil
 })
 ```
 
