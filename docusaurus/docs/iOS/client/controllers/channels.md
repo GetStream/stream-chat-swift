@@ -81,7 +81,7 @@ let controller = ChatClient.shared.channelListController(query: .and([
     // 2. have type == `.messaging` 
     // We are filtering for channels that a value exists for the extraData 
     // key `myCustomBooleanKey` and this value is `true`
-    return channel.extraData["myCustomBooleanKey"] as? Bool == true
+    return channel.extraData["myCustomBooleanKey"]?.boolValue == true
 })
 ```
 #### Manual Filtering
@@ -113,7 +113,7 @@ let controller = ChatClient.shared.channelListController(query: .and([
     // In this case, we need to evaluate manually all parts of the filter.
     return channel.members.map(\user.id).contains(currentUserId) 
         && channel.type == .messaging,
-        && channel.extraData["myCustomBooleanKey"] as? Bool == true
+        && channel.extraData["myCustomBooleanKey"]?.boolValue == true
 })
 ```
 
