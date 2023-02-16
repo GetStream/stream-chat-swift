@@ -20,6 +20,9 @@ _February 16, 2023_
 ### 🔄 Changed
 - Remove unused ReactionNotificationContent [#2485](https://github.com/GetStream/stream-chat-swift/pull/2485)
 
+### 🐞 Fixed
+- Fix channel unread count not updating when in foreground and notification extension is saving messages [#2481](https://github.com/GetStream/stream-chat-swift/pull/2481)
+
 ## StreamChatUI
 ### 🔄 Changed
 - Deprecates `ChatMessageGalleryView.UploadingOverlay` in favor of `UploadingOverlayView` (Renaming) [#2457](https://github.com/GetStream/stream-chat-swift/pull/2457)
