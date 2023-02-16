@@ -14,6 +14,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🔄 Changed
 - Remove unused ReactionNotificationContent [#2485](https://github.com/GetStream/stream-chat-swift/pull/2485)
 
+### 🔄 Changed
+- Remove unused ReactionNotificationContent [#2485](https://github.com/GetStream/stream-chat-swift/pull/2485)
+
 ## StreamChatUI
 ### 🔄 Changed
 - Deprecates `ChatMessageGalleryView.UploadingOverlay` in favor of `UploadingOverlayView` (Renaming) [#2457](https://github.com/GetStream/stream-chat-swift/pull/2457)
