@@ -136,14 +136,48 @@ lane :merge_main_to_develop do
   sh('git push')
 end
 
+desc 'Compresses the XCFrameworks into zip files'
+lane :compress_frameworks do
+  Dir.chdir('..') do
+    FileUtils.cp('LICENSE', 'Products/LICENSE')
+    Dir.chdir('Products') do
+      sh('zip -r "StreamChat-All" ./*.xcframework ./LICENSE')
+      sh('zip -r "StreamChat" ./StreamChat.xcframework ./LICENSE')
+      sh('zip -r "StreamChatUI" ./StreamChatUI.xcframework ./LICENSE')
+      sh('swift package compute-checksum StreamChat.zip')
+      sh('swift package compute-checksum StreamChatUI.zip')
+    end
+  end
+end
+
+desc 'Cleans Products and DerivedData folders'
+lane :clean_products_and_derived_data do
+  Dir.chdir('..') do
+    FileUtils.rm_rf(
+      %w[
+        DerivedData
+        Products/*.xcframework
+        Products/*.bundle
+        Products/*.BCSymbolMaps
+        Products/*.dSYMs
+        Products/LICENSE
+      ]
+    )
+    FileUtils.mkdir_p(%w[Products DerivedData])
+  end
+end
+
 desc 'Completes an SDK Release'
 lane :publish_release do |options|
   version = options[:version] || ''
   UI.user_error!('You need to pass the version of the release') unless version.length > 0
 
   # Create XCFrameworks
-  xcversion(version: xcode_version)
-  sh('cd .. && make frameworks')
+  xcversion(version: '13.0')
+  clean_products_and_derived_data
+  build_xcframeworks
+  compress_frameworks
+  clean_products_and_derived_data
 
   changes = read_changelog(version: version)
 
