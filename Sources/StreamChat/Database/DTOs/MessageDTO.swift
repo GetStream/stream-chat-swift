@@ -719,7 +719,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         //
         // The current message can stop being a valid preview e.g.
         // if it didn't pass moderation and obtained `error` type.
-        if payload.id == channelDTO.previewMessage?.id, let preview = preview(for: cid), payload.id == preview.id {
+        if payload.id == channelDTO.previewMessage?.id, let preview = preview(for: cid) {
             channelDTO.previewMessage = preview
         }
 
