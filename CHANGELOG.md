@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.27.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.27.0)
+_February 16, 2023_
+
 ## StreamChat
 ### ✅ Added
 - Add `UploadedAttachmentPostProcessor` in `ChatClientConfig` to allow changing custom attachment payloads after an attachment has been uploaded [#2457](https://github.com/GetStream/stream-chat-swift/pull/2457)
@@ -14,6 +19,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### 🔄 Changed
 - Remove unused ReactionNotificationContent [#2485](https://github.com/GetStream/stream-chat-swift/pull/2485)
+
+### 🐞 Fixed
+- Fix channel unread count not updating when in foreground and notification extension is saving messages [#2481](https://github.com/GetStream/stream-chat-swift/pull/2481)
 
 ## StreamChatUI
 ### 🔄 Changed
