@@ -141,11 +141,11 @@ lane :compress_frameworks do
   Dir.chdir('..') do
     FileUtils.cp('LICENSE', 'Products/LICENSE')
     Dir.chdir('Products') do
+      ['StreamChat', 'StreamChatUI'].each do |framework|
+        sh("zip -r #{framework} ./#{framework}.xcframework ./LICENSE")
+        sh("swift package compute-checksum #{framework}.zip")
+      end
       sh('zip -r "StreamChat-All" ./*.xcframework ./LICENSE')
-      sh('zip -r "StreamChat" ./StreamChat.xcframework ./LICENSE')
-      sh('zip -r "StreamChatUI" ./StreamChatUI.xcframework ./LICENSE')
-      sh('swift package compute-checksum StreamChat.zip')
-      sh('swift package compute-checksum StreamChatUI.zip')
     end
   end
 end
