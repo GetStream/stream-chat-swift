@@ -136,14 +136,40 @@ lane :merge_main_to_develop do
   sh('git push')
 end
 
+desc 'Compresses the XCFrameworks into zip files'
+lane :compress_frameworks do
+  Dir.chdir('..') do
+    FileUtils.cp('LICENSE', 'Products/LICENSE')
+    Dir.chdir('Products') do
+      ['StreamChat', 'StreamChatUI'].each do |framework|
+        sh("zip -r #{framework} ./#{framework}.xcframework ./LICENSE")
+        sh("swift package compute-checksum #{framework}.zip")
+      end
+      sh('zip -r "StreamChat-All" ./*.xcframework ./LICENSE')
+    end
+  end
+end
+
+desc 'Cleans Products and DerivedData folders'
+lane :clean_products do
+  Dir.chdir('..') do
+    ['*.xcframework', '*.bundle', '*.BCSymbolMaps', '*.dSYMs', 'LICENSE'].each do |f|
+      sh("rm -rf Products/#{f}") # FileUtils.rm_rf does not work from Makefile, using sh instead
+    end
+  end
+end
+
 desc 'Completes an SDK Release'
 lane :publish_release do |options|
   version = options[:version] || ''
   UI.user_error!('You need to pass the version of the release') unless version.length > 0
 
   # Create XCFrameworks
-  xcversion(version: xcode_version)
-  sh('cd .. && make frameworks')
+  xcversion(version: '13.0')
+  clean_products
+  build_xcframeworks
+  compress_frameworks
+  clean_products
 
   changes = read_changelog(version: version)
 
