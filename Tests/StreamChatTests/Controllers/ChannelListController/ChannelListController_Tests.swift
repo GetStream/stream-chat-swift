@@ -1387,6 +1387,8 @@ final class ChannelListController_Tests: XCTestCase {
 
         try assertFilterPredicate(
             .and([
+                /// Type's filter-key has value type of ChannelType. The stored value in DB though, is a String.
+                /// The filter-key provides a value mapper that transforms the ChannelType into the DB Type (String)
                 .equal(.type, to: .custom("test")),
                 .containMembers(userIds: [memberId])
             ]),
