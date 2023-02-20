@@ -2,6 +2,11 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
+
+### 🔄 Changed
+
+# [4.27.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.27.1)
+_February 20, 2023_
 ## StreamChat
 ### 🐞 Fixed
 - Fix channel auto-filtering when the filter contains the `type` key [#2497](https://github.com/GetStream/stream-chat-swift/pull/2497)
