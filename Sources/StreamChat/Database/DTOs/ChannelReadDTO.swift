@@ -124,6 +124,22 @@ extension NSManagedObjectContext {
         }
     }
 
+    func markChannelAsUnread(from messageId: MessageId, cid: ChannelId, by userId: UserId) {
+        guard let read = loadChannelRead(cid: cid, userId: userId),
+              let message = self.message(id: messageId) else {
+            return
+        }
+
+        let createdAtFrom = message.createdAt
+        read.lastReadAt = message.createdAt
+        let messages = MessageDTO.loadOtherUserMessages(
+            in: read.channel.cid,
+            createdAtFrom: createdAtFrom.bridgeDate,
+            context: self
+        )
+        read.unreadMessageCount = Int32(messages.count)
+    }
+
     func markChannelAsUnread(cid: ChannelId, by userId: UserId) {
         guard let read = loadChannelRead(cid: cid, userId: userId) else { return }
 

@@ -222,6 +222,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
     /// The worker used to fetch the remote data and communicate with servers.
     private lazy var updater: ChannelUpdater = self.environment.channelUpdaterBuilder(
+        client.channelRepository,
         client.callRepository,
         client.databaseContainer,
         client.apiClient
@@ -1356,6 +1357,7 @@ public extension ChatChannelController {
 extension ChatChannelController {
     struct Environment {
         var channelUpdaterBuilder: (
+            _ channelRepository: ChannelRepository,
             _ callRepository: CallRepository,
             _ database: DatabaseContainer,
             _ apiClient: APIClient

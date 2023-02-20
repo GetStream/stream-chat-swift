@@ -6,9 +6,11 @@ import Foundation
 
 /// Makes a channel query call to the backend and updates the local storage with the results.
 class ChannelUpdater: Worker {
+    private let channelRepository: ChannelRepository
     private let callRepository: CallRepository
 
-    init(callRepository: CallRepository, database: DatabaseContainer, apiClient: APIClient) {
+    init(channelRepository: ChannelRepository, callRepository: CallRepository, database: DatabaseContainer, apiClient: APIClient) {
+        self.channelRepository = channelRepository
         self.callRepository = callRepository
         super.init(database: database, apiClient: apiClient)
     }
@@ -349,12 +351,15 @@ class ChannelUpdater: Worker {
     ///   - cid: Channel id of the channel to be marked as read
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func markRead(cid: ChannelId, userId: UserId, completion: ((Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .markRead(cid: cid)) { [weak self] in
-            self?.database.write { (session) in
-                session.markChannelAsRead(cid: cid, userId: userId, at: .init())
-            }
-            completion?($0.error)
-        }
+        channelRepository.markRead(cid: cid, userId: userId, completion: completion)
+    }
+
+    /// Marks a channel as read
+    /// - Parameters:
+    ///   - cid: Channel id of the channel to be marked as read
+    ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    func markUnread(from messageId: MessageId, cid: ChannelId, userId: UserId, completion: ((Error?) -> Void)? = nil) {
+        channelRepository.markUnread(from: messageId, cid: cid, userId: userId, completion: completion)
     }
 
     ///

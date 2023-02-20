@@ -1207,6 +1207,8 @@
 		BDDD1EAC2632E32000BA007B /* AppearanceProvider_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDDD1EAB2632E32000BA007B /* AppearanceProvider_Tests.swift */; };
 		BDDD1EAE2632E6C200BA007B /* Appearance+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDDD1EAD2632E6C200BA007B /* Appearance+SwiftUI_Tests.swift */; };
 		BDEB9417268211EC00928AF1 /* ChatMessageListUnreadCountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDEB9416268211EC00928AF1 /* ChatMessageListUnreadCountView.swift */; };
+		C10C7552299D1D67008C8F78 /* ChannelRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10C7551299D1D67008C8F78 /* ChannelRepository.swift */; };
+		C10C7553299D1D67008C8F78 /* ChannelRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10C7551299D1D67008C8F78 /* ChannelRepository.swift */; };
 		C111B5B628CF3B1200C79D53 /* BackgroundListDatabaseObserver_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C111B5B528CF3B1200C79D53 /* BackgroundListDatabaseObserver_Tests.swift */; };
 		C111B5B828CF871E00C79D53 /* ListDatabaseObserverWrapper_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C111B5B728CF871E00C79D53 /* ListDatabaseObserverWrapper_Tests.swift */; };
 		C11BAA4D2907EC7B004C5EA4 /* AuthenticationRepository_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C11BAA4C2907EC7B004C5EA4 /* AuthenticationRepository_Tests.swift */; };
@@ -3424,6 +3426,7 @@
 		BDDD1EAB2632E32000BA007B /* AppearanceProvider_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppearanceProvider_Tests.swift; sourceTree = "<group>"; };
 		BDDD1EAD2632E6C200BA007B /* Appearance+SwiftUI_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Appearance+SwiftUI_Tests.swift"; sourceTree = "<group>"; };
 		BDEB9416268211EC00928AF1 /* ChatMessageListUnreadCountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageListUnreadCountView.swift; sourceTree = "<group>"; };
+		C10C7551299D1D67008C8F78 /* ChannelRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelRepository.swift; sourceTree = "<group>"; };
 		C111B5B528CF3B1200C79D53 /* BackgroundListDatabaseObserver_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundListDatabaseObserver_Tests.swift; sourceTree = "<group>"; };
 		C111B5B728CF871E00C79D53 /* ListDatabaseObserverWrapper_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListDatabaseObserverWrapper_Tests.swift; sourceTree = "<group>"; };
 		C11BAA4C2907EC7B004C5EA4 /* AuthenticationRepository_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationRepository_Tests.swift; sourceTree = "<group>"; };
@@ -7508,6 +7511,7 @@
 				C1EE5AA228B63CA300DD5D27 /* CallRepository.swift */,
 				88206FC325B18C88009D086A /* ConnectionRepository.swift */,
 				C1B0B38527BFE8AB00C8207D /* MessageRepository.swift */,
+				C10C7551299D1D67008C8F78 /* ChannelRepository.swift */,
 				C143788B27BBEBA000E23965 /* OfflineRequestsRepository.swift */,
 				C186BFAE27AADB410099CCA6 /* SyncOperations.swift */,
 				C1E8AD55278C8A440041B775 /* SyncRepository.swift */,
@@ -9557,6 +9561,7 @@
 				88BEBCD32536FD7600D9E8B7 /* MemberListController+Combine.swift in Sources */,
 				888E8C36252B2AAF00195E03 /* UserController+SwiftUI.swift in Sources */,
 				C143789027BC03EE00E23965 /* EndpointPath.swift in Sources */,
+				C10C7552299D1D67008C8F78 /* ChannelRepository.swift in Sources */,
 				790A4C45252DD4F1001F4A23 /* DevicePayloads.swift in Sources */,
 				C1FC2F902742579D0062530F /* NativeEngine.swift in Sources */,
 				792A4F39247FFACB00EAF71D /* WebSocketEngine.swift in Sources */,
@@ -10273,6 +10278,7 @@
 				C121E8C7274544B100023E4C /* ChannelListQuery.swift in Sources */,
 				C121E8C8274544B100023E4C /* UserListQuery.swift in Sources */,
 				C121E8C9274544B100023E4C /* MessageSearchQuery.swift in Sources */,
+				C10C7553299D1D67008C8F78 /* ChannelRepository.swift in Sources */,
 				C121E8CA274544B100023E4C /* QueryOptions.swift in Sources */,
 				C121E8CB274544B100023E4C /* ChannelQuery.swift in Sources */,
 				C121E8CC274544B100023E4C /* Filter.swift in Sources */,

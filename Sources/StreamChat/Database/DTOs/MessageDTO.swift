@@ -280,6 +280,15 @@ class MessageDTO: NSManagedObject {
         return .init(andPredicateWithSubpredicates: subpredicates)
     }
 
+    private static func sentMessagesPredicate(for cid: String) -> NSPredicate {
+        NSCompoundPredicate(andPredicateWithSubpredicates: [
+            channelPredicate(with: cid),
+            messageSentPredicate(),
+            nonTruncatedMessagesPredicate(),
+            nonDeletedMessagesPredicate()
+        ])
+    }
+
     /// Returns a fetch request for messages from the channel with the provided `cid`.
     static func messagesFetchRequest(
         for cid: ChannelId,
@@ -412,13 +421,27 @@ class MessageDTO: NSManagedObject {
         context: NSManagedObjectContext
     ) -> [MessageDTO] {
         let subpredicates: [NSPredicate] = [
-            channelPredicate(with: cid),
+            sentMessagesPredicate(for: cid),
             .init(format: "user.currentUser != nil"),
             .init(format: "createdAt > %@", createdAtFrom.bridgeDate),
-            .init(format: "createdAt <= %@", createdAtThrough.bridgeDate),
-            messageSentPredicate(),
-            nonTruncatedMessagesPredicate(),
-            nonDeletedMessagesPredicate()
+            .init(format: "createdAt <= %@", createdAtThrough.bridgeDate)
+        ]
+
+        let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: false)]
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: subpredicates)
+
+        return (try? context.fetch(request)) ?? []
+    }
+
+    static func loadOtherUserMessages(
+        in cid: String,
+        createdAtFrom: Date,
+        context: NSManagedObjectContext
+    ) -> [MessageDTO] {
+        var subpredicates: [NSPredicate] = [
+            sentMessagesPredicate(for: cid),
+            .init(format: "createdAt >= %@", createdAtFrom.bridgeDate)
         ]
 
         let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
