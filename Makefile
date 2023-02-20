@@ -12,19 +12,20 @@ all_artifacts:
 	open ./Products
 	echo "🏁 Ended at $$(date +%T)"
 
-frameworks:
-	bundle exec fastlane clean_products
+frameworks: clean
 	echo "👉 Creating dynamic libraries. Will take a while... Logs available: fastlane/fastlane.log"
 	bundle exec fastlane build_xcframeworks > fastlane/fastlane.log
 	bundle exec fastlane compress_frameworks
-	bundle exec fastlane clean_products
+	make clean
 
-static_libraries:
-	bundle exec fastlane clean_products
+static_libraries: clean
 	echo "👉 Creating static libraries"
 	./Scripts/buildStaticLibraries.sh
 	echo "👉 Creating compressed archive"
 	make zip_artifacts name="StreamChat-All-Static" pattern='./*.xcframework ./*.bundle'
+	make clean
+
+clean:
 	bundle exec fastlane clean_products
 
 zip_artifacts:
