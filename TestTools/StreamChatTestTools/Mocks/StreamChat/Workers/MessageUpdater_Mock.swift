@@ -30,6 +30,7 @@ final class MessageUpdater_Mock: MessageUpdater {
     @Atomic var createNewReply_showReplyInChannel: Bool?
     @Atomic var createNewReply_isSilent: Bool?
     @Atomic var createNewReply_skipPush: Bool?
+    @Atomic var createNewReply_skipEnrichUrl: Bool?
     @Atomic var createNewReply_quotedMessageId: MessageId?
     @Atomic var createNewReply_pinning: MessagePinning?
     @Atomic var createNewReply_extraData: [String: RawJSON]?
@@ -114,6 +115,7 @@ final class MessageUpdater_Mock: MessageUpdater {
         createNewReply_showReplyInChannel = nil
         createNewReply_isSilent = nil
         createNewReply_skipPush = nil
+        createNewReply_skipEnrichUrl = nil
         createNewReply_extraData = nil
         createNewReply_completion = nil
 
@@ -215,6 +217,7 @@ final class MessageUpdater_Mock: MessageUpdater {
         isSilent: Bool,
         quotedMessageId: MessageId?,
         skipPush: Bool,
+        skipEnrichUrl: Bool,
         extraData: [String: RawJSON],
         completion: ((Result<MessageId, Error>) -> Void)? = nil
     ) {
@@ -228,6 +231,7 @@ final class MessageUpdater_Mock: MessageUpdater {
         createNewReply_showReplyInChannel = showReplyInChannel
         createNewReply_isSilent = isSilent
         createNewReply_skipPush = skipPush
+        createNewReply_skipEnrichUrl = skipEnrichUrl
         createNewReply_quotedMessageId = quotedMessageId
         createNewReply_pinning = pinning
         createNewReply_extraData = extraData

@@ -248,6 +248,7 @@ public extension ChatMessageController {
     ///   in the response thread.
     ///   - quotedMessageId: An id of the message new message quotes. (inline reply)
     ///   - skipPush: If true, skips sending push notification to channel members.
+    ///   - skipEnrichUrl: If true, skips url enriching.
     ///   - extraData: Additional extra data of the message object.
     ///   - completion: Called when saving the message to the local DB finishes.
     ///
@@ -260,6 +261,7 @@ public extension ChatMessageController {
         isSilent: Bool = false,
         quotedMessageId: MessageId? = nil,
         skipPush: Bool = false,
+        skipEnrichUrl: Bool = false,
         extraData: [String: RawJSON] = [:],
         completion: ((Result<MessageId, Error>) -> Void)? = nil
     ) {
@@ -276,6 +278,7 @@ public extension ChatMessageController {
             isSilent: isSilent,
             quotedMessageId: quotedMessageId,
             skipPush: skipPush,
+            skipEnrichUrl: skipEnrichUrl,
             extraData: extraData
         ) { result in
             self.callback {

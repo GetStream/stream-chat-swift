@@ -6,7 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - Fix channel auto-filtering when the filter contains the `type` key [#2497](https://github.com/GetStream/stream-chat-swift/pull/2497)
 
-### 🔄 Changed
+## StreamChat
+### ✅ Added
+- Add support for `skip_enrich_url` when sending a message [#2498](https://github.com/GetStream/stream-chat-swift/pull/2498)
 
 # [4.27.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.27.0)
 _February 16, 2023_

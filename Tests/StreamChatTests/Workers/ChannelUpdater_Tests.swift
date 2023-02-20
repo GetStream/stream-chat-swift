@@ -480,6 +480,7 @@ final class ChannelUpdater_Tests: XCTestCase {
                 mentionedUserIds: [currentUserId],
                 quotedMessageId: nil,
                 skipPush: true,
+                skipEnrichUrl: true,
                 extraData: extraData
             ) { result in
                 do {
@@ -499,6 +500,7 @@ final class ChannelUpdater_Tests: XCTestCase {
             database.viewContext.message(id: newMessageId)
         )
         XCTAssertEqual(messageDTO.skipPush, true)
+        XCTAssertEqual(messageDTO.skipEnrichUrl, true)
 
         let message = try messageDTO.asModel()
         XCTAssertEqual(message.text, text)
@@ -553,6 +555,7 @@ final class ChannelUpdater_Tests: XCTestCase {
                 mentionedUserIds: [.unique],
                 quotedMessageId: nil,
                 skipPush: false,
+                skipEnrichUrl: false,
                 extraData: [:]
             ) { completion($0) }
         }

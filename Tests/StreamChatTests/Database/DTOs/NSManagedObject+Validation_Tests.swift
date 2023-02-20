@@ -79,7 +79,8 @@ private extension NSManagedObject_Validation_Tests {
                 text: "Hello",
                 pinning: nil,
                 quotedMessageId: nil,
-                skipPush: false
+                skipPush: false,
+                skipEnrichUrl: false
             )
         }
         return message
