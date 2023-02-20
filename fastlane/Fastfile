@@ -151,19 +151,11 @@ lane :compress_frameworks do
 end
 
 desc 'Cleans Products and DerivedData folders'
-lane :clean_products_and_derived_data do
+lane :clean_products do
   Dir.chdir('..') do
-    FileUtils.rm_rf(
-      %w[
-        DerivedData
-        Products/*.xcframework
-        Products/*.bundle
-        Products/*.BCSymbolMaps
-        Products/*.dSYMs
-        Products/LICENSE
-      ]
-    )
-    FileUtils.mkdir_p(%w[Products DerivedData])
+    ['*.xcframework', '*.bundle', '*.BCSymbolMaps', '*.dSYMs', 'LICENSE'].each do |f|
+      sh("rm -rf Products/#{f}") # FileUtils.rm_rf does not work from Makefile, using sh instead
+    end
   end
 end
 
@@ -174,10 +166,10 @@ lane :publish_release do |options|
 
   # Create XCFrameworks
   xcversion(version: '13.0')
-  clean_products_and_derived_data
+  clean_products
   build_xcframeworks
   compress_frameworks
-  clean_products_and_derived_data
+  clean_products
 
   changes = read_changelog(version: version)
 
