@@ -81,6 +81,7 @@ protocol MessageDatabaseSession {
         quotedMessageId: MessageId?,
         createdAt: Date?,
         skipPush: Bool,
+        skipEnrichUrl: Bool,
         extraData: [String: RawJSON]
     ) throws -> MessageDTO
 
@@ -191,6 +192,7 @@ extension MessageDatabaseSession {
         quotedMessageId: MessageId?,
         isSilent: Bool = false,
         skipPush: Bool,
+        skipEnrichUrl: Bool,
         attachments: [AnyAttachmentPayload] = [],
         mentionedUserIds: [UserId] = [],
         extraData: [String: RawJSON] = [:]
@@ -209,6 +211,7 @@ extension MessageDatabaseSession {
             quotedMessageId: quotedMessageId,
             createdAt: nil,
             skipPush: skipPush,
+            skipEnrichUrl: skipEnrichUrl,
             extraData: extraData
         )
     }
