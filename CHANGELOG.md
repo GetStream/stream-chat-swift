@@ -2,6 +2,9 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
+## StreamChat
+### 🐞 Fixed
+- Fix channel auto-filtering when the filter contains the `type` key [#2497](https://github.com/GetStream/stream-chat-swift/pull/2497)
 
 ## StreamChat
 ### ✅ Added
