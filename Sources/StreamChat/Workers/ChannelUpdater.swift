@@ -227,6 +227,7 @@ class ChannelUpdater: Worker {
     ///   - attachments: An array of the attachments for the message.
     ///   - quotedMessageId: An id of the message new message quotes. (inline reply)
     ///   - skipPush: If true, skips sending push notification to channel members.
+    ///   - skipEnrichUrl: If true, skips url enriching.
     ///   - extraData: Additional extra data of the message object.
     ///   - completion: Called when saving the message to the local DB finishes.
     ///
@@ -241,6 +242,7 @@ class ChannelUpdater: Worker {
         mentionedUserIds: [UserId],
         quotedMessageId: MessageId?,
         skipPush: Bool,
+        skipEnrichUrl: Bool,
         extraData: [String: RawJSON],
         completion: ((Result<MessageId, Error>) -> Void)? = nil
     ) {
@@ -260,6 +262,7 @@ class ChannelUpdater: Worker {
                 quotedMessageId: quotedMessageId,
                 createdAt: nil,
                 skipPush: skipPush,
+                skipEnrichUrl: skipEnrichUrl,
                 extraData: extraData
             )
 

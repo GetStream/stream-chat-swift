@@ -773,6 +773,7 @@ final class MessageDTO_Tests: XCTestCase {
                 quotedMessageId: nil,
                 createdAt: nil,
                 skipPush: false,
+                skipEnrichUrl: false,
                 extraData: messageExtraData
             ).id
         }
@@ -882,6 +883,7 @@ final class MessageDTO_Tests: XCTestCase {
                     quotedMessageId: nil,
                     createdAt: nil,
                     skipPush: false,
+                    skipEnrichUrl: false,
                     extraData: [:]
                 )
                 message1Id = message1DTO.id
@@ -902,6 +904,7 @@ final class MessageDTO_Tests: XCTestCase {
                     quotedMessageId: nil,
                     createdAt: nil,
                     skipPush: false,
+                    skipEnrichUrl: false,
                     extraData: [:]
                 )
                 // Reset the `locallyCreateAt` value of the second message to simulate the message was sent
@@ -996,6 +999,7 @@ final class MessageDTO_Tests: XCTestCase {
                 quotedMessageId: nil,
                 createdAt: nil,
                 skipPush: true,
+                skipEnrichUrl: true,
                 extraData: [:]
             )
             newMessageId = messageDTO.id
@@ -1005,6 +1009,7 @@ final class MessageDTO_Tests: XCTestCase {
 
         let messageDTO: MessageDTO = try XCTUnwrap(database.viewContext.message(id: newMessageId))
         XCTAssertEqual(messageDTO.skipPush, true)
+        XCTAssertEqual(messageDTO.skipEnrichUrl, true)
 
         let loadedMessage: ChatMessage = try messageDTO.asModel()
         XCTAssertEqual(loadedMessage.text, newMessageText)
@@ -1059,6 +1064,7 @@ final class MessageDTO_Tests: XCTestCase {
                 quotedMessageId: nil,
                 createdAt: nil,
                 skipPush: false,
+                skipEnrichUrl: false,
                 extraData: [:]
             )
             messageId = messageDTO.id
@@ -1102,6 +1108,7 @@ final class MessageDTO_Tests: XCTestCase {
                 quotedMessageId: nil,
                 createdAt: nil,
                 skipPush: false,
+                skipEnrichUrl: false,
                 extraData: [:]
             )
             threadReplyId = replyShownInChannelDTO.id
@@ -1158,6 +1165,7 @@ final class MessageDTO_Tests: XCTestCase {
                 quotedMessageId: nil,
                 createdAt: nil,
                 skipPush: false,
+                skipEnrichUrl: false,
                 extraData: [:]
             )
         }
@@ -1183,6 +1191,7 @@ final class MessageDTO_Tests: XCTestCase {
                     quotedMessageId: nil,
                     createdAt: nil,
                     skipPush: false,
+                    skipEnrichUrl: false,
                     extraData: [:]
                 )
             }, completion: completion)
@@ -1222,6 +1231,7 @@ final class MessageDTO_Tests: XCTestCase {
                     quotedMessageId: nil,
                     createdAt: nil,
                     skipPush: false,
+                    skipEnrichUrl: false,
                     extraData: [:]
                 )
             }, completion: completion)
@@ -1259,6 +1269,7 @@ final class MessageDTO_Tests: XCTestCase {
                 quotedMessageId: nil,
                 isSilent: false,
                 skipPush: false,
+                skipEnrichUrl: false,
                 extraData: [:]
             )
             newMessageId = messageDTO.id
@@ -1304,6 +1315,7 @@ final class MessageDTO_Tests: XCTestCase {
                 quotedMessageId: nil,
                 createdAt: nil,
                 skipPush: false,
+                skipEnrichUrl: false,
                 extraData: [:]
             )
             // Get reply messageId

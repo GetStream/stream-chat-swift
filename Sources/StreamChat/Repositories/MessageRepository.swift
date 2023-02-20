@@ -47,6 +47,7 @@ class MessageRepository {
 
             let requestBody = dto.asRequestBody() as MessageRequestBody
             let skipPush: Bool = dto.skipPush
+            let skipEnrichUrl: Bool = dto.skipEnrichUrl
 
             // Change the message state to `.sending` and the proceed with the actual sending
             self?.database.write({
@@ -64,7 +65,8 @@ class MessageRepository {
                 let endpoint: Endpoint<MessagePayload.Boxed> = .sendMessage(
                     cid: cid,
                     messagePayload: requestBody,
-                    skipPush: skipPush
+                    skipPush: skipPush,
+                    skipEnrichUrl: skipEnrichUrl
                 )
                 self?.apiClient.request(endpoint: endpoint) {
                     switch $0 {
