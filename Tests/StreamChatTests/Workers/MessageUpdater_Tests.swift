@@ -838,6 +838,7 @@ final class MessageUpdater_Tests: XCTestCase {
                 isSilent: isSilent,
                 quotedMessageId: nil,
                 skipPush: true,
+                skipEnrichUrl: false,
                 extraData: extraData
             ) { result in
                 if let newMessageId = try? result.get() {
@@ -854,6 +855,7 @@ final class MessageUpdater_Tests: XCTestCase {
 
         let messageDTO: MessageDTO = try XCTUnwrap(database.viewContext.message(id: newMessageId))
         XCTAssertEqual(messageDTO.skipPush, true)
+        XCTAssertEqual(messageDTO.skipEnrichUrl, false)
 
         let message: ChatMessage = try messageDTO.asModel()
         XCTAssertEqual(message.text, text)
@@ -901,6 +903,7 @@ final class MessageUpdater_Tests: XCTestCase {
                 isSilent: false,
                 quotedMessageId: nil,
                 skipPush: false,
+                skipEnrichUrl: false,
                 extraData: [:]
             ) { completion($0) }
         }

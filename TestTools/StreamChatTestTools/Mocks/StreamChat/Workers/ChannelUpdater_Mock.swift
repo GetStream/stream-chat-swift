@@ -59,6 +59,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
     @Atomic var createNewMessage_text: String?
     @Atomic var createNewMessage_isSilent: Bool?
     @Atomic var createNewMessage_skipPush: Bool?
+    @Atomic var createNewMessage_skipEnrichUrl: Bool?
     @Atomic var createNewMessage_command: String?
     @Atomic var createNewMessage_arguments: String?
     @Atomic var createNewMessage_attachments: [AnyAttachmentPayload]?
@@ -151,6 +152,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         createNewMessage_text = nil
         createNewMessage_isSilent = nil
         createNewMessage_skipPush = nil
+        createNewMessage_skipEnrichUrl = nil
         createNewMessage_command = nil
         createNewMessage_arguments = nil
         createNewMessage_attachments = nil
@@ -256,6 +258,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         mentionedUserIds: [UserId],
         quotedMessageId: MessageId?,
         skipPush: Bool,
+        skipEnrichUrl: Bool,
         extraData: [String: RawJSON] = [:],
         completion: ((Result<MessageId, Error>) -> Void)? = nil
     ) {
@@ -263,6 +266,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         createNewMessage_text = text
         createNewMessage_isSilent = isSilent
         createNewMessage_skipPush = skipPush
+        createNewMessage_skipEnrichUrl = skipEnrichUrl
         createNewMessage_command = command
         createNewMessage_arguments = arguments
         createNewMessage_attachments = attachments

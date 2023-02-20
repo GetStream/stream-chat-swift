@@ -418,6 +418,7 @@ final class ChannelController_Tests: XCTestCase {
                 quotedMessageId: nil,
                 createdAt: oldMessageCreatedAt,
                 skipPush: false,
+                skipEnrichUrl: false,
                 extraData: [:]
             )
             // Simulate sending failed for this message
@@ -2724,6 +2725,7 @@ final class ChannelController_Tests: XCTestCase {
         let quotedMessageId: MessageId = .unique
         let pin = MessagePinning(expirationDate: .unique)
         let skipPush = true
+        let skipEnrichUrl = false
 
         // Simulate `createNewMessage` calls and catch the completion
         var completionCalled = false
@@ -2733,6 +2735,7 @@ final class ChannelController_Tests: XCTestCase {
             attachments: attachments,
             quotedMessageId: quotedMessageId,
             skipPush: skipPush,
+            skipEnrichUrl: skipEnrichUrl,
             extraData: extraData
         ) { [callbackQueueID] result in
             AssertTestQueue(withId: callbackQueueID)
@@ -2757,6 +2760,7 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(env.channelUpdater?.createNewMessage_attachments, attachments)
         XCTAssertEqual(env.channelUpdater?.createNewMessage_quotedMessageId, quotedMessageId)
         XCTAssertEqual(env.channelUpdater?.createNewMessage_skipPush, skipPush)
+        XCTAssertEqual(env.channelUpdater?.createNewMessage_skipEnrichUrl, skipEnrichUrl)
         XCTAssertEqual(env.channelUpdater?.createNewMessage_pinning?.expirationDate, pin.expirationDate!)
 
         // Simulate successful update
@@ -4375,6 +4379,7 @@ extension ChannelController_Tests {
             quotedMessageId: nil,
             isSilent: false,
             skipPush: false,
+            skipEnrichUrl: false,
             attachments: [
                 .mockImage,
                 .mockFile,
