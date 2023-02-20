@@ -1380,6 +1380,24 @@ final class ChannelListController_Tests: XCTestCase {
             expectedResult: [cid]
         )
     }
+
+    func test_filterPredicate_filterKeyContainsAValueMapper_containsExpectedItems() throws {
+        let cid = ChannelId(type: .custom("test"), id: .unique)
+        let memberId = UserId.unique
+
+        try assertFilterPredicate(
+            .and([
+                .equal(.type, to: .custom("test")),
+                .containMembers(userIds: [memberId])
+            ]),
+            channelsInDB: [
+                .dummy(channel: .dummy(cid: cid), members: [.dummy(user: .dummy(userId: memberId))]),
+                .dummy(members: [.dummy(user: .dummy(userId: memberId))]),
+                .dummy(members: [.dummy(), .dummy()])
+            ],
+            expectedResult: [cid]
+        )
+    }
 }
 
 private class TestEnvironment {
