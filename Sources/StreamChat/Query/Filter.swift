@@ -215,34 +215,34 @@ public struct FilterKey<Scope: FilterScope, Value: FilterValue>: ExpressibleBySt
 
     /// The mapper that will transform the input value to a value that
     /// can be compared with the DB value
-    typealias InputValueMapper = (Any) -> FilterValue?
-    typealias TypeInputValueMapper = (Value) -> FilterValue?
-    let inputValueMapper: InputValueMapper?
+    typealias ValueMapper = (Any) -> FilterValue?
+    typealias TypedValueMapper = (Value) -> FilterValue?
+    let valueMapper: ValueMapper?
 
     public init(stringLiteral value: String) {
         rawValue = value
-        inputValueMapper = nil
+        valueMapper = nil
         keyPathString = nil
     }
 
     public init(rawValue value: String) {
         rawValue = value
         keyPathString = nil
-        inputValueMapper = nil
+        valueMapper = nil
     }
 
     init(
         rawValue value: String,
         keyPathString: String,
-        inputValueMapper: TypeInputValueMapper? = nil
+        valueMapper: TypedValueMapper? = nil
     ) {
         rawValue = value
         self.keyPathString = keyPathString
-        self.inputValueMapper = {
-            guard let inputValueMapper = inputValueMapper, let castInputValue = ($0 as? Value) else {
+        self.valueMapper = {
+            guard let valueMapper = valueMapper, let castInputValue = ($0 as? Value) else {
                 return nil
             }
-            return inputValueMapper(castInputValue)
+            return valueMapper(castInputValue)
         }
     }
 }
@@ -254,7 +254,7 @@ public extension Filter {
             operator: .equal,
             key: key,
             value: value,
-            valueMapper: key.inputValueMapper,
+            valueMapper: key.valueMapper,
             keyPathString: key.keyPathString
         )
     }
@@ -265,7 +265,7 @@ public extension Filter {
             operator: .notEqual,
             key: key,
             value: value,
-            valueMapper: key.inputValueMapper,
+            valueMapper: key.valueMapper,
             keyPathString: key.keyPathString
         )
     }
@@ -276,7 +276,7 @@ public extension Filter {
             operator: .greater,
             key: key,
             value: value,
-            valueMapper: key.inputValueMapper,
+            valueMapper: key.valueMapper,
             keyPathString: key.keyPathString
         )
     }
@@ -287,7 +287,7 @@ public extension Filter {
             operator: .greaterOrEqual,
             key: key,
             value: value,
-            valueMapper: key.inputValueMapper,
+            valueMapper: key.valueMapper,
             keyPathString: key.keyPathString
         )
     }
@@ -298,7 +298,7 @@ public extension Filter {
             operator: .less,
             key: key,
             value: value,
-            valueMapper: key.inputValueMapper,
+            valueMapper: key.valueMapper,
             keyPathString: key.keyPathString
         )
     }
@@ -309,7 +309,7 @@ public extension Filter {
             operator: .lessOrEqual,
             key: key,
             value: value,
-            valueMapper: key.inputValueMapper,
+            valueMapper: key.valueMapper,
             keyPathString: key.keyPathString
         )
     }
@@ -320,7 +320,7 @@ public extension Filter {
             operator: .in,
             key: key,
             value: values,
-            valueMapper: key.inputValueMapper,
+            valueMapper: key.valueMapper,
             keyPathString: key.keyPathString
         )
     }
@@ -331,7 +331,7 @@ public extension Filter {
             operator: .notIn,
             key: key,
             value: values,
-            valueMapper: key.inputValueMapper,
+            valueMapper: key.valueMapper,
             keyPathString: key.keyPathString
         )
     }
@@ -342,7 +342,7 @@ public extension Filter {
             operator: .query,
             key: key,
             value: text,
-            valueMapper: key.inputValueMapper,
+            valueMapper: key.valueMapper,
             keyPathString: key.keyPathString
         )
     }
@@ -353,7 +353,7 @@ public extension Filter {
             operator: .autocomplete,
             key: key,
             value: text,
-            valueMapper: key.inputValueMapper,
+            valueMapper: key.valueMapper,
             keyPathString: key.keyPathString
         )
     }
@@ -368,7 +368,7 @@ public extension Filter {
             operator: .exists,
             key: key,
             value: exists,
-            valueMapper: key.inputValueMapper,
+            valueMapper: key.valueMapper,
             keyPathString: key.keyPathString
         )
     }
@@ -379,7 +379,7 @@ public extension Filter {
             operator: .contains,
             key: key,
             value: value,
-            valueMapper: key.inputValueMapper,
+            valueMapper: key.valueMapper,
             keyPathString: key.keyPathString
         )
     }
