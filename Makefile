@@ -26,6 +26,7 @@ static_libraries: clean
 	make clean
 
 clean:
+	echo "♻️ Cleaning ./Products"
 	bundle exec fastlane clean_products
 
 zip_artifacts:
