@@ -5,6 +5,12 @@
 import Foundation
 
 extension Filter where Scope == ChannelListFilterScope {
+    /// If a valueMapper was provided, then here we will try to transform the value
+    /// using the mapper.
+    ///
+    /// If the mapper returns nil, the original value will be returned
+    var mappedValue: FilterValue { valueMapper?(value) ?? value }
+
     /// If it can be translated, this will return
     /// an NSPredicate instance that is equivalent
     /// to the current filter.
@@ -33,7 +39,7 @@ extension Filter where Scope == ChannelListFilterScope {
         case .and, .or, .nor:
             return logicalPredicate(op)
         default:
-            log.debug("Unhandled operator \(op) and filterValue \(value)")
+            log.debug("Unhandled operator \(op) and filterValue \(mappedValue)")
             return nil
         }
     }
@@ -42,8 +48,8 @@ extension Filter where Scope == ChannelListFilterScope {
         _ op: FilterOperator
     ) -> NSPredicate? {
         switch op {
-        case .and where value is [Filter<Scope>]:
-            guard let filters = value as? [Filter<Scope>] else {
+        case .and where mappedValue is [Filter<Scope>]:
+            guard let filters = mappedValue as? [Filter<Scope>] else {
                 return nil
             }
 
@@ -51,15 +57,15 @@ extension Filter where Scope == ChannelListFilterScope {
                 andPredicateWithSubpredicates: filters.compactMap(\.predicate)
             )
             return result
-        case .or where value is [Filter<Scope>]:
-            guard let filters = value as? [Filter<Scope>] else {
+        case .or where mappedValue is [Filter<Scope>]:
+            guard let filters = mappedValue as? [Filter<Scope>] else {
                 return nil
             }
             return NSCompoundPredicate(
                 orPredicateWithSubpredicates: filters.compactMap(\.predicate)
             )
-        case .nor where value is [Filter<Scope>]:
-            guard let filters = value as? [Filter<Scope>] else {
+        case .nor where mappedValue is [Filter<Scope>]:
+            guard let filters = mappedValue as? [Filter<Scope>] else {
                 return nil
             }
             return NSCompoundPredicate(
@@ -68,7 +74,7 @@ extension Filter where Scope == ChannelListFilterScope {
                 )
             )
         default:
-            log.debug("Unhandled operator \(`operator`) and filterValue \(value)")
+            log.debug("Unhandled operator \(`operator`) and filterValue \(mappedValue)")
             return nil
         }
     }
@@ -84,35 +90,35 @@ extension Filter where Scope == ChannelListFilterScope {
         case .equal:
             return NSPredicate(
                 format: "%@ == %K",
-                argumentArray: [value, keyPathString]
+                argumentArray: [mappedValue, keyPathString]
             )
         case .notEqual:
             return NSPredicate(
                 format: "%@ != %K",
-                argumentArray: [value, keyPathString]
+                argumentArray: [mappedValue, keyPathString]
             )
         case .greater:
             return NSPredicate(
                 format: "%K > %@",
-                argumentArray: [keyPathString, value]
+                argumentArray: [keyPathString, mappedValue]
             )
         case .greaterOrEqual:
             return NSPredicate(
                 format: "%K >= %@",
-                argumentArray: [keyPathString, value]
+                argumentArray: [keyPathString, mappedValue]
             )
         case .less:
             return NSPredicate(
                 format: "%K < %@",
-                argumentArray: [keyPathString, value]
+                argumentArray: [keyPathString, mappedValue]
             )
         case .lessOrEqual:
             return NSPredicate(
                 format: "%K <= %@",
-                argumentArray: [keyPathString, value]
+                argumentArray: [keyPathString, mappedValue]
             )
         default:
-            log.debug("Unhandled operator \(op) and filterValue \(value)")
+            log.debug("Unhandled operator \(op) and filterValue \(mappedValue)")
             return nil
         }
     }
@@ -126,8 +132,8 @@ extension Filter where Scope == ChannelListFilterScope {
         }
 
         switch op {
-        case .in where value is [FilterValue]:
-            guard let filterArray = (value as? [FilterValue]) else {
+        case .in where mappedValue is [FilterValue]:
+            guard let filterArray = (mappedValue as? [FilterValue]) else {
                 return nil
             }
             return NSCompoundPredicate(
@@ -139,8 +145,8 @@ extension Filter where Scope == ChannelListFilterScope {
                 }
             )
 
-        case .notIn where value is [FilterValue]:
-            guard let filterArray = (value as? [FilterValue]) else {
+        case .notIn where mappedValue is [FilterValue]:
+            guard let filterArray = (mappedValue as? [FilterValue]) else {
                 return nil
             }
             return NSCompoundPredicate(
@@ -154,24 +160,24 @@ extension Filter where Scope == ChannelListFilterScope {
                 )
             )
 
-        case .autocomplete where value is String:
-            guard let prefix = value as? String else {
+        case .autocomplete where mappedValue is String:
+            guard let prefix = mappedValue as? String else {
                 return nil
             }
             return NSPredicate(
                 format: "%K BEGINSWITH[c] %@",
                 argumentArray: [keyPathString, prefix]
             )
-        case .contains where value is String:
-            guard let needle = value as? String else {
+        case .contains where mappedValue is String:
+            guard let needle = mappedValue as? String else {
                 return nil
             }
             return NSPredicate(
                 format: "%K CONTAINS %@",
                 argumentArray: [keyPathString, needle]
             )
-        case .exists where value is Bool:
-            guard let boolValue = value as? Bool else {
+        case .exists where mappedValue is Bool:
+            guard let boolValue = mappedValue as? Bool else {
                 return nil
             }
             if boolValue {
@@ -186,7 +192,7 @@ extension Filter where Scope == ChannelListFilterScope {
                 )
             }
         default:
-            log.debug("Unhandled operator \(op) and filterValue \(value)")
+            log.debug("Unhandled operator \(op) and filterValue \(mappedValue)")
             return nil
         }
     }
