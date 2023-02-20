@@ -99,18 +99,27 @@ public struct Filter<Scope: FilterScope> {
     /// The "right-hand" side of the filter. Specifies the value the filter should match.
     public let value: FilterValue
 
+    /// The mapper that will transform the input value to a value that
+    /// can be compared with the DB value
+    typealias ValueMapper = (Any) -> FilterValue?
+    let valueMapper: ValueMapper?
+
+    /// The keypath of the DB object that will be compared with the input value during
+    /// a local filtering.
     let keyPathString: String?
 
     init(
         operator: String,
         key: String?,
         value: FilterValue,
+        valueMapper: ValueMapper?,
         keyPathString: String?
     ) {
         log.assert(`operator`.hasPrefix("$"), "A filter operator must have `$` prefix.")
         self.operator = `operator`
         self.key = key
         self.value = value
+        self.valueMapper = valueMapper
         self.keyPathString = keyPathString
     }
 
@@ -136,6 +145,7 @@ public struct Filter<Scope: FilterScope> {
             operator: `operator`,
             key: key,
             value: value,
+            valueMapper: nil,
             keyPathString: nil
         )
     }
@@ -148,12 +158,14 @@ extension Filter {
         operator: FilterOperator,
         key: FilterKey<Scope, Value>,
         value: FilterValue,
+        valueMapper: ValueMapper?,
         keyPathString: String?
     ) {
         self.init(
             operator: `operator`.rawValue,
             key: key.rawValue,
             value: value,
+            valueMapper: valueMapper,
             keyPathString: keyPathString
         )
     }
@@ -196,24 +208,42 @@ public extension Filter {
 public struct FilterKey<Scope: FilterScope, Value: FilterValue>: ExpressibleByStringLiteral, RawRepresentable {
     /// The raw value of the key. This value should match the "encodable" key for the given object.
     public let rawValue: String
+
+    /// The keypath of the DB object that will be compared with the input value during
+    /// a local filtering.
     let keyPathString: String?
+
+    /// The mapper that will transform the input value to a value that
+    /// can be compared with the DB value
+    typealias ValueMapper = (Any) -> FilterValue?
+    typealias TypedValueMapper = (Value) -> FilterValue?
+    let valueMapper: ValueMapper?
 
     public init(stringLiteral value: String) {
         rawValue = value
+        valueMapper = nil
         keyPathString = nil
     }
 
     public init(rawValue value: String) {
         rawValue = value
         keyPathString = nil
+        valueMapper = nil
     }
 
     init(
         rawValue value: String,
-        keyPathString: String
+        keyPathString: String,
+        valueMapper: TypedValueMapper? = nil
     ) {
         rawValue = value
         self.keyPathString = keyPathString
+        self.valueMapper = {
+            guard let valueMapper = valueMapper, let castInputValue = ($0 as? Value) else {
+                return nil
+            }
+            return valueMapper(castInputValue)
+        }
     }
 }
 
@@ -224,6 +254,7 @@ public extension Filter {
             operator: .equal,
             key: key,
             value: value,
+            valueMapper: key.valueMapper,
             keyPathString: key.keyPathString
         )
     }
@@ -234,6 +265,7 @@ public extension Filter {
             operator: .notEqual,
             key: key,
             value: value,
+            valueMapper: key.valueMapper,
             keyPathString: key.keyPathString
         )
     }
@@ -244,6 +276,7 @@ public extension Filter {
             operator: .greater,
             key: key,
             value: value,
+            valueMapper: key.valueMapper,
             keyPathString: key.keyPathString
         )
     }
@@ -254,6 +287,7 @@ public extension Filter {
             operator: .greaterOrEqual,
             key: key,
             value: value,
+            valueMapper: key.valueMapper,
             keyPathString: key.keyPathString
         )
     }
@@ -264,6 +298,7 @@ public extension Filter {
             operator: .less,
             key: key,
             value: value,
+            valueMapper: key.valueMapper,
             keyPathString: key.keyPathString
         )
     }
@@ -274,6 +309,7 @@ public extension Filter {
             operator: .lessOrEqual,
             key: key,
             value: value,
+            valueMapper: key.valueMapper,
             keyPathString: key.keyPathString
         )
     }
@@ -284,6 +320,7 @@ public extension Filter {
             operator: .in,
             key: key,
             value: values,
+            valueMapper: key.valueMapper,
             keyPathString: key.keyPathString
         )
     }
@@ -294,6 +331,7 @@ public extension Filter {
             operator: .notIn,
             key: key,
             value: values,
+            valueMapper: key.valueMapper,
             keyPathString: key.keyPathString
         )
     }
@@ -304,6 +342,7 @@ public extension Filter {
             operator: .query,
             key: key,
             value: text,
+            valueMapper: key.valueMapper,
             keyPathString: key.keyPathString
         )
     }
@@ -314,6 +353,7 @@ public extension Filter {
             operator: .autocomplete,
             key: key,
             value: text,
+            valueMapper: key.valueMapper,
             keyPathString: key.keyPathString
         )
     }
@@ -328,6 +368,7 @@ public extension Filter {
             operator: .exists,
             key: key,
             value: exists,
+            valueMapper: key.valueMapper,
             keyPathString: key.keyPathString
         )
     }
@@ -338,6 +379,7 @@ public extension Filter {
             operator: .contains,
             key: key,
             value: value,
+            valueMapper: key.valueMapper,
             keyPathString: key.keyPathString
         )
     }

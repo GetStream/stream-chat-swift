@@ -74,7 +74,7 @@ public extension FilterKey where Scope: AnyChannelListFilterScope {
 
     /// A filter key for matching the `type` value.
     /// Supported operators: `in`, `equal`
-    static var type: FilterKey<Scope, ChannelType> { .init(rawValue: "type", keyPathString: #keyPath(ChannelDTO.typeRawValue)) }
+    static var type: FilterKey<Scope, ChannelType> { .init(rawValue: "type", keyPathString: #keyPath(ChannelDTO.typeRawValue), valueMapper: { $0.rawValue }) }
 
     /// A filter key for matching the `lastMessageAt` value.
     /// Supported operators: `equal`, `greaterThan`, `lessThan`, `greaterOrEqual`, `lessOrEqual`, `notEqual`
