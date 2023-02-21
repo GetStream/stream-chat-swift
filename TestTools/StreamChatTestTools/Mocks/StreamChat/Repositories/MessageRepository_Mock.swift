@@ -12,11 +12,10 @@ final class MessageRepository_Mock: MessageRepository, Spy {
     }
 
     var sendMessageResult: Result<ChatMessage, MessageRepositoryError>?
-    var sendMessageCalls: [MessageId: (Result<ChatMessage, MessageRepositoryError>) -> Void] = [:]
+    @Atomic var sendMessageCalls: [MessageId: (Result<ChatMessage, MessageRepositoryError>) -> Void] = [:]
     var getMessageResult: Result<ChatMessage, Error>?
     var receivedGetMessageStore: Bool?
     var saveSuccessfullyDeletedMessageError: Error?
-    let lock = NSLock()
     var updatedMessageLocalState: LocalMessageState?
 
     override func sendMessage(
@@ -24,11 +23,11 @@ final class MessageRepository_Mock: MessageRepository, Spy {
         completion: @escaping (Result<ChatMessage, MessageRepositoryError>) -> Void
     ) {
         record()
-        lock.lock()
-        sendMessageCalls[messageId] = { result in
-            completion(result)
+        _sendMessageCalls.mutate { dictionary in
+            dictionary[messageId] = { result in
+                completion(result)
+            }
         }
-        lock.unlock()
 
         if let sendMessageResult = sendMessageResult {
             completion(sendMessageResult)
