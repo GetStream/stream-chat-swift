@@ -197,8 +197,6 @@ final class MessageSender_Tests: XCTestCase {
     }
 
     func test_senderSendsMessage_inTheOrderTheyWereCreatedLocally() throws {
-        throw XCTSkip("https://github.com/GetStream/ios-issues-tracking/issues/330")
-        
         var message1Id: MessageId!
         var message2Id: MessageId!
         var message3Id: MessageId!
