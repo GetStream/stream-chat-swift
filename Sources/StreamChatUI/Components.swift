@@ -282,6 +282,14 @@ public struct Components {
     public var threadHeaderView: ChatThreadHeaderView.Type =
         ChatThreadHeaderView.self
 
+    /// The view controller responsible for rendering a list of replies on a thread.
+    /// Used in Thread view controllers.
+    @available(iOSApplicationExtension, unavailable)
+    public var threadMessageListVC: ChatMessageListVC.Type = ChatThreadMessageListVC.self
+
+    /// The view that separates the source message from the replies and displays the number of replies in the thread.
+    public var threadListRepliesSeparatorView: ChatThreadListRepliesCountSeparatorView.Type = ChatThreadListRepliesCountSeparatorView.self
+
     // MARK: - Channel components
 
     /// The view controller that contains the channel messages and represents the chat view.

@@ -362,6 +362,16 @@ open class ChatMessageListVC: _ViewController,
         return isDifferentDay
     }
 
+    /// Check if the current message being displayed should show the thread replies separator.
+    /// - Parameters:
+    ///   - message: The message being displayed.
+    ///   - indexPath: The indexPath of the message.
+    /// - Returns: A Boolean value depending if it should show the date separator or not.
+    /// - Note: The default implementation returns false
+    open func shouldShowThreadRepliesSeparator(forMessage message: ChatMessage, at indexPath: IndexPath) -> Bool {
+        false
+    }
+
     /// Show the actions that can be performed in a debounced message.
     open func showActions(forDebouncedMessage message: ChatMessage) {
         guard let cid = message.cid else {
@@ -432,6 +442,16 @@ open class ChatMessageListVC: _ViewController,
 
         cell.dateSeparatorView.isHidden = !shouldShowDateSeparator(forMessage: message, at: indexPath)
         cell.dateSeparatorView.content = dateSeparatorFormatter.format(message.createdAt)
+
+        if
+            shouldShowThreadRepliesSeparator(forMessage: message, at: indexPath), /// Check if we should show the thread replies separator
+            let sourceMessage = dataSource?.messages.last /// If we should show the separator then fetch the source message
+        {
+            cell.threadRepliesSeparatorView.isHidden = false /// Update separator's visibility
+            cell.threadRepliesSeparatorView.content = sourceMessage.replyCount /// Update separator's content
+        } else {
+            cell.threadRepliesSeparatorView.isHidden = true
+        }
 
         return cell
     }

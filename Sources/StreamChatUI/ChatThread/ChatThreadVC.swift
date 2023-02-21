@@ -38,7 +38,7 @@ open class ChatThreadVC: _ViewController,
 
     /// The message list component responsible to render the messages.
     open lazy var messageListVC: ChatMessageListVC = components
-        .messageListVC
+        .threadMessageListVC
         .init()
 
     /// Controller that handles the composer view

@@ -27,6 +27,15 @@ public class ChatMessageCell: _TableViewCell, ComponentsProvider {
     /// The message content view the cell is showing.
     public private(set) var messageContentView: ChatMessageContentView?
 
+    /// The thread replies separator view that sits below the source message in a thread
+    /// and separates it from the replies. It contains counter with the number of replies
+    /// to the source message.
+    internal lazy var threadRepliesSeparatorView: ChatThreadListRepliesCountSeparatorView = components
+        .threadListRepliesSeparatorView
+        .init()
+        .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "threadRepliesSeparatorView")
+
     /// The minimum spacing below the cell.
     public var minimumSpacingBelow: CGFloat = 2 {
         didSet { updateBottomSpacing() }
@@ -45,14 +54,20 @@ public class ChatMessageCell: _TableViewCell, ComponentsProvider {
         containerStackView.spacing = 8
         containerStackView.addArrangedSubview(dateSeparatorView)
         messageContentView.map { containerStackView.addArrangedSubview($0) }
-        contentView.addSubview(containerStackView)
+        containerStackView.addArrangedSubview(threadRepliesSeparatorView)
 
+        contentView.addSubview(containerStackView)
         containerStackView.pin(
             anchors: [.leading, .top, .trailing, .bottom],
             to: contentView
         )
 
         messageContentView?.pin(
+            anchors: [.leading, .trailing],
+            to: containerStackView
+        )
+
+        threadRepliesSeparatorView.pin(
             anchors: [.leading, .trailing],
             to: containerStackView
         )
