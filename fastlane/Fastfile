@@ -384,7 +384,7 @@ lane :test_e2e_mock do |options|
   start_sinatra
 
   device = options[:ios] && options[:ios] != 'latest' ? "#{options[:device]} (#{options[:ios]})" : options[:device]
-  prepare_simulator(device: device, reset: true) if is_ci
+  prepare_simulator(device: device) if is_ci && (options[:ios].nil? || ['latest', '15.4'].include?(options[:ios]))
 
   scan_options = {
     project: xcode_project,
