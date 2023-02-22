@@ -51,7 +51,7 @@ The current connection status of the client.
 public internal(set) var connectionStatus: ConnectionStatus = .initialized
 ```
 
-To observe changes in the connection status, create an instance of `CurrentChatUserController`, and use it to receive
+To observe changes in the connection status, create an instance of `ChatConnectionController`, and use it to receive
 callbacks when the connection status changes.
 
 ### `config`
