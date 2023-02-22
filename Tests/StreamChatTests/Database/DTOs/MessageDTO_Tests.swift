@@ -2799,12 +2799,8 @@ final class MessageDTO_Tests: XCTestCase {
             shouldShowShadowedMessages: false
         )
 
-        // TODO: Should be 20 after enable mergeChanges: true when updating RefreshedObjects,
-        // Ticket: https://github.com/GetStream/ios-issues-tracking/issues/262
-        XCTAssertEqual(fetchRequest.fetchBatchSize, 0)
-        XCTAssertEqual(fetchRequest.fetchLimit, 0)
-//        XCTAssertEqual(fetchRequest.fetchBatchSize, 20)
-//        XCTAssertEqual(fetchRequest.fetchLimit, 20)
+        XCTAssertEqual(fetchRequest.fetchBatchSize, 20)
+        XCTAssertEqual(fetchRequest.fetchLimit, 20)
     }
 
     // MARK: Helpers:

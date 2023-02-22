@@ -115,7 +115,7 @@ final class BackgroundListDatabaseObserver_Tests: XCTestCase {
         XCTAssertFalse(testFRC.test_performFetchCalled)
     }
 
-    func test_updateNotReported_whenSamePropertyAssigned() throws {
+    func test_updateStillReported_whenSamePropertyAssigned() throws {
         // For this test, we need an actual NSFetchedResultsController, not the test one
         let observer = BackgroundListDatabaseObserver<String, TestManagedObject>(
             context: database.backgroundReadOnlyContext,
@@ -133,10 +133,11 @@ final class BackgroundListDatabaseObserver_Tests: XCTestCase {
         waitForExpectations(timeout: defaultTimeout)
 
         let onDidChangeExpectation = expectation(description: "onDidChange")
+        onDidChangeExpectation.expectedFulfillmentCount = 2
 
-        var receivedChangesId: [ListChange<String>]?
+        var receivedChanges: [ListChange<String>] = []
         observer.onDidChange = {
-            receivedChangesId = $0
+            receivedChanges.append(contentsOf: $0)
             onDidChangeExpectation.fulfill()
         }
 
@@ -150,19 +151,16 @@ final class BackgroundListDatabaseObserver_Tests: XCTestCase {
             item.testValue = testValue
         }
 
-        waitForExpectations(timeout: defaultTimeout)
-
-        XCTAssertEqual(receivedChangesId?.first?.item, testValue)
-
-        let oldChanges = receivedChangesId
-
         // Assign the same testValue to the same entity
         try database.writeSynchronously { _ in
             item.testValue = testValue
         }
 
-        // Assert no new change is reported
-        AssertAsync.staysEqual(receivedChangesId, oldChanges)
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertEqual(receivedChanges.count, 2)
+        XCTAssertEqual(receivedChanges.first?.isInsertion, true)
+        XCTAssertEqual(receivedChanges.last?.isUpdate, true)
     }
 
     func test_allItemsAreRemoved_whenDatabaseContainerRemovesAllData() throws {
