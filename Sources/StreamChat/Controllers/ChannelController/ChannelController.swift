@@ -1134,7 +1134,7 @@ public extension ChatChannelController {
 
         markingRead = true
 
-        updater.markUnread(from: messageId, cid: channel.cid, userId: currentUserId) { error in
+        updater.markUnread(cid: channel.cid, userId: currentUserId, from: messageId) { error in
             self.callback {
                 self.markingRead = false
                 completion?(error)

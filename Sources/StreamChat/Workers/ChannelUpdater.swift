@@ -354,12 +354,15 @@ class ChannelUpdater: Worker {
         channelRepository.markRead(cid: cid, userId: userId, completion: completion)
     }
 
-    /// Marks a channel as read
+    /// Marks a subset of the messages of the channel as unread. All the following messages, including the one that is
+    /// passed as parameter, will be marked as not read.
     /// - Parameters:
-    ///   - cid: Channel id of the channel to be marked as read
+    ///   - cid: The id of the channel to be marked as unread
+    ///   - userId: The id of the current user
+    ///   - messageId: The id of the first message id that will be marked as unread.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    func markUnread(from messageId: MessageId, cid: ChannelId, userId: UserId, completion: ((Error?) -> Void)? = nil) {
-        channelRepository.markUnread(from: messageId, cid: cid, userId: userId, completion: completion)
+    func markUnread(cid: ChannelId, userId: UserId, from messageId: MessageId, completion: ((Error?) -> Void)? = nil) {
+        channelRepository.markUnread(for: cid, userId: userId, from: messageId, completion: completion)
     }
 
     ///
