@@ -4,6 +4,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ### 🔄 Changed
+- Remove [URLQueryItem] public conformance of ExpressibleByDictionaryLiteral [#2505](https://github.com/GetStream/stream-chat-swift/pull/2505)
 
 # [4.27.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.27.1)
 _February 20, 2023_
