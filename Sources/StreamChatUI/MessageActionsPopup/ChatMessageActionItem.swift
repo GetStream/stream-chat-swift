@@ -106,6 +106,25 @@ public struct CopyActionItem: ChatMessageActionItem {
     }
 }
 
+/// Instance of `ChatMessageActionItem` for mark a message as unread action.
+public struct MarkUnreadActionItem: ChatMessageActionItem {
+    public var title: String { L10n.Message.Actions.markUnread }
+    public let icon: UIImage
+    public let action: (ChatMessageActionItem) -> Void
+
+    /// Init of `MarkUnreadActionItem`
+    /// - Parameters:
+    ///     - action: Action to be triggered when `MarkUnreadActionItem` is tapped.
+    ///     - appearance: `Appearance` that is used to configure UI properties.
+    public init(
+        action: @escaping (ChatMessageActionItem) -> Void,
+        appearance: Appearance = .default
+    ) {
+        self.action = action
+        icon = appearance.images.reactionThumgsUpSmall
+    }
+}
+
 /// Instance of `ChatMessageActionItem` for unblocking user.
 public struct UnblockUserActionItem: ChatMessageActionItem {
     public var title: String { L10n.Message.Actions.userUnblock }

@@ -30,6 +30,7 @@
 "message.actions.flag" = "Flag Message";
 "message.actions.flag.confirmation-title" = "Flag Message";
 "message.actions.flag.confirmation-message" = "Do you want to send a copy of this message to a moderator for further investigation?";
+"message.actions.mark-unread" = "Mark as unread";
 
 "messageList.typingIndicator.typing-unknown" = "Someone is typing";
 

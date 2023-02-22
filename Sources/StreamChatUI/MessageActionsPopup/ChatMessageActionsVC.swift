@@ -105,6 +105,10 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
                 actions.append(threadReplyActionItem())
             }
 
+            if channelConfig.readEventsEnabled {
+                actions.append(markUnreadActionItem())
+            }
+
             actions.append(copyActionItem())
 
             if message.isSentByCurrentUser {
