@@ -610,7 +610,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///   - extraData: Additional extra data of the message object.
     ///   - completion: Called when saving the message to the local DB finishes.
     ///
-    func createNewMessage(
+    public func createNewMessage(
         text: String,
         pinning: MessagePinning? = nil,
         isSilent: Bool = false,

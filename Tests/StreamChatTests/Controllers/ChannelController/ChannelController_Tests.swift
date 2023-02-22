@@ -390,37 +390,6 @@ final class ChannelController_Tests: XCTestCase {
 
         XCTAssertEqual(controller.messages.count, 4)
 
-        // Create a new message payload that's older than `channel.lastMessageAt`
-        // but newer than 2nd to last message
-        let oldMessageCreatedAt = Date.unique(
-            before: sortedMessages[0].createdAt,
-            after: sortedMessages[1].createdAt
-        )
-        var oldMessageId: MessageId?
-        // Save the message payload and check `channel.lastMessageAt` is not updated by older message
-        try client.databaseContainer.writeSynchronously {
-            let dto = try $0.createNewMessage(
-                in: channelId,
-                text: .unique,
-                pinning: nil,
-                command: nil,
-                arguments: nil,
-                parentMessageId: nil,
-                attachments: [],
-                mentionedUserIds: [],
-                showReplyInChannel: false,
-                isSilent: false,
-                quotedMessageId: nil,
-                createdAt: oldMessageCreatedAt,
-                skipPush: false,
-                skipEnrichUrl: false,
-                extraData: [:]
-            )
-            // Simulate sending failed for this message
-            dto.localMessageState = .sendingFailed
-            oldMessageId = dto.id
-        }
-
         let exp = expectation(description: "synchronize should complete")
         controller.synchronize { _ in
             exp.fulfill()
@@ -705,6 +674,7 @@ final class ChannelController_Tests: XCTestCase {
                 quotedMessageId: nil,
                 createdAt: oldMessageCreatedAt,
                 skipPush: false,
+                skipEnrichUrl: false,
                 extraData: [:]
             )
             // Simulate sending failed for this message
