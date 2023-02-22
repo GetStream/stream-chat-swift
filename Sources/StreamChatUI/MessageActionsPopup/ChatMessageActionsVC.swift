@@ -234,6 +234,14 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
         )
     }
 
+    /// Returns `MarkUnreadActionItem` for copy action.
+    open func markUnreadActionItem() -> ChatMessageActionItem {
+        MarkUnreadActionItem(
+            action: { [weak self] in self?.handleAction($0) },
+            appearance: appearance
+        )
+    }
+
     /// Returns `ChatMessageActionItem` for copy action.
     open func copyActionItem() -> ChatMessageActionItem {
         CopyActionItem(

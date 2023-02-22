@@ -93,6 +93,9 @@ open class ChatMessageListVC: _ViewController,
         components.messageListDateOverlayEnabled
     }
 
+    /// The id of the first unread message
+    private(set) var firstUnreadIndexPath: IndexPath?
+
     /// A boolean value that determines whether date separators should be shown between each message.
     open var isDateSeparatorEnabled: Bool {
         components.messageListDateSeparatorEnabled
@@ -222,6 +225,16 @@ open class ChatMessageListVC: _ViewController,
     /// Scrolls to most recent message
     open func scrollToMostRecentMessage(animated: Bool = true) {
         listView.scrollToMostRecentMessage(animated: animated)
+    }
+
+    func setUnreadMessagesSeparator(at indexPath: IndexPath) {
+        var indexPathsToReload = [indexPath]
+        if let currentIndexPath = firstUnreadIndexPath {
+            indexPathsToReload.append(currentIndexPath)
+        }
+        firstUnreadIndexPath = indexPath
+
+        listView.reloadRows(at: indexPathsToReload, with: .automatic)
     }
 
     /// Updates the table view data with given `changes`.
@@ -433,6 +446,10 @@ open class ChatMessageListVC: _ViewController,
         /// Process cell decorations
         cell.setDecoration(for: .header, decorationView: delegate?.chatMessageListVC(self, headerViewForMessage: message, at: indexPath))
         cell.setDecoration(for: .footer, decorationView: delegate?.chatMessageListVC(self, footerViewForMessage: message, at: indexPath))
+
+        if indexPath == firstUnreadIndexPath {
+            addUnreadSeparator(to: cell)
+        }
 
         return cell
     }
@@ -653,5 +670,9 @@ open class ChatMessageListVC: _ViewController,
     ) -> Bool {
         // To prevent the gesture recognizer consuming up the events from UIControls, we receive touch only when the view isn't a UIControl.
         !(touch.view is UIControl)
+    }
+
+    func addUnreadSeparator(to cell: ChatMessageCell) {
+        // TODO:
     }
 }

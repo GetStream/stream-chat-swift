@@ -288,6 +288,14 @@ open class ChatChannelVC: _ViewController,
     ) {
         let channelUnreadCount = channelController.channel?.unreadCount ?? .noUnread
         messageListVC.scrollToLatestMessageButton.content = channelUnreadCount
+
+        guard let currentUserRead = channel.item.reads.first(where: { $0.user.id == client.currentUserId }),
+              let firstUnreadMessageIndex = messages.lastIndex(where: { $0.createdAt >= currentUserRead.lastReadAt }) else {
+            return
+        }
+
+        let indexPath = IndexPath(item: firstUnreadMessageIndex, section: 0)
+        messageListVC.setUnreadMessagesSeparator(at: indexPath)
     }
 
     open func channelController(

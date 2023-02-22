@@ -1110,6 +1110,39 @@ public extension ChatChannelController {
         }
     }
 
+    /// Marks a subset of the messages of the channel as unread. All the following messages, including the one that is
+    /// passed as parameter, will be marked as not read.
+    /// - Parameters:
+    ///   - messageId: The id of the first message id that will be marked as unread.
+    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    func markUnread(from messageId: MessageId, completion: ((Error?) -> Void)? = nil) {
+        /// Perform action only if channel is already created on backend side and have a valid `cid`.
+        guard let channel = channel else {
+            channelModificationFailed(completion)
+            return
+        }
+
+        /// Read events are not enabled for this channel
+        guard areReadEventsEnabled else {
+            channelFeatureDisabled(feature: "read events", completion: completion)
+            return
+        }
+
+        guard let currentUserId = client.currentUserId else {
+            callback {
+                completion?(nil)
+            }
+            return
+        }
+
+        updater.markUnread(from: messageId, cid: channel.cid, userId: currentUserId) { error in
+            self.callback {
+                self.markingRead = false
+                completion?(error)
+            }
+        }
+    }
+
     /// Enables slow mode for the channel
     ///
     /// When slow mode is enabled, users can only send a message every `cooldownDuration` time interval.

@@ -434,12 +434,12 @@ class MessageDTO: NSManagedObject {
         return (try? context.fetch(request)) ?? []
     }
 
-    static func loadOtherUserMessages(
+    static func countOtherUserMessages(
         in cid: String,
         createdAtFrom: Date,
         context: NSManagedObjectContext
-    ) -> [MessageDTO] {
-        var subpredicates: [NSPredicate] = [
+    ) -> Int {
+        let subpredicates: [NSPredicate] = [
             sentMessagesPredicate(for: cid),
             .init(format: "createdAt >= %@", createdAtFrom.bridgeDate)
         ]
@@ -448,7 +448,7 @@ class MessageDTO: NSManagedObject {
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: false)]
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: subpredicates)
 
-        return (try? context.fetch(request)) ?? []
+        return (try? context.count(for: request)) ?? 0
     }
 
     static func numberOfReads(for messageId: MessageId, context: NSManagedObjectContext) -> Int {
