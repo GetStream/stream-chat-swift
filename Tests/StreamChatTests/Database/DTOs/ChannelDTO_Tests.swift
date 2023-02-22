@@ -851,14 +851,18 @@ final class ChannelDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedChannel?.extraData, [:])
     }
 
-    func test_channelWithChannelListQuery_isSavedAndLoaded() {
+    func test_channelWithChannelListQuery_isSavedAndLoaded() throws {
+        let createdAt = Date.unique
         let query = ChannelListQuery(
-            filter: .and([.less(.createdAt, than: .unique), .exists(.deletedAt, exists: false)])
+            filter: .and([
+                .less(.createdAt, than: createdAt),
+                .exists(.deletedAt, exists: false)
+            ])
         )
 
         // Create two channels
         let channel1Id: ChannelId = .unique
-        let payload1 = dummyPayload(with: channel1Id)
+        let payload1 = dummyPayload(with: channel1Id, createdAt: Date.unique(before: createdAt))
 
         let channel2Id: ChannelId = .unique
         let payload2 = dummyPayload(with: channel2Id)
@@ -869,7 +873,7 @@ final class ChannelDTO_Tests: XCTestCase {
             try session.saveChannel(payload: payload2)
         }
 
-        let fetchRequest = ChannelDTO.channelListFetchRequest(query: query)
+        let fetchRequest = ChannelDTO.channelListFetchRequest(query: query, chatClientConfig: .init(apiKeyString: .unique))
         var loadedChannels: [ChannelDTO] {
             try! database.viewContext.fetch(fetchRequest)
         }
@@ -884,7 +888,7 @@ final class ChannelDTO_Tests: XCTestCase {
             pageSize: 25
         )
 
-        let fetchRequest = ChannelDTO.channelListFetchRequest(query: query)
+        let fetchRequest = ChannelDTO.channelListFetchRequest(query: query, chatClientConfig: .init(apiKeyString: .unique))
 
         XCTAssertEqual(fetchRequest.fetchBatchSize, 25)
         XCTAssertEqual(fetchRequest.fetchLimit, 25)
@@ -892,15 +896,16 @@ final class ChannelDTO_Tests: XCTestCase {
 
     func test_channelListQuery_withSorting() {
         // Create two channels queries with different sortings.
-        let filter: Filter<ChannelListFilterScope> = .in(.members, values: [.unique])
+        let memberId = UserId.unique
+        let filter: Filter<ChannelListFilterScope> = .in(.members, values: [memberId])
         let queryWithDefaultSorting = ChannelListQuery(filter: filter)
         let queryWithUpdatedAtSorting = ChannelListQuery(filter: filter, sort: [.init(key: .updatedAt, isAscending: false)])
 
         // Create dummy channels payloads with ids: a, b, c, d.
-        let payload1 = dummyPayload(with: try! .init(cid: "a:a"), numberOfMessages: 0)
-        let payload2 = dummyPayload(with: try! .init(cid: "a:b"), numberOfMessages: 0)
-        let payload3 = dummyPayload(with: try! .init(cid: "a:c"), numberOfMessages: 0)
-        let payload4 = dummyPayload(with: try! .init(cid: "a:d"), numberOfMessages: 0)
+        let payload1 = dummyPayload(with: try! .init(cid: "a:a"), numberOfMessages: 0, members: [.dummy(user: .dummy(userId: memberId))])
+        let payload2 = dummyPayload(with: try! .init(cid: "a:b"), numberOfMessages: 0, members: [.dummy(user: .dummy(userId: memberId))])
+        let payload3 = dummyPayload(with: try! .init(cid: "a:c"), numberOfMessages: 0, members: [.dummy(user: .dummy(userId: memberId))])
+        let payload4 = dummyPayload(with: try! .init(cid: "a:d"), numberOfMessages: 0, members: [.dummy(user: .dummy(userId: memberId))])
 
         // Get `lastMessageDate` and `created` dates from generated dummy channels and sort the for the default sorting.
         let createdAndLastMessageDates = [payload1, payload2, payload3, payload4]
@@ -921,9 +926,9 @@ final class ChannelDTO_Tests: XCTestCase {
         }
 
         // A fetch request with a default sorting.
-        let fetchRequestWithDefaultSorting = ChannelDTO.channelListFetchRequest(query: queryWithDefaultSorting)
+        let fetchRequestWithDefaultSorting = ChannelDTO.channelListFetchRequest(query: queryWithDefaultSorting, chatClientConfig: .init(apiKeyString: .unique))
         // A fetch request with a sorting by `updatedAt`.
-        let fetchRequestWithUpdatedAtSorting = ChannelDTO.channelListFetchRequest(query: queryWithUpdatedAtSorting)
+        let fetchRequestWithUpdatedAtSorting = ChannelDTO.channelListFetchRequest(query: queryWithUpdatedAtSorting, chatClientConfig: .init(apiKeyString: .unique))
 
         var channelsWithDefaultSorting: [ChannelDTO] { try! database.viewContext.fetch(fetchRequestWithDefaultSorting) }
         var channelsWithUpdatedAtSorting: [ChannelDTO] { try! database.viewContext.fetch(fetchRequestWithUpdatedAtSorting) }
@@ -1007,7 +1012,7 @@ final class ChannelDTO_Tests: XCTestCase {
             hidden1.isHidden = true
         }
 
-        let fetchRequest = ChannelDTO.channelListFetchRequest(query: query)
+        let fetchRequest = ChannelDTO.channelListFetchRequest(query: query, chatClientConfig: .init(apiKeyString: .unique))
         let loadedChannels: [ChannelDTO] = try database.viewContext.fetch(fetchRequest)
 
         XCTAssertEqual(loadedChannels.count, 2)

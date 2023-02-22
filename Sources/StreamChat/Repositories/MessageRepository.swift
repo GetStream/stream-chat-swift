@@ -47,6 +47,7 @@ class MessageRepository {
 
             let requestBody = dto.asRequestBody() as MessageRequestBody
             let skipPush: Bool = dto.skipPush
+            let skipEnrichUrl: Bool = dto.skipEnrichUrl
 
             // Change the message state to `.sending` and the proceed with the actual sending
             self?.database.write({
@@ -64,7 +65,8 @@ class MessageRepository {
                 let endpoint: Endpoint<MessagePayload.Boxed> = .sendMessage(
                     cid: cid,
                     messagePayload: requestBody,
-                    skipPush: skipPush
+                    skipPush: skipPush,
+                    skipEnrichUrl: skipEnrichUrl
                 )
                 self?.apiClient.request(endpoint: endpoint) {
                     switch $0 {
@@ -170,8 +172,9 @@ class MessageRepository {
     /// - Parameters:
     ///   - cid: The channel identifier the message relates to.
     ///   - messageId: The message identifier.
+    ///   - store: A boolean indicating if the message should be stored to database or should only be retrieved
     ///   - completion: The completion. Will be called with an error if something goes wrong, otherwise - will be called with `nil`.
-    func getMessage(cid: ChannelId, messageId: MessageId, completion: ((Result<ChatMessage, Error>) -> Void)? = nil) {
+    func getMessage(cid: ChannelId, messageId: MessageId, store: Bool, completion: ((Result<ChatMessage, Error>) -> Void)? = nil) {
         let endpoint: Endpoint<MessagePayload.Boxed> = .getMessage(messageId: messageId)
         apiClient.request(endpoint: endpoint) {
             switch $0 {
@@ -179,6 +182,9 @@ class MessageRepository {
                 var message: ChatMessage?
                 self.database.write({ session in
                     message = try session.saveMessage(payload: boxed.message, for: cid, syncOwnReactions: true, cache: nil).asModel()
+                    if !store {
+                        self.database.writableContext.discardCurrentChanges()
+                    }
                 }, completion: { error in
                     if let error = error {
                         completion?(.failure(error))

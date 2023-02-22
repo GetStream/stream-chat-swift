@@ -22,7 +22,7 @@ class MessageUpdater: Worker {
     ///   - messageId: The message identifier.
     ///   - completion: The completion. Will be called with an error if something goes wrong, otherwise - will be called with `nil`.
     func getMessage(cid: ChannelId, messageId: MessageId, completion: ((Result<ChatMessage, Error>) -> Void)? = nil) {
-        repository.getMessage(cid: cid, messageId: messageId, completion: completion)
+        repository.getMessage(cid: cid, messageId: messageId, store: true, completion: completion)
     }
 
     /// Deletes the message.
@@ -151,6 +151,7 @@ class MessageUpdater: Worker {
     ///   in the response thread.
     ///   - quotedMessageId: An id of the message new message quotes. (inline reply)
     ///   - skipPush: If true, skips sending push notification to channel members.
+    ///   - skipEnrichUrl: If true, skips url enriching.
     ///   - extraData: Additional extra data of the message object.
     ///   - completion: Called when saving the message to the local DB finishes.
     ///
@@ -167,6 +168,7 @@ class MessageUpdater: Worker {
         isSilent: Bool,
         quotedMessageId: MessageId?,
         skipPush: Bool,
+        skipEnrichUrl: Bool,
         extraData: [String: RawJSON],
         completion: ((Result<MessageId, Error>) -> Void)? = nil
     ) {
@@ -186,6 +188,7 @@ class MessageUpdater: Worker {
                 quotedMessageId: quotedMessageId,
                 createdAt: nil,
                 skipPush: skipPush,
+                skipEnrichUrl: skipEnrichUrl,
                 extraData: extraData
             )
 

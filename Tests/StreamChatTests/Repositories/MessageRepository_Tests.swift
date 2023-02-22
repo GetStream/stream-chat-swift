@@ -144,6 +144,27 @@ final class MessageRepositoryTests: XCTestCase {
         XCTAssertTrue(skipPush)
     }
 
+    func test_sendMessage_skipEnrichUrl() throws {
+        let id = MessageId.unique
+        try createMessage(id: id, localState: .pendingSend, skipEnrichUrl: true)
+        let expectation = self.expectation(description: "Send Message completes")
+        repository.sendMessage(with: id) { _ in
+            expectation.fulfill()
+        }
+
+        wait(for: [apiClient.request_expectation], timeout: defaultTimeout)
+
+        let payload = MessagePayload.Boxed(message: .dummy(messageId: id, authorUserId: .anonymous))
+        (apiClient.request_completion as? (Result<MessagePayload.Boxed, Error>) -> Void)?(.success(payload))
+
+        wait(for: [expectation], timeout: defaultTimeout)
+
+        let expectedEndpoint = try XCTUnwrap(apiClient.request_endpoint)
+        let requestBody = try expectedEndpoint.bodyAsDictionary()
+        let skipPush = try XCTUnwrap(requestBody["skip_enrich_url"] as? Bool)
+        XCTAssertTrue(skipPush)
+    }
+
     // MARK: saveSuccessfullySentMessage
 
     func test_saveSuccessfullySentMessage_noChannel() {
@@ -254,7 +275,7 @@ final class MessageRepositoryTests: XCTestCase {
         let messageId: MessageId = .unique
 
         // Simulate `getMessage(cid:, messageId:)` call
-        repository.getMessage(cid: cid, messageId: messageId)
+        repository.getMessage(cid: cid, messageId: messageId, store: true)
 
         // Assert correct endpoint is called
         let expectedEndpoint: Endpoint<MessagePayload.Boxed> = .getMessage(messageId: messageId)
@@ -264,7 +285,7 @@ final class MessageRepositoryTests: XCTestCase {
     func test_getMessage_propogatesRequestError() {
         // Simulate `getMessage(cid:, messageId:)` call
         var completionCalledError: Error?
-        repository.getMessage(cid: .unique, messageId: .unique) {
+        repository.getMessage(cid: .unique, messageId: .unique, store: true) {
             completionCalledError = $0.error
         }
 
@@ -276,7 +297,7 @@ final class MessageRepositoryTests: XCTestCase {
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
 
-    func test_getMessage_propogatesDatabaseError() throws {
+    func test_getMessage_propagatesDatabaseError() throws {
         let messagePayload: MessagePayload.Boxed = .init(
             message: .dummy(messageId: .unique, authorUserId: .unique)
         )
@@ -291,7 +312,7 @@ final class MessageRepositoryTests: XCTestCase {
 
         // Simulate `getMessage(cid:, messageId:)` call
         var completionCalledError: Error?
-        repository.getMessage(cid: channelId, messageId: messagePayload.message.id) {
+        repository.getMessage(cid: channelId, messageId: messagePayload.message.id, store: true) {
             completionCalledError = $0.error
         }
 
@@ -302,7 +323,7 @@ final class MessageRepositoryTests: XCTestCase {
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
 
-    func test_getMessage_savesMessageToDatabase() throws {
+    func test_getMessage_savesMessageToDatabase_whenStoreIsTrue() throws {
         let currentUserId: UserId = .unique
         let messageId: MessageId = .unique
         let cid: ChannelId = .unique
@@ -315,7 +336,7 @@ final class MessageRepositoryTests: XCTestCase {
 
         // Simulate `getMessage(cid:, messageId:)` call
         var completionCalled = false
-        repository.getMessage(cid: cid, messageId: messageId) { _ in
+        repository.getMessage(cid: cid, messageId: messageId, store: true) { _ in
             completionCalled = true
         }
 
@@ -330,6 +351,36 @@ final class MessageRepositoryTests: XCTestCase {
 
         // Assert fetched message is saved to the database
         XCTAssertNotNil(database.viewContext.message(id: messageId))
+    }
+
+    func test_getMessage_doesNotSaveMessageToDatabase_whenStoreIsFalse() throws {
+        let currentUserId: UserId = .unique
+        let messageId: MessageId = .unique
+        let cid: ChannelId = .unique
+
+        // Create current user in the database
+        try database.createCurrentUser(id: currentUserId)
+
+        // Create channel in the database
+        try database.createChannel(cid: cid)
+
+        // Simulate `getMessage(cid:, messageId:)` call
+        var completionCalled = false
+        repository.getMessage(cid: cid, messageId: messageId, store: false) { _ in
+            completionCalled = true
+        }
+
+        // Simulate API response with success
+        let messagePayload: MessagePayload.Boxed = .init(
+            message: .dummy(messageId: messageId, authorUserId: currentUserId)
+        )
+        apiClient.test_simulateResponse(Result<MessagePayload.Boxed, Error>.success(messagePayload))
+
+        // Assert completion is called
+        AssertAsync.willBeTrue(completionCalled)
+
+        // Assert fetched message is NOT saved to the database
+        XCTAssertNil(database.viewContext.message(id: messageId))
     }
 
     // MARK: markMessage
@@ -542,7 +593,12 @@ final class MessageRepositoryTests: XCTestCase {
 
 extension MessageRepositoryTests {
     @discardableResult
-    private func createMessage(id: MessageId, localState: LocalMessageState, skipPush: Bool = false) throws -> MessageDTO {
+    private func createMessage(
+        id: MessageId,
+        localState: LocalMessageState,
+        skipPush: Bool = false,
+        skipEnrichUrl: Bool = false
+    ) throws -> MessageDTO {
         try database.createCurrentUser()
         try database.createChannel(cid: cid)
         var message: MessageDTO!
@@ -554,6 +610,7 @@ extension MessageRepositoryTests {
                 quotedMessageId: nil,
                 isSilent: false,
                 skipPush: skipPush,
+                skipEnrichUrl: skipEnrichUrl,
                 extraData: [:]
             )
             message.id = id

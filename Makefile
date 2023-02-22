@@ -13,14 +13,9 @@ all_artifacts:
 	echo "🏁 Ended at $$(date +%T)"
 
 frameworks: clean
-	echo "👉 Creating dynamic libraries. Will take a while... Logs available: DerivedData/fastlane.log"
-	bundle exec fastlane build_xcframeworks > DerivedData/fastlane.log
-	echo "👉 Creating compressed archives"
-	cp ./LICENSE ./Products/LICENSE
-	make zip_artifacts name="StreamChat-All" pattern=./*.xcframework
-	make zip_artifacts name="StreamChat" pattern="./StreamChat.xcframework ./LICENSE"
-	make zip_artifacts name="StreamChatUI" pattern="./StreamChatUI.xcframework ./LICENSE"
-	make swiftpm_checksum
+	echo "👉 Creating dynamic libraries. Will take a while... Logs available: fastlane/fastlane.log"
+	bundle exec fastlane build_xcframeworks > fastlane/fastlane.log
+	bundle exec fastlane compress_frameworks
 	make clean
 
 static_libraries: clean
@@ -31,14 +26,8 @@ static_libraries: clean
 	make clean
 
 clean:
-	echo "♻️  Cleaning ./Products & ./DerivedData"
-	rm -rf DerivedData
-	mkdir -p DerivedData
-	rm -rf Products/*.xcframework
-	rm -rf Products/*.bundle
-	rm -rf Products/*.BCSymbolMaps
-	rm -rf Products/*.dSYMs
-	rm Products/LICENSE || true
+	echo "♻️ Cleaning ./Products"
+	bundle exec fastlane clean_products
 
 zip_artifacts:
 	@if [ "$(name)" = "" ]; then\
@@ -51,12 +40,6 @@ zip_artifacts:
     fi
 	echo "👉 Compressing $(name)"
 	cd ./Products && zip -r "$(name).zip" $(pattern) > /dev/null
-
-swiftpm_checksum:
-	echo "ℹ️  Checksum for StreamChat.zip"
-	swift package compute-checksum Products/StreamChat.zip
-	echo "ℹ️  Checksum for StreamChatUI.zip"
-	swift package compute-checksum Products/StreamChatUI.zip
 
 update_dependencies:
 	echo "👉 Updating Nuke"

@@ -182,6 +182,11 @@ public struct ChatClientConfig {
     /// It controls how long (in seconds) a network task should wait for additional data to arrive before giving up
     public var timeoutIntervalForRequest: TimeInterval = 30
 
+    /// Enable/Disable local filtering for Channel lists. When enabled,
+    /// whenever a new channel is created,/updated the SDK will try to
+    /// match the channel list filter automatically.
+    public var isChannelAutomaticFilteringEnabled: Bool = true
+
     public init(apiKey: APIKey) {
         self.apiKey = apiKey
         isClientInActiveMode = !Bundle.main.isAppExtension

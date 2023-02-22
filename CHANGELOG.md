@@ -3,11 +3,35 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.27.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.27.1)
+_February 20, 2023_
+## StreamChat
+### 🐞 Fixed
+- Fix channel auto-filtering when the filter contains the `type` key [#2497](https://github.com/GetStream/stream-chat-swift/pull/2497)
+
+## StreamChat
+### ✅ Added
+- Add support for `skip_enrich_url` when sending a message [#2498](https://github.com/GetStream/stream-chat-swift/pull/2498)
+
+# [4.27.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.27.0)
+_February 16, 2023_
+
 ## StreamChat
 ### ✅ Added
 - Add `UploadedAttachmentPostProcessor` in `ChatClientConfig` to allow changing custom attachment payloads after an attachment has been uploaded [#2457](https://github.com/GetStream/stream-chat-swift/pull/2457)
 - Add `AnyAttachmentPayload(localFileURL:customPayload:)` initializer to allow creating custom attachments without a remote URL [#2457](https://github.com/GetStream/stream-chat-swift/pull/2457)
 - Add skip push support when sending a message [#2486](https://github.com/GetStream/stream-chat-swift/pull/2486)
+- Add support for automatically filtering channels in the Channel List [#2488](https://github.com/GetStream/stream-chat-swift/pull/2488)
+- Add `isChannelAutomaticFilteringEnabled` in `ChatClientConfig` to allow changing whether the Channels in ChannelList will be automatically filtered [#2488](https://github.com/GetStream/stream-chat-swift/pull/2488)
+
+
+### 🔄 Changed
+- Remove unused ReactionNotificationContent [#2485](https://github.com/GetStream/stream-chat-swift/pull/2485)
+
+### 🐞 Fixed
+- Fix channel unread count not updating when in foreground and notification extension is saving messages [#2481](https://github.com/GetStream/stream-chat-swift/pull/2481)
 
 ### 🐞 Fixed
 - Fix messages appearing sooner in Thread pagination [#2470](https://github.com/GetStream/stream-chat-swift/pull/2470)

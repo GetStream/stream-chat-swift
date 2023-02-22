@@ -37,6 +37,7 @@ class MessageDTO: NSManagedObject {
     @NSManaged var isBounced: Bool
     @NSManaged var isSilent: Bool
     @NSManaged var skipPush: Bool
+    @NSManaged var skipEnrichUrl: Bool
     @NSManaged var isShadowed: Bool
     @NSManaged var reactionScores: [String: Int]
     @NSManaged var reactionCounts: [String: Int]
@@ -482,6 +483,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         quotedMessageId: MessageId?,
         createdAt: Date?,
         skipPush: Bool,
+        skipEnrichUrl: Bool,
         extraData: [String: RawJSON]
     ) throws -> MessageDTO {
         guard let currentUserDTO = currentUser else {
@@ -517,6 +519,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         message.extraData = try JSONEncoder.default.encode(extraData)
         message.isSilent = isSilent
         message.skipPush = skipPush
+        message.skipEnrichUrl = skipEnrichUrl
         message.reactionScores = [:]
         message.reactionCounts = [:]
 

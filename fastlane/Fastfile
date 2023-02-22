@@ -15,7 +15,7 @@ before_all do |lane|
   if is_ci
     setup_ci
     ENV['FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT'] = '180'
-    xcodes(version: xcode_version, select_for_current_build_only: true) unless lane == :publish_release
+    xcodes(version: xcode_version, select_for_current_build_only: true) unless [:publish_release, :allure_launch].include?(lane)
   end
 end
 
@@ -136,14 +136,40 @@ lane :merge_main_to_develop do
   sh('git push')
 end
 
+desc 'Compresses the XCFrameworks into zip files'
+lane :compress_frameworks do
+  Dir.chdir('..') do
+    FileUtils.cp('LICENSE', 'Products/LICENSE')
+    Dir.chdir('Products') do
+      ['StreamChat', 'StreamChatUI'].each do |framework|
+        sh("zip -r #{framework} ./#{framework}.xcframework ./LICENSE")
+        sh("swift package compute-checksum #{framework}.zip")
+      end
+      sh('zip -r "StreamChat-All" ./*.xcframework ./LICENSE')
+    end
+  end
+end
+
+desc 'Cleans Products and DerivedData folders'
+lane :clean_products do
+  Dir.chdir('..') do
+    ['*.xcframework', '*.bundle', '*.BCSymbolMaps', '*.dSYMs', 'LICENSE'].each do |f|
+      sh("rm -rf Products/#{f}") # FileUtils.rm_rf does not work from Makefile, using sh instead
+    end
+  end
+end
+
 desc 'Completes an SDK Release'
 lane :publish_release do |options|
   version = options[:version] || ''
   UI.user_error!('You need to pass the version of the release') unless version.length > 0
 
   # Create XCFrameworks
-  xcversion(version: xcode_version)
-  sh('cd .. && make frameworks')
+  xcversion(version: '13.0')
+  clean_products
+  build_xcframeworks
+  compress_frameworks
+  clean_products
 
   changes = read_changelog(version: version)
 
@@ -357,9 +383,8 @@ lane :test_e2e_mock do |options|
 
   start_sinatra
 
-  ios = options[:ios]
-  device = ios && ios != 'latest' ? "#{options[:device]} (#{ios})" : options[:device]
-  build_for_testing = is_ci && options[:cron].nil?
+  device = options[:ios] && options[:ios] != 'latest' ? "#{options[:device]} (#{options[:ios]})" : options[:device]
+  prepare_simulator(device: device) if is_ci && (options[:ios].nil? || ['latest', '15.4'].include?(options[:ios]))
 
   scan_options = {
     project: xcode_project,
@@ -369,10 +394,11 @@ lane :test_e2e_mock do |options|
     devices: device,
     number_of_retries: 3 # TODO: CIS-1737
   }
+
+  build_for_testing = is_ci && options[:cron].nil?
   scan(scan_options.merge(clean: true, build_for_testing: build_for_testing))
 
   if build_for_testing
-    prepare_simulator(device: device, reset: true)
     parallelize_tests_on_ci(
       scan: scan_options,
       derived_data: lane_context[SharedValues::SCAN_DERIVED_DATA_PATH],
@@ -635,8 +661,8 @@ lane :emerge_upload do
   emerge(
     build_type: 'release',
     repo_name: github_repo,
-    pr_number: ENV.fetch('GITHUB_PR_NUM', nil), # If `nil` then local run or merge to main
-    sha: ENV['GITHUB_COMMIT_SHA'] || ENV['GITHUB_SHA'] || last_git_commit[:commit_hash]
+    pr_number: ENV['GITHUB_PR_NUM'] || nil, # If `nil` then local run or merge to develop/main
+    sha: last_git_commit[:commit_hash]
   )
 end
 
