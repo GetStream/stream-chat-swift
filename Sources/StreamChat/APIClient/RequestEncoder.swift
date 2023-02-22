@@ -261,6 +261,11 @@ struct DefaultRequestEncoder: RequestEncoder {
 }
 
 private extension URL {
+    func appendingQueryItems(_ items: [String: String]) throws -> URL {
+        let queryItems = items.map { URLQueryItem(name: $0.key, value: $0.value) }
+        return try appendingQueryItems(queryItems)
+    }
+
     func appendingQueryItems(_ items: [URLQueryItem]) throws -> URL {
         guard var components = URLComponents(url: self, resolvingAgainstBaseURL: false) else {
             throw ClientError.InvalidURL("Can't create `URLComponents` from the url: \(self).")
@@ -290,14 +295,4 @@ extension ClientError {
     class InvalidURL: ClientError {}
     class InvalidJSON: ClientError {}
     class MissingConnectionId: ClientError {}
-}
-
-/// A helper extension allowing to create `URLQueryItems` using a dictionary literal like:
-/// ```
-/// let queryItems = ["item1": "Luke", "item2": nil, "item3": "Leia"]
-/// ```
-extension Array: ExpressibleByDictionaryLiteral where Element == URLQueryItem {
-    public init(dictionaryLiteral elements: (String, String?)...) {
-        self = elements.map(URLQueryItem.init)
-    }
 }
