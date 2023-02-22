@@ -11,21 +11,25 @@ import UIKit
 public class ChatMessageCell: _TableViewCell, ComponentsProvider {
     public static var reuseId: String { "\(self)" }
 
-    /// The container that holds the date separator and the message content view.
-    /// This is internal since it is a temporary solution.
+    /// The container that holds the header, footer and the message content view.
     internal lazy var containerStackView = UIStackView()
         .withoutAutoresizingMaskConstraints
         .withAccessibilityIdentifier(identifier: "containerStackView")
 
-    /// The date separator view that groups messages from the same day.
-    /// This is internal since it is a temporary solution.
-    internal lazy var dateSeparatorView: ChatMessageListDateSeparatorView = components
-        .messageListDateSeparatorView.init()
+    /// The header View of the cell. It can be used to display additional information
+    /// about the message above the message's content.
+    internal lazy var headerContainerView: UIView = .init()
         .withoutAutoresizingMaskConstraints
-        .withAccessibilityIdentifier(identifier: "dateSeparatorView")
+        .withAccessibilityIdentifier(identifier: "headerContainerView")
 
     /// The message content view the cell is showing.
     public private(set) var messageContentView: ChatMessageContentView?
+
+    /// The header View of the cell. It can be used to display additional information
+    /// about the message below the message's content.
+    internal lazy var footerContainerView: UIView = .init()
+        .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "footerContainerView")
 
     /// The minimum spacing below the cell.
     public var minimumSpacingBelow: CGFloat = 2 {
@@ -43,8 +47,10 @@ public class ChatMessageCell: _TableViewCell, ComponentsProvider {
         containerStackView.axis = .vertical
         containerStackView.alignment = .center
         containerStackView.spacing = 8
-        containerStackView.addArrangedSubview(dateSeparatorView)
+
+        if !headerContainerView.subviews.isEmpty { containerStackView.addArrangedSubview(headerContainerView) }
         messageContentView.map { containerStackView.addArrangedSubview($0) }
+        if !footerContainerView.subviews.isEmpty { containerStackView.addArrangedSubview(footerContainerView) }
         contentView.addSubview(containerStackView)
 
         containerStackView.pin(
@@ -65,12 +71,45 @@ public class ChatMessageCell: _TableViewCell, ComponentsProvider {
 
         backgroundColor = .clear
         backgroundView = nil
+
+        headerContainerView.backgroundColor = nil
+        footerContainerView.backgroundColor = nil
     }
 
     override public func prepareForReuse() {
         super.prepareForReuse()
 
         messageContentView?.prepareForReuse()
+        headerContainerView.removeFromSuperview()
+        footerContainerView.removeFromSuperview()
+    }
+
+    public func updateDecoration(
+        for decorationType: ChatMessageDecorationType,
+        decorationView: ChatMessageDecorationView?
+    ) {
+        let container = decorationType == .header ? headerContainerView : footerContainerView
+
+        container.subviews.forEach { $0.removeFromSuperview() }
+
+        guard let decorationView = decorationView else {
+            container.removeFromSuperview()
+            return
+        }
+
+        decorationView.translatesAutoresizingMaskIntoConstraints = false
+        container.embed(decorationView)
+        switch decorationType {
+        case .header:
+            containerStackView.insertArrangedSubview(container, at: 0)
+        case .footer:
+            containerStackView.addArrangedSubview(container)
+        }
+
+        container.pin(
+            anchors: [.leading, .trailing],
+            to: containerStackView
+        )
     }
 
     /// Creates a message content view

@@ -36,6 +36,10 @@
 		22C2359A259CA87B00DC805A /* Animation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22C23599259CA87B00DC805A /* Animation.swift */; };
 		22CAFA7625CAE278005935D9 /* RawJSON_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22CAFA7525CAE278005935D9 /* RawJSON_Tests.swift */; };
 		22FF4365256E943F00133910 /* ChatSuggestionsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22FF4364256E943F00133910 /* ChatSuggestionsVC.swift */; };
+		400F063129A63A0B00242A86 /* ChatMessageDecorationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 400F063029A63A0B00242A86 /* ChatMessageDecorationView.swift */; };
+		400F063229A63A0B00242A86 /* ChatMessageDecorationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 400F063029A63A0B00242A86 /* ChatMessageDecorationView.swift */; };
+		400F063529A65DD500242A86 /* ChatMessageCell_DecorationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 400F063429A65DD500242A86 /* ChatMessageCell_DecorationTests.swift */; };
+		400F063C29A6632F00242A86 /* ChatMessageListDateSeparatorView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 400F063B29A6632F00242A86 /* ChatMessageListDateSeparatorView_Tests.swift */; };
 		4068ECD2298D06BB0032D57A /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4068ECD0298D06720032D57A /* SplashViewController.swift */; };
 		4068ECD3298D06BB0032D57A /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4068ECD0298D06720032D57A /* SplashViewController.swift */; };
 		4068ECD4298D06BC0032D57A /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4068ECD0298D06720032D57A /* SplashViewController.swift */; };
@@ -2362,6 +2366,9 @@
 		22C23599259CA87B00DC805A /* Animation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Animation.swift; sourceTree = "<group>"; };
 		22CAFA7525CAE278005935D9 /* RawJSON_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RawJSON_Tests.swift; sourceTree = "<group>"; };
 		22FF4364256E943F00133910 /* ChatSuggestionsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatSuggestionsVC.swift; sourceTree = "<group>"; };
+		400F063029A63A0B00242A86 /* ChatMessageDecorationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageDecorationView.swift; sourceTree = "<group>"; };
+		400F063429A65DD500242A86 /* ChatMessageCell_DecorationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageCell_DecorationTests.swift; sourceTree = "<group>"; };
+		400F063B29A6632F00242A86 /* ChatMessageListDateSeparatorView_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageListDateSeparatorView_Tests.swift; sourceTree = "<group>"; };
 		4068ECD0298D06720032D57A /* SplashViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashViewController.swift; sourceTree = "<group>"; };
 		430156DB26B1862C0006E7EA /* CustomDataHashMap_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomDataHashMap_Tests.swift; sourceTree = "<group>"; };
 		430156DD26B188A70006E7EA /* MessagePayload.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = MessagePayload.json; sourceTree = "<group>"; };
@@ -3950,6 +3957,22 @@
 				79983C80266633C2000995F6 /* ChatMessageVideoAttachment.swift */,
 			);
 			path = Attachments;
+			sourceTree = "<group>";
+		};
+		400F063629A660D400242A86 /* ChatMessageCell */ = {
+			isa = PBXGroup;
+			children = (
+				400F063429A65DD500242A86 /* ChatMessageCell_DecorationTests.swift */,
+			);
+			path = ChatMessageCell;
+			sourceTree = "<group>";
+		};
+		400F063A29A6632500242A86 /* ChatMessageListDateSeparatorView */ = {
+			isa = PBXGroup;
+			children = (
+				400F063B29A6632F00242A86 /* ChatMessageListDateSeparatorView_Tests.swift */,
+			);
+			path = ChatMessageListDateSeparatorView;
 			sourceTree = "<group>";
 		};
 		4068ECCF298D06620032D57A /* Shared */ = {
@@ -6243,6 +6266,8 @@
 		A3960DF327DA2DC2003AB2B0 /* CommonViews */ = {
 			isa = PBXGroup;
 			children = (
+				400F063A29A6632500242A86 /* ChatMessageListDateSeparatorView */,
+				400F063629A660D400242A86 /* ChatMessageCell */,
 				CF8268B72800A4EF00E300E7 /* ChatChannelHeaderView */,
 				A3960DFB27DA4F22003AB2B0 /* Suggestions */,
 				A3960DFA27DA4F0E003AB2B0 /* SendButton */,
@@ -7624,6 +7649,7 @@
 				224FF67A2562F1EA00725DD1 /* ChatMessageDeliveryStatusCheckmarkView.swift */,
 				8803E9E626398F4E002B2A7B /* ChatMessageBubbleView.swift */,
 				847F3CE92689FDEB00D240E0 /* ChatMessageCell.swift */,
+				400F063029A63A0B00242A86 /* ChatMessageDecorationView.swift */,
 				88A8CF15256E7BDA004EA4C7 /* ChatMessageContentView.swift */,
 				F87A4955260C6F38001653A8 /* ChatMessageContentView+SwiftUI.swift */,
 				88A11B2F2590CC860000AC24 /* ChatMessageErrorIndicator.swift */,
@@ -8974,6 +9000,7 @@
 				AD447398263ABD530030E583 /* ChatCommandSuggestionCollectionViewCell.swift in Sources */,
 				847D602D2679EF8A00FB701D /* VideoPlaybackControlView.swift in Sources */,
 				ADCB577528A42D7700B81AE8 /* ContentEquatable.swift in Sources */,
+				400F063129A63A0B00242A86 /* ChatMessageDecorationView.swift in Sources */,
 				88CABC8E25936E440061BB67 /* ChatMessageReactionsBubbleTail.swift in Sources */,
 				AD87D0AB263C7A7E008B466C /* ShrinkInputButton.swift in Sources */,
 				C1FC2F6C27416E150062530F /* LinkedList.swift in Sources */,
@@ -9044,6 +9071,7 @@
 				849AE666270CB55F00423A20 /* VideoAttachmentGalleryCell_Tests.swift in Sources */,
 				CF38F5B4287DB64B00E24D10 /* ChatChannelListErrorView_Tests.swift in Sources */,
 				AD71131225F138D500932AEE /* ChatUserAvatarView_Tests.swift in Sources */,
+				400F063529A65DD500242A86 /* ChatMessageCell_DecorationTests.swift in Sources */,
 				AD154C6D25DC3BA000850925 /* ChatCommandSuggestionView_Tests.swift in Sources */,
 				84F373F0280D95990081E8BA /* ChatMessageDeliveryStatusView_Tests.swift in Sources */,
 				8893FEF9265F890700DD62BE /* ChatMessageBubbleView_Tests.swift in Sources */,
@@ -9093,6 +9121,7 @@
 				795296C12582494000435B2E /* ComponentsProvider_Tests.swift in Sources */,
 				225503B825DC59FD00A5A65A /* UIView+Helpers.swift in Sources */,
 				7865705825FB6DF300974045 /* UIViewController+Extensions_Tests.swift in Sources */,
+				400F063C29A6632F00242A86 /* ChatMessageListDateSeparatorView_Tests.swift in Sources */,
 				792057AC264168A6002B145B /* UITestsEnvironmentSetup.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -10561,6 +10590,7 @@
 				C121EC1B2746A1EC00023E4C /* ImageDecoding.swift in Sources */,
 				ADCB578828A42D7700B81AE8 /* DifferentiableSection.swift in Sources */,
 				C121EC1C2746A1EC00023E4C /* ImagePipelineCache.swift in Sources */,
+				400F063229A63A0B00242A86 /* ChatMessageDecorationView.swift in Sources */,
 				C121EC1D2746A1EC00023E4C /* DataLoader.swift in Sources */,
 				C121EC1E2746A1EC00023E4C /* ImageResponse.swift in Sources */,
 				C121EC1F2746A1EC00023E4C /* ImagePipelineDelegate.swift in Sources */,
