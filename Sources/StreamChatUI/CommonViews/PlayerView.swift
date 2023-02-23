@@ -7,6 +7,7 @@ import StreamChat
 import UIKit
 
 /// A view that shows a playing video content.
+@objc(StreamPlayerView)
 open class PlayerView: _View {
     /// A player this view is following.
     open private(set) lazy var player = AVPlayer()
