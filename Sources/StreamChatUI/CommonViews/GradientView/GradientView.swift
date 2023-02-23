@@ -5,6 +5,7 @@
 import UIKit
 
 /// A view that draws a gradient
+@objc(StreamGradientView)
 open class GradientView: _View {
     /// A type representing gradient drawing options
     public struct Content {
