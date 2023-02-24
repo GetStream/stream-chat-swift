@@ -18,6 +18,6 @@ public enum ChatMessageDecorationType: Equatable {
 
 /// The view that displays any header or footer decorations above & below a
 /// ChatMessageCell.
-open class ChatMessageDecorationView: _TableViewHeaderFooterReusableView {
+open class ChatMessageDecorationView: _View {
     public static var reuseId: String { "\(self)" }
 }

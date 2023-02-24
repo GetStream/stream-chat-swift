@@ -36,6 +36,11 @@ public class ChatMessageCell: _TableViewCell, ComponentsProvider {
         didSet { updateBottomSpacing() }
     }
 
+    /// The spacing between the header, content and footer
+    public var spacingBetween: CGFloat = 8 {
+        didSet { updateSpacingBetween() }
+    }
+
     override public func setUp() {
         super.setUp()
         selectionStyle = .none
@@ -46,11 +51,10 @@ public class ChatMessageCell: _TableViewCell, ComponentsProvider {
 
         containerStackView.axis = .vertical
         containerStackView.alignment = .center
-        containerStackView.spacing = 8
 
-        if !headerContainerView.subviews.isEmpty { containerStackView.addArrangedSubview(headerContainerView) }
+        containerStackView.addArrangedSubview(headerContainerView)
         messageContentView.map { containerStackView.addArrangedSubview($0) }
-        if !footerContainerView.subviews.isEmpty { containerStackView.addArrangedSubview(footerContainerView) }
+        containerStackView.addArrangedSubview(footerContainerView)
         contentView.addSubview(containerStackView)
 
         containerStackView.pin(
@@ -58,7 +62,17 @@ public class ChatMessageCell: _TableViewCell, ComponentsProvider {
             to: contentView
         )
 
+        headerContainerView.pin(
+            anchors: [.leading, .trailing],
+            to: containerStackView
+        )
+
         messageContentView?.pin(
+            anchors: [.leading, .trailing],
+            to: containerStackView
+        )
+
+        footerContainerView.pin(
             anchors: [.leading, .trailing],
             to: containerStackView
         )
@@ -84,7 +98,11 @@ public class ChatMessageCell: _TableViewCell, ComponentsProvider {
         footerContainerView.removeFromSuperview()
     }
 
-    public func updateDecoration(
+    /// Sets a decoration surrounding the content view
+    /// - Parameters:
+    /// - decorationType: The type of the decoration to set. Currently supporting header and footer
+    /// - decorationView: The view to use as decoration. If nil, the UI space will be released
+    public func setDecoration(
         for decorationType: ChatMessageDecorationType,
         decorationView: ChatMessageDecorationView?
     ) {
@@ -93,23 +111,21 @@ public class ChatMessageCell: _TableViewCell, ComponentsProvider {
         container.subviews.forEach { $0.removeFromSuperview() }
 
         guard let decorationView = decorationView else {
-            container.removeFromSuperview()
+            container.isHidden = true
             return
         }
 
         decorationView.translatesAutoresizingMaskIntoConstraints = false
-        container.embed(decorationView)
         switch decorationType {
         case .header:
+            container.embed(decorationView, insets: .init(top: 0, leading: 0, bottom: spacingBetween, trailing: 0))
             containerStackView.insertArrangedSubview(container, at: 0)
         case .footer:
+            container.embed(decorationView, insets: .init(top: spacingBetween, leading: 0, bottom: 0, trailing: 0))
             containerStackView.addArrangedSubview(container)
         }
 
-        container.pin(
-            anchors: [.leading, .trailing],
-            to: containerStackView
-        )
+        container.isHidden = false
     }
 
     /// Creates a message content view
@@ -146,5 +162,15 @@ public class ChatMessageCell: _TableViewCell, ComponentsProvider {
             contentView.mainContainer.layoutMargins.bottom,
             minimumSpacingBelow
         )
+    }
+
+    private func updateSpacingBetween() {
+        if let headerDecorationView = headerContainerView.subviews.first as? ChatMessageDecorationView {
+            setDecoration(for: .header, decorationView: headerDecorationView)
+        }
+
+        if let footerDecorationView = footerContainerView.subviews.first as? ChatMessageDecorationView {
+            setDecoration(for: .footer, decorationView: footerDecorationView)
+        }
     }
 }

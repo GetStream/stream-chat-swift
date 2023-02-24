@@ -431,17 +431,8 @@ open class ChatMessageListVC: _ViewController,
         cell.messageContentView?.content = message
 
         /// Process cell decorations
-        [ChatMessageDecorationType.header, .footer].forEach { decorationType in
-            cell.updateDecoration(
-                for: decorationType,
-                decorationView: delegate?.chatMessageListVC(
-                    self,
-                    decorationViewForMessage: message,
-                    decorationType: decorationType,
-                    at: indexPath
-                )
-            )
-        }
+        cell.setDecoration(for: .header, decorationView: delegate?.chatMessageListVC(self, headerViewForMessage: message, at: indexPath))
+        cell.setDecoration(for: .footer, decorationView: delegate?.chatMessageListVC(self, footerViewForMessage: message, at: indexPath))
 
         return cell
     }

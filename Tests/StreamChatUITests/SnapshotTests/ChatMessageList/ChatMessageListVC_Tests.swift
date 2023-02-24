@@ -231,7 +231,7 @@ final class ChatMessageListVC_Tests: XCTestCase {
         let cell = try XCTUnwrap(subject.tableView(subject.listView, cellForRowAt: IndexPath(item: 0, section: 0)) as? ChatMessageCell)
         subject.view.addSubview(cell) // This is used to trigger the setUpLayout cycle of the cell
 
-        XCTAssertNil(cell.headerContainerView.superview)
+        XCTAssertTrue(cell.headerContainerView.isHidden)
     }
 
     func test_cellForRow_isDateSeparatorEnabledIsTrueShouldShowDateSeparatorIsReturnsFalse_headerIsNotVisibleOnCell() throws {
@@ -251,7 +251,7 @@ final class ChatMessageListVC_Tests: XCTestCase {
         let cell = try XCTUnwrap(subject.tableView(subject.listView, cellForRowAt: IndexPath(item: 0, section: 0)) as? ChatMessageCell)
         subject.view.addSubview(cell)
 
-        XCTAssertNil(cell.headerContainerView.superview)
+        XCTAssertTrue(cell.headerContainerView.isHidden)
     }
 
     func test_cellForRow_shouldShowDateSeparatorIsReturnsFalse_headerIsVisibleAndCorrectlyConfiguredOnCell() throws {
@@ -346,15 +346,17 @@ private class ChatMessageListVCDelegate_Mock: ChatMessageListVCDelegate {
 
     func chatMessageListVC(
         _ vc: ChatMessageListVC,
-        decorationViewForMessage message: ChatMessage,
-        decorationType: ChatMessageDecorationType,
+        headerViewForMessage message: ChatMessage,
         at indexPath: IndexPath
     ) -> ChatMessageDecorationView? {
-        switch decorationType {
-        case .header:
-            return mockedHeaderView
-        case .footer:
-            return mockedFooterView
-        }
+        mockedHeaderView
+    }
+
+    func chatMessageListVC(
+        _ vc: ChatMessageListVC,
+        footerViewForMessage message: ChatMessage,
+        at indexPath: IndexPath
+    ) -> ChatMessageDecorationView? {
+        mockedFooterView
     }
 }

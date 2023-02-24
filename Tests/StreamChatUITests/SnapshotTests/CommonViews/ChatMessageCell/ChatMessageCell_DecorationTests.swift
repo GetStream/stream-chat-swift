@@ -8,10 +8,12 @@
 import XCTest
 
 final class ChatMessageCell_DecorationTests: XCTestCase {
+    private final class MockDecorationView: ChatMessageDecorationView {}
+
     private lazy var subject: ChatMessageCell! = .init(style: .default, reuseIdentifier: nil)
 
-    override func setUpWithError() throws {
-        try super.setUpWithError()
+    override func setUp() {
+        super.setUp()
         subject.setMessageContentIfNeeded(
             contentViewClass: ChatMessageContentView.self,
             attachmentViewInjectorType: nil,
@@ -25,15 +27,39 @@ final class ChatMessageCell_DecorationTests: XCTestCase {
         subject.layoutIfNeeded()
     }
 
-    override func tearDownWithError() throws {
+    override func tearDown() {
         subject = nil
-        try super.tearDownWithError()
+        super.tearDown()
+    }
+
+    // MARK: - spacingBetween
+
+    func test_spacingBetween_returnsExpectedValue() {
+        XCTAssertEqual(subject.spacingBetween, 8)
+    }
+
+    func test_spacingBetween_willUpdateTheLayout() {
+        let mockHeader = MockDecorationView()
+        let mockFooter = MockDecorationView()
+        let spyHeaderContainerView = SpyUIView()
+        let spyFooterContainerView = SpyUIView()
+        subject.headerContainerView = spyHeaderContainerView
+        subject.footerContainerView = spyFooterContainerView
+        subject.setDecoration(for: .header, decorationView: mockHeader)
+        subject.setDecoration(for: .footer, decorationView: mockFooter)
+
+        spyHeaderContainerView.embedWasCalledWith = nil
+        spyFooterContainerView.embedWasCalledWith = nil
+        subject.spacingBetween = 10
+
+        XCTAssertEqual(spyHeaderContainerView.embedWasCalledWith?.insets, .init(top: 0, leading: 0, bottom: 10, trailing: 0))
+        XCTAssertEqual(spyFooterContainerView.embedWasCalledWith?.insets, .init(top: 10, leading: 0, bottom: 0, trailing: 0))
     }
 
     // MARK: - setupLayout
 
-    func test_setupLayout_headerAndFooterContainersAreNotInHierarchy() {
-        XCTAssertEqual(subject.containerStackView.subviews.count, 1)
+    func test_setupLayout_headerAndFooterContainersAreInHierarchy() {
+        XCTAssertEqual(subject.containerStackView.subviews.count, 3)
     }
 
     func test_setupLayout_messageContentViewHasSameWidthAsTheCell() {
@@ -64,49 +90,63 @@ final class ChatMessageCell_DecorationTests: XCTestCase {
         XCTAssertNil(subject.footerContainerView.superview)
     }
 
-    // MARK: - updateDecoration
+    // MARK: - setDecoration
 
-    func test_updateDecoration_decorationTypeIsHeaderAndDecorationViewIsNotNil_updatesHeaderContainerAsExpected() {
-        final class MockDecorationView: ChatMessageDecorationView {}
+    func test_setDecoration_decorationTypeIsHeaderAndDecorationViewIsNotNil_setsHeaderContainerAsExpected() {
         let decorationView = MockDecorationView()
 
-        subject.updateDecoration(for: .header, decorationView: decorationView)
+        subject.setDecoration(for: .header, decorationView: decorationView)
 
         XCTAssertEqual(subject.headerContainerView.subviews.count, 1)
         XCTAssertEqual(subject.headerContainerView.subviews.first, decorationView)
         XCTAssertEqual(subject.headerContainerView.superview, subject.containerStackView)
-        XCTAssertEqual(subject.headerContainerView, subject.containerStackView.arrangedSubviews.first)
+        XCTAssertFalse(subject.headerContainerView.isHidden)
     }
 
-    func test_updateDecoration_decorationTypeIsHeaderAndDecorationViewIsNotNilAndLaterUpdateWithDecorationViewNil_updatesHeaderContainerAsExpected() {
+    func test_setDecoration_decorationTypeIsHeaderAndDecorationViewIsNotNilAndLaterSetWithDecorationViewNil_setsHeaderContainerAsExpected() {
         final class MockDecorationView: ChatMessageDecorationView {}
         let decorationView = MockDecorationView()
 
-        subject.updateDecoration(for: .header, decorationView: decorationView)
-        subject.updateDecoration(for: .header, decorationView: nil)
+        subject.setDecoration(for: .header, decorationView: decorationView)
+        subject.setDecoration(for: .header, decorationView: nil)
 
-        XCTAssertNil(subject.headerContainerView.superview)
+        XCTAssertTrue(subject.headerContainerView.isHidden)
     }
 
-    func test_updateDecoration_decorationTypeIsFooterAndDecorationViewIsNotNil_updatesFooterContainerAsExpected() {
+    func test_setDecoration_decorationTypeIsFooterAndDecorationViewIsNotNil_setsFooterContainerAsExpected() {
         final class MockDecorationView: ChatMessageDecorationView {}
         let decorationView = MockDecorationView()
 
-        subject.updateDecoration(for: .footer, decorationView: decorationView)
+        subject.setDecoration(for: .footer, decorationView: decorationView)
 
         XCTAssertEqual(subject.footerContainerView.subviews.count, 1)
         XCTAssertEqual(subject.footerContainerView.subviews.first, decorationView)
         XCTAssertEqual(subject.footerContainerView.superview, subject.containerStackView)
-        XCTAssertEqual(subject.footerContainerView, subject.containerStackView.arrangedSubviews.last)
+        XCTAssertFalse(subject.footerContainerView.isHidden)
     }
 
-    func test_updateDecoration_decorationTypeIsFooterAndDecorationViewIsNotNilAndLaterUpdateWithDecorationViewNil_updatesFooterContainerAsExpected() {
+    func test_setDecoration_decorationTypeIsFooterAndDecorationViewIsNotNilAndLaterUpdateWithDecorationViewNil_setsFooterContainerAsExpected() {
         final class MockDecorationView: ChatMessageDecorationView {}
         let decorationView = MockDecorationView()
 
-        subject.updateDecoration(for: .footer, decorationView: decorationView)
-        subject.updateDecoration(for: .footer, decorationView: nil)
+        subject.setDecoration(for: .footer, decorationView: decorationView)
+        subject.setDecoration(for: .footer, decorationView: nil)
 
-        XCTAssertNil(subject.footerContainerView.superview)
+        XCTAssertTrue(subject.footerContainerView.isHidden)
+    }
+}
+
+// MARK: - Private Helpers
+
+private final class SpyUIView: UIView, Spy {
+    var recordedFunctions: [String] = []
+    var embedWasCalledWith: (subView: UIView, insets: NSDirectionalEdgeInsets)?
+
+    override func embed(
+        _ subview: UIView,
+        insets: NSDirectionalEdgeInsets = .zero
+    ) {
+        embedWasCalledWith = (subview, insets)
+        super.embed(subview, insets: insets)
     }
 }

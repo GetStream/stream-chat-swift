@@ -227,7 +227,10 @@ open class ChatChannelVC: _ViewController,
         }
     }
 
-    open func chatMessageListVC(_ vc: ChatMessageListVC, scrollViewDidScroll scrollView: UIScrollView) {
+    open func chatMessageListVC(
+        _ vc: ChatMessageListVC,
+        scrollViewDidScroll scrollView: UIScrollView
+    ) {
         if isLastMessageFullyVisible {
             channelController.markRead()
 
@@ -245,18 +248,23 @@ open class ChatChannelVC: _ViewController,
 
     open func chatMessageListVC(
         _ vc: ChatMessageListVC,
-        decorationViewForMessage message: ChatMessage,
-        decorationType: ChatMessageDecorationType,
+        headerViewForMessage message: ChatMessage,
         at indexPath: IndexPath
     ) -> ChatMessageDecorationView? {
-        switch decorationType {
-        case .header where vc.shouldShowDateSeparator(forMessage: message, at: indexPath):
-            let dateSeparatorView = components.messageListDateSeparatorView.init()
-            dateSeparatorView.content = vc.dateSeparatorFormatter.format(message.createdAt)
-            return dateSeparatorView
-        default:
-            return nil
-        }
+        dateHeaderView(
+            vc,
+            headerViewForMessage: message,
+            at: indexPath,
+            components: components
+        )
+    }
+
+    open func chatMessageListVC(
+        _ vc: ChatMessageListVC,
+        footerViewForMessage message: ChatMessage,
+        at indexPath: IndexPath
+    ) -> ChatMessageDecorationView? {
+        nil
     }
 
     // MARK: - ChatChannelControllerDelegate

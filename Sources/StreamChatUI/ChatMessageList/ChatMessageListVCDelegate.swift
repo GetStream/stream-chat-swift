@@ -47,16 +47,47 @@ public protocol ChatMessageListVCDelegate: AnyObject {
         with gestureRecognizer: UITapGestureRecognizer
     )
 
-    /// Ask the delegate to provide a decoration view for the specified decoration type.
+    /// Ask the delegate to provide a header view for the specified decoration type.
     /// - Parameters:
     ///   - vc: The message list  informing the delegate of this event.
     ///   - message: The given message.
-    ///   - decorationType: The type of the decoration to provide. The options are: *header* or *footer*.
     ///   - indexPath: An index path locating the row in the message list.
     func chatMessageListVC(
         _ vc: ChatMessageListVC,
-        decorationViewForMessage message: ChatMessage,
-        decorationType: ChatMessageDecorationType,
+        headerViewForMessage message: ChatMessage,
         at indexPath: IndexPath
     ) -> ChatMessageDecorationView?
+
+    /// Ask the delegate to provide a footer view for the specified decoration type.
+    /// - Parameters:
+    ///   - vc: The message list  informing the delegate of this event.
+    ///   - message: The given message.
+    ///   - indexPath: An index path locating the row in the message list.
+    func chatMessageListVC(
+        _ vc: ChatMessageListVC,
+        footerViewForMessage message: ChatMessage,
+        at indexPath: IndexPath
+    ) -> ChatMessageDecorationView?
+}
+
+extension ChatMessageListVCDelegate {
+    /// A helper method to create the DateSeparator that is used
+    /// - Parameters:
+    ///   - vc: The message list  informing the delegate of this event.
+    ///   - message: The given message.
+    ///   - indexPath: An index path locating the row in the message list.
+    ///   - components: The components to use in order to access the DateSeparatorView type
+    public func dateHeaderView(
+        _ vc: ChatMessageListVC,
+        headerViewForMessage message: ChatMessage,
+        at indexPath: IndexPath,
+        components: Components = .default
+    ) -> ChatMessageDecorationView? {
+        guard vc.shouldShowDateSeparator(forMessage: message, at: indexPath) else {
+            return nil
+        }
+        let dateSeparatorView = components.messageListDateSeparatorView.init()
+        dateSeparatorView.content = vc.dateSeparatorFormatter.format(message.createdAt)
+        return dateSeparatorView
+    }
 }

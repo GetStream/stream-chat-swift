@@ -466,7 +466,3 @@ open class _TableViewCell: UITableViewCell, Customizable, AccessibilityView {
         super.layoutSubviews()
     }
 }
-
-/// Base class for overridable views StreamChatUI provides.
-/// All conformers will have StreamChatUI appearance settings by default.
-open class _TableViewHeaderFooterReusableView: _View {}
