@@ -113,8 +113,11 @@ Components.default.messageLayoutOptionsResolver = CustomMessageLayoutOptionsReso
 | <img src={require("../../assets/message-basic-resolver-before.png").default} /> | <img src={require("../../assets/message-basic-resolver-after.png").default} /> |
 
 #### Decoration Views
+:::note
+Decoration Views are available on SDK version 4.28.0 and above.
+:::
 
-The SDK allows you to configure what will be presented above and below your message. Those views we are calling them `ChatMessageDecorationView`. `ChatMessageDecorationView` are fully customizable and they are even used for standard SDK components like the `Date Separators` that we will see below.
+The SDK allows you to configure what will be presented above and below your message with decoration views (`ChatMessageDecorationView`). They are fully customizable, and we also use them for standard SDK components like the `Date Separators` as seen below.
 
 In order to provide a `ChatMessageDecorationView` (either a header or a footer) for a message, you will need to implement the following method from the `ChatMessageListVCDelegate`
 ```swift
@@ -125,14 +128,7 @@ func chatMessageListVC(
     at indexPath: IndexPath
 ) -> ChatMessageDecorationView?
 ```
-`ChatMessageDecorationView` are following a similar flow as the `UITableViewHeaderFooterView` decorations for sections that `UITableView` is managing. During the preparation of a message cell, the `ChatMessageListVC` will ask the delegate to provide `ChatMessageDecorationView` for header and footer. If the delegate returns a non-nil value the 
-provided `ChatMessageDecorationView` will be placed in the cell's UI according to it's decoration type. In the case where the delegate will return a nil value then the cell will be updated to release the space for this specific decoration type, if it was previously used.
-
-:::note
-Unlike the `UITableViewHeaderFooterView`, the cell `ChatMessageDecorationView` that the SDK manages, is not cached and reused. This was decided due to some limitations of `UITableViewHeaderFooterView` that were preventing us from making `ChatMessageDecorationView` inherit from.
-
-This is a known limitation and we are working on providing a solution in a following update.
-:::
+`ChatMessageDecorationView` are following a similar flow as the `UITableViewHeaderFooterView` decorations for sections that `UITableView` is managing. During the preparation of a message cell, the `ChatMessageListVC` will ask the delegate to provide `ChatMessageDecorationView` for header and footer. If the delegate returns a non-nil value the provided `ChatMessageDecorationView` will be placed in the cell's UI according to it's decoration type. In the case where the delegate will return a nil value then the cell will be updated to release the space for this specific decoration type, if it was previously used.
 
 #### Date Separators
 
@@ -195,12 +191,12 @@ Components.default.messageListDateSeparatorView = CustomChatMessageListDateSepar
 | <img src={require("../../assets/message-list-date-separator-static.png").default} /> | <img src={require("../../assets/message-list-date-separator-custom.png").default} /> |
 
 :::important
-`Date Separator` is a type of `ChatMessageDecorationView` and its creation flow is going through the `ChatMessageListVCDelegate`. Both `ChatChannelVC` and `ChatThreadVC` have been updated to correctly configure `Date Separator` based on the `Components.default.messageListDateSeparatorEnabled` configuration flag.
+`Date Separator` is a type of `ChatMessageDecorationView` and its creation flow goes through the `ChatMessageListVCDelegate`. Both `ChatChannelVC` and `ChatThreadVC` configure `Date Separator` based on the `Components.default.messageListDateSeparatorEnabled` configuration flag.
 
 In the case where you are overriding the `func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell` method from `ChatMessageListVC` you may want to ensure that:
 1. You either call `super.tableView(tableView, cellForAt: indexPath)` at some point in your code 
 or
-2. You implement the `ChatMessageListVCDelegate` method that manages `ChatMessageDecorationView`
+2. You implement and call the `ChatMessageListVCDelegate` method that manages `ChatMessageDecorationView`
 :::
 
 ## Advanced Customizations

@@ -86,8 +86,10 @@ final class ChatMessageCell_DecorationTests: XCTestCase {
 
         subject.prepareForReuse()
 
-        XCTAssertNil(subject.headerContainerView.superview)
-        XCTAssertNil(subject.footerContainerView.superview)
+        XCTAssertTrue(subject.headerContainerView.subviews.isEmpty)
+        XCTAssertTrue(subject.headerContainerView.isHidden)
+        XCTAssertTrue(subject.footerContainerView.subviews.isEmpty)
+        XCTAssertTrue(subject.footerContainerView.isHidden)
     }
 
     // MARK: - setDecoration

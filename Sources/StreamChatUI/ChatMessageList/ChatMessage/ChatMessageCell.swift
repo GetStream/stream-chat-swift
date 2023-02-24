@@ -25,7 +25,7 @@ public class ChatMessageCell: _TableViewCell, ComponentsProvider {
     /// The message content view the cell is showing.
     public private(set) var messageContentView: ChatMessageContentView?
 
-    /// The header View of the cell. It can be used to display additional information
+    /// The footer View of the cell. It can be used to display additional information
     /// about the message below the message's content.
     internal lazy var footerContainerView: UIView = .init()
         .withoutAutoresizingMaskConstraints
@@ -94,8 +94,12 @@ public class ChatMessageCell: _TableViewCell, ComponentsProvider {
         super.prepareForReuse()
 
         messageContentView?.prepareForReuse()
-        headerContainerView.removeFromSuperview()
-        footerContainerView.removeFromSuperview()
+
+        headerContainerView.subviews.forEach { $0.removeFromSuperview() }
+        footerContainerView.subviews.forEach { $0.removeFromSuperview() }
+
+        headerContainerView.isHidden = true
+        footerContainerView.isHidden = true
     }
 
     /// Sets a decoration surrounding the content view

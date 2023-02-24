@@ -38,7 +38,7 @@ public protocol ChatMessageListVCDelegate: AnyObject {
 
     /// Tells the delegate when the user taps on the message list view.
     /// - Parameters:
-    ///   - vc: The message list  informing the delegate of this event.
+    ///   - vc: The message list informing the delegate of this event.
     ///   - messageListView: The message list view.
     ///   - gestureRecognizer: The tap gesture recognizer that triggered the event.
     func chatMessageListVC(
@@ -49,7 +49,7 @@ public protocol ChatMessageListVCDelegate: AnyObject {
 
     /// Ask the delegate to provide a header view for the specified decoration type.
     /// - Parameters:
-    ///   - vc: The message list  informing the delegate of this event.
+    ///   - vc: The message list informing the delegate of this event.
     ///   - message: The given message.
     ///   - indexPath: An index path locating the row in the message list.
     func chatMessageListVC(
@@ -60,7 +60,7 @@ public protocol ChatMessageListVCDelegate: AnyObject {
 
     /// Ask the delegate to provide a footer view for the specified decoration type.
     /// - Parameters:
-    ///   - vc: The message list  informing the delegate of this event.
+    ///   - vc: The message list informing the delegate of this event.
     ///   - message: The given message.
     ///   - indexPath: An index path locating the row in the message list.
     func chatMessageListVC(
@@ -73,7 +73,7 @@ public protocol ChatMessageListVCDelegate: AnyObject {
 extension ChatMessageListVCDelegate {
     /// A helper method to create the DateSeparator that is used
     /// - Parameters:
-    ///   - vc: The message list  informing the delegate of this event.
+    ///   - vc: The message list informing the delegate of this event.
     ///   - message: The given message.
     ///   - indexPath: An index path locating the row in the message list.
     ///   - components: The components to use in order to access the DateSeparatorView type
