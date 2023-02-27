@@ -249,4 +249,10 @@ final class DefaultMarkdownFormatter_Tests: XCTestCase {
             }
         }
     }
+
+    func test_complexMarkdownPattern_doesNotHangForever() {
+        let string = "**~*~~~*~*~**~*~* h e a r d ***~*~*~**~*~~~*"
+        let result = sut.format(string)
+        XCTAssertEqual(result.string, "**~~*~**~~ h e a r d ***~~~**~")
+    }
 }

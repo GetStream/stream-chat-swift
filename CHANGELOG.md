@@ -6,9 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChat
 ### 🔄 Changed
 - Remove [URLQueryItem] public conformance of ExpressibleByDictionaryLiteral [#2505](https://github.com/GetStream/stream-chat-swift/pull/2505)
+
 ### 🐞 Fixed
 - Fix messages appearing sooner in Thread pagination [#2470](https://github.com/GetStream/stream-chat-swift/pull/2470)
 - Fix messages disappearing from the Message List when quoting a message [#2470](https://github.com/GetStream/stream-chat-swift/pull/2470)
+- Fix Markdown formatting hanging with edge case pattern [#2513](https://github.com/GetStream/stream-chat-swift/pull/2513)
 
 # [4.27.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.27.1)
 _February 20, 2023_
