@@ -1228,16 +1228,66 @@ final class ChannelListController_Tests: XCTestCase {
     }
 
     func test_filterPredicate_in_containsExpectedItems() throws {
+        let cid1 = ChannelId.unique
+        let cid2 = ChannelId.unique
+        let cid3 = ChannelId.unique
+
+        let expectedCids = [
+            cid1,
+            cid2,
+            cid3
+        ]
+        let expectedChannels: [ChannelPayload] = expectedCids.map { .dummy(channel: .dummy(cid: $0)) }
+        let unexpectedChannels: [ChannelPayload] = [
+            .dummy(channel: .dummy(cid: .unique)),
+            .dummy(channel: .dummy(cid: .unique))
+        ]
+
+        // When all the channel ids are in DB.
+        try assertFilterPredicate(
+            .in(.id, values: expectedCids.map(\.rawValue)),
+            channelsInDB: expectedChannels + unexpectedChannels,
+            expectedResult: expectedCids
+        )
+
+        // When not all the channel ids are in DB.
+        try assertFilterPredicate(
+            .in(.id, values: expectedCids.map(\.rawValue)),
+            channelsInDB: expectedChannels.dropLast() + unexpectedChannels,
+            expectedResult: [cid1, cid2]
+        )
+    }
+
+    func test_filterPredicate_in_whenContainsMembers_containsExpectedItems() throws {
         let memberId1 = UserId.unique
         let memberId2 = UserId.unique
         let cid = ChannelId.unique
 
+        // When all values are in DB.
         try assertFilterPredicate(
             .in(.members, values: [memberId1, memberId2]),
             channelsInDB: [
                 .dummy(channel: .dummy(members: [.dummy(), .dummy()])),
                 .dummy(channel: .dummy(members: [.dummy()])),
-                .dummy(channel: .dummy(cid: cid, members: [.dummy(user: .dummy(userId: memberId1)), .dummy(user: .dummy(userId: memberId2))]))
+                .dummy(channel: .dummy(cid: cid, members: [
+                    .dummy(user: .dummy(userId: memberId1)),
+                    .dummy(user: .dummy(userId: memberId2)),
+                    .dummy(user: .dummy(userId: .unique))
+                ]))
+            ],
+            expectedResult: [cid]
+        )
+
+        // When not all of the values are in DB, it should also return the results.
+        try assertFilterPredicate(
+            .in(.members, values: [memberId1, memberId2]),
+            channelsInDB: [
+                .dummy(channel: .dummy(members: [.dummy(), .dummy()])),
+                .dummy(channel: .dummy(members: [.dummy()])),
+                .dummy(channel: .dummy(cid: cid, members: [
+                    .dummy(user: .dummy(userId: memberId1)),
+                    .dummy(user: .dummy(userId: .unique))
+                ]))
             ],
             expectedResult: [cid]
         )
