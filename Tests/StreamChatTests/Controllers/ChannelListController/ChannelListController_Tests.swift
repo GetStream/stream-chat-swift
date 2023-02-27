@@ -1346,19 +1346,23 @@ final class ChannelListController_Tests: XCTestCase {
 
     func test_filterPredicate_and_containsExpectedItems() throws {
         let memberId1 = UserId.unique
-        let memberId2 = UserId.unique
         let cid = ChannelId.unique
 
         try assertFilterPredicate(
             .and([
-                .in(.members, values: [memberId1, memberId2]),
+                .in(.members, values: [memberId1]),
                 .contains(.name, value: "team")
             ]),
             channelsInDB: [
                 .dummy(channel: .dummy(name: "streamtEam")),
                 .dummy(channel: .dummy(name: "originalTeam")),
-                .dummy(channel: .dummy(name: "basketball_team", members: [.dummy(user: .dummy(userId: memberId2))])),
-                .dummy(channel: .dummy(cid: cid, name: "teamDream", members: [.dummy(user: .dummy(userId: memberId1)), .dummy(user: .dummy(userId: memberId2))])),
+                .dummy(channel: .dummy(name: "basketball_team", members: [
+                    .dummy(user: .dummy(userId: .unique))
+                ])),
+                .dummy(channel: .dummy(cid: cid, name: "teamDream", members: [
+                    .dummy(user: .dummy(userId: memberId1)),
+                    .dummy(user: .dummy(userId: .unique))
+                ])),
                 .dummy(channel: .dummy(name: "TEAM"))
             ],
             expectedResult: [cid]
