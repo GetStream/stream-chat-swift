@@ -49,7 +49,7 @@ update_dependencies:
 	echo "👉 Updating SwiftyGif"
 	make update_swiftygif version=5.4.2
 	echo "👉 Updating SwiftyMarkdown"
-	make update_swiftymarkdown version=1.2.4
+	make update_swiftymarkdown version=master
 	echo "👉 Updating DifferenceKit"
 	make update_differencekit version=1.3.0
 
