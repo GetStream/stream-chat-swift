@@ -45,6 +45,7 @@
         "MessageSender_Tests\/test_sender_sendsMessage_withUploadedAttachments()",
         "MessageUpdater_Tests\/test_flagMessage_happyPath()",
         "MessageUpdater_Tests\/test_unpinMessage_propogatesMessageEditingError_ifLocalStateIsInvalidForUnpinning()",
+        "MessageUpdater_Tests\/test_deleteBouncedMessage_isDeletedLocally_whenLocalStateIsSendingFailed()",
         "SyncRepository_Tests\/test_cancelRecoveryFlow_cancelsAllOperations()",
         "WebSocketClient_Tests\/test_changingConnectEndpointAndReconnecting()",
         "WebSocketClient_Tests\/test_whenHealthCheckEventComes_itGetProcessedSilentlyWithoutBatching()"
