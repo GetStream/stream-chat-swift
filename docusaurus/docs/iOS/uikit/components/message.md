@@ -114,17 +114,22 @@ Components.default.messageLayoutOptionsResolver = CustomMessageLayoutOptionsReso
 
 #### Decoration Views
 :::note
-Decoration Views are available on SDK version 4.28.0 and above.
+Decoration Views are available on SDK version 4.29.0 and above.
 :::
 
 The SDK allows you to configure what will be presented above and below your message with decoration views (`ChatMessageDecorationView`). They are fully customizable, and we also use them for standard SDK components like the `Date Separators` as seen below.
 
-In order to provide a `ChatMessageDecorationView` (either a header or a footer) for a message, you will need to implement the following method from the `ChatMessageListVCDelegate`
+In order to provide a `ChatMessageDecorationView` (either a header or a footer) for a message, you will need to implement the following methods from the `ChatMessageListVCDelegate`
 ```swift
 func chatMessageListVC(
     _ vc: ChatMessageListVC,
-    decorationViewForMessage message: ChatMessage,
-    decorationType: ChatMessageDecorationType,
+    headerViewForMessage message: ChatMessage,
+    at indexPath: IndexPath
+) -> ChatMessageDecorationView?
+
+func chatMessageListVC(
+    _ vc: ChatMessageListVC,
+    footerViewForMessage message: ChatMessage,
     at indexPath: IndexPath
 ) -> ChatMessageDecorationView?
 ```
@@ -189,15 +194,6 @@ Components.default.messageListDateSeparatorView = CustomChatMessageListDateSepar
 | Before | After |
 | ------------- | ------------- |
 | <img src={require("../../assets/message-list-date-separator-static.png").default} /> | <img src={require("../../assets/message-list-date-separator-custom.png").default} /> |
-
-:::important
-`Date Separator` is a type of `ChatMessageDecorationView` and its creation flow goes through the `ChatMessageListVCDelegate`. Both `ChatChannelVC` and `ChatThreadVC` configure `Date Separator` based on the `Components.default.messageListDateSeparatorEnabled` configuration flag.
-
-In the case where you are overriding the `func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell` method from `ChatMessageListVC` you may want to ensure that:
-1. You either call `super.tableView(tableView, cellForAt: indexPath)` at some point in your code 
-or
-2. You implement and call the `ChatMessageListVCDelegate` method that manages `ChatMessageDecorationView`
-:::
 
 ## Advanced Customizations
 
