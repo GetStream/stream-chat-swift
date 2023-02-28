@@ -62,10 +62,8 @@ do
 		'public func isContentEqual(to source: Wrapped?) -> Bool {' \
 		$f
 
-		# This replacement is not actually working, and I don't know why,
-		# for now, I did this change manually.
-		replaceDeclaration 'func isContentEqual(to source: [Element]) -> Bool' \
-		'public func isContentEqual(to source: [Element]) -> Bool' \
+		replaceDeclaration 'func isContentEqual(to source: \[Element\]) -> Bool' \
+		'public func isContentEqual(to source: \[Element\]) -> Bool' \
 		$f
 
 		replaceDeclaration 'extension ContentIdentifiable where Self: Hashable {' \

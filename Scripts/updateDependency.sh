@@ -28,7 +28,7 @@ elif [[ $dependency_directory == *"SwiftyGif"* ]]; then
 elif [[ $dependency_directory == *"Starscream"* ]]; then
 	dependency_url="git@github.com:daltoniam/Starscream.git"
 elif [[ $dependency_directory == *"SwiftyMarkdown"* ]]; then
-    dependency_url="git@github.com:SimonFairbairn/SwiftyMarkdown.git"
+    dependency_url="git@github.com:GetStream/SwiftyMarkdown.git"
 elif [[ $dependency_directory == *"DifferenceKit"* ]]; then
 	dependency_url="git@github.com:ra1028/DifferenceKit.git"
 else
