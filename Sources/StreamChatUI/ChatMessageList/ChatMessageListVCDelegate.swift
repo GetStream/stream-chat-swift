@@ -90,4 +90,20 @@ extension ChatMessageListVCDelegate {
         dateSeparatorView.content = vc.dateSeparatorFormatter.format(message.createdAt)
         return dateSeparatorView
     }
+
+    func chatMessageListVC(
+        _ vc: ChatMessageListVC,
+        headerViewForMessage message: ChatMessage,
+        at indexPath: IndexPath
+    ) -> ChatMessageDecorationView? {
+        dateHeaderView(vc, headerViewForMessage: message, at: indexPath)
+    }
+
+    func chatMessageListVC(
+        _ vc: ChatMessageListVC,
+        footerViewForMessage message: ChatMessage,
+        at indexPath: IndexPath
+    ) -> ChatMessageDecorationView? {
+        nil
+    }
 }
