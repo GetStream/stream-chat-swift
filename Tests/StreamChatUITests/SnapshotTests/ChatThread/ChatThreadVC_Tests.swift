@@ -9,9 +9,9 @@ import StreamChat
 import XCTest
 
 final class ChatThreadVC_Tests: XCTestCase {
-    var vc: ChatThreadVC!
-    var channelControllerMock: ChatChannelController_Mock!
-    var messageControllerMock: ChatMessageController_Mock!
+    private var vc: ChatThreadVC!
+    private var channelControllerMock: ChatChannelController_Mock!
+    private var messageControllerMock: ChatMessageController_Mock!
 
     override func setUp() {
         super.setUp()
@@ -56,7 +56,7 @@ final class ChatThreadVC_Tests: XCTestCase {
             state: .remoteDataFetched
         )
         messageControllerMock.simulateInitial(
-            message: .mock(id: .unique, cid: .unique, text: "First message", author: .mock(id: .unique)),
+            message: .mock(id: .unique, cid: .unique, text: "First message", author: .mock(id: .unique), replyCount: 3),
             replies: [
                 .mock(
                     id: .unique,
@@ -98,5 +98,78 @@ final class ChatThreadVC_Tests: XCTestCase {
         // Assert child controllers have subviews of injected view types
         XCTAssertTrue(vc.messageListVC.listView is TestMessageListView)
         XCTAssertTrue(vc.messageComposerVC.composerView is TestComposerView)
+    }
+
+    // MARK: - chatMessageListVC(_:footerViewForMessage:at)
+
+    func test_footerViewForMessage_threadRepliesCounterEnabledIsTrueMessageIsNotLast_returnsNil() {
+        assertFooterDecorationView(
+            threadRepliesCounterEnabled: true,
+            useSourceMessage: false,
+            expected: nil
+        )
+    }
+
+    func test_footerViewForMessage_threadRepliesCounterEnabledIsTrueMessageIsLast_returnsExpectedResult() {
+        assertFooterDecorationView(
+            threadRepliesCounterEnabled: true,
+            useSourceMessage: true,
+            expected: "3 Replies"
+        )
+    }
+
+    func test_footerViewForMessage_threadRepliesCounterEnabledIsFalseMessageIsNotLast_returnsNil() {
+        assertFooterDecorationView(
+            threadRepliesCounterEnabled: false,
+            useSourceMessage: false,
+            expected: nil
+        )
+    }
+
+    func test_footerViewForMessage_threadRepliesCounterEnabledIsFalseMessageIsLast_returnsNil() {
+        assertFooterDecorationView(
+            threadRepliesCounterEnabled: false,
+            useSourceMessage: true,
+            expected: nil
+        )
+    }
+
+    // MARK: - Private Helpers
+
+    private func assertFooterDecorationView(
+        threadRepliesCounterEnabled: Bool,
+        useSourceMessage: Bool,
+        expected: @autoclosure () -> String?,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
+        var components = Components()
+        components.threadRepliesCounterEnabled = threadRepliesCounterEnabled
+        vc.components = components
+        let sourceMessage = ChatMessage.mock(id: .unique, cid: .unique, text: "First message", author: .mock(id: .unique), replyCount: 3)
+        messageControllerMock.simulateInitial(
+            message: sourceMessage,
+            replies: [
+                .mock(
+                    id: .unique,
+                    cid: .unique,
+                    text: "First reply",
+                    author: .mock(id: .unique, name: "Author author")
+                ),
+                .mock(id: .unique, cid: .unique, text: "Second reply", author: .mock(id: .unique)),
+                .mock(id: .unique, cid: .unique, text: "Third reply", author: .mock(id: .unique))
+            ],
+            state: .localDataFetched
+        )
+        messageControllerMock.simulate(state: .remoteDataFetched)
+        vc.view.layoutIfNeeded()
+
+        let footerView = vc.chatMessageListVC(
+            vc.messageListVC,
+            footerViewForMessage: useSourceMessage ? sourceMessage : vc.messages[1],
+            at: IndexPath(row: useSourceMessage ? 3 : 1, section: 0)
+        ) as? ChatThreadRepliesCountDecorationView
+
+        XCTAssertEqual(footerView?.content, expected(), file: file, line: line)
     }
 }
