@@ -18,18 +18,22 @@ import ComponentsNote from '../../common-content/components-note.md'
     ChatMessageListVC -> ChatMessageLayoutOptionsResolver
     ChatMessageLayoutOptionsResolver -> ChatMessageListVC
     ChatMessageListVC -> ChatMessageListView
-    ChatMessageListView -> ChatMessageContentView
+    ChatMessageListView -> ChatMessageCell
+    ChatMessageCell -> ChatMessageDecorationHeaderView
+    ChatMessageCell -> ChatMessageContentView
     ChatMessageContentView -> ChatAvatarView
     ChatMessageContentView -> ChatReactionsBubbleView
     ChatMessageContentView -> ChatMessageBubbleView
     ChatReactionsBubbleView -> ChatMessageReactionsView
     ChatMessageReactionsView -> "ChatMessageReactionItemView"
+    ChatMessageCell -> ChatMessageDecorationFooterView
 ` }</Digraph>
 
 ### Overview
 
 1. `ChatMessageLayoutOptionsResolver` calculates the `ChatMessageLayoutOptions` for each message.
 1. `ChatMessageLayoutOptions` contains all the information needed by the view to render the message.
+1. `ChatMessageCell` holds the message content view and all the decorations that surround it.
 1. `ChatMessageContentView` holds the entire message view and all its sub-views.
 1. `ChatMessageBubbleView` wraps the message content inside a bubble. Depending on the layout options, the bubble will have different borders and colors and will show or not the user profile and name.
 1. `ChatReactionsBubbleView` is a wrapper for `ChatMessageReactionsView`.
@@ -108,7 +112,30 @@ Components.default.messageLayoutOptionsResolver = CustomMessageLayoutOptionsReso
 | ------------- | ------------- |
 | <img src={require("../../assets/message-basic-resolver-before.png").default} /> | <img src={require("../../assets/message-basic-resolver-after.png").default} /> |
 
-### Date Separators
+#### Decoration Views
+:::note
+Decoration Views are available on SDK version 4.29.0 and above.
+:::
+
+The SDK allows you to configure what will be presented above and below your message with decoration views (`ChatMessageDecorationView`). They are fully customizable, and we also use them for standard SDK components like the `Date Separators` as seen below.
+
+In order to provide a `ChatMessageDecorationView` (either a header or a footer) for a message, you will need to implement the following methods from the `ChatMessageListVCDelegate`
+```swift
+func chatMessageListVC(
+    _ vc: ChatMessageListVC,
+    headerViewForMessage message: ChatMessage,
+    at indexPath: IndexPath
+) -> ChatMessageDecorationView?
+
+func chatMessageListVC(
+    _ vc: ChatMessageListVC,
+    footerViewForMessage message: ChatMessage,
+    at indexPath: IndexPath
+) -> ChatMessageDecorationView?
+```
+`ChatMessageDecorationView` are following a similar flow as the `UITableViewHeaderFooterView` decorations for sections that `UITableView` is managing. During the preparation of a message cell, the `ChatMessageListVC` will ask the delegate to provide `ChatMessageDecorationView` for header and footer. If the delegate returns a non-nil value the provided `ChatMessageDecorationView` will be placed in the cell's UI according to it's decoration type. In the case where the delegate will return a nil value then the cell will be updated to release the space for this specific decoration type, if it was previously used.
+
+#### Date Separators
 
 The SDK groups each message from the same day and shows the day which these messages belong to, since by default each message only has the time it was sent, not the day. The StreamChat SDK provides two options out-of-the-box on how to render the grouped messages date separator that can be configured in the `Components` configuration:
 
@@ -125,7 +152,7 @@ In case you want the separator to also be shown statically between each group of
 Components.default.messageListDateSeparatorEnabled = true
 ```
 
-#### Result:
+##### Result:
 | Overlay Enabled  | Overlay & Static Enabled |
 | ------------- | ------------- |
 | <img src={require("../../assets/message-list-date-separator-overlay.png").default} /> | <img src={require("../../assets/message-list-date-separator-static.png").default} /> |
@@ -163,7 +190,7 @@ class CustomChatMessageListDateSeparatorView: ChatMessageListDateSeparatorView {
 Components.default.messageListDateSeparatorView = CustomChatMessageListDateSeparatorView.self
 ```
 
-#### Result:
+##### Result:
 | Before | After |
 | ------------- | ------------- |
 | <img src={require("../../assets/message-list-date-separator-static.png").default} /> | <img src={require("../../assets/message-list-date-separator-custom.png").default} /> |

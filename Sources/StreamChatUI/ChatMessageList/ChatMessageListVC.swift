@@ -430,8 +430,9 @@ open class ChatMessageListVC: _ViewController,
         cell.messageContentView?.channel = channel
         cell.messageContentView?.content = message
 
-        cell.dateSeparatorView.isHidden = !shouldShowDateSeparator(forMessage: message, at: indexPath)
-        cell.dateSeparatorView.content = dateSeparatorFormatter.format(message.createdAt)
+        /// Process cell decorations
+        cell.setDecoration(for: .header, decorationView: delegate?.chatMessageListVC(self, headerViewForMessage: message, at: indexPath))
+        cell.setDecoration(for: .footer, decorationView: delegate?.chatMessageListVC(self, footerViewForMessage: message, at: indexPath))
 
         return cell
     }

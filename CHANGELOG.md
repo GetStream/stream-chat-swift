@@ -2,6 +2,8 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
+### ✅ Added
+- Now you can easily configure your own Decorations(headers and/or footers) around messages [#2507](https://github.com/GetStream/stream-chat-swift/pull/2507)
 
 ### 🔄 Changed
 

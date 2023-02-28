@@ -258,6 +258,27 @@ open class ChatThreadVC: _ViewController,
         messageComposerVC.dismissSuggestions()
     }
 
+    open func chatMessageListVC(
+        _ vc: ChatMessageListVC,
+        headerViewForMessage message: ChatMessage,
+        at indexPath: IndexPath
+    ) -> ChatMessageDecorationView? {
+        dateHeaderView(
+            vc,
+            headerViewForMessage: message,
+            at: indexPath,
+            components: components
+        )
+    }
+
+    open func chatMessageListVC(
+        _ vc: ChatMessageListVC,
+        footerViewForMessage message: ChatMessage,
+        at indexPath: IndexPath
+    ) -> ChatMessageDecorationView? {
+        nil
+    }
+
     // MARK: - ChatMessageControllerDelegate
 
     open func messageController(

@@ -227,7 +227,10 @@ open class ChatChannelVC: _ViewController,
         }
     }
 
-    open func chatMessageListVC(_ vc: ChatMessageListVC, scrollViewDidScroll scrollView: UIScrollView) {
+    open func chatMessageListVC(
+        _ vc: ChatMessageListVC,
+        scrollViewDidScroll scrollView: UIScrollView
+    ) {
         if isLastMessageFullyVisible {
             channelController.markRead()
 
@@ -241,6 +244,27 @@ open class ChatChannelVC: _ViewController,
         with gestureRecognizer: UITapGestureRecognizer
     ) {
         messageComposerVC.dismissSuggestions()
+    }
+
+    open func chatMessageListVC(
+        _ vc: ChatMessageListVC,
+        headerViewForMessage message: ChatMessage,
+        at indexPath: IndexPath
+    ) -> ChatMessageDecorationView? {
+        dateHeaderView(
+            vc,
+            headerViewForMessage: message,
+            at: indexPath,
+            components: components
+        )
+    }
+
+    open func chatMessageListVC(
+        _ vc: ChatMessageListVC,
+        footerViewForMessage message: ChatMessage,
+        at indexPath: IndexPath
+    ) -> ChatMessageDecorationView? {
+        nil
     }
 
     // MARK: - ChatChannelControllerDelegate

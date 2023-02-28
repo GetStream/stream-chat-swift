@@ -7,6 +7,7 @@ import UIKit
 extension UIView {
     // MARK: - `embed` family of helpers
 
+    @objc
     func embed(_ subview: UIView, insets: NSDirectionalEdgeInsets = .zero) {
         addSubview(subview)
 
