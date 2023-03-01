@@ -281,7 +281,7 @@ public struct Components {
     /// The view that displays channel information on the thread header.
     public var threadHeaderView: ChatThreadHeaderView.Type = ChatThreadHeaderView.self
 
-    /// The view that displays channel information on the thread header.
+    /// The view that displays the number of replies in the current thread.
     public var threadRepliesCounterDecorationView: ChatThreadRepliesCountDecorationView.Type = ChatThreadRepliesCountDecorationView.self
 
     /// A boolean value that determines whether thread replies counter decoration should be shown below the source message of a thread.
