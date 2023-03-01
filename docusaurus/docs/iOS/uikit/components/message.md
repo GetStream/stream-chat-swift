@@ -206,14 +206,14 @@ The SDK provides out-of-the-box a decoration view that is being displayed in thr
 Components.default.threadRepliesCounterEnabled = true | false
 ```
 
-By default only the `Components.default.threadRepliesCounterEnabled` is enabled, and in this case a decoration view will be displayed just underneath the first(source) message in a thread.
+By default the `Components.default.threadRepliesCounterEnabled` is enabled, and in this case a decoration view will be displayed just underneath the first(source) message in a thread.
 
 ##### Result:
 | Thread Replies Counter Disabled  | Thread Replies Counter Enabled |
 | ------------- | ------------- |
 | <img src={require("../../assets/thread-list-replies-counter-decoration-disabled.png").default} /> | <img src={require("../../assets/thread-list-replies-counter-decoration-enabled.png").default} /> |
 
-You can also easily customize the look of the thread replies decoration by subclassing the `ChatThreadRepliesCountDecorationView`:
+You can easily customize the look of the thread replies decoration by subclassing the `ChatThreadRepliesCountDecorationView`:
 ```swift
 final class DemoChatThreadRepliesCountDecorationView: ChatThreadRepliesCountDecorationView {
 
