@@ -30,9 +30,6 @@ class ChannelDTO: NSManagedObject {
     // We want to avoid new messages being inserted in the UI if we are in a mid-page.
     @NSManaged var newestMessageAt: DBDate?
 
-    // A boolean value that returns true if the channel has is newest page loaded.
-    @NSManaged var isFirstPageLoaded: Bool
-
     // This field is also used to implement the `clearHistory` option when hiding the channel.
     @NSManaged var truncatedAt: DBDate?
 

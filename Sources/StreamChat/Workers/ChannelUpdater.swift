@@ -43,28 +43,20 @@ class ChannelUpdater: Worker {
         let completion: (Result<ChannelPayload, Error>) -> Void = { [weak database] result in
             do {
                 let payload = try result.get()
+
                 onChannelCreated?(payload.channel.cid)
 
                 database?.write { session in
                     guard let channelDTO = session.channel(cid: payload.channel.cid) else { return }
-                    if isJumpingToMessage || (isFirstPage && !channelDTO.isFirstPageLoaded) {
-                        session.deleteChannelMessages(cid: payload.channel.cid)
+                    if isJumpingToMessage {
+                        channelDTO.messages = []
                     }
                 }
                 
                 database?.write { session in
-                    let channelDTO = session.channel(cid: payload.channel.cid)
-                    channelDTO?.cleanMessagesThatFailedToBeEditedDueToModeration()
-                    
-                    if isFirstPage, let channelDTO = channelDTO {
-                        channelDTO.messages = channelDTO.messages.filter { $0.isLocalOnly }
-                    }
-
-                    channelDTO?.isFirstPageLoaded = !isJumpingToMessage
-
-                    try session.saveChannel(payload: payload)
-
-                    channelDTO?.updatePaginationCursors(for: payload, with: channelQuery.pagination)
+                    let channelDTO = try session.saveChannel(payload: payload)
+                    channelDTO.cleanMessagesThatFailedToBeEditedDueToModeration()
+                    channelDTO.updatePaginationCursors(for: payload, with: channelQuery.pagination)
 
                 } completion: { error in
                     if let error = error {
