@@ -114,7 +114,7 @@ final class ChatThreadVC_Tests: XCTestCase {
         assertFooterDecorationView(
             threadRepliesCounterEnabled: true,
             useSourceMessage: true,
-            expected: "3 Replies"
+            expected: "3 REPLIES"
         )
     }
 

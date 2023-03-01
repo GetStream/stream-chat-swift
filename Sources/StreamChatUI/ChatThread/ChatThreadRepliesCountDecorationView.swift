@@ -27,7 +27,7 @@ open class ChatThreadRepliesCountDecorationView: ChatMessageDecorationView, Appe
     override open func setUpLayout() {
         super.setUpLayout()
 
-        embed(container, insets: .init(top: 3, leading: 0, bottom: 3, trailing: 0))
+        embed(container, insets: .init(top: 0, leading: 0, bottom: 8, trailing: 0))
         container.embed(textLabel, insets: .init(top: 3, leading: 9, bottom: 3, trailing: 9))
     }
 
@@ -37,8 +37,9 @@ open class ChatThreadRepliesCountDecorationView: ChatMessageDecorationView, Appe
         backgroundColor = nil
         container.backgroundColor = appearance.colorPalette.background6
 
-        textLabel.font = appearance.fonts.footnote
+        textLabel.font = appearance.fonts.caption1.bold
         textLabel.textColor = appearance.colorPalette.textLowEmphasis
+        textLabel.textAlignment = .center
     }
 
     override open func updateContent() {

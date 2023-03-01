@@ -49,11 +49,11 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>zero</key>
-			<string>No Replies</string>
+			<string>NO REPLIES</string>
 			<key>one</key>
-			<string>%d Reply</string>
+			<string>%d REPLY</string>
 			<key>other</key>
-			<string>%d Replies</string>
+			<string>%d REPLIES</string>
 		</dict>
 	</dict>
 	<key>reaction.authors.number-of-reactions</key>
