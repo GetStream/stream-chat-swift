@@ -65,6 +65,15 @@ open class ChatChannelVC: _ViewController,
 
     private var isLoadingPreviousMessages: Bool = false
 
+    /// A boolean value indicating wether it should mark the channel read.
+    public var shouldMarkChannelRead: Bool {
+        isLastMessageFullyVisible && !hasMarkedMessageAsUnread
+    }
+
+    private var hasMarkedMessageAsUnread: Bool {
+        channelController.firstUnreadMessageId != nil
+    }
+
     override open func setUp() {
         super.setUp()
 
@@ -137,7 +146,7 @@ open class ChatChannelVC: _ViewController,
 
         keyboardHandler.start()
 
-        if isLastMessageFullyVisible {
+        if shouldMarkChannelRead {
             channelController.markRead()
         }
     }
@@ -235,7 +244,7 @@ open class ChatChannelVC: _ViewController,
         _ vc: ChatMessageListVC,
         scrollViewDidScroll scrollView: UIScrollView
     ) {
-        if isLastMessageFullyVisible {
+        if shouldMarkChannelRead {
             channelController.markRead()
 
             messageListVC.scrollToLatestMessageButton.content = .noUnread
@@ -277,7 +286,7 @@ open class ChatChannelVC: _ViewController,
         _ channelController: ChatChannelController,
         didUpdateMessages changes: [ListChange<ChatMessage>]
     ) {
-        if isLastMessageFullyVisible {
+        if shouldMarkChannelRead {
             channelController.markRead()
         }
 
@@ -292,14 +301,7 @@ open class ChatChannelVC: _ViewController,
     ) {
         let channelUnreadCount = channelController.channel?.unreadCount ?? .noUnread
         messageListVC.scrollToLatestMessageButton.content = channelUnreadCount
-
-        guard let currentUserRead = channel.item.reads.first(where: { $0.user.id == client.currentUserId }),
-              let firstUnreadMessageIndex = messages.lastIndex(where: { $0.createdAt >= currentUserRead.lastReadAt }) else {
-            return
-        }
-
-        let indexPath = IndexPath(item: firstUnreadMessageIndex, section: 0)
-        messageListVC.setUnreadMessagesSeparator(at: indexPath)
+        messageListVC.setUnreadMessagesSeparator(at: channelController.firstUnreadMessageId)
     }
 
     open func channelController(

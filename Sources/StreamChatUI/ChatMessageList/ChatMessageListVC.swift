@@ -94,7 +94,7 @@ open class ChatMessageListVC: _ViewController,
     }
 
     /// The id of the first unread message
-    private(set) var firstUnreadIndexPath: IndexPath?
+    private(set) var firstUnreadMessageId: MessageId?
 
     /// A boolean value that determines whether date separators should be shown between each message.
     open var isDateSeparatorEnabled: Bool {
@@ -227,13 +227,16 @@ open class ChatMessageListVC: _ViewController,
         listView.scrollToMostRecentMessage(animated: animated)
     }
 
-    func setUnreadMessagesSeparator(at indexPath: IndexPath) {
-        var indexPathsToReload = [indexPath]
-        if let currentIndexPath = firstUnreadIndexPath {
-            indexPathsToReload.append(currentIndexPath)
-        }
-        firstUnreadIndexPath = indexPath
+    func setUnreadMessagesSeparator(at id: MessageId?) {
+        guard id != firstUnreadMessageId else { return }
 
+        func indexPath(for id: MessageId?) -> IndexPath? {
+            guard let id = id, let index = dataSource?.messages.firstIndex(where: { $0.id == id }) else { return nil }
+            return IndexPath(item: index, section: 0)
+        }
+
+        let indexPathsToReload = [indexPath(for: firstUnreadMessageId), indexPath(for: id)].compactMap { $0 }
+        firstUnreadMessageId = id
         listView.reloadRows(at: indexPathsToReload, with: .automatic)
     }
 
@@ -447,9 +450,7 @@ open class ChatMessageListVC: _ViewController,
         cell.setDecoration(for: .header, decorationView: delegate?.chatMessageListVC(self, headerViewForMessage: message, at: indexPath))
         cell.setDecoration(for: .footer, decorationView: delegate?.chatMessageListVC(self, footerViewForMessage: message, at: indexPath))
 
-        if indexPath == firstUnreadIndexPath {
-            addUnreadSeparator(to: cell)
-        }
+        // TODO: Add logic to show/hide separator based on `firstUnreadMessageId`
 
         return cell
     }

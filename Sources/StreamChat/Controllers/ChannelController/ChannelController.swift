@@ -233,6 +233,9 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         client.apiClient
     )
 
+    /// The first unread message id
+    public private(set) var firstUnreadMessageId: MessageId?
+
     private var markingRead: Bool = false
     private var lastFetchedMessageId: MessageId?
 
@@ -1134,9 +1137,14 @@ public extension ChatChannelController {
 
         markingRead = true
 
-        updater.markUnread(cid: channel.cid, userId: currentUserId, from: messageId) { error in
-            self.callback {
-                self.markingRead = false
+        let previousUnreadMessageId = firstUnreadMessageId
+        firstUnreadMessageId = messageId
+        updater.markUnread(cid: channel.cid, userId: currentUserId, from: messageId) { [weak self] error in
+            if error != nil {
+                self?.firstUnreadMessageId = previousUnreadMessageId
+            }
+            self?.callback {
+                self?.markingRead = false
                 completion?(error)
             }
         }
