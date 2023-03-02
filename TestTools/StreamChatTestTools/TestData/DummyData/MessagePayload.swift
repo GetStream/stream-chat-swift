@@ -10,7 +10,7 @@ extension MessagePayload {
     /// Creates a dummy `MessagePayload` with the given `messageId` and `userId` of the author.
     static func dummy(
         type: MessageType? = nil,
-        messageId: MessageId,
+        messageId: MessageId = .unique,
         parentId: MessageId? = nil,
         showReplyInChannel: Bool = false,
         quotedMessageId: MessageId? = nil,
@@ -24,12 +24,12 @@ extension MessagePayload {
             .dummy(),
             .dummy()
         ],
-        authorUserId: UserId,
+        authorUserId: UserId = .unique,
         text: String = .unique,
         extraData: [String: RawJSON] = [:],
         latestReactions: [MessageReactionPayload] = [],
         ownReactions: [MessageReactionPayload] = [],
-        createdAt: Date? = nil,
+        createdAt: Date? = .unique,
         deletedAt: Date? = nil,
         updatedAt: Date = .unique,
         channel: ChannelDetailPayload? = nil,
@@ -79,6 +79,14 @@ extension MessagePayload {
             pinExpires: pinExpires,
             translations: translations
         )
+    }
+
+    static func multipleDummies(amount: Int) -> [MessagePayload] {
+        var messages: [MessagePayload] = []
+        for messageIndex in stride(from: 0, to: amount, by: 1) {
+            messages.append(MessagePayload.dummy(messageId: "\(messageIndex)", authorUserId: .unique, createdAt: .unique))
+        }
+        return messages
     }
 }
 

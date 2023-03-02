@@ -34,7 +34,7 @@ final class MessageUpdater_Mock: MessageUpdater {
     @Atomic var createNewReply_quotedMessageId: MessageId?
     @Atomic var createNewReply_pinning: MessagePinning?
     @Atomic var createNewReply_extraData: [String: RawJSON]?
-    @Atomic var createNewReply_completion: ((Result<MessageId, Error>) -> Void)?
+    @Atomic var createNewReply_completion: ((Result<ChatMessage, Error>) -> Void)?
 
     @Atomic var loadReplies_cid: ChannelId?
     @Atomic var loadReplies_messageId: MessageId?
@@ -219,7 +219,7 @@ final class MessageUpdater_Mock: MessageUpdater {
         skipPush: Bool,
         skipEnrichUrl: Bool,
         extraData: [String: RawJSON],
-        completion: ((Result<MessageId, Error>) -> Void)? = nil
+        completion: ((Result<ChatMessage, Error>) -> Void)? = nil
     ) {
         createNewReply_cid = cid
         createNewReply_text = text

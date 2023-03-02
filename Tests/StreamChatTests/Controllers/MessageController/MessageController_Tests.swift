@@ -9,7 +9,7 @@ import XCTest
 
 final class MessageController_Tests: XCTestCase {
     private var env: TestEnvironment!
-    private var client: ChatClient!
+    private var client: ChatClient_Mock!
 
     private var currentUserId: UserId!
     private var messageId: MessageId!
@@ -243,7 +243,7 @@ final class MessageController_Tests: XCTestCase {
         // Set the deleted messages visibility to hide the message
         var config = ChatClient.defaultMockedConfig
         config.deletedMessagesVisibility = .alwaysHidden
-        client = .mock(config: config)
+        client = ChatClient_Mock(config: config)
         controller = ChatMessageController(client: client, cid: cid, messageId: messageId, environment: env.controllerEnvironment)
 
         // Save channel
@@ -970,7 +970,7 @@ final class MessageController_Tests: XCTestCase {
     // MARK: - Create new reply
 
     func test_createNewReply_callsMessageUpdater() {
-        let newMessageId: MessageId = .unique
+        let newMessage = ChatMessage.mock()
 
         // New message values
         let text: String = .unique
@@ -995,7 +995,7 @@ final class MessageController_Tests: XCTestCase {
             extraData: extraData
         ) { [callbackQueueID] result in
             AssertTestQueue(withId: callbackQueueID)
-            AssertResultSuccess(result, newMessageId)
+            AssertResultSuccess(result, newMessage.id)
             completionCalled = true
         }
 
@@ -1021,7 +1021,7 @@ final class MessageController_Tests: XCTestCase {
         XCTAssertEqual(env.messageUpdater.createNewReply_quotedMessageId, quotedMessageId)
 
         // Simulate successful update
-        env.messageUpdater.createNewReply_completion?(.success(newMessageId))
+        env.messageUpdater.createNewReply_completion?(.success(newMessage))
         // Release reference of completion so we can deallocate stuff
         env.messageUpdater.createNewReply_completion = nil
 
@@ -1032,6 +1032,23 @@ final class MessageController_Tests: XCTestCase {
         AssertAsync.willBeTrue(completionCalled)
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
+    }
+
+    func test_createNewReply_sendsNewMessagePendingEvent() throws {
+        let exp = expectation(description: "should complete create new message")
+
+        controller.createNewReply(
+            text: .unique
+        ) { _ in
+            exp.fulfill()
+        }
+
+        env.messageUpdater?.createNewReply_completion?(.success(.unique))
+
+        wait(for: [exp], timeout: defaultTimeout)
+
+        let event = try XCTUnwrap(client.mockedEventNotificationCenter.mock_process.calls.first?.0.first)
+        XCTAssertTrue(event is NewMessagePendingEvent)
     }
 
     // MARK: - Load replies

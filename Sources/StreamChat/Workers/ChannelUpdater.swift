@@ -18,8 +18,8 @@ class ChannelUpdater: Worker {
     /// - Parameters:
     ///   - channelQuery: The channel query used in the request
     ///   - isInRecoveryMode: Determines whether the SDK is in offline recovery mode
-    ///   - channelCreatedCallback: For some type of channels we need to obtain id from backend.
-    ///   This callback is called with the obtained `cid` before the channel payload is saved to the DB.
+    ///   - onChannelCreated: For some type of channels we need to obtain id from backend.
+    ///     This callback is called with the obtained `cid` before the channel payload is saved to the DB.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
     /// **Note**: If query messages pagination parameter is `nil` AKA updater is asked to fetch the first page of messages,
@@ -28,25 +28,44 @@ class ChannelUpdater: Worker {
     func update(
         channelQuery: ChannelQuery,
         isInRecoveryMode: Bool,
-        channelCreatedCallback: ((ChannelId) -> Void)? = nil,
+        onChannelCreated: ((ChannelId) -> Void)? = nil,
         completion: ((Result<ChannelPayload, Error>) -> Void)? = nil
     ) {
         let isFirstPage = channelQuery.pagination?.parameter == nil
-        let isChannelCreate = channelCreatedCallback != nil
+        var isJumpingToMessage: Bool {
+            switch channelQuery.pagination?.parameter {
+            case .around: return true
+            default: return false
+            }
+        }
+        let isChannelCreate = onChannelCreated != nil
 
         let completion: (Result<ChannelPayload, Error>) -> Void = { [weak database] result in
             do {
                 let payload = try result.get()
-                channelCreatedCallback?(payload.channel.cid)
+                onChannelCreated?(payload.channel.cid)
+
+                database?.write { session in
+                    guard let channelDTO = session.channel(cid: payload.channel.cid) else { return }
+                    if isJumpingToMessage || (isFirstPage && !channelDTO.isFirstPageLoaded) {
+                        session.deleteChannelMessages(cid: payload.channel.cid)
+                    }
+                }
+                
                 database?.write { session in
                     let channelDTO = session.channel(cid: payload.channel.cid)
                     channelDTO?.cleanMessagesThatFailedToBeEditedDueToModeration()
                     
                     if isFirstPage, let channelDTO = channelDTO {
-                        channelDTO.messages = channelDTO.messages.filter { $0.localMessageState?.isLocalOnly == true }
+                        channelDTO.messages = channelDTO.messages.filter { $0.isLocalOnly }
                     }
 
+                    channelDTO?.isFirstPageLoaded = !isJumpingToMessage
+
                     try session.saveChannel(payload: payload)
+
+                    channelDTO?.updatePaginationCursors(for: payload, with: channelQuery.pagination)
+
                 } completion: { error in
                     if let error = error {
                         completion?(.failure(error))
@@ -244,9 +263,9 @@ class ChannelUpdater: Worker {
         skipPush: Bool,
         skipEnrichUrl: Bool,
         extraData: [String: RawJSON],
-        completion: ((Result<MessageId, Error>) -> Void)? = nil
+        completion: ((Result<ChatMessage, Error>) -> Void)? = nil
     ) {
-        var newMessageId: MessageId?
+        var newMessage: ChatMessage?
         database.write({ (session) in
             let newMessageDTO = try session.createNewMessage(
                 in: cid,
@@ -267,11 +286,10 @@ class ChannelUpdater: Worker {
             )
 
             newMessageDTO.localMessageState = .pendingSend
-            newMessageId = newMessageDTO.id
-
+            newMessage = try newMessageDTO.asModel()
         }) { error in
-            if let messageId = newMessageId, error == nil {
-                completion?(.success(messageId))
+            if let message = newMessage, error == nil {
+                completion?(.success(message))
             } else {
                 completion?(.failure(error ?? ClientError.Unknown()))
             }

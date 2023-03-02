@@ -81,7 +81,7 @@ open class ChatMessageListVC: _ViewController,
     open var isScrollToBottomButtonVisible: Bool {
         let isMoreContentThanOnePage = listView.contentSize.height > listView.bounds.height
 
-        return !listView.isLastCellFullyVisible && isMoreContentThanOnePage
+        return !listView.isLastCellFullyVisible && isMoreContentThanOnePage || dataSource?.isFirstPageLoaded == false
     }
 
     /// A formatter that converts the message date to textual representation.
@@ -92,6 +92,10 @@ open class ChatMessageListVC: _ViewController,
     open var isDateOverlayEnabled: Bool {
         components.messageListDateOverlayEnabled
     }
+
+    /// A message pending to be scrolled after a message list update.
+    /// (Used for jumping to a message)
+    private(set) var messagePendingScrolling: ChatMessage?
 
     /// A boolean value that determines wether date separators should be shown between each message.
     open var isDateSeparatorEnabled: Bool {
@@ -144,7 +148,7 @@ open class ChatMessageListVC: _ViewController,
         scrollToLatestMessageButton.trailingAnchor.pin(equalTo: view.layoutMarginsGuide.trailingAnchor).isActive = true
         scrollToLatestMessageButton.widthAnchor.pin(equalTo: scrollToLatestMessageButton.heightAnchor).isActive = true
         scrollToLatestMessageButton.heightAnchor.pin(equalToConstant: 40).isActive = true
-        setScrollToLatestMessageButton(visible: false, animated: false)
+        scrollToLatestMessageButton.isHidden = true
 
         if isDateOverlayEnabled {
             view.addSubview(dateOverlayView)
@@ -205,17 +209,29 @@ open class ChatMessageListVC: _ViewController,
     }
 
     /// Set the visibility of `scrollToLatestMessageButton`.
+    @available(*, deprecated, message: "use updateScrollToBottomButtonVisibility(animated:) instead.")
     open func setScrollToLatestMessageButton(visible: Bool, animated: Bool = true) {
-        if visible { scrollToLatestMessageButton.isVisible = true }
+        updateScrollToBottomButtonVisibility()
+    }
+
+    /// Set the visibility of `scrollToLatestMessageButton`.
+    open func updateScrollToBottomButtonVisibility(animated: Bool = true) {
+        let isVisible = isScrollToBottomButtonVisible
+        if isVisible { scrollToLatestMessageButton.isVisible = true }
         Animate(isAnimated: animated, {
-            self.scrollToLatestMessageButton.alpha = visible ? 1 : 0
+            self.scrollToLatestMessageButton.alpha = isVisible ? 1 : 0
         }, completion: { _ in
-            if !visible { self.scrollToLatestMessageButton.isVisible = false }
+            if !isVisible { self.scrollToLatestMessageButton.isVisible = false }
         })
     }
 
     /// Action for `scrollToLatestMessageButton` that scroll to most recent message.
     @objc open func scrollToLatestMessage() {
+        guard dataSource?.isFirstPageLoaded == true else {
+            jumpToFirstPage()
+            return
+        }
+
         scrollToMostRecentMessage()
     }
 
@@ -236,11 +252,11 @@ open class ChatMessageListVC: _ViewController,
                 return
             }
 
-            listView.updateMessages(with: changes, completion: completion)
+            handleMessageUpdates(with: changes, completion: completion)
             return
         }
 
-        listView.updateMessages(with: changes, completion: completion)
+        handleMessageUpdates(with: changes, completion: completion)
     }
 
     /// Handles tap action on the table view.
@@ -397,6 +413,46 @@ open class ChatMessageListVC: _ViewController,
         navigationController?.present(alert, animated: true)
     }
 
+    /// Jump to a given message.
+    /// In case the message is already loaded, it directly goes to it.
+    /// If not, it will load the messages around it and go to that page.
+    ///
+    /// - Parameter message: The message which the message list should go to.
+    public func jumpToMessage(_ message: ChatMessage) {
+        if let indexPath = getIndexPath(forMessageId: message.id) {
+            listView.scrollToRow(at: indexPath, at: .middle, animated: true)
+            return
+        }
+
+        delegate?.chatMessageListVC(self, shouldLoadPageAroundMessage: message) { [weak self] error in
+            if let error = error {
+                log.error("Loading message around failed with error: \(error)")
+                return
+            }
+
+            self?.messagePendingScrolling = message
+        }
+    }
+
+    /// Jump to the first page of the message list.
+    internal func jumpToFirstPage() {
+        delegate?.chatMessageListVCShouldLoadFirstPage(self)
+        scrollToLatestMessageButton.isHidden = true
+        listView.reloadSkippedMessages()
+    }
+
+    /// Gets the IndexPath for the given message id. Returns `nil` if the message is not in the list.
+    public func getIndexPath(forMessageId messageId: MessageId) -> IndexPath? {
+        dataSource?.messages
+            .enumerated()
+            .first(where: {
+                $0.element.id == messageId
+            })
+            .map {
+                IndexPath(item: $0.offset, section: 0)
+            }
+    }
+
     // MARK: - UITableViewDataSource & UITableViewDelegate
 
     open func numberOfSections(in tableView: UITableView) -> Int {
@@ -456,12 +512,16 @@ open class ChatMessageListVC: _ViewController,
     open func scrollViewDidScroll(_ scrollView: UIScrollView) {
         delegate?.chatMessageListVC(self, scrollViewDidScroll: scrollView)
 
-        setScrollToLatestMessageButton(visible: isScrollToBottomButtonVisible)
+        updateScrollToBottomButtonVisibility()
 
         // If the user scrolled to the bottom, update the UI for the skipped messages
-        if listView.isLastCellFullyVisible && !listView.skippedMessages.isEmpty {
+        if listView.isLastCellFullyVisible && !listView.skippedMessages.isEmpty && dataSource?.isFirstPageLoaded == true {
             listView.reloadSkippedMessages()
         }
+    }
+
+    open func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+        updateScrollToBottomButtonVisibility()
     }
 
     // MARK: - ChatMessageListScrollOverlayDataSource
@@ -523,10 +583,8 @@ open class ChatMessageListVC: _ViewController,
         showThread(messageId: message.parentMessageId ?? message.id)
     }
 
-    open func messageContentViewDidTapOnQuotedMessage(_ indexPath: IndexPath?) {
-        log.info(
-            "Tapped a quoted message. To customize the behavior, override messageContentViewDidTapOnQuotedMessage."
-        )
+    open func messageContentViewDidTapOnQuotedMessage(_ quotedMessage: ChatMessage) {
+        jumpToMessage(quotedMessage)
     }
 
     open func messageContentViewDidTapOnAvatarView(_ indexPath: IndexPath?) {
@@ -653,5 +711,125 @@ open class ChatMessageListVC: _ViewController,
     ) -> Bool {
         // To prevent the gesture recognizer consuming up the events from UIControls, we receive touch only when the view isn't a UIControl.
         !(touch.view is UIControl)
+    }
+}
+
+// MARK: - Handle Message Updates
+
+private extension ChatMessageListVC {
+    func handleMessageUpdates(with changes: [ListChange<ChatMessage>], completion: (() -> Void)?) {
+        let newestChange = changes.first(where: { $0.indexPath.item == 0 })
+
+        addSkippedMessagesIfNeeded(with: changes, newestChange: newestChange)
+
+        // The old content offset and size should be stored before updating the list view.
+        let oldContentOffset = listView.contentOffset
+        let oldContentSize = listView.contentSize
+
+        listView.updateMessages(with: changes) { [weak self] in
+            // Calculate new content offset after loading next page
+            let shouldAdjustContentOffset = oldContentOffset.y < 0
+            if shouldAdjustContentOffset {
+                self?.adjustContentOffset(oldContentOffset: oldContentOffset, oldContentSize: oldContentSize)
+            }
+
+            self?.updateScrollToBottomButtonVisibility()
+            self?.scrollPendingMessageIfNeeded()
+
+            UIView.performWithoutAnimation {
+                self?.scrollToMostRecentMessageIfNeeded(newestChange: newestChange)
+                self?.reloadMovedMessage(newestChange: newestChange)
+                self?.reloadPreviousMessagesForVisibleRemoves(with: changes)
+                self?.reloadPreviousMessageWhenInsertingNewMessage()
+            }
+
+            completion?()
+        }
+    }
+
+    func addSkippedMessagesIfNeeded(with changes: [ListChange<ChatMessage>], newestChange: ListChange<ChatMessage>?) {
+        let insertions = changes.filter(\.isInsertion)
+        let isFirstPageLoaded = dataSource?.isFirstPageLoaded == true
+        let isNewestChangeInsertion = newestChange?.isInsertion == true
+        let isNewestChangeNotByCurrentUser = newestChange?.item.isSentByCurrentUser == false
+        let isNewestChangeNotVisible = !listView.isLastCellFullyVisible && !listView.previousMessagesSnapshot.isEmpty
+        let hasMultipleInsertions = insertions.count > 1
+        let shouldSkipMessages =
+            isFirstPageLoaded
+                && isNewestChangeNotVisible
+                && isNewestChangeInsertion
+                && isNewestChangeNotByCurrentUser
+                && !hasMultipleInsertions
+
+        guard shouldSkipMessages else {
+            return
+        }
+
+        changes.filter(\.isInsertion).forEach {
+            listView.skippedMessages.insert($0.item.id)
+        }
+
+        // By setting the new snapshots to itself, it will
+        // trigger didSet and remove the newly skipped messages.
+        let newMessageSnapshot = listView.newMessagesSnapshot
+        listView.newMessagesSnapshot = newMessageSnapshot
+    }
+
+    func scrollPendingMessageIfNeeded() {
+        // Only after updating the message to the UI we have the message around loaded
+        // So we check if we have a message waiting to be scrolled to here
+        if let message = messagePendingScrolling,
+           let indexPath = getIndexPath(forMessageId: message.id) {
+            listView.scrollToRow(at: indexPath, at: .middle, animated: true)
+            messagePendingScrolling = nil
+        }
+    }
+
+    func adjustContentOffset(oldContentOffset: CGPoint, oldContentSize: CGSize) {
+        let newContentSize = listView.contentSize
+        let newOffset = oldContentOffset.y + (newContentSize.height - oldContentSize.height)
+        listView.contentOffset.y = newOffset
+    }
+
+    // If we are inserting messages at the bottom, update the previous cell
+    // to hide the timestamp of the previous message if needed.
+    func reloadPreviousMessageWhenInsertingNewMessage() {
+        guard dataSource?.isFirstPageLoaded == true else { return }
+        if listView.isLastCellFullyVisible && listView.newMessagesSnapshot.count > 1 {
+            let previousMessageIndexPath = IndexPath(item: 1, section: 0)
+            listView.reloadRows(at: [previousMessageIndexPath], with: .none)
+        }
+    }
+
+    // When there are deletions, we should update the previous message, so that we add the
+    // avatar image is rendered back and the timestamp too. Since we have an inverted list, the previous
+    // message has the same index of the deleted message after the deletion has been executed.
+    func reloadPreviousMessagesForVisibleRemoves(with changes: [ListChange<ChatMessage>]) {
+        let visibleRemoves = changes.filter {
+            $0.isRemove && listView.indexPathsForVisibleRows?.contains($0.indexPath) == true
+        }
+        visibleRemoves.forEach {
+            listView.reloadRows(at: [$0.indexPath], with: .none)
+        }
+    }
+
+    // Scroll to the bottom if the new message was sent by
+    // the current user, or moved by the current user, and the first page is loaded.
+    func scrollToMostRecentMessageIfNeeded(newestChange: ListChange<ChatMessage>?) {
+        guard dataSource?.isFirstPageLoaded == true else { return }
+        guard let newMessage = newestChange?.item else { return }
+        let newestChangeIsInsertionOrMove = newestChange?.isInsertion == true || newestChange?.isMove == true
+        if newestChangeIsInsertionOrMove && newMessage.isSentByCurrentUser {
+            scrollToMostRecentMessage()
+        }
+    }
+
+    // When a Giphy moves to the bottom, we need to also trigger a reload
+    // Since a move doesn't trigger a reload of the cell.
+    func reloadMovedMessage(newestChange: ListChange<ChatMessage>?) {
+        if newestChange?.isMove == true {
+            let movedIndexPath = IndexPath(item: 0, section: 0)
+            listView.reloadRows(at: [movedIndexPath], with: .none)
+        }
     }
 }

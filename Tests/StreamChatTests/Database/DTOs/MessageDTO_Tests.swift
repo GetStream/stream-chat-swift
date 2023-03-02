@@ -72,6 +72,50 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(channelDTO.previewMessage?.id, previousPreviewMessage.id)
     }
 
+    func test_saveMessage_whenPreviewIsNil_doesNotUpdateChannelPreview() throws {
+        // GIVEN
+        let cid: ChannelId = .unique
+
+        let previewMessage: MessagePayload = .dummy(
+            type: .regular,
+            messageId: .unique,
+            authorUserId: .unique,
+            createdAt: Date(),
+            cid: cid
+        )
+
+        let channel: ChannelPayload = .dummy(
+            channel: .dummy(cid: cid),
+            messages: [
+                previewMessage
+            ]
+        )
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channel)
+        }
+
+        // WHEN
+        try database.writeSynchronously { session in
+            session.deleteChannelMessages(cid: channel.channel.cid)
+        }
+
+        let updatedEmptyPreviewMessage: MessagePayload = .dummy(
+            type: .error,
+            messageId: previewMessage.id,
+            authorUserId: previewMessage.user.id,
+            cid: cid
+        )
+
+        try database.writeSynchronously { session in
+            try session.saveMessage(payload: updatedEmptyPreviewMessage, for: cid, syncOwnReactions: false, cache: nil)
+        }
+
+        // THEN
+        let channelDTO = try XCTUnwrap(database.viewContext.channel(cid: cid))
+        XCTAssertEqual(channelDTO.previewMessage?.id, previewMessage.id)
+    }
+
     func test_saveMessage_messageSentByAnotherUser_hasNoReads() throws {
         // GIVEN
         let anotherUser: UserPayload = .dummy(userId: .unique)
@@ -1779,6 +1823,61 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(predicateCount, 0)
     }
 
+    func test_channelMessagesPredicate_whenNewestMessageAt_shouldIgnoreNewerMessages() throws {
+        let now = Date()
+        let channelId: ChannelId = .unique
+        let channelPayload = ChannelPayload.dummy(channel: .dummy(cid: channelId))
+        try database.writeSynchronously { session in
+            let channel = try session.saveChannel(payload: channelPayload)
+            channel.newestMessageAt = now.bridgeDate
+        }
+
+        let message: MessagePayload = .dummy(createdAt: now.addingTimeInterval(10), cid: channelId)
+        let predicateCount = try checkChannelMessagesPredicateCount(
+            channelId: channelId,
+            message: message
+        )
+
+        XCTAssertEqual(predicateCount, 0)
+    }
+
+    func test_channelMessagesPredicate_whenNewestMessageAtIsOlder_shouldNotIgnoreNewerMessages() throws {
+        let now = Date()
+        let channelId: ChannelId = .unique
+        let channelPayload = ChannelPayload.dummy(channel: .dummy(cid: channelId))
+        try database.writeSynchronously { session in
+            let channel = try session.saveChannel(payload: channelPayload)
+            channel.newestMessageAt = now.bridgeDate
+        }
+
+        let message: MessagePayload = .dummy(createdAt: now.addingTimeInterval(-10), cid: channelId)
+        let predicateCount = try checkChannelMessagesPredicateCount(
+            channelId: channelId,
+            message: message
+        )
+
+        XCTAssertEqual(predicateCount, 1)
+    }
+
+    func test_channelMessagesPredicate_whenNewestMessageAt_whenFilterNewerMessagesIsFale_shouldNotIgnoreNewerMessages() throws {
+        let now = Date()
+        let channelId: ChannelId = .unique
+        let channelPayload = ChannelPayload.dummy(channel: .dummy(cid: channelId))
+        try database.writeSynchronously { session in
+            let channel = try session.saveChannel(payload: channelPayload)
+            channel.newestMessageAt = now.bridgeDate
+        }
+
+        let message: MessagePayload = .dummy(createdAt: now.addingTimeInterval(10), cid: channelId)
+        let predicateCount = try checkChannelMessagesPredicateCount(
+            channelId: channelId,
+            message: message,
+            filterNewerMessages: false
+        )
+
+        XCTAssertEqual(predicateCount, 1)
+    }
+
     // MARK: Add Reaction
 
     func test_addReaction_noCurrentUser() {
@@ -2779,6 +2878,8 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(channelUpdatesCount, 1)
     }
 
+    // MARK: - fetchLimit and batchSzie
+
     func test_messagesFetchRequest_shouldHaveFetchLimitAndBatchSize() {
         let fetchRequest = MessageDTO.messagesFetchRequest(
             for: .unique,
@@ -2803,19 +2904,54 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(fetchRequest.fetchLimit, 20)
     }
 
+    // MARK: - isLocalOnly
+
+    func test_isLocalOnly_whenLocalMessageStateIsWaitingToBeSentToServer_returnsTrue() throws {
+        let message = try createMessage(with: .dummy(channel: .dummy()))
+        message.localMessageState = .pendingSync
+
+        XCTAssertEqual(message.isLocalOnly, true)
+    }
+
+    func test_isLocalOnly_whenLocalMessageStateIsNil_whenTypeIsEphemeral_returnsTrue() throws {
+        let message = try createMessage(with: .dummy(channel: .dummy()))
+        message.localMessageState = nil
+        message.type = MessageType.ephemeral.rawValue
+
+        XCTAssertEqual(message.isLocalOnly, true)
+    }
+
+    func test_isLocalOnly_whenLocalMessageStateIsNil_whenTypeNotEphemeral_returnsFalse() throws {
+        let message = try createMessage(with: .dummy(channel: .dummy()))
+        message.localMessageState = nil
+        message.type = MessageType.regular.rawValue
+
+        XCTAssertEqual(message.isLocalOnly, false)
+    }
+
     // MARK: Helpers:
+
+    private func createMessage(with message: MessagePayload) throws -> MessageDTO {
+        let context = database.viewContext
+        _ = try context.saveCurrentUser(payload: .dummy(userPayload: message.user))
+        return try XCTUnwrap(
+            context.saveMessage(payload: message, for: message.channel?.cid, cache: nil)
+        )
+    }
 
     private func checkChannelMessagesPredicateCount(
         channelId: ChannelId,
         message: MessagePayload,
-        isHardDeleted: Bool = false
+        isHardDeleted: Bool = false,
+        filterNewerMessages: Bool = true
     ) throws -> Int {
         let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: true)]
         request.predicate = MessageDTO.channelMessagesPredicate(
             for: channelId.rawValue,
             deletedMessagesVisibility: .visibleForCurrentUser,
-            shouldShowShadowedMessages: false
+            shouldShowShadowedMessages: false,
+            filterNewerMessages: filterNewerMessages
         )
 
         try database.writeSynchronously { session in

@@ -6,6 +6,7 @@ import Foundation
 @testable import StreamChat
 
 public class ChatChannelController_Mock: ChatChannelController {
+
     /// Creates a new mock instance of `ChatChannelController`.
     public static func mock(chatClientConfig: ChatClientConfig? = nil) -> ChatChannelController_Mock {
         .init(
@@ -35,6 +36,11 @@ public class ChatChannelController_Mock: ChatChannelController {
         )
     }
 
+    public var hasLoadedAllNextMessages_mock: Bool? = true
+    public override var hasLoadedAllNextMessages: Bool {
+        hasLoadedAllNextMessages_mock ?? super.hasLoadedAllNextMessages
+    }
+
     public var channel_mock: ChatChannel?
     override public var channel: ChatChannel? {
         channel_mock ?? super.channel
@@ -43,6 +49,11 @@ public class ChatChannelController_Mock: ChatChannelController {
     public var messages_mock: [ChatMessage]?
     override public var messages: LazyCachedMapCollection<ChatMessage> {
         messages_mock.map { $0.lazyCachedMap { $0 } } ?? super.messages
+    }
+
+    public var markReadCallCount = 0
+    public override func markRead(completion: ((Error?) -> Void)?) {
+        markReadCallCount += 1
     }
 
     public private(set) var state_mock: State?
@@ -54,6 +65,22 @@ public class ChatChannelController_Mock: ChatChannelController {
     public private(set) var synchronize_completion: ((Error?) -> Void)?
     override public func synchronize(_ completion: ((Error?) -> Void)? = nil) {
         synchronize_completion = completion
+    }
+
+    public var loadFirstPageCallCount = 0
+    public var loadFirstPage_result: Error?
+    public override func loadFirstPage(_ completion: ((Error?) -> Void)? = nil) {
+        loadFirstPageCallCount += 1
+        completion?(loadFirstPage_result)
+    }
+
+    public var loadPageAroundMessageIdCallCount = 0
+    public override func loadPageAroundMessageId(
+        _ messageId: MessageId,
+        limit: Int? = nil,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        loadPageAroundMessageIdCallCount += 1
     }
 }
 

@@ -53,8 +53,6 @@ open class ChatThreadVC: _ViewController,
 
     public var messageComposerBottomConstraint: NSLayoutConstraint?
 
-    private var isLoadingPreviousMessages: Bool = false
-
     private var currentlyTypingUsers: Set<ChatUser> = []
 
     override open func setUp() {
@@ -148,6 +146,18 @@ open class ChatThreadVC: _ViewController,
         keyboardHandler.stop()
     }
 
+    // TODO: Jump to message
+    open func loadPreviousMessages() {
+        guard !isLoadingPreviousMessages else {
+            return
+        }
+        isLoadingPreviousMessages = true
+
+        messageController.loadPreviousReplies { [weak self] _ in
+            self?.isLoadingPreviousMessages = false
+        }
+    }
+
     // MARK: - ChatMessageListVCDataSource
 
     public var messages: [ChatMessage] {
@@ -199,16 +209,25 @@ open class ChatThreadVC: _ViewController,
         return layoutOptions
     }
 
-    open func loadPreviousMessages() {
-        guard !isLoadingPreviousMessages else {
-            return
-        }
-        isLoadingPreviousMessages = true
+    // MARK: Missing jump to message implementation
 
-        messageController.loadPreviousReplies { [weak self] _ in
-            self?.isLoadingPreviousMessages = false
-        }
+    // TODO: Jump to message
+    public var isLoadingPreviousMessages: Bool = false
+
+    // TODO: Jump to message
+    public var isFirstPageLoaded: Bool {
+        true
     }
+
+    // TODO: Jump to message
+    public func chatMessageListVC(
+        _ vc: ChatMessageListVC,
+        shouldLoadPageAroundMessage message: ChatMessage,
+        _ completion: @escaping ((Error?) -> Void)
+    ) {}
+
+    // TODO: Jump to message
+    open func chatMessageListVCShouldLoadFirstPage(_ vc: ChatMessageListVC) {}
 
     // MARK: - ChatMessageListVCDelegate
 
