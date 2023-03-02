@@ -25,7 +25,7 @@ final class ChatThreadView_Tests: iOS13TestCase {
             state: .remoteDataFetched
         )
         messageControllerMock.simulateInitial(
-            message: .mock(id: .unique, cid: .unique, text: "First message", author: .mock(id: .unique)),
+            message: .mock(id: .unique, cid: .unique, text: "First message", author: .mock(id: .unique), replyCount: 3),
             replies: [
                 .mock(
                     id: .unique,
@@ -66,7 +66,7 @@ final class ChatThreadView_Tests: iOS13TestCase {
                     state: .localDataFetched
                 )
                 messageControllerMock.simulateInitial(
-                    message: .mock(id: .unique, cid: .unique, text: "First message", author: .mock(id: .unique)),
+                    message: .mock(id: .unique, cid: .unique, text: "First message", author: .mock(id: .unique), replyCount: 3),
                     replies: [
                         .mock(id: .unique, cid: .unique, text: "First reply", author: .mock(id: .unique)),
                         .mock(id: .unique, cid: .unique, text: "Second reply", author: .mock(id: .unique)),
