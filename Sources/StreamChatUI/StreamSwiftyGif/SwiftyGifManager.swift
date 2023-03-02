@@ -134,14 +134,14 @@ class SwiftyGifManager {
     
     /// Check if an imageView is already managed by this manager
     /// - Parameter imageView: The image view we're searching
-    /// - Returns : a boolean for wether the imageView was found
+    /// - Returns : a boolean for whether the imageView was found
     func containsImageView(_ imageView: PlatformImageView) -> Bool{
         return displayViews.contains(imageView)
     }
     
     /// Check if this manager has cache for an imageView
     /// - Parameter imageView: The image view we're searching cache for
-    /// - Returns : a boolean for wether we have cache for the imageView
+    /// - Returns : a boolean for whether we have cache for the imageView
     func hasCache(_ imageView: PlatformImageView) -> Bool {
         return imageView.displaying && (imageView.loopCount == -1 || imageView.loopCount >= 5) ? haveCache : false
     }

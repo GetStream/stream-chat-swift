@@ -77,7 +77,7 @@ open class ChatMessageListVC: _ViewController,
         .init()
         .withoutAutoresizingMaskConstraints
 
-    /// A Boolean value indicating wether the scroll to bottom button is visible.
+    /// A Boolean value indicating whether the scroll to bottom button is visible.
     open var isScrollToBottomButtonVisible: Bool {
         let isMoreContentThanOnePage = listView.contentSize.height > listView.bounds.height
 
@@ -88,12 +88,12 @@ open class ChatMessageListVC: _ViewController,
     /// This date formatter is used between each group message and the top overlay.
     public lazy var dateSeparatorFormatter = appearance.formatters.messageDateSeparator
 
-    /// A boolean value that determines wether the date overlay should be displayed while scrolling.
+    /// A boolean value that determines whether the date overlay should be displayed while scrolling.
     open var isDateOverlayEnabled: Bool {
         components.messageListDateOverlayEnabled
     }
 
-    /// A boolean value that determines wether date separators should be shown between each message.
+    /// A boolean value that determines whether date separators should be shown between each message.
     open var isDateSeparatorEnabled: Bool {
         components.messageListDateSeparatorEnabled
     }

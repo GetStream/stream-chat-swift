@@ -131,7 +131,7 @@ public struct MessageDeletedEvent: ChannelSpecificEvent {
     /// The event timestamp.
     public let createdAt: Date
 
-    /// A Boolean value indicating wether it is an hard delete or not.
+    /// A Boolean value indicating whether it is an hard delete or not.
     public let isHardDelete: Bool
 }
 

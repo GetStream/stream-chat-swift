@@ -68,7 +68,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         }
     }
 
-    /// A Boolean value that returns wether the reactions have all been loaded or not.
+    /// A Boolean value that returns whether the reactions have all been loaded or not.
     public internal(set) var hasLoadedAllReactions = false
 
     /// Describes the ordering the replies are presented.
@@ -100,7 +100,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     /// The id of the last fetched reply
     private var lastFetchedMessageId: MessageId?
 
-    /// A Boolean value that returns wether pagination is finished
+    /// A Boolean value that returns whether pagination is finished
     public private(set) var hasLoadedAllPreviousReplies: Bool = false
 
     private let environment: Environment

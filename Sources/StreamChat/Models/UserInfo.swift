@@ -12,7 +12,7 @@ public struct UserInfo {
     public let name: String?
     /// The avatar url of the user.
     public let imageURL: URL?
-    /// Wether the user wants to share his online status or not.
+    /// whether the user wants to share his online status or not.
     public let isInvisible: Bool
     /// Custom extra data of the user.
     public let extraData: [String: RawJSON]

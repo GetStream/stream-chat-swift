@@ -104,7 +104,7 @@ public var listOrdering: MessageOrdering = .topToBottom
 
 ### `hasLoadedAllPreviousReplies`
 
-A Boolean value that returns wether pagination is finished
+A Boolean value that returns whether pagination is finished
 
 ``` swift
 public private(set) var hasLoadedAllPreviousReplies: Bool = false

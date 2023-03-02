@@ -67,7 +67,7 @@ To observe changes of the channels, set your class as a delegate of this control
 
 ### `hasLoadedAllPreviousChannels`
 
-A Boolean value that returns wether pagination is finished
+A Boolean value that returns whether pagination is finished
 
 ``` swift
 public private(set) var hasLoadedAllPreviousChannels: Bool = false

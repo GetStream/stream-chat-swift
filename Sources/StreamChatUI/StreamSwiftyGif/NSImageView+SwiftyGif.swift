@@ -225,7 +225,7 @@ extension NSImageView {
     
     /// Check if this imageView is currently playing a gif
     ///
-    /// - Returns wether the gif is currently playing
+    /// - Returns whether the gif is currently playing
     func isAnimatingGif() -> Bool{
         return isPlaying
     }

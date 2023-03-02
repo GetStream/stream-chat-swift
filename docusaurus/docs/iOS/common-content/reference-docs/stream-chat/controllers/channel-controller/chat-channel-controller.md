@@ -75,7 +75,7 @@ The ChannelQuery this controller observes.
 
 ### `hasLoadedAllPreviousMessages`
 
-A Boolean value that returns wether the previous messages have all been loaded or not.
+A Boolean value that returns whether the previous messages have all been loaded or not.
 
 ``` swift
 public private(set) var hasLoadedAllPreviousMessages: Bool = false
