@@ -4397,7 +4397,7 @@ private class TestEnvironment {
 
     lazy var environment: ChatChannelController.Environment = .init(
         channelUpdaterBuilder: { [unowned self] in
-            self.channelUpdater = ChannelUpdater_Mock(callRepository: $0, database: $1, apiClient: $2)
+            self.channelUpdater = ChannelUpdater_Mock(channelRepository: $0, callRepository: $1, database: $2, apiClient: $3)
             return self.channelUpdater!
         },
         eventSenderBuilder: { [unowned self] in

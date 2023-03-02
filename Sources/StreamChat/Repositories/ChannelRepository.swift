@@ -16,11 +16,17 @@ class ChannelRepository {
     ///   - cid: Channel id of the channel to be marked as read
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func markRead(cid: ChannelId, userId: UserId, completion: ((Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .markRead(cid: cid)) { [weak self] in
-            self?.database.write { session in
-                session.markChannelAsRead(cid: cid, userId: userId, at: .init())
+        apiClient.request(endpoint: .markRead(cid: cid)) { [weak self] result in
+            if let error = result.error {
+                completion?(error)
+                return
             }
-            completion?($0.error)
+
+            self?.database.write({ session in
+                session.markChannelAsRead(cid: cid, userId: userId, at: .init())
+            }, completion: { error in
+                completion?(error)
+            })
         }
     }
 
@@ -40,10 +46,16 @@ class ChannelRepository {
         apiClient.request(
             endpoint: .markUnread(cid: cid, messageId: messageId, userId: userId)
         ) { [weak self] result in
-            self?.database.write { session in
-                session.markChannelAsUnread(for: cid, userId: userId, from: messageId)
+            if let error = result.error {
+                completion?(error)
+                return
             }
-            completion?(result.error)
+
+            self?.database.write({ session in
+                session.markChannelAsUnread(for: cid, userId: userId, from: messageId)
+            }, completion: { error in
+                completion?(error)
+            })
         }
     }
 }
