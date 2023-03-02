@@ -441,7 +441,8 @@ class MessageDTO: NSManagedObject {
     ) -> Int {
         let subpredicates: [NSPredicate] = [
             sentMessagesPredicate(for: cid),
-            .init(format: "createdAt >= %@", createdAtFrom.bridgeDate)
+            .init(format: "createdAt >= %@", createdAtFrom.bridgeDate),
+            .init(format: "user.currentUser == nil")
         ]
 
         let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)

@@ -672,8 +672,4 @@ open class ChatMessageListVC: _ViewController,
         // To prevent the gesture recognizer consuming up the events from UIControls, we receive touch only when the view isn't a UIControl.
         !(touch.view is UIControl)
     }
-
-    func addUnreadSeparator(to cell: ChatMessageCell) {
-        // TODO:
-    }
 }
