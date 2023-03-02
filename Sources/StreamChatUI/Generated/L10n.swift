@@ -202,6 +202,14 @@ internal enum L10n {
       /// UPLOADING FAILED
       internal static var attachmentUploadingFailed: String { L10n.tr("Localizable", "message.sending.attachment-uploading-failed") }
     }
+    internal enum Thread {
+      internal enum Replies {
+        /// Plural format key: "%#@replies@"
+        internal static func count(_ p1: Int) -> String {
+          return L10n.tr("Localizable", "message.thread.replies.count", p1)
+        }
+      }
+    }
     internal enum Threads {
       /// Plural format key: "%#@replies@"
       internal static func count(_ p1: Int) -> String {

@@ -195,6 +195,78 @@ Components.default.messageListDateSeparatorView = CustomChatMessageListDateSepar
 | ------------- | ------------- |
 | <img src={require("../../assets/message-list-date-separator-static.png").default} /> | <img src={require("../../assets/message-list-date-separator-custom.png").default} /> |
 
+#### Thread Replies Counter
+:::note
+Thread Replies Counter Decoration View is available on SDK version 4.29.0 and above.
+:::
+
+The SDK provides out-of-the-box a decoration view that is being displayed in threads only and shows the number of replies in this thread. You can configure the presentation of the decoration view in the `Components` configuration:
+
+```swift
+Components.default.threadRepliesCounterEnabled = true | false
+```
+
+By default the `Components.default.threadRepliesCounterEnabled` is enabled, and in this case a decoration view will be displayed just underneath the first(source) message in a thread.
+
+##### Result:
+| Thread Replies Counter Disabled  | Thread Replies Counter Enabled |
+| ------------- | ------------- |
+| <img src={require("../../assets/thread-list-replies-counter-decoration-disabled.png").default} /> | <img src={require("../../assets/thread-list-replies-counter-decoration-enabled.png").default} /> |
+
+You can easily customize the look of the thread replies decoration by subclassing the `ChatThreadRepliesCountDecorationView`:
+```swift
+final class DemoChatThreadRepliesCountDecorationView: ChatThreadRepliesCountDecorationView {
+
+    private lazy var leadingLine = UIView()
+    private lazy var trailingLine = UIView()
+
+    override func setUpLayout() {
+        super.setUpLayout()
+
+        let screenScale = UIScreen.main.scale
+        let hairlineHeight = 1 / screenScale
+        textLabel.removeFromSuperview()
+
+        leadingLine.translatesAutoresizingMaskIntoConstraints = false
+        textLabel.translatesAutoresizingMaskIntoConstraints = false
+        trailingLine.translatesAutoresizingMaskIntoConstraints = false
+
+        container.addSubview(leadingLine)
+        container.addSubview(textLabel)
+        container.addSubview(trailingLine)
+
+        NSLayoutConstraint.activate([
+            leadingLine.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 9),
+            leadingLine.centerYAnchor.constraint(equalTo: container.centerYAnchor),
+            leadingLine.heightAnchor.constraint(equalToConstant: hairlineHeight),
+
+            textLabel.leadingAnchor.constraint(equalTo: leadingLine.trailingAnchor, constant: 9),
+            textLabel.topAnchor.constraint(equalTo: container.topAnchor, constant: 3),
+            textLabel.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -3),
+            textLabel.centerXAnchor.constraint(equalTo: container.centerXAnchor),
+
+            trailingLine.leadingAnchor.constraint(equalTo: textLabel.trailingAnchor, constant: 9),
+            trailingLine.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -9),
+            trailingLine.centerYAnchor.constraint(equalTo: container.centerYAnchor),
+            trailingLine.heightAnchor.constraint(equalToConstant: hairlineHeight)
+        ])
+    }
+
+    override func setUpAppearance() {
+        super.setUpAppearance()
+
+        container.backgroundColor = nil
+
+        leadingLine.backgroundColor = UIColor.gray
+        trailingLine.backgroundColor = UIColor.gray
+    }
+}
+```
+
+| Thread Replies Counter Default  | Thread Replies Counter Customized |
+| ------------- | ------------- |
+| <img src={require("../../assets/thread-list-replies-counter-decoration-enabled.png").default} /> | <img src={require("../../assets/thread-list-replies-counter-decoration-customized.png").default} /> |
+
 ## Advanced Customizations
 
 Creating a subclass of [`ChatMessageContentView`](#chatmessagecontentview) is the best way do more advanced customizations since you have access to all the message subviews. By customizing this component you can not only change the existing views but add new ones and add new functionality.
