@@ -121,7 +121,7 @@ public struct MarkUnreadActionItem: ChatMessageActionItem {
         appearance: Appearance = .default
     ) {
         self.action = action
-        icon = appearance.images.reactionThumgsUpSmall
+        icon = appearance.images.messageActionMarkUnread
     }
 }
 

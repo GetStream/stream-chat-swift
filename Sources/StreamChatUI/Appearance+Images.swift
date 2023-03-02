@@ -189,6 +189,14 @@ public extension Appearance {
 
         public var messageActionInlineReply: UIImage = loadImageSafely(with: "icn_inline_reply")
         public var messageActionThreadReply: UIImage = loadImageSafely(with: "icn_thread_reply")
+        public var messageActionMarkUnread: UIImage = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "message.badge")!
+            } else {
+                return loadImageSafely(with: "mark_unread")
+            }
+        }()
+
         public var messageActionEdit: UIImage = loadImageSafely(with: "icn_edit")
         public var messageActionCopy: UIImage = loadImageSafely(with: "icn_copy")
         public var messageActionBlockUser: UIImage = loadImageSafely(with: "icn_block_user")
