@@ -276,7 +276,7 @@ open class ChatThreadVC: _ViewController,
         footerViewForMessage message: ChatMessage,
         at indexPath: IndexPath
     ) -> ChatMessageDecorationView? {
-        guard components.threadRepliesCounterEnabled, message == messages.last else {
+        guard components.threadRepliesCounterEnabled, message == messages.last, message.replyCount > 0 else {
             return nil
         }
         let repliesCounterDecorationView = components.threadRepliesCounterDecorationView.init()
