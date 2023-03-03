@@ -57,7 +57,7 @@ open class ChatChannelVC: _ViewController,
     /// The message composer bottom constraint used for keyboard animation handling.
     public var messageComposerBottomConstraint: NSLayoutConstraint?
 
-    /// A boolean value indicating wether the last message is fully visible or not.
+    /// A boolean value indicating whether the last message is fully visible or not.
     /// If the value is `true` it means the message list is fully scrolled to the bottom.
     open var isLastMessageFullyVisible: Bool {
         messageListVC.listView.isLastCellFullyVisible

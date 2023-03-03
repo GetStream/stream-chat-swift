@@ -55,7 +55,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
             client.apiClient
         )
 
-    /// A Boolean value that returns wether pagination is finished
+    /// A Boolean value that returns whether pagination is finished
     public private(set) var hasLoadedAllPreviousChannels: Bool = false
 
     /// A type-erased delegate.

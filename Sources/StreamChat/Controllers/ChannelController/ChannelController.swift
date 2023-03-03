@@ -182,7 +182,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// That is why we need to check both flag and valid `cid` before modifications.
     private var isChannelAlreadyCreated: Bool
 
-    /// A Boolean value that returns wether the previous messages have all been loaded or not.
+    /// A Boolean value that returns whether the previous messages have all been loaded or not.
     public private(set) var hasLoadedAllPreviousMessages: Bool = false
 
     /// The identifier of a channel this controller observes.
