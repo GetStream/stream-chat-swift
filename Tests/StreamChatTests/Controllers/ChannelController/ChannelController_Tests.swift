@@ -4549,6 +4549,71 @@ final class ChannelController_Tests: XCTestCase {
         // Result is propagated to completion
         AssertAsync.willBeEqual(resultingCallWithToken, mockCallWithToken)
     }
+
+    // MARK: deinit
+
+    func test_deinit_whenIsJumpingToMessage_deletesAllMessages() throws {
+        // GIVEN
+        controller = ChatChannelController(
+            channelQuery: .init(cid: channelId),
+            channelListQuery: nil,
+            client: client,
+            environment: env.environment
+        )
+        let messages: [MessagePayload] = [.dummy(), .dummy(), .dummy(), .dummy()]
+        try setupChannel(
+            channelPayload: .dummy(
+                channel: .dummy(cid: channelId),
+                messages: messages
+            )
+        )
+
+        var channel: ChannelDTO? {
+            try? XCTUnwrap(client.databaseContainer.viewContext.channel(cid: channelId))
+        }
+
+        XCTAssertEqual(channel?.messages.count, messages.count)
+
+        // WHEN
+        controller?.loadPageAroundMessageId(.unique)
+        env.channelUpdater?.update_completion?(.success(dummyPayload(with: .unique)))
+
+        // THEN
+        env.channelUpdater?.cleanUp()
+        controller = nil
+        AssertAsync.willBeEqual(channel?.messages.count, 0)
+    }
+
+    func test_deinit_whenIsNotJumpingToMessage_doesNotDeleteAnyMessage() throws {
+        // GIVEN
+        controller = ChatChannelController(
+            channelQuery: .init(cid: channelId),
+            channelListQuery: nil,
+            client: client,
+            environment: env.environment
+        )
+        let messages: [MessagePayload] = [.dummy(), .dummy(), .dummy(), .dummy()]
+        try setupChannel(
+            channelPayload: .dummy(
+                channel: .dummy(cid: channelId),
+                messages: messages
+            )
+        )
+
+        var channel: ChannelDTO? {
+            try? XCTUnwrap(client.databaseContainer.viewContext.channel(cid: channelId))
+        }
+
+        XCTAssertEqual(channel?.messages.count, messages.count)
+
+        // WHEN
+        XCTAssertEqual(controller.isJumpingToMessage, false)
+
+        // THEN
+        env.channelUpdater?.cleanUp()
+        controller = nil
+        AssertAsync.willBeEqual(channel?.messages.count, 4)
+    }
 }
 
 // MARK: Test Helpers

@@ -1050,6 +1050,13 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             synchronize(isInRecoveryMode: true, completion)
         }
     }
+
+    deinit {
+        guard self.isJumpingToMessage, let cid = self.cid else { return }
+        dataStore.database.write { session in
+            session.deleteChannelMessages(cid: cid)
+        }
+    }
 }
 
 // MARK: - Environment
