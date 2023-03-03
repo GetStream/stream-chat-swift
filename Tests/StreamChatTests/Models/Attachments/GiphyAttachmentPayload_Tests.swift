@@ -29,4 +29,18 @@ final class GiphyAttachmentPayload_Tests: XCTestCase {
         XCTAssertEqual(sut?.previewURL, giphyURL)
         XCTAssertEqual(sut?.actions, [])
     }
+    
+    func test_ItInitializesPayloadWithoutTitle() {
+        // WHEN
+        sut = GiphyAttachmentPayload(
+            title: nil,
+            previewURL: giphyURL,
+            actions: []
+        )
+
+        // THEN
+        XCTAssertNil(sut?.title)
+        XCTAssertEqual(sut?.previewURL, giphyURL)
+        XCTAssertEqual(sut?.actions, [])
+    }
 }
