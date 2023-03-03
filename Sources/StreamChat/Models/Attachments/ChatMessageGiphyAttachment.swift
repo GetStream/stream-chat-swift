@@ -16,7 +16,7 @@ public struct GiphyAttachmentPayload: AttachmentPayload {
     public static let type: AttachmentType = .giphy
 
     /// A  title, usually the search request used to find the gif.
-    public var title: String
+    public var title: String?
     /// A link to gif file.
     public var previewURL: URL
     /// Actions when gif is not sent yet. (e.g. `Shuffle`)
@@ -26,7 +26,7 @@ public struct GiphyAttachmentPayload: AttachmentPayload {
     ///   - title: Title of the giphy
     ///   - previewURL: thumb url of the giphy
     ///   - actions: Leave empty
-    public init(title: String, previewURL: URL, actions: [AttachmentAction] = []) {
+    public init(title: String?, previewURL: URL, actions: [AttachmentAction] = []) {
         self.title = title
         self.previewURL = previewURL
         self.actions = actions
@@ -63,7 +63,7 @@ extension GiphyAttachmentPayload: Decodable {
         let giphyAttachmentContainer = try decoder.container(keyedBy: GiphyAttachmentSpecificCodingKeys.self)
 
         self.init(
-            title: try container.decode(String.self, forKey: .title),
+            title: try container.decodeIfPresent(String.self, forKey: .title),
             previewURL: try container.decode(URL.self, forKey: .thumbURL),
             actions: try giphyAttachmentContainer.decodeIfPresent([AttachmentAction].self, forKey: .actions) ?? []
         )
