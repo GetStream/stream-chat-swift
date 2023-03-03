@@ -733,7 +733,6 @@ private extension ChatMessageListVC {
             }
 
             self?.updateScrollToBottomButtonVisibility()
-            self?.scrollPendingMessageIfNeeded()
 
             UIView.performWithoutAnimation {
                 self?.scrollToMostRecentMessageIfNeeded(newestChange: newestChange)
@@ -741,6 +740,8 @@ private extension ChatMessageListVC {
                 self?.reloadPreviousMessagesForVisibleRemoves(with: changes)
                 self?.reloadPreviousMessageWhenInsertingNewMessage()
             }
+
+            self?.scrollPendingMessageIfNeeded()
 
             completion?()
         }
