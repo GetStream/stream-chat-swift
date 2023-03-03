@@ -641,17 +641,18 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             channelDTO.pinnedMessages.remove(dto)
         }
 
-        if let quotedMessage = payload.quotedMessage {
+        if let quotedMessageId = payload.quotedMessageId,
+           let quotedMessage = message(id: quotedMessageId) {
+            // In case we do not have a fully formed quoted message in the payload,
+            // we check for quotedMessageId. This can happen in the case of nested quoted messages.
+            dto.quotedMessage = quotedMessage
+        } else if let quotedMessage = payload.quotedMessage {
             dto.quotedMessage = try saveMessage(
                 payload: quotedMessage,
                 channelDTO: channelDTO,
                 syncOwnReactions: false,
                 cache: cache
             )
-        } else if let quotedMessageId = payload.quotedMessageId {
-            // In case we do not have a fully formed quoted message in the payload,
-            // we check for quotedMessageId. This can happen in the case of nested quoted messages.
-            dto.quotedMessage = message(id: quotedMessageId)
         } else {
             dto.quotedMessage = nil
         }
@@ -699,8 +700,13 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         )
         dto.attachments = attachments
 
+        // Only insert message into Parent's replies if not already present.
+        // This in theory would not be needed since replies is a Set, but
+        // it will trigger an FRC update, which will cause the message to disappear
+        // in the Message List if there is already a message with the same ID.
         if let parentMessageId = payload.parentId,
-           let parentMessageDTO = MessageDTO.load(id: parentMessageId, context: self) {
+           let parentMessageDTO = MessageDTO.load(id: parentMessageId, context: self),
+           !parentMessageDTO.replies.contains(dto) {
             parentMessageDTO.replies.insert(dto)
         }
 
