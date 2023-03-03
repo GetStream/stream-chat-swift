@@ -1071,7 +1071,7 @@ public extension ChatChannelController {
 
     /// Marks the channel as read.
     ///
-    /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    /// - Parameter completion: The completion will be called on a **callbackQueue** when the network request is finished.
     ///                         If request fails, the completion will be called with an error.
     ///
     func markRead(completion: ((Error?) -> Void)? = nil) {
@@ -1114,7 +1114,7 @@ public extension ChatChannelController {
     /// passed as parameter, will be marked as not read.
     /// - Parameters:
     ///   - messageId: The id of the first message id that will be marked as unread.
-    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    ///   - completion: The completion will be called on a **callbackQueue** when the network request is finished.
     func markUnread(from messageId: MessageId, completion: ((Error?) -> Void)? = nil) {
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let channel = channel else {

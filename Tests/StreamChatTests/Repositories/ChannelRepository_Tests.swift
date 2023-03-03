@@ -12,6 +12,7 @@ final class ChannelRepository_Tests: XCTestCase {
     private var apiClient: APIClient_Spy!
 
     override func setUp() {
+        super.setUp()
         let client = ChatClient.mock
         database = client.mockDatabaseContainer
         apiClient = client.mockAPIClient
@@ -19,10 +20,10 @@ final class ChannelRepository_Tests: XCTestCase {
     }
 
     override func tearDown() {
-        super.tearDown()
         repository = nil
         database = nil
         apiClient = nil
+        super.tearDown()
     }
 
     // MARK: - Mark as read
