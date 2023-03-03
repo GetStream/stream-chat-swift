@@ -210,7 +210,7 @@ class DatabaseContainer: NSPersistentContainer {
 
                 for object in self.writableContext.updatedObjects {
                     if object.changedValues().isEmpty {
-                        self.writableContext.refresh(object, mergeChanges: true)
+                        self.writableContext.refresh(object, mergeChanges: false)
                     }
                 }
 

@@ -61,12 +61,12 @@ open class ChatChannelVC: _ViewController,
     /// The message composer bottom constraint used for keyboard animation handling.
     public var messageComposerBottomConstraint: NSLayoutConstraint?
 
-    /// A boolean value indicating wether the last message is fully visible or not.
+    /// A boolean value indicating whether the last message is fully visible or not.
     open var isLastMessageFullyVisible: Bool {
         messageListVC.listView.isLastCellFullyVisible
     }
 
-    /// A boolean value indicating wether it should mark the channel read.
+    /// A boolean value indicating whether it should mark the channel read.
     public var shouldMarkChannelRead: Bool {
         isLastMessageFullyVisible && channelController.hasLoadedAllNextMessages
     }
@@ -176,7 +176,7 @@ open class ChatChannelVC: _ViewController,
     public var messages: [ChatMessage] = []
 
     public var isFirstPageLoaded: Bool {
-        channelController.hasLoadedAllNextMessages
+        channelController.hasLoadedAllNextMessages // || channelController.hasLoadedAllPreviousMessages
     }
     
     open func channel(for vc: ChatMessageListVC) -> ChatChannel? {
@@ -256,7 +256,10 @@ open class ChatChannelVC: _ViewController,
         }
     }
 
-    open func chatMessageListVC(_ vc: ChatMessageListVC, scrollViewDidScroll scrollView: UIScrollView) {
+    open func chatMessageListVC(
+        _ vc: ChatMessageListVC,
+        scrollViewDidScroll scrollView: UIScrollView
+    ) {
         if shouldMarkChannelRead {
             channelController.markRead()
 
@@ -309,6 +312,7 @@ open class ChatChannelVC: _ViewController,
         messageListVC.updateMessages(with: changes) { [weak self] in
             if self?.shouldMarkChannelRead == true {
                 self?.channelController.markRead()
+                self?.messageListVC.scrollToLatestMessageButton.content = .noUnread
             }
         }
     }
@@ -343,7 +347,7 @@ open class ChatChannelVC: _ViewController,
     open func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
         if let newMessagePendingEvent = event as? NewMessagePendingEvent {
             let newMessage = newMessagePendingEvent.message
-            if !isFirstPageLoaded && newMessage.isSentByCurrentUser && !newMessage.isPartOfThread {
+            if !isFirstPageLoaded && newMessage.isSentByCurrentUser && !newMessage.isPartOfThread { // Why is this needed?
                 channelController.loadFirstPage()
             }
         }

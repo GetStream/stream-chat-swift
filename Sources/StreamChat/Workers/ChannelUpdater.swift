@@ -60,12 +60,11 @@ class ChannelUpdater: Worker {
                         channelDTO.messages = channelDTO.messages.filter { $0.isLocalOnly }
                     }
 
-                    channelDTO?.isFirstPageLoaded = !isJumpingToMessage
+                    channelDTO?.isFirstPageLoaded = !isJumpingToMessage // isFirstPage
 
                     try session.saveChannel(payload: payload)
 
                     channelDTO?.updatePaginationCursors(for: payload, with: channelQuery.pagination)
-
                 } completion: { error in
                     if let error = error {
                         completion?(.failure(error))

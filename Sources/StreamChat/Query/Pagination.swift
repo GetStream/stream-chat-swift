@@ -149,7 +149,8 @@ public enum PaginationParameter: Encodable, Hashable {
         case let (.greaterThan(value1), .greaterThan(value2)),
              let (.greaterThanOrEqual(value1), .greaterThanOrEqual(value2)),
              let (.lessThan(value1), .lessThan(value2)),
-             let (.lessThanOrEqual(value1), .lessThanOrEqual(value2)):
+             let (.lessThanOrEqual(value1), .lessThanOrEqual(value2)),
+             let (.around(value1), .around(value2)):
             return value1 == value2
         default:
             return false

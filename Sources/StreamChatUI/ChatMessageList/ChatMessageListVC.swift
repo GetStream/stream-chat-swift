@@ -77,7 +77,7 @@ open class ChatMessageListVC: _ViewController,
         .init()
         .withoutAutoresizingMaskConstraints
 
-    /// A Boolean value indicating wether the scroll to bottom button is visible.
+    /// A Boolean value indicating whether the scroll to bottom button is visible.
     open var isScrollToBottomButtonVisible: Bool {
         let isMoreContentThanOnePage = listView.contentSize.height > listView.bounds.height
 
@@ -88,16 +88,16 @@ open class ChatMessageListVC: _ViewController,
     /// This date formatter is used between each group message and the top overlay.
     public lazy var dateSeparatorFormatter = appearance.formatters.messageDateSeparator
 
-    /// A boolean value that determines wether the date overlay should be displayed while scrolling.
+    /// A boolean value that determines whether the date overlay should be displayed while scrolling.
     open var isDateOverlayEnabled: Bool {
         components.messageListDateOverlayEnabled
     }
 
     /// A message pending to be scrolled after a message list update.
     /// (Used for jumping to a message)
-    private(set) var messagePendingScrolling: ChatMessage?
+    private var messagePendingScrolling: ChatMessage?
 
-    /// A boolean value that determines wether date separators should be shown between each message.
+    /// A boolean value that determines whether date separators should be shown between each message.
     open var isDateSeparatorEnabled: Bool {
         components.messageListDateSeparatorEnabled
     }
@@ -520,10 +520,6 @@ open class ChatMessageListVC: _ViewController,
         }
     }
 
-    open func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
-        updateScrollToBottomButtonVisibility()
-    }
-
     // MARK: - ChatMessageListScrollOverlayDataSource
 
     open func scrollOverlay(
@@ -734,7 +730,6 @@ private extension ChatMessageListVC {
             }
 
             self?.updateScrollToBottomButtonVisibility()
-            self?.scrollPendingMessageIfNeeded()
 
             UIView.performWithoutAnimation {
                 self?.scrollToMostRecentMessageIfNeeded(newestChange: newestChange)
@@ -743,6 +738,7 @@ private extension ChatMessageListVC {
                 self?.reloadPreviousMessageWhenInsertingNewMessage()
             }
 
+            self?.scrollPendingMessageIfNeeded()
             completion?()
         }
     }
@@ -781,8 +777,10 @@ private extension ChatMessageListVC {
         if let message = messagePendingScrolling,
            let indexPath = getIndexPath(forMessageId: message.id) {
             listView.scrollToRow(at: indexPath, at: .middle, animated: true)
-            messagePendingScrolling = nil
         }
+
+        // Clean up
+        messagePendingScrolling = nil
     }
 
     func adjustContentOffset(oldContentOffset: CGPoint, oldContentSize: CGSize) {
@@ -801,25 +799,24 @@ private extension ChatMessageListVC {
         }
     }
 
-    // When there are deletions, we should update the previous message, so that we add the
+    // When there are deletions, we should update the previous message, so that the
     // avatar image is rendered back and the timestamp too. Since we have an inverted list, the previous
     // message has the same index of the deleted message after the deletion has been executed.
     func reloadPreviousMessagesForVisibleRemoves(with changes: [ListChange<ChatMessage>]) {
         let visibleRemoves = changes.filter {
             $0.isRemove && listView.indexPathsForVisibleRows?.contains($0.indexPath) == true
         }
-        visibleRemoves.forEach {
-            listView.reloadRows(at: [$0.indexPath], with: .none)
-        }
+
+        listView.reloadRows(at: visibleRemoves.map(\.indexPath), with: .none)
     }
 
     // Scroll to the bottom if the new message was sent by
     // the current user, or moved by the current user, and the first page is loaded.
     func scrollToMostRecentMessageIfNeeded(newestChange: ListChange<ChatMessage>?) {
         guard dataSource?.isFirstPageLoaded == true else { return }
-        guard let newMessage = newestChange?.item else { return }
+        guard let newMessage = newestChange?.item, newMessage.isSentByCurrentUser else { return }
         let newestChangeIsInsertionOrMove = newestChange?.isInsertion == true || newestChange?.isMove == true
-        if newestChangeIsInsertionOrMove && newMessage.isSentByCurrentUser {
+        if newestChangeIsInsertionOrMove {
             scrollToMostRecentMessage()
         }
     }
