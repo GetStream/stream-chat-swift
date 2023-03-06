@@ -278,11 +278,6 @@ open class ChatChannelVC: _ViewController,
         _ channelController: ChatChannelController,
         didUpdateMessages changes: [ListChange<ChatMessage>]
     ) {
-        // In order to not show an empty list when jumping to a message, ignore the remove updates.
-        if !isFirstPageLoaded && changes.filter(\.isRemove).count == messages.count {
-            return
-        }
-
         messageListVC.setPreviousMessagesSnapshot(messages)
         messageListVC.setNewMessagesSnapshot(Array(channelController.messages))
         messageListVC.updateMessages(with: changes) { [weak self] in

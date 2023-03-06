@@ -31,13 +31,13 @@ class ChannelUpdater: Worker {
         onChannelCreated: ((ChannelId) -> Void)? = nil,
         completion: ((Result<ChannelPayload, Error>) -> Void)? = nil
     ) {
-        let isFirstPage = channelQuery.pagination?.parameter == nil
         var isJumpingToMessage: Bool {
             switch channelQuery.pagination?.parameter {
             case .around: return true
             default: return false
             }
         }
+        
         let isChannelCreate = onChannelCreated != nil
 
         let completion: (Result<ChannelPayload, Error>) -> Void = { [weak database] result in
