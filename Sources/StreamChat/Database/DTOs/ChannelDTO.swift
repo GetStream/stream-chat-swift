@@ -564,6 +564,9 @@ extension ChannelDTO {
         // When loading next (new) pages
         case .greaterThan, .greaterThanOrEqual:
             self.newestMessageAt = newestMessageAt
+            if let pageSize = pagination?.pageSize, payload.messages.count < pageSize {
+                self.newestMessageAt = nil
+            }
 
         // When jumping to a mid-page
         case .around:
