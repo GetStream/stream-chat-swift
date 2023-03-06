@@ -3432,6 +3432,168 @@ final class ChannelController_Tests: XCTestCase {
         AssertAsync.staysTrue(weakController != nil)
     }
 
+    // MARK: - Mark unread
+
+    func test_markUnread_whenChannelDoesNotExist() {
+        var receivedError: Error?
+        let expectation = self.expectation(description: "Mark Unread completes")
+        controller.markUnread(from: .unique) { error in
+            receivedError = error
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertTrue(receivedError is ClientError.ChannelNotCreatedYet)
+    }
+
+    func test_markUnread_whenReadEventsAreNotEnabled() throws {
+        let channel: ChannelPayload = .dummy(
+            channel: .dummy(cid: channelId, config: .mock(readEventsEnabled: false))
+        )
+
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: channel)
+        }
+
+        var receivedError: Error?
+        let expectation = self.expectation(description: "Mark Unread completes")
+        controller.markUnread(from: .unique) { error in
+            receivedError = error
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertTrue(receivedError is ClientError.ChannelFeatureDisabled)
+    }
+
+    private func simulateMarkingAsRead(userId: UserId) throws {
+        let lastMessage: MessagePayload = .dummy(
+            messageId: .unique,
+            authorUserId: .unique,
+            cid: channelId
+        )
+
+        let currentUser: CurrentUserPayload = .dummy(userId: userId, role: .user)
+
+        let channel: ChannelPayload = .dummy(
+            channel: .dummy(cid: channelId, lastMessageAt: lastMessage.createdAt),
+            messages: [lastMessage],
+            channelReads: [
+                .init(
+                    user: currentUser,
+                    lastReadAt: lastMessage.createdAt.addingTimeInterval(-1),
+                    unreadMessagesCount: 0
+                )
+            ]
+        )
+
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveCurrentUser(payload: currentUser)
+            try session.saveChannel(payload: channel)
+        }
+
+        controller.markRead()
+    }
+
+    func test_markUnread_whenIsMarkingAsRead_andCurrentUserIdIsPresent() throws {
+        let channel: ChannelPayload = .dummy(
+            channel: .dummy(cid: channelId, config: .mock(readEventsEnabled: true))
+        )
+
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: channel)
+        }
+
+        let currentUserId = UserId.unique
+        client.setToken(token: .unique(userId: currentUserId))
+        try simulateMarkingAsRead(userId: currentUserId)
+
+        var receivedError: Error?
+        let expectation = self.expectation(description: "Mark Unread completes")
+        controller.markUnread(from: .unique) { error in
+            receivedError = error
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertNil(receivedError)
+        XCTAssertNil(controller.firstUnreadMessageId)
+    }
+
+    func test_markUnread_whenIsNotMarkingAsRead_andCurrentUserIdIsNotPresent() throws {
+        let channel: ChannelPayload = .dummy(
+            channel: .dummy(cid: channelId, config: .mock(readEventsEnabled: true))
+        )
+
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: channel)
+        }
+
+        var receivedError: Error?
+        let expectation = self.expectation(description: "Mark Unread completes")
+        controller.markUnread(from: .unique) { error in
+            receivedError = error
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertNil(receivedError)
+        XCTAssertNil(controller.firstUnreadMessageId)
+    }
+
+    func test_markUnread_whenIsNotMarkingAsRead_andCurrentUserIdIsPresent_whenUpdaterFails() throws {
+        let channel: ChannelPayload = .dummy(
+            channel: .dummy(cid: channelId, config: .mock(readEventsEnabled: true))
+        )
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: channel)
+        }
+        client.setToken(token: .unique(userId: .unique))
+
+        var receivedError: Error?
+        let expectation = self.expectation(description: "Mark Unread completes")
+        controller.markUnread(from: .unique) { error in
+            receivedError = error
+            expectation.fulfill()
+        }
+        let mockedError = TestError()
+        env.channelUpdater?.markUnread_completion?(mockedError)
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertNotNil(receivedError)
+        XCTAssertNil(controller.firstUnreadMessageId)
+    }
+
+    func test_markUnread_whenIsNotMarkingAsRead_andCurrentUserIdIsPresent_whenUpdaterSucceeds() throws {
+        let channel: ChannelPayload = .dummy(
+            channel: .dummy(cid: channelId, config: .mock(readEventsEnabled: true))
+        )
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: channel)
+        }
+        client.setToken(token: .unique(userId: .unique))
+
+        var receivedError: Error?
+        let messageId = MessageId.unique
+        let expectation = self.expectation(description: "Mark Unread completes")
+        controller.markUnread(from: messageId) { error in
+            receivedError = error
+            expectation.fulfill()
+        }
+        let mockedError = TestError()
+        env.channelUpdater?.markUnread_completion?(nil)
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertNil(receivedError)
+        XCTAssertEqual(controller.firstUnreadMessageId, messageId)
+    }
+
     // MARK: - Enable slow mode (cooldown)
 
     func test_enableSlowMode_failsForNewChannels() throws {
@@ -4397,7 +4559,7 @@ private class TestEnvironment {
 
     lazy var environment: ChatChannelController.Environment = .init(
         channelUpdaterBuilder: { [unowned self] in
-            self.channelUpdater = ChannelUpdater_Mock(callRepository: $0, database: $1, apiClient: $2)
+            self.channelUpdater = ChannelUpdater_Mock(channelRepository: $0, callRepository: $1, database: $2, apiClient: $3)
             return self.channelUpdater!
         },
         eventSenderBuilder: { [unowned self] in

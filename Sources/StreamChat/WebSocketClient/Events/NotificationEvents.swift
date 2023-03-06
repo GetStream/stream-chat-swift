@@ -103,6 +103,21 @@ public struct NotificationMarkReadEvent: ChannelSpecificEvent, HasUnreadCount {
     public let createdAt: Date
 }
 
+/// Triggered when a channel the current user is member of is marked as unread.
+public struct NotificationMarkUnreadEvent: ChannelSpecificEvent, HasUnreadCount {
+    /// The current user.
+    public let user: ChatUser
+
+    /// The read channel identifier.
+    public let cid: ChannelId
+
+    /// The unread counts of the current user.
+    public let unreadCount: UnreadCount?
+
+    /// The event timestamp.
+    public let createdAt: Date
+}
+
 class NotificationMarkReadEventDTO: EventDTO {
     let user: UserPayload
     let cid: ChannelId
@@ -122,6 +137,33 @@ class NotificationMarkReadEventDTO: EventDTO {
         guard let userDTO = session.user(id: user.id) else { return nil }
 
         return try? NotificationMarkReadEvent(
+            user: userDTO.asModel(),
+            cid: cid,
+            unreadCount: unreadCount,
+            createdAt: createdAt
+        )
+    }
+}
+
+class NotificationMarkUnreadEventDTO: EventDTO {
+    let user: UserPayload
+    let cid: ChannelId
+    let unreadCount: UnreadCount
+    let createdAt: Date
+    let payload: EventPayload
+
+    init(from response: EventPayload) throws {
+        user = try response.value(at: \.user)
+        cid = try response.value(at: \.cid)
+        createdAt = try response.value(at: \.createdAt)
+        unreadCount = try response.value(at: \.unreadCount)
+        payload = response
+    }
+
+    func toDomainEvent(session: DatabaseSession) -> Event? {
+        guard let userDTO = session.user(id: user.id) else { return nil }
+
+        return try? NotificationMarkUnreadEvent(
             user: userDTO.asModel(),
             cid: cid,
             unreadCount: unreadCount,

@@ -280,6 +280,15 @@ class MessageDTO: NSManagedObject {
         return .init(andPredicateWithSubpredicates: subpredicates)
     }
 
+    private static func sentMessagesPredicate(for cid: String) -> NSPredicate {
+        NSCompoundPredicate(andPredicateWithSubpredicates: [
+            channelPredicate(with: cid),
+            messageSentPredicate(),
+            nonTruncatedMessagesPredicate(),
+            nonDeletedMessagesPredicate()
+        ])
+    }
+
     /// Returns a fetch request for messages from the channel with the provided `cid`.
     static func messagesFetchRequest(
         for cid: ChannelId,
@@ -412,13 +421,10 @@ class MessageDTO: NSManagedObject {
         context: NSManagedObjectContext
     ) -> [MessageDTO] {
         let subpredicates: [NSPredicate] = [
-            channelPredicate(with: cid),
+            sentMessagesPredicate(for: cid),
             .init(format: "user.currentUser != nil"),
             .init(format: "createdAt > %@", createdAtFrom.bridgeDate),
-            .init(format: "createdAt <= %@", createdAtThrough.bridgeDate),
-            messageSentPredicate(),
-            nonTruncatedMessagesPredicate(),
-            nonDeletedMessagesPredicate()
+            .init(format: "createdAt <= %@", createdAtThrough.bridgeDate)
         ]
 
         let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
@@ -426,6 +432,24 @@ class MessageDTO: NSManagedObject {
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: subpredicates)
 
         return (try? context.fetch(request)) ?? []
+    }
+
+    static func countOtherUserMessages(
+        in cid: String,
+        createdAtFrom: Date,
+        context: NSManagedObjectContext
+    ) -> Int {
+        let subpredicates: [NSPredicate] = [
+            sentMessagesPredicate(for: cid),
+            .init(format: "createdAt >= %@", createdAtFrom.bridgeDate),
+            .init(format: "user.currentUser == nil")
+        ]
+
+        let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: false)]
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: subpredicates)
+
+        return (try? context.count(for: request)) ?? 0
     }
 
     static func numberOfReads(for messageId: MessageId, context: NSManagedObjectContext) -> Int {

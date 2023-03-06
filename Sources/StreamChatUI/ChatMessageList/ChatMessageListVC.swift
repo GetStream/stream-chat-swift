@@ -224,6 +224,16 @@ open class ChatMessageListVC: _ViewController,
         listView.scrollToMostRecentMessage(animated: animated)
     }
 
+    func updateUnreadMessagesSeparator(at id: MessageId?, previousId: MessageId?) {
+        func indexPath(for id: MessageId?) -> IndexPath? {
+            guard let id = id, let index = dataSource?.messages.firstIndex(where: { $0.id == id }) else { return nil }
+            return IndexPath(item: index, section: 0)
+        }
+
+        let indexPathsToReload = [indexPath(for: previousId), indexPath(for: id)].compactMap { $0 }
+        listView.reloadRows(at: indexPathsToReload, with: .automatic)
+    }
+
     /// Updates the table view data with given `changes`.
     open func updateMessages(with changes: [ListChange<ChatMessage>], completion: (() -> Void)? = nil) {
         // There is an issue on iOS 12 that when the message list has 0 or 1 message,

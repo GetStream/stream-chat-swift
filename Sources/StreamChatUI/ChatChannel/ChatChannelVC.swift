@@ -65,6 +65,18 @@ open class ChatChannelVC: _ViewController,
 
     private var isLoadingPreviousMessages: Bool = false
 
+    /// A boolean value indicating wether it should mark the channel read.
+    public var shouldMarkChannelRead: Bool {
+        isLastMessageFullyVisible && !hasMarkedMessageAsUnread
+    }
+
+    private var hasMarkedMessageAsUnread: Bool {
+        channelController.firstUnreadMessageId != nil
+    }
+
+    /// The id of the first unread message
+    private(set) var firstUnreadMessageId: MessageId?
+
     override open func setUp() {
         super.setUp()
 
@@ -137,7 +149,7 @@ open class ChatChannelVC: _ViewController,
 
         keyboardHandler.start()
 
-        if isLastMessageFullyVisible {
+        if shouldMarkChannelRead {
             channelController.markRead()
         }
     }
@@ -222,6 +234,10 @@ open class ChatChannelVC: _ViewController,
             dismiss(animated: true) { [weak self] in
                 self?.messageListVC.showThread(messageId: message.id)
             }
+        case is MarkUnreadActionItem:
+            dismiss(animated: true) { [weak self] in
+                self?.channelController.markUnread(from: message.id)
+            }
         default:
             return
         }
@@ -231,7 +247,7 @@ open class ChatChannelVC: _ViewController,
         _ vc: ChatMessageListVC,
         scrollViewDidScroll scrollView: UIScrollView
     ) {
-        if isLastMessageFullyVisible {
+        if shouldMarkChannelRead {
             channelController.markRead()
 
             messageListVC.scrollToLatestMessageButton.content = .noUnread
@@ -251,6 +267,8 @@ open class ChatChannelVC: _ViewController,
         headerViewForMessage message: ChatMessage,
         at indexPath: IndexPath
     ) -> ChatMessageDecorationView? {
+        // TODO: Add unread messages separator based on `firstUnreadMessageId`
+
         dateHeaderView(
             vc,
             headerViewForMessage: message,
@@ -273,7 +291,7 @@ open class ChatChannelVC: _ViewController,
         _ channelController: ChatChannelController,
         didUpdateMessages changes: [ListChange<ChatMessage>]
     ) {
-        if isLastMessageFullyVisible {
+        if shouldMarkChannelRead {
             channelController.markRead()
         }
 
@@ -288,6 +306,15 @@ open class ChatChannelVC: _ViewController,
     ) {
         let channelUnreadCount = channelController.channel?.unreadCount ?? .noUnread
         messageListVC.scrollToLatestMessageButton.content = channelUnreadCount
+
+        guard channelController.firstUnreadMessageId != firstUnreadMessageId else { return }
+        let previousUnreadMessageId = firstUnreadMessageId
+        firstUnreadMessageId = channelController.firstUnreadMessageId
+
+        messageListVC.updateUnreadMessagesSeparator(
+            at: firstUnreadMessageId,
+            previousId: previousUnreadMessageId
+        )
     }
 
     open func channelController(

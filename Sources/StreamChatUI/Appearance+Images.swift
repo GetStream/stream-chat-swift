@@ -24,29 +24,25 @@ public extension Appearance {
             }
         }
 
+        private static func loadSafely(systemName: String, assetsFallback: String) -> UIImage {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: systemName) ?? loadImageSafely(with: assetsFallback)
+            } else {
+                return loadImageSafely(with: assetsFallback)
+            }
+        }
+
         // MARK: - General
 
         public var loadingIndicator: UIImage = loadImageSafely(with: "loading_indicator")
-        public var close: UIImage = {
-            if #available(iOS 13.0, *) {
-                return UIImage(systemName: "xmark")!
-            } else {
-                return loadImageSafely(with: "close")
-            }
-        }()
+        public var close: UIImage = loadSafely(systemName: "xmark", assetsFallback: "close")
 
         public var closeCircleTransparent: UIImage = loadImageSafely(with: "close_circle_transparent")
         public var discardAttachment: UIImage = loadImageSafely(with: "close_circle_filled")
         public var back: UIImage = loadImageSafely(with: "icn_back")
         public var onlyVisibleToCurrentUser = loadImageSafely(with: "eye")
         public var more = loadImageSafely(with: "icn_more")
-        public var share: UIImage = {
-            if #available(iOS 13.0, *) {
-                return UIImage(systemName: "square.and.arrow.up")!
-            } else {
-                return loadImageSafely(with: "share")
-            }
-        }()
+        public var share: UIImage = loadSafely(systemName: "square.and.arrow.up", assetsFallback: "share")
 
         public var commands: UIImage = loadImageSafely(with: "bolt")
         public var smallBolt: UIImage = loadImageSafely(with: "bolt_small")
@@ -60,13 +56,7 @@ public extension Appearance {
         public var folder: UIImage = loadImageSafely(with: "folder")
         public var restart: UIImage = loadImageSafely(with: "restart")
         public var emptyChannelListMessageBubble: UIImage = loadImageSafely(with: "empty_channel_list_message_bubble")
-        public var download: UIImage = {
-            if #available(iOS 13.0, *) {
-                return UIImage(systemName: "icloud.and.arrow.down")!
-            } else {
-                return loadImageSafely(with: "download")
-            }
-        }()
+        public var download: UIImage = loadSafely(systemName: "icloud.and.arrow.down", assetsFallback: "download")
 
         // MARK: - Message Receipts
 
@@ -189,6 +179,8 @@ public extension Appearance {
 
         public var messageActionInlineReply: UIImage = loadImageSafely(with: "icn_inline_reply")
         public var messageActionThreadReply: UIImage = loadImageSafely(with: "icn_thread_reply")
+        public var messageActionMarkUnread: UIImage = loadSafely(systemName: "message.badge", assetsFallback: "mark_unread")
+
         public var messageActionEdit: UIImage = loadImageSafely(with: "icn_edit")
         public var messageActionCopy: UIImage = loadImageSafely(with: "icn_copy")
         public var messageActionBlockUser: UIImage = loadImageSafely(with: "icn_block_user")

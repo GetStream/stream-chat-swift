@@ -73,6 +73,11 @@ final class ChannelUpdater_Mock: ChannelUpdater {
     @Atomic var markRead_userId: UserId?
     @Atomic var markRead_completion: ((Error?) -> Void)?
 
+    @Atomic var markUnread_cid: ChannelId?
+    @Atomic var markUnread_userId: UserId?
+    @Atomic var markUnread_messageId: MessageId?
+    @Atomic var markUnread_completion: ((Error?) -> Void)?
+
     @Atomic var enableSlowMode_cid: ChannelId?
     @Atomic var enableSlowMode_cooldownDuration: Int?
     @Atomic var enableSlowMode_completion: ((Error?) -> Void)?
@@ -322,6 +327,13 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         markRead_cid = cid
         markRead_userId = userId
         markRead_completion = completion
+    }
+
+    override func markUnread(cid: ChannelId, userId: UserId, from messageId: MessageId, completion: ((Error?) -> Void)? = nil) {
+        markUnread_cid = cid
+        markUnread_userId = userId
+        markUnread_messageId = messageId
+        markUnread_completion = completion
     }
 
     override func enableSlowMode(cid: ChannelId, cooldownDuration: Int, completion: ((Error?) -> Void)? = nil) {
