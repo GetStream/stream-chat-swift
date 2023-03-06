@@ -82,6 +82,12 @@ class ChannelDTO: NSManagedObject {
                     $0.willChangeValue(for: \.id)
                     $0.didChangeValue(for: \.id)
                 }
+
+            // When truncating the channel, we need to reset the newestMessageAt so that
+            // the channel can render newer messages in the UI.
+            if newestMessageAt != nil {
+                newestMessageAt = nil
+            }
         }
 
         // Update the date for sorting every time new message in this channel arrive.

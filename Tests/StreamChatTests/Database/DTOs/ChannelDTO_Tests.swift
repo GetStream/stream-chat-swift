@@ -303,6 +303,29 @@ final class ChannelDTO_Tests: XCTestCase {
         XCTAssertEqual(database.viewContext.channel(cid: channelId)?.truncatedAt, originalTruncatedAt.bridgeDate)
     }
 
+    func test_saveChannel_whenChannelTruncated_shouldEraseNewestMessageAt() throws {
+        let channelId: ChannelId = .unique
+        let originalPayload = ChannelDetailPayload.dummy(cid: channelId, truncatedAt: nil)
+        try database.writeSynchronously { session in
+            let channel = try session.saveChannel(payload: originalPayload, query: nil, cache: nil)
+            channel.newestMessageAt = .unique
+        }
+        var channelDTO: ChannelDTO? {
+            database.viewContext.channel(cid: channelId)
+        }
+
+        XCTAssertNotNil(channelDTO?.newestMessageAt)
+
+        let newTruncatedAt = Date().addingTimeInterval(1200)
+        let newPayload = ChannelDetailPayload.dummy(cid: channelId, truncatedAt: newTruncatedAt)
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: newPayload, query: nil, cache: nil)
+        }
+
+        XCTAssertNil(channelDTO?.newestMessageAt)
+        XCTAssertNotNil(channelDTO)
+    }
+
     func test_deleteChannelMessages() throws {
         let channelId: ChannelId = .unique
         let payload = ChannelPayload.dummy(channel: .dummy(cid: channelId), messages: [.dummy(), .dummy(), .dummy()])
