@@ -74,6 +74,9 @@ open class ChatChannelVC: _ViewController,
         channelController.firstUnreadMessageId != nil
     }
 
+    /// The id of the first unread message
+    private(set) var firstUnreadMessageId: MessageId?
+
     override open func setUp() {
         super.setUp()
 
@@ -264,6 +267,8 @@ open class ChatChannelVC: _ViewController,
         headerViewForMessage message: ChatMessage,
         at indexPath: IndexPath
     ) -> ChatMessageDecorationView? {
+        // TODO: Add unread messages separator based on `firstUnreadMessageId`
+
         dateHeaderView(
             vc,
             headerViewForMessage: message,
@@ -301,7 +306,15 @@ open class ChatChannelVC: _ViewController,
     ) {
         let channelUnreadCount = channelController.channel?.unreadCount ?? .noUnread
         messageListVC.scrollToLatestMessageButton.content = channelUnreadCount
-        messageListVC.setUnreadMessagesSeparator(at: channelController.firstUnreadMessageId)
+
+        guard channelController.firstUnreadMessageId != firstUnreadMessageId else { return }
+        let previousUnreadMessageId = firstUnreadMessageId
+        firstUnreadMessageId = channelController.firstUnreadMessageId
+
+        messageListVC.updateUnreadMessagesSeparator(
+            at: firstUnreadMessageId,
+            previousId: previousUnreadMessageId
+        )
     }
 
     open func channelController(
