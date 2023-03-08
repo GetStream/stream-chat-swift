@@ -659,7 +659,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             dto.pinnedBy = try saveUser(payload: pinnedByUser)
         }
 
-        if dto.pinned {
+        if dto.pinned && !channelDTO.pinnedMessages.contains(dto) {
             channelDTO.pinnedMessages.insert(dto)
         } else {
             channelDTO.pinnedMessages.remove(dto)
