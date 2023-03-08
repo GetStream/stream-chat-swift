@@ -33,6 +33,7 @@ class ChannelUpdater: Worker {
         onChannelCreated: ((ChannelId) -> Void)? = nil,
         completion: ((Result<ChannelPayload, Error>) -> Void)? = nil
     ) {
+        let isFirstPage = channelQuery.pagination?.parameter == nil
         var isJumpingToMessage: Bool {
             switch channelQuery.pagination?.parameter {
             case .around: return true
@@ -50,15 +51,13 @@ class ChannelUpdater: Worker {
 
                 database?.write { session in
                     guard let channelDTO = session.channel(cid: payload.channel.cid) else { return }
-                    if isJumpingToMessage {
-                        channelDTO.messages = []
-                    }
-                }
-                
-                database?.write { session in
-                    let channelDTO = try session.saveChannel(payload: payload)
                     channelDTO.cleanMessagesThatFailedToBeEditedDueToModeration()
-                    channelDTO.updatePaginationCursors(for: payload, with: channelQuery.pagination)
+                    if isJumpingToMessage || isFirstPage {
+                        channelDTO.cleanAllMessagesExcludingLocalOnly()
+                    }
+
+                    let updatedChannel = try session.saveChannel(payload: payload)
+                    updatedChannel.updatePaginationCursors(for: payload, with: channelQuery.pagination)
 
                 } completion: { error in
                     if let error = error {

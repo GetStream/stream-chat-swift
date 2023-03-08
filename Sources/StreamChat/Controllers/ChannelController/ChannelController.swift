@@ -409,17 +409,21 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         channelQuery.pagination = MessagesPagination(pageSize: limit, parameter: .lessThan(messageId))
 
         isLoadingPreviousMessages = true
-        updater.update(channelQuery: channelQuery, isInRecoveryMode: false, completion: { result in
-            self.isLoadingPreviousMessages = false
-            switch result {
-            case let .success(payload):
-                self.updateOldestFetchedMessageId(with: payload)
-                self.hasLoadedAllPreviousMessages = payload.messages.count < limit
-                self.callback { completion?(nil) }
-            case let .failure(error):
-                self.callback { completion?(error) }
+        updater.update(
+            channelQuery: channelQuery,
+            isInRecoveryMode: false,
+            completion: { result in
+                self.isLoadingPreviousMessages = false
+                switch result {
+                case let .success(payload):
+                    self.updateOldestFetchedMessageId(with: payload)
+                    self.hasLoadedAllPreviousMessages = payload.messages.count < limit
+                    self.callback { completion?(nil) }
+                case let .failure(error):
+                    self.callback { completion?(error) }
+                }
             }
-        })
+        )
     }
 
     /// Loads next messages from backend.
@@ -455,20 +459,24 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         channelQuery.pagination = MessagesPagination(pageSize: limit, parameter: .greaterThan(messageId))
 
         isLoadingNextMessages = true
-        updater.update(channelQuery: channelQuery, isInRecoveryMode: false, completion: { result in
-            self.isLoadingNextMessages = false
-            switch result {
-            case let .success(payload):
-                self.updateNewestFetchedMessageId(with: payload)
-                if payload.messages.count < limit {
-                    self.isJumpingToMessage = false
-                }
+        updater.update(
+            channelQuery: channelQuery,
+            isInRecoveryMode: false,
+            completion: { result in
+                self.isLoadingNextMessages = false
+                switch result {
+                case let .success(payload):
+                    self.updateNewestFetchedMessageId(with: payload)
+                    if payload.messages.count < limit {
+                        self.isJumpingToMessage = false
+                    }
 
-                self.callback { completion?(nil) }
-            case let .failure(error):
-                self.callback { completion?(error) }
+                    self.callback { completion?(nil) }
+                case let .failure(error):
+                    self.callback { completion?(error) }
+                }
             }
-        })
+        )
     }
 
     /// Load messages around the given message id. Useful to jump to a message which is not loaded yet.
