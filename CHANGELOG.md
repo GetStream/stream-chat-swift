@@ -2,13 +2,24 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
+### ✅ Added
+- Now you can easily configure your own Decorations(headers and/or footers) around messages [#2507](https://github.com/GetStream/stream-chat-swift/pull/2507)
+- There is a new `ChatThreadRepliesCountDecorationView` component that should be used to display the number of replies in a thread. Read [here](https://getstream.io/chat/docs/sdk/ios/uikit/components/message/#thread-replies-counter) for more details.
+
+### 🔄 Changed
+
+# [4.28.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.28.0)
+_February 28, 2023_
 
 ## StreamChat
 ### 🔄 Changed
 - Remove [URLQueryItem] public conformance of ExpressibleByDictionaryLiteral [#2505](https://github.com/GetStream/stream-chat-swift/pull/2505)
+
 ### 🐞 Fixed
 - Fix messages appearing sooner in Thread pagination [#2470](https://github.com/GetStream/stream-chat-swift/pull/2470)
 - Fix messages disappearing from the Message List when quoting a message [#2470](https://github.com/GetStream/stream-chat-swift/pull/2470)
+- Fix Markdown formatting hanging with edge case pattern [#2513](https://github.com/GetStream/stream-chat-swift/pull/2513)
+- Fix "In" Filter only returning results when all values match [#2514][https://github.com/GetStream/stream-chat-swift/pull/2514]
 
 # [4.27.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.27.1)
 _February 20, 2023_

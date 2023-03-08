@@ -359,6 +359,28 @@ final class ChannelEndpoints_Tests: XCTestCase {
         XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)/read", endpoint.path.value)
     }
 
+    func test_markUnread_buildsCorrectly() {
+        let cid = ChannelId.unique
+        let messageId = MessageId.unique
+        let userId = UserId.unique
+
+        let expectedEndpoint = Endpoint<EmptyResponse>(
+            path: .markChannelUnread(cid.apiPath),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: [
+                "message_id": messageId,
+                "user_id": userId
+            ]
+        )
+
+        let endpoint = Endpoint<EmptyResponse>.markUnread(cid: cid, messageId: messageId, userId: userId)
+
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+        XCTAssertEqual(endpoint.path.value, "channels/\(cid.type.rawValue)/\(cid.id)/unread")
+    }
+
     func test_markAllRead_buildsCorrectly() {
         let expectedEndpoint = Endpoint<EmptyResponse>(
             path: .markAllChannelsRead,

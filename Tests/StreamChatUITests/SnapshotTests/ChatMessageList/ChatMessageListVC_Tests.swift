@@ -107,6 +107,8 @@ final class ChatMessageListVC_Tests: XCTestCase {
 
     // MARK: - didSelectMessageCell
 
+    // MARK: - didSelectMessageCell
+
     func test_didSelectMessageCell_shouldShowActionsPopup() {
         mockedListView.mockedCellForRow = .init()
         mockedListView.mockedCellForRow?.mockedMessage = .mock()
@@ -158,7 +160,7 @@ final class ChatMessageListVC_Tests: XCTestCase {
         XCTAssertEqual(mockedMessageWithoutCid.cid, nil)
     }
 
-    // MARK: isContentEqual (Message Diffing)
+    // MARK: - isContentEqual (Message Diffing)
 
     func test_messageIsContentEqual_whenCustomAttachmentDataDifferent_returnsFalse() throws {
         struct CustomAttachment: AttachmentPayload {
@@ -437,9 +439,71 @@ final class ChatMessageListVC_Tests: XCTestCase {
 
         XCTAssertEqual(mockedListView.scrollToRowCallCount, 0)
     }
+
+    // MARK: - cellForRow
+
+    func test_cellForRow_isDateSeparatorEnabledIsFalse_headerIsNotVisibleOnCell() throws {
+        var mockComponents = Components.mock
+        mockComponents.messageListDateSeparatorEnabled = false
+        let mockDatasource = ChatMessageListVCDataSource_Mock()
+        let mockDelegate = ChatMessageListVCDelegate_Mock()
+        mockDatasource.mockedChannel = .mock(cid: .unique)
+        let subject = ChatMessageListVC()
+        subject.client = ChatClient(config: ChatClientConfig(apiKey: .init(.unique)))
+        subject.components = mockComponents
+        subject.dataSource = mockDatasource
+        subject.delegate = mockDelegate
+        mockDatasource.messages.append(.mock())
+
+        let cell = try XCTUnwrap(subject.tableView(subject.listView, cellForRowAt: IndexPath(item: 0, section: 0)) as? ChatMessageCell)
+        subject.view.addSubview(cell) // This is used to trigger the setUpLayout cycle of the cell
+
+        XCTAssertTrue(cell.headerContainerView.isHidden)
+    }
+
+    func test_cellForRow_isDateSeparatorEnabledIsTrueShouldShowDateSeparatorIsReturnsFalse_headerIsNotVisibleOnCell() throws {
+        var mockComponents = Components.mock
+        mockComponents.messageListDateSeparatorEnabled = true
+        let mockDatasource = ChatMessageListVCDataSource_Mock()
+        mockDatasource.mockedChannel = .mock(cid: .unique)
+        let mockDelegate = ChatMessageListVCDelegate_Mock()
+        let subject = ChatMessageListVC()
+        subject.client = ChatClient(config: ChatClientConfig(apiKey: .init(.unique)))
+        subject.components = mockComponents
+        subject.dataSource = mockDatasource
+        subject.delegate = mockDelegate
+        mockDatasource.messages.append(.mock())
+        mockDatasource.messages.append(.mock())
+
+        let cell = try XCTUnwrap(subject.tableView(subject.listView, cellForRowAt: IndexPath(item: 0, section: 0)) as? ChatMessageCell)
+        subject.view.addSubview(cell)
+
+        XCTAssertTrue(cell.headerContainerView.isHidden)
+    }
+
+    func test_cellForRow_shouldShowDateSeparatorIsReturnsFalse_headerIsVisibleAndCorrectlyConfiguredOnCell() throws {
+        var mockComponents = Components.mock
+        mockComponents.messageListDateSeparatorEnabled = true
+        let mockDatasource = ChatMessageListVCDataSource_Mock()
+        mockDatasource.mockedChannel = .mock(cid: .unique)
+        let mockDelegate = ChatMessageListVCDelegate_Mock()
+        mockDelegate.mockedHeaderView = ChatMessageListDateSeparatorView()
+        let subject = ChatMessageListVC()
+        subject.client = ChatClient(config: ChatClientConfig(apiKey: .init(.unique)))
+        subject.components = mockComponents
+        subject.dataSource = mockDatasource
+        subject.delegate = mockDelegate
+        mockDatasource.messages.append(.mock(createdAt: Date(timeIntervalSince1970: 172_800))) // Ensure that the 2 messages were createAt different days
+        mockDatasource.messages.append(.mock())
+
+        let cell = try XCTUnwrap(subject.tableView(subject.listView, cellForRowAt: IndexPath(item: 0, section: 0)) as? ChatMessageCell)
+
+        XCTAssertNotNil(cell.headerContainerView.superview)
+        XCTAssertNotNil(cell.headerContainerView.subviews.first as? ChatMessageListDateSeparatorView)
+    }
 }
 
-class ChatMessageListView_Mock: ChatMessageListView {
+private class ChatMessageListView_Mock: ChatMessageListView {
     var mockIsLastCellFullyVisible = false
     override var isLastCellFullyVisible: Bool {
         mockIsLastCellFullyVisible
@@ -492,7 +556,7 @@ class ChatMessageListView_Mock: ChatMessageListView {
     }
 }
 
-class ChatMessageCell_Mock: ChatMessageCell {
+private class ChatMessageCell_Mock: ChatMessageCell {
     var mockedMessage: ChatMessage?
 
     override var messageContentView: ChatMessageContentView? {
@@ -534,6 +598,9 @@ class ChatMessageListVCDataSource_Mock: ChatMessageListVCDataSource {
 }
 
 class ChatMessageListVCDelegate_Mock: ChatMessageListVCDelegate {
+    var mockedHeaderView: ChatMessageDecorationView?
+    var mockedFooterView: ChatMessageDecorationView?
+
     func chatMessageListVC(_ vc: ChatMessageListVC, willDisplayMessageAt indexPath: IndexPath) {}
 
     func chatMessageListVC(_ vc: ChatMessageListVC, scrollViewDidScroll scrollView: UIScrollView) {}
@@ -554,5 +621,21 @@ class ChatMessageListVCDelegate_Mock: ChatMessageListVCDelegate {
     var shouldLoadFirstPageCallCount = 0
     func chatMessageListVCShouldLoadFirstPage(_ vc: ChatMessageListVC) {
         shouldLoadFirstPageCallCount += 1
+    }
+
+    func chatMessageListVC(
+        _ vc: ChatMessageListVC,
+        headerViewForMessage message: ChatMessage,
+        at indexPath: IndexPath
+    ) -> ChatMessageDecorationView? {
+        mockedHeaderView
+    }
+
+    func chatMessageListVC(
+        _ vc: ChatMessageListVC,
+        footerViewForMessage message: ChatMessage,
+        at indexPath: IndexPath
+    ) -> ChatMessageDecorationView? {
+        mockedFooterView
     }
 }

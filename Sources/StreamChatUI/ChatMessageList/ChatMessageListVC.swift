@@ -77,7 +77,7 @@ open class ChatMessageListVC: _ViewController,
         .init()
         .withoutAutoresizingMaskConstraints
 
-    /// A Boolean value indicating wether the scroll to bottom button is visible.
+    /// A Boolean value indicating whether the scroll to bottom button is visible.
     open var isScrollToBottomButtonVisible: Bool {
         let isMoreContentThanOnePage = listView.contentSize.height > listView.bounds.height
 
@@ -88,7 +88,7 @@ open class ChatMessageListVC: _ViewController,
     /// This date formatter is used between each group message and the top overlay.
     public lazy var dateSeparatorFormatter = appearance.formatters.messageDateSeparator
 
-    /// A boolean value that determines wether the date overlay should be displayed while scrolling.
+    /// A boolean value that determines whether the date overlay should be displayed while scrolling.
     open var isDateOverlayEnabled: Bool {
         components.messageListDateOverlayEnabled
     }
@@ -238,6 +238,14 @@ open class ChatMessageListVC: _ViewController,
     /// Scrolls to most recent message
     open func scrollToMostRecentMessage(animated: Bool = true) {
         listView.scrollToMostRecentMessage(animated: animated)
+    }
+
+    func updateUnreadMessagesSeparator(at id: MessageId?, previousId: MessageId?) {
+        guard let id = id, let previousId = previousId else { return }
+        let indexPath = getIndexPath(forMessageId: id)
+        let previousIndexPath = getIndexPath(forMessageId: previousId)
+        let indexPathsToReload = [previousIndexPath, indexPath].compactMap { $0 }
+        listView.reloadRows(at: indexPathsToReload, with: .automatic)
     }
 
     /// Updates the table view data with given `changes`.
@@ -486,8 +494,9 @@ open class ChatMessageListVC: _ViewController,
         cell.messageContentView?.channel = channel
         cell.messageContentView?.content = message
 
-        cell.dateSeparatorView.isHidden = !shouldShowDateSeparator(forMessage: message, at: indexPath)
-        cell.dateSeparatorView.content = dateSeparatorFormatter.format(message.createdAt)
+        /// Process cell decorations
+        cell.setDecoration(for: .header, decorationView: delegate?.chatMessageListVC(self, headerViewForMessage: message, at: indexPath))
+        cell.setDecoration(for: .footer, decorationView: delegate?.chatMessageListVC(self, footerViewForMessage: message, at: indexPath))
 
         return cell
     }

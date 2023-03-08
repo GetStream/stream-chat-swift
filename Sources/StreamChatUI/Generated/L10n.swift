@@ -167,6 +167,8 @@ internal enum L10n {
       internal static var flag: String { L10n.tr("Localizable", "message.actions.flag") }
       /// Reply
       internal static var inlineReply: String { L10n.tr("Localizable", "message.actions.inline-reply") }
+      /// Mark as unread
+      internal static var markUnread: String { L10n.tr("Localizable", "message.actions.mark-unread") }
       /// Resend
       internal static var resend: String { L10n.tr("Localizable", "message.actions.resend") }
       /// Thread Reply
@@ -201,6 +203,14 @@ internal enum L10n {
     internal enum Sending {
       /// UPLOADING FAILED
       internal static var attachmentUploadingFailed: String { L10n.tr("Localizable", "message.sending.attachment-uploading-failed") }
+    }
+    internal enum Thread {
+      internal enum Replies {
+        /// Plural format key: "%#@replies@"
+        internal static func count(_ p1: Int) -> String {
+          return L10n.tr("Localizable", "message.thread.replies.count", p1)
+        }
+      }
     }
     internal enum Threads {
       /// Plural format key: "%#@replies@"

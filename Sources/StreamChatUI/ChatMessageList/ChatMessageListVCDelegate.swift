@@ -67,4 +67,65 @@ public protocol ChatMessageListVCDelegate: AnyObject {
     func chatMessageListVCShouldLoadFirstPage(
         _ vc: ChatMessageListVC
     )
+    /// Ask the delegate to provide a header view for the specified decoration type.
+    /// - Parameters:
+    ///   - vc: The message list informing the delegate of this event.
+    ///   - message: The given message.
+    ///   - indexPath: An index path locating the row in the message list.
+    func chatMessageListVC(
+        _ vc: ChatMessageListVC,
+        headerViewForMessage message: ChatMessage,
+        at indexPath: IndexPath
+    ) -> ChatMessageDecorationView?
+
+    /// Ask the delegate to provide a footer view for the specified decoration type.
+    /// - Parameters:
+    ///   - vc: The message list informing the delegate of this event.
+    ///   - message: The given message.
+    ///   - indexPath: An index path locating the row in the message list.
+    func chatMessageListVC(
+        _ vc: ChatMessageListVC,
+        footerViewForMessage message: ChatMessage,
+        at indexPath: IndexPath
+    ) -> ChatMessageDecorationView?
+}
+
+public extension ChatMessageListVCDelegate {
+    /// A helper method to create the DateSeparator that is used
+    /// - Parameters:
+    ///   - vc: The message list informing the delegate of this event.
+    ///   - message: The given message.
+    ///   - indexPath: An index path locating the row in the message list.
+    ///   - components: The components to use in order to access the DateSeparatorView type
+    func dateHeaderView(
+        _ vc: ChatMessageListVC,
+        headerViewForMessage message: ChatMessage,
+        at indexPath: IndexPath,
+        components: Components = .default
+    ) -> ChatMessageDecorationView? {
+        guard vc.shouldShowDateSeparator(forMessage: message, at: indexPath) else {
+            return nil
+        }
+        let dateSeparatorView = components.messageListDateSeparatorView.init()
+        dateSeparatorView.content = vc.dateSeparatorFormatter.format(message.createdAt)
+        return dateSeparatorView
+    }
+
+    // MARK: - Default Implementations
+ 
+    func chatMessageListVC(
+        _ vc: ChatMessageListVC,
+        headerViewForMessage message: ChatMessage,
+        at indexPath: IndexPath
+    ) -> ChatMessageDecorationView? {
+        dateHeaderView(vc, headerViewForMessage: message, at: indexPath)
+    }
+
+    func chatMessageListVC(
+        _ vc: ChatMessageListVC,
+        footerViewForMessage message: ChatMessage,
+        at indexPath: IndexPath
+    ) -> ChatMessageDecorationView? {
+        nil
+    }
 }

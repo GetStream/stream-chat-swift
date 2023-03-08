@@ -9,7 +9,7 @@ import UIKit
 public struct TypingSuggestionOptions {
     /// The symbol that typing suggester will use to recognise a suggestion.
     public var symbol: String
-    /// Wether the suggester should only be recognising at the start of the input.
+    /// whether the suggester should only be recognising at the start of the input.
     public var shouldTriggerOnlyAtStart: Bool
     /// The minimum required characters for the suggester to start recognising a suggestion.
     public var minimumRequiredCharacters: Int

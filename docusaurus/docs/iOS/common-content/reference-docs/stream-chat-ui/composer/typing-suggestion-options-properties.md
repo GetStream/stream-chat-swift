@@ -9,7 +9,7 @@ public var symbol: String
 
 ### `shouldTriggerOnlyAtStart`
 
-Wether the suggester should only be recognising at the start of the input.
+whether the suggester should only be recognising at the start of the input.
 
 ``` swift
 public var shouldTriggerOnlyAtStart: Bool

@@ -277,6 +277,32 @@ open class ChatThreadVC: _ViewController,
         messageComposerVC.dismissSuggestions()
     }
 
+    open func chatMessageListVC(
+        _ vc: ChatMessageListVC,
+        headerViewForMessage message: ChatMessage,
+        at indexPath: IndexPath
+    ) -> ChatMessageDecorationView? {
+        dateHeaderView(
+            vc,
+            headerViewForMessage: message,
+            at: indexPath,
+            components: components
+        )
+    }
+
+    open func chatMessageListVC(
+        _ vc: ChatMessageListVC,
+        footerViewForMessage message: ChatMessage,
+        at indexPath: IndexPath
+    ) -> ChatMessageDecorationView? {
+        guard components.threadRepliesCounterEnabled, message == messages.last, message.replyCount > 0 else {
+            return nil
+        }
+        let repliesCounterDecorationView = components.threadRepliesCounterDecorationView.init()
+        repliesCounterDecorationView.content = L10n.Message.Thread.Replies.count(message.replyCount)
+        return repliesCounterDecorationView
+    }
+
     // MARK: - ChatMessageControllerDelegate
 
     open func messageController(

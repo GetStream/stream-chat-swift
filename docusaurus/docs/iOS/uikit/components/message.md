@@ -18,18 +18,22 @@ import ComponentsNote from '../../common-content/components-note.md'
     ChatMessageListVC -> ChatMessageLayoutOptionsResolver
     ChatMessageLayoutOptionsResolver -> ChatMessageListVC
     ChatMessageListVC -> ChatMessageListView
-    ChatMessageListView -> ChatMessageContentView
+    ChatMessageListView -> ChatMessageCell
+    ChatMessageCell -> ChatMessageDecorationHeaderView
+    ChatMessageCell -> ChatMessageContentView
     ChatMessageContentView -> ChatAvatarView
     ChatMessageContentView -> ChatReactionsBubbleView
     ChatMessageContentView -> ChatMessageBubbleView
     ChatReactionsBubbleView -> ChatMessageReactionsView
     ChatMessageReactionsView -> "ChatMessageReactionItemView"
+    ChatMessageCell -> ChatMessageDecorationFooterView
 ` }</Digraph>
 
 ### Overview
 
 1. `ChatMessageLayoutOptionsResolver` calculates the `ChatMessageLayoutOptions` for each message.
 1. `ChatMessageLayoutOptions` contains all the information needed by the view to render the message.
+1. `ChatMessageCell` holds the message content view and all the decorations that surround it.
 1. `ChatMessageContentView` holds the entire message view and all its sub-views.
 1. `ChatMessageBubbleView` wraps the message content inside a bubble. Depending on the layout options, the bubble will have different borders and colors and will show or not the user profile and name.
 1. `ChatReactionsBubbleView` is a wrapper for `ChatMessageReactionsView`.
@@ -108,7 +112,30 @@ Components.default.messageLayoutOptionsResolver = CustomMessageLayoutOptionsReso
 | ------------- | ------------- |
 | <img src={require("../../assets/message-basic-resolver-before.png").default} /> | <img src={require("../../assets/message-basic-resolver-after.png").default} /> |
 
-### Date Separators
+#### Decoration Views
+:::note
+Decoration Views are available on SDK version 4.29.0 and above.
+:::
+
+The SDK allows you to configure what will be presented above and below your message with decoration views (`ChatMessageDecorationView`). They are fully customizable, and we also use them for standard SDK components like the `Date Separators` as seen below.
+
+In order to provide a `ChatMessageDecorationView` (either a header or a footer) for a message, you will need to implement the following methods from the `ChatMessageListVCDelegate`
+```swift
+func chatMessageListVC(
+    _ vc: ChatMessageListVC,
+    headerViewForMessage message: ChatMessage,
+    at indexPath: IndexPath
+) -> ChatMessageDecorationView?
+
+func chatMessageListVC(
+    _ vc: ChatMessageListVC,
+    footerViewForMessage message: ChatMessage,
+    at indexPath: IndexPath
+) -> ChatMessageDecorationView?
+```
+`ChatMessageDecorationView` are following a similar flow as the `UITableViewHeaderFooterView` decorations for sections that `UITableView` is managing. During the preparation of a message cell, the `ChatMessageListVC` will ask the delegate to provide `ChatMessageDecorationView` for header and footer. If the delegate returns a non-nil value the provided `ChatMessageDecorationView` will be placed in the cell's UI according to it's decoration type. In the case where the delegate will return a nil value then the cell will be updated to release the space for this specific decoration type, if it was previously used.
+
+#### Date Separators
 
 The SDK groups each message from the same day and shows the day which these messages belong to, since by default each message only has the time it was sent, not the day. The StreamChat SDK provides two options out-of-the-box on how to render the grouped messages date separator that can be configured in the `Components` configuration:
 
@@ -125,7 +152,7 @@ In case you want the separator to also be shown statically between each group of
 Components.default.messageListDateSeparatorEnabled = true
 ```
 
-#### Result:
+##### Result:
 | Overlay Enabled  | Overlay & Static Enabled |
 | ------------- | ------------- |
 | <img src={require("../../assets/message-list-date-separator-overlay.png").default} /> | <img src={require("../../assets/message-list-date-separator-static.png").default} /> |
@@ -163,10 +190,82 @@ class CustomChatMessageListDateSeparatorView: ChatMessageListDateSeparatorView {
 Components.default.messageListDateSeparatorView = CustomChatMessageListDateSeparatorView.self
 ```
 
-#### Result:
+##### Result:
 | Before | After |
 | ------------- | ------------- |
 | <img src={require("../../assets/message-list-date-separator-static.png").default} /> | <img src={require("../../assets/message-list-date-separator-custom.png").default} /> |
+
+#### Thread Replies Counter
+:::note
+Thread Replies Counter Decoration View is available on SDK version 4.29.0 and above.
+:::
+
+The SDK provides out-of-the-box a decoration view that is being displayed in threads only and shows the number of replies in this thread. You can configure the presentation of the decoration view in the `Components` configuration:
+
+```swift
+Components.default.threadRepliesCounterEnabled = true | false
+```
+
+By default the `Components.default.threadRepliesCounterEnabled` is enabled, and in this case a decoration view will be displayed just underneath the first(source) message in a thread.
+
+##### Result:
+| Thread Replies Counter Disabled  | Thread Replies Counter Enabled |
+| ------------- | ------------- |
+| <img src={require("../../assets/thread-list-replies-counter-decoration-disabled.png").default} /> | <img src={require("../../assets/thread-list-replies-counter-decoration-enabled.png").default} /> |
+
+You can easily customize the look of the thread replies decoration by subclassing the `ChatThreadRepliesCountDecorationView`:
+```swift
+final class DemoChatThreadRepliesCountDecorationView: ChatThreadRepliesCountDecorationView {
+
+    private lazy var leadingLine = UIView()
+    private lazy var trailingLine = UIView()
+
+    override func setUpLayout() {
+        super.setUpLayout()
+
+        let screenScale = UIScreen.main.scale
+        let hairlineHeight = 1 / screenScale
+        textLabel.removeFromSuperview()
+
+        leadingLine.translatesAutoresizingMaskIntoConstraints = false
+        textLabel.translatesAutoresizingMaskIntoConstraints = false
+        trailingLine.translatesAutoresizingMaskIntoConstraints = false
+
+        container.addSubview(leadingLine)
+        container.addSubview(textLabel)
+        container.addSubview(trailingLine)
+
+        NSLayoutConstraint.activate([
+            leadingLine.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 9),
+            leadingLine.centerYAnchor.constraint(equalTo: container.centerYAnchor),
+            leadingLine.heightAnchor.constraint(equalToConstant: hairlineHeight),
+
+            textLabel.leadingAnchor.constraint(equalTo: leadingLine.trailingAnchor, constant: 9),
+            textLabel.topAnchor.constraint(equalTo: container.topAnchor, constant: 3),
+            textLabel.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -3),
+            textLabel.centerXAnchor.constraint(equalTo: container.centerXAnchor),
+
+            trailingLine.leadingAnchor.constraint(equalTo: textLabel.trailingAnchor, constant: 9),
+            trailingLine.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -9),
+            trailingLine.centerYAnchor.constraint(equalTo: container.centerYAnchor),
+            trailingLine.heightAnchor.constraint(equalToConstant: hairlineHeight)
+        ])
+    }
+
+    override func setUpAppearance() {
+        super.setUpAppearance()
+
+        container.backgroundColor = nil
+
+        leadingLine.backgroundColor = UIColor.gray
+        trailingLine.backgroundColor = UIColor.gray
+    }
+}
+```
+
+| Thread Replies Counter Default  | Thread Replies Counter Customized |
+| ------------- | ------------- |
+| <img src={require("../../assets/thread-list-replies-counter-decoration-enabled.png").default} /> | <img src={require("../../assets/thread-list-replies-counter-decoration-customized.png").default} /> |
 
 ## Advanced Customizations
 

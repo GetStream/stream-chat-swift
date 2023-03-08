@@ -97,6 +97,11 @@ public class ChatClient {
         return repository
     }()
 
+    private(set) lazy var channelRepository = environment.channelRepositoryBuilder(
+        databaseContainer,
+        apiClient
+    )
+
     private(set) lazy var messageRepository = environment.messageRepositoryBuilder(
         databaseContainer,
         apiClient
@@ -663,6 +668,13 @@ extension ChatClient {
             _ apiClient: APIClient
         ) -> CallRepository = {
             CallRepository(apiClient: $0)
+        }
+
+        var channelRepositoryBuilder: (
+            _ database: DatabaseContainer,
+            _ apiClient: APIClient
+        ) -> ChannelRepository = {
+            ChannelRepository(database: $0, apiClient: $1)
         }
 
         var messageRepositoryBuilder: (

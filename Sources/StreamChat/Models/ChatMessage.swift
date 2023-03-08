@@ -159,7 +159,7 @@ public struct ChatMessage {
     /// who read this message (excluding the current user).
     ///
     /// - Note: For the message authored by other members this field is always empty.
-    /// - Important: The `readBy` loades and evaluates user models. If you're interested only in `count`,
+    /// - Important: The `readBy` loads and evaluates user models. If you're interested only in `count`,
     /// it's recommended to use `readByCount` instead of `readBy.count` for better performance.
     public var readBy: Set<ChatUser> { _readBy }
 

@@ -711,6 +711,30 @@ final class ChatChannelVC_Tests: XCTestCase {
         mockedListView.updateMessagesCompletion?()
         XCTAssertEqual(channelControllerMock.markReadCallCount, 0)
     }
+    
+    // MARK: - chatMessageListVC(_:headerViewForMessage:at)
+
+    func test_headerViewForMessage_returnsExpectedValue() throws {
+        var components = Components.mock
+        components.channelHeaderView = ChatChannelHeaderViewMock.self
+        components.messageComposerVC = ComposerVC_Mock.self
+        components.messageListDateSeparatorEnabled = true
+        vc.components = components
+        vc.messageListVC.components = components
+        vc.messages = [
+            .mock(createdAt: Date(timeIntervalSince1970: 0)),
+            .mock(createdAt: Date(timeIntervalSince1970: 86401))
+        ]
+
+        let headerDecorationView = vc.chatMessageListVC(
+            vc.messageListVC,
+            headerViewForMessage: .mock(createdAt: Date(timeIntervalSince1970: 0)),
+            at: .init(row: 0, section: 0)
+        )
+        let dateSeparatorView = try XCTUnwrap(headerDecorationView as? ChatMessageListDateSeparatorView)
+
+        XCTAssertEqual(dateSeparatorView.content, "Jan 01")
+    }
 }
 
 private extension ChatChannelVC_Tests {

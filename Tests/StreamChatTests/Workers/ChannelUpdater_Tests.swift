@@ -9,7 +9,7 @@ import XCTest
 final class ChannelUpdater_Tests: XCTestCase {
     var apiClient: APIClient_Spy!
     var database: DatabaseContainer_Spy!
-
+    var channelRepository: ChannelRepository_Mock!
     var channelUpdater: ChannelUpdater!
 
     override func setUp() {
@@ -17,13 +17,19 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         apiClient = APIClient_Spy()
         database = DatabaseContainer_Spy()
-
-        channelUpdater = ChannelUpdater(callRepository: CallRepository(apiClient: apiClient), database: database, apiClient: apiClient)
+        channelRepository = ChannelRepository_Mock(database: database, apiClient: apiClient)
+        channelUpdater = ChannelUpdater(
+            channelRepository: channelRepository,
+            callRepository: CallRepository(apiClient: apiClient),
+            database: database,
+            apiClient: apiClient
+        )
     }
 
     override func tearDown() {
         apiClient.cleanUp()
         apiClient = nil
+        channelRepository = nil
         channelUpdater = nil
 
         AssertAsync.canBeReleased(&database)
@@ -1245,35 +1251,84 @@ final class ChannelUpdater_Tests: XCTestCase {
 
     func test_markRead_makesCorrectAPICall() {
         let cid = ChannelId.unique
+        let userId = UserId.unique
 
-        channelUpdater.markRead(cid: cid, userId: .unique)
+        channelUpdater.markRead(cid: cid, userId: userId)
 
-        let referenceEndpoint = Endpoint<EmptyResponse>.markRead(cid: cid)
-        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+        XCTAssertEqual(channelRepository.markReadCid, cid)
+        XCTAssertEqual(channelRepository.markReadUserId, userId)
     }
 
     func test_markRead_successfulResponse_isPropagatedToCompletion() {
-        var completionCalled = false
+        let expectation = self.expectation(description: "markRead completes")
+        var receivedError: Error?
+
+        channelRepository.markReadResult = .success(())
         channelUpdater.markRead(cid: .unique, userId: .unique) { error in
-            XCTAssertNil(error)
-            completionCalled = true
+            receivedError = error
+            expectation.fulfill()
         }
 
-        XCTAssertFalse(completionCalled)
-
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
-
-        AssertAsync.willBeTrue(completionCalled)
+        waitForExpectations(timeout: defaultTimeout)
+        XCTAssertNil(receivedError)
     }
 
     func test_markRead_errorResponse_isPropagatedToCompletion() {
-        var completionCalledError: Error?
-        channelUpdater.markRead(cid: .unique, userId: .unique) { completionCalledError = $0 }
+        let expectation = self.expectation(description: "markRead completes")
+        let mockedError = TestError()
+        var receivedError: Error?
 
-        let error = TestError()
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
+        channelRepository.markReadResult = .failure(mockedError)
+        channelUpdater.markRead(cid: .unique, userId: .unique) { error in
+            receivedError = error
+            expectation.fulfill()
+        }
 
-        AssertAsync.willBeEqual(completionCalledError as? TestError, error)
+        waitForExpectations(timeout: defaultTimeout)
+        XCTAssertEqual(receivedError, mockedError)
+    }
+
+    // MARK: - Mark channel as unread
+
+    func test_markUnread_makesCorrectAPICall() {
+        let cid = ChannelId.unique
+        let userId = UserId.unique
+        let messageId = MessageId.unique
+
+        channelUpdater.markUnread(cid: cid, userId: userId, from: messageId)
+
+        XCTAssertEqual(channelRepository.markUnreadCid, cid)
+        XCTAssertEqual(channelRepository.markUnreadUserId, userId)
+        XCTAssertEqual(channelRepository.markUnreadMessageId, messageId)
+    }
+
+    func test_markUnread_successfulResponse_isPropagatedToCompletion() {
+        let expectation = self.expectation(description: "markUnread completes")
+        var receivedError: Error?
+
+        channelRepository.markUnreadResult = .success(())
+        channelUpdater.markUnread(cid: .unique, userId: .unique, from: .unique) { error in
+            receivedError = error
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: defaultTimeout)
+        XCTAssertNil(receivedError)
+    }
+
+    func test_markUnread_errorResponse_isPropagatedToCompletion() {
+        let expectation = self.expectation(description: "markUnread completes")
+        let mockedError = TestError()
+        var receivedError: Error?
+
+        channelRepository.markUnreadResult = .failure(mockedError)
+        channelUpdater.markUnread(cid: .unique, userId: .unique, from: .unique) { error in
+            receivedError = error
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: defaultTimeout)
+        XCTAssertEqual(receivedError, mockedError)
     }
 
     // MARK: - Enable slow mode (cooldown)

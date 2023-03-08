@@ -137,7 +137,7 @@ extension Filter where Scope == ChannelListFilterScope {
                 return nil
             }
             return NSCompoundPredicate(
-                andPredicateWithSubpredicates: filterArray.map { subValue in
+                orPredicateWithSubpredicates: filterArray.map { subValue in
                     NSPredicate(
                         format: "%@ IN %K",
                         argumentArray: [subValue, keyPathString]

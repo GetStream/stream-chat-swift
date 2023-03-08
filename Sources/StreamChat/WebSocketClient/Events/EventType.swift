@@ -86,6 +86,10 @@ public extension EventType {
     /// When the total count of unread messages (across all channels the user is a member) changes
     /// (when clients from the user affected by the change).
     static let notificationMarkRead: Self = "notification.mark_read"
+
+    /// When a message of a channel is marked as unread
+    static let notificationMarkUnread: Self = "notification.mark_unread"
+
     /// When the user mutes someone.
     static let notificationMutesUpdated: Self = "notification.mutes_updated"
     /// When someone else from channel has muted someone.
@@ -150,6 +154,8 @@ extension EventType {
             return response.channel == nil
                 ? try NotificationMarkAllReadEventDTO(from: response)
                 : try NotificationMarkReadEventDTO(from: response)
+        case .notificationMarkUnread:
+            return try NotificationMarkUnreadEventDTO(from: response)
 
         case .notificationMutesUpdated: return try NotificationMutesUpdatedEventDTO(from: response)
         case .notificationAddedToChannel: return try NotificationAddedToChannelEventDTO(from: response)

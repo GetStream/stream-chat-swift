@@ -116,10 +116,10 @@ public struct Components {
     /// The date separator view that groups messages from the same day.
     public var messageListDateSeparatorView: ChatMessageListDateSeparatorView.Type = ChatMessageListDateSeparatorView.self
 
-    /// A boolean value that determines wether the date overlay should be displayed while scrolling.
+    /// A boolean value that determines whether the date overlay should be displayed while scrolling.
     public var messageListDateOverlayEnabled = true
 
-    /// A boolean value that determines wether date separators should be shown between each message.
+    /// A boolean value that determines whether date separators should be shown between each message.
     public var messageListDateSeparatorEnabled = false
 
     /// The view controller used to perform message actions.
@@ -279,8 +279,13 @@ public struct Components {
     public var threadVC: ChatThreadVC.Type = ChatThreadVC.self
 
     /// The view that displays channel information on the thread header.
-    public var threadHeaderView: ChatThreadHeaderView.Type =
-        ChatThreadHeaderView.self
+    public var threadHeaderView: ChatThreadHeaderView.Type = ChatThreadHeaderView.self
+
+    /// The view that displays the number of replies in the current thread.
+    public var threadRepliesCounterDecorationView: ChatThreadRepliesCountDecorationView.Type = ChatThreadRepliesCountDecorationView.self
+
+    /// A boolean value that determines whether thread replies counter decoration should be shown below the source message of a thread.
+    public var threadRepliesCounterEnabled = true
 
     // MARK: - Channel components
 

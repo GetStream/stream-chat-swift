@@ -66,6 +66,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
     /// The worker used to fetch the remote data and communicate with servers.
     private lazy var updater: ChannelUpdater = self.environment.channelUpdaterBuilder(
+        client.channelRepository,
         client.callRepository,
         client.databaseContainer,
         client.apiClient
@@ -98,6 +99,9 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
     /// The pagination cursor for loading next (new) messages.
     internal private(set) var lastNewestMessageId: MessageId?
+    
+    /// The first unread message id
+    public private(set) var firstUnreadMessageId: MessageId?
 
     private var markingRead: Bool = false
 
@@ -756,7 +760,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
     /// Marks the channel as read.
     ///
-    /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    /// - Parameter completion: The completion will be called on a **callbackQueue** when the network request is finished.
     ///                         If request fails, the completion will be called with an error.
     ///
     public func markRead(completion: ((Error?) -> Void)? = nil) {
@@ -773,6 +777,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         }
 
         guard
+            !markingRead,
             let currentUserId = client.currentUserId,
             let currentUserRead = channel.reads.first(where: { $0.user.id == currentUserId }),
             let lastMessageAt = channel.lastMessageAt,
@@ -784,15 +789,51 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        guard !markingRead else {
-            return
-        }
-
         markingRead = true
 
         updater.markRead(cid: channel.cid, userId: currentUserId) { error in
             self.callback {
                 self.markingRead = false
+                completion?(error)
+            }
+        }
+    }
+
+    /// Marks a subset of the messages of the channel as unread. All the following messages, including the one that is
+    /// passed as parameter, will be marked as not read.
+    /// - Parameters:
+    ///   - messageId: The id of the first message id that will be marked as unread.
+    ///   - completion: The completion will be called on a **callbackQueue** when the network request is finished.
+    public func markUnread(from messageId: MessageId, completion: ((Error?) -> Void)? = nil) {
+        /// Perform action only if channel is already created on backend side and have a valid `cid`.
+        guard let channel = channel else {
+            channelModificationFailed(completion)
+            return
+        }
+
+        /// Read events are not enabled for this channel
+        guard areReadEventsEnabled else {
+            channelFeatureDisabled(feature: "read events", completion: completion)
+            return
+        }
+
+        guard !markingRead, let currentUserId = client.currentUserId else {
+            callback {
+                completion?(nil)
+            }
+            return
+        }
+
+        markingRead = true
+
+        let previousUnreadMessageId = firstUnreadMessageId
+        firstUnreadMessageId = messageId
+        updater.markUnread(cid: channel.cid, userId: currentUserId, from: messageId) { [weak self] error in
+            if error != nil {
+                self?.firstUnreadMessageId = previousUnreadMessageId
+            }
+            self?.callback {
+                self?.markingRead = false
                 completion?(error)
             }
         }
@@ -1064,6 +1105,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 extension ChatChannelController {
     struct Environment {
         var channelUpdaterBuilder: (
+            _ channelRepository: ChannelRepository,
             _ callRepository: CallRepository,
             _ database: DatabaseContainer,
             _ apiClient: APIClient

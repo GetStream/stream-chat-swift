@@ -105,6 +105,10 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
                 actions.append(threadReplyActionItem())
             }
 
+            if channelConfig.readEventsEnabled {
+                actions.append(markUnreadActionItem())
+            }
+
             actions.append(copyActionItem())
 
             if message.isSentByCurrentUser {
@@ -229,6 +233,14 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
     /// Returns `ChatMessageActionItem` for thread reply action.
     open func threadReplyActionItem() -> ChatMessageActionItem {
         ThreadReplyActionItem(
+            action: { [weak self] in self?.handleAction($0) },
+            appearance: appearance
+        )
+    }
+
+    /// Returns `MarkUnreadActionItem` for copy action.
+    open func markUnreadActionItem() -> ChatMessageActionItem {
+        MarkUnreadActionItem(
             action: { [weak self] in self?.handleAction($0) },
             appearance: appearance
         )
