@@ -3038,6 +3038,9 @@ final class ChannelController_Tests: XCTestCase {
     func test_createNewMessage_sendsNewMessagePendingEvent() throws {
         let exp = expectation(description: "should complete create new message")
 
+        let mockedEventNotificationCenter = EventNotificationCenter_Mock(database: .init(kind: .inMemory))
+        client.mockedEventNotificationCenter = mockedEventNotificationCenter
+
         controller.createNewMessage(
             text: .unique
         ) { _ in
@@ -3048,7 +3051,7 @@ final class ChannelController_Tests: XCTestCase {
 
         wait(for: [exp], timeout: defaultTimeout)
 
-        let event = try XCTUnwrap(client.mockedEventNotificationCenter.mock_process.calls.first?.0.first)
+        let event = try XCTUnwrap(mockedEventNotificationCenter.mock_process.calls.first?.0.first)
         XCTAssertTrue(event is NewMessagePendingEvent)
     }
 
