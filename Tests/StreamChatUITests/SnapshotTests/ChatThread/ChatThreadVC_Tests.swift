@@ -168,7 +168,7 @@ final class ChatThreadVC_Tests: XCTestCase {
             vc.messageListVC,
             footerViewForMessage: useSourceMessage ? sourceMessage : vc.messages[1],
             at: IndexPath(row: useSourceMessage ? 3 : 1, section: 0)
-        ) as? ChatThreadRepliesCountDecorationView
+        ) as? ChatUnreadMessagesCountDecorationView
 
         XCTAssertEqual(footerView?.content, expected(), file: file, line: line)
     }
