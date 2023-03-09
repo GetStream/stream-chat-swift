@@ -209,25 +209,8 @@ open class ChatThreadVC: _ViewController,
         return layoutOptions
     }
 
-    // MARK: Missing jump to message implementation
-
     // TODO: Jump to message
     public var isLoadingPreviousMessages: Bool = false
-
-    // TODO: Jump to message
-    public var isFirstPageLoaded: Bool {
-        true
-    }
-
-    // TODO: Jump to message
-    public func chatMessageListVC(
-        _ vc: ChatMessageListVC,
-        shouldLoadPageAroundMessage message: ChatMessage,
-        _ completion: @escaping ((Error?) -> Void)
-    ) {}
-
-    // TODO: Jump to message
-    open func chatMessageListVCShouldLoadFirstPage(_ vc: ChatMessageListVC) {}
 
     // MARK: - ChatMessageListVCDelegate
 

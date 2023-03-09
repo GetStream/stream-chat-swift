@@ -67,6 +67,7 @@ public protocol ChatMessageListVCDelegate: AnyObject {
     func chatMessageListVCShouldLoadFirstPage(
         _ vc: ChatMessageListVC
     )
+    
     /// Ask the delegate to provide a header view for the specified decoration type.
     /// - Parameters:
     ///   - vc: The message list informing the delegate of this event.
@@ -112,6 +113,18 @@ public extension ChatMessageListVCDelegate {
     }
 
     // MARK: - Default Implementations
+
+    func chatMessageListVC(
+        _ vc: ChatMessageListVC,
+        shouldLoadPageAroundMessage message: ChatMessage,
+        _ completion: @escaping ((Error?) -> Void)
+    ) {
+        completion(nil)
+    }
+
+    func chatMessageListVCShouldLoadFirstPage(_ vc: ChatMessageListVC) {
+        // no-op
+    }
  
     func chatMessageListVC(
         _ vc: ChatMessageListVC,

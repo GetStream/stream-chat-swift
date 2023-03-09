@@ -39,3 +39,9 @@ public protocol ChatMessageListVCDataSource: AnyObject {
         messageLayoutOptionsAt indexPath: IndexPath
     ) -> ChatMessageLayoutOptions
 }
+
+public extension ChatMessageListVCDataSource {
+    var isFirstPageLoaded: Bool {
+        true
+    }
+}
