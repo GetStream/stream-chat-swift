@@ -50,10 +50,11 @@ class ChannelUpdater: Worker {
                 onChannelCreated?(payload.channel.cid)
 
                 database?.write { session in
-                    guard let channelDTO = session.channel(cid: payload.channel.cid) else { return }
-                    channelDTO.cleanMessagesThatFailedToBeEditedDueToModeration()
-                    if isJumpingToMessage || isFirstPage {
-                        channelDTO.cleanAllMessagesExcludingLocalOnly()
+                    if let channelDTO = session.channel(cid: payload.channel.cid) {
+                        channelDTO.cleanMessagesThatFailedToBeEditedDueToModeration()
+                        if isJumpingToMessage || isFirstPage {
+                            channelDTO.cleanAllMessagesExcludingLocalOnly()
+                        }
                     }
 
                     let updatedChannel = try session.saveChannel(payload: payload)
