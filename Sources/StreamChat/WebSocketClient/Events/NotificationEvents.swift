@@ -104,18 +104,24 @@ public struct NotificationMarkReadEvent: ChannelSpecificEvent, HasUnreadCount {
 }
 
 /// Triggered when a channel the current user is member of is marked as unread.
-public struct NotificationMarkUnreadEvent: ChannelSpecificEvent, HasUnreadCount {
+public struct NotificationMarkUnreadEvent: ChannelSpecificEvent {
     /// The current user.
     public let user: ChatUser
 
     /// The read channel identifier.
     public let cid: ChannelId
 
-    /// The unread counts of the current user.
-    public let unreadCount: UnreadCount?
-
     /// The event timestamp.
     public let createdAt: Date
+
+    /// The id of the first unread message id
+    public let firstUnreadMessageId: MessageId
+
+    /// The timestamp of the last read message
+    public let lastReadAt: Date
+
+    /// The number of unread messages for the channel
+    public let unreadMessages: Int
 }
 
 class NotificationMarkReadEventDTO: EventDTO {
@@ -148,15 +154,19 @@ class NotificationMarkReadEventDTO: EventDTO {
 class NotificationMarkUnreadEventDTO: EventDTO {
     let user: UserPayload
     let cid: ChannelId
-    let unreadCount: UnreadCount
     let createdAt: Date
+    let firstUnreadMessageId: MessageId
+    let lastReadAt: Date
+    let unreadMessages: Int
     let payload: EventPayload
 
     init(from response: EventPayload) throws {
         user = try response.value(at: \.user)
         cid = try response.value(at: \.cid)
         createdAt = try response.value(at: \.createdAt)
-        unreadCount = try response.value(at: \.unreadCount)
+        firstUnreadMessageId = try response.value(at: \.firstUnreadMessageId)
+        lastReadAt = try response.value(at: \.lastReadAt)
+        unreadMessages = try response.value(at: \.unreadMessages)
         payload = response
     }
 
@@ -166,8 +176,10 @@ class NotificationMarkUnreadEventDTO: EventDTO {
         return try? NotificationMarkUnreadEvent(
             user: userDTO.asModel(),
             cid: cid,
-            unreadCount: unreadCount,
-            createdAt: createdAt
+            createdAt: createdAt,
+            firstUnreadMessageId: firstUnreadMessageId,
+            lastReadAt: lastReadAt,
+            unreadMessages: unreadMessages
         )
     }
 }

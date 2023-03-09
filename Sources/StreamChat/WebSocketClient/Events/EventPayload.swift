@@ -28,6 +28,9 @@ class EventPayload: Decodable {
         case banExpiredAt = "expiration"
         case parentId = "parent_id"
         case hardDelete = "hard_delete"
+        case firstUnreadMessageId = "first_unread_message_id"
+        case lastReadAt = "last_read_at"
+        case unreadMessages = "unread_messages"
     }
 
     let eventType: EventType
@@ -48,6 +51,10 @@ class EventPayload: Decodable {
     let banExpiredAt: Date?
     let parentId: MessageId?
     let hardDelete: Bool
+    // Mark as unread properties
+    let firstUnreadMessageId: MessageId?
+    let lastReadAt: Date?
+    let unreadMessages: Int?
 
     init(
         eventType: EventType,
@@ -67,7 +74,10 @@ class EventPayload: Decodable {
         banReason: String? = nil,
         banExpiredAt: Date? = nil,
         parentId: MessageId? = nil,
-        hardDelete: Bool = false
+        hardDelete: Bool = false,
+        firstUnreadMessageId: MessageId? = nil,
+        lastReadAt: Date? = nil,
+        unreadMessages: Int? = nil
     ) {
         self.eventType = eventType
         self.connectionId = connectionId
@@ -87,6 +97,9 @@ class EventPayload: Decodable {
         self.banExpiredAt = banExpiredAt
         self.parentId = parentId
         self.hardDelete = hardDelete
+        self.firstUnreadMessageId = firstUnreadMessageId
+        self.lastReadAt = lastReadAt
+        self.unreadMessages = unreadMessages
     }
 
     required init(from decoder: Decoder) throws {
@@ -111,6 +124,9 @@ class EventPayload: Decodable {
         banExpiredAt = try container.decodeIfPresent(Date.self, forKey: .banExpiredAt)
         parentId = try container.decodeIfPresent(MessageId.self, forKey: .parentId)
         hardDelete = try container.decodeIfPresent(Bool.self, forKey: .hardDelete) ?? false
+        firstUnreadMessageId = try container.decodeIfPresent(MessageId.self, forKey: .firstUnreadMessageId)
+        lastReadAt = try container.decodeIfPresent(Date.self, forKey: .lastReadAt)
+        unreadMessages = try container.decodeIfPresent(Int.self, forKey: .unreadMessages)
     }
 
     func event() throws -> Event {
