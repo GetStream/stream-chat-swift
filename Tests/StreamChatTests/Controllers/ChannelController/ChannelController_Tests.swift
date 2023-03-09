@@ -3818,7 +3818,6 @@ final class ChannelController_Tests: XCTestCase {
             receivedError = error
             expectation.fulfill()
         }
-        let mockedError = TestError()
         env.channelUpdater?.markUnread_completion?(nil)
 
         waitForExpectations(timeout: defaultTimeout)

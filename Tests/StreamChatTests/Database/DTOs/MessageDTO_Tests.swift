@@ -2091,7 +2091,6 @@ final class MessageDTO_Tests: XCTestCase {
         try database.writeSynchronously { session in
             try session.saveChannel(payload: channel)
             try session.saveCurrentUser(payload: .dummy(userId: currentUserId, role: .user))
-            let currentUser = try XCTUnwrap(session.currentUser)
 
             try (1...2).forEach { _ in
                 let message = MessagePayload.dummy(

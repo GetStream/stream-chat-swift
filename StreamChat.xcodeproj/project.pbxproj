@@ -1743,6 +1743,7 @@
 		C174E0F9284DFD660040B936 /* IdentifiablePayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C174E0F8284DFD660040B936 /* IdentifiablePayload_Tests.swift */; };
 		C1788F5829B8C1B400149883 /* StackViewDecoratorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1788F5729B8C1B400149883 /* StackViewDecoratorView.swift */; };
 		C1788F5929B8C1B400149883 /* StackViewDecoratorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1788F5729B8C1B400149883 /* StackViewDecoratorView.swift */; };
+		C1788F5B29B9E4D900149883 /* NotificationMarkUnread.json in Resources */ = {isa = PBXBuildFile; fileRef = C1788F5A29B9E4D900149883 /* NotificationMarkUnread.json */; };
 		C18514FD292E34E10033387E /* ConnectionRepository_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C18514FC292E34E10033387E /* ConnectionRepository_Tests.swift */; };
 		C186BFA627A7F4E10099CCA6 /* AsyncOperation_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C186BFA527A7F4E10099CCA6 /* AsyncOperation_Tests.swift */; };
 		C186BFAA27AA979B0099CCA6 /* SyncRepository_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C186BFA927AA979B0099CCA6 /* SyncRepository_Tests.swift */; };
@@ -3516,6 +3517,7 @@
 		C174E0F5284DFA5A0040B936 /* IdentifiablePayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifiablePayload.swift; sourceTree = "<group>"; };
 		C174E0F8284DFD660040B936 /* IdentifiablePayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifiablePayload_Tests.swift; sourceTree = "<group>"; };
 		C1788F5729B8C1B400149883 /* StackViewDecoratorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackViewDecoratorView.swift; sourceTree = "<group>"; };
+		C1788F5A29B9E4D900149883 /* NotificationMarkUnread.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = NotificationMarkUnread.json; sourceTree = "<group>"; };
 		C18514FC292E34E10033387E /* ConnectionRepository_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionRepository_Tests.swift; sourceTree = "<group>"; };
 		C186BFA227A048690099CCA6 /* SyncRepository_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncRepository_Mock.swift; sourceTree = "<group>"; };
 		C186BFA527A7F4E10099CCA6 /* AsyncOperation_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncOperation_Tests.swift; sourceTree = "<group>"; };
@@ -5151,6 +5153,7 @@
 				8AC9CBDB24C74704006E236C /* NotificationInviteRejected.json */,
 				8AC9CBE524C74FFE006E236C /* NotificationMarkAllRead.json */,
 				8A0C3BDA24C1E59100CAFD19 /* NotificationMarkRead.json */,
+				C1788F5A29B9E4D900149883 /* NotificationMarkUnread.json */,
 				8AC9CBD724C737AF006E236C /* NotificationMessageNew.json */,
 				8431843A26FB53B400B5B25E /* NotificationMessageNew+MissingFields.json */,
 				8AC9CBD924C73AAA006E236C /* NotificationRemovedFromChannel.json */,
@@ -8600,6 +8603,7 @@
 				A311B40427E8B9AD00CFCF6D /* NotificationInviteRejected.json in Resources */,
 				A311B3F127E8B99800CFCF6D /* ChannelUpdated_ServerSide.json in Resources */,
 				A311B3DE27E8B98C00CFCF6D /* ChannelMembersQuery.json in Resources */,
+				C1788F5B29B9E4D900149883 /* NotificationMarkUnread.json in Resources */,
 				A311B3E827E8B99200CFCF6D /* AttachmentPayloadCustom.json in Resources */,
 				A3D9D68527EDE3B900725066 /* vader.jpg in Resources */,
 				A311B3EF27E8B99800CFCF6D /* ChannelDeleted.json in Resources */,
