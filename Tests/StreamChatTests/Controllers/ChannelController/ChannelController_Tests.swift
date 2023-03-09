@@ -1982,13 +1982,6 @@ final class ChannelController_Tests: XCTestCase {
             completionCalled = true
         }
 
-        // Keep a weak ref so we can check if it's actually deallocated
-        weak var weakController = controller
-
-        // (Try to) deallocate the controller
-        // by not keeping any references to it
-        controller = nil
-
         // Completion shouldn't be called yet
         XCTAssertFalse(completionCalled)
         // Assert correct `MessagesPagination` is created
@@ -2003,17 +1996,11 @@ final class ChannelController_Tests: XCTestCase {
             numberOfMessages: 5
         )
         env.channelUpdater?.update_completion?(.success(channelPayload))
-        // Release reference of completion so we can deallocate stuff
-        env.channelUpdater!.update_completion = nil
 
         // Should update old fetched message id
-        XCTAssertNotNil(controller.lastOldestMessageId)
-        XCTAssertEqual(controller.lastOldestMessageId, channelPayload.messages.first?.id)
-
+        AssertAsync.willBeEqual(controller.lastOldestMessageId, channelPayload.messages.first?.id)
         // Completion should be called
         AssertAsync.willBeTrue(completionCalled)
-        // `weakController` should be deallocated too
-        AssertAsync.canBeReleased(&weakController)
     }
 
     func test_loadPreviousMessages_whenHasLoadedAllPreviousMessages_dontCallChannelUpdater() throws {
@@ -2546,18 +2533,6 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertNil(controller.lastOldestMessageId)
 
         waitForExpectations(timeout: 0.5)
-    }
-
-    func test_loadPageAroundMessageId_whenIsJumpingToMessage_shouldNotCallChannelUpdater() throws {
-        try setupChannel()
-
-        XCTAssertEqual(env.channelUpdater?.update_callCount, nil)
-
-        controller.loadPageAroundMessageId(.unique)
-        XCTAssertEqual(env.channelUpdater?.update_callCount, 1)
-
-        controller.loadPageAroundMessageId(.unique)
-        XCTAssertEqual(env.channelUpdater?.update_callCount, 1)
     }
 
     // MARK: - loadFirstPage

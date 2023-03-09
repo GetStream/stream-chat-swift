@@ -496,10 +496,6 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        guard !isJumpingToMessage else {
-            return
-        }
-
         isJumpingToMessage = true
 
         let limit = limit ?? channelQuery.pagination?.pageSize ?? .messagesPageSize
