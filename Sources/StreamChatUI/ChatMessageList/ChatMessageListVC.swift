@@ -429,6 +429,7 @@ open class ChatMessageListVC: _ViewController,
     public func jumpToMessage(_ message: ChatMessage) {
         if let indexPath = getIndexPath(forMessageId: message.id) {
             listView.scrollToRow(at: indexPath, at: .middle, animated: true)
+            highlightCellBackground(for: indexPath)
             return
         }
 
@@ -459,6 +460,17 @@ open class ChatMessageListVC: _ViewController,
             .map {
                 IndexPath(item: $0.offset, section: 0)
             }
+    }
+
+    /// Highlight the background of the message cell when jumping to a message.
+    open func highlightCellBackground(for indexPath: IndexPath) {
+        let cell = listView.cellForRow(at: indexPath)
+        let previousBackgroundColor = cell?.backgroundColor
+        let highlightColor = appearance.colorPalette.messageCellHighlightBackground
+        cell?.backgroundColor = highlightColor
+        UIView.animate(withDuration: 0.2, delay: 0.6) {
+            cell?.backgroundColor = previousBackgroundColor
+        }
     }
 
     // MARK: - UITableViewDataSource & UITableViewDelegate
@@ -790,6 +802,9 @@ private extension ChatMessageListVC {
         if let message = messagePendingScrolling,
            let indexPath = getIndexPath(forMessageId: message.id) {
             listView.scrollToRow(at: indexPath, at: .middle, animated: true)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                self.highlightCellBackground(for: indexPath)
+            }
             messagePendingScrolling = nil
         }
     }
