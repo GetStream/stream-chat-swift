@@ -2076,7 +2076,7 @@ final class MessageDTO_Tests: XCTestCase {
 
     func test_countOtherUserMessages_whenThereAreNoMessages() {
         let cid = ChannelId.unique
-        let createdAtFrom = Date()
+        let createdAtFrom = DBDate()
 
         let count = MessageDTO.countOtherUserMessages(in: cid.rawValue, createdAtFrom: createdAtFrom, context: database.viewContext)
         XCTAssertEqual(count, 0)
@@ -2084,7 +2084,7 @@ final class MessageDTO_Tests: XCTestCase {
 
     func test_countOtherUserMessages_whenThereAreOnlyOwnMessages() throws {
         let cid = ChannelId.unique
-        let createdAtFrom = Date()
+        let createdAtFrom = DBDate()
         let currentUserId = UserId.unique
 
         let channel = ChannelPayload.dummy(channel: .dummy(cid: cid))
@@ -2097,7 +2097,7 @@ final class MessageDTO_Tests: XCTestCase {
                 let message = MessagePayload.dummy(
                     messageId: .unique,
                     authorUserId: currentUserId,
-                    createdAt: createdAtFrom.addingTimeInterval(10)
+                    createdAt: createdAtFrom.bridgeDate.addingTimeInterval(10)
                 )
                 try session.saveMessage(payload: message, for: cid, syncOwnReactions: true, cache: nil)
             }
@@ -2109,7 +2109,7 @@ final class MessageDTO_Tests: XCTestCase {
 
     func test_countOtherUserMessages_whenThereAreOnlyOwnAndOtherMessages() throws {
         let cid = ChannelId.unique
-        let createdAtFrom = Date()
+        let createdAtFrom = DBDate()
         let currentUserId = UserId.unique
 
         let channel = ChannelPayload.dummy(channel: .dummy(cid: cid))
@@ -2121,7 +2121,7 @@ final class MessageDTO_Tests: XCTestCase {
                 let message = MessagePayload.dummy(
                     messageId: .unique,
                     authorUserId: currentUserId,
-                    createdAt: createdAtFrom.addingTimeInterval(10)
+                    createdAt: createdAtFrom.bridgeDate.addingTimeInterval(10)
                 )
                 try session.saveMessage(payload: message, for: cid, syncOwnReactions: true, cache: nil)
             }
@@ -2130,7 +2130,7 @@ final class MessageDTO_Tests: XCTestCase {
                 let message = MessagePayload.dummy(
                     messageId: .unique,
                     authorUserId: .unique,
-                    createdAt: createdAtFrom.addingTimeInterval(10)
+                    createdAt: createdAtFrom.bridgeDate.addingTimeInterval(10)
                 )
                 try session.saveMessage(payload: message, for: cid, syncOwnReactions: true, cache: nil)
             }
@@ -2142,7 +2142,7 @@ final class MessageDTO_Tests: XCTestCase {
 
     func test_countOtherUserMessages_whenThereAreMessagesWithVariousDates_onlyCountTheOnesEqualOrLater() throws {
         let cid = ChannelId.unique
-        let createdAtFrom = Date()
+        let createdAtFrom = DBDate()
         let currentUserId = UserId.unique
 
         let channel = ChannelPayload.dummy(channel: .dummy(cid: cid))
@@ -2154,7 +2154,7 @@ final class MessageDTO_Tests: XCTestCase {
                 payload: .dummy(
                     messageId: .unique,
                     authorUserId: .unique,
-                    createdAt: createdAtFrom.addingTimeInterval(-1)
+                    createdAt: createdAtFrom.bridgeDate.addingTimeInterval(-1)
                 ),
                 for: cid,
                 syncOwnReactions: false,
@@ -2165,7 +2165,7 @@ final class MessageDTO_Tests: XCTestCase {
                 payload: .dummy(
                     messageId: .unique,
                     authorUserId: .unique,
-                    createdAt: createdAtFrom
+                    createdAt: createdAtFrom.bridgeDate
                 ),
                 for: cid,
                 syncOwnReactions: false,
@@ -2176,7 +2176,7 @@ final class MessageDTO_Tests: XCTestCase {
                 payload: .dummy(
                     messageId: .unique,
                     authorUserId: .unique,
-                    createdAt: createdAtFrom.addingTimeInterval(1)
+                    createdAt: createdAtFrom.bridgeDate.addingTimeInterval(1)
                 ),
                 for: cid,
                 syncOwnReactions: false,
