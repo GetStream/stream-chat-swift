@@ -448,7 +448,6 @@ final class ChannelUpdater_Tests: XCTestCase {
             expectation.fulfill()
         })
 
-        // Simulate API response with channel data
         let payload = dummyPayload(with: cid, numberOfMessages: 5)
         apiClient.test_simulateResponse(.success(payload))
 
@@ -459,24 +458,56 @@ final class ChannelUpdater_Tests: XCTestCase {
         XCTAssertNotNil(channel.newestMessageAt)
     }
 
-    func test_updateChannelQuery_whenPaginationIsNil_thenIsFirstPageLoaded() {
-        XCTFail()
+    func test_updateChannelQuery_whenIsJumpingToMessage_thenDeleteAllPreviousMessagesFromChannel() throws {
+        let cid = ChannelId(type: .messaging, id: .unique)
+        let query = ChannelQuery(cid: cid, paginationParameter: .around(.unique))
+
+        let previousMessagesCount = 10
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: self.dummyPayload(
+                with: cid, numberOfMessages: previousMessagesCount
+            ))
+        }
+
+        let expectation = self.expectation(description: "Update completes")
+        channelUpdater.update(channelQuery: query, isInRecoveryMode: false, completion: { _ in
+            expectation.fulfill()
+        })
+
+        let expectedMessagesCount = 5
+        let payload = dummyPayload(with: cid, numberOfMessages: expectedMessagesCount)
+        apiClient.test_simulateResponse(.success(payload))
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        let channel = try XCTUnwrap(database.viewContext.channel(cid: cid))
+        XCTAssertEqual(channel.messages.count, expectedMessagesCount)
     }
 
-    func test_updateChannelQuery_whenPaginationNotNil_thenFirstPageNotLoaded() {
-        XCTFail()
-    }
+    func test_updateChannelQuery_whenIsJumpingToMessage_whenRequestFails_thenDoesNotDeleteMessages() throws {
+        let cid = ChannelId(type: .messaging, id: .unique)
+        let query = ChannelQuery(cid: cid, paginationParameter: .around(.unique))
 
-    func test_updateChannelQuery_whenIsJumpingToMessage_thenDeletesChannelMessagesFromDB() {
-        XCTFail()
-    }
+        let previousMessagesCount = 10
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: self.dummyPayload(
+                with: cid, numberOfMessages: previousMessagesCount
+            ))
+        }
 
-    func test_updateChannelQuery_whenChannelWasLeftInMidPage_thenDeletesChannelMessagesFromDB() {
-        XCTFail()
-    }
+        let expectation = self.expectation(description: "Update completes")
+        channelUpdater.update(channelQuery: query, isInRecoveryMode: false, completion: { _ in
+            expectation.fulfill()
+        })
 
-    func test_updateChannelQuery_whenRequestFails_shouldNotDeleteChannelMessagesFromDB() {
-        XCTFail()
+        let expectedMessagesCount = previousMessagesCount
+        let payload = dummyPayload(with: cid, numberOfMessages: expectedMessagesCount)
+        apiClient.test_simulateResponse(.success(payload))
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        let channel = try XCTUnwrap(database.viewContext.channel(cid: cid))
+        XCTAssertEqual(channel.messages.count, expectedMessagesCount)
     }
 
     // MARK: - Messages
