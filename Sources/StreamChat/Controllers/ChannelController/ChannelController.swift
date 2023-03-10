@@ -91,7 +91,12 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// A Boolean value that returns whether the channel is currently loading next (new) messages.
     public private(set) var isLoadingNextMessages: Bool = false
 
+    /// A Boolean value that returns whether the channel is currently loading a page around a message.
+    public private(set) var isLoadingMiddleMessages: Bool = false
+
     /// A Boolean value that returns whether the channel is currently in a mid-page.
+    /// The value is false if the channel has the first page loaded.
+    /// The value is true if the channel is in a mid fragment and didn't load the first page yet.
     public private(set) var isJumpingToMessage: Bool = false
 
     /// The pagination cursor for loading previous (old) messages.
@@ -496,7 +501,12 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
+        guard !isLoadingMiddleMessages else {
+            return
+        }
+
         isJumpingToMessage = true
+        isLoadingMiddleMessages = true
 
         let limit = limit ?? channelQuery.pagination?.pageSize ?? .messagesPageSize
         channelQuery.pagination = MessagesPagination(pageSize: limit, parameter: .around(messageId))
@@ -504,6 +514,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             channelQuery: channelQuery,
             isInRecoveryMode: false,
             completion: { result in
+                self.isLoadingMiddleMessages = false
                 switch result {
                 case let .success(payload):
                     self.updateNewestFetchedMessageId(with: payload)

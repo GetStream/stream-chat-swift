@@ -2454,6 +2454,7 @@ final class ChannelController_Tests: XCTestCase {
             XCTAssertNil(error)
             completionCalled = true
         }
+        XCTAssertEqual(controller.isLoadingMiddleMessages, true)
 
         // Simulate successful update
         let expectedMessages: [MessagePayload] = [
@@ -2468,6 +2469,7 @@ final class ChannelController_Tests: XCTestCase {
                 with: .unique,
                 messages: expectedMessages
             )))
+        XCTAssertEqual(controller.isLoadingMiddleMessages, false)
 
         // Assert correct `MessagesPagination` is created
         let pagination = env!.channelUpdater?.update_channelQuery?.pagination
@@ -2533,6 +2535,20 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertNil(controller.lastOldestMessageId)
 
         waitForExpectations(timeout: 0.5)
+    }
+
+    func test_loadPageAroundMessageId_whenIsLoadingMessagesAround_shouldNotCallChannelUpdater() throws {
+        try setupChannel()
+
+        XCTAssertEqual(env.channelUpdater?.update_callCount, nil)
+
+        controller.loadPageAroundMessageId(.unique)
+        XCTAssertEqual(controller.isLoadingMiddleMessages, true)
+        XCTAssertEqual(env.channelUpdater?.update_callCount, 1)
+
+        controller.loadPageAroundMessageId(.unique)
+        XCTAssertEqual(controller.isLoadingMiddleMessages, true)
+        XCTAssertEqual(env.channelUpdater?.update_callCount, 1)
     }
 
     // MARK: - loadFirstPage
