@@ -219,6 +219,7 @@ open class ChatChannelVC: _ViewController,
     ) {
         // For now, we don't support jumping to a message which is inside a thread only
         if message.isPartOfThread && !message.showReplyInChannel {
+            log.warning("Did not jump to message with text '\(message.text)' since we don't support jumping inside threads yet.")
             return
         }
 
