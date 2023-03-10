@@ -166,7 +166,7 @@ open class ChatChannelVC: _ViewController,
         keyboardHandler.start()
 
         if shouldMarkChannelRead {
-            channelController.markRead()
+            markRead()
         }
     }
 
@@ -176,6 +176,14 @@ open class ChatChannelVC: _ViewController,
         keyboardHandler.stop()
 
         resignFirstResponder()
+    }
+
+    // MARK: - Actions
+
+    /// Marks the channel read and updates the UI optimistically.
+    public func markRead() {
+        channelController.markRead()
+        messageListVC.scrollToLatestMessageButton.content = .noUnread
     }
 
     // MARK: - ChatMessageListVCDataSource
@@ -273,9 +281,7 @@ open class ChatChannelVC: _ViewController,
         scrollViewDidScroll scrollView: UIScrollView
     ) {
         if shouldMarkChannelRead {
-            channelController.markRead()
-
-            messageListVC.scrollToLatestMessageButton.content = .noUnread
+            markRead()
         }
     }
 
@@ -320,7 +326,7 @@ open class ChatChannelVC: _ViewController,
         messageListVC.setNewMessagesSnapshot(Array(channelController.messages))
         messageListVC.updateMessages(with: changes) { [weak self] in
             if self?.shouldMarkChannelRead == true {
-                self?.channelController.markRead()
+                self?.markRead()
             }
         }
     }
