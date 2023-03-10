@@ -2,11 +2,24 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
+## StreamChat
+### ✅ Added
+- Add support for loading messages around a given message id in a Channel [#2464](https://github.com/GetStream/stream-chat-swift/pull/2464)
+- Add support for bidirectional scrolling in a Channel [#2464](https://github.com/GetStream/stream-chat-swift/pull/2464)
+
+## StreamChatUI
+### 🔄 Changed
+- Deprecated `setScrollToLatestMessageButton(visible:animated:)` -> `updateScrollToBottomButtonVisibility(animated:)`
+- Replaces `messageContentViewDidTapOnQuotedMessage(_ indexPath: IndexPath?)` -> `messageContentViewDidTapOnQuotedMessage(_ quotedMessage: ChatMessage)`
+    - This one is a breaking change, but a required one. The previous API was misleading, and it was not actually working.
 ### ✅ Added
 - Now you can easily configure your own Decorations(headers and/or footers) around messages [#2507](https://github.com/GetStream/stream-chat-swift/pull/2507)
 - There is a new `ChatThreadRepliesCountDecorationView` component that should be used to display the number of replies in a thread. Read [here](https://getstream.io/chat/docs/sdk/ios/uikit/components/message/#thread-replies-counter) for more details.
-
-### 🔄 Changed
+- Add support for jumping to a quoted message [#2464](https://github.com/GetStream/stream-chat-swift/pull/2464)
+- Add support for jumping to a message which is not in the message list (only channel view) [#2464](https://github.com/GetStream/stream-chat-swift/pull/2464)
+- Add bidirectional scrolling in the Channel view [#2464](https://github.com/GetStream/stream-chat-swift/pull/2464)
+### 🐞 Fixed
+- Fix ephemeral message disappearing after leaving channel [#2464](https://github.com/GetStream/stream-chat-swift/pull/2464)
 
 # [4.28.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.28.0)
 _February 28, 2023_
