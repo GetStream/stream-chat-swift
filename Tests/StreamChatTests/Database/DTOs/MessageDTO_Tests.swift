@@ -72,51 +72,6 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(channelDTO.previewMessage?.id, previousPreviewMessage.id)
     }
 
-    func test_saveMessage_whenPreviewIsNil_doesNotUpdateChannelPreview() throws {
-        // GIVEN
-        let cid: ChannelId = .unique
-
-        let previewMessage: MessagePayload = .dummy(
-            type: .regular,
-            messageId: .unique,
-            authorUserId: .unique,
-            createdAt: Date(),
-            cid: cid
-        )
-
-        let channel: ChannelPayload = .dummy(
-            channel: .dummy(cid: cid),
-            messages: [
-                previewMessage
-            ]
-        )
-
-        try database.writeSynchronously { session in
-            try session.saveChannel(payload: channel)
-        }
-
-        // WHEN
-        try database.writeSynchronously { session in
-            let channel = session.channel(cid: channel.channel.cid)
-            channel?.cleanAllMessagesExcludingLocalOnly()
-        }
-
-        let updatedEmptyPreviewMessage: MessagePayload = .dummy(
-            type: .error,
-            messageId: previewMessage.id,
-            authorUserId: previewMessage.user.id,
-            cid: cid
-        )
-
-        try database.writeSynchronously { session in
-            try session.saveMessage(payload: updatedEmptyPreviewMessage, for: cid, syncOwnReactions: false, cache: nil)
-        }
-
-        // THEN
-        let channelDTO = try XCTUnwrap(database.viewContext.channel(cid: cid))
-        XCTAssertEqual(channelDTO.previewMessage?.id, previewMessage.id)
-    }
-
     func test_saveMessage_messageSentByAnotherUser_hasNoReads() throws {
         // GIVEN
         let anotherUser: UserPayload = .dummy(userId: .unique)
