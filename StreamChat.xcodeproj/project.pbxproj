@@ -1054,8 +1054,8 @@
 		AD75CB6B27886746005F5FF7 /* OptionsSelectorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD75CB6A27886746005F5FF7 /* OptionsSelectorViewController.swift */; };
 		AD78568C298B268F00C2FEAD /* ChannelControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD78568B298B268F00C2FEAD /* ChannelControllerDelegate.swift */; };
 		AD78568D298B268F00C2FEAD /* ChannelControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD78568B298B268F00C2FEAD /* ChannelControllerDelegate.swift */; };
-		AD78568F298B273900C2FEAD /* ChatClient+channelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD78568E298B273900C2FEAD /* ChatClient+channelController.swift */; };
-		AD785690298B273900C2FEAD /* ChatClient+channelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD78568E298B273900C2FEAD /* ChatClient+channelController.swift */; };
+		AD78568F298B273900C2FEAD /* ChatClient+ChannelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD78568E298B273900C2FEAD /* ChatClient+ChannelController.swift */; };
+		AD785690298B273900C2FEAD /* ChatClient+ChannelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD78568E298B273900C2FEAD /* ChatClient+ChannelController.swift */; };
 		AD78F9EE28EC718700BC0FCE /* URL+EnrichedURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = A36C39F42860680A0004EB7E /* URL+EnrichedURL.swift */; };
 		AD78F9EF28EC718D00BC0FCE /* EventBatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CF9C72274D473D00BCDE2D /* EventBatcher.swift */; };
 		AD78F9F028EC719200BC0FCE /* ChannelTruncateRequestPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3B0CFA127BBF52600F352F9 /* ChannelTruncateRequestPayload.swift */; };
@@ -3331,7 +3331,7 @@
 		AD71131125F138D500932AEE /* ChatUserAvatarView_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatUserAvatarView_Tests.swift; sourceTree = "<group>"; };
 		AD75CB6A27886746005F5FF7 /* OptionsSelectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionsSelectorViewController.swift; sourceTree = "<group>"; };
 		AD78568B298B268F00C2FEAD /* ChannelControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelControllerDelegate.swift; sourceTree = "<group>"; };
-		AD78568E298B273900C2FEAD /* ChatClient+channelController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatClient+channelController.swift"; sourceTree = "<group>"; };
+		AD78568E298B273900C2FEAD /* ChatClient+ChannelController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatClient+ChannelController.swift"; sourceTree = "<group>"; };
 		AD7909902811CBCB0013C434 /* ChatMessageReactionsView_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageReactionsView_Tests.swift; sourceTree = "<group>"; };
 		AD793F48270B767500B05456 /* ChatMessageReactionAuthorsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageReactionAuthorsVC.swift; sourceTree = "<group>"; };
 		AD793F4A270B769E00B05456 /* ChatMessageReactionAuthorViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageReactionAuthorViewCell.swift; sourceTree = "<group>"; };
@@ -7634,7 +7634,7 @@
 		DAE566F22500F97E00E39431 /* ChannelController */ = {
 			isa = PBXGroup;
 			children = (
-				AD78568E298B273900C2FEAD /* ChatClient+channelController.swift */,
+				AD78568E298B273900C2FEAD /* ChatClient+ChannelController.swift */,
 				799C944B247D5766001F1104 /* ChannelController.swift */,
 				AD78568B298B268F00C2FEAD /* ChannelControllerDelegate.swift */,
 				DAE566E624FFD22300E39431 /* ChannelController+SwiftUI.swift */,
@@ -9548,7 +9548,7 @@
 				79877A0F2498E4BC00015F8B /* ChannelId.swift in Sources */,
 				882C5760252C7CC400E60C44 /* ChannelMemberListQueryDTO.swift in Sources */,
 				88DA57E02631E80D00FA8C53 /* MutedChannelPayload.swift in Sources */,
-				AD78568F298B273900C2FEAD /* ChatClient+channelController.swift in Sources */,
+				AD78568F298B273900C2FEAD /* ChatClient+ChannelController.swift in Sources */,
 				792A4F492480107A00EAF71D /* Sorting.swift in Sources */,
 				7937282A2498FFD300E13FE5 /* MemberPayload.swift in Sources */,
 				AD6A248A280DA890003BA1E4 /* PushDevice.swift in Sources */,
@@ -10313,7 +10313,7 @@
 				C121E8BA274544B100023E4C /* MessageController+SwiftUI.swift in Sources */,
 				C121E8BB274544B100023E4C /* MessageController+Combine.swift in Sources */,
 				C121E8BC274544B100023E4C /* UserListController.swift in Sources */,
-				AD785690298B273900C2FEAD /* ChatClient+channelController.swift in Sources */,
+				AD785690298B273900C2FEAD /* ChatClient+ChannelController.swift in Sources */,
 				C121E8BD274544B100023E4C /* UserListController+SwiftUI.swift in Sources */,
 				C121E8BE274544B100023E4C /* UserListController+Combine.swift in Sources */,
 				C121E8BF274544B100023E4C /* EventsController.swift in Sources */,
