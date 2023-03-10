@@ -37,6 +37,7 @@ final class ChatMessageListVC_Tests: XCTestCase {
     }
 
     override func tearDown() {
+        sut = nil
         mockedDataSource = nil
         mockedDelegate = nil
         super.tearDown()

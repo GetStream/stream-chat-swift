@@ -102,6 +102,10 @@ open class ChatMessageListVC: _ViewController,
         components.messageListDateSeparatorEnabled
     }
 
+    private var isFirstPageLoaded: Bool {
+        dataSource?.isFirstPageLoaded == true
+    }
+
     /// The message cell height caches. This makes sure that the message list doesn't
     /// need to recalculate the cell height every time. This improve the scrolling
     /// experience since the content size calculation is more precise.
@@ -227,7 +231,7 @@ open class ChatMessageListVC: _ViewController,
 
     /// Action for `scrollToLatestMessageButton` that scroll to most recent message.
     @objc open func scrollToLatestMessage() {
-        guard dataSource?.isFirstPageLoaded == true else {
+        guard isFirstPageLoaded else {
             jumpToFirstPage()
             return
         }
@@ -439,6 +443,9 @@ open class ChatMessageListVC: _ViewController,
                 return
             }
 
+            // When we load the mid-page, the UI is not yet updated, so we can't scroll here.
+            // So we need to wait when the updates messages are available in the UI, and only then
+            // we can scroll to it.
             self?.messagePendingScrolling = message
         }
     }
@@ -535,7 +542,7 @@ open class ChatMessageListVC: _ViewController,
         updateScrollToBottomButtonVisibility()
 
         // If the user scrolled to the bottom, update the UI for the skipped messages
-        if listView.isLastCellFullyVisible && !listView.skippedMessages.isEmpty && dataSource?.isFirstPageLoaded == true {
+        if listView.isLastCellFullyVisible && !listView.skippedMessages.isEmpty && isFirstPageLoaded {
             listView.reloadSkippedMessages()
         }
     }
@@ -770,7 +777,6 @@ private extension ChatMessageListVC {
 
     func addSkippedMessagesIfNeeded(with changes: [ListChange<ChatMessage>], newestChange: ListChange<ChatMessage>?) {
         let insertions = changes.filter(\.isInsertion)
-        let isFirstPageLoaded = dataSource?.isFirstPageLoaded == true
         let isNewestChangeInsertion = newestChange?.isInsertion == true
         let isNewestChangeNotByCurrentUser = newestChange?.item.isSentByCurrentUser == false
         let isNewestChangeNotVisible = !listView.isLastCellFullyVisible && !listView.previousMessagesSnapshot.isEmpty
@@ -818,7 +824,7 @@ private extension ChatMessageListVC {
     // If we are inserting messages at the bottom, update the previous cell
     // to hide the timestamp of the previous message if needed.
     func reloadPreviousMessageWhenInsertingNewMessage() {
-        guard dataSource?.isFirstPageLoaded == true else { return }
+        guard isFirstPageLoaded else { return }
         if listView.isLastCellFullyVisible && listView.newMessagesSnapshot.count > 1 {
             let previousMessageIndexPath = IndexPath(item: 1, section: 0)
             listView.reloadRows(at: [previousMessageIndexPath], with: .none)
@@ -840,7 +846,7 @@ private extension ChatMessageListVC {
     // Scroll to the bottom if the new message was sent by
     // the current user, or moved by the current user, and the first page is loaded.
     func scrollToMostRecentMessageIfNeeded(newestChange: ListChange<ChatMessage>?) {
-        guard dataSource?.isFirstPageLoaded == true else { return }
+        guard isFirstPageLoaded else { return }
         guard let newMessage = newestChange?.item else { return }
         let newestChangeIsInsertionOrMove = newestChange?.isInsertion == true || newestChange?.isMove == true
         if newestChangeIsInsertionOrMove && newMessage.isSentByCurrentUser {
