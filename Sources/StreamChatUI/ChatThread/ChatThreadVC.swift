@@ -146,7 +146,7 @@ open class ChatThreadVC: _ViewController,
         keyboardHandler.stop()
     }
 
-    // TODO: Jump to message
+    // TODO: Jump to message (https://github.com/GetStream/ios-issues-tracking/issues/343)
     open func loadPreviousMessages() {
         guard !isLoadingPreviousMessages else {
             return
@@ -209,7 +209,7 @@ open class ChatThreadVC: _ViewController,
         return layoutOptions
     }
 
-    // TODO: Jump to message
+    // TODO: Jump to message (https://github.com/GetStream/ios-issues-tracking/issues/343)
     public var isLoadingPreviousMessages: Bool = false
 
     // MARK: - ChatMessageListVCDelegate
