@@ -97,7 +97,7 @@ open class ChatMessageListVC: _ViewController,
     /// (Used for jumping to a message)
     private(set) var messagePendingScrolling: ChatMessage?
 
-    /// A boolean value that determines wether date separators should be shown between each message.
+    /// A boolean value that determines whether date separators should be shown between each message.
     open var isDateSeparatorEnabled: Bool {
         components.messageListDateSeparatorEnabled
     }

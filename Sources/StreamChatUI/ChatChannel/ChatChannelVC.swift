@@ -61,12 +61,12 @@ open class ChatChannelVC: _ViewController,
     /// The message composer bottom constraint used for keyboard animation handling.
     public var messageComposerBottomConstraint: NSLayoutConstraint?
 
-    /// A boolean value indicating wether the last message is fully visible or not.
+    /// A boolean value indicating whether the last message is fully visible or not.
     open var isLastMessageFullyVisible: Bool {
         messageListVC.listView.isLastCellFullyVisible
     }
 
-    /// A boolean value indicating wether it should mark the channel read.
+    /// A boolean value indicating whether it should mark the channel read.
     public var shouldMarkChannelRead: Bool {
         isLastMessageFullyVisible && channelController.hasLoadedAllNextMessages && !hasMarkedMessageAsUnread
     }

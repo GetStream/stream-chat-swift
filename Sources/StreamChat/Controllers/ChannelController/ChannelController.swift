@@ -77,10 +77,10 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         client.apiClient
     )
 
-    /// A Boolean value that returns wether the oldest messages have all been loaded or not.
+    /// A Boolean value that returns whether the oldest messages have all been loaded or not.
     public private(set) var hasLoadedAllPreviousMessages: Bool = false
 
-    /// A Boolean value that returns wether the newest messages have all been loaded or not.
+    /// A Boolean value that returns whether the newest messages have all been loaded or not.
     public var hasLoadedAllNextMessages: Bool {
         !isJumpingToMessage || messages.isEmpty
     }
