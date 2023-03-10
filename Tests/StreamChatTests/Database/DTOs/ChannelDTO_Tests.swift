@@ -326,24 +326,6 @@ final class ChannelDTO_Tests: XCTestCase {
         XCTAssertNotNil(channelDTO)
     }
 
-    func test_deleteChannelMessages() throws {
-        let channelId: ChannelId = .unique
-        let payload = ChannelPayload.dummy(channel: .dummy(cid: channelId), messages: [.dummy(), .dummy(), .dummy()])
-
-        try database.writeSynchronously { session in
-            try session.saveChannel(payload: payload, query: nil, cache: nil)
-        }
-
-        var channelDTO: ChannelDTO? { database.viewContext.channel(cid: channelId) }
-        XCTAssertEqual(channelDTO?.messages.count, 3)
-
-        try database.writeSynchronously { session in
-            session.deleteChannelMessages(cid: channelId)
-        }
-
-        XCTAssertEqual(channelDTO?.messages.count, 0)
-    }
-
     func test_channelPayload_isStoredAndLoadedFromDB() throws {
         let channelId: ChannelId = .unique
 

@@ -1114,7 +1114,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     deinit {
         guard self.isJumpingToMessage, let cid = self.cid else { return }
         dataStore.database.write { session in
-            session.deleteChannelMessages(cid: cid)
+            let channelDTO = session.channel(cid: cid)
+            channelDTO?.cleanAllMessagesExcludingLocalOnly()
         }
     }
 }

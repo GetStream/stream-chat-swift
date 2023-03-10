@@ -97,7 +97,8 @@ final class MessageDTO_Tests: XCTestCase {
 
         // WHEN
         try database.writeSynchronously { session in
-            session.deleteChannelMessages(cid: channel.channel.cid)
+            let channel = session.channel(cid: channel.channel.cid)
+            channel?.cleanAllMessagesExcludingLocalOnly()
         }
 
         let updatedEmptyPreviewMessage: MessagePayload = .dummy(

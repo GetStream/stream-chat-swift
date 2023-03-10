@@ -101,10 +101,6 @@ extension DatabaseSession_Mock {
         underlyingSession.cleanChannels(cids: cids)
     }
 
-    func deleteChannelMessages(cid: ChannelId) {
-        underlyingSession.deleteChannelMessages(cid: cid)
-    }
-
     func removeChannels(cids: Set<ChannelId>) {
         underlyingSession.removeChannels(cids: cids)
     }
