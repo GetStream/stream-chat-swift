@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### ✅ Added
 - Add support for loading messages around a given message id in a Channel [#2464](https://github.com/GetStream/stream-chat-swift/pull/2464)
 - Add support for bidirectional scrolling in a Channel [#2464](https://github.com/GetStream/stream-chat-swift/pull/2464)
+### 🐞 Fixed
+- Fix ephemeral message disappearing after leaving channel [#2464](https://github.com/GetStream/stream-chat-swift/pull/2464)
+- Fix ephemeral message appearing in channel preview [#2464](https://github.com/GetStream/stream-chat-swift/pull/2464)
 
 ## StreamChatUI
 ### 🔄 Changed
@@ -18,9 +21,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add support for jumping to a quoted message [#2464](https://github.com/GetStream/stream-chat-swift/pull/2464)
 - Add support for jumping to a message which is not in the message list (only channel view) [#2464](https://github.com/GetStream/stream-chat-swift/pull/2464)
 - Add bidirectional scrolling in the Channel view [#2464](https://github.com/GetStream/stream-chat-swift/pull/2464)
-### 🐞 Fixed
-- Fix ephemeral message disappearing after leaving channel [#2464](https://github.com/GetStream/stream-chat-swift/pull/2464)
-- Fix ephemeral message appearing in channel preview [#2464](https://github.com/GetStream/stream-chat-swift/pull/2464)
 
 # [4.28.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.28.0)
 _February 28, 2023_
