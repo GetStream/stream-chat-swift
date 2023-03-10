@@ -5,7 +5,7 @@
 import UIKit
 
 /// A component responsible to handle when to load new pages in a scrollView.
-class ScrollViewPaginationHandler: ViewPaginationHandling {
+final class ScrollViewPaginationHandler: ViewPaginationHandling {
     private weak var scrollView: UIScrollView?
     private var observation: NSKeyValueObservation?
     private var previousPosition: CGFloat = 0.0

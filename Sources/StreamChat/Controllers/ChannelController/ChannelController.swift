@@ -484,7 +484,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         )
     }
 
-    /// Load messages around the given message id. Useful to jump to a message which is not loaded yet.
+    /// Load messages around the given message id. Useful to jump to a message which hasn't been loaded yet.
     ///
     /// Cleans the current messages of the channel and loads the message with the given id,
     /// and the messages around it depending on the limit provided.

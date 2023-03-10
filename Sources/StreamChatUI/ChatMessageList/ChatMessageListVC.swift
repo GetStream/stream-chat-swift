@@ -81,7 +81,7 @@ open class ChatMessageListVC: _ViewController,
     open var isScrollToBottomButtonVisible: Bool {
         let isMoreContentThanOnePage = listView.contentSize.height > listView.bounds.height
 
-        return !listView.isLastCellFullyVisible && isMoreContentThanOnePage || dataSource?.isFirstPageLoaded == false
+        return (!listView.isLastCellFullyVisible && isMoreContentThanOnePage) || dataSource?.isFirstPageLoaded == false
     }
 
     /// A formatter that converts the message date to textual representation.

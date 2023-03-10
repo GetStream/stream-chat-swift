@@ -5,7 +5,7 @@
 import UIKit
 
 /// For inverted scroll views, we switch the top with the bottom and vice-versa.
-class InvertedScrollViewPaginationHandler: ViewPaginationHandling {
+final class InvertedScrollViewPaginationHandler: ViewPaginationHandling {
     private let scrollViewPaginationHandler: ScrollViewPaginationHandler
 
     var topThreshold: Int {
