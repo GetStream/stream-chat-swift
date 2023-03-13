@@ -407,6 +407,11 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         }
 
         guard !hasLoadedAllPreviousMessages && !isLoadingPreviousMessages else {
+            log.debug("""
+                Skipped loading more previous messages.
+                    - hasLoadedAllPreviousMessages:\(hasLoadedAllPreviousMessages)
+                    - isLoadingPreviousMessages: \(isLoadingPreviousMessages)
+            """)
             return
         }
 
@@ -457,6 +462,11 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         }
 
         guard !hasLoadedAllNextMessages && !isLoadingNextMessages else {
+            log.debug("""
+                Skipped loading more next messages.
+                    - hasLoadedAllNextMessages:\(hasLoadedAllNextMessages)
+                    - isLoadingNextMessages: \(isLoadingNextMessages)
+            """)
             return
         }
 
@@ -502,6 +512,10 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         }
 
         guard !isLoadingMiddleMessages else {
+            log.debug("""
+                Skipped loading middle messages.
+                    - isLoadingMiddleMessages: \(isLoadingMiddleMessages)
+            """)
             return
         }
 
