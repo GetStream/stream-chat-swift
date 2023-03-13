@@ -471,12 +471,14 @@ open class ChatMessageListVC: _ViewController,
 
     /// Highlight the background of the message cell when jumping to a message.
     open func highlightCellBackground(for indexPath: IndexPath) {
-        let cell = listView.cellForRow(at: indexPath)
-        let previousBackgroundColor = cell?.backgroundColor
+        guard let cell = listView.cellForRow(at: indexPath) as? ChatMessageCell else {
+            return
+        }
+        let previousBackgroundColor = cell.messageContentView?.backgroundColor
         let highlightColor = appearance.colorPalette.messageCellHighlightBackground
-        cell?.backgroundColor = highlightColor
+        cell.messageContentView?.backgroundColor = highlightColor
         UIView.animate(withDuration: 0.2, delay: 0.6) {
-            cell?.backgroundColor = previousBackgroundColor
+            cell.messageContentView?.backgroundColor = previousBackgroundColor
         }
     }
 
