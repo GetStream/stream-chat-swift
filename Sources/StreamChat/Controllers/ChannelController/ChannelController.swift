@@ -423,7 +423,10 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             channelQuery: channelQuery,
             isInRecoveryMode: false,
             completion: { result in
-                self.isLoadingPreviousMessages = false
+                self.callback {
+                    self.isLoadingPreviousMessages = false
+                }
+                
                 switch result {
                 case let .success(payload):
                     self.updateOldestFetchedMessageId(with: payload)
@@ -478,7 +481,10 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             channelQuery: channelQuery,
             isInRecoveryMode: false,
             completion: { result in
-                self.isLoadingNextMessages = false
+                self.callback {
+                    self.isLoadingNextMessages = false
+                }
+
                 switch result {
                 case let .success(payload):
                     self.updateNewestFetchedMessageId(with: payload)
@@ -528,7 +534,10 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             channelQuery: channelQuery,
             isInRecoveryMode: false,
             completion: { result in
-                self.isLoadingMiddleMessages = false
+                self.callback {
+                    self.isLoadingMiddleMessages = false
+                }
+
                 switch result {
                 case let .success(payload):
                     self.updateNewestFetchedMessageId(with: payload)
