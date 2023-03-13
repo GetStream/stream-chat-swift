@@ -88,14 +88,6 @@ open class ChatChannelVC: _ViewController,
 
         eventsController.delegate = self
 
-        let notificationCenter = NotificationCenter.default
-        notificationCenter.addObserver(
-            self,
-            selector: #selector(appMovedToForeground),
-            name: UIApplication.willEnterForegroundNotification,
-            object: nil
-        )
-
         messageListVC.delegate = self
         messageListVC.dataSource = self
         messageListVC.client = client
@@ -374,14 +366,5 @@ open class ChatChannelVC: _ViewController,
                 channelController.loadFirstPage()
             }
         }
-    }
-
-    // MARK: - Moving to foreground
-
-    // When app becomes active, and channel is open, recreate the database observers and reload
-    // the data source so that any missed database updates from the NotificationService are refreshed.
-    @objc func appMovedToForeground() {
-        channelController.delegate = self
-        messageListVC.dataSource = self
     }
 }
