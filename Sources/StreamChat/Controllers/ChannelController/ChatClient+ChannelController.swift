@@ -33,7 +33,7 @@ public extension ChatClient {
     ///
     /// - Parameters:
     ///   - channelQuery: The ChannelQuery this controller represents
-    ///   - channelListQuery: The channel list query the channel this controller represents is part of.
+    ///   - channelListQuery: The channel list query this controller is part of.
     ///   - messageOrdering: Describes the ordering the messages are presented.
     ///
     /// - Returns: A new instance of `ChatChannelController`.
