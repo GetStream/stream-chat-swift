@@ -1186,6 +1186,10 @@
 		ADE40043291B1A510000C98B /* AttachmentUploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADE40042291B1A510000C98B /* AttachmentUploader.swift */; };
 		ADE40044291B1A510000C98B /* AttachmentUploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADE40042291B1A510000C98B /* AttachmentUploader.swift */; };
 		ADE88A142949453200C0F084 /* ChatMessageListRouter_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADE88A132949453200C0F084 /* ChatMessageListRouter_Mock.swift */; };
+		ADEE651829BF712D00186129 /* ChatMessageListView_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADEE651429BF711200186129 /* ChatMessageListView_Mock.swift */; };
+		ADEE651929BF713200186129 /* ChatMessageCell_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADEE651629BF712500186129 /* ChatMessageCell_Mock.swift */; };
+		ADEE651E29BF715600186129 /* ChatMessageListVCDelegate_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADEE651C29BF715300186129 /* ChatMessageListVCDelegate_Mock.swift */; };
+		ADEE652029BF720900186129 /* ChatMessageListVCDataSource_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADEE651A29BF714300186129 /* ChatMessageListVCDataSource_Mock.swift */; };
 		ADEE888D289C3CC0007DF3F8 /* ChatMessageListView+DiffKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADEE888C289C3CC0007DF3F8 /* ChatMessageListView+DiffKit.swift */; };
 		ADEE888E289C3CC0007DF3F8 /* ChatMessageListView+DiffKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADEE888C289C3CC0007DF3F8 /* ChatMessageListView+DiffKit.swift */; };
 		ADEED08127F202C100A42B52 /* yoda_with_long_file_name.txt in Resources */ = {isa = PBXBuildFile; fileRef = ADEED08027F202C100A42B52 /* yoda_with_long_file_name.txt */; };
@@ -3419,6 +3423,10 @@
 		ADE88A132949453200C0F084 /* ChatMessageListRouter_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageListRouter_Mock.swift; sourceTree = "<group>"; };
 		ADEA7F21261D2F8C00CA2289 /* chewbacca.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = chewbacca.jpg; sourceTree = "<group>"; };
 		ADEA7F22261D2F8C00CA2289 /* r2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = r2.jpg; sourceTree = "<group>"; };
+		ADEE651429BF711200186129 /* ChatMessageListView_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageListView_Mock.swift; sourceTree = "<group>"; };
+		ADEE651629BF712500186129 /* ChatMessageCell_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageCell_Mock.swift; sourceTree = "<group>"; };
+		ADEE651A29BF714300186129 /* ChatMessageListVCDataSource_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageListVCDataSource_Mock.swift; sourceTree = "<group>"; };
+		ADEE651C29BF715300186129 /* ChatMessageListVCDelegate_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageListVCDelegate_Mock.swift; sourceTree = "<group>"; };
 		ADEE888C289C3CC0007DF3F8 /* ChatMessageListView+DiffKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatMessageListView+DiffKit.swift"; sourceTree = "<group>"; };
 		ADEED08027F202C100A42B52 /* yoda_with_long_file_name.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = yoda_with_long_file_name.txt; sourceTree = "<group>"; };
 		ADF34F6A25CD6A1D00AD637C /* ConnectionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionController.swift; sourceTree = "<group>"; };
@@ -6817,6 +6825,7 @@
 			children = (
 				ACABFF8226D6587E0018F3DC /* Components_Mock.swift */,
 				ACABFF8426D658B70018F3DC /* ImageLoader_Mock.swift */,
+				ADEE651329BF70F800186129 /* ChatMessageList */,
 				A3960E0627DA576C003AB2B0 /* Navigation */,
 				A3960E0727DA577E003AB2B0 /* Utils */,
 			);
@@ -7302,6 +7311,17 @@
 				226C438C25802AAD008B3648 /* InputTextView.swift */,
 			);
 			path = InputTextView;
+			sourceTree = "<group>";
+		};
+		ADEE651329BF70F800186129 /* ChatMessageList */ = {
+			isa = PBXGroup;
+			children = (
+				ADEE651429BF711200186129 /* ChatMessageListView_Mock.swift */,
+				ADEE651629BF712500186129 /* ChatMessageCell_Mock.swift */,
+				ADEE651A29BF714300186129 /* ChatMessageListVCDataSource_Mock.swift */,
+				ADEE651C29BF715300186129 /* ChatMessageListVCDelegate_Mock.swift */,
+			);
+			path = ChatMessageList;
 			sourceTree = "<group>";
 		};
 		ADF34F6925CD6A0100AD637C /* ConnectionController */ = {
@@ -9136,6 +9156,7 @@
 				8803E9F026399333002B2A7B /* ChatMessageContentView_Tests.swift in Sources */,
 				849AE668270CB65F00423A20 /* VideoAttachmentGalleryPreview_Tests.swift in Sources */,
 				64ECF6BC2672272D008B9D47 /* ChatThreadVC+SwiftUI_Tests.swift in Sources */,
+				ADEE651E29BF715600186129 /* ChatMessageListVCDelegate_Mock.swift in Sources */,
 				AD050BA8265D600B006649A5 /* QuotedChatMessageView+SwiftUI_Tests.swift in Sources */,
 				A3D9D69627EDE87900725066 /* Components_Mock.swift in Sources */,
 				AD25070D272C0C8D00BC14C4 /* ChatMessageReactionAuthorsVC_Tests.swift in Sources */,
@@ -9151,6 +9172,7 @@
 				79B4F0E625D305D40063FFB5 /* CurrentChatUserAvatarView_Tests.swift in Sources */,
 				AD016A1425CAFAF2009EBAD2 /* ChatChannelListVC_Tests.swift in Sources */,
 				E7D68C4D26B1AAB500FCF3B8 /* Localization_Tests.swift in Sources */,
+				ADEE651829BF712D00186129 /* ChatMessageListView_Mock.swift in Sources */,
 				7849AE7C25F22FA8007817D4 /* ChatChannelListVC+SwiftUI_Tests.swift in Sources */,
 				E73BD9EC264D9B2900E208B7 /* ChatFileAttachmentListView+ItemView_Tests.swift in Sources */,
 				F87A4A5A26146DAC001653A8 /* ChatMessageActionControl_Tests.swift in Sources */,
@@ -9165,12 +9187,14 @@
 				ADD2A99828FF227D00A83305 /* ImageSizeCalculator_Tests.swift in Sources */,
 				C1320E0A276B2E0F00A06B35 /* Array+SafeSubscript_Tests.swift in Sources */,
 				F86615D9264940A80026814A /* ChatMessageGalleryView_Tests.swift in Sources */,
+				ADEE651929BF713200186129 /* ChatMessageCell_Mock.swift in Sources */,
 				A3D9D69827EDE88300725066 /* ChatChannelListRouter_Mock.swift in Sources */,
 				CFE5F8602874F8BE0099A6A1 /* ChatChannelListEmptyView_Tests.swift in Sources */,
 				AD7BBFD02901B1B7004E8B76 /* ImageResultsMapper_Tests.swift in Sources */,
 				8893FF16265FC60B00DD62BE /* ChatMessageErrorIndicator_Tests.swift in Sources */,
 				E76B2F0425F23EE200E57112 /* CustomUIViewSubclasses.swift in Sources */,
 				F8700108264D144400898FDF /* ChatMessageLinkPreviewView_Tests.swift in Sources */,
+				ADEE652029BF720900186129 /* ChatMessageListVCDataSource_Mock.swift in Sources */,
 				AD4CDD862964991A0057BC8A /* InvertedScrollViewPaginationHandler_Tests.swift in Sources */,
 				795296C12582494000435B2E /* ComponentsProvider_Tests.swift in Sources */,
 				225503B825DC59FD00A5A65A /* UIView+Helpers.swift in Sources */,
