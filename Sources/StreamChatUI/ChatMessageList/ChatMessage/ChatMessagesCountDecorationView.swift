@@ -6,7 +6,7 @@ import StreamChat
 import UIKit
 
 /// The view used to show a separator when there are unread messages.
-open class ChatUnreadMessagesCountDecorationView: ChatMessageDecorationView, AppearanceProvider {
+open class ChatMessagesCountDecorationView: ChatMessageDecorationView, AppearanceProvider {
     /// The date in string format.
     open var content: String? {
         didSet { updateContentIfNeeded() }
@@ -15,7 +15,7 @@ open class ChatUnreadMessagesCountDecorationView: ChatMessageDecorationView, App
     /// The container that the contentTextLabel will be placed aligned to its centre.
     open private(set) lazy var container: UIView = UIView()
         .withoutAutoresizingMaskConstraints
-        .withAccessibilityIdentifier(identifier: "unreadMessagesDecorationContainer")
+        .withAccessibilityIdentifier(identifier: "messagesCountDecorationView")
 
     /// The text label that renders the date string.
     open private(set) lazy var textLabel: UILabel = UILabel()
@@ -28,7 +28,7 @@ open class ChatUnreadMessagesCountDecorationView: ChatMessageDecorationView, App
         super.setUpLayout()
 
         embed(container, insets: .init(top: 0, leading: 0, bottom: 8, trailing: 0))
-        container.embed(textLabel, insets: .init(top: 3, leading: 9, bottom: 3, trailing: 9))
+        container.giembed(textLabel, insets: .init(top: 3, leading: 9, bottom: 3, trailing: 9))
     }
 
     override open func setUpAppearance() {

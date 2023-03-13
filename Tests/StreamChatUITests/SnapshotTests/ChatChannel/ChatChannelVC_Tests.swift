@@ -768,7 +768,7 @@ final class ChatChannelVC_Tests: XCTestCase {
         let separatorView = try XCTUnwrap(headerDecorationView as? StackViewDecoratorView)
         XCTAssertEqual(separatorView.content.count, 2)
         let dateSeparatorView = try XCTUnwrap(separatorView.content.first as? ChatMessageListDateSeparatorView)
-        let unreadMessagesSeparator = try XCTUnwrap(separatorView.content.last as? ChatUnreadMessagesCountDecorationView)
+        let unreadMessagesSeparator = try XCTUnwrap(separatorView.content.last as? ChatMessagesCountDecorationView)
         XCTAssertEqual(dateSeparatorView.content, "Jan 01")
         XCTAssertEqual(unreadMessagesSeparator.content, "1 UNREAD MESSAGE")
 
