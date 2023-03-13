@@ -201,13 +201,34 @@ public class ParticipantRobot {
         )
         return self
     }
-
+    
     @discardableResult
-    public func replyToMessage(_ text: String) -> Self {
+    public func replyToMessage(_ text: String, withAttachment: Bool, toLastMessage: Bool = true) -> Self {
         startTyping()
         stopTyping()
 
-        let quotedMessage = server.lastMessage
+        let quotedMessage = toLastMessage ? server.lastMessage : server.firstMessage
+        let quotedMessageId = quotedMessage?[messageKey.id.rawValue] as? String
+        server.websocketMessage(
+            text,
+            channelId: server.currentChannelId,
+            messageId: TestData.uniqueId,
+            eventType: .messageNew,
+            user: participant()
+        ) { message in
+            message?[messageKey.quotedMessageId.rawValue] = quotedMessageId
+            message?[messageKey.quotedMessage.rawValue] = quotedMessage
+            return message
+        }
+        return self
+    }
+
+    @discardableResult
+    public func replyToMessage(_ text: String, toLastMessage: Bool = true) -> Self {
+        startTyping()
+        stopTyping()
+
+        let quotedMessage = toLastMessage ? server.lastMessage : server.firstMessage
         let quotedMessageId = quotedMessage?[messageKey.id.rawValue] as? String
         server.websocketMessage(
             text,
@@ -268,11 +289,11 @@ public class ParticipantRobot {
     }
 
     @discardableResult
-    public func replyWithGiphy() -> Self {
+    public func replyWithGiphy(toLastMessage: Bool = true) -> Self {
         startTyping()
         stopTyping()
-
-        let quotedMessage = server.lastMessage
+        
+        let quotedMessage = toLastMessage ? server.lastMessage : server.firstMessage
         let quotedMessageId = quotedMessage?[messageKey.id.rawValue] as? String
         server.websocketMessage(
             channelId: server.currentChannelId,
@@ -320,6 +341,8 @@ public class ParticipantRobot {
     @discardableResult
     public func uploadAttachment(type: AttachmentType,
                                  count: Int = 1,
+                                 asReplyToFirstMessage: Bool = false,
+                                 asReplyToLastMessage: Bool = false,
                                  waitForAppearance: Bool = true,
                                  waitForChannelQuery: Bool = true,
                                  waitBeforeSending: TimeInterval = 0,
@@ -365,7 +388,14 @@ public class ParticipantRobot {
                 file[AttachmentCodingKeys.title.rawValue] = "\(type.rawValue)_\(i)"
                 attachments.append(file)
             }
-
+            
+            if asReplyToFirstMessage || asReplyToLastMessage {
+                let quotedMessage = asReplyToLastMessage ? self.server.lastMessage : self.server.firstMessage
+                let quotedMessageId = quotedMessage?[messageKey.id.rawValue] as? String
+                message?[messageKey.quotedMessageId.rawValue] = quotedMessageId
+                message?[messageKey.quotedMessage.rawValue] = quotedMessage
+            }
+            
             message?[messageKey.attachments.rawValue] = attachments
             return message
         }

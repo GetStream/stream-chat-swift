@@ -317,7 +317,9 @@ final class MessageList_Tests: StreamTestCase {
             userRobot.tapOnScrollToBottomButton()
         }
         THEN("message list is scrolled down") {
-            userRobot.assertMessageIsVisible(newMessage)
+            userRobot
+                .assertMessageIsVisible(newMessage)
+                .assertScrollToBottomButton(isVisible: false)
         }
     }
 
@@ -341,7 +343,9 @@ final class MessageList_Tests: StreamTestCase {
             userRobot.tapOnScrollToBottomButton()
         }
         THEN("skipped messages are reloaded") {
-            userRobot.assertMessageIsVisible("Some message-16")
+            userRobot
+                .assertMessageIsVisible("Some message-16")
+                .assertScrollToBottomButton(isVisible: false)
         }
     }
 
@@ -449,60 +453,18 @@ final class MessageList_Tests: StreamTestCase {
         }
     }
 }
-
-// MARK: Quoted messages
-
+    
+// MARK: Pagination
+    
 extension MessageList_Tests {
-
-    func test_quotedReplyInList_whenUserAddsQuotedReply() {
-        linkToScenario(withId: 51)
-
-        let messageCount = 1
-        let message = String(messageCount)
-        let quotedMessage = "quoted reply"
-
-        GIVEN("user opens the channel") {
-            backendRobot.generateChannels(count: 1, messagesCount: messageCount)
-            userRobot.login().openChannel()
-        }
-        AND("participant sends a message") {
-            participantRobot.sendMessage(message)
-        }
-        WHEN("user adds a quoted reply to participant message") {
-            userRobot.replyToMessage(quotedMessage)
-        }
-        THEN("user observes the reply in message list") {
-            userRobot.assertQuotedMessage(replyText: quotedMessage, quotedText: message)
-        }
-    }
-
-    func test_quotedReplyInList_whenParticipantAddsQuotedReply() {
-        linkToScenario(withId: 52)
-
-        let messageCount = 1
-        let message = String(messageCount)
-        let quotedMessage = "quoted reply"
-
-        GIVEN("user opens the channel") {
-            backendRobot.generateChannels(count: 1, messagesCount: messageCount)
-            userRobot.login().openChannel()
-        }
-        WHEN("participant adds a quoted reply to users message") {
-            participantRobot.replyToMessage(quotedMessage)
-        }
-        THEN("user observes the reply in message list") {
-            userRobot.assertQuotedMessage(replyText: quotedMessage, quotedText: message)
-        }
-    }
-
     func test_paginationOnMessageList() throws {
         linkToScenario(withId: 56)
-
+        
         try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12,
                       "[CIS-2020] Scroll on message list does not work well enough")
-
+        
         let messagesCount = 60
-
+        
         WHEN("user opens the channel") {
             backendRobot.generateChannels(count: 1, messagesCount: messagesCount)
             userRobot.login().openChannel()
@@ -511,15 +473,15 @@ extension MessageList_Tests {
             userRobot.assertMessageListPagination(messagesCount: messagesCount)
         }
     }
-
+    
     func test_paginationOnThread() throws {
         linkToScenario(withId: 55)
-
+        
         try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12,
                       "[CIS-2020] Scroll on message list does not work well enough")
-
+        
         let replyCount = 60
-
+        
         GIVEN("user opens the channel") {
             backendRobot.generateChannels(count: 1, messagesCount: 1, replyCount: replyCount)
             userRobot.login().openChannel()
@@ -531,10 +493,15 @@ extension MessageList_Tests {
             userRobot.assertMessageListPagination(messagesCount: replyCount + 1)
         }
     }
+}
 
+// MARK: Mentions
+
+extension MessageList_Tests {
+    
     func test_addingCommandHidesLeftButtons() {
         linkToScenario(withId: 104)
-
+        
         GIVEN("user opens the channel") {
             userRobot.login().openChannel()
         }
@@ -551,10 +518,10 @@ extension MessageList_Tests {
             userRobot.assertComposerLeftButtons(shouldBeVisible: true)
         }
     }
-
+    
     func test_mentionsView() {
         linkToScenario(withId: 61)
-
+        
         GIVEN("user opens the channel") {
             userRobot.login().openChannel()
         }
@@ -571,10 +538,10 @@ extension MessageList_Tests {
             userRobot.assertComposerMentions(shouldBeVisible: false)
         }
     }
-
+    
     func test_userFillsTheComposerMentioningParticipantThroughMentionsView() {
         linkToScenario(withId: 62)
-
+        
         GIVEN("user opens the channel") {
             userRobot.login().openChannel()
         }
@@ -585,6 +552,12 @@ extension MessageList_Tests {
             userRobot.assertMentionWasApplied()
         }
     }
+}
+    
+    
+// MARK: Links preview
+
+extension MessageList_Tests {
 
     func test_addMessageWithLinkToUnsplash() {
         linkToScenario(withId: 59)
@@ -864,46 +837,6 @@ extension MessageList_Tests {
             participantRobot.deleteMessage()
         }
         THEN("the message is deleted") {
-            userRobot.assertDeletedMessage()
-        }
-    }
-
-    func test_quotedReplyIsDeletedByParticipant_deletedMessageIsShown() {
-        linkToScenario(withId: 108)
-
-        let quotedMessage = "quoted reply"
-
-        GIVEN("user opens the channel") {
-            backendRobot.generateChannels(count: 1, messagesCount: 1)
-            userRobot.login().openChannel()
-        }
-        AND("participant adds a quoted reply") {
-            participantRobot.replyToMessage(quotedMessage)
-        }
-        WHEN("participant deletes a quoted message") {
-            participantRobot.deleteMessage()
-        }
-        THEN("user observes Message deleted") {
-            userRobot.assertDeletedMessage()
-        }
-    }
-
-    func test_quotedReplyIsDeletedByUser_deletedMessageIsShown() {
-        linkToScenario(withId: 109)
-
-        let quotedMessage = "quoted reply"
-
-        GIVEN("user opens the channel") {
-            backendRobot.generateChannels(count: 1, messagesCount: 1)
-            userRobot.login().openChannel()
-        }
-        AND("user adds a quoted reply") {
-            userRobot.replyToMessage(quotedMessage)
-        }
-        WHEN("user deletes a quoted message") {
-            userRobot.deleteMessage()
-        }
-        THEN("deleted message is shown") {
             userRobot.assertDeletedMessage()
         }
     }

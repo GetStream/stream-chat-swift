@@ -248,10 +248,10 @@ extension ChannelList_Tests {
             userRobot.truncateChannel(withMessage: true)
         }
         THEN("user observes only the system message") {
-            userRobot.assertMessage(message)
-        }
-        AND("previous messages are no longer visible") {
-            userRobot.assertMessageCount(1)
+            userRobot
+                .assertMessage(message)
+                .assertMessageCount(1)
+                .assertScrollToBottomButton(isVisible: false)
         }
         WHEN("user goes to channel list") {
             userRobot.tapOnBackButton()

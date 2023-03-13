@@ -367,6 +367,21 @@ extension UserRobot {
         XCTAssertEqual(author, actualAuthor, file: file, line: line)
         return self
     }
+    @discardableResult
+    func assertScrollToBottomButton(
+        isVisible: Bool,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        var btn = MessageListPage.scrollToBottomButton
+        btn = isVisible ? btn.wait() : btn.waitForDisappearance()
+        XCTAssertEqual(isVisible,
+                       btn.exists,
+                       "Scroll to bottom button should be \(isVisible ? "visible" : "hidden")",
+                       file: file,
+                       line: line)
+        return self
+    }
 
     @discardableResult
     func assertTypingIndicatorShown(
@@ -629,6 +644,20 @@ extension UserRobot {
         line: UInt = #line
     ) -> Self {
         assertQuotedMessage(replyText, file: file, line: line)
+        let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
+        let quotedMessage = attributes.quotedText(quotedText, in: messageCell).wait()
+        XCTAssertTrue(quotedMessage.exists, "Quoted message was not showed", file: file, line: line)
+        XCTAssertFalse(quotedMessage.isEnabled, "Quoted message should be disabled", file: file, line: line)
+        return self
+    }
+    
+    @discardableResult
+    func assertQuotedMessageWithAttachment(
+        quotedText: String,
+        at messageCellIndex: Int? = nil,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
         let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
         let quotedMessage = attributes.quotedText(quotedText, in: messageCell).wait()
         XCTAssertTrue(quotedMessage.exists, "Quoted message was not showed", file: file, line: line)
