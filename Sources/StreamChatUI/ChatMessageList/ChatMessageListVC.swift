@@ -810,7 +810,7 @@ private extension ChatMessageListVC {
         if let message = messagePendingScrolling,
            let indexPath = getIndexPath(forMessageId: message.id) {
             listView.scrollToRow(at: indexPath, at: .middle, animated: true)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                 self.highlightCellBackground(for: indexPath)
             }
             messagePendingScrolling = nil
