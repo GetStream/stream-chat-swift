@@ -2469,7 +2469,6 @@ final class ChannelController_Tests: XCTestCase {
                 with: .unique,
                 messages: expectedMessages
             )))
-        XCTAssertEqual(controller.isLoadingMiddleMessages, false)
 
         // Assert correct `MessagesPagination` is created
         let pagination = env!.channelUpdater?.update_channelQuery?.pagination
@@ -2487,6 +2486,7 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(controller.lastNewestMessageId, expectedMessages.last?.id)
 
         AssertAsync.willBeTrue(completionCalled)
+        XCTAssertEqual(controller.isLoadingMiddleMessages, false)
 
         // Should not leak memory
         weak var weakController = controller
