@@ -8,14 +8,14 @@
 import XCTest
 
 final class ChatMessageListVC_Tests: XCTestCase {
-    var sut: ChatMessageListVC!
-    var config: ChatClientConfig!
-    var mockedListView: ChatMessageListView_Mock {
+    private var sut: ChatMessageListVC!
+    private var config: ChatClientConfig!
+    private var mockedListView: ChatMessageListView_Mock {
         sut.listView as! ChatMessageListView_Mock
     }
 
-    var mockedDataSource: ChatMessageListVCDataSource_Mock!
-    var mockedDelegate: ChatMessageListVCDelegate_Mock!
+    private var mockedDataSource: ChatMessageListVCDataSource_Mock!
+    private var mockedDelegate: ChatMessageListVCDelegate_Mock!
 
     override func setUp() {
         super.setUp()
@@ -42,7 +42,7 @@ final class ChatMessageListVC_Tests: XCTestCase {
         super.tearDown()
     }
 
-    func test_setUp_propagatesDeletedMessagesVisabilityToResolver() {
+    func test_setUp_propagatesDeletedMessagesVisibilityToResolver() {
         // GIVEN
         var config = ChatClientConfig(apiKey: .init(.unique))
         config.deletedMessagesVisibility = .alwaysHidden
@@ -686,5 +686,50 @@ final class ChatMessageListVC_Tests: XCTestCase {
 
         XCTAssertNotNil(cell.headerContainerView.superview)
         XCTAssertNotNil(cell.headerContainerView.subviews.first as? ChatMessageListDateSeparatorView)
+    }
+}
+
+extension ChatMessageListVC_Tests {
+    private class MockAudioPlayer: AudioPlaying {
+        private(set) var loadAssetWasCalledWith: (url: URL?, delegate: AudioPlayingDelegate)?
+        private(set) var playWasCalled = false
+        private(set) var pauseWasCalled = false
+        private(set) var stopWasCalled = false
+        private(set) var updateRateWasCalled = false
+        private(set) var seekToWasCalledWithTime: TimeInterval?
+
+        var stubbedPlaybackContextResult = AudioPlaybackContext.notLoaded
+
+        static func build() -> StreamChatUI.AudioPlaying {
+            MockAudioPlayer()
+        }
+
+        func playbackContext(for url: URL) -> AudioPlaybackContext { stubbedPlaybackContextResult }
+        func loadAsset(
+            from url: URL?,
+            delegate: StreamChatUI.AudioPlayingDelegate
+        ) {
+            loadAssetWasCalledWith = (url, delegate)
+        }
+
+        func play() {
+            playWasCalled = true
+        }
+
+        func pause() {
+            pauseWasCalled = true
+        }
+
+        func stop() {
+            stopWasCalled = true
+        }
+
+        func updateRate() {
+            updateRateWasCalled = true
+        }
+
+        func seek(to time: TimeInterval) {
+            seekToWasCalledWithTime = time
+        }
     }
 }
