@@ -5,13 +5,15 @@
 import UIKit
 
 /// The decorator view that is used to stack multiple decorators.
-final class StackViewDecoratorView: ChatMessageDecorationView {
+/// This is used when trying to (re)use multiple `ChatMessageDecorationView` in a footer/header, as only one resulting
+/// container can be set.
+public final class StackViewDecoratorView: ChatMessageDecorationView {
     /// The container for the stacked views.
-    private(set) lazy var container = UIStackView()
+    public private(set) lazy var container = UIStackView()
         .withoutAutoresizingMaskConstraints
         .withAccessibilityIdentifier(identifier: "stackViewDecoratorContainer")
 
-    var content: [ChatMessageDecorationView] = []
+    public var content: [ChatMessageDecorationView] = []
 
     override public func setUpLayout() {
         super.setUpLayout()

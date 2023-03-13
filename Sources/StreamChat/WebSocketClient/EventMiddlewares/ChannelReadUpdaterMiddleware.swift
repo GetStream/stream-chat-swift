@@ -46,7 +46,7 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
                 userId: event.user.id,
                 from: event.firstUnreadMessageId,
                 lastReadAt: event.lastReadAt,
-                unreadMessages: event.unreadMessages,
+                unreadMessages: event.unreadMessagesCount,
                 session: session
             )
 

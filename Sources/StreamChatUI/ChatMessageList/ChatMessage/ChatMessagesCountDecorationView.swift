@@ -28,7 +28,7 @@ open class ChatMessagesCountDecorationView: ChatMessageDecorationView, Appearanc
         super.setUpLayout()
 
         embed(container, insets: .init(top: 0, leading: 0, bottom: 8, trailing: 0))
-        container.giembed(textLabel, insets: .init(top: 3, leading: 9, bottom: 3, trailing: 9))
+        container.embed(textLabel, insets: .init(top: 3, leading: 9, bottom: 3, trailing: 9))
     }
 
     override open func setUpAppearance() {

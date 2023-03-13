@@ -61,7 +61,7 @@ final class NotificationsEvents_Tests: XCTestCase {
         XCTAssertEqual(event?.user.id, "luke_skywalker")
         XCTAssertEqual(event?.firstUnreadMessageId, "leia_organa-1f9b7fe0-989f-4fa6-87e8-9c9e788fb2c3")
         XCTAssertEqual(event?.lastReadAt.description, "2023-03-08 10:00:26 +0000")
-        XCTAssertEqual(event?.unreadMessages, 19)
+        XCTAssertEqual(event?.unreadMessagesCount, 19)
     }
 
     func test_channelSomeMutedChannels() throws {
@@ -225,7 +225,7 @@ final class NotificationsEvents_Tests: XCTestCase {
             createdAt: .unique,
             firstUnreadMessageId: "Hello",
             lastReadAt: lastReadAt,
-            unreadMessages: 6
+            unreadMessagesCount: 6
         )
 
         // Create event DTO
@@ -244,7 +244,7 @@ final class NotificationsEvents_Tests: XCTestCase {
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
         XCTAssertEqual(event.firstUnreadMessageId, event.firstUnreadMessageId)
         XCTAssertEqual(event.lastReadAt, eventPayload.lastReadAt)
-        XCTAssertEqual(event.unreadMessages, eventPayload.unreadMessages)
+        XCTAssertEqual(event.unreadMessagesCount, eventPayload.unreadMessagesCount)
     }
 
     func test_notificationMutesUpdatedEventDTO_toDomainEvent() throws {
