@@ -14,7 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🔄 Changed
 - Deprecated `setScrollToLatestMessageButton(visible:animated:)` -> `updateScrollToBottomButtonVisibility(animated:)`
 - Replaces `messageContentViewDidTapOnQuotedMessage(_ indexPath: IndexPath?)` -> `messageContentViewDidTapOnQuotedMessage(_ quotedMessage: ChatMessage)`
-    - This one is a breaking change, but a required one. The previous API was misleading, and it was not actually working.
+    - This one is a breaking change, but a required one. The previous API was not working as intended.
 ### ✅ Added
 - Now you can easily configure your own Decorations(headers and/or footers) around messages [#2507](https://github.com/GetStream/stream-chat-swift/pull/2507)
 - There is a new `ChatThreadRepliesCountDecorationView` component that should be used to display the number of replies in a thread. Read [here](https://getstream.io/chat/docs/sdk/ios/uikit/components/message/#thread-replies-counter) for more details.
