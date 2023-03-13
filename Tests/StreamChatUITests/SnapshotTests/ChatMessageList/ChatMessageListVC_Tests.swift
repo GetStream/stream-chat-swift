@@ -389,6 +389,21 @@ final class ChatMessageListVC_Tests: XCTestCase {
         XCTAssertEqual(mockedListView.scrollToMostRecentMessageCallCount, 1)
     }
 
+    func test_updateMessages_whenNewestMessageInsertedByCurrentUser_whenChangesMoreThan1_shouldNotScrollToMostRecentMessage() {
+        // When changes are more than 1, it means it loading next messages,
+        // and it should not scroll to most recent message.
+        mockedDataSource.mockedIsFirstPageLoaded = true
+        mockedListView.mockIsLastCellFullyVisible = true
+
+        sut.updateMessages(with: [
+            .insert(.mock(isSentByCurrentUser: true), index: .init(item: 0, section: 0)),
+            .insert(.mock(isSentByCurrentUser: true), index: .init(item: 1, section: 0))
+        ])
+        mockedListView.updateMessagesCompletion?()
+
+        XCTAssertEqual(mockedListView.scrollToMostRecentMessageCallCount, 0)
+    }
+
     func test_updateMessages_whenNewestMessageMovedByCurrentUser_shouldScrollToMostRecentMessage() {
         mockedDataSource.mockedIsFirstPageLoaded = true
         mockedListView.mockIsLastCellFullyVisible = true

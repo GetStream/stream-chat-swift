@@ -786,7 +786,7 @@ private extension ChatMessageListVC {
             self?.updateScrollToBottomButtonVisibility()
 
             UIView.performWithoutAnimation {
-                self?.scrollToMostRecentMessageIfNeeded(newestChange: newestChange)
+                self?.scrollToMostRecentMessageIfNeeded(with: changes, newestChange: newestChange)
                 self?.reloadMovedMessage(newestChange: newestChange)
                 self?.reloadPreviousMessagesForVisibleRemoves(with: changes)
                 self?.reloadPreviousMessageWhenInsertingNewMessage()
@@ -865,7 +865,8 @@ private extension ChatMessageListVC {
 
     // Scroll to the bottom if the new message was sent by
     // the current user, or moved by the current user, and the first page is loaded.
-    func scrollToMostRecentMessageIfNeeded(newestChange: ListChange<ChatMessage>?) {
+    func scrollToMostRecentMessageIfNeeded(with changes: [ListChange<ChatMessage>], newestChange: ListChange<ChatMessage>?) {
+        guard changes.count <= 1 else { return }
         guard isFirstPageLoaded else { return }
         guard let newMessage = newestChange?.item else { return }
         let newestChangeIsInsertionOrMove = newestChange?.isInsertion == true || newestChange?.isMove == true
