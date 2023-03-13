@@ -97,6 +97,10 @@ open class ChatMessageListVC: _ViewController,
     /// (Used for jumping to a message)
     private(set) var messagePendingScrolling: ChatMessage?
 
+    /// When scrolling to the the pending message, it can take some time for the cell to appear on screen.
+    /// So we need to highlight the message cell only when the scrolling animation ends.
+    private(set) var messageIndexPathPendingHighlight: IndexPath?
+
     /// A boolean value that determines whether date separators should be shown between each message.
     open var isDateSeparatorEnabled: Bool {
         components.messageListDateSeparatorEnabled
@@ -432,8 +436,7 @@ open class ChatMessageListVC: _ViewController,
     /// - Parameter message: The message which the message list should go to.
     public func jumpToMessage(_ message: ChatMessage) {
         if let indexPath = getIndexPath(forMessageId: message.id) {
-            listView.scrollToRow(at: indexPath, at: .middle, animated: true)
-            highlightCellBackground(for: indexPath)
+            highlightMessage(at: indexPath)
             return
         }
 
@@ -448,6 +451,13 @@ open class ChatMessageListVC: _ViewController,
             // we can scroll to it.
             self?.messagePendingScrolling = message
         }
+    }
+
+    /// Scrolls to the message with the given IndexPath and highlights the message.
+    public func highlightMessage(at indexPath: IndexPath) {
+        listView.scrollToRow(at: indexPath, at: .middle, animated: true)
+        highlightCellBackground(for: indexPath)
+        messageIndexPathPendingHighlight = indexPath
     }
 
     /// Jump to the first page of the message list.
@@ -551,6 +561,17 @@ open class ChatMessageListVC: _ViewController,
 
     open func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
         updateScrollToBottomButtonVisibility()
+
+        // It can take some time for highlighted message to appear on screen after scrolling to it.
+        // The only way to check if `scrollToRow` as finished it to wait here on delegate callback.
+        let visibleIndexPaths = listView.indexPathsForVisibleRows ?? []
+        if let messageScrollingIndexPath = messageIndexPathPendingHighlight {
+            guard visibleIndexPaths.contains(messageScrollingIndexPath) else { return }
+            DispatchQueue.main.async {
+                self.highlightCellBackground(for: messageScrollingIndexPath)
+            }
+            messageIndexPathPendingHighlight = nil
+        }
     }
 
     // MARK: - ChatMessageListScrollOverlayDataSource
@@ -809,10 +830,7 @@ private extension ChatMessageListVC {
         // So we check if we have a message waiting to be scrolled to here
         if let message = messagePendingScrolling,
            let indexPath = getIndexPath(forMessageId: message.id) {
-            listView.scrollToRow(at: indexPath, at: .middle, animated: true)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                self.highlightCellBackground(for: indexPath)
-            }
+            highlightMessage(at: indexPath)
             messagePendingScrolling = nil
         }
     }
