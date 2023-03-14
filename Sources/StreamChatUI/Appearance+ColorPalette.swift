@@ -43,6 +43,9 @@ public extension Appearance {
         public var highlightedAccentBackground: UIColor = .streamAccentBlue
         public var highlightedAccentBackground1: UIColor = .streamBlueAlice
 
+        public var messageCellHighlightBackground: UIColor = .streamYellowBackground
+        public var pinnedMessageBackground: UIColor = .streamYellowBackground
+
         // MARK: - Borders and shadows
 
         public var shadow: UIColor = .streamModalShadow
@@ -84,6 +87,7 @@ private extension UIColor {
     static let streamAccentRed = mode(0xff3742, 0xff3742)
     static let streamAccentGreen = mode(0x20e070, 0x20e070)
     static let streamGrayDisabledText = mode(0x72767e, 0x72767e)
+    static let streamYellowBackground = mode(0xfbf4dd, 0x333024)
 
     // Currently we are not using the correct shadow color from figma's color palette. This is to avoid
     // an issue with snapshots inconsistency between Intel vs M1. We can't use shadows with transparency.

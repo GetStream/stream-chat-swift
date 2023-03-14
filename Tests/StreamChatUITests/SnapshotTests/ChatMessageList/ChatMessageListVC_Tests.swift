@@ -8,7 +8,39 @@
 import XCTest
 
 final class ChatMessageListVC_Tests: XCTestCase {
-    // MARK: - setUp
+    var sut: ChatMessageListVC!
+    var config: ChatClientConfig!
+    var mockedListView: ChatMessageListView_Mock {
+        sut.listView as! ChatMessageListView_Mock
+    }
+
+    var mockedDataSource: ChatMessageListVCDataSource_Mock!
+    var mockedDelegate: ChatMessageListVCDelegate_Mock!
+
+    override func setUp() {
+        super.setUp()
+
+        var config = ChatClientConfig(apiKey: .init(.unique))
+        config.deletedMessagesVisibility = .alwaysHidden
+        self.config = config
+
+        sut = ChatMessageListVC()
+        sut.client = ChatClient(config: config)
+        sut.components = .mock
+        sut.components.messageListView = ChatMessageListView_Mock.self
+
+        mockedDataSource = ChatMessageListVCDataSource_Mock()
+        sut.dataSource = mockedDataSource
+
+        mockedDelegate = ChatMessageListVCDelegate_Mock()
+        sut.delegate = mockedDelegate
+    }
+
+    override func tearDown() {
+        mockedDataSource = nil
+        mockedDelegate = nil
+        super.tearDown()
+    }
 
     func test_setUp_propagatesDeletedMessagesVisabilityToResolver() {
         // GIVEN
@@ -33,14 +65,10 @@ final class ChatMessageListVC_Tests: XCTestCase {
 
     // MARK: - scrollViewDidScroll
 
-    func test_scrollViewDidScroll_whenLastCellIsFullyVisible_andSkippedMessagesNotEmpty_thenReloadsSkippedMessages() {
-        let sut = ChatMessageListVC()
-        sut.components = .mock
-        sut.components.messageListView = ChatMessageListView_Mock.self
-
-        let mockedListView = sut.listView as! ChatMessageListView_Mock
+    func test_scrollViewDidScroll_whenLastCellIsFullyVisible_andSkippedMessagesNotEmpty_andIsFirstPageLoaded_thenReloadsSkippedMessages() {
         mockedListView.mockIsLastCellFullyVisible = true
         mockedListView.skippedMessages = [.unique]
+        mockedDataSource.mockedIsFirstPageLoaded = true
 
         sut.scrollViewDidScroll(sut.listView)
 
@@ -48,13 +76,9 @@ final class ChatMessageListVC_Tests: XCTestCase {
     }
 
     func test_scrollViewDidScroll_whenLastCellIsFullyVisible_andSkippedMessagesEmpty_thenDoesNotReloadsSkippedMessages() {
-        let sut = ChatMessageListVC()
-        sut.components = .mock
-        sut.components.messageListView = ChatMessageListView_Mock.self
-
-        let mockedListView = sut.listView as! ChatMessageListView_Mock
         mockedListView.mockIsLastCellFullyVisible = false
         mockedListView.skippedMessages = []
+        mockedDataSource.mockedIsFirstPageLoaded = true
 
         sut.scrollViewDidScroll(sut.listView)
 
@@ -62,59 +86,30 @@ final class ChatMessageListVC_Tests: XCTestCase {
     }
 
     func test_scrollViewDidScroll_whenLastCellIsNotFullyVisible_thenDoesNotReloadsSkippedMessages() {
-        let sut = ChatMessageListVC()
-        sut.components = .mock
-        sut.components.messageListView = ChatMessageListView_Mock.self
-
-        let mockedListView = sut.listView as! ChatMessageListView_Mock
         mockedListView.mockIsLastCellFullyVisible = false
         mockedListView.skippedMessages = [.unique]
+        mockedDataSource.mockedIsFirstPageLoaded = true
 
         sut.scrollViewDidScroll(sut.listView)
 
         XCTAssertEqual(mockedListView.reloadSkippedMessagesCallCount, 0)
     }
 
-    // MARK: - updateMessages
-
-    func test_updateMessages_whenLastCellIsFullyVisible_shouldReloadPreviousCell() {
-        let sut = ChatMessageListVC()
-        sut.components = .mock
-        sut.components.messageListView = ChatMessageListView_Mock.self
-
-        let mockedListView = sut.listView as! ChatMessageListView_Mock
+    func test_scrollViewDidScroll_whenFirstPageNotLoaded_thenDoesNotReloadsSkippedMessages() {
         mockedListView.mockIsLastCellFullyVisible = true
-        mockedListView.newMessagesSnapshot = [ChatMessage.mock(), ChatMessage.mock()]
+        mockedListView.skippedMessages = [.unique]
+        mockedDataSource.mockedIsFirstPageLoaded = false
 
-        sut.updateMessages(with: [])
+        sut.scrollViewDidScroll(sut.listView)
 
-        XCTAssertEqual(mockedListView.reloadRowsCallCount, 1)
-        XCTAssertEqual(mockedListView.reloadRowsCalledWith, [IndexPath(item: 1, section: 0)])
-    }
-
-    func test_updateMessages_whenLastCellIsFullyVisible_whenMessagesCountBelowTwo_shouldNotReloadPreviousCell() {
-        let sut = ChatMessageListVC()
-        sut.components = .mock
-        sut.components.messageListView = ChatMessageListView_Mock.self
-
-        let mockedListView = sut.listView as! ChatMessageListView_Mock
-        mockedListView.mockIsLastCellFullyVisible = true
-        mockedListView.newMessagesSnapshot = [ChatMessage.mock()]
-
-        sut.updateMessages(with: [])
-
-        XCTAssertEqual(mockedListView.reloadRowsCallCount, 0)
+        XCTAssertEqual(mockedListView.reloadSkippedMessagesCallCount, 0)
     }
 
     // MARK: - didSelectMessageCell
 
-    func test_didSelectMessageCell_shouldShowActionsPopup() {
-        let sut = ChatMessageListVC()
-        sut.components = .mock
-        sut.components.messageListView = ChatMessageListView_Mock.self
-        sut.client = ChatClient(config: ChatClientConfig(apiKey: .init(.unique)))
+    // MARK: - didSelectMessageCell
 
-        let mockedListView = sut.listView as! ChatMessageListView_Mock
+    func test_didSelectMessageCell_shouldShowActionsPopup() {
         mockedListView.mockedCellForRow = .init()
         mockedListView.mockedCellForRow?.mockedMessage = .mock()
 
@@ -133,9 +128,6 @@ final class ChatMessageListVC_Tests: XCTestCase {
     // message.cid should be available from local cache, but right now, some how is not available for thread replies
     // so the workaround is to get the cid from the data source.
     func test_didSelectMessageCell_whenMessageCidIsNil_shouldStillShowActionsPopup() throws {
-        let sut = ChatMessageListVC()
-        sut.components = .mock
-        sut.components.messageListView = ChatMessageListView_Mock.self
         let mockedClient = ChatClient.mock
         sut.client = mockedClient
 
@@ -154,16 +146,13 @@ final class ChatMessageListVC_Tests: XCTestCase {
         }
         let mockedMessageWithoutCid = try messageDTOWithoutCid.asModel()
 
-        let mockedListView = sut.listView as! ChatMessageListView_Mock
         mockedListView.mockedCellForRow = .init()
         mockedListView.mockedCellForRow?.mockedMessage = mockedMessageWithoutCid
 
         let mockedRouter = ChatMessageListRouter_Mock(rootViewController: UIViewController())
         sut.router = mockedRouter
 
-        let dataSource = ChatMessageListVCDataSource_Mock()
-        dataSource.mockedChannel = .mock(cid: .unique)
-        sut.dataSource = dataSource
+        mockedDataSource.mockedChannel = .mock(cid: .unique)
 
         sut.didSelectMessageCell(at: IndexPath(item: 0, section: 0))
 
@@ -176,13 +165,13 @@ final class ChatMessageListVC_Tests: XCTestCase {
     func test_messageIsContentEqual_whenCustomAttachmentDataDifferent_returnsFalse() throws {
         struct CustomAttachment: AttachmentPayload {
             static var type: AttachmentType = .unknown
-
+            
             var comments: Int
             init(comments: Int) {
                 self.comments = comments
             }
         }
-
+        
         let attachmentId = AttachmentId.unique
         let makeCustomAttachmentWithComments: (Int) throws -> AnyChatMessageAttachment = { comments in
             let attachmentWithCommentsPayload = AnyAttachmentPayload(
@@ -198,19 +187,395 @@ final class ChatMessageListVC_Tests: XCTestCase {
                 uploadingState: nil
             )
         }
-
+        
         let attachmentWith4Comments = try makeCustomAttachmentWithComments(4)
         let attachmentWith5Comments = try makeCustomAttachmentWithComments(5)
-
+        
         // When attachments are the same, should be equal
         let messageSame1 = ChatMessage.mock(id: "1", text: "same", attachments: [attachmentWith4Comments])
         let messageSame2 = ChatMessage.mock(id: "1", text: "same", attachments: [attachmentWith4Comments])
         XCTAssert(messageSame1.isContentEqual(to: messageSame2))
-
+        
         // When attachments are different, should not be equal
         let messageDiff1 = ChatMessage.mock(id: "1", text: "same", attachments: [attachmentWith4Comments])
         let messageDiff2 = ChatMessage.mock(id: "1", text: "same", attachments: [attachmentWith5Comments])
         XCTAssertFalse(messageDiff1.isContentEqual(to: messageDiff2))
+    }
+
+    // MARK: - isScrollToBottomButtonVisible
+
+    func test_isScrollToBottomButtonVisible_whenLastCellNotVisible_whenMoreContentThanOnePage_whenFirstPageIsLoaded_returnsTrue() {
+        mockedListView.mockIsLastCellFullyVisible = false
+        mockedListView.mockMoreContentThanOnePage = true
+        mockedDataSource.mockedIsFirstPageLoaded = true
+
+        sut.scrollViewDidScroll(sut.listView)
+
+        XCTAssertTrue(sut.isScrollToBottomButtonVisible)
+    }
+
+    func test_isScrollToBottomButtonVisible_whenLastCellNotVisible_whenMoreContentThanOnePage_whenFirstPageNotLoaded_returnsTrue() {
+        mockedListView.mockIsLastCellFullyVisible = false
+        mockedListView.mockMoreContentThanOnePage = true
+        mockedDataSource.mockedIsFirstPageLoaded = false
+
+        sut.scrollViewDidScroll(sut.listView)
+
+        XCTAssertTrue(sut.isScrollToBottomButtonVisible)
+    }
+
+    func test_isScrollToBottomButtonVisible_whenLastCellIsVisible_whenMoreContentThanOnePage_whenFirstPageNotLoaded_returnsTrue() {
+        mockedListView.mockIsLastCellFullyVisible = true
+        mockedListView.mockMoreContentThanOnePage = true
+        mockedDataSource.mockedIsFirstPageLoaded = false
+
+        sut.scrollViewDidScroll(sut.listView)
+
+        XCTAssertTrue(sut.isScrollToBottomButtonVisible)
+    }
+
+    func test_isScrollToBottomButtonVisible_whenLastCellIsVisible_whenMoreContentThanOnePage_whenFirstPageIsLoaded_returnsFalse() {
+        mockedListView.mockIsLastCellFullyVisible = true
+        mockedListView.mockMoreContentThanOnePage = true
+        mockedDataSource.mockedIsFirstPageLoaded = true
+
+        sut.scrollViewDidScroll(sut.listView)
+
+        XCTAssertFalse(sut.isScrollToBottomButtonVisible)
+    }
+
+    func test_isScrollToBottomButtonVisible_whenLastCellIsVisible_whenNoMoreContent_whenFirstPageIsLoaded_returnsFalse() {
+        mockedListView.mockIsLastCellFullyVisible = true
+        mockedListView.mockMoreContentThanOnePage = false
+        mockedDataSource.mockedIsFirstPageLoaded = true
+
+        sut.scrollViewDidScroll(sut.listView)
+
+        XCTAssertFalse(sut.isScrollToBottomButtonVisible)
+    }
+
+    func test_isScrollToBottomButtonVisible_whenLastCellIsVisible_whenNoMoreContent_whenFirstPageNotLoaded_returnsTrue() {
+        mockedListView.mockIsLastCellFullyVisible = true
+        mockedListView.mockMoreContentThanOnePage = false
+        mockedDataSource.mockedIsFirstPageLoaded = false
+
+        sut.scrollViewDidScroll(sut.listView)
+
+        XCTAssertTrue(sut.isScrollToBottomButtonVisible)
+    }
+
+    // MARK: - getIndexPath
+
+    func test_getIndexPath_returnsIndexPathForGivenMessageId() {
+        mockedDataSource.messages = [
+            .mock(id: "0"),
+            .mock(id: "1")
+        ]
+
+        let indexPath = sut.getIndexPath(forMessageId: "1")
+        XCTAssertEqual(indexPath?.row, 1)
+    }
+
+    func test_getIndexPath_whenMessageNotInDataSource_returnsNil() {
+        mockedDataSource.messages = [
+            .mock(id: "0"),
+            .mock(id: "1")
+        ]
+
+        let indexPath = sut.getIndexPath(forMessageId: "4")
+        XCTAssertNil(indexPath)
+    }
+
+    // MARK: - jumpToFirstPage
+
+    func test_jumptToFirstPage() {
+        sut.jumpToFirstPage()
+
+        XCTAssertEqual(mockedDelegate.shouldLoadFirstPageCallCount, 1)
+        XCTAssertEqual(mockedListView.reloadSkippedMessagesCallCount, 1)
+        XCTAssertTrue(sut.scrollToLatestMessageButton.isHidden)
+    }
+
+    // MARK: - scrollToLatestMessage
+
+    func test_scrollToLatestMessage_whenFirstPageIsLoaded_scrollToMessage() {
+        mockedDataSource.mockedIsFirstPageLoaded = true
+
+        sut.scrollToLatestMessage()
+        XCTAssertEqual(mockedListView.scrollToMostRecentMessageCallCount, 1)
+    }
+
+    func test_scrollToLatestMessage_whenFirstPageNotLoaded_shouldJumpToFirstPage() {
+        mockedDataSource.mockedIsFirstPageLoaded = false
+
+        sut.scrollToLatestMessage()
+        XCTAssertEqual(mockedListView.scrollToMostRecentMessageCallCount, 0)
+        XCTAssertEqual(mockedDelegate.shouldLoadFirstPageCallCount, 1)
+    }
+
+    // MARK: Handling message updates
+
+    func test_updateMessages_whenLastCellIsFullyVisible_whenIsFirstPageLoaded_shouldReloadPreviousCell() {
+        mockedDataSource.mockedIsFirstPageLoaded = true
+        mockedListView.mockIsLastCellFullyVisible = true
+        mockedListView.newMessagesSnapshot = [ChatMessage.mock(), ChatMessage.mock()]
+
+        sut.updateMessages(with: [])
+        mockedListView.updateMessagesCompletion?()
+
+        XCTAssertEqual(mockedListView.reloadRowsCallCount, 1)
+        XCTAssertEqual(mockedListView.reloadRowsCalledWith, [IndexPath(item: 1, section: 0)])
+    }
+
+    func test_updateMessages_whenLastCellIsFullyVisible_whenFirstPageNotLoaded_shouldNotReloadPreviousCell() {
+        mockedDataSource.mockedIsFirstPageLoaded = false
+        mockedListView.mockIsLastCellFullyVisible = true
+        mockedListView.newMessagesSnapshot = [ChatMessage.mock(), ChatMessage.mock()]
+
+        sut.updateMessages(with: [])
+        mockedListView.updateMessagesCompletion?()
+
+        XCTAssertEqual(mockedListView.reloadRowsCallCount, 0)
+    }
+
+    func test_updateMessages_whenLastCellIsFullyVisible_whenMessagesCountBelowTwo_shouldNotReloadPreviousCell() {
+        mockedListView.mockIsLastCellFullyVisible = true
+        mockedListView.newMessagesSnapshot = [ChatMessage.mock()]
+
+        sut.updateMessages(with: [])
+        mockedListView.updateMessagesCompletion?()
+
+        XCTAssertEqual(mockedListView.reloadRowsCallCount, 0)
+    }
+
+    func test_updateMessages_whenNewestChangeIsAMove_shouldReloadNewestIndexPath() {
+        mockedListView.mockIsLastCellFullyVisible = true
+
+        sut.updateMessages(with: [
+            .move(.unique, fromIndex: .init(item: 1, section: 0), toIndex: .init(item: 0, section: 0))
+        ])
+        mockedListView.updateMessagesCompletion?()
+
+        XCTAssertEqual(mockedListView.reloadRowsCallCount, 1)
+        XCTAssertEqual(mockedListView.reloadRowsCalledWith, [.init(item: 0, section: 0)])
+    }
+
+    func test_updateMessages_shouldReloadCellsForVisibleRemoves() {
+        mockedListView.mockedIndexPathsForVisibleRows = [
+            .init(item: 0, section: 0),
+            .init(item: 1, section: 0)
+        ]
+
+        sut.updateMessages(with: [
+            .remove(.unique, index: .init(item: 0, section: 0)),
+            .remove(.unique, index: .init(item: 1, section: 0)),
+            .remove(.unique, index: .init(item: 2, section: 0))
+        ])
+        mockedListView.updateMessagesCompletion?()
+
+        XCTAssertEqual(mockedListView.reloadRowsCallCount, 2)
+        XCTAssertEqual(mockedListView.reloadRowsCalledWith, [.init(item: 0, section: 0), .init(item: 1, section: 0)])
+    }
+
+    func test_updateMessages_whenNewestMessageInsertedByCurrentUser_shouldScrollToMostRecentMessage() {
+        mockedDataSource.mockedIsFirstPageLoaded = true
+        mockedListView.mockIsLastCellFullyVisible = true
+
+        sut.updateMessages(with: [
+            .insert(.mock(isSentByCurrentUser: true), index: .init(item: 0, section: 0))
+        ])
+        mockedListView.updateMessagesCompletion?()
+
+        XCTAssertEqual(mockedListView.scrollToMostRecentMessageCallCount, 1)
+    }
+
+    func test_updateMessages_whenNewestMessageMovedByCurrentUser_shouldScrollToMostRecentMessage() {
+        mockedDataSource.mockedIsFirstPageLoaded = true
+        mockedListView.mockIsLastCellFullyVisible = true
+
+        sut.updateMessages(with: [
+            .move(
+                .mock(isSentByCurrentUser: true),
+                fromIndex: .init(item: 1, section: 0),
+                toIndex: .init(item: 0, section: 0)
+            )
+        ])
+        mockedListView.updateMessagesCompletion?()
+
+        XCTAssertEqual(mockedListView.scrollToMostRecentMessageCallCount, 1)
+    }
+
+    func test_updateMessages_whenNewestMessageMovedByCurrentUser_whenFistPageNotLoaded_shouldScrollToMostRecentMessage() {
+        mockedDataSource.mockedIsFirstPageLoaded = false
+        mockedListView.mockIsLastCellFullyVisible = true
+
+        sut.updateMessages(with: [
+            .move(
+                .mock(isSentByCurrentUser: true),
+                fromIndex: .init(item: 1, section: 0),
+                toIndex: .init(item: 0, section: 0)
+            )
+        ])
+        mockedListView.updateMessagesCompletion?()
+
+        XCTAssertEqual(mockedListView.scrollToMostRecentMessageCallCount, 0)
+    }
+
+    func test_updateMessages_whenNewestMessageInsertedByCurrentUser_whenFirstPageNotLoaded_shouldNotScrollToMostRecentMessage() {
+        mockedDataSource.mockedIsFirstPageLoaded = false
+        mockedListView.mockIsLastCellFullyVisible = true
+
+        sut.updateMessages(with: [
+            .insert(.mock(isSentByCurrentUser: true), index: .init(item: 0, section: 0))
+        ])
+        mockedListView.updateMessagesCompletion?()
+
+        XCTAssertEqual(mockedListView.scrollToMostRecentMessageCallCount, 0)
+    }
+
+    func test_updateMessages_whenNewestMessageInsertedByDifferentUser_shouldNotScrollToMostRecentMessage() {
+        mockedDataSource.mockedIsFirstPageLoaded = true
+        mockedListView.mockIsLastCellFullyVisible = true
+
+        sut.updateMessages(with: [
+            .insert(.mock(isSentByCurrentUser: false), index: .init(item: 0, section: 0))
+        ])
+        mockedListView.updateMessagesCompletion?()
+
+        XCTAssertEqual(mockedListView.scrollToMostRecentMessageCallCount, 0)
+    }
+
+    func test_updateMessages_whenNewestMessageMovedByDifferenttUser_shouldNotScrollToMostRecentMessage() {
+        mockedDataSource.mockedIsFirstPageLoaded = true
+        mockedListView.mockIsLastCellFullyVisible = true
+
+        sut.updateMessages(with: [
+            .move(
+                .mock(isSentByCurrentUser: false),
+                fromIndex: .init(item: 1, section: 0),
+                toIndex: .init(item: 0, section: 0)
+            )
+        ])
+        mockedListView.updateMessagesCompletion?()
+
+        XCTAssertEqual(mockedListView.scrollToMostRecentMessageCallCount, 0)
+    }
+
+    func test_updateMessages_whenFirstPageIsLoaded_whenNewestInsertionByDifferentUser_whenIsLastCellNotVisible_whenOnlyOneInsertion_shouldSkipMessages() {
+        mockedDataSource.mockedIsFirstPageLoaded = true
+        mockedListView.mockIsLastCellFullyVisible = false
+        mockedListView.previousMessagesSnapshot = [.unique]
+
+        sut.updateMessages(with: [
+            .insert(.mock(isSentByCurrentUser: false), index: .init(item: 0, section: 0))
+        ])
+        mockedListView.updateMessagesCompletion?()
+
+        sut.updateMessages(with: [
+            .insert(.mock(isSentByCurrentUser: false), index: .init(item: 0, section: 0))
+        ])
+        mockedListView.updateMessagesCompletion?()
+
+        XCTAssertEqual(mockedListView.skippedMessages.count, 2)
+    }
+
+    func test_updateMessages_whenMultipleInsertionsAtSameTime_shouldNotSkipMessages() {
+        mockedDataSource.mockedIsFirstPageLoaded = true
+        mockedListView.mockIsLastCellFullyVisible = false
+        mockedListView.previousMessagesSnapshot = [.unique]
+
+        // When multiple insertions at the same time it means it is loading next messages
+        // So we should not skip them
+        sut.updateMessages(with: [
+            .insert(.mock(isSentByCurrentUser: false), index: .init(item: 0, section: 0)),
+            .insert(.mock(isSentByCurrentUser: false), index: .init(item: 1, section: 0))
+        ])
+        mockedListView.updateMessagesCompletion?()
+
+        XCTAssertEqual(mockedListView.skippedMessages.count, 0)
+    }
+
+    func test_updateMessages_whenFirstPageNotLoaded_shouldNotSkipMessages() {
+        mockedDataSource.mockedIsFirstPageLoaded = false
+        mockedListView.mockIsLastCellFullyVisible = false
+        mockedListView.previousMessagesSnapshot = [.unique]
+
+        sut.updateMessages(with: [
+            .insert(.mock(isSentByCurrentUser: false), index: .init(item: 0, section: 0))
+        ])
+        mockedListView.updateMessagesCompletion?()
+
+        XCTAssertEqual(mockedListView.skippedMessages.count, 0)
+    }
+
+    func test_updateMessages_whenNewestInsertionByCurrentUser_shouldNotSkipMessages() {
+        mockedDataSource.mockedIsFirstPageLoaded = true
+        mockedListView.mockIsLastCellFullyVisible = false
+        mockedListView.previousMessagesSnapshot = [.unique]
+
+        sut.updateMessages(with: [
+            .insert(.mock(isSentByCurrentUser: true), index: .init(item: 0, section: 0))
+        ])
+        mockedListView.updateMessagesCompletion?()
+
+        XCTAssertEqual(mockedListView.skippedMessages.count, 0)
+    }
+
+    func test_updateMessages_whenLastCellIsVisible_shouldNotSkipMessages() {
+        mockedDataSource.mockedIsFirstPageLoaded = true
+        mockedListView.mockIsLastCellFullyVisible = true
+        mockedListView.previousMessagesSnapshot = [.unique]
+
+        sut.updateMessages(with: [
+            .insert(.mock(isSentByCurrentUser: false), index: .init(item: 0, section: 0))
+        ])
+        mockedListView.updateMessagesCompletion?()
+
+        XCTAssertEqual(mockedListView.skippedMessages.count, 0)
+    }
+
+    func test_updateMessages_whenPreviousMessagesEmpty_shouldNotSkipMessages() {
+        mockedDataSource.mockedIsFirstPageLoaded = true
+        mockedListView.mockIsLastCellFullyVisible = false
+        mockedListView.previousMessagesSnapshot = []
+
+        sut.updateMessages(with: [
+            .insert(.mock(isSentByCurrentUser: false), index: .init(item: 0, section: 0))
+        ])
+        mockedListView.updateMessagesCompletion?()
+
+        XCTAssertEqual(mockedListView.skippedMessages.count, 0)
+    }
+
+    // MARK: Jump to message
+
+    func test_jumpToMessage_whenMessageAlreadyInUI_shouldScrollToItsIndexPath_shouldNotLoadPageAroundMessage() {
+        mockedDataSource.messages = [
+            .mock(id: "0"),
+            .mock(id: "1"),
+            .mock(id: "2"),
+            .mock(id: "3"),
+            .mock(id: "4")
+        ]
+
+        sut.jumpToMessage(.mock(id: "2"))
+
+        XCTAssertEqual(mockedListView.scrollToRowCallCount, 1)
+        XCTAssertEqual(mockedListView.scrollToRowCalledWith?.row, 2)
+    }
+
+    func test_jumpToMessage_whenMessageNotInUI_shouldLoadPageAroundMessage_shouldSetMessagePendingScrolling() {
+        mockedDataSource.messages = [
+            .mock(id: "0"),
+            .mock(id: "1"),
+            .mock(id: "2"),
+            .mock(id: "3"),
+            .mock(id: "4")
+        ]
+
+        sut.jumpToMessage(.mock(id: "30"))
+
+        XCTAssertEqual(mockedListView.scrollToRowCallCount, 0)
     }
 
     // MARK: - cellForRow
@@ -273,90 +638,5 @@ final class ChatMessageListVC_Tests: XCTestCase {
 
         XCTAssertNotNil(cell.headerContainerView.superview)
         XCTAssertNotNil(cell.headerContainerView.subviews.first as? ChatMessageListDateSeparatorView)
-    }
-}
-
-private class ChatMessageListView_Mock: ChatMessageListView {
-    var mockIsLastCellFullyVisible = false
-    override var isLastCellFullyVisible: Bool {
-        mockIsLastCellFullyVisible
-    }
-
-    var reloadSkippedMessagesCallCount = 0
-    override func reloadSkippedMessages() {
-        reloadSkippedMessagesCallCount += 1
-    }
-
-    var reloadRowsCallCount = 0
-    var reloadRowsCalledWith: [IndexPath] = []
-    override func reloadRows(at indexPaths: [IndexPath], with animation: UITableView.RowAnimation) {
-        reloadRowsCallCount += 1
-        reloadRowsCalledWith = indexPaths
-    }
-
-    var mockedCellForRow: ChatMessageCell_Mock?
-
-    override func cellForRow(at indexPath: IndexPath) -> UITableViewCell? {
-        mockedCellForRow
-    }
-}
-
-private class ChatMessageCell_Mock: ChatMessageCell {
-    var mockedMessage: ChatMessage?
-
-    override var messageContentView: ChatMessageContentView? {
-        let view = ChatMessageContentView()
-        view.content = mockedMessage
-        return view
-    }
-}
-
-private class ChatMessageListVCDataSource_Mock: ChatMessageListVCDataSource {
-    var mockedChannel: ChatChannel?
-    func channel(for vc: ChatMessageListVC) -> ChatChannel? {
-        mockedChannel
-    }
-
-    var messages: [StreamChat.ChatMessage] = []
-
-    func numberOfMessages(in vc: StreamChatUI.ChatMessageListVC) -> Int {
-        messages.count
-    }
-
-    func chatMessageListVC(_ vc: StreamChatUI.ChatMessageListVC, messageAt indexPath: IndexPath) -> StreamChat.ChatMessage? {
-        messages[indexPath.item]
-    }
-
-    func chatMessageListVC(_ vc: StreamChatUI.ChatMessageListVC, messageLayoutOptionsAt indexPath: IndexPath) -> StreamChatUI.ChatMessageLayoutOptions {
-        .init()
-    }
-}
-
-private class ChatMessageListVCDelegate_Mock: ChatMessageListVCDelegate {
-    var mockedHeaderView: ChatMessageDecorationView?
-    var mockedFooterView: ChatMessageDecorationView?
-
-    func chatMessageListVC(_ vc: StreamChatUI.ChatMessageListVC, willDisplayMessageAt indexPath: IndexPath) { /* No-Op */ }
-
-    func chatMessageListVC(_ vc: StreamChatUI.ChatMessageListVC, scrollViewDidScroll scrollView: UIScrollView) { /* No-Op */ }
-
-    func chatMessageListVC(_ vc: StreamChatUI.ChatMessageListVC, didTapOnAction actionItem: StreamChatUI.ChatMessageActionItem, for message: StreamChat.ChatMessage) { /* No-Op */ }
-
-    func chatMessageListVC(_ vc: StreamChatUI.ChatMessageListVC, didTapOnMessageListView messageListView: StreamChatUI.ChatMessageListView, with gestureRecognizer: UITapGestureRecognizer) { /* No-Op */ }
-
-    func chatMessageListVC(
-        _ vc: ChatMessageListVC,
-        headerViewForMessage message: ChatMessage,
-        at indexPath: IndexPath
-    ) -> ChatMessageDecorationView? {
-        mockedHeaderView
-    }
-
-    func chatMessageListVC(
-        _ vc: ChatMessageListVC,
-        footerViewForMessage message: ChatMessage,
-        at indexPath: IndexPath
-    ) -> ChatMessageDecorationView? {
-        mockedFooterView
     }
 }

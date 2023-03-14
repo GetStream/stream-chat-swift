@@ -11,13 +11,17 @@ open class ChatChannelVC: _ViewController,
     ThemeProvider,
     ChatMessageListVCDataSource,
     ChatMessageListVCDelegate,
-    ChatChannelControllerDelegate {
+    ChatChannelControllerDelegate,
+    EventsControllerDelegate {
     /// Controller for observing data changes within the channel.
     open var channelController: ChatChannelController!
 
     /// User search controller for suggestion users when typing in the composer.
     open lazy var userSuggestionSearchController: ChatUserSearchController =
         channelController.client.userSearchController()
+
+    /// A controller for observing web socket events.
+    public lazy var eventsController: EventsController = client.eventsController()
 
     /// The size of the channel avatar.
     open var channelAvatarSize: CGSize {
@@ -58,17 +62,19 @@ open class ChatChannelVC: _ViewController,
     public var messageComposerBottomConstraint: NSLayoutConstraint?
 
     /// A boolean value indicating whether the last message is fully visible or not.
-    /// If the value is `true` it means the message list is fully scrolled to the bottom.
     open var isLastMessageFullyVisible: Bool {
         messageListVC.listView.isLastCellFullyVisible
     }
 
-    private var isLoadingPreviousMessages: Bool = false
-
-    /// A boolean value indicating wether it should mark the channel read.
+    /// A boolean value indicating whether it should mark the channel read.
     public var shouldMarkChannelRead: Bool {
-        isLastMessageFullyVisible && !hasMarkedMessageAsUnread
+        isLastMessageFullyVisible && channelController.hasLoadedAllNextMessages && !hasMarkedMessageAsUnread
     }
+
+    /// A component responsible to handle when to load new or old messages.
+    private lazy var viewPaginationHandler: ViewPaginationHandling = {
+        InvertedScrollViewPaginationHandler.make(scrollView: messageListVC.listView)
+    }()
 
     private var hasMarkedMessageAsUnread: Bool {
         channelController.firstUnreadMessageId != nil
@@ -80,13 +86,7 @@ open class ChatChannelVC: _ViewController,
     override open func setUp() {
         super.setUp()
 
-        let notificationCenter = NotificationCenter.default
-        notificationCenter.addObserver(
-            self,
-            selector: #selector(appMovedToForeground),
-            name: UIApplication.willEnterForegroundNotification,
-            object: nil
-        )
+        eventsController.delegate = self
 
         messageListVC.delegate = self
         messageListVC.dataSource = self
@@ -107,6 +107,14 @@ open class ChatChannelVC: _ViewController,
 
         // Initial messages data
         messages = Array(channelController.messages)
+
+        // Handle pagination
+        viewPaginationHandler.onNewTopPage = { [weak self] in
+            self?.channelController.loadPreviousMessages()
+        }
+        viewPaginationHandler.onNewBottomPage = { [weak self] in
+            self?.channelController.loadNextMessages()
+        }
     }
 
     private func setChannelControllerToComposerIfNeeded(cid: ChannelId?) {
@@ -150,7 +158,7 @@ open class ChatChannelVC: _ViewController,
         keyboardHandler.start()
 
         if shouldMarkChannelRead {
-            channelController.markRead()
+            markRead()
         }
     }
 
@@ -162,10 +170,22 @@ open class ChatChannelVC: _ViewController,
         resignFirstResponder()
     }
 
+    // MARK: - Actions
+
+    /// Marks the channel read and updates the UI optimistically.
+    public func markRead() {
+        channelController.markRead()
+        messageListVC.scrollToLatestMessageButton.content = .noUnread
+    }
+
     // MARK: - ChatMessageListVCDataSource
 
     public var messages: [ChatMessage] = []
 
+    public var isFirstPageLoaded: Bool {
+        channelController.hasLoadedAllNextMessages
+    }
+    
     open func channel(for vc: ChatMessageListVC) -> ChatChannel? {
         channelController.channel
     }
@@ -192,28 +212,33 @@ open class ChatChannelVC: _ViewController,
         )
     }
 
+    public func chatMessageListVC(
+        _ vc: ChatMessageListVC,
+        shouldLoadPageAroundMessage message: ChatMessage,
+        _ completion: @escaping ((Error?) -> Void)
+    ) {
+        // For now, we don't support jumping to a message which is inside a thread only
+        if message.isPartOfThread && !message.showReplyInChannel {
+            log.warning("Did not jump to message with text '\(message.text)' since we don't support jumping inside threads yet.")
+            return
+        }
+
+        channelController.loadPageAroundMessageId(message.id, completion: completion)
+    }
+
+    open func chatMessageListVCShouldLoadFirstPage(
+        _ vc: ChatMessageListVC
+    ) {
+        channelController.loadFirstPage()
+    }
+
     // MARK: - ChatMessageListVCDelegate
 
     open func chatMessageListVC(
         _ vc: ChatMessageListVC,
         willDisplayMessageAt indexPath: IndexPath
     ) {
-        guard messageListVC.listView.isTrackingOrDecelerating else {
-            return
-        }
-
-        if indexPath.row < messages.count - 10 {
-            return
-        }
-
-        guard !isLoadingPreviousMessages else {
-            return
-        }
-        isLoadingPreviousMessages = true
-
-        channelController.loadPreviousMessages { [weak self] _ in
-            self?.isLoadingPreviousMessages = false
-        }
+        // no-op
     }
 
     open func chatMessageListVC(
@@ -248,9 +273,7 @@ open class ChatChannelVC: _ViewController,
         scrollViewDidScroll scrollView: UIScrollView
     ) {
         if shouldMarkChannelRead {
-            channelController.markRead()
-
-            messageListVC.scrollToLatestMessageButton.content = .noUnread
+            markRead()
         }
     }
 
@@ -291,13 +314,13 @@ open class ChatChannelVC: _ViewController,
         _ channelController: ChatChannelController,
         didUpdateMessages changes: [ListChange<ChatMessage>]
     ) {
-        if shouldMarkChannelRead {
-            channelController.markRead()
-        }
-
         messageListVC.setPreviousMessagesSnapshot(messages)
         messageListVC.setNewMessagesSnapshot(Array(channelController.messages))
-        messageListVC.updateMessages(with: changes)
+        messageListVC.updateMessages(with: changes) { [weak self] in
+            if self?.shouldMarkChannelRead == true {
+                self?.markRead()
+            }
+        }
     }
 
     open func channelController(
@@ -310,7 +333,7 @@ open class ChatChannelVC: _ViewController,
         guard channelController.firstUnreadMessageId != firstUnreadMessageId else { return }
         let previousUnreadMessageId = firstUnreadMessageId
         firstUnreadMessageId = channelController.firstUnreadMessageId
-
+        
         messageListVC.updateUnreadMessagesSeparator(
             at: firstUnreadMessageId,
             previousId: previousUnreadMessageId
@@ -334,10 +357,14 @@ open class ChatChannelVC: _ViewController,
         }
     }
 
-    // When app becomes active, and channel is open, recreate the database observers and reload
-    // the data source so that any missed database updates from the NotificationService are refreshed.
-    @objc func appMovedToForeground() {
-        channelController.delegate = self
-        messageListVC.dataSource = self
+    // MARK: - EventsControllerDelegate
+
+    open func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
+        if let newMessagePendingEvent = event as? NewMessagePendingEvent {
+            let newMessage = newMessagePendingEvent.message
+            if !isFirstPageLoaded && newMessage.isSentByCurrentUser && !newMessage.isPartOfThread {
+                channelController.loadFirstPage()
+            }
+        }
     }
 }

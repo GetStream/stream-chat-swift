@@ -17,6 +17,7 @@ final class ChatChannelVC_Tests: XCTestCase {
         var components = Components.mock
         components.channelHeaderView = ChatChannelHeaderViewMock.self
         components.messageComposerVC = ComposerVC_Mock.self
+        components.messageListView = ChatMessageListView_Mock.self
         vc = ChatChannelVC()
         vc.components = components
         channelControllerMock = ChatChannelController_Mock.mock()
@@ -550,6 +551,167 @@ final class ChatChannelVC_Tests: XCTestCase {
         AssertSnapshot(vc, variants: [.defaultLight])
     }
 
+    func test_didReceiveNewMessagePendingEvent_whenFirstPageNotLoaded_whenMessageSentByCurrentUser_whenMessageNotPartOfThread_thenLoadsFirstPage() {
+        channelControllerMock.hasLoadedAllNextMessages_mock = false
+        let message = ChatMessage.mock(
+            parentMessageId: nil,
+            isSentByCurrentUser: true
+        )
+        
+        let pendingEvent = NewMessagePendingEvent(message: message)
+        vc.eventsController(vc.eventsController, didReceiveEvent: pendingEvent)
+
+        XCTAssertEqual(channelControllerMock.loadFirstPageCallCount, 1)
+    }
+
+    func test_didReceiveNewMessagePendingEvent_whenIsFirstPageLoaded_thenDoestNotLoadFirstPage() {
+        channelControllerMock.hasLoadedAllNextMessages_mock = true
+        let message = ChatMessage.mock(
+            parentMessageId: nil,
+            isSentByCurrentUser: true
+        )
+
+        let pendingEvent = NewMessagePendingEvent(message: message)
+        vc.eventsController(vc.eventsController, didReceiveEvent: pendingEvent)
+
+        XCTAssertEqual(channelControllerMock.loadFirstPageCallCount, 0)
+    }
+
+    func test_didReceiveNewMessagePendingEvent_whenMessageSentByOtherUser_thenDoestNotLoadFirstPage() {
+        channelControllerMock.hasLoadedAllNextMessages_mock = false
+        let message = ChatMessage.mock(
+            parentMessageId: nil,
+            isSentByCurrentUser: false
+        )
+
+        let pendingEvent = NewMessagePendingEvent(message: message)
+        vc.eventsController(vc.eventsController, didReceiveEvent: pendingEvent)
+
+        XCTAssertEqual(channelControllerMock.loadFirstPageCallCount, 0)
+    }
+
+    func test_didReceiveNewMessagePendingEvent_whenMessageIsPartOfThread_thenDoestNotLoadFirstPage() {
+        channelControllerMock.hasLoadedAllNextMessages_mock = false
+        let message = ChatMessage.mock(
+            parentMessageId: .unique,
+            isSentByCurrentUser: true
+        )
+
+        let pendingEvent = NewMessagePendingEvent(message: message)
+        vc.eventsController(vc.eventsController, didReceiveEvent: pendingEvent)
+
+        XCTAssertEqual(channelControllerMock.loadFirstPageCallCount, 0)
+    }
+
+    func test_shouldLoadFirstPage_thenLoadFirstPage() {
+        vc.chatMessageListVCShouldLoadFirstPage(vc.messageListVC)
+        XCTAssertEqual(channelControllerMock.loadFirstPageCallCount, 1)
+    }
+
+    func test_shouldLoadPageAroundMessage_thenLoadPageAroundMessageId() {
+        vc.chatMessageListVC(vc.messageListVC, shouldLoadPageAroundMessage: .mock()) { _ in }
+        XCTAssertEqual(channelControllerMock.loadPageAroundMessageIdCallCount, 1)
+    }
+
+    func test_shouldLoadPageAroundMessage_whenMessageIsInsideThread_thenDontPageAroundMessageId() {
+        let messageInsideThread = ChatMessage.mock(
+            parentMessageId: .unique,
+            showReplyInChannel: false
+        )
+        vc.chatMessageListVC(vc.messageListVC, shouldLoadPageAroundMessage: messageInsideThread) { _ in }
+        XCTAssertEqual(channelControllerMock.loadPageAroundMessageIdCallCount, 0)
+    }
+
+    // MARK: Channel read
+
+    func test_shouldMarkChannelRead_whenIsLastMessageFullyVisible_whenHasLoadedAllNextMessages_thenReturnsTrue() {
+        let mockedListView = makeMockMessageListView()
+        mockedListView.mockIsLastCellFullyVisible = true
+        channelControllerMock.hasLoadedAllNextMessages_mock = true
+
+        XCTAssertTrue(vc.shouldMarkChannelRead)
+    }
+
+    func test_shouldMarkChannelRead_whenNotLastMessageFullyVisible_thenReturnsFalse() {
+        let mockedListView = makeMockMessageListView()
+        mockedListView.mockIsLastCellFullyVisible = false
+        channelControllerMock.hasLoadedAllNextMessages_mock = true
+
+        XCTAssertFalse(vc.shouldMarkChannelRead)
+    }
+
+    func test_shouldMarkChannelRead_whenHasNotLoadedAllNextMessages_thenReturnsFalse() {
+        let mockedListView = makeMockMessageListView()
+        mockedListView.mockIsLastCellFullyVisible = true
+        channelControllerMock.hasLoadedAllNextMessages_mock = false
+
+        XCTAssertFalse(vc.shouldMarkChannelRead)
+    }
+
+    func test_shouldMarkChannelRead_whenNotLastMessageFullyVisible_whenHasNotLoadedAllNextMessages_thenReturnsFalse() {
+        let mockedListView = makeMockMessageListView()
+        mockedListView.mockIsLastCellFullyVisible = false
+        channelControllerMock.hasLoadedAllNextMessages_mock = false
+
+        XCTAssertFalse(vc.shouldMarkChannelRead)
+    }
+
+    func test_viewDidAppear_whenShouldMarkChannelRead_thenMarkRead() {
+        let mockedListView = makeMockMessageListView()
+        mockedListView.mockIsLastCellFullyVisible = true
+        channelControllerMock.hasLoadedAllNextMessages_mock = true
+
+        vc.viewDidAppear(false)
+        XCTAssertEqual(channelControllerMock.markReadCallCount, 1)
+    }
+
+    func test_viewDidAppear_whenShouldNotMarkChannelRead_thenDoesNotMarkRead() {
+        let mockedListView = makeMockMessageListView()
+        mockedListView.mockIsLastCellFullyVisible = false
+        channelControllerMock.hasLoadedAllNextMessages_mock = false
+
+        vc.viewDidAppear(false)
+        XCTAssertEqual(channelControllerMock.markReadCallCount, 0)
+    }
+
+    func test_scrollViewDidScroll_whenShouldMarkChannelRead_thenMarkRead() {
+        let mockedListView = makeMockMessageListView()
+        mockedListView.mockIsLastCellFullyVisible = true
+        channelControllerMock.hasLoadedAllNextMessages_mock = true
+
+        vc.chatMessageListVC(vc.messageListVC, scrollViewDidScroll: UIScrollView())
+        XCTAssertEqual(channelControllerMock.markReadCallCount, 1)
+    }
+
+    func test_scrollViewDidScroll_whenShouldNotMarkChannelRead_thenDoesNotMarkRead() {
+        let mockedListView = makeMockMessageListView()
+        mockedListView.mockIsLastCellFullyVisible = false
+        channelControllerMock.hasLoadedAllNextMessages_mock = false
+
+        vc.chatMessageListVC(vc.messageListVC, scrollViewDidScroll: UIScrollView())
+        XCTAssertEqual(channelControllerMock.markReadCallCount, 0)
+    }
+
+    func test_didUpdateMessagesComplete_whenShouldMarkChannelRead_thenMarkRead() {
+        let mockedListView = makeMockMessageListView()
+        mockedListView.mockIsLastCellFullyVisible = true
+        channelControllerMock.hasLoadedAllNextMessages_mock = true
+
+        vc.channelController(channelControllerMock, didUpdateMessages: [])
+        mockedListView.updateMessagesCompletion?()
+        XCTAssertEqual(channelControllerMock.markReadCallCount, 1)
+    }
+
+    func test_didUpdateMessagesComplete_whenShouldNotMarkChannelRead_thenDoesNotMarkRead() {
+        let mockedListView = makeMockMessageListView()
+        mockedListView.mockIsLastCellFullyVisible = false
+        channelControllerMock.hasLoadedAllNextMessages_mock = false
+
+        vc.channelController(channelControllerMock, didUpdateMessages: [])
+        mockedListView.updateMessagesCompletion?()
+        XCTAssertEqual(channelControllerMock.markReadCallCount, 0)
+    }
+    
     // MARK: - chatMessageListVC(_:headerViewForMessage:at)
 
     func test_headerViewForMessage_returnsExpectedValue() throws {
@@ -613,6 +775,11 @@ private extension ChatChannelVC_Tests {
             deletedAt: Date(),
             isSentByCurrentUser: isSentByCurrentUser
         )
+    }
+
+    func makeMockMessageListView() -> ChatMessageListView_Mock {
+        vc.messageListVC.components.messageListView = ChatMessageListView_Mock.self
+        return vc.messageListVC.listView as! ChatMessageListView_Mock
     }
 }
 

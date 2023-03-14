@@ -497,13 +497,20 @@ extension DatabaseSession {
 
         switch payload.eventType {
         case .messageNew, .notificationMessageNew:
-            channelDTO.previewMessage = preview(for: cid)
+            let newPreview = preview(for: cid)
+            let newPreviewCreatedAt = newPreview?.createdAt.bridgeDate ?? .distantFuture
+            let currentPreviewCreatedAt = channelDTO.previewMessage?.createdAt.bridgeDate ?? .distantPast
+            if newPreviewCreatedAt > currentPreviewCreatedAt {
+                channelDTO.previewMessage = newPreview
+            }
 
         case .messageDeleted where channelDTO.previewMessage?.id == payload.message?.id:
-            channelDTO.previewMessage = preview(for: cid)
+            let newPreview = preview(for: cid)
+            channelDTO.previewMessage = newPreview
 
         case .channelHidden where payload.isChannelHistoryCleared == true:
-            channelDTO.previewMessage = preview(for: cid)
+            let newPreview = preview(for: cid)
+            channelDTO.previewMessage = newPreview
 
         case .channelTruncated:
             // We're not using `preview(for: cid)` here because the channel

@@ -47,6 +47,27 @@ public protocol ChatMessageListVCDelegate: AnyObject {
         with gestureRecognizer: UITapGestureRecognizer
     )
 
+    /// Tells the delegate that it should load the page around the given message id.
+    ///
+    /// Ex: The user tapped on a quoted message which is not locally available.
+    /// - Parameters:
+    ///   - vc: The message list informing the delegate of this event.
+    ///   - messageId: The id of the message to load the page around it.
+    ///   - onSuccess: Call this closure when the page is successfully loaded.
+    func chatMessageListVC(
+        _ vc: ChatMessageListVC,
+        shouldLoadPageAroundMessage message: ChatMessage,
+        _ completion: @escaping ((Error?) -> Void)
+    )
+
+    /// Tells the delegate that it should load the first page.
+    ///
+    /// Ex: The user tapped on scroll to the bottom or sent a new message when the first page is not currently in the UI.
+    /// - Parameter vc: The message list informing the delegate of this event.
+    func chatMessageListVCShouldLoadFirstPage(
+        _ vc: ChatMessageListVC
+    )
+    
     /// Ask the delegate to provide a header view for the specified decoration type.
     /// - Parameters:
     ///   - vc: The message list informing the delegate of this event.
@@ -70,14 +91,14 @@ public protocol ChatMessageListVCDelegate: AnyObject {
     ) -> ChatMessageDecorationView?
 }
 
-extension ChatMessageListVCDelegate {
+public extension ChatMessageListVCDelegate {
     /// A helper method to create the DateSeparator that is used
     /// - Parameters:
     ///   - vc: The message list informing the delegate of this event.
     ///   - message: The given message.
     ///   - indexPath: An index path locating the row in the message list.
     ///   - components: The components to use in order to access the DateSeparatorView type
-    public func dateHeaderView(
+    func dateHeaderView(
         _ vc: ChatMessageListVC,
         headerViewForMessage message: ChatMessage,
         at indexPath: IndexPath,
@@ -91,6 +112,20 @@ extension ChatMessageListVCDelegate {
         return dateSeparatorView
     }
 
+    // MARK: - Default Implementations
+
+    func chatMessageListVC(
+        _ vc: ChatMessageListVC,
+        shouldLoadPageAroundMessage message: ChatMessage,
+        _ completion: @escaping ((Error?) -> Void)
+    ) {
+        completion(nil)
+    }
+
+    func chatMessageListVCShouldLoadFirstPage(_ vc: ChatMessageListVC) {
+        // no-op
+    }
+ 
     func chatMessageListVC(
         _ vc: ChatMessageListVC,
         headerViewForMessage message: ChatMessage,

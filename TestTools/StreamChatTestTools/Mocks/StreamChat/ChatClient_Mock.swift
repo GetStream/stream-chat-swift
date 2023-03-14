@@ -21,6 +21,12 @@ final class ChatClient_Mock: ChatClient {
     @Atomic var completeTokenWaiters_called = false
     @Atomic var completeTokenWaiters_token: Token?
 
+    var mockedEventNotificationCenter: EventNotificationCenter_Mock? = nil
+
+    override var eventNotificationCenter: EventNotificationCenter {
+        mockedEventNotificationCenter ?? super.eventNotificationCenter
+    }
+
     override var backgroundWorkers: [Worker] {
         _backgroundWorkers ?? super.backgroundWorkers
     }

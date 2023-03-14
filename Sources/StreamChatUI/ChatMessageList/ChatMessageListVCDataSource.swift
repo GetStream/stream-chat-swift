@@ -7,6 +7,9 @@ import StreamChat
 
 /// The object that acts as the data source of the message list.
 public protocol ChatMessageListVCDataSource: AnyObject {
+    /// Asks the data source if the first page is currently loaded.
+    var isFirstPageLoaded: Bool { get }
+
     /// Asks the data source to return all the available messages.
     var messages: [ChatMessage] { get set }
 
@@ -35,4 +38,10 @@ public protocol ChatMessageListVCDataSource: AnyObject {
         _ vc: ChatMessageListVC,
         messageLayoutOptionsAt indexPath: IndexPath
     ) -> ChatMessageLayoutOptions
+}
+
+public extension ChatMessageListVCDataSource {
+    var isFirstPageLoaded: Bool {
+        true
+    }
 }

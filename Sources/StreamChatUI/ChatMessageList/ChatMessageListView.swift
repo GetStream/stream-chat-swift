@@ -39,6 +39,7 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
     /// we skip adding the message to the UI until the user scrolls back
     /// to the bottom. This is to avoid message list jumps.
     internal var skippedMessages: Set<MessageId> = []
+
     /// This closure is to update the dataSource when DifferenceKit
     /// reports the data source should be updated.
     internal var onNewDataSource: (([ChatMessage]) -> Void)?
@@ -184,65 +185,15 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
         with changes: [ListChange<ChatMessage>],
         completion: (() -> Void)? = nil
     ) {
-        let newestChange = changes.first(where: { $0.indexPath.item == 0 })
-        let isNewestChangeInsertion = newestChange?.isInsertion == true
-        let isNewestChangeNotByCurrentUser = newestChange?.item.isSentByCurrentUser == false
-        let isNewestChangeNotVisible = !isLastCellFullyVisible && !previousMessagesSnapshot.isEmpty
-        let shouldSkipMessagesInsertions = isNewestChangeNotVisible && isNewestChangeInsertion && isNewestChangeNotByCurrentUser
-
-        if shouldSkipMessagesInsertions {
-            changes.filter(\.isInsertion).forEach {
-                skippedMessages.insert($0.item.id)
-            }
-
-            // By setting the new snapshots to itself, it will
-            // trigger didSet and remove the newly skipped messages.
-            let newMessageSnapshot = newMessagesSnapshot
-            newMessagesSnapshot = newMessageSnapshot
-        }
-
         UIView.performWithoutAnimation {
             reloadMessages(
                 previousSnapshot: previousMessagesSnapshot,
                 newSnapshot: newMessagesSnapshot,
                 with: .fade,
-                completion: { [weak self] in
-                    let newestChangeIsInsertionOrMove = isNewestChangeInsertion || newestChange?.isMove == true
-                    if newestChangeIsInsertionOrMove, let newMessage = newestChange?.item {
-                        // Scroll to the bottom if the new message was sent by
-                        // the current user, or moved by the current user
-                        if newMessage.isSentByCurrentUser {
-                            self?.scrollToMostRecentMessage()
-                        }
-
-                        // When a Giphy moves to the bottom, we need to also trigger a reload
-                        // Since a move doesn't trigger a reload of the cell.
-                        if newestChange?.isMove == true {
-                            let movedIndexPath = IndexPath(item: 0, section: 0)
-                            self?.reloadRows(at: [movedIndexPath], with: .none)
-                        }
-                    }
-
-                    // When there are deletions, we should update the previous message, so that we add the
-                    // avatar image back and the timestamp too. Since we have an inverted list, the previous
-                    // message has the same index of the deleted message after the deletion has been executed.
-                    let visibleRemoves = changes.filter {
-                        $0.isRemove && self?.indexPathsForVisibleRows?.contains($0.indexPath) == true
-                    }
-                    visibleRemoves.forEach {
-                        self?.reloadRows(at: [$0.indexPath], with: .none)
-                    }
-
+                completion: {
                     completion?()
                 }
             )
-
-            // If we are inserting messages at the bottom, update the previous cell
-            // to hide the timestamp of the previous message if needed.
-            if self.isLastCellFullyVisible, self.newMessagesSnapshot.count > 1 {
-                let previousMessageIndexPath = IndexPath(item: 1, section: 0)
-                self.reloadRows(at: [previousMessageIndexPath], with: .none)
-            }
         }
     }
 

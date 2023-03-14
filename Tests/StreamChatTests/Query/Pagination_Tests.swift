@@ -59,4 +59,19 @@ final class Pagination_Tests: XCTestCase {
         // Assert `MessagesPagination` encoded correctly
         AssertJSONEqual(encodedJSON, expectedJSON)
     }
+
+    func test_encoding_withAroundId() throws {
+        let pagination = MessagesPagination(pageSize: 25, parameter: .around("someId"))
+
+        let expectedData: [String: Any] = [
+            "limit": 25,
+            "id_around": "someId"
+        ]
+
+        let encodedJSON = try JSONEncoder.default.encode(pagination)
+        let expectedJSON = try JSONSerialization.data(withJSONObject: expectedData, options: [])
+
+        // Assert `MessagesPagination` encoded correctly
+        AssertJSONEqual(encodedJSON, expectedJSON)
+    }
 }

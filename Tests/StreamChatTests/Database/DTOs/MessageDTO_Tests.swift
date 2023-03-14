@@ -211,6 +211,244 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(message.readByCount, expectedReadBy.count)
     }
 
+    // This is required because FRC can report a deletion when inserting a message which already exists
+    // in the FRC data because it thinks it is a duplicated.
+    func test_saveMessage_whenMessageAlreadyInParentReplies_shouldNotReportChangesInFRC() throws {
+        let channelPayload: ChannelPayload = .dummy(
+            channel: .dummy()
+        )
+
+        let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
+        let parentId = MessageId.unique
+        let duplicatedMessageId = MessageId.unique
+        let duplicatedMessage = MessagePayload.dummy(
+            messageId: duplicatedMessageId,
+            parentId: parentId,
+            text: "test"
+        )
+
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: currentUser)
+
+            let channel = try session.saveChannel(payload: channelPayload)
+
+            // Save reply
+            let reply = try session.saveMessage(
+                payload: duplicatedMessage,
+                channelDTO: channel,
+                syncOwnReactions: false,
+                cache: nil
+            )
+
+            // Save parent message and insert to replies
+            let parentMessage = try session.saveMessage(
+                payload: .dummy(messageId: parentId),
+                channelDTO: channel,
+                syncOwnReactions: false,
+                cache: nil
+            )
+            parentMessage.replies.insert(reply)
+        }
+
+        let exp = expectation(description: "FRC should not report any changes")
+        exp.isInverted = true
+        var changes: [ListChange<ChatMessage>] = []
+        let observer = try createMessagesFRC(for: channelPayload)
+        observer.onDidChange = { newChanges in
+            changes += newChanges
+            exp.fulfill()
+        }
+
+        try database.writeSynchronously { session in
+            let channel = try XCTUnwrap(session.channel(cid: channelPayload.channel.cid))
+
+            // Save the same reply
+            try session.saveMessage(
+                payload: duplicatedMessage,
+                channelDTO: channel,
+                syncOwnReactions: false,
+                cache: nil
+            )
+        }
+
+        waitForExpectations(timeout: defaultTimeout)
+    }
+
+    func test_saveMessage_whenMessageNotInParentReplies_shouldReportChangesInFRC() throws {
+        let channelPayload: ChannelPayload = .dummy(
+            channel: .dummy()
+        )
+
+        let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
+        let parentId = MessageId.unique
+        let messageId = MessageId.unique
+        let message = MessagePayload.dummy(
+            messageId: messageId,
+            parentId: parentId
+        )
+        let anotherMessage = MessagePayload.dummy(parentId: parentId)
+
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: currentUser)
+
+            let channel = try session.saveChannel(payload: channelPayload)
+
+            // Save reply
+            let reply = try session.saveMessage(
+                payload: message,
+                channelDTO: channel,
+                syncOwnReactions: false,
+                cache: nil
+            )
+
+            // Save parent message and insert to replies
+            let parentMessage = try session.saveMessage(
+                payload: .dummy(messageId: parentId),
+                channelDTO: channel,
+                syncOwnReactions: false,
+                cache: nil
+            )
+            parentMessage.replies.insert(reply)
+        }
+
+        let exp = expectation(description: "FRC should report changes")
+        var changes: [ListChange<ChatMessage>] = []
+        let observer = try createMessagesFRC(for: channelPayload)
+        observer.onDidChange = { newChanges in
+            changes += newChanges
+            exp.fulfill()
+        }
+
+        try database.writeSynchronously { session in
+            let channel = try XCTUnwrap(session.channel(cid: channelPayload.channel.cid))
+
+            // Save another reply
+            try session.saveMessage(
+                payload: anotherMessage,
+                channelDTO: channel,
+                syncOwnReactions: false,
+                cache: nil
+            )
+        }
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        let parentMessage = try XCTUnwrap(database.viewContext.message(id: parentId))
+        XCTAssertEqual(parentMessage.replies.count, 2)
+        XCTAssertEqual(changes.count, 1)
+    }
+
+    // This is required because FRC can report a deletion when inserting a message which already exists
+    // in the FRC data because it thinks it is a duplicated.
+    func test_saveMessage_whenQuotedMessageAlreadyExists_shouldNotReportChangesForQuotedMessageInFRC() throws {
+        let channelPayload: ChannelPayload = .dummy(
+            channel: .dummy()
+        )
+
+        let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
+        let quotedMessageId = MessageId.unique
+        let quotedMessage = MessagePayload.dummy(messageId: quotedMessageId)
+        let messageId = MessageId.unique
+        let message = MessagePayload.dummy(
+            messageId: messageId,
+            quotedMessageId: quotedMessageId,
+            quotedMessage: quotedMessage
+        )
+
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: currentUser)
+
+            let channel = try session.saveChannel(payload: channelPayload)
+
+            // Save quotedMessage
+            try session.saveMessage(
+                payload: quotedMessage,
+                channelDTO: channel,
+                syncOwnReactions: false,
+                cache: nil
+            )
+
+            // Save message with quoted message
+            try session.saveMessage(
+                payload: message,
+                channelDTO: channel,
+                syncOwnReactions: false,
+                cache: nil
+            )
+        }
+
+        let exp = expectation(description: "FRC should not report changes for quoted message")
+        var changes: [ListChange<ChatMessage>] = []
+        let observer = try createMessagesFRC(for: channelPayload)
+        observer.onDidChange = { newChanges in
+            changes += newChanges
+            exp.fulfill()
+        }
+
+        try database.writeSynchronously { session in
+            let channel = try XCTUnwrap(session.channel(cid: channelPayload.channel.cid))
+
+            // Save message again
+            try session.saveMessage(
+                payload: message,
+                channelDTO: channel,
+                syncOwnReactions: false,
+                cache: nil
+            )
+        }
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertEqual(changes.count, 1)
+        XCTAssertNil(changes.first { $0.item.id == quotedMessageId })
+    }
+
+    func test_saveMessage_whenQuotedMessageDoesNotExist_shouldReportChangesForQuotedMessageInFRC() throws {
+        let channelPayload: ChannelPayload = .dummy(
+            channel: .dummy()
+        )
+
+        let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
+        let quotedMessageId = MessageId.unique
+        let quotedMessage = MessagePayload.dummy(messageId: quotedMessageId)
+        let messageId = MessageId.unique
+        let message = MessagePayload.dummy(
+            messageId: messageId,
+            quotedMessageId: quotedMessageId,
+            quotedMessage: quotedMessage
+        )
+
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: currentUser)
+            try session.saveChannel(payload: channelPayload)
+        }
+
+        let exp = expectation(description: "FRC should report changes for quoted message")
+        var changes: [ListChange<ChatMessage>] = []
+        let observer = try createMessagesFRC(for: channelPayload)
+        observer.onDidChange = { newChanges in
+            changes += newChanges
+            exp.fulfill()
+        }
+
+        try database.writeSynchronously { session in
+            let channel = try XCTUnwrap(session.channel(cid: channelPayload.channel.cid))
+
+            // Save message with quoted message which is not yet in DB
+            try session.saveMessage(
+                payload: message,
+                channelDTO: channel,
+                syncOwnReactions: false,
+                cache: nil
+            )
+        }
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertEqual(changes.count, 2)
+        XCTAssertNotNil(changes.first { $0.item.id == quotedMessageId })
+    }
+
     func test_numberOfReads() {
         let context = database.viewContext
 
@@ -1779,6 +2017,61 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(predicateCount, 0)
     }
 
+    func test_channelMessagesPredicate_whenNewestMessageAt_shouldIgnoreNewerMessages() throws {
+        let now = Date()
+        let channelId: ChannelId = .unique
+        let channelPayload = ChannelPayload.dummy(channel: .dummy(cid: channelId))
+        try database.writeSynchronously { session in
+            let channel = try session.saveChannel(payload: channelPayload)
+            channel.newestMessageAt = now.bridgeDate
+        }
+
+        let message: MessagePayload = .dummy(createdAt: now.addingTimeInterval(10), cid: channelId)
+        let predicateCount = try checkChannelMessagesPredicateCount(
+            channelId: channelId,
+            message: message
+        )
+
+        XCTAssertEqual(predicateCount, 0)
+    }
+
+    func test_channelMessagesPredicate_whenNewestMessageAtIsOlder_shouldNotIgnoreNewerMessages() throws {
+        let now = Date()
+        let channelId: ChannelId = .unique
+        let channelPayload = ChannelPayload.dummy(channel: .dummy(cid: channelId))
+        try database.writeSynchronously { session in
+            let channel = try session.saveChannel(payload: channelPayload)
+            channel.newestMessageAt = now.bridgeDate
+        }
+
+        let message: MessagePayload = .dummy(createdAt: now.addingTimeInterval(-10), cid: channelId)
+        let predicateCount = try checkChannelMessagesPredicateCount(
+            channelId: channelId,
+            message: message
+        )
+
+        XCTAssertEqual(predicateCount, 1)
+    }
+
+    func test_channelMessagesPredicate_whenNewestMessageAt_whenFilterNewerMessagesIsFale_shouldNotIgnoreNewerMessages() throws {
+        let now = Date()
+        let channelId: ChannelId = .unique
+        let channelPayload = ChannelPayload.dummy(channel: .dummy(cid: channelId))
+        try database.writeSynchronously { session in
+            let channel = try session.saveChannel(payload: channelPayload)
+            channel.newestMessageAt = now.bridgeDate
+        }
+
+        let message: MessagePayload = .dummy(createdAt: now.addingTimeInterval(10), cid: channelId)
+        let predicateCount = try checkChannelMessagesPredicateCount(
+            channelId: channelId,
+            message: message,
+            filterNewerMessages: false
+        )
+
+        XCTAssertEqual(predicateCount, 1)
+    }
+    
     // MARK: Count Other User Messages
 
     func test_countOtherUserMessages_whenThereAreNoMessages() {
@@ -2895,6 +3188,8 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(channelUpdatesCount, 1)
     }
 
+    // MARK: - fetchLimit and batchSzie
+
     func test_messagesFetchRequest_shouldHaveFetchLimitAndBatchSize() {
         let fetchRequest = MessageDTO.messagesFetchRequest(
             for: .unique,
@@ -2919,19 +3214,62 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(fetchRequest.fetchLimit, 20)
     }
 
+    // MARK: - isLocalOnly
+
+    func test_isLocalOnly_whenLocalMessageStateIsWaitingToBeSentToServer_returnsTrue() throws {
+        let message = try createMessage(with: .dummy(channel: .dummy()))
+        message.localMessageState = .pendingSync
+
+        XCTAssertEqual(message.isLocalOnly, true)
+    }
+
+    func test_isLocalOnly_whenLocalMessageStateIsNil_whenTypeIsEphemeral_returnsTrue() throws {
+        let message = try createMessage(with: .dummy(channel: .dummy()))
+        message.localMessageState = nil
+        message.type = MessageType.ephemeral.rawValue
+
+        XCTAssertEqual(message.isLocalOnly, true)
+    }
+
+    func test_isLocalOnly_whenLocalMessageStateIsNil_whenTypeIsError_returnsTrue() throws {
+        let message = try createMessage(with: .dummy(channel: .dummy()))
+        message.localMessageState = nil
+        message.type = MessageType.error.rawValue
+
+        XCTAssertEqual(message.isLocalOnly, true)
+    }
+
+    func test_isLocalOnly_whenLocalMessageStateIsNil_whenTypeNotEphemeralOrError_returnsFalse() throws {
+        let message = try createMessage(with: .dummy(channel: .dummy()))
+        message.localMessageState = nil
+        message.type = MessageType.regular.rawValue
+
+        XCTAssertEqual(message.isLocalOnly, false)
+    }
+
     // MARK: Helpers:
+
+    private func createMessage(with message: MessagePayload) throws -> MessageDTO {
+        let context = database.viewContext
+        _ = try context.saveCurrentUser(payload: .dummy(userPayload: message.user))
+        return try XCTUnwrap(
+            context.saveMessage(payload: message, for: message.channel?.cid, cache: nil)
+        )
+    }
 
     private func checkChannelMessagesPredicateCount(
         channelId: ChannelId,
         message: MessagePayload,
-        isHardDeleted: Bool = false
+        isHardDeleted: Bool = false,
+        filterNewerMessages: Bool = true
     ) throws -> Int {
         let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: true)]
         request.predicate = MessageDTO.channelMessagesPredicate(
             for: channelId.rawValue,
             deletedMessagesVisibility: .visibleForCurrentUser,
-            shouldShowShadowedMessages: false
+            shouldShowShadowedMessages: false,
+            filterNewerMessages: filterNewerMessages
         )
 
         try database.writeSynchronously { session in
@@ -2973,5 +3311,23 @@ final class MessageDTO_Tests: XCTestCase {
         )
 
         return results.contains(messageDTO)
+    }
+
+    // Creates a messages observer (FRC wrapper)
+    private func createMessagesFRC(for channelPayload: ChannelPayload) throws -> ListDatabaseObserverWrapper<ChatMessage, MessageDTO> {
+        let observer = ListDatabaseObserverWrapper(
+            isBackground: false,
+            database: database,
+            fetchRequest: MessageDTO.messagesFetchRequest(
+                for: channelPayload.channel.cid,
+                pageSize: 25,
+                sortAscending: true,
+                deletedMessagesVisibility: .visibleForCurrentUser,
+                shouldShowShadowedMessages: false
+            ),
+            itemCreator: { try $0.asModel() as ChatMessage }
+        )
+        try observer.startObserving()
+        return observer
     }
 }

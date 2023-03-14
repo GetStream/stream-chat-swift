@@ -221,9 +221,9 @@ final class ChannelUpdater_Tests: XCTestCase {
         // Simulate `updateChannel` call
         let completionCalled = expectation(description: "completion called")
         channelUpdater
-            .update(channelQuery: query, isInRecoveryMode: false, channelCreatedCallback: callback) { _ in
+            .update(channelQuery: query, isInRecoveryMode: false, onChannelCreated: callback, completion: { _ in
                 completionCalled.fulfill()
-            }
+            })
 
         // Simulate API response with channel data
         let payload = dummyPayload(with: query.cid!)
@@ -231,7 +231,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         wait(for: [completionCalled], timeout: defaultTimeout)
 
-        // Assert `channelCreatedCallback` is called
+        // Assert `onChannelCreated` is called
         XCTAssertEqual(cid, query.cid)
         // Assert channel is saved to DB after
         AssertAsync.willBeTrue(channel != nil)
@@ -255,9 +255,9 @@ final class ChannelUpdater_Tests: XCTestCase {
         // Simulate `updateChannel` call
         let completionCalled = expectation(description: "completion called")
         channelUpdater
-            .update(channelQuery: query, isInRecoveryMode: true, channelCreatedCallback: callback) { _ in
+            .update(channelQuery: query, isInRecoveryMode: true, onChannelCreated: callback, completion: { _ in
                 completionCalled.fulfill()
-            }
+            })
 
         // Simulate API response with channel data
         let payload = dummyPayload(with: query.cid!)
@@ -265,7 +265,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         wait(for: [completionCalled], timeout: defaultTimeout)
 
-        // Assert `channelCreatedCallback` is called
+        // Assert `onChannelCreated` is called
         XCTAssertEqual(cid, query.cid)
         // Assert channel is saved to DB after
         AssertAsync.willBeTrue(channel != nil)
@@ -435,6 +435,81 @@ final class ChannelUpdater_Tests: XCTestCase {
         XCTAssertEqual(channel?.messages.count, 4)
     }
 
+    func test_updateChannelQuery_updatesPaginationCursors() throws {
+        let cid = ChannelId(type: .messaging, id: .unique)
+        let query = ChannelQuery(cid: cid, paginationParameter: .around(.unique))
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: self.dummyPayload(with: cid, numberOfMessages: 0))
+        }
+
+        let expectation = self.expectation(description: "Update completes")
+        channelUpdater.update(channelQuery: query, isInRecoveryMode: false, completion: { _ in
+            expectation.fulfill()
+        })
+
+        let payload = dummyPayload(with: cid, numberOfMessages: 5)
+        apiClient.test_simulateResponse(.success(payload))
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        let channel = try XCTUnwrap(database.viewContext.channel(cid: cid))
+        XCTAssertNotNil(channel.oldestMessageAt)
+        XCTAssertNotNil(channel.newestMessageAt)
+    }
+
+    func test_updateChannelQuery_whenIsJumpingToMessage_thenDeleteAllPreviousMessagesFromChannel() throws {
+        let cid = ChannelId(type: .messaging, id: .unique)
+        let query = ChannelQuery(cid: cid, paginationParameter: .around(.unique))
+
+        let previousMessagesCount = 10
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: self.dummyPayload(
+                with: cid, numberOfMessages: previousMessagesCount
+            ))
+        }
+
+        let expectation = self.expectation(description: "Update completes")
+        channelUpdater.update(channelQuery: query, isInRecoveryMode: false, completion: { _ in
+            expectation.fulfill()
+        })
+
+        let expectedMessagesCount = 5
+        let payload = dummyPayload(with: cid, numberOfMessages: expectedMessagesCount)
+        apiClient.test_simulateResponse(.success(payload))
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        let channel = try XCTUnwrap(database.viewContext.channel(cid: cid))
+        XCTAssertEqual(channel.messages.count, expectedMessagesCount)
+    }
+
+    func test_updateChannelQuery_whenIsJumpingToMessage_whenRequestFails_thenDoesNotDeleteMessages() throws {
+        let cid = ChannelId(type: .messaging, id: .unique)
+        let query = ChannelQuery(cid: cid, paginationParameter: .around(.unique))
+
+        let previousMessagesCount = 10
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: self.dummyPayload(
+                with: cid, numberOfMessages: previousMessagesCount
+            ))
+        }
+
+        let expectation = self.expectation(description: "Update completes")
+        channelUpdater.update(channelQuery: query, isInRecoveryMode: false, completion: { _ in
+            expectation.fulfill()
+        })
+
+        let expectedMessagesCount = previousMessagesCount
+        let payload = dummyPayload(with: cid, numberOfMessages: expectedMessagesCount)
+        apiClient.test_simulateResponse(.success(payload))
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        let channel = try XCTUnwrap(database.viewContext.channel(cid: cid))
+        XCTAssertEqual(channel.messages.count, expectedMessagesCount)
+    }
+
     // MARK: - Messages
 
     func test_createNewMessage() throws {
@@ -474,7 +549,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         ]
 
         // Create new message
-        let newMessageId: MessageId = try waitFor { completion in
+        let newMessage: ChatMessage = try waitFor { completion in
             channelUpdater.createNewMessage(
                 in: cid,
                 text: text,
@@ -490,8 +565,8 @@ final class ChannelUpdater_Tests: XCTestCase {
                 extraData: extraData
             ) { result in
                 do {
-                    let newMessageId = try result.get()
-                    completion(newMessageId)
+                    let newMessage = try result.get()
+                    completion(newMessage)
                 } catch {
                     XCTFail("Saving the message failed. \(error)")
                 }
@@ -499,11 +574,11 @@ final class ChannelUpdater_Tests: XCTestCase {
         }
 
         func id(for envelope: AnyAttachmentPayload) -> AttachmentId {
-            .init(cid: cid, messageId: newMessageId, index: attachmentEnvelopes.firstIndex(of: envelope)!)
+            .init(cid: cid, messageId: newMessage.id, index: attachmentEnvelopes.firstIndex(of: envelope)!)
         }
 
         let messageDTO: MessageDTO = try XCTUnwrap(
-            database.viewContext.message(id: newMessageId)
+            database.viewContext.message(id: newMessage.id)
         )
         XCTAssertEqual(messageDTO.skipPush, true)
         XCTAssertEqual(messageDTO.skipEnrichUrl, true)
@@ -551,7 +626,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         let testError = TestError()
         database.write_errorResponse = testError
 
-        let result: Result<MessageId, Error> = try waitFor { completion in
+        let result: Result<ChatMessage, Error> = try waitFor { completion in
             channelUpdater.createNewMessage(
                 in: .unique,
                 text: .unique,

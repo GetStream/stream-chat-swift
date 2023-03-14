@@ -303,6 +303,29 @@ final class ChannelDTO_Tests: XCTestCase {
         XCTAssertEqual(database.viewContext.channel(cid: channelId)?.truncatedAt, originalTruncatedAt.bridgeDate)
     }
 
+    func test_saveChannel_whenChannelTruncated_shouldEraseNewestMessageAt() throws {
+        let channelId: ChannelId = .unique
+        let originalPayload = ChannelDetailPayload.dummy(cid: channelId, truncatedAt: nil)
+        try database.writeSynchronously { session in
+            let channel = try session.saveChannel(payload: originalPayload, query: nil, cache: nil)
+            channel.newestMessageAt = .unique
+        }
+        var channelDTO: ChannelDTO? {
+            database.viewContext.channel(cid: channelId)
+        }
+
+        XCTAssertNotNil(channelDTO?.newestMessageAt)
+
+        let newTruncatedAt = Date().addingTimeInterval(1200)
+        let newPayload = ChannelDetailPayload.dummy(cid: channelId, truncatedAt: newTruncatedAt)
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: newPayload, query: nil, cache: nil)
+        }
+
+        XCTAssertNil(channelDTO?.newestMessageAt)
+        XCTAssertNotNil(channelDTO)
+    }
+
     func test_channelPayload_isStoredAndLoadedFromDB() throws {
         let channelId: ChannelId = .unique
 
@@ -1393,9 +1416,166 @@ final class ChannelDTO_Tests: XCTestCase {
             Set([message1.id, deletedMessageFromCurrentUser.id, shadowedMessageFromAnotherUser.id])
         )
     }
+
+    func test_updatePaginationCursors_whenLessThan_updatesOldestMessageAtOnly() throws {
+        let channel = try createChannelWithEmptyPaginationCursors()
+
+        let oldestMessage = MessagePayload.dummy()
+        let newestMessage = MessagePayload.dummy()
+        let channelPayload = ChannelPayload.dummy(
+            messages: [
+                oldestMessage,
+                newestMessage
+            ]
+        )
+        let messagesPagination = MessagesPagination(pageSize: 25, parameter: .lessThan(.unique))
+        channel.updatePaginationCursors(for: channelPayload, with: messagesPagination)
+
+        XCTAssertNearlySameDate(channel.oldestMessageAt?.bridgeDate, oldestMessage.createdAt)
+        XCTAssertNearlySameDate(channel.newestMessageAt?.bridgeDate, nil)
+    }
+
+    func test_updatePaginationCursors_whenLessThanOrEqual_updatesOldestMessageAtOnly() throws {
+        let channel = try createChannelWithEmptyPaginationCursors()
+
+        let oldestMessage = MessagePayload.dummy()
+        let newestMessage = MessagePayload.dummy()
+        let channelPayload = ChannelPayload.dummy(
+            messages: [
+                oldestMessage,
+                newestMessage
+            ]
+        )
+        let messagesPagination = MessagesPagination(pageSize: 25, parameter: .lessThanOrEqual(.unique))
+        channel.updatePaginationCursors(for: channelPayload, with: messagesPagination)
+
+        XCTAssertNearlySameDate(channel.oldestMessageAt?.bridgeDate, oldestMessage.createdAt)
+        XCTAssertNearlySameDate(channel.newestMessageAt?.bridgeDate, nil)
+    }
+
+    func test_updatePaginationCursors_whenGreaterThan_updatesNewestMessageAtOnly() throws {
+        let channel = try createChannelWithEmptyPaginationCursors()
+
+        let oldestMessage = MessagePayload.dummy()
+        let newestMessage = MessagePayload.dummy()
+        let channelPayload = ChannelPayload.dummy(
+            messages: [
+                oldestMessage,
+                newestMessage
+            ]
+        )
+        let messagesPagination = MessagesPagination(pageSize: 1, parameter: .greaterThan(.unique))
+        channel.updatePaginationCursors(for: channelPayload, with: messagesPagination)
+
+        XCTAssertNearlySameDate(channel.oldestMessageAt?.bridgeDate, nil)
+        XCTAssertNearlySameDate(channel.newestMessageAt?.bridgeDate, newestMessage.createdAt)
+    }
+
+    func test_updatePaginationCursors_whenGreaterThanOrEqual_updatesNewestMessageAtOnly() throws {
+        let channel = try createChannelWithEmptyPaginationCursors()
+
+        let oldestMessage = MessagePayload.dummy()
+        let newestMessage = MessagePayload.dummy()
+        let channelPayload = ChannelPayload.dummy(
+            messages: [
+                oldestMessage,
+                newestMessage
+            ]
+        )
+        let messagesPagination = MessagesPagination(pageSize: 1, parameter: .greaterThanOrEqual(.unique))
+        channel.updatePaginationCursors(for: channelPayload, with: messagesPagination)
+
+        XCTAssertNearlySameDate(channel.oldestMessageAt?.bridgeDate, nil)
+        XCTAssertNearlySameDate(channel.newestMessageAt?.bridgeDate, newestMessage.createdAt)
+    }
+
+    func test_updatePaginationCursors_whenGreaterThan_whenMessagesCountLowerThanPageSize_thenEraseNewestMessageAt() throws {
+        let channel = try createChannelWithEmptyPaginationCursors()
+
+        let oldestMessage = MessagePayload.dummy()
+        let newestMessage = MessagePayload.dummy()
+        let channelPayload = ChannelPayload.dummy(
+            messages: [
+                oldestMessage,
+                newestMessage
+            ]
+        )
+        let messagesPagination = MessagesPagination(pageSize: 5, parameter: .greaterThan(.unique))
+        channel.updatePaginationCursors(for: channelPayload, with: messagesPagination)
+
+        XCTAssertNearlySameDate(channel.oldestMessageAt?.bridgeDate, nil)
+        XCTAssertNearlySameDate(channel.newestMessageAt?.bridgeDate, nil)
+    }
+
+    func test_updatePaginationCursors_whenGreaterThanOrEqual_whenMessagesCountLowerThanPageSize_thenEraseNewestMessageAt() throws {
+        let channel = try createChannelWithEmptyPaginationCursors()
+
+        let oldestMessage = MessagePayload.dummy()
+        let newestMessage = MessagePayload.dummy()
+        let channelPayload = ChannelPayload.dummy(
+            messages: [
+                oldestMessage,
+                newestMessage
+            ]
+        )
+        let messagesPagination = MessagesPagination(pageSize: 5, parameter: .greaterThanOrEqual(.unique))
+        channel.updatePaginationCursors(for: channelPayload, with: messagesPagination)
+
+        XCTAssertNearlySameDate(channel.oldestMessageAt?.bridgeDate, nil)
+        XCTAssertNearlySameDate(channel.newestMessageAt?.bridgeDate, nil)
+    }
+
+    func test_updatePaginationCursors_whenAround_updatesBothCursors() throws {
+        let channel = try createChannelWithEmptyPaginationCursors()
+
+        let oldestMessage = MessagePayload.dummy()
+        let newestMessage = MessagePayload.dummy()
+        let channelPayload = ChannelPayload.dummy(
+            messages: [
+                oldestMessage,
+                newestMessage
+            ]
+        )
+        let messagesPagination = MessagesPagination(pageSize: 25, parameter: .around(.unique))
+        channel.updatePaginationCursors(for: channelPayload, with: messagesPagination)
+
+        XCTAssertNearlySameDate(channel.oldestMessageAt?.bridgeDate, oldestMessage.createdAt)
+        XCTAssertNearlySameDate(channel.newestMessageAt?.bridgeDate, newestMessage.createdAt)
+    }
+
+    func test_updatePaginationCursors_whenNone_updatesOldestMessageAt_erasesNewestMessageAt() throws {
+        let channel = try createChannelWithEmptyPaginationCursors()
+        channel.newestMessageAt = .unique
+
+        let oldestMessage = MessagePayload.dummy()
+        let newestMessage = MessagePayload.dummy()
+        let channelPayload = ChannelPayload.dummy(
+            messages: [
+                oldestMessage,
+                newestMessage
+            ]
+        )
+        let messagesPagination = MessagesPagination(pageSize: 25, parameter: nil)
+        channel.updatePaginationCursors(for: channelPayload, with: messagesPagination)
+
+        XCTAssertNearlySameDate(channel.oldestMessageAt?.bridgeDate, oldestMessage.createdAt)
+        XCTAssertNearlySameDate(channel.newestMessageAt?.bridgeDate, nil)
+    }
 }
 
 private extension ChannelDTO_Tests {
+    func createChannelWithEmptyPaginationCursors() throws -> ChannelDTO {
+        let channelPayload = ChannelPayload.dummy()
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channelPayload)
+        }
+
+        let channel = try XCTUnwrap(
+            database.viewContext.channel(cid: channelPayload.channel.cid)
+        )
+        return channel
+    }
+
     func channel(with cid: ChannelId) throws -> ChatChannel {
         try XCTUnwrap(database.viewContext.channel(cid: cid)).asModel()
     }

@@ -206,7 +206,8 @@ class MessageDTO: NSManagedObject {
             channelMessagesPredicate(
                 for: cid,
                 deletedMessagesVisibility: .alwaysHidden,
-                shouldShowShadowedMessages: includeShadowedMessages
+                shouldShowShadowedMessages: includeShadowedMessages,
+                filterNewerMessages: false
             ),
             .init(format: "type != %@", MessageType.ephemeral.rawValue),
             .init(format: "type != %@", MessageType.error.rawValue)
@@ -217,7 +218,8 @@ class MessageDTO: NSManagedObject {
     static func channelMessagesPredicate(
         for cid: String,
         deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility,
-        shouldShowShadowedMessages: Bool
+        shouldShowShadowedMessages: Bool,
+        filterNewerMessages: Bool = true
     ) -> NSCompoundPredicate {
         let channelMessagePredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [
             .init(format: "showReplyInChannel == 1"),
@@ -249,6 +251,16 @@ class MessageDTO: NSManagedObject {
             ignoreOlderMessagesPredicate,
             deletedMessagesPredicate(deletedMessagesVisibility: deletedMessagesVisibility)
         ]
+
+        if filterNewerMessages {
+            // Used for paginating newer messages while jumping to a mid-page.
+            // We want to avoid new messages being inserted in the UI if we are in a mid-page.
+            let ignoreNewerMessagesPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [
+                .init(format: "channel.newestMessageAt == nil"),
+                .init(format: "createdAt <= channel.newestMessageAt")
+            ])
+            subpredicates.append(ignoreNewerMessagesPredicate)
+        }
 
         if !shouldShowShadowedMessages {
             let ignoreShadowedMessages = NSPredicate(format: "isShadowed == NO")
@@ -481,6 +493,14 @@ extension MessageDTO {
         set { localMessageStateRaw = newValue?.rawValue }
     }
 
+    var isLocalOnly: Bool {
+        if let localMessageState = self.localMessageState {
+            return localMessageState.isWaitingToBeSentToServer
+        }
+
+        return type == MessageType.ephemeral.rawValue || type == MessageType.error.rawValue
+    }
+
     /// When a message that has been synced gets edited but is bounced by the moderation API it will return true to this state.
     var failedToBeEditedDueToModeration: Bool {
         localMessageState == .syncingFailed && isBounced == true
@@ -635,23 +655,24 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             dto.pinnedBy = try saveUser(payload: pinnedByUser)
         }
 
-        if dto.pinned {
+        if dto.pinned && !channelDTO.pinnedMessages.contains(dto) {
             channelDTO.pinnedMessages.insert(dto)
         } else {
             channelDTO.pinnedMessages.remove(dto)
         }
 
-        if let quotedMessage = payload.quotedMessage {
+        if let quotedMessageId = payload.quotedMessageId,
+           let quotedMessage = message(id: quotedMessageId) {
+            // In case we do not have a fully formed quoted message in the payload,
+            // we check for quotedMessageId. This can happen in the case of nested quoted messages.
+            dto.quotedMessage = quotedMessage
+        } else if let quotedMessage = payload.quotedMessage {
             dto.quotedMessage = try saveMessage(
                 payload: quotedMessage,
                 channelDTO: channelDTO,
                 syncOwnReactions: false,
                 cache: cache
             )
-        } else if let quotedMessageId = payload.quotedMessageId {
-            // In case we do not have a fully formed quoted message in the payload,
-            // we check for quotedMessageId. This can happen in the case of nested quoted messages.
-            dto.quotedMessage = message(id: quotedMessageId)
         } else {
             dto.quotedMessage = nil
         }
@@ -675,7 +696,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         )
 
         channelDTO.lastMessageAt = max(channelDTO.lastMessageAt?.bridgeDate ?? payload.createdAt, payload.createdAt).bridgeDate
-
+        
         dto.channel = channelDTO
 
         dto.latestReactions = payload
@@ -699,8 +720,13 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         )
         dto.attachments = attachments
 
+        // Only insert message into Parent's replies if not already present.
+        // This in theory would not be needed since replies is a Set, but
+        // it will trigger an FRC update, which will cause the message to disappear
+        // in the Message List if there is already a message with the same ID.
         if let parentMessageId = payload.parentId,
-           let parentMessageDTO = MessageDTO.load(id: parentMessageId, context: self) {
+           let parentMessageDTO = MessageDTO.load(id: parentMessageId, context: self),
+           !parentMessageDTO.replies.contains(dto) {
             parentMessageDTO.replies.insert(dto)
         }
 
@@ -717,7 +743,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
 
         // Refetch channel preview if the current preview has changed.
         //
-        // The current messsage can stop being a valid preview e.g.
+        // The current message can stop being a valid preview e.g.
         // if it didn't pass moderation and obtained `error` type.
         if payload.id == channelDTO.previewMessage?.id {
             channelDTO.previewMessage = preview(for: cid)
