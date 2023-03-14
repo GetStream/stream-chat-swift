@@ -687,4 +687,94 @@ final class ChatMessageListVC_Tests: XCTestCase {
         XCTAssertNotNil(cell.headerContainerView.superview)
         XCTAssertNotNil(cell.headerContainerView.subviews.first as? ChatMessageListDateSeparatorView)
     }
+
+    // MARK: - audioAttachmentPresentationViewPlaybackContextForAttachment
+
+    func test_audioAttachmentPresentationViewPlaybackContextForAttachment_assetURLIsDifferentThanTheCurrentItem_returnsNotLoaded() {
+        let sut = ChatMessageListVC()
+
+        XCTAssertEqual(
+            sut.audioAttachmentPresentationViewPlaybackContextForAttachment(.mock(id: .unique)),
+            .notLoaded
+        )
+    }
+
+    func test_audioAttachmentPresentationViewPlaybackContextForAttachment_assetURLIsSameAsCurrentItem_returnsNotLoaded() {
+        var components = Components.mock
+        components.audioPlayer = MockAudioPlayer.self
+        let sut = ChatMessageListVC()
+        sut.components = components
+        let expected = AudioPlaybackContext.dummy(duration: 100, currentTime: 50, state: .playing)
+        (sut.audioPlayer as? MockAudioPlayer)?.stubbedPlaybackContextResult = expected
+
+        XCTAssertEqual(
+            sut.audioAttachmentPresentationViewPlaybackContextForAttachment(.mock(id: .unique)),
+            expected
+        )
+    }
+
+    // MARK: - audioAttachmentPresentationViewBeginPayback
+
+    func test_audioAttachmentPresentationViewBeginPayback_callsLoadAssetOnAudioPlayerWithExpectedValues() throws {
+        var components = Components.mock
+        components.audioPlayer = MockAudioPlayer.self
+        let sut = ChatMessageListVC()
+        sut.components = components
+        let attachment = ChatMessageFileAttachment.mock(
+            id: .unique,
+            assetURL: URL(string: "http://getstream.io")!
+        )
+        let delegate = MockAudioPlayerDelegate()
+
+        sut.audioAttachmentPresentationViewBeginPayback(
+            attachment,
+            with: delegate
+        )
+
+        let mockAudioPlayer = try XCTUnwrap(sut.audioPlayer as? MockAudioPlayer)
+        XCTAssertEqual(mockAudioPlayer.loadAssetWasCalledWith?.url, attachment.assetURL)
+        XCTAssertTrue((mockAudioPlayer.loadAssetWasCalledWith?.delegate as? MockAudioPlayerDelegate) === delegate)
+    }
+
+    // MARK: - audioAttachmentPresentationViewPausePayback
+
+    func test_audioAttachmentPresentationViewPausePayback_callsPauseOnAudioPlayer() throws {
+        var components = Components.mock
+        components.audioPlayer = MockAudioPlayer.self
+        let sut = ChatMessageListVC()
+        sut.components = components
+
+        sut.audioAttachmentPresentationViewPausePayback()
+
+        let mockAudioPlayer = try XCTUnwrap(sut.audioPlayer as? MockAudioPlayer)
+        XCTAssertTrue(mockAudioPlayer.pauseWasCalled)
+    }
+
+    // MARK: - audioAttachmentPresentationViewUpdatePlaybackRate
+
+    func test_audioAttachmentPresentationViewUpdatePlaybackRate_callsUpdateRateOnAudioPlayer() throws {
+        var components = Components.mock
+        components.audioPlayer = MockAudioPlayer.self
+        let sut = ChatMessageListVC()
+        sut.components = components
+
+        sut.audioAttachmentPresentationViewUpdatePlaybackRate()
+
+        let mockAudioPlayer = try XCTUnwrap(sut.audioPlayer as? MockAudioPlayer)
+        XCTAssertTrue(mockAudioPlayer.updateRateWasCalled)
+    }
+
+    // MARK: - audioAttachmentPresentationViewSeek
+
+    func test_audioAttachmentPresentationViewSeek_callsSeekToOnAudioPlayerWithExpectedValues() throws {
+        var components = Components.mock
+        components.audioPlayer = MockAudioPlayer.self
+        let sut = ChatMessageListVC()
+        sut.components = components
+
+        sut.audioAttachmentPresentationViewSeek(to: 10)
+
+        let mockAudioPlayer = try XCTUnwrap(sut.audioPlayer as? MockAudioPlayer)
+        XCTAssertEqual(mockAudioPlayer.seekToWasCalledWithTime, 10)
+    }
 }

@@ -15,6 +15,7 @@ open class ChatMessageListVC: _ViewController,
     GalleryContentViewDelegate,
     GiphyActionContentViewDelegate,
     FileActionContentViewDelegate,
+    AudioAttachmentPresentationViewDelegate,
     LinkPreviewViewDelegate,
     UITableViewDataSource,
     UITableViewDelegate,
@@ -76,6 +77,10 @@ open class ChatMessageListVC: _ViewController,
         .scrollToLatestMessageButton
         .init()
         .withoutAutoresizingMaskConstraints
+
+    open private(set) lazy var audioPlayer: AudioPlaying = components
+        .audioPlayer
+        .build()
 
     /// A Boolean value indicating whether the scroll to bottom button is visible.
     open var isScrollToBottomButtonVisible: Bool {
@@ -764,6 +769,43 @@ open class ChatMessageListVC: _ViewController,
             messageContentView: messageContentView,
             client: client
         )
+    }
+
+    // MARK: - AudioAttachmentPresentationViewDelegate
+
+    open func audioAttachmentPresentationViewPlaybackContextForAttachment(
+        _ attachment: ChatMessageFileAttachment
+    ) -> AudioPlaybackContext {
+        audioPlayer.playbackContext(for: attachment.assetURL)
+    }
+
+    open func audioAttachmentPresentationViewBeginPayback(
+        _ attachment: ChatMessageFileAttachment,
+        with delegate: AudioPlayingDelegate
+    ) {
+        UISelectionFeedbackGenerator().selectionChanged()
+
+        audioPlayer.loadAsset(
+            from: attachment.assetURL,
+            delegate: delegate
+        )
+    }
+
+    open func audioAttachmentPresentationViewPausePayback() {
+        UISelectionFeedbackGenerator().selectionChanged()
+        audioPlayer.pause()
+    }
+
+    open func audioAttachmentPresentationViewUpdatePlaybackRate() {
+        UISelectionFeedbackGenerator().selectionChanged()
+        audioPlayer.updateRate()
+    }
+
+    open func audioAttachmentPresentationViewSeek(
+        to timeInterval: TimeInterval
+    ) {
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        audioPlayer.seek(to: timeInterval)
     }
 
     // MARK: - UIGestureRecognizerDelegate

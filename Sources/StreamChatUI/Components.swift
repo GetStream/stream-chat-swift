@@ -88,6 +88,9 @@ public struct Components {
     /// The object responsible for loading video attachments.
     public var videoLoader: VideoLoading = StreamVideoLoader()
 
+    /// The object responsible for playing audio attachments.
+    public var audioPlayer: AudioPlaying.Type = StreamRemoteAudioPlayer.self
+
     /// The view that shows a gradient.
     public var gradientView: GradientView.Type = GradientView.self
 
@@ -184,6 +187,14 @@ public struct Components {
     /// The view that shows a single file attachment.
     public var fileAttachmentView: ChatMessageFileAttachmentListView.ItemView.Type =
         ChatMessageFileAttachmentListView.ItemView.self
+
+    /// The view that shows a single audio attachment.
+    public var audioAttachmentView: ChatMessageFileAttachmentListView.AudioView.Type =
+        ChatMessageFileAttachmentListView.AudioView.self
+
+    /// The component responsible for update the UI of an ``ChatMessageFileAttachmentListView.AudioView``
+    /// when a update occurs.
+    public var audioAttachmentViewUpdater: ChatMessageAudioViewStateUpdater.Type = ChatMessageAudioViewStateUpdater.self
 
     /// The view that shows a link preview in message cell.
     public var linkPreviewView: ChatMessageLinkPreviewView.Type =
