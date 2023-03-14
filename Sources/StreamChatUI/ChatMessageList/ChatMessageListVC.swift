@@ -436,7 +436,7 @@ open class ChatMessageListVC: _ViewController,
     /// - Parameter message: The message which the message list should go to.
     public func jumpToMessage(_ message: ChatMessage) {
         if let indexPath = getIndexPath(forMessageId: message.id) {
-            highlightMessage(at: indexPath)
+            scrollToMessage(at: indexPath)
             return
         }
 
@@ -453,20 +453,6 @@ open class ChatMessageListVC: _ViewController,
         }
     }
 
-    /// Scrolls to the message with the given IndexPath and highlights the message.
-    public func highlightMessage(at indexPath: IndexPath) {
-        listView.scrollToRow(at: indexPath, at: .middle, animated: true)
-        highlightCellBackground(for: indexPath)
-        messageIndexPathPendingHighlight = indexPath
-    }
-
-    /// Jump to the first page of the message list.
-    internal func jumpToFirstPage() {
-        delegate?.chatMessageListVCShouldLoadFirstPage(self)
-        scrollToLatestMessageButton.isHidden = true
-        listView.reloadSkippedMessages()
-    }
-
     /// Gets the IndexPath for the given message id. Returns `nil` if the message is not in the list.
     public func getIndexPath(forMessageId messageId: MessageId) -> IndexPath? {
         dataSource?.messages
@@ -479,8 +465,8 @@ open class ChatMessageListVC: _ViewController,
             }
     }
 
-    /// Highlight the background of the message cell when jumping to a message.
-    open func highlightCellBackground(for indexPath: IndexPath) {
+    /// Highlight the the message cell when jumping to a message.
+    open func highlightCell(at indexPath: IndexPath) {
         guard let cell = listView.cellForRow(at: indexPath) as? ChatMessageCell else {
             return
         }
@@ -490,6 +476,20 @@ open class ChatMessageListVC: _ViewController,
         UIView.animate(withDuration: 0.2, delay: 0.6) {
             cell.messageContentView?.backgroundColor = previousBackgroundColor
         }
+    }
+
+    /// Jump to the first page of the message list.
+    internal func jumpToFirstPage() {
+        delegate?.chatMessageListVCShouldLoadFirstPage(self)
+        scrollToLatestMessageButton.isHidden = true
+        listView.reloadSkippedMessages()
+    }
+
+    /// Scrolls to a message and highlights it.
+    private func scrollToMessage(at indexPath: IndexPath) {
+        listView.scrollToRow(at: indexPath, at: .middle, animated: true)
+        messageIndexPathPendingHighlight = indexPath
+        highlightCell(at: indexPath)
     }
 
     // MARK: - UITableViewDataSource & UITableViewDelegate
@@ -568,7 +568,7 @@ open class ChatMessageListVC: _ViewController,
         if let messageScrollingIndexPath = messageIndexPathPendingHighlight {
             guard visibleIndexPaths.contains(messageScrollingIndexPath) else { return }
             DispatchQueue.main.async {
-                self.highlightCellBackground(for: messageScrollingIndexPath)
+                self.highlightCell(at: messageScrollingIndexPath)
             }
             messageIndexPathPendingHighlight = nil
         }
@@ -830,7 +830,7 @@ private extension ChatMessageListVC {
         // So we check if we have a message waiting to be scrolled to here
         if let message = messagePendingScrolling,
            let indexPath = getIndexPath(forMessageId: message.id) {
-            highlightMessage(at: indexPath)
+            scrollToMessage(at: indexPath)
             messagePendingScrolling = nil
         }
     }
