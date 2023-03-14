@@ -352,12 +352,8 @@ public extension ChatMessage {
         if let localState = self.localState {
             return localState.isWaitingToBeSentToServer
         }
-
-        if type == .ephemeral {
-            return true
-        }
-
-        return false
+        
+        return type == .ephemeral || type == .error
     }
 }
 

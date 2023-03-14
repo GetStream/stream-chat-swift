@@ -498,7 +498,7 @@ extension MessageDTO {
             return localMessageState.isWaitingToBeSentToServer
         }
 
-        return type == MessageType.ephemeral.rawValue
+        return type == MessageType.ephemeral.rawValue || type == MessageType.error.rawValue
     }
 
     /// When a message that has been synced gets edited but is bounced by the moderation API it will return true to this state.

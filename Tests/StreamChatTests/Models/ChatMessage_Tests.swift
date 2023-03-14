@@ -331,7 +331,16 @@ final class ChatMessage_Tests: XCTestCase {
         XCTAssertEqual(message.isLocalOnly, true)
     }
 
-    func test_isLocalOnly_whenLocalStateIsNil_whenTypeNotEphemeral_returnsFalse() {
+    func test_isLocalOnly_whenLocalStateIsNil_whenTypeIsError_returnsTrue() {
+        let message: ChatMessage = .mock(
+            type: .error,
+            localState: nil
+        )
+
+        XCTAssertEqual(message.isLocalOnly, true)
+    }
+
+    func test_isLocalOnly_whenLocalStateIsNil_whenTypeNotEphemeralOrError_returnsFalse() {
         let message: ChatMessage = .mock(
             type: .regular,
             localState: nil

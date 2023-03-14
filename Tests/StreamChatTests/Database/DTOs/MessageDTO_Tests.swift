@@ -3231,7 +3231,15 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(message.isLocalOnly, true)
     }
 
-    func test_isLocalOnly_whenLocalMessageStateIsNil_whenTypeNotEphemeral_returnsFalse() throws {
+    func test_isLocalOnly_whenLocalMessageStateIsNil_whenTypeIsError_returnsTrue() throws {
+        let message = try createMessage(with: .dummy(channel: .dummy()))
+        message.localMessageState = nil
+        message.type = MessageType.error.rawValue
+
+        XCTAssertEqual(message.isLocalOnly, true)
+    }
+
+    func test_isLocalOnly_whenLocalMessageStateIsNil_whenTypeNotEphemeralOrError_returnsFalse() throws {
         let message = try createMessage(with: .dummy(channel: .dummy()))
         message.localMessageState = nil
         message.type = MessageType.regular.rawValue
