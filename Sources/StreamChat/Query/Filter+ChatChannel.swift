@@ -9,7 +9,22 @@ extension Filter where Scope == ChannelListFilterScope {
     /// using the mapper.
     ///
     /// If the mapper returns nil, the original value will be returned
-    var mappedValue: FilterValue { valueMapper?(value) ?? value }
+    var mappedValue: FilterValue {
+        valueMapper?(value) ?? value
+    }
+
+    /// If the mappedValues is an array of FilterValues, we will try to transform them using the valueMapper
+    /// to ensure that both parts of the comparison are of the same type.
+    ///
+    /// If the value is not an array, this value will return nil.
+    /// If the valueMapper isn't provided or the value mapper returns nil, the original value will be included
+    /// in the array.
+    var mappedArrayValue: [FilterValue]? {
+        guard let filterArray = mappedValue as? [FilterValue] else {
+            return nil
+        }
+        return filterArray.map { valueMapper?($0) ?? $0 }
+    }
 
     /// If it can be translated, this will return
     /// an NSPredicate instance that is equivalent
@@ -133,7 +148,7 @@ extension Filter where Scope == ChannelListFilterScope {
 
         switch op {
         case .in where mappedValue is [FilterValue]:
-            guard let filterArray = (mappedValue as? [FilterValue]) else {
+            guard let filterArray = mappedArrayValue else {
                 return nil
             }
             return NSCompoundPredicate(
@@ -146,7 +161,7 @@ extension Filter where Scope == ChannelListFilterScope {
             )
 
         case .notIn where mappedValue is [FilterValue]:
-            guard let filterArray = (mappedValue as? [FilterValue]) else {
+            guard let filterArray = mappedArrayValue else {
                 return nil
             }
             return NSCompoundPredicate(
