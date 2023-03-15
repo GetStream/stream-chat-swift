@@ -99,6 +99,42 @@ final class ChatMessageActionsVC_Tests: XCTestCase {
 
         XCTAssertFalse(vc.messageActions.contains(where: { $0 is InlineReplyActionItem }))
     }
+
+    func test_messageActions_whenReadEventsEnabled_containsMarkAsUnreadAction() {
+        vc.channelConfig = .mock(readEventsEnabled: true)
+
+        XCTAssertTrue(vc.messageActions.contains(where: { $0 is MarkUnreadActionItem }))
+    }
+
+    func test_messageActions_whenReadEventsDisabled_doesNotContainMarkAsUnreadAction() {
+        vc.channelConfig = .mock(readEventsEnabled: false)
+
+        XCTAssertFalse(vc.messageActions.contains(where: { $0 is MarkUnreadActionItem }))
+    }
+
+    func test_messageActions_whenReadEventsEnabled_threadReply_doesNotContainMarkAsUnreadAction() {
+        chatMessageController.simulateInitial(
+            message: ChatMessage.mock(id: .unique, cid: .unique, text: "", author: ChatUser.mock(id: .unique), parentMessageId: "122"),
+            replies: [],
+            state: .remoteDataFetched
+        )
+
+        vc.channelConfig = .mock(readEventsEnabled: true)
+
+        XCTAssertFalse(vc.messageActions.contains(where: { $0 is MarkUnreadActionItem }))
+    }
+
+    func test_messageActions_whenReadEventsEnabled_threadReplySentToChat_containsMarkAsUnreadAction() {
+        chatMessageController.simulateInitial(
+            message: ChatMessage.mock(id: .unique, cid: .unique, text: "", author: ChatUser.mock(id: .unique), parentMessageId: "122", showReplyInChannel: true),
+            replies: [],
+            state: .remoteDataFetched
+        )
+
+        vc.channelConfig = .mock(readEventsEnabled: true)
+
+        XCTAssertTrue(vc.messageActions.contains(where: { $0 is MarkUnreadActionItem }))
+    }
 }
 
 private extension UIViewController {
