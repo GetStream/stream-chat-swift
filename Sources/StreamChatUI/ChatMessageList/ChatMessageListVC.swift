@@ -256,6 +256,7 @@ open class ChatMessageListVC: _ViewController,
         }
 
         let indexPathsToReload = [indexPath(for: previousId), indexPath(for: id)].compactMap { $0 }
+        guard !indexPathsToReload.isEmpty else { return }
         listView.reloadRows(at: indexPathsToReload, with: .automatic)
     }
 
