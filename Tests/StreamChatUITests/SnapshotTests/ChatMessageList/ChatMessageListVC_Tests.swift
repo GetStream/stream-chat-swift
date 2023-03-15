@@ -578,6 +578,54 @@ final class ChatMessageListVC_Tests: XCTestCase {
         XCTAssertEqual(mockedListView.scrollToRowCallCount, 0)
     }
 
+    // MARK: updateUnreadMessagesSeparator
+
+    func test_updateUnreadMessagesSeparator_whenThereIsNoExistingSeparator() {
+        let unreadMessageId = MessageId.unique
+        mockedDataSource.messages = [
+            ChatMessage.mock(), // IndexPath: 0 - 0
+            ChatMessage.mock(), // IndexPath: 0 - 1
+            ChatMessage.mock(id: unreadMessageId) // IndexPath: 0 - 2
+        ]
+
+        sut.updateUnreadMessagesSeparator(at: unreadMessageId, previousId: nil)
+
+        XCTAssertEqual(mockedListView.reloadRowsCallCount, 1)
+        XCTAssertEqual(mockedListView.reloadRowsCalledWith, [IndexPath(item: 2, section: 0)])
+    }
+
+    func test_updateUnreadMessagesSeparator_whenThereIsExistingSeparator() {
+        let previousUnreadMessageId = MessageId.unique
+        let unreadMessageId = MessageId.unique
+        mockedDataSource.messages = [
+            ChatMessage.mock(), // IndexPath: 0 - 0
+            ChatMessage.mock(), // IndexPath: 0 - 1
+            ChatMessage.mock(id: previousUnreadMessageId), // IndexPath: 0 - 2
+            ChatMessage.mock(id: unreadMessageId) // IndexPath: 0 - 3
+        ]
+
+        sut.updateUnreadMessagesSeparator(at: unreadMessageId, previousId: previousUnreadMessageId)
+
+        XCTAssertEqual(mockedListView.reloadRowsCallCount, 1)
+        XCTAssertEqual(mockedListView.reloadRowsCalledWith, [IndexPath(item: 2, section: 0), IndexPath(item: 3, section: 0)])
+    }
+
+    func test_updateUnreadMessagesSeparator_whenIdsDontExist() {
+        let nonExistingMessage = MessageId.unique
+        let nonExistingMessage2 = MessageId.unique
+        mockedDataSource.messages = [
+            ChatMessage.mock(), // IndexPath: 0 - 0
+            ChatMessage.mock(), // IndexPath: 0 - 1
+            ChatMessage.mock(), // IndexPath: 0 - 2
+            ChatMessage.mock() // IndexPath: 0 - 3
+        ]
+
+        sut.updateUnreadMessagesSeparator(at: nonExistingMessage, previousId: nonExistingMessage2)
+
+        XCTAssertEqual(mockedListView.reloadRowsCallCount, 0)
+        XCTAssertEqual(mockedListView.reloadRowsCalledWith.count, 0)
+    }
+
     // MARK: - cellForRow
 
     func test_cellForRow_isDateSeparatorEnabledIsFalse_headerIsNotVisibleOnCell() throws {

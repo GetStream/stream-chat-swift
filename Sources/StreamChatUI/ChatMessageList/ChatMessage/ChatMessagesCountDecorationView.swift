@@ -7,7 +7,7 @@ import UIKit
 
 /// The view used to show a separator when there are unread messages.
 open class ChatMessagesCountDecorationView: ChatMessageDecorationView, AppearanceProvider {
-    /// The date in string format.
+    /// The string to be shown in the view
     open var content: String? {
         didSet { updateContentIfNeeded() }
     }
