@@ -9,7 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - Fix ephemeral message disappearing after leaving channel [#2464](https://github.com/GetStream/stream-chat-swift/pull/2464)
 - Fix ephemeral message appearing in channel preview [#2464](https://github.com/GetStream/stream-chat-swift/pull/2464)
-- Fix an issue when auto-filtering is enabled and using the `in` operator with the `ChannelType` FilterKey. [#2531](https://github.com/GetStream/stream-chat-swift/pull/2531)
+- Fix issue when using `in` or `notIn` operators with auto-filtering enabled. [#2531](https://github.com/GetStream/stream-chat-swift/pull/2531)
 
 ## StreamChatUI
 ### 🔄 Changed
