@@ -161,7 +161,7 @@ extension Filter where Scope == ChannelListFilterScope {
             )
 
         case .notIn where mappedValue is [FilterValue]:
-            guard let filterArray = (mappedValue as? [FilterValue]) else {
+            guard let filterArray = mappedArrayValue else {
                 return nil
             }
             return NSCompoundPredicate(
