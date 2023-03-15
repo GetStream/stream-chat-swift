@@ -63,6 +63,7 @@ open class ChatChannelVC: _ViewController,
 
     /// A boolean value indicating whether the last message is fully visible or not.
     open var isLastMessageFullyVisible: Bool {
+        guard viewIfLoaded?.window != nil else { return false }
         messageListVC.listView.isLastCellFullyVisible
     }
 
