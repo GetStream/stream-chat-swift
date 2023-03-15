@@ -1454,6 +1454,36 @@ final class ChannelListController_Tests: XCTestCase {
             expectedResult: [cid]
         )
     }
+
+    func test_filterPredicate_inWithArrayOfChannelTypes_returnsExpectedResults() throws {
+        let streamChannelTypes: [ChannelType] = [
+            .custom("private_messaging"),
+            .custom("messaging"),
+            .custom("location_group"),
+            .custom("department_group"),
+            .custom("role_group")
+        ]
+
+        let teamId = TeamId.unique
+        let cid = ChannelId(type: .custom("private_messaging"), id: .unique)
+        let memberId = UserId.unique
+
+        try assertFilterPredicate(
+            .and([
+                .in(.type, values: streamChannelTypes),
+                .equal(.team, to: teamId),
+                .containMembers(userIds: [memberId])
+            ]),
+            channelsInDB: [
+                .dummy(channel: .dummy(cid: cid, team: teamId), members: [.dummy(user: .dummy(userId: memberId))]),
+                .dummy(channel: .dummy(cid: .init(type: .custom("private_messaging"), id: .unique)), members: [.dummy(user: .dummy(userId: memberId))]),
+                .dummy(channel: .dummy(cid: .init(type: .custom("messaging"), id: .unique), team: teamId), members: [.dummy()]),
+                .dummy(channel: .dummy(cid: .init(type: .custom("location_group"), id: .unique), team: teamId), members: []),
+                .dummy(channel: .dummy(cid: .init(type: .custom("role_group"), id: .unique)), members: [.dummy()])
+            ],
+            expectedResult: [cid]
+        )
+    }
 }
 
 private class TestEnvironment {
