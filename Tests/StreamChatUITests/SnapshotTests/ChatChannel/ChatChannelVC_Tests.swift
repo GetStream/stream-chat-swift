@@ -747,8 +747,8 @@ final class ChatChannelVC_Tests: XCTestCase {
         // Simulate marking a message as unread
         let firstMessageId = MessageId.unique
         vc.messages = [
-            .mock(id: firstMessageId, createdAt: Date(timeIntervalSince1970: 0)),
-            .mock(createdAt: Date(timeIntervalSince1970: 86401))
+            .mock(id: firstMessageId, text: "First message", createdAt: Date(timeIntervalSince1970: 0)),
+            .mock(text: "Second message", createdAt: Date(timeIntervalSince1970: 86401))
         ]
         vc.channelController.client.authenticationRepository.setMockToken()
         channelControllerMock.simulateInitial(
