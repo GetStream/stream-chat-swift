@@ -54,6 +54,16 @@ final class NotificationsEvents_Tests: XCTestCase {
         XCTAssertEqual(event?.unreadCount, .init(channels: 8, messages: 55))
     }
 
+    func test_markUnread() throws {
+        let json = XCTestCase.mockData(fromJSONFile: "NotificationMarkUnread")
+        let event = try eventDecoder.decode(from: json) as? NotificationMarkUnreadEventDTO
+        XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "A9643A22-A"))
+        XCTAssertEqual(event?.user.id, "luke_skywalker")
+        XCTAssertEqual(event?.firstUnreadMessageId, "leia_organa-1f9b7fe0-989f-4fa6-87e8-9c9e788fb2c3")
+        XCTAssertEqual(event?.lastReadAt.description, "2023-03-08 10:00:26 +0000")
+        XCTAssertEqual(event?.unreadMessagesCount, 19)
+    }
+
     func test_channelSomeMutedChannels() throws {
         let json = XCTestCase.mockData(fromJSONFile: "NotificationChannelMutesUpdatedWithSomeMutedChannels")
         let event = try eventDecoder.decode(from: json) as? NotificationChannelMutesUpdatedEventDTO
@@ -199,6 +209,42 @@ final class NotificationsEvents_Tests: XCTestCase {
         XCTAssertEqual(event.cid, eventPayload.cid)
         XCTAssertEqual(event.unreadCount, eventPayload.unreadCount)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
+    }
+
+    func test_notificationMarkUnreadEventDTO_toDomainEvent() throws {
+        // Create database session
+        let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
+
+        let lastReadAt = Date()
+        // Create event payload
+        let eventPayload = EventPayload(
+            eventType: .notificationMarkRead,
+            cid: .unique,
+            user: .dummy(userId: .unique),
+            unreadCount: .init(channels: .unique, messages: .unique),
+            createdAt: .unique,
+            firstUnreadMessageId: "Hello",
+            lastReadAt: lastReadAt,
+            unreadMessagesCount: 6
+        )
+
+        // Create event DTO
+        let dto = try NotificationMarkUnreadEventDTO(from: eventPayload)
+
+        // Assert event creation fails due to missing dependencies in database
+        XCTAssertNil(dto.toDomainEvent(session: session))
+
+        // Save event to database
+        try session.saveUser(payload: eventPayload.user!)
+
+        // Assert event can be created and has correct fields
+        let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? NotificationMarkUnreadEvent)
+        XCTAssertEqual(event.user.id, eventPayload.user?.id)
+        XCTAssertEqual(event.cid, eventPayload.cid)
+        XCTAssertEqual(event.createdAt, eventPayload.createdAt)
+        XCTAssertEqual(event.firstUnreadMessageId, event.firstUnreadMessageId)
+        XCTAssertEqual(event.lastReadAt, eventPayload.lastReadAt)
+        XCTAssertEqual(event.unreadMessagesCount, eventPayload.unreadMessagesCount)
     }
 
     func test_notificationMutesUpdatedEventDTO_toDomainEvent() throws {

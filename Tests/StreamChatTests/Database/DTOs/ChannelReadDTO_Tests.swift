@@ -282,7 +282,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
 
         // WHEN
         try database.writeSynchronously { session in
-            session.markChannelAsUnread(for: cid, userId: userId, from: messageId)
+            session.markChannelAsUnread(for: cid, userId: userId, from: messageId, lastReadAt: nil, unreadMessagesCount: nil)
         }
 
         // THEN
@@ -317,7 +317,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
 
         // WHEN
         try database.writeSynchronously { session in
-            session.markChannelAsUnread(for: cid, userId: userId, from: messageId)
+            session.markChannelAsUnread(for: cid, userId: userId, from: messageId, lastReadAt: nil, unreadMessagesCount: nil)
         }
 
         // THEN
@@ -338,8 +338,9 @@ final class ChannelReadDTO_Tests: XCTestCase {
             lastReadAt: .init(),
             unreadMessagesCount: 10
         )
+        let firstMessageDate = Date()
         let messages: [MessagePayload] = [messageId, .unique, .unique].enumerated().map { index, id in
-            MessagePayload.dummy(messageId: id, authorUserId: .unique, createdAt: Date().addingTimeInterval(TimeInterval(index)))
+            MessagePayload.dummy(messageId: id, authorUserId: .unique, createdAt: firstMessageDate.addingTimeInterval(TimeInterval(index)))
         }
 
         let channel: ChannelPayload = .dummy(
@@ -357,14 +358,67 @@ final class ChannelReadDTO_Tests: XCTestCase {
 
         // WHEN
         try database.writeSynchronously { session in
-            session.markChannelAsUnread(for: cid, userId: userId, from: messageId)
+            session.markChannelAsUnread(for: cid, userId: userId, from: messageId, lastReadAt: nil, unreadMessagesCount: nil)
         }
 
         // THEN
         XCTAssertEqual(database.writeSessionCounter, 1)
         let readDTO = try XCTUnwrap(readDTO(cid: cid, userId: userId))
-        XCTAssertNearlySameDate(readDTO.lastReadAt.bridgeDate, messages.first?.createdAt)
+        XCTAssertNearlySameDate(readDTO.lastReadAt.bridgeDate, firstMessageDate)
         XCTAssertEqual(readDTO.unreadMessageCount, 3)
+        XCTAssertNotNil(database.viewContext.message(id: messageId))
+    }
+
+    func test_markChannelAsUnreadPartial_whenMessagesExist_lastReadAndUnreadMessagesAreSent_shouldUpdateWithArgumentValue() throws {
+        // GIVEN
+        let cid = ChannelId.unique
+        let userId = UserId.unique
+        let messageId = MessageId.unique
+
+        let member: MemberPayload = .dummy(user: .dummy(userId: userId))
+        let read = ChannelReadPayload(
+            user: member.user!,
+            lastReadAt: .init(),
+            unreadMessagesCount: 10
+        )
+        let firstMessageDate = Date()
+        let messages: [MessagePayload] = [messageId, .unique, .unique].enumerated().map { index, id in
+            MessagePayload.dummy(messageId: id, authorUserId: .unique, createdAt: firstMessageDate.addingTimeInterval(TimeInterval(index)))
+        }
+
+        let channel: ChannelPayload = .dummy(
+            channel: .dummy(cid: cid),
+            members: [member],
+            messages: messages,
+            channelReads: [read]
+        )
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channel)
+        }
+
+        database.writeSessionCounter = 0
+
+        let passedLastReadAt = Date().addingTimeInterval(-1000)
+        let passedUnreadMessagesCount = 100
+
+        // WHEN
+        try database.writeSynchronously { session in
+            session.markChannelAsUnread(for: cid, userId: userId, from: messageId, lastReadAt: passedLastReadAt, unreadMessagesCount: passedUnreadMessagesCount)
+        }
+
+        // THEN
+        XCTAssertEqual(database.writeSessionCounter, 1)
+        let readDTO = try XCTUnwrap(readDTO(cid: cid, userId: userId))
+
+        // Assert pre-calculated values are overridden by argument values
+        XCTAssertNotEqual(readDTO.lastReadAt.bridgeDate, firstMessageDate)
+        XCTAssertNotEqual(readDTO.unreadMessageCount, 3)
+
+        // Assert passed values take precedence
+        XCTAssertNearlySameDate(readDTO.lastReadAt.bridgeDate, passedLastReadAt)
+        XCTAssertEqual(readDTO.unreadMessageCount, Int32(passedUnreadMessagesCount))
+
         XCTAssertNotNil(database.viewContext.message(id: messageId))
     }
 

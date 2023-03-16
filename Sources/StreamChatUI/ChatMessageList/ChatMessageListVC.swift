@@ -251,10 +251,12 @@ open class ChatMessageListVC: _ViewController,
     }
 
     func updateUnreadMessagesSeparator(at id: MessageId?, previousId: MessageId?) {
-        guard let id = id, let previousId = previousId else { return }
-        let indexPath = getIndexPath(forMessageId: id)
-        let previousIndexPath = getIndexPath(forMessageId: previousId)
-        let indexPathsToReload = [previousIndexPath, indexPath].compactMap { $0 }
+        func indexPath(for id: MessageId?) -> IndexPath? {
+            id.flatMap(getIndexPath)
+        }
+
+        let indexPathsToReload = [indexPath(for: previousId), indexPath(for: id)].compactMap { $0 }
+        guard !indexPathsToReload.isEmpty else { return }
         listView.reloadRows(at: indexPathsToReload, with: .automatic)
     }
 

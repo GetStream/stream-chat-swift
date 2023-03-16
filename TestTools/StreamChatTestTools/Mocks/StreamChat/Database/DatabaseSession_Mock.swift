@@ -239,8 +239,8 @@ extension DatabaseSession_Mock {
         underlyingSession.markChannelAsUnread(cid: cid, by: userId)
     }
 
-    func markChannelAsUnread(for cid: ChannelId, userId: UserId, from messageId: MessageId) {
-        underlyingSession.markChannelAsUnread(for: cid, userId: userId, from: messageId)
+    func markChannelAsUnread(for cid: ChannelId, userId: UserId, from messageId: MessageId, lastReadAt: Date?, unreadMessagesCount: Int?) {
+        underlyingSession.markChannelAsUnread(for: cid, userId: userId, from: messageId, lastReadAt: lastReadAt, unreadMessagesCount: unreadMessagesCount)
     }
 
     func loadChannelRead(cid: ChannelId, userId: String) -> ChannelReadDTO? {

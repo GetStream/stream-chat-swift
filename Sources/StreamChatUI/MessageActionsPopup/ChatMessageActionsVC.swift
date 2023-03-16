@@ -105,7 +105,7 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
                 actions.append(threadReplyActionItem())
             }
 
-            if channelConfig.readEventsEnabled {
+            if channelConfig.readEventsEnabled && (!message.isPartOfThread || message.showReplyInChannel) {
                 actions.append(markUnreadActionItem())
             }
 

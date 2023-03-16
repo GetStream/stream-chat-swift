@@ -234,6 +234,12 @@ internal enum L10n {
       /// Online
       internal static var online: String { L10n.tr("Localizable", "message.title.online") }
     }
+    internal enum Unread {
+      /// Plural format key: "%#@unread@"
+      internal static func count(_ p1: Int) -> String {
+        return L10n.tr("Localizable", "message.unread.count", p1)
+      }
+    }
   }
 
   internal enum MessageList {

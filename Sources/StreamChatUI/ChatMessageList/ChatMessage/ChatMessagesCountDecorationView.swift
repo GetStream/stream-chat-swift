@@ -5,9 +5,9 @@
 import StreamChat
 import UIKit
 
-/// The date separator view that groups messages from the same day.
-open class ChatThreadRepliesCountDecorationView: ChatMessageDecorationView, AppearanceProvider {
-    /// The date in string format.
+/// The view used to show a separator when there are unread messages.
+open class ChatMessagesCountDecorationView: ChatMessageDecorationView, AppearanceProvider {
+    /// The string to be shown in the view
     open var content: String? {
         didSet { updateContentIfNeeded() }
     }
@@ -15,7 +15,7 @@ open class ChatThreadRepliesCountDecorationView: ChatMessageDecorationView, Appe
     /// The container that the contentTextLabel will be placed aligned to its centre.
     open private(set) lazy var container: UIView = UIView()
         .withoutAutoresizingMaskConstraints
-        .withAccessibilityIdentifier(identifier: "repliesCountDecorationContainer")
+        .withAccessibilityIdentifier(identifier: "messagesCountDecorationView")
 
     /// The text label that renders the date string.
     open private(set) lazy var textLabel: UILabel = UILabel()

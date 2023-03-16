@@ -52,7 +52,13 @@ class ChannelRepository {
             }
 
             self?.database.write({ session in
-                session.markChannelAsUnread(for: cid, userId: userId, from: messageId)
+                session.markChannelAsUnread(
+                    for: cid,
+                    userId: userId,
+                    from: messageId,
+                    lastReadAt: nil,
+                    unreadMessagesCount: nil
+                )
             }, completion: { error in
                 completion?(error)
             })
