@@ -11,6 +11,13 @@ public protocol AudioPlaying: AnyObject {
     /// Provides  way to get an instance of a player
     static func build() -> AudioPlaying
 
+    /// Requests the playbackContext for the given URL. If the player's current item has as URL that
+    /// matches the provided one, it should return a context, otherwise it will return
+    /// ``AudioPlaybackContext.notLoaded``
+    /// - Parameters:
+    /// - url: The URL (provided by the asset) that is used to stream/download the content to play
+    func playbackContext(for url: URL) -> AudioPlaybackContext
+
     /// Instructs the player to load the asset from the provided URL and prepare it for streaming. If the
     /// player's current item has as URL that matches the provided one, then we will try to play or restart
     /// the playback while updating the new delegate.
@@ -265,6 +272,16 @@ final class StreamRemoteAudioPlayer: AudioPlaying {
     }
 
     // MARK: - AudioPlaying
+
+    func playbackContext(for url: URL) -> AudioPlaybackContext {
+        guard
+            let currentItemURL = (player.currentItem?.asset as? AVURLAsset)?.url,
+            currentItemURL == url
+        else {
+            return .notLoaded
+        }
+        return context
+    }
 
     func loadAsset(from url: URL?, andConnectDelegate delegate: AudioPlayingDelegate) {
         /// We are going to check if the URL requested to load, represents the currentItem that we

@@ -278,6 +278,32 @@ final class StreamRemoteAudioPlayer_Tests: XCTestCase {
         ))
     }
 
+    // MARK: - playbackContext
+
+    func test_playbackContext_URLMatchesCurrentItemsURL_returnsExpectedResult() {
+        let url = URL(string: "http://getstream.io")!
+        assetPropertyLoader.loadPropertyResult = .success(TimeInterval(100))
+        subject.loadAsset(from: url, andConnectDelegate: audioPlayerDelegate)
+
+        XCTAssertEqual(
+            subject.playbackContext(for: url),
+            .init(
+                duration: 100,
+                currentTime: 0,
+                state: .playing,
+                rate: .normal,
+                isSeeking: false
+            )
+        )
+    }
+
+    func test_playbackContext_URLDoesNotMatchCurrentItemsURL_returnsNotLoaded() {
+        XCTAssertEqual(
+            subject.playbackContext(for: .init(string: "http://getstream.io")!),
+            .notLoaded
+        )
+    }
+
     // MARK: - loadAsset
 
     func test_loadAsset_whenURLIsNil_willCallPauseUpdateTheContextReplaceCurrentItemButWillNotCallLoadProperty() {
