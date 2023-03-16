@@ -5,7 +5,7 @@
 import Foundation
 
 // Defines an enumeration for audio player playback state
-public enum AudioPlaybackState: Equatable {
+public enum AudioPlaybackState: Equatable, CaseIterable {
     // Cases representing different playback states
     case notLoaded
     case loading
