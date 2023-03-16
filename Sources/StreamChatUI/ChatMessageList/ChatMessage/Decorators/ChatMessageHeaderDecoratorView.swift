@@ -22,10 +22,14 @@ public final class ChatMessageHeaderDecoratorView: ChatMessageDecorationView, Th
 
     public private(set) lazy var dateView = components.messageListDateSeparatorView.init()
         .withoutAutoresizingMaskConstraints
-    public private(set) lazy var unreadCountView = ChatUnreadMessagesCountDecorationView()
+    public private(set) lazy var unreadCountView = components.unreadMessagesCounterDecorationView.init()
         .withoutAutoresizingMaskConstraints
 
-    public var content: ChatMessageHeaderDecoratorViewContent?
+    public var content: ChatMessageHeaderDecoratorViewContent? {
+        didSet {
+            updateContentIfNeeded()
+        }
+    }
 
     override public func setUpLayout() {
         super.setUpLayout()

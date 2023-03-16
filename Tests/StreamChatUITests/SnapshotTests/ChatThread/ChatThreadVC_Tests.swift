@@ -164,12 +164,16 @@ final class ChatThreadVC_Tests: XCTestCase {
         messageControllerMock.simulate(state: .remoteDataFetched)
         vc.view.layoutIfNeeded()
 
-        let footerView = vc.chatMessageListVC(
+        let footer = vc.chatMessageListVC(
             vc.messageListVC,
             footerViewForMessage: useSourceMessage ? sourceMessage : vc.messages[1],
             at: IndexPath(row: useSourceMessage ? 3 : 1, section: 0)
-        ) as? ChatMessagesCountDecorationView
+        )
 
-        XCTAssertEqual(footerView?.content, expected(), file: file, line: line)
+        guard let footerView = footer as? ChatThreadRepliesCountDecorationView else {
+            XCTFail("FooterView should be of the correct type")
+            return
+        }
+        XCTAssertEqual(footerView.messagesCountDecorationView.textLabel.text, expected(), file: file, line: line)
     }
 }

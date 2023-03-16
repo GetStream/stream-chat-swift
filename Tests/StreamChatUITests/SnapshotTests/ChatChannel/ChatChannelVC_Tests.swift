@@ -760,18 +760,26 @@ final class ChatChannelVC_Tests: XCTestCase {
         vc.channelController.markUnread(from: firstMessageId)
         vc.channelController(vc.channelController, didUpdateChannel: EntityChange<ChatChannel>.update(channel))
 
-        let headerDecorationView = vc.chatMessageListVC(
+        let header = vc.chatMessageListVC(
             vc.messageListVC,
             headerViewForMessage: .mock(id: firstMessageId, createdAt: Date(timeIntervalSince1970: 0)),
             at: .init(row: 0, section: 0)
         )
-        let separatorView = try XCTUnwrap(headerDecorationView as? StackViewDecoratorView)
-        XCTAssertEqual(separatorView.content.count, 2)
-        let dateSeparatorView = try XCTUnwrap(separatorView.content.first as? ChatMessageListDateSeparatorView)
-        let unreadMessagesSeparator = try XCTUnwrap(separatorView.content.last as? ChatMessagesCountDecorationView)
-        XCTAssertEqual(dateSeparatorView.content, "Jan 01")
-        XCTAssertEqual(unreadMessagesSeparator.content, "1 UNREAD MESSAGE")
+        let headerDecorationView = try XCTUnwrap(header as? ChatMessageHeaderDecoratorView)
+        let headerDecorationViewContent = try XCTUnwrap(headerDecorationView.content)
 
+        XCTAssertTrue(headerDecorationViewContent.shouldShowDate)
+        XCTAssertTrue(headerDecorationViewContent.shouldShowUnreadMessages)
+
+        XCTAssertEqual(
+            headerDecorationView.dateView.textLabel.text,
+            "Jan 01"
+        )
+
+        XCTAssertEqual(
+            headerDecorationView.unreadCountView.messagesCountDecorationView.textLabel.text,
+            "1 UNREAD MESSAGE"
+        )
         AssertSnapshot(vc, variants: [.defaultLight])
     }
 }

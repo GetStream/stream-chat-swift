@@ -5,15 +5,14 @@
 import StreamChat
 import UIKit
 
-open class ChatUnreadMessagesCountDecorationView: ChatMessageDecorationView {
+open class ChatUnreadMessagesCountDecorationView: ChatMessageDecorationView, ThemeProvider {
     public var content: ChatChannel? {
         didSet {
             updateContentIfNeeded()
         }
     }
 
-    #warning("No need for components here?")
-    lazy var messagesCountDecorationView = ChatMessagesCountDecorationView()
+    lazy var messagesCountDecorationView = components.messagesCountDecorationView.init()
         .withoutAutoresizingMaskConstraints
 
     override open func setUpLayout() {
