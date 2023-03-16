@@ -5,7 +5,7 @@
 import AVFoundation
 import Foundation
 
-/// Defines a type that represents the properties of an asset that can be request for loading
+/// Defines a type that represents the properties of an asset that can be loaded
 public enum AssetProperty: String {
     case duration
 }
@@ -34,8 +34,8 @@ public protocol AssetPropertyLoading {
     /// - property: The property to load
     /// - asset: The asset on which we will try to load the provided property
     /// - onSuccessTransformer: If the load succeeds then the onSuccessTransformer
-    /// will be called, to provide the value to pass on the completion closure
-    /// - completion: The closure to call when we have final result to
+    /// will be called, to transform the asset to result value we expect
+    /// - completion: The closure to call when we have a final result to
     /// report (success or failure)
     func loadProperty<Value>(
         _ property: AssetProperty,
