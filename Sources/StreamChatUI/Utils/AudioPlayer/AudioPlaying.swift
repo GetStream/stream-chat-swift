@@ -13,7 +13,7 @@ public protocol AudioPlaying: AnyObject {
 
     /// Instructs the player to load the asset from the provided URL and prepare it for streaming. If the
     /// player's current item has as URL that matches the provided one, then we will try to play or restart
-    /// the playback while updating the delegate to the provided one.
+    /// the playback while updating the new delegate.
     /// - Parameters:
     /// - url: The URL where the asset will be streamed from. If nil then the player will simply clear
     /// up the current playback queue.
