@@ -6,11 +6,25 @@ import StreamChat
 import UIKit
 
 public struct ChatMessageHeaderDecoratorViewContent {
-    let message: ChatMessage
-    let channel: ChatChannel
-    let dateFormatter: MessageDateSeparatorFormatter
-    let shouldShowDate: Bool
-    let shouldShowUnreadMessages: Bool
+    public let message: ChatMessage
+    public let channel: ChatChannel
+    public let dateFormatter: MessageDateSeparatorFormatter
+    public let shouldShowDate: Bool
+    public let shouldShowUnreadMessages: Bool
+
+    public init(
+        message: ChatMessage,
+        channel: ChatChannel,
+        dateFormatter: MessageDateSeparatorFormatter,
+        shouldShowDate: Bool,
+        shouldShowUnreadMessages: Bool
+    ) {
+        self.message = message
+        self.channel = channel
+        self.dateFormatter = dateFormatter
+        self.shouldShowDate = shouldShowDate
+        self.shouldShowUnreadMessages = shouldShowUnreadMessages
+    }
 }
 
 /// The decorator view that is used as a container for the chat message header view decorators.

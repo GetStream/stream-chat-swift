@@ -5,6 +5,7 @@
 import StreamChat
 import UIKit
 
+/// The decorator view that is used to display the unread messages count in a channel.
 open class ChatUnreadMessagesCountDecorationView: ChatMessageDecorationView, ThemeProvider {
     public var content: ChatChannel? {
         didSet {

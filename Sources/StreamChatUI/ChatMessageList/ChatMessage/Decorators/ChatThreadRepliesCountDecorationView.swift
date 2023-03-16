@@ -5,6 +5,7 @@
 import StreamChat
 import UIKit
 
+/// The decorator view that is used to display the replies count in a thread
 open class ChatThreadRepliesCountDecorationView: ChatMessageDecorationView, ThemeProvider {
     public var content: ChatMessage? {
         didSet {
