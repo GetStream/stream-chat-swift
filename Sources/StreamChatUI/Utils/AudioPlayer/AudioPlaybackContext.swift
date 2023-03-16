@@ -24,7 +24,7 @@ public struct AudioPlaybackContext: Equatable {
 }
 
 extension AudioPlaybackContext {
-    // A static constant representing a default "not loaded" state for an
+    // A static property representing a default "not loaded" state for an
     // audio player context
     public static let notLoaded = AudioPlaybackContext(
         duration: 0,

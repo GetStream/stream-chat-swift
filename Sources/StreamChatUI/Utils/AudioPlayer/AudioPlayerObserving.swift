@@ -5,12 +5,12 @@
 import AVFoundation
 import Foundation
 
-/// Describes and object that can provide AVPlayer related updates.
+/// Describes an object that can provide AVPlayer related updates.
 public protocol AudioPlayerObserving {
     /// Registers an observer with the player that will receive updates when the player's
     /// ``timeControlStatus`` gets updated.
     /// - Parameters:
-    /// player: The player from which we would like to received updates
+    /// player: The player from which we would like to receive updates
     /// block: The block to call once a ``timeControlStatus`` update occurs
     func addTimeControlStatusObserver(
         _ player: AVPlayer,
@@ -20,7 +20,7 @@ public protocol AudioPlayerObserving {
     /// Registers an observer that will periodically invoke the given block during playback to
     /// report changing time.
     /// - Parameters:
-    /// player: The player from which we would like to received updates
+    /// player: The player from which we would like to receive updates
     /// interval: The interval at which we would like to receive updates
     /// queue: The queue on which the call to block will occur every time there is an update
     /// block: The block to call every time there is an update
@@ -57,11 +57,11 @@ open class StreamPlayerObserver: AudioPlayerObserving {
     /// https://developer.apple.com/documentation/avfoundation/avplayer/1385829-addperiodictimeobserverforinterv#return_value
     private var periodicTimeObservationCancellationBlock: (() -> Void)?
 
-    /// An observer token that tis used to reference the NotificationCenter registration, that is being used
+    /// An observer token that is used to reference the NotificationCenter registration, that is being used
     /// to get notifications when the player's playback has been stopped.
     private var stoppedPlaybackObservationToken: Any?
 
-    /// The notificationCenter on which the ``playbackFinishedObserver`` will be registered one
+    /// The notificationCenter on which the ``playbackFinishedObserver`` will be registered on
     private let notificationCenter: NotificationCenter
 
     // MARK: - Lifecycle
