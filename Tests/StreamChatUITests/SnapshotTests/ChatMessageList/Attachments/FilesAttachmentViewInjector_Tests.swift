@@ -114,16 +114,12 @@ extension FilesAttachmentViewInjector_Tests {
         func messageContentViewDidTapOnQuotedMessage(_ indexPath: IndexPath?) {}
         func messageContentViewDidTapOnAvatarView(_ indexPath: IndexPath?) {}
         func messageContentViewDidTapOnReactionsView(_ indexPath: IndexPath?) {}
+        func messageContentViewDidTapOnQuotedMessage(_ quotedMessage: StreamChat.ChatMessage) {}
 
         // MARK: - AudioAttachmentPresentationViewDelegate
 
-        func audioAttachmentPresentationViewPlaybackContextForAttachment(
-            _ attachment: StreamChat.ChatMessageFileAttachment
-        ) -> AudioPlaybackContext { .notLoaded }
-        func audioAttachmentPresentationViewBeginPayback(
-            _ attachment: StreamChat.ChatMessageFileAttachment,
-            with delegate: StreamChatUI.AudioPlayingDelegate
-        ) {}
+        func audioAttachmentPresentationViewPlaybackContextForAttachment(_ attachment: StreamChat.ChatMessageFileAttachment) -> AudioPlaybackContext { .notLoaded }
+        func audioAttachmentPresentationViewBeginPayback(_ attachment: StreamChat.ChatMessageFileAttachment, with delegate: StreamChatUI.AudioPlayingDelegate) {}
         func audioAttachmentPresentationViewPausePayback() {}
         func audioAttachmentPresentationViewUpdatePlaybackRate() {}
         func audioAttachmentPresentationViewSeek(to timeInterval: TimeInterval) {}

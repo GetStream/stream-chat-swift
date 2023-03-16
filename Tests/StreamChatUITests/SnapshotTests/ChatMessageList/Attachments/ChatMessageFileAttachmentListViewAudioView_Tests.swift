@@ -153,5 +153,6 @@ extension ChatMessageFileAttachmentListViewAudioView_Tests {
         func messageContentViewDidTapOnQuotedMessage(_ indexPath: IndexPath?) {}
         func messageContentViewDidTapOnAvatarView(_ indexPath: IndexPath?) {}
         func messageContentViewDidTapOnReactionsView(_ indexPath: IndexPath?) {}
+        func messageContentViewDidTapOnQuotedMessage(_ quotedMessage: StreamChat.ChatMessage) {}
     }
 }

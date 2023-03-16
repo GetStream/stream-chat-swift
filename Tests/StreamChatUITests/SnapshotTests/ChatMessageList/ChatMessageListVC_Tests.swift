@@ -42,7 +42,7 @@ final class ChatMessageListVC_Tests: XCTestCase {
         super.tearDown()
     }
 
-    func test_setUp_propagatesDeletedMessagesVisabilityToResolver() {
+    func test_setUp_propagatesDeletedMessagesVisibilityToResolver() {
         // GIVEN
         var config = ChatClientConfig(apiKey: .init(.unique))
         config.deletedMessagesVisibility = .alwaysHidden
@@ -747,7 +747,7 @@ final class ChatMessageListVC_Tests: XCTestCase {
         sut.audioAttachmentPresentationViewPausePayback()
 
         let mockAudioPlayer = try XCTUnwrap(sut.audioPlayer as? MockAudioPlayer)
-        XCTAssertTrue(mockAudioPlayer.pauseWasCalled)
+        XCTAssertEqual(mockAudioPlayer.recordedFunctions, ["pause()"])
     }
 
     // MARK: - audioAttachmentPresentationViewUpdatePlaybackRate
@@ -761,7 +761,7 @@ final class ChatMessageListVC_Tests: XCTestCase {
         sut.audioAttachmentPresentationViewUpdatePlaybackRate()
 
         let mockAudioPlayer = try XCTUnwrap(sut.audioPlayer as? MockAudioPlayer)
-        XCTAssertTrue(mockAudioPlayer.updateRateWasCalled)
+        XCTAssertEqual(mockAudioPlayer.recordedFunctions, ["updateRate()"])
     }
 
     // MARK: - audioAttachmentPresentationViewSeek
@@ -776,5 +776,56 @@ final class ChatMessageListVC_Tests: XCTestCase {
 
         let mockAudioPlayer = try XCTUnwrap(sut.audioPlayer as? MockAudioPlayer)
         XCTAssertEqual(mockAudioPlayer.seekToWasCalledWithTime, 10)
+    }
+}
+
+extension ChatMessageListVC_Tests {
+    private final class MockAudioPlayer: AudioPlaying, Spy {
+        var recordedFunctions: [String] = []
+
+        static func build() -> AudioPlaying { MockAudioPlayer() }
+
+        private(set) var playbackContextWasCalledWithURL: URL?
+        var stubbedPlaybackContextResult = AudioPlaybackContext.notLoaded
+
+        private(set) var loadAssetWasCalledWith: (url: URL?, delegate: AudioPlayingDelegate)?
+        private(set) var seekToWasCalledWithTime: TimeInterval?
+
+        func playbackContext(
+            for url: URL
+        ) -> AudioPlaybackContext {
+            record()
+            playbackContextWasCalledWithURL = url
+            return stubbedPlaybackContextResult
+        }
+
+        func loadAsset(
+            from url: URL?,
+            delegate: AudioPlayingDelegate
+        ) {
+            record()
+            loadAssetWasCalledWith = (url, delegate)
+        }
+
+        func play() {
+            record()
+        }
+
+        func pause() {
+            record()
+        }
+
+        func stop() {
+            record()
+        }
+
+        func updateRate() {
+            record()
+        }
+
+        func seek(to time: TimeInterval) {
+            record()
+            seekToWasCalledWithTime = time
+        }
     }
 }
