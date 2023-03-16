@@ -136,8 +136,8 @@ extension NSManagedObjectContext {
             return
         }
 
-        let lastReadAt = lastReadAt?.bridgeDate ?? message.createdAt
-        read.lastReadAt = lastReadAt
+        let lastReadAt = lastReadAt ?? message.createdAt.bridgeDate
+        read.lastReadAt = lastReadAt.bridgeDate
 
         let messagesCount = unreadMessagesCount ?? MessageDTO.countOtherUserMessages(
             in: read.channel.cid,

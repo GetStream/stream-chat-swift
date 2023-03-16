@@ -448,12 +448,12 @@ class MessageDTO: NSManagedObject {
 
     static func countOtherUserMessages(
         in cid: String,
-        createdAtFrom: DBDate,
+        createdAtFrom: Date,
         context: NSManagedObjectContext
     ) -> Int {
         let subpredicates: [NSPredicate] = [
             sentMessagesPredicate(for: cid),
-            .init(format: "createdAt >= %@", createdAtFrom),
+            .init(format: "createdAt >= %@", createdAtFrom.bridgeDate),
             .init(format: "user.currentUser == nil")
         ]
 
