@@ -787,7 +787,7 @@ open class ChatMessageListVC: _ViewController,
 
         audioPlayer.loadAsset(
             from: attachment.assetURL,
-            delegate: delegate
+            andConnectDelegate: delegate
         )
     }
 
