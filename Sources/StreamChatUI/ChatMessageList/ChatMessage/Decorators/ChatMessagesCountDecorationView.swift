@@ -7,11 +7,6 @@ import UIKit
 
 /// The view used to show a separator when there are unread messages.
 open class ChatMessagesCountDecorationView: ChatMessageDecorationView, AppearanceProvider {
-    /// The string to be shown in the view
-    open var content: String? {
-        didSet { updateContentIfNeeded() }
-    }
-
     /// The container that the contentTextLabel will be placed aligned to its centre.
     open private(set) lazy var container: UIView = UIView()
         .withoutAutoresizingMaskConstraints
@@ -27,7 +22,7 @@ open class ChatMessagesCountDecorationView: ChatMessageDecorationView, Appearanc
     override open func setUpLayout() {
         super.setUpLayout()
 
-        embed(container, insets: .init(top: 0, leading: 0, bottom: 8, trailing: 0))
+        embed(container)
         container.embed(textLabel, insets: .init(top: 3, leading: 9, bottom: 3, trailing: 9))
     }
 
@@ -40,11 +35,5 @@ open class ChatMessagesCountDecorationView: ChatMessageDecorationView, Appearanc
         textLabel.font = appearance.fonts.caption1.bold
         textLabel.textColor = appearance.colorPalette.textLowEmphasis
         textLabel.textAlignment = .center
-    }
-
-    override open func updateContent() {
-        super.updateContent()
-
-        textLabel.text = content
     }
 }

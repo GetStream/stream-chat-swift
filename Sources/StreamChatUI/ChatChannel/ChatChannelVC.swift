@@ -290,27 +290,22 @@ open class ChatChannelVC: _ViewController,
         headerViewForMessage message: ChatMessage,
         at indexPath: IndexPath
     ) -> ChatMessageDecorationView? {
-        let dateHeaderView = dateHeaderView(
-            vc,
-            headerViewForMessage: message,
-            at: indexPath,
-            components: components
+        let shouldShowDate = vc.shouldShowDateSeparator(forMessage: message, at: indexPath)
+        let shouldShowUnreadMessages = message.id == firstUnreadMessageId
+
+        guard (shouldShowDate || shouldShowUnreadMessages), let channel = channelController.channel else {
+            return nil
+        }
+
+        let header = components.messageHeaderDecorationView.init()
+        header.content = ChatMessageHeaderDecoratorViewContent(
+            message: message,
+            channel: channel,
+            dateFormatter: vc.dateSeparatorFormatter,
+            shouldShowDate: shouldShowDate,
+            shouldShowUnreadMessages: shouldShowUnreadMessages
         )
-
-        var unreadMessagesView: ChatMessageDecorationView?
-        if message.id == firstUnreadMessageId, let unreadCount = channelController.channel?.unreadCount.messages {
-            let view = components.unreadMessagesCounterDecorationView.init()
-            view.content = L10n.Message.Unread.count(unreadCount)
-            unreadMessagesView = view
-        }
-
-        guard let dateView = dateHeaderView, let unreadView = unreadMessagesView else {
-            return dateHeaderView ?? unreadMessagesView
-        }
-
-        let stackView = StackViewDecoratorView()
-        stackView.content = [dateView, unreadView]
-        return stackView
+        return header
     }
 
     open func chatMessageListVC(
