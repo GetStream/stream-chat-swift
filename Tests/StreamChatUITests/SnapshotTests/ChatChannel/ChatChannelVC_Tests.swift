@@ -725,15 +725,24 @@ final class ChatChannelVC_Tests: XCTestCase {
             .mock(createdAt: Date(timeIntervalSince1970: 0)),
             .mock(createdAt: Date(timeIntervalSince1970: 86401))
         ]
-
-        let headerDecorationView = vc.chatMessageListVC(
+        channelControllerMock.simulateInitial(
+            channel: .mock(cid: .unique, unreadCount: ChannelUnreadCount(messages: 1, mentions: 0)),
+            messages: vc.messages,
+            state: .remoteDataFetched
+        )
+        let header = vc.chatMessageListVC(
             vc.messageListVC,
             headerViewForMessage: .mock(createdAt: Date(timeIntervalSince1970: 0)),
             at: .init(row: 0, section: 0)
         )
-        let dateSeparatorView = try XCTUnwrap(headerDecorationView as? ChatMessageListDateSeparatorView)
+        let headerDecorationView = try XCTUnwrap(header as? ChatChannelMessageHeaderDecoratorView)
 
-        XCTAssertEqual(dateSeparatorView.content, "Jan 01")
+        // Based on our implementation, views are not fully set up until they have a superview. We are forcing it here.
+        let view = UIView()
+        view.addSubview(headerDecorationView)
+
+        XCTAssertEqual(headerDecorationView.dateView.textLabel.text, "Jan 01")
+        XCTAssertTrue(headerDecorationView.unreadCountView.isHidden)
     }
 
     func test_headerViewForMessage_returnsExpectedValue_whenMessageShouldShowDateSeparator_AndIsMarkedAsUnread() throws {
@@ -760,18 +769,29 @@ final class ChatChannelVC_Tests: XCTestCase {
         vc.channelController.markUnread(from: firstMessageId)
         vc.channelController(vc.channelController, didUpdateChannel: EntityChange<ChatChannel>.update(channel))
 
-        let headerDecorationView = vc.chatMessageListVC(
+        let header = vc.chatMessageListVC(
             vc.messageListVC,
             headerViewForMessage: .mock(id: firstMessageId, createdAt: Date(timeIntervalSince1970: 0)),
             at: .init(row: 0, section: 0)
         )
-        let separatorView = try XCTUnwrap(headerDecorationView as? StackViewDecoratorView)
-        XCTAssertEqual(separatorView.content.count, 2)
-        let dateSeparatorView = try XCTUnwrap(separatorView.content.first as? ChatMessageListDateSeparatorView)
-        let unreadMessagesSeparator = try XCTUnwrap(separatorView.content.last as? ChatMessagesCountDecorationView)
-        XCTAssertEqual(dateSeparatorView.content, "Jan 01")
-        XCTAssertEqual(unreadMessagesSeparator.content, "1 UNREAD MESSAGE")
+        let headerDecorationView = try XCTUnwrap(header as? ChatChannelMessageHeaderDecoratorView)
+        let headerDecorationViewContent = try XCTUnwrap(headerDecorationView.content)
+        XCTAssertTrue(headerDecorationViewContent.shouldShowDate)
+        XCTAssertTrue(headerDecorationViewContent.shouldShowUnreadMessages)
 
+        // Based on our implementation, views are not fully set up until they have a superview. We are forcing it here.
+        let view = UIView()
+        view.addSubview(headerDecorationView)
+
+        XCTAssertEqual(
+            headerDecorationView.dateView.textLabel.text,
+            "Jan 01"
+        )
+
+        XCTAssertEqual(
+            headerDecorationView.unreadCountView.messagesCountDecorationView.textLabel.text,
+            "1 UNREAD MESSAGE"
+        )
         AssertSnapshot(vc, variants: [.defaultLight])
     }
 }

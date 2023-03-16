@@ -282,7 +282,7 @@ open class ChatThreadVC: _ViewController,
             return nil
         }
         let repliesCounterDecorationView = components.threadRepliesCounterDecorationView.init()
-        repliesCounterDecorationView.content = L10n.Message.Thread.Replies.count(message.replyCount)
+        repliesCounterDecorationView.content = message
         return repliesCounterDecorationView
     }
 

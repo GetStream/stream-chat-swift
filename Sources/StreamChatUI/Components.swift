@@ -94,6 +94,9 @@ public struct Components {
     /// The view that shows a playing video.
     public var playerView: PlayerView.Type = PlayerView.self
 
+    // The view that displays a banner to show the count of messages
+    public var messagesCountDecorationView: ChatMessagesCountDecorationView.Type = ChatMessagesCountDecorationView.self
+
     // MARK: - Message List components
 
     /// The view controller responsible for rendering a list of messages.
@@ -236,7 +239,10 @@ public struct Components {
         ChatMessageDeliveryStatusCheckmarkView.self
 
     /// The view that displays the number of unread messages in the chat.
-    public var unreadMessagesCounterDecorationView: ChatMessagesCountDecorationView.Type = ChatMessagesCountDecorationView.self
+    public var unreadMessagesCounterDecorationView: ChatUnreadMessagesCountDecorationView.Type = ChatUnreadMessagesCountDecorationView.self
+
+    /// The view that displays the number of unread messages in the chat.
+    public var messageHeaderDecorationView: ChatChannelMessageHeaderDecoratorView.Type = ChatChannelMessageHeaderDecoratorView.self
 
     // MARK: - Reactions
 
@@ -285,7 +291,7 @@ public struct Components {
     public var threadHeaderView: ChatThreadHeaderView.Type = ChatThreadHeaderView.self
 
     /// The view that displays the number of replies in the current thread.
-    public var threadRepliesCounterDecorationView: ChatMessagesCountDecorationView.Type = ChatMessagesCountDecorationView.self
+    public var threadRepliesCounterDecorationView: ChatThreadRepliesCountDecorationView.Type = ChatThreadRepliesCountDecorationView.self
 
     /// A boolean value that determines whether thread replies counter decoration should be shown below the source message of a thread.
     public var threadRepliesCounterEnabled = true

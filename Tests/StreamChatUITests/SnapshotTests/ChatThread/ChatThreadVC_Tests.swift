@@ -168,8 +168,10 @@ final class ChatThreadVC_Tests: XCTestCase {
             vc.messageListVC,
             footerViewForMessage: useSourceMessage ? sourceMessage : vc.messages[1],
             at: IndexPath(row: useSourceMessage ? 3 : 1, section: 0)
-        ) as? ChatMessagesCountDecorationView
+        ) as? ChatThreadRepliesCountDecorationView
 
-        XCTAssertEqual(footerView?.content, expected(), file: file, line: line)
+        // Based on our implementation, views are not fully set up until they have a superview. We are forcing it here.
+        footerView?.updateContent()
+        XCTAssertEqual(footerView?.messagesCountDecorationView.textLabel.text, expected(), file: file, line: line)
     }
 }
