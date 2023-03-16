@@ -289,6 +289,9 @@ final class StreamRemoteAudioPlayer: AudioPlaying {
         from url: URL?,
         delegate: AudioPlayingDelegate
     ) {
+        /// We are going to check if the URL requested to load, represents the currentItem that we
+        /// have already loaded (if any). In this case, we will try either continue the existing playback
+        /// or restart it, if possible.
         if let url = url,
            let currentItem = player.currentItem?.asset as? AVURLAsset,
            url == currentItem.url {
@@ -297,6 +300,9 @@ final class StreamRemoteAudioPlayer: AudioPlaying {
             if context.state == .paused {
                 player.play()
             } else if context.state == .stopped {
+                /// If the currentItem has stopped, we want to restart the playback. We are replacing
+                /// the currentItem with the same one to trigger the player's observers on the updated
+                /// currentItem.
                 player.replaceCurrentItem(with: .init(asset: currentItem))
                 player.play()
             }
