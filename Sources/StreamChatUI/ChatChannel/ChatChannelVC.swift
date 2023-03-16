@@ -298,7 +298,7 @@ open class ChatChannelVC: _ViewController,
         }
 
         let header = components.messageHeaderDecorationView.init()
-        header.content = ChatMessageHeaderDecoratorViewContent(
+        header.content = ChatChannelMessageHeaderDecoratorViewContent(
             message: message,
             channel: channel,
             dateFormatter: vc.dateSeparatorFormatter,

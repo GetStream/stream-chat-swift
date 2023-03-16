@@ -242,7 +242,7 @@ public struct Components {
     public var unreadMessagesCounterDecorationView: ChatUnreadMessagesCountDecorationView.Type = ChatUnreadMessagesCountDecorationView.self
 
     /// The view that displays the number of unread messages in the chat.
-    public var messageHeaderDecorationView: ChatMessageHeaderDecoratorView.Type = ChatMessageHeaderDecoratorView.self
+    public var messageHeaderDecorationView: ChatChannelMessageHeaderDecoratorView.Type = ChatChannelMessageHeaderDecoratorView.self
 
     // MARK: - Reactions
 

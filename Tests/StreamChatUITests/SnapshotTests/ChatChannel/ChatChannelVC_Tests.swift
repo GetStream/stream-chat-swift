@@ -735,7 +735,7 @@ final class ChatChannelVC_Tests: XCTestCase {
             headerViewForMessage: .mock(createdAt: Date(timeIntervalSince1970: 0)),
             at: .init(row: 0, section: 0)
         )
-        let headerDecorationView = try XCTUnwrap(header as? ChatMessageHeaderDecoratorView)
+        let headerDecorationView = try XCTUnwrap(header as? ChatChannelMessageHeaderDecoratorView)
 
         // Based on our implementation, views are not fully set up until they have a superview. We are forcing it here.
         let view = UIView()
@@ -774,7 +774,7 @@ final class ChatChannelVC_Tests: XCTestCase {
             headerViewForMessage: .mock(id: firstMessageId, createdAt: Date(timeIntervalSince1970: 0)),
             at: .init(row: 0, section: 0)
         )
-        let headerDecorationView = try XCTUnwrap(header as? ChatMessageHeaderDecoratorView)
+        let headerDecorationView = try XCTUnwrap(header as? ChatChannelMessageHeaderDecoratorView)
         let headerDecorationViewContent = try XCTUnwrap(headerDecorationView.content)
         XCTAssertTrue(headerDecorationViewContent.shouldShowDate)
         XCTAssertTrue(headerDecorationViewContent.shouldShowUnreadMessages)
