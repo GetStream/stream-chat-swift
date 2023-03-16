@@ -11,22 +11,14 @@ public protocol AudioPlaying: AnyObject {
     /// Provides  way to get an instance of a player
     static func build() -> AudioPlaying
 
-    /// Requests the playbackContext for the given URL. If the player's current item has as URL that
-    /// matches the provided one, it should return a context, otherwise it will return
-    /// ``AudioPlaybackContext.notLoaded``
-    /// - Parameters:
-    /// - url: The URL (provided by the asset) that is used to stream/download the content to play
-    func playbackContext(for url: URL) -> AudioPlaybackContext
-
-    /// Instructs the player to load the asset from the provided URL and prepare it for streaming.
+    /// Instructs the player to load the asset from the provided URL and prepare it for streaming. If the
+    /// player's current item has as URL that matches the provided one, then we will try to play or restart
+    /// the playback while updating the delegate to the provided one.
     /// - Parameters:
     /// - url: The URL where the asset will be streamed from. If nil then the player will simply clear
     /// up the current playback queue.
     /// - delegate: The delegate that will be informed for changes on the asset's playback.
-    func loadAsset(
-        from url: URL?,
-        delegate: AudioPlayingDelegate
-    )
+    func loadAsset(from url: URL?, andConnectDelegate delegate: AudioPlayingDelegate)
 
     /// Begin the loaded asset's playback. If no asset has been loaded, the action has no effect
     func play()
@@ -46,9 +38,7 @@ public protocol AudioPlaying: AnyObject {
     /// Performs a seek in the loaded asset's timeline at the provided time.
     /// - Parameters:
     /// - time: The time to seek at
-    func seek(
-        to time: TimeInterval
-    )
+    func seek(to time: TimeInterval)
 }
 
 /// An implementation of ``AudioPlaying`` that can be used to stream audio files from a URL
@@ -276,25 +266,16 @@ final class StreamRemoteAudioPlayer: AudioPlaying {
 
     // MARK: - AudioPlaying
 
-    func playbackContext(
-        for url: URL
-    ) -> AudioPlaybackContext {
-        guard (player.currentItem?.asset as? AVURLAsset)?.url == url else {
-            return .notLoaded
-        }
-        return context
-    }
-
-    func loadAsset(
-        from url: URL?,
-        delegate: AudioPlayingDelegate
-    ) {
+    func loadAsset(from url: URL?, andConnectDelegate delegate: AudioPlayingDelegate) {
         /// We are going to check if the URL requested to load, represents the currentItem that we
         /// have already loaded (if any). In this case, we will try either continue the existing playback
         /// or restart it, if possible.
         if let url = url,
            let currentItem = player.currentItem?.asset as? AVURLAsset,
            url == currentItem.url {
+            /// Update the delegate to the provided one
+            self.delegate = delegate
+
             /// If the currentItem is paused, we want to continue the playback
             /// Otherwise, no action is required
             if context.state == .paused {
@@ -305,6 +286,11 @@ final class StreamRemoteAudioPlayer: AudioPlaying {
                 /// currentItem.
                 player.replaceCurrentItem(with: .init(asset: currentItem))
                 player.play()
+            } else {
+                /// This case may be triggered if we call ``loadAsset`` on a player that is currently
+                /// playing the URL we provided. In this case we will Inform the delegate about the
+                /// current state.
+                delegate.audioPlayer(self, didUpdateContext: context)
             }
 
             return
@@ -327,6 +313,13 @@ final class StreamRemoteAudioPlayer: AudioPlaying {
                 completion: { [weak self] in self?.handleDurationLoading($0, asset: asset) }
             )
         }
+    }
+
+    func reconnectDelegate(_ delegate: AudioPlayingDelegate, for url: URL) {
+        guard (player.currentItem?.asset as? AVURLAsset)?.url == url else {
+            return
+        }
+        self.delegate = delegate
     }
 
     func play() {
@@ -360,9 +353,7 @@ final class StreamRemoteAudioPlayer: AudioPlaying {
         player.rate = context.rate.next.rawValue
     }
 
-    func seek(
-        to time: TimeInterval
-    ) {
+    func seek(to time: TimeInterval) {
         player.pause()
         updateContext { value in
             value.currentTime = time
