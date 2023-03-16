@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-public struct ChatMessageHeaderDecoratorViewContent {
+public struct ChatChannelMessageHeaderDecoratorViewContent {
     public let message: ChatMessage
     public let channel: ChatChannel
     public let dateFormatter: MessageDateSeparatorFormatter
@@ -28,7 +28,7 @@ public struct ChatMessageHeaderDecoratorViewContent {
 }
 
 /// The decorator view that is used as a container for the chat message header view decorators.
-public final class ChatMessageHeaderDecoratorView: ChatMessageDecorationView, ThemeProvider {
+public final class ChatChannelMessageHeaderDecoratorView: ChatMessageDecorationView, ThemeProvider {
     /// The container for the stacked views.
     public private(set) lazy var container = UIStackView()
         .withoutAutoresizingMaskConstraints
@@ -39,7 +39,7 @@ public final class ChatMessageHeaderDecoratorView: ChatMessageDecorationView, Th
     public private(set) lazy var unreadCountView = components.unreadMessagesCounterDecorationView.init()
         .withoutAutoresizingMaskConstraints
 
-    public var content: ChatMessageHeaderDecoratorViewContent? {
+    public var content: ChatChannelMessageHeaderDecoratorViewContent? {
         didSet {
             updateContentIfNeeded()
         }

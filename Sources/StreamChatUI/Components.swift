@@ -94,7 +94,7 @@ public struct Components {
     /// The view that shows a playing video.
     public var playerView: PlayerView.Type = PlayerView.self
 
-    // The view that displays unread messages count for messages and thread replies
+    // The view that displays a banner to show the count of messages
     public var messagesCountDecorationView: ChatMessagesCountDecorationView.Type = ChatMessagesCountDecorationView.self
 
     // MARK: - Message List components
