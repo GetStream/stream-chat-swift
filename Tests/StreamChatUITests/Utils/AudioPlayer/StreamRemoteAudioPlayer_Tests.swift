@@ -4,6 +4,7 @@
 
 import AVFoundation
 import Foundation
+import StreamChatTestTools
 @testable import StreamChatUI
 import XCTest
 
@@ -35,6 +36,7 @@ final class StreamRemoteAudioPlayer_Tests: XCTestCase {
     override func tearDownWithError() throws {
         subject = nil
         player = nil
+        playerObserver = nil
         assetPropertyLoader = nil
         syncDebouncer = nil
         audioPlayerDelegate = nil

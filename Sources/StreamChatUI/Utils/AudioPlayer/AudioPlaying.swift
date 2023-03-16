@@ -11,8 +11,9 @@ public protocol AudioPlaying: AnyObject {
     /// Provides  way to get an instance of a player
     static func build() -> AudioPlaying
 
-    /// Requests the playbackContext for the given URL. If the player has an item that matches this URL
-    /// it should return a context, otherwise ``AudioPlaybackContext.notLoaded`` will be returned
+    /// Requests the playbackContext for the given URL. If the player's current item has as URL that
+    /// matches the provided one, it should return a context, otherwise it will return
+    /// ``AudioPlaybackContext.notLoaded``
     /// - Parameters:
     /// - url: The URL (provided by the asset) that is used to stream/download the content to play
     func playbackContext(for url: URL) -> AudioPlaybackContext
@@ -27,7 +28,7 @@ public protocol AudioPlaying: AnyObject {
         delegate: AudioPlayingDelegate
     )
 
-    /// Being the loaded asset's playback. If non has been loaded the action has no effect
+    /// Begin the loaded asset's playback. If no asset has been loaded, the action has no effect
     func play()
 
     /// Pauses the loaded asset's playback. If non has been loaded or the playback hasn't started yet
@@ -39,10 +40,10 @@ public protocol AudioPlaying: AnyObject {
     func stop()
 
     /// Updates the loaded asset's playback rate to the next available one. For more information see
-    /// ``AudioPlaybackRate``
+    /// ``AudioPlaybackRate.swift``
     func updateRate()
 
-    /// Performs as seek at the loaded asset's timeline at the provided time
+    /// Performs a seek in the loaded asset's timeline at the provided time.
     /// - Parameters:
     /// - time: The time to seek at
     func seek(
@@ -54,14 +55,14 @@ public protocol AudioPlaying: AnyObject {
 final class StreamRemoteAudioPlayer: AudioPlaying {
     // MARK: - Properties
 
-    /// Describes the state of the player and provides information about its metadata
+    /// Describes the player's current playback state
     @Atomic private(set) var context: AudioPlaybackContext = .notLoaded
 
     /// The player that will be used for the playback of the audio files
     private let player: AVPlayer
 
-    /// The debouncer is being used during `` seek(to time: TimeInterval)`` to provide a
-    /// interactive UI updates while keeping actual seek requests to minimum.
+    /// The debouncer is being used during `` seek(to time: TimeInterval)`` to provide
+    /// interactive UI updates while keeping the executed seek requests to minimum.
     private let debouncer: Debouncing
 
     /// The assetPropertyLoader is being used during the loading of an asset with non-nil URL, to provide
@@ -198,8 +199,8 @@ final class StreamRemoteAudioPlayer: AudioPlaying {
         delegate?.audioPlayer(self, didUpdateContext: context)
     }
 
-    /// It's used by the assetPropertyLoader to provide information when the propertyLoading has been
-    /// completed.
+    /// It's used by the assetPropertyLoader to handle the completion (successful or failed) of duration's
+    /// asynchronous loading.
     private func handleDurationLoading(
         _ result: Result<TimeInterval, Error>,
         asset: AVURLAsset
@@ -239,8 +240,7 @@ final class StreamRemoteAudioPlayer: AudioPlaying {
         }
     }
 
-    /// Once a seek task has been executed (and not debounced) we are performing the seek task
-    /// on the player in order to progress the playback.
+    /// It executes a seek request at the specified time on the player in order to progress the playback.
     private func executeSeek(
         to time: TimeInterval
     ) {

@@ -5,10 +5,12 @@
 import Foundation
 import StreamChatUI
 
-final class MockAudioPlayerDelegate: AudioPlayingDelegate {
-    private(set) var didUpdateContextWasCalled: (player: AudioPlaying, context: AudioPlaybackContext)?
+public final class MockAudioPlayerDelegate: AudioPlayingDelegate {
+    public private(set) var didUpdateContextWasCalled: (player: AudioPlaying, context: AudioPlaybackContext)?
 
-    func audioPlayer(
+    public init() {}
+
+    public func audioPlayer(
         _ audioPlayer: AudioPlaying,
         didUpdateContext context: AudioPlaybackContext
     ) {

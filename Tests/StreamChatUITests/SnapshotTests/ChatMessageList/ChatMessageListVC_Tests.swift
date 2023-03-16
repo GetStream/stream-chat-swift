@@ -8,14 +8,14 @@
 import XCTest
 
 final class ChatMessageListVC_Tests: XCTestCase {
-    private var sut: ChatMessageListVC!
-    private var config: ChatClientConfig!
-    private var mockedListView: ChatMessageListView_Mock {
+    var sut: ChatMessageListVC!
+    var config: ChatClientConfig!
+    var mockedListView: ChatMessageListView_Mock {
         sut.listView as! ChatMessageListView_Mock
     }
 
-    private var mockedDataSource: ChatMessageListVCDataSource_Mock!
-    private var mockedDelegate: ChatMessageListVCDelegate_Mock!
+    var mockedDataSource: ChatMessageListVCDataSource_Mock!
+    var mockedDelegate: ChatMessageListVCDelegate_Mock!
 
     override func setUp() {
         super.setUp()
@@ -42,7 +42,7 @@ final class ChatMessageListVC_Tests: XCTestCase {
         super.tearDown()
     }
 
-    func test_setUp_propagatesDeletedMessagesVisibilityToResolver() {
+    func test_setUp_propagatesDeletedMessagesVisabilityToResolver() {
         // GIVEN
         var config = ChatClientConfig(apiKey: .init(.unique))
         config.deletedMessagesVisibility = .alwaysHidden
@@ -165,13 +165,13 @@ final class ChatMessageListVC_Tests: XCTestCase {
     func test_messageIsContentEqual_whenCustomAttachmentDataDifferent_returnsFalse() throws {
         struct CustomAttachment: AttachmentPayload {
             static var type: AttachmentType = .unknown
-            
+
             var comments: Int
             init(comments: Int) {
                 self.comments = comments
             }
         }
-        
+
         let attachmentId = AttachmentId.unique
         let makeCustomAttachmentWithComments: (Int) throws -> AnyChatMessageAttachment = { comments in
             let attachmentWithCommentsPayload = AnyAttachmentPayload(
@@ -187,15 +187,15 @@ final class ChatMessageListVC_Tests: XCTestCase {
                 uploadingState: nil
             )
         }
-        
+
         let attachmentWith4Comments = try makeCustomAttachmentWithComments(4)
         let attachmentWith5Comments = try makeCustomAttachmentWithComments(5)
-        
+
         // When attachments are the same, should be equal
         let messageSame1 = ChatMessage.mock(id: "1", text: "same", attachments: [attachmentWith4Comments])
         let messageSame2 = ChatMessage.mock(id: "1", text: "same", attachments: [attachmentWith4Comments])
         XCTAssert(messageSame1.isContentEqual(to: messageSame2))
-        
+
         // When attachments are different, should not be equal
         let messageDiff1 = ChatMessage.mock(id: "1", text: "same", attachments: [attachmentWith4Comments])
         let messageDiff2 = ChatMessage.mock(id: "1", text: "same", attachments: [attachmentWith5Comments])
@@ -686,50 +686,5 @@ final class ChatMessageListVC_Tests: XCTestCase {
 
         XCTAssertNotNil(cell.headerContainerView.superview)
         XCTAssertNotNil(cell.headerContainerView.subviews.first as? ChatMessageListDateSeparatorView)
-    }
-}
-
-extension ChatMessageListVC_Tests {
-    private class MockAudioPlayer: AudioPlaying {
-        private(set) var loadAssetWasCalledWith: (url: URL?, delegate: AudioPlayingDelegate)?
-        private(set) var playWasCalled = false
-        private(set) var pauseWasCalled = false
-        private(set) var stopWasCalled = false
-        private(set) var updateRateWasCalled = false
-        private(set) var seekToWasCalledWithTime: TimeInterval?
-
-        var stubbedPlaybackContextResult = AudioPlaybackContext.notLoaded
-
-        static func build() -> StreamChatUI.AudioPlaying {
-            MockAudioPlayer()
-        }
-
-        func playbackContext(for url: URL) -> AudioPlaybackContext { stubbedPlaybackContextResult }
-        func loadAsset(
-            from url: URL?,
-            delegate: StreamChatUI.AudioPlayingDelegate
-        ) {
-            loadAssetWasCalledWith = (url, delegate)
-        }
-
-        func play() {
-            playWasCalled = true
-        }
-
-        func pause() {
-            pauseWasCalled = true
-        }
-
-        func stop() {
-            stopWasCalled = true
-        }
-
-        func updateRate() {
-            updateRateWasCalled = true
-        }
-
-        func seek(to time: TimeInterval) {
-            seekToWasCalledWithTime = time
-        }
     }
 }
