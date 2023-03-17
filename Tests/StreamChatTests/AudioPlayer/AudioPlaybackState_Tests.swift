@@ -3,7 +3,7 @@
 //
 
 import Foundation
-import StreamChatUI
+import StreamChat
 import XCTest
 
 final class AudioPlaybackState_Tests: XCTestCase {

@@ -4,7 +4,7 @@
 
 import AVFoundation
 import Foundation
-@testable import StreamChatUI
+@testable import StreamChat
 import XCTest
 
 final class StreamPlayerObserver_Tests: XCTestCase {

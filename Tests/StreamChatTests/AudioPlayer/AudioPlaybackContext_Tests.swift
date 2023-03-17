@@ -2,7 +2,7 @@
 // Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
-@testable import StreamChatUI
+@testable import StreamChat
 import XCTest
 
 final class AudioPlaybackContext_Tests: XCTestCase {
