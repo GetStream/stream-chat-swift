@@ -60,8 +60,7 @@ final class StreamAssetPropertyLoader_Tests: XCTestCase {
                 case .success:
                     XCTFail()
                 case let .failure(error):
-                    let compositeError = try XCTUnwrap(error as? AssetPropertyLoadingCompositeError)
-                    XCTAssertEqual(compositeError.cancelledProperties.first?.property.name, "duration")
+                    XCTAssertEqual(error.cancelledProperties.first?.property.name, "duration")
                 }
             }
         )
@@ -79,9 +78,8 @@ final class StreamAssetPropertyLoader_Tests: XCTestCase {
                 case .success:
                     XCTFail()
                 case let .failure(error):
-                    let compositeError = try XCTUnwrap(error as? AssetPropertyLoadingCompositeError)
-                    XCTAssertEqual(compositeError.failedProperties.first?.property.name, "duration")
-                    XCTAssertEqual((compositeError.failedProperties.first)?.error as? NSError, expectedError)
+                    XCTAssertEqual(error.failedProperties.first?.property.name, "duration")
+                    XCTAssertEqual((error.failedProperties.first)?.error as? NSError, expectedError)
                 }
             }
         )
@@ -96,8 +94,7 @@ final class StreamAssetPropertyLoader_Tests: XCTestCase {
                 case .success:
                     XCTFail()
                 case let .failure(error):
-                    let compositeError = try XCTUnwrap(error as? AssetPropertyLoadingCompositeError)
-                    XCTAssertEqual(compositeError.failedProperties.first?.property.name, "duration")
+                    XCTAssertEqual(error.failedProperties.first?.property.name, "duration")
                 }
             }
         )
@@ -112,8 +109,7 @@ final class StreamAssetPropertyLoader_Tests: XCTestCase {
                 case .success:
                     XCTFail()
                 case let .failure(error):
-                    let compositeError = try XCTUnwrap(error as? AssetPropertyLoadingCompositeError)
-                    XCTAssertEqual(compositeError.failedProperties.first?.property.name, "duration")
+                    XCTAssertEqual(error.failedProperties.first?.property.name, "duration")
                 }
             }
         )
@@ -134,9 +130,8 @@ final class StreamAssetPropertyLoader_Tests: XCTestCase {
                 case .success:
                     XCTFail()
                 case let .failure(error):
-                    let compositeError = try XCTUnwrap(error as? AssetPropertyLoadingCompositeError)
-                    XCTAssertEqual(compositeError.failedProperties.count, 3)
-                    XCTAssertEqual(compositeError.failedProperties.map(\.property.name), ["duration", "readable", "playable"])
+                    XCTAssertEqual(error.failedProperties.count, 3)
+                    XCTAssertEqual(error.failedProperties.map(\.property.name), ["duration", "readable", "playable"])
                 }
             }
         )
@@ -155,11 +150,10 @@ final class StreamAssetPropertyLoader_Tests: XCTestCase {
                 case .success:
                     XCTFail()
                 case let .failure(error):
-                    let compositeError = try XCTUnwrap(error as? AssetPropertyLoadingCompositeError)
-                    XCTAssertEqual(compositeError.failedProperties.count, 1)
-                    XCTAssertEqual(compositeError.cancelledProperties.count, 1)
-                    XCTAssertEqual(compositeError.failedProperties.map(\.property.name), ["playable"])
-                    XCTAssertEqual(compositeError.cancelledProperties.map(\.property.name), ["readable"])
+                    XCTAssertEqual(error.failedProperties.count, 1)
+                    XCTAssertEqual(error.cancelledProperties.count, 1)
+                    XCTAssertEqual(error.failedProperties.map(\.property.name), ["playable"])
+                    XCTAssertEqual(error.cancelledProperties.map(\.property.name), ["readable"])
                 }
             }
         )
@@ -178,9 +172,8 @@ final class StreamAssetPropertyLoader_Tests: XCTestCase {
                 case .success:
                     XCTFail()
                 case let .failure(error):
-                    let compositeError = try XCTUnwrap(error as? AssetPropertyLoadingCompositeError)
-                    XCTAssertEqual(compositeError.failedProperties.count, 2)
-                    XCTAssertEqual(compositeError.failedProperties.map(\.property.name), ["readable", "playable"])
+                    XCTAssertEqual(error.failedProperties.count, 2)
+                    XCTAssertEqual(error.failedProperties.map(\.property.name), ["readable", "playable"])
                 }
             }
         )
@@ -199,9 +192,8 @@ final class StreamAssetPropertyLoader_Tests: XCTestCase {
                 case .success:
                     XCTFail()
                 case let .failure(error):
-                    let compositeError = try XCTUnwrap(error as? AssetPropertyLoadingCompositeError)
-                    XCTAssertEqual(compositeError.cancelledProperties.count, 2)
-                    XCTAssertEqual(compositeError.cancelledProperties.map(\.property.name), ["readable", "playable"])
+                    XCTAssertEqual(error.cancelledProperties.count, 2)
+                    XCTAssertEqual(error.cancelledProperties.map(\.property.name), ["readable", "playable"])
                 }
             }
         )
@@ -231,11 +223,11 @@ final class StreamAssetPropertyLoader_Tests: XCTestCase {
     private func assertPropertiesLoading(
         _ properties: [AssetProperty],
         resultMap statusOfValueResultMap: [String: AVKeyValueStatus],
-        completion: (Result<AVURLAsset, Error>) throws -> Void,
+        completion: (Result<AVURLAsset, AssetPropertyLoadingCompositeError>) throws -> Void,
         file: StaticString = #file,
         line: UInt = #line
     ) throws {
-        var completionWasCalledWithResult: Result<AVURLAsset, Error>?
+        var completionWasCalledWithResult: Result<AVURLAsset, AssetPropertyLoadingCompositeError>?
         mockAsset.statusOfValueResultMap = statusOfValueResultMap
 
         subject.loadProperties(

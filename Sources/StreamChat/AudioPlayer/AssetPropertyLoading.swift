@@ -7,11 +7,11 @@ import Foundation
 
 /// A simple type that describes the domain cancelled errors an instance of AssetPropertyLoading can return
 public struct AssetPropertyLoadingCancelledError: Error {
-    /// The property for which the loading failed
+    /// The property for which the loading cancelled
     public let property: AssetProperty
 
-    /// Initialises as new instance of the error
-    /// - Parameter property: The property for which the error was thrown during loading
+    /// Initialises a new instance of the error
+    /// - Parameter property: The property for which the error was occurred during loading
     public init(_ property: AssetProperty) {
         self.property = property
     }
@@ -26,14 +26,14 @@ public struct AssetPropertyLoadingFailedError: Error {
     /// The property for which the loading failed
     public let property: AssetProperty
 
-    /// The error which was thrown during loading
+    /// The error which occurred during loading, if nil the failure occurred due to an unknown error
     public var error: Error?
 
-    /// The property for which the error was generated containing the original error
-    /// as additional information
+    /// The property for which the error was generated. The instance will additionally include the original
+    /// error (if any)
     /// - Parameters:
     ///   - property: The property for which the error was generated
-    ///   - error: The error that was thrown during loading or nil if an unknown error occurred
+    ///   - error: The error that was occurred during loading or nil if an unknown error occurred
     public init(_ property: AssetProperty, error: Error?) {
         self.property = property
         self.error = error
@@ -49,7 +49,7 @@ public struct AssetPropertyLoadingFailedError: Error {
 }
 
 /// A composite type that will be returned on the completion of a loading request. It will contain the errors
-/// that were thrown for each property that we tried to load but failed.
+/// that occurred for each property that we tried to load but failed.
 public struct AssetPropertyLoadingCompositeError: Error {
     /// An array containing the properties and their errors, that failed with or without additional information
     public let failedProperties: [AssetPropertyLoadingFailedError]
@@ -93,7 +93,7 @@ public protocol AssetPropertyLoading {
     func loadProperties<Asset: AVAsset>(
         _ properties: [AssetProperty],
         of asset: Asset,
-        completion: @escaping (Result<Asset, Error>) -> Void
+        completion: @escaping (Result<Asset, AssetPropertyLoadingCompositeError>) -> Void
     )
 }
 
@@ -101,7 +101,7 @@ public struct StreamAssetPropertyLoader: AssetPropertyLoading {
     public func loadProperties<Asset: AVAsset>(
         _ properties: [AssetProperty],
         of asset: Asset,
-        completion: @escaping (Result<Asset, Error>) -> Void
+        completion: @escaping (Result<Asset, AssetPropertyLoadingCompositeError>) -> Void
     ) {
         // it's worth noting here that according to the documentation, the completion
         // handler will be invoked only once, regardless of the number of
@@ -121,7 +121,7 @@ public struct StreamAssetPropertyLoader: AssetPropertyLoading {
     private func handlePropertiesLoadingResult<Asset: AVAsset>(
         _ properties: [AssetProperty],
         of asset: Asset,
-        completion: @escaping (Result<Asset, Error>) -> Void
+        completion: @escaping (Result<Asset, AssetPropertyLoadingCompositeError>) -> Void
     ) {
         var failedProperties: [AssetPropertyLoadingFailedError] = []
         var cancelledProperties: [AssetPropertyLoadingCancelledError] = []
