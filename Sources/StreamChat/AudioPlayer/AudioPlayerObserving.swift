@@ -8,10 +8,10 @@ import Foundation
 /// Describes an object that can provide AVPlayer related updates.
 public protocol AudioPlayerObserving {
     /// Registers an observer with the player that will receive updates when the player's
-    /// ``AVPlayer.timeControlStatus`` gets updated.
+    /// `AVPlayer.timeControlStatus` gets updated.
     /// - Parameters:
     ///   - player: The player from which we would like to receive updates
-    ///   - block: The block to call once a ``timeControlStatus`` update occurs
+    ///   - block: The block to call once a `timeControlStatus` update occurs
     func addTimeControlStatusObserver(
         _ player: AVPlayer,
         using block: @escaping (AVPlayer.TimeControlStatus?) -> Void
@@ -33,7 +33,7 @@ public protocol AudioPlayerObserving {
 
     /// Registers and observer that will be called once the playback of an item stops
     /// - Parameters:
-    ///   - queue: The queue on which the ``stoppedPlaybackHandler`` will be dispatched
+    ///   - queue: The queue on which the `stoppedPlaybackHandler` will be dispatched
     ///   - block: The block to call once a player's item has stopped
     func addStoppedPlaybackObserver(
         queue: OperationQueue?,
@@ -66,6 +66,10 @@ public class StreamPlayerObserver: AudioPlayerObserving {
 
     // MARK: - Lifecycle
 
+    /// Creates a new instance of StreamPlayerObserver
+    /// - Parameter notificationCenter: The notificationCenter on which the stoppedPlaybackObserver
+    /// will be registered to listen for the `NSNotification.Name.AVPlayerItemDidPlayToEndTime`
+    /// notifications.
     public init(
         notificationCenter: NotificationCenter = .default
     ) {

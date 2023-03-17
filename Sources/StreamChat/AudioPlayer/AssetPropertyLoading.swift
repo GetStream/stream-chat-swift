@@ -98,6 +98,7 @@ public protocol AssetPropertyLoading {
     )
 }
 
+/// A concrete implementation of `AssetPropertyLoading`
 public struct StreamAssetPropertyLoader: AssetPropertyLoading {
     public func loadProperties<Asset: AVAsset>(
         _ properties: [AssetProperty],

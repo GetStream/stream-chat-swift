@@ -4,7 +4,7 @@
 
 import Foundation
 
-/// Defines an enumeration for audio playback rate with a raw value of Float
+/// Defines a struct that describes the audio playback rate with a raw value of Float
 public struct AudioPlaybackRate: Comparable, Equatable {
     public let rawValue: Float
 

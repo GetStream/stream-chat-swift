@@ -4,7 +4,7 @@
 
 import Foundation
 
-/// Defines an enumeration for audio player playback state
+/// Defines an struct which describes an audio player's playback state
 public struct AudioPlaybackState: Equatable, CustomStringConvertible {
     /// The name that describes the state
     public let name: String
