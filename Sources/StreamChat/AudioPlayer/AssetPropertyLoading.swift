@@ -103,6 +103,10 @@ public struct StreamAssetPropertyLoader: AssetPropertyLoading {
         of asset: Asset,
         completion: @escaping (Result<Asset, Error>) -> Void
     ) {
+        // it's worth noting here that according to the documentation, the completion
+        // handler will be invoked only once, regardless of the number of
+        // properties we are loading.
+        // https://developer.apple.com/documentation/avfoundation/avasynchronouskeyvalueloading/1387321-loadvaluesasynchronously
         asset.loadValuesAsynchronously(forKeys: properties.map(\.name)) {
             handlePropertiesLoadingResult(
                 properties,
