@@ -51,10 +51,10 @@ public struct AssetPropertyLoadingFailedError: Error {
 /// A composite type that will be returned on the completion of a loading request. It will contain the errors
 /// that occurred for each property that we tried to load but failed.
 public struct AssetPropertyLoadingCompositeError: Error {
-    /// An array containing the properties and their errors, that failed with or without additional information
+    /// An array containing the errors for the properties that failed
     public let failedProperties: [AssetPropertyLoadingFailedError]
 
-    /// An array containing the properties and their errors, that were cancelled
+    /// An array containing the errors for the properties that were cancelled
     public let cancelledProperties: [AssetPropertyLoadingCancelledError]
 
     public init(
@@ -72,6 +72,7 @@ public struct AssetPropertyLoadingCompositeError: Error {
 
 /// Defines a type that represents the properties of an asset that can be loaded
 public struct AssetProperty: CustomStringConvertible {
+    /// The property's name
     public var name: String
 
     /// Initialises a new instance from a typed keyPath
@@ -116,7 +117,7 @@ public struct StreamAssetPropertyLoader: AssetPropertyLoading {
         }
     }
 
-    /// A private method that handles the result of loading the property of an AVURLAsset and returns a
+    /// A private method that handles the result of loading the properties of an AVURLAsset and returns a
     /// result through a completion handler
     private func handlePropertiesLoadingResult<Asset: AVAsset>(
         _ properties: [AssetProperty],
