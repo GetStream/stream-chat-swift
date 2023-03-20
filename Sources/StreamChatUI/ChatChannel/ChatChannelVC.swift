@@ -338,6 +338,8 @@ open class ChatChannelVC: _ViewController,
         let channelUnreadCount = channelController.channel?.unreadCount ?? .noUnread
         messageListVC.scrollToLatestMessageButton.content = channelUnreadCount
 
+        channelAvatarView.content = (channelController.channel, client.currentUserId)
+
         guard channelController.firstUnreadMessageId != firstUnreadMessageId else { return }
         let previousUnreadMessageId = firstUnreadMessageId
         firstUnreadMessageId = channelController.firstUnreadMessageId

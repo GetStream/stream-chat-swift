@@ -28,8 +28,10 @@ struct UserWatchingEventMiddleware: EventMiddleware {
 
             channelDTO.watcherCount = Int64(userWatchingEvent.watcherCount)
 
-            guard let userDTO = session.user(id: userWatchingEvent.user.id) else {
-                throw ClientError.UserDoesNotExist(userId: userWatchingEvent.user.id)
+            let userDTO = try session.saveUser(payload: userWatchingEvent.user)
+
+            if let member = channelDTO.members.first(where: { $0.user.id == userDTO.id }) {
+                member.user = userDTO
             }
 
             if userWatchingEvent.isStarted {
