@@ -292,6 +292,15 @@ public enum AttachmentFileType: String, Codable, Equatable, CaseIterable {
             .first(where: { $1 == self })?
             .key ?? "application/octet-stream"
     }
+
+    public var isAudio: Bool {
+        switch self {
+        case .mp3, .mp4, .wav, .ogg, .m4a:
+            return true
+        default:
+            return false
+        }
+    }
 }
 
 extension ClientError {
