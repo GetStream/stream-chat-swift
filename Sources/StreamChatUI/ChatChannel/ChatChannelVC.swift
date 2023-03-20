@@ -35,7 +35,8 @@ open class ChatChannelVC: _ViewController,
     /// Component responsible for setting the correct offset when keyboard frame is changed.
     open lazy var keyboardHandler: KeyboardHandler = ComposerKeyboardHandler(
         composerParentVC: self,
-        composerBottomConstraint: messageComposerBottomConstraint
+        composerBottomConstraint: messageComposerBottomConstraint,
+        messageListVC: messageListVC
     )
 
     /// The message list component responsible to render the messages.

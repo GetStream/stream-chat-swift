@@ -123,6 +123,7 @@ class AppConfigViewController: UITableViewController {
 
     enum ComponentsConfigOption: String, CaseIterable {
         case isUniqueReactionsEnabled
+        case shouldMessagesStartAtTheTop
     }
 
     enum ChatClientConfigOption: String, CaseIterable {
@@ -336,6 +337,10 @@ class AppConfigViewController: UITableViewController {
         case .isUniqueReactionsEnabled:
             cell.accessoryView = makeSwitchButton(Components.default.isUniqueReactionsEnabled) { newValue in
                 Components.default.isUniqueReactionsEnabled = newValue
+            }
+        case .shouldMessagesStartAtTheTop:
+            cell.accessoryView = makeSwitchButton(Components.default.shouldMessagesStartAtTheTop) { newValue in
+                Components.default.shouldMessagesStartAtTheTop = newValue
             }
         }
     }

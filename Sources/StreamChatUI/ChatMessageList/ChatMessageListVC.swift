@@ -184,12 +184,16 @@ open class ChatMessageListVC: _ViewController,
         listView.delegate = self
         listView.dataSource = self
         listView.reloadData()
+        DispatchQueue.main.async {
+            self.listView.adjustContentInsetToPositionMessagesAtTheTop()
+        }
     }
 
     override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
 
         view.layoutIfNeeded()
+        listView.adjustContentInsetToPositionMessagesAtTheTop()
     }
 
     /// Returns layout options for the message on given `indexPath`.
