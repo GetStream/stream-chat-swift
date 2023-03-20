@@ -137,12 +137,8 @@ public struct StreamAssetPropertyLoader: AssetPropertyLoading {
 
             /// Handle the status of the loaded property and call the appropriate completion handler
             switch statusOfValue {
-            case .loading:
-                /// Do nothing if the property is still loading
-                break
-            case .loaded:
-                /// If the property has been loaded, apply the onSuccessTransformer to the asset and call
-                /// the completion handler with a success result
+            case .loading, .loaded:
+                /// Do nothing if the property is still loading or it has been loaded successfully
                 break
             case .cancelled:
                 /// If loading the property was cancelled, call the completion handler with a failure result
