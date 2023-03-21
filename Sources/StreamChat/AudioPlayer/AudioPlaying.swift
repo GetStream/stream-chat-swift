@@ -19,7 +19,7 @@ public protocol AudioPlaying: AnyObject {
     func playbackContext(for url: URL) -> AudioPlaybackContext
 
     /// Instructs the player to load the asset from the provided URL and prepare it for streaming. If the
-    /// player's current item has as URL that matches the provided one, then we will try to play or restart
+    /// player's current item has a URL that matches the provided one, then we will try to play or restart
     /// the playback while updating the new delegate.
     /// - Parameters:
     ///   - url: The URL where the asset will be streamed from. If nil then the player will simply clear up the current playback queue.
@@ -38,7 +38,7 @@ public protocol AudioPlaying: AnyObject {
     func stop()
 
     /// Updates the loaded asset's playback rate to the provided one.
-    /// - Parameter newRate: The new rate which we want to player to use for playback
+    /// - Parameter newRate: The new rate which we want the player to use for playback
     func updateRate(_ newRate: AudioPlaybackRate)
 
     /// Performs a seek in the loaded asset's timeline at the provided time.
@@ -47,7 +47,7 @@ public protocol AudioPlaying: AnyObject {
 }
 
 /// An implementation of ``AudioPlaying`` that can be used to stream audio files from a URL
-final class StreamRemoteAudioPlayer: AudioPlaying {
+open class StreamRemoteAudioPlayer: AudioPlaying {
     // MARK: - Properties
 
     /// The queue used to ensure thread-safe access to the context property
@@ -81,7 +81,7 @@ final class StreamRemoteAudioPlayer: AudioPlaying {
 
     // MARK: - Lifecycle
 
-    static func build() -> AudioPlaying {
+    public static func build() -> AudioPlaying {
         StreamRemoteAudioPlayer(
             assetPropertyLoader: StreamAssetPropertyLoader(),
             playerObserver: StreamPlayerObserver(),
@@ -89,7 +89,7 @@ final class StreamRemoteAudioPlayer: AudioPlaying {
         )
     }
 
-    init(
+    public init(
         assetPropertyLoader: AssetPropertyLoading,
         playerObserver: AudioPlayerObserving,
         player: AVPlayer
@@ -222,7 +222,7 @@ final class StreamRemoteAudioPlayer: AudioPlaying {
 
             player.play()
 
-        /// If the assetPropertyLoaded failed to load the asset's duration information we update the
+        /// If the assetPropertyLoader failed to load the asset's duration information we update the
         /// context with the notLoaded state in order to inform the delegate and we log a debug error message
         case let .failure(error):
             updateContext { value in
@@ -275,7 +275,7 @@ final class StreamRemoteAudioPlayer: AudioPlaying {
 
     // MARK: - AudioPlaying
 
-    func playbackContext(for url: URL) -> AudioPlaybackContext {
+    open func playbackContext(for url: URL) -> AudioPlaybackContext {
         guard
             let currentItemURL = (player.currentItem?.asset as? AVURLAsset)?.url,
             currentItemURL == url
@@ -285,9 +285,12 @@ final class StreamRemoteAudioPlayer: AudioPlaying {
         return context
     }
 
-    func loadAsset(from url: URL?, andConnectDelegate delegate: AudioPlayingDelegate) {
+    open func loadAsset(
+        from url: URL?,
+        andConnectDelegate delegate: AudioPlayingDelegate
+    ) {
         /// We are going to check if the URL requested to load, represents the currentItem that we
-        /// have already loaded (if any). In this case, we will try either continue the existing playback
+        /// have already loaded (if any). In this case, we will try either to resume the existing playback
         /// or restart it, if possible.
         if let url = url,
            let currentItem = player.currentItem?.asset as? AVURLAsset,
@@ -332,22 +335,15 @@ final class StreamRemoteAudioPlayer: AudioPlaying {
         }
     }
 
-    func reconnectDelegate(_ delegate: AudioPlayingDelegate, for url: URL) {
-        guard (player.currentItem?.asset as? AVURLAsset)?.url == url else {
-            return
-        }
-        self.delegate = delegate
-    }
-
-    func play() {
+    open func play() {
         player.play()
     }
 
-    func pause() {
+    open func pause() {
         player.pause()
     }
 
-    func stop() {
+    open func stop() {
         /// As the AVPlayer doesn't provide an API to actually stop the playback, we are simulating it
         /// by calling pause
         player.pause()
@@ -363,11 +359,11 @@ final class StreamRemoteAudioPlayer: AudioPlaying {
         }
     }
 
-    func updateRate(_ newRate: AudioPlaybackRate) {
+    open func updateRate(_ newRate: AudioPlaybackRate) {
         player.rate = newRate.rawValue
     }
 
-    func seek(to time: TimeInterval) {
+    open func seek(to time: TimeInterval) {
         player.pause()
         updateContext { value in
             value.currentTime = time
