@@ -78,7 +78,7 @@ final class StreamRemoteAudioPlayer_Tests: XCTestCase {
         mockAsset.stubProperty(\.duration, with: assetDuration)
         assetPropertyLoader.loadPropertiesResult = .success(mockAsset)
         subject.loadAsset(
-            from: .init(string: "http://getstream.io"),
+            from: assetURL,
             andConnectDelegate: audioPlayerDelegate
         )
 
@@ -98,7 +98,7 @@ final class StreamRemoteAudioPlayer_Tests: XCTestCase {
         assetPropertyLoader.loadPropertiesResult = .success(mockAsset)
         player.holdSeekCompletion = true
         subject.loadAsset(
-            from: .init(string: "http://getstream.io"),
+            from: assetURL,
             andConnectDelegate: audioPlayerDelegate
         )
         subject.seek(to: 10)
