@@ -4,7 +4,6 @@
 
 import AVFoundation
 import Foundation
-import StreamChat
 
 /// A protocol describing an object that can be manage the playback of an audio file or stream.
 public protocol AudioPlaying: AnyObject {
@@ -14,17 +13,17 @@ public protocol AudioPlaying: AnyObject {
     /// Requests the playbackContext for the given URL. If the player's current item has as URL that
     /// matches the provided one, it should return a context, otherwise it will return
     /// ``AudioPlaybackContext.notLoaded``
-    /// - Parameters:
-    /// - url: The URL (provided by the asset) that is used to stream/download the content to play
+    /// - Parameter url: The URL (provided by the asset) that is used to stream/download the content to play
+    /// - Returns: if the provided URL matches the current item's URL, otherwise it will return the context
+    /// for the current playback. Otherwise, the context will be ``.notLoaded``.
     func playbackContext(for url: URL) -> AudioPlaybackContext
 
     /// Instructs the player to load the asset from the provided URL and prepare it for streaming. If the
     /// player's current item has as URL that matches the provided one, then we will try to play or restart
     /// the playback while updating the new delegate.
     /// - Parameters:
-    /// - url: The URL where the asset will be streamed from. If nil then the player will simply clear
-    /// up the current playback queue.
-    /// - delegate: The delegate that will be informed for changes on the asset's playback.
+    ///   - url: The URL where the asset will be streamed from. If nil then the player will simply clear up the current playback queue.
+    ///   - delegate: The delegate that will be informed for changes on the asset's playback.
     func loadAsset(from url: URL?, andConnectDelegate delegate: AudioPlayingDelegate)
 
     /// Begin the loaded asset's playback. If no asset has been loaded, the action has no effect
@@ -38,13 +37,12 @@ public protocol AudioPlaying: AnyObject {
     /// the action has no effect.
     func stop()
 
-    /// Updates the loaded asset's playback rate to the next available one. For more information see
-    /// ``AudioPlaybackRate.swift``
-    func updateRate()
+    /// Updates the loaded asset's playback rate to the provided one.
+    /// - Parameter newRate: The new rate which we want to player to use for playback
+    func updateRate(_ newRate: AudioPlaybackRate)
 
     /// Performs a seek in the loaded asset's timeline at the provided time.
-    /// - Parameters:
-    /// - time: The time to seek at
+    /// - Parameter time: The time to seek at
     func seek(to time: TimeInterval)
 }
 
@@ -57,10 +55,6 @@ final class StreamRemoteAudioPlayer: AudioPlaying {
 
     /// The player that will be used for the playback of the audio files
     private let player: AVPlayer
-
-    /// The debouncer is being used during `` seek(to time: TimeInterval)`` to provide
-    /// interactive UI updates while keeping the executed seek requests to minimum.
-    private let debouncer: Debouncing
 
     /// The assetPropertyLoader is being used during the loading of an asset with non-nil URL, to provide
     /// async information about the asset's properties. Currently, we are only loading the `duration`
@@ -80,7 +74,6 @@ final class StreamRemoteAudioPlayer: AudioPlaying {
 
     static func build() -> AudioPlaying {
         StreamRemoteAudioPlayer(
-            debouncer: Debouncer(interval: 0.1),
             assetPropertyLoader: StreamAssetPropertyLoader(),
             playerObserver: StreamPlayerObserver(),
             player: .init()
@@ -88,12 +81,10 @@ final class StreamRemoteAudioPlayer: AudioPlaying {
     }
 
     init(
-        debouncer: Debouncing,
         assetPropertyLoader: AssetPropertyLoading,
         playerObserver: AudioPlayerObserving,
         player: AVPlayer
     ) {
-        self.debouncer = debouncer
         self.assetPropertyLoader = assetPropertyLoader
         self.playerObserver = playerObserver
         self.player = player
@@ -132,7 +123,7 @@ final class StreamRemoteAudioPlayer: AudioPlaying {
 
                 value.state = player.rate != 0 ? .playing : .paused
 
-                value.rate = .init(rawValue: player.rate) ?? .zero
+                value.rate = .init(rawValue: player.rate)
             }
         }
 
@@ -199,12 +190,11 @@ final class StreamRemoteAudioPlayer: AudioPlaying {
     /// It's used by the assetPropertyLoader to handle the completion (successful or failed) of duration's
     /// asynchronous loading.
     private func handleDurationLoading(
-        _ result: Result<TimeInterval, Error>,
-        asset: AVURLAsset
+        _ result: Result<AVURLAsset, AssetPropertyLoadingCompositeError>
     ) {
         guard Thread.isMainThread else {
             DispatchQueue.main.async { [weak self] in
-                self?.handleDurationLoading(result, asset: asset)
+                self?.handleDurationLoading(result)
             }
             return
         }
@@ -212,10 +202,10 @@ final class StreamRemoteAudioPlayer: AudioPlaying {
         switch result {
         /// If the assetPropertyLoaded managed to successfully load the asset's duration information
         /// we update the context with the new information.
-        case let .success(duration):
+        case let .success(asset):
             player.replaceCurrentItem(with: .init(asset: asset))
             updateContext { value in
-                value.duration = duration
+                value.duration = asset.duration.seconds
                 value.currentTime = 0
                 value.rate = .zero
                 value.isSeeking = false
@@ -265,10 +255,13 @@ final class StreamRemoteAudioPlayer: AudioPlaying {
             ),
             toleranceBefore: .zero,
             toleranceAfter: .zero
-        )
-
-        updateContext { value in value.isSeeking = false }
-        play()
+        ) { [weak self] finished in
+            guard finished else {
+                return
+            }
+            self?.updateContext { value in value.isSeeking = false }
+            self?.play()
+        }
     }
 
     // MARK: - AudioPlaying
@@ -323,12 +316,10 @@ final class StreamRemoteAudioPlayer: AudioPlaying {
             updateContext { $0.state = .loading }
             let asset = AVURLAsset(url: url)
 
-            assetPropertyLoader.loadProperty(
-                .duration,
-                of: asset,
-                onSuccessTransformer: { TimeInterval($0.duration.seconds) },
-                completion: { [weak self] in self?.handleDurationLoading($0, asset: asset) }
-            )
+            assetPropertyLoader.loadProperties(
+                [.init(\.duration)],
+                of: asset
+            ) { [weak self] in self?.handleDurationLoading($0) }
         }
     }
 
@@ -363,11 +354,8 @@ final class StreamRemoteAudioPlayer: AudioPlaying {
         }
     }
 
-    func updateRate() {
-        /// The allowed rates that the user can toggle on the player are defined on the
-        /// ``AudioPlaybackRate`` and the player uses them to toggle between them by using the
-        /// ``AudioPlaybackRate.next`` variable
-        player.rate = context.rate.next.rawValue
+    func updateRate(_ newRate: AudioPlaybackRate) {
+        player.rate = newRate.rawValue
     }
 
     func seek(to time: TimeInterval) {
@@ -377,7 +365,6 @@ final class StreamRemoteAudioPlayer: AudioPlaying {
             value.state = .paused
             value.isSeeking = true
         }
-
-        debouncer.debounce { [weak self] in self?.executeSeek(to: time) }
+        executeSeek(to: time)
     }
 }

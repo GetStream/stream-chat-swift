@@ -3,7 +3,7 @@
 //
 
 import Foundation
-import StreamChatUI
+import StreamChat
 
 public final class MockAudioPlayerDelegate: AudioPlayingDelegate {
     public private(set) var didUpdateContextWasCalled: (player: AudioPlaying, context: AudioPlaybackContext)?
