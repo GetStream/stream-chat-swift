@@ -73,6 +73,12 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
     open func setUpLayout() { /* default empty implementation */ }
     open func updateContent() { /* default empty implementation */ }
 
+    override open func layoutSubviews() {
+        super.layoutSubviews()
+
+        adjustContentInsetToPositionMessagesAtTheTop()
+    }
+
     // MARK: Public API
 
     /// Calculates the cell reuse identifier for the given options.
