@@ -25,7 +25,7 @@ final class ChatMessageListVC_Tests: XCTestCase {
         self.config = config
 
         sut = ChatMessageListVC()
-        sut.client = ChatClient(config: config)
+        sut.client = ChatClient_Mock(config: config)
         sut.components = .mock
         sut.components.messageListView = ChatMessageListView_Mock.self
 
@@ -133,6 +133,7 @@ final class ChatMessageListVC_Tests: XCTestCase {
 
         // Make message without a CID
         var messageDTOWithoutCid: MessageDTO!
+        var mockedMessageWithoutCid: ChatMessage!
         try mockedClient.databaseContainer.writeSynchronously { session in
             let messagePayload = self.dummyMessagePayload(cid: nil)
             let channel = try session.saveChannel(payload: .dummy())
@@ -143,9 +144,9 @@ final class ChatMessageListVC_Tests: XCTestCase {
                 cache: nil
             )
             messageDTOWithoutCid.channel = nil
+            mockedMessageWithoutCid = try messageDTOWithoutCid.asModel()
         }
-        let mockedMessageWithoutCid = try messageDTOWithoutCid.asModel()
-
+        
         mockedListView.mockedCellForRow = .init()
         mockedListView.mockedCellForRow?.mockedMessage = mockedMessageWithoutCid
 

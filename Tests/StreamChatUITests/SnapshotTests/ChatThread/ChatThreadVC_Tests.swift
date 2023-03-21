@@ -78,6 +78,35 @@ final class ChatThreadVC_Tests: XCTestCase {
         )
     }
 
+    func test_whenShouldMessagesStartAtTheTopEnabled() {
+        var components = Components.mock
+        components.shouldMessagesStartAtTheTop = true
+        vc.components = components
+
+        channelControllerMock.simulateInitial(
+            channel: .mock(cid: .unique),
+            messages: [],
+            state: .remoteDataFetched
+        )
+        messageControllerMock.simulateInitial(
+            message: .mock(id: .unique, cid: .unique, text: "First message", author: .mock(id: .unique), replyCount: 2),
+            replies: [
+                .mock(id: .unique, cid: .unique, text: "First reply", author: .mock(id: .unique)),
+                .mock(id: .unique, cid: .unique, text: "Second reply", author: .mock(id: .unique))
+            ],
+            state: .localDataFetched
+        )
+        messageControllerMock.simulate(state: .remoteDataFetched)
+
+        vc.view.layoutIfNeeded()
+
+        AssertSnapshot(
+            vc,
+            isEmbeddedInNavigationController: true,
+            variants: [.smallDark]
+        )
+    }
+
     func test_childControllersUseComponentsTakenFromResponderChain() {
         // Declare custom message list used by `ChatMessageListVC`
         class TestMessageListView: ChatMessageListView {}

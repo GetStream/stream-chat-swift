@@ -186,6 +186,26 @@ final class ChatChannelVC_Tests: XCTestCase {
         )
     }
 
+    func test_whenShouldMessagesStartAtTheTopEnabled() {
+        var components = Components.mock
+        components.shouldMessagesStartAtTheTop = true
+        vc.components = components
+
+        channelControllerMock.simulateInitial(
+            channel: .mock(cid: .unique),
+            messages: [
+                .mock(id: .unique, cid: .unique, text: "Hello", author: .mock(id: .unique)),
+                .mock(id: .unique, cid: .unique, text: "Cool", author: .mock(id: .unique))
+            ],
+            state: .localDataFetched
+        )
+
+        AssertSnapshot(
+            vc,
+            variants: [.smallDark] // This variant is the only one where the contentInset is stable between tests
+        )
+    }
+
     func test_childControllersUseComponentsTakenFromResponderChain() {
         // Declare custom message list used by `ChatMessageListVC`
         class TestMessageListView: ChatMessageListView {}
