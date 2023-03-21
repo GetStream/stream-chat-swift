@@ -8,7 +8,6 @@
 
 import AVFoundation
 
-
 @dynamicMemberLookup
 public final class MockAVURLAsset: AVURLAsset, Spy, Stub {
 
