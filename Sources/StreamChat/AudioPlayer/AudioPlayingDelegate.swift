@@ -6,7 +6,7 @@ import Foundation
 
 /// An object that the audioPlayer can communicate updates regarding its context
 public protocol AudioPlayingDelegate: AnyObject {
-    /// The audioPlayer will calls this one to inform its delegate that the the playback's context has
+    /// The audioPlayer will call this one to inform its delegate that the the playback's context has
     /// been updated.
     func audioPlayer(
         _ audioPlayer: AudioPlaying,

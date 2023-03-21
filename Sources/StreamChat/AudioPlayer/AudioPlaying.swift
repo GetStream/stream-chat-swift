@@ -50,8 +50,17 @@ public protocol AudioPlaying: AnyObject {
 final class StreamRemoteAudioPlayer: AudioPlaying {
     // MARK: - Properties
 
-    /// Describes the player's current playback state
-    @Atomic private(set) var context: AudioPlaybackContext = .notLoaded
+    /// The queue used to ensure thread-safe access to the context property
+    private lazy var contextAccessQueue: DispatchQueue = .init(
+        label: "com.getstream.audio.player.context", qos: .userInteractive
+    )
+    /// Describes the player's current playback state. The access to this property is **not** thread-safe
+    private var _context: AudioPlaybackContext = .notLoaded
+    /// Describes the player's current playback state. The access to this property is thread-safe
+    private(set) var context: AudioPlaybackContext {
+        get { contextAccessQueue.sync { _context } }
+        set { contextAccessQueue.sync { _context = newValue } }
+    }
 
     /// The player that will be used for the playback of the audio files
     private let player: AVPlayer
@@ -165,12 +174,12 @@ final class StreamRemoteAudioPlayer: AudioPlaying {
             else {
                 return
             }
-            self._context.mutate { value in
-                value.state = .stopped
-                value.currentTime = 0
-                value.rate = .zero
-                value.isSeeking = false
-            }
+            var newContext = self.context
+            newContext.state = .stopped
+            newContext.currentTime = 0
+            newContext.rate = .zero
+            newContext.isSeeking = false
+            self.context = newContext
 
             self.delegate?.audioPlayer(self, didUpdateContext: self.context)
         }
@@ -181,9 +190,9 @@ final class StreamRemoteAudioPlayer: AudioPlaying {
     private func updateContext(
         _ newContextProvider: (inout AudioPlaybackContext) -> Void
     ) {
-        _context.mutate { value in
-            newContextProvider(&value)
-        }
+        var newContext = context
+        newContextProvider(&newContext)
+        context = newContext
         delegate?.audioPlayer(self, didUpdateContext: context)
     }
 
