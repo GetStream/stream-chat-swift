@@ -87,3 +87,5 @@
 "dates.time-ago-months-plural" = "last seen %d months ago";
 
 "you" = "You";
+
+"audio.player.rate" = "x%@";
