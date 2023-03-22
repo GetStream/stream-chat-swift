@@ -4,9 +4,25 @@
 
 import Foundation
 
-struct ChannelListPayload: Decodable {
+struct ChannelListPayload {
     /// A list of channels response (see `ChannelQuery`).
     let channels: [ChannelPayload]
+}
+
+extension ChannelListPayload: Decodable {
+    enum CodingKeys: String, CodingKey {
+        case channels
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let channels = try container
+            .decodeArrayIgnoringFailures([ChannelPayload].self, forKey: .channels)
+
+        self.init(
+            channels: channels
+        )
+    }
 }
 
 struct ChannelPayload {
@@ -57,12 +73,12 @@ extension ChannelPayload: Decodable {
         self.init(
             channel: try container.decode(ChannelDetailPayload.self, forKey: .channel),
             watcherCount: try container.decodeIfPresent(Int.self, forKey: .watcherCount),
-            watchers: try container.decodeIfPresent([UserPayload].self, forKey: .watchers),
+            watchers: try container.decodeArrayIfPresentIgnoringFailures([UserPayload].self, forKey: .watchers),
             members: try container.decodeArrayIgnoringFailures([MemberPayload].self, forKey: .members),
             membership: try container.decodeIfPresent(MemberPayload.self, forKey: .membership),
             messages: try container.decodeArrayIgnoringFailures([MessagePayload].self, forKey: .messages),
             pinnedMessages: try container.decodeArrayIgnoringFailures([MessagePayload].self, forKey: .pinnedMessages),
-            channelReads: try container.decodeIfPresent([ChannelReadPayload].self, forKey: .channelReads) ?? [],
+            channelReads: try container.decodeArrayIgnoringFailures([ChannelReadPayload].self, forKey: .channelReads),
             isHidden: try container.decodeIfPresent(Bool.self, forKey: .hidden)
         )
     }
@@ -156,7 +172,7 @@ extension ChannelDetailPayload: Decodable {
             // since this field is not sent for all API calls and for events
             // We can't assume anything regarding this flag when it's absent
             isHidden: try container.decodeIfPresent(Bool.self, forKey: .hidden),
-            members: try container.decodeIfPresent([MemberPayload].self, forKey: .members),
+            members: try container.decodeArrayIfPresentIgnoringFailures([MemberPayload].self, forKey: .members),
             memberCount: try container.decodeIfPresent(Int.self, forKey: .memberCount) ?? 0,
             team: try container.decodeIfPresent(String.self, forKey: .team),
             cooldownDuration: try container.decodeIfPresent(Int.self, forKey: .cooldownDuration) ?? 0
