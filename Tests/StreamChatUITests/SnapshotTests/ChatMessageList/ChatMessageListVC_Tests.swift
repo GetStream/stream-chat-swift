@@ -758,10 +758,10 @@ final class ChatMessageListVC_Tests: XCTestCase {
         let sut = ChatMessageListVC()
         sut.components = components
 
-        sut.audioAttachmentPresentationViewUpdatePlaybackRate()
+        sut.audioAttachmentPresentationViewUpdatePlaybackRate(.half)
 
         let mockAudioPlayer = try XCTUnwrap(sut.audioPlayer as? MockAudioPlayer)
-        XCTAssertEqual(mockAudioPlayer.recordedFunctions, ["updateRate()"])
+        XCTAssertEqual(mockAudioPlayer.recordedFunctions, ["updateRate(0.5)"])
     }
 
     // MARK: - audioAttachmentPresentationViewSeek
@@ -800,8 +800,8 @@ extension ChatMessageListVC_Tests {
         }
 
         func loadAsset(
-            from url: URL?,
-            delegate: AudioPlayingDelegate
+            from url: URL,
+            andConnectDelegate delegate: AudioPlayingDelegate
         ) {
             record()
             loadAssetWasCalledWith = (url, delegate)
@@ -819,8 +819,8 @@ extension ChatMessageListVC_Tests {
             record()
         }
 
-        func updateRate() {
-            record()
+        func updateRate(_ newRate: StreamChat.AudioPlaybackRate) {
+            recordedFunctions.append("updateRate(\(newRate.rawValue))")
         }
 
         func seek(to time: TimeInterval) {

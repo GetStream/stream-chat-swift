@@ -7,7 +7,7 @@
 //
 
 import Foundation
-@testable import StreamChatUI
+@testable import StreamChat
 
 extension AudioPlaybackContext {
 
