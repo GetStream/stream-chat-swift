@@ -44,6 +44,10 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
     /// reports the data source should be updated.
     internal var onNewDataSource: (([ChatMessage]) -> Void)?
 
+    /// Property used for `adjustContentInsetToPositionMessagesAtTheTop()` to avoid
+    /// reseting the content inset more than one time.
+    private var requiresContentInsetReset = false
+
     // MARK: Lifecycle
 
     override open func didMoveToSuperview() {
@@ -68,6 +72,12 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
     open func setUpAppearance() { /* default empty implementation */ }
     open func setUpLayout() { /* default empty implementation */ }
     open func updateContent() { /* default empty implementation */ }
+
+    override open func layoutSubviews() {
+        super.layoutSubviews()
+
+        adjustContentInsetToPositionMessagesAtTheTop()
+    }
 
     // MARK: Public API
 
@@ -185,13 +195,15 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
         with changes: [ListChange<ChatMessage>],
         completion: (() -> Void)? = nil
     ) {
+        adjustContentInsetToPositionMessagesAtTheTop()
         UIView.performWithoutAnimation {
             reloadMessages(
                 previousSnapshot: previousMessagesSnapshot,
                 newSnapshot: newMessagesSnapshot,
                 with: .fade,
-                completion: {
+                completion: { [weak self] in
                     completion?()
+                    self?.adjustContentInsetToPositionMessagesAtTheTop()
                 }
             )
         }
@@ -205,6 +217,34 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
         onNewDataSource?(newMessagesSnapshot)
         reloadData()
         scrollToMostRecentMessage()
+    }
+
+    /// Adjusts the content inset so that messages are inserted at the top when there are few messages.
+    /// This is will be executed if the `Components.shouldMessagesStartAtTheTop` is enabled.
+    internal func adjustContentInsetToPositionMessagesAtTheTop() {
+        guard components.shouldMessagesStartAtTheTop else {
+            return
+        }
+
+        // If the height of message list is more than the content height
+        // then adjust the content inset so that it fills the remaining height
+        // otherwise do not set any content inset.
+        let contentSizeHeight = contentSize.height
+        let messageListHeight = frame.height
+        let newContentInset = messageListHeight - contentSizeHeight
+        if newContentInset > 0 {
+            contentInset.top = newContentInset
+            showsVerticalScrollIndicator = false
+            requiresContentInsetReset = true
+            // In case  we already removed the content inset, there's
+            // no need to do it every time.
+        } else if requiresContentInsetReset {
+            requiresContentInsetReset = false
+            contentInset.top = 0
+            showsVerticalScrollIndicator = true
+        } else {
+            // no-op
+        }
     }
 }
 

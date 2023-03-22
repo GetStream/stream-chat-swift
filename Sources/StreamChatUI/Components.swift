@@ -109,8 +109,11 @@ public struct Components {
         ChatMessageActionsTransitionController.self
 
     /// The foundation view for the message list view controller.
-    public var messageListView: ChatMessageListView.Type = ChatMessageListView
-        .self
+    public var messageListView: ChatMessageListView.Type = ChatMessageListView.self
+
+    /// A boolean value that determines whether the messages should start at the top
+    /// of the list  when there are few messages. By default it is `false`.
+    public var shouldMessagesStartAtTheTop: Bool = false
 
     /// The view that shows the date for currently visible messages on top of message list.
     public var messageListScrollOverlayView: ChatMessageListScrollOverlayView.Type =

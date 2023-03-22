@@ -17,6 +17,7 @@ public protocol KeyboardHandler {
 open class ComposerKeyboardHandler: KeyboardHandler {
     public weak var composerParentVC: UIViewController?
     public weak var composerBottomConstraint: NSLayoutConstraint?
+    public weak var messageListVC: ChatMessageListVC?
 
     public let originalBottomConstraintValue: CGFloat
 
@@ -24,10 +25,13 @@ open class ComposerKeyboardHandler: KeyboardHandler {
     /// - Parameters:
     ///   - composerParentVC: The parent view controller of the composer.
     ///   - composerBottomConstraint: The bottom constraint of the composer.
+    ///   - messageListVC: The message list view controller.
     public init(
         composerParentVC: UIViewController,
-        composerBottomConstraint: NSLayoutConstraint?
+        composerBottomConstraint: NSLayoutConstraint?,
+        messageListVC: ChatMessageListVC? = nil
     ) {
+        self.messageListVC = messageListVC
         self.composerParentVC = composerParentVC
         self.composerBottomConstraint = composerBottomConstraint
         originalBottomConstraintValue = composerBottomConstraint?.constant ?? 0
@@ -91,8 +95,9 @@ open class ComposerKeyboardHandler: KeyboardHandler {
             withDuration: duration,
             delay: 0,
             options: UIView.AnimationOptions(rawValue: curve << 16)
-        ) {
+        ) { [weak self] in
             composerParentView.layoutIfNeeded()
+            self?.messageListVC?.listView.adjustContentInsetToPositionMessagesAtTheTop()
         }
     }
 }

@@ -3,7 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+## StreamChatUI
+### ✅ Added
+- Allow the message list to start at the top if `Components.shouldMessagesStartAtTheTop` is enabled [#2537](https://github.com/GetStream/stream-chat-swift/pull/2537)
 
 # [4.29.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.29.0)
 _March 17, 2023_
