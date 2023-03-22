@@ -9,9 +9,10 @@ public extension ChatMessageFileAttachment {
     /// Creates a new `ChatMessageFileAttachment` object from the provided data.
     static func mock(
         id: AttachmentId,
+        type: AttachmentType = .file,
         title: String = "Sample.pdf",
         assetURL: URL = URL(string: "http://asset.url")!,
-        file: AttachmentFile = AttachmentFile(type: .pdf, size: 120, mimeType: "application/pdf"),
+        file: AttachmentFile = .mock(type: .pdf, mimeType: AttachmentFileType.pdf.mimeType),
         localState: LocalAttachmentState? = .uploaded,
         extraData: [String: RawJSON]? = nil
     ) -> Self {

@@ -128,6 +128,7 @@ open class _View: UIView, Customizable, AccessibilityView {
     open func setUpAppearance() { setNeedsLayout() }
     open func setUpLayout() { setNeedsLayout() }
     open func updateContent() { setNeedsLayout() }
+    open func prepareForReuse() { /* default empty implementation */ }
 
     override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)

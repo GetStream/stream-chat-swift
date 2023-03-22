@@ -15,6 +15,15 @@ open class ChatMessageFileAttachmentListView: _View, ComponentsProvider {
     /// Closure what should happen on tapping the given attachment.
     open var didTapOnAttachment: ((ChatMessageFileAttachment) -> Void)?
 
+    /// Closure that provides the view for each item. Provides a default implementation that callers
+    /// can override.
+    open lazy var itemViewProvider: ((ChatMessageFileAttachment) -> UIView?) = { [components = self.components] attachment in
+        let item = components.fileAttachmentView.init()
+        item.didTapOnAttachment = { [weak self] in self?.didTapOnAttachment?($0) }
+        item.content = attachment
+        return item
+    }
+
     /// Container which holds one or multiple attachment views in self.
     open private(set) lazy var containerStackView: ContainerStackView = ContainerStackView()
         .withoutAutoresizingMaskConstraints
@@ -29,14 +38,21 @@ open class ChatMessageFileAttachmentListView: _View, ComponentsProvider {
         containerStackView.spacing = 4
     }
 
+    override open func prepareForReuse() {
+        super.prepareForReuse()
+
+        containerStackView.subviews
+            .map { $0 as? _View }
+            .forEach {
+                $0?.prepareForReuse()
+            }
+    }
+
     override open func updateContent() {
         containerStackView.subviews.forEach { $0.removeFromSuperview() }
 
-        content.forEach { attachment in
-            let item = components.fileAttachmentView.init()
-            item.didTapOnAttachment = { [weak self] in self?.didTapOnAttachment?($0) }
-            item.content = attachment
-            containerStackView.addArrangedSubview(item)
-        }
+        content
+            .compactMap { itemViewProvider($0) }
+            .forEach { containerStackView.addArrangedSubview($0) }
     }
 }

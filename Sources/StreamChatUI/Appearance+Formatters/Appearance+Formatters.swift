@@ -30,6 +30,8 @@ public extension Appearance {
         /// A formatter used for text Markdown
         public var markdownFormatter: MarkdownFormatter = DefaultMarkdownFormatter()
 
+        public var audioRateFormatter: AudioRateFormatter = DefaultAudioRateFormatter()
+
         /// A boolean value that determines whether Markdown is active for messages to be formatted.
         public var isMarkdownEnabled = true
     }
