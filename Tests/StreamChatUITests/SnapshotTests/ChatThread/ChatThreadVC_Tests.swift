@@ -102,7 +102,6 @@ final class ChatThreadVC_Tests: XCTestCase {
 
         AssertSnapshot(
             vc,
-            isEmbeddedInNavigationController: true,
             variants: [.smallDark]
         )
     }
