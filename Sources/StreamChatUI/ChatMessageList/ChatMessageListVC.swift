@@ -15,6 +15,7 @@ open class ChatMessageListVC: _ViewController,
     GalleryContentViewDelegate,
     GiphyActionContentViewDelegate,
     FileActionContentViewDelegate,
+    AudioAttachmentPresentationViewDelegate,
     LinkPreviewViewDelegate,
     UITableViewDataSource,
     UITableViewDelegate,
@@ -76,6 +77,11 @@ open class ChatMessageListVC: _ViewController,
         .scrollToLatestMessageButton
         .init()
         .withoutAutoresizingMaskConstraints
+
+    /// The audioPlayer that will be used to play audio messages
+    open private(set) lazy var audioPlayer: AudioPlaying = components
+        .audioPlayer
+        .build()
 
     /// A Boolean value indicating whether the scroll to bottom button is visible.
     open var isScrollToBottomButtonVisible: Bool {
@@ -764,6 +770,45 @@ open class ChatMessageListVC: _ViewController,
             messageContentView: messageContentView,
             client: client
         )
+    }
+
+    // MARK: - AudioAttachmentPresentationViewDelegate
+
+    open func audioAttachmentPresentationViewPlaybackContextForAttachment(
+        _ attachment: ChatMessageFileAttachment
+    ) -> AudioPlaybackContext {
+        audioPlayer.playbackContext(for: attachment.assetURL)
+    }
+
+    open func audioAttachmentPresentationViewBeginPayback(
+        _ attachment: ChatMessageFileAttachment,
+        with delegate: AudioPlayingDelegate
+    ) {
+        UISelectionFeedbackGenerator().selectionChanged()
+
+        audioPlayer.loadAsset(
+            from: attachment.assetURL,
+            andConnectDelegate: delegate
+        )
+    }
+
+    open func audioAttachmentPresentationViewPausePayback() {
+        UISelectionFeedbackGenerator().selectionChanged()
+        audioPlayer.pause()
+    }
+
+    open func audioAttachmentPresentationViewUpdatePlaybackRate(
+        _ audioPlaybackRate: AudioPlaybackRate
+    ) {
+        UISelectionFeedbackGenerator().selectionChanged()
+        audioPlayer.updateRate(audioPlaybackRate)
+    }
+
+    open func audioAttachmentPresentationViewSeek(
+        to timeInterval: TimeInterval
+    ) {
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        audioPlayer.seek(to: timeInterval)
     }
 
     // MARK: - UIGestureRecognizerDelegate

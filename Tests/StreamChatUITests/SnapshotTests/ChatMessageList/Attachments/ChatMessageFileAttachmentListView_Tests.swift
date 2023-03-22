@@ -2,7 +2,7 @@
 // Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
-import StreamChat
+@testable import StreamChat
 @testable import StreamChatTestTools
 @testable import StreamChatUI
 import UIKit
@@ -12,6 +12,8 @@ final class ChatFileAttachmentListView_Tests: XCTestCase {
     private var fileAttachmentListView: ChatMessageFileAttachmentListView!
     private var vc: UIViewController!
 
+    // MARK: - Lifecycle
+
     override func setUp() {
         super.setUp()
         fileAttachmentListView = ChatMessageFileAttachmentListView().withoutAutoresizingMaskConstraints
@@ -19,9 +21,12 @@ final class ChatFileAttachmentListView_Tests: XCTestCase {
 
     override func tearDown() {
         fileAttachmentListView = nil
+        vc = nil
 
         super.tearDown()
     }
+
+    // MARK: - appearance
 
     func test_appearance_one_attachment() {
         fileAttachmentListView.content = [.mock(id: .unique)]
@@ -119,5 +124,41 @@ final class ChatFileAttachmentListView_Tests: XCTestCase {
         ]
 
         AssertSnapshot(fileAttachmentListView, variants: [.defaultLight])
+    }
+
+    // MARK: - prepareForReuse
+
+    func test_prepareForReuse_callsPrepareForReuseOnSubviews() {
+        final class SpyView: _View, Spy {
+            var recordedFunctions: [String] = []
+            override func prepareForReuse() { recordedFunctions.append(#function) }
+        }
+
+        let spyView = SpyView()
+        fileAttachmentListView.containerStackView.addSubview(spyView)
+
+        fileAttachmentListView.prepareForReuse()
+
+        XCTAssertEqual(spyView.recordedFunctions, ["prepareForReuse()"])
+    }
+
+    // MARK: - contentUpdate
+
+    func test_contentUpdate_defaultItemViewProviderCreatesExpectedResults() {
+        let pdfAttachment = ChatMessageFileAttachment.mock(
+            id: .unique,
+            type: .file,
+            file: .mock(type: .pdf)
+        )
+
+        let audioAttachment = ChatMessageFileAttachment.mock(
+            id: .unique,
+            type: .audio,
+            file: .mock(type: .mp3)
+        )
+
+        fileAttachmentListView.content = [pdfAttachment, audioAttachment]
+
+        AssertSnapshot(fileAttachmentListView)
     }
 }

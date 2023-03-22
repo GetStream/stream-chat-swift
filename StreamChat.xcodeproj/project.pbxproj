@@ -46,6 +46,12 @@
 		4012253229C9CC390034B60B /* MockAudioPlayerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4012253029C9CC320034B60B /* MockAudioPlayerDelegate.swift */; };
 		401225BF29C9F7960034B60B /* Stub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 401225BD29C9F7670034B60B /* Stub.swift */; };
 		401225C029C9F7BB0034B60B /* MockAVURLAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4012253429C9CF230034B60B /* MockAVURLAsset.swift */; };
+		401225C329CB31CF0034B60B /* ChatMessageAudioViewStateUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 401225C129CB31CE0034B60B /* ChatMessageAudioViewStateUpdater.swift */; };
+		401225C429CB31CF0034B60B /* ChatMessageAudioViewStateUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 401225C129CB31CE0034B60B /* ChatMessageAudioViewStateUpdater.swift */; };
+		401225C529CB31CF0034B60B /* ChatMessageFileAttachmentListView+AudioView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 401225C229CB31CE0034B60B /* ChatMessageFileAttachmentListView+AudioView.swift */; };
+		401225C629CB31CF0034B60B /* ChatMessageFileAttachmentListView+AudioView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 401225C229CB31CE0034B60B /* ChatMessageFileAttachmentListView+AudioView.swift */; };
+		401225C829CB36860034B60B /* AudioRateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 401225C729CB36860034B60B /* AudioRateFormatter.swift */; };
+		401225C929CB36860034B60B /* AudioRateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 401225C729CB36860034B60B /* AudioRateFormatter.swift */; };
 		401EBB6D29A79686004D9304 /* ChatMessagesCountDecorationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 401EBB6C29A79686004D9304 /* ChatMessagesCountDecorationView.swift */; };
 		401EBB6E29A79686004D9304 /* ChatMessagesCountDecorationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 401EBB6C29A79686004D9304 /* ChatMessagesCountDecorationView.swift */; };
 		4068ECD2298D06BB0032D57A /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4068ECD0298D06720032D57A /* SplashViewController.swift */; };
@@ -2421,6 +2427,9 @@
 		4012253029C9CC320034B60B /* MockAudioPlayerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockAudioPlayerDelegate.swift; sourceTree = "<group>"; };
 		4012253429C9CF230034B60B /* MockAVURLAsset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAVURLAsset.swift; sourceTree = "<group>"; };
 		401225BD29C9F7670034B60B /* Stub.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stub.swift; sourceTree = "<group>"; };
+		401225C129CB31CE0034B60B /* ChatMessageAudioViewStateUpdater.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatMessageAudioViewStateUpdater.swift; sourceTree = "<group>"; };
+		401225C229CB31CE0034B60B /* ChatMessageFileAttachmentListView+AudioView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ChatMessageFileAttachmentListView+AudioView.swift"; sourceTree = "<group>"; };
+		401225C729CB36860034B60B /* AudioRateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRateFormatter.swift; sourceTree = "<group>"; };
 		401EBB6C29A79686004D9304 /* ChatMessagesCountDecorationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessagesCountDecorationView.swift; sourceTree = "<group>"; };
 		4032C4AE29C0A9E60086849E /* AudioPlayerObserving.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayerObserving.swift; sourceTree = "<group>"; };
 		4032C4B029C0BA110086849E /* StreamPlayerObserver_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamPlayerObserver_Tests.swift; sourceTree = "<group>"; };
@@ -5006,6 +5015,8 @@
 				88AD1D5D2588B87C00ECED5B /* ChatFileAttachmentListView+ItemView.swift */,
 				8800A26E258A04D5006D64C4 /* ChatMessageAttachmentPreviewVC.swift */,
 				8800A28B258A1924006D64C4 /* ChatMessageFileAttachmentListView.swift */,
+				401225C129CB31CE0034B60B /* ChatMessageAudioViewStateUpdater.swift */,
+				401225C229CB31CE0034B60B /* ChatMessageFileAttachmentListView+AudioView.swift */,
 				883998202576397900294DB9 /* ChatMessageGalleryView.swift */,
 				DB8230F1259B8DBF00E7D7FE /* ChatMessageGiphyView.swift */,
 				AD6F531827175FDB00D428B4 /* ChatMessageGiphyView+GiphyBadge.swift */,
@@ -7267,6 +7278,7 @@
 				ADBBDA21279F0CFA00E47B1C /* UploadingProgressFormatter.swift */,
 				AD99C90A279B1363009DD9C5 /* UserLastActivityFormatter.swift */,
 				ADBBDA1E279F0CEA00E47B1C /* VideoDurationFormatter.swift */,
+				401225C729CB36860034B60B /* AudioRateFormatter.swift */,
 				CFBF8D502847C57700EEB7D3 /* MarkdownFormatter.swift */,
 			);
 			path = "Appearance+Formatters";
@@ -8928,6 +8940,7 @@
 				888123D2255D430B00070D5A /* UIView+Extensions.swift in Sources */,
 				AD158B6526C1873000C104CD /* ChatThreadVC+SwiftUI.swift in Sources */,
 				8825333E258CE7AC00B77352 /* ChatMessageActionsVC.swift in Sources */,
+				401225C829CB36860034B60B /* AudioRateFormatter.swift in Sources */,
 				F80BCA1E26304FEE00F2107B /* CloseButton.swift in Sources */,
 				22ADD682256C40410098EFEB /* ComposerView.swift in Sources */,
 				E7A37B8425ADA66E0055458F /* ChatSuggestionsHeaderView.swift in Sources */,
@@ -9037,6 +9050,7 @@
 				79CCB66E259CBC4F0082F172 /* ChatChannelNamer.swift in Sources */,
 				43EB3AE22671718200954323 /* AttachmentViewCatalog.swift in Sources */,
 				79F691B22604C10A000AE89B /* SystemEnvironment.swift in Sources */,
+				401225C329CB31CF0034B60B /* ChatMessageAudioViewStateUpdater.swift in Sources */,
 				AD1D7A8526A2131D00494CA5 /* ChatChannelVC.swift in Sources */,
 				ADCB578528A42D7700B81AE8 /* ElementPath.swift in Sources */,
 				88AD1D5E2588B87C00ECED5B /* ChatFileAttachmentListView+ItemView.swift in Sources */,
@@ -9126,6 +9140,7 @@
 				CFE5F85B2874A9330099A6A1 /* ChatChannelListEmptyView.swift in Sources */,
 				E7166CBA25BED29200B03B07 /* Appearance+Fonts.swift in Sources */,
 				ADCB577F28A42D7700B81AE8 /* ContentIdentifiable.swift in Sources */,
+				401225C529CB31CF0034B60B /* ChatMessageFileAttachmentListView+AudioView.swift in Sources */,
 				E7073A6325DD67B3003896B9 /* UILabel+Extensions.swift in Sources */,
 				C171041E2768C34E008FB3F2 /* Array+SafeSubscript.swift in Sources */,
 				843F0BC526775D2D00B342CB /* VideoLoading.swift in Sources */,
@@ -10556,6 +10571,7 @@
 				C121EB622746A1E600023E4C /* Appearance+Images.swift in Sources */,
 				C121EB632746A1E600023E4C /* Appearance+Fonts.swift in Sources */,
 				AD95FD0E28F991ED00DBDF41 /* ImageResize.swift in Sources */,
+				401225C929CB36860034B60B /* AudioRateFormatter.swift in Sources */,
 				C121EB642746A1E600023E4C /* Appearance+SwiftUI.swift in Sources */,
 				ADBBDA23279F0CFA00E47B1C /* UploadingProgressFormatter.swift in Sources */,
 				AD78F9F428EC72D700BC0FCE /* UIScrollView+Extensions.swift in Sources */,
@@ -10665,6 +10681,7 @@
 				C121EBBC2746A1E900023E4C /* VideoAttachmentGalleryCell.swift in Sources */,
 				C121EBBD2746A1E900023E4C /* GalleryVC.swift in Sources */,
 				ADD2A99128FF0CD300A83305 /* ImageSizeCalculator.swift in Sources */,
+				401225C429CB31CF0034B60B /* ChatMessageAudioViewStateUpdater.swift in Sources */,
 				C121EBBE2746A1E900023E4C /* ZoomDismissalInteractionController.swift in Sources */,
 				AD95FD1228FA038900DBDF41 /* ImageDownloadOptions.swift in Sources */,
 				C121EBBF2746A1E900023E4C /* ZoomTransitionController.swift in Sources */,
@@ -10754,6 +10771,7 @@
 				AD78F9FA28EC735700BC0FCE /* SwiftyTokeniser.swift in Sources */,
 				C121EBF92746A1EB00023E4C /* ChatMessageCell.swift in Sources */,
 				C121EBFA2746A1EB00023E4C /* ChatMessageListVC.swift in Sources */,
+				401225C629CB31CF0034B60B /* ChatMessageFileAttachmentListView+AudioView.swift in Sources */,
 				C121EBFB2746A1EB00023E4C /* ChatMessageListVCDataSource.swift in Sources */,
 				ADCB577A28A42D7700B81AE8 /* Algorithm.swift in Sources */,
 				C121EBFC2746A1EB00023E4C /* ChatMessageListVCDelegate.swift in Sources */,
