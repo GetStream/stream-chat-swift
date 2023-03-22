@@ -246,7 +246,7 @@ open class StreamRemoteAudioPlayer: AudioPlaying {
                 case (.playing, .paused), (.playing, .stopped), (.playing, .loading):
                     value.state = .playing
                 default:
-                    log.debug("\(type(of: self)): No action for transition \(currentPlaybackState) -> \(newValue)")
+                    log.debug("\(type(of: self)): No action for transition \(currentPlaybackState) -> \(newValue)", subsystems: .audioPlayback)
                 }
             }
         }
@@ -320,7 +320,7 @@ open class StreamRemoteAudioPlayer: AudioPlaying {
                 value.state = .notLoaded
                 value.isSeeking = false
             }
-            log.debug(error.localizedDescription)
+            log.error(error.localizedDescription, subsystems: .audioPlayback)
         }
     }
 
