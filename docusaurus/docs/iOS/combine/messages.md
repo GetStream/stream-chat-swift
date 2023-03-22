@@ -92,7 +92,7 @@ class ViewController: UIViewController {
                 log.assertionFailure(error!)
                 return
             }
-            /// set the intial state to the view
+            /// set the initial state to the view
             self.messageDetailView.message = self.controller.message
         }
         

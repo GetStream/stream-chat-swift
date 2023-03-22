@@ -95,7 +95,7 @@ class ViewController: UIViewController {
                 log.assertionFailure(error!)
                 return
             }
-            /// set the intial state to the delegated view
+            /// set the initial state to the delegated view
             self.messageDetailView.message = self.controller.message
         }
 
