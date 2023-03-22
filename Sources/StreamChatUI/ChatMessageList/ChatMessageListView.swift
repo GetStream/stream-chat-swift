@@ -242,6 +242,8 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
             requiresContentInsetReset = false
             contentInset.top = 0
             showsVerticalScrollIndicator = true
+        } else {
+            // no-op
         }
     }
 }
