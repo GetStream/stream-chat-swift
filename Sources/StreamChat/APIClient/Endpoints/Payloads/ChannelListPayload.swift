@@ -78,7 +78,7 @@ extension ChannelPayload: Decodable {
             membership: try container.decodeIfPresent(MemberPayload.self, forKey: .membership),
             messages: try container.decodeArrayIgnoringFailures([MessagePayload].self, forKey: .messages),
             pinnedMessages: try container.decodeArrayIgnoringFailures([MessagePayload].self, forKey: .pinnedMessages),
-            channelReads: try container.decodeArrayIgnoringFailures([ChannelReadPayload].self, forKey: .channelReads),
+            channelReads: try container.decodeArrayIfPresentIgnoringFailures([ChannelReadPayload].self, forKey: .channelReads) ?? [],
             isHidden: try container.decodeIfPresent(Bool.self, forKey: .hidden)
         )
     }
