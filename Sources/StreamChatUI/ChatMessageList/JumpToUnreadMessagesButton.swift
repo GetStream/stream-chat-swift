@@ -31,10 +31,8 @@ open class JumpToUnreadMessagesButton: _Button, ThemeProvider {
     override open func setUpAppearance() {
         super.setUpAppearance()
 
-        backgroundColor = appearance.colorPalette.textLowEmphasis
-
-        layer.addShadow(color: UIColor.black.withAlphaComponent(0.25))
-
+        backgroundColor = appearance.colorPalette.jumpToUnreadMessagesBackground
+        layer.addShadow(color: appearance.colorPalette.iconButtonShadow)
         textLabel.font = appearance.fonts.footnote
         textLabel.textColor = appearance.colorPalette.staticColorText
         closeButton.setImage(appearance.images.close, for: .normal)
