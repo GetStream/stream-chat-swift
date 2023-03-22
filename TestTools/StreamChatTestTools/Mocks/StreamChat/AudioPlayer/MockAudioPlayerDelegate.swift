@@ -6,7 +6,8 @@ import Foundation
 import StreamChat
 
 public final class MockAudioPlayerDelegate: AudioPlayingDelegate {
-    public private(set) var didUpdateContextWasCalled: (player: AudioPlaying, context: AudioPlaybackContext)?
+    public private(set) var didUpdateContextWasCalledWithPlayer: AudioPlaying?
+    public private(set) var didUpdateContextWasCalledWithContext: AudioPlaybackContext?
 
     public init() {}
 
@@ -14,6 +15,7 @@ public final class MockAudioPlayerDelegate: AudioPlayingDelegate {
         _ audioPlayer: AudioPlaying,
         didUpdateContext context: AudioPlaybackContext
     ) {
-        didUpdateContextWasCalled = (audioPlayer, context)
+        didUpdateContextWasCalledWithPlayer = audioPlayer
+        didUpdateContextWasCalledWithContext = context
     }
 }

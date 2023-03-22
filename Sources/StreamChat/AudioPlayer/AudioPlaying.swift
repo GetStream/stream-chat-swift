@@ -22,9 +22,9 @@ public protocol AudioPlaying: AnyObject {
     /// player's current item has a URL that matches the provided one, then we will try to play or restart
     /// the playback while updating the new delegate.
     /// - Parameters:
-    ///   - url: The URL where the asset will be streamed from. If nil then the player will simply clear up the current playback queue.
+    ///   - url: The URL where the asset will be streamed from
     ///   - delegate: The delegate that will be informed for changes on the asset's playback.
-    func loadAsset(from url: URL?, andConnectDelegate delegate: AudioPlayingDelegate)
+    func loadAsset(from url: URL, andConnectDelegate delegate: AudioPlayingDelegate)
 
     /// Begin the loaded asset's playback. If no asset has been loaded, the action has no effect
     func play()
@@ -101,6 +101,102 @@ open class StreamRemoteAudioPlayer: AudioPlaying {
         setUp()
     }
 
+    // MARK: - AudioPlaying
+
+    open func playbackContext(for url: URL) -> AudioPlaybackContext {
+        guard
+            let currentItemURL = (player.currentItem?.asset as? AVURLAsset)?.url,
+            currentItemURL == url
+        else {
+            return .notLoaded
+        }
+        return context
+    }
+
+    open func loadAsset(
+        from url: URL,
+        andConnectDelegate delegate: AudioPlayingDelegate
+    ) {
+        /// We are going to check if the URL requested to load, represents the currentItem that we
+        /// have already loaded (if any). In this case, we will try either to resume the existing playback
+        /// or restart it, if possible.
+        if let currentItem = player.currentItem?.asset as? AVURLAsset,
+           url == currentItem.url {
+            /// Update the delegate to the provided one
+            self.delegate = delegate
+
+            /// If the currentItem is paused, we want to continue the playback
+            /// Otherwise, no action is required
+            if context.state == .paused {
+                player.play()
+            } else if context.state == .stopped {
+                /// If the currentItem has stopped, we want to restart the playback. We are replacing
+                /// the currentItem with the same one to trigger the player's observers on the updated
+                /// currentItem.
+                player.replaceCurrentItem(with: .init(asset: currentItem))
+                player.play()
+            } else {
+                /// This case may be triggered if we call ``loadAsset`` on a player that is currently
+                /// playing the URL we provided. In this case we will Inform the delegate about the
+                /// current state.
+                delegate.audioPlayer(self, didUpdateContext: context)
+            }
+
+            return
+        }
+
+        /// We call stop to update the currently set delegate that the playback has been stopped
+        /// and then we remove the current item from the player's queue.
+        stop()
+        player.replaceCurrentItem(with: nil)
+
+        self.delegate = delegate
+        updateContext { $0.state = .loading }
+        let asset = AVURLAsset(url: url)
+
+        assetPropertyLoader.loadProperties(
+            [.init(\.duration)],
+            of: asset
+        ) { [weak self] in self?.handleDurationLoading($0) }
+    }
+
+    open func play() {
+        player.play()
+    }
+
+    open func pause() {
+        player.pause()
+    }
+
+    open func stop() {
+        /// As the AVPlayer doesn't provide an API to actually stop the playback, we are simulating it
+        /// by calling pause
+        player.pause()
+
+        updateContext { value in
+            value = .init(
+                duration: value.duration,
+                currentTime: 0,
+                state: .stopped,
+                rate: .zero,
+                isSeeking: false
+            )
+        }
+    }
+
+    open func updateRate(_ newRate: AudioPlaybackRate) {
+        player.rate = newRate.rawValue
+    }
+
+    open func seek(to time: TimeInterval) {
+        player.pause()
+        updateContext { value in
+            value.currentTime = time
+            value.isSeeking = true
+        }
+        executeSeek(to: time)
+    }
+
     // MARK: - Helpers
 
     private func setUp() {
@@ -115,10 +211,7 @@ open class StreamRemoteAudioPlayer: AudioPlaying {
             forInterval: interval,
             queue: nil
         ) { [weak self] in
-            guard
-                let self = self,
-                self.context.isSeeking == false
-            else {
+            guard let self = self, self.context.isSeeking == false else {
                 return
             }
 
@@ -130,8 +223,6 @@ open class StreamRemoteAudioPlayer: AudioPlaying {
 
                 value.isSeeking = false
 
-                value.state = player.rate != 0 ? .playing : .paused
-
                 value.rate = .init(rawValue: player.rate)
             }
         }
@@ -139,10 +230,7 @@ open class StreamRemoteAudioPlayer: AudioPlaying {
         playerObserver.addTimeControlStatusObserver(
             player
         ) { [weak self] newValue in
-            guard
-                let self = self,
-                let newValue = newValue
-            else {
+            guard let self = self, let newValue = newValue else {
                 return
             }
 
@@ -237,22 +325,15 @@ open class StreamRemoteAudioPlayer: AudioPlaying {
     }
 
     /// It executes a seek request at the specified time on the player in order to progress the playback.
-    private func executeSeek(
-        to time: TimeInterval
-    ) {
-        guard
-            Thread.isMainThread
-        else {
+    private func executeSeek(to time: TimeInterval) {
+        guard Thread.isMainThread else {
             DispatchQueue.main.async { [weak self] in
                 self?.executeSeek(to: time)
             }
             return
         }
 
-        guard
-            context.isSeeking,
-            let currentItem = player.currentItem
-        else {
+        guard context.isSeeking, let currentItem = player.currentItem else {
             return
         }
 
@@ -271,105 +352,5 @@ open class StreamRemoteAudioPlayer: AudioPlaying {
             self?.updateContext { value in value.isSeeking = false }
             self?.play()
         }
-    }
-
-    // MARK: - AudioPlaying
-
-    open func playbackContext(for url: URL) -> AudioPlaybackContext {
-        guard
-            let currentItemURL = (player.currentItem?.asset as? AVURLAsset)?.url,
-            currentItemURL == url
-        else {
-            return .notLoaded
-        }
-        return context
-    }
-
-    open func loadAsset(
-        from url: URL?,
-        andConnectDelegate delegate: AudioPlayingDelegate
-    ) {
-        /// We are going to check if the URL requested to load, represents the currentItem that we
-        /// have already loaded (if any). In this case, we will try either to resume the existing playback
-        /// or restart it, if possible.
-        if let url = url,
-           let currentItem = player.currentItem?.asset as? AVURLAsset,
-           url == currentItem.url {
-            /// Update the delegate to the provided one
-            self.delegate = delegate
-
-            /// If the currentItem is paused, we want to continue the playback
-            /// Otherwise, no action is required
-            if context.state == .paused {
-                player.play()
-            } else if context.state == .stopped {
-                /// If the currentItem has stopped, we want to restart the playback. We are replacing
-                /// the currentItem with the same one to trigger the player's observers on the updated
-                /// currentItem.
-                player.replaceCurrentItem(with: .init(asset: currentItem))
-                player.play()
-            } else {
-                /// This case may be triggered if we call ``loadAsset`` on a player that is currently
-                /// playing the URL we provided. In this case we will Inform the delegate about the
-                /// current state.
-                delegate.audioPlayer(self, didUpdateContext: context)
-            }
-
-            return
-        }
-
-        /// We call stop to update the currently set delegate that the playback has been stopped
-        /// and then we remove the current item from the player's queue.
-        stop()
-        player.replaceCurrentItem(with: nil)
-
-        if let url = url {
-            self.delegate = delegate
-            updateContext { $0.state = .loading }
-            let asset = AVURLAsset(url: url)
-
-            assetPropertyLoader.loadProperties(
-                [.init(\.duration)],
-                of: asset
-            ) { [weak self] in self?.handleDurationLoading($0) }
-        }
-    }
-
-    open func play() {
-        player.play()
-    }
-
-    open func pause() {
-        player.pause()
-    }
-
-    open func stop() {
-        /// As the AVPlayer doesn't provide an API to actually stop the playback, we are simulating it
-        /// by calling pause
-        player.pause()
-
-        updateContext { value in
-            value = .init(
-                duration: value.duration,
-                currentTime: 0,
-                state: .stopped,
-                rate: .zero,
-                isSeeking: false
-            )
-        }
-    }
-
-    open func updateRate(_ newRate: AudioPlaybackRate) {
-        player.rate = newRate.rawValue
-    }
-
-    open func seek(to time: TimeInterval) {
-        player.pause()
-        updateContext { value in
-            value.currentTime = time
-            value.state = .paused
-            value.isSeeking = true
-        }
-        executeSeek(to: time)
     }
 }
