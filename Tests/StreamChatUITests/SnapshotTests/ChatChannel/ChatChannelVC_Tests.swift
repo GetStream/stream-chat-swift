@@ -186,7 +186,7 @@ final class ChatChannelVC_Tests: XCTestCase {
         )
     }
 
-    func test_whenShouldMessagesStartAtTheTopEnabled() {
+    func test_whenShouldMessagesStartAtTheTopIsTrue() {
         var components = Components.mock
         components.shouldMessagesStartAtTheTop = true
         vc.components = components
@@ -202,7 +202,7 @@ final class ChatChannelVC_Tests: XCTestCase {
 
         AssertSnapshot(
             vc,
-            variants: [.smallDark] // This variant is the only one where the contentInset is stable between tests
+            variants: [.smallDark]
         )
     }
 

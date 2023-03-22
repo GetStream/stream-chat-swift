@@ -78,7 +78,7 @@ final class ChatThreadVC_Tests: XCTestCase {
         )
     }
 
-    func test_whenShouldMessagesStartAtTheTopEnabled() {
+    func test_whenShouldMessagesStartAtTheTopIsTrue() {
         var components = Components.mock
         components.shouldMessagesStartAtTheTop = true
         vc.components = components

@@ -201,9 +201,9 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
                 previousSnapshot: previousMessagesSnapshot,
                 newSnapshot: newMessagesSnapshot,
                 with: .fade,
-                completion: {
+                completion: { [weak self] in
                     completion?()
-                    self.adjustContentInsetToPositionMessagesAtTheTop()
+                    self?.adjustContentInsetToPositionMessagesAtTheTop()
                 }
             )
         }

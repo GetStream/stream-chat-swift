@@ -95,9 +95,9 @@ open class ComposerKeyboardHandler: KeyboardHandler {
             withDuration: duration,
             delay: 0,
             options: UIView.AnimationOptions(rawValue: curve << 16)
-        ) {
+        ) { [weak self] in
             composerParentView.layoutIfNeeded()
-            self.messageListVC?.listView.adjustContentInsetToPositionMessagesAtTheTop()
+            self?.messageListVC?.listView.adjustContentInsetToPositionMessagesAtTheTop()
         }
     }
 }

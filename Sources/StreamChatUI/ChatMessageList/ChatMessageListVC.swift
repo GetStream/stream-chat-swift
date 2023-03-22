@@ -184,8 +184,8 @@ open class ChatMessageListVC: _ViewController,
         listView.delegate = self
         listView.dataSource = self
         listView.reloadData()
-        DispatchQueue.main.async {
-            self.listView.adjustContentInsetToPositionMessagesAtTheTop()
+        DispatchQueue.main.async { [weak self] in
+            self?.listView.adjustContentInsetToPositionMessagesAtTheTop()
         }
     }
 
