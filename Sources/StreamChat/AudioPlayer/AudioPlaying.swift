@@ -223,6 +223,8 @@ open class StreamRemoteAudioPlayer: AudioPlaying {
 
                 value.isSeeking = false
 
+                value.state = player.rate != 0 ? .playing : .paused
+
                 value.rate = .init(rawValue: player.rate)
             }
         }
