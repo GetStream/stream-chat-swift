@@ -10,7 +10,7 @@ import XCTest
 final class JumpToUnreadMessagesButtonTests: XCTestCase {
     func test_jumpToUnreadMessages_zeroMessages() {
         let button = JumpToUnreadMessagesButton()
-        button.content = 0
+        button.content = .noUnread
         button.translatesAutoresizingMaskIntoConstraints = false
         button.sizeToFit()
 
@@ -19,7 +19,7 @@ final class JumpToUnreadMessagesButtonTests: XCTestCase {
 
     func test_jumpToUnreadMessages_hundredMessages() {
         let button = JumpToUnreadMessagesButton()
-        button.content = 100
+        button.content = .mock(messages: 100)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.sizeToFit()
 

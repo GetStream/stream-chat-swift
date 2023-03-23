@@ -8,7 +8,7 @@ import UIKit
 /// A Button that is used to indicate unread messages in the Message list.
 open class JumpToUnreadMessagesButton: _Button, ThemeProvider {
     /// The unread count that will be shown on the button as a badge icon.
-    var content: Int = 0 {
+    var content: ChannelUnreadCount = .noUnread {
         didSet {
             updateContentIfNeeded()
         }
@@ -60,7 +60,7 @@ open class JumpToUnreadMessagesButton: _Button, ThemeProvider {
     override open func updateContent() {
         super.updateContent()
 
-        textLabel.text = "\(content) unread"
+        textLabel.text = "\(content.messages) unread"
     }
 
     open func addTarget(_ target: Any?, action: Selector) {
