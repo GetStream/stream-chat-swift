@@ -23,7 +23,7 @@ Most UI components are stateless view classes. Components like `MessageList`, `C
 
 You can provide your own component class via dependency injection. The SDK exposes this via the `Components` object and the `Components.default` singleton. You should provide all customizations as early as possible in your application.
 
-Let's say that you have your own component to render messages called `MyCustomMessageView`, this is how you register it to the SDK and replace the bulit-in one
+Let's say that you have your own component to render messages called `MyCustomMessageView`, this is how you register it to the SDK and replace the built-in one
 
 ```swift
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {

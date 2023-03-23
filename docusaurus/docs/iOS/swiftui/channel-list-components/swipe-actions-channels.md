@@ -62,7 +62,7 @@ Let's explore the code sample above in more details. First, we take the currentl
 
 Next, we create the freeze action, which creates a channel controller, and executes the `freezeChannel` method of the low-level chat client. In the completion handler, we provide the `onError` and `onDismiss` actions, depending on the result of the freeze action. These are the default ones, which either close the actions view on success, or display an alert in case of a failure. You can add additional logic here if needed.
 
-We can optionally specify a confirmation popup, where the end-users are asked if they really want to perform the action. The `ConfrimationPopup` struct has title, message and button title. If you don't create one and pass nil, the popup will not be displayed and the action will be performed immediately. Apart from the confirmation popup, you can also specify the title and icon shown in the menu of actions, as well as whether the action is destructive.
+We can optionally specify a confirmation popup, where the end-users are asked if they really want to perform the action. The `ConfirmationPopup` struct has title, message and button title. If you don't create one and pass nil, the popup will not be displayed and the action will be performed immediately. Apart from the confirmation popup, you can also specify the title and icon shown in the menu of actions, as well as whether the action is destructive.
 
 Finally, we need to inject the `CustomFactory` in our view hierarchy.
 

@@ -64,7 +64,7 @@ let userInfo = UserInfo(
     imageURL: URL(string: "https://cutt.ly/SmeFRfC")
 )
 
-// Create a token provider that uses the backend to retreive a new token. The token provider is called on `connect` as well as when the current token expires
+// Create a token provider that uses the backend to retrieve a new token. The token provider is called on `connect` as well as when the current token expires
 let tokenProvider: TokenProvider = { completion in
    yourAuthService.fetchToken(for: userInfo.id, completion: completion)
 }

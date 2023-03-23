@@ -108,7 +108,7 @@ struct CustomChatChannelModifier: ChatChannelHeaderViewModifier {
 
     func body(content: Content) -> some View {
         content.toolbar {
-            CustomChatChannelHeader(channelName: channel.name ?? "Unkown") {
+            CustomChatChannelHeader(channelName: channel.name ?? "Unknown") {
                 editShown = true
             }
         }
