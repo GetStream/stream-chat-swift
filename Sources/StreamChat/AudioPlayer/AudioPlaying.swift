@@ -51,7 +51,7 @@ open class StreamRemoteAudioPlayer: AudioPlaying {
     // MARK: - Properties
     
     /// Provides thread-safe access to context storage
-    private var contextValueAccessor: ThreadSafeValueAccessor<AudioPlaybackContext>
+    private lazy var contextValueAccessor: AudioPlaybackContextAccessor = .init(.notLoaded)
     /// Describes the player's current playback state. The access to this property is thread-safe
     private(set) var context: AudioPlaybackContext {
         get { contextValueAccessor.value }
@@ -96,11 +96,6 @@ open class StreamRemoteAudioPlayer: AudioPlaying {
         self.assetPropertyLoader = assetPropertyLoader
         self.playerObserver = playerObserver
         self.player = player
-        contextValueAccessor = .init(
-            .notLoaded,
-            with: [.read, .write],
-            qos: .userInteractive
-        )
 
         setUp()
     }
