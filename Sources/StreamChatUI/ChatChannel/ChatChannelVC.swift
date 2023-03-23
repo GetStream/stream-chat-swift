@@ -67,9 +67,16 @@ open class ChatChannelVC: _ViewController,
         messageListVC.listView.isLastCellFullyVisible
     }
 
+    internal var isViewVisible: ((ChatChannelVC) -> Bool) = { channelVC in
+        channelVC.viewIfLoaded?.window != nil
+    }
+
     /// A boolean value indicating whether it should mark the channel read.
     public var shouldMarkChannelRead: Bool {
-        isLastMessageFullyVisible && channelController.hasLoadedAllNextMessages && !hasMarkedMessageAsUnread
+        guard isViewVisible(self) else {
+            return false
+        }
+        return isLastMessageFullyVisible && channelController.hasLoadedAllNextMessages && !hasMarkedMessageAsUnread
     }
 
     /// A component responsible to handle when to load new or old messages.

@@ -19,6 +19,7 @@ final class ChatChannelVC_Tests: XCTestCase {
         components.messageComposerVC = ComposerVC_Mock.self
         components.messageListView = ChatMessageListView_Mock.self
         vc = ChatChannelVC()
+        vc.isViewVisible = { _ in true }
         vc.components = components
         channelControllerMock = ChatChannelController_Mock.mock()
         vc.channelController = channelControllerMock
@@ -650,6 +651,15 @@ final class ChatChannelVC_Tests: XCTestCase {
         channelControllerMock.hasLoadedAllNextMessages_mock = true
 
         XCTAssertTrue(vc.shouldMarkChannelRead)
+    }
+
+    func test_shouldMarkChannelRead_whenViewIsNotVisible_thenReturnsFalse() {
+        let mockedListView = makeMockMessageListView()
+        mockedListView.mockIsLastCellFullyVisible = true
+        channelControllerMock.hasLoadedAllNextMessages_mock = true
+        vc.isViewVisible = { _ in false }
+
+        XCTAssertFalse(vc.shouldMarkChannelRead)
     }
 
     func test_shouldMarkChannelRead_whenNotLastMessageFullyVisible_thenReturnsFalse() {
