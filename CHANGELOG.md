@@ -11,6 +11,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### ✅ Added
 - Allow the message list to start at the top if `Components.shouldMessagesStartAtTheTop` is enabled [#2537](https://github.com/GetStream/stream-chat-swift/pull/2537)
 
+### 🐞 Fixed
+- Fix channel marking read when view is not visible [#2544](https://github.com/GetStream/stream-chat-swift/pull/2544)
+
 # [4.29.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.29.0)
 _March 17, 2023_
 ## StreamChat

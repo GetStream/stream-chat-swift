@@ -52,8 +52,12 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
             vc.channelController = rootViewController.controller.client.channelController(for: cid)
             vc.tabBarItem = .init(title: "Chat", image: nil, tag: 0)
 
+            let dummyViewController = UIViewController()
+            dummyViewController.tabBarItem = .init(title: "Dummy", image: nil, tag: 1)
+
             let tabBarController = UITabBarController()
-            tabBarController.viewControllers = [vc]
+            tabBarController.view.backgroundColor = .systemBackground
+            tabBarController.viewControllers = [vc, dummyViewController]
             // Make the tab bar not translucent to make sure the
             // keyboard handling works in all conditions.
             tabBarController.tabBar.isTranslucent = false
