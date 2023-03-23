@@ -49,17 +49,16 @@ public protocol AudioPlaying: AnyObject {
 /// An implementation of ``AudioPlaying`` that can be used to stream audio files from a URL
 open class StreamRemoteAudioPlayer: AudioPlaying {
     // MARK: - Properties
-
-    /// The queue used to ensure thread-safe access to the context property
-    private lazy var contextAccessQueue: DispatchQueue = .init(
-        label: "com.getstream.audio.player.context", qos: .userInteractive
-    )
-    /// Describes the player's current playback state. The access to this property is **not** thread-safe
-    private var _context: AudioPlaybackContext = .notLoaded
+    
+    /// Provides thread-safe access to context storage
+    private var contextValueAccessor: ThreadSafeValueAccessor<AudioPlaybackContext>
     /// Describes the player's current playback state. The access to this property is thread-safe
     private(set) var context: AudioPlaybackContext {
-        get { contextAccessQueue.sync { _context } }
-        set { contextAccessQueue.sync { _context = newValue } }
+        get { contextValueAccessor.value }
+        set {
+            contextValueAccessor.value = newValue
+            delegate?.audioPlayer(self, didUpdateContext: newValue)
+        }
     }
 
     /// The player that will be used for the playback of the audio files
@@ -97,6 +96,11 @@ open class StreamRemoteAudioPlayer: AudioPlaying {
         self.assetPropertyLoader = assetPropertyLoader
         self.playerObserver = playerObserver
         self.player = player
+        contextValueAccessor = .init(
+            .notLoaded,
+            with: [.read, .write],
+            qos: .userInteractive
+        )
 
         setUp()
     }
@@ -264,13 +268,12 @@ open class StreamRemoteAudioPlayer: AudioPlaying {
             else {
                 return
             }
-            var newContext = self.context
-            newContext.state = .stopped
-            newContext.currentTime = 0
-            newContext.rate = .zero
-            newContext.isSeeking = false
-            self.context = newContext
-
+            self.updateContext { value in
+                value.state = .stopped
+                value.currentTime = 0
+                value.rate = .zero
+                value.isSeeking = false
+            }
             self.delegate?.audioPlayer(self, didUpdateContext: self.context)
         }
     }
@@ -283,7 +286,6 @@ open class StreamRemoteAudioPlayer: AudioPlaying {
         var newContext = context
         newContextProvider(&newContext)
         context = newContext
-        delegate?.audioPlayer(self, didUpdateContext: context)
     }
 
     /// It's used by the assetPropertyLoader to handle the completion (successful or failed) of duration's

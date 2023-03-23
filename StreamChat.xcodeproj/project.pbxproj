@@ -46,6 +46,8 @@
 		4012253229C9CC390034B60B /* MockAudioPlayerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4012253029C9CC320034B60B /* MockAudioPlayerDelegate.swift */; };
 		401225BF29C9F7960034B60B /* Stub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 401225BD29C9F7670034B60B /* Stub.swift */; };
 		401225C029C9F7BB0034B60B /* MockAVURLAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4012253429C9CF230034B60B /* MockAVURLAsset.swift */; };
+		401225D629CC73BA0034B60B /* ThreadSafeValueAccessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 401225D529CC73BA0034B60B /* ThreadSafeValueAccessor.swift */; };
+		401225D729CC73BA0034B60B /* ThreadSafeValueAccessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 401225D529CC73BA0034B60B /* ThreadSafeValueAccessor.swift */; };
 		401EBB6D29A79686004D9304 /* ChatMessagesCountDecorationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 401EBB6C29A79686004D9304 /* ChatMessagesCountDecorationView.swift */; };
 		401EBB6E29A79686004D9304 /* ChatMessagesCountDecorationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 401EBB6C29A79686004D9304 /* ChatMessagesCountDecorationView.swift */; };
 		4068ECD2298D06BB0032D57A /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4068ECD0298D06720032D57A /* SplashViewController.swift */; };
@@ -2421,6 +2423,7 @@
 		4012253029C9CC320034B60B /* MockAudioPlayerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockAudioPlayerDelegate.swift; sourceTree = "<group>"; };
 		4012253429C9CF230034B60B /* MockAVURLAsset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAVURLAsset.swift; sourceTree = "<group>"; };
 		401225BD29C9F7670034B60B /* Stub.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stub.swift; sourceTree = "<group>"; };
+		401225D529CC73BA0034B60B /* ThreadSafeValueAccessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadSafeValueAccessor.swift; sourceTree = "<group>"; };
 		401EBB6C29A79686004D9304 /* ChatMessagesCountDecorationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessagesCountDecorationView.swift; sourceTree = "<group>"; };
 		4032C4AE29C0A9E60086849E /* AudioPlayerObserving.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayerObserving.swift; sourceTree = "<group>"; };
 		4032C4B029C0BA110086849E /* StreamPlayerObserver_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamPlayerObserver_Tests.swift; sourceTree = "<group>"; };
@@ -4404,6 +4407,7 @@
 				79D5CDD027EA1BA100BE7D8B /* TranslationLanguage.swift */,
 				C14D27B52869EEE40063F6F2 /* Array+CompactMapLoggingError.swift */,
 				C163ECFA299155D0006D6124 /* NotificationExtension+Lifecycle.swift */,
+				401225D529CC73BA0034B60B /* ThreadSafeValueAccessor.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -9747,6 +9751,7 @@
 				C1FC2F902742579D0062530F /* NativeEngine.swift in Sources */,
 				792A4F39247FFACB00EAF71D /* WebSocketEngine.swift in Sources */,
 				C1FC2F922742579D0062530F /* Server.swift in Sources */,
+				401225D629CC73BA0034B60B /* ThreadSafeValueAccessor.swift in Sources */,
 				79280F422484F4EC00CDEB89 /* Event.swift in Sources */,
 				C1FC2F932742579D0062530F /* Framer.swift in Sources */,
 				C14D27B62869EEE40063F6F2 /* Array+CompactMapLoggingError.swift in Sources */,
@@ -10495,6 +10500,7 @@
 				CFE616BA28348A6100AE2ABF /* CountdownTracker.swift in Sources */,
 				C121E8DB274544B100023E4C /* ConsoleLogDestination.swift in Sources */,
 				C121E8DC274544B100023E4C /* BaseLogDestination.swift in Sources */,
+				401225D729CC73BA0034B60B /* ThreadSafeValueAccessor.swift in Sources */,
 				C121E8DD274544B100023E4C /* LogDestination.swift in Sources */,
 				C121E8DE274544B100023E4C /* Logger.swift in Sources */,
 				C121E8DF274544B100023E4C /* StringInterpolation+Extensions.swift in Sources */,
