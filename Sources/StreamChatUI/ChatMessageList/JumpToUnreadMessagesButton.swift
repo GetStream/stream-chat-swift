@@ -35,7 +35,7 @@ open class JumpToUnreadMessagesButton: _Button, ThemeProvider {
         layer.addShadow(color: appearance.colorPalette.iconButtonShadow)
         textLabel.font = appearance.fonts.footnote
         textLabel.textColor = appearance.colorPalette.staticColorText
-        closeButton.setImage(appearance.images.close, for: .normal)
+        closeButton.setImage(appearance.images.discard, for: .normal)
         closeButton.tintColor = appearance.colorPalette.staticColorText
     }
 
@@ -49,11 +49,11 @@ open class JumpToUnreadMessagesButton: _Button, ThemeProvider {
             textLabel.leadingAnchor.pin(equalTo: leadingAnchor, constant: 12),
             textLabel.topAnchor.pin(equalTo: topAnchor, constant: 10),
             textLabel.bottomAnchor.pin(equalTo: bottomAnchor, constant: -10),
-            closeButton.leadingAnchor.pin(equalTo: textLabel.trailingAnchor, constant: 4),
+            closeButton.leadingAnchor.pin(equalTo: textLabel.trailingAnchor, constant: 2),
             closeButton.topAnchor.pin(greaterThanOrEqualTo: topAnchor),
             closeButton.centerYAnchor.pin(equalTo: centerYAnchor),
             closeButton.bottomAnchor.pin(lessThanOrEqualTo: bottomAnchor),
-            closeButton.trailingAnchor.pin(equalTo: trailingAnchor, constant: -12)
+            closeButton.trailingAnchor.pin(equalTo: trailingAnchor, constant: -10)
         ])
     }
 

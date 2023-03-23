@@ -30,7 +30,7 @@ final class VideoAttachmentGalleryPreview_Tests: XCTestCase {
             uploadingState: nil
         )
 
-        // Add cell to view heirarchy to trigger lifecycle methods
+        // Add cell to view hierarchy to trigger lifecycle methods
         UIView().addSubview(view)
 
         // Assert injected loader is invoked with correct values
