@@ -14,6 +14,15 @@ final class JumpToUnreadMessagesButtonTests: XCTestCase {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.sizeToFit()
 
-        AssertSnapshot(button, variants: [.defaultDark, .defaultLight], record: true)
+        AssertSnapshot(button, variants: [.defaultDark, .defaultLight])
+    }
+
+    func test_jumpToUnreadMessages_hundredMessages() {
+        let button = JumpToUnreadMessagesButton()
+        button.content = 100
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.sizeToFit()
+
+        AssertSnapshot(button, variants: [.defaultDark, .defaultLight])
     }
 }
