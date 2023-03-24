@@ -5,6 +5,7 @@
 import AVFoundation
 import Foundation
 @testable import StreamChat
+import StreamChatTestTools
 import XCTest
 
 final class StreamAssetPropertyLoader_Tests: XCTestCase {
@@ -250,35 +251,5 @@ final class StreamAssetPropertyLoader_Tests: XCTestCase {
         )
 
         try completion(completionWasCalledWithResult!)
-    }
-}
-
-// MARK: - Private Helpers
-
-extension StreamAssetPropertyLoader_Tests {
-    private final class MockAVURLAsset: AVURLAsset, Spy {
-        var recordedFunctions: [String] = []
-
-        var statusOfValueResultMap: [String: AVKeyValueStatus] = [:]
-        var statusOfValueErrorMap: [String: Error] = [:]
-
-        private(set) var loadValuesAsynchronouslyWasCalledWithKeys: [String]?
-
-        override func statusOfValue(
-            forKey key: String,
-            error outError: NSErrorPointer
-        ) -> AVKeyValueStatus {
-            recordedFunctions.append("statusOfValue(\(key))")
-            outError?.pointee = statusOfValueErrorMap[key] as? NSError
-            return statusOfValueResultMap[key]!
-        }
-
-        override func loadValuesAsynchronously(
-            forKeys keys: [String],
-            completionHandler handler: (() -> Void)? = nil
-        ) {
-            loadValuesAsynchronouslyWasCalledWithKeys = keys
-            handler?()
-        }
     }
 }
