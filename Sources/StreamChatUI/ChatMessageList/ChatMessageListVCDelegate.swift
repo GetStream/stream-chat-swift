@@ -52,8 +52,22 @@ public protocol ChatMessageListVCDelegate: AnyObject {
     /// Ex: The user tapped on a quoted message which is not locally available.
     /// - Parameters:
     ///   - vc: The message list informing the delegate of this event.
-    ///   - messageId: The id of the message to load the page around it.
+    ///   - messageId: The id of the message  to load the page around it.
     ///   - onSuccess: Call this closure when the page is successfully loaded.
+    func chatMessageListVC(
+        _ vc: ChatMessageListVC,
+        shouldLoadPageAroundMessageId messageId: MessageId,
+        _ completion: @escaping ((Error?) -> Void)
+    )
+
+    /// Tells the delegate that it should load the page around the given message id.
+    ///
+    /// Ex: The user tapped on a quoted message which is not locally available.
+    /// - Parameters:
+    ///   - vc: The message list informing the delegate of this event.
+    ///   - message: The the message to load the page around it.
+    ///   - onSuccess: Call this closure when the page is successfully loaded.
+    @available(*, deprecated, renamed: "chatMessageListVC(vc:shouldLoadPageAroundMessageId:completion:)")
     func chatMessageListVC(
         _ vc: ChatMessageListVC,
         shouldLoadPageAroundMessage message: ChatMessage,
@@ -116,10 +130,18 @@ public extension ChatMessageListVCDelegate {
 
     func chatMessageListVC(
         _ vc: ChatMessageListVC,
-        shouldLoadPageAroundMessage message: ChatMessage,
+        shouldLoadPageAroundMessageId messageId: MessageId,
         _ completion: @escaping ((Error?) -> Void)
     ) {
         completion(nil)
+    }
+
+    func chatMessageListVC(
+        _ vc: ChatMessageListVC,
+        shouldLoadPageAroundMessage message: ChatMessage,
+        _ completion: @escaping ((Error?) -> Void)
+    ) {
+        chatMessageListVC(vc, shouldLoadPageAroundMessageId: message.id, completion)
     }
 
     func chatMessageListVCShouldLoadFirstPage(_ vc: ChatMessageListVC) {

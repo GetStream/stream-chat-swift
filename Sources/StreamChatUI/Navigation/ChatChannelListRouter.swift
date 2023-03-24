@@ -23,13 +23,28 @@ open class ChatChannelListRouter: NavigationRouter<ChatChannelListVC>, Component
     /// Shows the view controller with messages for the provided cid.
     ///
     /// - Parameter cid: `ChannelId` of the channel the should be presented.
-    ///
     open func showChannel(for cid: ChannelId) {
+        showChannel(for: cid, at: nil)
+    }
+
+    open func showChannel(for cid: ChannelId, at messageId: MessageId?) {
         let vc = components.channelVC.init()
-        vc.channelController = rootViewController.controller.client.channelController(
-            for: cid,
-            channelListQuery: rootViewController.controller.query
-        )
+
+        if let messageId = messageId {
+            vc.channelController = rootViewController.controller.client.channelController(
+                for: ChannelQuery(
+                    cid: cid,
+                    pageSize: .messagesPageSize,
+                    paginationParameter: .around(messageId)
+                ),
+                channelListQuery: rootViewController.controller.query
+            )
+        } else {
+            vc.channelController = rootViewController.controller.client.channelController(
+                for: cid,
+                channelListQuery: rootViewController.controller.query
+            )
+        }
 
         if let splitVC = rootViewController.splitViewController {
             splitVC.showDetailViewController(UINavigationController(rootViewController: vc), sender: self)

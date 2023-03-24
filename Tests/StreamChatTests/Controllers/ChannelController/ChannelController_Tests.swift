@@ -2553,9 +2553,16 @@ final class ChannelController_Tests: XCTestCase {
 
     // MARK: - loadFirstPage
 
-    func test_loadFirstPage_shouldCallSynchronize() throws {
+    func test_loadFirstPage_shouldCallSynchronize_shouldChangeChannelQueryPagination() throws {
         // Create new channel
         try setupChannel(channelPayload: .dummy())
+
+        let controller = ChatChannelController(
+            channelQuery: .init(cid: channelId, paginationParameter: .around(.unique)),
+            channelListQuery: nil,
+            client: client,
+            environment: env.environment
+        )
 
         let exp = expectation(description: "loadFirstPage should complete")
         controller.loadFirstPage { _ in

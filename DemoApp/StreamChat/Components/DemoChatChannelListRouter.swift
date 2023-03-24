@@ -391,24 +391,19 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
 
                     let messageController = channelController.client.messageController(cid: cid, messageId: id)
                     messageController.synchronize { [weak self] error in
-                        if let error = error {
-                            self?.rootViewController.presentAlert(
-                                title: "Couldn't show message with id: \(id)",
-                                message: "\(error)"
-                            )
-                            return
-                        }
-
                         let message = messageController.message
+
+                        var errorMessage: String? = error?.localizedDescription
                         if message?.cid != cid {
-                            self?.rootViewController.presentAlert(
-                                title: "Message ID does not belong to this channel.",
-                                message: message?.id ?? ""
-                            )
+                            errorMessage = "Message ID does not belong to this channel."
+                        }
+
+                        if let errorMessage {
+                            self?.rootViewController.presentAlert(title: errorMessage)
                             return
                         }
 
-                        self?.showChannel(for: cid, at: messageController.message)
+                        self?.showChannel(for: cid, at: message?.id)
                     }
                 }
             })

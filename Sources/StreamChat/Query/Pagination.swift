@@ -127,6 +127,16 @@ public enum PaginationParameter: Encodable, Hashable {
         }
     }
 
+    /// A Boolean value that returns true if the pagination will jump to a message around a given id.
+    public var isJumpingToMessage: Bool {
+        switch self {
+        case .around:
+            return true
+        default:
+            return false
+        }
+    }
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
 
