@@ -49,6 +49,11 @@ public class ChatUser {
     /// The date the user was last time active.
     public let lastActiveAt: Date?
 
+    /// Determines if the user has been deactivated
+    public var isDeactivated: Bool {
+        userDeactivatedAt != nil
+    }
+
     /// Teams the user belongs to.
     ///
     /// You need to enable multi-tenancy if you want to use this, else it'll be empty. Refer to
