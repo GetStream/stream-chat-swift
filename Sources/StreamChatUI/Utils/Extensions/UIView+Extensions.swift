@@ -64,6 +64,23 @@ extension UIView {
     static func spacer(axis: NSLayoutConstraint.Axis) -> UIView {
         UIView().flexible(axis: axis)
     }
+
+    func addAbsolutelyAbove(
+        _ view: UIView,
+        padding: CGFloat = 0
+    ) {
+        guard
+            let window = window,
+            let viewFrame = superview?.convert(frame.origin, to: window)
+        else {
+            return
+        }
+
+        view.translatesAutoresizingMaskIntoConstraints = false
+        window.addSubview(view)
+        view.trailingAnchor.constraint(equalTo: window.trailingAnchor).isActive = true
+        view.bottomAnchor.constraint(equalTo: window.bottomAnchor, constant: -(window.frame.height - viewFrame.y) - padding).isActive = true
+    }
 }
 
 enum LayoutAnchorName {

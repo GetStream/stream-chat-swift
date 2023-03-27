@@ -288,6 +288,13 @@ open class ComposerVC: _ViewController,
         )
     )
 
+    open lazy var recordingAdapter: RecordingAdapter = .init(
+        composerView: composerView,
+        addFloatingViewHandler: { [weak self] in self?.showRecordingFloatingView($0) },
+        updateContentHandler: { [weak self] in try? self?.addAttachmentToContent(from: $0, type: .audio) },
+        clearMessageHandler: { [weak self] in self?.clearContent(sender: .init()) }
+    )
+
     /// The view of the composer.
     open private(set) lazy var composerView: ComposerView = components
         .messageComposerView.init()
@@ -362,6 +369,8 @@ open class ComposerVC: _ViewController,
 
             self?.content.slowMode(cooldown: currentTime)
         }
+
+        recordingAdapter.setUp()
     }
 
     override open func setUpLayout() {
@@ -402,6 +411,7 @@ open class ComposerVC: _ViewController,
                 : L10n.Composer.Placeholder.message
             Animate {
                 self.composerView.confirmButton.isHidden = true
+                self.composerView.recordButton.isHidden = false
                 self.composerView.sendButton.isHidden = self.content.isSlowModeOn
                 self.composerView.headerView.isHidden = true
                 self.composerView.cooldownView.isHidden = !self.content.isSlowModeOn
@@ -410,6 +420,7 @@ open class ComposerVC: _ViewController,
             composerView.titleLabel.text = L10n.Composer.Title.reply
             Animate {
                 self.composerView.confirmButton.isHidden = true
+                self.composerView.recordButton.isHidden = false
                 self.composerView.sendButton.isHidden = self.content.isSlowModeOn
                 self.composerView.headerView.isHidden = false
                 self.composerView.cooldownView.isHidden = !self.content.isSlowModeOn
@@ -418,6 +429,7 @@ open class ComposerVC: _ViewController,
             composerView.titleLabel.text = L10n.Composer.Title.edit
             Animate {
                 self.composerView.confirmButton.isHidden = false
+                self.composerView.recordButton.isHidden = true
                 self.composerView.sendButton.isHidden = true
                 self.composerView.headerView.isHidden = false
                 self.composerView.cooldownView.isHidden = true
@@ -428,6 +440,7 @@ open class ComposerVC: _ViewController,
 
         composerView.cooldownView.content = .init(cooldown: content.cooldownTime)
 
+        composerView.recordButton.isHidden = !content.isEmpty
         composerView.sendButton.isEnabled = !content.isEmpty
         composerView.confirmButton.isEnabled = !content.isEmpty
 
@@ -1046,6 +1059,22 @@ open class ComposerVC: _ViewController,
                 attachmentType: type,
                 error: error
             )
+        }
+    }
+
+    // MARK: - record
+
+    /// Shows the suggestions view
+    open func showRecordingFloatingView(_ recordingFloatingView: UIView) {
+        if let parent = parent {
+            recordingFloatingView.translatesAutoresizingMaskIntoConstraints = false
+            parent.view.addSubview(recordingFloatingView)
+            NSLayoutConstraint.activate([
+                recordingFloatingView.leadingAnchor.pin(equalTo: parent.view.leadingAnchor),
+                recordingFloatingView.trailingAnchor.pin(equalTo: parent.view.trailingAnchor),
+                composerView.topAnchor.pin(equalTo: recordingFloatingView.bottomAnchor),
+                recordingFloatingView.topAnchor.pin(greaterThanOrEqualTo: parent.view.safeAreaLayoutGuide.topAnchor)
+            ])
         }
     }
 

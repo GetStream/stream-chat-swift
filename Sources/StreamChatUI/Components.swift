@@ -43,6 +43,9 @@ public struct Components {
     /// A button used for sending a message, or any type of content.
     public var sendButton: UIButton.Type = SendButton.self
 
+    /// A button used for sending a message, or any type of content.
+    public var recordButton: RecordButton.Type = RecordButton.self
+
     /// A view for showing a cooldown when Slow Mode is active.
     public var cooldownView: CooldownView.Type = CooldownView.self
 
@@ -87,6 +90,12 @@ public struct Components {
 
     /// The object responsible for loading video attachments.
     public var videoLoader: VideoLoading = StreamVideoLoader()
+
+    /// The object responsible for recording audio files.
+    public var audioRecorder: AudioRecording.Type = StreamAudioRecorder.self
+
+    /// The object responsible for recording audio files.
+    public var audioSessionConfigurator: AudioSessionConfiguring.Type = StreamAudioSessionConfigurator.self
 
     /// The view that shows a gradient.
     public var gradientView: GradientView.Type = GradientView.self

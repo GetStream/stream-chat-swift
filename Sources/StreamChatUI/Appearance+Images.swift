@@ -57,6 +57,7 @@ public extension Appearance {
         public var restart: UIImage = loadImageSafely(with: "restart")
         public var emptyChannelListMessageBubble: UIImage = loadImageSafely(with: "empty_channel_list_message_bubble")
         public var download: UIImage = loadSafely(systemName: "icloud.and.arrow.down", assetsFallback: "download")
+        public var mic: UIImage = loadSafely(systemName: "mic", assetsFallback: "download")
 
         // MARK: - Message Receipts
 
