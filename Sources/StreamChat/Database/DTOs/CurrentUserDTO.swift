@@ -210,6 +210,7 @@ extension CurrentChatUser {
             userRole: UserRole(rawValue: user.userRoleRaw),
             createdAt: user.userCreatedAt.bridgeDate,
             updatedAt: user.userUpdatedAt.bridgeDate,
+            deactivatedAt: user.userDeactivatedAt?.bridgeDate,
             lastActiveAt: user.lastActivityAt?.bridgeDate,
             teams: Set(user.teams),
             extraData: extraData,
