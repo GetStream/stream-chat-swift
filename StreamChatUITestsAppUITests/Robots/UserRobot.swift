@@ -207,7 +207,6 @@ extension UserRobot {
                         line: UInt = #line) -> Self {
         selectOptionFromContextMenu(option: .reply, forMessageAtIndex: messageCellIndex)
         sendMessage(text,
-                    at: messageCellIndex,
                     waitForAppearance: waitForAppearance,
                     file: file,
                     line: line)
@@ -231,6 +230,13 @@ extension UserRobot {
     func tapOnMessage(at messageCellIndex: Int? = 0) -> Self {
         let messageCell = messageCell(withIndex: messageCellIndex)
         return tapOnMessage(messageCell)
+    }
+    
+    @discardableResult
+    func tapOnRepliedMessage(_ text: String, at messageCellIndex: Int? = 0) -> Self {
+        let messageCell = messageCell(withIndex: messageCellIndex)
+        MessageListPage.Attributes.quotedText(text, in: messageCell).waitForHitPoint().safeTap()
+        return self
     }
 
     @discardableResult
@@ -301,20 +307,26 @@ extension UserRobot {
     }
 
     @discardableResult
-    func scrollMessageListDown() -> Self {
-        MessageListPage.list.swipeUp()
+    func scrollMessageListDown(times: Int = 1) -> Self {
+        for _ in 1...times {
+            MessageListPage.list.swipeUp()
+        }
         return self
     }
 
     @discardableResult
-    func scrollMessageListUp() -> Self {
-        MessageListPage.list.swipeDown()
+    func scrollMessageListUp(times: Int = 1) -> Self {
+        for _ in 1...times {
+            MessageListPage.list.swipeDown()
+        }
         return self
     }
 
     @discardableResult
-    func scrollMessageListUpSlow() -> Self {
-        MessageListPage.list.swipeDown(velocity: .slow)
+    func scrollMessageListUpSlow(times: Int = 1) -> Self {
+        for _ in 1...times {
+            MessageListPage.list.swipeDown(velocity: .slow)
+        }
         return self
     }
 
