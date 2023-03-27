@@ -31,8 +31,8 @@ open class JumpToUnreadMessagesButton: _Button, ThemeProvider {
     override open func setUpAppearance() {
         super.setUpAppearance()
 
-        backgroundColor = appearance.colorPalette.jumpToUnreadMessagesBackground
-        layer.addShadow(color: appearance.colorPalette.iconButtonShadow)
+        backgroundColor = appearance.colorPalette.jumpToUnreadButtonBackground
+        layer.addShadow(color: appearance.colorPalette.hoverButtonShadow)
         textLabel.font = appearance.fonts.footnote
         textLabel.textColor = appearance.colorPalette.staticColorText
         closeButton.setImage(appearance.images.discard, for: .normal)

@@ -45,7 +45,7 @@ public extension Appearance {
 
         public var messageCellHighlightBackground: UIColor = .streamYellowBackground
         public var pinnedMessageBackground: UIColor = .streamYellowBackground
-        public var jumpToUnreadMessagesBackground: UIColor = .streamGrayDisabledText
+        public var jumpToUnreadButtonBackground: UIColor = .streamGrayDisabledText
 
         // MARK: - Borders and shadows
 
@@ -54,7 +54,7 @@ public extension Appearance {
         public var border: UIColor = .streamGrayGainsboro
         public var border2: UIColor = .streamGray
         public var border3: UIColor = .streamGrayWhisper
-        public var iconButtonShadow: UIColor = .streamIconButtonShadow
+        public var hoverButtonShadow: UIColor = .streamIconButtonShadow
 
         // MARK: - Tint and alert
 
