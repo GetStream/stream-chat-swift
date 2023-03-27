@@ -19,6 +19,7 @@ extension MutedUserPayload {
                 role: .user,
                 createdAt: .unique,
                 updatedAt: .unique,
+                deactivatedAt: nil,
                 lastActiveAt: .unique,
                 isOnline: true,
                 isInvisible: true,

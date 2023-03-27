@@ -17,6 +17,7 @@ public extension ChatUser {
         userRole: UserRole = .user,
         createdAt: Date = .init(),
         updatedAt: Date = .init(),
+        deactivatedAt: Date? = nil,
         lastActiveAt: Date? = nil,
         teams: Set<TeamId> = [],
         extraData: [String: RawJSON] = [:]
@@ -31,6 +32,7 @@ public extension ChatUser {
             userRole: userRole,
             createdAt: createdAt,
             updatedAt: updatedAt,
+            deactivatedAt: deactivatedAt,
             lastActiveAt: lastActiveAt,
             teams: teams,
             extraData: extraData

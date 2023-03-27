@@ -15,7 +15,8 @@ extension UserPayload {
         extraData: [String: RawJSON] = [:],
         teams: [TeamId] = [.unique, .unique, .unique],
         isBanned: Bool = false,
-        updatedAt: Date = .unique
+        updatedAt: Date = .unique,
+        deactivatedAt: Date? = nil
     ) -> UserPayload {
         .init(
             id: userId,
@@ -24,6 +25,7 @@ extension UserPayload {
             role: role,
             createdAt: .unique,
             updatedAt: updatedAt,
+            deactivatedAt: deactivatedAt,
             lastActiveAt: .unique,
             isOnline: true,
             isInvisible: true,
