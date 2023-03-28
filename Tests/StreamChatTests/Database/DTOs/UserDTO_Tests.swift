@@ -61,6 +61,7 @@ final class UserDTO_Tests: XCTestCase {
             role: .admin,
             createdAt: .unique,
             updatedAt: .unique,
+            deactivatedAt: nil,
             lastActiveAt: .unique,
             isOnline: true,
             isInvisible: true,

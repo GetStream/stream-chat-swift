@@ -4,6 +4,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
+### ✅ Added
+- Expose `deactivatedAt` and `isDeactivated` in ChatUser [#2547](https://github.com/GetStream/stream-chat-swift/pull/2547)
+
 ### 🐞 Fixed
 - Fix channel list parsing failing completely if one channel fails parsing [#2541](https://github.com/GetStream/stream-chat-swift/pull/2541)
 

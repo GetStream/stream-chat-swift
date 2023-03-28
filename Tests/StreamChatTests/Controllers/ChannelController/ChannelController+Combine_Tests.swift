@@ -138,6 +138,7 @@ final class ChannelController_Combine_Tests: iOS13TestCase {
             userRole: .user,
             createdAt: .unique,
             updatedAt: .unique,
+            deactivatedAt: nil,
             lastActiveAt: .unique,
             teams: [],
             extraData: [:]

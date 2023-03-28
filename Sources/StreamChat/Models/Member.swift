@@ -53,6 +53,7 @@ public class ChatChannelMember: ChatUser {
         userRole: UserRole,
         userCreatedAt: Date,
         userUpdatedAt: Date,
+        deactivatedAt: Date?,
         lastActiveAt: Date?,
         teams: Set<TeamId>,
         extraData: [String: RawJSON],
@@ -86,6 +87,7 @@ public class ChatChannelMember: ChatUser {
             userRole: userRole,
             createdAt: userCreatedAt,
             updatedAt: userUpdatedAt,
+            deactivatedAt: deactivatedAt,
             lastActiveAt: lastActiveAt,
             teams: teams,
             extraData: extraData

@@ -19,6 +19,7 @@ final class MissingEventsPayload_Tests: XCTestCase {
             role: .user,
             createdAt: "2019-12-12T15:33:46.488935Z".toDate(),
             updatedAt: "2020-09-07T12:27:43.096437Z".toDate(),
+            deactivatedAt: nil,
             lastActiveAt: "2020-09-07T12:25:41.501574Z".toDate(),
             isOnline: true,
             isInvisible: false,
