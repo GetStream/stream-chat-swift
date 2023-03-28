@@ -229,6 +229,9 @@ public struct Components {
     /// The button that indicates unread messages at the bottom of the message list and scroll to the latest message on tap.
     public var scrollToLatestMessageButton: ScrollToLatestMessageButton.Type = ScrollToLatestMessageButton.self
 
+    /// The button that shows when there are unread messages outside the bounds of the screen. Can be tapped to scroll to them, or can be discarded.
+    public var jumpToUnreadMessagesButton: JumpToUnreadMessagesButton.Type = JumpToUnreadMessagesButton.self
+
     /// The view that shows a number of unread messages on the Scroll-To-Latest-Message button in the Message List.
     public var messageListUnreadCountView: ChatMessageListUnreadCountView.Type =
         ChatMessageListUnreadCountView.self

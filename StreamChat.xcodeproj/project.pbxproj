@@ -1771,6 +1771,9 @@
 		C1B49B402822C01C00F4E89E /* NSManagedObject+Validation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B49B3F2822C01C00F4E89E /* NSManagedObject+Validation.swift */; };
 		C1B49B412822C01C00F4E89E /* NSManagedObject+Validation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B49B3F2822C01C00F4E89E /* NSManagedObject+Validation.swift */; };
 		C1BE72732732CA62006EB51E /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = C1BE72722732CA62006EB51E /* Nuke */; };
+		C1BFBABE29CB2A7500FC82A2 /* JumpToUnreadMessagesButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BFBABD29CB2A7500FC82A2 /* JumpToUnreadMessagesButton.swift */; };
+		C1BFBABF29CB2A7500FC82A2 /* JumpToUnreadMessagesButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BFBABD29CB2A7500FC82A2 /* JumpToUnreadMessagesButton.swift */; };
+		C1BFBAC129CC42CE00FC82A2 /* JumpToUnreadMessagesButton_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BFBAC029CC42CE00FC82A2 /* JumpToUnreadMessagesButton_Tests.swift */; };
 		C1C5345A29AFDDAE006F9AF4 /* ChannelRepository_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1C5345929AFDDAE006F9AF4 /* ChannelRepository_Mock.swift */; };
 		C1C5345D29AFE526006F9AF4 /* ChannelRepository_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1C5345B29AFE4C9006F9AF4 /* ChannelRepository_Tests.swift */; };
 		C1E8AD57278C8A6E0041B775 /* SyncRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1E8AD55278C8A440041B775 /* SyncRepository.swift */; };
@@ -3578,6 +3581,8 @@
 		C1BE729A2732CB7B006EB51E /* Operation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Operation.swift; sourceTree = "<group>"; };
 		C1BE729B2732CB7B006EB51E /* ImageRequestKeys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageRequestKeys.swift; sourceTree = "<group>"; };
 		C1BE729C2732CB7B006EB51E /* LinkedList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinkedList.swift; sourceTree = "<group>"; };
+		C1BFBABD29CB2A7500FC82A2 /* JumpToUnreadMessagesButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JumpToUnreadMessagesButton.swift; sourceTree = "<group>"; };
+		C1BFBAC029CC42CE00FC82A2 /* JumpToUnreadMessagesButton_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JumpToUnreadMessagesButton_Tests.swift; sourceTree = "<group>"; };
 		C1C5345929AFDDAE006F9AF4 /* ChannelRepository_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelRepository_Mock.swift; sourceTree = "<group>"; };
 		C1C5345B29AFE4C9006F9AF4 /* ChannelRepository_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelRepository_Tests.swift; sourceTree = "<group>"; };
 		C1CE8EFD27F20C3A0091097B /* MissingEventsPayload-IncompleteChannel.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "MissingEventsPayload-IncompleteChannel.json"; sourceTree = "<group>"; };
@@ -4196,6 +4201,7 @@
 				AD470C9D26C6D9030090759A /* ChatMessageListVCDelegate.swift */,
 				79088331254876C100896F03 /* ChatMessageListView.swift */,
 				ADEE888C289C3CC0007DF3F8 /* ChatMessageListView+DiffKit.swift */,
+				C1BFBABD29CB2A7500FC82A2 /* JumpToUnreadMessagesButton.swift */,
 				BD69F5D42669392E00E9E3FA /* ScrollToLatestMessageButton.swift */,
 				E768AAFA2627691600328E6E /* TypingAnimationView.swift */,
 				E768AA882625C18D00328E6E /* TypingIndicatorView.swift */,
@@ -6260,6 +6266,7 @@
 			children = (
 				8479C7A82812FCC000FC8CFD /* ChatMessageListVC_Tests.swift */,
 				E74DB0102655473300508D22 /* TypingIndicatorView_Tests.swift */,
+				C1BFBAC029CC42CE00FC82A2 /* JumpToUnreadMessagesButton_Tests.swift */,
 				A3960DEE27DA2D2F003AB2B0 /* Attachments */,
 				A3960DEF27DA2D4B003AB2B0 /* ChatMessage */,
 				A3960DF027DA2D7D003AB2B0 /* Reactions */,
@@ -8972,6 +8979,7 @@
 				43EB3AE22671718200954323 /* AttachmentViewCatalog.swift in Sources */,
 				79F691B22604C10A000AE89B /* SystemEnvironment.swift in Sources */,
 				AD1D7A8526A2131D00494CA5 /* ChatChannelVC.swift in Sources */,
+				C1BFBABE29CB2A7500FC82A2 /* JumpToUnreadMessagesButton.swift in Sources */,
 				ADCB578528A42D7700B81AE8 /* ElementPath.swift in Sources */,
 				88AD1D5E2588B87C00ECED5B /* ChatFileAttachmentListView+ItemView.swift in Sources */,
 				88F836612578D1A80039AEC8 /* ChatMessageActionItem.swift in Sources */,
@@ -9181,6 +9189,7 @@
 				AD71131225F138D500932AEE /* ChatUserAvatarView_Tests.swift in Sources */,
 				400F063529A65DD500242A86 /* ChatMessageCell_DecorationTests.swift in Sources */,
 				AD154C6D25DC3BA000850925 /* ChatCommandSuggestionView_Tests.swift in Sources */,
+				C1BFBAC129CC42CE00FC82A2 /* JumpToUnreadMessagesButton_Tests.swift in Sources */,
 				84F373F0280D95990081E8BA /* ChatMessageDeliveryStatusView_Tests.swift in Sources */,
 				8893FEF9265F890700DD62BE /* ChatMessageBubbleView_Tests.swift in Sources */,
 				A3D9D69727EDE87C00725066 /* ImageLoader_Mock.swift in Sources */,
@@ -10584,6 +10593,7 @@
 				C121EBBD2746A1E900023E4C /* GalleryVC.swift in Sources */,
 				ADD2A99128FF0CD300A83305 /* ImageSizeCalculator.swift in Sources */,
 				C121EBBE2746A1E900023E4C /* ZoomDismissalInteractionController.swift in Sources */,
+				C1BFBABF29CB2A7500FC82A2 /* JumpToUnreadMessagesButton.swift in Sources */,
 				AD95FD1228FA038900DBDF41 /* ImageDownloadOptions.swift in Sources */,
 				C121EBBF2746A1E900023E4C /* ZoomTransitionController.swift in Sources */,
 				C121EBC02746A1E900023E4C /* ZoomAnimator.swift in Sources */,

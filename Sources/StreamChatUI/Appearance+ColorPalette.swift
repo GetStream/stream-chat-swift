@@ -45,6 +45,7 @@ public extension Appearance {
 
         public var messageCellHighlightBackground: UIColor = .streamYellowBackground
         public var pinnedMessageBackground: UIColor = .streamYellowBackground
+        public var jumpToUnreadButtonBackground: UIColor = .streamGrayDisabledText
 
         // MARK: - Borders and shadows
 
@@ -53,6 +54,7 @@ public extension Appearance {
         public var border: UIColor = .streamGrayGainsboro
         public var border2: UIColor = .streamGray
         public var border3: UIColor = .streamGrayWhisper
+        public var hoverButtonShadow: UIColor = .streamIconButtonShadow
 
         // MARK: - Tint and alert
 
@@ -101,6 +103,7 @@ private extension UIColor {
     static let streamOverlay = mode(0x000000, lightAlpha: 0.2, 0x000000, darkAlpha: 0.4)
     static let streamOverlayDark = mode(0x000000, lightAlpha: 0.6, 0xffffff, darkAlpha: 0.8)
     static let streamOverlayDarkStatic = mode(0x000000, lightAlpha: 0.6, 0x000000, darkAlpha: 0.6)
+    static let streamIconButtonShadow = mode(0x000000, lightAlpha: 0.25, 0x000000, darkAlpha: 0.25)
 
     static func mode(_ light: Int, lightAlpha: CGFloat = 1.0, _ dark: Int, darkAlpha: CGFloat = 1.0) -> UIColor {
         if #available(iOS 13.0, *) {
