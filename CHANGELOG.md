@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### 🐞 Fixed
 - Fix channel list parsing failing completely if one channel fails parsing [#2541](https://github.com/GetStream/stream-chat-swift/pull/2541)
+- Fix completion blocks not called when loading more messages [#2553](https://github.com/GetStream/stream-chat-swift/pull/2553)
 
 ## StreamChatUI
 ### ✅ Added

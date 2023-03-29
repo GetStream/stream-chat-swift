@@ -2038,8 +2038,14 @@ final class ChannelController_Tests: XCTestCase {
             )))
 
         // Since the messages have been all loaded already, the second call
-        // to load the previous message should not make any request
-        controller.loadPreviousMessages(before: messageId, limit: pageSize)
+        // to load the previous message should not make any request but should call the completion block
+        let exp = expectation(description: "should still call the completion block")
+        controller.loadPreviousMessages(before: messageId, limit: pageSize) { error in
+            XCTAssertNil(error)
+            exp.fulfill()
+        }
+
+        waitForExpectations(timeout: defaultTimeout)
 
         // Wait for the first load to be completed
         AssertAsync.willBeTrue(firstLoadCompletionCalled)
@@ -2055,8 +2061,14 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(controller.isLoadingPreviousMessages, true)
 
         // Since the messages have been all loaded already, the second call
-        // to load the previous message should not make any request
-        controller.loadPreviousMessages(before: .unique)
+        // to load the previous message should not make any request but should call the completion block
+        let exp = expectation(description: "should still call the completion block")
+        controller.loadPreviousMessages(before: .unique) { error in
+            XCTAssertNil(error)
+            exp.fulfill()
+        }
+
+        waitForExpectations(timeout: defaultTimeout)
 
         // Make sure the channel updater is only called the first time
         AssertAsync.willBeEqual(env.channelUpdater?.update_callCount, 1)
@@ -2359,7 +2371,13 @@ final class ChannelController_Tests: XCTestCase {
             withAllNextMessagesLoaded: true
         )
 
-        controller.loadNextMessages()
+        let exp = expectation(description: "should still call the completion block")
+        controller.loadNextMessages() { error in
+            XCTAssertNil(error)
+            exp.fulfill()
+        }
+
+        waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertEqual(env.channelUpdater?.update_callCount, 0)
     }
@@ -2374,7 +2392,12 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(env.channelUpdater?.update_callCount, 1)
 
         // Second call should not increment the call count
-        controller.loadNextMessages(after: .unique)
+        let exp = expectation(description: "should still call the completion block")
+        controller.loadNextMessages(after: .unique) { error in
+            XCTAssertNil(error)
+            exp.fulfill()
+        }
+        waitForExpectations(timeout: defaultTimeout)
         XCTAssertEqual(env.channelUpdater?.update_callCount, 1)
     }
 
@@ -2546,7 +2569,12 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(controller.isLoadingMiddleMessages, true)
         XCTAssertEqual(env.channelUpdater?.update_callCount, 1)
 
-        controller.loadPageAroundMessageId(.unique)
+        let exp = expectation(description: "should still call the completion block")
+        controller.loadPageAroundMessageId(.unique) { error in
+            XCTAssertNil(error)
+            exp.fulfill()
+        }
+        waitForExpectations(timeout: defaultTimeout)
         XCTAssertEqual(controller.isLoadingMiddleMessages, true)
         XCTAssertEqual(env.channelUpdater?.update_callCount, 1)
     }
