@@ -8,9 +8,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix channel list parsing failing completely if one channel fails parsing [#2541](https://github.com/GetStream/stream-chat-swift/pull/2541)
 
 ## StreamChatUI
+### 🔄 Changed
+- Deprecated `ChatMessageListVC.jumpToMessage(message:)` -> `ChatMessageListVC.jumpToMessage(id:)` [#2546](https://github.com/GetStream/stream-chat-swift/pull/2546)
+- Deprecated `ChatMessageListVCDelegate.chatMessageListVC(vc:shouldLoadPageAroundMessage:completion:)` -> `ChatMessageListVCDelegate.chatMessageListVC(vc:shouldLoadPageAroundMessageId:completion:)` [#2546](https://github.com/GetStream/stream-chat-swift/pull/2546)
 ### ✅ Added
 - Allow the message list to start at the top if `Components.shouldMessagesStartAtTheTop` is enabled [#2537](https://github.com/GetStream/stream-chat-swift/pull/2537)
-
+- Add support for jumping to message when opening channel [#2546](https://github.com/GetStream/stream-chat-swift/pull/2546)
+- Add `ChatChannelVC.jumpToMessage(id:shouldHighlight)` high-level function for jumping to a message [#2546](https://github.com/GetStream/stream-chat-swift/pull/2546)
 ### 🐞 Fixed
 - Fix channel marking read when view is not visible [#2544](https://github.com/GetStream/stream-chat-swift/pull/2544)
 
