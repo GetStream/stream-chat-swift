@@ -185,6 +185,7 @@ extension ChatChannelMember {
             userRole: UserRole(rawValue: dto.user.userRoleRaw),
             userCreatedAt: dto.user.userCreatedAt.bridgeDate,
             userUpdatedAt: dto.user.userUpdatedAt.bridgeDate,
+            deactivatedAt: dto.user.userDeactivatedAt?.bridgeDate,
             lastActiveAt: dto.user.lastActivityAt?.bridgeDate,
             teams: Set(dto.user.teams),
             extraData: extraData,

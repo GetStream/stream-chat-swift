@@ -17,6 +17,7 @@ final class UserPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.createdAt, "2019-12-12T15:33:46.488935Z".toDate())
         XCTAssertEqual(payload.lastActiveAt, "2020-06-10T13:24:00.501797Z".toDate())
         XCTAssertEqual(payload.updatedAt, "2020-06-10T14:11:29.946106Z".toDate())
+        XCTAssertNil(payload.deactivatedAt)
         XCTAssertEqual(payload.name, "Broken Waterfall")
         XCTAssertEqual(
             payload.imageURL,
@@ -34,6 +35,7 @@ final class UserPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.createdAt, "2019-12-12T15:33:46.488935Z".toDate())
         XCTAssertEqual(payload.lastActiveAt, "2020-06-10T13:24:00.501797Z".toDate())
         XCTAssertEqual(payload.updatedAt, "2020-06-10T14:11:29.946106Z".toDate())
+        XCTAssertNil(payload.deactivatedAt)
         XCTAssertEqual(payload.role, .user)
         XCTAssertEqual(payload.isOnline, true)
         XCTAssertEqual(payload.teams.count, 3)
@@ -50,12 +52,33 @@ final class UserPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.createdAt, "2020-06-09T18:33:04.070518Z".toDate())
         XCTAssertEqual(payload.lastActiveAt, "2020-06-09T18:33:04.075114Z".toDate())
         XCTAssertEqual(payload.updatedAt, "2020-06-09T18:33:04.078929Z".toDate())
+        XCTAssertNil(payload.deactivatedAt)
         XCTAssertEqual(
             payload.imageURL,
             URL(string: "https://getstream.io/random_png/?name=Bitter+cloud")!
         )
         XCTAssertEqual(payload.teams.count, 3)
         XCTAssertEqual(payload.role, .guest)
+        XCTAssertEqual(payload.isOnline, true)
+    }
+
+    func test_deactivatedUserJSON_isSerialized() throws {
+        let deactivatedUserJSON = XCTestCase.mockData(fromJSONFile: "DeactivatedUser")
+        let payload = try JSONDecoder.default.decode(UserPayload.self, from: deactivatedUserJSON)
+        XCTAssertEqual(payload.id, "deactivated-5")
+        XCTAssertEqual(payload.isBanned, false)
+        XCTAssertEqual(payload.isOnline, true)
+        XCTAssertEqual(payload.name, "Deactivated Waterfall")
+        XCTAssertEqual(payload.createdAt, "2019-12-12T15:33:46.488935Z".toDate())
+        XCTAssertEqual(payload.lastActiveAt, "2020-06-10T13:24:00.501797Z".toDate())
+        XCTAssertEqual(payload.updatedAt, "2020-06-10T14:11:29.946106Z".toDate())
+        XCTAssertEqual(payload.deactivatedAt, "2017-05-09T13:32:30.628Z".toDate())
+        XCTAssertEqual(
+            payload.imageURL,
+            URL(string: "https://getstream.io/random_svg/?id=deactivated-waterfall-5&amp;name=Deactivated+waterfall")!
+        )
+        XCTAssertEqual(payload.teams.count, 3)
+        XCTAssertEqual(payload.role, .user)
         XCTAssertEqual(payload.isOnline, true)
     }
 }

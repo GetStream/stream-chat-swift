@@ -13,6 +13,7 @@ enum UserPayloadsCodingKeys: String, CodingKey, CaseIterable {
     case isBanned = "banned"
     case createdAt = "created_at"
     case updatedAt = "updated_at"
+    case deactivatedAt = "deactivated_at"
     case lastActiveAt = "last_active"
     case isInvisible = "invisible"
     case teams
@@ -35,6 +36,7 @@ class UserPayload: Decodable {
     let role: UserRole
     let createdAt: Date
     let updatedAt: Date
+    let deactivatedAt: Date?
     let lastActiveAt: Date?
     let isOnline: Bool
     let isInvisible: Bool
@@ -49,6 +51,7 @@ class UserPayload: Decodable {
         role: UserRole,
         createdAt: Date,
         updatedAt: Date,
+        deactivatedAt: Date?,
         lastActiveAt: Date?,
         isOnline: Bool,
         isInvisible: Bool,
@@ -62,6 +65,7 @@ class UserPayload: Decodable {
         self.role = role
         self.createdAt = createdAt
         self.updatedAt = updatedAt
+        self.deactivatedAt = deactivatedAt
         self.lastActiveAt = lastActiveAt
         self.isOnline = isOnline
         self.isInvisible = isInvisible
@@ -80,6 +84,7 @@ class UserPayload: Decodable {
         role = try container.decode(UserRole.self, forKey: .role)
         createdAt = try container.decode(Date.self, forKey: .createdAt)
         updatedAt = try container.decode(Date.self, forKey: .updatedAt)
+        deactivatedAt = try container.decodeIfPresent(Date.self, forKey: .deactivatedAt)
         lastActiveAt = try container.decodeIfPresent(Date.self, forKey: .lastActiveAt)
         isOnline = try container.decode(Bool.self, forKey: .isOnline)
         isInvisible = try container.decodeIfPresent(Bool.self, forKey: .isInvisible) ?? false

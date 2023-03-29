@@ -43,8 +43,16 @@ public class ChatUser {
     /// The date the user info was updated the last time.
     public let userUpdatedAt: Date
 
+    /// The date the user was deactivated
+    public let userDeactivatedAt: Date?
+
     /// The date the user was last time active.
     public let lastActiveAt: Date?
+
+    /// Determines if the user has been deactivated
+    public var isDeactivated: Bool {
+        userDeactivatedAt != nil
+    }
 
     /// Teams the user belongs to.
     ///
@@ -64,6 +72,7 @@ public class ChatUser {
         userRole: UserRole,
         createdAt: Date,
         updatedAt: Date,
+        deactivatedAt: Date?,
         lastActiveAt: Date?,
         teams: Set<TeamId>,
         extraData: [String: RawJSON]
@@ -77,6 +86,7 @@ public class ChatUser {
         self.userRole = userRole
         userCreatedAt = createdAt
         userUpdatedAt = updatedAt
+        userDeactivatedAt = deactivatedAt
         self.lastActiveAt = lastActiveAt
         self.teams = teams
         self.extraData = extraData

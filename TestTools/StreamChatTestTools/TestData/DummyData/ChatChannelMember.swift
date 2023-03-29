@@ -17,6 +17,7 @@ extension ChatChannelMember {
             userRole: .user,
             userCreatedAt: .unique,
             userUpdatedAt: .unique,
+            deactivatedAt: nil,
             lastActiveAt: .unique,
             teams: [],
             extraData: [:],

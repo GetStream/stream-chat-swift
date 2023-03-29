@@ -18,6 +18,7 @@ class UserDTO: NSManagedObject {
     @NSManaged var userCreatedAt: DBDate
     @NSManaged var userRoleRaw: String
     @NSManaged var userUpdatedAt: DBDate
+    @NSManaged var userDeactivatedAt: DBDate?
 
     @NSManaged var flaggedBy: CurrentUserDTO?
 
@@ -125,6 +126,7 @@ extension NSManagedObjectContext: UserDatabaseSession {
         dto.userCreatedAt = payload.createdAt.bridgeDate
         dto.userRoleRaw = payload.role.rawValue
         dto.userUpdatedAt = payload.updatedAt.bridgeDate
+        dto.userDeactivatedAt = payload.deactivatedAt?.bridgeDate
 
         do {
             dto.extraData = try JSONEncoder.default.encode(payload.extraData)
@@ -230,6 +232,7 @@ extension ChatUser {
             userRole: UserRole(rawValue: dto.userRoleRaw),
             createdAt: dto.userCreatedAt.bridgeDate,
             updatedAt: dto.userUpdatedAt.bridgeDate,
+            deactivatedAt: dto.userDeactivatedAt?.bridgeDate,
             lastActiveAt: dto.lastActivityAt?.bridgeDate,
             teams: Set(dto.teams),
             extraData: extraData
