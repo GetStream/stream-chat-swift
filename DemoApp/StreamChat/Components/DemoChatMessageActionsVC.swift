@@ -25,7 +25,9 @@ final class DemoChatMessageActionsVC: ChatMessageActionsVC {
             actions.append(translateActionItem())
         }
 
-        actions.append(messageDebugActionItem())
+        if AppConfig.shared.demoAppConfig.isMessageDebuggerEnabled {
+            actions.append(messageDebugActionItem())
+        }
 
         return actions
     }
