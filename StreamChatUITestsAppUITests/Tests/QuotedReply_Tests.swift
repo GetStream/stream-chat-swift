@@ -35,18 +35,18 @@ final class QuotedReply_Tests: StreamTestCase {
         WHEN("user adds a quoted reply to participant message") {
             userRobot
                 .scrollMessageListUp(times: 4)
-                .replyToMessage(quotedMessage, messageCellIndex: messageCount - 1)
+                .quoteMessage(quotedMessage, messageCellIndex: messageCount - 1)
                 .waitForMessageVisibility(at: 0)
         }
-        THEN("user observes the reply in message list") {
+        THEN("user observes the quote reply in message list") {
             userRobot
                 .assertQuotedMessage(replyText: quotedMessage, quotedText: parentMessage)
                 .assertScrollToBottomButton(isVisible: false)
         }
-        WHEN("user taps on a replied message") {
-            userRobot.tapOnRepliedMessage(parentMessage, at: 0)
+        WHEN("user taps on a quoted message") {
+            userRobot.tapOnQuotedMessage(parentMessage, at: 0)
         }
-        THEN("user is scrolled up to the parent message") {
+        THEN("user is scrolled up to the quoted message") {
             userRobot
                 .assertMessageIsVisible(at: messageCount)
                 .assertScrollToBottomButton(isVisible: true)
@@ -63,18 +63,18 @@ final class QuotedReply_Tests: StreamTestCase {
             userRobot.login().openChannel()
         }
         WHEN("participant adds a quoted reply") {
-            participantRobot.replyToMessage(quotedMessage, toLastMessage: false)
+            participantRobot.quoteMessage(quotedMessage, toLastMessage: false)
             userRobot.waitForMessageVisibility(at: 0)
         }
-        THEN("user observes the reply in message list") {
+        THEN("user observes the quote reply in message list") {
             userRobot
                 .assertQuotedMessage(replyText: quotedMessage, quotedText: parentMessage)
                 .assertScrollToBottomButton(isVisible: false)
         }
-        WHEN("user taps on a replied message") {
-            userRobot.tapOnRepliedMessage(parentMessage, at: 0)
+        WHEN("user taps on a quoted message") {
+            userRobot.tapOnQuotedMessage(parentMessage, at: 0)
         }
-        THEN("user is scrolled up to the parent message") {
+        THEN("user is scrolled up to the quoted message") {
             userRobot
                 .assertMessageIsVisible(at: messageCount)
                 .assertScrollToBottomButton(isVisible: true)
@@ -91,18 +91,18 @@ final class QuotedReply_Tests: StreamTestCase {
         WHEN("user adds a quoted reply to participant message") {
             userRobot
                 .scrollMessageListUp(times: 4)
-                .replyToMessage(quotedMessage, messageCellIndex: messageCount - 1)
+                .quoteMessage(quotedMessage, messageCellIndex: messageCount - 1)
                 .waitForMessageVisibility(at: 0)
         }
-        THEN("user observes the reply in message list") {
+        THEN("user observes the quote reply in message list") {
             userRobot
                 .assertQuotedMessage(replyText: quotedMessage, quotedText: parentMessage)
                 .assertScrollToBottomButton(isVisible: false)
         }
-        WHEN("user taps on a replied message") {
-            userRobot.tapOnRepliedMessage(parentMessage, at: 0)
+        WHEN("user taps on a quoted message") {
+            userRobot.tapOnQuotedMessage(parentMessage, at: 0)
         }
-        THEN("user is scrolled up to the parent message") {
+        THEN("user is scrolled up to the quoted message") {
             userRobot
                 .assertMessageIsVisible(at: messageCount)
                 .assertScrollToBottomButton(isVisible: true)
@@ -117,18 +117,18 @@ final class QuotedReply_Tests: StreamTestCase {
             userRobot.login().openChannel()
         }
         WHEN("participant adds a quoted reply") {
-            participantRobot.replyToMessage(quotedMessage, toLastMessage: false)
+            participantRobot.quoteMessage(quotedMessage, toLastMessage: false)
             userRobot.waitForMessageVisibility(at: 0)
         }
-        THEN("user observes the reply in message list") {
+        THEN("user observes the quote reply in message list") {
             userRobot
                 .assertQuotedMessage(replyText: quotedMessage, quotedText: parentMessage)
                 .assertScrollToBottomButton(isVisible: false)
         }
-        WHEN("user taps on a replied message") {
-            userRobot.tapOnRepliedMessage(parentMessage, at: 0)
+        WHEN("user taps on a quoted message") {
+            userRobot.tapOnQuotedMessage(parentMessage, at: 0)
         }
-        THEN("user is scrolled up to the parent message") {
+        THEN("user is scrolled up to the quoted message") {
             userRobot
                 .assertMessageIsVisible(at: messageCount)
                 .assertScrollToBottomButton(isVisible: true)
@@ -146,16 +146,16 @@ final class QuotedReply_Tests: StreamTestCase {
             participantRobot.uploadAttachment(type: .file, asReplyToFirstMessage: true)
             userRobot.waitForMessageVisibility(at: 0)
         }
-        THEN("user observes the reply in message list") {
+        THEN("user observes the quote reply in message list") {
             userRobot
                 .assertFile(isPresent: true)
                 .assertQuotedMessage(quotedText: parentMessage)
                 .assertScrollToBottomButton(isVisible: false)
         }
-        WHEN("user taps on a replied message") {
-            userRobot.tapOnRepliedMessage(parentMessage, at: 0)
+        WHEN("user taps on a quoted message") {
+            userRobot.tapOnQuotedMessage(parentMessage, at: 0)
         }
-        THEN("user is scrolled up to the parent message") {
+        THEN("user is scrolled up to the quoted message") {
             userRobot
                 .assertMessageIsVisible(at: messageCount)
                 .assertScrollToBottomButton(isVisible: true)
@@ -173,16 +173,16 @@ final class QuotedReply_Tests: StreamTestCase {
             participantRobot.replyWithGiphy(toLastMessage: false)
             userRobot.waitForMessageVisibility(at: 0)
         }
-        THEN("user observes the reply in message list") {
+        THEN("user observes the quote reply in message list") {
             userRobot
                 .assertGiphyImage()
                 .assertQuotedMessage(quotedText: parentMessage)
                 .assertScrollToBottomButton(isVisible: false)
         }
-        WHEN("user taps on a replied message") {
-            userRobot.tapOnRepliedMessage(parentMessage, at: 0)
+        WHEN("user taps on a quoted message") {
+            userRobot.tapOnQuotedMessage(parentMessage, at: 0)
         }
-        THEN("user is scrolled up to the parent message") {
+        THEN("user is scrolled up to the quoted message") {
             userRobot
                 .assertMessageIsVisible(at: messageCount)
                 .assertScrollToBottomButton(isVisible: true)
@@ -197,7 +197,7 @@ final class QuotedReply_Tests: StreamTestCase {
             userRobot.login().openChannel()
         }
         AND("participant adds a quoted reply") {
-            participantRobot.replyToMessage(quotedMessage)
+            participantRobot.quoteMessage(quotedMessage)
         }
         WHEN("participant deletes a quoted message") {
             participantRobot.deleteMessage()
@@ -215,7 +215,7 @@ final class QuotedReply_Tests: StreamTestCase {
             userRobot.login().openChannel()
         }
         AND("user adds a quoted reply") {
-            userRobot.replyToMessage(quotedMessage)
+            userRobot.quoteMessage(quotedMessage)
         }
         WHEN("user deletes a quoted message") {
             userRobot.deleteMessage()
@@ -237,13 +237,13 @@ final class QuotedReply_Tests: StreamTestCase {
         WHEN("user adds a quoted reply to participant message") {
             userRobot
                 .scrollMessageListUp(times: 4)
-                .replyToMessage(quotedMessage, messageCellIndex: messageCount - 1)
+                .quoteMessage(quotedMessage, messageCellIndex: messageCount - 1)
         }
         AND("user sends a message with invalid command") {
             userRobot.sendMessage("/\(invalidCommand)", waitForAppearance: false)
         }
-        AND("user taps on a replied message") {
-            userRobot.tapOnRepliedMessage(parentMessage, at: 0)
+        AND("user taps on a quoted message") {
+            userRobot.tapOnQuotedMessage(parentMessage, at: 0)
         }
         THEN("user observes error message") {
             userRobot

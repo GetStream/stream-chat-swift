@@ -224,7 +224,7 @@ public class ParticipantRobot {
     }
 
     @discardableResult
-    public func replyToMessage(_ text: String, toLastMessage: Bool = true) -> Self {
+    public func quoteMessage(_ text: String, toLastMessage: Bool = true) -> Self {
         startTyping()
         stopTyping()
 

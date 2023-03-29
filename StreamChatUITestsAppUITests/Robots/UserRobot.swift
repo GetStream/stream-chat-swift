@@ -200,11 +200,11 @@ extension UserRobot {
     }
 
     @discardableResult
-    func replyToMessage(_ text: String,
-                        messageCellIndex: Int = 0,
-                        waitForAppearance: Bool = true,
-                        file: StaticString = #filePath,
-                        line: UInt = #line) -> Self {
+    func quoteMessage(_ text: String,
+                      messageCellIndex: Int = 0,
+                      waitForAppearance: Bool = true,
+                      file: StaticString = #filePath,
+                      line: UInt = #line) -> Self {
         selectOptionFromContextMenu(option: .reply, forMessageAtIndex: messageCellIndex)
         sendMessage(text,
                     waitForAppearance: waitForAppearance,
@@ -233,7 +233,7 @@ extension UserRobot {
     }
     
     @discardableResult
-    func tapOnRepliedMessage(_ text: String, at messageCellIndex: Int? = 0) -> Self {
+    func tapOnQuotedMessage(_ text: String, at messageCellIndex: Int? = 0) -> Self {
         let messageCell = messageCell(withIndex: messageCellIndex)
         MessageListPage
             .Attributes
