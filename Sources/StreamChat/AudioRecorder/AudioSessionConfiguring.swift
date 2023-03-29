@@ -17,6 +17,13 @@ public protocol AudioSessionConfiguring {
 
     func deactivateRecordingSession() throws
 
+    func activatePlaybackSession(
+        mode: AVAudioSession.Mode,
+        policy: AVAudioSession.RouteSharingPolicy
+    ) throws
+
+    func deactivatePlaybackSession() throws
+
     func requestRecordPermission(
         _ completionHandler: @escaping (Bool) -> Void
     )
@@ -58,24 +65,63 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring {
     }
 
     open func deactivateRecordingSession() throws {
+        guard audioSession.category == .record || audioSession.category == .playAndRecord else {
+            return
+        }
 //        try audioSession.setActive(false)
+    }
+
+    open func activatePlaybackSession(
+        mode: AVAudioSession.Mode,
+        policy: AVAudioSession.RouteSharingPolicy
+    ) throws {
+        guard audioSession.category != .playback && audioSession.category != .playback else {
+            try audioSession.setActive(true)
+            return
+        }
+        try audioSession.setCategory(.playback, mode: mode, policy: policy)
+        try audioSession.setActive(true)
+    }
+
+    open func deactivatePlaybackSession() throws {
+        guard audioSession.category == .playback || audioSession.category == .playback else {
+            return
+        }
+        try audioSession.setActive(false)
     }
 
     open func requestRecordPermission(
         _ completionHandler: @escaping (Bool) -> Void
     ) {
-        guard audioSession.recordPermission != .granted else {
-            completionHandler(true)
-            return
-        }
-        audioSession.requestRecordPermission { allowed in
-            DispatchQueue.main.async {
-                completionHandler(allowed)
-            }
+        audioSession.requestRecordPermission { [weak self] in
+            self?.handleRecordPermissionResponse($0, completionHandler: completionHandler)
         }
     }
 
     // MARK: - Helpers
+
+    private func handleRecordPermissionResponse(
+        _ permissionGranted: Bool,
+        completionHandler: @escaping (Bool) -> Void
+    ) {
+        guard Thread.isMainThread else {
+            DispatchQueue.main.async { [weak self] in
+                self?.handleRecordPermissionResponse(
+                    permissionGranted,
+                    completionHandler: completionHandler
+                )
+            }
+            return
+        }
+
+        if permissionGranted {
+            log.debug("🎤 Request Permission: ✅", subsystems: .audioRecording)
+        } else {
+            log.warning("🎤 Request Permission: ❌", subsystems: .audioRecording)
+        }
+
+        completionHandler(permissionGranted)
+    }
 
     private func setUpPreferredInput(
         _ preferredInput: AVAudioSession.Port

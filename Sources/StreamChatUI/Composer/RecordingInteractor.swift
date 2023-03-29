@@ -8,8 +8,10 @@ import UIKit
 
 public enum RecordingState {
     case notRecording
+    case cancelled
     case possibleRecording
     case recording
+    case sendImmediately
     case stopped
     case locked
     case replaying
@@ -22,6 +24,8 @@ open class RecordingAdapter: AudioRecordingDelegate, AudioPlayingDelegate {
     private let addFloatingViewHandler: (UIView) -> Void
     private let updateContentHandler: (URL) -> Void
     private let clearMessageHandler: () -> Void
+
+    private var almostCancelled = false
 
     open private(set) lazy var audioRecorder: AudioRecording = composerView
         .components
@@ -99,17 +103,26 @@ open class RecordingAdapter: AudioRecordingDelegate, AudioPlayingDelegate {
             self?.state = .recording
         }
 
-        composerView.recordButton.completedLongPressHandler = { [weak self] in
-            guard self?.state != .locked else { return }
-            self?.state = .notRecording
+        biDirectionalPanGestureRecognizer.shouldReceiveEventHandler = { [weak self] in
+            guard let state = self?.state else { return false }
+            switch state {
+            case .recording, .notRecording:
+                return true
+            default:
+                return false
+            }
         }
-
         biDirectionalPanGestureRecognizer.horizontalMovementHandler = { [weak self] in self?.didMoveTouchHorizontal(at: $0) }
         biDirectionalPanGestureRecognizer.verticalMovementHandler = { [weak self] in self?.didMoveTouchVertically(at: $0) }
         composerView.addGestureRecognizer(biDirectionalPanGestureRecognizer)
+        biDirectionalPanGestureRecognizer.completionHandler = { [weak self] in
+            if self?.state == .recording {
+                self?.state = .sendImmediately
+            }
+        }
 
         discardButton.didTapHandler = { [weak self] in
-            self?.clearMessageHandler()
+            self?.audioRecorder.deleteRecording()
             self?.state = .notRecording
         }
 
@@ -157,7 +170,8 @@ open class RecordingAdapter: AudioRecordingDelegate, AudioPlayingDelegate {
             return
         }
 
-        state = .notRecording
+        almostCancelled = true
+        state = .cancelled
     }
 
     open func didMoveTouchVertically(
@@ -167,7 +181,7 @@ open class RecordingAdapter: AudioRecordingDelegate, AudioPlayingDelegate {
             return
         }
 
-        debugPrint("[\(type(of: self)) Current vertical position in composerView is \(point)]")
+//        debugPrint("[\(type(of: self)) Current vertical position in composerView is \(point)]")
         let diff = composerView.bounds.size.height - point
 
         guard diff > 50 else {
@@ -179,6 +193,7 @@ open class RecordingAdapter: AudioRecordingDelegate, AudioPlayingDelegate {
     }
 
     @objc open func didTapSend(_ sender: UIButton) {
+        // TODO: Handle when send is being tapped in locked or recording state
         state = .notRecording
     }
 
@@ -216,9 +231,9 @@ open class RecordingAdapter: AudioRecordingDelegate, AudioPlayingDelegate {
 
         case (_, .notRecording):
             audioRecorder.stopRecording()
-            audioRecorder.deleteRecording()
             recordingWithPlaybackView.content = .init(inPlaybackMode: false, isPlaying: false, interval: 0)
             recordingView.content = 0
+            almostCancelled = false
 
             Animate { [weak self] in
                 guard let self = self else { return }
@@ -234,6 +249,8 @@ open class RecordingAdapter: AudioRecordingDelegate, AudioPlayingDelegate {
                     subview.superview.map { _ in self.composerView.centerContainer.removeArrangedSubview(subview) }
                 }
 
+                self.recordingView.reset()
+                self.recordingWithPlaybackView.reset()
                 self.recordingWithPlaybackView.removeFromSuperview()
                 self.composerView.headerView.isHidden = true
                 self.composerView.recordButton.isHidden = false
@@ -247,6 +264,7 @@ open class RecordingAdapter: AudioRecordingDelegate, AudioPlayingDelegate {
                 self.lockView.content = false
                 self.composerView.sendButton.isEnabled = false
                 self.audioPlayer.clearUpQueue()
+                self.clearMessageHandler()
             }
 
         case (.notRecording, .possibleRecording):
@@ -255,6 +273,7 @@ open class RecordingAdapter: AudioRecordingDelegate, AudioPlayingDelegate {
         case (.possibleRecording, .recording):
             addFloatingViewHandler(floatingContainer)
             lockView.isHidden = false
+            audioRecorder.beginRecording()
             Animate { [composerView, recordingView, slideToCancelView, floatingContainer] in
                 composerView.centerContainer.insertArrangedSubview(recordingView, at: 0)
                 composerView.centerContainer.insertArrangedSubview(slideToCancelView, at: 1)
@@ -263,10 +282,18 @@ open class RecordingAdapter: AudioRecordingDelegate, AudioPlayingDelegate {
                 composerView.sendButton.isHidden = true
                 floatingContainer.isHidden = false
             }
-            audioRecorder.beginRecording()
+
+        case (.recording, .cancelled):
+            audioRecorder.stopRecording()
+            audioRecorder.deleteRecording()
+            state = .notRecording
+
+        case (.recording, .sendImmediately):
+            audioRecorder.stopRecording()
 
         case (.recording, .locked):
             composerView.headerView.embed(recordingWithPlaybackView)
+            recordingWithPlaybackView.updateContent()
             Animate { [slideToCancelView, stopButton, recordingView, composerView, lockView] in
                 composerView.centerContainer.insertArrangedSubview(stopButton, at: 1)
                 lockView.content = true
@@ -295,7 +322,9 @@ open class RecordingAdapter: AudioRecordingDelegate, AudioPlayingDelegate {
 
         case (.stopped, .replaying):
             audioPlayer.clearUpQueue()
-            audioPlayer.loadAsset(from: audioRecorder.storageURL.standardizedFileURL, andConnectDelegate: self)
+            if let url = audioRecorder.recordingURL {
+                audioPlayer.loadAsset(from: url, andConnectDelegate: self)
+            }
         case (.paused, .replaying):
             audioPlayer.play()
         case (.replaying, .paused):
@@ -313,8 +342,9 @@ open class RecordingAdapter: AudioRecordingDelegate, AudioPlayingDelegate {
         state = .recording
     }
 
-    open func audioRecorder(_ audioRecorder: AudioRecording, didFailRecording error: Error) {
+    open func audioRecorder(_ audioRecorder: AudioRecording, didFailOperationWithError error: Error) {
         debugPrint("[\(type(of: self)) \(#function)] error: \(error)")
+        state = .notRecording
     }
 
     open func audioRecorderDidPauseRecording(_ audioRecorder: AudioRecording) {
@@ -325,10 +355,14 @@ open class RecordingAdapter: AudioRecordingDelegate, AudioPlayingDelegate {
         debugPrint("[\(type(of: self)) \(#function)]")
     }
 
-    open func audioRecorderDidFinishRecording(_ audioRecorder: AudioRecording, url: URL?) {
-        debugPrint("[\(type(of: self)) \(#function)] url :\(url)")
-        if let url = url {
-            updateContentHandler(url.standardizedFileURL)
+    open func audioRecorderDidFinishRecording(_ audioRecorder: AudioRecording, url: URL) {
+        guard state != .notRecording && state != .cancelled else {
+            return
+        }
+        debugPrint("[\(type(of: self)) \(#function)] url: \(url)")
+        updateContentHandler(url)
+        if state == .sendImmediately {
+            composerView.sendButton.sendActions(for: .touchUpInside)
         }
     }
 
@@ -341,8 +375,8 @@ open class RecordingAdapter: AudioRecordingDelegate, AudioPlayingDelegate {
         )
     }
 
-    open func audioRecorderDeletedRecording(_ audioRecorder: AudioRecording, error: Error?) {
-        debugPrint("[\(type(of: self)) \(#function)] error: \(error)")
+    open func audioRecorderDeletedRecording(_ audioRecorder: AudioRecording) {
+        debugPrint("[\(type(of: self)) \(#function)]")
     }
 
     open func audioRecorderBeginInterruption(_ audioRecorder: AudioRecording) {
@@ -353,16 +387,13 @@ open class RecordingAdapter: AudioRecordingDelegate, AudioPlayingDelegate {
         debugPrint("[\(type(of: self)) \(#function)]")
     }
 
-    open func audioRecorderEncodingFailed(_ audioRecorder: AudioRecording, error: Error?) {
-        debugPrint("[\(type(of: self)) \(#function)] error: \(error)")
-    }
-
     // MARK: - AudioPlayingDelegate
 
     public func audioPlayer(
         _ audioPlayer: AudioPlaying,
         didUpdateContext context: AudioPlaybackContext
     ) {
+        debugPrint("[\(type(of: self)) \(#function)] state: \(state) context.state: \(context.state)")
         guard state == .paused || state == .replaying || state == .stopped else {
             return
         }
@@ -446,6 +477,10 @@ open class RecordingView: _View, ThemeProvider {
         recordingButton.isUserInteractionEnabled = false
     }
 
+    func reset() {
+        updateContent()
+    }
+
     override open func setUpLayout() {
         super.setUpLayout()
         recordingButton.pin(anchors: [.width], to: 28)
@@ -495,8 +530,9 @@ open class RecordingAndPlaybackView: _View, ThemeProvider {
     open lazy var waveformView: UISlider = .init()
         .withoutAutoresizingMaskConstraints
 
-    override open func setUp() {
-        super.setUp()
+    func reset() {
+        waveformView.maximumValue = 0
+        updateContent()
     }
 
     override open func setUpLayout() {
@@ -653,6 +689,7 @@ open class LockView: _View, ThemeProvider {
         }
         lockImageView.tintColor = content ? appearance.colorPalette.accentPrimary : appearance.colorPalette.textLowEmphasis
         chevronImageView.tintColor = lockImageView.tintColor
+        container.layer.cornerRadius = container.bounds.width / 2.0
     }
 
     override open func updateContent() {
@@ -690,23 +727,21 @@ open class WaveFormView: _View, ThemeProvider {
     }
 
     override open func updateContent() {
-        guard let content = content else { return }
+//        guard let content = content else { return }
     }
 }
 
 // MARK: - Helpers
 
 open class BiDirectionalPanGestureRecognizer: UIPanGestureRecognizer, UIGestureRecognizerDelegate {
+    open var shouldReceiveEventHandler: (() -> Bool)?
     open var horizontalMovementHandler: ((CGFloat) -> Void)?
     open var verticalMovementHandler: ((CGFloat) -> Void)?
 
+    open var completionHandler: (() -> Void)?
+
     private var horizontalPoint: CGFloat = 0
     private var verticalPoint: CGFloat = 0
-
-    public init() {
-        super.init(target: nil, action: nil)
-        delegate = self
-    }
 
     override open func reset() {
         super.reset()
@@ -714,19 +749,42 @@ open class BiDirectionalPanGestureRecognizer: UIPanGestureRecognizer, UIGestureR
         verticalPoint = view?.bounds.height ?? 0
     }
 
-    override open func touchesBegan(
-        _ touches: Set<UITouch>,
-        with event: UIEvent
-    ) {
-        super.touchesBegan(touches, with: event)
+    init() {
+        super.init(target: nil, action: nil)
+        delegate = self
+    }
+
+    // NOTE: It seems that it's required to implement at least one shouldReceive
+    // delegate method for the shouldBegin to be called
+    public func gestureRecognizer(
+        _ gestureRecognizer: UIGestureRecognizer,
+        shouldReceive touch: UITouch
+    ) -> Bool {
+        let result = shouldReceiveEventHandler?() ?? false
+        debugPrint("[\(type(of: self))]\(#function) touch returns \(result)")
+        return result
+    }
+
+    public func gestureRecognizerShouldBegin(
+        _ gestureRecognizer: UIGestureRecognizer
+    ) -> Bool {
         horizontalPoint = view?.bounds.width ?? 0
         verticalPoint = view?.bounds.height ?? 0
+        return true
+    }
+
+    public func gestureRecognizer(
+        _ gestureRecognizer: UIGestureRecognizer,
+        shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
+    ) -> Bool {
+        true
     }
 
     override open func touchesMoved(
         _ touches: Set<UITouch>,
         with event: UIEvent
     ) {
+//        debugPrint("[\(type(of: self))]\(#function)")
         super.touchesMoved(touches, with: event)
         let velocity = self.velocity(in: view)
         let isHorizontalMovement = abs(velocity.x) >= abs(velocity.y)
@@ -740,13 +798,15 @@ open class BiDirectionalPanGestureRecognizer: UIPanGestureRecognizer, UIGestureR
             verticalMovementHandler?(verticalPoint)
         }
 
+        state = .changed
         setTranslation(.zero, in: view)
     }
 
-    public func gestureRecognizer(
-        _ gestureRecognizer: UIGestureRecognizer,
-        shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
-    ) -> Bool {
-        true
+    override open func touchesEnded(
+        _ touches: Set<UITouch>,
+        with event: UIEvent
+    ) {
+        super.touchesEnded(touches, with: event)
+        completionHandler?()
     }
 }

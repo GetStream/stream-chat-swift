@@ -35,6 +35,15 @@ internal enum L10n {
     internal static var maxSizeExceeded: String { L10n.tr("Localizable", "attachment.max-size-exceeded") }
   }
 
+  internal enum Audio {
+    internal enum Player {
+      /// x%@
+      internal static func rate(_ p1: Any) -> String {
+        return L10n.tr("Localizable", "audio.player.rate", String(describing: p1))
+      }
+    }
+  }
+
   internal enum Channel {
     internal enum Item {
       /// No messages

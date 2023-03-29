@@ -11,7 +11,7 @@ public protocol AudioRecording {
 
     var delegate: AudioRecordingDelegate? { get set }
 
-    var storageURL: URL { get }
+    var recordingURL: URL? { get }
 
     func beginRecording()
 
@@ -26,16 +26,25 @@ public protocol AudioRecording {
 
 // MARK: - Errors
 
+public struct StreamAudioRecorderUnknownError: Error {}
 public struct StreamAudioRecorderFailedToInitialize: Error {}
 public struct StreamAudioRecorderHasNoRecordPermission: Error {}
 public struct StreamAudioRecorderFailedToDeleteRecording: Error {}
 public struct StreamAudioRecorderFailedToBeginRecording: Error {}
+public struct StreamAudioRecorderFailedToResumeRecording: Error {}
+public struct StreamAudioRecorderFailedToSaveRecording: Error {}
 
 // MARK: - Implementation
 
 open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegate {
     private let audioSessionConfigurator: AudioSessionConfiguring
-    private let audioRecorder: AVAudioRecorder
+    private let audioRecorderSettings: [String: Any]
+    private let audioRecorderBaseStorageURL: URL
+
+//    public private(set) var recordingURL: URL?
+    public var recordingURL: URL? { audioRecorder?.url }
+
+    private var audioRecorder: AVAudioRecorder?
     private var currentTimeObservationToken: Any?
     private var currentTimeTimer: Foundation.Timer?
 
@@ -44,109 +53,109 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
     // MARK: - Lifecycle
 
     public static func build() -> AudioRecording {
-        let commonFormat = AVAudioFormat(
-            commonFormat: .pcmFormatFloat32,
-            sampleRate: 22050,
-            channels: 1,
-            interleaved: true
-        )!
-
-        let storageDirectory = FileManager.default
-            .temporaryDirectory
-            .appendingPathComponent("recording.m4a")
-
-        // TODO: Change optionality and error throwing
-        let result = try? StreamAudioRecorder(
-            audioSessionConfigurator: StreamAudioSessionConfigurator(.sharedInstance()),
-            audioFormat: commonFormat,
-            storageDirectory: storageDirectory
-        )
-        return result!
-    }
-
-    open var storageURL: URL { audioRecorder.url }
-
-    public init(
-        audioSessionConfigurator: AudioSessionConfiguring,
-        audioFormat: AVAudioFormat,
-        storageDirectory: URL
-    ) throws {
-        self.audioSessionConfigurator = audioSessionConfigurator
-        let settings = [
+        let audioRecorderSettings = [
             AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
             AVSampleRateKey: 12000,
             AVNumberOfChannelsKey: 1,
             AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
         ]
-        audioRecorder = try .init(url: storageDirectory, settings: settings)
+
+        return StreamAudioRecorder(
+            audioSessionConfigurator: StreamAudioSessionConfigurator(.sharedInstance()),
+            audioRecorderSettings: audioRecorderSettings,
+            audioRecorderBaseStorageURL: FileManager.default.temporaryDirectory
+        )
+    }
+
+    public init(
+        audioSessionConfigurator: AudioSessionConfiguring,
+        audioRecorderSettings: [String: Any],
+        audioRecorderBaseStorageURL: URL
+    ) {
+        self.audioSessionConfigurator = audioSessionConfigurator
+        self.audioRecorderBaseStorageURL = audioRecorderBaseStorageURL
+        self.audioRecorderSettings = audioRecorderSettings
+
         super.init()
-        setUp()
+    }
+
+    private func makeAudioRecorder() throws -> AVAudioRecorder {
+        let audioRecorder = try AVAudioRecorder(
+            url: audioRecorderBaseStorageURL.appendingPathComponent("\(UUID().uuidString).m4a"),
+            settings: audioRecorderSettings
+        )
+
+        audioRecorder.delegate = self
+        audioRecorder.isMeteringEnabled = true
+        audioRecorder.prepareToRecord()
+
+        return audioRecorder
     }
 
     // MARK: - AudioRecording
 
     open func beginRecording() {
-        audioSessionConfigurator.requestRecordPermission { [weak self] allowed in
-            guard let self = self else { return }
+        do {
+            try audioSessionConfigurator.activateRecordingSession(
+                mode: .spokenAudio,
+                policy: .default,
+                preferredInput: .builtInMic
+            )
 
-            guard allowed else {
-                self.delegate?.audioRecorder(self, didFailRecording: StreamAudioRecorderHasNoRecordPermission())
-                return
+            audioSessionConfigurator.requestRecordPermission { [weak self] in
+                self?.handleRecordRequest($0)
             }
-
-            do {
-                try self.audioSessionConfigurator.activateRecordingSession(
-                    mode: .spokenAudio,
-                    policy: .default,
-                    preferredInput: .builtInMic
-                )
-
-                if self.audioRecorder.record() {
-                    self.startObservingCurrentTime()
-                    self.delegate?.audioRecorderDidBeginRecording(self)
-                } else {
-                    throw StreamAudioRecorderFailedToBeginRecording()
-                }
-            } catch {
-                self.delegate?.audioRecorder(self, didFailRecording: error)
-            }
+        } catch {
+            delegate?.audioRecorder(self, didFailOperationWithError: error)
         }
     }
 
     open func pauseRecording() {
-        guard audioRecorder.isRecording else {
+        guard audioRecorder?.isRecording == true else {
             return
         }
 
-        audioRecorder.pause()
-        try? audioSessionConfigurator.deactivateRecordingSession()
+        audioRecorder?.pause()
         delegate?.audioRecorderDidPauseRecording(self)
     }
 
     open func resumeRecording() {
-        guard audioRecorder.isRecording == false else {
+        guard audioRecorder?.isRecording == false else {
             return
         }
-        try? audioSessionConfigurator.activateRecordingSession(
-            mode: .default,
-            policy: .default,
-            preferredInput: .builtInMic
-        )
-        audioRecorder.record()
-        delegate?.audioRecorderDidResumeRecording(self)
+        do {
+            try audioSessionConfigurator.activateRecordingSession(
+                mode: .default,
+                policy: .default,
+                preferredInput: .builtInMic
+            )
+
+            if audioRecorder?.record() == false {
+                throw StreamAudioRecorderFailedToResumeRecording()
+            } else {
+                delegate?.audioRecorderDidResumeRecording(self)
+            }
+        } catch {
+            delegate?.audioRecorder(self, didFailOperationWithError: error)
+        }
     }
 
     open func stopRecording() {
-        audioRecorder.stop()
+        audioRecorder?.stop()
         try? audioSessionConfigurator.deactivateRecordingSession()
         stopObservingCurrentTime()
     }
 
     open func deleteRecording() {
-        delegate?.audioRecorderDeletedRecording(
-            self,
-            error: audioRecorder.deleteRecording() ? nil : StreamAudioRecorderFailedToDeleteRecording()
-        )
+        guard let audioRecorder = audioRecorder else {
+            return
+        }
+
+        if audioRecorder.deleteRecording() {
+            delegate?.audioRecorderDeletedRecording(self)
+        } else {
+            delegate?.audioRecorder(self, didFailOperationWithError: StreamAudioRecorderFailedToDeleteRecording())
+        }
     }
 
     // MARK: - AVAudioRecorderDelegate
@@ -155,10 +164,20 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
         _ recorder: AVAudioRecorder,
         successfully flag: Bool
     ) {
-        delegate?.audioRecorderDidFinishRecording(
-            self,
-            url: flag ? recorder.url : nil
-        )
+        guard flag else {
+            delegate?.audioRecorder(self, didFailOperationWithError: StreamAudioRecorderFailedToSaveRecording())
+            return
+        }
+
+//        let newLocation = audioRecorderBaseStorageURL
+//            .appendingPathComponent("\(UUID().uuidString).m4a")
+//        try {
+//            let data = try Data(contentsOf: recorder.url.standardizedFileURL)
+//            data.write(to: newLocation)
+        delegate?.audioRecorderDidFinishRecording(self, url: recorder.url.standardizedFileURL)
+//        } catch {
+//
+//        }
     }
 
     open func audioRecorderBeginInterruption(
@@ -178,23 +197,51 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
         _ recorder: AVAudioRecorder,
         error: Error?
     ) {
-        delegate?.audioRecorderEncodingFailed(self, error: error)
+        delegate?.audioRecorder(self, didFailOperationWithError: error ?? StreamAudioRecorderUnknownError())
     }
 
     // MARK: - Private Helpers
 
-    private func setUp() {
-        audioRecorder.delegate = self
+    private func handleRecordRequest(
+        _ permissionGranted: Bool
+    ) {
+        do {
+            guard permissionGranted else { throw StreamAudioRecorderHasNoRecordPermission() }
 
-        audioRecorder.isMeteringEnabled = true
-        audioRecorder.prepareToRecord()
+            audioRecorder = try makeAudioRecorder()
+
+            if audioRecorder?.record() == true {
+                startObservingCurrentTime()
+                delegate?.audioRecorderDidBeginRecording(self)
+            } else {
+                throw StreamAudioRecorderFailedToBeginRecording()
+            }
+        } catch {
+            delegate?.audioRecorder(self, didFailOperationWithError: error)
+        }
     }
 
     private func startObservingCurrentTime() {
-        currentTimeTimer = Foundation.Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true, block: { [weak self] _ in
-            guard let self = self, self.audioRecorder.isRecording else { return }
-            self.delegate?.audioRecorderDidUpdate(self, currentTime: self.audioRecorder.currentTime)
-        })
+        guard let audioRecorder = audioRecorder else {
+            return
+        }
+        currentTimeTimer?.invalidate()
+
+        currentTimeTimer = Foundation.Timer.scheduledTimer(
+            withTimeInterval: 0.5,
+            repeats: true,
+            block: { [weak audioRecorder, weak self] _ in
+                guard let audioRecorder = audioRecorder, audioRecorder.isRecording else {
+                    return
+                }
+                self.map { unwrappedSelf in
+                    unwrappedSelf.delegate?.audioRecorderDidUpdate(
+                        unwrappedSelf,
+                        currentTime: audioRecorder.currentTime
+                    )
+                }
+            }
+        )
     }
 
     private func stopObservingCurrentTime() {

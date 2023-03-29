@@ -291,7 +291,17 @@ open class ComposerVC: _ViewController,
     open lazy var recordingAdapter: RecordingAdapter = .init(
         composerView: composerView,
         addFloatingViewHandler: { [weak self] in self?.showRecordingFloatingView($0) },
-        updateContentHandler: { [weak self] in try? self?.addAttachmentToContent(from: $0, type: .audio) },
+        updateContentHandler: { [weak self] in
+            do {
+                try self?.addAttachmentToContent(from: $0, type: .file, info: [:])
+            } catch {
+                self?.handleAddAttachmentError(
+                    attachmentURL: $0,
+                    attachmentType: .file,
+                    error: error
+                )
+            }
+        },
         clearMessageHandler: { [weak self] in self?.clearContent(sender: .init()) }
     )
 
@@ -413,7 +423,11 @@ open class ComposerVC: _ViewController,
                 self.composerView.confirmButton.isHidden = true
                 self.composerView.recordButton.isHidden = false
                 self.composerView.sendButton.isHidden = self.content.isSlowModeOn
-                self.composerView.headerView.isHidden = true
+                if self.composerView.headerView.subviews.first(where: { $0 as? RecordingAndPlaybackView != nil }) != nil {
+                    self.composerView.headerView.isHidden = false
+                } else {
+                    self.composerView.headerView.isHidden = true
+                }
                 self.composerView.cooldownView.isHidden = !self.content.isSlowModeOn
             }
         case .quote:

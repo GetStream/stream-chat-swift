@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-open class RecordButton: _Button, AppearanceProvider, UIGestureRecognizerDelegate {
+open class RecordButton: _Button, AppearanceProvider {
     open var minimumLongPressDuration: Double = 0.7
 
     open var possibleLongPressHandler: (() -> Void)?
@@ -19,7 +19,6 @@ open class RecordButton: _Button, AppearanceProvider, UIGestureRecognizerDelegat
             minimumInterval: minimumLongPressDuration
         )
 
-        gestureRecognizer.delegate = self
         gestureRecognizer.possibleHandler = { [weak self] in
             self?.possibleLongPressHandler?()
         }
@@ -46,17 +45,10 @@ open class RecordButton: _Button, AppearanceProvider, UIGestureRecognizerDelegat
         let disabledStateImage = appearance.images.mic.tinted(with: buttonColor)
         setImage(disabledStateImage, for: .disabled)
     }
-
-    public func gestureRecognizer(
-        _ gestureRecognizer: UIGestureRecognizer,
-        shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
-    ) -> Bool {
-        true
-    }
 }
 
 extension RecordButton {
-    private final class LongPressDurationGestureRecognizer: UIGestureRecognizer {
+    private final class LongPressDurationGestureRecognizer: UIGestureRecognizer, UIGestureRecognizerDelegate {
         private let minimumInterval: Double
         var possibleHandler: (() -> Void)?
         var completedHandler: (() -> Void)?
@@ -72,6 +64,7 @@ extension RecordButton {
         ) {
             self.minimumInterval = minimumInterval
             super.init(target: nil, action: nil)
+            delegate = delegate
         }
 
         override func touchesBegan(
@@ -104,6 +97,13 @@ extension RecordButton {
             } else {
                 completedHandler?()
             }
+        }
+
+        func gestureRecognizer(
+            _ gestureRecognizer: UIGestureRecognizer,
+            shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
+        ) -> Bool {
+            true
         }
     }
 }
