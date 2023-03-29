@@ -1196,6 +1196,10 @@ private extension ChatChannelController {
 
                     let pageSize = self.channelQuery.pagination?.pageSize ?? .messagesPageSize
                     self.hasLoadedAllPreviousMessages = payload.messages.count < pageSize
+
+                    // If we are jumping to a message when synchronizing, and the messages loaded
+                    // are less than the page size, it means we loaded the first page and we are not
+                    // jumping to a message anymore.
                     if self.isJumpingToMessage {
                         self.isJumpingToMessage = payload.messages.count >= pageSize
                     }

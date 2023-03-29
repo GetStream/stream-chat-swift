@@ -22,11 +22,15 @@ open class ChatChannelListRouter: NavigationRouter<ChatChannelListVC>, Component
 
     /// Shows the view controller with messages for the provided cid.
     ///
-    /// - Parameter cid: `ChannelId` of the channel the should be presented.
+    /// - Parameter cid: The `ChannelId` of the channel the should be presented.
     open func showChannel(for cid: ChannelId) {
         showChannel(for: cid, at: nil)
     }
 
+    /// Shows the view controller with messages for the provided cid and jumps to the given message id.
+    /// - Parameters:
+    ///   - cid: The `ChannelId` of the channel the should be presented.
+    ///   - messageId: The `MessageId` to where the channel should jump to when opening the channel.
     open func showChannel(for cid: ChannelId, at messageId: MessageId?) {
         let vc = components.channelVC.init()
 

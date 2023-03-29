@@ -136,6 +136,7 @@ public extension ChatMessageListVCDelegate {
         completion(nil)
     }
 
+    @available(*, deprecated, renamed: "chatMessageListVC(vc:shouldLoadPageAroundMessageId:completion:)")
     func chatMessageListVC(
         _ vc: ChatMessageListVC,
         shouldLoadPageAroundMessage message: ChatMessage,

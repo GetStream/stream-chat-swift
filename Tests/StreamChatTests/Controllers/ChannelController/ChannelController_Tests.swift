@@ -434,6 +434,78 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(controller.hasLoadedAllPreviousMessages, false)
     }
 
+    func test_synchronize_whenPaginationIsJumpingToMessage_thenIsJumpingToMessageIsTrue() throws {
+        controller = ChatChannelController(
+            channelQuery: .init(cid: channelId, paginationParameter: .around(.unique)),
+            channelListQuery: nil,
+            client: client,
+            environment: env.environment
+        )
+
+        controller.synchronize()
+
+        XCTAssertEqual(controller.isJumpingToMessage, true)
+    }
+
+    func test_synchronize_whenPaginationIsNotJumpingToMessage_thenIsJumpingToMessageIsFalse() throws {
+        controller = ChatChannelController(
+            channelQuery: .init(cid: channelId, paginationParameter: .lessThan(.unique)),
+            channelListQuery: nil,
+            client: client,
+            environment: env.environment
+        )
+
+        controller.synchronize()
+
+        XCTAssertEqual(controller.isJumpingToMessage, false)
+    }
+
+    func test_synchronize_whenJumpingToMessage_whenMessagesCountEqualOrBiggerThanPageSize_thenIsJumpingToMessageIsTrue() throws {
+        controller = ChatChannelController(
+            channelQuery: .init(cid: channelId, pageSize: 25, paginationParameter: .around(.unique)),
+            channelListQuery: nil,
+            client: client,
+            environment: env.environment
+        )
+
+        let exp = expectation(description: "synchronize should complete")
+        controller.synchronize { _ in
+            exp.fulfill()
+        }
+
+        XCTAssertEqual(controller.isJumpingToMessage, true)
+
+        let channelPayload = dummyPayload(with: .unique, numberOfMessages: 25)
+        env.channelUpdater?.update_completion?(.success(channelPayload))
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertEqual(controller.isJumpingToMessage, true)
+    }
+
+    func test_synchronize_whenJumpingToMessage_whenMessagesCountLowerThanPageSize_thenIsJumpingToMessageIsFalse() throws {
+        controller = ChatChannelController(
+            channelQuery: .init(cid: channelId, pageSize: 25, paginationParameter: .around(.unique)),
+            channelListQuery: nil,
+            client: client,
+            environment: env.environment
+        )
+
+        let exp = expectation(description: "synchronize should complete")
+        controller.synchronize { _ in
+            exp.fulfill()
+        }
+
+        XCTAssertEqual(controller.isJumpingToMessage, true)
+
+        let channelPayload = dummyPayload(with: .unique, numberOfMessages: 20)
+        env.channelUpdater?.update_completion?(.success(channelPayload))
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertEqual(controller.isJumpingToMessage, false)
+    }
+
     // MARK: - Creating `ChannelController` tests
 
     func test_channelControllerForNewChannel_createdCorrectly() throws {
