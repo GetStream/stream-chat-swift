@@ -235,7 +235,12 @@ extension UserRobot {
     @discardableResult
     func tapOnRepliedMessage(_ text: String, at messageCellIndex: Int? = 0) -> Self {
         let messageCell = messageCell(withIndex: messageCellIndex)
-        MessageListPage.Attributes.quotedText(text, in: messageCell).waitForHitPoint().safeTap()
+        MessageListPage
+            .Attributes
+            .quotedText(text, in: messageCell)
+            .wait()
+            .waitForHitPoint()
+            .safeTap()
         return self
     }
 

@@ -149,7 +149,7 @@ final class QuotedReply_Tests: StreamTestCase {
         THEN("user observes the reply in message list") {
             userRobot
                 .assertFile(isPresent: true)
-                .assertQuotedMessageWithAttachment(quotedText: parentMessage)
+                .assertQuotedMessage(quotedText: parentMessage)
                 .assertScrollToBottomButton(isVisible: false)
         }
         WHEN("user taps on a replied message") {
@@ -176,7 +176,7 @@ final class QuotedReply_Tests: StreamTestCase {
         THEN("user observes the reply in message list") {
             userRobot
                 .assertGiphyImage()
-                .assertQuotedMessageWithAttachment(quotedText: parentMessage)
+                .assertQuotedMessage(quotedText: parentMessage)
                 .assertScrollToBottomButton(isVisible: false)
         }
         WHEN("user taps on a replied message") {

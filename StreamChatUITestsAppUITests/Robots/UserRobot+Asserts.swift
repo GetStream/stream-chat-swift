@@ -662,18 +662,25 @@ extension UserRobot {
 
     @discardableResult
     func assertQuotedMessage(
-        replyText: String,
+        replyText: String = "",
         quotedText: String,
         at messageCellIndex: Int? = nil,
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> Self {
-        assertQuotedMessage(replyText, file: file, line: line)
         let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
-        let quotedMessage = attributes.quotedText(quotedText, in: messageCell).wait()
-        XCTAssertTrue(quotedMessage.exists, "Quoted message was not showed", file: file, line: line)
-        XCTAssertFalse(quotedMessage.isEnabled, "Quoted message should be disabled", file: file, line: line)
-        XCTAssertTrue(quotedMessage.isHittable, "Quoted message is not visible", file: file, line: line)
+        let message = attributes.quotedText(quotedText, in: messageCell).wait()
+        let actualText = message.waitForText(quotedText).text
+        XCTAssertEqual(quotedText, actualText)
+        XCTAssertTrue(message.exists, "Quoted message was not showed")
+        XCTAssertFalse(message.isEnabled, "Quoted message should be disabled")
+        XCTAssertTrue(message.isHittable, "Quoted message is not visible")
+        
+        if !replyText.isEmpty {
+            let message = attributes.text(replyText, in: messageCell).wait()
+            let actualText = message.waitForText(replyText).text
+            XCTAssertEqual(replyText, actualText)
+        }
         return self
     }
     
