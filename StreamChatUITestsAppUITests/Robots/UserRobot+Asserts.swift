@@ -662,7 +662,7 @@ extension UserRobot {
 
     @discardableResult
     func assertQuotedMessage(
-        replyText: String = "",
+        replyText: String = "", // empty text by default for attachment messages
         quotedText: String,
         at messageCellIndex: Int? = nil,
         file: StaticString = #filePath,
