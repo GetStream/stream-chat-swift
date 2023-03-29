@@ -559,7 +559,7 @@ final class ChatMessageListVC_Tests: XCTestCase {
             .mock(id: "4")
         ]
 
-        sut.jumpToMessage(.mock(id: "2"))
+        sut.jumpToMessage(id: "2")
 
         XCTAssertEqual(mockedListView.scrollToRowCallCount, 1)
         XCTAssertEqual(mockedListView.scrollToRowCalledWith?.row, 2)
@@ -574,7 +574,7 @@ final class ChatMessageListVC_Tests: XCTestCase {
             .mock(id: "4")
         ]
 
-        sut.jumpToMessage(.mock(id: "30"))
+        sut.jumpToMessage(id: "30")
 
         XCTAssertEqual(mockedListView.scrollToRowCallCount, 0)
     }

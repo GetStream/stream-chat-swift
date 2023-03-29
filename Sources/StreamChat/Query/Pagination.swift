@@ -58,18 +58,10 @@ public struct Pagination: Encodable, Equatable {
 
 public struct MessagesPagination: Encodable, Equatable {
     /// A page size
-    public let pageSize: Int?
+    public let pageSize: Int
     /// Parameter for pagination.
     public let parameter: PaginationParameter?
-    
-    /// Failable initializer for attempts of creating invalid pagination.
-    init?(pageSize: Int? = nil, parameter: PaginationParameter? = nil) {
-        guard pageSize != nil, parameter != nil else { return nil }
-        self.pageSize = pageSize
-        self.parameter = parameter
-    }
 
-    /// Initializer with required page size.
     init(pageSize: Int, parameter: PaginationParameter? = nil) {
         self.pageSize = pageSize
         self.parameter = parameter
