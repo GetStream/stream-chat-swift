@@ -1233,6 +1233,16 @@
 		C111B5B628CF3B1200C79D53 /* BackgroundListDatabaseObserver_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C111B5B528CF3B1200C79D53 /* BackgroundListDatabaseObserver_Tests.swift */; };
 		C111B5B828CF871E00C79D53 /* ListDatabaseObserverWrapper_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C111B5B728CF871E00C79D53 /* ListDatabaseObserverWrapper_Tests.swift */; };
 		C11B575629D20F3600D5A248 /* User_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10B0A0B29D20DE1006517FC /* User_Tests.swift */; };
+		C11B575E29D43FD800D5A248 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C11B575D29D43FD800D5A248 /* AppDelegate.swift */; };
+		C11B576029D43FD800D5A248 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C11B575F29D43FD800D5A248 /* SceneDelegate.swift */; };
+		C11B576229D43FD800D5A248 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C11B576129D43FD800D5A248 /* ViewController.swift */; };
+		C11B576729D43FD900D5A248 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C11B576629D43FD900D5A248 /* Assets.xcassets */; };
+		C11B577129D4403800D5A248 /* Atlantis in Frameworks */ = {isa = PBXBuildFile; productRef = C11B577029D4403800D5A248 /* Atlantis */; };
+		C11B577229D4403800D5A248 /* StreamChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; };
+		C11B577329D4403800D5A248 /* StreamChat.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		C11B577629D4403800D5A248 /* StreamChatUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; };
+		C11B577729D4403800D5A248 /* StreamChatUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		C11B577F29D4878900D5A248 /* EdgeCasesCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C11B577B29D485FE00D5A248 /* EdgeCasesCoordinator.swift */; };
 		C11BAA4D2907EC7B004C5EA4 /* AuthenticationRepository_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C11BAA4C2907EC7B004C5EA4 /* AuthenticationRepository_Tests.swift */; };
 		C121E804274544AC00023E4C /* ChatClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A0E9AC2498BD0C00E9BD50 /* ChatClient.swift */; };
 		C121E805274544AC00023E4C /* Deprecations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69712522260BC9B4003C7B47 /* Deprecations.swift */; };
@@ -2227,6 +2237,20 @@
 			remoteGlobalIDString = 793060E525778896005CF846;
 			remoteInfo = StreamChatTestTools;
 		};
+		C11B577429D4403800D5A248 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 799C941A247D2F80001F1104;
+			remoteInfo = StreamChat;
+		};
+		C11B577829D4403800D5A248 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 790881FC25432B7200896F03;
+			remoteInfo = StreamChatUI;
+		};
 		C121EC5F2746AC8C00023E4C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
@@ -2326,6 +2350,18 @@
 			files = (
 				7908821325432B7200896F03 /* StreamChatUI.framework in Embed Frameworks */,
 				79200D47250140BB002F4EB1 /* StreamChat.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C11B577A29D4403800D5A248 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				C11B577729D4403800D5A248 /* StreamChatUI.framework in Embed Frameworks */,
+				C11B577329D4403800D5A248 /* StreamChat.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3480,6 +3516,13 @@
 		C10C7551299D1D67008C8F78 /* ChannelRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelRepository.swift; sourceTree = "<group>"; };
 		C111B5B528CF3B1200C79D53 /* BackgroundListDatabaseObserver_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundListDatabaseObserver_Tests.swift; sourceTree = "<group>"; };
 		C111B5B728CF871E00C79D53 /* ListDatabaseObserverWrapper_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListDatabaseObserverWrapper_Tests.swift; sourceTree = "<group>"; };
+		C11B575B29D43FD800D5A248 /* EdgeCases.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EdgeCases.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C11B575D29D43FD800D5A248 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		C11B575F29D43FD800D5A248 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		C11B576129D43FD800D5A248 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		C11B576629D43FD900D5A248 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		C11B576B29D43FD900D5A248 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C11B577B29D485FE00D5A248 /* EdgeCasesCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EdgeCasesCoordinator.swift; sourceTree = "<group>"; };
 		C11BAA4C2907EC7B004C5EA4 /* AuthenticationRepository_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationRepository_Tests.swift; sourceTree = "<group>"; };
 		C121E758274543D000023E4C /* libStreamChat.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libStreamChat.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C121EA2F2746A19400023E4C /* libStreamChatUI.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libStreamChatUI.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3962,6 +4005,16 @@
 			files = (
 				AC90839D268B120900ACFB8E /* StreamChat.framework in Frameworks */,
 				AC908398268B120300ACFB8E /* StreamChatUI.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C11B575829D43FD800D5A248 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C11B577229D4403800D5A248 /* StreamChat.framework in Frameworks */,
+				C11B577129D4403800D5A248 /* Atlantis in Frameworks */,
+				C11B577629D4403800D5A248 /* StreamChatUI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5275,6 +5328,7 @@
 				A34407BA27D8C33F0044F150 /* StreamChatUITestsApp.app */,
 				A34407DC27D8C3400044F150 /* StreamChatUITestsAppUITests.xctest */,
 				A3A0C999283E952900B18DA4 /* StreamChatTestMockServer.framework */,
+				C11B575B29D43FD800D5A248 /* EdgeCases.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -7399,6 +7453,19 @@
 			path = AttachmentViews;
 			sourceTree = "<group>";
 		};
+		C11B575C29D43FD800D5A248 /* EdgeCases */ = {
+			isa = PBXGroup;
+			children = (
+				C11B575D29D43FD800D5A248 /* AppDelegate.swift */,
+				C11B577B29D485FE00D5A248 /* EdgeCasesCoordinator.swift */,
+				C11B575F29D43FD800D5A248 /* SceneDelegate.swift */,
+				C11B576129D43FD800D5A248 /* ViewController.swift */,
+				C11B576629D43FD900D5A248 /* Assets.xcassets */,
+				C11B576B29D43FD900D5A248 /* Info.plist */,
+			);
+			path = EdgeCases;
+			sourceTree = "<group>";
+		};
 		C12D0A5E28FD58CE0099895A /* Repositories */ = {
 			isa = PBXGroup;
 			children = (
@@ -7749,6 +7816,7 @@
 		E3D5D2142701F0450054ECE5 /* Examples */ = {
 			isa = PBXGroup;
 			children = (
+				C11B575C29D43FD800D5A248 /* EdgeCases */,
 				4068ECCF298D06620032D57A /* Shared */,
 				F89C23A725E508DE0082CA5B /* iMessageClone */,
 				F86C87B325F906630000BCA9 /* MessengerClone */,
@@ -8265,6 +8333,29 @@
 			productReference = AC908381268B115F00ACFB8E /* YouTube.app */;
 			productType = "com.apple.product-type.application";
 		};
+		C11B575A29D43FD800D5A248 /* EdgeCases */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C11B576F29D43FD900D5A248 /* Build configuration list for PBXNativeTarget "EdgeCases" */;
+			buildPhases = (
+				C11B575729D43FD800D5A248 /* Sources */,
+				C11B575829D43FD800D5A248 /* Frameworks */,
+				C11B575929D43FD800D5A248 /* Resources */,
+				C11B577A29D4403800D5A248 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C11B577529D4403800D5A248 /* PBXTargetDependency */,
+				C11B577929D4403800D5A248 /* PBXTargetDependency */,
+			);
+			name = EdgeCases;
+			packageProductDependencies = (
+				C11B577029D4403800D5A248 /* Atlantis */,
+			);
+			productName = EdgeCases;
+			productReference = C11B575B29D43FD800D5A248 /* EdgeCases.app */;
+			productType = "com.apple.product-type.application";
+		};
 		C121E757274543D000023E4C /* StreamChatStatic */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = C121E75F274543D000023E4C /* Build configuration list for PBXNativeTarget "StreamChatStatic" */;
@@ -8387,7 +8478,7 @@
 		8AD5EC8622E9A3E8005CFAC9 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1330;
+				LastSwiftUpdateCheck = 1420;
 				LastUpgradeCheck = 1340;
 				ORGANIZATIONNAME = "Stream.io Inc";
 				TargetAttributes = {
@@ -8433,6 +8524,9 @@
 					};
 					AC908380268B115F00ACFB8E = {
 						CreatedOnToolsVersion = 12.5;
+					};
+					C11B575A29D43FD800D5A248 = {
+						CreatedOnToolsVersion = 14.2;
 					};
 					C121E757274543D000023E4C = {
 						CreatedOnToolsVersion = 13.0;
@@ -8492,6 +8586,7 @@
 				C121E9262746A19400023E4C /* StreamChatUIStatic */,
 				A34407B927D8C33F0044F150 /* StreamChatUITestsApp */,
 				A34407DB27D8C3400044F150 /* StreamChatUITestsAppUITests */,
+				C11B575A29D43FD800D5A248 /* EdgeCases */,
 			);
 		};
 /* End PBXProject section */
@@ -8739,6 +8834,14 @@
 				AC908390268B116000ACFB8E /* LaunchScreen.storyboard in Resources */,
 				AC90838D268B116000ACFB8E /* Assets.xcassets in Resources */,
 				ACBEF4E6268B439A00FE7557 /* YTLiveVideoViewController.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C11B575929D43FD800D5A248 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C11B576729D43FD900D5A248 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10177,6 +10280,17 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C11B575729D43FD800D5A248 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C11B576229D43FD800D5A248 /* ViewController.swift in Sources */,
+				C11B575E29D43FD800D5A248 /* AppDelegate.swift in Sources */,
+				C11B577F29D4878900D5A248 /* EdgeCasesCoordinator.swift in Sources */,
+				C11B576029D43FD800D5A248 /* SceneDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C121E754274543D000023E4C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -10962,6 +11076,16 @@
 			isa = PBXTargetDependency;
 			target = 793060E525778896005CF846 /* StreamChatTestTools */;
 			targetProxy = AD78F9F228EC729D00BC0FCE /* PBXContainerItemProxy */;
+		};
+		C11B577529D4403800D5A248 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 799C941A247D2F80001F1104 /* StreamChat */;
+			targetProxy = C11B577429D4403800D5A248 /* PBXContainerItemProxy */;
+		};
+		C11B577929D4403800D5A248 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 790881FC25432B7200896F03 /* StreamChatUI */;
+			targetProxy = C11B577829D4403800D5A248 /* PBXContainerItemProxy */;
 		};
 		C121EC602746AC8C00023E4C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -12429,6 +12553,94 @@
 			};
 			name = ReleaseTests;
 		};
+		C11B576C29D43FD900D5A248 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = TT6EHSB5EG;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Examples/EdgeCases/Info.plist;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = io.stream.EdgeCases;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		C11B576D29D43FD900D5A248 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = TT6EHSB5EG;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Examples/EdgeCases/Info.plist;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = io.stream.EdgeCases;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		C11B576E29D43FD900D5A248 /* ReleaseTests */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = TT6EHSB5EG;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Examples/EdgeCases/Info.plist;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = io.stream.EdgeCases;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = ReleaseTests;
+		};
 		C121E75C274543D000023E4C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -12942,6 +13154,16 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		C11B576F29D43FD900D5A248 /* Build configuration list for PBXNativeTarget "EdgeCases" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C11B576C29D43FD900D5A248 /* Debug */,
+				C11B576D29D43FD900D5A248 /* Release */,
+				C11B576E29D43FD900D5A248 /* ReleaseTests */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		C121E75F274543D000023E4C /* Build configuration list for PBXNativeTarget "StreamChatStatic" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -13154,6 +13376,11 @@
 			productName = Sentry;
 		};
 		ADDFDE2A2779EC8A003B3B07 /* Atlantis */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ADDFDE272779EC67003B3B07 /* XCRemoteSwiftPackageReference "atlantis" */;
+			productName = Atlantis;
+		};
+		C11B577029D4403800D5A248 /* Atlantis */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = ADDFDE272779EC67003B3B07 /* XCRemoteSwiftPackageReference "atlantis" */;
 			productName = Atlantis;
