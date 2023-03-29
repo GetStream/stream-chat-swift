@@ -543,6 +543,11 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// Cleans the current state and loads the first page again.
     /// - Parameter completion: Callback when the API call is completed.
     public func loadFirstPage(_ completion: ((_ error: Error?) -> Void)? = nil) {
+        channelQuery.pagination = .init(
+            pageSize: channelQuery.pagination?.pageSize ?? .messagesPageSize,
+            parameter: nil
+        )
+
         synchronize(isInRecoveryMode: false, completion)
     }
 
@@ -1163,12 +1168,7 @@ public enum MessageOrdering {
 
 private extension ChatChannelController {
     func synchronize(isInRecoveryMode: Bool, _ completion: ((_ error: Error?) -> Void)? = nil) {
-        channelQuery.pagination = .init(
-            pageSize: channelQuery.pagination?.pageSize ?? .messagesPageSize,
-            parameter: nil
-        )
-
-        isJumpingToMessage = false
+        isJumpingToMessage = channelQuery.pagination?.parameter?.isJumpingToMessage == true
 
         let channelCreatedCallback = isChannelAlreadyCreated ? nil : channelCreated(forwardErrorTo: setLocalStateBasedOnError)
         updater.update(
@@ -1179,11 +1179,20 @@ private extension ChatChannelController {
                 switch result {
                 case let .success(payload):
                     self.state = .remoteDataFetched
+
                     self.updateNewestFetchedMessageId(with: payload)
                     self.updateOldestFetchedMessageId(with: payload)
-                    if let pageSize = self.channelQuery.pagination?.pageSize {
-                        self.hasLoadedAllPreviousMessages = payload.messages.count < pageSize
+
+                    let pageSize = self.channelQuery.pagination?.pageSize ?? .messagesPageSize
+                    self.hasLoadedAllPreviousMessages = payload.messages.count < pageSize
+
+                    // If we are jumping to a message when synchronizing, and the messages loaded
+                    // are less than the page size, it means we loaded the first page and we are not
+                    // jumping to a message anymore.
+                    if self.isJumpingToMessage {
+                        self.isJumpingToMessage = payload.messages.count >= pageSize
                     }
+
                     self.callback { completion?(nil) }
                 case let .failure(error):
                     self.state = .remoteDataFetchFailed(ClientError(with: error))

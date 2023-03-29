@@ -378,6 +378,34 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                     }
                     channelController.createNewMessage(text: message, skipEnrichUrl: true)
                 }
+            }),
+            .init(title: "Show channel with message id", style: .default, handler: { [unowned self] _ in
+                self.rootViewController.presentAlert(
+                    title: "Enter message id",
+                    textFieldPlaceholder: "Message ID"
+                ) { id in
+                    guard let id = id, !id.isEmpty else {
+                        self.rootViewController.presentAlert(title: "Message ID is not valid")
+                        return
+                    }
+
+                    let messageController = channelController.client.messageController(cid: cid, messageId: id)
+                    messageController.synchronize { [weak self] error in
+                        let message = messageController.message
+
+                        var errorMessage: String? = error?.localizedDescription
+                        if message?.cid != cid {
+                            errorMessage = "Message ID does not belong to this channel."
+                        }
+
+                        if let errorMessage {
+                            self?.rootViewController.presentAlert(title: errorMessage)
+                            return
+                        }
+
+                        self?.showChannel(for: cid, at: message?.id)
+                    }
+                }
             })
         ])
     }

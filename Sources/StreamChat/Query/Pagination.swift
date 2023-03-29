@@ -58,18 +58,10 @@ public struct Pagination: Encodable, Equatable {
 
 public struct MessagesPagination: Encodable, Equatable {
     /// A page size
-    public let pageSize: Int?
+    public let pageSize: Int
     /// Parameter for pagination.
     public let parameter: PaginationParameter?
-    
-    /// Failable initializer for attempts of creating invalid pagination.
-    init?(pageSize: Int? = nil, parameter: PaginationParameter? = nil) {
-        guard pageSize != nil, parameter != nil else { return nil }
-        self.pageSize = pageSize
-        self.parameter = parameter
-    }
 
-    /// Initializer with required page size.
     init(pageSize: Int, parameter: PaginationParameter? = nil) {
         self.pageSize = pageSize
         self.parameter = parameter
@@ -124,6 +116,16 @@ public enum PaginationParameter: Encodable, Hashable {
             return ["id_lte": id]
         case let .around(id):
             return ["id_around": id]
+        }
+    }
+
+    /// A Boolean value that returns true if the pagination will jump to a message around a given id.
+    public var isJumpingToMessage: Bool {
+        switch self {
+        case .around:
+            return true
+        default:
+            return false
         }
     }
 

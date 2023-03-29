@@ -111,6 +111,14 @@ open class ChatChannelVC: _ViewController,
             }
             self?.setChannelControllerToComposerIfNeeded(cid: self?.channelController.cid)
             self?.messageComposerVC.updateContent()
+
+            let pagination = self?.channelController.channelQuery.pagination?.parameter
+            switch pagination {
+            case let .around(messageId):
+                self?.jumpToMessage(id: messageId)
+            default:
+                break
+            }
         }
 
         // Initial messages data
@@ -186,6 +194,26 @@ open class ChatChannelVC: _ViewController,
         messageListVC.scrollToLatestMessageButton.content = .noUnread
     }
 
+    /// Jump to a given message.
+    /// In case the message is already loaded, it directly goes to it.
+    /// If not, it will load the messages around it and go to that page.
+    ///
+    /// This function is an high-level abstraction of `messageListVC.jumpToMessage(id:onHighlight:)`.
+    ///
+    /// - Parameters:
+    ///   - id: The id of message which the message list should go to.
+    ///   - shouldHighlight: Whether the message should be highlighted when jumping to it. By default it is highlighted.
+    public func jumpToMessage(id: MessageId, shouldHighlight: Bool = true) {
+        if shouldHighlight {
+            messageListVC.jumpToMessage(id: id) { [weak self] indexPath in
+                self?.messageListVC.highlightCell(at: indexPath)
+            }
+            return
+        }
+
+        messageListVC.jumpToMessage(id: id)
+    }
+
     // MARK: - ChatMessageListVCDataSource
 
     public var messages: [ChatMessage] = []
@@ -222,16 +250,18 @@ open class ChatChannelVC: _ViewController,
 
     public func chatMessageListVC(
         _ vc: ChatMessageListVC,
-        shouldLoadPageAroundMessage message: ChatMessage,
+        shouldLoadPageAroundMessageId messageId: MessageId,
         _ completion: @escaping ((Error?) -> Void)
     ) {
         // For now, we don't support jumping to a message which is inside a thread only
-        if message.isPartOfThread && !message.showReplyInChannel {
-            log.warning("Did not jump to message with text '\(message.text)' since we don't support jumping inside threads yet.")
-            return
+        if let message = channelController.dataStore.message(id: messageId) {
+            if message.isPartOfThread && !message.showReplyInChannel {
+                log.warning("Did not jump to message with text '\(message.text)' since we don't support jumping inside threads yet.")
+                return
+            }
         }
 
-        channelController.loadPageAroundMessageId(message.id, completion: completion)
+        channelController.loadPageAroundMessageId(messageId, completion: completion)
     }
 
     open func chatMessageListVCShouldLoadFirstPage(
