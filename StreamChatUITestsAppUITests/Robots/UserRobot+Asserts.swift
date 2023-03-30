@@ -367,6 +367,40 @@ extension UserRobot {
         XCTAssertEqual(author, actualAuthor, file: file, line: line)
         return self
     }
+    
+    @discardableResult
+    func assertScrollToBottomButton(
+        isVisible: Bool,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        var btn = MessageListPage.scrollToBottomButton
+        btn = isVisible ? btn.wait() : btn.waitForDisappearance()
+        XCTAssertEqual(isVisible,
+                       btn.exists,
+                       "Scroll to bottom button should be \(isVisible ? "visible" : "hidden")",
+                       file: file,
+                       line: line)
+        return self
+    }
+    
+    @discardableResult
+    func assertScrollToBottomButtonUnreadCount(
+        _ expectedCount: Int,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        let unreadCount = MessageListPage.scrollToBottomButtonUnreadCount
+        let unreadCountShouldBeVisible = expectedCount > 0
+        if unreadCountShouldBeVisible {
+            XCTAssertEqual("\(expectedCount)", unreadCount.wait().label)
+        } else {
+            if unreadCount.exists {
+                XCTAssertEqual("\(expectedCount)", unreadCount.label)
+            }
+        }
+        return self
+    }
 
     @discardableResult
     func assertTypingIndicatorShown(
@@ -615,6 +649,12 @@ extension UserRobot {
         XCTAssertTrue(link.isHittable, "Link itself is not clickable")
         return self
     }
+    
+    @discardableResult
+    func waitForMessageVisibility(at messageCellIndex: Int) -> Self {
+        _ = messageCell(withIndex: messageCellIndex).waitForHitPoint()
+        return self
+    }
 }
 
 // MARK: Quoted Messages
@@ -622,17 +662,40 @@ extension UserRobot {
 
     @discardableResult
     func assertQuotedMessage(
-        replyText: String,
+        replyText: String = "", // empty text by default for attachment messages
         quotedText: String,
         at messageCellIndex: Int? = nil,
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> Self {
-        assertQuotedMessage(replyText, file: file, line: line)
+        let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
+        let message = attributes.quotedText(quotedText, in: messageCell).wait()
+        let actualText = message.waitForText(quotedText).text
+        XCTAssertEqual(quotedText, actualText)
+        XCTAssertTrue(message.exists, "Quoted message was not showed")
+        XCTAssertFalse(message.isEnabled, "Quoted message should be disabled")
+        XCTAssertTrue(message.isHittable, "Quoted message is not visible")
+        
+        if !replyText.isEmpty {
+            let message = attributes.text(replyText, in: messageCell).wait()
+            let actualText = message.waitForText(replyText).text
+            XCTAssertEqual(replyText, actualText)
+        }
+        return self
+    }
+    
+    @discardableResult
+    func assertQuotedMessageWithAttachment(
+        quotedText: String,
+        at messageCellIndex: Int? = nil,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
         let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
         let quotedMessage = attributes.quotedText(quotedText, in: messageCell).wait()
         XCTAssertTrue(quotedMessage.exists, "Quoted message was not showed", file: file, line: line)
         XCTAssertFalse(quotedMessage.isEnabled, "Quoted message should be disabled", file: file, line: line)
+        XCTAssertTrue(quotedMessage.isHittable, "Quoted message is not visible", file: file, line: line)
         return self
     }
 }

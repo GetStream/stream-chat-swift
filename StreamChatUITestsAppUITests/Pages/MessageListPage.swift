@@ -26,6 +26,10 @@ class MessageListPage {
     static var scrollToBottomButton: XCUIElement {
         app.buttons["ScrollToLatestMessageButton"]
     }
+    
+    static var scrollToBottomButtonUnreadCount: XCUIElement {
+        app.staticTexts["unreadCountLabel"]
+    }
 
     enum NavigationBar {
 
