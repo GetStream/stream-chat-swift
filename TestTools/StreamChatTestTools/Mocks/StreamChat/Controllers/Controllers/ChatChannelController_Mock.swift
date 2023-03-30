@@ -7,6 +7,11 @@ import Foundation
 
 public class ChatChannelController_Mock: ChatChannelController {
 
+    var mockCid: ChannelId?
+    public override var cid: ChannelId? {
+        mockCid ?? super.cid
+    }
+
     /// Creates a new mock instance of `ChatChannelController`.
     public static func mock(chatClientConfig: ChatClientConfig? = nil) -> ChatChannelController_Mock {
         .init(

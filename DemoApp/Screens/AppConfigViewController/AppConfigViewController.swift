@@ -12,8 +12,10 @@ struct DemoAppConfig {
     var isHardDeleteEnabled: Bool
     /// A Boolean value to define if Atlantis will be started to proxy HTTP and WebSocket calls.
     var isAtlantisEnabled: Bool
-    /// A Boolean value to define if we should mimic token refresh scenarios
+    /// A Boolean value to define if we should mimic token refresh scenarios.
     var isTokenRefreshEnabled: Bool
+    /// A Boolean value to define if an additional message debugger action will be added.
+    var isMessageDebuggerEnabled: Bool
 }
 
 class AppConfig {
@@ -27,7 +29,8 @@ class AppConfig {
         demoAppConfig = DemoAppConfig(
             isHardDeleteEnabled: false,
             isAtlantisEnabled: false,
-            isTokenRefreshEnabled: false
+            isTokenRefreshEnabled: false,
+            isMessageDebuggerEnabled: false
         )
     }
 }
@@ -119,6 +122,7 @@ class AppConfigViewController: UITableViewController {
     enum DemoAppConfigOption: String, CaseIterable {
         case isHardDeleteEnabled
         case isAtlantisEnabled
+        case isMessageDebuggerEnabled
     }
 
     enum ComponentsConfigOption: String, CaseIterable {
@@ -234,6 +238,10 @@ class AppConfigViewController: UITableViewController {
             cell.accessoryView = makeSwitchButton(demoAppConfig.isAtlantisEnabled) { [weak self] newValue in
                 self?.demoAppConfig.isAtlantisEnabled = newValue
             }
+        case .isMessageDebuggerEnabled:
+            cell.accessoryView = makeSwitchButton(demoAppConfig.isMessageDebuggerEnabled) { [weak self] newValue in
+                self?.demoAppConfig.isMessageDebuggerEnabled = newValue
+            }
         }
     }
 
@@ -247,6 +255,8 @@ class AppConfigViewController: UITableViewController {
         case .isHardDeleteEnabled:
             break
         case .isAtlantisEnabled:
+            break
+        case .isMessageDebuggerEnabled:
             break
         }
     }

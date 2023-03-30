@@ -5493,11 +5493,11 @@
 				A3698D7F2820187200814143 /* DebugMenu.swift */,
 				A3698DD728215E2F00814143 /* Settings.swift */,
 				A34407C027D8C33F0044F150 /* ViewController.swift */,
+				A34407FA27D8C8AB0044F150 /* StreamChat */,
 				A34407C827D8C3400044F150 /* Assets.xcassets */,
 				A3BD4816281A97750090D511 /* Extensions */,
 				A36F99782818457F0078260D /* InternetConnection */,
 				A34407CA27D8C3400044F150 /* LaunchScreen.storyboard */,
-				A34407FA27D8C8AB0044F150 /* StreamChat */,
 			);
 			path = StreamChatUITestsApp;
 			sourceTree = "<group>";

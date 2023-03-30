@@ -7,13 +7,6 @@
 import XCTest
 
 final class Pagination_Tests: XCTestCase {
-    func test_invalidMessagesPaginationInit_returnsNil() {
-        let pagination = MessagesPagination(pageSize: nil, parameter: nil)
-
-        // Assert initializer returns nil on invalid pagination
-        XCTAssertNil(pagination)
-    }
-
     func test_pagination_Encoding() throws {
         var pagination = Pagination(pageSize: 10, offset: 10)
 

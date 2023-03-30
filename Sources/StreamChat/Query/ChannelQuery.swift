@@ -52,7 +52,7 @@ public struct ChannelQuery: Encodable {
         type = cid.type
         channelPayload = nil
 
-        pagination = MessagesPagination(pageSize: pageSize, parameter: paginationParameter)
+        pagination = MessagesPagination(pageSize: pageSize ?? .messagesPageSize, parameter: paginationParameter)
         self.membersLimit = membersLimit
         self.watchersLimit = watchersLimit
     }

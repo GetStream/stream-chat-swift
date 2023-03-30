@@ -11,6 +11,7 @@ final class ChatChannelVC_Tests: XCTestCase {
     var vc: ChatChannelVC!
     fileprivate var mockComposer: ComposerVC_Mock!
     var channelControllerMock: ChatChannelController_Mock!
+    var cid: ChannelId!
 
     override func setUp() {
         super.setUp()
@@ -21,7 +22,9 @@ final class ChatChannelVC_Tests: XCTestCase {
         vc = ChatChannelVC()
         vc.isViewVisible = { _ in true }
         vc.components = components
+        cid = .unique
         channelControllerMock = ChatChannelController_Mock.mock()
+        channelControllerMock.mockCid = cid
         vc.channelController = channelControllerMock
         let mockedComposer = vc.messageComposerVC as! ComposerVC_Mock
         mockedComposer.mockChannelController = channelControllerMock
@@ -629,17 +632,29 @@ final class ChatChannelVC_Tests: XCTestCase {
         XCTAssertEqual(channelControllerMock.loadFirstPageCallCount, 1)
     }
 
-    func test_shouldLoadPageAroundMessage_thenLoadPageAroundMessageId() {
-        vc.chatMessageListVC(vc.messageListVC, shouldLoadPageAroundMessage: .mock()) { _ in }
+    func test_shouldLoadPageAroundMessageId_thenLoadPageAroundMessageId() {
+        vc.chatMessageListVC(vc.messageListVC, shouldLoadPageAroundMessageId: .unique) { _ in }
         XCTAssertEqual(channelControllerMock.loadPageAroundMessageIdCallCount, 1)
     }
 
-    func test_shouldLoadPageAroundMessage_whenMessageIsInsideThread_thenDontPageAroundMessageId() {
-        let messageInsideThread = ChatMessage.mock(
-            parentMessageId: .unique,
+    // This test is temporary until we support jumping to inside a thread.
+    func test_shouldLoadPageAroundMessageId_whenMessageIsInsideThread_thenDontLoadPageAroundMessageId() throws {
+        let messageInsideThread = MessagePayload.dummy(
+            parentId: .unique,
             showReplyInChannel: false
         )
-        vc.chatMessageListVC(vc.messageListVC, shouldLoadPageAroundMessage: messageInsideThread) { _ in }
+
+        try channelControllerMock.client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: self.cid)))
+            try session.saveMessage(
+                payload: messageInsideThread,
+                for: self.cid,
+                syncOwnReactions: false,
+                cache: nil
+            )
+        }
+
+        vc.chatMessageListVC(vc.messageListVC, shouldLoadPageAroundMessageId: messageInsideThread.id) { _ in }
         XCTAssertEqual(channelControllerMock.loadPageAroundMessageIdCallCount, 0)
     }
 

@@ -441,26 +441,29 @@ open class ChatMessageListVC: _ViewController,
     /// In case the message is already loaded, it directly goes to it.
     /// If not, it will load the messages around it and go to that page.
     ///
-    /// - Parameter message: The message which the message list should go to.
+    /// - Parameter id: The id of message which the message list should go to.
     /// - Parameter onHighlight: An optional closure to provide highlighting style when the message appears on screen.
-    public func jumpToMessage(_ message: ChatMessage, onHighlight: ((IndexPath) -> Void)? = nil) {
-        if let indexPath = getIndexPath(forMessageId: message.id) {
+    public func jumpToMessage(id: MessageId, onHighlight: ((IndexPath) -> Void)? = nil) {
+        if let indexPath = getIndexPath(forMessageId: id) {
             scrollToMessage(at: indexPath, onHighlight: onHighlight)
+            updateScrollToBottomButtonVisibility()
             return
         }
 
         onMessageHighlight = onHighlight
 
-        delegate?.chatMessageListVC(self, shouldLoadPageAroundMessage: message) { [weak self] error in
+        delegate?.chatMessageListVC(self, shouldLoadPageAroundMessageId: id) { [weak self] error in
             if let error = error {
                 log.error("Loading message around failed with error: \(error)")
                 return
             }
 
+            self?.updateScrollToBottomButtonVisibility()
+
             // When we load the mid-page, the UI is not yet updated, so we can't scroll here.
             // So we need to wait when the updates messages are available in the UI, and only then
             // we can scroll to it.
-            self?.messageIndexPathPendingScrolling = self?.getIndexPath(forMessageId: message.id)
+            self?.messageIndexPathPendingScrolling = self?.getIndexPath(forMessageId: id)
         }
     }
 
@@ -649,7 +652,7 @@ open class ChatMessageListVC: _ViewController,
     }
 
     open func messageContentViewDidTapOnQuotedMessage(_ quotedMessage: ChatMessage) {
-        jumpToMessage(quotedMessage, onHighlight: { [weak self] indexPath in
+        jumpToMessage(id: quotedMessage.id, onHighlight: { [weak self] indexPath in
             self?.highlightCell(at: indexPath)
         })
     }
@@ -897,5 +900,20 @@ private extension ChatMessageListVC {
             let movedIndexPath = IndexPath(item: 0, section: 0)
             listView.reloadRows(at: [movedIndexPath], with: .none)
         }
+    }
+}
+
+// MARK: - Deprecations
+
+extension ChatMessageListVC {
+    /// Jump to a given message.
+    /// In case the message is already loaded, it directly goes to it.
+    /// If not, it will load the messages around it and go to that page.
+    ///
+    /// - Parameter message: The message which the message list should go to.
+    /// - Parameter onHighlight: An optional closure to provide highlighting style when the message appears on screen.
+    @available(*, deprecated, renamed: "jumpToMessage(id:onHighlight:)")
+    public func jumpToMessage(_ message: ChatMessage, onHighlight: ((IndexPath) -> Void)? = nil) {
+        jumpToMessage(id: message.id, onHighlight: onHighlight)
     }
 }
