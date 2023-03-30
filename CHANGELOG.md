@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.30.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.30.0)
+_March 30, 2023_
+
 ## StreamChat
 ### ✅ Added
 - Expose `deactivatedAt` and `isDeactivated` in ChatUser [#2547](https://github.com/GetStream/stream-chat-swift/pull/2547)
