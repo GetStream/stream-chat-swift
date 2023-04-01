@@ -1,12 +1,12 @@
 {
-    "duration": "176.79ms",
+    "duration": "167.26ms",
     "message": {
         "attachments": [],
         "before_message_send_failed": true,
-        "cid": "messaging:34ec7712-c2c6-11ed-bb67-005056962955",
-        "created_at": "2023-03-15T00:13:27.353783Z",
+        "cid": "messaging:e1de5662-d021-11ed-a449-0050568d3e6a",
+        "created_at": "2023-04-01T00:12:28.432777Z",
         "html": "<p>Test</p>\n",
-        "id": "3536f972-c2c6-11ed-bb67-005056962955",
+        "id": "e3317706-d021-11ed-a449-0050568d3e6a",
         "latest_reactions": [],
         "mentioned_users": [],
         "own_reactions": [],
@@ -21,18 +21,18 @@
         "silent": false,
         "text": "Test",
         "type": "regular",
-        "updated_at": "2023-03-15T00:13:27.353783Z",
+        "updated_at": "2023-04-01T00:12:28.432777Z",
         "user": {
             "banned": false,
             "birthland": "Tatooine",
             "created_at": "2020-12-07T11:36:47.059906Z",
             "id": "luke_skywalker",
             "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
-            "last_active": "2023-03-15T00:13:26.587041167Z",
+            "last_active": "2023-04-01T00:12:25.885677286Z",
             "name": "Luke Skywalker",
             "online": true,
             "role": "user",
-            "updated_at": "2023-03-13T10:27:10.834831Z"
+            "updated_at": "2023-03-29T18:39:18.103938Z"
         }
     }
 }
