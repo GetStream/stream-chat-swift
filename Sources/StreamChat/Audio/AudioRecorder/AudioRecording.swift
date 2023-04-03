@@ -11,8 +11,6 @@ public protocol AudioRecording {
 
     var delegate: AudioRecordingDelegate? { get set }
 
-    var recordingURL: URL? { get }
-
     func beginRecording()
 
     func pauseRecording()
@@ -40,11 +38,12 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
     private let audioSessionConfigurator: AudioSessionConfiguring
     private let audioRecorderSettings: [String: Any]
     private let audioRecorderBaseStorageURL: URL
+    private let audioRecorderMeterNormaliser: ΑudioRecorderMeterNormalising
 
-//    public private(set) var recordingURL: URL?
     public var recordingURL: URL? { audioRecorder?.url }
 
     private var audioRecorder: AVAudioRecorder?
+    private var updateMetersTimer: Foundation.Timer?
     private var currentTimeObservationToken: Any?
     private var currentTimeTimer: Foundation.Timer?
 
@@ -63,31 +62,36 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
         return StreamAudioRecorder(
             audioSessionConfigurator: StreamAudioSessionConfigurator(.sharedInstance()),
             audioRecorderSettings: audioRecorderSettings,
-            audioRecorderBaseStorageURL: FileManager.default.temporaryDirectory
+            audioRecorderBaseStorageURL: FileManager.default.temporaryDirectory,
+            audioRecorderMeterNormaliser: StreamΑudioRecorderMeterNormaliser()
         )
     }
 
     public init(
         audioSessionConfigurator: AudioSessionConfiguring,
         audioRecorderSettings: [String: Any],
-        audioRecorderBaseStorageURL: URL
+        audioRecorderBaseStorageURL: URL,
+        audioRecorderMeterNormaliser: ΑudioRecorderMeterNormalising
     ) {
         self.audioSessionConfigurator = audioSessionConfigurator
         self.audioRecorderBaseStorageURL = audioRecorderBaseStorageURL
         self.audioRecorderSettings = audioRecorderSettings
+        self.audioRecorderMeterNormaliser = audioRecorderMeterNormaliser
 
         super.init()
     }
 
     private func makeAudioRecorder() throws -> AVAudioRecorder {
         let audioRecorder = try AVAudioRecorder(
-            url: audioRecorderBaseStorageURL.appendingPathComponent("\(UUID().uuidString).m4a"),
+            url: audioRecorderBaseStorageURL.appendingPathComponent("recording.m4a"),
             settings: audioRecorderSettings
         )
 
         audioRecorder.delegate = self
         audioRecorder.isMeteringEnabled = true
         audioRecorder.prepareToRecord()
+
+        updateMetersTimer?.invalidate()
 
         return audioRecorder
     }
@@ -96,11 +100,7 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
 
     open func beginRecording() {
         do {
-            try audioSessionConfigurator.activateRecordingSession(
-                mode: .spokenAudio,
-                policy: .default,
-                preferredInput: .builtInMic
-            )
+            try audioSessionConfigurator.activateRecordingSession()
 
             audioSessionConfigurator.requestRecordPermission { [weak self] in
                 self?.handleRecordRequest($0)
@@ -124,11 +124,7 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
             return
         }
         do {
-            try audioSessionConfigurator.activateRecordingSession(
-                mode: .default,
-                policy: .default,
-                preferredInput: .builtInMic
-            )
+            try audioSessionConfigurator.activateRecordingSession()
 
             if audioRecorder?.record() == false {
                 throw StreamAudioRecorderFailedToResumeRecording()
@@ -142,6 +138,7 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
 
     open func stopRecording() {
         audioRecorder?.stop()
+        updateMetersTimer?.invalidate()
         try? audioSessionConfigurator.deactivateRecordingSession()
         stopObservingCurrentTime()
     }
@@ -169,15 +166,16 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
             return
         }
 
-//        let newLocation = audioRecorderBaseStorageURL
-//            .appendingPathComponent("\(UUID().uuidString).m4a")
-//        try {
-//            let data = try Data(contentsOf: recorder.url.standardizedFileURL)
-//            data.write(to: newLocation)
-        delegate?.audioRecorderDidFinishRecording(self, url: recorder.url.standardizedFileURL)
-//        } catch {
-//
-//        }
+        let newName = "\(UUID().uuidString).m4a"
+        let newLocation = audioRecorderBaseStorageURL
+            .appendingPathComponent(newName)
+        do {
+            let data = try Data(contentsOf: recorder.url.standardizedFileURL)
+            try data.write(to: newLocation)
+            delegate?.audioRecorderDidFinishRecording(self, url: newLocation)
+        } catch {
+            delegate?.audioRecorder(self, didFailOperationWithError: error)
+        }
     }
 
     open func audioRecorderBeginInterruption(
@@ -212,6 +210,7 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
 
             if audioRecorder?.record() == true {
                 startObservingCurrentTime()
+                updateMetersTimer = .scheduledTimer(withTimeInterval: 0.1, repeats: true, block: { [weak self] _ in self?.didUpdateMeters() })
                 delegate?.audioRecorderDidBeginRecording(self)
             } else {
                 throw StreamAudioRecorderFailedToBeginRecording()
@@ -219,6 +218,19 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
         } catch {
             delegate?.audioRecorder(self, didFailOperationWithError: error)
         }
+    }
+
+    private func didUpdateMeters() {
+        guard let audioRecorder = audioRecorder, let delegate = delegate else {
+            return
+        }
+        audioRecorder.updateMeters()
+
+        delegate.audioRecorderDidUpdateMeters(
+            self,
+            averagePower: audioRecorderMeterNormaliser.normalise(audioRecorder.averagePower(forChannel: 0)),
+            peakPower: audioRecorderMeterNormaliser.normalise(audioRecorder.peakPower(forChannel: 0))
+        )
     }
 
     private func startObservingCurrentTime() {

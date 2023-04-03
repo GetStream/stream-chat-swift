@@ -23,6 +23,7 @@ public struct LocalAttachmentInfoKey: Hashable, Equatable, RawRepresentable {
     }
 
     public static let originalImage: Self = .init(rawValue: "originalImage")
+    public static let waveformData: Self = .init(rawValue: "waveformData")
 }
 
 /// The possible composer states. An Enum is not used so it does not cause
@@ -291,12 +292,12 @@ open class ComposerVC: _ViewController,
     open lazy var recordingAdapter: RecordingAdapter = .init(
         composerView: composerView,
         addFloatingViewHandler: { [weak self] in self?.showRecordingFloatingView($0) },
-        updateContentHandler: { [weak self] in
+        updateContentHandler: { [weak self] url, extraData in
             do {
-                try self?.addAttachmentToContent(from: $0, type: .file, info: [:])
+                try self?.addAttachmentToContent(from: url, type: .file, info: extraData ?? [:])
             } catch {
                 self?.handleAddAttachmentError(
-                    attachmentURL: $0,
+                    attachmentURL: url,
                     attachmentType: .file,
                     error: error
                 )

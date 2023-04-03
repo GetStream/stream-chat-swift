@@ -9,18 +9,11 @@ import AVFoundation
 public protocol AudioSessionConfiguring {
     static func build() -> AudioSessionConfiguring
 
-    func activateRecordingSession(
-        mode: AVAudioSession.Mode,
-        policy: AVAudioSession.RouteSharingPolicy,
-        preferredInput: AVAudioSession.Port
-    ) throws
+    func activateRecordingSession() throws
 
     func deactivateRecordingSession() throws
 
-    func activatePlaybackSession(
-        mode: AVAudioSession.Mode,
-        policy: AVAudioSession.RouteSharingPolicy
-    ) throws
+    func activatePlaybackSession() throws
 
     func deactivatePlaybackSession() throws
 
@@ -50,17 +43,13 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring {
         StreamAudioSessionConfigurator(.sharedInstance())
     }
 
-    open func activateRecordingSession(
-        mode: AVAudioSession.Mode,
-        policy: AVAudioSession.RouteSharingPolicy,
-        preferredInput: AVAudioSession.Port
-    ) throws {
+    open func activateRecordingSession() throws {
         guard audioSession.category != .playAndRecord else {
             try audioSession.setActive(true)
             return
         }
-        try audioSession.setCategory(.playAndRecord, mode: mode, policy: policy)
-        try setUpPreferredInput(preferredInput)
+        try audioSession.setCategory(.playAndRecord, mode: .spokenAudio, policy: .default)
+        try setUpPreferredInput(.builtInMic)
         try audioSession.setActive(true)
     }
 
@@ -68,18 +57,15 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring {
         guard audioSession.category == .record || audioSession.category == .playAndRecord else {
             return
         }
-//        try audioSession.setActive(false)
+        try audioSession.setActive(false)
     }
 
-    open func activatePlaybackSession(
-        mode: AVAudioSession.Mode,
-        policy: AVAudioSession.RouteSharingPolicy
-    ) throws {
+    open func activatePlaybackSession() throws {
         guard audioSession.category != .playback && audioSession.category != .playback else {
             try audioSession.setActive(true)
             return
         }
-        try audioSession.setCategory(.playback, mode: mode, policy: policy)
+        try audioSession.setCategory(.playback, mode: .default, policy: .default)
         try audioSession.setActive(true)
     }
 

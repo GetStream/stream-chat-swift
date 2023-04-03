@@ -22,10 +22,13 @@ open class RecordingAdapter: AudioRecordingDelegate, AudioPlayingDelegate {
     private let composerView: ComposerView
     private let serialDispatchQueue: DispatchQueue = .init(label: "com.stream.recording.adapter", qos: .userInteractive)
     private let addFloatingViewHandler: (UIView) -> Void
-    private let updateContentHandler: (URL) -> Void
+    private let updateContentHandler: (URL, [LocalAttachmentInfoKey: Any]?) -> Void
     private let clearMessageHandler: () -> Void
 
     private var almostCancelled = false
+    private var lastRecordingURL: URL?
+
+    open var sendInsteadOfStacking = false
 
     open private(set) lazy var audioRecorder: AudioRecording = composerView
         .components
@@ -54,6 +57,8 @@ open class RecordingAdapter: AudioRecordingDelegate, AudioPlayingDelegate {
         .withoutAutoresizingMaskConstraints
     open private(set) lazy var discardButton: DiscardRecordingButton = .init()
         .withoutAutoresizingMaskConstraints
+    open private(set) lazy var addAttachmentButton: AddAttachment = .init()
+        .withoutAutoresizingMaskConstraints
     open private(set) lazy var lockView: LockView = .init()
         .withoutAutoresizingMaskConstraints
     open private(set) lazy var spacer: UIStackView = .init()
@@ -72,7 +77,7 @@ open class RecordingAdapter: AudioRecordingDelegate, AudioPlayingDelegate {
     public init(
         composerView: ComposerView,
         addFloatingViewHandler: @escaping (UIView) -> Void,
-        updateContentHandler: @escaping (URL) -> Void,
+        updateContentHandler: @escaping (URL, [LocalAttachmentInfoKey: Any]?) -> Void,
         clearMessageHandler: @escaping () -> Void
     ) {
         self.composerView = composerView
@@ -132,6 +137,12 @@ open class RecordingAdapter: AudioRecordingDelegate, AudioPlayingDelegate {
             for: .touchUpInside
         )
 
+        composerView.confirmButton.addTarget(
+            self,
+            action: #selector(didTapConfirm),
+            for: .touchUpInside
+        )
+
         audioRecorder.delegate = self
 
         stopButton.didTapHandler = { [weak self] in
@@ -150,7 +161,7 @@ open class RecordingAdapter: AudioRecordingDelegate, AudioPlayingDelegate {
             }
         }
 
-        recordingWithPlaybackView.waveformView.addTarget(self, action: #selector(didScrub), for: .valueChanged)
+        recordingWithPlaybackView.waveformView.slider.addTarget(self, action: #selector(didScrub), for: .valueChanged)
     }
 
     // MARK: - Action Handlers
@@ -193,6 +204,11 @@ open class RecordingAdapter: AudioRecordingDelegate, AudioPlayingDelegate {
     }
 
     @objc open func didTapSend(_ sender: UIButton) {
+        // TODO: Handle when send is being tapped in locked or recording state
+        state = .notRecording
+    }
+
+    @objc open func didTapConfirm(_ sender: UIButton) {
         // TODO: Handle when send is being tapped in locked or recording state
         state = .notRecording
     }
@@ -254,7 +270,12 @@ open class RecordingAdapter: AudioRecordingDelegate, AudioPlayingDelegate {
                 self.recordingWithPlaybackView.removeFromSuperview()
                 self.composerView.headerView.isHidden = true
                 self.composerView.recordButton.isHidden = false
-                self.composerView.sendButton.isHidden = false
+                if self.sendInsteadOfStacking {
+                    self.composerView.sendButton.isHidden = false
+                    self.composerView.sendButton.isEnabled = false
+                } else {
+                    self.composerView.confirmButton.isHidden = true
+                }
                 self.composerView.leadingContainer.isHidden = false
                 self.composerView.inputMessageView.isHidden = false
                 self.notLongTapView.isHidden = true
@@ -262,7 +283,7 @@ open class RecordingAdapter: AudioRecordingDelegate, AudioPlayingDelegate {
                 self.floatingContainer.isHidden = true
                 self.recordingView.durationLabel.isHidden = false
                 self.lockView.content = false
-                self.composerView.sendButton.isEnabled = false
+                self.lockView.alpha = 1
                 self.audioPlayer.clearUpQueue()
                 self.clearMessageHandler()
             }
@@ -274,12 +295,18 @@ open class RecordingAdapter: AudioRecordingDelegate, AudioPlayingDelegate {
             addFloatingViewHandler(floatingContainer)
             lockView.isHidden = false
             audioRecorder.beginRecording()
+            let sendInsteadOfStacking = sendInsteadOfStacking
             Animate { [composerView, recordingView, slideToCancelView, floatingContainer] in
                 composerView.centerContainer.insertArrangedSubview(recordingView, at: 0)
                 composerView.centerContainer.insertArrangedSubview(slideToCancelView, at: 1)
                 composerView.leadingContainer.isHidden = true
                 composerView.inputMessageView.isHidden = true
-                composerView.sendButton.isHidden = true
+                if sendInsteadOfStacking {
+                    composerView.sendButton.isHidden = true
+                } else {
+                    composerView.sendButton.isHidden = true
+                    composerView.confirmButton.isHidden = true
+                }
                 floatingContainer.isHidden = false
             }
 
@@ -294,16 +321,29 @@ open class RecordingAdapter: AudioRecordingDelegate, AudioPlayingDelegate {
         case (.recording, .locked):
             composerView.headerView.embed(recordingWithPlaybackView)
             recordingWithPlaybackView.updateContent()
+            let sendInsteadOfStacking = self.sendInsteadOfStacking
             Animate { [slideToCancelView, stopButton, recordingView, composerView, lockView] in
                 composerView.centerContainer.insertArrangedSubview(stopButton, at: 1)
                 lockView.content = true
                 slideToCancelView.removeFromSuperview()
                 recordingView.durationLabel.isHidden = true
-                composerView.sendButton.isHidden = false
+                if sendInsteadOfStacking {
+                    composerView.sendButton.isHidden = false
+                    composerView.sendButton.isEnabled = true
+                } else {
+                    composerView.confirmButton.isHidden = false
+                }
                 composerView.recordButton.isHidden = true
                 composerView.headerView.isHidden = false
-                composerView.sendButton.isEnabled = true
                 lockView.bottomPaddingConstraint.constant = 5
+            } completion: { _ in
+                Animate(delay: 2) { [weak self] in
+                    guard self?.state != .notRecording else {
+                        return
+                    }
+
+                    self?.lockView.alpha = 0
+                }
             }
 
         case (.locked, .stopped):
@@ -322,7 +362,7 @@ open class RecordingAdapter: AudioRecordingDelegate, AudioPlayingDelegate {
 
         case (.stopped, .replaying):
             audioPlayer.clearUpQueue()
-            if let url = audioRecorder.recordingURL {
+            if let url = lastRecordingURL {
                 audioPlayer.loadAsset(from: url, andConnectDelegate: self)
             }
         case (.paused, .replaying):
@@ -360,10 +400,25 @@ open class RecordingAdapter: AudioRecordingDelegate, AudioPlayingDelegate {
             return
         }
         debugPrint("[\(type(of: self)) \(#function)] url: \(url)")
-        updateContentHandler(url)
-        if state == .sendImmediately {
-            composerView.sendButton.sendActions(for: .touchUpInside)
-        }
+
+        recordingWithPlaybackView.waveformView.content = url
+        lastRecordingURL = url
+
+        let analyser = WaveformAnalyzer(audioAssetURL: url)
+        analyser?.samples(count: 80, completionHandler: { [weak self] amplitudes in
+            guard let self = self else {
+                return
+            }
+            let extraData: [LocalAttachmentInfoKey: Any]? = amplitudes.map { [.waveformData: $0] }
+            self.updateContentHandler(url, extraData)
+            if self.state == .sendImmediately {
+                if self.sendInsteadOfStacking {
+                    self.composerView.sendButton.sendActions(for: .touchUpInside)
+                } else {
+                    self.composerView.confirmButton.sendActions(for: .touchUpInside)
+                }
+            }
+        })
     }
 
     open func audioRecorderDidUpdate(_ audioRecorder: AudioRecording, currentTime: TimeInterval) {
@@ -385,6 +440,14 @@ open class RecordingAdapter: AudioRecordingDelegate, AudioPlayingDelegate {
 
     open func audioRecorderEndInterruption(_ audioRecorder: AudioRecording) {
         debugPrint("[\(type(of: self)) \(#function)]")
+    }
+
+    open func audioRecorderDidUpdateMeters(
+        _ audioRecorder: AudioRecording,
+        averagePower: Float,
+        peakPower: Float
+    ) {
+        debugPrint("[\(type(of: self)) \(#function)] averagePower: \(averagePower), peakPower: \(peakPower)")
     }
 
     // MARK: - AudioPlayingDelegate
@@ -409,12 +472,13 @@ open class RecordingAdapter: AudioRecordingDelegate, AudioPlayingDelegate {
             break
         }
 
-        recordingWithPlaybackView.waveformView.maximumValue = Float(context.duration)
+        recordingWithPlaybackView.waveformView.slider.maximumValue = Float(context.duration)
         recordingWithPlaybackView.content = .init(
             inPlaybackMode: true,
             isPlaying: state == .replaying,
             interval: state == .stopped ? context.duration : context.currentTime
         )
+        recordingWithPlaybackView.waveformView.slider.value = state == .stopped ? 0 : Float(context.currentTime)
     }
 }
 
@@ -527,11 +591,11 @@ open class RecordingAndPlaybackView: _View, ThemeProvider {
         .withBidirectionalLanguagesSupport
         .withoutAutoresizingMaskConstraints
 
-    open lazy var waveformView: UISlider = .init()
+    open lazy var waveformView: WaveFormView = .init()
         .withoutAutoresizingMaskConstraints
 
     func reset() {
-        waveformView.maximumValue = 0
+        waveformView.slider.maximumValue = 0
         updateContent()
     }
 
@@ -551,7 +615,7 @@ open class RecordingAndPlaybackView: _View, ThemeProvider {
         super.setUpAppearance()
         backgroundColor = appearance.colorPalette.background
         durationLabel.textColor = appearance.colorPalette.textLowEmphasis
-        durationLabel.font = appearance.fonts.footnote
+        durationLabel.font = .monospacedDigitSystemFont(ofSize: appearance.fonts.footnote.pointSize, weight: .medium)
     }
 
     override open func updateContent() {
@@ -559,8 +623,8 @@ open class RecordingAndPlaybackView: _View, ThemeProvider {
         playPauseButton.isHidden = !content.inPlaybackMode
         playPauseButton.content = content.isPlaying
         waveformView.isHidden = playPauseButton.isHidden
-        waveformView.minimumValue = 0
-        waveformView.value = Float(content.interval)
+        waveformView.slider.minimumValue = 0
+        waveformView.slider.value = Float(content.interval)
         container.setNeedsLayout()
         container.layoutIfNeeded()
     }
@@ -711,23 +775,137 @@ open class LockView: _View, ThemeProvider {
 
 open class DeleteButton: _View, ThemeProvider {}
 
-open class WaveFormView: _View, ThemeProvider {
-    var content: URL? { didSet { updateContentIfNeeded() } }
+open class BarView: _View, ThemeProvider {
+    var content: CGFloat = 0 {
+        didSet { updateContentIfNeeded() }
+    }
 
-    open private(set) lazy var imageView: UIStackView = .init()
+    private var maxHeight: CGFloat = 30
+    private lazy var heightConstraint: NSLayoutConstraint = pillView.heightAnchor.constraint(equalToConstant: 0)
+
+    open var pillView: UIView = .init()
         .withoutAutoresizingMaskConstraints
 
     override open func setUpLayout() {
-        embed(imageView, insets: .init(top: 8, leading: 8, bottom: 8, trailing: 8))
+        super.setUpLayout()
+
+        addSubview(pillView)
+        pillView.pin(anchors: [.leading, .trailing, .centerY], to: self)
+        NSLayoutConstraint.activate([
+            heightAnchor.constraint(equalToConstant: maxHeight),
+            heightConstraint,
+            pillView.topAnchor.constraint(greaterThanOrEqualTo: topAnchor),
+            pillView.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor),
+            pillView.widthAnchor.constraint(greaterThanOrEqualToConstant: 2)
+        ])
     }
 
     override open func setUpAppearance() {
         super.setUpAppearance()
-        imageView.backgroundColor = appearance.colorPalette.background
+
+        backgroundColor = nil
+        pillView.backgroundColor = appearance.colorPalette.textLowEmphasis
+    }
+
+    override open func layoutSubviews() {
+        super.layoutSubviews()
+        pillView.layer.cornerRadius = pillView.bounds.width / 2
+        heightConstraint.constant = max(pillView.bounds.width, heightConstraint.constant)
     }
 
     override open func updateContent() {
-//        guard let content = content else { return }
+        super.updateContent()
+
+        let newConstant = max(pillView.bounds.width, CGFloat(maxHeight * content))
+        heightConstraint.constant = newConstant
+    }
+}
+
+open class WaveFormView: _View, ThemeProvider {
+    var content: URL? { didSet { updateContentIfNeeded() } }
+
+    open private(set) var numberOfBars = 80
+
+    open private(set) lazy var container: UIStackView = .init(arrangedSubviews: barViews)
+        .withoutAutoresizingMaskConstraints
+
+    open private(set) lazy var barViews: [BarView] = (0..<numberOfBars)
+        .map { _ in BarView().withoutAutoresizingMaskConstraints }
+
+    open private(set) lazy var slider: UISlider = .init()
+        .withoutAutoresizingMaskConstraints
+
+    override open func setUpLayout() {
+        embed(container, insets: .zero)
+        embed(slider, insets: .zero)
+
+        container.axis = .horizontal
+        container.spacing = 1
+        container.alignment = .center
+        container.distribution = .equalSpacing
+    }
+
+    override open func setUpAppearance() {
+        super.setUpAppearance()
+        slider.setMaximumTrackImage(.init(), for: .normal)
+        slider.setMinimumTrackImage(.init(), for: .normal)
+        slider.maximumTrackTintColor = .clear
+        slider.minimumTrackTintColor = .clear
+        slider.backgroundColor = nil
+
+        let image = UIImage(named: "cursor", in: .streamChatUI)?.withRenderingMode(.alwaysOriginal)
+        slider.setThumbImage(image, for: .normal)
+    }
+
+    override open func updateContent() {
+        guard
+            let content = content,
+            let analyser = WaveformAnalyzer(audioAssetURL: content)
+        else { return }
+
+        analyser.samples(count: barViews.count) { [weak self, analyser] amplitudes in
+            _ = analyser
+            guard let amplitudes = amplitudes else {
+                return
+            }
+
+            print("Amplitudes: \(amplitudes.map(\.description).joined(separator: ","))")
+
+            DispatchQueue.main.async {
+                amplitudes.enumerated().forEach { item in
+                    self?.barViews[item.offset].content = CGFloat(item.element)
+                }
+            }
+        }
+    }
+}
+
+open class AddAttachment: _Button, AppearanceProvider {
+    /// Override this variable to enable custom behavior upon button enabled.
+    override open var isEnabled: Bool {
+        didSet {
+            isEnabledChangeAnimation(isEnabled)
+        }
+    }
+
+    override open func setUpAppearance() {
+        super.setUpAppearance()
+
+        let normalStateImage = appearance.images.confirmCheckmark
+        setImage(normalStateImage, for: .normal)
+
+        let buttonColor: UIColor = appearance.colorPalette.alternativeInactiveTint
+        let disabledStateImage = appearance.images.sendArrow.tinted(with: buttonColor)
+        setImage(disabledStateImage, for: .disabled)
+    }
+
+    /// The animation when the `isEnabled` state changes.
+    open func isEnabledChangeAnimation(_ isEnabled: Bool) {
+        Animate {
+            self.transform = isEnabled
+                ? CGAffineTransform(rotationAngle: -CGFloat.pi / 2.0)
+                : .identity
+        }
     }
 }
 
@@ -754,25 +932,6 @@ open class BiDirectionalPanGestureRecognizer: UIPanGestureRecognizer, UIGestureR
         delegate = self
     }
 
-    // NOTE: It seems that it's required to implement at least one shouldReceive
-    // delegate method for the shouldBegin to be called
-    public func gestureRecognizer(
-        _ gestureRecognizer: UIGestureRecognizer,
-        shouldReceive touch: UITouch
-    ) -> Bool {
-        let result = shouldReceiveEventHandler?() ?? false
-        debugPrint("[\(type(of: self))]\(#function) touch returns \(result)")
-        return result
-    }
-
-    public func gestureRecognizerShouldBegin(
-        _ gestureRecognizer: UIGestureRecognizer
-    ) -> Bool {
-        horizontalPoint = view?.bounds.width ?? 0
-        verticalPoint = view?.bounds.height ?? 0
-        return true
-    }
-
     public func gestureRecognizer(
         _ gestureRecognizer: UIGestureRecognizer,
         shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
@@ -780,11 +939,22 @@ open class BiDirectionalPanGestureRecognizer: UIPanGestureRecognizer, UIGestureR
         true
     }
 
+    override open func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent) {
+        let result = shouldReceiveEventHandler?() ?? false
+        debugPrint("[\(type(of: self))]\(#function) touch returns \(result)")
+        guard result else {
+            state = .possible
+            return
+        }
+
+        reset()
+        super.touchesBegan(touches, with: event)
+    }
+
     override open func touchesMoved(
         _ touches: Set<UITouch>,
         with event: UIEvent
     ) {
-//        debugPrint("[\(type(of: self))]\(#function)")
         super.touchesMoved(touches, with: event)
         let velocity = self.velocity(in: view)
         let isHorizontalMovement = abs(velocity.x) >= abs(velocity.y)
@@ -798,7 +968,6 @@ open class BiDirectionalPanGestureRecognizer: UIPanGestureRecognizer, UIGestureR
             verticalMovementHandler?(verticalPoint)
         }
 
-        state = .changed
         setTranslation(.zero, in: view)
     }
 

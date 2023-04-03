@@ -66,6 +66,8 @@ open class StreamRemoteAudioPlayer: AudioPlaying {
     /// The player that will be used for the playback of the audio files
     private let player: AVPlayer
 
+    private let audioSessionConfigurator: AudioSessionConfiguring
+
     /// The assetPropertyLoader is being used during the loading of an asset with non-nil URL, to provide
     /// async information about the asset's properties. Currently, we are only loading the `duration`
     /// property.
@@ -86,18 +88,21 @@ open class StreamRemoteAudioPlayer: AudioPlaying {
         StreamRemoteAudioPlayer(
             assetPropertyLoader: StreamAssetPropertyLoader(),
             playerObserver: StreamPlayerObserver(),
-            player: .init()
+            player: .init(),
+            audioSessionConfigurator: StreamAudioSessionConfigurator(.sharedInstance())
         )
     }
 
     public init(
         assetPropertyLoader: AssetPropertyLoading,
         playerObserver: AudioPlayerObserving,
-        player: AVPlayer
+        player: AVPlayer,
+        audioSessionConfigurator: AudioSessionConfiguring
     ) {
         self.assetPropertyLoader = assetPropertyLoader
         self.playerObserver = playerObserver
         self.player = player
+        self.audioSessionConfigurator = audioSessionConfigurator
 
         setUp()
     }
@@ -167,7 +172,13 @@ open class StreamRemoteAudioPlayer: AudioPlaying {
     }
 
     open func play() {
-        player.play()
+        do {
+            try audioSessionConfigurator.activatePlaybackSession()
+            player.play()
+        } catch {
+            log.error(error)
+            stop()
+        }
     }
 
     open func pause() {
@@ -175,18 +186,24 @@ open class StreamRemoteAudioPlayer: AudioPlaying {
     }
 
     open func stop() {
-        /// As the AVPlayer doesn't provide an API to actually stop the playback, we are simulating it
-        /// by calling pause
-        player.pause()
+        do {
+            /// As the AVPlayer doesn't provide an API to actually stop the playback, we are simulating it
+            /// by calling pause
+            player.pause()
 
-        updateContext { value in
-            value = .init(
-                duration: value.duration,
-                currentTime: 0,
-                state: .stopped,
-                rate: .zero,
-                isSeeking: false
-            )
+            try audioSessionConfigurator.deactivatePlaybackSession()
+
+            updateContext { value in
+                value = .init(
+                    duration: value.duration,
+                    currentTime: 0,
+                    state: .stopped,
+                    rate: .zero,
+                    isSeeking: false
+                )
+            }
+        } catch {
+            log.error(error)
         }
     }
 
@@ -314,7 +331,7 @@ open class StreamRemoteAudioPlayer: AudioPlaying {
                 value.isSeeking = false
             }
 
-            player.play()
+            play()
 
         /// If the assetPropertyLoader failed to load the asset's duration information we update the
         /// context with the notLoaded state in order to inform the delegate and we log a debug error message
@@ -360,193 +377,3 @@ open class StreamRemoteAudioPlayer: AudioPlaying {
         }
     }
 }
-
-// open class StreamLocalAudioPlayer: NSObject, AudioPlaying, AVAudioPlayerDelegate {
-//
-//    // MARK: - Properties
-//
-//    /// Provides thread-safe access to context storage
-//    private lazy var contextValueAccessor: AudioPlaybackContextAccessor = .init(.notLoaded)
-//    /// Describes the player's current playback state. The access to this property is thread-safe
-//    private(set) var context: AudioPlaybackContext {
-//        get { contextValueAccessor.value }
-//        set {
-//            contextValueAccessor.value = newValue
-//            delegate?.audioPlayer(self, didUpdateContext: newValue)
-//        }
-//    }
-//
-//    /// The delegate which should get informed when the player's context gets updated
-//    private(set) weak var delegate: AudioPlayingDelegate? {
-//        didSet { delegate?.audioPlayer(self, didUpdateContext: context) }
-//    }
-//
-//    /// The player that will be used for the playback of the audio files
-//    private var player: AVAudioPlayer? { didSet { setUp() } }
-//
-//    private var currentTimeObserver: Foundation.Timer?
-//
-//    public static func build() -> AudioPlaying {
-//        StreamLocalAudioPlayer()
-//    }
-//
-//    public func playbackContext(for url: URL) -> AudioPlaybackContext {
-//        guard
-//            let currentItemURL = player?.url,
-//            currentItemURL == url
-//        else {
-//            return .notLoaded
-//        }
-//        return context
-//    }
-//
-//    public func loadAsset(
-//        from url: URL,
-//        andConnectDelegate delegate: AudioPlayingDelegate
-//    ) {
-//        /// We are going to check if the URL requested to load, represents the currentItem that we
-//        /// have already loaded (if any). In this case, we will try either to resume the existing playback
-//        /// or restart it, if possible.
-//        if let currentURL = player?.url, url == currentURL {
-//            /// Update the delegate to the provided one
-//            self.delegate = delegate
-//
-//            /// If the currentItem is paused, we want to continue the playback
-//            /// Otherwise, no action is required
-//            if context.state == .paused {
-//                player?.play()
-//            } else if context.state == .stopped {
-//                /// If the currentItem has stopped, we want to restart the playback. We are replacing
-//                /// the currentItem with the same one to trigger the player's observers on the updated
-//                /// currentItem.
-//                player?.play(atTime: 0)
-//            } else {
-//                /// This case may be triggered if we call ``loadAsset`` on a player that is currently
-//                /// playing the URL we provided. In this case we will Inform the delegate about the
-//                /// current state.
-//                delegate.audioPlayer(self, didUpdateContext: context)
-//            }
-//
-//            return
-//        }
-//
-//        /// We call stop to update the currently set delegate that the playback has been stopped
-//        /// and then we remove the current item from the player's queue.
-//        stop()
-//        do {
-//            let data = try Data(contentsOf: url)
-//            debugPrint("[\(type(of: self))]Load asset with size \(data.count) from \(url).")
-//            let newPlayer = try AVAudioPlayer(data: data)
-//            player = newPlayer
-//            self.delegate = delegate
-//
-//            updateContext { value in
-//                value.duration = newPlayer.duration
-//                value.currentTime = 0
-//                value.rate = .zero
-//                value.isSeeking = false
-//            }
-//        } catch {
-//            updateContext { value in
-//                value.duration = 0
-//                value.currentTime = 0
-//                value.rate = .zero
-//                value.state = .notLoaded
-//                value.isSeeking = false
-//            }
-//            log.error(error, subsystems: .audioPlayback)
-//            return
-//        }
-//    }
-//
-//    public func play() {
-//        try? AVAudioSession.sharedInstance().setCategory(.playback)
-//        try? AVAudioSession.sharedInstance().setActive(true)
-//        player?.play()
-//    }
-//
-//    public func pause() {
-//        player?.pause()
-//        try? AVAudioSession.sharedInstance().setActive(false)
-//    }
-//
-//    public func stop() {
-//        player?.stop()
-//        try? AVAudioSession.sharedInstance().setActive(false)
-//    }
-//
-//    public func updateRate(_ newRate: AudioPlaybackRate) {
-//        player?.rate = newRate.rawValue
-//    }
-//
-//    public func seek(to time: TimeInterval) {
-//        player?.currentTime = time
-//    }
-//
-//    // MARK: - Private Handlers
-//
-//    private func setUp() {
-//        guard self.player != nil else {
-//            return
-//        }
-//
-//        currentTimeObserver = Foundation.Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true, block: { [weak self] _ in
-//            guard let player = self?.player, player.isPlaying else {
-//                return
-//            }
-//
-//            self?.updateContext({ value in
-//                value.currentTime = player.currentTime
-//            })
-//        })
-//    }
-//
-//    // MARK: - AVAudioPlayerDelegate
-//
-//    public func audioPlayerDidFinishPlaying(
-//        _ player: AVAudioPlayer,
-//        successfully flag: Bool
-//    ) {
-//        updateContext { value in
-//            value.state = .stopped
-//            value.currentTime = 0
-//            value.isSeeking = false
-//        }
-//    }
-//
-//    public func audioPlayerDecodeErrorDidOccur(
-//        _ player: AVAudioPlayer,
-//        error: Error?
-//    ) {
-//        updateContext { value in
-//            value = .notLoaded
-//        }
-//    }
-//
-//    public func audioPlayerBeginInterruption(_ player: AVAudioPlayer) {
-//        updateContext { value in
-//            value.state = .paused
-//        }
-//    }
-//
-//    public func audioPlayerEndInterruption(
-//        _ player: AVAudioPlayer,
-//        withOptions flags: Int
-//    ) {
-//        updateContext { value in
-//            value.state = .playing
-//        }
-//    }
-//
-//    // MARK: - Private Helpers
-//
-//    /// Provides thread-safe updates for the player's context and makes sure to forward any updates
-//    /// to the the delegate
-//    private func updateContext(
-//        _ newContextProvider: (inout AudioPlaybackContext) -> Void
-//    ) {
-//        var newContext = context
-//        newContextProvider(&newContext)
-//        context = newContext
-//    }
-// }

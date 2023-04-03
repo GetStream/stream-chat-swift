@@ -13,6 +13,7 @@ public protocol AudioRecordingDelegate: AnyObject {
     func audioRecorderDeletedRecording(_ audioRecorder: AudioRecording)
     func audioRecorderBeginInterruption(_ audioRecorder: AudioRecording)
     func audioRecorderEndInterruption(_ audioRecorder: AudioRecording)
+    func audioRecorderDidUpdateMeters(_ audioRecorder: AudioRecording, averagePower: Float, peakPower: Float)
 
     func audioRecorder(_ audioRecorder: AudioRecording, didFailOperationWithError: Error)
 }

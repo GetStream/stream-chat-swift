@@ -81,6 +81,10 @@
 		40E642FF29D336A400B6F86B /* PauseRecordingButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40E642FE29D336A400B6F86B /* PauseRecordingButton.swift */; };
 		40E6430129D3387500B6F86B /* ResumeRecordingButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40E6430029D3387500B6F86B /* ResumeRecordingButton.swift */; };
 		40E6430329D482BE00B6F86B /* AudioPlaybackContextAccessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40E6430229D482BE00B6F86B /* AudioPlaybackContextAccessor.swift */; };
+		40FB0F6929D702AF007701B4 /* WaveformAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40FB0F6829D702AF007701B4 /* WaveformAnalyzer.swift */; };
+		40FB0F6A29D702AF007701B4 /* WaveformAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40FB0F6829D702AF007701B4 /* WaveformAnalyzer.swift */; };
+		40FB0F6C29DB04BE007701B4 /* ΑudioRecorderMeterNormalising.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40FB0F6B29DB04BE007701B4 /* ΑudioRecorderMeterNormalising.swift */; };
+		40FB0F6D29DB04BE007701B4 /* ΑudioRecorderMeterNormalising.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40FB0F6B29DB04BE007701B4 /* ΑudioRecorderMeterNormalising.swift */; };
 		40FC028D29BE981B00E2A1CD /* AttachmentFileType_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40FC028C29BE981B00E2A1CD /* AttachmentFileType_Tests.swift */; };
 		430156DC26B1862C0006E7EA /* CustomDataHashMap_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 430156DB26B1862C0006E7EA /* CustomDataHashMap_Tests.swift */; };
 		430156F226B4523A0006E7EA /* WebSocketConnectPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 430156F126B4523A0006E7EA /* WebSocketConnectPayload_Tests.swift */; };
@@ -2460,6 +2464,8 @@
 		40E642FE29D336A400B6F86B /* PauseRecordingButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PauseRecordingButton.swift; sourceTree = "<group>"; };
 		40E6430029D3387500B6F86B /* ResumeRecordingButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResumeRecordingButton.swift; sourceTree = "<group>"; };
 		40E6430229D482BE00B6F86B /* AudioPlaybackContextAccessor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioPlaybackContextAccessor.swift; sourceTree = "<group>"; };
+		40FB0F6829D702AF007701B4 /* WaveformAnalyzer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformAnalyzer.swift; sourceTree = "<group>"; };
+		40FB0F6B29DB04BE007701B4 /* ΑudioRecorderMeterNormalising.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ΑudioRecorderMeterNormalising.swift"; sourceTree = "<group>"; };
 		40FC027829BA079F00E2A1CD /* AudioPlaybackState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlaybackState.swift; sourceTree = "<group>"; };
 		40FC027A29BA0C2000E2A1CD /* AudioPlaybackContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlaybackContext.swift; sourceTree = "<group>"; };
 		40FC027E29BA26DE00E2A1CD /* AudioPlaybackRate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlaybackRate.swift; sourceTree = "<group>"; };
@@ -4127,10 +4133,20 @@
 			isa = PBXGroup;
 			children = (
 				40E642F829D2E9EB00B6F86B /* AudioRecording.swift */,
-				40E642FA29D3044700B6F86B /* AudioSessionConfiguring.swift */,
 				40E642FC29D3048600B6F86B /* AudioRecordingDelegate.swift */,
+				40FB0F6B29DB04BE007701B4 /* ΑudioRecorderMeterNormalising.swift */,
 			);
 			path = AudioRecorder;
+			sourceTree = "<group>";
+		};
+		40FB0F6E29DB0ADC007701B4 /* Audio */ = {
+			isa = PBXGroup;
+			children = (
+				40E642FA29D3044700B6F86B /* AudioSessionConfiguring.swift */,
+				40E642F729D2E9D900B6F86B /* AudioRecorder */,
+				40FC027529BA06CC00E2A1CD /* AudioPlayer */,
+			);
+			path = Audio;
 			sourceTree = "<group>";
 		};
 		40FC027529BA06CC00E2A1CD /* AudioPlayer */ = {
@@ -4189,8 +4205,7 @@
 				792A4F412480103A00EAF71D /* Query */,
 				C1E8AD59278DDC500041B775 /* Repositories */,
 				C13C74EE273936D900F93B34 /* StreamStarscream */,
-				40E642F729D2E9D900B6F86B /* AudioRecorder */,
-				40FC027529BA06CC00E2A1CD /* AudioPlayer */,
+				40FB0F6E29DB0ADC007701B4 /* Audio */,
 				792A4F3A247FFB7600EAF71D /* Utils */,
 				799C9426247D2FB9001F1104 /* WebSocketClient */,
 				799C9427247D2FB9001F1104 /* Workers */,
@@ -7172,6 +7187,7 @@
 		AD4EA229264ADE0100DF8EE2 /* Composer */ = {
 			isa = PBXGroup;
 			children = (
+				40FB0F6829D702AF007701B4 /* WaveformAnalyzer.swift */,
 				A35757C62613081B00DC914C /* ComposerKeyboardHandler.swift */,
 				E73A8B2A2578EB2B00FBDC56 /* ComposerVC.swift */,
 				22ADD681256C40410098EFEB /* ComposerView.swift */,
@@ -9057,6 +9073,7 @@
 				AD552E0128F46CE700199A6F /* ImageLoaderOptions.swift in Sources */,
 				40E642F629D22D7A00B6F86B /* PlayPauseButton.swift in Sources */,
 				88D88F86257F9AA700AFE2A2 /* NSLayoutConstraint+Extensions.swift in Sources */,
+				40FB0F6929D702AF007701B4 /* WaveformAnalyzer.swift in Sources */,
 				ADCB577928A42D7700B81AE8 /* Algorithm.swift in Sources */,
 				796CBD1C25FF9552003299B0 /* UIStackView+Extensions.swift in Sources */,
 				C1FC2F8627416E150062530F /* Allocations.swift in Sources */,
@@ -9656,6 +9673,7 @@
 				79896D5E25065ECD00BA8F1C /* ChannelRead.swift in Sources */,
 				C1FC2F972742579D0062530F /* Compression.swift in Sources */,
 				C1B49B3D2822A7AD00F4E89E /* StreamRuntimeCheck.swift in Sources */,
+				40FB0F6C29DB04BE007701B4 /* ΑudioRecorderMeterNormalising.swift in Sources */,
 				C1B0B38627BFE8AB00C8207D /* MessageRepository.swift in Sources */,
 				847E946E269C687300E31D0C /* EventsController.swift in Sources */,
 				79DDF80E249CB920002F4412 /* RequestDecoder.swift in Sources */,
@@ -10695,6 +10713,7 @@
 				C121EB912746A1E800023E4C /* ChatMentionSuggestionView.swift in Sources */,
 				C121EB922746A1E800023E4C /* ChatMentionSuggestionCollectionViewCell.swift in Sources */,
 				C121EB932746A1E800023E4C /* ChatCommandSuggestionView.swift in Sources */,
+				40FB0F6A29D702AF007701B4 /* WaveformAnalyzer.swift in Sources */,
 				C121EB942746A1E800023E4C /* ChatCommandSuggestionCollectionViewCell.swift in Sources */,
 				C121EB952746A1E800023E4C /* AttachmentsPreviewVC.swift in Sources */,
 				C121EB962746A1E800023E4C /* AttachmentPreviewContainer.swift in Sources */,
@@ -10795,6 +10814,7 @@
 				C121EBD82746A1EA00023E4C /* ChatMessageReactionsView.swift in Sources */,
 				C121EBD92746A1EA00023E4C /* ChatMessageReactionsPickerVC.swift in Sources */,
 				C121EBDA2746A1EA00023E4C /* ChatReactionPickerBubbleView.swift in Sources */,
+				40FB0F6D29DB04BE007701B4 /* ΑudioRecorderMeterNormalising.swift in Sources */,
 				A3EA3329276C904700C84A52 /* ObjcAssociatedWeakObject.swift in Sources */,
 				C121EBDB2746A1EA00023E4C /* ChatMessageDefaultReactionsBubbleView.swift in Sources */,
 				C121EBDC2746A1EA00023E4C /* ChatMessageReactionsBubbleTail.swift in Sources */,
