@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChat
 
 ### 🐞 Fixed
-- Fix channel list auto-filtering issue in cases where we are querying for channels that the user may not be a member [#2557](https://github.com/GetStream/stream-chat-swift/pull/2557)
+- Fix channel disappearing when channel list auto-filtering is enabled and the user is not a member of the channel [#2557](https://github.com/GetStream/stream-chat-swift/pull/2557)
 
 ### 🔄 Changed
 
