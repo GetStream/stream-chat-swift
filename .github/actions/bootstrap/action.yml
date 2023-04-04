@@ -12,7 +12,7 @@ runs:
       id: spm-cache
       with:
         path: ~/Library/Developer/Xcode/DerivedData/**/SourcePackages/checkouts
-        key: ${{ env.IMAGE }}-spm-${{ hashFiles('StreamChat.xcodeproj/**/Package.resolved') }}
+        key: ${{ env.IMAGE }}-spm-${{ hashFiles('StreamChat.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
         restore-keys: |
           ${{ env.IMAGE }}-spm-
     - name: Cache RubyGems

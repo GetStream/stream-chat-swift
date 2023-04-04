@@ -91,7 +91,7 @@ jobs:
     if: ${{ github.event_name != 'push' }}
     steps:
     - uses: actions/checkout@v3.1.0
-    - run: ls StreamChat.xcodeproj/**/Package.resolved || true
+    - run: ls StreamChat.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved || true
     - uses: ./.github/actions/bootstrap
       env:
         INSTALL_XCPARSE: true
@@ -102,7 +102,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GITHUB_PR_NUM: ${{ github.event.number }}
 
-    - run: ls StreamChat.xcodeproj/**/Package.resolved || true
+    - run: ls StreamChat.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved || true
     # - name: Parse xcresult
     #   if: failure()
     #   run: xcparse screenshots fastlane/test_output/StreamChatUI.xcresult fastlane/test_output/snapshots --test
