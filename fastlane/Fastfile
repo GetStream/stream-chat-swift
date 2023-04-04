@@ -427,7 +427,7 @@ end
 
 desc 'Runs ui tests in Debug config'
 lane :test_ui do |options|
-  next unless is_check_required(sources: sources_matrix[:ui])
+  # next unless is_check_required(sources: sources_matrix[:ui])
 
   remove_snapshots if options[:record]
 
