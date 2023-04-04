@@ -203,6 +203,13 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
             return filter(channel)
         }
 
+        guard !client.config.isChannelAutomaticFilteringEnabled else {
+            // When auto-filtering is enabled this will be called with channels
+            // that already have been matched against the provided filter. For
+            // this reason, we provide no additional logic and simply return true.
+            return true
+        }
+
         // Given that at the moment some delegate methods are not yet removed, but some integrators are still using
         // those, we need to keep using them for now.
         // This block should be removed once `shouldAddNewChannelToList` and `shouldListUpdatedChannel` methods are

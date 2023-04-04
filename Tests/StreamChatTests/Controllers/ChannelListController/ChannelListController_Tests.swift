@@ -8,29 +8,21 @@ import CoreData
 import XCTest
 
 final class ChannelListController_Tests: XCTestCase {
-    fileprivate var env: TestEnvironment!
+    private lazy var env: TestEnvironment! = TestEnvironment()
+    private lazy var memberId: UserId = .unique
+    private lazy var query: ChannelListQuery! = .init(filter: .in(.members, values: [memberId]))
+    private lazy var client: ChatClient! = ChatClient.mock()
+    private lazy var controllerCallbackQueueID: UUID! = .init()
+    private lazy var controller: ChatChannelListController! = {
+        let controller = ChatChannelListController(query: query, client: client, environment: env.environment)
+        controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
+        return controller
+    }()
 
-    var client: ChatClient!
-    var memberId: UserId = .unique
-    var query: ChannelListQuery!
-
-    var controller: ChatChannelListController!
-    var controllerCallbackQueueID: UUID!
     /// Workaround for unwrapping **controllerCallbackQueueID!** in each closure that captures it
     private var callbackQueueID: UUID { controllerCallbackQueueID }
 
     var database: DatabaseContainer_Spy { client.databaseContainer as! DatabaseContainer_Spy }
-
-    override func setUp() {
-        super.setUp()
-
-        env = TestEnvironment()
-        client = ChatClient.mock()
-        query = .init(filter: .in(.members, values: [memberId]))
-        controller = ChatChannelListController(query: query, client: client, environment: env.environment)
-        controllerCallbackQueueID = UUID()
-        controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
-    }
 
     override func tearDown() {
         query = nil
@@ -301,6 +293,8 @@ final class ChannelListController_Tests: XCTestCase {
     }
 
     func test_newChannel_callsListHook_whenSynchronized() throws {
+        setUpChatClientWithoutAutoFiltering()
+
         // Simulate `synchronize` call and catch the completion
         var synchronized = false
         controller.synchronize { _ in synchronized = true }
@@ -353,6 +347,8 @@ final class ChannelListController_Tests: XCTestCase {
     }
 
     func test_updatedChannel_callsLinkHook_whenSynchronized() throws {
+        setUpChatClientWithoutAutoFiltering()
+
         // Simulate `synchronize` call and catch the completion
         var synchronized = false
         controller.synchronize { _ in synchronized = true }
@@ -419,6 +415,8 @@ final class ChannelListController_Tests: XCTestCase {
     }
 
     func test_updatedChannel_callsUnlinkHook_whenSynchronized() throws {
+        setUpChatClientWithoutAutoFiltering()
+
         // Simulate `synchronize` call and catch the completion
         var synchronized = false
         controller.synchronize { _ in synchronized = true }
@@ -501,6 +499,8 @@ final class ChannelListController_Tests: XCTestCase {
     }
 
     func test_linkedChannels_doesTriggerUnlinkHook_whenNotSynchronized() throws {
+        setUpChatClientWithoutAutoFiltering()
+
         // Save a channel linked to the current query
         let cid: ChannelId = .unique
         try database.writeSynchronously { session in
@@ -689,6 +689,96 @@ final class ChannelListController_Tests: XCTestCase {
             ]
         ))
         controller = ChatChannelListController(query: query, client: client, filter: filter, environment: env.environment)
+    }
+
+    // MARK: - Change propagation tests with auto-filtering
+
+    func test_linkChannel_whenAutoFilteringEnabled_doesNotTriggerLinkChannelOnDelegate() throws {
+        let shouldListNewChannelWasNotCalledExpectation = expectation(description: "shouldListNewChannel won't be called")
+        let shouldListUpdatedChannelWasNotCalledExpectation = expectation(description: "shouldListUpdatedChannel won't be called")
+        [shouldListNewChannelWasNotCalledExpectation, shouldListUpdatedChannelWasNotCalledExpectation].forEach { $0.isInverted = true }
+
+        let testLinkDelegate = TestLinkDelegate(
+            shouldListNewChannel: { _ in
+                shouldListNewChannelWasNotCalledExpectation.fulfill()
+                return false
+            },
+            shouldListUpdatedChannel: { _ in
+                shouldListUpdatedChannelWasNotCalledExpectation.fulfill()
+                return false
+            }
+        )
+        controller.delegate = testLinkDelegate
+
+        // Save a channel linked to the current query
+        let cid: ChannelId = .unique
+        try database.writeSynchronously { session in
+            try session.saveChannel(
+                payload: self.dummyPayload(
+                    with: cid,
+                    members: [.dummy(user: .dummy(userId: self.memberId))]
+                ),
+                query: self.query,
+                cache: nil
+            )
+        }
+
+        // Assert channel is linked
+        AssertAsync.willBeEqual(controller.channels.map(\.cid), [cid])
+
+        // Update a channel linked to the current query
+        try database.writeSynchronously { session in
+            let dto = try XCTUnwrap(session.channel(cid: cid))
+            dto.updatedAt = .unique
+        }
+
+        // Assert linked channel is unlisted
+        AssertAsync.willBeEqual(controller.channels.map(\.cid), [cid])
+        waitForExpectations(timeout: defaultTimeoutForInversedExpecations)
+    }
+
+    func test_unlinkChannel_whenAutoFilteringEnabled_doesNotTriggerUnLinkChannelOnDelegate() throws {
+        let shouldListNewChannelWasNotCalledExpectation = expectation(description: "shouldListNewChannel won't be called")
+        let shouldListUpdatedChannelWasNotCalledExpectation = expectation(description: "shouldListUpdatedChannel won't be called")
+        [shouldListNewChannelWasNotCalledExpectation, shouldListUpdatedChannelWasNotCalledExpectation].forEach { $0.isInverted = true }
+
+        let testLinkDelegate = TestLinkDelegate(
+            shouldListNewChannel: { _ in
+                shouldListNewChannelWasNotCalledExpectation.fulfill()
+                return false
+            },
+            shouldListUpdatedChannel: { _ in
+                shouldListUpdatedChannelWasNotCalledExpectation.fulfill()
+                return false
+            }
+        )
+        controller.delegate = testLinkDelegate
+
+        // Save a channel linked to the current query
+        let cid: ChannelId = .unique
+        try database.writeSynchronously { session in
+            try session.saveChannel(
+                payload: self.dummyPayload(
+                    with: cid,
+                    members: [.dummy(user: .dummy(userId: self.memberId))]
+                ),
+                query: self.query,
+                cache: nil
+            )
+        }
+
+        // Assert channel is linked
+        AssertAsync.willBeEqual(controller.channels.map(\.cid), [cid])
+
+        // Update a channel linked to the current query
+        try database.writeSynchronously { session in
+            let dto = try XCTUnwrap(session.channel(cid: cid))
+            dto.members = .init()
+        }
+
+        // Assert linked channel is unlisted
+        AssertAsync.willBeEqual(controller.channels.map(\.cid), [])
+        waitForExpectations(timeout: defaultTimeoutForInversedExpecations)
     }
 
     // MARK: - Delegate tests
@@ -1483,6 +1573,14 @@ final class ChannelListController_Tests: XCTestCase {
             ],
             expectedResult: [cid]
         )
+    }
+
+    // MARK: - Private Helpers
+
+    private func setUpChatClientWithoutAutoFiltering() {
+        var config = ChatClientConfig(apiKey: .init(.unique))
+        config.isChannelAutomaticFilteringEnabled = false
+        client = ChatClient.mock(config: config)
     }
 }
 
