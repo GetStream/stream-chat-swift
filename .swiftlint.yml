@@ -28,7 +28,6 @@ disabled_rules:
   - type_body_length
   - opening_brace
   - line_length
-  - constraints_forbidden
 
 opt_in_rules:
   - convenience_type
