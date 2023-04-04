@@ -102,7 +102,7 @@ open class InputTextView: UITextView, AppearanceProvider {
         placeholderLabel.pin(anchors: [.centerY], to: self)
         placeholderLabel.widthAnchor.pin(equalTo: widthAnchor, multiplier: 0.95).isActive = true
 
-        heightConstraint = heightAnchor.constraint(equalToConstant: minimumHeight)
+        heightConstraint = heightAnchor.pin(equalToConstant: minimumHeight)
         isScrollEnabled = false
     }
 

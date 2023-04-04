@@ -78,14 +78,14 @@ cyclomatic_complexity:
   error: 30
 
 custom_rules:
-  constraints_forbidden:
-    included: ".*StreamChatUI" # Matches all StreamChatUI files
-    excluded: ".*(?:_Tests)" # Doesn't apply to tests
-    regex: "Anchor(.constraint)\\("
+  regular_constraints_forbidden:
+    included: "Sources/StreamChatUI"
+    regex: "(.constraint)\\("
     capture_group: 1
     match_kinds:
       - identifier
     message: "Plain constraints methods are forbidden. Use `pin(...)` alternative"
+
   coredata_date_forbidden:
     included: "Sources/StreamChat/Database/DTOs"
     regex: "@NSManaged(| \\S*)* var \\S*: (NS)?Date"

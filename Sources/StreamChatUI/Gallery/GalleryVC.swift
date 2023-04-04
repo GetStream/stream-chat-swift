@@ -195,7 +195,7 @@ open class GalleryVC: _ViewController,
 
         view.addSubview(topBarView)
         topBarView.pin(anchors: [.leading, .trailing], to: view)
-        topBarTopConstraint = topBarView.topAnchor.constraint(equalTo: view.topAnchor)
+        topBarTopConstraint = topBarView.topAnchor.pin(equalTo: view.topAnchor)
         topBarTopConstraint?.isActive = true
 
         topBarView.embed(topBarContainerStackView)
@@ -219,7 +219,7 @@ open class GalleryVC: _ViewController,
 
         view.addSubview(bottomBarView)
         bottomBarView.pin(anchors: [.leading, .trailing], to: view)
-        bottomBarBottomConstraint = bottomBarView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        bottomBarBottomConstraint = bottomBarView.bottomAnchor.pin(equalTo: view.bottomAnchor)
         bottomBarBottomConstraint?.isActive = true
 
         bottomBarContainerStackView.preservesSuperviewLayoutMargins = true
@@ -238,7 +238,7 @@ open class GalleryVC: _ViewController,
 
         view.addSubview(videoPlaybackBar)
         videoPlaybackBar.pin(anchors: [.leading, .trailing], to: view)
-        videoPlaybackBar.bottomAnchor.constraint(equalTo: bottomBarView.topAnchor).isActive = true
+        videoPlaybackBar.bottomAnchor.pin(equalTo: bottomBarView.topAnchor).isActive = true
     }
 
     override open func viewDidLoad() {
