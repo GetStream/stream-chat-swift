@@ -601,8 +601,7 @@ extension MessageList_Tests {
         }
     }
 }
-    
-    
+
 // MARK: Links preview
 
 extension MessageList_Tests {

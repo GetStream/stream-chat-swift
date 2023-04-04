@@ -4,6 +4,8 @@
 
 import UIKit
 
+// swiftlint:disable regular_constraints_forbidden
+
 extension UILayoutPriority {
     /// Having our default priority lower than `.required(1000)` allow user easily
     /// override any default constraints and customize layout

@@ -32,11 +32,11 @@ open class ChatMessageListDateSeparatorView: ChatMessageDecorationView, Appearan
         container.embed(textLabel, insets: .init(top: 3, leading: 9, bottom: 3, trailing: 9))
 
         NSLayoutConstraint.activate([
-            container.leadingAnchor.constraint(greaterThanOrEqualTo: leadingAnchor),
-            container.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor),
-            container.topAnchor.constraint(equalTo: topAnchor),
-            container.bottomAnchor.constraint(equalTo: bottomAnchor),
-            container.centerXAnchor.constraint(equalTo: centerXAnchor)
+            container.leadingAnchor.pin(greaterThanOrEqualTo: leadingAnchor),
+            container.trailingAnchor.pin(lessThanOrEqualTo: trailingAnchor),
+            container.topAnchor.pin(equalTo: topAnchor),
+            container.bottomAnchor.pin(equalTo: bottomAnchor),
+            container.centerXAnchor.pin(equalTo: centerXAnchor)
         ])
     }
 

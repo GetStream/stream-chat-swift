@@ -5,6 +5,8 @@
 import StreamChat
 import UIKit
 
+// swiftlint:disable regular_constraints_forbidden
+
 extension ContainerStackView {
     /// Describes the size distribution of the arranged subviews in a container stack view.
     public struct Distribution: Equatable {
