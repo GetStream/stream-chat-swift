@@ -83,7 +83,7 @@ custom_rules:
     capture_group: 1
     match_kinds:
       - identifier
-    message: "Plain constraints methods are forbidden. Use `pin(...)` alternative"
+    message: "Regular constraint methods are forbidden. Use `.pin()` instead."
 
   coredata_date_forbidden:
     included: "Sources/StreamChat/Database/DTOs"
