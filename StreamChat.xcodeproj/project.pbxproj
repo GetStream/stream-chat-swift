@@ -8002,7 +8002,6 @@
 				790881F925432B7200896F03 /* Sources */,
 				790881FA25432B7200896F03 /* Frameworks */,
 				790881FB25432B7200896F03 /* Resources */,
-				E3C7A0E52858BB2A006133C3 /* SwiftLint */,
 			);
 			buildRules = (
 			);
@@ -8840,25 +8839,6 @@
 			shellScript = "# Adds support for Apple Silicon brew directory\nexport PATH=\"$PATH:/opt/homebrew/bin\"\n\nif which mint; then\n  echo \"Runnning SwiftLint\"\n  mkdir -p reports && mint run swiftlint | tee reports/swiftlint.txt\nelse\n  echo \"Warning: Mint not installed\"\nfi\n";
 		};
 		E3C7A0E42858BB10006133C3 /* SwiftLint */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = SwiftLint;
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Adds support for Apple Silicon brew directory\nexport PATH=\"$PATH:/opt/homebrew/bin\"\n\nif which mint; then\n  echo \"Runnning SwiftLint\"\n  mkdir -p reports && mint run swiftlint | tee reports/swiftlint.txt\nelse\n  echo \"Warning: Mint not installed\"\nfi\n";
-		};
-		E3C7A0E52858BB2A006133C3 /* SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
