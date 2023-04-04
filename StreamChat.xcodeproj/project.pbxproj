@@ -1243,6 +1243,11 @@
 		C11B577629D4403800D5A248 /* StreamChatUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; };
 		C11B577729D4403800D5A248 /* StreamChatUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C11B577F29D4878900D5A248 /* EdgeCasesCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C11B577B29D485FE00D5A248 /* EdgeCasesCoordinator.swift */; };
+		C11B578029D490E700D5A248 /* DemoUsers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7933064825712C8B00FBB586 /* DemoUsers.swift */; };
+		C11B578129D490F600D5A248 /* ChatUser+CustomFields.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43016E1526B734410054E805 /* ChatUser+CustomFields.swift */; };
+		C11B578229DC792A00D5A248 /* SwitchButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6BEFEF2786070800E184B4 /* SwitchButton.swift */; };
+		C11B578529DC7AFD00D5A248 /* EdgeCasesSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C11B578329DC7AE100D5A248 /* EdgeCasesSettingsViewController.swift */; };
+		C11B578829DC7B3500D5A248 /* EdgeCasesChannelList.swift in Sources */ = {isa = PBXBuildFile; fileRef = C11B578629DC7B2A00D5A248 /* EdgeCasesChannelList.swift */; };
 		C11BAA4D2907EC7B004C5EA4 /* AuthenticationRepository_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C11BAA4C2907EC7B004C5EA4 /* AuthenticationRepository_Tests.swift */; };
 		C121E804274544AC00023E4C /* ChatClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A0E9AC2498BD0C00E9BD50 /* ChatClient.swift */; };
 		C121E805274544AC00023E4C /* Deprecations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69712522260BC9B4003C7B47 /* Deprecations.swift */; };
@@ -3523,6 +3528,8 @@
 		C11B576629D43FD900D5A248 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C11B576B29D43FD900D5A248 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C11B577B29D485FE00D5A248 /* EdgeCasesCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EdgeCasesCoordinator.swift; sourceTree = "<group>"; };
+		C11B578329DC7AE100D5A248 /* EdgeCasesSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EdgeCasesSettingsViewController.swift; sourceTree = "<group>"; };
+		C11B578629DC7B2A00D5A248 /* EdgeCasesChannelList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EdgeCasesChannelList.swift; sourceTree = "<group>"; };
 		C11BAA4C2907EC7B004C5EA4 /* AuthenticationRepository_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationRepository_Tests.swift; sourceTree = "<group>"; };
 		C121E758274543D000023E4C /* libStreamChat.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libStreamChat.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C121EA2F2746A19400023E4C /* libStreamChatUI.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libStreamChatUI.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -7458,6 +7465,8 @@
 			children = (
 				C11B575D29D43FD800D5A248 /* AppDelegate.swift */,
 				C11B577B29D485FE00D5A248 /* EdgeCasesCoordinator.swift */,
+				C11B578629DC7B2A00D5A248 /* EdgeCasesChannelList.swift */,
+				C11B578329DC7AE100D5A248 /* EdgeCasesSettingsViewController.swift */,
 				C11B575F29D43FD800D5A248 /* SceneDelegate.swift */,
 				C11B576129D43FD800D5A248 /* ViewController.swift */,
 				C11B576629D43FD900D5A248 /* Assets.xcassets */,
@@ -10284,9 +10293,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C11B578129D490F600D5A248 /* ChatUser+CustomFields.swift in Sources */,
 				C11B576229D43FD800D5A248 /* ViewController.swift in Sources */,
+				C11B578229DC792A00D5A248 /* SwitchButton.swift in Sources */,
 				C11B575E29D43FD800D5A248 /* AppDelegate.swift in Sources */,
+				C11B578529DC7AFD00D5A248 /* EdgeCasesSettingsViewController.swift in Sources */,
 				C11B577F29D4878900D5A248 /* EdgeCasesCoordinator.swift in Sources */,
+				C11B578829DC7B3500D5A248 /* EdgeCasesChannelList.swift in Sources */,
+				C11B578029D490E700D5A248 /* DemoUsers.swift in Sources */,
 				C11B576029D43FD800D5A248 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
