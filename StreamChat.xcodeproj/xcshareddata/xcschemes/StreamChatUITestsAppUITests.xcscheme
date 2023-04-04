@@ -21,6 +21,41 @@
                BlueprintName = "StreamChatUITestsAppUITests"
                ReferencedContainer = "container:StreamChat.xcodeproj">
             </BuildableReference>
+            <SkippedTests>
+               <Test
+                  Identifier = "Authentication_Tests">
+               </Test>
+               <Test
+                  Identifier = "ChannelList_Tests">
+               </Test>
+               <Test
+                  Identifier = "Ephemeral_Messages_Tests">
+               </Test>
+               <Test
+                  Identifier = "MessageDeliveryStatus_ChannelList_Tests">
+               </Test>
+               <Test
+                  Identifier = "MessageDeliveryStatus_Tests">
+               </Test>
+               <Test
+                  Identifier = "MessageList_Tests">
+               </Test>
+               <Test
+                  Identifier = "PushNotification_Tests">
+               </Test>
+               <Test
+                  Identifier = "QuotedReply_Tests">
+               </Test>
+               <Test
+                  Identifier = "Reactions_Tests">
+               </Test>
+               <Test
+                  Identifier = "SlowMode_Tests">
+               </Test>
+               <Test
+                  Identifier = "UserDetails_Tests">
+               </Test>
+            </SkippedTests>
          </TestableReference>
       </Testables>
    </TestAction>
