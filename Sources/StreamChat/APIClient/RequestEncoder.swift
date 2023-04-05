@@ -151,10 +151,9 @@ struct DefaultRequestEncoder: RequestEncoder {
                     updatedRequest.setHTTPHeaders(.jwtStreamAuth, .authorization(token.rawValue))
                 }
                 completion(.success(updatedRequest))
-            case .failure(_ as ClientError.WaiterTimeout):
-                // We complete with a success to account for the most probable case for the timeout: No connection.
-                // That way, when reaching the APIClient, we would properly report a connection error.
-                completion(.success(request))
+            case let .failure(error as ClientError.WaiterTimeout):
+                // The APIClient will treat a waiter timeout differently than the other ones
+                completion(.failure(error))
             case .failure:
                 completion(.failure(missingTokenError))
             }
@@ -188,10 +187,9 @@ struct DefaultRequestEncoder: RequestEncoder {
                     var updatedRequest = request
                     updatedRequest.url = try updatedRequest.url?.appendingQueryItems(["connection_id": connectionId])
                     completion(.success(updatedRequest))
-                case .failure(_ as ClientError.WaiterTimeout):
-                    // We complete with a success to account for the most probable case for the timeout: No connection.
-                    // That way, when reaching the APIClient, we would properly report a connection error.
-                    completion(.success(request))
+                case let .failure(error as ClientError.WaiterTimeout):
+                    // The APIClient will treat a waiter timeout differently than the other ones
+                    throw error
                 case .failure:
                     throw missingConnectionIdError
                 }
