@@ -9,10 +9,10 @@ import Foundation
 final class ConnectionDetailsProviderDelegate_Spy: ConnectionDetailsProviderDelegate, Spy {
     var recordedFunctions: [String] = []
 
-    @Atomic var token: Token?
+    var provideTokenResult: Result<Token, Error>?
     @Atomic var tokenWaiters: [String: (Token?) -> Void] = [:]
 
-    @Atomic var connectionId: ConnectionId?
+    var provideConnectionIdResult: Result<ConnectionId, Error>?
     @Atomic var connectionWaiters: [String: (ConnectionId?) -> Void] = [:]
 
     func clear() {
@@ -29,8 +29,8 @@ final class ConnectionDetailsProviderDelegate_Spy: ConnectionDetailsProviderDele
             $0[waiterToken] = valueCompletion
         }
 
-        if let connectionId = connectionId {
-            completion(.success(connectionId))
+        if let connectionIdResult = provideConnectionIdResult {
+            completion(connectionIdResult)
         }
     }
 
@@ -43,8 +43,8 @@ final class ConnectionDetailsProviderDelegate_Spy: ConnectionDetailsProviderDele
             $0[waiterToken] = valueCompletion
         }
 
-        if let token = token {
-            completion(.success(token))
+        if let tokenResult = provideTokenResult {
+            completion(tokenResult)
         }
     }
 
