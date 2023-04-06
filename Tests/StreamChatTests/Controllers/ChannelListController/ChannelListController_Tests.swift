@@ -1575,6 +1575,50 @@ final class ChannelListController_Tests: XCTestCase {
         )
     }
 
+    func test_filterPredicate_inWithArrayOfChannelIds_returnsExpectedResults() throws {
+        let chatIds: [String] = [
+            "suggestions-63986de56549624f314b75cb",
+            "suggestions-6ukh3986de56549624f314b75cjkhagfdkjhab",
+            "suggestions-sdfdsfsad",
+            "suggestions-234263986desadfsadf56549624f314b75cb"
+        ]
+
+        let channelIds = chatIds.map { ChannelId(type: .custom("daisy-dashboard"), id: $0) }
+
+        try assertFilterPredicate(
+            .in(.cid, values: channelIds),
+            channelsInDB: [
+                .dummy(channel: .dummy(cid: channelIds[0])),
+                .dummy(channel: .dummy(cid: channelIds[1])),
+                .dummy(),
+                .dummy()
+            ],
+            expectedResult: [channelIds[0], channelIds[1]]
+        )
+    }
+
+    func test_filterPredicate_inWithArrayOfIds_returnsExpectedResults() throws {
+        let chatIds: [String] = [
+            "suggestions-63986de56549624f314b75cb",
+            "suggestions-6ukh3986de56549624f314b75cjkhagfdkjhab",
+            "suggestions-sdfdsfsad",
+            "suggestions-234263986desadfsadf56549624f314b75cb"
+        ]
+
+        let channelIds = chatIds.map { ChannelId(type: .custom("daisy-dashboard"), id: $0) }
+
+        try assertFilterPredicate(
+            .in(.id, values: channelIds.map(\.rawValue)),
+            channelsInDB: [
+                .dummy(channel: .dummy(cid: channelIds[0])),
+                .dummy(channel: .dummy(cid: channelIds[1])),
+                .dummy(),
+                .dummy()
+            ],
+            expectedResult: [channelIds[0], channelIds[1]]
+        )
+    }
+
     // MARK: - Private Helpers
 
     private func setUpChatClientWithoutAutoFiltering() {
