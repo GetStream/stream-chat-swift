@@ -47,6 +47,10 @@ class MessageDTO: NSManagedObject {
 
     @NSManaged var translations: [String: String]?
 
+    // Boolean flag that determines if the reply will be shown inside the thread query.
+    // This boolean is used to control the pagination of the replies of a thread.
+    @NSManaged var showInsideThread: Bool
+
     @NSManaged var user: UserDTO
     @NSManaged var mentionedUsers: Set<UserDTO>
     @NSManaged var threadParticipants: NSOrderedSet
@@ -277,9 +281,11 @@ class MessageDTO: NSManagedObject {
         shouldShowShadowedMessages: Bool
     ) -> NSCompoundPredicate {
         let replyMessage = NSPredicate(format: "parentMessageId == %@", messageId)
+        let shouldShowInsideThread = NSPredicate(format: "showInsideThread == YES")
 
         var subpredicates = [
             replyMessage,
+            shouldShowInsideThread,
             deletedMessagesPredicate(deletedMessagesVisibility: deletedMessagesVisibility),
             nonTruncatedMessagesPredicate()
         ]

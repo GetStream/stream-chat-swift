@@ -192,6 +192,7 @@ class MessageUpdater: Worker {
                 extraData: extraData
             )
 
+            newMessageDTO.showInsideThread = true
             newMessageDTO.localMessageState = .pendingSend
             newMessage = try newMessageDTO.asModel()
 
@@ -217,6 +218,8 @@ class MessageUpdater: Worker {
         pagination: MessagesPagination,
         completion: ((Result<MessageRepliesPayload, Error>) -> Void)? = nil
     ) {
+        let isFirstPage = pagination.parameter == nil
+        let isJumpingToMessage: Bool = pagination.parameter?.isJumpingToMessage == true
         let endpoint: Endpoint<MessageRepliesPayload> = .loadReplies(messageId: messageId, pagination: pagination)
         apiClient.request(endpoint: endpoint) {
             switch $0 {
@@ -226,7 +229,22 @@ class MessageUpdater: Worker {
                         channelDTO.cleanMessagesThatFailedToBeEditedDueToModeration()
                     }
 
-                    session.saveMessages(messagesPayload: payload, for: cid, syncOwnReactions: true)
+                    // If it is first page or jumping to a message, clear the current messages.
+                    if let parentMessage = session.message(id: messageId) {
+                        if isJumpingToMessage || isFirstPage {
+                            parentMessage.replies
+                                .filter { !$0.isLocalOnly }
+                                .forEach {
+                                    $0.showInsideThread = false
+                                }
+                        }
+                    }
+
+                    let replies = session.saveMessages(messagesPayload: payload, for: cid, syncOwnReactions: true)
+                    replies.forEach {
+                        $0.showInsideThread = true
+                    }
+
                 }, completion: { error in
                     if let error = error {
                         completion?(.failure(error))

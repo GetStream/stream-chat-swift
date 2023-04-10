@@ -967,9 +967,9 @@ final class MessageUpdater_Tests: XCTestCase {
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
 
-    func test_loadReplies_savesMessagesToDatabase() throws {
+    func test_loadReplies_savesMessagesToDatabase_savedMessagesShouldAppearInsideThread() throws {
         let currentUserId: UserId = .unique
-        let messageId: MessageId = .unique
+        let messageIds: [MessageId] = [.unique, .unique, .unique]
         let cid: ChannelId = .unique
 
         // Create current user in the database
@@ -986,7 +986,7 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Simulate API response with success
         let repliesPayload: MessageRepliesPayload = .init(
-            messages: [.dummy(messageId: messageId, authorUserId: .unique)]
+            messages: messageIds.map { .dummy(messageId: $0, authorUserId: .unique) }
         )
         apiClient.test_simulateResponse(Result<MessageRepliesPayload, Error>.success(repliesPayload))
 
@@ -994,7 +994,100 @@ final class MessageUpdater_Tests: XCTestCase {
         AssertAsync.willBeTrue(completionCalled)
 
         // Assert fetched message is saved to the database
-        XCTAssertNotNil(database.viewContext.message(id: messageId))
+        let messageDTOs = messageIds.compactMap { database.viewContext.message(id: $0) }
+        XCTAssertEqual(messageDTOs.count, 3)
+        XCTAssertEqual(messageDTOs.map(\.showInsideThread), [true, true, true])
+    }
+
+    func test_loadReplies_whenIsFirstPage_shouldClearCurrentMessagesExcludingLocalOnly() throws {
+        let firstPage = MessagesPagination(pageSize: 25, parameter: nil)
+        try AssertLoadReplies(shouldClearCurrentMessagesExcludingLocalOnly: true, for: firstPage)
+    }
+
+    func test_loadReplies_whenIsJumpingToMessage_shouldClearCurrentMessagesExcludingLocalOnly() throws {
+        let midPage = MessagesPagination(pageSize: 25, parameter: .around(.unique))
+        try AssertLoadReplies(shouldClearCurrentMessagesExcludingLocalOnly: true, for: midPage)
+    }
+
+    func test_loadReplies_whenIsLoadingPreviousMessages_shouldNotClearCurrentMessages() throws {
+        let previousPage = MessagesPagination(pageSize: 25, parameter: .lessThan(.unique))
+        try AssertLoadReplies(shouldClearCurrentMessagesExcludingLocalOnly: false, for: previousPage)
+    }
+
+    private func AssertLoadReplies(
+        shouldClearCurrentMessagesExcludingLocalOnly shouldClear: Bool,
+        for pagination: MessagesPagination,
+        line: UInt = #line,
+        file: StaticString = #filePath
+    ) throws {
+        let parentMessageId = MessageId.unique
+        let currentUserId: UserId = .unique
+        let currentMessageIds: [MessageId] = [.unique, .unique, .unique]
+        let messageIds: [MessageId] = [.unique, .unique, .unique]
+        let cid: ChannelId = .unique
+
+        // Create current user in the database
+        try database.createCurrentUser(id: currentUserId)
+
+        // Create channel in the database
+        try database.createChannel(cid: cid)
+
+        // Save current messages
+        try database.writeSynchronously { session in
+            guard let channelDTO = session.channel(cid: cid) else { return }
+            let parentMessage = try session.saveMessage(
+                payload: .dummy(messageId: parentMessageId),
+                channelDTO: channelDTO,
+                syncOwnReactions: false,
+                cache: nil
+            )
+            try currentMessageIds.enumerated().forEach { index, message in
+                let currentMessage = try session.saveMessage(
+                    payload: .dummy(type: index == 0 ? .error : .regular, messageId: message),
+                    channelDTO: channelDTO,
+                    syncOwnReactions: false,
+                    cache: nil
+                )
+                currentMessage.showInsideThread = true
+                parentMessage.replies.insert(currentMessage)
+            }
+        }
+
+        var currentMessageDTOs: [MessageDTO] {
+            currentMessageIds.compactMap { database.viewContext.message(id: $0) }
+        }
+
+        XCTAssertEqual(currentMessageDTOs.map(\.showInsideThread), [true, true, true])
+
+        // Simulate `loadReplies` call
+        var completionCalled = false
+        messageUpdater.loadReplies(cid: cid, messageId: parentMessageId, pagination: pagination) { _ in
+            completionCalled = true
+        }
+
+        // Simulate API response with success
+        let repliesPayload: MessageRepliesPayload = .init(
+            messages: messageIds.map { .dummy(messageId: $0, authorUserId: .unique) }
+        )
+        apiClient.test_simulateResponse(Result<MessageRepliesPayload, Error>.success(repliesPayload))
+
+        // Assert completion is called
+        AssertAsync.willBeTrue(completionCalled)
+
+        var newMessageDTOs: [MessageDTO] {
+            messageIds.compactMap { database.viewContext.message(id: $0) }
+        }
+
+        if shouldClear {
+            // Previous current messages are not shown (excluding local messages).
+            XCTAssertEqual(currentMessageDTOs.map(\.showInsideThread), [true, false, false], file: file, line: line)
+        } else {
+            // Previous current messages are not discarded.
+            XCTAssertEqual(currentMessageDTOs.map(\.showInsideThread), [true, true, true], file: file, line: line)
+        }
+
+        // Newly fetched messages are shown.
+        XCTAssertEqual(newMessageDTOs.map(\.showInsideThread), [true, true, true], file: file, line: line)
     }
 
     // MARK: - Load reactions

@@ -22,6 +22,9 @@ open class ChatThreadVC: _ViewController,
     /// Controller for observing typing events for this thread.
     open lazy var channelEventsController: ChannelEventsController = client.channelEventsController(for: messageController.cid)
 
+    /// A controller for observing web socket events.
+    open lazy var eventsController: EventsController = client.eventsController()
+
     public var client: ChatClient {
         channelController.client
     }
@@ -32,6 +35,11 @@ open class ChatThreadVC: _ViewController,
         composerBottomConstraint: messageComposerBottomConstraint,
         messageListVC: messageListVC
     )
+
+    /// A component responsible to handle when to load new or old messages.
+    private lazy var viewPaginationHandler: ViewPaginationHandling = {
+        InvertedScrollViewPaginationHandler.make(scrollView: messageListVC.listView)
+    }()
 
     /// User search controller passed directly to the composer
     open lazy var userSuggestionSearchController: ChatUserSearchController =
@@ -71,6 +79,15 @@ open class ChatThreadVC: _ViewController,
 
         messageController.delegate = self
         channelEventsController.delegate = self
+        eventsController.delegate = self
+
+        // Handle pagination
+        viewPaginationHandler.onNewTopPage = { [weak self] in
+            self?.messageController.loadPreviousReplies()
+        }
+        viewPaginationHandler.onNewBottomPage = { [weak self] in
+            self?.messageController.loadNextReplies()
+        }
 
         // Set the initial data
         messages = getRepliesWithThreadRootMessage(from: messageController)
@@ -89,7 +106,7 @@ open class ChatThreadVC: _ViewController,
 
             // Replies are only loaded when we don't have all available or when a reply has a stale state.
             if message.latestReplies.count != message.replyCount || repliesContainsFailedEditedMessages {
-                self.loadPreviousMessages()
+                self.messageController.loadPreviousReplies()
             }
         }
 
@@ -139,18 +156,6 @@ open class ChatThreadVC: _ViewController,
         keyboardHandler.stop()
     }
 
-    // TODO: Jump to message (https://github.com/GetStream/ios-issues-tracking/issues/343)
-    open func loadPreviousMessages() {
-        guard !isLoadingPreviousMessages else {
-            return
-        }
-        isLoadingPreviousMessages = true
-
-        messageController.loadPreviousReplies { [weak self] _ in
-            self?.isLoadingPreviousMessages = false
-        }
-    }
-
     // MARK: - ChatMessageListVCDataSource
 
     public var messages: [ChatMessage] {
@@ -164,6 +169,10 @@ open class ChatThreadVC: _ViewController,
 
     // This property is a bit redundant after the difference kit changes. Should be removed in v5.
     open var replies: [ChatMessage] = []
+
+    public var isFirstPageLoaded: Bool {
+        messageController.hasLoadedAllNextReplies
+    }
 
     open func channel(for vc: ChatMessageListVC) -> ChatChannel? {
         channelController.channel
@@ -202,20 +211,14 @@ open class ChatThreadVC: _ViewController,
         return layoutOptions
     }
 
-    // TODO: Jump to message (https://github.com/GetStream/ios-issues-tracking/issues/343)
-    public var isLoadingPreviousMessages: Bool = false
-
     // MARK: - ChatMessageListVCDelegate
 
     open func chatMessageListVC(
         _ vc: ChatMessageListVC,
         willDisplayMessageAt indexPath: IndexPath
     ) {
-        if indexPath.row < messages.count - 10 {
-            return
-        }
-
-        loadPreviousMessages()
+        // No-op. By default this component is not interest this event,
+        // but you as customer can override this function and provide an implementation.
     }
 
     open func chatMessageListVC(
@@ -235,6 +238,17 @@ open class ChatThreadVC: _ViewController,
         default:
             return
         }
+    }
+
+    public func chatMessageListVC(
+        _ vc: ChatMessageListVC, shouldLoadPageAroundMessageId messageId: MessageId,
+        _ completion: @escaping ((Error?) -> Void)
+    ) {
+        messageController.loadPageAroundReplyId(messageId, completion: completion)
+    }
+
+    open func chatMessageListVCShouldLoadFirstPage(_ vc: ChatMessageListVC) {
+        messageController.loadFirstPage()
     }
 
     open func chatMessageListVC(
@@ -328,10 +342,17 @@ open class ChatThreadVC: _ViewController,
             } else {
                 messageListVC.showTypingIndicator(typingUsers: Array(currentlyTypingUsers))
             }
+        case let event as NewMessagePendingEvent:
+            let newMessage = event.message
+            if !isFirstPageLoaded && newMessage.isSentByCurrentUser && newMessage.isPartOfThread {
+                messageController.loadFirstPage()
+            }
         default:
             break
         }
     }
+
+    // MARK: - Helpers
 
     private func updateMessages(with changes: [ListChange<ChatMessage>]) {
         messageListVC.setPreviousMessagesSnapshot(self.messages)
@@ -346,5 +367,15 @@ open class ChatThreadVC: _ViewController,
             messages.append(threadRootMessage)
         }
         return messages
+    }
+
+    // MARK: - Deprecations
+
+    @available(*, deprecated, message: "use messageController.isLoadingPreviousReplies instead.")
+    public var isLoadingPreviousMessages: Bool = false
+
+    @available(*, deprecated, message: "use messageController.loadPreviousReplies() instead.")
+    open func loadPreviousMessages() {
+        messageController.loadPreviousReplies()
     }
 }
