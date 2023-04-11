@@ -117,6 +117,14 @@ class APIClient {
                     // Retry request. Expired token has been refreshed
                     operation.resetRetries()
                     done(.retry)
+                case .failure(_ as ClientError.WaiterTimeout):
+                    // When waiters timeout, chances are that we are still connecting. We are going to retry until we reach max retries
+                    if operation.canRetry {
+                        done(.retry)
+                    } else {
+                        completion(result)
+                        done(.continue)
+                    }
                 case let .failure(error) where self?.isConnectionError(error) == true:
                     // If a non recovery request comes in while we are in recovery mode, we want to queue if still has
                     // retries left

@@ -23,13 +23,13 @@ final class RequestEncoder_Spy: RequestEncoder, Spy {
         completion: @escaping (Result<URLRequest, Error>) -> Void
     ) where ResponsePayload: Decodable {
         record()
-        onEncodeRequestCall?()
         encodeRequest_endpoints.append(AnyEndpoint(endpoint))
         encodeRequest_completion = completion
 
         if let result = encodeRequest {
             completion(result)
         }
+        onEncodeRequestCall?()
     }
 
     required init(baseURL: URL, apiKey: APIKey) {
