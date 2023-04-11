@@ -152,7 +152,8 @@ struct DefaultRequestEncoder: RequestEncoder {
                 }
                 completion(.success(updatedRequest))
             case let .failure(error as ClientError.WaiterTimeout):
-                // The APIClient will treat a waiter timeout differently than the other ones
+                // The receiver will treat a waiter timeout differently than the other ones, and that's why we are not
+                // masking it under missing token. The receiver should retry based on their own logic
                 completion(.failure(error))
             case .failure:
                 completion(.failure(missingTokenError))
@@ -188,7 +189,8 @@ struct DefaultRequestEncoder: RequestEncoder {
                     updatedRequest.url = try updatedRequest.url?.appendingQueryItems(["connection_id": connectionId])
                     completion(.success(updatedRequest))
                 case let .failure(error as ClientError.WaiterTimeout):
-                    // The APIClient will treat a waiter timeout differently than the other ones
+                    // The receiver will treat a waiter timeout differently than the other ones, and that's why we are not
+                    // masking it under missing token. The receiver should retry based on their own logic
                     throw error
                 case .failure:
                     throw missingConnectionIdError

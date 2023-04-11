@@ -122,26 +122,33 @@ final class APIClient_Tests: XCTestCase {
         let testEndpoint = Endpoint<Data>.mock()
 
         // Create a request and wait for its completion
-        let expectation = self.expectation(description: "APIClient receives request result")
+        let requestCompletesExpectation = expectation(description: "APIClient receives request result")
+        let firstEncodeRequestExpectation = expectation(description: "First encode request is called")
+        encoder.onEncodeRequestCall = {
+            firstEncodeRequestExpectation.fulfill()
+        }
         var result: Result<Data, Error>?
         apiClient.request(endpoint: testEndpoint) {
             result = $0
-            expectation.fulfill()
+            requestCompletesExpectation.fulfill()
         }
 
-        let testError = TestError()
+        wait(for: [firstEncodeRequestExpectation], timeout: defaultTimeout)
+
         // Returning WaiterTimeout should retry the request.
         // We only want to return it in the first try, and set another expected failure
         // for the following execution.
-        encoder.onEncodeRequestCall = { [weak encoder] in
-            encoder?.onEncodeRequestCall = nil // So that this block does not get called again
-            encoder?.encodeRequest = .failure(testError) // This is for the following execution
-            encoder?.encodeRequest_completion?(.failure(ClientError.WaiterTimeout())) // This is for the initial execution, which we want to complete now.
+        let secondEncodeRequestExpectation = expectation(description: "Second encode request is called")
+        encoder.onEncodeRequestCall = {
+            secondEncodeRequestExpectation.fulfill()
         }
+        let secondCallError = TestError()
+        encoder.encodeRequest = .failure(secondCallError) // This is for the following execution
+        encoder.encodeRequest_completion?(.failure(ClientError.WaiterTimeout())) // This is for the initial execution, which we want to complete now.
 
         waitForExpectations(timeout: defaultTimeout)
 
-        XCTAssertEqual(result?.error, testError)
+        XCTAssertEqual(result?.error, secondCallError)
         // Should retry once, as the waiter timeout is only returned in the first try
         XCTAssertCall("encodeRequest(for:completion:)", on: encoder, times: 2)
         XCTAssertNotCall("decodeRequestResponse(data:response:error:)", on: decoder)
