@@ -2,6 +2,11 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
+## StreamChat
+
+### 🐞 Fixed
+- Fix channel disappearing when channel list auto-filtering is enabled and the user is not a member of the channel [#2557](https://github.com/GetStream/stream-chat-swift/pull/2557)
+- Fix an issues which was causing the app to terminate when using a filter with the `in` operator and `cid` values [#2561](https://github.com/GetStream/stream-chat-swift/pull/2561)
 
 ## StreamChat
 ### 🐞 Fixed
@@ -55,6 +60,29 @@ override var defaultMessageFont: UIFont {
 }
 ```
 For more details, you can read the documentation of `ChatMessageContentView.defaultMessageFont` or read the PR [#2575](https://github.com/GetStream/stream-chat-swift/pull/2575).
+
+# [4.30.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.30.0)
+_March 30, 2023_
+
+## StreamChat
+### ✅ Added
+- Expose `deactivatedAt` and `isDeactivated` in ChatUser [#2547](https://github.com/GetStream/stream-chat-swift/pull/2547)
+
+### 🐞 Fixed
+- Fix channel list parsing failing completely if one channel fails parsing [#2541](https://github.com/GetStream/stream-chat-swift/pull/2541)
+- Fix completion blocks not called when loading more messages [#2553](https://github.com/GetStream/stream-chat-swift/pull/2553)
+- Fix `ChatChannelController` ignoring initial pagination parameter [#2546](https://github.com/GetStream/stream-chat-swift/pull/2546)
+
+## StreamChatUI
+### 🔄 Changed
+- Deprecated `ChatMessageListVC.jumpToMessage(message:)` -> `ChatMessageListVC.jumpToMessage(id:)` [#2546](https://github.com/GetStream/stream-chat-swift/pull/2546)
+- Deprecated `ChatMessageListVCDelegate.chatMessageListVC(vc:shouldLoadPageAroundMessage:completion:)` -> `ChatMessageListVCDelegate.chatMessageListVC(vc:shouldLoadPageAroundMessageId:completion:)` [#2546](https://github.com/GetStream/stream-chat-swift/pull/2546)
+### ✅ Added
+- Allow the message list to start at the top if `Components.shouldMessagesStartAtTheTop` is enabled [#2537](https://github.com/GetStream/stream-chat-swift/pull/2537)
+- Add support for jumping to message when opening channel [#2546](https://github.com/GetStream/stream-chat-swift/pull/2546)
+- Add `ChatChannelVC.jumpToMessage(id:shouldHighlight)` high-level function for jumping to a message [#2546](https://github.com/GetStream/stream-chat-swift/pull/2546)
+### 🐞 Fixed
+- Fix channel marking read when view is not visible [#2544](https://github.com/GetStream/stream-chat-swift/pull/2544)
 
 # [4.30.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.30.0)
 _March 30, 2023_
