@@ -711,7 +711,7 @@ lane :sources_matrix do
     emerge: ['Sources'],
     sample_apps: ['Sources', 'Examples', 'DemoApp', 'StreamChatSample', xcode_project],
     integration: ['Sources', 'Integration', xcode_project],
-    ruby: ['fastlane']
+    ruby: ['fastlane', 'Gemfile', 'Gemfile.lock']
   }
 end
 
