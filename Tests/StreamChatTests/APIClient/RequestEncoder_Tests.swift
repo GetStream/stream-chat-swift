@@ -65,7 +65,7 @@ final class RequestEncoder_Tests: XCTestCase {
 
         // Simulate provided token
         let token = Token.unique()
-        connectionDetailsProvider.token = token
+        connectionDetailsProvider.provideTokenResult = .success(token)
 
         // Encode the request and wait for the result
         let request = try waitFor { encoder.encodeRequest(for: endpoint, completion: $0) }.get()
@@ -85,7 +85,7 @@ final class RequestEncoder_Tests: XCTestCase {
         )
 
         // Set anonymous token.
-        connectionDetailsProvider.token = .anonymous
+        connectionDetailsProvider.provideTokenResult = .success(.anonymous)
 
         // Encode the request and wait for the result.
         let request = try waitFor { encoder.encodeRequest(for: endpoint, completion: $0) }.get()
@@ -104,7 +104,7 @@ final class RequestEncoder_Tests: XCTestCase {
         )
 
         // Reset the token.
-        connectionDetailsProvider.token = nil
+        connectionDetailsProvider.provideTokenResult = nil
 
         // Encode the request and capture the result
         var encodingResult: Result<URLRequest, Error>?
@@ -114,6 +114,46 @@ final class RequestEncoder_Tests: XCTestCase {
         connectionDetailsProvider.completeTokenWaiters(passing: nil)
 
         // Assert request encoding has failed.
+        AssertAsync.willBeTrue(encodingResult?.error is ClientError.MissingToken)
+    }
+
+    func test_endpointRequiringToken_whenTokenProviderTimeouts_returnsCorrectError() throws {
+        // Prepare a new endpoint.
+        let endpoint = Endpoint<Data>(
+            path: .guest,
+            method: .get,
+            requiresConnectionId: false,
+            requiresToken: true
+        )
+
+        // Reset the token.
+        connectionDetailsProvider.provideTokenResult = .failure(ClientError.WaiterTimeout())
+
+        // Encode the request and capture the result
+        var encodingResult: Result<URLRequest, Error>?
+        encoder.encodeRequest(for: endpoint) { encodingResult = $0 }
+
+        // Assert request encoding has failed with the correct error.
+        AssertAsync.willBeTrue(encodingResult?.error is ClientError.WaiterTimeout)
+    }
+
+    func test_endpointRequiringToken_whenTokenProviderFailsWithUnknownError_returnsMissingTokenError() throws {
+        // Prepare a new endpoint.
+        let endpoint = Endpoint<Data>(
+            path: .guest,
+            method: .get,
+            requiresConnectionId: false,
+            requiresToken: true
+        )
+
+        // Reset the token.
+        connectionDetailsProvider.provideTokenResult = .failure(TestError())
+
+        // Encode the request and capture the result
+        var encodingResult: Result<URLRequest, Error>?
+        encoder.encodeRequest(for: endpoint) { encodingResult = $0 }
+
+        // Assert request encoding has failed with the correct error.
         AssertAsync.willBeTrue(encodingResult?.error is ClientError.MissingToken)
     }
 
@@ -130,7 +170,7 @@ final class RequestEncoder_Tests: XCTestCase {
 
         // Set a new connection id
         let connectionId = String.unique
-        connectionDetailsProvider.connectionId = connectionId
+        connectionDetailsProvider.provideConnectionIdResult = .success(connectionId)
 
         // Encode the request and wait for the result
         let request = try waitFor { encoder.encodeRequest(for: endpoint, completion: $0) }.get()
@@ -152,7 +192,7 @@ final class RequestEncoder_Tests: XCTestCase {
         )
 
         // Reset a connection id
-        connectionDetailsProvider.connectionId = nil
+        connectionDetailsProvider.provideConnectionIdResult = nil
 
         // Encode the request and capture the result
         var encodingResult: Result<URLRequest, Error>?
@@ -162,6 +202,50 @@ final class RequestEncoder_Tests: XCTestCase {
         connectionDetailsProvider.completeConnectionIdWaiters(passing: nil)
 
         // Assert request encoding has failed.
+        AssertAsync.willBeTrue(encodingResult?.error is ClientError.MissingConnectionId)
+    }
+
+    func test_endpointRequiringConnectionId_whenConnectionIdProviderTimeouts_returnsCorrectError() throws {
+        // Prepare an endpoint that requires connection id
+        let endpoint = Endpoint<Data>(
+            path: .guest,
+            method: .get,
+            queryItems: nil,
+            requiresConnectionId: true,
+            requiresToken: false,
+            body: nil
+        )
+
+        // Reset the token.
+        connectionDetailsProvider.provideConnectionIdResult = .failure(ClientError.WaiterTimeout())
+
+        // Encode the request and capture the result
+        var encodingResult: Result<URLRequest, Error>?
+        encoder.encodeRequest(for: endpoint) { encodingResult = $0 }
+
+        // Assert request encoding has failed with the correct error.
+        AssertAsync.willBeTrue(encodingResult?.error is ClientError.WaiterTimeout)
+    }
+
+    func test_endpointRequiringConnectionId_whenConnectionIdFailsWithUnknownError_returnsMissingConnectionIdError() throws {
+        // Prepare an endpoint that requires connection id
+        let endpoint = Endpoint<Data>(
+            path: .guest,
+            method: .get,
+            queryItems: nil,
+            requiresConnectionId: true,
+            requiresToken: false,
+            body: nil
+        )
+
+        // Reset the token.
+        connectionDetailsProvider.provideConnectionIdResult = .failure(TestError())
+
+        // Encode the request and capture the result
+        var encodingResult: Result<URLRequest, Error>?
+        encoder.encodeRequest(for: endpoint) { encodingResult = $0 }
+
+        // Assert request encoding has failed with the correct error.
         AssertAsync.willBeTrue(encodingResult?.error is ClientError.MissingConnectionId)
     }
 
@@ -178,11 +262,11 @@ final class RequestEncoder_Tests: XCTestCase {
 
         // Set a new connection id
         let connectionId = String.unique
-        connectionDetailsProvider.connectionId = connectionId
+        connectionDetailsProvider.provideConnectionIdResult = .success(connectionId)
 
         // Set a new token
         let token = Token.unique()
-        connectionDetailsProvider.token = token
+        connectionDetailsProvider.provideTokenResult = .success(token)
 
         // Encode the request and wait for the result
         let request = try waitFor { encoder.encodeRequest(for: endpoint, completion: $0) }.get()

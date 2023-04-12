@@ -58,7 +58,7 @@ public enum InviteFilterValue: String, FilterValue {
 public extension FilterKey where Scope: AnyChannelListFilterScope {
     /// A filter key for matching the `cid` value.
     /// Supported operators: `in`, `equal`
-    static var cid: FilterKey<Scope, ChannelId> { .init(rawValue: "cid", keyPathString: #keyPath(ChannelDTO.cid)) }
+    static var cid: FilterKey<Scope, ChannelId> { .init(rawValue: "cid", keyPathString: #keyPath(ChannelDTO.cid), valueMapper: { $0.rawValue }) }
 
     /// A filter key for matching the `id` value.
     /// Supported operators: `in`, `equal`
