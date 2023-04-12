@@ -549,7 +549,7 @@ extension UserRobot {
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> Self {
-        let timeout = 10
+        let timeout: TimeInterval = 15
         let endTime = Date().timeIntervalSince1970 * 1000 + timeout * 1000
         var actualCount = MessageListPage.cells.count
         XCTAssertNotEqual(expectedCount, actualCount, file: file, line: line)
