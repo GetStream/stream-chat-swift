@@ -1203,15 +1203,12 @@ final class MessageController_Tests: XCTestCase {
         XCTAssertEqual(controller.hasLoadedAllPreviousReplies, false)
     }
 
-    // MARK: - `loadNextReplies`
+    // MARK: - Load Next Replies
 
     func test_loadNextReplies_failsOnEmptyReplies() throws {
         // Simulate controller is in mid-page
         controller.loadPageAroundReplyId(.unique)
         try saveReplies(with: [.unique, .unique])
-
-        // Simulate loading mid page, so that we can load next replies
-        controller.loadPageAroundReplyId(.unique)
         
         // Simulate `loadNextReplies` call and catch the completion error.
         let completionError = try waitFor {
@@ -1414,6 +1411,42 @@ final class MessageController_Tests: XCTestCase {
 
         XCTAssertEqual(env.messageUpdater.loadReplies_callCount, 1)
         XCTAssertEqual(controller.isJumpingToMessage, true)
+    }
+
+    // MARK: - Load first page
+
+    func test_loadFirstPage_loadsFirstPageOfReplies() throws {
+        let firstPage = MessagesPagination(pageSize: 25, parameter: nil)
+
+        let exp = expectation(description: "load first page completes")
+        controller.loadFirstPage() { error in
+            XCTAssertNil(error)
+            exp.fulfill()
+        }
+
+        env.messageUpdater.loadReplies_completion?(.success(.init(messages: [.dummy()])))
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        // Assert message updater is called with correct values
+        XCTAssertEqual(env.messageUpdater.loadReplies_cid, controller.cid)
+        XCTAssertEqual(env.messageUpdater.loadReplies_messageId, messageId)
+        XCTAssertEqual(env.messageUpdater.loadReplies_pagination, firstPage)
+    }
+
+    func test_loadFirstPage_whenError() throws {
+        let exp = expectation(description: "load first page completes")
+        var expectedError: Error?
+        controller.loadFirstPage() { error in
+            expectedError = error
+            exp.fulfill()
+        }
+
+        env.messageUpdater.loadReplies_completion?(.failure(NSError(domain: "dummy", code: 3)))
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertNotNil(expectedError)
     }
 
     // MARK: - Load Reactions
