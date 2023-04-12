@@ -40,20 +40,21 @@ class OfflineRequestsRepository {
     /// - If the request fails with a connection error -> The request is kept to be executed once the connection is back (we are not putting it back at the queue to make sure we respect the order)
     /// - If the request fails with any other error -> We are dismissing the request, and removing it from the queue
     func runQueuedRequests(completion: @escaping () -> Void) {
-        var pendingActions: [(String, Data)] = []
-
         let readContext = database.backgroundReadOnlyContext
-        readContext.performAndWait {
-            pendingActions = QueuedRequestDTO.loadAllPendingRequests(context: readContext).map {
-                ($0.id, $0.endpoint)
+        readContext.perform { [weak self] in
+            let requests = QueuedRequestDTO.loadAllPendingRequests(context: readContext).map { ($0.id, $0.endpoint) }
+            DispatchQueue.main.async {
+                self?.executeRequests(requests, completion: completion)
             }
         }
+    }
 
-        log.info("\(pendingActions.count) pending offline requests", subsystems: .offlineSupport)
+    private func executeRequests(_ requests: [(String, Data)], completion: @escaping () -> Void) {
+        log.info("\(requests.count) pending offline requests", subsystems: .offlineSupport)
 
         let database = self.database
         let group = DispatchGroup()
-        for (id, endpoint) in pendingActions {
+        for (id, endpoint) in requests {
             group.enter()
             let leave = {
                 group.leave()
