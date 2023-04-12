@@ -361,6 +361,17 @@ public extension ChatMessageController {
         }
     }
 
+    /// Load replies around the given reply id. Useful to jump to a reply which hasn't been loaded yet.
+    ///
+    /// Clears the current replies of the parent message and loads the replies with the given id,
+    /// and the replies around it depending on the limit provided.
+    ///
+    /// Ex: If the limit is 25, it will load the reply and 12 on top and 12 below it. (25 total)
+    ///
+    /// - Parameters:
+    ///   - replyId: The reply id of the message to jump to.
+    ///   - limit: The number of replies to load in total, including the message to jump to.
+    ///   - completion: Callback when the API call is completed.
     func loadPageAroundReplyId(
         _ replyId: MessageId,
         limit: Int? = nil,
