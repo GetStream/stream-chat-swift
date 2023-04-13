@@ -98,7 +98,6 @@ open class ChatThreadVC: _ViewController,
                 messageComposerVC.content.threadMessage = message
             }
 
-            guard let message = message else { return }
             self.messageController.loadPreviousReplies()
         }
 

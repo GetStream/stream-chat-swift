@@ -1413,6 +1413,75 @@ final class MessageController_Tests: XCTestCase {
         XCTAssertEqual(controller.isJumpingToMessage, true)
     }
 
+    // MARK: - Load Page Around Reply Id
+
+    func test_loadPageAroundReplyId() {
+        let exp = expectation(description: "should load page around reply id")
+        let replyId = MessageId.unique
+        controller.loadPageAroundReplyId(replyId, limit: 5) { error in
+            XCTAssertNil(error)
+            exp.fulfill()
+        }
+
+        XCTAssertEqual(controller.isLoadingMiddleReplies, true)
+
+        let oldestReply = MessagePayload.dummy()
+        let newestReply = MessagePayload.dummy()
+        env.messageUpdater.loadReplies_completion?(.success(.init(
+            messages: [oldestReply, .dummy(), newestReply]
+        )))
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        let expectedPagination = MessagesPagination(pageSize: 5, parameter: .around(replyId))
+        XCTAssertEqual(controller.isJumpingToMessage, true)
+        XCTAssertEqual(controller.isLoadingMiddleReplies, false)
+        XCTAssertEqual(controller.lastOldestReplyId, oldestReply.id)
+        XCTAssertEqual(controller.lastNewestReplyId, newestReply.id)
+        XCTAssertEqual(env.messageUpdater.loadReplies_callCount, 1)
+        XCTAssertEqual(env.messageUpdater.loadReplies_pagination, expectedPagination)
+    }
+
+    func test_loadPageAroundReplyId_whenError_shouldCompleteWithError() {
+        let exp = expectation(description: "should load page around reply id")
+        let replyId = MessageId.unique
+        controller.loadPageAroundReplyId(replyId, limit: 5) { error in
+            XCTAssertNotNil(error)
+            exp.fulfill()
+        }
+
+        env.messageUpdater.loadReplies_completion?(.failure(NSError(domain: "dummy", code: 3)))
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertEqual(env.messageUpdater.loadReplies_callCount, 1)
+    }
+
+    func test_loadPageAroundReplyId_whenIsLoadingMiddleMessages_shouldNotLoadMoreReplies() {
+        // When is loading middle messages
+        controller.loadPageAroundReplyId(.unique)
+
+        XCTAssertEqual(controller.isLoadingMiddleReplies, true)
+        XCTAssertEqual(env.messageUpdater.loadReplies_callCount, 1)
+
+        let exp = expectation(description: "should load page around reply id")
+        let replyId = MessageId.unique
+        controller.loadPageAroundReplyId(replyId, limit: 5) { error in
+            XCTAssertNil(error)
+            exp.fulfill()
+        }
+
+        let oldestReply = MessagePayload.dummy()
+        let newestReply = MessagePayload.dummy()
+        env.messageUpdater.loadReplies_completion?(.success(.init(
+            messages: [oldestReply, .dummy(), newestReply]
+        )))
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertEqual(env.messageUpdater.loadReplies_callCount, 1)
+    }
+
     // MARK: - Load first page
 
     func test_loadFirstPage_loadsFirstPageOfReplies() throws {
