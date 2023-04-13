@@ -508,6 +508,72 @@ final class DatabaseSession_Tests: XCTestCase {
         XCTAssertEqual(channelDTO.previewMessage?.id, newMessage.id)
     }
 
+    func test_saveEvent_whenMessageNewEventComes_whenIsThreadReply_thenShowInsideThreadIsTrue() throws {
+        // GIVEN
+        let channel: ChannelPayload = .dummy(
+            messages: []
+        )
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channel)
+        }
+
+        // WHEN
+        let newMessage: MessagePayload = .dummy(
+            messageId: .unique,
+            parentId: .unique,
+            authorUserId: .unique,
+            cid: channel.channel.cid
+        )
+
+        let messageNewEvent = EventPayload(
+            eventType: .messageNew,
+            cid: channel.channel.cid,
+            message: newMessage
+        )
+
+        try database.writeSynchronously { session in
+            try session.saveEvent(payload: messageNewEvent)
+        }
+
+        // THEN
+        let messageDTO = try XCTUnwrap(database.viewContext.message(id: newMessage.id))
+        XCTAssertEqual(messageDTO.showInsideThread, true)
+    }
+
+    func test_saveEvent_whenNotificationMessageNewEventComes_whenIsThreadReply_thenShowInsideThreadIsTrue() throws {
+        // GIVEN
+        let channel: ChannelPayload = .dummy(
+            messages: []
+        )
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channel)
+        }
+
+        // WHEN
+        let newMessage: MessagePayload = .dummy(
+            messageId: .unique,
+            parentId: .unique,
+            authorUserId: .unique,
+            cid: channel.channel.cid
+        )
+
+        let messageNewEvent = EventPayload(
+            eventType: .notificationMessageNew,
+            cid: channel.channel.cid,
+            message: newMessage
+        )
+
+        try database.writeSynchronously { session in
+            try session.saveEvent(payload: messageNewEvent)
+        }
+
+        // THEN
+        let messageDTO = try XCTUnwrap(database.viewContext.message(id: newMessage.id))
+        XCTAssertEqual(messageDTO.showInsideThread, true)
+    }
+
     func test_saveEvent_whenMessageNewEventComes_whenUpdateIsOlderThanCurrentPreview_DoesNotUpdateChannelPreview() throws {
         // GIVEN
         let previousPreviewMessage: MessagePayload = .dummy(
