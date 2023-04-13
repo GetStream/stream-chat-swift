@@ -2,13 +2,18 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
-## StreamChat
 
+## StreamChat
+### ✅ Added
+- Add `ChatMessageController.loadPageAroundReplyId()` to load mid-page inside threads [#2566](https://github.com/GetStream/stream-chat-swift/pull/2566)
 ### 🐞 Fixed
 - Fix channel disappearing when channel list auto-filtering is enabled and the user is not a member of the channel [#2557](https://github.com/GetStream/stream-chat-swift/pull/2557)
 - Fix an issues which was causing the app to terminate when using a filter with the `in` operator and `cid` values [#2561](https://github.com/GetStream/stream-chat-swift/pull/2561)
 
-### 🔄 Changed
+## StreamChatUI
+### ✅ Added
+- Add support for bidirectional scrolling inside threads [#2566](https://github.com/GetStream/stream-chat-swift/pull/2566)
+- Add support for jumping to a message which is not in the message list inside Threads [#2566](https://github.com/GetStream/stream-chat-swift/pull/2566)
 
 # [4.30.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.30.0)
 _March 30, 2023_
