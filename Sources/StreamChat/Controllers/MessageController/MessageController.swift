@@ -194,6 +194,13 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     override public func synchronize(_ completion: ((Error?) -> Void)? = nil) {
         startObserversIfNeeded()
 
+        client.databaseContainer.write { session in
+            let latestReplies = self.message?.latestReplies.map(\.id).compactMap { session.message(id: $0) }
+            latestReplies?.forEach {
+                $0.showInsideThread = true
+            }
+        }
+
         messageUpdater.getMessage(cid: cid, messageId: messageId) { result in
             let error = result.error
             self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))

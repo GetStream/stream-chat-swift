@@ -110,11 +110,6 @@ open class ChatThreadVC: _ViewController,
             }
         }
 
-        if let message = messageController.message {
-            completeSetUp(message)
-            return
-        }
-
         messageController.synchronize { [weak self] _ in
             completeSetUp(self?.messageController.message)
         }
