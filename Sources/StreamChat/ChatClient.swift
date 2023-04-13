@@ -22,7 +22,7 @@ public class ChatClient {
 
     /// The current connection status of the client.
     ///
-    /// To observe changes in the connection status, create an instance of `CurrentChatUserController`, and use it to receive
+    /// To observe changes in the connection status, create an instance of `ChatConnectionController`, and use it to receive
     /// callbacks when the connection status changes.
     ///
     public var connectionStatus: ConnectionStatus {
