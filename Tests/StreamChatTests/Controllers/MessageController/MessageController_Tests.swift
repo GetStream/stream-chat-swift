@@ -1503,6 +1503,35 @@ final class MessageController_Tests: XCTestCase {
         XCTAssertEqual(env.messageUpdater.loadReplies_pagination, firstPage)
     }
 
+    func test_loadFirstPage_whenHasLoadedAllPreviousReplies_shouldStillLoadFirstPage() throws {
+        let exp = expectation(description: "load replies completes")
+        controller.loadPreviousReplies(before: "last message", limit: 5) { _ in
+            exp.fulfill()
+        }
+
+        env.messageUpdater.loadReplies_completion?(.success(.init(messages: [.dummy(), .dummy()])))
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertEqual(controller.hasLoadedAllPreviousReplies, true)
+
+        let firstPage = MessagesPagination(pageSize: 25, parameter: nil)
+
+        let exp2 = expectation(description: "load first page completes")
+        controller.loadFirstPage() { error in
+            XCTAssertNil(error)
+            exp2.fulfill()
+        }
+
+        env.messageUpdater.loadReplies_completion?(.success(.init(messages: [.dummy()])))
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        // Assert message updater is called with correct values
+        XCTAssertEqual(env.messageUpdater.loadReplies_cid, controller.cid)
+        XCTAssertEqual(env.messageUpdater.loadReplies_messageId, messageId)
+        XCTAssertEqual(env.messageUpdater.loadReplies_pagination, firstPage)
+    }
+
     func test_loadFirstPage_whenError() throws {
         let exp = expectation(description: "load first page completes")
         var expectedError: Error?
