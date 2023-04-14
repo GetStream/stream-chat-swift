@@ -197,6 +197,7 @@
         <attribute name="latestReactions" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformer"/>
         <attribute name="locallyCreatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="localMessageStateRaw" optional="YES" attributeType="String"/>
+        <attribute name="newestReplyAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="ownReactions" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformer"/>
         <attribute name="parentMessageId" optional="YES" attributeType="String"/>
         <attribute name="pinExpires" optional="YES" attributeType="Date" usesScalarValueType="NO"/>

@@ -232,11 +232,21 @@ class MessageUpdater: Worker {
                     // If it is first page or jumping to a message, clear the current messages.
                     if let parentMessage = session.message(id: messageId) {
                         if isJumpingToMessage || isFirstPage {
-                            parentMessage.replies
-                                .filter { !$0.isLocalOnly }
-                                .forEach {
-                                    $0.showInsideThread = false
-                                }
+                            parentMessage.replies.filter { !$0.isLocalOnly }.forEach {
+                                $0.showInsideThread = false
+                            }
+                        }
+
+                        switch pagination.parameter {
+                        case .greaterThan, .greaterThanOrEqual, .around:
+                            parentMessage.newestReplyAt = payload.messages.last?.createdAt.bridgeDate
+                            if payload.messages.count < pagination.pageSize {
+                                parentMessage.newestReplyAt = nil
+                            }
+                        case .lessThan, .lessThanOrEqual:
+                            break
+                        case .none:
+                            parentMessage.newestReplyAt = nil
                         }
                     }
 

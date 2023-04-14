@@ -31,6 +31,7 @@ class MessageDTO: NSManagedObject {
     @NSManaged var isHardDeleted: Bool
     @NSManaged var args: String?
     @NSManaged var parentMessageId: MessageId?
+    @NSManaged var parentMessage: MessageDTO?
     @NSManaged var showReplyInChannel: Bool
     @NSManaged var replyCount: Int32
     @NSManaged var extraData: Data?
@@ -50,6 +51,10 @@ class MessageDTO: NSManagedObject {
     // Boolean flag that determines if the reply will be shown inside the thread query.
     // This boolean is used to control the pagination of the replies of a thread.
     @NSManaged var showInsideThread: Bool
+
+    // Used for paginating newer replies while jumping to a mid-page.
+    // We want to avoid new replies being inserted in the UI if we are in a mid-page.
+    @NSManaged var newestReplyAt: DBDate?
 
     @NSManaged var user: UserDTO
     @NSManaged var mentionedUsers: Set<UserDTO>
@@ -283,9 +288,15 @@ class MessageDTO: NSManagedObject {
         let replyMessage = NSPredicate(format: "parentMessageId == %@", messageId)
         let shouldShowInsideThread = NSPredicate(format: "showInsideThread == YES")
 
+        let ignoreNewerRepliesPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [
+            .init(format: "parentMessage.newestReplyAt == nil"),
+            .init(format: "createdAt <= parentMessage.newestReplyAt")
+        ])
+
         var subpredicates = [
             replyMessage,
             shouldShowInsideThread,
+            ignoreNewerRepliesPredicate,
             deletedMessagesPredicate(deletedMessagesVisibility: deletedMessagesVisibility),
             nonTruncatedMessagesPredicate()
         ]
