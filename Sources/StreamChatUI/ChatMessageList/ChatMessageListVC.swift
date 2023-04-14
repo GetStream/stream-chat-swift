@@ -94,11 +94,11 @@ open class ChatMessageListVC: _ViewController,
     }
 
     /// A message pending to be scrolled after a message list update.
-    private(set) var messageIndexPathPendingScrolling: IndexPath?
+    private(set) var messageIdPendingScrolling: MessageId?
 
     /// When scrolling to the the pending message, it can take some time for the cell to appear on screen.
     /// So we need to highlight the message cell only when the scrolling animation ends.
-    private(set) var messageIndexPathPendingHighlight: IndexPath?
+    private(set) var messageIdPendingHighlight: MessageId?
 
     /// A closure that will be performed when a message is scrolled to it and appears on the screen.
     private(set) var onMessageHighlight: ((IndexPath) -> Void)?
@@ -445,6 +445,7 @@ open class ChatMessageListVC: _ViewController,
     /// - Parameter onHighlight: An optional closure to provide highlighting style when the message appears on screen.
     public func jumpToMessage(id: MessageId, onHighlight: ((IndexPath) -> Void)? = nil) {
         if let indexPath = getIndexPath(forMessageId: id) {
+            messageIdPendingScrolling = id
             scrollToMessage(at: indexPath, onHighlight: onHighlight)
             updateScrollToBottomButtonVisibility()
             return
@@ -463,7 +464,7 @@ open class ChatMessageListVC: _ViewController,
             // When we load the mid-page, the UI is not yet updated, so we can't scroll here.
             // So we need to wait when the updates messages are available in the UI, and only then
             // we can scroll to it.
-            self?.messageIndexPathPendingScrolling = self?.getIndexPath(forMessageId: id)
+            self?.messageIdPendingScrolling = id
         }
     }
 
@@ -486,7 +487,8 @@ open class ChatMessageListVC: _ViewController,
     public func scrollToMessage(at indexPath: IndexPath, onHighlight: ((IndexPath) -> Void)?) {
         onMessageHighlight = onHighlight
         listView.scrollToRow(at: indexPath, at: .middle, animated: true)
-        messageIndexPathPendingHighlight = indexPath
+        messageIdPendingHighlight = messageIdPendingScrolling
+        messageIdPendingScrolling = nil
     }
 
     /// Highlight the the message cell, for example, when jumping to a message.
@@ -582,12 +584,12 @@ open class ChatMessageListVC: _ViewController,
         // It can take some time for highlighted message to appear on screen after scrolling to it.
         // The only way to check if `scrollToRow` as finished it to wait here on delegate callback.
         let visibleIndexPaths = listView.indexPathsForVisibleRows ?? []
-        if let messageScrollingIndexPath = messageIndexPathPendingHighlight {
-            guard visibleIndexPaths.contains(messageScrollingIndexPath) else { return }
+        if let messageId = messageIdPendingHighlight, let indexPath = getIndexPath(forMessageId: messageId) {
+            guard visibleIndexPaths.contains(indexPath) else { return }
             DispatchQueue.main.async {
-                self.onMessageHighlight?(messageScrollingIndexPath)
+                self.onMessageHighlight?(indexPath)
             }
-            messageIndexPathPendingHighlight = nil
+            messageIdPendingHighlight = nil
         }
     }
 
@@ -847,9 +849,8 @@ private extension ChatMessageListVC {
     func scrollPendingMessageIfNeeded() {
         // Only after updating the message to the UI we have the message around loaded
         // So we check if we have a message waiting to be scrolled to here
-        if let indexPath = messageIndexPathPendingScrolling {
+        if let messageId = messageIdPendingScrolling, let indexPath = getIndexPath(forMessageId: messageId) {
             scrollToMessage(at: indexPath, onHighlight: onMessageHighlight)
-            messageIndexPathPendingScrolling = nil
         }
     }
 
