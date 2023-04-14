@@ -203,8 +203,9 @@ open class ChatThreadVC: _ViewController,
         _ vc: ChatMessageListVC,
         willDisplayMessageAt indexPath: IndexPath
     ) {
-        // No-op. By default this component is not interest this event,
+        // No-op. By default the thread component is not interested in this event,
         // but you as customer can override this function and provide an implementation.
+        // Ex: Provide an animation when the cell is being displayed.
     }
 
     open func chatMessageListVC(
@@ -241,7 +242,7 @@ open class ChatThreadVC: _ViewController,
         _ vc: ChatMessageListVC,
         scrollViewDidScroll scrollView: UIScrollView
     ) {
-        // No-op. By default this component is not interest in scrollView events,
+        // No-op. By default the thread component is not interested in scrollView events,
         // but you as customer can override this function and provide an implementation.
     }
 
