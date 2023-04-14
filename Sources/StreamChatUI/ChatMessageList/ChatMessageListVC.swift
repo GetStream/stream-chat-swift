@@ -487,7 +487,6 @@ open class ChatMessageListVC: _ViewController,
         onMessageHighlight = onHighlight
         listView.scrollToRow(at: indexPath, at: .middle, animated: true)
         messageIndexPathPendingHighlight = indexPath
-        onMessageHighlight?(indexPath)
     }
 
     /// Highlight the the message cell, for example, when jumping to a message.
