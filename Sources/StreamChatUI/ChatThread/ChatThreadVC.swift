@@ -350,7 +350,9 @@ open class ChatThreadVC: _ViewController,
 
     private func getRepliesWithThreadRootMessage(from messageController: ChatMessageController) -> [ChatMessage] {
         var messages = Array(messageController.replies)
-        if let threadRootMessage = messageController.message {
+        let isFirstPage = messages.count < messageController.repliesPageSize
+        let shouldAddRootMessageAtTheTop = isFirstPage || messageController.hasLoadedAllPreviousReplies
+        if shouldAddRootMessageAtTheTop, let threadRootMessage = messageController.message {
             messages.append(threadRootMessage)
         }
         return messages
