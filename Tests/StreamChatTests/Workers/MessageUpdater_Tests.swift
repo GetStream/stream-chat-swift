@@ -856,6 +856,7 @@ final class MessageUpdater_Tests: XCTestCase {
         let messageDTO: MessageDTO = try XCTUnwrap(database.viewContext.message(id: newMessage.id))
         XCTAssertEqual(messageDTO.skipPush, true)
         XCTAssertEqual(messageDTO.skipEnrichUrl, false)
+        XCTAssertEqual(messageDTO.showInsideThread, true)
 
         let message: ChatMessage = try messageDTO.asModel()
         XCTAssertEqual(message.text, text)
