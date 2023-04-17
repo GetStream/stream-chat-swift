@@ -497,6 +497,12 @@ extension DatabaseSession {
                 message.updatedAt = savedMessage.updatedAt
             }
         }
+
+        let isNewMessage = payload.eventType == .messageNew || payload.eventType == .notificationMessageNew
+        let isThreadReply = savedMessage.parentMessageId != nil
+        if isNewMessage && isThreadReply {
+            savedMessage.showInsideThread = true
+        }
     }
 
     func updateChannelPreview(from payload: EventPayload) {

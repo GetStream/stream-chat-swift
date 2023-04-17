@@ -97,11 +97,33 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         }
     }
 
-    /// The id of the last fetched reply
-    private var lastFetchedMessageId: MessageId?
-
-    /// A Boolean value that returns whether pagination is finished
+    /// A Boolean value that returns whether the oldest replies have all been loaded or not.
     public private(set) var hasLoadedAllPreviousReplies: Bool = false
+
+    /// A Boolean value that returns whether the newest replies have all been loaded or not.
+    public var hasLoadedAllNextReplies: Bool {
+        !isJumpingToMessage || replies.isEmpty
+    }
+
+    /// A Boolean value that returns whether the thread is currently loading previous (old) replies.
+    public private(set) var isLoadingPreviousReplies: Bool = false
+
+    /// A Boolean value that returns whether the thread is currently loading next (new) replies.
+    public private(set) var isLoadingNextReplies: Bool = false
+
+    /// A Boolean value that returns whether the thread is currently loading a page around a reply.
+    public private(set) var isLoadingMiddleReplies: Bool = false
+
+    /// A Boolean value that returns whether the thread is currently in a mid-page.
+    /// The value is false if the thread has the first page loaded.
+    /// The value is true if the thread is in a mid fragment and didn't load the first page yet.
+    public private(set) var isJumpingToMessage: Bool = false
+
+    /// The pagination cursor for loading previous (old) replies.
+    internal private(set) var lastOldestReplyId: MessageId?
+
+    /// The pagination cursor for loading next (new) replies.
+    internal private(set) var lastNewestReplyId: MessageId?
 
     private let environment: Environment
 
@@ -300,11 +322,11 @@ public extension ChatMessageController {
     ///                 If request fails, the completion will be called with an error.
     ///
     func loadPreviousReplies(
-        before messageId: MessageId? = nil,
+        before replyId: MessageId? = nil,
         limit: Int? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
-        if hasLoadedAllPreviousReplies {
+        if hasLoadedAllPreviousReplies || isLoadingPreviousReplies {
             completion?(nil)
             return
         }
@@ -312,24 +334,84 @@ public extension ChatMessageController {
         let pageSize = limit ?? repliesPageSize
         let pagination: MessagesPagination
 
-        if let lastMessageId = messageId ?? lastFetchedMessageId {
+        if let replyId = replyId ?? lastOldestReplyId {
             pagination = MessagesPagination(
                 pageSize: pageSize,
-                parameter: .lessThan(lastMessageId)
+                parameter: .lessThan(replyId)
             )
         } else {
             pagination = MessagesPagination(pageSize: pageSize)
         }
 
+        isLoadingPreviousReplies = true
         messageUpdater.loadReplies(
             cid: cid,
-            messageId: self.messageId,
+            messageId: messageId,
             pagination: pagination
         ) { result in
+            self.isLoadingPreviousReplies = false
             switch result {
             case let .success(payload):
                 self.hasLoadedAllPreviousReplies = payload.messages.count < pageSize
-                self.updateLastFetchedReplyId(with: payload)
+                self.updateOldestReplyId(with: payload)
+                self.callback {
+                    // If the first page was loaded with 25 messages, it means we need to load
+                    // a page with 0 messages. This won't trigger a didChangeReplies, but we need
+                    // to fake it so that we can insert the parent message to the list again.
+                    // When we have the oldestReplyId and newestReplyId from the backend, this won't be
+                    // needed since when loading the first page, we can check if the first message is the
+                    // oldestReplyId, if it is, it means we already loaded all messages, and we don't need
+                    // to perform any more requests.
+                    if payload.messages.isEmpty {
+                        self.delegate?.messageController(self, didChangeReplies: [])
+                    }
+
+                    completion?(nil)
+                }
+            case let .failure(error):
+                self.callback { completion?(error) }
+            }
+        }
+    }
+
+    /// Load replies around the given reply id. Useful to jump to a reply which hasn't been loaded yet.
+    ///
+    /// Clears the current replies of the parent message and loads the replies with the given id,
+    /// and the replies around it depending on the limit provided.
+    ///
+    /// Ex: If the limit is 25, it will load the reply and 12 on top and 12 below it. (25 total)
+    ///
+    /// - Parameters:
+    ///   - replyId: The reply id of the message to jump to.
+    ///   - limit: The number of replies to load in total, including the message to jump to.
+    ///   - completion: Callback when the API call is completed.
+    func loadPageAroundReplyId(
+        _ replyId: MessageId,
+        limit: Int? = nil,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        if isLoadingMiddleReplies {
+            completion?(nil)
+            return
+        }
+
+        let pageSize = limit ?? repliesPageSize
+        let pagination = MessagesPagination(pageSize: pageSize, parameter: .around(replyId))
+
+        isJumpingToMessage = true
+        isLoadingMiddleReplies = true
+        messageUpdater.loadReplies(
+            cid: cid,
+            messageId: messageId,
+            pagination: pagination
+        ) { result in
+            self.isLoadingMiddleReplies = false
+            switch result {
+            case let .success(payload):
+                self.updateOldestReplyId(with: payload)
+                self.updateNewestReplyId(with: payload)
+                // If we are jumping to the root message, then it means we are loading the first page
+                self.hasLoadedAllPreviousReplies = self.messageId == replyId
                 self.callback { completion?(nil) }
             case let .failure(error):
                 self.callback { completion?(error) }
@@ -346,23 +428,53 @@ public extension ChatMessageController {
     ///                 If request fails, the completion will be called with an error.
     ///
     func loadNextReplies(
-        after messageId: MessageId? = nil,
-        limit: Int = 25,
+        after replyId: MessageId? = nil,
+        limit: Int? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
-        guard let messageId = messageId ?? replies.first?.id else {
+        if isLoadingNextReplies || hasLoadedAllNextReplies {
+            completion?(nil)
+            return
+        }
+
+        guard let replyId = replyId ?? lastNewestReplyId else {
             log.error(ClientError.MessageEmptyReplies().localizedDescription)
             callback { completion?(ClientError.MessageEmptyReplies()) }
             return
         }
 
+        let pageSize = limit ?? repliesPageSize
+
+        isLoadingNextReplies = true
         messageUpdater.loadReplies(
             cid: cid,
-            messageId: self.messageId,
-            pagination: MessagesPagination(pageSize: limit, parameter: .greaterThan(messageId))
+            messageId: messageId,
+            pagination: MessagesPagination(pageSize: pageSize, parameter: .greaterThan(replyId))
         ) { result in
-            self.callback { completion?(result.error) }
+            self.isLoadingNextReplies = false
+            switch result {
+            case let .success(payload):
+                self.updateNewestReplyId(with: payload)
+                if payload.messages.count < pageSize {
+                    self.isJumpingToMessage = false
+                }
+                self.callback { completion?(nil) }
+            case let .failure(error):
+                self.callback { completion?(error) }
+            }
         }
+    }
+
+    /// Cleans the current state and loads the first page again.
+    /// - Parameter completion: Callback when the API call is completed.
+    func loadFirstPage(_ completion: ((_ error: Error?) -> Void)? = nil) {
+        lastOldestReplyId = nil
+        hasLoadedAllPreviousReplies = false
+        isLoadingPreviousReplies = false
+        lastNewestReplyId = nil
+        isJumpingToMessage = false
+
+        loadPreviousReplies(completion: completion)
     }
 
     /// Loads the next page of reactions starting from the current fetched reactions.
@@ -664,9 +776,14 @@ private extension ChatMessageController {
         }
     }
 
-    func updateLastFetchedReplyId(with payload: MessageRepliesPayload) {
+    func updateOldestReplyId(with payload: MessageRepliesPayload) {
         // Payload messages are ordered from oldest to newest
-        lastFetchedMessageId = payload.messages.first?.id
+        lastOldestReplyId = payload.messages.first?.id
+    }
+
+    func updateNewestReplyId(with payload: MessageRepliesPayload) {
+        // Payload messages are ordered from oldest to newest
+        lastNewestReplyId = payload.messages.last?.id
     }
 }
 

@@ -217,7 +217,7 @@ extension UserRobot {
     func openThread(messageCellIndex: Int = 0) -> Self {
         let messageCell = messageCell(withIndex: messageCellIndex)
         let threadButton = MessageListPage.Attributes.threadReplyCountButton(in: messageCell)
-        if threadButton.exists {
+        if threadButton.waitForExistence(timeout: 5) {
             threadButton.tap()
         } else {
             selectOptionFromContextMenu(option: .threadReply, forMessageAtIndex: messageCellIndex)

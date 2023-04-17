@@ -37,6 +37,7 @@ final class MessageUpdater_Mock: MessageUpdater {
     @Atomic var createNewReply_completion: ((Result<ChatMessage, Error>) -> Void)?
 
     @Atomic var loadReplies_cid: ChannelId?
+    @Atomic var loadReplies_callCount = 0
     @Atomic var loadReplies_messageId: MessageId?
     @Atomic var loadReplies_pagination: MessagesPagination?
     @Atomic var loadReplies_completion: ((Result<MessageRepliesPayload, Error>) -> Void)?
@@ -244,6 +245,7 @@ final class MessageUpdater_Mock: MessageUpdater {
         pagination: MessagesPagination,
         completion: ((Result<MessageRepliesPayload, Error>) -> Void)? = nil
     ) {
+        loadReplies_callCount += 1
         loadReplies_cid = cid
         loadReplies_messageId = messageId
         loadReplies_pagination = pagination

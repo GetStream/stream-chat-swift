@@ -171,30 +171,19 @@ final class MessageController_Tests: XCTestCase {
         controller.synchronize()
 
         // Create the message and replies in the DB
-        try client.databaseContainer.createCurrentUser(id: currentUserId)
-        try client.databaseContainer.createChannel(cid: cid)
-        try client.databaseContainer.createMessage(
-            id: messageId,
-            authorId: currentUserId,
-            cid: cid,
-            text: "No, I am your father.",
-            numberOfReplies: 10
-        )
+        let expectedReplies: [MessageId] = [.unique, .unique, .unique, .unique, .unique]
+        try saveReplies(with: expectedReplies)
 
         // Simulate updater completion call
         env.messageUpdater.getMessage_completion?(.success(ChatMessage.unique))
 
         XCTAssertEqual(controller.message?.id, messageId)
-        XCTAssertEqual(controller.replies.count, 10)
+        XCTAssertEqual(controller.replies.count, expectedReplies.count)
     }
 
     // MARK: - Order
 
     func test_replies_haveCorrectOrder() throws {
-        // Insert parent message
-        try client.databaseContainer.createMessage(id: messageId, authorId: .unique, cid: cid, text: "Parent")
-
-        // Insert 2 replies for parent message
         let reply1: MessagePayload = .dummy(
             messageId: .unique,
             parentId: messageId,
@@ -208,11 +197,7 @@ final class MessageController_Tests: XCTestCase {
             showReplyInChannel: false,
             authorUserId: .unique
         )
-
-        try client.databaseContainer.writeSynchronously {
-            try $0.saveMessage(payload: reply1, for: self.cid, syncOwnReactions: true, cache: nil)
-            try $0.saveMessage(payload: reply2, for: self.cid, syncOwnReactions: true, cache: nil)
-        }
+        try saveReplies(with: [reply1, reply2])
 
         // Set top-to-bottom ordering
         controller.listOrdering = .topToBottom
@@ -236,7 +221,6 @@ final class MessageController_Tests: XCTestCase {
     /// - newer than channel's truncation date (if channel is truncated)
     func test_replies_onlyIncludeValidMessages() throws {
         // Create dummy channel
-        let cid = ChannelId.unique
         let truncatedDate = Date.unique
         let channel = dummyPayload(with: cid, truncatedAt: truncatedDate)
 
@@ -246,22 +230,6 @@ final class MessageController_Tests: XCTestCase {
         client = ChatClient_Mock(config: config)
         controller = ChatMessageController(client: client, cid: cid, messageId: messageId, environment: env.controllerEnvironment)
 
-        // Save channel
-        var dto: ChannelDTO?
-        try client.databaseContainer.writeSynchronously {
-            dto = try $0.saveChannel(payload: channel)
-        }
-
-        // Insert parent message
-        try client.databaseContainer.createMessage(
-            id: messageId,
-            authorId: .unique,
-            cid: cid,
-            channel: dto,
-            text: "Parent"
-        )
-
-        // Insert replies for parent message
         let reply1: MessagePayload = .dummy(
             messageId: .unique,
             parentId: messageId,
@@ -270,7 +238,6 @@ final class MessageController_Tests: XCTestCase {
             createdAt: .unique(after: truncatedDate)
         )
 
-        // Insert the 2nd reply as deleted
         let createdAt = Date.unique(after: truncatedDate)
         let reply2: MessagePayload = .dummy(
             messageId: .unique,
@@ -291,11 +258,7 @@ final class MessageController_Tests: XCTestCase {
         )
 
         // Save messages
-        try client.databaseContainer.writeSynchronously {
-            try $0.saveMessage(payload: reply1, for: cid, syncOwnReactions: true, cache: nil)
-            try $0.saveMessage(payload: reply2, for: cid, syncOwnReactions: true, cache: nil)
-            try $0.saveMessage(payload: reply3, for: cid, syncOwnReactions: true, cache: nil)
-        }
+        try saveReplies(with: [reply1, reply2, reply3], channelPayload: channel)
 
         // Check if the replies are correct
         let ids = [reply1].map(\.id)
@@ -303,22 +266,11 @@ final class MessageController_Tests: XCTestCase {
     }
 
     func test_replies_withVisibleForCurrentUser_messageVisibility() throws {
-        // Create dummy channel
-        let cid = ChannelId.unique
         let channel = dummyPayload(with: cid)
         let truncatedDate = Date.unique
 
         try client.databaseContainer.createCurrentUser(id: currentUserId)
         client.databaseContainer.viewContext.deletedMessagesVisibility = .visibleForCurrentUser
-
-        // Save channel
-        try client.databaseContainer.writeSynchronously {
-            let dto = try $0.saveChannel(payload: channel)
-            dto.truncatedAt = truncatedDate.bridgeDate
-        }
-
-        // Insert parent message
-        try client.databaseContainer.createMessage(id: messageId, authorId: .unique, cid: cid, text: "Parent")
 
         // Insert own deleted reply
         let ownReply: MessagePayload = .dummy(
@@ -341,11 +293,7 @@ final class MessageController_Tests: XCTestCase {
             deletedAt: .unique(after: createdAt)
         )
 
-        // Save messages
-        try client.databaseContainer.writeSynchronously {
-            try $0.saveMessage(payload: ownReply, for: cid, syncOwnReactions: true, cache: nil)
-            try $0.saveMessage(payload: otherReply, for: cid, syncOwnReactions: true, cache: nil)
-        }
+        try saveReplies(with: [ownReply, otherReply], channelPayload: channel)
 
         // Only own reply should be visible
         XCTAssertEqual(controller.replies.map(\.id), [ownReply.id])
@@ -353,7 +301,6 @@ final class MessageController_Tests: XCTestCase {
 
     func test_replies_withAlwaysHidden_messageVisibility() throws {
         // Create dummy channel
-        let cid = ChannelId.unique
         let channel = dummyPayload(with: cid)
         let truncatedDate = Date.unique
 
@@ -390,11 +337,7 @@ final class MessageController_Tests: XCTestCase {
             deletedAt: .unique(after: createdAt)
         )
 
-        // Save messages
-        try client.databaseContainer.writeSynchronously {
-            try $0.saveMessage(payload: ownReply, for: cid, syncOwnReactions: true, cache: nil)
-            try $0.saveMessage(payload: otherReply, for: cid, syncOwnReactions: true, cache: nil)
-        }
+        try saveReplies(with: [ownReply, otherReply])
 
         // both deleted replies should be hidden
         XCTAssertTrue(controller.replies.isEmpty)
@@ -402,7 +345,6 @@ final class MessageController_Tests: XCTestCase {
 
     func test_replies_withAlwaysVisible_messageVisibility() throws {
         // Create dummy channel
-        let cid = ChannelId.unique
         let channel = dummyPayload(with: cid)
         let truncatedDate = Date.unique
 
@@ -440,10 +382,7 @@ final class MessageController_Tests: XCTestCase {
         )
 
         // Save messages
-        try client.databaseContainer.writeSynchronously {
-            try $0.saveMessage(payload: ownReply, for: cid, syncOwnReactions: true, cache: nil)
-            try $0.saveMessage(payload: otherReply, for: cid, syncOwnReactions: true, cache: nil)
-        }
+        try saveReplies(with: [ownReply, otherReply])
 
         // both deleted replies should be visible
         XCTAssertEqual(Set(controller.replies.map(\.id)), Set([ownReply.id, otherReply.id]))
@@ -451,7 +390,6 @@ final class MessageController_Tests: XCTestCase {
 
     func test_replies_whenShadowedMessagesVisible() throws {
         // Create dummy channel
-        let cid = ChannelId.unique
         let channel = dummyPayload(with: cid)
         let truncatedDate = Date.unique
 
@@ -489,10 +427,7 @@ final class MessageController_Tests: XCTestCase {
         )
 
         // Save messages
-        try client.databaseContainer.writeSynchronously {
-            try $0.saveMessage(payload: nonShadowedReply, for: cid, syncOwnReactions: true, cache: nil)
-            try $0.saveMessage(payload: shadowedReply, for: cid, syncOwnReactions: true, cache: nil)
-        }
+        try saveReplies(with: [nonShadowedReply, shadowedReply])
 
         // all replies should be visible
         XCTAssertEqual(Set(controller.replies.map(\.id)), Set([nonShadowedReply.id, shadowedReply.id]))
@@ -500,7 +435,6 @@ final class MessageController_Tests: XCTestCase {
 
     func test_replies_withDefaultShadowedMessagesVisible() throws {
         // Create dummy channel
-        let cid = ChannelId.unique
         let channel = dummyPayload(with: cid)
         let truncatedDate = Date.unique
 
@@ -536,11 +470,7 @@ final class MessageController_Tests: XCTestCase {
             isShadowed: true
         )
 
-        // Save messages
-        try client.databaseContainer.writeSynchronously {
-            try $0.saveMessage(payload: nonShadowedReply, for: cid, syncOwnReactions: true, cache: nil)
-            try $0.saveMessage(payload: shadowedReply, for: cid, syncOwnReactions: true, cache: nil)
-        }
+        try saveReplies(with: [nonShadowedReply, shadowedReply])
 
         // only non-shadowed reply should be visible
         XCTAssertEqual(Set(controller.replies.map(\.id)), Set([nonShadowedReply.id]))
@@ -657,15 +587,6 @@ final class MessageController_Tests: XCTestCase {
     }
 
     func test_delegate_isNotifiedAboutRepliesChanges() throws {
-        // Create current user in the database
-        try client.databaseContainer.createCurrentUser(id: currentUserId)
-
-        // Create channel in the database
-        try client.databaseContainer.createChannel(cid: cid)
-
-        // Create parent message
-        try client.databaseContainer.createMessage(id: messageId, authorId: currentUserId, cid: cid)
-
         // Set the delegate
         let delegate = TestDelegate(expectedQueueId: callbackQueueID)
         controller.delegate = delegate
@@ -674,16 +595,13 @@ final class MessageController_Tests: XCTestCase {
         controller.synchronize()
 
         // Add reply to DB
-        let reply: MessagePayload = .dummy(
-            messageId: .unique,
-            parentId: messageId,
-            showReplyInChannel: false,
-            authorUserId: .unique
-        )
+        let replyId = MessageId.unique
+        try saveReplies(with: [replyId])
 
         var replyModel: ChatMessage?
         try client.databaseContainer.writeSynchronously { session in
-            replyModel = try session.saveMessage(payload: reply, for: self.cid, syncOwnReactions: true, cache: nil).asModel()
+            guard let reply = session.message(id: replyId) else { return }
+            replyModel = try reply.asModel()
         }
 
         // Assert `insert` entity change is received by the delegate
@@ -1189,9 +1107,134 @@ final class MessageController_Tests: XCTestCase {
         )
     }
 
-    // MARK: - `loadNextReplies`
+    func test_loadPreviousReplies_whenHasLoadedAllPreviousReplies_doesNotCallUpdater() throws {
+        let exp = expectation(description: "load replies completes")
+        controller.loadPreviousReplies(before: "last message", limit: 2) { _ in
+            exp.fulfill()
+        }
+
+        env.messageUpdater.loadReplies_completion?(.success(.init(messages: [.dummy()])))
+        waitForExpectations(timeout: defaultTimeout)
+        env.messageUpdater.loadReplies_completion = nil
+
+        let exp2 = expectation(description: "load replies completes")
+        controller.loadPreviousReplies(before: "last message", limit: 2) { _ in
+            exp2.fulfill()
+        }
+
+        env.messageUpdater.loadReplies_completion?(.success(.init(messages: [.dummy()])))
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertEqual(env.messageUpdater.loadReplies_callCount, 1)
+        XCTAssertEqual(controller.hasLoadedAllPreviousReplies, true)
+        XCTAssertEqual(controller.isLoadingPreviousReplies, false)
+    }
+
+    func test_loadPreviousReplies_whenIsLoadingPreviousReplies_doesNotCallUpdater() throws {
+        controller.loadPreviousReplies(before: "last message", limit: 2)
+        env.messageUpdater.loadReplies_completion = nil
+
+        XCTAssertEqual(env.messageUpdater.loadReplies_callCount, 1)
+
+        let exp = expectation(description: "load replies completes")
+        controller.loadPreviousReplies(before: "last message", limit: 2) { _ in
+            exp.fulfill()
+        }
+
+        env.messageUpdater.loadReplies_completion?(.success(.init(messages: [.dummy()])))
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertEqual(env.messageUpdater.loadReplies_callCount, 1)
+        XCTAssertEqual(controller.isLoadingPreviousReplies, true)
+        XCTAssertEqual(controller.hasLoadedAllPreviousReplies, false)
+    }
+
+    func test_loadPreviousReplies_setsIsLoadingPreviousReplies() {
+        let exp = expectation(description: "load replies completes")
+        controller.loadPreviousReplies(before: "last message", limit: 2) { _ in
+            exp.fulfill()
+        }
+
+        XCTAssertEqual(controller.isLoadingPreviousReplies, true)
+
+        env.messageUpdater.loadReplies_completion?(.success(.init(messages: [.dummy()])))
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertEqual(controller.isLoadingPreviousReplies, false)
+    }
+
+    func test_loadPreviousReplies_updatesOldestReplyId() {
+        let expectedMessageId = MessageId.unique
+
+        let exp = expectation(description: "load replies completes")
+        controller.loadPreviousReplies(before: "last message", limit: 2) { _ in
+            exp.fulfill()
+        }
+
+        env.messageUpdater.loadReplies_completion?(.success(.init(messages: [.dummy(messageId: expectedMessageId), .dummy()])))
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertEqual(controller.lastOldestReplyId, expectedMessageId)
+    }
+
+    func test_loadPreviousReplies_whenRepliesLowerThanPageSize_thenHasLoadedAllPreviousReplies() {
+        let exp = expectation(description: "load replies completes")
+        controller.loadPreviousReplies(before: "last message", limit: 5) { _ in
+            exp.fulfill()
+        }
+
+        env.messageUpdater.loadReplies_completion?(.success(.init(messages: [.dummy(), .dummy()])))
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertEqual(env.messageUpdater.loadReplies_callCount, 1)
+        XCTAssertEqual(controller.hasLoadedAllPreviousReplies, true)
+    }
+
+    func test_loadPreviousReplies_whenRepliesEqualToPageSize_thenHasNotLoadedAllPreviousReplies() {
+        let exp = expectation(description: "load replies completes")
+        controller.loadPreviousReplies(before: "last message", limit: 2) { _ in
+            exp.fulfill()
+        }
+
+        env.messageUpdater.loadReplies_completion?(.success(.init(messages: [.dummy(), .dummy()])))
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertEqual(env.messageUpdater.loadReplies_callCount, 1)
+        XCTAssertEqual(controller.hasLoadedAllPreviousReplies, false)
+    }
+
+    func test_loadPreviousReplies_whenMessagesAreEmpty_callDelegateWithEmptyChanges() {
+        let exp = expectation(description: "load replies completes")
+        controller.loadPreviousReplies(before: "last message", limit: 2) { _ in
+            exp.fulfill()
+        }
+
+        class MockTestDelegate: ChatMessageControllerDelegate {
+            var callCount = 0
+            func messageController(_ controller: ChatMessageController, didChangeReplies changes: [ListChange<ChatMessage>]) {
+                callCount += 1
+            }
+        }
+
+        let testDelegate = MockTestDelegate()
+        controller.delegate = testDelegate
+
+        env.messageUpdater.loadReplies_completion?(.success(.init(messages: [])))
+        waitForExpectations(timeout: defaultTimeout)
+        
+        XCTAssertEqual(env.messageUpdater.loadReplies_callCount, 1)
+        // It should call the didChangeReplies with empty changes
+        // in order to add the parent message to the list again.
+        XCTAssertEqual(testDelegate.callCount, 1)
+    }
+
+    // MARK: - Load Next Replies
 
     func test_loadNextReplies_failsOnEmptyReplies() throws {
+        // Simulate controller is in mid-page
+        controller.loadPageAroundReplyId(.unique)
+        try saveReplies(with: [.unique, .unique])
+        
         // Simulate `loadNextReplies` call and catch the completion error.
         let completionError = try waitFor {
             controller.loadNextReplies(completion: $0)
@@ -1201,7 +1244,14 @@ final class MessageController_Tests: XCTestCase {
         AssertAsync.willBeTrue(completionError is ClientError.MessageEmptyReplies)
     }
 
-    func test_loadNextReplies_propagatesError() {
+    func test_loadNextReplies_propagatesError() throws {
+        // Simulate controller is in mid-page
+        controller.loadPageAroundReplyId(.unique)
+        try saveReplies(with: [.unique, .unique])
+
+        // Simulate loading mid page, so that we can load next replies
+        controller.loadPageAroundReplyId(.unique)
+
         // Simulate `loadNextReplies` call and catch the completion
         var completionError: Error?
         controller.loadNextReplies(after: .unique) { [callbackQueueID] in
@@ -1217,7 +1267,11 @@ final class MessageController_Tests: XCTestCase {
         AssertAsync.willBeEqual(completionError as? TestError, networkError)
     }
 
-    func test_loadNextReplies_propagatesNilError() {
+    func test_loadNextReplies_propagatesNilError() throws {
+        // Simulate controller is in mid-page
+        controller.loadPageAroundReplyId(.unique)
+        try saveReplies(with: [.unique, .unique])
+
         // Simulate `loadNextReplies` call and catch the completion
         var completionCalled = false
         controller.loadNextReplies(after: .unique) { [callbackQueueID] in
@@ -1244,7 +1298,11 @@ final class MessageController_Tests: XCTestCase {
         AssertAsync.canBeReleased(&weakController)
     }
 
-    func test_loadNextReplies_callsMessageUpdater_withCorrectValues() {
+    func test_loadNextReplies_callsMessageUpdater_withCorrectValues() throws {
+        // Simulate controller is in mid-page
+        controller.loadPageAroundReplyId(.unique)
+        try saveReplies(with: [.unique, .unique])
+
         // Simulate `loadNextReplies` call
         let afterMessageId: MessageId = .unique
         controller.loadNextReplies(after: afterMessageId)
@@ -1253,6 +1311,284 @@ final class MessageController_Tests: XCTestCase {
         XCTAssertEqual(env.messageUpdater.loadReplies_cid, controller.cid)
         XCTAssertEqual(env.messageUpdater.loadReplies_messageId, messageId)
         XCTAssertEqual(env.messageUpdater.loadReplies_pagination, .init(pageSize: 25, parameter: .greaterThan(afterMessageId)))
+    }
+
+    func test_loadNextReplies_whenHasLoadedAllNextReplies_doesNotCallUpdater() throws {
+        // Simulate controller is in mid-page
+        controller.loadPageAroundReplyId(.unique)
+        try saveReplies(with: [.unique, .unique])
+        env.messageUpdater.loadReplies_callCount = 0
+
+        let exp = expectation(description: "load replies completes")
+        controller.loadNextReplies(after: "last message", limit: 2) { _ in
+            exp.fulfill()
+        }
+
+        env.messageUpdater.loadReplies_completion?(.success(.init(messages: [.dummy()])))
+        waitForExpectations(timeout: defaultTimeout)
+        env.messageUpdater.loadReplies_completion = nil
+
+        let exp2 = expectation(description: "load replies completes")
+        controller.loadNextReplies(after: "last message", limit: 2) { _ in
+            exp2.fulfill()
+        }
+
+        env.messageUpdater.loadReplies_completion?(.success(.init(messages: [.dummy()])))
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertEqual(env.messageUpdater.loadReplies_callCount, 1)
+        XCTAssertEqual(controller.hasLoadedAllNextReplies, true)
+        XCTAssertEqual(controller.isLoadingNextReplies, false)
+    }
+
+    func test_loadNextReplies_whenIsLoadingNextReplies_doesNotCallUpdater() throws {
+        // Simulate controller is in mid-page
+        controller.loadPageAroundReplyId(.unique)
+        try saveReplies(with: [.unique, .unique])
+        env.messageUpdater.loadReplies_callCount = 0
+
+        controller.loadNextReplies(after: "last message", limit: 2)
+        env.messageUpdater.loadReplies_completion = nil
+
+        XCTAssertEqual(env.messageUpdater.loadReplies_callCount, 1)
+        XCTAssertEqual(controller.isLoadingNextReplies, true)
+
+        let exp = expectation(description: "load replies completes")
+        controller.loadNextReplies(after: "last message", limit: 2) { _ in
+            exp.fulfill()
+        }
+
+        env.messageUpdater.loadReplies_completion?(.success(.init(messages: [.dummy()])))
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertEqual(env.messageUpdater.loadReplies_callCount, 1)
+        XCTAssertEqual(controller.isLoadingNextReplies, true)
+        XCTAssertEqual(controller.hasLoadedAllNextReplies, false)
+    }
+
+    func test_loadNextReplies_setsIsLoadingNextReplies() throws {
+        // Simulate controller is in mid-page
+        controller.loadPageAroundReplyId(.unique)
+        try saveReplies(with: [.unique, .unique])
+
+        let exp = expectation(description: "load replies completes")
+        controller.loadNextReplies(after: "last message", limit: 2) { _ in
+            exp.fulfill()
+        }
+
+        XCTAssertEqual(controller.isLoadingNextReplies, true)
+
+        env.messageUpdater.loadReplies_completion?(.success(.init(messages: [.dummy()])))
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertEqual(controller.isLoadingNextReplies, false)
+    }
+
+    func test_loadNextReplies_updatesNewestReplyId() throws {
+        // Simulate controller is in mid-page
+        controller.loadPageAroundReplyId(.unique)
+        try saveReplies(with: [.unique, .unique])
+
+        let expectedMessageId = MessageId.unique
+
+        let exp = expectation(description: "load replies completes")
+        controller.loadNextReplies(after: "last message", limit: 2) { _ in
+            exp.fulfill()
+        }
+
+        env.messageUpdater.loadReplies_completion?(.success(.init(messages: [.dummy(), .dummy(messageId: expectedMessageId)])))
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertEqual(controller.lastNewestReplyId, expectedMessageId)
+    }
+
+    func test_loadNextReplies_whenRepliesLowerThanPageSize_thenIsNotJumpingToMessage() throws {
+        // Simulate controller is in mid-page
+        controller.loadPageAroundReplyId(.unique)
+        try saveReplies(with: [.unique, .unique])
+        env.messageUpdater.loadReplies_callCount = 0
+
+        let exp = expectation(description: "load replies completes")
+        controller.loadNextReplies(after: "last message", limit: 5) { _ in
+            exp.fulfill()
+        }
+
+        env.messageUpdater.loadReplies_completion?(.success(.init(messages: [.dummy(), .dummy()])))
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertEqual(env.messageUpdater.loadReplies_callCount, 1)
+        XCTAssertEqual(controller.isJumpingToMessage, false)
+    }
+
+    func test_loadNextReplies_whenRepliesEqualToPageSize_thenIsJumpingToMessage() throws {
+        // Simulate controller is in mid-page
+        controller.loadPageAroundReplyId(.unique)
+        try saveReplies(with: [.unique, .unique])
+        env.messageUpdater.loadReplies_callCount = 0
+
+        let exp = expectation(description: "load replies completes")
+        controller.loadNextReplies(after: "last message", limit: 2) { _ in
+            exp.fulfill()
+        }
+
+        env.messageUpdater.loadReplies_completion?(.success(.init(messages: [.dummy(), .dummy()])))
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertEqual(env.messageUpdater.loadReplies_callCount, 1)
+        XCTAssertEqual(controller.isJumpingToMessage, true)
+    }
+
+    // MARK: - Load Page Around Reply Id
+
+    func test_loadPageAroundReplyId() {
+        let exp = expectation(description: "should load page around reply id")
+        let replyId = MessageId.unique
+        controller.loadPageAroundReplyId(replyId, limit: 5) { error in
+            XCTAssertNil(error)
+            exp.fulfill()
+        }
+
+        XCTAssertEqual(controller.isLoadingMiddleReplies, true)
+
+        let oldestReply = MessagePayload.dummy()
+        let newestReply = MessagePayload.dummy()
+        env.messageUpdater.loadReplies_completion?(.success(.init(
+            messages: [oldestReply, .dummy(), newestReply]
+        )))
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        let expectedPagination = MessagesPagination(pageSize: 5, parameter: .around(replyId))
+        XCTAssertEqual(controller.isJumpingToMessage, true)
+        XCTAssertEqual(controller.isLoadingMiddleReplies, false)
+        XCTAssertEqual(controller.lastOldestReplyId, oldestReply.id)
+        XCTAssertEqual(controller.lastNewestReplyId, newestReply.id)
+        XCTAssertEqual(env.messageUpdater.loadReplies_callCount, 1)
+        XCTAssertEqual(env.messageUpdater.loadReplies_pagination, expectedPagination)
+    }
+
+    func test_loadPageAroundReplyId_whenError_shouldCompleteWithError() {
+        let exp = expectation(description: "should load page around reply id")
+        let replyId = MessageId.unique
+        controller.loadPageAroundReplyId(replyId, limit: 5) { error in
+            XCTAssertNotNil(error)
+            exp.fulfill()
+        }
+
+        env.messageUpdater.loadReplies_completion?(.failure(NSError(domain: "dummy", code: 3)))
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertEqual(env.messageUpdater.loadReplies_callCount, 1)
+    }
+
+    func test_loadPageAroundReplyId_whenIsLoadingMiddleMessages_shouldNotLoadMoreReplies() {
+        // When is loading middle messages
+        controller.loadPageAroundReplyId(.unique)
+
+        XCTAssertEqual(controller.isLoadingMiddleReplies, true)
+        XCTAssertEqual(env.messageUpdater.loadReplies_callCount, 1)
+
+        let exp = expectation(description: "should load page around reply id")
+        let replyId = MessageId.unique
+        controller.loadPageAroundReplyId(replyId, limit: 5) { error in
+            XCTAssertNil(error)
+            exp.fulfill()
+        }
+
+        let oldestReply = MessagePayload.dummy()
+        let newestReply = MessagePayload.dummy()
+        env.messageUpdater.loadReplies_completion?(.success(.init(
+            messages: [oldestReply, .dummy(), newestReply]
+        )))
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertEqual(env.messageUpdater.loadReplies_callCount, 1)
+    }
+
+    func test_loadPageAroundReplyId_whenReplyIdEqualToParentMessage_thenHasLoadedAllPreviousReplies() {
+        let exp = expectation(description: "should load page around reply id")
+        let replyId = controller.messageId
+        controller.loadPageAroundReplyId(replyId, limit: 5) { error in
+            XCTAssertNil(error)
+            exp.fulfill()
+        }
+
+        XCTAssertEqual(controller.hasLoadedAllPreviousReplies, false)
+
+        env.messageUpdater.loadReplies_completion?(.success(.init(
+            messages: [.dummy(), .dummy()]
+        )))
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertEqual(controller.hasLoadedAllPreviousReplies, true)
+        XCTAssertEqual(env.messageUpdater.loadReplies_callCount, 1)
+    }
+
+    // MARK: - Load first page
+
+    func test_loadFirstPage_loadsFirstPageOfReplies() throws {
+        let firstPage = MessagesPagination(pageSize: 25, parameter: nil)
+
+        let exp = expectation(description: "load first page completes")
+        controller.loadFirstPage() { error in
+            XCTAssertNil(error)
+            exp.fulfill()
+        }
+
+        env.messageUpdater.loadReplies_completion?(.success(.init(messages: [.dummy()])))
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        // Assert message updater is called with correct values
+        XCTAssertEqual(env.messageUpdater.loadReplies_cid, controller.cid)
+        XCTAssertEqual(env.messageUpdater.loadReplies_messageId, messageId)
+        XCTAssertEqual(env.messageUpdater.loadReplies_pagination, firstPage)
+    }
+
+    func test_loadFirstPage_whenHasLoadedAllPreviousReplies_shouldStillLoadFirstPage() throws {
+        let exp = expectation(description: "load replies completes")
+        controller.loadPreviousReplies(before: "last message", limit: 5) { _ in
+            exp.fulfill()
+        }
+
+        env.messageUpdater.loadReplies_completion?(.success(.init(messages: [.dummy(), .dummy()])))
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertEqual(controller.hasLoadedAllPreviousReplies, true)
+
+        let firstPage = MessagesPagination(pageSize: 25, parameter: nil)
+
+        let exp2 = expectation(description: "load first page completes")
+        controller.loadFirstPage() { error in
+            XCTAssertNil(error)
+            exp2.fulfill()
+        }
+
+        env.messageUpdater.loadReplies_completion?(.success(.init(messages: [.dummy()])))
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        // Assert message updater is called with correct values
+        XCTAssertEqual(env.messageUpdater.loadReplies_cid, controller.cid)
+        XCTAssertEqual(env.messageUpdater.loadReplies_messageId, messageId)
+        XCTAssertEqual(env.messageUpdater.loadReplies_pagination, firstPage)
+    }
+
+    func test_loadFirstPage_whenError() throws {
+        let exp = expectation(description: "load first page completes")
+        var expectedError: Error?
+        controller.loadFirstPage() { error in
+            expectedError = error
+            exp.fulfill()
+        }
+
+        env.messageUpdater.loadReplies_completion?(.failure(NSError(domain: "dummy", code: 3)))
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertNotNil(expectedError)
     }
 
     // MARK: - Load Reactions
@@ -1991,6 +2327,43 @@ final class MessageController_Tests: XCTestCase {
 
         // Assert controller is kept alive.
         AssertAsync.staysTrue(weakController != nil)
+    }
+
+    @discardableResult
+    private func saveReplies(with ids: [MessageId], channelPayload: ChannelPayload? = nil) throws -> [MessageDTO] {
+        let payloads: [MessagePayload] = ids.map {
+            MessagePayload.dummy(messageId: $0, parentId: self.messageId)
+        }
+
+        return try saveReplies(with: payloads, channelPayload: channelPayload)
+    }
+
+    @discardableResult
+    private func saveReplies(with payloads: [MessagePayload], channelPayload: ChannelPayload? = nil) throws -> [MessageDTO] {
+        var replies: [MessageDTO] = []
+
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: channelPayload ?? .dummy(channel: .dummy(cid: self.cid)))
+            let parentMessage = try session.saveMessage(
+                payload: .dummy(messageId: self.messageId),
+                for: self.cid,
+                syncOwnReactions: false,
+                cache: nil
+            )
+            replies = try payloads.compactMap { payload in
+                let reply = try session.saveMessage(
+                    payload: payload,
+                    for: self.cid,
+                    syncOwnReactions: false,
+                    cache: nil
+                )
+                reply.showInsideThread = true
+                return reply
+            }
+            parentMessage.replies = Set(replies)
+        }
+
+        return replies
     }
 }
 
