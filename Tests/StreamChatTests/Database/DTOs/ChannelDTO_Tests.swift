@@ -1324,6 +1324,35 @@ final class ChannelDTO_Tests: XCTestCase {
         XCTAssertEqual(previewMessage.text, previewMessagePayload.text)
     }
 
+    /// The root cause of this issue can be found on ChatChannel.create(fromDTO:), when creating a block to lazily get
+    /// its unread count. To get the data, there is a predicate that looks as follows: `NSPredicate(format: "%@ IN mentionedUsers", currentUser.user)`.
+    /// Whenever `currentUser.user` is invalid, this would directly crash as we cannot create a predicate with nil on the left hand side
+    /// This test verifies that this code is not executed when `currentUser.user` is invalid
+    func test_asModel_shouldNotCrashWhenCurrentUserInvalid() throws {
+        // GIVEN
+        let channelPayload: ChannelPayload = .dummy()
+        let userId = UserId.unique
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channelPayload)
+            let currentUser = try session.saveCurrentUser(payload: .dummy(userId: userId, role: .user))
+        }
+
+        // WHEN
+        let channel = try XCTUnwrap(
+            database.viewContext.channel(cid: channelPayload.channel.cid)?.asModel()
+        )
+
+        try database.writeSynchronously { session in
+            let currentUser = try XCTUnwrap(session.currentUser)
+            let managedObjectContext = try XCTUnwrap(currentUser.managedObjectContext)
+            managedObjectContext.delete(currentUser.user)
+        }
+
+        // THEN
+        XCTAssertEqual(channel.unreadCount.messages, 0)
+    }
+
     func test_asModel_populatesLatestMessage() throws {
         // GIVEN
         database = DatabaseContainer_Spy(
