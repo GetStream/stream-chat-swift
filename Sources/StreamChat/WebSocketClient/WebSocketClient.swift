@@ -65,12 +65,13 @@ class WebSocketClient {
         return pingController
     }()
 
-    private func createEngineIfNeeded(for connectEndpoint: Endpoint<EmptyResponse>) -> WebSocketEngine {
+    private func createEngineIfNeeded(for connectEndpoint: Endpoint<EmptyResponse>) throws -> WebSocketEngine {
         let request: URLRequest
         do {
             request = try requestEncoder.encodeRequest(for: connectEndpoint)
         } catch {
-            fatalError("Failed to create WebSocketEngine with error: \(error)")
+            log.log(.debug, message: error.localizedDescription)
+            throw ClientError(error.localizedDescription)
         }
 
         if let existedEngine = engine, existedEngine.request == request {
@@ -113,7 +114,11 @@ class WebSocketClient {
         default: break
         }
 
-        engine = createEngineIfNeeded(for: endpoint)
+        do {
+            engine = try createEngineIfNeeded(for: endpoint)
+        } catch {
+            return
+        }
 
         connectionState = .connecting
 

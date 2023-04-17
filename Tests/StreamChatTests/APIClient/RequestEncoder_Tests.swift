@@ -279,6 +279,36 @@ final class RequestEncoder_Tests: XCTestCase {
         XCTAssertEqual(request.allHTTPHeaderFields?["Authorization"], token.rawValue)
     }
 
+    func test_encodeRequest_syncVersion_whenEndpointRequiresConnectionId_shouldReturnRequest() {
+        let endpoint = Endpoint<Data>(
+            path: .guest,
+            method: .get,
+            queryItems: nil,
+            requiresConnectionId: true,
+            requiresToken: false,
+            body: nil
+        )
+
+        connectionDetailsProvider.provideConnectionIdResult = .success(.unique)
+
+        XCTAssertNoThrow(try encoder.encodeRequest(for: endpoint))
+    }
+
+    func test_encodeRequest_syncVersion_whenEndpointRequiresConnectionId_whenConnectionFails_shouldThrow() {
+        let endpoint = Endpoint<Data>(
+            path: .guest,
+            method: .get,
+            queryItems: nil,
+            requiresConnectionId: true,
+            requiresToken: false,
+            body: nil
+        )
+
+        connectionDetailsProvider.provideConnectionIdResult = .failure(TestError())
+        
+        XCTAssertThrowsError(try encoder.encodeRequest(for: endpoint))
+    }
+
     func test_encodingRequestURL() throws {
         let testStringValue = String.unique
 

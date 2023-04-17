@@ -45,16 +45,23 @@ extension RequestEncoder {
             subsystems: .httpRequests
         )
 
-        var result: Result<URLRequest, Error>?
-        encodeRequest(for: endpoint) { result = $0 }
-
-        log.assert(
-            result != nil,
-            "`encodeRequest` with `requiresConnectionId == false` should return immediately.",
-            subsystems: .httpRequests
+        var result: Result<URLRequest, Error> = .failure(
+            ClientError("Unexpected error. The result was not changed after encoding the request.")
         )
 
-        return try result!.get()
+        let dispatchGroup = DispatchGroup()
+        dispatchGroup.enter()
+        encodeRequest(for: endpoint) {
+            result = $0
+            dispatchGroup.leave()
+        }
+
+        let waitResult = dispatchGroup.wait(timeout: .now() + 5)
+        if waitResult == .timedOut {
+            result = .failure(ClientError("Encoding request timed out. Endpoint: \(endpoint)"))
+        }
+
+        return try result.get()
     }
 }
 
