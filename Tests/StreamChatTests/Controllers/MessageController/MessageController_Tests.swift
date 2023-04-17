@@ -1482,6 +1482,25 @@ final class MessageController_Tests: XCTestCase {
         XCTAssertEqual(env.messageUpdater.loadReplies_callCount, 1)
     }
 
+    func test_loadPageAroundReplyId_whenReplyIdEqualToParentMessage_thenHasLoadedAllPreviousReplies() {
+        let exp = expectation(description: "should load page around reply id")
+        let replyId = controller.messageId
+        controller.loadPageAroundReplyId(replyId, limit: 5) { error in
+            XCTAssertNil(error)
+            exp.fulfill()
+        }
+
+        XCTAssertEqual(controller.hasLoadedAllPreviousReplies, false)
+
+        env.messageUpdater.loadReplies_completion?(.success(.init(
+            messages: [.dummy(), .dummy()]
+        )))
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertEqual(controller.hasLoadedAllPreviousReplies, true)
+        XCTAssertEqual(env.messageUpdater.loadReplies_callCount, 1)
+    }
+
     // MARK: - Load first page
 
     func test_loadFirstPage_loadsFirstPageOfReplies() throws {

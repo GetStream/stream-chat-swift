@@ -397,6 +397,8 @@ public extension ChatMessageController {
             case let .success(payload):
                 self.updateOldestReplyId(with: payload)
                 self.updateNewestReplyId(with: payload)
+                // If we are jumping to the root message, then it means we are loading the first page
+                self.hasLoadedAllPreviousReplies = self.messageId == replyId
                 self.callback { completion?(nil) }
             case let .failure(error):
                 self.callback { completion?(error) }
