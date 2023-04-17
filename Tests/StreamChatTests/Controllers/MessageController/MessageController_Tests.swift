@@ -1203,6 +1203,31 @@ final class MessageController_Tests: XCTestCase {
         XCTAssertEqual(controller.hasLoadedAllPreviousReplies, false)
     }
 
+    func test_loadPreviousReplies_whenMessagesAreEmpty_callDelegateWithEmptyChanges() {
+        let exp = expectation(description: "load replies completes")
+        controller.loadPreviousReplies(before: "last message", limit: 2) { _ in
+            exp.fulfill()
+        }
+
+        class MockTestDelegate: ChatMessageControllerDelegate {
+            var callCount = 0
+            func messageController(_ controller: ChatMessageController, didChangeReplies changes: [ListChange<ChatMessage>]) {
+                callCount += 1
+            }
+        }
+
+        let testDelegate = MockTestDelegate()
+        controller.delegate = testDelegate
+
+        env.messageUpdater.loadReplies_completion?(.success(.init(messages: [])))
+        waitForExpectations(timeout: defaultTimeout)
+        
+        XCTAssertEqual(env.messageUpdater.loadReplies_callCount, 1)
+        // It should call the didChangeReplies with empty changes
+        // in order to add the parent message to the list again.
+        XCTAssertEqual(testDelegate.callCount, 1)
+    }
+
     // MARK: - Load Next Replies
 
     func test_loadNextReplies_failsOnEmptyReplies() throws {

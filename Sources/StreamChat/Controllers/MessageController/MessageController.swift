@@ -354,7 +354,20 @@ public extension ChatMessageController {
             case let .success(payload):
                 self.hasLoadedAllPreviousReplies = payload.messages.count < pageSize
                 self.updateOldestReplyId(with: payload)
-                self.callback { completion?(nil) }
+                self.callback {
+                    // If the first page was loaded with 25 messages, it means we need to load
+                    // a page with 0 messages. This won't trigger a didChangeReplies, but we need
+                    // to fake it so that we can insert the parent message to the list again.
+                    // When we have the oldestReplyId and newestReplyId from the backend, this won't be
+                    // needed since when loading the first page, we can check if the first message is the
+                    // oldestReplyId, if it is, it means we already loaded all messages, and we don't need
+                    // to perform any more requests.
+                    if payload.messages.isEmpty {
+                        self.delegate?.messageController(self, didChangeReplies: [])
+                    }
+
+                    completion?(nil)
+                }
             case let .failure(error):
                 self.callback { completion?(error) }
             }
