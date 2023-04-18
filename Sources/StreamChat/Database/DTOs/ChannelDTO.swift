@@ -413,7 +413,9 @@ extension ChatChannel {
         let reads: [ChatChannelRead] = try dto.reads.map { try $0.asModel() }
 
         let unreadCount: () -> ChannelUnreadCount = {
-            guard dto.isValid, let currentUser = context.currentUser else { return .noUnread }
+            guard dto.isValid, let currentUser = context.currentUser, currentUser.user.isValid else {
+                return .noUnread
+            }
 
             let currentUserRead = reads.first(where: { $0.user.id == currentUser.user.id })
 
