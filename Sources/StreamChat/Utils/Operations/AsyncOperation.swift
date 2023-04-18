@@ -56,6 +56,8 @@ class AsyncOperation: BaseOperation {
     }
 }
 
+class UnmanagedAsyncOperation: AsyncOperation {}
+
 class BaseOperation: Operation {
     private var _finished = false
     private var _executing = false

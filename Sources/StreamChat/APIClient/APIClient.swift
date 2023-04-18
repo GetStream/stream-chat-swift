@@ -101,12 +101,34 @@ class APIClient {
         recoveryQueue.addOperation(requestOperation)
     }
 
+    /// Performs a network request and retries in case of network failures. The network operation
+    /// won't be managed by the APIClient instance. Instead it will be added on the provided operationQueue.
+    ///
+    /// - Parameters:
+    ///   - endpoint: The `Endpoint` used to create the network request.
+    ///   - operationQueue: The queue that will be responsible for executing the network operation
+    ///   - completion: Called when the networking request is finished.
+    func unmanagedRequest<Response: Decodable>(
+        endpoint: Endpoint<Response>,
+        operationQueue: OperationQueue,
+        completion: @escaping (Result<Response, Error>) -> Void
+    ) {
+        operationQueue.addOperation(
+            unmanagedOperation(endpoint: endpoint, completion: completion)
+        )
+    }
+
     private func operation<Response: Decodable>(
         endpoint: Endpoint<Response>,
         isRecoveryOperation: Bool,
         completion: @escaping (Result<Response, Error>) -> Void
     ) -> AsyncOperation {
         AsyncOperation(maxRetries: maximumRequestRetries) { [weak self] operation, done in
+            guard self?.isRefreshingToken == false else {
+                completion(.failure(ClientError.RefreshingToken()))
+                return
+            }
+
             self?.executeRequest(endpoint: endpoint) { [weak self] result in
                 switch result {
                 case .failure(_ as ClientError.RefreshingToken):
@@ -159,6 +181,31 @@ class APIClient {
         }
     }
 
+    private func unmanagedOperation<Response: Decodable>(
+        endpoint: Endpoint<Response>,
+        completion: @escaping (Result<Response, Error>) -> Void
+    ) -> UnmanagedAsyncOperation {
+        UnmanagedAsyncOperation(maxRetries: maximumRequestRetries) { [weak self] operation, done in
+            self?.executeRequest(endpoint: endpoint) { [weak self] result in
+                switch result {
+                case let .failure(error) where self?.isConnectionError(error) == true:
+                    // Do not retry unless its a connection problem and we still have retries left
+                    if operation.canRetry {
+                        done(.retry)
+                        return
+                    }
+
+                    completion(result)
+                    done(.continue)
+                case .success, .failure:
+                    log.debug("Request succeeded /\(endpoint.path)", subsystems: .offlineSupport)
+                    completion(result)
+                    done(.continue)
+                }
+            }
+        }
+    }
+
     /// Performs a network request.
     ///
     /// - Parameters:
@@ -168,11 +215,6 @@ class APIClient {
         endpoint: Endpoint<Response>,
         completion: @escaping (Result<Response, Error>) -> Void
     ) {
-        guard !isRefreshingToken else {
-            completion(.failure(ClientError.RefreshingToken()))
-            return
-        }
-
         encoder.encodeRequest(for: endpoint) { [weak self] (requestResult) in
             let urlRequest: URLRequest
             do {
