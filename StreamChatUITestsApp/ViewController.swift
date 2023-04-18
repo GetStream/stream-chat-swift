@@ -26,6 +26,7 @@ final class ViewController: UIViewController {
         stackView.distribution = .fillProportionally
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.addArrangedSubview(createStartButton())
+        stackView.addArrangedSubview(createConnectGuestButton())
         view.addSubview(stackView)
         NSLayoutConstraint.activate([
             stackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -37,6 +38,13 @@ final class ViewController: UIViewController {
         // Setup chat client
         streamChat.setUpChat()
         streamChat.connectUser(completion: { _ in })
+        showChannelList()
+    }
+
+    @objc func didTapConnectGuest() {
+        // Setup chat client
+        streamChat.setUpChat()
+        streamChat.connectGuestUser(completion: { _ in })
         showChannelList()
     }
 
@@ -163,6 +171,15 @@ extension ViewController {
         return startButton
     }
 
+    func createConnectGuestButton() -> UIButton {
+        let startButton = UIButton(type: .system)
+        startButton.translatesAutoresizingMaskIntoConstraints = false
+        startButton.setTitle("Connect Guest", for: .normal)
+        startButton.accessibilityIdentifier = "TestApp.ConnectGuest"
+        startButton.addTarget(self, action: #selector(didTapConnectGuest), for: .touchUpInside)
+        return startButton
+    }
+
     func createDebugButton() -> UIBarButtonItem {
         let item = UIBarButtonItem(
             image: UIImage(named: "pencil")!,
@@ -183,6 +200,15 @@ extension StreamChatWrapper {
         client?.connectUser(
             userInfo: userCredentials.userInfo,
             tokenProvider: tokenProvider,
+            completion: completion
+        )
+    }
+
+    func connectGuestUser(completion: @escaping (Error?) -> Void) {
+        let userCredentials = UserCredentials.default
+        let tokenProvider = mockTokenProvider(for: userCredentials)
+        client?.connectGuestUser(
+            userInfo: userCredentials.userInfo,
             completion: completion
         )
     }

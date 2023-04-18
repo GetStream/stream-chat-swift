@@ -121,6 +121,16 @@ class AuthenticationRepository {
         self.currentUserId = currentUserId
     }
 
+    /// Fetches the user saved in the database, if exists
+    func deleteCurrentUser() {
+        if let currentUserId = currentUserId {
+            let context = databaseContainer.writableContext
+            context.performAndWait {
+                context.deleteQuery(.user(withID: currentUserId))
+            }
+        }
+    }
+
     /// Sets the user token. This method is only needed to perform API calls without connecting as a user.
     /// You should only use this in special cases like a notification service or other background process
     /// - Parameters:
@@ -161,6 +171,7 @@ class AuthenticationRepository {
         clearTokenProvider()
         currentToken = nil
         currentUserId = nil
+        deleteCurrentUser()
     }
 
     func refreshToken(completion: @escaping (Error?) -> Void) {
