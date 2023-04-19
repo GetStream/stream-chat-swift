@@ -8,6 +8,7 @@ import XCTest
 class ThreadPage: MessageListPage {
 
     static var alsoSendInChannelCheckbox: XCUIElement { app.otherElements["CheckboxControl"] }
+    static var repliesCountLabel: XCUIElement { app.staticTexts["textLabel"] }
 
     enum NavigationBar {
 

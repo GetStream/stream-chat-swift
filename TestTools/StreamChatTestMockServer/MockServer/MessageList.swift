@@ -42,13 +42,21 @@ public extension StreamMockServer {
     var lastMessage: [String: Any]? {
         try? XCTUnwrap(waitForMessageList().last)
     }
+    
+    var firstMessageInThread: [String: Any]? {
+        try? XCTUnwrap(threadList.first)
+    }
+    
+    var lastMessageInThread: [String: Any]? {
+        try? XCTUnwrap(threadList.last)
+    }
 
     func findMessageByIndex(_ index: Int) -> [String: Any]? {
         try? XCTUnwrap(waitForMessageList()[index])
     }
 
     func findMessageById(_ id: String) -> [String: Any]? {
-        try? XCTUnwrap(waitForMessageWithId(id))
+        waitForMessageWithId(id) ?? [:] // this avoids unexpected crashes after test
     }
 
     func findMessageByUserId(_ userId: String) -> [String: Any]? {
@@ -67,18 +75,41 @@ public extension StreamMockServer {
             String(describing: $0[messageKey.cid.rawValue]).contains(":\(channelId)")
         }
     }
+    
+    func getMessageId(_ message: [String: Any]?) -> String? {
+        message?[messageKey.id.rawValue] as? String
+    }
 
     func removeMessage(_ deletedMessage: [String: Any]?) {
+        removeMessage(id: getMessageId(deletedMessage))
+    }
+
+    func removeMessage(id: String?) {
+        removeMessageFromMessageList(id)
+        removeMessageFromThreadList(id)
+    }
+    
+    private func removeMessageFromMessageList(_ id: String?) {
         if let deletedIndex = messageList.firstIndex(where: { (message) -> Bool in
-            (message[messageKey.id.rawValue] as? String) == (deletedMessage?[messageKey.id.rawValue] as? String)
+            (message[messageKey.id.rawValue] as? String) == id
         }) {
             messageList.remove(at: deletedIndex)
         }
     }
-
-    func removeMessage(id: String) {
-        let deletedMessage = try? XCTUnwrap(waitForMessageWithId(id))
-        removeMessage(deletedMessage)
+    
+    private func removeMessageFromThreadList(_ id: String?) {
+        if let deletedIndex = threadList.firstIndex(where: { (message) -> Bool in
+            (message[messageKey.id.rawValue] as? String) == id
+        }) {
+            threadList.remove(at: deletedIndex)
+        }
+    }
+    
+    func isMessageInList(_ list: [[String: Any]], message: [String: Any]?) -> Bool {
+        let filteredList = list.filter {
+            ($0[messageKey.id.rawValue] as? String) == (message?[messageKey.id.rawValue] as? String)
+        }
+        return !filteredList.isEmpty
     }
 
     @discardableResult
@@ -92,7 +123,7 @@ public extension StreamMockServer {
         let endTime = TestData.waitingEndTime
         var newMessageList: [[String: Any]] = []
         while newMessageList.isEmpty && endTime > TestData.currentTimeInterval {
-            newMessageList = messageList.filter {
+            newMessageList = (messageList + threadList).filter {
                 ($0[messageKey.id.rawValue] as? String) == id
             }
         }
@@ -103,7 +134,7 @@ public extension StreamMockServer {
         let endTime = TestData.waitingEndTime
         var newMessageList: [[String: Any]] = []
         while newMessageList.isEmpty && endTime > TestData.currentTimeInterval {
-            newMessageList = messageList.filter {
+            newMessageList = (messageList + threadList).filter {
                 let user = $0[messageKey.user.rawValue] as? [String: Any]
                 return (user?[userKey.id.rawValue] as? String) == userId
             }
@@ -135,7 +166,8 @@ public extension StreamMockServer {
         idLt: String?,
         idGt: String?,
         idLte: String?,
-        idGte: String?
+        idGte: String?,
+        around: String?
     ) -> [[String: Any]] {
         var newMessageList: [[String: Any]] = []
         if let idLt = idLt {
@@ -175,6 +207,15 @@ public extension StreamMockServer {
                 let plusLimit = messageIndex + limit
                 let endWith = plusLimit < messageCount ? plusLimit - 1 : messageCount
                 newMessageList = Array(messageList[messageIndex...endWith])
+            }
+        } else if let around = around {
+            let messageIndex = messageList.firstIndex {
+                around == $0[messageKey.id.rawValue] as? String
+            }
+            if let messageIndex = messageIndex {
+                let startWith = messageIndex
+                let endWith = messageIndex + limit
+                newMessageList = Array(messageList[startWith...endWith])
             }
         } else {
             newMessageList = Array(messageList.suffix(limit))

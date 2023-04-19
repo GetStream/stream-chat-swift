@@ -210,9 +210,13 @@ final class MessageList_Tests: StreamTestCase {
         let isIpad = UIDevice.current.userInterfaceIdiom == .pad
         let typingIndicatorTimeout = isIpad ? 10 : XCUIElement.waitTimeout
         let typingEventsTimeout: Double = 3
+        let message = "message"
 
         GIVEN("user opens the channel") {
-            userRobot.login().openChannel()
+            userRobot
+                .login()
+                .openChannel()
+                .sendMessage(message)
         }
         WHEN("participant starts typing") {
             participantRobot.wait(typingEventsTimeout).startTyping()

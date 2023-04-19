@@ -191,7 +191,8 @@ public extension StreamMockServer {
             idLt: messages?[paginationKey.lessThan.rawValue] as? String,
             idGt: messages?[paginationKey.greaterThan.rawValue] as? String,
             idLte: messages?[paginationKey.lessThanOrEqual.rawValue] as? String,
-            idGte: messages?[paginationKey.greaterThanOrEqual.rawValue] as? String
+            idGte: messages?[paginationKey.greaterThanOrEqual.rawValue] as? String,
+            around: messages?[paginationKey.around.rawValue] as? String
         )
         return .ok(.json(channel))
     }

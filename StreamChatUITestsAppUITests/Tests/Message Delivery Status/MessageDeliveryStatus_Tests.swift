@@ -346,7 +346,7 @@ extension MessageDeliveryStatus_Tests {
             userRobot.replyToMessageInThread(threadReply)
         }
         AND("participant reads the user's thread reply") {
-            participantRobot.readMessageAfterDelay()
+            participantRobot.readMessageInThreadAfterDelay()
         }
         THEN("user spots double checkmark below the message") {
             userRobot.assertMessageDeliveryStatus(.read)
@@ -398,7 +398,7 @@ extension MessageDeliveryStatus_Tests {
             userRobot.replyToMessageInThread(threadReply)
         }
         AND("thread reply is read by participant") {
-            participantRobot.readMessageAfterDelay()
+            participantRobot.readMessageInThreadAfterDelay()
             userRobot
                 .assertMessageDeliveryStatus(.read)
                 .assertMessageReadCount(readBy: 1)

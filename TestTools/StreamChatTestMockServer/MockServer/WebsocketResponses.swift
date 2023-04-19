@@ -50,7 +50,7 @@ public extension StreamMockServer {
     @discardableResult
     func websocketMessage(
         _ text: String? = "",
-        channelId: String?,
+        channelId: String? = nil,
         messageId: String?,
         parentId: String? = nil,
         timestamp: String? = TestData.currentDate,
@@ -58,6 +58,7 @@ public extension StreamMockServer {
         eventType: EventType,
         user: [String: Any]?,
         channel: [String: Any]? = nil,
+        channelReply: Bool = false,
         hardDelete: Bool = false,
         intercept: ((inout [String: Any]?) -> [String: Any]?)? = nil
     ) -> Self {
@@ -84,17 +85,19 @@ public extension StreamMockServer {
                 var attachments = mockedMessage?[messageKey.attachments.rawValue] as? [[String: Any]]
                 attachments?[0][GiphyAttachmentSpecificCodingKeys.actions.rawValue] = nil
                 mockedMessage?[messageKey.attachments.rawValue] = attachments
-                mockedMessage?[messageKey.type.rawValue] = MessageType.regular.rawValue
+                mockedMessage?[messageKey.type.rawValue] = parentId == nil || channelReply ? MessageType.regular.rawValue : MessageType.reply.rawValue
             }
-            saveMessage(mockedMessage)
+            parentId == nil ? saveMessage(mockedMessage) : saveReply(mockedMessage)
         case .messageDeleted:
             let message = findMessageById(messageId)
             mockedMessage = mockDeletedMessage(message, user: user)
             mockedMessage = intercept?(&mockedMessage) ?? mockedMessage
             if hardDelete {
                 removeMessage(id: messageId)
-            } else {
+            } else if isMessageInList(messageList, message: mockedMessage) {
                 saveMessage(mockedMessage)
+            } else {
+                saveReply(mockedMessage)
             }
         case .messageUpdated:
             let message = findMessageById(messageId)
@@ -108,7 +111,7 @@ public extension StreamMockServer {
                 updatedAt: timestamp
             )
             mockedMessage = intercept?(&mockedMessage) ?? mockedMessage
-            saveMessage(mockedMessage)
+            parentId == nil ? saveMessage(mockedMessage) : saveReply(mockedMessage)
         default:
             mockedMessage = [:]
         }
