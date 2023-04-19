@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix unexpected 401s produced at launch while the chat is not yet fully connected [#2559](https://github.com/GetStream/stream-chat-swift/pull/2559)
 - Fix crash when getting unread count in an invalid state [#2570](https://github.com/GetStream/stream-chat-swift/pull/2570)
 - Fix crash when accessing FetchCache with an unexecuted NSFetchRequest [#2572](https://github.com/GetStream/stream-chat-swift/pull/2572)
+- Fix an issue which was blocking a Guest Authentication operation to retrieve a connection token [#2574](https://github.com/GetStream/stream-chat-swift/pull/2574)
 
 ## StreamChatUI
 ### ✅ Added
