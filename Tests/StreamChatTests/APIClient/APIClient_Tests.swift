@@ -667,7 +667,7 @@ final class APIClient_Tests: XCTestCase {
         )
 
         XCTAssertEqual(operationQueue.operationCount, 1)
-        _ = try XCTUnwrap(operationQueue.operations.first as? UnmanagedAsyncOperation)
+        _ = try XCTUnwrap(operationQueue.operations.first as? AsyncOperation)
     }
 
     func test_unmanagedRequest_noRecoveryNoTokenFetching_requestSucceeds() throws {

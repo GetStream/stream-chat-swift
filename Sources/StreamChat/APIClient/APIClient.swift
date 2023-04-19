@@ -125,7 +125,9 @@ class APIClient {
     ) -> AsyncOperation {
         AsyncOperation(maxRetries: maximumRequestRetries) { [weak self] operation, done in
             guard self?.isRefreshingToken == false else {
-                completion(.failure(ClientError.RefreshingToken()))
+                // Requeue request
+                self?.request(endpoint: endpoint, completion: completion)
+                done(.continue)
                 return
             }
 
@@ -184,8 +186,8 @@ class APIClient {
     private func unmanagedOperation<Response: Decodable>(
         endpoint: Endpoint<Response>,
         completion: @escaping (Result<Response, Error>) -> Void
-    ) -> UnmanagedAsyncOperation {
-        UnmanagedAsyncOperation(maxRetries: maximumRequestRetries) { [weak self] operation, done in
+    ) -> AsyncOperation {
+        AsyncOperation(maxRetries: maximumRequestRetries) { [weak self] operation, done in
             self?.executeRequest(endpoint: endpoint) { [weak self] result in
                 switch result {
                 case let .failure(error) where self?.isConnectionError(error) == true:
