@@ -176,6 +176,8 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
             expectation.fulfill()
         }
 
+        apiClient.waitForRecoveryRequest()
+
         XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 5)
         // We make all the requests succeed
         apiClient.recoveryRequest_allRecordedCalls.forEach { _, completion in
@@ -199,6 +201,8 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         repository.runQueuedRequests {
             expectation.fulfill()
         }
+
+        apiClient.waitForRecoveryRequest()
 
         XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 5)
 
@@ -228,6 +232,8 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         repository.runQueuedRequests {
             expectation.fulfill()
         }
+
+        apiClient.waitForRecoveryRequest()
 
         XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 5)
 

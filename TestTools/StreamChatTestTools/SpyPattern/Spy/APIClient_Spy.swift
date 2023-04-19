@@ -34,6 +34,7 @@ final class APIClient_Spy: APIClient, Spy {
     @Atomic var init_requestDecoder: RequestDecoder
     @Atomic var init_attachmentUploader: AttachmentUploader
     @Atomic var request_expectation: XCTestExpectation
+    @Atomic var recoveryRequest_expectation: XCTestExpectation
 
     // Cleans up all recorded values
     func cleanUp() {
@@ -41,6 +42,7 @@ final class APIClient_Spy: APIClient, Spy {
         request_endpoint = nil
         request_completion = nil
         request_expectation = .init()
+        recoveryRequest_expectation = .init()
 
         recoveryRequest_endpoint = nil
         recoveryRequest_allRecordedCalls = []
@@ -66,6 +68,7 @@ final class APIClient_Spy: APIClient, Spy {
         init_requestDecoder = requestDecoder
         init_attachmentUploader = attachmentUploader
         request_expectation = .init()
+        recoveryRequest_expectation = .init()
 
         super.init(
             sessionConfiguration: sessionConfiguration,
@@ -132,6 +135,12 @@ final class APIClient_Spy: APIClient, Spy {
     func waitForRequest(timeout: Double = defaultTimeout) -> AnyEndpoint? {
         XCTWaiter().wait(for: [request_expectation], timeout: timeout)
         return request_endpoint
+    }
+
+    @discardableResult
+    func waitForRecoveryRequest(timeout: Double = defaultTimeout) -> AnyEndpoint? {
+        XCTWaiter().wait(for: [recoveryRequest_expectation], timeout: timeout)
+        return recoveryRequest_endpoint
     }
 
     override func enterRecoveryMode() {
