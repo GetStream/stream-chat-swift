@@ -6,11 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChat
 ### ✅ Added
 - Add `ChatMessageController.loadPageAroundReplyId()` to load mid-page inside threads [#2566](https://github.com/GetStream/stream-chat-swift/pull/2566)
+
 ### 🐞 Fixed
 - Fix channel disappearing when channel list auto-filtering is enabled and the user is not a member of the channel [#2557](https://github.com/GetStream/stream-chat-swift/pull/2557)
 - Fix an issues which was causing the app to terminate when using a filter with the `in` operator and `cid` values [#2561](https://github.com/GetStream/stream-chat-swift/pull/2561)
 - Fix unexpected 401s produced at launch while the chat is not yet fully connected [#2559](https://github.com/GetStream/stream-chat-swift/pull/2559)
 - Fix crash when getting unread count in an invalid state [#2570](https://github.com/GetStream/stream-chat-swift/pull/2570)
+- Fix crash when accessing FetchCache with an unexecuted NSFetchRequest [#2572](https://github.com/GetStream/stream-chat-swift/pull/2572)
 - Make connect/disconnect safer when network is offline [#2571](https://github.com/GetStream/stream-chat-swift/pull/2571)
 
 ## StreamChatUI
