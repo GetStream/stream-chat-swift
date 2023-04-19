@@ -56,12 +56,16 @@ extension RequestEncoder {
             dispatchGroup.leave()
         }
 
-        let waitResult = dispatchGroup.wait(timeout: .now() + 5)
+        let waitResult = dispatchGroup.wait(timeout: .now() + returningResultTimeout)
         if waitResult == .timedOut {
             result = .failure(ClientError("Encoding request timed out. Endpoint: \(endpoint)"))
         }
 
         return try result.get()
+    }
+
+    private var returningResultTimeout: TimeInterval {
+        5
     }
 }
 

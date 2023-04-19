@@ -70,8 +70,8 @@ class WebSocketClient {
         do {
             request = try requestEncoder.encodeRequest(for: connectEndpoint)
         } catch {
-            log.log(.debug, message: error.localizedDescription)
-            throw ClientError(error.localizedDescription)
+            log.log(.error, message: error.localizedDescription)
+            throw error
         }
 
         if let existedEngine = engine, existedEngine.request == request {
