@@ -27,9 +27,8 @@ final class APIClient_Spy: APIClient, Spy {
     /// The last endpoint `unmanagedRequest` function was called with.
     @Atomic private var unmanagedRequest_result: Any?
     @Atomic var unmanagedRequest_endpoint: AnyEndpoint?
-    @Atomic var unmanagedRequest_operationQueue: OperationQueue?
     @Atomic var unmanagedRequest_completion: Any?
-    @Atomic var unmanagedRequest_allRecordedCalls: [(endpoint: AnyEndpoint, operationQueue: OperationQueue, completion: Any?)] = []
+    @Atomic var unmanagedRequest_allRecordedCalls: [(endpoint: AnyEndpoint, completion: Any?)] = []
 
     /// The last endpoint `uploadFile` function was called with.
     @Atomic var uploadFile_attachment: AnyChatMessageAttachment?
@@ -130,13 +129,11 @@ final class APIClient_Spy: APIClient, Spy {
 
     override func unmanagedRequest<Response>(
         endpoint: Endpoint<Response>,
-        operationQueue: OperationQueue,
         completion: @escaping (Result<Response, Error>) -> Void
     ) where Response : Decodable {
         unmanagedRequest_endpoint = AnyEndpoint(endpoint)
-        unmanagedRequest_operationQueue = operationQueue
         unmanagedRequest_completion = completion
-        _unmanagedRequest_allRecordedCalls.mutate { $0.append((unmanagedRequest_endpoint!, unmanagedRequest_operationQueue!, unmanagedRequest_completion!)) }
+        _unmanagedRequest_allRecordedCalls.mutate { $0.append((unmanagedRequest_endpoint!, unmanagedRequest_completion!)) }
         if let result = unmanagedRequest_result as? Result<Response, Error> {
             completion(result)
         }

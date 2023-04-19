@@ -102,18 +102,16 @@ class APIClient {
     }
 
     /// Performs a network request and retries in case of network failures. The network operation
-    /// won't be managed by the APIClient instance. Instead it will be added on the provided operationQueue.
+    /// won't be managed by the APIClient instance. Instead it will be added on the `OperationQueue.main`
     ///
     /// - Parameters:
     ///   - endpoint: The `Endpoint` used to create the network request.
-    ///   - operationQueue: The queue that will be responsible for executing the network operation
     ///   - completion: Called when the networking request is finished.
     func unmanagedRequest<Response: Decodable>(
         endpoint: Endpoint<Response>,
-        operationQueue: OperationQueue,
         completion: @escaping (Result<Response, Error>) -> Void
     ) {
-        operationQueue.addOperation(
+        OperationQueue.main.addOperation(
             unmanagedOperation(endpoint: endpoint, completion: completion)
         )
     }

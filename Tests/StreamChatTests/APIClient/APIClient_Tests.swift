@@ -656,20 +656,6 @@ final class APIClient_Tests: XCTestCase {
 
     // MARK: - Unmanaged Requests
 
-    func test_unmanagedRequest_addsAnOperationOnTheProvidedOperationQueue() throws {
-        let operationQueue = OperationQueue()
-        operationQueue.isSuspended = true
-
-        apiClient.unmanagedRequest(
-            endpoint: Endpoint<TestUser>.mock(),
-            operationQueue: operationQueue,
-            completion: { _ in }
-        )
-
-        XCTAssertEqual(operationQueue.operationCount, 1)
-        _ = try XCTUnwrap(operationQueue.operations.first as? AsyncOperation)
-    }
-
     func test_unmanagedRequest_noRecoveryNoTokenFetching_requestSucceeds() throws {
         try executeUnmanagedRequestThatSucceeds()
     }
@@ -695,7 +681,7 @@ final class APIClient_Tests: XCTestCase {
         decoder.decodeRequestResponse = .failure(networkError)
 
         let expectation = self.expectation(description: "Request completes")
-        apiClient.unmanagedRequest(endpoint: Endpoint<TestUser>.mock(), operationQueue: .main) { _ in
+        apiClient.unmanagedRequest(endpoint: Endpoint<TestUser>.mock()) { _ in
             expectation.fulfill()
         }
         waitForExpectations(timeout: defaultTimeout, handler: nil)
@@ -747,7 +733,7 @@ extension APIClient_Tests {
         let testEndpoint = Endpoint<TestUser>.mock()
 
         // Create a request and wait for the completion block
-        let result = try waitFor { apiClient.unmanagedRequest(endpoint: testEndpoint, operationQueue: .main, completion: $0) }
+        let result = try waitFor { apiClient.unmanagedRequest(endpoint: testEndpoint, completion: $0) }
 
         // Check the incoming data to the encoder is the URLResponse and data from the network
         XCTAssertEqual(decoder.decodeRequestResponse_data, mockNetworkResponseData)
