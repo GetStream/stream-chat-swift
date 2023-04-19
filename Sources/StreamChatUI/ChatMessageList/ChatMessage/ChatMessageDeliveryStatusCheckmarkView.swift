@@ -30,10 +30,6 @@ open class ChatMessageDeliveryStatusCheckmarkView: _View, ThemeProvider {
     override open func setUpLayout() {
         super.setUpLayout()
 
-        let size: CGFloat = 14
-        widthAnchor.pin(equalToConstant: size).isActive = true
-        heightAnchor.pin(equalToConstant: size).isActive = true
-
         embed(imageView)
     }
 
