@@ -473,21 +473,8 @@ public class ChatClient {
 }
 
 extension ChatClient: AuthenticationRepositoryDelegate {
-    /// Clears state related to the current user to leave the client ready for another user
-    /// Will clear:
-    ///     - Background workers
-    ///     - References to active controllers
-    ///     - Database
-    /// - Parameter completion: A block to be executed when the process is completed. Contains an error if something went wrong
-    func clearCurrentUserData(completion: @escaping (Error?) -> Void) {
-        createBackgroundWorkers()
-
-        // Stop tracking active components
-        activeChannelControllers.removeAllObjects()
-        activeChannelListControllers.removeAllObjects()
-
-        // Reset all existing local data.
-        databaseContainer.removeAllData(force: true, completion: completion)
+    func logoutUser(completion: @escaping () -> Void) {
+        logout(completion: completion)
     }
 
     func didFinishSettingUpAuthenticationEnvironment(for state: EnvironmentState) {

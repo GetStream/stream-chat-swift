@@ -10,11 +10,25 @@ enum EnvironmentState {
     case firstConnection
     case newToken
     case newUser
+
+    init(currentUserId: UserId?, newUserId: UserId?) {
+        if currentUserId == nil {
+            self = .firstConnection
+            return
+        }
+        
+        if currentUserId == newUserId {
+            self = .newToken
+            return
+        }
+
+        self = .newUser
+    }
 }
 
 protocol AuthenticationRepositoryDelegate: AnyObject {
     func didFinishSettingUpAuthenticationEnvironment(for state: EnvironmentState)
-    func clearCurrentUserData(completion: @escaping (Error?) -> Void)
+    func logoutUser(completion: @escaping () -> Void)
 }
 
 class AuthenticationRepository {
@@ -135,8 +149,23 @@ class AuthenticationRepository {
     ///   - userInfo:       The user information that will be created OR updated if it exists.
     ///   - tokenProvider:  The block to be used to get a token.
     func connectUser(userInfo: UserInfo?, tokenProvider: @escaping TokenProvider, completion: @escaping (Error?) -> Void) {
-        self.tokenProvider = tokenProvider
-        scheduleTokenFetch(isRetry: false, userInfo: userInfo, tokenProvider: tokenProvider, completion: completion)
+        log.assert(delegate != nil, "Delegate should not be nil at this point")
+
+        let handleTokenFetch = { [weak self] in
+            self?.tokenProvider = tokenProvider
+            self?.scheduleTokenFetch(isRetry: false, userInfo: userInfo, tokenProvider: tokenProvider, completion: completion)
+        }
+
+        let state = EnvironmentState(currentUserId: currentUserId, newUserId: userInfo?.id)
+
+        switch state {
+        case .firstConnection, .newToken:
+            handleTokenFetch()
+        case .newUser:
+            delegate?.logoutUser {
+                handleTokenFetch()
+            }
+        }
     }
 
     /// Establishes a connection for a guest user.
@@ -176,17 +205,12 @@ class AuthenticationRepository {
 
     func prepareEnvironment(
         userInfo: UserInfo?,
-        newToken: Token,
-        completion: @escaping (Error?) -> Void
+        newToken: Token
     ) {
-        let state: EnvironmentState
-        if currentUserId == nil {
-            state = .firstConnection
-        } else if newToken.userId == currentUserId {
-            state = .newToken
-        } else {
-            state = .newUser
-        }
+        let state = EnvironmentState(
+            currentUserId: currentUserId,
+            newUserId: newToken.userId
+        )
 
         log.assert(delegate != nil, "Delegate should not be nil at this point")
 
@@ -195,23 +219,11 @@ class AuthenticationRepository {
             connectionRepository.updateWebSocketEndpoint(with: newToken, userInfo: userInfo)
             setToken(token: newToken, completeTokenWaiters: true)
             delegate?.didFinishSettingUpAuthenticationEnvironment(for: state)
-            completion(nil)
 
         case .newUser:
             completeTokenWaiters(token: nil)
             setToken(token: newToken, completeTokenWaiters: false)
             delegate?.didFinishSettingUpAuthenticationEnvironment(for: state)
-
-            // Setting a new connection is not possible in connectionless mode.
-            guard connectionRepository.isClientInActiveMode else {
-                completion(ClientError.ClientIsNotInActiveMode())
-                return
-            }
-
-            connectionRepository.disconnect(source: .userInitiated) { [weak delegate, weak connectionRepository] in
-                connectionRepository?.updateWebSocketEndpoint(with: newToken, userInfo: userInfo)
-                delegate?.clearCurrentUserData(completion: completion)
-            }
         }
     }
 
@@ -294,19 +306,9 @@ class AuthenticationRepository {
         }
 
         let onTokenReceived: (Token) -> Void = { [weak self, weak connectionRepository] token in
-            self?.prepareEnvironment(userInfo: userInfo, newToken: token) { error in
-                // Errors thrown during `prepareEnvironment` cannot be recovered
-                if let error = error {
-                    onCompletion(error)
-                    return
-                }
-
-                // We manually change the `connectionStatus` for passive client
-                // to `disconnected` when environment was prepared correctly
-                // (e.g. current user session is successfully restored).
-                connectionRepository?.forceConnectionStatusForInactiveModeIfNeeded()
-                connectionRepository?.connect(userInfo: userInfo, completion: onCompletion)
-            }
+            self?.prepareEnvironment(userInfo: userInfo, newToken: token)
+            connectionRepository?.forceConnectionStatusForInactiveModeIfNeeded()
+            connectionRepository?.connect(userInfo: userInfo, completion: onCompletion)
         }
 
         let retryFetchIfPossible: (Error?) -> Void = { [weak self] error in
