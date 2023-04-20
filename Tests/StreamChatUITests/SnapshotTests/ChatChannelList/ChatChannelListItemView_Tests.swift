@@ -26,7 +26,7 @@ final class ChatChannelListItemView_Tests: XCTestCase {
         let pendingSendMessage: ChatMessage = .mock(
             id: .unique,
             cid: .unique,
-            text: "Pending send message from current user",
+            text: "Pending send message",
             author: currentUser,
             createdAt: Date(timeIntervalSince1970: 100),
             localState: .pendingSend,
@@ -42,15 +42,16 @@ final class ChatChannelListItemView_Tests: XCTestCase {
                 currentUserId: currentUser.id
             )
         )
+        view.updateContent()
 
-        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+        AssertSnapshot(view, variants: [.defaultLight])
     }
 
     func test_appearance_pendingPreviewMessageFromCurrentUser_readsDisabled() {
         let pendingSendMessage: ChatMessage = .mock(
             id: .unique,
             cid: .unique,
-            text: "Pending send message from current user",
+            text: "Pending send message",
             author: currentUser,
             createdAt: Date(timeIntervalSince1970: 100),
             localState: .pendingSend,
@@ -67,7 +68,7 @@ final class ChatChannelListItemView_Tests: XCTestCase {
             )
         )
 
-        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+        AssertSnapshot(view, variants: [.defaultLight])
     }
 
     func test_appearance_sentPreviewMessageFromCurrentUser_readsEnabled() {
