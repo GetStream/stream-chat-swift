@@ -346,7 +346,11 @@ class AuthenticationRepository {
             imageURL: userInfo.imageURL,
             extraData: userInfo.extraData
         )
-        apiClient.request(endpoint: endpoint) {
+
+        /// We need to ensure that the request to fetch the userToken will be executed. As APIClient's
+        /// operationQueue may be suspended (due to the getToken operation) we are firing an
+        /// unmanagedRequest/Operation that will be added on the `OperationQueue.main`
+        apiClient.unmanagedRequest(endpoint: endpoint) {
             switch $0 {
             case let .success(payload):
                 let token = payload.token

@@ -653,6 +653,42 @@ final class APIClient_Tests: XCTestCase {
         XCTAssertEqual(totalRequests.count, 8)
         XCTAssertEqual(Set(totalRequests).count, 5)
     }
+
+    // MARK: - Unmanaged Requests
+
+    func test_unmanagedRequest_noRecoveryNoTokenFetching_requestSucceeds() throws {
+        try executeUnmanagedRequestThatSucceeds()
+    }
+
+    func test_unmanagedRequest_recoveryNoTokenFetching_requestSucceeds() throws {
+        apiClient.enterRecoveryMode()
+        try executeUnmanagedRequestThatSucceeds()
+    }
+
+    func test_unmanagedRequest_recoveryAndTokenFetching_requestSucceeds() throws {
+        apiClient.enterRecoveryMode()
+        apiClient.enterTokenFetchMode()
+        try executeUnmanagedRequestThatSucceeds()
+    }
+
+    func test_unmanagedRequest_noRecoveryButInTokenFetching_requestSucceeds() throws {
+        apiClient.enterTokenFetchMode()
+        try executeUnmanagedRequestThatSucceeds()
+    }
+
+    func test_unmanagedRequest_retriesOnConnectionFailure() throws {
+        let networkError = NSError(domain: "", code: NSURLErrorNotConnectedToInternet, userInfo: nil)
+        decoder.decodeRequestResponse = .failure(networkError)
+
+        let expectation = self.expectation(description: "Request completes")
+        apiClient.unmanagedRequest(endpoint: Endpoint<TestUser>.mock()) { _ in
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: defaultTimeout, handler: nil)
+
+        // Retries until the maximum amount
+        XCTEnsureRequestsWereExecuted(times: 4)
+    }
 }
 
 // MARK: Helpers
@@ -676,6 +712,36 @@ extension APIClient_Tests {
             tokenRefresher: self.tokenRefresher,
             queueOfflineRequest: self.queueOfflineRequest
         )
+    }
+
+    private func executeUnmanagedRequestThatSucceeds() throws {
+        // Create a test request and set it as a response from the encoder
+        let testRequest = URLRequest(url: .unique())
+        encoder.encodeRequest = .success(testRequest)
+
+        // Set up a successful mock network response for the request
+        let mockNetworkResponseData = try JSONEncoder.stream.encode(TestUser(name: "Network Response"))
+        URLProtocol_Mock.mockResponse(request: testRequest, statusCode: 234, responseBody: mockNetworkResponseData)
+
+        // Set up a decoder response
+        // ⚠️ Watch out: the user is different there, so we can distinguish between the incoming data
+        // to the encoder, and the outgoing data).
+        let mockDecoderResponseData = TestUser(name: "Decoder Response")
+        decoder.decodeRequestResponse = .success(mockDecoderResponseData)
+
+        // Create a test endpoint (it's actually ignored, because APIClient uses the testRequest returned from the encoder)
+        let testEndpoint = Endpoint<TestUser>.mock()
+
+        // Create a request and wait for the completion block
+        let result = try waitFor { apiClient.unmanagedRequest(endpoint: testEndpoint, completion: $0) }
+
+        // Check the incoming data to the encoder is the URLResponse and data from the network
+        XCTAssertEqual(decoder.decodeRequestResponse_data, mockNetworkResponseData)
+        XCTAssertEqual(decoder.decodeRequestResponse_response?.statusCode, 234)
+
+        // Check the outgoing data from the encoder is the result data
+        AssertResultSuccess(result, mockDecoderResponseData)
+        XCTEnsureRequestsWereExecuted(times: 1)
     }
 
     // MARK: - Helpers

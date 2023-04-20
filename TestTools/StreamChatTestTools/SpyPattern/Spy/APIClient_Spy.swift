@@ -24,6 +24,12 @@ final class APIClient_Spy: APIClient, Spy {
     @Atomic var recoveryRequest_completion: Any?
     @Atomic var recoveryRequest_allRecordedCalls: [(endpoint: AnyEndpoint, completion: Any?)] = []
 
+    /// The last endpoint `unmanagedRequest` function was called with.
+    @Atomic private var unmanagedRequest_result: Any?
+    @Atomic var unmanagedRequest_endpoint: AnyEndpoint?
+    @Atomic var unmanagedRequest_completion: Any?
+    @Atomic var unmanagedRequest_allRecordedCalls: [(endpoint: AnyEndpoint, completion: Any?)] = []
+
     /// The last endpoint `uploadFile` function was called with.
     @Atomic var uploadFile_attachment: AnyChatMessageAttachment?
     @Atomic var uploadFile_progress: ((Double) -> Void)?
@@ -95,6 +101,10 @@ final class APIClient_Spy: APIClient, Spy {
         request_result = responseResult
     }
 
+    func test_mockUnmanagedResponseResult<Response: Decodable>(_ responseResult: Result<Response, Error>) {
+        unmanagedRequest_result = responseResult
+    }
+
     override func request<Response>(
         endpoint: Endpoint<Response>,
         completion: @escaping (Result<Response, Error>) -> Void
@@ -115,6 +125,18 @@ final class APIClient_Spy: APIClient, Spy {
         recoveryRequest_endpoint = AnyEndpoint(endpoint)
         recoveryRequest_completion = completion
         _recoveryRequest_allRecordedCalls.mutate { $0.append((recoveryRequest_endpoint!, recoveryRequest_completion!)) }
+    }
+
+    override func unmanagedRequest<Response>(
+        endpoint: Endpoint<Response>,
+        completion: @escaping (Result<Response, Error>) -> Void
+    ) where Response : Decodable {
+        unmanagedRequest_endpoint = AnyEndpoint(endpoint)
+        unmanagedRequest_completion = completion
+        _unmanagedRequest_allRecordedCalls.mutate { $0.append((unmanagedRequest_endpoint!, unmanagedRequest_completion!)) }
+        if let result = unmanagedRequest_result as? Result<Response, Error> {
+            completion(result)
+        }
     }
 
     override func uploadAttachment(
