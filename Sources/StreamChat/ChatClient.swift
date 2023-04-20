@@ -403,6 +403,10 @@ public class ChatClient {
     public func logout(completion: @escaping () -> Void) {
         authenticationRepository.logOutUser()
 
+        // Stop tracking active components
+        activeChannelControllers.removeAllObjects()
+        activeChannelListControllers.removeAllObjects()
+
         let group = DispatchGroup()
         group.enter()
         disconnect {
