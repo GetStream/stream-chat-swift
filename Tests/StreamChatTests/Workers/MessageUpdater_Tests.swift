@@ -2678,15 +2678,10 @@ extension MessageUpdater_Tests {
         let messageIds: [MessageId] = [.unique, .unique, .unique]
         let cid: ChannelId = .unique
 
-        // Create current user in the database
-        try database.createCurrentUser(id: currentUserId)
-
-        // Create channel in the database
-        try database.createChannel(cid: cid)
-
         // Save current messages
         try database.writeSynchronously { session in
-            guard let channelDTO = session.channel(cid: cid) else { return }
+            try session.saveCurrentUser(payload: .dummy(userId: currentUserId, role: .user))
+            let channelDTO = try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
             let parentMessage = try session.saveMessage(
                 payload: .dummy(messageId: parentMessageId),
                 channelDTO: channelDTO,
@@ -2712,9 +2707,9 @@ extension MessageUpdater_Tests {
         XCTAssertEqual(currentMessageDTOs.map(\.showInsideThread), [true, true, true])
 
         // Simulate `loadReplies` call
-        var completionCalled = false
+        let exp = expectation(description: "should load replies")
         messageUpdater.loadReplies(cid: cid, messageId: parentMessageId, pagination: pagination) { _ in
-            completionCalled = true
+            exp.fulfill()
         }
 
         // Simulate API response with success
@@ -2723,8 +2718,7 @@ extension MessageUpdater_Tests {
         )
         apiClient.test_simulateResponse(Result<MessageRepliesPayload, Error>.success(repliesPayload))
 
-        // Assert completion is called
-        AssertAsync.willBeTrue(completionCalled)
+        waitForExpectations(timeout: defaultTimeout)
 
         var newMessageDTOs: [MessageDTO] {
             messageIds.compactMap { database.viewContext.message(id: $0) }

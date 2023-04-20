@@ -128,6 +128,20 @@ final class WebSocketClient_Tests: XCTestCase {
         XCTAssertFalse(oldEngine === webSocketClient.engine)
     }
 
+    func test_engine_whenRequestEncoderFails_engineIsNil() {
+        // Setup endpoint.
+        webSocketClient.connectEndpoint = endpoint
+
+        // Update request encode to provide different request.
+        requestEncoder.encodeRequest = .failure(ClientError("Dummy"))
+
+        // Simulate connect to trigger engine creation or reuse.
+        webSocketClient.connect()
+
+        // Assert engine is recreated since the connect request is changed.
+        XCTAssertNil(webSocketClient.engine)
+    }
+
     // MARK: - Connection tests
 
     func test_connectionFlow() {
