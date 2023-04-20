@@ -114,7 +114,7 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
     /// **Note:** Because of an issue which we don't know yet the root cause, if you want
     /// the message font to change dynamically (live) when changing the font in accessibility
     /// settings, you need to override this property and return a new instance of `UIFont`. Do
-    /// not use the `appearance` config, a new instance is `UIFont` is required.
+    /// not use the `appearance` config, a new instance of `UIFont` is required.
     ///
     /// Example: `UIFont.preferredFont(forTextStyle: .body)`
     open var defaultMessageFont: UIFont {
