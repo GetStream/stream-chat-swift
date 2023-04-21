@@ -302,7 +302,9 @@ lane :match_me do |options|
     'io.getstream.iOS.SlackClone',
     'io.getstream.iOS.MessengerClone',
     'io.getstream.iOS.YouTubeClone',
-    'io.getstream.iOS.DemoAppSwiftUI'
+    'io.getstream.iOS.DemoAppSwiftUI',
+    'io.getstream.iOS.VideoDemoApp',
+    'io.getstream.iOS.DemoAppUIKit'
   ]
   custom_match(
     api_key: appstore_api_key,
