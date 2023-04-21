@@ -2,6 +2,24 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>message.title.members.count</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@members@</string>
+		<key>members</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>zero</key>
+			<string>no members</string>
+			<key>one</key>
+			<string>1 member</string>
+			<key>other</key>
+			<string>%d members</string>
+		</dict>
+	</dict>
 	<key>messageList.typingIndicator.users</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>

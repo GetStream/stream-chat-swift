@@ -52,7 +52,7 @@
 
 "message.title.online" = "Online";
 "message.title.offline" = "Offline";
-"message.title.group" = "%d members, %d online";
+"message.title.members.online" = "%d online";
 
 "message.moderation.title" = "This message has been moderated";
 "message.moderation.message" = "Please select any of the following options to proceed";

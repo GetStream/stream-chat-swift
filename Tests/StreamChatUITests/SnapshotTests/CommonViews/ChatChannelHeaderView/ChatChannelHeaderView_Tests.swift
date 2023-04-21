@@ -95,6 +95,34 @@ final class ChatChannelHeaderView_Tests: XCTestCase {
         XCTAssertEqual(subtitleText, expectedSubtitleText)
     }
 
+    func test_isNotDirectMessageChannel_OneMemberOnline_SubtitleText_containsSingularMemberCount() {
+        // GIVEN
+        let expectedSubtitleText = "\(L10n.Message.Title.Members.count(1)), \(L10n.Message.Title.Members.online(1))"
+        let mockChannel: ChatChannel = .mockNonDMChannel(watcherCount: 1, memberCount: 1)
+        mockChannelController.channel_mock = mockChannel
+        sut.setUpLayout()
+
+        // WHEN
+        let subtitleText = sut.subtitleText
+
+        // THEN
+        XCTAssertEqual(subtitleText, expectedSubtitleText)
+    }
+
+    func test_isNotDirectMessageChannel_MultipleMembersOnline_SubtitleText_containsPluralMemberCount() {
+        // GIVEN
+        let expectedSubtitleText = "\(L10n.Message.Title.Members.count(2)), \(L10n.Message.Title.Members.online(2))"
+        let mockChannel: ChatChannel = .mockNonDMChannel(watcherCount: 2, memberCount: 2)
+        mockChannelController.channel_mock = mockChannel
+        sut.setUpLayout()
+
+        // WHEN
+        let subtitleText = sut.subtitleText
+
+        // THEN
+        XCTAssertEqual(subtitleText, expectedSubtitleText)
+    }
+
     func test_channelNameSet() {
         let newChannelName = "New Channel Name"
 

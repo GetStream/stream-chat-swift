@@ -225,14 +225,20 @@ internal enum L10n {
       }
     }
     internal enum Title {
-      /// %d members, %d online
-      internal static func group(_ p1: Int, _ p2: Int) -> String {
-        return L10n.tr("Localizable", "message.title.group", p1, p2)
-      }
       /// Offline
       internal static var offline: String { L10n.tr("Localizable", "message.title.offline") }
       /// Online
       internal static var online: String { L10n.tr("Localizable", "message.title.online") }
+      internal enum Members {
+        /// Plural format key: "%#@members@"
+        internal static func count(_ p1: Int) -> String {
+          return L10n.tr("Localizable", "message.title.members.count", p1)
+        }
+        /// %d online
+        internal static func online(_ p1: Int) -> String {
+          return L10n.tr("Localizable", "message.title.members.online", p1)
+        }
+      }
     }
     internal enum Unread {
       /// Plural format key: "%#@unread@"
