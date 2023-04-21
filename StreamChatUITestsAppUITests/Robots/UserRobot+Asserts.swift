@@ -206,7 +206,11 @@ extension UserRobot {
         if let topMessageCell = cells.lastMatch {
             let message = attributes.text(in: topMessageCell).wait()
             let actualText = message.waitForText(text).text
-            XCTAssertEqual(text, actualText, file: file, line: line)
+            if isEqual {
+                XCTAssertEqual(text, actualText, file: file, line: line)
+            } else {
+                XCTAssertNotEqual(text, actualText, file: file, line: line)
+            }
         } else {
             XCTFail("lastMessageCell cannot be found")
         }
