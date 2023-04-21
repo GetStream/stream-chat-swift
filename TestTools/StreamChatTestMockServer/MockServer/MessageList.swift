@@ -65,7 +65,7 @@ public extension StreamMockServer {
 
     func findMessagesByParentId(_ parentId: String) -> [[String: Any]] {
         _ = waitForMessageWithId(parentId)
-        return (messageList + threadList).filter {
+        return (threadList + messageList).filter {
             ($0[messageKey.parentId.rawValue] as? String) == parentId
         }
     }

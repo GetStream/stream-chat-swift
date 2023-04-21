@@ -195,6 +195,23 @@ extension UserRobot {
         XCTAssertEqual(text, actualText, file: file, line: line)
         return self
     }
+    
+    @discardableResult
+    func assertOldestLoadedMessage(
+        isEqual: Bool,
+        to text: String,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        if let topMessageCell = cells.lastMatch {
+            let message = attributes.text(in: topMessageCell).wait()
+            let actualText = message.waitForText(text).text
+            XCTAssertEqual(text, actualText, file: file, line: line)
+        } else {
+            XCTFail("lastMessageCell cannot be found")
+        }
+        return self
+    }
 
     @discardableResult
     func assertPushNotification(
@@ -828,6 +845,23 @@ extension UserRobot {
         let expectedLabel = "\(count) REPLIES"
         let repliesCountLabel = ThreadPage.repliesCountLabel.waitForText(expectedLabel).text
         XCTAssertEqual(repliesCountLabel, repliesCountLabel, file: file, line: line)
+        return self
+    }
+    
+    @discardableResult
+    func assertParentMessageInThread(
+        withText text: String,
+        isLoaded: Bool,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        if isLoaded {
+            assertOldestLoadedMessage(isEqual: true, to: text)
+            XCTAssertTrue(ThreadPage.repliesCountLabel.exists, file: file, line: line)
+        } else {
+            assertOldestLoadedMessage(isEqual: false, to: text)
+            XCTAssertFalse(ThreadPage.repliesCountLabel.exists, file: file, line: line)
+        }
         return self
     }
 }

@@ -40,6 +40,7 @@ public class BackendRobot {
     @discardableResult
     public func generateChannels(
         count: Int,
+        messageText: String? = nil,
         messagesCount: Int = 0,
         replyCount: Int = 0,
         authorDetails: [String: String] = UserDetails.lukeSkywalker,
@@ -63,6 +64,7 @@ public class BackendRobot {
         let author = server.setUpUser(source: userSources, details: authorDetails)
         let channels = server.mockChannels(
             count: count,
+            messageText: messageText,
             messagesCount: messagesCount,
             replyCount: replyCount,
             author: author,

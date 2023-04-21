@@ -469,6 +469,7 @@ public extension StreamMockServer {
             messageText,
             channelId: httpMessage?[eventKey.channelId.rawValue] as? String,
             messageId: httpMessage?[messageKey.id.rawValue] as? String,
+            parentId: httpMessage?[messageKey.parentId.rawValue] as? String,
             timestamp: messageTimestamp,
             messageType: messageType,
             eventType: eventType,
