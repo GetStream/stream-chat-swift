@@ -68,7 +68,7 @@ open class ChatMessageDeliveryStatusView: _Control, ThemeProvider {
         stackView.axis = .horizontal
         stackView.spacing = 4
         stackView.distribution = .fill
-        stackView.alignment = .fill
+        stackView.alignment = .center
         stackView.addArrangedSubview(messageReadСountsLabel)
         stackView.addArrangedSubview(messageDeliveryChekmarkView)
         embed(stackView)

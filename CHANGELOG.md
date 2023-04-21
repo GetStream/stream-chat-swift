@@ -9,7 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### 🐞 Fixed
 - Fix channel disappearing when channel list auto-filtering is enabled and the user is not a member of the channel [#2557](https://github.com/GetStream/stream-chat-swift/pull/2557)
-- Fix an issues which was causing the app to terminate when using a filter with the `in` operator and `cid` values [#2561](https://github.com/GetStream/stream-chat-swift/pull/2561)
+- Fix an issue which was causing the app to terminate when using a filter with the `in` operator and `cid` values [#2561](https://github.com/GetStream/stream-chat-swift/pull/2561)
 - Fix unexpected 401s produced at launch while the chat is not yet fully connected [#2559](https://github.com/GetStream/stream-chat-swift/pull/2559)
 - Fix crash when getting unread count in an invalid state [#2570](https://github.com/GetStream/stream-chat-swift/pull/2570)
 - Fix crash when accessing FetchCache with an unexecuted NSFetchRequest [#2572](https://github.com/GetStream/stream-chat-swift/pull/2572)
@@ -20,6 +20,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### ✅ Added
 - Add support for bidirectional scrolling inside threads [#2566](https://github.com/GetStream/stream-chat-swift/pull/2566)
 - Add support for jumping to a message which is not in the message list inside Threads [#2566](https://github.com/GetStream/stream-chat-swift/pull/2566)
+
+### 🐞 Fixed
+- Fix the message text font when the text accessibility setting is set to large after closing the app [#2575](https://github.com/GetStream/stream-chat-swift/pull/2575)
+- Fix the timestamp label being clipped when the text font size is larger [#2575](https://github.com/GetStream/stream-chat-swift/pull/2575)
+
+### ⚠️ Known Issue
+When changing the text accessibility while the app is running, it won't affect the message cell text, only after closing the app. So this is a regression of [#2325](https://github.com/GetStream/stream-chat-swift/issues/2325). This regression is necessary, since the original fix did not work 100% as it changed the text font size after closing the app, causing the font to be too big when the text accessibility is set to large. If you still want to have the dynamic font size to be working while the app is running, there is a workaround. You need to return a new `UIFont` instance everytime in `ChatMessageContentView.defaultMessageFont`. Example:
+```swift
+override var defaultMessageFont: UIFont {
+    UIFont.preferredFont(forTextStyle: .body)
+}
+```
+For more details, you can read the documentation of `ChatMessageContentView.defaultMessageFont` or read the PR [#2575](https://github.com/GetStream/stream-chat-swift/pull/2575).
 
 # [4.30.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.30.0)
 _March 30, 2023_

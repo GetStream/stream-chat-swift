@@ -18,6 +18,7 @@ public extension Appearance {
         public var headlineBold = UIFont.preferredFont(forTextStyle: .headline).bold
         public var title = UIFont.preferredFont(forTextStyle: .title1)
         public var title3 = UIFont.preferredFont(forTextStyle: .title3).bold
+        /// A font used to render emojis as "Jumbomoji".
         public var emoji = UIFont.preferredFont(forTextStyle: .body).withSize(50)
     }
 }

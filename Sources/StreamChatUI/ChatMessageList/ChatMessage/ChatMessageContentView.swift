@@ -99,6 +99,54 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
     /// for the content will taken from the provided `width`.
     open var messageAuthorAvatarSize: CGSize { .init(width: 32, height: 32) }
 
+    /// The font used when rendering emojis as "Jumbomoji".
+    open var jumbomojiMessageFont: UIFont {
+        appearance.fonts.emoji
+    }
+
+    /// The font used when rendering system messages.
+    open var systemMessageFont: UIFont {
+        appearance.fonts.caption1.bold
+    }
+
+    /// The default font when rendering the message text.
+    ///
+    /// **Note:** Because of an issue which we don't know yet the root cause, if you want
+    /// the message font to change dynamically (live) when changing the font in accessibility
+    /// settings, you need to override this property and return a new instance of `UIFont`. Do
+    /// not use the `appearance` config, a new instance of `UIFont` is required.
+    ///
+    /// Example: `UIFont.preferredFont(forTextStyle: .body)`
+    open var defaultMessageFont: UIFont {
+        appearance.fonts.body
+    }
+
+    /// The current font used in the message text based on the content of the message.
+    open var messageTextFont: UIFont {
+        if content?.shouldRenderAsJumbomoji == true {
+            return jumbomojiMessageFont
+        }
+
+        if content?.type == .system || content?.type == .error {
+            return systemMessageFont
+        }
+
+        return defaultMessageFont
+    }
+
+    /// The current text color used in the message text based on the content of the message.
+    open var messageTextColor: UIColor {
+        if content?.isDeleted == true {
+            return appearance.colorPalette.textLowEmphasis
+        }
+
+        if content?.type == .system || content?.type == .error {
+            return appearance.colorPalette.textLowEmphasis
+        }
+
+        return appearance.colorPalette.text
+    }
+
     // MARK: - Content views
 
     /// Shows the bubble around message content.
@@ -493,24 +541,12 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
             setNeedsLayout()
         }
 
-        var textColor = appearance.colorPalette.text
-        var textFont = appearance.fonts.body
-
-        if content?.isDeleted == true {
-            textColor = appearance.colorPalette.textLowEmphasis
-        } else if content?.shouldRenderAsJumbomoji == true {
-            textFont = appearance.fonts.emoji
-        } else if content?.type == .system || content?.type == .error {
-            textFont = appearance.fonts.caption1.bold
-            textColor = appearance.colorPalette.textLowEmphasis
-        }
-
         let text = content?.textContent ?? ""
         let attributedText = NSAttributedString(
             string: text,
             attributes: [
-                .foregroundColor: textColor,
-                .font: forceScaledFont(textFont)
+                .foregroundColor: messageTextColor,
+                .font: messageTextFont
             ]
         )
         textView?.attributedText = attributedText
@@ -927,28 +963,6 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
             deliveryStatusView!.addTarget(self, action: #selector(handleTapOnDeliveryStatusView), for: .touchUpInside)
         }
         return deliveryStatusView!
-    }
-}
-
-extension ChatMessageContentView {
-    /// It creates a new instance of the provided font and forces it to be scalable with `UIFontMetrics`.
-    /// This seems to be required when using `UITextView.adjustsForContentSizeCategory` in a reusable cell.
-    /// When setting the font in the textView, it needs be a new instance for each cell, it can't be shared.
-    /// So using directly the `appearance.fonts.body` makes it not work when adjusting the content size.
-    ///
-    /// - Parameter font: The font to be scaled.
-    /// - Returns: A scaled font with `UIFontMetrics`.
-    public func forceScaledFont(_ font: UIFont) -> UIFont {
-        let originalDescriptor = font.fontDescriptor
-        let originalFontAttributes = originalDescriptor.fontAttributes
-        let originalTextStyle = originalFontAttributes[.textStyle] as? UIFont.TextStyle ?? .body
-
-        // We use the font descriptor, instead of the font directly, because if the original
-        // font is already scaled with UIFontMetrics, it crashes, scaling an already scaled font 🤷‍♂️
-        return UIFontMetrics(forTextStyle: originalTextStyle)
-            .scaledFont(
-                for: UIFont(descriptor: originalDescriptor, size: 0)
-            )
     }
 }
 
