@@ -354,7 +354,7 @@ public class ParticipantRobot {
         let quotedMessageId = quotedMessage?[messageKey.id.rawValue] as? String
         let parentId = threadParentId ?? (server.lastMessage?[messageKey.id.rawValue] as? String)
         server.websocketMessage(
-//            channelId: server.currentChannelId,
+            channelId: server.currentChannelId,
             messageId: TestData.uniqueId,
             parentId: parentId,
             messageType: .ephemeral,
