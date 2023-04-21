@@ -205,10 +205,8 @@ extension StreamChatWrapper {
     }
 
     func connectGuestUser(completion: @escaping (Error?) -> Void) {
-        let userCredentials = UserCredentials.default
-        let tokenProvider = mockTokenProvider(for: userCredentials)
         client?.connectGuestUser(
-            userInfo: userCredentials.userInfo,
+            userInfo: .init(id: "123"),
             completion: completion
         )
     }
