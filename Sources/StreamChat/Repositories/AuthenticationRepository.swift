@@ -307,6 +307,9 @@ class AuthenticationRepository {
 
         let onTokenReceived: (Token) -> Void = { [weak self, weak connectionRepository] token in
             self?.prepareEnvironment(userInfo: userInfo, newToken: token)
+            // We manually change the `connectionStatus` for passive client
+            // to `disconnected` when environment was prepared correctly
+            // (e.g. current user session is successfully restored).
             connectionRepository?.forceConnectionStatusForInactiveModeIfNeeded()
             connectionRepository?.connect(userInfo: userInfo, completion: onCompletion)
         }
