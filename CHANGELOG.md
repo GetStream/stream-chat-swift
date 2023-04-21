@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix crash when accessing FetchCache with an unexecuted NSFetchRequest [#2572](https://github.com/GetStream/stream-chat-swift/pull/2572)
 - Fix an issue which was blocking a Guest Authentication operation to retrieve a connection token [#2574](https://github.com/GetStream/stream-chat-swift/pull/2574)
 - Make connect/disconnect safer when network is offline [#2571](https://github.com/GetStream/stream-chat-swift/pull/2571)
+- Make connect by logging out the user first if needed [#2577](https://github.com/GetStream/stream-chat-swift/pull/2577)
 
 ## StreamChatUI
 ### ✅ Added
