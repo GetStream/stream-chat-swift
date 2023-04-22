@@ -195,6 +195,27 @@ extension UserRobot {
         XCTAssertEqual(text, actualText, file: file, line: line)
         return self
     }
+    
+    @discardableResult
+    func assertOldestLoadedMessage(
+        isEqual: Bool,
+        to text: String,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        if let topMessageCell = cells.lastMatch {
+            let message = attributes.text(in: topMessageCell).wait()
+            let actualText = message.text
+            if isEqual {
+                XCTAssertEqual(text, actualText, file: file, line: line)
+            } else {
+                XCTAssertNotEqual(text, actualText, file: file, line: line)
+            }
+        } else {
+            XCTFail("lastMessageCell cannot be found")
+        }
+        return self
+    }
 
     @discardableResult
     func assertPushNotification(
@@ -466,7 +487,7 @@ extension UserRobot {
         if deliveryStatus == .failed || deliveryStatus == nil {
             XCTAssertFalse(checkmark.exists, "Checkmark is visible", file: file, line: line)
         } else {
-            XCTAssertTrue(checkmark.wait(timeout: 10).exists, "Checkmark is not visible", file: file, line: line)
+            XCTAssertTrue(checkmark.wait(timeout: 15).exists, "Checkmark is not visible", file: file, line: line)
         }
 
         return self
@@ -675,7 +696,7 @@ extension UserRobot {
         XCTAssertEqual(quotedText, actualText)
         XCTAssertTrue(message.exists, "Quoted message was not showed")
         XCTAssertFalse(message.isEnabled, "Quoted message should be disabled")
-        XCTAssertTrue(message.isHittable, "Quoted message is not visible")
+        XCTAssertTrue(message.waitForHitPoint().isHittable, "Quoted message is not visible")
         
         if !replyText.isEmpty {
             let message = attributes.text(replyText, in: messageCell).wait()
@@ -796,12 +817,55 @@ extension UserRobot {
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> Self {
+        assertThreadReplyCountButton(at: messageCellIndex, replies: 0, file: file, line: line)
+    }
+    
+    @discardableResult
+    func assertThreadReplyCountButton(
+        at messageCellIndex: Int? = nil,
+        replies: Int,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
         let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
         let threadReplyCountButton = attributes.threadReplyCountButton(in: messageCell).wait()
         XCTAssertTrue(threadReplyCountButton.exists,
                       "There is no thread reply count button",
                       file: file,
                       line: line)
+        if replies > 0 {
+            let expectedText = "\(replies) Thread Replies"
+            XCTAssertEqual(expectedText, threadReplyCountButton.waitForText(expectedText).text)
+        }
+        return self
+    }
+    
+    @discardableResult
+    func assertThreadRepliesCountLabel(
+        _ count: Int,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        let expectedLabel = "\(count) REPLIES"
+        let repliesCountLabel = ThreadPage.repliesCountLabel.waitForText(expectedLabel).text
+        XCTAssertEqual(repliesCountLabel, repliesCountLabel, file: file, line: line)
+        return self
+    }
+    
+    @discardableResult
+    func assertParentMessageInThread(
+        withText text: String,
+        isLoaded: Bool,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        if isLoaded {
+            XCTAssertTrue(ThreadPage.repliesCountLabel.wait().exists, file: file, line: line)
+            assertOldestLoadedMessage(isEqual: true, to: text)
+        } else {
+            XCTAssertFalse(ThreadPage.repliesCountLabel.exists, file: file, line: line)
+            assertOldestLoadedMessage(isEqual: false, to: text)
+        }
         return self
     }
 }

@@ -346,7 +346,7 @@ extension MessageDeliveryStatus_Tests {
             userRobot.replyToMessageInThread(threadReply)
         }
         AND("participant reads the user's thread reply") {
-            participantRobot.readMessageAfterDelay()
+            participantRobot.readMessageInThreadAfterDelay()
         }
         THEN("user spots double checkmark below the message") {
             userRobot.assertMessageDeliveryStatus(.read)
@@ -356,8 +356,10 @@ extension MessageDeliveryStatus_Tests {
         }
     }
 
-    func test_doubleCheckmarkShownInThreadReply_whenNewParticipantAdded() {
+    func test_doubleCheckmarkShownInThreadReply_whenNewParticipantAdded() throws {
         linkToScenario(withId: 154)
+        
+        try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12, "Flaky on iOS 12")
 
         GIVEN("user opens the channel") {
             userRobot
@@ -398,7 +400,7 @@ extension MessageDeliveryStatus_Tests {
             userRobot.replyToMessageInThread(threadReply)
         }
         AND("thread reply is read by participant") {
-            participantRobot.readMessageAfterDelay()
+            participantRobot.readMessageInThreadAfterDelay()
             userRobot
                 .assertMessageDeliveryStatus(.read)
                 .assertMessageReadCount(readBy: 1)

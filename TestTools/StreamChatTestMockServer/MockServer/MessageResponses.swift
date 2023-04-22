@@ -52,7 +52,7 @@ public extension StreamMockServer {
     func mockMessage(
         _ message: [String: Any]?,
         messageType: MessageType = .regular,
-        channelId: String?,
+        channelId: String? = nil,
         messageId: String?,
         text: String?,
         command: String? = nil,
@@ -188,16 +188,25 @@ public extension StreamMockServer {
         let message = json[JSONKey.message] as? [String: Any]
         let parentId = message?[messageKey.parentId.rawValue] as? String
         let quotedMessageId = message?[messageKey.quotedMessageId.rawValue] as? String
-
+        let channelReply = message?[messageKey.showReplyInChannel.rawValue] as? Bool ?? false
+        
         let messageText = message?[messageKey.text.rawValue] as? String ?? ""
         let messageTextComponents = Set(messageText.components(separatedBy: " "))
-
-        let messageType: MessageType = messageText.starts(with: "/giphy") ? .ephemeral : .regular
-        if messageType == .regular && messageText.starts(with: "/") {
+        
+        let messageType: MessageType
+        if messageText.starts(with: "/giphy") {
+            messageType = .ephemeral
+        } else if channelReply || parentId == nil {
+            messageType = .regular
+        } else {
+            messageType = .reply
+        }
+        if messageText.starts(with: "/") && messageType != .ephemeral {
             return messageInvalidCommand(message,
                                          command: String(messageText.dropFirst(1)),
-                                         channelId: channelId)
-        } else if messageType == .regular && !forbiddenWords.isDisjoint(with: messageTextComponents) {
+                                         channelId: channelId,
+                                         parentId: parentId)
+        } else if messageType != .ephemeral && !forbiddenWords.isDisjoint(with: messageTextComponents) {
             return errorMessageHttpResponse(
                 from: message,
                 errorText: Message.blockedByModerationPolicies,
@@ -209,7 +218,6 @@ public extension StreamMockServer {
             return quotedMessageCreationInThread(
                 message,
                 messageType: messageType,
-                channelId: channelId,
                 parentId: parentId,
                 quotedMessageId: quotedMessageId,
                 eventType: eventType
@@ -218,7 +226,6 @@ public extension StreamMockServer {
             return messageCreationInThread(
                 message,
                 messageType: messageType,
-                channelId: channelId,
                 parentId: parentId,
                 eventType: eventType
             )
@@ -248,7 +255,7 @@ public extension StreamMockServer {
     ) -> HttpResponse {
         let text = message?[messageKey.text.rawValue] as? String ?? ""
         let messageId = message?[messageKey.id.rawValue] as? String
-        let mockFile = messageType == .regular ? MockFile.message : MockFile.ephemeralMessage
+        let mockFile = messageType == .ephemeral ? MockFile.ephemeralMessage : MockFile.message
         var responseJson = TestData.toJson(mockFile)
         let responseMessage = responseJson[JSONKey.message] as? [String: Any]
         let timestamp: String = TestData.currentDate
@@ -294,7 +301,7 @@ public extension StreamMockServer {
     ) -> HttpResponse {
         let text = message?[messageKey.text.rawValue] as? String ?? ""
         let messageId = message?[messageKey.id.rawValue] as? String
-        let mockFile = messageType == .regular ? MockFile.message : MockFile.ephemeralMessage
+        let mockFile = messageType == .ephemeral ? MockFile.ephemeralMessage : MockFile.message
         var responseJson = TestData.toJson(mockFile)
         let responseMessage = responseJson[JSONKey.message] as? [String: Any]
         let timestamp: String = TestData.currentDate
@@ -337,14 +344,13 @@ public extension StreamMockServer {
     private func messageCreationInThread(
         _ message: [String: Any]?,
         messageType: MessageType,
-        channelId: String?,
         parentId: String,
         eventType: EventType = .messageNew
     ) -> HttpResponse {
         let showReplyInChannel = message?[messageKey.showReplyInChannel.rawValue] as? Bool
         let text = message?[messageKey.text.rawValue] as? String ?? ""
         let messageId = message?[messageKey.id.rawValue] as? String
-        let mockFile = messageType == .regular ? MockFile.message : MockFile.ephemeralMessage
+        let mockFile = messageType == .ephemeral ? MockFile.ephemeralMessage : MockFile.message
         var responseJson = TestData.toJson(mockFile)
         let responseMessage = responseJson[JSONKey.message] as? [String: Any]
         let timestamp: String = TestData.currentDate
@@ -355,7 +361,6 @@ public extension StreamMockServer {
         let mockedMessage = mockMessage(
             responseMessage,
             messageType: messageType,
-            channelId: channelId,
             messageId: messageId,
             text: text,
             user: user,
@@ -374,7 +379,8 @@ public extension StreamMockServer {
                 messageText: text,
                 messageTimestamp: timestamp,
                 messageType: messageType,
-                eventType: eventType
+                eventType: eventType,
+                channelReply: showReplyInChannel
             )
         }
 
@@ -386,7 +392,6 @@ public extension StreamMockServer {
     private func quotedMessageCreationInThread(
         _ message: [String: Any]?,
         messageType: MessageType,
-        channelId: String?,
         parentId: String,
         quotedMessageId: String,
         eventType: EventType = .messageNew
@@ -394,7 +399,7 @@ public extension StreamMockServer {
         let showReplyInChannel = message?[messageKey.showReplyInChannel.rawValue] as? Bool
         let text = message?[messageKey.text.rawValue] as? String ?? ""
         let messageId = message?[messageKey.id.rawValue] as? String
-        let mockFile = messageType == .regular ? MockFile.message : MockFile.ephemeralMessage
+        let mockFile = messageType == .ephemeral ? MockFile.ephemeralMessage : MockFile.message
         var responseJson = TestData.toJson(mockFile)
         let responseMessage = responseJson[JSONKey.message] as? [String: Any]
         let timestamp: String = TestData.currentDate
@@ -407,7 +412,6 @@ public extension StreamMockServer {
         let mockedMessage = mockMessage(
             responseMessage,
             messageType: messageType,
-            channelId: channelId,
             messageId: messageId,
             text: text,
             user: user,
@@ -428,7 +432,8 @@ public extension StreamMockServer {
                 messageText: text,
                 messageTimestamp: timestamp,
                 messageType: messageType,
-                eventType: eventType
+                eventType: eventType,
+                channelReply: showReplyInChannel
             )
         }
 
@@ -442,7 +447,8 @@ public extension StreamMockServer {
         messageText: String,
         messageTimestamp: String,
         messageType: MessageType,
-        eventType: EventType
+        eventType: EventType,
+        channelReply: Bool? = false
     ){
         if let parentId = httpMessage?[messageKey.parentId.rawValue] as? String {
             let parentMessage = findMessageById(parentId)
@@ -463,10 +469,12 @@ public extension StreamMockServer {
             messageText,
             channelId: httpMessage?[eventKey.channelId.rawValue] as? String,
             messageId: httpMessage?[messageKey.id.rawValue] as? String,
+            parentId: httpMessage?[messageKey.parentId.rawValue] as? String,
             timestamp: messageTimestamp,
             messageType: messageType,
             eventType: eventType,
-            user: httpMessage?[messageKey.user.rawValue] as? [String: Any]
+            user: httpMessage?[messageKey.user.rawValue] as? [String: Any],
+            channelReply: channelReply ?? false
         ) { message in
             if let parentId = httpMessage?[messageKey.parentId.rawValue] as? String {
                 message?[messageKey.parentId.rawValue] = parentId
@@ -515,23 +523,27 @@ public extension StreamMockServer {
     private func mockMessageReplies(_ request: HttpRequest) throws -> HttpResponse {
         let messageId = try XCTUnwrap(request.params[EndpointQuery.messageId])
         var json = "{\"\(JSONKey.messages)\":[]}".json
+        var threadList = findMessagesByParentId(messageId)
 
         guard
+            let parentMessage = findMessageById(messageId),
             let limitQueryParam = request.queryParams.first(where: { $0.0 == MessagesPagination.CodingKeys.pageSize.rawValue })
         else {
-            json[JSONKey.messages] = findMessagesByParentId(messageId)
+            json[JSONKey.messages] = threadList
             return .ok(.json(json))
         }
 
         let limit = (limitQueryParam.1 as NSString).integerValue
 
+        threadList.insert(parentMessage, at: 0)
         json[JSONKey.messages] = mockMessagePagination(
-            messageList: findMessagesByParentId(messageId),
+            messageList: threadList,
             limit: limit,
             idLt: request.queryParams.first(where: { $0.0 == paginationKey.lessThan.rawValue })?.1,
             idGt: request.queryParams.first(where: { $0.0 == paginationKey.greaterThan.rawValue })?.1,
             idLte: request.queryParams.first(where: { $0.0 == paginationKey.lessThanOrEqual.rawValue })?.1,
-            idGte: request.queryParams.first(where: { $0.0 == paginationKey.greaterThanOrEqual.rawValue })?.1
+            idGte: request.queryParams.first(where: { $0.0 == paginationKey.greaterThanOrEqual.rawValue })?.1,
+            around: request.queryParams.first(where: { $0.0 == paginationKey.around.rawValue })?.1
         )
         return .ok(.json(json))
     }
@@ -540,6 +552,7 @@ public extension StreamMockServer {
         _ message: [String: Any]?,
         command: String,
         channelId: String?,
+        parentId: String?,
         eventType: EventType = .messageRead
     ) -> HttpResponse {
         let text = Message.message(withInvalidCommand: command)
@@ -553,6 +566,7 @@ public extension StreamMockServer {
             text,
             channelId: channelId,
             messageId: messageId,
+            parentId: parentId,
             timestamp: timestamp,
             eventType: eventType,
             user: user
@@ -567,7 +581,8 @@ public extension StreamMockServer {
             command: command,
             user: user,
             createdAt: timestamp,
-            updatedAt: timestamp
+            updatedAt: timestamp,
+            parentId: parentId
         )
 
         responseJson[JSONKey.message] = mockedMessage

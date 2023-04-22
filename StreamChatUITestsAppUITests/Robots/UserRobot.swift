@@ -73,7 +73,7 @@ extension UserRobot {
 
     @discardableResult
     func openContextMenu(messageCellIndex: Int = 0) -> Self {
-        messageCell(withIndex: messageCellIndex).safePress(forDuration: 1)
+        messageCell(withIndex: messageCellIndex).waitForHitPoint().safePress(forDuration: 1)
         return self
     }
 

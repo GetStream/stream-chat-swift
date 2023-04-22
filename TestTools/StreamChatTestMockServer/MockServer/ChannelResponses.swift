@@ -191,7 +191,8 @@ public extension StreamMockServer {
             idLt: messages?[paginationKey.lessThan.rawValue] as? String,
             idGt: messages?[paginationKey.greaterThan.rawValue] as? String,
             idLte: messages?[paginationKey.lessThanOrEqual.rawValue] as? String,
-            idGte: messages?[paginationKey.greaterThanOrEqual.rawValue] as? String
+            idGte: messages?[paginationKey.greaterThanOrEqual.rawValue] as? String,
+            around: messages?[paginationKey.around.rawValue] as? String
         )
         return .ok(.json(channel))
     }
@@ -285,7 +286,8 @@ public extension StreamMockServer {
 
     func mockChannels(
         count: Int,
-        messagesCount: Int,
+        messageText: String? = nil,
+        messagesCount: Int = 0,
         replyCount: Int = 0,
         author: [String: Any]?,
         members: [[String: Any]],
@@ -314,6 +316,7 @@ public extension StreamMockServer {
                     let channelId = channelDetails?[channelKey.id.rawValue] as? String
                     let messageId = TestData.uniqueId
                     let newMessage = generateMessage(
+                        withText: messageText,
                         withIndex: messageIndex,
                         withId: messageId,
                         channelId: channelId,
@@ -346,6 +349,7 @@ public extension StreamMockServer {
 
     @discardableResult
     private func generateMessage(
+        withText text: String? = nil,
         withIndex index: Int,
         withId id: String?,
         parentId: String? = nil,
@@ -355,11 +359,12 @@ public extension StreamMockServer {
     ) -> [String : Any]? {
         let timeInterval = TimeInterval(index * 1000 - 123_456_789)
         let timestamp = TestData.stringTimestamp(Date(timeIntervalSinceNow: timeInterval))
+        let messageText = text == nil ? String(index) : text
         let message = mockMessage(
             TestData.toJson(.message)[JSONKey.message] as? [String : Any],
             channelId: channelId,
             messageId: id,
-            text: String(index),
+            text: messageText,
             user: author,
             createdAt: timestamp,
             updatedAt: timestamp,
