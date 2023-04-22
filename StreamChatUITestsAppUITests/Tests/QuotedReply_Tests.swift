@@ -626,9 +626,7 @@ final class QuotedReply_Tests: StreamTestCase {
             userRobot.tapOnQuotedMessage(parentText)
         }
         THEN("parent message is loaded") {
-            userRobot
-                .assertParentMessageInThread(withText: parentText, isLoaded: true)
-                .assertOldestLoadedMessage(isEqual: true, to: parentText)
+            userRobot.assertParentMessageInThread(withText: parentText, isLoaded: true)
         }
     }
 }

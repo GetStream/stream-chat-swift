@@ -205,7 +205,7 @@ extension UserRobot {
     ) -> Self {
         if let topMessageCell = cells.lastMatch {
             let message = attributes.text(in: topMessageCell).wait()
-            let actualText = message.waitForText(text).text
+            let actualText = message.text
             if isEqual {
                 XCTAssertEqual(text, actualText, file: file, line: line)
             } else {
@@ -860,11 +860,11 @@ extension UserRobot {
         line: UInt = #line
     ) -> Self {
         if isLoaded {
+            XCTAssertTrue(ThreadPage.repliesCountLabel.wait().exists, file: file, line: line)
             assertOldestLoadedMessage(isEqual: true, to: text)
-            XCTAssertTrue(ThreadPage.repliesCountLabel.exists, file: file, line: line)
         } else {
-            assertOldestLoadedMessage(isEqual: false, to: text)
             XCTAssertFalse(ThreadPage.repliesCountLabel.exists, file: file, line: line)
+            assertOldestLoadedMessage(isEqual: false, to: text)
         }
         return self
     }
