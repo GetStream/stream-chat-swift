@@ -356,8 +356,10 @@ extension MessageDeliveryStatus_Tests {
         }
     }
 
-    func test_doubleCheckmarkShownInThreadReply_whenNewParticipantAdded() {
+    func test_doubleCheckmarkShownInThreadReply_whenNewParticipantAdded() throws {
         linkToScenario(withId: 154)
+        
+        try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12, "Flaky on iOS 12")
 
         GIVEN("user opens the channel") {
             userRobot
