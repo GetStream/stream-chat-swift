@@ -169,6 +169,10 @@ class AttachmentQueueUploader: Worker {
             payload.assetURL = uploadedAttachment.remoteURL
         }
 
+        attachmentUpdater.update(&attachment, forPayload: VoiceRecordingAttachmentPayload.self) { payload in
+            payload.voiceRecordingURL = uploadedAttachment.remoteURL
+        }
+
         uploadedAttachment.attachment = attachment
     }
 }

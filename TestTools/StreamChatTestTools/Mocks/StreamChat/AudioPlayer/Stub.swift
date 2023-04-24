@@ -31,7 +31,7 @@ extension Stub {
         stubbedProperties[keyPathName] = nil
     }
 
-    subscript<T>(
+    public subscript<T>(
         dynamicMember keyPath: KeyPath<Self, T>
     ) -> T {
         let keyPathName = NSExpression(forKeyPath: keyPath).keyPath
