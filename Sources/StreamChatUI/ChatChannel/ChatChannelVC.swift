@@ -12,7 +12,9 @@ open class ChatChannelVC: _ViewController,
     ChatMessageListVCDataSource,
     ChatMessageListVCDelegate,
     ChatChannelControllerDelegate,
-    EventsControllerDelegate {
+    EventsControllerDelegate,
+    AudioQueuePlayerDatasource
+{
     /// Controller for observing data changes within the channel.
     open var channelController: ChatChannelController!
 
@@ -47,6 +49,10 @@ open class ChatChannelVC: _ViewController,
     /// Controller that handles the composer view
     open private(set) lazy var messageComposerVC = components
         .messageComposerVC
+        .init()
+
+    open private(set) lazy var audioPlayer: AudioPlaying = components
+        .audioPlayer
         .init()
 
     /// Header View
@@ -130,6 +136,13 @@ open class ChatChannelVC: _ViewController,
         }
         viewPaginationHandler.onNewBottomPage = { [weak self] in
             self?.channelController.loadNextMessages()
+        }
+
+        messageListVC.audioPlayer = audioPlayer
+        messageComposerVC.audioPlayer = audioPlayer
+
+        if let queueAudioPlayer = audioPlayer as? StreamRemoteAudioQueuePlayer {
+            queueAudioPlayer.datasource = self
         }
     }
 
@@ -411,6 +424,66 @@ open class ChatChannelVC: _ViewController,
             if !isFirstPageLoaded && newMessage.isSentByCurrentUser && !newMessage.isPartOfThread {
                 channelController.loadFirstPage()
             }
+        }
+    }
+
+    // MARK: - AudioQueuePlayerDatasource
+
+    open func audioQueuePlayerNextAssetURL(
+        _ audioPlayer: AudioPlaying,
+        currentAssetURL: URL?
+    ) -> URL? {
+        guard
+            components.asyncMessagesPlayNextVoiceRecordingInSameMessage,
+            let currentAssetURL = currentAssetURL
+        else {
+            return nil
+        }
+
+        let voiceRecordingMessages = messages
+            .filter {
+                $0.isSentByCurrentUser == false
+                    && $0.attachments(payloadType: VoiceRecordingAttachmentPayload.self).isEmpty == false
+            }
+
+        let currentVoiceRecordingMessage = voiceRecordingMessages
+            .lazy
+            .enumerated()
+            .first { iterator in
+                iterator.element
+                    .attachments(payloadType: VoiceRecordingAttachmentPayload.self)
+                    .first { $0.voiceRecordingURL == currentAssetURL } != nil
+            }
+
+        guard
+            let currentVoiceRecordingMessage = currentVoiceRecordingMessage
+        else {
+            return nil
+        }
+
+        var nextVoiceRecordingMessage: ChatMessage?
+
+        if currentVoiceRecordingMessage.offset + 1 < voiceRecordingMessages.endIndex {
+            nextVoiceRecordingMessage = voiceRecordingMessages[currentVoiceRecordingMessage.offset + 1]
+        }
+
+        let currentMessageVoiceRecordingAttachments = currentVoiceRecordingMessage.element
+            .attachments(payloadType: VoiceRecordingAttachmentPayload.self)
+
+        let voiceRecordingIndexInMessage = currentMessageVoiceRecordingAttachments
+            .enumerated()
+            .first { $0.element.voiceRecordingURL == currentAssetURL }
+
+        if let voiceRecordingIndexInMessage = voiceRecordingIndexInMessage {
+            if voiceRecordingIndexInMessage.offset + 1 < currentMessageVoiceRecordingAttachments.endIndex {
+                return currentMessageVoiceRecordingAttachments[voiceRecordingIndexInMessage.offset + 1].voiceRecordingURL
+            } else if let nextVoiceRecordingMessage = nextVoiceRecordingMessage {
+                return nextVoiceRecordingMessage.attachments(payloadType: VoiceRecordingAttachmentPayload.self).first?.voiceRecordingURL
+            } else {
+                return nil
+            }
+        } else {
+            return nil
         }
     }
 }

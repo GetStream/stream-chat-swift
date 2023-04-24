@@ -18,7 +18,9 @@ open class ChatMessageListVC: _ViewController,
     LinkPreviewViewDelegate,
     UITableViewDataSource,
     UITableViewDelegate,
-    UIGestureRecognizerDelegate {
+    UIGestureRecognizerDelegate,
+    AudioAttachmentPresentationViewDelegate
+{
     /// The object that acts as the data source of the message list.
     public weak var dataSource: ChatMessageListVCDataSource? {
         didSet {
@@ -87,6 +89,12 @@ open class ChatMessageListVC: _ViewController,
     /// A formatter that converts the message date to textual representation.
     /// This date formatter is used between each group message and the top overlay.
     public lazy var dateSeparatorFormatter = appearance.formatters.messageDateSeparator
+
+    public var audioPlayer: AudioPlaying?
+
+    public private(set) lazy var audioSessionFeedbackGenerator: AudioSessionFeedbackGenerator = components
+        .audioSessionFeedbackGenerator
+        .init()
 
     /// A boolean value that determines whether the date overlay should be displayed while scrolling.
     open var isDateOverlayEnabled: Bool {
@@ -782,6 +790,44 @@ open class ChatMessageListVC: _ViewController,
     ) -> Bool {
         // To prevent the gesture recognizer consuming up the events from UIControls, we receive touch only when the view isn't a UIControl.
         !(touch.view is UIControl)
+    }
+
+    // MARK: - AudioAttachmentPresentationViewDelegate
+
+    open func audioAttachmentPresentationViewConnect(delegate: AudioPlayingDelegate) {
+        audioPlayer?.subscribe(delegate)
+    }
+
+    open func audioAttachmentPresentationViewPlaybackContextForAttachment(
+        _ attachment: ChatMessageFileAttachment
+    ) -> AudioPlaybackContext {
+        audioPlayer?.playbackContext(for: attachment.assetURL) ?? .notLoaded
+    }
+
+    open func audioAttachmentPresentationViewBeginPayback(
+        _ attachment: ChatMessageVoiceRecordingAttachment
+    ) {
+        audioSessionFeedbackGenerator.feedbackForPlay()
+        audioPlayer?.loadAsset(from: attachment.voiceRecordingURL)
+    }
+
+    open func audioAttachmentPresentationViewPausePayback() {
+        audioSessionFeedbackGenerator.feedbackForPause()
+        audioPlayer?.pause()
+    }
+
+    open func audioAttachmentPresentationViewUpdatePlaybackRate(
+        _ audioPlaybackRate: AudioPlaybackRate
+    ) {
+        audioSessionFeedbackGenerator.feedbackForPlaybackRateChange()
+        audioPlayer?.updateRate(audioPlaybackRate)
+    }
+
+    open func audioAttachmentPresentationViewSeek(
+        to timeInterval: TimeInterval
+    ) {
+        audioSessionFeedbackGenerator.feedbackForSeeking()
+        audioPlayer?.seek(to: timeInterval)
     }
 }
 

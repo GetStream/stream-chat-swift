@@ -61,6 +61,15 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
         .withBidirectionalLanguagesSupport
         .withAccessibilityIdentifier(identifier: "titleLabel")
 
+    open private(set) lazy var subtitleContainer: UIStackView = UIStackView()
+        .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "topContainer")
+
+    /// The `UILabel` instance showing the last message or typing users if any.
+    open private(set) lazy var subtitleImageView: UIImageView = UIImageView()
+        .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "subtitleIcon")
+
     /// The `UILabel` instance showing the last message or typing users if any.
     open private(set) lazy var subtitleLabel: UILabel = UILabel()
         .withoutAutoresizingMaskConstraints
@@ -102,6 +111,8 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
         guard let content = content else { return nil }
         if let typingUsersInfo = typingUserString {
             return typingUsersInfo
+        } else if lastMessageIsVoiceRecording {
+            return L10n.ChannelList.Preview.Voice.recording
         } else if let previewMessage = content.channel.previewMessage {
             guard previewMessage.type != .system else {
                 return previewMessage.text
@@ -117,6 +128,10 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
         } else {
             return L10n.Channel.Item.emptyMessages
         }
+    }
+
+    open var subtitleIcon: UIImage? {
+        lastMessageIsVoiceRecording ? appearance.images.mic : nil
     }
 
     /// Text of `timestampLabel` which contains the time of the last sent message.
@@ -162,6 +177,10 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
         subtitleLabel.textColor = appearance.colorPalette.subtitleText
         subtitleLabel.font = appearance.fonts.footnote
 
+        subtitleImageView.tintColor = subtitleLabel.textColor
+        subtitleImageView.contentMode = .scaleAspectFit
+        subtitleImageView.heightAnchor.pin(equalToConstant: subtitleLabel.font.pointSize).isActive = true
+
         timestampLabel.textColor = appearance.colorPalette.subtitleText
         timestampLabel.font = appearance.fonts.footnote
     }
@@ -174,7 +193,7 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
         /// |----------------------------------------------------|
         /// |            | titleLabel          | unreadCountView |
         /// | avatarView | --------------------------------------|
-        /// |            | subtitleLabel        | timestampLabel |
+        /// |            | subtitleContainer   | timestampLabel |
         /// |----------------------------------------------------|
         /// ```
 
@@ -182,8 +201,14 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
             titleLabel.flexible(axis: .horizontal), unreadCountView
         ])
 
+        subtitleContainer.axis = .horizontal
+        subtitleContainer.spacing = 4
+        subtitleContainer.alignment = .center
+        subtitleContainer.addArrangedSubview(subtitleImageView)
+        subtitleContainer.addArrangedSubview(subtitleLabel.flexible(axis: .horizontal))
+
         bottomContainer.addArrangedSubviews([
-            subtitleLabel.flexible(axis: .horizontal), timestampLabel
+            subtitleContainer, timestampLabel
         ])
 
         rightContainer.addArrangedSubviews([
@@ -205,6 +230,8 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
 
         timestampLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
 
+        subtitleImageView.widthAnchor.pin(equalTo: subtitleImageView.heightAnchor).isActive = true
+
         embed(mainContainer)
     }
 
@@ -212,6 +239,8 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
         titleLabel.text = titleText
         subtitleLabel.text = subtitleText
         timestampLabel.text = timestampText
+        subtitleImageView.image = subtitleIcon
+        subtitleImageView.isHidden = subtitleImageView.image == nil
 
         avatarView.content = (content?.channel, content?.currentUserId)
 
@@ -249,5 +278,9 @@ extension ChatChannelListItemView {
         let typingPluralText = L10n.Channel.Item.typingPlural
 
         return names + " \(users.count == 1 ? typingSingularText : typingPluralText)"
+    }
+
+    var lastMessageIsVoiceRecording: Bool {
+        content?.channel.latestMessages.first?.voiceRecordingAttachments.isEmpty == false && typingUserString == nil
     }
 }

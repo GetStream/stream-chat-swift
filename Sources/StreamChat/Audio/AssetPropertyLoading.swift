@@ -6,28 +6,28 @@ import AVFoundation
 import Foundation
 
 /// A simple type that describes the domain cancelled errors an instance of AssetPropertyLoading can return
-struct AssetPropertyLoadingCancelledError: Error {
+public struct AssetPropertyLoadingCancelledError: Error {
     /// The property for which the loading cancelled
-    let property: AssetProperty
+    public let property: AssetProperty
 
     /// Initialises a new instance of the error
     /// - Parameter property: The property for which the error was occurred during loading
-    init(_ property: AssetProperty) {
+    public init(_ property: AssetProperty) {
         self.property = property
     }
 
-    var localizedDescription: String? {
+    public var localizedDescription: String? {
         "Loading of asset's \(property) property cancelled"
     }
 }
 
 /// A simple type that describes the domain specific errors an instance of AssetPropertyLoading can return
-struct AssetPropertyLoadingFailedError: Error {
+public struct AssetPropertyLoadingFailedError: Error {
     /// The property for which the loading failed
-    let property: AssetProperty
+    public let property: AssetProperty
 
     /// The error which occurred during loading, if nil the failure occurred due to an unknown error
-    var error: Error?
+    public var error: Error?
 
     /// The property for which the error was generated. The instance will additionally include the original
     /// error (if any)
@@ -39,7 +39,7 @@ struct AssetPropertyLoadingFailedError: Error {
         self.error = error
     }
 
-    var localizedDescription: String? {
+    public var localizedDescription: String? {
         if let error = error {
             return "Loading of asset's \(property) property failed with error \(error)"
         } else {
@@ -50,14 +50,14 @@ struct AssetPropertyLoadingFailedError: Error {
 
 /// A composite type that will be returned on the completion of a loading request. It will contain the errors
 /// that occurred for each property that we tried to load but failed.
-struct AssetPropertyLoadingCompositeError: Error {
+public struct AssetPropertyLoadingCompositeError: Error {
     /// An array containing the errors for the properties that failed
-    let failedProperties: [AssetPropertyLoadingFailedError]
+    public let failedProperties: [AssetPropertyLoadingFailedError]
 
     /// An array containing the errors for the properties that were cancelled
-    let cancelledProperties: [AssetPropertyLoadingCancelledError]
+    public let cancelledProperties: [AssetPropertyLoadingCancelledError]
 
-    init(
+    public init(
         failedProperties: [AssetPropertyLoadingFailedError],
         cancelledProperties: [AssetPropertyLoadingCancelledError]
     ) {
@@ -65,26 +65,26 @@ struct AssetPropertyLoadingCompositeError: Error {
         self.cancelledProperties = cancelledProperties
     }
 
-    var errorDescription: String? {
+    public var errorDescription: String? {
         "Loading of \(cancelledProperties.count) properties was cancelled and the loading of \(failedProperties.count) failed with various errors."
     }
 }
 
 /// Defines a type that represents the properties of an asset that can be loaded
-struct AssetProperty: CustomStringConvertible {
+public struct AssetProperty: CustomStringConvertible {
     /// The property's name
-    var name: String
+    public var name: String
 
     /// Initialises a new instance from a typed keyPath
-    init<Asset: AVAsset, Value>(_ keyPath: KeyPath<Asset, Value>) {
+    public init<Asset: AVAsset, Value>(_ keyPath: KeyPath<Asset, Value>) {
         name = NSExpression(forKeyPath: keyPath).keyPath
     }
 
-    var description: String { name }
+    public var description: String { name }
 }
 
 /// A protocol that describes an object that can be used to load properties from an AVAsset
-protocol AssetPropertyLoading {
+public protocol AssetPropertyLoading {
     /// A method that loads the property of an AVAsset asynchronously and
     /// returns a result through a completion handler
     /// - Parameters:
@@ -99,10 +99,10 @@ protocol AssetPropertyLoading {
 }
 
 /// A concrete implementation of `AssetPropertyLoading`
-struct StreamAssetPropertyLoader: AssetPropertyLoading {
-    init() {}
+public struct StreamAssetPropertyLoader: AssetPropertyLoading {
+    public init() {}
 
-    func loadProperties<Asset: AVAsset>(
+    public func loadProperties<Asset: AVAsset>(
         _ properties: [AssetProperty],
         of asset: Asset,
         completion: @escaping (Result<Asset, AssetPropertyLoadingCompositeError>) -> Void

@@ -7,6 +7,11 @@ import StreamChat
 
 /// An object containing visual configuration for whole application.
 public struct Appearance {
+    /// Provider for custom localization which is dependent on App Bundle.
+    public var localizationProvider: (_ key: String, _ table: String) -> String = { key, table in
+        Bundle.streamChatUI.localizedString(forKey: key, value: nil, table: table)
+    }
+
     /// A color pallete to provide basic set of colors for the Views.
     ///
     /// By providing different object or changing individual colors, you can change the look of the views.
@@ -27,11 +32,6 @@ public struct Appearance {
     /// By providing different object or changing individual formatters,
     /// you can change how data is formatted to textual representation.
     public var formatters = Formatters()
-
-    /// Provider for custom localization which is dependent on App Bundle.
-    public var localizationProvider: (_ key: String, _ table: String) -> String = { key, table in
-        Bundle.streamChatUI.localizedString(forKey: key, value: nil, table: table)
-    }
 
     public init() {}
 }

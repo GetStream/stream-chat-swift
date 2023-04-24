@@ -53,6 +53,8 @@ open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
     /// The current scroll view height used to activate the scrolling on the vertical stack.
     public var verticalScrollViewHeightConstraint: NSLayoutConstraint?
 
+    public var audioPlayer: AudioPlaying?
+
     /// The attachment views for each attachment preview.
     ///
     /// - Parameter axises: The desired axises of which the previews belong.
@@ -65,6 +67,12 @@ open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
             .map { index, attachment in
                 let view = attachment.previewView(components: components)
                     .withoutAutoresizingMaskConstraints
+
+                if let voiceRecordingView = view as? VoiceRecordingAttachmentComposerPreview {
+                    voiceRecordingView.audioPlayer = audioPlayer
+                    voiceRecordingView.indexProvider = { index }
+                }
+
                 let cell = components.messageComposerAttachmentCell.init()
                     .withoutAutoresizingMaskConstraints
                 cell.embed(attachmentView: view)

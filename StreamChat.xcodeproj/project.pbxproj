@@ -87,6 +87,44 @@
 		404296E72A0116280089126D /* MockAppStateObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404296E52A0116280089126D /* MockAppStateObserver.swift */; };
 		404296EA2A011AC20089126D /* AudioSessionProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404296E82A011AC20089126D /* AudioSessionProtocol.swift */; };
 		404296EB2A011B050089126D /* AudioSessionProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404296E82A011AC20089126D /* AudioSessionProtocol.swift */; };
+		404297332A015AF20089126D /* WaveformView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4042972A2A015AF20089126D /* WaveformView.swift */; };
+		404297342A015AF20089126D /* WaveformView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4042972A2A015AF20089126D /* WaveformView.swift */; };
+		404297352A015AF20089126D /* RecordingPlaybackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4042972B2A015AF20089126D /* RecordingPlaybackView.swift */; };
+		404297362A015AF20089126D /* RecordingPlaybackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4042972B2A015AF20089126D /* RecordingPlaybackView.swift */; };
+		404297372A015AF20089126D /* RecordingTipView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4042972C2A015AF20089126D /* RecordingTipView.swift */; };
+		404297382A015AF20089126D /* RecordingTipView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4042972C2A015AF20089126D /* RecordingTipView.swift */; };
+		404297392A015AF20089126D /* RecordingIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4042972D2A015AF20089126D /* RecordingIndicatorView.swift */; };
+		4042973A2A015AF20089126D /* RecordingIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4042972D2A015AF20089126D /* RecordingIndicatorView.swift */; };
+		4042973B2A015AF20089126D /* LockIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4042972E2A015AF20089126D /* LockIndicatorView.swift */; };
+		4042973C2A015AF20089126D /* LockIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4042972E2A015AF20089126D /* LockIndicatorView.swift */; };
+		4042973D2A015AF20089126D /* BiDirectionalPanGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4042972F2A015AF20089126D /* BiDirectionalPanGestureRecognizer.swift */; };
+		4042973E2A015AF20089126D /* BiDirectionalPanGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4042972F2A015AF20089126D /* BiDirectionalPanGestureRecognizer.swift */; };
+		4042973F2A015AF20089126D /* SlideToCancelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404297302A015AF20089126D /* SlideToCancelView.swift */; };
+		404297402A015AF20089126D /* SlideToCancelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404297302A015AF20089126D /* SlideToCancelView.swift */; };
+		404297412A015AF20089126D /* AudioVisualizationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404297312A015AF20089126D /* AudioVisualizationView.swift */; };
+		404297422A015AF20089126D /* AudioVisualizationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404297312A015AF20089126D /* AudioVisualizationView.swift */; };
+		404297432A015AF20089126D /* RecordingViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404297322A015AF20089126D /* RecordingViewManager.swift */; };
+		404297442A015AF20089126D /* RecordingViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404297322A015AF20089126D /* RecordingViewManager.swift */; };
+		404297492A015B0B0089126D /* ChatMessageVoiceRecordingAttachmentListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404297452A015B0B0089126D /* ChatMessageVoiceRecordingAttachmentListView.swift */; };
+		4042974A2A015B0B0089126D /* ChatMessageVoiceRecordingAttachmentListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404297452A015B0B0089126D /* ChatMessageVoiceRecordingAttachmentListView.swift */; };
+		4042974B2A015B0B0089126D /* ChatMessageVoiceRecordingAttachmentListView+ItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404297462A015B0B0089126D /* ChatMessageVoiceRecordingAttachmentListView+ItemView.swift */; };
+		4042974C2A015B0B0089126D /* ChatMessageVoiceRecordingAttachmentListView+ItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404297462A015B0B0089126D /* ChatMessageVoiceRecordingAttachmentListView+ItemView.swift */; };
+		4042974D2A015B0B0089126D /* ChatMessageVoiceRecordingViewStateUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404297472A015B0B0089126D /* ChatMessageVoiceRecordingViewStateUpdater.swift */; };
+		4042974E2A015B0B0089126D /* ChatMessageVoiceRecordingViewStateUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404297472A015B0B0089126D /* ChatMessageVoiceRecordingViewStateUpdater.swift */; };
+		4042974F2A015B0B0089126D /* VoiceRecordingAttachmentViewInjector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404297482A015B0B0089126D /* VoiceRecordingAttachmentViewInjector.swift */; };
+		404297502A015B0B0089126D /* VoiceRecordingAttachmentViewInjector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404297482A015B0B0089126D /* VoiceRecordingAttachmentViewInjector.swift */; };
+		404297532A015B1E0089126D /* VoiceRecordingAttachmentQuotedPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404297512A015B1E0089126D /* VoiceRecordingAttachmentQuotedPreview.swift */; };
+		404297542A015B1E0089126D /* VoiceRecordingAttachmentQuotedPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404297512A015B1E0089126D /* VoiceRecordingAttachmentQuotedPreview.swift */; };
+		404297552A015B1E0089126D /* VoiceRecordingAttachmentComposerPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404297522A015B1E0089126D /* VoiceRecordingAttachmentComposerPreview.swift */; };
+		404297562A015B1E0089126D /* VoiceRecordingAttachmentComposerPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404297522A015B1E0089126D /* VoiceRecordingAttachmentComposerPreview.swift */; };
+		4042975B2A015B360089126D /* RecordButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404297582A015B360089126D /* RecordButton.swift */; };
+		4042975C2A015B360089126D /* RecordButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404297582A015B360089126D /* RecordButton.swift */; };
+		4042975D2A015B360089126D /* PlayPauseButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4042975A2A015B360089126D /* PlayPauseButton.swift */; };
+		4042975E2A015B360089126D /* PlayPauseButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4042975A2A015B360089126D /* PlayPauseButton.swift */; };
+		404297612A015B4A0089126D /* AudioRecordingNameFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4042975F2A015B4A0089126D /* AudioRecordingNameFormatter.swift */; };
+		404297622A015B4A0089126D /* AudioRecordingNameFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4042975F2A015B4A0089126D /* AudioRecordingNameFormatter.swift */; };
+		404297632A015B4A0089126D /* AudioPlaybackRateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404297602A015B4A0089126D /* AudioPlaybackRateFormatter.swift */; };
+		404297642A015B4A0089126D /* AudioPlaybackRateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404297602A015B4A0089126D /* AudioPlaybackRateFormatter.swift */; };
 		4068ECD2298D06BB0032D57A /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4068ECD0298D06720032D57A /* SplashViewController.swift */; };
 		4068ECD3298D06BB0032D57A /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4068ECD0298D06720032D57A /* SplashViewController.swift */; };
 		4068ECD4298D06BC0032D57A /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4068ECD0298D06720032D57A /* SplashViewController.swift */; };
@@ -2583,6 +2621,25 @@
 		404296E22A01161F0089126D /* MockAudioPlayerObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAudioPlayerObserver.swift; sourceTree = "<group>"; };
 		404296E52A0116280089126D /* MockAppStateObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAppStateObserver.swift; sourceTree = "<group>"; };
 		404296E82A011AC20089126D /* AudioSessionProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioSessionProtocol.swift; sourceTree = "<group>"; };
+		4042972A2A015AF20089126D /* WaveformView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformView.swift; sourceTree = "<group>"; };
+		4042972B2A015AF20089126D /* RecordingPlaybackView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordingPlaybackView.swift; sourceTree = "<group>"; };
+		4042972C2A015AF20089126D /* RecordingTipView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordingTipView.swift; sourceTree = "<group>"; };
+		4042972D2A015AF20089126D /* RecordingIndicatorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordingIndicatorView.swift; sourceTree = "<group>"; };
+		4042972E2A015AF20089126D /* LockIndicatorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LockIndicatorView.swift; sourceTree = "<group>"; };
+		4042972F2A015AF20089126D /* BiDirectionalPanGestureRecognizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BiDirectionalPanGestureRecognizer.swift; sourceTree = "<group>"; };
+		404297302A015AF20089126D /* SlideToCancelView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SlideToCancelView.swift; sourceTree = "<group>"; };
+		404297312A015AF20089126D /* AudioVisualizationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioVisualizationView.swift; sourceTree = "<group>"; };
+		404297322A015AF20089126D /* RecordingViewManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordingViewManager.swift; sourceTree = "<group>"; };
+		404297452A015B0B0089126D /* ChatMessageVoiceRecordingAttachmentListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatMessageVoiceRecordingAttachmentListView.swift; sourceTree = "<group>"; };
+		404297462A015B0B0089126D /* ChatMessageVoiceRecordingAttachmentListView+ItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ChatMessageVoiceRecordingAttachmentListView+ItemView.swift"; sourceTree = "<group>"; };
+		404297472A015B0B0089126D /* ChatMessageVoiceRecordingViewStateUpdater.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatMessageVoiceRecordingViewStateUpdater.swift; sourceTree = "<group>"; };
+		404297482A015B0B0089126D /* VoiceRecordingAttachmentViewInjector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VoiceRecordingAttachmentViewInjector.swift; sourceTree = "<group>"; };
+		404297512A015B1E0089126D /* VoiceRecordingAttachmentQuotedPreview.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VoiceRecordingAttachmentQuotedPreview.swift; sourceTree = "<group>"; };
+		404297522A015B1E0089126D /* VoiceRecordingAttachmentComposerPreview.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VoiceRecordingAttachmentComposerPreview.swift; sourceTree = "<group>"; };
+		404297582A015B360089126D /* RecordButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordButton.swift; sourceTree = "<group>"; };
+		4042975A2A015B360089126D /* PlayPauseButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayPauseButton.swift; sourceTree = "<group>"; };
+		4042975F2A015B4A0089126D /* AudioRecordingNameFormatter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioRecordingNameFormatter.swift; sourceTree = "<group>"; };
+		404297602A015B4A0089126D /* AudioPlaybackRateFormatter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioPlaybackRateFormatter.swift; sourceTree = "<group>"; };
 		4068ECD0298D06720032D57A /* SplashViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashViewController.swift; sourceTree = "<group>"; };
 		40789CFD29F6AC4F0018C2BB /* AudioPlaybackContext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioPlaybackContext.swift; sourceTree = "<group>"; };
 		40789CFE29F6AC4F0018C2BB /* AudioPlaybackRate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioPlaybackRate.swift; sourceTree = "<group>"; };
@@ -4313,6 +4370,38 @@
 			path = Analysis;
 			sourceTree = "<group>";
 		};
+		404297292A015AF20089126D /* Recording */ = {
+			isa = PBXGroup;
+			children = (
+				4042972A2A015AF20089126D /* WaveformView.swift */,
+				4042972B2A015AF20089126D /* RecordingPlaybackView.swift */,
+				4042972C2A015AF20089126D /* RecordingTipView.swift */,
+				4042972D2A015AF20089126D /* RecordingIndicatorView.swift */,
+				4042972E2A015AF20089126D /* LockIndicatorView.swift */,
+				4042972F2A015AF20089126D /* BiDirectionalPanGestureRecognizer.swift */,
+				404297302A015AF20089126D /* SlideToCancelView.swift */,
+				404297312A015AF20089126D /* AudioVisualizationView.swift */,
+				404297322A015AF20089126D /* RecordingViewManager.swift */,
+			);
+			path = Recording;
+			sourceTree = "<group>";
+		};
+		404297572A015B360089126D /* RecordButton */ = {
+			isa = PBXGroup;
+			children = (
+				404297582A015B360089126D /* RecordButton.swift */,
+			);
+			path = RecordButton;
+			sourceTree = "<group>";
+		};
+		404297592A015B360089126D /* PlayPauseButton */ = {
+			isa = PBXGroup;
+			children = (
+				4042975A2A015B360089126D /* PlayPauseButton.swift */,
+			);
+			path = PlayPauseButton;
+			sourceTree = "<group>";
+		};
 		4068ECCF298D06620032D57A /* Shared */ = {
 			isa = PBXGroup;
 			children = (
@@ -5296,6 +5385,10 @@
 		886BDE68258A501E00E1CD00 /* Attachments */ = {
 			isa = PBXGroup;
 			children = (
+				404297452A015B0B0089126D /* ChatMessageVoiceRecordingAttachmentListView.swift */,
+				404297462A015B0B0089126D /* ChatMessageVoiceRecordingAttachmentListView+ItemView.swift */,
+				404297472A015B0B0089126D /* ChatMessageVoiceRecordingViewStateUpdater.swift */,
+				404297482A015B0B0089126D /* VoiceRecordingAttachmentViewInjector.swift */,
 				88AD1D5D2588B87C00ECED5B /* ChatFileAttachmentListView+ItemView.swift */,
 				8800A26E258A04D5006D64C4 /* ChatMessageAttachmentPreviewVC.swift */,
 				8800A28B258A1924006D64C4 /* ChatMessageFileAttachmentListView.swift */,
@@ -5342,6 +5435,8 @@
 		888123E5255D51BD00070D5A /* CommonViews */ = {
 			isa = PBXGroup;
 			children = (
+				404297592A015B360089126D /* PlayPauseButton */,
+				404297572A015B360089126D /* RecordButton */,
 				792DD9D8256BC542001DB91B /* BaseViews.swift */,
 				88BA7F5C258B6953006CE0C5 /* ChatLoadingIndicator.swift */,
 				22A0921625682880001FE9F0 /* ChatNavigationBar.swift */,
@@ -7411,6 +7506,7 @@
 		AD4EA229264ADE0100DF8EE2 /* Composer */ = {
 			isa = PBXGroup;
 			children = (
+				404297292A015AF20089126D /* Recording */,
 				A35757C62613081B00DC914C /* ComposerKeyboardHandler.swift */,
 				E73A8B2A2578EB2B00FBDC56 /* ComposerVC.swift */,
 				22ADD681256C40410098EFEB /* ComposerView.swift */,
@@ -7564,6 +7660,8 @@
 		AD99C901279B06E9009DD9C5 /* Appearance+Formatters */ = {
 			isa = PBXGroup;
 			children = (
+				404297602A015B4A0089126D /* AudioPlaybackRateFormatter.swift */,
+				4042975F2A015B4A0089126D /* AudioRecordingNameFormatter.swift */,
 				ADC4AAAF2788C8850004BB35 /* Appearance+Formatters.swift */,
 				ADBBDA27279F0E9B00E47B1C /* ChannelNameFormatter.swift */,
 				AD99C906279B0C9B009DD9C5 /* MessageDateSeparatorFormatter.swift */,
@@ -7746,6 +7844,8 @@
 		BD3EA7F4264AD954003AFA09 /* AttachmentViews */ = {
 			isa = PBXGroup;
 			children = (
+				404297522A015B1E0089126D /* VoiceRecordingAttachmentComposerPreview.swift */,
+				404297512A015B1E0089126D /* VoiceRecordingAttachmentQuotedPreview.swift */,
 				22086B3F259509450007F8C0 /* FileAttachmentView.swift */,
 				AD4474FC263B19F90030E583 /* ImageAttachmentComposerPreview.swift */,
 				847DD2D72670F75F0084E14B /* VideoAttachmentComposerPreview.swift */,
@@ -9308,8 +9408,10 @@
 				C1FC2F7327416E150062530F /* ImageViewExtensions.swift in Sources */,
 				C1FC2F8327416E150062530F /* TaskFetchDecodedImage.swift in Sources */,
 				22411680258A91280034184D /* String+Extensions.swift in Sources */,
+				4042973F2A015AF20089126D /* SlideToCancelView.swift in Sources */,
 				228C7EE52583AF4800AAE9E3 /* UITextView+Extensions.swift in Sources */,
 				8803E9E726398F4E002B2A7B /* ChatMessageBubbleView.swift in Sources */,
+				4042973B2A015AF20089126D /* LockIndicatorView.swift in Sources */,
 				22FF4365256E943F00133910 /* ChatSuggestionsVC.swift in Sources */,
 				22A0921725682880001FE9F0 /* ChatNavigationBar.swift in Sources */,
 				AD87D0A1263C7823008B466C /* AttachmentButton.swift in Sources */,
@@ -9324,6 +9426,7 @@
 				847DD2D82670F75F0084E14B /* VideoAttachmentComposerPreview.swift in Sources */,
 				847D60292679EDD300FB701D /* GalleryCollectionViewCell.swift in Sources */,
 				C1FC2F7B27416E150062530F /* DataLoader.swift in Sources */,
+				404297412A015AF20089126D /* AudioVisualizationView.swift in Sources */,
 				E7166CB225BED22B00B03B07 /* Appearance+ColorPalette.swift in Sources */,
 				88A11B0A2590AFBB0000AC24 /* ChatMessage+Extensions.swift in Sources */,
 				780DFCFC25EF7DA500A39A6E /* ChatChannelListVC+SwiftUI.swift in Sources */,
@@ -9346,7 +9449,9 @@
 				88D88F86257F9AA700AFE2A2 /* NSLayoutConstraint+Extensions.swift in Sources */,
 				ADCB577928A42D7700B81AE8 /* Algorithm.swift in Sources */,
 				796CBD1C25FF9552003299B0 /* UIStackView+Extensions.swift in Sources */,
+				404297492A015B0B0089126D /* ChatMessageVoiceRecordingAttachmentListView.swift in Sources */,
 				C1FC2F8627416E150062530F /* Allocations.swift in Sources */,
+				404297392A015AF20089126D /* RecordingIndicatorView.swift in Sources */,
 				C1FC2F8C27416E1F0062530F /* UIImage+SwiftyGif.swift in Sources */,
 				ADC4AAB02788C8850004BB35 /* Appearance+Formatters.swift in Sources */,
 				AD6F531927175FDB00D428B4 /* ChatMessageGiphyView+GiphyBadge.swift in Sources */,
@@ -9358,6 +9463,7 @@
 				888ABA072594FDE30015937E /* ChatMessageInteractiveAttachmentView.swift in Sources */,
 				ACCA772C26C40D43007AE2ED /* NukeImageLoader.swift in Sources */,
 				C1FC2F6D27416E150062530F /* TaskLoadData.swift in Sources */,
+				4042973D2A015AF20089126D /* BiDirectionalPanGestureRecognizer.swift in Sources */,
 				88BD82B02549D18F00369074 /* ChatChannelListItemView.swift in Sources */,
 				A3C5022B284F9CF70048753E /* Token.swift in Sources */,
 				A39A8AE7263825F4003453D9 /* ChatMessageLayoutOptionsResolver.swift in Sources */,
@@ -9388,6 +9494,7 @@
 				C1FC2F6F27416E150062530F /* ImagePipelineConfiguration.swift in Sources */,
 				F838F6B32636D42B0025E1F5 /* ZoomAnimator.swift in Sources */,
 				ADCB578328A42D7700B81AE8 /* StagedChangeset.swift in Sources */,
+				404297352A015AF20089126D /* RecordingPlaybackView.swift in Sources */,
 				64B059E22670EFFE0024CE90 /* ChatChannelVC+SwiftUI.swift in Sources */,
 				BDDD1EA32632C50200BA007B /* Appearance.swift in Sources */,
 				88CABC4425933EE70061BB67 /* ChatMessageDefaultReactionsBubbleView.swift in Sources */,
@@ -9412,6 +9519,7 @@
 				22086B40259509450007F8C0 /* FileAttachmentView.swift in Sources */,
 				E768AAFB2627691600328E6E /* TypingAnimationView.swift in Sources */,
 				A3C50225284F9CF70048753E /* SwiftyLineProcessor.swift in Sources */,
+				404297552A015B1E0089126D /* VoiceRecordingAttachmentComposerPreview.swift in Sources */,
 				ADB4166C26208F1C00E623E3 /* AttachmentPreviewProvider.swift in Sources */,
 				792DD9FB256E67C6001DB91B /* ComponentsProvider.swift in Sources */,
 				84DA54DF2680C66A003A26CD /* PlayerView.swift in Sources */,
@@ -9438,6 +9546,7 @@
 				224FF6812562F2E900725DD1 /* ChatChannelUnreadCountView.swift in Sources */,
 				A3C50224284F9CF70048753E /* PerfomanceLog.swift in Sources */,
 				C1FC2F7827416E150062530F /* ImageDecoding.swift in Sources */,
+				404297612A015B4A0089126D /* AudioRecordingNameFormatter.swift in Sources */,
 				CFBF8D512847C57700EEB7D3 /* MarkdownFormatter.swift in Sources */,
 				C1FC2F8227416E150062530F /* ImagePipelineTask.swift in Sources */,
 				A3EA3328276C904700C84A52 /* ObjcAssociatedWeakObject.swift in Sources */,
@@ -9456,6 +9565,7 @@
 				BD837AF02652D23600A99AB5 /* AttachmentPreviewContainer.swift in Sources */,
 				C1FC2F6727416E150062530F /* ResumableData.swift in Sources */,
 				BD4016362638411D00F09774 /* Deprecations.swift in Sources */,
+				404297632A015B4A0089126D /* AudioPlaybackRateFormatter.swift in Sources */,
 				7844B14E25EF9F5700B87E89 /* ChatChannelAvatarView+SwiftUI.swift in Sources */,
 				ADA5A0F8276790C100E1C465 /* ChatMessageListDateSeparatorView.swift in Sources */,
 				BDC80CB5265CF4B800F62CE2 /* ImageCDN.swift in Sources */,
@@ -9469,6 +9579,7 @@
 				A3C50226284F9CF70048753E /* SwiftyScanner.swift in Sources */,
 				AD99C904279B073B009DD9C5 /* MessageTimestampFormatter.swift in Sources */,
 				2245B2B625602465006A612D /* ChatChannelAvatarView.swift in Sources */,
+				404297432A015AF20089126D /* RecordingViewManager.swift in Sources */,
 				C1FC2F6E27416E150062530F /* ImagePipeline.swift in Sources */,
 				C1FC2F8027416E150062530F /* ImagePrefetcher.swift in Sources */,
 				88EF29FF2571288600B06EF1 /* Array+Extensions.swift in Sources */,
@@ -9491,6 +9602,8 @@
 				843F0BC526775D2D00B342CB /* VideoLoading.swift in Sources */,
 				88CABC4625933EE70061BB67 /* ChatReactionPickerBubbleView.swift in Sources */,
 				F838F6A92636D3C30025E1F5 /* ZoomTransitionController.swift in Sources */,
+				4042974F2A015B0B0089126D /* VoiceRecordingAttachmentViewInjector.swift in Sources */,
+				4042975B2A015B360089126D /* RecordButton.swift in Sources */,
 				AD81AF0D25ED141A00F17F8F /* ListCollectionViewLayout.swift in Sources */,
 				ADCB577B28A42D7700B81AE8 /* AppKitExtension.swift in Sources */,
 				ADFB7E90283E700500ABB6CF /* CollectionViewListChangeUpdater.swift in Sources */,
@@ -9507,6 +9620,7 @@
 				43F4750E26FB247C0009487D /* ChatReactionPickerReactionsView.swift in Sources */,
 				E7516B162642E11A00DE778C /* GiphyAttachmentViewInjector.swift in Sources */,
 				E79AC10D25831A1500C3CE5D /* ChatSuggestionsCollectionViewLayout.swift in Sources */,
+				4042974B2A015B0B0089126D /* ChatMessageVoiceRecordingAttachmentListView+ItemView.swift in Sources */,
 				C1FC2F7427416E150062530F /* Deprecated.swift in Sources */,
 				ADCB578928A42D7700B81AE8 /* Changeset.swift in Sources */,
 				C1FC2F8B27416E1F0062530F /* SwiftyGifManager.swift in Sources */,
@@ -9517,6 +9631,7 @@
 				847DD2DB267233DB0084E14B /* GradientView.swift in Sources */,
 				A3C5022C284F9CF70048753E /* SwiftyMarkdown+iOS.swift in Sources */,
 				640FE0EA26A56921006CE703 /* ListChangeIndexPathResolver.swift in Sources */,
+				4042975D2A015B360089126D /* PlayPauseButton.swift in Sources */,
 				AD43F90926153BAD00F2D4BB /* QuotedChatMessageView.swift in Sources */,
 				C1FC2F8927416E150062530F /* ImageEncoding.swift in Sources */,
 				847F3CEA2689FDEB00D240E0 /* ChatMessageCell.swift in Sources */,
@@ -9524,11 +9639,14 @@
 				C14A46582846636900EF498E /* SDKIdentifier.swift in Sources */,
 				224FF6912562F58F00725DD1 /* UIColor+Extensions.swift in Sources */,
 				CF7B2A2628BEAA93006BE124 /* TextViewMentionedUsersHandler.swift in Sources */,
+				404297332A015AF20089126D /* WaveformView.swift in Sources */,
 				22C2359A259CA87B00DC805A /* Animation.swift in Sources */,
 				79088339254876F200896F03 /* ChatMessageListView.swift in Sources */,
 				C1FC2F7627416E150062530F /* Extensions.swift in Sources */,
 				AD7BBFCB2901AF3F004E8B76 /* ImageResultsMapper.swift in Sources */,
+				404297532A015B1E0089126D /* VoiceRecordingAttachmentQuotedPreview.swift in Sources */,
 				ACD502A926BC0C670029FB7D /* ImageMerger.swift in Sources */,
+				4042974D2A015B0B0089126D /* ChatMessageVoiceRecordingViewStateUpdater.swift in Sources */,
 				E3C7A0E02858BA9B006133C3 /* Reusable+Extensions.swift in Sources */,
 				AD447398263ABD530030E583 /* ChatCommandSuggestionCollectionViewCell.swift in Sources */,
 				847D602D2679EF8A00FB701D /* VideoPlaybackControlView.swift in Sources */,
@@ -9557,6 +9675,7 @@
 				A3C5022D284F9CF70048753E /* String+SwiftyMarkdown.swift in Sources */,
 				88A11B302590CC860000AC24 /* ChatMessageErrorIndicator.swift in Sources */,
 				AD99C908279B0E9A009DD9C5 /* MessageDateSeparatorFormatter.swift in Sources */,
+				404297372A015AF20089126D /* RecordingTipView.swift in Sources */,
 				22ADD67C256BF1550098EFEB /* InputChatMessageView.swift in Sources */,
 				E7734D1C25F9479F004F76B0 /* CellActionView.swift in Sources */,
 				88BA7F7F258B97A8006CE0C5 /* ChatMessageImageGallery+ImagePreview.swift in Sources */,
@@ -11044,8 +11163,10 @@
 				C121EB722746A1E700023E4C /* Bundle+Extensions.swift in Sources */,
 				C121EB742746A1E700023E4C /* UIImage+Extensions.swift in Sources */,
 				C121EB752746A1E700023E4C /* UIFont+Extensions.swift in Sources */,
+				404297402A015AF20089126D /* SlideToCancelView.swift in Sources */,
 				AD99C909279B0E9D009DD9C5 /* MessageDateSeparatorFormatter.swift in Sources */,
 				C121EB762746A1E700023E4C /* Array+Extensions.swift in Sources */,
+				4042973C2A015AF20089126D /* LockIndicatorView.swift in Sources */,
 				C121EB772746A1E700023E4C /* UIViewController+Extensions.swift in Sources */,
 				C121EB782746A1E700023E4C /* NSLayoutConstraint+Extensions.swift in Sources */,
 				C14A46592846636900EF498E /* SDKIdentifier.swift in Sources */,
@@ -11060,6 +11181,7 @@
 				C121EB812746A1E700023E4C /* CGRect+Extensions.swift in Sources */,
 				C121EB822746A1E700023E4C /* CGPoint+Extensions.swift in Sources */,
 				C121EB832746A1E700023E4C /* NavigationVC.swift in Sources */,
+				404297422A015AF20089126D /* AudioVisualizationView.swift in Sources */,
 				C121EB842746A1E700023E4C /* Cache.swift in Sources */,
 				C121EB852746A1E700023E4C /* VideoLoading.swift in Sources */,
 				C121EB862746A1E700023E4C /* ListChangeIndexPathResolver.swift in Sources */,
@@ -11082,7 +11204,9 @@
 				C121EB952746A1E800023E4C /* AttachmentsPreviewVC.swift in Sources */,
 				C121EB962746A1E800023E4C /* AttachmentPreviewContainer.swift in Sources */,
 				C121EB972746A1E800023E4C /* AttachmentPreviewProvider.swift in Sources */,
+				4042974A2A015B0B0089126D /* ChatMessageVoiceRecordingAttachmentListView.swift in Sources */,
 				C121EB982746A1E800023E4C /* DefaultAttachmentPreviewProvider.swift in Sources */,
+				4042973A2A015AF20089126D /* RecordingIndicatorView.swift in Sources */,
 				C121EB992746A1E800023E4C /* FileAttachmentView.swift in Sources */,
 				AD78F9FC28EC735700BC0FCE /* PerfomanceLog.swift in Sources */,
 				C121EB9A2746A1E800023E4C /* ImageAttachmentComposerPreview.swift in Sources */,
@@ -11094,6 +11218,7 @@
 				C121EBA02746A1E800023E4C /* CircularCloseButton.swift in Sources */,
 				C121EBA12746A1E800023E4C /* ShrinkInputButton.swift in Sources */,
 				C121EBA22746A1E800023E4C /* CheckboxControl.swift in Sources */,
+				4042973E2A015AF20089126D /* BiDirectionalPanGestureRecognizer.swift in Sources */,
 				C121EBA32746A1E800023E4C /* QuotedChatMessageView.swift in Sources */,
 				C121EBA42746A1E800023E4C /* QuotedChatMessageView+SwiftUI.swift in Sources */,
 				C121EBA52746A1E800023E4C /* OnlineIndicatorView.swift in Sources */,
@@ -11124,6 +11249,7 @@
 				C121EBB82746A1E900023E4C /* ChatLoadingIndicator.swift in Sources */,
 				ADEE888E289C3CC0007DF3F8 /* ChatMessageListView+DiffKit.swift in Sources */,
 				CFE5F85C2874A9330099A6A1 /* ChatChannelListEmptyView.swift in Sources */,
+				404297362A015AF20089126D /* RecordingPlaybackView.swift in Sources */,
 				AD78F9F528EC735700BC0FCE /* SwiftyMarkdown+macOS.swift in Sources */,
 				C121EBB92746A1E900023E4C /* PlayerView.swift in Sources */,
 				C121EBBA2746A1E900023E4C /* GalleryCollectionViewCell.swift in Sources */,
@@ -11148,6 +11274,7 @@
 				ADFB7E98283E73C600ABB6CF /* ListChangeUpdater.swift in Sources */,
 				C121EBC82746A1E900023E4C /* SwipeableView.swift in Sources */,
 				C121EBC92746A1E900023E4C /* CellActionView.swift in Sources */,
+				404297562A015B1E0089126D /* VoiceRecordingAttachmentComposerPreview.swift in Sources */,
 				C121EBCA2746A1E900023E4C /* ChatMessageDeliveryStatusCheckmarkView.swift in Sources */,
 				ADC4AAB12788C8850004BB35 /* Appearance+Formatters.swift in Sources */,
 				C121EBCB2746A1E900023E4C /* ChatChannelUnreadCountView.swift in Sources */,
@@ -11174,6 +11301,7 @@
 				C121EBD72746A1EA00023E4C /* ChatMessageReactions+Types.swift in Sources */,
 				AD78F9F928EC735700BC0FCE /* CharacterRule.swift in Sources */,
 				CF38F5B0287DB53E00E24D10 /* ChatChannelListErrorView.swift in Sources */,
+				404297622A015B4A0089126D /* AudioRecordingNameFormatter.swift in Sources */,
 				CF62AD9A28944D4700392893 /* SkeletonLoadable.swift in Sources */,
 				C121EBD82746A1EA00023E4C /* ChatMessageReactionsView.swift in Sources */,
 				C121EBD92746A1EA00023E4C /* ChatMessageReactionsPickerVC.swift in Sources */,
@@ -11192,6 +11320,7 @@
 				C121EBE32746A1EA00023E4C /* ChatMessageImageGallery+ImagePreview.swift in Sources */,
 				C121EBE42746A1EA00023E4C /* VideoAttachmentGalleryPreview.swift in Sources */,
 				C121EBE52746A1EA00023E4C /* UploadingOverlayView.swift in Sources */,
+				404297642A015B4A0089126D /* AudioPlaybackRateFormatter.swift in Sources */,
 				CF01EB7C288A2B7200B426B8 /* ChatChannelListLoadingView.swift in Sources */,
 				C121EBE62746A1EA00023E4C /* ChatMessageInteractiveAttachmentView.swift in Sources */,
 				C121EBE72746A1EA00023E4C /* ChatMessageInteractiveAttachmentView+ActionButton.swift in Sources */,
@@ -11205,6 +11334,7 @@
 				ADA5A0F9276790C100E1C465 /* ChatMessageListDateSeparatorView.swift in Sources */,
 				C121EBEA2746A1EA00023E4C /* ChatMessageGiphyView+GiphyBadge.swift in Sources */,
 				C121EBEB2746A1EB00023E4C /* AttachmentViewInjector.swift in Sources */,
+				404297442A015AF20089126D /* RecordingViewManager.swift in Sources */,
 				C121EBEC2746A1EB00023E4C /* GalleryAttachmentViewInjector.swift in Sources */,
 				C121EBED2746A1EB00023E4C /* GiphyAttachmentViewInjector.swift in Sources */,
 				C121EBEE2746A1EB00023E4C /* LinkAttachmentViewInjector.swift in Sources */,
@@ -11227,6 +11357,8 @@
 				C121EBFC2746A1EB00023E4C /* ChatMessageListVCDelegate.swift in Sources */,
 				C121EBFD2746A1EB00023E4C /* ChatMessageListView.swift in Sources */,
 				C171041F2768C34E008FB3F2 /* Array+SafeSubscript.swift in Sources */,
+				404297502A015B0B0089126D /* VoiceRecordingAttachmentViewInjector.swift in Sources */,
+				4042975C2A015B360089126D /* RecordButton.swift in Sources */,
 				CFBF8D522847C57700EEB7D3 /* MarkdownFormatter.swift in Sources */,
 				84C11BE627FB459900000A9E /* ChatMessageDeliveryStatusView.swift in Sources */,
 				C121EBFE2746A1EB00023E4C /* ChatMessageListScrollOverlayView.swift in Sources */,
@@ -11243,6 +11375,7 @@
 				C121EC082746A1EC00023E4C /* MessageActionsTransitionController.swift in Sources */,
 				C121EC092746A1EC00023E4C /* ChatMessageActionControl.swift in Sources */,
 				C121EC0A2746A1EC00023E4C /* ChatMessageActionItem.swift in Sources */,
+				4042974C2A015B0B0089126D /* ChatMessageVoiceRecordingAttachmentListView+ItemView.swift in Sources */,
 				C121EC0B2746A1EC00023E4C /* ChatMessageActionsVC.swift in Sources */,
 				C121EC0C2746A1EC00023E4C /* ChatChannelListRouter.swift in Sources */,
 				C121EC0D2746A1EC00023E4C /* ChatMessageListRouter.swift in Sources */,
@@ -11253,6 +11386,7 @@
 				C121EC102746A1EC00023E4C /* L10n.swift in Sources */,
 				C121EC112746A1EC00023E4C /* ImageViewExtensions.swift in Sources */,
 				C121EC122746A1EC00023E4C /* FetchImage.swift in Sources */,
+				4042975E2A015B360089126D /* PlayPauseButton.swift in Sources */,
 				C121EC132746A1EC00023E4C /* ImageCache.swift in Sources */,
 				C121EC142746A1EC00023E4C /* ImageTask.swift in Sources */,
 				C121EC152746A1EC00023E4C /* ImagePipeline.swift in Sources */,
@@ -11260,11 +11394,14 @@
 				CF143981288637AD00898ECA /* ChatChannelListLoadingViewCellContentView.swift in Sources */,
 				C121EC172746A1EC00023E4C /* ImagePipelineConfiguration.swift in Sources */,
 				C121EC182746A1EC00023E4C /* ImageEncoding.swift in Sources */,
+				404297342A015AF20089126D /* WaveformView.swift in Sources */,
 				ADBBDA29279F0E9B00E47B1C /* ChannelNameFormatter.swift in Sources */,
 				C121EC192746A1EC00023E4C /* ImageRequest.swift in Sources */,
 				ADCD5E4427987EFE00E66911 /* StreamModalTransitioningDelegate.swift in Sources */,
 				AD7BBFCC2901AF3F004E8B76 /* ImageResultsMapper.swift in Sources */,
+				404297542A015B1E0089126D /* VoiceRecordingAttachmentQuotedPreview.swift in Sources */,
 				C121EC1A2746A1EC00023E4C /* DataCache.swift in Sources */,
+				4042974E2A015B0B0089126D /* ChatMessageVoiceRecordingViewStateUpdater.swift in Sources */,
 				CF14397E2886374900898ECA /* ChatChannelListLoadingViewCell.swift in Sources */,
 				C121EC1B2746A1EC00023E4C /* ImageDecoding.swift in Sources */,
 				ADCB578828A42D7700B81AE8 /* DifferentiableSection.swift in Sources */,
@@ -11293,6 +11430,7 @@
 				C121EC2E2746A1ED00023E4C /* Extensions.swift in Sources */,
 				C121EC2F2746A1ED00023E4C /* Deprecated.swift in Sources */,
 				C121EC302746A1ED00023E4C /* Combine.swift in Sources */,
+				404297382A015AF20089126D /* RecordingTipView.swift in Sources */,
 				C121EC312746A1ED00023E4C /* Operation.swift in Sources */,
 				C121EC322746A1ED00023E4C /* ImageRequestKeys.swift in Sources */,
 				C121EC332746A1ED00023E4C /* LinkedList.swift in Sources */,
