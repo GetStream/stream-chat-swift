@@ -369,9 +369,7 @@ public class ChatClient {
     /// Connects anonymous user
     /// - Parameter completion: The completion that will be called once the **first** user session for the given token is setup.
     public func connectAnonymousUser(completion: ((Error?) -> Void)? = nil) {
-        authenticationRepository.connectUser(
-            userInfo: nil,
-            tokenProvider: { $0(.success(.anonymous)) },
+        authenticationRepository.connectAnonymousUser(
             completion: { completion?($0) }
         )
     }
@@ -402,6 +400,10 @@ public class ChatClient {
     /// Disconnects the chat client form the chat servers and removes all the local data related.
     public func logout(completion: @escaping () -> Void) {
         authenticationRepository.logOutUser()
+
+        // Stop tracking active components
+        activeChannelControllers.removeAllObjects()
+        activeChannelListControllers.removeAllObjects()
 
         let group = DispatchGroup()
         group.enter()
@@ -473,21 +475,8 @@ public class ChatClient {
 }
 
 extension ChatClient: AuthenticationRepositoryDelegate {
-    /// Clears state related to the current user to leave the client ready for another user
-    /// Will clear:
-    ///     - Background workers
-    ///     - References to active controllers
-    ///     - Database
-    /// - Parameter completion: A block to be executed when the process is completed. Contains an error if something went wrong
-    func clearCurrentUserData(completion: @escaping (Error?) -> Void) {
-        createBackgroundWorkers()
-
-        // Stop tracking active components
-        activeChannelControllers.removeAllObjects()
-        activeChannelListControllers.removeAllObjects()
-
-        // Reset all existing local data.
-        databaseContainer.removeAllData(force: true, completion: completion)
+    func logOutUser(completion: @escaping () -> Void) {
+        logout(completion: completion)
     }
 
     func didFinishSettingUpAuthenticationEnvironment(for state: EnvironmentState) {

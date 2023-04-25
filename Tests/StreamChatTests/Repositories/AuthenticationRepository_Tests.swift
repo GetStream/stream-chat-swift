@@ -325,14 +325,18 @@ final class AuthenticationRepository_Tests: XCTestCase {
     }
 
     func test_connectUser_updatesTokenProvider() throws {
+        let userInfo = UserInfo(id: "123")
         XCTAssertNil(repository.tokenProvider)
+
+        let delegate = AuthenticationRepositoryDelegateMock()
+        repository.delegate = delegate
 
         let originalProviderCalled = self.expectation(description: "Initial token provider call")
         let originalTokenProvider: TokenProvider = { $0(.success(.unique())) }
 
         connectionRepository.connectResult = .success(())
 
-        repository.connectUser(userInfo: nil, tokenProvider: originalTokenProvider, completion: { _ in
+        repository.connectUser(userInfo: userInfo, tokenProvider: originalTokenProvider, completion: { _ in
             originalProviderCalled.fulfill()
         })
         XCTAssertNotNil(repository.tokenProvider)
@@ -343,7 +347,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         let newTokenProvider: TokenProvider = { _ in
             expectation.fulfill()
         }
-        repository.connectUser(userInfo: nil, tokenProvider: newTokenProvider, completion: { _ in })
+        repository.connectUser(userInfo: userInfo, tokenProvider: newTokenProvider, completion: { _ in })
         waitForExpectations(timeout: defaultTimeout)
     }
 
@@ -358,10 +362,10 @@ final class AuthenticationRepository_Tests: XCTestCase {
 
         // First user
         var initialCompletionCalls = 0
-
+        let userInfo = UserInfo(id: "123")
         let originalTokenProvider: TokenProvider = { $0(.success(.unique())) }
         let expectation1 = expectation(description: "Completion call 1")
-        repository.connectUser(userInfo: nil, tokenProvider: originalTokenProvider, completion: { _ in
+        repository.connectUser(userInfo: userInfo, tokenProvider: originalTokenProvider, completion: { _ in
             initialCompletionCalls += 1
             expectation1.fulfill()
         })
@@ -371,14 +375,15 @@ final class AuthenticationRepository_Tests: XCTestCase {
         XCTAssertEqual(initialCompletionCalls, 1)
         XCTAssertEqual(delegate.newStateCalls, 1)
         XCTAssertEqual(delegate.newState, .firstConnection)
-        XCTAssertEqual(delegate.clearDataCalls, 0)
+        XCTAssertEqual(delegate.logoutCallCount, 0)
 
         // New token/user
         let newUserId = "user-id"
+        let newUserInfo = UserInfo(id: newUserId)
         var newTokenCompletionCalls = 0
         let expectation2 = expectation(description: "Completion call 2")
         let newTokenProvider: TokenProvider = { $0(.success(.unique(userId: newUserId))) }
-        repository.connectUser(userInfo: nil, tokenProvider: newTokenProvider, completion: { _ in
+        repository.connectUser(userInfo: userInfo, tokenProvider: newTokenProvider, completion: { _ in
             newTokenCompletionCalls += 1
             expectation2.fulfill()
         })
@@ -389,13 +394,13 @@ final class AuthenticationRepository_Tests: XCTestCase {
         XCTAssertEqual(newTokenCompletionCalls, 1)
         XCTAssertEqual(delegate.newStateCalls, 2)
         XCTAssertEqual(delegate.newState, .newUser)
-        XCTAssertEqual(delegate.clearDataCalls, 1)
+        XCTAssertEqual(delegate.logoutCallCount, 1)
 
         // Refresh token
         var refreshTokenCompletionCalls = 0
         let expectation3 = expectation(description: "Completion call 2")
         let refreshTokenProvider: TokenProvider = { $0(.success(.unique(userId: newUserId))) }
-        repository.connectUser(userInfo: nil, tokenProvider: refreshTokenProvider, completion: { _ in
+        repository.connectUser(userInfo: newUserInfo, tokenProvider: refreshTokenProvider, completion: { _ in
             refreshTokenCompletionCalls += 1
             expectation3.fulfill()
         })
@@ -407,7 +412,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         XCTAssertEqual(refreshTokenCompletionCalls, 1)
         XCTAssertEqual(delegate.newStateCalls, 3)
         XCTAssertEqual(delegate.newState, .newToken)
-        XCTAssertEqual(delegate.clearDataCalls, 1)
+        XCTAssertEqual(delegate.logoutCallCount, 1)
     }
 
     // Prepare environment on a successful token retrieval
@@ -428,8 +433,42 @@ final class AuthenticationRepository_Tests: XCTestCase {
         XCTAssertEqual(connectionRepository.updateWebSocketEndpointUserInfo, newUserInfo)
         XCTAssertCall(ConnectionRepository_Mock.Signature.updateWebSocketEndpointTokenInfo, on: connectionRepository)
         XCTAssertEqual(delegate.newStateCalls, 1)
-        XCTAssertEqual(delegate.clearDataCalls, 0)
+        XCTAssertEqual(delegate.logoutCallCount, 0)
         XCTAssertEqual(delegate.newState, .firstConnection)
+    }
+
+    func test_connectUser_prepareEnvironment_differentUserIdThanUserInfo() {
+        let Logger_Spy = Logger_Spy()
+        Logger_Spy.injectMock()
+        let delegate = AuthenticationRepositoryDelegateMock()
+        let existingUserId = "user2"
+        let existingUserInfo = UserInfo(id: existingUserId)
+        let existingToken = Token.unique(userId: existingUserId)
+
+        repository.setToken(token: existingToken, completeTokenWaiters: false)
+
+        XCTAssertEqual(repository.currentToken, existingToken)
+        XCTAssertEqual(repository.currentUserId, existingUserId)
+
+        let otherUserId = "otheruser"
+        let newToken = Token.unique(userId: otherUserId)
+
+        repository.delegate = delegate
+        let error = testPrepareEnvironmentAfterConnect(existingToken: nil, newUserInfo: existingUserInfo, newToken: newToken)
+
+        XCTAssertNil(error)
+        XCTAssertEqual(repository.currentUserId, otherUserId)
+        XCTAssertEqual(repository.currentToken, newToken)
+        XCTAssertEqual(connectionRepository.updateWebSocketEndpointToken, newToken)
+        XCTAssertEqual(connectionRepository.updateWebSocketEndpointUserInfo, existingUserInfo)
+        XCTAssertCall(ConnectionRepository_Mock.Signature.updateWebSocketEndpointTokenInfo, on: connectionRepository)
+        XCTAssertEqual(delegate.newStateCalls, 1)
+        XCTAssertEqual(delegate.logoutCallCount, 0)
+        XCTAssertEqual(delegate.newState, .newUser)
+
+        // Should fail when asserting that user ids match
+        XCTAssertEqual(Logger_Spy.failedAsserts, 1)
+        Logger_Spy.restoreLogger()
     }
 
     func test_connectUser_prepareEnvironment_sameUser() {
@@ -455,7 +494,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         XCTAssertEqual(connectionRepository.updateWebSocketEndpointUserInfo, existingUserInfo)
         XCTAssertCall(ConnectionRepository_Mock.Signature.updateWebSocketEndpointTokenInfo, on: connectionRepository)
         XCTAssertEqual(delegate.newStateCalls, 1)
-        XCTAssertEqual(delegate.clearDataCalls, 0)
+        XCTAssertEqual(delegate.logoutCallCount, 0)
         XCTAssertEqual(delegate.newState, .newToken)
     }
 
@@ -483,11 +522,11 @@ final class AuthenticationRepository_Tests: XCTestCase {
         XCTAssertEqual(connectionRepository.updateWebSocketEndpointToken, newToken)
         XCTAssertCall(ConnectionRepository_Mock.Signature.updateWebSocketEndpointTokenInfo, on: connectionRepository)
         XCTAssertEqual(delegate.newStateCalls, 1)
-        XCTAssertEqual(delegate.clearDataCalls, 0)
+        XCTAssertEqual(delegate.logoutCallCount, 0)
         XCTAssertEqual(delegate.newState, .newToken)
     }
 
-    func test_connectUser_prepareEnvironment_newUser_activeMode() {
+    func test_connectUser_prepareEnvironment_newUser() {
         let delegate = AuthenticationRepositoryDelegateMock()
         let existingUserId = "userOld1"
         let existingToken = Token.unique(userId: existingUserId)
@@ -518,55 +557,94 @@ final class AuthenticationRepository_Tests: XCTestCase {
         XCTAssertNil(error)
         XCTAssertEqual(repository.currentUserId, newUserId)
         XCTAssertEqual(repository.currentToken, newToken)
-        XCTAssertEqual(connectionRepository.updateWebSocketEndpointUserInfo, newUserInfo)
-        XCTAssertEqual(connectionRepository.updateWebSocketEndpointToken, newToken)
-        XCTAssertCall(ConnectionRepository_Mock.Signature.updateWebSocketEndpointTokenInfo, on: connectionRepository)
         XCTAssertEqual(delegate.newStateCalls, 1)
-        XCTAssertEqual(delegate.clearDataCalls, 1)
+        XCTAssertEqual(delegate.logoutCallCount, 1)
         XCTAssertEqual(delegate.newState, .newUser)
     }
 
-    func test_connectUser_prepareEnvironment_newUser_notActiveMode() {
+    // Log out logic when calling connect
+
+    func test_connectUser_whenFirstConnection_thenDoNotCallLogout() {
+        let userInfo = UserInfo(id: "123")
+        XCTAssertNil(repository.tokenProvider)
+
         let delegate = AuthenticationRepositoryDelegateMock()
-        let existingUserId = "userOld2"
-        let existingToken = Token.unique(userId: existingUserId)
-        var config = ChatClientConfig(apiKeyString: "")
-        config.isClientInActiveMode = false
-        connectionRepository = ConnectionRepository_Mock(client: ChatClient(config: config))
-        repository = AuthenticationRepository(
-            apiClient: apiClient,
-            databaseContainer: database,
-            connectionRepository: connectionRepository,
-            tokenExpirationRetryStrategy: retryStrategy,
-            timerType: DefaultTimer.self
-        )
-
-        repository.setToken(token: existingToken, completeTokenWaiters: false)
-
-        XCTAssertEqual(repository.currentToken, existingToken)
-        XCTAssertEqual(repository.currentUserId, existingUserId)
-
-        let newUserId = "user9"
-        let newUserInfo = UserInfo(id: newUserId)
-        let newToken = Token.unique(userId: newUserId)
-
         repository.delegate = delegate
-        let error = testPrepareEnvironmentAfterConnect(existingToken: nil, newUserInfo: newUserInfo, newToken: newToken)
 
-        XCTAssertTrue(error is ClientError.ClientIsNotInActiveMode)
-        XCTAssertEqual(repository.currentUserId, newUserId)
-        XCTAssertEqual(repository.currentToken, newToken)
-        XCTAssertNil(connectionRepository.updateWebSocketEndpointUserInfo)
-        XCTAssertNotCall(ConnectionRepository_Mock.Signature.updateWebSocketEndpointTokenInfo, on: connectionRepository)
+        connectionRepository.connectResult = .success(())
+        connectionRepository.disconnectResult = .success(())
+
+        let originalTokenProvider: TokenProvider = { $0(.success(.unique())) }
+        let expectation1 = expectation(description: "Completion call 1")
+        repository.connectUser(userInfo: userInfo, tokenProvider: originalTokenProvider, completion: { _ in
+            expectation1.fulfill()
+        })
+
+        waitForExpectations(timeout: defaultTimeout)
+
         XCTAssertEqual(delegate.newStateCalls, 1)
-        XCTAssertEqual(delegate.clearDataCalls, 0)
+        XCTAssertEqual(delegate.newState, .firstConnection)
+        XCTAssertEqual(delegate.logoutCallCount, 0)
+    }
+
+    func test_connectUser_whenSameUser_thenDoNotCallLogout() throws {
+        XCTAssertNil(repository.tokenProvider)
+
+        connectionRepository.connectResult = .success(())
+        connectionRepository.disconnectResult = .success(())
+
+        let userId = UserId.unique
+        let delegate = AuthenticationRepositoryDelegateMock()
+        let token = Token.unique(userId: userId)
+
+        try setCurrentUserId(userId: userId, delegate: delegate)
+
+        let tokenProvider: TokenProvider = { $0(.success(token)) }
+        let expectation = expectation(description: "Completion call")
+        repository.connectUser(userInfo: .init(id: userId), tokenProvider: tokenProvider, completion: { _ in
+            expectation.fulfill()
+        })
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertEqual(delegate.newStateCalls, 1)
+        XCTAssertEqual(delegate.newState, .newToken)
+        XCTAssertEqual(delegate.logoutCallCount, 0)
+    }
+
+    func test_connectUser_whenNewUser_thenCallLogout() throws {
+        XCTAssertNil(repository.tokenProvider)
+
+        let delegate = AuthenticationRepositoryDelegateMock()
+        connectionRepository.connectResult = .success(())
+        connectionRepository.disconnectResult = .success(())
+
+        let userId = UserId.unique
+
+        try setCurrentUserId(userId: userId, delegate: delegate)
+
+        let newUserId = UserId.unique
+        let newUserToken = Token.unique(userId: newUserId)
+        let newTokenProvider: TokenProvider = { $0(.success(newUserToken)) }
+        let expectation = expectation(description: "Completion call")
+        repository.connectUser(userInfo: .init(id: newUserId), tokenProvider: newTokenProvider, completion: { _ in
+            expectation.fulfill()
+        })
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertEqual(delegate.newStateCalls, 1)
         XCTAssertEqual(delegate.newState, .newUser)
+        XCTAssertEqual(delegate.logoutCallCount, 1)
     }
 
     // MARK: Connect guest user
 
     func test_connectGuestUser_isNotGettingToken_tokenProviderFailure() throws {
         let userInfo = UserInfo(id: "123")
+
+        let delegate = AuthenticationRepositoryDelegateMock()
+        repository.delegate = delegate
 
         // Token Provider Failure
         let apiError = TestError()
@@ -589,10 +667,14 @@ final class AuthenticationRepository_Tests: XCTestCase {
         XCTAssertEqual(request.path, .guest)
         XCTAssertNotCall(ConnectionRepository_Mock.Signature.connect, on: connectionRepository)
         XCTAssertNotCall(ConnectionRepository_Mock.Signature.forceConnectionInactiveMode, on: connectionRepository)
+        XCTAssertEqual(delegate.logoutCallCount, 1)
     }
 
     func test_connectGuestUser_isNotGettingToken_tokenProviderSuccess_connectFailure() throws {
         let userInfo = UserInfo(id: "123")
+
+        let delegate = AuthenticationRepositoryDelegateMock()
+        repository.delegate = delegate
 
         // Token Provider Success
         let apiToken = Token.unique()
@@ -629,10 +711,14 @@ final class AuthenticationRepository_Tests: XCTestCase {
         XCTAssertCall(ConnectionRepository_Mock.Signature.connect, on: connectionRepository)
         XCTAssertCall(ConnectionRepository_Mock.Signature.forceConnectionInactiveMode, on: connectionRepository)
         XCTAssertEqual(receivedError, testError)
+        XCTAssertEqual(delegate.logoutCallCount, 1)
     }
 
     func test_connectGuestUser_isNotGettingToken_tokenProviderSuccess_connectSuccess() throws {
         let userInfo = UserInfo(id: "123")
+
+        let delegate = AuthenticationRepositoryDelegateMock()
+        repository.delegate = delegate
 
         // Token Provider Success
         let apiToken = Token.unique()
@@ -668,6 +754,35 @@ final class AuthenticationRepository_Tests: XCTestCase {
         XCTAssertCall(ConnectionRepository_Mock.Signature.connect, on: connectionRepository)
         XCTAssertCall(ConnectionRepository_Mock.Signature.forceConnectionInactiveMode, on: connectionRepository)
         XCTAssertNil(receivedError)
+        XCTAssertEqual(delegate.logoutCallCount, 1)
+    }
+
+    // MARK: Connect anonymous user
+
+    func test_connectAnonymousUser() throws {
+        let delegate = AuthenticationRepositoryDelegateMock()
+        repository.delegate = delegate
+
+        connectionRepository.connectResult = .success(())
+
+        let completionExpectation = expectation(description: "Connect completion")
+        var receivedError: Error?
+        XCTAssertNil(repository.tokenProvider)
+
+        repository.connectAnonymousUser(completion: { error in
+            receivedError = error
+            completionExpectation.fulfill()
+        })
+
+        XCTAssertNotNil(repository.tokenProvider)
+        waitForExpectations(timeout: 1_000_000)
+        XCTAssertTrue(repository.currentToken?.userId.isAnonymousUser == true)
+        XCTAssertTrue(connectionRepository.updateWebSocketEndpointToken?.userId.isAnonymousUser == true)
+        XCTAssertNil(connectionRepository.updateWebSocketEndpointUserInfo)
+        XCTAssertCall(ConnectionRepository_Mock.Signature.connect, on: connectionRepository)
+        XCTAssertCall(ConnectionRepository_Mock.Signature.forceConnectionInactiveMode, on: connectionRepository)
+        XCTAssertNil(receivedError)
+        XCTAssertEqual(delegate.logoutCallCount, 1)
     }
 
     // MARK: Clear Token Provider
@@ -866,6 +981,23 @@ final class AuthenticationRepository_Tests: XCTestCase {
         XCTAssertEqual(result?.value, token)
     }
 
+    // MARK: EnvironmentState
+
+    func test_environmentState_nilCurrentUserId() {
+        let state = EnvironmentState(currentUserId: nil, newUserId: "123")
+        XCTAssertEqual(state, .firstConnection)
+    }
+
+    func test_environmentState_currentUserId_differentThanNew() {
+        let state = EnvironmentState(currentUserId: "000", newUserId: "123")
+        XCTAssertEqual(state, .newUser)
+    }
+
+    func test_environmentState_currentUserId_equalToNew() {
+        let state = EnvironmentState(currentUserId: "123", newUserId: "123")
+        XCTAssertEqual(state, .newToken)
+    }
+
     // MARK: Helpers
 
     private func testPrepareEnvironmentAfterConnect(
@@ -891,13 +1023,8 @@ final class AuthenticationRepository_Tests: XCTestCase {
         XCTAssertNotNil(repository.tokenProvider)
         waitForExpectations(timeout: defaultTimeout)
 
-        if connectionRepository.isClientInActiveMode {
-            XCTAssertCall(ConnectionRepository_Mock.Signature.connect, on: connectionRepository)
-            XCTAssertCall(ConnectionRepository_Mock.Signature.forceConnectionInactiveMode, on: connectionRepository)
-        } else {
-            XCTAssertNotCall(ConnectionRepository_Mock.Signature.connect, on: connectionRepository)
-            XCTAssertNotCall(ConnectionRepository_Mock.Signature.forceConnectionInactiveMode, on: connectionRepository)
-        }
+        XCTAssertCall(ConnectionRepository_Mock.Signature.connect, on: connectionRepository)
+        XCTAssertCall(ConnectionRepository_Mock.Signature.forceConnectionInactiveMode, on: connectionRepository)
         return receivedError
     }
 
@@ -918,6 +1045,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
     }
 
     private func setTokenProvider(mockedResult: Result<Token, Error>, delay: DispatchTimeInterval? = nil) throws {
+        let userInfo = UserInfo(id: "123")
         retryStrategy.mock_nextRetryDelay.returns(0)
         let tokenProvider: TokenProvider = { completion in
             if let delay = delay {
@@ -931,7 +1059,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         connectionRepository.connectResult = .success(())
         var isFirstTime = true
         let expectation = self.expectation(description: "connect completes")
-        repository.connectUser(userInfo: nil, tokenProvider: tokenProvider, completion: { _ in
+        repository.connectUser(userInfo: userInfo, tokenProvider: tokenProvider, completion: { _ in
             if isFirstTime {
                 expectation.fulfill()
             }
@@ -942,11 +1070,26 @@ final class AuthenticationRepository_Tests: XCTestCase {
         connectionRepository.cleanUp()
         retryStrategy.clear()
     }
+
+    private func setCurrentUserId(userId: UserId, delegate: AuthenticationRepositoryDelegateMock) throws {
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: CurrentUserPayload.dummy(userId: userId, role: .user))
+        }
+
+        repository = AuthenticationRepository(
+            apiClient: apiClient,
+            databaseContainer: database,
+            connectionRepository: connectionRepository,
+            tokenExpirationRetryStrategy: retryStrategy,
+            timerType: DefaultTimer.self
+        )
+        repository.delegate = delegate
+    }
 }
 
 private class AuthenticationRepositoryDelegateMock: AuthenticationRepositoryDelegate {
     var newState: EnvironmentState?
-    var clearDataCalls: Int = 0
+    var logoutCallCount: Int = 0
     var newStateCalls: Int = 0
 
     func didFinishSettingUpAuthenticationEnvironment(for state: EnvironmentState) {
@@ -954,9 +1097,9 @@ private class AuthenticationRepositoryDelegateMock: AuthenticationRepositoryDele
         newState = state
     }
 
-    func clearCurrentUserData(completion: @escaping (Error?) -> Void) {
-        clearDataCalls += 1
-        completion(nil)
+    func logOutUser(completion: @escaping () -> Void) {
+        logoutCallCount += 1
+        completion()
     }
 }
 
