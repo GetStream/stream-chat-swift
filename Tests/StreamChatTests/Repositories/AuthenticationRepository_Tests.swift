@@ -433,7 +433,42 @@ final class AuthenticationRepository_Tests: XCTestCase {
         XCTAssertEqual(connectionRepository.updateWebSocketEndpointUserInfo, newUserInfo)
         XCTAssertCall(ConnectionRepository_Mock.Signature.updateWebSocketEndpointTokenInfo, on: connectionRepository)
         XCTAssertEqual(delegate.newStateCalls, 1)
+        XCTAssertEqual(delegate.logoutCallCount, 0)
         XCTAssertEqual(delegate.newState, .firstConnection)
+    }
+
+    func test_connectUser_prepareEnvironment_differentUserIdThanUserInfo() {
+        let Logger_Spy = Logger_Spy()
+        Logger_Spy.injectMock()
+        let delegate = AuthenticationRepositoryDelegateMock()
+        let existingUserId = "user2"
+        let existingUserInfo = UserInfo(id: existingUserId)
+        let existingToken = Token.unique(userId: existingUserId)
+
+        repository.setToken(token: existingToken, completeTokenWaiters: false)
+
+        XCTAssertEqual(repository.currentToken, existingToken)
+        XCTAssertEqual(repository.currentUserId, existingUserId)
+
+        let otherUserId = "otheruser"
+        let newToken = Token.unique(userId: otherUserId)
+
+        repository.delegate = delegate
+        let error = testPrepareEnvironmentAfterConnect(existingToken: nil, newUserInfo: existingUserInfo, newToken: newToken)
+
+        XCTAssertNil(error)
+        XCTAssertEqual(repository.currentUserId, otherUserId)
+        XCTAssertEqual(repository.currentToken, newToken)
+        XCTAssertEqual(connectionRepository.updateWebSocketEndpointToken, newToken)
+        XCTAssertEqual(connectionRepository.updateWebSocketEndpointUserInfo, existingUserInfo)
+        XCTAssertCall(ConnectionRepository_Mock.Signature.updateWebSocketEndpointTokenInfo, on: connectionRepository)
+        XCTAssertEqual(delegate.newStateCalls, 1)
+        XCTAssertEqual(delegate.logoutCallCount, 0)
+        XCTAssertEqual(delegate.newState, .newUser)
+
+        // Should fail when asserting that user ids match
+        XCTAssertEqual(Logger_Spy.failedAsserts, 1)
+        Logger_Spy.restoreLogger()
     }
 
     func test_connectUser_prepareEnvironment_sameUser() {
@@ -459,6 +494,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         XCTAssertEqual(connectionRepository.updateWebSocketEndpointUserInfo, existingUserInfo)
         XCTAssertCall(ConnectionRepository_Mock.Signature.updateWebSocketEndpointTokenInfo, on: connectionRepository)
         XCTAssertEqual(delegate.newStateCalls, 1)
+        XCTAssertEqual(delegate.logoutCallCount, 0)
         XCTAssertEqual(delegate.newState, .newToken)
     }
 
@@ -486,6 +522,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         XCTAssertEqual(connectionRepository.updateWebSocketEndpointToken, newToken)
         XCTAssertCall(ConnectionRepository_Mock.Signature.updateWebSocketEndpointTokenInfo, on: connectionRepository)
         XCTAssertEqual(delegate.newStateCalls, 1)
+        XCTAssertEqual(delegate.logoutCallCount, 0)
         XCTAssertEqual(delegate.newState, .newToken)
     }
 

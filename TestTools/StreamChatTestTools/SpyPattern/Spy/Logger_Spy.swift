@@ -8,6 +8,7 @@ import Foundation
 final class Logger_Spy: Logger, Spy {
     var originalLogger: Logger?
     var recordedFunctions: [String] = []
+    var failedAsserts: Int = 0
 
     func injectMock() {
         let logger = LogConfig.logger
@@ -39,6 +40,7 @@ final class Logger_Spy: Logger, Spy {
         lineNumber: UInt = #line
     ) {
         record()
+        failedAsserts += condition() ? 0 : 1
     }
 
     override func assertionFailure(
@@ -49,5 +51,6 @@ final class Logger_Spy: Logger, Spy {
         lineNumber: UInt = #line
     ) {
         record()
+        failedAsserts += 1
     }
 }
