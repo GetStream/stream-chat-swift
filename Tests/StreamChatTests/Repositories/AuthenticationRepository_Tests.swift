@@ -325,6 +325,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
     }
 
     func test_connectUser_updatesTokenProvider() throws {
+        let userInfo = UserInfo(id: "123")
         XCTAssertNil(repository.tokenProvider)
 
         let delegate = AuthenticationRepositoryDelegateMock()
@@ -335,7 +336,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
 
         connectionRepository.connectResult = .success(())
 
-        repository.connectUser(userInfo: nil, tokenProvider: originalTokenProvider, completion: { _ in
+        repository.connectUser(userInfo: userInfo, tokenProvider: originalTokenProvider, completion: { _ in
             originalProviderCalled.fulfill()
         })
         XCTAssertNotNil(repository.tokenProvider)
@@ -346,11 +347,12 @@ final class AuthenticationRepository_Tests: XCTestCase {
         let newTokenProvider: TokenProvider = { _ in
             expectation.fulfill()
         }
-        repository.connectUser(userInfo: nil, tokenProvider: newTokenProvider, completion: { _ in })
+        repository.connectUser(userInfo: userInfo, tokenProvider: newTokenProvider, completion: { _ in })
         waitForExpectations(timeout: defaultTimeout)
     }
 
     func test_connectUser_clearsTokenCompletionsQueueAfterSuccess() throws {
+        let userInfo = UserInfo(id: "123")
         XCTAssertNil(repository.tokenProvider)
 
         let delegate = AuthenticationRepositoryDelegateMock()
@@ -364,7 +366,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
 
         let originalTokenProvider: TokenProvider = { $0(.success(.unique())) }
         let expectation1 = expectation(description: "Completion call 1")
-        repository.connectUser(userInfo: nil, tokenProvider: originalTokenProvider, completion: { _ in
+        repository.connectUser(userInfo: userInfo, tokenProvider: originalTokenProvider, completion: { _ in
             initialCompletionCalls += 1
             expectation1.fulfill()
         })
@@ -381,7 +383,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         var newTokenCompletionCalls = 0
         let expectation2 = expectation(description: "Completion call 2")
         let newTokenProvider: TokenProvider = { $0(.success(.unique(userId: newUserId))) }
-        repository.connectUser(userInfo: nil, tokenProvider: newTokenProvider, completion: { _ in
+        repository.connectUser(userInfo: userInfo, tokenProvider: newTokenProvider, completion: { _ in
             newTokenCompletionCalls += 1
             expectation2.fulfill()
         })
@@ -398,7 +400,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         var refreshTokenCompletionCalls = 0
         let expectation3 = expectation(description: "Completion call 2")
         let refreshTokenProvider: TokenProvider = { $0(.success(.unique(userId: newUserId))) }
-        repository.connectUser(userInfo: nil, tokenProvider: refreshTokenProvider, completion: { _ in
+        repository.connectUser(userInfo: userInfo, tokenProvider: refreshTokenProvider, completion: { _ in
             refreshTokenCompletionCalls += 1
             expectation3.fulfill()
         })
@@ -524,6 +526,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
     }
 
     func test_connectUser_whenFirstConnection_thenDoNotCallLogout() {
+        let userInfo = UserInfo(id: "123")
         XCTAssertNil(repository.tokenProvider)
 
         let delegate = AuthenticationRepositoryDelegateMock()
@@ -537,7 +540,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
 
         let originalTokenProvider: TokenProvider = { $0(.success(.unique())) }
         let expectation1 = expectation(description: "Completion call 1")
-        repository.connectUser(userInfo: nil, tokenProvider: originalTokenProvider, completion: { _ in
+        repository.connectUser(userInfo: userInfo, tokenProvider: originalTokenProvider, completion: { _ in
             initialCompletionCalls += 1
             expectation1.fulfill()
         })
@@ -943,6 +946,23 @@ final class AuthenticationRepository_Tests: XCTestCase {
         XCTAssertEqual(result?.value, token)
     }
 
+    // MARK: EnvironmentState
+
+    func test_environmentState_nilCurrentUserId() {
+        let state = EnvironmentState(currentUserId: nil, newUserId: "123")
+        XCTAssertEqual(state, .firstConnection)
+    }
+
+    func test_environmentState_currentUserId_differentThanNew() {
+        let state = EnvironmentState(currentUserId: "000", newUserId: "123")
+        XCTAssertEqual(state, .newUser)
+    }
+
+    func test_environmentState_currentUserId_equalToNew() {
+        let state = EnvironmentState(currentUserId: "123", newUserId: "123")
+        XCTAssertEqual(state, .newToken)
+    }
+
     // MARK: Helpers
 
     private func testPrepareEnvironmentAfterConnect(
@@ -990,6 +1010,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
     }
 
     private func setTokenProvider(mockedResult: Result<Token, Error>, delay: DispatchTimeInterval? = nil) throws {
+        let userInfo = UserInfo(id: "123")
         retryStrategy.mock_nextRetryDelay.returns(0)
         let tokenProvider: TokenProvider = { completion in
             if let delay = delay {
@@ -1003,7 +1024,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         connectionRepository.connectResult = .success(())
         var isFirstTime = true
         let expectation = self.expectation(description: "connect completes")
-        repository.connectUser(userInfo: nil, tokenProvider: tokenProvider, completion: { _ in
+        repository.connectUser(userInfo: userInfo, tokenProvider: tokenProvider, completion: { _ in
             if isFirstTime {
                 expectation.fulfill()
             }
@@ -1026,7 +1047,7 @@ private class AuthenticationRepositoryDelegateMock: AuthenticationRepositoryDele
         newState = state
     }
 
-    func logoutUser(completion: @escaping () -> Void) {
+    func logOutUser(completion: @escaping () -> Void) {
         logoutCallCount += 1
         completion()
     }

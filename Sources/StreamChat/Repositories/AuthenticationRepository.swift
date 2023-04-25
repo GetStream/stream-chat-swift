@@ -11,7 +11,7 @@ enum EnvironmentState {
     case newToken
     case newUser
 
-    init(currentUserId: UserId?, newUserId: UserId?) {
+    init(currentUserId: UserId?, newUserId: UserId) {
         if currentUserId == nil {
             self = .firstConnection
         } else if currentUserId == newUserId {

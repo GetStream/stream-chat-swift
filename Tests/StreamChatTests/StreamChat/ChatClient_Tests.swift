@@ -599,7 +599,7 @@ final class ChatClient_Tests: XCTestCase {
         let authenticationRepository = try XCTUnwrap(client.authenticationRepository as? AuthenticationRepository_Mock)
         let expectation = self.expectation(description: "Connect completes")
 
-        authenticationRepository.connectUserResult = .failure(testError)
+        authenticationRepository.connectAnonResult = .failure(testError)
         var receivedError: Error?
         client.connectAnonymousUser {
             receivedError = $0
@@ -607,7 +607,7 @@ final class ChatClient_Tests: XCTestCase {
         }
         waitForExpectations(timeout: defaultTimeout)
 
-        XCTAssertCall(AuthenticationRepository_Mock.Signature.connectTokenProvider, on: authenticationRepository)
+        XCTAssertCall(AuthenticationRepository_Mock.Signature.connectAnon, on: authenticationRepository)
         XCTAssertEqual(receivedError, testError)
     }
 
@@ -616,7 +616,7 @@ final class ChatClient_Tests: XCTestCase {
         let authenticationRepository = try XCTUnwrap(client.authenticationRepository as? AuthenticationRepository_Mock)
         let expectation = self.expectation(description: "Connect completes")
 
-        authenticationRepository.connectUserResult = .success(())
+        authenticationRepository.connectAnonResult = .success(())
         var receivedError: Error?
         client.connectAnonymousUser {
             receivedError = $0
@@ -624,7 +624,7 @@ final class ChatClient_Tests: XCTestCase {
         }
         waitForExpectations(timeout: defaultTimeout)
 
-        XCTAssertCall(AuthenticationRepository_Mock.Signature.connectTokenProvider, on: authenticationRepository)
+        XCTAssertCall(AuthenticationRepository_Mock.Signature.connectAnon, on: authenticationRepository)
         XCTAssertNil(receivedError)
     }
 

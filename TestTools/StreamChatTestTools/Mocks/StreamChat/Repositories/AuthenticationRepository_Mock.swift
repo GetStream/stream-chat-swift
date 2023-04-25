@@ -10,6 +10,7 @@ class AuthenticationRepository_Mock: AuthenticationRepository, Spy {
     enum Signature {
         static let connectTokenProvider = "connectUser(userInfo:tokenProvider:completion:)"
         static let connectGuest = "connectGuestUser(userInfo:completion:)"
+        static let connectAnon = "connectAnonymousUser(completion:)"
         static let refreshToken = "refreshToken(completion:)"
         static let clearTokenProvider = "clearTokenProvider()"
         static let logOut = "logOutUser()"
@@ -24,6 +25,7 @@ class AuthenticationRepository_Mock: AuthenticationRepository, Spy {
 
     var connectUserResult: Result<Void, Error>?
     var connectGuestResult: Result<Void, Error>?
+    var connectAnonResult: Result<Void, Error>?
     var refreshTokenResult: Result<Void, Error>?
     var completeWaitersToken: Token?
 
@@ -69,6 +71,13 @@ class AuthenticationRepository_Mock: AuthenticationRepository, Spy {
     override func connectGuestUser(userInfo: UserInfo, completion: @escaping (Error?) -> Void) {
         record()
         if let result = connectGuestResult {
+            completion(result.error)
+        }
+    }
+
+    override func connectAnonymousUser(completion: @escaping (Error?) -> Void) {
+        record()
+        if let result = connectAnonResult {
             completion(result.error)
         }
     }
