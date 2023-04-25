@@ -14,21 +14,17 @@ enum EnvironmentState {
     init(currentUserId: UserId?, newUserId: UserId?) {
         if currentUserId == nil {
             self = .firstConnection
-            return
-        }
-        
-        if currentUserId == newUserId {
+        } else if currentUserId == newUserId {
             self = .newToken
-            return
+        } else {
+            self = .newUser
         }
-
-        self = .newUser
     }
 }
 
 protocol AuthenticationRepositoryDelegate: AnyObject {
     func didFinishSettingUpAuthenticationEnvironment(for state: EnvironmentState)
-    func logoutUser(completion: @escaping () -> Void)
+    func logOutUser(completion: @escaping () -> Void)
 }
 
 class AuthenticationRepository {
@@ -144,11 +140,40 @@ class AuthenticationRepository {
         updateToken(token: token, notifyTokenWaiters: completeTokenWaiters)
     }
 
-    /// Establishes a connection for a  user.
+    /// Establishes a connection for a non anonymous user.
     /// - Parameters:
     ///   - userInfo:       The user information that will be created OR updated if it exists.
     ///   - tokenProvider:  The block to be used to get a token.
-    func connectUser(userInfo: UserInfo?, tokenProvider: @escaping TokenProvider, completion: @escaping (Error?) -> Void) {
+    func connectUser(userInfo: UserInfo, tokenProvider: @escaping TokenProvider, completion: @escaping (Error?) -> Void) {
+        var logOutFirst: Bool {
+            if let currentUserId = currentUserId, currentUserId.isGuest {
+                return true
+            }
+
+            let state = EnvironmentState(currentUserId: currentUserId, newUserId: userInfo.id)
+            return state == .newUser
+        }
+
+        executeTokenFetch(logOutFirst: logOutFirst, userInfo: userInfo, tokenProvider: tokenProvider, completion: completion)
+    }
+
+    /// Establishes a connection for a guest user.
+    /// - Parameters:
+    ///   - userInfo: The user information that will be created OR updated if it exists.
+    func connectGuestUser(userInfo: UserInfo, completion: @escaping (Error?) -> Void) {
+        let tokenProvider: TokenProvider = { [weak self] completion in
+            self?.fetchGuestToken(userInfo: userInfo, completion: completion)
+        }
+        executeTokenFetch(logOutFirst: true, userInfo: userInfo, tokenProvider: tokenProvider, completion: completion)
+    }
+
+    /// Establishes a connection for an anonymous user.
+    func connectAnonymousUser(completion: @escaping (Error?) -> Void) {
+        let tokenProvider: TokenProvider = { $0(.success(.anonymous)) }
+        executeTokenFetch(logOutFirst: true, userInfo: nil, tokenProvider: tokenProvider, completion: completion)
+    }
+
+    private func executeTokenFetch(logOutFirst: Bool, userInfo: UserInfo?, tokenProvider: @escaping TokenProvider, completion: @escaping (Error?) -> Void) {
         log.assert(delegate != nil, "Delegate should not be nil at this point")
 
         let handleTokenFetch = { [weak self] in
@@ -156,29 +181,16 @@ class AuthenticationRepository {
             self?.scheduleTokenFetch(isRetry: false, userInfo: userInfo, tokenProvider: tokenProvider, completion: completion)
         }
 
-        let state = EnvironmentState(currentUserId: currentUserId, newUserId: userInfo?.id)
-
-        switch state {
-        case .firstConnection, .newToken:
+        guard logOutFirst else {
             handleTokenFetch()
-        case .newUser:
-            delegate?.logoutUser {
-                handleTokenFetch()
-            }
+            return
         }
-    }
 
-    /// Establishes a connection for a guest user.
-    /// - Parameters:
-    ///   - userInfo: The user information that will be created OR updated if it exists.
-    func connectGuestUser(userInfo: UserInfo, completion: @escaping (Error?) -> Void) {
-        connectUser(
-            userInfo: userInfo,
-            tokenProvider: { [weak self] completion in
-                self?.fetchGuestToken(userInfo: userInfo, completion: completion)
-            },
-            completion: completion
-        )
+        if let delegate = delegate {
+            delegate.logOutUser(completion: handleTokenFetch)
+        } else {
+            handleTokenFetch()
+        }
     }
 
     func clearTokenProvider() {
@@ -207,12 +219,16 @@ class AuthenticationRepository {
         userInfo: UserInfo?,
         newToken: Token
     ) {
-        let state = EnvironmentState(
-            currentUserId: currentUserId,
-            newUserId: newToken.userId
-        )
+        let state = EnvironmentState(currentUserId: currentUserId, newUserId: newToken.userId)
 
         log.assert(delegate != nil, "Delegate should not be nil at this point")
+
+        if let userInfo = userInfo, !newToken.userId.isGuest {
+            log.assert(
+                userInfo.id == newToken.userId,
+                "The id of the retrieved token should match the user information passed to connect"
+            )
+        }
 
         switch state {
         case .firstConnection, .newToken:
@@ -222,6 +238,7 @@ class AuthenticationRepository {
 
         case .newUser:
             completeTokenWaiters(token: nil)
+            connectionRepository.updateWebSocketEndpoint(with: newToken, userInfo: userInfo)
             setToken(token: newToken, completeTokenWaiters: false)
             delegate?.didFinishSettingUpAuthenticationEnvironment(for: state)
         }
@@ -380,5 +397,11 @@ extension ClientError {
                 Please make sure that your `tokenProvider` is correctly functioning.
             """
         }
+    }
+}
+
+private extension UserId {
+    var isGuest: Bool {
+        hasPrefix(UserRole.guest.rawValue)
     }
 }
