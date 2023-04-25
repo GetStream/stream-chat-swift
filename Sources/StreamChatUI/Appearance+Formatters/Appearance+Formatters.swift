@@ -30,6 +30,12 @@ public extension Appearance {
         /// A formatter used for text Markdown
         public var markdownFormatter: MarkdownFormatter = DefaultMarkdownFormatter()
 
+        /// A formatter that converts an audio playback rate to textual representation.
+        public var audioPlaybackRateFormatter: AudioPlaybackRateFormatter = DefaultAudioPlaybackRateFormatter()
+
+        /// A formatter that converts an audio playback rate to textual representation.
+        public var audioRecordingNameFormatter: AudioRecordingNameFormatter = DefaultAudioRecordingNameFormatter()
+
         /// A boolean value that determines whether Markdown is active for messages to be formatted.
         public var isMarkdownEnabled = true
     }

@@ -88,3 +88,23 @@ public extension ChatMessageAttachment where Payload: AttachmentPayload {
         )
     }
 }
+
+public extension ChatMessageAttachment where Payload: AttachmentPayload {
+    func castAs<NewPayload: AttachmentPayload>(
+        payloadType: NewPayload.Type
+    ) -> ChatMessageAttachment<NewPayload>? {
+        guard
+            let payloadData = try? JSONEncoder.stream.encode(payload),
+            let concretePayload = try? JSONDecoder.stream.decode(NewPayload.self, from: payloadData)
+        else {
+            return nil
+        }
+
+        return .init(
+            id: id,
+            type: .file,
+            payload: concretePayload,
+            uploadingState: uploadingState
+        )
+    }
+}

@@ -28,6 +28,7 @@ public struct LocalAttachmentInfoKey: Hashable, Equatable, RawRepresentable {
 /// The possible composer states. An Enum is not used so it does not cause
 /// future breaking changes and is possible to extend with new cases.
 public struct ComposerState: RawRepresentable, Equatable {
+    public typealias RawValue = String
     public let rawValue: String
     public var description: String { rawValue.uppercased() }
 
@@ -38,6 +39,8 @@ public struct ComposerState: RawRepresentable, Equatable {
     public static var new = ComposerState(rawValue: "new")
     public static var edit = ComposerState(rawValue: "edit")
     public static var quote = ComposerState(rawValue: "quote")
+    public static var recording = ComposerState(rawValue: "recording")
+    public static var recordingLocked = ComposerState(rawValue: "recordingLocked")
 }
 
 /// A view controller that manages the composer view.
@@ -49,7 +52,7 @@ open class ComposerVC: _ViewController,
     UINavigationControllerDelegate,
     InputTextViewClipboardAttachmentDelegate {
     /// The content of the composer.
-    public struct Content {
+    public struct Content: Equatable {
         /// The text of the input text view.
         public var text: String
         /// The state of the composer.
@@ -227,6 +230,48 @@ open class ComposerVC: _ViewController,
                 cooldownTime: 0
             )
         }
+
+        public mutating func recording() {
+            self = .init(
+                text: text,
+                state: .recording,
+                editingMessage: editingMessage,
+                quotingMessage: quotingMessage,
+                threadMessage: threadMessage,
+                attachments: attachments,
+                mentionedUsers: mentionedUsers,
+                command: command
+            )
+        }
+
+        public mutating func recordingLocked() {
+            self = .init(
+                text: text,
+                state: .recordingLocked,
+                editingMessage: editingMessage,
+                quotingMessage: quotingMessage,
+                threadMessage: threadMessage,
+                attachments: attachments,
+                mentionedUsers: mentionedUsers,
+                command: command
+            )
+        }
+
+        public static func == (
+            lhs: Content,
+            rhs: Content
+        ) -> Bool {
+            lhs.text == rhs.text
+                && lhs.state == rhs.state
+                && lhs.editingMessage == rhs.editingMessage
+                && lhs.quotingMessage == rhs.quotingMessage
+                && lhs.threadMessage == rhs.threadMessage
+                && lhs.attachments.map(\.localFileURL) == rhs.attachments.map(\.localFileURL)
+                && lhs.mentionedUsers == rhs.mentionedUsers
+                && lhs.command == rhs.command
+                && lhs.extraData == rhs.extraData
+                && lhs.cooldownTime == rhs.cooldownTime
+        }
     }
 
     /// The content of the composer.
@@ -288,7 +333,15 @@ open class ComposerVC: _ViewController,
         )
     )
 
-    /// The view of the composer.
+    open lazy var recordingViewManager = RecordingViewManager(self)
+
+    open var audioPlayer: AudioPlaying? {
+        didSet {
+            attachmentsVC.audioPlayer = audioPlayer
+            recordingViewManager.audioPlayer = audioPlayer
+        }
+    }
+
     open private(set) lazy var composerView: ComposerView = components
         .messageComposerView.init()
         .withoutAutoresizingMaskConstraints
@@ -350,6 +403,8 @@ open class ComposerVC: _ViewController,
             for: .touchUpInside
         )
 
+        recordingViewManager.setUp()
+
         channelController?.delegate = self
 
         setupAttachmentsView()
@@ -403,24 +458,48 @@ open class ComposerVC: _ViewController,
             Animate {
                 self.composerView.confirmButton.isHidden = true
                 self.composerView.sendButton.isHidden = self.content.isSlowModeOn
+                self.composerView.recordButton.isHidden = self.composerView.sendButton.isHidden || !self.components.asyncMessagesEnabled
                 self.composerView.headerView.isHidden = true
                 self.composerView.cooldownView.isHidden = !self.content.isSlowModeOn
+                self.composerView.leadingContainer.isHidden = false
+                self.composerView.inputMessageView.isHidden = false
+            }
+        case .recording:
+            Animate {
+                self.composerView.confirmButton.isHidden = true
+                self.composerView.sendButton.isHidden = true
+                self.composerView.recordButton.isHidden = false
+                self.composerView.headerView.isHidden = true
+                self.composerView.cooldownView.isHidden = true
+                self.composerView.leadingContainer.isHidden = true
+                self.composerView.inputMessageView.isHidden = true
+            }
+        case .recordingLocked:
+            Animate {
+                self.composerView.headerView.isHidden = false
+                self.composerView.recordButton.isHidden = true
             }
         case .quote:
             composerView.titleLabel.text = L10n.Composer.Title.reply
             Animate {
                 self.composerView.confirmButton.isHidden = true
                 self.composerView.sendButton.isHidden = self.content.isSlowModeOn
+                self.composerView.recordButton.isHidden = self.composerView.sendButton.isHidden || !self.components.asyncMessagesEnabled
                 self.composerView.headerView.isHidden = false
                 self.composerView.cooldownView.isHidden = !self.content.isSlowModeOn
+                self.composerView.leadingContainer.isHidden = false
+                self.composerView.inputMessageView.isHidden = false
             }
         case .edit:
             composerView.titleLabel.text = L10n.Composer.Title.edit
             Animate {
                 self.composerView.confirmButton.isHidden = false
                 self.composerView.sendButton.isHidden = true
+                self.composerView.recordButton.isHidden = self.composerView.sendButton.isHidden
                 self.composerView.headerView.isHidden = false
                 self.composerView.cooldownView.isHidden = true
+                self.composerView.leadingContainer.isHidden = false
+                self.composerView.inputMessageView.isHidden = false
             }
         default:
             log.warning("The composer state \(content.state.description) was not handled.")
@@ -835,7 +914,7 @@ open class ComposerVC: _ViewController,
         suggestionsVC.removeFromParent()
         suggestionsVC.view.removeFromSuperview()
     }
-
+    
     /// Creates and adds an attachment from the given URL to the `content`
     /// - Parameters:
     ///   - url: The URL of the attachment
@@ -855,7 +934,8 @@ open class ComposerVC: _ViewController,
     open func addAttachmentToContent(
         from url: URL,
         type: AttachmentType,
-        info: [LocalAttachmentInfoKey: Any]
+        info: [LocalAttachmentInfoKey: Any],
+        extraData: Encodable? = nil
     ) throws {
         guard let chatConfig = channelController?.client.config else {
             log.assertionFailure("Channel controller must be set at this point")
@@ -885,7 +965,8 @@ open class ComposerVC: _ViewController,
         let attachment = try AnyAttachmentPayload(
             localFileURL: url,
             attachmentType: type,
-            localMetadata: localMetadata
+            localMetadata: localMetadata,
+            extraData: extraData
         )
         content.attachments.append(attachment)
     }

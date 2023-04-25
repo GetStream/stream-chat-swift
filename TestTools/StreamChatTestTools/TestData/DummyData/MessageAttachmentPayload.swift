@@ -141,4 +141,36 @@ extension MessageAttachmentPayload {
             ])
         )
     }
+
+    static func audio(
+        title: String = .unique,
+        audioURL: URL = URL(string: "https://getstream.io/audio.mp3")!,
+        file: AttachmentFile = .init(type: .mov, size: 1024, mimeType: "audio/mp3")
+    ) -> Self {
+        .init(
+            type: .audio,
+            payload: .dictionary([
+                "title": .string(title),
+                "asset_url": .string(audioURL.absoluteString),
+                "mime_type": .string(file.mimeType!),
+                "file_size": .string("\(file.size)")
+            ])
+        )
+    }
+
+    static func voiceRecording(
+        title: String = .unique,
+        audioURL: URL = URL(string: "https://getstream.io/recording.aac")!,
+        file: AttachmentFile = .init(type: .mov, size: 1024, mimeType: "audio/aac")
+    ) -> Self {
+        .init(
+            type: .voiceRecording,
+            payload: .dictionary([
+                "title": .string(title),
+                "asset_url": .string(audioURL.absoluteString),
+                "mime_type": .string(file.mimeType!),
+                "file_size": .string("\(file.size)")
+            ])
+        )
+    }
 }

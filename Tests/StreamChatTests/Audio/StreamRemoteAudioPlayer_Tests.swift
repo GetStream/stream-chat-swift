@@ -12,6 +12,8 @@ final class StreamRemoteAudioPlayer_Tests: XCTestCase {
     private var audioPlayerDelegate: MockAudioPlayerDelegate!
     private var assetPropertyLoader: MockAssetPropertyLoader!
     private var playerObserver: MockAudioPlayerObserver!
+    private var audioSessionConfigurator: MockAudioSessionConfiguring!
+    private var appStateObserver: MockAppStateObserver!
     private var player: MockAVPlayer!
     private var subject: StreamRemoteAudioPlayer!
 
@@ -28,7 +30,9 @@ final class StreamRemoteAudioPlayer_Tests: XCTestCase {
         subject = .init(
             assetPropertyLoader: assetPropertyLoader,
             playerObserver: playerObserver,
-            player: player
+            player: player,
+            audioSessionConfigurator: audioSessionConfigurator,
+            appStateObserver: appStateObserver
         )
 
         player.mockPlayerObserver = playerObserver
@@ -37,6 +41,8 @@ final class StreamRemoteAudioPlayer_Tests: XCTestCase {
     override func tearDownWithError() throws {
         subject = nil
         player = nil
+        appStateObserver = nil
+        audioSessionConfigurator = nil
         playerObserver = nil
         assetPropertyLoader = nil
         audioPlayerDelegate = nil
@@ -78,8 +84,7 @@ final class StreamRemoteAudioPlayer_Tests: XCTestCase {
         mockAsset.stubProperty(\.duration, with: assetDuration)
         assetPropertyLoader.loadPropertiesResult = .success(mockAsset)
         subject.loadAsset(
-            from: assetURL,
-            andConnectDelegate: audioPlayerDelegate
+            from: assetURL
         )
 
         player.rate = 2
@@ -98,8 +103,7 @@ final class StreamRemoteAudioPlayer_Tests: XCTestCase {
         assetPropertyLoader.loadPropertiesResult = .success(mockAsset)
         player.holdSeekCompletion = true
         subject.loadAsset(
-            from: assetURL,
-            andConnectDelegate: audioPlayerDelegate
+            from: assetURL
         )
         subject.seek(to: 10)
 
@@ -128,8 +132,7 @@ final class StreamRemoteAudioPlayer_Tests: XCTestCase {
     func test_timeControlStatusObserver_newStateIsPausedCurrentStateIsLoading_delegateWasCalledWithExpectedContext() {
         assetPropertyLoader.holdLoadProperties = true
         subject.loadAsset(
-            from: assetURL,
-            andConnectDelegate: audioPlayerDelegate
+            from: assetURL
         )
 
         playerObserver.addTimeControlStatusObserverWaCalledWithBlock?(.paused)
@@ -147,8 +150,7 @@ final class StreamRemoteAudioPlayer_Tests: XCTestCase {
         mockAsset.stubProperty(\.duration, with: assetDuration)
         assetPropertyLoader.loadPropertiesResult = .success(mockAsset)
         subject.loadAsset(
-            from: assetURL,
-            andConnectDelegate: audioPlayerDelegate
+            from: assetURL
         )
 
         playerObserver.addTimeControlStatusObserverWaCalledWithBlock?(.paused)
@@ -166,8 +168,7 @@ final class StreamRemoteAudioPlayer_Tests: XCTestCase {
         mockAsset.stubProperty(\.duration, with: assetDuration)
         assetPropertyLoader.loadPropertiesResult = .success(mockAsset)
         subject.loadAsset(
-            from: assetURL,
-            andConnectDelegate: audioPlayerDelegate
+            from: assetURL
         )
         playerObserver.addStoppedPlaybackObserverWasCalledWithBlock?(.init(url: assetURL))
 
@@ -193,8 +194,7 @@ final class StreamRemoteAudioPlayer_Tests: XCTestCase {
     func test_timeControlStatusObserver_newStateIsPlayingCurrentStateIsLoading_delegateWasCalledWithExpectedContext() {
         assetPropertyLoader.holdLoadProperties = true
         subject.loadAsset(
-            from: assetURL,
-            andConnectDelegate: audioPlayerDelegate
+            from: assetURL
         )
 
         playerObserver.addTimeControlStatusObserverWaCalledWithBlock?(.playing)
@@ -212,8 +212,7 @@ final class StreamRemoteAudioPlayer_Tests: XCTestCase {
         mockAsset.stubProperty(\.duration, with: assetDuration)
         assetPropertyLoader.loadPropertiesResult = .success(mockAsset)
         subject.loadAsset(
-            from: assetURL,
-            andConnectDelegate: audioPlayerDelegate
+            from: assetURL
         )
         subject.pause()
 
@@ -232,8 +231,7 @@ final class StreamRemoteAudioPlayer_Tests: XCTestCase {
         mockAsset.stubProperty(\.duration, with: assetDuration)
         assetPropertyLoader.loadPropertiesResult = .success(mockAsset)
         subject.loadAsset(
-            from: assetURL,
-            andConnectDelegate: audioPlayerDelegate
+            from: assetURL
         )
         playerObserver.addStoppedPlaybackObserverWasCalledWithBlock?(.init(url: assetURL))
 
@@ -254,8 +252,7 @@ final class StreamRemoteAudioPlayer_Tests: XCTestCase {
         mockAsset.stubProperty(\.duration, with: assetDuration)
         assetPropertyLoader.loadPropertiesResult = .success(mockAsset)
         subject.loadAsset(
-            from: assetURL,
-            andConnectDelegate: audioPlayerDelegate
+            from: assetURL
         )
 
         playerObserver.addStoppedPlaybackObserverWasCalledWithBlock?(.init(url: assetURL))
@@ -273,8 +270,7 @@ final class StreamRemoteAudioPlayer_Tests: XCTestCase {
         mockAsset.stubProperty(\.duration, with: assetDuration)
         assetPropertyLoader.loadPropertiesResult = .success(mockAsset)
         subject.loadAsset(
-            from: assetURL,
-            andConnectDelegate: audioPlayerDelegate
+            from: assetURL
         )
 
         playerObserver.addStoppedPlaybackObserverWasCalledWithBlock?(.init(url: .init(string: "http://getstream.io/2")!))
@@ -293,7 +289,7 @@ final class StreamRemoteAudioPlayer_Tests: XCTestCase {
     func test_playbackContext_URLMatchesCurrentItemsURL_returnsExpectedResult() {
         mockAsset.stubProperty(\.duration, with: assetDuration)
         assetPropertyLoader.loadPropertiesResult = .success(mockAsset)
-        subject.loadAsset(from: assetURL, andConnectDelegate: audioPlayerDelegate)
+        subject.loadAsset(from: assetURL)
 
         XCTAssertEqual(
             subject.playbackContext(for: assetURL),
@@ -326,13 +322,13 @@ final class StreamRemoteAudioPlayer_Tests: XCTestCase {
             isSeeking: false
         )
 
-        subject.loadAsset(from: assetURL, andConnectDelegate: audioPlayerDelegate)
+        subject.loadAsset(from: assetURL)
 
         XCTAssertTrue(player.pauseWasCalled)
         XCTAssertEqual(subject.context, expectedContext)
         XCTAssertTrue(player.replaceCurrentItemWasCalled)
         XCTAssertEqual((player.replaceCurrentItemWasCalledWithItem?.asset as? AVURLAsset)?.url, assetURL)
-        XCTAssertTrue(subject.delegate === audioPlayerDelegate)
+//        XCTAssertTrue(subject.delegate === audioPlayerDelegate)
         XCTAssertEqual(assetPropertyLoader.loadPropertiesWasCalledWithProperties?.first?.name, "duration")
         XCTAssertEqual((assetPropertyLoader.loadPropertiesWasCalledWithAsset as? AVURLAsset)?.url, assetURL)
         XCTAssertTrue(player.playWasCalled)
@@ -345,7 +341,7 @@ final class StreamRemoteAudioPlayer_Tests: XCTestCase {
         player.playWasCalled = false
         assetPropertyLoader.loadPropertiesResult = .failure(.init(failedProperties: [], cancelledProperties: []))
 
-        subject.loadAsset(from: assetURL, andConnectDelegate: audioPlayerDelegate)
+        subject.loadAsset(from: assetURL)
 
         XCTAssertTrue(player.pauseWasCalled)
         XCTAssertEqual(subject.context, .init(
@@ -357,7 +353,7 @@ final class StreamRemoteAudioPlayer_Tests: XCTestCase {
         ))
         XCTAssertTrue(player.replaceCurrentItemWasCalled)
         XCTAssertNil(player.replaceCurrentItemWasCalledWithItem)
-        XCTAssertTrue(subject.delegate === audioPlayerDelegate)
+//        XCTAssertTrue(subject.delegate === audioPlayerDelegate)
         XCTAssertEqual(assetPropertyLoader.loadPropertiesWasCalledWithProperties?.first?.name, "duration")
         XCTAssertEqual((assetPropertyLoader.loadPropertiesWasCalledWithAsset as? AVURLAsset)?.url, assetURL)
         XCTAssertFalse(player.playWasCalled)
@@ -366,13 +362,14 @@ final class StreamRemoteAudioPlayer_Tests: XCTestCase {
     func test_loadAsset_whenURLSameAsCurrentItemURLAndContextStateIsPaused_willNotCallAssetLoaderWillCallPlayUpdatesStateAndDelegate() {
         mockAsset.stubProperty(\.duration, with: assetDuration)
         assetPropertyLoader.loadPropertiesResult = .success(mockAsset)
-        subject.loadAsset(from: assetURL, andConnectDelegate: audioPlayerDelegate)
+        subject.loadAsset(from: assetURL)
         subject.pause()
         assetPropertyLoader.loadPropertiesWasCalledWithProperties = nil
         assetPropertyLoader.loadPropertiesWasCalledWithAsset = nil
         let secondDelegate = MockAudioPlayerDelegate()
 
-        subject.loadAsset(from: assetURL, andConnectDelegate: secondDelegate)
+//        subject.loadAsset(from: assetURL, andConnectDelegate: secondDelegate)
+        subject.loadAsset(from: assetURL)
 
         XCTAssertNil(assetPropertyLoader.loadPropertiesWasCalledWithProperties)
         XCTAssertNil(assetPropertyLoader.loadPropertiesWasCalledWithAsset)
@@ -388,14 +385,15 @@ final class StreamRemoteAudioPlayer_Tests: XCTestCase {
     func test_loadAsset_whenURLSameAsCurrentItemURLAndContextStateIsStopped_willNotCallAssetLoaderWillCallPlayUpdatesStateAndDelegate() {
         mockAsset.stubProperty(\.duration, with: assetDuration)
         assetPropertyLoader.loadPropertiesResult = .success(mockAsset)
-        subject.loadAsset(from: assetURL, andConnectDelegate: audioPlayerDelegate)
+        subject.loadAsset(from: assetURL)
         playerObserver.addStoppedPlaybackObserverWasCalledWithBlock?(.init(url: assetURL))
         assetPropertyLoader.loadPropertiesWasCalledWithProperties = nil
         assetPropertyLoader.loadPropertiesWasCalledWithAsset = nil
         player.replaceCurrentItemWasCalledWithItem = nil
         let secondDelegate = MockAudioPlayerDelegate()
 
-        subject.loadAsset(from: assetURL, andConnectDelegate: secondDelegate)
+//        subject.loadAsset(from: assetURL, andConnectDelegate: secondDelegate)
+        subject.loadAsset(from: assetURL)
 
         XCTAssertNil(assetPropertyLoader.loadPropertiesWasCalledWithProperties)
         XCTAssertNil(assetPropertyLoader.loadPropertiesWasCalledWithAsset)
@@ -412,14 +410,15 @@ final class StreamRemoteAudioPlayer_Tests: XCTestCase {
     func test_loadAsset_whenURLSameAsCurrentItemURLAndContextStateIsPlaying_willNotCallAssetLoaderWillCallPlayUpdatesStateAndDelegate() {
         mockAsset.stubProperty(\.duration, with: assetDuration)
         assetPropertyLoader.loadPropertiesResult = .success(mockAsset)
-        subject.loadAsset(from: assetURL, andConnectDelegate: audioPlayerDelegate)
+        subject.loadAsset(from: assetURL)
         player.playWasCalled = false
         assetPropertyLoader.loadPropertiesWasCalledWithProperties = nil
         assetPropertyLoader.loadPropertiesWasCalledWithAsset = nil
         player.replaceCurrentItemWasCalledWithItem = nil
         let secondDelegate = MockAudioPlayerDelegate()
 
-        subject.loadAsset(from: assetURL, andConnectDelegate: secondDelegate)
+//        subject.loadAsset(from: assetURL, andConnectDelegate: secondDelegate)
+        subject.loadAsset(from: assetURL)
 
         XCTAssertNil(assetPropertyLoader.loadPropertiesWasCalledWithProperties)
         XCTAssertNil(assetPropertyLoader.loadPropertiesWasCalledWithAsset)
@@ -439,7 +438,7 @@ final class StreamRemoteAudioPlayer_Tests: XCTestCase {
     func test_play_callsPlayOnPlayerAndUpdatesContextAndDelegate() {
         mockAsset.stubProperty(\.duration, with: assetDuration)
         assetPropertyLoader.loadPropertiesResult = .success(mockAsset)
-        subject.loadAsset(from: assetURL, andConnectDelegate: audioPlayerDelegate)
+        subject.loadAsset(from: assetURL)
         player.pause()
         player.playWasCalled = false
 
@@ -454,7 +453,7 @@ final class StreamRemoteAudioPlayer_Tests: XCTestCase {
     func test_pause_callsPauseOnPlayerAndUpdatesContextAndDelegate() {
         mockAsset.stubProperty(\.duration, with: assetDuration)
         assetPropertyLoader.loadPropertiesResult = .success(mockAsset)
-        subject.loadAsset(from: assetURL, andConnectDelegate: audioPlayerDelegate)
+        subject.loadAsset(from: assetURL)
 
         subject.pause()
 
@@ -467,7 +466,7 @@ final class StreamRemoteAudioPlayer_Tests: XCTestCase {
     func test_stop_callsPauseOnPlayerAndUpdatesContextAndDelegate() {
         mockAsset.stubProperty(\.duration, with: assetDuration)
         assetPropertyLoader.loadPropertiesResult = .success(mockAsset)
-        subject.loadAsset(from: assetURL, andConnectDelegate: audioPlayerDelegate)
+        subject.loadAsset(from: assetURL)
 
         subject.stop()
 
@@ -484,7 +483,7 @@ final class StreamRemoteAudioPlayer_Tests: XCTestCase {
     func test_updateRate_updatesPlayerRate() {
         mockAsset.stubProperty(\.duration, with: assetDuration)
         assetPropertyLoader.loadPropertiesResult = .success(mockAsset)
-        subject.loadAsset(from: assetURL, andConnectDelegate: audioPlayerDelegate)
+        subject.loadAsset(from: assetURL)
 
         subject.updateRate(.double) // This call will change the rate to 2
         XCTAssertEqual(player.rateWasUpdatedTo, 2)
@@ -505,12 +504,14 @@ final class StreamRemoteAudioPlayer_Tests: XCTestCase {
         subject = .init(
             assetPropertyLoader: assetPropertyLoader,
             playerObserver: playerObserver,
-            player: player
+            player: player,
+            audioSessionConfigurator: audioSessionConfigurator,
+            appStateObserver: appStateObserver
         )
 
         mockAsset.stubProperty(\.duration, with: assetDuration)
         assetPropertyLoader.loadPropertiesResult = .success(mockAsset)
-        subject.loadAsset(from: assetURL, andConnectDelegate: audioPlayerDelegate)
+        subject.loadAsset(from: assetURL)
         player.holdSeekCompletion = true
 
         subject.seek(to: 50)
@@ -524,7 +525,7 @@ final class StreamRemoteAudioPlayer_Tests: XCTestCase {
     func test_seek_seekWasCalledAndTheRequestWasNotInterrupted_seekWasCalledOnPlayerAndContextWasUpdatedSuccessfully() {
         mockAsset.stubProperty(\.duration, with: assetDuration)
         assetPropertyLoader.loadPropertiesResult = .success(mockAsset)
-        subject.loadAsset(from: assetURL, andConnectDelegate: audioPlayerDelegate)
+        subject.loadAsset(from: assetURL)
 
         subject.seek(to: 50)
 
@@ -658,6 +659,49 @@ extension StreamRemoteAudioPlayer_Tests {
         ) {
             addStoppedPlaybackObserverWasCalledWithQueue = queue
             addStoppedPlaybackObserverWasCalledWithBlock = block
+        }
+    }
+
+    private class MockAudioSessionConfiguring: AudioSessionConfiguring, Spy {
+        var recordedFunctions: [String] = []
+
+        static func build() -> AudioSessionConfiguring { MockAudioSessionConfiguring() }
+
+        func activateRecordingSession() throws {
+            record()
+        }
+
+        func deactivateRecordingSession() throws {
+            record()
+        }
+
+        func activatePlaybackSession() throws {
+            record()
+        }
+
+        func deactivatePlaybackSession() throws {
+            record()
+        }
+
+        func requestRecordPermission(_ completionHandler: @escaping (Bool) -> Void) {
+            record()
+        }
+    }
+
+    private class MockAppStateObserver: AppStateObserving, Spy {
+        var recordedFunctions: [String] = []
+
+        private(set) var subscribeWasCalledWithSubscriber: AppStateObserverDelegate?
+        private(set) var unsubscribeWasCalledWithSubscriber: AppStateObserverDelegate?
+
+        func subscribe(_ subscriber: AppStateObserverDelegate) {
+            record()
+            subscribeWasCalledWithSubscriber = subscriber
+        }
+
+        func unsubscribe(_ subscriber: AppStateObserverDelegate) {
+            record()
+            unsubscribeWasCalledWithSubscriber = subscriber
         }
     }
 }

@@ -12,7 +12,8 @@ open class ChatThreadVC: _ViewController,
     ChatMessageListVCDataSource,
     ChatMessageListVCDelegate,
     ChatMessageControllerDelegate,
-    EventsControllerDelegate {
+    EventsControllerDelegate,
+    AudioQueuePlayerDatasource {
     /// Controller for observing data changes within the channel
     open var channelController: ChatChannelController!
 
@@ -59,6 +60,9 @@ open class ChatThreadVC: _ViewController,
     open lazy var headerView: ChatThreadHeaderView = components
         .threadHeaderView.init()
         .withoutAutoresizingMaskConstraints
+    open private(set) lazy var audioPlayer: AudioPlaying = components
+        .audioPlayer
+        .build()
 
     public var messageComposerBottomConstraint: NSLayoutConstraint?
 
@@ -70,9 +74,11 @@ open class ChatThreadVC: _ViewController,
         messageListVC.delegate = self
         messageListVC.dataSource = self
         messageListVC.client = client
+        messageListVC.audioPlayer = audioPlayer
 
         messageComposerVC.channelController = channelController
         messageComposerVC.userSearchController = userSuggestionSearchController
+        messageComposerVC.audioPlayer = audioPlayer
         if let message = messageController.message {
             messageComposerVC.content.threadMessage = message
         }
@@ -87,6 +93,10 @@ open class ChatThreadVC: _ViewController,
         }
         viewPaginationHandler.onNewBottomPage = { [weak self] in
             self?.messageController.loadNextReplies()
+        }
+
+        if let queueAudioPlayer = audioPlayer as? StreamRemoteAudioQueuePlayer {
+            queueAudioPlayer.datasource = self
         }
 
         // Set the initial data
@@ -356,6 +366,66 @@ open class ChatThreadVC: _ViewController,
             messages.append(threadRootMessage)
         }
         return messages
+    }
+
+    // MARK: - AudioQueuePlayerDatasource
+
+    open func audioQueuePlayerNextAssetURL(
+        _ audioPlayer: AudioPlaying,
+        currentAssetURL: URL?
+    ) -> URL? {
+        guard
+            components.asyncMessagesPlayNextVoiceRecordingInSameMessage,
+            let currentAssetURL = currentAssetURL
+        else {
+            return nil
+        }
+
+        let voiceRecordingMessages = messages
+            .filter {
+                $0.isSentByCurrentUser == false
+                    && $0.attachments(payloadType: VoiceRecordingAttachmentPayload.self).isEmpty == false
+            }
+
+        let currentVoiceRecordingMessage = voiceRecordingMessages
+            .lazy
+            .enumerated()
+            .first { iterator in
+                iterator.element
+                    .attachments(payloadType: VoiceRecordingAttachmentPayload.self)
+                    .first { $0.voiceRecordingURL == currentAssetURL } != nil
+            }
+
+        guard
+            let currentVoiceRecordingMessage = currentVoiceRecordingMessage
+        else {
+            return nil
+        }
+
+        var nextVoiceRecordingMessage: ChatMessage?
+
+        if currentVoiceRecordingMessage.offset + 1 < voiceRecordingMessages.endIndex {
+            nextVoiceRecordingMessage = voiceRecordingMessages[currentVoiceRecordingMessage.offset + 1]
+        }
+
+        let currentMessageVoiceRecordingAttachments = currentVoiceRecordingMessage.element
+            .attachments(payloadType: VoiceRecordingAttachmentPayload.self)
+
+        let voiceRecordingIndexInMessage = currentMessageVoiceRecordingAttachments
+            .enumerated()
+            .first { $0.element.voiceRecordingURL == currentAssetURL }
+
+        if let voiceRecordingIndexInMessage = voiceRecordingIndexInMessage {
+            if voiceRecordingIndexInMessage.offset + 1 < currentMessageVoiceRecordingAttachments.endIndex {
+                return currentMessageVoiceRecordingAttachments[voiceRecordingIndexInMessage.offset + 1].voiceRecordingURL
+            } else if let nextVoiceRecordingMessage = nextVoiceRecordingMessage {
+                return nextVoiceRecordingMessage.attachments(payloadType: VoiceRecordingAttachmentPayload.self).first?.voiceRecordingURL
+            } else {
+                return nil
+            }
+        } else {
+            return nil
+        }
     }
 
     // MARK: - Deprecations

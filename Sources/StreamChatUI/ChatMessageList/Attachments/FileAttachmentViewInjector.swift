@@ -12,6 +12,8 @@ public protocol FileActionContentViewDelegate: ChatMessageContentViewDelegate {
 }
 
 public class FilesAttachmentViewInjector: AttachmentViewInjector {
+    var fileAttachments: [ChatMessageFileAttachment] { contentView.content?.fileAttachments ?? [] }
+
     open lazy var fileAttachmentView: ChatMessageFileAttachmentListView = {
         let attachmentListView = contentView
             .components
@@ -34,11 +36,5 @@ public class FilesAttachmentViewInjector: AttachmentViewInjector {
 
     override open func contentViewDidUpdateContent() {
         fileAttachmentView.content = fileAttachments
-    }
-}
-
-private extension FilesAttachmentViewInjector {
-    var fileAttachments: [ChatMessageFileAttachment] {
-        contentView.content?.fileAttachments ?? []
     }
 }

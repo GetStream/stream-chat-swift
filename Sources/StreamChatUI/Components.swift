@@ -43,6 +43,9 @@ public struct Components {
     /// A button used for sending a message, or any type of content.
     public var sendButton: UIButton.Type = SendButton.self
 
+    /// A button used for recording a voice message,
+    public var recordButton: RecordButton.Type = RecordButton.self
+
     /// A view for showing a cooldown when Slow Mode is active.
     public var cooldownView: CooldownView.Type = CooldownView.self
 
@@ -173,6 +176,9 @@ public struct Components {
     /// The injector used for injecting file attachment views
     public var filesAttachmentInjector: AttachmentViewInjector.Type = FilesAttachmentViewInjector.self
 
+    /// The injector used for injecting voice recording attachment views
+    public var voiceRecordingAttachmentInjector: AttachmentViewInjector.Type = VoiceRecordingAttachmentViewInjector.self
+
     /// The injector used to combine multiple types of attachment views.
     /// By default, it is a combination of a file injector and a gallery injector.
     public var mixedAttachmentInjector: MixedAttachmentViewInjector.Type = MixedAttachmentViewInjector.self
@@ -187,9 +193,16 @@ public struct Components {
     public var fileAttachmentListView: ChatMessageFileAttachmentListView
         .Type = ChatMessageFileAttachmentListView.self
 
+    public var voiceRecordingAttachmentListView: ChatMessageVoiceRecordingAttachmentListView
+        .Type = ChatMessageVoiceRecordingAttachmentListView.self
+
     /// The view that shows a single file attachment.
     public var fileAttachmentView: ChatMessageFileAttachmentListView.ItemView.Type =
         ChatMessageFileAttachmentListView.ItemView.self
+
+    /// The view that shows a single file attachment.
+    public var voiceRecordingAttachmentView: ChatMessageVoiceRecordingAttachmentListView.ItemView.Type =
+        ChatMessageVoiceRecordingAttachmentListView.ItemView.self
 
     /// The view that shows a link preview in message cell.
     public var linkPreviewView: ChatMessageLinkPreviewView.Type =
@@ -369,6 +382,14 @@ public struct Components {
     public var videoAttachmentComposerPreview: VideoAttachmentComposerPreview
         .Type = VideoAttachmentComposerPreview.self
 
+    /// A view that displays the video attachment preview in composer.
+    public var voiceRecordingAttachmentComposerPreview: VoiceRecordingAttachmentComposerPreview
+        .Type = VoiceRecordingAttachmentComposerPreview.self
+
+    /// A view that displays the video attachment preview in composer.
+    public var voiceRecordingAttachmentQuotedPreview: VoiceRecordingAttachmentQuotedPreview
+        .Type = VoiceRecordingAttachmentQuotedPreview.self
+
     // MARK: - Composer suggestion components
 
     /// A view controller that shows suggestions of commands or mentions.
@@ -408,6 +429,19 @@ public struct Components {
 
     /// A type for the view used as avatar when picking users to mention.
     public var mentionAvatarView: ChatUserAvatarView.Type = ChatUserAvatarView.self
+
+    // MARK: - Composer async messages components
+
+    public var asyncMessagesEnabled = true
+    public var asyncMessagesMultiSendEnabled = true
+    public var asyncMessageSlideToCancelDistance: CGFloat = 75
+    public var asyncMessageLockDistance: CGFloat = 50
+    public var asyncMessagesMinimumPressDuration: TimeInterval = 0.5
+    public var asyncMessagesPlayNextVoiceRecordingInSameMessage: Bool = true
+
+    public var audioPlayer: AudioPlaying.Type = StreamRemoteAudioQueuePlayer.self
+    public var audioRecorder: AudioRecording.Type = StreamAudioRecorder.self
+    public var audioSessionFeedbackGenerator: AudioSessionFeedbackGenerator.Type = StreamAudioSessionFeedbackGenerator.self
 
     // MARK: - Current user components
 

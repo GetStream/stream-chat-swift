@@ -128,6 +128,9 @@ class AppConfigViewController: UITableViewController {
     enum ComponentsConfigOption: String, CaseIterable {
         case isUniqueReactionsEnabled
         case shouldMessagesStartAtTheTop
+        case isAsyncMessagesEnabled
+        case isAsyncMessagesStackingEnabled
+        case isAsyncMessagesAutoPlayNextEnabled
     }
 
     enum ChatClientConfigOption: String, CaseIterable {
@@ -351,6 +354,18 @@ class AppConfigViewController: UITableViewController {
         case .shouldMessagesStartAtTheTop:
             cell.accessoryView = makeSwitchButton(Components.default.shouldMessagesStartAtTheTop) { newValue in
                 Components.default.shouldMessagesStartAtTheTop = newValue
+            }
+        case .isAsyncMessagesEnabled:
+            cell.accessoryView = makeSwitchButton(Components.default.asyncMessagesEnabled) { newValue in
+                Components.default.asyncMessagesEnabled = newValue
+            }
+        case .isAsyncMessagesStackingEnabled:
+            cell.accessoryView = makeSwitchButton(Components.default.asyncMessagesMultiSendEnabled) { newValue in
+                Components.default.asyncMessagesMultiSendEnabled = newValue
+            }
+        case .isAsyncMessagesAutoPlayNextEnabled:
+            cell.accessoryView = makeSwitchButton(Components.default.asyncMessagesPlayNextVoiceRecordingInSameMessage) { newValue in
+                Components.default.asyncMessagesPlayNextVoiceRecordingInSameMessage = newValue
             }
         }
     }
