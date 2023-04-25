@@ -352,7 +352,6 @@ final class AuthenticationRepository_Tests: XCTestCase {
     }
 
     func test_connectUser_clearsTokenCompletionsQueueAfterSuccess() throws {
-        let userInfo = UserInfo(id: "123")
         XCTAssertNil(repository.tokenProvider)
 
         let delegate = AuthenticationRepositoryDelegateMock()
@@ -363,7 +362,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
 
         // First user
         var initialCompletionCalls = 0
-
+        let userInfo = UserInfo(id: "123")
         let originalTokenProvider: TokenProvider = { $0(.success(.unique())) }
         let expectation1 = expectation(description: "Completion call 1")
         repository.connectUser(userInfo: userInfo, tokenProvider: originalTokenProvider, completion: { _ in
@@ -380,6 +379,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
 
         // New token/user
         let newUserId = "user-id"
+        let newUserInfo = UserInfo(id: newUserId)
         var newTokenCompletionCalls = 0
         let expectation2 = expectation(description: "Completion call 2")
         let newTokenProvider: TokenProvider = { $0(.success(.unique(userId: newUserId))) }
@@ -400,7 +400,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         var refreshTokenCompletionCalls = 0
         let expectation3 = expectation(description: "Completion call 2")
         let refreshTokenProvider: TokenProvider = { $0(.success(.unique(userId: newUserId))) }
-        repository.connectUser(userInfo: userInfo, tokenProvider: refreshTokenProvider, completion: { _ in
+        repository.connectUser(userInfo: newUserInfo, tokenProvider: refreshTokenProvider, completion: { _ in
             refreshTokenCompletionCalls += 1
             expectation3.fulfill()
         })
@@ -412,7 +412,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         XCTAssertEqual(refreshTokenCompletionCalls, 1)
         XCTAssertEqual(delegate.newStateCalls, 3)
         XCTAssertEqual(delegate.newState, .newToken)
-        XCTAssertEqual(delegate.logoutCallCount, 2)
+        XCTAssertEqual(delegate.logoutCallCount, 1)
     }
 
     // Prepare environment on a successful token retrieval
