@@ -67,4 +67,12 @@ final class Pagination_Tests: XCTestCase {
         // Assert `MessagesPagination` encoded correctly
         AssertJSONEqual(encodedJSON, expectedJSON)
     }
+
+    func test_aroundMessageId() {
+        let aroundPagination = MessagesPagination(pageSize: 25, parameter: .around("someId"))
+        XCTAssertEqual(aroundPagination.parameter?.aroundMessageId, "someId")
+
+        let greaterPagination = MessagesPagination(pageSize: 25, parameter: .greaterThan("someId"))
+        XCTAssertEqual(greaterPagination.parameter?.aroundMessageId, nil)
+    }
 }
