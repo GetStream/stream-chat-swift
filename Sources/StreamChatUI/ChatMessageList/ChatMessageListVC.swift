@@ -84,6 +84,18 @@ open class ChatMessageListVC: _ViewController,
         return (!listView.isLastCellFullyVisible && isMoreContentThanOnePage) || dataSource?.isFirstPageLoaded == false
     }
 
+    /// A button to scroll the collection view to the first unread message.
+    /// Visible when there are unread messages outside of the bounds of the screen.
+    open private(set) lazy var jumpToUnreadMessagesButton: JumpToUnreadMessagesButton = components
+        .jumpToUnreadMessagesButton
+        .init()
+        .withoutAutoresizingMaskConstraints
+
+    /// A Boolean value indicating whether jump to unread messages button is visible.
+    open var showJumpToUnreadMessages: Bool {}
+
+    private var lastReadMessageIndexPath: IndexPath? {}
+
     /// A formatter that converts the message date to textual representation.
     /// This date formatter is used between each group message and the top overlay.
     public lazy var dateSeparatorFormatter = appearance.formatters.messageDateSeparator
@@ -136,6 +148,8 @@ open class ChatMessageListVC: _ViewController,
         listView.addGestureRecognizer(tapOnList)
 
         scrollToLatestMessageButton.addTarget(self, action: #selector(scrollToLatestMessage), for: .touchUpInside)
+        jumpToUnreadMessagesButton.addTarget(self, action: #selector(jumpToUnreadMessages))
+        jumpToUnreadMessagesButton.addDiscardButtonTarget(self, action: #selector(discardUnreadMessages))
     }
 
     override open func setUpLayout() {
@@ -159,6 +173,10 @@ open class ChatMessageListVC: _ViewController,
         scrollToLatestMessageButton.widthAnchor.pin(equalTo: scrollToLatestMessageButton.heightAnchor).isActive = true
         scrollToLatestMessageButton.heightAnchor.pin(equalToConstant: 40).isActive = true
         scrollToLatestMessageButton.isHidden = true
+
+        view.addSubview(jumpToUnreadMessagesButton)
+        jumpToUnreadMessagesButton.topAnchor.pin(equalToSystemSpacingBelow: view.safeAreaLayoutGuide.topAnchor).isActive = true
+        jumpToUnreadMessagesButton.centerXAnchor.pin(equalTo: view.layoutMarginsGuide.centerXAnchor).isActive = true
 
         if isDateOverlayEnabled {
             view.addSubview(dateOverlayView)
@@ -228,16 +246,29 @@ open class ChatMessageListVC: _ViewController,
         updateScrollToBottomButtonVisibility()
     }
 
+    func updateScrollDependentButtonsVisibility(animated: Bool = true) {
+        updateScrollToBottomButtonVisibility(animated: animated)
+        updateJumpToUnreadMessagesVisibility(animated: animated)
+    }
+
     /// Set the visibility of `scrollToLatestMessageButton`.
     open func updateScrollToBottomButtonVisibility(animated: Bool = true) {
-        let isVisible = isScrollToBottomButtonVisible
-        if isVisible { scrollToLatestMessageButton.isVisible = true }
-        Animate(isAnimated: animated, {
-            self.scrollToLatestMessageButton.alpha = isVisible ? 1 : 0
-        }, completion: { _ in
-            if !isVisible { self.scrollToLatestMessageButton.isVisible = false }
-        })
+        updateVisibility(
+            for: scrollToLatestMessageButton,
+            isVisible: isScrollToBottomButtonVisible,
+            animated: animated
+        )
     }
+
+    open func updateJumpToUnreadMessagesVisibility(animated: Bool = true) {
+        updateVisibility(
+            for: jumpToUnreadMessagesButton,
+            isVisible: showJumpToUnreadMessages,
+            animated: animated
+        )
+    }
+
+    private func updateVisibility(for view: UIView, isVisible: Bool, animated: Bool) {}
 
     /// Action for `scrollToLatestMessageButton` that scroll to most recent message.
     @objc open func scrollToLatestMessage() {
@@ -254,15 +285,21 @@ open class ChatMessageListVC: _ViewController,
         listView.scrollToMostRecentMessage(animated: animated)
     }
 
-    func updateUnreadMessagesSeparator(at id: MessageId?, previousId: MessageId?) {
+    func updateUnreadMessagesSeparator(at lastReadId: MessageId?, previousId: MessageId?) {
         func indexPath(for id: MessageId?) -> IndexPath? {
             id.flatMap(getIndexPath)
         }
 
-        let indexPathsToReload = [indexPath(for: previousId), indexPath(for: id)].compactMap { $0 }
+        let indexPathsToReload = [indexPath(for: previousId), indexPath(for: lastReadId)].compactMap { $0 }
         guard !indexPathsToReload.isEmpty else { return }
         listView.reloadRows(at: indexPathsToReload, with: .automatic)
+
+        jumpToUnreadMessagesButton.content = dataSource?.channel(for: self)?.unreadCount ?? .noUnread
     }
+
+    @objc func jumpToUnreadMessages() {}
+
+    @objc func discardUnreadMessages() {}
 
     /// Updates the table view data with given `changes`.
     open func updateMessages(with changes: [ListChange<ChatMessage>], completion: (() -> Void)? = nil) {
@@ -570,7 +607,7 @@ open class ChatMessageListVC: _ViewController,
     open func scrollViewDidScroll(_ scrollView: UIScrollView) {
         delegate?.chatMessageListVC(self, scrollViewDidScroll: scrollView)
 
-        updateScrollToBottomButtonVisibility()
+        updateScrollDependentButtonsVisibility()
 
         // If the user scrolled to the bottom, update the UI for the skipped messages
         if listView.isLastCellFullyVisible && !listView.skippedMessages.isEmpty && isFirstPageLoaded {
@@ -579,7 +616,7 @@ open class ChatMessageListVC: _ViewController,
     }
 
     open func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
-        updateScrollToBottomButtonVisibility()
+        updateScrollDependentButtonsVisibility()
 
         // It can take some time for highlighted message to appear on screen after scrolling to it.
         // The only way to check if `scrollToRow` as finished it to wait here on delegate callback.
@@ -804,7 +841,7 @@ private extension ChatMessageListVC {
                 self?.adjustContentOffset(oldContentOffset: oldContentOffset, oldContentSize: oldContentSize)
             }
 
-            self?.updateScrollToBottomButtonVisibility()
+            self?.updateScrollDependentButtonsVisibility()
 
             UIView.performWithoutAnimation {
                 self?.scrollToMostRecentMessageIfNeeded(with: changes, newestChange: newestChange)
