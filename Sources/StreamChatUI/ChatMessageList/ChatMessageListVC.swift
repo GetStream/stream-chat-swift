@@ -345,11 +345,15 @@ open class ChatMessageListVC: _ViewController,
         )
     }
 
-    /// Opens thread detail for given `MessageId`.
-    open func showThread(messageId: MessageId) {
+    /// Opens the thread for the given parent `MessageId`.
+    /// - Parameters:
+    ///   - messageId: The parent message id.
+    ///   - replyId: An optional reply id to where the thread will jump to when opening the thread.
+    open func showThread(messageId: MessageId, at replyId: MessageId? = nil) {
         guard let cid = dataSource?.channel(for: self)?.cid else { log.error("Channel is not available"); return }
         router.showThread(
             messageId: messageId,
+            at: replyId,
             cid: cid,
             client: client
         )
