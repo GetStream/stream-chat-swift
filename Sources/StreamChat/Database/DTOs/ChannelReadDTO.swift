@@ -8,6 +8,7 @@ import Foundation
 @objc(ChannelReadDTO)
 class ChannelReadDTO: NSManagedObject {
     @NSManaged var lastReadAt: DBDate
+    @NSManaged var lastReadMessageId: MessageId?
     @NSManaged var unreadMessageCount: Int32
 
     // MARK: - Relationships
@@ -79,6 +80,7 @@ extension NSManagedObjectContext {
         dto.user = try saveUser(payload: payload.user)
 
         dto.lastReadAt = payload.lastReadAt.bridgeDate
+        dto.lastReadMessageId = payload.lastReadMessageId
         dto.unreadMessageCount = Int32(payload.unreadMessagesCount)
 
         return dto
@@ -138,6 +140,7 @@ extension NSManagedObjectContext {
 
         let lastReadAt = lastReadAt ?? message.createdAt.bridgeDate
         read.lastReadAt = lastReadAt.bridgeDate
+        read.lastReadMessageId = message.id
 
         let messagesCount = unreadMessagesCount ?? MessageDTO.countOtherUserMessages(
             in: read.channel.cid,
@@ -180,6 +183,10 @@ extension NSManagedObjectContext {
         for message in messages {
             message.reads.insert(read)
         }
+
+        if let lastMessage = messages.last {
+            read.lastReadMessageId = lastMessage.id
+        }
     }
 }
 
@@ -188,6 +195,7 @@ extension ChatChannelRead {
         guard dto.isValid else { throw InvalidModel(dto) }
         return try .init(
             lastReadAt: dto.lastReadAt.bridgeDate,
+            lastReadMessageId: dto.lastReadMessageId,
             unreadMessagesCount: Int(dto.unreadMessageCount),
             user: dto.user.asModel()
         )

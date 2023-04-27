@@ -1312,6 +1312,7 @@ private extension ChatChannelController {
                         log.warning("Callback called while self is nil")
                         return
                     }
+                    self.updateLastUnreadMessage()
                     $0.channelController(self, didUpdateChannel: change)
                 }
             }
@@ -1372,6 +1373,8 @@ private extension ChatChannelController {
             return observer
         }()
     }
+
+    private func updateLastUnreadMessage() {}
 
     /// A convenience method that invokes the completion? with a ChannelFeatureDisabled error
     /// ie. VCs should use the `are{FEATURE_NAME}Enabled` props (ie. `areReadEventsEnabled`) before using any feature
