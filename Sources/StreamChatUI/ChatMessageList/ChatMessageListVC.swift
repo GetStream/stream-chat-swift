@@ -493,6 +493,14 @@ open class ChatMessageListVC: _ViewController,
         listView.scrollToRow(at: indexPath, at: .middle, animated: true)
         messageIdPendingHighlight = messageIdPendingScrolling
         messageIdPendingScrolling = nil
+
+        // If the list view does not scroll, because the message is too close
+        // we need to instantly highlight the message.
+        if listView.indexPathsForVisibleRows?.contains(indexPath) == true {
+            DispatchQueue.main.async {
+                onHighlight?(indexPath)
+            }
+        }
     }
 
     /// Highlight the the message cell, for example, when jumping to a message.
