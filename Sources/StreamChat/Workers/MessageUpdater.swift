@@ -228,7 +228,7 @@ class MessageUpdater: Worker {
         paginationStateHandler.start(pagination: pagination)
 
         let didLoadFirstPage = pagination.parameter == nil
-        let didJumpToMessage = paginationState.isJumpingToMessage
+        let didJumpToMessage = pagination.parameter?.isJumpingToMessage == true
         let endpoint: Endpoint<MessageRepliesPayload> = .loadReplies(messageId: messageId, pagination: pagination)
 
         apiClient.request(endpoint: endpoint) {

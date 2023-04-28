@@ -49,7 +49,9 @@ class PaginationStateHandler: MessagesPaginationStateHandling {
     var state: MessagesPaginationState = .initial
 
     func start(pagination: MessagesPagination) {
-        state.isJumpingToMessage = pagination.parameter?.isJumpingToMessage == true
+        if pagination.parameter?.isJumpingToMessage == true {
+            state.isJumpingToMessage = true
+        }
 
         switch pagination.parameter {
         case .lessThan, .lessThanOrEqual:
@@ -63,11 +65,13 @@ class PaginationStateHandler: MessagesPaginationStateHandling {
 
         case .none:
             state.hasLoadedAllPreviousMessages = false
+            state.hasLoadedAllNextMessages = true
             state.isLoadingPreviousMessages = false
             state.isLoadingMiddleMessages = false
             state.isLoadingNextMessages = false
             state.oldestFetchedMessage = nil
             state.newestFetchedMessage = nil
+            state.isJumpingToMessage = false
         }
     }
 
@@ -89,10 +93,18 @@ class PaginationStateHandler: MessagesPaginationStateHandling {
         case .lessThan, .lessThanOrEqual:
             state.oldestMessageAt = oldestMessageAt
             state.oldestFetchedMessage = oldestFetchedMessage
+            if messages.count < pagination.pageSize {
+                state.hasLoadedAllPreviousMessages = true
+            }
 
         case .greaterThan, .greaterThanOrEqual:
             state.newestMessageAt = newestMessageAt
             state.newestFetchedMessage = newestFetchedMessage
+            if messages.count < pagination.pageSize {
+                state.hasLoadedAllNextMessages = true
+                state.newestMessageAt = nil
+                state.isJumpingToMessage = false
+            }
 
         case .around:
             state.oldestMessageAt = oldestMessageAt
@@ -103,7 +115,13 @@ class PaginationStateHandler: MessagesPaginationStateHandling {
         case .none:
             state.oldestMessageAt = oldestMessageAt
             state.oldestFetchedMessage = oldestFetchedMessage
+            state.newestFetchedMessage = nil
             state.newestMessageAt = nil
+
+            if messages.count < pagination.pageSize {
+                state.hasLoadedAllNextMessages = true
+                state.hasLoadedAllPreviousMessages = true
+            }
         }
 
         if let aroundMessageId = pagination.parameter?.aroundMessageId, !messages.isEmpty {
@@ -120,14 +138,12 @@ class PaginationStateHandler: MessagesPaginationStateHandling {
                 state.isJumpingToMessage = false
                 state.hasLoadedAllNextMessages = true
             }
-        }
 
-        if messages.count < pagination.pageSize {
-            state.isJumpingToMessage = false
-            state.newestMessageAt = nil
-            state.oldestMessageAt = nil
-            state.hasLoadedAllNextMessages = true
-            state.hasLoadedAllPreviousMessages = true
+            if messages.count < pagination.pageSize {
+                state.isJumpingToMessage = false
+                state.hasLoadedAllNextMessages = true
+                state.hasLoadedAllPreviousMessages = true
+            }
         }
     }
 }
