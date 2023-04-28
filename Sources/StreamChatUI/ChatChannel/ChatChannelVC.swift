@@ -137,6 +137,11 @@ open class ChatChannelVC: _ViewController,
             }
         }
 
+        if channelController.channelQuery.pagination?.parameter == nil {
+            // Load initial messages from cache if loading the first page
+            messages = Array(channelController.messages)
+        }
+
         // Handle pagination
         viewPaginationHandler.onNewTopPage = { [weak self] in
             self?.channelController.loadPreviousMessages()
