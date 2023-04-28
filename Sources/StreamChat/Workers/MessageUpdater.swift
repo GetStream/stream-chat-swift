@@ -16,6 +16,8 @@ class MessageUpdater: Worker {
         super.init(database: database, apiClient: apiClient)
     }
 
+    private(set) var isJumpingToMessage: Bool = false
+
     /// Fetches the message from the backend and saves it into the database
     /// - Parameters:
     ///   - cid: The channel identifier the message relates to.
@@ -219,7 +221,8 @@ class MessageUpdater: Worker {
         completion: ((Result<MessageRepliesPayload, Error>) -> Void)? = nil
     ) {
         let isFirstPage = pagination.parameter == nil
-        let isJumpingToMessage: Bool = pagination.parameter?.isJumpingToMessage == true
+        isJumpingToMessage = pagination.parameter?.isJumpingToMessage == true
+        let aroundReplyId = pagination.parameter?.aroundMessageId
         let endpoint: Endpoint<MessageRepliesPayload> = .loadReplies(messageId: messageId, pagination: pagination)
         apiClient.request(endpoint: endpoint) {
             switch $0 {
@@ -231,22 +234,32 @@ class MessageUpdater: Worker {
 
                     // If it is first page or jumping to a message, clear the current messages.
                     if let parentMessage = session.message(id: messageId) {
-                        if isJumpingToMessage || isFirstPage {
+                        if self.isJumpingToMessage || isFirstPage {
                             parentMessage.replies.filter { !$0.isLocalOnly }.forEach {
                                 $0.showInsideThread = false
                             }
                         }
 
                         switch pagination.parameter {
-                        case .greaterThan, .greaterThanOrEqual, .around:
-                            parentMessage.newestReplyAt = payload.messages.last?.createdAt.bridgeDate
-                            if payload.messages.count < pagination.pageSize {
-                                parentMessage.newestReplyAt = nil
-                            }
                         case .lessThan, .lessThanOrEqual:
                             break
+                        case .greaterThan, .greaterThanOrEqual, .around:
+                            parentMessage.newestReplyAt = payload.messages.last?.createdAt.bridgeDate
+
+                            guard let aroundReplyId = aroundReplyId else {
+                                break
+                            }
+
+                            let isJumpingToNewestPage = self.isJumpingToNewestPage(
+                                aroundReplyId: aroundReplyId,
+                                payload: payload
+                            )
+                            if payload.messages.count < pagination.pageSize || isJumpingToNewestPage {
+                                fallthrough
+                            }
                         case .none:
                             parentMessage.newestReplyAt = nil
+                            self.isJumpingToMessage = false
                         }
                     }
 
@@ -648,6 +661,17 @@ private extension MessageUpdater {
             let exists = context.message(id: messageId) != nil
             completion(exists)
         }
+    }
+
+    // TODO: With just this logic, we can check if we are still
+    /// jumping to message, hasLoadedAllNextMessages, hasLoadedAllPreviousMessages
+    ///
+    /// If when jumping to a message, that message belongs to the second half of the array (newest messages)
+    /// it means that we are loading the first page, so we are not jumping to a message any more.
+    func isJumpingToNewestPage(aroundReplyId: MessageId, payload: MessageRepliesPayload) -> Bool {
+        let midpoint = payload.messages.count / 2
+        let firstHalf = payload.messages[...midpoint]
+        return !firstHalf.contains(where: { $0.id == aroundReplyId })
     }
 }
 

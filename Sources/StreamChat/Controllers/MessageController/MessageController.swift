@@ -117,7 +117,9 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     /// A Boolean value that returns whether the thread is currently in a mid-page.
     /// The value is false if the thread has the first page loaded.
     /// The value is true if the thread is in a mid fragment and didn't load the first page yet.
-    public private(set) var isJumpingToMessage: Bool = false
+    public var isJumpingToMessage: Bool {
+        messageUpdater.isJumpingToMessage
+    }
 
     /// The pagination cursor for loading previous (old) replies.
     internal private(set) var lastOldestReplyId: MessageId?
@@ -398,7 +400,6 @@ public extension ChatMessageController {
         let pageSize = limit ?? repliesPageSize
         let pagination = MessagesPagination(pageSize: pageSize, parameter: .around(replyId))
 
-        isJumpingToMessage = true
         isLoadingMiddleReplies = true
         messageUpdater.loadReplies(
             cid: cid,
@@ -410,7 +411,7 @@ public extension ChatMessageController {
             case let .success(payload):
                 self.updateOldestReplyId(with: payload)
                 self.updateNewestReplyId(with: payload)
-                // If we are jumping to the root message, then it means we are loading the first page
+                // If we are jumping to the root message, then it means we are loading the oldest page
                 self.hasLoadedAllPreviousReplies = self.messageId == replyId
                 self.callback { completion?(nil) }
             case let .failure(error):
@@ -455,9 +456,6 @@ public extension ChatMessageController {
             switch result {
             case let .success(payload):
                 self.updateNewestReplyId(with: payload)
-                if payload.messages.count < pageSize {
-                    self.isJumpingToMessage = false
-                }
                 self.callback { completion?(nil) }
             case let .failure(error):
                 self.callback { completion?(error) }
@@ -472,7 +470,6 @@ public extension ChatMessageController {
         hasLoadedAllPreviousReplies = false
         isLoadingPreviousReplies = false
         lastNewestReplyId = nil
-        isJumpingToMessage = false
 
         loadPreviousReplies(completion: completion)
     }
