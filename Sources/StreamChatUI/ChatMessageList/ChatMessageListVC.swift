@@ -661,7 +661,9 @@ open class ChatMessageListVC: _ViewController,
             return log.error("DataSource not found for the message list.")
         }
 
-        showThread(messageId: message.parentMessageId ?? message.id)
+        // If the parentMessageId does not exist, it means the message is the root of the thread
+        // For this scenario we still want to highlight the root message when opening the thread
+        showThread(messageId: message.parentMessageId ?? message.id, at: message.id)
     }
 
     open func messageContentViewDidTapOnQuotedMessage(_ quotedMessage: ChatMessage) {
