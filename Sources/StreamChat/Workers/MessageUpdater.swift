@@ -651,17 +651,6 @@ private extension MessageUpdater {
             completion(exists)
         }
     }
-
-    // TODO: With just this logic, we can check if we are still
-    /// jumping to message, hasLoadedAllNextMessages, hasLoadedAllPreviousMessages
-    ///
-    /// If when jumping to a message, that message belongs to the second half of the array (newest messages)
-    /// it means that we are loading the first page, so we are not jumping to a message any more.
-    func isJumpingToNewestPage(aroundReplyId: MessageId, payload: MessageRepliesPayload) -> Bool {
-        let midpoint = payload.messages.count / 2
-        let firstHalf = payload.messages[...midpoint]
-        return !firstHalf.contains(where: { $0.id == aroundReplyId })
-    }
 }
 
 extension ClientError {
