@@ -13,8 +13,9 @@ public protocol ChatMessageListVCDataSource: AnyObject {
     /// Asks the data source to return all the available messages.
     var messages: [ChatMessage] { get set }
 
-    /// Asks the data source to return the unread messages count for the session when opening the channel
-    var jumpToUnreadMessagesCount: ChannelUnreadCount { get }
+    /// Asks the data source to return the unread messages count for the session.
+    /// It can either contain the initial unread count, or the one after marking the channel as read/unread
+    var sessionUnreadCount: ChannelUnreadCount { get }
 
     /// Asks the data source to return the channel for the given message list.
     /// - Parameter vc: The message list requesting the channel.
@@ -44,7 +45,6 @@ public protocol ChatMessageListVCDataSource: AnyObject {
 }
 
 public extension ChatMessageListVCDataSource {
-    var isFirstPageLoaded: Bool {
-        true
-    }
+    var sessionUnreadCount: ChannelUnreadCount { .noUnread }
+    var isFirstPageLoaded: Bool { true }
 }

@@ -90,10 +90,9 @@ open class ChatChannelVC: _ViewController,
         channelController.markedAsUnread
     }
 
-    /// Returns the unread messages count for the session when opening the channel
-    public var jumpToUnreadMessagesCount: ChannelUnreadCount {
-        channelController.initialUnreadCount ?? .noUnread
-    }
+    /// Unread messages count for the session.
+    /// It can either contain the initial unread count, or the one after marking the channel as read/unread
+    public var sessionUnreadCount: ChannelUnreadCount = .noUnread
 
     /// The id of the first unread message
     private var lastReadMessageId: MessageId? {
@@ -120,6 +119,7 @@ open class ChatChannelVC: _ViewController,
             }
             self?.setChannelControllerToComposerIfNeeded(cid: self?.channelController.cid)
             self?.messageComposerVC.updateContent()
+            self?.updateSessionUnreadCount()
 
             let pagination = self?.channelController.channelQuery.pagination?.parameter
             switch pagination {
@@ -201,6 +201,11 @@ open class ChatChannelVC: _ViewController,
     public func markRead() {
         channelController.markRead()
         messageListVC.scrollToLatestMessageButton.content = .noUnread
+    }
+
+    private func updateSessionUnreadCount() {
+        guard let unreadCount = channelController.channel?.unreadCount else { return }
+        sessionUnreadCount = unreadCount
     }
 
     /// Jump to a given message.
@@ -308,7 +313,10 @@ open class ChatChannelVC: _ViewController,
             }
         case is MarkUnreadActionItem:
             dismiss(animated: true) { [weak self] in
-                self?.channelController.markUnread(from: message.id)
+                self?.channelController.markUnread(from: message.id) { [weak self] error in
+                    guard error == nil else { return }
+                    self?.updateSessionUnreadCount()
+                }
             }
         default:
             return
@@ -316,7 +324,7 @@ open class ChatChannelVC: _ViewController,
     }
 
     public func chatMessageListDidDiscardUnreadMessages(_ vc: ChatMessageListVC) {
-        channelController.resetInitialUnreadCount()
+        sessionUnreadCount = .noUnread
         messageListVC.updateJumpToUnreadMessagesVisibility()
         markRead()
     }

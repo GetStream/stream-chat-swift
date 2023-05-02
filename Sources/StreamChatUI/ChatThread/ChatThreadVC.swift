@@ -13,10 +13,6 @@ open class ChatThreadVC: _ViewController,
     ChatMessageListVCDelegate,
     ChatMessageControllerDelegate,
     EventsControllerDelegate {
-    public var jumpToUnreadMessagesCount: ChannelUnreadCount {
-        .noUnread
-    }
-
     /// Controller for observing data changes within the channel
     open var channelController: ChatChannelController!
 

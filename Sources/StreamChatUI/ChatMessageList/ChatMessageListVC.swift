@@ -94,12 +94,11 @@ open class ChatMessageListVC: _ViewController,
     /// A Boolean value indicating whether jump to unread messages button is visible.
     open var showJumpToUnreadMessages: Bool {
         guard let dataSource = dataSource,
-              let channel = dataSource.channel(for: self),
-              dataSource.jumpToUnreadMessagesCount.messages > 0 else {
+              dataSource.sessionUnreadCount.messages > 0 else {
             return false
         }
 
-        guard let lastReadId = lastReadMessageId, let lastReadIndexPath = lastReadMessageIndexPath else {
+        guard let lastReadIndexPath = lastReadMessageIndexPath else {
             // If there are messages, but none is read, we show the button if the first message is not on screen.
             if !dataSource.messages.isEmpty {
                 return !isMessageVisible(for: IndexPath(item: dataSource.messages.count - 1, section: 0))
@@ -282,7 +281,7 @@ open class ChatMessageListVC: _ViewController,
     }
 
     open func updateJumpToUnreadMessagesVisibility(animated: Bool = true) {
-        if let unreadCount = dataSource?.jumpToUnreadMessagesCount,
+        if let unreadCount = dataSource?.sessionUnreadCount,
            unreadCount != jumpToUnreadMessagesButton.content {
             jumpToUnreadMessagesButton.content = unreadCount
         }
