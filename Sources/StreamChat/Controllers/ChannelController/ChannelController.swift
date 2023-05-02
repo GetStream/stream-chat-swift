@@ -846,26 +846,23 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///   - messageId: The id of the first message id that will be marked as unread.
     ///   - completion: The completion will be called on a **callbackQueue** when the network request is finished.
     public func markUnread(from messageId: MessageId, completion: ((Error?) -> Void)? = nil) {
-        /// Perform action only if channel is already created on backend side and have a valid `cid`.
-        guard let channel = channel,
-              let messageIndex = messages.firstIndex(where: { $0.id == messageId }) else {
-            channelModificationFailed(completion)
-            return
-        }
-
-        let newLastReadMessageIndex = messages.index(after: messageIndex)
-        guard messages.indices.contains(newLastReadMessageIndex) else {
-            channelModificationFailed(completion)
-            return
-        }
-
-        let newLastReadMessageId = messages[newLastReadMessageIndex].id
-
         /// Read events are not enabled for this channel
         guard areReadEventsEnabled else {
             channelFeatureDisabled(feature: "read events", completion: completion)
             return
         }
+
+        /// Perform action only if channel is already created on backend side and have a valid `cid`.
+        guard let channel = channel, let messageIndex = messages.firstIndex(where: { $0.id == messageId }) else {
+            channelModificationFailed(completion)
+            return
+        }
+
+        var newLastReadMessageIndex = messages.index(after: messageIndex)
+        if !messages.indices.contains(newLastReadMessageIndex) {
+            newLastReadMessageIndex = messageIndex
+        }
+        let newLastReadMessageId = messages[newLastReadMessageIndex].id
 
         guard !markingRead, let currentUserId = client.currentUserId else {
             callback {
