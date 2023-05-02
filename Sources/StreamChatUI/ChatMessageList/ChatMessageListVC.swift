@@ -92,9 +92,35 @@ open class ChatMessageListVC: _ViewController,
         .withoutAutoresizingMaskConstraints
 
     /// A Boolean value indicating whether jump to unread messages button is visible.
-    open var showJumpToUnreadMessages: Bool {}
+    open var showJumpToUnreadMessages: Bool {
+        guard let dataSource = dataSource,
+              let channel = dataSource.channel(for: self),
+              channel.unreadCount.messages > 0 else {
+            return false
+        }
 
-    private var lastReadMessageIndexPath: IndexPath? {}
+        guard let lastReadId = lastReadMessageId, let lastReadIndexPath = lastReadMessageIndexPath else {
+            // If there are messages, but none is read, we show the button if the first message is not on screen.
+            if !dataSource.messages.isEmpty {
+                return !isMessageVisible(for: IndexPath(item: dataSource.messages.count - 1, section: 0))
+            } else {
+                return false
+            }
+        }
+
+        // If the message is the last one, we don't show the button
+        guard lastReadId != dataSource.messages.first?.id else {
+            return false
+        }
+
+        // If the message is visible on screen, we don't show the button
+        return !isMessageVisible(for: lastReadIndexPath)
+    }
+
+    private var lastReadMessageId: MessageId?
+    private var lastReadMessageIndexPath: IndexPath? {
+        lastReadMessageId.flatMap(getIndexPath)
+    }
 
     /// A formatter that converts the message date to textual representation.
     /// This date formatter is used between each group message and the top overlay.
@@ -268,7 +294,18 @@ open class ChatMessageListVC: _ViewController,
         )
     }
 
-    private func updateVisibility(for view: UIView, isVisible: Bool, animated: Bool) {}
+    private func updateVisibility(for view: UIView, isVisible: Bool, animated: Bool) {
+        if isVisible { view.isVisible = true }
+        Animate(
+            duration: 2,
+            isAnimated: animated,
+            {
+                view.alpha = isVisible ? 1 : 0
+            }, completion: { _ in
+                if !isVisible { view.isVisible = false }
+            }
+        )
+    }
 
     /// Action for `scrollToLatestMessageButton` that scroll to most recent message.
     @objc open func scrollToLatestMessage() {
@@ -285,21 +322,44 @@ open class ChatMessageListVC: _ViewController,
         listView.scrollToMostRecentMessage(animated: animated)
     }
 
-    func updateUnreadMessagesSeparator(at lastReadId: MessageId?, previousId: MessageId?) {
+    func updateUnreadMessagesSeparator(at lastReadId: MessageId?) {
+        let previousLastReadId = lastReadMessageId
+        guard previousLastReadId != lastReadId else { return }
+
         func indexPath(for id: MessageId?) -> IndexPath? {
             id.flatMap(getIndexPath)
         }
 
-        let indexPathsToReload = [indexPath(for: previousId), indexPath(for: lastReadId)].compactMap { $0 }
+        lastReadMessageId = lastReadId
+        let indexPathsToReload = [indexPath(for: previousLastReadId), indexPath(for: lastReadId)].compactMap { $0 }
+
         guard !indexPathsToReload.isEmpty else { return }
         listView.reloadRows(at: indexPathsToReload, with: .automatic)
-
-        jumpToUnreadMessagesButton.content = dataSource?.channel(for: self)?.unreadCount ?? .noUnread
     }
 
-    @objc func jumpToUnreadMessages() {}
+    func updateJumpToUnreadMessages(with unreadCount: ChannelUnreadCount) {
+        jumpToUnreadMessagesButton.content = unreadCount
+        updateScrollDependentButtonsVisibility()
+    }
 
-    @objc func discardUnreadMessages() {}
+    func isMessageVisible(for messageId: MessageId) -> Bool {
+        guard let indexPath = getIndexPath(forMessageId: messageId) else { return false }
+        return isMessageVisible(for: indexPath)
+    }
+
+    private func isMessageVisible(for indexPath: IndexPath) -> Bool {
+        guard let visibleIndexPaths = listView.indexPathsForVisibleRows else { return false }
+        return visibleIndexPaths.contains(indexPath)
+    }
+
+    @objc func jumpToUnreadMessages() {
+        guard let indexPath = lastReadMessageIndexPath else { return }
+        listView.scrollToRow(at: indexPath, at: .bottom, animated: true)
+    }
+
+    @objc func discardUnreadMessages() {
+        delegate?.chatMessageListDidDiscardUnreadMessages(self)
+    }
 
     /// Updates the table view data with given `changes`.
     open func updateMessages(with changes: [ListChange<ChatMessage>], completion: (() -> Void)? = nil) {
@@ -620,9 +680,8 @@ open class ChatMessageListVC: _ViewController,
 
         // It can take some time for highlighted message to appear on screen after scrolling to it.
         // The only way to check if `scrollToRow` as finished it to wait here on delegate callback.
-        let visibleIndexPaths = listView.indexPathsForVisibleRows ?? []
         if let messageId = messageIdPendingHighlight, let indexPath = getIndexPath(forMessageId: messageId) {
-            guard visibleIndexPaths.contains(indexPath) else { return }
+            guard isMessageVisible(for: indexPath) else { return }
             DispatchQueue.main.async {
                 self.onMessageHighlight?(indexPath)
             }
@@ -636,10 +695,12 @@ open class ChatMessageListVC: _ViewController,
         _ overlay: ChatMessageListScrollOverlayView,
         textForItemAt indexPath: IndexPath
     ) -> String? {
-        guard let message = dataSource?.chatMessageListVC(self, messageAt: indexPath) else {
+        guard let message = dataSource?.chatMessageListVC(self, messageAt: indexPath),
+              !showJumpToUnreadMessages else {
             return nil
         }
 
+        guard !showJumpToUnreadMessages else { return nil }
         return dateSeparatorFormatter.format(message.createdAt)
     }
 
@@ -912,7 +973,7 @@ private extension ChatMessageListVC {
     // message has the same index of the deleted message after the deletion has been executed.
     func reloadPreviousMessagesForVisibleRemoves(with changes: [ListChange<ChatMessage>]) {
         let visibleRemoves = changes.filter {
-            $0.isRemove && listView.indexPathsForVisibleRows?.contains($0.indexPath) == true
+            $0.isRemove && isMessageVisible(for: $0.indexPath)
         }
         visibleRemoves.forEach {
             listView.reloadRows(at: [$0.indexPath], with: .none)

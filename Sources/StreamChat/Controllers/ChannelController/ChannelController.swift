@@ -105,8 +105,13 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// The pagination cursor for loading next (new) messages.
     internal private(set) var lastNewestMessageId: MessageId?
     
-    /// The first unread message id
-    public private(set) var firstUnreadMessageId: MessageId?
+    /// The last read message id
+    public var lastReadMessageId: MessageId? {
+        channel?.reads.first(where: { $0.user.id == client.currentUserId })?.lastReadMessageId
+    }
+
+    /// A boolean indicating if the user marked the channel as unread in the current session
+    public private(set) var markedAsUnread: Bool = false
 
     private var markingRead: Bool = false
 
@@ -842,10 +847,19 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///   - completion: The completion will be called on a **callbackQueue** when the network request is finished.
     public func markUnread(from messageId: MessageId, completion: ((Error?) -> Void)? = nil) {
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
-        guard let channel = channel else {
+        guard let channel = channel,
+              let messageIndex = messages.firstIndex(where: { $0.id == messageId }) else {
             channelModificationFailed(completion)
             return
         }
+
+        let newLastReadMessageIndex = messages.index(after: messageIndex)
+        guard messages.indices.contains(newLastReadMessageIndex) else {
+            channelModificationFailed(completion)
+            return
+        }
+
+        let newLastReadMessageId = messages[newLastReadMessageIndex].id
 
         /// Read events are not enabled for this channel
         guard areReadEventsEnabled else {
@@ -862,13 +876,16 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
         markingRead = true
 
-        let previousUnreadMessageId = firstUnreadMessageId
-        firstUnreadMessageId = messageId
-        updater.markUnread(cid: channel.cid, userId: currentUserId, from: messageId) { [weak self] error in
-            if error != nil {
-                self?.firstUnreadMessageId = previousUnreadMessageId
-            }
+        updater.markUnread(
+            cid: channel.cid,
+            userId: currentUserId,
+            from: messageId,
+            lastReadMessageId: newLastReadMessageId
+        ) { [weak self] error in
             self?.callback {
+                if error == nil {
+                    self?.markedAsUnread = true
+                }
                 self?.markingRead = false
                 completion?(error)
             }
@@ -1312,7 +1329,6 @@ private extension ChatChannelController {
                         log.warning("Callback called while self is nil")
                         return
                     }
-                    self.updateLastUnreadMessage()
                     $0.channelController(self, didUpdateChannel: change)
                 }
             }
@@ -1373,8 +1389,6 @@ private extension ChatChannelController {
             return observer
         }()
     }
-
-    private func updateLastUnreadMessage() {}
 
     /// A convenience method that invokes the completion? with a ChannelFeatureDisabled error
     /// ie. VCs should use the `are{FEATURE_NAME}Enabled` props (ie. `areReadEventsEnabled`) before using any feature

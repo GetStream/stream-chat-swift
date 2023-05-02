@@ -47,6 +47,11 @@ public protocol ChatMessageListVCDelegate: AnyObject {
         with gestureRecognizer: UITapGestureRecognizer
     )
 
+    /// Tells the delegate when the user discards jumping to unread messages.
+    /// - Parameters:
+    ///   - vc: The message list informing the delegate of this event.
+    func chatMessageListDidDiscardUnreadMessages(_ vc: ChatMessageListVC)
+
     /// Tells the delegate that it should load the page around the given message id.
     ///
     /// Ex: The user tapped on a quoted message which is not locally available.
@@ -127,6 +132,8 @@ public extension ChatMessageListVCDelegate {
     }
 
     // MARK: - Default Implementations
+
+    func chatMessageListDidDiscardUnreadMessages(_ vc: ChatMessageListVC) {}
 
     func chatMessageListVC(
         _ vc: ChatMessageListVC,

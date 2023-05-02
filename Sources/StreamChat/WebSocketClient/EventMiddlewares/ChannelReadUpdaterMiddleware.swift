@@ -76,11 +76,19 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
         for cid: ChannelId,
         userId: UserId,
         from messageId: MessageId,
+        lastReadMessageId: MessageId,
         lastReadAt: Date,
         unreadMessages: Int,
         session: DatabaseSession
     ) {
-        session.markChannelAsUnread(for: cid, userId: userId, from: messageId, lastReadAt: lastReadAt, unreadMessagesCount: unreadMessages)
+        session.markChannelAsUnread(
+            for: cid,
+            userId: userId,
+            from: messageId,
+            lastReadMessageId: lastReadMessageId,
+            lastReadAt: lastReadAt,
+            unreadMessagesCount: unreadMessages
+        )
     }
 
     private func incrementUnreadCountIfNeeded(

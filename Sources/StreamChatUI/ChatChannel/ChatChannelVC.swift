@@ -73,9 +73,10 @@ open class ChatChannelVC: _ViewController,
 
     /// A boolean value indicating whether it should mark the channel read.
     public var shouldMarkChannelRead: Bool {
-        guard isViewVisible(self) else {
+        guard isViewVisible(self), case .remoteDataFetched = channelController.state else {
             return false
         }
+
         return isLastMessageFullyVisible && channelController.hasLoadedAllNextMessages && !hasMarkedMessageAsUnread
     }
 
@@ -84,12 +85,15 @@ open class ChatChannelVC: _ViewController,
         InvertedScrollViewPaginationHandler.make(scrollView: messageListVC.listView)
     }()
 
+    /// Determines if a messaged had been marked as unread in the current session
     private var hasMarkedMessageAsUnread: Bool {
-        channelController.firstUnreadMessageId != nil
+        channelController.markedAsUnread
     }
 
     /// The id of the first unread message
-    private(set) var firstUnreadMessageId: MessageId?
+    private var lastReadMessageId: MessageId? {
+        channelController.lastReadMessageId
+    }
 
     override open func setUp() {
         super.setUp()
@@ -192,6 +196,15 @@ open class ChatChannelVC: _ViewController,
     public func markRead() {
         channelController.markRead()
         messageListVC.scrollToLatestMessageButton.content = .noUnread
+    }
+
+    /// Marks the channel read, discarding local unread state.
+    public func markReadDiscardingState() {
+        messageListVC.scrollToLatestMessageButton.content = .noUnread
+        channelController.markRead { [weak self] _ in
+            guard let unreadCount = self?.channelController.initialUnreadCount else { return }
+            self?.messageListVC.updateJumpToUnreadMessages(with: unreadCount)
+        }
     }
 
     /// Jump to a given message.
@@ -306,6 +319,10 @@ open class ChatChannelVC: _ViewController,
         }
     }
 
+    public func chatMessageListDidDiscardUnreadMessages(_ vc: ChatMessageListVC) {
+        markReadDiscardingState()
+    }
+
     open func chatMessageListVC(
         _ vc: ChatMessageListVC,
         scrollViewDidScroll scrollView: UIScrollView
@@ -328,21 +345,10 @@ open class ChatChannelVC: _ViewController,
         headerViewForMessage message: ChatMessage,
         at indexPath: IndexPath
     ) -> ChatMessageDecorationView? {
-        let shouldShowDate = vc.shouldShowDateSeparator(forMessage: message, at: indexPath)
-        let shouldShowUnreadMessages = message.id == firstUnreadMessageId
+        guard vc.shouldShowDateSeparator(forMessage: message, at: indexPath) else { return nil }
 
-        guard (shouldShowDate || shouldShowUnreadMessages), let channel = channelController.channel else {
-            return nil
-        }
-
-        let header = components.messageHeaderDecorationView.init()
-        header.content = ChatChannelMessageHeaderDecoratorViewContent(
-            message: message,
-            channel: channel,
-            dateFormatter: vc.dateSeparatorFormatter,
-            shouldShowDate: shouldShowDate,
-            shouldShowUnreadMessages: shouldShowUnreadMessages
-        )
+        let header = components.messageListDateSeparatorView.init()
+        header.content = vc.dateSeparatorFormatter.format(message.createdAt)
         return header
     }
 
@@ -351,7 +357,10 @@ open class ChatChannelVC: _ViewController,
         footerViewForMessage message: ChatMessage,
         at indexPath: IndexPath
     ) -> ChatMessageDecorationView? {
-        nil
+        guard message.id == lastReadMessageId, messages.first?.id != message.id, let channel = channelController.channel else { return nil }
+        let footer = components.unreadMessagesCounterDecorationView.init()
+        footer.content = channel
+        return footer
     }
 
     // MARK: - ChatChannelControllerDelegate
@@ -375,15 +384,8 @@ open class ChatChannelVC: _ViewController,
     ) {
         let channelUnreadCount = channelController.channel?.unreadCount ?? .noUnread
         messageListVC.scrollToLatestMessageButton.content = channelUnreadCount
-
-        guard channelController.firstUnreadMessageId != firstUnreadMessageId else { return }
-        let previousUnreadMessageId = firstUnreadMessageId
-        firstUnreadMessageId = channelController.firstUnreadMessageId
-        
-        messageListVC.updateUnreadMessagesSeparator(
-            at: firstUnreadMessageId,
-            previousId: previousUnreadMessageId
-        )
+        messageListVC.updateUnreadMessagesSeparator(at: lastReadMessageId)
+        messageListVC.updateJumpToUnreadMessages(with: channelController.initialUnreadCount ?? .noUnread)
     }
 
     open func channelController(

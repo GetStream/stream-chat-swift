@@ -130,6 +130,7 @@ extension NSManagedObjectContext {
         for cid: ChannelId,
         userId: UserId,
         from messageId: MessageId,
+        lastReadMessageId: MessageId,
         lastReadAt: Date?,
         unreadMessagesCount: Int?
     ) {
@@ -140,7 +141,7 @@ extension NSManagedObjectContext {
 
         let lastReadAt = lastReadAt ?? message.createdAt.bridgeDate
         read.lastReadAt = lastReadAt.bridgeDate
-        read.lastReadMessageId = message.id
+        read.lastReadMessageId = lastReadMessageId
 
         let messagesCount = unreadMessagesCount ?? MessageDTO.countOtherUserMessages(
             in: read.channel.cid,
@@ -182,10 +183,6 @@ extension NSManagedObjectContext {
 
         for message in messages {
             message.reads.insert(read)
-        }
-
-        if let lastMessage = messages.last {
-            read.lastReadMessageId = lastMessage.id
         }
     }
 }
