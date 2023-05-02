@@ -13,6 +13,9 @@ public protocol ChatMessageListVCDataSource: AnyObject {
     /// Asks the data source to return all the available messages.
     var messages: [ChatMessage] { get set }
 
+    /// Asks the data source to return the unread messages count for the session when opening the channel
+    var jumpToUnreadMessagesCount: ChannelUnreadCount { get }
+
     /// Asks the data source to return the channel for the given message list.
     /// - Parameter vc: The message list requesting the channel.
     func channel(for vc: ChatMessageListVC) -> ChatChannel?

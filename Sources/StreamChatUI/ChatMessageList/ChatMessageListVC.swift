@@ -95,7 +95,7 @@ open class ChatMessageListVC: _ViewController,
     open var showJumpToUnreadMessages: Bool {
         guard let dataSource = dataSource,
               let channel = dataSource.channel(for: self),
-              channel.unreadCount.messages > 0 else {
+              dataSource.jumpToUnreadMessagesCount.messages > 0 else {
             return false
         }
 
@@ -106,11 +106,6 @@ open class ChatMessageListVC: _ViewController,
             } else {
                 return false
             }
-        }
-
-        // If the message is the last one, we don't show the button
-        guard lastReadId != dataSource.messages.first?.id else {
-            return false
         }
 
         // If the message is visible on screen, we don't show the button
@@ -287,6 +282,10 @@ open class ChatMessageListVC: _ViewController,
     }
 
     open func updateJumpToUnreadMessagesVisibility(animated: Bool = true) {
+        if let unreadCount = dataSource?.jumpToUnreadMessagesCount,
+           unreadCount != jumpToUnreadMessagesButton.content {
+            jumpToUnreadMessagesButton.content = unreadCount
+        }
         updateVisibility(
             for: jumpToUnreadMessagesButton,
             isVisible: showJumpToUnreadMessages,
@@ -335,11 +334,6 @@ open class ChatMessageListVC: _ViewController,
 
         guard !indexPathsToReload.isEmpty else { return }
         listView.reloadRows(at: indexPathsToReload, with: .automatic)
-    }
-
-    func updateJumpToUnreadMessages(with unreadCount: ChannelUnreadCount) {
-        jumpToUnreadMessagesButton.content = unreadCount
-        updateScrollDependentButtonsVisibility()
     }
 
     func isMessageVisible(for messageId: MessageId) -> Bool {
@@ -700,7 +694,6 @@ open class ChatMessageListVC: _ViewController,
             return nil
         }
 
-        guard !showJumpToUnreadMessages else { return nil }
         return dateSeparatorFormatter.format(message.createdAt)
     }
 

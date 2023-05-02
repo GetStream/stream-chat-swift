@@ -112,6 +112,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
     /// A boolean indicating if the user marked the channel as unread in the current session
     public private(set) var markedAsUnread: Bool = false
+    public private(set) var initialUnreadCount: ChannelUnreadCount?
 
     private var markingRead: Bool = false
 
@@ -885,11 +886,21 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             self?.callback {
                 if error == nil {
                     self?.markedAsUnread = true
+                    self?.updateInitialUnreadCount()
                 }
                 self?.markingRead = false
                 completion?(error)
             }
         }
+    }
+
+    private func updateInitialUnreadCount() {
+        guard let unreadCount = channel?.unreadCount else { return }
+        initialUnreadCount = unreadCount
+    }
+
+    public func resetInitialUnreadCount() {
+        initialUnreadCount = .noUnread
     }
 
     /// Enables slow mode for the channel
@@ -1202,7 +1213,7 @@ private extension ChatChannelController {
 
                     let pageSize = self.channelQuery.pagination?.pageSize ?? .messagesPageSize
                     self.hasLoadedAllPreviousMessages = payload.messages.count < pageSize
-
+                    self.updateInitialUnreadCount()
                     // If we are jumping to a message when synchronizing, and the messages loaded
                     // are less than the page size, it means we loaded the first page and we are not
                     // jumping to a message anymore.

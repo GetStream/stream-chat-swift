@@ -90,6 +90,11 @@ open class ChatChannelVC: _ViewController,
         channelController.markedAsUnread
     }
 
+    /// Returns the unread messages count for the session when opening the channel
+    public var jumpToUnreadMessagesCount: ChannelUnreadCount {
+        channelController.initialUnreadCount ?? .noUnread
+    }
+
     /// The id of the first unread message
     private var lastReadMessageId: MessageId? {
         channelController.lastReadMessageId
@@ -196,15 +201,6 @@ open class ChatChannelVC: _ViewController,
     public func markRead() {
         channelController.markRead()
         messageListVC.scrollToLatestMessageButton.content = .noUnread
-    }
-
-    /// Marks the channel read, discarding local unread state.
-    public func markReadDiscardingState() {
-        messageListVC.scrollToLatestMessageButton.content = .noUnread
-        channelController.markRead { [weak self] _ in
-            guard let unreadCount = self?.channelController.initialUnreadCount else { return }
-            self?.messageListVC.updateJumpToUnreadMessages(with: unreadCount)
-        }
     }
 
     /// Jump to a given message.
@@ -320,7 +316,9 @@ open class ChatChannelVC: _ViewController,
     }
 
     public func chatMessageListDidDiscardUnreadMessages(_ vc: ChatMessageListVC) {
-        markReadDiscardingState()
+        channelController.resetInitialUnreadCount()
+        messageListVC.updateJumpToUnreadMessagesVisibility()
+        markRead()
     }
 
     open func chatMessageListVC(
@@ -385,7 +383,7 @@ open class ChatChannelVC: _ViewController,
         let channelUnreadCount = channelController.channel?.unreadCount ?? .noUnread
         messageListVC.scrollToLatestMessageButton.content = channelUnreadCount
         messageListVC.updateUnreadMessagesSeparator(at: lastReadMessageId)
-        messageListVC.updateJumpToUnreadMessages(with: channelController.initialUnreadCount ?? .noUnread)
+        messageListVC.updateJumpToUnreadMessagesVisibility()
     }
 
     open func channelController(
