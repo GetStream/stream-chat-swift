@@ -7,10 +7,10 @@ import Foundation
 /// The transformer computes the percentage value of each sample with respect to the maximum
 /// and minimum sample values in the input array. The result is an array of transformed Float values,
 /// where each element is between 0 and 1.
-open class AudioSamplesPercentageTransformer {
-    public init() {}
+internal class AudioSamplesPercentageTransformer {
+    init() {}
 
-    open func transform(_ samples: [Float]) -> [Float] {
+    func transform(_ samples: [Float]) -> [Float] {
         /// Compute the absolute values of each sample
         let absArray = samples.map(abs)
 

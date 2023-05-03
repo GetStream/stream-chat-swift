@@ -3,7 +3,7 @@
 //
 
 import AVFoundation
-import StreamChat
+@testable import StreamChat
 
 open class MockAssetPropertyLoader: AssetPropertyLoading {
     open var loadPropertiesWasCalledWithProperties: [AssetProperty]?

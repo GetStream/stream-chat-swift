@@ -3,7 +3,7 @@
 //
 
 import Foundation
-import StreamChat
+@testable import StreamChat
 
 public final class MockAudioSessionConfigurator: Stub, Spy, AudioSessionConfiguring {
 
@@ -19,10 +19,6 @@ public final class MockAudioSessionConfigurator: Stub, Spy, AudioSessionConfigur
     public var deactivateRecordingSessionThrowsError: Error?
     public var activatePlaybackSessionThrowsError: Error?
     public var deactivatePlaybackSessionThrowsError: Error?
-
-    public static func build() -> AudioSessionConfiguring {
-        MockAudioSessionConfigurator()
-    }
 
     public init() { /* No-op */ }
 

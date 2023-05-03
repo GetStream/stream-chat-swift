@@ -32,7 +32,7 @@ public struct AudioAnalysisEngine {
         )
     }
 
-    public init(
+    init(
         assetPropertiesLoader: AssetPropertyLoading,
         audioAnalyser: AudioAnalysing
     ) {
@@ -108,14 +108,14 @@ public struct AudioAnalysisEngine {
 
 // MARK: - Errors
 
-public class AudioAnalysisEngineError: ClientError {
+public final class AudioAnalysisEngineError: ClientError {
     /// An error occurred when the Audio track cannot be loaded from the AudioFile provided
-    public class func failedToLoadAVAssetTrack(file: StaticString = #file, line: UInt = #line) -> AudioAnalysisEngineError {
+    public static func failedToLoadAVAssetTrack(file: StaticString = #file, line: UInt = #line) -> AudioAnalysisEngineError {
         .init("Failed to load AVAssetTrack.", file, line)
     }
 
     /// An error occurred when the AudioFormatDescriptions cannot be loaded from the AudioFile provided
-    public class func failedToLoadFormatDescriptions(file: StaticString = #file, line: UInt = #line) -> AudioAnalysisEngineError {
+    public static func failedToLoadFormatDescriptions(file: StaticString = #file, line: UInt = #line) -> AudioAnalysisEngineError {
         .init("Failed to load format descriptions.", file, line)
     }
 }

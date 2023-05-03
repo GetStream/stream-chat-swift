@@ -9,7 +9,7 @@ import AVFoundation
 /// Describes an object that can record audio
 public protocol AudioRecording {
     /// A static function which returns an instance of the type conforming to `AudioRecording`
-    static func build() -> AudioRecording
+    init()
 
     /// Subscribes the provided object on AudioRecorder's updates
     func subscribe(_ subscriber: AudioRecordingDelegate)
@@ -113,8 +113,8 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
         }
     }
 
-    /// Public property to access the current recording URL
-    public var recordingURL: URL? { audioRecorder?.url }
+    /// property to access the current recording URL
+    var recordingURL: URL? { audioRecorder?.url }
 
     /// If a recording session is in progress, this property holds a reference to the audio recorder used
     private var audioRecorder: AVAudioRecorder?
@@ -132,6 +132,10 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
 
     // MARK: - Lifecycle
 
+    override public required convenience init() {
+        self.init(configuration: .default)
+    }
+
     /// Initialises a new instance of StreamAudioRecorder
     /// - Parameters:
     ///   - audioSessionConfigurator: The configurator to use to interact with `AVAudioSession`
@@ -140,14 +144,12 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
     ///   - audioRecorderBaseStorageURL: The path in where we would like to store temporary and finalised recording files.
     ///   - audioRecorderMeterNormaliser: The normaliser that will be used to transform `AVAudioRecorder's` updated meter values.
     public convenience init(
-        configuration: Configuration,
-        audioSessionConfigurator: AudioSessionConfiguring,
-        audioRecorderMeterNormaliser: ΑudioRecorderMeterNormalising
+        configuration: Configuration
     ) {
         self.init(
             configuration: configuration,
-            audioSessionConfigurator: audioSessionConfigurator,
-            audioRecorderMeterNormaliser: audioRecorderMeterNormaliser,
+            audioSessionConfigurator: StreamAudioSessionConfigurator(),
+            audioRecorderMeterNormaliser: StreamΑudioRecorderMeterNormaliser(),
             audioRecorderAVProvider: AVAudioRecorder.init
         )
     }
@@ -168,14 +170,6 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
     }
 
     // MARK: - AudioRecording
-
-    open class func build() -> AudioRecording {
-        StreamAudioRecorder(
-            configuration: .default,
-            audioSessionConfigurator: StreamAudioSessionConfigurator(),
-            audioRecorderMeterNormaliser: StreamΑudioRecorderMeterNormaliser()
-        )
-    }
 
     open func subscribe(_ subscriber: AudioRecordingDelegate) {
         multicastDelegate.add(additionalDelegate: subscriber)
@@ -457,20 +451,20 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
 /// An enum that acts as a namespace for various audio recording errors that might occur
 public class AudioRecorderError: ClientError {
     /// An unknown error occurred
-    public class func unknown(file: StaticString = #file, line: UInt = #line) -> AudioRecorderError { .init("An unknown error occurred.", file, line) }
+    public static func unknown(file: StaticString = #file, line: UInt = #line) -> AudioRecorderError { .init("An unknown error occurred.", file, line) }
 
     /// User has not granted permission to record audio
-    public class func noRecordPermission(file: StaticString = #file, line: UInt = #line) -> AudioRecorderError { .init("Missing permission to record.", file, line) }
+    public static func noRecordPermission(file: StaticString = #file, line: UInt = #line) -> AudioRecorderError { .init("Missing permission to record.", file, line) }
 
     /// Failed to begin audio recording
-    public class func failedToBegin(file: StaticString = #file, line: UInt = #line) -> AudioRecorderError { .init("Failed to begin recording.", file, line) }
+    public static func failedToBegin(file: StaticString = #file, line: UInt = #line) -> AudioRecorderError { .init("Failed to begin recording.", file, line) }
 
     /// Failed to resume audio recording
-    public class func failedToResume(file: StaticString = #file, line: UInt = #line) -> AudioRecorderError { .init("Failed to resume recording.", file, line) }
+    public static func failedToResume(file: StaticString = #file, line: UInt = #line) -> AudioRecorderError { .init("Failed to resume recording.", file, line) }
 
     /// Failed to save audio recording
-    public class func failedToSave(file: StaticString = #file, line: UInt = #line) -> AudioRecorderError { .init("Failed to save recording.", file, line) }
+    public static func failedToSave(file: StaticString = #file, line: UInt = #line) -> AudioRecorderError { .init("Failed to save recording.", file, line) }
 
     /// Failed to delete audio recording
-    public class func failedToDelete(file: StaticString = #file, line: UInt = #line) -> AudioRecorderError { .init("Failed to delete recording.", file, line) }
+    public static func failedToDelete(file: StaticString = #file, line: UInt = #line) -> AudioRecorderError { .init("Failed to delete recording.", file, line) }
 }

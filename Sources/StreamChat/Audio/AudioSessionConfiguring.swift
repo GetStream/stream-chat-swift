@@ -7,7 +7,7 @@ import AVFoundation
 // MARK: - Protocol
 
 /// A protocol describing an object that can configure/interact with `AVAudioSession`
-public protocol AudioSessionConfiguring {
+protocol AudioSessionConfiguring {
     /// The required initialiser
     init()
 
@@ -33,14 +33,14 @@ public protocol AudioSessionConfiguring {
 
 // MARK: - Implementation
 
-open class StreamAudioSessionConfigurator: AudioSessionConfiguring {
+final class StreamAudioSessionConfigurator: AudioSessionConfiguring {
     private static let recordingCategories: Set<AVAudioSession.Category> = [.record, .playAndRecord]
     private static let playbackCategories: Set<AVAudioSession.Category> = [.playback, .playAndRecord]
 
     /// The audioSession with which the configurator will interact.
     private let audioSession: AudioSessionProtocol
 
-    public init(
+    init(
         _ audioSession: AudioSessionProtocol
     ) {
         self.audioSession = audioSession
@@ -48,13 +48,13 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring {
 
     // MARK: - AudioSessionConfigurator
 
-    public required convenience init() {
+    required convenience init() {
         self.init(AVAudioSession.sharedInstance())
     }
 
     /// - Note: This method is using the `.playAndRecord` category with the `.spokenAudio` mode.
     /// The preferredInput will be set to `.buildInMic`
-    open func activateRecordingSession() throws {
+    func activateRecordingSession() throws {
         guard !Self.recordingCategories.contains(audioSession.category) else {
             return
         }
@@ -70,7 +70,7 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring {
 
     /// - Note: The method will check if the audioSession's category contains the `record` capability
     /// and if it does it will deactivate it. Otherwise, no action will be performed
-    open func deactivateRecordingSession() throws {
+    func deactivateRecordingSession() throws {
         guard Self.recordingCategories.contains(audioSession.category) else {
             return
         }
@@ -80,7 +80,7 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring {
     /// - Note: The method will check if the audioSession's category contains the `playback` capability
     /// and if it doesn't it will active it using the `.playback` category and `.default` for both mode
     /// and policy.
-    open func activatePlaybackSession() throws {
+    func activatePlaybackSession() throws {
         guard !Self.playbackCategories.contains(audioSession.category) else {
             return
         }
@@ -95,14 +95,14 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring {
 
     /// - Note: The method will check if the audioSession's category contains the `playback` capability
     /// and if it does it will deactivate it. Otherwise, no action will be performed
-    open func deactivatePlaybackSession() throws {
+    func deactivatePlaybackSession() throws {
         guard Self.playbackCategories.contains(audioSession.category) else {
             return
         }
         try audioSession.setActive(false, options: [])
     }
 
-    open func requestRecordPermission(
+    func requestRecordPermission(
         _ completionHandler: @escaping (Bool) -> Void
     ) {
         audioSession.requestRecordPermission { [weak self] in
@@ -150,7 +150,7 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring {
 
 // MARK: - Errors
 
-public class AudioSessionConfiguratorError: ClientError {
+final class AudioSessionConfiguratorError: ClientError {
     /// An unknown error occurred
-    public class func noAvailableInputsFound(file: StaticString = #file, line: UInt = #line) -> AudioSessionConfiguratorError { .init("No available audio inputs found.", file, line) }
+    static func noAvailableInputsFound(file: StaticString = #file, line: UInt = #line) -> AudioSessionConfiguratorError { .init("No available audio inputs found.", file, line) }
 }

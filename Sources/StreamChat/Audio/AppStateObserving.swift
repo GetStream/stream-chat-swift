@@ -9,7 +9,7 @@ import UIKit
 
 /// This protocol defines the methods that should be implemented by any class that wants to observe
 /// app state changes.
-public protocol AppStateObserverDelegate: AnyObject {
+protocol AppStateObserverDelegate: AnyObject {
     /// Will be triggered when the app moves to the background
     func applicationDidMoveToBackground()
 
@@ -19,7 +19,7 @@ public protocol AppStateObserverDelegate: AnyObject {
 
 /// This protocol describes an object that observes the state of an App and provides related information
 /// to its observers.
-public protocol AppStateObserving {
+protocol AppStateObserving {
     /// Adds the provided subscriber to the list of observers that will be informed once the state of the app
     /// changes.
     /// - Note: The list holds a weak reference to the subscriber
@@ -30,9 +30,9 @@ public protocol AppStateObserving {
 }
 
 /// A class responsible for observing changes to the app state.
-open class StreamAppStateObserver: AppStateObserving {
+final class StreamAppStateObserver: AppStateObserving {
     /// The NotificationCenter used for observing app state changes.
-    public let notificationCenter: NotificationCenter
+    let notificationCenter: NotificationCenter
 
     /// The observation tokens that are used to retain the notification subscription on the NotificationCenter
     private var didMoveToBackgroundObservationToken: Any?
@@ -48,7 +48,7 @@ open class StreamAppStateObserver: AppStateObserving {
 
     /// Initializes an instance of StreamAppStateObserver with the provided notification center. If no
     /// notification center is provided, the default NotificationCenter will be used.
-    public init(
+    init(
         notificationCenter: NotificationCenter = .default
     ) {
         self.notificationCenter = notificationCenter
@@ -60,12 +60,12 @@ open class StreamAppStateObserver: AppStateObserving {
     // MARK: - AppStateObserving
 
     /// Adds a subscriber to receive app state updates.
-    open func subscribe(_ subscriber: AppStateObserverDelegate) {
+    func subscribe(_ subscriber: AppStateObserverDelegate) {
         delegate.add(additionalDelegate: subscriber)
     }
 
     /// Removes a subscriber from receiving app state updates.
-    open func unsubscribe(_ subscriber: AppStateObserverDelegate) {
+    func unsubscribe(_ subscriber: AppStateObserverDelegate) {
         delegate.remove(additionalDelegate: subscriber)
     }
 

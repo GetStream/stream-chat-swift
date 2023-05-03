@@ -3,7 +3,7 @@
 //
 
 import Foundation
-import StreamChat
+@testable import StreamChat
 import XCTest
 
 final class AudioSamplesPercentageTransformer_Tests: XCTestCase {

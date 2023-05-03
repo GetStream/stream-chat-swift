@@ -5,20 +5,20 @@
 import AVFoundation
 
 /// An object describing the context of an AudioTrack analysis process
-public struct AudioAnalysisContext {
+struct AudioAnalysisContext {
     /// The URL location of the AudioTrack under analysis
-    public let audioURL: URL
+    let audioURL: URL
 
     /// The number of samples contained in the AudioTrack
-    public let totalSamples: Int
+    let totalSamples: Int
 
     /// The asset pointing to the AudioTrack
-    public let asset: AVAsset
+    let asset: AVAsset
 
     /// The first audio track available in the asset (if any)
-    public let assetTrack: AVAssetTrack?
+    let assetTrack: AVAssetTrack?
 
-    internal init(
+    init(
         audioURL: URL,
         totalSamples: Int,
         asset: AVAsset,
@@ -30,7 +30,7 @@ public struct AudioAnalysisContext {
         self.assetTrack = assetTrack
     }
 
-    internal init(
+    init(
         from loadedAsset: AVAsset,
         audioURL: URL
     ) throws {

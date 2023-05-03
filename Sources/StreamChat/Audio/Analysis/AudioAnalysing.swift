@@ -7,7 +7,7 @@ import AVFoundation
 /// Describes an object that given an `AudioAnalysisContext` will analyse and process it in order to
 /// generate a set of data points that describe some characteristics of the audio track provided from the
 /// context.
-public protocol AudioAnalysing {
+protocol AudioAnalysing {
     /// Analyse and process the provided context and provide data points limited to the number of the
     /// targetSamples.
     /// - Parameters:
@@ -22,13 +22,13 @@ public protocol AudioAnalysing {
 
 /// An implementation of `AudioAnalysing` that processes an `AudioAnalysisContext` in order
 /// to provide information for the visualisation of the audio's waveform.
-open class StreamAudioWaveformAnalyser: AudioAnalysing {
+final class StreamAudioWaveformAnalyser: AudioAnalysing {
     private let audioSamplesExtractor: AudioSamplesExtractor
     private let audioSamplesProcessor: AudioSamplesProcessor
     private let audioSamplesPercentageTransformer: AudioSamplesPercentageTransformer
     private let outputSettings: [String: Any]
 
-    public init(
+    init(
         audioSamplesExtractor: AudioSamplesExtractor,
         audioSamplesProcessor: AudioSamplesProcessor,
         audioSamplesPercentageTransformer: AudioSamplesPercentageTransformer,
@@ -40,7 +40,7 @@ open class StreamAudioWaveformAnalyser: AudioAnalysing {
         self.outputSettings = outputSettings
     }
 
-    open func analyse(
+    func analyse(
         audioAnalysisContext context: AudioAnalysisContext,
         for targetSamples: Int
     ) throws -> [Float] {
@@ -158,19 +158,19 @@ open class StreamAudioWaveformAnalyser: AudioAnalysing {
 
 // MARK: - Errors
 
-public class AudioAnalysingError: ClientError {
+final class AudioAnalysingError: ClientError {
     /// Failed to read the asset provided by the `AudioAnalysisContext`
-    public class func failedToReadAsset(file: StaticString = #file, line: UInt = #line) -> AudioAnalysingError {
+    static func failedToReadAsset(file: StaticString = #file, line: UInt = #line) -> AudioAnalysingError {
         .init("Failed to read AVAsset.", file, line)
     }
 
     /// Failed to load the formatDescriptions from the asset provided by the `AudioAnalysisContext`
-    public class func failedToLoadFormatDescriptions(file: StaticString = #file, line: UInt = #line) -> AudioAnalysingError {
+    static func failedToLoadFormatDescriptions(file: StaticString = #file, line: UInt = #line) -> AudioAnalysingError {
         .init("Failed to load format descriptions.", file, line)
     }
 
     /// Failed to read the data from the provided Audio file
-    public class func failedToReadAudioFile(file: StaticString = #file, line: UInt = #line) -> AudioAnalysingError {
+    static func failedToReadAudioFile(file: StaticString = #file, line: UInt = #line) -> AudioAnalysingError {
         .init("Failed to read audio file.", file, line)
     }
 }

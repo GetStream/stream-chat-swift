@@ -8,11 +8,11 @@ import AVFoundation
 /// of samples to process based on the provided downsamplingRate.
 ///
 /// - Note: Audio samples are expected to be stored in Int16 format.
-open class AudioSamplesExtractor {
+internal class AudioSamplesExtractor {
     /// A struct to represent the result of the extractSamples method
-    public struct Result: Equatable { var samplesToProcess, downSampledLength: Int }
+    struct Result: Equatable { var samplesToProcess, downSampledLength: Int }
 
-    public init() {}
+    init() {}
 
     /// Extracts samples from the provided buffer and calculates the number of samples to process
     /// based on the provided `samplesPerPixel` (downsample).
@@ -21,7 +21,7 @@ open class AudioSamplesExtractor {
     ///   - sampleBuffer: An inout parameter of type Data representing the current buffer of audio samples
     ///   - downsamplingRate: An integer value that determines the downsampling rate
     /// - Returns: a struct containing the information regarding processing and downsampling
-    open func extractSamples(
+    func extractSamples(
         from readSampleBuffer: CMSampleBuffer?,
         sampleBuffer: inout Data,
         downsamplingRate: Int

@@ -98,7 +98,7 @@ open class StreamRemoteAudioPlayer: AudioPlaying, AppStateObserverDelegate {
         )
     }
 
-    public init(
+    init(
         assetPropertyLoader: AssetPropertyLoading,
         playerObserver: AudioPlayerObserving,
         player: AVPlayer,
@@ -136,9 +136,7 @@ open class StreamRemoteAudioPlayer: AudioPlaying, AppStateObserverDelegate {
         player.replaceCurrentItem(with: nil)
     }
 
-    open func loadAsset(
-        from url: URL
-    ) {
+    open func loadAsset(from url: URL) {
         /// We are going to check if the URL requested to load, represents the currentItem that we
         /// have already loaded (if any). In this case, we will try either to resume the existing playback
         /// or restart it, if possible.
@@ -234,13 +232,13 @@ open class StreamRemoteAudioPlayer: AudioPlaying, AppStateObserverDelegate {
 
     // MARK: - AppStateObserverDelegate
 
-    public func applicationDidMoveToBackground() {
+    func applicationDidMoveToBackground() {
         guard context.state == .playing else { return }
         shouldPlayWhenComeToForeground = true
         player.pause()
     }
 
-    public func applicationDidMoveToForeground() {
+    func applicationDidMoveToForeground() {
         guard shouldPlayWhenComeToForeground else { return }
         shouldPlayWhenComeToForeground = false
         player.play()
@@ -248,7 +246,7 @@ open class StreamRemoteAudioPlayer: AudioPlaying, AppStateObserverDelegate {
 
     // MARK: - Helpers
 
-    open func playbackWillStop(_ playerItem: AVPlayerItem) {
+    func playbackWillStop(_ playerItem: AVPlayerItem) {
         guard
             let playerItemURL = (playerItem.asset as? AVURLAsset)?.url,
             let currentItemURL = (player.currentItem?.asset as? AVURLAsset)?.url,

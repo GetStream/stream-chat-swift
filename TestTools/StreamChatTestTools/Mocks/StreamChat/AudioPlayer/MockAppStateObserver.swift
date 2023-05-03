@@ -3,7 +3,7 @@
 //
 
 import Foundation
-import StreamChat
+@testable import StreamChat
 
 public class MockAppStateObserver: AppStateObserving, Spy {
     public var recordedFunctions: [String] = []

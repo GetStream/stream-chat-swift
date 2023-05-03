@@ -5,7 +5,7 @@
 import AVFoundation
 
 /// A simple protocol that abstracts the usage of AVAudioSession
-public protocol AudioSessionProtocol {
+protocol AudioSessionProtocol {
     var category: AVAudioSession.Category { get }
     var availableInputs: [AVAudioSessionPortDescription]? { get }
 

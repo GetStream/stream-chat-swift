@@ -6,14 +6,14 @@ import Accelerate
 import AVFoundation
 
 /// An object with the purpose to prepare the provided audio data for visualisation or further processing.
-open class AudioSamplesProcessor {
-    public let noiseFloor: Float
+internal class AudioSamplesProcessor {
+    let noiseFloor: Float
 
     /// Creates a new instances with the desired noiseFloor value
     /// - Parameter noiseFloor: The value which we will use as noiseFloor. Any value greater than
     /// this one will be considered silence.
     /// - Note: Default value: -50
-    public init(noiseFloor: Float = -50) {
+    init(noiseFloor: Float = -50) {
         self.noiseFloor = noiseFloor
     }
 
@@ -30,7 +30,7 @@ open class AudioSamplesProcessor {
     ///   - downsamplingRate: An integer value that determines the downsampling rate
     ///   - filter: The filter to be used to smooth the result by applying a weighting function to the neighboring elements.
     /// - Returns: The resulting array of downsampled values.
-    open func processSamples(
+    func processSamples(
         fromData sampleBuffer: inout Data,
         outputSamples: inout [Float],
         samplesToProcess: Int,

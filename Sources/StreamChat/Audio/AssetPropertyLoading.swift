@@ -34,7 +34,7 @@ public struct AssetPropertyLoadingFailedError: Error {
     /// - Parameters:
     ///   - property: The property for which the error was generated
     ///   - error: The error that was occurred during loading or nil if an unknown error occurred
-    public init(_ property: AssetProperty, error: Error?) {
+    init(_ property: AssetProperty, error: Error?) {
         self.property = property
         self.error = error
     }
