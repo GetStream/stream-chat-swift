@@ -32,7 +32,7 @@ public struct AudioAnalysisEngine {
         )
     }
 
-    internal init(
+    public init(
         assetPropertiesLoader: AssetPropertyLoading,
         audioAnalyser: AudioAnalysing
     ) {

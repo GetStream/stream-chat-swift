@@ -19,27 +19,23 @@ final class AudioSamplesExtractor_Tests: XCTestCase {
     // MARK: - extractSamples(from:sampleBuffer:samplesPerPixel:)
 
     func testExtractSamples_withNoSampleBuffer() throws {
-        // Given
         var sampleBuffer = Data()
         let readSampleBuffer = makeReadSampleBuffer(
             data: sampleBuffer,
             formatDescription: makeFormatDescription()
         )
 
-        // When
         let result = subject.extractSamples(
             from: readSampleBuffer,
             sampleBuffer: &sampleBuffer,
             downsamplingRate: 2
         )
 
-        // Then
         XCTAssertEqual(result.samplesToProcess, 0)
         XCTAssertEqual(result.downSampledLength, 0)
     }
 
     func testExtractSamples_withValidSampleBuffer_downsamplingIs2_returnsResultWithExpectedProperties() {
-        // Arrange
         let audioData: [Int16] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
         let readSampleBuffer = makeReadSampleBuffer(
             data: audioData.withUnsafeBufferPointer { Data(buffer: $0) },
@@ -47,19 +43,16 @@ final class AudioSamplesExtractor_Tests: XCTestCase {
         )
         var sampleBuffer = Data()
 
-        // Act
         let result = subject.extractSamples(
             from: readSampleBuffer,
             sampleBuffer: &sampleBuffer,
             downsamplingRate: 2
         )
 
-        // Assert
         XCTAssertEqual(.init(samplesToProcess: 10, downSampledLength: 5), result)
     }
 
     func testExtractSamples_withValidSampleBuffer_downsamplingIsHalfTheSizeOfAudioData_returnsResultWithExpectedProperties() {
-        // Arrange
         let audioData: [Int16] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
         let readSampleBuffer = makeReadSampleBuffer(
             data: audioData.withUnsafeBufferPointer { Data(buffer: $0) },
@@ -67,14 +60,12 @@ final class AudioSamplesExtractor_Tests: XCTestCase {
         )
         var sampleBuffer = Data()
 
-        // Act
         let result = subject.extractSamples(
             from: readSampleBuffer,
             sampleBuffer: &sampleBuffer,
             downsamplingRate: audioData.count / 2
         )
 
-        // Assert
         XCTAssertEqual(.init(samplesToProcess: 10, downSampledLength: 2), result)
     }
 

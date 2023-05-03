@@ -3,7 +3,7 @@
 //
 
 import Foundation
-@testable import StreamChat
+import StreamChat
 import StreamChatTestTools
 import XCTest
 
