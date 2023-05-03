@@ -70,7 +70,7 @@ final class ChannelRepository_Tests: XCTestCase {
         XCTAssertEqual(receivedError, error)
     }
 
-    // MARK: - Mark as read
+    // MARK: - Mark as unread
 
     func test_markUnread_successfulResponse() {
         let cid = ChannelId.unique
