@@ -335,7 +335,7 @@ open class ChatMessageListVC: _ViewController,
         listView.reloadRows(at: indexPathsToReload, with: .automatic)
     }
 
-    func isMessageVisible(for messageId: MessageId) -> Bool {
+    private func isMessageVisible(for messageId: MessageId) -> Bool {
         guard let indexPath = getIndexPath(forMessageId: messageId) else { return false }
         return isMessageVisible(for: indexPath)
     }
