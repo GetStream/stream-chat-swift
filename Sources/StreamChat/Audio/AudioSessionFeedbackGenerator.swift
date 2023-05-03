@@ -7,7 +7,7 @@ import UIKit.UIImpactFeedbackGenerator
 import UIKit.UISelectionFeedbackGenerator
 
 /// A protocol that defines the required methods for providing haptic feedback for different events in an audio session
-public protocol AudioSessionFeedbackGenerator {
+protocol AudioSessionFeedbackGenerator {
     /// Initialises an instance of the conforming type
     init()
 
@@ -43,7 +43,7 @@ public protocol AudioSessionFeedbackGenerator {
 }
 
 /// A class that conforms to the AudioSessionFeedbackGenerator protocol
-open class StreamAudioSessionFeedbackGenerator: AudioSessionFeedbackGenerator {
+final class StreamAudioSessionFeedbackGenerator: AudioSessionFeedbackGenerator {
     /// The following properties are instances of feedback generators
     private let lightImpactFeedbackGenerator: UIImpactFeedbackGenerator
     private let mediumImpactFeedbackGenerator: UIImpactFeedbackGenerator
@@ -51,7 +51,7 @@ open class StreamAudioSessionFeedbackGenerator: AudioSessionFeedbackGenerator {
     private let selectionFeedbackGenerator: UISelectionFeedbackGenerator
 
     /// A required initialiser for the AudioSessionFeedbackGenerator protocol
-    public required convenience init() {
+    required convenience init() {
         self.init(
             { UIImpactFeedbackGenerator(style: $0) },
             selectionFeedbackGeneratorProvider: { .init() }
@@ -70,43 +70,43 @@ open class StreamAudioSessionFeedbackGenerator: AudioSessionFeedbackGenerator {
 
     /// Methods that play haptic feedback for different events
 
-    open func feedbackForPlay() {
+    func feedbackForPlay() {
         lightImpactFeedbackGenerator.impactOccurred()
     }
 
-    open func feedbackForPause() {
+    func feedbackForPause() {
         lightImpactFeedbackGenerator.impactOccurred()
     }
 
-    open func feedbackForStop() {
+    func feedbackForStop() {
         mediumImpactFeedbackGenerator.impactOccurred()
     }
 
-    open func feedbackForPlaybackRateChange() {
+    func feedbackForPlaybackRateChange() {
         mediumImpactFeedbackGenerator.impactOccurred()
     }
 
-    open func feedbackForSeeking() {
+    func feedbackForSeeking() {
         selectionFeedbackGenerator.selectionChanged()
     }
 
-    open func feedbackForPreparingRecording() {
+    func feedbackForPreparingRecording() {
         lightImpactFeedbackGenerator.impactOccurred()
     }
 
-    open func feedbackForBeginRecording() {
+    func feedbackForBeginRecording() {
         mediumImpactFeedbackGenerator.impactOccurred()
     }
 
-    open func feedbackForCancelRecording() {
+    func feedbackForCancelRecording() {
         heavyImpactFeedbackGenerator.impactOccurred()
     }
 
-    open func feedbackForStopRecording() {
+    func feedbackForStopRecording() {
         mediumImpactFeedbackGenerator.impactOccurred()
     }
 
-    open func feedbackForDiscardRecording() {
+    func feedbackForDiscardRecording() {
         heavyImpactFeedbackGenerator.impactOccurred()
     }
 }
