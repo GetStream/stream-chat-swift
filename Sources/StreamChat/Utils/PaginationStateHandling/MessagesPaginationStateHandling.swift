@@ -13,7 +13,6 @@ struct MessagesPaginationState {
 
     var isJumpingToMessage: Bool
 
-    var hasLoadedAllNextMessages: Bool
     var hasLoadedAllPreviousMessages: Bool
 
     var isLoadingNextMessages: Bool
@@ -30,7 +29,6 @@ struct MessagesPaginationState {
         oldestMessageAt: nil,
         newestMessageAt: nil,
         isJumpingToMessage: false,
-        hasLoadedAllNextMessages: true,
         hasLoadedAllPreviousMessages: false,
         isLoadingNextMessages: false,
         isLoadingPreviousMessages: false,
@@ -65,7 +63,6 @@ class PaginationStateHandler: MessagesPaginationStateHandling {
 
         case .none:
             state.hasLoadedAllPreviousMessages = false
-            state.hasLoadedAllNextMessages = true
             state.isLoadingPreviousMessages = false
             state.isLoadingMiddleMessages = false
             state.isLoadingNextMessages = false
@@ -101,7 +98,6 @@ class PaginationStateHandler: MessagesPaginationStateHandling {
             state.newestMessageAt = newestMessageAt
             state.newestFetchedMessage = newestFetchedMessage
             if messages.count < pagination.pageSize {
-                state.hasLoadedAllNextMessages = true
                 state.newestMessageAt = nil
                 state.isJumpingToMessage = false
             }
@@ -119,7 +115,7 @@ class PaginationStateHandler: MessagesPaginationStateHandling {
             state.newestMessageAt = nil
 
             if messages.count < pagination.pageSize {
-                state.hasLoadedAllNextMessages = true
+                state.isJumpingToMessage = false
                 state.hasLoadedAllPreviousMessages = true
             }
         }
@@ -127,21 +123,23 @@ class PaginationStateHandler: MessagesPaginationStateHandling {
         if let aroundMessageId = pagination.parameter?.aroundMessageId, !messages.isEmpty {
             let midIndex = messages.count / 2
             let midPoint: Int = Int(floor(Double(midIndex)))
-            let firstHalf = messages[..<midPoint]
+            let secondHalf = messages[midPoint...].dropFirst()
 
+            // If the message is in the mid point, it means there's more pages to load in both sides
             if messages[midPoint].id == aroundMessageId {
                 state.isJumpingToMessage = true
-            } else if firstHalf.contains(where: { $0.id == aroundMessageId }) {
-                state.isJumpingToMessage = true
-                state.hasLoadedAllPreviousMessages = true
-            } else {
+                // If the message is in the second half of the response, it means there are no more next messages,
+                // so it means jumping is finished.
+            } else if secondHalf.contains(where: { $0.id == aroundMessageId }) {
                 state.isJumpingToMessage = false
-                state.hasLoadedAllNextMessages = true
+                // Otherwise, if the message is on the first half, it means it loaded all previous messages.
+                // If the messages was not found, it could also mean we are jumping to a parent message.
+            } else {
+                state.hasLoadedAllPreviousMessages = true
             }
 
             if messages.count < pagination.pageSize {
                 state.isJumpingToMessage = false
-                state.hasLoadedAllNextMessages = true
                 state.hasLoadedAllPreviousMessages = true
             }
         }
