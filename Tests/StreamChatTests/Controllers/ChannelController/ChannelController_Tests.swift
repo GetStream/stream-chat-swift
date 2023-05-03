@@ -1315,6 +1315,7 @@ final class ChannelController_Tests: XCTestCase {
                 payload: ChannelReadPayload(
                     user: self.dummyUser(id: userId),
                     lastReadAt: originalReadDate,
+                    lastReadMessageId: .unique,
                     unreadMessagesCount: .unique // This value doesn't matter at all. It's not updated by events. We cam ignore it.
                 ),
                 for: self.channelId,
@@ -3651,6 +3652,7 @@ final class ChannelController_Tests: XCTestCase {
                 .init(
                     user: currentUser,
                     lastReadAt: lastMessage.createdAt,
+                    lastReadMessageId: .unique,
                     unreadMessagesCount: 0
                 )
             ]
@@ -3696,6 +3698,7 @@ final class ChannelController_Tests: XCTestCase {
                 .init(
                     user: currentUser,
                     lastReadAt: lastMessage.createdAt.addingTimeInterval(-1),
+                    lastReadMessageId: .unique,
                     unreadMessagesCount: 0
                 )
             ]
@@ -3824,6 +3827,7 @@ final class ChannelController_Tests: XCTestCase {
                 .init(
                     user: currentUser,
                     lastReadAt: lastMessage.createdAt.addingTimeInterval(-1),
+                    lastReadMessageId: nil,
                     unreadMessagesCount: 0
                 )
             ]
@@ -3860,7 +3864,7 @@ final class ChannelController_Tests: XCTestCase {
         waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertNil(receivedError)
-        XCTAssertNil(controller.firstUnreadMessageId)
+        XCTAssertNil(controller.lastReadMessageId)
     }
 
     func test_markUnread_whenIsNotMarkingAsRead_andCurrentUserIdIsNotPresent() throws {
@@ -3882,7 +3886,7 @@ final class ChannelController_Tests: XCTestCase {
         waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertNil(receivedError)
-        XCTAssertNil(controller.firstUnreadMessageId)
+        XCTAssertNil(controller.lastReadMessageId)
     }
 
     func test_markUnread_whenIsNotMarkingAsRead_andCurrentUserIdIsPresent_whenUpdaterFails() throws {
@@ -3906,7 +3910,7 @@ final class ChannelController_Tests: XCTestCase {
         waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertNotNil(receivedError)
-        XCTAssertNil(controller.firstUnreadMessageId)
+        XCTAssertNil(controller.lastReadMessageId)
     }
 
     func test_markUnread_whenIsNotMarkingAsRead_andCurrentUserIdIsPresent_whenUpdaterSucceeds() throws {
@@ -3930,7 +3934,7 @@ final class ChannelController_Tests: XCTestCase {
         waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertNil(receivedError)
-        XCTAssertEqual(controller.firstUnreadMessageId, messageId)
+        XCTAssertEqual(env.channelUpdater?.markUnread_lastReadMessageId, messageId)
     }
 
     // MARK: - Enable slow mode (cooldown)
@@ -4944,7 +4948,7 @@ extension ChannelController_Tests {
                 // Create a channel with the provided payload
                 let dummyUserPayload: CurrentUserPayload = .dummy(userId: .unique, role: .user)
                 try session.saveCurrentUser(payload: dummyUserPayload)
-                let channel = try session.saveChannel(payload: channelPayload)
+                try session.saveChannel(payload: channelPayload)
 
                 if !withAllNextMessagesLoaded {
                     self.controller.loadPageAroundMessageId(.unique)

@@ -48,11 +48,13 @@ public extension ChatChannelRead {
     /// Creates a new `ChatChannelRead` object from the provided data.
     static func mock(
         lastReadAt: Date,
+        lastReadMessageId: MessageId?,
         unreadMessagesCount: Int,
         user: ChatUser
     ) -> Self {
         .init(
             lastReadAt: lastReadAt,
+            lastReadMessageId: lastReadMessageId,
             unreadMessagesCount: unreadMessagesCount,
             user: user
         )

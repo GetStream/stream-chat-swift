@@ -29,6 +29,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
         let read = ChannelReadPayload(
             user: .dummy(userId: .unique),
             lastReadAt: .init(),
+            lastReadMessageId: .unique,
             unreadMessagesCount: 10
         )
 
@@ -122,6 +123,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
         let anotherUserRead = ChannelReadPayload(
             user: anotherUser,
             lastReadAt: anotherUserMessage.createdAt.addingTimeInterval(-1),
+            lastReadMessageId: .unique,
             unreadMessagesCount: 0
         )
 
@@ -282,7 +284,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
 
         // WHEN
         try database.writeSynchronously { session in
-            session.markChannelAsUnread(for: cid, userId: userId, from: messageId, lastReadAt: nil, unreadMessagesCount: nil)
+            session.markChannelAsUnread(for: cid, userId: userId, from: messageId, lastReadMessageId: .unique, lastReadAt: nil, unreadMessagesCount: nil)
         }
 
         // THEN
@@ -300,6 +302,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
         let read = ChannelReadPayload(
             user: member.user!,
             lastReadAt: .init(),
+            lastReadMessageId: .unique,
             unreadMessagesCount: 10
         )
 
@@ -317,7 +320,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
 
         // WHEN
         try database.writeSynchronously { session in
-            session.markChannelAsUnread(for: cid, userId: userId, from: messageId, lastReadAt: nil, unreadMessagesCount: nil)
+            session.markChannelAsUnread(for: cid, userId: userId, from: messageId, lastReadMessageId: .unique, lastReadAt: nil, unreadMessagesCount: nil)
         }
 
         // THEN
@@ -336,6 +339,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
         let read = ChannelReadPayload(
             user: member.user!,
             lastReadAt: .init(),
+            lastReadMessageId: .unique,
             unreadMessagesCount: 10
         )
         let firstMessageDate = Date()
@@ -358,7 +362,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
 
         // WHEN
         try database.writeSynchronously { session in
-            session.markChannelAsUnread(for: cid, userId: userId, from: messageId, lastReadAt: nil, unreadMessagesCount: nil)
+            session.markChannelAsUnread(for: cid, userId: userId, from: messageId, lastReadMessageId: .unique, lastReadAt: nil, unreadMessagesCount: nil)
         }
 
         // THEN
@@ -379,6 +383,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
         let read = ChannelReadPayload(
             user: member.user!,
             lastReadAt: .init(),
+            lastReadMessageId: .unique,
             unreadMessagesCount: 10
         )
         let firstMessageDate = Date()
@@ -404,7 +409,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
 
         // WHEN
         try database.writeSynchronously { session in
-            session.markChannelAsUnread(for: cid, userId: userId, from: messageId, lastReadAt: passedLastReadAt, unreadMessagesCount: passedUnreadMessagesCount)
+            session.markChannelAsUnread(for: cid, userId: userId, from: messageId, lastReadMessageId: .unique, lastReadAt: passedLastReadAt, unreadMessagesCount: passedUnreadMessagesCount)
         }
 
         // THEN
@@ -430,6 +435,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
         let read = ChannelReadPayload(
             user: member.user!,
             lastReadAt: .init(),
+            lastReadMessageId: .unique,
             unreadMessagesCount: 10
         )
 

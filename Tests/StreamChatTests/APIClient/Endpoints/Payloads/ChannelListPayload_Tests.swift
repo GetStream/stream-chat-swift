@@ -227,6 +227,7 @@ final class ChannelListPayload_Tests: XCTestCase {
                     ChannelReadPayload(
                         user: channelUsers[i],
                         lastReadAt: .unique(after: channelCreatedDate),
+                        lastReadMessageId: .unique,
                         unreadMessagesCount: (0..<10).randomElement()!
                     )
                 },

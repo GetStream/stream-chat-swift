@@ -79,7 +79,7 @@ final class ChannelRepository_Tests: XCTestCase {
 
         let expectation = self.expectation(description: "markUnread completes")
         var receivedError: Error?
-        repository.markUnread(for: cid, userId: userId, from: messageId) { error in
+        repository.markUnread(for: cid, userId: userId, from: messageId, lastReadMessageId: .unique) { error in
             receivedError = error
             expectation.fulfill()
         }
@@ -100,7 +100,7 @@ final class ChannelRepository_Tests: XCTestCase {
 
         let expectation = self.expectation(description: "markUnread completes")
         var receivedError: Error?
-        repository.markUnread(for: cid, userId: userId, from: messageId) { error in
+        repository.markUnread(for: cid, userId: userId, from: messageId, lastReadMessageId: .unique) { error in
             receivedError = error
             expectation.fulfill()
         }

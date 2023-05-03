@@ -84,6 +84,7 @@ final class MessageDTO_Tests: XCTestCase {
         let anotherUserRead: ChannelReadPayload = .init(
             user: anotherUser,
             lastReadAt: anotherUserMessage.createdAt,
+            lastReadMessageId: .unique,
             unreadMessagesCount: 0
         )
 
@@ -92,6 +93,7 @@ final class MessageDTO_Tests: XCTestCase {
         let currentUserRead: ChannelReadPayload = .init(
             user: currentUser,
             lastReadAt: anotherUserMessage.createdAt.addingTimeInterval(10),
+            lastReadMessageId: .unique,
             unreadMessagesCount: 0
         )
 
@@ -145,22 +147,26 @@ final class MessageDTO_Tests: XCTestCase {
         let currentUserRead: ChannelReadPayload = .init(
             user: currentUser,
             lastReadAt: currentUserMessage.createdAt,
+            lastReadMessageId: .unique,
             unreadMessagesCount: 0
         )
 
         let member1ReadEarlierOwnMessage: ChannelReadPayload = .init(
             user: .dummy(userId: .unique),
             lastReadAt: currentUserMessage.createdAt.addingTimeInterval(-10),
+            lastReadMessageId: .unique,
             unreadMessagesCount: 0
         )
         let member2ReadAtOwnMessage: ChannelReadPayload = .init(
             user: .dummy(userId: .unique),
             lastReadAt: currentUserMessage.createdAt.addingTimeInterval(2),
+            lastReadMessageId: .unique,
             unreadMessagesCount: 0
         )
         let member3ReadLaterOwnMessage: ChannelReadPayload = .init(
             user: .dummy(userId: .unique),
             lastReadAt: currentUserMessage.createdAt.addingTimeInterval(10),
+            lastReadMessageId: .unique,
             unreadMessagesCount: 0
         )
 
