@@ -660,51 +660,54 @@ final class ChatChannelVC_Tests: XCTestCase {
 
     // MARK: Channel read
 
-    func test_shouldMarkChannelRead_whenIsLastMessageFullyVisible_whenHasLoadedAllNextMessages_thenReturnsTrue() {
+    func test_shouldMarkChannelRead_viewIsVisible_remoteDataFetched_lastMessageVisible_hasLoadedAllNextMessages_hasNotMarkedMessageAsUnread_shouldReturnTrue() {
         let mockedListView = makeMockMessageListView()
+        vc.isViewVisible = { _ in true }
         mockedListView.mockIsLastCellFullyVisible = true
         channelControllerMock.hasLoadedAllNextMessages_mock = true
+        channelControllerMock.markedAsUnread_mock = false
+        channelControllerMock.state_mock = .remoteDataFetched
 
         XCTAssertTrue(vc.shouldMarkChannelRead)
     }
 
-    func test_shouldMarkChannelRead_whenViewIsNotVisible_thenReturnsFalse() {
+    func test_shouldMarkChannelRead_viewIsNotVisible_remoteDataNotFetched_lastMessageNotVisible_hasNotLoadedAllNextMessages_hasMarkedMessageAsUnread_shouldReturnFalse() {
         let mockedListView = makeMockMessageListView()
-        mockedListView.mockIsLastCellFullyVisible = true
-        channelControllerMock.hasLoadedAllNextMessages_mock = true
         vc.isViewVisible = { _ in false }
-
-        XCTAssertFalse(vc.shouldMarkChannelRead)
-    }
-
-    func test_shouldMarkChannelRead_whenNotLastMessageFullyVisible_thenReturnsFalse() {
-        let mockedListView = makeMockMessageListView()
-        mockedListView.mockIsLastCellFullyVisible = false
-        channelControllerMock.hasLoadedAllNextMessages_mock = true
-
-        XCTAssertFalse(vc.shouldMarkChannelRead)
-    }
-
-    func test_shouldMarkChannelRead_whenHasNotLoadedAllNextMessages_thenReturnsFalse() {
-        let mockedListView = makeMockMessageListView()
-        mockedListView.mockIsLastCellFullyVisible = true
-        channelControllerMock.hasLoadedAllNextMessages_mock = false
-
-        XCTAssertFalse(vc.shouldMarkChannelRead)
-    }
-
-    func test_shouldMarkChannelRead_whenNotLastMessageFullyVisible_whenHasNotLoadedAllNextMessages_thenReturnsFalse() {
-        let mockedListView = makeMockMessageListView()
+        channelControllerMock.state_mock = .initialized
         mockedListView.mockIsLastCellFullyVisible = false
         channelControllerMock.hasLoadedAllNextMessages_mock = false
+        channelControllerMock.markedAsUnread_mock = true
 
         XCTAssertFalse(vc.shouldMarkChannelRead)
+    }
+
+    func test_shouldMarkChannelRead_otherCombinations_shouldReturnFalse() {
+        let options: [(Bool, DataController.State, Bool, Bool, Bool)] = [
+            (false, .remoteDataFetched, true, true, false),
+            (true, .initialized, true, true, false),
+            (true, .remoteDataFetched, false, true, false),
+            (true, .remoteDataFetched, true, false, false),
+            (true, .remoteDataFetched, true, true, true)
+        ]
+
+        options.forEach { isViewVisible, state, isLastCellFullyVisible, hasLoadedAllNextMessages, markedAsUnread in
+            let mockedListView = makeMockMessageListView()
+            vc.isViewVisible = { _ in isViewVisible }
+            channelControllerMock.state_mock = state
+            mockedListView.mockIsLastCellFullyVisible = isLastCellFullyVisible
+            channelControllerMock.hasLoadedAllNextMessages_mock = hasLoadedAllNextMessages
+            channelControllerMock.markedAsUnread_mock = markedAsUnread
+            XCTAssertFalse(vc.shouldMarkChannelRead)
+        }
     }
 
     func test_viewDidAppear_whenShouldMarkChannelRead_thenMarkRead() {
         let mockedListView = makeMockMessageListView()
         mockedListView.mockIsLastCellFullyVisible = true
         channelControllerMock.hasLoadedAllNextMessages_mock = true
+        channelControllerMock.markedAsUnread_mock = false
+        channelControllerMock.state_mock = .remoteDataFetched
 
         vc.viewDidAppear(false)
         XCTAssertEqual(channelControllerMock.markReadCallCount, 1)
@@ -714,6 +717,8 @@ final class ChatChannelVC_Tests: XCTestCase {
         let mockedListView = makeMockMessageListView()
         mockedListView.mockIsLastCellFullyVisible = false
         channelControllerMock.hasLoadedAllNextMessages_mock = false
+        channelControllerMock.markedAsUnread_mock = true
+        channelControllerMock.state_mock = .initialized
 
         vc.viewDidAppear(false)
         XCTAssertEqual(channelControllerMock.markReadCallCount, 0)
@@ -723,6 +728,8 @@ final class ChatChannelVC_Tests: XCTestCase {
         let mockedListView = makeMockMessageListView()
         mockedListView.mockIsLastCellFullyVisible = true
         channelControllerMock.hasLoadedAllNextMessages_mock = true
+        channelControllerMock.markedAsUnread_mock = false
+        channelControllerMock.state_mock = .remoteDataFetched
 
         vc.chatMessageListVC(vc.messageListVC, scrollViewDidScroll: UIScrollView())
         XCTAssertEqual(channelControllerMock.markReadCallCount, 1)
@@ -732,6 +739,8 @@ final class ChatChannelVC_Tests: XCTestCase {
         let mockedListView = makeMockMessageListView()
         mockedListView.mockIsLastCellFullyVisible = false
         channelControllerMock.hasLoadedAllNextMessages_mock = false
+        channelControllerMock.markedAsUnread_mock = true
+        channelControllerMock.state_mock = .initialized
 
         vc.chatMessageListVC(vc.messageListVC, scrollViewDidScroll: UIScrollView())
         XCTAssertEqual(channelControllerMock.markReadCallCount, 0)
@@ -741,6 +750,8 @@ final class ChatChannelVC_Tests: XCTestCase {
         let mockedListView = makeMockMessageListView()
         mockedListView.mockIsLastCellFullyVisible = true
         channelControllerMock.hasLoadedAllNextMessages_mock = true
+        channelControllerMock.markedAsUnread_mock = false
+        channelControllerMock.state_mock = .remoteDataFetched
 
         vc.channelController(channelControllerMock, didUpdateMessages: [])
         mockedListView.updateMessagesCompletion?()
@@ -751,6 +762,8 @@ final class ChatChannelVC_Tests: XCTestCase {
         let mockedListView = makeMockMessageListView()
         mockedListView.mockIsLastCellFullyVisible = false
         channelControllerMock.hasLoadedAllNextMessages_mock = false
+        channelControllerMock.markedAsUnread_mock = true
+        channelControllerMock.state_mock = .initialized
 
         vc.channelController(channelControllerMock, didUpdateMessages: [])
         mockedListView.updateMessagesCompletion?()
@@ -759,7 +772,7 @@ final class ChatChannelVC_Tests: XCTestCase {
     
     // MARK: - chatMessageListVC(_:headerViewForMessage:at)
 
-    func test_headerViewForMessage_returnsExpectedValue_whenMessageShouldShowDateSeparator_andIsNotMarkedAsUnread() throws {
+    func test_headerViewForMessage_returnsExpectedValue_whenMessageShouldShowDateSeparator() throws {
         var components = Components.mock
         components.channelHeaderView = ChatChannelHeaderViewMock.self
         components.messageComposerVC = ComposerVC_Mock.self
@@ -780,64 +793,13 @@ final class ChatChannelVC_Tests: XCTestCase {
             headerViewForMessage: .mock(createdAt: Date(timeIntervalSince1970: 0)),
             at: .init(row: 0, section: 0)
         )
-        let headerDecorationView = try XCTUnwrap(header as? ChatChannelMessageHeaderDecoratorView)
+        let dateView = try XCTUnwrap(header as? ChatMessageListDateSeparatorView)
 
         // Based on our implementation, views are not fully set up until they have a superview. We are forcing it here.
         let view = UIView()
-        view.addSubview(headerDecorationView)
+        view.addSubview(dateView)
 
-        XCTAssertEqual(headerDecorationView.dateView.textLabel.text, "Jan 01")
-        XCTAssertTrue(headerDecorationView.unreadCountView.isHidden)
-    }
-
-    func test_headerViewForMessage_returnsExpectedValue_whenMessageShouldShowDateSeparator_AndIsMarkedAsUnread() throws {
-        var components = Components.mock
-        components.channelHeaderView = ChatChannelHeaderViewMock.self
-        components.messageComposerVC = ComposerVC_Mock.self
-        components.messageListDateSeparatorEnabled = true
-        vc.components = components
-        vc.messageListVC.components = components
-
-        // Simulate marking a message as unread
-        let firstMessageId = MessageId.unique
-        vc.messages = [
-            .mock(id: firstMessageId, text: "First message", createdAt: Date(timeIntervalSince1970: 0)),
-            .mock(text: "Second message", createdAt: Date(timeIntervalSince1970: 86401))
-        ]
-        vc.channelController.client.authenticationRepository.setMockToken()
-        channelControllerMock.simulateInitial(
-            channel: .mock(cid: .unique, unreadCount: ChannelUnreadCount(messages: 1, mentions: 0)),
-            messages: vc.messages,
-            state: .remoteDataFetched
-        )
-        let channel = try XCTUnwrap(vc.channelController.channel)
-        vc.channelController.markUnread(from: firstMessageId)
-        vc.channelController(vc.channelController, didUpdateChannel: EntityChange<ChatChannel>.update(channel))
-
-        let header = vc.chatMessageListVC(
-            vc.messageListVC,
-            headerViewForMessage: .mock(id: firstMessageId, createdAt: Date(timeIntervalSince1970: 0)),
-            at: .init(row: 0, section: 0)
-        )
-        let headerDecorationView = try XCTUnwrap(header as? ChatChannelMessageHeaderDecoratorView)
-        let headerDecorationViewContent = try XCTUnwrap(headerDecorationView.content)
-        XCTAssertTrue(headerDecorationViewContent.shouldShowDate)
-        XCTAssertTrue(headerDecorationViewContent.shouldShowUnreadMessages)
-
-        // Based on our implementation, views are not fully set up until they have a superview. We are forcing it here.
-        let view = UIView()
-        view.addSubview(headerDecorationView)
-
-        XCTAssertEqual(
-            headerDecorationView.dateView.textLabel.text,
-            "Jan 01"
-        )
-
-        XCTAssertEqual(
-            headerDecorationView.unreadCountView.messagesCountDecorationView.textLabel.text,
-            "1 UNREAD MESSAGE"
-        )
-        AssertSnapshot(vc, variants: [.defaultLight])
+        XCTAssertEqual(dateView.textLabel.text, "Jan 01")
     }
 }
 

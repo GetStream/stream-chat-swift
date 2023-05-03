@@ -589,13 +589,14 @@ final class ChatMessageListVC_Tests: XCTestCase {
             ChatMessage.mock(id: unreadMessageId) // IndexPath: 0 - 2
         ]
 
-        sut.updateUnreadMessagesSeparator(at: unreadMessageId, previousId: nil)
+        sut.updateUnreadMessagesSeparator(at: unreadMessageId)
 
         XCTAssertEqual(mockedListView.reloadRowsCallCount, 1)
         XCTAssertEqual(mockedListView.reloadRowsCalledWith, [IndexPath(item: 2, section: 0)])
     }
 
     func test_updateUnreadMessagesSeparator_whenThereIsExistingSeparator() {
+        // GIVEN
         let previousUnreadMessageId = MessageId.unique
         let unreadMessageId = MessageId.unique
         mockedDataSource.messages = [
@@ -605,13 +606,20 @@ final class ChatMessageListVC_Tests: XCTestCase {
             ChatMessage.mock(id: unreadMessageId) // IndexPath: 0 - 3
         ]
 
-        sut.updateUnreadMessagesSeparator(at: unreadMessageId, previousId: previousUnreadMessageId)
+        sut.updateUnreadMessagesSeparator(at: previousUnreadMessageId)
+        mockedListView.reloadRowsCallCount = 0
+        mockedListView.reloadRowsCalledWith = []
 
+        // WHEN
+        sut.updateUnreadMessagesSeparator(at: unreadMessageId)
+
+        // THEN
         XCTAssertEqual(mockedListView.reloadRowsCallCount, 1)
         XCTAssertEqual(mockedListView.reloadRowsCalledWith, [IndexPath(item: 2, section: 0), IndexPath(item: 3, section: 0)])
     }
 
     func test_updateUnreadMessagesSeparator_whenIdsDontExist() {
+        // GIVEN
         let nonExistingMessage = MessageId.unique
         let nonExistingMessage2 = MessageId.unique
         mockedDataSource.messages = [
@@ -621,8 +629,14 @@ final class ChatMessageListVC_Tests: XCTestCase {
             ChatMessage.mock() // IndexPath: 0 - 3
         ]
 
-        sut.updateUnreadMessagesSeparator(at: nonExistingMessage, previousId: nonExistingMessage2)
+        sut.updateUnreadMessagesSeparator(at: nonExistingMessage2)
+        mockedListView.reloadRowsCallCount = 0
+        mockedListView.reloadRowsCalledWith = []
 
+        // WHEN
+        sut.updateUnreadMessagesSeparator(at: nonExistingMessage)
+
+        // THEN
         XCTAssertEqual(mockedListView.reloadRowsCallCount, 0)
         XCTAssertEqual(mockedListView.reloadRowsCalledWith.count, 0)
     }

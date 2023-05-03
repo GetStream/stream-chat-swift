@@ -46,6 +46,11 @@ public class ChatChannelController_Mock: ChatChannelController {
         hasLoadedAllNextMessages_mock ?? super.hasLoadedAllNextMessages
     }
 
+    public var markedAsUnread_mock: Bool? = true
+    public override var markedAsUnread: Bool {
+        markedAsUnread_mock ?? super.markedAsUnread
+    }
+
     public var channel_mock: ChatChannel?
     override public var channel: ChatChannel? {
         channel_mock ?? super.channel
@@ -61,7 +66,7 @@ public class ChatChannelController_Mock: ChatChannelController {
         markReadCallCount += 1
     }
 
-    public private(set) var state_mock: State?
+    public var state_mock: State?
     override public var state: DataController.State {
         get { state_mock ?? super.state }
         set { super.state = newValue }

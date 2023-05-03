@@ -197,6 +197,7 @@ open class ChatMessageListVC: _ViewController,
         view.addSubview(jumpToUnreadMessagesButton)
         jumpToUnreadMessagesButton.topAnchor.pin(equalToSystemSpacingBelow: view.safeAreaLayoutGuide.topAnchor).isActive = true
         jumpToUnreadMessagesButton.centerXAnchor.pin(equalTo: view.layoutMarginsGuide.centerXAnchor).isActive = true
+        jumpToUnreadMessagesButton.isHidden = true
 
         if isDateOverlayEnabled {
             view.addSubview(dateOverlayView)
