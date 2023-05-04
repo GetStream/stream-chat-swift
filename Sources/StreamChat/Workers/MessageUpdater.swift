@@ -9,8 +9,8 @@ import Foundation
 class MessageUpdater: Worker {
     private let repository: MessageRepository
     private let isLocalStorageEnabled: Bool
-    private let paginationStateHandler: MessagesPaginationStateHandling = PaginationStateHandlerThreadDecorator(
-        decoratee: PaginationStateHandler()
+    private let paginationStateHandler: MessagesPaginationStateHandling = MessagesPaginationStateThreadDecorator(
+        decoratee: MessagesPaginationStateHandler()
     )
 
     init(isLocalStorageEnabled: Bool, messageRepository: MessageRepository, database: DatabaseContainer, apiClient: APIClient) {

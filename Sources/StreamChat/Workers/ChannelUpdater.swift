@@ -8,8 +8,8 @@ import Foundation
 class ChannelUpdater: Worker {
     private let channelRepository: ChannelRepository
     private let callRepository: CallRepository
-    private let paginationStateHandler: MessagesPaginationStateHandling = PaginationStateHandlerThreadDecorator(
-        decoratee: PaginationStateHandler()
+    private let paginationStateHandler: MessagesPaginationStateHandling = MessagesPaginationStateThreadDecorator(
+        decoratee: MessagesPaginationStateHandler()
     )
 
     init(channelRepository: ChannelRepository, callRepository: CallRepository, database: DatabaseContainer, apiClient: APIClient) {
