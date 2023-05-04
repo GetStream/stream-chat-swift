@@ -170,14 +170,16 @@ public extension StreamMockServer {
         around: String?
     ) -> [[String: Any]] {
         var newMessageList: [[String: Any]] = []
+        var startWith: Int?
+        var endWith: Int?
+
         if let idLt = idLt {
             let messageIndex = messageList.firstIndex {
                 idLt == $0[messageKey.id.rawValue] as? String
             }
             if let messageIndex = messageIndex {
-                let startWith = messageIndex - limit > 0 ? messageIndex - limit : 0
-                let endWith = messageIndex - 1 > 0 ? messageIndex - 1 : 0
-                newMessageList = Array(messageList[startWith...endWith])
+                startWith = messageIndex - limit > 0 ? messageIndex - limit : 0
+                endWith = messageIndex - 1 > 0 ? messageIndex - 1 : 0
             }
         } else if let idGt = idGt {
             let messageIndex = messageList.firstIndex {
@@ -186,8 +188,8 @@ public extension StreamMockServer {
             if let messageIndex = messageIndex {
                 let messageCount = messageList.count - 1
                 let plusLimit = messageIndex + limit
-                let endWith = plusLimit < messageCount ? plusLimit : messageCount
-                newMessageList = Array(messageList[messageIndex + 1...endWith])
+                startWith = messageIndex
+                endWith = plusLimit < messageCount ? plusLimit : messageCount
             }
         } else if let idLte = idLte {
             let messageIndex = messageList.firstIndex {
@@ -195,8 +197,8 @@ public extension StreamMockServer {
             }
             if let messageIndex = messageIndex {
                 let minusLimit = messageIndex - limit
-                let startWith = minusLimit > 0 ? minusLimit : 0
-                newMessageList = Array(messageList[startWith + 1...messageIndex])
+                startWith = minusLimit > 0 ? minusLimit : 0
+                endWith = messageIndex
             }
         } else if let idGte = idGte {
             let messageIndex = messageList.firstIndex {
@@ -205,21 +207,26 @@ public extension StreamMockServer {
             if let messageIndex = messageIndex {
                 let messageCount = messageList.count - 1
                 let plusLimit = messageIndex + limit
-                let endWith = plusLimit < messageCount ? plusLimit - 1 : messageCount
-                newMessageList = Array(messageList[messageIndex...endWith])
+                startWith = messageIndex
+                endWith = plusLimit < messageCount ? plusLimit - 1 : messageCount
             }
         } else if let around = around {
             let messageIndex = messageList.firstIndex {
                 around == $0[messageKey.id.rawValue] as? String
             }
             if let messageIndex = messageIndex {
-                let startWith = messageIndex
-                let endWith = messageIndex + limit
-                newMessageList = Array(messageList[startWith...endWith])
+                startWith = messageIndex
+                endWith = min(messageIndex + limit, messageList.count - 1)
             }
+        }
+
+        if let startWith = startWith, let endWith = endWith {
+            let endWith = min(endWith, messageList.count - 1)
+            newMessageList = Array(messageList[startWith...endWith])
         } else {
             newMessageList = Array(messageList.suffix(limit))
         }
+
         return newMessageList
     }
 }
