@@ -463,9 +463,17 @@ public extension ChatMessageController {
     }
 
     /// Cleans the current state and loads the first page again.
+    /// - Parameter limit: Limit for page size
     /// - Parameter completion: Callback when the API call is completed.
-    func loadFirstPage(_ completion: ((_ error: Error?) -> Void)? = nil) {
-        loadPreviousReplies(completion: completion)
+    func loadFirstPage(limit: Int? = nil, _ completion: ((_ error: Error?) -> Void)? = nil) {
+        let pageSize = limit ?? repliesPageSize
+        messageUpdater.loadReplies(
+            cid: cid,
+            messageId: messageId,
+            pagination: MessagesPagination(pageSize: pageSize)
+        ) { result in
+            self.callback { completion?(result.error) }
+        }
     }
 
     /// Loads the next page of reactions starting from the current fetched reactions.
