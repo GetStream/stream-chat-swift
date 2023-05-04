@@ -96,7 +96,7 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
 
     /// A normaliser that will be responsible to polish the powering meters as they will be send by
     /// the AVAudioRecorder
-    private let audioRecorderMeterNormaliser: ΑudioRecorderMeterNormalising
+    private let audioRecorderMeterNormaliser: AudioValuePercentageNormaliser
 
     /// The provider that will be asked when a new AVAudioRecorder instance is required.
     private let audioRecorderAVProvider: (URL, [String: Any]) throws -> AVAudioRecorder
@@ -149,7 +149,7 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
         self.init(
             configuration: configuration,
             audioSessionConfigurator: StreamAudioSessionConfigurator(),
-            audioRecorderMeterNormaliser: StreamΑudioRecorderMeterNormaliser(),
+            audioRecorderMeterNormaliser: AudioValuePercentageNormaliser(),
             audioRecorderAVProvider: AVAudioRecorder.init
         )
     }
@@ -157,7 +157,7 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
     internal init(
         configuration: Configuration,
         audioSessionConfigurator: AudioSessionConfiguring,
-        audioRecorderMeterNormaliser: ΑudioRecorderMeterNormalising,
+        audioRecorderMeterNormaliser: AudioValuePercentageNormaliser,
         audioRecorderAVProvider: @escaping (URL, [String: Any]) throws -> AVAudioRecorder
     ) {
         self.audioSessionConfigurator = audioSessionConfigurator

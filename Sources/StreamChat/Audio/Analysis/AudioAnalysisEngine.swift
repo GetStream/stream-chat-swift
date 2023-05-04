@@ -14,15 +14,15 @@ public struct AudioAnalysisEngine {
 
     public init(
         assetPropertiesLoader: AssetPropertyLoading
-    ) {
+    ) throws {
         self.init(
             assetPropertiesLoader: assetPropertiesLoader,
             audioAnalyser: StreamAudioWaveformAnalyser(
                 audioSamplesExtractor: .init(),
                 audioSamplesProcessor: .init(),
-                audioSamplesPercentageTransformer: .init(),
+                audioSamplesPercentageNormaliser: .init(),
                 outputSettings: [
-                    AVFormatIDKey: Int(kAudioFormatLinearPCM),
+                    AVFormatIDKey: kAudioFormatLinearPCM,
                     AVLinearPCMBitDepthKey: 16,
                     AVLinearPCMIsBigEndianKey: false,
                     AVLinearPCMIsFloatKey: false,
@@ -65,7 +65,7 @@ public struct AudioAnalysisEngine {
             switch result {
             case let .success(loadedAsset):
                 do {
-                    let audioAnalysisContext = try AudioAnalysisContext(from: loadedAsset, audioURL: audioURL)
+                    let audioAnalysisContext = AudioAnalysisContext(from: loadedAsset, audioURL: audioURL)
                     let result = try audioAnalyser.analyse(
                         audioAnalysisContext: audioAnalysisContext,
                         for: targetSamples
@@ -97,7 +97,7 @@ public struct AudioAnalysisEngine {
             ]
         )
 
-        let audioAnalysisContext = try AudioAnalysisContext(from: asset, audioURL: audioURL)
+        let audioAnalysisContext = AudioAnalysisContext(from: asset, audioURL: audioURL)
 
         return try audioAnalyser.analyse(
             audioAnalysisContext: audioAnalysisContext,

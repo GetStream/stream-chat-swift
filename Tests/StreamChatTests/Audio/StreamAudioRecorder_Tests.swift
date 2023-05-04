@@ -431,11 +431,11 @@ final class StreamAudioRecorder_Tests: XCTestCase {
     }
 }
 
-private final class MockΑudioRecorderMeterNormaliser: ΑudioRecorderMeterNormalising {
+private final class MockΑudioRecorderMeterNormaliser: AudioValuePercentageNormaliser {
     private(set) var normaliseWasCalledWithValue: Float?
     var normaliseResult: Float = 0
 
-    func normalise(_ value: Float) -> Float {
+    override func normalise(_ value: Float) -> Float {
         normaliseWasCalledWithValue = value
         return normaliseResult
     }

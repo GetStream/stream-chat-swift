@@ -7,7 +7,7 @@ import Foundation
 import XCTest
 
 final class StreamΑudioRecorderMeterNormaliser_Tests: XCTestCase {
-    private lazy var subject: StreamΑudioRecorderMeterNormaliser! = StreamΑudioRecorderMeterNormaliser()
+    private lazy var subject: AudioValuePercentageNormaliser! = AudioValuePercentageNormaliser()
 
     override func tearDown() {
         subject = nil
@@ -17,7 +17,9 @@ final class StreamΑudioRecorderMeterNormaliser_Tests: XCTestCase {
     // MARK: - init
 
     func test_init_minimumLevelThresholdIsCorrectlySet() {
-        XCTAssertEqual(subject.minimumLevelThreshold, -50)
+        XCTAssertEqual(subject.valueRange.lowerBound, -50)
+        XCTAssertEqual(subject.valueRange.upperBound, 0)
+        XCTAssertEqual(subject.delta, 50)
     }
 
     // MARK: - normalise(_:)
@@ -27,7 +29,7 @@ final class StreamΑudioRecorderMeterNormaliser_Tests: XCTestCase {
     }
 
     func test_normalise_valueIsEqualToMinimumLevelThreshold_returnsExpectedValue() {
-        XCTAssertEqual(subject.normalise(subject.minimumLevelThreshold), 0)
+        XCTAssertEqual(subject.normalise(subject.valueRange.lowerBound), 0)
     }
 
     func test_normalise_valueIsAboveToMinimumLevelThreshold_returnsExpectedValue() {

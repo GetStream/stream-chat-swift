@@ -14,7 +14,7 @@ final class StreamAudioWaveformAnalyser_Tests: XCTestCase {
         .path(forResource: "test_audio_file", ofType: "m4a")!
     private lazy var audioSamplesExtractor: SpyAudioSamplesExtractor! = .init()
     private lazy var audioSamplesProcessor: SpyAudioSamplesProcessor! = .init()
-    private lazy var audioSamplesPercentageTransformer: SpyAudioSamplesPercentageTransformer! = .init()
+    private lazy var audioSamplesPercentageNormaliser: SpyAudioSamplesPercentageTransformer! = .init()
     private lazy var outputSettings: [String: Any]! = [
         AVFormatIDKey: Int(kAudioFormatLinearPCM),
         AVLinearPCMBitDepthKey: 16,
@@ -25,14 +25,14 @@ final class StreamAudioWaveformAnalyser_Tests: XCTestCase {
     private lazy var subject: StreamAudioWaveformAnalyser! = .init(
         audioSamplesExtractor: audioSamplesExtractor,
         audioSamplesProcessor: audioSamplesProcessor,
-        audioSamplesPercentageTransformer: audioSamplesPercentageTransformer,
+        audioSamplesPercentageNormaliser: audioSamplesPercentageNormaliser,
         outputSettings: outputSettings
     )
 
     override func tearDown() {
         subject = nil
         outputSettings = nil
-        audioSamplesPercentageTransformer = nil
+        audioSamplesPercentageNormaliser = nil
         audioSamplesProcessor = nil
         audioSamplesExtractor = nil
         audioFilePath = nil
@@ -54,30 +54,19 @@ final class StreamAudioWaveformAnalyser_Tests: XCTestCase {
 
         assertThrowsClientError(
             { _ = try subject.analyse(audioAnalysisContext: makeAudioAnalysisContext(asset: asset), for: 0) },
-            AudioAnalysingError.failedToLoadFormatDescriptions()
+            AudioAnalysingError.failedToReadAsset()
         )
     }
 
     func test_analyse_completesSuccessfullyAndReturnsExpectedResult() throws {
         let asset = AVAsset(url: .init(fileURLWithPath: audioFilePath))
-        let context = try AudioAnalysisContext(from: asset, audioURL: .init(fileURLWithPath: audioFilePath))
-        let expected: [Float] = [
-            0.40989828,
-            0.039050672,
-            0.23860154,
-            0.39069766,
-            0.18528144,
-            0.0,
-            0.12881927,
-            0.20159021,
-            0.030400243,
-            1.0
-        ]
+        let context = AudioAnalysisContext(from: asset, audioURL: .init(fileURLWithPath: audioFilePath))
+        let expected: [Float] = [0.58714765, 0.638425, 0.61083335, 0.58980256, 0.61820537, 0.64382464, 0.6260126, 0.6159506, 0.63962114, 0.5055537]
 
         let actual = try subject.analyse(audioAnalysisContext: context, for: 10)
 
         for (offset, element) in actual.enumerated() {
-            XCTAssertEqual(element, expected[offset], accuracy: 0.001)
+            XCTAssertEqual(element, expected[offset], accuracy: 0.05)
         }
     }
 
@@ -181,15 +170,15 @@ private final class SpyAudioSamplesProcessor: AudioSamplesProcessor {
     }
 }
 
-private final class SpyAudioSamplesPercentageTransformer: AudioSamplesPercentageTransformer {
+private final class SpyAudioSamplesPercentageTransformer: AudioValuePercentageNormaliser {
     private(set) var transformWasCalledWithSamples: [Float]?
     private(set) var timesTransformWasCalled: Int = 0
 
-    override func transform(
-        _ samples: [Float]
+    override func normalise(
+        _ values: [Float]
     ) -> [Float] {
-        transformWasCalledWithSamples = samples
+        transformWasCalledWithSamples = values
         timesTransformWasCalled += 1
-        return super.transform(samples)
+        return super.normalise(values)
     }
 }

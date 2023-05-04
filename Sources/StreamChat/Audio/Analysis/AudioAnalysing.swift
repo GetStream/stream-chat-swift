@@ -25,18 +25,18 @@ protocol AudioAnalysing {
 final class StreamAudioWaveformAnalyser: AudioAnalysing {
     private let audioSamplesExtractor: AudioSamplesExtractor
     private let audioSamplesProcessor: AudioSamplesProcessor
-    private let audioSamplesPercentageTransformer: AudioSamplesPercentageTransformer
+    private let audioSamplesPercentageNormaliser: AudioValuePercentageNormaliser
     private let outputSettings: [String: Any]
 
     init(
         audioSamplesExtractor: AudioSamplesExtractor,
         audioSamplesProcessor: AudioSamplesProcessor,
-        audioSamplesPercentageTransformer: AudioSamplesPercentageTransformer,
+        audioSamplesPercentageNormaliser: AudioValuePercentageNormaliser,
         outputSettings: [String: Any]
     ) {
         self.audioSamplesExtractor = audioSamplesExtractor
         self.audioSamplesProcessor = audioSamplesProcessor
-        self.audioSamplesPercentageTransformer = audioSamplesPercentageTransformer
+        self.audioSamplesPercentageNormaliser = audioSamplesPercentageNormaliser
         self.outputSettings = outputSettings
     }
 
@@ -56,10 +56,9 @@ final class StreamAudioWaveformAnalyser: AudioAnalysing {
         let duration = CMTime(value: Int64(sampleRange.count), timescale: context.asset.duration.timescale)
 
         guard
-            let assetTrack = context.assetTrack,
-            let formatDescriptions = assetTrack.formatDescriptions as? [CMAudioFormatDescription]
+            let assetTrack = context.assetTrack
         else {
-            throw AudioAnalysingError.failedToLoadFormatDescriptions()
+            throw AudioAnalysingError.failedToReadAsset()
         }
 
         let readerOutput = AVAssetReaderTrackOutput(
@@ -71,22 +70,13 @@ final class StreamAudioWaveformAnalyser: AudioAnalysing {
         reader.timeRange = CMTimeRange(start: startTime, duration: duration)
         reader.add(readerOutput)
 
-        let channelCount = formatDescriptions.reduce(0) { partialResult, formatDescription in
-            guard
-                let basicFormatDescription = CMAudioFormatDescriptionGetStreamBasicDescription(formatDescription)
-            else {
-                return partialResult
-            }
-            return Int(basicFormatDescription.pointee.mChannelsPerFrame)
-        }
-
         /// Calculate the downsampling rate, which is the factor by which the sample rate will be reduced
         /// to achieve the desired target sample rate. The channelCount variable is the number of audio
         /// channels, and sampleRange.count is the number of audio samples in the selected range.
         /// The max(1, ...) part ensures that the downsampling rate is always at least 1, which means that
         /// the audio will be processed at the original sample rate if the target sample rate is higher than
         /// the current one.
-        let downsamplingRate = max(1, channelCount * sampleRange.count / targetSamples)
+        let downsamplingRate = max(1, sampleRange.count / targetSamples)
 
         /// The filter array is a low-pass filter kernel that emphasises lower frequencies and attenuates
         /// higher frequencies, to remove high-frequency noise and avoid aliasing artifacts during the
@@ -152,7 +142,7 @@ final class StreamAudioWaveformAnalyser: AudioAnalysing {
         }
 
         /// Return the output samples after applying a final transformation into percentages.
-        return audioSamplesPercentageTransformer.transform(outputSamples)
+        return audioSamplesPercentageNormaliser.normalise(outputSamples)
     }
 }
 
@@ -162,11 +152,6 @@ final class AudioAnalysingError: ClientError {
     /// Failed to read the asset provided by the `AudioAnalysisContext`
     static func failedToReadAsset(file: StaticString = #file, line: UInt = #line) -> AudioAnalysingError {
         .init("Failed to read AVAsset.", file, line)
-    }
-
-    /// Failed to load the formatDescriptions from the asset provided by the `AudioAnalysisContext`
-    static func failedToLoadFormatDescriptions(file: StaticString = #file, line: UInt = #line) -> AudioAnalysingError {
-        .init("Failed to load format descriptions.", file, line)
     }
 
     /// Failed to read the data from the provided Audio file

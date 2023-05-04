@@ -215,9 +215,7 @@ public enum AttachmentFileType: String, Codable, Equatable, CaseIterable {
     /// Text
     case csv, rtf, txt
     /// Audio
-    case mp3, mp4, wav, ogg, m4a
-    /// Voice Recording
-    case aac
+    case mp3, wav, ogg, m4a, aac, mp4
     /// Video
     case mov, avi, wmv, webm
     /// Image
@@ -294,10 +292,6 @@ public enum AttachmentFileType: String, Codable, Equatable, CaseIterable {
             return "image/jpeg"
         }
 
-        if self == .aac {
-            return "voiceRecording/aac"
-        }
-
         return AttachmentFileType.mimeTypes
             .first(where: { $1 == self })?
             .key ?? "application/octet-stream"
@@ -305,7 +299,7 @@ public enum AttachmentFileType: String, Codable, Equatable, CaseIterable {
 
     public var isAudio: Bool {
         switch self {
-        case .mp3, .mp4, .wav, .ogg, .m4a:
+        case .mp3, .mp4, .wav, .ogg, .m4a, .aac:
             return true
         default:
             return false

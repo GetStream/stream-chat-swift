@@ -33,28 +33,12 @@ struct AudioAnalysisContext {
     init(
         from loadedAsset: AVAsset,
         audioURL: URL
-    ) throws {
-        guard
-            let assetTrack = loadedAsset.tracks(withMediaType: .audio).first,
-            let formatDescriptions = assetTrack.formatDescriptions as? [CMAudioFormatDescription],
-            let audioFormatDesc = formatDescriptions.first,
-            let basicDescription = CMAudioFormatDescriptionGetStreamBasicDescription(audioFormatDesc)
-        else {
-            throw AudioAnalysisEngineError.failedToLoadFormatDescriptions()
-        }
-
-        // The total number of samples in the audio track is calculated
-        // using the duration and the sample rate of the basic audio
-        // format description.
-        let totalSamples = Int(
-            (basicDescription.pointee.mSampleRate) * Float64(loadedAsset.duration.value) / Float64(loadedAsset.duration.timescale)
-        )
-
+    ) {
         self.init(
             audioURL: audioURL,
-            totalSamples: totalSamples,
+            totalSamples: loadedAsset.totalSamplesOfFirstAudioTrack(),
             asset: loadedAsset,
-            assetTrack: assetTrack
+            assetTrack: loadedAsset.tracks(withMediaType: .audio).first
         )
     }
 }

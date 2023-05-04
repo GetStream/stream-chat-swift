@@ -6,54 +6,56 @@ import Foundation
 @testable import StreamChat
 import XCTest
 
-final class AudioSamplesPercentageTransformer_Tests: XCTestCase {
-    private let defaultAccuracy: Float = 0.001
+final class AudioSamplesPercentageNormaliser_Tests: XCTestCase {
+    private let defaultAccuracy: Float = 0.01
 
-    // MARK: - transform
+    private lazy var subject: AudioValuePercentageNormaliser! = .init()
 
-    func test_transform_emptyArray() {
-        let transformer = AudioSamplesPercentageTransformer()
+    override func tearDown() {
+        subject = nil
+        super.tearDown()
+    }
 
-        let result = transformer.transform([])
+    // MARK: - normalise
+
+    func test_normalise_emptyArray() {
+        let result = subject.normalise([])
 
         assertSampleArrays([], result, accuracy: defaultAccuracy)
     }
 
-    func test_transform_singleValueArray() {
-        let transformer = AudioSamplesPercentageTransformer()
+    func test_normalise_singleValueArray() {
+        let transformer = AudioValuePercentageNormaliser()
 
-        let result = transformer.transform([0.5])
+        let result = transformer.normalise([-25])
 
-        assertSampleArrays([1.0], result, accuracy: defaultAccuracy)
+        assertSampleArrays([0.5], result, accuracy: defaultAccuracy)
     }
 
-    func test_transform_positiveValues() {
-        let transformer = AudioSamplesPercentageTransformer()
-        let samples: [Float] = [0.2, 0.4, 0.6, 0.8, 1.0]
+    func test_normalise_returnsExpectedResult() {
+        let samples: [Float] = [-40, -30, -20, -10, 0]
 
-        let result = transformer.transform(samples)
+        let result = subject.normalise(samples)
 
-        assertSampleArrays([0.0, 0.25, 0.5, 0.75, 1.0], result, accuracy: defaultAccuracy)
+        assertSampleArrays([0.2, 0.4, 0.6, 0.8, 1.0], result, accuracy: defaultAccuracy)
     }
 
-    func test_transform_negativeValues() {
-        let transformer = AudioSamplesPercentageTransformer()
-        let samples: [Float] = [-0.2, -0.4, -0.6, -0.8, -1.0]
+    func test_normalise_manyValues_returnsExpectedResult() {
+        let samples: [Float] = [
+            -50, -50, -50, -50, -50, -50, -50, -50, -50, -50,
+            -15, -20, -25, -30, -35, -40, -45, -50, -50, -50,
+            -50, -50, -50, -50, -50, -50, -50, -50, -50, -50,
+            -30, -35, -40, -45, -50, -50, -50, -50, -50, -50
+        ]
 
-        let result = transformer.transform(samples)
+        let result = subject.normalise(samples)
 
-        assertSampleArrays([0.0, 0.25, 0.5, 0.75, 1.0], result, accuracy: defaultAccuracy)
-    }
-
-    func test_transform_mixedValues() {
-        let transformer = AudioSamplesPercentageTransformer()
-        let samples: [Float] = [-0.5, 0.2, -0.8, 0.6, -0.2, 0.8, -1.0, 1.0]
-
-        let result = transformer
-            .transform(samples)
-            .map { ($0 * 100).rounded() / 100 }
-
-        assertSampleArrays([0.38, 0.0, 0.75, 0.5, 0.0, 0.75, 1.0, 1.0], result, accuracy: defaultAccuracy)
+        assertSampleArrays([
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0.4, 0.3, 0.2, 0.1, 0, 0, 0, 0, 0, 0
+        ], result, accuracy: defaultAccuracy)
     }
 
     // MARK: - Private Helpers

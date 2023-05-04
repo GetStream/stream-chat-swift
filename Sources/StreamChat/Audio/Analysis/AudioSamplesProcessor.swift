@@ -112,7 +112,7 @@ internal class AudioSamplesProcessor {
         let length = vDSP_Length(normalizedSamples.count)
 
         /// Α variable - representing zero - that is initialised with the reference level for dB calculation.
-        var zero: Float = 32768.0
+        var zero: Float = Float(Int16.max)
 
         /// Converts the linear scale of the input array to a logarithmic scale and stores the result
         /// in normalizedSamples.

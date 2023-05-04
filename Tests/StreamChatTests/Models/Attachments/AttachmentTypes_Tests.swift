@@ -122,7 +122,7 @@ final class AttachmentTypes_Tests: XCTestCase {
         XCTAssertEqual(AttachmentType(fileExtension: "jpg"), .image)
         XCTAssertEqual(AttachmentType(fileExtension: "mp4"), .video)
         XCTAssertEqual(AttachmentType(fileExtension: "wav"), .audio)
-        XCTAssertEqual(AttachmentType(fileExtension: "aac"), .voiceRecording)
+        XCTAssertEqual(AttachmentType(fileExtension: "aac"), .audio)
         XCTAssertEqual(AttachmentType(fileExtension: "txt"), .file)
         XCTAssertEqual(AttachmentType(fileExtension: "zip"), .file)
         XCTAssertEqual(AttachmentType(fileExtension: "unknown"), .file)
