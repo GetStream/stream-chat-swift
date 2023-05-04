@@ -13,8 +13,9 @@ struct MessagesPaginationState {
     /// The newest fetched message while paginating.
     var newestFetchedMessage: MessagePayload?
 
-    /// A Boolean value that returns whether the channel is currently in a mid-page.
-    var isJumpingToMessage: Bool
+    /// A Boolean value that returns whether the newest messages have all been loaded or not.
+    /// If false, it means that the channel is currently in a mid-page.
+    var hasLoadedAllNextMessages: Bool
     /// A Boolean value that returns whether the oldest messages have all been loaded or not.
     var hasLoadedAllPreviousMessages: Bool
 
@@ -30,6 +31,11 @@ struct MessagesPaginationState {
     /// A Boolean value that returns whether the channel is currently loading messages, either old/new or mid pages.
     var isLoadingMessages: Bool {
         isLoadingNextMessages || isLoadingPreviousMessages || isLoadingMiddleMessages
+    }
+
+    /// A Boolean value that returns whether the channel is currently in a mid-page.
+    var isJumpingToMessage: Bool {
+        !hasLoadedAllNextMessages
     }
 
     /// The oldest fetched message createdAt date while paginating.
@@ -48,7 +54,7 @@ struct MessagesPaginationState {
     static var initial: Self = .init(
         oldestFetchedMessage: nil,
         newestFetchedMessage: nil,
-        isJumpingToMessage: false,
+        hasLoadedAllNextMessages: true,
         hasLoadedAllPreviousMessages: false,
         isLoadingNextMessages: false,
         isLoadingPreviousMessages: false,

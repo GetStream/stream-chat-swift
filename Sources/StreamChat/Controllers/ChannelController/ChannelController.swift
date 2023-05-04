@@ -84,7 +84,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
     /// A Boolean value that returns whether the newest messages have all been loaded or not.
     public var hasLoadedAllNextMessages: Bool {
-        !updater.paginationState.isJumpingToMessage || messages.isEmpty
+        updater.paginationState.hasLoadedAllNextMessages || messages.isEmpty
     }
 
     /// A Boolean value that returns whether the channel is currently loading previous (old) messages.

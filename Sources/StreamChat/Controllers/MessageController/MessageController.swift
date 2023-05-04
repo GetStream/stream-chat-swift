@@ -104,7 +104,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
 
     /// A Boolean value that returns whether the newest replies have all been loaded or not.
     public var hasLoadedAllNextReplies: Bool {
-        !messageUpdater.paginationState.isJumpingToMessage || replies.isEmpty
+        messageUpdater.paginationState.hasLoadedAllNextMessages || replies.isEmpty
     }
 
     /// A Boolean value that returns whether the thread is currently loading previous (old) replies.
