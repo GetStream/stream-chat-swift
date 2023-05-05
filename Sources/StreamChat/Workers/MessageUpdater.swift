@@ -9,13 +9,18 @@ import Foundation
 class MessageUpdater: Worker {
     private let repository: MessageRepository
     private let isLocalStorageEnabled: Bool
-    private let paginationStateHandler: MessagesPaginationStateHandling = MessagesPaginationThreadSafeDecorator(
-        decoratee: MessagesPaginationStateHandler()
-    )
+    private let paginationStateHandler: MessagesPaginationStateHandling
 
-    init(isLocalStorageEnabled: Bool, messageRepository: MessageRepository, database: DatabaseContainer, apiClient: APIClient) {
+    init(
+        isLocalStorageEnabled: Bool,
+        messageRepository: MessageRepository,
+        paginationStateHandler: MessagesPaginationStateHandling,
+        database: DatabaseContainer,
+        apiClient: APIClient
+    ) {
         self.isLocalStorageEnabled = isLocalStorageEnabled
         repository = messageRepository
+        self.paginationStateHandler = paginationStateHandler
         super.init(database: database, apiClient: apiClient)
     }
 

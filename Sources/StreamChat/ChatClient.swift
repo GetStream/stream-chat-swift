@@ -132,6 +132,12 @@ public class ChatClient {
         environment.callRepositoryBuilder(apiClient)
     }()
 
+    func makeMessagesPaginationStateHandler() -> MessagesPaginationStateHandling {
+        MessagesPaginationThreadSafeDecorator(
+            decoratee: MessagesPaginationStateHandler()
+        )
+    }
+
     /// The `APIClient` instance `Client` uses to communicate with Stream REST API.
     lazy var apiClient: APIClient = {
         var encoder = environment.requestEncoderBuilder(config.baseURL.restAPIBaseURL, config.apiKey)

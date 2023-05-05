@@ -185,6 +185,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     private lazy var messageUpdater: MessageUpdater = environment.messageUpdaterBuilder(
         client.config.isLocalStorageEnabled,
         client.messageRepository,
+        client.makeMessagesPaginationStateHandler(),
         client.databaseContainer,
         client.apiClient
     )
@@ -715,6 +716,7 @@ extension ChatMessageController {
         var messageUpdaterBuilder: (
             _ isLocalStorageEnabled: Bool,
             _ messageRepository: MessageRepository,
+            _ paginationStateHandler: MessagesPaginationStateHandling,
             _ database: DatabaseContainer,
             _ apiClient: APIClient
         ) -> MessageUpdater = MessageUpdater.init

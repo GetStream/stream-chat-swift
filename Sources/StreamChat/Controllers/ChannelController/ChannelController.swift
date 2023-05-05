@@ -68,6 +68,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     private lazy var updater: ChannelUpdater = self.environment.channelUpdaterBuilder(
         client.channelRepository,
         client.callRepository,
+        client.makeMessagesPaginationStateHandler(),
         client.databaseContainer,
         client.apiClient
     )
@@ -1132,6 +1133,7 @@ extension ChatChannelController {
         var channelUpdaterBuilder: (
             _ channelRepository: ChannelRepository,
             _ callRepository: CallRepository,
+            _ paginationStateHandler: MessagesPaginationStateHandling,
             _ database: DatabaseContainer,
             _ apiClient: APIClient
         ) -> ChannelUpdater = ChannelUpdater.init
