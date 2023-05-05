@@ -14,7 +14,7 @@ internal class AudioValuePercentageNormaliser {
     internal init() {}
 
     /// Computes the percentage value of each sample with respect to the maximum
-    /// and minimum values in the provided range. The result is
+    /// and minimum values in the provided range. The result is will be in the range `0...1`.
     /// - Parameter samples: The array containing the values to be transformed to percentages
     /// relative to the provided valueRange
     /// - Returns: an array of normalised Float values

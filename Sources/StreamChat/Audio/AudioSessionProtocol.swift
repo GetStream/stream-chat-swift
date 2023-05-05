@@ -24,6 +24,8 @@ protocol AudioSessionProtocol {
     func requestRecordPermission(_ response: @escaping (Bool) -> Void)
 
     func setPreferredInput(_ inPort: AVAudioSessionPortDescription?) throws
+
+    func overrideOutputAudioPort(_ portOverride: AVAudioSession.PortOverride) throws
 }
 
 extension AVAudioSession: AudioSessionProtocol {}
