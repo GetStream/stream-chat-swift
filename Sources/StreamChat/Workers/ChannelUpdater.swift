@@ -8,11 +8,18 @@ import Foundation
 class ChannelUpdater: Worker {
     private let channelRepository: ChannelRepository
     private let callRepository: CallRepository
+    private let paginationStateHandler: MessagesPaginationStateHandling = MessagesPaginationThreadSafeDecorator(
+        decoratee: MessagesPaginationStateHandler()
+    )
 
     init(channelRepository: ChannelRepository, callRepository: CallRepository, database: DatabaseContainer, apiClient: APIClient) {
         self.channelRepository = channelRepository
         self.callRepository = callRepository
         super.init(database: database, apiClient: apiClient)
+    }
+
+    var paginationState: MessagesPaginationState {
+        paginationStateHandler.state
     }
 
     /// Makes a channel query call to the backend and updates the local storage with the results.
@@ -33,12 +40,20 @@ class ChannelUpdater: Worker {
         onChannelCreated: ((ChannelId) -> Void)? = nil,
         completion: ((Result<ChannelPayload, Error>) -> Void)? = nil
     ) {
-        let isFirstPage = channelQuery.pagination?.parameter == nil
-        let isJumpingToMessage: Bool = channelQuery.pagination?.parameter?.isJumpingToMessage == true
+        if let pagination = channelQuery.pagination {
+            paginationStateHandler.start(pagination: pagination)
+        }
+        
+        let didLoadFirstPage = channelQuery.pagination?.parameter == nil
+        let didJumpToMessage: Bool = channelQuery.pagination?.parameter?.isJumpingToMessage == true
         let isChannelCreate = onChannelCreated != nil
 
         let completion: (Result<ChannelPayload, Error>) -> Void = { [weak database] result in
             do {
+                if let pagination = channelQuery.pagination {
+                    self.paginationStateHandler.end(pagination: pagination, with: result.map(\.messages))
+                }
+
                 let payload = try result.get()
 
                 onChannelCreated?(payload.channel.cid)
@@ -46,13 +61,14 @@ class ChannelUpdater: Worker {
                 database?.write { session in
                     if let channelDTO = session.channel(cid: payload.channel.cid) {
                         channelDTO.cleanMessagesThatFailedToBeEditedDueToModeration()
-                        if isJumpingToMessage || isFirstPage {
+                        if didJumpToMessage || didLoadFirstPage {
                             channelDTO.cleanAllMessagesExcludingLocalOnly()
                         }
                     }
 
                     let updatedChannel = try session.saveChannel(payload: payload)
-                    updatedChannel.updatePaginationCursors(for: payload, with: channelQuery.pagination)
+                    updatedChannel.oldestMessageAt = self.paginationState.oldestMessageAt?.bridgeDate
+                    updatedChannel.newestMessageAt = self.paginationState.newestMessageAt?.bridgeDate
 
                 } completion: { error in
                     if let error = error {
