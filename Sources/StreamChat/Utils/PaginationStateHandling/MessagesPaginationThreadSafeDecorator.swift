@@ -5,7 +5,7 @@
 import Foundation
 
 /// A decorator of the `MessagesPaginationStateHandling` to make sure it is thread safe.
-class MessagesPaginationStateThreadDecorator: MessagesPaginationStateHandling {
+class MessagesPaginationThreadSafeDecorator: MessagesPaginationStateHandling {
     let queue = DispatchQueue(label: "io.getstream.messages-pagination-state-handler")
     let decoratee: MessagesPaginationStateHandling
 
