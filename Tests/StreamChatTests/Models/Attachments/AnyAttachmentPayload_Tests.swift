@@ -69,6 +69,30 @@ final class AnyAttachmentPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.extraData(), extraData)
     }
 
+    func test_whenInitWithVoiceRecordingAttachmentType_payloadIsFile() throws {
+        // Create any voiceRecording payload.
+        let url: URL = .localYodaQuote
+        let type: AttachmentType = .voiceRecording
+        let extraData: [String: RawJSON] = [
+            "duration": .number(10),
+            "waveform": .array([0.5, 0.4, 0.3, 0.2, 0.1])
+        ]
+        let anyPayload = try AnyAttachmentPayload(
+            localFileURL: url,
+            attachmentType: type,
+            extraData: extraData
+        )
+
+        // Assert any payload fields are correct.
+        let payload = try XCTUnwrap(anyPayload.payload as? VoiceRecordingAttachmentPayload)
+        XCTAssertEqual(anyPayload.type, type)
+        XCTAssertEqual(anyPayload.localFileURL, url)
+        XCTAssertEqual(payload.title, url.lastPathComponent)
+        XCTAssertEqual(payload.voiceRecordingURL, url)
+        XCTAssertEqual(payload.file, try AttachmentFile(url: url))
+        XCTAssertEqual(payload.extraData(), extraData)
+    }
+
     func test_whenInitWithCustomAttachmentType_errorIsThrown() {
         XCTAssertThrowsError(
             // Try to create uploadable attachment with custom type

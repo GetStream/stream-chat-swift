@@ -51,7 +51,8 @@ final class AttachmentQueueUploader_Tests: XCTestCase {
             .mockFile,
             .mockImage,
             .mockVideo,
-            .mockAudio
+            .mockAudio,
+            .mockVoiceRecording
         ]
 
         for (index, envelope) in attachmentPayloads.enumerated() {
@@ -127,7 +128,18 @@ final class AttachmentQueueUploader_Tests: XCTestCase {
                     // Assert `attachment.assetURL` is set.
                     Assert.willBeEqual(originalURLString(audioModel?.audioURL), remoteUrl.absoluteString)
                 }
-            default: throw TestError()
+            case .voiceRecording:
+                var audioModel: ChatMessageVoiceRecordingAttachment? {
+                    attachment.asAnyModel().attachment(payloadType: VoiceRecordingAttachmentPayload.self)
+                }
+                AssertAsync {
+                    // Assert attachment state eventually becomes `.uploaded`.
+                    Assert.willBeEqual(audioModel?.uploadingState?.state, .uploaded)
+                    // Assert `attachment.assetURL` is set.
+                    Assert.willBeEqual(originalURLString(audioModel?.voiceRecordingURL), remoteUrl.absoluteString)
+                }
+            default:
+                throw TestError()
             }
         }
     }

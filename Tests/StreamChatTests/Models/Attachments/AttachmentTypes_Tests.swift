@@ -8,7 +8,16 @@ import XCTest
 
 final class AttachmentTypes_Tests: XCTestCase {
     func test_type_encodedAndDecodedCorrectly() throws {
-        let types: [AttachmentType] = [.image, .video, .audio, .file, .giphy, .linkPreview, "sticker"]
+        let types: [AttachmentType] = [
+            .image,
+            .video,
+            .audio,
+            .voiceRecording,
+            .file,
+            .giphy,
+            .linkPreview,
+            "sticker"
+        ]
 
         // Different test for < iOS 13 because of decoding bug.
         if #available(iOS 13, *) {
@@ -113,6 +122,7 @@ final class AttachmentTypes_Tests: XCTestCase {
         XCTAssertEqual(AttachmentType(fileExtension: "jpg"), .image)
         XCTAssertEqual(AttachmentType(fileExtension: "mp4"), .video)
         XCTAssertEqual(AttachmentType(fileExtension: "wav"), .audio)
+        XCTAssertEqual(AttachmentType(fileExtension: "aac"), .audio)
         XCTAssertEqual(AttachmentType(fileExtension: "txt"), .file)
         XCTAssertEqual(AttachmentType(fileExtension: "zip"), .file)
         XCTAssertEqual(AttachmentType(fileExtension: "unknown"), .file)

@@ -7,8 +7,10 @@ import Foundation
 
 /// A protocol describing an object that can be manage the playback of an audio file or stream.
 public protocol AudioPlaying: AnyObject {
-    /// Provides  way to get an instance of a player
-    static func build() -> AudioPlaying
+    init()
+
+    /// Subscribes the provided object on AudioPlayer's updates
+    func subscribe(_ subscriber: AudioPlayingDelegate)
 
     /// Requests the playbackContext for the given URL. If the player's current item has as URL that
     /// matches the provided one, it should return a context, otherwise it will return
@@ -24,7 +26,9 @@ public protocol AudioPlaying: AnyObject {
     /// - Parameters:
     ///   - url: The URL where the asset will be streamed from
     ///   - delegate: The delegate that will be informed for changes on the asset's playback.
-    func loadAsset(from url: URL, andConnectDelegate delegate: AudioPlayingDelegate)
+    func loadAsset(from url: URL)
+
+    func clearUpQueue()
 
     /// Begin the loaded asset's playback. If no asset has been loaded, the action has no effect
     func play()
@@ -47,7 +51,7 @@ public protocol AudioPlaying: AnyObject {
 }
 
 /// An implementation of ``AudioPlaying`` that can be used to stream audio files from a URL
-open class StreamRemoteAudioPlayer: AudioPlaying {
+open class StreamRemoteAudioPlayer: AudioPlaying, AppStateObserverDelegate {
     // MARK: - Properties
     
     /// Provides thread-safe access to context storage
@@ -57,12 +61,17 @@ open class StreamRemoteAudioPlayer: AudioPlaying {
         get { contextValueAccessor.value }
         set {
             contextValueAccessor.value = newValue
-            delegate?.audioPlayer(self, didUpdateContext: newValue)
+            notifyDelegates()
         }
     }
 
+    /// The delegate which should get informed when the player's context gets updated
+    private lazy var multicastDelegate: MulticastDelegate<AudioPlayingDelegate> = .init()
+
     /// The player that will be used for the playback of the audio files
-    private let player: AVPlayer
+    fileprivate let player: AVPlayer
+
+    private let audioSessionConfigurator: AudioSessionConfiguring
 
     /// The assetPropertyLoader is being used during the loading of an asset with non-nil URL, to provide
     /// async information about the asset's properties. Currently, we are only loading the `duration`
@@ -73,34 +82,44 @@ open class StreamRemoteAudioPlayer: AudioPlaying {
     /// updates.
     private let playerObserver: AudioPlayerObserving
 
-    /// The delegate which should get informed when the player's context gets updated
-    private(set) weak var delegate: AudioPlayingDelegate? {
-        didSet { delegate?.audioPlayer(self, didUpdateContext: context) }
-    }
+    private let appStateObserver: AppStateObserving
+
+    private var shouldPlayWhenComeToForeground = false
 
     // MARK: - Lifecycle
 
-    public static func build() -> AudioPlaying {
-        StreamRemoteAudioPlayer(
+    public required convenience init() {
+        self.init(
             assetPropertyLoader: StreamAssetPropertyLoader(),
             playerObserver: StreamPlayerObserver(),
-            player: .init()
+            player: .init(),
+            audioSessionConfigurator: StreamAudioSessionConfigurator(),
+            appStateObserver: StreamAppStateObserver()
         )
     }
 
-    public init(
+    init(
         assetPropertyLoader: AssetPropertyLoading,
         playerObserver: AudioPlayerObserving,
-        player: AVPlayer
+        player: AVPlayer,
+        audioSessionConfigurator: AudioSessionConfiguring,
+        appStateObserver: AppStateObserving
     ) {
         self.assetPropertyLoader = assetPropertyLoader
         self.playerObserver = playerObserver
         self.player = player
+        self.audioSessionConfigurator = audioSessionConfigurator
+        self.appStateObserver = appStateObserver
 
         setUp()
     }
 
     // MARK: - AudioPlaying
+
+    open func subscribe(_ subscriber: AudioPlayingDelegate) {
+        multicastDelegate.add(additionalDelegate: subscriber)
+        subscriber.audioPlayer(self, didUpdateContext: context)
+    }
 
     open func playbackContext(for url: URL) -> AudioPlaybackContext {
         guard
@@ -112,18 +131,18 @@ open class StreamRemoteAudioPlayer: AudioPlaying {
         return context
     }
 
-    open func loadAsset(
-        from url: URL,
-        andConnectDelegate delegate: AudioPlayingDelegate
-    ) {
+    open func clearUpQueue() {
+        multicastDelegate.set(additionalDelegates: [])
+        player.replaceCurrentItem(with: nil)
+    }
+
+    open func loadAsset(from url: URL) {
         /// We are going to check if the URL requested to load, represents the currentItem that we
         /// have already loaded (if any). In this case, we will try either to resume the existing playback
         /// or restart it, if possible.
         if let currentItem = player.currentItem?.asset as? AVURLAsset,
-           url == currentItem.url {
-            /// Update the delegate to the provided one
-            self.delegate = delegate
-
+           url == currentItem.url,
+           context.assetLocation == url {
             /// If the currentItem is paused, we want to continue the playback
             /// Otherwise, no action is required
             if context.state == .paused {
@@ -134,12 +153,12 @@ open class StreamRemoteAudioPlayer: AudioPlaying {
                 /// currentItem.
                 player.replaceCurrentItem(with: .init(asset: currentItem))
                 player.play()
-            } else {
-                /// This case may be triggered if we call ``loadAsset`` on a player that is currently
-                /// playing the URL we provided. In this case we will Inform the delegate about the
-                /// current state.
-                delegate.audioPlayer(self, didUpdateContext: context)
             }
+
+            /// This case may be triggered if we call ``loadAsset`` on a player that is currently
+            /// playing the URL we provided. In this case we will Inform the delegate about the
+            /// current state.
+            notifyDelegates()
 
             return
         }
@@ -149,8 +168,10 @@ open class StreamRemoteAudioPlayer: AudioPlaying {
         stop()
         player.replaceCurrentItem(with: nil)
 
-        self.delegate = delegate
-        updateContext { $0.state = .loading }
+        updateContext {
+            $0.state = .loading
+            $0.assetLocation = url
+        }
         let asset = AVURLAsset(url: url)
 
         assetPropertyLoader.loadProperties(
@@ -160,7 +181,13 @@ open class StreamRemoteAudioPlayer: AudioPlaying {
     }
 
     open func play() {
-        player.play()
+        do {
+            try audioSessionConfigurator.activatePlaybackSession()
+            player.play()
+        } catch {
+            log.error(error)
+            stop()
+        }
     }
 
     open func pause() {
@@ -168,18 +195,24 @@ open class StreamRemoteAudioPlayer: AudioPlaying {
     }
 
     open func stop() {
-        /// As the AVPlayer doesn't provide an API to actually stop the playback, we are simulating it
-        /// by calling pause
-        player.pause()
+        do {
+            /// As the AVPlayer doesn't provide an API to actually stop the playback, we are simulating it
+            /// by calling pause
+            player.pause()
 
-        updateContext { value in
-            value = .init(
-                duration: value.duration,
-                currentTime: 0,
-                state: .stopped,
-                rate: .zero,
-                isSeeking: false
-            )
+            try audioSessionConfigurator.deactivatePlaybackSession()
+
+            updateContext { value in
+                value = .init(
+                    duration: value.duration,
+                    currentTime: 0,
+                    state: .stopped,
+                    rate: .zero,
+                    isSeeking: false
+                )
+            }
+        } catch {
+            log.error(error)
         }
     }
 
@@ -188,15 +221,49 @@ open class StreamRemoteAudioPlayer: AudioPlaying {
     }
 
     open func seek(to time: TimeInterval) {
-        player.pause()
+        pause()
         updateContext { value in
+            value.state = .paused
             value.currentTime = time
             value.isSeeking = true
         }
         executeSeek(to: time)
     }
 
+    // MARK: - AppStateObserverDelegate
+
+    func applicationDidMoveToBackground() {
+        guard context.state == .playing else { return }
+        shouldPlayWhenComeToForeground = true
+        player.pause()
+    }
+
+    func applicationDidMoveToForeground() {
+        guard shouldPlayWhenComeToForeground else { return }
+        shouldPlayWhenComeToForeground = false
+        player.play()
+    }
+
     // MARK: - Helpers
+
+    func playbackWillStop(_ playerItem: AVPlayerItem) {
+        guard
+            let playerItemURL = (playerItem.asset as? AVURLAsset)?.url,
+            let currentItemURL = (player.currentItem?.asset as? AVURLAsset)?.url,
+            playerItemURL == currentItemURL
+        else {
+            return
+        }
+        updateContext { value in
+            value.state = .stopped
+            value.currentTime = 0
+            value.rate = .zero
+            value.isSeeking = false
+        }
+        notifyDelegates()
+    }
+
+    // MARK: - Private Helpers
 
     private func setUp() {
         let player = self.player
@@ -254,23 +321,13 @@ open class StreamRemoteAudioPlayer: AudioPlaying {
 
         playerObserver.addStoppedPlaybackObserver(
             queue: nil
-        ) { [weak self] playerItem in
-            guard
-                let self = self,
-                let playerItemURL = (playerItem.asset as? AVURLAsset)?.url,
-                let currentItemURL = (player.currentItem?.asset as? AVURLAsset)?.url,
-                playerItemURL == currentItemURL
-            else {
-                return
-            }
-            self.updateContext { value in
-                value.state = .stopped
-                value.currentTime = 0
-                value.rate = .zero
-                value.isSeeking = false
-            }
-            self.delegate?.audioPlayer(self, didUpdateContext: self.context)
-        }
+        ) { [weak self] in self?.playbackWillStop($0) }
+
+        appStateObserver.subscribe(self)
+    }
+
+    private func notifyDelegates() {
+        multicastDelegate.invoke { $0.audioPlayer(self, didUpdateContext: context) }
     }
 
     /// Provides thread-safe updates for the player's context and makes sure to forward any updates
@@ -307,7 +364,7 @@ open class StreamRemoteAudioPlayer: AudioPlaying {
                 value.isSeeking = false
             }
 
-            player.play()
+            play()
 
         /// If the assetPropertyLoader failed to load the asset's duration information we update the
         /// context with the notLoaded state in order to inform the delegate and we log a debug error message
@@ -349,7 +406,6 @@ open class StreamRemoteAudioPlayer: AudioPlaying {
                 return
             }
             self?.updateContext { value in value.isSeeking = false }
-            self?.play()
         }
     }
 }

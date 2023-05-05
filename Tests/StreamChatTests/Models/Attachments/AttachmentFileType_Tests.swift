@@ -15,7 +15,8 @@ final class AttachmentFileType_Tests: XCTestCase {
             .mp4,
             .wav,
             .ogg,
-            .m4a
+            .m4a,
+            .aac
         ]
 
         AttachmentFileType.allCases.forEach { subject in

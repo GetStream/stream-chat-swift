@@ -136,6 +136,13 @@ public extension AnyAttachmentPayload {
                 file: file,
                 extraData: extraData
             )
+        case .voiceRecording:
+            payload = VoiceRecordingAttachmentPayload(
+                title: localFileURL.lastPathComponent,
+                voiceRecordingRemoteURL: localFileURL,
+                file: file,
+                extraData: extraData
+            )
         default:
             throw ClientError.UnsupportedUploadableAttachmentType(attachmentType)
         }
