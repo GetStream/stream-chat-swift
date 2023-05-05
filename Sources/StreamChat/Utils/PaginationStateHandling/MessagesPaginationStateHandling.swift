@@ -76,6 +76,11 @@ class MessagesPaginationStateHandler: MessagesPaginationStateHandling {
         case .around:
             state.oldestFetchedMessage = oldestFetchedMessage
             state.newestFetchedMessage = newestFetchedMessage
+
+            if let aroundMessageId = pagination.parameter?.aroundMessageId {
+                calculateHasLoadedAllMessagesBasedOnTheLocation(of: aroundMessageId, given: messages)
+            }
+
             if messages.count < pagination.pageSize {
                 state.hasLoadedAllNextMessages = true
                 state.hasLoadedAllPreviousMessages = true
@@ -87,10 +92,6 @@ class MessagesPaginationStateHandler: MessagesPaginationStateHandling {
             if messages.count < pagination.pageSize {
                 state.hasLoadedAllNextMessages = true
             }
-        }
-
-        if let aroundMessageId = pagination.parameter?.aroundMessageId {
-            calculateHasLoadedAllMessagesBasedOnTheLocation(of: aroundMessageId, given: messages)
         }
     }
 
