@@ -1175,6 +1175,7 @@
 		ADCD5E4427987EFE00E66911 /* StreamModalTransitioningDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADCD5E4227987EFE00E66911 /* StreamModalTransitioningDelegate.swift */; };
 		ADCDDD0025AE2784004E15FB /* UserUpdateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADCDDCEC25AE2214004E15FB /* UserUpdateViewController.swift */; };
 		ADCDDD0825AE2F4A004E15FB /* InputViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADCDDD0725AE2F4A004E15FB /* InputViewController.swift */; };
+		ADCE32F72A055A9200B52559 /* MessagesPaginationStateHandler_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADCE32F62A055A9200B52559 /* MessagesPaginationStateHandler_Mock.swift */; };
 		ADD2A99028FF0CD300A83305 /* ImageSizeCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD2A98F28FF0CD300A83305 /* ImageSizeCalculator.swift */; };
 		ADD2A99128FF0CD300A83305 /* ImageSizeCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD2A98F28FF0CD300A83305 /* ImageSizeCalculator.swift */; };
 		ADD2A99828FF227D00A83305 /* ImageSizeCalculator_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD2A99528FF227800A83305 /* ImageSizeCalculator_Tests.swift */; };
@@ -3477,6 +3478,7 @@
 		ADCDDCC425AE1293004E15FB /* UserUpdateResponse.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = UserUpdateResponse.json; sourceTree = "<group>"; };
 		ADCDDCEC25AE2214004E15FB /* UserUpdateViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserUpdateViewController.swift; sourceTree = "<group>"; };
 		ADCDDD0725AE2F4A004E15FB /* InputViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputViewController.swift; sourceTree = "<group>"; };
+		ADCE32F62A055A9200B52559 /* MessagesPaginationStateHandler_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesPaginationStateHandler_Mock.swift; sourceTree = "<group>"; };
 		ADD2A98F28FF0CD300A83305 /* ImageSizeCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageSizeCalculator.swift; sourceTree = "<group>"; };
 		ADD2A99528FF227800A83305 /* ImageSizeCalculator_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageSizeCalculator_Tests.swift; sourceTree = "<group>"; };
 		ADD2A99928FF4F4B00A83305 /* StreamCDN.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamCDN.swift; sourceTree = "<group>"; };
@@ -6239,6 +6241,7 @@
 				A3C7BAB127E4D45200BBF4FA /* TestChannelListObserver.swift */,
 				84F373EB280D803E0081E8BA /* TestChannelObserver.swift */,
 				CFAA6CBF2834B0B700EBF57A /* ScheduledStreamTimer_Mock.swift */,
+				ADCE32F62A055A9200B52559 /* MessagesPaginationStateHandler_Mock.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -9585,6 +9588,7 @@
 				A311B43927E8BC8400CFCF6D /* ChannelListController_Delegate.swift in Sources */,
 				A344077C27D753530044F150 /* ChatMessageImageAttachment_Mock.swift in Sources */,
 				ADB951AB291C1DE400800554 /* AttachmentUploader_Spy.swift in Sources */,
+				ADCE32F72A055A9200B52559 /* MessagesPaginationStateHandler_Mock.swift in Sources */,
 				A3C3BC4027E87F5C00224761 /* ChannelMemberListUpdater_Mock.swift in Sources */,
 				A3C3BC2527E87F2000224761 /* MessageReactionPayload.swift in Sources */,
 				A311B42F27E8BC8400CFCF6D /* UserController_Delegate.swift in Sources */,

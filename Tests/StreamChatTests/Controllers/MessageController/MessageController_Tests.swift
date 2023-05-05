@@ -2416,8 +2416,9 @@ private class TestEnvironment {
                 self.messageUpdater = MessageUpdater_Mock(
                     isLocalStorageEnabled: $0,
                     messageRepository: $1,
-                    database: $2,
-                    apiClient: $3
+                    paginationStateHandler: $2,
+                    database: $3,
+                    apiClient: $4
                 )
                 return self.messageUpdater
             }

@@ -12,6 +12,7 @@ final class MessageUpdater_Tests: XCTestCase {
     var apiClient: APIClient_Spy!
     var database: DatabaseContainer_Spy!
     var messageRepository: MessageRepository_Mock!
+    var paginationStateHandler: MessagesPaginationStateHandler_Mock!
     var messageUpdater: MessageUpdater!
 
     // MARK: Setup
@@ -23,9 +24,11 @@ final class MessageUpdater_Tests: XCTestCase {
         apiClient = APIClient_Spy()
         database = DatabaseContainer_Spy()
         messageRepository = MessageRepository_Mock(database: database, apiClient: apiClient)
+        paginationStateHandler = MessagesPaginationStateHandler_Mock()
         messageUpdater = MessageUpdater(
             isLocalStorageEnabled: true,
             messageRepository: messageRepository,
+            paginationStateHandler: paginationStateHandler,
             database: database,
             apiClient: apiClient
         )
@@ -49,6 +52,7 @@ final class MessageUpdater_Tests: XCTestCase {
         messageUpdater = MessageUpdater(
             isLocalStorageEnabled: isLocalStorageEnabled,
             messageRepository: messageRepository,
+            paginationStateHandler: paginationStateHandler,
             database: database,
             apiClient: apiClient
         )

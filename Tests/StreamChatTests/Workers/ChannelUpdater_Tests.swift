@@ -10,6 +10,7 @@ final class ChannelUpdater_Tests: XCTestCase {
     var apiClient: APIClient_Spy!
     var database: DatabaseContainer_Spy!
     var channelRepository: ChannelRepository_Mock!
+    var paginationStateHandler: MessagesPaginationStateHandler_Mock!
     var channelUpdater: ChannelUpdater!
 
     override func setUp() {
@@ -18,9 +19,11 @@ final class ChannelUpdater_Tests: XCTestCase {
         apiClient = APIClient_Spy()
         database = DatabaseContainer_Spy()
         channelRepository = ChannelRepository_Mock(database: database, apiClient: apiClient)
+        paginationStateHandler = MessagesPaginationStateHandler_Mock()
         channelUpdater = ChannelUpdater(
             channelRepository: channelRepository,
             callRepository: CallRepository(apiClient: apiClient),
+            paginationStateHandler: paginationStateHandler,
             database: database,
             apiClient: apiClient
         )
