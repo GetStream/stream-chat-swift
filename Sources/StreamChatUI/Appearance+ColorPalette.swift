@@ -16,6 +16,7 @@ public extension Appearance {
         /// Static color which should stay the same in dark and light mode, because it's only used as text on small UI Elements
         /// such as `ChatUnreadCountView`, `GiphyBadge` or Commands icon.
         public var staticColorText: UIColor = .streamWhiteStatic
+        public var staticBlackColorText: UIColor = .streamBlackStatic
         public var subtitleText: UIColor = .streamGray
 
         // MARK: - Text interactions
@@ -97,6 +98,7 @@ private extension UIColor {
     static let streamModalShadow = mode(0xd6d6d6, lightAlpha: 1, 0, darkAlpha: 1)
 
     static let streamWhiteStatic = mode(0xffffff, 0xffffff)
+    static let streamBlackStatic = mode(0x000000, 0x000000)
 
     static let streamBGGradientFrom = mode(0xf7f7f7, 0x101214)
     static let streamBGGradientTo = mode(0xfcfcfc, 0x070a0d)
