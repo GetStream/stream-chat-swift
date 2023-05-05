@@ -6,7 +6,7 @@ import AVFoundation
 import Foundation
 
 /// Describes an object that can provide AVPlayer related updates.
-public protocol AudioPlayerObserving {
+protocol AudioPlayerObserving {
     /// Registers an observer with the player that will receive updates when the player's
     /// `AVPlayer.timeControlStatus` gets updated.
     /// - Parameters:
@@ -41,7 +41,7 @@ public protocol AudioPlayerObserving {
     )
 }
 
-public class StreamPlayerObserver: AudioPlayerObserving {
+final class StreamPlayerObserver: AudioPlayerObserving {
     /// An observer token that is used to observe the ``AVPlayer.timeControlStatus`` of the player to receive
     /// updates when the state changes between playing and paused.
     private var timeControlStatusObserver: NSKeyValueObservation?
@@ -70,7 +70,7 @@ public class StreamPlayerObserver: AudioPlayerObserving {
     /// - Parameter notificationCenter: The notificationCenter on which the stoppedPlaybackObserver
     /// will be registered to listen for the `NSNotification.Name.AVPlayerItemDidPlayToEndTime`
     /// notifications.
-    public init(
+    init(
         notificationCenter: NotificationCenter = .default
     ) {
         self.notificationCenter = notificationCenter
@@ -84,7 +84,7 @@ public class StreamPlayerObserver: AudioPlayerObserving {
 
     // MARK: - AudioPlayerObserving
 
-    public func addTimeControlStatusObserver(
+    func addTimeControlStatusObserver(
         _ player: AVPlayer,
         using block: @escaping (AVPlayer.TimeControlStatus?) -> Void
     ) {
@@ -94,7 +94,7 @@ public class StreamPlayerObserver: AudioPlayerObserving {
         )
     }
 
-    public func addPeriodicTimeObserver(
+    func addPeriodicTimeObserver(
         _ player: AVPlayer,
         forInterval interval: CMTime,
         queue: DispatchQueue?,
@@ -116,7 +116,7 @@ public class StreamPlayerObserver: AudioPlayerObserving {
         }
     }
 
-    public func addStoppedPlaybackObserver(
+    func addStoppedPlaybackObserver(
         queue: OperationQueue?,
         using block: @escaping (AVPlayerItem) -> Void
     ) {

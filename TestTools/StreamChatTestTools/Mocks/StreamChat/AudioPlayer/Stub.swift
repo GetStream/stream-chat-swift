@@ -1,9 +1,5 @@
 //
-//  Stub.swift
-//  StreamChatTestTools
-//
-//  Created by Ilias Pavlidakis on 21/3/23.
-//  Copyright © 2023 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -31,7 +27,7 @@ extension Stub {
         stubbedProperties[keyPathName] = nil
     }
 
-    subscript<T>(
+    public subscript<T>(
         dynamicMember keyPath: KeyPath<Self, T>
     ) -> T {
         let keyPathName = NSExpression(forKeyPath: keyPath).keyPath
