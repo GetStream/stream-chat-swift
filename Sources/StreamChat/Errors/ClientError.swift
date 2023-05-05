@@ -14,7 +14,7 @@ public class ClientError: Error, CustomStringConvertible {
     /// The file and line number which emitted the error.
     public let location: Location?
 
-    private var message: String?
+    public let message: String?
 
     /// An underlying error.
     public let underlyingError: Error?
@@ -34,6 +34,7 @@ public class ClientError: Error, CustomStringConvertible {
     ///   - file: a file name source of an error.
     ///   - line: a line source of an error.
     public init(with error: Error? = nil, _ file: StaticString = #file, _ line: UInt = #line) {
+        message = nil
         underlyingError = error
         location = .init(file: "\(file)", line: Int(line))
     }

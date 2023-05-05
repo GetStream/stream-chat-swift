@@ -317,6 +317,13 @@ public extension ChatMessage {
         attachments(payloadType: AudioAttachmentPayload.self)
     }
 
+    /// Returns the attachments of `.voiceRecording` type.
+    ///
+    /// - Important: The `voiceRecordingAttachments` are loaded lazily and cached to maintain high performance.
+    var voiceRecordingAttachments: [ChatMessageVoiceRecordingAttachment] {
+        attachments(payloadType: VoiceRecordingAttachmentPayload.self)
+    }
+
     /// Returns attachment for the given identifier.
     /// - Parameter id: Attachment identifier.
     /// - Returns: A type-erased attachment.
