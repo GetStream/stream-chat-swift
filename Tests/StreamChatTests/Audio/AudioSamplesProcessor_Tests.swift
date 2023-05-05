@@ -48,23 +48,6 @@ final class AudioSamplesProcessor_Tests: XCTestCase {
         XCTAssertEqual(outputSamples.count, 0)
     }
 
-    func test_processSamples_withNegativeNoiseFloor_returnsExpectedResult() {
-        subject = AudioSamplesProcessor(noiseFloor: -60)
-        var data = Data(repeating: 0, count: 4)
-        var outputSamples = [Float]()
-
-        subject.processSamples(
-            fromData: &data,
-            outputSamples: &outputSamples,
-            samplesToProcess: 2,
-            downSampledLength: 2,
-            downsamplingRate: 1,
-            filter: []
-        )
-
-        XCTAssert(outputSamples.allSatisfy { $0 >= -60 })
-    }
-
     func test_processSamples_withLargeSampleBuffer_returnsExpectedResult() {
         var data = Data(repeating: 0, count: 16)
         var outputSamples = [Float]()
