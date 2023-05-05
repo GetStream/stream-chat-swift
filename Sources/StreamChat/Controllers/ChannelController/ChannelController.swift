@@ -65,13 +65,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     public let messageOrdering: MessageOrdering
 
     /// The worker used to fetch the remote data and communicate with servers.
-    private lazy var updater: ChannelUpdater = self.environment.channelUpdaterBuilder(
-        client.channelRepository,
-        client.callRepository,
-        client.makeMessagesPaginationStateHandler(),
-        client.databaseContainer,
-        client.apiClient
-    )
+    private let updater: ChannelUpdater
 
     private lazy var eventSender: TypingEventsSender = self.environment.eventSenderBuilder(
         client.databaseContainer,
@@ -184,6 +178,14 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         self.environment = environment
         self.isChannelAlreadyCreated = isChannelAlreadyCreated
         self.messageOrdering = messageOrdering
+        updater = self.environment.channelUpdaterBuilder(
+            client.channelRepository,
+            client.callRepository,
+            client.makeMessagesPaginationStateHandler(),
+            client.databaseContainer,
+            client.apiClient
+        )
+        
         super.init()
 
         setChannelObserver()
