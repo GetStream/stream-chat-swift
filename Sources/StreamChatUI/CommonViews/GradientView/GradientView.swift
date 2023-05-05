@@ -56,7 +56,7 @@ open class GradientView: _View {
         gradientLayer?.colors = content?.colors.map(\.cgColor)
         gradientLayer?.startPoint = content?.direction.startPoint ?? .zero
         gradientLayer?.endPoint = content?.direction.endPoint ?? .zero
-        gradientLayer?.locations = content?.locations.map { $0.map(NSNumber.init) }
+        gradientLayer?.locations = content?.locations.map { $0.map(NSNumber.init(value:)) }
     }
 }
 
