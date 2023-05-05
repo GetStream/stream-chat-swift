@@ -6,6 +6,8 @@ import Foundation
 
 /// A struct that represents the current state of an audio player
 public struct AudioPlaybackContext: Equatable {
+    public var assetLocation: URL?
+
     /// The duration of the audio track in seconds
     public var duration: TimeInterval
 
@@ -20,11 +22,10 @@ public struct AudioPlaybackContext: Equatable {
 
     /// A boolean flag indicating whether the audio player is currently seeking to a new position in the track
     public var isSeeking: Bool
-}
 
-extension AudioPlaybackContext {
     /// A static property representing a default "not loaded" state for an audio player context
     public static let notLoaded = AudioPlaybackContext(
+        assetLocation: nil,
         duration: 0,
         currentTime: 0,
         state: .notLoaded,

@@ -1,9 +1,5 @@
 //
-//  MockAsset.swift
-//  StreamChatTests
-//
-//  Created by Ilias Pavlidakis on 21/3/23.
-//  Copyright © 2023 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import AVFoundation
