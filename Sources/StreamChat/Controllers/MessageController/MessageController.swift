@@ -98,32 +98,46 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     }
 
     /// A Boolean value that returns whether the oldest replies have all been loaded or not.
-    public private(set) var hasLoadedAllPreviousReplies: Bool = false
+    public var hasLoadedAllPreviousReplies: Bool {
+        messageUpdater.paginationState.hasLoadedAllPreviousMessages
+    }
 
     /// A Boolean value that returns whether the newest replies have all been loaded or not.
     public var hasLoadedAllNextReplies: Bool {
-        !isJumpingToMessage || replies.isEmpty
+        messageUpdater.paginationState.hasLoadedAllNextMessages || replies.isEmpty
     }
 
     /// A Boolean value that returns whether the thread is currently loading previous (old) replies.
-    public private(set) var isLoadingPreviousReplies: Bool = false
+    public var isLoadingPreviousReplies: Bool {
+        messageUpdater.paginationState.isLoadingPreviousMessages
+    }
 
     /// A Boolean value that returns whether the thread is currently loading next (new) replies.
-    public private(set) var isLoadingNextReplies: Bool = false
+    public var isLoadingNextReplies: Bool {
+        messageUpdater.paginationState.isLoadingNextMessages
+    }
 
     /// A Boolean value that returns whether the thread is currently loading a page around a reply.
-    public private(set) var isLoadingMiddleReplies: Bool = false
+    public var isLoadingMiddleReplies: Bool {
+        messageUpdater.paginationState.isLoadingMiddleMessages
+    }
 
     /// A Boolean value that returns whether the thread is currently in a mid-page.
     /// The value is false if the thread has the first page loaded.
     /// The value is true if the thread is in a mid fragment and didn't load the first page yet.
-    public private(set) var isJumpingToMessage: Bool = false
+    public var isJumpingToMessage: Bool {
+        messageUpdater.paginationState.isJumpingToMessage
+    }
 
     /// The pagination cursor for loading previous (old) replies.
-    internal private(set) var lastOldestReplyId: MessageId?
+    internal var lastOldestReplyId: MessageId? {
+        messageUpdater.paginationState.oldestFetchedMessage?.id
+    }
 
     /// The pagination cursor for loading next (new) replies.
-    internal private(set) var lastNewestReplyId: MessageId?
+    internal var lastNewestReplyId: MessageId? {
+        messageUpdater.paginationState.newestFetchedMessage?.id
+    }
 
     private let environment: Environment
 
@@ -343,17 +357,13 @@ public extension ChatMessageController {
             pagination = MessagesPagination(pageSize: pageSize)
         }
 
-        isLoadingPreviousReplies = true
         messageUpdater.loadReplies(
             cid: cid,
             messageId: messageId,
             pagination: pagination
         ) { result in
-            self.isLoadingPreviousReplies = false
             switch result {
             case let .success(payload):
-                self.hasLoadedAllPreviousReplies = payload.messages.count < pageSize
-                self.updateOldestReplyId(with: payload)
                 self.callback {
                     // If the first page was loaded with 25 messages, it means we need to load
                     // a page with 0 messages. This won't trigger a didChangeReplies, but we need
@@ -398,20 +408,13 @@ public extension ChatMessageController {
         let pageSize = limit ?? repliesPageSize
         let pagination = MessagesPagination(pageSize: pageSize, parameter: .around(replyId))
 
-        isJumpingToMessage = true
-        isLoadingMiddleReplies = true
         messageUpdater.loadReplies(
             cid: cid,
             messageId: messageId,
             pagination: pagination
         ) { result in
-            self.isLoadingMiddleReplies = false
             switch result {
-            case let .success(payload):
-                self.updateOldestReplyId(with: payload)
-                self.updateNewestReplyId(with: payload)
-                // If we are jumping to the root message, then it means we are loading the first page
-                self.hasLoadedAllPreviousReplies = self.messageId == replyId
+            case .success:
                 self.callback { completion?(nil) }
             case let .failure(error):
                 self.callback { completion?(error) }
@@ -445,19 +448,13 @@ public extension ChatMessageController {
 
         let pageSize = limit ?? repliesPageSize
 
-        isLoadingNextReplies = true
         messageUpdater.loadReplies(
             cid: cid,
             messageId: messageId,
             pagination: MessagesPagination(pageSize: pageSize, parameter: .greaterThan(replyId))
         ) { result in
-            self.isLoadingNextReplies = false
             switch result {
-            case let .success(payload):
-                self.updateNewestReplyId(with: payload)
-                if payload.messages.count < pageSize {
-                    self.isJumpingToMessage = false
-                }
+            case .success:
                 self.callback { completion?(nil) }
             case let .failure(error):
                 self.callback { completion?(error) }
@@ -466,15 +463,17 @@ public extension ChatMessageController {
     }
 
     /// Cleans the current state and loads the first page again.
+    /// - Parameter limit: Limit for page size
     /// - Parameter completion: Callback when the API call is completed.
-    func loadFirstPage(_ completion: ((_ error: Error?) -> Void)? = nil) {
-        lastOldestReplyId = nil
-        hasLoadedAllPreviousReplies = false
-        isLoadingPreviousReplies = false
-        lastNewestReplyId = nil
-        isJumpingToMessage = false
-
-        loadPreviousReplies(completion: completion)
+    func loadFirstPage(limit: Int? = nil, _ completion: ((_ error: Error?) -> Void)? = nil) {
+        let pageSize = limit ?? repliesPageSize
+        messageUpdater.loadReplies(
+            cid: cid,
+            messageId: messageId,
+            pagination: MessagesPagination(pageSize: pageSize)
+        ) { result in
+            self.callback { completion?(result.error) }
+        }
     }
 
     /// Loads the next page of reactions starting from the current fetched reactions.
@@ -774,16 +773,6 @@ private extension ChatMessageController {
 
             return observer
         }
-    }
-
-    func updateOldestReplyId(with payload: MessageRepliesPayload) {
-        // Payload messages are ordered from oldest to newest
-        lastOldestReplyId = payload.messages.first?.id
-    }
-
-    func updateNewestReplyId(with payload: MessageRepliesPayload) {
-        // Payload messages are ordered from oldest to newest
-        lastNewestReplyId = payload.messages.last?.id
     }
 }
 
