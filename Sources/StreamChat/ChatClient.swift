@@ -133,9 +133,7 @@ public class ChatClient {
     }()
 
     func makeMessagesPaginationStateHandler() -> MessagesPaginationStateHandling {
-        MessagesPaginationThreadSafeDecorator(
-            decoratee: MessagesPaginationStateHandler()
-        )
+        MessagesPaginationStateHandler()
     }
 
     /// The `APIClient` instance `Client` uses to communicate with Stream REST API.

@@ -18,7 +18,21 @@ protocol MessagesPaginationStateHandling {
 
 /// A component responsible for handling the messages pagination state.
 class MessagesPaginationStateHandler: MessagesPaginationStateHandling {
-    var state: MessagesPaginationState = .initial
+    private let queue = DispatchQueue(label: "io.getstream.messages-pagination-state-handler")
+    private var _state: MessagesPaginationState = .initial
+
+    var state: MessagesPaginationState {
+        get {
+            queue.sync {
+                _state
+            }
+        }
+        set {
+            queue.sync {
+                _state = newValue
+            }
+        }
+    }
 
     func begin(pagination: MessagesPagination) {
         // When loading a page around a message it means we jumped to a mid-page,
@@ -53,7 +67,7 @@ class MessagesPaginationStateHandler: MessagesPaginationStateHandling {
 
         let oldestFetchedMessage = messages.first
         let newestFetchedMessage = messages.last
-        
+
         switch pagination.parameter {
         case .lessThan, .lessThanOrEqual:
             state.oldestFetchedMessage = oldestFetchedMessage

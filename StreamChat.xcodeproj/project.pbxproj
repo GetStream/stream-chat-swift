@@ -1204,7 +1204,6 @@
 		ADF34FA625CDD8F600AD637C /* ConnectionController+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF34FA525CDD8F600AD637C /* ConnectionController+Combine.swift */; };
 		ADF617692A09927000E70307 /* MessagesPaginationStateHandler_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF617672A09926900E70307 /* MessagesPaginationStateHandler_Tests.swift */; };
 		ADF9E1F72A03E7E400109108 /* MessagesPaginationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF9E1F62A03E7E400109108 /* MessagesPaginationState.swift */; };
-		ADF9E1F92A03E86E00109108 /* MessagesPaginationThreadSafeDecorator.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF9E1F82A03E86E00109108 /* MessagesPaginationThreadSafeDecorator.swift */; };
 		ADFA09C926A99E0A002A6EFA /* ChatThreadHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADFA09C726A99C71002A6EFA /* ChatThreadHeaderView.swift */; };
 		ADFB7E90283E700500ABB6CF /* CollectionViewListChangeUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADFB7E8F283E700500ABB6CF /* CollectionViewListChangeUpdater.swift */; };
 		ADFB7E91283E700500ABB6CF /* CollectionViewListChangeUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADFB7E8F283E700500ABB6CF /* CollectionViewListChangeUpdater.swift */; };
@@ -3503,7 +3502,6 @@
 		ADF34FA525CDD8F600AD637C /* ConnectionController+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConnectionController+Combine.swift"; sourceTree = "<group>"; };
 		ADF617672A09926900E70307 /* MessagesPaginationStateHandler_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesPaginationStateHandler_Tests.swift; sourceTree = "<group>"; };
 		ADF9E1F62A03E7E400109108 /* MessagesPaginationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesPaginationState.swift; sourceTree = "<group>"; };
-		ADF9E1F82A03E86E00109108 /* MessagesPaginationThreadSafeDecorator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesPaginationThreadSafeDecorator.swift; sourceTree = "<group>"; };
 		ADFA09C726A99C71002A6EFA /* ChatThreadHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatThreadHeaderView.swift; sourceTree = "<group>"; };
 		ADFB7E8F283E700500ABB6CF /* CollectionViewListChangeUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionViewListChangeUpdater.swift; sourceTree = "<group>"; };
 		ADFB7E93283E703A00ABB6CF /* TableViewListChangeUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewListChangeUpdater.swift; sourceTree = "<group>"; };
@@ -7402,7 +7400,6 @@
 			children = (
 				ADF9E1F62A03E7E400109108 /* MessagesPaginationState.swift */,
 				ADE2093C29FC022D007D0FF3 /* MessagesPaginationStateHandling.swift */,
-				ADF9E1F82A03E86E00109108 /* MessagesPaginationThreadSafeDecorator.swift */,
 			);
 			path = MessagesPaginationStateHandling;
 			sourceTree = "<group>";
@@ -9726,7 +9723,6 @@
 				79A9EB4D2625793000F2A72D /* CoreDataLazy.swift in Sources */,
 				DABC6AC22546FFB600A8FC78 /* AttachmentTypes.swift in Sources */,
 				7964F3B9249A314D002A09EC /* BaseLogDestination.swift in Sources */,
-				ADF9E1F92A03E86E00109108 /* MessagesPaginationThreadSafeDecorator.swift in Sources */,
 				C1FC2F942742579D0062530F /* Security.swift in Sources */,
 				AD52A21C2804851600D0157E /* CommandDTO.swift in Sources */,
 				792AF91624D812440010097B /* EntityDatabaseObserver.swift in Sources */,
