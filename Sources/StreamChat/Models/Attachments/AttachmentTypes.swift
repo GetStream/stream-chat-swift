@@ -112,8 +112,6 @@ public struct AttachmentType: RawRepresentable, Codable, Hashable, ExpressibleBy
             self = .video
         case "audio":
             self = .audio
-        case "voiceRecording":
-            self = .voiceRecording
         default:
             self = .file
         }
