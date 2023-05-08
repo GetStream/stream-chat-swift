@@ -109,7 +109,7 @@ class WebSocketClient {
 
         switch connectionState {
         // Calling connect in the following states has no effect
-        case .connecting, .waitingForConnectionId, .connected(connectionId: _):
+        case .connecting, .waitingForConnectionId, .connected:
             return
         default: break
         }
