@@ -12,7 +12,9 @@ open class ChatChannelVC: _ViewController,
     ChatMessageListVCDataSource,
     ChatMessageListVCDelegate,
     ChatChannelControllerDelegate,
-    EventsControllerDelegate {
+    EventsControllerDelegate,
+    AudioQueuePlayerDatasource
+{
     /// Controller for observing data changes within the channel.
     open var channelController: ChatChannelController!
 
@@ -47,6 +49,17 @@ open class ChatChannelVC: _ViewController,
     /// Controller that handles the composer view
     open private(set) lazy var messageComposerVC = components
         .messageComposerVC
+        .init()
+
+    /// The audioPlayer  that will be used for the playback of VoiceRecordings
+    open private(set) lazy var audioPlayer: AudioPlaying = components
+        .audioPlayer
+        .init()
+
+    /// The provider that will be asked to provide the next VoiceRecording to play automatically once the
+    /// currently playing one, finishes.
+    open private(set) lazy var audioQueuePlayerNextItemProvider: AudioQueuePlayerNextItemProvider = components
+        .audioQueuePlayerNextItemProvider
         .init()
 
     /// Header View
@@ -130,6 +143,13 @@ open class ChatChannelVC: _ViewController,
         }
         viewPaginationHandler.onNewBottomPage = { [weak self] in
             self?.channelController.loadNextMessages()
+        }
+
+        messageListVC.audioPlayer = audioPlayer
+        messageComposerVC.audioPlayer = audioPlayer
+
+        if let queueAudioPlayer = audioPlayer as? StreamRemoteAudioQueuePlayer {
+            queueAudioPlayer.datasource = self
         }
     }
 
@@ -412,5 +432,18 @@ open class ChatChannelVC: _ViewController,
                 channelController.loadFirstPage()
             }
         }
+    }
+
+    // MARK: - AudioQueuePlayerDatasource
+
+    open func audioQueuePlayerNextAssetURL(
+        _ audioPlayer: AudioPlaying,
+        currentAssetURL: URL?
+    ) -> URL? {
+        audioQueuePlayerNextItemProvider.findNextItem(
+            in: messages,
+            currentVoiceRecordingURL: currentAssetURL,
+            lookUpScope: .subsequentMessagesFromUser
+        )
     }
 }

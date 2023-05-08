@@ -136,9 +136,11 @@ open class ChatMessageGalleryView: _View, ThemeProvider {
 
         // Prevents layout issue. Can be removed when CIS-981 is fixed.
         guard !content.isEmpty else {
-            previewsContainerView.isHidden = true
+            isHidden = true
             return
         }
+
+        isHidden = false
 
         // Add previews to the spots
         if content.count == 3 {

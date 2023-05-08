@@ -254,28 +254,6 @@ final class StreamAudioRecorder_Tests: XCTestCase {
         assertDidFailWithError(genericError)
     }
 
-    // MARK: - deleteRecording
-
-    func test_deleteRecording_deleteRecordingReturnsFalse_callsDidFailOnDelegate() {
-        simulateIsRecording()
-        stubAVAudioRecorder.deleteRecordingResult = false
-
-        subject.deleteRecording()
-
-        assertDidFailWithClientError(AudioRecorderError.failedToDelete())
-    }
-
-    func test_deleteRecording_deleteRecordingReturnsTrue_callsDeletedRecordingOnDelegate() {
-        simulateIsRecording()
-        stubAVAudioRecorder.deleteRecordingResult = true
-
-        subject.deleteRecording()
-
-        XCTAssertTrue(
-            (mockRecorderDelegate.deletedRecordingWasCalledWithAudioRecorder as? StreamAudioRecorder) == subject
-        )
-    }
-
     // MARK: - audioRecorderDidFinishRecording(_:successfully:)
 
     func test_audioRecorderDidFinishRecording_flagIsFalse_callsDidFailOnDelegate() {

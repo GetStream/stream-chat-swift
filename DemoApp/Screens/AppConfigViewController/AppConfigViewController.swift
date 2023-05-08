@@ -128,6 +128,8 @@ class AppConfigViewController: UITableViewController {
     enum ComponentsConfigOption: String, CaseIterable {
         case isUniqueReactionsEnabled
         case shouldMessagesStartAtTheTop
+        case voiceRecordingEnabled
+        case voiceRecordingConfirmInsteadOfSendEnabled
     }
 
     enum ChatClientConfigOption: String, CaseIterable {
@@ -351,6 +353,14 @@ class AppConfigViewController: UITableViewController {
         case .shouldMessagesStartAtTheTop:
             cell.accessoryView = makeSwitchButton(Components.default.shouldMessagesStartAtTheTop) { newValue in
                 Components.default.shouldMessagesStartAtTheTop = newValue
+            }
+        case .voiceRecordingEnabled:
+            cell.accessoryView = makeSwitchButton(Components.default.voiceRecordingEnabled) { newValue in
+                Components.default.voiceRecordingEnabled = newValue
+            }
+        case .voiceRecordingConfirmInsteadOfSendEnabled:
+            cell.accessoryView = makeSwitchButton(Components.default.voiceRecordingConfirmInsteadOfSendEnabled) { newValue in
+                Components.default.voiceRecordingConfirmInsteadOfSendEnabled = newValue
             }
         }
     }
