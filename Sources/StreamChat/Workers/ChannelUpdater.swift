@@ -46,7 +46,7 @@ class ChannelUpdater: Worker {
         completion: ((Result<ChannelPayload, Error>) -> Void)? = nil
     ) {
         if let pagination = channelQuery.pagination {
-            paginationStateHandler.start(pagination: pagination)
+            paginationStateHandler.begin(pagination: pagination)
         }
         
         let didLoadFirstPage = channelQuery.pagination?.parameter == nil

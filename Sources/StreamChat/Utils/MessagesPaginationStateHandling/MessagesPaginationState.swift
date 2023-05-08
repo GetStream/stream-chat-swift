@@ -28,7 +28,7 @@ struct MessagesPaginationState {
 
     // MARK: Computed Properties
 
-    /// A Boolean value that returns whether the channel is currently loading messages, either old/new or mid pages.
+    /// A Boolean value that returns whether the channel is currently loading messages on either previous, mid or next pages.
     var isLoadingMessages: Bool {
         isLoadingNextMessages || isLoadingPreviousMessages || isLoadingMiddleMessages
     }

@@ -19,57 +19,57 @@ class MessagesPaginationStateHandlerTests: XCTestCase {
         super.tearDown()
     }
 
-    // MARK: - start
+    // MARK: - begin
 
-    func test_start_whenLoadingPreviousMessages_thenSetsStateToLoadingPreviousMessages() {
+    func test_begin_whenLoadingPreviousMessages_thenSetsStateToLoadingPreviousMessages() {
         // Given
         sut.state.isLoadingPreviousMessages = false
         let pagination = MessagesPagination(pageSize: 10, parameter: .lessThan("123"))
 
         // When
-        sut.start(pagination: pagination)
+        sut.begin(pagination: pagination)
 
         // Then
         XCTAssertTrue(sut.state.isLoadingPreviousMessages)
     }
 
-    func test_start_whenLoadingNextMessages_thenSetsStateToLoadingNextMessages() {
+    func test_begin_whenLoadingNextMessages_thenSetsStateToLoadingNextMessages() {
         // Given
         sut.state.isLoadingNextMessages = false
         let pagination = MessagesPagination(pageSize: 10, parameter: .greaterThan("123"))
 
         // When
-        sut.start(pagination: pagination)
+        sut.begin(pagination: pagination)
 
         // Then
         XCTAssertTrue(sut.state.isLoadingNextMessages)
     }
 
-    func test_start_whenLoadingMiddleMessages_thenSetsStateToLoadingMiddleMessages() {
+    func test_begin_whenLoadingMiddleMessages_thenSetsStateToLoadingMiddleMessages() {
         // Given
         sut.state.isLoadingMiddleMessages = false
         let pagination = MessagesPagination(pageSize: 10, parameter: .around("123"))
 
         // When
-        sut.start(pagination: pagination)
+        sut.begin(pagination: pagination)
 
         // Then
         XCTAssertTrue(sut.state.isLoadingMiddleMessages)
     }
 
-    func test_start_whenJumpingToMessage_thenSetsHasLoadedAllNextMessagesToFalse() {
+    func test_begin_whenJumpingToMessage_thenSetsHasLoadedAllNextMessagesToFalse() {
         // Given
         sut.state.hasLoadedAllNextMessages = true
         let pagination = MessagesPagination(pageSize: 10, parameter: .around("123"))
 
         // When
-        sut.start(pagination: pagination)
+        sut.begin(pagination: pagination)
 
         // Then
         XCTAssertFalse(sut.state.hasLoadedAllNextMessages)
     }
 
-    func test_start_whenLoadingFirstPage_thenSetsStateToInitial() {
+    func test_begin_whenLoadingFirstPage_thenSetsStateToInitial() {
         // Given
         sut.state.isLoadingNextMessages = true
         sut.state.hasLoadedAllNextMessages = false
@@ -77,7 +77,7 @@ class MessagesPaginationStateHandlerTests: XCTestCase {
         let pagination = MessagesPagination(pageSize: 10, parameter: nil)
 
         // When
-        sut.start(pagination: pagination)
+        sut.begin(pagination: pagination)
 
         // Then
         XCTAssertEqual(sut.state, .initial)

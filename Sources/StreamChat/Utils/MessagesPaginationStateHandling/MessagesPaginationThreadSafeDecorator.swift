@@ -19,9 +19,9 @@ class MessagesPaginationThreadSafeDecorator: MessagesPaginationStateHandling {
         }
     }
 
-    func start(pagination: MessagesPagination) {
+    func begin(pagination: MessagesPagination) {
         queue.sync {
-            self.decoratee.start(pagination: pagination)
+            self.decoratee.begin(pagination: pagination)
         }
     }
 

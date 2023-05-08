@@ -13,8 +13,8 @@ class MessagesPaginationStateHandler_Mock: MessagesPaginationStateHandling {
 
     var mockState: MessagesPaginationState = .initial
 
-    var startCallCount = 0
-    var startCalledWith: MessagesPagination?
+    var beginCallCount = 0
+    var beginCalledWith: MessagesPagination?
 
     var endCallCount = 0
     var endCalledWith: (MessagesPagination, Result<[MessagePayload], Error>)?
@@ -23,9 +23,9 @@ class MessagesPaginationStateHandler_Mock: MessagesPaginationStateHandling {
         mockState
     }
 
-    func start(pagination: MessagesPagination) {
-        startCallCount += 1
-        startCalledWith = pagination
+    func begin(pagination: MessagesPagination) {
+        beginCallCount += 1
+        beginCalledWith = pagination
     }
 
     func end(pagination: MessagesPagination, with result: Result<[MessagePayload], Error>) {

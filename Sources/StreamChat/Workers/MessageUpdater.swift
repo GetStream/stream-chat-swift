@@ -230,7 +230,7 @@ class MessageUpdater: Worker {
         pagination: MessagesPagination,
         completion: ((Result<MessageRepliesPayload, Error>) -> Void)? = nil
     ) {
-        paginationStateHandler.start(pagination: pagination)
+        paginationStateHandler.begin(pagination: pagination)
 
         let didLoadFirstPage = pagination.parameter == nil
         let didJumpToMessage = pagination.parameter?.isJumpingToMessage == true

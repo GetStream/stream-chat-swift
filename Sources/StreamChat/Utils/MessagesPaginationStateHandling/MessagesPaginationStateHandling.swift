@@ -9,9 +9,10 @@ protocol MessagesPaginationStateHandling {
     /// The current state of the messages pagination.
     var state: MessagesPaginationState { get }
 
-    /// This function should be called before performing the pagination call.
-    func start(pagination: MessagesPagination)
-    /// This function should be called with the result of the pagination call.
+    /// A method that will be called to inform the object that a pagination call is about to begin.
+    func begin(pagination: MessagesPagination)
+    /// A method that will be called to inform the object that a pagination call has finished
+    /// with the provided result.
     func end(pagination: MessagesPagination, with result: Result<[MessagePayload], Error>)
 }
 
@@ -19,7 +20,7 @@ protocol MessagesPaginationStateHandling {
 class MessagesPaginationStateHandler: MessagesPaginationStateHandling {
     var state: MessagesPaginationState = .initial
 
-    func start(pagination: MessagesPagination) {
+    func begin(pagination: MessagesPagination) {
         // When loading a page around a message it means we jumped to a mid-page,
         // so now the newest page is not loaded.
         if pagination.parameter?.isJumpingToMessage == true {
