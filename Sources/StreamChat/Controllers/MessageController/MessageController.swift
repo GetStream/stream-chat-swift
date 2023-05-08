@@ -182,13 +182,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     @Cached private var repliesObserver: ListDatabaseObserver<ChatMessage, MessageDTO>?
 
     /// The worker used to fetch the remote data and communicate with servers.
-    private lazy var messageUpdater: MessageUpdater = environment.messageUpdaterBuilder(
-        client.config.isLocalStorageEnabled,
-        client.messageRepository,
-        client.makeMessagesPaginationStateHandler(),
-        client.databaseContainer,
-        client.apiClient
-    )
+    private let messageUpdater: MessageUpdater
 
     /// Creates a new `MessageControllerGeneric`.
     /// - Parameters:
@@ -201,6 +195,13 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         self.cid = cid
         self.messageId = messageId
         self.environment = environment
+        messageUpdater = environment.messageUpdaterBuilder(
+            client.config.isLocalStorageEnabled,
+            client.messageRepository,
+            client.makeMessagesPaginationStateHandler(),
+            client.databaseContainer,
+            client.apiClient
+        )
         super.init()
 
         setRepliesObserver()
