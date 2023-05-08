@@ -1004,59 +1004,33 @@ final class MessageUpdater_Tests: XCTestCase {
         XCTAssertEqual(messageDTOs.map(\.showInsideThread), [true, true, true])
     }
 
-    func test_loadReplies_whenJumpingToMessage_shouldSetNewestReplyAt() throws {
+    func test_loadReplies_shouldSetNewestReplyAt() throws {
         let pagination = MessagesPagination(pageSize: 3, parameter: .around(.unique))
         let expectedNewestReplyAt = Date.unique
         let repliesPayload: MessageRepliesPayload = .init(
             messages: [
                 .dummy(),
                 .dummy(),
-                .dummy(createdAt: expectedNewestReplyAt)
+                .dummy()
             ]
         )
+
+        paginationStateHandler.mockState.newestFetchedMessage = .dummy(createdAt: expectedNewestReplyAt)
 
         try AssertLoadReplies(expectedNewestReplyAt: expectedNewestReplyAt, for: repliesPayload, with: pagination)
     }
 
-    func test_loadReplies_whenIsLoadingNextPage_shouldSetNewestReplyAt() throws {
-        let expectedNewestReplyAt = Date.unique
-        let repliesPayload: MessageRepliesPayload = .init(
-            messages: [
-                .dummy(),
-                .dummy(),
-                .dummy(createdAt: expectedNewestReplyAt)
-            ]
-        )
-
-        let greaterOrEqual = MessagesPagination(pageSize: 3, parameter: .greaterThanOrEqual(.unique))
-        try AssertLoadReplies(expectedNewestReplyAt: expectedNewestReplyAt, for: repliesPayload, with: greaterOrEqual)
-
-        let greater = MessagesPagination(pageSize: 3, parameter: .greaterThan(.unique))
-        try AssertLoadReplies(expectedNewestReplyAt: expectedNewestReplyAt, for: repliesPayload, with: greater)
-    }
-
-    func test_loadReplies_whenIsLoadingNextPage_whenMessagesLowerThanPageSize_shouldSetNewestReplyAtToNil() throws {
-        let pagination = MessagesPagination(pageSize: 5, parameter: .greaterThan(.unique))
-        let repliesPayload: MessageRepliesPayload = .init(
-            messages: [
-                .dummy(),
-                .dummy(),
-                .dummy(createdAt: .unique)
-            ]
-        )
-
-        try AssertLoadReplies(expectedNewestReplyAt: nil, for: repliesPayload, with: pagination)
-    }
-
-    func test_loadReplies_whenIsFirstPage_shouldSetNewestReplyAtToNil() throws {
+    func test_loadReplies_whenNewestFetchedMessageIsNil_shouldSetNewestReplyAtToNil() throws {
         let pagination = MessagesPagination(pageSize: 3, parameter: nil)
         let repliesPayload: MessageRepliesPayload = .init(
             messages: [
                 .dummy(),
                 .dummy(),
-                .dummy(createdAt: .unique)
+                .dummy()
             ]
         )
+
+        paginationStateHandler.mockState.newestFetchedMessage = nil
 
         try AssertLoadReplies(expectedNewestReplyAt: nil, for: repliesPayload, with: pagination)
     }

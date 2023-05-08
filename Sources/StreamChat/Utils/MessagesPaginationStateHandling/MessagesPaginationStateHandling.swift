@@ -37,13 +37,7 @@ class MessagesPaginationStateHandler: MessagesPaginationStateHandling {
             state.isLoadingMiddleMessages = true
 
         case .none:
-            state.hasLoadedAllPreviousMessages = false
-            state.hasLoadedAllNextMessages = true
-            state.isLoadingPreviousMessages = false
-            state.isLoadingMiddleMessages = false
-            state.isLoadingNextMessages = false
-            state.oldestFetchedMessage = nil
-            state.newestFetchedMessage = nil
+            state = .initial
         }
     }
 
