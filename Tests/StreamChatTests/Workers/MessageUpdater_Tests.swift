@@ -919,11 +919,21 @@ final class MessageUpdater_Tests: XCTestCase {
     // MARK: Load replies
 
     func test_loadReplies_makesCorrectAPICall() {
+        let repliesPayload: MessageRepliesPayload = .init(messages: [
+            .dummy(messageId: .unique, authorUserId: .unique)
+        ])
         let messageId: MessageId = .unique
         let pagination: MessagesPagination = .init(pageSize: 25)
 
         // Simulate `loadReplies` call
-        messageUpdater.loadReplies(cid: .unique, messageId: messageId, pagination: pagination)
+        let exp = expectation(description: "load replies should complete")
+        messageUpdater.loadReplies(cid: .unique, messageId: messageId, pagination: pagination) { _ in
+            exp.fulfill()
+        }
+
+        XCTAssertEqual(paginationStateHandler.beginCallCount, 1)
+        XCTAssertEqual(paginationStateHandler.beginCalledWith, pagination)
+        XCTAssertEqual(paginationStateHandler.endCallCount, 0)
 
         // Assert correct endpoint is called
         let expectedEndpoint: Endpoint<MessageRepliesPayload> = .loadReplies(
@@ -931,6 +941,15 @@ final class MessageUpdater_Tests: XCTestCase {
             pagination: pagination
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+
+        // Simulate API response with success
+        apiClient.test_simulateResponse(Result<MessageRepliesPayload, Error>.success(repliesPayload))
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertEqual(paginationStateHandler.endCallCount, 1)
+        XCTAssertEqual(paginationStateHandler.endCalledWith?.0, pagination)
+        XCTAssertEqual(paginationStateHandler.endCalledWith?.1.value?.count, repliesPayload.messages.count)
     }
 
     func test_loadReplies_propagatesRequestError() {
@@ -949,7 +968,9 @@ final class MessageUpdater_Tests: XCTestCase {
     }
 
     func test_loadReplies_propagatesDatabaseError() throws {
-        let repliesPayload: MessageRepliesPayload = .init(messages: [.dummy(messageId: .unique, authorUserId: .unique)])
+        let repliesPayload: MessageRepliesPayload = .init(messages: [
+            .dummy(messageId: .unique, authorUserId: .unique)
+        ])
         let cid = ChannelId.unique
 
         // Create channel in the database

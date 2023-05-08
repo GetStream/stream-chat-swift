@@ -63,13 +63,18 @@ final class ChannelUpdater_Tests: XCTestCase {
 
     func test_updateChannelQuery_successfulResponseData_areSavedToDB() {
         // Simulate `update(channelQuery:)` call
-        let query = ChannelQuery(cid: .unique)
+        let expectedPaginationParameter = PaginationParameter.lessThan(.unique)
+        let query = ChannelQuery(cid: .unique, paginationParameter: expectedPaginationParameter)
         let expectation = self.expectation(description: "Update completes")
         var updateResult: Result<ChannelPayload, Error>!
         channelUpdater.update(channelQuery: query, isInRecoveryMode: false, completion: { result in
             updateResult = result
             expectation.fulfill()
         })
+
+        XCTAssertEqual(paginationStateHandler.beginCallCount, 1)
+        XCTAssertEqual(paginationStateHandler.beginCalledWith?.parameter, expectedPaginationParameter)
+        XCTAssertEqual(paginationStateHandler.endCallCount, 0)
 
         // Simulate API response with channel data
         let cid = ChannelId(type: .messaging, id: .unique)
@@ -82,6 +87,10 @@ final class ChannelUpdater_Tests: XCTestCase {
         XCTAssertNotNil(channel)
         XCTAssertNil(updateResult.error)
         XCTAssertEqual(channel?.messages.count, 2)
+
+        XCTAssertEqual(paginationStateHandler.endCallCount, 1)
+        XCTAssertEqual(paginationStateHandler.endCalledWith?.0.parameter, expectedPaginationParameter)
+        XCTAssertEqual(paginationStateHandler.endCalledWith?.1.value?.count, 2)
     }
 
     func test_updateChannelQuery_successfulResponseData_oldestMessageAtAndNewestMessageAtAreSavedToDB() {
