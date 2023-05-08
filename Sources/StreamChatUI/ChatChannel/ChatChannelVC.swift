@@ -77,7 +77,7 @@ open class ChatChannelVC: _ViewController,
             return false
         }
 
-        return isLastMessageFullyVisible && channelController.hasLoadedAllNextMessages && !hasMarkedMessageAsUnread
+        return hasSeenLastMessage && hasSeenAllUnreadMessages && channelController.hasLoadedAllNextMessages && !hasMarkedMessageAsUnread
     }
 
     /// A component responsible to handle when to load new or old messages.
@@ -90,9 +90,11 @@ open class ChatChannelVC: _ViewController,
         channelController.markedAsUnread
     }
 
-    /// Unread messages count for the session.
-    /// It can either contain the initial unread count, or the one after marking the channel as read/unread
-    public var sessionUnreadCount: ChannelUnreadCount = .noUnread
+    /// Determines whether all unread messages have been seen
+    private var hasSeenAllUnreadMessages: Bool = false
+
+    /// Determines whether last cell has been seen
+    private var hasSeenLastMessage: Bool = false
 
     /// The id of the first unread message
     private var lastReadMessageId: MessageId? {
@@ -119,7 +121,6 @@ open class ChatChannelVC: _ViewController,
             }
             self?.setChannelControllerToComposerIfNeeded(cid: self?.channelController.cid)
             self?.messageComposerVC.updateContent()
-            self?.updateSessionUnreadCount()
 
             let pagination = self?.channelController.channelQuery.pagination?.parameter
             switch pagination {
@@ -201,11 +202,6 @@ open class ChatChannelVC: _ViewController,
     public func markRead() {
         channelController.markRead()
         messageListVC.scrollToLatestMessageButton.content = .noUnread
-    }
-
-    private func updateSessionUnreadCount() {
-        guard let unreadCount = channelController.channel?.unreadCount else { return }
-        sessionUnreadCount = unreadCount
     }
 
     /// Jump to a given message.
@@ -290,7 +286,14 @@ open class ChatChannelVC: _ViewController,
         _ vc: ChatMessageListVC,
         willDisplayMessageAt indexPath: IndexPath
     ) {
-        // no-op
+        let message = chatMessageListVC(vc, messageAt: indexPath)
+        if message?.id == lastReadMessageId {
+            hasSeenAllUnreadMessages = true
+        }
+
+        if isLastMessageFullyVisible {
+            hasSeenLastMessage = true
+        }
     }
 
     open func chatMessageListVC(
@@ -313,10 +316,7 @@ open class ChatChannelVC: _ViewController,
             }
         case is MarkUnreadActionItem:
             dismiss(animated: true) { [weak self] in
-                self?.channelController.markUnread(from: message.id) { [weak self] error in
-                    guard error == nil else { return }
-                    self?.updateSessionUnreadCount()
-                }
+                self?.channelController.markUnread(from: message.id)
             }
         default:
             return
@@ -324,8 +324,6 @@ open class ChatChannelVC: _ViewController,
     }
 
     public func chatMessageListDidDiscardUnreadMessages(_ vc: ChatMessageListVC) {
-        sessionUnreadCount = .noUnread
-        messageListVC.updateJumpToUnreadMessagesVisibility()
         markRead()
     }
 

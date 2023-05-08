@@ -13,10 +13,6 @@ public protocol ChatMessageListVCDataSource: AnyObject {
     /// Asks the data source to return all the available messages.
     var messages: [ChatMessage] { get set }
 
-    /// Asks the data source to return the unread messages count for the session.
-    /// It can either contain the initial unread count, or the one after marking the channel as read/unread
-    var sessionUnreadCount: ChannelUnreadCount { get }
-
     /// Asks the data source to return the channel for the given message list.
     /// - Parameter vc: The message list requesting the channel.
     func channel(for vc: ChatMessageListVC) -> ChatChannel?
@@ -45,6 +41,5 @@ public protocol ChatMessageListVCDataSource: AnyObject {
 }
 
 public extension ChatMessageListVCDataSource {
-    var sessionUnreadCount: ChannelUnreadCount { .noUnread }
     var isFirstPageLoaded: Bool { true }
 }

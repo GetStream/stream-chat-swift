@@ -94,7 +94,8 @@ open class ChatMessageListVC: _ViewController,
     /// A Boolean value indicating whether jump to unread messages button is visible.
     open var showJumpToUnreadMessages: Bool {
         guard let dataSource = dataSource,
-              dataSource.sessionUnreadCount.messages > 0 else {
+              let unreadCount = dataSource.channel(for: self)?.unreadCount,
+              unreadCount.messages > 0 else {
             return false
         }
 
@@ -282,7 +283,7 @@ open class ChatMessageListVC: _ViewController,
     }
 
     open func updateJumpToUnreadMessagesVisibility(animated: Bool = true) {
-        if let unreadCount = dataSource?.sessionUnreadCount,
+        if let unreadCount = dataSource?.channel(for: self)?.unreadCount,
            unreadCount != jumpToUnreadMessagesButton.content {
             jumpToUnreadMessagesButton.content = unreadCount
         }
@@ -347,8 +348,8 @@ open class ChatMessageListVC: _ViewController,
     }
 
     @objc func jumpToUnreadMessages() {
-        guard let indexPath = lastReadMessageIndexPath else { return }
-        listView.scrollToRow(at: indexPath, at: .bottom, animated: true)
+        guard let lastReadMessageId = lastReadMessageId else { return }
+        jumpToMessage(id: lastReadMessageId)
     }
 
     @objc func discardUnreadMessages() {
