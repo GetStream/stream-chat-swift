@@ -12,6 +12,7 @@ final class MessageUpdater_Tests: XCTestCase {
     var apiClient: APIClient_Spy!
     var database: DatabaseContainer_Spy!
     var messageRepository: MessageRepository_Mock!
+    var paginationStateHandler: MessagesPaginationStateHandler_Mock!
     var messageUpdater: MessageUpdater!
 
     // MARK: Setup
@@ -23,9 +24,11 @@ final class MessageUpdater_Tests: XCTestCase {
         apiClient = APIClient_Spy()
         database = DatabaseContainer_Spy()
         messageRepository = MessageRepository_Mock(database: database, apiClient: apiClient)
+        paginationStateHandler = MessagesPaginationStateHandler_Mock()
         messageUpdater = MessageUpdater(
             isLocalStorageEnabled: true,
             messageRepository: messageRepository,
+            paginationStateHandler: paginationStateHandler,
             database: database,
             apiClient: apiClient
         )
@@ -49,6 +52,7 @@ final class MessageUpdater_Tests: XCTestCase {
         messageUpdater = MessageUpdater(
             isLocalStorageEnabled: isLocalStorageEnabled,
             messageRepository: messageRepository,
+            paginationStateHandler: paginationStateHandler,
             database: database,
             apiClient: apiClient
         )
@@ -915,11 +919,21 @@ final class MessageUpdater_Tests: XCTestCase {
     // MARK: Load replies
 
     func test_loadReplies_makesCorrectAPICall() {
+        let repliesPayload: MessageRepliesPayload = .init(messages: [
+            .dummy(messageId: .unique, authorUserId: .unique)
+        ])
         let messageId: MessageId = .unique
         let pagination: MessagesPagination = .init(pageSize: 25)
 
         // Simulate `loadReplies` call
-        messageUpdater.loadReplies(cid: .unique, messageId: messageId, pagination: pagination)
+        let exp = expectation(description: "load replies should complete")
+        messageUpdater.loadReplies(cid: .unique, messageId: messageId, pagination: pagination) { _ in
+            exp.fulfill()
+        }
+
+        XCTAssertEqual(paginationStateHandler.beginCallCount, 1)
+        XCTAssertEqual(paginationStateHandler.beginCalledWith, pagination)
+        XCTAssertEqual(paginationStateHandler.endCallCount, 0)
 
         // Assert correct endpoint is called
         let expectedEndpoint: Endpoint<MessageRepliesPayload> = .loadReplies(
@@ -927,6 +941,15 @@ final class MessageUpdater_Tests: XCTestCase {
             pagination: pagination
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+
+        // Simulate API response with success
+        apiClient.test_simulateResponse(Result<MessageRepliesPayload, Error>.success(repliesPayload))
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertEqual(paginationStateHandler.endCallCount, 1)
+        XCTAssertEqual(paginationStateHandler.endCalledWith?.0, pagination)
+        XCTAssertEqual(paginationStateHandler.endCalledWith?.1.value?.count, repliesPayload.messages.count)
     }
 
     func test_loadReplies_propagatesRequestError() {
@@ -945,7 +968,9 @@ final class MessageUpdater_Tests: XCTestCase {
     }
 
     func test_loadReplies_propagatesDatabaseError() throws {
-        let repliesPayload: MessageRepliesPayload = .init(messages: [.dummy(messageId: .unique, authorUserId: .unique)])
+        let repliesPayload: MessageRepliesPayload = .init(messages: [
+            .dummy(messageId: .unique, authorUserId: .unique)
+        ])
         let cid = ChannelId.unique
 
         // Create channel in the database
@@ -1000,59 +1025,33 @@ final class MessageUpdater_Tests: XCTestCase {
         XCTAssertEqual(messageDTOs.map(\.showInsideThread), [true, true, true])
     }
 
-    func test_loadReplies_whenJumpingToMessage_shouldSetNewestReplyAt() throws {
+    func test_loadReplies_shouldSetNewestReplyAt() throws {
         let pagination = MessagesPagination(pageSize: 3, parameter: .around(.unique))
         let expectedNewestReplyAt = Date.unique
         let repliesPayload: MessageRepliesPayload = .init(
             messages: [
                 .dummy(),
                 .dummy(),
-                .dummy(createdAt: expectedNewestReplyAt)
+                .dummy()
             ]
         )
+
+        paginationStateHandler.mockState.newestFetchedMessage = .dummy(createdAt: expectedNewestReplyAt)
 
         try AssertLoadReplies(expectedNewestReplyAt: expectedNewestReplyAt, for: repliesPayload, with: pagination)
     }
 
-    func test_loadReplies_whenIsLoadingNextPage_shouldSetNewestReplyAt() throws {
-        let expectedNewestReplyAt = Date.unique
-        let repliesPayload: MessageRepliesPayload = .init(
-            messages: [
-                .dummy(),
-                .dummy(),
-                .dummy(createdAt: expectedNewestReplyAt)
-            ]
-        )
-
-        let greaterOrEqual = MessagesPagination(pageSize: 3, parameter: .greaterThanOrEqual(.unique))
-        try AssertLoadReplies(expectedNewestReplyAt: expectedNewestReplyAt, for: repliesPayload, with: greaterOrEqual)
-
-        let greater = MessagesPagination(pageSize: 3, parameter: .greaterThan(.unique))
-        try AssertLoadReplies(expectedNewestReplyAt: expectedNewestReplyAt, for: repliesPayload, with: greater)
-    }
-
-    func test_loadReplies_whenIsLoadingNextPage_whenMessagesLowerThanPageSize_shouldSetNewestReplyAtToNil() throws {
-        let pagination = MessagesPagination(pageSize: 5, parameter: .greaterThan(.unique))
-        let repliesPayload: MessageRepliesPayload = .init(
-            messages: [
-                .dummy(),
-                .dummy(),
-                .dummy(createdAt: .unique)
-            ]
-        )
-
-        try AssertLoadReplies(expectedNewestReplyAt: nil, for: repliesPayload, with: pagination)
-    }
-
-    func test_loadReplies_whenIsFirstPage_shouldSetNewestReplyAtToNil() throws {
+    func test_loadReplies_whenNewestFetchedMessageIsNil_shouldSetNewestReplyAtToNil() throws {
         let pagination = MessagesPagination(pageSize: 3, parameter: nil)
         let repliesPayload: MessageRepliesPayload = .init(
             messages: [
                 .dummy(),
                 .dummy(),
-                .dummy(createdAt: .unique)
+                .dummy()
             ]
         )
+
+        paginationStateHandler.mockState.newestFetchedMessage = nil
 
         try AssertLoadReplies(expectedNewestReplyAt: nil, for: repliesPayload, with: pagination)
     }

@@ -559,35 +559,6 @@ extension ChannelDTO {
         }
     }
 
-    /// When fetching messages pages in Channel Query we use `oldestMessageAt` and `newestMessageAt` as cursors.
-    func updatePaginationCursors(for payload: ChannelPayload, with pagination: MessagesPagination?) {
-        let oldestMessageAt = payload.messages.first?.createdAt.bridgeDate
-        let newestMessageAt = payload.messages.last?.createdAt.bridgeDate
-
-        switch pagination?.parameter {
-        // When loading previous (old) pages
-        case .lessThan, .lessThanOrEqual:
-            self.oldestMessageAt = oldestMessageAt
-                
-        // When loading next (new) pages
-        case .greaterThan, .greaterThanOrEqual:
-            self.newestMessageAt = newestMessageAt
-            if let pageSize = pagination?.pageSize, payload.messages.count < pageSize {
-                self.newestMessageAt = nil
-            }
-
-        // When jumping to a mid-page
-        case .around:
-            self.oldestMessageAt = oldestMessageAt
-            self.newestMessageAt = newestMessageAt
-
-        // When loading first page
-        case .none:
-            self.oldestMessageAt = oldestMessageAt
-            self.newestMessageAt = nil
-        }
-    }
-    
     /// Returns `true` if the payload holds messages sent after the current channel preview.
     func needsPreviewUpdate(_ payload: ChannelPayload) -> Bool {
         guard let preview = previewMessage else {

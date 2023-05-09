@@ -93,6 +93,11 @@ final class MessageUpdater_Mock: MessageUpdater {
     @Atomic var translate_language: TranslationLanguage?
     @Atomic var translate_completion: ((Error?) -> Void)?
 
+    var mockPaginationState: MessagesPaginationState = .initial
+    override var paginationState: MessagesPaginationState {
+        mockPaginationState
+    }
+
     // Cleans up all recorded values
     func cleanUp() {
         getMessage_cid = nil
