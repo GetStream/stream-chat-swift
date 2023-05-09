@@ -1619,6 +1619,41 @@ final class ChannelListController_Tests: XCTestCase {
         )
     }
 
+    func test_filterPredicate_autocompleteInCollection_returnsExpectedResults() throws {
+        let cid = ChannelId.unique
+
+        try assertFilterPredicate(
+            .autocomplete(.memberName, text: "test"),
+            channelsInDB: [
+                .dummy(channel: .dummy(cid: .unique, members: [
+                    .dummy(user: .dummy(userId: .unique, name: "userA")),
+                    .dummy(user: .dummy(userId: .unique, name: "userC"))
+                ])),
+                .dummy(channel: .dummy(cid: .unique, members: [
+                    .dummy(user: .dummy(userId: .unique, name: "userB"))
+                ])),
+                .dummy(channel: .dummy(cid: cid, members: [
+                    .dummy(user: .dummy(userId: .unique, name: "test"))
+                ]))
+            ],
+            expectedResult: [cid]
+        )
+    }
+
+    func test_filterPredicate_autocompleteInNonCollection_returnsExpectedResults() throws {
+        let cid = ChannelId.unique
+
+        try assertFilterPredicate(
+            .autocomplete(.name, text: "test"),
+            channelsInDB: [
+                .dummy(channel: .dummy(cid: .unique, name: "channelA")),
+                .dummy(channel: .dummy(cid: .unique, name: "channelB")),
+                .dummy(channel: .dummy(cid: cid, name: "test"))
+            ],
+            expectedResult: [cid]
+        )
+    }
+
     // MARK: - Private Helpers
 
     private func setUpChatClientWithoutAutoFiltering() {

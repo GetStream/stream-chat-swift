@@ -180,7 +180,7 @@ extension Filter where Scope == ChannelListFilterScope {
                 return nil
             }
             return NSPredicate(
-                format: "%K BEGINSWITH[c] %@",
+                format: "%K BEGINSWITH[c] %@".prepend(("ANY "), ifCondition: isACollectionFilter),
                 argumentArray: [keyPathString, prefix]
             )
         case .contains where mappedValue is String:
@@ -188,7 +188,7 @@ extension Filter where Scope == ChannelListFilterScope {
                 return nil
             }
             return NSPredicate(
-                format: "%K CONTAINS %@",
+                format: "%K CONTAINS %@".prepend(("ANY "), ifCondition: isACollectionFilter),
                 argumentArray: [keyPathString, needle]
             )
         case .exists where mappedValue is Bool:
@@ -210,5 +210,12 @@ extension Filter where Scope == ChannelListFilterScope {
             log.debug("Unhandled operator \(op) and filterValue \(mappedValue)")
             return nil
         }
+    }
+}
+
+extension String {
+    func prepend(_ prefixToPrepend: String, ifCondition: Bool) -> String {
+        guard ifCondition else { return self }
+        return "\(prefixToPrepend)\(self)"
     }
 }
