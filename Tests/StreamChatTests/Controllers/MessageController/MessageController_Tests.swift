@@ -76,6 +76,202 @@ final class MessageController_Tests: XCTestCase {
         XCTAssertNil(controller.message)
     }
 
+    // MARK: - hasLoadedAllPreviousReplies
+
+    func test_hasLoadedAllPreviousReplies_whenPaginationStateHasLoadedAllPreviousMessages_thenReturnsTrue() {
+        // Given
+        env.messageUpdater.mockPaginationState.hasLoadedAllPreviousMessages = true
+
+        // When
+        let result = controller.hasLoadedAllPreviousReplies
+
+        // Then
+        XCTAssertTrue(result)
+    }
+
+    func test_hasLoadedAllPreviousReplies_whenPaginationStateHasNotLoadedAllPreviousMessages_thenReturnsFalse() {
+        // Given
+        env.messageUpdater.mockPaginationState.hasLoadedAllPreviousMessages = false
+
+        // When
+        let result = controller.hasLoadedAllPreviousReplies
+
+        // Then
+        XCTAssertFalse(result)
+    }
+
+    // MARK: - hasLoadedAllNextReplies
+
+    func test_hasLoadedAllNextReplies_whenPaginationStateHasLoadedAllNextMessagesOrRepliesAreEmpty_thenReturnsTrue() throws {
+        // Given
+        env.messageUpdater.mockPaginationState.hasLoadedAllNextMessages = true
+        try saveReplies(with: [MessageId]())
+
+        // When
+        let result = controller.hasLoadedAllNextReplies
+
+        // Then
+        XCTAssertTrue(result)
+    }
+
+    func test_hasLoadedAllNextReplies_whenPaginationStateHasNotLoadedAllNextMessagesAndRepliesAreNotEmpty_thenReturnsFalse() throws {
+        // Given
+        env.messageUpdater.mockPaginationState.hasLoadedAllNextMessages = false
+        try saveReplies(with: [.unique, .unique])
+
+        // When
+        let result = controller.hasLoadedAllNextReplies
+
+        // Then
+        XCTAssertFalse(result)
+    }
+
+    // MARK: - isLoadingPreviousReplies
+
+    func test_isLoadingPreviousReplies_whenPaginationStateIsLoadingPreviousMessages_thenReturnsTrue() {
+        // Given
+        env.messageUpdater.mockPaginationState.isLoadingPreviousMessages = true
+
+        // When
+        let result = controller.isLoadingPreviousReplies
+
+        // Then
+        XCTAssertTrue(result)
+    }
+
+    func test_isLoadingPreviousReplies_whenPaginationStateIsNotLoadingPreviousMessages_thenReturnsFalse() {
+        // Given
+        env.messageUpdater.mockPaginationState.isLoadingPreviousMessages = false
+
+        // When
+        let result = controller.isLoadingPreviousReplies
+
+        // Then
+        XCTAssertFalse(result)
+    }
+
+    // MARK: - Tests for isLoadingNextReplies
+
+    func test_isLoadingNextReplies_whenPaginationStateIsLoadingNextMessages_thenReturnsTrue() {
+        // Given
+        env.messageUpdater.mockPaginationState.isLoadingNextMessages = true
+
+        // When
+        let result = controller.isLoadingNextReplies
+
+        // Then
+        XCTAssertTrue(result)
+    }
+
+    func test_isLoadingNextReplies_whenPaginationStateIsNotLoadingNextMessages_thenReturnsFalse() {
+        // Given
+        env.messageUpdater.mockPaginationState.isLoadingNextMessages = false
+
+        // When
+        let result = controller.isLoadingNextReplies
+
+        // Then
+        XCTAssertFalse(result)
+    }
+
+    // MARK: - Tests for isLoadingMiddleReplies
+
+    func test_isLoadingMiddleReplies_whenPaginationStateIsLoadingMiddleMessages_thenReturnsTrue() {
+        // Given
+        env.messageUpdater.mockPaginationState.isLoadingMiddleMessages = true
+
+        // When
+        let result = controller.isLoadingMiddleReplies
+
+        // Then
+        XCTAssertTrue(result)
+    }
+
+    func test_isLoadingMiddleReplies_whenPaginationStateIsNotLoadingMiddleMessages_thenReturnsFalse() {
+        // Given
+        env.messageUpdater.mockPaginationState.isLoadingMiddleMessages = false
+
+        // When
+        let result = controller.isLoadingMiddleReplies
+
+        // Then
+        XCTAssertFalse(result)
+    }
+
+    // MARK: - Tests for isJumpingToMessage
+
+    func test_isJumpingToMessage_whenPaginationStateIsJumpingToMessage_thenReturnsTrue() {
+        // Given
+        env.messageUpdater.mockPaginationState.hasLoadedAllNextMessages = false
+
+        // When
+        let result = controller.isJumpingToMessage
+
+        // Then
+        XCTAssertTrue(result)
+    }
+
+    func test_isJumpingToMessage_whenPaginationStateIsNotJumpingToMessage_thenReturnsFalse() {
+        // Given
+        env.messageUpdater.mockPaginationState.hasLoadedAllNextMessages = true
+
+        // When
+        let result = controller.isJumpingToMessage
+
+        // Then
+        XCTAssertFalse(result)
+    }
+
+    // MARK: - Tests for lastOldestReplyId
+
+    func test_lastOldestReplyId_whenPaginationStateHasOldestFetchedMessage_thenReturnsItsId() {
+        // Given
+        let oldestFetchedMessage = MessagePayload.dummy()
+        env.messageUpdater.mockPaginationState.oldestFetchedMessage = oldestFetchedMessage
+
+        // When
+        let result = controller.lastOldestReplyId
+
+        // Then
+        XCTAssertEqual(result, oldestFetchedMessage.id)
+    }
+
+    func test_lastOldestReplyId_whenPaginationStateHasNoOldestFetchedMessage_thenReturnsNil() {
+        // Given
+        env.messageUpdater.mockPaginationState.oldestFetchedMessage = nil
+
+        // When
+        let result = controller.lastOldestReplyId
+
+        // Then
+        XCTAssertNil(result)
+    }
+
+    // MARK: - Tests for lastNewestReplyId
+
+    func test_lastNewestReplyId_whenPaginationStateHasNewestFetchedMessage_thenReturnsItsId() {
+        // Given
+        let newestFetchedMessage = MessagePayload.dummy()
+        env.messageUpdater.mockPaginationState.newestFetchedMessage = newestFetchedMessage
+
+        // When
+        let result = controller.lastNewestReplyId
+
+        // Then
+        XCTAssertEqual(result, newestFetchedMessage.id)
+    }
+
+    func test_lastNewestReplyId_whenPaginationStateHasNoNewestFetchedMessage_thenReturnsNil() {
+        // Given
+        env.messageUpdater.mockPaginationState.newestFetchedMessage = nil
+
+        // When
+        let result = controller.lastNewestReplyId
+
+        // Then
+        XCTAssertNil(result)
+    }
+
     // MARK: - Synchronize
 
     func test_synchronize_forwardsUpdaterError() throws {
@@ -1027,18 +1223,6 @@ final class MessageController_Tests: XCTestCase {
     }
 
     func test_loadPreviousReplies_noMessageIdPassed_noLastMessageFetched_fetchWithoutParemeter() {
-        // Create observers
-        controller.synchronize()
-
-        // Call `loadPreviousReplies`, this time since the first batch was received already it should
-        // pass the last message id
-        env.messageUpdater.loadReplies_completion?(
-            .success(
-                .init(
-                    messages: []
-                )
-            )
-        )
         _ = controller.replies
         env.repliesObserver.items_mock = [
             .mock(
@@ -1064,24 +1248,8 @@ final class MessageController_Tests: XCTestCase {
     }
 
     func test_loadPreviousReplies_noMessageIdPassed_usesLastFetchedId() {
-        controller.loadPreviousReplies(
-            limit: 21,
-            completion: nil
-        )
-
-        // Pagination should not have a parameter because this is the first call
-        XCTAssertNil(env.messageUpdater.loadReplies_pagination?.parameter)
-
-        // The last fetched message id, is actually the first from the payload
-        var messages: [MessagePayload] = [MessagePayload.dummy(messageId: "last message", authorUserId: .unique)]
-        messages += (0...30).map { _ in
-            MessagePayload.dummy(messageId: .unique, authorUserId: .unique)
-        }
-
-        env.messageUpdater.loadReplies_completion?(
-            .success(.init(messages: messages))
-        )
-        _ = controller.replies
+        let lastFetchedId = MessageId.unique
+        env.messageUpdater.mockPaginationState.oldestFetchedMessage = .dummy(messageId: lastFetchedId)
 
         controller.loadPreviousReplies(
             limit: 21,
@@ -1090,7 +1258,7 @@ final class MessageController_Tests: XCTestCase {
 
         XCTAssertEqual(
             env.messageUpdater.loadReplies_pagination?.parameter,
-            .lessThan("last message")
+            .lessThan(lastFetchedId)
         )
     }
 
@@ -1108,6 +1276,8 @@ final class MessageController_Tests: XCTestCase {
     }
 
     func test_loadPreviousReplies_whenHasLoadedAllPreviousReplies_doesNotCallUpdater() throws {
+        env.messageUpdater.mockPaginationState.hasLoadedAllPreviousMessages = true
+
         let exp = expectation(description: "load replies completes")
         controller.loadPreviousReplies(before: "last message", limit: 2) { _ in
             exp.fulfill()
@@ -1115,26 +1285,12 @@ final class MessageController_Tests: XCTestCase {
 
         env.messageUpdater.loadReplies_completion?(.success(.init(messages: [.dummy()])))
         waitForExpectations(timeout: defaultTimeout)
-        env.messageUpdater.loadReplies_completion = nil
 
-        let exp2 = expectation(description: "load replies completes")
-        controller.loadPreviousReplies(before: "last message", limit: 2) { _ in
-            exp2.fulfill()
-        }
-
-        env.messageUpdater.loadReplies_completion?(.success(.init(messages: [.dummy()])))
-        waitForExpectations(timeout: defaultTimeout)
-
-        XCTAssertEqual(env.messageUpdater.loadReplies_callCount, 1)
-        XCTAssertEqual(controller.hasLoadedAllPreviousReplies, true)
-        XCTAssertEqual(controller.isLoadingPreviousReplies, false)
+        XCTAssertEqual(env.messageUpdater.loadReplies_callCount, 0)
     }
 
     func test_loadPreviousReplies_whenIsLoadingPreviousReplies_doesNotCallUpdater() throws {
-        controller.loadPreviousReplies(before: "last message", limit: 2)
-        env.messageUpdater.loadReplies_completion = nil
-
-        XCTAssertEqual(env.messageUpdater.loadReplies_callCount, 1)
+        env.messageUpdater.mockPaginationState.isLoadingPreviousMessages = true
 
         let exp = expectation(description: "load replies completes")
         controller.loadPreviousReplies(before: "last message", limit: 2) { _ in
@@ -1144,63 +1300,7 @@ final class MessageController_Tests: XCTestCase {
         env.messageUpdater.loadReplies_completion?(.success(.init(messages: [.dummy()])))
         waitForExpectations(timeout: defaultTimeout)
 
-        XCTAssertEqual(env.messageUpdater.loadReplies_callCount, 1)
-        XCTAssertEqual(controller.isLoadingPreviousReplies, true)
-        XCTAssertEqual(controller.hasLoadedAllPreviousReplies, false)
-    }
-
-    func test_loadPreviousReplies_setsIsLoadingPreviousReplies() {
-        let exp = expectation(description: "load replies completes")
-        controller.loadPreviousReplies(before: "last message", limit: 2) { _ in
-            exp.fulfill()
-        }
-
-        XCTAssertEqual(controller.isLoadingPreviousReplies, true)
-
-        env.messageUpdater.loadReplies_completion?(.success(.init(messages: [.dummy()])))
-        waitForExpectations(timeout: defaultTimeout)
-
-        XCTAssertEqual(controller.isLoadingPreviousReplies, false)
-    }
-
-    func test_loadPreviousReplies_updatesOldestReplyId() {
-        let expectedMessageId = MessageId.unique
-
-        let exp = expectation(description: "load replies completes")
-        controller.loadPreviousReplies(before: "last message", limit: 2) { _ in
-            exp.fulfill()
-        }
-
-        env.messageUpdater.loadReplies_completion?(.success(.init(messages: [.dummy(messageId: expectedMessageId), .dummy()])))
-        waitForExpectations(timeout: defaultTimeout)
-
-        XCTAssertEqual(controller.lastOldestReplyId, expectedMessageId)
-    }
-
-    func test_loadPreviousReplies_whenRepliesLowerThanPageSize_thenHasLoadedAllPreviousReplies() {
-        let exp = expectation(description: "load replies completes")
-        controller.loadPreviousReplies(before: "last message", limit: 5) { _ in
-            exp.fulfill()
-        }
-
-        env.messageUpdater.loadReplies_completion?(.success(.init(messages: [.dummy(), .dummy()])))
-        waitForExpectations(timeout: defaultTimeout)
-
-        XCTAssertEqual(env.messageUpdater.loadReplies_callCount, 1)
-        XCTAssertEqual(controller.hasLoadedAllPreviousReplies, true)
-    }
-
-    func test_loadPreviousReplies_whenRepliesEqualToPageSize_thenHasNotLoadedAllPreviousReplies() {
-        let exp = expectation(description: "load replies completes")
-        controller.loadPreviousReplies(before: "last message", limit: 2) { _ in
-            exp.fulfill()
-        }
-
-        env.messageUpdater.loadReplies_completion?(.success(.init(messages: [.dummy(), .dummy()])))
-        waitForExpectations(timeout: defaultTimeout)
-
-        XCTAssertEqual(env.messageUpdater.loadReplies_callCount, 1)
-        XCTAssertEqual(controller.hasLoadedAllPreviousReplies, false)
+        XCTAssertEqual(env.messageUpdater.loadReplies_callCount, 0)
     }
 
     func test_loadPreviousReplies_whenMessagesAreEmpty_callDelegateWithEmptyChanges() {
@@ -1230,27 +1330,10 @@ final class MessageController_Tests: XCTestCase {
 
     // MARK: - Load Next Replies
 
-    func test_loadNextReplies_failsOnEmptyReplies() throws {
-        // Simulate controller is in mid-page
-        controller.loadPageAroundReplyId(.unique)
-        try saveReplies(with: [.unique, .unique])
-        
-        // Simulate `loadNextReplies` call and catch the completion error.
-        let completionError = try waitFor {
-            controller.loadNextReplies(completion: $0)
-        }
-
-        // Assert correct error is thrown
-        AssertAsync.willBeTrue(completionError is ClientError.MessageEmptyReplies)
-    }
-
     func test_loadNextReplies_propagatesError() throws {
         // Simulate controller is in mid-page
-        controller.loadPageAroundReplyId(.unique)
         try saveReplies(with: [.unique, .unique])
-
-        // Simulate loading mid page, so that we can load next replies
-        controller.loadPageAroundReplyId(.unique)
+        env.messageUpdater.mockPaginationState.hasLoadedAllNextMessages = false
 
         // Simulate `loadNextReplies` call and catch the completion
         var completionError: Error?
@@ -1269,8 +1352,8 @@ final class MessageController_Tests: XCTestCase {
 
     func test_loadNextReplies_propagatesNilError() throws {
         // Simulate controller is in mid-page
-        controller.loadPageAroundReplyId(.unique)
         try saveReplies(with: [.unique, .unique])
+        env.messageUpdater.mockPaginationState.hasLoadedAllNextMessages = false
 
         // Simulate `loadNextReplies` call and catch the completion
         var completionCalled = false
@@ -1292,6 +1375,9 @@ final class MessageController_Tests: XCTestCase {
         // Release reference of completion so we can deallocate stuff
         env.messageUpdater.loadReplies_completion = nil
 
+        // Clean message updater
+        env.messageUpdater.cleanUp()
+
         // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)
         // `weakController` should be deallocated too
@@ -1300,8 +1386,8 @@ final class MessageController_Tests: XCTestCase {
 
     func test_loadNextReplies_callsMessageUpdater_withCorrectValues() throws {
         // Simulate controller is in mid-page
-        controller.loadPageAroundReplyId(.unique)
         try saveReplies(with: [.unique, .unique])
+        env.messageUpdater.mockPaginationState.hasLoadedAllNextMessages = false
 
         // Simulate `loadNextReplies` call
         let afterMessageId: MessageId = .unique
@@ -1314,10 +1400,9 @@ final class MessageController_Tests: XCTestCase {
     }
 
     func test_loadNextReplies_whenHasLoadedAllNextReplies_doesNotCallUpdater() throws {
-        // Simulate controller is in mid-page
-        controller.loadPageAroundReplyId(.unique)
+        // Simulate controller has loaded all next replies
         try saveReplies(with: [.unique, .unique])
-        env.messageUpdater.loadReplies_callCount = 0
+        env.messageUpdater.mockPaginationState.hasLoadedAllNextMessages = true
 
         let exp = expectation(description: "load replies completes")
         controller.loadNextReplies(after: "last message", limit: 2) { _ in
@@ -1326,32 +1411,15 @@ final class MessageController_Tests: XCTestCase {
 
         env.messageUpdater.loadReplies_completion?(.success(.init(messages: [.dummy()])))
         waitForExpectations(timeout: defaultTimeout)
-        env.messageUpdater.loadReplies_completion = nil
 
-        let exp2 = expectation(description: "load replies completes")
-        controller.loadNextReplies(after: "last message", limit: 2) { _ in
-            exp2.fulfill()
-        }
-
-        env.messageUpdater.loadReplies_completion?(.success(.init(messages: [.dummy()])))
-        waitForExpectations(timeout: defaultTimeout)
-
-        XCTAssertEqual(env.messageUpdater.loadReplies_callCount, 1)
-        XCTAssertEqual(controller.hasLoadedAllNextReplies, true)
-        XCTAssertEqual(controller.isLoadingNextReplies, false)
+        XCTAssertEqual(env.messageUpdater.loadReplies_callCount, 0)
     }
 
     func test_loadNextReplies_whenIsLoadingNextReplies_doesNotCallUpdater() throws {
-        // Simulate controller is in mid-page
-        controller.loadPageAroundReplyId(.unique)
+        // Simulate controller is loading next replies
         try saveReplies(with: [.unique, .unique])
-        env.messageUpdater.loadReplies_callCount = 0
-
-        controller.loadNextReplies(after: "last message", limit: 2)
-        env.messageUpdater.loadReplies_completion = nil
-
-        XCTAssertEqual(env.messageUpdater.loadReplies_callCount, 1)
-        XCTAssertEqual(controller.isLoadingNextReplies, true)
+        env.messageUpdater.mockPaginationState.hasLoadedAllNextMessages = false
+        env.messageUpdater.mockPaginationState.isLoadingNextMessages = true
 
         let exp = expectation(description: "load replies completes")
         controller.loadNextReplies(after: "last message", limit: 2) { _ in
@@ -1361,81 +1429,7 @@ final class MessageController_Tests: XCTestCase {
         env.messageUpdater.loadReplies_completion?(.success(.init(messages: [.dummy()])))
         waitForExpectations(timeout: defaultTimeout)
 
-        XCTAssertEqual(env.messageUpdater.loadReplies_callCount, 1)
-        XCTAssertEqual(controller.isLoadingNextReplies, true)
-        XCTAssertEqual(controller.hasLoadedAllNextReplies, false)
-    }
-
-    func test_loadNextReplies_setsIsLoadingNextReplies() throws {
-        // Simulate controller is in mid-page
-        controller.loadPageAroundReplyId(.unique)
-        try saveReplies(with: [.unique, .unique])
-
-        let exp = expectation(description: "load replies completes")
-        controller.loadNextReplies(after: "last message", limit: 2) { _ in
-            exp.fulfill()
-        }
-
-        XCTAssertEqual(controller.isLoadingNextReplies, true)
-
-        env.messageUpdater.loadReplies_completion?(.success(.init(messages: [.dummy()])))
-        waitForExpectations(timeout: defaultTimeout)
-
-        XCTAssertEqual(controller.isLoadingNextReplies, false)
-    }
-
-    func test_loadNextReplies_updatesNewestReplyId() throws {
-        // Simulate controller is in mid-page
-        controller.loadPageAroundReplyId(.unique)
-        try saveReplies(with: [.unique, .unique])
-
-        let expectedMessageId = MessageId.unique
-
-        let exp = expectation(description: "load replies completes")
-        controller.loadNextReplies(after: "last message", limit: 2) { _ in
-            exp.fulfill()
-        }
-
-        env.messageUpdater.loadReplies_completion?(.success(.init(messages: [.dummy(), .dummy(messageId: expectedMessageId)])))
-        waitForExpectations(timeout: defaultTimeout)
-
-        XCTAssertEqual(controller.lastNewestReplyId, expectedMessageId)
-    }
-
-    func test_loadNextReplies_whenRepliesLowerThanPageSize_thenIsNotJumpingToMessage() throws {
-        // Simulate controller is in mid-page
-        controller.loadPageAroundReplyId(.unique)
-        try saveReplies(with: [.unique, .unique])
-        env.messageUpdater.loadReplies_callCount = 0
-
-        let exp = expectation(description: "load replies completes")
-        controller.loadNextReplies(after: "last message", limit: 5) { _ in
-            exp.fulfill()
-        }
-
-        env.messageUpdater.loadReplies_completion?(.success(.init(messages: [.dummy(), .dummy()])))
-        waitForExpectations(timeout: defaultTimeout)
-
-        XCTAssertEqual(env.messageUpdater.loadReplies_callCount, 1)
-        XCTAssertEqual(controller.isJumpingToMessage, false)
-    }
-
-    func test_loadNextReplies_whenRepliesEqualToPageSize_thenIsJumpingToMessage() throws {
-        // Simulate controller is in mid-page
-        controller.loadPageAroundReplyId(.unique)
-        try saveReplies(with: [.unique, .unique])
-        env.messageUpdater.loadReplies_callCount = 0
-
-        let exp = expectation(description: "load replies completes")
-        controller.loadNextReplies(after: "last message", limit: 2) { _ in
-            exp.fulfill()
-        }
-
-        env.messageUpdater.loadReplies_completion?(.success(.init(messages: [.dummy(), .dummy()])))
-        waitForExpectations(timeout: defaultTimeout)
-
-        XCTAssertEqual(env.messageUpdater.loadReplies_callCount, 1)
-        XCTAssertEqual(controller.isJumpingToMessage, true)
+        XCTAssertEqual(env.messageUpdater.loadReplies_callCount, 0)
     }
 
     // MARK: - Load Page Around Reply Id
@@ -1448,21 +1442,13 @@ final class MessageController_Tests: XCTestCase {
             exp.fulfill()
         }
 
-        XCTAssertEqual(controller.isLoadingMiddleReplies, true)
-
-        let oldestReply = MessagePayload.dummy()
-        let newestReply = MessagePayload.dummy()
         env.messageUpdater.loadReplies_completion?(.success(.init(
-            messages: [oldestReply, .dummy(), newestReply]
+            messages: [.dummy(), .dummy(), .dummy()]
         )))
 
         waitForExpectations(timeout: defaultTimeout)
 
         let expectedPagination = MessagesPagination(pageSize: 5, parameter: .around(replyId))
-        XCTAssertEqual(controller.isJumpingToMessage, true)
-        XCTAssertEqual(controller.isLoadingMiddleReplies, false)
-        XCTAssertEqual(controller.lastOldestReplyId, oldestReply.id)
-        XCTAssertEqual(controller.lastNewestReplyId, newestReply.id)
         XCTAssertEqual(env.messageUpdater.loadReplies_callCount, 1)
         XCTAssertEqual(env.messageUpdater.loadReplies_pagination, expectedPagination)
     }
@@ -1483,11 +1469,8 @@ final class MessageController_Tests: XCTestCase {
     }
 
     func test_loadPageAroundReplyId_whenIsLoadingMiddleMessages_shouldNotLoadMoreReplies() {
-        // When is loading middle messages
-        controller.loadPageAroundReplyId(.unique)
-
-        XCTAssertEqual(controller.isLoadingMiddleReplies, true)
-        XCTAssertEqual(env.messageUpdater.loadReplies_callCount, 1)
+        // Simulate controller is loading middle messages
+        env.messageUpdater.mockPaginationState.isLoadingMiddleMessages = true
 
         let exp = expectation(description: "should load page around reply id")
         let replyId = MessageId.unique
@@ -1504,26 +1487,7 @@ final class MessageController_Tests: XCTestCase {
 
         waitForExpectations(timeout: defaultTimeout)
 
-        XCTAssertEqual(env.messageUpdater.loadReplies_callCount, 1)
-    }
-
-    func test_loadPageAroundReplyId_whenReplyIdEqualToParentMessage_thenHasLoadedAllPreviousReplies() {
-        let exp = expectation(description: "should load page around reply id")
-        let replyId = controller.messageId
-        controller.loadPageAroundReplyId(replyId, limit: 5) { error in
-            XCTAssertNil(error)
-            exp.fulfill()
-        }
-
-        XCTAssertEqual(controller.hasLoadedAllPreviousReplies, false)
-
-        env.messageUpdater.loadReplies_completion?(.success(.init(
-            messages: [.dummy(), .dummy()]
-        )))
-        waitForExpectations(timeout: defaultTimeout)
-
-        XCTAssertEqual(controller.hasLoadedAllPreviousReplies, true)
-        XCTAssertEqual(env.messageUpdater.loadReplies_callCount, 1)
+        XCTAssertEqual(env.messageUpdater.loadReplies_callCount, 0)
     }
 
     // MARK: - Load first page
@@ -1535,35 +1499,6 @@ final class MessageController_Tests: XCTestCase {
         controller.loadFirstPage() { error in
             XCTAssertNil(error)
             exp.fulfill()
-        }
-
-        env.messageUpdater.loadReplies_completion?(.success(.init(messages: [.dummy()])))
-
-        waitForExpectations(timeout: defaultTimeout)
-
-        // Assert message updater is called with correct values
-        XCTAssertEqual(env.messageUpdater.loadReplies_cid, controller.cid)
-        XCTAssertEqual(env.messageUpdater.loadReplies_messageId, messageId)
-        XCTAssertEqual(env.messageUpdater.loadReplies_pagination, firstPage)
-    }
-
-    func test_loadFirstPage_whenHasLoadedAllPreviousReplies_shouldStillLoadFirstPage() throws {
-        let exp = expectation(description: "load replies completes")
-        controller.loadPreviousReplies(before: "last message", limit: 5) { _ in
-            exp.fulfill()
-        }
-
-        env.messageUpdater.loadReplies_completion?(.success(.init(messages: [.dummy(), .dummy()])))
-        waitForExpectations(timeout: defaultTimeout)
-
-        XCTAssertEqual(controller.hasLoadedAllPreviousReplies, true)
-
-        let firstPage = MessagesPagination(pageSize: 25, parameter: nil)
-
-        let exp2 = expectation(description: "load first page completes")
-        controller.loadFirstPage() { error in
-            XCTAssertNil(error)
-            exp2.fulfill()
         }
 
         env.messageUpdater.loadReplies_completion?(.success(.init(messages: [.dummy()])))
@@ -2416,8 +2351,9 @@ private class TestEnvironment {
                 self.messageUpdater = MessageUpdater_Mock(
                     isLocalStorageEnabled: $0,
                     messageRepository: $1,
-                    database: $2,
-                    apiClient: $3
+                    paginationStateHandler: $2,
+                    database: $3,
+                    apiClient: $4
                 )
                 return self.messageUpdater
             }

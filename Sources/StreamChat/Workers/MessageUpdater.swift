@@ -9,11 +9,23 @@ import Foundation
 class MessageUpdater: Worker {
     private let repository: MessageRepository
     private let isLocalStorageEnabled: Bool
+    private let paginationStateHandler: MessagesPaginationStateHandling
 
-    init(isLocalStorageEnabled: Bool, messageRepository: MessageRepository, database: DatabaseContainer, apiClient: APIClient) {
+    init(
+        isLocalStorageEnabled: Bool,
+        messageRepository: MessageRepository,
+        paginationStateHandler: MessagesPaginationStateHandling,
+        database: DatabaseContainer,
+        apiClient: APIClient
+    ) {
         self.isLocalStorageEnabled = isLocalStorageEnabled
         repository = messageRepository
+        self.paginationStateHandler = paginationStateHandler
         super.init(database: database, apiClient: apiClient)
+    }
+
+    var paginationState: MessagesPaginationState {
+        paginationStateHandler.state
     }
 
     /// Fetches the message from the backend and saves it into the database
@@ -218,10 +230,15 @@ class MessageUpdater: Worker {
         pagination: MessagesPagination,
         completion: ((Result<MessageRepliesPayload, Error>) -> Void)? = nil
     ) {
-        let isFirstPage = pagination.parameter == nil
-        let isJumpingToMessage: Bool = pagination.parameter?.isJumpingToMessage == true
+        paginationStateHandler.begin(pagination: pagination)
+
+        let didLoadFirstPage = pagination.parameter == nil
+        let didJumpToMessage = pagination.parameter?.isJumpingToMessage == true
         let endpoint: Endpoint<MessageRepliesPayload> = .loadReplies(messageId: messageId, pagination: pagination)
+
         apiClient.request(endpoint: endpoint) {
+            self.paginationStateHandler.end(pagination: pagination, with: $0.map(\.messages))
+
             switch $0 {
             case let .success(payload):
                 self.database.write({ session in
@@ -231,23 +248,13 @@ class MessageUpdater: Worker {
 
                     // If it is first page or jumping to a message, clear the current messages.
                     if let parentMessage = session.message(id: messageId) {
-                        if isJumpingToMessage || isFirstPage {
+                        if didJumpToMessage || didLoadFirstPage {
                             parentMessage.replies.filter { !$0.isLocalOnly }.forEach {
                                 $0.showInsideThread = false
                             }
                         }
 
-                        switch pagination.parameter {
-                        case .greaterThan, .greaterThanOrEqual, .around:
-                            parentMessage.newestReplyAt = payload.messages.last?.createdAt.bridgeDate
-                            if payload.messages.count < pagination.pageSize {
-                                parentMessage.newestReplyAt = nil
-                            }
-                        case .lessThan, .lessThanOrEqual:
-                            break
-                        case .none:
-                            parentMessage.newestReplyAt = nil
-                        }
+                        parentMessage.newestReplyAt = self.paginationState.newestMessageAt?.bridgeDate
                     }
 
                     let replies = session.saveMessages(messagesPayload: payload, for: cid, syncOwnReactions: true)
