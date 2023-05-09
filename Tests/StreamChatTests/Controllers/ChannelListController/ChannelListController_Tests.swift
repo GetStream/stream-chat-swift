@@ -1633,7 +1633,7 @@ final class ChannelListController_Tests: XCTestCase {
                     .dummy(user: .dummy(userId: .unique, name: "userB"))
                 ])),
                 .dummy(channel: .dummy(cid: cid, members: [
-                    .dummy(user: .dummy(userId: .unique, name: "test"))
+                    .dummy(user: .dummy(userId: .unique, name: "testUser"))
                 ]))
             ],
             expectedResult: [cid]
@@ -1648,7 +1648,7 @@ final class ChannelListController_Tests: XCTestCase {
             channelsInDB: [
                 .dummy(channel: .dummy(cid: .unique, name: "channelA")),
                 .dummy(channel: .dummy(cid: .unique, name: "channelB")),
-                .dummy(channel: .dummy(cid: cid, name: "test"))
+                .dummy(channel: .dummy(cid: cid, name: "testChannel"))
             ],
             expectedResult: [cid]
         )
@@ -1669,7 +1669,7 @@ final class ChannelListController_Tests: XCTestCase {
                     .dummy(user: .dummy(userId: .unique, name: "userB"))
                 ])),
                 .dummy(channel: .dummy(cid: cid2, members: [
-                    .dummy(user: .dummy(userId: .unique, name: "test"))
+                    .dummy(user: .dummy(userId: .unique, name: "testUser"))
                 ]))
             ],
             expectedResult: [cid1, cid2]
