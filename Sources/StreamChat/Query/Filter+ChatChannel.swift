@@ -98,6 +98,7 @@ extension Filter where Scope == ChannelListFilterScope {
         _ op: FilterOperator
     ) -> NSPredicate? {
         guard key != nil, let keyPathString = keyPathString else {
+            logWarning(key: key)
             return nil
         }
 
@@ -143,6 +144,7 @@ extension Filter where Scope == ChannelListFilterScope {
     ) -> NSPredicate? {
         guard key != nil, let keyPathString = keyPathString
         else {
+            logWarning(key: key)
             return nil
         }
 
@@ -210,5 +212,17 @@ extension Filter where Scope == ChannelListFilterScope {
             log.debug("Unhandled operator \(op) and filterValue \(mappedValue)")
             return nil
         }
+    }
+
+    private func logWarning(key: String?) {
+        let key = key ?? "unknown"
+        log.warning(
+            """
+            The Channel property (\(key)) can't be automatically filtered at runtime.
+            You need write a filter block for this property, or disable automatic filtering.
+            More details here:
+            https://getstream.io/chat/docs/sdk/ios/client/controllers/channels/#filtering-with-extra-data
+            """
+        )
     }
 }
