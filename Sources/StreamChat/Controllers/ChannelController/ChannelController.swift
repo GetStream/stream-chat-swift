@@ -181,7 +181,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         updater = self.environment.channelUpdaterBuilder(
             client.channelRepository,
             client.callRepository,
-            client.makeMessagesPaginationStateHandler(),
+            client.makeMessagesPaginationStateHandler(parentMessageId: nil),
             client.databaseContainer,
             client.apiClient
         )

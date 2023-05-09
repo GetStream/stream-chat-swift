@@ -11,7 +11,7 @@ class MessagesPaginationStateHandlerTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        sut = MessagesPaginationStateHandler()
+        sut = MessagesPaginationStateHandler(parentMessageId: nil)
     }
 
     override func tearDown() {
@@ -142,7 +142,13 @@ class MessagesPaginationStateHandlerTests: XCTestCase {
     func test_end_whenLoadingMiddleMessages_thenSetsOldestFetchedMessageToFirstMessageAndNewestFetchedMessageToLastMessage() {
         // Given
         let pagination = MessagesPagination(pageSize: 5, parameter: .around("123"))
-        let messages: [MessagePayload] = [.dummy(messageId: "121"), .dummy(messageId: "122"), .dummy(messageId: "123"), .dummy(messageId: "124"), .dummy(messageId: "125")]
+        let messages: [MessagePayload] = [
+            .dummy(messageId: "121"),
+            .dummy(messageId: "122"),
+            .dummy(messageId: "123"),
+            .dummy(messageId: "124"),
+            .dummy(messageId: "125")
+        ]
 
         // When
         sut.end(pagination: pagination, with: .success(messages))
@@ -164,6 +170,20 @@ class MessagesPaginationStateHandlerTests: XCTestCase {
         // Then
         XCTAssertTrue(sut.state.hasLoadedAllPreviousMessages)
         XCTAssertTrue(sut.state.hasLoadedAllNextMessages)
+    }
+
+    func test_end_whenLoadingMiddleMessagesAndParentMessageIdEqualsReply_thenSetsHasLoadedAllPreviousMessagesToTrue() {
+        // Given
+        sut = MessagesPaginationStateHandler(parentMessageId: "123")
+        sut.state.hasLoadedAllPreviousMessages = false
+        let messages: [MessagePayload] = [.dummy(), .dummy()]
+        let pagination = MessagesPagination(pageSize: messages.count, parameter: .around("123"))
+
+        // When
+        sut.end(pagination: pagination, with: .success(messages))
+
+        // Then
+        XCTAssertTrue(sut.state.hasLoadedAllPreviousMessages)
     }
 
     func test_end_whenResultIsError_thenDoesNotChangePreviousState() {

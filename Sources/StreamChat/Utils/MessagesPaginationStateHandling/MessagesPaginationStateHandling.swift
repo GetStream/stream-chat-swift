@@ -20,6 +20,11 @@ protocol MessagesPaginationStateHandling {
 class MessagesPaginationStateHandler: MessagesPaginationStateHandling {
     private let queue = DispatchQueue(label: "io.getstream.messages-pagination-state-handler")
     private var _state: MessagesPaginationState = .initial
+    private let parentMessageId: MessageId?
+
+    init(parentMessageId: MessageId?) {
+        self.parentMessageId = parentMessageId
+    }
 
     var state: MessagesPaginationState {
         get {
@@ -82,12 +87,16 @@ class MessagesPaginationStateHandler: MessagesPaginationStateHandling {
                 state.hasLoadedAllNextMessages = true
             }
 
-        case .around:
+        case let .around(replyId):
             state.oldestFetchedMessage = oldestFetchedMessage
             state.newestFetchedMessage = newestFetchedMessage
 
             if messages.count < pagination.pageSize {
                 state.hasLoadedAllNextMessages = true
+                state.hasLoadedAllPreviousMessages = true
+            }
+
+            if parentMessageId == replyId {
                 state.hasLoadedAllPreviousMessages = true
             }
 

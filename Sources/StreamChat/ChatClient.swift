@@ -132,8 +132,8 @@ public class ChatClient {
         environment.callRepositoryBuilder(apiClient)
     }()
 
-    func makeMessagesPaginationStateHandler() -> MessagesPaginationStateHandling {
-        MessagesPaginationStateHandler()
+    func makeMessagesPaginationStateHandler(parentMessageId: MessageId?) -> MessagesPaginationStateHandling {
+        MessagesPaginationStateHandler(parentMessageId: parentMessageId)
     }
 
     /// The `APIClient` instance `Client` uses to communicate with Stream REST API.
