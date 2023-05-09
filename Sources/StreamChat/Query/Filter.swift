@@ -108,7 +108,8 @@ public struct Filter<Scope: FilterScope> {
     /// a local filtering.
     let keyPathString: String?
 
-    let isACollectionFilter: Bool
+    /// Whether the `keyPathString` represents an array in the DTO entities.
+    let isCollectionFilter: Bool
 
     init(
         operator: String,
@@ -116,7 +117,7 @@ public struct Filter<Scope: FilterScope> {
         value: FilterValue,
         valueMapper: ValueMapper?,
         keyPathString: String?,
-        isACollectionFilter: Bool
+        isCollectionFilter: Bool
     ) {
         log.assert(`operator`.hasPrefix("$"), "A filter operator must have `$` prefix.")
         self.operator = `operator`
@@ -124,7 +125,7 @@ public struct Filter<Scope: FilterScope> {
         self.value = value
         self.valueMapper = valueMapper
         self.keyPathString = keyPathString
-        self.isACollectionFilter = isACollectionFilter
+        self.isCollectionFilter = isCollectionFilter
     }
 
     /// Creates a new instance of `Filter`.
@@ -144,7 +145,7 @@ public struct Filter<Scope: FilterScope> {
         operator: String,
         key: String?,
         value: FilterValue,
-        isACollectionFilter: Bool
+        isCollectionFilter: Bool
     ) {
         self.init(
             operator: `operator`,
@@ -152,7 +153,7 @@ public struct Filter<Scope: FilterScope> {
             value: value,
             valueMapper: nil,
             keyPathString: nil,
-            isACollectionFilter: isACollectionFilter
+            isCollectionFilter: isCollectionFilter
         )
     }
 }
@@ -173,7 +174,7 @@ extension Filter {
             value: value,
             valueMapper: valueMapper,
             keyPathString: keyPathString,
-            isACollectionFilter: key.isACollectionFilter
+            isCollectionFilter: key.isCollectionFilter
         )
     }
 
@@ -185,7 +186,7 @@ extension Filter {
             operator: `operator`.rawValue,
             key: nil,
             value: value,
-            isACollectionFilter: false
+            isCollectionFilter: false
         )
     }
 }
@@ -227,31 +228,31 @@ public struct FilterKey<Scope: FilterScope, Value: FilterValue>: ExpressibleBySt
     typealias TypedValueMapper = (Value) -> FilterValue?
     let valueMapper: ValueMapper?
 
-    let isACollectionFilter: Bool
+    let isCollectionFilter: Bool
 
     public init(stringLiteral value: String) {
         rawValue = value
         valueMapper = nil
         keyPathString = nil
-        isACollectionFilter = false
+        isCollectionFilter = false
     }
 
     public init(rawValue value: String) {
         rawValue = value
         keyPathString = nil
         valueMapper = nil
-        isACollectionFilter = false
+        isCollectionFilter = false
     }
 
     init(
         rawValue value: String,
         keyPathString: String,
         valueMapper: TypedValueMapper? = nil,
-        isACollectionFilter: Bool = false
+        isCollectionFilter: Bool = false
     ) {
         rawValue = value
         self.keyPathString = keyPathString
-        self.isACollectionFilter = isACollectionFilter
+        self.isCollectionFilter = isCollectionFilter
         self.valueMapper = {
             guard let valueMapper = valueMapper, let castInputValue = ($0 as? Value) else {
                 return nil
@@ -484,13 +485,13 @@ extension Filter: Codable {
             if key.stringValue.hasPrefix("$") {
                 // The right side should be an array of other filters
                 let filters = try container.decode([Filter].self, forKey: key)
-                self.init(operator: key.stringValue, key: nil, value: filters, isACollectionFilter: false)
+                self.init(operator: key.stringValue, key: nil, value: filters, isCollectionFilter: false)
                 return
 
             } else {
                 // The right side should be FilterRightSide
                 let rightSide = try container.decode(FilterRightSide.self, forKey: key)
-                self.init(operator: rightSide.operator, key: key.stringValue, value: rightSide.value, isACollectionFilter: false)
+                self.init(operator: rightSide.operator, key: key.stringValue, value: rightSide.value, isCollectionFilter: false)
                 return
             }
         }

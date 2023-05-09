@@ -1654,6 +1654,28 @@ final class ChannelListController_Tests: XCTestCase {
         )
     }
 
+    func test_filterPredicate_containsInCollection_returnsExpectedResults() throws {
+        let cid1 = ChannelId.unique
+        let cid2 = ChannelId.unique
+
+        try assertFilterPredicate(
+            .contains(.memberName, value: "test"),
+            channelsInDB: [
+                .dummy(channel: .dummy(cid: cid1, members: [
+                    .dummy(user: .dummy(userId: .unique, name: "userA")),
+                    .dummy(user: .dummy(userId: .unique, name: "userCtest"))
+                ])),
+                .dummy(channel: .dummy(cid: .unique, members: [
+                    .dummy(user: .dummy(userId: .unique, name: "userB"))
+                ])),
+                .dummy(channel: .dummy(cid: cid2, members: [
+                    .dummy(user: .dummy(userId: .unique, name: "test"))
+                ]))
+            ],
+            expectedResult: [cid1, cid2]
+        )
+    }
+
     // MARK: - Private Helpers
 
     private func setUpChatClientWithoutAutoFiltering() {

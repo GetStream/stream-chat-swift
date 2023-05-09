@@ -63,8 +63,8 @@ final class Filter_Tests: XCTestCase {
         XCTAssertEqual(filter.value as? Bool, false)
         XCTAssertEqual(filter.operator, FilterOperator.exists.rawValue)
 
-        let filter1: Filter<FilterTestScope> = .init(operator: "$" + .unique, key: .unique, value: String.unique, isACollectionFilter: false)
-        let filter2: Filter<FilterTestScope> = .init(operator: "$" + .unique, key: .unique, value: String.unique, isACollectionFilter: false)
+        let filter1: Filter<FilterTestScope> = .init(operator: "$" + .unique, key: .unique, value: String.unique, isCollectionFilter: false)
+        let filter2: Filter<FilterTestScope> = .init(operator: "$" + .unique, key: .unique, value: String.unique, isCollectionFilter: false)
 
         filter = .and([filter1, filter2])
         XCTAssertEqual(filter.key, nil)
@@ -84,13 +84,13 @@ final class Filter_Tests: XCTestCase {
 
     func test_operatorEncodingAndDecoding() {
         // Test non-group filter
-        var filter: Filter<FilterTestScope> = .init(operator: FilterOperator.equal.rawValue, key: "test_key", value: "test_value", isACollectionFilter: false)
+        var filter: Filter<FilterTestScope> = .init(operator: FilterOperator.equal.rawValue, key: "test_key", value: "test_value", isCollectionFilter: false)
         var jsonString: String { filter.serialized }
         XCTAssertEqual(jsonString, #"{"test_key":{"$eq":"test_value"}}"#)
         XCTAssertEqual(jsonString.deserializeFilter(), filter)
 
         // Test in filter
-        filter = .init(operator: FilterOperator.in.rawValue, key: "test_key", value: [1, 2, 3], isACollectionFilter: false)
+        filter = .init(operator: FilterOperator.in.rawValue, key: "test_key", value: [1, 2, 3], isCollectionFilter: false)
         XCTAssertEqual(filter.serialized, #"{"test_key":{"$in":[1,2,3]}}"#)
         XCTAssertEqual(jsonString.deserializeFilter(), filter)
 
