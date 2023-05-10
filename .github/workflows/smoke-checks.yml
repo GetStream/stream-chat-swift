@@ -203,7 +203,7 @@ jobs:
       timeout-minutes: 25
 
   build-apps:
-    name: Build Sample + Demo Apps
+    name: Build Demo App + Example Apps
     runs-on: macos-12
     if: ${{ github.event_name != 'push' }}
     env:
@@ -212,9 +212,6 @@ jobs:
     steps:
     - uses: actions/checkout@v3.1.0
     - uses: ./.github/actions/bootstrap
-    - name: Build Sample App
-      run: bundle exec fastlane build_sample
-      timeout-minutes: 10
     - name: Build Demo App
       run: bundle exec fastlane build_demo
       timeout-minutes: 10
