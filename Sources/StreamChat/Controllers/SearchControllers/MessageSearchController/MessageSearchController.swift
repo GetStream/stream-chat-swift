@@ -68,7 +68,7 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
         .messageUpdaterBuilder(
             client.config.isLocalStorageEnabled,
             client.messageRepository,
-            client.makeMessagesPaginationStateHandler(parentMessageId: nil),
+            client.makeMessagesPaginationStateHandler(),
             client.databaseContainer,
             client.apiClient
         )
