@@ -147,6 +147,10 @@
 		40B345F829C46AE500B96027 /* AudioPlaybackRate_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40FC028F29BE9B2000E2A1CD /* AudioPlaybackRate_Tests.swift */; };
 		40C20EB229F69E1D00702EEE /* ChatMessageVoiceRecordingAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40C20EB129F69E1D00702EEE /* ChatMessageVoiceRecordingAttachment.swift */; };
 		40C20EB329F69E1D00702EEE /* ChatMessageVoiceRecordingAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40C20EB129F69E1D00702EEE /* ChatMessageVoiceRecordingAttachment.swift */; };
+		40D396252A0905560020DDC9 /* AudioPlaybackRateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40D396232A0905560020DDC9 /* AudioPlaybackRateFormatter.swift */; };
+		40D396262A0905560020DDC9 /* AudioPlaybackRateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40D396232A0905560020DDC9 /* AudioPlaybackRateFormatter.swift */; };
+		40D396272A0905560020DDC9 /* AudioRecordingNameFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40D396242A0905560020DDC9 /* AudioRecordingNameFormatter.swift */; };
+		40D396282A0905560020DDC9 /* AudioRecordingNameFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40D396242A0905560020DDC9 /* AudioRecordingNameFormatter.swift */; };
 		40FC028D29BE981B00E2A1CD /* AttachmentFileType_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40FC028C29BE981B00E2A1CD /* AttachmentFileType_Tests.swift */; };
 		430156DC26B1862C0006E7EA /* CustomDataHashMap_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 430156DB26B1862C0006E7EA /* CustomDataHashMap_Tests.swift */; };
 		430156F226B4523A0006E7EA /* WebSocketConnectPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 430156F126B4523A0006E7EA /* WebSocketConnectPayload_Tests.swift */; };
@@ -2539,6 +2543,8 @@
 		40A2961929F8244500E0C186 /* ChatMessageVoiceRecordingAttachment_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageVoiceRecordingAttachment_Mock.swift; sourceTree = "<group>"; };
 		40A458EC2A03AC7C00C198F7 /* AVAsset+TotalAudioSamples.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AVAsset+TotalAudioSamples.swift"; sourceTree = "<group>"; };
 		40C20EB129F69E1D00702EEE /* ChatMessageVoiceRecordingAttachment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatMessageVoiceRecordingAttachment.swift; sourceTree = "<group>"; };
+		40D396232A0905560020DDC9 /* AudioPlaybackRateFormatter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioPlaybackRateFormatter.swift; sourceTree = "<group>"; };
+		40D396242A0905560020DDC9 /* AudioRecordingNameFormatter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioRecordingNameFormatter.swift; sourceTree = "<group>"; };
 		40FC028C29BE981B00E2A1CD /* AttachmentFileType_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentFileType_Tests.swift; sourceTree = "<group>"; };
 		40FC028F29BE9B2000E2A1CD /* AudioPlaybackRate_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlaybackRate_Tests.swift; sourceTree = "<group>"; };
 		40FC029129BE9C7100E2A1CD /* AudioPlaybackState_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlaybackState_Tests.swift; sourceTree = "<group>"; };
@@ -7355,6 +7361,8 @@
 		AD99C901279B06E9009DD9C5 /* Appearance+Formatters */ = {
 			isa = PBXGroup;
 			children = (
+				40D396232A0905560020DDC9 /* AudioPlaybackRateFormatter.swift */,
+				40D396242A0905560020DDC9 /* AudioRecordingNameFormatter.swift */,
 				ADC4AAAF2788C8850004BB35 /* Appearance+Formatters.swift */,
 				ADBBDA27279F0E9B00E47B1C /* ChannelNameFormatter.swift */,
 				AD99C906279B0C9B009DD9C5 /* MessageDateSeparatorFormatter.swift */,
@@ -9209,6 +9217,7 @@
 				E7DF7E2425C2C67E00AE9D21 /* ChatAvatarView.swift in Sources */,
 				79FA4A7A263BFCE200EC33DA /* AttachmentViewInjector.swift in Sources */,
 				AD470C9E26C6D9030090759A /* ChatMessageListVCDelegate.swift in Sources */,
+				40D396272A0905560020DDC9 /* AudioRecordingNameFormatter.swift in Sources */,
 				E73BD9E6264AC21300E208B7 /* FileAttachmentViewInjector.swift in Sources */,
 				7844B10C25EF92B600B87E89 /* ChatChannelListItemView+SwiftUI.swift in Sources */,
 				224FF67B2562F1EA00725DD1 /* ChatMessageDeliveryStatusCheckmarkView.swift in Sources */,
@@ -9310,6 +9319,7 @@
 				ADB22F7C25F1626200853C92 /* OnlineIndicatorView.swift in Sources */,
 				AD447586263B463D0030E583 /* ConfirmButton.swift in Sources */,
 				AD7112F325F12AA800932AEE /* ChatUserAvatarView.swift in Sources */,
+				40D396252A0905560020DDC9 /* AudioPlaybackRateFormatter.swift in Sources */,
 				C1FC2F8827416E150062530F /* ImageRequestKeys.swift in Sources */,
 				882AE124257A7FFE004095B3 /* UIViewController+Extensions.swift in Sources */,
 				E768AA892625C18D00328E6E /* TypingIndicatorView.swift in Sources */,
@@ -10905,6 +10915,7 @@
 				C121EBDB2746A1EA00023E4C /* ChatMessageDefaultReactionsBubbleView.swift in Sources */,
 				C121EBDC2746A1EA00023E4C /* ChatMessageReactionsBubbleTail.swift in Sources */,
 				C121EBDD2746A1EA00023E4C /* ChatMessageReactionItemView.swift in Sources */,
+				40D396282A0905560020DDC9 /* AudioRecordingNameFormatter.swift in Sources */,
 				C121EBDE2746A1EA00023E4C /* ChatReactionPickerReactionsView.swift in Sources */,
 				ADFB7E91283E700500ABB6CF /* CollectionViewListChangeUpdater.swift in Sources */,
 				C121EBDF2746A1EA00023E4C /* ChatMessageAttachmentPreviewVC.swift in Sources */,
@@ -11006,6 +11017,7 @@
 				C121EC262746A1ED00023E4C /* TaskFetchOriginalImageData.swift in Sources */,
 				C121EC272746A1ED00023E4C /* ImagePipelineTask.swift in Sources */,
 				C121EC282746A1ED00023E4C /* OperationTask.swift in Sources */,
+				40D396262A0905560020DDC9 /* AudioPlaybackRateFormatter.swift in Sources */,
 				C121EC292746A1ED00023E4C /* TaskLoadImage.swift in Sources */,
 				ADCB577628A42D7700B81AE8 /* ContentEquatable.swift in Sources */,
 				C121EC2A2746A1ED00023E4C /* Task.swift in Sources */,
