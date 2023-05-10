@@ -567,12 +567,6 @@ lane :stress_test_release do |options|
   end
 end
 
-desc 'Builds Sample app'
-lane :build_sample do |options|
-  options[:scheme] = 'StreamChatSample'
-  build_example_app(options)
-end
-
 desc 'Builds Demo app'
 lane :build_demo do |options|
   options[:scheme] = 'DemoApp'
@@ -711,7 +705,7 @@ lane :sources_matrix do
     unit: ['Sources', 'Tests/StreamChatTests', 'Tests/Shared', 'TestTools/StreamChatTestTools', xcode_project],
     ui: ['Sources', 'Tests/StreamChatUITests', 'Tests/Shared', xcode_project],
     emerge: ['Sources'],
-    sample_apps: ['Sources', 'Examples', 'DemoApp', 'StreamChatSample', xcode_project],
+    sample_apps: ['Sources', 'Examples', 'DemoApp', xcode_project],
     integration: ['Sources', 'Integration', xcode_project],
     ruby: ['fastlane', 'Gemfile', 'Gemfile.lock']
   }
