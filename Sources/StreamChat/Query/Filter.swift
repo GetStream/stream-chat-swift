@@ -108,12 +108,16 @@ public struct Filter<Scope: FilterScope> {
     /// a local filtering.
     let keyPathString: String?
 
+    /// Whether the `keyPathString` represents an array in the DTO entities.
+    let isCollectionFilter: Bool
+
     init(
         operator: String,
         key: String?,
         value: FilterValue,
         valueMapper: ValueMapper?,
-        keyPathString: String?
+        keyPathString: String?,
+        isCollectionFilter: Bool
     ) {
         log.assert(`operator`.hasPrefix("$"), "A filter operator must have `$` prefix.")
         self.operator = `operator`
@@ -121,6 +125,7 @@ public struct Filter<Scope: FilterScope> {
         self.value = value
         self.valueMapper = valueMapper
         self.keyPathString = keyPathString
+        self.isCollectionFilter = isCollectionFilter
     }
 
     /// Creates a new instance of `Filter`.
@@ -139,14 +144,16 @@ public struct Filter<Scope: FilterScope> {
     public init(
         operator: String,
         key: String?,
-        value: FilterValue
+        value: FilterValue,
+        isCollectionFilter: Bool
     ) {
         self.init(
             operator: `operator`,
             key: key,
             value: value,
             valueMapper: nil,
-            keyPathString: nil
+            keyPathString: nil,
+            isCollectionFilter: isCollectionFilter
         )
     }
 }
@@ -166,7 +173,8 @@ extension Filter {
             key: key.rawValue,
             value: value,
             valueMapper: valueMapper,
-            keyPathString: keyPathString
+            keyPathString: keyPathString,
+            isCollectionFilter: key.isCollectionFilter
         )
     }
 
@@ -177,7 +185,8 @@ extension Filter {
         self.init(
             operator: `operator`.rawValue,
             key: nil,
-            value: value
+            value: value,
+            isCollectionFilter: false
         )
     }
 }
@@ -219,25 +228,31 @@ public struct FilterKey<Scope: FilterScope, Value: FilterValue>: ExpressibleBySt
     typealias TypedValueMapper = (Value) -> FilterValue?
     let valueMapper: ValueMapper?
 
+    let isCollectionFilter: Bool
+
     public init(stringLiteral value: String) {
         rawValue = value
         valueMapper = nil
         keyPathString = nil
+        isCollectionFilter = false
     }
 
     public init(rawValue value: String) {
         rawValue = value
         keyPathString = nil
         valueMapper = nil
+        isCollectionFilter = false
     }
 
     init(
         rawValue value: String,
         keyPathString: String,
-        valueMapper: TypedValueMapper? = nil
+        valueMapper: TypedValueMapper? = nil,
+        isCollectionFilter: Bool = false
     ) {
         rawValue = value
         self.keyPathString = keyPathString
+        self.isCollectionFilter = isCollectionFilter
         self.valueMapper = {
             guard let valueMapper = valueMapper, let castInputValue = ($0 as? Value) else {
                 return nil
@@ -470,13 +485,13 @@ extension Filter: Codable {
             if key.stringValue.hasPrefix("$") {
                 // The right side should be an array of other filters
                 let filters = try container.decode([Filter].self, forKey: key)
-                self.init(operator: key.stringValue, key: nil, value: filters)
+                self.init(operator: key.stringValue, key: nil, value: filters, isCollectionFilter: false)
                 return
 
             } else {
                 // The right side should be FilterRightSide
                 let rightSide = try container.decode(FilterRightSide.self, forKey: key)
-                self.init(operator: rightSide.operator, key: key.stringValue, value: rightSide.value)
+                self.init(operator: rightSide.operator, key: key.stringValue, value: rightSide.value, isCollectionFilter: false)
                 return
             }
         }

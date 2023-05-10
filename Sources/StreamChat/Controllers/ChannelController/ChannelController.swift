@@ -65,12 +65,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     public let messageOrdering: MessageOrdering
 
     /// The worker used to fetch the remote data and communicate with servers.
-    private lazy var updater: ChannelUpdater = self.environment.channelUpdaterBuilder(
-        client.channelRepository,
-        client.callRepository,
-        client.databaseContainer,
-        client.apiClient
-    )
+    private let updater: ChannelUpdater
 
     private lazy var eventSender: TypingEventsSender = self.environment.eventSenderBuilder(
         client.databaseContainer,
@@ -78,33 +73,43 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     )
 
     /// A Boolean value that returns whether the oldest messages have all been loaded or not.
-    public private(set) var hasLoadedAllPreviousMessages: Bool = false
+    public var hasLoadedAllPreviousMessages: Bool {
+        updater.paginationState.hasLoadedAllPreviousMessages
+    }
 
     /// A Boolean value that returns whether the newest messages have all been loaded or not.
     public var hasLoadedAllNextMessages: Bool {
-        !isJumpingToMessage || messages.isEmpty
+        updater.paginationState.hasLoadedAllNextMessages || messages.isEmpty
     }
 
     /// A Boolean value that returns whether the channel is currently loading previous (old) messages.
-    public private(set) var isLoadingPreviousMessages: Bool = false
+    public var isLoadingPreviousMessages: Bool {
+        updater.paginationState.isLoadingPreviousMessages
+    }
 
     /// A Boolean value that returns whether the channel is currently loading next (new) messages.
-    public private(set) var isLoadingNextMessages: Bool = false
+    public var isLoadingNextMessages: Bool {
+        updater.paginationState.isLoadingNextMessages
+    }
 
     /// A Boolean value that returns whether the channel is currently loading a page around a message.
-    public private(set) var isLoadingMiddleMessages: Bool = false
+    public var isLoadingMiddleMessages: Bool {
+        updater.paginationState.isLoadingMiddleMessages
+    }
 
     /// A Boolean value that returns whether the channel is currently in a mid-page.
     /// The value is false if the channel has the first page loaded.
     /// The value is true if the channel is in a mid fragment and didn't load the first page yet.
-    public private(set) var isJumpingToMessage: Bool = false
+    public var isJumpingToMessage: Bool {
+        updater.paginationState.isJumpingToMessage
+    }
 
     /// The pagination cursor for loading previous (old) messages.
-    internal private(set) var lastOldestMessageId: MessageId?
+    internal var lastOldestMessageId: MessageId? {
+        updater.paginationState.oldestFetchedMessage?.id
+    }
 
     /// The pagination cursor for loading next (new) messages.
-    internal private(set) var lastNewestMessageId: MessageId?
-
     private var _firstUnreadMessageId: MessageId?
     public var firstUnreadMessageId: MessageId? {
         if let messageId = _firstUnreadMessageId { return messageId }
@@ -115,6 +120,10 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
     /// A boolean indicating if the user marked the channel as unread in the current session
     public private(set) var markedAsUnread: Bool = false
+
+    internal var lastNewestMessageId: MessageId? {
+        updater.paginationState.newestFetchedMessage?.id
+    }
 
     private var markingRead: Bool = false
 
@@ -177,6 +186,14 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         self.environment = environment
         self.isChannelAlreadyCreated = isChannelAlreadyCreated
         self.messageOrdering = messageOrdering
+        updater = self.environment.channelUpdaterBuilder(
+            client.channelRepository,
+            client.callRepository,
+            client.makeMessagesPaginationStateHandler(parentMessageId: nil),
+            client.databaseContainer,
+            client.apiClient
+        )
+        
         super.init()
 
         setChannelObserver()
@@ -422,19 +439,12 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         let limit = limit ?? channelQuery.pagination?.pageSize ?? .messagesPageSize
         channelQuery.pagination = MessagesPagination(pageSize: limit, parameter: .lessThan(messageId))
 
-        isLoadingPreviousMessages = true
         updater.update(
             channelQuery: channelQuery,
             isInRecoveryMode: false,
             completion: { result in
-                self.callback {
-                    self.isLoadingPreviousMessages = false
-                }
-                
                 switch result {
-                case let .success(payload):
-                    self.updateOldestFetchedMessageId(with: payload)
-                    self.hasLoadedAllPreviousMessages = payload.messages.count < limit
+                case .success:
                     self.callback { completion?(nil) }
                 case let .failure(error):
                     self.callback { completion?(error) }
@@ -476,22 +486,12 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         let limit = limit ?? channelQuery.pagination?.pageSize ?? .messagesPageSize
         channelQuery.pagination = MessagesPagination(pageSize: limit, parameter: .greaterThan(messageId))
 
-        isLoadingNextMessages = true
         updater.update(
             channelQuery: channelQuery,
             isInRecoveryMode: false,
             completion: { result in
-                self.callback {
-                    self.isLoadingNextMessages = false
-                }
-
                 switch result {
-                case let .success(payload):
-                    self.updateNewestFetchedMessageId(with: payload)
-                    if payload.messages.count < limit {
-                        self.isJumpingToMessage = false
-                    }
-
+                case .success:
                     self.callback { completion?(nil) }
                 case let .failure(error):
                     self.callback { completion?(error) }
@@ -522,23 +522,14 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        isJumpingToMessage = true
-        isLoadingMiddleMessages = true
-
         let limit = limit ?? channelQuery.pagination?.pageSize ?? .messagesPageSize
         channelQuery.pagination = MessagesPagination(pageSize: limit, parameter: .around(messageId))
         updater.update(
             channelQuery: channelQuery,
             isInRecoveryMode: false,
             completion: { result in
-                self.callback {
-                    self.isLoadingMiddleMessages = false
-                }
-
                 switch result {
-                case let .success(payload):
-                    self.updateNewestFetchedMessageId(with: payload)
-                    self.updateOldestFetchedMessageId(with: payload)
+                case .success:
                     self.callback { completion?(nil) }
                 case let .failure(error):
                     log.error("Not able to load message around messageId: \(messageId). Error: \(error)")
@@ -1155,6 +1146,7 @@ extension ChatChannelController {
         var channelUpdaterBuilder: (
             _ channelRepository: ChannelRepository,
             _ callRepository: CallRepository,
+            _ paginationStateHandler: MessagesPaginationStateHandling,
             _ database: DatabaseContainer,
             _ apiClient: APIClient
         ) -> ChannelUpdater = ChannelUpdater.init
@@ -1179,8 +1171,6 @@ public enum MessageOrdering {
 
 private extension ChatChannelController {
     func synchronize(isInRecoveryMode: Bool, _ completion: ((_ error: Error?) -> Void)? = nil) {
-        isJumpingToMessage = channelQuery.pagination?.parameter?.isJumpingToMessage == true
-
         let channelCreatedCallback = isChannelAlreadyCreated ? nil : channelCreated(forwardErrorTo: setLocalStateBasedOnError)
         updater.update(
             channelQuery: channelQuery,
@@ -1188,21 +1178,8 @@ private extension ChatChannelController {
             onChannelCreated: channelCreatedCallback,
             completion: { result in
                 switch result {
-                case let .success(payload):
+                case .success:
                     self.state = .remoteDataFetched
-
-                    self.updateNewestFetchedMessageId(with: payload)
-                    self.updateOldestFetchedMessageId(with: payload)
-
-                    let pageSize = self.channelQuery.pagination?.pageSize ?? .messagesPageSize
-                    self.hasLoadedAllPreviousMessages = payload.messages.count < pageSize
-                    // If we are jumping to a message when synchronizing, and the messages loaded
-                    // are less than the page size, it means we loaded the first page and we are not
-                    // jumping to a message anymore.
-                    if self.isJumpingToMessage {
-                        self.isJumpingToMessage = payload.messages.count >= pageSize
-                    }
-
                     self.callback { completion?(nil) }
                 case let .failure(error):
                     self.state = .remoteDataFetchFailed(ClientError(with: error))
@@ -1402,16 +1379,6 @@ private extension ChatChannelController {
         callback {
             completion?(error)
         }
-    }
-
-    private func updateOldestFetchedMessageId(with payload: ChannelPayload) {
-        // Payload messages are ordered from oldest to newest
-        lastOldestMessageId = payload.messages.first?.id
-    }
-
-    private func updateNewestFetchedMessageId(with payload: ChannelPayload) {
-        // Payload messages are ordered from oldest to newest
-        lastNewestMessageId = payload.messages.last?.id
     }
 
     /// This callback is called after channel is created on backend but before channel is saved to DB. When channel is created

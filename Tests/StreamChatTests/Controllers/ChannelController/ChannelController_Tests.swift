@@ -87,6 +87,206 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(Set(controller.messages.map(\.id)), Set(payload.messages.map(\.id)))
     }
 
+    // MARK: - hasLoadedAllPreviousMessages
+
+    func test_hasLoadedAllPreviousMessages_whenPaginationStateHasLoadedAllPreviousMessages_thenReturnsTrue() {
+        // Given
+        env.channelUpdater?.mockPaginationState.hasLoadedAllPreviousMessages = true
+
+        // When
+        let result = controller.hasLoadedAllPreviousMessages
+
+        // Then
+        XCTAssertTrue(result)
+    }
+
+    func test_hasLoadedAllPreviousMessages_whenPaginationStateHasNotLoadedAllPreviousMessages_thenReturnsFalse() {
+        // Given
+        env.channelUpdater?.mockPaginationState.hasLoadedAllPreviousMessages = false
+
+        // When
+        let result = controller.hasLoadedAllPreviousMessages
+
+        // Then
+        XCTAssertFalse(result)
+    }
+
+    // MARK: - hasLoadedAllNextMessages
+
+    func test_hasLoadedAllNextMessages_whenPaginationStateHasLoadedAllNextMessagesOrMessagesAreEmpty_thenReturnsTrue() throws {
+        // Given
+        try setupChannel(
+            channelPayload: .dummy(messages: []),
+            withAllNextMessagesLoaded: true
+        )
+
+        // When
+        let result = controller.hasLoadedAllNextMessages
+
+        // Then
+        XCTAssertTrue(result)
+    }
+
+    func test_hasLoadedAllNextMessages_whenPaginationStateHasNotLoadedAllNextMessagesAndMessagesAreNotEmpty_thenReturnsFalse() throws {
+        // Given
+        try setupChannel(
+            channelPayload: .dummy(channel: .dummy(cid: controller.cid!), messages: [.dummy(), .dummy()]),
+            withAllNextMessagesLoaded: false
+        )
+
+        // When
+        let result = controller.hasLoadedAllNextMessages
+
+        // Then
+        XCTAssertFalse(result)
+    }
+
+    // MARK: - isLoadingPreviousMessages
+
+    func test_isLoadingPreviousMessages_whenPaginationStateIsLoadingPreviousMessages_thenReturnsTrue() {
+        // Given
+        env.channelUpdater?.mockPaginationState.isLoadingPreviousMessages = true
+
+        // When
+        let result = controller.isLoadingPreviousMessages
+
+        // Then
+        XCTAssertTrue(result)
+    }
+
+    func test_isLoadingPreviousMessages_whenPaginationStateIsNotLoadingPreviousMessages_thenReturnsFalse() {
+        // Given
+        env.channelUpdater?.mockPaginationState.isLoadingPreviousMessages = false
+
+        // When
+        let result = controller.isLoadingPreviousMessages
+
+        // Then
+        XCTAssertFalse(result)
+    }
+
+    // MARK: - Tests for isLoadingNextMessages
+
+    func test_isLoadingNextMessages_whenPaginationStateIsLoadingNextMessages_thenReturnsTrue() {
+        // Given
+        env.channelUpdater?.mockPaginationState.isLoadingNextMessages = true
+
+        // When
+        let result = controller.isLoadingNextMessages
+
+        // Then
+        XCTAssertTrue(result)
+    }
+
+    func test_isLoadingNextMessages_whenPaginationStateIsNotLoadingNextMessages_thenReturnsFalse() {
+        // Given
+        env.channelUpdater?.mockPaginationState.isLoadingNextMessages = false
+
+        // When
+        let result = controller.isLoadingNextMessages
+
+        // Then
+        XCTAssertFalse(result)
+    }
+
+    // MARK: - Tests for isLoadingMiddleMessages
+
+    func test_isLoadingMiddleMessages_whenPaginationStateIsLoadingMiddleMessages_thenReturnsTrue() {
+        // Given
+        env.channelUpdater?.mockPaginationState.isLoadingMiddleMessages = true
+
+        // When
+        let result = controller.isLoadingMiddleMessages
+
+        // Then
+        XCTAssertTrue(result)
+    }
+
+    func test_isLoadingMiddleMessages_whenPaginationStateIsNotLoadingMiddleMessages_thenReturnsFalse() {
+        // Given
+        env.channelUpdater?.mockPaginationState.isLoadingMiddleMessages = false
+
+        // When
+        let result = controller.isLoadingMiddleMessages
+
+        // Then
+        XCTAssertFalse(result)
+    }
+
+    // MARK: - Tests for isJumpingToMessage
+
+    func test_isJumpingToMessage_whenPaginationStateIsJumpingToMessage_thenReturnsTrue() {
+        // Given
+        env.channelUpdater?.mockPaginationState.hasLoadedAllNextMessages = false
+
+        // When
+        let result = controller.isJumpingToMessage
+
+        // Then
+        XCTAssertTrue(result)
+    }
+
+    func test_isJumpingToMessage_whenPaginationStateIsNotJumpingToMessage_thenReturnsFalse() {
+        // Given
+        env.channelUpdater?.mockPaginationState.hasLoadedAllNextMessages = true
+
+        // When
+        let result = controller.isJumpingToMessage
+
+        // Then
+        XCTAssertFalse(result)
+    }
+
+    // MARK: - Tests for lastOldestMessageId
+
+    func test_lastOldestMessageId_whenPaginationStateHasOldestFetchedMessage_thenReturnsItsId() {
+        // Given
+        let oldestFetchedMessage = MessagePayload.dummy()
+        env.channelUpdater?.mockPaginationState.oldestFetchedMessage = oldestFetchedMessage
+
+        // When
+        let result = controller.lastOldestMessageId
+
+        // Then
+        XCTAssertEqual(result, oldestFetchedMessage.id)
+    }
+
+    func test_lastOldestMessageId_whenPaginationStateHasNoOldestFetchedMessage_thenReturnsNil() {
+        // Given
+        env.channelUpdater?.mockPaginationState.oldestFetchedMessage = nil
+
+        // When
+        let result = controller.lastOldestMessageId
+
+        // Then
+        XCTAssertNil(result)
+    }
+
+    // MARK: - Tests for lastNewestMessageId
+
+    func test_lastNewestMessageId_whenPaginationStateHasNewestFetchedMessage_thenReturnsItsId() {
+        // Given
+        let newestFetchedMessage = MessagePayload.dummy()
+        env.channelUpdater?.mockPaginationState.newestFetchedMessage = newestFetchedMessage
+
+        // When
+        let result = controller.lastNewestMessageId
+
+        // Then
+        XCTAssertEqual(result, newestFetchedMessage.id)
+    }
+
+    func test_lastNewestMessageId_whenPaginationStateHasNoNewestFetchedMessage_thenReturnsNil() {
+        // Given
+        env.channelUpdater?.mockPaginationState.newestFetchedMessage = nil
+
+        // When
+        let result = controller.lastNewestMessageId
+
+        // Then
+        XCTAssertNil(result)
+    }
+
     // MARK: - Channel config feature tests
 
     func test_readFeatures_onNilChannel_returnsFalse() {
@@ -430,136 +630,6 @@ final class ChannelController_Tests: XCTestCase {
 
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
-    }
-
-    func test_synchronize_updatesNewestAndOldestFetchedMessageId() {
-        let exp = expectation(description: "synchronize should complete")
-        controller.synchronize { _ in
-            exp.fulfill()
-        }
-
-        let channelPayload = ChannelPayload.dummy(messages: [
-            .dummy(messageId: "oldest"),
-            .dummy(),
-            .dummy(),
-            .dummy(messageId: "newest")
-        ])
-
-        env.channelUpdater?.update_completion?(.success(channelPayload))
-
-        waitForExpectations(timeout: defaultTimeout)
-
-        XCTAssertEqual(controller.lastOldestMessageId, "oldest")
-        XCTAssertEqual(controller.lastNewestMessageId, "newest")
-    }
-
-    func test_synchronize_whenMessagesCountLowerThanPageSize_thenAllPreviousMessagesWereLoaded() throws {
-        let exp = expectation(description: "synchronize should complete")
-        controller.synchronize { _ in
-            exp.fulfill()
-        }
-
-        XCTAssertEqual(controller.hasLoadedAllPreviousMessages, false)
-
-        let channelPayload = ChannelPayload.dummy(messages: [
-            .dummy(),
-            .dummy(),
-            .dummy(),
-            .dummy()
-        ])
-
-        env.channelUpdater?.update_completion?(.success(channelPayload))
-
-        waitForExpectations(timeout: defaultTimeout)
-
-        XCTAssertEqual(controller.hasLoadedAllPreviousMessages, true)
-    }
-
-    func test_synchronize_whenMessagesCountBiggerThanPageSize_thenAllPreviousMessagesNotLoaded() throws {
-        let exp = expectation(description: "synchronize should complete")
-        controller.synchronize { _ in
-            exp.fulfill()
-        }
-
-        let channelPayload = dummyPayload(with: .unique, numberOfMessages: 30)
-
-        env.channelUpdater?.update_completion?(.success(channelPayload))
-
-        waitForExpectations(timeout: defaultTimeout)
-
-        XCTAssertEqual(controller.hasLoadedAllPreviousMessages, false)
-    }
-
-    func test_synchronize_whenPaginationIsJumpingToMessage_thenIsJumpingToMessageIsTrue() throws {
-        controller = ChatChannelController(
-            channelQuery: .init(cid: channelId, paginationParameter: .around(.unique)),
-            channelListQuery: nil,
-            client: client,
-            environment: env.environment
-        )
-
-        controller.synchronize()
-
-        XCTAssertEqual(controller.isJumpingToMessage, true)
-    }
-
-    func test_synchronize_whenPaginationIsNotJumpingToMessage_thenIsJumpingToMessageIsFalse() throws {
-        controller = ChatChannelController(
-            channelQuery: .init(cid: channelId, paginationParameter: .lessThan(.unique)),
-            channelListQuery: nil,
-            client: client,
-            environment: env.environment
-        )
-
-        controller.synchronize()
-
-        XCTAssertEqual(controller.isJumpingToMessage, false)
-    }
-
-    func test_synchronize_whenJumpingToMessage_whenMessagesCountEqualOrBiggerThanPageSize_thenIsJumpingToMessageIsTrue() throws {
-        controller = ChatChannelController(
-            channelQuery: .init(cid: channelId, pageSize: 25, paginationParameter: .around(.unique)),
-            channelListQuery: nil,
-            client: client,
-            environment: env.environment
-        )
-
-        let exp = expectation(description: "synchronize should complete")
-        controller.synchronize { _ in
-            exp.fulfill()
-        }
-
-        XCTAssertEqual(controller.isJumpingToMessage, true)
-
-        let channelPayload = dummyPayload(with: .unique, numberOfMessages: 25)
-        env.channelUpdater?.update_completion?(.success(channelPayload))
-
-        waitForExpectations(timeout: defaultTimeout)
-
-        XCTAssertEqual(controller.isJumpingToMessage, true)
-    }
-
-    func test_synchronize_whenJumpingToMessage_whenMessagesCountLowerThanPageSize_thenIsJumpingToMessageIsFalse() throws {
-        controller = ChatChannelController(
-            channelQuery: .init(cid: channelId, pageSize: 25, paginationParameter: .around(.unique)),
-            channelListQuery: nil,
-            client: client,
-            environment: env.environment
-        )
-
-        let exp = expectation(description: "synchronize should complete")
-        controller.synchronize { _ in
-            exp.fulfill()
-        }
-
-        XCTAssertEqual(controller.isJumpingToMessage, true)
-
-        let channelPayload = dummyPayload(with: .unique, numberOfMessages: 20)
-        env.channelUpdater?.update_completion?(.success(channelPayload))
-
-        waitForExpectations(timeout: defaultTimeout)
-
-        XCTAssertEqual(controller.isJumpingToMessage, false)
     }
 
     // MARK: - Creating `ChannelController` tests
@@ -2126,145 +2196,48 @@ final class ChannelController_Tests: XCTestCase {
         )
         env.channelUpdater?.update_completion?(.success(channelPayload))
 
-        // Should update old fetched message id
-        AssertAsync.willBeEqual(controller.lastOldestMessageId, channelPayload.messages.first?.id)
         // Completion should be called
         AssertAsync.willBeTrue(completionCalled)
     }
 
     func test_loadPreviousMessages_whenHasLoadedAllPreviousMessages_dontCallChannelUpdater() throws {
-        let channel = try setupChannel(channelPayload: dummyPayload(with: channelId, numberOfMessages: 1))
-        let messageId = channel.messages.first?.id
+        env.channelUpdater?.mockPaginationState.hasLoadedAllPreviousMessages = true
 
-        // By loading less messages than the limit, it means
-        // we loaded all messages, and there's no more pages
-        let pageSize = 25
-        let numberOfMessagesFetched = 20
-
-        // Load all the previous message
-        var firstLoadCompletionCalled = false
-        controller.loadPreviousMessages(before: messageId, limit: pageSize) { [callbackQueueID] error in
-            AssertTestQueue(withId: callbackQueueID)
-            XCTAssertNil(error)
-            firstLoadCompletionCalled = true
-        }
-
-        // Completion shouldn't be called yet
-        XCTAssertFalse(firstLoadCompletionCalled)
-
-        // Assert correct `MessagesPagination` is created
-        XCTAssertEqual(
-            env!.channelUpdater?.update_channelQuery?.pagination,
-            MessagesPagination(pageSize: pageSize, parameter: .lessThan(messageId!))
-        )
-
-        // Simulate channel update response with messages less than the limit
-        // Which should switch the flag of all messages loaded to true
-        env.channelUpdater?
-            .update_completion?(.success(dummyPayload(
-                with: .unique,
-                numberOfMessages: numberOfMessagesFetched
-            )))
-
-        // Since the messages have been all loaded already, the second call
-        // to load the previous message should not make any request but should call the completion block
         let exp = expectation(description: "should still call the completion block")
-        controller.loadPreviousMessages(before: messageId, limit: pageSize) { error in
+        controller.loadPreviousMessages(before: .unique, limit: 5) { error in
             XCTAssertNil(error)
             exp.fulfill()
         }
 
+        env.channelUpdater?
+            .update_completion?(.success(dummyPayload(
+                with: .unique,
+                numberOfMessages: 1
+            )))
+
         waitForExpectations(timeout: defaultTimeout)
 
-        // Wait for the first load to be completed
-        AssertAsync.willBeTrue(firstLoadCompletionCalled)
-        // Make sure the channel updater is only called the first time
-        AssertAsync.willBeEqual(env.channelUpdater?.update_callCount, 1)
+        XCTAssertEqual(env.channelUpdater?.update_callCount, 0)
     }
 
     func test_loadPreviousMessages_whenIsLoadingPreviousMessages_shouldNotCallChannelUpdater() throws {
-        try setupChannel(channelPayload: dummyPayload(with: channelId, numberOfMessages: 1))
+        env.channelUpdater?.mockPaginationState.isLoadingPreviousMessages = true
 
-        // Trigger loading previous messages
-        controller.loadPreviousMessages(before: .unique)
-        XCTAssertEqual(controller.isLoadingPreviousMessages, true)
-
-        // Since the messages have been all loaded already, the second call
-        // to load the previous message should not make any request but should call the completion block
         let exp = expectation(description: "should still call the completion block")
-        controller.loadPreviousMessages(before: .unique) { error in
+        controller.loadPreviousMessages(before: .unique, limit: 5) { error in
             XCTAssertNil(error)
             exp.fulfill()
         }
 
+        env.channelUpdater?
+            .update_completion?(.success(dummyPayload(
+                with: .unique,
+                numberOfMessages: 1
+            )))
+
         waitForExpectations(timeout: defaultTimeout)
 
-        // Make sure the channel updater is only called the first time
-        AssertAsync.willBeEqual(env.channelUpdater?.update_callCount, 1)
-    }
-
-    func test_loadPreviousMessages_whenLoadedMessagesLessThanLimit_dontFetchMoreMessages() throws {
-        try setupChannel(channelPayload: dummyPayload(with: channelId, numberOfMessages: 1))
-
-        // By loading less messages than the limit, it means
-        // we loaded all messages, and there's no more pages
-        let pageSize = 25
-        let numberOfMessagesFetched = 20
-
-        // Load all the previous message
-        var loadCompletionCalled = false
-        controller.loadPreviousMessages(before: .unique, limit: pageSize) { [callbackQueueID] error in
-            AssertTestQueue(withId: callbackQueueID)
-            XCTAssertNil(error)
-            loadCompletionCalled = true
-        }
-
-        // Completion shouldn't be called yet
-        XCTAssertFalse(loadCompletionCalled)
-
-        // Simulate channel update response
-        env.channelUpdater?
-            .update_completion?(.success(dummyPayload(
-                with: .unique,
-                numberOfMessages: numberOfMessagesFetched
-            )))
-
-        // Wait for the load to be completed
-        AssertAsync.willBeTrue(loadCompletionCalled)
-        // Assert that no more messages will be loaded
-        AssertAsync.willBeEqual(controller.hasLoadedAllPreviousMessages, true)
-    }
-
-    func test_loadPreviousMessages_whenLoadedMessagesEqualToLimit_fetchMoreMessages() throws {
-        try setupChannel(channelPayload: dummyPayload(with: channelId, numberOfMessages: 1))
-
-        // The number of messages loaded == pageSize,
-        // then we should load more messages
-        let pageSize = 25
-        let numberOfMessagesFetched = 25
-
-        // Load all the previous message
-        var loadCompletionCalled = false
-        controller.loadPreviousMessages(before: .unique, limit: pageSize) { [callbackQueueID] error in
-            AssertTestQueue(withId: callbackQueueID)
-            XCTAssertNil(error)
-            loadCompletionCalled = true
-        }
-
-        // Completion shouldn't be called yet
-        XCTAssertFalse(loadCompletionCalled)
-
-        // Simulate channel update response
-        env.channelUpdater?
-            .update_completion?(.success(dummyPayload(
-                with: .unique,
-                numberOfMessages: numberOfMessagesFetched
-            )))
-
-        // Wait for the load to be completed
-        AssertAsync.willBeTrue(loadCompletionCalled)
-        // Assert that more messages will be loaded
-        AssertAsync.willBeEqual(controller.hasLoadedAllPreviousMessages, false)
+        XCTAssertEqual(env.channelUpdater?.update_callCount, 0)
     }
 
     func test_loadPreviousMessages_throwsError_on_emptyMessages() throws {
@@ -2332,24 +2305,14 @@ final class ChannelController_Tests: XCTestCase {
     }
 
     func test_loadPreviousMessages_usesLastFetchedId() throws {
-        let expectation = self.expectation(description: "synchronize completes")
-        controller.synchronize { error in
-            XCTAssertNil(error)
-            expectation.fulfill()
-        }
+        let lastFetchedId = MessageId.unique
+        env.channelUpdater?.mockPaginationState.oldestFetchedMessage = .dummy(messageId: lastFetchedId)
 
-        // Generate messages bigger than pageSize (25)
-        let messages: [MessagePayload] = MessagePayload.multipleDummies(amount: 30)
-        let payload = ChannelPayload.dummy(messages: messages)
-        env.channelUpdater?.update_completion?(.success(payload))
-
-        waitForExpectations(timeout: defaultTimeout)
-
-        let expectation2 = self.expectation(description: "loadPreviousMessage completes")
+        let exp = expectation(description: "loadPreviousMessage completes")
         var receivedError: Error?
         controller.loadPreviousMessages() { error in
             receivedError = error
-            expectation2.fulfill()
+            exp.fulfill()
         }
 
         let error = TestError()
@@ -2362,7 +2325,7 @@ final class ChannelController_Tests: XCTestCase {
             XCTFail("Missing pagination parameter")
             return
         }
-        XCTAssertEqual(paginationMessageId, messages.first?.id)
+        XCTAssertEqual(paginationMessageId, lastFetchedId)
         XCTAssertEqual(receivedError, error)
     }
 
@@ -2445,10 +2408,6 @@ final class ChannelController_Tests: XCTestCase {
         let channelPayload = dummyPayload(with: .unique, numberOfMessages: 5)
         env.channelUpdater?.update_completion?(.success(channelPayload))
 
-        // Should update update
-        XCTAssertNotNil(controller.lastNewestMessageId)
-        AssertAsync.willBeEqual(controller.lastNewestMessageId, channelPayload.messages.last?.id)
-
         // Completion should be called
         AssertAsync.willBeTrue(completionCalled)
     }
@@ -2470,7 +2429,6 @@ final class ChannelController_Tests: XCTestCase {
             withAllNextMessagesLoaded: false
         )
 
-        // Simulate `loadPreviousMessages` call and catch the completion
         var completionCalledError: Error?
         let exp = expectation(description: "load next messages completion called")
         controller.loadNextMessages(after: .unique) { [callbackQueueID] in
@@ -2490,10 +2448,6 @@ final class ChannelController_Tests: XCTestCase {
     }
 
     func test_loadNextMessages_whenHasLoadedAllNextMessages_shouldNotCallChannelUpdater() throws {
-        // Create the channel updater and reset the call count
-        controller.synchronize()
-        env.channelUpdater?.update_callCount = 0
-
         // Create new channel
         try setupChannel(
             channelPayload: dummyPayload(with: channelId),
@@ -2512,78 +2466,67 @@ final class ChannelController_Tests: XCTestCase {
     }
 
     func test_loadNextMessages_whenIsLoadingNextMessages_shouldNotCallChannelUpdater() throws {
-        try setupChannel(withAllNextMessagesLoaded: false)
+        env.channelUpdater?.mockPaginationState.isLoadingNextMessages = true
+        env.channelUpdater?.mockPaginationState.hasLoadedAllNextMessages = false
 
-        XCTAssertEqual(env.channelUpdater?.update_callCount, 0)
-
-        // Only the first call should call the channelUpdater
-        controller.loadNextMessages(after: .unique)
-        XCTAssertEqual(env.channelUpdater?.update_callCount, 1)
-
-        // Second call should not increment the call count
         let exp = expectation(description: "should still call the completion block")
         controller.loadNextMessages(after: .unique) { error in
             XCTAssertNil(error)
             exp.fulfill()
         }
         waitForExpectations(timeout: defaultTimeout)
-        XCTAssertEqual(env.channelUpdater?.update_callCount, 1)
+        XCTAssertEqual(env.channelUpdater?.update_callCount, 0)
     }
 
-    func test_loadNextMessages_whenMessagesCountLowerThanPageSize_thenSetJumpingMessageFalse() throws {
-        // Create the channel updater
-        controller.synchronize()
+    func test_loadNextMessages_usesPassedMessageId() throws {
+        try setupChannel(withAllNextMessagesLoaded: false)
 
-        // Create new channel
-        try setupChannel(
-            channelPayload: dummyPayload(with: channelId),
-            withAllNextMessagesLoaded: true
-        )
-
-        // Set is jumping to message to true
-        controller.loadPageAroundMessageId(.unique)
-        XCTAssertEqual(controller.isJumpingToMessage, true)
-
-        let exp = expectation(description: "load next messages completion called")
-        controller.loadNextMessages(limit: 10) { _ in
+        let exp = expectation(description: "loadNextMessage completes")
+        var receivedError: Error?
+        controller.loadNextMessages(after: "3") { error in
+            receivedError = error
             exp.fulfill()
         }
 
-        // Simulate successful update
-        let channelPayload = dummyPayload(with: .unique, numberOfMessages: 5)
-        env.channelUpdater?.update_completion?(.success(channelPayload))
+        let error = TestError()
+        env.channelUpdater!.update_completion?(.failure(error))
 
         waitForExpectations(timeout: defaultTimeout)
 
-        XCTAssertEqual(controller.isJumpingToMessage, false)
+        let paginationParameter = env.channelUpdater?.update_channelQuery?.pagination?.parameter
+        guard case let .greaterThan(paginationMessageId) = paginationParameter else {
+            XCTFail("Missing pagination parameter")
+            return
+        }
+        XCTAssertEqual(paginationMessageId, "3")
+        XCTAssertEqual(receivedError, error)
     }
 
-    func test_loadNextMessages_whenMessagesCountBiggeThanPageSize_thenDoesNotChangeJumpingToMessage() throws {
-        // Create the channel updater
-        controller.synchronize()
+    func test_loadNextMessages_usesLastFetchedId() throws {
+        try setupChannel(withAllNextMessagesLoaded: false)
+        
+        let lastFetchedId = MessageId.unique
+        env.channelUpdater?.mockPaginationState.newestFetchedMessage = .dummy(messageId: lastFetchedId)
 
-        // Create new channel
-        try setupChannel(
-            channelPayload: dummyPayload(with: channelId),
-            withAllNextMessagesLoaded: true
-        )
-
-        // Set is jumping to message to true
-        controller.loadPageAroundMessageId(.unique)
-        XCTAssertEqual(controller.isJumpingToMessage, true)
-
-        let exp = expectation(description: "load next messages completion called")
-        controller.loadNextMessages(limit: 2) { _ in
+        let exp = expectation(description: "loadNextMessage completes")
+        var receivedError: Error?
+        controller.loadNextMessages() { error in
+            receivedError = error
             exp.fulfill()
         }
 
-        // Simulate successful update
-        let channelPayload = dummyPayload(with: .unique, numberOfMessages: 5)
-        env.channelUpdater?.update_completion?(.success(channelPayload))
+        let error = TestError()
+        env.channelUpdater!.update_completion?(.failure(error))
 
         waitForExpectations(timeout: defaultTimeout)
 
-        XCTAssertEqual(controller.isJumpingToMessage, true)
+        let paginationParameter = env.channelUpdater?.update_channelQuery?.pagination?.parameter
+        guard case let .greaterThan(paginationMessageId) = paginationParameter else {
+            XCTFail("Missing pagination parameter")
+            return
+        }
+        XCTAssertEqual(paginationMessageId, lastFetchedId)
+        XCTAssertEqual(receivedError, error)
     }
 
     // MARK: - Load messages around given message id.
@@ -2606,7 +2549,6 @@ final class ChannelController_Tests: XCTestCase {
             XCTAssertNil(error)
             completionCalled = true
         }
-        XCTAssertEqual(controller.isLoadingMiddleMessages, true)
 
         // Simulate successful update
         let expectedMessages: [MessagePayload] = [
@@ -2627,18 +2569,7 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(pagination?.pageSize, 5)
         XCTAssertEqual(pagination?.parameter?.parameters as! [String: String], ["id_around": messageId])
 
-        // Should update the oldest fetched message id to make sure
-        // pagination oldest messages starts from correct message.
-        XCTAssertNotNil(controller.lastOldestMessageId)
-        XCTAssertEqual(controller.lastOldestMessageId, expectedMessages.first?.id)
-
-        // Should update the newest fetched message id to make sure
-        // pagination newest messages starts from correct message.
-        XCTAssertNotNil(controller.lastNewestMessageId)
-        XCTAssertEqual(controller.lastNewestMessageId, expectedMessages.last?.id)
-
         AssertAsync.willBeTrue(completionCalled)
-        XCTAssertEqual(controller.isLoadingMiddleMessages, false)
 
         // Should not leak memory
         weak var weakController = controller
@@ -2660,7 +2591,7 @@ final class ChannelController_Tests: XCTestCase {
             exp.fulfill()
         }
 
-        waitForExpectations(timeout: 0.5)
+        waitForExpectations(timeout: defaultTimeout)
     }
 
     func test_loadPageAroundMessageId_whenRequestFails() throws {
@@ -2684,19 +2615,11 @@ final class ChannelController_Tests: XCTestCase {
 
         env.channelUpdater?.update_completion?(.failure(ClientError("fake")))
 
-        XCTAssertNil(controller.lastOldestMessageId)
-
-        waitForExpectations(timeout: 0.5)
+        waitForExpectations(timeout: defaultTimeout)
     }
 
     func test_loadPageAroundMessageId_whenIsLoadingMessagesAround_shouldNotCallChannelUpdater() throws {
-        try setupChannel()
-
-        XCTAssertEqual(env.channelUpdater?.update_callCount, nil)
-
-        controller.loadPageAroundMessageId(.unique)
-        XCTAssertEqual(controller.isLoadingMiddleMessages, true)
-        XCTAssertEqual(env.channelUpdater?.update_callCount, 1)
+        env.channelUpdater?.mockPaginationState.isLoadingMiddleMessages = true
 
         let exp = expectation(description: "should still call the completion block")
         controller.loadPageAroundMessageId(.unique) { error in
@@ -2704,8 +2627,7 @@ final class ChannelController_Tests: XCTestCase {
             exp.fulfill()
         }
         waitForExpectations(timeout: defaultTimeout)
-        XCTAssertEqual(controller.isLoadingMiddleMessages, true)
-        XCTAssertEqual(env.channelUpdater?.update_callCount, 1)
+        XCTAssertEqual(env.channelUpdater?.update_callCount, 0)
     }
 
     // MARK: - loadFirstPage
@@ -4886,8 +4808,7 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(channel?.messages.count, messages.count)
 
         // WHEN
-        controller?.loadPageAroundMessageId(.unique)
-        env.channelUpdater?.update_completion?(.success(dummyPayload(with: .unique)))
+        env.channelUpdater?.mockPaginationState.hasLoadedAllNextMessages = false
 
         // THEN
         env.channelUpdater?.cleanUp()
@@ -5008,11 +4929,7 @@ extension ChannelController_Tests {
                 let dummyUserPayload: CurrentUserPayload = .dummy(userId: .unique, role: .user)
                 try session.saveCurrentUser(payload: dummyUserPayload)
                 try session.saveChannel(payload: channelPayload)
-
-                if !withAllNextMessagesLoaded {
-                    self.controller.loadPageAroundMessageId(.unique)
-                    self.env.channelUpdater?.update_callCount = 0
-                }
+                self.env.channelUpdater?.mockPaginationState.hasLoadedAllNextMessages = withAllNextMessagesLoaded
 
             }, completion: $0)
         }
@@ -5061,7 +4978,13 @@ private class TestEnvironment {
 
     lazy var environment: ChatChannelController.Environment = .init(
         channelUpdaterBuilder: { [unowned self] in
-            self.channelUpdater = ChannelUpdater_Mock(channelRepository: $0, callRepository: $1, database: $2, apiClient: $3)
+            self.channelUpdater = ChannelUpdater_Mock(
+                channelRepository: $0,
+                callRepository: $1,
+                paginationStateHandler: $2,
+                database: $3,
+                apiClient: $4
+            )
             return self.channelUpdater!
         },
         eventSenderBuilder: { [unowned self] in

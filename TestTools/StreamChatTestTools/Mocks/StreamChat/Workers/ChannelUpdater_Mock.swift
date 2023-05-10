@@ -200,6 +200,12 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         createCall_cid = nil
         createCall_completion = nil
     }
+
+    var mockPaginationState: MessagesPaginationState = .initial
+    override var paginationState: MessagesPaginationState {
+        mockPaginationState
+    }
+
     override func update(
         channelQuery: ChannelQuery,
         isInRecoveryMode: Bool,
