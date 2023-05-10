@@ -34,7 +34,7 @@ final class ChannelRepository_Tests: XCTestCase {
 
         let expectation = self.expectation(description: "markRead completes")
         var receivedError: Error?
-        repository.markRead(cid: cid, userId: userId) { error in
+        repository.markRead(cid: cid, userId: userId, lastReadMessageId: .unique) { error in
             receivedError = error
             expectation.fulfill()
         }
@@ -54,7 +54,7 @@ final class ChannelRepository_Tests: XCTestCase {
 
         let expectation = self.expectation(description: "markRead completes")
         var receivedError: Error?
-        repository.markRead(cid: cid, userId: userId) { error in
+        repository.markRead(cid: cid, userId: userId, lastReadMessageId: .unique) { error in
             receivedError = error
             expectation.fulfill()
         }

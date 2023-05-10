@@ -195,6 +195,7 @@ class MessageReadEventDTO: EventDTO {
     let cid: ChannelId
     let createdAt: Date
     let unreadCount: UnreadCount?
+    let lastReadMessageId: MessageId?
     let payload: EventPayload
 
     init(from response: EventPayload) throws {
@@ -202,6 +203,7 @@ class MessageReadEventDTO: EventDTO {
         cid = try response.value(at: \.cid)
         createdAt = try response.value(at: \.createdAt)
         unreadCount = try? response.value(at: \.unreadCount)
+        lastReadMessageId = try response.value(at: \.lastReadMessageId)
         payload = response
     }
 

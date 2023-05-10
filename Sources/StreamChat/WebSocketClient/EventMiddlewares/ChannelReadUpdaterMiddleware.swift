@@ -35,10 +35,22 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
             )
 
         case let event as MessageReadEventDTO:
-            resetChannelRead(for: event.cid, userId: event.user.id, lastReadAt: event.createdAt, session: session)
+            resetChannelRead(
+                for: event.cid,
+                userId: event.user.id,
+                lastReadAt: event.createdAt,
+                lastReadMessageId: event.lastReadMessageId,
+                session: session
+            )
 
         case let event as NotificationMarkReadEventDTO:
-            resetChannelRead(for: event.cid, userId: event.user.id, lastReadAt: event.createdAt, session: session)
+            resetChannelRead(
+                for: event.cid,
+                userId: event.user.id,
+                lastReadAt: event.createdAt,
+                lastReadMessageId: event.lastReadMessageId,
+                session: session
+            )
 
         case let event as NotificationMarkUnreadEventDTO:
             markChannelAsUnread(
@@ -68,16 +80,17 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
         for cid: ChannelId,
         userId: UserId,
         lastReadAt: Date,
+        lastReadMessageId: MessageId?,
         session: DatabaseSession
     ) {
-        session.markChannelAsRead(cid: cid, userId: userId, at: lastReadAt)
+        session.markChannelAsRead(cid: cid, userId: userId, at: lastReadAt, lastReadMessageId: lastReadMessageId)
     }
 
     private func markChannelAsUnread(
         for cid: ChannelId,
         userId: UserId,
         from messageId: MessageId,
-        lastReadMessageId: MessageId,
+        lastReadMessageId: MessageId?,
         lastReadAt: Date,
         unreadMessages: Int,
         session: DatabaseSession

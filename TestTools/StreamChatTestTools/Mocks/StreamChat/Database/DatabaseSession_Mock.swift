@@ -17,7 +17,7 @@ final class DatabaseSession_Mock: DatabaseSession {
         self.underlyingSession = underlyingSession
     }
 
-    var markChannelAsReadParams: (cid: ChannelId, userId: UserId, at: Date)?
+    var markChannelAsReadParams: (cid: ChannelId, userId: UserId, at: Date, lastReadMessageId: MessageId?)?
     var markChannelAsUnreadParams: (cid: ChannelId, userId: UserId)?
 }
 
@@ -229,9 +229,9 @@ extension DatabaseSession_Mock {
         return try underlyingSession.saveChannelRead(payload: payload, for: cid, cache: cache)
     }
 
-    func markChannelAsRead(cid: ChannelId, userId: UserId, at: Date) {
-        markChannelAsReadParams = (cid, userId, at)
-        underlyingSession.markChannelAsRead(cid: cid, userId: userId, at: at)
+    func markChannelAsRead(cid: ChannelId, userId: UserId, at: Date, lastReadMessageId: MessageId?) {
+        markChannelAsReadParams = (cid, userId, at, lastReadMessageId)
+        underlyingSession.markChannelAsRead(cid: cid, userId: userId, at: at, lastReadMessageId: lastReadMessageId)
     }
 
     func markChannelAsUnread(cid: ChannelId, by userId: UserId) {
@@ -239,7 +239,7 @@ extension DatabaseSession_Mock {
         underlyingSession.markChannelAsUnread(cid: cid, by: userId)
     }
     
-    func markChannelAsUnread(for cid: ChannelId, userId: UserId, from messageId: MessageId, lastReadMessageId: MessageId, lastReadAt: Date?, unreadMessagesCount: Int?) {
+    func markChannelAsUnread(for cid: ChannelId, userId: UserId, from messageId: MessageId, lastReadMessageId: MessageId?, lastReadAt: Date?, unreadMessagesCount: Int?) {
         underlyingSession.markChannelAsUnread(
             for: cid,
             userId: userId,

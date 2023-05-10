@@ -71,10 +71,12 @@ final class ChannelReadDTO_Tests: XCTestCase {
 
         // WHEN
         let newLastReadAt = read.lastReadAt.addingTimeInterval(10)
+        let lastReadMessageId = MessageId.unique
         database.viewContext.markChannelAsRead(
             cid: channel.channel.cid,
             userId: read.user.id,
-            at: newLastReadAt
+            at: newLastReadAt,
+            lastReadMessageId: lastReadMessageId
         )
 
         // THEN
@@ -82,6 +84,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
             ChannelReadDTO.load(cid: channel.channel.cid, userId: read.user.id, context: database.viewContext)
         )
         XCTAssertNearlySameDate(readDTO.lastReadAt.bridgeDate, newLastReadAt)
+        XCTAssertEqual(readDTO.lastReadMessageId, lastReadMessageId)
         XCTAssertEqual(readDTO.unreadMessageCount, 0)
     }
 
@@ -99,10 +102,12 @@ final class ChannelReadDTO_Tests: XCTestCase {
 
         // WHEN
         let readAt = Date()
+        let lastReadMessageId = MessageId.unique
         database.viewContext.markChannelAsRead(
             cid: channel.channel.cid,
             userId: member.userId,
-            at: readAt
+            at: readAt,
+            lastReadMessageId: lastReadMessageId
         )
 
         // THEN
@@ -110,6 +115,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
             ChannelReadDTO.load(cid: channel.channel.cid, userId: member.userId, context: database.viewContext)
         )
         XCTAssertNearlySameDate(createdReadDTO.lastReadAt.bridgeDate, readAt)
+        XCTAssertEqual(createdReadDTO.lastReadMessageId, lastReadMessageId)
         XCTAssertEqual(createdReadDTO.unreadMessageCount, 0)
     }
 
@@ -130,7 +136,8 @@ final class ChannelReadDTO_Tests: XCTestCase {
         database.viewContext.markChannelAsRead(
             cid: channel.channel.cid,
             userId: unkownMemberId,
-            at: .init()
+            at: .init(),
+            lastReadMessageId: .unique
         )
 
         // THEN
@@ -191,7 +198,8 @@ final class ChannelReadDTO_Tests: XCTestCase {
             session.markChannelAsRead(
                 cid: channel.channel.cid,
                 userId: anotherUser.id,
-                at: ownMessageUnreadByAnotherUser.createdAt
+                at: ownMessageUnreadByAnotherUser.createdAt,
+                lastReadMessageId: .unique
             )
         }
 
@@ -242,7 +250,8 @@ final class ChannelReadDTO_Tests: XCTestCase {
             session.markChannelAsRead(
                 cid: channel.channel.cid,
                 userId: anotherUser.id,
-                at: anotherUserReadDate
+                at: anotherUserReadDate,
+                lastReadMessageId: .unique
             )
         }
 
@@ -293,7 +302,8 @@ final class ChannelReadDTO_Tests: XCTestCase {
             session.markChannelAsRead(
                 cid: channel.channel.cid,
                 userId: currentUser.id,
-                at: currentUserReadDate
+                at: currentUserReadDate,
+                lastReadMessageId: .unique
             )
         }
 
