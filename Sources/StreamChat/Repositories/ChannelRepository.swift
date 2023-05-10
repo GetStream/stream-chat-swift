@@ -18,7 +18,6 @@ class ChannelRepository {
     func markRead(
         cid: ChannelId,
         userId: UserId,
-        lastReadMessageId: MessageId?,
         completion: ((Error?) -> Void)? = nil
     ) {
         apiClient.request(endpoint: .markRead(cid: cid)) { [weak self] result in
@@ -28,7 +27,7 @@ class ChannelRepository {
             }
 
             self?.database.write({ session in
-                session.markChannelAsRead(cid: cid, userId: userId, at: .init(), lastReadMessageId: lastReadMessageId)
+                session.markChannelAsRead(cid: cid, userId: userId, at: .init())
             }, completion: { error in
                 completion?(error)
             })

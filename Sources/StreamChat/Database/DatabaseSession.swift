@@ -288,7 +288,7 @@ protocol ChannelReadDatabaseSession {
     func loadChannelReads(for userId: UserId) -> [ChannelReadDTO]
 
     /// Sets the channel `cid` as read for `userId`
-    func markChannelAsRead(cid: ChannelId, userId: UserId, at: Date, lastReadMessageId: MessageId?)
+    func markChannelAsRead(cid: ChannelId, userId: UserId, at: Date)
 
     /// Sets the channel `cid` as unread for `userId` starting from the `messageId`
     /// Uses `lastReadAt` and `unreadMessagesCount` if passed, otherwise it calculates it.

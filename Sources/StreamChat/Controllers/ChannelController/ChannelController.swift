@@ -826,7 +826,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
         markingRead = true
 
-        updater.markRead(cid: channel.cid, userId: currentUserId, lastReadMessageId: messages.first?.id) { error in
+        updater.markRead(cid: channel.cid, userId: currentUserId) { error in
             self.callback {
                 self.markingRead = false
                 completion?(error)

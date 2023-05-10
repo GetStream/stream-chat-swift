@@ -86,13 +86,12 @@ extension NSManagedObjectContext {
         return dto
     }
 
-    func markChannelAsRead(cid: ChannelId, userId: UserId, at: Date, lastReadMessageId: MessageId?) {
+    func markChannelAsRead(cid: ChannelId, userId: UserId, at: Date) {
         if let read = loadChannelRead(cid: cid, userId: userId) {
             let previousLastReadAt = read.lastReadAt
 
             // We have a read object saved, we can update it
             read.lastReadAt = at.bridgeDate
-            read.lastReadMessageId = lastReadMessageId
             read.unreadMessageCount = 0
 
             // Mark messages authored by the current user sent within `previousLastReadAt...at` window
@@ -108,7 +107,6 @@ extension NSManagedObjectContext {
             read.channel = channel
             read.user = member.user
             read.lastReadAt = at.bridgeDate
-            read.lastReadMessageId = lastReadMessageId
             read.unreadMessageCount = 0
 
             // Mark all locally existed messages authored by the current user

@@ -131,7 +131,6 @@ class NotificationMarkReadEventDTO: EventDTO {
     let user: UserPayload
     let cid: ChannelId
     let unreadCount: UnreadCount
-    let lastReadMessageId: MessageId?
     let createdAt: Date
     let payload: EventPayload
 
@@ -140,7 +139,6 @@ class NotificationMarkReadEventDTO: EventDTO {
         cid = try response.value(at: \.cid)
         createdAt = try response.value(at: \.createdAt)
         unreadCount = try response.value(at: \.unreadCount)
-        lastReadMessageId = try response.value(at: \.lastReadMessageId)
         payload = response
     }
 

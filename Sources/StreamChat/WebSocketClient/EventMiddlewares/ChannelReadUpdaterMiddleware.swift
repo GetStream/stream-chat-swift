@@ -39,7 +39,6 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
                 for: event.cid,
                 userId: event.user.id,
                 lastReadAt: event.createdAt,
-                lastReadMessageId: event.lastReadMessageId,
                 session: session
             )
 
@@ -48,7 +47,6 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
                 for: event.cid,
                 userId: event.user.id,
                 lastReadAt: event.createdAt,
-                lastReadMessageId: event.lastReadMessageId,
                 session: session
             )
 
@@ -80,10 +78,9 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
         for cid: ChannelId,
         userId: UserId,
         lastReadAt: Date,
-        lastReadMessageId: MessageId?,
         session: DatabaseSession
     ) {
-        session.markChannelAsRead(cid: cid, userId: userId, at: lastReadAt, lastReadMessageId: lastReadMessageId)
+        session.markChannelAsRead(cid: cid, userId: userId, at: lastReadAt)
     }
 
     private func markChannelAsUnread(
