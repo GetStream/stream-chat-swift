@@ -104,10 +104,13 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
     /// The pagination cursor for loading next (new) messages.
     internal private(set) var lastNewestMessageId: MessageId?
-    
-    /// The last read message id
-    public var lastReadMessageId: MessageId? {
-        channel?.reads.first(where: { $0.user.id == client.currentUserId })?.lastReadMessageId
+
+    private var _firstUnreadMessageId: MessageId?
+    public var firstUnreadMessageId: MessageId? {
+        if let messageId = _firstUnreadMessageId { return messageId }
+
+        _firstUnreadMessageId = getFirstUnreadMessageId()
+        return _firstUnreadMessageId
     }
 
     /// A boolean indicating if the user marked the channel as unread in the current session
@@ -865,25 +868,13 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        var lastReadMessageId: MessageId {
-            guard let messageIndex = messages.firstIndex(where: { $0.id == messageId }) else {
-                return messageId
-            }
-
-            let newLastReadMessageIndex = messages.index(after: messageIndex)
-            if !messages.indices.contains(newLastReadMessageIndex) {
-                return messageId
-            }
-            return messages[newLastReadMessageIndex].id
-        }
-
         markingRead = true
 
         updater.markUnread(
             cid: channel.cid,
             userId: currentUserId,
             from: messageId,
-            lastReadMessageId: lastReadMessageId
+            lastReadMessageId: getLastReadMessageId(firstUnreadMessageId: messageId)
         ) { [weak self] error in
             self?.callback {
                 if error == nil {
@@ -1326,6 +1317,7 @@ private extension ChatChannelController {
                 fetchRequest: ChannelDTO.fetchRequest(for: cid),
                 itemCreator: { try $0.asModel() as ChatChannel }
             ).onChange { [weak self] change in
+                self?._firstUnreadMessageId = nil
                 self?.delegateCallback { [weak self] in
                     guard let self = self else {
                         log.warning("Callback called while self is nil")
@@ -1439,6 +1431,33 @@ private extension ChatChannelController {
             // Update observing state
             self?.state = error == nil ? .localDataFetched : .localDataFetchFailed(ClientError(with: error))
         }
+    }
+
+    private func getLastReadMessageId(firstUnreadMessageId: MessageId) -> MessageId {
+        guard let messageIndex = messages.firstIndex(where: { $0.id == firstUnreadMessageId }) else {
+            return firstUnreadMessageId
+        }
+
+        let newLastReadMessageIndex = messages.index(after: messageIndex)
+        return messageId(at: newLastReadMessageIndex) ?? firstUnreadMessageId
+    }
+
+    private func getFirstUnreadMessageId() -> MessageId? {
+        guard let lastReadMessageId = channel?.reads.first(where: { $0.user.id == client.currentUserId })?.lastReadMessageId,
+              lastReadMessageId != messages.first?.id,
+              let lastReadIndex = messages.firstIndex(where: { $0.id == lastReadMessageId }) else {
+            return nil
+        }
+
+        let newFirstUnreadMessageIndex = messages.index(before: lastReadIndex)
+        return messageId(at: newFirstUnreadMessageIndex)
+    }
+
+    private func messageId(at index: Int) -> MessageId? {
+        if !messages.indices.contains(index) {
+            return nil
+        }
+        return messages[index].id
     }
 }
 

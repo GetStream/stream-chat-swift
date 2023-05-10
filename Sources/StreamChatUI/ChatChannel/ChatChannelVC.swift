@@ -97,8 +97,8 @@ open class ChatChannelVC: _ViewController,
     private var hasSeenLastMessage: Bool = false
 
     /// The id of the first unread message
-    private var lastReadMessageId: MessageId? {
-        channelController.lastReadMessageId
+    private var firstUnreadMessageId: MessageId? {
+        channelController.firstUnreadMessageId
     }
 
     override open func setUp() {
@@ -287,10 +287,9 @@ open class ChatChannelVC: _ViewController,
         willDisplayMessageAt indexPath: IndexPath
     ) {
         let message = chatMessageListVC(vc, messageAt: indexPath)
-        if message?.id == lastReadMessageId {
+        if message?.id == firstUnreadMessageId || firstUnreadMessageId == nil {
             hasSeenAllUnreadMessages = true
         }
-
         if isLastMessageFullyVisible {
             hasSeenLastMessage = true
         }
@@ -349,10 +348,21 @@ open class ChatChannelVC: _ViewController,
         headerViewForMessage message: ChatMessage,
         at indexPath: IndexPath
     ) -> ChatMessageDecorationView? {
-        guard vc.shouldShowDateSeparator(forMessage: message, at: indexPath) else { return nil }
+        let shouldShowDate = vc.shouldShowDateSeparator(forMessage: message, at: indexPath)
+        let shouldShowUnreadMessages = message.id == firstUnreadMessageId
 
-        let header = components.messageListDateSeparatorView.init()
-        header.content = vc.dateSeparatorFormatter.format(message.createdAt)
+        guard (shouldShowDate || shouldShowUnreadMessages), let channel = channelController.channel else {
+            return nil
+        }
+
+        let header = components.messageHeaderDecorationView.init()
+        header.content = ChatChannelMessageHeaderDecoratorViewContent(
+            message: message,
+            channel: channel,
+            dateFormatter: vc.dateSeparatorFormatter,
+            shouldShowDate: shouldShowDate,
+            shouldShowUnreadMessages: shouldShowUnreadMessages
+        )
         return header
     }
 
@@ -361,10 +371,7 @@ open class ChatChannelVC: _ViewController,
         footerViewForMessage message: ChatMessage,
         at indexPath: IndexPath
     ) -> ChatMessageDecorationView? {
-        guard message.id == lastReadMessageId, messages.first?.id != message.id, let channel = channelController.channel else { return nil }
-        let footer = components.unreadMessagesCounterDecorationView.init()
-        footer.content = channel
-        return footer
+        nil
     }
 
     // MARK: - ChatChannelControllerDelegate
@@ -388,7 +395,7 @@ open class ChatChannelVC: _ViewController,
     ) {
         let channelUnreadCount = channelController.channel?.unreadCount ?? .noUnread
         messageListVC.scrollToLatestMessageButton.content = channelUnreadCount
-        messageListVC.updateUnreadMessagesSeparator(at: lastReadMessageId)
+        messageListVC.updateUnreadMessagesSeparator(at: firstUnreadMessageId)
         messageListVC.updateJumpToUnreadMessagesVisibility()
     }
 
