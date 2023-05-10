@@ -92,5 +92,23 @@
 			<string>%d Message Reactions</string>
 		</dict>
 	</dict>
+	<key>recording.presentation.name</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@recording@</string>
+		<key>recording</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>other</key>
+			<string>Recording(%d)</string>
+			<key>zero</key>
+			<string>Recording</string>
+			<key>one</key>
+			<string>Recording(%d)</string>
+		</dict>
+	</dict>
 </dict>
 </plist>

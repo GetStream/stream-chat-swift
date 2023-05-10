@@ -35,6 +35,15 @@ internal enum L10n {
     internal static var maxSizeExceeded: String { L10n.tr("Localizable", "attachment.max-size-exceeded") }
   }
 
+  internal enum Audio {
+    internal enum Player {
+      /// x%@
+      internal static func rate(_ p1: Any) -> String {
+        return L10n.tr("Localizable", "audio.player.rate", String(describing: p1))
+      }
+    }
+  }
+
   internal enum Channel {
     internal enum Item {
       /// No messages
@@ -68,6 +77,12 @@ internal enum L10n {
     internal enum Error {
       /// Error loading channels
       internal static var message: String { L10n.tr("Localizable", "channelList.error.message") }
+    }
+    internal enum Preview {
+      internal enum Voice {
+        /// Voice message
+        internal static var recording: String { L10n.tr("Localizable", "channelList.preview.voice.recording") }
+      }
     }
   }
 
@@ -258,6 +273,19 @@ internal enum L10n {
       /// Plural format key: "%#@reactions@"
       internal static func numberOfReactions(_ p1: Int) -> String {
         return L10n.tr("Localizable", "reaction.authors.number-of-reactions", p1)
+      }
+    }
+  }
+
+  internal enum Recording {
+    /// Slide to cancel
+    internal static var slideToCancel: String { L10n.tr("Localizable", "recording.slideToCancel") }
+    /// Hold to record, release to send
+    internal static var tip: String { L10n.tr("Localizable", "recording.tip") }
+    internal enum Presentation {
+      /// Plural format key: "%#@recording@"
+      internal static func name(_ p1: Int) -> String {
+        return L10n.tr("Localizable", "recording.presentation.name", p1)
       }
     }
   }
