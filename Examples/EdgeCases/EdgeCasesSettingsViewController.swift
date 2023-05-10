@@ -17,13 +17,10 @@ class EdgeCasesSettingsViewController: UITableViewController {
         super.init(style: .grouped)
     }
 
-    // swiftlint:disable unavailable_function
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
-    // swiftlint:enable unavailable_function
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         cases.count
