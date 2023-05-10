@@ -19,7 +19,7 @@ open class ChatUnreadMessagesCountDecorationView: ChatMessageDecorationView, The
     override open func setUpLayout() {
         super.setUpLayout()
 
-        embed(messagesCountDecorationView, insets: .init(top: 0, leading: 0, bottom: 8, trailing: 0))
+        embed(messagesCountDecorationView, insets: .init(top: 8, leading: 0, bottom: 0, trailing: 0))
     }
 
     override open func updateContent() {
