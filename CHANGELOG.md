@@ -7,6 +7,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChat
 ### 🐞 Fixed
 - Fix "to-many key not allowed here" error when using the `memberName` filter [#2604](https://github.com/GetStream/stream-chat-swift/pull/2604)
+- Fix `isJumpingToMessage` being `true` after jumping to message in the first page [#2608](https://github.com/GetStream/stream-chat-swift/pull/2608)
+
+## StreamChatUI
+### 🐞 Fixed
+- Fix scrollToBottomButton visible when jumping to message in first page [#2608](https://github.com/GetStream/stream-chat-swift/pull/2608)
 
 # [4.31.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.31.0)
 _April 25, 2023_
