@@ -14,8 +14,15 @@ public protocol AudioRecording {
     /// Subscribes the provided object on AudioRecorder's updates
     func subscribe(_ subscriber: AudioRecordingDelegate)
 
-    /// Begin the recording process
-    func beginRecording()
+    /// Begin the recording process and calls the completionHandler once all the permission requests
+    /// have been answered.
+    /// - Parameter completionHandler: The completionHandler to call once the recording has
+    /// started successfully *only*. In the case of an error the completionHandler won't be called and the
+    /// delegate will be informed of the error in the `didFail` method.
+    /// - Note: If the recording permission has been answered before
+    /// the completionHandler will be called immediately, otherwise it will be called once the user has
+    /// replied on the request permission prompt.
+    func beginRecording(_ completionHandler: @escaping (() -> Void))
 
     /// Pause the currently active recording process
     func pauseRecording()
@@ -175,7 +182,7 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
         multicastDelegate.add(additionalDelegate: subscriber)
     }
 
-    open func beginRecording() {
+    open func beginRecording(_ completionHandler: @escaping (() -> Void)) {
         do {
             /// Enable recording on `AudioSession`
             try audioSessionConfigurator.activateRecordingSession()
@@ -183,7 +190,7 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
             /// Request record permission. The first time this will be executed, it will prompt the user
             /// to allow recording.
             audioSessionConfigurator.requestRecordPermission { [weak self] in
-                self?.handleRecordRequest($0)
+                self?.handleRecordRequest($0, completionHandler: completionHandler)
             }
         } catch {
             /// In case we failed to activate the `AudioSession` for recording, inform the delegates
@@ -360,7 +367,10 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
         )
     }
 
-    private func handleRecordRequest(_ permissionGranted: Bool) {
+    private func handleRecordRequest(
+        _ permissionGranted: Bool,
+        completionHandler: @escaping () -> Void
+    ) {
         do {
             guard permissionGranted else {
                 throw AudioRecorderError.noRecordPermission()
@@ -371,6 +381,7 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
             if audioRecorder?.record() == true {
                 context = .init(state: .recording, duration: 0, averagePower: 0)
                 startObservers()
+                completionHandler()
             } else {
                 // This error may occur due to the audio file name.
                 throw AudioRecorderError.failedToBegin()

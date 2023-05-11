@@ -40,37 +40,49 @@ final class StreamAudioRecorder_Tests: XCTestCase {
     func test_beginRecording_audioSessionConfiguratorThrowsAnError_callsDidFailWithErrorOnDelegate() throws {
         audioSessionConfigurator.activateRecordingSessionThrowsError = genericError
         setAudioRecorder()
+        let completionHandlerExpectation = expectation(description: "Completion handler was called.")
+        completionHandlerExpectation.isInverted = true
 
-        subject?.beginRecording()
+        subject?.beginRecording { completionHandlerExpectation.fulfill() }
 
+        wait(for: [completionHandlerExpectation], timeout: defaultTimeout)
         assertDidFailWithError(genericError)
     }
 
     func test_beginRecording_audioSessionConfiguratorRequestRecordPersmissionReturnsFalse_callsDidFailWithErrorOnDelegate() throws {
         setAudioRecorder()
+        let completionHandlerExpectation = expectation(description: "Completion handler was called.")
+        completionHandlerExpectation.isInverted = true
 
-        subject?.beginRecording()
+        subject?.beginRecording { completionHandlerExpectation.fulfill() }
         audioSessionConfigurator.requestRecordPermissionCompletionHandler?(false)
 
+        wait(for: [completionHandlerExpectation], timeout: defaultTimeout)
         assertDidFailWithClientError(AudioRecorderError.noRecordPermission())
     }
 
     func test_beginRecording_failedToInitialiseAVAudioRecorder_callsDidFailWithErrorOnDelegate() throws {
         avAudioRecorderFactoryResult = .failure(genericError)
         setAudioRecorder()
+        let completionHandlerExpectation = expectation(description: "Completion handler was called.")
+        completionHandlerExpectation.isInverted = true
 
-        subject?.beginRecording()
+        subject?.beginRecording { completionHandlerExpectation.fulfill() }
         audioSessionConfigurator.requestRecordPermissionCompletionHandler?(true)
 
+        wait(for: [completionHandlerExpectation], timeout: defaultTimeout)
         assertDidFailWithError(genericError)
     }
 
     func test_beginRecording_avAudioRecorderWasCreated_avAudioRecorderWasConfiguredCorrectly() throws {
         setAudioRecorder()
+        let completionHandlerExpectation = expectation(description: "Completion handler was called.")
+        completionHandlerExpectation.isInverted = true
 
-        subject?.beginRecording()
+        subject?.beginRecording { completionHandlerExpectation.fulfill() }
         audioSessionConfigurator.requestRecordPermissionCompletionHandler?(true)
 
+        wait(for: [completionHandlerExpectation], timeout: defaultTimeout)
         XCTAssertEqual(avAudioRecorderFactoryWasCalledWithURL, FileManager.default.temporaryDirectory.appendingPathComponent("recording.aac"))
         XCTAssertEqual(avAudioRecorderFactoryWasCalledWithSettings?[AVFormatIDKey] as? Int, Int(kAudioFormatMPEG4AAC))
         XCTAssertEqual(avAudioRecorderFactoryWasCalledWithSettings?[AVSampleRateKey] as? Int, 12000)
@@ -84,10 +96,13 @@ final class StreamAudioRecorder_Tests: XCTestCase {
     func test_beginRecording_failedToBeginRecording_callsDidFailWithErrorOnDelegate() throws {
         stubAVAudioRecorder.recordResult = false
         setAudioRecorder()
+        let completionHandlerExpectation = expectation(description: "Completion handler was called.")
+        completionHandlerExpectation.isInverted = true
 
-        subject?.beginRecording()
+        subject?.beginRecording { completionHandlerExpectation.fulfill() }
         audioSessionConfigurator.requestRecordPermissionCompletionHandler?(true)
 
+        wait(for: [completionHandlerExpectation], timeout: defaultTimeout)
         assertDidFailWithClientError(AudioRecorderError.failedToBegin())
     }
 
@@ -369,15 +384,18 @@ final class StreamAudioRecorder_Tests: XCTestCase {
         file: StaticString = #file,
         line: UInt = #line
     ) {
+        let completionHandlerExpectation = expectation(description: "Completion handler was called.")
+
         stubAVAudioRecorder.recordResult = true
         if subject == nil {
             setAudioRecorder()
         }
 
-        subject?.beginRecording()
+        subject?.beginRecording { completionHandlerExpectation.fulfill() }
         audioSessionConfigurator.requestRecordPermissionCompletionHandler?(true)
         assertContextUpdate(.init(state: .recording, duration: 0, averagePower: 0), file: file, line: line)
         stubAVAudioRecorder.stubProperty(\.isRecording, with: true)
+        wait(for: [completionHandlerExpectation], timeout: defaultTimeout)
     }
 
     private func assertContextUpdate(
