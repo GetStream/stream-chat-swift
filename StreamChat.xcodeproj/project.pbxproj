@@ -217,6 +217,7 @@
 		40FA4E0D2A12A86800DA21D2 /* RecordingIndicatorView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40FA4E082A12A86700DA21D2 /* RecordingIndicatorView_Tests.swift */; };
 		40FA4E102A12AA4500DA21D2 /* AttachmentPreviewProvider_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40FA4E0E2A12AA4500DA21D2 /* AttachmentPreviewProvider_Tests.swift */; };
 		40FA4E112A12AA4500DA21D2 /* AttachmentsPreviewVC_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40FA4E0F2A12AA4500DA21D2 /* AttachmentsPreviewVC_Tests.swift */; };
+		40FA4E132A12AACC00DA21D2 /* MockAudioQueuePlayerNextItemProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40FA4E122A12AACC00DA21D2 /* MockAudioQueuePlayerNextItemProvider.swift */; };
 		40FC028D29BE981B00E2A1CD /* AttachmentFileType_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40FC028C29BE981B00E2A1CD /* AttachmentFileType_Tests.swift */; };
 		430156DC26B1862C0006E7EA /* CustomDataHashMap_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 430156DB26B1862C0006E7EA /* CustomDataHashMap_Tests.swift */; };
 		430156F226B4523A0006E7EA /* WebSocketConnectPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 430156F126B4523A0006E7EA /* WebSocketConnectPayload_Tests.swift */; };
@@ -2661,6 +2662,7 @@
 		40FA4E082A12A86700DA21D2 /* RecordingIndicatorView_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordingIndicatorView_Tests.swift; sourceTree = "<group>"; };
 		40FA4E0E2A12AA4500DA21D2 /* AttachmentPreviewProvider_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttachmentPreviewProvider_Tests.swift; sourceTree = "<group>"; };
 		40FA4E0F2A12AA4500DA21D2 /* AttachmentsPreviewVC_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttachmentsPreviewVC_Tests.swift; sourceTree = "<group>"; };
+		40FA4E122A12AACC00DA21D2 /* MockAudioQueuePlayerNextItemProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockAudioQueuePlayerNextItemProvider.swift; sourceTree = "<group>"; };
 		40FC028C29BE981B00E2A1CD /* AttachmentFileType_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentFileType_Tests.swift; sourceTree = "<group>"; };
 		40FC028F29BE9B2000E2A1CD /* AudioPlaybackRate_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlaybackRate_Tests.swift; sourceTree = "<group>"; };
 		40FC029129BE9C7100E2A1CD /* AudioPlaybackState_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlaybackState_Tests.swift; sourceTree = "<group>"; };
@@ -7254,6 +7256,7 @@
 		A3D9D69227EDE85A00725066 /* Mocks */ = {
 			isa = PBXGroup;
 			children = (
+				40FA4E122A12AACC00DA21D2 /* MockAudioQueuePlayerNextItemProvider.swift */,
 				40FA4DFB2A12A79900DA21D2 /* MockVoiceRecordingAttachmentPresentationViewDelegate.swift */,
 				ACABFF8226D6587E0018F3DC /* Components_Mock.swift */,
 				ACABFF8426D658B70018F3DC /* ImageLoader_Mock.swift */,
@@ -9677,6 +9680,7 @@
 				AD158B6726C1876D00C104CD /* ChatChannelVC_Tests.swift in Sources */,
 				849AE664270CB14000423A20 /* VideoAttachmentComposerPreview_Tests.swift in Sources */,
 				40FA4E0D2A12A86800DA21D2 /* RecordingIndicatorView_Tests.swift in Sources */,
+				40FA4E132A12AACC00DA21D2 /* MockAudioQueuePlayerNextItemProvider.swift in Sources */,
 				AD540AE2260CECA10082D802 /* QuotedChatMessageView_Tests.swift in Sources */,
 				40824D492A1271EF003B61FD /* PlayPauseButton_Tests.swift in Sources */,
 				E73BD9EE264D9B3A00E208B7 /* ChatMessageFileAttachmentListView_Tests.swift in Sources */,
