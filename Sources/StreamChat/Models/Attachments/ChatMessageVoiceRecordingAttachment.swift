@@ -23,6 +23,11 @@ public struct VoiceRecordingAttachmentPayload: AttachmentPayload {
     public var voiceRecordingURL: URL
     /// The voiceRecording itself.
     public var file: AttachmentFile
+    /// The duration of the attached Audio file
+    public var duration: TimeInterval?
+    /// The waveformData that can be used to create waveform visualisation of the attached Audio file
+    public var waveformData: [Float]?
+
     /// An extra data.
     public var extraData: [String: RawJSON]?
 
@@ -38,15 +43,31 @@ public struct VoiceRecordingAttachmentPayload: AttachmentPayload {
     /// Creates `VoiceRecordingAttachmentPayload` instance.
     ///
     /// Use this initializer if the attachment is already uploaded and you have the remote URLs.
-    public init(title: String?, voiceRecordingRemoteURL: URL, file: AttachmentFile, extraData: [String: RawJSON]?) {
+    public init(
+        title: String?,
+        voiceRecordingRemoteURL: URL,
+        file: AttachmentFile,
+        duration: TimeInterval?,
+        waveformData: [Float]?,
+        extraData: [String: RawJSON]?
+    ) {
         self.title = title
         voiceRecordingURL = voiceRecordingRemoteURL
         self.file = file
+        self.duration = duration
+        self.waveformData = waveformData
         self.extraData = extraData
     }
 }
 
 extension VoiceRecordingAttachmentPayload: Hashable {}
+
+extension VoiceRecordingAttachmentPayload {
+    public enum CodingKeys: String, CodingKey {
+        case duration
+        case waveformData = "waveform_data"
+    }
+}
 
 // MARK: - Encodable
 
@@ -57,6 +78,8 @@ extension VoiceRecordingAttachmentPayload: Encodable {
         values[AttachmentCodingKeys.assetURL.rawValue] = .string(voiceRecordingURL.absoluteString)
         values[AttachmentFile.CodingKeys.size.rawValue] = .number(Double(file.size))
         values[AttachmentFile.CodingKeys.mimeType.rawValue] = file.mimeType.map { .string($0) }
+        values[VoiceRecordingAttachmentPayload.CodingKeys.duration.rawValue] = duration.map { .number(Double($0)) }
+        values[VoiceRecordingAttachmentPayload.CodingKeys.waveformData.rawValue] = waveformData.map { waveformData in .array(waveformData.map { .number(Double($0)) }) }
         try values.encode(to: encoder)
     }
 }
@@ -66,11 +89,14 @@ extension VoiceRecordingAttachmentPayload: Encodable {
 extension VoiceRecordingAttachmentPayload: Decodable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: AttachmentCodingKeys.self)
+        let voiceRecordingContainer = try decoder.container(keyedBy: CodingKeys.self)
 
         self.init(
             title: try container.decodeIfPresent(String.self, forKey: .title),
             voiceRecordingRemoteURL: try container.decode(URL.self, forKey: .assetURL),
             file: try AttachmentFile(from: decoder),
+            duration: try voiceRecordingContainer.decodeIfPresent(TimeInterval.self, forKey: .duration),
+            waveformData: try voiceRecordingContainer.decodeIfPresent([Float].self, forKey: .waveformData),
             extraData: try Self.decodeExtraData(from: decoder)
         )
     }
