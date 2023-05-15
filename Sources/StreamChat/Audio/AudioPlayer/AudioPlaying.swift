@@ -12,14 +12,6 @@ public protocol AudioPlaying: AnyObject {
     /// Subscribes the provided object on AudioPlayer's updates
     func subscribe(_ subscriber: AudioPlayingDelegate)
 
-    /// Requests the playbackContext for the given URL. If the player's current item has as URL that
-    /// matches the provided one, it should return a context, otherwise it will return
-    /// ``AudioPlaybackContext.notLoaded``
-    /// - Parameter url: The URL (provided by the asset) that is used to stream/download the content to play
-    /// - Returns: if the provided URL matches the current item's URL, otherwise it will return the context
-    /// for the current playback. Otherwise, the context will be ``.notLoaded``.
-    func playbackContext(for url: URL) -> AudioPlaybackContext
-
     /// Instructs the player to load the asset from the provided URL and prepare it for streaming. If the
     /// player's current item has a URL that matches the provided one, then we will try to play or restart
     /// the playback while updating the new delegate.
@@ -120,17 +112,7 @@ open class StreamRemoteAudioPlayer: AudioPlaying, AppStateObserverDelegate {
         multicastDelegate.add(additionalDelegate: subscriber)
         subscriber.audioPlayer(self, didUpdateContext: context)
     }
-
-    open func playbackContext(for url: URL) -> AudioPlaybackContext {
-        guard
-            let currentItemURL = (player.currentItem?.asset as? AVURLAsset)?.url,
-            currentItemURL == url
-        else {
-            return .notLoaded
-        }
-        return context
-    }
-
+    
     open func clearUpQueue() {
         multicastDelegate.set(additionalDelegates: [])
         player.replaceCurrentItem(with: nil)
@@ -204,6 +186,7 @@ open class StreamRemoteAudioPlayer: AudioPlaying, AppStateObserverDelegate {
 
             updateContext { value in
                 value = .init(
+                    assetLocation: value.assetLocation,
                     duration: value.duration,
                     currentTime: 0,
                     state: .stopped,
@@ -288,8 +271,6 @@ open class StreamRemoteAudioPlayer: AudioPlaying, AppStateObserverDelegate {
                     : .zero
 
                 value.isSeeking = false
-
-                value.state = player.rate != 0 ? .playing : .paused
 
                 value.rate = .init(rawValue: player.rate)
             }
