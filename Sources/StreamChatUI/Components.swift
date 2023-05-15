@@ -224,6 +224,14 @@ public struct Components {
     /// The view that shows a video attachment preview inside a message.
     public var videoAttachmentGalleryPreview: VideoAttachmentGalleryPreview.Type = VideoAttachmentGalleryPreview.self
 
+    /// A view that displays the voiceRecording attachment preview in composer.
+    public var voiceRecordingAttachmentComposerPreview: VoiceRecordingAttachmentComposerPreview
+        .Type = VoiceRecordingAttachmentComposerPreview.self
+
+    /// A view that displays the voiceRecording attachment as a quoted preview in composer.
+    public var voiceRecordingAttachmentQuotedPreview: VoiceRecordingAttachmentQuotedPreview
+        .Type = VoiceRecordingAttachmentQuotedPreview.self
+
     /// The view that shows an overlay with uploading progress for image attachment that is being uploaded.
     public var uploadingOverlayView: UploadingOverlayView.Type = UploadingOverlayView.self
 
