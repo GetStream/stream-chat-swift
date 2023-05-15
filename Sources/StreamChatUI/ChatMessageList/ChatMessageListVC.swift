@@ -18,7 +18,9 @@ open class ChatMessageListVC: _ViewController,
     LinkPreviewViewDelegate,
     UITableViewDataSource,
     UITableViewDelegate,
-    UIGestureRecognizerDelegate {
+    UIGestureRecognizerDelegate,
+    VoiceRecordingAttachmentPresentationViewDelegate
+{
     /// The object that acts as the data source of the message list.
     public weak var dataSource: ChatMessageListVCDataSource? {
         didSet {
@@ -87,6 +89,15 @@ open class ChatMessageListVC: _ViewController,
     /// A formatter that converts the message date to textual representation.
     /// This date formatter is used between each group message and the top overlay.
     public lazy var dateSeparatorFormatter = appearance.formatters.messageDateSeparator
+
+    /// The audioPlayer that will be used for the playback of VoiceRecordings.
+    public var audioPlayer: AudioPlaying?
+
+    /// The feedbackGenerator that will be used to provide haptic feedback when the UI elements
+    /// of audio playback are being interacted with.
+    public private(set) lazy var audioSessionFeedbackGenerator: AudioSessionFeedbackGenerator = components
+        .audioSessionFeedbackGenerator
+        .init()
 
     /// A boolean value that determines whether the date overlay should be displayed while scrolling.
     open var isDateOverlayEnabled: Bool {
@@ -782,6 +793,38 @@ open class ChatMessageListVC: _ViewController,
     ) -> Bool {
         // To prevent the gesture recognizer consuming up the events from UIControls, we receive touch only when the view isn't a UIControl.
         !(touch.view is UIControl)
+    }
+
+    // MARK: - VoiceRecordingAttachmentPresentationViewDelegate
+
+    open func voiceRecordingAttachmentPresentationViewConnect(delegate: AudioPlayingDelegate) {
+        audioPlayer?.subscribe(delegate)
+    }
+
+    open func voiceRecordingAttachmentPresentationViewBeginPayback(
+        _ attachment: ChatMessageVoiceRecordingAttachment
+    ) {
+        audioSessionFeedbackGenerator.feedbackForPlay()
+        audioPlayer?.loadAsset(from: attachment.voiceRecordingURL)
+    }
+
+    open func voiceRecordingAttachmentPresentationViewPausePayback() {
+        audioSessionFeedbackGenerator.feedbackForPause()
+        audioPlayer?.pause()
+    }
+
+    open func voiceRecordingAttachmentPresentationViewUpdatePlaybackRate(
+        _ audioPlaybackRate: AudioPlaybackRate
+    ) {
+        audioSessionFeedbackGenerator.feedbackForPlaybackRateChange()
+        audioPlayer?.updateRate(audioPlaybackRate)
+    }
+
+    open func voiceRecordingAttachmentPresentationViewSeek(
+        to timeInterval: TimeInterval
+    ) {
+        audioSessionFeedbackGenerator.feedbackForSeeking()
+        audioPlayer?.seek(to: timeInterval)
     }
 }
 
