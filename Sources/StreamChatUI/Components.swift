@@ -43,6 +43,9 @@ public struct Components {
     /// A button used for sending a message, or any type of content.
     public var sendButton: UIButton.Type = SendButton.self
 
+    /// A button used for recording a voice message,
+    public var recordButton: RecordButton.Type = RecordButton.self
+
     /// A view for showing a cooldown when Slow Mode is active.
     public var cooldownView: CooldownView.Type = CooldownView.self
 
