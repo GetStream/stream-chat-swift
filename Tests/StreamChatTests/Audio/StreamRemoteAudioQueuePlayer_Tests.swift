@@ -8,7 +8,7 @@ import StreamChatTestTools
 import XCTest
 
 final class StreamRemoteAudioQueuePlayer_Tests: XCTestCase {
-    private var datasource: MockAudioQueuePlayerDatasource!
+    private var dataSource: MockAudioQueuePlayerDatasource!
     private var assetPropertyLoader: MockAssetPropertyLoader!
     private var playerObserver: MockAudioPlayerObserver!
     private var audioSessionConfigurator: MockAudioSessionConfigurator!
@@ -18,7 +18,7 @@ final class StreamRemoteAudioQueuePlayer_Tests: XCTestCase {
 
     override func setUpWithError() throws {
         try super.setUpWithError()
-        datasource = .init()
+        dataSource = .init()
         assetPropertyLoader = .init()
         audioSessionConfigurator = .init()
         playerObserver = .init()
@@ -33,7 +33,7 @@ final class StreamRemoteAudioQueuePlayer_Tests: XCTestCase {
         )
 
         player.mockPlayerObserver = playerObserver
-        subject.datasource = datasource
+        subject.dataSource = dataSource
     }
 
     override func tearDownWithError() throws {
@@ -43,13 +43,13 @@ final class StreamRemoteAudioQueuePlayer_Tests: XCTestCase {
         audioSessionConfigurator = nil
         playerObserver = nil
         assetPropertyLoader = nil
-        datasource = nil
+        dataSource = nil
         try super.tearDownWithError()
     }
 
     // MARK: - playbackWillStop(_:)
 
-    func test_playbackDidStop_datasourceProvidesNoNextTrackURL_stopsPlayback() {
+    func test_playbackDidStop_dataSourceProvidesNoNextTrackURL_stopsPlayback() {
         let currentURL = URL.unique()
         assetPropertyLoader.loadPropertiesResult = .success(.init(url: currentURL))
         subject.loadAsset(from: currentURL)
@@ -57,12 +57,12 @@ final class StreamRemoteAudioQueuePlayer_Tests: XCTestCase {
         /// Simulate playback approaching stop
         playerObserver.addStoppedPlaybackObserverWasCalledWithBlock?(.init(url: currentURL))
 
-        XCTAssertTrue((datasource.audioQueuePlayerNextAssetURLWasCalledWithAudioPlayer as? StreamRemoteAudioQueuePlayer) === subject)
-        XCTAssertEqual(datasource.audioQueuePlayerNextAssetURLWasCalledWithCurrentAssetURL, currentURL)
+        XCTAssertTrue((dataSource.audioQueuePlayerNextAssetURLWasCalledWithAudioPlayer as? StreamRemoteAudioQueuePlayer) === subject)
+        XCTAssertEqual(dataSource.audioQueuePlayerNextAssetURLWasCalledWithCurrentAssetURL, currentURL)
         XCTAssertTrue(player.pauseWasCalled)
     }
 
-    func test_playbackDidStop_datasourceProvidesNextTrackURL_loadsAsset() {
+    func test_playbackDidStop_dataSourceProvidesNextTrackURL_loadsAsset() {
         let currentURL = URL.unique()
         let nextTrackURL = URL.unique()
         assetPropertyLoader.loadPropertiesResult = .success(.init(url: currentURL))
@@ -70,13 +70,13 @@ final class StreamRemoteAudioQueuePlayer_Tests: XCTestCase {
         /// Prepare for the second call
         player.replaceCurrentItemWasCalledWithItem = nil
         assetPropertyLoader.loadPropertiesResult = .success(.init(url: nextTrackURL))
-        datasource.audioQueuePlayerNextAssetURLResult = nextTrackURL
+        dataSource.audioQueuePlayerNextAssetURLResult = nextTrackURL
 
         /// Simulate playback approaching stop
         playerObserver.addStoppedPlaybackObserverWasCalledWithBlock?(.init(url: currentURL))
 
-        XCTAssertTrue((datasource.audioQueuePlayerNextAssetURLWasCalledWithAudioPlayer as? StreamRemoteAudioQueuePlayer) === subject)
-        XCTAssertEqual(datasource.audioQueuePlayerNextAssetURLWasCalledWithCurrentAssetURL, currentURL)
+        XCTAssertTrue((dataSource.audioQueuePlayerNextAssetURLWasCalledWithAudioPlayer as? StreamRemoteAudioQueuePlayer) === subject)
+        XCTAssertEqual(dataSource.audioQueuePlayerNextAssetURLWasCalledWithCurrentAssetURL, currentURL)
         XCTAssertEqual((player.replaceCurrentItemWasCalledWithItem?.asset as? AVURLAsset)?.url, nextTrackURL)
     }
 }

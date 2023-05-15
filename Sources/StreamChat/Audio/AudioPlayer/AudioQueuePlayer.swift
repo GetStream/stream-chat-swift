@@ -20,10 +20,10 @@ public protocol AudioQueuePlayerDatasource: AnyObject {
 }
 
 open class StreamRemoteAudioQueuePlayer: StreamRemoteAudioPlayer {
-    open weak var datasource: AudioQueuePlayerDatasource?
+    open weak var dataSource: AudioQueuePlayerDatasource?
 
     override open func playbackWillStop(_ playerItem: AVPlayerItem) {
-        if let nextAssetURL = datasource?.audioQueuePlayerNextAssetURL(self, currentAssetURL: context.assetLocation) {
+        if let nextAssetURL = dataSource?.audioQueuePlayerNextAssetURL(self, currentAssetURL: context.assetLocation) {
             loadAsset(from: nextAssetURL)
         } else {
             stop()
