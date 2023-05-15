@@ -59,7 +59,7 @@ open class ComposerView: _View, ThemeProvider {
         .withoutAutoresizingMaskConstraints
         .withAccessibilityIdentifier(identifier: "sendButton")
 
-    /// A button to record an async message.
+    /// A button to record an VoiceRecording.
     public private(set) lazy var recordButton: RecordButton = components
         .recordButton
         .init()
