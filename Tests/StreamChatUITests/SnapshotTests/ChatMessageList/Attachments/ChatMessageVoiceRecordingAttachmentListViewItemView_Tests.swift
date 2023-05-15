@@ -17,7 +17,7 @@ final class ChatMessageVoiceRecordingAttachmentListViewItemView_Tests: XCTestCas
     override func setUp() {
         super.setUp()
         var components = Components.mock
-        components.voiceRecordingEnabled = true
+        components.isVoiceRecordingEnabled = true
         subject.components = components
         subject.presenter = presenter
         subject.setUp()
