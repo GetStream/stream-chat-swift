@@ -9,7 +9,9 @@ import SwiftUI
 import XCTest
 
 final class QuotedChatMessageView_Tests: XCTestCase {
-    var view: QuotedChatMessageView!
+    private var view: QuotedChatMessageView!
+
+    // MARK: - Lifecycle
 
     override func setUp() {
         super.setUp()
@@ -23,6 +25,8 @@ final class QuotedChatMessageView_Tests: XCTestCase {
         super.tearDown()
         view = nil
     }
+
+    // MARK: - appearance
 
     func test_emptyAppearance() {
         view.content = makeContent(text: "")
@@ -97,6 +101,17 @@ final class QuotedChatMessageView_Tests: XCTestCase {
         view.content = makeContent(text: "", attachments: [attachment.asAnyAttachment])
 
         AssertSnapshot(view, suffix: "-emptyText")
+    }
+
+    func test_withVoiceRecordingAttachmentAppearance() {
+        let attachment = ChatMessageVoiceRecordingAttachment.mock(
+            id: .unique,
+            duration: 59
+        )
+
+        view.content = makeContent(text: "Hello Vader!", attachments: [attachment.asAnyAttachment])
+
+        AssertSnapshot(view)
     }
 
     func test_withLongTextAppearance() {
