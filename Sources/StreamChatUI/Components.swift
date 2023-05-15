@@ -429,10 +429,26 @@ public struct Components {
     // MARK: - Composer VoiceRecording components
 
     /// A flag which determines if `VoiceRecording` feature will be enabled.
-    public var voiceRecordingEnabled = false
+    public var isVoiceRecordingEnabled = false
+
+    /// When set to `true` recorded messages can be grouped together and send as part of one message.
+    public var isVoiceRecordingConfirmationRequiredEnabled = true
+
+    /// The ViewController that handles the recording flow.
+    public var voiceRecordingViewController: VoiceRecordingVC.Type = VoiceRecordingVC.self
+
+    /// The AudioPlayer that will be used for the voiceRecording playback.
+    public var audioPlayer: AudioPlaying.Type = StreamRemoteAudioQueuePlayer.self
+
+    /// The AudioRecorder that will be used to record new voiceRecordings.
+    public var audioRecorder: AudioRecording.Type = StreamAudioRecorder.self
 
     /// A feedbackGenerator that will be used to provide haptic feedback during the recording flow.
     public var audioSessionFeedbackGenerator: AudioSessionFeedbackGenerator.Type = StreamAudioSessionFeedbackGenerator.self
+
+    /// If the AudioPlayer supports queuing, this object will be asked to provide the VoiceRecording to
+    /// play automatically, once the current one completes.
+    public var audioQueuePlayerNextItemProvider: AudioQueuePlayerNextItemProvider.Type = AudioQueuePlayerNextItemProvider.self
 
     // MARK: - Current user components
 
