@@ -37,7 +37,7 @@ public protocol AudioRecording {
 // MARK: - Implementation
 
 /// Definition of a class to handle audio recording
-open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegate {
+open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegate, AppStateObserverDelegate {
     /// Contains the configuration properties required by the AudioRecorder
     public struct Configuration {
         /// The settings that will be used to create **internally** the AVAudioRecorder instances
@@ -126,6 +126,8 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
     /// If a recording session is in progress, this property holds a reference to the audio recorder used
     private var audioRecorder: AVAudioRecorder?
 
+    private let appStateObserver: AppStateObserving
+
     /// If a recording session is in progress, this property holds a reference to the timer that is being used
     /// to receive the updated meters from the active `AVAudioRecorder` instance.
     private var metersObservingTimer: RepeatingTimerControl?
@@ -157,6 +159,7 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
             configuration: configuration,
             audioSessionConfigurator: StreamAudioSessionConfigurator(),
             audioRecorderMeterNormaliser: AudioValuePercentageNormaliser(),
+            appStateObserver: StreamAppStateObserver(),
             audioRecorderAVProvider: AVAudioRecorder.init
         )
     }
@@ -165,15 +168,19 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
         configuration: Configuration,
         audioSessionConfigurator: AudioSessionConfiguring,
         audioRecorderMeterNormaliser: AudioValuePercentageNormaliser,
+        appStateObserver: AppStateObserving,
         audioRecorderAVProvider: @escaping (URL, [String: Any]) throws -> AVAudioRecorder
     ) {
         self.audioSessionConfigurator = audioSessionConfigurator
         self.configuration = configuration
         self.audioRecorderMeterNormaliser = audioRecorderMeterNormaliser
+        self.appStateObserver = appStateObserver
         self.audioRecorderAVProvider = audioRecorderAVProvider
         multicastDelegate = .init()
 
         super.init()
+
+        setUp()
     }
 
     // MARK: - AudioRecording
@@ -256,18 +263,6 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
         }
     }
 
-    open func deleteRecording() {
-        guard let audioRecorder = audioRecorder else {
-            return
-        }
-
-        if audioRecorder.deleteRecording() {
-            multicastDelegate.invoke { $0.audioRecorderDeletedRecording(self) }
-        } else {
-            multicastDelegate.invoke { $0.audioRecorder(self, didFailWithError: AudioRecorderError.failedToDelete()) }
-        }
-    }
-
     // MARK: - AVAudioRecorderDelegate
 
     open func audioRecorderDidFinishRecording(
@@ -336,7 +331,26 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
         stopRecording()
     }
 
+    // MARK: - AppStateObserverDelegate
+
+    func applicationDidMoveToBackground() {
+        /// If an we move to the background then we want to stop the recording as we don't
+        /// have the ability to pause and resume it afterwards.
+        stopRecording()
+    }
+
+    func applicationDidMoveToForeground() {
+        /// Once we return to the foreground and the execution return back to us, we have an opportunity
+        /// to resume the interrupted recording.
+        /// - Note: As we don't currently support pause/resume on recording this is a No-Op call
+        /* No-op */
+    }
+
     // MARK: - Private Helpers
+
+    private func setUp() {
+        appStateObserver.subscribe(self)
+    }
 
     /// Private method to create a new AVAudioRecorder instance
     private func makeAudioRecorder() throws -> AVAudioRecorder {

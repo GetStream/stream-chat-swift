@@ -6,7 +6,7 @@
 import Foundation
 
 public extension ChatMessageVoiceRecordingAttachment {
-    /// Creates a new `ChatMessageFileAttachment` object from the provided data.
+    /// Creates a new `ChatMessageVoiceRecordingAttachment` object from the provided data.
     static func mock(
         id: AttachmentId,
         title: String = "recording.aac",
@@ -17,8 +17,8 @@ public extension ChatMessageVoiceRecordingAttachment {
     ) -> Self {
         .init(
             id: id,
-            type: .file,
-            payload: .init(
+            type: .voiceRecording,
+            payload: VoiceRecordingAttachmentPayload(
                 title: title,
                 voiceRecordingRemoteURL: assetURL,
                 file: file,

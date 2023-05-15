@@ -89,23 +89,3 @@ final class AudioAnalysisEngine_Tests: XCTestCase {
         XCTAssertEqual(expected, actual)
     }
 }
-
-private final class MockAudioAnalyser: AudioAnalysing {
-    private(set) var analyseWasCalledWithAudioAnalysisContext: AudioAnalysisContext?
-    private(set) var analyseWasCalledWithTargetSamples: Int?
-    var analyseResult: Result<[Float], Error> = .success([])
-
-    func analyse(
-        audioAnalysisContext context: AudioAnalysisContext,
-        for targetSamples: Int
-    ) throws -> [Float] {
-        analyseWasCalledWithAudioAnalysisContext = context
-        analyseWasCalledWithTargetSamples = targetSamples
-        switch analyseResult {
-        case let .success(result):
-            return result
-        case let .failure(error):
-            throw error
-        }
-    }
-}
