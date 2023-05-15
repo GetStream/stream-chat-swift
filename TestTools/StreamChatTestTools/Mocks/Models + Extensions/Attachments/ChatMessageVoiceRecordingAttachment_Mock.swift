@@ -13,6 +13,8 @@ public extension ChatMessageVoiceRecordingAttachment {
         assetURL: URL = URL(string: "http://asset.url")!,
         file: AttachmentFile = AttachmentFile(type: .aac, size: 120, mimeType: "audio/aac"),
         localState: LocalAttachmentState? = .uploaded,
+        duration: TimeInterval? = nil,
+        waveformData: [Float] = [],
         extraData: [String: RawJSON]? = nil
     ) -> Self {
         .init(
@@ -22,6 +24,8 @@ public extension ChatMessageVoiceRecordingAttachment {
                 title: title,
                 voiceRecordingRemoteURL: assetURL,
                 file: file,
+                duration: duration,
+                waveformData: waveformData,
                 extraData: extraData
             ),
             uploadingState: localState.map {
