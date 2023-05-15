@@ -16,6 +16,7 @@ final class StreamAudioRecorder_Tests: XCTestCase {
     private lazy var audioSessionConfigurator: MockAudioSessionConfigurator! = .init()
     private lazy var audioRecorderMeterNormaliser: MockΑudioRecorderMeterNormaliser! = .init()
     private lazy var mockRecorderDelegate: MockAudioRecordingDelegate! = .init()
+    private lazy var appstateObserver: MockAppStateObserver! = .init()
     private lazy var stubAVAudioRecorder: StubAudioRecorder! = .init()
     private lazy var genericError: Error! = NSError(domain: "test", code: 10)
 
@@ -30,6 +31,7 @@ final class StreamAudioRecorder_Tests: XCTestCase {
         audioRecorderMeterNormaliser = nil
         mockRecorderDelegate = nil
         stubAVAudioRecorder = nil
+        appstateObserver = nil
         genericError = nil
         subject = nil
         super.tearDown()
@@ -53,6 +55,8 @@ final class StreamAudioRecorder_Tests: XCTestCase {
         setAudioRecorder()
         let completionHandlerExpectation = expectation(description: "Completion handler was called.")
         completionHandlerExpectation.isInverted = true
+        stubAVAudioRecorder.stubProperty(\.isRecording, with: false)
+        stubAVAudioRecorder.stubProperty(\.currentTime, with: 10)
 
         subject?.beginRecording { completionHandlerExpectation.fulfill() }
         audioSessionConfigurator.requestRecordPermissionCompletionHandler?(false)
@@ -254,28 +258,6 @@ final class StreamAudioRecorder_Tests: XCTestCase {
         assertDidFailWithError(genericError)
     }
 
-    // MARK: - deleteRecording
-
-    func test_deleteRecording_deleteRecordingReturnsFalse_callsDidFailOnDelegate() {
-        simulateIsRecording()
-        stubAVAudioRecorder.deleteRecordingResult = false
-
-        subject.deleteRecording()
-
-        assertDidFailWithClientError(AudioRecorderError.failedToDelete())
-    }
-
-    func test_deleteRecording_deleteRecordingReturnsTrue_callsDeletedRecordingOnDelegate() {
-        simulateIsRecording()
-        stubAVAudioRecorder.deleteRecordingResult = true
-
-        subject.deleteRecording()
-
-        XCTAssertTrue(
-            (mockRecorderDelegate.deletedRecordingWasCalledWithAudioRecorder as? StreamAudioRecorder) == subject
-        )
-    }
-
     // MARK: - audioRecorderDidFinishRecording(_:successfully:)
 
     func test_audioRecorderDidFinishRecording_flagIsFalse_callsDidFailOnDelegate() {
@@ -362,6 +344,7 @@ final class StreamAudioRecorder_Tests: XCTestCase {
             configuration: configuration,
             audioSessionConfigurator: audioSessionConfigurator,
             audioRecorderMeterNormaliser: audioRecorderMeterNormaliser,
+            appStateObserver: appstateObserver,
             audioRecorderAVProvider: {
                 self.avAudioRecorderFactoryWasCalledWithURL = $0
                 self.avAudioRecorderFactoryWasCalledWithSettings = $1
@@ -391,6 +374,7 @@ final class StreamAudioRecorder_Tests: XCTestCase {
             setAudioRecorder()
         }
 
+        stubAVAudioRecorder.stubProperty(\.currentTime, with: 10)
         subject?.beginRecording { completionHandlerExpectation.fulfill() }
         audioSessionConfigurator.requestRecordPermissionCompletionHandler?(true)
         assertContextUpdate(.init(state: .recording, duration: 0, averagePower: 0), file: file, line: line)

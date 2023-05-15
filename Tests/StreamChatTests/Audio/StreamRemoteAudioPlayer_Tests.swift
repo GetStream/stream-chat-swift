@@ -284,32 +284,7 @@ final class StreamRemoteAudioPlayer_Tests: XCTestCase {
             isSeeking: false
         ))
     }
-
-    // MARK: - playbackContext
-
-    func test_playbackContext_URLMatchesCurrentItemsURL_returnsExpectedResult() {
-        mockAsset.stubProperty(\.duration, with: assetDuration)
-        assetPropertyLoader.loadPropertiesResult = .success(mockAsset)
-        subject.subscribe(audioPlayerDelegate)
-        subject.loadAsset(from: assetURL)
-
-        XCTAssertEqual(
-            subject.playbackContext(for: assetURL),
-            .init(
-                assetLocation: assetURL,
-                duration: 100,
-                currentTime: 0,
-                state: .playing,
-                rate: .normal,
-                isSeeking: false
-            )
-        )
-    }
-
-    func test_playbackContext_URLDoesNotMatchCurrentItemsURL_returnsNotLoaded() {
-        XCTAssertEqual(subject.playbackContext(for: assetURL), .notLoaded)
-    }
-
+    
     // MARK: - loadAsset
 
     func test_loadAsset_whenURLIsNotNil_assetLoadSucceeds_willCallPauseUpdateTheContextReplaceCurrentItemLoadPropertyAndPlay() {
