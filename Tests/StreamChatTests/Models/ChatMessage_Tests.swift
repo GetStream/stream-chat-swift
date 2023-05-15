@@ -375,6 +375,8 @@ final class ChatMessage_Tests: XCTestCase {
                     title: nil,
                     voiceRecordingRemoteURL: .unique(),
                     file: .init(url: .localYodaQuote),
+                    duration: nil,
+                    waveformData: nil,
                     extraData: nil
                 )
             )

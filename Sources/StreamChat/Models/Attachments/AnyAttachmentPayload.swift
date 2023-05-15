@@ -31,6 +31,12 @@ public struct AnyAttachmentLocalMetadata {
     /// The original width and height of an image or video attachment in Pixels.
     public var originalResolution: (width: Double, height: Double)?
 
+    /// The duration of a media file
+    public var duration: TimeInterval?
+
+    /// The data that can be used to render a waveform visualisation of an audio file.
+    public var waveformData: [Float]?
+
     public init() {}
 }
 
@@ -141,6 +147,8 @@ public extension AnyAttachmentPayload {
                 title: localFileURL.lastPathComponent,
                 voiceRecordingRemoteURL: localFileURL,
                 file: file,
+                duration: localMetadata?.duration,
+                waveformData: localMetadata?.waveformData,
                 extraData: extraData
             )
         default:
