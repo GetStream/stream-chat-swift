@@ -109,7 +109,7 @@ final class DemoChatMessageActionsVC: ChatMessageActionsVC {
         ) {
             self.title = title
             self.action = action
-            icon = UIImage(systemName: "pin")!
+            icon = UIImage(systemName: "pin") ?? .init()
         }
     }
 
