@@ -129,6 +129,8 @@ class AppConfigViewController: UITableViewController {
         case isUniqueReactionsEnabled
         case shouldMessagesStartAtTheTop
         case threadRendersParentMessageEnabled
+        case isVoiceRecordingEnabled
+        case isVoiceRecordingConfirmationRequiredEnabled
     }
 
     enum ChatClientConfigOption: String, CaseIterable {
@@ -356,6 +358,14 @@ class AppConfigViewController: UITableViewController {
         case .threadRendersParentMessageEnabled:
             cell.accessoryView = makeSwitchButton(Components.default.threadRendersParentMessageEnabled) { newValue in
                 Components.default.threadRendersParentMessageEnabled = newValue
+            }
+        case .isVoiceRecordingEnabled:
+            cell.accessoryView = makeSwitchButton(Components.default.isVoiceRecordingEnabled) { newValue in
+                Components.default.isVoiceRecordingEnabled = newValue
+            }
+        case .isVoiceRecordingConfirmationRequiredEnabled:
+            cell.accessoryView = makeSwitchButton(Components.default.isVoiceRecordingConfirmationRequiredEnabled) { newValue in
+                Components.default.isVoiceRecordingConfirmationRequiredEnabled = newValue
             }
         }
     }

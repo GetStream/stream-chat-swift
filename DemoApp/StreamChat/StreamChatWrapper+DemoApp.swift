@@ -23,9 +23,6 @@ extension StreamChatWrapper {
         // Create Client
         client = ChatClient(config: config)
 
-        // Customize UI
-        configureUI()
-
         // L10N
         let localizationProvider = Appearance.default.localizationProvider
         Appearance.default.localizationProvider = { key, table in
@@ -41,6 +38,7 @@ extension StreamChatWrapper {
         // Customize UI configuration
         Components.default.messageListDateSeparatorEnabled = true
         Components.default.messageListDateOverlayEnabled = true
+        Components.default.isVoiceRecordingEnabled = true
 
         // Customize UI components
         Components.default.channelListRouter = DemoChatChannelListRouter.self
