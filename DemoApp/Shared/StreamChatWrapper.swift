@@ -24,7 +24,9 @@ final class StreamChatWrapper {
         return config
     }()
 
-    private init() {}
+    private init() {
+        configureUI()
+    }
 }
 
 extension StreamChatWrapper {
