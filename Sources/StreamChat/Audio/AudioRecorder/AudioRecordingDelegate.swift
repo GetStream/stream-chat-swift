@@ -12,9 +12,6 @@ public protocol AudioRecordingDelegate: AnyObject {
     /// Notifies the delegate that the audio recording finished at the specified URL.
     func audioRecorder(_ audioRecorder: AudioRecording, didFinishRecordingAtURL: URL)
 
-    /// Notifies the delegate that the audio recording was deleted.
-    func audioRecorderDeletedRecording(_ audioRecorder: AudioRecording)
-
     /// Notifies the delegate that the audio recording failed with an error.
     func audioRecorder(_ audioRecorder: AudioRecording, didFailWithError: Error)
 }

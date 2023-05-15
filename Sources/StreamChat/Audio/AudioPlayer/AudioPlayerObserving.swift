@@ -90,7 +90,7 @@ final class StreamPlayerObserver: AudioPlayerObserving {
     ) {
         timeControlStatusObserver = player.observe(
             \.timeControlStatus,
-            changeHandler: { _, change in block(change.newValue) }
+            changeHandler: { player, _ in block(player.timeControlStatus) }
         )
     }
 

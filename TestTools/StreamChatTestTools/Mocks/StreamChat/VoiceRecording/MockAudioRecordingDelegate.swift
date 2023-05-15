@@ -13,8 +13,6 @@ public final class MockAudioRecordingDelegate: AudioRecordingDelegate {
     public private(set) var didFinishRecordingAtURLWasCalledWithAudioRecorder: AudioRecording?
     public private(set) var didFinishRecordingAtURLWasCalledWithURL: URL?
 
-    public private(set) var deletedRecordingWasCalledWithAudioRecorder: AudioRecording?
-
     public private(set) var didFailWithErrorWasCalledWithAudioRecorder: AudioRecording?
     public private(set) var didFailWithErrorWasCalledWithError: Error?
 
@@ -38,10 +36,6 @@ public final class MockAudioRecordingDelegate: AudioRecordingDelegate {
     ) {
         didFinishRecordingAtURLWasCalledWithAudioRecorder = audioRecorder
         didFinishRecordingAtURLWasCalledWithURL = location
-    }
-
-    public func audioRecorderDeletedRecording(_ audioRecorder: AudioRecording) {
-        deletedRecordingWasCalledWithAudioRecorder = audioRecorder
     }
 
     public func audioRecorder(
