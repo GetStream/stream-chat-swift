@@ -172,5 +172,13 @@ open class InputTextView: UITextView, AppearanceProvider {
             // so we must call this function
             setTextViewHeight()
         }
+
+        // When pasting text, we should scroll to the bottom, so that if the text
+        // is very long, it correctly scrolls to the input caret.
+        if let pasteboardText = UIPasteboard.general.string {
+            let padding = directionalLayoutMargins.leading
+            let bottomOffset = contentSize.height - padding
+            setContentOffset(.init(x: 0, y: contentSize.height - padding), animated: true)
+        }
     }
 }
