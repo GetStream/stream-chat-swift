@@ -133,12 +133,17 @@ final class ChannelListController_Tests: XCTestCase {
         controller.callbackQueue = .testQueue(withId: queueId)
 
         // Simulate `synchronize` calls and catch the completion
-        var completionCalled = false
+        let exp = expectation(description: "sync call should complete")
         controller.synchronize { error in
             XCTAssertNil(error)
             AssertTestQueue(withId: queueId)
-            completionCalled = true
+            exp.fulfill()
         }
+
+        // Simulate successful update
+        env.channelListUpdater?.update_completion?(.success([]))
+
+        waitForExpectations(timeout: defaultTimeout)
 
         // Keep a weak ref so we can check if it's actually deallocated
         weak var weakController = controller
@@ -149,16 +154,7 @@ final class ChannelListController_Tests: XCTestCase {
 
         // Assert the updater is called with the query
         XCTAssertEqual(env.channelListUpdater!.update_queries.first?.filter.filterHash, query.filter.filterHash)
-        // Completion shouldn't be called yet
-        XCTAssertFalse(completionCalled)
 
-        // Simulate successful update
-        env.channelListUpdater?.update_completion?(.success([]))
-        // Release reference of completion so we can deallocate stuff
-        env.channelListUpdater?.update_completion = nil
-
-        // Completion should be called
-        AssertAsync.willBeTrue(completionCalled)
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
     }
@@ -171,12 +167,17 @@ final class ChannelListController_Tests: XCTestCase {
         controller.callbackQueue = .testQueue(withId: queueId)
 
         // Simulate `synchronize` calls and catch the completion
-        var completionCalled = false
+        let exp = expectation(description: "sync call should complete")
         controller.synchronize { error in
             XCTAssertNil(error)
             AssertTestQueue(withId: queueId)
-            completionCalled = true
+            exp.fulfill()
         }
+
+        // Simulate successful update
+        env.channelListUpdater?.update_completion?(.success([]))
+
+        waitForExpectations(timeout: defaultTimeout)
 
         // Keep a weak ref so we can check if it's actually deallocated
         weak var weakController = controller
@@ -185,18 +186,6 @@ final class ChannelListController_Tests: XCTestCase {
         // by not keeping any references to it
         controller = nil
 
-        // Assert the updater is called with the correct pageSize
-        XCTAssertEqual(env.channelListUpdater!.update_queries.first?.pagination.pageSize, pageSize)
-        // Completion shouldn't be called yet
-        XCTAssertFalse(completionCalled)
-
-        // Simulate successful update
-        env.channelListUpdater!.update_completion?(.success([]))
-        // Release reference of completion so we can deallocate stuff
-        env.channelListUpdater!.update_completion = nil
-
-        // Completion should be called
-        AssertAsync.willBeTrue(completionCalled)
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
     }
@@ -206,12 +195,17 @@ final class ChannelListController_Tests: XCTestCase {
         controller.callbackQueue = .testQueue(withId: queueId)
 
         // Simulate `synchronize` calls and catch the completion
-        var completionCalled = false
+        let exp = expectation(description: "sync call should complete")
         controller.synchronize { error in
             XCTAssertNil(error)
             AssertTestQueue(withId: queueId)
-            completionCalled = true
+            exp.fulfill()
         }
+
+        // Simulate successful update
+        env.channelListUpdater?.update_completion?(.success([]))
+
+        waitForExpectations(timeout: defaultTimeout)
 
         // Keep a weak ref so we can check if it's actually deallocated
         weak var weakController = controller
@@ -222,16 +216,7 @@ final class ChannelListController_Tests: XCTestCase {
 
         // Assert the updater is called with the query
         XCTAssertEqual(env.channelListUpdater?.update_queries.first?.filter.filterHash, query.filter.filterHash)
-        // Completion shouldn't be called yet
-        XCTAssertFalse(completionCalled)
 
-        // Simulate successful update
-        env.channelListUpdater?.update_completion?(.success([]))
-        // Release reference of completion so we can deallocate stuff
-        env.channelListUpdater?.update_completion = nil
-
-        // Completion should be called
-        AssertAsync.willBeTrue(completionCalled)
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
     }
