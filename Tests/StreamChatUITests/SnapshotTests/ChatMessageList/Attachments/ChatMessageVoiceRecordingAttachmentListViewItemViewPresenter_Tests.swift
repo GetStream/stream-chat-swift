@@ -20,7 +20,7 @@ final class ChatMessageVoiceRecordingAttachmentListViewItemViewPresenter_Tests: 
     override func setUp() {
         super.setUp()
         var components = Components.mock
-        components.voiceRecordingEnabled = true
+        components.isVoiceRecordingEnabled = true
         view.components = components
         spyView.components = components
 
