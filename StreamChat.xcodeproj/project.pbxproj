@@ -40,6 +40,30 @@
 		400F063229A63A0B00242A86 /* ChatMessageDecorationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 400F063029A63A0B00242A86 /* ChatMessageDecorationView.swift */; };
 		400F063529A65DD500242A86 /* ChatMessageCell_DecorationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 400F063429A65DD500242A86 /* ChatMessageCell_DecorationTests.swift */; };
 		400F063C29A6632F00242A86 /* ChatMessageListDateSeparatorView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 400F063B29A6632F00242A86 /* ChatMessageListDateSeparatorView_Tests.swift */; };
+		401105292A12734800F877C7 /* WaveformView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 401105272A12734800F877C7 /* WaveformView.swift */; };
+		4011052A2A12734800F877C7 /* WaveformView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 401105272A12734800F877C7 /* WaveformView.swift */; };
+		4011052B2A12734800F877C7 /* AudioVisualizationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 401105282A12734800F877C7 /* AudioVisualizationView.swift */; };
+		4011052C2A12734800F877C7 /* AudioVisualizationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 401105282A12734800F877C7 /* AudioVisualizationView.swift */; };
+		401105462A12735900F877C7 /* WaveformView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4011052F2A12735900F877C7 /* WaveformView_Tests.swift */; };
+		401105472A12735900F877C7 /* WaveformView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4011052F2A12735900F877C7 /* WaveformView_Tests.swift */; };
+		401105482A12735900F877C7 /* AudioVisualizationView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 401105302A12735900F877C7 /* AudioVisualizationView_Tests.swift */; };
+		401105492A12735900F877C7 /* AudioVisualizationView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 401105302A12735900F877C7 /* AudioVisualizationView_Tests.swift */; };
+		4011054A2A12735900F877C7 /* test_appearance_isRecording_snapshotsAreAsExpected.extraExtraExtraLarge-light.png in Resources */ = {isa = PBXBuildFile; fileRef = 401105332A12735900F877C7 /* test_appearance_isRecording_snapshotsAreAsExpected.extraExtraExtraLarge-light.png */; };
+		4011054B2A12735900F877C7 /* test_appearance_isPlaying_snapshotsAreAsExpected.extraExtraExtraLarge-light.png in Resources */ = {isa = PBXBuildFile; fileRef = 401105342A12735900F877C7 /* test_appearance_isPlaying_snapshotsAreAsExpected.extraExtraExtraLarge-light.png */; };
+		4011054C2A12735900F877C7 /* test_appearance_isPlaying_snapshotsAreAsExpected.small-dark.png in Resources */ = {isa = PBXBuildFile; fileRef = 401105352A12735900F877C7 /* test_appearance_isPlaying_snapshotsAreAsExpected.small-dark.png */; };
+		4011054D2A12735900F877C7 /* test_appearance_isRecording_snapshotsAreAsExpected.default-light.png in Resources */ = {isa = PBXBuildFile; fileRef = 401105362A12735900F877C7 /* test_appearance_isRecording_snapshotsAreAsExpected.default-light.png */; };
+		4011054E2A12735900F877C7 /* test_appearance_isRecording_snapshotsAreAsExpected.small-dark.png in Resources */ = {isa = PBXBuildFile; fileRef = 401105372A12735900F877C7 /* test_appearance_isRecording_snapshotsAreAsExpected.small-dark.png */; };
+		4011054F2A12735900F877C7 /* test_appearance_isPlaying_snapshotsAreAsExpected.rightToLeftLayout-default.png in Resources */ = {isa = PBXBuildFile; fileRef = 401105382A12735900F877C7 /* test_appearance_isPlaying_snapshotsAreAsExpected.rightToLeftLayout-default.png */; };
+		401105502A12735900F877C7 /* test_appearance_isPlaying_snapshotsAreAsExpected.default-light.png in Resources */ = {isa = PBXBuildFile; fileRef = 401105392A12735900F877C7 /* test_appearance_isPlaying_snapshotsAreAsExpected.default-light.png */; };
+		401105512A12735900F877C7 /* test_appearance_isRecording_snapshotsAreAsExpected.rightToLeftLayout-default.png in Resources */ = {isa = PBXBuildFile; fileRef = 4011053A2A12735900F877C7 /* test_appearance_isRecording_snapshotsAreAsExpected.rightToLeftLayout-default.png */; };
+		401105522A12735900F877C7 /* test_appearance_silence_snapshotsAreAsExpected.small-dark.png in Resources */ = {isa = PBXBuildFile; fileRef = 4011053C2A12735900F877C7 /* test_appearance_silence_snapshotsAreAsExpected.small-dark.png */; };
+		401105532A12735900F877C7 /* test_appearance_silence_snapshotsAreAsExpected.default-light.png in Resources */ = {isa = PBXBuildFile; fileRef = 4011053D2A12735900F877C7 /* test_appearance_silence_snapshotsAreAsExpected.default-light.png */; };
+		401105542A12735900F877C7 /* test_appearance_nonSilence_snapshotsAreAsExpected.rightToLeftLayout-default.png in Resources */ = {isa = PBXBuildFile; fileRef = 4011053E2A12735900F877C7 /* test_appearance_nonSilence_snapshotsAreAsExpected.rightToLeftLayout-default.png */; };
+		401105552A12735900F877C7 /* test_appearance_nonSilence_snapshotsAreAsExpected.extraExtraExtraLarge-light.png in Resources */ = {isa = PBXBuildFile; fileRef = 4011053F2A12735900F877C7 /* test_appearance_nonSilence_snapshotsAreAsExpected.extraExtraExtraLarge-light.png */; };
+		401105562A12735900F877C7 /* test_appearance_nonSilence_snapshotsAreAsExpected.small-dark.png in Resources */ = {isa = PBXBuildFile; fileRef = 401105402A12735900F877C7 /* test_appearance_nonSilence_snapshotsAreAsExpected.small-dark.png */; };
+		401105572A12735900F877C7 /* test_appearance_silence_snapshotsAreAsExpected.extraExtraExtraLarge-light.png in Resources */ = {isa = PBXBuildFile; fileRef = 401105412A12735900F877C7 /* test_appearance_silence_snapshotsAreAsExpected.extraExtraExtraLarge-light.png */; };
+		401105582A12735900F877C7 /* test_appearance_silence_snapshotsAreAsExpected.rightToLeftLayout-default.png in Resources */ = {isa = PBXBuildFile; fileRef = 401105422A12735900F877C7 /* test_appearance_silence_snapshotsAreAsExpected.rightToLeftLayout-default.png */; };
+		401105592A12735900F877C7 /* test_appearance_nonSilence_snapshotsAreAsExpected.default-light.png in Resources */ = {isa = PBXBuildFile; fileRef = 401105432A12735900F877C7 /* test_appearance_nonSilence_snapshotsAreAsExpected.default-light.png */; };
 		4012252F29C9CBD80034B60B /* StreamRemoteAudioPlayer_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4012252E29C9CBD80034B60B /* StreamRemoteAudioPlayer_Tests.swift */; };
 		401EBB6D29A79686004D9304 /* ChatMessagesCountDecorationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 401EBB6C29A79686004D9304 /* ChatMessagesCountDecorationView.swift */; };
 		401EBB6E29A79686004D9304 /* ChatMessagesCountDecorationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 401EBB6C29A79686004D9304 /* ChatMessagesCountDecorationView.swift */; };
@@ -74,6 +98,8 @@
 		404296EA2A011AC20089126D /* AudioSessionProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404296E82A011AC20089126D /* AudioSessionProtocol.swift */; };
 		404296EB2A011B050089126D /* AudioSessionProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404296E82A011AC20089126D /* AudioSessionProtocol.swift */; };
 		405D172D2A03E57C00A77C3B /* AVAssetTotalAudioSamples_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 405D172C2A03E57C00A77C3B /* AVAssetTotalAudioSamples_Tests.swift */; };
+		4067764F2A14CB550079B05C /* MediaButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4067764E2A14CB550079B05C /* MediaButton.swift */; };
+		406776502A14CB550079B05C /* MediaButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4067764E2A14CB550079B05C /* MediaButton.swift */; };
 		4068ECD2298D06BB0032D57A /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4068ECD0298D06720032D57A /* SplashViewController.swift */; };
 		4068ECD3298D06BB0032D57A /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4068ECD0298D06720032D57A /* SplashViewController.swift */; };
 		4068ECD4298D06BC0032D57A /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4068ECD0298D06720032D57A /* SplashViewController.swift */; };
@@ -124,6 +150,22 @@
 		40789D4929F6C1DC0018C2BB /* StreamAppStateObserver_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40789D4729F6C1DC0018C2BB /* StreamAppStateObserver_Tests.swift */; };
 		40789D4B29F6C87B0018C2BB /* AudioRecordingState_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40789D4A29F6C87B0018C2BB /* AudioRecordingState_Tests.swift */; };
 		40789D4C29F6C87B0018C2BB /* AudioRecordingState_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40789D4A29F6C87B0018C2BB /* AudioRecordingState_Tests.swift */; };
+		40824D1D2A1271B9003B61FD /* PillButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40824D172A1271B9003B61FD /* PillButton.swift */; };
+		40824D1E2A1271B9003B61FD /* PillButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40824D172A1271B9003B61FD /* PillButton.swift */; };
+		40824D1F2A1271B9003B61FD /* ClampedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40824D182A1271B9003B61FD /* ClampedView.swift */; };
+		40824D202A1271B9003B61FD /* ClampedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40824D182A1271B9003B61FD /* ClampedView.swift */; };
+		40824D212A1271B9003B61FD /* RecordButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40824D1A2A1271B9003B61FD /* RecordButton.swift */; };
+		40824D222A1271B9003B61FD /* RecordButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40824D1A2A1271B9003B61FD /* RecordButton.swift */; };
+		40824D232A1271B9003B61FD /* PlayPauseButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40824D1C2A1271B9003B61FD /* PlayPauseButton.swift */; };
+		40824D242A1271B9003B61FD /* PlayPauseButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40824D1C2A1271B9003B61FD /* PlayPauseButton.swift */; };
+		40824D2F2A1271D7003B61FD /* RecordButton_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40824D262A1271D7003B61FD /* RecordButton_Tests.swift */; };
+		40824D302A1271D7003B61FD /* RecordButton_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40824D262A1271D7003B61FD /* RecordButton_Tests.swift */; };
+		40824D352A1271D7003B61FD /* PillButton_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40824D2D2A1271D7003B61FD /* PillButton_Tests.swift */; };
+		40824D362A1271D7003B61FD /* PillButton_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40824D2D2A1271D7003B61FD /* PillButton_Tests.swift */; };
+		40824D372A1271D7003B61FD /* ClampedView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40824D2E2A1271D7003B61FD /* ClampedView_Tests.swift */; };
+		40824D382A1271D7003B61FD /* ClampedView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40824D2E2A1271D7003B61FD /* ClampedView_Tests.swift */; };
+		40824D492A1271EF003B61FD /* PlayPauseButton_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40824D3A2A1271EF003B61FD /* PlayPauseButton_Tests.swift */; };
+		40824D4A2A1271EF003B61FD /* PlayPauseButton_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40824D3A2A1271EF003B61FD /* PlayPauseButton_Tests.swift */; };
 		40A2961A29F8244500E0C186 /* ChatMessageVoiceRecordingAttachment_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A2961929F8244500E0C186 /* ChatMessageVoiceRecordingAttachment_Mock.swift */; };
 		40A458ED2A03AC7C00C198F7 /* AVAsset+TotalAudioSamples.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A458EC2A03AC7C00C198F7 /* AVAsset+TotalAudioSamples.swift */; };
 		40A458EE2A03AC7C00C198F7 /* AVAsset+TotalAudioSamples.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40A458EC2A03AC7C00C198F7 /* AVAsset+TotalAudioSamples.swift */; };
@@ -132,6 +174,7 @@
 		40B345F629C46AE500B96027 /* AudioPlaybackContext_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40FC029329BF419A00E2A1CD /* AudioPlaybackContext_Tests.swift */; };
 		40B345F729C46AE500B96027 /* StreamPlayerObserver_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4032C4B029C0BA110086849E /* StreamPlayerObserver_Tests.swift */; };
 		40B345F829C46AE500B96027 /* AudioPlaybackRate_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40FC028F29BE9B2000E2A1CD /* AudioPlaybackRate_Tests.swift */; };
+		40B735072A1273D5008BE681 /* Array+Sampling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40D3962D2A0910DE0020DDC9 /* Array+Sampling.swift */; };
 		40C20EB229F69E1D00702EEE /* ChatMessageVoiceRecordingAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40C20EB129F69E1D00702EEE /* ChatMessageVoiceRecordingAttachment.swift */; };
 		40C20EB329F69E1D00702EEE /* ChatMessageVoiceRecordingAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40C20EB129F69E1D00702EEE /* ChatMessageVoiceRecordingAttachment.swift */; };
 		40D396252A0905560020DDC9 /* AudioPlaybackRateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40D396232A0905560020DDC9 /* AudioPlaybackRateFormatter.swift */; };
@@ -139,7 +182,6 @@
 		40D396272A0905560020DDC9 /* AudioRecordingNameFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40D396242A0905560020DDC9 /* AudioRecordingNameFormatter.swift */; };
 		40D396282A0905560020DDC9 /* AudioRecordingNameFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40D396242A0905560020DDC9 /* AudioRecordingNameFormatter.swift */; };
 		40D3962C2A0910CF0020DDC9 /* ArraySampling_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40D3962B2A0910CF0020DDC9 /* ArraySampling_Tests.swift */; };
-		40D3962E2A0910DE0020DDC9 /* Array+Sampling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40D3962D2A0910DE0020DDC9 /* Array+Sampling.swift */; };
 		40D484002A1264F1009E4134 /* MockAudioSessionFeedbackGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40D483F32A1264F1009E4134 /* MockAudioSessionFeedbackGenerator.swift */; };
 		40D484012A1264F1009E4134 /* MockAudioSessionConfigurator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40D483F42A1264F1009E4134 /* MockAudioSessionConfigurator.swift */; };
 		40D484022A1264F1009E4134 /* MockAudioRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40D483F52A1264F1009E4134 /* MockAudioRecorder.swift */; };
@@ -2489,6 +2531,26 @@
 		400F063029A63A0B00242A86 /* ChatMessageDecorationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageDecorationView.swift; sourceTree = "<group>"; };
 		400F063429A65DD500242A86 /* ChatMessageCell_DecorationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageCell_DecorationTests.swift; sourceTree = "<group>"; };
 		400F063B29A6632F00242A86 /* ChatMessageListDateSeparatorView_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageListDateSeparatorView_Tests.swift; sourceTree = "<group>"; };
+		401105272A12734800F877C7 /* WaveformView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformView.swift; sourceTree = "<group>"; };
+		401105282A12734800F877C7 /* AudioVisualizationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioVisualizationView.swift; sourceTree = "<group>"; };
+		4011052F2A12735900F877C7 /* WaveformView_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformView_Tests.swift; sourceTree = "<group>"; };
+		401105302A12735900F877C7 /* AudioVisualizationView_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioVisualizationView_Tests.swift; sourceTree = "<group>"; };
+		401105332A12735900F877C7 /* test_appearance_isRecording_snapshotsAreAsExpected.extraExtraExtraLarge-light.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "test_appearance_isRecording_snapshotsAreAsExpected.extraExtraExtraLarge-light.png"; sourceTree = "<group>"; };
+		401105342A12735900F877C7 /* test_appearance_isPlaying_snapshotsAreAsExpected.extraExtraExtraLarge-light.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "test_appearance_isPlaying_snapshotsAreAsExpected.extraExtraExtraLarge-light.png"; sourceTree = "<group>"; };
+		401105352A12735900F877C7 /* test_appearance_isPlaying_snapshotsAreAsExpected.small-dark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "test_appearance_isPlaying_snapshotsAreAsExpected.small-dark.png"; sourceTree = "<group>"; };
+		401105362A12735900F877C7 /* test_appearance_isRecording_snapshotsAreAsExpected.default-light.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "test_appearance_isRecording_snapshotsAreAsExpected.default-light.png"; sourceTree = "<group>"; };
+		401105372A12735900F877C7 /* test_appearance_isRecording_snapshotsAreAsExpected.small-dark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "test_appearance_isRecording_snapshotsAreAsExpected.small-dark.png"; sourceTree = "<group>"; };
+		401105382A12735900F877C7 /* test_appearance_isPlaying_snapshotsAreAsExpected.rightToLeftLayout-default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "test_appearance_isPlaying_snapshotsAreAsExpected.rightToLeftLayout-default.png"; sourceTree = "<group>"; };
+		401105392A12735900F877C7 /* test_appearance_isPlaying_snapshotsAreAsExpected.default-light.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "test_appearance_isPlaying_snapshotsAreAsExpected.default-light.png"; sourceTree = "<group>"; };
+		4011053A2A12735900F877C7 /* test_appearance_isRecording_snapshotsAreAsExpected.rightToLeftLayout-default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "test_appearance_isRecording_snapshotsAreAsExpected.rightToLeftLayout-default.png"; sourceTree = "<group>"; };
+		4011053C2A12735900F877C7 /* test_appearance_silence_snapshotsAreAsExpected.small-dark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "test_appearance_silence_snapshotsAreAsExpected.small-dark.png"; sourceTree = "<group>"; };
+		4011053D2A12735900F877C7 /* test_appearance_silence_snapshotsAreAsExpected.default-light.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "test_appearance_silence_snapshotsAreAsExpected.default-light.png"; sourceTree = "<group>"; };
+		4011053E2A12735900F877C7 /* test_appearance_nonSilence_snapshotsAreAsExpected.rightToLeftLayout-default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "test_appearance_nonSilence_snapshotsAreAsExpected.rightToLeftLayout-default.png"; sourceTree = "<group>"; };
+		4011053F2A12735900F877C7 /* test_appearance_nonSilence_snapshotsAreAsExpected.extraExtraExtraLarge-light.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "test_appearance_nonSilence_snapshotsAreAsExpected.extraExtraExtraLarge-light.png"; sourceTree = "<group>"; };
+		401105402A12735900F877C7 /* test_appearance_nonSilence_snapshotsAreAsExpected.small-dark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "test_appearance_nonSilence_snapshotsAreAsExpected.small-dark.png"; sourceTree = "<group>"; };
+		401105412A12735900F877C7 /* test_appearance_silence_snapshotsAreAsExpected.extraExtraExtraLarge-light.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "test_appearance_silence_snapshotsAreAsExpected.extraExtraExtraLarge-light.png"; sourceTree = "<group>"; };
+		401105422A12735900F877C7 /* test_appearance_silence_snapshotsAreAsExpected.rightToLeftLayout-default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "test_appearance_silence_snapshotsAreAsExpected.rightToLeftLayout-default.png"; sourceTree = "<group>"; };
+		401105432A12735900F877C7 /* test_appearance_nonSilence_snapshotsAreAsExpected.default-light.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "test_appearance_nonSilence_snapshotsAreAsExpected.default-light.png"; sourceTree = "<group>"; };
 		4012252E29C9CBD80034B60B /* StreamRemoteAudioPlayer_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamRemoteAudioPlayer_Tests.swift; sourceTree = "<group>"; };
 		401EBB6C29A79686004D9304 /* ChatMessagesCountDecorationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessagesCountDecorationView.swift; sourceTree = "<group>"; };
 		4032C4B029C0BA110086849E /* StreamPlayerObserver_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamPlayerObserver_Tests.swift; sourceTree = "<group>"; };
@@ -2510,6 +2572,7 @@
 		404296DC2A0114900089126D /* StreamRemoteAudioQueuePlayer_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamRemoteAudioQueuePlayer_Tests.swift; sourceTree = "<group>"; };
 		404296E82A011AC20089126D /* AudioSessionProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioSessionProtocol.swift; sourceTree = "<group>"; };
 		405D172C2A03E57C00A77C3B /* AVAssetTotalAudioSamples_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVAssetTotalAudioSamples_Tests.swift; sourceTree = "<group>"; };
+		4067764E2A14CB550079B05C /* MediaButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaButton.swift; sourceTree = "<group>"; };
 		4068ECD0298D06720032D57A /* SplashViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashViewController.swift; sourceTree = "<group>"; };
 		40789CFD29F6AC4F0018C2BB /* AudioPlaybackContext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioPlaybackContext.swift; sourceTree = "<group>"; };
 		40789CFE29F6AC4F0018C2BB /* AudioPlaybackRate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioPlaybackRate.swift; sourceTree = "<group>"; };
@@ -2534,6 +2597,14 @@
 		40789D4429F6B6F00018C2BB /* StreamAudioSessionFeedbackGenerator_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamAudioSessionFeedbackGenerator_Tests.swift; sourceTree = "<group>"; };
 		40789D4729F6C1DC0018C2BB /* StreamAppStateObserver_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamAppStateObserver_Tests.swift; sourceTree = "<group>"; };
 		40789D4A29F6C87B0018C2BB /* AudioRecordingState_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecordingState_Tests.swift; sourceTree = "<group>"; };
+		40824D172A1271B9003B61FD /* PillButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PillButton.swift; sourceTree = "<group>"; };
+		40824D182A1271B9003B61FD /* ClampedView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClampedView.swift; sourceTree = "<group>"; };
+		40824D1A2A1271B9003B61FD /* RecordButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordButton.swift; sourceTree = "<group>"; };
+		40824D1C2A1271B9003B61FD /* PlayPauseButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayPauseButton.swift; sourceTree = "<group>"; };
+		40824D262A1271D7003B61FD /* RecordButton_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordButton_Tests.swift; sourceTree = "<group>"; };
+		40824D2D2A1271D7003B61FD /* PillButton_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PillButton_Tests.swift; sourceTree = "<group>"; };
+		40824D2E2A1271D7003B61FD /* ClampedView_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClampedView_Tests.swift; sourceTree = "<group>"; };
+		40824D3A2A1271EF003B61FD /* PlayPauseButton_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayPauseButton_Tests.swift; sourceTree = "<group>"; };
 		40A2961929F8244500E0C186 /* ChatMessageVoiceRecordingAttachment_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageVoiceRecordingAttachment_Mock.swift; sourceTree = "<group>"; };
 		40A458EC2A03AC7C00C198F7 /* AVAsset+TotalAudioSamples.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AVAsset+TotalAudioSamples.swift"; sourceTree = "<group>"; };
 		40C20EB129F69E1D00702EEE /* ChatMessageVoiceRecordingAttachment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatMessageVoiceRecordingAttachment.swift; sourceTree = "<group>"; };
@@ -4161,6 +4232,96 @@
 			path = ChatMessageListDateSeparatorView;
 			sourceTree = "<group>";
 		};
+		401105252A12734800F877C7 /* VoiceRecording */ = {
+			isa = PBXGroup;
+			children = (
+				401105262A12734800F877C7 /* Views */,
+			);
+			path = VoiceRecording;
+			sourceTree = "<group>";
+		};
+		401105262A12734800F877C7 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				401105272A12734800F877C7 /* WaveformView.swift */,
+				401105282A12734800F877C7 /* AudioVisualizationView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		4011052D2A12735900F877C7 /* VoiceRecording */ = {
+			isa = PBXGroup;
+			children = (
+				4011052E2A12735900F877C7 /* Views */,
+				401105442A12735900F877C7 /* __Snapshots__ */,
+			);
+			path = VoiceRecording;
+			sourceTree = "<group>";
+		};
+		4011052E2A12735900F877C7 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				4011052F2A12735900F877C7 /* WaveformView_Tests.swift */,
+				401105302A12735900F877C7 /* AudioVisualizationView_Tests.swift */,
+				401105312A12735900F877C7 /* __Snapshots__ */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		401105312A12735900F877C7 /* __Snapshots__ */ = {
+			isa = PBXGroup;
+			children = (
+				401105322A12735900F877C7 /* WaveformView_Tests */,
+				4011053B2A12735900F877C7 /* AudioVisualizationView_Tests */,
+			);
+			path = __Snapshots__;
+			sourceTree = "<group>";
+		};
+		401105322A12735900F877C7 /* WaveformView_Tests */ = {
+			isa = PBXGroup;
+			children = (
+				401105332A12735900F877C7 /* test_appearance_isRecording_snapshotsAreAsExpected.extraExtraExtraLarge-light.png */,
+				401105342A12735900F877C7 /* test_appearance_isPlaying_snapshotsAreAsExpected.extraExtraExtraLarge-light.png */,
+				401105352A12735900F877C7 /* test_appearance_isPlaying_snapshotsAreAsExpected.small-dark.png */,
+				401105362A12735900F877C7 /* test_appearance_isRecording_snapshotsAreAsExpected.default-light.png */,
+				401105372A12735900F877C7 /* test_appearance_isRecording_snapshotsAreAsExpected.small-dark.png */,
+				401105382A12735900F877C7 /* test_appearance_isPlaying_snapshotsAreAsExpected.rightToLeftLayout-default.png */,
+				401105392A12735900F877C7 /* test_appearance_isPlaying_snapshotsAreAsExpected.default-light.png */,
+				4011053A2A12735900F877C7 /* test_appearance_isRecording_snapshotsAreAsExpected.rightToLeftLayout-default.png */,
+			);
+			path = WaveformView_Tests;
+			sourceTree = "<group>";
+		};
+		4011053B2A12735900F877C7 /* AudioVisualizationView_Tests */ = {
+			isa = PBXGroup;
+			children = (
+				4011053C2A12735900F877C7 /* test_appearance_silence_snapshotsAreAsExpected.small-dark.png */,
+				4011053D2A12735900F877C7 /* test_appearance_silence_snapshotsAreAsExpected.default-light.png */,
+				4011053E2A12735900F877C7 /* test_appearance_nonSilence_snapshotsAreAsExpected.rightToLeftLayout-default.png */,
+				4011053F2A12735900F877C7 /* test_appearance_nonSilence_snapshotsAreAsExpected.extraExtraExtraLarge-light.png */,
+				401105402A12735900F877C7 /* test_appearance_nonSilence_snapshotsAreAsExpected.small-dark.png */,
+				401105412A12735900F877C7 /* test_appearance_silence_snapshotsAreAsExpected.extraExtraExtraLarge-light.png */,
+				401105422A12735900F877C7 /* test_appearance_silence_snapshotsAreAsExpected.rightToLeftLayout-default.png */,
+				401105432A12735900F877C7 /* test_appearance_nonSilence_snapshotsAreAsExpected.default-light.png */,
+			);
+			path = AudioVisualizationView_Tests;
+			sourceTree = "<group>";
+		};
+		401105442A12735900F877C7 /* __Snapshots__ */ = {
+			isa = PBXGroup;
+			children = (
+				401105452A12735900F877C7 /* AsyncMessagesVC_Test */,
+			);
+			path = __Snapshots__;
+			sourceTree = "<group>";
+		};
+		401105452A12735900F877C7 /* AsyncMessagesVC_Test */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = AsyncMessagesVC_Test;
+			sourceTree = "<group>";
+		};
 		4042967529FAC46F0089126D /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
@@ -4239,6 +4400,38 @@
 				40789D0D29F6AC4F0018C2BB /* AudioRecording.swift */,
 			);
 			path = AudioRecorder;
+			sourceTree = "<group>";
+		};
+		40824D192A1271B9003B61FD /* RecordButton */ = {
+			isa = PBXGroup;
+			children = (
+				40824D1A2A1271B9003B61FD /* RecordButton.swift */,
+			);
+			path = RecordButton;
+			sourceTree = "<group>";
+		};
+		40824D1B2A1271B9003B61FD /* PlayPauseButton */ = {
+			isa = PBXGroup;
+			children = (
+				40824D1C2A1271B9003B61FD /* PlayPauseButton.swift */,
+			);
+			path = PlayPauseButton;
+			sourceTree = "<group>";
+		};
+		40824D252A1271D7003B61FD /* RecordButton */ = {
+			isa = PBXGroup;
+			children = (
+				40824D262A1271D7003B61FD /* RecordButton_Tests.swift */,
+			);
+			path = RecordButton;
+			sourceTree = "<group>";
+		};
+		40824D392A1271EF003B61FD /* PlayPauseButton */ = {
+			isa = PBXGroup;
+			children = (
+				40824D3A2A1271EF003B61FD /* PlayPauseButton_Tests.swift */,
+			);
+			path = PlayPauseButton;
 			sourceTree = "<group>";
 		};
 		40D483F22A1264F1009E4134 /* VoiceRecording */ = {
@@ -4327,6 +4520,7 @@
 		7908823025432C6400896F03 /* StreamChatUI */ = {
 			isa = PBXGroup;
 			children = (
+				401105252A12734800F877C7 /* VoiceRecording */,
 				7908823125432C6400896F03 /* StreamChatUI.h */,
 				7908823225432C6400896F03 /* Info.plist */,
 				BDDD1EA22632C50200BA007B /* Appearance.swift */,
@@ -5151,6 +5345,11 @@
 		888123E5255D51BD00070D5A /* CommonViews */ = {
 			isa = PBXGroup;
 			children = (
+				40824D182A1271B9003B61FD /* ClampedView.swift */,
+				40824D172A1271B9003B61FD /* PillButton.swift */,
+				4067764E2A14CB550079B05C /* MediaButton.swift */,
+				40824D1B2A1271B9003B61FD /* PlayPauseButton */,
+				40824D192A1271B9003B61FD /* RecordButton */,
 				792DD9D8256BC542001DB91B /* BaseViews.swift */,
 				88BA7F5C258B6953006CE0C5 /* ChatLoadingIndicator.swift */,
 				22A0921625682880001FE9F0 /* ChatNavigationBar.swift */,
@@ -6400,6 +6599,7 @@
 		A3960DEA27DA2C3F003AB2B0 /* SnapshotTests */ = {
 			isa = PBXGroup;
 			children = (
+				4011052D2A12735900F877C7 /* VoiceRecording */,
 				A3960DEB27DA2C70003AB2B0 /* ChatChannel */,
 				A3960DEC27DA2CBB003AB2B0 /* ChatChannelList */,
 				A3960DED27DA2CF9003AB2B0 /* ChatMessageList */,
@@ -6506,6 +6706,10 @@
 		A3960DF327DA2DC2003AB2B0 /* CommonViews */ = {
 			isa = PBXGroup;
 			children = (
+				40824D392A1271EF003B61FD /* PlayPauseButton */,
+				40824D2E2A1271D7003B61FD /* ClampedView_Tests.swift */,
+				40824D2D2A1271D7003B61FD /* PillButton_Tests.swift */,
+				40824D252A1271D7003B61FD /* RecordButton */,
 				400F063A29A6632500242A86 /* ChatMessageListDateSeparatorView */,
 				400F063629A660D400242A86 /* ChatMessageCell */,
 				CF8268B72800A4EF00E300E7 /* ChatChannelHeaderView */,
@@ -8717,7 +8921,23 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4011054B2A12735900F877C7 /* test_appearance_isPlaying_snapshotsAreAsExpected.extraExtraExtraLarge-light.png in Resources */,
+				401105522A12735900F877C7 /* test_appearance_silence_snapshotsAreAsExpected.small-dark.png in Resources */,
+				401105512A12735900F877C7 /* test_appearance_isRecording_snapshotsAreAsExpected.rightToLeftLayout-default.png in Resources */,
 				E7D68C5526B1B37500FCF3B8 /* TestLocalizable.strings in Resources */,
+				4011054F2A12735900F877C7 /* test_appearance_isPlaying_snapshotsAreAsExpected.rightToLeftLayout-default.png in Resources */,
+				4011054C2A12735900F877C7 /* test_appearance_isPlaying_snapshotsAreAsExpected.small-dark.png in Resources */,
+				401105562A12735900F877C7 /* test_appearance_nonSilence_snapshotsAreAsExpected.small-dark.png in Resources */,
+				401105572A12735900F877C7 /* test_appearance_silence_snapshotsAreAsExpected.extraExtraExtraLarge-light.png in Resources */,
+				401105592A12735900F877C7 /* test_appearance_nonSilence_snapshotsAreAsExpected.default-light.png in Resources */,
+				4011054E2A12735900F877C7 /* test_appearance_isRecording_snapshotsAreAsExpected.small-dark.png in Resources */,
+				4011054D2A12735900F877C7 /* test_appearance_isRecording_snapshotsAreAsExpected.default-light.png in Resources */,
+				401105582A12735900F877C7 /* test_appearance_silence_snapshotsAreAsExpected.rightToLeftLayout-default.png in Resources */,
+				401105552A12735900F877C7 /* test_appearance_nonSilence_snapshotsAreAsExpected.extraExtraExtraLarge-light.png in Resources */,
+				401105542A12735900F877C7 /* test_appearance_nonSilence_snapshotsAreAsExpected.rightToLeftLayout-default.png in Resources */,
+				4011054A2A12735900F877C7 /* test_appearance_isRecording_snapshotsAreAsExpected.extraExtraExtraLarge-light.png in Resources */,
+				401105532A12735900F877C7 /* test_appearance_silence_snapshotsAreAsExpected.default-light.png in Resources */,
+				401105502A12735900F877C7 /* test_appearance_isPlaying_snapshotsAreAsExpected.default-light.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9114,11 +9334,14 @@
 				C1FC2F7B27416E150062530F /* DataLoader.swift in Sources */,
 				E7166CB225BED22B00B03B07 /* Appearance+ColorPalette.swift in Sources */,
 				88A11B0A2590AFBB0000AC24 /* ChatMessage+Extensions.swift in Sources */,
+				4011052B2A12734800F877C7 /* AudioVisualizationView.swift in Sources */,
 				780DFCFC25EF7DA500A39A6E /* ChatChannelListVC+SwiftUI.swift in Sources */,
 				CF14397D2886374900898ECA /* ChatChannelListLoadingViewCell.swift in Sources */,
 				DBC8A5762581476E00B20A82 /* ChatMessageListVC.swift in Sources */,
 				8800A28C258A1924006D64C4 /* ChatMessageFileAttachmentListView.swift in Sources */,
+				40824D232A1271B9003B61FD /* PlayPauseButton.swift in Sources */,
 				ACCA772E26C568D8007AE2ED /* NukeImageProcessor.swift in Sources */,
+				4067764F2A14CB550079B05C /* MediaButton.swift in Sources */,
 				C1FC2F6B27416E150062530F /* ImagePublisher.swift in Sources */,
 				88A8CF16256E7BDA004EA4C7 /* ChatMessageContentView.swift in Sources */,
 				BDEB9417268211EC00928AF1 /* ChatMessageListUnreadCountView.swift in Sources */,
@@ -9189,6 +9412,7 @@
 				ADCB578528A42D7700B81AE8 /* ElementPath.swift in Sources */,
 				88AD1D5E2588B87C00ECED5B /* ChatFileAttachmentListView+ItemView.swift in Sources */,
 				88F836612578D1A80039AEC8 /* ChatMessageActionItem.swift in Sources */,
+				40824D1D2A1271B9003B61FD /* PillButton.swift in Sources */,
 				F87E8F5D264CFFA300D0F6AA /* LinkAttachmentViewInjector.swift in Sources */,
 				BDDD1E9F2632C4C900BA007B /* Components+SwiftUI.swift in Sources */,
 				F87A4866260B3516001653A8 /* SwiftUIViewRepresentable.swift in Sources */,
@@ -9302,10 +9526,12 @@
 				C1FC2F8427416E150062530F /* FetchImage.swift in Sources */,
 				E73A8B2B2578EB2B00FBDC56 /* ComposerVC.swift in Sources */,
 				ADFA09C926A99E0A002A6EFA /* ChatThreadHeaderView.swift in Sources */,
+				401105292A12734800F877C7 /* WaveformView.swift in Sources */,
 				8800A26F258A04D5006D64C4 /* ChatMessageAttachmentPreviewVC.swift in Sources */,
 				847DD2DB267233DB0084E14B /* GradientView.swift in Sources */,
 				A3C5022C284F9CF70048753E /* SwiftyMarkdown+iOS.swift in Sources */,
 				640FE0EA26A56921006CE703 /* ListChangeIndexPathResolver.swift in Sources */,
+				40824D1F2A1271B9003B61FD /* ClampedView.swift in Sources */,
 				AD43F90926153BAD00F2D4BB /* QuotedChatMessageView.swift in Sources */,
 				C1FC2F8927416E150062530F /* ImageEncoding.swift in Sources */,
 				847F3CEA2689FDEB00D240E0 /* ChatMessageCell.swift in Sources */,
@@ -9321,6 +9547,7 @@
 				E3C7A0E02858BA9B006133C3 /* Reusable+Extensions.swift in Sources */,
 				AD447398263ABD530030E583 /* ChatCommandSuggestionCollectionViewCell.swift in Sources */,
 				847D602D2679EF8A00FB701D /* VideoPlaybackControlView.swift in Sources */,
+				40824D212A1271B9003B61FD /* RecordButton.swift in Sources */,
 				ADCB577528A42D7700B81AE8 /* ContentEquatable.swift in Sources */,
 				400F063129A63A0B00242A86 /* ChatMessageDecorationView.swift in Sources */,
 				88CABC8E25936E440061BB67 /* ChatMessageReactionsBubbleTail.swift in Sources */,
@@ -9393,6 +9620,7 @@
 				845CEE5A270F2A06002C7EBD /* ChatReactionsBubbleView_Tests.swift in Sources */,
 				79567F35266F6F12007EADD3 /* CommandLabelView_Tests.swift in Sources */,
 				ADE88A142949453200C0F084 /* ChatMessageListRouter_Mock.swift in Sources */,
+				40824D352A1271D7003B61FD /* PillButton_Tests.swift in Sources */,
 				849AE666270CB55F00423A20 /* VideoAttachmentGalleryCell_Tests.swift in Sources */,
 				CF38F5B4287DB64B00E24D10 /* ChatChannelListErrorView_Tests.swift in Sources */,
 				AD71131225F138D500932AEE /* ChatUserAvatarView_Tests.swift in Sources */,
@@ -9410,17 +9638,21 @@
 				8803E9F026399333002B2A7B /* ChatMessageContentView_Tests.swift in Sources */,
 				849AE668270CB65F00423A20 /* VideoAttachmentGalleryPreview_Tests.swift in Sources */,
 				64ECF6BC2672272D008B9D47 /* ChatThreadVC+SwiftUI_Tests.swift in Sources */,
+				401105462A12735900F877C7 /* WaveformView_Tests.swift in Sources */,
 				ADEE651E29BF715600186129 /* ChatMessageListVCDelegate_Mock.swift in Sources */,
 				AD050BA8265D600B006649A5 /* QuotedChatMessageView+SwiftUI_Tests.swift in Sources */,
+				40824D2F2A1271D7003B61FD /* RecordButton_Tests.swift in Sources */,
 				A3D9D69627EDE87900725066 /* Components_Mock.swift in Sources */,
 				AD25070D272C0C8D00BC14C4 /* ChatMessageReactionAuthorsVC_Tests.swift in Sources */,
 				AD158B6726C1876D00C104CD /* ChatChannelVC_Tests.swift in Sources */,
 				849AE664270CB14000423A20 /* VideoAttachmentComposerPreview_Tests.swift in Sources */,
 				AD540AE2260CECA10082D802 /* QuotedChatMessageView_Tests.swift in Sources */,
+				40824D492A1271EF003B61FD /* PlayPauseButton_Tests.swift in Sources */,
 				E73BD9EE264D9B3A00E208B7 /* ChatMessageFileAttachmentListView_Tests.swift in Sources */,
 				BDDD1EAE2632E6C200BA007B /* Appearance+SwiftUI_Tests.swift in Sources */,
 				CFAA6CBE2834AEA900EBF57A /* CooldownTracker_Mock.swift in Sources */,
 				BD40C1F5265FA80D004392CE /* StreamImageCDN_Tests.swift in Sources */,
+				401105482A12735900F877C7 /* AudioVisualizationView_Tests.swift in Sources */,
 				AD447455263AC6A60030E583 /* ChatMentionSuggestionView_Tests.swift in Sources */,
 				225504C725DEA03700A5A65A /* ChatChannelListItemView_Tests.swift in Sources */,
 				79B4F0E625D305D40063FFB5 /* CurrentChatUserAvatarView_Tests.swift in Sources */,
@@ -9447,6 +9679,7 @@
 				AD7BBFD02901B1B7004E8B76 /* ImageResultsMapper_Tests.swift in Sources */,
 				8893FF16265FC60B00DD62BE /* ChatMessageErrorIndicator_Tests.swift in Sources */,
 				E76B2F0425F23EE200E57112 /* CustomUIViewSubclasses.swift in Sources */,
+				40824D372A1271D7003B61FD /* ClampedView_Tests.swift in Sources */,
 				F8700108264D144400898FDF /* ChatMessageLinkPreviewView_Tests.swift in Sources */,
 				ADEE652029BF720900186129 /* ChatMessageListVCDataSource_Mock.swift in Sources */,
 				AD4CDD862964991A0057BC8A /* InvertedScrollViewPaginationHandler_Tests.swift in Sources */,
@@ -9898,6 +10131,7 @@
 				8AE335A824FCF999002B6677 /* Reachability_Vendor.swift in Sources */,
 				79D6CE2725F7C83C00BE2EEC /* ChatChannelWatcherListController+Combine.swift in Sources */,
 				C1B49B402822C01C00F4E89E /* NSManagedObject+Validation.swift in Sources */,
+				40B735072A1273D5008BE681 /* Array+Sampling.swift in Sources */,
 				79877A0C2498E4BC00015F8B /* ChannelType.swift in Sources */,
 				DABC6ABC2546FD0100A8FC78 /* MessageAttachmentPayload.swift in Sources */,
 				C1E8AD5E278EF5F30041B775 /* AsyncOperation.swift in Sources */,
@@ -10211,7 +10445,6 @@
 				7952B3B324D4560E00AC53D4 /* ChannelController_Tests.swift in Sources */,
 				8A0CC9EB24C601F600705CF9 /* MemberEvents_Tests.swift in Sources */,
 				C1A25D6029E70DEB00DAE933 /* FetchCache_Tests.swift in Sources */,
-				40D3962E2A0910DE0020DDC9 /* Array+Sampling.swift in Sources */,
 				A32D55142860B40B00E66AF9 /* ChatMessageLinkAttachment_Tests.swift in Sources */,
 				792B805224D95D4300C2963E /* Cached_StressTests.swift in Sources */,
 				A34ECB4A27F5CA1B00A804C1 /* TypingEvents_IntegrationTests.swift in Sources */,
@@ -10800,6 +11033,7 @@
 				AD99C909279B0E9D009DD9C5 /* MessageDateSeparatorFormatter.swift in Sources */,
 				C121EB762746A1E700023E4C /* Array+Extensions.swift in Sources */,
 				C121EB772746A1E700023E4C /* UIViewController+Extensions.swift in Sources */,
+				401105492A12735900F877C7 /* AudioVisualizationView_Tests.swift in Sources */,
 				C121EB782746A1E700023E4C /* NSLayoutConstraint+Extensions.swift in Sources */,
 				C14A46592846636900EF498E /* SDKIdentifier.swift in Sources */,
 				C121EB792746A1E700023E4C /* UITextView+Extensions.swift in Sources */,
@@ -10819,6 +11053,7 @@
 				ADCB577C28A42D7700B81AE8 /* AppKitExtension.swift in Sources */,
 				C121EB872746A1E700023E4C /* ImageMerger.swift in Sources */,
 				C121EB882746A1E700023E4C /* NukeImageProcessor.swift in Sources */,
+				40824D242A1271B9003B61FD /* PlayPauseButton.swift in Sources */,
 				C121EB892746A1E700023E4C /* TitleContainerView.swift in Sources */,
 				C121EB8A2746A1E700023E4C /* GradientView.swift in Sources */,
 				C121EB8B2746A1E700023E4C /* AttachmentActionButton.swift in Sources */,
@@ -10832,6 +11067,7 @@
 				C121EB922746A1E800023E4C /* ChatMentionSuggestionCollectionViewCell.swift in Sources */,
 				C121EB932746A1E800023E4C /* ChatCommandSuggestionView.swift in Sources */,
 				C121EB942746A1E800023E4C /* ChatCommandSuggestionCollectionViewCell.swift in Sources */,
+				40824D4A2A1271EF003B61FD /* PlayPauseButton_Tests.swift in Sources */,
 				C121EB952746A1E800023E4C /* AttachmentsPreviewVC.swift in Sources */,
 				C121EB962746A1E800023E4C /* AttachmentPreviewContainer.swift in Sources */,
 				C121EB972746A1E800023E4C /* AttachmentPreviewProvider.swift in Sources */,
@@ -10890,10 +11126,13 @@
 				AD95FD1228FA038900DBDF41 /* ImageDownloadOptions.swift in Sources */,
 				C121EBBF2746A1E900023E4C /* ZoomTransitionController.swift in Sources */,
 				C121EBC02746A1E900023E4C /* ZoomAnimator.swift in Sources */,
+				40824D362A1271D7003B61FD /* PillButton_Tests.swift in Sources */,
+				40824D1E2A1271B9003B61FD /* PillButton.swift in Sources */,
 				AD78F9FD28EC735700BC0FCE /* SwiftyScanner.swift in Sources */,
 				C121EBC12746A1E900023E4C /* VideoPlaybackControlView.swift in Sources */,
 				C121EBC22746A1E900023E4C /* ChatChannelListVC.swift in Sources */,
 				C121EBC32746A1E900023E4C /* ChatChannelListVC+SwiftUI.swift in Sources */,
+				40824D382A1271D7003B61FD /* ClampedView_Tests.swift in Sources */,
 				C121EBC42746A1E900023E4C /* ChatChannelListCollectionViewDelegate.swift in Sources */,
 				C121EBC52746A1E900023E4C /* ChatChannelListCollectionViewCell.swift in Sources */,
 				C121EBC62746A1E900023E4C /* ChatChannelListItemView.swift in Sources */,
@@ -10967,11 +11206,13 @@
 				C121EBF02746A1EB00023E4C /* AttachmentViewCatalog.swift in Sources */,
 				C121EBF12746A1EB00023E4C /* ChatMessageContentView.swift in Sources */,
 				C121EBF22746A1EB00023E4C /* ChatMessageContentView+SwiftUI.swift in Sources */,
+				406776502A14CB550079B05C /* MediaButton.swift in Sources */,
 				C121EBF32746A1EB00023E4C /* ChatMessageBubbleView.swift in Sources */,
 				C121EBF42746A1EB00023E4C /* ChatMessageLayoutOptions.swift in Sources */,
 				C121EBF52746A1EB00023E4C /* ChatMessageLayoutOptionsResolver.swift in Sources */,
 				C121EBF62746A1EB00023E4C /* ChatReactionsBubbleView.swift in Sources */,
 				C121EBF72746A1EB00023E4C /* ChatThreadArrowView.swift in Sources */,
+				401105472A12735900F877C7 /* WaveformView_Tests.swift in Sources */,
 				C121EBF82746A1EB00023E4C /* ChatMessageErrorIndicator.swift in Sources */,
 				AD78F9FA28EC735700BC0FCE /* SwiftyTokeniser.swift in Sources */,
 				C121EBF92746A1EB00023E4C /* ChatMessageCell.swift in Sources */,
@@ -11007,6 +11248,7 @@
 				C121EC102746A1EC00023E4C /* L10n.swift in Sources */,
 				C121EC112746A1EC00023E4C /* ImageViewExtensions.swift in Sources */,
 				C121EC122746A1EC00023E4C /* FetchImage.swift in Sources */,
+				40824D202A1271B9003B61FD /* ClampedView.swift in Sources */,
 				C121EC132746A1EC00023E4C /* ImageCache.swift in Sources */,
 				C121EC142746A1EC00023E4C /* ImageTask.swift in Sources */,
 				C121EC152746A1EC00023E4C /* ImagePipeline.swift in Sources */,
@@ -11022,10 +11264,13 @@
 				CF14397E2886374900898ECA /* ChatChannelListLoadingViewCell.swift in Sources */,
 				C121EC1B2746A1EC00023E4C /* ImageDecoding.swift in Sources */,
 				ADCB578828A42D7700B81AE8 /* DifferentiableSection.swift in Sources */,
+				40824D222A1271B9003B61FD /* RecordButton.swift in Sources */,
 				C121EC1C2746A1EC00023E4C /* ImagePipelineCache.swift in Sources */,
 				400F063229A63A0B00242A86 /* ChatMessageDecorationView.swift in Sources */,
 				C121EC1D2746A1EC00023E4C /* DataLoader.swift in Sources */,
 				C121EC1E2746A1EC00023E4C /* ImageResponse.swift in Sources */,
+				4011052A2A12734800F877C7 /* WaveformView.swift in Sources */,
+				40824D302A1271D7003B61FD /* RecordButton_Tests.swift in Sources */,
 				C121EC1F2746A1EC00023E4C /* ImagePipelineDelegate.swift in Sources */,
 				C121EC202746A1EC00023E4C /* ImagePrefetcher.swift in Sources */,
 				C121EC212746A1EC00023E4C /* ImagePublisher.swift in Sources */,
@@ -11036,6 +11281,7 @@
 				C1788F6329C33A2C00149883 /* ChatUnreadMessagesCountDecorationView.swift in Sources */,
 				C121EC262746A1ED00023E4C /* TaskFetchOriginalImageData.swift in Sources */,
 				C121EC272746A1ED00023E4C /* ImagePipelineTask.swift in Sources */,
+				4011052C2A12734800F877C7 /* AudioVisualizationView.swift in Sources */,
 				C121EC282746A1ED00023E4C /* OperationTask.swift in Sources */,
 				40D396262A0905560020DDC9 /* AudioPlaybackRateFormatter.swift in Sources */,
 				C121EC292746A1ED00023E4C /* TaskLoadImage.swift in Sources */,
