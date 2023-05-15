@@ -23,6 +23,8 @@ public struct LocalAttachmentInfoKey: Hashable, Equatable, RawRepresentable {
     }
 
     public static let originalImage: Self = .init(rawValue: "originalImage")
+    public static let duration: Self = .init(rawValue: "duration")
+    public static let waveformData: Self = .init(rawValue: "waveformData")
 }
 
 /// The possible composer states. An Enum is not used so it does not cause
@@ -38,6 +40,8 @@ public struct ComposerState: RawRepresentable, Equatable {
     public static var new = ComposerState(rawValue: "new")
     public static var edit = ComposerState(rawValue: "edit")
     public static var quote = ComposerState(rawValue: "quote")
+    public static var recording = ComposerState(rawValue: "recording")
+    public static var recordingLocked = ComposerState(rawValue: "recordingLocked")
 }
 
 /// A view controller that manages the composer view.
@@ -47,7 +51,8 @@ open class ComposerVC: _ViewController,
     UIImagePickerControllerDelegate,
     UIDocumentPickerDelegate,
     UINavigationControllerDelegate,
-    InputTextViewClipboardAttachmentDelegate {
+    InputTextViewClipboardAttachmentDelegate,
+    VoiceRecordingDelegate {
     /// The content of the composer.
     public struct Content {
         /// The text of the input text view.
@@ -227,6 +232,32 @@ open class ComposerVC: _ViewController,
                 cooldownTime: 0
             )
         }
+
+        public mutating func recording() {
+            self = .init(
+                text: text,
+                state: .recording,
+                editingMessage: editingMessage,
+                quotingMessage: quotingMessage,
+                threadMessage: threadMessage,
+                attachments: attachments,
+                mentionedUsers: mentionedUsers,
+                command: command
+            )
+        }
+
+        public mutating func recordingLocked() {
+            self = .init(
+                text: text,
+                state: .recordingLocked,
+                editingMessage: editingMessage,
+                quotingMessage: quotingMessage,
+                threadMessage: threadMessage,
+                attachments: attachments,
+                mentionedUsers: mentionedUsers,
+                command: command
+            )
+        }
     }
 
     /// The content of the composer.
@@ -288,7 +319,22 @@ open class ComposerVC: _ViewController,
         )
     )
 
-    /// The view of the composer.
+    /// The view controller responsible to managing the VoiceRecording flow.
+    open internal(set) lazy var voiceRecordingVC = components
+        .voiceRecordingViewController
+        .init(composerView: composerView)
+
+    /// The audioPlayer that will be used for the VoiceRecording's playback.
+    open var audioPlayer: AudioPlaying? {
+        didSet {
+            // When the audioPlayer changes to a new instance, forward it to
+            // the attachmentsVC and voiceRecordingVC to ensure that all are using
+            // the same one.
+            attachmentsVC.audioPlayer = audioPlayer
+            voiceRecordingVC.audioPlayer = audioPlayer
+        }
+    }
+
     open private(set) lazy var composerView: ComposerView = components
         .messageComposerView.init()
         .withoutAutoresizingMaskConstraints
@@ -353,6 +399,7 @@ open class ComposerVC: _ViewController,
         channelController?.delegate = self
 
         setupAttachmentsView()
+        setupVoiceRecordingView()
 
         cooldownTracker.onChange = { [weak self] currentTime in
             guard currentTime != 0 && self?.content.state != .edit else {
@@ -403,24 +450,48 @@ open class ComposerVC: _ViewController,
             Animate {
                 self.composerView.confirmButton.isHidden = true
                 self.composerView.sendButton.isHidden = self.content.isSlowModeOn
+                self.composerView.recordButton.isHidden = self.composerView.sendButton.isHidden || !self.components.isVoiceRecordingEnabled
                 self.composerView.headerView.isHidden = true
                 self.composerView.cooldownView.isHidden = !self.content.isSlowModeOn
+                self.composerView.leadingContainer.isHidden = false
+                self.composerView.inputMessageView.isHidden = false
+            }
+        case .recording:
+            Animate {
+                self.composerView.confirmButton.isHidden = true
+                self.composerView.sendButton.isHidden = true
+                self.composerView.recordButton.isHidden = false
+                self.composerView.headerView.isHidden = true
+                self.composerView.cooldownView.isHidden = true
+                self.composerView.leadingContainer.isHidden = true
+                self.composerView.inputMessageView.isHidden = true
+            }
+        case .recordingLocked:
+            Animate {
+                self.composerView.headerView.isHidden = false
+                self.composerView.recordButton.isHidden = true
             }
         case .quote:
             composerView.titleLabel.text = L10n.Composer.Title.reply
             Animate {
                 self.composerView.confirmButton.isHidden = true
                 self.composerView.sendButton.isHidden = self.content.isSlowModeOn
+                self.composerView.recordButton.isHidden = self.composerView.sendButton.isHidden || !self.components.isVoiceRecordingEnabled
                 self.composerView.headerView.isHidden = false
                 self.composerView.cooldownView.isHidden = !self.content.isSlowModeOn
+                self.composerView.leadingContainer.isHidden = false
+                self.composerView.inputMessageView.isHidden = false
             }
         case .edit:
             composerView.titleLabel.text = L10n.Composer.Title.edit
             Animate {
                 self.composerView.confirmButton.isHidden = false
                 self.composerView.sendButton.isHidden = true
+                self.composerView.recordButton.isHidden = self.composerView.sendButton.isHidden
                 self.composerView.headerView.isHidden = false
                 self.composerView.cooldownView.isHidden = true
+                self.composerView.leadingContainer.isHidden = false
+                self.composerView.inputMessageView.isHidden = false
             }
         default:
             log.warning("The composer state \(content.state.description) was not handled.")
@@ -491,6 +562,13 @@ open class ComposerVC: _ViewController,
         attachmentsVC.didTapRemoveItemButton = { [weak self] index in
             self?.content.attachments.remove(at: index)
         }
+    }
+
+    open func setupVoiceRecordingView() {
+        voiceRecordingVC.delegate = self
+        addChild(voiceRecordingVC)
+        voiceRecordingVC.didMove(toParent: self)
+        voiceRecordingVC.setUp()
     }
 
     // MARK: - Actions
@@ -844,10 +922,10 @@ open class ComposerVC: _ViewController,
         from url: URL,
         type: AttachmentType
     ) throws {
-        try addAttachmentToContent(from: url, type: type, info: [:])
+        try addAttachmentToContent(from: url, type: type, info: [:], extraData: nil)
     }
 
-    /// Creates and adds an attachment from the given URL to the `content`
+    /// /// Creates and adds an attachment from the given URL to the `content`
     /// - Parameters:
     ///   - url: The URL of the attachment
     ///   - type: The type of the attachment
@@ -856,6 +934,21 @@ open class ComposerVC: _ViewController,
         from url: URL,
         type: AttachmentType,
         info: [LocalAttachmentInfoKey: Any]
+    ) throws {
+        try addAttachmentToContent(from: url, type: type, info: info, extraData: nil)
+    }
+
+    /// Creates and adds an attachment from the given URL to the `content`
+    /// - Parameters:
+    ///   - url: The URL of the attachment
+    ///   - type: The type of the attachment
+    ///   - info: The metadata of the attachment
+    ///   - extraData: The attachment's extraData
+    open func addAttachmentToContent(
+        from url: URL,
+        type: AttachmentType,
+        info: [LocalAttachmentInfoKey: Any],
+        extraData: Encodable?
     ) throws {
         guard let chatConfig = channelController?.client.config else {
             log.assertionFailure("Channel controller must be set at this point")
@@ -882,10 +975,20 @@ open class ComposerVC: _ViewController,
             )
         }
 
+        switch type {
+        case .voiceRecording:
+            localMetadata.duration = info[.duration] as? TimeInterval
+            localMetadata.waveformData = info[.waveformData] as? [Float]
+        default:
+            /* No-op */
+            break
+        }
+
         let attachment = try AnyAttachmentPayload(
             localFileURL: url,
             attachmentType: type,
-            localMetadata: localMetadata
+            localMetadata: localMetadata,
+            extraData: extraData
         )
         content.attachments.append(attachment)
     }
@@ -1046,6 +1149,77 @@ open class ComposerVC: _ViewController,
                 attachmentType: type,
                 error: error
             )
+        }
+    }
+
+    // MARK: - VoiceRecordingDelegate
+
+    public func voiceRecording(
+        _ voiceRecordingVC: VoiceRecordingVC,
+        addAttachmentFromLocation location: URL,
+        duration: TimeInterval,
+        waveformData: [Float]
+    ) {
+        do {
+            try addAttachmentToContent(
+                from: location,
+                type: .voiceRecording,
+                info: [
+                    .duration: duration,
+                    .waveformData: waveformData
+                ]
+            )
+        } catch {
+            handleAddAttachmentError(
+                attachmentURL: location,
+                attachmentType: .voiceRecording,
+                error: error
+            )
+        }
+    }
+
+    public func voiceRecordingPublishMessage(_ voiceRecordingVC: VoiceRecordingVC) {
+        publishMessage(sender: composerView.sendButton)
+    }
+
+    public func voiceRecordingWillBeginRecording(_ voiceRecordingVC: VoiceRecordingVC) {
+        /* No-op */
+    }
+
+    public func voiceRecordingDidBeginRecording(_ voiceRecordingVC: VoiceRecordingVC) {
+        content.recording()
+    }
+
+    public func voiceRecordingDidLockRecording(_ voiceRecordingVC: VoiceRecordingVC) {
+        content.recordingLocked()
+    }
+
+    public func voiceRecordingDidStopRecording(_ voiceRecordingVC: VoiceRecordingVC) {
+        content = .init(
+            text: content.text,
+            state: .new,
+            editingMessage: content.editingMessage,
+            quotingMessage: content.quotingMessage,
+            threadMessage: content.threadMessage,
+            attachments: content.attachments,
+            mentionedUsers: content.mentionedUsers,
+            command: content.command
+        )
+    }
+
+    public func voiceRecording(
+        _ voiceRecordingVC: VoiceRecordingVC,
+        presentFloatingView floatingView: UIView
+    ) {
+        if let parent = parent {
+            floatingView.translatesAutoresizingMaskIntoConstraints = false
+            parent.view.addSubview(floatingView)
+            NSLayoutConstraint.activate([
+                floatingView.leadingAnchor.pin(equalTo: parent.view.leadingAnchor),
+                floatingView.trailingAnchor.pin(equalTo: parent.view.trailingAnchor),
+                composerView.topAnchor.pin(equalTo: floatingView.bottomAnchor),
+                floatingView.topAnchor.pin(greaterThanOrEqualTo: parent.view.safeAreaLayoutGuide.topAnchor)
+            ])
         }
     }
 

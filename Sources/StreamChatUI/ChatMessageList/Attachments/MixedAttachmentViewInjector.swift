@@ -8,7 +8,8 @@ import Foundation
 open class MixedAttachmentViewInjector: AttachmentViewInjector {
     open lazy var injectors = [
         contentView.components.galleryAttachmentInjector.init(contentView),
-        contentView.components.filesAttachmentInjector.init(contentView)
+        contentView.components.filesAttachmentInjector.init(contentView),
+        contentView.components.voiceRecordingAttachmentInjector.init(contentView)
     ]
 
     override open func contentViewDidLayout(options: ChatMessageLayoutOptions) {

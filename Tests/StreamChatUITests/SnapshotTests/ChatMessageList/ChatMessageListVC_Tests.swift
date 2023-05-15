@@ -688,4 +688,101 @@ final class ChatMessageListVC_Tests: XCTestCase {
         XCTAssertNotNil(cell.headerContainerView.superview)
         XCTAssertNotNil(cell.headerContainerView.subviews.first as? ChatMessageListDateSeparatorView)
     }
+
+    // MARK: - voiceRecordingAttachmentPresentationViewConnect(delegate:)
+
+    func test_voiceRecordingAttachmentPresentationViewConnect_subscribeWasCalledOnAudioPlayer() {
+        let audioPlayer = MockAudioPlayer()
+        sut.audioPlayer = audioPlayer
+        let delegate = MockAudioPlayerDelegate()
+
+        sut.voiceRecordingAttachmentPresentationViewConnect(delegate: delegate)
+
+        XCTAssertTrue(audioPlayer.subscribeWasCalledWithSubscriber === delegate)
+    }
+
+    // MARK: - voiceRecordingAttachmentPresentationViewBeginPayback(_:)
+
+    func test_voiceRecordingAttachmentPresentationViewBeginPayback_feedbackForPlayWasCalled() {
+        var components = Components.mock
+        components.audioSessionFeedbackGenerator = MockAudioSessionFeedbackGenerator.self
+        sut.components = components
+
+        sut.voiceRecordingAttachmentPresentationViewBeginPayback(.mock(id: .unique))
+
+        XCTAssertEqual((sut.audioSessionFeedbackGenerator as? MockAudioSessionFeedbackGenerator)?.recordedFunctions.first, "feedbackForPlay()")
+    }
+
+    func test_voiceRecordingAttachmentPresentationViewBeginPayback_loadAssetWasCalled() {
+        let audioPlayer = MockAudioPlayer()
+        sut.audioPlayer = audioPlayer
+        let expectedURL = URL.unique()
+
+        sut.voiceRecordingAttachmentPresentationViewBeginPayback(.mock(id: .unique, assetURL: expectedURL))
+
+        XCTAssertEqual(audioPlayer.loadAssetWasCalledWithURL, expectedURL)
+    }
+
+    // MARK: - voiceRecordingAttachmentPresentationViewPausePayback
+
+    func test_voiceRecordingAttachmentPresentationViewPausePayback_feedbackForPauseWasCalled() {
+        var components = Components.mock
+        components.audioSessionFeedbackGenerator = MockAudioSessionFeedbackGenerator.self
+        sut.components = components
+
+        sut.voiceRecordingAttachmentPresentationViewPausePayback()
+
+        XCTAssertEqual((sut.audioSessionFeedbackGenerator as? MockAudioSessionFeedbackGenerator)?.recordedFunctions.first, "feedbackForPause()")
+    }
+
+    func test_voiceRecordingAttachmentPresentationViewPausePayback_pauseWasCalled() {
+        let audioPlayer = MockAudioPlayer()
+        sut.audioPlayer = audioPlayer
+
+        sut.voiceRecordingAttachmentPresentationViewPausePayback()
+
+        XCTAssertTrue(audioPlayer.pauseWasCalled)
+    }
+
+    // MARK: - voiceRecordingAttachmentPresentationViewUpdatePlaybackRate(_:)
+
+    func test_voiceRecordingAttachmentPresentationViewUpdatePlaybackRate_feedbackForPlaybackRateChangeWasCalled() {
+        var components = Components.mock
+        components.audioSessionFeedbackGenerator = MockAudioSessionFeedbackGenerator.self
+        sut.components = components
+
+        sut.voiceRecordingAttachmentPresentationViewUpdatePlaybackRate(.normal)
+
+        XCTAssertEqual((sut.audioSessionFeedbackGenerator as? MockAudioSessionFeedbackGenerator)?.recordedFunctions.first, "feedbackForPlaybackRateChange()")
+    }
+
+    func test_voiceRecordingAttachmentPresentationViewUpdatePlaybackRate_updateRateWasCalled() {
+        let audioPlayer = MockAudioPlayer()
+        sut.audioPlayer = audioPlayer
+
+        sut.voiceRecordingAttachmentPresentationViewUpdatePlaybackRate(.double)
+
+        XCTAssertEqual(audioPlayer.updateRateWasCalledWithRate, .double)
+    }
+
+    // MARK: - voiceRecordingAttachmentPresentationViewSeek
+
+    func test_voiceRecordingAttachmentPresentationViewSeek_feedbackForSeekingWasCalled() {
+        var components = Components.mock
+        components.audioSessionFeedbackGenerator = MockAudioSessionFeedbackGenerator.self
+        sut.components = components
+
+        sut.voiceRecordingAttachmentPresentationViewSeek(to: 100)
+
+        XCTAssertEqual((sut.audioSessionFeedbackGenerator as? MockAudioSessionFeedbackGenerator)?.recordedFunctions.first, "feedbackForSeeking()")
+    }
+
+    func test_voiceRecordingAttachmentPresentationViewSeek_seekWasCalled() {
+        let audioPlayer = MockAudioPlayer()
+        sut.audioPlayer = audioPlayer
+
+        sut.voiceRecordingAttachmentPresentationViewSeek(to: 100)
+
+        XCTAssertEqual(audioPlayer.seekWasCalledWithTime, 100)
+    }
 }

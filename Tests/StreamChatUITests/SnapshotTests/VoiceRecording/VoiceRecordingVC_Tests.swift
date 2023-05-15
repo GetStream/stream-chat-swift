@@ -863,6 +863,96 @@ final class VoiceRecordingVC_Tests: XCTestCase {
             .init(isRecording: false, isPlaying: false, duration: 15, currentTime: 0, waveform: [1, 2, 3])
         )
     }
+
+    // MARK: - updateContent
+
+    func test_updateContent_idle_viewIsConfiguredAsExpected() {
+        assertViewController(for: .idle)
+    }
+
+    func test_updateContent_showingTip_viewIsConfiguredAsExpected() {
+        assertViewController(for: .showingTip)
+    }
+
+    func test_updateContent_recording_viewIsConfiguredAsExpected() {
+        assertViewController(for: .recording)
+    }
+
+    func test_updateContent_locked_viewIsConfiguredAsExpected() {
+        assertViewController(for: .locked, initialContentStates: [.recording])
+    }
+
+    func test_updateContent_preview_viewIsConfiguredAsExpected() {
+        assertViewController(for: .preview, initialContentStates: [.recording, .locked])
+    }
+
+    // MARK: - Private Helpers
+
+    private func assertViewController(
+        for contentState: VoiceRecordingVC.State,
+        initialContentStates: [VoiceRecordingVC.State] = [.idle],
+        file: StaticString = #file,
+        function: String = #function,
+        line: UInt = #line
+    ) {
+        let viewController = ChatChannelVC()
+        viewController.components = subject.components
+        viewController.messageComposerVC.components = subject.components
+        viewController.messageComposerVC.voiceRecordingVC.audioRecorder = audioRecorder
+        viewController.messageComposerVC.voiceRecordingVC.components = subject.components
+        viewController.channelController = ChatChannelController_Mock(
+            channelQuery: .init(cid: .unique),
+            channelListQuery: nil,
+            client: .mock,
+            isChannelAlreadyCreated: true
+        )
+        viewController.setUp()
+        viewController.setUpLayout()
+        viewController.setUpAppearance()
+
+        if initialContentStates != [.idle] {
+            for initialContentState in initialContentStates {
+                let waitExpectationA = expectation(description: "Wait expectation")
+                waitExpectationA.isInverted = true
+
+                // Setup initial state
+                var content = viewController.messageComposerVC.voiceRecordingVC.content
+                content.state = initialContentState
+                viewController.messageComposerVC.voiceRecordingVC.content = content
+                wait(for: [waitExpectationA], timeout: defaultTimeout)
+            }
+        }
+
+        var content = viewController.messageComposerVC.voiceRecordingVC.content
+        content.state = contentState
+        viewController.messageComposerVC.voiceRecordingVC.content = content
+
+        (0..<10).forEach { _ in
+            audioRecorder.subscribeWasCalledWithSubscriber?.audioRecorder(audioRecorder, didUpdateContext: .init(
+                state: .recording,
+                duration: 10,
+                averagePower: 0
+            ))
+        }
+
+        audioRecorder.subscribeWasCalledWithSubscriber?.audioRecorder(audioRecorder, didUpdateContext: .init(
+            state: .stopped,
+            duration: 10,
+            averagePower: 0
+        ))
+
+        let waitExpectationB = expectation(description: "Wait expectation")
+        waitExpectationB.isInverted = true
+        wait(for: [waitExpectationB], timeout: defaultTimeout)
+
+        AssertSnapshot(
+            viewController.view,
+            variants: .onlyUserInterfaceStyles,
+            line: line,
+            file: file,
+            function: function
+        )
+    }
 }
 
 // MARK: - Mocks
