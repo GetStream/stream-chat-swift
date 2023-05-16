@@ -66,8 +66,8 @@ class CurrentUserUpdater: Worker {
         currentUserId: UserId,
         completion: ((Error?) -> Void)? = nil
     ) {
-        func saveCurrentDevice(deviceId: String, completion: ((Error?) -> Void)?) {
-            database.write({ (session) in
+        let saveCurrentDevice: ((String, ((Error?) -> Void)?) -> Void) = { [weak self] deviceId, completion in
+            self?.database.write({ (session) in
                 try session.saveCurrentDevice(deviceId)
             }) { completion?($0) }
         }
@@ -76,7 +76,7 @@ class CurrentUserUpdater: Worker {
         backgroundContext.perform { [weak self] in
             if let currentUserDTO = backgroundContext.currentUser,
                currentUserDTO.devices.first(where: { $0.id == deviceId }) != nil {
-                saveCurrentDevice(deviceId: deviceId, completion: completion)
+                saveCurrentDevice(deviceId, completion)
                 return
             }
 
@@ -95,7 +95,7 @@ class CurrentUserUpdater: Worker {
                             return
                         }
                         log.debug("Device token \(deviceId) was successfully registered on Stream's backend.")
-                        saveCurrentDevice(deviceId: deviceId, completion: completion)
+                        saveCurrentDevice(deviceId, completion)
                     }
                 )
         }

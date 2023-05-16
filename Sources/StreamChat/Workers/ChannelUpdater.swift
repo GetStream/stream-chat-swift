@@ -53,10 +53,10 @@ class ChannelUpdater: Worker {
         let didJumpToMessage: Bool = channelQuery.pagination?.parameter?.isJumpingToMessage == true
         let isChannelCreate = onChannelCreated != nil
 
-        let completion: (Result<ChannelPayload, Error>) -> Void = { [weak database] result in
+        let completion: (Result<ChannelPayload, Error>) -> Void = { [weak database, weak self] result in
             do {
                 if let pagination = channelQuery.pagination {
-                    self.paginationStateHandler.end(pagination: pagination, with: result.map(\.messages))
+                    self?.paginationStateHandler.end(pagination: pagination, with: result.map(\.messages))
                 }
 
                 let payload = try result.get()
@@ -72,8 +72,8 @@ class ChannelUpdater: Worker {
                     }
 
                     let updatedChannel = try session.saveChannel(payload: payload)
-                    updatedChannel.oldestMessageAt = self.paginationState.oldestMessageAt?.bridgeDate
-                    updatedChannel.newestMessageAt = self.paginationState.newestMessageAt?.bridgeDate
+                    updatedChannel.oldestMessageAt = self?.paginationState.oldestMessageAt?.bridgeDate
+                    updatedChannel.newestMessageAt = self?.paginationState.newestMessageAt?.bridgeDate
 
                 } completion: { error in
                     if let error = error {
@@ -450,10 +450,12 @@ class ChannelUpdater: Worker {
     ///   - query: Query object for watchers. See `ChannelWatcherListQuery`
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func channelWatchers(query: ChannelWatcherListQuery, completion: ((Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .channelWatchers(query: query)) { (result: Result<ChannelPayload, Error>) in
+        apiClient.request(
+            endpoint: .channelWatchers(query: query)
+        ) { [weak self] (result: Result<ChannelPayload, Error>) in
             do {
                 let payload = try result.get()
-                self.database.write { (session) in
+                self?.database.write { (session) in
                     if let channel = session.channel(cid: query.cid) {
                         if query.pagination.offset == 0, (payload.watchers?.isEmpty ?? false) {
                             // This is the first page of the watchers, and backend reported empty array

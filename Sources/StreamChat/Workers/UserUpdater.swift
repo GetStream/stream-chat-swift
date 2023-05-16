@@ -35,34 +35,35 @@ class UserUpdater: Worker {
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
     func loadUser(_ userId: UserId, completion: ((Error?) -> Void)? = nil) {
-        apiClient
-            .request(endpoint: .users(query: .user(withID: userId))) { (result: Result<UserListPayload, Error>) in
-                switch result {
-                case let .success(payload):
-                    guard payload.users.count <= 1 else {
-                        completion?(ClientError.Unexpected(
-                            "UserUpdater.loadUser must fetch exactly 0 or 1 user. Fetched: \(payload.users)"
-                        ))
-                        return
-                    }
-
-                    guard let user = payload.users.first else {
-                        completion?(ClientError.UserDoesNotExist(userId: userId))
-                        return
-                    }
-
-                    self.database.write({ session in
-                        try session.saveUser(payload: user)
-                    }, completion: { error in
-                        if let error = error {
-                            log.error("Failed to save user with id: <\(userId)> to the database. Error: \(error)")
-                        }
-                        completion?(error)
-                    })
-                case let .failure(error):
-                    completion?(error)
+        apiClient.request(
+            endpoint: .users(query: .user(withID: userId))
+        ) { [weak self] (result: Result<UserListPayload, Error>) in
+            switch result {
+            case let .success(payload):
+                guard payload.users.count <= 1 else {
+                    completion?(ClientError.Unexpected(
+                        "UserUpdater.loadUser must fetch exactly 0 or 1 user. Fetched: \(payload.users)"
+                    ))
+                    return
                 }
+
+                guard let user = payload.users.first else {
+                    completion?(ClientError.UserDoesNotExist(userId: userId))
+                    return
+                }
+
+                self?.database.write({ session in
+                    try session.saveUser(payload: user)
+                }, completion: { error in
+                    if let error = error {
+                        log.error("Failed to save user with id: <\(userId)> to the database. Error: \(error)")
+                    }
+                    completion?(error)
+                })
+            case let .failure(error):
+                completion?(error)
             }
+        }
     }
 
     /// Flags or unflags the user with the provided `userId` depending on `flag` value.
@@ -73,10 +74,10 @@ class UserUpdater: Worker {
     ///
     func flagUser(_ flag: Bool, with userId: UserId, completion: ((Error?) -> Void)? = nil) {
         let endpoint: Endpoint<FlagUserPayload> = .flagUser(flag, with: userId)
-        apiClient.request(endpoint: endpoint) {
+        apiClient.request(endpoint: endpoint) { [weak self] in
             switch $0 {
             case let .success(payload):
-                self.database.write({ session in
+                self?.database.write({ session in
                     let userDTO = try session.saveUser(payload: payload.flaggedUser)
 
                     let currentUserDTO = session.currentUser

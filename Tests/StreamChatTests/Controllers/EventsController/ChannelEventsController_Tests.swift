@@ -186,35 +186,6 @@ final class ChannelEventsController_Tests: XCTestCase {
         AssertAsync.willBeTrue(completionCalled)
     }
 
-    func test_sendEvent_keepsControllerAlive() throws {
-        // Create events controller.
-        var controller: ChannelEventsController? = ChannelEventsController(
-            cidProvider: { .unique },
-            eventSender: eventSender,
-            notificationCenter: notificationCenter
-        )
-
-        // Simulate `sendEvent` and catch the completion.
-        controller?.sendEvent(IdeaEventPayload.unique)
-
-        // Keep only weak ref to controller.
-        weak var weakController = controller
-        controller = nil
-
-        // Assert controller is kept alive.
-        AssertAsync.willBeTrue(weakController != nil)
-
-        // Restore strong reference to controller
-        controller = weakController!
-
-        // Simulate API response.
-        eventSender.sendEvent_completion?(nil)
-        eventSender.sendEvent_completion = nil
-
-        // Assert controller can be released.
-        AssertAsync.canBeReleased(&controller)
-    }
-
     // MARK: - Event propagation
 
     func test_onlyEventsRelatedToChannel_areForwardedToDelegate() throws {

@@ -255,8 +255,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             extraData: extraData
         )
 
-        updater.updateChannel(channelPayload: payload) { error in
-            self.callback {
+        updater.updateChannel(channelPayload: payload) { [weak self] error in
+            self?.callback {
                 completion?(error)
             }
         }
@@ -274,8 +274,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        updater.muteChannel(cid: cid, mute: true) { error in
-            self.callback {
+        updater.muteChannel(cid: cid, mute: true) { [weak self] error in
+            self?.callback {
                 completion?(error)
             }
         }
@@ -294,8 +294,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        updater.muteChannel(cid: cid, mute: false) { error in
-            self.callback {
+        updater.muteChannel(cid: cid, mute: false) { [weak self] error in
+            self?.callback {
                 completion?(error)
             }
         }
@@ -312,8 +312,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        updater.deleteChannel(cid: cid) { error in
-            self.callback {
+        updater.deleteChannel(cid: cid) { [weak self] error in
+            self?.callback {
                 completion?(error)
             }
         }
@@ -347,8 +347,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             skipPush: skipPush,
             hardDelete: hardDelete,
             systemMessage: systemMessage
-        ) { error in
-            self.callback {
+        ) { [weak self] error in
+            self?.callback {
                 completion?(error)
             }
         }
@@ -368,8 +368,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        updater.hideChannel(cid: cid, clearHistory: clearHistory) { error in
-            self.callback {
+        updater.hideChannel(cid: cid, clearHistory: clearHistory) { [weak self] error in
+            self?.callback {
                 completion?(error)
             }
         }
@@ -387,8 +387,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        updater.showChannel(cid: cid) { error in
-            self.callback {
+        updater.showChannel(cid: cid) { [weak self] error in
+            self?.callback {
                 completion?(error)
             }
         }
@@ -434,12 +434,12 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         updater.update(
             channelQuery: channelQuery,
             isInRecoveryMode: false,
-            completion: { result in
+            completion: { [weak self] result in
                 switch result {
                 case .success:
-                    self.callback { completion?(nil) }
+                    self?.callback { completion?(nil) }
                 case let .failure(error):
-                    self.callback { completion?(error) }
+                    self?.callback { completion?(error) }
                 }
             }
         )
@@ -481,12 +481,12 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         updater.update(
             channelQuery: channelQuery,
             isInRecoveryMode: false,
-            completion: { result in
+            completion: { [weak self] result in
                 switch result {
                 case .success:
-                    self.callback { completion?(nil) }
+                    self?.callback { completion?(nil) }
                 case let .failure(error):
-                    self.callback { completion?(error) }
+                    self?.callback { completion?(error) }
                 }
             }
         )
@@ -519,13 +519,13 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         updater.update(
             channelQuery: channelQuery,
             isInRecoveryMode: false,
-            completion: { result in
+            completion: { [weak self] result in
                 switch result {
                 case .success:
-                    self.callback { completion?(nil) }
+                    self?.callback { completion?(nil) }
                 case let .failure(error):
                     log.error("Not able to load message around messageId: \(messageId). Error: \(error)")
-                    self.callback { completion?(error) }
+                    self?.callback { completion?(error) }
                 }
             }
         )
@@ -563,8 +563,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        eventSender.keystroke(in: cid, parentMessageId: parentMessageId) { error in
-            self.callback {
+        eventSender.keystroke(in: cid, parentMessageId: parentMessageId) { [weak self] error in
+            self?.callback {
                 completion?(error)
             }
         }
@@ -591,8 +591,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        eventSender.startTyping(in: cid, parentMessageId: parentMessageId) { error in
-            self.callback {
+        eventSender.startTyping(in: cid, parentMessageId: parentMessageId) { [weak self] error in
+            self?.callback {
                 completion?(error)
             }
         }
@@ -619,8 +619,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        eventSender.stopTyping(in: cid, parentMessageId: parentMessageId) { error in
-            self.callback {
+        eventSender.stopTyping(in: cid, parentMessageId: parentMessageId) { [weak self] error in
+            self?.callback {
                 completion?(error)
             }
         }
@@ -677,11 +677,11 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             skipPush: skipPush,
             skipEnrichUrl: skipEnrichUrl,
             extraData: extraData
-        ) { result in
+        ) { [weak self] result in
             if let newMessage = try? result.get() {
-                self.client.eventNotificationCenter.process(NewMessagePendingEvent(message: newMessage))
+                self?.client.eventNotificationCenter.process(NewMessagePendingEvent(message: newMessage))
             }
-            self.callback {
+            self?.callback {
                 completion?(result.map(\.id))
             }
         }
@@ -702,8 +702,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        updater.addMembers(cid: cid, userIds: userIds, hideHistory: hideHistory) { error in
-            self.callback {
+        updater.addMembers(cid: cid, userIds: userIds, hideHistory: hideHistory) { [weak self] error in
+            self?.callback {
                 completion?(error)
             }
         }
@@ -723,8 +723,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        updater.removeMembers(cid: cid, userIds: userIds) { error in
-            self.callback {
+        updater.removeMembers(cid: cid, userIds: userIds) { [weak self] error in
+            self?.callback {
                 completion?(error)
             }
         }
@@ -741,8 +741,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        updater.inviteMembers(cid: cid, userIds: userIds) { error in
-            self.callback {
+        updater.inviteMembers(cid: cid, userIds: userIds) { [weak self] error in
+            self?.callback {
                 completion?(error)
             }
         }
@@ -760,8 +760,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             channelModificationFailed(completion)
             return
         }
-        updater.acceptInvite(cid: cid, message: message) { error in
-            self.callback {
+        updater.acceptInvite(cid: cid, message: message) { [weak self] error in
+            self?.callback {
                 completion?(error)
             }
         }
@@ -778,8 +778,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        updater.rejectInvite(cid: cid) { error in
-            self.callback {
+        updater.rejectInvite(cid: cid) { [weak self] error in
+            self?.callback {
                 completion?(error)
             }
         }
@@ -818,9 +818,9 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
         markingRead = true
 
-        updater.markRead(cid: channel.cid, userId: currentUserId) { error in
-            self.callback {
-                self.markingRead = false
+        updater.markRead(cid: channel.cid, userId: currentUserId) { [weak self] error in
+            self?.callback {
+                self?.markingRead = false
                 completion?(error)
             }
         }
@@ -888,8 +888,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             }
             return
         }
-        updater.enableSlowMode(cid: cid, cooldownDuration: cooldownDuration) { error in
-            self.callback {
+        updater.enableSlowMode(cid: cid, cooldownDuration: cooldownDuration) { [weak self] error in
+            self?.callback {
                 completion?(error)
             }
         }
@@ -907,8 +907,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             channelModificationFailed(completion)
             return
         }
-        updater.enableSlowMode(cid: cid, cooldownDuration: 0) { error in
-            self.callback {
+        updater.enableSlowMode(cid: cid, cooldownDuration: 0) { [weak self] error in
+            self?.callback {
                 completion?(error)
             }
         }
@@ -930,9 +930,9 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             channelModificationFailed(completion)
             return
         }
-        updater.startWatching(cid: cid, isInRecoveryMode: isInRecoveryMode) { error in
-            self.state = error.map { .remoteDataFetchFailed(ClientError(with: $0)) } ?? .remoteDataFetched
-            self.callback {
+        updater.startWatching(cid: cid, isInRecoveryMode: isInRecoveryMode) { [weak self] error in
+            self?.state = error.map { .remoteDataFetchFailed(ClientError(with: $0)) } ?? .remoteDataFetched
+            self?.callback {
                 completion?(error)
             }
         }
@@ -961,9 +961,9 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             channelModificationFailed(completion)
             return
         }
-        updater.stopWatching(cid: cid) { error in
-            self.state = error.map { .remoteDataFetchFailed(ClientError(with: $0)) } ?? .localDataFetched
-            self.callback {
+        updater.stopWatching(cid: cid) { [weak self] error in
+            self?.state = error.map { .remoteDataFetchFailed(ClientError(with: $0)) } ?? .localDataFetched
+            self?.callback {
                 completion?(error)
             }
         }
@@ -984,8 +984,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        updater.freezeChannel(true, cid: cid) { error in
-            self.callback {
+        updater.freezeChannel(true, cid: cid) { [weak self] error in
+            self?.callback {
                 completion?(error)
             }
         }
@@ -1006,8 +1006,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        updater.freezeChannel(false, cid: cid) { error in
-            self.callback {
+        updater.freezeChannel(false, cid: cid) { [weak self] error in
+            self?.callback {
                 completion?(error)
             }
         }
@@ -1032,8 +1032,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        updater.uploadFile(type: type, localFileURL: localFileURL, cid: cid, progress: progress) { result in
-            self.callback {
+        updater.uploadFile(type: type, localFileURL: localFileURL, cid: cid, progress: progress) { [weak self] result in
+            self?.callback {
                 completion(result)
             }
         }
@@ -1063,14 +1063,14 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             pagination: pagination
         )
 
-        updater.loadPinnedMessages(in: cid, query: query) {
+        updater.loadPinnedMessages(in: cid, query: query) { [weak self] in
             switch $0 {
             case let .success(messages):
-                self.callback {
+                self?.callback {
                     completion(.success(messages))
                 }
             case let .failure(error):
-                self.callback {
+                self?.callback {
                     completion(.failure(error))
                 }
             }
@@ -1095,14 +1095,14 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        updater.createCall(in: cid, callId: id, type: type) {
+        updater.createCall(in: cid, callId: id, type: type) { [weak self] in
             switch $0 {
             case let .success(messages):
-                self.callback {
+                self?.callback {
                     completion(.success(messages))
                 }
             case let .failure(error):
-                self.callback {
+                self?.callback {
                     completion(.failure(error))
                 }
             }
@@ -1165,14 +1165,14 @@ private extension ChatChannelController {
             channelQuery: channelQuery,
             isInRecoveryMode: isInRecoveryMode,
             onChannelCreated: channelCreatedCallback,
-            completion: { result in
+            completion: { [weak self] result in
                 switch result {
                 case .success:
-                    self.state = .remoteDataFetched
-                    self.callback { completion?(nil) }
+                    self?.state = .remoteDataFetched
+                    self?.callback { completion?(nil) }
                 case let .failure(error):
-                    self.state = .remoteDataFetchFailed(ClientError(with: error))
-                    self.callback { completion?(error) }
+                    self?.state = .remoteDataFetchFailed(ClientError(with: error))
+                    self?.callback { completion?(error) }
                 }
             }
         )

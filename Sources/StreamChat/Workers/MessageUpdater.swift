@@ -236,12 +236,12 @@ class MessageUpdater: Worker {
         let didJumpToMessage = pagination.parameter?.isJumpingToMessage == true
         let endpoint: Endpoint<MessageRepliesPayload> = .loadReplies(messageId: messageId, pagination: pagination)
 
-        apiClient.request(endpoint: endpoint) {
-            self.paginationStateHandler.end(pagination: pagination, with: $0.map(\.messages))
+        apiClient.request(endpoint: endpoint) { [weak self] in
+            self?.paginationStateHandler.end(pagination: pagination, with: $0.map(\.messages))
 
             switch $0 {
             case let .success(payload):
-                self.database.write({ session in
+                self?.database.write({ session in
                     if let channelDTO = session.channel(cid: cid) {
                         channelDTO.cleanMessagesThatFailedToBeEditedDueToModeration()
                     }
@@ -254,7 +254,7 @@ class MessageUpdater: Worker {
                             }
                         }
 
-                        parentMessage.newestReplyAt = self.paginationState.newestMessageAt?.bridgeDate
+                        parentMessage.newestReplyAt = self?.paginationState.newestMessageAt?.bridgeDate
                     }
 
                     let replies = session.saveMessages(messagesPayload: payload, for: cid, syncOwnReactions: true)
@@ -286,11 +286,11 @@ class MessageUpdater: Worker {
             pagination: pagination
         )
 
-        apiClient.request(endpoint: endpoint) { result in
+        apiClient.request(endpoint: endpoint) { [weak self] result in
             switch result {
             case let .success(payload):
                 var reactions: [ChatMessageReaction] = []
-                self.database.write({ session in
+                self?.database.write({ session in
                     reactions = try session.saveReactions(payload: payload).map { try $0.asModel() }
                 }, completion: { error in
                     if let error = error {
@@ -321,10 +321,10 @@ class MessageUpdater: Worker {
             }
 
             let endpoint: Endpoint<FlagMessagePayload> = .flagMessage(flag, with: messageId)
-            self.apiClient.request(endpoint: endpoint) { result in
+            self.apiClient.request(endpoint: endpoint) { [weak self] result in
                 switch result {
                 case let .success(payload):
-                    self.database.write({ session in
+                    self?.database.write({ session in
                         guard let messageDTO = session.message(id: payload.flaggedMessageId) else {
                             throw ClientError.MessageDoesNotExist(messageId: messageId)
                         }
@@ -386,7 +386,7 @@ class MessageUpdater: Worker {
                 log.warning("Failed to optimistically add the reaction to the database: \(error)")
             }
         } completion: { [weak self, weak repository] error in
-            self?.apiClient.request(endpoint: endpoint) { result in
+            self?.apiClient.request(endpoint: endpoint) { [weak self] result in
                 guard let error = result.error else { return }
 
                 if self?.canKeepReactionState(for: error) == true { return }
@@ -417,7 +417,7 @@ class MessageUpdater: Worker {
                 log.warning("Failed to remove the reaction from to the database: \(error)")
             }
         } completion: { [weak self, weak repository] error in
-            self?.apiClient.request(endpoint: .deleteReaction(type, messageId: messageId)) { result in
+            self?.apiClient.request(endpoint: .deleteReaction(type, messageId: messageId)) { [weak self] result in
                 guard let error = result.error else { return }
 
                 if self?.canKeepReactionState(for: error) == true { return }
@@ -567,10 +567,10 @@ class MessageUpdater: Worker {
                 action: action
             )
 
-            self.apiClient.request(endpoint: endpoint) {
+            self.apiClient.request(endpoint: endpoint) { [weak self] in
                 switch $0 {
                 case let .success(payload):
-                    self.database.write({ session in
+                    self?.database.write({ session in
                         try session.saveMessage(payload: payload.message, for: cid, syncOwnReactions: true, cache: nil)
                     }, completion: { error in
                         completion?(error)
@@ -585,10 +585,10 @@ class MessageUpdater: Worker {
     }
 
     func search(query: MessageSearchQuery, policy: UpdatePolicy = .merge, completion: ((Result<MessageSearchResultsPayload, Error>) -> Void)? = nil) {
-        apiClient.request(endpoint: .search(query: query)) { result in
+        apiClient.request(endpoint: .search(query: query)) { [weak self] result in
             switch result {
             case let .success(payload):
-                self.database.write { session in
+                self?.database.write { session in
                     if case .replace = policy {
                         let dto = session.saveQuery(query: query)
                         dto.messages.removeAll()
@@ -618,21 +618,24 @@ class MessageUpdater: Worker {
     }
 
     func translate(messageId: MessageId, to language: TranslationLanguage, completion: ((Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .translate(messageId: messageId, to: language), completion: { result in
-            switch result {
-            case let .success(boxedMessage):
-                self.database.write { session in
-                    try session.saveMessage(
-                        payload: boxedMessage.message,
-                        for: boxedMessage.message.cid,
-                        syncOwnReactions: false,
-                        cache: nil
-                    )
-                } completion: { completion?($0) }
-            case let .failure(error):
-                completion?(error)
+        apiClient.request(
+            endpoint: .translate(messageId: messageId, to: language),
+            completion: { [weak self] result in
+                switch result {
+                case let .success(boxedMessage):
+                    self?.database.write { session in
+                        try session.saveMessage(
+                            payload: boxedMessage.message,
+                            for: boxedMessage.message.cid,
+                            syncOwnReactions: false,
+                            cache: nil
+                        )
+                    } completion: { completion?($0) }
+                case let .failure(error):
+                    completion?(error)
+                }
             }
-        })
+        )
     }
 }
 
