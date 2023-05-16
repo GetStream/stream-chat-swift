@@ -18,12 +18,10 @@ final class EventSender_Mock: EventSender {
     ) {
         sendEvent_payload = payload
         sendEvent_cid = cid
-        sendEvent_completion = completion
     }
 
     func cleanUp() {
         sendEvent_payload = nil
         sendEvent_cid = nil
-        sendEvent_completion = nil
     }
 }

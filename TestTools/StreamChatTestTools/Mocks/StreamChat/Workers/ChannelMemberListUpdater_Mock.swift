@@ -12,7 +12,6 @@ final class ChannelMemberListUpdater_Mock: ChannelMemberListUpdater {
 
     func cleanUp() {
         load_query = nil
-        load_completion = nil
     }
 
     override func load(_ query: ChannelMemberListQuery, completion: ((Error?) -> Void)? = nil) {

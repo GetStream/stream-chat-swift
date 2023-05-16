@@ -40,14 +40,11 @@ final class TypingEventsSender_Mock: TypingEventsSender {
     func cleanUp() {
         keystroke_cid = nil
         keystroke_parentMessageId = nil
-        keystroke_completion = nil
 
         startTyping_cid = nil
         startTyping_parentMessageId = nil
-        startTyping_completion = nil
 
         stopTyping_cid = nil
         stopTyping_parentMessageId = nil
-        stopTyping_completion = nil
     }
 }

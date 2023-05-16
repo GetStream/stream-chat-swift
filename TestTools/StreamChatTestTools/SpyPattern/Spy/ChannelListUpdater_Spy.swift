@@ -24,15 +24,10 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy {
 
     func cleanUp() {
         update_queries.removeAll()
-        update_completion = nil
 
         fetch_queries.removeAll()
-        fetch_completion = nil
-
-        markAllRead_completion = nil
 
         startWatchingChannels_cids.removeAll()
-        startWatchingChannels_completion = nil
     }
 
     override func update(

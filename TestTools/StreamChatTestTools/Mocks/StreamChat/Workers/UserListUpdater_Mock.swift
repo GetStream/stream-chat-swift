@@ -17,10 +17,8 @@ final class UserListUpdater_Mock: UserListUpdater {
     func cleanUp() {
         update_queries.removeAll()
         update_policy = nil
-        update_completion = nil
 
         fetch_queries.removeAll()
-        fetch_completion = nil
     }
 
     override func update(

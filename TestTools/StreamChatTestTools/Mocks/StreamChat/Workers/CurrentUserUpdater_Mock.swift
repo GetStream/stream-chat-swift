@@ -77,18 +77,14 @@ final class CurrentUserUpdater_Mock: CurrentUserUpdater {
         updateUserData_name = nil
         updateUserData_imageURL = nil
         updateUserData_userExtraData = nil
-        updateUserData_completion = nil
 
         addDevice_id = nil
         addDevice_currentUserId = nil
-        addDevice_completion = nil
 
         removeDevice_id = nil
         removeDevice_currentUserId = nil
-        removeDevice_completion = nil
 
         fetchDevices_currentUserId = nil
-        fetchDevices_completion = nil
 
         markAllRead_completion = nil
     }

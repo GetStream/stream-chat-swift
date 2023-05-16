@@ -112,46 +112,34 @@ final class ChannelUpdater_Mock: ChannelUpdater {
     func cleanUp() {
         update_channelQuery = nil
         update_onChannelCreated = nil
-        update_completion = nil
 
         updateChannel_payload = nil
-        updateChannel_completion = nil
 
         muteChannel_cid = nil
         muteChannel_mute = nil
-        muteChannel_completion = nil
 
         deleteChannel_cid = nil
-        deleteChannel_completion = nil
 
         truncateChannel_cid = nil
-        truncateChannel_completion = nil
 
         hideChannel_cid = nil
         hideChannel_clearHistory = nil
-        hideChannel_completion = nil
 
         showChannel_cid = nil
-        showChannel_completion = nil
 
         addMembers_cid = nil
         addMembers_userIds = nil
-        addMembers_completion = nil
 
         inviteMembers_cid = nil
         inviteMembers_userIds = nil
-        inviteMembers_completion = nil
 
         acceptInvite_cid = nil
         acceptInvite_message = nil
-        acceptInvite_completion = nil
 
         rejectInvite_cid = nil
-        rejectInvite_completion = nil
 
         removeMembers_cid = nil
         removeMembers_userIds = nil
-        removeMembers_completion = nil
 
         createNewMessage_cid = nil
         createNewMessage_text = nil
@@ -166,37 +154,28 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         createNewMessage_completion = nil
 
         markRead_cid = nil
-        markRead_completion = nil
 
         enableSlowMode_cid = nil
         enableSlowMode_cooldownDuration = nil
-        enableSlowMode_completion = nil
 
         startWatching_cid = nil
-        startWatching_completion = nil
 
         stopWatching_cid = nil
-        stopWatching_completion = nil
 
         channelWatchers_query = nil
-        channelWatchers_completion = nil
 
         freezeChannel_freeze = nil
         freezeChannel_cid = nil
-        freezeChannel_completion = nil
 
         uploadFile_type = nil
         uploadFile_localFileURL = nil
         uploadFile_cid = nil
         uploadFile_progress = nil
-        uploadFile_completion = nil
 
         loadPinnedMessages_cid = nil
         loadPinnedMessages_query = nil
-        loadPinnedMessages_completion = nil
 
         createCall_cid = nil
-        createCall_completion = nil
     }
 
     var mockPaginationState: MessagesPaginationState = .initial

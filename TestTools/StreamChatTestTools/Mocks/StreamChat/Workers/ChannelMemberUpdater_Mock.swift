@@ -22,11 +22,9 @@ final class ChannelMemberUpdater_Mock: ChannelMemberUpdater {
         banMember_cid = nil
         banMember_timeoutInMinutes = nil
         banMember_reason = nil
-        banMember_completion = nil
 
         unbanMember_userId = nil
         unbanMember_cid = nil
-        unbanMember_completion = nil
     }
 
     override func banMember(

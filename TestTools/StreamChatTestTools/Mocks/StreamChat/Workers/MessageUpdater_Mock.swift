@@ -102,14 +102,11 @@ final class MessageUpdater_Mock: MessageUpdater {
     func cleanUp() {
         getMessage_cid = nil
         getMessage_messageId = nil
-        getMessage_completion = nil
 
         deleteMessage_messageId = nil
-        deleteMessage_completion = nil
 
         editMessage_messageId = nil
         editMessage_text = nil
-        editMessage_completion = nil
 
         createNewReply_cid = nil
         createNewReply_text = nil
@@ -123,62 +120,50 @@ final class MessageUpdater_Mock: MessageUpdater {
         createNewReply_skipPush = nil
         createNewReply_skipEnrichUrl = nil
         createNewReply_extraData = nil
-        createNewReply_completion = nil
 
         loadReplies_cid = nil
         loadReplies_messageId = nil
         loadReplies_pagination = nil
-        loadReplies_completion = nil
 
         loadReactions_cid = nil
         loadReactions_messageId = nil
         loadReactions_pagination = nil
-        loadReactions_completion = nil
         loadReactions_result = nil
 
         flagMessage_flag = nil
         flagMessage_messageId = nil
         flagMessage_cid = nil
-        flagMessage_completion = nil
 
         addReaction_type = nil
         addReaction_score = nil
         addReaction_extraData = nil
         addReaction_messageId = nil
-        addReaction_completion = nil
 
         deleteReaction_type = nil
         deleteReaction_messageId = nil
-        deleteReaction_completion = nil
 
         pinMessage_pinning = nil
         pinMessage_completion = nil
         pinMessage_messageId = nil
 
         unpinMessage_messageId = nil
-        unpinMessage_completion = nil
 
         restartFailedAttachmentUploading_id = nil
         restartFailedAttachmentUploading_completion = nil
 
         resendMessage_messageId = nil
-        resendMessage_completion = nil
 
         dispatchEphemeralMessageAction_cid = nil
         dispatchEphemeralMessageAction_messageId = nil
         dispatchEphemeralMessageAction_action = nil
-        dispatchEphemeralMessageAction_completion = nil
 
         search_query = nil
         search_policy = nil
-        search_completion = nil
 
         clearSearchResults_query = nil
-        clearSearchResults_completion = nil
 
         translate_messageId = nil
         translate_language = nil
-        translate_completion = nil
     }
 
     override func getMessage(cid: ChannelId, messageId: MessageId, completion: ((Result<ChatMessage, Error>) -> Void)? = nil) {

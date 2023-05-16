@@ -46,17 +46,14 @@ final class APIClient_Spy: APIClient, Spy {
     func cleanUp() {
         request_allRecordedCalls = []
         request_endpoint = nil
-        request_completion = nil
         request_expectation = .init()
         recoveryRequest_expectation = .init()
 
         recoveryRequest_endpoint = nil
         recoveryRequest_allRecordedCalls = []
-        recoveryRequest_completion = nil
 
         uploadFile_attachment = nil
         uploadFile_progress = nil
-        uploadFile_completion = nil
 
         flushRequestsQueue()
     }
