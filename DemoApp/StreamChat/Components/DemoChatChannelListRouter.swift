@@ -419,19 +419,4 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
             }
         }
     }
-
-    func showHiddenChannels() {
-        let client = rootViewController.controller.client
-
-        let vc = HiddenChannelListVC()
-        vc.router = self
-        vc.controller = client.channelListController(
-            query: .init(filter: .and([
-                .containMembers(userIds: [client.currentUserId!]),
-                .equal(.hidden, to: true)
-            ]))
-        )
-
-        rootNavigationController?.pushViewController(vc, animated: true)
-    }
 }
