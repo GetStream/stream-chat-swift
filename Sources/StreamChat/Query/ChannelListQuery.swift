@@ -118,7 +118,16 @@ public extension FilterKey where Scope: AnyChannelListFilterScope {
 
     /// Filter for checking whether current user has muted the channel
     /// Supported operators: `equal`
-    static var muted: FilterKey<Scope, Bool> { .init(rawValue: "muted", keyPathString: #keyPath(ChannelDTO.mute)) }
+    static var muted: FilterKey<Scope, Bool> { .init(
+        rawValue: "muted",
+        keyPathString: #keyPath(ChannelDTO.mute),
+        predicateMapper: { muted in
+            if muted {
+                return NSPredicate(format: "mute != nil")
+            }
+            return NSPredicate(format: "mute == nil")
+        }
+    ) }
 
     /// Filter for checking the status of the invite
     /// Supported operators: `equal`

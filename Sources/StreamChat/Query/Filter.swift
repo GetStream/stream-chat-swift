@@ -111,13 +111,19 @@ public struct Filter<Scope: FilterScope> {
     /// Whether the `keyPathString` represents an array in the DTO entities.
     let isCollectionFilter: Bool
 
+    /// The mapper that will override the DB Predicate. This might be needed
+    /// for cases where our DB value is completely different from the server value.
+    typealias PredicateMapper = (Any) -> NSPredicate?
+    let predicateMapper: PredicateMapper?
+
     init(
         operator: String,
         key: String?,
         value: FilterValue,
         valueMapper: ValueMapper?,
         keyPathString: String?,
-        isCollectionFilter: Bool
+        isCollectionFilter: Bool,
+        predicateMapper: PredicateMapper? = nil
     ) {
         log.assert(`operator`.hasPrefix("$"), "A filter operator must have `$` prefix.")
         self.operator = `operator`
@@ -126,6 +132,7 @@ public struct Filter<Scope: FilterScope> {
         self.valueMapper = valueMapper
         self.keyPathString = keyPathString
         self.isCollectionFilter = isCollectionFilter
+        self.predicateMapper = predicateMapper
     }
 
     /// Creates a new instance of `Filter`.
@@ -153,7 +160,8 @@ public struct Filter<Scope: FilterScope> {
             value: value,
             valueMapper: nil,
             keyPathString: nil,
-            isCollectionFilter: isCollectionFilter
+            isCollectionFilter: isCollectionFilter,
+            predicateMapper: nil
         )
     }
 }
@@ -174,7 +182,8 @@ extension Filter {
             value: value,
             valueMapper: valueMapper,
             keyPathString: keyPathString,
-            isCollectionFilter: key.isCollectionFilter
+            isCollectionFilter: key.isCollectionFilter,
+            predicateMapper: key.predicateMapper
         )
     }
 
@@ -228,6 +237,12 @@ public struct FilterKey<Scope: FilterScope, Value: FilterValue>: ExpressibleBySt
     typealias TypedValueMapper = (Value) -> FilterValue?
     let valueMapper: ValueMapper?
 
+    /// The mapper that will override the DB Predicate. This might be needed
+    /// for cases where our DB value is completely different from the server value.
+    typealias PredicateMapper = (Any) -> NSPredicate?
+    typealias TypedPredicateMapper = (Value) -> NSPredicate?
+    let predicateMapper: PredicateMapper?
+
     let isCollectionFilter: Bool
 
     public init(stringLiteral value: String) {
@@ -235,6 +250,7 @@ public struct FilterKey<Scope: FilterScope, Value: FilterValue>: ExpressibleBySt
         valueMapper = nil
         keyPathString = nil
         isCollectionFilter = false
+        predicateMapper = nil
     }
 
     public init(rawValue value: String) {
@@ -242,17 +258,26 @@ public struct FilterKey<Scope: FilterScope, Value: FilterValue>: ExpressibleBySt
         keyPathString = nil
         valueMapper = nil
         isCollectionFilter = false
+        predicateMapper = nil
     }
 
     init(
         rawValue value: String,
         keyPathString: String,
         valueMapper: TypedValueMapper? = nil,
-        isCollectionFilter: Bool = false
+        isCollectionFilter: Bool = false,
+        predicateMapper: TypedPredicateMapper? = nil
     ) {
         rawValue = value
         self.keyPathString = keyPathString
         self.isCollectionFilter = isCollectionFilter
+        self.predicateMapper = {
+            guard let predicateMapper = predicateMapper, let castInputValue = ($0 as? Value) else {
+                return nil
+            }
+            return predicateMapper(castInputValue)
+        }
+
         self.valueMapper = {
             guard let valueMapper = valueMapper, let castInputValue = ($0 as? Value) else {
                 return nil
@@ -485,13 +510,23 @@ extension Filter: Codable {
             if key.stringValue.hasPrefix("$") {
                 // The right side should be an array of other filters
                 let filters = try container.decode([Filter].self, forKey: key)
-                self.init(operator: key.stringValue, key: nil, value: filters, isCollectionFilter: false)
+                self.init(
+                    operator: key.stringValue,
+                    key: nil,
+                    value: filters,
+                    isCollectionFilter: false
+                )
                 return
 
             } else {
                 // The right side should be FilterRightSide
                 let rightSide = try container.decode(FilterRightSide.self, forKey: key)
-                self.init(operator: rightSide.operator, key: key.stringValue, value: rightSide.value, isCollectionFilter: false)
+                self.init(
+                    operator: rightSide.operator,
+                    key: key.stringValue,
+                    value: rightSide.value,
+                    isCollectionFilter: false
+                )
                 return
             }
         }
