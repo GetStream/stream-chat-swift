@@ -2,15 +2,16 @@
 title: Working with Attachments/Files
 ---
 
-Stream chat allows you to add attachments to a message. There is built-in support for files, images, videos, giphy and URL preview attachments.
-It is also possible to have your own type of attachment and to customize how built-in attachments are rendered. Custom attachments are one of the most useful ways to add application specific content to messages. Examples of custom attachments are: location sharing, workouts and voice memos.
+Stream chat allows you to add attachments to a message. There is built-in support for files, images, videos, voice recordings, giphy and URL preview attachments.
+It is also possible to have your own type of attachment and to customize how built-in attachments are rendered. Custom attachments are one of the most useful ways to add application specific content to messages. Examples of custom attachments are: location sharing and workouts.
 
 The type of attachment is defined by the value on the `Type` field. All SDKs support these built-in attachment types out-of-the-box:
 
-- attachment type "image" for images
-- attachment type "video" for videos
-- attachment type "giphy" for interactive Giphy attachments (see Slack)
-- attachment type "file" for files
+- attachment type `image` for images
+- attachment type `video` for videos
+- attachment type `voiceRecording` for voice recordings
+- attachment type `giphy` for interactive Giphy attachments (see Slack)
+- attachment type `file` for files
 
 URL previews can have type image, video or audio depending on the resource that the URL addresses. All attachments view classes are subclasses of the `AttachmentViewInjector` class.
 
@@ -28,12 +29,13 @@ Components.default.filesAttachmentInjector = MyCustomAttachmentViewInjector.self
 
 This is the list of `Components`'s attributes used to map attachments to views
 
-|  Attribute                | Description                                     | Default View Class                              |
-|---------------------------|-------------------------------------------------|-------------------------------------------------|
-| galleryAttachmentInjector | Single or multiple images and video attachments | `GalleryAttachmentViewInjector.self`|
-| linkAttachmentInjector    | URL preview attachments                         | `LinkAttachmentViewInjector.self`  |
-| giphyAttachmentInjector   | Giphy attachments                               | `GiphyAttachmentViewInjector.self` |
-| filesAttachmentInjector   | File attachments                                | `FilesAttachmentViewInjector.self` |
+|  Attribute                        | Description                                     | Default View Class                          |
+|-----------------------------------|-------------------------------------------------|---------------------------------------------|
+| galleryAttachmentInjector         | Single or multiple images and video attachments | `GalleryAttachmentViewInjector.self`        |
+| linkAttachmentInjector            | URL preview attachments                         | `LinkAttachmentViewInjector.self`           |
+| giphyAttachmentInjector           | Giphy attachments                               | `GiphyAttachmentViewInjector.self`          |
+| voiceRecordingAttachmentInjector  | Voice Recording attachments                     | `VoiceRecordingAttachmentViewInjector.self` |
+| filesAttachmentInjector           | File attachments                                | `FilesAttachmentViewInjector.self`          |
 
 You can implement `MyCustomAttachmentViewInjector` as a subclass of `FilesAttachmentViewInjector` or as a subclass of `AttachmentViewInjector`.
 

@@ -12,6 +12,10 @@ public struct AudioAnalysisEngine {
     /// The analyser that will be used to analyse an audio file
     private let audioAnalyser: AudioAnalysing
 
+    public init() throws {
+        try self.init(assetPropertiesLoader: StreamAssetPropertyLoader())
+    }
+
     public init(
         assetPropertiesLoader: AssetPropertyLoading
     ) throws {
@@ -109,12 +113,12 @@ public struct AudioAnalysisEngine {
 // MARK: - Errors
 
 public final class AudioAnalysisEngineError: ClientError {
-    /// An error occurred when the Audio track cannot be loaded from the AudioFile provided
+    /// An error occurred when the Audio track cannot be loaded from the AudioFile provided.
     public static func failedToLoadAVAssetTrack(file: StaticString = #file, line: UInt = #line) -> AudioAnalysisEngineError {
         .init("Failed to load AVAssetTrack.", file, line)
     }
 
-    /// An error occurred when the AudioFormatDescriptions cannot be loaded from the AudioFile provided
+    /// An error occurred when the AudioFormatDescriptions cannot be loaded from the AudioFile provided.
     public static func failedToLoadFormatDescriptions(file: StaticString = #file, line: UInt = #line) -> AudioAnalysisEngineError {
         .init("Failed to load format descriptions.", file, line)
     }
