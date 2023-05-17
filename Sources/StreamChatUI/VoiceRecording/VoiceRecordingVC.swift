@@ -136,6 +136,8 @@ open class VoiceRecordingVC: _ViewController, ComponentsProvider, AppearanceProv
 
     // MARK: - Delegate & ComposerView
 
+    /// The delegate which the `VoiceRecordingVC` will ask for support on presenting views and
+    /// communicating the state of  the recording flow to its parent controller.
     public weak var delegate: VoiceRecordingDelegate?
 
     private let composerView: ComposerView
@@ -152,7 +154,7 @@ open class VoiceRecordingVC: _ViewController, ComponentsProvider, AppearanceProv
     // MARK: - Subviews
 
     /// A view that is being used to display a tip to user when the tap duration on the recording button wasn't
-    /// long enough (the display of this view relates to `RecordButton.minimumPressDuration`)
+    /// long enough (the display of this view relates to `RecordButton.minimumPressDuration`).
     open lazy var recordingTipView: RecordingTipView = .init()
         .withoutAutoresizingMaskConstraints
 

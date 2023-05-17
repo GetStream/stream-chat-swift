@@ -20,7 +20,7 @@ public protocol AudioPlaying: AnyObject {
     ///   - delegate: The delegate that will be informed for changes on the asset's playback.
     func loadAsset(from url: URL)
 
-    /// Begin the loaded asset's playback. If no asset has been loaded, the action has no effect
+    /// Begin the loaded asset's playback. If no asset has been loaded, the action has no effect.
     func play()
 
     /// Pauses the loaded asset's playback. If non has been loaded or the playback hasn't started yet
