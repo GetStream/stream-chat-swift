@@ -84,6 +84,11 @@ open class ChatMessageLayoutOptionsResolver {
         if isLastInSequence && !message.isSentByCurrentUser && channel.memberCount > 2 {
             options.insert(.authorName)
         }
+        if channel.config.repliesEnabled && (message.isRootOfThread || message.isPartOfThread) {
+            options.insert(.threadInfo)
+            // The bubbles with thread look like continuous bubbles
+            options.insert(.continuousBubble)
+        }
 
         guard message.isDeleted == false else {
             return options
@@ -91,11 +96,6 @@ open class ChatMessageLayoutOptionsResolver {
 
         if hasQuotedMessage(message) {
             options.insert(.quotedMessage)
-        }
-        if channel.config.repliesEnabled && (message.isRootOfThread || message.isPartOfThread) {
-            options.insert(.threadInfo)
-            // The bubbles with thread look like continuous bubbles
-            options.insert(.continuousBubble)
         }
         if hasReactions(channel, message, appearance) {
             options.insert(.reactions)
@@ -114,7 +114,7 @@ open class ChatMessageLayoutOptionsResolver {
         message.quotedMessage?.id != nil
     }
 
-    func hasReactions(_ channel: ChatChannel, _ message: ChatMessage, _ appareance: Appearance) -> Bool {
+    func hasReactions(_ channel: ChatChannel, _ message: ChatMessage, _ appearance: Appearance) -> Bool {
         if !channel.config.reactionsEnabled {
             return false
         }
@@ -123,14 +123,14 @@ open class ChatMessageLayoutOptionsResolver {
             return false
         }
 
-        let unhandledReactionTypes = message.latestReactions.filter { appareance.images.availableReactions[$0.type] == nil }
+        let unhandledReactionTypes = message.latestReactions.filter { appearance.images.availableReactions[$0.type] == nil }
             .map(\.type)
 
         if !unhandledReactionTypes.isEmpty {
             log.warning("message contains unhandled reaction types \(unhandledReactionTypes)")
         }
 
-        return !message.latestReactions.filter { appareance.images.availableReactions[$0.type] != nil }.isEmpty
+        return !message.latestReactions.filter { appearance.images.availableReactions[$0.type] != nil }.isEmpty
     }
 
     /// Says whether the message at given `indexPath` is the last one in a sequence of messages
