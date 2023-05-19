@@ -9,7 +9,7 @@
 import Foundation
 @testable import StreamChat
 
-class MessagesPaginationStateHandler_Mock: MessagesPaginationStateHandling {
+final class MessagesPaginationStateHandler_Mock: MessagesPaginationStateHandling {
 
     var mockState: MessagesPaginationState = .initial
 

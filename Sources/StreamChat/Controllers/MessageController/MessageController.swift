@@ -198,7 +198,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         messageUpdater = environment.messageUpdaterBuilder(
             client.config.isLocalStorageEnabled,
             client.messageRepository,
-            client.makeMessagesPaginationStateHandler(parentMessageId: messageId),
+            client.makeMessagesPaginationStateHandler(),
             client.databaseContainer,
             client.apiClient
         )
