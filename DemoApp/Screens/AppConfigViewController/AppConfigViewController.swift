@@ -128,6 +128,7 @@ class AppConfigViewController: UITableViewController {
     enum ComponentsConfigOption: String, CaseIterable {
         case isUniqueReactionsEnabled
         case shouldMessagesStartAtTheTop
+        case threadRendersParentMessageEnabled
     }
 
     enum ChatClientConfigOption: String, CaseIterable {
@@ -351,6 +352,10 @@ class AppConfigViewController: UITableViewController {
         case .shouldMessagesStartAtTheTop:
             cell.accessoryView = makeSwitchButton(Components.default.shouldMessagesStartAtTheTop) { newValue in
                 Components.default.shouldMessagesStartAtTheTop = newValue
+            }
+        case .threadRendersParentMessageEnabled:
+            cell.accessoryView = makeSwitchButton(Components.default.threadRendersParentMessageEnabled) { newValue in
+                Components.default.threadRendersParentMessageEnabled = newValue
             }
         }
     }
