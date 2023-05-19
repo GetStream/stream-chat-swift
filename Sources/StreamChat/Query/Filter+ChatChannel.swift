@@ -46,6 +46,10 @@ extension Filter where Scope == ChannelListFilterScope {
             return nil
         }
 
+        if let overridePredicate = predicateMapper?(op, mappedValue) {
+            return overridePredicate
+        }
+
         switch op {
         case .equal, .notEqual, .greater, .greaterOrEqual, .less, .lessOrEqual:
             return comparingPredicate(op)
