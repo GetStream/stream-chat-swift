@@ -264,6 +264,48 @@ Page size is used to specify how many channels the initial page will show. You c
 
 `messagesLimit` is used to specify how many messages the initial fetch will return.
 
+## Replacing Channel List Query
+
+In case you want to apply filters to your Channel List you can do this by replacing the channel list query of the `ChatChannelListVC` with either `replaceQuery()` function, or `replaceChannelListController()` in case you need more control. Here is a basic example on how you can change the Channel List data to show hidden channels only:
+
+```swift
+class CustomChatChannelListVC: ChatChannelListVC {
+
+    lazy var hiddenChannelsButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(systemName: "archive")!, for: .normal)
+        return button
+    }()
+
+    override open func setUp() {
+        super.setUp()
+
+        hiddenChannelsButton.addTarget(self, action: #selector(didTapHiddenChannelsButton), for: .touchUpInside)
+    }
+
+    override open func setUpLayout() {
+        super.setUpLayout()
+
+        ...
+    }
+
+    @objc private func didTapHiddenChannelsButton(_ sender: Any) {
+        guard let currentUserId = controller.client.currentUserId else { return }
+        let hiddenChannelsQuery: ChannelListQuery = .init(filter: .and([
+            .containMembers(userIds: [currentUserId]),
+            .equal(.hidden, to: true)
+        ]))
+        self.replaceQuery(hiddenChannelsQuery)
+    }
+}
+```
+
+You can see a full working example in our Demo App [here](https://github.com/GetStream/stream-chat-swift/blob/add/replace-query-in-channel-list/DemoApp/StreamChat/Components/DemoChatChannelListVC.swift).
+
+:::note
+The replacing of the Channel List Query is only available after **4.32.0** version.
+:::
+
 ## Marking all Channels as Read
 
 When you're displaying, or loading a set of channels, you may want to mark all the channels as read. For this, `ChannelListController` has `markAllRead` function:
