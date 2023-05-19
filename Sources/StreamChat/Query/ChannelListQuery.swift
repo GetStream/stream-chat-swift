@@ -113,8 +113,20 @@ public extension FilterKey where Scope: AnyChannelListFilterScope {
     static var team: FilterKey<Scope, TeamId?> { .init(rawValue: "team", keyPathString: #keyPath(ChannelDTO.team)) }
 
     /// Filter for checking whether current user is joined the channel or not (through invite or directly)
-    /// Supported operators: `equal`
-    static var joined: FilterKey<Scope, Bool> { .init(rawValue: "joined", keyPathString: #keyPath(ChannelDTO.membership)) }
+    /// Supported operators: `equal`.
+    static var joined: FilterKey<Scope, Bool> { .init(
+        rawValue: "joined",
+        keyPathString: #keyPath(ChannelDTO.membership),
+        predicateMapper: { op, joined in
+            let key = #keyPath(ChannelDTO.membership)
+            switch op {
+            case .equal:
+                return NSPredicate(format: joined ? "\(key) != nil" : "\(key) == nil")
+            default:
+                return nil
+            }
+        }
+    ) }
 
     /// Filter for checking whether current user has muted the channel
     /// Supported operators: `equal`.
