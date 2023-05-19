@@ -1661,6 +1661,78 @@ final class ChannelListController_Tests: XCTestCase {
         )
     }
 
+    func test_filterPredicate_joined_returnsExpectedResults() throws {
+        let cid1 = ChannelId.unique
+        let cid2 = ChannelId.unique
+
+        try assertFilterPredicate(
+            .equal(.joined, to: true),
+            channelsInDB: [
+                .dummy(channel: .dummy(cid: cid1), membership: .dummy()),
+                .dummy(channel: .dummy(team: .unique)),
+                .dummy(channel: .dummy(team: .unique)),
+                .dummy(channel: .dummy(team: .unique)),
+                .dummy(channel: .dummy(cid: cid2), membership: .dummy())
+            ],
+            expectedResult: [cid1, cid2]
+        )
+    }
+
+    func test_filterPredicate_muted_returnsExpectedResults() throws {
+        let cid1 = ChannelId.unique
+        let userId = memberId
+
+        // Create the Controller
+        let query = ChannelListQuery(filter: .equal(.muted, to: true))
+        controller = ChatChannelListController(
+            query: query,
+            client: client,
+            environment: env.environment
+        )
+        controller.synchronize()
+
+        // Save Mute
+        let mutedChannel: ChannelDetailPayload = .dummy(
+            cid: cid1,
+            members: [.dummy(user: .dummy(userId: userId))]
+        )
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: .dummy(channel: mutedChannel), query: query, cache: nil)
+            try session.saveCurrentUser(payload: .dummy(
+                userId: userId,
+                role: .admin
+            ))
+            try session.saveChannelMute(payload: .init(
+                mutedChannel: mutedChannel,
+                user: .dummy(userId: userId),
+                createdAt: .unique,
+                updatedAt: .unique
+            ))
+        }
+
+        // Save Channels
+        let channelsInDB: [ChannelPayload] = [
+            .dummy(channel: .dummy(cid: cid1), membership: .dummy()),
+            .dummy(channel: .dummy(team: .unique)),
+            .dummy(channel: .dummy(team: .unique)),
+            .dummy(channel: .dummy(team: .unique))
+        ]
+        _ = try waitFor { [unowned client] in
+            client?.databaseContainer.write({ [query] session in
+                try channelsInDB.forEach { payload in
+                    try session.saveChannel(payload: payload, query: query, cache: nil)
+                }
+            }, completion: $0)
+        }
+
+        // Assert
+        let expectedResult = [cid1]
+        XCTAssertEqual(
+            controller.channels.map(\.cid.rawValue).sorted(),
+            expectedResult.map(\.rawValue).sorted()
+        )
+    }
+
     // MARK: - Private Helpers
 
     private func setUpChatClientWithoutAutoFiltering() {
