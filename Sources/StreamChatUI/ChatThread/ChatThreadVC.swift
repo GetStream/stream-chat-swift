@@ -64,6 +64,11 @@ open class ChatThreadVC: _ViewController,
 
     private var currentlyTypingUsers: Set<ChatUser> = []
 
+    /// A boolean value that determines whether the thread view renders the parent message at the top.
+    open var shouldRenderParentMessage: Bool {
+        components.threadRendersParentMessageEnabled
+    }
+
     override open func setUp() {
         super.setUp()
 
@@ -90,7 +95,7 @@ open class ChatThreadVC: _ViewController,
         }
 
         // Set the initial data
-        messages = getRepliesWithThreadRootMessage(from: messageController)
+        messages = getReplies(from: messageController)
 
         let completeSetUp: (ChatMessage?) -> Void = { [messageController, messageComposerVC] message in
             if messageComposerVC.content.threadMessage == nil,
@@ -286,7 +291,7 @@ open class ChatThreadVC: _ViewController,
         _ controller: ChatMessageController,
         didChangeMessage change: EntityChange<ChatMessage>
     ) {
-        guard !messages.isEmpty else {
+        guard shouldRenderParentMessage && !messages.isEmpty else {
             return
         }
 
@@ -343,12 +348,15 @@ open class ChatThreadVC: _ViewController,
 
     private func updateMessages(with changes: [ListChange<ChatMessage>]) {
         messageListVC.setPreviousMessagesSnapshot(self.messages)
-        let messages = getRepliesWithThreadRootMessage(from: messageController)
+        let messages = getReplies(from: messageController)
         messageListVC.setNewMessagesSnapshot(messages)
         messageListVC.updateMessages(with: changes)
     }
 
-    private func getRepliesWithThreadRootMessage(from messageController: ChatMessageController) -> [ChatMessage] {
+    private func getReplies(from messageController: ChatMessageController) -> [ChatMessage] {
+        guard shouldRenderParentMessage else {
+            return Array(messageController.replies)
+        }
         var messages = Array(messageController.replies)
         let isFirstPage = messages.count < messageController.repliesPageSize
         let shouldAddRootMessageAtTheTop = isFirstPage || messageController.hasLoadedAllPreviousReplies

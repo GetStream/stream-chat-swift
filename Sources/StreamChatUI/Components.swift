@@ -302,6 +302,9 @@ public struct Components {
     /// A boolean value that determines whether thread replies counter decoration should be shown below the source message of a thread.
     public var threadRepliesCounterEnabled = true
 
+    /// A boolean value that determines whether the thread view renders the parent message at the top.
+    public var threadRendersParentMessageEnabled = true
+
     // MARK: - Channel components
 
     /// The view controller that contains the channel messages and represents the chat view.
