@@ -216,6 +216,9 @@ open class ChatChannelListVC: _ViewController,
 
     /// Replaces the channel list query and loads the new data.
     ///
+    /// In case your `ChatChannelListController` uses a filter block, you should
+    /// use the `replaceChannelListController()` function instead of this one.
+    ///
     /// - Parameter query: The new channel list query.
     public func replaceQuery(_ query: ChannelListQuery) {
         let newController = controller.client.channelListController(
