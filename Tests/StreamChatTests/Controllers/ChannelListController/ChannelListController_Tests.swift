@@ -1732,6 +1732,22 @@ final class ChannelListController_Tests: XCTestCase {
             expectedResult.map(\.rawValue).sorted()
         )
     }
+  
+    func test_filterPredicate_noTeam_returnsExpectedResults() throws {
+        let cid = ChannelId.unique
+
+        try assertFilterPredicate(
+            .noTeam,
+            channelsInDB: [
+                .dummy(channel: .dummy(cid: cid, team: nil)),
+                .dummy(channel: .dummy(team: .unique)),
+                .dummy(channel: .dummy(team: .unique)),
+                .dummy(channel: .dummy(team: .unique)),
+                .dummy(channel: .dummy(team: .unique))
+            ],
+            expectedResult: [cid]
+        )
+    }
 
     // MARK: - Private Helpers
 
