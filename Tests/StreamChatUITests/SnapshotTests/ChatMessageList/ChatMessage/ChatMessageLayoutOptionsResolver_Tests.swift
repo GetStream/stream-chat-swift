@@ -929,7 +929,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         }
     }
 
-    func test_optionsForMessage_whenMessageIsDeleted_doesNotIncludeThreadInfo() {
+    func test_optionsForMessage_whenMessageIsDeleted_includesThreadInfo() {
         let sut = createOptionsResolver()
 
         // Create deleted thread root message
@@ -965,7 +965,7 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             )
 
             // Assert `.threadInfo` is not included since message is deleted
-            XCTAssertFalse(layoutOptions.contains(.threadInfo))
+            XCTAssertTrue(layoutOptions.contains(.threadInfo))
         }
     }
 
