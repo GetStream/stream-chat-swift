@@ -437,6 +437,7 @@ public struct Components {
     public var isVoiceRecordingEnabled = false
 
     /// When set to `true` recorded messages can be grouped together and send as part of one message.
+    /// When set to `false`, recorded messages will be sent instantly.
     public var isVoiceRecordingConfirmationRequiredEnabled = true
 
     /// The ViewController that handles the recording flow.
