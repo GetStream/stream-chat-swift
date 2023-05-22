@@ -104,13 +104,13 @@ extension Filter where Scope == ChannelListFilterScope {
         switch op {
         case .equal:
             return NSPredicate(
-                format: "%@ == %K",
-                argumentArray: [mappedValue, keyPathString]
+                format: "%K == %@",
+                argumentArray: [keyPathString, mappedValue]
             )
         case .notEqual:
             return NSPredicate(
-                format: "%@ != %K",
-                argumentArray: [mappedValue, keyPathString]
+                format: "%K != %@",
+                argumentArray: [keyPathString, mappedValue]
             )
         case .greater:
             return NSPredicate(
