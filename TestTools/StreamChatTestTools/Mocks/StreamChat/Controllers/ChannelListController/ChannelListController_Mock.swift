@@ -8,6 +8,7 @@ import XCTest
 
 final class ChannelListController_Mock: ChatChannelListController {
     @Atomic var synchronize_called = false
+    var synchronizeCallCount = 0
 
     var channels_simulated: [ChatChannel]?
     override var channels: LazyCachedMapCollection<ChatChannel> {
@@ -26,5 +27,6 @@ final class ChannelListController_Mock: ChatChannelListController {
 
     override func synchronize(_ completion: ((Error?) -> Void)? = nil) {
         synchronize_called = true
+        synchronizeCallCount += 1 
     }
 }
