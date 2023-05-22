@@ -398,7 +398,7 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                             errorMessage = "Message ID does not belong to this channel."
                         }
 
-                        if let errorMessage {
+                        if let errorMessage = errorMessage {
                             self?.rootViewController.presentAlert(title: errorMessage)
                             return
                         }
