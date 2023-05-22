@@ -12,7 +12,6 @@ final class AttachmentFileType_Tests: XCTestCase {
     func test_isAudio_returnsTrueForExpectedValues() {
         let expectedValues: Set<AttachmentFileType> = [
             .mp3,
-            .mp4,
             .wav,
             .ogg,
             .m4a,
