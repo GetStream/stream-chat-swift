@@ -14,7 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix Composer's keyboard not adjusted when presenting alert controllers [#2610](https://github.com/GetStream/stream-chat-swift/pull/2610)
 - Fix InputTextView not scrolling to caret when pasting long text [#2609](https://github.com/GetStream/stream-chat-swift/pull/2609)
 - Fix scrollToBottomButton visible when jumping to message on the first page [#2608](https://github.com/GetStream/stream-chat-swift/pull/2608)
-- Allow replies to soft-deleted messages [#2633](https://github.com/GetStream/stream-chat-swift/pull/2633)
+- Allow sending replies to soft-deleted parent messages [#2633](https://github.com/GetStream/stream-chat-swift/pull/2633)
 
 # [4.31.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.31.0)
 _April 25, 2023_
