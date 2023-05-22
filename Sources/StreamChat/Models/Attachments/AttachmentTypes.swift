@@ -297,7 +297,7 @@ public enum AttachmentFileType: String, Codable, Equatable, CaseIterable {
 
     public var isAudio: Bool {
         switch self {
-        case .mp3, .mp4, .wav, .ogg, .m4a, .aac:
+        case .mp3, .wav, .ogg, .m4a, .aac:
             return true
         default:
             return false
