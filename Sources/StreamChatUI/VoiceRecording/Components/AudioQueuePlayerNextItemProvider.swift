@@ -145,10 +145,10 @@ open class AudioQueuePlayerNextItemProvider {
 
         let indexAfter = voiceRecordingAttachments.index(after: attachmentIndex)
 
-        guard voiceRecordingAttachments.indices.contains(indexAfter) else {
+        guard let voiceRecordingAttachment = voiceRecordingAttachments[safe: indexAfter] else {
             return nil
         }
 
-        return voiceRecordingAttachments[indexAfter]
+        return voiceRecordingAttachment
     }
 }
