@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix memory leak in `ChannelListController` when loading more channels [#2624](https://github.com/GetStream/stream-chat-swift/pull/2624)
 - Fix `isJumpingToMessage` being `true` after jumping to message on the first page [#2608](https://github.com/GetStream/stream-chat-swift/pull/2608)
 - Fix `noTeam` filter that was causing an error [#2632](https://github.com/GetStream/stream-chat-swift/pull/2632)
+- Fix muted and joined channel list queries with empty data (Auto Filtering Enabled) [#2634](https://github.com/GetStream/stream-chat-swift/pull/2634)
 
 ## StreamChatUI
 ### ✅ Added
