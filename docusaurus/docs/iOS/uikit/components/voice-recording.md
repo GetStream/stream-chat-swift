@@ -2,7 +2,7 @@
 title: VoiceRecording
 ---
 
-Stream chat allows you to exchange Voice Recordings in your channels. Those Voice Recordings are a built-in Attachment types (as are being defined [here](./working-with-attachments.md)). We are going to take a look in the main parts of Voice Recording feature below.
+Stream chat allows you to exchange Voice Recordings in your channels. Those Voice Recordings are a built-in Attachment types (as are being defined [here](../guides/working-with-attachments.md)). We are going to take a look in the main parts of Voice Recording feature below.
 
 :::note
 Voice Recordings are available since version 4.32.0.
