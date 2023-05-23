@@ -19,7 +19,7 @@ public protocol AudioQueuePlayerDatasource: AnyObject {
     ) -> URL?
 }
 
-open class StreamRemoteAudioQueuePlayer: StreamRemoteAudioPlayer {
+open class StreamAudioQueuePlayer: StreamAudioPlayer {
     open weak var dataSource: AudioQueuePlayerDatasource?
 
     override open func playbackWillStop(_ playerItem: AVPlayerItem) {

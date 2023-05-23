@@ -148,7 +148,7 @@ open class ChatChannelVC: _ViewController,
         messageListVC.audioPlayer = audioPlayer
         messageComposerVC.audioPlayer = audioPlayer
 
-        if let queueAudioPlayer = audioPlayer as? StreamRemoteAudioQueuePlayer {
+        if let queueAudioPlayer = audioPlayer as? StreamAudioQueuePlayer {
             queueAudioPlayer.dataSource = self
         }
     }

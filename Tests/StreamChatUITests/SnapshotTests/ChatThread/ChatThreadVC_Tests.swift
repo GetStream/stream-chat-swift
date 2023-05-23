@@ -207,7 +207,7 @@ final class ChatThreadVC_Tests: XCTestCase {
     func test_setUp_audioPlayerIsKindOfQueuePlayer_audioPlayerDatasourceWasSetCorrectly() {
         vc.setUp()
 
-        XCTAssertTrue((vc.audioPlayer as? StreamRemoteAudioQueuePlayer)?.dataSource === vc)
+        XCTAssertTrue((vc.audioPlayer as? StreamAudioQueuePlayer)?.dataSource === vc)
     }
 
     // MARK: - audioQueuePlayerNextAssetURL
