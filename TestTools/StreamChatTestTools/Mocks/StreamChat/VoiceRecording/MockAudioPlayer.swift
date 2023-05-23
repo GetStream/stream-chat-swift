@@ -11,8 +11,6 @@ public class MockAudioPlayer: AudioPlaying {
 
     public private(set) var loadAssetWasCalledWithURL: URL?
 
-    public private(set) var clearUpQueueWasCalled = false
-
     public private(set) var playWasCalled = false
 
     public private(set) var pauseWasCalled = false
@@ -31,10 +29,6 @@ public class MockAudioPlayer: AudioPlaying {
 
     public func loadAsset(from url: URL) {
         loadAssetWasCalledWithURL = url
-    }
-
-    public func clearUpQueue() {
-        clearUpQueueWasCalled = true
     }
 
     public func play() {
