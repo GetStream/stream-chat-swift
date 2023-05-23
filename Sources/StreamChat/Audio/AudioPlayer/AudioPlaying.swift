@@ -20,8 +20,6 @@ public protocol AudioPlaying: AnyObject {
     ///   - delegate: The delegate that will be informed for changes on the asset's playback.
     func loadAsset(from url: URL)
 
-    func clearUpQueue()
-
     /// Begin the loaded asset's playback. If no asset has been loaded, the action has no effect
     func play()
 
@@ -111,11 +109,6 @@ open class StreamAudioPlayer: AudioPlaying, AppStateObserverDelegate {
     open func subscribe(_ subscriber: AudioPlayingDelegate) {
         multicastDelegate.add(additionalDelegate: subscriber)
         subscriber.audioPlayer(self, didUpdateContext: context)
-    }
-    
-    open func clearUpQueue() {
-        multicastDelegate.set(additionalDelegates: [])
-        player.replaceCurrentItem(with: nil)
     }
 
     open func loadAsset(from url: URL) {
