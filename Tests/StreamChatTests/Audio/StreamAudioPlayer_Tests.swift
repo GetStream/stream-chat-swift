@@ -8,14 +8,14 @@ import Foundation
 import StreamChatTestTools
 import XCTest
 
-final class StreamRemoteAudioPlayer_Tests: XCTestCase {
+final class StreamAudioPlayer_Tests: XCTestCase {
     private var audioPlayerDelegate: MockAudioPlayerDelegate!
     private var assetPropertyLoader: MockAssetPropertyLoader!
     private var playerObserver: MockAudioPlayerObserver!
     private var audioSessionConfigurator: MockAudioSessionConfigurator!
     private var appStateObserver: MockAppStateObserver!
     private var player: MockAVPlayer!
-    private var subject: StreamRemoteAudioPlayer!
+    private var subject: StreamAudioPlayer!
 
     private lazy var assetURL: URL! = .unique()
     private lazy var mockAsset: MockAVURLAsset! = .init(url: assetURL)
@@ -312,7 +312,7 @@ final class StreamRemoteAudioPlayer_Tests: XCTestCase {
         XCTAssertEqual(assetPropertyLoader.loadPropertiesWasCalledWithProperties?.first?.name, "duration")
         XCTAssertEqual((assetPropertyLoader.loadPropertiesWasCalledWithAsset as? AVURLAsset)?.url, assetURL)
         XCTAssertTrue(player.playWasCalled)
-        XCTAssertTrue((audioPlayerDelegate.didUpdateContextWasCalledWithPlayer as? StreamRemoteAudioPlayer) === subject)
+        XCTAssertTrue((audioPlayerDelegate.didUpdateContextWasCalledWithPlayer as? StreamAudioPlayer) === subject)
         XCTAssertEqual(audioPlayerDelegate.didUpdateContextWasCalledWithContext, expectedContext)
     }
 

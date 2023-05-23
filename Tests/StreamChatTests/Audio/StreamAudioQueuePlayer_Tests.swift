@@ -7,14 +7,14 @@ import AVFoundation
 import StreamChatTestTools
 import XCTest
 
-final class StreamRemoteAudioQueuePlayer_Tests: XCTestCase {
+final class StreamAudioQueuePlayer_Tests: XCTestCase {
     private var dataSource: MockAudioQueuePlayerDatasource!
     private var assetPropertyLoader: MockAssetPropertyLoader!
     private var playerObserver: MockAudioPlayerObserver!
     private var audioSessionConfigurator: MockAudioSessionConfigurator!
     private var appStateObserver: MockAppStateObserver!
     private var player: MockAVPlayer!
-    private var subject: StreamRemoteAudioQueuePlayer!
+    private var subject: StreamAudioQueuePlayer!
 
     override func setUpWithError() throws {
         try super.setUpWithError()
@@ -57,7 +57,7 @@ final class StreamRemoteAudioQueuePlayer_Tests: XCTestCase {
         /// Simulate playback approaching stop
         playerObserver.addStoppedPlaybackObserverWasCalledWithBlock?(.init(url: currentURL))
 
-        XCTAssertTrue((dataSource.audioQueuePlayerNextAssetURLWasCalledWithAudioPlayer as? StreamRemoteAudioQueuePlayer) === subject)
+        XCTAssertTrue((dataSource.audioQueuePlayerNextAssetURLWasCalledWithAudioPlayer as? StreamAudioQueuePlayer) === subject)
         XCTAssertEqual(dataSource.audioQueuePlayerNextAssetURLWasCalledWithCurrentAssetURL, currentURL)
         XCTAssertTrue(player.pauseWasCalled)
     }
@@ -75,7 +75,7 @@ final class StreamRemoteAudioQueuePlayer_Tests: XCTestCase {
         /// Simulate playback approaching stop
         playerObserver.addStoppedPlaybackObserverWasCalledWithBlock?(.init(url: currentURL))
 
-        XCTAssertTrue((dataSource.audioQueuePlayerNextAssetURLWasCalledWithAudioPlayer as? StreamRemoteAudioQueuePlayer) === subject)
+        XCTAssertTrue((dataSource.audioQueuePlayerNextAssetURLWasCalledWithAudioPlayer as? StreamAudioQueuePlayer) === subject)
         XCTAssertEqual(dataSource.audioQueuePlayerNextAssetURLWasCalledWithCurrentAssetURL, currentURL)
         XCTAssertEqual((player.replaceCurrentItemWasCalledWithItem?.asset as? AVURLAsset)?.url, nextTrackURL)
     }
