@@ -12,7 +12,7 @@ import UIKit
 /// manage its own view. Instead, the view property of the ViewController has been overridden and returns
 /// the ComposerView.
 /// - Important: Avoid adding the ViewController's view in view hierarchy.
-open class VoiceRecordingVC: _ViewController, ComponentsProvider, AppearanceProvider, AudioRecordingDelegate, AudioPlayingDelegate {
+open class VoiceRecordingVC: _ViewController, ComponentsProvider, AppearanceProvider, AudioRecordingDelegate, AudioPlayingDelegate, UIGestureRecognizerDelegate {
     // MARK: - Nested Types
 
     public struct State: RawRepresentable, Equatable {
@@ -266,12 +266,16 @@ open class VoiceRecordingVC: _ViewController, ComponentsProvider, AppearanceProv
 
         guard components.isVoiceRecordingEnabled else { return }
 
-        bidirectionalPanGestureRecogniser.touchesBeganHandler = { [weak self] in self?.updateContentByApplyingAction(.tapRecord) }
-        bidirectionalPanGestureRecogniser.touchesEndedHandler = { [weak self] in self?.updateContentByApplyingAction(.touchUp) }
+        bidirectionalPanGestureRecogniser.touchesEndedHandler = { [weak self] in
+            guard self?.content != .idle else { return }
+            self?.updateContentByApplyingAction(.touchUp)
+        }
         bidirectionalPanGestureRecogniser.horizontalMovementHandler = { [weak self] in self?.didPanHorizontally($0) }
         bidirectionalPanGestureRecogniser.verticalMovementHandler = { [weak self] in self?.didPanVertically($0) }
         view.addGestureRecognizer(bidirectionalPanGestureRecogniser)
+        bidirectionalPanGestureRecogniser.delegate = self
 
+        recordButton.touchDownHandler = { [weak self] in self?.updateContentByApplyingAction(.tapRecord) }
         recordButton.incompleteHandler = { [weak self] in self?.updateContentByApplyingAction(.showTip) }
         recordButton.completedHandler = { [weak self] in self?.updateContentByApplyingAction(.beginRecording) }
 
@@ -665,6 +669,15 @@ open class VoiceRecordingVC: _ViewController, ComponentsProvider, AppearanceProv
         default:
             break
         }
+    }
+
+    // MARK: - UIGestureRecognizerDelegate
+
+    public func gestureRecognizer(
+        _ gestureRecognizer: UIGestureRecognizer,
+        shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
+    ) -> Bool {
+        content != .idle
     }
 
     // MARK: - Private Action Handlers

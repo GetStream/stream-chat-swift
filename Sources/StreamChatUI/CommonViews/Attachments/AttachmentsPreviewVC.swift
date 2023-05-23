@@ -50,6 +50,12 @@ open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
     ).withoutAutoresizingMaskConstraints
         .withAccessibilityIdentifier(identifier: "verticalStackView")
 
+    /// The initial height constraint for the scrollView when the vertical stack contains less items than
+    /// the maxNumberOfVerticalItems
+    public lazy var initialVerticalScrollViewHeightConstraint: NSLayoutConstraint = verticalScrollView
+        .heightAnchor
+        .pin(equalTo: verticalStackView.heightAnchor)
+
     /// The current scroll view height used to activate the scrolling on the vertical stack.
     public var verticalScrollViewHeightConstraint: NSLayoutConstraint?
 
@@ -123,7 +129,7 @@ open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
         horizontalScrollView.heightAnchor.pin(equalTo: horizontalStackView.heightAnchor).isActive = true
         horizontalScrollView.widthAnchor.pin(equalTo: verticalStackView.widthAnchor).isActive = true
 
-        verticalScrollView.heightAnchor.pin(equalTo: verticalStackView.heightAnchor).isActive = true
+        initialVerticalScrollViewHeightConstraint.isActive = true
         verticalScrollView.widthAnchor.pin(equalTo: verticalStackView.widthAnchor).isActive = true
     }
 
@@ -171,10 +177,9 @@ open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
                 let spacingSize = CGFloat(verticalAttachmentPreviews.count + 1) * verticalStackView.spacing.rawValue
                 let maxScrollViewHeight: CGFloat = CGFloat(maxNumberOfVerticalItems) * attachmentHeight + spacingSize
 
-                verticalScrollViewHeightConstraint = verticalScrollView.heightAnchor.pin(
-                    lessThanOrEqualToConstant: maxScrollViewHeight
-                )
+                verticalScrollViewHeightConstraint = verticalScrollView.heightAnchor.pin(equalToConstant: maxScrollViewHeight)
                 verticalScrollViewHeightConstraint?.isActive = true
+                initialVerticalScrollViewHeightConstraint.isActive = false
             }
 
             // When adding a vertical attachment, make sure the last item is visible
@@ -184,6 +189,7 @@ open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
             // reset the scroll view height constraint.
             verticalScrollViewHeightConstraint?.isActive = false
             verticalScrollViewHeightConstraint = nil
+            initialVerticalScrollViewHeightConstraint.isActive = true
         }
     }
 
