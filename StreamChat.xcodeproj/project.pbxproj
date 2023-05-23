@@ -1755,6 +1755,7 @@
 		C1BFBAC129CC42CE00FC82A2 /* JumpToUnreadMessagesButton_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BFBAC029CC42CE00FC82A2 /* JumpToUnreadMessagesButton_Tests.swift */; };
 		C1C5345A29AFDDAE006F9AF4 /* ChannelRepository_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1C5345929AFDDAE006F9AF4 /* ChannelRepository_Mock.swift */; };
 		C1C5345D29AFE526006F9AF4 /* ChannelRepository_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1C5345B29AFE4C9006F9AF4 /* ChannelRepository_Tests.swift */; };
+		C1CEF9072A1BC4E800414931 /* UserProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1CEF9062A1BC4E800414931 /* UserProfileViewController.swift */; };
 		C1E8AD57278C8A6E0041B775 /* SyncRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1E8AD55278C8A440041B775 /* SyncRepository.swift */; };
 		C1E8AD58278C8A6F0041B775 /* SyncRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1E8AD55278C8A440041B775 /* SyncRepository.swift */; };
 		C1E8AD5E278EF5F30041B775 /* AsyncOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1E8AD5B278DDEC70041B775 /* AsyncOperation.swift */; };
@@ -3535,6 +3536,7 @@
 		C1C5345929AFDDAE006F9AF4 /* ChannelRepository_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelRepository_Mock.swift; sourceTree = "<group>"; };
 		C1C5345B29AFE4C9006F9AF4 /* ChannelRepository_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelRepository_Tests.swift; sourceTree = "<group>"; };
 		C1CE8EFD27F20C3A0091097B /* MissingEventsPayload-IncompleteChannel.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "MissingEventsPayload-IncompleteChannel.json"; sourceTree = "<group>"; };
+		C1CEF9062A1BC4E800414931 /* UserProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileViewController.swift; sourceTree = "<group>"; };
 		C1E8AD55278C8A440041B775 /* SyncRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncRepository.swift; sourceTree = "<group>"; };
 		C1E8AD5B278DDEC70041B775 /* AsyncOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncOperation.swift; sourceTree = "<group>"; };
 		C1EE53A627BA53F300B1A6CA /* Endpoint_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Endpoint_Tests.swift; sourceTree = "<group>"; };
@@ -5238,6 +5240,7 @@
 		A3227ECA284A607D00EBE6CC /* Screens */ = {
 			isa = PBXGroup;
 			children = (
+				C1CEF9052A1BC4CD00414931 /* UserProfileViewController */,
 				79330603256FEBE600FBB586 /* AdvancedOptionsViewController.swift */,
 				AD6BEFF42786474A00E184B4 /* AppConfigViewController */,
 				A3227E5D284A494000EBE6CC /* Create Chat */,
@@ -7490,6 +7493,14 @@
 			path = Tasks;
 			sourceTree = "<group>";
 		};
+		C1CEF9052A1BC4CD00414931 /* UserProfileViewController */ = {
+			isa = PBXGroup;
+			children = (
+				C1CEF9062A1BC4E800414931 /* UserProfileViewController.swift */,
+			);
+			path = UserProfileViewController;
+			sourceTree = "<group>";
+		};
 		C1E8AD59278DDC500041B775 /* Repositories */ = {
 			isa = PBXGroup;
 			children = (
@@ -9149,6 +9160,7 @@
 				A3227E7E284A511200EBE6CC /* DemoAppConfiguration.swift in Sources */,
 				AD6BEFF227862F9300E184B4 /* AppConfigViewController.swift in Sources */,
 				792DDA5C256FB69E001DB91B /* SceneDelegate.swift in Sources */,
+				C1CEF9072A1BC4E800414931 /* UserProfileViewController.swift in Sources */,
 				A3227E62284A499500EBE6CC /* SearchUserCell.swift in Sources */,
 				A3227E76284A4C6400EBE6CC /* MessageReactionType+Position.swift in Sources */,
 				A3227E74284A4C3300EBE6CC /* DemoChatMessageActionsVC.swift in Sources */,
