@@ -54,7 +54,7 @@ final class UserUpdateMiddleware_Tests: XCTestCase {
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         // Assert `UserWatchingEvent` is forwarded even though database error happened.
-        XCTAssertTrue(forwardedEvent is UserWatchingEventDTO)
+        XCTAssertTrue(forwardedEvent is UserUpdatedEventDTO)
     }
 
     func test_whenDatabaseWriteDoesNotFail_userInformationIsUpdated() throws {
