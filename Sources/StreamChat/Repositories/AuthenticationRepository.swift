@@ -328,7 +328,7 @@ class AuthenticationRepository {
             // to `disconnected` when environment was prepared correctly
             // (e.g. current user session is successfully restored).
             connectionRepository?.forceConnectionStatusForInactiveModeIfNeeded()
-            connectionRepository?.connect(userInfo: userInfo, completion: onCompletion)
+            connectionRepository?.connect(completion: onCompletion)
         }
 
         let retryFetchIfPossible: (Error?) -> Void = { [weak self] error in

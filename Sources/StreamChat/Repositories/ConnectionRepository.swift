@@ -52,13 +52,9 @@ class ConnectionRepository {
     /// When the connection is established, `ChatClient` starts receiving chat updates, and `currentUser` variable is available.
     ///
     /// - Parameters:
-    ///   - userInfo:       The user information that will be created OR updated if it exists.
     ///   - completion: Called when the connection is established. If the connection fails, the completion is called with an error.
     ///
-    func connect(
-        userInfo: UserInfo? = nil,
-        completion: ((Error?) -> Void)? = nil
-    ) {
+    func connect(completion: ((Error?) -> Void)? = nil) {
         // Connecting is not possible in connectionless mode (duh)
         guard isClientInActiveMode else {
             completion?(ClientError.ClientIsNotInActiveMode())
