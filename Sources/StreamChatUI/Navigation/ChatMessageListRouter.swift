@@ -129,7 +129,7 @@ open class ChatMessageListRouter:
     /// Shows the detail View Controller of a message thread.
     ///
     /// - Parameters:
-    ///   - messageId: The id if the parent message of the thread.
+    ///   - messageId: The id of the parent message of the thread.
     ///   - cid: The `cid` of the channel the message belongs to.
     ///   - client: The current `ChatClient` instance.
     ///
@@ -140,6 +140,28 @@ open class ChatMessageListRouter:
         client: ChatClient
     ) {
         let threadVC = components.threadVC.init()
+        threadVC.channelController = client.channelController(for: cid)
+        threadVC.messageController = client.messageController(
+            cid: cid,
+            messageId: messageId
+        )
+        rootNavigationController?.show(threadVC, sender: self)
+    }
+
+    /// Shows the view controller with messages for the provided cid and jumps to the given message id.
+    /// - Parameters:
+    ///   - messageId: The id of the parent message of the thread.
+    ///   - replyId: The reply id to where the thread should jump to when opening the thread.
+    ///   - cid: The `ChannelId` of the channel the should be presented.
+    ///   - client: The current `ChatClient` instance.
+    open func showThread(
+        messageId: MessageId,
+        at replyId: MessageId?,
+        cid: ChannelId,
+        client: ChatClient
+    ) {
+        let threadVC = components.threadVC.init()
+        threadVC.initialReplyId = replyId
         threadVC.channelController = client.channelController(for: cid)
         threadVC.messageController = client.messageController(
             cid: cid,
