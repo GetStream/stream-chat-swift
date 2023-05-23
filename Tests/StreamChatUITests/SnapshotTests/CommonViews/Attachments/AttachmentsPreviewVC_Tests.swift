@@ -19,7 +19,7 @@ final class AttachmentsPreviewVC_Tests: XCTestCase {
     // MARK: - attachmentPreviews(for:)
 
     func test_attachmentPreviews_attachmentIsVoiceRecording_audioPlayerAndIndexProviderWereSetCorrectly() throws {
-        let audioPlayer = StreamRemoteAudioPlayer()
+        let audioPlayer = StreamAudioPlayer()
         subject.audioPlayer = audioPlayer
         subject.content = [
             VoiceRecordingAttachmentPayload(

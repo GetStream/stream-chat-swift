@@ -108,7 +108,7 @@ open class ChatThreadVC: _ViewController,
             self?.messageController.loadNextReplies()
         }
 
-        if let queueAudioPlayer = audioPlayer as? StreamRemoteAudioQueuePlayer {
+        if let queueAudioPlayer = audioPlayer as? StreamAudioQueuePlayer {
             queueAudioPlayer.dataSource = self
         }
 

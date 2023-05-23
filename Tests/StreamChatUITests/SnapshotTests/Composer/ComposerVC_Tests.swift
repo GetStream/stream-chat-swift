@@ -289,7 +289,7 @@ final class ComposerVC_Tests: XCTestCase {
     // MARK: - audioPlayer
     
     func test_audioPlayer_voiceRecordingAndAttachmentsVCGetTheSameInstance() {
-        let audioPlayer = StreamRemoteAudioPlayer()
+        let audioPlayer = StreamAudioPlayer()
         
         composerVC.audioPlayer = audioPlayer
         

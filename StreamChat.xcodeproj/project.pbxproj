@@ -48,7 +48,7 @@
 		401105472A12735900F877C7 /* WaveformView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4011052F2A12735900F877C7 /* WaveformView_Tests.swift */; };
 		401105482A12735900F877C7 /* AudioVisualizationView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 401105302A12735900F877C7 /* AudioVisualizationView_Tests.swift */; };
 		401105492A12735900F877C7 /* AudioVisualizationView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 401105302A12735900F877C7 /* AudioVisualizationView_Tests.swift */; };
-		4012252F29C9CBD80034B60B /* StreamRemoteAudioPlayer_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4012252E29C9CBD80034B60B /* StreamRemoteAudioPlayer_Tests.swift */; };
+		4012252F29C9CBD80034B60B /* StreamAudioPlayer_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4012252E29C9CBD80034B60B /* StreamAudioPlayer_Tests.swift */; };
 		401EBB6D29A79686004D9304 /* ChatMessagesCountDecorationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 401EBB6C29A79686004D9304 /* ChatMessagesCountDecorationView.swift */; };
 		401EBB6E29A79686004D9304 /* ChatMessagesCountDecorationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 401EBB6C29A79686004D9304 /* ChatMessagesCountDecorationView.swift */; };
 		4042966929FA6B4B0089126D /* StreamAudioRecorder_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4042966829FA6B4B0089126D /* StreamAudioRecorder_Tests.swift */; };
@@ -77,8 +77,8 @@
 		4042969929FE92320089126D /* AudioAnalysisEngine_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4042969729FE92320089126D /* AudioAnalysisEngine_Tests.swift */; };
 		404296DA2A0112D00089126D /* AudioQueuePlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404296D92A0112D00089126D /* AudioQueuePlayer.swift */; };
 		404296DB2A0112D00089126D /* AudioQueuePlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404296D92A0112D00089126D /* AudioQueuePlayer.swift */; };
-		404296DD2A0114900089126D /* StreamRemoteAudioQueuePlayer_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404296DC2A0114900089126D /* StreamRemoteAudioQueuePlayer_Tests.swift */; };
-		404296DE2A0114900089126D /* StreamRemoteAudioQueuePlayer_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404296DC2A0114900089126D /* StreamRemoteAudioQueuePlayer_Tests.swift */; };
+		404296DD2A0114900089126D /* StreamAudioQueuePlayer_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404296DC2A0114900089126D /* StreamAudioQueuePlayer_Tests.swift */; };
+		404296DE2A0114900089126D /* StreamAudioQueuePlayer_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404296DC2A0114900089126D /* StreamAudioQueuePlayer_Tests.swift */; };
 		404296EA2A011AC20089126D /* AudioSessionProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404296E82A011AC20089126D /* AudioSessionProtocol.swift */; };
 		404296EB2A011B050089126D /* AudioSessionProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404296E82A011AC20089126D /* AudioSessionProtocol.swift */; };
 		405D172D2A03E57C00A77C3B /* AVAssetTotalAudioSamples_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 405D172C2A03E57C00A77C3B /* AVAssetTotalAudioSamples_Tests.swift */; };
@@ -2553,7 +2553,7 @@
 		401105282A12734800F877C7 /* AudioVisualizationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioVisualizationView.swift; sourceTree = "<group>"; };
 		4011052F2A12735900F877C7 /* WaveformView_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformView_Tests.swift; sourceTree = "<group>"; };
 		401105302A12735900F877C7 /* AudioVisualizationView_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioVisualizationView_Tests.swift; sourceTree = "<group>"; };
-		4012252E29C9CBD80034B60B /* StreamRemoteAudioPlayer_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamRemoteAudioPlayer_Tests.swift; sourceTree = "<group>"; };
+		4012252E29C9CBD80034B60B /* StreamAudioPlayer_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamAudioPlayer_Tests.swift; sourceTree = "<group>"; };
 		401EBB6C29A79686004D9304 /* ChatMessagesCountDecorationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessagesCountDecorationView.swift; sourceTree = "<group>"; };
 		4032C4B029C0BA110086849E /* StreamPlayerObserver_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamPlayerObserver_Tests.swift; sourceTree = "<group>"; };
 		4042966829FA6B4B0089126D /* StreamAudioRecorder_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamAudioRecorder_Tests.swift; sourceTree = "<group>"; };
@@ -2571,7 +2571,7 @@
 		4042969429FC092F0089126D /* StreamAudioWaveformAnalyser_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamAudioWaveformAnalyser_Tests.swift; sourceTree = "<group>"; };
 		4042969729FE92320089126D /* AudioAnalysisEngine_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioAnalysisEngine_Tests.swift; sourceTree = "<group>"; };
 		404296D92A0112D00089126D /* AudioQueuePlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioQueuePlayer.swift; sourceTree = "<group>"; };
-		404296DC2A0114900089126D /* StreamRemoteAudioQueuePlayer_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamRemoteAudioQueuePlayer_Tests.swift; sourceTree = "<group>"; };
+		404296DC2A0114900089126D /* StreamAudioQueuePlayer_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamAudioQueuePlayer_Tests.swift; sourceTree = "<group>"; };
 		404296E82A011AC20089126D /* AudioSessionProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioSessionProtocol.swift; sourceTree = "<group>"; };
 		405D172C2A03E57C00A77C3B /* AVAssetTotalAudioSamples_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVAssetTotalAudioSamples_Tests.swift; sourceTree = "<group>"; };
 		4067764E2A14CB550079B05C /* MediaButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaButton.swift; sourceTree = "<group>"; };
@@ -4479,8 +4479,8 @@
 				40789D4429F6B6F00018C2BB /* StreamAudioSessionFeedbackGenerator_Tests.swift */,
 				4042969429FC092F0089126D /* StreamAudioWaveformAnalyser_Tests.swift */,
 				4032C4B029C0BA110086849E /* StreamPlayerObserver_Tests.swift */,
-				4012252E29C9CBD80034B60B /* StreamRemoteAudioPlayer_Tests.swift */,
-				404296DC2A0114900089126D /* StreamRemoteAudioQueuePlayer_Tests.swift */,
+				4012252E29C9CBD80034B60B /* StreamAudioPlayer_Tests.swift */,
+				404296DC2A0114900089126D /* StreamAudioQueuePlayer_Tests.swift */,
 				4042967129FA97110089126D /* StreamΑudioRecorderMeterNormaliser_Tests.swift */,
 				4042969729FE92320089126D /* AudioAnalysisEngine_Tests.swift */,
 			);
@@ -6524,7 +6524,6 @@
 				C163ECFD2992B06C006D6124 /* NotificationExtensionLifecycle_Tests.swift */,
 				C14A46552845064E00EF498E /* ThreadSafeWeakCollection_Tests.swift */,
 				ADF617662A09925300E70307 /* MessagesPaginationStateHandling */,
-				A364D0BE27D12C950029857A /* InternetConnection */,
 				A364D0BD27D12C600029857A /* Database */,
 				A3F65E3B27EB7357003F6256 /* EquatableEvent */,
 				A364D0BE27D12C950029857A /* InternetConnection */,
@@ -10333,7 +10332,7 @@
 				F62BE7872506525700D13B86 /* MissingEventsRequestBody_Tests.swift in Sources */,
 				AD90D18525D56196001D03BB /* CurrentUserUpdater_Tests.swift in Sources */,
 				882C575C252C79E900E60C44 /* MemberEndpoints_Tests.swift in Sources */,
-				404296DD2A0114900089126D /* StreamRemoteAudioQueuePlayer_Tests.swift in Sources */,
+				404296DD2A0114900089126D /* StreamAudioQueuePlayer_Tests.swift in Sources */,
 				A34ECB5427F5CBD500A804C1 /* ListChangeAggregator_Tests.swift in Sources */,
 				88BEBCD92536FDDB00D9E8B7 /* MemberListController+Combine_Tests.swift in Sources */,
 				84DCB851269F4D31006CDF32 /* EventsController+Combine_Tests.swift in Sources */,
@@ -10463,7 +10462,7 @@
 				40FC028D29BE981B00E2A1CD /* AttachmentFileType_Tests.swift in Sources */,
 				F62BE7852506309B00D13B86 /* MissingEventsPayload_Tests.swift in Sources */,
 				A3C7BAE527E4EABC00BBF4FA /* ChannelEvents_IntegrationTests.swift in Sources */,
-				4012252F29C9CBD80034B60B /* StreamRemoteAudioPlayer_Tests.swift in Sources */,
+				4012252F29C9CBD80034B60B /* StreamAudioPlayer_Tests.swift in Sources */,
 				7952B3B324D4560E00AC53D4 /* ChannelController_Tests.swift in Sources */,
 				8A0CC9EB24C601F600705CF9 /* MemberEvents_Tests.swift in Sources */,
 				C1A25D6029E70DEB00DAE933 /* FetchCache_Tests.swift in Sources */,
@@ -10878,7 +10877,7 @@
 				C121E899274544B000023E4C /* MessageReactionType.swift in Sources */,
 				C121E89A274544B000023E4C /* MuteDetails.swift in Sources */,
 				C121E89B274544B000023E4C /* Controller.swift in Sources */,
-				404296DE2A0114900089126D /* StreamRemoteAudioQueuePlayer_Tests.swift in Sources */,
+				404296DE2A0114900089126D /* StreamAudioQueuePlayer_Tests.swift in Sources */,
 				C121E89C274544B000023E4C /* DataController.swift in Sources */,
 				AD17CDFA27E4DB2700E0D092 /* PushProvider.swift in Sources */,
 				C121E89D274544B000023E4C /* UserSearchController.swift in Sources */,

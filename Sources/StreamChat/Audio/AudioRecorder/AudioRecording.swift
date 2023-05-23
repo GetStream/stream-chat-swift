@@ -489,7 +489,4 @@ public class AudioRecorderError: ClientError {
 
     /// Failed to save audio recording
     public static func failedToSave(file: StaticString = #file, line: UInt = #line) -> AudioRecorderError { .init("Failed to save recording.", file, line) }
-
-    /// Failed to delete audio recording
-    public static func failedToDelete(file: StaticString = #file, line: UInt = #line) -> AudioRecorderError { .init("Failed to delete recording.", file, line) }
 }

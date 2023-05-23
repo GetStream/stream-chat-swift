@@ -447,7 +447,7 @@ public struct Components {
     public var voiceRecordingViewController: VoiceRecordingVC.Type = VoiceRecordingVC.self
 
     /// The AudioPlayer that will be used for the voiceRecording playback.
-    public var audioPlayer: AudioPlaying.Type = StreamRemoteAudioQueuePlayer.self
+    public var audioPlayer: AudioPlaying.Type = StreamAudioQueuePlayer.self
 
     /// The AudioRecorder that will be used to record new voiceRecordings.
     public var audioRecorder: AudioRecording.Type = StreamAudioRecorder.self
