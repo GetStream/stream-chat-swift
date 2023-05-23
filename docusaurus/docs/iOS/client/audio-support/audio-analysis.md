@@ -2,7 +2,7 @@
 title: Audio Analysis
 ---
 
-The Stream Client ships with tools that enable you to analyze audio files and extract data points that can be used to visualize your files.
+The `StreamChat` framework ships with tools that enable you to analyze audio files and extract data points that can be used to visualize your files.
 
 :::note
 Audio Analysis is available since version 4.32.0.

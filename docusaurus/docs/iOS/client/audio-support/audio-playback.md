@@ -2,7 +2,7 @@
 title: Audio Playback
 ---
 
-The Stream Client ships with tools that enable you to playback any (supported) audio file.
+The `StreamChat` framework ships with tools that enable you to playback any (supported) audio file.
 
 :::note
 Audio Playback, using an instance of `AudioPlaying`, is available since version 4.32.0.
