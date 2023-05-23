@@ -36,7 +36,9 @@ class UserProfileViewController: UIViewController, CurrentChatUserControllerDele
         imageView.layer.cornerRadius = 30
         imageView.layer.masksToBounds = true
         updateButton.setTitle("Update", for: .normal)
-        updateButton.backgroundColor = .blue
+        updateButton.layer.cornerRadius = 4
+        updateButton.backgroundColor = .systemBlue
+        updateButton.contentEdgeInsets = UIEdgeInsets(top: 0.0, left: 15, bottom: 0.0, right: 15)
         updateButton.addTarget(self, action: #selector(didTapUpdateButton), for: .touchUpInside)
         updateButton.isHidden = !DemoAppConfiguration.isStreamInternalConfiguration
 
@@ -49,7 +51,7 @@ class UserProfileViewController: UIViewController, CurrentChatUserControllerDele
             nameTextField.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 20),
             updateButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             updateButton.topAnchor.constraint(equalTo: nameTextField.bottomAnchor, constant: 20),
-            updateButton.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor)
+            updateButton.heightAnchor.constraint(equalToConstant: 35)
         ])
 
         currentUserController.delegate = self

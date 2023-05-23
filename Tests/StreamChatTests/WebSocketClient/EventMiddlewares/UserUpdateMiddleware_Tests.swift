@@ -16,11 +16,12 @@ final class UserUpdateMiddleware_Tests: XCTestCase {
         super.setUp()
 
         database = DatabaseContainer_Spy()
-        middleware = .init()
+        middleware = UserUpdateMiddleware()
     }
 
     override func tearDown() {
         database = nil
+        middleware = nil
         AssertAsync.canBeReleased(&database)
         super.tearDown()
     }

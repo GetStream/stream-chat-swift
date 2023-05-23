@@ -4,7 +4,7 @@
 
 import Foundation
 
-/// The middleware listens for `UserUpdatedEvent`s and updates `CurrentChatUserDTO` accordingly.
+/// The middleware listens for `UserUpdatedEvent`s and updates the database accordingly.
 struct UserUpdateMiddleware: EventMiddleware {
     func handle(event: Event, session: DatabaseSession) -> Event? {
         guard let userUpdatedEvent = event as? UserUpdatedEventDTO else { return event }
