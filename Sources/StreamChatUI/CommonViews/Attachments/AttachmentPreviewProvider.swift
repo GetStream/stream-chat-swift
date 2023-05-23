@@ -53,7 +53,7 @@ extension VideoAttachmentPayload: AttachmentPreviewProvider {
 extension VoiceRecordingAttachmentPayload: AttachmentPreviewProvider {
     public static var preferredAxis: NSLayoutConstraint.Axis { .vertical }
 
-    /// The view representing the video attachment.
+    /// The view representing the voiceRecording attachment.
     public func previewView(components: Components) -> UIView {
         let preview = components.voiceRecordingAttachmentComposerPreview.init()
         preview.content = .init(

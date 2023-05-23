@@ -40,7 +40,7 @@ open class VoiceRecordingAttachmentComposerPreview: _View, AppearanceProvider, C
     }
 
     /// The height the previewView should have
-    open var height: CGFloat = 54
+    open var height: CGFloat = 60
 
     /// The audioPlayer that will be used for the recording's playback.
     ///
@@ -117,6 +117,7 @@ open class VoiceRecordingAttachmentComposerPreview: _View, AppearanceProvider, C
     override open func setUpLayout() {
         super.setUpLayout()
 
+        heightAnchor.pin(lessThanOrEqualToConstant: height).isActive = true
         embed(container, insets: .init(top: 4, leading: 8, bottom: 4, trailing: 34))
 
         container.axis = .horizontal

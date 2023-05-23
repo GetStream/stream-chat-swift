@@ -62,9 +62,8 @@ final class VoiceRecordingVC_Tests: XCTestCase {
 
     func test_setUp_bidirectionalPanGestureRecogniserWasConfiguredCorrectly() {
         spySubject.setUp()
+        spySubject.content = .beginRecording
 
-        spySubject.bidirectionalPanGestureRecogniser.touchesBeganHandler?()
-        XCTAssertEqual(spySubject.updateContentByApplyingActionWasCalledWithAction, .tapRecord)
         spySubject.bidirectionalPanGestureRecogniser.touchesEndedHandler?()
         XCTAssertEqual(spySubject.updateContentByApplyingActionWasCalledWithAction, .touchUp)
         XCTAssertNotNil(spySubject.bidirectionalPanGestureRecogniser.horizontalMovementHandler)

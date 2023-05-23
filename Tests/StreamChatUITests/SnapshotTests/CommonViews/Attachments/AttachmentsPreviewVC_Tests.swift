@@ -50,4 +50,68 @@ final class AttachmentsPreviewVC_Tests: XCTestCase {
         XCTAssertTrue(attachmentPreviews[1]?.audioPlayer === audioPlayer)
         XCTAssertEqual(attachmentPreviews[1]?.indexProvider?(), 1)
     }
+
+    // MARK: - appearance
+
+    func test_appearance_contentHasMoreItemsThanMaxNumberOfVerticalItems_rendersCorrectly() {
+        subject.content = [
+            VoiceRecordingAttachmentPayload(
+                title: nil,
+                voiceRecordingRemoteURL: .unique(),
+                file: .init(type: .aac, size: 120, mimeType: "audio/aac"),
+                duration: nil,
+                waveformData: nil,
+                extraData: nil
+            ),
+            VoiceRecordingAttachmentPayload(
+                title: nil,
+                voiceRecordingRemoteURL: .unique(),
+                file: .init(type: .aac, size: 120, mimeType: "audio/aac"),
+                duration: nil,
+                waveformData: nil,
+                extraData: nil
+            ),
+            VoiceRecordingAttachmentPayload(
+                title: nil,
+                voiceRecordingRemoteURL: .unique(),
+                file: .init(type: .aac, size: 120, mimeType: "audio/aac"),
+                duration: nil,
+                waveformData: nil,
+                extraData: nil
+            ),
+            VoiceRecordingAttachmentPayload(
+                title: nil,
+                voiceRecordingRemoteURL: .unique(),
+                file: .init(type: .aac, size: 120, mimeType: "audio/aac"),
+                duration: nil,
+                waveformData: nil,
+                extraData: nil
+            )
+        ]
+
+        AssertSnapshot(subject.view)
+    }
+
+    func test_appearance_contentHasLessItemsThanMaxNumberOfVerticalItems_rendersCorrectly() {
+        subject.content = [
+            VoiceRecordingAttachmentPayload(
+                title: nil,
+                voiceRecordingRemoteURL: .unique(),
+                file: .init(type: .aac, size: 120, mimeType: "audio/aac"),
+                duration: nil,
+                waveformData: nil,
+                extraData: nil
+            ),
+            VoiceRecordingAttachmentPayload(
+                title: nil,
+                voiceRecordingRemoteURL: .unique(),
+                file: .init(type: .aac, size: 120, mimeType: "audio/aac"),
+                duration: nil,
+                waveformData: nil,
+                extraData: nil
+            )
+        ]
+
+        AssertSnapshot(subject.view)
+    }
 }
