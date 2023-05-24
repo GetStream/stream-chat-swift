@@ -42,7 +42,7 @@ A view that indicates to the user if the currently active recording is locked or
 A view that during a locked recording, displays information about the active recording or its preview.
 
 #### bidirectionalPanGestureRecogniser
-The gestureRecogniser used to identify touch movements in the horizontal or vertical axis.
+The gesture recogniser used to identify touch movements in the horizontal or vertical axis.
  
 ### Presentation
 VoiceRecordings are being presented using the `voiceRecordingAttachmentView` that is defined and configurable in Components:
@@ -50,7 +50,7 @@ VoiceRecordings are being presented using the `voiceRecordingAttachmentView` tha
 Components.default.voiceRecordingAttachmentView = ChatMessageVoiceRecordingAttachmentListView.ItemView.self
 ```
 
-The view manages the visibility and state of all UI components (e.g play/pause button, waveform visualization, playbackRate button and name label).
+The view manages the visibility and state of all UI components (e.g play/pause button, waveform visualization, playback rate button and name label).
 
 ## Properties
 
@@ -70,7 +70,7 @@ Default value: 50
 :::
 
 ### `waveformTargetSamples`
-The number of samples (dataPoints) we want to extract from a recording in order to render a waveform visualisation of it.
+The number of samples (data points) we want to extract from a recording in order to render a waveform visualisation of it.
 :::note
 Default value: 100
 :::
@@ -92,7 +92,7 @@ Components.default.isVoiceRecordingConfirmationRequiredEnabled = false
 ```
 By default the property is set to `true`.
 
-#### voiceRecordingViewController
+#### `voiceRecordingViewController`
 A ViewController that manages all aspects of the voice recording from the ComposerVC. 
 :::important
 The VoiceRecordingVC even though it's a ViewController (as it manages a view) it doesn't manage its own view. Instead, the view property of the ViewController has been overridden and returns the ComposerView.
@@ -103,8 +103,8 @@ Avoid adding the ViewController's view in view hierarchy.
 Components.default.voiceRecordingViewController = VoiceRecordingVC.self
 ```
 
-#### audioPlayer
-The AudioPlayer that will be used for the voiceRecording playback.
+#### `audioPlayer`
+The `AudioPlayer` that will be used for the voice recording playback.
 ```swift
 Components.default.audioPlayer = StreamRemoteAudioQueuePlayer.self
 ```
@@ -112,31 +112,31 @@ Components.default.audioPlayer = StreamRemoteAudioQueuePlayer.self
 Default value is `StreamRemoteAudioQueuePlayer.self`. In case you want to disable voice recording messages to play automatically once the previous one finishes, you can set this one to `StreamRemoteAudioPlayer.self`
 :::
 
-#### audioRecorder
-The AudioRecorder that will be used to record new voiceRecordings.
+#### `audioRecorder`
+The `AudioRecorder` that will be used to record new voice recordings.
 ```swift
 Components.default.audioRecorder = StreamAudioRecorder.self
 ```
 
-#### audioSessionFeedbackGenerator
-A feedbackGenerator that will be used to provide haptic feedback during the recording flow. It can be customized in cases where you want to provide different or none haptic feedback for actions during the recording flow.
+#### `audioSessionFeedbackGenerator`
+A `feedbackGenerator` that will be used to provide haptic feedback during the recording flow. It can be customized in cases where you want to provide different or none haptic feedback for actions during the recording flow.
 ```swift
 Components.default.audioSessionFeedbackGenerator = StreamAudioSessionFeedbackGenerator.self
 ```
 
-#### audioQueuePlayerNextItemProvider
+#### `audioQueuePlayerNextItemProvider`
 `ComposerVC` parent view controllers (`ChatChannelVC` and `ChatThreadVC`) will become the data source of the audio player if it's an instance of `StreamRemoteAudioQueuePlayer`. The default implementation of the `AudioQueuePlayerDatasource` in those view controllers is using the `audioQueuePlayerNextItemProvider` instance defined here to find the next (if any) voice recording to play.
 
 ```swift
 Components.default.audioQueuePlayerNextItemProvider = AudioQueuePlayerNextItemProvider.self
 ```
 
-When calling `findNextItem` on the the `AudioQueuePlayerNextItemProvider` instance, we can specify a lookup scope. This will inform the `AudioQueuePlayerNextItemProvider` to know where to look for the next voiceRecording. The available values for the `lookUpScope` are:
+When calling `findNextItem` on the `AudioQueuePlayerNextItemProvider` instance, we can specify a lookup scope. This will inform the `AudioQueuePlayerNextItemProvider` to know where to look for the next voice recording. The available values for the `lookUpScope` are:
 
-##### sameMessage
+##### `sameMessage`
 The provider will look for the next VoiceRecording in the attachments of the message containing the currently playing URL.
 
-##### subsequentMessagesFromUser
+##### `subsequentMessagesFromUser`
 The provider will look for the next VoiceRecording in the attachments of the of the message containing the currently playing URL and if not found will apply the same logic in all subsequent messages that have the same author.
 
-You can create your own `lookupScope` instances and override the the implementation `AudioQueuePlayerNextItemProvider` in order to fit its functionality to your use-cases.
+You can create your own `lookupScope` instances and override the implementation `AudioQueuePlayerNextItemProvider` in order to fit its functionality to your use-cases.

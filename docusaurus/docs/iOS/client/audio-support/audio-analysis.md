@@ -13,10 +13,10 @@ The `AudioAnalysisEngine` that ships by default with the SDK, can extract data p
 ### Actions
 #### `waveformVisualisation(fromAudioURL audioURL: URL, for targetSamples: Int, completionHandler: @escaping (Result<[Float], Error>) -> Void)`
 
-Analyses the file located in the audioURL and calculates its waveform representation limited to the number of requested targetSamples.
+Analyses the file located in the `audioURL` and calculates its waveform representation limited to the number of requested `targetSamples`.
 
 #### `waveformVisualisation(fromLiveAudioURL audioURL: URL, for targetSamples: Int) throws -> [Float]`
-Analyses the live recording file located in the audioURL and calculates its waveform representation limited to the number of requested targetSamples.
+Analyses the live recording file located in the `audioURL` and calculates its waveform representation limited to the number of requested `targetSamples`.
 
 ## Errors
 
