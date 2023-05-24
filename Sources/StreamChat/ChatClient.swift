@@ -66,6 +66,7 @@ public class ChatClient {
             MemberEventMiddleware(),
             UserChannelBanEventsMiddleware(),
             UserWatchingEventMiddleware(),
+            UserUpdateMiddleware(),
             ChannelVisibilityEventMiddleware(),
             EventDTOConverterMiddleware()
         ]
