@@ -8,9 +8,9 @@ Stream chat allows you to exchange Voice Recordings in your channels. Those Voic
 Voice Recordings are available since version 4.32.0.
 :::
 
-VoiceRecording creation and playback is by default disabled. If you would like to enable it, you can do so by setting the Components `voiceRecordingEnabled` property to `true` like below:
+VoiceRecording creation and playback is by default disabled. If you would like to enable it, you can do so by setting the Components `isVoiceRecordingEnabled` property to `true` like below:
 ```swift
-Components.default.voiceRecordingEnabled = true
+Components.default.isVoiceRecordingEnabled = true
 ```
 
 :::note
@@ -51,12 +51,6 @@ Components.default.voiceRecordingAttachmentView = ChatMessageVoiceRecordingAttac
 ```
 
 The view manages the visibility and state of all UI components (e.g play/pause button, waveform visualization, playbackRate button and name label).
-
-For anything else (interaction and event handling) it relies on its `presenter` property.
-
-The `presenter` is of type `ChatMessageVoiceRecordingAttachmentListView.ItemViewPresenter` and it's responsible:
-1. To handle user interactions on the `voiceRecordingAttachmentView`
-2. To handle events/updates that are being sent by the AudioPlayer during the voiceRecording's playback.
 
 ## Properties
 
