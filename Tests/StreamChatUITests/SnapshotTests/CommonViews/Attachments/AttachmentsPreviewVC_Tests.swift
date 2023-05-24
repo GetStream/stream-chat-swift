@@ -89,7 +89,7 @@ final class AttachmentsPreviewVC_Tests: XCTestCase {
             )
         ]
 
-        AssertSnapshot(subject.view)
+        AssertSnapshot(subject.view, size: .init(width: 320, height: 200))
     }
 
     func test_appearance_contentHasLessItemsThanMaxNumberOfVerticalItems_rendersCorrectly() {
@@ -112,6 +112,6 @@ final class AttachmentsPreviewVC_Tests: XCTestCase {
             )
         ]
 
-        AssertSnapshot(subject.view)
+        AssertSnapshot(subject.view, size: .init(width: 320, height: 200))
     }
 }
