@@ -39,6 +39,13 @@ public class FilesAttachmentViewInjector: AttachmentViewInjector {
 
 private extension FilesAttachmentViewInjector {
     var fileAttachments: [ChatMessageFileAttachment] {
-        contentView.content?.fileAttachments ?? []
+        if fileAttachmentView.components.isVoiceRecordingEnabled {
+            return contentView.content?.fileAttachments ?? []
+        } else {
+            let fileAttachments = contentView.content?.fileAttachments ?? []
+            let voiceRecordingAttachments = (contentView.content?.voiceRecordingAttachments ?? [])
+                .compactMap { $0.asAttachment(payloadType: FileAttachmentPayload.self) }
+            return fileAttachments + voiceRecordingAttachments
+        }
     }
 }

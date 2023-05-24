@@ -4,22 +4,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
+### ✅ Added
+- Audio Support is now available. We added components that will allow you to record and playback audio files [#2638](https://github.com/GetStream/stream-chat-swift/issues/2638)
 ### 🐞 Fixed
 - Fix "to-many key not allowed here" error when using the `memberName` filter [#2604](https://github.com/GetStream/stream-chat-swift/pull/2604)
 - Fix memory leak in `ChannelListController` when loading more channels [#2624](https://github.com/GetStream/stream-chat-swift/pull/2624)
 - Fix `isJumpingToMessage` being `true` after jumping to message on the first page [#2608](https://github.com/GetStream/stream-chat-swift/pull/2608)
 - Fix `noTeam` filter that was causing an error [#2632](https://github.com/GetStream/stream-chat-swift/pull/2632)
 - Fix muted and joined channel list queries with empty data (Auto Filtering Enabled) [#2634](https://github.com/GetStream/stream-chat-swift/pull/2634)
+- Fix user information not being updated when receiving updated information from backend [#2643](https://github.com/GetStream/stream-chat-swift/pull/2643)
 
 ## StreamChatUI
 ### ✅ Added
 - Add `Components.threadRendersParentMessageEnabled` to control whether the parent message is rendered in the Thread [#2636](https://github.com/GetStream/stream-chat-swift/pull/2636)
 - Add `replaceQuery()` and `replaceChannelListController()` to `ChatChannelListVC` [#2630](https://github.com/GetStream/stream-chat-swift/pull/2630)
+- Voice Recording attachments are here. You can now record voice messages and share them in your conversations. You can enable it by setting the `Components.default.isVoiceRecordingEnabled = true`. [#2638](https://github.com/GetStream/stream-chat-swift/issues/2638)
 ### 🐞 Fixed
 - Fix Composer's keyboard not adjusted when presenting alert controllers [#2610](https://github.com/GetStream/stream-chat-swift/pull/2610)
 - Fix InputTextView not scrolling to caret when pasting long text [#2609](https://github.com/GetStream/stream-chat-swift/pull/2609)
 - Fix scrollToBottomButton visible when jumping to message on the first page [#2608](https://github.com/GetStream/stream-chat-swift/pull/2608)
 - Allow sending replies to soft-deleted parent messages [#2633](https://github.com/GetStream/stream-chat-swift/pull/2633)
+- Fix an issue where attachment preview in Composer was breaking when more attachments than the `maxNumberOfVerticalItems` were added. [#2638](https://github.com/GetStream/stream-chat-swift/issues/2638)
 
 # [4.31.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.31.0)
 _April 25, 2023_

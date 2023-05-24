@@ -125,6 +125,7 @@ public extension AttachmentType {
     static let giphy = Self(rawValue: "giphy")
     static let video = Self(rawValue: "video")
     static let audio = Self(rawValue: "audio")
+    static let voiceRecording = Self(rawValue: "voiceRecording")
 
     /// Application custom types.
     static let linkPreview = Self(rawValue: "linkPreview")
@@ -212,7 +213,7 @@ public enum AttachmentFileType: String, Codable, Equatable, CaseIterable {
     /// Text
     case csv, rtf, txt
     /// Audio
-    case mp3, mp4, wav, ogg, m4a
+    case mp3, wav, ogg, m4a, aac, mp4
     /// Video
     case mov, avi, wmv, webm
     /// Image
@@ -238,6 +239,7 @@ public enum AttachmentFileType: String, Codable, Equatable, CaseIterable {
         "text/plain": .txt,
         "audio/mp3": .mp3,
         "audio/mp4": .m4a,
+        "audio/aac": .aac,
         "audio/wav": .wav,
         "audio/ogg": .ogg,
         "video/mp4": .mp4,
@@ -291,6 +293,15 @@ public enum AttachmentFileType: String, Codable, Equatable, CaseIterable {
         return AttachmentFileType.mimeTypes
             .first(where: { $1 == self })?
             .key ?? "application/octet-stream"
+    }
+
+    public var isAudio: Bool {
+        switch self {
+        case .mp3, .wav, .ogg, .m4a, .aac:
+            return true
+        default:
+            return false
+        }
     }
 }
 

@@ -12,7 +12,8 @@ open class ChatThreadVC: _ViewController,
     ChatMessageListVCDataSource,
     ChatMessageListVCDelegate,
     ChatMessageControllerDelegate,
-    EventsControllerDelegate {
+    EventsControllerDelegate,
+    AudioQueuePlayerDatasource {
     /// Controller for observing data changes within the channel
     open var channelController: ChatChannelController!
 
@@ -63,6 +64,17 @@ open class ChatThreadVC: _ViewController,
         .threadHeaderView.init()
         .withoutAutoresizingMaskConstraints
 
+    /// The audioPlayer  that will be used for the playback of VoiceRecordings
+    open private(set) lazy var audioPlayer: AudioPlaying = components
+        .audioPlayer
+        .init()
+
+    /// The provider that will be asked to provide the next VoiceRecording to play automatically once the
+    /// currently playing one, finishes.
+    open private(set) lazy var audioQueuePlayerNextItemProvider: AudioQueuePlayerNextItemProvider = components
+        .audioQueuePlayerNextItemProvider
+        .init()
+
     public var messageComposerBottomConstraint: NSLayoutConstraint?
 
     private var currentlyTypingUsers: Set<ChatUser> = []
@@ -78,9 +90,11 @@ open class ChatThreadVC: _ViewController,
         messageListVC.delegate = self
         messageListVC.dataSource = self
         messageListVC.client = client
+        messageListVC.audioPlayer = audioPlayer
 
         messageComposerVC.channelController = channelController
         messageComposerVC.userSearchController = userSuggestionSearchController
+        messageComposerVC.audioPlayer = audioPlayer
         if let message = messageController.message {
             messageComposerVC.content.threadMessage = message
         }
@@ -95,6 +109,10 @@ open class ChatThreadVC: _ViewController,
         }
         viewPaginationHandler.onNewBottomPage = { [weak self] in
             self?.messageController.loadNextReplies()
+        }
+
+        if let queueAudioPlayer = audioPlayer as? StreamAudioQueuePlayer {
+            queueAudioPlayer.dataSource = self
         }
 
         // Set the initial data
@@ -403,6 +421,19 @@ open class ChatThreadVC: _ViewController,
             messages.append(threadRootMessage)
         }
         return messages
+    }
+
+    // MARK: - AudioQueuePlayerDatasource
+
+    open func audioQueuePlayerNextAssetURL(
+        _ audioPlayer: AudioPlaying,
+        currentAssetURL: URL?
+    ) -> URL? {
+        audioQueuePlayerNextItemProvider.findNextItem(
+            in: messages,
+            currentVoiceRecordingURL: currentAssetURL,
+            lookUpScope: .subsequentMessagesFromUser
+        )
     }
 
     // MARK: - Deprecations

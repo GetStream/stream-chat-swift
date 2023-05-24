@@ -38,6 +38,21 @@ final class ChatMessageAttachment_Tests: XCTestCase {
         XCTAssertEqual(typeErasedAttachment.uploadingState, fileAttachment.uploadingState)
     }
 
+    func test_asAttachment() throws {
+        // Create voiceRecording attachment.
+        let voiceRecordingAttachment: ChatMessageVoiceRecordingAttachment = .mock(
+            id: .unique
+        )
+
+        // As File attachment.
+        let fileAttachment = try XCTUnwrap(voiceRecordingAttachment.asAttachment(payloadType: FileAttachmentPayload.self))
+
+        // Assert type-erased attachment has correct values.
+        XCTAssertEqual(fileAttachment.id, voiceRecordingAttachment.id)
+        XCTAssertEqual(fileAttachment.type, .file)
+        XCTAssertEqual(fileAttachment.uploadingState, voiceRecordingAttachment.uploadingState)
+    }
+
     func test_anyAttachment_withKnownType_asConcreteAttachment() throws {
         // Create file attachment with known `file` type.
         let originalAttachment = ChatMessageFileAttachment.mock(id: .unique)

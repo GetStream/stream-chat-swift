@@ -28,6 +28,12 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
 
     override func showCurrentUserProfile() {
         rootViewController.presentAlert(title: nil, actions: [
+            .init(title: "Show Profile", style: .default, handler: { [weak self] _ in
+                guard let self = self else { return }
+                let client = self.rootViewController.controller.client
+                let viewController = UserProfileViewController(currentUserController: client.currentUserController())
+                self.rootNavigationController?.pushViewController(viewController, animated: true)
+            }),
             .init(title: "Logout", style: .destructive, handler: { [weak self] _ in
                 self?.onLogout?()
             })
@@ -398,7 +404,7 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                             errorMessage = "Message ID does not belong to this channel."
                         }
 
-                        if let errorMessage {
+                        if let errorMessage = errorMessage {
                             self?.rootViewController.presentAlert(title: errorMessage)
                             return
                         }

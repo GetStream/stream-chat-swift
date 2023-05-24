@@ -137,7 +137,13 @@ extension ChatMessageFileAttachmentListView {
 
         private var fileIcon: UIImage? {
             guard let file = content?.payload.file else { return nil }
-            return appearance.images.fileIcons[file.type] ?? appearance.images.fileFallback
+
+            /// If the `file.type` is `.aac` (VoiceRecording) but we `VoiceRecordings` feature
+            /// is disabled, we don't want to show the `.aac` new icon and instead we are mapping it
+            /// to an `.mp3`.
+            let fileType: AttachmentFileType = file.type == .aac ? .mp3 : file.type
+
+            return appearance.images.fileIcons[fileType] ?? appearance.images.fileFallback
         }
     }
 }
