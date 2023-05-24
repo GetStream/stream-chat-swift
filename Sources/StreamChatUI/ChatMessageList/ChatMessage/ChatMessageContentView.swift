@@ -862,7 +862,9 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
                 .init()
                 .withoutAutoresizingMaskConstraints
 
-            errorIndicatorView!.addTarget(self, action: #selector(handleTapOnErrorIndicator), for: .touchUpInside)
+            errorIndicatorView?.setContentHuggingPriority(.streamRequire, for: .horizontal)
+
+            errorIndicatorView?.addTarget(self, action: #selector(handleTapOnErrorIndicator), for: .touchUpInside)
         }
         return errorIndicatorView!
     }

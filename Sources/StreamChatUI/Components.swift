@@ -43,6 +43,9 @@ public struct Components {
     /// A button used for sending a message, or any type of content.
     public var sendButton: UIButton.Type = SendButton.self
 
+    /// A button used for recording a voice message,
+    public var recordButton: RecordButton.Type = RecordButton.self
+
     /// A view for showing a cooldown when Slow Mode is active.
     public var cooldownView: CooldownView.Type = CooldownView.self
 
@@ -173,6 +176,9 @@ public struct Components {
     /// The injector used for injecting file attachment views
     public var filesAttachmentInjector: AttachmentViewInjector.Type = FilesAttachmentViewInjector.self
 
+    /// The injector used for injecting voice recording attachment views
+    public var voiceRecordingAttachmentInjector: AttachmentViewInjector.Type = VoiceRecordingAttachmentViewInjector.self
+
     /// The injector used to combine multiple types of attachment views.
     /// By default, it is a combination of a file injector and a gallery injector.
     public var mixedAttachmentInjector: MixedAttachmentViewInjector.Type = MixedAttachmentViewInjector.self
@@ -187,9 +193,17 @@ public struct Components {
     public var fileAttachmentListView: ChatMessageFileAttachmentListView
         .Type = ChatMessageFileAttachmentListView.self
 
+    /// The view that shows message's voiceRecording attachments.
+    public var voiceRecordingAttachmentListView: ChatMessageVoiceRecordingAttachmentListView
+        .Type = ChatMessageVoiceRecordingAttachmentListView.self
+
     /// The view that shows a single file attachment.
     public var fileAttachmentView: ChatMessageFileAttachmentListView.ItemView.Type =
         ChatMessageFileAttachmentListView.ItemView.self
+
+    /// The view that shows a single voiceRecording attachment.
+    public var voiceRecordingAttachmentView: ChatMessageVoiceRecordingAttachmentListView.ItemView.Type =
+        ChatMessageVoiceRecordingAttachmentListView.ItemView.self
 
     /// The view that shows a link preview in message cell.
     public var linkPreviewView: ChatMessageLinkPreviewView.Type =
@@ -209,6 +223,14 @@ public struct Components {
 
     /// The view that shows a video attachment preview inside a message.
     public var videoAttachmentGalleryPreview: VideoAttachmentGalleryPreview.Type = VideoAttachmentGalleryPreview.self
+
+    /// A view that displays the voiceRecording attachment preview in composer.
+    public var voiceRecordingAttachmentComposerPreview: VoiceRecordingAttachmentComposerPreview
+        .Type = VoiceRecordingAttachmentComposerPreview.self
+
+    /// A view that displays the voiceRecording attachment as a quoted preview in composer.
+    public var voiceRecordingAttachmentQuotedPreview: VoiceRecordingAttachmentQuotedPreview
+        .Type = VoiceRecordingAttachmentQuotedPreview.self
 
     /// The view that shows an overlay with uploading progress for image attachment that is being uploaded.
     public var uploadingOverlayView: UploadingOverlayView.Type = UploadingOverlayView.self
@@ -411,6 +433,31 @@ public struct Components {
 
     /// A type for the view used as avatar when picking users to mention.
     public var mentionAvatarView: ChatUserAvatarView.Type = ChatUserAvatarView.self
+
+    // MARK: - Composer VoiceRecording components
+
+    /// A flag which determines if `VoiceRecording` feature will be enabled.
+    public var isVoiceRecordingEnabled = false
+
+    /// When set to `true` recorded messages can be grouped together and send as part of one message.
+    /// When set to `false`, recorded messages will be sent instantly.
+    public var isVoiceRecordingConfirmationRequiredEnabled = true
+
+    /// The ViewController that handles the recording flow.
+    public var voiceRecordingViewController: VoiceRecordingVC.Type = VoiceRecordingVC.self
+
+    /// The AudioPlayer that will be used for the voiceRecording playback.
+    public var audioPlayer: AudioPlaying.Type = StreamAudioQueuePlayer.self
+
+    /// The AudioRecorder that will be used to record new voiceRecordings.
+    public var audioRecorder: AudioRecording.Type = StreamAudioRecorder.self
+
+    /// A feedbackGenerator that will be used to provide haptic feedback during the recording flow.
+    public var audioSessionFeedbackGenerator: AudioSessionFeedbackGenerator.Type = StreamAudioSessionFeedbackGenerator.self
+
+    /// If the AudioPlayer supports queuing, this object will be asked to provide the VoiceRecording to
+    /// play automatically, once the current one completes.
+    public var audioQueuePlayerNextItemProvider: AudioQueuePlayerNextItemProvider.Type = AudioQueuePlayerNextItemProvider.self
 
     // MARK: - Current user components
 

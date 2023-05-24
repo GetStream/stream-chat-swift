@@ -14,6 +14,7 @@
 "channelList.empty.button" = "Start a chat";
 
 "channelList.error.message" = "Error loading channels";
+"channelList.preview.voice.recording" = "Voice message";
 
 "message.actions.inline-reply" = "Reply";
 "message.actions.thread-reply" = "Thread Reply";
@@ -87,3 +88,8 @@
 "dates.time-ago-months-plural" = "last seen %d months ago";
 
 "you" = "You";
+
+"recording.tip" = "Hold to record, release to send";
+"recording.slideToCancel" = "Slide to cancel";
+
+"audio.player.rate" = "x%@";

@@ -26,7 +26,8 @@
             "uikit/components/channel",
             "uikit/components/thread",
             "uikit/components/message",
-            "uikit/components/message-composer"
+            "uikit/components/message-composer",
+            "uikit/components/voice-recording"
           ]
         },
         {
@@ -105,6 +106,14 @@
         "client/importance-of-synchronize",
         "client/push-notifications",
         "client/custom-cdn",
+        {
+          "Audio Support": [
+            "client/audio-support/audio-recording-and-playback-overview",
+            "client/audio-support/audio-recording",
+            "client/audio-support/audio-analysis",
+            "client/audio-support/audio-playback"
+          ]
+        },
         {
           "Controllers and Delegates": [
             "client/controllers/controllers-overview",

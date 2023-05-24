@@ -49,3 +49,19 @@ extension VideoAttachmentPayload: AttachmentPreviewProvider {
         return preview
     }
 }
+
+extension VoiceRecordingAttachmentPayload: AttachmentPreviewProvider {
+    public static var preferredAxis: NSLayoutConstraint.Axis { .vertical }
+
+    /// The view representing the voiceRecording attachment.
+    public func previewView(components: Components) -> UIView {
+        let preview = components.voiceRecordingAttachmentComposerPreview.init()
+        preview.content = .init(
+            title: title ?? "",
+            size: file.size,
+            duration: duration ?? 0,
+            audioAssetURL: voiceRecordingURL
+        )
+        return preview
+    }
+}

@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import CoreData.NSManagedObjectContext
 @testable import StreamChat
 
 public extension ChatMessage {
@@ -39,7 +40,8 @@ public extension ChatMessage {
         currentUserReactions: Set<ChatMessageReaction> = [],
         isSentByCurrentUser: Bool = false,
         pinDetails: MessagePinDetails? = nil,
-        readBy: Set<ChatUser> = []
+        readBy: Set<ChatUser> = [],
+        underlyingContext: NSManagedObjectContext? = nil
     ) -> Self {
         .init(
             id: id,
@@ -76,7 +78,7 @@ public extension ChatMessage {
             translations: nil,
             readBy: { readBy },
             readByCount: { readBy.count },
-            underlyingContext: nil
+            underlyingContext: underlyingContext
         )
     }
 }

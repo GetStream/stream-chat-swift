@@ -7,6 +7,8 @@
 import XCTest
 
 final class ChatMessage_Tests: XCTestCase {
+    // MARK: - isPinned
+
     func test_isPinned_whenHasPinDetails_shouldReturnTrue() {
         let message = ChatMessage.mock(
             id: .anonymous,
@@ -50,6 +52,8 @@ final class ChatMessage_Tests: XCTestCase {
 
         XCTAssertTrue(message.isPinned)
     }
+
+    // MARK: - attachmentWithId
 
     func test_attachmentWithId_whenAttachmentDoesNotExist_returnsNil() {
         // Create message with attachments
@@ -105,6 +109,8 @@ final class ChatMessage_Tests: XCTestCase {
             targetAttachment
         )
     }
+
+    // MARK: - totalReactionsCount
 
     func test_totalReactionsCount() {
         let message = ChatMessage.mock(
@@ -347,5 +353,43 @@ final class ChatMessage_Tests: XCTestCase {
         )
 
         XCTAssertEqual(message.isLocalOnly, false)
+    }
+
+    // MARK: - voiceRecordingAttachments
+
+    func test_voiceRecordingAttachments_returnsExpectedResult() throws {
+        var attachments: [AnyChatMessageAttachment] = [
+            .dummy(type: .audio),
+            .dummy(type: .file),
+            .dummy(type: .giphy),
+            .dummy(type: .image),
+            .dummy(type: .linkPreview),
+            .dummy(type: .unknown),
+            .dummy(type: .video)
+        ]
+
+        let expectedIds: [AttachmentId] = [.unique, .unique]
+        try attachments.append(contentsOf: expectedIds.map {
+            let payload = try JSONEncoder().encode(
+                VoiceRecordingAttachmentPayload(
+                    title: nil,
+                    voiceRecordingRemoteURL: .unique(),
+                    file: .init(url: .localYodaQuote),
+                    duration: nil,
+                    waveformData: nil,
+                    extraData: nil
+                )
+            )
+            return .dummy(
+                id: $0,
+                type: .voiceRecording,
+                payload: payload
+            )
+        })
+        let messageWithAttachments = ChatMessage.mock(attachments: attachments)
+
+        let actualIds = messageWithAttachments.voiceRecordingAttachments.map(\.id)
+
+        XCTAssertEqual(actualIds, expectedIds)
     }
 }

@@ -366,6 +366,39 @@ final class ChatChannelListItemView_Tests: XCTestCase {
         XCTAssertEqual(itemView.timestampText, itemView.timestampLabel.text)
     }
 
+    func test_appearance_previewMessageIsVoiceRecording() throws {
+        let previewMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: .unique,
+            author: .mock(id: .unique),
+            attachments: [
+                .dummy(
+                    type: .voiceRecording,
+                    payload: try JSONEncoder().encode(VoiceRecordingAttachmentPayload(
+                        title: nil,
+                        voiceRecordingRemoteURL: .unique(),
+                        file: .init(type: .aac, size: 120, mimeType: nil),
+                        duration: nil,
+                        waveformData: nil,
+                        extraData: nil
+                    ))
+                )
+            ]
+        )
+
+        let channel: ChatChannel = .mock(
+            cid: .unique,
+            previewMessage: previewMessage
+        )
+
+        let view = channelItemView(
+            content: .init(channel: channel, currentUserId: currentUser.id)
+        )
+
+        AssertSnapshot(view)
+    }
+
     // MARK: - Title
 
     func test_titleText_isNil_whenChannelIsNil() {
@@ -552,6 +585,39 @@ final class ChatChannelListItemView_Tests: XCTestCase {
             itemView.subtitleText,
             L10n.Channel.Item.emptyMessages
         )
+    }
+
+    func test_subtitleText_whenPreviewMessageIsAVoiceRecording() throws {
+        let previewMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: .unique,
+            author: .mock(id: .unique),
+            attachments: [
+                .dummy(
+                    type: .voiceRecording,
+                    payload: try JSONEncoder().encode(VoiceRecordingAttachmentPayload(
+                        title: nil,
+                        voiceRecordingRemoteURL: .unique(),
+                        file: .init(type: .aac, size: 120, mimeType: nil),
+                        duration: nil,
+                        waveformData: nil,
+                        extraData: nil
+                    ))
+                )
+            ]
+        )
+
+        let channel: ChatChannel = .mock(
+            cid: .unique,
+            previewMessage: previewMessage
+        )
+
+        let itemView = ChatChannelListItemView()
+        itemView.content = .init(channel: channel, currentUserId: nil)
+
+        XCTAssertEqual("Voice message", itemView.subtitleText)
+        XCTAssertFalse(itemView.subtitleImageView.isHidden)
     }
 
     // MARK: - Timestamp
