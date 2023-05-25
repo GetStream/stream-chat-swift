@@ -292,7 +292,10 @@ private_lane :appstore_api_key do
 end
 
 lane :pod_lint do
-  pod_lib_lint(allow_warnings: true)
+  # We do not lint StreamChatUI.podspec since pod lints it against StreamChat's latest version instead of local one
+  ['StreamChat.podspec', 'StreamChat-XCFramework.podspec'].each do |podspec|
+    pod_lib_lint(podspec: podspec, allow_warnings: true)
+  end
 end
 
 desc "If `readonly: true` (by default), installs all Certs and Profiles necessary for development and ad-hoc.\nIf `readonly: false`, recreates all Profiles necessary for development and ad-hoc, updates them locally and remotely."
