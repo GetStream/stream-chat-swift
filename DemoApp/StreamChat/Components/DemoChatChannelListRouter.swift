@@ -73,6 +73,7 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
     }
 
     // swiftlint:disable function_body_length
+    // swiftlint:disable cyclomatic_complexity
     override func didTapMoreButton(for cid: ChannelId) {
         let channelController = rootViewController.controller.client.channelController(for: cid)
         rootViewController.presentAlert(title: "Select an action", actions: [
@@ -347,6 +348,13 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                     message: channelController.channel.debugDescription
                 )
             }),
+            .init(title: "Show Channel Members", style: .default, handler: { [unowned self] _ in
+                guard let cid = channelController.channel?.cid else { return }
+                let client = channelController.client
+                self.rootViewController.present(MembersViewController(
+                    membersController: client.memberListController(query: .init(cid: cid))
+                ), animated: true)
+            }),
             .init(title: "Truncate channel w/o message", style: .default, handler: { _ in
                 channelController.truncateChannel { [unowned self] error in
                     if let error = error {
@@ -417,6 +425,7 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
     }
 
     // swiftlint:enable function_body_length
+    // swiftlint:enable cyclomatic_complexity
 
     override func didTapDeleteButton(for cid: ChannelId) {
         rootViewController.controller.client.channelController(for: cid).deleteChannel { error in
