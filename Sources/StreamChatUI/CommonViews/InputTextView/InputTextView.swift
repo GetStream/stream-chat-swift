@@ -30,6 +30,9 @@ open class InputTextView: UITextView, AppearanceProvider {
         .withBidirectionalLanguagesSupport
         .withAdjustingFontForContentSizeCategory
 
+    /// A boolean value to control wether the text was changed by pasting a text from the clipboard.
+    private var textChangedFromClipboard = false
+
     override open var text: String! {
         didSet {
             textDidChangeProgrammatically()
@@ -127,6 +130,13 @@ open class InputTextView: UITextView, AppearanceProvider {
     @objc open func handleTextChange() {
         placeholderLabel.isHidden = !text.isEmpty
         setTextViewHeight()
+
+        // If the user pasted text from the clipboard, we want to scroll to the caret position.
+        if textChangedFromClipboard, let selectedTextRange = self.selectedTextRange {
+            let caret = caretRect(for: selectedTextRange.start)
+            scrollRectToVisible(caret, animated: true)
+            textChangedFromClipboard = false
+        }
     }
 
     open func setTextViewHeight() {
@@ -171,14 +181,10 @@ open class InputTextView: UITextView, AppearanceProvider {
             // On text paste, textView height will not change automatically
             // so we must call this function
             setTextViewHeight()
-        }
 
-        // When pasting text, we should scroll to the bottom, so that if the text
-        // is very long, it correctly scrolls to the input caret.
-        if let pasteboardText = UIPasteboard.general.string {
-            let padding = directionalLayoutMargins.leading
-            let bottomOffset = contentSize.height - padding
-            setContentOffset(.init(x: 0, y: contentSize.height - padding), animated: true)
+            if UIPasteboard.general.string != nil {
+                textChangedFromClipboard = true
+            }
         }
     }
 }
