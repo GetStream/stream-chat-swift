@@ -25,7 +25,7 @@ class UserProfileViewController: UIViewController, CurrentChatUserControllerDele
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = .white
+        view.backgroundColor = .systemBackground
 
         [imageView, nameTextField, updateButton].forEach {
             view.addSubview($0)
