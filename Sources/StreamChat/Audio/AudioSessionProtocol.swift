@@ -4,6 +4,7 @@
 
 import AVFoundation
 
+#if !os(macOS) || targetEnvironment(macCatalyst)
 /// A simple protocol that abstracts the usage of AVAudioSession
 protocol AudioSessionProtocol {
     var category: AVAudioSession.Category { get }
@@ -29,9 +30,4 @@ protocol AudioSessionProtocol {
 }
 
 extension AVAudioSession: AudioSessionProtocol {}
-
-extension AVAudioSession {
-    /// Defining the method here as it's not available on macOS.
-    @available(macOS 10.15, *)
-    func setPreferredInput(_ inPort: AVAudioSessionPortDescription?) throws { /* No-op */ }
-}
+#endif // #if os(macOS) && !targetEnvironment(macCatalyst)
