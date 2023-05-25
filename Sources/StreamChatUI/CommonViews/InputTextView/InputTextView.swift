@@ -177,14 +177,14 @@ open class InputTextView: UITextView, AppearanceProvider {
         if let pasteboardImage = UIPasteboard.general.image {
             clipboardAttachmentDelegate?.inputTextView(self, didPasteImage: pasteboardImage)
         } else {
+            if UIPasteboard.general.string != nil {
+                textChangedFromClipboard = true
+            }
+
             super.paste(sender)
             // On text paste, textView height will not change automatically
             // so we must call this function
             setTextViewHeight()
-
-            if UIPasteboard.general.string != nil {
-                textChangedFromClipboard = true
-            }
         }
     }
 }
