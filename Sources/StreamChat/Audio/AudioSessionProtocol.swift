@@ -29,3 +29,9 @@ protocol AudioSessionProtocol {
 }
 
 extension AVAudioSession: AudioSessionProtocol {}
+
+extension AVAudioSession {
+    /// Defining the method here as it's not available on macOS.
+    @available(macOS 10.15, *)
+    func setPreferredInput(_ inPort: AVAudioSessionPortDescription?) throws { /* No-op */ }
+}
