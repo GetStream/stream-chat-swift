@@ -119,3 +119,4 @@ jobs:
     - uses: ./.github/actions/bootstrap
     - run: bundle exec fastlane rubocop
     - run: ./Scripts/run-linter.sh
+    - run: bundle exec fastlane pod_lint

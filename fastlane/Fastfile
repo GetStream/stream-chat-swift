@@ -8,6 +8,7 @@ import 'Allurefile'
 
 xcode_version = ENV['XCODE_VERSION'] || '14.2'
 xcode_project = 'StreamChat.xcodeproj'
+sdk_names = ['StreamChat', 'StreamChatUI']
 github_repo = ENV['GITHUB_REPOSITORY'] || 'GetStream/stream-chat-swift'
 stress_tests_cycles = 50
 
@@ -289,6 +290,12 @@ private_lane :appstore_api_key do
     key_content: ENV.fetch('APPSTORE_API_KEY', nil),
     in_house: false
   )
+end
+
+lane :pod_lint do
+  sdk_names.each do |sdk_name|
+    pod_lib_lint(podspec: "#{sdk_name}.podspec", allow_warnings: true)
+  end
 end
 
 desc "If `readonly: true` (by default), installs all Certs and Profiles necessary for development and ad-hoc.\nIf `readonly: false`, recreates all Profiles necessary for development and ad-hoc, updates them locally and remotely."
