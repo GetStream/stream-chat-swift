@@ -30,7 +30,7 @@ open class InputTextView: UITextView, AppearanceProvider {
         .withBidirectionalLanguagesSupport
         .withAdjustingFontForContentSizeCategory
 
-    /// A boolean value to control wether the text was changed by pasting a text from the clipboard.
+    /// A boolean value to control whether the text was changed by pasting a text from the clipboard.
     private var textChangedFromClipboard = false
 
     override open var text: String! {
