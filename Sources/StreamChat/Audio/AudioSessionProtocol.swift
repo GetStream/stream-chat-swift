@@ -4,6 +4,7 @@
 
 import AVFoundation
 
+#if !os(macOS) || targetEnvironment(macCatalyst)
 /// A simple protocol that abstracts the usage of AVAudioSession
 protocol AudioSessionProtocol {
     var category: AVAudioSession.Category { get }
@@ -29,3 +30,4 @@ protocol AudioSessionProtocol {
 }
 
 extension AVAudioSession: AudioSessionProtocol {}
+#endif // #if os(macOS) && !targetEnvironment(macCatalyst)
