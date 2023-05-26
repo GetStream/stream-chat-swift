@@ -3,7 +3,8 @@
 //
 
 import Foundation
-import StreamChat
+import StreamChatTestTools
+import StreamChatUI
 
 public final class MockAudioSessionFeedbackGenerator: AudioSessionFeedbackGenerator, Spy {
     public var recordedFunctions: [String] = []
@@ -30,4 +31,3 @@ public final class MockAudioSessionFeedbackGenerator: AudioSessionFeedbackGenera
 
     public func feedbackForDiscardRecording() { record() }
 }
-

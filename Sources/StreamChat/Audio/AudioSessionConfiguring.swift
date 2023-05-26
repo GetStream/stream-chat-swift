@@ -33,6 +33,20 @@ protocol AudioSessionConfiguring {
 
 // MARK: - Implementation
 
+#if os(macOS) && !targetEnvironment(macCatalyst)
+/// An implementation where for macOS we don't have interactions with AVAudioSession as it's not available.
+final class StreamAudioSessionConfigurator: AudioSessionConfiguring {
+    func activateRecordingSession() throws { /* No-op */ }
+
+    func deactivateRecordingSession() throws { /* No-op */ }
+
+    func activatePlaybackSession() throws { /* No-op */ }
+
+    func deactivatePlaybackSession() throws { /* No-op */ }
+
+    func requestRecordPermission(_ completionHandler: @escaping (Bool) -> Void) { completionHandler(true) }
+}
+#else
 final class StreamAudioSessionConfigurator: AudioSessionConfiguring {
     private static let recordingCategories: Set<AVAudioSession.Category> = [.record, .playAndRecord]
     private static let playbackCategories: Set<AVAudioSession.Category> = [.playback, .playAndRecord]
@@ -151,6 +165,7 @@ final class StreamAudioSessionConfigurator: AudioSessionConfiguring {
         try audioSession.setPreferredInput(preferredInput)
     }
 }
+#endif
 
 // MARK: - Errors
 
