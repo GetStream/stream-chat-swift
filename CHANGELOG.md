@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.32.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.32.0)
+_May 26, 2023_
+
 ## StreamChat
 ### ✅ Added
 - Audio Support is now available. We added components that will allow you to record and playback audio files [#2638](https://github.com/GetStream/stream-chat-swift/issues/2638)
