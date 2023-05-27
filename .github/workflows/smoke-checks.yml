@@ -22,7 +22,7 @@ concurrency:
 
 env:
   HOMEBREW_NO_INSTALL_CLEANUP: 1 # Disable cleanup for homebrew, we don't need it on CI
-  IOS_SIMULATOR_DEVICE: "iPhone 14 Pro (16.2)"
+  IOS_SIMULATOR_DEVICE: "iPhone 14 Pro (16.4)"
 
 jobs:
   automated-code-review:
@@ -41,8 +41,10 @@ jobs:
         run: bundle exec danger
       - name: Run Fastlane Linting
         run: bundle exec fastlane rubocop
-      - name: Run Linting
+      - name: Run SwiftFormat Linting
         run: ./Scripts/run-linter.sh
+      - name: Run Podspec Linting
+        run: bundle exec fastlane pod_lint
 
   build-and-test-debug:
     name: Test LLC (Debug)
