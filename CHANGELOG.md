@@ -4,6 +4,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
+### 🐞 Fixed
+- Fix not being able to send messages when jumping to message in newest page [#2647](https://github.com/GetStream/stream-chat-swift/pull/2647)
 
 ## StreamChatUI
 ### ✅ Added
