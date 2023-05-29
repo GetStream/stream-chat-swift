@@ -27,7 +27,7 @@ env:
 jobs:
   automated-code-review:
     name: Automated Code Review
-    runs-on: macos-12
+    runs-on: macos-13
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_PR_NUM: ${{ github.event.number }}
@@ -48,7 +48,7 @@ jobs:
 
   build-and-test-debug:
     name: Test LLC (Debug)
-    runs-on: macos-12
+    runs-on: macos-13
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_PR_NUM: ${{ github.event.number }}
@@ -89,7 +89,7 @@ jobs:
 
   build-and-test-ui-debug:
     name: Test UI (Debug)
-    runs-on: macos-12
+    runs-on: macos-13
     if: ${{ github.event_name != 'push' }}
     steps:
     - uses: actions/checkout@v3.1.0
@@ -119,6 +119,8 @@ jobs:
     needs: allure_testops_launch
     env:
       LAUNCH_ID: ${{ needs.allure_testops_launch.outputs.launch_id }}
+      XCODE_VERSION: "14.2.0"                      # TODO: delete these two lines
+      IOS_SIMULATOR_DEVICE: "iPhone 14 Pro (16.2)" # when Xcode 14.3.1 is released
     strategy:
       matrix:
         batch: [0, 1, 2]
@@ -165,7 +167,7 @@ jobs:
 
   allure_testops_launch:
     name: Launch Allure TestOps
-    runs-on: macos-12
+    runs-on: macos-13
     if: ${{ github.event_name != 'push' }}
     outputs:
       launch_id: ${{ steps.get_launch_id.outputs.launch_id }}
@@ -206,7 +208,7 @@ jobs:
 
   build-apps:
     name: Build Demo App + Example Apps
-    runs-on: macos-12
+    runs-on: macos-13
     if: ${{ github.event_name != 'push' }}
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -232,7 +234,7 @@ jobs:
 
   spm-integration:
     name: Test Integration (SPM)
-    runs-on: macos-12
+    runs-on: macos-13
     if: ${{ github.event_name != 'push' }}
     steps:
     - uses: actions/checkout@v3.1.0
@@ -246,7 +248,7 @@ jobs:
 
   cocoapods-integration:
     name: Test Integration (CocoaPods)
-    runs-on: macos-12
+    runs-on: macos-13
     if: ${{ github.event_name != 'push' }}
     steps:
     - uses: actions/checkout@v3.1.0

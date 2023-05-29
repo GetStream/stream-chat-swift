@@ -22,21 +22,32 @@ jobs:
         include:
           - ios: latest
             device: "iPhone 14 Pro Max"
+            xcode: 14.2
+            os: macos-12
           - ios: 15.4
             device: "iPhone 8"
+            xcode: 14.2
+            os: macos-12
           - ios: 14.5
             device: "iPhone SE (2nd generation)"
+            xcode: 14.2
+            os: macos-12
           - ios: 13.7
             device: "iPad Air (3rd generation)"
+            xcode: 14.2
+            os: macos-12
           - ios: 12.4
             device: "iPhone X"
+            xcode: 14.2
+            os: macos-12
       fail-fast: false
-    runs-on: macos-12
+    runs-on: ${{ matrix.os }}
     env:
       GITHUB_EVENT: ${{ toJson(github.event) }}
       GITHUB_PR_NUM: ${{ github.event.number }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
+      XCODE_VERSION: ${{ matrix.xcode }}
       STREAM_DEMO_APP_SECRET: ${{ secrets.STREAM_DEMO_APP_SECRET }}
       IOS_SIMULATOR_DEVICE: "${{ matrix.device }} (${{ matrix.ios }})"
     steps:
@@ -69,7 +80,7 @@ jobs:
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         MATRIX_CONTEXT: ${{ toJson(matrix) }}
-      if: failure()
+      if: failure() && github.event_name == 'schedule'
     - name: Parse xcresult
       if: failure()
       run: xcparse logs fastlane/test_output/StreamChatUITestsApp.xcresult fastlane/test_output/logs/
@@ -86,8 +97,15 @@ jobs:
     name: Test LLC (Debug)
     strategy:
       matrix:
-        xcode: [13.1, 13.4.1, 14.2]
-        os: [macos-12]
+        include:
+          - xcode: 14.3
+            os: macos-13
+          - xcode: 14.2
+            os: macos-12
+          - xcode: 13.4.1
+            os: macos-12
+          - xcode: 13.1
+            os: macos-12
       fail-fast: false
     runs-on: ${{ matrix.os }}
     steps:
@@ -109,11 +127,11 @@ jobs:
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         MATRIX_CONTEXT: ${{ toJson(matrix) }}
-      if: failure()
+      if: failure() && github.event_name == 'schedule'
 
   automated-code-review:
     name: Automated Code Review
-    runs-on: macos-12
+    runs-on: macos-13
     steps:
     - uses: actions/checkout@v3.1.0
     - uses: ./.github/actions/bootstrap
