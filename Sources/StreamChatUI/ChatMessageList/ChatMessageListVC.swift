@@ -861,7 +861,7 @@ private extension ChatMessageListVC {
 
         listView.updateMessages(with: changes) { [weak self] in
             // Calculate new content offset after loading next page
-            let shouldAdjustContentOffset = oldContentOffset.y < 0
+            let shouldAdjustContentOffset = oldContentOffset.y < 0 && self?.isFirstPageLoaded == false
             if shouldAdjustContentOffset {
                 self?.adjustContentOffset(oldContentOffset: oldContentOffset, oldContentSize: oldContentSize)
             }
