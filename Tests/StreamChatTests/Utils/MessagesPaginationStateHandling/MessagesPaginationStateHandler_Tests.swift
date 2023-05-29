@@ -85,6 +85,42 @@ class MessagesPaginationStateHandlerTests: XCTestCase {
 
     // MARK: - end
 
+    func test_end_whenLoadingNewestPage_thenSetsOldestFetchedMessageAndHasLoadedAllNextMessages() {
+        // Given
+        sut.state.hasLoadedAllNextMessages = false
+        sut.state.oldestFetchedMessage = nil
+        let pagination = MessagesPagination(pageSize: 2, parameter: nil)
+        let messages: [MessagePayload] = [
+            .dummy(messageId: "111"),
+            .dummy(messageId: "112"),
+            .dummy(messageId: "113")
+        ]
+
+        // When
+        sut.end(pagination: pagination, with: .success(messages))
+
+        // Then
+        XCTAssertEqual(sut.state.oldestFetchedMessage?.id, "111")
+        XCTAssertTrue(sut.state.hasLoadedAllNextMessages)
+    }
+
+    func test_end_whenLoadingNewestPageAndResultIsLowerThanPageSize_thenHasLoadedAllPreviousMessages() {
+        // Given
+        sut.state.hasLoadedAllPreviousMessages = false
+        let pagination = MessagesPagination(pageSize: 10, parameter: nil)
+        let messages: [MessagePayload] = [
+            .dummy(messageId: "111"),
+            .dummy(messageId: "112"),
+            .dummy(messageId: "113")
+        ]
+
+        // When
+        sut.end(pagination: pagination, with: .success(messages))
+
+        // Then
+        XCTAssertTrue(sut.state.hasLoadedAllPreviousMessages)
+    }
+
     func test_end_whenLoadingPreviousMessages_thenSetsOldestFetchedMessage() {
         // Given
         let pagination = MessagesPagination(pageSize: 10, parameter: .lessThan("123"))
@@ -313,13 +349,15 @@ class MessagesPaginationStateHandlerTests: XCTestCase {
 
     func test_end_whenResultIsError_thenDoesNotChangePreviousState() {
         // Given
-        let pagination = MessagesPagination(pageSize: 10, parameter: .around("123"))
-        sut.end(pagination: pagination, with: .success([.dummy(), .dummy()]))
+        sut.state.oldestFetchedMessage = .dummy()
+        sut.state.newestFetchedMessage = .dummy()
+        sut.state.hasLoadedAllPreviousMessages = true
         let stateBefore = sut.state
         XCTAssertNotNil(stateBefore.oldestFetchedMessage)
         XCTAssertNotNil(stateBefore.newestFetchedMessage)
 
         // When
+        let pagination = MessagesPagination(pageSize: 10, parameter: .around("123"))
         sut.end(pagination: pagination, with: .failure(NSError(domain: "test", code: 0)))
 
         // Then
