@@ -15,7 +15,14 @@ struct MessagesPaginationState {
 
     /// A Boolean value that returns whether the newest messages have all been loaded or not.
     /// If false, it means that the channel is currently in a mid-page.
-    var hasLoadedAllNextMessages: Bool
+    var hasLoadedAllNextMessages: Bool {
+        didSet {
+            if hasLoadedAllNextMessages {
+                newestFetchedMessage = nil
+            }
+        }
+    }
+
     /// A Boolean value that returns whether the oldest messages have all been loaded or not.
     var hasLoadedAllPreviousMessages: Bool
 
