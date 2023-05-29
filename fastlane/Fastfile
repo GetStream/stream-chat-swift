@@ -8,6 +8,7 @@ import 'Allurefile'
 
 xcode_version = ENV['XCODE_VERSION'] || '14.2'
 xcode_project = 'StreamChat.xcodeproj'
+sdk_names = ['StreamChat', 'StreamChatUI']
 github_repo = ENV['GITHUB_REPOSITORY'] || 'GetStream/stream-chat-swift'
 stress_tests_cycles = 50
 
@@ -42,72 +43,50 @@ end
 
 desc 'Start a new release'
 lane :release do |options|
-  # Ensure we have a clean git status
-  ensure_git_status_clean unless options[:no_ensure_clean]
+  previous_version_number = last_git_tag
+  artifacts_path = File.absolute_path('../StreamChatArtifacts.json')
+  swift_environment_path = File.absolute_path('../Sources/StreamChat/Generated/SystemEnvironment+Version.swift')
+  extra_changes = lambda do |release_version|
+    # Set the framework version on the artifacts
+    artifacts = JSON.parse(File.read(artifacts_path))
+    artifacts[release_version.to_s] = "https://github.com/#{github_repo}/releases/download/#{release_version}/StreamChat-All.zip"
+    File.write(artifacts_path, JSON.dump(artifacts))
 
-  # Ensure we have a release type
-  UI.user_error!('Please use type parameter with one of the options: type:patch, type:minor, type:major') unless %w[patch minor major].include?(options[:type])
+    # Set the framework version in SystemEnvironment+Version.swift
+    new_content = File.read(swift_environment_path).gsub!(previous_version_number, release_version)
+    File.open(swift_environment_path, 'w') { |f| f.puts(new_content) }
+  end
 
-  # Ensure We Have the GITHUB Token
-  UI.user_error!('Please set GITHUB_TOKEN environment value. See https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token') if ENV['GITHUB_TOKEN'].nil?
+  pod_lint
+  release_ios_sdk(
+    version: options[:version],
+    bump_type: options[:type],
+    sdk_names: sdk_names,
+    podspec_names: ['StreamChat', 'StreamChat-XCFramework', 'StreamChatUI', 'StreamChatUI-XCFramework'],
+    github_repo: github_repo,
+    extra_changes: extra_changes,
+    create_pull_request: true
+  )
+end
 
-  # Version Number
-  version_number = increment_version_number_in_plist(bump_type: options[:type], xcodeproj: xcode_project, target: 'StreamChat')
+desc 'Completes an SDK Release'
+lane :publish_release do |options|
+  # Create XCFrameworks
+  xcversion(version: '13.0')
+  clean_products
+  build_xcframeworks
+  compress_frameworks
+  clean_products
 
-  UI.user_error!("Tag for version #{version_number} already exists!") if git_tag_exists(tag: version_number)
-
-  # Checkout New Release Branch
-  sh("git checkout -b release/#{version_number}")
-
-  # Set version on the SDK & Project
-  increment_version_number_in_plist(version_number: version_number, xcodeproj: xcode_project, target: 'StreamChat')
-  set_SDK_version(version: version_number)
-  increment_version_number_in_plist(version_number: version_number, xcodeproj: xcode_project, target: 'StreamChatUI')
-
-  # Set the framework version on the artifacts
-  file = File.read('../StreamChatArtifacts.json')
-  data_hash = JSON.parse(file)
-
-  data_hash[version_number.to_s] = "https://github.com/#{github_repo}/releases/download/#{version_number}/StreamChat-All.zip"
-  File.write('../StreamChatArtifacts.json', JSON.dump(data_hash))
-
-  changes = touch_changelog(release_version: version_number, github_repo: github_repo)
-
-  # Make sure the podspecs actually build before pushing
-  # Disabled now since `StreamChatUI` pod lints it against `StreamChat`s latest version instead of `develop` branch
-  # pod_lib_lint(podspec: "StreamChat.podspec", allow_warnings: true)
-  # pod_lib_lint(podspec: "StreamChatUI.podspec", allow_warnings: true)
-
-  # Bump Podspec Version
-  version_bump_podspec(path: 'StreamChat.podspec', version_number: version_number)
-  version_bump_podspec(path: 'StreamChatUI.podspec', version_number: version_number)
-
-  # Bump XCFramework Version
-  version_bump_podspec(path: 'StreamChat-XCFramework.podspec', version_number: version_number)
-  version_bump_podspec(path: 'StreamChatUI-XCFramework.podspec', version_number: version_number)
-
-  # Stage all changes
-  sh('git add -A')
-
-  UI.user_error!('Not committing changes') unless prompt(text: 'Will commit changes. All looking good?', boolean: true)
-
-  sh("git commit -m 'Bump #{version_number}'")
-
-  UI.user_error!('Not pushing changes') unless prompt(text: 'Will push changes. All looking good?', boolean: true)
-
-  push_to_git_remote(tags: false)
-
-  # Open a new PR
-  create_pull_request(
-    api_token: ENV.fetch('GITHUB_TOKEN', nil),
-    repo: github_repo,
-    title: "#{version_number} Release",
-    head: "release/#{version_number}",
-    base: 'main',
-    body: changes.to_s
+  publish_ios_sdk(
+    version: options[:version],
+    sdk_names: sdk_names,
+    podspec_names: ['StreamChat', 'StreamChat-XCFramework', 'StreamChatUI', 'StreamChatUI-XCFramework'],
+    github_repo: github_repo,
+    upload_assets: ['Products/StreamChat.zip', 'Products/StreamChatUI.zip', 'Products/StreamChat-All.zip']
   )
 
-  UI.success("Successfully started release #{version_number}")
+  update_spm(version: options[:version])
 end
 
 lane :merge_release_to_main do
@@ -157,42 +136,6 @@ lane :clean_products do
       sh("rm -rf Products/#{f}") # FileUtils.rm_rf does not work from Makefile, using sh instead
     end
   end
-end
-
-desc 'Completes an SDK Release'
-lane :publish_release do |options|
-  version = options[:version] || ''
-  UI.user_error!('You need to pass the version of the release') unless version.length > 0
-
-  # Create XCFrameworks
-  xcversion(version: '13.0')
-  clean_products
-  build_xcframeworks
-  compress_frameworks
-  clean_products
-
-  changes = read_changelog(version: version)
-
-  # Create Github Release
-  github_release = set_github_release(
-    repository_name: github_repo,
-    api_token: ENV.fetch('GITHUB_TOKEN', nil),
-    name: version,
-    tag_name: version,
-    commitish: 'main',
-    description: changes,
-    upload_assets: ['Products/StreamChat.zip', 'Products/StreamChatUI.zip', 'Products/StreamChat-All.zip']
-  )
-
-  spm_github_release_url = update_spm(version: version)
-
-  ['StreamChat.podspec', 'StreamChat-XCFramework.podspec', 'StreamChatUI.podspec', 'StreamChatUI-XCFramework.podspec'].each do |podspec|
-    pod_push_safely(podspec: podspec, sync: options[:sync] & true)
-  end
-
-  # TODO: Update stream-chat-swift-integration-apps
-
-  UI.success("🎉🎉🎉🎉🎉🎉 Github releases successfully created:\n 👉 stream-chat-swift: #{github_release['html_url']}\n👉 stream-chat-swift-spm: #{spm_github_release_url}")
 end
 
 desc 'Update XCFrameworks and submit to the SPM repository'
@@ -265,23 +208,6 @@ private_lane :update_spm do |options|
   github_release['html_url']
 end
 
-lane :set_SDK_version do |options|
-  path_to_version_file = '../Sources/StreamChat/Generated/SystemEnvironment+Version.swift'
-  version_generated_file = "//
-// Copyright © 2023 Stream.io Inc. All rights reserved.
-//
-// ⚠️  Generated file, please use `fastlane :bump_SDK_version or fastlane release major|minor|patch` lanes
-
-import Foundation
-
-extension SystemEnvironment {
-  /// A Stream Chat version.
-  public static let version: String = \"#{options[:version]}\"
-}
-"
-  File.write(path_to_version_file, version_generated_file)
-end
-
 private_lane :appstore_api_key do
   @appstore_api_key ||= app_store_connect_api_key(
     key_id: 'MT3PRT8TB7',
@@ -289,6 +215,11 @@ private_lane :appstore_api_key do
     key_content: ENV.fetch('APPSTORE_API_KEY', nil),
     in_house: false
   )
+end
+
+lane :pod_lint do
+  # We don't lint StreamChatUI.podspec since pod lints it against StreamChat's remote version instead of local one
+  pod_lib_lint(podspec: 'StreamChat.podspec', allow_warnings: true)
 end
 
 desc "If `readonly: true` (by default), installs all Certs and Profiles necessary for development and ad-hoc.\nIf `readonly: false`, recreates all Profiles necessary for development and ad-hoc, updates them locally and remotely."
