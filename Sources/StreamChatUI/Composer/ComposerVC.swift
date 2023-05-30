@@ -156,6 +156,36 @@ open class ComposerVC: _ViewController,
         ///
         /// - Parameter message: The message that the composer will edit.
         public mutating func editMessage(_ message: ChatMessage) {
+            #warning("This process does not belong here probably!")
+            let attachments: [AnyAttachmentPayload] = message.allAttachments.compactMap { attachment in
+                let payload: AttachmentPayload?
+
+                let decoder = JSONDecoder()
+
+                let type: AttachmentPayload.Type
+
+                switch attachment.type {
+                case .image:
+                    type = ImageAttachmentPayload.self
+                case .video:
+                    type = VideoAttachmentPayload.self
+                case .audio:
+                    type = AudioAttachmentPayload.self
+                case .file:
+                    type = FileAttachmentPayload.self
+                default:
+                    return nil
+                }
+
+                payload = try? decoder.decode(type, from: attachment.payload)
+
+                guard let payload = payload else {
+                    return nil
+                }
+
+                return AnyAttachmentPayload(payload: payload)
+            }
+
             self = .init(
                 text: message.text,
                 state: .edit,
