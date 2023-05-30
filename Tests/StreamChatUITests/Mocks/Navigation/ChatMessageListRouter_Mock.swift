@@ -16,4 +16,17 @@ class ChatMessageListRouter_Mock: ChatMessageListRouter {
     ) {
         showMessageActionsPopUpCallCount += 1
     }
+
+    var showThreadCallCount = 0
+    var showThreadCalledWith: (parentMessageId: MessageId, replyId: MessageId?, cid: ChannelId)?
+
+    override func showThread(messageId: MessageId, cid: ChannelId, client: ChatClient) {
+        showThreadCallCount += 1
+        showThreadCalledWith = (messageId, nil, cid)
+    }
+
+    override func showThread(messageId: MessageId, at replyId: MessageId?, cid: ChannelId, client: ChatClient) {
+        showThreadCallCount += 1
+        showThreadCalledWith = (messageId, replyId, cid)
+    }
 }

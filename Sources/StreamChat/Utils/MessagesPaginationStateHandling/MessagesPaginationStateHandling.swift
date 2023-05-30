@@ -78,7 +78,6 @@ class MessagesPaginationStateHandler: MessagesPaginationStateHandling {
         case .greaterThan, .greaterThanOrEqual:
             state.newestFetchedMessage = newestFetchedMessage
             if messages.count < pagination.pageSize {
-                state.newestFetchedMessage = nil
                 state.hasLoadedAllNextMessages = true
             }
 
@@ -95,9 +94,9 @@ class MessagesPaginationStateHandler: MessagesPaginationStateHandling {
 
         case .none:
             state.oldestFetchedMessage = oldestFetchedMessage
-            state.newestFetchedMessage = nil
+            state.hasLoadedAllNextMessages = true
             if messages.count < pagination.pageSize {
-                state.hasLoadedAllNextMessages = true
+                state.hasLoadedAllPreviousMessages = true
             }
         }
     }

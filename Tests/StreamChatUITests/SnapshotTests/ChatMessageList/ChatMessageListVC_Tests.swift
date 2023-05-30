@@ -14,6 +14,8 @@ final class ChatMessageListVC_Tests: XCTestCase {
         sut.listView as! ChatMessageListView_Mock
     }
 
+    var mockedRouter: ChatMessageListRouter_Mock { sut.router as! ChatMessageListRouter_Mock }
+
     var mockedDataSource: ChatMessageListVCDataSource_Mock!
     var mockedDelegate: ChatMessageListVCDelegate_Mock!
 
@@ -28,6 +30,7 @@ final class ChatMessageListVC_Tests: XCTestCase {
         sut.client = ChatClient_Mock(config: config)
         sut.components = .mock
         sut.components.messageListView = ChatMessageListView_Mock.self
+        sut.components.messageListRouter = ChatMessageListRouter_Mock.self
 
         mockedDataSource = ChatMessageListVCDataSource_Mock()
         sut.dataSource = mockedDataSource
@@ -689,6 +692,37 @@ final class ChatMessageListVC_Tests: XCTestCase {
         XCTAssertNotNil(cell.headerContainerView.subviews.first as? ChatMessageListDateSeparatorView)
     }
 
+    // MARK: - messageContentViewDidTapOnThread
+
+    func test_messageContentViewDidTapOnThread_whenParentMessageExists_showThreadAtReplyId() {
+        let expectedParentMessageId = MessageId.unique
+        let messageWithParentMessage = ChatMessage.mock(parentMessageId: expectedParentMessageId)
+        let expectedCid = ChannelId.unique
+        mockedDataSource.messages = [messageWithParentMessage]
+        mockedDataSource.mockedChannel = .mock(cid: expectedCid)
+
+        sut.messageContentViewDidTapOnThread(.init(item: 0, section: 0))
+
+        XCTAssertEqual(mockedRouter.showThreadCallCount, 1)
+        XCTAssertEqual(mockedRouter.showThreadCalledWith?.parentMessageId, expectedParentMessageId)
+        XCTAssertEqual(mockedRouter.showThreadCalledWith?.replyId, messageWithParentMessage.id)
+        XCTAssertEqual(mockedRouter.showThreadCalledWith?.cid, expectedCid)
+    }
+
+    func test_messageContentViewDidTapOnThread_whenParentMessageDoesNotExist_showThreadWithoutJumpingToReply() {
+        let messageWithParentMessage = ChatMessage.mock(parentMessageId: nil)
+        let expectedCid = ChannelId.unique
+        mockedDataSource.messages = [messageWithParentMessage]
+        mockedDataSource.mockedChannel = .mock(cid: expectedCid)
+
+        sut.messageContentViewDidTapOnThread(.init(item: 0, section: 0))
+
+        XCTAssertEqual(mockedRouter.showThreadCallCount, 1)
+        XCTAssertEqual(mockedRouter.showThreadCalledWith?.parentMessageId, messageWithParentMessage.id)
+        XCTAssertNil(mockedRouter.showThreadCalledWith?.replyId)
+        XCTAssertEqual(mockedRouter.showThreadCalledWith?.cid, expectedCid)
+    }
+  
     // MARK: - voiceRecordingAttachmentPresentationViewConnect(delegate:)
 
     func test_voiceRecordingAttachmentPresentationViewConnect_subscribeWasCalledOnAudioPlayer() {

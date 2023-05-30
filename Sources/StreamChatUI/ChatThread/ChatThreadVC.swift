@@ -20,6 +20,9 @@ open class ChatThreadVC: _ViewController,
     /// Controller for observing data changes within the parent thread message.
     open var messageController: ChatMessageController!
 
+    /// An optional message id to where the thread should jump to when opening the thread.
+    public var initialReplyId: MessageId?
+
     /// Controller for observing typing events for this thread.
     open lazy var channelEventsController: ChannelEventsController = client.channelEventsController(for: messageController.cid)
 
@@ -121,7 +124,23 @@ open class ChatThreadVC: _ViewController,
                 messageComposerVC.content.threadMessage = message
             }
 
+            if let initialReplyId = self.initialReplyId {
+                self.messageController.loadPageAroundReplyId(initialReplyId) { error in
+                    guard error == nil else {
+                        return
+                    }
+
+                    self.jumpToMessage(id: initialReplyId)
+                }
+                return
+            }
+
             self.messageController.loadPreviousReplies()
+        }
+
+        if let message = messageController.message {
+            completeSetUp(message)
+            return
         }
 
         messageController.synchronize { [weak self] _ in
@@ -163,6 +182,26 @@ open class ChatThreadVC: _ViewController,
         resignFirstResponder()
 
         keyboardHandler.stop()
+    }
+
+    /// Jump to a given message.
+    /// In case the message is already loaded, it directly goes to it.
+    /// If not, it will load the messages around it and go to that page.
+    ///
+    /// This function is an high-level abstraction of `messageListVC.jumpToMessage(id:onHighlight:)`.
+    ///
+    /// - Parameters:
+    ///   - id: The id of message which the message list should go to.
+    ///   - shouldHighlight: Whether the message should be highlighted when jumping to it. By default it is highlighted.
+    public func jumpToMessage(id: MessageId, shouldHighlight: Bool = true) {
+        if shouldHighlight {
+            messageListVC.jumpToMessage(id: id) { [weak self] indexPath in
+                self?.messageListVC.highlightCell(at: indexPath)
+            }
+            return
+        }
+
+        messageListVC.jumpToMessage(id: id)
     }
 
     // MARK: - ChatMessageListVCDataSource

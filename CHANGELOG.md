@@ -3,7 +3,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+## StreamChat
+### 🐞 Fixed
+- Fix not being able to send messages when jumping to message in newest page [#2647](https://github.com/GetStream/stream-chat-swift/pull/2647)
+
+## StreamChatUI
+### ✅ Added
+- Add jumping to a reply inside a thread when tapping a quoted message which is inside a thread [#2647](https://github.com/GetStream/stream-chat-swift/pull/2647)
+- Add jumping to a reply inside a thread when opening a thread from a thread reply in the channel view [#2647](https://github.com/GetStream/stream-chat-swift/pull/2647)
+- Add jumping to a reply inside a thread when opening a channel from a reply as the given message around id [#2647](https://github.com/GetStream/stream-chat-swift/pull/2647)
 
 # [4.32.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.32.0)
 _May 26, 2023_

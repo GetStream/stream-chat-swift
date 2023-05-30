@@ -356,11 +356,15 @@ open class ChatMessageListVC: _ViewController,
         )
     }
 
-    /// Opens thread detail for given `MessageId`.
-    open func showThread(messageId: MessageId) {
+    /// Opens the thread for the given parent `MessageId`.
+    /// - Parameters:
+    ///   - messageId: The parent message id.
+    ///   - replyId: An optional reply id to where the thread will jump to when opening the thread.
+    open func showThread(messageId: MessageId, at replyId: MessageId? = nil) {
         guard let cid = dataSource?.channel(for: self)?.cid else { log.error("Channel is not available"); return }
         router.showThread(
             messageId: messageId,
+            at: replyId,
             cid: cid,
             client: client
         )
@@ -500,6 +504,14 @@ open class ChatMessageListVC: _ViewController,
         listView.scrollToRow(at: indexPath, at: .middle, animated: true)
         messageIdPendingHighlight = messageIdPendingScrolling
         messageIdPendingScrolling = nil
+
+        // If the list view does not scroll, because the message is too close
+        // we need to instantly highlight the message.
+        if listView.indexPathsForVisibleRows?.contains(indexPath) == true {
+            DispatchQueue.main.async {
+                onHighlight?(indexPath)
+            }
+        }
     }
 
     /// Highlight the the message cell, for example, when jumping to a message.
@@ -660,7 +672,14 @@ open class ChatMessageListVC: _ViewController,
             return log.error("DataSource not found for the message list.")
         }
 
-        showThread(messageId: message.parentMessageId ?? message.id)
+        // If the parent message id exists, it means we open the thread from a reply
+        if let parentMessageId = message.parentMessageId {
+            showThread(messageId: parentMessageId, at: message.id)
+            return
+        }
+
+        // If the parentMessageId does not exist, it means the message is the root of the thread
+        showThread(messageId: message.id)
     }
 
     open func messageContentViewDidTapOnQuotedMessage(_ quotedMessage: ChatMessage) {
@@ -842,7 +861,7 @@ private extension ChatMessageListVC {
 
         listView.updateMessages(with: changes) { [weak self] in
             // Calculate new content offset after loading next page
-            let shouldAdjustContentOffset = oldContentOffset.y < 0
+            let shouldAdjustContentOffset = oldContentOffset.y < 0 && self?.isFirstPageLoaded == false
             if shouldAdjustContentOffset {
                 self?.adjustContentOffset(oldContentOffset: oldContentOffset, oldContentSize: oldContentSize)
             }
