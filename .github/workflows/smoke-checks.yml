@@ -89,7 +89,7 @@ jobs:
 
   build-and-test-ui-debug:
     name: Test UI (Debug)
-    runs-on: macos-13
+    runs-on: macos-12
     if: ${{ github.event_name != 'push' }}
     steps:
     - uses: actions/checkout@v3.1.0
@@ -102,6 +102,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GITHUB_PR_NUM: ${{ github.event.number }}
+        XCODE_VERSION: "14.2.0"                      # TODO: delete these two lines
+        IOS_SIMULATOR_DEVICE: "iPhone 14 Pro (16.2)" # when Xcode 14.3.1 is released
     - name: Parse xcresult
       if: failure()
       run: xcparse screenshots fastlane/test_output/StreamChatUI.xcresult fastlane/test_output/snapshots --test
