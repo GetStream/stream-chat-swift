@@ -12,23 +12,27 @@ struct ChannelMemberBanRequestPayload: Encodable {
         case channelId = "id"
         case timeoutInMinutes = "timeout"
         case reason
+        case shadow
     }
 
     let userId: String
     let channelType: ChannelType
     let channelId: String
+    let shadow: Bool
     let timeoutInMinutes: Int?
     let reason: String?
 
     init(
         userId: UserId,
         cid: ChannelId,
+        shadow: Bool,
         timeoutInMinutes: Int? = nil,
         reason: String? = nil
     ) {
         self.userId = userId
         channelType = cid.type
         channelId = cid.id
+        self.shadow = shadow
         self.timeoutInMinutes = timeoutInMinutes
         self.reason = reason
     }

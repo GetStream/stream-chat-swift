@@ -59,13 +59,20 @@ final class ModerationEndpoints_Tests: XCTestCase {
             body: ChannelMemberBanRequestPayload(
                 userId: userId,
                 cid: cid,
+                shadow: false,
                 timeoutInMinutes: timeoutInMinutes,
                 reason: reason
             )
         )
 
         // Build endpoint.
-        let endpoint: Endpoint<EmptyResponse> = .banMember(userId, cid: cid, timeoutInMinutes: timeoutInMinutes, reason: reason)
+        let endpoint: Endpoint<EmptyResponse> = .banMember(
+            userId,
+            cid: cid,
+            shadow: false,
+            timeoutInMinutes: timeoutInMinutes,
+            reason: reason
+        )
 
         // Assert endpoint is built correctly.
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))

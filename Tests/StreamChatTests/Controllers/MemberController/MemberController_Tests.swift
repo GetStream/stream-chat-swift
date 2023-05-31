@@ -380,6 +380,69 @@ final class MemberController_Tests: XCTestCase {
         XCTAssertEqual(env.memberUpdater!.banMember_cid, controller.cid)
         XCTAssertEqual(env.memberUpdater!.banMember_timeoutInMinutes, timeout)
         XCTAssertEqual(env.memberUpdater!.banMember_reason, reason)
+        XCTAssertEqual(env.memberUpdater!.banMember_shadow, false)
+    }
+
+    // MARK: - Shadow Ban
+
+    func test_shadowBan_propagatesError() {
+        // Simulate `shadowBan` call and catch the completion.
+        var completionError: Error?
+        controller.shadowBan { [callbackQueueID] in
+            AssertTestQueue(withId: callbackQueueID)
+            completionError = $0
+        }
+
+        // Simulate network response with the error.
+        let networkError = TestError()
+        env.memberUpdater!.banMember_completion!(networkError)
+
+        // Assert error is propogated.
+        AssertAsync.willBeEqual(completionError as? TestError, networkError)
+    }
+
+    func test_shadowBan_propagatesNilError() {
+        // Simulate `shadowBan` call and catch the completion.
+        var completionIsCalled = false
+        controller.shadowBan { [callbackQueueID] error in
+            // Assert callback queue is correct.
+            AssertTestQueue(withId: callbackQueueID)
+            // Assert there is no error.
+            XCTAssertNil(error)
+            completionIsCalled = true
+        }
+
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+
+        // Simulate successful network response.
+        env.memberUpdater!.banMember_completion!(nil)
+        // Release reference of completion so we can deallocate stuff
+        env.memberUpdater!.banMember_completion = nil
+
+        // Assert completion is called.
+        AssertAsync.willBeTrue(completionIsCalled)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
+    }
+
+    func test_shadowBan_callsMemberUpdater_withCorrectValues() {
+        let timeout = 10
+        let reason: String = .unique
+
+        // Simulate `shadowBan` call.
+        controller.shadowBan(for: timeout, reason: reason)
+
+        // Assert updater is called with correct values
+        XCTAssertEqual(env.memberUpdater!.banMember_userId, controller.userId)
+        XCTAssertEqual(env.memberUpdater!.banMember_cid, controller.cid)
+        XCTAssertEqual(env.memberUpdater!.banMember_timeoutInMinutes, timeout)
+        XCTAssertEqual(env.memberUpdater!.banMember_reason, reason)
+        XCTAssertEqual(env.memberUpdater!.banMember_shadow, true)
     }
 
     // MARK: - Unban user
