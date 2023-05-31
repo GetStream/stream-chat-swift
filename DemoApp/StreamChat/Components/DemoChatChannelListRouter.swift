@@ -221,6 +221,23 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                 } ?? []
                 self.rootViewController.presentAlert(title: "Select a member", actions: actions)
             }),
+            .init(title: "Shadow ban member", style: .default, handler: { [unowned self] _ in
+                let actions = channelController.channel?.lastActiveMembers.map { member in
+                    UIAlertAction(title: member.id, style: .default) { _ in
+                        channelController.client
+                            .memberController(userId: member.id, in: channelController.cid!)
+                            .shadowBan { error in
+                                if let error = error {
+                                    self.rootViewController.presentAlert(
+                                        title: "Couldn't ban user \(member.id) from channel \(cid)",
+                                        message: "\(error)"
+                                    )
+                                }
+                            }
+                    }
+                } ?? []
+                self.rootViewController.presentAlert(title: "Select a member", actions: actions)
+            }),
             .init(title: "Unban member", style: .default, handler: { [unowned self] _ in
                 let actions = channelController.channel?.lastActiveMembers.map { member in
                     UIAlertAction(title: member.id, style: .default) { _ in
@@ -353,6 +370,15 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                 let client = channelController.client
                 self.rootViewController.present(MembersViewController(
                     membersController: client.memberListController(query: .init(cid: cid))
+                ), animated: true)
+            }),
+            .init(title: "Show Banned Members", style: .default, handler: { [unowned self] _ in
+                guard let cid = channelController.channel?.cid else { return }
+                let client = channelController.client
+                self.rootViewController.present(MembersViewController(
+                    membersController: client.memberListController(
+                        query: .init(cid: cid, filter: .equal(.banned, to: true))
+                    )
                 ), animated: true)
             }),
             .init(title: "Truncate channel w/o message", style: .default, handler: { _ in
