@@ -125,6 +125,10 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
 
         return dto
     }
+
+    func delete(attachment: AttachmentDTO) {
+        delete(attachment)
+    }
 }
 
 private extension AttachmentDTO {

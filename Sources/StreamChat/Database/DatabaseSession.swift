@@ -366,6 +366,10 @@ protocol AttachmentDatabaseSession {
         attachment: AnyAttachmentPayload,
         id: AttachmentId
     ) throws -> AttachmentDTO
+
+    /// Deletes the provided dto from a database
+    /// - Parameter attachment: The DTO to be deleted
+    func delete(attachment: AttachmentDTO)
 }
 
 protocol QueuedRequestDatabaseSession {

@@ -156,43 +156,13 @@ open class ComposerVC: _ViewController,
         ///
         /// - Parameter message: The message that the composer will edit.
         public mutating func editMessage(_ message: ChatMessage) {
-            #warning("This process does not belong here probably!")
-            let attachments: [AnyAttachmentPayload] = message.allAttachments.compactMap { attachment in
-                let payload: AttachmentPayload?
-
-                let decoder = JSONDecoder()
-
-                let type: AttachmentPayload.Type
-
-                switch attachment.type {
-                case .image:
-                    type = ImageAttachmentPayload.self
-                case .video:
-                    type = VideoAttachmentPayload.self
-                case .audio:
-                    type = AudioAttachmentPayload.self
-                case .file:
-                    type = FileAttachmentPayload.self
-                default:
-                    return nil
-                }
-
-                payload = try? decoder.decode(type, from: attachment.payload)
-
-                guard let payload = payload else {
-                    return nil
-                }
-
-                return AnyAttachmentPayload(payload: payload)
-            }
-
             self = .init(
                 text: message.text,
                 state: .edit,
                 editingMessage: message,
                 quotingMessage: nil,
                 threadMessage: threadMessage,
-                attachments: attachments,
+                attachments: message.allAttachments.toAnyAttachmentPayload,
                 mentionedUsers: message.mentionedUsers,
                 command: command,
                 extraData: message.extraData,
@@ -767,9 +737,12 @@ open class ComposerVC: _ViewController,
             cid: cid,
             messageId: id
         )
-        // TODO: Adjust LLC to edit attachments also
         // TODO: Adjust LLC to edit mentions
-        messageController?.editMessage(text: newText, extraData: content.extraData)
+        messageController?.editMessage(
+            text: newText,
+            attachments: content.attachments,
+            extraData: content.extraData
+        )
     }
 
     /// Returns a potential user mention in case the user is currently typing a username.
@@ -1306,5 +1279,24 @@ extension ComposerVC: ChatChannelControllerDelegate {
         didUpdateMessages changes: [ListChange<ChatMessage>]
     ) {
         cooldownTracker.start(with: channelController.currentCooldownTime())
+    }
+}
+
+private extension Array where Element == ChatMessageAttachment<Data> {
+    var toAnyAttachmentPayload: [AnyAttachmentPayload] {
+        let decoder = JSONDecoder()
+        return compactMap { attachment in
+            let type: AttachmentPayload.Type
+            switch attachment.type {
+            case .image: type = ImageAttachmentPayload.self
+            case .video: type = VideoAttachmentPayload.self
+            case .audio: type = AudioAttachmentPayload.self
+            case .file: type = FileAttachmentPayload.self
+            default: return nil
+            }
+
+            guard let payload = try? decoder.decode(type, from: attachment.payload) else { return nil }
+            return AnyAttachmentPayload(payload: payload)
+        }
     }
 }
