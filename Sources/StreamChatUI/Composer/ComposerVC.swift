@@ -487,7 +487,7 @@ open class ComposerVC: _ViewController,
             Animate {
                 self.composerView.confirmButton.isHidden = false
                 self.composerView.sendButton.isHidden = true
-                self.composerView.recordButton.isHidden = self.composerView.sendButton.isHidden
+                self.composerView.recordButton.isHidden = self.composerView.confirmButton.isHidden
                 self.composerView.headerView.isHidden = false
                 self.composerView.cooldownView.isHidden = true
                 self.composerView.leadingContainer.isHidden = false
@@ -1292,7 +1292,10 @@ private extension Array where Element == ChatMessageAttachment<Data> {
             case .video: type = VideoAttachmentPayload.self
             case .audio: type = AudioAttachmentPayload.self
             case .file: type = FileAttachmentPayload.self
-            default: return nil
+            case .voiceRecording: type = VoiceRecordingAttachmentPayload.self
+            default:
+                log.assertionFailure("Unsupported attachment")
+                return nil
             }
 
             guard let payload = try? decoder.decode(type, from: attachment.payload) else { return nil }
