@@ -79,7 +79,10 @@ final class ModerationEndpoints_Tests: XCTestCase {
         let expectedEndpoint = Endpoint<EmptyResponse>(
             path: .banMember,
             method: .delete,
-            queryItems: ChannelMemberBanRequestPayload(userId: userId, cid: cid),
+            queryItems: ChannelMemberUnbanRequestPayload(
+                userId: userId,
+                cid: cid
+            ),
             requiresConnectionId: false,
             body: nil
         )

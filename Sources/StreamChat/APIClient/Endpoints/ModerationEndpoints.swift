@@ -43,7 +43,7 @@ extension Endpoint {
         .init(
             path: .banMember,
             method: .delete,
-            queryItems: ChannelMemberBanRequestPayload(userId: userId, cid: cid),
+            queryItems: ChannelMemberUnbanRequestPayload(userId: userId, cid: cid),
             requiresConnectionId: false,
             body: nil
         )
