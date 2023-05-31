@@ -50,6 +50,7 @@ final class UserEvents_Tests: XCTestCase {
         XCTAssertEqual(event?.ownerId, "steep-moon-9")
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "new_channel_7070"))
         XCTAssertEqual(event?.reason, "I don't like you 🤮")
+        XCTAssertEqual(event?.isShadowBan, true)
     }
 
     func test_userUnbannedEvent() throws {
