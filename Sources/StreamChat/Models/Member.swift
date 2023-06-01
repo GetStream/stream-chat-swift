@@ -40,8 +40,7 @@ public class ChatChannelMember: ChatUser {
     ///
     /// Learn more about shadow banning in the [documentation](https://getstream.io/chat/docs/ios-swift/moderation/?language=swift#shadow-ban).
     ///
-    // TODO: Make public when working on CIS-720
-    internal let isShadowBannedFromChannel: Bool
+    public let isShadowBannedFromChannel: Bool
 
     init(
         id: String,

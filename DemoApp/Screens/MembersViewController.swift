@@ -59,6 +59,11 @@ class MembersViewController: UITableViewController, ChatChannelMemberListControl
         return cell
     }
 
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let member = members[indexPath.row]
+        dump(member)
+    }
+
     func memberListController(_ controller: ChatChannelMemberListController, didChangeMembers changes: [ListChange<ChatChannelMember>]) {
         members = Array(controller.members)
         updateData()

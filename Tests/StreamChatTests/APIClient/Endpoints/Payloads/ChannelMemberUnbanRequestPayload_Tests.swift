@@ -6,21 +6,15 @@
 @testable import StreamChatTestTools
 import XCTest
 
-final class ChannelMemberBanRequestPayload_Tests: XCTestCase {
+final class ChannelMemberUnbanRequestPayload_Tests: XCTestCase {
     func test_payload_isBuiltAndEncodedCorrectly() throws {
         let userId: UserId = .unique
         let cid: ChannelId = .unique
-        let timeoutInMinutes = 15
-        let reason: String = .unique
-        let shadow = true
 
         // Build the payload.
-        let payload = ChannelMemberBanRequestPayload(
+        let payload = ChannelMemberUnbanRequestPayload(
             userId: userId,
-            cid: cid,
-            shadow: shadow,
-            timeoutInMinutes: timeoutInMinutes,
-            reason: reason
+            cid: cid
         )
 
         // Encode the payload.
@@ -30,10 +24,7 @@ final class ChannelMemberBanRequestPayload_Tests: XCTestCase {
         AssertJSONEqual(json, [
             "target_user_id": userId,
             "type": cid.type.rawValue,
-            "id": cid.id,
-            "shadow": shadow,
-            "timeout": timeoutInMinutes,
-            "reason": reason
+            "id": cid.id
         ])
     }
 }

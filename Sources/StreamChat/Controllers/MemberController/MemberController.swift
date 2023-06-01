@@ -153,9 +153,10 @@ public class ChatChannelMemberController: DataController, DelegateCallable, Data
 // MARK: - Actions
 
 public extension ChatChannelMemberController {
-    /// Bans the channel member for a specific # of minutes.
+    /// Bans the channel member.
     /// - Parameters:
     ///   - timeoutInMinutes: The # of minutes the user should be banned for.
+    ///   By default it is `nil`, it will ban the member until it is unbanned.
     ///   - reason: The ban reason.
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
@@ -164,7 +165,38 @@ public extension ChatChannelMemberController {
         reason: String? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
-        memberUpdater.banMember(userId, in: cid, for: timeoutInMinutes, reason: reason) { error in
+        memberUpdater.banMember(
+            userId,
+            in: cid,
+            shadow: false,
+            for: timeoutInMinutes,
+            reason: reason
+        ) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
+    }
+
+    /// Shadow bans the channel member.
+    /// - Parameters:
+    ///   - timeoutInMinutes: The # of minutes the user should be banned for.
+    ///   By default it is `nil`, it will ban the member until it is unbanned.
+    ///   - reason: The ban reason.
+    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    ///                 If request fails, the completion will be called with an error.
+    func shadowBan(
+        for timeoutInMinutes: Int? = nil,
+        reason: String? = nil,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        memberUpdater.banMember(
+            userId,
+            in: cid,
+            shadow: true,
+            for: timeoutInMinutes,
+            reason: reason
+        ) { error in
             self.callback {
                 completion?(error)
             }

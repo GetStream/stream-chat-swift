@@ -22,8 +22,9 @@ extension Endpoint {
     static func banMember(
         _ userId: UserId,
         cid: ChannelId,
-        timeoutInMinutes: Int? = nil,
-        reason: String? = nil
+        shadow: Bool,
+        timeoutInMinutes: Int?,
+        reason: String?
     ) -> Endpoint<EmptyResponse> {
         .init(
             path: .banMember,
@@ -33,6 +34,7 @@ extension Endpoint {
             body: ChannelMemberBanRequestPayload(
                 userId: userId,
                 cid: cid,
+                shadow: shadow,
                 timeoutInMinutes: timeoutInMinutes,
                 reason: reason
             )
@@ -43,7 +45,7 @@ extension Endpoint {
         .init(
             path: .banMember,
             method: .delete,
-            queryItems: ChannelMemberBanRequestPayload(userId: userId, cid: cid),
+            queryItems: ChannelMemberUnbanRequestPayload(userId: userId, cid: cid),
             requiresConnectionId: false,
             body: nil
         )

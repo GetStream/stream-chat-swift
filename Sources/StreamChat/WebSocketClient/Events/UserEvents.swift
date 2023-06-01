@@ -165,6 +165,9 @@ public struct UserBannedEvent: ChannelSpecificEvent {
 
     /// The ban expiration date.
     public let expiredAt: Date?
+
+    /// A boolean value indicating if the ban is a shadowed ban or not.
+    public let isShadowBan: Bool?
 }
 
 class UserBannedEventDTO: EventDTO {
@@ -175,6 +178,7 @@ class UserBannedEventDTO: EventDTO {
     let reason: String?
     let expiredAt: Date?
     let payload: EventPayload
+    let isShadowBan: Bool?
 
     init(from response: EventPayload) throws {
         cid = try response.value(at: \.cid)
@@ -184,6 +188,7 @@ class UserBannedEventDTO: EventDTO {
         reason = response.banReason
         expiredAt = response.banExpiredAt
         payload = response
+        isShadowBan = response.shadow
     }
 
     func toDomainEvent(session: DatabaseSession) -> Event? {
@@ -195,7 +200,8 @@ class UserBannedEventDTO: EventDTO {
             ownerId: ownerId,
             createdAt: createdAt,
             reason: reason,
-            expiredAt: expiredAt
+            expiredAt: expiredAt,
+            isShadowBan: isShadowBan
         )
     }
 }
