@@ -532,6 +532,7 @@ extension MessageDTO {
 extension NSManagedObjectContext: MessageDatabaseSession {
     func createNewMessage(
         in cid: ChannelId,
+        messageId: MessageId,
         text: String,
         pinning: MessagePinning?,
         command: String?,
@@ -555,7 +556,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             throw ClientError.ChannelDoesNotExist(cid: cid)
         }
 
-        let message = MessageDTO.loadOrCreate(id: .newUniqueId, context: self, cache: nil)
+        let message = MessageDTO.loadOrCreate(id: messageId, context: self, cache: nil)
 
         // We make `createdDate` 0.1 second bigger than Channel's most recent message
         // so if the local time is not in sync, the message will still appear in the correct position

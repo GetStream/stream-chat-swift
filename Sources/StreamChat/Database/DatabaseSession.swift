@@ -69,6 +69,7 @@ protocol MessageDatabaseSession {
     @discardableResult
     func createNewMessage(
         in cid: ChannelId,
+        messageId: MessageId,
         text: String,
         pinning: MessagePinning?,
         command: String?,
@@ -187,6 +188,7 @@ extension MessageDatabaseSession {
     @discardableResult
     func createNewMessage(
         in cid: ChannelId,
+        messageId: MessageId,
         text: String,
         pinning: MessagePinning?,
         quotedMessageId: MessageId?,
@@ -199,6 +201,7 @@ extension MessageDatabaseSession {
     ) throws -> MessageDTO {
         try createNewMessage(
             in: cid,
+            messageId: messageId,
             text: text,
             pinning: pinning,
             command: nil,

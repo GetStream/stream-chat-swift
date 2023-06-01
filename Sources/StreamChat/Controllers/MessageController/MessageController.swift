@@ -277,6 +277,7 @@ public extension ChatMessageController {
     /// Creates a new reply message locally and schedules it for send.
     ///
     /// - Parameters:
+    ///   - messageId: The id for the sent message.
     ///   - text: Text of the message.
     ///   - pinning: Pins the new message. `nil` if should not be pinned.
     ///   - attachments: An array of the attachments for the message.
@@ -291,6 +292,7 @@ public extension ChatMessageController {
     ///   - completion: Called when saving the message to the local DB finishes.
     ///
     func createNewReply(
+        messageId: MessageId? = nil,
         text: String,
         pinning: MessagePinning? = nil,
         attachments: [AnyAttachmentPayload] = [],
@@ -303,13 +305,16 @@ public extension ChatMessageController {
         extraData: [String: RawJSON] = [:],
         completion: ((Result<MessageId, Error>) -> Void)? = nil
     ) {
+        let parentMessageId = self.messageId
+
         messageUpdater.createNewReply(
             in: cid,
+            messageId: messageId ?? .newUniqueId,
             text: text,
             pinning: pinning,
             command: nil,
             arguments: nil,
-            parentMessageId: messageId,
+            parentMessageId: parentMessageId,
             attachments: attachments,
             mentionedUserIds: mentionedUserIds,
             showReplyInChannel: showReplyInChannel,

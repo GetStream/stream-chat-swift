@@ -155,6 +155,7 @@ class MessageUpdater: Worker {
     ///
     /// - Parameters:
     ///   - cid: The cid of the channel the message is create in.
+    ///   - messageId: The id for the sent message.
     ///   - text: Text of the message.
     ///   - pinning: Pins the new message. Nil if should not be pinned.
     ///   - parentMessageId: The `MessageId` of the message this message replies to.
@@ -169,6 +170,7 @@ class MessageUpdater: Worker {
     ///
     func createNewReply(
         in cid: ChannelId,
+        messageId: MessageId,
         text: String,
         pinning: MessagePinning?,
         command: String?,
@@ -188,6 +190,7 @@ class MessageUpdater: Worker {
         database.write({ (session) in
             let newMessageDTO = try session.createNewMessage(
                 in: cid,
+                messageId: messageId,
                 text: text,
                 pinning: pinning,
                 command: command,
