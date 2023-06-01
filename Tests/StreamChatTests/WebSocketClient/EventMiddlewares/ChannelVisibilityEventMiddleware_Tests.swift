@@ -207,4 +207,93 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
         // Assert the `isHidden` value is reset
         XCTAssertFalse(channelDTO.isHidden)
     }
+
+    func test_messageNewEvent_whenShadowedMessage_doesNotResetsHiddenAtValue() throws {
+        let cid: ChannelId = .unique
+
+        // Create the event
+        let event = try MessageNewEventDTO(
+            from: .init(
+                eventType: .messageNew,
+                cid: cid,
+                user: .dummy(userId: .unique),
+                message: .dummy(messageId: .unique, authorUserId: .unique, isShadowed: true),
+                createdAt: .unique
+            ) as EventPayload
+        )
+
+        // Create a channel in the DB with `isHidden` set to true
+        try database.writeSynchronously { session in
+            let dto = try session.saveChannel(payload: XCTestCase().dummyPayload(with: cid))
+            dto.isHidden = true
+        }
+
+        // Simulate incoming event
+        _ = middleware.handle(event: event, session: database.viewContext)
+
+        let channelDTO = try XCTUnwrap(database.viewContext.channel(cid: cid))
+
+        // Assert the `isHidden` value is still true
+        XCTAssertTrue(channelDTO.isHidden)
+    }
+
+    func test_notificationMessageNewEvent_resetsHiddenAtValue() throws {
+        let cid: ChannelId = .unique
+
+        // Create the event
+        let event = try NotificationMessageNewEventDTO(
+            from: .init(
+                eventType: .notificationMessageNew,
+                cid: cid,
+                user: .dummy(userId: .unique),
+                channel: .dummy(cid: cid),
+                message: .dummy(messageId: .unique, authorUserId: .unique),
+                createdAt: .unique
+            )
+        )
+
+        // Create a channel in the DB with `isHidden` set to true
+        try database.writeSynchronously { session in
+            let dto = try session.saveChannel(payload: XCTestCase().dummyPayload(with: cid))
+            dto.isHidden = true
+        }
+
+        // Simulate incoming event
+        _ = middleware.handle(event: event, session: database.viewContext)
+
+        let channelDTO = try XCTUnwrap(database.viewContext.channel(cid: cid))
+
+        // Assert the `isHidden` value is reset
+        XCTAssertFalse(channelDTO.isHidden)
+    }
+
+    func test_notificationMessageNewEvent_whenShadowedMessage_doesNotResetsHiddenAtValue() throws {
+        let cid: ChannelId = .unique
+
+        // Create the event
+        let event = try NotificationMessageNewEventDTO(
+            from: .init(
+                eventType: .notificationMessageNew,
+                cid: cid,
+                user: .dummy(userId: .unique),
+                channel: .dummy(cid: cid),
+                message: .dummy(messageId: .unique, authorUserId: .unique, isShadowed: true),
+                createdAt: .unique
+            )
+        )
+
+        // Create a channel in the DB with `isHidden` set to true
+        try database.writeSynchronously { session in
+            let dto = try session.saveChannel(payload: XCTestCase().dummyPayload(with: cid))
+            dto.isHidden = true
+        }
+
+        // Simulate incoming event
+        _ = middleware.handle(event: event, session: database.viewContext)
+
+        let channelDTO = try XCTUnwrap(database.viewContext.channel(cid: cid))
+
+        // Assert the `isHidden` value is still true
+        XCTAssertTrue(channelDTO.isHidden)
+    }
 }

@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Expose `ChatChannelMember.isShadowBannedFromChannel` [#2660](https://github.com/GetStream/stream-chat-swift/pull/2660)
 ### 🐞 Fixed
 - Fix not being able to send messages when jumping to message in newest page [#2647](https://github.com/GetStream/stream-chat-swift/pull/2647)
+- Fix shadow message making hidden channel reappear #2663(https://github.com/GetStream/stream-chat-swift/pull/2663)
 
 ## StreamChatUI
 ### ✅ Added
