@@ -167,7 +167,7 @@ extension ClientError {
     public class UnsupportedUploadableAttachmentType: ClientError {
         init(_ type: AttachmentType) {
             super.init(
-                "For uploadable attachments only .image/.file/.video types are supported."
+                "For uploadable attachments only image/video/audio/file/voiceRecording types are supported."
             )
         }
     }

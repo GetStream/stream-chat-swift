@@ -87,7 +87,10 @@ final class MessageUpdater_Tests: XCTestCase {
         let pairs: [(LocalMessageState?, LocalMessageState?)] = [
             (nil, .pendingSync),
             (.pendingSync, .pendingSync),
-            (.pendingSend, .pendingSend)
+            (.syncingFailed, .pendingSync),
+            (.deletingFailed, .pendingSync),
+            (.pendingSend, .pendingSend),
+            (.sendingFailed, .pendingSend)
         ]
 
         for (initialState, expectedState) in pairs {
@@ -267,6 +270,47 @@ final class MessageUpdater_Tests: XCTestCase {
         XCTAssertNil(completionError)
         // Assert message's extra data is updated
         XCTAssertEqual(encodedExtraData, extraData)
+    }
+
+    func test_editMessage_updatesAttachments() throws {
+        let currentUserId: UserId = .unique
+        let messageId: MessageId = .unique
+        let updatedText: String = .unique
+        let originalAttachmentTypes: [AttachmentType] = [.audio, .file]
+        let updatedAttachmentsTypes: [AttachmentType] = [.voiceRecording, .image]
+
+        // Create current user is the database
+        try database.createCurrentUser(id: currentUserId)
+
+        // Create a new message in the database
+        try database.createMessage(
+            id: messageId,
+            authorId: currentUserId,
+            attachments: originalAttachmentTypes.map { MessageAttachmentPayload.dummy(type: $0) }
+        )
+        let createdMessage = try XCTUnwrap(database.viewContext.message(id: messageId))
+        let databaseAttachmentTypes = createdMessage.attachments.map(\.attachmentType)
+
+        XCTAssertEqual(databaseAttachmentTypes.sorted { $0.rawValue < $1.rawValue }, originalAttachmentTypes.sorted { $0.rawValue < $1.rawValue })
+
+        // Edit created message with new attaachments
+        let completionError = try waitFor {
+            messageUpdater.editMessage(
+                messageId: messageId,
+                text: updatedText,
+                attachments: updatedAttachmentsTypes.map { AnyAttachmentPayload.mock(type: $0) },
+                completion: $0
+            )
+        }
+
+        // Load the message
+        let message = try XCTUnwrap(database.viewContext.message(id: messageId))
+        let updatedDatabaseAttachmentTypes = message.attachments.map(\.attachmentType)
+
+        // Assert completion is called without any error
+        XCTAssertNil(completionError)
+        // Assert message's attachments are updated
+        XCTAssertEqual(updatedDatabaseAttachmentTypes.sorted { $0.rawValue < $1.rawValue }, updatedAttachmentsTypes.sorted { $0.rawValue < $1.rawValue })
     }
 
     // MARK: Delete message
