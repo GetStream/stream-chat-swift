@@ -8,7 +8,7 @@ import UIKit
 /// The cell that displays the message content of a dynamic type and layout.
 /// Once the cell is set up it is expected to be dequeued for messages with
 /// the same content and layout the cell has already been configured with.
-public class ChatMessageCell: _TableViewCell, ComponentsProvider {
+public class ChatMessageCell: _TableViewCell, ThemeProvider {
     public static var reuseId: String { "\(self)" }
 
     /// The container that holds the header, footer and the message content view.
@@ -21,6 +21,10 @@ public class ChatMessageCell: _TableViewCell, ComponentsProvider {
     internal lazy var headerContainerView: UIView = .init()
         .withoutAutoresizingMaskConstraints
         .withAccessibilityIdentifier(identifier: "headerContainerView")
+
+    /// The reply icon image view.
+    public private(set) lazy var replyIconImageView = UIImageView()
+        .withoutAutoresizingMaskConstraints
 
     /// The message content view the cell is showing.
     public private(set) var messageContentView: ChatMessageContentView?
@@ -76,6 +80,24 @@ public class ChatMessageCell: _TableViewCell, ComponentsProvider {
             anchors: [.leading, .trailing],
             to: containerStackView
         )
+
+        replyIconImageView.isHidden = true
+        contentView.addSubview(replyIconImageView)
+        if let messageContentView = self.messageContentView {
+            replyIconImageView.image = appearance.images
+                .messageActionSwipeReply
+                .tinted(with: appearance.colorPalette.textLowEmphasis)
+
+            NSLayoutConstraint.activate([
+                replyIconImageView.topAnchor.pin(equalTo: messageContentView.bubbleContentContainer.topAnchor),
+                replyIconImageView.leadingAnchor.pin(
+                    equalTo: messageContentView.bubbleContentContainer.leadingAnchor,
+                    constant: messageContentView.content?.isSentByCurrentUser == true ? -45 : -30
+                ),
+                replyIconImageView.widthAnchor.pin(equalToConstant: 25),
+                replyIconImageView.heightAnchor.pin(equalToConstant: 25)
+            ])
+        }
 
         updateBottomSpacing()
     }

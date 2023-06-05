@@ -195,6 +195,7 @@ public extension Appearance {
 
         // MARK: - Message Actions
 
+        public var messageActionSwipeReply: UIImage = loadImageSafely(with: "icn_inline_reply")
         public var messageActionInlineReply: UIImage = loadImageSafely(with: "icn_inline_reply")
         public var messageActionThreadReply: UIImage = loadImageSafely(with: "icn_thread_reply")
         public var messageActionMarkUnread: UIImage = loadSafely(systemName: "message.badge", assetsFallback: "mark_unread")

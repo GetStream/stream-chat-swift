@@ -99,6 +99,9 @@ open class ChatMessageListVC: _ViewController,
         .audioSessionFeedbackGenerator
         .init()
 
+    /// A component responsible to manage the swipe to quote reply logic.
+    open lazy var swipeToReplyGestureHandler = SwipeToReplyGestureHandler(listView: self.listView)
+
     /// A boolean value that determines whether the date overlay should be displayed while scrolling.
     open var isDateOverlayEnabled: Bool {
         components.messageListDateOverlayEnabled
@@ -145,6 +148,10 @@ open class ChatMessageListVC: _ViewController,
         tapOnList.cancelsTouchesInView = false
         tapOnList.delegate = self
         listView.addGestureRecognizer(tapOnList)
+
+        let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:)))
+        panGestureRecognizer.delegate = self
+        listView.addGestureRecognizer(panGestureRecognizer)
 
         scrollToLatestMessageButton.addTarget(self, action: #selector(scrollToLatestMessage), for: .touchUpInside)
     }
@@ -294,7 +301,7 @@ open class ChatMessageListVC: _ViewController,
         handleMessageUpdates(with: changes, completion: completion)
     }
 
-    /// Handles tap action on the table view.
+    /// Handles tap action on the message list.
     ///
     /// Default implementation will dismiss the keyboard if it is open
     @objc open func handleTap(_ gesture: UITapGestureRecognizer) {
@@ -302,9 +309,9 @@ open class ChatMessageListVC: _ViewController,
         view.endEditing(true)
     }
 
-    /// Handles long press action on collection view.
+    /// Handles long press action the message list.
     ///
-    /// Default implementation will convert the gesture location to collection view's `indexPath`
+    /// Default implementation will convert the gesture location to table views's `indexPath`
     /// and then call selection action on the selected cell.
     @objc open func handleLongPress(_ gesture: UILongPressGestureRecognizer) {
         let location = gesture.location(in: listView)
@@ -315,6 +322,33 @@ open class ChatMessageListVC: _ViewController,
         else { return }
 
         didSelectMessageCell(at: indexPath)
+    }
+
+    /// Handles pan gesture in the message list.
+    ///
+    /// By default, this will trigger the swipe to reply gesture recognition.
+    @objc open func handlePan(_ gesture: UIPanGestureRecognizer) {
+        swipeToReplyGestureHandler.handle(gesture: gesture)
+    }
+
+    /// Handles the pan gesture recognizer not conflicting with the message list vertical scrolling.
+    public func gestureRecognizerShouldBegin(_ gesture: UIGestureRecognizer) -> Bool {
+        guard let panGestureRecognizer = gesture as? UIPanGestureRecognizer else {
+            return false
+        }
+
+        let location = gesture.location(in: listView)
+        guard let indexPath = listView.indexPathForRow(at: location),
+              let cell = listView.cellForRow(at: indexPath) as? ChatMessageCell else {
+            return false
+        }
+
+        let translation = panGestureRecognizer.translation(in: cell)
+        if abs(translation.x) > abs(translation.y) {
+            return true
+        }
+
+        return false
     }
 
     /// The message cell was select and should show the available message actions.
