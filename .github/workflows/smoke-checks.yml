@@ -22,12 +22,12 @@ concurrency:
 
 env:
   HOMEBREW_NO_INSTALL_CLEANUP: 1 # Disable cleanup for homebrew, we don't need it on CI
-  IOS_SIMULATOR_DEVICE: "iPhone 14 Pro (16.2)"
+  IOS_SIMULATOR_DEVICE: "iPhone 14 Pro (16.4)"
 
 jobs:
   automated-code-review:
     name: Automated Code Review
-    runs-on: macos-12
+    runs-on: macos-13
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_PR_NUM: ${{ github.event.number }}
@@ -41,12 +41,14 @@ jobs:
         run: bundle exec danger
       - name: Run Fastlane Linting
         run: bundle exec fastlane rubocop
-      - name: Run Linting
+      - name: Run SwiftFormat Linting
         run: ./Scripts/run-linter.sh
+      - name: Run Podspec Linting
+        run: bundle exec fastlane pod_lint
 
   build-and-test-debug:
     name: Test LLC (Debug)
-    runs-on: macos-12
+    runs-on: macos-13
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_PR_NUM: ${{ github.event.number }}
@@ -100,6 +102,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GITHUB_PR_NUM: ${{ github.event.number }}
+        XCODE_VERSION: "14.2.0"                      # TODO: delete these two lines
+        IOS_SIMULATOR_DEVICE: "iPhone 14 Pro (16.2)" # when Xcode 14.3.1 is released
     - name: Parse xcresult
       if: failure()
       run: xcparse screenshots fastlane/test_output/StreamChatUI.xcresult fastlane/test_output/snapshots --test
@@ -117,6 +121,8 @@ jobs:
     needs: allure_testops_launch
     env:
       LAUNCH_ID: ${{ needs.allure_testops_launch.outputs.launch_id }}
+      XCODE_VERSION: "14.2.0"                      # TODO: delete these two lines
+      IOS_SIMULATOR_DEVICE: "iPhone 14 Pro (16.2)" # when Xcode 14.3.1 is released
     strategy:
       matrix:
         batch: [0, 1, 2]
@@ -163,7 +169,7 @@ jobs:
 
   allure_testops_launch:
     name: Launch Allure TestOps
-    runs-on: macos-12
+    runs-on: macos-13
     if: ${{ github.event_name != 'push' }}
     outputs:
       launch_id: ${{ steps.get_launch_id.outputs.launch_id }}
@@ -203,8 +209,8 @@ jobs:
       timeout-minutes: 25
 
   build-apps:
-    name: Build Sample + Demo Apps
-    runs-on: macos-12
+    name: Build Demo App + Example Apps
+    runs-on: macos-13
     if: ${{ github.event_name != 'push' }}
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -212,9 +218,6 @@ jobs:
     steps:
     - uses: actions/checkout@v3.1.0
     - uses: ./.github/actions/bootstrap
-    - name: Build Sample App
-      run: bundle exec fastlane build_sample
-      timeout-minutes: 10
     - name: Build Demo App
       run: bundle exec fastlane build_demo
       timeout-minutes: 10
@@ -233,7 +236,7 @@ jobs:
 
   spm-integration:
     name: Test Integration (SPM)
-    runs-on: macos-12
+    runs-on: macos-13
     if: ${{ github.event_name != 'push' }}
     steps:
     - uses: actions/checkout@v3.1.0
@@ -247,7 +250,7 @@ jobs:
 
   cocoapods-integration:
     name: Test Integration (CocoaPods)
-    runs-on: macos-12
+    runs-on: macos-13
     if: ${{ github.event_name != 'push' }}
     steps:
     - uses: actions/checkout@v3.1.0

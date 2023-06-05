@@ -17,12 +17,17 @@ struct UserChannelBanEventsMiddleware: EventMiddleware {
                 memberDTO.isBanned = true
                 memberDTO.banExpiresAt = userBannedEvent.expiredAt?.bridgeDate
 
+                if let isShadowBan = userBannedEvent.isShadowBan {
+                    memberDTO.isShadowBanned = isShadowBan
+                }
+
             case let userUnbannedEvent as UserUnbannedEventDTO:
                 guard let memberDTO = session.member(userId: userUnbannedEvent.user.id, cid: userUnbannedEvent.cid) else {
                     throw ClientError.MemberDoesNotExist(userId: userUnbannedEvent.user.id, cid: userUnbannedEvent.cid)
                 }
 
                 memberDTO.isBanned = false
+                memberDTO.isShadowBanned = false
                 memberDTO.banExpiresAt = nil
 
             default:

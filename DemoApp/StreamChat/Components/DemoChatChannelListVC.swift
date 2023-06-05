@@ -15,9 +15,9 @@ final class DemoChatChannelListVC: ChatChannelListVC, EventsControllerDelegate {
         return button
     }()
 
-    lazy var hiddenChannelsButton: UIButton = {
+    lazy var filterChannelsButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(systemName: "archivebox")!, for: .normal)
+        button.setImage(UIImage(systemName: "slider.horizontal.3")!, for: .normal)
         return button
     }()
 
@@ -27,6 +27,25 @@ final class DemoChatChannelListVC: ChatChannelListVC, EventsControllerDelegate {
         showUnder: navigationController!.navigationBar
     )
 
+    var highlightSelectedChannel: Bool { splitViewController?.isCollapsed == false }
+    var selectedChannel: ChatChannel?
+
+    var currentUserId: UserId {
+        controller.client.currentUserId!
+    }
+
+    var initialQuery: ChannelListQuery!
+
+    lazy var hiddenChannelsQuery: ChannelListQuery = .init(filter: .and([
+        .containMembers(userIds: [currentUserId]),
+        .equal(.hidden, to: true)
+    ]))
+
+    lazy var mutedChannelsQuery: ChannelListQuery = .init(filter: .and([
+        .containMembers(userIds: [currentUserId]),
+        .equal(.muted, to: true)
+    ]))
+
     var demoRouter: DemoChatChannelListRouter? {
         router as? DemoChatChannelListRouter
     }
@@ -34,15 +53,19 @@ final class DemoChatChannelListVC: ChatChannelListVC, EventsControllerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        title = "Channels"
+
+        initialQuery = controller.query
+
         eventsController.delegate = self
         connectionController.delegate = connectionDelegate
 
         navigationItem.rightBarButtonItems = [
-            UIBarButtonItem(customView: hiddenChannelsButton),
+            UIBarButtonItem(customView: filterChannelsButton),
             UIBarButtonItem(customView: createChannelButton)
         ]
         createChannelButton.addTarget(self, action: #selector(didTapCreateNewChannel), for: .touchUpInside)
-        hiddenChannelsButton.addTarget(self, action: #selector(didTapHiddenChannelsButton), for: .touchUpInside)
+        filterChannelsButton.addTarget(self, action: #selector(didTapFilterChannelsButton), for: .touchUpInside)
 
         emptyView.actionButtonPressed = { [weak self] in
             guard let self = self else { return }
@@ -54,12 +77,52 @@ final class DemoChatChannelListVC: ChatChannelListVC, EventsControllerDelegate {
         demoRouter?.showCreateNewChannelFlow()
     }
 
-    @objc private func didTapHiddenChannelsButton(_ sender: Any) {
-        demoRouter?.showHiddenChannels()
+    @objc private func didTapFilterChannelsButton(_ sender: Any) {
+        let defaultChannelsAction = UIAlertAction(
+            title: "Initial Channels",
+            style: .default,
+            handler: { [weak self] _ in
+                self?.title = "Channels"
+                self?.setInitialChannelsQuery()
+            }
+        )
+
+        let hiddenChannelsAction = UIAlertAction(
+            title: "Hidden Channels",
+            style: .default,
+            handler: { [weak self] _ in
+                self?.title = "Hidden Channels"
+                self?.setHiddenChannelsQuery()
+            }
+        )
+
+        let mutedChannelsAction = UIAlertAction(
+            title: "Muted Channels",
+            style: .default,
+            handler: { [weak self] _ in
+                self?.title = "Muted Channels"
+                self?.setMutedChannelsQuery()
+            }
+        )
+
+        presentAlert(
+            title: "Filter Channels",
+            actions: [defaultChannelsAction, hiddenChannelsAction, mutedChannelsAction],
+            preferredStyle: .actionSheet
+        )
     }
 
-    var highlightSelectedChannel: Bool { splitViewController?.isCollapsed == false }
-    var selectedChannel: ChatChannel?
+    func setHiddenChannelsQuery() {
+        replaceQuery(hiddenChannelsQuery)
+    }
+
+    func setMutedChannelsQuery() {
+        replaceQuery(mutedChannelsQuery)
+    }
+
+    func setInitialChannelsQuery() {
+        replaceQuery(initialQuery)
+    }
 
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         collectionView.deselectItem(at: indexPath, animated: true)

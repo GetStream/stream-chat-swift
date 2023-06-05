@@ -20,11 +20,6 @@ protocol MessagesPaginationStateHandling {
 class MessagesPaginationStateHandler: MessagesPaginationStateHandling {
     private let queue = DispatchQueue(label: "io.getstream.messages-pagination-state-handler")
     private var _state: MessagesPaginationState = .initial
-    private let parentMessageId: MessageId?
-
-    init(parentMessageId: MessageId?) {
-        self.parentMessageId = parentMessageId
-    }
 
     var state: MessagesPaginationState {
         get {
@@ -83,29 +78,61 @@ class MessagesPaginationStateHandler: MessagesPaginationStateHandling {
         case .greaterThan, .greaterThanOrEqual:
             state.newestFetchedMessage = newestFetchedMessage
             if messages.count < pagination.pageSize {
-                state.newestFetchedMessage = nil
                 state.hasLoadedAllNextMessages = true
             }
 
-        case let .around(replyId):
+        case let .around(messageId):
             state.oldestFetchedMessage = oldestFetchedMessage
             state.newestFetchedMessage = newestFetchedMessage
 
+            calculateHasLoadedAllMessagesBasedOnTheLocation(of: messageId, given: messages)
+
             if messages.count < pagination.pageSize {
                 state.hasLoadedAllNextMessages = true
-                state.hasLoadedAllPreviousMessages = true
-            }
-
-            if parentMessageId == replyId {
                 state.hasLoadedAllPreviousMessages = true
             }
 
         case .none:
             state.oldestFetchedMessage = oldestFetchedMessage
-            state.newestFetchedMessage = nil
+            state.hasLoadedAllNextMessages = true
             if messages.count < pagination.pageSize {
-                state.hasLoadedAllNextMessages = true
+                state.hasLoadedAllPreviousMessages = true
             }
+        }
+    }
+
+    /// If we are jumping to a message we can determine if we loaded the oldest page
+    /// or the newest page, depending on where the aroundMessageId is located.
+    /// - If the aroundMessageId is in the middle of the messages response,
+    ///   it means there are still older and newer pages to fetch.
+    /// - If the aroundMessageId is on first half of the messages response,
+    ///   it means we loaded all the oldest pages
+    /// - If the aroundMessageId is on the second half of the messages response,
+    ///   it means we loaded all the newest pages
+    /// - If the aroundMessageId is not in the messages response,
+    ///   it means we jumping to a parent message inside a thread
+    ///
+    ///   **Note:** If we had the `newestMessageId` or `oldestMessageId` in a Channel/Thread
+    ///   from the backend, this logic wouldn't be required. But until then we need to do this.
+    private func calculateHasLoadedAllMessagesBasedOnTheLocation(
+        of aroundMessageId: MessageId,
+        given messages: [MessagePayload]
+    ) {
+        guard !messages.isEmpty else {
+            return
+        }
+
+        let midIndex: Double = Double(messages.count) / 2.0
+        let midPoint: Int = Int(round(midIndex)) - 1
+        let secondHalf = messages[midPoint...].dropFirst() // drop the midpoint from second half
+
+        if messages[midPoint].id == aroundMessageId {
+            state.hasLoadedAllNextMessages = false
+            state.hasLoadedAllPreviousMessages = false
+        } else if secondHalf.contains(where: { $0.id == aroundMessageId }) {
+            state.hasLoadedAllNextMessages = true
+        } else {
+            state.hasLoadedAllPreviousMessages = true
         }
     }
 }

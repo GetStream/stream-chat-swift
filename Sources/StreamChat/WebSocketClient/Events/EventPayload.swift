@@ -32,6 +32,7 @@ class EventPayload: Decodable {
         case lastReadAt = "last_read_at"
         case lastReadMessageId = "last_read_message_id"
         case unreadMessagesCount = "unread_messages"
+        case shadow
     }
 
     let eventType: EventType
@@ -52,6 +53,7 @@ class EventPayload: Decodable {
     let banExpiredAt: Date?
     let parentId: MessageId?
     let hardDelete: Bool
+    let shadow: Bool?
     // Mark as unread properties
     let firstUnreadMessageId: MessageId?
     let lastReadMessageId: MessageId?
@@ -77,6 +79,7 @@ class EventPayload: Decodable {
         banExpiredAt: Date? = nil,
         parentId: MessageId? = nil,
         hardDelete: Bool = false,
+        shadow: Bool? = nil,
         firstUnreadMessageId: MessageId? = nil,
         lastReadAt: Date? = nil,
         lastReadMessageId: MessageId? = nil,
@@ -100,6 +103,7 @@ class EventPayload: Decodable {
         self.banExpiredAt = banExpiredAt
         self.parentId = parentId
         self.hardDelete = hardDelete
+        self.shadow = shadow
         self.firstUnreadMessageId = firstUnreadMessageId
         self.lastReadAt = lastReadAt
         self.lastReadMessageId = lastReadMessageId
@@ -128,6 +132,7 @@ class EventPayload: Decodable {
         banExpiredAt = try container.decodeIfPresent(Date.self, forKey: .banExpiredAt)
         parentId = try container.decodeIfPresent(MessageId.self, forKey: .parentId)
         hardDelete = try container.decodeIfPresent(Bool.self, forKey: .hardDelete) ?? false
+        shadow = try container.decodeIfPresent(Bool.self, forKey: .shadow)
         firstUnreadMessageId = try container.decodeIfPresent(MessageId.self, forKey: .firstUnreadMessageId)
         lastReadAt = try container.decodeIfPresent(Date.self, forKey: .lastReadAt)
         lastReadMessageId = try container.decodeIfPresent(MessageId.self, forKey: .lastReadMessageId)
@@ -169,6 +174,7 @@ private extension PartialKeyPath where Root == EventPayload {
         case \EventPayload.banExpiredAt: return "banExpiredAt"
         case \EventPayload.parentId: return "parentId"
         case \EventPayload.hardDelete: return "hardDelete"
+        case \EventPayload.shadow: return "shadow"
         default: return String(describing: self)
         }
     }

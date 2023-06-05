@@ -12,12 +12,16 @@ open class ChatThreadVC: _ViewController,
     ChatMessageListVCDataSource,
     ChatMessageListVCDelegate,
     ChatMessageControllerDelegate,
-    EventsControllerDelegate {
+    EventsControllerDelegate,
+    AudioQueuePlayerDatasource {
     /// Controller for observing data changes within the channel
     open var channelController: ChatChannelController!
 
     /// Controller for observing data changes within the parent thread message.
     open var messageController: ChatMessageController!
+
+    /// An optional message id to where the thread should jump to when opening the thread.
+    public var initialReplyId: MessageId?
 
     /// Controller for observing typing events for this thread.
     open lazy var channelEventsController: ChannelEventsController = client.channelEventsController(for: messageController.cid)
@@ -60,9 +64,25 @@ open class ChatThreadVC: _ViewController,
         .threadHeaderView.init()
         .withoutAutoresizingMaskConstraints
 
+    /// The audioPlayer  that will be used for the playback of VoiceRecordings
+    open private(set) lazy var audioPlayer: AudioPlaying = components
+        .audioPlayer
+        .init()
+
+    /// The provider that will be asked to provide the next VoiceRecording to play automatically once the
+    /// currently playing one, finishes.
+    open private(set) lazy var audioQueuePlayerNextItemProvider: AudioQueuePlayerNextItemProvider = components
+        .audioQueuePlayerNextItemProvider
+        .init()
+
     public var messageComposerBottomConstraint: NSLayoutConstraint?
 
     private var currentlyTypingUsers: Set<ChatUser> = []
+
+    /// A boolean value that determines whether the thread view renders the parent message at the top.
+    open var shouldRenderParentMessage: Bool {
+        components.threadRendersParentMessageEnabled
+    }
 
     override open func setUp() {
         super.setUp()
@@ -70,9 +90,11 @@ open class ChatThreadVC: _ViewController,
         messageListVC.delegate = self
         messageListVC.dataSource = self
         messageListVC.client = client
+        messageListVC.audioPlayer = audioPlayer
 
         messageComposerVC.channelController = channelController
         messageComposerVC.userSearchController = userSuggestionSearchController
+        messageComposerVC.audioPlayer = audioPlayer
         if let message = messageController.message {
             messageComposerVC.content.threadMessage = message
         }
@@ -89,8 +111,12 @@ open class ChatThreadVC: _ViewController,
             self?.messageController.loadNextReplies()
         }
 
+        if let queueAudioPlayer = audioPlayer as? StreamAudioQueuePlayer {
+            queueAudioPlayer.dataSource = self
+        }
+
         // Set the initial data
-        messages = getRepliesWithThreadRootMessage(from: messageController)
+        messages = getReplies(from: messageController)
 
         let completeSetUp: (ChatMessage?) -> Void = { [messageController, messageComposerVC] message in
             if messageComposerVC.content.threadMessage == nil,
@@ -98,7 +124,23 @@ open class ChatThreadVC: _ViewController,
                 messageComposerVC.content.threadMessage = message
             }
 
+            if let initialReplyId = self.initialReplyId {
+                self.messageController.loadPageAroundReplyId(initialReplyId) { error in
+                    guard error == nil else {
+                        return
+                    }
+
+                    self.jumpToMessage(id: initialReplyId)
+                }
+                return
+            }
+
             self.messageController.loadPreviousReplies()
+        }
+
+        if let message = messageController.message {
+            completeSetUp(message)
+            return
         }
 
         messageController.synchronize { [weak self] _ in
@@ -140,6 +182,26 @@ open class ChatThreadVC: _ViewController,
         resignFirstResponder()
 
         keyboardHandler.stop()
+    }
+
+    /// Jump to a given message.
+    /// In case the message is already loaded, it directly goes to it.
+    /// If not, it will load the messages around it and go to that page.
+    ///
+    /// This function is an high-level abstraction of `messageListVC.jumpToMessage(id:onHighlight:)`.
+    ///
+    /// - Parameters:
+    ///   - id: The id of message which the message list should go to.
+    ///   - shouldHighlight: Whether the message should be highlighted when jumping to it. By default it is highlighted.
+    public func jumpToMessage(id: MessageId, shouldHighlight: Bool = true) {
+        if shouldHighlight {
+            messageListVC.jumpToMessage(id: id) { [weak self] indexPath in
+                self?.messageListVC.highlightCell(at: indexPath)
+            }
+            return
+        }
+
+        messageListVC.jumpToMessage(id: id)
     }
 
     // MARK: - ChatMessageListVCDataSource
@@ -286,7 +348,7 @@ open class ChatThreadVC: _ViewController,
         _ controller: ChatMessageController,
         didChangeMessage change: EntityChange<ChatMessage>
     ) {
-        guard !messages.isEmpty else {
+        guard shouldRenderParentMessage && !messages.isEmpty else {
             return
         }
 
@@ -343,12 +405,15 @@ open class ChatThreadVC: _ViewController,
 
     private func updateMessages(with changes: [ListChange<ChatMessage>]) {
         messageListVC.setPreviousMessagesSnapshot(self.messages)
-        let messages = getRepliesWithThreadRootMessage(from: messageController)
+        let messages = getReplies(from: messageController)
         messageListVC.setNewMessagesSnapshot(messages)
         messageListVC.updateMessages(with: changes)
     }
 
-    private func getRepliesWithThreadRootMessage(from messageController: ChatMessageController) -> [ChatMessage] {
+    private func getReplies(from messageController: ChatMessageController) -> [ChatMessage] {
+        guard shouldRenderParentMessage else {
+            return Array(messageController.replies)
+        }
         var messages = Array(messageController.replies)
         let isFirstPage = messages.count < messageController.repliesPageSize
         let shouldAddRootMessageAtTheTop = isFirstPage || messageController.hasLoadedAllPreviousReplies
@@ -356,6 +421,19 @@ open class ChatThreadVC: _ViewController,
             messages.append(threadRootMessage)
         }
         return messages
+    }
+
+    // MARK: - AudioQueuePlayerDatasource
+
+    open func audioQueuePlayerNextAssetURL(
+        _ audioPlayer: AudioPlaying,
+        currentAssetURL: URL?
+    ) -> URL? {
+        audioQueuePlayerNextItemProvider.findNextItem(
+            in: messages,
+            currentVoiceRecordingURL: currentAssetURL,
+            lookUpScope: .subsequentMessagesFromUser
+        )
     }
 
     // MARK: - Deprecations

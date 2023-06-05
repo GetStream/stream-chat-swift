@@ -13,6 +13,8 @@ final class ChatThreadVC_Tests: XCTestCase {
     private var channelControllerMock: ChatChannelController_Mock!
     private var messageControllerMock: ChatMessageController_Mock!
 
+    // MARK: - Lifecycle
+
     override func setUp() {
         super.setUp()
         vc = ChatThreadVC()
@@ -28,6 +30,8 @@ final class ChatThreadVC_Tests: XCTestCase {
         channelControllerMock = nil
         messageControllerMock = nil
     }
+
+    // MARK: - Appearance
 
     func test_emptyAppearance() {
         channelControllerMock.simulateInitial(
@@ -106,6 +110,34 @@ final class ChatThreadVC_Tests: XCTestCase {
         )
     }
 
+    func test_whenThreadRendersParentMessageEnabledIsFalse() {
+        var components = Components.mock
+        components.threadRendersParentMessageEnabled = false
+        vc.components = components
+
+        channelControllerMock.simulateInitial(
+            channel: .mock(cid: .unique),
+            messages: [],
+            state: .remoteDataFetched
+        )
+        messageControllerMock.simulateInitial(
+            message: .mock(id: .unique, cid: .unique, text: "First message", author: .mock(id: .unique), replyCount: 2),
+            replies: [
+                .mock(id: .unique, cid: .unique, text: "First reply", author: .mock(id: .unique)),
+                .mock(id: .unique, cid: .unique, text: "Second reply", author: .mock(id: .unique))
+            ],
+            state: .localDataFetched
+        )
+        messageControllerMock.simulate(state: .remoteDataFetched)
+
+        vc.view.layoutIfNeeded()
+
+        AssertSnapshot(
+            vc,
+            variants: [.defaultLight]
+        )
+    }
+
     func test_childControllersUseComponentsTakenFromResponderChain() {
         // Declare custom message list used by `ChatMessageListVC`
         class TestMessageListView: ChatMessageListView {}
@@ -119,6 +151,7 @@ final class ChatThreadVC_Tests: XCTestCase {
         components.messageComposerView = TestComposerView.self
         vc.components = components
         vc.messageListVC.components = components
+        vc.messageComposerVC.components = components
 
         // Simulate view loading
         _ = vc.view
@@ -160,6 +193,39 @@ final class ChatThreadVC_Tests: XCTestCase {
             useSourceMessage: true,
             expected: nil
         )
+    }
+
+    // MARK: - setUp
+
+    func test_setUp_messagesListVCAndMessageComposerVCHaveTheExpectedAudioPlayerInstance() {
+        vc.setUp()
+
+        XCTAssertTrue(vc.messageListVC.audioPlayer === vc.audioPlayer)
+        XCTAssertTrue(vc.messageComposerVC.audioPlayer === vc.audioPlayer)
+    }
+
+    func test_setUp_audioPlayerIsKindOfQueuePlayer_audioPlayerDatasourceWasSetCorrectly() {
+        vc.setUp()
+
+        XCTAssertTrue((vc.audioPlayer as? StreamAudioQueuePlayer)?.dataSource === vc)
+    }
+
+    // MARK: - audioQueuePlayerNextAssetURL
+
+    func test_audioQueuePlayerNextAssetURL_callsNextAvailableVoiceRecordingProvideWithExpectedInputAndReturnsValue() throws {
+        var components = Components.mock
+        components.audioQueuePlayerNextItemProvider = MockAudioQueuePlayerNextItemProvider.self
+        vc.components = components
+        let currentAssetURL = URL.unique()
+        let expected = URL.unique()
+        let mockAudioQueuePlayerNextItemProvider = try XCTUnwrap(vc.audioQueuePlayerNextItemProvider as? MockAudioQueuePlayerNextItemProvider)
+        mockAudioQueuePlayerNextItemProvider.findNextItemResult = expected
+
+        let actual = vc.audioQueuePlayerNextAssetURL(vc.audioPlayer, currentAssetURL: currentAssetURL)
+
+        XCTAssertEqual(mockAudioQueuePlayerNextItemProvider.findNextItemWasCalledWithCurrentVoiceRecordingURL, currentAssetURL)
+        XCTAssertEqual(mockAudioQueuePlayerNextItemProvider.findNextItemWasCalledWithLookUpScope, .subsequentMessagesFromUser)
+        XCTAssertEqual(actual, expected)
     }
 
     // MARK: - Private Helpers

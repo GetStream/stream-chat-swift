@@ -223,6 +223,7 @@ final class ChatChannelVC_Tests: XCTestCase {
         components.messageComposerView = TestComposerView.self
         vc.components = components
         vc.messageListVC.components = components
+        vc.messageComposerVC.components = components
 
         // Simulate view loading
         _ = vc.view
@@ -800,6 +801,39 @@ final class ChatChannelVC_Tests: XCTestCase {
         view.addSubview(dateView)
 
         XCTAssertEqual(dateView.textLabel.text, "Jan 01")
+    }
+
+    // MARK: - setUp
+
+    func test_setUp_messagesListVCAndMessageComposerVCHaveTheExpectedAudioPlayerInstance() {
+        vc.setUp()
+
+        XCTAssertTrue(vc.messageListVC.audioPlayer === vc.audioPlayer)
+        XCTAssertTrue(vc.messageComposerVC.audioPlayer === vc.audioPlayer)
+    }
+
+    func test_setUp_audioPlayerIsKindOfQueuePlayer_audioPlayerDatasourceWasSetCorrectly() {
+        vc.setUp()
+
+        XCTAssertTrue((vc.audioPlayer as? StreamAudioQueuePlayer)?.dataSource === vc)
+    }
+
+    // MARK: - audioQueuePlayerNextAssetURL
+
+    func test_audioQueuePlayerNextAssetURL_callsNextAvailableVoiceRecordingProvideWithExpectedInputAndReturnsValue() throws {
+        var components = Components.mock
+        components.audioQueuePlayerNextItemProvider = MockAudioQueuePlayerNextItemProvider.self
+        vc.components = components
+        let currentAssetURL = URL.unique()
+        let expected = URL.unique()
+        let mockAudioQueuePlayerNextItemProvider = try XCTUnwrap(vc.audioQueuePlayerNextItemProvider as? MockAudioQueuePlayerNextItemProvider)
+        mockAudioQueuePlayerNextItemProvider.findNextItemResult = expected
+
+        let actual = vc.audioQueuePlayerNextAssetURL(vc.audioPlayer, currentAssetURL: currentAssetURL)
+
+        XCTAssertEqual(mockAudioQueuePlayerNextItemProvider.findNextItemWasCalledWithCurrentVoiceRecordingURL, currentAssetURL)
+        XCTAssertEqual(mockAudioQueuePlayerNextItemProvider.findNextItemWasCalledWithLookUpScope, .subsequentMessagesFromUser)
+        XCTAssertEqual(actual, expected)
     }
 }
 

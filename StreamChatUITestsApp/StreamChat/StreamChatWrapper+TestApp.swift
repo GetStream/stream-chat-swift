@@ -23,8 +23,6 @@ extension StreamChatWrapper {
         config.isLocalStorageEnabled = settings.isLocalStorageEnabled.isOn
         config.staysConnectedInBackground = settings.staysConnectedInBackground.isOn
 
-        configureUI()
-
         // create an instance of ChatClient and share it using the singleton
         let environment = ChatClient.Environment()
         client = ChatClient(config: config, environment: environment)

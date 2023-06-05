@@ -63,12 +63,13 @@ extension UIViewController {
         title: String?,
         message: String? = nil,
         actions: [UIAlertAction],
-        cancelHandler: (() -> Void)? = nil
+        cancelHandler: (() -> Void)? = nil,
+        preferredStyle: UIAlertController.Style = .alert
     ) {
         let alert = UIAlertController(
             title: title,
             message: message,
-            preferredStyle: .alert
+            preferredStyle: preferredStyle
         )
 
         actions.forEach { alert.addAction($0) }

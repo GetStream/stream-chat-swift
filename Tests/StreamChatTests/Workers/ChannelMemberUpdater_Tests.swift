@@ -46,19 +46,21 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
         let reason: String = .unique
 
         // Simulate `banMember` call
-        updater.banMember(userId, in: cid, for: timeoutInMinutes, reason: reason)
+        updater.banMember(userId, in: cid, shadow: false, for: timeoutInMinutes, reason: reason)
 
         // Assert correct endpoint is called
         XCTAssertEqual(
             apiClient.request_endpoint,
-            AnyEndpoint(.banMember(userId, cid: cid, timeoutInMinutes: timeoutInMinutes, reason: reason))
+            AnyEndpoint(
+                .banMember(userId, cid: cid, shadow: false, timeoutInMinutes: timeoutInMinutes, reason: reason)
+            )
         )
     }
 
     func test_banMember_propagatesSuccessfulResponse() {
         // Simulate `banMember` call
         var completionCalled = false
-        updater.banMember(.unique, in: .unique) { error in
+        updater.banMember(.unique, in: .unique, shadow: false) { error in
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -76,7 +78,7 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
     func test_banMember_propagatesError() {
         // Simulate `banMember` call
         var completionCalledError: Error?
-        updater.banMember(.unique, in: .unique) { error in
+        updater.banMember(.unique, in: .unique, shadow: false) { error in
             completionCalledError = error
         }
 

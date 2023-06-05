@@ -145,6 +145,14 @@ Returns actions for attachments picker.
 open var attachmentsPickerActions: [UIAlertAction] 
 ```
 
+### `voiceRecordingVC`
+
+The view controller for recording VoiceRecordings.
+
+``` swift
+open private(set) lazy var voiceRecordingVC: VoiceRecordingVC
+```
+
 ## Methods
 
 ### `setUp()`

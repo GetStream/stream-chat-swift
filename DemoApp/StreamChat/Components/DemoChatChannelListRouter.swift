@@ -28,6 +28,12 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
 
     override func showCurrentUserProfile() {
         rootViewController.presentAlert(title: nil, actions: [
+            .init(title: "Show Profile", style: .default, handler: { [weak self] _ in
+                guard let self = self else { return }
+                let client = self.rootViewController.controller.client
+                let viewController = UserProfileViewController(currentUserController: client.currentUserController())
+                self.rootNavigationController?.pushViewController(viewController, animated: true)
+            }),
             .init(title: "Logout", style: .destructive, handler: { [weak self] _ in
                 self?.onLogout?()
             })
@@ -67,6 +73,7 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
     }
 
     // swiftlint:disable function_body_length
+    // swiftlint:disable cyclomatic_complexity
     override func didTapMoreButton(for cid: ChannelId) {
         let channelController = rootViewController.controller.client.channelController(for: cid)
         rootViewController.presentAlert(title: "Select an action", actions: [
@@ -214,6 +221,23 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                 } ?? []
                 self.rootViewController.presentAlert(title: "Select a member", actions: actions)
             }),
+            .init(title: "Shadow ban member", style: .default, handler: { [unowned self] _ in
+                let actions = channelController.channel?.lastActiveMembers.map { member in
+                    UIAlertAction(title: member.id, style: .default) { _ in
+                        channelController.client
+                            .memberController(userId: member.id, in: channelController.cid!)
+                            .shadowBan { error in
+                                if let error = error {
+                                    self.rootViewController.presentAlert(
+                                        title: "Couldn't ban user \(member.id) from channel \(cid)",
+                                        message: "\(error)"
+                                    )
+                                }
+                            }
+                    }
+                } ?? []
+                self.rootViewController.presentAlert(title: "Select a member", actions: actions)
+            }),
             .init(title: "Unban member", style: .default, handler: { [unowned self] _ in
                 let actions = channelController.channel?.lastActiveMembers.map { member in
                     UIAlertAction(title: member.id, style: .default) { _ in
@@ -341,6 +365,22 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                     message: channelController.channel.debugDescription
                 )
             }),
+            .init(title: "Show Channel Members", style: .default, handler: { [unowned self] _ in
+                guard let cid = channelController.channel?.cid else { return }
+                let client = channelController.client
+                self.rootViewController.present(MembersViewController(
+                    membersController: client.memberListController(query: .init(cid: cid))
+                ), animated: true)
+            }),
+            .init(title: "Show Banned Members", style: .default, handler: { [unowned self] _ in
+                guard let cid = channelController.channel?.cid else { return }
+                let client = channelController.client
+                self.rootViewController.present(MembersViewController(
+                    membersController: client.memberListController(
+                        query: .init(cid: cid, filter: .equal(.banned, to: true))
+                    )
+                ), animated: true)
+            }),
             .init(title: "Truncate channel w/o message", style: .default, handler: { _ in
                 channelController.truncateChannel { [unowned self] error in
                     if let error = error {
@@ -398,7 +438,7 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                             errorMessage = "Message ID does not belong to this channel."
                         }
 
-                        if let errorMessage {
+                        if let errorMessage = errorMessage {
                             self?.rootViewController.presentAlert(title: errorMessage)
                             return
                         }
@@ -411,6 +451,7 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
     }
 
     // swiftlint:enable function_body_length
+    // swiftlint:enable cyclomatic_complexity
 
     override func didTapDeleteButton(for cid: ChannelId) {
         rootViewController.controller.client.channelController(for: cid).deleteChannel { error in
@@ -418,20 +459,5 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                 self.rootViewController.presentAlert(title: "Channel \(cid) couldn't be deleted", message: "\(error)")
             }
         }
-    }
-
-    func showHiddenChannels() {
-        let client = rootViewController.controller.client
-
-        let vc = HiddenChannelListVC()
-        vc.router = self
-        vc.controller = client.channelListController(
-            query: .init(filter: .and([
-                .containMembers(userIds: [client.currentUserId!]),
-                .equal(.hidden, to: true)
-            ]))
-        )
-
-        rootNavigationController?.pushViewController(vc, animated: true)
     }
 }

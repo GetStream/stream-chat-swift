@@ -9,6 +9,7 @@ import XCTest
 final class ChannelMemberUpdater_Mock: ChannelMemberUpdater {
     @Atomic var banMember_userId: UserId?
     @Atomic var banMember_cid: ChannelId?
+    @Atomic var banMember_shadow: Bool?
     @Atomic var banMember_timeoutInMinutes: Int??
     @Atomic var banMember_reason: String??
     @Atomic var banMember_completion: ((Error?) -> Void)?
@@ -32,12 +33,14 @@ final class ChannelMemberUpdater_Mock: ChannelMemberUpdater {
     override func banMember(
         _ userId: UserId,
         in cid: ChannelId,
+        shadow: Bool,
         for timeoutInMinutes: Int? = nil,
         reason: String? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
         banMember_userId = userId
         banMember_cid = cid
+        banMember_shadow = shadow
         banMember_timeoutInMinutes = timeoutInMinutes
         banMember_reason = reason
         banMember_completion = completion

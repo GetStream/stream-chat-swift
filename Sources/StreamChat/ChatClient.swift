@@ -66,6 +66,7 @@ public class ChatClient {
             MemberEventMiddleware(),
             UserChannelBanEventsMiddleware(),
             UserWatchingEventMiddleware(),
+            UserUpdateMiddleware(),
             ChannelVisibilityEventMiddleware(),
             EventDTOConverterMiddleware()
         ]
@@ -132,8 +133,8 @@ public class ChatClient {
         environment.callRepositoryBuilder(apiClient)
     }()
 
-    func makeMessagesPaginationStateHandler(parentMessageId: MessageId?) -> MessagesPaginationStateHandling {
-        MessagesPaginationStateHandler(parentMessageId: parentMessageId)
+    func makeMessagesPaginationStateHandler() -> MessagesPaginationStateHandling {
+        MessagesPaginationStateHandler()
     }
 
     /// The `APIClient` instance `Client` uses to communicate with Stream REST API.

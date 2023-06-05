@@ -133,12 +133,17 @@ final class ChannelListController_Tests: XCTestCase {
         controller.callbackQueue = .testQueue(withId: queueId)
 
         // Simulate `synchronize` calls and catch the completion
-        var completionCalled = false
+        let exp = expectation(description: "sync call should complete")
         controller.synchronize { error in
             XCTAssertNil(error)
             AssertTestQueue(withId: queueId)
-            completionCalled = true
+            exp.fulfill()
         }
+
+        // Simulate successful update
+        env.channelListUpdater?.update_completion?(.success([]))
+
+        waitForExpectations(timeout: defaultTimeout)
 
         // Keep a weak ref so we can check if it's actually deallocated
         weak var weakController = controller
@@ -149,16 +154,7 @@ final class ChannelListController_Tests: XCTestCase {
 
         // Assert the updater is called with the query
         XCTAssertEqual(env.channelListUpdater!.update_queries.first?.filter.filterHash, query.filter.filterHash)
-        // Completion shouldn't be called yet
-        XCTAssertFalse(completionCalled)
 
-        // Simulate successful update
-        env.channelListUpdater?.update_completion?(.success([]))
-        // Release reference of completion so we can deallocate stuff
-        env.channelListUpdater?.update_completion = nil
-
-        // Completion should be called
-        AssertAsync.willBeTrue(completionCalled)
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
     }
@@ -171,12 +167,17 @@ final class ChannelListController_Tests: XCTestCase {
         controller.callbackQueue = .testQueue(withId: queueId)
 
         // Simulate `synchronize` calls and catch the completion
-        var completionCalled = false
+        let exp = expectation(description: "sync call should complete")
         controller.synchronize { error in
             XCTAssertNil(error)
             AssertTestQueue(withId: queueId)
-            completionCalled = true
+            exp.fulfill()
         }
+
+        // Simulate successful update
+        env.channelListUpdater?.update_completion?(.success([]))
+
+        waitForExpectations(timeout: defaultTimeout)
 
         // Keep a weak ref so we can check if it's actually deallocated
         weak var weakController = controller
@@ -185,18 +186,6 @@ final class ChannelListController_Tests: XCTestCase {
         // by not keeping any references to it
         controller = nil
 
-        // Assert the updater is called with the correct pageSize
-        XCTAssertEqual(env.channelListUpdater!.update_queries.first?.pagination.pageSize, pageSize)
-        // Completion shouldn't be called yet
-        XCTAssertFalse(completionCalled)
-
-        // Simulate successful update
-        env.channelListUpdater!.update_completion?(.success([]))
-        // Release reference of completion so we can deallocate stuff
-        env.channelListUpdater!.update_completion = nil
-
-        // Completion should be called
-        AssertAsync.willBeTrue(completionCalled)
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
     }
@@ -206,12 +195,17 @@ final class ChannelListController_Tests: XCTestCase {
         controller.callbackQueue = .testQueue(withId: queueId)
 
         // Simulate `synchronize` calls and catch the completion
-        var completionCalled = false
+        let exp = expectation(description: "sync call should complete")
         controller.synchronize { error in
             XCTAssertNil(error)
             AssertTestQueue(withId: queueId)
-            completionCalled = true
+            exp.fulfill()
         }
+
+        // Simulate successful update
+        env.channelListUpdater?.update_completion?(.success([]))
+
+        waitForExpectations(timeout: defaultTimeout)
 
         // Keep a weak ref so we can check if it's actually deallocated
         weak var weakController = controller
@@ -222,16 +216,7 @@ final class ChannelListController_Tests: XCTestCase {
 
         // Assert the updater is called with the query
         XCTAssertEqual(env.channelListUpdater?.update_queries.first?.filter.filterHash, query.filter.filterHash)
-        // Completion shouldn't be called yet
-        XCTAssertFalse(completionCalled)
 
-        // Simulate successful update
-        env.channelListUpdater?.update_completion?(.success([]))
-        // Release reference of completion so we can deallocate stuff
-        env.channelListUpdater?.update_completion = nil
-
-        // Completion should be called
-        AssertAsync.willBeTrue(completionCalled)
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
     }
@@ -1673,6 +1658,94 @@ final class ChannelListController_Tests: XCTestCase {
                 ]))
             ],
             expectedResult: [cid1, cid2]
+        )
+    }
+
+    func test_filterPredicate_joined_returnsExpectedResults() throws {
+        let cid1 = ChannelId.unique
+        let cid2 = ChannelId.unique
+
+        try assertFilterPredicate(
+            .equal(.joined, to: true),
+            channelsInDB: [
+                .dummy(channel: .dummy(cid: cid1), membership: .dummy()),
+                .dummy(channel: .dummy(team: .unique)),
+                .dummy(channel: .dummy(team: .unique)),
+                .dummy(channel: .dummy(team: .unique)),
+                .dummy(channel: .dummy(cid: cid2), membership: .dummy())
+            ],
+            expectedResult: [cid1, cid2]
+        )
+    }
+
+    func test_filterPredicate_muted_returnsExpectedResults() throws {
+        let cid1 = ChannelId.unique
+        let userId = memberId
+
+        // Create the Controller
+        let query = ChannelListQuery(filter: .equal(.muted, to: true))
+        controller = ChatChannelListController(
+            query: query,
+            client: client,
+            environment: env.environment
+        )
+        controller.synchronize()
+
+        // Save Mute
+        let mutedChannel: ChannelDetailPayload = .dummy(
+            cid: cid1,
+            members: [.dummy(user: .dummy(userId: userId))]
+        )
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: .dummy(channel: mutedChannel), query: query, cache: nil)
+            try session.saveCurrentUser(payload: .dummy(
+                userId: userId,
+                role: .admin
+            ))
+            try session.saveChannelMute(payload: .init(
+                mutedChannel: mutedChannel,
+                user: .dummy(userId: userId),
+                createdAt: .unique,
+                updatedAt: .unique
+            ))
+        }
+
+        // Save Channels
+        let channelsInDB: [ChannelPayload] = [
+            .dummy(channel: .dummy(cid: cid1), membership: .dummy()),
+            .dummy(channel: .dummy(team: .unique)),
+            .dummy(channel: .dummy(team: .unique)),
+            .dummy(channel: .dummy(team: .unique))
+        ]
+        _ = try waitFor { [unowned client] in
+            client?.databaseContainer.write({ [query] session in
+                try channelsInDB.forEach { payload in
+                    try session.saveChannel(payload: payload, query: query, cache: nil)
+                }
+            }, completion: $0)
+        }
+
+        // Assert
+        let expectedResult = [cid1]
+        XCTAssertEqual(
+            controller.channels.map(\.cid.rawValue).sorted(),
+            expectedResult.map(\.rawValue).sorted()
+        )
+    }
+  
+    func test_filterPredicate_noTeam_returnsExpectedResults() throws {
+        let cid = ChannelId.unique
+
+        try assertFilterPredicate(
+            .noTeam,
+            channelsInDB: [
+                .dummy(channel: .dummy(cid: cid, team: nil)),
+                .dummy(channel: .dummy(team: .unique)),
+                .dummy(channel: .dummy(team: .unique)),
+                .dummy(channel: .dummy(team: .unique)),
+                .dummy(channel: .dummy(team: .unique))
+            ],
+            expectedResult: [cid]
         )
     }
 

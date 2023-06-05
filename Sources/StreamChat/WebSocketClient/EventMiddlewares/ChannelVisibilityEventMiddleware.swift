@@ -34,7 +34,9 @@ struct ChannelVisibilityEventMiddleware: EventMiddleware {
                     throw ClientError.ChannelDoesNotExist(cid: event.cid)
                 }
 
-                channelDTO.isHidden = false
+                if !event.message.isShadowed {
+                    channelDTO.isHidden = false
+                }
 
             // New Message will unhide the channel
             // but we won't get `ChannelVisibleEvent` for this case
@@ -43,7 +45,9 @@ struct ChannelVisibilityEventMiddleware: EventMiddleware {
                     throw ClientError.ChannelDoesNotExist(cid: event.channel.cid)
                 }
 
-                channelDTO.isHidden = false
+                if !event.message.isShadowed {
+                    channelDTO.isHidden = false
+                }
 
             default:
                 break

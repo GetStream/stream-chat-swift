@@ -99,6 +99,7 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
 
         let member = try XCTUnwrap(database.viewContext.member(userId: eventPayload.user!.id, cid: eventPayload.cid!))
         XCTAssertEqual(member.isBanned, false)
+        XCTAssertEqual(member.isShadowBanned, false)
         XCTAssertEqual(member.banExpiresAt, nil)
 
         // Simulate `UserBannedEvent` event.
@@ -106,6 +107,42 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
 
         // Assert the member ban information is updated
         XCTAssertEqual(member.isBanned, true)
+        XCTAssertEqual(member.isShadowBanned, false)
+        XCTAssertEqual(member.banExpiresAt?.bridgeDate, eventPayload.banExpiredAt!)
+
+        XCTAssert(forwardedEvent is UserBannedEventDTO)
+    }
+
+    func test_middleware_handlesUserBannedEventCorrectly_whenShadowBanned() throws {
+        // Create event payload
+        let eventPayload: EventPayload = .init(
+            eventType: .userBanned,
+            cid: .unique,
+            user: .dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: [:]),
+            createdBy: .dummy(userId: .unique, name: "Leia", imageUrl: nil, extraData: [:]),
+            createdAt: .unique,
+            banExpiredAt: .unique,
+            shadow: true
+        )
+
+        // Create event with payload.
+        let event = try UserBannedEventDTO(from: eventPayload)
+
+        // Create required objects in the DB
+        try database.createChannel(cid: eventPayload.cid!)
+        try database.createMember(userId: eventPayload.user!.id, cid: eventPayload.cid!)
+
+        let member = try XCTUnwrap(database.viewContext.member(userId: eventPayload.user!.id, cid: eventPayload.cid!))
+        XCTAssertEqual(member.isBanned, false)
+        XCTAssertEqual(member.isShadowBanned, false)
+        XCTAssertEqual(member.banExpiresAt, nil)
+
+        // Simulate `UserBannedEvent` event.
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
+
+        // Assert the member ban information is updated
+        XCTAssertEqual(member.isBanned, true)
+        XCTAssertEqual(member.isShadowBanned, true)
         XCTAssertEqual(member.banExpiresAt?.bridgeDate, eventPayload.banExpiredAt!)
 
         XCTAssert(forwardedEvent is UserBannedEventDTO)
@@ -139,11 +176,13 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
 
             // Simulate the member is banned
             memberDTO.isBanned = true
+            memberDTO.isShadowBanned = true
             memberDTO.banExpiresAt = .unique
         }
 
         let member = try XCTUnwrap(database.viewContext.member(userId: eventPayload.user!.id, cid: eventPayload.cid!))
         XCTAssertEqual(member.isBanned, true)
+        XCTAssertEqual(member.isShadowBanned, true)
         XCTAssertNotEqual(member.banExpiresAt, nil)
 
         // Simulate `UserUnbannedEvent` event.
@@ -151,6 +190,7 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
 
         // Assert the member ban information is updated
         XCTAssertEqual(member.isBanned, false)
+        XCTAssertEqual(member.isShadowBanned, false)
         XCTAssertEqual(member.banExpiresAt, nil)
 
         XCTAssert(forwardedEvent is UserUnbannedEventDTO)

@@ -62,8 +62,11 @@ open class ComposerKeyboardHandler: KeyboardHandler {
     // swiftlint:enable notification_center_detachment
 
     @objc open func keyboardWillChangeFrame(_ notification: Notification) {
-        guard composerParentVC?.presentedViewController == nil,
-              let userInfo = notification.userInfo,
+        if composerParentVC?.presentedViewController is ChatMessagePopupVC {
+            return
+        }
+
+        guard let userInfo = notification.userInfo,
               let frame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue,
               let duration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? Double,
               let curve = userInfo[UIResponder.keyboardAnimationCurveUserInfoKey] as? UInt,

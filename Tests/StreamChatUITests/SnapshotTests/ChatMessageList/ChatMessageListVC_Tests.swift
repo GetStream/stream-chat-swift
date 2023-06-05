@@ -14,6 +14,8 @@ final class ChatMessageListVC_Tests: XCTestCase {
         sut.listView as! ChatMessageListView_Mock
     }
 
+    var mockedRouter: ChatMessageListRouter_Mock { sut.router as! ChatMessageListRouter_Mock }
+
     var mockedDataSource: ChatMessageListVCDataSource_Mock!
     var mockedDelegate: ChatMessageListVCDelegate_Mock!
 
@@ -28,6 +30,7 @@ final class ChatMessageListVC_Tests: XCTestCase {
         sut.client = ChatClient_Mock(config: config)
         sut.components = .mock
         sut.components.messageListView = ChatMessageListView_Mock.self
+        sut.components.messageListRouter = ChatMessageListRouter_Mock.self
 
         mockedDataSource = ChatMessageListVCDataSource_Mock()
         sut.dataSource = mockedDataSource
@@ -701,5 +704,133 @@ final class ChatMessageListVC_Tests: XCTestCase {
 
         XCTAssertNotNil(cell.headerContainerView.superview)
         XCTAssertNotNil(cell.headerContainerView.subviews.first as? ChatMessageListDateSeparatorView)
+    }
+
+    // MARK: - messageContentViewDidTapOnThread
+
+    func test_messageContentViewDidTapOnThread_whenParentMessageExists_showThreadAtReplyId() {
+        let expectedParentMessageId = MessageId.unique
+        let messageWithParentMessage = ChatMessage.mock(parentMessageId: expectedParentMessageId)
+        let expectedCid = ChannelId.unique
+        mockedDataSource.messages = [messageWithParentMessage]
+        mockedDataSource.mockedChannel = .mock(cid: expectedCid)
+
+        sut.messageContentViewDidTapOnThread(.init(item: 0, section: 0))
+
+        XCTAssertEqual(mockedRouter.showThreadCallCount, 1)
+        XCTAssertEqual(mockedRouter.showThreadCalledWith?.parentMessageId, expectedParentMessageId)
+        XCTAssertEqual(mockedRouter.showThreadCalledWith?.replyId, messageWithParentMessage.id)
+        XCTAssertEqual(mockedRouter.showThreadCalledWith?.cid, expectedCid)
+    }
+
+    func test_messageContentViewDidTapOnThread_whenParentMessageDoesNotExist_showThreadWithoutJumpingToReply() {
+        let messageWithParentMessage = ChatMessage.mock(parentMessageId: nil)
+        let expectedCid = ChannelId.unique
+        mockedDataSource.messages = [messageWithParentMessage]
+        mockedDataSource.mockedChannel = .mock(cid: expectedCid)
+
+        sut.messageContentViewDidTapOnThread(.init(item: 0, section: 0))
+
+        XCTAssertEqual(mockedRouter.showThreadCallCount, 1)
+        XCTAssertEqual(mockedRouter.showThreadCalledWith?.parentMessageId, messageWithParentMessage.id)
+        XCTAssertNil(mockedRouter.showThreadCalledWith?.replyId)
+        XCTAssertEqual(mockedRouter.showThreadCalledWith?.cid, expectedCid)
+    }
+  
+    // MARK: - voiceRecordingAttachmentPresentationViewConnect(delegate:)
+
+    func test_voiceRecordingAttachmentPresentationViewConnect_subscribeWasCalledOnAudioPlayer() {
+        let audioPlayer = MockAudioPlayer()
+        sut.audioPlayer = audioPlayer
+        let delegate = MockAudioPlayerDelegate()
+
+        sut.voiceRecordingAttachmentPresentationViewConnect(delegate: delegate)
+
+        XCTAssertTrue(audioPlayer.subscribeWasCalledWithSubscriber === delegate)
+    }
+
+    // MARK: - voiceRecordingAttachmentPresentationViewBeginPayback(_:)
+
+    func test_voiceRecordingAttachmentPresentationViewBeginPayback_feedbackForPlayWasCalled() {
+        var components = Components.mock
+        components.audioSessionFeedbackGenerator = MockAudioSessionFeedbackGenerator.self
+        sut.components = components
+
+        sut.voiceRecordingAttachmentPresentationViewBeginPayback(.mock(id: .unique))
+
+        XCTAssertEqual((sut.audioSessionFeedbackGenerator as? MockAudioSessionFeedbackGenerator)?.recordedFunctions.first, "feedbackForPlay()")
+    }
+
+    func test_voiceRecordingAttachmentPresentationViewBeginPayback_loadAssetWasCalled() {
+        let audioPlayer = MockAudioPlayer()
+        sut.audioPlayer = audioPlayer
+        let expectedURL = URL.unique()
+
+        sut.voiceRecordingAttachmentPresentationViewBeginPayback(.mock(id: .unique, assetURL: expectedURL))
+
+        XCTAssertEqual(audioPlayer.loadAssetWasCalledWithURL, expectedURL)
+    }
+
+    // MARK: - voiceRecordingAttachmentPresentationViewPausePayback
+
+    func test_voiceRecordingAttachmentPresentationViewPausePayback_feedbackForPauseWasCalled() {
+        var components = Components.mock
+        components.audioSessionFeedbackGenerator = MockAudioSessionFeedbackGenerator.self
+        sut.components = components
+
+        sut.voiceRecordingAttachmentPresentationViewPausePayback()
+
+        XCTAssertEqual((sut.audioSessionFeedbackGenerator as? MockAudioSessionFeedbackGenerator)?.recordedFunctions.first, "feedbackForPause()")
+    }
+
+    func test_voiceRecordingAttachmentPresentationViewPausePayback_pauseWasCalled() {
+        let audioPlayer = MockAudioPlayer()
+        sut.audioPlayer = audioPlayer
+
+        sut.voiceRecordingAttachmentPresentationViewPausePayback()
+
+        XCTAssertTrue(audioPlayer.pauseWasCalled)
+    }
+
+    // MARK: - voiceRecordingAttachmentPresentationViewUpdatePlaybackRate(_:)
+
+    func test_voiceRecordingAttachmentPresentationViewUpdatePlaybackRate_feedbackForPlaybackRateChangeWasCalled() {
+        var components = Components.mock
+        components.audioSessionFeedbackGenerator = MockAudioSessionFeedbackGenerator.self
+        sut.components = components
+
+        sut.voiceRecordingAttachmentPresentationViewUpdatePlaybackRate(.normal)
+
+        XCTAssertEqual((sut.audioSessionFeedbackGenerator as? MockAudioSessionFeedbackGenerator)?.recordedFunctions.first, "feedbackForPlaybackRateChange()")
+    }
+
+    func test_voiceRecordingAttachmentPresentationViewUpdatePlaybackRate_updateRateWasCalled() {
+        let audioPlayer = MockAudioPlayer()
+        sut.audioPlayer = audioPlayer
+
+        sut.voiceRecordingAttachmentPresentationViewUpdatePlaybackRate(.double)
+
+        XCTAssertEqual(audioPlayer.updateRateWasCalledWithRate, .double)
+    }
+
+    // MARK: - voiceRecordingAttachmentPresentationViewSeek
+
+    func test_voiceRecordingAttachmentPresentationViewSeek_feedbackForSeekingWasCalled() {
+        var components = Components.mock
+        components.audioSessionFeedbackGenerator = MockAudioSessionFeedbackGenerator.self
+        sut.components = components
+
+        sut.voiceRecordingAttachmentPresentationViewSeek(to: 100)
+
+        XCTAssertEqual((sut.audioSessionFeedbackGenerator as? MockAudioSessionFeedbackGenerator)?.recordedFunctions.first, "feedbackForSeeking()")
+    }
+
+    func test_voiceRecordingAttachmentPresentationViewSeek_seekWasCalled() {
+        let audioPlayer = MockAudioPlayer()
+        sut.audioPlayer = audioPlayer
+
+        sut.voiceRecordingAttachmentPresentationViewSeek(to: 100)
+
+        XCTAssertEqual(audioPlayer.seekWasCalledWithTime, 100)
     }
 }

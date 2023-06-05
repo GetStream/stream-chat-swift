@@ -9,9 +9,6 @@ mint run swiftformat --lint --config .swiftformat Sources --exclude **/Generated
 echo -e "👉 Linting Tests..."
 mint run swiftformat --lint --config .swiftformat Tests
 
-echo -e "👉 Linting Sample..."
-mint run swiftformat --lint --config .swiftformat StreamChatSample
-
 echo -e "👉 Linting DemoApp..."
 mint run swiftformat --lint --config .swiftformat DemoApp
 

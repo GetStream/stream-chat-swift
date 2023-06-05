@@ -12,7 +12,9 @@ open class ChatChannelVC: _ViewController,
     ChatMessageListVCDataSource,
     ChatMessageListVCDelegate,
     ChatChannelControllerDelegate,
-    EventsControllerDelegate {
+    EventsControllerDelegate,
+    AudioQueuePlayerDatasource
+{
     /// Controller for observing data changes within the channel.
     open var channelController: ChatChannelController!
 
@@ -47,6 +49,17 @@ open class ChatChannelVC: _ViewController,
     /// Controller that handles the composer view
     open private(set) lazy var messageComposerVC = components
         .messageComposerVC
+        .init()
+
+    /// The audioPlayer  that will be used for the playback of VoiceRecordings
+    open private(set) lazy var audioPlayer: AudioPlaying = components
+        .audioPlayer
+        .init()
+
+    /// The provider that will be asked to provide the next VoiceRecording to play automatically once the
+    /// currently playing one, finishes.
+    open private(set) lazy var audioQueuePlayerNextItemProvider: AudioQueuePlayerNextItemProvider = components
+        .audioQueuePlayerNextItemProvider
         .init()
 
     /// Header View
@@ -114,6 +127,19 @@ open class ChatChannelVC: _ViewController,
 
         setChannelControllerToComposerIfNeeded(cid: channelController.cid)
 
+        // If the given message id is a reply that is inside a thread, we need
+        // to fetch the parent message, jump to the parent message and then open
+        // the thread so that we can jump to the thread reply.
+        // For this, we need to manipulate the original channel controller to contain
+        // the parent message id instead of the reply id.
+        var initialReplyId: MessageId?
+        if let initialMessageId = channelController.channelQuery.pagination?.parameter?.aroundMessageId,
+           let message = channelController.dataStore.message(id: initialMessageId),
+           let parentMessageId = getParentMessageId(forMessageInsideThread: message) {
+            initialReplyId = initialMessageId
+            channelController = makeChannelController(forParentMessageId: parentMessageId)
+        }
+
         channelController.delegate = self
         channelController.synchronize { [weak self] error in
             if let error = error {
@@ -122,17 +148,22 @@ open class ChatChannelVC: _ViewController,
             self?.setChannelControllerToComposerIfNeeded(cid: self?.channelController.cid)
             self?.messageComposerVC.updateContent()
 
-            let pagination = self?.channelController.channelQuery.pagination?.parameter
-            switch pagination {
-            case let .around(messageId):
+            if let messageId = self?.channelController.channelQuery.pagination?.parameter?.aroundMessageId {
                 self?.jumpToMessage(id: messageId)
-            default:
-                break
+            }
+
+            if let replyId = initialReplyId {
+                // The delay is necessary so that the animation does not happen to quickly.
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    self?.jumpToMessage(id: replyId)
+                }
             }
         }
 
-        // Initial messages data
-        messages = Array(channelController.messages)
+        if channelController.channelQuery.pagination?.parameter == nil {
+            // Load initial messages from cache if loading the first page
+            messages = Array(channelController.messages)
+        }
 
         // Handle pagination
         viewPaginationHandler.onNewTopPage = { [weak self] in
@@ -140,6 +171,13 @@ open class ChatChannelVC: _ViewController,
         }
         viewPaginationHandler.onNewBottomPage = { [weak self] in
             self?.channelController.loadNextMessages()
+        }
+
+        messageListVC.audioPlayer = audioPlayer
+        messageComposerVC.audioPlayer = audioPlayer
+
+        if let queueAudioPlayer = audioPlayer as? StreamAudioQueuePlayer {
+            queueAudioPlayer.dataSource = self
         }
     }
 
@@ -263,12 +301,11 @@ open class ChatChannelVC: _ViewController,
         shouldLoadPageAroundMessageId messageId: MessageId,
         _ completion: @escaping ((Error?) -> Void)
     ) {
-        // For now, we don't support jumping to a message which is inside a thread only
-        if let message = channelController.dataStore.message(id: messageId) {
-            if message.isPartOfThread && !message.showReplyInChannel {
-                log.warning("Did not jump to message with text '\(message.text)' since we don't support jumping inside threads yet.")
-                return
-            }
+        if let message = channelController.dataStore.message(id: messageId),
+           let parentMessageId = getParentMessageId(forMessageInsideThread: message) {
+            let replyId = message.id
+            messageListVC.showThread(messageId: parentMessageId, at: replyId)
+            return
         }
 
         channelController.loadPageAroundMessageId(messageId, completion: completion)
@@ -425,5 +462,42 @@ open class ChatChannelVC: _ViewController,
                 channelController.loadFirstPage()
             }
         }
+    }
+
+    // MARK: - AudioQueuePlayerDatasource
+
+    open func audioQueuePlayerNextAssetURL(
+        _ audioPlayer: AudioPlaying,
+        currentAssetURL: URL?
+    ) -> URL? {
+        audioQueuePlayerNextItemProvider.findNextItem(
+            in: messages,
+            currentVoiceRecordingURL: currentAssetURL,
+            lookUpScope: .subsequentMessagesFromUser
+        )
+    }
+}
+
+// MARK: - Helpers
+
+private extension ChatChannelVC {
+    /// Returns a parent message id if the given message is a reply inside a thread only.
+    func getParentMessageId(forMessageInsideThread message: ChatMessage) -> MessageId? {
+        guard message.isPartOfThread && !message.showReplyInChannel else {
+            return nil
+        }
+
+        return message.parentMessageId
+    }
+
+    func makeChannelController(forParentMessageId parentMessageId: MessageId) -> ChatChannelController {
+        var newQuery = channelController.channelQuery
+        let pageSize = newQuery.pagination?.pageSize ?? .messagesPageSize
+        newQuery.pagination = MessagesPagination(pageSize: pageSize, parameter: .around(parentMessageId))
+        return client.channelController(
+            for: newQuery,
+            channelListQuery: channelController.channelListQuery,
+            messageOrdering: channelController.messageOrdering
+        )
     }
 }

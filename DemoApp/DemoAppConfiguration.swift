@@ -21,7 +21,7 @@ enum DemoAppConfiguration {
 
     // MARK: Internal configuration
 
-    private static var isStreamInternalConfiguration: Bool {
+    static var isStreamInternalConfiguration: Bool {
         ProcessInfo.processInfo.environment["STREAM_DEV"] != nil
     }
 

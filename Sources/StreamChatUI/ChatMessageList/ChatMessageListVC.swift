@@ -18,7 +18,9 @@ open class ChatMessageListVC: _ViewController,
     LinkPreviewViewDelegate,
     UITableViewDataSource,
     UITableViewDelegate,
-    UIGestureRecognizerDelegate {
+    UIGestureRecognizerDelegate,
+    VoiceRecordingAttachmentPresentationViewDelegate
+{
     /// The object that acts as the data source of the message list.
     public weak var dataSource: ChatMessageListVCDataSource? {
         didSet {
@@ -120,6 +122,15 @@ open class ChatMessageListVC: _ViewController,
     /// A formatter that converts the message date to textual representation.
     /// This date formatter is used between each group message and the top overlay.
     public lazy var dateSeparatorFormatter = appearance.formatters.messageDateSeparator
+
+    /// The audioPlayer that will be used for the playback of VoiceRecordings.
+    public var audioPlayer: AudioPlaying?
+
+    /// The feedbackGenerator that will be used to provide haptic feedback when the UI elements
+    /// of audio playback are being interacted with.
+    public private(set) lazy var audioSessionFeedbackGenerator: AudioSessionFeedbackGenerator = components
+        .audioSessionFeedbackGenerator
+        .init()
 
     /// A boolean value that determines whether the date overlay should be displayed while scrolling.
     open var isDateOverlayEnabled: Bool {
@@ -437,11 +448,15 @@ open class ChatMessageListVC: _ViewController,
         )
     }
 
-    /// Opens thread detail for given `MessageId`.
-    open func showThread(messageId: MessageId) {
+    /// Opens the thread for the given parent `MessageId`.
+    /// - Parameters:
+    ///   - messageId: The parent message id.
+    ///   - replyId: An optional reply id to where the thread will jump to when opening the thread.
+    open func showThread(messageId: MessageId, at replyId: MessageId? = nil) {
         guard let cid = dataSource?.channel(for: self)?.cid else { log.error("Channel is not available"); return }
         router.showThread(
             messageId: messageId,
+            at: replyId,
             cid: cid,
             client: client
         )
@@ -581,6 +596,14 @@ open class ChatMessageListVC: _ViewController,
         listView.scrollToRow(at: indexPath, at: .middle, animated: true)
         messageIdPendingHighlight = messageIdPendingScrolling
         messageIdPendingScrolling = nil
+
+        // If the list view does not scroll, because the message is too close
+        // we need to instantly highlight the message.
+        if listView.indexPathsForVisibleRows?.contains(indexPath) == true {
+            DispatchQueue.main.async {
+                onHighlight?(indexPath)
+            }
+        }
     }
 
     /// Highlight the the message cell, for example, when jumping to a message.
@@ -741,7 +764,14 @@ open class ChatMessageListVC: _ViewController,
             return log.error("DataSource not found for the message list.")
         }
 
-        showThread(messageId: message.parentMessageId ?? message.id)
+        // If the parent message id exists, it means we open the thread from a reply
+        if let parentMessageId = message.parentMessageId {
+            showThread(messageId: parentMessageId, at: message.id)
+            return
+        }
+
+        // If the parentMessageId does not exist, it means the message is the root of the thread
+        showThread(messageId: message.id)
     }
 
     open func messageContentViewDidTapOnQuotedMessage(_ quotedMessage: ChatMessage) {
@@ -875,6 +905,38 @@ open class ChatMessageListVC: _ViewController,
         // To prevent the gesture recognizer consuming up the events from UIControls, we receive touch only when the view isn't a UIControl.
         !(touch.view is UIControl)
     }
+
+    // MARK: - VoiceRecordingAttachmentPresentationViewDelegate
+
+    open func voiceRecordingAttachmentPresentationViewConnect(delegate: AudioPlayingDelegate) {
+        audioPlayer?.subscribe(delegate)
+    }
+
+    open func voiceRecordingAttachmentPresentationViewBeginPayback(
+        _ attachment: ChatMessageVoiceRecordingAttachment
+    ) {
+        audioSessionFeedbackGenerator.feedbackForPlay()
+        audioPlayer?.loadAsset(from: attachment.voiceRecordingURL)
+    }
+
+    open func voiceRecordingAttachmentPresentationViewPausePayback() {
+        audioSessionFeedbackGenerator.feedbackForPause()
+        audioPlayer?.pause()
+    }
+
+    open func voiceRecordingAttachmentPresentationViewUpdatePlaybackRate(
+        _ audioPlaybackRate: AudioPlaybackRate
+    ) {
+        audioSessionFeedbackGenerator.feedbackForPlaybackRateChange()
+        audioPlayer?.updateRate(audioPlaybackRate)
+    }
+
+    open func voiceRecordingAttachmentPresentationViewSeek(
+        to timeInterval: TimeInterval
+    ) {
+        audioSessionFeedbackGenerator.feedbackForSeeking()
+        audioPlayer?.seek(to: timeInterval)
+    }
 }
 
 // MARK: - Handle Message Updates
@@ -891,7 +953,7 @@ private extension ChatMessageListVC {
 
         listView.updateMessages(with: changes) { [weak self] in
             // Calculate new content offset after loading next page
-            let shouldAdjustContentOffset = oldContentOffset.y < 0
+            let shouldAdjustContentOffset = oldContentOffset.y < 0 && self?.isFirstPageLoaded == false
             if shouldAdjustContentOffset {
                 self?.adjustContentOffset(oldContentOffset: oldContentOffset, oldContentSize: oldContentSize)
             }

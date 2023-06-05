@@ -45,9 +45,11 @@ opt_in_rules:
   - syntactic_sugar
   - multiline_arguments
   - multiline_function_chains
-  - unused_import
   - attributes
   - file_name_no_space
+
+analyzer_rules:
+  - unused_import
 
 multiline_arguments:
   only_enforce_after_first_closure_on_first_line: true
