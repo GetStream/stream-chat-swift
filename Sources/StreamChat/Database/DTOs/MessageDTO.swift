@@ -131,7 +131,7 @@ class MessageDTO: NSManagedObject {
 
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
             pendingSendMessage,
-            allAttachmentsAreUploadedOrEmpty
+            allAttachmentsAreUploadedOrEmptyPredicate()
         ])
 
         return request
@@ -141,8 +141,19 @@ class MessageDTO: NSManagedObject {
     static func messagesPendingSyncFetchRequest() -> NSFetchRequest<MessageDTO> {
         let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.locallyCreatedAt, ascending: true)]
-        request.predicate = NSPredicate(format: "localMessageStateRaw == %@", LocalMessageState.pendingSync.rawValue)
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            NSPredicate(format: "localMessageStateRaw == %@", LocalMessageState.pendingSync.rawValue),
+            allAttachmentsAreUploadedOrEmptyPredicate()
+        ])
+
         return request
+    }
+
+    private static func allAttachmentsAreUploadedOrEmptyPredicate() -> NSCompoundPredicate {
+        NSCompoundPredicate(orPredicateWithSubpredicates: [
+            .init(format: "NOT (ANY attachments.localStateRaw != %@)", LocalAttachmentState.uploaded.rawValue),
+            .init(format: "attachments.@count == 0")
+        ])
     }
 
     /// Returns a predicate that filters out deleted message by other than the current user
