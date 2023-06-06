@@ -328,7 +328,11 @@ open class ChatMessageListVC: _ViewController,
     ///
     /// By default, this will trigger the swipe to reply gesture recognition.
     @objc open func handlePan(_ gesture: UIPanGestureRecognizer) {
-        swipeToReplyGestureHandler.handle(gesture: gesture)
+        let canReply = dataSource?.channel(for: self)?.ownCapabilities.contains(.sendReply) ?? false
+        let isSwipeToReplyEnabled = components.messageSwipeToReplyEnabled
+        if canReply && isSwipeToReplyEnabled {
+            swipeToReplyGestureHandler.handle(gesture: gesture)
+        }
     }
 
     /// Handles the pan gesture recognizer not conflicting with the message list vertical scrolling.
