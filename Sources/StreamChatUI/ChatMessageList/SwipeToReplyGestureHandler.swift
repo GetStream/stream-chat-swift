@@ -23,9 +23,10 @@ open class SwipeToReplyGestureHandler {
     /// The original thread info position.
     public private(set) var threadInfoOriginalCenter = CGPoint()
 
-    /// Wether the swipe threshold was surpassed or not. If yes, it means we should trigger a reply action.
+    /// Whether the swipe threshold was surpassed or not. If yes, it means we should trigger a reply action.
     public private(set) var shouldReply = false
-    /// A boolean to control when a feedback should be generated. It should only be generated
+    /// A boolean to control when a feedback should be generated.
+    /// It should be generated only one time, when it surpasses the threshold.
     public private(set) var shouldTriggerFeedback = true
 
     /// The message bubble view.
@@ -79,7 +80,7 @@ open class SwipeToReplyGestureHandler {
         guard let listView = self.listView else { return }
         let location = gesture.location(in: listView)
 
-        // When the gesture begins, record the current center location of the message view
+        // When the gesture begins, record the original locations of the views
         if gesture.state == .began, let indexPath = listView.indexPathForRow(at: location) {
             messageCell = listView.cellForRow(at: indexPath) as? ChatMessageCell
             messageOriginalCenter = messageBubbleView?.center ?? .zero
@@ -92,7 +93,7 @@ open class SwipeToReplyGestureHandler {
             return
         }
 
-        // When we are swiping, move the message view and handle if when it should swipe
+        // When we are swiping, move the message views and determine if it should reply
         if gesture.state == .changed {
             let translation = gesture.translation(in: messageCell)
 
@@ -129,7 +130,7 @@ open class SwipeToReplyGestureHandler {
             }
         }
 
-        // When the gesture ends, animate back to the original position and trigger the swipe if needed
+        // When the gesture ends, animate back to the original position and trigger the reply if needed
         if gesture.state == .ended {
             UIView.animate(withDuration: 0.4, animations: {
                 self.messageBubbleView?.center = self.messageOriginalCenter
