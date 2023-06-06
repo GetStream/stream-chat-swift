@@ -145,8 +145,6 @@ open class SwipeToReplyGestureHandler {
             if shouldReply {
                 onReply?(message)
             }
-
-            messageCell = nil
         }
     }
 }
