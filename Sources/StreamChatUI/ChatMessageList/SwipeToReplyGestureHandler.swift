@@ -20,6 +20,9 @@ open class SwipeToReplyGestureHandler {
     public private(set) var reactionsOriginalCenter = CGPoint()
     /// The original reply icon position.
     public private(set) var replyIconOriginalCenter = CGPoint()
+    /// The original thread info position.
+    public private(set) var threadInfoOriginalCenter = CGPoint()
+
     /// Wether the swipe threshold was surpassed or not. If yes, it means we should trigger a reply action.
     public private(set) var shouldReply = false
     /// A boolean to control when a feedback should be generated. It should only be generated
@@ -33,6 +36,11 @@ open class SwipeToReplyGestureHandler {
     /// The message reactions bubble view.
     public var reactionsBubbleView: ChatReactionBubbleBaseView? {
         messageCell?.messageContentView?.reactionsBubbleView
+    }
+
+    /// The thread info of the message.
+    public var threadInfoContainer: ContainerStackView? {
+        messageCell?.messageContentView?.threadInfoContainer
     }
 
     /// The reply icon view.
@@ -77,14 +85,10 @@ open class SwipeToReplyGestureHandler {
             messageOriginalCenter = messageBubbleView?.center ?? .zero
             replyIconOriginalCenter = replyIconImageView?.center ?? .zero
             reactionsOriginalCenter = reactionsBubbleView?.center ?? .zero
+            threadInfoOriginalCenter = threadInfoContainer?.center ?? .zero
         }
 
-        guard let messageBubbleView = self.messageBubbleView,
-              let message = self.message else {
-            return
-        }
-
-        guard message.isInteractionEnabled else {
+        guard let message = self.message, message.isInteractionEnabled else {
             return
         }
 
@@ -92,7 +96,7 @@ open class SwipeToReplyGestureHandler {
         if gesture.state == .changed {
             let translation = gesture.translation(in: messageCell)
 
-            messageBubbleView.center = CGPoint(
+            messageBubbleView?.center = CGPoint(
                 x: max(messageOriginalCenter.x, messageOriginalCenter.x + translation.x),
                 y: messageOriginalCenter.y
             )
@@ -100,17 +104,20 @@ open class SwipeToReplyGestureHandler {
                 x: max(reactionsOriginalCenter.x, reactionsOriginalCenter.x + translation.x),
                 y: reactionsOriginalCenter.y
             )
+            threadInfoContainer?.center = CGPoint(
+                x: max(threadInfoOriginalCenter.x, threadInfoOriginalCenter.x + translation.x),
+                y: threadInfoOriginalCenter.y
+            )
 
-            let translationAmount = (messageOriginalCenter.x + translation.x) - messageOriginalCenter.x
-            shouldReply = translationAmount > swipeThreshold
-
-            let replyIconTranslation = max(0, min(translationAmount, swipeThreshold))
-            messageCell?.replyIconImageView.isHidden = false
-            messageCell?.replyIconImageView.alpha = replyIconTranslation / swipeThreshold
+            let replyIconTranslation = max(0, min(translation.x, swipeThreshold))
             messageCell?.replyIconImageView.center = CGPoint(
                 x: replyIconOriginalCenter.x + replyIconTranslation,
                 y: replyIconOriginalCenter.y
             )
+            messageCell?.replyIconImageView.isHidden = false
+            messageCell?.replyIconImageView.alpha = replyIconTranslation / swipeThreshold
+
+            shouldReply = translation.x > swipeThreshold
 
             if shouldReply && shouldTriggerFeedback {
                 impactFeedbackGenerator.impactOccurred()
@@ -127,6 +134,7 @@ open class SwipeToReplyGestureHandler {
             UIView.animate(withDuration: 0.4, animations: {
                 self.messageBubbleView?.center = self.messageOriginalCenter
                 self.reactionsBubbleView?.center = self.reactionsOriginalCenter
+                self.threadInfoContainer?.center = self.threadInfoOriginalCenter
                 self.replyIconImageView?.center = self.replyIconOriginalCenter
                 self.replyIconImageView?.alpha = 0.0
             }, completion: { _ in
