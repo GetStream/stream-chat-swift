@@ -104,15 +104,13 @@ open class SwipeToReplyGestureHandler {
             let translationAmount = (messageOriginalCenter.x + translation.x) - messageOriginalCenter.x
             shouldReply = translationAmount > swipeThreshold
 
-            if translationAmount > 0 {
-                let replyIconTranslation = min(translationAmount, swipeThreshold)
-                messageCell?.replyIconImageView.isHidden = false
-                messageCell?.replyIconImageView.alpha = replyIconTranslation / swipeThreshold
-                messageCell?.replyIconImageView.center = CGPoint(
-                    x: replyIconOriginalCenter.x + replyIconTranslation,
-                    y: replyIconOriginalCenter.y
-                )
-            }
+            let replyIconTranslation = max(0, min(translationAmount, swipeThreshold))
+            messageCell?.replyIconImageView.isHidden = false
+            messageCell?.replyIconImageView.alpha = replyIconTranslation / swipeThreshold
+            messageCell?.replyIconImageView.center = CGPoint(
+                x: replyIconOriginalCenter.x + replyIconTranslation,
+                y: replyIconOriginalCenter.y
+            )
 
             if shouldReply && shouldTriggerFeedback {
                 impactFeedbackGenerator.impactOccurred()
