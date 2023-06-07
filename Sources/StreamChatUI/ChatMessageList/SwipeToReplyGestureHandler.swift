@@ -119,7 +119,7 @@ open class SwipeToReplyGestureHandler {
         swipeableViews.forEach {
             guard let originalCenter = swipeableViewsOriginalPositions[$0] else { return }
             $0.center = CGPoint(
-                x: originalCenter.x + translation.x,
+                x: max(originalCenter.x, originalCenter.x + translation.x),
                 y: originalCenter.y
             )
         }
