@@ -22,10 +22,6 @@ public class ChatMessageCell: _TableViewCell, ThemeProvider {
         .withoutAutoresizingMaskConstraints
         .withAccessibilityIdentifier(identifier: "headerContainerView")
 
-    /// The reply icon image view.
-    public private(set) lazy var replyIconImageView = UIImageView()
-        .withoutAutoresizingMaskConstraints
-
     /// The message content view the cell is showing.
     public private(set) var messageContentView: ChatMessageContentView?
 
@@ -80,24 +76,6 @@ public class ChatMessageCell: _TableViewCell, ThemeProvider {
             anchors: [.leading, .trailing],
             to: containerStackView
         )
-
-        replyIconImageView.isHidden = true
-        contentView.addSubview(replyIconImageView)
-        if let messageContentView = self.messageContentView {
-            replyIconImageView.image = appearance.images
-                .messageActionSwipeReply
-                .tinted(with: appearance.colorPalette.textLowEmphasis)
-
-            NSLayoutConstraint.activate([
-                replyIconImageView.topAnchor.pin(equalTo: messageContentView.bubbleContentContainer.topAnchor),
-                replyIconImageView.leadingAnchor.pin(
-                    equalTo: messageContentView.bubbleContentContainer.leadingAnchor,
-                    constant: messageContentView.content?.isSentByCurrentUser == true ? -45 : -30
-                ),
-                replyIconImageView.widthAnchor.pin(equalToConstant: 25),
-                replyIconImageView.heightAnchor.pin(equalToConstant: 25)
-            ])
-        }
 
         updateBottomSpacing()
     }

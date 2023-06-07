@@ -22,7 +22,7 @@ open class SwipeToReplyGestureHandler {
 
     /// The reply icon view.
     public var replyIconImageView: UIImageView? {
-        messageCell?.replyIconImageView
+        messageCell?.messageContentView?.replyIconImageView
     }
 
     /// The original reply icon position.
@@ -125,12 +125,12 @@ open class SwipeToReplyGestureHandler {
         }
 
         let replyIconTranslation = max(0, min(translation.x, swipeThreshold))
-        messageCell?.replyIconImageView.center = CGPoint(
+        replyIconImageView?.center = CGPoint(
             x: replyIconOriginalPosition.x + replyIconTranslation,
             y: replyIconOriginalPosition.y
         )
-        messageCell?.replyIconImageView.isHidden = false
-        messageCell?.replyIconImageView.alpha = replyIconTranslation / swipeThreshold
+        replyIconImageView?.isHidden = false
+        replyIconImageView?.alpha = replyIconTranslation / swipeThreshold
     }
 
     /// Animates the views to their original positions.
