@@ -84,6 +84,12 @@ open class ChatThreadVC: _ViewController,
         components.threadRendersParentMessageEnabled
     }
 
+    /// A boolean value that determines if replies start from the oldest replies.
+    /// By default it is false, and newest replies are rendered in the first page.
+    open var shouldStartFromOldestReplies: Bool {
+        components.threadRepliesStartFromOldest
+    }
+
     override open func setUp() {
         super.setUp()
 
@@ -128,13 +134,22 @@ open class ChatThreadVC: _ViewController,
                 messageComposerVC.content.threadMessage = message
             }
 
+            // If there is an initial reply id, we should jump to it
             if let initialReplyId = self.initialReplyId {
-                self.messageController.loadPageAroundReplyId(initialReplyId) { error in
+                self.messageController.loadPageAroundReplyId(initialReplyId) { [weak self] error in
                     guard error == nil else {
                         return
                     }
 
-                    self.jumpToMessage(id: initialReplyId)
+                    self?.jumpToMessage(id: initialReplyId)
+                }
+                return
+            }
+
+            // When we tap on the parent message and start from oldest replies is enabled
+            if self.shouldStartFromOldestReplies, let parentMessage = self.messageController.message {
+                self.messageController.loadPageAroundReplyId(parentMessage.id) { [weak self] _ in
+                    self?.messageListVC.scrollToOldestMessage(animated: false)
                 }
                 return
             }

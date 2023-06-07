@@ -330,6 +330,10 @@ public struct Components {
     /// A boolean value that determines whether the thread view renders the parent message at the top.
     public var threadRendersParentMessageEnabled = true
 
+    /// A boolean value that determines if thread replies start from the oldest replies.
+    /// By default it is false, and newest replies are rendered in the first page.
+    public var threadRepliesStartFromOldest = false
+
     // MARK: - Channel components
 
     /// The view controller that contains the channel messages and represents the chat view.

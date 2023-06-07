@@ -267,9 +267,17 @@ open class ChatMessageListVC: _ViewController,
         scrollToMostRecentMessage()
     }
 
-    /// Scrolls to most recent message
+    /// Scrolls to most recent message.
     open func scrollToMostRecentMessage(animated: Bool = true) {
         listView.scrollToMostRecentMessage(animated: animated)
+    }
+
+    /// Scrolls to the oldest message.
+    public func scrollToOldestMessage(animated: Bool = true) {
+        let numberOfRows = listView.numberOfRows(inSection: 0)
+        guard numberOfRows > 0 else { return }
+        let indexPath = IndexPath(row: numberOfRows - 1, section: 0)
+        listView.scrollToRow(at: indexPath, at: .bottom, animated: animated)
     }
 
     func updateUnreadMessagesSeparator(at id: MessageId?, previousId: MessageId?) {
