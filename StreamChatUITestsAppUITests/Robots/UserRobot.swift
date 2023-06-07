@@ -336,6 +336,20 @@ extension UserRobot {
     }
 
     @discardableResult
+    func swipeMessageAboveThreshold(at index: Int = 0) -> Self {
+        let cell = messageCell(withIndex: index).waitForHitPoint()
+        cell.swipeRight(velocity: .default)
+        return self
+    }
+
+    @discardableResult
+    func swipeMessageBelowThreshold(at index: Int = 0) -> Self {
+        let cell = messageCell(withIndex: index).waitForHitPoint()
+        cell.swipeRight(velocity: .slow)
+        return self
+    }
+
+    @discardableResult
     func openComposerCommands() -> Self {
         if MessageListPage.ComposerCommands.cells.count == 0 {
             MessageListPage.Composer.commandButton.wait().safeTap()

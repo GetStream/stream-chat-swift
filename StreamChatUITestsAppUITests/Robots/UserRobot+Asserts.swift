@@ -344,6 +344,18 @@ extension UserRobot {
         XCTAssertEqual(text, actualText, file: file, line: line)
         return self
     }
+    @discardableResult
+    func assertQuotedMessageDoesNotExist(
+        _ text: String,
+        at messageCellIndex: Int? = nil,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
+        let quotedMessage = attributes.quotedText(text, in: messageCell).wait()
+        XCTAssertFalse(quotedMessage.waitForText(text).exists, file: file, line: line)
+        return self
+    }
 
     @discardableResult
     func assertDeletedMessage(
