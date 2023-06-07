@@ -188,3 +188,25 @@ extension AttachmentPayload {
         return customPayload.isEmpty ? nil : customPayload
     }
 }
+
+public extension Array where Element == ChatMessageAttachment<Data> {
+    var toAnyAttachmentPayload: [AnyAttachmentPayload] {
+        let decoder = JSONDecoder()
+        return compactMap { attachment in
+            let type: AttachmentPayload.Type
+            switch attachment.type {
+            case .image: type = ImageAttachmentPayload.self
+            case .video: type = VideoAttachmentPayload.self
+            case .audio: type = AudioAttachmentPayload.self
+            case .file: type = FileAttachmentPayload.self
+            case .voiceRecording: type = VoiceRecordingAttachmentPayload.self
+            default:
+                log.assertionFailure("Unsupported attachment")
+                return nil
+            }
+
+            guard let payload = try? decoder.decode(type, from: attachment.payload) else { return nil }
+            return AnyAttachmentPayload(payload: payload)
+        }
+    }
+}
