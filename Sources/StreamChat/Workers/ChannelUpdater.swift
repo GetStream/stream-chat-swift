@@ -262,7 +262,7 @@ class ChannelUpdater: Worker {
     ///
     func createNewMessage(
         in cid: ChannelId,
-        messageId: MessageId,
+        messageId: MessageId?,
         text: String,
         pinning: MessagePinning? = nil,
         isSilent: Bool,

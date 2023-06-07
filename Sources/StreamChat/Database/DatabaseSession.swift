@@ -69,7 +69,7 @@ protocol MessageDatabaseSession {
     @discardableResult
     func createNewMessage(
         in cid: ChannelId,
-        messageId: MessageId,
+        messageId: MessageId?,
         text: String,
         pinning: MessagePinning?,
         command: String?,
@@ -188,7 +188,7 @@ extension MessageDatabaseSession {
     @discardableResult
     func createNewMessage(
         in cid: ChannelId,
-        messageId: MessageId,
+        messageId: MessageId?,
         text: String,
         pinning: MessagePinning?,
         quotedMessageId: MessageId?,

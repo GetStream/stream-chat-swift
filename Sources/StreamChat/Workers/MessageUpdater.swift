@@ -170,7 +170,7 @@ class MessageUpdater: Worker {
     ///
     func createNewReply(
         in cid: ChannelId,
-        messageId: MessageId,
+        messageId: MessageId?,
         text: String,
         pinning: MessagePinning?,
         command: String?,

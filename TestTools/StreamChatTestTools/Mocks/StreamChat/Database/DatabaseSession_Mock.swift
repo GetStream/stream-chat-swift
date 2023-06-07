@@ -123,7 +123,7 @@ extension DatabaseSession_Mock {
 
     func createNewMessage(
         in cid: ChannelId,
-        messageId: MessageId,
+        messageId: MessageId?,
         text: String,
         pinning: MessagePinning?,
         command: String?,
