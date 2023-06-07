@@ -24,6 +24,42 @@ final class QuotedReply_Tests: StreamTestCase {
             try super.tearDownWithError()
         }
     }
+
+    func test_whenSwipingMessageAboveThreshold_thenMessageIsQuotedReply() {
+        linkToScenario(withId: 2096)
+
+        GIVEN("user opens the channel") {
+            backendRobot.generateChannels(count: 1, messagesCount: 1)
+            userRobot.login().openChannel()
+        }
+        WHEN("user swipes a message above threshold") {
+            userRobot
+                .swipeMessageAboveThreshold()
+        }
+        THEN("user quoted the message") {
+            userRobot
+                .sendMessage("Quoting")
+                .assertQuotedMessage("1")
+        }
+    }
+
+    func test_whenSwipingMessageBelowThreshold_thenMessageIsNotQuotedReply() {
+        linkToScenario(withId: 2097)
+
+        GIVEN("user opens the channel") {
+            backendRobot.generateChannels(count: 1, messagesCount: 1)
+            userRobot.login().openChannel()
+        }
+        WHEN("user swipes a message below threshold") {
+            userRobot
+                .swipeMessageBelowThreshold()
+        }
+        THEN("user did not quoted the message") {
+            userRobot
+                .sendMessage("Quoting")
+                .assertQuotedMessageDoesNotExist("1")
+        }
+    }
     
     func test_quotedReplyInList_whenUserAddsQuotedReply() {
         linkToScenario(withId: 1667)
