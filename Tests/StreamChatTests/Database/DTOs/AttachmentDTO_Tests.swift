@@ -266,6 +266,7 @@ final class AttachmentDTO_Tests: XCTestCase {
         try database.writeSynchronously { session in
             let message = try session.createNewMessage(
                 in: cid,
+                messageId: .unique,
                 text: "Message pending send",
                 pinning: nil,
                 quotedMessageId: nil,

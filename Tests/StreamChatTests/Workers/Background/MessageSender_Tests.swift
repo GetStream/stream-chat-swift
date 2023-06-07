@@ -66,6 +66,7 @@ final class MessageSender_Tests: XCTestCase {
         try database.writeSynchronously { session in
             let message1 = try session.createNewMessage(
                 in: self.cid,
+                messageId: .unique,
                 text: "Message pending send without attachments",
                 pinning: nil,
                 quotedMessageId: nil,
@@ -79,6 +80,7 @@ final class MessageSender_Tests: XCTestCase {
 
             let message2 = try session.createNewMessage(
                 in: self.cid,
+                messageId: .unique,
                 text: "Message pending send with attachments",
                 pinning: nil,
                 quotedMessageId: nil,
@@ -98,6 +100,7 @@ final class MessageSender_Tests: XCTestCase {
             // Create 3rd message
             try session.createNewMessage(
                 in: self.cid,
+                messageId: .unique,
                 text: "Message without local state",
                 pinning: nil,
                 quotedMessageId: nil,
@@ -140,6 +143,7 @@ final class MessageSender_Tests: XCTestCase {
         try database.writeSynchronously { session in
             let message = try session.createNewMessage(
                 in: self.cid,
+                messageId: .unique,
                 text: "Message pending send",
                 pinning: nil,
                 quotedMessageId: nil,
@@ -166,6 +170,7 @@ final class MessageSender_Tests: XCTestCase {
         try database.writeSynchronously { session in
             let message = try session.createNewMessage(
                 in: self.cid,
+                messageId: .unique,
                 text: "Message pending send",
                 pinning: nil,
                 quotedMessageId: nil,
@@ -205,6 +210,7 @@ final class MessageSender_Tests: XCTestCase {
         try database.writeSynchronously { session in
             let message1 = try session.createNewMessage(
                 in: self.cid,
+                messageId: .unique,
                 text: "Message pending send 1",
                 pinning: nil,
                 quotedMessageId: nil,
@@ -218,6 +224,7 @@ final class MessageSender_Tests: XCTestCase {
 
             let message2 = try session.createNewMessage(
                 in: self.cid,
+                messageId: .unique,
                 text: "Message pending send 2",
                 pinning: nil,
                 quotedMessageId: nil,
@@ -231,6 +238,7 @@ final class MessageSender_Tests: XCTestCase {
 
             let message3 = try session.createNewMessage(
                 in: self.cid,
+                messageId: .unique,
                 text: "Message pending send 3",
                 pinning: nil,
                 quotedMessageId: nil,
@@ -279,6 +287,7 @@ final class MessageSender_Tests: XCTestCase {
         try database.writeSynchronously { session in
             let messageA1 = try session.createNewMessage(
                 in: cidA,
+                messageId: .unique,
                 text: "Channel A message 1",
                 pinning: nil,
                 quotedMessageId: nil,
@@ -292,6 +301,7 @@ final class MessageSender_Tests: XCTestCase {
 
             let messageA2 = try session.createNewMessage(
                 in: cidA,
+                messageId: .unique,
                 text: "Channel A message 2",
                 pinning: nil,
                 quotedMessageId: nil,
@@ -305,6 +315,7 @@ final class MessageSender_Tests: XCTestCase {
 
             let messageB1 = try session.createNewMessage(
                 in: cidB,
+                messageId: .unique,
                 text: "Channel B message 1",
                 pinning: nil,
                 quotedMessageId: nil,
@@ -318,6 +329,7 @@ final class MessageSender_Tests: XCTestCase {
 
             let messageB2 = try session.createNewMessage(
                 in: cidB,
+                messageId: .unique,
                 text: "Channel B message 2",
                 pinning: nil,
                 quotedMessageId: nil,

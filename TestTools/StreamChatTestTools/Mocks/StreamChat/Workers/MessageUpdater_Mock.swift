@@ -212,6 +212,7 @@ final class MessageUpdater_Mock: MessageUpdater {
 
     override func createNewReply(
         in cid: ChannelId,
+        messageId: MessageId,
         text: String,
         pinning: MessagePinning?,
         command: String?,

@@ -747,6 +747,7 @@ final class ChannelController_Tests: XCTestCase {
         try client.databaseContainer.writeSynchronously {
             let dto = try $0.createNewMessage(
                 in: channelId,
+                messageId: .unique,
                 text: .unique,
                 pinning: nil,
                 command: nil,

@@ -831,6 +831,7 @@ final class MessageUpdater_Tests: XCTestCase {
         let newMessage: ChatMessage = try waitFor { completion in
             messageUpdater.createNewReply(
                 in: cid,
+                messageId: .unique,
                 text: text,
                 pinning: MessagePinning(expirationDate: .unique),
                 command: command,
@@ -897,6 +898,7 @@ final class MessageUpdater_Tests: XCTestCase {
         let result: Result<ChatMessage, Error> = try waitFor { completion in
             messageUpdater.createNewReply(
                 in: .unique,
+                messageId: .unique,
                 text: .unique,
                 pinning: nil,
                 command: .unique,

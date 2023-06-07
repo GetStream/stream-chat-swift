@@ -570,6 +570,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         let newMessage: ChatMessage = try waitFor { completion in
             channelUpdater.createNewMessage(
                 in: cid,
+                messageId: .unique,
                 text: text,
                 pinning: MessagePinning(expirationDate: .unique),
                 isSilent: false,
@@ -647,6 +648,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         let result: Result<ChatMessage, Error> = try waitFor { completion in
             channelUpdater.createNewMessage(
                 in: .unique,
+                messageId: .unique,
                 text: .unique,
                 isSilent: false,
                 command: .unique,
