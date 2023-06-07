@@ -819,4 +819,48 @@ final class ChatMessageListVC_Tests: XCTestCase {
 
         XCTAssertEqual(audioPlayer.seekWasCalledWithTime, 100)
     }
+
+    // MARK: - handlePan
+
+    func test_handlePan_whenCanReply_whenSwipeToReplyIsEnabled_thenShouldHandleSwipingToReply() {
+        // Given
+        let handlerMock = SwipeToReplyGestureHandler_Mock(listView: sut.listView)
+        sut.swipeToReplyGestureHandler = handlerMock
+
+        // When
+        mockedDataSource.mockedChannel = .mock(cid: .unique, ownCapabilities: [.sendReply])
+        sut.components.messageSwipeToReplyEnabled = true
+
+        // Then
+        sut.handlePan(.init())
+        XCTAssertEqual(handlerMock.handleCallCount, 1)
+    }
+
+    func test_handlePan_whenCanReply_whenSwipeToReplyIsDisabled_thenDoesNotHandleSwipingToReply() {
+        // Given
+        let handlerMock = SwipeToReplyGestureHandler_Mock(listView: sut.listView)
+        sut.swipeToReplyGestureHandler = handlerMock
+
+        // When
+        mockedDataSource.mockedChannel = .mock(cid: .unique, ownCapabilities: [.sendReply])
+        sut.components.messageSwipeToReplyEnabled = false
+
+        // Then
+        sut.handlePan(.init())
+        XCTAssertEqual(handlerMock.handleCallCount, 0)
+    }
+
+    func test_handlePan_whenCanNotReply_thenDoesNotHandleSwipingToReply() {
+        // Given
+        let handlerMock = SwipeToReplyGestureHandler_Mock(listView: sut.listView)
+        sut.swipeToReplyGestureHandler = handlerMock
+
+        // When
+        mockedDataSource.mockedChannel = .mock(cid: .unique, ownCapabilities: [])
+        sut.components.messageSwipeToReplyEnabled = true
+
+        // Then
+        sut.handlePan(.init())
+        XCTAssertEqual(handlerMock.handleCallCount, 0)
+    }
 }
