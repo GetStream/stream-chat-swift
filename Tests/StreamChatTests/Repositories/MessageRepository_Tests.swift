@@ -605,6 +605,7 @@ extension MessageRepositoryTests {
         try database.writeSynchronously { session in
             message = try session.createNewMessage(
                 in: self.cid,
+                messageId: .unique,
                 text: "Message pending send",
                 pinning: nil,
                 quotedMessageId: nil,
