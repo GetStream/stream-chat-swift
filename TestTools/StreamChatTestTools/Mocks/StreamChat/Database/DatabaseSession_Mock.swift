@@ -123,6 +123,7 @@ extension DatabaseSession_Mock {
 
     func createNewMessage(
         in cid: ChannelId,
+        messageId: MessageId?,
         text: String,
         pinning: MessagePinning?,
         command: String?,
@@ -142,6 +143,7 @@ extension DatabaseSession_Mock {
 
         return try underlyingSession.createNewMessage(
             in: cid,
+            messageId: messageId,
             text: text,
             pinning: pinning,
             command: command,

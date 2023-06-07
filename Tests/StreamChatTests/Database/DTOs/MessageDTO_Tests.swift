@@ -999,6 +999,7 @@ final class MessageDTO_Tests: XCTestCase {
         try database.writeSynchronously { session in
             messageId = try session.createNewMessage(
                 in: cid,
+                messageId: .unique,
                 text: messageText,
                 pinning: messagePinning,
                 command: messageCommand,
@@ -1109,6 +1110,7 @@ final class MessageDTO_Tests: XCTestCase {
             database.write({ session in
                 let message1DTO = try session.createNewMessage(
                     in: cid,
+                    messageId: .unique,
                     text: .unique,
                     pinning: nil,
                     command: nil,
@@ -1130,6 +1132,7 @@ final class MessageDTO_Tests: XCTestCase {
 
                 let message2DTO = try session.createNewMessage(
                     in: cid,
+                    messageId: .unique,
                     text: .unique,
                     pinning: nil,
                     command: nil,
@@ -1225,6 +1228,7 @@ final class MessageDTO_Tests: XCTestCase {
         try database.writeSynchronously { session in
             let messageDTO = try session.createNewMessage(
                 in: cid,
+                messageId: .unique,
                 text: newMessageText,
                 pinning: newMessagePinning,
                 command: newMessageCommand,
@@ -1290,6 +1294,7 @@ final class MessageDTO_Tests: XCTestCase {
         try database.writeSynchronously { session in
             let messageDTO = try session.createNewMessage(
                 in: cid,
+                messageId: .unique,
                 text: .unique,
                 pinning: nil,
                 command: nil,
@@ -1334,6 +1339,7 @@ final class MessageDTO_Tests: XCTestCase {
         try database.writeSynchronously { session in
             let replyShownInChannelDTO = try session.createNewMessage(
                 in: cid,
+                messageId: .unique,
                 text: .unique,
                 pinning: nil,
                 command: nil,
@@ -1391,6 +1397,7 @@ final class MessageDTO_Tests: XCTestCase {
         try database.writeSynchronously { session in
             try session.createNewMessage(
                 in: cid,
+                messageId: .unique,
                 text: .unique,
                 pinning: nil,
                 command: nil,
@@ -1417,6 +1424,7 @@ final class MessageDTO_Tests: XCTestCase {
             database.write({ (session) in
                 try session.createNewMessage(
                     in: .unique,
+                    messageId: .unique,
                     text: .unique,
                     pinning: MessagePinning(expirationDate: .unique),
                     command: .unique,
@@ -1457,6 +1465,7 @@ final class MessageDTO_Tests: XCTestCase {
             database.write({ (session) in
                 try session.createNewMessage(
                     in: .unique,
+                    messageId: .unique,
                     text: .unique,
                     pinning: MessagePinning(expirationDate: .unique),
                     command: .unique,
@@ -1502,6 +1511,7 @@ final class MessageDTO_Tests: XCTestCase {
         try database.writeSynchronously { session in
             let messageDTO = try session.createNewMessage(
                 in: cid,
+                messageId: .unique,
                 text: newMessageText,
                 pinning: MessagePinning(expirationDate: .unique),
                 quotedMessageId: nil,
@@ -1541,6 +1551,7 @@ final class MessageDTO_Tests: XCTestCase {
         try database.writeSynchronously { session in
             let replyDTO = try session.createNewMessage(
                 in: cid,
+                messageId: .unique,
                 text: "Reply",
                 pinning: nil,
                 command: nil,
