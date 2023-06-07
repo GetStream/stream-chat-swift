@@ -39,6 +39,7 @@ extension StreamChatWrapper {
         Components.default.messageListDateSeparatorEnabled = true
         Components.default.messageListDateOverlayEnabled = true
         Components.default.isVoiceRecordingEnabled = true
+        Components.default.messageSwipeToReplyEnabled = true
 
         // Customize UI components
         Components.default.channelListRouter = DemoChatChannelListRouter.self
