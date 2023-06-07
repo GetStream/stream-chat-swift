@@ -856,6 +856,16 @@ final class ChatChannelVC_Tests: XCTestCase {
         XCTAssertTrue((vc.audioPlayer as? StreamAudioQueuePlayer)?.dataSource === vc)
     }
 
+    func test_setUp_whenSwipeToReplyIsTriggered_thenComposerHasQuotingMessageState() {
+        vc.setUp()
+
+        let expectMessage = ChatMessage.unique
+        vc.messageListVC.swipeToReplyGestureHandler.onReply?(expectMessage)
+
+        XCTAssertEqual(vc.messageComposerVC.content.state, .quote)
+        XCTAssertEqual(vc.messageComposerVC.content.quotingMessage?.id, expectMessage.id)
+    }
+
     // MARK: - audioQueuePlayerNextAssetURL
 
     func test_audioQueuePlayerNextAssetURL_callsNextAvailableVoiceRecordingProvideWithExpectedInputAndReturnsValue() throws {
