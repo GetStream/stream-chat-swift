@@ -131,7 +131,7 @@ public struct Components {
     /// A boolean value that determines whether date separators should be shown between each message.
     public var messageListDateSeparatorEnabled = false
 
-    /// A boolean value that determines wether swiping to quote reply is available.
+    /// A boolean value that determines whether swiping to quote reply is available.
     public var messageSwipeToReplyEnabled = true
 
     /// The view controller used to perform message actions.
