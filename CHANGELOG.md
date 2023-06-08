@@ -19,8 +19,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add jumping to a reply inside a thread when opening a thread from a thread reply in the channel view [#2647](https://github.com/GetStream/stream-chat-swift/pull/2647)
 - Add jumping to a reply inside a thread when opening a channel from a reply as the given message around id [#2647](https://github.com/GetStream/stream-chat-swift/pull/2647)
 - Add swipe to reply when `Components.default.messageSwipeToReplyEnabled` is `true` [#2665](https://github.com/GetStream/stream-chat-swift/pull/2665)
-
-### 🐞 Fixed
 - Allow editing messages with attachments [#2659](https://github.com/GetStream/stream-chat-swift/pull/2659)
 
 # [4.32.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.32.0)
