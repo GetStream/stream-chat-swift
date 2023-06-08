@@ -58,7 +58,7 @@ class AttachmentQueueUploader: Worker {
     private func handleChanges(changes: [ListChange<AttachmentDTO>]) {
         guard !changes.isEmpty else { return }
 
-        var wasEmpty: Bool!
+        var wasEmpty: Bool = false
         _pendingAttachmentIDs.mutate { pendingAttachmentIDs in
             wasEmpty = pendingAttachmentIDs.isEmpty
             changes.pendingUploadAttachmentIDs.forEach { pendingAttachmentIDs.insert($0) }

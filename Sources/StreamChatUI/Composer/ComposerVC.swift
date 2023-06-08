@@ -162,7 +162,7 @@ open class ComposerVC: _ViewController,
                 editingMessage: message,
                 quotingMessage: nil,
                 threadMessage: threadMessage,
-                attachments: attachments,
+                attachments: message.allAttachments.toAnyAttachmentPayload(),
                 mentionedUsers: message.mentionedUsers,
                 command: command,
                 extraData: message.extraData,
@@ -487,7 +487,7 @@ open class ComposerVC: _ViewController,
             Animate {
                 self.composerView.confirmButton.isHidden = false
                 self.composerView.sendButton.isHidden = true
-                self.composerView.recordButton.isHidden = self.composerView.sendButton.isHidden
+                self.composerView.recordButton.isHidden = self.composerView.confirmButton.isHidden
                 self.composerView.headerView.isHidden = false
                 self.composerView.cooldownView.isHidden = true
                 self.composerView.leadingContainer.isHidden = false
@@ -737,9 +737,12 @@ open class ComposerVC: _ViewController,
             cid: cid,
             messageId: id
         )
-        // TODO: Adjust LLC to edit attachments also
         // TODO: Adjust LLC to edit mentions
-        messageController?.editMessage(text: newText, extraData: content.extraData)
+        messageController?.editMessage(
+            text: newText,
+            attachments: content.attachments,
+            extraData: content.extraData
+        )
     }
 
     /// Returns a potential user mention in case the user is currently typing a username.

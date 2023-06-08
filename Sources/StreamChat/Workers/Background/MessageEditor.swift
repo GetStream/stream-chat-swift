@@ -52,12 +52,14 @@ class MessageEditor: Worker {
     private func handleChanges(changes: [ListChange<MessageDTO>]) {
         guard !changes.isEmpty else { return }
 
+        var wasEmpty: Bool = false
         _pendingMessageIDs.mutate { pendingMessageIDs in
-            let wasEmpty = pendingMessageIDs.isEmpty
+            wasEmpty = pendingMessageIDs.isEmpty
             changes.pendingEditMessageIDs.forEach { pendingMessageIDs.insert($0) }
-            if wasEmpty {
-                processNextMessage()
-            }
+        }
+
+        if wasEmpty {
+            processNextMessage()
         }
     }
 

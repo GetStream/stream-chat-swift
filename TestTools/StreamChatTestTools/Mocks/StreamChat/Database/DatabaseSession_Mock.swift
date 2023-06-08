@@ -319,6 +319,10 @@ extension DatabaseSession_Mock {
         return try underlyingSession.createNewAttachment(attachment: attachment, id: id)
     }
 
+    func delete(attachment: AttachmentDTO) {
+        underlyingSession.delete(attachment: attachment)
+    }
+
     func saveChannelMute(
         payload: MutedChannelPayload
     ) throws -> ChannelMuteDTO {

@@ -81,6 +81,38 @@ final class MessageEditor_Tests: XCTestCase {
         XCTAssertCall("updateMessage(withID:localState:isBounced:completion:)", on: messageRepository, times: 1)
     }
 
+    func test_editorSyncsMessage_withPendingSyncLocalState_withPendingAttachments() throws {
+        let currentUserId: UserId = .unique
+        let messageId: MessageId = .unique
+
+        try database.createCurrentUser(id: currentUserId)
+        try database.createMessage(
+            id: messageId,
+            authorId: currentUserId,
+            attachments: [MessageAttachmentPayload.dummy()],
+            localState: .pendingSync
+        )
+
+        let messageDTO = try XCTUnwrap(database.viewContext.message(id: messageId))
+        XCTAssertEqual(messageDTO.attachments.count, 1)
+
+        let attachmentId = try XCTUnwrap(messageDTO.attachments.first?.attachmentID)
+        XCTAssertEqual(apiClient.request_allRecordedCalls.count, 0)
+
+        try database.writeSynchronously { session in
+            let attachment = try XCTUnwrap(session.attachment(id: attachmentId))
+            attachment.localState = .uploaded
+        }
+
+        AssertAsync {
+            Assert.willBeTrue(self.apiClient.request_allRecordedCalls.count == 1)
+        }
+        XCTAssertTrue(apiClient.request_allRecordedCalls.contains(where: {
+            $0.endpoint == AnyEndpoint(.editMessage(payload: messageDTO.asRequestBody()))
+        }))
+        XCTAssertCall("updateMessage(withID:localState:isBounced:completion:)", on: messageRepository, times: 1)
+    }
+
     func test_editor_changesMessageStates_whenSyncingSucceeds() throws {
         let currentUserId: UserId = .unique
         let messageId: MessageId = .unique

@@ -939,15 +939,21 @@ final class MessageController_Tests: XCTestCase {
         XCTAssertEqual(env.messageUpdater.editMessage_text, updatedText)
     }
 
-    func test_editMessage_callsMessageUpdater_withCorrectExtraDataValues() {
+    func test_editMessage_callsMessageUpdater_withCorrectExtraParameters() {
         let updatedText: String = .unique
+        let attachments = [AnyAttachmentPayload.mockAudio]
         let extraData: [String: RawJSON] = ["myKey": .string("myValue")]
 
         // Simulate `editMessage` call and catch the completion
-        controller.editMessage(text: updatedText, extraData: extraData)
+        controller.editMessage(
+            text: updatedText,
+            attachments: attachments,
+            extraData: extraData
+        )
 
         // Assert message updater is called with correct `messageId` and `text`
         XCTAssertEqual(env.messageUpdater.editMessage_text, updatedText)
+        XCTAssertEqual(env.messageUpdater.editMessage_attachments, attachments)
         XCTAssertEqual(env.messageUpdater.editMessage_extraData, extraData)
     }
 

@@ -121,7 +121,7 @@ private class MessageSendingQueue {
     /// Schedules sending of the message. All already scheduled messages with `createdLocallyAt` older than these ones will
     /// be sent first.
     func scheduleSend(requests: [SendRequest]) {
-        var wasEmpty: Bool!
+        var wasEmpty: Bool = false
         _requests.mutate { mutableRequests in
             wasEmpty = mutableRequests.isEmpty
             mutableRequests.formUnion(requests)

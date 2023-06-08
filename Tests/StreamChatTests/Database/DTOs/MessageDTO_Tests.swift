@@ -608,6 +608,50 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(messagePayload.translations?.mapKeys(\.languageCode), loadedMessage?.translations)
     }
 
+    func test_message_isNotOverwrittenWhenAlreadyInDatabase_andIsPending() throws {
+        let pairs: [(LocalMessageState, shouldOverwrite: Bool)] = [
+            (.pendingSync, false),
+            (.syncing, true),
+            (.syncingFailed, true),
+            (.pendingSend, false),
+            (.sending, true),
+            (.sendingFailed, true),
+            (.deleting, true),
+            (.deletingFailed, true)
+        ]
+
+        try pairs.forEach { (state, shouldOverwrite) in
+            // Given
+            let expectedMessage = shouldOverwrite ? "Edited Text" : "Original Text"
+            let messageId = MessageId.unique
+            let channelId = ChannelId.unique
+            let originalMessage = MessagePayload.dummy(messageId: messageId, text: "Original Text")
+
+            try database.writeSynchronously {
+                try $0.saveChannel(payload: .dummy(channel: .dummy(cid: channelId)))
+                let dto = try $0.saveMessage(payload: originalMessage, for: channelId, syncOwnReactions: false, cache: nil)
+                dto.localMessageState = state
+            }
+
+            var messageInDatabase: MessageDTO? {
+                database.viewContext.message(id: messageId)
+            }
+
+            XCTAssertEqual(messageInDatabase?.text, originalMessage.text)
+            XCTAssertEqual(messageInDatabase?.localMessageState, state)
+
+            // When
+            let editedMessage = MessagePayload.dummy(messageId: messageId, text: "Edited Text")
+            try database.writeSynchronously {
+                try $0.saveMessage(payload: editedMessage, for: channelId, syncOwnReactions: false, cache: nil)
+            }
+
+            // Then
+            XCTAssertEqual(messageInDatabase?.text, expectedMessage)
+            XCTAssertEqual(messageInDatabase?.localMessageState, state)
+        }
+    }
+
     func test_messagePayload_withExtraData_isStoredAndLoadedFromDB() throws {
         let userId: UserId = .unique
         let messageId: MessageId = .unique
