@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.33.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.33.0)
+_June 08, 2023_
+
 ## StreamChat
 ### ✅ Added
 - Add support for shadow banning a member [#2660](https://github.com/GetStream/stream-chat-swift/pull/2660)
