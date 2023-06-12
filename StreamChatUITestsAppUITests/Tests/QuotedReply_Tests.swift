@@ -43,8 +43,10 @@ final class QuotedReply_Tests: StreamTestCase {
         }
     }
 
-    func test_whenSwipingMessageBelowThreshold_thenMessageIsNotQuotedReply() {
+    func test_whenSwipingMessageBelowThreshold_thenMessageIsNotQuotedReply() throws {
         linkToScenario(withId: 2097)
+        
+        throw XCTSkip("https://github.com/GetStream/ios-issues-tracking/issues/469")
 
         GIVEN("user opens the channel") {
             backendRobot.generateChannels(count: 1, messagesCount: 1)
