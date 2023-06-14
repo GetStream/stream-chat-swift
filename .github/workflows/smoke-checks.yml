@@ -138,7 +138,7 @@ jobs:
     - name: Run UI Tests (Debug)
       if: env.LAUNCH_ID != ''
       run: bundle exec fastlane test_e2e_mock device:"${{ env.IOS_SIMULATOR_DEVICE }}" batch:'${{ matrix.batch }}'
-      timeout-minutes: 40
+      timeout-minutes: 60
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GITHUB_PR_NUM: ${{ github.event.number }}
