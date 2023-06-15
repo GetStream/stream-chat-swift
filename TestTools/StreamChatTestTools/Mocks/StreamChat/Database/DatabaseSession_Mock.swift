@@ -209,6 +209,10 @@ extension DatabaseSession_Mock {
         underlyingSession.preview(for: cid)
     }
 
+    func rescueMessagesStuckInSending() {
+        underlyingSession.rescueMessagesStuckInSending()
+    }
+
     func reaction(messageId: MessageId, userId: UserId, type: MessageReactionType) -> MessageReactionDTO? {
         underlyingSession.reaction(messageId: messageId, userId: userId, type: type)
     }

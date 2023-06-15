@@ -3268,6 +3268,55 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(fetchRequest.fetchLimit, 20)
     }
 
+    // MARK: Rescue messages stuck in .sending
+
+    func test_rescueMessagesStuckInSending_setsStateToPendingSend_whenNeeded() throws {
+        // Given
+        let channelId = ChannelId.unique
+        let deletingMessageId = MessageId.unique
+        let pendingSendMessageId = MessageId.unique
+        let sendingMessageId = MessageId.unique
+        let sendingMessageIdWithAttachments = MessageId.unique
+
+        let pairs: [(MessageId, LocalMessageState, [MessageAttachmentPayload])] = [
+            (deletingMessageId, .deleting, []),
+            (pendingSendMessageId, .pendingSend, []),
+            (sendingMessageId, .sending, []),
+            (sendingMessageIdWithAttachments, .sending, [.dummy(), .dummy()])
+        ]
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: channelId)))
+
+            try pairs.forEach { id, state, attachments in
+                let message = try session.saveMessage(
+                    payload: .dummy(messageId: id, attachments: attachments),
+                    for: channelId,
+                    syncOwnReactions: false,
+                    cache: nil
+                )
+                message.localMessageState = state
+            }
+        }
+
+        let sendingMessages = MessageDTO.loadSendingMessages(context: database.viewContext)
+        XCTAssertEqual(sendingMessages.count, 2)
+        XCTAssertNotNil(sendingMessages.first(where: { $0.id == sendingMessageId }))
+        XCTAssertNotNil(sendingMessages.first(where: { $0.id == sendingMessageIdWithAttachments }))
+
+        // When
+        try database.writeSynchronously {
+            $0.rescueMessagesStuckInSending()
+        }
+
+        // Then
+        XCTAssertEqual(MessageDTO.loadSendingMessages(context: database.viewContext).count, 0)
+        XCTAssertEqual(database.viewContext.message(id: sendingMessageId)?.localMessageState, .pendingSend)
+        XCTAssertEqual(database.viewContext.message(id: sendingMessageIdWithAttachments)?.localMessageState, .pendingSend)
+        XCTAssertEqual(database.viewContext.message(id: pendingSendMessageId)?.localMessageState, .pendingSend)
+        XCTAssertEqual(database.viewContext.message(id: deletingMessageId)?.localMessageState, .deleting)
+    }
+
     // MARK: - isLocalOnly
 
     func test_isLocalOnly_whenLocalMessageStateIsWaitingToBeSentToServer_returnsTrue() throws {
