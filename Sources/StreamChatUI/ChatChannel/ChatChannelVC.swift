@@ -158,6 +158,8 @@ open class ChatChannelVC: _ViewController,
                     self?.jumpToMessage(id: replyId)
                 }
             }
+
+            self?.updateUnreadMessagesRelatedComponents()
         }
 
         if channelController.channelQuery.pagination?.parameter == nil {
@@ -352,7 +354,9 @@ open class ChatChannelVC: _ViewController,
             }
         case is MarkUnreadActionItem:
             dismiss(animated: true) { [weak self] in
-                self?.channelController.markUnread(from: message.id)
+                self?.channelController.markUnread(from: message.id) { _ in
+                    self?.updateUnreadMessagesRelatedComponents()
+                }
             }
         default:
             return
@@ -432,6 +436,9 @@ open class ChatChannelVC: _ViewController,
     ) {
         let channelUnreadCount = channelController.channel?.unreadCount ?? .noUnread
         messageListVC.scrollToLatestMessageButton.content = channelUnreadCount
+    }
+
+    private func updateUnreadMessagesRelatedComponents() {
         messageListVC.updateUnreadMessagesSeparator(at: firstUnreadMessageId)
         messageListVC.updateJumpToUnreadMessagesVisibility()
     }
