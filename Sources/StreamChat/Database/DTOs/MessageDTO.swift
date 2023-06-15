@@ -123,12 +123,6 @@ class MessageDTO: NSManagedObject {
         let pendingSendMessage = NSPredicate(
             format: "localMessageStateRaw == %@", LocalMessageState.pendingSend.rawValue
         )
-
-        let allAttachmentsAreUploadedOrEmpty = NSCompoundPredicate(orPredicateWithSubpredicates: [
-            .init(format: "NOT (ANY attachments.localStateRaw != %@)", LocalAttachmentState.uploaded.rawValue),
-            .init(format: "attachments.@count == 0")
-        ])
-
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
             pendingSendMessage,
             allAttachmentsAreUploadedOrEmptyPredicate()
@@ -509,6 +503,13 @@ class MessageDTO: NSManagedObject {
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.createdAt, ascending: false)]
         request.fetchLimit = 1
         return load(by: request, context: context).first
+    }
+
+    static func loadSendingMessages(context: NSManagedObjectContext) -> [MessageDTO] {
+        let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.locallyCreatedAt, ascending: false)]
+        request.predicate = NSPredicate(format: "localMessageStateRaw == %@", LocalMessageState.sending.rawValue)
+        return load(by: request, context: context)
     }
 }
 
@@ -989,6 +990,16 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         let cache = payload.getPayloadToModelIdMappings(context: self)
         return payload.results.compactMapLoggingError {
             try saveMessage(payload: $0.message, for: query, cache: cache)
+        }
+    }
+
+    /// Changes the state to `.pendingSend` for all messages in `.sending` state. This method is expected to be used at the beginning of the session
+    /// to avoid those from being stuck there in limbo.
+    /// Messages can get stuck in `.sending` state if the network request to send them takes to much, and the app is backgrounded or killed.
+    func rescueMessagesStuckInSending() {
+        let messages = MessageDTO.loadSendingMessages(context: self)
+        messages.forEach {
+            $0.localMessageState = .pendingSend
         }
     }
 }

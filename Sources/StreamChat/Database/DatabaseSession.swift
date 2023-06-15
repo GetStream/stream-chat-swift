@@ -181,6 +181,11 @@ protocol MessageDatabaseSession {
     /// Ignores messages that could not be saved
     @discardableResult
     func saveMessageSearch(payload: MessageSearchResultsPayload, for query: MessageSearchQuery) -> [MessageDTO]
+
+    /// Changes the state to `.pendingSend` for all messages in `.sending` state. This method is expected to be used at the beginning of the session
+    /// to avoid those from being stuck there in limbo.
+    /// Messages can get stuck in `.sending` state if the network request to send them takes to much, and the app is backgrounded or killed.
+    func rescueMessagesStuckInSending()
 }
 
 extension MessageDatabaseSession {

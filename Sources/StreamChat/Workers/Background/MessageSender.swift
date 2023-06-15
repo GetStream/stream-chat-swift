@@ -56,6 +56,9 @@ class MessageSender: Worker {
                 if let changes = self?.observer.items.map({ ListChange.insert($0, index: .init(item: 0, section: 0)) }) {
                     self?.handleChanges(changes: changes)
                 }
+                self?.database.write {
+                    $0.rescueMessagesStuckInSending()
+                }
             } catch {
                 log.error("Failed to start MessageSender worker. \(error)")
             }
