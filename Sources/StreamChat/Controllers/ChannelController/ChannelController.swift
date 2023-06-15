@@ -1177,6 +1177,7 @@ private extension ChatChannelController {
             isInRecoveryMode: isInRecoveryMode,
             onChannelCreated: channelCreatedCallback,
             completion: { result in
+                self._firstUnreadMessageId = nil
                 switch result {
                 case .success:
                     self.state = .remoteDataFetched
@@ -1400,18 +1401,21 @@ private extension ChatChannelController {
         }
     }
 
-    private func getLastReadMessageId(firstUnreadMessageId: MessageId) -> MessageId {
+    private func getLastReadMessageId(firstUnreadMessageId: MessageId) -> MessageId? {
         guard let messageIndex = messages.firstIndex(where: { $0.id == firstUnreadMessageId }) else {
-            return firstUnreadMessageId
+            return nil
         }
 
         let newLastReadMessageIndex = messages.index(after: messageIndex)
-        return messageId(at: newLastReadMessageIndex) ?? firstUnreadMessageId
+        return messageId(at: newLastReadMessageIndex)
     }
 
     private func getFirstUnreadMessageId() -> MessageId? {
-        guard let lastReadMessageId = channel?.reads.first(where: { $0.user.id == client.currentUserId })?.lastReadMessageId,
-              lastReadMessageId != messages.first?.id,
+        guard let lastReadMessageId = channel?.reads.first(where: { $0.user.id == client.currentUserId })?.lastReadMessageId else {
+            return messages.last?.id
+        }
+
+        guard lastReadMessageId != messages.first?.id,
               let lastReadIndex = messages.firstIndex(where: { $0.id == lastReadMessageId }) else {
             return nil
         }

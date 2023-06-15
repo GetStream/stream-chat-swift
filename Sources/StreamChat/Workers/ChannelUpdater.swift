@@ -391,7 +391,7 @@ class ChannelUpdater: Worker {
         cid: ChannelId,
         userId: UserId,
         from messageId: MessageId,
-        lastReadMessageId: MessageId,
+        lastReadMessageId: MessageId?,
         completion: ((Error?) -> Void)? = nil
     ) {
         channelRepository.markUnread(
