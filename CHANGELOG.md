@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### ✅ Added
 - Expose Extra Data for Giphy Attachment Payloads [#2678](https://github.com/GetStream/stream-chat-swift/pull/2678)
 
+### 🐞 Fixed
+- Rescue messages that are stuck in `.sending` state [#2676](https://github.com/GetStream/stream-chat-swift/pull/2676)
+
 # [4.33.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.33.0)
 _June 08, 2023_
 
@@ -18,7 +21,7 @@ _June 08, 2023_
 
 ### 🐞 Fixed
 - Fix not being able to send messages when jumping to message in newest page [#2647](https://github.com/GetStream/stream-chat-swift/pull/2647)
-- Fix shadow message making hidden channel reappear #2663(https://github.com/GetStream/stream-chat-swift/pull/2663)
+- Fix shadow message making hidden channel reappear [#2663](https://github.com/GetStream/stream-chat-swift/pull/2663)
 
 ## StreamChatUI
 ### ✅ Added
