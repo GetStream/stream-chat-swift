@@ -25,16 +25,15 @@ final class QuotedReply_Tests: StreamTestCase {
         }
     }
 
-    func test_whenSwipingMessageAboveThreshold_thenMessageIsQuotedReply() {
+    func test_whenSwipingMessage_thenMessageIsQuotedReply() {
         linkToScenario(withId: 2096)
 
         GIVEN("user opens the channel") {
             backendRobot.generateChannels(count: 1, messagesCount: 1)
             userRobot.login().openChannel()
         }
-        WHEN("user swipes a message above threshold") {
-            userRobot
-                .swipeMessageAboveThreshold()
+        WHEN("user swipes a message") {
+            userRobot.swipeMessage()
         }
         THEN("user quoted the message") {
             userRobot
@@ -43,26 +42,6 @@ final class QuotedReply_Tests: StreamTestCase {
         }
     }
 
-    func test_whenSwipingMessageBelowThreshold_thenMessageIsNotQuotedReply() throws {
-        linkToScenario(withId: 2097)
-        
-        throw XCTSkip("https://github.com/GetStream/ios-issues-tracking/issues/469")
-
-        GIVEN("user opens the channel") {
-            backendRobot.generateChannels(count: 1, messagesCount: 1)
-            userRobot.login().openChannel()
-        }
-        WHEN("user swipes a message below threshold") {
-            userRobot
-                .swipeMessageBelowThreshold()
-        }
-        THEN("user did not quoted the message") {
-            userRobot
-                .sendMessage("Quoting")
-                .assertQuotedMessageDoesNotExist("1")
-        }
-    }
-    
     func test_quotedReplyInList_whenUserAddsQuotedReply() {
         linkToScenario(withId: 1667)
 
