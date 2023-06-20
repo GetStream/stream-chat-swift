@@ -336,16 +336,9 @@ extension UserRobot {
     }
 
     @discardableResult
-    func swipeMessageAboveThreshold(at index: Int = 0) -> Self {
+    func swipeMessage(at index: Int = 0) -> Self {
         let cell = messageCell(withIndex: index).waitForHitPoint()
-        cell.swipeRight(velocity: .default)
-        return self
-    }
-
-    @discardableResult
-    func swipeMessageBelowThreshold(at index: Int = 0) -> Self {
-        let cell = messageCell(withIndex: index).waitForHitPoint()
-        cell.swipeRight(velocity: .slow)
+        cell.swipeRight()
         return self
     }
 
