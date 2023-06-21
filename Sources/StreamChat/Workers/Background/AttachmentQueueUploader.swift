@@ -226,7 +226,7 @@ private class AttachmentStorage {
 
     private let fileManager: FileManager
     private lazy var baseURL: URL = {
-        let base = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first ?? FileManager.default.temporaryDirectory
+        let base = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first ?? fileManager.temporaryDirectory
         return base.appendingPathComponent(Constants.path)
     }()
 

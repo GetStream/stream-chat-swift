@@ -264,6 +264,52 @@ final class AttachmentQueueUploader_Tests: XCTestCase {
             Assert.willBeEqual(imageModel?.extraData, ["test": 123])
         }
     }
+
+    func test_attachmentsAreCopiedToSandbox_beforeBeingSent() throws {
+        // GIVEN
+        let cid: ChannelId = .unique
+        let messageId: MessageId = .unique
+        let attachmentId: AttachmentId = .init(cid: cid, messageId: messageId, index: 0)
+
+        let fileManager = FileManager.default
+        let fileContent = "This is the file content"
+        let fileName = "Test.txt"
+
+        // Save a temporary file for the attachment to be sent
+        let fileData = try XCTUnwrap(fileContent.data(using: .utf8))
+        let temporaryFileURL = fileManager.temporaryDirectory.appendingPathComponent(fileName)
+        try fileData.write(to: temporaryFileURL)
+
+        // WHEN
+        // Create an attachment using the temporary file
+        let attachment = AnyAttachmentPayload.mock(type: .file, localFileURL: temporaryFileURL)
+        try database.createChannel(cid: cid, withMessages: false)
+        try database.createMessage(id: messageId, cid: cid, localState: .pendingSend)
+        try database.writeSynchronously { session in
+            try session.createNewAttachment(attachment: attachment, id: attachmentId)
+        }
+
+        // THEN
+        let attachmentDTO = try XCTUnwrap(database.viewContext.attachment(id: attachmentId))
+        let documentsURL = try XCTUnwrap(fileManager.urls(for: .documentDirectory, in: .userDomainMask).first)
+        let attachmentsDirectory = documentsURL.appendingPathComponent("LocalAttachments")
+        var locallyStoredAttachments: [URL] {
+            (try? fileManager.contentsOfDirectory(at: attachmentsDirectory, includingPropertiesForKeys: nil)) ?? []
+        }
+
+        wait(for: [apiClient.uploadRequest_expectation], timeout: defaultTimeout)
+
+        XCTAssertEqual(locallyStoredAttachments.count, 1)
+        XCTAssertEqual(locallyStoredAttachments.first?.lastPathComponent, fileName)
+        XCTAssertEqual(attachmentDTO.localState, .pendingUpload)
+
+        // Simulate attachment upload
+        let mockedRemoteURL = documentsURL.appendingPathComponent("mock-remote-url")
+        apiClient.uploadFile_completion!(.success(.dummy(remoteURL: mockedRemoteURL)))
+
+        AssertAsync.willBeTrue(attachmentDTO.localState == .uploaded)
+        XCTAssertEqual(locallyStoredAttachments.count, 0)
+    }
 }
 
 private extension URL {
