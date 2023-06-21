@@ -171,11 +171,11 @@ public struct AttachmentFile: Codable, Hashable {
         }
 
         let fileType = AttachmentFileType(ext: url.pathExtension)
-        let attributes = try FileManager.default.attributesOfItem(atPath: url.path)
+        let attributes = try? FileManager.default.attributesOfItem(atPath: url.path)
 
         self.init(
             type: fileType,
-            size: attributes[.size] as? Int64 ?? 0,
+            size: attributes?[.size] as? Int64 ?? 0,
             mimeType: fileType.mimeType
         )
     }
