@@ -240,8 +240,8 @@ private class AttachmentStorage {
     }
 
     /// Since iOS 8, we cannot use absolute paths to access resources because the intermediate folders can change between sessions/app runs. The content of it, when
-    /// using `.documentsDirectory` is stable.
-    /// Because of that, if the file is already in our storage, the only thing we will do is to give a fresh and valid url to access it.
+    /// using `.documentsDirectory`, is stable though.
+    /// Because of that, if the file is already in our storage, the only thing we will do is to return a fresh and valid url to access it.
     func storeAttachment(at temporaryURL: URL) throws -> URL {
         let id = temporaryURL.lastPathComponent
         let sandboxedURL = baseURL.appendingPathComponent(id)
