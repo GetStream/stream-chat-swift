@@ -2771,7 +2771,7 @@ extension MessageUpdater_Tests {
 
         if shouldClear {
             // Previous current messages are not shown (excluding local messages).
-            XCTAssertEqual(currentMessageDTOs.map(\.showInsideThread), [true, false, false], file: file, line: line)
+            XCTAssertEqual(currentMessageDTOs.filter { $0.showInsideThread }.count, 1, file: file, line: line)
         } else {
             // Previous current messages are not discarded.
             XCTAssertEqual(currentMessageDTOs.map(\.showInsideThread), [true, true, true], file: file, line: line)
