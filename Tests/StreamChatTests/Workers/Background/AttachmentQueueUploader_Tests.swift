@@ -310,6 +310,74 @@ final class AttachmentQueueUploader_Tests: XCTestCase {
         AssertAsync.willBeTrue(attachmentDTO.localState == .uploaded)
         XCTAssertEqual(locallyStoredAttachments.count, 0)
     }
+
+    func test_multipleAttachmentsAreCopiedToSandbox_onlySuccessfulOnesAreRemoved() throws {
+        let fileManager = FileManager.default
+        // GIVEN
+        let cid: ChannelId = .unique
+        let messageId: MessageId = .unique
+
+        let documentsURL = try XCTUnwrap(fileManager.urls(for: .documentDirectory, in: .userDomainMask).first)
+        var locallyStoredAttachments: [URL] {
+            let attachmentsDirectory = documentsURL.appendingPathComponent("LocalAttachments")
+            return (try? fileManager.contentsOfDirectory(at: attachmentsDirectory, includingPropertiesForKeys: nil)) ?? []
+        }
+
+        func saveFile(for attachmentId: AttachmentId, fileName: String) throws -> URL {
+            let fileData = try XCTUnwrap("This is the file content".data(using: .utf8))
+            let temporaryFileURL = fileManager.temporaryDirectory.appendingPathComponent(fileName)
+            try fileData.write(to: temporaryFileURL)
+            return temporaryFileURL
+        }
+
+        func completeUploadRequest(with result: Result<UploadedAttachment, Error>) throws {
+            try XCTUnwrap(apiClient.uploadFile_completion)(result)
+        }
+
+        let attachmentId1: AttachmentId = .init(cid: cid, messageId: messageId, index: 0)
+        let attachmentId2: AttachmentId = .init(cid: cid, messageId: messageId, index: 1)
+        let fileName1 = "Test\(attachmentId1.index).txt"
+        let fileName2 = "Test\(attachmentId2.index).txt"
+
+        let temporaryFileURL1 = try saveFile(for: attachmentId1, fileName: fileName1)
+        let temporaryFileURL2 = try saveFile(for: attachmentId2, fileName: fileName2)
+
+        // WHEN
+        // Create channel and message
+        try database.createChannel(cid: cid, withMessages: false)
+        try database.createMessage(id: messageId, cid: cid, localState: .pendingSend)
+
+        // Save first attachment
+        try database.writeSynchronously { session in
+            let attachment = AnyAttachmentPayload.mock(type: .file, localFileURL: temporaryFileURL1)
+            try session.createNewAttachment(attachment: attachment, id: attachmentId1)
+        }
+
+        wait(for: [apiClient.uploadRequest_expectation], timeout: defaultTimeout)
+        try completeUploadRequest(with: .failure(TestError()))
+
+        apiClient.cleanUp()
+
+        // Save first attachment
+        try database.writeSynchronously { session in
+            let attachment = AnyAttachmentPayload.mock(type: .file, localFileURL: temporaryFileURL2)
+            try session.createNewAttachment(attachment: attachment, id: attachmentId2)
+        }
+
+        wait(for: [apiClient.uploadRequest_expectation], timeout: defaultTimeout)
+        let mockedRemoteURL2 = documentsURL.appendingPathComponent("mock-remote-url")
+        try completeUploadRequest(with: .success(.dummy(remoteURL: mockedRemoteURL2)))
+
+        // THEN
+        let attachmentDTO1 = try XCTUnwrap(database.viewContext.attachment(id: attachmentId1))
+        let attachmentDTO2 = try XCTUnwrap(database.viewContext.attachment(id: attachmentId2))
+
+        AssertAsync.willBeTrue(attachmentDTO1.localState == .uploadingFailed)
+        AssertAsync.willBeTrue(attachmentDTO2.localState == .uploaded)
+
+        XCTAssertEqual(locallyStoredAttachments.count, 1)
+        XCTAssertEqual(locallyStoredAttachments.first?.lastPathComponent, fileName1)
+    }
 }
 
 private extension URL {
