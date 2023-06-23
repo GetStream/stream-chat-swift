@@ -297,22 +297,22 @@ final class ChatMessageListVC_Tests: XCTestCase {
 
         XCTAssertEqual(mockedDelegate.shouldLoadFirstPageCallCount, 1)
         XCTAssertEqual(mockedListView.reloadSkippedMessagesCallCount, 1)
-        XCTAssertTrue(sut.scrollToLatestMessageButton.isHidden)
+        XCTAssertTrue(sut.scrollToBottomButton.isHidden)
     }
 
-    // MARK: - scrollToLatestMessage
+    // MARK: - didTapScrollToBottomButton
 
-    func test_scrollToLatestMessage_whenFirstPageIsLoaded_scrollToMessage() {
+    func test_didTapScrollToBottomButton_whenFirstPageIsLoaded_scrollToMessage() {
         mockedDataSource.mockedIsFirstPageLoaded = true
 
-        sut.scrollToLatestMessage()
+        sut.didTapScrollToBottomButton()
         XCTAssertEqual(mockedListView.scrollToBottomCallCount, 1)
     }
 
-    func test_scrollToLatestMessage_whenFirstPageNotLoaded_shouldJumpToFirstPage() {
+    func test_didTapScrollToBottomButton_whenFirstPageNotLoaded_shouldJumpToFirstPage() {
         mockedDataSource.mockedIsFirstPageLoaded = false
 
-        sut.scrollToLatestMessage()
+        sut.didTapScrollToBottomButton()
         XCTAssertEqual(mockedListView.scrollToBottomCallCount, 0)
         XCTAssertEqual(mockedDelegate.shouldLoadFirstPageCallCount, 1)
     }

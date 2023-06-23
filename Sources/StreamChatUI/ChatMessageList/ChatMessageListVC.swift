@@ -74,8 +74,8 @@ open class ChatMessageListVC: _ViewController,
 
     /// A button to scroll the collection view to the bottom.
     /// Visible when there is unread message and the collection view is not at the bottom already.
-    open private(set) lazy var scrollToLatestMessageButton: ScrollToLatestMessageButton = components
-        .scrollToLatestMessageButton
+    open private(set) lazy var scrollToBottomButton: ScrollToBottomButton = components
+        .scrollToBottomButton
         .init()
         .withoutAutoresizingMaskConstraints
 
@@ -153,7 +153,7 @@ open class ChatMessageListVC: _ViewController,
         panGestureRecognizer.delegate = self
         listView.addGestureRecognizer(panGestureRecognizer)
 
-        scrollToLatestMessageButton.addTarget(self, action: #selector(scrollToLatestMessage), for: .touchUpInside)
+        scrollToBottomButton.addTarget(self, action: #selector(didTapScrollToBottomButton), for: .touchUpInside)
     }
 
     override open func setUpLayout() {
@@ -171,12 +171,12 @@ open class ChatMessageListVC: _ViewController,
         typingIndicatorView.pin(anchors: [.leading, .trailing], to: view)
         typingIndicatorView.bottomAnchor.pin(equalTo: listView.bottomAnchor).isActive = true
 
-        view.addSubview(scrollToLatestMessageButton)
-        listView.bottomAnchor.pin(equalToSystemSpacingBelow: scrollToLatestMessageButton.bottomAnchor).isActive = true
-        scrollToLatestMessageButton.trailingAnchor.pin(equalTo: view.layoutMarginsGuide.trailingAnchor).isActive = true
-        scrollToLatestMessageButton.widthAnchor.pin(equalTo: scrollToLatestMessageButton.heightAnchor).isActive = true
-        scrollToLatestMessageButton.heightAnchor.pin(equalToConstant: 40).isActive = true
-        scrollToLatestMessageButton.isHidden = true
+        view.addSubview(scrollToBottomButton)
+        listView.bottomAnchor.pin(equalToSystemSpacingBelow: scrollToBottomButton.bottomAnchor).isActive = true
+        scrollToBottomButton.trailingAnchor.pin(equalTo: view.layoutMarginsGuide.trailingAnchor).isActive = true
+        scrollToBottomButton.widthAnchor.pin(equalTo: scrollToBottomButton.heightAnchor).isActive = true
+        scrollToBottomButton.heightAnchor.pin(equalToConstant: 40).isActive = true
+        scrollToBottomButton.isHidden = true
 
         if isDateOverlayEnabled {
             view.addSubview(dateOverlayView)
@@ -240,19 +240,19 @@ open class ChatMessageListVC: _ViewController,
         )
     }
 
-    /// Set the visibility of `scrollToLatestMessageButton`.
+    /// Set the visibility of `scrollToBottomButton`.
     open func updateScrollToBottomButtonVisibility(animated: Bool = true) {
         let isVisible = isScrollToBottomButtonVisible
-        if isVisible { scrollToLatestMessageButton.isVisible = true }
+        if isVisible { scrollToBottomButton.isVisible = true }
         Animate(isAnimated: animated, {
-            self.scrollToLatestMessageButton.alpha = isVisible ? 1 : 0
+            self.scrollToBottomButton.alpha = isVisible ? 1 : 0
         }, completion: { _ in
-            if !isVisible { self.scrollToLatestMessageButton.isVisible = false }
+            if !isVisible { self.scrollToBottomButton.isVisible = false }
         })
     }
 
-    /// Action for `scrollToLatestMessageButton` that scroll to most recent message.
-    @objc open func scrollToLatestMessage() {
+    /// Action for `scrollToBottomButton` that scroll to most recent message.
+    @objc open func didTapScrollToBottomButton() {
         guard isFirstPageLoaded else {
             jumpToFirstPage()
             return
@@ -563,7 +563,7 @@ open class ChatMessageListVC: _ViewController,
     /// Jump to the first page of the message list.
     internal func jumpToFirstPage() {
         delegate?.chatMessageListVCShouldLoadFirstPage(self)
-        scrollToLatestMessageButton.isHidden = true
+        scrollToBottomButton.isHidden = true
         listView.reloadSkippedMessages()
     }
 
@@ -901,6 +901,16 @@ open class ChatMessageListVC: _ViewController,
     @available(*, deprecated, renamed: "scrollToBottom(animated:)")
     open func scrollToMostRecentMessage(animated: Bool = true) {
         listView.scrollToBottom(animated: animated)
+    }
+
+    @available(*, deprecated, renamed: "scrollToBottomButton")
+    open var scrollToLatestMessageButton: ScrollToBottomButton {
+        scrollToBottomButton
+    }
+
+    @available(*, deprecated, renamed: "didTapScrollToBottomButton")
+    @objc open func scrollToLatestMessage() {
+        didTapScrollToBottomButton()
     }
 }
 
