@@ -379,4 +379,44 @@ final class MessageSender_Tests: XCTestCase {
         // Assert sender can be released even though network response hasn't come yet
         AssertAsync.canBeReleased(&sender)
     }
+
+    // MARK: Rescue messages
+
+    func test_sender_startsMessagesRescueOnInit() throws {
+        // Given
+        let channelId = ChannelId.unique
+        let messageId = MessageId.unique
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: channelId)))
+            let message = try session.saveMessage(
+                payload: .dummy(messageId: messageId),
+                for: channelId,
+                syncOwnReactions: false,
+                cache: nil
+            )
+            message.localMessageState = .sending
+        }
+
+        let initialMessages = MessageDTO.loadSendingMessages(context: database.viewContext)
+        XCTAssertEqual(initialMessages.count, 1)
+        XCTAssertEqual(initialMessages.first?.id, messageId)
+        XCTAssertEqual(initialMessages.first?.localMessageState, .sending)
+
+        // When
+        let sessionMock = DatabaseSessionRescueListener(underlyingSession: database.writableContext)
+        let mockDatabase = DatabaseContainer_Spy(sessionMock: sessionMock)
+        sender = .init(messageRepository: messageRepository, database: mockDatabase, apiClient: apiClient)
+
+        // Then
+        wait(for: [sessionMock.rescueMessagesExpectation], timeout: defaultTimeout)
+    }
+}
+
+private class DatabaseSessionRescueListener: DatabaseSession_Mock {
+    let rescueMessagesExpectation = XCTestExpectation(description: "rescue messages")
+
+    override func rescueMessagesStuckInSending() {
+        rescueMessagesExpectation.fulfill()
+    }
 }

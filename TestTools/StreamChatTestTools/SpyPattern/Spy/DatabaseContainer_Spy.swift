@@ -28,6 +28,8 @@ public final class DatabaseContainer_Spy: DatabaseContainer, Spy {
     /// If set to `true` and the mock will remove its database files once deinited.
     var shouldCleanUpTempDBFiles = false
 
+    private(set) var sessionMock: DatabaseSession_Mock?
+
     public convenience init(localCachingSettings: ChatClientConfig.LocalCaching? = nil) {
         self.init(kind: .onDisk(databaseFileURL: .newTemporaryFileURL()), localCachingSettings: localCachingSettings)
         shouldCleanUpTempDBFiles = true
@@ -54,6 +56,11 @@ public final class DatabaseContainer_Spy: DatabaseContainer, Spy {
             deletedMessagesVisibility: deletedMessagesVisibility,
             shouldShowShadowedMessages: shouldShowShadowedMessages
         )
+    }
+
+    convenience init(sessionMock: DatabaseSession_Mock) {
+        self.init(kind: .inMemory)
+        self.sessionMock = sessionMock
     }
 
     deinit {
@@ -97,8 +104,12 @@ public final class DatabaseContainer_Spy: DatabaseContainer, Spy {
         record()
         let wrappedActions: ((DatabaseSession) throws -> Void) = { session in
             self.isWriteSessionInProgress = true
-            try actions(session)
+            try actions(self.sessionMock ?? session)
             self.isWriteSessionInProgress = false
+        }
+
+        let completion: (Error?) -> Void = { error in
+            completion(error)
             self._writeSessionCounter { $0 += 1 }
         }
 
