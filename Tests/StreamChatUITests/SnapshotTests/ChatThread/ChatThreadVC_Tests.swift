@@ -234,7 +234,7 @@ final class ChatThreadVC_Tests: XCTestCase {
         messageControllerMock.loadPageAroundReplyId_completion?(nil)
 
         XCTAssertEqual(messageControllerMock.loadPageAroundReplyId_callCount, 1)
-        XCTAssertEqual(messageListVCMock?.scrollToOldestMessageCallCount, 1)
+        XCTAssertEqual(messageListVCMock?.scrollToTopCallCount, 1)
     }
 
     func test_setUp_whenShouldStartFromOldestRepliesAndHasInitialReplyId_thenJumpsToInitialReplyId() {
@@ -256,7 +256,7 @@ final class ChatThreadVC_Tests: XCTestCase {
 
         XCTAssertEqual(messageControllerMock.loadPageAroundReplyId_callCount, 1)
         XCTAssertEqual(messageListVCMock?.jumpToMessageCallCount, 1)
-        XCTAssertEqual(messageListVCMock?.scrollToOldestMessageCallCount, 0)
+        XCTAssertEqual(messageListVCMock?.scrollToTopCallCount, 0)
     }
 
     // MARK: - audioQueuePlayerNextAssetURL

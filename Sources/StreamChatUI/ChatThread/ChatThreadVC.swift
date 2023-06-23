@@ -149,7 +149,7 @@ open class ChatThreadVC: _ViewController,
             // When we tap on the parent message and start from oldest replies is enabled
             if self.shouldStartFromOldestReplies, let parentMessage = self.messageController.message {
                 self.messageController.loadPageAroundReplyId(parentMessage.id) { [weak self] _ in
-                    self?.messageListVC.scrollToOldestMessage(animated: false)
+                    self?.messageListVC.scrollToTop(animated: false)
                 }
                 return
             }

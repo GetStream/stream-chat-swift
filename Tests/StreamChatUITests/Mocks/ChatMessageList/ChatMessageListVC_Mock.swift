@@ -7,9 +7,9 @@
 import UIKit
 
 class ChatMessageListVC_Mock: ChatMessageListVC {
-    var scrollToOldestMessageCallCount = 0
-    override func scrollToOldestMessage(animated: Bool = true) {
-        scrollToOldestMessageCallCount += 1
+    var scrollToTopCallCount = 0
+    override func scrollToTop(animated: Bool = true) {
+        scrollToTopCallCount += 1
     }
 
     var jumpToMessageCallCount = 0

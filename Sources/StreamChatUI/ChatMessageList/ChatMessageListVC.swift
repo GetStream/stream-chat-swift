@@ -241,12 +241,6 @@ open class ChatMessageListVC: _ViewController,
     }
 
     /// Set the visibility of `scrollToLatestMessageButton`.
-    @available(*, deprecated, message: "use updateScrollToBottomButtonVisibility(animated:) instead.")
-    open func setScrollToLatestMessageButton(visible: Bool, animated: Bool = true) {
-        updateScrollToBottomButtonVisibility()
-    }
-
-    /// Set the visibility of `scrollToLatestMessageButton`.
     open func updateScrollToBottomButtonVisibility(animated: Bool = true) {
         let isVisible = isScrollToBottomButtonVisible
         if isVisible { scrollToLatestMessageButton.isVisible = true }
@@ -264,20 +258,17 @@ open class ChatMessageListVC: _ViewController,
             return
         }
 
-        scrollToMostRecentMessage()
+        scrollToBottom()
     }
 
-    /// Scrolls to most recent message.
-    open func scrollToMostRecentMessage(animated: Bool = true) {
-        listView.scrollToMostRecentMessage(animated: animated)
+    /// Scroll to the bottom of the message list.
+    open func scrollToBottom(animated: Bool = true) {
+        listView.scrollToBottom(animated: animated)
     }
 
-    /// Scrolls to the oldest message.
-    public func scrollToOldestMessage(animated: Bool = true) {
-        let numberOfRows = listView.numberOfRows(inSection: 0)
-        guard numberOfRows > 0 else { return }
-        let indexPath = IndexPath(row: numberOfRows - 1, section: 0)
-        listView.scrollToRow(at: indexPath, at: .bottom, animated: animated)
+    /// Scroll to the top of the message list.
+    open func scrollToTop(animated: Bool = true) {
+        listView.scrollToTop(animated: animated)
     }
 
     func updateUnreadMessagesSeparator(at id: MessageId?, previousId: MessageId?) {
@@ -887,6 +878,30 @@ open class ChatMessageListVC: _ViewController,
         audioSessionFeedbackGenerator.feedbackForSeeking()
         audioPlayer?.seek(to: timeInterval)
     }
+
+    // MARK: - Deprecations
+
+    /// Jump to a given message.
+    /// In case the message is already loaded, it directly goes to it.
+    /// If not, it will load the messages around it and go to that page.
+    ///
+    /// - Parameter message: The message which the message list should go to.
+    /// - Parameter onHighlight: An optional closure to provide highlighting style when the message appears on screen.
+    @available(*, deprecated, renamed: "jumpToMessage(id:onHighlight:)")
+    public func jumpToMessage(_ message: ChatMessage, onHighlight: ((IndexPath) -> Void)? = nil) {
+        jumpToMessage(id: message.id, onHighlight: onHighlight)
+    }
+
+    /// Set the visibility of `scrollToBottomButton`.
+    @available(*, deprecated, message: "use updateScrollToBottomButtonVisibility(animated:) instead.")
+    open func setScrollToLatestMessageButton(visible: Bool, animated: Bool = true) {
+        updateScrollToBottomButtonVisibility()
+    }
+
+    @available(*, deprecated, renamed: "scrollToBottom(animated:)")
+    open func scrollToMostRecentMessage(animated: Bool = true) {
+        listView.scrollToBottom(animated: animated)
+    }
 }
 
 // MARK: - Handle Message Updates
@@ -911,7 +926,7 @@ private extension ChatMessageListVC {
             self?.updateScrollToBottomButtonVisibility()
 
             UIView.performWithoutAnimation {
-                self?.scrollToMostRecentMessageIfNeeded(with: changes, newestChange: newestChange)
+                self?.scrollToBottomIfNeeded(with: changes, newestChange: newestChange)
                 self?.reloadMovedMessage(newestChange: newestChange)
                 self?.reloadPreviousMessagesForVisibleRemoves(with: changes)
                 self?.reloadPreviousMessageWhenInsertingNewMessage()
@@ -988,12 +1003,12 @@ private extension ChatMessageListVC {
 
     // Scroll to the bottom if the new message was sent by
     // the current user, or moved by the current user, and the first page is loaded.
-    func scrollToMostRecentMessageIfNeeded(with changes: [ListChange<ChatMessage>], newestChange: ListChange<ChatMessage>?) {
+    func scrollToBottomIfNeeded(with changes: [ListChange<ChatMessage>], newestChange: ListChange<ChatMessage>?) {
         guard isFirstPageLoaded else { return }
         guard let newMessage = newestChange?.item else { return }
         let newestChangeIsInsertionOrMove = newestChange?.isInsertion == true || newestChange?.isMove == true
         if newestChangeIsInsertionOrMove && newMessage.isSentByCurrentUser {
-            scrollToMostRecentMessage()
+            scrollToBottom()
         }
     }
 
@@ -1004,20 +1019,5 @@ private extension ChatMessageListVC {
             let movedIndexPath = IndexPath(item: 0, section: 0)
             listView.reloadRows(at: [movedIndexPath], with: .none)
         }
-    }
-}
-
-// MARK: - Deprecations
-
-extension ChatMessageListVC {
-    /// Jump to a given message.
-    /// In case the message is already loaded, it directly goes to it.
-    /// If not, it will load the messages around it and go to that page.
-    ///
-    /// - Parameter message: The message which the message list should go to.
-    /// - Parameter onHighlight: An optional closure to provide highlighting style when the message appears on screen.
-    @available(*, deprecated, renamed: "jumpToMessage(id:onHighlight:)")
-    public func jumpToMessage(_ message: ChatMessage, onHighlight: ((IndexPath) -> Void)? = nil) {
-        jumpToMessage(id: message.id, onHighlight: onHighlight)
     }
 }
