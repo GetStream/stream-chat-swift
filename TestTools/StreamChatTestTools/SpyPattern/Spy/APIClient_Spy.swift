@@ -41,6 +41,7 @@ final class APIClient_Spy: APIClient, Spy {
     @Atomic var init_attachmentUploader: AttachmentUploader
     @Atomic var request_expectation: XCTestExpectation
     @Atomic var recoveryRequest_expectation: XCTestExpectation
+    @Atomic var uploadRequest_expectation: XCTestExpectation
 
     // Cleans up all recorded values
     func cleanUp() {
@@ -49,6 +50,7 @@ final class APIClient_Spy: APIClient, Spy {
         request_completion = nil
         request_expectation = .init()
         recoveryRequest_expectation = .init()
+        uploadRequest_expectation = .init()
 
         recoveryRequest_endpoint = nil
         recoveryRequest_allRecordedCalls = []
@@ -75,6 +77,7 @@ final class APIClient_Spy: APIClient, Spy {
         init_attachmentUploader = attachmentUploader
         request_expectation = .init()
         recoveryRequest_expectation = .init()
+        uploadRequest_expectation = .init()
 
         super.init(
             sessionConfiguration: sessionConfiguration,
@@ -147,6 +150,7 @@ final class APIClient_Spy: APIClient, Spy {
         uploadFile_attachment = attachment
         uploadFile_progress = progress
         uploadFile_completion = completion
+        uploadRequest_expectation.fulfill()
     }
 
     override func flushRequestsQueue() {
