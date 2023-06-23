@@ -274,13 +274,13 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///                 If request fails, the completion will be called with an error.
     ///
     public func partialChannelUpdate(
-        name: String?,
-        imageURL: URL?,
-        team: String?,
+        name: String? = nil,
+        imageURL: URL? = nil,
+        team: String? = nil,
         members: Set<UserId> = [],
         invites: Set<UserId> = [],
         extraData: [String: RawJSON] = [:],
-        unsetProperties: [String],
+        unsetProperties: [String] = [],
         completion: ((Error?) -> Void)? = nil
     ) {
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
