@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### ✅ Added
 - Expose Extra Data for Giphy Attachment Payloads [#2678](https://github.com/GetStream/stream-chat-swift/pull/2678)
 
+### 🐞 Fixed
+- Fix not being able to resend failed attachments [#2680](https://github.com/GetStream/stream-chat-swift/pull/2680)
+
 # [4.33.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.33.0)
 _June 08, 2023_
 

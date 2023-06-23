@@ -25,6 +25,7 @@ class AttachmentQueueUploader: Worker {
     private let observer: ListDatabaseObserver<AttachmentDTO, AttachmentDTO>
     private let attachmentPostProcessor: UploadedAttachmentPostProcessor?
     private let attachmentUpdater = AnyAttachmentUpdater()
+    private let attachmentStorage = AttachmentStorage()
 
     var minSignificantUploadingProgressChange: Double = 0.05
 
@@ -69,12 +70,10 @@ class AttachmentQueueUploader: Worker {
     }
 
     private func uploadNextAttachment() {
-        database.write { [weak self] session in
-            guard let attachmentID = self?.pendingAttachmentIDs.first else {
-                return
-            }
+        guard let attachmentID = pendingAttachmentIDs.first else { return }
 
-            guard let attachment = session.attachment(id: attachmentID)?.asAnyModel() else {
+        prepareAttachmentForUpload(with: attachmentID) { [weak self] attachment in
+            guard let attachment = attachment else {
                 self?.removeAttachmentIDAndContinue(attachmentID)
                 return
             }
@@ -100,6 +99,28 @@ class AttachmentQueueUploader: Worker {
                     )
                 }
             )
+        }
+    }
+
+    private func prepareAttachmentForUpload(with id: AttachmentId, completion: @escaping (AnyChatMessageAttachment?) -> Void) {
+        let attachmentStorage = self.attachmentStorage
+        database.write { session in
+            guard let attachment = session.attachment(id: id) else { return }
+
+            if let temporaryURL = attachment.localURL {
+                do {
+                    let localURL = try attachmentStorage.storeAttachment(at: temporaryURL)
+                    attachment.localURL = localURL
+                } catch {
+                    log.error("Could not copy attachment to local storage: \(error.localizedDescription)", subsystems: .offlineSupport)
+                }
+            }
+
+            let model = attachment.asAnyModel()
+
+            DispatchQueue.main.async {
+                completion(model)
+            }
         }
     }
 
@@ -139,6 +160,7 @@ class AttachmentQueueUploader: Worker {
                     uploadedAttachment = processedAttachment
                 }
                 attachmentDTO.data = uploadedAttachment.attachment.payload
+                self?.removeDataFromLocalStorage(for: attachmentId)
             }
         }, completion: {
             if let error = $0 {
@@ -175,6 +197,13 @@ class AttachmentQueueUploader: Worker {
 
         uploadedAttachment.attachment = attachment
     }
+
+    private func removeDataFromLocalStorage(for attachmentId: AttachmentId) {
+        database.write { [weak attachmentStorage] session in
+            guard let attachmentLocalURL = session.attachment(id: attachmentId)?.localURL else { return }
+            attachmentStorage?.removeAttachment(at: attachmentLocalURL)
+        }
+    }
 }
 
 private extension Array where Element == ListChange<AttachmentDTO> {
@@ -187,5 +216,55 @@ private extension Array where Element == ListChange<AttachmentDTO> {
                 return nil
             }
         }
+    }
+}
+
+private class AttachmentStorage {
+    enum Constants {
+        static let path = "LocalAttachments"
+    }
+
+    private let fileManager: FileManager
+    private lazy var baseURL: URL = {
+        let base = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first ?? fileManager.temporaryDirectory
+        return base.appendingPathComponent(Constants.path)
+    }()
+
+    init(fileManager: FileManager = .default) {
+        self.fileManager = fileManager
+        do {
+            try fileManager.createDirectory(at: baseURL, withIntermediateDirectories: true)
+        } catch {
+            log.error("Could not create a directory to store attachments: \(error.localizedDescription)")
+        }
+    }
+
+    /// Since iOS 8, we cannot use absolute paths to access resources because the intermediate folders can change between sessions/app runs. The content of it, when
+    /// using `.documentsDirectory`, is stable though.
+    /// Because of that, if the file is already in our storage, the only thing we will do is to return a fresh and valid url to access it.
+    func storeAttachment(at temporaryURL: URL) throws -> URL {
+        let id = temporaryURL.lastPathComponent
+        let sandboxedURL = baseURL.appendingPathComponent(id)
+
+        guard !fileExists(at: sandboxedURL) else {
+            return sandboxedURL
+        }
+
+        // Copy data to local path
+        try Data(contentsOf: temporaryURL).write(to: sandboxedURL)
+        return sandboxedURL
+    }
+
+    func removeAttachment(at localURL: URL) {
+        guard fileExists(at: localURL) else { return }
+        do {
+            try fileManager.removeItem(at: localURL)
+        } catch {
+            log.info("Unable to remove attachment at \(localURL): \(error.localizedDescription)")
+        }
+    }
+
+    private func fileExists(at url: URL) -> Bool {
+        fileManager.fileExists(atPath: url.path)
     }
 }
