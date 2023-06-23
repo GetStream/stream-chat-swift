@@ -218,7 +218,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// `true` if the channel supports uploading files/images. Defaults to `false` if the channel doesn't exist yet.
     public var areUploadsEnabled: Bool { channel?.config.uploadsEnabled == true }
 
-    // MARK: - Channel actions
+    // MARK: - Actions
 
     /// Updated channel with new data.
     ///
