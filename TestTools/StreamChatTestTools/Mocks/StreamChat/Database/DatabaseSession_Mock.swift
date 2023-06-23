@@ -6,7 +6,7 @@ import Foundation
 @testable import StreamChat
 
 /// This class allows you to wrap an existing `DatabaseSession` and adjust the behavior of its methods.
-final class DatabaseSession_Mock: DatabaseSession {
+class DatabaseSession_Mock: DatabaseSession {
     /// The wrapped session
     let underlyingSession: DatabaseSession
 
@@ -19,11 +19,7 @@ final class DatabaseSession_Mock: DatabaseSession {
 
     var markChannelAsReadParams: (cid: ChannelId, userId: UserId, at: Date)?
     var markChannelAsUnreadParams: (cid: ChannelId, userId: UserId)?
-}
 
-// Here start the boilerplate that forwards and intercepts the session calls if needed
-
-extension DatabaseSession_Mock {
     func addReaction(
         to messageId: MessageId,
         type: MessageReactionType,
