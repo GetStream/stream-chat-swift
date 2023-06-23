@@ -262,6 +262,50 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         }
     }
 
+    /// Updates  channel information with provided data, and removes unneeded properties.
+    ///
+    /// - Parameters:
+    ///   - team: New team.
+    ///   - members: New members.
+    ///   - invites: New invites.
+    ///   - extraData: New `ExtraData`.
+    ///   - unsetProperties: Properties from the channel that are going to be cleared/unset.
+    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    ///                 If request fails, the completion will be called with an error.
+    ///
+    public func partialChannelUpdate(
+        name: String?,
+        imageURL: URL?,
+        team: String?,
+        members: Set<UserId> = [],
+        invites: Set<UserId> = [],
+        extraData: [String: RawJSON] = [:],
+        unsetProperties: [String],
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        /// Perform action only if channel is already created on backend side and have a valid `cid`.
+        guard let cid = cid, isChannelAlreadyCreated else {
+            channelModificationFailed(completion)
+            return
+        }
+
+        let payload: ChannelEditDetailPayload = .init(
+            cid: cid,
+            name: name,
+            imageURL: imageURL,
+            team: team,
+            members: members,
+            invites: invites,
+            extraData: extraData
+        )
+
+        updater.partialChannelUpdate(updates: payload, unsetProperties: unsetProperties) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
+    }
+
     /// Mutes the channel this controller manages.
     ///
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
