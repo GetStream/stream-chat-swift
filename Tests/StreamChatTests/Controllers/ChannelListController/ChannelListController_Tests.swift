@@ -513,6 +513,93 @@ final class ChannelListController_Tests: XCTestCase {
         AssertAsync.willBeEqual(controller.channels.map(\.cid), [])
     }
 
+    func test_unlinkedChannels_whenChannelInsertedWithoutAnyLinkedQuery_shouldInsertChannel() throws {
+        let exp = expectation(description: "didChangeChannels called")
+        exp.expectedFulfillmentCount = 2
+        let testDelegate = TestDelegate(exp: exp)
+        controller.delegate = testDelegate
+        controller.synchronize()
+        env.channelListUpdater?.update_completion?(.success([]))
+
+        // Save a channel linked to the current query
+        let cid1: ChannelId = .unique
+        try database.writeSynchronously { session in
+            try session.saveChannel(
+                payload: self.dummyPayload(
+                    with: cid1,
+                    members: [.dummy(user: .dummy(userId: self.memberId))]
+                ),
+                query: self.query,
+                cache: nil
+            )
+        }
+
+        // Assert channel is linked
+        XCTAssertEqual(controller.channels.map(\.cid), [cid1])
+
+        // Save a channel without any linked query
+        let cid2: ChannelId = .unique
+        try database.writeSynchronously { session in
+            try session.saveChannel(
+                payload: self.dummyPayload(
+                    with: cid2,
+                    members: [.dummy(user: .dummy(userId: self.memberId))]
+                ),
+                query: nil,
+                cache: nil
+            )
+        }
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        // Assert channels include the inserted channel
+        XCTAssertEqual(Set(controller.channels.map(\.cid)), Set([cid1, cid2]))
+    }
+
+    func test_unlinkedChannels_whenChannelInsertedBelongingToAnotherQuery_shouldNotInsertChannel() throws {
+        controller.synchronize()
+        env.channelListUpdater?.update_completion?(.success([]))
+
+        // Save a channel linked to the current query
+        let cid1: ChannelId = .unique
+        try database.writeSynchronously { session in
+            try session.saveChannel(
+                payload: self.dummyPayload(
+                    with: cid1,
+                    members: [.dummy(user: .dummy(userId: self.memberId))]
+                ),
+                query: self.query,
+                cache: nil
+            )
+        }
+
+        // Assert channel is linked
+        XCTAssertEqual(controller.channels.map(\.cid), [cid1])
+
+        let exp = expectation(description: "didChangeChannels not called when inserting channel from another query")
+        exp.isInverted = true
+        let testDelegate = TestDelegate(exp: exp)
+        controller.delegate = testDelegate
+
+        // Save a channel linked to another query
+        let cid2: ChannelId = .unique
+        try database.writeSynchronously { session in
+            try session.saveChannel(
+                payload: self.dummyPayload(
+                    with: cid2,
+                    members: [.dummy(user: .dummy(userId: self.memberId))]
+                ),
+                query: .init(filter: .noTeam),
+                cache: nil
+            )
+        }
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        // Assert channels remain the same
+        XCTAssertEqual(controller.channels.map(\.cid), [cid1])
+    }
+
     func test_hiddenChannel_isExcluded_whenFilterDoesntContainHiddenKey() throws {
         // Add 2 channels to the DB
         let cid: ChannelId = .unique
@@ -1755,6 +1842,17 @@ final class ChannelListController_Tests: XCTestCase {
         var config = ChatClientConfig(apiKey: .init(.unique))
         config.isChannelAutomaticFilteringEnabled = false
         client = ChatClient.mock(config: config)
+    }
+}
+
+private class TestDelegate: ChatChannelListControllerDelegate {
+    let exp: XCTestExpectation
+    init(exp: XCTestExpectation) {
+        self.exp = exp
+    }
+
+    func controller(_ controller: ChatChannelListController, didChangeChannels changes: [ListChange<ChatChannel>]) {
+        exp.fulfill()
     }
 }
 

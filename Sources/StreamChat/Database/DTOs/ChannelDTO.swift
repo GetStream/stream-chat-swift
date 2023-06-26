@@ -374,14 +374,11 @@ extension ChannelDTO {
         return request
     }
 
-    static func channelsFetchRequest(notLinkedTo query: ChannelListQuery) -> NSFetchRequest<ChannelDTO> {
+    static func channelsNotLinkedToAnyQueryFetchRequest() -> NSFetchRequest<ChannelDTO> {
         let request = NSFetchRequest<ChannelDTO>(entityName: ChannelDTO.entityName)
         request.sortDescriptors = [ChannelListSortingKey.defaultSortDescriptor]
-        // Channels which are not linked to this query
-        request.predicate = NSCompoundPredicate(
-            notPredicateWithSubpredicate: NSPredicate(
-                format: "ANY queries.filterHash == %@", query.filter.filterHash
-            )
+        request.predicate = NSPredicate(
+            format: "queries.@count == 0"
         )
         return request
     }

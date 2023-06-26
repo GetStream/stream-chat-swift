@@ -109,7 +109,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         let observer = self.environment.createChannelListDatabaseObserver(
             StreamRuntimeCheck._isBackgroundMappingEnabled,
             client.databaseContainer,
-            ChannelDTO.channelsFetchRequest(notLinkedTo: query),
+            ChannelDTO.channelsNotLinkedToAnyQueryFetchRequest(),
             { try $0.asModel() }
         )
 
