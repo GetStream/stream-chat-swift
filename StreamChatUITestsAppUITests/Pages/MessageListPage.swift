@@ -261,6 +261,14 @@ class MessageListPage {
         static func videoPlayer() -> XCUIElement {
             app.otherElements["PlayerView"]
         }
+        
+        static func restartAttachmentUploadIcon(in messageCell: XCUIElement) -> XCUIElement {
+            messageCell.buttons["AttachmentActionButton"]
+        }
+        
+        static func uploadingProgressLabel(in messageCell: XCUIElement) -> XCUIElement {
+            messageCell.staticTexts["uploadingProgressLabel"]
+        }
 
         enum LinkPreview {
             static func link(in messageCell: XCUIElement) -> XCUIElement {
