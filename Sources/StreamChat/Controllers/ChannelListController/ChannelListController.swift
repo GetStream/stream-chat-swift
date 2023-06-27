@@ -89,7 +89,6 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
                 log.debug("didChangeChannels: \(changes.map(\.debugDescription))")
                 $0.controller(self, didChangeChannels: changes)
             }
-            self?.handleLinkedChannels(changes)
         }
 
         observer.onWillChange = { [weak self] in
@@ -185,7 +184,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         }
     }
 
-    private func channelBelongsToController(_ channel: ChatChannel, change: ListChange<ChatChannel>) -> Bool {
+    private func channelBelongsToController(_ channel: ChatChannel) -> Bool {
         if let filter = filter {
             return filter(channel)
         }
@@ -202,90 +201,46 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         // This block should be removed once `shouldAddNewChannelToList` and `shouldListUpdatedChannel` methods are
         // fully removed.
         let deprecatedFallback: () -> Bool? = {
-            switch change {
-            case .insert:
-                return self.delegate?.controller(self, shouldAddNewChannelToList: channel)
-            case .update:
-                return self.delegate?.controller(self, shouldListUpdatedChannel: channel)
-            default:
-                return nil
-            }
+            self.delegate?.controller(self, shouldAddNewChannelToList: channel)
         }
 
         return deprecatedFallback() ?? true
     }
 
-    private func handleUnlinkedChannels(_ changes: [ListChange<ChatChannel>]) {
+    private func handleUnlinkedChannel(_ channel: ChatChannel) {
         guard state == .remoteDataFetched else {
             log.debug("Ignoring inserted/updated unlinked channels due to query \(query) not being synced.")
             return
         }
 
-        let channels = changes.compactMap { change -> ChatChannel? in
-            switch change {
-            case let .insert(channel, _):
-                return channelBelongsToController(channel, change: change) ? channel : nil
-            case let .update(channel, _):
-                return channelBelongsToController(channel, change: change) ? channel : nil
-            default: return nil
-            }
+        guard channelBelongsToController(channel) else {
+            return
         }
-        link(channels: channels)
+
+        link(channel: channel)
     }
 
-    private func handleLinkedChannels(_ changes: [ListChange<ChatChannel>]) {
-        let channels = changes.compactMap { change -> ChatChannel? in
-            switch change {
-            case let .update(channel, _):
-                // We unlink the channels that do not belong to this controller
-                return channelBelongsToController(channel, change: change) ? nil : channel
-            default: return nil
-            }
-        }
-        unlink(channels: channels)
-    }
-
-    private func link(channels: [ChatChannel]) {
-        guard !channels.isEmpty else { return }
+    // TODO: Move this to ChannelUpdater so it is easier to test.
+    private func link(channel: ChatChannel) {
         client.databaseContainer.write { session in
             guard let queryDTO = session.channelListQuery(filterHash: self.query.filter.filterHash) else {
                 log.debug("Channel list query has not yet created \(self.query)")
                 return
             }
 
-            for channel in channels {
-                guard let channelDTO = session.channel(cid: channel.cid) else {
-                    log.error("Channel \(channel.cid) cannot be found in database.")
-                    continue
-                }
-                queryDTO.channels.insert(channelDTO)
+            guard let channelDTO = session.channel(cid: channel.cid) else {
+                log.error("Channel \(channel.cid) cannot be found in database.")
+                return
             }
+
+            queryDTO.channels.insert(channelDTO)
         } completion: { [weak self] _ in
-            let cids = channels.map(\.cid)
-            self?.worker.startWatchingChannels(withIds: cids) {
+            self?.worker.startWatchingChannels(withIds: [channel.cid]) {
                 guard let error = $0 else { return }
 
                 log.warning(
-                    "Failed to start watching linked channels: \(cids), error: \(error.localizedDescription)"
+                    "Failed to start watching linked channel: \(channel.cid), error: \(error.localizedDescription)"
                 )
-            }
-        }
-    }
-
-    private func unlink(channels: [ChatChannel]) {
-        guard !channels.isEmpty else { return }
-        client.databaseContainer.write { session in
-            guard let queryDTO = session.channelListQuery(filterHash: self.query.filter.filterHash) else {
-                log.debug("Channel list query has not yet created \(self.query)")
-                return
-            }
-
-            for channel in channels {
-                guard let channelDTO = session.channel(cid: channel.cid) else {
-                    log.error("Channel \(channel.cid) cannot be found in database.")
-                    continue
-                }
-                queryDTO.channels.remove(channelDTO)
             }
         }
     }
@@ -357,7 +312,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
 extension ChatChannelListController: EventsControllerDelegate {
     public func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
         if let channelAddedEvent = event as? NotificationAddedToChannelEvent {
-            handleUnlinkedChannels([.insert(channelAddedEvent.channel, index: IndexPath(item: 0, section: 0))])
+            handleUnlinkedChannel(channelAddedEvent.channel)
         }
     }
 }
