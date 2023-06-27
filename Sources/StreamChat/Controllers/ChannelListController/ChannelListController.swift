@@ -114,6 +114,11 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         )
 
         observer.onDidChange = { [weak self] changes in
+            // Only handle unlinked channels if a channel was inserted through web socket event
+            // This means that we should only handle 1 channel at the time.
+            // If changes include multiple insertions it means that it is a result of
+            // unlinking multiple channels when loading the first page.
+            guard changes.map(\.isInsertion).count == 1 else { return }
             self?.handleUnlinkedChannels(changes)
         }
 

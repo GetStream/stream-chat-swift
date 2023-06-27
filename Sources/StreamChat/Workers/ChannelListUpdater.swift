@@ -19,9 +19,20 @@ class ChannelListUpdater: Worker {
         fetch(channelListQuery: channelListQuery) { [weak self] in
             switch $0 {
             case let .success(channelListPayload):
+                let isInitialFetch = channelListQuery.pagination.cursor == nil && channelListQuery.pagination.offset == 0
+                var initialActions: ((DatabaseSession) -> Void)?
+                if isInitialFetch {
+                    initialActions = { session in
+                        let filterHash = channelListQuery.filter.filterHash
+                        guard let queryDTO = session.channelListQuery(filterHash: filterHash) else { return }
+                        queryDTO.channels.removeAll()
+                    }
+                }
+
                 self?.writeChannelListPayload(
                     payload: channelListPayload,
                     query: channelListQuery,
+                    initialActions: initialActions,
                     completion: completion
                 )
             case let .failure(error):
