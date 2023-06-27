@@ -314,6 +314,14 @@ extension ChatChannelListController: EventsControllerDelegate {
         if let channelAddedEvent = event as? NotificationAddedToChannelEvent {
             handleUnlinkedChannel(channelAddedEvent.channel)
         }
+
+        if let messageNewEvent = event as? MessageNewEvent {
+            handleUnlinkedChannel(messageNewEvent.channel)
+        }
+
+        if let messageNewEvent = event as? NotificationMessageNewEvent {
+            handleUnlinkedChannel(messageNewEvent.channel)
+        }
     }
 }
 
