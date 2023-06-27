@@ -38,6 +38,8 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     /// The `ChatClient` instance this controller belongs to.
     public let client: ChatClient
 
+    let eventsController: EventsController
+
     /// The channels matching the query of this controller.
     ///
     /// To observe changes of the channels, set your class as a delegate of this controller or use the provided
@@ -104,27 +106,6 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         return observer
     }()
 
-    /// Used for observing the database for changes.
-    private(set) lazy var updatedChannelObserver: ListDatabaseObserverWrapper<ChatChannel, ChannelDTO> = {
-        let observer = self.environment.createChannelListDatabaseObserver(
-            StreamRuntimeCheck._isBackgroundMappingEnabled,
-            client.databaseContainer,
-            ChannelDTO.channelsNotLinkedToAnyQueryFetchRequest(),
-            { try $0.asModel() }
-        )
-
-        observer.onDidChange = { [weak self] changes in
-            // Only handle unlinked channels if a channel was inserted through web socket event
-            // This means that we should only handle 1 channel at the time.
-            // If changes include multiple insertions it means that it is a result of
-            // unlinking multiple channels when loading the first page.
-            guard changes.map(\.isInsertion).count == 1 else { return }
-            self?.handleUnlinkedChannels(changes)
-        }
-
-        return observer
-    }()
-
     var _basePublishers: Any?
     /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
     /// publishers. Instead of creating custom `Publisher` types, we use `CurrentValueSubject` and `PassthroughSubject` internally,
@@ -157,8 +138,10 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         self.query = query
         self.filter = filter
         self.environment = environment
+        eventsController = client.eventsController()
         super.init()
         client.trackChannelListController(self)
+        eventsController.delegate = self
     }
 
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
@@ -195,7 +178,6 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         guard state == .initialized else { return }
         do {
             try channelListObserver.startObserving()
-            try updatedChannelObserver.startObserving()
             state = .localDataFetched
         } catch {
             state = .localDataFetchFailed(ClientError(with: error))
@@ -368,6 +350,14 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
             self.callback {
                 completion?(error)
             }
+        }
+    }
+}
+
+extension ChatChannelListController: EventsControllerDelegate {
+    public func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
+        if let channelAddedEvent = event as? NotificationAddedToChannelEvent {
+            handleUnlinkedChannels([.insert(channelAddedEvent.channel, index: IndexPath(item: 0, section: 0))])
         }
     }
 }

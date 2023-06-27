@@ -373,15 +373,6 @@ extension ChannelDTO {
         request.fetchBatchSize = query.pagination.pageSize
         return request
     }
-
-    static func channelsNotLinkedToAnyQueryFetchRequest() -> NSFetchRequest<ChannelDTO> {
-        let request = NSFetchRequest<ChannelDTO>(entityName: ChannelDTO.entityName)
-        request.sortDescriptors = [ChannelListSortingKey.defaultSortDescriptor]
-        request.predicate = NSPredicate(
-            format: "queries.@count == 0"
-        )
-        return request
-    }
 }
 
 extension ChannelDTO {
