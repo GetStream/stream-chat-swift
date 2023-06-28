@@ -164,7 +164,7 @@ streamChat = StreamChat(chatClient: chatClient, utils: utils)
 
 ### dateIndicatorPlacement
 
-The date indicator describes an element that displays the date in the message list. It must not be confused with the date of a specific message (TODO: link to the docs here.) The SDK supports three types of date indicators
+The date indicator describes an element that displays the date in the message list. It must not be confused with the [`created_at`](https://getstream.io/chat/docs/ios-swift/message_format/?language=swift#messages-returned-by-the-api-follow-this-structure:) date of a specific message. The SDK supports three types of date indicators
 
 - floating overlay (`.overlay`)
 - date separators in-between the messages (`.messageList`)
