@@ -302,7 +302,7 @@ end
 
 desc 'Starts Sinatra web server'
 lane :start_sinatra do
-  sh('nohup bundle exec ruby sinatra.rb > sinatra_log.txt 2>&1 &')
+  sh('bundle exec ruby sinatra.rb > sinatra_log.txt 2>&1 &')
 end
 
 desc 'Stops Sinatra web server'
