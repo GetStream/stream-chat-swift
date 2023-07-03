@@ -148,6 +148,73 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         updateChannelList(completion)
     }
 
+    // MARK: - Actions
+
+    /// Loads next channels from backend.
+    ///
+    /// - Parameters:
+    ///   - limit: Limit for page size.
+    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    ///                 If request fails, the completion will be called with an error.
+    ///
+    public func loadNextChannels(
+        limit: Int? = nil,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        if hasLoadedAllPreviousChannels {
+            completion?(nil)
+            return
+        }
+
+        let limit = limit ?? query.pagination.pageSize
+        var updatedQuery = query
+        updatedQuery.pagination = Pagination(pageSize: limit, offset: channels.count)
+        worker.update(channelListQuery: updatedQuery) { result in
+            switch result {
+            case let .success(channels):
+                self.hasLoadedAllPreviousChannels = channels.count < limit
+                self.callback { completion?(nil) }
+            case let .failure(error):
+                self.callback { completion?(error) }
+            }
+        }
+    }
+
+    @available(*, deprecated, message: "Please use `markAllRead` available in `CurrentChatUserController`")
+    public func markAllRead(completion: ((Error?) -> Void)? = nil) {
+        worker.markAllRead { error in
+            self.callback {
+                completion?(error)
+            }
+        }
+    }
+
+    // MARK: - Internal
+
+    func resetQuery(
+        watchedAndSynchedChannelIds: Set<ChannelId>,
+        synchedChannelIds: Set<ChannelId>,
+        completion: @escaping (Result<(synchedAndWatched: [ChatChannel], unwanted: Set<ChannelId>), Error>) -> Void
+    ) {
+        let pageSize = query.pagination.pageSize
+        worker.resetChannelsQuery(
+            for: query,
+            pageSize: pageSize,
+            watchedAndSynchedChannelIds: watchedAndSynchedChannelIds,
+            synchedChannelIds: synchedChannelIds
+        ) { [weak self] result in
+            switch result {
+            case let .success((newChannels, unwantedCids)):
+                self?.hasLoadedAllPreviousChannels = newChannels.count < pageSize
+                completion(.success((newChannels, unwantedCids)))
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+
+    // MARK: - Helpers
+
     private func updateChannelList(
         _ completion: ((_ error: Error?) -> Void)? = nil
     ) {
@@ -183,23 +250,51 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
             log.error("Failed to perform fetch request with error: \(error). This is an internal error.")
         }
     }
+}
 
-    private func channelBelongsToController(_ channel: ChatChannel) -> Bool {
+extension ChatChannelListController: EventsControllerDelegate {
+    public func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
+        let newChannel: ChatChannel?
+
+        if let channelAddedEvent = event as? NotificationAddedToChannelEvent {
+            newChannel = channelAddedEvent.channel
+        } else if let messageNewEvent = event as? MessageNewEvent {
+            newChannel = messageNewEvent.channel
+        } else if let messageNewEvent = event as? NotificationMessageNewEvent {
+            newChannel = messageNewEvent.channel
+        } else {
+            newChannel = nil
+        }
+
+        guard let channel = newChannel else {
+            return
+        }
+
+        guard shouldLinkChannelToQuery(channel) else {
+            return
+        }
+
+        link(channel: channel)
+    }
+
+    /// Checks if the given channel matches the current channel list query.
+    private func shouldLinkChannelToQuery(_ channel: ChatChannel) -> Bool {
+        guard state == .remoteDataFetched else {
+            log.debug("Ignoring inserted/updated unlinked channels due to query \(query) not being synced.")
+            return false
+        }
+
         if let filter = filter {
             return filter(channel)
         }
 
         guard !client.config.isChannelAutomaticFilteringEnabled else {
-            // When auto-filtering is enabled this will be called with channels
-            // that already have been matched against the provided filter. For
-            // this reason, we provide no additional logic and simply return true.
+            // When auto-filtering is enabled we will link the channel to the current query always.
+            // Then, the channel will appear in the Channel List automatically if the query matches the DB Predicate.
             return true
         }
 
-        // Given that at the moment some delegate methods are not yet removed, but some integrators are still using
-        // those, we need to keep using them for now.
-        // This block should be removed once `shouldAddNewChannelToList` and `shouldListUpdatedChannel` methods are
-        // fully removed.
+        // Fallback to legacy of checking if a channel should be linked to the current channel list query.
         let deprecatedFallback: () -> Bool? = {
             self.delegate?.controller(self, shouldAddNewChannelToList: channel)
         }
@@ -207,120 +302,20 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         return deprecatedFallback() ?? true
     }
 
-    private func handleUnlinkedChannel(_ channel: ChatChannel) {
-        guard state == .remoteDataFetched else {
-            log.debug("Ignoring inserted/updated unlinked channels due to query \(query) not being synced.")
-            return
-        }
-
-        guard channelBelongsToController(channel) else {
-            return
-        }
-
-        link(channel: channel)
-    }
-
-    // TODO: Move this to ChannelUpdater so it is easier to test.
+    /// Links the channel to the current channel list query and starts watching it.
     private func link(channel: ChatChannel) {
-        client.databaseContainer.write { session in
-            guard let queryDTO = session.channelListQuery(filterHash: self.query.filter.filterHash) else {
-                log.debug("Channel list query has not yet created \(self.query)")
+        worker.link(channel: channel, with: query) { [weak self] error in
+            if let error = error {
+                log.error(error)
                 return
             }
 
-            guard let channelDTO = session.channel(cid: channel.cid) else {
-                log.error("Channel \(channel.cid) cannot be found in database.")
-                return
-            }
-
-            queryDTO.channels.insert(channelDTO)
-        } completion: { [weak self] _ in
-            self?.worker.startWatchingChannels(withIds: [channel.cid]) {
-                guard let error = $0 else { return }
-
+            self?.worker.startWatchingChannels(withIds: [channel.cid]) { error in
+                guard let error = error else { return }
                 log.warning(
                     "Failed to start watching linked channel: \(channel.cid), error: \(error.localizedDescription)"
                 )
             }
-        }
-    }
-
-    // MARK: - Actions
-
-    /// Loads next channels from backend.
-    ///
-    /// - Parameters:
-    ///   - limit: Limit for page size.
-    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
-    ///                 If request fails, the completion will be called with an error.
-    ///
-    public func loadNextChannels(
-        limit: Int? = nil,
-        completion: ((Error?) -> Void)? = nil
-    ) {
-        if hasLoadedAllPreviousChannels {
-            completion?(nil)
-            return
-        }
-
-        let limit = limit ?? query.pagination.pageSize
-        var updatedQuery = query
-        updatedQuery.pagination = Pagination(pageSize: limit, offset: channels.count)
-        worker.update(channelListQuery: updatedQuery) { result in
-            switch result {
-            case let .success(channels):
-                self.hasLoadedAllPreviousChannels = channels.count < limit
-                self.callback { completion?(nil) }
-            case let .failure(error):
-                self.callback { completion?(error) }
-            }
-        }
-    }
-
-    func resetQuery(
-        watchedAndSynchedChannelIds: Set<ChannelId>,
-        synchedChannelIds: Set<ChannelId>,
-        completion: @escaping (Result<(synchedAndWatched: [ChatChannel], unwanted: Set<ChannelId>), Error>) -> Void
-    ) {
-        let pageSize = query.pagination.pageSize
-        worker.resetChannelsQuery(
-            for: query,
-            pageSize: pageSize,
-            watchedAndSynchedChannelIds: watchedAndSynchedChannelIds,
-            synchedChannelIds: synchedChannelIds
-        ) { [weak self] result in
-            switch result {
-            case let .success((newChannels, unwantedCids)):
-                self?.hasLoadedAllPreviousChannels = newChannels.count < pageSize
-                completion(.success((newChannels, unwantedCids)))
-            case let .failure(error):
-                completion(.failure(error))
-            }
-        }
-    }
-
-    @available(*, deprecated, message: "Please use `markAllRead` available in `CurrentChatUserController`")
-    public func markAllRead(completion: ((Error?) -> Void)? = nil) {
-        worker.markAllRead { error in
-            self.callback {
-                completion?(error)
-            }
-        }
-    }
-}
-
-extension ChatChannelListController: EventsControllerDelegate {
-    public func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
-        if let channelAddedEvent = event as? NotificationAddedToChannelEvent {
-            handleUnlinkedChannel(channelAddedEvent.channel)
-        }
-
-        if let messageNewEvent = event as? MessageNewEvent {
-            handleUnlinkedChannel(messageNewEvent.channel)
-        }
-
-        if let messageNewEvent = event as? NotificationMessageNewEvent {
-            handleUnlinkedChannel(messageNewEvent.channel)
         }
     }
 }
