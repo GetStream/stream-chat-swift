@@ -181,6 +181,10 @@ open class ChatChannelVC: _ViewController,
         if let queueAudioPlayer = audioPlayer as? StreamAudioQueuePlayer {
             queueAudioPlayer.dataSource = self
         }
+
+        messageListVC.swipeToReplyGestureHandler.onReply = { [weak self] message in
+            self?.messageComposerVC.content.quoteMessage(message)
+        }
     }
 
     private func setChannelControllerToComposerIfNeeded(cid: ChannelId?) {

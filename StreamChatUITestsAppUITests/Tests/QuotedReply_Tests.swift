@@ -24,7 +24,24 @@ final class QuotedReply_Tests: StreamTestCase {
             try super.tearDownWithError()
         }
     }
-    
+
+    func test_whenSwipingMessage_thenMessageIsQuotedReply() {
+        linkToScenario(withId: 2096)
+
+        GIVEN("user opens the channel") {
+            backendRobot.generateChannels(count: 1, messagesCount: 1)
+            userRobot.login().openChannel()
+        }
+        WHEN("user swipes a message") {
+            userRobot.swipeMessage()
+        }
+        THEN("user quoted the message") {
+            userRobot
+                .sendMessage("Quoting")
+                .assertQuotedMessage("1")
+        }
+    }
+
     func test_quotedReplyInList_whenUserAddsQuotedReply() {
         linkToScenario(withId: 1667)
 
@@ -36,7 +53,7 @@ final class QuotedReply_Tests: StreamTestCase {
         }
         WHEN("user adds a quoted reply to participant message") {
             userRobot
-                .scrollMessageListUp(times: 4)
+                .scrollMessageListUp(times: 3)
                 .quoteMessage(replyText, messageCellIndex: messageCount - 1)
                 .waitForMessageVisibility(at: 0)
         }
@@ -92,7 +109,7 @@ final class QuotedReply_Tests: StreamTestCase {
         }
         WHEN("user adds a quoted reply to participant message") {
             userRobot
-                .scrollMessageListUp(times: 4)
+                .scrollMessageListUp(times: 3)
                 .quoteMessage(replyText, messageCellIndex: messageCount - 1)
                 .waitForMessageVisibility(at: 0)
         }
@@ -238,7 +255,7 @@ final class QuotedReply_Tests: StreamTestCase {
         }
         WHEN("user adds a quoted reply to participant message") {
             userRobot
-                .scrollMessageListUp(times: 4)
+                .scrollMessageListUp(times: 3)
                 .quoteMessage(replyText, messageCellIndex: messageCount - 1)
         }
         AND("user quotes a message with invalid command") {
@@ -270,7 +287,7 @@ final class QuotedReply_Tests: StreamTestCase {
         WHEN("user adds a quoted reply to participant message in thread") {
             userRobot
                 .openThread()
-                .scrollMessageListUp(times: 4)
+                .scrollMessageListUp(times: 3)
                 .quoteMessage(replyText, messageCellIndex: replyToMessageIndex, waitForAppearance: false)
                 .waitForMessageVisibility(at: 0)
         }
@@ -330,7 +347,7 @@ final class QuotedReply_Tests: StreamTestCase {
         WHEN("user adds a quoted reply to participant message in thread") {
             userRobot
                 .openThread()
-                .scrollMessageListUp(times: 4)
+                .scrollMessageListUp(times: 3)
                 .quoteMessage(replyText, messageCellIndex: replyToMessageIndex, waitForAppearance: false)
                 .waitForMessageVisibility(at: 0)
         }
@@ -444,7 +461,7 @@ final class QuotedReply_Tests: StreamTestCase {
         THEN("user adds a quoted reply in thread") {
             userRobot
                 .openThread()
-                .scrollMessageListUp(times: 4)
+                .scrollMessageListUp(times: 3)
                 .quoteMessage(replyText, messageCellIndex: replyToMessageIndex, waitForAppearance: false)
         }
         AND("user quotes a message with invalid command") {
@@ -474,7 +491,7 @@ final class QuotedReply_Tests: StreamTestCase {
             userRobot.assertThreadReplyCountButton(replies: messageCount)
         }
         WHEN("user opens the tread and scrolls up") {
-            userRobot.openThread().scrollMessageListUp(times: 4)
+            userRobot.openThread().scrollMessageListUp(times: 3)
         }
         AND("user observes the number of replies in the thread") {
             userRobot.assertThreadRepliesCountLabel(messageCount)
@@ -614,8 +631,8 @@ final class QuotedReply_Tests: StreamTestCase {
         }
         WHEN("user quote replies root message") {
             userRobot
-                .scrollMessageListUp(times: 4)
-                .quoteMessage(replyText, messageCellIndex: messageCount)
+                .scrollMessageListUp(times: 3)
+                .quoteMessage(replyText, messageCellIndex: messageCount, waitForAppearance: false)
         }
         AND("user reenters the thread") {
             userRobot

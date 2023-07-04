@@ -162,13 +162,13 @@ open class ComposerView: _View, ThemeProvider {
         trailingContainer.distribution = .equal
         trailingContainer.directionalLayoutMargins = .zero
         trailingContainer.addArrangedSubview(sendButton)
-        if components.isVoiceRecordingEnabled {
-            trailingContainer.addArrangedSubview(recordButton)
-        }
         trailingContainer.addArrangedSubview(cooldownView)
         trailingContainer.addArrangedSubview(confirmButton)
         cooldownView.isHidden = true
         confirmButton.isHidden = true
+        if components.isVoiceRecordingEnabled {
+            trailingContainer.addArrangedSubview(recordButton)
+        }
 
         leadingContainer.axis = .horizontal
         leadingContainer.alignment = .center

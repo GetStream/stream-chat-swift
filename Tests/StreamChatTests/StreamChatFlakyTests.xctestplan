@@ -28,9 +28,11 @@
         "MessageUpdater_Tests\/test_flagMessage_happyPath()",
         "MessageUpdater_Tests\/test_unpinMessage_propogatesMessageEditingError_ifLocalStateIsInvalidForUnpinning()",
         "MessageUpdater_Tests\/test_deleteBouncedMessage_isDeletedLocally_whenLocalStateIsSendingFailed()",
+        "MessageUpdater_Tests\/test_deleteMessage_updatesMessageStateCorrectly()",
         "SyncRepository_Tests\/test_cancelRecoveryFlow_cancelsAllOperations()",
-        "WebSocketClient_Tests\/test_whenHealthCheckEventComes_itGetProcessedSilentlyWithoutBatching()",
-        "WebSocketClient_Tests\/test_changingConnectEndpointAndReconnecting()"
+        "SyncRepository_Tests\/test_syncExistingChannelsEvents_someChannels_apiSuccess_shouldStoreEvents()",
+        "WebSocketClient_Tests\/test_changingConnectEndpointAndReconnecting()",
+        "WebSocketClient_Tests\/test_whenHealthCheckEventComes_itGetProcessedSilentlyWithoutBatching()"
       ],
       "target" : {
         "containerPath" : "container:StreamChat.xcodeproj",

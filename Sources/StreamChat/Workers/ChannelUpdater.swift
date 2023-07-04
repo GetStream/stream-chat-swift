@@ -249,6 +249,7 @@ class ChannelUpdater: Worker {
     ///
     /// - Parameters:
     ///   - cid: The cid of the channel the message is create in.
+    ///   - messageId: The id for the sent message.
     ///   - text: Text of the message.
     ///   - pinning: Pins the new message. Nil if should not be pinned.
     ///   - isSilent: A flag indicating whether the message is a silent message. Silent messages are special messages that don't increase the unread messages count nor mark a channel as unread.
@@ -261,6 +262,7 @@ class ChannelUpdater: Worker {
     ///
     func createNewMessage(
         in cid: ChannelId,
+        messageId: MessageId?,
         text: String,
         pinning: MessagePinning? = nil,
         isSilent: Bool,
@@ -278,6 +280,7 @@ class ChannelUpdater: Worker {
         database.write({ (session) in
             let newMessageDTO = try session.createNewMessage(
                 in: cid,
+                messageId: messageId,
                 text: text,
                 pinning: pinning,
                 command: command,

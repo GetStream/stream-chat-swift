@@ -219,6 +219,15 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
     /// An object responsible for injecting the views needed to display the attachments content.
     public private(set) var attachmentViewInjector: AttachmentViewInjector?
 
+    /// The reply icon image view.
+    open private(set) lazy var replyIconImageView: UIImageView = {
+        let imageView = UIImageView().withoutAutoresizingMaskConstraints
+        imageView.image = appearance.images
+            .messageActionSwipeReply
+            .tinted(with: appearance.colorPalette.textLowEmphasis)
+        return imageView
+    }()
+
     // MARK: - Containers
 
     /// The root container which holds `authorAvatarView` (or the avatar padding) and `bubbleThreadMetaContainer`.
@@ -509,6 +518,19 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
         ]
 
         NSLayoutConstraint.activate(constraintsToActivate)
+
+        // Swipe to Reply Icon
+        replyIconImageView.isHidden = true
+        addSubview(replyIconImageView)
+        NSLayoutConstraint.activate([
+            replyIconImageView.topAnchor.pin(equalTo: bubbleContentContainer.topAnchor),
+            replyIconImageView.leadingAnchor.pin(
+                equalTo: bubbleContentContainer.leadingAnchor,
+                constant: content?.isSentByCurrentUser == true ? -45 : -30
+            ),
+            replyIconImageView.widthAnchor.pin(equalToConstant: 25),
+            replyIconImageView.heightAnchor.pin(equalToConstant: 25)
+        ])
     }
 
     // swiftlint:enable function_body_length

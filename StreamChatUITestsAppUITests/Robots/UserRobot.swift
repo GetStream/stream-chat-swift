@@ -336,6 +336,13 @@ extension UserRobot {
     }
 
     @discardableResult
+    func swipeMessage(at index: Int = 0) -> Self {
+        let cell = messageCell(withIndex: index).waitForHitPoint()
+        cell.swipeRight()
+        return self
+    }
+
+    @discardableResult
     func openComposerCommands() -> Self {
         if MessageListPage.ComposerCommands.cells.count == 0 {
             MessageListPage.Composer.commandButton.wait().safeTap()
@@ -394,6 +401,13 @@ extension UserRobot {
             MessageListPage.AttachmentMenu.images.waitCount(1).allElementsBoundByIndex[i].safeTap()
         }
         if send { sendMessage("", waitForAppearance: false) }
+        return self
+    }
+    
+    @discardableResult
+    func restartImageUpload(messageCellIndex: Int = 0) -> Self {
+        let messageCell = messageCell(withIndex: messageCellIndex)
+        MessageListPage.Attributes.restartAttachmentUploadIcon(in: messageCell).wait().safeTap()
         return self
     }
 

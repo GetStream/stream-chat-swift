@@ -43,4 +43,42 @@ final class GiphyAttachmentPayload_Tests: XCTestCase {
         XCTAssertEqual(sut?.previewURL, giphyURL)
         XCTAssertEqual(sut?.actions, [])
     }
+
+    func test_decodingExtraData() throws {
+        let title: String = .unique
+        let thumbURL: URL = .unique()
+        let comment: String = .unique
+
+        let json = """
+        {
+            "title": "\(title)",
+            "thumb_url": "\(thumbURL.absoluteString)",
+            "comment": "\(comment)"
+        }
+        """.data(using: .utf8)!
+        let payload = try JSONDecoder.stream.decode(GiphyAttachmentPayload.self, from: json)
+
+        XCTAssertEqual(payload.title, title)
+        XCTAssertEqual(payload.previewURL, thumbURL)
+        XCTAssertEqual(payload.extraData?["comment"]?.stringValue, comment)
+    }
+
+    func test_encodingExtraData() throws {
+        let payload = GiphyAttachmentPayload(
+            title: "Giphy 1",
+            previewURL: URL(string: "dummyURL")!,
+            actions: [],
+            extraData: ["comment": .string("Some comment")]
+        )
+        let json = try JSONEncoder.stream.encode(payload)
+
+        let expectedJsonObject: [String: Any] = [
+            "title": "Giphy 1",
+            "thumb_url": "dummyURL",
+            "comment": "Some comment",
+            "actions": NSArray()
+        ]
+
+        AssertJSONEqual(json, expectedJsonObject)
+    }
 }

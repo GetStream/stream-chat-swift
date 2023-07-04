@@ -110,36 +110,50 @@ class MessageUpdater: Worker {
     ///  - Parameters:
     ///   - messageId: The message identifier.
     ///   - text: The updated message text.
+    ///   - attachments: An array of the attachments for the message.
     ///   - extraData: Extra Data for the message.
     ///   - completion: The completion. Will be called with an error if smth goes wrong, otherwise - will be called with `nil`.
     func editMessage(
         messageId: MessageId,
         text: String,
+        attachments: [AnyAttachmentPayload] = [],
         extraData: [String: RawJSON]? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
         database.write({ session in
             let messageDTO = try session.messageEditableByCurrentUser(messageId)
 
-            let encodedExtraData = extraData.map { try? JSONEncoder.default.encode($0) } ?? messageDTO.extraData
+            func updateMessage(localState: LocalMessageState) throws {
+                messageDTO.text = text
+                let encodedExtraData = extraData.map { try? JSONEncoder.default.encode($0) } ?? messageDTO.extraData
+                messageDTO.extraData = encodedExtraData
 
-            let updateQuotingMessages = {
+                messageDTO.localMessageState = localState
+
                 messageDTO.quotedBy.forEach { message in
                     message.updatedAt = messageDTO.updatedAt
                 }
+
+                guard let cid = try? messageDTO.channel.map({ try ChannelId(cid: $0.cid) }) else { return }
+                let messageId = messageDTO.id
+
+                messageDTO.attachments.forEach {
+                    session.delete(attachment: $0)
+                }
+
+                messageDTO.attachments = Set(
+                    try attachments.enumerated().map { index, attachment in
+                        let id = AttachmentId(cid: cid, messageId: messageId, index: index)
+                        return try session.createNewAttachment(attachment: attachment, id: id)
+                    }
+                )
             }
 
             switch messageDTO.localMessageState {
             case nil, .pendingSync, .syncingFailed, .deletingFailed:
-                messageDTO.text = text
-                messageDTO.extraData = encodedExtraData
-                messageDTO.localMessageState = .pendingSync
-                updateQuotingMessages()
+                try updateMessage(localState: .pendingSync)
             case .pendingSend, .sendingFailed:
-                messageDTO.text = text
-                messageDTO.extraData = encodedExtraData
-                messageDTO.localMessageState = .pendingSend
-                updateQuotingMessages()
+                try updateMessage(localState: .pendingSend)
             case .sending, .syncing, .deleting:
                 throw ClientError.MessageEditing(
                     messageId: messageId,
@@ -155,6 +169,7 @@ class MessageUpdater: Worker {
     ///
     /// - Parameters:
     ///   - cid: The cid of the channel the message is create in.
+    ///   - messageId: The id for the sent message.
     ///   - text: Text of the message.
     ///   - pinning: Pins the new message. Nil if should not be pinned.
     ///   - parentMessageId: The `MessageId` of the message this message replies to.
@@ -169,6 +184,7 @@ class MessageUpdater: Worker {
     ///
     func createNewReply(
         in cid: ChannelId,
+        messageId: MessageId?,
         text: String,
         pinning: MessagePinning?,
         command: String?,
@@ -188,6 +204,7 @@ class MessageUpdater: Worker {
         database.write({ (session) in
             let newMessageDTO = try session.createNewMessage(
                 in: cid,
+                messageId: messageId,
                 text: text,
                 pinning: pinning,
                 command: command,

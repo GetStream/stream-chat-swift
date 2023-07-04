@@ -57,7 +57,7 @@ if [[ ${XCODE_ACTIONS-default} == default ]]; then
   # https://github.com/GetStream/ios-issues-tracking/issues/265
   if [[ $(sw_vers -productVersion) != *"11."* ]]; then
     puts "Install RobotsAndPencils/xcodes"
-    mint install RobotsAndPencils/xcodes@1.2.0 -l
+    mint install RobotsAndPencils/xcodes@1.4.1 -l
   fi
 
   # Copy internal Xcode scheme to the right folder for

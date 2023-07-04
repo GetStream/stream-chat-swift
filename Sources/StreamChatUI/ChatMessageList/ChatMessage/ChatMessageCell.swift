@@ -8,7 +8,7 @@ import UIKit
 /// The cell that displays the message content of a dynamic type and layout.
 /// Once the cell is set up it is expected to be dequeued for messages with
 /// the same content and layout the cell has already been configured with.
-public class ChatMessageCell: _TableViewCell, ComponentsProvider {
+public class ChatMessageCell: _TableViewCell, ThemeProvider {
     public static var reuseId: String { "\(self)" }
 
     /// The container that holds the header, footer and the message content view.

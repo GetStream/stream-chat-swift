@@ -123,15 +123,9 @@ class MessageDTO: NSManagedObject {
         let pendingSendMessage = NSPredicate(
             format: "localMessageStateRaw == %@", LocalMessageState.pendingSend.rawValue
         )
-
-        let allAttachmentsAreUploadedOrEmpty = NSCompoundPredicate(orPredicateWithSubpredicates: [
-            .init(format: "NOT (ANY attachments.localStateRaw != %@)", LocalAttachmentState.uploaded.rawValue),
-            .init(format: "attachments.@count == 0")
-        ])
-
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
             pendingSendMessage,
-            allAttachmentsAreUploadedOrEmpty
+            allAttachmentsAreUploadedOrEmptyPredicate()
         ])
 
         return request
@@ -141,8 +135,19 @@ class MessageDTO: NSManagedObject {
     static func messagesPendingSyncFetchRequest() -> NSFetchRequest<MessageDTO> {
         let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.locallyCreatedAt, ascending: true)]
-        request.predicate = NSPredicate(format: "localMessageStateRaw == %@", LocalMessageState.pendingSync.rawValue)
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            NSPredicate(format: "localMessageStateRaw == %@", LocalMessageState.pendingSync.rawValue),
+            allAttachmentsAreUploadedOrEmptyPredicate()
+        ])
+
         return request
+    }
+
+    private static func allAttachmentsAreUploadedOrEmptyPredicate() -> NSCompoundPredicate {
+        NSCompoundPredicate(orPredicateWithSubpredicates: [
+            .init(format: "NOT (ANY attachments.localStateRaw != %@)", LocalAttachmentState.uploaded.rawValue),
+            .init(format: "attachments.@count == 0")
+        ])
     }
 
     /// Returns a predicate that filters out deleted message by other than the current user
@@ -499,6 +504,13 @@ class MessageDTO: NSManagedObject {
         request.fetchLimit = 1
         return load(by: request, context: context).first
     }
+
+    static func loadSendingMessages(context: NSManagedObjectContext) -> [MessageDTO] {
+        let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.locallyCreatedAt, ascending: false)]
+        request.predicate = NSPredicate(format: "localMessageStateRaw == %@", LocalMessageState.sending.rawValue)
+        return load(by: request, context: context)
+    }
 }
 
 // MARK: - State Helpers
@@ -532,6 +544,7 @@ extension MessageDTO {
 extension NSManagedObjectContext: MessageDatabaseSession {
     func createNewMessage(
         in cid: ChannelId,
+        messageId: MessageId?,
         text: String,
         pinning: MessagePinning?,
         command: String?,
@@ -555,7 +568,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             throw ClientError.ChannelDoesNotExist(cid: cid)
         }
 
-        let message = MessageDTO.loadOrCreate(id: .newUniqueId, context: self, cache: nil)
+        let message = MessageDTO.loadOrCreate(id: messageId ?? .newUniqueId, context: self, cache: nil)
 
         // We make `createdDate` 0.1 second bigger than Channel's most recent message
         // so if the local time is not in sync, the message will still appear in the correct position
@@ -632,6 +645,10 @@ extension NSManagedObjectContext: MessageDatabaseSession {
     ) throws -> MessageDTO {
         let cid = try ChannelId(cid: channelDTO.cid)
         let dto = MessageDTO.loadOrCreate(id: payload.id, context: self, cache: cache)
+
+        if dto.localMessageState == .pendingSend || dto.localMessageState == .pendingSync {
+            return dto
+        }
 
         dto.text = payload.text
         dto.createdAt = payload.createdAt.bridgeDate
@@ -973,6 +990,16 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         let cache = payload.getPayloadToModelIdMappings(context: self)
         return payload.results.compactMapLoggingError {
             try saveMessage(payload: $0.message, for: query, cache: cache)
+        }
+    }
+
+    /// Changes the state to `.pendingSend` for all messages in `.sending` state. This method is expected to be used at the beginning of the session
+    /// to avoid those from being stuck there in limbo.
+    /// Messages can get stuck in `.sending` state if the network request to send them takes to much, and the app is backgrounded or killed.
+    func rescueMessagesStuckInSending() {
+        let messages = MessageDTO.loadSendingMessages(context: self)
+        messages.forEach {
+            $0.localMessageState = .pendingSend
         }
     }
 }

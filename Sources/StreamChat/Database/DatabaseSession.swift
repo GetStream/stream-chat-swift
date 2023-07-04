@@ -69,6 +69,7 @@ protocol MessageDatabaseSession {
     @discardableResult
     func createNewMessage(
         in cid: ChannelId,
+        messageId: MessageId?,
         text: String,
         pinning: MessagePinning?,
         command: String?,
@@ -180,6 +181,11 @@ protocol MessageDatabaseSession {
     /// Ignores messages that could not be saved
     @discardableResult
     func saveMessageSearch(payload: MessageSearchResultsPayload, for query: MessageSearchQuery) -> [MessageDTO]
+
+    /// Changes the state to `.pendingSend` for all messages in `.sending` state. This method is expected to be used at the beginning of the session
+    /// to avoid those from being stuck there in limbo.
+    /// Messages can get stuck in `.sending` state if the network request to send them takes to much, and the app is backgrounded or killed.
+    func rescueMessagesStuckInSending()
 }
 
 extension MessageDatabaseSession {
@@ -187,6 +193,7 @@ extension MessageDatabaseSession {
     @discardableResult
     func createNewMessage(
         in cid: ChannelId,
+        messageId: MessageId?,
         text: String,
         pinning: MessagePinning?,
         quotedMessageId: MessageId?,
@@ -199,6 +206,7 @@ extension MessageDatabaseSession {
     ) throws -> MessageDTO {
         try createNewMessage(
             in: cid,
+            messageId: messageId,
             text: text,
             pinning: pinning,
             command: nil,
@@ -364,6 +372,10 @@ protocol AttachmentDatabaseSession {
         attachment: AnyAttachmentPayload,
         id: AttachmentId
     ) throws -> AttachmentDTO
+
+    /// Deletes the provided dto from a database
+    /// - Parameter attachment: The DTO to be deleted
+    func delete(attachment: AttachmentDTO)
 }
 
 protocol QueuedRequestDatabaseSession {

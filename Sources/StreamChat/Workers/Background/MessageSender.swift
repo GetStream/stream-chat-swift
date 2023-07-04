@@ -56,6 +56,9 @@ class MessageSender: Worker {
                 if let changes = self?.observer.items.map({ ListChange.insert($0, index: .init(item: 0, section: 0)) }) {
                     self?.handleChanges(changes: changes)
                 }
+                self?.database.write {
+                    $0.rescueMessagesStuckInSending()
+                }
             } catch {
                 log.error("Failed to start MessageSender worker. \(error)")
             }
@@ -121,7 +124,7 @@ private class MessageSendingQueue {
     /// Schedules sending of the message. All already scheduled messages with `createdLocallyAt` older than these ones will
     /// be sent first.
     func scheduleSend(requests: [SendRequest]) {
-        var wasEmpty: Bool!
+        var wasEmpty: Bool = false
         _requests.mutate { mutableRequests in
             wasEmpty = mutableRequests.isEmpty
             mutableRequests.formUnion(requests)

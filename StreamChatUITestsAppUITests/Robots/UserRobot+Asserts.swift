@@ -344,6 +344,18 @@ extension UserRobot {
         XCTAssertEqual(text, actualText, file: file, line: line)
         return self
     }
+    @discardableResult
+    func assertQuotedMessageDoesNotExist(
+        _ text: String,
+        at messageCellIndex: Int? = nil,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
+        let quotedMessage = attributes.quotedText(text, in: messageCell).wait()
+        XCTAssertFalse(quotedMessage.waitForText(text).exists, file: file, line: line)
+        return self
+    }
 
     @discardableResult
     func assertDeletedMessage(
@@ -975,6 +987,9 @@ extension UserRobot {
     ) -> Self {
         let messageCell = messageCell(withIndex: messageCellIndex)
         MessageListPage.Attributes.time(in: messageCell).wait()
+        let uploadingProgressLabel = MessageListPage.Attributes.uploadingProgressLabel(in: messageCell).waitForDisappearance()
+        XCTAssertFalse(uploadingProgressLabel.exists, "Image uploading failed", file: file, line: line)
+        
         tapOnMessage(messageCell)
         let fullscreenImage = attributes.fullscreenImage().wait()
         let errMessage = isPresent ? "There is no image" : "Image is presented"

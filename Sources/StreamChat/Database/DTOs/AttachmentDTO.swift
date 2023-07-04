@@ -125,6 +125,10 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
 
         return dto
     }
+
+    func delete(attachment: AttachmentDTO) {
+        delete(attachment)
+    }
 }
 
 private extension AttachmentDTO {
@@ -142,7 +146,7 @@ private extension AttachmentDTO {
             )
         } catch {
             log.error("""
-                Failed to build uploading state for attachment with id: \(attachmentID).
+                Failed to build uploading state for attachment with id: \(attachmentID) at \(localURL)
                 Error: \(error.localizedDescription)
             """)
             return nil

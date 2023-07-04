@@ -103,6 +103,10 @@ open class ChatThreadVC: _ViewController,
         channelEventsController.delegate = self
         eventsController.delegate = self
 
+        messageListVC.swipeToReplyGestureHandler.onReply = { [weak self] message in
+            self?.messageComposerVC.content.quoteMessage(message)
+        }
+
         // Handle pagination
         viewPaginationHandler.onNewTopPage = { [weak self] in
             self?.messageController.loadPreviousReplies()

@@ -261,6 +261,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
 
     override func createNewMessage(
         in cid: ChannelId,
+        messageId: MessageId?,
         text: String,
         pinning: MessagePinning?,
         isSilent: Bool,

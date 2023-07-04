@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name = "StreamChatUI"
-  spec.version = "4.32.0"
+  spec.version = "4.33.0"
   spec.summary = "StreamChat UI Components"
   spec.description = "StreamChatUI SDK offers flexible UI components able to display data provided by StreamChat SDK."
 
@@ -9,7 +9,7 @@ Pod::Spec.new do |spec|
   spec.author = { "getstream.io" => "support@getstream.io" }
   spec.social_media_url = "https://getstream.io"
 
-  spec.swift_version = "5.2"
+  spec.swift_version = '5.6'
   spec.platform = :ios, "11.0"
   spec.requires_arc = true
 

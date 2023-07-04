@@ -285,6 +285,31 @@ final class ComposerVC_Tests: XCTestCase {
         
         XCTAssertEqual(mockedCooldownTracker.startCallCount, 1)
     }
+
+    func test_editMessage_addsAttachmentsToContent() {
+        // Given
+        var content = ComposerVC.Content.initial()
+        XCTAssertEqual(content.attachments.count, 0)
+
+        // When
+        let messageId = MessageId.unique
+
+        let encoder = JSONEncoder.default
+        let attachments: [AnyChatMessageAttachment] = [
+            MessageAttachmentPayload.dummy(type: .image),
+            MessageAttachmentPayload.dummy(type: .image)
+        ].compactMap {
+            guard let payload = try? encoder.encode($0.payload) else { return nil }
+            return AnyChatMessageAttachment.dummy(type: $0.type, payload: payload)
+        }
+        let message = ChatMessage.mock(id: messageId, attachments: attachments)
+        content.editMessage(message)
+
+        // Then
+        let contentAttachmentTypes = content.attachments.map(\.type)
+        XCTAssertEqual(content.attachments.count, 2)
+        XCTAssertEqual(contentAttachmentTypes, [.image, .image])
+    }
     
     // MARK: - audioPlayer
     

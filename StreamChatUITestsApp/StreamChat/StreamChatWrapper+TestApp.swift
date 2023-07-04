@@ -30,13 +30,12 @@ extension StreamChatWrapper {
 
     func configureUI() {
         // Customization
-        var components = Components.default
-        components.channelListRouter = CustomChannelListRouter.self
-        components.messageListRouter = CustomMessageListRouter.self
-        components.channelVC = ChannelVC.self
-        components.threadVC = ThreadVC.self
-        Components.default = components
+        Components.default.channelListRouter = CustomChannelListRouter.self
+        Components.default.messageListRouter = CustomMessageListRouter.self
+        Components.default.channelVC = ChannelVC.self
+        Components.default.threadVC = ThreadVC.self
         Components.default.messageActionsVC = MessageActionsVC.self
+        Components.default.messageSwipeToReplyEnabled = true
     }
 
 }

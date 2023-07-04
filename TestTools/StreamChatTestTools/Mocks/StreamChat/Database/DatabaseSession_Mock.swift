@@ -6,7 +6,7 @@ import Foundation
 @testable import StreamChat
 
 /// This class allows you to wrap an existing `DatabaseSession` and adjust the behavior of its methods.
-final class DatabaseSession_Mock: DatabaseSession {
+class DatabaseSession_Mock: DatabaseSession {
     /// The wrapped session
     let underlyingSession: DatabaseSession
 
@@ -19,11 +19,7 @@ final class DatabaseSession_Mock: DatabaseSession {
 
     var markChannelAsReadParams: (cid: ChannelId, userId: UserId, at: Date, lastReadMessageId: MessageId?)?
     var markChannelAsUnreadParams: (cid: ChannelId, userId: UserId)?
-}
 
-// Here start the boilerplate that forwards and intercepts the session calls if needed
-
-extension DatabaseSession_Mock {
     func addReaction(
         to messageId: MessageId,
         type: MessageReactionType,
@@ -123,6 +119,7 @@ extension DatabaseSession_Mock {
 
     func createNewMessage(
         in cid: ChannelId,
+        messageId: MessageId?,
         text: String,
         pinning: MessagePinning?,
         command: String?,
@@ -142,6 +139,7 @@ extension DatabaseSession_Mock {
 
         return try underlyingSession.createNewMessage(
             in: cid,
+            messageId: messageId,
             text: text,
             pinning: pinning,
             command: command,
@@ -205,6 +203,10 @@ extension DatabaseSession_Mock {
 
     func preview(for cid: ChannelId) -> MessageDTO? {
         underlyingSession.preview(for: cid)
+    }
+
+    func rescueMessagesStuckInSending() {
+        underlyingSession.rescueMessagesStuckInSending()
     }
 
     func reaction(messageId: MessageId, userId: UserId, type: MessageReactionType) -> MessageReactionDTO? {
@@ -322,6 +324,10 @@ extension DatabaseSession_Mock {
     func createNewAttachment(attachment: AnyAttachmentPayload, id: AttachmentId) throws -> AttachmentDTO {
         try throwErrorIfNeeded()
         return try underlyingSession.createNewAttachment(attachment: attachment, id: id)
+    }
+
+    func delete(attachment: AttachmentDTO) {
+        underlyingSession.delete(attachment: attachment)
     }
 
     func saveChannelMute(

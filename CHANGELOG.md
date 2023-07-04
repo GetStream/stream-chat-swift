@@ -5,17 +5,32 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChat
 ### ✅ Added
+- Expose Extra Data for Giphy Attachment Payloads [#2678](https://github.com/GetStream/stream-chat-swift/pull/2678)
+
+### 🐞 Fixed
+- Rescue messages that are stuck in `.sending` state [#2676](https://github.com/GetStream/stream-chat-swift/pull/2676)
+- Fix not being able to resend failed attachments [#2680](https://github.com/GetStream/stream-chat-swift/pull/2680)
+
+# [4.33.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.33.0)
+_June 08, 2023_
+
+## StreamChat
+### ✅ Added
 - Add support for shadow banning a member [#2660](https://github.com/GetStream/stream-chat-swift/pull/2660)
 - Expose `ChatChannelMember.isShadowBannedFromChannel` [#2660](https://github.com/GetStream/stream-chat-swift/pull/2660)
+- Add support for passing a custom id when creating a message/reply [#2667](https://github.com/GetStream/stream-chat-swift/pull/2667)
+
 ### 🐞 Fixed
 - Fix not being able to send messages when jumping to message in newest page [#2647](https://github.com/GetStream/stream-chat-swift/pull/2647)
-- Fix shadow message making hidden channel reappear #2663(https://github.com/GetStream/stream-chat-swift/pull/2663)
+- Fix shadow message making hidden channel reappear [#2663](https://github.com/GetStream/stream-chat-swift/pull/2663)
 
 ## StreamChatUI
 ### ✅ Added
 - Add jumping to a reply inside a thread when tapping a quoted message which is inside a thread [#2647](https://github.com/GetStream/stream-chat-swift/pull/2647)
 - Add jumping to a reply inside a thread when opening a thread from a thread reply in the channel view [#2647](https://github.com/GetStream/stream-chat-swift/pull/2647)
 - Add jumping to a reply inside a thread when opening a channel from a reply as the given message around id [#2647](https://github.com/GetStream/stream-chat-swift/pull/2647)
+- Add swipe to reply when `Components.default.messageSwipeToReplyEnabled` is `true` [#2665](https://github.com/GetStream/stream-chat-swift/pull/2665)
+- Allow editing messages with attachments [#2659](https://github.com/GetStream/stream-chat-swift/pull/2659)
 
 # [4.32.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.32.0)
 _May 26, 2023_
