@@ -25,6 +25,8 @@ final class VoiceRecordingVC_Tests: XCTestCase {
     override func setUp() {
         super.setUp()
 
+        UIView.setAnimationsEnabled(false)
+
         var components = subject.components
         components.isVoiceRecordingEnabled = true
         subject.components = components
@@ -55,6 +57,9 @@ final class VoiceRecordingVC_Tests: XCTestCase {
         delegate = nil
         composerView = nil
         spySubject = nil
+
+        UIView.setAnimationsEnabled(true)
+
         super.tearDown()
     }
 
@@ -647,9 +652,7 @@ final class VoiceRecordingVC_Tests: XCTestCase {
 
         subject.audioRecorder(audioRecorder, didFinishRecordingAtURL: location)
 
-        let waitExpectation = expectation(description: "Wait for some time.")
-        waitExpectation.isInverted = true
-        wait(for: [waitExpectation], timeout: defaultTimeout)
+        wait()
 
         XCTAssertEqual(subject.content.waveform, [1, 2, 3])
         XCTAssertEqual(subject.content.location, location)
@@ -663,9 +666,7 @@ final class VoiceRecordingVC_Tests: XCTestCase {
 
         subject.audioRecorder(audioRecorder, didFinishRecordingAtURL: .unique())
 
-        let waitExpectation = expectation(description: "Wait for some time.")
-        waitExpectation.isInverted = true
-        wait(for: [waitExpectation], timeout: defaultTimeout)
+        wait()
 
         XCTAssertEqual(subject.liveRecordingView.content, .init(
             isRecording: false,
@@ -683,9 +684,7 @@ final class VoiceRecordingVC_Tests: XCTestCase {
 
         subject.audioRecorder(audioRecorder, didFinishRecordingAtURL: .unique())
 
-        let waitExpectation = expectation(description: "Wait for some time.")
-        waitExpectation.isInverted = true
-        wait(for: [waitExpectation], timeout: defaultTimeout)
+        wait()
 
         XCTAssertTrue(subject.stopRecordingButton.isHidden)
     }
@@ -703,9 +702,7 @@ final class VoiceRecordingVC_Tests: XCTestCase {
 
         subject.audioRecorder(audioRecorder, didFinishRecordingAtURL: location)
 
-        let waitExpectation = expectation(description: "Wait for some time.")
-        waitExpectation.isInverted = true
-        wait(for: [waitExpectation], timeout: defaultTimeout)
+        wait()
 
         XCTAssertTrue(audioPlayer.stopWasCalled)
         XCTAssertTrue(delegate.voiceRecordingAddAttachmentFromLocationWasCalledWithVC === subject)
@@ -729,9 +726,7 @@ final class VoiceRecordingVC_Tests: XCTestCase {
 
         subject.audioRecorder(audioRecorder, didFinishRecordingAtURL: location)
 
-        let waitExpectation = expectation(description: "Wait for some time.")
-        waitExpectation.isInverted = true
-        wait(for: [waitExpectation], timeout: defaultTimeout)
+        wait()
 
         XCTAssertTrue(audioPlayer.stopWasCalled)
         XCTAssertTrue(delegate.voiceRecordingAddAttachmentFromLocationWasCalledWithVC === subject)
@@ -870,6 +865,8 @@ final class VoiceRecordingVC_Tests: XCTestCase {
     }
 
     func test_updateContent_showingTip_viewIsConfiguredAsExpected() {
+        subject.hideViewsDebouncer = .init(20, queue: .main)
+        
         assertViewController(for: .showingTip)
     }
 
@@ -878,10 +875,20 @@ final class VoiceRecordingVC_Tests: XCTestCase {
     }
 
     func test_updateContent_locked_viewIsConfiguredAsExpected() {
+        subject.hideViewsDebouncer = .init(20, queue: .main)
+        
         assertViewController(for: .locked, initialContentStates: [.recording])
     }
 
     func test_updateContent_preview_viewIsConfiguredAsExpected() {
+        subject.hideViewsDebouncer = .init(20, queue: .main)
+        
+        assertViewController(for: .preview, initialContentStates: [.recording, .locked])
+    }
+
+    func test_updateContent_preview_afterHideViewsDebouncerExecution_viewIsConfiguredAsExpected() {
+        subject.hideViewsDebouncer = .init(0, queue: .main)
+
         assertViewController(for: .preview, initialContentStates: [.recording, .locked])
     }
 
@@ -890,6 +897,7 @@ final class VoiceRecordingVC_Tests: XCTestCase {
     private func assertViewController(
         for contentState: VoiceRecordingVC.State,
         initialContentStates: [VoiceRecordingVC.State] = [.idle],
+        record: Bool = false,
         file: StaticString = #file,
         function: String = #function,
         line: UInt = #line
@@ -899,6 +907,7 @@ final class VoiceRecordingVC_Tests: XCTestCase {
         viewController.messageComposerVC.components = subject.components
         viewController.messageComposerVC.voiceRecordingVC.audioRecorder = audioRecorder
         viewController.messageComposerVC.voiceRecordingVC.components = subject.components
+        viewController.messageComposerVC.voiceRecordingVC.hideViewsDebouncer = subject.hideViewsDebouncer
         viewController.channelController = ChatChannelController_Mock(
             channelQuery: .init(cid: .unique),
             channelListQuery: nil,
@@ -911,14 +920,10 @@ final class VoiceRecordingVC_Tests: XCTestCase {
 
         if initialContentStates != [.idle] {
             for initialContentState in initialContentStates {
-                let waitExpectationA = expectation(description: "Wait expectation")
-                waitExpectationA.isInverted = true
-
                 // Setup initial state
                 var content = viewController.messageComposerVC.voiceRecordingVC.content
                 content.state = initialContentState
                 viewController.messageComposerVC.voiceRecordingVC.content = content
-                wait(for: [waitExpectationA], timeout: defaultTimeout)
             }
         }
 
@@ -940,17 +945,22 @@ final class VoiceRecordingVC_Tests: XCTestCase {
             averagePower: 0
         ))
 
-        let waitExpectationB = expectation(description: "Wait expectation")
-        waitExpectationB.isInverted = true
-        wait(for: [waitExpectationB], timeout: defaultTimeout)
+        wait()
 
         AssertSnapshot(
             viewController.view,
             variants: .onlyUserInterfaceStyles,
+            record: record,
             line: line,
             file: file,
             function: function
         )
+    }
+
+    private func wait(for timeout: TimeInterval = defaultTimeout) {
+        let waitExpectation = expectation(description: "Wait expectation")
+        waitExpectation.isInverted = true
+        wait(for: [waitExpectation], timeout: timeout)
     }
 }
 
