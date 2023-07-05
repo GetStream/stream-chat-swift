@@ -19,8 +19,14 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy {
 
     @Atomic var markAllRead_completion: ((Error?) -> Void)?
 
+    var startWatchingChannels_callCount = 0
     @Atomic var startWatchingChannels_cids: [ChannelId] = []
     @Atomic var startWatchingChannels_completion: ((Error?) -> Void)?
+
+    var link_callCount = 0
+    var link_completion: ((Error?) -> Void)?
+
+    var unlink_callCount = 0
 
     func cleanUp() {
         update_queries.removeAll()
@@ -66,7 +72,25 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy {
         resetChannelsQueryResult.map(completion)
     }
 
+    override func link(
+        channel: ChatChannel,
+        with query: ChannelListQuery,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        link_callCount += 1
+        link_completion = completion
+    }
+
+    override func unlink(
+        channel: ChatChannel,
+        with query: ChannelListQuery,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        unlink_callCount += 1
+    }
+
     override func startWatchingChannels(withIds ids: [ChannelId], completion: ((Error?) -> Void)?) {
+        startWatchingChannels_callCount += 1
         startWatchingChannels_cids = ids
         startWatchingChannels_completion = completion
     }

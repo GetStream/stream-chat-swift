@@ -252,6 +252,13 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     }
 }
 
+/// When we receive events, we need to check if a channel should be added or removed from
+/// the current query depending on the following events:
+/// - Channel created: We analyse if the channel should be added to the current query.
+/// - New message sent: This means the channel will reorder and appear on first position,
+///   so we also analyse if it should be added to the current query.
+/// - Channel is updated: We only check if we should remove it from the current query.
+///   We don't try to add it to the current query to not mess with pagination.
 extension ChatChannelListController: EventsControllerDelegate {
     public func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
         if let channelAddedEvent = event as? NotificationAddedToChannelEvent {
@@ -274,14 +281,9 @@ extension ChatChannelListController: EventsControllerDelegate {
 
     /// Handles if a channel should be unlinked from the current query or not.
     private func unlinkChannelIfNeeded(_ channel: ChatChannel) {
-        if isChannelLinkedToCurrentQuery(channel) && !shouldChannelBelongToCurrentQuery(channel) {
+        if !shouldChannelBelongToCurrentQuery(channel) {
             worker.unlink(channel: channel, with: query)
         }
-    }
-
-    /// Checks if the given channel is part of the current query and it is displayed in the channel list.
-    private func isChannelLinkedToCurrentQuery(_ channel: ChatChannel) -> Bool {
-        Set(channels.map(\.cid)).contains(channel.cid)
     }
 
     /// Checks if the given channel should belong to the current query or not.
