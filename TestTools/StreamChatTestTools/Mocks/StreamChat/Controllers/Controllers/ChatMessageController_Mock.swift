@@ -50,8 +50,22 @@ public class ChatMessageController_Mock: ChatMessageController {
     }
 
     var synchronize_callCount = 0
+    var synchronize_completion: ((Error?) -> Void)?
     override public func synchronize(_ completion: ((Error?) -> Void)? = nil) {
         synchronize_callCount += 1
+        synchronize_completion = completion
+    }
+
+
+    var loadPageAroundReplyId_callCount = 0
+    var loadPageAroundReplyId_completion: ((Error?) -> Void)?
+    override public func loadPageAroundReplyId(
+        _ replyId: MessageId,
+        limit: Int? = nil,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        loadPageAroundReplyId_callCount += 1
+        loadPageAroundReplyId_completion = completion
     }
 }
 
