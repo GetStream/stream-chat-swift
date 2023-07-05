@@ -1581,7 +1581,7 @@ final class ChannelController_Tests: XCTestCase {
         }
         XCTAssert(error is ClientError.ChannelNotCreatedYet)
 
-        // Simulate succsesfull backend channel creation
+        // Simulate successful backend channel creation
         env.channelUpdater!.update_onChannelCreated?(query.cid!)
 
         // Simulate `updateChannel` call and assert no error is returned
@@ -1639,6 +1639,97 @@ final class ChannelController_Tests: XCTestCase {
 
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+    }
+
+    // MARK: - Channel partial update
+
+    func test_partialChannelUpdate_failsForNewChannels() throws {
+        //  Create `ChannelController` for new channel
+        let query = ChannelQuery(channelPayload: .unique)
+        setupControllerForNewChannel(query: query)
+
+        var receivedError: Error?
+        let expectation = self.expectation(description: "partialChannelUpdate completes")
+        controller.partialChannelUpdate { [callbackQueueID] error in
+            AssertTestQueue(withId: callbackQueueID)
+            receivedError = error
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: defaultTimeout)
+        XCTAssert(receivedError is ClientError.ChannelNotCreatedYet)
+    }
+
+    func test_partialChannelUpdate_propagatesSuccess() throws {
+        let name = "Jason Bourne"
+        let imageURL: URL? = nil
+        let team = "team-one"
+        let members: Set<UserId> = ["member1", "member2"]
+        let invites: Set<UserId> = ["invite1"]
+        let extraData: [String: RawJSON] = ["scope": "test"]
+        let unsetProperties: [String] = ["user.id", "channel_store"]
+
+        var receivedError: Error?
+        let expectation = self.expectation(description: "partialChannelUpdate completes")
+        controller.partialChannelUpdate(
+            name: name,
+            imageURL: imageURL,
+            team: team,
+            members: members,
+            invites: invites,
+            extraData: extraData,
+            unsetProperties: unsetProperties
+        ) { [callbackQueueID] error in
+            AssertTestQueue(withId: callbackQueueID)
+            receivedError = error
+            expectation.fulfill()
+        }
+
+        let updater = try XCTUnwrap(env.channelUpdater)
+
+        // Simulate successful update
+        updater.partialChannelUpdate_completion?(nil)
+        updater.partialChannelUpdate_completion = nil
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertEqual(updater.partialChannelUpdate_updates?.name, name)
+        XCTAssertEqual(updater.partialChannelUpdate_updates?.imageURL, imageURL)
+        XCTAssertEqual(updater.partialChannelUpdate_updates?.team, team)
+        XCTAssertEqual(updater.partialChannelUpdate_updates?.members, members)
+        XCTAssertEqual(updater.partialChannelUpdate_updates?.invites, invites)
+        XCTAssertEqual(updater.partialChannelUpdate_updates?.extraData, extraData)
+        XCTAssertEqual(updater.partialChannelUpdate_unsetProperties, unsetProperties)
+        XCTAssertNil(receivedError)
+    }
+
+    func test_partialChannelUpdate_propagatesError() throws {
+        var receivedError: Error?
+        let expectation = self.expectation(description: "partialChannelUpdate completes")
+        controller.partialChannelUpdate(
+            name: .unique,
+            imageURL: .unique(),
+            team: .unique,
+            members: [],
+            invites: [],
+            extraData: [:],
+            unsetProperties: []
+        ) { [callbackQueueID] error in
+            AssertTestQueue(withId: callbackQueueID)
+            receivedError = error
+            expectation.fulfill()
+        }
+
+        let updater = try XCTUnwrap(env.channelUpdater)
+
+        // Simulate failed update
+        let testError = TestError()
+        updater.partialChannelUpdate_completion?(testError)
+        updater.partialChannelUpdate_completion = nil
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertEqual(receivedError, testError)
     }
 
     // MARK: - Muting channel

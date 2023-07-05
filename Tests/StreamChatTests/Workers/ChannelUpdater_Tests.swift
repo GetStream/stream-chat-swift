@@ -708,6 +708,53 @@ final class ChannelUpdater_Tests: XCTestCase {
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
 
+    // MARK: - Partial channel update
+
+    func test_partialChannelUpdate_makesCorrectAPICall() {
+        let updates: ChannelEditDetailPayload = .unique
+        let unsetProperties: [String] = ["user.id", "channel_store"]
+
+        // Simulate `partialChannelUpdate(updates:unsetProperties:completion:)` call
+        channelUpdater.partialChannelUpdate(updates: updates, unsetProperties: unsetProperties)
+
+        // Assert correct endpoint is called
+        let referenceEndpoint: Endpoint<EmptyResponse> = .partialChannelUpdate(updates: updates, unsetProperties: unsetProperties)
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+    }
+
+    func test_partialChannelUpdate_successfulResponse_isPropagatedToCompletion() {
+        // Simulate `partialChannelUpdate(updates:unsetProperties:completion:)` call
+        var receivedError: Error?
+        let expectation = self.expectation(description: "partialChannelUpdate completion")
+        channelUpdater.partialChannelUpdate(updates: .unique, unsetProperties: []) { error in
+            receivedError = error
+            expectation.fulfill()
+        }
+
+        // Simulate API response with success
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertNil(receivedError)
+    }
+
+    func test_partialChannelUpdate_errorResponse_isPropagatedToCompletion() {
+        // Simulate `partialChannelUpdate(updates:unsetProperties:completion:)` call
+        var receivedError: Error?
+        let expectation = self.expectation(description: "partialChannelUpdate completion")
+        channelUpdater.partialChannelUpdate(updates: .unique, unsetProperties: []) { error in
+            receivedError = error
+            expectation.fulfill()
+        }
+
+        // Simulate API response with failure
+        let error = TestError()
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertEqual(receivedError, error)
+    }
+
     // MARK: - Mute channel
 
     func test_muteChannel_makesCorrectAPICall() {

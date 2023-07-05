@@ -44,6 +44,21 @@ extension Endpoint {
         )
     }
 
+    static func partialChannelUpdate(updates: ChannelEditDetailPayload, unsetProperties: [String]) -> Endpoint<EmptyResponse> {
+        let body: [String: AnyEncodable] = [
+            "set": AnyEncodable(updates),
+            "unset": AnyEncodable(unsetProperties)
+        ]
+
+        return .init(
+            path: .channelUpdate(updates.apiPath),
+            method: .patch,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: body
+        )
+    }
+
     static func muteChannel(cid: ChannelId, mute: Bool) -> Endpoint<EmptyResponse> {
         .init(
             path: .muteChannel(mute),
