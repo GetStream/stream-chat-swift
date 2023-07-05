@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChat
 ### ✅ Added
 - Expose Extra Data for Giphy Attachment Payloads [#2678](https://github.com/GetStream/stream-chat-swift/pull/2678)
+- Add support for partial Channel update [#2681](https://github.com/GetStream/stream-chat-swift/pull/2681)
+
 ### 🐞 Fixed
 - Rescue messages that are stuck in `.sending` state [#2676](https://github.com/GetStream/stream-chat-swift/pull/2676)
 - Fix not being able to resend failed attachments [#2680](https://github.com/GetStream/stream-chat-swift/pull/2680)
