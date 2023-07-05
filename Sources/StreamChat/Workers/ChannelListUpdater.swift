@@ -156,7 +156,7 @@ class ChannelListUpdater: Worker {
             }
 
             guard let channelDTO = session.channel(cid: channel.cid) else {
-                log.error("Channel \(channel.cid) cannot be found in database.")
+                log.debug("Channel \(channel.cid) cannot be found in database.")
                 return
             }
 
@@ -175,7 +175,7 @@ class ChannelListUpdater: Worker {
             }
 
             guard let channelDTO = session.channel(cid: channel.cid) else {
-                log.error("Channel \(channel.cid) cannot be found in database.")
+                log.debug("Channel \(channel.cid) cannot be found in database.")
                 return
             }
             queryDTO.channels.remove(channelDTO)
