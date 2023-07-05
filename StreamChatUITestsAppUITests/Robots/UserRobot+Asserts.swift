@@ -987,6 +987,9 @@ extension UserRobot {
     ) -> Self {
         let messageCell = messageCell(withIndex: messageCellIndex)
         MessageListPage.Attributes.time(in: messageCell).wait()
+        let uploadingProgressLabel = MessageListPage.Attributes.uploadingProgressLabel(in: messageCell).waitForDisappearance()
+        XCTAssertFalse(uploadingProgressLabel.exists, "Image uploading failed", file: file, line: line)
+        
         tapOnMessage(messageCell)
         let fullscreenImage = attributes.fullscreenImage().wait()
         let errMessage = isPresent ? "There is no image" : "Image is presented"

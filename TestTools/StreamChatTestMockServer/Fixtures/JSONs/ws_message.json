@@ -1,15 +1,15 @@
 {
-    "channel_id": "3598d76c-0b11-11ee-8ca6-6a5d31489236",
+    "channel_id": "8083a21c-17a4-11ee-8f95-9a7c8f974d94",
     "channel_type": "messaging",
-    "cid": "messaging:3598d76c-0b11-11ee-8ca6-6a5d31489236",
-    "created_at": "2023-06-15T00:11:51.972823413Z",
+    "cid": "messaging:8083a21c-17a4-11ee-8f95-9a7c8f974d94",
+    "created_at": "2023-07-01T00:16:28.657813552Z",
     "message": {
         "attachments": [],
         "before_message_send_failed": true,
-        "cid": "messaging:3598d76c-0b11-11ee-8ca6-6a5d31489236",
-        "created_at": "2023-06-15T00:11:51.94713Z",
+        "cid": "messaging:8083a21c-17a4-11ee-8f95-9a7c8f974d94",
+        "created_at": "2023-07-01T00:16:28.628673Z",
         "html": "<p>Test</p>\n",
-        "id": "36650512-0b11-11ee-8ca6-6a5d31489236",
+        "id": "813a2eb0-17a4-11ee-8f95-9a7c8f974d94",
         "latest_reactions": [],
         "mentioned_users": [],
         "own_reactions": [],
@@ -24,7 +24,7 @@
         "silent": false,
         "text": "Test",
         "type": "regular",
-        "updated_at": "2023-06-15T00:11:51.94713Z",
+        "updated_at": "2023-07-01T00:16:28.628673Z",
         "user": {
             "banned": false,
             "birthland": "Tatooine",
@@ -32,11 +32,11 @@
             "honneypotted": true,
             "id": "luke_skywalker",
             "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
-            "last_active": "2023-06-15T00:11:50.404215279Z",
+            "last_active": "2023-07-01T00:16:27.079551028Z",
             "name": "Luke Skywalker",
             "online": true,
             "role": "user",
-            "updated_at": "2023-06-10T21:38:32.444409Z"
+            "updated_at": "2023-06-28T12:39:03.395627Z"
         }
     },
     "type": "message.new",
@@ -47,11 +47,11 @@
         "honneypotted": true,
         "id": "luke_skywalker",
         "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
-        "last_active": "2023-06-15T00:11:50.404215279Z",
+        "last_active": "2023-07-01T00:16:27.079551028Z",
         "name": "Luke Skywalker",
         "online": true,
         "role": "user",
-        "updated_at": "2023-06-10T21:38:32.444409Z"
+        "updated_at": "2023-06-28T12:39:03.395627Z"
     },
     "watcher_count": 1
 }

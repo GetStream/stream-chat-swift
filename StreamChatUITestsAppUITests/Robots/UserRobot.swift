@@ -403,6 +403,13 @@ extension UserRobot {
         if send { sendMessage("", waitForAppearance: false) }
         return self
     }
+    
+    @discardableResult
+    func restartImageUpload(messageCellIndex: Int = 0) -> Self {
+        let messageCell = messageCell(withIndex: messageCellIndex)
+        MessageListPage.Attributes.restartAttachmentUploadIcon(in: messageCell).wait().safeTap()
+        return self
+    }
 
     @discardableResult
     func mentionParticipant(manually: Bool = false) -> Self {
