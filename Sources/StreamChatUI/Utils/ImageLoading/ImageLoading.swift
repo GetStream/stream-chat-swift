@@ -99,7 +99,7 @@ public extension ImageLoading {
         into imageView: UIImageView,
         from attachmentPayload: ImageAttachmentPayload?,
         maxResolutionInPixels: Double,
-        completion: ((_ result: Result<UIImage, Error>) -> Void)? = nil
+        completion: ((_ result: Result<UIImage, Error>) -> Void)?
     ) -> Cancellable? {
         guard let originalWidth = attachmentPayload?.originalWidth,
               let originalHeight = attachmentPayload?.originalHeight else {
@@ -125,20 +125,40 @@ public extension ImageLoading {
             completion: completion
         )
     }
+
+    @discardableResult
+    func loadImage(
+        into imageView: UIImageView,
+        from attachmentPayload: ImageAttachmentPayload?,
+        maxResolutionInPixels: Double
+    ) -> Cancellable? {
+        loadImage(
+            into: imageView,
+            from: attachmentPayload,
+            maxResolutionInPixels: maxResolutionInPixels,
+            completion: nil
+        )
+    }
 }
 
 // MARK: - Default Parameters
 
 public extension ImageLoading {
-    // Default empty completion block.
+    @discardableResult
+    func loadImage(
+        into imageView: UIImageView,
+        from url: URL?
+    ) -> Cancellable? {
+        loadImage(into: imageView, from: url, with: ImageLoaderOptions(), completion: nil)
+    }
+
     @discardableResult
     func loadImage(
         into imageView: UIImageView,
         from url: URL?,
-        with options: ImageLoaderOptions = ImageLoaderOptions(),
-        completion: ((_ result: Result<UIImage, Error>) -> Void)? = nil
+        with options: ImageLoaderOptions
     ) -> Cancellable? {
-        loadImage(into: imageView, from: url, with: options, completion: completion)
+        loadImage(into: imageView, from: url, with: options, completion: nil)
     }
 }
 
