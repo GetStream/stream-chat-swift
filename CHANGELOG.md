@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### ✅ Added
 - Add support for starting thread from oldest replies by enabling `Components.threadRepliesStartFromOldest` [#2682](https://github.com/GetStream/stream-chat-swift/pull/2682)
 ### 🐞 Fixed
+- Fix custom `ImageLoading` functions with default arguments not being called [#2695](https://github.com/GetStream/stream-chat-swift/pull/2695)
 - Improve Channel List prefetching when loading more channels [#2682](https://github.com/GetStream/stream-chat-swift/pull/2682)
 ### 🔄 Changed
 - Renamed `scrollToMostRecentMessage()` -> `scrollToBottom()` [#2682](https://github.com/GetStream/stream-chat-swift/pull/2682)
