@@ -254,43 +254,45 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
 
 extension ChatChannelListController: EventsControllerDelegate {
     public func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
-        let newChannel: ChatChannel?
-
         if let channelAddedEvent = event as? NotificationAddedToChannelEvent {
-            newChannel = channelAddedEvent.channel
+            linkChannelIfNeeded(channelAddedEvent.channel)
         } else if let messageNewEvent = event as? MessageNewEvent {
-            newChannel = messageNewEvent.channel
+            linkChannelIfNeeded(messageNewEvent.channel)
         } else if let messageNewEvent = event as? NotificationMessageNewEvent {
-            newChannel = messageNewEvent.channel
-        } else {
-            newChannel = nil
+            linkChannelIfNeeded(messageNewEvent.channel)
+        } else if let updatedChannelEvent = event as? ChannelUpdatedEvent {
+            unlinkChannelIfNeeded(updatedChannelEvent.channel)
         }
-
-        guard let channel = newChannel else {
-            return
-        }
-
-        guard shouldLinkChannelToQuery(channel) else {
-            return
-        }
-
-        link(channel: channel)
     }
 
-    /// Checks if the given channel matches the current channel list query.
-    private func shouldLinkChannelToQuery(_ channel: ChatChannel) -> Bool {
-        guard state == .remoteDataFetched else {
-            log.debug("Ignoring inserted/updated unlinked channels due to query \(query) not being synced.")
-            return false
+    /// Handles if a channel should be linked to the current query or not.
+    private func linkChannelIfNeeded(_ channel: ChatChannel) {
+        if shouldChannelBelongToCurrentQuery(channel) {
+            link(channel: channel)
         }
+    }
 
+    /// Handles if a channel should be unlinked from the current query or not.
+    private func unlinkChannelIfNeeded(_ channel: ChatChannel) {
+        if isChannelLinkedToCurrentQuery(channel) && !shouldChannelBelongToCurrentQuery(channel) {
+            worker.unlink(channel: channel, with: query)
+        }
+    }
+
+    /// Checks if the given channel is part of the current query and it is displayed in the channel list.
+    private func isChannelLinkedToCurrentQuery(_ channel: ChatChannel) -> Bool {
+        Set(channels.map(\.cid)).contains(channel.cid)
+    }
+
+    /// Checks if the given channel should belong to the current query or not.
+    private func shouldChannelBelongToCurrentQuery(_ channel: ChatChannel) -> Bool {
         if let filter = filter {
             return filter(channel)
         }
 
         guard !client.config.isChannelAutomaticFilteringEnabled else {
-            // When auto-filtering is enabled we will link the channel to the current query always.
-            // Then, the channel will appear in the Channel List automatically if the query matches the DB Predicate.
+            // When auto-filtering is enabled the channel will appear or not automatically if the
+            // query matches the DB Predicate. So here we default to saying it always belong to the current query.
             return true
         }
 

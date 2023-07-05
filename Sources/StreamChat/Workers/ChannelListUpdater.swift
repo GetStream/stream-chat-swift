@@ -165,6 +165,24 @@ class ChannelListUpdater: Worker {
             completion?(error)
         }
     }
+
+    /// Unlinks a channel to the given query.
+    func unlink(channel: ChatChannel, with query: ChannelListQuery, completion: ((Error?) -> Void)? = nil) {
+        database.write { session in
+            guard let queryDTO = session.channelListQuery(filterHash: query.filter.filterHash) else {
+                log.debug("Channel list query has not yet created \(query)")
+                return
+            }
+
+            guard let channelDTO = session.channel(cid: channel.cid) else {
+                log.error("Channel \(channel.cid) cannot be found in database.")
+                return
+            }
+            queryDTO.channels.remove(channelDTO)
+        } completion: { error in
+            completion?(error)
+        }
+    }
 }
 
 private extension ChannelListUpdater {
