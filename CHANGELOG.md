@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.34.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.34.0)
+_July 05, 2023_
+
 ## StreamChat
 ### ✅ Added
 - Expose Extra Data for Giphy Attachment Payloads [#2678](https://github.com/GetStream/stream-chat-swift/pull/2678)
