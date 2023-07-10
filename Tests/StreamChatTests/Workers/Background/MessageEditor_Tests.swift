@@ -81,6 +81,42 @@ final class MessageEditor_Tests: XCTestCase {
         XCTAssertCall("updateMessage(withID:localState:isBounced:completion:)", on: messageRepository, times: 1)
     }
 
+    func test_editorSyncsMessage_whenMessageChangesToPendingSyncAndHasAttachmentsUploadedFromServer() throws {
+        let currentUserId: UserId = .unique
+        let messageId: MessageId = .unique
+        let cid: ChannelId = .unique
+
+        // We create a message with an attachment from the server.
+        try database.createCurrentUser(id: currentUserId)
+        try database.createMessage(id: messageId, authorId: currentUserId, cid: cid, localState: nil)
+        try database.writeSynchronously { session in
+            let attachmentDTO = try session.saveAttachment(
+                payload: .dummy(),
+                id: .init(cid: cid, messageId: messageId, index: 0)
+            )
+            let messageDTO = session.message(id: messageId)
+            messageDTO?.attachments.insert(attachmentDTO)
+        }
+
+        // When we update the message local state to pending sync
+        try database.writeSynchronously { session in
+            let messageDTO = session.message(id: messageId)
+            messageDTO?.localMessageState = .pendingSync
+        }
+
+        // Then the message editor updates the message.
+        let message1Payload: MessageRequestBody = try XCTUnwrap(
+            database.viewContext.message(id: messageId)?
+                .asRequestBody()
+        )
+        AssertAsync {
+            Assert.willBeEqual(self.apiClient.request_allRecordedCalls.filter {
+                $0.endpoint == AnyEndpoint(.editMessage(payload: message1Payload))
+            }.count, 1)
+        }
+        XCTAssertCall("updateMessage(withID:localState:isBounced:completion:)", on: messageRepository, times: 1)
+    }
+
     func test_editorSyncsMessage_withPendingSyncLocalState_withPendingAttachments() throws {
         let currentUserId: UserId = .unique
         let messageId: MessageId = .unique
@@ -96,9 +132,9 @@ final class MessageEditor_Tests: XCTestCase {
         let messageDTO = try XCTUnwrap(database.viewContext.message(id: messageId))
         XCTAssertEqual(messageDTO.attachments.count, 1)
 
-        let attachmentId = try XCTUnwrap(messageDTO.attachments.first?.attachmentID)
-        XCTAssertEqual(apiClient.request_allRecordedCalls.count, 0)
+        apiClient.request_allRecordedCalls = []
 
+        let attachmentId = try XCTUnwrap(messageDTO.attachments.first?.attachmentID)
         try database.writeSynchronously { session in
             let attachment = try XCTUnwrap(session.attachment(id: attachmentId))
             attachment.localState = .uploaded
