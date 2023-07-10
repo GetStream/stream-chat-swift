@@ -134,15 +134,17 @@ final class MessageEditor_Tests: XCTestCase {
 
         apiClient.request_allRecordedCalls = []
 
+        apiClient.request_expectation = expectation(description: "should call apiClient.request")
+
         let attachmentId = try XCTUnwrap(messageDTO.attachments.first?.attachmentID)
         try database.writeSynchronously { session in
             let attachment = try XCTUnwrap(session.attachment(id: attachmentId))
             attachment.localState = .uploaded
         }
 
-        AssertAsync {
-            Assert.willBeTrue(self.apiClient.request_allRecordedCalls.count == 1)
-        }
+        wait(for: [apiClient.request_expectation], timeout: defaultTimeout)
+
+        XCTAssertTrue(apiClient.request_allRecordedCalls.count == 1)
         XCTAssertTrue(apiClient.request_allRecordedCalls.contains(where: {
             $0.endpoint == AnyEndpoint(.editMessage(payload: messageDTO.asRequestBody()))
         }))
