@@ -1218,7 +1218,8 @@ final class MessageDTO_Tests: XCTestCase {
         let messagePayload: MessagePayload = .dummy(
             messageId: .unique,
             authorUserId: .unique,
-            channel: ChannelDetailPayload.dummy(cid: channelId)
+            channel: ChannelDetailPayload.dummy(cid: channelId),
+            cid: channelId
         )
 
         try database.writeSynchronously { session in
