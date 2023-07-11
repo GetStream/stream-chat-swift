@@ -117,37 +117,43 @@ final class MessageEditor_Tests: XCTestCase {
         XCTAssertCall("updateMessage(withID:localState:isBounced:completion:)", on: messageRepository, times: 1)
     }
 
-    func test_editorSyncsMessage_withPendingSyncLocalState_withPendingAttachments() throws {
+    func test_editorSyncsMessage_whenAttachmentFinishesUploading() throws {
         let currentUserId: UserId = .unique
+        let cid: ChannelId = .unique
         let messageId: MessageId = .unique
 
+        // We create a message with an attachment in progress.
         try database.createCurrentUser(id: currentUserId)
-        try database.createMessage(
-            id: messageId,
-            authorId: currentUserId,
-            attachments: [MessageAttachmentPayload.dummy()],
-            localState: .pendingSync
-        )
-
-        let messageDTO = try XCTUnwrap(database.viewContext.message(id: messageId))
-        XCTAssertEqual(messageDTO.attachments.count, 1)
-
-        apiClient.request_allRecordedCalls = []
-
-        apiClient.request_expectation = expectation(description: "should call apiClient.request")
-
-        let attachmentId = try XCTUnwrap(messageDTO.attachments.first?.attachmentID)
+        try database.createMessage(id: messageId, authorId: currentUserId, cid: cid, localState: .syncingFailed)
         try database.writeSynchronously { session in
-            let attachment = try XCTUnwrap(session.attachment(id: attachmentId))
-            attachment.localState = .uploaded
+            let attachmentDTO = try session.saveAttachment(
+                payload: .dummy(),
+                id: .init(cid: cid, messageId: messageId, index: 0)
+            )
+            attachmentDTO.localState = .uploading(progress: 0.3)
+            let messageDTO = session.message(id: messageId)
+            messageDTO?.attachments.insert(attachmentDTO)
         }
 
+        // When changing state to pendingSync, should not trigger any update because there are pending attachments
+        apiClient.request_expectation = expectation(description: "should not update message if attachments are in progress")
+        apiClient.request_expectation.isInverted = true
+        try database.writeSynchronously { session in
+            let messageDTO = session.message(id: messageId)
+            messageDTO?.localMessageState = .pendingSync
+        }
         wait(for: [apiClient.request_expectation], timeout: defaultTimeout)
 
+        // When the attachments finish uploading, it should finally sync the message.
+        apiClient.request_expectation = expectation(description: "should update message when attachment is finished uploaded")
+        try database.writeSynchronously { session in
+            let messageDTO = try XCTUnwrap(session.message(id: messageId))
+            messageDTO.attachments.first!.localState = .uploaded
+        }
+        wait(for: [apiClient.request_expectation], timeout: defaultTimeout)
+
+        // Then
         XCTAssertTrue(apiClient.request_allRecordedCalls.count == 1)
-        XCTAssertTrue(apiClient.request_allRecordedCalls.contains(where: {
-            $0.endpoint == AnyEndpoint(.editMessage(payload: messageDTO.asRequestBody()))
-        }))
         XCTAssertCall("updateMessage(withID:localState:isBounced:completion:)", on: messageRepository, times: 1)
     }
 
