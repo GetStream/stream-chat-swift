@@ -38,7 +38,7 @@ final class AttachmentDTO_Tests: XCTestCase {
 
         // Assert attachment has correct values.
         XCTAssertEqual(loadedAttachment.attachmentID, attachmentId)
-        XCTAssertEqual(loadedAttachment.localState, .unknown)
+        XCTAssertEqual(loadedAttachment.localState, nil)
         XCTAssertEqual(loadedAttachment.attachmentType, attachment.type)
         XCTAssertEqual(loadedAttachment.message.id, messageId)
 
@@ -72,7 +72,7 @@ final class AttachmentDTO_Tests: XCTestCase {
 
         // Assert attachment has correct values.
         XCTAssertEqual(loadedAttachment.attachmentID, attachmentId)
-        XCTAssertEqual(loadedAttachment.localState, .unknown)
+        XCTAssertEqual(loadedAttachment.localState, nil)
         XCTAssertEqual(loadedAttachment.attachmentType, attachment.type)
         XCTAssertEqual(loadedAttachment.message.id, messageId)
 
@@ -109,7 +109,7 @@ final class AttachmentDTO_Tests: XCTestCase {
 
         // Assert attachment has correct values.
         XCTAssertEqual(loadedAttachment.attachmentID, attachmentId)
-        XCTAssertEqual(loadedAttachment.localState, .unknown)
+        XCTAssertEqual(loadedAttachment.localState, nil)
         XCTAssertEqual(loadedAttachment.attachmentType, attachment.type)
         XCTAssertEqual(loadedAttachment.message.id, messageId)
 
@@ -250,7 +250,34 @@ final class AttachmentDTO_Tests: XCTestCase {
 
         // Assert attachment local file URL and state are nil.
         XCTAssertNil(loadedAttachment?.localURL)
-        XCTAssertEqual(loadedAttachment?.localState, .unknown)
+        XCTAssertEqual(loadedAttachment?.localState, nil)
+    }
+
+    func test_localStateRaw_whenSetToNil_shouldReturnNil() throws {
+        let cid: ChannelId = .unique
+        let messageId: MessageId = .unique
+        let attachmentId = AttachmentId(cid: cid, messageId: messageId, index: 0)
+        let attachmentEnvelope = AnyAttachmentPayload.mockFile
+
+        // Create channel in the database.
+        try database.createChannel(cid: cid, withMessages: false)
+
+        // Create message in the database.
+        try database.createMessage(id: messageId, cid: cid)
+
+        // Seed message attachment with localState == nil.
+        try database.writeSynchronously { session in
+            let attachmentDTO = try session.createNewAttachment(attachment: attachmentEnvelope, id: attachmentId)
+            attachmentDTO.localState = nil
+        }
+
+        // Load the attachment from the database.
+        var loadedAttachment: AttachmentDTO? {
+            database.viewContext.attachment(id: attachmentId)
+        }
+
+        // Assert attachment has localState == nil, which means the attachment comes from the server.
+        XCTAssertEqual(loadedAttachment?.localState, nil)
     }
 
     func test_attachmentChange_triggerMessageUpdate() throws {

@@ -22,14 +22,15 @@ class AttachmentDTO: NSManagedObject {
     }
 
     /// An attachment local state.
-    @NSManaged private var localStateRaw: String
+    @NSManaged private var localStateRaw: String?
     @NSManaged private var localProgress: Double
     var localState: LocalAttachmentState? {
         get {
-            LocalAttachmentState(rawValue: localStateRaw, progress: localProgress)
+            guard let localStateRaw = self.localStateRaw else { return nil }
+            return LocalAttachmentState(rawValue: localStateRaw, progress: localProgress)
         }
         set {
-            localStateRaw = newValue?.rawValue ?? ""
+            localStateRaw = newValue?.rawValue
             localProgress = newValue?.progress ?? 0
         }
     }
