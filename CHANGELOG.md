@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChat
 ### 🐞 Fixed
+- Fix pinning messages with attachments not synced with server [#2698](https://github.com/GetStream/stream-chat-swift/pull/2698)
 - Fix messages disappearing in search query after entering a channel [#2700](https://github.com/GetStream/stream-chat-swift/pull/2700)
 
 # [4.34.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.34.0)

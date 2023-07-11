@@ -4,7 +4,7 @@
         <attribute name="data" attributeType="Binary"/>
         <attribute name="id" attributeType="String"/>
         <attribute name="localProgress" attributeType="Double" minValueString="0" maxValueString="1" defaultValueString="0.0" usesScalarValueType="YES"/>
-        <attribute name="localStateRaw" attributeType="String" defaultValueString=""/>
+        <attribute name="localStateRaw" optional="YES" attributeType="String"/>
         <attribute name="localURL" optional="YES" attributeType="URI"/>
         <attribute name="type" optional="YES" attributeType="String"/>
         <relationship name="message" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="attachments" inverseEntity="MessageDTO"/>
