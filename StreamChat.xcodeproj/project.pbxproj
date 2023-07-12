@@ -1945,6 +1945,8 @@
 		C1B49B3E2822A7AD00F4E89E /* StreamRuntimeCheck.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B49B3C2822A7AD00F4E89E /* StreamRuntimeCheck.swift */; };
 		C1B49B402822C01C00F4E89E /* NSManagedObject+Validation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B49B3F2822C01C00F4E89E /* NSManagedObject+Validation.swift */; };
 		C1B49B412822C01C00F4E89E /* NSManagedObject+Validation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B49B3F2822C01C00F4E89E /* NSManagedObject+Validation.swift */; };
+		C1B9AB482A5ECFA7002D9B3E /* Channel+Sorting.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B9AB472A5ECFA7002D9B3E /* Channel+Sorting.swift */; };
+		C1B9AB492A5ECFA7002D9B3E /* Channel+Sorting.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B9AB472A5ECFA7002D9B3E /* Channel+Sorting.swift */; };
 		C1BE72732732CA62006EB51E /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = C1BE72722732CA62006EB51E /* Nuke */; };
 		C1BFBABE29CB2A7500FC82A2 /* JumpToUnreadMessagesButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BFBABD29CB2A7500FC82A2 /* JumpToUnreadMessagesButton.swift */; };
 		C1BFBABF29CB2A7500FC82A2 /* JumpToUnreadMessagesButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1BFBABD29CB2A7500FC82A2 /* JumpToUnreadMessagesButton.swift */; };
@@ -3849,6 +3851,7 @@
 		C1B15A1329115E8D00C9CD80 /* Token+Development.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Token+Development.swift"; sourceTree = "<group>"; };
 		C1B49B3C2822A7AD00F4E89E /* StreamRuntimeCheck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamRuntimeCheck.swift; sourceTree = "<group>"; };
 		C1B49B3F2822C01C00F4E89E /* NSManagedObject+Validation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSManagedObject+Validation.swift"; sourceTree = "<group>"; };
+		C1B9AB472A5ECFA7002D9B3E /* Channel+Sorting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Channel+Sorting.swift"; sourceTree = "<group>"; };
 		C1BE72762732CB7B006EB51E /* ImageViewExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageViewExtensions.swift; sourceTree = "<group>"; };
 		C1BE72772732CB7B006EB51E /* FetchImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FetchImage.swift; sourceTree = "<group>"; };
 		C1BE72792732CB7B006EB51E /* ImageCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageCache.swift; sourceTree = "<group>"; };
@@ -5090,6 +5093,7 @@
 				8A62706D24BF45360040BFD6 /* BanEnabling.swift */,
 				43D3F0FE28410B4800B74921 /* Call.swift */,
 				79877A062498E4BC00015F8B /* Channel.swift */,
+				C1B9AB472A5ECFA7002D9B3E /* Channel+Sorting.swift */,
 				79877A072498E4BC00015F8B /* ChannelId.swift */,
 				79896D5D25065E6900BA8F1C /* ChannelRead.swift */,
 				79877A042498E4BB00015F8B /* ChannelType.swift */,
@@ -10084,6 +10088,7 @@
 				40789D2929F6AC500018C2BB /* AudioRecordingContextAccessor.swift in Sources */,
 				84D5BC6F277B619D00A65C75 /* PinnedMessagesSortingKey.swift in Sources */,
 				C1FC2FA22742579D0062530F /* WSCompression.swift in Sources */,
+				C1B9AB482A5ECFA7002D9B3E /* Channel+Sorting.swift in Sources */,
 				CFE616BD28348ACD00AE2ABF /* ScheduledStreamTimer.swift in Sources */,
 				AD57979E2978C4F7006CC435 /* UploadedAttachmentPostProcessor.swift in Sources */,
 				40789D2B29F6AC500018C2BB /* AudioRecordingContext.swift in Sources */,
@@ -11049,6 +11054,7 @@
 				AD785690298B273900C2FEAD /* ChatClient+ChannelController.swift in Sources */,
 				C121E8BD274544B100023E4C /* UserListController+SwiftUI.swift in Sources */,
 				C121E8BE274544B100023E4C /* UserListController+Combine.swift in Sources */,
+				C1B9AB492A5ECFA7002D9B3E /* Channel+Sorting.swift in Sources */,
 				C121E8BF274544B100023E4C /* EventsController.swift in Sources */,
 				C121E8C0274544B100023E4C /* EventsController+Combine.swift in Sources */,
 				C121E8C1274544B100023E4C /* EventsController+SwiftUI.swift in Sources */,
