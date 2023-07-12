@@ -184,6 +184,7 @@
     </entity>
     <entity name="MessageDTO" representedClassName="MessageDTO" syncable="YES">
         <attribute name="args" optional="YES" attributeType="String"/>
+        <attribute name="cid" optional="YES" attributeType="String"/>
         <attribute name="command" optional="YES" attributeType="String"/>
         <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="defaultSortingKey" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
