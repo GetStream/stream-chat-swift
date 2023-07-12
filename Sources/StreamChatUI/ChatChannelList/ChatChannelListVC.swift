@@ -233,8 +233,8 @@ open class ChatChannelListVC: _ViewController,
     public func replaceChannelListController(_ controller: ChatChannelListController) {
         self.controller = controller
         self.controller.delegate = self
-        collectionView.reloadData()
         self.controller.synchronize()
+        collectionView.reloadData()
     }
 
     open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
