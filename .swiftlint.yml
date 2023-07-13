@@ -38,7 +38,6 @@ opt_in_rules:
   - identical_operands
   - joined_default_parameter
   - unavailable_function
-  - overridden_super_call
   - explicit_init
   - redundant_optional_initialization
   - syntactic_sugar
