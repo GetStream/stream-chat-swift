@@ -357,7 +357,7 @@ public struct Components {
     /// The view that shows channel information.
     public var channelContentView: ChatChannelListItemView.Type = ChatChannelListItemView.self
 
-    /// The view that shows a user avatar including an indicator of the user presence (online/offline).
+    /// The view that shows the channel avatar including an indicator of the user presence (online/offline).
     public var channelAvatarView: ChatChannelAvatarView.Type = ChatChannelAvatarView.self
 
     /// The view that shows a number of unread messages in channel.
@@ -438,8 +438,8 @@ public struct Components {
     public var suggestionsHeaderView: ChatSuggestionsHeaderView.Type =
         ChatSuggestionsHeaderView.self
 
-    /// A type for the view used as avatar when picking users to mention.
-    public var mentionAvatarView: ChatUserAvatarView.Type = ChatUserAvatarView.self
+    /// The view that shows a user avatar including an indicator of the user presence (online/offline).
+    public var userAvatarView: ChatUserAvatarView.Type = ChatUserAvatarView.self
 
     // MARK: - Composer VoiceRecording components
 
@@ -523,6 +523,16 @@ public extension Components {
         }
         set {
             scrollToBottomButton = newValue
+        }
+    }
+
+    @available(*, deprecated, renamed: "userAvatarView")
+    var mentionAvatarView: ChatUserAvatarView.Type {
+        get {
+            userAvatarView
+        }
+        set {
+            userAvatarView = newValue
         }
     }
 }
