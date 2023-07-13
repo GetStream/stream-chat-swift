@@ -376,6 +376,18 @@ public struct Components {
     /// If it is false, it does not show empty or error views and just shows a spinner indicator for the loading state. If set to true, the empty, error and shimmer loading views are shown instead.
     public var isChatChannelListStatesEnabled = false
 
+    // MARK: - Search
+
+    /// The channel list search strategy. The UI SDK supports search out-of-the-box if a strategy is provided.
+    /// It is possible to search by messages or channels. By default, search is disabled.
+    public var channelListSearchStrategy: ChannelListSearchStrategy? = .messages
+
+    /// The view controller responsible to search channels.
+    public var channelSearchVC: ChatChannelSearchVC.Type = ChatChannelSearchVC.self
+
+    /// The view controller responsible to search messages.
+    public var messageSearchVC: ChatMessageSearchVC.Type = ChatMessageSearchVC.self
+
     // MARK: - Composer components
 
     /// The view controller used to compose a message.

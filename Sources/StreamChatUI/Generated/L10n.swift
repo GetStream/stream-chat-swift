@@ -48,6 +48,8 @@ internal enum L10n {
     internal enum Item {
       /// No messages
       internal static var emptyMessages: String { L10n.tr("Localizable", "channel.item.empty-messages") }
+      /// in
+      internal static var `in`: String { L10n.tr("Localizable", "channel.item.in") }
       /// are typing ...
       internal static var typingPlural: String { L10n.tr("Localizable", "channel.item.typing-plural") }
       /// is typing ...
@@ -66,6 +68,8 @@ internal enum L10n {
   }
 
   internal enum ChannelList {
+    /// Search
+    internal static var search: String { L10n.tr("Localizable", "channelList.search") }
     internal enum Empty {
       /// Start a chat
       internal static var button: String { L10n.tr("Localizable", "channelList.empty.button") }

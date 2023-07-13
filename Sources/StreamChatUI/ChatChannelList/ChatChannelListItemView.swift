@@ -13,10 +13,17 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
         public let channel: ChatChannel
         /// Current user ID needed to filter out when showing typing indicator.
         public let currentUserId: UserId?
+        /// The message part of a search result.
+        public var searchedMessage: ChatMessage?
 
-        public init(channel: ChatChannel, currentUserId: UserId?) {
+        public init(
+            channel: ChatChannel,
+            currentUserId: UserId?,
+            searchedMessage: ChatMessage? = nil
+        ) {
             self.channel = channel
             self.currentUserId = currentUserId
+            self.searchedMessage = searchedMessage
         }
     }
 
@@ -91,6 +98,13 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
         .withoutAutoresizingMaskConstraints
         .withAccessibilityIdentifier(identifier: "avatarView")
 
+    /// The view used to show user avatar in case we are in a search result.
+    open private(set) lazy var userAvatarView: ChatUserAvatarView = components
+        .userAvatarView
+        .init()
+        .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "userAvatarView")
+
     /// The view showing number of unread messages in channel if any.
     open private(set) lazy var unreadCountView: ChatChannelUnreadCountView = components
         .channelUnreadCountView.init()
@@ -99,16 +113,31 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
 
     /// Text of `titleLabel` which contains the channel name.
     open var titleText: String? {
-        if let channel = content?.channel {
-            return appearance.formatters.channelName.format(channel: channel, forCurrentUserId: channel.membership?.id)
-        } else {
-            return nil
+        if let searchedMessage = content?.searchedMessage {
+            var title = "\(searchedMessage.author.name ?? searchedMessage.author.id)"
+            if let channelName = content?.channel.name {
+                title += " \(L10n.Channel.Item.in) \(channelName)"
+            }
+            return title
         }
+
+        if let channel = content?.channel {
+            return appearance.formatters
+                .channelName
+                .format(channel: channel, forCurrentUserId: channel.membership?.id)
+        }
+
+        return nil
     }
 
     /// Text of `subtitleLabel` which contains current typing user or the last message in the channel.
     open var subtitleText: String? {
         guard let content = content else { return nil }
+
+        if let searchedMessage = content.searchedMessage {
+            return searchedMessage.text
+        }
+
         if let typingUsersInfo = typingUserString {
             return typingUsersInfo
         } else if isLastMessageVoiceRecording {
@@ -214,6 +243,14 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
             topContainer, bottomContainer
         ])
 
+        let avatarView: UIView
+
+        if content?.searchedMessage != nil {
+            avatarView = userAvatarView
+        } else {
+            avatarView = self.avatarView
+        }
+
         NSLayoutConstraint.activate([
             avatarView.heightAnchor.pin(equalToConstant: 48),
             avatarView.widthAnchor.pin(equalTo: avatarView.heightAnchor)
@@ -245,7 +282,11 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
             subtitleContainer.removeArrangedSubview(subtitleImageView)
         }
 
-        avatarView.content = (content?.channel, content?.currentUserId)
+        if let searchedMessage = content?.searchedMessage {
+            userAvatarView.content = searchedMessage.author
+        } else {
+            avatarView.content = (content?.channel, content?.currentUserId)
+        }
 
         unreadCountView.content = content?.channel.unreadCount ?? .noUnread
         unreadCountView.invalidateIntrinsicContentSize()

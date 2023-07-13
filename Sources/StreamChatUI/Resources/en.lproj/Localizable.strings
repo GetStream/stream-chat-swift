@@ -8,10 +8,12 @@
 "channel.item.empty-messages" = "No messages";
 "channel.item.typing-singular" = "is typing ...";
 "channel.item.typing-plural" = "are typing ...";
+"channel.item.in" = "in";
 
 "channelList.empty.title" = "Let's start chatting!";
 "channelList.empty.subtitle" = "How about sending your first message to a friend?";
 "channelList.empty.button" = "Start a chat";
+"channelList.search" = "Search";
 
 "channelList.error.message" = "Error loading channels";
 "channelList.preview.voice.recording" = "Voice message";
