@@ -132,6 +132,7 @@ class AppConfigViewController: UITableViewController {
         case threadRendersParentMessageEnabled
         case isVoiceRecordingEnabled
         case isVoiceRecordingConfirmationRequiredEnabled
+        case channelListSearchStrategy
     }
 
     enum ChatClientConfigOption: String, CaseIterable {
@@ -201,11 +202,11 @@ class AppConfigViewController: UITableViewController {
         guard let cell = tableView.cellForRow(at: indexPath) else { return }
 
         switch options[indexPath.section] {
-        case .info, .user, .components:
+        case .info, .user, .demoApp:
             break
 
-        case let .demoApp(options):
-            didSelectDemoAppOptionsCell(cell, at: indexPath, options: options)
+        case let .components(options):
+            didSelectComponentsOptionsCell(cell, at: indexPath, options: options)
 
         case let .chatClient(options):
             didSelectChatClientOptionsCell(cell, at: indexPath, options: options)
@@ -246,22 +247,6 @@ class AppConfigViewController: UITableViewController {
             cell.accessoryView = makeSwitchButton(demoAppConfig.isMessageDebuggerEnabled) { [weak self] newValue in
                 self?.demoAppConfig.isMessageDebuggerEnabled = newValue
             }
-        }
-    }
-
-    private func didSelectDemoAppOptionsCell(
-        _ cell: UITableViewCell,
-        at indexPath: IndexPath,
-        options: [DemoAppConfigOption]
-    ) {
-        let option = options[indexPath.row]
-        switch option {
-        case .isHardDeleteEnabled:
-            break
-        case .isAtlantisEnabled:
-            break
-        case .isMessageDebuggerEnabled:
-            break
         }
     }
 
@@ -306,15 +291,9 @@ class AppConfigViewController: UITableViewController {
     ) {
         let option = options[indexPath.row]
         switch option {
-        case .isLocalStorageEnabled:
-            break
-        case .staysConnectedInBackground:
-            break
-        case .shouldShowShadowedMessages:
-            break
         case .deletedMessagesVisibility:
-            makeDeletedMessagesVisibilitySelectorVC()
-        case .isChannelAutomaticFilteringEnabled:
+            pushDeletedMessagesVisibilitySelectorVC()
+        default:
             break
         }
     }
@@ -372,10 +351,27 @@ class AppConfigViewController: UITableViewController {
             cell.accessoryView = makeSwitchButton(Components.default.isVoiceRecordingConfirmationRequiredEnabled) { newValue in
                 Components.default.isVoiceRecordingConfirmationRequiredEnabled = newValue
             }
+        case .channelListSearchStrategy:
+            cell.detailTextLabel?.text = Components.default.channelListSearchStrategy.description
+            cell.accessoryType = .disclosureIndicator
         }
     }
 
-    // MARK: View Factories
+    private func didSelectComponentsOptionsCell(
+        _ cell: UITableViewCell,
+        at indexPath: IndexPath,
+        options: [ComponentsConfigOption]
+    ) {
+        let option = options[indexPath.row]
+        switch option {
+        case .channelListSearchStrategy:
+            pushChannelListSearchStrategySelectorVC()
+        default:
+            break
+        }
+    }
+
+    // MARK: - Helpers
 
     private func makeSwitchButton(_ initialValue: Bool, _ didChangeValue: @escaping (Bool) -> Void) -> SwitchButton {
         let switchButton = SwitchButton()
@@ -384,7 +380,7 @@ class AppConfigViewController: UITableViewController {
         return switchButton
     }
 
-    private func makeDeletedMessagesVisibilitySelectorVC() {
+    private func pushDeletedMessagesVisibilitySelectorVC() {
         let selectorViewController = OptionsSelectorViewController(
             options: [.alwaysHidden, .alwaysVisible, .visibleForCurrentUser],
             initialSelectedOptions: [chatClientConfig.deletedMessagesVisibility],
@@ -396,5 +392,34 @@ class AppConfigViewController: UITableViewController {
         }
 
         navigationController?.pushViewController(selectorViewController, animated: true)
+    }
+
+    private func pushChannelListSearchStrategySelectorVC() {
+        let selectorViewController = OptionsSelectorViewController(
+            options: [ChannelListSearchStrategy.channels, ChannelListSearchStrategy.messages, nil],
+            initialSelectedOptions: [Components.default.channelListSearchStrategy],
+            allowsMultipleSelection: false,
+            optionFormatter: { $0.description }
+        )
+        selectorViewController.didChangeSelectedOptions = { [weak self] options in
+            guard let selectedOption = options.first else { return }
+            Components.default.channelListSearchStrategy = selectedOption
+            self?.tableView.reloadData()
+        }
+
+        navigationController?.pushViewController(selectorViewController, animated: true)
+    }
+}
+
+extension Optional: CustomStringConvertible where Wrapped == ChannelListSearchStrategy {
+    public var description: String {
+        switch self {
+        case .messages:
+            return "messages"
+        case .channels:
+            return "channels"
+        case .none:
+            return "none"
+        }
     }
 }

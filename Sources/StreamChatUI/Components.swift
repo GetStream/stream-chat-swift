@@ -380,7 +380,7 @@ public struct Components {
 
     /// The channel list search strategy. The UI SDK supports search out-of-the-box if a strategy is provided.
     /// It is possible to search by messages or channels. By default, search is disabled.
-    public var channelListSearchStrategy: ChannelListSearchStrategy? = .messages
+    public var channelListSearchStrategy: ChannelListSearchStrategy?
 
     /// The view controller responsible to search channels.
     public var channelSearchVC: ChatChannelSearchVC.Type = ChatChannelSearchVC.self
