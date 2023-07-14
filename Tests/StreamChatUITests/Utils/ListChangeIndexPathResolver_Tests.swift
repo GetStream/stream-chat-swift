@@ -89,14 +89,14 @@ final class ListChangeIndexPathResolver_Tests: XCTestCase {
         )
     }
 
-    func test_resolve_whenAllWithSameIndex_hasConflicts_returnsNil() {
+    func test_resolve_whenInsertAndRemoveWithSameIndex_hasNoConflicts_returnsIndices() {
         let listChangeIndexPathResolver = ListChangeIndexPathResolver()
 
         let changes: [ListChange<Int>] = [
-            .update(0, index: .init(row: 0, section: 0)),
+            .update(0, index: .init(row: 5, section: 0)),
             .move(
                 0,
-                fromIndex: .init(row: 0, section: 0),
+                fromIndex: .init(row: 6, section: 0),
                 toIndex: .init(row: 1, section: 0)
             ),
             .remove(0, index: .init(row: 0, section: 0)),
@@ -107,17 +107,17 @@ final class ListChangeIndexPathResolver_Tests: XCTestCase {
             changes: changes
         )
 
-        XCTAssertNil(indices)
+        XCTAssertNotNil(indices)
     }
 
-    func test_resolve_whenInsertAndRemoveWithSameIndex_hasConflicts_returnsNil() {
+    func test_resolve_whenAllWithSameIndex_hasConflicts_returnsNil() {
         let listChangeIndexPathResolver = ListChangeIndexPathResolver()
 
         let changes: [ListChange<Int>] = [
-            .update(0, index: .init(row: 5, section: 0)),
+            .update(0, index: .init(row: 0, section: 0)),
             .move(
                 0,
-                fromIndex: .init(row: 6, section: 0),
+                fromIndex: .init(row: 0, section: 0),
                 toIndex: .init(row: 1, section: 0)
             ),
             .remove(0, index: .init(row: 0, section: 0)),

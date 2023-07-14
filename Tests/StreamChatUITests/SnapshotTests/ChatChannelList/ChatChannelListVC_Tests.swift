@@ -256,27 +256,6 @@ final class ChatChannelListVC_Tests: XCTestCase {
         XCTAssertEqual(channelListVC.mockedCollectionView.reloadDataCallCount, 0)
     }
 
-    func test_didChangeChannels_whenHasRemoveConflicts_reloadData() {
-        let channelListVC = FakeChatChannelListVC()
-        channelListVC.controller = mockedChannelListController
-
-        let hasConflictChanges: [ListChange<ChatChannel>] = [
-            .update(.mock(cid: .unique), index: .init(row: 1, section: 0)),
-            .update(.mock(cid: .unique), index: .init(row: 2, section: 0)),
-            .insert(.mock(cid: .unique), index: .init(row: 3, section: 0)),
-            .remove(.mock(cid: .unique), index: .init(row: 3, section: 0))
-        ]
-
-        mockedChannelListController.simulate(
-            channels: [.mock(cid: .unique), .mock(cid: .unique), .mock(cid: .unique)],
-            changes: hasConflictChanges
-        )
-
-        channelListVC.controller(mockedChannelListController, didChangeChannels: hasConflictChanges)
-        XCTAssertEqual(channelListVC.mockedCollectionView.performBatchUpdatesCallCount, 0)
-        XCTAssertEqual(channelListVC.mockedCollectionView.reloadDataCallCount, 1)
-    }
-
     func test_didChangeChannels_whenHasMoveConflicts_reloadData() {
         let channelListVC = FakeChatChannelListVC()
         channelListVC.controller = mockedChannelListController
@@ -304,7 +283,7 @@ final class ChatChannelListVC_Tests: XCTestCase {
 
         let hasConflictChanges: [ListChange<ChatChannel>] = [
             .update(.mock(cid: .unique), index: .init(row: 1, section: 0)),
-            .remove(.mock(cid: .unique), index: .init(row: 2, section: 0)),
+            .move(.mock(cid: .unique), fromIndex: .init(row: 3, section: 0), toIndex: .init(row: 2, section: 0)),
             .insert(.mock(cid: .unique), index: .init(row: 3, section: 0)),
             .insert(.mock(cid: .unique), index: .init(row: 2, section: 0))
         ]
@@ -327,7 +306,7 @@ final class ChatChannelListVC_Tests: XCTestCase {
             .update(.mock(cid: .unique), index: .init(row: 1, section: 0)),
             .update(.mock(cid: .unique), index: .init(row: 2, section: 0)),
             .insert(.mock(cid: .unique), index: .init(row: 3, section: 0)),
-            .remove(.mock(cid: .unique), index: .init(row: 3, section: 0))
+            .remove(.mock(cid: .unique), index: .init(row: 2, section: 0))
         ]
 
         mockedChannelListController.simulate(
