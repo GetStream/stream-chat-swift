@@ -21,6 +21,15 @@ open class ChatChannelSearchVC: ChatChannelListVC, UISearchResultsUpdating {
         ScrollViewPaginationHandler(scrollView: collectionView)
     }()
 
+    override open func setUpLayout() {
+        super.setUpLayout()
+
+        view.embed(emptyView)
+        emptyView.isHidden = true
+        emptyView.actionButton.removeFromSuperview()
+        emptyView.titleLabel.isHidden = true
+    }
+
     override open func setUp() {
         collectionView.register(
             components.channelCell.self,
@@ -40,6 +49,12 @@ open class ChatChannelSearchVC: ChatChannelListVC, UISearchResultsUpdating {
         viewPaginationHandler.onNewBottomPage = { [weak self] in
             self?.loadMoreChannels()
         }
+    }
+
+    override open func setUpAppearance() {
+        super.setUpAppearance()
+
+        emptyView.iconView.image = appearance.images.emptySearch
     }
 
     open func updateSearchResults(for searchController: UISearchController) {
@@ -69,6 +84,10 @@ open class ChatChannelSearchVC: ChatChannelListVC, UISearchResultsUpdating {
             } else {
                 loadingIndicator.stopAnimating()
             }
+        case .remoteDataFetched:
+            loadingIndicator.stopAnimating()
+            emptyView.subtitleLabel.text = L10n.ChannelList.Search.Empty.subtitle("\"\(currentSearchText)\"")
+            emptyView.isHidden = !self.controller.channels.isEmpty
         default:
             loadingIndicator.stopAnimating()
         }

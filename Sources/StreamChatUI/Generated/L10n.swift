@@ -48,12 +48,16 @@ internal enum L10n {
     internal enum Item {
       /// No messages
       internal static var emptyMessages: String { L10n.tr("Localizable", "channel.item.empty-messages") }
-      /// in
-      internal static var `in`: String { L10n.tr("Localizable", "channel.item.in") }
       /// are typing ...
       internal static var typingPlural: String { L10n.tr("Localizable", "channel.item.typing-plural") }
       /// is typing ...
       internal static var typingSingular: String { L10n.tr("Localizable", "channel.item.typing-singular") }
+      internal enum Search {
+        ///  in %@
+        internal static func `in`(_ p1: Any) -> String {
+          return L10n.tr("Localizable", "channel.item.search.in", String(describing: p1))
+        }
+      }
     }
     internal enum Name {
       /// and
@@ -86,6 +90,14 @@ internal enum L10n {
       internal enum Voice {
         /// Voice message
         internal static var recording: String { L10n.tr("Localizable", "channelList.preview.voice.recording") }
+      }
+    }
+    internal enum Search {
+      internal enum Empty {
+        /// No results for %@
+        internal static func subtitle(_ p1: Any) -> String {
+          return L10n.tr("Localizable", "channelList.search.empty.subtitle", String(describing: p1))
+        }
       }
     }
   }

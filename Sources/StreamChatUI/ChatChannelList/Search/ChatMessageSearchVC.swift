@@ -31,6 +31,15 @@ open class ChatMessageSearchVC: ChatChannelListVC, UISearchResultsUpdating, Chat
 
     private var isPaginatingMessages: Bool = false
 
+    override open func setUpLayout() {
+        super.setUpLayout()
+
+        view.embed(emptyView)
+        emptyView.isHidden = true
+        emptyView.actionButton.removeFromSuperview()
+        emptyView.titleLabel.isHidden = true
+    }
+
     override open func setUp() {
         collectionView.register(
             components.channelCell.self,
@@ -52,6 +61,12 @@ open class ChatMessageSearchVC: ChatChannelListVC, UISearchResultsUpdating, Chat
         }
 
         messageSearchController.delegate = self
+    }
+
+    override open func setUpAppearance() {
+        super.setUpAppearance()
+
+        emptyView.iconView.image = appearance.images.emptySearch
     }
 
     public func updateSearchResults(for searchController: UISearchController) {
@@ -127,6 +142,10 @@ open class ChatMessageSearchVC: ChatChannelListVC, UISearchResultsUpdating, Chat
             } else {
                 loadingIndicator.stopAnimating()
             }
+        case .remoteDataFetched:
+            loadingIndicator.stopAnimating()
+            emptyView.subtitleLabel.text = L10n.ChannelList.Search.Empty.subtitle("\"\(currentSearchText)\"")
+            emptyView.isHidden = !messageSearchController.messages.isEmpty
         default:
             loadingIndicator.stopAnimating()
         }

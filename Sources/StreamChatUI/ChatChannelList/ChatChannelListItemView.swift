@@ -116,7 +116,7 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
         if let searchedMessage = content?.searchedMessage {
             var title = "\(searchedMessage.author.name ?? searchedMessage.author.id)"
             if let channelName = content?.channel.name {
-                title += " \(L10n.Channel.Item.in) \(channelName)"
+                title += L10n.Channel.Item.Search.in(channelName)
             }
             return title
         }
