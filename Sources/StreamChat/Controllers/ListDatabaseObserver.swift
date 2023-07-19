@@ -263,7 +263,7 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
                 }, context: context)
 
                 if !sorting.isEmpty {
-                    let sorted = Array(result).sortWithKeyPath(with: sorting)
+                    let sorted = Array(result).sort(using: sorting)
                     result = LazyCachedMapCollection(source: sorted, map: { $0 })
                 }
             }

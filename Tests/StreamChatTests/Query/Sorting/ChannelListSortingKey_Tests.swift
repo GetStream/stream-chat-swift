@@ -102,6 +102,28 @@ final class ChannelListSortingKey_Tests: XCTestCase {
         XCTAssertNil(key.sortDescriptor(isAscending: true))
         XCTAssertFalse(key.canUseAsDBSortDescriptor)
     }
+
+    func test_sortingKeyArray_customSorting_returnsEmptyIfNoCustomKey() {
+        let sorting = [
+            Sorting(key: ChannelListSortingKey.updatedAt),
+            Sorting(key: ChannelListSortingKey.memberCount)
+        ]
+
+        XCTAssertTrue(sorting.customSorting.isEmpty)
+    }
+
+    func test_sortingKeyArray_customSorting_returnsArrayIfCustomKey() {
+        let sorting = [
+            Sorting(key: ChannelListSortingKey.updatedAt),
+            Sorting(key: ChannelListSortingKey.memberCount),
+            Sorting(key: ChannelListSortingKey.custom(keyPath: \.customScore, key: "score"))
+        ]
+
+        XCTAssertEqual(sorting.customSorting.count, 3)
+        XCTAssertTrue(sorting.customSorting.contains(where: { $0.keyPath == \ChatChannel.updatedAt }))
+        XCTAssertTrue(sorting.customSorting.contains(where: { $0.keyPath == \ChatChannel.memberCount }))
+        XCTAssertTrue(sorting.customSorting.contains(where: { $0.keyPath == \ChatChannel.customScore }))
+    }
 }
 
 private extension ChatChannel {

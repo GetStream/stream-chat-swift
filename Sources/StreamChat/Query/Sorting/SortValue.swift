@@ -10,7 +10,7 @@ struct SortValue<T> {
 }
 
 extension Array {
-    func sortWithKeyPath(with sorting: [SortValue<Element>]) -> [Element] {
+    func sort(using sorting: [SortValue<Element>]) -> [Element] {
         func evaluate(lhs: Any?, rhs: Any?, isAscending: Bool) -> Bool {
             if lhs == nil, rhs != nil, !isAscending {
                 return true
