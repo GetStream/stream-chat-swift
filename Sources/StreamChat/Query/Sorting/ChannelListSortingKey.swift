@@ -7,7 +7,7 @@ import Foundation
 /// `ChannelListSortingKey` is keys by which you can get sorted channels after query.
 public struct ChannelListSortingKey: SortingKey, Equatable {
     /// The default sorting is by the last massage date or a channel created date. The same as by `updatedDate`.
-    public static let `default` = Self(keyPath: \.updatedAt, localKey: "defaultSortingAt", remoteKey: "updated_at", canUseAsDBSortDescriptor: true)
+    public static let `default` = Self(keyPath: \.defaultSortingAt, localKey: "defaultSortingAt", remoteKey: "updated_at", canUseAsDBSortDescriptor: true)
     /// Sort channels by date they were created.
     public static let createdAt = Self(keyPath: \.createdAt, remoteKey: "created_at", canUseAsDBSortDescriptor: true)
     /// Sort channels by date they were updated.
@@ -95,5 +95,11 @@ private extension KeyPath where Root == ChatChannel {
         let value = String(describing: self)
         let root = String(describing: Self.rootType)
         return value.replacingOccurrences(of: "\\\(root).", with: "")
+    }
+}
+
+extension ChatChannel {
+    var defaultSortingAt: Date {
+        lastMessageAt ?? createdAt
     }
 }
