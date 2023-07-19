@@ -6,8 +6,6 @@ import Foundation
 
 /// `ChannelMemberListSortingKey` describes the keys by which you can get sorted channel members after query.
 public enum ChannelMemberListSortingKey: String, SortingKey {
-    public typealias Object = ChatChannelMember
-
     case createdAt = "memberCreatedAt"
 
     /// Sort channel members by name.

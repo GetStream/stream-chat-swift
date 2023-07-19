@@ -49,27 +49,3 @@ extension Array {
         }
     }
 }
-
-private extension RawJSON {
-    var sortValue: String? {
-        if let number = numberValue {
-            return number.sortValue
-        } else if let string = stringValue {
-            return string
-        } else {
-            return nil
-        }
-    }
-}
-
-private extension Int {
-    var sortValue: String { "\(self)" }
-}
-
-private extension Double {
-    var sortValue: String { "\(self)" }
-}
-
-private extension Date {
-    var sortValue: String { description }
-}

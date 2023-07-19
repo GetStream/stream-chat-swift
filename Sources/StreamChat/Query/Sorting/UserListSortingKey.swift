@@ -6,8 +6,6 @@ import Foundation
 
 /// `UserListSortingKey` is keys by which you can get sorted users after query.
 public enum UserListSortingKey: String, SortingKey {
-    public typealias Object = ChatUser
-
     /// Sort users by id.
     case id
     /// Sort users by name.

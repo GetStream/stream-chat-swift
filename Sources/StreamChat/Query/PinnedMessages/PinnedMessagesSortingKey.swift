@@ -6,8 +6,6 @@ import Foundation
 
 /// The type describing a value that can be used as a sorting when paginating pinned messages.
 public struct PinnedMessagesSortingKey: RawRepresentable, Hashable, SortingKey {
-    public typealias Object = ChatMessage
-
     public let rawValue: String
 
     public init(rawValue: String) {

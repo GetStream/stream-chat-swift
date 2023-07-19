@@ -6,8 +6,6 @@ import Foundation
 
 /// Keys that you can use to sort Message search results.
 public enum MessageSearchSortingKey: String, SortingKey {
-    public typealias Object = ChatMessage
-
     /// Sort messages by their relevance to the query.
     /// - Warning: This sorting key will not take effect on iOS SDK. We suggest using other sorting keys for now.
     case relevance
