@@ -8,6 +8,8 @@ import Foundation
 import XCTest
 
 final class ChannelListSortingKey_Tests: XCTestCase {
+    private let jsonEncoder = JSONEncoder()
+
     func test_defaultSortingKeys_keyPaths_areValid() throws {
         let sortingKeys: [ChannelListSortingKey] = [
             .default,
@@ -82,6 +84,7 @@ final class ChannelListSortingKey_Tests: XCTestCase {
                 XCTFail()
             }
             XCTAssertFalse(key.isCustom)
+            XCTAssertEqual(jsonEncoder.encodedString(key), key.remoteKey)
         }
     }
 
@@ -92,6 +95,7 @@ final class ChannelListSortingKey_Tests: XCTestCase {
         XCTAssertEqual(key.remoteKey, "score")
         XCTAssertNil(key.sortDescriptor(isAscending: true))
         XCTAssertFalse(key.canUseAsDBSortDescriptor)
+        XCTAssertEqual(jsonEncoder.encodedString(key), "score")
     }
 
     func test_customNestedSortingKey_keyPath_isValid() throws {
@@ -101,6 +105,7 @@ final class ChannelListSortingKey_Tests: XCTestCase {
         XCTAssertEqual(key.remoteKey, "employee.name")
         XCTAssertNil(key.sortDescriptor(isAscending: true))
         XCTAssertFalse(key.canUseAsDBSortDescriptor)
+        XCTAssertEqual(jsonEncoder.encodedString(key), "employee.name")
     }
 
     func test_sortingKeyArray_customSorting_returnsEmptyIfNoCustomKey() {

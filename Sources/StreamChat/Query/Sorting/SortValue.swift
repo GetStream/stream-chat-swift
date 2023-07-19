@@ -11,28 +11,10 @@ struct SortValue<T> {
 
 extension Array {
     func sort(using sorting: [SortValue<Element>]) -> [Element] {
-        func evaluate(lhs: Any?, rhs: Any?, isAscending: Bool) -> Bool {
-            if lhs == nil, rhs != nil, !isAscending {
-                return true
-            } else if lhs != nil, rhs == nil, isAscending {
-                return true
-            }
+        var result = self
 
-            if let lString = lhs as? String, let rString = rhs as? String {
-                return isAscending ? lString < rString : lString > rString
-            } else if let lInt = lhs as? Int, let rInt = rhs as? Int {
-                return isAscending ? lInt < rInt : lInt > rInt
-            } else if let lDouble = lhs as? Double, let rDouble = rhs as? Double {
-                return isAscending ? lDouble < rDouble : lDouble > rDouble
-            } else if let lDate = lhs as? Date, let rDate = rhs as? Date {
-                return isAscending ? lDate < rDate : lDate > rDate
-            }
-
-            return false
-        }
-
-        return sorted { lhs, rhs in
-            for sort in sorting {
+        for sort in sorting.reversed() {
+            result = result.sorted { lhs, rhs in
                 let lhsValue = lhs[keyPath: sort.keyPath]
                 let rhsValue = rhs[keyPath: sort.keyPath]
 
@@ -41,11 +23,31 @@ extension Array {
                 } else if !sort.isAscending, evaluate(lhs: lhsValue, rhs: rhsValue, isAscending: sort.isAscending) {
                     return true
                 } else {
-                    continue
+                    return false
                 }
             }
-
-            return false
         }
+
+        return result
+    }
+
+    private func evaluate(lhs: Any?, rhs: Any?, isAscending: Bool) -> Bool {
+        if lhs == nil, rhs != nil, !isAscending {
+            return true
+        } else if lhs != nil, rhs == nil, isAscending {
+            return true
+        }
+
+        if let lString = lhs as? String, let rString = rhs as? String {
+            return isAscending ? lString < rString : lString > rString
+        } else if let lInt = lhs as? Int, let rInt = rhs as? Int {
+            return isAscending ? lInt < rInt : lInt > rInt
+        } else if let lDouble = lhs as? Double, let rDouble = rhs as? Double {
+            return isAscending ? lDouble < rDouble : lDouble > rDouble
+        } else if let lDate = lhs as? Date, let rDate = rhs as? Date {
+            return isAscending ? lDate < rDate : lDate > rDate
+        }
+
+        return false
     }
 }
