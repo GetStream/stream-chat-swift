@@ -5,7 +5,9 @@
 import Foundation
 
 /// A sorting key protocol.
-public protocol SortingKey: Encodable {}
+public protocol SortingKey: Encodable {
+    associatedtype Object
+}
 
 /// Sorting options.
 ///
@@ -43,3 +45,13 @@ public struct Sorting<Key: SortingKey>: Encodable, CustomStringConvertible {
 
 extension Sorting: Equatable where Key: Equatable {}
 extension Sorting: Hashable where Key: Hashable {}
+
+extension Sorting {
+    var sortValue: SortValue<Key.Object>? {
+        guard let key = key as? ChannelListSortingKey,
+              let keyPath = key.keyPath as? PartialKeyPath<Key.Object> else {
+            return nil
+        }
+        return SortValue(keyPath: keyPath, isAscending: isAscending)
+    }
+}

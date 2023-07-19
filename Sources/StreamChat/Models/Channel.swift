@@ -7,7 +7,6 @@ import Foundation
 
 /// A type representing a chat channel. `ChatChannel` is an immutable snapshot of a channel entity at the given time.
 ///
-@dynamicMemberLookup
 public struct ChatChannel {
     /// The `ChannelId` of the channel.
     public let cid: ChannelId

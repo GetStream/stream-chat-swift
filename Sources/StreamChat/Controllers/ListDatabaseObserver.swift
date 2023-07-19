@@ -184,6 +184,7 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
     let itemCreator: (DTO) throws -> Item
     let request: NSFetchRequest<DTO>
     let context: NSManagedObjectContext
+    let sorting: [SortValue<Item>]
 
     /// When called, release the notification observers
     var releaseNotificationObservers: (() -> Void)?
@@ -205,11 +206,13 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
         context: NSManagedObjectContext,
         fetchRequest: NSFetchRequest<DTO>,
         itemCreator: @escaping (DTO) throws -> Item,
+        sorting: [SortValue<Item>],
         fetchedResultsControllerType: NSFetchedResultsController<DTO>.Type = NSFetchedResultsController<DTO>.self
     ) {
         self.context = context
         request = fetchRequest
         self.itemCreator = itemCreator
+        self.sorting = sorting
         frc = fetchedResultsControllerType.init(
             fetchRequest: request,
             managedObjectContext: self.context,
@@ -223,6 +226,15 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
         listenForRemoveAllDataNotifications()
     }
 
+    convenience init(
+        context: NSManagedObjectContext,
+        fetchRequest: NSFetchRequest<DTO>,
+        itemCreator: @escaping (DTO) throws -> Item,
+        fetchedResultsControllerType: NSFetchedResultsController<DTO>.Type = NSFetchedResultsController<DTO>.self
+    ) {
+        self.init(context: context, fetchRequest: fetchRequest, itemCreator: itemCreator, sorting: [], fetchedResultsControllerType: fetchedResultsControllerType)
+    }
+
     deinit {
         releaseNotificationObservers?()
     }
@@ -232,6 +244,7 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
     ///
     /// - Throws: An error if the provided fetch request fails.
     func startObserving() throws {
+        let sorting = self.sorting
         _items.computeValue = { [weak self] in
             guard let frc = self?.frc,
                   let itemCreator = self?.itemCreator,
@@ -248,6 +261,11 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
                     }
                     return resultItem
                 }, context: context)
+
+                if !sorting.isEmpty {
+                    let sorted = Array(result).sortWithKeyPath(with: sorting)
+                    result = LazyCachedMapCollection(source: sorted, map: { $0 })
+                }
             }
             return result
         }

@@ -5,55 +5,47 @@
 import Foundation
 
 /// `ChannelListSortingKey` is keys by which you can get sorted channels after query.
-public enum ChannelListSortingKey: String, SortingKey {
+public struct ChannelListSortingKey: SortingKey, Equatable {
+    public typealias Object = ChatChannel
+
     /// The default sorting is by the last massage date or a channel created date. The same as by `updatedDate`.
-    case `default` = "defaultSortingAt"
+    public static let `default` = Self.updatedAt
     /// Sort channels by date they were created.
-    case createdAt
+    public static let createdAt = Self(keyPath: \.createdAt, remoteKey: "created_at", canUseAsDBSortDescriptor: true)
     /// Sort channels by date they were updated.
-    case updatedAt
+    public static let updatedAt = Self(keyPath: \.updatedAt, remoteKey: "updated_at", canUseAsDBSortDescriptor: true)
     /// Sort channels by the last message date..
-    case lastMessageAt
+    public static let lastMessageAt = Self(keyPath: \.lastMessageAt, remoteKey: "last_message_at", canUseAsDBSortDescriptor: true)
     /// Sort channels by number of members.
-    case memberCount
+    public static let memberCount = Self(keyPath: \.memberCount, remoteKey: "member_count", canUseAsDBSortDescriptor: true)
     /// Sort channels by `cid`.
     /// **Note**: This sorting option can extend your response waiting time if used as primary one.
-    case cid
+    public static let cid = Self(keyPath: \.cid, remoteKey: "cid", canUseAsDBSortDescriptor: true)
     /// Sort channels by unread state. When using this sorting key, every unread channel weighs the same,
     /// so they're sorted by `updatedAt`
-    case hasUnread
+    public static let hasUnread = Self(keyPath: \.hasUnread, remoteKey: "has_unread", canUseAsDBSortDescriptor: false)
     /// Sort channels by their unread count.
-    case unreadCount
+    public static let unreadCount = Self(keyPath: \.unreadCount, remoteKey: "unread_count", canUseAsDBSortDescriptor: false)
 
-    private var canUseAsSortDescriptor: Bool {
-        switch self {
-        case .createdAt: return true
-        case .updatedAt: return true
-        case .lastMessageAt: return true
-        case .memberCount: return true
-        case .cid: return true
-        case .hasUnread: return false
-        case .unreadCount: return false
-        case .default: return true
-        }
+    public static func custom<T>(keyPath: KeyPath<ChatChannel, T>, key: String) -> Self {
+        .init(keyPath: keyPath, remoteKey: key, canUseAsDBSortDescriptor: false)
+    }
+
+    let keyPath: PartialKeyPath<ChatChannel>
+    private let dbKey: String
+    private let remoteKey: String
+    private let canUseAsDBSortDescriptor: Bool
+
+    init<T>(keyPath: KeyPath<ChatChannel, T>, remoteKey: String, canUseAsDBSortDescriptor: Bool) {
+        self.keyPath = keyPath
+        dbKey = keyPath.stringValue
+        self.remoteKey = dbKey
+        self.canUseAsDBSortDescriptor = canUseAsDBSortDescriptor
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
-        let value: String
-
-        switch self {
-        case .default: value = "updated_at"
-        case .createdAt: value = "created_at"
-        case .updatedAt: value = "updated_at"
-        case .lastMessageAt: value = "last_message_at"
-        case .memberCount: value = "member_count"
-        case .cid: value = "cid"
-        case .hasUnread: value = "has_unread"
-        case .unreadCount: value = "unread_count"
-        }
-
-        try container.encode(value)
+        try container.encode(remoteKey)
     }
 }
 
@@ -64,7 +56,7 @@ extension ChannelListSortingKey {
     }()
 
     func sortDescriptor(isAscending: Bool) -> NSSortDescriptor? {
-        canUseAsSortDescriptor ? .init(key: rawValue, ascending: isAscending) : nil
+        canUseAsDBSortDescriptor ? .init(key: dbKey, ascending: isAscending) : nil
     }
 }
 
@@ -77,5 +69,17 @@ extension Array where Element == Sorting<ChannelListSortingKey> {
         }
 
         return self + [.init(key: .cid)]
+    }
+}
+
+private extension KeyPath where Root == ChatChannel {
+    var stringValue: String {
+        NSExpression(forKeyPath: self).keyPath
+    }
+}
+
+private extension ChatChannel {
+    var hasUnread: Bool {
+        unreadCount.messages > 0
     }
 }
