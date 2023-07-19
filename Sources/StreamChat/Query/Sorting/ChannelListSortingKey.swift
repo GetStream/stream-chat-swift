@@ -9,7 +9,7 @@ public struct ChannelListSortingKey: SortingKey, Equatable {
     public typealias Object = ChatChannel
 
     /// The default sorting is by the last massage date or a channel created date. The same as by `updatedDate`.
-    public static let `default` = Self.updatedAt
+    public static let `default` = Self(keyPath: \.updatedAt, localKey: "defaultSortingAt", remoteKey: "updated_at", canUseAsDBSortDescriptor: true)
     /// Sort channels by date they were created.
     public static let createdAt = Self(keyPath: \.createdAt, remoteKey: "created_at", canUseAsDBSortDescriptor: true)
     /// Sort channels by date they were updated.
@@ -32,15 +32,15 @@ public struct ChannelListSortingKey: SortingKey, Equatable {
     }
 
     let keyPath: PartialKeyPath<ChatChannel>
-    private let dbKey: String
-    private let remoteKey: String
-    private let canUseAsDBSortDescriptor: Bool
+    let localKey: String
+    let remoteKey: String
+    let canUseAsDBSortDescriptor: Bool
     let isCustom: Bool
 
-    init<T>(keyPath: KeyPath<ChatChannel, T>, remoteKey: String, canUseAsDBSortDescriptor: Bool, isCustom: Bool = false) {
+    init<T>(keyPath: KeyPath<ChatChannel, T>, localKey: String? = nil, remoteKey: String, canUseAsDBSortDescriptor: Bool, isCustom: Bool = false) {
         self.keyPath = keyPath
-        dbKey = keyPath.stringValue
-        self.remoteKey = dbKey
+        self.localKey = localKey ?? keyPath.stringValue
+        self.remoteKey = remoteKey
         self.canUseAsDBSortDescriptor = canUseAsDBSortDescriptor
         self.isCustom = isCustom
     }
@@ -58,7 +58,7 @@ extension ChannelListSortingKey {
     }()
 
     func sortDescriptor(isAscending: Bool) -> NSSortDescriptor? {
-        canUseAsDBSortDescriptor ? .init(key: dbKey, ascending: isAscending) : nil
+        canUseAsDBSortDescriptor ? .init(key: localKey, ascending: isAscending) : nil
     }
 }
 
@@ -76,12 +76,8 @@ extension Array where Element == Sorting<ChannelListSortingKey> {
 
 private extension KeyPath where Root == ChatChannel {
     var stringValue: String {
-        NSExpression(forKeyPath: self).keyPath
-    }
-}
-
-private extension ChatChannel {
-    var hasUnread: Bool {
-        unreadCount.messages > 0
+        let value = String(describing: self)
+        let root = String(describing: Self.rootType)
+        return value.replacingOccurrences(of: "\\\(root).", with: "")
     }
 }
