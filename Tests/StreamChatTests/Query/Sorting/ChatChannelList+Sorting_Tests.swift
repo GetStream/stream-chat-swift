@@ -27,17 +27,25 @@ final class ChannelList_Sorting_Tests: XCTestCase {
 
     var database: DatabaseContainer_Spy!
     var query: ChannelListQuery!
-    var observer: ListDatabaseObserver<ChatChannel, ChannelDTO>!
+    var observer: ListDatabaseObserverWrapper<ChatChannel, ChannelDTO>!
 
-    func test_channelsAreSortedAccordingToDefaultSorting() throws {
+    func test_channelsAreSortedAccordingToDefaultSorting_foreground() throws {
+        try test_channelsAreSortedAccordingToDefaultSorting(isBackground: false)
+    }
+
+    func test_channelsAreSortedAccordingToDefaultSorting_background() throws {
+        try test_channelsAreSortedAccordingToDefaultSorting(isBackground: true)
+    }
+
+    func test_channelsAreSortedAccordingToDefaultSorting(isBackground: Bool) throws {
         createObserver(with: [
             .init(key: .default, isAscending: false)
-        ])
+        ], isBackground: isBackground)
 
         try observer.startObserving()
 
         let expectation = self.expectation(description: "Observer notifies")
-        observer.onChange = { changes in
+        observer.onDidChange = { changes in
             XCTAssertEqual(changes.count, 5)
             expectation.fulfill()
         }
@@ -56,18 +64,26 @@ final class ChannelList_Sorting_Tests: XCTestCase {
 
         XCTAssertEqual(observer.items.count, 5)
         XCTAssertEqual(observer.items.map(\.name), ["B", "C", "E", "D", "A"])
+    }
+
+    func test_channelsAreSortedAccordingToDefaultSorting_forcingItViaCustom_foreground() throws {
+        try test_channelsAreSortedAccordingToDefaultSorting_forcingItViaCustom(isBackground: false)
+    }
+
+    func test_channelsAreSortedAccordingToDefaultSorting_forcingItViaCustom_background() throws {
+        try test_channelsAreSortedAccordingToDefaultSorting_forcingItViaCustom(isBackground: true)
     }
 
     // This test is to make sure that the default sorting mechanism using DB (vía `defaultSortingAt`) matches the same behaviour when using local custom mapping instead
-    func test_channelsAreSortedAccordingToDefaultSorting_forcingItViaCustom() throws {
+    func test_channelsAreSortedAccordingToDefaultSorting_forcingItViaCustom(isBackground: Bool) throws {
         createObserver(with: [
             .init(key: .custom(keyPath: \.defaultSortingAt, key: "defaultSortingAt"), isAscending: false)
-        ])
+        ], isBackground: isBackground)
 
         try observer.startObserving()
 
         let expectation = self.expectation(description: "Observer notifies")
-        observer.onChange = { changes in
+        observer.onDidChange = { changes in
             XCTAssertEqual(changes.count, 5)
             expectation.fulfill()
         }
@@ -88,14 +104,22 @@ final class ChannelList_Sorting_Tests: XCTestCase {
         XCTAssertEqual(observer.items.map(\.name), ["B", "C", "E", "D", "A"])
     }
 
-    func test_channelsAreSortedAccordingToCustomSorting() throws {
+    func test_channelsAreSortedAccordingToCustomSorting_foreground() throws {
+        try test_channelsAreSortedAccordingToCustomSorting(isBackground: false)
+    }
+
+    func test_channelsAreSortedAccordingToCustomSorting_background() throws {
+        try test_channelsAreSortedAccordingToCustomSorting(isBackground: true)
+    }
+
+    func test_channelsAreSortedAccordingToCustomSorting(isBackground: Bool) throws {
         createObserver(with: [
             .init(key: .custom(keyPath: \.name, key: "name"), isAscending: false)
-        ])
+        ], isBackground: isBackground)
         try observer.startObserving()
 
         let expectation = self.expectation(description: "Observer notifies")
-        observer.onChange = { changes in
+        observer.onDidChange = { changes in
             XCTAssertEqual(changes.count, 5)
             expectation.fulfill()
         }
@@ -108,15 +132,23 @@ final class ChannelList_Sorting_Tests: XCTestCase {
         XCTAssertEqual(observer.items.map(\.name), ["E", "D", "C", "B", "A"])
     }
 
-    func test_channelsAreSortedAccordingToACombinationWithCustomSorting() throws {
+    func test_channelsAreSortedAccordingToACombinationWithCustomSorting_foreground() throws {
+        try test_channelsAreSortedAccordingToACombinationWithCustomSorting(isBackground: false)
+    }
+
+    func test_channelsAreSortedAccordingToACombinationWithCustomSorting_background() throws {
+        try test_channelsAreSortedAccordingToACombinationWithCustomSorting(isBackground: true)
+    }
+
+    func test_channelsAreSortedAccordingToACombinationWithCustomSorting(isBackground: Bool) throws {
         createObserver(with: [
             .init(key: .createdAt, isAscending: false),
             .init(key: .custom(keyPath: \.name, key: "name"), isAscending: false)
-        ])
+        ], isBackground: isBackground)
         try observer.startObserving()
 
         let expectation = self.expectation(description: "Observer notifies")
-        observer.onChange = { changes in
+        observer.onDidChange = { changes in
             XCTAssertEqual(changes.count, 5)
             expectation.fulfill()
         }
@@ -129,18 +161,26 @@ final class ChannelList_Sorting_Tests: XCTestCase {
         XCTAssertEqual(observer.items.map(\.name), ["D", "B", "E", "A", "C"])
     }
 
-    func test_timeToProcessMultipleChatChannels_customSorting() throws {
+    func test_timeToProcessMultipleChatChannels_customSorting_foreground() throws {
+        try test_timeToProcessMultipleChatChannels_customSorting(isBackground: false)
+    }
+
+    func test_timeToProcessMultipleChatChannels_customSorting_background() throws {
+        try test_timeToProcessMultipleChatChannels_customSorting(isBackground: true)
+    }
+
+    func test_timeToProcessMultipleChatChannels_customSorting(isBackground: Bool) throws {
         let sorting: [Sorting<ChannelListSortingKey>] = [
             .init(key: .createdAt, isAscending: false),
             .init(key: .custom(keyPath: \.name, key: "name"), isAscending: false)
         ]
 
         measureMetrics([.wallClockTime], automaticallyStartMeasuring: false) {
-            createObserver(with: sorting)
+            createObserver(with: sorting, isBackground: isBackground)
             do {
                 try observer.startObserving()
 
-                observer.onChange = { changes in
+                observer.onDidChange = { changes in
                     self.stopMeasuring()
                     XCTAssertEqual(changes.count, self.bulkChannels.count)
                     XCTAssertEqual(self.observer.items.count, self.bulkChannels.count)
@@ -154,17 +194,25 @@ final class ChannelList_Sorting_Tests: XCTestCase {
         }
     }
 
-    func test_timeToProcessMultipleChatChannels_defaultSorting() throws {
+    func test_timeToProcessMultipleChatChannels_defaultSorting_foreground() throws {
+        try test_timeToProcessMultipleChatChannels_defaultSorting(isBackground: false)
+    }
+
+    func test_timeToProcessMultipleChatChannels_defaultSorting_background() throws {
+        try test_timeToProcessMultipleChatChannels_defaultSorting(isBackground: true)
+    }
+
+    func test_timeToProcessMultipleChatChannels_defaultSorting(isBackground: Bool) throws {
         let sorting: [Sorting<ChannelListSortingKey>] = [
             .init(key: .default, isAscending: false)
         ]
 
         measureMetrics([.wallClockTime], automaticallyStartMeasuring: false) {
-            createObserver(with: sorting)
+            createObserver(with: sorting, isBackground: isBackground)
             do {
                 try observer.startObserving()
 
-                observer.onChange = { changes in
+                observer.onDidChange = { changes in
                     self.stopMeasuring()
                     XCTAssertEqual(changes.count, self.bulkChannels.count)
                     XCTAssertEqual(self.observer.items.count, self.bulkChannels.count)
@@ -178,7 +226,9 @@ final class ChannelList_Sorting_Tests: XCTestCase {
         }
     }
 
-    private func createObserver(with sorting: [Sorting<ChannelListSortingKey>]) {
+    // MARK: - Helpers
+
+    private func createObserver(with sorting: [Sorting<ChannelListSortingKey>], isBackground: Bool) {
         database = DatabaseContainer_Spy(
             kind: .onDisk(databaseFileURL: .newTemporaryFileURL()),
             modelName: "StreamChatModel",
@@ -188,8 +238,9 @@ final class ChannelList_Sorting_Tests: XCTestCase {
 
         let request = ChannelDTO.channelListFetchRequest(query: query, chatClientConfig: ChatClientConfig(apiKeyString: "1234"))
 
-        observer = ListDatabaseObserver(
-            context: database.viewContext,
+        observer = ListDatabaseObserverWrapper(
+            isBackground: isBackground,
+            database: database,
             fetchRequest: request,
             itemCreator: { try $0.asModel() },
             sorting: sorting.customSorting

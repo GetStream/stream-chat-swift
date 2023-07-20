@@ -29,6 +29,7 @@ final class BackgroundListDatabaseObserver_Tests: XCTestCase {
             context: database.backgroundReadOnlyContext,
             fetchRequest: fetchRequest,
             itemCreator: { $0.uniqueValue },
+            sorting: [],
             fetchedResultsControllerType: TestFetchedResultsController.self
         )
     }
@@ -120,7 +121,8 @@ final class BackgroundListDatabaseObserver_Tests: XCTestCase {
         let observer = BackgroundListDatabaseObserver<String, TestManagedObject>(
             context: database.backgroundReadOnlyContext,
             fetchRequest: fetchRequest,
-            itemCreator: { $0.testId }
+            itemCreator: { $0.testId },
+            sorting: []
         )
 
         // Call startObserving to set everything up

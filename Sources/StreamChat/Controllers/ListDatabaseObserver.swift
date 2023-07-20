@@ -182,9 +182,9 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
     private(set) var frc: NSFetchedResultsController<DTO>!
 
     let itemCreator: (DTO) throws -> Item
+    let sorting: [SortValue<Item>]
     let request: NSFetchRequest<DTO>
     let context: NSManagedObjectContext
-    let sorting: [SortValue<Item>]
 
     /// When called, release the notification observers
     var releaseNotificationObservers: (() -> Void)?
