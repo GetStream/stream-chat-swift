@@ -162,68 +162,90 @@ final class ChannelList_Sorting_Tests: XCTestCase {
     }
 
     func test_timeToProcessMultipleChatChannels_customSorting_foreground() throws {
-        try test_timeToProcessMultipleChatChannels_customSorting(isBackground: false)
+        measureMetrics([.wallClockTime], automaticallyStartMeasuring: false) {
+            do {
+                try test_timeToProcessMultipleChatChannels_customSorting(isBackground: false)
+            } catch {
+                XCTFail(error.localizedDescription)
+            }
+        }
     }
 
     func test_timeToProcessMultipleChatChannels_customSorting_background() throws {
-        try test_timeToProcessMultipleChatChannels_customSorting(isBackground: true)
+        measureMetrics([.wallClockTime], automaticallyStartMeasuring: false) {
+            do {
+                try test_timeToProcessMultipleChatChannels_customSorting(isBackground: true)
+            } catch {
+                XCTFail(error.localizedDescription)
+            }
+        }
     }
 
     func test_timeToProcessMultipleChatChannels_customSorting(isBackground: Bool) throws {
+        let expectation = self.expectation(description: "observer is notified")
+
         let sorting: [Sorting<ChannelListSortingKey>] = [
             .init(key: .createdAt, isAscending: false),
             .init(key: .custom(keyPath: \.name, key: "name"), isAscending: false)
         ]
 
+        createObserver(with: sorting, isBackground: isBackground)
+        try observer.startObserving()
+
+        observer.onDidChange = { changes in
+            expectation.fulfill()
+            XCTAssertEqual(changes.count, self.bulkChannels.count)
+            XCTAssertEqual(self.observer.items.count, self.bulkChannels.count)
+        }
+
+        startMeasuring()
+        try createChannels(mapping: bulkChannels)
+
+        wait(for: [expectation])
+        stopMeasuring()
+    }
+
+    func test_timeToProcessMultipleChatChannels_defaultSorting_foreground() throws {
         measureMetrics([.wallClockTime], automaticallyStartMeasuring: false) {
-            createObserver(with: sorting, isBackground: isBackground)
             do {
-                try observer.startObserving()
-
-                observer.onDidChange = { changes in
-                    self.stopMeasuring()
-                    XCTAssertEqual(changes.count, self.bulkChannels.count)
-                    XCTAssertEqual(self.observer.items.count, self.bulkChannels.count)
-                }
-
-                startMeasuring()
-                try createChannels(mapping: self.bulkChannels)
+                try test_timeToProcessMultipleChatChannels_defaultSorting(isBackground: false)
             } catch {
                 XCTFail(error.localizedDescription)
             }
         }
     }
 
-    func test_timeToProcessMultipleChatChannels_defaultSorting_foreground() throws {
-        try test_timeToProcessMultipleChatChannels_defaultSorting(isBackground: false)
-    }
-
     func test_timeToProcessMultipleChatChannels_defaultSorting_background() throws {
-        try test_timeToProcessMultipleChatChannels_defaultSorting(isBackground: true)
+        measureMetrics([.wallClockTime], automaticallyStartMeasuring: false) {
+            do {
+                try test_timeToProcessMultipleChatChannels_defaultSorting(isBackground: true)
+            } catch {
+                XCTFail(error.localizedDescription)
+            }
+        }
     }
 
     func test_timeToProcessMultipleChatChannels_defaultSorting(isBackground: Bool) throws {
+        let expectation = self.expectation(description: "observer is notified")
+
         let sorting: [Sorting<ChannelListSortingKey>] = [
             .init(key: .default, isAscending: false)
         ]
 
-        measureMetrics([.wallClockTime], automaticallyStartMeasuring: false) {
-            createObserver(with: sorting, isBackground: isBackground)
-            do {
-                try observer.startObserving()
+        createObserver(with: sorting, isBackground: isBackground)
+        try observer.startObserving()
 
-                observer.onDidChange = { changes in
-                    self.stopMeasuring()
-                    XCTAssertEqual(changes.count, self.bulkChannels.count)
-                    XCTAssertEqual(self.observer.items.count, self.bulkChannels.count)
-                }
-
-                startMeasuring()
-                try createChannels(mapping: self.bulkChannels)
-            } catch {
-                XCTFail(error.localizedDescription)
-            }
+        observer.onDidChange = { changes in
+            expectation.fulfill()
+            XCTAssertEqual(changes.count, self.bulkChannels.count)
+            XCTAssertEqual(self.observer.items.count, self.bulkChannels.count)
         }
+
+        startMeasuring()
+        try createChannels(mapping: bulkChannels)
+
+        wait(for: [expectation])
+        stopMeasuring()
     }
 
     // MARK: - Helpers

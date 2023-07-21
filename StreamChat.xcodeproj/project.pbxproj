@@ -1883,7 +1883,7 @@
 		C121EC622746AC8C00023E4C /* StreamChatUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C121EC662746AD0E00023E4C /* StreamChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; };
 		C12D0A6028FD59B60099895A /* AuthenticationRepository_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = C12D0A5F28FD59B60099895A /* AuthenticationRepository_Mock.swift */; };
-		C12DBE5C2A614F310045D9F0 /* ChatChannelList+Sorting_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C12DBE5B2A614F310045D9F0 /* ChatChannelList+Sorting_Tests.swift */; };
+		C12DBE5C2A614F310045D9F0 /* ListDatabaseObserver+Sorting.swift in Sources */ = {isa = PBXBuildFile; fileRef = C12DBE5B2A614F310045D9F0 /* ListDatabaseObserver+Sorting.swift */; };
 		C12DBE5F2A67DFE80045D9F0 /* SortValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = C12DBE5D2A67DFC70045D9F0 /* SortValue.swift */; };
 		C12DBE612A67E2D60045D9F0 /* SortingValue_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C12DBE602A67E2D60045D9F0 /* SortingValue_Tests.swift */; };
 		C1320E0A276B2E0F00A06B35 /* Array+SafeSubscript_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1320E07276B2E0800A06B35 /* Array+SafeSubscript_Tests.swift */; };
@@ -3782,7 +3782,7 @@
 		C121E758274543D000023E4C /* libStreamChat.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libStreamChat.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C121EA2F2746A19400023E4C /* libStreamChatUI.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libStreamChatUI.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C12D0A5F28FD59B60099895A /* AuthenticationRepository_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationRepository_Mock.swift; sourceTree = "<group>"; };
-		C12DBE5B2A614F310045D9F0 /* ChatChannelList+Sorting_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatChannelList+Sorting_Tests.swift"; sourceTree = "<group>"; };
+		C12DBE5B2A614F310045D9F0 /* ListDatabaseObserver+Sorting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ListDatabaseObserver+Sorting.swift"; sourceTree = "<group>"; };
 		C12DBE5D2A67DFC70045D9F0 /* SortValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortValue.swift; sourceTree = "<group>"; };
 		C12DBE602A67E2D60045D9F0 /* SortingValue_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortingValue_Tests.swift; sourceTree = "<group>"; };
 		C1320E07276B2E0800A06B35 /* Array+SafeSubscript_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+SafeSubscript_Tests.swift"; sourceTree = "<group>"; };
@@ -6580,7 +6580,7 @@
 			children = (
 				79B8B648285B5ADD0059FB2D /* ChannelListSortingKey_Tests.swift */,
 				791D3D8F26776BE400E3A0F9 /* ChannelMemberListSortingKey_Tests.swift */,
-				C12DBE5B2A614F310045D9F0 /* ChatChannelList+Sorting_Tests.swift */,
+				C12DBE5B2A614F310045D9F0 /* ListDatabaseObserver+Sorting.swift */,
 				DA958D5325309917005D23FA /* Sorting_Tests.swift */,
 				C12DBE602A67E2D60045D9F0 /* SortingValue_Tests.swift */,
 			);
@@ -10449,7 +10449,7 @@
 				4042969229FBF84B0089126D /* AudioSamplesProcessor_Tests.swift in Sources */,
 				A3F65E3627EB70E0003F6256 /* EventLogger.swift in Sources */,
 				DA8407332526003D005A0F62 /* UserListUpdater_Tests.swift in Sources */,
-				C12DBE5C2A614F310045D9F0 /* ChatChannelList+Sorting_Tests.swift in Sources */,
+				C12DBE5C2A614F310045D9F0 /* ListDatabaseObserver+Sorting.swift in Sources */,
 				F69E7F7D24ED7562000F5252 /* CurrentUserController_Tests.swift in Sources */,
 				A30C3F22276B4F8800DA5968 /* UnknownUserEvent_Tests.swift in Sources */,
 				7922F30A24DAE3B600C364BC /* EntityDatabaseObserver_Tests.swift in Sources */,
