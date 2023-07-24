@@ -79,7 +79,7 @@ extension Array where Element == Sorting<ChannelListSortingKey> {
 
     var customSorting: [SortValue<ChatChannel>] {
         var hasCustom = false
-        let sortValues = compactMap {
+        let sortValues: [SortValue<ChatChannel>] = compactMap {
             if $0.key.isCustom {
                 hasCustom = true
             }
