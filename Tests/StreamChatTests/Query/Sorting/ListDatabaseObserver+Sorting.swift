@@ -7,7 +7,7 @@ import CoreData
 @testable import StreamChatTestTools
 import XCTest
 
-final class ChannelList_Sorting_Tests: XCTestCase {
+final class ListDatabaseObserver_Sorting: XCTestCase {
     let dateNow = Date()
     let datePast = Date().addingTimeInterval(-60 * 60 * 3)
     let dateWayPast = Date().addingTimeInterval(-60 * 60 * 100)
@@ -29,15 +29,22 @@ final class ChannelList_Sorting_Tests: XCTestCase {
     var query: ChannelListQuery!
     var observer: ListDatabaseObserverWrapper<ChatChannel, ChannelDTO>!
 
+    override func tearDown() {
+        super.tearDown()
+        database = nil
+        query = nil
+        observer = nil
+    }
+
     func test_channelsAreSortedAccordingToDefaultSorting_foreground() throws {
-        try test_channelsAreSortedAccordingToDefaultSorting(isBackground: false)
+        try assert_channelsAreSortedAccordingToDefaultSorting(isBackground: false)
     }
 
     func test_channelsAreSortedAccordingToDefaultSorting_background() throws {
-        try test_channelsAreSortedAccordingToDefaultSorting(isBackground: true)
+        try assert_channelsAreSortedAccordingToDefaultSorting(isBackground: true)
     }
 
-    func test_channelsAreSortedAccordingToDefaultSorting(isBackground: Bool) throws {
+    func assert_channelsAreSortedAccordingToDefaultSorting(isBackground: Bool, file: StaticString = #filePath, line: UInt = #line) throws {
         createObserver(with: [
             .init(key: .default, isAscending: false)
         ], isBackground: isBackground)
@@ -67,15 +74,15 @@ final class ChannelList_Sorting_Tests: XCTestCase {
     }
 
     func test_channelsAreSortedAccordingToDefaultSorting_forcingItViaCustom_foreground() throws {
-        try test_channelsAreSortedAccordingToDefaultSorting_forcingItViaCustom(isBackground: false)
+        try assert_channelsAreSortedAccordingToDefaultSorting_forcingItViaCustom(isBackground: false)
     }
 
     func test_channelsAreSortedAccordingToDefaultSorting_forcingItViaCustom_background() throws {
-        try test_channelsAreSortedAccordingToDefaultSorting_forcingItViaCustom(isBackground: true)
+        try assert_channelsAreSortedAccordingToDefaultSorting_forcingItViaCustom(isBackground: true)
     }
 
     // This test is to make sure that the default sorting mechanism using DB (vía `defaultSortingAt`) matches the same behaviour when using local custom mapping instead
-    func test_channelsAreSortedAccordingToDefaultSorting_forcingItViaCustom(isBackground: Bool) throws {
+    func assert_channelsAreSortedAccordingToDefaultSorting_forcingItViaCustom(isBackground: Bool, file: StaticString = #filePath, line: UInt = #line) throws {
         createObserver(with: [
             .init(key: .custom(keyPath: \.defaultSortingAt, key: "defaultSortingAt"), isAscending: false)
         ], isBackground: isBackground)
@@ -105,14 +112,14 @@ final class ChannelList_Sorting_Tests: XCTestCase {
     }
 
     func test_channelsAreSortedAccordingToCustomSorting_foreground() throws {
-        try test_channelsAreSortedAccordingToCustomSorting(isBackground: false)
+        try assert_channelsAreSortedAccordingToCustomSorting(isBackground: false)
     }
 
     func test_channelsAreSortedAccordingToCustomSorting_background() throws {
-        try test_channelsAreSortedAccordingToCustomSorting(isBackground: true)
+        try assert_channelsAreSortedAccordingToCustomSorting(isBackground: true)
     }
 
-    func test_channelsAreSortedAccordingToCustomSorting(isBackground: Bool) throws {
+    func assert_channelsAreSortedAccordingToCustomSorting(isBackground: Bool, file: StaticString = #filePath, line: UInt = #line) throws {
         createObserver(with: [
             .init(key: .custom(keyPath: \.name, key: "name"), isAscending: false)
         ], isBackground: isBackground)
@@ -133,14 +140,14 @@ final class ChannelList_Sorting_Tests: XCTestCase {
     }
 
     func test_channelsAreSortedAccordingToACombinationWithCustomSorting_foreground() throws {
-        try test_channelsAreSortedAccordingToACombinationWithCustomSorting(isBackground: false)
+        try assert_channelsAreSortedAccordingToACombinationWithCustomSorting(isBackground: false)
     }
 
     func test_channelsAreSortedAccordingToACombinationWithCustomSorting_background() throws {
-        try test_channelsAreSortedAccordingToACombinationWithCustomSorting(isBackground: true)
+        try assert_channelsAreSortedAccordingToACombinationWithCustomSorting(isBackground: true)
     }
 
-    func test_channelsAreSortedAccordingToACombinationWithCustomSorting(isBackground: Bool) throws {
+    func assert_channelsAreSortedAccordingToACombinationWithCustomSorting(isBackground: Bool, file: StaticString = #filePath, line: UInt = #line) throws {
         createObserver(with: [
             .init(key: .createdAt, isAscending: false),
             .init(key: .custom(keyPath: \.name, key: "name"), isAscending: false)
@@ -164,7 +171,7 @@ final class ChannelList_Sorting_Tests: XCTestCase {
     func test_timeToProcessMultipleChatChannels_customSorting_foreground() throws {
         measureMetrics([.wallClockTime], automaticallyStartMeasuring: false) {
             do {
-                try test_timeToProcessMultipleChatChannels_customSorting(isBackground: false)
+                try assert_timeToProcessMultipleChatChannels_customSorting(isBackground: false)
             } catch {
                 XCTFail(error.localizedDescription)
             }
@@ -174,14 +181,14 @@ final class ChannelList_Sorting_Tests: XCTestCase {
     func test_timeToProcessMultipleChatChannels_customSorting_background() throws {
         measureMetrics([.wallClockTime], automaticallyStartMeasuring: false) {
             do {
-                try test_timeToProcessMultipleChatChannels_customSorting(isBackground: true)
+                try assert_timeToProcessMultipleChatChannels_customSorting(isBackground: true)
             } catch {
                 XCTFail(error.localizedDescription)
             }
         }
     }
 
-    func test_timeToProcessMultipleChatChannels_customSorting(isBackground: Bool) throws {
+    func assert_timeToProcessMultipleChatChannels_customSorting(isBackground: Bool, file: StaticString = #filePath, line: UInt = #line) throws {
         let expectation = self.expectation(description: "observer is notified")
 
         let sorting: [Sorting<ChannelListSortingKey>] = [
@@ -208,7 +215,7 @@ final class ChannelList_Sorting_Tests: XCTestCase {
     func test_timeToProcessMultipleChatChannels_defaultSorting_foreground() throws {
         measureMetrics([.wallClockTime], automaticallyStartMeasuring: false) {
             do {
-                try test_timeToProcessMultipleChatChannels_defaultSorting(isBackground: false)
+                try assert_timeToProcessMultipleChatChannels_defaultSorting(isBackground: false)
             } catch {
                 XCTFail(error.localizedDescription)
             }
@@ -218,14 +225,14 @@ final class ChannelList_Sorting_Tests: XCTestCase {
     func test_timeToProcessMultipleChatChannels_defaultSorting_background() throws {
         measureMetrics([.wallClockTime], automaticallyStartMeasuring: false) {
             do {
-                try test_timeToProcessMultipleChatChannels_defaultSorting(isBackground: true)
+                try assert_timeToProcessMultipleChatChannels_defaultSorting(isBackground: true)
             } catch {
                 XCTFail(error.localizedDescription)
             }
         }
     }
 
-    func test_timeToProcessMultipleChatChannels_defaultSorting(isBackground: Bool) throws {
+    func assert_timeToProcessMultipleChatChannels_defaultSorting(isBackground: Bool, file: StaticString = #filePath, line: UInt = #line) throws {
         let expectation = self.expectation(description: "observer is notified")
 
         let sorting: [Sorting<ChannelListSortingKey>] = [
