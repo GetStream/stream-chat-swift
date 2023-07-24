@@ -189,7 +189,7 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
         frc.delegate = changeAggregator
 
         frc.managedObjectContext.perform {
-            self.processItems()
+            self.processInitialItems()
         }
     }
 
@@ -231,9 +231,14 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
         }
     }
 
-    private func processItems(_ changes: [ListChange<Item>] = []) {
+    private func processInitialItems() {
+        processItems(nil)
+    }
+
+    private func processItems(_ changes: [ListChange<Item>]?) {
         mapItems { [weak self] items in
             self?._items = items
+            let changes = changes ?? items.enumerated().map { .insert($1, index: IndexPath(item: $0, section: 0)) }
             self?.notifyDidChange(changes: changes)
         }
     }

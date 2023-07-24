@@ -49,6 +49,12 @@ public struct ChannelListSortingKey: SortingKey, Equatable {
     }
 }
 
+extension ChannelListSortingKey: CustomDebugStringConvertible {
+    public var debugDescription: String {
+        localKey
+    }
+}
+
 extension ChannelListSortingKey {
     static let defaultSortDescriptor: NSSortDescriptor = {
         let dateKeyPath: KeyPath<ChannelDTO, DBDate> = \ChannelDTO.defaultSortingAt
