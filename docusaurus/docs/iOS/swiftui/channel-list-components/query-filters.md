@@ -77,6 +77,9 @@ Most commonly, you don't need to specify any sorting, StreamChat SDK handles thi
 let sorting: [Sorting<ChannelListSortingKey>] = [.init(key: .memberCount, isAscending: true),
                                                  .init(key: .lastMessageAt, isAscending: true)]
 ```
+:::note
+If you want to implement custom sorting, you can have more information [here](../../../client/controllers/channels/#sorting-with-custom--extra-data)
+:::
 
 ### PageSize
 
