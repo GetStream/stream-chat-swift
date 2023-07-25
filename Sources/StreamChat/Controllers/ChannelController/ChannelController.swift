@@ -218,7 +218,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// `true` if the channel supports uploading files/images. Defaults to `false` if the channel doesn't exist yet.
     public var areUploadsEnabled: Bool { channel?.config.uploadsEnabled == true }
 
-    // MARK: - Channel actions
+    // MARK: - Actions
 
     /// Updated channel with new data.
     ///
@@ -256,6 +256,50 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         )
 
         updater.updateChannel(channelPayload: payload) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
+    }
+
+    /// Updates  channel information with provided data, and removes unneeded properties.
+    ///
+    /// - Parameters:
+    ///   - team: New team.
+    ///   - members: New members.
+    ///   - invites: New invites.
+    ///   - extraData: New `ExtraData`.
+    ///   - unsetProperties: Properties from the channel that are going to be cleared/unset.
+    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    ///                 If request fails, the completion will be called with an error.
+    ///
+    public func partialChannelUpdate(
+        name: String? = nil,
+        imageURL: URL? = nil,
+        team: String? = nil,
+        members: Set<UserId> = [],
+        invites: Set<UserId> = [],
+        extraData: [String: RawJSON] = [:],
+        unsetProperties: [String] = [],
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        /// Perform action only if channel is already created on backend side and have a valid `cid`.
+        guard let cid = cid, isChannelAlreadyCreated else {
+            channelModificationFailed(completion)
+            return
+        }
+
+        let payload: ChannelEditDetailPayload = .init(
+            cid: cid,
+            name: name,
+            imageURL: imageURL,
+            team: team,
+            members: members,
+            invites: invites,
+            extraData: extraData
+        )
+
+        updater.partialChannelUpdate(updates: payload, unsetProperties: unsetProperties) { error in
             self.callback {
                 completion?(error)
             }

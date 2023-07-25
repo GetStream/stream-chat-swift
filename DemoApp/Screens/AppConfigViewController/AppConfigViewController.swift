@@ -128,6 +128,7 @@ class AppConfigViewController: UITableViewController {
     enum ComponentsConfigOption: String, CaseIterable {
         case isUniqueReactionsEnabled
         case shouldMessagesStartAtTheTop
+        case threadRepliesStartFromOldest
         case threadRendersParentMessageEnabled
         case isVoiceRecordingEnabled
         case isVoiceRecordingConfirmationRequiredEnabled
@@ -354,6 +355,10 @@ class AppConfigViewController: UITableViewController {
         case .shouldMessagesStartAtTheTop:
             cell.accessoryView = makeSwitchButton(Components.default.shouldMessagesStartAtTheTop) { newValue in
                 Components.default.shouldMessagesStartAtTheTop = newValue
+            }
+        case .threadRepliesStartFromOldest:
+            cell.accessoryView = makeSwitchButton(Components.default.threadRepliesStartFromOldest) { newValue in
+                Components.default.threadRepliesStartFromOldest = newValue
             }
         case .threadRendersParentMessageEnabled:
             cell.accessoryView = makeSwitchButton(Components.default.threadRendersParentMessageEnabled) { newValue in

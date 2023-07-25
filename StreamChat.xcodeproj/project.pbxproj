@@ -509,6 +509,10 @@
 		82BA52EF27E1EF7B00951B87 /* MessageList_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82BA52EE27E1EF7B00951B87 /* MessageList_Tests.swift */; };
 		82CBE5682861BF300039C35C /* AttachmentResponses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82CBE5672861BF300039C35C /* AttachmentResponses.swift */; };
 		82CED1C827DF492F006E967A /* ThreadPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82CED1C727DF492F006E967A /* ThreadPage.swift */; };
+		82DCB3A92A4AE8FB00738933 /* StreamChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; };
+		82DCB3AA2A4AE8FB00738933 /* StreamChat.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		82DCB3AD2A4AE8FB00738933 /* StreamChatUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; };
+		82DCB3AE2A4AE8FB00738933 /* StreamChatUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		82E43AC128637651007BB6CD /* http_attachment.json in Resources */ = {isa = PBXBuildFile; fileRef = 82E43AC028637651007BB6CD /* http_attachment.json */; };
 		840B4FCF26A9E53100D5EFAB /* CustomEventRequestBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840B4FCE26A9E53100D5EFAB /* CustomEventRequestBody.swift */; };
 		84196FA32805892500185E99 /* LocalMessageState+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84196FA22805892500185E99 /* LocalMessageState+Extensions.swift */; };
@@ -1138,6 +1142,7 @@
 		AD050B9E265D5E12006649A5 /* QuotedChatMessageView+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD050B8C265D5E09006649A5 /* QuotedChatMessageView+SwiftUI.swift */; };
 		AD050BA8265D600B006649A5 /* QuotedChatMessageView+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD050BA7265D600B006649A5 /* QuotedChatMessageView+SwiftUI_Tests.swift */; };
 		AD0AD6C02A25140A00CB96CB /* MessagesPaginationState_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0AD6BF2A25140A00CB96CB /* MessagesPaginationState_Tests.swift */; };
+		AD0EC6D52A45AAAF005220B1 /* ChatMessageListVC_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0EC6D42A45AAAF005220B1 /* ChatMessageListVC_Mock.swift */; };
 		AD154C6D25DC3BA000850925 /* ChatCommandSuggestionView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD154C6C25DC3BA000850925 /* ChatCommandSuggestionView_Tests.swift */; };
 		AD158B6526C1873000C104CD /* ChatThreadVC+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD158B6326C1872D00C104CD /* ChatThreadVC+SwiftUI.swift */; };
 		AD158B6626C1876800C104CD /* ChatChannelVC+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64B059EC267116B40024CE90 /* ChatChannelVC+SwiftUI_Tests.swift */; };
@@ -1172,6 +1177,7 @@
 		AD472EF825C425FB00A96E70 /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = AD472EF725C425FB00A96E70 /* SnapshotTesting */; };
 		AD483B962A2658970004B406 /* ChannelMemberUnbanRequestPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD483B952A2658970004B406 /* ChannelMemberUnbanRequestPayload.swift */; };
 		AD483B972A2658970004B406 /* ChannelMemberUnbanRequestPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD483B952A2658970004B406 /* ChannelMemberUnbanRequestPayload.swift */; };
+		AD4C15562A55874700A32955 /* ImageLoading_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4C15552A55874700A32955 /* ImageLoading_Tests.swift */; };
 		AD4CDD85296499160057BC8A /* ScrollViewPaginationHandler_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4CDD81296498D20057BC8A /* ScrollViewPaginationHandler_Tests.swift */; };
 		AD4CDD862964991A0057BC8A /* InvertedScrollViewPaginationHandler_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4CDD83296498EB0057BC8A /* InvertedScrollViewPaginationHandler_Tests.swift */; };
 		AD52A2192804850700D0157E /* ChannelConfigDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD52A2182804850700D0157E /* ChannelConfigDTO.swift */; };
@@ -1354,7 +1360,7 @@
 		BCE486580F913CFFDB3B5ECD /* JSONEncoder_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE489A4B136D48249DD6969 /* JSONEncoder_Tests.swift */; };
 		BD4016362638411D00F09774 /* Deprecations.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD4016352638411D00F09774 /* Deprecations.swift */; };
 		BD40C1F5265FA80D004392CE /* StreamImageCDN_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD40C1F4265FA80D004392CE /* StreamImageCDN_Tests.swift */; };
-		BD69F5D52669392E00E9E3FA /* ScrollToLatestMessageButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD69F5D42669392E00E9E3FA /* ScrollToLatestMessageButton.swift */; };
+		BD69F5D52669392E00E9E3FA /* ScrollToBottomButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD69F5D42669392E00E9E3FA /* ScrollToBottomButton.swift */; };
 		BD837AF02652D23600A99AB5 /* AttachmentPreviewContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD837AEF2652D23600A99AB5 /* AttachmentPreviewContainer.swift */; };
 		BD8EBC3A26442E090052199F /* AttachmentsPreviewVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8EBC3926442E090052199F /* AttachmentsPreviewVC.swift */; };
 		BDC80CB5265CF4B800F62CE2 /* ImageCDN.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC80CB4265CF4B800F62CE2 /* ImageCDN.swift */; };
@@ -1803,7 +1809,7 @@
 		C121EBFD2746A1EB00023E4C /* ChatMessageListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79088331254876C100896F03 /* ChatMessageListView.swift */; };
 		C121EBFE2746A1EB00023E4C /* ChatMessageListScrollOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69736BF126413E5D00090B67 /* ChatMessageListScrollOverlayView.swift */; };
 		C121EBFF2746A1EB00023E4C /* ChatMessageListUnreadCountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDEB9416268211EC00928AF1 /* ChatMessageListUnreadCountView.swift */; };
-		C121EC002746A1EB00023E4C /* ScrollToLatestMessageButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD69F5D42669392E00E9E3FA /* ScrollToLatestMessageButton.swift */; };
+		C121EC002746A1EB00023E4C /* ScrollToBottomButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD69F5D42669392E00E9E3FA /* ScrollToBottomButton.swift */; };
 		C121EC012746A1EB00023E4C /* TypingIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E768AA882625C18D00328E6E /* TypingIndicatorView.swift */; };
 		C121EC022746A1EB00023E4C /* TypingAnimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E768AAFA2627691600328E6E /* TypingAnimationView.swift */; };
 		C121EC032746A1EB00023E4C /* ComposerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73A8B2A2578EB2B00FBDC56 /* ComposerVC.swift */; };
@@ -2288,6 +2294,20 @@
 			remoteGlobalIDString = 793060E525778896005CF846;
 			remoteInfo = StreamChatTestTools;
 		};
+		82DCB3AB2A4AE8FB00738933 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 799C941A247D2F80001F1104;
+			remoteInfo = StreamChat;
+		};
+		82DCB3AF2A4AE8FB00738933 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 790881FC25432B7200896F03;
+			remoteInfo = StreamChatUI;
+		};
 		A327D4B827E0D59300CFEC3F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
@@ -2468,6 +2488,18 @@
 				437FCA0B26D67BE40000223C /* DemoAppPush.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		82DCB3B12A4AE8FB00738933 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				82DCB3AE2A4AE8FB00738933 /* StreamChatUI.framework in Embed Frameworks */,
+				82DCB3AA2A4AE8FB00738933 /* StreamChat.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		C11B577A29D4403800D5A248 /* Embed Frameworks */ = {
@@ -3545,6 +3577,7 @@
 		AD050B8C265D5E09006649A5 /* QuotedChatMessageView+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "QuotedChatMessageView+SwiftUI.swift"; sourceTree = "<group>"; };
 		AD050BA7265D600B006649A5 /* QuotedChatMessageView+SwiftUI_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "QuotedChatMessageView+SwiftUI_Tests.swift"; sourceTree = "<group>"; };
 		AD0AD6BF2A25140A00CB96CB /* MessagesPaginationState_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesPaginationState_Tests.swift; sourceTree = "<group>"; };
+		AD0EC6D42A45AAAF005220B1 /* ChatMessageListVC_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageListVC_Mock.swift; sourceTree = "<group>"; };
 		AD154C6C25DC3BA000850925 /* ChatCommandSuggestionView_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatCommandSuggestionView_Tests.swift; sourceTree = "<group>"; };
 		AD158B6326C1872D00C104CD /* ChatThreadVC+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatThreadVC+SwiftUI.swift"; sourceTree = "<group>"; };
 		AD17CDF827E4DB2700E0D092 /* PushProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushProvider.swift; sourceTree = "<group>"; };
@@ -3569,6 +3602,7 @@
 		AD470C9B26C6D8C60090759A /* ChatMessageListVCDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageListVCDataSource.swift; sourceTree = "<group>"; };
 		AD470C9D26C6D9030090759A /* ChatMessageListVCDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageListVCDelegate.swift; sourceTree = "<group>"; };
 		AD483B952A2658970004B406 /* ChannelMemberUnbanRequestPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelMemberUnbanRequestPayload.swift; sourceTree = "<group>"; };
+		AD4C15552A55874700A32955 /* ImageLoading_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageLoading_Tests.swift; sourceTree = "<group>"; };
 		AD4CDD81296498D20057BC8A /* ScrollViewPaginationHandler_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollViewPaginationHandler_Tests.swift; sourceTree = "<group>"; };
 		AD4CDD83296498EB0057BC8A /* InvertedScrollViewPaginationHandler_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvertedScrollViewPaginationHandler_Tests.swift; sourceTree = "<group>"; };
 		AD52A2182804850700D0157E /* ChannelConfigDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelConfigDTO.swift; sourceTree = "<group>"; };
@@ -3696,7 +3730,7 @@
 		BCE48E6828D1A30622C243F0 /* FilterTestScope.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterTestScope.swift; sourceTree = "<group>"; };
 		BD4016352638411D00F09774 /* Deprecations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Deprecations.swift; sourceTree = "<group>"; };
 		BD40C1F4265FA80D004392CE /* StreamImageCDN_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamImageCDN_Tests.swift; sourceTree = "<group>"; };
-		BD69F5D42669392E00E9E3FA /* ScrollToLatestMessageButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollToLatestMessageButton.swift; sourceTree = "<group>"; };
+		BD69F5D42669392E00E9E3FA /* ScrollToBottomButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollToBottomButton.swift; sourceTree = "<group>"; };
 		BD837AEF2652D23600A99AB5 /* AttachmentPreviewContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentPreviewContainer.swift; sourceTree = "<group>"; };
 		BD8EBC3926442E090052199F /* AttachmentsPreviewVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentsPreviewVC.swift; sourceTree = "<group>"; };
 		BDC80CB4265CF4B800F62CE2 /* ImageCDN.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCDN.swift; sourceTree = "<group>"; };
@@ -4163,7 +4197,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				82DCB3A92A4AE8FB00738933 /* StreamChat.framework in Frameworks */,
 				A3BD486B281FD4500090D511 /* OHHTTPStubs in Frameworks */,
+				82DCB3AD2A4AE8FB00738933 /* StreamChatUI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4669,7 +4705,7 @@
 				79088331254876C100896F03 /* ChatMessageListView.swift */,
 				ADEE888C289C3CC0007DF3F8 /* ChatMessageListView+DiffKit.swift */,
 				C1BFBABD29CB2A7500FC82A2 /* JumpToUnreadMessagesButton.swift */,
-				BD69F5D42669392E00E9E3FA /* ScrollToLatestMessageButton.swift */,
+				BD69F5D42669392E00E9E3FA /* ScrollToBottomButton.swift */,
 				E768AAFA2627691600328E6E /* TypingAnimationView.swift */,
 				E768AA882625C18D00328E6E /* TypingIndicatorView.swift */,
 				AD29395C2A2E36FE00533CA7 /* SwipeToReplyGestureHandler.swift */,
@@ -6896,6 +6932,7 @@
 		A3960E0427DA5512003AB2B0 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				AD4C15552A55874700A32955 /* ImageLoading_Tests.swift */,
 				640FE0F526A57903006CE703 /* ListChangeIndexPathResolver_Tests.swift */,
 				BDDD1EAB2632E32000BA007B /* AppearanceProvider_Tests.swift */,
 				C1320E07276B2E0800A06B35 /* Array+SafeSubscript_Tests.swift */,
@@ -7775,6 +7812,7 @@
 		ADEE651329BF70F800186129 /* ChatMessageList */ = {
 			isa = PBXGroup;
 			children = (
+				AD0EC6D42A45AAAF005220B1 /* ChatMessageListVC_Mock.swift */,
 				ADEE651429BF711200186129 /* ChatMessageListView_Mock.swift */,
 				ADEE651629BF712500186129 /* ChatMessageCell_Mock.swift */,
 				ADEE651A29BF714300186129 /* ChatMessageListVCDataSource_Mock.swift */,
@@ -8602,12 +8640,15 @@
 				A34407B727D8C33F0044F150 /* Frameworks */,
 				A34407B827D8C33F0044F150 /* Resources */,
 				A3B78F1B282AB07100348AD1 /* SwiftLint */,
+				82DCB3B12A4AE8FB00738933 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				A34407F127D8C85E0044F150 /* PBXTargetDependency */,
 				A34407F327D8C85E0044F150 /* PBXTargetDependency */,
+				82DCB3AC2A4AE8FB00738933 /* PBXTargetDependency */,
+				82DCB3B02A4AE8FB00738933 /* PBXTargetDependency */,
 			);
 			name = StreamChatUITestsApp;
 			packageProductDependencies = (
@@ -9462,7 +9503,7 @@
 				A3C5022A284F9CF70048753E /* CharacterRule.swift in Sources */,
 				E7166CE225BEE20600B03B07 /* Appearance+Images.swift in Sources */,
 				88CABC6625934CF60061BB67 /* ChatMessageReactions+Types.swift in Sources */,
-				BD69F5D52669392E00E9E3FA /* ScrollToLatestMessageButton.swift in Sources */,
+				BD69F5D52669392E00E9E3FA /* ScrollToBottomButton.swift in Sources */,
 				AD99C90C279B136B009DD9C5 /* UserLastActivityFormatter.swift in Sources */,
 				790882F725486B8000896F03 /* ChatChannelListCollectionViewDelegate.swift in Sources */,
 				43F4750C26F4E4FF0009487D /* ChatMessageReactionItemView.swift in Sources */,
@@ -9719,6 +9760,7 @@
 				F838F6CE263713090025E1F5 /* GalleryVC_Tests.swift in Sources */,
 				AD4CDD85296499160057BC8A /* ScrollViewPaginationHandler_Tests.swift in Sources */,
 				84F373EE280D95690081E8BA /* ChatMessageDeliveryStatusCheckmarkView_Tests.swift in Sources */,
+				AD0EC6D52A45AAAF005220B1 /* ChatMessageListVC_Mock.swift in Sources */,
 				ADA8EBEB28CFD82C00DB9B03 /* ChatMessageContentViewDelegate_Mock.swift in Sources */,
 				8897305E265D046D00F83739 /* ChatMessageLayoutOptionsResolver_Tests.swift in Sources */,
 				ADA8EBE928CFD52F00DB9B03 /* TextViewUserMentionsHandler_Mock.swift in Sources */,
@@ -9742,6 +9784,7 @@
 				795296C12582494000435B2E /* ComponentsProvider_Tests.swift in Sources */,
 				225503B825DC59FD00A5A65A /* UIView+Helpers.swift in Sources */,
 				7865705825FB6DF300974045 /* UIViewController+Extensions_Tests.swift in Sources */,
+				AD4C15562A55874700A32955 /* ImageLoading_Tests.swift in Sources */,
 				40FA4E012A12A85E00DA21D2 /* VoiceRecordingVC_Tests.swift in Sources */,
 				400F063C29A6632F00242A86 /* ChatMessageListDateSeparatorView_Tests.swift in Sources */,
 				792057AC264168A6002B145B /* UITestsEnvironmentSetup.swift in Sources */,
@@ -11290,7 +11333,7 @@
 				84C11BE627FB459900000A9E /* ChatMessageDeliveryStatusView.swift in Sources */,
 				C121EBFE2746A1EB00023E4C /* ChatMessageListScrollOverlayView.swift in Sources */,
 				C121EBFF2746A1EB00023E4C /* ChatMessageListUnreadCountView.swift in Sources */,
-				C121EC002746A1EB00023E4C /* ScrollToLatestMessageButton.swift in Sources */,
+				C121EC002746A1EB00023E4C /* ScrollToBottomButton.swift in Sources */,
 				AD78F9F628EC735700BC0FCE /* String+SwiftyMarkdown.swift in Sources */,
 				C121EC012746A1EB00023E4C /* TypingIndicatorView.swift in Sources */,
 				C121EC022746A1EB00023E4C /* TypingAnimationView.swift in Sources */,
@@ -11489,6 +11532,16 @@
 			isa = PBXTargetDependency;
 			target = 793060E525778896005CF846 /* StreamChatTestTools */;
 			targetProxy = 79F458A825E3B52900E63D67 /* PBXContainerItemProxy */;
+		};
+		82DCB3AC2A4AE8FB00738933 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 799C941A247D2F80001F1104 /* StreamChat */;
+			targetProxy = 82DCB3AB2A4AE8FB00738933 /* PBXContainerItemProxy */;
+		};
+		82DCB3B02A4AE8FB00738933 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 790881FC25432B7200896F03 /* StreamChatUI */;
+			targetProxy = 82DCB3AF2A4AE8FB00738933 /* PBXContainerItemProxy */;
 		};
 		A327D4B927E0D59300CFEC3F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

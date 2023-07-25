@@ -251,8 +251,8 @@ public struct Components {
     /// The view that shows a badge on `giphyAttachmentView`.
     public var giphyBadgeView: ChatMessageGiphyView.GiphyBadge.Type = ChatMessageGiphyView.GiphyBadge.self
 
-    /// The button that indicates unread messages at the bottom of the message list and scroll to the latest message on tap.
-    public var scrollToLatestMessageButton: ScrollToLatestMessageButton.Type = ScrollToLatestMessageButton.self
+    /// The button that indicates unread messages at the bottom of the message list and scroll to the bottom on tap.
+    public var scrollToBottomButton: ScrollToBottomButton.Type = ScrollToBottomButton.self
 
     /// The button that shows when there are unread messages outside the bounds of the screen. Can be tapped to scroll to them, or can be discarded.
     public var jumpToUnreadMessagesButton: JumpToUnreadMessagesButton.Type = JumpToUnreadMessagesButton.self
@@ -329,6 +329,10 @@ public struct Components {
 
     /// A boolean value that determines whether the thread view renders the parent message at the top.
     public var threadRendersParentMessageEnabled = true
+
+    /// A boolean value that determines if thread replies start from the oldest replies.
+    /// By default it is false, and newest replies are rendered in the first page.
+    public var threadRepliesStartFromOldest = false
 
     // MARK: - Channel components
 
@@ -508,6 +512,17 @@ public extension Components {
         }
         set {
             DefaultChannelNameFormatter.channelNamer = newValue
+        }
+    }
+
+    /// The button that indicates unread messages at the bottom of the message list and scroll to the latest message on tap.
+    @available(*, deprecated, renamed: "scrollToBottomButton")
+    var scrollToLatestMessageButton: ScrollToBottomButton.Type {
+        get {
+            scrollToBottomButton
+        }
+        set {
+            scrollToBottomButton = newValue
         }
     }
 }

@@ -24,7 +24,7 @@ class MessageListPage {
     }
 
     static var scrollToBottomButton: XCUIElement {
-        app.buttons["ScrollToLatestMessageButton"]
+        app.buttons["ScrollToBottomButton"]
     }
     
     static var scrollToBottomButtonUnreadCount: XCUIElement {
@@ -260,6 +260,14 @@ class MessageListPage {
 
         static func videoPlayer() -> XCUIElement {
             app.otherElements["PlayerView"]
+        }
+        
+        static func restartAttachmentUploadIcon(in messageCell: XCUIElement) -> XCUIElement {
+            messageCell.buttons["AttachmentActionButton"]
+        }
+        
+        static func uploadingProgressLabel(in messageCell: XCUIElement) -> XCUIElement {
+            messageCell.staticTexts["uploadingProgressLabel"]
         }
 
         enum LinkPreview {

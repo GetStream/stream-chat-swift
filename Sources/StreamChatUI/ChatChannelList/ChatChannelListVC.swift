@@ -151,6 +151,7 @@ open class ChatChannelListVC: _ViewController,
             self?.channelListErrorView.hide()
         }
 
+        viewPaginationHandler.bottomThreshold = 800
         viewPaginationHandler.onNewBottomPage = { [weak self] in
             self?.loadMoreChannels()
         }

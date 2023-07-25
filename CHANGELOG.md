@@ -4,13 +4,32 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
+### 🐞 Fixed
+- Fix pinning messages with attachments not synced with server [#2698](https://github.com/GetStream/stream-chat-swift/pull/2698)
+- Fix messages disappearing in search query after entering a channel [#2700](https://github.com/GetStream/stream-chat-swift/pull/2700)
+
+# [4.34.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.34.0)
+_July 05, 2023_
+
+## StreamChat
 ### ✅ Added
 - Expose Extra Data for Giphy Attachment Payloads [#2678](https://github.com/GetStream/stream-chat-swift/pull/2678)
+- Add support for partial Channel update [#2681](https://github.com/GetStream/stream-chat-swift/pull/2681)
 
 ### 🐞 Fixed
 - Rescue messages that are stuck in `.sending` state [#2676](https://github.com/GetStream/stream-chat-swift/pull/2676)
 - Fix not being able to resend failed attachments [#2680](https://github.com/GetStream/stream-chat-swift/pull/2680)
 - Fix channel list having data from a different channel list query [#2684](https://github.com/GetStream/stream-chat-swift/pull/2684)
+
+## StreamChatUI
+### ✅ Added
+- Add support for starting thread from oldest replies by enabling `Components.threadRepliesStartFromOldest` [#2682](https://github.com/GetStream/stream-chat-swift/pull/2682)
+### 🐞 Fixed
+- Fix custom `ImageLoading` functions with default arguments not being called [#2695](https://github.com/GetStream/stream-chat-swift/pull/2695)
+- Improve Channel List prefetching when loading more channels [#2682](https://github.com/GetStream/stream-chat-swift/pull/2682)
+### 🔄 Changed
+- Renamed `scrollToMostRecentMessage()` -> `scrollToBottom()` [#2682](https://github.com/GetStream/stream-chat-swift/pull/2682)
+- Renamed `ScrollToLatestButton` -> `ScrollToBottomButton` [#2682](https://github.com/GetStream/stream-chat-swift/pull/2682)
 
 # [4.33.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.33.0)
 _June 08, 2023_

@@ -220,6 +220,45 @@ final class ChatThreadVC_Tests: XCTestCase {
         XCTAssertEqual(vc.messageComposerVC.content.quotingMessage?.id, expectMessage.id)
     }
 
+    func test_setUp_whenShouldStartFromOldestReplies_thenLoadsPageAroundParentMessageAndJumpsToTopMessage() {
+        var components = Components.mock
+        components.threadRepliesStartFromOldest = true
+        components.messageListVC = ChatMessageListVC_Mock.self
+        vc.components = components
+        messageControllerMock.message_mock = .mock()
+        let messageListVCMock = vc.messageListVC as? ChatMessageListVC_Mock
+
+        vc.setUp()
+
+        messageControllerMock.synchronize_completion?(nil)
+        messageControllerMock.loadPageAroundReplyId_completion?(nil)
+
+        XCTAssertEqual(messageControllerMock.loadPageAroundReplyId_callCount, 1)
+        XCTAssertEqual(messageListVCMock?.scrollToTopCallCount, 1)
+    }
+
+    func test_setUp_whenShouldStartFromOldestRepliesAndHasInitialReplyId_thenJumpsToInitialReplyId() {
+        // When initial reply id is set, it should jump to that reply
+        // and not to the parent message.
+
+        var components = Components.mock
+        components.threadRepliesStartFromOldest = true
+        components.messageListVC = ChatMessageListVC_Mock.self
+        vc.components = components
+        messageControllerMock.message_mock = .mock()
+        let messageListVCMock = vc.messageListVC as? ChatMessageListVC_Mock
+        vc.initialReplyId = .unique
+
+        vc.setUp()
+
+        messageControllerMock.synchronize_completion?(nil)
+        messageControllerMock.loadPageAroundReplyId_completion?(nil)
+
+        XCTAssertEqual(messageControllerMock.loadPageAroundReplyId_callCount, 1)
+        XCTAssertEqual(messageListVCMock?.jumpToMessageCallCount, 1)
+        XCTAssertEqual(messageListVCMock?.scrollToTopCallCount, 0)
+    }
+
     // MARK: - audioQueuePlayerNextAssetURL
 
     func test_audioQueuePlayerNextAssetURL_callsNextAvailableVoiceRecordingProvideWithExpectedInputAndReturnsValue() throws {

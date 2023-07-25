@@ -236,11 +236,9 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
             state = .localDataFetchFailed(ClientError(with: error))
         }
     }
-}
 
-// MARK: - Actions
+    // MARK: - Actions
 
-public extension ChatMessageController {
     /// Edits the message this controller manages with the provided values.
     ///
     /// - Parameters:
@@ -250,7 +248,7 @@ public extension ChatMessageController {
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
     ///
-    func editMessage(
+    public func editMessage(
         text: String,
         attachments: [AnyAttachmentPayload] = [],
         extraData: [String: RawJSON]? = nil,
@@ -277,7 +275,7 @@ public extension ChatMessageController {
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
     ///
-    func deleteMessage(hard: Bool = false, completion: ((Error?) -> Void)? = nil) {
+    public func deleteMessage(hard: Bool = false, completion: ((Error?) -> Void)? = nil) {
         messageUpdater.deleteMessage(messageId: messageId, hard: hard) { error in
             self.callback {
                 completion?(error)
@@ -302,7 +300,7 @@ public extension ChatMessageController {
     ///   - extraData: Additional extra data of the message object.
     ///   - completion: Called when saving the message to the local DB finishes.
     ///
-    func createNewReply(
+    public func createNewReply(
         messageId: MessageId? = nil,
         text: String,
         pinning: MessagePinning? = nil,
@@ -353,7 +351,7 @@ public extension ChatMessageController {
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
     ///
-    func loadPreviousReplies(
+    public func loadPreviousReplies(
         before replyId: MessageId? = nil,
         limit: Int? = nil,
         completion: ((Error?) -> Void)? = nil
@@ -413,7 +411,7 @@ public extension ChatMessageController {
     ///   - replyId: The reply id of the message to jump to.
     ///   - limit: The number of replies to load in total, including the message to jump to.
     ///   - completion: Callback when the API call is completed.
-    func loadPageAroundReplyId(
+    public func loadPageAroundReplyId(
         _ replyId: MessageId,
         limit: Int? = nil,
         completion: ((Error?) -> Void)? = nil
@@ -448,7 +446,7 @@ public extension ChatMessageController {
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
     ///
-    func loadNextReplies(
+    public func loadNextReplies(
         after replyId: MessageId? = nil,
         limit: Int? = nil,
         completion: ((Error?) -> Void)? = nil
@@ -483,7 +481,7 @@ public extension ChatMessageController {
     /// Cleans the current state and loads the first page again.
     /// - Parameter limit: Limit for page size
     /// - Parameter completion: Callback when the API call is completed.
-    func loadFirstPage(limit: Int? = nil, _ completion: ((_ error: Error?) -> Void)? = nil) {
+    public func loadFirstPage(limit: Int? = nil, _ completion: ((_ error: Error?) -> Void)? = nil) {
         let pageSize = limit ?? repliesPageSize
         messageUpdater.loadReplies(
             cid: cid,
@@ -501,7 +499,7 @@ public extension ChatMessageController {
     ///   - completion: The completion is called when the network request is finished.
     ///   If the request fails, the completion will be called with an error, if it succeeds it is
     ///   called without an error and the delegate is notified of reactions changes.
-    func loadNextReactions(
+    public func loadNextReactions(
         limit: Int = 25,
         completion: ((Error?) -> Void)? = nil
     ) {
@@ -548,7 +546,7 @@ public extension ChatMessageController {
     ///   - offset: The starting position from the desired range to be fetched.
     ///   - completion: The completion is called when the network request is finished.
     ///   It is called with the reactions if the request succeeds or error if the request fails.
-    func loadReactions(
+    public func loadReactions(
         limit: Int,
         offset: Int = 0,
         completion: @escaping (Result<[ChatMessageReaction], Error>) -> Void
@@ -571,7 +569,7 @@ public extension ChatMessageController {
     ///
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///
-    func flag(completion: ((Error?) -> Void)? = nil) {
+    public func flag(completion: ((Error?) -> Void)? = nil) {
         messageUpdater.flagMessage(true, with: messageId, in: cid) { error in
             self.callback {
                 completion?(error)
@@ -583,7 +581,7 @@ public extension ChatMessageController {
     ///
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///
-    func unflag(completion: ((Error?) -> Void)? = nil) {
+    public func unflag(completion: ((Error?) -> Void)? = nil) {
         messageUpdater.flagMessage(false, with: messageId, in: cid) { error in
             self.callback {
                 completion?(error)
@@ -598,7 +596,7 @@ public extension ChatMessageController {
     ///   - enforceUnique: If set to `true`, new reaction will replace all reactions the user has (if any) on this message.
     ///   - extraData: The reaction extra data.
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
-    func addReaction(
+    public func addReaction(
         _ type: MessageReactionType,
         score: Int = 1,
         enforceUnique: Bool = false,
@@ -622,7 +620,7 @@ public extension ChatMessageController {
     /// - Parameters:
     ///   - type: The reaction type.
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
-    func deleteReaction(
+    public func deleteReaction(
         _ type: MessageReactionType,
         completion: ((Error?) -> Void)? = nil
     ) {
@@ -637,7 +635,7 @@ public extension ChatMessageController {
     ///  - Parameters:
     ///   - pinning: The pinning expiration information. It supports setting an infinite expiration, setting a date, or the amount of time a message is pinned.
     ///   - completion: A completion block with an error if the request was failed.
-    func pin(_ pinning: MessagePinning, completion: ((Error?) -> Void)? = nil) {
+    public func pin(_ pinning: MessagePinning, completion: ((Error?) -> Void)? = nil) {
         messageUpdater.pinMessage(messageId: messageId, pinning: pinning) { result in
             self.callback {
                 completion?(result)
@@ -648,7 +646,7 @@ public extension ChatMessageController {
     /// Unpins the message this controller manages.
     ///  - Parameters:
     ///   - completion: A completion block with an error if the request was failed.
-    func unpin(completion: ((Error?) -> Void)? = nil) {
+    public func unpin(completion: ((Error?) -> Void)? = nil) {
         messageUpdater.unpinMessage(messageId: messageId) { result in
             self.callback {
                 completion?(result)
@@ -661,7 +659,7 @@ public extension ChatMessageController {
     ///   - id: The attachment identifier.
     ///   - completion: The completion. Will be called on a **callbackQueue** when the database operation is finished.
     ///                 If operation fails, the completion will be called with an error.
-    func restartFailedAttachmentUploading(
+    public func restartFailedAttachmentUploading(
         with id: AttachmentId,
         completion: ((Error?) -> Void)? = nil
     ) {
@@ -675,7 +673,7 @@ public extension ChatMessageController {
     /// Changes local message from `.sendingFailed` to `.pendingSend` so it is enqueued by message sender worker.
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the database operation is finished.
     ///                         If operation fails, the completion will be called with an error.
-    func resendMessage(completion: ((Error?) -> Void)? = nil) {
+    public func resendMessage(completion: ((Error?) -> Void)? = nil) {
         messageUpdater.resendMessage(with: messageId) { error in
             self.callback {
                 completion?(error)
@@ -688,7 +686,7 @@ public extension ChatMessageController {
     ///   - action: The action to take.
     ///   - completion: The completion. Will be called on a **callbackQueue** when the operation is finished.
     ///                 If operation fails, the completion is called with the error.
-    func dispatchEphemeralMessageAction(_ action: AttachmentAction, completion: ((Error?) -> Void)? = nil) {
+    public func dispatchEphemeralMessageAction(_ action: AttachmentAction, completion: ((Error?) -> Void)? = nil) {
         messageUpdater.dispatchEphemeralMessageAction(cid: cid, messageId: messageId, action: action) { error in
             self.callback {
                 completion?(error)
@@ -703,7 +701,7 @@ public extension ChatMessageController {
     ///   - language: The language message text should be translated to.
     ///   - completion: The completion. Will be called on a **callbackQueue** when the operation is finished.
     ///                 If operation fails, the completion is called with the error.
-    func translate(to language: TranslationLanguage, completion: ((Error?) -> Void)? = nil) {
+    public func translate(to language: TranslationLanguage, completion: ((Error?) -> Void)? = nil) {
         messageUpdater.translate(messageId: messageId, to: language) { error in
             self.callback {
                 completion?(error)

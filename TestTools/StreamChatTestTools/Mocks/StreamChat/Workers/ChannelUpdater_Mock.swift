@@ -15,6 +15,10 @@ final class ChannelUpdater_Mock: ChannelUpdater {
     @Atomic var updateChannel_payload: ChannelEditDetailPayload?
     @Atomic var updateChannel_completion: ((Error?) -> Void)?
 
+    @Atomic var partialChannelUpdate_updates: ChannelEditDetailPayload?
+    @Atomic var partialChannelUpdate_unsetProperties: [String]?
+    @Atomic var partialChannelUpdate_completion: ((Error?) -> Void)?
+
     @Atomic var muteChannel_cid: ChannelId?
     @Atomic var muteChannel_mute: Bool?
     @Atomic var muteChannel_completion: ((Error?) -> Void)?
@@ -219,6 +223,12 @@ final class ChannelUpdater_Mock: ChannelUpdater {
     override func updateChannel(channelPayload: ChannelEditDetailPayload, completion: ((Error?) -> Void)? = nil) {
         updateChannel_payload = channelPayload
         updateChannel_completion = completion
+    }
+
+    override func partialChannelUpdate(updates: ChannelEditDetailPayload, unsetProperties: [String], completion: ((Error?) -> Void)? = nil) {
+        partialChannelUpdate_updates = updates
+        partialChannelUpdate_unsetProperties = unsetProperties
+        partialChannelUpdate_completion = completion
     }
 
     override func muteChannel(cid: ChannelId, mute: Bool, completion: ((Error?) -> Void)? = nil) {

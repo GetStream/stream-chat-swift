@@ -53,9 +53,14 @@ class ChatMessageListView_Mock: ChatMessageListView {
         }
     }
 
-    var scrollToMostRecentMessageCallCount = 0
-    override func scrollToMostRecentMessage(animated: Bool = true) {
-        scrollToMostRecentMessageCallCount += 1
+    var scrollToTopCallCount = 0
+    override func scrollToTop(animated: Bool = true) {
+        scrollToTopCallCount += 1
+    }
+
+    var scrollToBottomCallCount = 0
+    override func scrollToBottom(animated: Bool = true) {
+        scrollToBottomCallCount += 1
     }
 
     var updateMessagesCompletion: (() -> Void)?

@@ -1218,7 +1218,8 @@ final class MessageDTO_Tests: XCTestCase {
         let messagePayload: MessagePayload = .dummy(
             messageId: .unique,
             authorUserId: .unique,
-            channel: ChannelDetailPayload.dummy(cid: channelId)
+            channel: ChannelDetailPayload.dummy(cid: channelId),
+            cid: channelId
         )
 
         try database.writeSynchronously { session in
@@ -3350,7 +3351,30 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(message.isLocalOnly, false)
     }
 
-    // MARK: Helpers:
+    // MARK: - message.cid
+
+    func test_cid_whenChannelIsDeleted_thenCidNotNil() throws {
+        // GIVEN
+        let messagePayload = MessagePayload.dummy(cid: .unique)
+        let channelId = ChannelId.unique
+        try database.writeSynchronously { session in
+            let channelDTO = try session.saveChannel(payload: .dummy(channel: .dummy(cid: channelId)))
+            try session.saveMessage(payload: messagePayload, channelDTO: channelDTO, syncOwnReactions: false, cache: nil)
+        }
+
+        // WHEN
+        try database.writeSynchronously { session in
+            session.removeChannels(cids: Set([channelId]))
+        }
+
+        // THEN
+        let messageDTO = try XCTUnwrap(database.viewContext.message(id: messagePayload.id))
+        let messageModel = try messageDTO.asModel()
+        XCTAssertNotNil(messageDTO.cid)
+        XCTAssertNotNil(messageModel.cid)
+    }
+
+    // MARK: - Helpers:
 
     private func createMessage(with message: MessagePayload) throws -> MessageDTO {
         let context = database.viewContext
