@@ -139,6 +139,48 @@ final class ListDatabaseObserver_Sorting: XCTestCase {
         XCTAssertEqual(observer.items.map(\.name), ["E", "D", "C", "B", "A"])
     }
 
+    func test_channelsAreSortedAccordingToBoolSorting_foreground() throws {
+        try assert_channelsAreSortedAccordingToBoolSorting(isBackground: false)
+    }
+
+    func test_channelsAreSortedAccordingToBoolSorting_background() throws {
+        try assert_channelsAreSortedAccordingToBoolSorting(isBackground: true)
+    }
+
+    func assert_channelsAreSortedAccordingToBoolSorting(isBackground: Bool, file: StaticString = #filePath, line: UInt = #line) throws {
+        createObserver(with: [
+            .init(key: .custom(keyPath: \.isPinned, key: "is_pinned"), isAscending: false),
+            .init(key: .custom(keyPath: \.name, key: "name"), isAscending: true)
+        ], isBackground: isBackground)
+        try observer.startObserving()
+
+        let expectation = self.expectation(description: "Observer notifies")
+        expectation.expectedFulfillmentCount = 2
+        observer.onDidChange = { _ in
+            expectation.fulfill()
+        }
+
+        let cids = try createChannels(mapping: defaultChannels)
+        let extra: [String: RawJSON] = ["is_pinned": .bool(true)]
+        let extraData = try JSONEncoder.default.encode(extra)
+        let namesToUpdate = ["B", "E"]
+        try database.writeSynchronously { session in
+            cids.forEach {
+                guard let channelDTO = session.channel(cid: $0) else {
+                    XCTFail()
+                    return
+                }
+                guard let name = channelDTO.name, namesToUpdate.contains(name) else { return }
+                channelDTO.extraData = extraData
+            }
+        }
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertEqual(observer.items.count, 5)
+        XCTAssertEqual(observer.items.map(\.name), ["B", "E", "A", "C", "D"])
+    }
+
     func test_channelsAreSortedAccordingToACombinationWithCustomSorting_foreground() throws {
         try assert_channelsAreSortedAccordingToACombinationWithCustomSorting(isBackground: false)
     }
@@ -278,7 +320,9 @@ final class ListDatabaseObserver_Sorting: XCTestCase {
         XCTAssertEqual(observer.items.count, 0)
     }
 
-    private func createChannels(mapping: [(name: String, createdAt: Date, messageCreatedAt: Date)]) throws {
+    @discardableResult
+    private func createChannels(mapping: [(name: String, createdAt: Date, messageCreatedAt: Date)]) throws -> [ChannelId] {
+        var cids: [ChannelId] = []
         try database.writeSynchronously { session in
             session.saveQuery(query: self.query)
             let channels = try mapping.map {
@@ -297,12 +341,21 @@ final class ListDatabaseObserver_Sorting: XCTestCase {
             for channel in channels {
                 queryDTO.channels.insert(channel)
             }
+            cids = channels.compactMap { try? ChannelId(cid: $0.cid) }
         }
+        return cids
     }
 
-    private func createChannels(mapping: [(name: String, createdAt: Date)]) throws {
+    @discardableResult
+    private func createChannels(mapping: [(name: String, createdAt: Date)]) throws -> [ChannelId] {
         try createChannels(mapping: mapping.map {
             ($0, $1, $1)
         })
+    }
+}
+
+private extension ChatChannel {
+    var isPinned: Bool {
+        extraData["is_pinned"]?.boolValue ?? false
     }
 }
