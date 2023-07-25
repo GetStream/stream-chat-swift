@@ -150,16 +150,9 @@ class ChannelListUpdater: Worker {
     /// Links a channel to the given query.
     func link(channel: ChatChannel, with query: ChannelListQuery, completion: ((Error?) -> Void)? = nil) {
         database.write { session in
-            guard let queryDTO = session.channelListQuery(filterHash: query.filter.filterHash) else {
-                log.debug("Channel list query has not yet created \(query)")
+            guard let (channelDTO, queryDTO) = session.getChannelWithQuery(cid: channel.cid, query: query) else {
                 return
             }
-
-            guard let channelDTO = session.channel(cid: channel.cid) else {
-                log.debug("Channel \(channel.cid) cannot be found in database.")
-                return
-            }
-
             queryDTO.channels.insert(channelDTO)
         } completion: { error in
             completion?(error)
@@ -169,19 +162,29 @@ class ChannelListUpdater: Worker {
     /// Unlinks a channel to the given query.
     func unlink(channel: ChatChannel, with query: ChannelListQuery, completion: ((Error?) -> Void)? = nil) {
         database.write { session in
-            guard let queryDTO = session.channelListQuery(filterHash: query.filter.filterHash) else {
-                log.debug("Channel list query has not yet created \(query)")
-                return
-            }
-
-            guard let channelDTO = session.channel(cid: channel.cid) else {
-                log.debug("Channel \(channel.cid) cannot be found in database.")
+            guard let (channelDTO, queryDTO) = session.getChannelWithQuery(cid: channel.cid, query: query) else {
                 return
             }
             queryDTO.channels.remove(channelDTO)
         } completion: { error in
             completion?(error)
         }
+    }
+}
+
+private extension DatabaseSession {
+    func getChannelWithQuery(cid: ChannelId, query: ChannelListQuery) -> (ChannelDTO, ChannelListQueryDTO)? {
+        guard let queryDTO = channelListQuery(filterHash: query.filter.filterHash) else {
+            log.debug("Channel list query has not yet created \(query)")
+            return nil
+        }
+
+        guard let channelDTO = channel(cid: cid) else {
+            log.debug("Channel \(cid) cannot be found in database.")
+            return nil
+        }
+
+        return (channelDTO, queryDTO)
     }
 }
 
