@@ -1161,6 +1161,8 @@
 		AD3D0CC226A88E5100A6D813 /* MessengerChatChannelHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD3D0CC126A88E5100A6D813 /* MessengerChatChannelHeaderView.swift */; };
 		AD3D0CC426A89E6300A6D813 /* iMessageChatChannelHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD3D0CC326A89E6300A6D813 /* iMessageChatChannelHeaderView.swift */; };
 		AD3EE5442832921400ACEFD9 /* VirtualTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3D15D8527E9D4B5006B34D7 /* VirtualTime.swift */; };
+		AD43DE6D2A712B0F0040C0FD /* ChatChannelListSearchVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD43DE6C2A712B0F0040C0FD /* ChatChannelListSearchVC.swift */; };
+		AD43DE6E2A712B0F0040C0FD /* ChatChannelListSearchVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD43DE6C2A712B0F0040C0FD /* ChatChannelListSearchVC.swift */; };
 		AD43F90926153BAD00F2D4BB /* QuotedChatMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD43F90826153BAD00F2D4BB /* QuotedChatMessageView.swift */; };
 		AD447398263ABD530030E583 /* ChatCommandSuggestionCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD447376263ABC5C0030E583 /* ChatCommandSuggestionCollectionViewCell.swift */; };
 		AD4473B3263ABFA20030E583 /* ChatSuggestionsCollectionReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4473A9263ABFA00030E583 /* ChatSuggestionsCollectionReusableView.swift */; };
@@ -3596,6 +3598,7 @@
 		AD3D0CBF26A8727800A6D813 /* SlackChatChannelHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackChatChannelHeaderView.swift; sourceTree = "<group>"; };
 		AD3D0CC126A88E5100A6D813 /* MessengerChatChannelHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessengerChatChannelHeaderView.swift; sourceTree = "<group>"; };
 		AD3D0CC326A89E6300A6D813 /* iMessageChatChannelHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iMessageChatChannelHeaderView.swift; sourceTree = "<group>"; };
+		AD43DE6C2A712B0F0040C0FD /* ChatChannelListSearchVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelListSearchVC.swift; sourceTree = "<group>"; };
 		AD43F90826153BAD00F2D4BB /* QuotedChatMessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuotedChatMessageView.swift; sourceTree = "<group>"; };
 		AD447376263ABC5C0030E583 /* ChatCommandSuggestionCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatCommandSuggestionCollectionViewCell.swift; sourceTree = "<group>"; };
 		AD4473A9263ABFA00030E583 /* ChatSuggestionsCollectionReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatSuggestionsCollectionReusableView.swift; sourceTree = "<group>"; };
@@ -7561,6 +7564,7 @@
 				AD50C31C2A607A88002FDD06 /* ChannelListSearchStrategy.swift */,
 				AD76CE2F2A5F10F2003CA182 /* ChatMessageSearchVC.swift */,
 				AD76CE312A5F1104003CA182 /* ChatChannelSearchVC.swift */,
+				AD43DE6C2A712B0F0040C0FD /* ChatChannelListSearchVC.swift */,
 			);
 			path = Search;
 			sourceTree = "<group>";
@@ -9579,6 +9583,7 @@
 				C1FC2F6E27416E150062530F /* ImagePipeline.swift in Sources */,
 				C1FC2F8027416E150062530F /* ImagePrefetcher.swift in Sources */,
 				88EF29FF2571288600B06EF1 /* Array+Extensions.swift in Sources */,
+				AD43DE6D2A712B0F0040C0FD /* ChatChannelListSearchVC.swift in Sources */,
 				40824D102A1270CB003B61FD /* ChatMessageVoiceRecordingAttachmentListView+ItemView.swift in Sources */,
 				401EBB6D29A79686004D9304 /* ChatMessagesCountDecorationView.swift in Sources */,
 				F80BCA562631D4DA00F2107B /* ZoomDismissalInteractionController.swift in Sources */,
@@ -11290,6 +11295,7 @@
 				AD78F9F728EC735700BC0FCE /* SwiftyMarkdown.swift in Sources */,
 				C121EBD52746A1EA00023E4C /* ChatMessageReactionAuthorsFlowLayout.swift in Sources */,
 				ADBBDA20279F0CEA00E47B1C /* VideoDurationFormatter.swift in Sources */,
+				AD43DE6E2A712B0F0040C0FD /* ChatChannelListSearchVC.swift in Sources */,
 				C121EBD62746A1EA00023E4C /* ChatMessageReactionAppearance.swift in Sources */,
 				AD78F9FB28EC735700BC0FCE /* SwiftyLineProcessor.swift in Sources */,
 				C1788F6029C33A1000149883 /* ChatThreadRepliesCountDecorationView.swift in Sources */,
