@@ -165,11 +165,15 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
 
     /// Text of `timestampLabel` which contains the time of the last sent message.
     open var timestampText: String? {
+        if let searchedMessage = content?.searchedMessage {
+            return timestampFormatter.format(searchedMessage.createdAt)
+        }
+        
         if let timestamp = content?.channel.previewMessage?.createdAt {
             return timestampFormatter.format(timestamp)
-        } else {
-            return nil
         }
+
+        return nil
     }
 
     /// The delivery status to be shown for the channel's preview message.
