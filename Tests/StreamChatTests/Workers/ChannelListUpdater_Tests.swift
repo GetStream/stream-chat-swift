@@ -119,6 +119,113 @@ final class ChannelListUpdater_Tests: XCTestCase {
         }
     }
 
+    func test_update_whenSuccess_whenFirstFetch_shouldRemoveAllPreviousChannelsFromQuery() throws {
+        var query = ChannelListQuery(
+            filter: .in(.members, values: [.unique])
+        )
+        query.pagination = .init(pageSize: 25, offset: 0)
+
+        try database.writeSynchronously { session in
+            let queryDTO = session.saveQuery(query: query)
+            queryDTO.channels.insert(try session.saveChannel(payload: .dummy()))
+            queryDTO.channels.insert(try session.saveChannel(payload: .dummy()))
+            queryDTO.channels.insert(try session.saveChannel(payload: .dummy()))
+        }
+
+        var channelsFromQuery: [ChatChannel] {
+            database.viewContext.channelListQuery(
+                filterHash: query.filter.filterHash
+            )?.channels.compactMap { try? $0.asModel() } ?? []
+        }
+
+        XCTAssertEqual(channelsFromQuery.count, 3)
+
+        let exp = expectation(description: "update completes")
+        listUpdater.update(channelListQuery: query, completion: { result in
+            XCTAssertNil(result.error)
+            exp.fulfill()
+        })
+
+        let cid = ChannelId(type: .messaging, id: .unique)
+        let payload = ChannelListPayload(channels: [dummyPayload(with: cid)])
+        apiClient.test_simulateResponse(.success(payload))
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertEqual(channelsFromQuery.count, 1)
+    }
+
+    func test_update_whenSuccess_whenNotFirstFetch_shouldContinueChannelsFromQuery() throws {
+        var query = ChannelListQuery(
+            filter: .in(.members, values: [.unique])
+        )
+        query.pagination = .init(pageSize: 25, offset: 25)
+
+        try database.writeSynchronously { session in
+            let queryDTO = session.saveQuery(query: query)
+            queryDTO.channels.insert(try session.saveChannel(payload: .dummy()))
+            queryDTO.channels.insert(try session.saveChannel(payload: .dummy()))
+            queryDTO.channels.insert(try session.saveChannel(payload: .dummy()))
+        }
+
+        var channelsFromQuery: [ChatChannel] {
+            database.viewContext.channelListQuery(
+                filterHash: query.filter.filterHash
+            )?.channels.compactMap { try? $0.asModel() } ?? []
+        }
+
+        XCTAssertEqual(channelsFromQuery.count, 3)
+
+        let exp = expectation(description: "update completes")
+        listUpdater.update(channelListQuery: query, completion: { result in
+            XCTAssertNil(result.error)
+            exp.fulfill()
+        })
+
+        let cid = ChannelId(type: .messaging, id: .unique)
+        let payload = ChannelListPayload(channels: [dummyPayload(with: cid)])
+        apiClient.test_simulateResponse(.success(payload))
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertEqual(channelsFromQuery.count, 4)
+    }
+
+    func test_update_whenError_shouldContinueChannelsFromQuery() throws {
+        var query = ChannelListQuery(
+            filter: .in(.members, values: [.unique])
+        )
+        query.pagination = .init(pageSize: 25, offset: 25)
+
+        try database.writeSynchronously { session in
+            let queryDTO = session.saveQuery(query: query)
+            queryDTO.channels.insert(try session.saveChannel(payload: .dummy()))
+            queryDTO.channels.insert(try session.saveChannel(payload: .dummy()))
+            queryDTO.channels.insert(try session.saveChannel(payload: .dummy()))
+        }
+
+        var channelsFromQuery: [ChatChannel] {
+            database.viewContext.channelListQuery(
+                filterHash: query.filter.filterHash
+            )?.channels.compactMap { try? $0.asModel() } ?? []
+        }
+
+        XCTAssertEqual(channelsFromQuery.count, 3)
+
+        let exp = expectation(description: "update completes")
+        listUpdater.update(channelListQuery: query, completion: { result in
+            XCTAssertNotNil(result.error)
+            exp.fulfill()
+        })
+
+        let result: Result<ChannelListPayload, Error> = .failure(TestError())
+        apiClient.test_simulateResponse(result)
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertEqual(channelsFromQuery.count, 3)
+    }
+
     // MARK: - Reset Channels Query
 
     func test_resetChannelsQueryGreenPath() throws {
@@ -412,6 +519,63 @@ final class ChannelListUpdater_Tests: XCTestCase {
         let expectedEndpoint: Endpoint<ChannelListPayload> = .channels(query: expectedQuery)
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), apiClient.request_endpoint)
         XCTAssertNotNil(actualError)
+    }
+
+    func test_link_shouldAddChannelToQuery() throws {
+        let exp = expectation(description: "link completion is called")
+        let channel = ChatChannel.mock(cid: .unique)
+        let query = ChannelListQuery(filter: .noTeam)
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(
+                payload: .dummy(channel: .dummy(cid: channel.cid))
+            )
+            session.saveQuery(query: query)
+        }
+
+        listUpdater.link(channel: channel, with: query) { _ in
+            exp.fulfill()
+        }
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        var channelsInQuery: [ChatChannel] {
+            database.viewContext.channelListQuery(
+                filterHash: query.filter.filterHash
+            )?.channels.compactMap { try? $0.asModel() } ?? []
+        }
+
+        XCTAssertTrue(channelsInQuery.contains(channel))
+    }
+
+    func test_unlink_shouldRemoveChannelFromQuery() throws {
+        let exp = expectation(description: "unlink completion is called")
+        let channel = ChatChannel.mock(cid: .unique)
+        let query = ChannelListQuery(filter: .noTeam)
+
+        try database.writeSynchronously { session in
+            let channelDTO = try session.saveChannel(
+                payload: .dummy(channel: .dummy(cid: channel.cid))
+            )
+            let queryDTO = session.saveQuery(query: query)
+            queryDTO.channels.insert(channelDTO)
+        }
+
+        var channelsInQuery: [ChatChannel] {
+            database.viewContext.channelListQuery(
+                filterHash: query.filter.filterHash
+            )?.channels.compactMap { try? $0.asModel() } ?? []
+        }
+
+        XCTAssertTrue(channelsInQuery.contains(channel))
+
+        listUpdater.unlink(channel: channel, with: query) { _ in
+            exp.fulfill()
+        }
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertFalse(channelsInQuery.contains(channel))
     }
 
     private func channels(for query: ChannelListQuery, database: DatabaseContainer) -> Set<ChannelDTO> {

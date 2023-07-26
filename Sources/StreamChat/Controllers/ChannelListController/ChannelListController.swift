@@ -38,6 +38,8 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     /// The `ChatClient` instance this controller belongs to.
     public let client: ChatClient
 
+    let eventsController: EventsController
+
     /// The channels matching the query of this controller.
     ///
     /// To observe changes of the channels, set your class as a delegate of this controller or use the provided
@@ -87,7 +89,6 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
                 log.debug("didChangeChannels: \(changes.map(\.debugDescription))")
                 $0.controller(self, didChangeChannels: changes)
             }
-            self?.handleLinkedChannels(changes)
         }
 
         observer.onWillChange = { [weak self] in
@@ -99,22 +100,6 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
 
                 $0.controllerWillChangeChannels(self)
             }
-        }
-
-        return observer
-    }()
-
-    /// Used for observing the database for changes.
-    private(set) lazy var updatedChannelObserver: ListDatabaseObserverWrapper<ChatChannel, ChannelDTO> = {
-        let observer = self.environment.createChannelListDatabaseObserver(
-            StreamRuntimeCheck._isBackgroundMappingEnabled,
-            client.databaseContainer,
-            ChannelDTO.channelsFetchRequest(notLinkedTo: query),
-            { try $0.asModel() }
-        )
-
-        observer.onDidChange = { [weak self] changes in
-            self?.handleUnlinkedChannels(changes)
         }
 
         return observer
@@ -152,155 +137,15 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         self.query = query
         self.filter = filter
         self.environment = environment
+        eventsController = client.eventsController()
         super.init()
         client.trackChannelListController(self)
+        eventsController.delegate = self
     }
 
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
         startChannelListObserverIfNeeded()
         updateChannelList(completion)
-    }
-
-    private func updateChannelList(
-        _ completion: ((_ error: Error?) -> Void)? = nil
-    ) {
-        let limit = query.pagination.pageSize
-        worker.update(
-            channelListQuery: query
-        ) { [weak self] result in
-            switch result {
-            case let .success(channels):
-                self?.state = .remoteDataFetched
-                self?.hasLoadedAllPreviousChannels = channels.count < limit
-                self?.callback { completion?(nil) }
-            case let .failure(error):
-                self?.state = .remoteDataFetchFailed(ClientError(with: error))
-                self?.callback { completion?(error) }
-            }
-        }
-    }
-
-    /// If the `state` of the controller is `initialized`, this method calls `startObserving` on the
-    /// `channelListObserver` to fetch the local data and start observing the changes. It also changes
-    /// `state` based on the result.
-    ///
-    /// It's safe to call this method repeatedly.
-    ///
-    private func startChannelListObserverIfNeeded() {
-        guard state == .initialized else { return }
-        do {
-            try channelListObserver.startObserving()
-            try updatedChannelObserver.startObserving()
-            state = .localDataFetched
-        } catch {
-            state = .localDataFetchFailed(ClientError(with: error))
-            log.error("Failed to perform fetch request with error: \(error). This is an internal error.")
-        }
-    }
-
-    private func channelBelongsToController(_ channel: ChatChannel, change: ListChange<ChatChannel>) -> Bool {
-        if let filter = filter {
-            return filter(channel)
-        }
-
-        guard !client.config.isChannelAutomaticFilteringEnabled else {
-            // When auto-filtering is enabled this will be called with channels
-            // that already have been matched against the provided filter. For
-            // this reason, we provide no additional logic and simply return true.
-            return true
-        }
-
-        // Given that at the moment some delegate methods are not yet removed, but some integrators are still using
-        // those, we need to keep using them for now.
-        // This block should be removed once `shouldAddNewChannelToList` and `shouldListUpdatedChannel` methods are
-        // fully removed.
-        let deprecatedFallback: () -> Bool? = {
-            switch change {
-            case .insert:
-                return self.delegate?.controller(self, shouldAddNewChannelToList: channel)
-            case .update:
-                return self.delegate?.controller(self, shouldListUpdatedChannel: channel)
-            default:
-                return nil
-            }
-        }
-
-        return deprecatedFallback() ?? true
-    }
-
-    private func handleUnlinkedChannels(_ changes: [ListChange<ChatChannel>]) {
-        guard state == .remoteDataFetched else {
-            log.debug("Ignoring inserted/updated unlinked channels due to query \(query) not being synced.")
-            return
-        }
-
-        let channels = changes.compactMap { change -> ChatChannel? in
-            switch change {
-            case let .insert(channel, _):
-                return channelBelongsToController(channel, change: change) ? channel : nil
-            case let .update(channel, _):
-                return channelBelongsToController(channel, change: change) ? channel : nil
-            default: return nil
-            }
-        }
-        link(channels: channels)
-    }
-
-    private func handleLinkedChannels(_ changes: [ListChange<ChatChannel>]) {
-        let channels = changes.compactMap { change -> ChatChannel? in
-            switch change {
-            case let .update(channel, _):
-                // We unlink the channels that do not belong to this controller
-                return channelBelongsToController(channel, change: change) ? nil : channel
-            default: return nil
-            }
-        }
-        unlink(channels: channels)
-    }
-
-    private func link(channels: [ChatChannel]) {
-        guard !channels.isEmpty else { return }
-        client.databaseContainer.write { session in
-            guard let queryDTO = session.channelListQuery(filterHash: self.query.filter.filterHash) else {
-                log.debug("Channel list query has not yet created \(self.query)")
-                return
-            }
-
-            for channel in channels {
-                guard let channelDTO = session.channel(cid: channel.cid) else {
-                    log.error("Channel \(channel.cid) cannot be found in database.")
-                    continue
-                }
-                queryDTO.channels.insert(channelDTO)
-            }
-        } completion: { [weak self] _ in
-            let cids = channels.map(\.cid)
-            self?.worker.startWatchingChannels(withIds: cids) {
-                guard let error = $0 else { return }
-
-                log.warning(
-                    "Failed to start watching linked channels: \(cids), error: \(error.localizedDescription)"
-                )
-            }
-        }
-    }
-
-    private func unlink(channels: [ChatChannel]) {
-        guard !channels.isEmpty else { return }
-        client.databaseContainer.write { session in
-            guard let queryDTO = session.channelListQuery(filterHash: self.query.filter.filterHash) else {
-                log.debug("Channel list query has not yet created \(self.query)")
-                return
-            }
-
-            for channel in channels {
-                guard let channelDTO = session.channel(cid: channel.cid) else {
-                    log.error("Channel \(channel.cid) cannot be found in database.")
-                    continue
-                }
-                queryDTO.channels.remove(channelDTO)
-            }
-        }
     }
 
     // MARK: - Actions
@@ -335,6 +180,17 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         }
     }
 
+    @available(*, deprecated, message: "Please use `markAllRead` available in `CurrentChatUserController`")
+    public func markAllRead(completion: ((Error?) -> Void)? = nil) {
+        worker.markAllRead { error in
+            self.callback {
+                completion?(error)
+            }
+        }
+    }
+
+    // MARK: - Internal
+
     func resetQuery(
         watchedAndSynchedChannelIds: Set<ChannelId>,
         synchedChannelIds: Set<ChannelId>,
@@ -357,11 +213,112 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         }
     }
 
-    @available(*, deprecated, message: "Please use `markAllRead` available in `CurrentChatUserController`")
-    public func markAllRead(completion: ((Error?) -> Void)? = nil) {
-        worker.markAllRead { error in
-            self.callback {
-                completion?(error)
+    // MARK: - Helpers
+
+    private func updateChannelList(
+        _ completion: ((_ error: Error?) -> Void)? = nil
+    ) {
+        let limit = query.pagination.pageSize
+        worker.update(
+            channelListQuery: query
+        ) { [weak self] result in
+            switch result {
+            case let .success(channels):
+                self?.state = .remoteDataFetched
+                self?.hasLoadedAllPreviousChannels = channels.count < limit
+                self?.callback { completion?(nil) }
+            case let .failure(error):
+                self?.state = .remoteDataFetchFailed(ClientError(with: error))
+                self?.callback { completion?(error) }
+            }
+        }
+    }
+
+    /// If the `state` of the controller is `initialized`, this method calls `startObserving` on the
+    /// `channelListObserver` to fetch the local data and start observing the changes. It also changes
+    /// `state` based on the result.
+    ///
+    /// It's safe to call this method repeatedly.
+    ///
+    private func startChannelListObserverIfNeeded() {
+        guard state == .initialized else { return }
+        do {
+            try channelListObserver.startObserving()
+            state = .localDataFetched
+        } catch {
+            state = .localDataFetchFailed(ClientError(with: error))
+            log.error("Failed to perform fetch request with error: \(error). This is an internal error.")
+        }
+    }
+}
+
+/// When we receive events, we need to check if a channel should be added or removed from
+/// the current query depending on the following events:
+/// - Channel created: We analyse if the channel should be added to the current query.
+/// - New message sent: This means the channel will reorder and appear on first position,
+///   so we also analyse if it should be added to the current query.
+/// - Channel is updated: We only check if we should remove it from the current query.
+///   We don't try to add it to the current query to not mess with pagination.
+extension ChatChannelListController: EventsControllerDelegate {
+    public func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
+        if let channelAddedEvent = event as? NotificationAddedToChannelEvent {
+            linkChannelIfNeeded(channelAddedEvent.channel)
+        } else if let messageNewEvent = event as? MessageNewEvent {
+            linkChannelIfNeeded(messageNewEvent.channel)
+        } else if let messageNewEvent = event as? NotificationMessageNewEvent {
+            linkChannelIfNeeded(messageNewEvent.channel)
+        } else if let updatedChannelEvent = event as? ChannelUpdatedEvent {
+            unlinkChannelIfNeeded(updatedChannelEvent.channel)
+        }
+    }
+
+    /// Handles if a channel should be linked to the current query or not.
+    private func linkChannelIfNeeded(_ channel: ChatChannel) {
+        if shouldChannelBelongToCurrentQuery(channel) {
+            link(channel: channel)
+        }
+    }
+
+    /// Handles if a channel should be unlinked from the current query or not.
+    private func unlinkChannelIfNeeded(_ channel: ChatChannel) {
+        if !shouldChannelBelongToCurrentQuery(channel) {
+            worker.unlink(channel: channel, with: query)
+        }
+    }
+
+    /// Checks if the given channel should belong to the current query or not.
+    private func shouldChannelBelongToCurrentQuery(_ channel: ChatChannel) -> Bool {
+        if let filter = filter {
+            return filter(channel)
+        }
+
+        guard !client.config.isChannelAutomaticFilteringEnabled else {
+            // When auto-filtering is enabled the channel will appear or not automatically if the
+            // query matches the DB Predicate. So here we default to saying it always belong to the current query.
+            return true
+        }
+
+        // Fallback to legacy of checking if a channel should be linked to the current channel list query.
+        let deprecatedFallback: () -> Bool? = {
+            self.delegate?.controller(self, shouldAddNewChannelToList: channel)
+        }
+
+        return deprecatedFallback() ?? true
+    }
+
+    /// Links the channel to the current channel list query and starts watching it.
+    private func link(channel: ChatChannel) {
+        worker.link(channel: channel, with: query) { [weak self] error in
+            if let error = error {
+                log.error(error)
+                return
+            }
+
+            self?.worker.startWatchingChannels(withIds: [channel.cid]) { error in
+                guard let error = error else { return }
+                log.warning(
+                    "Failed to start watching linked channel: \(channel.cid), error: \(error.localizedDescription)"
+                )
             }
         }
     }

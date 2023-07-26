@@ -19,6 +19,7 @@ _July 05, 2023_
 ### 🐞 Fixed
 - Rescue messages that are stuck in `.sending` state [#2676](https://github.com/GetStream/stream-chat-swift/pull/2676)
 - Fix not being able to resend failed attachments [#2680](https://github.com/GetStream/stream-chat-swift/pull/2680)
+- Fix channel list having data from a different channel list query [#2684](https://github.com/GetStream/stream-chat-swift/pull/2684)
 
 ## StreamChatUI
 ### ✅ Added
