@@ -47,7 +47,7 @@ open class ChatChannelListSearchVC: ChatChannelListVC, UISearchResultsUpdating {
 
         viewPaginationHandler.bottomThreshold = 800
         viewPaginationHandler.onNewBottomPage = { [weak self] in
-            self?.loadMoreChannels()
+            self?.loadMoreSearchResults()
         }
     }
 
