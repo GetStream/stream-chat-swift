@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-/// An `UIView` subclass that shows summary and preview information about a given channel.
+/// The channel item view that displays information in a channel list cell.
 open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
     /// The content of this view.
     public struct Content {
@@ -178,6 +178,11 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
 
     /// The delivery status to be shown for the channel's preview message.
     open var previewMessageDeliveryStatus: MessageDeliveryStatus? {
+        if content?.searchedMessage != nil {
+            // When doing message search, we don't want to display delivery status.
+            return nil
+        }
+
         guard
             let content = content,
             let deliveryStatus = content.channel.previewMessage?.deliveryStatus
