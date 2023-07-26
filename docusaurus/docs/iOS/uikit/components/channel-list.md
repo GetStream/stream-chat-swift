@@ -26,7 +26,7 @@ let channelListVC = ChatChannelListVC.make(with: controller)
 
 When the `ChatChannelListVC` instance is created, there are multiple ways of showing it:
 1. modally
-1. inside existed `UINavigationController`
+1. inside an existing `UINavigationController`
 1. as a tab inside `UITabBarController`
 1. inside `UISplitViewController`
 1. as a child controller
@@ -38,7 +38,7 @@ let navigationVC = UINavigationController(rootViewController: channelListVC)
 present(navigationVC, animated: true)
 ```
 
-To push the channel list to existed navigation controller:
+To push the channel list to an existing navigation controller:
 ```swift
 navigationController?.pushViewController(channelListVC, animated: true)
 ```
@@ -215,7 +215,7 @@ The channel list component uses the `ChannelListController` to fetch the list of
 ## Channel List Query
 
 The `ChannelListQuery` is the structure used to specify the query parameters for fetching the list of channels from Stream backend.
-It has 4 parameters in it's `init`:
+It has 4 parameters in its `init`:
 
 ```swift
 public init(

@@ -149,7 +149,7 @@ Your `ChannelId` has to be a unique ID and you can set this to anything, in this
 
 :::tip Using Synchronize
 
-After creating the channel `try ChatClient.shared.channelController(createChannelWithId: ChannelId(type: .livestream, id: UUID().uuidString), name: channelName)` it's important you call `synchronize()` after so the local and remote data is updated. You can read more about the importance of `synchronize()` [here](../../client/importance-of-synchronize)..
+After creating the channel `try ChatClient.shared.channelController(createChannelWithId: ChannelId(type: .livestream, id: UUID().uuidString), name: channelName)` it's important you call `synchronize()` after so the local and remote data is updated. You can read more about the importance of `synchronize()` [here](../../client/importance-of-synchronize).
 
 :::
 

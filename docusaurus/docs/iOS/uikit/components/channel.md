@@ -124,7 +124,7 @@ class CustomChatChannelVC: ChatChannelVC {
 | <img src={require("../../assets/channelvc-default.png").default} /> | <img src={require("../../assets/channelvc-livestream.png").default} /> |
 
 ## Channel Query
-When creating a `ChannelController` for the `ChatChannelVC` you can provide `ChannelQuery` different from one used by default. The `ChannelQuery` is the query parameters for fetching the channel from Stream's backend. It has the following initializer:
+When creating a `ChannelController` for the `ChatChannelVC` you can provide `ChannelQuery` different from the one used by default. The `ChannelQuery` contains the query parameters for fetching the channel from Stream's backend. It has the following initializer:
 
 ```swift
 public init(
