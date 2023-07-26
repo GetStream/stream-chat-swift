@@ -60,6 +60,15 @@ class AppConfigViewController: UITableViewController {
         }
     }
 
+    var channelListSearchStrategy: ChannelListSearchStrategy? {
+        get {
+            Components.default.channelListSearchFactory as? ChannelListSearchStrategy
+        }
+        set {
+            Components.default.channelListSearchFactory = newValue
+        }
+    }
+
     init() {
         super.init(style: .grouped)
     }
@@ -352,7 +361,7 @@ class AppConfigViewController: UITableViewController {
                 Components.default.isVoiceRecordingConfirmationRequiredEnabled = newValue
             }
         case .channelListSearchStrategy:
-            cell.detailTextLabel?.text = Components.default.channelListSearchStrategy.description
+            cell.detailTextLabel?.text = channelListSearchStrategy?.name ?? "none"
             cell.accessoryType = .disclosureIndicator
         }
     }
@@ -396,30 +405,25 @@ class AppConfigViewController: UITableViewController {
 
     private func pushChannelListSearchStrategySelectorVC() {
         let selectorViewController = OptionsSelectorViewController(
-            options: [ChannelListSearchStrategy.channels, ChannelListSearchStrategy.messages, nil],
-            initialSelectedOptions: [Components.default.channelListSearchStrategy],
+            options: [ChannelListSearchStrategy.channels.name, ChannelListSearchStrategy.messages.name, nil],
+            initialSelectedOptions: [channelListSearchStrategy?.name],
             allowsMultipleSelection: false,
-            optionFormatter: { $0.description }
+            optionFormatter: { option in
+                option ?? "none"
+            }
         )
         selectorViewController.didChangeSelectedOptions = { [weak self] options in
             guard let selectedOption = options.first else { return }
-            Components.default.channelListSearchStrategy = selectedOption
+            if selectedOption == ChannelListSearchStrategy.channels.name {
+                self?.channelListSearchStrategy = ChannelListSearchStrategy.channels
+            } else if selectedOption == ChannelListSearchStrategy.messages.name {
+                self?.channelListSearchStrategy = ChannelListSearchStrategy.messages
+            } else {
+                self?.channelListSearchStrategy = nil
+            }
             self?.tableView.reloadData()
         }
 
         navigationController?.pushViewController(selectorViewController, animated: true)
-    }
-}
-
-extension Optional: CustomStringConvertible where Wrapped == ChannelListSearchStrategy {
-    public var description: String {
-        switch self {
-        case .messages:
-            return "messages"
-        case .channels:
-            return "channels"
-        case .none:
-            return "none"
-        }
     }
 }

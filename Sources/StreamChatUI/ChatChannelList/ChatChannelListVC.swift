@@ -155,7 +155,10 @@ open class ChatChannelListVC: _ViewController,
             self?.loadMoreChannels()
         }
 
-        navigationItem.searchController = makeSearchController()
+        let searchStrategyFactory = components.channelListSearchFactory
+        let searchController = searchStrategyFactory?.makeSearchController(with: self)
+        searchController?.searchBar.placeholder = L10n.ChannelList.search
+        navigationItem.searchController = searchController
     }
 
     override open func viewWillAppear(_ animated: Bool) {
@@ -236,36 +239,6 @@ open class ChatChannelListVC: _ViewController,
         self.controller.delegate = self
         self.controller.synchronize()
         collectionView.reloadData()
-    }
-
-    /// The factory method responsible to create the search controller.
-    open func makeSearchController() -> UISearchController? {
-        guard let searchStrategy = components.channelListSearchStrategy else {
-            return nil
-        }
-
-        let resultsController: UIViewController & UISearchResultsUpdating
-        switch searchStrategy {
-        case .messages:
-            let messageSearchVC = components.messageSearchVC.init()
-            messageSearchVC.messageSearchController = controller.client.messageSearchController()
-            messageSearchVC.didSelectMessage = { [weak self] channel, message in
-                self?.router.showChannel(for: channel.cid, at: message.id)
-            }
-            resultsController = messageSearchVC
-        case .channels:
-            let channelSearchVC = components.channelSearchVC.init()
-            channelSearchVC.controller = controller
-            channelSearchVC.didSelectChannel = { [weak self] channel in
-                self?.router.showChannel(for: channel.cid)
-            }
-            resultsController = channelSearchVC
-        }
-
-        let searchController = UISearchController(searchResultsController: resultsController)
-        searchController.searchResultsUpdater = resultsController
-        searchController.searchBar.placeholder = L10n.ChannelList.search
-        return searchController
     }
 
     open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
