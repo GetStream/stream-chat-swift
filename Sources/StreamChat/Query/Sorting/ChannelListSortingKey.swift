@@ -28,19 +28,21 @@ public struct ChannelListSortingKey: SortingKey, Equatable {
     public static let unreadCount = Self(keyPath: \.unreadCount, remoteKey: "unread_count", canUseAsDBSortDescriptor: false)
 
     public static func custom<T>(keyPath: KeyPath<ChatChannel, T>, key: String) -> Self {
-        .init(keyPath: keyPath, remoteKey: key, canUseAsDBSortDescriptor: false)
+        .init(keyPath: keyPath, remoteKey: key, canUseAsDBSortDescriptor: false, isCustom: true)
     }
 
     let keyPath: PartialKeyPath<ChatChannel>
     private let dbKey: String
     private let remoteKey: String
     private let canUseAsDBSortDescriptor: Bool
+    let isCustom: Bool
 
-    init<T>(keyPath: KeyPath<ChatChannel, T>, remoteKey: String, canUseAsDBSortDescriptor: Bool) {
+    init<T>(keyPath: KeyPath<ChatChannel, T>, remoteKey: String, canUseAsDBSortDescriptor: Bool, isCustom: Bool = false) {
         self.keyPath = keyPath
         dbKey = keyPath.stringValue
         self.remoteKey = dbKey
         self.canUseAsDBSortDescriptor = canUseAsDBSortDescriptor
+        self.isCustom = isCustom
     }
 
     public func encode(to encoder: Encoder) throws {

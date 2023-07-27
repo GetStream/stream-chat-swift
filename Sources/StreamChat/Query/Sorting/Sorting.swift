@@ -55,3 +55,17 @@ extension Sorting {
         return SortValue(keyPath: keyPath, isAscending: isAscending)
     }
 }
+
+extension Array where Element == Sorting<ChannelListSortingKey> {
+    var customSorting: [SortValue<ChatChannel>] {
+        var hasCustom = false
+        let sortValues = compactMap {
+            if $0.key.isCustom {
+                hasCustom = true
+            }
+            return $0.sortValue
+        }
+
+        return hasCustom ? sortValues : []
+    }
+}

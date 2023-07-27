@@ -77,7 +77,8 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
             StreamRuntimeCheck._isBackgroundMappingEnabled,
             client.databaseContainer,
             request,
-            { try $0.asModel() }
+            { try $0.asModel() },
+            query.sort.customSorting
         )
 
         observer.onDidChange = { [weak self] changes in
@@ -335,10 +336,11 @@ extension ChatChannelListController {
             _ isBackground: Bool,
             _ database: DatabaseContainer,
             _ fetchRequest: NSFetchRequest<ChannelDTO>,
-            _ itemCreator: @escaping (ChannelDTO) throws -> ChatChannel
+            _ itemCreator: @escaping (ChannelDTO) throws -> ChatChannel,
+            _ sorting: [SortValue<ChatChannel>]
         )
             -> ListDatabaseObserverWrapper<ChatChannel, ChannelDTO> = {
-                ListDatabaseObserverWrapper(isBackground: $0, database: $1, fetchRequest: $2, itemCreator: $3)
+                ListDatabaseObserverWrapper(isBackground: $0, database: $1, fetchRequest: $2, itemCreator: $3, sorting: $4)
             }
     }
 }

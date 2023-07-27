@@ -50,6 +50,7 @@ class ListDatabaseObserverWrapper<Item, DTO: NSManagedObject> {
         database: DatabaseContainer,
         fetchRequest: NSFetchRequest<DTO>,
         itemCreator: @escaping (DTO) throws -> Item,
+        sorting: [SortValue<Item>] = [],
         fetchedResultsControllerType: NSFetchedResultsController<DTO>.Type = NSFetchedResultsController<DTO>.self
     ) {
         self.isBackground = isBackground
@@ -65,6 +66,7 @@ class ListDatabaseObserverWrapper<Item, DTO: NSManagedObject> {
                 context: database.viewContext,
                 fetchRequest: fetchRequest,
                 itemCreator: itemCreator,
+                sorting: sorting,
                 fetchedResultsControllerType: fetchedResultsControllerType
             )
         }
