@@ -141,7 +141,7 @@ extension ListChange: Equatable where Item: Equatable {}
 ///
 /// `ListObserver` is just a wrapper around `NSFetchedResultsController` and `ChangeAggregator`. You can use both of
 /// these elements separately, if it better fits your use case.
-class ListDatabaseObserver<Item, DTO: NSManagedObject> {
+class ListDatabaseObserver<Item: ListDatabaseObserverItem, DTO: NSManagedObject> {
     /// The current collection of items matching the provided fetch request. To receive granular updates to this collection,
     /// you can use the `onChange` callback.
     @Cached var items: LazyCachedMapCollection<Item>
@@ -166,10 +166,7 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
             changeAggregator.onDidChange = { [weak self] in
                 // Ideally, this should rather be `unowned`, however, `deinit` is not always called on the same thread as this
                 // callback which can cause a race condition when the object is already being deinited on a different thread.
-                guard let self = self else { return }
-
-                self._items.reset()
-                self.onChange?($0)
+                self?.handleChanges($0)
             }
         }
     }
@@ -188,6 +185,9 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
 
     /// When called, release the notification observers
     var releaseNotificationObservers: (() -> Void)?
+
+    /// Used to keep a reference to the data previous to a database wipe, so we can calculate and publish the right `ListChange`s through `onChange`
+    private var removeAllDataItems: LazyCachedMapCollection<Item>?
 
     /// Creates a new `ListObserver`.
     ///
@@ -313,6 +313,10 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
                 )
             }
 
+            // We keep a reference to the items that existed previous to removing the whole content so we can calculate
+            // changes if needed.
+            self.removeAllDataItems = self.items
+
             // Remove the cached items since they're now deleted, technically. It is important for it to be reset before
             // calling `controllerDidChangeContent` so it properly reflects the state
             self._items.computeValue = { [] }
@@ -320,6 +324,7 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
 
             // Publish the changes
             self.changeAggregator.controllerDidChangeContent(fetchResultsController)
+            self.removeAllDataItems = nil
 
             // Remove delegate so it doesn't get further removal updates
             self.frc.delegate = nil
@@ -348,6 +353,21 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
             notificationCenter?.removeObserver(willRemoveAllDataNotificationObserver)
             notificationCenter?.removeObserver(didRemoveAllDataNotificationObserver)
         }
+    }
+
+    private func handleChanges(_ changes: [ListChange<Item>]) {
+        var result = changes
+
+        if !sorting.isEmpty {
+            let initialItems = (removeAllDataItems.map(Array.init) ?? Array(items))
+            _items.reset()
+            let newItems = Array(items)
+            result = Item.mapChanges(changes, initialItems: initialItems, newItems: newItems)
+        } else {
+            _items.reset()
+        }
+
+        onChange?(result)
     }
 }
 

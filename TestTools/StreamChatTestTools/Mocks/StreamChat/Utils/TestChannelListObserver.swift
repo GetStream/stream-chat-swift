@@ -25,3 +25,5 @@ final class TestChannelListObserver {
         try! databaseObserver.startObserving()
     }
 }
+
+extension ChannelId: ListDatabaseObserverItem {}

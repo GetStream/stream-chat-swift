@@ -5,7 +5,7 @@
 import CoreData
 import Foundation
 
-class ListDatabaseObserverWrapper<Item, DTO: NSManagedObject> {
+class ListDatabaseObserverWrapper<Item: ListDatabaseObserverItem, DTO: NSManagedObject> {
     private var foreground: ListDatabaseObserver<Item, DTO>?
     private var background: BackgroundListDatabaseObserver<Item, DTO>?
     let isBackground: Bool
@@ -84,7 +84,7 @@ class ListDatabaseObserverWrapper<Item, DTO: NSManagedObject> {
     }
 }
 
-class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
+class BackgroundListDatabaseObserver<Item: ListDatabaseObserverItem, DTO: NSManagedObject> {
     /// Called with the aggregated changes after the internal `NSFetchResultsController` calls `controllerWillChangeContent`
     /// on its delegate.
     var onWillChange: (() -> Void)?

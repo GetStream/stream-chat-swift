@@ -84,7 +84,7 @@ final class ListDatabaseObserver_Sorting: XCTestCase {
     // This test is to make sure that the default sorting mechanism using DB (vía `defaultSortingAt`) matches the same behaviour when using local custom mapping instead
     func assert_channelsAreSortedAccordingToDefaultSorting_forcingItViaCustom(isBackground: Bool, file: StaticString = #filePath, line: UInt = #line) throws {
         createObserver(with: [
-            .init(key: .custom(keyPath: \.defaultSortingAt, key: "defaultSortingAt"), isAscending: false)
+            .init(key: .custom(keyPath: \.updatedAt, key: "updatedAt"), isAscending: false)
         ], isBackground: isBackground)
 
         try observer.startObserving()

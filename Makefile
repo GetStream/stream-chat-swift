@@ -70,8 +70,8 @@ update_swiftymarkdown: check_version_parameter
 	./Scripts/removePublicDeclarations.sh Sources/StreamChatUI/StreamSwiftyMarkdown
 
 update_differencekit: check_version_parameter
-	./Scripts/updateDependency.sh $(version) Dependencies/DifferenceKit Sources/StreamChatUI/StreamDifferenceKit Sources
-	./Scripts/removePublicDeclarations.sh Sources/StreamChatUI/StreamDifferenceKit
+	./Scripts/updateDependency.sh $(version) Dependencies/DifferenceKit Sources/StreamChat/StreamDifferenceKit Sources
+	./Scripts/removePublicDeclarations.sh Sources/StreamChat/StreamDifferenceKit
 
 check_version_parameter:
 	@if [ "$(version)" = "" ]; then\
