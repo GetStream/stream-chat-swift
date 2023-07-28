@@ -686,7 +686,7 @@ extension UserRobot {
     
     @discardableResult
     func waitForMessageVisibility(at messageCellIndex: Int) -> Self {
-        _ = messageCell(withIndex: messageCellIndex).waitForHitPoint()
+        _ = messageCell(withIndex: messageCellIndex).wait().waitForHitPoint()
         return self
     }
 }
