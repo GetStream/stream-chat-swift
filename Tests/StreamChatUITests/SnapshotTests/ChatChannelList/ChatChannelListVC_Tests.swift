@@ -132,6 +132,15 @@ final class ChatChannelListVC_Tests: XCTestCase {
         AssertSnapshot(vc, isEmbeddedInNavigationController: true, variants: .onlyUserInterfaceStyles)
     }
 
+    func test_appearance_withSearchBar() {
+        vc.components.channelListSearchStrategy = .messages
+        mockedChannelListController.simulate(
+            channels: channels,
+            changes: []
+        )
+        AssertSnapshot(vc, isEmbeddedInNavigationController: true)
+    }
+
     func test_makeChatChannelListVC() {
         let mockedController = ChatChannelListController_Mock.mock()
         let mockChatChannelListVC = TestChatChannelListVC.make(with: mockedController)
