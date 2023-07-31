@@ -134,10 +134,9 @@ final class ChatChannelListVC_Tests: XCTestCase {
 
     func test_appearance_withSearchBar() {
         vc.components.channelListSearchStrategy = .messages
-        mockedChannelListController.simulate(
-            channels: channels,
-            changes: []
-        )
+        mockedChannelListController.channels_mock = channels
+        mockedChannelListController.simulate(state: .remoteDataFetched)
+        vc.executeLifecycleMethods()
         AssertSnapshot(vc, isEmbeddedInNavigationController: true)
     }
 
