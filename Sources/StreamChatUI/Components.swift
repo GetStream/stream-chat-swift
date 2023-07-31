@@ -378,18 +378,24 @@ public struct Components {
 
     // MARK: - Channel Search
 
-    /// The channel list search factory. By default, search is disabled so it returns `nil`.
+    /// The channel list search strategy. By default, search is disabled so it is `nil`.
     ///
-    /// To enable searching by messages you can provide the following factory:
+    /// To enable searching by messages you can provide the following strategy:
     /// ```
-    /// Components.default.channelListSearchFactory = ChannelListSearchStrategy.messages
+    /// // With default UI Component
+    /// Components.default.channelListSearchStrategy = .messages
+    /// // With custom UI Component
+    /// Components.default.channelListSearchStrategy = .messages(CustomChatMessageSearchVC.self)
     /// ```
     ///
-    /// To enable searching by channels you can provide the following factory:
+    /// To enable searching by channels you can provide the following strategy:
     /// ```
-    /// Components.default.channelListSearchFactory = ChannelListSearchStrategy.channels
+    /// // With default UI Component
+    /// Components.default.channelListSearchStrategy = .channels
+    /// // With custom UI Component
+    /// Components.default.channelListSearchStrategy = .channels(CustomChatChannelSearchVC.self)
     /// ```
-    public var channelListSearchFactory: ChannelListSearchFactory?
+    public var channelListSearchStrategy: ChannelListSearchStrategy?
 
     // MARK: - Composer components
 

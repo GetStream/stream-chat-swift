@@ -155,10 +155,10 @@ open class ChatChannelListVC: _ViewController,
             self?.loadMoreChannels()
         }
 
-        let searchStrategyFactory = components.channelListSearchFactory
-        let searchController = searchStrategyFactory?.makeSearchController(with: self)
-        searchController?.searchBar.placeholder = L10n.ChannelList.search
+        let searchStrategy = components.channelListSearchStrategy
+        let searchController = searchStrategy?.makeSearchController(with: self)
         navigationItem.searchController = searchController
+        navigationItem.searchController?.searchBar.placeholder = L10n.ChannelList.search
     }
 
     override open func viewWillAppear(_ animated: Bool) {

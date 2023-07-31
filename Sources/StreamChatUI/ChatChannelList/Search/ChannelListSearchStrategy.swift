@@ -5,32 +5,35 @@
 import StreamChat
 import UIKit
 
-/// The component responsible for creating the `UISearchController` of the Channel List.
-public protocol ChannelListSearchFactory {
-    func makeSearchController(with channelListVC: ChatChannelListVC) -> UISearchController?
-}
-
-/// The channel list search strategy. It is possible to search by messages or channels, or provide your custom strategy.
-public struct ChannelListSearchStrategy: ChannelListSearchFactory {
+/// The channel list search strategy. It is possible to search by messages or channels.
+public struct ChannelListSearchStrategy {
+    /// The name of the strategy.
     public var name: String
-    public var searchVC: (UIViewController & UISearchResultsUpdating).Type
+    /// The type of search UI component.
+    public var searchVC: UIViewController.Type
 
-    internal init(searchVC: (UIViewController & UISearchResultsUpdating).Type, name: String) {
+    internal init(searchVC: UIViewController.Type, name: String) {
         self.searchVC = searchVC
         self.name = name
     }
 
+    /// The strategy to search by messages using the default UI component.
     public static let messages: Self = .messages(ChatMessageSearchVC.self)
+
+    /// The strategy to search by channels using the default UI component.
     public static let channels: Self = .channels(ChatChannelSearchVC.self)
 
+    /// The strategy to search by messages using a custom UI component.
     public static func messages(_ searchVC: ChatMessageSearchVC.Type) -> Self {
         .init(searchVC: searchVC, name: "messages")
     }
 
+    /// The strategy to search by channels using a custom UI component.
     public static func channels(_ searchVC: ChatChannelSearchVC.Type) -> Self {
         .init(searchVC: searchVC, name: "channels")
     }
 
+    /// Creates the `UISearchController` for the Channel List depending on the current search strategy.
     public func makeSearchController(
         with channelListVC: ChatChannelListVC
     ) -> UISearchController? {

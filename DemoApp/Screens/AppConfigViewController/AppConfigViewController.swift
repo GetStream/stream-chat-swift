@@ -62,10 +62,10 @@ class AppConfigViewController: UITableViewController {
 
     var channelListSearchStrategy: ChannelListSearchStrategy? {
         get {
-            Components.default.channelListSearchFactory as? ChannelListSearchStrategy
+            Components.default.channelListSearchStrategy
         }
         set {
-            Components.default.channelListSearchFactory = newValue
+            Components.default.channelListSearchStrategy = newValue
         }
     }
 
