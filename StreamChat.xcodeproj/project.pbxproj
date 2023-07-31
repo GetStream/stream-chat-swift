@@ -1193,12 +1193,14 @@
 		AD552E0228F46CE700199A6F /* ImageLoaderOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD552E0028F46CE700199A6F /* ImageLoaderOptions.swift */; };
 		AD57979E2978C4F7006CC435 /* UploadedAttachmentPostProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD57979D2978C4F7006CC435 /* UploadedAttachmentPostProcessor.swift */; };
 		AD57979F2978C4F7006CC435 /* UploadedAttachmentPostProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD57979D2978C4F7006CC435 /* UploadedAttachmentPostProcessor.swift */; };
-		AD57DE762A77D5A2005408B6 /* ChannelListSearchStrategy_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD57DE752A77D5A2005408B6 /* ChannelListSearchStrategy_Tests.swift */; };
 		AD61F3D92A27A9FB00247B5D /* ChannelMemberUnbanRequestPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD61F3D82A27A9FB00247B5D /* ChannelMemberUnbanRequestPayload_Tests.swift */; };
 		AD6A248A280DA890003BA1E4 /* PushDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6A2489280DA88F003BA1E4 /* PushDevice.swift */; };
 		AD6A248B280DA890003BA1E4 /* PushDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6A2489280DA88F003BA1E4 /* PushDevice.swift */; };
 		AD6BEFF02786070800E184B4 /* SwitchButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6BEFEF2786070800E184B4 /* SwitchButton.swift */; };
 		AD6BEFF227862F9300E184B4 /* AppConfigViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6BEFF127862F9300E184B4 /* AppConfigViewController.swift */; };
+		AD6CA1C12A7820F30034AC2F /* ChannelListSearchStrategy_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD57DE752A77D5A2005408B6 /* ChannelListSearchStrategy_Tests.swift */; };
+		AD6CA1C22A7820FA0034AC2F /* ChatChannelSearchVC_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6CA1BD2A7820440034AC2F /* ChatChannelSearchVC_Tests.swift */; };
+		AD6CA1C32A7820FE0034AC2F /* ChatMessageSearchVC_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6CA1BF2A7820560034AC2F /* ChatMessageSearchVC_Tests.swift */; };
 		AD6F531927175FDB00D428B4 /* ChatMessageGiphyView+GiphyBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6F531827175FDB00D428B4 /* ChatMessageGiphyView+GiphyBadge.swift */; };
 		AD7112F325F12AA800932AEE /* ChatUserAvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7112F225F12AA800932AEE /* ChatUserAvatarView.swift */; };
 		AD71130225F138BA00932AEE /* ChatChannelAvatarView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E791E4D525D3E2DA00B0E076 /* ChatChannelAvatarView_Tests.swift */; };
@@ -3627,6 +3629,8 @@
 		AD6A2489280DA88F003BA1E4 /* PushDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushDevice.swift; sourceTree = "<group>"; };
 		AD6BEFEF2786070800E184B4 /* SwitchButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchButton.swift; sourceTree = "<group>"; };
 		AD6BEFF127862F9300E184B4 /* AppConfigViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfigViewController.swift; sourceTree = "<group>"; };
+		AD6CA1BD2A7820440034AC2F /* ChatChannelSearchVC_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelSearchVC_Tests.swift; sourceTree = "<group>"; };
+		AD6CA1BF2A7820560034AC2F /* ChatMessageSearchVC_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageSearchVC_Tests.swift; sourceTree = "<group>"; };
 		AD6F531827175FDB00D428B4 /* ChatMessageGiphyView+GiphyBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatMessageGiphyView+GiphyBadge.swift"; sourceTree = "<group>"; };
 		AD7112F225F12AA800932AEE /* ChatUserAvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatUserAvatarView.swift; sourceTree = "<group>"; };
 		AD71131125F138D500932AEE /* ChatUserAvatarView_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatUserAvatarView_Tests.swift; sourceTree = "<group>"; };
@@ -7534,6 +7538,8 @@
 			isa = PBXGroup;
 			children = (
 				AD57DE752A77D5A2005408B6 /* ChannelListSearchStrategy_Tests.swift */,
+				AD6CA1BD2A7820440034AC2F /* ChatChannelSearchVC_Tests.swift */,
+				AD6CA1BF2A7820560034AC2F /* ChatMessageSearchVC_Tests.swift */,
 			);
 			path = Search;
 			sourceTree = "<group>";
@@ -9719,9 +9725,11 @@
 				BDDD1EA42632C66200BA007B /* Components+SwiftUI_Tests.swift in Sources */,
 				CF24AAB3284A5659005AD3B8 /* DefaultMarkdownFormatter_Tests.swift in Sources */,
 				79567F2B266F5DB1007EADD3 /* TitleContainerView_Tests.swift in Sources */,
+				AD6CA1C12A7820F30034AC2F /* ChannelListSearchStrategy_Tests.swift in Sources */,
 				406CC6132A127552000780F7 /* ChatMessageVoiceRecordingAttachmentListViewItemView_Tests.swift in Sources */,
 				7849AF6725F243C8007817D4 /* ChatChannelListItemView+SwiftUI_Tests.swift in Sources */,
 				A3D9D68C27EDE54900725066 /* UIView+SimulateViewAddedToHierarchy.swift in Sources */,
+				AD6CA1C22A7820FA0034AC2F /* ChatChannelSearchVC_Tests.swift in Sources */,
 				F86C887725FA5C020000BCA9 /* ChatChannelAvatarView+SwiftUI_Tests.swift in Sources */,
 				BDDD1EAC2632E32000BA007B /* AppearanceProvider_Tests.swift in Sources */,
 				E74DB0112655473300508D22 /* TypingIndicatorView_Tests.swift in Sources */,
@@ -9773,6 +9781,7 @@
 				AD158B6726C1876D00C104CD /* ChatChannelVC_Tests.swift in Sources */,
 				849AE664270CB14000423A20 /* VideoAttachmentComposerPreview_Tests.swift in Sources */,
 				40FA4E0D2A12A86800DA21D2 /* RecordingIndicatorView_Tests.swift in Sources */,
+				AD6CA1C32A7820FE0034AC2F /* ChatMessageSearchVC_Tests.swift in Sources */,
 				40FA4E132A12AACC00DA21D2 /* MockAudioQueuePlayerNextItemProvider.swift in Sources */,
 				AD540AE2260CECA10082D802 /* QuotedChatMessageView_Tests.swift in Sources */,
 				40824D492A1271EF003B61FD /* PlayPauseButton_Tests.swift in Sources */,
@@ -10648,7 +10657,6 @@
 				88F7692B25837EE600BD36B0 /* AttachmentQueueUploader_Tests.swift in Sources */,
 				8819DFDE252622D900FD1A50 /* ModerationEndpoints_Tests.swift in Sources */,
 				4042969829FE92320089126D /* AudioAnalysisEngine_Tests.swift in Sources */,
-				AD57DE762A77D5A2005408B6 /* ChannelListSearchStrategy_Tests.swift in Sources */,
 				F65D9093250A5CD4000B8CEB /* WebSocketConnectEndpoint_Tests.swift in Sources */,
 				790A4C4A252DDD50001F4A23 /* DeviceEndpoints_Tests.swift in Sources */,
 				649968D7264E693E000515AB /* StreamCDNClient_Tests.swift in Sources */,
