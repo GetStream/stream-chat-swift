@@ -74,7 +74,7 @@ open class ChatMessageSearchVC: ChatChannelListSearchVC, ChatMessageSearchContro
         cell.itemView.content = .init(
             channel: channel,
             currentUserId: messageSearchController.client.currentUserId,
-            searchedMessage: message
+            searchResult: .init(text: currentSearchText, message: message)
         )
 
         return cell

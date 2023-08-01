@@ -13,17 +13,30 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
         public let channel: ChatChannel
         /// Current user ID needed to filter out when showing typing indicator.
         public let currentUserId: UserId?
+        /// The result of a search query.
+        public let searchResult: SearchResult?
+
         /// The message part of a search result.
-        public var searchedMessage: ChatMessage?
+        var searchedMessage: ChatMessage? {
+            searchResult?.message
+        }
 
         public init(
             channel: ChatChannel,
             currentUserId: UserId?,
-            searchedMessage: ChatMessage? = nil
+            searchResult: SearchResult? = nil
         ) {
             self.channel = channel
             self.currentUserId = currentUserId
-            self.searchedMessage = searchedMessage
+            self.searchResult = searchResult
+        }
+
+        /// The additional information as part of a search query.
+        public struct SearchResult {
+            /// The search query input.
+            let text: String
+            /// The message that belongs to a message search result.
+            let message: ChatMessage?
         }
     }
 

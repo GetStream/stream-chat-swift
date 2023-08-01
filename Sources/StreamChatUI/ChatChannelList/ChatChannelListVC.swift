@@ -256,7 +256,7 @@ open class ChatChannelListVC: _ViewController,
         cell.itemView.content = .init(
             channel: channel,
             currentUserId: controller.client.currentUserId,
-            searchedMessage: nil
+            searchResult: nil
         )
 
         cell.swipeableView.delegate = self

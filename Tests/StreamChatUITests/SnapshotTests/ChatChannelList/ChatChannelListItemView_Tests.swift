@@ -290,7 +290,7 @@ final class ChatChannelListItemView_Tests: XCTestCase {
             content: .init(
                 channel: .mock(cid: .unique, name: "Star Wars"),
                 currentUserId: currentUser.id,
-                searchedMessage: searchedMessage
+                searchResult: .init(text: "Dummy", message: searchedMessage)
             )
         )
 
@@ -298,7 +298,7 @@ final class ChatChannelListItemView_Tests: XCTestCase {
             content: .init(
                 channel: .mock(cid: .unique, name: nil),
                 currentUserId: currentUser.id,
-                searchedMessage: searchedMessage
+                searchResult: .init(text: "Dummy", message: searchedMessage)
             )
         )
 
@@ -467,7 +467,7 @@ final class ChatChannelListItemView_Tests: XCTestCase {
         itemView.content = .init(
             channel: channel,
             currentUserId: nil,
-            searchedMessage: .mock(author: .mock(id: .unique, name: "Yoda"))
+            searchResult: .init(text: "Dummy", message: .mock(author: .mock(id: .unique, name: "Yoda")))
         )
 
         XCTAssertEqual(itemView.titleText, "Yoda in Star Wars")
@@ -486,7 +486,7 @@ final class ChatChannelListItemView_Tests: XCTestCase {
         itemView.content = .init(
             channel: channel,
             currentUserId: nil,
-            searchedMessage: .mock(author: .mock(id: .unique, name: "Yoda"))
+            searchResult: .init(text: "Dummy", message: .mock(author: .mock(id: .unique, name: "Yoda")))
         )
 
         XCTAssertEqual(itemView.titleText, "Yoda")
@@ -693,7 +693,7 @@ final class ChatChannelListItemView_Tests: XCTestCase {
         itemView.content = .init(
             channel: .mock(cid: .unique, previewMessage: nil),
             currentUserId: nil,
-            searchedMessage: .mock(text: "Some text")
+            searchResult: .init(text: "Dummy", message: .mock(text: "Some text"))
         )
 
         XCTAssertEqual("Some text", itemView.subtitleText)
@@ -738,9 +738,9 @@ final class ChatChannelListItemView_Tests: XCTestCase {
         itemView.content = .init(
             channel: .mockNonDMChannel(previewMessage: nil),
             currentUserId: nil,
-            searchedMessage: .mock(
-                text: "Some text",
-                createdAt: Date(timeIntervalSince1970: 1)
+            searchResult: .init(
+                text: "Dummy",
+                message: .mock(text: "Some text", createdAt: Date(timeIntervalSince1970: 1))
             )
         )
 
@@ -948,7 +948,7 @@ final class ChatChannelListItemView_Tests: XCTestCase {
                     readEventsEnabled: true
                 ),
                 currentUserId: .unique,
-                searchedMessage: .mock()
+                searchResult: .init(text: "Dummy", message: .mock())
             )
         )
 
