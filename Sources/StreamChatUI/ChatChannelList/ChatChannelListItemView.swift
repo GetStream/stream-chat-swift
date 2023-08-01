@@ -313,6 +313,10 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
         unreadCountView.content = content?.channel.unreadCount ?? .noUnread
         unreadCountView.invalidateIntrinsicContentSize()
 
+        if let searchedMessage = content?.searchedMessage {
+            unreadCountView.content = .noUnread
+        }
+
         let checkmarkContent = previewMessageDeliveryStatus.map {
             ChatMessageDeliveryStatusCheckmarkView.Content(deliveryStatus: $0)
         }

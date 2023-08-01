@@ -288,7 +288,11 @@ final class ChatChannelListItemView_Tests: XCTestCase {
 
         let view = channelItemView(
             content: .init(
-                channel: .mock(cid: .unique, name: "Star Wars"),
+                channel: .mock(
+                    cid: .unique,
+                    name: "Star Wars",
+                    unreadCount: .mock(messages: 10) // Should not display unreadCounts
+                ),
                 currentUserId: currentUser.id,
                 searchResult: .init(text: "Dummy", message: searchedMessage)
             )
