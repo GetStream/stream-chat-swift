@@ -153,9 +153,7 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
             completion?(ClientError.CurrentUserDoesNotExist("For message search with text, a current user must be logged in"))
             return
         }
-        // We don't choose `guard` here since the expression
-        // guard !text.isEmpty, lastQuery != nil else { ...clearSearch(for: lastQuery!).. }
-        // would be much more complex to parse than this `if` statement
+
         if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty, let lastQuery = lastQuery {
             messageUpdater.clearSearchResults(for: lastQuery) { error in
                 self.nextPageCursor = nil
@@ -163,17 +161,20 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
             }
             return
         }
+
         let query = MessageSearchQuery(
             channelFilter: .containMembers(userIds: [currentUserId]),
-            messageFilter: .queryText(text)
+            messageFilter: .autocomplete(.text, text: text),
+            sort: [.init(key: .createdAt, isAscending: false)]
         )
+        
         search(query: query, completion: completion)
     }
 
     private func resetMessagesObserver() {
-        state = .initialized
-        setMessagesObserver()
         _messagesObserver.reset()
+        setMessagesObserver()
+        state = .initialized
         startObserversIfNeeded()
     }
 

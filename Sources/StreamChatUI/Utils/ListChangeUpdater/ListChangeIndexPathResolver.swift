@@ -65,11 +65,13 @@ final class ListChangeIndexPathResolver {
             update: updateIndexes
         )
 
-        // Check if there are conflicts between Inserts<->Moves<->Deletes or Updates<->Moves<->Deletes.
-        // We don't check for conflicts between Inserts<->Updates, since it is not a conflict.
+        // Check if there are conflicts between Inserts<->Moves or Updates<->Moves<->Deletes.
+        // We don't check for conflicts between Inserts<->Updates or Inserts<->Removes, since it is not a conflict.
+        let moves = [moveFromIndexes, moveToIndexes]
         let movesAndRemoves = [moveFromIndexes, moveToIndexes, removeIndexes]
-        let hasInsertConflicts = insertIndexes.containsDuplicates(between: movesAndRemoves)
+        let hasInsertConflicts = insertIndexes.containsDuplicates(between: moves)
         let hasUpdateConflicts = updateIndexes.containsDuplicates(between: movesAndRemoves)
+
         let hasConflicts = hasInsertConflicts || hasUpdateConflicts
         if hasConflicts {
             log.warning("ListChange conflicts found: \(indexes)")

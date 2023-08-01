@@ -132,6 +132,14 @@ final class ChatChannelListVC_Tests: XCTestCase {
         AssertSnapshot(vc, isEmbeddedInNavigationController: true, variants: .onlyUserInterfaceStyles)
     }
 
+    func test_appearance_withSearchBar() {
+        vc.components.channelListSearchStrategy = .messages
+        mockedChannelListController.channels_mock = channels
+        mockedChannelListController.simulate(state: .remoteDataFetched)
+        vc.executeLifecycleMethods()
+        AssertSnapshot(vc, isEmbeddedInNavigationController: true)
+    }
+
     func test_makeChatChannelListVC() {
         let mockedController = ChatChannelListController_Mock.mock()
         let mockChatChannelListVC = TestChatChannelListVC.make(with: mockedController)
@@ -256,27 +264,6 @@ final class ChatChannelListVC_Tests: XCTestCase {
         XCTAssertEqual(channelListVC.mockedCollectionView.reloadDataCallCount, 0)
     }
 
-    func test_didChangeChannels_whenHasRemoveConflicts_reloadData() {
-        let channelListVC = FakeChatChannelListVC()
-        channelListVC.controller = mockedChannelListController
-
-        let hasConflictChanges: [ListChange<ChatChannel>] = [
-            .update(.mock(cid: .unique), index: .init(row: 1, section: 0)),
-            .update(.mock(cid: .unique), index: .init(row: 2, section: 0)),
-            .insert(.mock(cid: .unique), index: .init(row: 3, section: 0)),
-            .remove(.mock(cid: .unique), index: .init(row: 3, section: 0))
-        ]
-
-        mockedChannelListController.simulate(
-            channels: [.mock(cid: .unique), .mock(cid: .unique), .mock(cid: .unique)],
-            changes: hasConflictChanges
-        )
-
-        channelListVC.controller(mockedChannelListController, didChangeChannels: hasConflictChanges)
-        XCTAssertEqual(channelListVC.mockedCollectionView.performBatchUpdatesCallCount, 0)
-        XCTAssertEqual(channelListVC.mockedCollectionView.reloadDataCallCount, 1)
-    }
-
     func test_didChangeChannels_whenHasMoveConflicts_reloadData() {
         let channelListVC = FakeChatChannelListVC()
         channelListVC.controller = mockedChannelListController
@@ -304,7 +291,7 @@ final class ChatChannelListVC_Tests: XCTestCase {
 
         let hasConflictChanges: [ListChange<ChatChannel>] = [
             .update(.mock(cid: .unique), index: .init(row: 1, section: 0)),
-            .remove(.mock(cid: .unique), index: .init(row: 2, section: 0)),
+            .move(.mock(cid: .unique), fromIndex: .init(row: 3, section: 0), toIndex: .init(row: 2, section: 0)),
             .insert(.mock(cid: .unique), index: .init(row: 3, section: 0)),
             .insert(.mock(cid: .unique), index: .init(row: 2, section: 0))
         ]
@@ -327,7 +314,7 @@ final class ChatChannelListVC_Tests: XCTestCase {
             .update(.mock(cid: .unique), index: .init(row: 1, section: 0)),
             .update(.mock(cid: .unique), index: .init(row: 2, section: 0)),
             .insert(.mock(cid: .unique), index: .init(row: 3, section: 0)),
-            .remove(.mock(cid: .unique), index: .init(row: 3, section: 0))
+            .remove(.mock(cid: .unique), index: .init(row: 2, section: 0))
         ]
 
         mockedChannelListController.simulate(

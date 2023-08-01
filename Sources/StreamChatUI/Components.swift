@@ -357,7 +357,7 @@ public struct Components {
     /// The view that shows channel information.
     public var channelContentView: ChatChannelListItemView.Type = ChatChannelListItemView.self
 
-    /// The view that shows a user avatar including an indicator of the user presence (online/offline).
+    /// The view that shows the channel avatar including an indicator of the user presence (online/offline).
     public var channelAvatarView: ChatChannelAvatarView.Type = ChatChannelAvatarView.self
 
     /// The view that shows a number of unread messages in channel.
@@ -375,6 +375,27 @@ public struct Components {
     /// A boolean value that determines whether the Channel list default loading states (empty, error and loading views) are handled by the Stream SDK. It is false by default.
     /// If it is false, it does not show empty or error views and just shows a spinner indicator for the loading state. If set to true, the empty, error and shimmer loading views are shown instead.
     public var isChatChannelListStatesEnabled = false
+
+    // MARK: - Channel Search
+
+    /// The channel list search strategy. By default, search is disabled so it is `nil`.
+    ///
+    /// To enable searching by messages you can provide the following strategy:
+    /// ```
+    /// // With default UI Component
+    /// Components.default.channelListSearchStrategy = .messages
+    /// // With custom UI Component
+    /// Components.default.channelListSearchStrategy = .messages(CustomChatMessageSearchVC.self)
+    /// ```
+    ///
+    /// To enable searching by channels you can provide the following strategy:
+    /// ```
+    /// // With default UI Component
+    /// Components.default.channelListSearchStrategy = .channels
+    /// // With custom UI Component
+    /// Components.default.channelListSearchStrategy = .channels(CustomChatChannelSearchVC.self)
+    /// ```
+    public var channelListSearchStrategy: ChannelListSearchStrategy?
 
     // MARK: - Composer components
 
@@ -438,8 +459,8 @@ public struct Components {
     public var suggestionsHeaderView: ChatSuggestionsHeaderView.Type =
         ChatSuggestionsHeaderView.self
 
-    /// A type for the view used as avatar when picking users to mention.
-    public var mentionAvatarView: ChatUserAvatarView.Type = ChatUserAvatarView.self
+    /// The view that shows a user avatar including an indicator of the user presence (online/offline).
+    public var userAvatarView: ChatUserAvatarView.Type = ChatUserAvatarView.self
 
     // MARK: - Composer VoiceRecording components
 
@@ -523,6 +544,16 @@ public extension Components {
         }
         set {
             scrollToBottomButton = newValue
+        }
+    }
+
+    @available(*, deprecated, renamed: "userAvatarView")
+    var mentionAvatarView: ChatUserAvatarView.Type {
+        get {
+            userAvatarView
+        }
+        set {
+            userAvatarView = newValue
         }
     }
 }

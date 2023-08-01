@@ -33,7 +33,7 @@ public enum FilterOperator: String {
     /// Matches values by performing text search with the specified value.
     case query = "$q"
 
-    /// Matches values with the specified prefix.
+    /// Matches values with the specified text.
     case autocomplete = "$autocomplete"
 
     /// Matches values that exist/don't exist based on the specified boolean value.
@@ -387,7 +387,7 @@ public extension Filter {
         )
     }
 
-    /// Matches values with the specified prefix.
+    /// Matches values with the specified text.
     static func autocomplete<Value: Encodable>(_ key: FilterKey<Scope, Value>, text: String) -> Filter {
         .init(
             operator: .autocomplete,

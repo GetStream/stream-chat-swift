@@ -11,7 +11,6 @@ open class ChatChannelListVC: _ViewController,
     UICollectionViewDataSource,
     UICollectionViewDelegate,
     ChatChannelListControllerDelegate,
-    DataControllerStateDelegate,
     ThemeProvider,
     SwipeableViewDelegate {
     /// The `ChatChannelListController` instance that provides channels data.
@@ -155,6 +154,11 @@ open class ChatChannelListVC: _ViewController,
         viewPaginationHandler.onNewBottomPage = { [weak self] in
             self?.loadMoreChannels()
         }
+
+        let searchStrategy = components.channelListSearchStrategy
+        let searchController = searchStrategy?.makeSearchController(with: self)
+        navigationItem.searchController = searchController
+        navigationItem.searchController?.searchBar.placeholder = L10n.ChannelList.search
     }
 
     override open func viewWillAppear(_ animated: Bool) {
@@ -233,8 +237,8 @@ open class ChatChannelListVC: _ViewController,
     public func replaceChannelListController(_ controller: ChatChannelListController) {
         self.controller = controller
         self.controller.delegate = self
-        collectionView.reloadData()
         self.controller.synchronize()
+        collectionView.reloadData()
     }
 
     open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -249,7 +253,11 @@ open class ChatChannelListVC: _ViewController,
         guard let channel = getChannel(at: indexPath) else { return cell }
 
         cell.components = components
-        cell.itemView.content = .init(channel: channel, currentUserId: controller.client.currentUserId)
+        cell.itemView.content = .init(
+            channel: channel,
+            currentUserId: controller.client.currentUserId,
+            searchResult: nil
+        )
 
         cell.swipeableView.delegate = self
         cell.swipeableView.indexPath = { [weak cell, weak self] in
