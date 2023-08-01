@@ -208,6 +208,31 @@ Components.default.channelListRouter = CustomChannelListRouter.self
 
 <ComponentsNote />
 
+## Search
+
+The UI SDK provides searching components out-of-the-box for the Channel List. Currently, there is two types of searching strategies that can be enabled, searching by messages or channels.
+
+To enable it, a `ChannelListSearchStrategy` should be configured in the `Components` configuration:
+```swift
+// If you want to enable the search by messages
+Components.default.channelListSearchStrategy = .messages
+// If you want to enable the search by channels
+Components.default.channelListSearchStrategy = .channels
+```
+
+In order to customize the search UI component, you can provide a subclass of our default components, `ChatMessageSearchVC` and `ChatChannelSearchVC`, like so:
+
+```swift
+// If you want to enable the search by messages with a custom subclass
+Components.default.channelListSearchStrategy = .messages(CustomChatMessageSearchVC.self)
+// If you want to enable the search by channels with a custom subclass
+Components.default.channelListSearchStrategy = .channels(CustomChatChannelSearchVC.self)
+```
+
+Both `ChatMessageSearchVC` and `ChatChannelSearchVC` inherit from the Channel List component, so all the customization provided in the Channel List should be reflected in the search components. They also use the same cell component found in the Channel List, so in case you want to customize the search cell component, you can do it by customizing the [`ChannelListItemView`](../../views/channel-list-item-view). The Channel List Item View contains a `searchResult` in the `content` property in case the view is being used for searching.
+
+In case your app requires a total custom search UI component you can build your own from scratch. To do so, you need to customize the `ChatChannelListVC.setUp()` lifecycle method and provide a `UISearchController` by setting the `navigationItem.searchController`.
+
 ## Channel List Controller
 
 The channel list component uses the `ChannelListController` to fetch the list of channels matching your query and to stay up-to-date with all changes. In the example above you can see that we are passing a `ChannelListQuery` object to create the controller. Stream Chat APIs allow you to list channels based on your own query and sort.
