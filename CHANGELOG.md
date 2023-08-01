@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - Fix pinning messages with attachments not synced with server [#2698](https://github.com/GetStream/stream-chat-swift/pull/2698)
 - Fix messages disappearing in search query after entering a channel [#2700](https://github.com/GetStream/stream-chat-swift/pull/2700)
+- Fix channel search with `autocomplete` only showing results if value started with the given query [#2703](https://github.com/GetStream/stream-chat-swift/pull/2703)
 
 ## StreamChatUI
 ### ✅ Added

@@ -1124,15 +1124,17 @@ final class ChannelListController_Tests: XCTestCase {
     func test_filterPredicate_autocomplete_containsExpectedItems() throws {
         let cid1 = ChannelId.unique
         let cid2 = ChannelId.unique
+        let cid3 = ChannelId.unique
 
         try assertFilterPredicate(
             .autocomplete(.name, text: "team"),
             channelsInDB: [
                 .dummy(channel: .dummy(cid: cid1, name: "teamStream")),
                 .dummy(channel: .dummy(cid: cid2, name: "TeAm_original")),
+                .dummy(channel: .dummy(cid: cid3, name: "original_team")),
                 .dummy(channel: .dummy(name: "random"))
             ],
-            expectedResult: [cid1, cid2]
+            expectedResult: [cid1, cid2, cid3]
         )
     }
 
