@@ -77,12 +77,6 @@ open class ChatMessageSearchVC: ChatChannelListSearchVC, ChatMessageSearchContro
             searchedMessage: message
         )
 
-        cell.swipeableView.delegate = self
-        cell.swipeableView.indexPath = { [weak cell, weak self] in
-            guard let cell = cell else { return nil }
-            return self?.collectionView.indexPath(for: cell)
-        }
-
         return cell
     }
 

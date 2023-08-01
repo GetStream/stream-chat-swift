@@ -113,4 +113,17 @@ final class ChatMessageSearchVC_Tests: XCTestCase {
 
         XCTAssertEqual(didSelectMessageCallCount, 1)
     }
+
+    func test_collectionViewCellForItemAt_shouldHaveSwipeDisabled() throws {
+        mockedMessageSearchController.messages_mock = [.mock(cid: channelId), .mock(cid: channelId)]
+        vc.setUp()
+
+        let cell = try XCTUnwrap(vc.collectionView(
+            vc.collectionView,
+            cellForItemAt: .init(item: 1, section: 0)
+        ) as? ChatChannelListCollectionViewCell)
+
+        XCTAssertNil(cell.swipeableView.delegate)
+        XCTAssertNil(cell.swipeableView.indexPath)
+    }
 }
