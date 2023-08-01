@@ -164,7 +164,7 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
 
         let query = MessageSearchQuery(
             channelFilter: .containMembers(userIds: [currentUserId]),
-            messageFilter: .queryText(text),
+            messageFilter: .autocomplete(.text, text: text),
             sort: [.init(key: .createdAt, isAscending: false)]
         )
         
