@@ -464,9 +464,10 @@ final class ChannelReadDTO_Tests: XCTestCase {
 
     func test_loadOrCreateChannelRead_channelReadExists_returnsExpectedResult() throws {
         // GIVEN
+        let lastReadAt = Date.unique
         let read = ChannelReadPayload(
             user: .dummy(userId: .unique),
-            lastReadAt: .init(),
+            lastReadAt: lastReadAt,
             unreadMessagesCount: 10
         )
 
