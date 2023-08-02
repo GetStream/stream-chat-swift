@@ -459,6 +459,66 @@ final class ChannelReadDTO_Tests: XCTestCase {
     private func readDTO(cid: ChannelId, userId: UserId) -> ChannelReadDTO? {
         ChannelReadDTO.load(cid: cid, userId: userId, context: database.viewContext)
     }
+
+    // MARK: - loadOrCreateChannelRead
+
+    func test_loadOrCreateChannelRead_channelReadExists_returnsExpectedResult() throws {
+        // GIVEN
+        let lastReadAt = Date.unique
+        let read = ChannelReadPayload(
+            user: .dummy(userId: .unique),
+            lastReadAt: lastReadAt,
+            unreadMessagesCount: 10
+        )
+
+        let channel: ChannelPayload = .dummy(
+            members: [.dummy(user: read.user)],
+            channelReads: [read]
+        )
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channel)
+        }
+
+        // WHEN
+        let loadedRead = try XCTUnwrap(
+            database.viewContext.loadOrCreateChannelRead(
+                cid: channel.channel.cid,
+                userId: read.user.id
+            )
+        )
+
+        // THEN
+        XCTAssertEqual(loadedRead.user.id, read.user.id)
+        XCTAssertEqual(loadedRead.lastReadAt.bridgeDate, read.lastReadAt)
+        XCTAssertTrue(loadedRead.unreadMessageCount == read.unreadMessagesCount)
+    }
+
+    func test_loadOrCreateChannelRead_channelReadNotExist_returnsExpectedResult() throws {
+        // GIVEN
+        let user = UserPayload.dummy(userId: .unique)
+
+        let channel: ChannelPayload = .dummy(
+            members: [.dummy(user: user)],
+            channelReads: []
+        )
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channel)
+        }
+
+        // WHEN
+        let loadedRead = try XCTUnwrap(
+            database.viewContext.loadOrCreateChannelRead(
+                cid: channel.channel.cid,
+                userId: user.id
+            )
+        )
+
+        // THEN
+        XCTAssertEqual(loadedRead.user.id, user.id)
+        XCTAssertTrue(loadedRead.unreadMessageCount == 0)
+    }
 }
 
 // MARK: - Helpers

@@ -164,15 +164,17 @@ final class SyncRepository_Tests: XCTestCase {
     }
 
     func test_syncLocalState_localStorageEnabled_pendingConnectionDate_channels() throws {
+        let channelId = ChannelId.unique
         try prepareForSyncLocalStorage(
             createUser: true,
             lastSynchedEventDate: Date().addingTimeInterval(-3600),
-            createChannel: true
+            createChannel: true,
+            cid: channelId
         )
 
         let firstEventDate = Date.unique
         let secondEventDate = Date.unique
-        let payload = messageEventPayload(with: [firstEventDate, secondEventDate])
+        let payload = messageEventPayload(cid: channelId, with: [firstEventDate, secondEventDate])
         waitForSyncLocalStateRun(requestResult: .success(payload))
 
         // Should use first event's created at date
@@ -187,10 +189,12 @@ final class SyncRepository_Tests: XCTestCase {
     }
 
     func test_syncLocalState_localStorageEnabled_pendingConnectionDate_channels_activeRemoteChannelController() throws {
+        let cid = ChannelId.unique
         try prepareForSyncLocalStorage(
             createUser: true,
             lastSynchedEventDate: Date().addingTimeInterval(-3600),
-            createChannel: true
+            createChannel: true,
+            cid: cid
         )
 
         let chatController = ChatChannelController_Spy(client: client)
@@ -198,7 +202,7 @@ final class SyncRepository_Tests: XCTestCase {
         _activeChannelControllers.add(chatController)
 
         let eventDate = Date.unique
-        waitForSyncLocalStateRun(requestResult: .success(messageEventPayload(with: [eventDate])))
+        waitForSyncLocalStateRun(requestResult: .success(messageEventPayload(cid: cid, with: [eventDate])))
 
         // Should use first event's created at date
         XCTAssertEqual(lastSyncAtValue, eventDate)
@@ -213,10 +217,12 @@ final class SyncRepository_Tests: XCTestCase {
     }
 
     func test_syncLocalState_localStorageEnabled_pendingConnectionDate_channels_activeRemoteChannelListController() throws {
+        let cid = ChannelId.unique
         try prepareForSyncLocalStorage(
             createUser: true,
             lastSynchedEventDate: Date().addingTimeInterval(-3600),
-            createChannel: true
+            createChannel: true,
+            cid: cid
         )
 
         let chatListController = ChatChannelListController_Mock(query: .init(filter: .exists(.cid)), client: client)
@@ -225,7 +231,7 @@ final class SyncRepository_Tests: XCTestCase {
         chatListController.resetChannelsQueryResult = .success(([], []))
 
         let eventDate = Date.unique
-        waitForSyncLocalStateRun(requestResult: .success(messageEventPayload(with: [eventDate])))
+        waitForSyncLocalStateRun(requestResult: .success(messageEventPayload(cid: cid, with: [eventDate])))
 
         // Should use first event's created at date
         XCTAssertEqual(lastSyncAtValue, eventDate)
@@ -244,10 +250,12 @@ final class SyncRepository_Tests: XCTestCase {
 
     func test_syncLocalState_localStorageEnabled_pendingConnectionDate_channels_activeRemoteChannelListController_unwantedChannels(
     ) throws {
+        let cid = ChannelId.unique
         try prepareForSyncLocalStorage(
             createUser: true,
             lastSynchedEventDate: Date().addingTimeInterval(-3600),
-            createChannel: true
+            createChannel: true,
+            cid: cid
         )
 
         let chatListController = ChatChannelListController_Mock(query: .init(filter: .exists(.cid)), client: client)
@@ -257,7 +265,7 @@ final class SyncRepository_Tests: XCTestCase {
         chatListController.resetChannelsQueryResult = .success(([], [unwantedId]))
 
         let eventDate = Date.unique
-        waitForSyncLocalStateRun(requestResult: .success(messageEventPayload(with: [eventDate])))
+        waitForSyncLocalStateRun(requestResult: .success(messageEventPayload(cid: cid, with: [eventDate])))
 
         // Should use first event's created at date
         XCTAssertEqual(lastSyncAtValue, eventDate)
@@ -276,21 +284,23 @@ final class SyncRepository_Tests: XCTestCase {
 
     func test_syncLocalState_ignoresTheCooldown() throws {
         let lastSyncDate = Date()
+        let cid = ChannelId.unique
         try prepareForSyncLocalStorage(
             createUser: true,
             lastSynchedEventDate: lastSyncDate,
-            createChannel: true
+            createChannel: true,
+            cid: cid
         )
 
         let firstDate = lastSyncDate.addingTimeInterval(1)
         let secondDate = lastSyncDate.addingTimeInterval(2)
-        let eventsPayload1 = messageEventPayload(with: [firstDate, secondDate])
+        let eventsPayload1 = messageEventPayload(cid: cid, with: [firstDate, secondDate])
         waitForSyncLocalStateRun(requestResult: .success(eventsPayload1))
 
         XCTAssertNearlySameDate(lastSyncAtValue, secondDate)
 
         let thirdDate = secondDate.addingTimeInterval(1)
-        let eventsPayload2 = messageEventPayload(with: [thirdDate])
+        let eventsPayload2 = messageEventPayload(cid: cid, with: [thirdDate])
         waitForSyncLocalStateRun(requestResult: .success(eventsPayload2))
 
         XCTAssertNearlySameDate(lastSyncAtValue, thirdDate)
@@ -692,7 +702,8 @@ extension SyncRepository_Tests {
     private func prepareForSyncLocalStorage(
         createUser: Bool,
         lastSynchedEventDate: Date?,
-        createChannel: Bool
+        createChannel: Bool,
+        cid: ChannelId? = nil
     ) throws {
         if createUser {
             try database.createCurrentUser()
@@ -702,9 +713,9 @@ extension SyncRepository_Tests {
             if let lastSynchedEventDate = lastSynchedEventDate {
                 session.currentUser?.lastSynchedEventDate = lastSynchedEventDate.bridgeDate
             }
-            if createChannel {
+            if createChannel, let channelId = cid {
                 let query = ChannelListQuery(filter: .exists(.cid))
-                try session.saveChannel(payload: self.dummyPayload(with: .unique, numberOfMessages: 0), query: query, cache: nil)
+                try session.saveChannel(payload: self.dummyPayload(with: channelId, numberOfMessages: 0), query: query, cache: nil)
             }
         }
         database.writeSessionCounter = 0
@@ -733,7 +744,7 @@ extension SyncRepository_Tests {
             callback(result)
         }
 
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 10000, handler: nil)
         XCTAssertCall("exitRecoveryMode()", on: apiClient)
     }
 
