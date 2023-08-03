@@ -78,7 +78,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
             client.databaseContainer,
             request,
             { try $0.asModel() },
-            query.sort.customSorting
+            query.sort.runtimeSorting
         )
 
         observer.onDidChange = { [weak self] changes in

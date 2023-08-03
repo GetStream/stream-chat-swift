@@ -111,15 +111,15 @@ final class ListDatabaseObserver_Sorting: XCTestCase {
         XCTAssertEqual(observer.items.map(\.name), ["B", "C", "E", "D", "A"])
     }
 
-    func test_channelsAreSortedAccordingToCustomSorting_foreground() throws {
-        try assert_channelsAreSortedAccordingToCustomSorting(isBackground: false)
+    func test_channelsAreSortedAccordingToRuntimeSorting_foreground() throws {
+        try assert_channelsAreSortedAccordingToRuntimeSorting(isBackground: false)
     }
 
-    func test_channelsAreSortedAccordingToCustomSorting_background() throws {
-        try assert_channelsAreSortedAccordingToCustomSorting(isBackground: true)
+    func test_channelsAreSortedAccordingToRuntimeSorting_background() throws {
+        try assert_channelsAreSortedAccordingToRuntimeSorting(isBackground: true)
     }
 
-    func assert_channelsAreSortedAccordingToCustomSorting(isBackground: Bool, file: StaticString = #filePath, line: UInt = #line) throws {
+    func assert_channelsAreSortedAccordingToRuntimeSorting(isBackground: Bool, file: StaticString = #filePath, line: UInt = #line) throws {
         createObserver(with: [
             .init(key: .custom(keyPath: \.name, key: "name"), isAscending: false)
         ], isBackground: isBackground)
@@ -181,15 +181,15 @@ final class ListDatabaseObserver_Sorting: XCTestCase {
         XCTAssertEqual(observer.items.map(\.name), ["B", "E", "A", "C", "D"])
     }
 
-    func test_channelsAreSortedAccordingToACombinationWithCustomSorting_foreground() throws {
-        try assert_channelsAreSortedAccordingToACombinationWithCustomSorting(isBackground: false)
+    func test_channelsAreSortedAccordingToACombinationWithRuntimeSorting_foreground() throws {
+        try assert_channelsAreSortedAccordingToACombinationWithRuntimeSorting(isBackground: false)
     }
 
-    func test_channelsAreSortedAccordingToACombinationWithCustomSorting_background() throws {
-        try assert_channelsAreSortedAccordingToACombinationWithCustomSorting(isBackground: true)
+    func test_channelsAreSortedAccordingToACombinationWithRuntimeSorting_background() throws {
+        try assert_channelsAreSortedAccordingToACombinationWithRuntimeSorting(isBackground: true)
     }
 
-    func assert_channelsAreSortedAccordingToACombinationWithCustomSorting(isBackground: Bool, file: StaticString = #filePath, line: UInt = #line) throws {
+    func assert_channelsAreSortedAccordingToACombinationWithRuntimeSorting(isBackground: Bool, file: StaticString = #filePath, line: UInt = #line) throws {
         createObserver(with: [
             .init(key: .createdAt, isAscending: false),
             .init(key: .custom(keyPath: \.name, key: "name"), isAscending: false)
@@ -210,27 +210,27 @@ final class ListDatabaseObserver_Sorting: XCTestCase {
         XCTAssertEqual(observer.items.map(\.name), ["D", "B", "E", "A", "C"])
     }
 
-    func test_timeToProcessMultipleChatChannels_customSorting_foreground() throws {
+    func test_timeToProcessMultipleChatChannels_runtimeSorting_foreground() throws {
         measureMetrics([.wallClockTime], automaticallyStartMeasuring: false) {
             do {
-                try assert_timeToProcessMultipleChatChannels_customSorting(isBackground: false)
+                try assert_timeToProcessMultipleChatChannels_runtimeSorting(isBackground: false)
             } catch {
                 XCTFail(error.localizedDescription)
             }
         }
     }
 
-    func test_timeToProcessMultipleChatChannels_customSorting_background() throws {
+    func test_timeToProcessMultipleChatChannels_runtimeSorting_background() throws {
         measureMetrics([.wallClockTime], automaticallyStartMeasuring: false) {
             do {
-                try assert_timeToProcessMultipleChatChannels_customSorting(isBackground: true)
+                try assert_timeToProcessMultipleChatChannels_runtimeSorting(isBackground: true)
             } catch {
                 XCTFail(error.localizedDescription)
             }
         }
     }
 
-    func assert_timeToProcessMultipleChatChannels_customSorting(isBackground: Bool, file: StaticString = #filePath, line: UInt = #line) throws {
+    func assert_timeToProcessMultipleChatChannels_runtimeSorting(isBackground: Bool, file: StaticString = #filePath, line: UInt = #line) throws {
         let expectation = self.expectation(description: "observer is notified")
 
         let sorting: [Sorting<ChannelListSortingKey>] = [
@@ -314,7 +314,7 @@ final class ListDatabaseObserver_Sorting: XCTestCase {
             database: database,
             fetchRequest: request,
             itemCreator: { try $0.asModel() },
-            sorting: sorting.customSorting
+            sorting: sorting.runtimeSorting
         )
 
         XCTAssertEqual(observer.items.count, 0)
