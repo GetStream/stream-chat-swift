@@ -71,6 +71,7 @@ final class ChatChannelListVC_Tests: XCTestCase {
             channels: channels,
             changes: []
         )
+        vc.channels = channels
         AssertSnapshot(vc, isEmbeddedInNavigationController: true)
     }
 
@@ -129,6 +130,7 @@ final class ChatChannelListVC_Tests: XCTestCase {
             channels: channels,
             changes: []
         )
+        vc.channels = channels
         AssertSnapshot(vc, isEmbeddedInNavigationController: true, variants: .onlyUserInterfaceStyles)
     }
 
@@ -164,13 +166,10 @@ final class ChatChannelListVC_Tests: XCTestCase {
             imageURL: TestImages.yoda.url
         )
 
-        mockedChannelListController.simulateInitial(
-            channels: [channel],
-            state: .remoteDataFetched
-        )
+        vc.channels = [channel]
 
         vc.collectionView(vc.collectionView, didSelectItemAt: IndexPath(item: 0, section: 0))
-        XCTAssertEqual(mockedRouter.openChat_channelId, vc.controller.channels.first?.cid)
+        XCTAssertEqual(mockedRouter.openChat_channelId, channel.cid)
     }
 
     func test_usesCorrectComponentsTypes_whenCustomTypesDefined() {
@@ -241,90 +240,6 @@ final class ChatChannelListVC_Tests: XCTestCase {
 
         let channel = ChatChannel.mock(cid: .unique, membership: nil)
         XCTAssertFalse(channelListVC.controller(mockedChannelListController, shouldListUpdatedChannel: channel))
-    }
-
-    func test_didChangeChannels_whenNoConflicts_performBatchUpdates() {
-        let channelListVC = FakeChatChannelListVC()
-        channelListVC.controller = mockedChannelListController
-
-        let noConflictChanges: [ListChange<ChatChannel>] = [
-            .update(.mock(cid: .unique), index: .init(row: 1, section: 0)),
-            .update(.mock(cid: .unique), index: .init(row: 2, section: 0)),
-            .insert(.mock(cid: .unique), index: .init(row: 3, section: 0)),
-            .remove(.mock(cid: .unique), index: .init(row: 4, section: 0))
-        ]
-
-        mockedChannelListController.simulate(
-            channels: [.mock(cid: .unique), .mock(cid: .unique), .mock(cid: .unique)],
-            changes: noConflictChanges
-        )
-
-        channelListVC.controller(mockedChannelListController, didChangeChannels: noConflictChanges)
-        XCTAssertEqual(channelListVC.mockedCollectionView.performBatchUpdatesCallCount, 1)
-        XCTAssertEqual(channelListVC.mockedCollectionView.reloadDataCallCount, 0)
-    }
-
-    func test_didChangeChannels_whenHasMoveConflicts_reloadData() {
-        let channelListVC = FakeChatChannelListVC()
-        channelListVC.controller = mockedChannelListController
-
-        let hasConflictChanges: [ListChange<ChatChannel>] = [
-            .update(.mock(cid: .unique), index: .init(row: 1, section: 0)),
-            .update(.mock(cid: .unique), index: .init(row: 2, section: 0)),
-            .insert(.mock(cid: .unique), index: .init(row: 3, section: 0)),
-            .move(.mock(cid: .unique), fromIndex: .init(row: 3, section: 0), toIndex: .init(row: 4, section: 0))
-        ]
-
-        mockedChannelListController.simulate(
-            channels: [.mock(cid: .unique), .mock(cid: .unique), .mock(cid: .unique)],
-            changes: hasConflictChanges
-        )
-
-        channelListVC.controller(mockedChannelListController, didChangeChannels: hasConflictChanges)
-        XCTAssertEqual(channelListVC.mockedCollectionView.performBatchUpdatesCallCount, 0)
-        XCTAssertEqual(channelListVC.mockedCollectionView.reloadDataCallCount, 1)
-    }
-
-    func test_didChangeChannels_whenHasInsertConflicts_reloadData() {
-        let channelListVC = FakeChatChannelListVC()
-        channelListVC.controller = mockedChannelListController
-
-        let hasConflictChanges: [ListChange<ChatChannel>] = [
-            .update(.mock(cid: .unique), index: .init(row: 1, section: 0)),
-            .move(.mock(cid: .unique), fromIndex: .init(row: 3, section: 0), toIndex: .init(row: 2, section: 0)),
-            .insert(.mock(cid: .unique), index: .init(row: 3, section: 0)),
-            .insert(.mock(cid: .unique), index: .init(row: 2, section: 0))
-        ]
-
-        mockedChannelListController.simulate(
-            channels: [.mock(cid: .unique), .mock(cid: .unique), .mock(cid: .unique)],
-            changes: hasConflictChanges
-        )
-
-        channelListVC.controller(mockedChannelListController, didChangeChannels: hasConflictChanges)
-        XCTAssertEqual(channelListVC.mockedCollectionView.performBatchUpdatesCallCount, 0)
-        XCTAssertEqual(channelListVC.mockedCollectionView.reloadDataCallCount, 1)
-    }
-
-    func test_didChangeChannels_whenHasUpdateConflicts_reloadData() {
-        let channelListVC = FakeChatChannelListVC()
-        channelListVC.controller = mockedChannelListController
-
-        let hasConflictChanges: [ListChange<ChatChannel>] = [
-            .update(.mock(cid: .unique), index: .init(row: 1, section: 0)),
-            .update(.mock(cid: .unique), index: .init(row: 2, section: 0)),
-            .insert(.mock(cid: .unique), index: .init(row: 3, section: 0)),
-            .remove(.mock(cid: .unique), index: .init(row: 2, section: 0))
-        ]
-
-        mockedChannelListController.simulate(
-            channels: [.mock(cid: .unique), .mock(cid: .unique), .mock(cid: .unique)],
-            changes: hasConflictChanges
-        )
-
-        channelListVC.controller(mockedChannelListController, didChangeChannels: hasConflictChanges)
-        XCTAssertEqual(channelListVC.mockedCollectionView.performBatchUpdatesCallCount, 0)
-        XCTAssertEqual(channelListVC.mockedCollectionView.reloadDataCallCount, 1)
     }
 
     func test_didChangeChannels_whenIsNotVisible_dontUpdateData_setSkippedRendering() {

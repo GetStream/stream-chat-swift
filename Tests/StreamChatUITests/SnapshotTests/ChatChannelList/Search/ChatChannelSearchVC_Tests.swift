@@ -74,6 +74,7 @@ final class ChatChannelSearchVC_Tests: XCTestCase {
 
         vc.currentSearchText = "Some message"
         vc.executeLifecycleMethods()
+        vc.channels = mockedChannelListController.channels_mock ?? []
         vc.controller(mockedChannelListController, didChangeState: .remoteDataFetched)
 
         AssertSnapshot(vc, isEmbeddedInNavigationController: true)
