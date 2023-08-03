@@ -149,7 +149,7 @@ final class ListDatabaseObserver_Sorting: XCTestCase {
 
     func assert_channelsAreSortedAccordingToBoolSorting(isBackground: Bool, file: StaticString = #filePath, line: UInt = #line) throws {
         createObserver(with: [
-            .init(key: .custom(keyPath: \.isPinned, key: "is_pinned"), isAscending: false),
+            .init(key: .custom(keyPath: \.isPinned, key: "is_pinned"), isAscending: true),
             .init(key: .custom(keyPath: \.name, key: "name"), isAscending: true)
         ], isBackground: isBackground)
         try observer.startObserving()

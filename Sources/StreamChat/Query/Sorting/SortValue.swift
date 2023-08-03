@@ -47,7 +47,7 @@ extension Array {
         } else if let lDate = lhs as? Date, let rDate = rhs as? Date {
             return isAscending ? lDate < rDate : lDate > rDate
         } else if let lBool = lhs as? Bool, let rBool = rhs as? Bool {
-            return isAscending ? !lBool && rBool : lBool && !rBool
+            return isAscending ? lBool && !rBool : !lBool && rBool
         }
 
         return false
