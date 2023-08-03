@@ -200,7 +200,7 @@ public struct ChannelListQuery: Encodable {
         membersLimit: Int = .channelMembersPageSize
     ) {
         self.filter = filter
-        self.sort = sort.appendingDefaultSortingKey()
+        self.sort = sort.appendingCidSortingKey()
         pagination = Pagination(pageSize: pageSize)
         self.messagesLimit = messagesLimit
         self.membersLimit = membersLimit

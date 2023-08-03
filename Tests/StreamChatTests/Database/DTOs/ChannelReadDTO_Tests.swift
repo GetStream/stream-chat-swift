@@ -556,5 +556,3 @@ private class MessageListObserver {
         try! databaseObserver.startObserving()
     }
 }
-
-extension MessageId: ListDatabaseObserverItem {}

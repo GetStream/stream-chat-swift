@@ -86,7 +86,7 @@ final class ChannelListFilterScope_Tests: XCTestCase {
 
         // Assert safe sorting option is added
         queries.forEach {
-            XCTAssertEqual($0.sort.last?.key, Sorting<ChannelListSortingKey>(key: .default).key)
+            XCTAssertEqual($0.sort.last?.key, Sorting<ChannelListSortingKey>(key: .cid).key)
         }
     }
 
@@ -111,12 +111,12 @@ final class ChannelListFilterScope_Tests: XCTestCase {
         let id = "theid"
         let query = ChannelListQuery(
             filter: .containMembers(userIds: [id]),
-            sort: [Sorting<ChannelListSortingKey>(key: .default)],
+            sort: [Sorting<ChannelListSortingKey>(key: .cid)],
             pageSize: 1,
             messagesLimit: 2,
             membersLimit: 3
         )
 
-        XCTAssertEqual(query.debugDescription, "Filter: members IN [\"theid\"] | Sort: [defaultSortingAt:-1]")
+        XCTAssertEqual(query.debugDescription, "Filter: members IN [\"theid\"] | Sort: [cid:-1]")
     }
 }

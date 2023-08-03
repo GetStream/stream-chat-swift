@@ -10,7 +10,7 @@ final class ChannelListQuery_Tests: XCTestCase {
     func test_channelListQuery_encodedCorrectly() throws {
         let cid = ChannelId.unique
         let filter = Filter<ChannelListFilterScope>.equal(.cid, to: cid)
-        let sort = Sorting<ChannelListSortingKey>.init(key: .default)
+        let sort = Sorting<ChannelListSortingKey>.init(key: .cid)
         let pageSize = Int.channelsPageSize
         let messagesLimit = Int.messagesPageSize
         let membersLimit = Int.channelMembersPageSize
@@ -29,7 +29,7 @@ final class ChannelListQuery_Tests: XCTestCase {
             "limit": pageSize,
             "message_limit": messagesLimit,
             "member_limit": membersLimit,
-            "sort": [["field": "updated_at", "direction": -1]],
+            "sort": [["field": "cid", "direction": -1]],
             "filter_conditions": ["cid": ["$eq": cid.rawValue]],
             "watch": true
         ]
