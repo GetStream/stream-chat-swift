@@ -313,7 +313,7 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
         unreadCountView.content = content?.channel.unreadCount ?? .noUnread
         unreadCountView.invalidateIntrinsicContentSize()
 
-        if let searchedMessage = content?.searchedMessage {
+        if content?.searchedMessage != nil {
             unreadCountView.content = .noUnread
         }
 
