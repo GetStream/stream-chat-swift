@@ -283,6 +283,24 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                     }
                 }
             }),
+            .init(title: "Pin channel", style: .default, handler: { [unowned self] _ in
+                let userId = channelController.channel?.membership?.id ?? ""
+                let pinnedKey = ChatChannel.isPinnedBy(keyForUserId: userId)
+                channelController.partialChannelUpdate(extraData: [pinnedKey: true]) { error in
+                    if let error = error {
+                        self.rootViewController.presentAlert(title: "Couldn't pin channel \(cid)", message: "\(error)")
+                    }
+                }
+            }),
+            .init(title: "Unpin channel", style: .default, handler: { [unowned self] _ in
+                let userId = channelController.channel?.membership?.id ?? ""
+                let pinnedKey = ChatChannel.isPinnedBy(keyForUserId: userId)
+                channelController.partialChannelUpdate(extraData: [pinnedKey: false]) { error in
+                    if let error = error {
+                        self.rootViewController.presentAlert(title: "Couldn't unpin channel \(cid)", message: "\(error)")
+                    }
+                }
+            }),
             .init(title: "Freeze channel", style: .default, handler: { [unowned self] _ in
                 channelController.freezeChannel { error in
                     if let error = error {

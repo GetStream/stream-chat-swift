@@ -1243,6 +1243,7 @@
 		AD7DFC3625D2FA8100DD9DA3 /* CurrentUserUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7DFC3525D2FA8100DD9DA3 /* CurrentUserUpdater.swift */; };
 		AD81AF0525ED141800F17F8F /* CellSeparatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD81AEEC25ED135100F17F8F /* CellSeparatorView.swift */; };
 		AD81AF0D25ED141A00F17F8F /* ListCollectionViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD81AEF525ED13D900F17F8F /* ListCollectionViewLayout.swift */; };
+		AD82903D2A7C5A8F00396782 /* DemoChatChannelListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD82903C2A7C5A8F00396782 /* DemoChatChannelListItemView.swift */; };
 		AD876B4727288DF700317314 /* ChatMessageReactionAuthorsFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD876B4627288DF700317314 /* ChatMessageReactionAuthorsFlowLayout.swift */; };
 		AD87D097263C7783008B466C /* CommandButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD87D096263C7783008B466C /* CommandButton.swift */; };
 		AD87D0A1263C7823008B466C /* AttachmentButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD87D0A0263C7823008B466C /* AttachmentButton.swift */; };
@@ -3656,6 +3657,7 @@
 		AD7DFC3525D2FA8100DD9DA3 /* CurrentUserUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentUserUpdater.swift; sourceTree = "<group>"; };
 		AD81AEEC25ED135100F17F8F /* CellSeparatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellSeparatorView.swift; sourceTree = "<group>"; };
 		AD81AEF525ED13D900F17F8F /* ListCollectionViewLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListCollectionViewLayout.swift; sourceTree = "<group>"; };
+		AD82903C2A7C5A8F00396782 /* DemoChatChannelListItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoChatChannelListItemView.swift; sourceTree = "<group>"; };
 		AD876B4627288DF700317314 /* ChatMessageReactionAuthorsFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageReactionAuthorsFlowLayout.swift; sourceTree = "<group>"; };
 		AD87D096263C7783008B466C /* CommandButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandButton.swift; sourceTree = "<group>"; };
 		AD87D0A0263C7823008B466C /* AttachmentButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentButton.swift; sourceTree = "<group>"; };
@@ -5824,6 +5826,7 @@
 			children = (
 				7933060A256FF94800FBB586 /* DemoChatChannelListRouter.swift */,
 				A3227E79284A4CE000EBE6CC /* DemoChatChannelListVC.swift */,
+				AD82903C2A7C5A8F00396782 /* DemoChatChannelListItemView.swift */,
 				A3227E6F284A4BC700EBE6CC /* DemoChatChannelVC.swift */,
 				A3227E73284A4C3300EBE6CC /* DemoChatMessageActionsVC.swift */,
 				A3227E77284A4CAD00EBE6CC /* DemoChatMessageContentView.swift */,
@@ -9884,6 +9887,7 @@
 				A3227E65284A4A5C00EBE6CC /* StreamChatWrapper.swift in Sources */,
 				A3227E78284A4CAD00EBE6CC /* DemoChatMessageContentView.swift in Sources */,
 				7933060B256FF94800FBB586 /* DemoChatChannelListRouter.swift in Sources */,
+				AD82903D2A7C5A8F00396782 /* DemoChatChannelListItemView.swift in Sources */,
 				A3227E69284A4AE800EBE6CC /* AvatarView.swift in Sources */,
 				A3227E5B284A489000EBE6CC /* UIViewController+Alert.swift in Sources */,
 				A3227E6D284A4B6A00EBE6CC /* UserCredentialsCell.swift in Sources */,
