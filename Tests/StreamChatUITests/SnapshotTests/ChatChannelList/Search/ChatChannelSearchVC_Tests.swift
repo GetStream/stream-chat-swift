@@ -81,10 +81,10 @@ final class ChatChannelSearchVC_Tests: XCTestCase {
     }
 
     func test_hasEmptyResults() {
-        mockedChannelListController.channels_mock = []
+        vc.channels = []
         XCTAssertEqual(vc.hasEmptyResults, true)
 
-        mockedChannelListController.channels_mock = [.mockDMChannel()]
+        vc.channels = [.mockDMChannel()]
         XCTAssertEqual(vc.hasEmptyResults, false)
     }
 
@@ -105,7 +105,7 @@ final class ChatChannelSearchVC_Tests: XCTestCase {
     }
 
     func test_collectionViewDidSelectItemAt() {
-        mockedChannelListController.channels_mock = [
+        vc.channels = [
             .mock(cid: .unique),
             .mock(cid: .unique)
         ]
