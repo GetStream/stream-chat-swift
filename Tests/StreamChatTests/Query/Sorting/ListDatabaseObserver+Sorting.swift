@@ -250,7 +250,7 @@ final class ListDatabaseObserver_Sorting: XCTestCase {
         startMeasuring()
         try createChannels(mapping: bulkChannels)
 
-        wait(for: [expectation])
+        waitForExpectations(timeout: defaultTimeout)
         stopMeasuring()
     }
 
@@ -293,7 +293,7 @@ final class ListDatabaseObserver_Sorting: XCTestCase {
         startMeasuring()
         try createChannels(mapping: bulkChannels)
 
-        wait(for: [expectation])
+        waitForExpectations(timeout: defaultTimeout)
         stopMeasuring()
     }
 
@@ -325,9 +325,8 @@ final class ListDatabaseObserver_Sorting: XCTestCase {
         var cids: [ChannelId] = []
         try database.writeSynchronously { session in
             session.saveQuery(query: self.query)
-            let channels = try mapping.map {
-                let (name, createdAt, messageCreatedAt) = $0
-                return try session.saveChannel(
+            let channels = try mapping.map { (name, createdAt, messageCreatedAt) -> ChannelDTO in
+                try session.saveChannel(
                     payload: .dummy(
                         channel: .dummy(name: name, createdAt: createdAt),
                         messages: [.dummy(createdAt: messageCreatedAt)]
