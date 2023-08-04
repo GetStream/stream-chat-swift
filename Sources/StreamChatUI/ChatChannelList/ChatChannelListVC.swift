@@ -164,7 +164,7 @@ open class ChatChannelListVC: _ViewController,
         super.viewWillAppear(animated)
 
         if skippedRendering {
-            collectionView.reloadData()
+            reloadChannels(Array(controller.channels))
             skippedRendering = false
         }
     }
@@ -473,6 +473,7 @@ extension ChatChannel: Differentiable {
             reads == source.reads &&
             muteDetails == source.muteDetails &&
             cooldownDuration == source.cooldownDuration &&
-            extraData == source.extraData
+            extraData == source.extraData &&
+            previewMessage == source.previewMessage
     }
 }
