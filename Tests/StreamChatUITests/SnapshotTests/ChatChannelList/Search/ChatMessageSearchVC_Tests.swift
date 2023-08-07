@@ -83,10 +83,12 @@ final class ChatMessageSearchVC_Tests: XCTestCase {
     }
 
     func test_hasEmptyResults() {
-        vc.messages = []
+        mockedMessageSearchController.messages_mock = []
+        vc.reloadMessages()
         XCTAssertEqual(vc.hasEmptyResults, true)
 
-        vc.messages = [.mock()]
+        mockedMessageSearchController.messages_mock = [.mock()]
+        vc.reloadMessages()
         XCTAssertEqual(vc.hasEmptyResults, false)
     }
 

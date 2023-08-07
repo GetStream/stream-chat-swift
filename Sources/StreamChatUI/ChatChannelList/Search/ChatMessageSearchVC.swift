@@ -9,7 +9,7 @@ import UIKit
 /// It implements the required functions of the `ChatChannelListSearchVC` abstract class.
 open class ChatMessageSearchVC: ChatChannelListSearchVC, ChatMessageSearchControllerDelegate {
     /// The data of the message list.
-    public var messages: [ChatMessage] = []
+    public private(set) var messages: [ChatMessage] = []
 
     /// The `ChatMessageSearchController` instance to perform the messages search.
     public var messageSearchController: ChatMessageSearchController!
