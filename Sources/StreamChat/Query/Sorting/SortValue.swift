@@ -47,6 +47,9 @@ extension Array {
         } else if let lDate = lhs as? Date, let rDate = rhs as? Date {
             return isAscending ? lDate < rDate : lDate > rDate
         } else if let lBool = lhs as? Bool, let rBool = rhs as? Bool {
+            // The logic is actually the other way around, and this a backend issue.
+            // But we can't change the backend at the moment otherwise it would be a breaking change.
+            // So for now, isAscending means true values will come first, and then false.
             return isAscending ? lBool && !rBool : !lBool && rBool
         }
 
