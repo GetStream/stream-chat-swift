@@ -21,7 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### 🔄 Changed
 - Renames `Components.mentionAvatarView` -> `Components.userAvatarView` [#2703](https://github.com/GetStream/stream-chat-swift/pull/2703)
-- Uses Diffing to update Channel List data for stability improvements [#2701](https://github.com/GetStream/stream-chat-swift/pull/2701)
+- Use Diffing to update Channel List data to improve stability  [#2701](https://github.com/GetStream/stream-chat-swift/pull/2701)
 
 # [4.34.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.34.0)
 _July 05, 2023_
