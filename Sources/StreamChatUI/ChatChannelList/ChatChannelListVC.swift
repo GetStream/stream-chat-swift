@@ -125,7 +125,7 @@ open class ChatChannelListVC: _ViewController,
         super.setUp()
         controller.delegate = self
         controller.synchronize()
-        channels = Array(controller.channels)
+        reloadChannels()
 
         collectionView.register(
             components.channelCell.self,
@@ -164,7 +164,7 @@ open class ChatChannelListVC: _ViewController,
         super.viewWillAppear(animated)
 
         if skippedRendering {
-            reloadChannels(Array(controller.channels))
+            reloadChannels()
             skippedRendering = false
         }
     }
@@ -241,9 +241,10 @@ open class ChatChannelListVC: _ViewController,
         collectionView.reloadData()
     }
 
-    /// Updates the list view with new data.
-    public func reloadChannels(_ newChannels: [ChatChannel]) {
+    /// Updates the list view with the most updated channels.
+    public func reloadChannels() {
         let previousChannels = channels
+        let newChannels = Array(controller.channels)
         let stagedChangeset = StagedChangeset(source: previousChannels, target: newChannels)
         collectionView.reload(using: stagedChangeset) { [weak self] newChannels in
             self?.channels = newChannels
@@ -396,8 +397,7 @@ open class ChatChannelListVC: _ViewController,
             skippedRendering = true
             return
         }
-        let newChannels = Array(controller.channels)
-        reloadChannels(newChannels)
+        reloadChannels()
     }
 
     @available(*, deprecated, message: "Please use `filter` when initializing a `ChatChannelListController`")

@@ -44,8 +44,9 @@ open class ChatMessageSearchVC: ChatChannelListSearchVC, ChatMessageSearchContro
     // MARK: - Actions
 
     /// Updates the list view with new data.
-    public func reloadMessages(_ newMessages: [ChatMessage]) {
+    public func reloadMessages() {
         let previousMessages = messages
+        let newMessages = Array(messageSearchController.messages)
         let stagedChangeset = StagedChangeset(source: previousMessages, target: newMessages)
         collectionView.reload(using: stagedChangeset) { [weak self] newMessages in
             self?.messages = newMessages
@@ -104,7 +105,6 @@ open class ChatMessageSearchVC: ChatChannelListSearchVC, ChatMessageSearchContro
     // MARK: - ChatMessageSearchControllerDelegate
 
     open func controller(_ controller: ChatMessageSearchController, didChangeMessages changes: [ListChange<ChatMessage>]) {
-        let newMessages = Array(controller.messages)
-        reloadMessages(newMessages)
+        reloadMessages()
     }
 }

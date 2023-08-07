@@ -255,17 +255,18 @@ final class ChatChannelListVC_Tests: XCTestCase {
         XCTAssertEqual(channelListVC.skippedRendering, true)
     }
 
-    func test_viewWillAppear_whenSkippedRendering_shouldCallReloadData() {
+    func test_viewWillAppear_whenSkippedRendering_shouldReloadData() {
         let channelListVC = FakeChatChannelListVC()
         channelListVC.controller = mockedChannelListController
         channelListVC.shouldMockViewIfLoaded = false
+        mockedChannelListController.channels_mock = [.mock(cid: .unique), .mock(cid: .unique)]
         channelListVC.controller(mockedChannelListController, didChangeChannels: [])
         XCTAssertEqual(channelListVC.skippedRendering, true)
 
         channelListVC.viewWillAppear(false)
 
         XCTAssertEqual(channelListVC.skippedRendering, false)
-        XCTAssertEqual(channelListVC.mockedCollectionView.reloadDataCallCount, 1)
+        XCTAssertEqual(channelListVC.reloadChannelsCallCount, 1)
     }
 
     func test_replaceChannelListController() {
@@ -298,6 +299,11 @@ final class ChatChannelListVC_Tests: XCTestCase {
         var mockedCollectionView: MockCollectionView = MockCollectionView()
         override var collectionView: UICollectionView {
             mockedCollectionView
+        }
+
+        var reloadChannelsCallCount = 0
+        override func reloadChannels() {
+            reloadChannelsCallCount += 1
         }
 
         class MockView: UIView {
