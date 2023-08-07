@@ -14,7 +14,7 @@ open class ChatChannelListVC: _ViewController,
     ThemeProvider,
     SwipeableViewDelegate {
     /// The data of the channel list.
-    public var channels: [ChatChannel] = []
+    public private(set) var channels: [ChatChannel] = []
 
     /// The `ChatChannelListController` instance that provides channels data.
     public var controller: ChatChannelListController!

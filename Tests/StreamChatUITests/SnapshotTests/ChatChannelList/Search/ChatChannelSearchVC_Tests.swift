@@ -74,17 +74,19 @@ final class ChatChannelSearchVC_Tests: XCTestCase {
 
         vc.currentSearchText = "Some message"
         vc.executeLifecycleMethods()
-        vc.channels = mockedChannelListController.channels_mock ?? []
+        vc.reloadChannels()
         vc.controller(mockedChannelListController, didChangeState: .remoteDataFetched)
 
         AssertSnapshot(vc, isEmbeddedInNavigationController: true)
     }
 
     func test_hasEmptyResults() {
-        vc.channels = []
+        mockedChannelListController.channels_mock = []
+        vc.reloadChannels()
         XCTAssertEqual(vc.hasEmptyResults, true)
 
-        vc.channels = [.mockDMChannel()]
+        mockedChannelListController.channels_mock = [.mockDMChannel()]
+        vc.reloadChannels()
         XCTAssertEqual(vc.hasEmptyResults, false)
     }
 
@@ -105,10 +107,11 @@ final class ChatChannelSearchVC_Tests: XCTestCase {
     }
 
     func test_collectionViewDidSelectItemAt() {
-        vc.channels = [
+        mockedChannelListController.channels_mock = [
             .mock(cid: .unique),
             .mock(cid: .unique)
         ]
+        vc.reloadChannels()
 
         var didSelectChannelCallCount = 0
         vc.didSelectChannel = { _ in

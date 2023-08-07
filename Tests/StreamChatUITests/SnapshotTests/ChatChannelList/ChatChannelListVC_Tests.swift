@@ -71,7 +71,7 @@ final class ChatChannelListVC_Tests: XCTestCase {
             channels: channels,
             changes: []
         )
-        vc.channels = channels
+        vc.reloadChannels()
         AssertSnapshot(vc, isEmbeddedInNavigationController: true)
     }
 
@@ -130,7 +130,7 @@ final class ChatChannelListVC_Tests: XCTestCase {
             channels: channels,
             changes: []
         )
-        vc.channels = channels
+        vc.reloadChannels()
         AssertSnapshot(vc, isEmbeddedInNavigationController: true, variants: .onlyUserInterfaceStyles)
     }
 
@@ -166,7 +166,8 @@ final class ChatChannelListVC_Tests: XCTestCase {
             imageURL: TestImages.yoda.url
         )
 
-        vc.channels = [channel]
+        mockedChannelListController.channels_mock = [channel]
+        vc.reloadChannels()
 
         vc.collectionView(vc.collectionView, didSelectItemAt: IndexPath(item: 0, section: 0))
         XCTAssertEqual(mockedRouter.openChat_channelId, channel.cid)
