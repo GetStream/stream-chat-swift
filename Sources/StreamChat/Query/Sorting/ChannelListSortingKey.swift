@@ -85,6 +85,10 @@ private extension Sorting where Key == ChannelListSortingKey {
 }
 
 private extension KeyPath where Root == ChatChannel {
+    /// The keyPath key has a string.
+    ///
+    /// Example:
+    /// `\ChatChannel.createdAt` returns `"createdAt"`.
     var stringValue: String {
         let value = String(describing: self)
         let root = String(describing: Self.rootType)
