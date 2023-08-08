@@ -8,16 +8,14 @@ import UIKit
 /// The view controller responsible to search messages.
 /// It implements the required functions of the `ChatChannelListSearchVC` abstract class.
 open class ChatMessageSearchVC: ChatChannelListSearchVC, ChatMessageSearchControllerDelegate {
+    /// The data of the message list.
+    public private(set) var messages: [ChatMessage] = []
+
     /// The `ChatMessageSearchController` instance to perform the messages search.
     public var messageSearchController: ChatMessageSearchController!
 
     /// The closure that is triggered whenever a message is selected from the search result.
     public var didSelectMessage: ((ChatChannel, ChatMessage) -> Void)?
-
-    /// Component responsible to process an array of `[ListChange<Item>]`'s and apply those changes to a view.
-    private lazy var listChangeUpdater: ListChangeUpdater = CollectionViewListChangeUpdater(
-        collectionView: collectionView
-    )
 
     private var isPaginatingMessages: Bool = false
 
@@ -32,7 +30,7 @@ open class ChatMessageSearchVC: ChatChannelListSearchVC, ChatMessageSearchContro
     // MARK: - ChatChannelListSearchVC Abstract Implementations
 
     override open var hasEmptyResults: Bool {
-        messageSearchController.messages.isEmpty
+        messages.isEmpty
     }
 
     override open func loadSearchResults(with text: String) {
@@ -44,6 +42,16 @@ open class ChatMessageSearchVC: ChatChannelListSearchVC, ChatMessageSearchContro
     }
 
     // MARK: - Actions
+
+    /// Updates the list view with new data.
+    public func reloadMessages() {
+        let previousMessages = messages
+        let newMessages = Array(messageSearchController.messages)
+        let stagedChangeset = StagedChangeset(source: previousMessages, target: newMessages)
+        collectionView.reload(using: stagedChangeset) { [weak self] newMessages in
+            self?.messages = newMessages
+        }
+    }
 
     open func loadMoreMessages() {
         guard !isPaginatingMessages else {
@@ -59,12 +67,12 @@ open class ChatMessageSearchVC: ChatChannelListSearchVC, ChatMessageSearchContro
     // MARK: - Collection View Implementations
 
     override open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        messageSearchController.messages.count
+        messages.count
     }
 
     override open func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(with: ChatChannelListCollectionViewCell.self, for: indexPath)
-        guard let message = messageSearchController.messages[safe: indexPath.item],
+        guard let message = messages[safe: indexPath.item],
               let cid = message.cid,
               let channel = messageSearchController.dataStore.channel(cid: cid) else {
             return cell
@@ -85,7 +93,7 @@ open class ChatMessageSearchVC: ChatChannelListSearchVC, ChatMessageSearchContro
             collectionView.deselectItem(at: indexPath, animated: true)
         }
 
-        guard let message = messageSearchController.messages[safe: indexPath.item],
+        guard let message = messages[safe: indexPath.item],
               let cid = message.cid,
               let channel = messageSearchController.dataStore.channel(cid: cid) else {
             return
@@ -97,6 +105,6 @@ open class ChatMessageSearchVC: ChatChannelListSearchVC, ChatMessageSearchContro
     // MARK: - ChatMessageSearchControllerDelegate
 
     open func controller(_ controller: ChatMessageSearchController, didChangeMessages changes: [ListChange<ChatMessage>]) {
-        listChangeUpdater.performUpdate(with: changes)
+        reloadMessages()
     }
 }

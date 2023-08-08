@@ -34,9 +34,9 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
         /// The additional information as part of a search query.
         public struct SearchResult {
             /// The search query input.
-            let text: String
+            public let text: String
             /// The message that belongs to a message search result.
-            let message: ChatMessage?
+            public let message: ChatMessage?
         }
     }
 
@@ -213,6 +213,16 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
         }
     }
 
+    /// The item's view background color.
+    open var contentBackgroundColor: UIColor {
+        appearance.colorPalette.background
+    }
+
+    /// The item's view background color when highlighted.
+    open var contentHighlightedBackgroundColor: UIColor {
+        appearance.colorPalette.highlightedBackground
+    }
+
     /// The indicator the delivery status of the channel preview message.
     open private(set) lazy var previewMessageDeliveryStatusView = components
         .messageDeliveryStatusCheckmarkView.init()
@@ -221,7 +231,7 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
 
     override open func setUpAppearance() {
         super.setUpAppearance()
-        backgroundColor = appearance.colorPalette.background
+        backgroundColor = contentBackgroundColor
 
         titleLabel.font = appearance.fonts.bodyBold
 
@@ -313,7 +323,7 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
         unreadCountView.content = content?.channel.unreadCount ?? .noUnread
         unreadCountView.invalidateIntrinsicContentSize()
 
-        if let searchedMessage = content?.searchedMessage {
+        if content?.searchedMessage != nil {
             unreadCountView.content = .noUnread
         }
 

@@ -16,6 +16,8 @@ struct DemoAppConfig {
     var isTokenRefreshEnabled: Bool
     /// A Boolean value to define if an additional message debugger action will be added.
     var isMessageDebuggerEnabled: Bool
+    /// A Boolean value to define if channel pinning example is enabled.
+    var isChannelPinningEnabled: Bool
 }
 
 class AppConfig {
@@ -30,7 +32,8 @@ class AppConfig {
             isHardDeleteEnabled: false,
             isAtlantisEnabled: false,
             isTokenRefreshEnabled: false,
-            isMessageDebuggerEnabled: false
+            isMessageDebuggerEnabled: false,
+            isChannelPinningEnabled: false
         )
     }
 }
@@ -132,6 +135,7 @@ class AppConfigViewController: UITableViewController {
         case isHardDeleteEnabled
         case isAtlantisEnabled
         case isMessageDebuggerEnabled
+        case isChannelPinningEnabled
     }
 
     enum ComponentsConfigOption: String, CaseIterable {
@@ -255,6 +259,10 @@ class AppConfigViewController: UITableViewController {
         case .isMessageDebuggerEnabled:
             cell.accessoryView = makeSwitchButton(demoAppConfig.isMessageDebuggerEnabled) { [weak self] newValue in
                 self?.demoAppConfig.isMessageDebuggerEnabled = newValue
+            }
+        case .isChannelPinningEnabled:
+            cell.accessoryView = makeSwitchButton(demoAppConfig.isChannelPinningEnabled) { [weak self] newValue in
+                self?.demoAppConfig.isChannelPinningEnabled = newValue
             }
         }
     }

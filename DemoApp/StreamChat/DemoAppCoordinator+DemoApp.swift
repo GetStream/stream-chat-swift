@@ -63,7 +63,21 @@ extension DemoAppCoordinator {
         let channelListQuery: ChannelListQuery
         switch user {
         case let .credentials(userCredentials):
-            channelListQuery = .init(filter: .containMembers(userIds: [userCredentials.id]))
+            if AppConfig.shared.demoAppConfig.isChannelPinningEnabled {
+                let pinnedByKey = ChatChannel.isPinnedBy(keyForUserId: userCredentials.id)
+                channelListQuery = .init(
+                    filter: .containMembers(userIds: [userCredentials.id]),
+                    sort: [
+                        .init(key: .custom(keyPath: \.isPinned, key: pinnedByKey), isAscending: true),
+                        .init(key: .lastMessageAt),
+                        .init(key: .updatedAt)
+                    ]
+                )
+            } else {
+                channelListQuery = .init(
+                    filter: .containMembers(userIds: [userCredentials.id])
+                )
+            }
         case .anonymous, .guest:
             channelListQuery = .init(filter: .equal(.type, to: .messaging))
         }
@@ -149,6 +163,18 @@ private extension DemoAppCoordinator {
             // show login screen
             self?.showLogin(animated: true)
         }
+    }
+}
+
+extension ChatChannel {
+    static func isPinnedBy(keyForUserId userId: UserId) -> String {
+        "is_pinned_by_\(userId)"
+    }
+
+    var isPinned: Bool {
+        guard let userId = membership?.id else { return false }
+        let key = Self.isPinnedBy(keyForUserId: userId)
+        return extraData[key]?.boolValue ?? false
     }
 }
 
