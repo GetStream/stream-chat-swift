@@ -14,7 +14,7 @@ open class ChatChannelSearchVC: ChatChannelListSearchVC {
     // MARK: - ChatChannelListSearchVC Abstract Implementations
 
     override open var hasEmptyResults: Bool {
-        controller.channels.isEmpty
+        channels.isEmpty
     }
 
     override open func loadSearchResults(with text: String) {
@@ -54,7 +54,7 @@ open class ChatChannelSearchVC: ChatChannelListSearchVC {
         defer {
             collectionView.deselectItem(at: indexPath, animated: true)
         }
-        guard let channel = controller.channels[safe: indexPath.row] else { return }
+        guard let channel = channels[safe: indexPath.row] else { return }
         didSelectChannel?(channel)
     }
 }

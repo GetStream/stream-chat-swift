@@ -92,7 +92,7 @@ public struct UserListQuery: Encodable {
         pageSize: Int = .usersPageSize
     ) {
         self.filter = filter
-        self.sort = sort.appendingIdSortingKey()
+        self.sort = sort
         pagination = Pagination(pageSize: pageSize)
     }
 

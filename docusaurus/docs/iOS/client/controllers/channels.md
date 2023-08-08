@@ -54,6 +54,27 @@ let compoundFilter: Filter<ChannelListFilterScope> = .and([
 
 The `query.sort` is an array of sorting options. Sorting options are applied based on their order in the array so the first option has the highest impact while the others are used mainly as a tiebreakers. By default, the channel list is sorted by `updated_at`.
 
+#### Sorting with custom / extra data:
+
+When sorting using a property that is not by default available in `ChannelListSortingKey`, you can create a custom one as such:
+
+```
+let key = ChannelListSortingKey.custom(keyPath: \.myCustomValue, key: "custom_score.value")
+let customValueSorting = Sorting<ChannelListSortingKey>(key: key, isAscending: false)
+let query = ChannelListQuery(filter: filter, sort: [customValueSorting])
+
+```
+
+In order for the above to work, you need to create a computed property to access the custom value that you want to use to sort:
+```
+extension ChatChannel {
+    var myCustomValue: Double {
+        return extraData["custom_score"]?["value"]?.numberValue ?? 0
+    }
+}
+
+```
+
 ### 2. Create a controller
 The simplest way to create a controller is by using the method `channelListController(query:)` on your `ChatClient`.
 ```swift
