@@ -69,7 +69,8 @@ extension DemoAppCoordinator {
                     filter: .containMembers(userIds: [userCredentials.id]),
                     sort: [
                         .init(key: .custom(keyPath: \.isPinned, key: pinnedByKey), isAscending: true),
-                        .init(key: .lastMessageAt)
+                        .init(key: .lastMessageAt),
+                        .init(key: .updatedAt)
                     ]
                 )
             } else {
