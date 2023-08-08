@@ -20,7 +20,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - ios: 16.4
+          - ios: 16.2
             setup_runtime: false
             device: "iPhone 14 Pro Max"
             xcode: 14.2
