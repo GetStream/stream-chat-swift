@@ -34,9 +34,9 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
         /// The additional information as part of a search query.
         public struct SearchResult {
             /// The search query input.
-            let text: String
+            public let text: String
             /// The message that belongs to a message search result.
-            let message: ChatMessage?
+            public let message: ChatMessage?
         }
     }
 
