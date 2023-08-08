@@ -3,13 +3,19 @@
 //
 
 import StreamChatUI
+import UIKit
 
 final class DemoChatChannelListItemView: ChatChannelListItemView {
+    override var contentBackgroundColor: UIColor {
+        if AppConfig.shared.demoAppConfig.isChannelPinningEnabled && content?.channel.isPinned == true {
+            return appearance.colorPalette.pinnedMessageBackground
+        }
+        return super.contentBackgroundColor
+    }
+
     override func updateContent() {
         super.updateContent()
 
-        if AppConfig.shared.demoAppConfig.isChannelPinningEnabled && content?.channel.isPinned == true {
-            backgroundColor = appearance.colorPalette.pinnedMessageBackground
-        }
+        backgroundColor = contentBackgroundColor
     }
 }
