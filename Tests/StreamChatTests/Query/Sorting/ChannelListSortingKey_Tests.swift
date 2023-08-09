@@ -90,7 +90,7 @@ final class ChannelListSortingKey_Tests: XCTestCase {
     func test_runtimeSortingKey_keyPath_isValid() throws {
         let key = ChannelListSortingKey.custom(keyPath: \.customScore, key: "score")
         XCTAssertTrue(key.requiresRuntimeSorting)
-        XCTAssertEqual(key.localKey, "customScore")
+        XCTAssertEqual(key.localKey, nil)
         XCTAssertEqual(key.remoteKey, "score")
         XCTAssertNil(key.sortDescriptor(isAscending: true))
         XCTAssertTrue(key.requiresRuntimeSorting)
@@ -100,7 +100,7 @@ final class ChannelListSortingKey_Tests: XCTestCase {
     func test_customNestedSortingKey_keyPath_isValid() throws {
         let key = ChannelListSortingKey.custom(keyPath: \.customNestedName, key: "employee.name")
         XCTAssertTrue(key.requiresRuntimeSorting)
-        XCTAssertEqual(key.localKey, "customNestedName")
+        XCTAssertEqual(key.localKey, nil)
         XCTAssertEqual(key.remoteKey, "employee.name")
         XCTAssertNil(key.sortDescriptor(isAscending: true))
         XCTAssertTrue(key.requiresRuntimeSorting)
