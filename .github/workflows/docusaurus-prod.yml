@@ -3,7 +3,9 @@ name: Publish Docusaurus to prod
 on:
   release:
     types: [published]
+
   workflow_dispatch:
+
 jobs:
   push_docusaurus:
     name: Publish docusaurus docs
