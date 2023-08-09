@@ -93,7 +93,7 @@ final class ChannelListFilterScope_Tests: XCTestCase {
         let id = "theid"
         let query = ChannelListQuery(
             filter: .containMembers(userIds: [id]),
-            sort: [Sorting<ChannelListSortingKey>(key: .cid)],
+            sort: [.init(key: .cid)],
             pageSize: 1,
             messagesLimit: 2,
             membersLimit: 3
