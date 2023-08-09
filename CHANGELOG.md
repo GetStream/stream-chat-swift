@@ -3,7 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+## StreamChat
+### 🐞 Fixed
+- Fix channel list custom sorting for iOS 14 and below [#2719](https://github.com/GetStream/stream-chat-swift/pull/2719)
 
 # [4.35.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.35.0)
 _August 08, 2023_
