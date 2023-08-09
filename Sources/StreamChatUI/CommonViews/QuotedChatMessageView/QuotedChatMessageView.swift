@@ -243,7 +243,11 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
             textView.text = message.text.isEmpty ? "Giphy" : message.text
         } else if let videoPayload = message.videoAttachments.first?.payload {
             attachmentPreviewView.contentMode = .scaleAspectFill
-            setVideoAttachmentPreviewImage(url: videoPayload.videoURL)
+            if let thumbnailURL = videoPayload.thumbnailURL {
+                setVideoAttachmentThumbnail(url: thumbnailURL)
+            } else {
+                setVideoAttachmentPreviewImage(url: videoPayload.videoURL)
+            }
             textView.text = message.text.isEmpty ? videoPayload.title : message.text
         } else if let voiceRecordingPayload = message.voiceRecordingAttachments.first?.payload {
             voiceRecordingAttachmentQuotedPreview.content = .init(
@@ -267,6 +271,19 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
             from: url,
             with: ImageLoaderOptions(resize: .init(attachmentPreviewSize))
         )
+    }
+
+    /// Set the image from the given URL into `attachmentPreviewImage.image`
+    /// - Parameter url: The URL of the thumbnail
+    open func setVideoAttachmentThumbnail(url: URL) {
+        components.imageLoader.downloadImage(with: .init(url: url, options: ImageDownloadOptions())) { [weak self] result in
+            switch result {
+            case let .success(preview):
+                self?.attachmentPreviewView.image = preview
+            case .failure:
+                self?.attachmentPreviewView.image = nil
+            }
+        }
     }
 
     /// Set the image from the given URL into `attachmentPreviewImage.image`
