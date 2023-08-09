@@ -5,9 +5,10 @@ on:
     # Runs "At 03:00 every night"
     - cron: '0 3 * * *'
 
-  release:
-    types:
-      - created
+  pull_request:
+    branches:
+      - 'release/*'
+      - 'hotfix/*'
 
   workflow_dispatch:
 
