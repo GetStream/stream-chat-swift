@@ -4,8 +4,7 @@ on:
   pull_request:
     branches:
       - '**'
-      - '!release/*'
-      - '!hotfix/*'
+      - '!main'
 
   workflow_dispatch:
 
