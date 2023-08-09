@@ -211,7 +211,7 @@ final class AttachmentQueueUploader_Tests: XCTestCase {
                     payload.extraData = ["test": 123]
                 }
 
-                return UploadedAttachment(attachment: attachment, remoteURL: uploadedAttachment.remoteURL)
+                return UploadedAttachment(attachment: attachment, remoteURL: uploadedAttachment.remoteURL, thumbnailURL: uploadedAttachment.thumbnailURL)
             }
         }
 
@@ -277,8 +277,17 @@ final class AttachmentQueueUploader_Tests: XCTestCase {
 
         // Save a temporary file for the attachment to be sent
         let fileData = try XCTUnwrap(fileContent.data(using: .utf8))
-        let temporaryFileURL = fileManager.temporaryDirectory.appendingPathComponent(fileName)
+        let folderURL = fileManager.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try fileManager.createDirectory(at: folderURL, withIntermediateDirectories: true)
+        let temporaryFileURL = folderURL.appendingPathComponent(fileName)
         try fileData.write(to: temporaryFileURL)
+
+        let documentsURL = try XCTUnwrap(fileManager.urls(for: .documentDirectory, in: .userDomainMask).first)
+        let attachmentsDirectory = documentsURL.appendingPathComponent("LocalAttachments")
+        var locallyStoredAttachments: [URL] {
+            (try? fileManager.contentsOfDirectory(at: attachmentsDirectory, includingPropertiesForKeys: nil)) ?? []
+        }
+        try locallyStoredAttachments.forEach(fileManager.removeItem)
 
         // WHEN
         // Create an attachment using the temporary file
@@ -291,11 +300,6 @@ final class AttachmentQueueUploader_Tests: XCTestCase {
 
         // THEN
         let attachmentDTO = try XCTUnwrap(database.viewContext.attachment(id: attachmentId))
-        let documentsURL = try XCTUnwrap(fileManager.urls(for: .documentDirectory, in: .userDomainMask).first)
-        let attachmentsDirectory = documentsURL.appendingPathComponent("LocalAttachments")
-        var locallyStoredAttachments: [URL] {
-            (try? fileManager.contentsOfDirectory(at: attachmentsDirectory, includingPropertiesForKeys: nil)) ?? []
-        }
 
         wait(for: [apiClient.uploadRequest_expectation], timeout: defaultTimeout)
 
@@ -325,7 +329,9 @@ final class AttachmentQueueUploader_Tests: XCTestCase {
 
         func saveFile(for attachmentId: AttachmentId, fileName: String) throws -> URL {
             let fileData = try XCTUnwrap("This is the file content".data(using: .utf8))
-            let temporaryFileURL = fileManager.temporaryDirectory.appendingPathComponent(fileName)
+            let folderURL = fileManager.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+            try fileManager.createDirectory(at: folderURL, withIntermediateDirectories: true)
+            let temporaryFileURL = folderURL.appendingPathComponent(fileName)
             try fileData.write(to: temporaryFileURL)
             return temporaryFileURL
         }
@@ -341,6 +347,7 @@ final class AttachmentQueueUploader_Tests: XCTestCase {
 
         let temporaryFileURL1 = try saveFile(for: attachmentId1, fileName: fileName1)
         let temporaryFileURL2 = try saveFile(for: attachmentId2, fileName: fileName2)
+        try locallyStoredAttachments.forEach(fileManager.removeItem)
 
         // WHEN
         // Create channel and message

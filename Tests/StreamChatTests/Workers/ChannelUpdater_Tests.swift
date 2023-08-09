@@ -1725,7 +1725,8 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         let attachment = UploadedAttachment(
             attachment: ChatMessageImageAttachment.mock(id: .unique).asAnyAttachment,
-            remoteURL: .localYodaQuote
+            remoteURL: .localYodaQuote,
+            thumbnailURL: nil
         )
         apiClient.uploadFile_completion?(.success(attachment))
 

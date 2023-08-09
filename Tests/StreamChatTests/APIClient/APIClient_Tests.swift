@@ -348,7 +348,8 @@ final class APIClient_Tests: XCTestCase {
         attachmentUploader.uploadAttachmentResult = .success(
             UploadedAttachment(
                 attachment: attachment,
-                remoteURL: mockedURL
+                remoteURL: mockedURL,
+                thumbnailURL: nil
             )
         )
 

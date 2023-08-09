@@ -37,7 +37,7 @@ public protocol CDNClient {
     )
 }
 
-extension CDNClient {
+public extension CDNClient {
     func uploadAttachment(
         _ attachment: AnyChatMessageAttachment,
         progress: ((Double) -> Void)?,
