@@ -5,6 +5,10 @@ on:
     # Runs "At 03:00 every night"
     - cron: '0 3 * * *'
 
+  pull_request:
+    branches:
+      - 'main'
+
   workflow_dispatch:
 
 concurrency:
