@@ -19,10 +19,6 @@ open class ChatMessageSearchVC: ChatChannelListSearchVC, ChatMessageSearchContro
 
     private var isPaginatingMessages: Bool = false
 
-    override open var isChatChannelListStatesEnabled: Bool {
-        false
-    }
-
     // MARK: - Lifecycle
 
     override open func setUp() {
