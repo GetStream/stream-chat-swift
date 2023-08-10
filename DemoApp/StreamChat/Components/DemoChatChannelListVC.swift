@@ -108,7 +108,8 @@ final class DemoChatChannelListVC: ChatChannelListVC, EventsControllerDelegate {
         presentAlert(
             title: "Filter Channels",
             actions: [defaultChannelsAction, hiddenChannelsAction, mutedChannelsAction],
-            preferredStyle: .actionSheet
+            preferredStyle: .actionSheet,
+            sourceView: filterChannelsButton
         )
     }
 
