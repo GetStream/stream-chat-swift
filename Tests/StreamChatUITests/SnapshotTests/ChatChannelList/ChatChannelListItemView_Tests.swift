@@ -276,6 +276,40 @@ final class ChatChannelListItemView_Tests: XCTestCase {
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
 
+    func test_appearance_searchedMessage() {
+        let searchedMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "May the force be with you",
+            type: .system,
+            author: .mock(id: .unique, name: "Yoda", imageURL: .localYodaImage),
+            createdAt: Date(timeIntervalSince1970: 100)
+        )
+
+        let view = channelItemView(
+            content: .init(
+                channel: .mock(
+                    cid: .unique,
+                    name: "Star Wars",
+                    unreadCount: .mock(messages: 10) // Should not display unreadCounts
+                ),
+                currentUserId: currentUser.id,
+                searchResult: .init(text: "Dummy", message: searchedMessage)
+            )
+        )
+
+        let viewWithoutChannelName = channelItemView(
+            content: .init(
+                channel: .mock(cid: .unique, name: nil),
+                currentUserId: currentUser.id,
+                searchResult: .init(text: "Dummy", message: searchedMessage)
+            )
+        )
+
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+        AssertSnapshot(viewWithoutChannelName, variants: [.defaultLight], suffix: "without-channel-name")
+    }
+
     func test_appearanceCustomization_usingAppearance() {
         var appearance = Appearance()
         appearance.fonts.bodyBold = .italicSystemFont(ofSize: 20)
@@ -422,6 +456,44 @@ final class ChatChannelListItemView_Tests: XCTestCase {
         itemView.content = .init(channel: channel, currentUserId: nil)
 
         XCTAssertEqual(itemView.titleText, channel.name)
+    }
+
+    func test_titleText_whenSearchingMessage() {
+        let userId: UserId = .unique
+
+        let channel: ChatChannel = .mock(
+            cid: .unique,
+            name: "Star Wars",
+            membership: .mock(id: userId)
+        )
+
+        let itemView = ChatChannelListItemView()
+        itemView.content = .init(
+            channel: channel,
+            currentUserId: nil,
+            searchResult: .init(text: "Dummy", message: .mock(author: .mock(id: .unique, name: "Yoda")))
+        )
+
+        XCTAssertEqual(itemView.titleText, "Yoda in Star Wars")
+    }
+
+    func test_titleText_whenSearchingMessage_whenNoChannelName() {
+        let userId: UserId = .unique
+
+        let channel: ChatChannel = .mock(
+            cid: .unique,
+            name: nil,
+            membership: .mock(id: userId)
+        )
+
+        let itemView = ChatChannelListItemView()
+        itemView.content = .init(
+            channel: channel,
+            currentUserId: nil,
+            searchResult: .init(text: "Dummy", message: .mock(author: .mock(id: .unique, name: "Yoda")))
+        )
+
+        XCTAssertEqual(itemView.titleText, "Yoda")
     }
 
     // MARK: - Subtitle
@@ -620,6 +692,17 @@ final class ChatChannelListItemView_Tests: XCTestCase {
         XCTAssertFalse(itemView.subtitleImageView.isHidden)
     }
 
+    func test_subtitleText_whenSearchingMessage() {
+        let itemView = ChatChannelListItemView()
+        itemView.content = .init(
+            channel: .mock(cid: .unique, previewMessage: nil),
+            currentUserId: nil,
+            searchResult: .init(text: "Dummy", message: .mock(text: "Some text"))
+        )
+
+        XCTAssertEqual("Some text", itemView.subtitleText)
+    }
+
     // MARK: - Timestamp
 
     func test_timestampText_isNil_whenPreviewMessageIsNil() {
@@ -647,6 +730,23 @@ final class ChatChannelListItemView_Tests: XCTestCase {
 
         let itemView = ChatChannelListItemView()
         itemView.content = .init(channel: channel, currentUserId: nil)
+
+        XCTAssertEqual(
+            itemView.timestampText,
+            "12:00 AM"
+        )
+    }
+
+    func test_timestampText_whenSearchingMessage() {
+        let itemView = ChatChannelListItemView()
+        itemView.content = .init(
+            channel: .mockNonDMChannel(previewMessage: nil),
+            currentUserId: nil,
+            searchResult: .init(
+                text: "Dummy",
+                message: .mock(text: "Some text", createdAt: Date(timeIntervalSince1970: 1))
+            )
+        )
 
         XCTAssertEqual(
             itemView.timestampText,
@@ -828,6 +928,31 @@ final class ChatChannelListItemView_Tests: XCTestCase {
                     readEventsEnabled: false
                 ),
                 currentUserId: .unique
+            )
+        )
+
+        XCTAssertNil(itemView.previewMessageDeliveryStatus)
+    }
+
+    func test_previewMessageDeliveryStatus_whenSearchingMessage() {
+        let ownReadMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: .unique,
+            author: .mock(id: .unique),
+            localState: nil,
+            isSentByCurrentUser: true,
+            readBy: [.mock(id: .unique)]
+        )
+
+        let itemView = channelItemView(
+            content: .init(
+                channel: channel(
+                    previewMessage: ownReadMessage,
+                    readEventsEnabled: true
+                ),
+                currentUserId: .unique,
+                searchResult: .init(text: "Dummy", message: .mock())
             )
         )
 

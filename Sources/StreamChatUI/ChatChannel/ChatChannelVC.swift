@@ -245,7 +245,7 @@ open class ChatChannelVC: _ViewController,
     /// Marks the channel read and updates the UI optimistically.
     public func markRead() {
         channelController.markRead()
-        messageListVC.scrollToLatestMessageButton.content = .noUnread
+        messageListVC.scrollToBottomButton.content = .noUnread
     }
 
     /// Jump to a given message.
@@ -439,7 +439,7 @@ open class ChatChannelVC: _ViewController,
         didUpdateChannel channel: EntityChange<ChatChannel>
     ) {
         let channelUnreadCount = channelController.channel?.unreadCount ?? .noUnread
-        messageListVC.scrollToLatestMessageButton.content = channelUnreadCount
+        messageListVC.scrollToBottomButton.content = channelUnreadCount
     }
 
     private func updateUnreadMessagesRelatedComponents() {

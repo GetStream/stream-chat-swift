@@ -14,9 +14,9 @@ open class ChatMentionSuggestionView: _View, ThemeProvider {
         }
     }
 
-    /// `ChatChannelAvatarView` instance which holds photo of user for tagging.
+    /// `ChatUserAvatarView` instance which holds photo of user for tagging.
     open private(set) lazy var avatarView: ChatUserAvatarView = components
-        .mentionAvatarView
+        .userAvatarView
         .init()
         .withoutAutoresizingMaskConstraints
 

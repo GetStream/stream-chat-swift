@@ -117,7 +117,7 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
             return log.debug("Not incrementing count for \(message.id) as this message has already been processed")
         }
 
-        guard let channelRead = session.loadChannelRead(cid: cid, userId: currentUser.user.id) else {
+        guard let channelRead = session.loadOrCreateChannelRead(cid: cid, userId: currentUser.user.id) else {
             return log.error("Channel read is missing", subsystems: .webSocket)
         }
 
@@ -148,7 +148,7 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
             return log.error("Current user is missing", subsystems: .webSocket)
         }
 
-        guard let channelRead = session.loadChannelRead(cid: event.cid, userId: currentUser.user.id) else {
+        guard let channelRead = session.loadOrCreateChannelRead(cid: event.cid, userId: currentUser.user.id) else {
             return log.error("Channel read is missing", subsystems: .webSocket)
         }
 

@@ -16,14 +16,14 @@ To make customizations as easy as possible all view components share the same li
 component in most cases you only need to override methods from the `Customizable` protocol such as `updateContent()`, `setUpAppearance()` or `setUpLayout()`.
 
 :::note
-Most UI components are stateless view classes. Components like `MessageList`, `ChannelList` and `MessageComposer` are stateful and are view controllers. Customization for these components are described in detail in their own doc pages.
+Most UI components are stateless view classes. Components like `MessageList`, `ChannelList` and `MessageComposer` are stateful and are view controllers. Customizations for these components are described in detail in their own doc pages.
 :::
 
 ## The `Components` object
 
 You can provide your own component class via dependency injection. The SDK exposes this via the `Components` object and the `Components.default` singleton. You should provide all customizations as early as possible in your application.
 
-Let's say that you have your own component to render messages called `MyCustomMessageView`, this is how you register it to the SDK and replace the built-in one
+Let's say that you have your own component to render messages called `MyCustomMessageView`. Here's an example how to register it in the SDK and replace the built-in one:
 
 ```swift
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
@@ -57,16 +57,16 @@ func updateContent()
 ```
 
 ### `setUp()`
-You can see this lifecycle method as a custom constructor of the view since it is only called once in the lifecycle of the component. Here it is a good place for setting delegates, adding gesture recognizers or adding any kind of target action. Usually you want to call `super.setUp()` when overriding this lifecycle method, but you can chose not to if you want to configure all the delegates and actions from scratch.
+You can see this lifecycle method as a custom constructor of the view since it is only called once in the lifecycle of the component. This is a good place for setting delegates, adding gesture recognizers or adding any kind of target action. Usually you want to call `super.setUp()` when overriding this lifecycle method, but you can choose not to if you want to configure all the delegates and actions from scratch.
 
 ### `setUpAppearance()`
-This lifecycle is where you can customize the appearance of the component, like changing colors, corner radius, everything that changes the style of the UI but not the layout. You should call `super.setUpAppearance()` if you only want to override some of the view's appearance and not everything.
+This lifecycle method is where you can customize the appearance of the component, like changing colors, corner radius, everything that changes the style of the UI but not the layout. You should call `super.setUpAppearance()` if you only want to override part of the view's appearance and not everything.
 
 ### `setUpLayout()`
-Here is where you should do customize the layout of the component, for example, changing the position of the views, padding, margins or even remove some child views. All the UI Components of the SDK use **AutoLayout** to layout the views, but our SDK provides a `ContainerStackView` component to make the customization easier. The `ContainerStackView` works very much like a `UIStackView`, in fact, it has almost the same API, but it is better suitable for our needs in terms of customizability. Just like the other lifecycle methods, you can call `super.setUpLayout()` depending on if you want to make the layout of the component from scratch or just want to change some parts of the component.
+This method is where you should customize the layout of the component, for example, changing the position of the views, padding, margins or even remove some child views. All the UI Components of the SDK use **AutoLayout** to layout the views, but our SDK provides a `ContainerStackView` component to make the customization easier. The `ContainerStackView` works very much like a `UIStackView`, in fact, it has almost the same API, but it is better suitable for our needs in terms of customizability. Just like the other lifecycle methods, you can call `super.setUpLayout()` depending on if you want to make the layout of the component from scratch or just want to change some parts of the component.
 
 ### `updateContent()`
-Finally, this last lifecycle is called whenever the data of the component changes. Here is where you can change the logic of the component, change how the data is displayed or formatted. In the Stream SDK all of the components have a `content` property that represents the data of the component. The rule of thumb to use this lifecycle is that if the change you want to do depends on the data of the component, then you should use this lifecycle method, even, for example, to do layout changes that are impacted by the content.
+Finally, this method is called whenever the data of the component changes. Here you can change the logic of the component, change how the data is displayed or formatted. In the Stream SDK all of the components have a `content` property that represents the data of the component. This method should be used if the user interface depends on the data of the component.
 
 In addition to this, view components expose their content with the `content` property. For instance the `MessageContent` component `content`'s property holds the `ChatMessage` object.
 
@@ -102,7 +102,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 | ------------- | ------------- |
 | ![Default Avatars](../assets/default-avatars.png)  | ![Bordered Avatars](../assets/bordered-avatars.png)  |
 
-And that's it 🎉 as you can see all avatars across the UI are now with a border.
+And that's it 🎉, as you can see all avatars across the UI are now with a border.
 
 #### Change Avatar only in one view
 
@@ -133,7 +133,7 @@ As you can see, we override the `authorAvatarView` property of the `QuotedChatMe
 
 ## Example: Custom Unread Count Indicator
 
-Now, to show an example on how to use to other lifecycle methods, let's try to change the channel unread count indicator to look like the one in iMessage:
+Now, to show an example on how to use the other lifecycle methods, let's try to change the channel unread count indicator to look like the one in iMessage:
 
 | Default style  | Custom "iMessage" Style |
 | ------------- | ------------- |

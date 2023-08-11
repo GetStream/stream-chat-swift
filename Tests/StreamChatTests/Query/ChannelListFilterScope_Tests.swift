@@ -72,24 +72,6 @@ final class ChannelListFilterScope_Tests: XCTestCase {
         )
     }
 
-    func test_safeSorting_added() {
-        // Sortings without safe option
-        let sortings: [[Sorting<ChannelListSortingKey>]] = [
-            [.init(key: .createdAt)],
-            [.init(key: .updatedAt), .init(key: .memberCount)]
-        ]
-
-        // Create queries with sortings
-        let queries = sortings.map {
-            ChannelListQuery(filter: .containMembers(userIds: [.unique]), sort: $0)
-        }
-
-        // Assert safe sorting option is added
-        queries.forEach {
-            XCTAssertEqual($0.sort.last?.key, Sorting<ChannelListSortingKey>(key: .cid).key)
-        }
-    }
-
     func test_hiddenFilter_valueIsDetected() {
         let hiddenValue = Bool.random()
         let testValues: [(Filter<ChannelListFilterScope>, Bool?)] = [
@@ -111,7 +93,7 @@ final class ChannelListFilterScope_Tests: XCTestCase {
         let id = "theid"
         let query = ChannelListQuery(
             filter: .containMembers(userIds: [id]),
-            sort: [Sorting<ChannelListSortingKey>(key: .cid)],
+            sort: [.init(key: .cid)],
             pageSize: 1,
             messagesLimit: 2,
             membersLimit: 3

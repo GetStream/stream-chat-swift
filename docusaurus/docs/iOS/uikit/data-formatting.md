@@ -88,11 +88,11 @@ It supports the most common Markdown syntax:
 - headings and subheadings
 - links, etc.
 
-It uses [SwiftyMarkdown](https://github.com/SimonFairbairn/SwiftyMarkdown) library internally.
+It uses the [SwiftyMarkdown](https://github.com/SimonFairbairn/SwiftyMarkdown) library internally.
 
 <center><img src={require("../assets/markdown-formatting.png").default} width="60%" height="60%"/></center>
 
-Markdown support is enabled by default. You can disable it by setting the following flag to false in the `Appearance` configuration:
+Markdown support is enabled by default. You can disable it by setting the following flag to `false` in the `Appearance` configuration:
 
 ```swift
 Appearance.default.formatters.isMarkdownEnabled = false

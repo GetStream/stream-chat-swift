@@ -104,7 +104,7 @@ public struct MessageSearchQuery: Encodable {
     public init(
         channelFilter: Filter<ChannelListFilterScope>,
         messageFilter: Filter<MessageSearchFilterScope>,
-        sort: [Sorting<MessageSearchSortingKey>] = [],
+        sort: [Sorting<MessageSearchSortingKey>] = [.init(key: .createdAt, isAscending: false)],
         pageSize: Int = .messagesPageSize
     ) {
         self.channelFilter = channelFilter

@@ -157,6 +157,10 @@ extension NSManagedObjectContext {
         delete(read)
     }
 
+    func loadOrCreateChannelRead(cid: ChannelId, userId: String) -> ChannelReadDTO? {
+        ChannelReadDTO.loadOrCreate(cid: cid, userId: userId, context: self, cache: nil)
+    }
+
     func loadChannelRead(cid: ChannelId, userId: String) -> ChannelReadDTO? {
         ChannelReadDTO.load(cid: cid, userId: userId, context: self)
     }

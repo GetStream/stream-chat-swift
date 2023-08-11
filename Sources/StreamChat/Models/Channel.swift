@@ -166,6 +166,10 @@ public struct ChatChannel {
 
     // MARK: - Internal
 
+    var hasUnread: Bool {
+        unreadCount.messages > 0
+    }
+
     /// A helper variable to cache the result of the filter for only banned members.
     //  lazy var bannedMembers: Set<ChatChannelMember> = Set(self.members.filter { $0.isBanned })
 

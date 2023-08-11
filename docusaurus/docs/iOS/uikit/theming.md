@@ -68,12 +68,12 @@ Appearance style properties are organized in three groups:
 
 ### `colorPalette`
 
-A color palette to provide basic set of colors for all UI components. The full reference can be found [here](../common-content/reference-docs/stream-chat-ui/appearance.color-palette.md)
+A color palette to provide basic set of colors for all UI components. The full reference can be found [here](../common-content/reference-docs/stream-chat-ui/appearance.color-palette.md).
 
-### fonts
+### `fonts`
 
-The set of fonts used by UI components. The full reference can be found [here](../common-content/reference-docs/stream-chat-ui/appearance.fonts.md)
+The set of fonts used by UI components. The full reference can be found [here](../common-content/reference-docs/stream-chat-ui/appearance.fonts.md).
 
-### images
+### `images`
 
-The set of images used by UI components. The full reference can be found [here](../common-content/reference-docs/stream-chat-ui/appearance.images.md)
+The set of images used by UI components. The full reference can be found [here](../common-content/reference-docs/stream-chat-ui/appearance.images.md).

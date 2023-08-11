@@ -22,6 +22,7 @@ class MessageDTO: NSManagedObject {
     @NSManaged fileprivate var localMessageStateRaw: String?
 
     @NSManaged var id: String
+    @NSManaged var cid: String?
     @NSManaged var text: String
     @NSManaged var type: String
     @NSManaged var command: String?
@@ -95,6 +96,10 @@ class MessageDTO: NSManagedObject {
 
         guard !isDeleted else {
             return
+        }
+
+        if let channel = channel, self.cid != channel.cid {
+            self.cid = channel.cid
         }
 
         // Manually mark the channel as dirty to trigger the entity update and give the UI a chance
@@ -365,7 +370,10 @@ class MessageDTO: NSManagedObject {
 
     static func messagesFetchRequest(for query: MessageSearchQuery) -> NSFetchRequest<MessageDTO> {
         let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
-        request.predicate = NSPredicate(format: "ANY searches.filterHash == %@", query.filterHash)
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            NSPredicate(format: "ANY searches.filterHash == %@", query.filterHash),
+            NSPredicate(format: "isHardDeleted == NO")
+        ])
         let sortDescriptors = query.sort.compactMap { $0.key.sortDescriptor(isAscending: $0.isAscending) }
         request.sortDescriptors = sortDescriptors.isEmpty ? [MessageSearchSortingKey.defaultSortDescriptor] : sortDescriptors
         return request
@@ -650,6 +658,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             return dto
         }
 
+        dto.cid = payload.cid?.rawValue
         dto.text = payload.text
         dto.createdAt = payload.createdAt.bridgeDate
         dto.updatedAt = payload.updatedAt.bridgeDate
@@ -1054,7 +1063,7 @@ private extension ChatMessage {
         }
 
         id = dto.id
-        cid = try? dto.channel.map { try ChannelId(cid: $0.cid) }
+        cid = try? dto.cid.map { try ChannelId(cid: $0) }
         text = dto.text
         type = MessageType(rawValue: dto.type) ?? .regular
         command = dto.command

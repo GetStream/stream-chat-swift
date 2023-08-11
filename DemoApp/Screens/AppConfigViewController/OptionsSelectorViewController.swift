@@ -15,10 +15,13 @@ class OptionsSelectorViewController<OptionType: Hashable>: UITableViewController
         }
     }
 
+    private(set) var optionFormatter: (OptionType) -> String
+
     init(
         options: [OptionType],
         initialSelectedOptions: [OptionType],
-        allowsMultipleSelection: Bool
+        allowsMultipleSelection: Bool,
+        optionFormatter: @escaping (OptionType) -> String = { "\($0)" }
     ) {
         self.options = options
         if allowsMultipleSelection {
@@ -26,6 +29,7 @@ class OptionsSelectorViewController<OptionType: Hashable>: UITableViewController
         } else if let initialOption = initialSelectedOptions.first {
             selectedOptions = [initialOption]
         }
+        self.optionFormatter = optionFormatter
         super.init(nibName: nil, bundle: nil)
         tableView.allowsMultipleSelection = allowsMultipleSelection
     }
@@ -53,7 +57,7 @@ class OptionsSelectorViewController<OptionType: Hashable>: UITableViewController
         let option = options[indexPath.row]
         let cell = UITableViewCell(style: cellType, reuseIdentifier: nil)
         cell.selectionStyle = .none
-        cell.textLabel?.text = "\(option)"
+        cell.textLabel?.text = optionFormatter(option)
 
         if selectedOptions.contains(option) {
             tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)

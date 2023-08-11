@@ -6,7 +6,7 @@ require 'net/http'
 import 'Sonarfile'
 import 'Allurefile'
 
-xcode_version = ENV['XCODE_VERSION'] || '14.3'
+xcode_version = ENV['XCODE_VERSION'] || '14.3.1'
 xcode_project = 'StreamChat.xcodeproj'
 sdk_names = ['StreamChat', 'StreamChatUI']
 github_repo = ENV['GITHUB_REPOSITORY'] || 'GetStream/stream-chat-swift'
@@ -316,8 +316,8 @@ lane :test_e2e_mock do |options|
 
   start_sinatra
 
-  device = options[:ios] && options[:ios] != 'latest' ? "#{options[:device]} (#{options[:ios]})" : options[:device]
-  prepare_simulator(device: device) if is_ci && (options[:ios].nil? || ['latest', '15.4'].include?(options[:ios]))
+  device = options[:ios] ? "#{options[:device]} (#{options[:ios]})" : options[:device]
+  prepare_simulator(device: device) if is_ci
 
   scan_options = {
     project: xcode_project,

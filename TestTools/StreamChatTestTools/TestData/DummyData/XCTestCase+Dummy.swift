@@ -150,7 +150,8 @@ extension XCTestCase {
         channelExtraData: [String: RawJSON] = [:],
         createdAt: Date = XCTestCase.channelCreatedDate,
         truncatedAt: Date? = nil,
-        cooldownDuration: Int? = nil
+        cooldownDuration: Int? = nil,
+        channelReads: [ChannelReadPayload]? = nil
     ) -> ChannelPayload {
         var payloadMessages: [MessagePayload] = []
         if let messages = messages {
@@ -192,7 +193,7 @@ extension XCTestCase {
                 membership: includeMembership ? members.first : nil,
                 messages: payloadMessages,
                 pinnedMessages: pinnedMessages,
-                channelReads: [dummyChannelRead],
+                channelReads: channelReads ?? [dummyChannelRead],
                 isHidden: false
             )
 

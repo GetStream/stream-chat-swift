@@ -357,6 +357,13 @@ class DatabaseSession_Mock: DatabaseSession {
     func deleteQueuedRequest(id: String) {
         underlyingSession.deleteQueuedRequest(id: id)
     }
+
+    func loadOrCreateChannelRead(
+        cid: StreamChat.ChannelId,
+        userId: StreamChat.UserId
+    ) -> StreamChat.ChannelReadDTO? {
+        underlyingSession.loadChannelRead(cid: cid, userId: userId)
+    }
 }
 
 private extension DatabaseSession_Mock {

@@ -50,6 +50,7 @@ class ListDatabaseObserverWrapper<Item, DTO: NSManagedObject> {
         database: DatabaseContainer,
         fetchRequest: NSFetchRequest<DTO>,
         itemCreator: @escaping (DTO) throws -> Item,
+        sorting: [SortValue<Item>] = [],
         fetchedResultsControllerType: NSFetchedResultsController<DTO>.Type = NSFetchedResultsController<DTO>.self
     ) {
         self.isBackground = isBackground
@@ -58,6 +59,7 @@ class ListDatabaseObserverWrapper<Item, DTO: NSManagedObject> {
                 context: database.backgroundReadOnlyContext,
                 fetchRequest: fetchRequest,
                 itemCreator: itemCreator,
+                sorting: sorting,
                 fetchedResultsControllerType: fetchedResultsControllerType
             )
         } else {
@@ -65,6 +67,7 @@ class ListDatabaseObserverWrapper<Item, DTO: NSManagedObject> {
                 context: database.viewContext,
                 fetchRequest: fetchRequest,
                 itemCreator: itemCreator,
+                sorting: sorting,
                 fetchedResultsControllerType: fetchedResultsControllerType
             )
         }
@@ -92,6 +95,7 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
 
     /// Used to convert the `DTO`s to the resulting `Item`s.
     private let itemCreator: (DTO) throws -> Item
+    private let sorting: [SortValue<Item>]
 
     /// Used for observing the changes in the DB.
     let frc: NSFetchedResultsController<DTO>
@@ -141,9 +145,11 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
         context: NSManagedObjectContext,
         fetchRequest: NSFetchRequest<DTO>,
         itemCreator: @escaping (DTO) throws -> Item,
+        sorting: [SortValue<Item>],
         fetchedResultsControllerType: NSFetchedResultsController<DTO>.Type = NSFetchedResultsController<DTO>.self
     ) {
         self.itemCreator = itemCreator
+        self.sorting = sorting
         changeAggregator = ListChangeAggregator<DTO, Item>(itemCreator: itemCreator)
         frc = fetchedResultsControllerType.init(
             fetchRequest: fetchRequest,
@@ -182,7 +188,9 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
 
         frc.delegate = changeAggregator
 
-        processItems()
+        frc.managedObjectContext.perform {
+            self.processInitialItems()
+        }
     }
 
     private func notifyWillChange() {
@@ -192,6 +200,7 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
     }
 
     private func notifyDidChange(changes: [ListChange<Item>]) {
+        guard !changes.isEmpty else { return }
         DispatchQueue.main.async { [weak self] in
             self?.onDidChange?(changes)
         }
@@ -212,14 +221,24 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
             }
         }
 
+        let sorting = self.sorting
         group.notify(queue: queue) {
-            completion(items.compactMap { $0 })
+            var result = items.compactMap { $0 }
+            if !sorting.isEmpty {
+                result = result.sort(using: sorting)
+            }
+            completion(result)
         }
     }
 
-    private func processItems(_ changes: [ListChange<Item>] = []) {
+    private func processInitialItems() {
+        processItems(nil)
+    }
+
+    private func processItems(_ changes: [ListChange<Item>]?) {
         mapItems { [weak self] items in
             self?._items = items
+            let changes = changes ?? items.enumerated().map { .insert($1, index: IndexPath(item: $0, section: 0)) }
             self?.notifyDidChange(changes: changes)
         }
     }

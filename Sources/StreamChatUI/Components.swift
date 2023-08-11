@@ -251,8 +251,8 @@ public struct Components {
     /// The view that shows a badge on `giphyAttachmentView`.
     public var giphyBadgeView: ChatMessageGiphyView.GiphyBadge.Type = ChatMessageGiphyView.GiphyBadge.self
 
-    /// The button that indicates unread messages at the bottom of the message list and scroll to the latest message on tap.
-    public var scrollToLatestMessageButton: ScrollToLatestMessageButton.Type = ScrollToLatestMessageButton.self
+    /// The button that indicates unread messages at the bottom of the message list and scroll to the bottom on tap.
+    public var scrollToBottomButton: ScrollToBottomButton.Type = ScrollToBottomButton.self
 
     /// The button that shows when there are unread messages outside the bounds of the screen. Can be tapped to scroll to them, or can be discarded.
     public var jumpToUnreadMessagesButton: JumpToUnreadMessagesButton.Type = JumpToUnreadMessagesButton.self
@@ -330,6 +330,10 @@ public struct Components {
     /// A boolean value that determines whether the thread view renders the parent message at the top.
     public var threadRendersParentMessageEnabled = true
 
+    /// A boolean value that determines if thread replies start from the oldest replies.
+    /// By default it is false, and newest replies are rendered in the first page.
+    public var threadRepliesStartFromOldest = false
+
     // MARK: - Channel components
 
     /// The view controller that contains the channel messages and represents the chat view.
@@ -353,7 +357,7 @@ public struct Components {
     /// The view that shows channel information.
     public var channelContentView: ChatChannelListItemView.Type = ChatChannelListItemView.self
 
-    /// The view that shows a user avatar including an indicator of the user presence (online/offline).
+    /// The view that shows the channel avatar including an indicator of the user presence (online/offline).
     public var channelAvatarView: ChatChannelAvatarView.Type = ChatChannelAvatarView.self
 
     /// The view that shows a number of unread messages in channel.
@@ -371,6 +375,27 @@ public struct Components {
     /// A boolean value that determines whether the Channel list default loading states (empty, error and loading views) are handled by the Stream SDK. It is false by default.
     /// If it is false, it does not show empty or error views and just shows a spinner indicator for the loading state. If set to true, the empty, error and shimmer loading views are shown instead.
     public var isChatChannelListStatesEnabled = false
+
+    // MARK: - Channel Search
+
+    /// The channel list search strategy. By default, search is disabled so it is `nil`.
+    ///
+    /// To enable searching by messages you can provide the following strategy:
+    /// ```
+    /// // With default UI Component
+    /// Components.default.channelListSearchStrategy = .messages
+    /// // With custom UI Component
+    /// Components.default.channelListSearchStrategy = .messages(CustomChatMessageSearchVC.self)
+    /// ```
+    ///
+    /// To enable searching by channels you can provide the following strategy:
+    /// ```
+    /// // With default UI Component
+    /// Components.default.channelListSearchStrategy = .channels
+    /// // With custom UI Component
+    /// Components.default.channelListSearchStrategy = .channels(CustomChatChannelSearchVC.self)
+    /// ```
+    public var channelListSearchStrategy: ChannelListSearchStrategy?
 
     // MARK: - Composer components
 
@@ -434,8 +459,8 @@ public struct Components {
     public var suggestionsHeaderView: ChatSuggestionsHeaderView.Type =
         ChatSuggestionsHeaderView.self
 
-    /// A type for the view used as avatar when picking users to mention.
-    public var mentionAvatarView: ChatUserAvatarView.Type = ChatUserAvatarView.self
+    /// The view that shows a user avatar including an indicator of the user presence (online/offline).
+    public var userAvatarView: ChatUserAvatarView.Type = ChatUserAvatarView.self
 
     // MARK: - Composer VoiceRecording components
 
@@ -508,6 +533,27 @@ public extension Components {
         }
         set {
             DefaultChannelNameFormatter.channelNamer = newValue
+        }
+    }
+
+    /// The button that indicates unread messages at the bottom of the message list and scroll to the latest message on tap.
+    @available(*, deprecated, renamed: "scrollToBottomButton")
+    var scrollToLatestMessageButton: ScrollToBottomButton.Type {
+        get {
+            scrollToBottomButton
+        }
+        set {
+            scrollToBottomButton = newValue
+        }
+    }
+
+    @available(*, deprecated, renamed: "userAvatarView")
+    var mentionAvatarView: ChatUserAvatarView.Type {
+        get {
+            userAvatarView
+        }
+        set {
+            userAvatarView = newValue
         }
     }
 }

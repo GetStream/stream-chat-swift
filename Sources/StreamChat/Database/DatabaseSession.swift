@@ -288,6 +288,10 @@ protocol ChannelReadDatabaseSession {
         cache: PreWarmedCache?
     ) throws -> ChannelReadDTO
 
+    /// Creates (if doesn't exist) and fetches  `ChannelReadDTO` with the given `cid` and `userId`
+    /// from the DB.
+    func loadOrCreateChannelRead(cid: ChannelId, userId: UserId) -> ChannelReadDTO?
+
     /// Fetches `ChannelReadDTO` with the given `cid` and `userId` from the DB.
     /// Returns `nil` if no `ChannelReadDTO` matching the `cid` and `userId`  exists.
     func loadChannelRead(cid: ChannelId, userId: UserId) -> ChannelReadDTO?

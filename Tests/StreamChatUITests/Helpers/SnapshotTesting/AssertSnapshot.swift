@@ -39,11 +39,7 @@ func AssertSnapshot(
 ) {
     let viewController = isEmbeddedInNavigationController ? UINavigationController(rootViewController: vc) : vc
 
-    // Test the variants in multiple orders to make sure there's
-    // no layout issues when transitioning between multiple traits.
-    let variantsToTest = record ? variants : variants + variants.reversed()
-
-    variantsToTest.forEach { variant in
+    variants.forEach { variant in
         assertSnapshot(
             matching: viewController,
             as: .image(perceptualPrecision: 0.98, size: screenSize, traits: variant.traits),
@@ -78,11 +74,7 @@ func AssertSnapshot(
     file: StaticString = #filePath,
     function: String = #function
 ) {
-    // Test the variants in multiple orders to make sure there's
-    // no layout issues when transitioning between multiple traits.
-    let variantsToTest = record ? variants : variants + variants.reversed()
-
-    variantsToTest.forEach { variant in
+    variants.forEach { variant in
         assertSnapshot(
             matching: view,
             as: size != nil ?
@@ -149,11 +141,7 @@ func AssertSnapshot<View: SwiftUI.View>(
     file: StaticString = #filePath,
     function: String = #function
 ) {
-    // Test the variants in multiple orders to make sure there's
-    // no layout issues when transitioning between multiple traits.
-    let variantsToTest = record ? variants : variants + variants.reversed()
-
-    variantsToTest.forEach { variant in
+    variants.forEach { variant in
         assertSnapshot(
             matching: view,
             as: size != nil ?

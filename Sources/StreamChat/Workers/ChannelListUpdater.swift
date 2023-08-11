@@ -19,9 +19,20 @@ class ChannelListUpdater: Worker {
         fetch(channelListQuery: channelListQuery) { [weak self] in
             switch $0 {
             case let .success(channelListPayload):
+                let isInitialFetch = channelListQuery.pagination.cursor == nil && channelListQuery.pagination.offset == 0
+                var initialActions: ((DatabaseSession) -> Void)?
+                if isInitialFetch {
+                    initialActions = { session in
+                        let filterHash = channelListQuery.filter.filterHash
+                        guard let queryDTO = session.channelListQuery(filterHash: filterHash) else { return }
+                        queryDTO.channels.removeAll()
+                    }
+                }
+
                 self?.writeChannelListPayload(
                     payload: channelListPayload,
                     query: channelListQuery,
+                    initialActions: initialActions,
                     completion: completion
                 )
             case let .failure(error):
@@ -134,6 +145,46 @@ class ChannelListUpdater: Worker {
         apiClient.request(endpoint: .markAllRead()) {
             completion?($0.error)
         }
+    }
+
+    /// Links a channel to the given query.
+    func link(channel: ChatChannel, with query: ChannelListQuery, completion: ((Error?) -> Void)? = nil) {
+        database.write { session in
+            guard let (channelDTO, queryDTO) = session.getChannelWithQuery(cid: channel.cid, query: query) else {
+                return
+            }
+            queryDTO.channels.insert(channelDTO)
+        } completion: { error in
+            completion?(error)
+        }
+    }
+
+    /// Unlinks a channel to the given query.
+    func unlink(channel: ChatChannel, with query: ChannelListQuery, completion: ((Error?) -> Void)? = nil) {
+        database.write { session in
+            guard let (channelDTO, queryDTO) = session.getChannelWithQuery(cid: channel.cid, query: query) else {
+                return
+            }
+            queryDTO.channels.remove(channelDTO)
+        } completion: { error in
+            completion?(error)
+        }
+    }
+}
+
+private extension DatabaseSession {
+    func getChannelWithQuery(cid: ChannelId, query: ChannelListQuery) -> (ChannelDTO, ChannelListQueryDTO)? {
+        guard let queryDTO = channelListQuery(filterHash: query.filter.filterHash) else {
+            log.debug("Channel list query has not yet created \(query)")
+            return nil
+        }
+
+        guard let channelDTO = channel(cid: cid) else {
+            log.debug("Channel \(cid) cannot be found in database.")
+            return nil
+        }
+
+        return (channelDTO, queryDTO)
     }
 }
 
