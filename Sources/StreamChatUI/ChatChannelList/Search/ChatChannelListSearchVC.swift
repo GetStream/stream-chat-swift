@@ -19,6 +19,10 @@ open class ChatChannelListSearchVC: ChatChannelListVC, UISearchResultsUpdating {
         ScrollViewPaginationHandler(scrollView: collectionView)
     }()
 
+    override open var isChatChannelListStatesEnabled: Bool {
+        false
+    }
+
     // MARK: - Lifecycle
 
     override open func setUpLayout() {
