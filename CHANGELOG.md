@@ -13,6 +13,7 @@ _August 09, 2023_
 ## StreamChat
 ### 🐞 Fixed
 - Fix channel list sorting for iOS 14 and below [#2719](https://github.com/GetStream/stream-chat-swift/pull/2719)
+- Fix video attachments not being sent with `thumb_url`, which caused issues in other platforms [#2720](https://github.com/GetStream/stream-chat-swift/pull/2720)
 
 # [4.35.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.35.0)
 _August 08, 2023_
@@ -26,7 +27,6 @@ _August 08, 2023_
 - Fix messages disappearing in search query after entering a channel [#2700](https://github.com/GetStream/stream-chat-swift/pull/2700)
 - Fix unread counts not updating if the channelRead information was missing from the persistence storage [#2709](https://github.com/GetStream/stream-chat-swift/pull/2709)
 - Fix channel search with `autocomplete` only showing results if value started with the given query [#2703](https://github.com/GetStream/stream-chat-swift/pull/2703)
-- Fix video attachments not being sent with `thumb_url`, which caused issues in other platforms [#2720](https://github.com/GetStream/stream-chat-swift/pull/2720)
 
 ## StreamChatUI
 ### ✅ Added

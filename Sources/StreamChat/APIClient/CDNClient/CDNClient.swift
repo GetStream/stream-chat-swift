@@ -8,6 +8,11 @@ import Foundation
 public struct UploadedFile: Decodable {
     public let fileURL: URL
     public let thumbnailURL: URL?
+
+    public init(fileURL: URL, thumbnailURL: URL? = nil) {
+        self.fileURL = fileURL
+        self.thumbnailURL = thumbnailURL
+    }
 }
 
 /// The CDN client is responsible to upload files to a CDN.

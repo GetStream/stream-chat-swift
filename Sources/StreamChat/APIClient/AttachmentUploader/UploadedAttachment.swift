@@ -18,7 +18,7 @@ public struct UploadedAttachment {
     public init(
         attachment: AnyChatMessageAttachment,
         remoteURL: URL,
-        thumbnailURL: URL?
+        thumbnailURL: URL? = nil
     ) {
         self.attachment = attachment
         self.remoteURL = remoteURL

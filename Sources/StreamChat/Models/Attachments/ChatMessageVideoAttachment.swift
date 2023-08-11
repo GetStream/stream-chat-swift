@@ -39,7 +39,7 @@ public struct VideoAttachmentPayload: AttachmentPayload {
     /// Creates `VideoAttachmentPayload` instance.
     ///
     /// Use this initializer if the attachment is already uploaded and you have the remote URLs.
-    public init(title: String?, videoRemoteURL: URL, thumbnailURL: URL?, file: AttachmentFile, extraData: [String: RawJSON]?) {
+    public init(title: String?, videoRemoteURL: URL, thumbnailURL: URL? = nil, file: AttachmentFile, extraData: [String: RawJSON]?) {
         self.title = title
         videoURL = videoRemoteURL
         self.thumbnailURL = thumbnailURL
