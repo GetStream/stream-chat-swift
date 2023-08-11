@@ -3,6 +3,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### 🐞 Fixed
+- Fix video attachments not being sent with `thumb_url`, which caused issues in other platforms [#2720](https://github.com/GetStream/stream-chat-swift/pull/2720)
+
 ## StreamChatUI
 ### 🐞 Fixed
 - Explicitly disable channel list states for Search Components [#2725](https://github.com/GetStream/stream-chat-swift/pull/2725)
@@ -13,7 +17,6 @@ _August 09, 2023_
 ## StreamChat
 ### 🐞 Fixed
 - Fix channel list sorting for iOS 14 and below [#2719](https://github.com/GetStream/stream-chat-swift/pull/2719)
-- Fix video attachments not being sent with `thumb_url`, which caused issues in other platforms [#2720](https://github.com/GetStream/stream-chat-swift/pull/2720)
 
 # [4.35.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.35.0)
 _August 08, 2023_
