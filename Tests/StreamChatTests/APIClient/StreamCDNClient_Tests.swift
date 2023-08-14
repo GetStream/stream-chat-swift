@@ -33,7 +33,7 @@ final class StreamCDNClient_Tests: XCTestCase {
                 )
             ),
             progress: nil,
-            completion: { _ in }
+            completion: { (_: Result<UploadedFile, Error>) in }
         )
 
         // Check the encoder is called with the correct endpoint
@@ -48,7 +48,7 @@ final class StreamCDNClient_Tests: XCTestCase {
         builder.encoder.encodeRequest = .failure(testError)
 
         // Create a request and assert the result is failure
-        let result = try waitFor {
+        let result: Result<UploadedFile, Error> = try waitFor {
             client.uploadAttachment(
                 .dummy(
                     uploadingState: .init(
@@ -81,11 +81,11 @@ final class StreamCDNClient_Tests: XCTestCase {
         // Set up a decoder response
         // ⚠️ Watch out: the user is different there, so we can distinguish between the incoming data
         // to the encoder, and the outgoing data).
-        let payload = FileUploadPayload(fileURL: .unique())
+        let payload = FileUploadPayload(fileURL: .unique(), thumbURL: .unique())
         decoder.decodeRequestResponse = .success(payload)
 
         // Create a request and wait for the completion block
-        let result = try waitFor {
+        let result: Result<UploadedFile, Error> = try waitFor {
             client.uploadAttachment(
                 .dummy(
                     uploadingState: .init(
@@ -104,7 +104,7 @@ final class StreamCDNClient_Tests: XCTestCase {
         XCTAssertEqual(decoder.decodeRequestResponse_response?.statusCode, 234)
 
         // Check the outgoing data is from the decoder
-        XCTAssertEqual(try result.get(), payload.fileURL)
+        XCTAssertEqual(try result.get().fileURL, payload.fileURL)
     }
 
     func test_uploadFileFailure() throws {
@@ -127,7 +127,7 @@ final class StreamCDNClient_Tests: XCTestCase {
         decoder.decodeRequestResponse = .failure(encoderError)
 
         // Create a request and wait for the completion block
-        let result = try waitFor {
+        let result: Result<UploadedFile, Error> = try waitFor {
             client.uploadAttachment(
                 .dummy(
                     uploadingState: .init(
@@ -188,7 +188,7 @@ final class StreamCDNClient_Tests: XCTestCase {
                 )
             ),
             progress: nil,
-            completion: { _ in }
+            completion: { (_: Result<UploadedFile, Error>) in }
         )
 
         // Check a network request is made with the values from `testRequest`

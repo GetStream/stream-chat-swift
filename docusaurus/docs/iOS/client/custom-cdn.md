@@ -23,6 +23,7 @@ protocol UploadFileAPI {
 }
 protocol FileDetails {
     var url: URL { get }
+    var thumbnailURL: URL { get }
 }
 
 final class CustomCDNClient: CDNClient {
@@ -38,7 +39,7 @@ final class CustomCDNClient: CDNClient {
     func uploadAttachment(
         _ attachment: AnyChatMessageAttachment,
         progress: ((Double) -> Void)?,
-        completion: @escaping (Result<URL, Error>
+        completion: @escaping (Result<UploadedFile, Error>
     ) -> Void) {
         // The local file url is present in attachment.uploadingState.
         guard let uploadingState = attachment.uploadingState,
@@ -47,7 +48,8 @@ final class CustomCDNClient: CDNClient {
         }
 
         uploadFileApi.uploadFile(data: fileData, progress: progress) { file in
-            completion(.success(file.url))
+            let uploadedFile = UploadedFile(url: file.url, thumbnailURL: file.thumbnailURL)
+            completion(.success(uploadedFile))
         }
     }
 

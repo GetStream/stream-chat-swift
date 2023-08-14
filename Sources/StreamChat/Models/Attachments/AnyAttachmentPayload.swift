@@ -125,6 +125,7 @@ public extension AnyAttachmentPayload {
             payload = VideoAttachmentPayload(
                 title: localFileURL.lastPathComponent,
                 videoRemoteURL: localFileURL,
+                thumbnailURL: nil,
                 file: file,
                 extraData: extraData
             )
