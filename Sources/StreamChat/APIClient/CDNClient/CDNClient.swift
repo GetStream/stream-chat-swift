@@ -48,7 +48,7 @@ public extension CDNClient {
         progress: ((Double) -> Void)?,
         completion: @escaping (Result<UploadedFile, Error>) -> Void
     ) {
-        uploadAttachment(attachment, progress: progress, completion: { result in
+        uploadAttachment(attachment, progress: progress, completion: { (result: Result<URL, Error>) in
             switch result {
             case let .success(url):
                 completion(.success(UploadedFile(fileURL: url, thumbnailURL: nil)))
@@ -84,7 +84,7 @@ class StreamCDNClient: CDNClient {
         progress: ((Double) -> Void)? = nil,
         completion: @escaping (Result<URL, Error>) -> Void
     ) {
-        uploadAttachment(attachment, progress: progress, completion: { result in
+        uploadAttachment(attachment, progress: progress, completion: { (result: Result<UploadedFile, Error>) in
             switch result {
             case let .success(file):
                 completion(.success(file.fileURL))
