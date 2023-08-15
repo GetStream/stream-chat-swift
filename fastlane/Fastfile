@@ -16,7 +16,7 @@ before_all do |lane|
   if is_ci
     setup_ci
     ENV['FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT'] = '180'
-    xcodes(version: xcode_version, select_for_current_build_only: true) unless [:publish_release, :allure_launch].include?(lane)
+    xcversion(version: xcode_version) unless [:publish_release, :allure_launch].include?(lane)
   end
 end
 
@@ -316,15 +316,14 @@ lane :test_e2e_mock do |options|
 
   start_sinatra
 
-  device = options[:ios] ? "#{options[:device]} (#{options[:ios]})" : options[:device]
-  prepare_simulator(device: device) if is_ci
+  prepare_simulator(device: options[:device]) if is_ci
 
   scan_options = {
     project: xcode_project,
     scheme: 'StreamChatUITestsApp',
     testplan: 'StreamChatUITestsApp',
     result_bundle: true,
-    devices: device,
+    devices: options[:device],
     number_of_retries: 3 # TODO: CIS-1737
   }
 

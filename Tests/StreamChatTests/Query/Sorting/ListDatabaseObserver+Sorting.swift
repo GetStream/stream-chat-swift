@@ -211,6 +211,11 @@ final class ListDatabaseObserver_Sorting: XCTestCase {
     }
 
     func test_timeToProcessMultipleChatChannels_runtimeSorting_foreground() throws {
+        try XCTSkipIf(
+            ProcessInfo().operatingSystemVersion.majorVersion < 15,
+            "https://github.com/GetStream/ios-issues-tracking/issues/515"
+        )
+        
         measureMetrics([.wallClockTime], automaticallyStartMeasuring: false) {
             do {
                 try assert_timeToProcessMultipleChatChannels_runtimeSorting(isBackground: false)
@@ -221,6 +226,11 @@ final class ListDatabaseObserver_Sorting: XCTestCase {
     }
 
     func test_timeToProcessMultipleChatChannels_runtimeSorting_background() throws {
+        try XCTSkipIf(
+            ProcessInfo().operatingSystemVersion.majorVersion < 15,
+            "https://github.com/GetStream/ios-issues-tracking/issues/515"
+        )
+        
         measureMetrics([.wallClockTime], automaticallyStartMeasuring: false) {
             do {
                 try assert_timeToProcessMultipleChatChannels_runtimeSorting(isBackground: true)
@@ -255,6 +265,11 @@ final class ListDatabaseObserver_Sorting: XCTestCase {
     }
 
     func test_timeToProcessMultipleChatChannels_defaultSorting_foreground() throws {
+        try XCTSkipIf(
+            ProcessInfo().operatingSystemVersion.majorVersion < 15,
+            "https://github.com/GetStream/ios-issues-tracking/issues/515"
+        )
+        
         measureMetrics([.wallClockTime], automaticallyStartMeasuring: false) {
             do {
                 try assert_timeToProcessMultipleChatChannels_defaultSorting(isBackground: false)
@@ -265,6 +280,11 @@ final class ListDatabaseObserver_Sorting: XCTestCase {
     }
 
     func test_timeToProcessMultipleChatChannels_defaultSorting_background() throws {
+        try XCTSkipIf(
+            ProcessInfo().operatingSystemVersion.majorVersion < 15,
+            "https://github.com/GetStream/ios-issues-tracking/issues/515"
+        )
+        
         measureMetrics([.wallClockTime], automaticallyStartMeasuring: false) {
             do {
                 try assert_timeToProcessMultipleChatChannels_defaultSorting(isBackground: true)

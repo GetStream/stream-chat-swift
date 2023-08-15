@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChatUI
 ### 🐞 Fixed
 - Explicitly disable channel list states for Search Components [#2725](https://github.com/GetStream/stream-chat-swift/pull/2725)
+- Fix blank channel name in Message Search [#2726](https://github.com/GetStream/stream-chat-swift/pull/2726)
 
 # [4.35.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.35.1)
 _August 09, 2023_

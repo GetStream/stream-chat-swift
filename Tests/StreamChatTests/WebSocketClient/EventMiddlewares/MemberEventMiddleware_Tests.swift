@@ -104,6 +104,11 @@ final class MemberEventMiddleware_Tests: XCTestCase {
     }
 
     func test_memberAddedEvent_linksNewMember_toMemberListQueries() throws {
+        try XCTSkipIf(
+            ProcessInfo().operatingSystemVersion.majorVersion < 15,
+            "https://github.com/GetStream/ios-issues-tracking/issues/515"
+        )
+        
         let cid = ChannelId.unique
         let newMemberId = UserId.unique
 
