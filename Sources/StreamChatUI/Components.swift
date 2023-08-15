@@ -477,6 +477,9 @@ public struct Components {
     /// The AudioPlayer that will be used for the voiceRecording playback.
     public var audioPlayer: AudioPlaying.Type = StreamAudioQueuePlayer.self
 
+    /// The default destination for the audio output played by `audioPlayer`.
+    public var audioPlayerDefaultAudioOutput: AudioOutputDestination = .speaker
+
     /// The AudioRecorder that will be used to record new voiceRecordings.
     public var audioRecorder: AudioRecording.Type = StreamAudioRecorder.self
 

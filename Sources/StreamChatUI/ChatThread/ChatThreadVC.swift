@@ -67,7 +67,7 @@ open class ChatThreadVC: _ViewController,
     /// The audioPlayer  that will be used for the playback of VoiceRecordings
     open private(set) lazy var audioPlayer: AudioPlaying = components
         .audioPlayer
-        .init()
+        .init(outputDestination: components.audioPlayerDefaultAudioOutput)
 
     /// The provider that will be asked to provide the next VoiceRecording to play automatically once the
     /// currently playing one, finishes.

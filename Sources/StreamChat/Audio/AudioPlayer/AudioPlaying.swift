@@ -8,6 +8,7 @@ import Foundation
 /// A protocol describing an object that can be manage the playback of an audio file or stream.
 public protocol AudioPlaying: AnyObject {
     init()
+    init(outputDestination: AudioOutputDestination)
 
     /// Subscribes the provided object on AudioPlayer's updates
     func subscribe(_ subscriber: AudioPlayingDelegate)
@@ -38,6 +39,12 @@ public protocol AudioPlaying: AnyObject {
     /// Performs a seek in the loaded asset's timeline at the provided time.
     /// - Parameter time: The time to seek at
     func seek(to time: TimeInterval)
+}
+
+extension AudioPlaying {
+    public init(outputDestination: AudioOutputDestination) {
+        self.init()
+    }
 }
 
 /// An implementation of ``AudioPlaying`` that can be used to stream audio files from a URL
@@ -79,11 +86,15 @@ open class StreamAudioPlayer: AudioPlaying, AppStateObserverDelegate {
     // MARK: - Lifecycle
 
     public required convenience init() {
+        self.init(outputDestination: .speaker)
+    }
+
+    public required convenience init(outputDestination: AudioOutputDestination) {
         self.init(
             assetPropertyLoader: StreamAssetPropertyLoader(),
             playerObserver: StreamPlayerObserver(),
             player: .init(),
-            audioSessionConfigurator: StreamAudioSessionConfigurator(),
+            audioSessionConfigurator: StreamAudioSessionConfigurator(outputDestination: outputDestination),
             appStateObserver: StreamAppStateObserver()
         )
     }

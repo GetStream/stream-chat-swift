@@ -33,8 +33,22 @@ protocol AudioSessionConfiguring {
 
 // MARK: - Implementation
 
+public enum AudioOutputDestination {
+    case speaker
+    case earpiece
+
+    fileprivate var portOverride: AVAudioSession.PortOverride {
+        switch self {
+        case .speaker:
+            return .speaker
+        case .earpiece:
+            return .none
+        }
+    }
+}
+
 #if os(macOS) && !targetEnvironment(macCatalyst)
-/// An implementation where for macOS we don't have interactions with AVAudioSession as it's not available.
+/// An implementation for macOS where we don't have interactions with AVAudioSession as it's not available.
 final class StreamAudioSessionConfigurator: AudioSessionConfiguring {
     func activateRecordingSession() throws { /* No-op */ }
 
@@ -51,23 +65,28 @@ final class StreamAudioSessionConfigurator: AudioSessionConfiguring {
     private static let recordingCategories: Set<AVAudioSession.Category> = [.record, .playAndRecord]
     private static let playbackCategories: Set<AVAudioSession.Category> = [.playback, .playAndRecord]
 
+    /// The default output destination for the audio session
+    private let outputDestination: AudioOutputDestination
+
     /// The audioSession with which the configurator will interact.
     private let audioSession: AudioSessionProtocol
 
     init(
-        _ audioSession: AudioSessionProtocol
+        outputDestination: AudioOutputDestination,
+        _ audioSession: AudioSessionProtocol = AVAudioSession.sharedInstance()
     ) {
+        self.outputDestination = outputDestination
         self.audioSession = audioSession
     }
 
     // MARK: - AudioSessionConfigurator
 
     required convenience init() {
-        self.init(AVAudioSession.sharedInstance())
+        self.init(outputDestination: .speaker, AVAudioSession.sharedInstance())
     }
 
     /// - Note: This method is using the `.playAndRecord` category with the `.spokenAudio` mode.
-    /// The preferredInput will be set to `.buildInMic` and overrideOutputAudioPort to `.speaker`.
+    /// The preferredInput will be set to `.buildInMic` and overrideOutputAudioPort to  the one defined in `outputDestination`.
     func activateRecordingSession() throws {
         guard !Self.recordingCategories.contains(audioSession.category) else {
             return
@@ -79,7 +98,7 @@ final class StreamAudioSessionConfigurator: AudioSessionConfiguring {
             options: []
         )
         try setUpPreferredInput(.builtInMic)
-        try audioSession.overrideOutputAudioPort(.speaker)
+        try audioSession.overrideOutputAudioPort(outputDestination.portOverride)
         try audioSession.setActive(true, options: [])
     }
 
@@ -95,7 +114,7 @@ final class StreamAudioSessionConfigurator: AudioSessionConfiguring {
 
     /// - Note: The method will check if the audioSession's category contains the `playback` capability
     /// and if it doesn't it will activate it using the `.playback` category and `.default` for both mode
-    /// and policy.  OverrideOutputAudioPort is set to `.speaker`.
+    /// and policy.  OverrideOutputAudioPort is set to the one defined in `outputDestination`.
     func activatePlaybackSession() throws {
         guard !Self.playbackCategories.contains(audioSession.category) else {
             return
@@ -106,7 +125,7 @@ final class StreamAudioSessionConfigurator: AudioSessionConfiguring {
             policy: .default,
             options: []
         )
-        try audioSession.overrideOutputAudioPort(.speaker)
+        try audioSession.overrideOutputAudioPort(outputDestination.portOverride)
         try audioSession.setActive(true, options: [])
     }
 
