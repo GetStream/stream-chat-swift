@@ -181,6 +181,7 @@ class AttachmentQueueUploader: Worker {
 
         attachmentUpdater.update(&attachment, forPayload: VideoAttachmentPayload.self) { payload in
             payload.videoURL = uploadedAttachment.remoteURL
+            payload.thumbnailURL = uploadedAttachment.thumbnailURL
         }
 
         attachmentUpdater.update(&attachment, forPayload: AudioAttachmentPayload.self) { payload in
