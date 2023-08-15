@@ -496,6 +496,25 @@ final class ChatChannelListItemView_Tests: XCTestCase {
         XCTAssertEqual(itemView.titleText, "Yoda")
     }
 
+    func test_titleText_whenSearchingMessage_whenChannelNameIsEmpty() {
+        let userId: UserId = .unique
+
+        let channel: ChatChannel = .mock(
+            cid: .unique,
+            name: "",
+            membership: .mock(id: userId)
+        )
+
+        let itemView = ChatChannelListItemView()
+        itemView.content = .init(
+            channel: channel,
+            currentUserId: nil,
+            searchResult: .init(text: "Dummy", message: .mock(author: .mock(id: .unique, name: "Yoda")))
+        )
+
+        XCTAssertEqual(itemView.titleText, "Yoda")
+    }
+
     // MARK: - Subtitle
 
     func test_subtitleText_isNil_whenChannelIsNil() {
