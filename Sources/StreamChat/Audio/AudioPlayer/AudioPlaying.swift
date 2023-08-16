@@ -121,13 +121,13 @@ open class StreamAudioPlayer: AudioPlaying, AppStateObserverDelegate {
             /// If the currentItem is paused, we want to continue the playback
             /// Otherwise, no action is required
             if context.state == .paused {
-                player.play()
+                play()
             } else if context.state == .stopped {
                 /// If the currentItem has stopped, we want to restart the playback. We are replacing
                 /// the currentItem with the same one to trigger the player's observers on the updated
                 /// currentItem.
                 player.replaceCurrentItem(with: .init(asset: currentItem))
-                player.play()
+                play()
             }
 
             /// This case may be triggered if we call ``loadAsset`` on a player that is currently
@@ -173,7 +173,7 @@ open class StreamAudioPlayer: AudioPlaying, AppStateObserverDelegate {
         do {
             /// As the AVPlayer doesn't provide an API to actually stop the playback, we are simulating it
             /// by calling pause
-            player.pause()
+            pause()
 
             try audioSessionConfigurator.deactivatePlaybackSession()
 
@@ -211,13 +211,13 @@ open class StreamAudioPlayer: AudioPlaying, AppStateObserverDelegate {
     func applicationDidMoveToBackground() {
         guard context.state == .playing else { return }
         shouldPlayWhenComeToForeground = true
-        player.pause()
+        pause()
     }
 
     func applicationDidMoveToForeground() {
         guard shouldPlayWhenComeToForeground else { return }
         shouldPlayWhenComeToForeground = false
-        player.play()
+        play()
     }
 
     // MARK: - Helpers

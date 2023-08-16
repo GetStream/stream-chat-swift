@@ -69,9 +69,6 @@ final class StreamAudioSessionConfigurator: AudioSessionConfiguring {
     /// - Note: This method is using the `.playAndRecord` category with the `.spokenAudio` mode.
     /// The preferredInput will be set to `.buildInMic` and overrideOutputAudioPort to `.speaker`.
     func activateRecordingSession() throws {
-        guard !Self.recordingCategories.contains(audioSession.category) else {
-            return
-        }
         try audioSession.setCategory(
             .playAndRecord,
             mode: .spokenAudio,
@@ -79,45 +76,32 @@ final class StreamAudioSessionConfigurator: AudioSessionConfiguring {
             options: []
         )
         try setUpPreferredInput(.builtInMic)
-        try audioSession.overrideOutputAudioPort(.speaker)
-        try audioSession.setActive(true, options: [])
+        try activateSession()
     }
 
     /// - Note: The method will check if the audioSession's category contains the `record` capability
     /// and if it does it will deactivate it. Otherwise, no action will be performed.
     func deactivateRecordingSession() throws {
-        guard Self.recordingCategories.contains(audioSession.category) else {
-            return
-        }
-        try audioSession.overrideOutputAudioPort(.none)
-        try audioSession.setActive(false, options: [])
+        try deactivateSession()
     }
 
     /// - Note: The method will check if the audioSession's category contains the `playback` capability
     /// and if it doesn't it will activate it using the `.playback` category and `.default` for both mode
     /// and policy.  OverrideOutputAudioPort is set to `.speaker`.
     func activatePlaybackSession() throws {
-        guard !Self.playbackCategories.contains(audioSession.category) else {
-            return
-        }
         try audioSession.setCategory(
-            .playback,
+            .playAndRecord,
             mode: .default,
             policy: .default,
             options: []
         )
-        try audioSession.overrideOutputAudioPort(.speaker)
-        try audioSession.setActive(true, options: [])
+        try activateSession()
     }
 
     /// - Note: The method will check if the audioSession's category contains the `playback` capability
     /// and if it does it will deactivate it. Otherwise, no action will be performed.
     func deactivatePlaybackSession() throws {
-        guard Self.playbackCategories.contains(audioSession.category) else {
-            return
-        }
-        try audioSession.overrideOutputAudioPort(.none)
-        try audioSession.setActive(false, options: [])
+        try deactivateSession()
     }
 
     func requestRecordPermission(
@@ -129,6 +113,16 @@ final class StreamAudioSessionConfigurator: AudioSessionConfiguring {
     }
 
     // MARK: - Helpers
+
+    private func activateSession() throws {
+        try audioSession.overrideOutputAudioPort(.speaker)
+        try audioSession.setActive(true, options: [])
+    }
+
+    private func deactivateSession() throws {
+        try audioSession.overrideOutputAudioPort(.none)
+        try audioSession.setActive(false, options: [])
+    }
 
     private func handleRecordPermissionResponse(
         _ permissionGranted: Bool,
