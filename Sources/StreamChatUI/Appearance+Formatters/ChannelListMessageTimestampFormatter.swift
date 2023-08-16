@@ -42,11 +42,9 @@ open class ChannelListMessageTimestampFormatter: MessageTimestampFormatter {
         return formatter
     }()
 
-    public let calendar: Calendar
+    var calendar: ChannelListMessageTimestampCalendar = Calendar.current
 
-    public init(calendar: Calendar = .current) {
-        self.calendar = calendar
-    }
+    public init() {}
 
     open func format(_ date: Date) -> String {
         if calendar.isDateInToday(date) {
@@ -63,7 +61,13 @@ open class ChannelListMessageTimestampFormatter: MessageTimestampFormatter {
     }
 }
 
-private extension Calendar {
+protocol ChannelListMessageTimestampCalendar {
+    func isDateInToday(_ date: Date) -> Bool
+    func isDateInYesterday(_ date: Date) -> Bool
+    func isDateInLastWeek(_ date: Date) -> Bool
+}
+
+extension Calendar: ChannelListMessageTimestampCalendar {
     func isDateInLastWeek(_ date: Date) -> Bool {
         guard let dateBefore7days = self.date(byAdding: .day, value: -7, to: Date()) else {
             return false
