@@ -370,6 +370,7 @@ final class ChatChannelListItemView_Tests: XCTestCase {
 
         view.addSizeConstraints()
         view.components = .mock
+        view.appearance.formatters.channelListMessageTimestamp = DefaultMessageTimestampFormatter()
 
         view.content = .init(
             channel: channel(
@@ -724,7 +725,7 @@ final class ChatChannelListItemView_Tests: XCTestCase {
 
     // MARK: - Timestamp
 
-    func test_timestampText_isNil_whenPreviewMessageIsNil() {
+    func test_timestampText_whenPreviewMessageIsNil_thenTimestampIsNil() {
         let channel: ChatChannel = .mock(
             cid: .unique,
             previewMessage: nil
@@ -735,7 +736,7 @@ final class ChatChannelListItemView_Tests: XCTestCase {
         XCTAssertNil(itemView.timestampText)
     }
 
-    func test_timestampText_whenPreviewMessageExists() {
+    func test_timestampText_whenPreviewMessageExists_thenUsesCreatedAtFromPreviewMessage() {
         let channel: ChatChannel = .mock(
             cid: .unique,
             previewMessage: .mock(
@@ -749,6 +750,7 @@ final class ChatChannelListItemView_Tests: XCTestCase {
 
         let itemView = ChatChannelListItemView()
         itemView.content = .init(channel: channel, currentUserId: nil)
+        itemView.appearance.formatters.channelListMessageTimestamp = DefaultMessageTimestampFormatter()
 
         XCTAssertEqual(
             itemView.timestampText,
@@ -756,7 +758,7 @@ final class ChatChannelListItemView_Tests: XCTestCase {
         )
     }
 
-    func test_timestampText_whenSearchingMessage() {
+    func test_timestampText_whenSearchingMessage_thenUsesCreatedAtFromSearchResultMessage() {
         let itemView = ChatChannelListItemView()
         itemView.content = .init(
             channel: .mockNonDMChannel(previewMessage: nil),
@@ -766,6 +768,7 @@ final class ChatChannelListItemView_Tests: XCTestCase {
                 message: .mock(text: "Some text", createdAt: Date(timeIntervalSince1970: 1))
             )
         )
+        itemView.appearance.formatters.channelListMessageTimestamp = DefaultMessageTimestampFormatter()
 
         XCTAssertEqual(
             itemView.timestampText,
@@ -988,6 +991,7 @@ final class ChatChannelListItemView_Tests: XCTestCase {
         let view = ChatChannelListItemView().withoutAutoresizingMaskConstraints
         view.components = components
         view.appearance = appearance
+        view.appearance.formatters.channelListMessageTimestamp = DefaultMessageTimestampFormatter()
         view.content = content
         view.addSizeConstraints()
         return view

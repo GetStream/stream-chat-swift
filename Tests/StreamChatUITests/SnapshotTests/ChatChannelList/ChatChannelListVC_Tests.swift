@@ -46,6 +46,7 @@ final class ChatChannelListVC_Tests: XCTestCase {
         var components = Components.mock
         components.channelListRouter = ChatChannelListRouterMock.self
         vc.components = components
+        vc.appearance.formatters.channelListMessageTimestamp = DefaultMessageTimestampFormatter()
 
         channels = .dummy()
     }
@@ -121,6 +122,7 @@ final class ChatChannelListVC_Tests: XCTestCase {
 
         let vc = TestView()
         vc.controller = mockedChannelListController
+        vc.appearance.formatters.channelListMessageTimestamp = DefaultMessageTimestampFormatter()
 
         var components = Components.mock
         components.channelCellSeparator = TestSeparatorView.self
