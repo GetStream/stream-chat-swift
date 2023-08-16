@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChat
 ### 🐞 Fixed
 - Fix video attachments not being sent with `thumb_url`, which caused issues in other platforms [#2720](https://github.com/GetStream/stream-chat-swift/pull/2720)
+- Make sure loud speaker is always used for playback in voice messages [#2734](https://github.com/GetStream/stream-chat-swift/pull/2734)
 
 ## StreamChatUI
 ### 🐞 Fixed
