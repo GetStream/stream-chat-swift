@@ -48,9 +48,6 @@ final class StreamAudioSessionConfigurator: AudioSessionConfiguring {
 }
 #else
 final class StreamAudioSessionConfigurator: AudioSessionConfiguring {
-    private static let recordingCategories: Set<AVAudioSession.Category> = [.record, .playAndRecord]
-    private static let playbackCategories: Set<AVAudioSession.Category> = [.playback, .playAndRecord]
-
     /// The audioSession with which the configurator will interact.
     private let audioSession: AudioSessionProtocol
 
