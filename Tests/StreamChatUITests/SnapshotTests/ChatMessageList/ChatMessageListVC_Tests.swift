@@ -194,15 +194,16 @@ final class ChatMessageListVC_Tests: XCTestCase {
         
         let attachmentWith4Comments = try makeCustomAttachmentWithComments(4)
         let attachmentWith5Comments = try makeCustomAttachmentWithComments(5)
+        let sameAuthor = ChatUser.mock(id: .newUniqueId)
         
         // When attachments are the same, should be equal
-        let messageSame1 = ChatMessage.mock(id: "1", text: "same", attachments: [attachmentWith4Comments])
-        let messageSame2 = ChatMessage.mock(id: "1", text: "same", attachments: [attachmentWith4Comments])
+        let messageSame1 = ChatMessage.mock(id: "1", text: "same", author: sameAuthor, attachments: [attachmentWith4Comments])
+        let messageSame2 = ChatMessage.mock(id: "1", text: "same", author: sameAuthor, attachments: [attachmentWith4Comments])
         XCTAssert(messageSame1.isContentEqual(to: messageSame2))
         
         // When attachments are different, should not be equal
-        let messageDiff1 = ChatMessage.mock(id: "1", text: "same", attachments: [attachmentWith4Comments])
-        let messageDiff2 = ChatMessage.mock(id: "1", text: "same", attachments: [attachmentWith5Comments])
+        let messageDiff1 = ChatMessage.mock(id: "1", text: "same", author: sameAuthor, attachments: [attachmentWith4Comments])
+        let messageDiff2 = ChatMessage.mock(id: "1", text: "same", author: sameAuthor, attachments: [attachmentWith5Comments])
         XCTAssertFalse(messageDiff1.isContentEqual(to: messageDiff2))
     }
 
