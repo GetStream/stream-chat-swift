@@ -588,7 +588,8 @@ lane :emerge_upload do
     build_type: 'release',
     repo_name: github_repo,
     pr_number: ENV['GITHUB_PR_NUM'] || nil, # If `nil` then local run or merge to develop/main
-    sha: last_git_commit[:commit_hash]
+    sha: ENV['GITHUB_COMMIT_SHA'] || last_git_commit[:commit_hash],
+    base_sha: ENV['GITHUB_BASE_SHA'] || nil
   )
 end
 
