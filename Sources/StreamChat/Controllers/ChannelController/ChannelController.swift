@@ -198,26 +198,6 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         synchronize(isInRecoveryMode: false, completion)
     }
 
-    // MARK: - Channel features
-
-    /// `true` if the channel has typing events enabled. Defaults to `false` if the channel doesn't exist yet.
-    public var areTypingEventsEnabled: Bool { channel?.config.typingEventsEnabled == true }
-
-    /// `true` if the channel has reactions enabled. Defaults to `false` if the channel doesn't exist yet.
-    public var areReactionsEnabled: Bool { channel?.config.reactionsEnabled == true }
-
-    /// `true` if the channel has replies enabled. Defaults to `false` if the channel doesn't exist yet.
-    public var areRepliesEnabled: Bool { channel?.config.repliesEnabled == true }
-
-    /// `true` if the channel has quotes enabled. Defaults to `false` if the channel doesn't exist yet.
-    public var areQuotesEnabled: Bool { channel?.config.quotesEnabled == true }
-
-    /// `true` if the channel has read events enabled. Defaults to `false` if the channel doesn't exist yet.
-    public var areReadEventsEnabled: Bool { channel?.config.readEventsEnabled == true }
-
-    /// `true` if the channel supports uploading files/images. Defaults to `false` if the channel doesn't exist yet.
-    public var areUploadsEnabled: Bool { channel?.config.uploadsEnabled == true }
-
     // MARK: - Actions
 
     /// Updated channel with new data.

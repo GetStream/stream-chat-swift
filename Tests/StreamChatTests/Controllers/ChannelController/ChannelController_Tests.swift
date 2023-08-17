@@ -4812,6 +4812,240 @@ final class ChannelController_Tests: XCTestCase {
         AssertAsync.willBeEqual(resultingCallWithToken, mockCallWithToken)
     }
 
+    // MARK: Capabilities
+
+    func test_canBanChannelMembers() throws {
+        try setupChannel(withCapabilities: [.banChannelMembers])
+        XCTAssertEqual(controller.canBanChannelMembers, true)
+
+        try setupChannel(withCapabilities: [])
+        XCTAssertEqual(controller.canBanChannelMembers, false)
+    }
+
+    func test_canReceiveConnectEvents() throws {
+        try setupChannel(withCapabilities: [.connectEvents])
+        XCTAssertEqual(controller.canReceiveConnectEvents, true)
+
+        try setupChannel(withCapabilities: [])
+        XCTAssertEqual(controller.canReceiveConnectEvents, false)
+    }
+
+    func test_canDeleteAnyMessage() throws {
+        try setupChannel(withCapabilities: [.deleteAnyMessage])
+        XCTAssertEqual(controller.canDeleteAnyMessage, true)
+
+        try setupChannel(withCapabilities: [])
+        XCTAssertEqual(controller.canDeleteAnyMessage, false)
+    }
+
+    func test_canDeleteChannel() throws {
+        try setupChannel(withCapabilities: [.deleteChannel])
+        XCTAssertEqual(controller.canDeleteChannel, true)
+
+        try setupChannel(withCapabilities: [])
+        XCTAssertEqual(controller.canDeleteChannel, false)
+    }
+
+    func test_canDeleteOwnMessage() throws {
+        try setupChannel(withCapabilities: [.deleteOwnMessage])
+        XCTAssertEqual(controller.canDeleteOwnMessage, true)
+
+        try setupChannel(withCapabilities: [])
+        XCTAssertEqual(controller.canDeleteOwnMessage, false)
+    }
+
+    func test_canFlagMessage() throws {
+        try setupChannel(withCapabilities: [.flagMessage])
+        XCTAssertEqual(controller.canFlagMessage, true)
+
+        try setupChannel(withCapabilities: [])
+        XCTAssertEqual(controller.canFlagMessage, false)
+    }
+
+    func test_canFreezeChannel() throws {
+        try setupChannel(withCapabilities: [.freezeChannel])
+        XCTAssertEqual(controller.canFreezeChannel, true)
+
+        try setupChannel(withCapabilities: [])
+        XCTAssertEqual(controller.canFreezeChannel, false)
+    }
+
+    func test_canLeaveChannel() throws {
+        try setupChannel(withCapabilities: [.leaveChannel])
+        XCTAssertEqual(controller.canLeaveChannel, true)
+
+        try setupChannel(withCapabilities: [])
+        XCTAssertEqual(controller.canLeaveChannel, false)
+    }
+
+    func test_canJoinChannel() throws {
+        try setupChannel(withCapabilities: [.joinChannel])
+        XCTAssertEqual(controller.canJoinChannel, true)
+
+        try setupChannel(withCapabilities: [])
+        XCTAssertEqual(controller.canJoinChannel, false)
+    }
+
+    func test_canMuteChannel() throws {
+        try setupChannel(withCapabilities: [.muteChannel])
+        XCTAssertEqual(controller.canMuteChannel, true)
+
+        try setupChannel(withCapabilities: [])
+        XCTAssertEqual(controller.canMuteChannel, false)
+    }
+
+    func test_canPinMessage() throws {
+        try setupChannel(withCapabilities: [.pinMessage])
+        XCTAssertEqual(controller.canPinMessage, true)
+
+        try setupChannel(withCapabilities: [])
+        XCTAssertEqual(controller.canPinMessage, false)
+    }
+
+    func test_canQuoteMessage() throws {
+        try setupChannel(withCapabilities: [.quoteMessage])
+        XCTAssertEqual(controller.canQuoteMessage, true)
+
+        try setupChannel(withCapabilities: [])
+        XCTAssertEqual(controller.canQuoteMessage, false)
+    }
+
+    func test_canReceiveReadEvents() throws {
+        try setupChannel(withCapabilities: [.readEvents])
+        XCTAssertEqual(controller.canReceiveReadEvents, true)
+
+        try setupChannel(withCapabilities: [])
+        XCTAssertEqual(controller.canReceiveReadEvents, false)
+    }
+
+    func test_canSearchMessages() throws {
+        try setupChannel(withCapabilities: [.searchMessages])
+        XCTAssertEqual(controller.canSearchMessages, true)
+
+        try setupChannel(withCapabilities: [])
+        XCTAssertEqual(controller.canSearchMessages, false)
+    }
+
+    func test_canSendCustomEvents() throws {
+        try setupChannel(withCapabilities: [.sendCustomEvents])
+        XCTAssertEqual(controller.canSendCustomEvents, true)
+
+        try setupChannel(withCapabilities: [])
+        XCTAssertEqual(controller.canSendCustomEvents, false)
+    }
+
+    func test_canSendLinks() throws {
+        try setupChannel(withCapabilities: [.sendLinks])
+        XCTAssertEqual(controller.canSendLinks, true)
+
+        try setupChannel(withCapabilities: [])
+        XCTAssertEqual(controller.canSendLinks, false)
+    }
+
+    func test_canSendMessage() throws {
+        try setupChannel(withCapabilities: [.sendMessage])
+        XCTAssertEqual(controller.canSendMessage, true)
+
+        try setupChannel(withCapabilities: [])
+        XCTAssertEqual(controller.canSendMessage, false)
+    }
+
+    func test_canSendReaction() throws {
+        try setupChannel(withCapabilities: [.sendReaction])
+        XCTAssertEqual(controller.canSendReaction, true)
+
+        try setupChannel(withCapabilities: [])
+        XCTAssertEqual(controller.canSendReaction, false)
+    }
+
+    func test_canSendReply() throws {
+        try setupChannel(withCapabilities: [.sendReply])
+        XCTAssertEqual(controller.canSendReply, true)
+
+        try setupChannel(withCapabilities: [])
+        XCTAssertEqual(controller.canSendReply, false)
+    }
+
+    func test_canSetChannelCooldown() throws {
+        try setupChannel(withCapabilities: [.setChannelCooldown])
+        XCTAssertEqual(controller.canSetChannelCooldown, true)
+
+        try setupChannel(withCapabilities: [])
+        XCTAssertEqual(controller.canSetChannelCooldown, false)
+    }
+
+    func test_canSendTypingEvents() throws {
+        try setupChannel(withCapabilities: [.sendTypingEvents])
+        XCTAssertEqual(controller.canSendTypingEvents, true)
+
+        try setupChannel(withCapabilities: [])
+        XCTAssertEqual(controller.canSendTypingEvents, false)
+    }
+
+    func test_canUpdateAnyMessage() throws {
+        try setupChannel(withCapabilities: [.updateAnyMessage])
+        XCTAssertEqual(controller.canUpdateAnyMessage, true)
+
+        try setupChannel(withCapabilities: [])
+        XCTAssertEqual(controller.canUpdateAnyMessage, false)
+    }
+
+    func test_canUpdateChannel() throws {
+        try setupChannel(withCapabilities: [.updateChannel])
+        XCTAssertEqual(controller.canUpdateChannel, true)
+
+        try setupChannel(withCapabilities: [])
+        XCTAssertEqual(controller.canUpdateChannel, false)
+    }
+
+    func test_canUpdateChannelMembers() throws {
+        try setupChannel(withCapabilities: [.updateChannelMembers])
+        XCTAssertEqual(controller.canUpdateChannelMembers, true)
+
+        try setupChannel(withCapabilities: [])
+        XCTAssertEqual(controller.canUpdateChannelMembers, false)
+    }
+
+    func test_canUpdateOwnMessage() throws {
+        try setupChannel(withCapabilities: [.updateOwnMessage])
+        XCTAssertEqual(controller.canUpdateOwnMessage, true)
+
+        try setupChannel(withCapabilities: [])
+        XCTAssertEqual(controller.canUpdateOwnMessage, false)
+    }
+
+    func test_canUploadFile() throws {
+        try setupChannel(withCapabilities: [.uploadFile])
+        XCTAssertEqual(controller.canUploadFile, true)
+
+        try setupChannel(withCapabilities: [])
+        XCTAssertEqual(controller.canUploadFile, false)
+    }
+
+    func test_canJoinCall() throws {
+        try setupChannel(withCapabilities: [.joinCall])
+        XCTAssertEqual(controller.canJoinCall, true)
+
+        try setupChannel(withCapabilities: [])
+        XCTAssertEqual(controller.canJoinCall, false)
+    }
+
+    func test_canCreateCall() throws {
+        try setupChannel(withCapabilities: [.createCall])
+        XCTAssertEqual(controller.canCreateCall, true)
+
+        try setupChannel(withCapabilities: [])
+        XCTAssertEqual(controller.canCreateCall, false)
+    }
+
+    func test_isSlowMode() throws {
+        try setupChannel(withCapabilities: [.slowMode])
+        XCTAssertEqual(controller.isSlowMode, true)
+
+        try setupChannel(withCapabilities: [])
+        XCTAssertEqual(controller.isSlowMode, false)
+    }
+
     // MARK: deinit
 
     func test_deinit_whenIsJumpingToMessage_deletesAllMessages() throws {
@@ -4944,6 +5178,13 @@ extension ChannelController_Tests {
             isChannelAlreadyCreated: false
         )
         controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
+    }
+
+    func setupChannel(withCapabilities capabilities: [ChannelCapability]) throws {
+        let payload = dummyPayload(with: channelId, ownCapabilities: capabilities.map(\.rawValue))
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: payload)
+        }
     }
 
     @discardableResult
