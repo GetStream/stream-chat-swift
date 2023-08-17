@@ -160,12 +160,17 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
                 return previewMessage.text
             }
 
-            let authorName = previewMessage.isSentByCurrentUser
-                ? L10n.you
-                : previewMessage.author.name ?? previewMessage.author.id
-
             let text = previewMessage.textContent ?? previewMessage.text
 
+            if previewMessage.isSentByCurrentUser {
+                return "\(L10n.you): \(text)"
+            }
+
+            if content.channel.memberCount == 2 {
+                return text
+            }
+
+            let authorName = previewMessage.author.name ?? previewMessage.author.id
             return "\(authorName): \(text)"
         } else {
             return L10n.Channel.Item.emptyMessages
