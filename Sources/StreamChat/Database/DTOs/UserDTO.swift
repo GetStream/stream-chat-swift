@@ -23,6 +23,7 @@ class UserDTO: NSManagedObject {
     @NSManaged var flaggedBy: CurrentUserDTO?
 
     @NSManaged var members: Set<MemberDTO>?
+    @NSManaged var messages: Set<MessageDTO>?
     @NSManaged var currentUser: CurrentUserDTO?
     @NSManaged var teams: [TeamId]
 
@@ -37,7 +38,7 @@ class UserDTO: NSManagedObject {
     override func willSave() {
         super.willSave()
 
-        // When user changed, we need to propagate this change to members and current user
+        // When user is changed, we need to propagate this change to current user, members and messages
         if hasPersistentChangedValues {
             if let currentUser = currentUser, !currentUser.hasChanges {
                 // this will not change object, but mark it as dirty, triggering updates
@@ -49,6 +50,12 @@ class UserDTO: NSManagedObject {
                 // this will not change object, but mark it as dirty, triggering updates
                 let assigningPropertyToItself = member.channelRoleRaw
                 member.channelRoleRaw = assigningPropertyToItself
+            }
+            for message in messages ?? [] {
+                guard !message.hasChanges, !message.isDeleted else { continue }
+                // this will not change object, but mark it as dirty, triggering updates
+                let assigningPropertyToItself = message.text
+                message.text = assigningPropertyToItself
             }
         }
     }
