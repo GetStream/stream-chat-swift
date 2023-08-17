@@ -3,7 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+## StreamChatUI
+### 🐞 Fixed
+- Fix channel list rendering username on subtitle text in 1:1 channel [#2737](https://github.com/GetStream/stream-chat-swift/pull/2737)
 
 # [4.35.2](https://github.com/GetStream/stream-chat-swift/releases/tag/4.35.2)
 _August 16, 2023_
