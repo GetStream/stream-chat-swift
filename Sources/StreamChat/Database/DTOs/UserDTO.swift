@@ -38,24 +38,30 @@ class UserDTO: NSManagedObject {
     override func willSave() {
         super.willSave()
 
-        // When user is changed, we need to propagate this change to current user, members and messages
+        // We need to propagate fake changes to other models so that it triggers FRC
+        // updates for other entities. We also need to check that these models
+        // don't have changes already, otherwise it creates an infinite loop.
         if hasPersistentChangedValues {
             if let currentUser = currentUser, !currentUser.hasChanges {
-                // this will not change object, but mark it as dirty, triggering updates
-                let assigningPropertyToItself = currentUser.unreadChannelsCount
-                currentUser.unreadChannelsCount = assigningPropertyToItself
+                let fakeNewUnread = currentUser.unreadChannelsCount
+                currentUser.unreadChannelsCount = fakeNewUnread
             }
             for member in members ?? [] {
-                guard !member.hasChanges, !member.isDeleted else { continue }
-                // this will not change object, but mark it as dirty, triggering updates
-                let assigningPropertyToItself = member.channelRoleRaw
-                member.channelRoleRaw = assigningPropertyToItself
+                if !member.hasChanges && !member.isDeleted {
+                    let fakeNewChannelRole = member.channelRoleRaw
+                    member.channelRoleRaw = fakeNewChannelRole
+                }
+
+                if !member.channel.hasChanges && !member.channel.isDeleted {
+                    let fakeNewCid = member.channel.cid
+                    member.channel.cid = fakeNewCid
+                }
             }
             for message in messages ?? [] {
-                guard !message.hasChanges, !message.isDeleted else { continue }
-                // this will not change object, but mark it as dirty, triggering updates
-                let assigningPropertyToItself = message.text
-                message.text = assigningPropertyToItself
+                if !message.hasChanges, !message.isDeleted {
+                    let fakeNewText = message.text
+                    message.text = fakeNewText
+                }
             }
         }
     }
