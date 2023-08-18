@@ -841,6 +841,19 @@ final class ChatChannelVC_Tests: XCTestCase {
         AssertSnapshot(vc, variants: [.defaultLight])
     }
 
+    func test_didUpdateChannel_shouldUpdateChannelAvatarView() {
+        vc.setUp()
+
+        let previousChannel = ChatChannel.mockNonDMChannel(name: "Previous")
+        vc.channelAvatarView.content = (previousChannel, .unique)
+
+        let newChannel = ChatChannel.mockNonDMChannel(name: "New")
+        channelControllerMock.channel_mock = newChannel
+        vc.channelController(vc.channelController, didUpdateChannel: .update(newChannel))
+
+        XCTAssertEqual(vc.channelAvatarView.content.channel?.name, "New")
+    }
+
     // MARK: - setUp
 
     func test_setUp_messagesListVCAndMessageComposerVCHaveTheExpectedAudioPlayerInstance() {
