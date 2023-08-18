@@ -46,7 +46,7 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
     }
 
     /// A formatter that converts the message timestamp to textual representation.
-    public lazy var timestampFormatter: MessageTimestampFormatter = appearance.formatters.messageTimestamp
+    public lazy var timestampFormatter: MessageTimestampFormatter = appearance.formatters.channelListMessageTimestamp
 
     /// Main container which holds `avatarView` and two horizontal containers `title` and `unreadCount` and
     /// `subtitle` and `timestampLabel`

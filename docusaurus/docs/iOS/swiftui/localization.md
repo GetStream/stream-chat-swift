@@ -10,7 +10,7 @@ If your app supports multiple languages, the chat SDK has support for localizati
 
 1. If you don't have `strings` or `stringsdict` files in your project, add those new files to `Localizable.strings` and `Localizable.stringsdict`.
 2. Next [add new language to the project](https://developer.apple.com/documentation/xcode/adding-support-for-languages-and-regions).
-3. Copy the StreamChatUI localization keys into your `strings` and `stringsdict` files. You can find the latest version [here](https://github.com/GetStream/stream-chat-swift/blob/main/Sources/StreamChatSwiftUI/Resources/en.lproj/).
+3. Copy the StreamChatSwiftUI localization keys into your `strings` and `stringsdict` files. You can find the latest version [here](https://github.com/GetStream/stream-chat-swiftui/blob/main/Sources/StreamChatSwiftUI/Resources/en.lproj/).
 4. Set the `localizationProvider` to provide your `Bundle` instead of the one provided by `StreamChatSwiftUI` SDK (as early as possible in the App lifecycle, for example in the `AppDelegate`):
 ```swift
 Appearance.localizationProvider = { key, table in
