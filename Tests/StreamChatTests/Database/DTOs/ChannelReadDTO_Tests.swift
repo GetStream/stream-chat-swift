@@ -219,7 +219,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
 
         // THEN
         let messageDTOsThatContainReads = observer.updatedMessageDTOs.filter { !$0.reads.isEmpty }.map(\.id)
-        XCTAssertEqual(messageDTOsThatContainReads, [ownMessage1.id, ownMessage2.id])
+        XCTAssertEqual(Set(messageDTOsThatContainReads), Set([ownMessage1.id, ownMessage2.id]))
     }
 
     func test_markChannelAsRead_ownRead_doesNotTriggerOwnMessagesUpdate() throws {
