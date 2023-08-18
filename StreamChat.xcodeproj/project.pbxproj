@@ -488,6 +488,8 @@
 		8232B84F28635C4A0032C7DB /* Attachments_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8232B84E28635C4A0032C7DB /* Attachments_Tests.swift */; };
 		82390E7B28C609A700829581 /* push_notification.json in Resources */ = {isa = PBXBuildFile; fileRef = 82390E7A28C609A700829581 /* push_notification.json */; };
 		823A1ADA28C74C1400F7CADA /* SpringBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 823A1AD928C74C1400F7CADA /* SpringBoard.swift */; };
+		823F5B1A2A8D0294000C3081 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 823F5B192A8D0294000C3081 /* PrivacyInfo.xcprivacy */; };
+		823F5B1B2A8D0294000C3081 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 823F5B192A8D0294000C3081 /* PrivacyInfo.xcprivacy */; };
 		825A32CB27DBB463000402A9 /* MessageListPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 825A32CA27DBB463000402A9 /* MessageListPage.swift */; };
 		825A32CD27DBB46F000402A9 /* ChannelListPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 825A32CC27DBB46F000402A9 /* ChannelListPage.swift */; };
 		825A32CF27DBB48D000402A9 /* StartPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 825A32CE27DBB48D000402A9 /* StartPage.swift */; };
@@ -3037,6 +3039,7 @@
 		8232B84E28635C4A0032C7DB /* Attachments_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Attachments_Tests.swift; sourceTree = "<group>"; };
 		82390E7A28C609A700829581 /* push_notification.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = push_notification.json; sourceTree = "<group>"; };
 		823A1AD928C74C1400F7CADA /* SpringBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpringBoard.swift; sourceTree = "<group>"; };
+		823F5B192A8D0294000C3081 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		824445AA27EA364300DB2FD8 /* ChannelResponses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelResponses.swift; sourceTree = "<group>"; };
 		82472AA528C2395F004A4ACD /* StreamChatUITestsApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = StreamChatUITestsApp.entitlements; sourceTree = "<group>"; };
 		825A32AD27DA686C000402A9 /* TestData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestData.swift; sourceTree = "<group>"; };
@@ -5672,6 +5675,7 @@
 				4A4E184528D06CA30062378D /* Documentation.docc */,
 				AD9BE32526680E4200A6D284 /* Stream.playground */,
 				792E3D6A25C97D920040B0C2 /* Package.swift */,
+				823F5B192A8D0294000C3081 /* PrivacyInfo.xcprivacy */,
 				792DDA58256FB69E001DB91B /* DemoApp */,
 				437FCA0526D67BE40000223C /* DemoAppPush */,
 				E3D5D2142701F0450054ECE5 /* Examples */,
@@ -9021,6 +9025,7 @@
 			files = (
 				88F0D74B257E50B200F4B050 /* Assets.xcassets in Resources */,
 				88F0D743257E50B000F4B050 /* Localizable.strings in Resources */,
+				823F5B1B2A8D0294000C3081 /* PrivacyInfo.xcprivacy in Resources */,
 				DBC8A4BB257E5BFB00B20A82 /* Localizable.stringsdict in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -9174,6 +9179,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				823F5B1A2A8D0294000C3081 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
