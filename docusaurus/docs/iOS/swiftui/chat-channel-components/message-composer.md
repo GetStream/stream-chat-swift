@@ -277,28 +277,28 @@ struct CustomAttachmentSourcePickerView: View {
     var body: some View {
         HStack(alignment: .center, spacing: 24) {
             AttachmentPickerButton(
-                iconName: "photo",
+                icon: UIImage(systemName: "photo")!,
                 pickerType: .photos,
                 isSelected: selected == .photos,
                 onTap: onTap
             )
 
             AttachmentPickerButton(
-                iconName: "folder",
+                icon: UIImage(systemName: "folder")!,
                 pickerType: .files,
                 isSelected: selected == .files,
                 onTap: onTap
             )
 
             AttachmentPickerButton(
-                iconName: "camera",
+                icon: UIImage(systemName: "camera")!,
                 pickerType: .camera,
                 isSelected: selected == .camera,
                 onTap: onTap
             )
 
             AttachmentPickerButton(
-                iconName: "person.crop.circle",
+                icon: UIImage(systemName: "person.crop.circle")!,
                 pickerType: .custom,
                 isSelected: selected == .custom,
                 onTap: onTap
