@@ -20,6 +20,7 @@ final class ChatChannelListView_Tests: iOS13TestCase {
 
         // TODO: We have to replace default as the components are not injected in SwiftUI views.
         Components.default = .mock
+        Appearance.default.formatters.channelListMessageTimestamp = DefaultMessageTimestampFormatter()
         mockedChannelListController = ChatChannelListController_Mock.mock()
         chatChannelList = ChatChannelListVC.asView(mockedChannelListController)
 
