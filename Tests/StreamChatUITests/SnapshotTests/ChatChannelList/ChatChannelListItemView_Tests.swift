@@ -645,6 +645,52 @@ final class ChatChannelListItemView_Tests: XCTestCase {
         XCTAssertEqual(itemView.subtitleText, "\(L10n.you): \(ownMessage.text)")
     }
 
+    func test_subtitleText_whenPreviewMessageIsSentByCurrentUser_andChannelMemberCountIs2() {
+        let ownMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "Hey there",
+            author: .mock(id: .unique),
+            isSentByCurrentUser: true
+        )
+
+        let itemView = channelItemView(
+            content: .init(
+                channel: channel(
+                    previewMessage: ownMessage,
+                    readEventsEnabled: true,
+                    memberCount: 2
+                ),
+                currentUserId: .unique
+            )
+        )
+
+        XCTAssertEqual(itemView.subtitleText, "\(L10n.you): \(ownMessage.text)")
+    }
+
+    func test_subtitleText_whenPreviewMessageIsSentByAnothertUser_andChannelMemberCountIs2() {
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "Hey there",
+            author: .mock(id: .unique),
+            isSentByCurrentUser: false
+        )
+
+        let itemView = channelItemView(
+            content: .init(
+                channel: channel(
+                    previewMessage: message,
+                    readEventsEnabled: true,
+                    memberCount: 2
+                ),
+                currentUserId: .unique
+            )
+        )
+
+        XCTAssertEqual(itemView.subtitleText, "\(message.text)")
+    }
+
     func test_subtitleText_whenPreviewMessageIsSystem() {
         let systemMessage: ChatMessage = .mock(
             id: .unique,
@@ -1075,7 +1121,8 @@ final class ChatChannelListItemView_Tests: XCTestCase {
 
     private func channel(
         previewMessage: ChatMessage? = nil,
-        readEventsEnabled: Bool
+        readEventsEnabled: Bool,
+        memberCount: Int = 0
     ) -> ChatChannel {
         .mock(
             cid: previewMessage?.cid ?? .unique,
@@ -1083,6 +1130,7 @@ final class ChatChannelListItemView_Tests: XCTestCase {
             imageURL: TestImages.yoda.url,
             createdAt: Date(timeIntervalSince1970: 1),
             config: .mock(readEventsEnabled: readEventsEnabled),
+            memberCount: memberCount,
             previewMessage: previewMessage
         )
     }
