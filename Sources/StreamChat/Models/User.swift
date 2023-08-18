@@ -94,12 +94,25 @@ public class ChatUser {
 }
 
 extension ChatUser: Hashable {
-    public static func == (lhs: ChatUser, rhs: ChatUser) -> Bool {
-        lhs.id == rhs.id
-    }
-
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
+    }
+}
+
+extension ChatUser: Equatable {
+    public static func == (lhs: ChatUser, rhs: ChatUser) -> Bool {
+        lhs.id == rhs.id
+            && lhs.name == rhs.name
+            && lhs.imageURL == rhs.imageURL
+            && lhs.isOnline == rhs.isOnline
+            && lhs.isBanned == rhs.isBanned
+            && lhs.isFlaggedByCurrentUser == rhs.isFlaggedByCurrentUser
+            && lhs.userRole == rhs.userRole
+            && lhs.userCreatedAt == rhs.userCreatedAt
+            && lhs.userDeactivatedAt == rhs.userDeactivatedAt
+            && lhs.lastActiveAt == rhs.lastActiveAt
+            && lhs.teams == rhs.teams
+            && lhs.extraData == rhs.extraData
     }
 }
 

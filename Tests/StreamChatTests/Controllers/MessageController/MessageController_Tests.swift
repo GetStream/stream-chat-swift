@@ -815,8 +815,8 @@ final class MessageController_Tests: XCTestCase {
         controller.reactions = [.mock(type: "like")]
 
         AssertAsync.willBeEqual(
-            delegate.didChangeReactions_reactions,
-            [.mock(type: "like")]
+            delegate.didChangeReactions_reactions.map(\.type),
+            [ChatMessageReaction.mock(type: "like").type]
         )
     }
 

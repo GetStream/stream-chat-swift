@@ -357,4 +357,49 @@ final class UserDTO_Tests: XCTestCase {
         // Assert: Members should be updated
         XCTAssertNotNil(receivedChange)
     }
+
+    func test_userChange_triggerMessagesUpdate() throws {
+        // Arrange: Store messages in database
+        let userId: UserId = .unique
+        let channelId: ChannelId = .unique
+
+        let userPayload: UserPayload = .dummy(userId: userId)
+        let channelPayload: ChannelPayload = .dummy(channel: .dummy(cid: channelId))
+        let payload: MessagePayload = .dummy(
+            showReplyInChannel: false,
+            authorUserId: userId,
+            text: "Yo"
+        )
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channelPayload)
+            try session.saveUser(payload: userPayload)
+            try session.saveMessage(payload: payload, for: channelId, syncOwnReactions: false, cache: nil)
+        }
+
+        // Arrange: Observe changes on messages
+        let observer = EntityDatabaseObserver<MessageDTO, MessageDTO>(
+            context: database.viewContext,
+            fetchRequest: MessageDTO.messagesFetchRequest(
+                for: channelId,
+                pageSize: 20,
+                deletedMessagesVisibility: .alwaysVisible,
+                shouldShowShadowedMessages: false
+            ),
+            itemCreator: { $0 }
+        )
+        try observer.startObserving()
+
+        var receivedChange: EntityChange<MessageDTO>?
+        observer.onChange { receivedChange = $0 }
+
+        // Act: Update user
+        try database.writeSynchronously { session in
+            let loadedUser: UserDTO = try XCTUnwrap(session.user(id: userId))
+            loadedUser.name = "Jo Jo"
+        }
+
+        // Assert: Messages should be updated
+        XCTAssertNotNil(receivedChange)
+    }
 }
