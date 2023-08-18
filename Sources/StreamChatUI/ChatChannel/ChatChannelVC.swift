@@ -417,14 +417,16 @@ open class ChatChannelVC: _ViewController,
         let channelUnreadCount = channelController.channel?.unreadCount ?? .noUnread
         messageListVC.scrollToBottomButton.content = channelUnreadCount
 
-        guard channelController.firstUnreadMessageId != firstUnreadMessageId else { return }
-        let previousUnreadMessageId = firstUnreadMessageId
-        firstUnreadMessageId = channelController.firstUnreadMessageId
-        
-        messageListVC.updateUnreadMessagesSeparator(
-            at: firstUnreadMessageId,
-            previousId: previousUnreadMessageId
-        )
+        if channelController.firstUnreadMessageId != firstUnreadMessageId {
+            let previousUnreadMessageId = firstUnreadMessageId
+            firstUnreadMessageId = channelController.firstUnreadMessageId
+            messageListVC.updateUnreadMessagesSeparator(
+                at: firstUnreadMessageId,
+                previousId: previousUnreadMessageId
+            )
+        }
+
+        channelAvatarView.content = (channelController.channel, client.currentUserId)
     }
 
     open func channelController(
