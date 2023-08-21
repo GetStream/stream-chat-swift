@@ -287,7 +287,7 @@ open class ComposerVC: _ViewController,
 
     /// A Boolean value indicating whether the attachments are enabled.
     open var isAttachmentsEnabled: Bool {
-        channelConfig?.uploadsEnabled == true
+        self.channelController?.canUploadFile == true
     }
 
     /// When enabled mentions search users across the entire app instead of searching
@@ -667,7 +667,7 @@ open class ComposerVC: _ViewController,
                 }
 
             // If attachment uploads is disabled, don't ever show the attachments button
-            if self.channelController?.channel?.config.uploadsEnabled == false {
+            if !self.isAttachmentsEnabled {
                 self.composerView.attachmentButton.isHidden = true
             }
         }

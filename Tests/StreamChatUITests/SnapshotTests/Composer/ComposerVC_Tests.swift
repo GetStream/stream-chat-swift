@@ -310,6 +310,30 @@ final class ComposerVC_Tests: XCTestCase {
         XCTAssertEqual(content.attachments.count, 2)
         XCTAssertEqual(contentAttachmentTypes, [.image, .image])
     }
+
+    func test_canUploadFiles_hasAttachmentButtonShown() {
+        composerVC.appearance = Appearance.default
+        composerVC.content = .initial()
+
+        let mock = ChatChannelController_Mock.mock()
+        mock.channel_mock = .mock(cid: .unique, ownCapabilities: [.uploadFile, .sendMessage])
+        composerVC.channelController = mock
+        composerVC.updateContent()
+
+        XCTAssertEqual(composerVC.composerView.attachmentButton.isHidden, false)
+    }
+
+    func test_canNotUploadFiles_hasAttachmentButtonHidden() {
+        composerVC.appearance = Appearance.default
+        composerVC.content = .initial()
+
+        let mock = ChatChannelController_Mock.mock()
+        mock.channel_mock = .mock(cid: .unique, ownCapabilities: [.sendMessage])
+        composerVC.channelController = mock
+        composerVC.updateContent()
+
+        XCTAssertEqual(composerVC.composerView.attachmentButton.isHidden, true)
+    }
     
     // MARK: - audioPlayer
     
