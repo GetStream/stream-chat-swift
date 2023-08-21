@@ -287,7 +287,11 @@ open class ComposerVC: _ViewController,
 
     /// A Boolean value indicating whether the attachments are enabled.
     open var isAttachmentsEnabled: Bool {
-        self.channelController?.canUploadFile == true
+        channelController?.canUploadFile == true
+    }
+
+    open var isSendMessageEnabled: Bool {
+        channelController?.canSendMessage == true
     }
 
     /// When enabled mentions search users across the entire app instead of searching
@@ -553,6 +557,14 @@ open class ComposerVC: _ViewController,
         // This is due to the limitation of UI(files and images cannot be shown together)
         let filesExistInAttachments = content.attachments.contains(where: { $0.type == .file })
         composerView.inputMessageView.textView.isPastingImagesEnabled = !filesExistInAttachments
+
+        if !isSendMessageEnabled {
+            composerView.inputMessageView.textView.placeholderLabel.text = L10n.Composer.Placeholder.messageDisabled
+            composerView.inputMessageView.isUserInteractionEnabled = false
+            composerView.recordButton.isHidden = true
+            composerView.attachmentButton.isHidden = true
+            composerView.commandsButton.isHidden = true
+        }
 
         dismissSuggestions()
     }

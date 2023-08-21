@@ -8,12 +8,27 @@
 import XCTest
 
 final class ComposerVC_Tests: XCTestCase {
-    private var composerVC: ComposerVC! = .init()
+    private var composerVC: ComposerVC!
+    var mockedChatChannelController: ChatChannelController_Mock!
     
     // MARK: - Lifecycle
+
+    override func setUp() {
+        super.setUp()
+        mockedChatChannelController = ChatChannelController_Mock.mock()
+        mockedChatChannelController.channel_mock = .mock(
+            cid: .unique,
+            config: .mock(commands: []),
+            ownCapabilities: [.sendMessage]
+        )
+
+        composerVC = .init()
+        composerVC.channelController = mockedChatChannelController
+    }
     
     override func tearDown() {
         composerVC = nil
+        mockedChatChannelController = nil
         super.tearDown()
     }
     
@@ -170,7 +185,7 @@ final class ComposerVC_Tests: XCTestCase {
     
     func test_attachmentsPreview_withMultipleAttachmentTypes() {
         composerVC.appearance = Appearance.default
-        
+
         composerVC.content = .initial()
         composerVC.content.attachments = [.mockFile, .mockFile, .mockImage, .mockVideo]
         
@@ -252,6 +267,7 @@ final class ComposerVC_Tests: XCTestCase {
         mockChannelController.client.authenticationRepository.setMockToken()
         mockChannelController.channel_mock = .mock(
             cid: .unique,
+            ownCapabilities: [.uploadFile, .sendMessage],
             lastActiveMembers: [member],
             lastActiveWatchers: [watcher]
         )
@@ -267,12 +283,9 @@ final class ComposerVC_Tests: XCTestCase {
     }
     
     func test_channelWithSlowModeActive_messageIsSent_SlowModeIsOnWithCountdownShown() {
-        composerVC.cooldownTracker = CooldownTracker_Mock(timer: ScheduledStreamTimer_Mock())
         composerVC.appearance = Appearance.default
+        composerVC.content.slowMode(cooldown: 120)
         composerVC.content.text = "Test text"
-        composerVC.viewDidLoad()
-        
-        composerVC.cooldownTracker.start(with: 120)
         
         AssertSnapshot(composerVC)
     }
@@ -333,6 +346,17 @@ final class ComposerVC_Tests: XCTestCase {
         composerVC.updateContent()
 
         XCTAssertEqual(composerVC.composerView.attachmentButton.isHidden, true)
+    }
+
+    func test_canNotSendMessage() {
+        composerVC.appearance = Appearance.default
+        composerVC.content = .initial()
+
+        let mock = ChatChannelController_Mock.mock()
+        mock.channel_mock = .mock(cid: .unique, ownCapabilities: [.uploadFile])
+        composerVC.channelController = mock
+
+        AssertSnapshot(composerVC)
     }
     
     // MARK: - audioPlayer
