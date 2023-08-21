@@ -368,7 +368,7 @@ open class ChatMessageListVC: _ViewController,
 
         let actionsController = components.messageActionsVC.init()
         actionsController.messageController = messageController
-        actionsController.channelConfig = dataSource?.channel(for: self)?.config
+        actionsController.channel = dataSource?.channel(for: self)
         actionsController.delegate = self
 
         let reactionsController: ChatMessageReactionsPickerVC? = {
@@ -463,7 +463,7 @@ open class ChatMessageListVC: _ViewController,
 
         messageActionsVC = components.messageActionsVC.init()
         messageActionsVC?.messageController = messageController
-        messageActionsVC?.channelConfig = dataSource?.channel(for: self)?.config
+        messageActionsVC?.channel = dataSource?.channel(for: self)
         messageActionsVC?.delegate = self
 
         guard let messageActions = messageActionsVC?.messageActionsForAlertMenu else {

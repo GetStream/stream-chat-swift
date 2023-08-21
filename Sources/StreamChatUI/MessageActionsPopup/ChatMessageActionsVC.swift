@@ -21,6 +21,13 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
     /// `ChatMessageController` instance used to obtain the message data.
     public var messageController: ChatMessageController!
 
+    /// The channel which the actions will be performed.
+    public var channel: ChatChannel! {
+        didSet {
+            channelConfig = channel.config
+        }
+    }
+
     /// `ChannelConfig` that contains the feature flags of the channel.
     public var channelConfig: ChannelConfig!
 
@@ -97,40 +104,53 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
         case nil:
             var actions: [ChatMessageActionItem] = []
 
-            if channelConfig.quotesEnabled {
+            if channel.ownCapabilities.contains(.quoteMessage) {
                 actions.append(inlineReplyActionItem())
             }
 
-            if channelConfig.repliesEnabled && !message.isPartOfThread {
+            if channel.ownCapabilities.contains(.sendReply) && !message.isPartOfThread {
                 actions.append(threadReplyActionItem())
             }
 
-            if channelConfig.readEventsEnabled && (!message.isPartOfThread || message.showReplyInChannel) {
+            if channel.ownCapabilities.contains(.readEvents) && (!message.isPartOfThread || message.showReplyInChannel) {
                 actions.append(markUnreadActionItem())
             }
 
             actions.append(copyActionItem())
 
-            if message.isSentByCurrentUser {
-                actions += [editActionItem(), deleteActionItem()]
+            if channel.ownCapabilities.contains(.updateAnyMessage) {
+                actions.append(editActionItem())
+            } else if channel.ownCapabilities.contains(.updateOwnMessage) && message.isSentByCurrentUser {
+                actions.append(editActionItem())
+            }
 
-            } else {
-                actions += [flagActionItem()]
+            if channel.ownCapabilities.contains(.deleteAnyMessage) {
+                actions.append(deleteActionItem())
+            } else if channel.ownCapabilities.contains(.deleteOwnMessage) && message.isSentByCurrentUser {
+                actions.append(deleteActionItem())
+            }
 
-                if channelConfig.mutesEnabled {
-                    let isMuted = currentUser.mutedUsers.contains(message.author)
-                    actions.append(isMuted ? unmuteActionItem() : muteActionItem())
-                }
+            if !message.isSentByCurrentUser {
+                actions.append(flagActionItem())
+            }
+
+            if channelConfig.mutesEnabled && !message.isSentByCurrentUser {
+                let isMuted = currentUser.mutedUsers.map(\.id).contains(message.author.id)
+                actions.append(isMuted ? unmuteActionItem() : muteActionItem())
             }
 
             return actions
-        case .pendingSend, .sendingFailed, .pendingSync, .syncingFailed, .deletingFailed:
+        case .sendingFailed:
             return [
-                (message.localState == .sendingFailed || message.failedToBeSentDueToModeration) ? resendActionItem() : nil,
+                resendActionItem(),
                 editActionItem(),
                 deleteActionItem()
             ]
-            .compactMap { $0 }
+        case .pendingSend, .pendingSync, .syncingFailed, .deletingFailed:
+            return [
+                editActionItem(),
+                deleteActionItem()
+            ]
         case .sending, .syncing, .deleting:
             return []
         }
