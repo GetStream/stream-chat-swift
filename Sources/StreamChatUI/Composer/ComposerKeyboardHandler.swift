@@ -83,7 +83,7 @@ open class ComposerKeyboardHandler: KeyboardHandler {
             composerBottomConstraint?.constant = originalBottomConstraintValue
         } else {
             let convertedKeyboardFrame = composerParentView.convert(frame, from: UIScreen.main.coordinateSpace)
-            let intersectedKeyboardHeight = composerParentView.frame.intersection(convertedKeyboardFrame).height
+            let intersectedKeyboardHeight = composerParentView.bounds.intersection(convertedKeyboardFrame).height
 
             let rootTabBar = composerParentView.window?.rootViewController?.tabBarController?.tabBar
             let shouldAddTabBarHeight = rootTabBar != nil && rootTabBar!.isTranslucent == false
