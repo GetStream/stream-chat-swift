@@ -12,6 +12,8 @@ final class ChatChannelListItemView_Tests: XCTestCase {
         id: "yoda",
         name: "Yoda"
     )
+    // To solve s space key issue on iOS 17:
+    let sampleTime = ProcessInfo().operatingSystemVersion.majorVersion == 17 ? "12:00 AM" : "12:00 AM"
 
     // MARK: - Appearance
 
@@ -794,10 +796,7 @@ final class ChatChannelListItemView_Tests: XCTestCase {
         itemView.content = .init(channel: channel, currentUserId: nil)
         itemView.appearance.formatters.channelListMessageTimestamp = DefaultMessageTimestampFormatter()
 
-        XCTAssertEqual(
-            itemView.timestampText,
-            "12:00 AM"
-        )
+        XCTAssertEqual(itemView.timestampText, sampleTime)
     }
 
     func test_timestampText_whenSearchingMessage_thenUsesCreatedAtFromSearchResultMessage() {
@@ -812,10 +811,7 @@ final class ChatChannelListItemView_Tests: XCTestCase {
         )
         itemView.appearance.formatters.channelListMessageTimestamp = DefaultMessageTimestampFormatter()
 
-        XCTAssertEqual(
-            itemView.timestampText,
-            "12:00 AM"
-        )
+        XCTAssertEqual(itemView.timestampText, sampleTime)
     }
 
     func test_timestampText_whenCreatedAtIsToday_thenShowsTimeOnly() {
@@ -835,10 +831,7 @@ final class ChatChannelListItemView_Tests: XCTestCase {
         itemView.content = .init(channel: channel, currentUserId: nil)
         itemView.appearance.formatters.channelListMessageTimestamp = formatter
 
-        XCTAssertEqual(
-            itemView.timestampText,
-            "12:00 AM"
-        )
+        XCTAssertEqual(itemView.timestampText, sampleTime)
     }
 
     func test_timestampText_whenCreatedAtIsYesterday_thenShowsYesterday() {

@@ -14,7 +14,7 @@ concurrency:
 
 env:
   HOMEBREW_NO_INSTALL_CLEANUP: 1 # Disable cleanup for homebrew, we don't need it on CI
-  IOS_SIMULATOR_DEVICE: "iPhone 14 Pro (16.4)"
+  IOS_SIMULATOR_DEVICE: "iPhone 15 Pro (17.0)"
 
 jobs:
   automated-code-review:
@@ -77,7 +77,7 @@ jobs:
     - uses: ./.github/actions/python-cache
     - name: Run LLC Tests (Debug)
       run: bundle exec fastlane test device:"${{ env.IOS_SIMULATOR_DEVICE }}" skip_build:true
-      timeout-minutes: 30
+      timeout-minutes: 40
     - name: Get branch name
       id: get_branch_name
       run: echo "branch=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
@@ -113,7 +113,7 @@ jobs:
     - uses: ./.github/actions/bootstrap
     - name: Run UI Tests (Debug)
       run: bundle exec fastlane test_ui device:"${{ env.IOS_SIMULATOR_DEVICE }}" skip_build:true
-      timeout-minutes: 25
+      timeout-minutes: 40
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GITHUB_PR_NUM: ${{ github.event.number }}

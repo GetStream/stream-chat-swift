@@ -11,19 +11,6 @@ final class QuotedReply_Tests: StreamTestCase {
     let quotedText = "1"
     let parentText = "test"
     let replyText = "quoted reply"
-    
-    override func setUpWithError() throws {
-        try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12,
-                      "Quoted Reply automated tests do not work well on iOS 12")
-        try super.setUpWithError()
-        addTags([.coreFeatures])
-    }
-    
-    override func tearDownWithError() throws {
-        if ProcessInfo().operatingSystemVersion.majorVersion > 12 {
-            try super.tearDownWithError()
-        }
-    }
 
     func test_whenSwipingMessage_thenMessageIsQuotedReply() {
         linkToScenario(withId: 2096)

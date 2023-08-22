@@ -139,9 +139,6 @@ final class MessageList_Tests: StreamTestCase {
     func test_messageIncreases_whenUserEditsMessageWithOneLineText() throws {
         linkToScenario(withId: 99)
 
-        try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12,
-                      "XCUITest does not get text from a cell after editing it on iOS 12")
-
         let message = "test message"
 
         GIVEN("user opens the channel") {
@@ -157,9 +154,6 @@ final class MessageList_Tests: StreamTestCase {
 
     func test_messageDecreases_whenUserEditsMessage() throws {
         linkToScenario(withId: 100)
-
-        try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12,
-                      "XCUITest does not get text from a cell after editing it on iOS 12")
 
         let message = "test\nmessage"
 
@@ -257,9 +251,6 @@ final class MessageList_Tests: StreamTestCase {
     func test_offlineMessageInTheMessageList() throws {
         linkToScenario(withId: 34)
 
-        try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12,
-                      "This test is not stable enough on iOS 12")
-
         let message = "test message"
 
         GIVEN("user opens the channel") {
@@ -348,9 +339,6 @@ extension MessageList_Tests {
     func test_messageListScrollsDown_whenMessageListIsScrolledUp_andUserSendsNewMessage() throws {
         linkToScenario(withId: 193)
 
-        try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12,
-                      "[CIS-2020] Scroll on message list does not work well enough")
-
         let newMessage = "New message"
 
         GIVEN("user opens the channel") {
@@ -372,9 +360,6 @@ extension MessageList_Tests {
 
     func test_messageListScrollsDown_whenMessageListIsScrolledDown_andUserReceivesNewMessage() throws {
         linkToScenario(withId: 75)
-
-        try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12,
-                      "[CIS-2020] Scroll on message list does not work well enough")
 
         let newMessage = "New message"
 
@@ -417,9 +402,6 @@ extension MessageList_Tests {
     func test_messageListScrollsDown_whenUserTapsOnScrollToBottomButton() throws {
         linkToScenario(withId: 196)
 
-        try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12,
-                      "[CIS-2020] Scroll on message list does not work well enough")
-
         let newMessage = "New message"
 
         GIVEN("user opens the channel") {
@@ -445,9 +427,6 @@ extension MessageList_Tests {
     func test_reloadsSkippedMessages_whenScrolledToTheBottom() throws {
         linkToScenario(withId: 289)
 
-        try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12,
-                      "[CIS-2020] Scroll on message list does not work well enough")
-
         GIVEN("user opens the channel") {
             backendRobot.generateChannels(count: 1, messagesCount: 30)
             userRobot.login().openChannel()
@@ -472,9 +451,6 @@ extension MessageList_Tests {
         throw XCTSkip("https://github.com/GetStream/ios-issues-tracking/issues/491")
         
         linkToScenario(withId: 1669)
-        
-        try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12,
-                      "This test does not work well enough on iOS 12")
 
         let newMessage = "New message"
 
@@ -514,9 +490,6 @@ extension MessageList_Tests {
     func test_paginationOnMessageList() throws {
         linkToScenario(withId: 56)
         
-        try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12,
-                      "[CIS-2020] Scroll on message list does not work well enough")
-        
         let messagesCount = 60
         
         WHEN("user opens the channel") {
@@ -530,9 +503,6 @@ extension MessageList_Tests {
     
     func test_paginationOnThread() throws {
         linkToScenario(withId: 55)
-        
-        try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12,
-                      "[CIS-2020] Scroll on message list does not work well enough")
         
         let replyCount = 60
         
@@ -925,8 +895,6 @@ extension MessageList_Tests {
 
     func test_threadReplyIsRemovedEverywhere_whenUserRemovesItFromChannel() throws {
         linkToScenario(withId: 114)
-        
-        try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12, "Flaky on iOS 12")
 
         let threadReply = "thread reply"
 
@@ -1002,8 +970,6 @@ extension MessageList_Tests {
 
     func test_userRemovesThreadReply() throws {
         linkToScenario(withId: 53)
-        
-        try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12, "Flaky on iOS 12")
 
         let threadReply = "thread reply"
 

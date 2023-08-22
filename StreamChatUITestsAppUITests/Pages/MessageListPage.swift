@@ -222,15 +222,15 @@ class MessageListPage {
             messageCell.buttons.matching(NSPredicate(format: "identifier LIKE 'ActionButton'"))
         }
 
-        static func giphySendButton(in messageCell: XCUIElement) -> XCUIElement {
+        static func giphySendButton(in messageCell: XCUIElement) -> XCUIElementQuery {
             attachmentActionButton(in: messageCell, label: "Send")
         }
 
-        static func giphyShuffleButton(in messageCell: XCUIElement) -> XCUIElement {
+        static func giphyShuffleButton(in messageCell: XCUIElement) -> XCUIElementQuery {
             attachmentActionButton(in: messageCell, label: "Shuffle")
         }
 
-        static func giphyCancelButton(in messageCell: XCUIElement) -> XCUIElement {
+        static func giphyCancelButton(in messageCell: XCUIElement) -> XCUIElementQuery {
             attachmentActionButton(in: messageCell, label: "Cancel")
         }
 
@@ -238,8 +238,8 @@ class MessageListPage {
             messageCell.staticTexts["GIPHY"]
         }
 
-        private static func attachmentActionButton(in messageCell: XCUIElement, label: String) -> XCUIElement {
-            giphyButtons(in: messageCell).matching(NSPredicate(format: "label LIKE '\(label)'")).firstMatch
+        private static func attachmentActionButton(in messageCell: XCUIElement, label: String) -> XCUIElementQuery {
+            giphyButtons(in: messageCell).matching(NSPredicate(format: "label LIKE '\(label)'"))
         }
 
         static var deletedMessagePlaceholder: String {

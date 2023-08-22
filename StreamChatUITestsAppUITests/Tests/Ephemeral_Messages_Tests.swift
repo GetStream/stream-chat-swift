@@ -9,9 +9,6 @@ final class Ephemeral_Messages_Tests: StreamTestCase {
     func test_userObservesAnimatedGiphy_whenUserAddsGiphyMessage() throws {
         linkToScenario(withId: 67)
 
-        try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12,
-                      "[CIS-2054] Giphy is not loaded")
-
         GIVEN("user opens a channel") {
             userRobot
                 .login()
@@ -27,9 +24,6 @@ final class Ephemeral_Messages_Tests: StreamTestCase {
 
     func test_userObservesAnimatedGiphy_whenParticipantAddsGiphyMessage() throws {
         linkToScenario(withId: 68)
-
-        try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12,
-                      "[CIS-2054] Giphy is not loaded")
 
         GIVEN("user opens a channel") {
             userRobot
@@ -131,9 +125,6 @@ final class Ephemeral_Messages_Tests: StreamTestCase {
 
     func test_userObservesAnimatedGiphy_afterAddingGiphyThroughComposerMenu() throws {
         linkToScenario(withId: 278)
-
-        try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12,
-                      "[CIS-2054] Giphy is not loaded")
 
         GIVEN("user opens a channel") {
             userRobot

@@ -84,7 +84,7 @@ final class ChatMentionSuggestionView_Tests: XCTestCase {
 
         var components = Components.mock
         components.onlineIndicatorView = RectIndicator.self
-        components.mentionAvatarView = CustomAvatarView.self
+        components.userAvatarView = CustomAvatarView.self
 
         let view = ChatMentionSuggestionView().withoutAutoresizingMaskConstraints
         view.widthAnchor.constraint(equalToConstant: Self.defaultCellWidth).isActive = true

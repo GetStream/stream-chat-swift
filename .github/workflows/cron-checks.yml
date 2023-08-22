@@ -133,6 +133,11 @@ jobs:
     strategy:
       matrix:
         include:
+          - ios: 17.0
+            xcode: 15.0
+            os: macos-13
+            device: "iPhone 15 Pro"
+            setup_runtime: false
           - ios: 16.4
             xcode: 14.3.1
             os: macos-13

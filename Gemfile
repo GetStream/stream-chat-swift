@@ -4,7 +4,7 @@ source 'https://rubygems.org'
 
 git_source(:github) { |repo_name| "https://github.com/#{repo_name}" }
 
-gem 'cocoapods'
+gem 'cocoapods', git: 'https://github.com/CocoaPods/CocoaPods', branch: 'master' # TODO: This fix has to be released to use the exact version https://github.com/CocoaPods/CocoaPods/pull/12009
 gem 'danger'
 gem 'danger-commit_lint'
 gem 'fastlane'

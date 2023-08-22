@@ -273,7 +273,7 @@ class APIClient {
 
         enterTokenFetchMode()
 
-        tokenRefresher?() { [weak self] in
+        tokenRefresher? { [weak self] in
             self?.exitTokenFetchMode()
             completion(ClientError.TokenRefreshed())
         }
