@@ -62,6 +62,8 @@
 "composer.picker.media" = "Photo or Video";
 "composer.picker.camera" = "Camera";
 "composer.picker.cancel" = "Cancel";
+"composer.links-disabled.title" = "Links are disabled";
+"composer.links-disabled.subtitle" = "Sending links is not allowed in this conversation.";
 
 "composer.suggestions.commands.header" = "Instant Commands";
 "message.sending.attachment-uploading-failed" = "UPLOADING FAILED";

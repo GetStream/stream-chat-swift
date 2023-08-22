@@ -269,6 +269,8 @@ open class ComposerVC: _ViewController,
 
     open var cooldownTracker: CooldownTracker = CooldownTracker(timer: ScheduledStreamTimer(interval: 1))
 
+    lazy var linkDetector: NSDataDetector? = try? .init(types: NSTextCheckingResult.CheckingType.link.rawValue)
+
     /// A symbol that is used to recognise when the user is mentioning a user.
     open var mentionSymbol = "@"
 
@@ -292,6 +294,11 @@ open class ComposerVC: _ViewController,
 
     open var isSendMessageEnabled: Bool {
         channelController?.canSendMessage == true
+    }
+
+    /// A Boolean value indicating whether the current input text contains links.
+    open var inputContainsLinks: Bool {
+        linkDetector?.firstMatch(in: content.text, range: NSRange(location: 0, length: content.text.utf16.count)) != nil
     }
 
     /// When enabled mentions search users across the entire app instead of searching
@@ -586,6 +593,11 @@ open class ComposerVC: _ViewController,
     // MARK: - Actions
 
     @objc open func publishMessage(sender: UIButton) {
+        if channelController?.canSendLinks == false && inputContainsLinks {
+            presentAlert(title: L10n.Composer.LinksDisabled.title, message: L10n.Composer.LinksDisabled.subtitle)
+            return
+        }
+
         let text: String
         if let command = content.command {
             text = "/\(command.name) " + content.text

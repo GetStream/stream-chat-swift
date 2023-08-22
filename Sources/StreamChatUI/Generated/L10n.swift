@@ -109,6 +109,12 @@ internal enum L10n {
       /// Also send as direct message
       internal static var directMessageReply: String { L10n.tr("Localizable", "composer.checkmark.direct-message-reply") }
     }
+    internal enum LinksDisabled {
+      /// Sending links is not allowed in this conversation.
+      internal static var subtitle: String { L10n.tr("Localizable", "composer.links-disabled.subtitle") }
+      /// Links are disabled
+      internal static var title: String { L10n.tr("Localizable", "composer.links-disabled.title") }
+    }
     internal enum Picker {
       /// Camera
       internal static var camera: String { L10n.tr("Localizable", "composer.picker.camera") }

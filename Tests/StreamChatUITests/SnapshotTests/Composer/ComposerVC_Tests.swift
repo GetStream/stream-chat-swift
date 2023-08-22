@@ -358,6 +358,37 @@ final class ComposerVC_Tests: XCTestCase {
 
         AssertSnapshot(composerVC)
     }
+
+    func test_canNotSendLinks() {
+        composerVC.appearance = Appearance.default
+        composerVC.content = .initial()
+        composerVC.content.text = "Some link: https://github.com/GetStream/stream-chat-swift"
+
+        let mock = ChatChannelController_Mock.mock()
+        mock.channel_mock = .mock(cid: .unique, ownCapabilities: [.uploadFile, .sendMessage])
+        composerVC.channelController = mock
+        composerVC.publishMessage(sender: composerVC.composerView.sendButton)
+
+        XCTAssertEqual(mock.createNewMessageCallCount, 0)
+
+        composerVC.content.text = "Without links"
+        composerVC.publishMessage(sender: composerVC.composerView.sendButton)
+
+        XCTAssertEqual(mock.createNewMessageCallCount, 1)
+    }
+
+    func test_canSendLinks() {
+        composerVC.appearance = Appearance.default
+        composerVC.content = .initial()
+        composerVC.content.text = "Some link: https://github.com/GetStream/stream-chat-swift"
+
+        let mock = ChatChannelController_Mock.mock()
+        mock.channel_mock = .mock(cid: .unique, ownCapabilities: [.uploadFile, .sendMessage, .sendLinks])
+        composerVC.channelController = mock
+        composerVC.publishMessage(sender: composerVC.composerView.sendButton)
+
+        XCTAssertEqual(mock.createNewMessageCallCount, 1)
+    }
     
     // MARK: - audioPlayer
     
