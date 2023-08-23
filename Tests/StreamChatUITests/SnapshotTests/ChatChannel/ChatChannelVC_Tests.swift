@@ -972,6 +972,10 @@ class ComposerVC_Mock: ComposerVC {
         true
     }
 
+    override var isSendMessageEnabled: Bool {
+        true
+    }
+
     override func updateContent() {
         if callUpdateContent {
             super.updateContent()
