@@ -72,7 +72,7 @@ public extension ChatChannel {
         isHidden: Bool = false,
         createdBy: ChatUser? = nil,
         config: ChannelConfig = .mock(),
-        ownCapabilities: Set<ChannelCapability> = [.sendMessage],
+        ownCapabilities: Set<ChannelCapability> = [.sendMessage, .uploadFile],
         isFrozen: Bool = false,
         lastActiveMembers: [ChatChannelMember] = [],
         membership: ChatChannelMember? = nil,
