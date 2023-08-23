@@ -22,9 +22,9 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
     public var messageController: ChatMessageController!
 
     /// The channel which the actions will be performed.
-    public var channel: ChatChannel! {
+    public var channel: ChatChannel? {
         didSet {
-            channelConfig = channel.config
+            channelConfig = channel?.config
         }
     }
 
@@ -104,29 +104,38 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
         case nil:
             var actions: [ChatMessageActionItem] = []
 
-            if channel.ownCapabilities.contains(.quoteMessage) {
+            // If a channel is not set, we fallback to using channelConfig only.
+            let canQuoteMessage = channel?.ownCapabilities.contains(.quoteMessage) ?? channelConfig.quotesEnabled
+            let canSendReply = channel?.ownCapabilities.contains(.sendReply) ?? channelConfig.repliesEnabled
+            let canReceiveReadEvents = channel?.ownCapabilities.contains(.readEvents) ?? channelConfig.readEventsEnabled
+            let canUpdateAnyMessage = channel?.ownCapabilities.contains(.updateAnyMessage) ?? false
+            let canUpdateOwnMessage = channel?.ownCapabilities.contains(.updateOwnMessage) ?? true
+            let canDeleteAnyMessage = channel?.ownCapabilities.contains(.deleteAnyMessage) ?? false
+            let canDeleteOwnMessage = channel?.ownCapabilities.contains(.deleteOwnMessage) ?? true
+
+            if canQuoteMessage {
                 actions.append(inlineReplyActionItem())
             }
 
-            if channel.ownCapabilities.contains(.sendReply) && !message.isPartOfThread {
+            if canSendReply && !message.isPartOfThread {
                 actions.append(threadReplyActionItem())
             }
 
-            if channel.ownCapabilities.contains(.readEvents) && (!message.isPartOfThread || message.showReplyInChannel) {
+            if canReceiveReadEvents && (!message.isPartOfThread || message.showReplyInChannel) {
                 actions.append(markUnreadActionItem())
             }
 
             actions.append(copyActionItem())
 
-            if channel.ownCapabilities.contains(.updateAnyMessage) {
+            if canUpdateAnyMessage {
                 actions.append(editActionItem())
-            } else if channel.ownCapabilities.contains(.updateOwnMessage) && message.isSentByCurrentUser {
+            } else if canUpdateOwnMessage && message.isSentByCurrentUser {
                 actions.append(editActionItem())
             }
 
-            if channel.ownCapabilities.contains(.deleteAnyMessage) {
+            if canDeleteAnyMessage {
                 actions.append(deleteActionItem())
-            } else if channel.ownCapabilities.contains(.deleteOwnMessage) && message.isSentByCurrentUser {
+            } else if canDeleteOwnMessage && message.isSentByCurrentUser {
                 actions.append(deleteActionItem())
             }
 
