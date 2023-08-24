@@ -4,25 +4,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
-
 ### ✅ Added
 - Add XCPrivacy manifest [#2740](https://github.com/GetStream/stream-chat-swift/pull/2740)
 - Add digital signature to StreamChat XCFramework [#2740](https://github.com/GetStream/stream-chat-swift/pull/2740)
-
 ### 🐞 Fixed
 - Fix Message List not updating when user info changes [#2738](https://github.com/GetStream/stream-chat-swift/pull/2738)
 - Fix Channel List items online presence not updating when user info changes [#2742](https://github.com/GetStream/stream-chat-swift/pull/2742)
 - Fix Channel name not updating when member name changes [#2742](https://github.com/GetStream/stream-chat-swift/pull/2742)
 
 ## StreamChatUI
-
 ### ✅ Added
 - Add XCPrivacy manifest [#2740](https://github.com/GetStream/stream-chat-swift/pull/2740)
 - Add digital signature to StreamChatUI XCFramework [#2740](https://github.com/GetStream/stream-chat-swift/pull/2740)
-
 ### 🐞 Fixed
 - Fix Channel Header View not updating when user info changes [#2742](https://github.com/GetStream/stream-chat-swift/pull/2742)
 - Fix Channel List rendering user name on subtitle text in 1:1 channel [#2737](https://github.com/GetStream/stream-chat-swift/pull/2737)
+- Fix gap between the composer and the keyboard when parent view’s frame origin is not zero [#2743](https://github.com/GetStream/stream-chat-swift/pull/2743)
 ### 🔄 Changed
 - Change timestamp formatting in Channel List according to the default design and other SDKs [#2736](https://github.com/GetStream/stream-chat-swift/pull/2736)
 
