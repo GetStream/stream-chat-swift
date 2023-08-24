@@ -17,14 +17,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChatUI
 
 ### ✅ Added
-- Apply channel capabilities in UI components [#2747](https://github.com/GetStream/stream-chat-swift/pull/2747)
-    - Only show the delete swipe action in the Channel List if the user can delete a channel
-    - Only show message actions if the user can perform them
-    - Only show the reactions picker if the user can add a reaction
-    - Disable sending messages if the channel has messages disabled
-    - Only allow sending links if the channel has links enabled
 - Add XCPrivacy manifest [#2740](https://github.com/GetStream/stream-chat-swift/pull/2740)
 - Add digital signature to StreamChatUI XCFramework [#2740](https://github.com/GetStream/stream-chat-swift/pull/2740)
+- Apply channel capabilities in UI components [#2747](https://github.com/GetStream/stream-chat-swift/pull/2747)
 
 ### 🐞 Fixed
 - Fix Channel Header View not updating when user info changes [#2742](https://github.com/GetStream/stream-chat-swift/pull/2742)
