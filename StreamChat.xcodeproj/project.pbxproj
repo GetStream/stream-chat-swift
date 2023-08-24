@@ -1139,8 +1139,6 @@
 		ACE6E069268DB8AC00396310 /* YTInputChatMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACE6E068268DB8AC00396310 /* YTInputChatMessageView.swift */; };
 		ACF73D7826CFE07900372DC0 /* Cancellable.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACF73D7726CFE07900372DC0 /* Cancellable.swift */; };
 		AD016A1425CAFAF2009EBAD2 /* ChatChannelListVC_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD46C4DA25C431C500B405F8 /* ChatChannelListVC_Tests.swift */; };
-		AD03C5B72A8E9363009D3299 /* ChannelController+Capabilities+Features.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD03C5B62A8E9363009D3299 /* ChannelController+Capabilities+Features.swift */; };
-		AD03C5B82A8E9363009D3299 /* ChannelController+Capabilities+Features.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD03C5B62A8E9363009D3299 /* ChannelController+Capabilities+Features.swift */; };
 		AD050B9E265D5E12006649A5 /* QuotedChatMessageView+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD050B8C265D5E09006649A5 /* QuotedChatMessageView+SwiftUI.swift */; };
 		AD050BA8265D600B006649A5 /* QuotedChatMessageView+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD050BA7265D600B006649A5 /* QuotedChatMessageView+SwiftUI_Tests.swift */; };
 		AD0AD6C02A25140A00CB96CB /* MessagesPaginationState_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0AD6BF2A25140A00CB96CB /* MessagesPaginationState_Tests.swift */; };
@@ -3585,7 +3583,6 @@
 		AD0169CA25CAEDC0009EBAD2 /* yoda.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = yoda.jpg; sourceTree = "<group>"; };
 		AD0169F325CAF689009EBAD2 /* vader.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = vader.jpg; sourceTree = "<group>"; };
 		AD016A3325CB0AE6009EBAD2 /* StreamChatUITestPlan.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = StreamChatUITestPlan.xctestplan; sourceTree = "<group>"; };
-		AD03C5B62A8E9363009D3299 /* ChannelController+Capabilities+Features.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChannelController+Capabilities+Features.swift"; sourceTree = "<group>"; };
 		AD050B8C265D5E09006649A5 /* QuotedChatMessageView+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "QuotedChatMessageView+SwiftUI.swift"; sourceTree = "<group>"; };
 		AD050BA7265D600B006649A5 /* QuotedChatMessageView+SwiftUI_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "QuotedChatMessageView+SwiftUI_Tests.swift"; sourceTree = "<group>"; };
 		AD0AD6BF2A25140A00CB96CB /* MessagesPaginationState_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesPaginationState_Tests.swift; sourceTree = "<group>"; };
@@ -8218,7 +8215,6 @@
 				AD78568E298B273900C2FEAD /* ChatClient+ChannelController.swift */,
 				799C944B247D5766001F1104 /* ChannelController.swift */,
 				AD78568B298B268F00C2FEAD /* ChannelControllerDelegate.swift */,
-				AD03C5B62A8E9363009D3299 /* ChannelController+Capabilities+Features.swift */,
 				DAE566E624FFD22300E39431 /* ChannelController+SwiftUI.swift */,
 				DA4AA3B12502718600FAAF6E /* ChannelController+Combine.swift */,
 			);
@@ -10161,7 +10157,6 @@
 				799C9449247D5211001F1104 /* MessageSender.swift in Sources */,
 				792A4F4D248011E500EAF71D /* ChannelListQuery.swift in Sources */,
 				882C5746252C6FDF00E60C44 /* ChannelMemberListQuery.swift in Sources */,
-				AD03C5B72A8E9363009D3299 /* ChannelController+Capabilities+Features.swift in Sources */,
 				7964F3B8249A314D002A09EC /* ConsoleLogDestination.swift in Sources */,
 				799C9445247D3DD2001F1104 /* WebSocketClient.swift in Sources */,
 				43D3F0F9284106EE00B74921 /* CallEndpoints.swift in Sources */,
@@ -10816,7 +10811,6 @@
 				C1B49B3E2822A7AD00F4E89E /* StreamRuntimeCheck.swift in Sources */,
 				C121E80C274544AC00023E4C /* EventDataProcessorMiddleware.swift in Sources */,
 				C121E80D274544AC00023E4C /* ChannelReadUpdaterMiddleware.swift in Sources */,
-				AD03C5B82A8E9363009D3299 /* ChannelController+Capabilities+Features.swift in Sources */,
 				C121E80E274544AC00023E4C /* UserTypingStateUpdaterMiddleware.swift in Sources */,
 				C121E80F274544AC00023E4C /* ChannelTruncatedEventMiddleware.swift in Sources */,
 				C121E811274544AC00023E4C /* UserChannelBanEventsMiddleware.swift in Sources */,

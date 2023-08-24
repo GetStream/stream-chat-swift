@@ -364,3 +364,150 @@ public struct ChannelCapability: RawRepresentable, ExpressibleByStringLiteral, H
     /// Ability to create a call.
     public static var createCall: Self = "create-call"
 }
+
+public extension ChatChannel {
+    /// Can the current user ban members from this channel.
+    var canBanChannelMembers: Bool {
+        ownCapabilities.contains(.banChannelMembers) == true
+    }
+
+    /// Can the current user receive connect events from this channel.
+    var canReceiveConnectEvents: Bool {
+        ownCapabilities.contains(.connectEvents) == true
+    }
+
+    /// Can the current user delete any message from this channel.
+    var canDeleteAnyMessage: Bool {
+        ownCapabilities.contains(.deleteAnyMessage) == true
+    }
+
+    /// Can the current user delete the channel.
+    var canDeleteChannel: Bool {
+        ownCapabilities.contains(.deleteChannel) == true
+    }
+
+    /// Can the current user delete own messages from the channel.
+    var canDeleteOwnMessage: Bool {
+        ownCapabilities.contains(.deleteOwnMessage) == true
+    }
+
+    /// Can the current user flag a message in this channel.
+    var canFlagMessage: Bool {
+        ownCapabilities.contains(.flagMessage) == true
+    }
+
+    /// Can the current user freeze or unfreeze the channel.
+    var canFreezeChannel: Bool {
+        ownCapabilities.contains(.freezeChannel) == true
+    }
+
+    /// Can the current user leave the channel (remove own membership).
+    var canLeaveChannel: Bool {
+        ownCapabilities.contains(.leaveChannel) == true
+    }
+
+    /// Can the current user join the channel (add own membership).
+    var canJoinChannel: Bool {
+        ownCapabilities.contains(.joinChannel) == true
+    }
+
+    /// Can the current user mute the channel.
+    var canMuteChannel: Bool {
+        ownCapabilities.contains(.muteChannel) == true
+    }
+
+    /// Can the current user pin a message in this channel.
+    var canPinMessage: Bool {
+        ownCapabilities.contains(.pinMessage) == true
+    }
+
+    /// Can the current user quote a message in this channel.
+    var canQuoteMessage: Bool {
+        ownCapabilities.contains(.quoteMessage) == true
+    }
+
+    /// Can the current user receive read events from this channel.
+    var canReceiveReadEvents: Bool {
+        ownCapabilities.contains(.readEvents) == true
+    }
+
+    /// Can the current user use message search in this channel.
+    var canSearchMessages: Bool {
+        ownCapabilities.contains(.searchMessages) == true
+    }
+
+    /// Can the current user send custom events in this channel.
+    var canSendCustomEvents: Bool {
+        ownCapabilities.contains(.sendCustomEvents) == true
+    }
+
+    /// Can the current user attach links to messages in this channel.
+    var canSendLinks: Bool {
+        ownCapabilities.contains(.sendLinks) == true
+    }
+
+    /// Can the current user send a message in this channel.
+    var canSendMessage: Bool {
+        ownCapabilities.contains(.sendMessage) == true
+    }
+
+    /// Can the current user send reactions in this channel.
+    var canSendReaction: Bool {
+        ownCapabilities.contains(.sendReaction) == true
+    }
+
+    /// Can the current user thread reply to a message in this channel.
+    var canSendReply: Bool {
+        ownCapabilities.contains(.sendReply) == true
+    }
+
+    /// Can the current user enable or disable slow mode in this channel.
+    var canSetChannelCooldown: Bool {
+        ownCapabilities.contains(.setChannelCooldown) == true
+    }
+
+    /// Can the current user send and receive typing events in this channel.
+    var canSendTypingEvents: Bool {
+        ownCapabilities.contains(.sendTypingEvents) == true
+    }
+
+    /// Can the current user update any message in this channel.
+    var canUpdateAnyMessage: Bool {
+        ownCapabilities.contains(.updateAnyMessage) == true
+    }
+
+    /// Can the current user update channel data.
+    var canUpdateChannel: Bool {
+        ownCapabilities.contains(.updateChannel) == true
+    }
+
+    /// Can the current user update channel members.
+    var canUpdateChannelMembers: Bool {
+        ownCapabilities.contains(.updateChannelMembers) == true
+    }
+
+    /// Can the current user update own messages in this channel.
+    var canUpdateOwnMessage: Bool {
+        ownCapabilities.contains(.updateOwnMessage) == true
+    }
+
+    /// Can the current user upload message attachments in this channel.
+    var canUploadFile: Bool {
+        ownCapabilities.contains(.uploadFile) == true
+    }
+
+    /// Can the current user join a call in this channel.
+    var canJoinCall: Bool {
+        ownCapabilities.contains(.joinCall) == true
+    }
+
+    /// Can the current user create a call in this channel.
+    var canCreateCall: Bool {
+        ownCapabilities.contains(.createCall) == true
+    }
+
+    /// Is slow mode active in this channel.
+    var isSlowMode: Bool {
+        ownCapabilities.contains(.slowMode) == true
+    }
+}

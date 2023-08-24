@@ -76,6 +76,14 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
     // swiftlint:disable cyclomatic_complexity
     override func didTapMoreButton(for cid: ChannelId) {
         let channelController = rootViewController.controller.client.channelController(for: cid)
+        let canUpdateChannel = channelController.channel?.canUpdateChannel == true
+        let canUpdateChannelMembers = channelController.channel?.canUpdateChannelMembers == true
+        let canBanChannelMembers = channelController.channel?.canBanChannelMembers == true
+        let canFreezeChannel = channelController.channel?.canFreezeChannel == true
+        let canMuteChannel = channelController.channel?.canMuteChannel == true
+        let canSetChannelCooldown = channelController.channel?.canSetChannelCooldown == true
+        let canSendMessage = channelController.channel?.canSendMessage == true
+
         rootViewController.presentAlert(title: "Select an action", actions: [
             .init(title: "Change nav bar translucency", handler: { [unowned self] _ in
                 self.rootViewController.presentAlert(
@@ -111,7 +119,7 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                 )
                 self.channelPresentingStyle = .embeddedInTabBar
             }),
-            .init(title: "Update channel name", isEnabled: channelController.canUpdateChannel, handler: { [unowned self] _ in
+            .init(title: "Update channel name", isEnabled: canUpdateChannel, handler: { [unowned self] _ in
                 self.rootViewController.presentAlert(title: "Enter channel name", textFieldPlaceholder: "Channel name") { name in
                     guard let name = name, !name.isEmpty else {
                         self.rootViewController.presentAlert(title: "Name is not valid")
@@ -131,7 +139,7 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                     }
                 }
             }),
-            .init(title: "Update channel image", isEnabled: channelController.canUpdateChannel, handler: { [unowned self] _ in
+            .init(title: "Update channel image", isEnabled: canUpdateChannel, handler: { [unowned self] _ in
                 self.rootViewController.presentAlert(
                     title: "Enter channel image url",
                     textFieldPlaceholder: "Channel image url, must be valid"
@@ -155,7 +163,7 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                     }
                 }
             }),
-            .init(title: "Add member", isEnabled: channelController.canUpdateChannelMembers, handler: { [unowned self] _ in
+            .init(title: "Add member", isEnabled: canUpdateChannelMembers, handler: { [unowned self] _ in
                 self.rootViewController.presentAlert(title: "Enter user id", textFieldPlaceholder: "User ID") { id in
                     guard let id = id, !id.isEmpty else {
                         self.rootViewController.presentAlert(title: "User ID is not valid")
@@ -171,7 +179,7 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                     }
                 }
             }),
-            .init(title: "Add member w/o history", isEnabled: channelController.canUpdateChannelMembers, handler: { [unowned self] _ in
+            .init(title: "Add member w/o history", isEnabled: canUpdateChannelMembers, handler: { [unowned self] _ in
                 self.rootViewController.presentAlert(title: "Enter user id", textFieldPlaceholder: "User ID") { id in
                     guard let id = id, !id.isEmpty else {
                         self.rootViewController.presentAlert(title: "User ID is not valid")
@@ -187,7 +195,7 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                     }
                 }
             }),
-            .init(title: "Remove a member", isEnabled: channelController.canUpdateChannelMembers, handler: { [unowned self] _ in
+            .init(title: "Remove a member", isEnabled: canUpdateChannelMembers, handler: { [unowned self] _ in
                 let actions = channelController.channel?.lastActiveMembers.map { member in
                     UIAlertAction(title: member.id, style: .default) { _ in
                         channelController.removeMembers(userIds: [member.id]) { [unowned self] error in
@@ -204,7 +212,7 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                 } ?? []
                 self.rootViewController.presentAlert(title: "Select a member", actions: actions)
             }),
-            .init(title: "Ban member", isEnabled: channelController.canBanChannelMembers, handler: { [unowned self] _ in
+            .init(title: "Ban member", isEnabled: canBanChannelMembers, handler: { [unowned self] _ in
                 let actions = channelController.channel?.lastActiveMembers.map { member in
                     UIAlertAction(title: member.id, style: .default) { _ in
                         channelController.client
@@ -221,7 +229,7 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                 } ?? []
                 self.rootViewController.presentAlert(title: "Select a member", actions: actions)
             }),
-            .init(title: "Shadow ban member", isEnabled: channelController.canBanChannelMembers, handler: { [unowned self] _ in
+            .init(title: "Shadow ban member", isEnabled: canBanChannelMembers, handler: { [unowned self] _ in
                 let actions = channelController.channel?.lastActiveMembers.map { member in
                     UIAlertAction(title: member.id, style: .default) { _ in
                         channelController.client
@@ -238,7 +246,7 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                 } ?? []
                 self.rootViewController.presentAlert(title: "Select a member", actions: actions)
             }),
-            .init(title: "Unban member", isEnabled: channelController.canBanChannelMembers, handler: { [unowned self] _ in
+            .init(title: "Unban member", isEnabled: canBanChannelMembers, handler: { [unowned self] _ in
                 let actions = channelController.channel?.lastActiveMembers.map { member in
                     UIAlertAction(title: member.id, style: .default) { _ in
                         channelController.client
@@ -255,28 +263,28 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                 } ?? []
                 self.rootViewController.presentAlert(title: "Select a member", actions: actions)
             }),
-            .init(title: "Freeze channel", isEnabled: channelController.canFreezeChannel, handler: { [unowned self] _ in
+            .init(title: "Freeze channel", isEnabled: canFreezeChannel, handler: { [unowned self] _ in
                 channelController.freezeChannel { error in
                     if let error = error {
                         self.rootViewController.presentAlert(title: "Couldn't freeze channel \(cid)", message: "\(error)")
                     }
                 }
             }),
-            .init(title: "Unfreeze channel", isEnabled: channelController.canFreezeChannel, handler: { [unowned self] _ in
+            .init(title: "Unfreeze channel", isEnabled: canFreezeChannel, handler: { [unowned self] _ in
                 channelController.unfreezeChannel { error in
                     if let error = error {
                         self.rootViewController.presentAlert(title: "Couldn't unfreeze channel \(cid)", message: "\(error)")
                     }
                 }
             }),
-            .init(title: "Mute channel", isEnabled: channelController.canMuteChannel, handler: { [unowned self] _ in
+            .init(title: "Mute channel", isEnabled: canMuteChannel, handler: { [unowned self] _ in
                 channelController.muteChannel { error in
                     if let error = error {
                         self.rootViewController.presentAlert(title: "Couldn't mute channel \(cid)", message: "\(error)")
                     }
                 }
             }),
-            .init(title: "Unmute channel", isEnabled: channelController.canMuteChannel, handler: { [unowned self] _ in
+            .init(title: "Unmute channel", isEnabled: canMuteChannel, handler: { [unowned self] _ in
                 channelController.unmuteChannel { error in
                     if let error = error {
                         self.rootViewController.presentAlert(title: "Couldn't unmute channel \(cid)", message: "\(error)")
@@ -301,7 +309,7 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                     }
                 }
             }),
-            .init(title: "Enable slow mode", isEnabled: channelController.canSetChannelCooldown, handler: { [unowned self] _ in
+            .init(title: "Enable slow mode", isEnabled: canSetChannelCooldown, handler: { [unowned self] _ in
                 self.rootViewController
                     .presentAlert(title: "Enter cooldown", textFieldPlaceholder: "Cooldown duration, 0-120") { cooldown in
                         guard let cooldown = cooldown, !cooldown.isEmpty, let duration = Int(cooldown) else {
@@ -318,7 +326,7 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                         }
                     }
             }),
-            .init(title: "Disable slow mode", isEnabled: channelController.canSetChannelCooldown, handler: { [unowned self] _ in
+            .init(title: "Disable slow mode", isEnabled: canSetChannelCooldown, handler: { [unowned self] _ in
                 channelController.disableSlowMode { error in
                     if let error = error {
                         self.rootViewController.presentAlert(
@@ -389,7 +397,7 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                     )
                 ), animated: true)
             }),
-            .init(title: "Truncate channel w/o message", isEnabled: channelController.canUpdateChannel, handler: { _ in
+            .init(title: "Truncate channel w/o message", isEnabled: canUpdateChannel, handler: { _ in
                 channelController.truncateChannel { [unowned self] error in
                     if let error = error {
                         self.rootViewController.presentAlert(
@@ -399,7 +407,7 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                     }
                 }
             }),
-            .init(title: "Truncate channel with message", isEnabled: channelController.canUpdateChannel, handler: { _ in
+            .init(title: "Truncate channel with message", isEnabled: canUpdateChannel, handler: { _ in
                 channelController.truncateChannel(systemMessage: "Channel truncated") { [unowned self] error in
                     if let error = error {
                         self.rootViewController.presentAlert(
@@ -409,7 +417,7 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                     }
                 }
             }),
-            .init(title: "Send message with skip push", isEnabled: channelController.canSendMessage, handler: { [unowned self] _ in
+            .init(title: "Send message with skip push", isEnabled: canSendMessage, handler: { [unowned self] _ in
                 self.rootViewController.presentAlert(title: "Enter the message text", textFieldPlaceholder: "Send message") { message in
                     guard let message = message, !message.isEmpty else {
                         self.rootViewController.presentAlert(title: "Message is not valid")
@@ -418,7 +426,7 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                     channelController.createNewMessage(text: message, skipPush: true)
                 }
             }),
-            .init(title: "Send message without url enriching", isEnabled: channelController.canSendMessage, handler: { [unowned self] _ in
+            .init(title: "Send message without url enriching", isEnabled: canSendMessage, handler: { [unowned self] _ in
                 self.rootViewController.presentAlert(title: "Enter the message text", textFieldPlaceholder: "Send message") { message in
                     guard let message = message, !message.isEmpty else {
                         self.rootViewController.presentAlert(title: "Message is not valid")

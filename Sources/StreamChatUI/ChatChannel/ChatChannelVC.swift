@@ -433,7 +433,7 @@ open class ChatChannelVC: _ViewController,
         _ channelController: ChatChannelController,
         didChangeTypingUsers typingUsers: Set<ChatUser>
     ) {
-        guard channelController.areTypingEventsEnabled else { return }
+        guard channelController.channel?.canSendTypingEvents == true else { return }
 
         let typingUsersWithoutCurrentUser = typingUsers
             .sorted { $0.id < $1.id }

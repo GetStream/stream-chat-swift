@@ -289,11 +289,11 @@ open class ComposerVC: _ViewController,
 
     /// A Boolean value indicating whether the attachments are enabled.
     open var isAttachmentsEnabled: Bool {
-        channelController?.canUploadFile == true
+        channelController?.channel?.canUploadFile == true
     }
 
     open var isSendMessageEnabled: Bool {
-        channelController?.canSendMessage == true
+        channelController?.channel?.canSendMessage == true
     }
 
     /// A Boolean value indicating whether the current input text contains links.
@@ -593,7 +593,7 @@ open class ComposerVC: _ViewController,
     // MARK: - Actions
 
     @objc open func publishMessage(sender: UIButton) {
-        if channelController?.canSendLinks == false && inputContainsLinks {
+        if channelController?.channel?.canSendLinks == false && inputContainsLinks {
             presentAlert(title: L10n.Composer.LinksDisabled.title, message: L10n.Composer.LinksDisabled.subtitle)
             return
         }

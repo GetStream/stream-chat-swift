@@ -574,7 +574,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///
     public func sendKeystrokeEvent(parentMessageId: MessageId? = nil, completion: ((Error?) -> Void)? = nil) {
         /// Ignore if typing events are not enabled
-        guard areTypingEventsEnabled else {
+        guard channel?.canSendTypingEvents == true else {
             callback {
                 completion?(nil)
             }
@@ -604,7 +604,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///
     public func sendStartTypingEvent(parentMessageId: MessageId? = nil, completion: ((Error?) -> Void)? = nil) {
         /// Ignore if typing events are not enabled
-        guard areTypingEventsEnabled else {
+        guard channel?.canSendTypingEvents == true else {
             channelFeatureDisabled(feature: "typing events", completion: completion)
             return
         }
@@ -632,7 +632,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///
     public func sendStopTypingEvent(parentMessageId: MessageId? = nil, completion: ((Error?) -> Void)? = nil) {
         /// Ignore if typing events are not enabled
-        guard areTypingEventsEnabled else {
+        guard channel?.canSendTypingEvents == true else {
             channelFeatureDisabled(feature: "typing events", completion: completion)
             return
         }
@@ -825,7 +825,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         }
 
         /// Read events are not enabled for this channel
-        guard areReadEventsEnabled else {
+        guard channel.canReceiveReadEvents == true else {
             channelFeatureDisabled(feature: "read events", completion: completion)
             return
         }
@@ -866,7 +866,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         }
 
         /// Read events are not enabled for this channel
-        guard areReadEventsEnabled else {
+        guard channel.canReceiveReadEvents == true else {
             channelFeatureDisabled(feature: "read events", completion: completion)
             return
         }
@@ -1450,7 +1450,45 @@ extension ClientError {
 
 // MARK: - Deprecations
 
-extension ChatChannelController {
+public extension ChatChannelController {
+    /// Indicates whether the channel has typing events enabled.
+    @available(*, deprecated, message: "`channel.canSendTypingEvents` should be used instead.")
+    var areTypingEventsEnabled: Bool {
+        channel?.canSendTypingEvents == true
+    }
+
+    /// Indicates whether the channel has reactions enabled.
+    @available(*, deprecated, message: "`channel.canSendReaction` should be used instead.")
+    var areReactionsEnabled: Bool {
+        channel?.canSendReaction == true
+    }
+
+    /// Indicates whether the channel has replies enabled.
+    @available(*, deprecated, message: "`channel.canSendReply` should be used instead.")
+    var areRepliesEnabled: Bool {
+        channel?.canSendReply == true
+    }
+
+    /// Indicates whether the channel has quotes enabled.
+    @available(*, deprecated, message: "`channel.canQuoteMessage` should be used instead.")
+    var areQuotesEnabled: Bool {
+        channel?.canQuoteMessage == true
+    }
+
+    /// Indicates whether the channel has read events enabled.
+    @available(*, deprecated, message: "`channel.canReceiveReadEvents` should be used instead.")
+    var areReadEventsEnabled: Bool {
+        channel?.canReceiveReadEvents == true
+    }
+
+    /// Indicates whether the channel supports uploading files/images.
+    @available(*, deprecated, message: "`channel.canUploadFile should be used instead.")
+    var areUploadsEnabled: Bool {
+        channel?.canUploadFile == true
+    }
+}
+
+public extension ChatChannelController {
     /// Uploads the given file to CDN and returns the file URL.
     /// - Parameters:
     ///   - localFileURL: Local URL of the file.
