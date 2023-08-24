@@ -172,15 +172,23 @@ class DefaultRequestEncoder: RequestEncoder {
         }
     }
 
+    #warning("when retrying, this is called twice (in a row). Therefore it is then executed twice when the completion comes")
     private func addConnectionIdIfNeeded<T: Decodable>(
         request: URLRequest,
         endpoint: Endpoint<T>,
         completion: @escaping (Result<URLRequest, Error>) -> Void
     ) {
+        var completion = completion
         guard endpoint.requiresConnectionId else {
             completion(.success(request))
             return
         }
+
+        var path: String = ""
+        if #available(iOS 16.0, *) {
+            path = request.url?.path() ?? ""
+        }
+        let authHeader = request.value(forHTTPHeaderField: "Stream-Auth-Type")
 
         log.assert(
             connectionDetailsProviderDelegate != nil,
@@ -192,7 +200,15 @@ class DefaultRequestEncoder: RequestEncoder {
             "Failed to get `connectionId`, request can't be created."
         )
 
+        withUnsafePointer(to: &completion) {
+            print("📌🇭🇷 2", "\(path) addConnectionIdIfNeeded \($0) - AUTH: \(authHeader)")
+        }
+
         connectionDetailsProviderDelegate?.provideConnectionId(timeout: waiterTimeout) {
+            withUnsafePointer(to: &completion) {
+                print("🇭🇷 3", "\(path) provideConnectionId completion for \($0) - AUTH: \(authHeader)")
+            }
+
             do {
                 switch $0 {
                 case let .success(connectionId):

@@ -145,8 +145,26 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     }
 
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
+        _synchronize(completion)
+    }
+
+    private func _synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
         startChannelListObserverIfNeeded()
-        updateChannelList(completion)
+        if #available(iOS 13.0, *) {
+            Task {
+                _ = await withCheckedContinuation { continuation in
+                    updateChannelList { error in
+                        if let error = error {
+                            print(error)
+                        }
+                        print("🇭🇷", "completing with error: \(error)")
+                        continuation.resume(returning: self.channels)
+                    }
+                }
+            }
+        } else {
+            fatalError()
+        }
     }
 
     // MARK: - Actions

@@ -4,13 +4,20 @@
 
 import Foundation
 
+struct ConnWaiter {
+    let id: String
+    let waiter: (String?) -> Void
+}
+
+typealias ConnectionIdWaiter = ConnWaiter
+
 class ConnectionRepository {
     private let connectionQueue: DispatchQueue = DispatchQueue(label: "io.getstream.connection-repository", attributes: .concurrent)
-    private var _connectionIdWaiters: [String: (String?) -> Void] = [:]
+    private var _connectionIdWaiters: [String: ConnectionIdWaiter] = [:]
     private var _connectionId: ConnectionId?
     private var _connectionStatus: ConnectionStatus = .initialized
 
-    private var connectionIdWaiters: [String: (String?) -> Void] {
+    private var connectionIdWaiters: [String: ConnectionIdWaiter] {
         get { connectionQueue.sync { _connectionIdWaiters } }
         set { connectionQueue.async(flags: .barrier) { self._connectionIdWaiters = newValue }}
     }
@@ -54,7 +61,7 @@ class ConnectionRepository {
     /// - Parameters:
     ///   - completion: Called when the connection is established. If the connection fails, the completion is called with an error.
     ///
-    func connect(completion: ((Error?) -> Void)? = nil) {
+    func aConnect(completion: ((Error?) -> Void)? = nil) {
         // Connecting is not possible in connectionless mode (duh)
         guard isClientInActiveMode else {
             completion?(ClientError.ClientIsNotInActiveMode())
@@ -67,6 +74,8 @@ class ConnectionRepository {
             return
         }
 
+        // Warning do not add any overload here. Concurrency issue possibly
+//        print("📌🇭🇷 ConnectRepository.connect")
         // Set up a waiter for the new connection id to know when the connection process is finished
         provideConnectionId { [weak webSocketClient] result in
             switch result {
@@ -81,6 +90,7 @@ class ConnectionRepository {
                 }
             }
         }
+        print("🇭🇷", "📌 POST ConnectRepository.connect")
         webSocketClient?.connect()
     }
 
@@ -168,6 +178,7 @@ class ConnectionRepository {
         )
     }
 
+    #warning("This is somehow called twice with the same completion block")
     func provideConnectionId(timeout: TimeInterval = 10, completion: @escaping (Result<ConnectionId, Error>) -> Void) {
         if let connectionId = connectionId {
             completion(.success(connectionId))
@@ -180,11 +191,25 @@ class ConnectionRepository {
         }
 
         let waiterToken = String.newUniqueId
-        let completion = timerType.addTimeout(timeout, to: completion, noValueError: ClientError.MissingConnectionId()) { [weak self] in
+        var completion = timerType.addTimeout(timeout, to: completion, noValueError: ClientError.MissingConnectionId()) { [weak self] in
             self?.invalidateConnectionIdWaiter(waiterToken)
         }
 
-        connectionIdWaiters[waiterToken] = completion
+//        connectionIdWaiters.forEach { key, value in
+//            var value = value
+//            withUnsafePointer(to: &value) {
+//                print("🇭🇷 ??", "existing completion \($0)")
+//            }
+//        }
+//
+        let id = UUID().uuidString
+//
+//        withUnsafePointer(to: &completion) {
+//            print("🇭🇷 ??", "new completion \($0) id: \(id)")
+//        }
+        // Warning do not add any overload here. Concurrency issue possibly
+        connectionIdWaiters[waiterToken] = ConnWaiter(id: id, waiter: completion)
+        print("🇭🇷", "POST ConnectionRepository.provideConnectionId")
     }
 
     func completeConnectionIdWaiters(connectionId: String?) {
@@ -204,7 +229,7 @@ class ConnectionRepository {
         connectionId: String?,
         shouldNotifyWaiters: Bool
     ) {
-        let waiters: [String: (String?) -> Void] = connectionQueue.sync {
+        let waiters: [String: ConnWaiter] = connectionQueue.sync {
             _connectionId = connectionId
             guard shouldNotifyWaiters else { return [:] }
             let waiters = _connectionIdWaiters
@@ -212,7 +237,10 @@ class ConnectionRepository {
             return waiters
         }
 
-        waiters.forEach { $0.value(connectionId) }
+        waiters.forEach {
+            print("🇭🇷 4", "updateConnectionId for \($0.value.id)")
+            $0.value.waiter(connectionId)
+        }
     }
 
     private func invalidateConnectionIdWaiter(_ waiter: WaiterToken) {

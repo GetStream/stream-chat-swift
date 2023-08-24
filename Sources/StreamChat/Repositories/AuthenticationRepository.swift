@@ -272,15 +272,20 @@ class AuthenticationRepository {
             return waiters
         }
 
-        waiters.forEach { $0.value(token) }
+        waiters.forEach {
+//            print("🇭🇷 updateToken.completion")
+            $0.value(token)
+        }
     }
 
     private func scheduleTokenFetch(isRetry: Bool, userInfo: UserInfo?, tokenProvider: @escaping TokenProvider, completion: @escaping (Error?) -> Void) {
         guard !isGettingToken || isRetry else {
             tokenRequestCompletions.append(completion)
+            print("🇭🇷 completion appended to tokenRequestCompletions")
             return
         }
 
+        print("🇭🇷", "scheduleTokenFetch")
         timerType.schedule(
             timeInterval: tokenExpirationRetryStrategy.getDelayAfterTheFailure(),
             queue: .main
@@ -314,7 +319,9 @@ class AuthenticationRepository {
                 self._consecutiveRefreshFailures = 0
                 return completions
             }
-            completionBlocks?.forEach { $0(error) }
+            completionBlocks?.forEach {
+                $0(error)
+            }
         }
 
         guard consecutiveRefreshFailures < Constants.maximumTokenRefreshAttempts else {
@@ -328,7 +335,8 @@ class AuthenticationRepository {
             // to `disconnected` when environment was prepared correctly
             // (e.g. current user session is successfully restored).
             connectionRepository?.forceConnectionStatusForInactiveModeIfNeeded()
-            connectionRepository?.connect(completion: onCompletion)
+            connectionRepository?.aConnect(completion: onCompletion)
+            print("🇭🇷 AuthRepo.onTokenReceived")
         }
 
         let retryFetchIfPossible: (Error?) -> Void = { [weak self] error in

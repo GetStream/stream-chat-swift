@@ -120,6 +120,7 @@ class APIClient {
         AsyncOperation(maxRetries: maximumRequestRetries) { [weak self] operation, done in
             guard self?.isRefreshingToken == false else {
                 // Requeue request
+                print("🇭🇷 requeuing because isRefreshingToken")
                 self?.request(endpoint: endpoint, completion: completion)
                 done(.continue)
                 return

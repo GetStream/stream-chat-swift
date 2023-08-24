@@ -109,15 +109,15 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
         // Unlike the other DataControllers, this one does not make a remote call when synchronising.
         // But we can assume that if we wait for the connection of the WebSocket, it means the local data
         // is in sync with the remote server, so we can set the state to remoteDataFetched.
-        client.provideConnectionId { [weak self] result in
-            var error: ClientError?
-            if case .failure = result {
-                error = ClientError.ConnectionNotSuccessful()
-            }
-
-            self?.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(error!)
-            self?.callback { completion?(error) }
-        }
+//        client.provideConnectionId { [weak self] result in
+//            var error: ClientError?
+//            if case .failure = result {
+//                error = ClientError.ConnectionNotSuccessful()
+//            }
+//
+//            self?.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(error!)
+//            self?.callback { completion?(error) }
+//        }
     }
 
     private func startObservingIfNeeded() {

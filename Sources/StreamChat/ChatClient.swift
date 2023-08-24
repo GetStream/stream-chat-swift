@@ -445,7 +445,20 @@ extension ChatClient: ConnectionDetailsProviderDelegate {
         authenticationRepository.provideToken(timeout: timeout, completion: completion)
     }
 
+    static var ids: [String] = []
+
     func provideConnectionId(timeout: TimeInterval = 10, completion: @escaping (Result<ConnectionId, Error>) -> Void) {
+        var completion = completion
+        withUnsafePointer(to: &completion) {
+            let id = String(describing: $0)
+            print("🇭🇷 1", "ChatClient.provideConnectionId \(id)")
+            if Self.ids.contains(id) {
+                print("🇭🇷 Stop")
+            } else {
+                Self.ids.append(id)
+            }
+        }
+
         connectionRepository.provideConnectionId(timeout: timeout, completion: completion)
     }
 }

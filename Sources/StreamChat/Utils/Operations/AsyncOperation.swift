@@ -48,6 +48,7 @@ class AsyncOperation: BaseOperation {
         }
 
         executedRetries += 1
+        print("🇭🇷", "Retrying \(ObjectIdentifier(self))")
         execute()
     }
 
