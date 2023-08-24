@@ -105,13 +105,13 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
             var actions: [ChatMessageActionItem] = []
 
             // If a channel is not set, we fallback to using channelConfig only.
-            let canQuoteMessage = channel?.ownCapabilities.contains(.quoteMessage) ?? channelConfig.quotesEnabled
-            let canSendReply = channel?.ownCapabilities.contains(.sendReply) ?? channelConfig.repliesEnabled
-            let canReceiveReadEvents = channel?.ownCapabilities.contains(.readEvents) ?? channelConfig.readEventsEnabled
-            let canUpdateAnyMessage = channel?.ownCapabilities.contains(.updateAnyMessage) ?? false
-            let canUpdateOwnMessage = channel?.ownCapabilities.contains(.updateOwnMessage) ?? true
-            let canDeleteAnyMessage = channel?.ownCapabilities.contains(.deleteAnyMessage) ?? false
-            let canDeleteOwnMessage = channel?.ownCapabilities.contains(.deleteOwnMessage) ?? true
+            let canQuoteMessage = channel?.canQuoteMessage ?? channelConfig.quotesEnabled
+            let canSendReply = channel?.canSendReply ?? channelConfig.repliesEnabled
+            let canReceiveReadEvents = channel?.canReceiveReadEvents ?? channelConfig.readEventsEnabled
+            let canUpdateAnyMessage = channel?.canUpdateAnyMessage ?? false
+            let canUpdateOwnMessage = channel?.canUpdateOwnMessage ?? true
+            let canDeleteAnyMessage = channel?.canDeleteAnyMessage ?? false
+            let canDeleteOwnMessage = channel?.canDeleteOwnMessage ?? true
 
             if canQuoteMessage {
                 actions.append(inlineReplyActionItem())

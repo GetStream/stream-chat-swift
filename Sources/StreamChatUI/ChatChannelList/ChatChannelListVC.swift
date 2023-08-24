@@ -365,7 +365,7 @@ open class ChatChannelListVC: _ViewController,
 
         moreView.action = { [weak self] in self?.moreButtonPressedForCell(at: indexPath) }
 
-        if let channel = channels[safe: indexPath.item], channel.ownCapabilities.contains(.deleteChannel) {
+        if let channel = channels[safe: indexPath.item], channel.canDeleteChannel {
             return [moreView, deleteView]
         }
 
