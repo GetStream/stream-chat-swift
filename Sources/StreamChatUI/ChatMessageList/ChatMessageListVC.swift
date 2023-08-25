@@ -305,6 +305,7 @@ open class ChatMessageListVC: _ViewController,
         )
     }
 
+    /// Set the visibility of `jumpToUnreadMessagesButton`.
     open func updateJumpToUnreadButtonVisibility(animated: Bool = true) {
         guard isJumpToUnreadEnabled else { return }
 
