@@ -75,8 +75,8 @@ open class ChatChannelVC: _ViewController,
     /// The message composer bottom constraint used for keyboard animation handling.
     public var messageComposerBottomConstraint: NSLayoutConstraint?
 
-    /// A boolean value indicating whether the last cell is fully visible or not.
-    open var isLastCellFullyVisible: Bool {
+    /// A boolean value indicating whether the last message is fully visible or not.
+    open var isLastMessageFullyVisible: Bool {
         messageListVC.listView.isLastCellFullyVisible
     }
 
@@ -333,7 +333,7 @@ open class ChatChannelVC: _ViewController,
         if message?.id == firstUnreadMessageId {
             hasSeenAllUnreadMessages = true
         }
-        if isLastCellFullyVisible {
+        if isLastMessageFullyVisible {
             hasSeenLastMessage = true
         }
     }
