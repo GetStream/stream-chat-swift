@@ -1443,9 +1443,7 @@ private extension ChatChannelController {
     }
 
     private func getLastReadMessageId(firstUnreadMessageId: MessageId) -> MessageId? {
-        guard let messageIndex = messages.firstIndex(where: { $0.id == firstUnreadMessageId }) else {
-            return nil
-        }
+        guard let messageIndex = messages.firstIndex(where: { $0.id == firstUnreadMessageId }) else { return nil }
 
         let newLastReadMessageIndex = messages.index(after: messageIndex)
         return messageId(at: newLastReadMessageIndex)
@@ -1461,9 +1459,7 @@ private extension ChatChannelController {
             // No unread messages
             return nil
         }
-        guard let lastReadIndex = messages.firstIndex(where: { $0.id == lastReadMessageId }), lastReadIndex != 0 else {
-            return nil
-        }
+        guard let lastReadIndex = messages.firstIndex(where: { $0.id == lastReadMessageId }), lastReadIndex != 0 else { return nil }
 
         let lookUpStartIndex = messages.index(before: lastReadIndex)
 

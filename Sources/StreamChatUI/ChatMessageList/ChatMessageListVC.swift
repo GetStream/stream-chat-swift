@@ -104,14 +104,14 @@ open class ChatMessageListVC: _ViewController,
         guard let firstUnreadIndexPath = firstUnreadMessageIndexPath else {
             // If there are messages, but none is read, we show the button if the first message is not on screen.
             if !dataSource.messages.isEmpty {
-                return !isMessageVisible(for: IndexPath(item: dataSource.messages.count - 1, section: 0))
+                return !isMessageVisible(at: IndexPath(item: dataSource.messages.count - 1, section: 0))
             } else {
                 return false
             }
         }
 
         // If the message is visible on screen, we don't show the button
-        return !isMessageVisible(for: firstUnreadIndexPath)
+        return !isMessageVisible(at: firstUnreadIndexPath)
     }
 
     private var firstUnreadMessageId: MessageId?
@@ -314,15 +314,11 @@ open class ChatMessageListVC: _ViewController,
 
     private func updateVisibility(for view: UIView, isVisible: Bool, animated: Bool) {
         if isVisible { view.isVisible = true }
-        Animate(
-            duration: 2,
-            isAnimated: animated,
-            {
-                view.alpha = isVisible ? 1 : 0
-            }, completion: { _ in
-                if !isVisible { view.isVisible = false }
-            }
-        )
+        Animate(isAnimated: animated, {
+            view.alpha = isVisible ? 1 : 0
+        }, completion: { _ in
+            if !isVisible { view.isVisible = false }
+        })
     }
 
     /// Action for `scrollToBottomButton` that scroll to most recent message.
@@ -360,12 +356,7 @@ open class ChatMessageListVC: _ViewController,
         listView.reloadRows(at: indexPathsToReload, with: .automatic)
     }
 
-    private func isMessageVisible(for messageId: MessageId) -> Bool {
-        guard let indexPath = getIndexPath(forMessageId: messageId) else { return false }
-        return isMessageVisible(for: indexPath)
-    }
-
-    private func isMessageVisible(for indexPath: IndexPath) -> Bool {
+    private func isMessageVisible(at indexPath: IndexPath) -> Bool {
         guard let visibleIndexPaths = listView.indexPathsForVisibleRows else { return false }
         return visibleIndexPaths.contains(indexPath)
     }
@@ -738,7 +729,7 @@ open class ChatMessageListVC: _ViewController,
         // It can take some time for highlighted message to appear on screen after scrolling to it.
         // The only way to check if `scrollToRow` as finished it to wait here on delegate callback.
         if let messageId = messageIdPendingHighlight, let indexPath = getIndexPath(forMessageId: messageId) {
-            guard isMessageVisible(for: indexPath) else { return }
+            guard isMessageVisible(at: indexPath) else { return }
             DispatchQueue.main.async {
                 self.onMessageHighlight?(indexPath)
             }
@@ -1096,7 +1087,7 @@ private extension ChatMessageListVC {
     // message has the same index of the deleted message after the deletion has been executed.
     func reloadPreviousMessagesForVisibleRemoves(with changes: [ListChange<ChatMessage>]) {
         let visibleRemoves = changes.filter {
-            $0.isRemove && isMessageVisible(for: $0.indexPath)
+            $0.isRemove && isMessageVisible(at: $0.indexPath)
         }
         visibleRemoves.forEach {
             listView.reloadRows(at: [$0.indexPath], with: .none)
