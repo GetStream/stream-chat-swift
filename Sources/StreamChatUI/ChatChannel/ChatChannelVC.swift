@@ -242,7 +242,9 @@ open class ChatChannelVC: _ViewController,
 
     /// Marks the channel read and updates the UI optimistically.
     public func markRead() {
-        channelController.markRead()
+        channelController.markRead { [weak self] _ in
+            self?.updateJumpToUnreadMessagesVisibility()
+        }
         messageListVC.scrollToBottomButton.content = .noUnread
     }
 
@@ -448,6 +450,10 @@ open class ChatChannelVC: _ViewController,
     private func updateUnreadMessagesRelatedComponents() {
         firstUnreadMessageId = channelController.firstUnreadMessageId
         messageListVC.updateUnreadMessagesSeparator(at: firstUnreadMessageId)
+        updateJumpToUnreadMessagesVisibility()
+    }
+
+    private func updateJumpToUnreadMessagesVisibility() {
         messageListVC.updateJumpToUnreadMessagesVisibility()
     }
 
