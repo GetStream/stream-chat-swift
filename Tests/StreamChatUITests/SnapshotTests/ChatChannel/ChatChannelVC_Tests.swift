@@ -712,10 +712,13 @@ final class ChatChannelVC_Tests: XCTestCase {
     func test_shouldMarkChannelRead_viewIsVisible_remoteDataFetched_lastMessageVisible_hasLoadedAllNextMessages_hasNotMarkedMessageAsUnread_shouldReturnTrue() {
         let mockedListView = makeMockMessageListView()
         vc.isViewVisible = { _ in true }
+        channelControllerMock.state_mock = .remoteDataFetched
         mockedListView.mockIsLastCellFullyVisible = true
         channelControllerMock.hasLoadedAllNextMessages_mock = true
         channelControllerMock.markedAsUnread_mock = false
-        channelControllerMock.state_mock = .remoteDataFetched
+
+        // Simulate display to update hasSeenLastMessage
+        vc.chatMessageListVC(ChatMessageListVC_Mock(), willDisplayMessageAt: IndexPath(item: 0, section: 0))
 
         XCTAssertTrue(vc.shouldMarkChannelRead)
     }
@@ -727,6 +730,9 @@ final class ChatChannelVC_Tests: XCTestCase {
         mockedListView.mockIsLastCellFullyVisible = false
         channelControllerMock.hasLoadedAllNextMessages_mock = false
         channelControllerMock.markedAsUnread_mock = true
+
+        // Simulate display to update hasSeenLastMessage
+        vc.chatMessageListVC(ChatMessageListVC_Mock(), willDisplayMessageAt: IndexPath(item: 0, section: 0))
 
         XCTAssertFalse(vc.shouldMarkChannelRead)
     }
@@ -744,12 +750,22 @@ final class ChatChannelVC_Tests: XCTestCase {
         ]
 
         options.forEach { option in
+            // We are recreating the vc so there is no shared state between the options
+            let vc = ChatChannelVC()
+            vc.isViewVisible = { _ in true }
+            vc.components = self.vc.components
+            vc.channelController = self.vc.channelController
+
             let mockedListView = makeMockMessageListView()
             vc.isViewVisible = { _ in option.isViewVisible }
             channelControllerMock.state_mock = option.state
             mockedListView.mockIsLastCellFullyVisible = option.isLastCellFullyVisible
             channelControllerMock.hasLoadedAllNextMessages_mock = option.hasLoadedAllNextMessages
             channelControllerMock.markedAsUnread_mock = option.markedAsUnread
+
+            // Simulate display to update hasSeenLastMessage
+            vc.chatMessageListVC(ChatMessageListVC_Mock(), willDisplayMessageAt: IndexPath(item: 0, section: 0))
+
             XCTAssertFalse(vc.shouldMarkChannelRead)
         }
     }
@@ -760,6 +776,9 @@ final class ChatChannelVC_Tests: XCTestCase {
         channelControllerMock.hasLoadedAllNextMessages_mock = true
         channelControllerMock.markedAsUnread_mock = false
         channelControllerMock.state_mock = .remoteDataFetched
+
+        // Simulate display to update hasSeenLastMessage
+        vc.chatMessageListVC(ChatMessageListVC_Mock(), willDisplayMessageAt: IndexPath(item: 0, section: 0))
 
         vc.viewDidAppear(false)
         XCTAssertEqual(channelControllerMock.markReadCallCount, 1)
@@ -772,6 +791,9 @@ final class ChatChannelVC_Tests: XCTestCase {
         channelControllerMock.markedAsUnread_mock = true
         channelControllerMock.state_mock = .initialized
 
+        // Simulate display to update hasSeenLastMessage
+        vc.chatMessageListVC(ChatMessageListVC_Mock(), willDisplayMessageAt: IndexPath(item: 0, section: 0))
+
         vc.viewDidAppear(false)
         XCTAssertEqual(channelControllerMock.markReadCallCount, 0)
     }
@@ -782,6 +804,9 @@ final class ChatChannelVC_Tests: XCTestCase {
         channelControllerMock.hasLoadedAllNextMessages_mock = true
         channelControllerMock.markedAsUnread_mock = false
         channelControllerMock.state_mock = .remoteDataFetched
+
+        // Simulate display to update hasSeenLastMessage
+        vc.chatMessageListVC(ChatMessageListVC_Mock(), willDisplayMessageAt: IndexPath(item: 0, section: 0))
 
         vc.chatMessageListVC(vc.messageListVC, scrollViewDidScroll: UIScrollView())
         XCTAssertEqual(channelControllerMock.markReadCallCount, 1)
@@ -794,6 +819,9 @@ final class ChatChannelVC_Tests: XCTestCase {
         channelControllerMock.markedAsUnread_mock = true
         channelControllerMock.state_mock = .initialized
 
+        // Simulate display to update hasSeenLastMessage
+        vc.chatMessageListVC(ChatMessageListVC_Mock(), willDisplayMessageAt: IndexPath(item: 0, section: 0))
+
         vc.chatMessageListVC(vc.messageListVC, scrollViewDidScroll: UIScrollView())
         XCTAssertEqual(channelControllerMock.markReadCallCount, 0)
     }
@@ -804,6 +832,9 @@ final class ChatChannelVC_Tests: XCTestCase {
         channelControllerMock.hasLoadedAllNextMessages_mock = true
         channelControllerMock.markedAsUnread_mock = false
         channelControllerMock.state_mock = .remoteDataFetched
+
+        // Simulate display to update hasSeenLastMessage
+        vc.chatMessageListVC(ChatMessageListVC_Mock(), willDisplayMessageAt: IndexPath(item: 0, section: 0))
 
         vc.channelController(channelControllerMock, didUpdateMessages: [])
         mockedListView.updateMessagesCompletion?()
@@ -816,6 +847,9 @@ final class ChatChannelVC_Tests: XCTestCase {
         channelControllerMock.hasLoadedAllNextMessages_mock = false
         channelControllerMock.markedAsUnread_mock = true
         channelControllerMock.state_mock = .initialized
+
+        // Simulate display to update hasSeenLastMessage
+        vc.chatMessageListVC(ChatMessageListVC_Mock(), willDisplayMessageAt: IndexPath(item: 0, section: 0))
 
         vc.channelController(channelControllerMock, didUpdateMessages: [])
         mockedListView.updateMessagesCompletion?()
@@ -845,13 +879,66 @@ final class ChatChannelVC_Tests: XCTestCase {
             headerViewForMessage: .mock(createdAt: Date(timeIntervalSince1970: 0)),
             at: .init(row: 0, section: 0)
         )
-        let dateView = try XCTUnwrap(header as? ChatMessageListDateSeparatorView)
+        let headerDecorationView = try XCTUnwrap(header as? ChatChannelMessageHeaderDecoratorView)
 
         // Based on our implementation, views are not fully set up until they have a superview. We are forcing it here.
         let view = UIView()
-        view.addSubview(dateView)
+        view.addSubview(headerDecorationView)
 
-        XCTAssertEqual(dateView.textLabel.text, "Jan 01")
+        XCTAssertEqual(headerDecorationView.dateView.textLabel.text, "Jan 01")
+        XCTAssertTrue(headerDecorationView.unreadCountView.isHidden)
+    }
+
+    func test_headerViewForMessage_returnsExpectedValue_whenMessageShouldShowDateSeparator_AndIsMarkedAsUnread() throws {
+        var components = Components.mock
+        components.channelHeaderView = ChatChannelHeaderViewMock.self
+        components.messageComposerVC = ComposerVC_Mock.self
+        components.messageListDateSeparatorEnabled = true
+        vc.components = components
+        vc.messageListVC.components = components
+
+        // Simulate marking a message as unread
+        let firstMessageId = MessageId.unique
+        channelControllerMock.mockFirstUnreadMessageId = firstMessageId
+        vc.channelController(channelControllerMock, didUpdateMessages: [])
+        vc.messages = [
+            .mock(id: firstMessageId, text: "First message", createdAt: Date(timeIntervalSince1970: 0)),
+            .mock(text: "Second message", createdAt: Date(timeIntervalSince1970: 86401))
+        ]
+        vc.channelController.client.authenticationRepository.setMockToken()
+        channelControllerMock.simulateInitial(
+            channel: .mock(cid: .unique, ownCapabilities: [.sendMessage, .readEvents], unreadCount: ChannelUnreadCount(messages: 1, mentions: 0)),
+            messages: vc.messages,
+            state: .remoteDataFetched
+        )
+        let channel = try XCTUnwrap(vc.channelController.channel)
+        vc.channelController.markUnread(from: firstMessageId)
+        vc.channelController(vc.channelController, didUpdateChannel: EntityChange<ChatChannel>.update(channel))
+
+        let header = vc.chatMessageListVC(
+            vc.messageListVC,
+            headerViewForMessage: .mock(id: firstMessageId, createdAt: Date(timeIntervalSince1970: 0)),
+            at: .init(row: 0, section: 0)
+        )
+        let headerDecorationView = try XCTUnwrap(header as? ChatChannelMessageHeaderDecoratorView)
+        let headerDecorationViewContent = try XCTUnwrap(headerDecorationView.content)
+        XCTAssertTrue(headerDecorationViewContent.shouldShowDate)
+        XCTAssertTrue(headerDecorationViewContent.shouldShowUnreadMessages)
+
+        // Based on our implementation, views are not fully set up until they have a superview. We are forcing it here.
+        let view = UIView()
+        view.addSubview(headerDecorationView)
+
+        XCTAssertEqual(
+            headerDecorationView.dateView.textLabel.text,
+            "Jan 01"
+        )
+
+        XCTAssertEqual(
+            headerDecorationView.unreadCountView.messagesCountDecorationView.textLabel.text,
+            "UNREAD MESSAGES"
+        )
+        AssertSnapshot(vc, variants: [.defaultLight])
     }
 
     func test_didUpdateChannel_shouldUpdateChannelAvatarView() {
