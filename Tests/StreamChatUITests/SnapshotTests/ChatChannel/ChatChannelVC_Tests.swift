@@ -807,7 +807,7 @@ final class ChatChannelVC_Tests: XCTestCase {
         ]
         vc.channelController.client.authenticationRepository.setMockToken()
         channelControllerMock.simulateInitial(
-            channel: .mock(cid: .unique, unreadCount: ChannelUnreadCount(messages: 1, mentions: 0)),
+            channel: .mock(cid: .unique, ownCapabilities: [.sendMessage, .readEvents], unreadCount: ChannelUnreadCount(messages: 1, mentions: 0)),
             messages: vc.messages,
             state: .remoteDataFetched
         )
@@ -969,6 +969,10 @@ class ComposerVC_Mock: ComposerVC {
     }
 
     override var isAttachmentsEnabled: Bool {
+        true
+    }
+
+    override var isSendMessageEnabled: Bool {
         true
     }
 

@@ -52,6 +52,7 @@
 "composer.title.edit" = "Edit Message";
 "composer.title.reply" = "Reply to Message";
 "composer.placeholder.message" = "Send a message";
+"composer.placeholder.messageDisabled" = "You can't send messages in this channel";
 "composer.placeholder.slowMode" = "Slow mode ON";
 "composer.placeholder.giphy" = "Search GIFs";
 "composer.checkmark.direct-message-reply" = "Also send as direct message";
@@ -61,6 +62,8 @@
 "composer.picker.media" = "Photo or Video";
 "composer.picker.camera" = "Camera";
 "composer.picker.cancel" = "Cancel";
+"composer.links-disabled.title" = "Links are disabled";
+"composer.links-disabled.subtitle" = "Sending links is not allowed in this conversation.";
 
 "composer.suggestions.commands.header" = "Instant Commands";
 "message.sending.attachment-uploading-failed" = "UPLOADING FAILED";

@@ -17,7 +17,7 @@ final class ChatMessageActionsVC_Tests: XCTestCase {
         chatMessageController = .mock()
         vc = ChatMessageActionsVC()
         vc.messageController = chatMessageController
-        vc.channelConfig = .mock()
+        vc.channel = .mock(cid: .unique, config: .mock(), ownCapabilities: [.sendReply, .quoteMessage, .readEvents])
 
         chatMessageController.simulateInitial(
             message: ChatMessage.mock(id: .unique, cid: .unique, text: "", author: ChatUser.mock(id: .unique)),
@@ -61,7 +61,7 @@ final class ChatMessageActionsVC_Tests: XCTestCase {
 
         let vc = TestView()
         vc.messageController = chatMessageController
-        vc.channelConfig = .mock()
+        vc.channel = .mock(cid: .unique, config: .mock(), ownCapabilities: [.sendReply, .quoteMessage, .readEvents])
         AssertSnapshot(vc.embedded())
     }
 
@@ -77,37 +77,59 @@ final class ChatMessageActionsVC_Tests: XCTestCase {
     }
 
     func test_messageActions_whenMutesEnabled_containsMuteAction() {
-        vc.channelConfig = .mock(mutesEnabled: true)
+        vc.channel = .mock(cid: .unique, config: .mock(mutesEnabled: true))
 
         XCTAssertTrue(vc.messageActions.contains(where: { $0 is MuteUserActionItem }))
     }
 
     func test_messageActions_whenMutesDisabled_doesNotContainMuteAction() {
-        vc.channelConfig = .mock(mutesEnabled: false)
+        vc.channel = .mock(cid: .unique, config: .mock(mutesEnabled: false))
 
         XCTAssertFalse(vc.messageActions.contains(where: { $0 is MuteUserActionItem }))
     }
 
+    func test_messageActions_whenMutesEnabled_isMuted_containsUnmuteAction() throws {
+        let messageAuthor = ChatUser.mock(id: .unique)
+        chatMessageController.simulateInitial(
+            message: .mock(author: messageAuthor, isSentByCurrentUser: false),
+            replies: [],
+            state: .remoteDataFetched
+        )
+
+        let currentUser = try XCTUnwrap(chatMessageController.dataStore.currentUser())
+        try chatMessageController.client.databaseContainer.writeSynchronously {
+            try $0.saveCurrentUser(payload: .dummy(
+                userPayload: .dummy(userId: currentUser.id),
+                mutedUsers: [.dummy(userId: messageAuthor.id)]
+            )
+            )
+        }
+
+        vc.channel = .mock(cid: .unique, config: .mock(mutesEnabled: true))
+
+        XCTAssertTrue(vc.messageActions.contains(where: { $0 is UnmuteUserActionItem }))
+    }
+
     func test_messageActions_whenQuotesEnabled_containsQuoteAction() {
-        vc.channelConfig = .mock(quotesEnabled: true)
+        vc.channel = .mock(cid: .unique, ownCapabilities: [.quoteMessage])
 
         XCTAssertTrue(vc.messageActions.contains(where: { $0 is InlineReplyActionItem }))
     }
 
     func test_messageActions_whenQuotesDisabled_doesNotContainQuoteAction() {
-        vc.channelConfig = .mock(quotesEnabled: false)
+        vc.channel = .mock(cid: .unique, ownCapabilities: [])
 
         XCTAssertFalse(vc.messageActions.contains(where: { $0 is InlineReplyActionItem }))
     }
 
     func test_messageActions_whenReadEventsEnabled_containsMarkAsUnreadAction() {
-        vc.channelConfig = .mock(readEventsEnabled: true)
+        vc.channel = .mock(cid: .unique, ownCapabilities: [.readEvents])
 
         XCTAssertTrue(vc.messageActions.contains(where: { $0 is MarkUnreadActionItem }))
     }
 
     func test_messageActions_whenReadEventsDisabled_doesNotContainMarkAsUnreadAction() {
-        vc.channelConfig = .mock(readEventsEnabled: false)
+        vc.channel = .mock(cid: .unique, ownCapabilities: [])
 
         XCTAssertFalse(vc.messageActions.contains(where: { $0 is MarkUnreadActionItem }))
     }
@@ -119,7 +141,7 @@ final class ChatMessageActionsVC_Tests: XCTestCase {
             state: .remoteDataFetched
         )
 
-        vc.channelConfig = .mock(readEventsEnabled: true)
+        vc.channel = .mock(cid: .unique, ownCapabilities: [.readEvents])
 
         XCTAssertFalse(vc.messageActions.contains(where: { $0 is MarkUnreadActionItem }))
     }
@@ -131,9 +153,210 @@ final class ChatMessageActionsVC_Tests: XCTestCase {
             state: .remoteDataFetched
         )
 
-        vc.channelConfig = .mock(readEventsEnabled: true)
+        vc.channel = .mock(cid: .unique, ownCapabilities: [.readEvents])
 
         XCTAssertTrue(vc.messageActions.contains(where: { $0 is MarkUnreadActionItem }))
+    }
+
+    func test_messageActions_whenSendReply_messageIsNotPartOfThread_containsThreadReplyAction() {
+        chatMessageController.simulateInitial(
+            message: ChatMessage.mock(parentMessageId: nil),
+            replies: [],
+            state: .remoteDataFetched
+        )
+
+        vc.channel = .mock(cid: .unique, ownCapabilities: [.sendReply])
+
+        XCTAssertTrue(vc.messageActions.contains(where: { $0 is ThreadReplyActionItem }))
+    }
+
+    func test_messageActions_whenSendReply_messageIsPartOfThread_DoesNotcontainsThreadReplyAction() {
+        chatMessageController.simulateInitial(
+            message: ChatMessage.mock(parentMessageId: "123"),
+            replies: [],
+            state: .remoteDataFetched
+        )
+
+        vc.channel = .mock(cid: .unique, ownCapabilities: [.sendReply])
+
+        XCTAssertFalse(vc.messageActions.contains(where: { $0 is ThreadReplyActionItem }))
+    }
+
+    func test_messageActions_whenUpdateOwnMessage_messageIsSentByCurrentUser_thenContainsEditAction() {
+        chatMessageController.simulateInitial(
+            message: ChatMessage.mock(isSentByCurrentUser: true),
+            replies: [],
+            state: .remoteDataFetched
+        )
+
+        vc.channel = .mock(cid: .unique, ownCapabilities: [.updateOwnMessage])
+
+        XCTAssertTrue(vc.messageActions.contains(where: { $0 is EditActionItem }))
+    }
+
+    func test_messageActions_whenUpdateOwnMessage_messageIsSentByAnotherUser_thenDoesNotContainEditAction() {
+        chatMessageController.simulateInitial(
+            message: ChatMessage.mock(isSentByCurrentUser: false),
+            replies: [],
+            state: .remoteDataFetched
+        )
+
+        vc.channel = .mock(cid: .unique, ownCapabilities: [.updateOwnMessage])
+
+        XCTAssertFalse(vc.messageActions.contains(where: { $0 is EditActionItem }))
+    }
+
+    func test_messageActions_whenUpdateAnyMessage_messageIsSentByCurrentUser_thenContainsEditAction() {
+        chatMessageController.simulateInitial(
+            message: ChatMessage.mock(isSentByCurrentUser: true),
+            replies: [],
+            state: .remoteDataFetched
+        )
+
+        vc.channel = .mock(cid: .unique, ownCapabilities: [.updateAnyMessage])
+
+        XCTAssertTrue(vc.messageActions.contains(where: { $0 is EditActionItem }))
+    }
+
+    func test_messageActions_whenUpdateAnyMessage_messageIsSentByAnotherUser_thenContainsEditAction() {
+        chatMessageController.simulateInitial(
+            message: ChatMessage.mock(isSentByCurrentUser: false),
+            replies: [],
+            state: .remoteDataFetched
+        )
+
+        vc.channel = .mock(cid: .unique, ownCapabilities: [.updateAnyMessage])
+
+        XCTAssertTrue(vc.messageActions.contains(where: { $0 is EditActionItem }))
+    }
+
+    func test_messageActions_whenDeleteOwnMessage_messageIsSentByCurrentUser_thenContainsDeleteAction() {
+        chatMessageController.simulateInitial(
+            message: ChatMessage.mock(isSentByCurrentUser: true),
+            replies: [],
+            state: .remoteDataFetched
+        )
+
+        vc.channel = .mock(cid: .unique, ownCapabilities: [.deleteOwnMessage])
+
+        XCTAssertTrue(vc.messageActions.contains(where: { $0 is DeleteActionItem }))
+    }
+
+    func test_messageActions_whenDeleteOwnMessage_messageIsSentByAnotherUser_thenDoesNotContainDeleteAction() {
+        chatMessageController.simulateInitial(
+            message: ChatMessage.mock(isSentByCurrentUser: false),
+            replies: [],
+            state: .remoteDataFetched
+        )
+
+        vc.channel = .mock(cid: .unique, ownCapabilities: [.deleteOwnMessage])
+
+        XCTAssertFalse(vc.messageActions.contains(where: { $0 is DeleteActionItem }))
+    }
+
+    func test_messageActions_whenDeleteAnyMessage_messageIsSentByCurrentUser_thenContainsDeleteAction() {
+        chatMessageController.simulateInitial(
+            message: ChatMessage.mock(isSentByCurrentUser: true),
+            replies: [],
+            state: .remoteDataFetched
+        )
+
+        vc.channel = .mock(cid: .unique, ownCapabilities: [.deleteAnyMessage])
+
+        XCTAssertTrue(vc.messageActions.contains(where: { $0 is DeleteActionItem }))
+    }
+
+    func test_messageActions_whenDeleteAnyMessage_messageIsSentByAnotherUser_thenContainsDeleteAction() {
+        chatMessageController.simulateInitial(
+            message: ChatMessage.mock(isSentByCurrentUser: false),
+            replies: [],
+            state: .remoteDataFetched
+        )
+
+        vc.channel = .mock(cid: .unique, ownCapabilities: [.deleteAnyMessage])
+
+        XCTAssertTrue(vc.messageActions.contains(where: { $0 is DeleteActionItem }))
+    }
+
+    func test_messageActions_whenMessageIsSentByAnotherUser_thenContainsFlagAction() {
+        chatMessageController.simulateInitial(
+            message: ChatMessage.mock(isSentByCurrentUser: false),
+            replies: [],
+            state: .remoteDataFetched
+        )
+
+        vc.channel = .mock(cid: .unique, ownCapabilities: [])
+
+        XCTAssertTrue(vc.messageActions.contains(where: { $0 is FlagActionItem }))
+    }
+
+    func test_messageActions_whenSendingOrSyncingOrDeleting_thenContainsEmptyActions() {
+        let states: [LocalMessageState] = [.sending, .syncing, .deleting]
+
+        states.forEach {
+            chatMessageController.simulateInitial(
+                message: .mock(localState: $0, isSentByCurrentUser: false),
+                replies: [],
+                state: .remoteDataFetched
+            )
+
+            vc.channel = .mock(cid: .unique, ownCapabilities: [])
+
+            XCTAssertTrue(vc.messageActions.isEmpty)
+        }
+    }
+
+    func test_messageActions_whenSendingFailed_thenContainsResendActionEditActionDeleteAction() {
+        chatMessageController.simulateInitial(
+            message: .mock(localState: .sendingFailed, isSentByCurrentUser: false),
+            replies: [],
+            state: .remoteDataFetched
+        )
+
+        vc.channel = .mock(cid: .unique, ownCapabilities: [])
+
+        XCTAssertTrue(vc.messageActions[0] is ResendActionItem)
+        XCTAssertTrue(vc.messageActions[1] is EditActionItem)
+        XCTAssertTrue(vc.messageActions[2] is DeleteActionItem)
+    }
+
+    func test_messageActions_whenPendingOrSyncingFailedOrDeletingFailed_thenContainsEditActionDeleteAction() {
+        let states: [LocalMessageState] = [.pendingSend, .pendingSync, .syncingFailed, .deletingFailed]
+
+        states.forEach {
+            chatMessageController.simulateInitial(
+                message: .mock(localState: $0, isSentByCurrentUser: false),
+                replies: [],
+                state: .remoteDataFetched
+            )
+
+            vc.channel = .mock(cid: .unique, ownCapabilities: [])
+
+            XCTAssertTrue(vc.messageActions[0] is EditActionItem)
+            XCTAssertTrue(vc.messageActions[1] is DeleteActionItem)
+        }
+    }
+
+    func test_messageActions_hasCorrectOrdering() {
+        chatMessageController.simulateInitial(
+            message: .mock(isSentByCurrentUser: false),
+            replies: [],
+            state: .remoteDataFetched
+        )
+
+        vc.channel = .mock(
+            cid: .unique,
+            config: .mock(mutesEnabled: true),
+            ownCapabilities: [
+                .quoteMessage,
+                .sendReply,
+                .readEvents,
+                .updateAnyMessage,
+                .deleteAnyMessage
+            ]
+        )
+
+        AssertSnapshot(vc.embedded(), variants: [.defaultLight])
     }
 }
 

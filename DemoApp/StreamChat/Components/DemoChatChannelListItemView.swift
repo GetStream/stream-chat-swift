@@ -7,7 +7,7 @@ import UIKit
 
 final class DemoChatChannelListItemView: ChatChannelListItemView {
     override var contentBackgroundColor: UIColor {
-        /// In case it is a message search, we don't want change the bg color.
+        // In case it is a message search, we want to ignore the pinning behaviour.
         if content?.searchResult?.message != nil {
             return super.contentBackgroundColor
         }

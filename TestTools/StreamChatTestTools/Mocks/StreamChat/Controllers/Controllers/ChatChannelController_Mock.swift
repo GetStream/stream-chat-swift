@@ -41,6 +41,22 @@ public class ChatChannelController_Mock: ChatChannelController {
         )
     }
 
+    var createNewMessageCallCount = 0
+    public override func createNewMessage(
+        messageId: MessageId? = nil,
+        text: String, pinning: MessagePinning? = nil,
+        isSilent: Bool = false,
+        attachments: [AnyAttachmentPayload] = [],
+        mentionedUserIds: [UserId] = [],
+        quotedMessageId: MessageId? = nil,
+        skipPush: Bool = false,
+        skipEnrichUrl: Bool = false,
+        extraData: [String : RawJSON] = [:],
+        completion: ((Result<MessageId, Error>) -> Void)? = nil
+    ) {
+        createNewMessageCallCount += 1
+    }
+
     public var hasLoadedAllNextMessages_mock: Bool? = true
     public override var hasLoadedAllNextMessages: Bool {
         hasLoadedAllNextMessages_mock ?? super.hasLoadedAllNextMessages

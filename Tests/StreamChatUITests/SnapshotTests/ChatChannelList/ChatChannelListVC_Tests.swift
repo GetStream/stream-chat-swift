@@ -298,6 +298,29 @@ final class ChatChannelListVC_Tests: XCTestCase {
         XCTAssertNil(mockedChannelListController.delegate)
     }
 
+    func test_swipeableViewActionViews() {
+        mockedChannelListController.channels_mock = [.mock(cid: .unique, ownCapabilities: [.deleteChannel])]
+        let channelListVC = ChatChannelListVC()
+        channelListVC.controller = mockedChannelListController
+        channelListVC.reloadChannels()
+
+        let swipeViews = channelListVC.swipeableViewActionViews(for: IndexPath(item: 0, section: 0))
+        let swipeViewIdentifiers = Set(swipeViews.compactMap(\.accessibilityIdentifier))
+        XCTAssertEqual(swipeViewIdentifiers, Set(["deleteView", "moreView"]))
+    }
+
+    func test_swipeableViewActionViews_whenCantDeleteChannel() {
+        mockedChannelListController.channels_mock = [.mock(cid: .unique, ownCapabilities: [])]
+        let channelListVC = ChatChannelListVC()
+        channelListVC.controller = mockedChannelListController
+        channelListVC.reloadChannels()
+
+        let swipeViews = channelListVC.swipeableViewActionViews(for: IndexPath(item: 0, section: 0))
+        let swipeViewIdentifiers = Set(swipeViews.compactMap(\.accessibilityIdentifier))
+        XCTAssertFalse(channelListVC.channels.isEmpty)
+        XCTAssertEqual(swipeViewIdentifiers, Set(["moreView"]))
+    }
+
     private class FakeChatChannelListVC: ChatChannelListVC {
         var mockedCollectionView: MockCollectionView = MockCollectionView()
         override var collectionView: UICollectionView {

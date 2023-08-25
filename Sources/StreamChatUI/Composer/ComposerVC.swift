@@ -269,6 +269,8 @@ open class ComposerVC: _ViewController,
 
     open var cooldownTracker: CooldownTracker = CooldownTracker(timer: ScheduledStreamTimer(interval: 1))
 
+    lazy var linkDetector: NSDataDetector? = try? .init(types: NSTextCheckingResult.CheckingType.link.rawValue)
+
     /// A symbol that is used to recognise when the user is mentioning a user.
     open var mentionSymbol = "@"
 
@@ -287,7 +289,16 @@ open class ComposerVC: _ViewController,
 
     /// A Boolean value indicating whether the attachments are enabled.
     open var isAttachmentsEnabled: Bool {
-        channelConfig?.uploadsEnabled == true
+        channelController?.channel?.canUploadFile == true
+    }
+
+    open var isSendMessageEnabled: Bool {
+        channelController?.channel?.canSendMessage == true
+    }
+
+    /// A Boolean value indicating whether the current input text contains links.
+    open var inputContainsLinks: Bool {
+        linkDetector?.firstMatch(in: content.text, range: NSRange(location: 0, length: content.text.utf16.count)) != nil
     }
 
     /// When enabled mentions search users across the entire app instead of searching
@@ -554,6 +565,14 @@ open class ComposerVC: _ViewController,
         let filesExistInAttachments = content.attachments.contains(where: { $0.type == .file })
         composerView.inputMessageView.textView.isPastingImagesEnabled = !filesExistInAttachments
 
+        if !isSendMessageEnabled {
+            composerView.inputMessageView.textView.placeholderLabel.text = L10n.Composer.Placeholder.messageDisabled
+            composerView.inputMessageView.isUserInteractionEnabled = false
+            composerView.recordButton.isHidden = true
+            composerView.attachmentButton.isHidden = true
+            composerView.commandsButton.isHidden = true
+        }
+
         dismissSuggestions()
     }
 
@@ -574,6 +593,11 @@ open class ComposerVC: _ViewController,
     // MARK: - Actions
 
     @objc open func publishMessage(sender: UIButton) {
+        if channelController?.channel?.canSendLinks == false && inputContainsLinks {
+            presentAlert(title: L10n.Composer.LinksDisabled.title, message: L10n.Composer.LinksDisabled.subtitle)
+            return
+        }
+
         let text: String
         if let command = content.command {
             text = "/\(command.name) " + content.text
@@ -667,7 +691,7 @@ open class ComposerVC: _ViewController,
                 }
 
             // If attachment uploads is disabled, don't ever show the attachments button
-            if self.channelController?.channel?.config.uploadsEnabled == false {
+            if !self.isAttachmentsEnabled {
                 self.composerView.attachmentButton.isHidden = true
             }
         }

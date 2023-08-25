@@ -128,6 +128,41 @@ final class ChatMessageListVC_Tests: XCTestCase {
         XCTAssertEqual(mockedRouter.showMessageActionsPopUpCallCount, 1)
     }
 
+    func test_didSelectMessageCell_whenCanSendReactions_shouldShowActionsPopupWithReactions() {
+        mockedListView.mockedCellForRow = .init()
+        mockedListView.mockedCellForRow?.mockedMessage = .mock()
+
+        let mockedRouter = ChatMessageListRouter_Mock(rootViewController: UIViewController())
+        sut.router = mockedRouter
+
+        let dataSource = ChatMessageListVCDataSource_Mock()
+        dataSource.mockedChannel = .mock(cid: .unique, ownCapabilities: [.sendReaction])
+        sut.dataSource = dataSource
+
+        sut.didSelectMessageCell(at: IndexPath(item: 0, section: 0))
+
+        XCTAssertEqual(mockedRouter.showMessageActionsPopUpCallCount, 1)
+        XCTAssertNotNil(mockedRouter.showMessageActionsPopUpCalledWith?.messageReactionsController)
+    }
+
+    func test_didSelectMessageCell_whenCanNotSendReactions_shouldShowActionsPopupWithoutReactions() {
+        mockedListView.mockedCellForRow = .init()
+        mockedListView.mockedCellForRow?.mockedMessage = .mock()
+
+        let mockedRouter = ChatMessageListRouter_Mock(rootViewController: UIViewController())
+        sut.router = mockedRouter
+
+        let dataSource = ChatMessageListVCDataSource_Mock()
+        dataSource.mockedChannel = .mock(cid: .unique, ownCapabilities: [])
+        sut.dataSource = dataSource
+
+        sut.didSelectMessageCell(at: IndexPath(item: 0, section: 0))
+
+        XCTAssertEqual(mockedRouter.showMessageActionsPopUpCallCount, 1)
+        XCTAssertNotNil(mockedRouter.showMessageActionsPopUpCalledWith)
+        XCTAssertEqual(mockedRouter.showMessageActionsPopUpCalledWith?.messageReactionsController, nil)
+    }
+
     // message.cid should be available from local cache, but right now, some how is not available for thread replies
     // so the workaround is to get the cid from the data source.
     func test_didSelectMessageCell_whenMessageCidIsNil_shouldStillShowActionsPopup() throws {
