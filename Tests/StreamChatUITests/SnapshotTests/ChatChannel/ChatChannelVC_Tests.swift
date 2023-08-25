@@ -684,7 +684,32 @@ final class ChatChannelVC_Tests: XCTestCase {
 
     // MARK: Jump to unread pill
 
-    func test_whenThereIsAnUnreadMessageOutOfScreen_shouldShowJumpToUnreadPill() {
+    func test_whenThereIsAnUnreadMessageOutOfScreen_shouldShowJumpToUnreadPill_whenJumpToUnreadIsEnabled() {
+        vc.components.isJumpToUnreadEnabled = true
+        let unreadMessageId = MessageId.unique
+        let longText = "Hello\nHello\nHello\nHello\nHello\nHello\nHello\nHello\nHello\nHello\nHello\nHello\nHello\nHello"
+        channelControllerMock.simulateInitial(
+            channel: .mock(cid: .unique, unreadCount: ChannelUnreadCount(messages: 4, mentions: 0)),
+            messages: [
+                .mock(id: unreadMessageId, text: longText, createdAt: Date(timeIntervalSince1970: 1)),
+                .mock(id: .unique, text: longText, createdAt: Date(timeIntervalSince1970: 2)),
+                .mock(id: .unique, text: longText, createdAt: Date(timeIntervalSince1970: 3)),
+                .mock(id: .unique, text: "All the messages above are unread", createdAt: Date(timeIntervalSince1970: 4))
+            ].reversed(), // We reverse it because the table is inverted. This way is readable in tests.
+            state: .localDataFetched
+        )
+        channelControllerMock.mockFirstUnreadMessageId = unreadMessageId
+        vc.view.layoutIfNeeded()
+        vc.channelController(channelControllerMock, didUpdateMessages: [])
+        AssertSnapshot(
+            vc,
+            isEmbeddedInNavigationController: true,
+            variants: [.defaultLight]
+        )
+    }
+
+    func test_whenThereIsAnUnreadMessageOutOfScreen_shouldShowJumpToUnreadPill_whenJumpToUnreadIsDisabled() {
+        vc.components.isJumpToUnreadEnabled = false
         let unreadMessageId = MessageId.unique
         let longText = "Hello\nHello\nHello\nHello\nHello\nHello\nHello\nHello\nHello\nHello\nHello\nHello\nHello\nHello"
         channelControllerMock.simulateInitial(
