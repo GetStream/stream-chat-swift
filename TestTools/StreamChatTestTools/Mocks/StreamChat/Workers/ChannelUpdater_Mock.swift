@@ -75,7 +75,6 @@ final class ChannelUpdater_Mock: ChannelUpdater {
 
     @Atomic var markRead_cid: ChannelId?
     @Atomic var markRead_userId: UserId?
-    @Atomic var markRead_lastReadMessageId: MessageId?
     @Atomic var markRead_completion: ((Error?) -> Void)?
 
     @Atomic var markUnread_cid: ChannelId?
@@ -341,14 +340,13 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         removeMembers_completion = completion
     }
 
-    override func markRead(cid: ChannelId, userId: UserId, lastReadMessageId: MessageId?, completion: ((Error?) -> Void)? = nil) {
+    override func markRead(cid: ChannelId, userId: UserId, completion: ((Error?) -> Void)? = nil) {
         markRead_cid = cid
         markRead_userId = userId
-        markRead_lastReadMessageId = lastReadMessageId
         markRead_completion = completion
     }
 
-    override func markUnread(cid: ChannelId, userId: UserId, from messageId: MessageId, lastReadMessageId: MessageId, completion: ((Error?) -> Void)? = nil) {
+    override func markUnread(cid: ChannelId, userId: UserId, from messageId: MessageId, lastReadMessageId: MessageId?, completion: ((Error?) -> Void)? = nil) {
         markUnread_cid = cid
         markUnread_userId = userId
         markUnread_messageId = messageId

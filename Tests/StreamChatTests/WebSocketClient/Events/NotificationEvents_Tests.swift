@@ -192,7 +192,8 @@ final class NotificationsEvents_Tests: XCTestCase {
             cid: .unique,
             user: .dummy(userId: .unique),
             unreadCount: .init(channels: .unique, messages: .unique),
-            createdAt: .unique
+            createdAt: .unique,
+            lastReadMessageId: "lastRead"
         )
 
         // Create event DTO
@@ -209,6 +210,7 @@ final class NotificationsEvents_Tests: XCTestCase {
         XCTAssertEqual(event.user.id, eventPayload.user?.id)
         XCTAssertEqual(event.cid, eventPayload.cid)
         XCTAssertEqual(event.unreadCount, eventPayload.unreadCount)
+        XCTAssertEqual(event.lastReadMessageId, eventPayload.lastReadMessageId)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
 

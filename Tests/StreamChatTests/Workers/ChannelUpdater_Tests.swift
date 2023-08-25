@@ -1350,13 +1350,11 @@ final class ChannelUpdater_Tests: XCTestCase {
     func test_markRead_makesCorrectAPICall() {
         let cid = ChannelId.unique
         let userId = UserId.unique
-        let lastReadMessageId = MessageId.unique
 
-        channelUpdater.markRead(cid: cid, userId: userId, lastReadMessageId: lastReadMessageId)
+        channelUpdater.markRead(cid: cid, userId: userId)
 
         XCTAssertEqual(channelRepository.markReadCid, cid)
         XCTAssertEqual(channelRepository.markReadUserId, userId)
-        XCTAssertEqual(channelRepository.markReadLastReadMessageId, lastReadMessageId)
     }
 
     func test_markRead_successfulResponse_isPropagatedToCompletion() {
@@ -1364,7 +1362,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         var receivedError: Error?
 
         channelRepository.markReadResult = .success(())
-        channelUpdater.markRead(cid: .unique, userId: .unique, lastReadMessageId: .unique) { error in
+        channelUpdater.markRead(cid: .unique, userId: .unique) { error in
             receivedError = error
             expectation.fulfill()
         }
@@ -1379,7 +1377,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         var receivedError: Error?
 
         channelRepository.markReadResult = .failure(mockedError)
-        channelUpdater.markRead(cid: .unique, userId: .unique, lastReadMessageId: .unique) { error in
+        channelUpdater.markRead(cid: .unique, userId: .unique) { error in
             receivedError = error
             expectation.fulfill()
         }

@@ -12,7 +12,6 @@ import Foundation
 class ChannelRepository_Mock: ChannelRepository {
     var markReadCid: ChannelId?
     var markReadUserId: UserId?
-    var markReadLastReadMessageId: UserId?
     var markReadResult: Result<Void, Error>?
 
     var markUnreadCid: ChannelId?
@@ -21,10 +20,9 @@ class ChannelRepository_Mock: ChannelRepository {
     var markUnreadLastReadMessageId: UserId?
     var markUnreadResult: Result<Void, Error>?
 
-    override func markRead(cid: ChannelId, userId: UserId, lastReadMessageId: MessageId?, completion: ((Error?) -> Void)? = nil) {
+    override func markRead(cid: ChannelId, userId: UserId, completion: ((Error?) -> Void)? = nil) {
         markReadCid = cid
         markReadUserId = userId
-        markReadLastReadMessageId = lastReadMessageId
 
         markReadResult.map {
             completion?($0.error)

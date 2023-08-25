@@ -394,22 +394,21 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertFalse(controller.areUploadsEnabled)
     }
 
-    // MARK: - Last Read Message Id
+    // MARK: - First Unread Message Id
 
-    func test_lastReadMessageId_whenThereIsNoChannel() {
-        XCTAssertNil(controller.lastReadMessageId)
+    func test_firstUnreadMessageId_whenThereIsNoChannel() {
+        XCTAssertNil(controller.firstUnreadMessageId)
     }
 
-    func test_lastReadMessageId_whenReadsDoesNotContainCurrentUserId() throws {
-        let payload = dummyPayload(with: channelId)
-        try client.databaseContainer.writeSynchronously {
-            try $0.saveChannel(payload: payload, query: nil, cache: nil)
-        }
+    func test_firstUnreadMessageId_whenReadsDoesNotContainCurrentUserId() throws {
+        let oldestMessageId = MessageId.unique
+        let newestMessageId = MessageId.unique
+        try createChannel(oldestMessageId: oldestMessageId, newestMessageId: newestMessageId)
 
-        XCTAssertNil(controller.lastReadMessageId)
+        XCTAssertEqual(controller.firstUnreadMessageId, oldestMessageId)
     }
 
-    func test_lastReadMessageId_whenReadsContainsCurrentUserId_whenLastReadMessageIdIsNil() throws {
+    func test_firstUnreadMessageId_whenReadsContainsCurrentUserId_whenLastReadMessageIdIsNil() throws {
         let userId = UserId.unique
         let channelRead = ChannelReadPayload(
             user: .dummy(userId: userId),
@@ -417,37 +416,123 @@ final class ChannelController_Tests: XCTestCase {
             lastReadMessageId: nil,
             unreadMessagesCount: 3
         )
+        let token = Token(rawValue: "", userId: userId, expiration: nil)
+        controller.client.authenticationRepository.setMockToken(token)
 
-        let payload = ChannelPayload.dummy(channel: .dummy(cid: channelId), channelReads: [channelRead])
-
+        let oldestMessageId = MessageId.unique
+        let newestMessageId = MessageId.unique
+        try createChannel(oldestMessageId: oldestMessageId, newestMessageId: newestMessageId, channelReads: [channelRead])
         try client.databaseContainer.writeSynchronously {
             try $0.saveCurrentUser(payload: .dummy(userId: userId, role: .user))
-            try $0.saveChannel(payload: payload, query: nil, cache: nil)
         }
 
-        XCTAssertNil(controller.lastReadMessageId)
+        XCTAssertEqual(controller.firstUnreadMessageId, oldestMessageId)
     }
 
-    func test_lastReadMessageId_whenReadsContainsCurrentUserId_whenLastReadMessageIdIsNotNil() throws {
+    func test_firstUnreadMessageId_whenReadsContainsCurrentUserId_whenLastReadMessageIdIsTheSameAsTheLastMessage() throws {
+        let oldestMessageId = MessageId.unique
+        let newestMessageId = MessageId.unique
+
         let userId = UserId.unique
-        let lastReadMessageId = MessageId.unique
         let channelRead = ChannelReadPayload(
             user: .dummy(userId: userId),
             lastReadAt: .unique,
-            lastReadMessageId: lastReadMessageId,
+            lastReadMessageId: newestMessageId,
             unreadMessagesCount: 3
         )
         let token = Token(rawValue: "", userId: userId, expiration: nil)
         controller.client.authenticationRepository.setMockToken(token)
 
-        let payload = ChannelPayload.dummy(channel: .dummy(cid: channelId), channelReads: [channelRead])
+        try createChannel(oldestMessageId: oldestMessageId, newestMessageId: newestMessageId, channelReads: [channelRead])
 
         try client.databaseContainer.writeSynchronously {
             try $0.saveCurrentUser(payload: .dummy(userId: userId, role: .user))
-            try $0.saveChannel(payload: payload, query: nil, cache: nil)
         }
 
-        XCTAssertEqual(controller.lastReadMessageId, lastReadMessageId)
+        XCTAssertNil(controller.firstUnreadMessageId)
+    }
+
+    func test_firstUnreadMessageId_whenReadsContainsCurrentUserId_whenLastReadMessageIdIsNotTheLatestMessage() throws {
+        let oldestMessageId = MessageId.unique
+        let newestMessageId = MessageId.unique
+
+        let userId = UserId.unique
+        let channelRead = ChannelReadPayload(
+            user: .dummy(userId: userId),
+            lastReadAt: .unique,
+            lastReadMessageId: oldestMessageId,
+            unreadMessagesCount: 3
+        )
+        let token = Token(rawValue: "", userId: userId, expiration: nil)
+        controller.client.authenticationRepository.setMockToken(token)
+
+        try createChannel(oldestMessageId: oldestMessageId, newestMessageId: newestMessageId, channelReads: [channelRead])
+
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveCurrentUser(payload: .dummy(userId: userId, role: .user))
+        }
+
+        XCTAssertEqual(controller.firstUnreadMessageId, newestMessageId)
+    }
+
+    func test_firstUnreadMessageId_whenMessagesAfterLastReadAreDeletedAndOwned() throws {
+        let notOwnMessageId = MessageId.unique
+        let deletedMessageId = MessageId.unique
+        let ownMessageId = MessageId.unique
+
+        let userId = UserId.unique
+        let channelRead = ChannelReadPayload(
+            user: .dummy(userId: userId),
+            lastReadAt: .unique,
+            lastReadMessageId: notOwnMessageId,
+            unreadMessagesCount: 3
+        )
+        let token = Token(rawValue: "", userId: userId, expiration: nil)
+        controller.client.authenticationRepository.setMockToken(token)
+
+        let messages: [MessagePayload] = [
+            .dummy(messageId: notOwnMessageId, authorUserId: .unique, createdAt: Date().addingTimeInterval(-1000)),
+            .dummy(messageId: deletedMessageId, authorUserId: .unique, createdAt: Date().addingTimeInterval(0), deletedAt: Date()),
+            .dummy(messageId: ownMessageId, authorUserId: userId, createdAt: Date().addingTimeInterval(1000))
+        ]
+
+        try createChannel(messages: messages, channelReads: [channelRead])
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveCurrentUser(payload: .dummy(userId: userId, role: .user))
+        }
+
+        XCTAssertNil(controller.firstUnreadMessageId)
+    }
+
+    func test_firstUnreadMessageId_whenMessagesAfterLastReadAlsoContainDeletedAndOwned_willPickTheFirstOneThatIsNotOwnedAndIsNotDeleted() throws {
+        let notOwnMessageId = MessageId.unique
+        let deletedMessageId = MessageId.unique
+        let ownMessageId = MessageId.unique
+        let notOwnNextValidId = MessageId.unique
+
+        let userId = UserId.unique
+        let channelRead = ChannelReadPayload(
+            user: .dummy(userId: userId),
+            lastReadAt: .unique,
+            lastReadMessageId: notOwnMessageId,
+            unreadMessagesCount: 3
+        )
+        let token = Token(rawValue: "", userId: userId, expiration: nil)
+        controller.client.authenticationRepository.setMockToken(token)
+
+        let messages: [MessagePayload] = [
+            .dummy(messageId: notOwnMessageId, authorUserId: .unique, createdAt: Date().addingTimeInterval(-1000)),
+            .dummy(messageId: deletedMessageId, authorUserId: .unique, createdAt: Date().addingTimeInterval(0), deletedAt: Date()),
+            .dummy(messageId: ownMessageId, authorUserId: userId, createdAt: Date().addingTimeInterval(1000)),
+            .dummy(messageId: notOwnNextValidId, authorUserId: .unique, createdAt: Date().addingTimeInterval(2000))
+        ]
+
+        try createChannel(messages: messages, channelReads: [channelRead])
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveCurrentUser(payload: .dummy(userId: userId, role: .user))
+        }
+
+        XCTAssertEqual(controller.firstUnreadMessageId, notOwnNextValidId)
     }
 
     // MARK: - Synchronize tests
@@ -3904,7 +3989,6 @@ final class ChannelController_Tests: XCTestCase {
         waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertNil(receivedError)
-        XCTAssertNil(controller.lastReadMessageId)
     }
 
     func test_markUnread_whenIsNotMarkingAsRead_andCurrentUserIdIsNotPresent() throws {
@@ -3926,7 +4010,6 @@ final class ChannelController_Tests: XCTestCase {
         waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertNil(receivedError)
-        XCTAssertNil(controller.lastReadMessageId)
     }
 
     func test_markUnread_whenIsNotMarkingAsRead_andCurrentUserIdIsPresent_whenUpdaterFails() throws {
@@ -3950,7 +4033,6 @@ final class ChannelController_Tests: XCTestCase {
         waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertNotNil(receivedError)
-        XCTAssertNil(controller.lastReadMessageId)
     }
 
     func test_markUnread_whenIsNotMarkingAsRead_andCurrentUserIdIsPresent_whenThereAreNoMessages_whenUpdaterSucceeds() throws {
@@ -3978,7 +4060,7 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertNil(receivedError)
 
         // Because we don't have other messages, we fallback to the passed messageId as lastReadMessageId.
-        XCTAssertEqual(updater.markUnread_lastReadMessageId, messageId)
+        XCTAssertNil(updater.markUnread_lastReadMessageId)
         XCTAssertEqual(updater.markUnread_messageId, messageId)
     }
 
@@ -5061,6 +5143,20 @@ extension ChannelController_Tests {
         }
 
         controller.markRead()
+    }
+
+    private func createChannel(oldestMessageId: MessageId, newestMessageId: MessageId, channelReads: [ChannelReadPayload] = []) throws {
+        let oldestMessage = MessagePayload.dummy(messageId: oldestMessageId, createdAt: Date().addingTimeInterval(-1000))
+        let newestMessage = MessagePayload.dummy(messageId: newestMessageId, createdAt: Date().addingTimeInterval(1000))
+
+        try createChannel(messages: [oldestMessage, newestMessage], channelReads: channelReads)
+    }
+
+    private func createChannel(messages: [MessagePayload], channelReads: [ChannelReadPayload] = []) throws {
+        let payload = dummyPayload(with: channelId, messages: messages, channelReads: channelReads)
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveChannel(payload: payload, query: nil, cache: nil)
+        }
     }
 }
 
