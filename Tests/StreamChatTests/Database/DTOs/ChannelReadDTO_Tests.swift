@@ -24,7 +24,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
 
     // MARK: - saveChannelRead
 
-    func test_saveChannelRead() throws {
+    func test_saveChannelReadPayload() throws {
         // GIVEN
         let userId = UserId.unique
         let lastReadAt = Date.unique

@@ -684,21 +684,24 @@ final class ChatChannelVC_Tests: XCTestCase {
     }
 
     func test_shouldMarkChannelRead_otherCombinations_shouldReturnFalse() {
-        let options: [(Bool, DataController.State, Bool, Bool, Bool)] = [
-            (false, .remoteDataFetched, true, true, false),
-            (true, .initialized, true, true, false),
-            (true, .remoteDataFetched, false, true, false),
-            (true, .remoteDataFetched, true, false, false),
-            (true, .remoteDataFetched, true, true, true)
+        struct MarkUnreadStatePreconditions {
+            let isViewVisible: Bool, state: DataController.State, isLastCellFullyVisible: Bool, hasLoadedAllNextMessages: Bool, markedAsUnread: Bool
+        }
+        let options: [MarkUnreadStatePreconditions] = [
+            .init(isViewVisible: false, state: .remoteDataFetched, isLastCellFullyVisible: true, hasLoadedAllNextMessages: true, markedAsUnread: false),
+            .init(isViewVisible: true, state: .initialized, isLastCellFullyVisible: true, hasLoadedAllNextMessages: true, markedAsUnread: false),
+            .init(isViewVisible: true, state: .remoteDataFetched, isLastCellFullyVisible: false, hasLoadedAllNextMessages: true, markedAsUnread: false),
+            .init(isViewVisible: true, state: .remoteDataFetched, isLastCellFullyVisible: true, hasLoadedAllNextMessages: false, markedAsUnread: false),
+            .init(isViewVisible: true, state: .remoteDataFetched, isLastCellFullyVisible: true, hasLoadedAllNextMessages: true, markedAsUnread: true)
         ]
 
-        options.forEach { isViewVisible, state, isLastCellFullyVisible, hasLoadedAllNextMessages, markedAsUnread in
+        options.forEach { option in
             let mockedListView = makeMockMessageListView()
-            vc.isViewVisible = { _ in isViewVisible }
-            channelControllerMock.state_mock = state
-            mockedListView.mockIsLastCellFullyVisible = isLastCellFullyVisible
-            channelControllerMock.hasLoadedAllNextMessages_mock = hasLoadedAllNextMessages
-            channelControllerMock.markedAsUnread_mock = markedAsUnread
+            vc.isViewVisible = { _ in option.isViewVisible }
+            channelControllerMock.state_mock = option.state
+            mockedListView.mockIsLastCellFullyVisible = option.isLastCellFullyVisible
+            channelControllerMock.hasLoadedAllNextMessages_mock = option.hasLoadedAllNextMessages
+            channelControllerMock.markedAsUnread_mock = option.markedAsUnread
             XCTAssertFalse(vc.shouldMarkChannelRead)
         }
     }

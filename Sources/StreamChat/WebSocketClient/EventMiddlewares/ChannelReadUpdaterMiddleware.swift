@@ -97,10 +97,7 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
         lastReadAt: Date,
         session: DatabaseSession
     ) {
-        guard let read = session.loadChannelRead(cid: cid, userId: userId) else {
-            return
-        }
-
+        guard let read = session.loadChannelRead(cid: cid, userId: userId) else { return }
         read.lastReadMessageId = lastReadMessageId
     }
 

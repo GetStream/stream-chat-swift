@@ -72,8 +72,8 @@ open class ChatMessageListVC: _ViewController,
         dataSource?.channel(for: self)?.config.typingEventsEnabled == true
     }
 
-    /// A button to scroll the collection view to the bottom.
-    /// Visible when there is unread message and the collection view is not at the bottom already.
+    /// A button to scroll the table view to the bottom.
+    /// Visible when there is unread message and the table view is not at the bottom already.
     open private(set) lazy var scrollToBottomButton: ScrollToBottomButton = components
         .scrollToBottomButton
         .init()
@@ -86,7 +86,7 @@ open class ChatMessageListVC: _ViewController,
         return (!listView.isLastCellFullyVisible && isMoreContentThanOnePage) || dataSource?.isFirstPageLoaded == false
     }
 
-    /// A button to scroll the collection view to the first unread message.
+    /// A button to scroll the table view to the first unread message.
     /// Visible when there are unread messages outside of the bounds of the screen.
     open private(set) lazy var jumpToUnreadMessagesButton: JumpToUnreadMessagesButton = components
         .jumpToUnreadMessagesButton
