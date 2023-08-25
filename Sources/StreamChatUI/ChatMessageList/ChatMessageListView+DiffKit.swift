@@ -50,6 +50,7 @@ extension ChatMessage: Differentiable {
             && localState == source.localState
             && isFlaggedByCurrentUser == source.isFlaggedByCurrentUser
             && readBy.count == source.readBy.count
+            && author == source.author
             && allAttachments == source.allAttachments
     }
 }

@@ -128,6 +128,41 @@ final class ChatMessageListVC_Tests: XCTestCase {
         XCTAssertEqual(mockedRouter.showMessageActionsPopUpCallCount, 1)
     }
 
+    func test_didSelectMessageCell_whenCanSendReactions_shouldShowActionsPopupWithReactions() {
+        mockedListView.mockedCellForRow = .init()
+        mockedListView.mockedCellForRow?.mockedMessage = .mock()
+
+        let mockedRouter = ChatMessageListRouter_Mock(rootViewController: UIViewController())
+        sut.router = mockedRouter
+
+        let dataSource = ChatMessageListVCDataSource_Mock()
+        dataSource.mockedChannel = .mock(cid: .unique, ownCapabilities: [.sendReaction])
+        sut.dataSource = dataSource
+
+        sut.didSelectMessageCell(at: IndexPath(item: 0, section: 0))
+
+        XCTAssertEqual(mockedRouter.showMessageActionsPopUpCallCount, 1)
+        XCTAssertNotNil(mockedRouter.showMessageActionsPopUpCalledWith?.messageReactionsController)
+    }
+
+    func test_didSelectMessageCell_whenCanNotSendReactions_shouldShowActionsPopupWithoutReactions() {
+        mockedListView.mockedCellForRow = .init()
+        mockedListView.mockedCellForRow?.mockedMessage = .mock()
+
+        let mockedRouter = ChatMessageListRouter_Mock(rootViewController: UIViewController())
+        sut.router = mockedRouter
+
+        let dataSource = ChatMessageListVCDataSource_Mock()
+        dataSource.mockedChannel = .mock(cid: .unique, ownCapabilities: [])
+        sut.dataSource = dataSource
+
+        sut.didSelectMessageCell(at: IndexPath(item: 0, section: 0))
+
+        XCTAssertEqual(mockedRouter.showMessageActionsPopUpCallCount, 1)
+        XCTAssertNotNil(mockedRouter.showMessageActionsPopUpCalledWith)
+        XCTAssertEqual(mockedRouter.showMessageActionsPopUpCalledWith?.messageReactionsController, nil)
+    }
+
     // message.cid should be available from local cache, but right now, some how is not available for thread replies
     // so the workaround is to get the cid from the data source.
     func test_didSelectMessageCell_whenMessageCidIsNil_shouldStillShowActionsPopup() throws {
@@ -194,15 +229,31 @@ final class ChatMessageListVC_Tests: XCTestCase {
         
         let attachmentWith4Comments = try makeCustomAttachmentWithComments(4)
         let attachmentWith5Comments = try makeCustomAttachmentWithComments(5)
+        let sameAuthor = ChatUser.mock(id: .newUniqueId)
         
         // When attachments are the same, should be equal
-        let messageSame1 = ChatMessage.mock(id: "1", text: "same", attachments: [attachmentWith4Comments])
-        let messageSame2 = ChatMessage.mock(id: "1", text: "same", attachments: [attachmentWith4Comments])
+        let messageSame1 = ChatMessage.mock(id: "1", text: "same", author: sameAuthor, attachments: [attachmentWith4Comments])
+        let messageSame2 = ChatMessage.mock(id: "1", text: "same", author: sameAuthor, attachments: [attachmentWith4Comments])
         XCTAssert(messageSame1.isContentEqual(to: messageSame2))
         
         // When attachments are different, should not be equal
-        let messageDiff1 = ChatMessage.mock(id: "1", text: "same", attachments: [attachmentWith4Comments])
-        let messageDiff2 = ChatMessage.mock(id: "1", text: "same", attachments: [attachmentWith5Comments])
+        let messageDiff1 = ChatMessage.mock(id: "1", text: "same", author: sameAuthor, attachments: [attachmentWith4Comments])
+        let messageDiff2 = ChatMessage.mock(id: "1", text: "same", author: sameAuthor, attachments: [attachmentWith5Comments])
+        XCTAssertFalse(messageDiff1.isContentEqual(to: messageDiff2))
+    }
+
+    func test_messageIsContentEqual_whenAuthorIsDifferent_returnsFalse() throws {
+        let userId = UserId.unique
+        let sameUser = ChatUser.mock(id: userId, name: "Leia Organa")
+
+        // When author is the same, should be equal
+        let messageSame1 = ChatMessage.mock(id: "1", text: "same", author: sameUser)
+        let messageSame2 = ChatMessage.mock(id: "1", text: "same", author: sameUser)
+        XCTAssert(messageSame1.isContentEqual(to: messageSame2))
+
+        // When author is different, should not be equal
+        let messageDiff1 = ChatMessage.mock(id: "1", text: "same", author: sameUser)
+        let messageDiff2 = ChatMessage.mock(id: "1", text: "same", author: .mock(id: userId, name: "Leia"))
         XCTAssertFalse(messageDiff1.isContentEqual(to: messageDiff2))
     }
 

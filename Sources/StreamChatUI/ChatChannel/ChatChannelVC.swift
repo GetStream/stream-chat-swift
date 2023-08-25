@@ -445,6 +445,17 @@ open class ChatChannelVC: _ViewController,
     ) {
         let channelUnreadCount = channelController.channel?.unreadCount ?? .noUnread
         messageListVC.scrollToBottomButton.content = channelUnreadCount
+
+        if channelController.firstUnreadMessageId != firstUnreadMessageId {
+            let previousUnreadMessageId = firstUnreadMessageId
+            firstUnreadMessageId = channelController.firstUnreadMessageId
+            messageListVC.updateUnreadMessagesSeparator(
+                at: firstUnreadMessageId,
+                previousId: previousUnreadMessageId
+            )
+        }
+
+        channelAvatarView.content = (channelController.channel, client.currentUserId)
     }
 
     private func updateUnreadMessagesRelatedComponents() {
@@ -457,7 +468,7 @@ open class ChatChannelVC: _ViewController,
         _ channelController: ChatChannelController,
         didChangeTypingUsers typingUsers: Set<ChatUser>
     ) {
-        guard channelController.areTypingEventsEnabled else { return }
+        guard channelController.channel?.canSendTypingEvents == true else { return }
 
         let typingUsersWithoutCurrentUser = typingUsers
             .sorted { $0.id < $1.id }

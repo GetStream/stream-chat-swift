@@ -196,7 +196,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
         }
 
         // THEN
-        XCTAssertEqual(observer.updatedMessageIDs, [ownMessageUnreadByAnotherUser.id])
+        XCTAssertEqual(observer.updatedMessageDTOs.map(\.id), [ownMessageUnreadByAnotherUser.id])
     }
 
     func test_markChannelAsRead_whenMemberReadDoesNotExist_allOwnMessagesAreUpdated() throws {
@@ -247,7 +247,8 @@ final class ChannelReadDTO_Tests: XCTestCase {
         }
 
         // THEN
-        XCTAssertEqual(observer.updatedMessageIDs, [ownMessage1.id, ownMessage2.id])
+        let messageDTOsThatContainReads = observer.updatedMessageDTOs.filter { !$0.reads.isEmpty }.map(\.id)
+        XCTAssertEqual(Set(messageDTOsThatContainReads), Set([ownMessage1.id, ownMessage2.id]))
     }
 
     func test_markChannelAsRead_ownRead_doesNotTriggerOwnMessagesUpdate() throws {
@@ -298,7 +299,8 @@ final class ChannelReadDTO_Tests: XCTestCase {
         }
 
         // THEN
-        XCTAssertTrue(observer.updatedMessageIDs.isEmpty)
+        let messageDTOsThatContainReads = observer.updatedMessageDTOs.filter { !$0.reads.isEmpty }.map(\.id)
+        XCTAssertTrue(messageDTOsThatContainReads.isEmpty)
     }
 
     // MARK: - markChannelAsUnread - partial
@@ -562,15 +564,15 @@ final class ChannelReadDTO_Tests: XCTestCase {
 // MARK: - Helpers
 
 private class MessageListObserver {
-    let databaseObserver: ListDatabaseObserver<MessageId, MessageDTO>
+    let databaseObserver: ListDatabaseObserver<MessageDTO, MessageDTO>
 
-    var observedChanges: [ListChange<MessageId>] = []
+    var observedChanges: [ListChange<MessageDTO>] = []
 
-    var updatedMessageIDs: Set<MessageId> {
+    var updatedMessageDTOs: Set<MessageDTO> {
         Set(
             observedChanges.compactMap {
-                guard case let .update(messageId, _) = $0 else { return nil }
-                return messageId
+                guard case let .update(messageDTO, _) = $0 else { return nil }
+                return messageDTO
             }
         )
     }
@@ -584,7 +586,7 @@ private class MessageListObserver {
                 deletedMessagesVisibility: .alwaysVisible,
                 shouldShowShadowedMessages: false
             ),
-            itemCreator: { $0.id }
+            itemCreator: { $0 }
         )
 
         databaseObserver.onChange = { [weak self] in

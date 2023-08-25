@@ -395,6 +395,11 @@ final class WebSocketClient_Tests: XCTestCase {
     }
 
     func test_currentUserDTOExists_whenStateIsConnected() throws {
+        try XCTSkipIf(
+            ProcessInfo().operatingSystemVersion.majorVersion < 15,
+            "https://github.com/GetStream/ios-issues-tracking/issues/515"
+        )
+        
         // Add `EventDataProcessorMiddleware` which is responsible for saving CurrentUser
         let eventDataProcessorMiddleware = EventDataProcessorMiddleware()
         webSocketClient.eventNotificationCenter.add(middleware: eventDataProcessorMiddleware)

@@ -23,6 +23,7 @@ final class ChatChannelSearchVC_Tests: XCTestCase {
 
         vc = ChatChannelSearchVC()
         vc.controller = mockedChannelListController
+        vc.appearance.formatters.channelListMessageTimestamp = DefaultMessageTimestampFormatter()
     }
 
     override func tearDown() {

@@ -806,6 +806,19 @@ final class ChatChannelVC_Tests: XCTestCase {
         XCTAssertEqual(dateView.textLabel.text, "Jan 01")
     }
 
+    func test_didUpdateChannel_shouldUpdateChannelAvatarView() {
+        vc.setUp()
+
+        let previousChannel = ChatChannel.mockNonDMChannel(name: "Previous")
+        vc.channelAvatarView.content = (previousChannel, .unique)
+
+        let newChannel = ChatChannel.mockNonDMChannel(name: "New")
+        channelControllerMock.channel_mock = newChannel
+        vc.channelController(vc.channelController, didUpdateChannel: .update(newChannel))
+
+        XCTAssertEqual(vc.channelAvatarView.content.channel?.name, "New")
+    }
+
     // MARK: - setUp
 
     func test_setUp_messagesListVCAndMessageComposerVCHaveTheExpectedAudioPlayerInstance() {
@@ -921,6 +934,10 @@ class ComposerVC_Mock: ComposerVC {
     }
 
     override var isAttachmentsEnabled: Bool {
+        true
+    }
+
+    override var isSendMessageEnabled: Bool {
         true
     }
 

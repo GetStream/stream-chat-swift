@@ -3,7 +3,39 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### ✅ Added
+- Add XCPrivacy manifest [#2740](https://github.com/GetStream/stream-chat-swift/pull/2740)
+- Add digital signature to StreamChat XCFramework [#2740](https://github.com/GetStream/stream-chat-swift/pull/2740)
+### 🐞 Fixed
+- Fix Message List not updating when user info changes [#2738](https://github.com/GetStream/stream-chat-swift/pull/2738)
+- Fix Channel List items online presence not updating when user info changes [#2742](https://github.com/GetStream/stream-chat-swift/pull/2742)
+- Fix Channel name not updating when member name changes [#2742](https://github.com/GetStream/stream-chat-swift/pull/2742)
+
+## StreamChatUI
+### ✅ Added
+- Add XCPrivacy manifest [#2740](https://github.com/GetStream/stream-chat-swift/pull/2740)
+- Add digital signature to StreamChatUI XCFramework [#2740](https://github.com/GetStream/stream-chat-swift/pull/2740)
+- Apply channel capabilities in UI components [#2747](https://github.com/GetStream/stream-chat-swift/pull/2747)
+### 🐞 Fixed
+- Fix Channel Header View not updating when user info changes [#2742](https://github.com/GetStream/stream-chat-swift/pull/2742)
+- Fix Channel List rendering user name on subtitle text in 1:1 channel [#2737](https://github.com/GetStream/stream-chat-swift/pull/2737)
+- Fix gap between the composer and the keyboard when parent view’s frame origin is not zero [#2743](https://github.com/GetStream/stream-chat-swift/pull/2743)
 ### 🔄 Changed
+- Change timestamp formatting in Channel List according to the default design and other SDKs [#2736](https://github.com/GetStream/stream-chat-swift/pull/2736)
+
+# [4.35.2](https://github.com/GetStream/stream-chat-swift/releases/tag/4.35.2)
+_August 16, 2023_
+
+## StreamChat
+### 🐞 Fixed
+- Fix video attachments not being sent with `thumb_url`, which caused issues in other platforms [#2720](https://github.com/GetStream/stream-chat-swift/pull/2720)
+- Make sure loud speaker is always used for playback in voice messages [#2734](https://github.com/GetStream/stream-chat-swift/pull/2734)
+
+## StreamChatUI
+### 🐞 Fixed
+- Explicitly disable channel list states for Search Components [#2725](https://github.com/GetStream/stream-chat-swift/pull/2725)
+- Fix blank channel name in Message Search [#2726](https://github.com/GetStream/stream-chat-swift/pull/2726)
 
 # [4.35.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.35.1)
 _August 09, 2023_
@@ -298,7 +330,7 @@ _November 15, 2022_
 
 ## StreamChat
 ### 🔄 Changed
-- `channelController.uploadFile()` and `channelController.uploadImage()` are deprecated in favour of `channelController.uploadAttachment()` [#2369](https://github.com/GetStream/stream-chat-swift/pull/2369) 
+- `channelController.uploadFile()` and `channelController.uploadImage()` are deprecated in favour of `channelController.uploadAttachment()` [#2369](https://github.com/GetStream/stream-chat-swift/pull/2369)
 - `imageAttachmentPayload.imagePreviewURL` is deprecated since it was misleading, it was basically using the original `imageURL` [#2369](https://github.com/GetStream/stream-chat-swift/pull/2369)
 
 ### ✅ Added
@@ -1163,7 +1195,7 @@ _July 19, 2021_
 - The `ChatSuggestionsViewController` was renamed to `ChatSuggestionsVC` to follow the same pattern across the codebase. [#1195](https://github.com/GetStream/stream-chat-swift/pull/1195)
 
 ### 🔄 Changed
-- Changed Channel from  `currentlyTypingMembers: Set<ChatChannelMember>` to `currentlyTypingUsers: Set<ChatUser>` to show all typing users (not only channel members; eg: watching users) [#1254](https://github.com/GetStream/stream-chat-swift/pull/1254)  
+- Changed Channel from  `currentlyTypingMembers: Set<ChatChannelMember>` to `currentlyTypingUsers: Set<ChatUser>` to show all typing users (not only channel members; eg: watching users) [#1254](https://github.com/GetStream/stream-chat-swift/pull/1254)
 
 ### 🐞 Fixed
 - Fix deleted messages appearance [#1267](https://github.com/GetStream/stream-chat-swift/pull/1267)

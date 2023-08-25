@@ -20,6 +20,8 @@ public struct VideoAttachmentPayload: AttachmentPayload {
     public var title: String?
     /// A link to the video.
     public var videoURL: URL
+    /// A link to the video thumbnail.
+    public var thumbnailURL: URL?
     /// The video itself.
     public var file: AttachmentFile
     /// An extra data.
@@ -37,9 +39,10 @@ public struct VideoAttachmentPayload: AttachmentPayload {
     /// Creates `VideoAttachmentPayload` instance.
     ///
     /// Use this initializer if the attachment is already uploaded and you have the remote URLs.
-    public init(title: String?, videoRemoteURL: URL, file: AttachmentFile, extraData: [String: RawJSON]?) {
+    public init(title: String?, videoRemoteURL: URL, thumbnailURL: URL? = nil, file: AttachmentFile, extraData: [String: RawJSON]?) {
         self.title = title
         videoURL = videoRemoteURL
+        self.thumbnailURL = thumbnailURL
         self.file = file
         self.extraData = extraData
     }
@@ -54,6 +57,9 @@ extension VideoAttachmentPayload: Encodable {
         var values = extraData ?? [:]
         values[AttachmentCodingKeys.title.rawValue] = title.map { .string($0) }
         values[AttachmentCodingKeys.assetURL.rawValue] = .string(videoURL.absoluteString)
+        thumbnailURL.map {
+            values[AttachmentCodingKeys.thumbURL.rawValue] = .string($0.absoluteString)
+        }
         values[AttachmentFile.CodingKeys.size.rawValue] = .number(Double(Int(file.size)))
         values[AttachmentFile.CodingKeys.mimeType.rawValue] = file.mimeType.map { .string($0) }
         try values.encode(to: encoder)
@@ -69,6 +75,7 @@ extension VideoAttachmentPayload: Decodable {
         self.init(
             title: try container.decodeIfPresent(String.self, forKey: .title),
             videoRemoteURL: try container.decode(URL.self, forKey: .assetURL),
+            thumbnailURL: try container.decodeIfPresent(URL.self, forKey: .thumbURL),
             file: try AttachmentFile(from: decoder),
             extraData: try Self.decodeExtraData(from: decoder)
         )

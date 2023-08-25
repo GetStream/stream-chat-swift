@@ -46,6 +46,7 @@ final class ChatChannelListVC_Tests: XCTestCase {
         var components = Components.mock
         components.channelListRouter = ChatChannelListRouterMock.self
         vc.components = components
+        vc.appearance.formatters.channelListMessageTimestamp = DefaultMessageTimestampFormatter()
 
         channels = .dummy()
     }
@@ -121,6 +122,7 @@ final class ChatChannelListVC_Tests: XCTestCase {
 
         let vc = TestView()
         vc.controller = mockedChannelListController
+        vc.appearance.formatters.channelListMessageTimestamp = DefaultMessageTimestampFormatter()
 
         var components = Components.mock
         components.channelCellSeparator = TestSeparatorView.self
@@ -294,6 +296,29 @@ final class ChatChannelListVC_Tests: XCTestCase {
         XCTAssertEqual(channelListVC.controller.query, newQuery)
         XCTAssertEqual(channelListVC.mockedCollectionView.reloadDataCallCount, 1)
         XCTAssertNil(mockedChannelListController.delegate)
+    }
+
+    func test_swipeableViewActionViews() {
+        mockedChannelListController.channels_mock = [.mock(cid: .unique, ownCapabilities: [.deleteChannel])]
+        let channelListVC = ChatChannelListVC()
+        channelListVC.controller = mockedChannelListController
+        channelListVC.reloadChannels()
+
+        let swipeViews = channelListVC.swipeableViewActionViews(for: IndexPath(item: 0, section: 0))
+        let swipeViewIdentifiers = Set(swipeViews.compactMap(\.accessibilityIdentifier))
+        XCTAssertEqual(swipeViewIdentifiers, Set(["deleteView", "moreView"]))
+    }
+
+    func test_swipeableViewActionViews_whenCantDeleteChannel() {
+        mockedChannelListController.channels_mock = [.mock(cid: .unique, ownCapabilities: [])]
+        let channelListVC = ChatChannelListVC()
+        channelListVC.controller = mockedChannelListController
+        channelListVC.reloadChannels()
+
+        let swipeViews = channelListVC.swipeableViewActionViews(for: IndexPath(item: 0, section: 0))
+        let swipeViewIdentifiers = Set(swipeViews.compactMap(\.accessibilityIdentifier))
+        XCTAssertFalse(channelListVC.channels.isEmpty)
+        XCTAssertEqual(swipeViewIdentifiers, Set(["moreView"]))
     }
 
     private class FakeChatChannelListVC: ChatChannelListVC {

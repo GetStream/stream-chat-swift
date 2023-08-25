@@ -46,7 +46,7 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
     }
 
     /// A formatter that converts the message timestamp to textual representation.
-    public lazy var timestampFormatter: MessageTimestampFormatter = appearance.formatters.messageTimestamp
+    public lazy var timestampFormatter: MessageTimestampFormatter = appearance.formatters.channelListMessageTimestamp
 
     /// Main container which holds `avatarView` and two horizontal containers `title` and `unreadCount` and
     /// `subtitle` and `timestampLabel`
@@ -128,7 +128,7 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
     open var titleText: String? {
         if let searchedMessage = content?.searchedMessage {
             var title = "\(searchedMessage.author.name ?? searchedMessage.author.id)"
-            if let channelName = content?.channel.name {
+            if let channelName = content?.channel.name, !channelName.isEmpty {
                 title += L10n.Channel.Item.Search.in(channelName)
             }
             return title
@@ -160,12 +160,17 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
                 return previewMessage.text
             }
 
-            let authorName = previewMessage.isSentByCurrentUser
-                ? L10n.you
-                : previewMessage.author.name ?? previewMessage.author.id
-
             let text = previewMessage.textContent ?? previewMessage.text
 
+            if previewMessage.isSentByCurrentUser {
+                return "\(L10n.you): \(text)"
+            }
+
+            if content.channel.memberCount == 2 {
+                return text
+            }
+
+            let authorName = previewMessage.author.name ?? previewMessage.author.id
             return "\(authorName): \(text)"
         } else {
             return L10n.Channel.Item.emptyMessages

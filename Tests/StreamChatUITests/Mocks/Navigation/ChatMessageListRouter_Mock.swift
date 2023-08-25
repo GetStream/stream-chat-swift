@@ -8,12 +8,18 @@ import XCTest
 
 class ChatMessageListRouter_Mock: ChatMessageListRouter {
     var showMessageActionsPopUpCallCount = 0
+    var showMessageActionsPopUpCalledWith: (
+        messageContentView: ChatMessageContentView,
+        messageActionsController: ChatMessageActionsVC,
+        messageReactionsController: ChatMessageReactionsPickerVC?
+    )?
 
     override func showMessageActionsPopUp(
         messageContentView: ChatMessageContentView,
         messageActionsController: ChatMessageActionsVC,
         messageReactionsController: ChatMessageReactionsPickerVC?
     ) {
+        showMessageActionsPopUpCalledWith = (messageContentView, messageActionsController, messageReactionsController)
         showMessageActionsPopUpCallCount += 1
     }
 

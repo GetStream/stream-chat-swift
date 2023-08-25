@@ -11,11 +11,13 @@ import Foundation
 extension UploadedAttachment {
     static func dummy(
         attachment: AnyChatMessageAttachment = .dummy(),
-        remoteURL: URL = .unique()
+        remoteURL: URL = .unique(),
+        thumbnailURL: URL = .unique()
     ) -> UploadedAttachment {
         UploadedAttachment(
             attachment: attachment,
-            remoteURL: remoteURL
+            remoteURL: remoteURL,
+            thumbnailURL: thumbnailURL
         )
     }
 }

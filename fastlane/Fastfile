@@ -16,7 +16,7 @@ before_all do |lane|
   if is_ci
     setup_ci
     ENV['FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT'] = '180'
-    xcodes(version: xcode_version, select_for_current_build_only: true) unless [:publish_release, :allure_launch].include?(lane)
+    xcversion(version: xcode_version) unless [:publish_release, :allure_launch].include?(lane)
   end
 end
 
@@ -26,19 +26,24 @@ end
 
 desc "Build .xcframeworks"
 lane :build_xcframeworks do
+  match_me
   output_directory = "#{Dir.pwd}/../Products"
-  %w[StreamChatUI StreamChat].each do |scheme|
+  team_id = File.read('Matchfile').match(/team_id\("(.*)"\)/)[1]
+  codesign = ["codesign --timestamp -v --sign 'Apple Distribution: Stream.io Inc (#{team_id})'"]
+  sdk_names.each do |sdk|
     create_xcframework(
       project: xcode_project,
-      scheme: scheme,
+      scheme: sdk,
       destinations: ['iOS'],
       include_BCSymbolMaps: true,
       include_debug_symbols: true,
       xcframework_output_directory: output_directory,
       remove_xcarchives: true
     )
-    sh('../Scripts/removeUnneededSymbols.sh', scheme, output_directory)
+    sh('../Scripts/removeUnneededSymbols.sh', sdk, output_directory)
+    codesign << lane_context[SharedValues::XCFRAMEWORK_OUTPUT_PATH]
   end
+  sh(codesign.join(' ')) # We need to sign all frameworks at once
 end
 
 desc 'Start a new release'
@@ -71,8 +76,8 @@ end
 
 desc 'Completes an SDK Release'
 lane :publish_release do |options|
-  # Create XCFrameworks
   xcversion(version: '13.0')
+
   clean_products
   build_xcframeworks
   compress_frameworks
@@ -226,6 +231,7 @@ desc "If `readonly: true` (by default), installs all Certs and Profiles necessar
 lane :match_me do |options|
   app_identifiers = [
     'io.getstream.StreamChat',
+    'io.stream.StreamChatUI',
     'io.getstream.iOS.ChatDemoApp',
     'io.getstream.iOS.ChatDemoAppTwo',
     'io.getstream.iOS.ChatDemoApp.DemoAppPush',
@@ -233,8 +239,6 @@ lane :match_me do |options|
     'io.getstream.iOS.SlackClone',
     'io.getstream.iOS.MessengerClone',
     'io.getstream.iOS.YouTubeClone',
-    'io.getstream.iOS.DemoAppSwiftUI',
-    'io.getstream.iOS.VideoDemoApp',
     'io.getstream.iOS.DemoAppUIKit'
   ]
   custom_match(
@@ -316,15 +320,14 @@ lane :test_e2e_mock do |options|
 
   start_sinatra
 
-  device = options[:ios] ? "#{options[:device]} (#{options[:ios]})" : options[:device]
-  prepare_simulator(device: device) if is_ci
+  prepare_simulator(device: options[:device]) if is_ci
 
   scan_options = {
     project: xcode_project,
     scheme: 'StreamChatUITestsApp',
     testplan: 'StreamChatUITestsApp',
     result_bundle: true,
-    devices: device,
+    devices: options[:device],
     number_of_retries: 3 # TODO: CIS-1737
   }
 
@@ -589,7 +592,8 @@ lane :emerge_upload do
     build_type: 'release',
     repo_name: github_repo,
     pr_number: ENV['GITHUB_PR_NUM'] || nil, # If `nil` then local run or merge to develop/main
-    sha: last_git_commit[:commit_hash]
+    sha: ENV['GITHUB_COMMIT_SHA'] || last_git_commit[:commit_hash],
+    base_sha: ENV['GITHUB_BASE_SHA'] || nil
   )
 end
 

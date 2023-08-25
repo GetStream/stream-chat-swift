@@ -23,6 +23,7 @@ class UserDTO: NSManagedObject {
     @NSManaged var flaggedBy: CurrentUserDTO?
 
     @NSManaged var members: Set<MemberDTO>?
+    @NSManaged var messages: Set<MessageDTO>?
     @NSManaged var currentUser: CurrentUserDTO?
     @NSManaged var teams: [TeamId]
 
@@ -37,18 +38,30 @@ class UserDTO: NSManagedObject {
     override func willSave() {
         super.willSave()
 
-        // When user changed, we need to propagate this change to members and current user
+        // We need to propagate fake changes to other models so that it triggers FRC
+        // updates for other entities. We also need to check that these models
+        // don't have changes already, otherwise it creates an infinite loop.
         if hasPersistentChangedValues {
             if let currentUser = currentUser, !currentUser.hasChanges {
-                // this will not change object, but mark it as dirty, triggering updates
-                let assigningPropertyToItself = currentUser.unreadChannelsCount
-                currentUser.unreadChannelsCount = assigningPropertyToItself
+                let fakeNewUnread = currentUser.unreadChannelsCount
+                currentUser.unreadChannelsCount = fakeNewUnread
             }
             for member in members ?? [] {
-                guard !member.hasChanges, !member.isDeleted else { continue }
-                // this will not change object, but mark it as dirty, triggering updates
-                let assigningPropertyToItself = member.channelRoleRaw
-                member.channelRoleRaw = assigningPropertyToItself
+                if !member.hasChanges && !member.isDeleted {
+                    let fakeNewChannelRole = member.channelRoleRaw
+                    member.channelRoleRaw = fakeNewChannelRole
+                }
+
+                if !member.channel.hasChanges && !member.channel.isDeleted {
+                    let fakeNewCid = member.channel.cid
+                    member.channel.cid = fakeNewCid
+                }
+            }
+            for message in messages ?? [] {
+                if !message.hasChanges, !message.isDeleted {
+                    let fakeNewText = message.text
+                    message.text = fakeNewText
+                }
             }
         }
     }

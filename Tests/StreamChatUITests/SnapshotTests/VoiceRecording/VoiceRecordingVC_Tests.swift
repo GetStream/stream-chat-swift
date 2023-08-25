@@ -908,12 +908,15 @@ final class VoiceRecordingVC_Tests: XCTestCase {
         viewController.messageComposerVC.voiceRecordingVC.audioRecorder = audioRecorder
         viewController.messageComposerVC.voiceRecordingVC.components = subject.components
         viewController.messageComposerVC.voiceRecordingVC.hideViewsDebouncer = subject.hideViewsDebouncer
-        viewController.channelController = ChatChannelController_Mock(
+        let mock = ChatChannelController_Mock(
             channelQuery: .init(cid: .unique),
             channelListQuery: nil,
             client: .mock,
             isChannelAlreadyCreated: true
         )
+        mock.channel_mock = .mock(cid: .unique, config: .mock(commands: []), ownCapabilities: [.sendMessage])
+        viewController.channelController = mock
+        viewController.messageComposerVC.channelController = mock
         viewController.setUp()
         viewController.setUpLayout()
         viewController.setUpAppearance()

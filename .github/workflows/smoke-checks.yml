@@ -189,7 +189,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3.1.0
     - uses: ./.github/actions/bootstrap
-    - name: List Xcode versions xcodes sees
+    - name: List Xcode versions xcversion sees
       run: mdfind "kMDItemCFBundleIdentifier = 'com.apple.dt.Xcode'"
     - name: Build LLC (Xcode 13)
       run: bundle exec fastlane test device:"iPhone 13" build_for_testing:true

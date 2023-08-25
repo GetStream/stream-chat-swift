@@ -54,12 +54,6 @@ if [[ ${XCODE_ACTIONS-default} == default ]]; then
   puts "Bootstrap Mint dependencies"
   mint bootstrap --link
 
-  # https://github.com/GetStream/ios-issues-tracking/issues/265
-  if [[ $(sw_vers -productVersion) != *"11."* ]]; then
-    puts "Install RobotsAndPencils/xcodes"
-    mint install RobotsAndPencils/xcodes@1.4.1 -l
-  fi
-
   # Copy internal Xcode scheme to the right folder for
   puts "Adding DemoApp-StreamDevelopers.xcscheme to the Xcode project"
   cp Scripts/DemoApp-StreamDevelopers.xcscheme StreamChat.xcodeproj/xcshareddata/xcschemes/DemoApp-StreamDevelopers.xcscheme

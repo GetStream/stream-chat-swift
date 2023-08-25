@@ -4,6 +4,17 @@
 
 import Foundation
 
+/// An uploaded file.
+public struct UploadedFile: Decodable {
+    public let fileURL: URL
+    public let thumbnailURL: URL?
+
+    public init(fileURL: URL, thumbnailURL: URL? = nil) {
+        self.fileURL = fileURL
+        self.thumbnailURL = thumbnailURL
+    }
+}
+
 /// The CDN client is responsible to upload files to a CDN.
 public protocol CDNClient {
     static var maxAttachmentSize: Int64 { get }
@@ -18,6 +29,34 @@ public protocol CDNClient {
         progress: ((Double) -> Void)?,
         completion: @escaping (Result<URL, Error>) -> Void
     )
+
+    /// Uploads attachment as a multipart/form-data and returns the uploaded remote file and its thumbnail.
+    /// - Parameters:
+    ///   - attachment: An attachment to upload.
+    ///   - progress: A closure that broadcasts upload progress.
+    ///   - completion: Returns the uploaded file's information.
+    func uploadAttachment(
+        _ attachment: AnyChatMessageAttachment,
+        progress: ((Double) -> Void)?,
+        completion: @escaping (Result<UploadedFile, Error>) -> Void
+    )
+}
+
+public extension CDNClient {
+    func uploadAttachment(
+        _ attachment: AnyChatMessageAttachment,
+        progress: ((Double) -> Void)?,
+        completion: @escaping (Result<UploadedFile, Error>) -> Void
+    ) {
+        uploadAttachment(attachment, progress: progress, completion: { (result: Result<URL, Error>) in
+            switch result {
+            case let .success(url):
+                completion(.success(UploadedFile(fileURL: url, thumbnailURL: nil)))
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        })
+    }
 }
 
 /// Default implementation of CDNClient that uses Stream CDN
@@ -44,6 +83,21 @@ class StreamCDNClient: CDNClient {
         _ attachment: AnyChatMessageAttachment,
         progress: ((Double) -> Void)? = nil,
         completion: @escaping (Result<URL, Error>) -> Void
+    ) {
+        uploadAttachment(attachment, progress: progress, completion: { (result: Result<UploadedFile, Error>) in
+            switch result {
+            case let .success(file):
+                completion(.success(file.fileURL))
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        })
+    }
+
+    func uploadAttachment(
+        _ attachment: AnyChatMessageAttachment,
+        progress: ((Double) -> Void)? = nil,
+        completion: @escaping (Result<UploadedFile, Error>) -> Void
     ) {
         guard
             let uploadingState = attachment.uploadingState,
@@ -79,13 +133,14 @@ class StreamCDNClient: CDNClient {
 
             let task = self.session.dataTask(with: urlRequest) { [decoder = self.decoder] (data, response, error) in
                 do {
-                    let decodedResponse: FileUploadPayload = try decoder.decodeRequestResponse(
+                    let response: FileUploadPayload = try decoder.decodeRequestResponse(
                         data: data,
                         response: response,
                         error: error
                     )
+                    let file = UploadedFile(fileURL: response.fileURL, thumbnailURL: response.thumbURL)
 
-                    completion(.success(decodedResponse.fileURL))
+                    completion(.success(file))
                 } catch {
                     completion(.failure(error))
                 }

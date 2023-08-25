@@ -25,30 +25,25 @@ jobs:
       matrix:
         include:
           - ios: 16.2
-            setup_runtime: false
+            xcode: 14.2
+            os: macos-12
             device: "iPhone 14 Pro Max"
-            xcode: 14.2
+            setup_runtime: false
+          - ios: 15.5
+            xcode: 13.4.1
             os: macos-12
-          - ios: 15.4
-            setup_runtime: true
             device: "iPhone 8"
-            xcode: 14.2
-            os: macos-12
+            setup_runtime: false
           - ios: 14.5
-            setup_runtime: true
+            xcode: 14.2
+            os: macos-12
             device: "iPhone SE (2nd generation)"
-            xcode: 14.2
-            os: macos-12
+            setup_runtime: true
           - ios: 13.7
-            setup_runtime: true
+            xcode: 14.2
+            os: macos-12
             device: "iPad Air (3rd generation)"
-            xcode: 14.2
-            os: macos-12
-          - ios: 12.4
             setup_runtime: true
-            device: "iPhone X"
-            xcode: 14.2
-            os: macos-12
       fail-fast: false
     runs-on: ${{ matrix.os }}
     env:
@@ -56,9 +51,8 @@ jobs:
       GITHUB_PR_NUM: ${{ github.event.number }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
-      XCODE_VERSION: ${{ matrix.xcode }}
       STREAM_DEMO_APP_SECRET: ${{ secrets.STREAM_DEMO_APP_SECRET }}
-      IOS_SIMULATOR_DEVICE: "${{ matrix.device }} (${{ matrix.ios }})"
+      XCODE_VERSION: ${{ matrix.xcode }}
     steps:
     - uses: actions/checkout@v3.1.0
     - uses: ./.github/actions/bootstrap
@@ -68,12 +62,12 @@ jobs:
     - name: Setup iOS ${{ matrix.ios }} Runtime
       if: ${{ matrix.setup_runtime }}
       timeout-minutes: 60
-      run: sudo xcodes runtimes install 'iOS ${{ matrix.ios }}'
+      run: xcversion simulators --install='iOS ${{ matrix.ios }}'
     - name: Launch Allure TestOps
       run: bundle exec fastlane allure_launch cron:true
     - name: Run UI Tests (Debug)
-      run: bundle exec fastlane test_e2e_mock cron:true device:"${{ matrix.device }}" ios:"${{ matrix.ios }}"
-      timeout-minutes: 90
+      run: bundle exec fastlane test_e2e_mock cron:true device:"${{ matrix.device }} (${{ matrix.ios }})"
+      timeout-minutes: 120
     - name: Allure TestOps Upload
       if: success() || failure()
       run: bundle exec fastlane allure_upload launch_id:$LAUNCH_ID
@@ -107,22 +101,38 @@ jobs:
     strategy:
       matrix:
         include:
-          - xcode: 14.3
+          - ios: 16.4
+            xcode: 14.3.1
             os: macos-13
-          - xcode: 14.2
+            device: "iPhone 14 Pro Max"
+            setup_runtime: false
+          - ios: 15.5
+            xcode: 13.4.1
             os: macos-12
-          - xcode: 13.4.1
+            device: "iPhone 8"
+            setup_runtime: false
+          - ios: 14.5
+            xcode: 14.2
             os: macos-12
-          - xcode: 13.1
+            device: "iPhone SE (2nd generation)"
+            setup_runtime: true
+          - ios: 13.7
+            xcode: 14.2
             os: macos-12
+            device: "iPad Air (3rd generation)"
+            setup_runtime: true
       fail-fast: false
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3.1.0
     - uses: ./.github/actions/bootstrap
+    - name: Setup iOS ${{ matrix.ios }} Runtime
+      if: ${{ matrix.setup_runtime }}
+      timeout-minutes: 60
+      run: xcversion simulators --install='iOS ${{ matrix.ios }}'
     - name: Run LLC Tests (Debug)
-      run: bundle exec fastlane test device:"iPhone 8"
-      timeout-minutes: 30
+      run: bundle exec fastlane test device:"${{ matrix.device }} (${{ matrix.ios }})"
+      timeout-minutes: 40
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GITHUB_PR_NUM: ${{ github.event.number }}
@@ -137,6 +147,24 @@ jobs:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         MATRIX_CONTEXT: ${{ toJson(matrix) }}
       if: failure() && github.event_name == 'schedule'
+
+  build-xcode13:
+    name: Build LLC + UI (Xcode 13)
+    runs-on: macos-12
+    env:
+      XCODE_VERSION: "13.4.1"
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+    - uses: actions/checkout@v3.1.0
+    - uses: ./.github/actions/bootstrap
+    - name: List Xcode versions xcversion sees
+      run: mdfind "kMDItemCFBundleIdentifier = 'com.apple.dt.Xcode'"
+    - name: Build LLC (Xcode 13)
+      run: bundle exec fastlane test device:"iPhone 8" build_for_testing:true
+      timeout-minutes: 25
+    - name: Build UI (Xcode 13)
+      run: bundle exec fastlane test_ui device:"iPhone 8" build_for_testing:true
+      timeout-minutes: 25
 
   automated-code-review:
     name: Automated Code Review

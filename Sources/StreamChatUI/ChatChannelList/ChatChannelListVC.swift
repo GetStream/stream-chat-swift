@@ -365,7 +365,11 @@ open class ChatChannelListVC: _ViewController,
 
         moreView.action = { [weak self] in self?.moreButtonPressedForCell(at: indexPath) }
 
-        return [moreView, deleteView]
+        if let channel = channels[safe: indexPath.item], channel.canDeleteChannel {
+            return [moreView, deleteView]
+        }
+
+        return [moreView]
     }
 
     /// This function is called when delete button is pressed from action items of a cell.
