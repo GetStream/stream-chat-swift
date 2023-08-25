@@ -293,7 +293,7 @@ open class ChatMessageListVC: _ViewController,
 
     func updateScrollDependentButtonsVisibility(animated: Bool = true) {
         updateScrollToBottomButtonVisibility(animated: animated)
-        updateJumpToUnreadMessagesVisibility(animated: animated)
+        updateJumpToUnreadButtonVisibility(animated: animated)
     }
 
     /// Set the visibility of `scrollToLatestMessageButton`.
@@ -305,7 +305,7 @@ open class ChatMessageListVC: _ViewController,
         )
     }
 
-    open func updateJumpToUnreadMessagesVisibility(animated: Bool = true) {
+    open func updateJumpToUnreadButtonVisibility(animated: Bool = true) {
         guard isJumpToUnreadEnabled else { return }
 
         if let unreadCount = dataSource?.channel(for: self)?.unreadCount,

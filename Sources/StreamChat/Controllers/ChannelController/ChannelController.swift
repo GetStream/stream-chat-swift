@@ -109,13 +109,13 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         updater.paginationState.oldestFetchedMessage?.id
     }
 
-    /// The pagination cursor for loading next (new) messages.
+    /// The id if the first unread message for the current user.
     public var firstUnreadMessageId: MessageId? {
         getFirstUnreadMessageId()
     }
 
     /// A boolean indicating if the user marked the channel as unread in the current session
-    public private(set) var markedAsUnread: Bool = false
+    public private(set) var isMarkedAsUnread: Bool = false
 
     internal var lastNewestMessageId: MessageId? {
         updater.paginationState.newestFetchedMessage?.id
@@ -892,7 +892,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         ) { [weak self] error in
             self?.callback {
                 if error == nil {
-                    self?.markedAsUnread = true
+                    self?.isMarkedAsUnread = true
                 }
                 self?.markingRead = false
                 completion?(error)

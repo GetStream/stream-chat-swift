@@ -68,8 +68,8 @@ public class ChatChannelController_Mock: ChatChannelController {
     }
 
     public var markedAsUnread_mock: Bool? = true
-    public override var markedAsUnread: Bool {
-        markedAsUnread_mock ?? super.markedAsUnread
+    public override var isMarkedAsUnread: Bool {
+        markedAsUnread_mock ?? super.isMarkedAsUnread
     }
 
     public var channel_mock: ChatChannel?

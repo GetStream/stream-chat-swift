@@ -75,8 +75,8 @@ open class ChatChannelVC: _ViewController,
     /// The message composer bottom constraint used for keyboard animation handling.
     public var messageComposerBottomConstraint: NSLayoutConstraint?
 
-    /// A boolean value indicating whether the last message is fully visible or not.
-    open var isLastMessageFullyVisible: Bool {
+    /// A boolean value indicating whether the last cell is fully visible or not.
+    open var isLastCellFullyVisible: Bool {
         messageListVC.listView.isLastCellFullyVisible
     }
 
@@ -100,7 +100,7 @@ open class ChatChannelVC: _ViewController,
 
     /// Determines if a messaged had been marked as unread in the current session
     private var hasMarkedMessageAsUnread: Bool {
-        channelController.markedAsUnread
+        channelController.isMarkedAsUnread
     }
 
     /// Determines whether all unread messages have been seen
@@ -333,7 +333,7 @@ open class ChatChannelVC: _ViewController,
         if message?.id == firstUnreadMessageId {
             hasSeenAllUnreadMessages = true
         }
-        if isLastMessageFullyVisible {
+        if isLastCellFullyVisible {
             hasSeenLastMessage = true
         }
     }
@@ -448,12 +448,6 @@ open class ChatChannelVC: _ViewController,
         channelAvatarView.content = (channelController.channel, client.currentUserId)
     }
 
-    private func updateUnreadMessagesRelatedComponents() {
-        firstUnreadMessageId = channelController.firstUnreadMessageId
-        messageListVC.updateUnreadMessagesSeparator(at: firstUnreadMessageId)
-        messageListVC.updateJumpToUnreadMessagesVisibility()
-    }
-
     open func channelController(
         _ channelController: ChatChannelController,
         didChangeTypingUsers typingUsers: Set<ChatUser>
@@ -517,5 +511,11 @@ private extension ChatChannelVC {
             channelListQuery: channelController.channelListQuery,
             messageOrdering: channelController.messageOrdering
         )
+    }
+
+    func updateUnreadMessagesRelatedComponents() {
+        firstUnreadMessageId = channelController.firstUnreadMessageId
+        messageListVC.updateUnreadMessagesSeparator(at: firstUnreadMessageId)
+        messageListVC.updateJumpToUnreadButtonVisibility()
     }
 }
