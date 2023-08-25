@@ -265,6 +265,7 @@ final class ChatChannelVC_Tests: XCTestCase {
             ],
             state: .localDataFetched
         )
+        channelControllerMock.mockFirstUnreadMessageId = "non-existent"
 
         // Load the view with the initial messages
         _ = vc.view
@@ -657,6 +658,53 @@ final class ChatChannelVC_Tests: XCTestCase {
 
         vc.chatMessageListVC(vc.messageListVC, shouldLoadPageAroundMessageId: messageInsideThread.id) { _ in }
         XCTAssertEqual(channelControllerMock.loadPageAroundMessageIdCallCount, 0)
+    }
+
+    // MARK: Unread banner
+
+    func test_whenThereIsAnUnreadMessage_shouldShowABannerOnTopOfIt() {
+        let unreadMessageId = MessageId.unique
+        channelControllerMock.simulateInitial(
+            channel: .mock(cid: .unique),
+            messages: [
+                .mock(id: .unique, text: "Read message", createdAt: Date(timeIntervalSince1970: 1)),
+                .mock(id: unreadMessageId, text: "Unread message", createdAt: Date(timeIntervalSince1970: 2))
+            ].reversed(), // We reverse it because the table is inverted. This way is readable in tests.
+            state: .localDataFetched
+        )
+        channelControllerMock.mockFirstUnreadMessageId = unreadMessageId
+        vc.channelController(channelControllerMock, didUpdateMessages: [])
+
+        AssertSnapshot(
+            vc,
+            isEmbeddedInNavigationController: true,
+            variants: [.defaultLight]
+        )
+    }
+
+    // MARK: Jump to unread pill
+
+    func test_whenThereIsAnUnreadMessageOutOfScreen_shouldShowJumpToUnreadPill() {
+        let unreadMessageId = MessageId.unique
+        let longText = "Hello\nHello\nHello\nHello\nHello\nHello\nHello\nHello\nHello\nHello\nHello\nHello\nHello\nHello"
+        channelControllerMock.simulateInitial(
+            channel: .mock(cid: .unique, unreadCount: ChannelUnreadCount(messages: 4, mentions: 0)),
+            messages: [
+                .mock(id: unreadMessageId, text: longText, createdAt: Date(timeIntervalSince1970: 1)),
+                .mock(id: .unique, text: longText, createdAt: Date(timeIntervalSince1970: 2)),
+                .mock(id: .unique, text: longText, createdAt: Date(timeIntervalSince1970: 3)),
+                .mock(id: .unique, text: "All the messages above are unread", createdAt: Date(timeIntervalSince1970: 4))
+            ].reversed(), // We reverse it because the table is inverted. This way is readable in tests.
+            state: .localDataFetched
+        )
+        channelControllerMock.mockFirstUnreadMessageId = unreadMessageId
+        vc.view.layoutIfNeeded()
+        vc.channelController(channelControllerMock, didUpdateMessages: [])
+        AssertSnapshot(
+            vc,
+            isEmbeddedInNavigationController: true,
+            variants: [.defaultLight]
+        )
     }
 
     // MARK: Channel read

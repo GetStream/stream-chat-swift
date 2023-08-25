@@ -12,6 +12,11 @@ public class ChatChannelController_Mock: ChatChannelController {
         mockCid ?? super.cid
     }
 
+    var mockFirstUnreadMessageId: MessageId?
+    public override var firstUnreadMessageId: MessageId? {
+        mockFirstUnreadMessageId ?? super.firstUnreadMessageId
+    }
+
     /// Creates a new mock instance of `ChatChannelController`.
     public static func mock(chatClientConfig: ChatClientConfig? = nil) -> ChatChannelController_Mock {
         .init(
