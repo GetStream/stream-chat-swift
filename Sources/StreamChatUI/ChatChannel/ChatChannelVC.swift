@@ -110,9 +110,7 @@ open class ChatChannelVC: _ViewController,
     private var hasSeenLastMessage: Bool = false
 
     /// The id of the first unread message
-    private var firstUnreadMessageId: MessageId? {
-        channelController.firstUnreadMessageId
-    }
+    private var firstUnreadMessageId: MessageId?
 
     override open func setUp() {
         super.setUp()
@@ -421,10 +419,15 @@ open class ChatChannelVC: _ViewController,
 
     // MARK: - ChatChannelControllerDelegate
 
+    private var firstMessagesUpdate: Bool = true
     open func channelController(
         _ channelController: ChatChannelController,
         didUpdateMessages changes: [ListChange<ChatMessage>]
     ) {
+        if firstMessagesUpdate {
+            updateUnreadMessagesRelatedComponents()
+            firstMessagesUpdate = false
+        }
         messageListVC.setPreviousMessagesSnapshot(messages)
         messageListVC.setNewMessagesSnapshot(Array(channelController.messages))
         messageListVC.updateMessages(with: changes) { [weak self] in
@@ -443,6 +446,7 @@ open class ChatChannelVC: _ViewController,
     }
 
     private func updateUnreadMessagesRelatedComponents() {
+        firstUnreadMessageId = channelController.firstUnreadMessageId
         messageListVC.updateUnreadMessagesSeparator(at: firstUnreadMessageId)
         messageListVC.updateJumpToUnreadMessagesVisibility()
     }

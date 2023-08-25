@@ -17,7 +17,7 @@ class DatabaseSession_Mock: DatabaseSession {
         self.underlyingSession = underlyingSession
     }
 
-    var markChannelAsReadParams: (cid: ChannelId, userId: UserId, at: Date, lastReadMessageId: MessageId?)?
+    var markChannelAsReadParams: (cid: ChannelId, userId: UserId, at: Date)?
     var markChannelAsUnreadParams: (cid: ChannelId, userId: UserId)?
 
     func addReaction(
@@ -231,9 +231,9 @@ class DatabaseSession_Mock: DatabaseSession {
         return try underlyingSession.saveChannelRead(payload: payload, for: cid, cache: cache)
     }
 
-    func markChannelAsRead(cid: ChannelId, userId: UserId, at: Date, lastReadMessageId: MessageId?) {
-        markChannelAsReadParams = (cid, userId, at, lastReadMessageId)
-        underlyingSession.markChannelAsRead(cid: cid, userId: userId, at: at, lastReadMessageId: lastReadMessageId)
+    func markChannelAsRead(cid: ChannelId, userId: UserId, at: Date) {
+        markChannelAsReadParams = (cid, userId, at)
+        underlyingSession.markChannelAsRead(cid: cid, userId: userId, at: at)
     }
 
     func markChannelAsUnread(cid: ChannelId, by userId: UserId) {

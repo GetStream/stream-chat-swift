@@ -110,12 +110,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     }
 
     /// The pagination cursor for loading next (new) messages.
-    private var _firstUnreadMessageId: MessageId?
     public var firstUnreadMessageId: MessageId? {
-        if let messageId = _firstUnreadMessageId { return messageId }
-
-        _firstUnreadMessageId = getFirstUnreadMessageId()
-        return _firstUnreadMessageId
+        getFirstUnreadMessageId()
     }
 
     /// A boolean indicating if the user marked the channel as unread in the current session
@@ -1224,7 +1220,6 @@ private extension ChatChannelController {
             isInRecoveryMode: isInRecoveryMode,
             onChannelCreated: channelCreatedCallback,
             completion: { result in
-                self._firstUnreadMessageId = nil
                 switch result {
                 case .success:
                     self.state = .remoteDataFetched
@@ -1342,7 +1337,6 @@ private extension ChatChannelController {
                 fetchRequest: ChannelDTO.fetchRequest(for: cid),
                 itemCreator: { try $0.asModel() as ChatChannel }
             ).onChange { [weak self] change in
-                self?._firstUnreadMessageId = nil
                 self?.delegateCallback { [weak self] in
                     guard let self = self else {
                         log.warning("Callback called while self is nil")
@@ -1459,23 +1453,39 @@ private extension ChatChannelController {
 
     private func getFirstUnreadMessageId() -> MessageId? {
         guard let lastReadMessageId = channel?.reads.first(where: { $0.user.id == client.currentUserId })?.lastReadMessageId else {
-            return messages.last?.id
+            return messages.first?.id
         }
 
-        guard lastReadMessageId != messages.first?.id,
-              let lastReadIndex = messages.firstIndex(where: { $0.id == lastReadMessageId }) else {
+        guard lastReadMessageId != messages.first?.id else {
+            // No unread messages
+            return nil
+        }
+        guard let lastReadIndex = messages.firstIndex(where: { $0.id == lastReadMessageId }), lastReadIndex != 0 else {
             return nil
         }
 
-        let newFirstUnreadMessageIndex = messages.index(before: lastReadIndex)
-        return messageId(at: newFirstUnreadMessageIndex)
+        let lookUpStartIndex = messages.index(before: lastReadIndex)
+
+        var id: MessageId?
+        for index in (0...lookUpStartIndex).reversed() {
+            let message = message(at: index)
+            guard message?.author.id != client.currentUserId, message?.deletedAt == nil else { continue }
+            id = message?.id
+            break
+        }
+
+        return id
     }
 
-    private func messageId(at index: Int) -> MessageId? {
+    private func message(at index: Int) -> ChatMessage? {
         if !messages.indices.contains(index) {
             return nil
         }
-        return messages[index].id
+        return messages[index]
+    }
+
+    private func messageId(at index: Int) -> MessageId? {
+        message(at: index)?.id
     }
 }
 

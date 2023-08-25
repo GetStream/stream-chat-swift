@@ -294,7 +294,7 @@ open class ChatMessageListVC: _ViewController,
     /// Set the visibility of `scrollToLatestMessageButton`.
     open func updateScrollToBottomButtonVisibility(animated: Bool = true) {
         updateVisibility(
-            for: scrollToLatestMessageButton,
+            for: scrollToBottomButton,
             isVisible: isScrollToBottomButtonVisible,
             animated: animated
         )
