@@ -337,8 +337,9 @@ final class ChatClient_Tests: XCTestCase {
         
         // initialise a ChatClient with a custom URLSessionConfiguration,
         // which is used instead of `URLSessionConfiguration.default`
-        let chatClient = ChatClient(
-            config: .init(urlSessionConfiguration: urlSessionConfiguration))
+        var chatClientConfig = ChatClientConfig()
+        chatClientConfig.urlSessionConfiguration = urlSessionConfiguration
+        let chatClient = ChatClient(config: chatClientConfig)
         
         // make sure the `apiClient` is initialised using the injected
         // `URLSessionConfiguration`
@@ -987,12 +988,7 @@ private struct Queue<Element> {
 }
 
 private extension ChatClientConfig {
-    init(
-        urlSessionConfiguration: URLSessionConfiguration = .default
-    ) {
-        self = .init(
-            apiKey: APIKey(.unique),
-            urlSessionConfiguration: urlSessionConfiguration
-        )
+    init() {
+        self = .init(apiKey: APIKey(.unique))
     }
 }

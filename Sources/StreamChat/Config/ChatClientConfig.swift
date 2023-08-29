@@ -189,14 +189,12 @@ public struct ChatClientConfig {
     
     /// The `URLSessionConfiguration` being used as default configuration for the `APIClient` and
     /// `WebSocketClient`
-    public let urlSessionConfiguration: URLSessionConfiguration
+    public var urlSessionConfiguration: URLSessionConfiguration = .default
 
     public init(
-        apiKey: APIKey,
-        urlSessionConfiguration: URLSessionConfiguration = .default
+        apiKey: APIKey
     ) {
         self.apiKey = apiKey
-        self.urlSessionConfiguration = urlSessionConfiguration
         isClientInActiveMode = !Bundle.main.isAppExtension
     }
 }
