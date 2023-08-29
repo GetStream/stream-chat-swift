@@ -186,9 +186,17 @@ public struct ChatClientConfig {
     /// whenever a new channel is created,/updated the SDK will try to
     /// match the channel list filter automatically.
     public var isChannelAutomaticFilteringEnabled: Bool = true
+    
+    /// The `URLSessionConfiguration` being used as default configuration for the `APIClient` and
+    /// `WebSocketClient`
+    public let urlSessionConfiguration: URLSessionConfiguration
 
-    public init(apiKey: APIKey) {
+    public init(
+        apiKey: APIKey,
+        urlSessionConfiguration: URLSessionConfiguration = .default
+    ) {
         self.apiKey = apiKey
+        self.urlSessionConfiguration = urlSessionConfiguration
         isClientInActiveMode = !Bundle.main.isAppExtension
     }
 }
