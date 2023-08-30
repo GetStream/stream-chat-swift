@@ -521,10 +521,12 @@ open class ComposerVC: _ViewController,
 
         let isAttachmentButtonHidden = !isAttachmentsEnabled || content.hasCommand || !composerView.shrinkInputButton.isHidden
         let isCommandsButtonHidden = !isCommandsEnabled || content.hasCommand || !composerView.shrinkInputButton.isHidden
+        let isRecordButtonHidden = !isAttachmentsEnabled
 
         Animate {
             self.composerView.attachmentButton.isHidden = isAttachmentButtonHidden
             self.composerView.commandsButton.isHidden = isCommandsButtonHidden
+            self.composerView.recordButton.isHidden = isRecordButtonHidden
         }
 
         composerView.inputMessageView.content = .init(

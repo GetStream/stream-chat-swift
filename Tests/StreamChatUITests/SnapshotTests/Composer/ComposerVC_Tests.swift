@@ -336,6 +336,18 @@ final class ComposerVC_Tests: XCTestCase {
         XCTAssertEqual(composerVC.composerView.attachmentButton.isHidden, false)
     }
 
+    func test_canUploadFiles_hasRecordButtonShown() {
+        composerVC.appearance = Appearance.default
+        composerVC.content = .initial()
+
+        let mock = ChatChannelController_Mock.mock()
+        mock.channel_mock = .mock(cid: .unique, ownCapabilities: [.uploadFile, .sendMessage])
+        composerVC.channelController = mock
+        composerVC.updateContent()
+
+        XCTAssertEqual(composerVC.composerView.recordButton.isHidden, false)
+    }
+
     func test_canNotUploadFiles_hasAttachmentButtonHidden() {
         composerVC.appearance = Appearance.default
         composerVC.content = .initial()
@@ -346,6 +358,18 @@ final class ComposerVC_Tests: XCTestCase {
         composerVC.updateContent()
 
         XCTAssertEqual(composerVC.composerView.attachmentButton.isHidden, true)
+    }
+
+    func test_canNotUploadFiles_hasRecordButtonHidden() {
+        composerVC.appearance = Appearance.default
+        composerVC.content = .initial()
+
+        let mock = ChatChannelController_Mock.mock()
+        mock.channel_mock = .mock(cid: .unique, ownCapabilities: [.sendMessage])
+        composerVC.channelController = mock
+        composerVC.updateContent()
+
+        XCTAssertEqual(composerVC.composerView.recordButton.isHidden, true)
     }
 
     func test_isAttachmentsEnabled_whenChannelIsEmpty_thenReturnsTrue() {
