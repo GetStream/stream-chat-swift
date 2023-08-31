@@ -3,7 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+## StreamChat
+### 🐞 Fixed
+- Fix core data warnings when logging with different user [#2759](https://github.com/GetStream/stream-chat-swift/pull/2759)
 
 # [4.36.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.36.0)
 _August 28, 2023_
