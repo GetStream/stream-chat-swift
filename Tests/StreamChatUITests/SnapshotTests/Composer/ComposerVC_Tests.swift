@@ -340,6 +340,10 @@ final class ComposerVC_Tests: XCTestCase {
         composerVC.appearance = Appearance.default
         composerVC.content = .initial()
 
+        var components = Components.default
+        components.isVoiceRecordingEnabled = true
+        composerVC.components = components
+
         let mock = ChatChannelController_Mock.mock()
         mock.channel_mock = .mock(cid: .unique, ownCapabilities: [.uploadFile, .sendMessage])
         composerVC.channelController = mock
