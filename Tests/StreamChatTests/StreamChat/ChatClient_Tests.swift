@@ -329,7 +329,6 @@ final class ChatClient_Tests: XCTestCase {
         XCTAssertEqual(client.activeChannelListControllers.count, 0)
     }
     
-    
     func test_apiClient_usesInjectedURLSessionConfiguration() {
         // configure a URLSessionConfiguration with a URLProtocol class
         var urlSessionConfiguration = URLSessionConfiguration.default
