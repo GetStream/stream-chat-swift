@@ -161,7 +161,9 @@ private extension DemoAppCoordinator {
             UserDefaults.shared.currentUserId = nil
 
             // show login screen
-            self?.showLogin(animated: true)
+            DispatchQueue.main.async {
+                self?.showLogin(animated: true)
+            }
         }
     }
 }

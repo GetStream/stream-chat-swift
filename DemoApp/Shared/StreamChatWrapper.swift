@@ -77,13 +77,15 @@ extension StreamChatWrapper {
         setUpChat()
 
         // Connect to chat
-        connect(user: user) { [weak self] in
-            if let error = $0 {
-                log.warning(error.localizedDescription)
-            } else {
-                self?.onRemotePushRegistration?()
+        DispatchQueue.global().async {
+            self.connect(user: user) { [weak self] in
+                if let error = $0 {
+                    log.warning(error.localizedDescription)
+                } else {
+                    self?.onRemotePushRegistration?()
+                }
+                completion($0)
             }
-            completion($0)
         }
     }
 
