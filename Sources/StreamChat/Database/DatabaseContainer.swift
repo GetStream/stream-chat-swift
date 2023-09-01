@@ -110,8 +110,8 @@ class DatabaseContainer: NSPersistentContainer {
             let modelURL = bundle.url(forResource: modelName, withExtension: "momd")!
             let model = NSManagedObjectModel(contentsOf: modelURL)!
             managedObjectModel = model
+            Self.cachedModel = model
         }
-        Self.cachedModel = managedObjectModel
 
         self.localCachingSettings = localCachingSettings
         deletedMessageVisibility = deletedMessagesVisibility
