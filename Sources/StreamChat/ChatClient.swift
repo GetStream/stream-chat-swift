@@ -5,129 +5,6 @@
 import CoreData
 import Foundation
 
-class ChatClientFactory {
-    let config: ChatClientConfig
-    let environment: ChatClient.Environment
-
-    init(config: ChatClientConfig, environment: ChatClient.Environment) {
-        self.config = config
-        self.environment = environment
-    }
-
-    func makeApiClientRequestEncoder() -> RequestEncoder {
-        environment.requestEncoderBuilder(config.baseURL.restAPIBaseURL, config.apiKey)
-    }
-
-    func makeWebSocketRequestEncoder() -> RequestEncoder {
-        environment.requestEncoderBuilder(config.baseURL.webSocketBaseURL, config.apiKey)
-    }
-
-    func makeApiClient(
-        encoder: RequestEncoder,
-        urlSessionConfiguration: URLSessionConfiguration
-    ) -> APIClient {
-        let decoder = environment.requestDecoderBuilder()
-        let attachmentUploader = config.customAttachmentUploader ?? StreamAttachmentUploader(
-            cdnClient: config.customCDNClient ?? StreamCDNClient(
-                encoder: encoder,
-                decoder: decoder,
-                sessionConfiguration: urlSessionConfiguration
-            )
-        )
-        let apiClient = environment.apiClientBuilder(
-            urlSessionConfiguration,
-            encoder,
-            decoder,
-            attachmentUploader
-        )
-        return apiClient
-    }
-
-    func makeWebSocketClient(
-        requestEncoder: RequestEncoder,
-        urlSessionConfiguration: URLSessionConfiguration,
-        eventNotificationCenter: EventNotificationCenter
-    ) -> WebSocketClient? {
-        environment.webSocketClientBuilder?(
-            urlSessionConfiguration,
-            requestEncoder,
-            EventDecoder(),
-            eventNotificationCenter
-        )
-    }
-
-    func makeDatabaseContainer() -> DatabaseContainer {
-        do {
-            if config.isLocalStorageEnabled {
-                guard let storeURL = config.localStorageFolderURL else {
-                    throw ClientError.MissingLocalStorageURL()
-                }
-
-                // Create the folder if needed
-                try FileManager.default.createDirectory(
-                    at: storeURL,
-                    withIntermediateDirectories: true,
-                    attributes: nil
-                )
-
-                let dbFileURL = storeURL.appendingPathComponent(config.apiKey.apiKeyString)
-                return environment.databaseContainerBuilder(
-                    .onDisk(databaseFileURL: dbFileURL),
-                    config.shouldFlushLocalStorageOnStart,
-                    config.isClientInActiveMode, // Only reset Ephemeral values in active mode
-                    config.localCaching,
-                    config.deletedMessagesVisibility,
-                    config.shouldShowShadowedMessages
-                )
-            }
-
-        } catch is ClientError.MissingLocalStorageURL {
-            log.assertionFailure("The URL provided in ChatClientConfig can't be `nil`. Falling back to the in-memory option.")
-
-        } catch {
-            log.error("Failed to initialize the local storage with error: \(error). Falling back to the in-memory option.")
-        }
-
-        return environment.databaseContainerBuilder(
-            .inMemory,
-            config.shouldFlushLocalStorageOnStart,
-            config.isClientInActiveMode, // Only reset Ephemeral values in active mode
-            config.localCaching,
-            config.deletedMessagesVisibility,
-            config.shouldShowShadowedMessages
-        )
-    }
-
-    func makeEventNotificationCenter(
-        databaseContainer: DatabaseContainer,
-        currentUserId: @escaping () -> UserId?
-    ) -> EventNotificationCenter {
-        let center = environment.notificationCenterBuilder(databaseContainer)
-        let middlewares: [EventMiddleware] = [
-            EventDataProcessorMiddleware(),
-            TypingStartCleanupMiddleware(
-                excludedUserIds: { Set([currentUserId()].compactMap { $0 }) },
-                emitEvent: { [weak center] in center?.process($0) }
-            ),
-            ChannelReadUpdaterMiddleware(
-                newProcessedMessageIds: { [weak center] in center?.newMessageIds ?? [] }
-            ),
-            UserTypingStateUpdaterMiddleware(),
-            ChannelTruncatedEventMiddleware(),
-            MemberEventMiddleware(),
-            UserChannelBanEventsMiddleware(),
-            UserWatchingEventMiddleware(),
-            UserUpdateMiddleware(),
-            ChannelVisibilityEventMiddleware(),
-            EventDTOConverterMiddleware()
-        ]
-
-        center.add(middlewares: middlewares)
-
-        return center
-    }
-}
-
 /// The root object representing a Stream Chat.
 ///
 /// Typically, an app contains just one instance of `ChatClient`. However, it's possible to have multiple instances if your use
@@ -266,7 +143,13 @@ public class ChatClient {
         )
         let eventNotificationCenter = factory.makeEventNotificationCenter(
             databaseContainer: databaseContainer,
-            currentUserId: { databaseContainer.viewContext.currentUser?.user.id }
+            currentUserId: {
+                var currentUserId: UserId?
+                databaseContainer.viewContext.performAndWait { [weak databaseContainer] in
+                    currentUserId = try? databaseContainer?.viewContext.currentUser?.asModel().id
+                }
+                return currentUserId
+            }
         )
         let messageRepository = environment.messageRepositoryBuilder(
             databaseContainer,
@@ -567,6 +450,184 @@ extension ChatClient: ConnectionDetailsProviderDelegate {
     }
 }
 
+extension ClientError {
+    public class MissingLocalStorageURL: ClientError {
+        override public var localizedDescription: String { "The URL provided in ChatClientConfig is `nil`." }
+    }
+
+    public class ConnectionNotSuccessful: ClientError {
+        override public var localizedDescription: String {
+            """
+            Connection to the API has failed.
+            You can read more about making a successful connection in our docs:
+            https://getstream.io/chat/docs/sdk/ios/uikit/getting-started/
+            \n
+            API Error: \(String(describing: errorDescription))
+            """
+        }
+    }
+
+    public class MissingToken: ClientError {}
+    class WaiterTimeout: ClientError {}
+
+    public class ClientIsNotInActiveMode: ClientError {
+        override public var localizedDescription: String {
+            """
+                ChatClient is in connectionless mode, it cannot connect to websocket.
+                Please check `ChatClientConfig.isClientInActiveMode` for additional info.
+            """
+        }
+    }
+
+    public class ConnectionWasNotInitiated: ClientError {
+        override public var localizedDescription: String {
+            """
+                Before performing any other actions on chat client it's required to connect by using \
+                one of the available `connect` methods e.g. `connectUser`.
+            """
+        }
+    }
+
+    public class ClientHasBeenDeallocated: ClientError {
+        override public var localizedDescription: String {
+            "ChatClient has been deallocated, make sure to keep at least one strong reference to it."
+        }
+    }
+
+    public class MissingTokenProvider: ClientError {
+        override public var localizedDescription: String {
+            """
+                Missing token refresh provider to get a new token
+                When using expiring tokens you need to provide a way to refresh it by passing `tokenProvider` when \
+                calling `ChatClient.connectUser()`.
+            """
+        }
+    }
+}
+
+class ChatClientFactory {
+    let config: ChatClientConfig
+    let environment: ChatClient.Environment
+
+    init(config: ChatClientConfig, environment: ChatClient.Environment) {
+        self.config = config
+        self.environment = environment
+    }
+
+    func makeApiClientRequestEncoder() -> RequestEncoder {
+        environment.requestEncoderBuilder(config.baseURL.restAPIBaseURL, config.apiKey)
+    }
+
+    func makeWebSocketRequestEncoder() -> RequestEncoder {
+        environment.requestEncoderBuilder(config.baseURL.webSocketBaseURL, config.apiKey)
+    }
+
+    func makeApiClient(
+        encoder: RequestEncoder,
+        urlSessionConfiguration: URLSessionConfiguration
+    ) -> APIClient {
+        let decoder = environment.requestDecoderBuilder()
+        let attachmentUploader = config.customAttachmentUploader ?? StreamAttachmentUploader(
+            cdnClient: config.customCDNClient ?? StreamCDNClient(
+                encoder: encoder,
+                decoder: decoder,
+                sessionConfiguration: urlSessionConfiguration
+            )
+        )
+        let apiClient = environment.apiClientBuilder(
+            urlSessionConfiguration,
+            encoder,
+            decoder,
+            attachmentUploader
+        )
+        return apiClient
+    }
+
+    func makeWebSocketClient(
+        requestEncoder: RequestEncoder,
+        urlSessionConfiguration: URLSessionConfiguration,
+        eventNotificationCenter: EventNotificationCenter
+    ) -> WebSocketClient? {
+        environment.webSocketClientBuilder?(
+            urlSessionConfiguration,
+            requestEncoder,
+            EventDecoder(),
+            eventNotificationCenter
+        )
+    }
+
+    func makeDatabaseContainer() -> DatabaseContainer {
+        do {
+            if config.isLocalStorageEnabled {
+                guard let storeURL = config.localStorageFolderURL else {
+                    throw ClientError.MissingLocalStorageURL()
+                }
+
+                // Create the folder if needed
+                try FileManager.default.createDirectory(
+                    at: storeURL,
+                    withIntermediateDirectories: true,
+                    attributes: nil
+                )
+
+                let dbFileURL = storeURL.appendingPathComponent(config.apiKey.apiKeyString)
+                return environment.databaseContainerBuilder(
+                    .onDisk(databaseFileURL: dbFileURL),
+                    config.shouldFlushLocalStorageOnStart,
+                    config.isClientInActiveMode, // Only reset Ephemeral values in active mode
+                    config.localCaching,
+                    config.deletedMessagesVisibility,
+                    config.shouldShowShadowedMessages
+                )
+            }
+
+        } catch is ClientError.MissingLocalStorageURL {
+            log.assertionFailure("The URL provided in ChatClientConfig can't be `nil`. Falling back to the in-memory option.")
+
+        } catch {
+            log.error("Failed to initialize the local storage with error: \(error). Falling back to the in-memory option.")
+        }
+
+        return environment.databaseContainerBuilder(
+            .inMemory,
+            config.shouldFlushLocalStorageOnStart,
+            config.isClientInActiveMode, // Only reset Ephemeral values in active mode
+            config.localCaching,
+            config.deletedMessagesVisibility,
+            config.shouldShowShadowedMessages
+        )
+    }
+
+    func makeEventNotificationCenter(
+        databaseContainer: DatabaseContainer,
+        currentUserId: @escaping () -> UserId?
+    ) -> EventNotificationCenter {
+        let center = environment.notificationCenterBuilder(databaseContainer)
+        let middlewares: [EventMiddleware] = [
+            EventDataProcessorMiddleware(),
+            TypingStartCleanupMiddleware(
+                excludedUserIds: { Set([currentUserId()].compactMap { $0 }) },
+                emitEvent: { [weak center] in center?.process($0) }
+            ),
+            ChannelReadUpdaterMiddleware(
+                newProcessedMessageIds: { [weak center] in center?.newMessageIds ?? [] }
+            ),
+            UserTypingStateUpdaterMiddleware(),
+            ChannelTruncatedEventMiddleware(),
+            MemberEventMiddleware(),
+            UserChannelBanEventsMiddleware(),
+            UserWatchingEventMiddleware(),
+            UserUpdateMiddleware(),
+            ChannelVisibilityEventMiddleware(),
+            EventDTOConverterMiddleware()
+        ]
+
+        center.add(middlewares: middlewares)
+
+        return center
+    }
+}
+
 extension ChatClient {
     /// An object containing all dependencies of `Client`
     struct Environment {
@@ -735,61 +796,6 @@ extension ChatClient {
                 database: $1,
                 apiClient: $2
             )
-        }
-    }
-}
-
-extension ClientError {
-    public class MissingLocalStorageURL: ClientError {
-        override public var localizedDescription: String { "The URL provided in ChatClientConfig is `nil`." }
-    }
-
-    public class ConnectionNotSuccessful: ClientError {
-        override public var localizedDescription: String {
-            """
-            Connection to the API has failed.
-            You can read more about making a successful connection in our docs:
-            https://getstream.io/chat/docs/sdk/ios/uikit/getting-started/
-            \n
-            API Error: \(String(describing: errorDescription))
-            """
-        }
-    }
-
-    public class MissingToken: ClientError {}
-    class WaiterTimeout: ClientError {}
-
-    public class ClientIsNotInActiveMode: ClientError {
-        override public var localizedDescription: String {
-            """
-                ChatClient is in connectionless mode, it cannot connect to websocket.
-                Please check `ChatClientConfig.isClientInActiveMode` for additional info.
-            """
-        }
-    }
-
-    public class ConnectionWasNotInitiated: ClientError {
-        override public var localizedDescription: String {
-            """
-                Before performing any other actions on chat client it's required to connect by using \
-                one of the available `connect` methods e.g. `connectUser`.
-            """
-        }
-    }
-
-    public class ClientHasBeenDeallocated: ClientError {
-        override public var localizedDescription: String {
-            "ChatClient has been deallocated, make sure to keep at least one strong reference to it."
-        }
-    }
-
-    public class MissingTokenProvider: ClientError {
-        override public var localizedDescription: String {
-            """
-                Missing token refresh provider to get a new token
-                When using expiring tokens you need to provide a way to refresh it by passing `tokenProvider` when \
-                calling `ChatClient.connectUser()`.
-            """
         }
     }
 }
