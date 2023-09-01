@@ -467,7 +467,7 @@ open class ComposerVC: _ViewController,
             Animate {
                 self.composerView.confirmButton.isHidden = true
                 self.composerView.sendButton.isHidden = self.content.isSlowModeOn
-                self.composerView.recordButton.isHidden = self.composerView.sendButton.isHidden || !self.components.isVoiceRecordingEnabled
+                self.composerView.recordButton.isHidden = self.composerView.sendButton.isHidden || !self.components.isVoiceRecordingEnabled || !self.isAttachmentsEnabled
                 self.composerView.headerView.isHidden = true
                 self.composerView.cooldownView.isHidden = !self.content.isSlowModeOn
                 self.composerView.leadingContainer.isHidden = false
@@ -493,7 +493,7 @@ open class ComposerVC: _ViewController,
             Animate {
                 self.composerView.confirmButton.isHidden = true
                 self.composerView.sendButton.isHidden = self.content.isSlowModeOn
-                self.composerView.recordButton.isHidden = self.composerView.sendButton.isHidden || !self.components.isVoiceRecordingEnabled
+                self.composerView.recordButton.isHidden = self.composerView.sendButton.isHidden || !self.components.isVoiceRecordingEnabled || !self.isAttachmentsEnabled
                 self.composerView.headerView.isHidden = false
                 self.composerView.cooldownView.isHidden = !self.content.isSlowModeOn
                 self.composerView.leadingContainer.isHidden = false
@@ -504,7 +504,7 @@ open class ComposerVC: _ViewController,
             Animate {
                 self.composerView.confirmButton.isHidden = false
                 self.composerView.sendButton.isHidden = true
-                self.composerView.recordButton.isHidden = self.composerView.confirmButton.isHidden
+                self.composerView.recordButton.isHidden = self.composerView.confirmButton.isHidden || !self.isAttachmentsEnabled
                 self.composerView.headerView.isHidden = false
                 self.composerView.cooldownView.isHidden = true
                 self.composerView.leadingContainer.isHidden = false
