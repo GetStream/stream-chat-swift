@@ -47,7 +47,9 @@ open class WaveformView: _View, ThemeProvider {
 
     // MARK: - UI Components
 
-    open private(set) lazy var audioVisualizationView: AudioVisualizationView = .init()
+    open private(set) lazy var audioVisualizationView: AudioVisualizationView = components
+        .voiceRecordingAudioVisualizationView
+        .init()
         .withoutAutoresizingMaskConstraints
 
     open private(set) lazy var slider: UISlider = .init()

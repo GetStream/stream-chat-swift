@@ -91,7 +91,9 @@ extension ChatMessageVoiceRecordingAttachmentListView {
             .withAccessibilityIdentifier(identifier: "durationLabel")
 
         /// The view that shows a waveform visualisation of the audio file.
-        open private(set) lazy var waveformView = WaveformView()
+        open private(set) lazy var waveformView = components
+            .voiceRecordingWaveformView
+            .init()
             .withoutAutoresizingMaskConstraints
             .withAccessibilityIdentifier(identifier: "waveform")
 

@@ -487,6 +487,12 @@ public struct Components {
     /// play automatically, once the current one completes.
     public var audioQueuePlayerNextItemProvider: AudioQueuePlayerNextItemProvider.Type = AudioQueuePlayerNextItemProvider.self
 
+    /// A view that renders an interactive waveform representation of an audio stream/file.
+    public var voiceRecordingWaveformView: WaveformView.Type = WaveformView.self
+
+    /// A view that renders a waveform representation of an audio stream/file.
+    public var voiceRecordingAudioVisualizationView: AudioVisualizationView.Type = AudioVisualizationView.self
+
     // MARK: - Current user components
 
     /// The view that shows current user avatar.

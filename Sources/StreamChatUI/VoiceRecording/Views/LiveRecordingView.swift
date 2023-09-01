@@ -72,7 +72,9 @@ open class LiveRecordingView: _View, ThemeProvider {
         .withoutAutoresizingMaskConstraints
 
     /// The view used to render a waveform visualisation from the waveform array.
-    open lazy var waveformView: WaveformView = .init()
+    open lazy var waveformView: WaveformView = components
+        .voiceRecordingWaveformView
+        .init()
         .withoutAutoresizingMaskConstraints
 
     // MARK: - Lifecycle
