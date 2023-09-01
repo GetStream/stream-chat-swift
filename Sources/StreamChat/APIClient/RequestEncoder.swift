@@ -70,7 +70,7 @@ extension RequestEncoder {
 }
 
 /// The default implementation of `RequestEncoder`.
-struct DefaultRequestEncoder: RequestEncoder {
+class DefaultRequestEncoder: RequestEncoder {
     let baseURL: URL
     let apiKey: APIKey
 
@@ -125,7 +125,7 @@ struct DefaultRequestEncoder: RequestEncoder {
         }
     }
 
-    init(baseURL: URL, apiKey: APIKey) {
+    required init(baseURL: URL, apiKey: APIKey) {
         self.baseURL = baseURL
         self.apiKey = apiKey
     }
