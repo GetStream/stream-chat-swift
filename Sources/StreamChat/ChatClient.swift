@@ -144,11 +144,7 @@ public class ChatClient {
         let eventNotificationCenter = factory.makeEventNotificationCenter(
             databaseContainer: databaseContainer,
             currentUserId: {
-                var currentUserId: UserId?
-                databaseContainer.viewContext.performAndWait { [weak databaseContainer] in
-                    currentUserId = try? databaseContainer?.viewContext.currentUser?.asModel().id
-                }
-                return currentUserId
+                nil
             }
         )
         let messageRepository = environment.messageRepositoryBuilder(
@@ -606,7 +602,6 @@ class ChatClientFactory {
         let middlewares: [EventMiddleware] = [
             EventDataProcessorMiddleware(),
             TypingStartCleanupMiddleware(
-                excludedUserIds: { Set([currentUserId()].compactMap { $0 }) },
                 emitEvent: { [weak center] in center?.process($0) }
             ),
             ChannelReadUpdaterMiddleware(

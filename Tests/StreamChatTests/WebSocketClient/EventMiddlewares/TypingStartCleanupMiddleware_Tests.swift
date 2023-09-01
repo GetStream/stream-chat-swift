@@ -13,7 +13,7 @@ final class TypingStartCleanupMiddleware_Tests: XCTestCase {
     // to provide a database session
     var database: DatabaseContainer_Spy!
 
-    override func setUp() {
+    override func setUpWithError() throws {
         super.setUp()
 
         currentUser = .mock(id: "Luke")
@@ -22,6 +22,9 @@ final class TypingStartCleanupMiddleware_Tests: XCTestCase {
         VirtualTimeTimer.time = time
 
         database = DatabaseContainer_Spy()
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: .dummy(userId: self.currentUser.id, role: .admin))
+        }
     }
 
     override func tearDown() {
@@ -33,11 +36,10 @@ final class TypingStartCleanupMiddleware_Tests: XCTestCase {
         super.tearDown()
     }
 
-    func test_stopTypingEvent_notSentForExcludedUsers() {
+    func test_stopTypingEvent_notSentForCurrentUser() {
         // Create a middleware and store emitted events.
         var emittedEvents: [Event] = []
         var middleware: TypingStartCleanupMiddleware? = .init(
-            excludedUserIds: { [self.currentUser.id] },
             emitEvent: { emittedEvents.append($0) }
         )
         middleware?.timer = VirtualTimeTimer.self
@@ -66,7 +68,6 @@ final class TypingStartCleanupMiddleware_Tests: XCTestCase {
         // Create a middleware and store emitted events.
         var emittedEvents: [Event] = []
         var middleware: TypingStartCleanupMiddleware? = .init(
-            excludedUserIds: { [self.currentUser.id] },
             emitEvent: { emittedEvents.append($0) }
         )
         middleware?.timer = VirtualTimeTimer.self
