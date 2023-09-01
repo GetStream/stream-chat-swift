@@ -31,6 +31,7 @@ public final class DatabaseContainer_Spy: DatabaseContainer, Spy {
     private(set) var sessionMock: DatabaseSession_Mock?
 
     public convenience init(localCachingSettings: ChatClientConfig.LocalCaching? = nil) {
+        Self.cachedModel = nil
         self.init(kind: .onDisk(databaseFileURL: .newTemporaryFileURL()), localCachingSettings: localCachingSettings)
         shouldCleanUpTempDBFiles = true
     }
@@ -45,6 +46,7 @@ public final class DatabaseContainer_Spy: DatabaseContainer, Spy {
         deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility? = nil,
         shouldShowShadowedMessages: Bool? = nil
     ) {
+        Self.cachedModel = nil
         init_kind = kind
         super.init(
             kind: kind,
@@ -59,6 +61,7 @@ public final class DatabaseContainer_Spy: DatabaseContainer, Spy {
     }
 
     convenience init(sessionMock: DatabaseSession_Mock) {
+        Self.cachedModel = nil
         self.init(kind: .inMemory)
         self.sessionMock = sessionMock
     }

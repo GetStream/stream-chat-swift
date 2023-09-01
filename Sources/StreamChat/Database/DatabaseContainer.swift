@@ -74,6 +74,8 @@ class DatabaseContainer: NSPersistentContainer {
     private let deletedMessageVisibility: ChatClientConfig.DeletedMessageVisibility?
     private let shouldShowShadowedMessages: Bool?
 
+    static var cachedModel: NSManagedObjectModel?
+
     /// All `NSManagedObjectContext`s this container owns.
     private lazy var allContext: [NSManagedObjectContext] = [viewContext, backgroundReadOnlyContext, writableContext]
 
@@ -99,16 +101,23 @@ class DatabaseContainer: NSPersistentContainer {
         deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility? = nil,
         shouldShowShadowedMessages: Bool? = nil
     ) {
-        // It's safe to unwrap the following values because this is not settable by users and it's always a programmer error.
-        let bundle = bundle ?? Bundle(for: DatabaseContainer.self)
-        let modelURL = bundle.url(forResource: modelName, withExtension: "momd")!
-        let model = NSManagedObjectModel(contentsOf: modelURL)!
+        let managedObjectModel: NSManagedObjectModel
+        if let cachedModel = Self.cachedModel {
+            managedObjectModel = cachedModel
+        } else {
+            // It's safe to unwrap the following values because this is not settable by users and it's always a programmer error.
+            let bundle = bundle ?? Bundle(for: DatabaseContainer.self)
+            let modelURL = bundle.url(forResource: modelName, withExtension: "momd")!
+            let model = NSManagedObjectModel(contentsOf: modelURL)!
+            managedObjectModel = model
+            Self.cachedModel = model
+        }
 
         self.localCachingSettings = localCachingSettings
         deletedMessageVisibility = deletedMessagesVisibility
         self.shouldShowShadowedMessages = shouldShowShadowedMessages
 
-        super.init(name: modelName, managedObjectModel: model)
+        super.init(name: modelName, managedObjectModel: managedObjectModel)
 
         setUpPersistentStoreDescription(with: kind)
 
