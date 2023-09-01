@@ -5,6 +5,129 @@
 import CoreData
 import Foundation
 
+class ChatClientFactory {
+    let config: ChatClientConfig
+    let environment: ChatClient.Environment
+
+    init(config: ChatClientConfig, environment: ChatClient.Environment) {
+        self.config = config
+        self.environment = environment
+    }
+
+    func makeApiClientRequestEncoder() -> RequestEncoder {
+        environment.requestEncoderBuilder(config.baseURL.restAPIBaseURL, config.apiKey)
+    }
+
+    func makeWebSocketRequestEncoder() -> RequestEncoder {
+        environment.requestEncoderBuilder(config.baseURL.webSocketBaseURL, config.apiKey)
+    }
+
+    func makeApiClient(
+        encoder: RequestEncoder,
+        urlSessionConfiguration: URLSessionConfiguration
+    ) -> APIClient {
+        let decoder = environment.requestDecoderBuilder()
+        let attachmentUploader = config.customAttachmentUploader ?? StreamAttachmentUploader(
+            cdnClient: config.customCDNClient ?? StreamCDNClient(
+                encoder: encoder,
+                decoder: decoder,
+                sessionConfiguration: urlSessionConfiguration
+            )
+        )
+        let apiClient = environment.apiClientBuilder(
+            urlSessionConfiguration,
+            encoder,
+            decoder,
+            attachmentUploader
+        )
+        return apiClient
+    }
+
+    func makeWebSocketClient(
+        requestEncoder: RequestEncoder,
+        urlSessionConfiguration: URLSessionConfiguration,
+        eventNotificationCenter: EventNotificationCenter
+    ) -> WebSocketClient? {
+        environment.webSocketClientBuilder?(
+            urlSessionConfiguration,
+            requestEncoder,
+            EventDecoder(),
+            eventNotificationCenter
+        )
+    }
+
+    func makeDatabaseContainer() -> DatabaseContainer {
+        do {
+            if config.isLocalStorageEnabled {
+                guard let storeURL = config.localStorageFolderURL else {
+                    throw ClientError.MissingLocalStorageURL()
+                }
+
+                // Create the folder if needed
+                try FileManager.default.createDirectory(
+                    at: storeURL,
+                    withIntermediateDirectories: true,
+                    attributes: nil
+                )
+
+                let dbFileURL = storeURL.appendingPathComponent(config.apiKey.apiKeyString)
+                return environment.databaseContainerBuilder(
+                    .onDisk(databaseFileURL: dbFileURL),
+                    config.shouldFlushLocalStorageOnStart,
+                    config.isClientInActiveMode, // Only reset Ephemeral values in active mode
+                    config.localCaching,
+                    config.deletedMessagesVisibility,
+                    config.shouldShowShadowedMessages
+                )
+            }
+
+        } catch is ClientError.MissingLocalStorageURL {
+            log.assertionFailure("The URL provided in ChatClientConfig can't be `nil`. Falling back to the in-memory option.")
+
+        } catch {
+            log.error("Failed to initialize the local storage with error: \(error). Falling back to the in-memory option.")
+        }
+
+        return environment.databaseContainerBuilder(
+            .inMemory,
+            config.shouldFlushLocalStorageOnStart,
+            config.isClientInActiveMode, // Only reset Ephemeral values in active mode
+            config.localCaching,
+            config.deletedMessagesVisibility,
+            config.shouldShowShadowedMessages
+        )
+    }
+
+    func makeEventNotificationCenter(
+        databaseContainer: DatabaseContainer,
+        currentUserId: @escaping () -> UserId?
+    ) -> EventNotificationCenter {
+        let center = environment.notificationCenterBuilder(databaseContainer)
+        let middlewares: [EventMiddleware] = [
+            EventDataProcessorMiddleware(),
+            TypingStartCleanupMiddleware(
+                excludedUserIds: { Set([currentUserId()].compactMap { $0 }) },
+                emitEvent: { [weak center] in center?.process($0) }
+            ),
+            ChannelReadUpdaterMiddleware(
+                newProcessedMessageIds: { [weak center] in center?.newMessageIds ?? [] }
+            ),
+            UserTypingStateUpdaterMiddleware(),
+            ChannelTruncatedEventMiddleware(),
+            MemberEventMiddleware(),
+            UserChannelBanEventsMiddleware(),
+            UserWatchingEventMiddleware(),
+            UserUpdateMiddleware(),
+            ChannelVisibilityEventMiddleware(),
+            EventDTOConverterMiddleware()
+        ]
+
+        center.add(middlewares: middlewares)
+
+        return center
+    }
+}
+
 /// The root object representing a Stream Chat.
 ///
 /// Typically, an app contains just one instance of `ChatClient`. However, it's possible to have multiple instances if your use
@@ -49,206 +172,48 @@ public class ChatClient {
     private(set) var connectionRecoveryHandler: ConnectionRecoveryHandler?
 
     /// The notification center used to send and receive notifications about incoming events.
-    private(set) lazy var eventNotificationCenter: EventNotificationCenter = {
-        let center = environment.notificationCenterBuilder(databaseContainer)
-
-        let middlewares: [EventMiddleware] = [
-            EventDataProcessorMiddleware(),
-            TypingStartCleanupMiddleware(
-                excludedUserIds: { [weak self] in Set([self?.currentUserId].compactMap { $0 }) },
-                emitEvent: { [weak center] in center?.process($0) }
-            ),
-            ChannelReadUpdaterMiddleware(
-                newProcessedMessageIds: { [weak center] in center?.newMessageIds ?? [] }
-            ),
-            UserTypingStateUpdaterMiddleware(),
-            ChannelTruncatedEventMiddleware(),
-            MemberEventMiddleware(),
-            UserChannelBanEventsMiddleware(),
-            UserWatchingEventMiddleware(),
-            UserUpdateMiddleware(),
-            ChannelVisibilityEventMiddleware(),
-            EventDTOConverterMiddleware()
-        ]
-
-        center.add(middlewares: middlewares)
-
-        return center
-    }()
+    private(set) var eventNotificationCenter: EventNotificationCenter
 
     // MARK: Repositories
 
-    private(set) lazy var connectionRepository = environment.connectionRepositoryBuilder(
-        config.isClientInActiveMode,
-        syncRepository,
-        webSocketClient,
-        apiClient,
-        environment.timerType
-    )
+    private(set) var connectionRepository: ConnectionRepository
 
-    private(set) lazy var authenticationRepository: AuthenticationRepository = {
-        let repository = environment.authenticationRepositoryBuilder(
-            apiClient,
-            databaseContainer,
-            connectionRepository,
-            environment.tokenExpirationRetryStrategy,
-            environment.timerType
-        )
-        repository.delegate = self
-        return repository
-    }()
+    private(set) var authenticationRepository: AuthenticationRepository
 
-    private(set) lazy var channelRepository = environment.channelRepositoryBuilder(
-        databaseContainer,
-        apiClient
-    )
+    private(set) var messageRepository: MessageRepository
 
-    private(set) lazy var messageRepository = environment.messageRepositoryBuilder(
-        databaseContainer,
-        apiClient
-    )
-
-    private(set) lazy var offlineRequestsRepository = environment.offlineRequestsRepositoryBuilder(
-        messageRepository,
-        databaseContainer,
-        apiClient
-    )
+    private(set) var offlineRequestsRepository: OfflineRequestsRepository
 
     /// A repository that handles all the executions needed to keep the Database in sync with remote.
-    private(set) lazy var syncRepository: SyncRepository = {
-        let channelRepository = ChannelListUpdater(database: databaseContainer, apiClient: apiClient)
-        return environment.syncRepositoryBuilder(
-            config,
-            activeChannelControllers,
-            activeChannelListControllers,
-            offlineRequestsRepository,
-            eventNotificationCenter,
-            databaseContainer,
-            apiClient
-        )
-    }()
+    private(set) var syncRepository: SyncRepository
 
     /// A repository that handles all the executions needed to keep the Database in sync with remote.
-    private(set) lazy var callRepository: CallRepository = {
-        environment.callRepositoryBuilder(apiClient)
-    }()
+    private(set) var callRepository: CallRepository
+
+    private(set) var channelRepository: ChannelRepository
 
     func makeMessagesPaginationStateHandler() -> MessagesPaginationStateHandling {
         MessagesPaginationStateHandler()
     }
 
     /// The `APIClient` instance `Client` uses to communicate with Stream REST API.
-    lazy var apiClient: APIClient = {
-        var encoder = environment.requestEncoderBuilder(config.baseURL.restAPIBaseURL, config.apiKey)
-        encoder.connectionDetailsProviderDelegate = self
-
-        let decoder = environment.requestDecoderBuilder()
-
-        let attachmentUploader = config.customAttachmentUploader ?? StreamAttachmentUploader(
-            cdnClient: config.customCDNClient ?? StreamCDNClient(
-                encoder: encoder,
-                decoder: decoder,
-                sessionConfiguration: urlSessionConfiguration
-            )
-        )
-
-        let apiClient = environment.apiClientBuilder(
-            urlSessionConfiguration,
-            encoder,
-            decoder,
-            attachmentUploader,
-            { [weak self] completion in
-                guard let self = self else {
-                    completion()
-                    return
-                }
-                self.refreshToken(
-                    completion: { _ in completion() }
-                )
-            },
-            { [weak self] endpoint in
-                self?.syncRepository.queueOfflineRequest(endpoint: endpoint)
-            }
-        )
-        return apiClient
-    }()
+    var apiClient: APIClient
 
     /// The `WebSocketClient` instance `Client` uses to communicate with Stream WS servers.
-    lazy var webSocketClient: WebSocketClient? = {
-        var encoder = environment.requestEncoderBuilder(config.baseURL.webSocketBaseURL, config.apiKey)
-        encoder.connectionDetailsProviderDelegate = self
-
-        // Create a WebSocketClient.
-        let webSocketClient = environment.webSocketClientBuilder?(
-            urlSessionConfiguration,
-            encoder,
-            EventDecoder(),
-            eventNotificationCenter
-        )
-
-        webSocketClient?.connectionStateDelegate = self
-
-        return webSocketClient
-    }()
+    let webSocketClient: WebSocketClient?
 
     /// The `DatabaseContainer` instance `Client` uses to store and cache data.
-    private(set) lazy var databaseContainer: DatabaseContainer = {
-        do {
-            if config.isLocalStorageEnabled {
-                guard let storeURL = config.localStorageFolderURL else {
-                    throw ClientError.MissingLocalStorageURL()
-                }
-
-                // Create the folder if needed
-                try FileManager.default.createDirectory(
-                    at: storeURL,
-                    withIntermediateDirectories: true,
-                    attributes: nil
-                )
-
-                let dbFileURL = storeURL.appendingPathComponent(config.apiKey.apiKeyString)
-                return environment.databaseContainerBuilder(
-                    .onDisk(databaseFileURL: dbFileURL),
-                    config.shouldFlushLocalStorageOnStart,
-                    config.isClientInActiveMode, // Only reset Ephemeral values in active mode
-                    config.localCaching,
-                    config.deletedMessagesVisibility,
-                    config.shouldShowShadowedMessages
-                )
-            }
-
-        } catch is ClientError.MissingLocalStorageURL {
-            log.assertionFailure("The URL provided in ChatClientConfig can't be `nil`. Falling back to the in-memory option.")
-
-        } catch {
-            log.error("Failed to initialize the local storage with error: \(error). Falling back to the in-memory option.")
-        }
-
-        return environment.databaseContainerBuilder(
-            .inMemory,
-            config.shouldFlushLocalStorageOnStart,
-            config.isClientInActiveMode, // Only reset Ephemeral values in active mode
-            config.localCaching,
-            config.deletedMessagesVisibility,
-            config.shouldShowShadowedMessages
-        )
-    }()
+    private(set) var databaseContainer: DatabaseContainer
 
     /// Used as a bridge to communicate between the host app and the notification extension. Holds the state for the app lifecycle.
-    private(set) lazy var extensionLifecycle = environment.extensionLifecycleBuilder(config.applicationGroupIdentifier)
+    private(set) var extensionLifecycle: NotificationExtensionLifecycle
 
     /// The environment object containing all dependencies of this `Client` instance.
     private let environment: Environment
 
     /// The default configuration of URLSession to be used for both the `APIClient` and `WebSocketClient`. It contains all
     /// required header auth parameters to make a successful request.
-    private var urlSessionConfiguration: URLSessionConfiguration {
-        let configuration = config.urlSessionConfiguration
-        configuration.waitsForConnectivity = false
-        configuration.httpAdditionalHeaders = sessionHeaders
-        configuration.timeoutIntervalForRequest = config.timeoutIntervalForRequest
-        return configuration
-    }
+    private var urlSessionConfiguration: URLSessionConfiguration
 
     /// Stream-specific request headers.
     private let sessionHeaders: [String: String] = [
@@ -284,6 +249,92 @@ public class ChatClient {
     ) {
         self.config = config
         self.environment = environment
+
+        let configuration = config.urlSessionConfiguration
+        configuration.waitsForConnectivity = false
+        configuration.httpAdditionalHeaders = sessionHeaders
+        configuration.timeoutIntervalForRequest = config.timeoutIntervalForRequest
+        urlSessionConfiguration = configuration
+
+        let factory = ChatClientFactory(config: config, environment: environment)
+        var apiClientEncoder = factory.makeApiClientRequestEncoder()
+        var webSocketEncoder = factory.makeWebSocketRequestEncoder()
+        let databaseContainer = factory.makeDatabaseContainer()
+        let apiClient = factory.makeApiClient(
+            encoder: apiClientEncoder,
+            urlSessionConfiguration: configuration
+        )
+        let eventNotificationCenter = factory.makeEventNotificationCenter(
+            databaseContainer: databaseContainer,
+            currentUserId: { databaseContainer.viewContext.currentUser?.user.id }
+        )
+        let messageRepository = environment.messageRepositoryBuilder(
+            databaseContainer,
+            apiClient
+        )
+        let offlineRequestsRepository = environment.offlineRequestsRepositoryBuilder(
+            messageRepository,
+            databaseContainer,
+            apiClient
+        )
+        let syncRepository = environment.syncRepositoryBuilder(
+            config,
+            activeChannelControllers,
+            activeChannelListControllers,
+            offlineRequestsRepository,
+            eventNotificationCenter,
+            databaseContainer,
+            apiClient
+        )
+        let webSocketClient = factory.makeWebSocketClient(
+            requestEncoder: webSocketEncoder,
+            urlSessionConfiguration: urlSessionConfiguration,
+            eventNotificationCenter: eventNotificationCenter
+        )
+        let connectionRepository = environment.connectionRepositoryBuilder(
+            config.isClientInActiveMode,
+            syncRepository,
+            webSocketClient,
+            apiClient,
+            environment.timerType
+        )
+        let authRepository = environment.authenticationRepositoryBuilder(
+            apiClient,
+            databaseContainer,
+            connectionRepository,
+            environment.tokenExpirationRetryStrategy,
+            environment.timerType
+        )
+
+        self.databaseContainer = databaseContainer
+        self.apiClient = apiClient
+        self.webSocketClient = webSocketClient
+        self.eventNotificationCenter = eventNotificationCenter
+        self.offlineRequestsRepository = offlineRequestsRepository
+        self.connectionRepository = connectionRepository
+        self.messageRepository = messageRepository
+        self.syncRepository = syncRepository
+        authenticationRepository = authRepository
+        extensionLifecycle = environment.extensionLifecycleBuilder(config.applicationGroupIdentifier)
+        callRepository = environment.callRepositoryBuilder(apiClient)
+        channelRepository = environment.channelRepositoryBuilder(
+            databaseContainer,
+            apiClient
+        )
+
+        authRepository.delegate = self
+        apiClientEncoder.connectionDetailsProviderDelegate = self
+        webSocketEncoder.connectionDetailsProviderDelegate = self
+        webSocketClient?.connectionStateDelegate = self
+
+        self.apiClient.tokenRefresher = { [weak self] completion in
+            self?.refreshToken { _ in
+                completion()
+            }
+        }
+        self.apiClient.queueOfflineRequest = { [weak self] endpoint in
+            self?.syncRepository.queueOfflineRequest(endpoint: endpoint)
+        }
 
         setupConnectionRecoveryHandler(with: environment)
     }
@@ -523,17 +574,13 @@ extension ChatClient {
             _ sessionConfiguration: URLSessionConfiguration,
             _ requestEncoder: RequestEncoder,
             _ requestDecoder: RequestDecoder,
-            _ attachmentUploader: AttachmentUploader,
-            _ tokenRefresher: @escaping (@escaping () -> Void) -> Void,
-            _ queueOfflineRequest: @escaping QueueOfflineRequestBlock
+            _ attachmentUploader: AttachmentUploader
         ) -> APIClient = {
             APIClient(
                 sessionConfiguration: $0,
                 requestEncoder: $1,
                 requestDecoder: $2,
-                attachmentUploader: $3,
-                tokenRefresher: $4,
-                queueOfflineRequest: $5
+                attachmentUploader: $3
             )
         }
 
