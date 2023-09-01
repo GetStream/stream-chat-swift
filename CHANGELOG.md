@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Allow injecting a custom URLSessionConfiguration in ChatClientConfig [#2756](https://github.com/GetStream/stream-chat-swift/pull/2756)
 
 ## StreamChatUI
+### 🐞 Fixed
+- Fix tapping on the status bar scrolling to the bottom instead of the top [#2763](https://github.com/GetStream/stream-chat-swift/pull/2763)
 ### 🔄 Changed
 - Make record button in composer, visible depending on the channel's capabilities. [#2758](https://github.com/GetStream/stream-chat-swift/pull/2758)
 
