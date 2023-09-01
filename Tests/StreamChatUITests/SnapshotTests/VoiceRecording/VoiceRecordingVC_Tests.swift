@@ -914,7 +914,7 @@ final class VoiceRecordingVC_Tests: XCTestCase {
             client: .mock,
             isChannelAlreadyCreated: true
         )
-        mock.channel_mock = .mock(cid: .unique, config: .mock(commands: []), ownCapabilities: [.sendMessage])
+        mock.channel_mock = .mock(cid: .unique, config: .mock(commands: []), ownCapabilities: [.sendMessage, .uploadFile])
         viewController.channelController = mock
         viewController.messageComposerVC.channelController = mock
         viewController.setUp()

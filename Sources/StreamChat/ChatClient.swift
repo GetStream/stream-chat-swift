@@ -243,7 +243,7 @@ public class ChatClient {
     /// The default configuration of URLSession to be used for both the `APIClient` and `WebSocketClient`. It contains all
     /// required header auth parameters to make a successful request.
     private var urlSessionConfiguration: URLSessionConfiguration {
-        let configuration = URLSessionConfiguration.default
+        let configuration = config.urlSessionConfiguration
         configuration.waitsForConnectivity = false
         configuration.httpAdditionalHeaders = sessionHeaders
         configuration.timeoutIntervalForRequest = config.timeoutIntervalForRequest
