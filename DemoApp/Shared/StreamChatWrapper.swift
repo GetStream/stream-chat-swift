@@ -76,7 +76,7 @@ extension StreamChatWrapper {
         // Setup Stream Chat
         setUpChat()
 
-        // Connect to chat
+        // We connect from a background thread to make sure it works without issues/crashes
         DispatchQueue.global().async {
             self.connect(user: user) { [weak self] in
                 if let error = $0 {
