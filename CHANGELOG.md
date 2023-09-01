@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChat
 ### 🐞 Fixed
 - Allow injecting a custom URLSessionConfiguration in ChatClientConfig [#2756](https://github.com/GetStream/stream-chat-swift/pull/2756)
+- Fix connecting user from background thread [#2762](https://github.com/GetStream/stream-chat-swift/pull/2762)
 
 ## StreamChatUI
 ### 🔄 Changed
