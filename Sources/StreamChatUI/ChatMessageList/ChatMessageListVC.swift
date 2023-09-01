@@ -634,6 +634,17 @@ open class ChatMessageListVC: _ViewController,
         }
     }
 
+    /// Since our message list view is an inverted table view, when the user taps the status bar
+    /// our message list will be scrolled to the bottom instead of the top. This implementation makes sure
+    /// we to the top. The only caveat is that when the list is fully scrolled to the bottom, this method
+    /// won't be triggered because UIKit thinks we are already at the "top" which in our case is not true.
+    /// If this caveat is a concern for you, we recommend turning off the scrollToTop behaviour.
+    /// You can do this by setting `listView.scrollsToTop = false` in the `setUp()` lifecycle.
+    open func scrollViewShouldScrollToTop(_ scrollView: UIScrollView) -> Bool {
+        scrollToTop()
+        return false
+    }
+
     open func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
         updateScrollToBottomButtonVisibility()
 
