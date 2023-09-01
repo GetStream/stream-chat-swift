@@ -76,15 +76,18 @@ extension StreamChatWrapper {
         // Setup Stream Chat
         setUpChat()
 
-        // We connect from a background thread to make sure it works without issues/crashes
+        // We connect from a background thread to make sure it works without issues/crashes.
+        // This is for testing purposes only. As a customer you can connect directly without dispatching to any queue.
         DispatchQueue.global().async {
-            self.connect(user: user) { [weak self] in
-                if let error = $0 {
+            self.connect(user: user) { [weak self] error in
+                if let error = error {
                     log.warning(error.localizedDescription)
                 } else {
                     self?.onRemotePushRegistration?()
                 }
-                completion($0)
+                DispatchQueue.main.async {
+                    completion(error)
+                }
             }
         }
     }
