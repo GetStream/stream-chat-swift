@@ -854,6 +854,30 @@ final class ChatChannelVC_Tests: XCTestCase {
         XCTAssertEqual(vc.channelAvatarView.content.channel?.name, "New")
     }
 
+    func test_didUpdateChannel_whenHeaderViewHasEmptyController_shouldSetChannelController() {
+        vc.setUp()
+
+        vc.headerView.channelController = nil
+
+        let newChannel = ChatChannel.mockNonDMChannel(name: "New")
+        channelControllerMock.channel_mock = newChannel
+        vc.channelController(vc.channelController, didUpdateChannel: .update(newChannel))
+
+        XCTAssertNotNil(vc.headerView.channelController)
+    }
+
+    func test_didUpdateChannel_whenHeaderViewHasController_shouldNotSetNewController() {
+        vc.setUp()
+
+        vc.headerView.channelController = channelControllerMock
+
+        let newChannel = ChatChannel.mockNonDMChannel(name: "New")
+        channelControllerMock.channel_mock = newChannel
+        vc.channelController(vc.channelController, didUpdateChannel: .update(newChannel))
+
+        XCTAssertTrue(vc.headerView.channelController === channelControllerMock)
+    }
+
     // MARK: - setUp
 
     func test_setUp_messagesListVCAndMessageComposerVCHaveTheExpectedAudioPlayerInstance() {
