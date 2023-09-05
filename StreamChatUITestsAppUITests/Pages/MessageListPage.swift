@@ -348,5 +348,6 @@ class MessageListPage {
             app.cells.matching(NSPredicate(format: "identifier LIKE 'ChatMentionSuggestionCollectionViewCell'"))
         }
     }
-
 }
+
+// swiftlint:enable convenience_type
