@@ -62,3 +62,5 @@ struct MulticastDelegate<T> {
         _additionalDelegates.remove(additionalDelegate as AnyObject)
     }
 }
+
+// swiftlint:enable force_cast

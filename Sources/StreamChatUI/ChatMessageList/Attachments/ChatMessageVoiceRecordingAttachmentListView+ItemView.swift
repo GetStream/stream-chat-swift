@@ -277,7 +277,7 @@ extension ChatMessageVoiceRecordingAttachmentListView {
             switch state {
             case .notLoaded, .loading, .stopped:
                 durationLabel.text = appearance.formatters.videoDuration.format(duration)
-            case .paused, .playing, .stopped:
+            case .paused, .playing:
                 durationLabel.text = appearance.formatters.videoDuration.format(min(currentTime, duration))
             default:
                 log.assert(false, "Unhandled `AudioPlaybackState` \(state)")
