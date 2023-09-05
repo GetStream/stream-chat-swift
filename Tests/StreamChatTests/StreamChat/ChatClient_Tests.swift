@@ -328,6 +328,23 @@ final class ChatClient_Tests: XCTestCase {
         XCTAssertEqual(client.activeChannelControllers.count, 0)
         XCTAssertEqual(client.activeChannelListControllers.count, 0)
     }
+    
+    func test_apiClient_usesInjectedURLSessionConfiguration() {
+        // configure a URLSessionConfiguration with a URLProtocol class
+        var urlSessionConfiguration = URLSessionConfiguration.default
+        URLProtocol_Mock.startTestSession(with: &urlSessionConfiguration)
+        
+        // initialise a ChatClient with a custom URLSessionConfiguration,
+        // which is used instead of `URLSessionConfiguration.default`
+        var chatClientConfig = ChatClientConfig()
+        chatClientConfig.urlSessionConfiguration = urlSessionConfiguration
+        let chatClient = ChatClient(config: chatClientConfig)
+        
+        // make sure the `apiClient` is initialised using the injected
+        // `URLSessionConfiguration`
+        XCTAssertTrue(chatClient.apiClient.session.configuration.protocolClasses?
+            .contains(where: { $0 is URLProtocol_Mock.Type }) ?? false)
+    }
 
     // MARK: - Background workers tests
 
