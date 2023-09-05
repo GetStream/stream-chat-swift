@@ -89,6 +89,8 @@ public extension ChatMessageAttachment where Payload: AttachmentPayload {
     }
 }
 
+// swiftlint:enable force_try
+
 public extension ChatMessageAttachment where Payload: AttachmentPayload {
     func asAttachment<NewPayload: AttachmentPayload>(
         payloadType: NewPayload.Type

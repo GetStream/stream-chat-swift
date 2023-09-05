@@ -163,3 +163,5 @@ extension NSLayoutYAxisAnchor {
         constraint(lessThanOrEqualToSystemSpacingBelow: anchor, multiplier: multiplier).with(priority: .streamRequire)
     }
 }
+
+// swiftlint:enable regular_constraints_forbidden
