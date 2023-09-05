@@ -42,3 +42,5 @@ open class AttachmentViewCatalog {
         }
     }
 }
+
+// swiftlint:enable convenience_type
