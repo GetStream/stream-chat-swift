@@ -90,11 +90,12 @@ open class ChatChannelListSearchVC: ChatChannelListVC, UISearchResultsUpdating {
         fatalError("This function should be implemented by a subclass.")
     }
 
-    // swiftlint:disable unavailable_function
     /// Called when a new page of search results should be performed.
     open func loadMoreSearchResults() {
         fatalError("This function should be implemented by a subclass.")
     }
+    
+    // swiftlint:enable unavailable_function
 
     // MARK: - State Handling
 
