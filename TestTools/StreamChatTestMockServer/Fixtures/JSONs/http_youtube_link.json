@@ -1,5 +1,5 @@
 {
-    "duration": "194.48ms",
+    "duration": "186.26ms",
     "message": {
         "attachments": [
             {
@@ -15,10 +15,10 @@
             }
         ],
         "before_message_send_failed": true,
-        "cid": "messaging:1278e8de-3b00-11ee-943f-424f8b18aab1",
-        "created_at": "2023-08-15T00:10:19.429915Z",
+        "cid": "messaging:18ec6c22-485c-11ee-8066-424f8b18aab1",
+        "created_at": "2023-09-01T00:11:34.022518Z",
         "html": "<p><a href=\"https://youtube.com/watch?v=xOX7MsrbaPY\" rel=\"nofollow\">https://youtube.com/watch?v=xOX7MsrbaPY</a></p>\n",
-        "id": "1393f600-3b00-11ee-943f-424f8b18aab1",
+        "id": "19d7552a-485c-11ee-8066-424f8b18aab1",
         "latest_reactions": [],
         "mentioned_users": [],
         "own_reactions": [],
@@ -33,19 +33,19 @@
         "silent": false,
         "text": "https://youtube.com/watch?v=xOX7MsrbaPY",
         "type": "regular",
-        "updated_at": "2023-08-15T00:10:19.429915Z",
+        "updated_at": "2023-09-01T00:11:34.022518Z",
         "user": {
             "banned": false,
             "birthland": "Tatooine",
             "created_at": "2020-12-07T11:36:47.059906Z",
-            "honneypotted": true,
+            "dashboard_user": true,
             "id": "luke_skywalker",
             "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
-            "last_active": "2023-08-15T00:10:17.269781315Z",
+            "last_active": "2023-09-01T00:11:32.229612406Z",
             "name": "Luke Skywalker",
             "online": true,
             "role": "user",
-            "updated_at": "2023-08-11T14:23:29.024256Z"
+            "updated_at": "2023-08-31T12:28:06.523095Z"
         }
     }
 }
