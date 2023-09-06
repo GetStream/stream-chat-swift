@@ -20,7 +20,7 @@ final class ChatMessageActionsVC_Tests: XCTestCase {
         vc.channel = .mock(cid: .unique, config: .mock(), ownCapabilities: [.sendReply, .quoteMessage, .readEvents])
 
         chatMessageController.simulateInitial(
-            message: ChatMessage.mock(id: .unique, cid: .unique, text: "", author: ChatUser.mock(id: .unique)),
+            message: ChatMessage.mock(id: .unique, cid: .unique, text: "test", author: ChatUser.mock(id: .unique)),
             replies: [],
             state: .remoteDataFetched
         )
@@ -318,6 +318,30 @@ final class ChatMessageActionsVC_Tests: XCTestCase {
         XCTAssertTrue(vc.messageActions[0] is ResendActionItem)
         XCTAssertTrue(vc.messageActions[1] is EditActionItem)
         XCTAssertTrue(vc.messageActions[2] is DeleteActionItem)
+    }
+
+    func test_messageActions_whenTextNotEmpty_thenContainsCopyMessageAction() {
+        chatMessageController.simulateInitial(
+            message: ChatMessage.mock(text: "test"),
+            replies: [],
+            state: .remoteDataFetched
+        )
+
+        vc.channel = .mock(cid: .unique, ownCapabilities: [])
+
+        XCTAssertTrue(vc.messageActions.contains(where: { $0 is CopyActionItem }))
+    }
+
+    func test_messageActions_whenTextIsEmpty_thenDoesNotContainCopyMessageAction() {
+        chatMessageController.simulateInitial(
+            message: ChatMessage.mock(text: ""),
+            replies: [],
+            state: .remoteDataFetched
+        )
+
+        vc.channel = .mock(cid: .unique, ownCapabilities: [])
+
+        XCTAssertFalse(vc.messageActions.contains(where: { $0 is CopyActionItem }))
     }
 
     func test_messageActions_whenPendingOrSyncingFailedOrDeletingFailed_thenContainsEditActionDeleteAction() {

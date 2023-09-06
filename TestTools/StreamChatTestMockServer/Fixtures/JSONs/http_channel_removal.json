@@ -1,6 +1,6 @@
 {
     "channel": {
-        "cid": "messaging:1278e8de-3b00-11ee-943f-424f8b18aab1",
+        "cid": "messaging:18ec6c22-485c-11ee-8066-424f8b18aab1",
         "config": {
             "automod": "AI",
             "automod_behavior": "block",
@@ -48,20 +48,20 @@
             "uploads": true,
             "url_enrichment": true
         },
-        "created_at": "2023-08-15T00:10:17.574131Z",
+        "created_at": "2023-09-01T00:11:32.463765Z",
         "created_by": null,
-        "deleted_at": "2023-08-15T00:10:20.142252Z",
+        "deleted_at": "2023-09-01T00:11:34.795487Z",
         "disabled": false,
         "frozen": false,
-        "id": "1278e8de-3b00-11ee-943f-424f8b18aab1",
+        "id": "18ec6c22-485c-11ee-8066-424f8b18aab1",
         "members": [
             {
                 "banned": false,
                 "channel_role": "channel_member",
-                "created_at": "2023-08-15T00:10:17.586705Z",
+                "created_at": "2023-09-01T00:11:32.47498Z",
                 "role": "member",
                 "shadow_banned": false,
-                "updated_at": "2023-08-15T00:10:17.586705Z",
+                "updated_at": "2023-09-01T00:11:32.47498Z",
                 "user": {
                     "banned": false,
                     "birthland": "Serenno",
@@ -71,7 +71,7 @@
                     "id": "count_dooku",
                     "image": "https://vignette.wikia.nocookie.net/starwars/images/b/b8/Dooku_Headshot.jpg",
                     "image_url": "https://vignette.wikia.nocookie.net/starwars/images/b/b8/Dooku_Headshot.jpg",
-                    "last_active": "2023-08-10T08:54:33.698969Z",
+                    "last_active": "2023-08-24T10:11:25.574422Z",
                     "name": "Count Dooku",
                     "online": false,
                     "role": "user",
@@ -82,10 +82,10 @@
             {
                 "banned": false,
                 "channel_role": "channel_member",
-                "created_at": "2023-08-15T00:10:17.586705Z",
+                "created_at": "2023-09-01T00:11:32.47498Z",
                 "role": "member",
                 "shadow_banned": false,
-                "updated_at": "2023-08-15T00:10:17.586705Z",
+                "updated_at": "2023-09-01T00:11:32.47498Z",
                 "user": {
                     "banned": false,
                     "birthland": "Corellia",
@@ -94,7 +94,7 @@
                     "id": "han_solo",
                     "image": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
                     "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
-                    "last_active": "2023-08-14T15:30:44.158944974Z",
+                    "last_active": "2023-08-31T17:28:52.787056Z",
                     "name": "Han Solo",
                     "online": false,
                     "role": "user",
@@ -105,65 +105,63 @@
             {
                 "banned": false,
                 "channel_role": "channel_member",
-                "created_at": "2023-08-15T00:10:17.586705Z",
+                "created_at": "2023-09-01T00:11:32.47498Z",
                 "role": "owner",
                 "shadow_banned": false,
-                "updated_at": "2023-08-15T00:10:17.586705Z",
+                "updated_at": "2023-09-01T00:11:32.47498Z",
                 "user": {
                     "banned": false,
                     "birthland": "Tatooine",
                     "created_at": "2020-12-07T11:36:47.059906Z",
-                    "honneypotted": true,
+                    "dashboard_user": true,
                     "id": "luke_skywalker",
                     "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
-                    "last_active": "2023-08-15T00:10:17.269781315Z",
+                    "last_active": "2023-09-01T00:11:32.229612406Z",
                     "name": "Luke Skywalker",
                     "online": true,
                     "role": "user",
-                    "updated_at": "2023-08-11T14:23:29.024256Z"
+                    "updated_at": "2023-08-31T12:28:06.523095Z"
                 },
                 "user_id": "luke_skywalker"
             },
             {
                 "banned": false,
                 "channel_role": "channel_member",
-                "created_at": "2023-08-15T00:10:18.736671Z",
+                "created_at": "2023-09-01T00:11:33.401722Z",
                 "role": "member",
                 "shadow_banned": false,
-                "updated_at": "2023-08-15T00:10:18.736671Z",
+                "updated_at": "2023-09-01T00:11:33.401722Z",
                 "user": {
-                    "AdditionalProperties": {},
                     "banned": false,
                     "birthland": "Polis Massa",
                     "created_at": "2020-12-07T11:37:33.78879Z",
-                    "dashboard_user": true,
                     "id": "leia_organa",
                     "image": "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png",
-                    "last_active": "2023-08-14T19:29:06.247707312Z",
+                    "last_active": "2023-08-31T17:48:56.274975944Z",
                     "name": "Leia Organa",
                     "online": false,
                     "role": "user",
-                    "updated_at": "2023-04-26T22:20:39.187454Z"
+                    "updated_at": "2023-08-30T15:57:27.40766Z"
                 },
                 "user_id": "leia_organa"
             }
         ],
-        "truncated_at": "2023-08-15T00:10:20.142252Z",
+        "truncated_at": "2023-09-01T00:11:34.795487Z",
         "truncated_by": {
             "banned": false,
             "birthland": "Tatooine",
             "created_at": "2020-12-07T11:36:47.059906Z",
-            "honneypotted": true,
+            "dashboard_user": true,
             "id": "luke_skywalker",
             "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
-            "last_active": "2023-08-15T00:10:17.269781315Z",
+            "last_active": "2023-09-01T00:11:32.229612406Z",
             "name": "Luke Skywalker",
             "online": true,
             "role": "user",
-            "updated_at": "2023-08-11T14:23:29.024256Z"
+            "updated_at": "2023-08-31T12:28:06.523095Z"
         },
         "type": "messaging",
-        "updated_at": "2023-08-15T00:10:20.02775Z"
+        "updated_at": "2023-09-01T00:11:34.654952Z"
     },
-    "duration": "26.79ms"
+    "duration": "28.78ms"
 }
