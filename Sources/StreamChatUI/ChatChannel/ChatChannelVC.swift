@@ -426,6 +426,10 @@ open class ChatChannelVC: _ViewController,
             )
         }
 
+        if headerView.channelController == nil, let cid = channelController.cid {
+            headerView.channelController = client.channelController(for: cid)
+        }
+
         channelAvatarView.content = (channelController.channel, client.currentUserId)
     }
 
