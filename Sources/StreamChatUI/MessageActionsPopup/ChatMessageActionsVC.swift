@@ -125,7 +125,9 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
                 actions.append(markUnreadActionItem())
             }
 
-            actions.append(copyActionItem())
+            if !message.text.isEmpty {
+                actions.append(copyActionItem())
+            }
 
             if canUpdateAnyMessage {
                 actions.append(editActionItem())
