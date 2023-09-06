@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - Fix tapping on the status bar scrolling to the bottom instead of the top [#2763](https://github.com/GetStream/stream-chat-swift/pull/2763)
 - Fix empty channel header view for new DM Channels [#2764](https://github.com/GetStream/stream-chat-swift/pull/2764)
+- Fix showing copy message action when text is empty [#2765](https://github.com/GetStream/stream-chat-swift/pull/2765)
 ### 🔄 Changed
 - Make record button in composer, visible depending on the channel's capabilities. [#2758](https://github.com/GetStream/stream-chat-swift/pull/2758)
 
