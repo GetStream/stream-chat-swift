@@ -106,19 +106,21 @@ public class ChatClient {
 
         self.init(
             config: config,
-            environment: environment
+            environment: environment,
+            factory: .init(config: config, environment: environment)
         )
     }
 
-    /// Creates a new instance of Stream Chat `Client`.
+    /// Creates a new instance `ChatClient`.
     ///
     /// - Parameters:
-    ///   - config: The config object for the `Client`.
-    ///   - environment: An object with all external dependencies the new `Client` instance should use.
-    ///
+    ///   - config: The config object for the `ChatClient`.
+    ///   - environment: An object with all external dependencies the new `ChatClient` instance should use.
+    ///   - factory: A factory component to help creating all `ChatClient` dependencies.
     init(
         config: ChatClientConfig,
-        environment: Environment
+        environment: Environment,
+        factory: ChatClientFactory
     ) {
         self.config = config
         self.environment = environment
@@ -129,7 +131,6 @@ public class ChatClient {
         configuration.timeoutIntervalForRequest = config.timeoutIntervalForRequest
         urlSessionConfiguration = configuration
 
-        let factory = ChatClientFactory(config: config, environment: environment)
         var apiClientEncoder = factory.makeApiClientRequestEncoder()
         var webSocketEncoder = factory.makeWebSocketRequestEncoder()
         let databaseContainer = factory.makeDatabaseContainer()
@@ -202,21 +203,28 @@ public class ChatClient {
         webSocketEncoder.connectionDetailsProviderDelegate = self
         webSocketClient?.connectionStateDelegate = self
 
-        self.apiClient.tokenRefresher = { [weak self] completion in
-            self?.refreshToken { _ in
-                completion()
-            }
-        }
-        self.apiClient.queueOfflineRequest = { [weak self] endpoint in
-            self?.syncRepository.queueOfflineRequest(endpoint: endpoint)
-        }
-
+        setupTokenRefresher()
+        setupOfflineRequestQueue()
         setupConnectionRecoveryHandler(with: environment)
     }
 
     deinit {
         completeConnectionIdWaiters(connectionId: nil)
         completeTokenWaiters(token: nil)
+    }
+
+    func setupTokenRefresher() {
+        apiClient.tokenRefresher = { [weak self] completion in
+            self?.refreshToken { _ in
+                completion()
+            }
+        }
+    }
+
+    func setupOfflineRequestQueue() {
+        apiClient.queueOfflineRequest = { [weak self] endpoint in
+            self?.syncRepository.queueOfflineRequest(endpoint: endpoint)
+        }
     }
 
     func setupConnectionRecoveryHandler(with environment: Environment) {
