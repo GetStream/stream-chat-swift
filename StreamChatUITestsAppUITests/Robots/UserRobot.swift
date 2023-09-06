@@ -55,7 +55,7 @@ final class UserRobot: Robot {
             "Channel cell is not found at index #\(channelCellIndex)"
         )
 
-        cells.allElementsBoundByIndex[channelCellIndex].safeTap()
+        cells.allElementsBoundByIndex[channelCellIndex].waitForHitPoint().safeTap()
         return self
     }
 
@@ -396,8 +396,8 @@ extension UserRobot {
     @discardableResult
     func uploadImage(count: Int = 1, send: Bool = true) -> Self {
         for i in 1...count {
-            MessageListPage.Composer.attachmentButton.wait().safeTap()
-            MessageListPage.AttachmentMenu.photoOrVideoButton.wait().safeTap()
+            MessageListPage.Composer.attachmentButton.wait(timeout: 10).safeTap()
+            MessageListPage.AttachmentMenu.photoOrVideoButton.wait(timeout: 10).safeTap()
             MessageListPage.AttachmentMenu.images.waitCount(1).allElementsBoundByIndex[i].safeTap()
         }
         if send { sendMessage("", waitForAppearance: false) }
@@ -407,7 +407,7 @@ extension UserRobot {
     @discardableResult
     func restartImageUpload(messageCellIndex: Int = 0) -> Self {
         let messageCell = messageCell(withIndex: messageCellIndex)
-        MessageListPage.Attributes.restartAttachmentUploadIcon(in: messageCell).wait().safeTap()
+        MessageListPage.Attributes.restartAttachmentUploadIcon(in: messageCell).wait(timeout: 10).safeTap()
         return self
     }
 
