@@ -51,39 +51,35 @@ public class ChatClient {
     /// The notification center used to send and receive notifications about incoming events.
     private(set) var eventNotificationCenter: EventNotificationCenter
 
-    // MARK: Repositories
+    let connectionRepository: ConnectionRepository
 
-    private(set) var connectionRepository: ConnectionRepository
+    let authenticationRepository: AuthenticationRepository
 
-    private(set) var authenticationRepository: AuthenticationRepository
+    let messageRepository: MessageRepository
 
-    private(set) var messageRepository: MessageRepository
+    let offlineRequestsRepository: OfflineRequestsRepository
 
-    private(set) var offlineRequestsRepository: OfflineRequestsRepository
+    let syncRepository: SyncRepository
 
-    /// A repository that handles all the executions needed to keep the Database in sync with remote.
-    private(set) var syncRepository: SyncRepository
+    let callRepository: CallRepository
 
-    /// A repository that handles all the executions needed to keep the Database in sync with remote.
-    private(set) var callRepository: CallRepository
-
-    private(set) var channelRepository: ChannelRepository
+    let channelRepository: ChannelRepository
 
     func makeMessagesPaginationStateHandler() -> MessagesPaginationStateHandling {
         MessagesPaginationStateHandler()
     }
 
     /// The `APIClient` instance `Client` uses to communicate with Stream REST API.
-    var apiClient: APIClient
+    let apiClient: APIClient
 
     /// The `WebSocketClient` instance `Client` uses to communicate with Stream WS servers.
     let webSocketClient: WebSocketClient?
 
     /// The `DatabaseContainer` instance `Client` uses to store and cache data.
-    private(set) var databaseContainer: DatabaseContainer
+    let databaseContainer: DatabaseContainer
 
     /// Used as a bridge to communicate between the host app and the notification extension. Holds the state for the app lifecycle.
-    private(set) var extensionLifecycle: NotificationExtensionLifecycle
+    let extensionLifecycle: NotificationExtensionLifecycle
 
     /// The environment object containing all dependencies of this `Client` instance.
     private let environment: Environment
