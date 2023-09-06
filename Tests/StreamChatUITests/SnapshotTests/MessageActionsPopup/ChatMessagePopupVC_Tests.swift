@@ -62,7 +62,7 @@ final class ChatMessagePopupVC_Tests: XCTestCase {
         let chatMessageController = ChatMessageController_Mock.mock()
         chatMessageController.startObserversIfNeeded_mock = {}
         chatMessageController.simulateInitial(
-            message: ChatMessage.mock(id: .unique, cid: .unique, text: "", author: ChatUser.mock(id: .unique)),
+            message: ChatMessage.mock(id: .unique, cid: .unique, text: "Test", author: ChatUser.mock(id: .unique)),
             replies: [],
             state: .remoteDataFetched
         )
