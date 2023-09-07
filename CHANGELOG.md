@@ -11,6 +11,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix connecting user from background thread [#2762](https://github.com/GetStream/stream-chat-swift/pull/2762)
 
 ## StreamChatUI
+### ✅ Added
+- Add support for disabling jumping to message animation [#2770](https://github.com/GetStream/stream-chat-swift/pull/2770)
 ### 🐞 Fixed
 - Fix tapping on the status bar scrolling to the bottom instead of the top [#2763](https://github.com/GetStream/stream-chat-swift/pull/2763)
 - Fix empty channel header view for new DM Channels [#2764](https://github.com/GetStream/stream-chat-swift/pull/2764)
