@@ -244,16 +244,17 @@ open class ChatChannelVC: _ViewController,
     ///
     /// - Parameters:
     ///   - id: The id of message which the message list should go to.
+    ///   - animated: `true` if you want to animate the change in position; `false` if it should be immediate.
     ///   - shouldHighlight: Whether the message should be highlighted when jumping to it. By default it is highlighted.
-    public func jumpToMessage(id: MessageId, shouldHighlight: Bool = true) {
+    public func jumpToMessage(id: MessageId, animated: Bool = true, shouldHighlight: Bool = true) {
         if shouldHighlight {
-            messageListVC.jumpToMessage(id: id) { [weak self] indexPath in
+            messageListVC.jumpToMessage(id: id, animated: animated) { [weak self] indexPath in
                 self?.messageListVC.highlightCell(at: indexPath)
             }
             return
         }
 
-        messageListVC.jumpToMessage(id: id)
+        messageListVC.jumpToMessage(id: id, animated: animated)
     }
 
     // MARK: - ChatMessageListVCDataSource
