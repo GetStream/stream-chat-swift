@@ -64,7 +64,7 @@ open class ChatChannelListVC: _ViewController,
 
     /// View that shows when loading the Channel list.
     open private(set) lazy var chatChannelListLoadingView: ChatChannelListLoadingView = components
-        .chatChannelListLoadingView
+        .channelListLoadingView
         .init()
         .withoutAutoresizingMaskConstraints
 
