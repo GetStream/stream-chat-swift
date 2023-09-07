@@ -212,8 +212,8 @@ open class ChatChannelListVC: _ViewController,
         }
     }
 
-    override open func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+    override open func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
 
         chatChannelListLoadingView.updateContent()
     }
