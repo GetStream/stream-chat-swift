@@ -259,6 +259,44 @@ final class ChatThreadVC_Tests: XCTestCase {
         XCTAssertEqual(messageListVCMock?.scrollToTopCallCount, 0)
     }
 
+    func test_setUp_whenInitialReply_whenShouldAnimateJumpToMessageWhenOpeningChannelIsTrue_thenAnimate() {
+        var components = Components.mock
+        components.shouldAnimateJumpToMessageWhenOpeningChannel = true
+        components.messageListVC = ChatMessageListVC_Mock.self
+        vc.components = components
+        messageControllerMock.message_mock = .mock()
+        let messageListVCMock = vc.messageListVC as? ChatMessageListVC_Mock
+        vc.initialReplyId = .unique
+
+        vc.setUp()
+
+        messageControllerMock.synchronize_completion?(nil)
+        messageControllerMock.loadPageAroundReplyId_completion?(nil)
+
+        XCTAssertEqual(messageControllerMock.loadPageAroundReplyId_callCount, 1)
+        XCTAssertEqual(messageListVCMock?.jumpToMessageCallCount, 1)
+        XCTAssertEqual(messageListVCMock?.jumpToMessageCalledWith?.animated, true)
+    }
+
+    func test_setUp_whenInitialReply_whenShouldAnimateJumpToMessageWhenOpeningChannelIsFalse_thenDoesNotAnimate() {
+        var components = Components.mock
+        components.shouldAnimateJumpToMessageWhenOpeningChannel = false
+        components.messageListVC = ChatMessageListVC_Mock.self
+        vc.components = components
+        messageControllerMock.message_mock = .mock()
+        let messageListVCMock = vc.messageListVC as? ChatMessageListVC_Mock
+        vc.initialReplyId = .unique
+
+        vc.setUp()
+
+        messageControllerMock.synchronize_completion?(nil)
+        messageControllerMock.loadPageAroundReplyId_completion?(nil)
+
+        XCTAssertEqual(messageControllerMock.loadPageAroundReplyId_callCount, 1)
+        XCTAssertEqual(messageListVCMock?.jumpToMessageCallCount, 1)
+        XCTAssertEqual(messageListVCMock?.jumpToMessageCalledWith?.animated, false)
+    }
+
     // MARK: - audioQueuePlayerNextAssetURL
 
     func test_audioQueuePlayerNextAssetURL_callsNextAvailableVoiceRecordingProvideWithExpectedInputAndReturnsValue() throws {
