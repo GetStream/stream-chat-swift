@@ -19,10 +19,7 @@ open class ChatChannelListLoadingView: _View, ThemeProvider, UITableViewDataSour
 
         tableView.dataSource = self
         tableView.isScrollEnabled = false
-        tableView.register(
-            ChatChannelListLoadingViewCell.self,
-            forCellReuseIdentifier: ChatChannelListLoadingViewCell.reuseIdentifier
-        )
+        tableView.register(components.channelListLoadingViewCell)
     }
 
     override open func setUpLayout() {
@@ -44,6 +41,6 @@ open class ChatChannelListLoadingView: _View, ThemeProvider, UITableViewDataSour
     }
 
     open func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        tableView.dequeueReusableCell(with: ChatChannelListLoadingViewCell.self, for: indexPath)
+        tableView.dequeueReusableCell(with: components.channelListLoadingViewCell, for: indexPath)
     }
 }
