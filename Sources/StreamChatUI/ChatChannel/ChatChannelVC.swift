@@ -104,6 +104,9 @@ open class ChatChannelVC: _ViewController,
     /// The id of the first unread message
     private(set) var firstUnreadMessageId: MessageId?
 
+    /// In case the given  around message id is from a thread, we need to jump to the parent message and then the reply.
+    private var initialReplyId: MessageId?
+
     override open func setUp() {
         super.setUp()
 
@@ -122,7 +125,6 @@ open class ChatChannelVC: _ViewController,
         // the thread so that we can jump to the thread reply.
         // For this, we need to manipulate the original channel controller to contain
         // the parent message id instead of the reply id.
-        var initialReplyId: MessageId?
         if let initialMessageId = channelController.channelQuery.pagination?.parameter?.aroundMessageId,
            let message = channelController.dataStore.message(id: initialMessageId),
            let parentMessageId = getParentMessageId(forMessageInsideThread: message) {
@@ -132,22 +134,7 @@ open class ChatChannelVC: _ViewController,
 
         channelController.delegate = self
         channelController.synchronize { [weak self] error in
-            if let error = error {
-                log.error("Error when synchronizing ChannelController: \(error)")
-            }
-            self?.setChannelControllerToComposerIfNeeded(cid: self?.channelController.cid)
-            self?.messageComposerVC.updateContent()
-
-            if let messageId = self?.channelController.channelQuery.pagination?.parameter?.aroundMessageId {
-                self?.jumpToMessage(id: messageId)
-            }
-
-            if let replyId = initialReplyId {
-                // The delay is necessary so that the animation does not happen to quickly.
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    self?.jumpToMessage(id: replyId)
-                }
-            }
+            self?.didFinishSynchronizing(with: error)
         }
 
         if channelController.channelQuery.pagination?.parameter == nil {
@@ -226,6 +213,30 @@ open class ChatChannelVC: _ViewController,
         keyboardHandler.stop()
 
         resignFirstResponder()
+    }
+
+    /// Called when the syncing of the `channelController` is finished.
+    /// - Parameter error: An `error` if the syncing failed; `nil` if it was successful.
+    open func didFinishSynchronizing(with error: Error?) {
+        if let error = error {
+            log.error("Error when synchronizing ChannelController: \(error)")
+        }
+        setChannelControllerToComposerIfNeeded(cid: channelController.cid)
+        messageComposerVC.updateContent()
+
+        if let messageId = channelController.channelQuery.pagination?.parameter?.aroundMessageId {
+            jumpToMessage(id: messageId, animated: components.shouldAnimateJumpToMessageWhenOpeningChannel)
+        }
+
+        if let replyId = initialReplyId {
+            // The delay is necessary so that the animation does not happen to quickly.
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                self.jumpToMessage(
+                    id: replyId,
+                    animated: self.components.shouldAnimateJumpToMessageWhenOpeningChannel
+                )
+            }
+        }
     }
 
     // MARK: - Actions
