@@ -25,7 +25,11 @@ extension StreamChatWrapper {
 
         // create an instance of ChatClient and share it using the singleton
         let environment = ChatClient.Environment()
-        client = ChatClient(config: config, environment: environment)
+        client = ChatClient(
+            config: config,
+            environment: environment,
+            factory: .init(config: config, environment: environment)
+        )
     }
 
     func configureUI() {
