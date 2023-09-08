@@ -118,7 +118,7 @@ public struct Components {
     /// of the list  when there are few messages. By default it is `false`.
     public var shouldMessagesStartAtTheTop: Bool = false
 
-    /// Wether it should animate when opening the channel with a given message around id.
+    /// Whether it should animate when opening the channel with a given message around id.
     /// Ex: When opening a channel from a push notification with a given message id.
     public var shouldAnimateJumpToMessageWhenOpeningChannel: Bool = true
 
