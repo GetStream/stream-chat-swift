@@ -4,9 +4,10 @@
 
 import UIKit
 
-open class ChatChannelListLoadingViewCell: _TableViewCell, ThemeProvider, SkeletonLoadable {
+open class ChatChannelListLoadingViewCell: _TableViewCell, ThemeProvider {
     /// The `ChatChannelListLoadingViewCellContentView` instance used as content view.
-    open private(set) lazy var chatChannelListLoadingViewCellContentView: ChatChannelListLoadingViewCellContentView = .init()
+    open private(set) lazy var chatChannelListLoadingViewCellContentView: ChatChannelListLoadingViewCellContentView = components
+        .channelListLoadingContentViewCell.init()
         .withoutAutoresizingMaskConstraints
 
     override open func setUp() {

@@ -374,7 +374,13 @@ public struct Components {
     public var channelListErrorView: ChatChannelListErrorView.Type = ChatChannelListErrorView.self
 
     /// View that shows when loading the Channel list.
-    public var chatChannelListLoadingView: ChatChannelListLoadingView.Type = ChatChannelListLoadingView.self
+    public var channelListLoadingView: ChatChannelListLoadingView.Type = ChatChannelListLoadingView.self
+
+    /// The `UITableViewCell` responsible to display a skeleton loading view.
+    public var channelListLoadingViewCell: ChatChannelListLoadingViewCell.Type = ChatChannelListLoadingViewCell.self
+
+    /// The content view inside the `UITableViewCell` responsible to display a skeleton loading view.
+    public var channelListLoadingContentViewCell: ChatChannelListLoadingViewCellContentView.Type = ChatChannelListLoadingViewCellContentView.self
 
     /// A boolean value that determines whether the Channel list default loading states (empty, error and loading views) are handled by the Stream SDK. It is false by default.
     /// If it is false, it does not show empty or error views and just shows a spinner indicator for the loading state. If set to true, the empty, error and shimmer loading views are shown instead.
@@ -558,6 +564,16 @@ public extension Components {
         }
         set {
             userAvatarView = newValue
+        }
+    }
+
+    @available(*, deprecated, renamed: "channelListLoadingView")
+    var chatChannelListLoadingView: ChatChannelListLoadingView.Type {
+        get {
+            channelListLoadingView
+        }
+        set {
+            channelListLoadingView = newValue
         }
     }
 }
