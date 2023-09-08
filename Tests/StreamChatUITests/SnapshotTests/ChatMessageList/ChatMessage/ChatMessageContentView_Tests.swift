@@ -17,6 +17,15 @@ final class ChatMessageContentView_Tests: XCTestCase {
     /// The `createdAt` for all test messages
     private let createdAt = DateFormatter.Stream.rfc3339Date(from: "2019-12-12T15:33:46.488935Z")!
 
+    /// Static setUp() is only run once. Which is what we want in this case to preload the images.
+    override class func setUp() {
+        /// Dummy snapshot to preload the TestImages.r2.url image
+        /// This was the only workaround to make sure the image always appears in the snapshots.
+        let view = UIImageView(frame: .init(center: .zero, size: .init(width: 100, height: 100)))
+        Components.default.imageLoader.loadImage(into: view, from: TestImages.r2.url)
+        AssertSnapshot(view, variants: [.defaultLight])
+    }
+
     func test_appearance() {
         let components = Components.mock
 
@@ -280,7 +289,143 @@ final class ChatMessageContentView_Tests: XCTestCase {
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
 
-    func test_ChatReactionsBubbleViewInjectable() {
+    func test_appearance_whenMessageHasLink() throws {
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "https://getstream.io/chat/docs/",
+            author: me,
+            createdAt: createdAt,
+            attachments: [
+                .dummy(
+                    id: .unique,
+                    type: .linkPreview,
+                    payload: try JSONEncoder.stream.encode(LinkAttachmentPayload(
+                        originalURL: URL(string: "https://getstream.io/chat/docs/")!,
+                        title: "Chat API Documentation",
+                        text: "Stream, scalable news feeds and activity streams as a service.",
+                        author: "Stream",
+                        previewURL: TestImages.r2.url
+                    )),
+                    uploadingState: nil
+                )
+            ],
+            localState: nil,
+            isSentByCurrentUser: true
+        )
+
+        let view = contentView(
+            message: message,
+            channel: .mock(cid: .unique),
+            attachmentInjector: LinkAttachmentViewInjector.self
+        )
+
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
+
+    func test_appearance_whenMessageHasLinkWithoutImage() throws {
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "https://getstream.io/chat/docs/",
+            author: me,
+            createdAt: createdAt,
+            attachments: [
+                .dummy(
+                    id: .unique,
+                    type: .linkPreview,
+                    payload: try JSONEncoder.stream.encode(LinkAttachmentPayload(
+                        originalURL: URL(string: "https://getstream.io/chat/docs/")!,
+                        title: "Chat API Documentation",
+                        text: "Stream, scalable news feeds and activity streams as a service.",
+                        author: "Stream",
+                        previewURL: nil
+                    )),
+                    uploadingState: nil
+                )
+            ],
+            localState: nil,
+            isSentByCurrentUser: true
+        )
+
+        let view = contentView(
+            message: message,
+            channel: .mock(cid: .unique),
+            attachmentInjector: LinkAttachmentViewInjector.self
+        )
+
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
+
+    func test_appearance_whenMessageHasLinkWithoutAuthor() throws {
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "https://getstream.io/chat/docs/",
+            author: me,
+            createdAt: createdAt,
+            attachments: [
+                .dummy(
+                    id: .unique,
+                    type: .linkPreview,
+                    payload: try JSONEncoder.stream.encode(LinkAttachmentPayload(
+                        originalURL: URL(string: "https://getstream.io/chat/docs/")!,
+                        title: "Chat API Documentation",
+                        text: "Stream, scalable news feeds and activity streams as a service.",
+                        author: nil,
+                        previewURL: TestImages.r2.url
+                    )),
+                    uploadingState: nil
+                )
+            ],
+            localState: nil,
+            isSentByCurrentUser: true
+        )
+
+        let view = contentView(
+            message: message,
+            channel: .mock(cid: .unique),
+            attachmentInjector: LinkAttachmentViewInjector.self
+        )
+
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
+
+    func test_appearance_whenMessageHasLinkWithoutImageAndAuthor() throws {
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "https://getstream.io/chat/docs/",
+            author: me,
+            createdAt: createdAt,
+            attachments: [
+                .dummy(
+                    id: .unique,
+                    type: .linkPreview,
+                    payload: try JSONEncoder.stream.encode(LinkAttachmentPayload(
+                        originalURL: URL(string: "https://getstream.io/chat/docs/")!,
+                        title: "Chat API Documentation",
+                        text: "Stream, scalable news feeds and activity streams as a service.",
+                        author: nil,
+                        previewURL: nil
+                    )),
+                    uploadingState: nil
+                )
+            ],
+            localState: nil,
+            isSentByCurrentUser: true
+        )
+
+        let view = contentView(
+            message: message,
+            channel: .mock(cid: .unique),
+            attachmentInjector: LinkAttachmentViewInjector.self
+        )
+
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
+
+    func test_chatReactionsBubbleViewInjectable() {
         let testMessage: ChatMessage = .mock(
             id: .unique,
             cid: .unique,
@@ -633,7 +778,8 @@ private extension ChatMessageContentView_Tests {
         channel: ChatChannel = .mock(cid: .unique),
         layout: ChatMessageLayoutOptions? = nil,
         appearance: Appearance = .default,
-        components: Components = .default
+        components: Components = .default,
+        attachmentInjector: AttachmentViewInjector.Type? = nil
     ) -> ChatMessageContentView {
         let layoutOptions = layout ?? components.messageLayoutOptionsResolver.optionsForMessage(
             at: .init(item: 0, section: 0),
@@ -646,7 +792,7 @@ private extension ChatMessageContentView_Tests {
         view.widthAnchor.constraint(equalToConstant: contentViewWidth).isActive = true
         view.appearance = appearance
         view.components = components
-        view.setUpLayoutIfNeeded(options: layoutOptions, attachmentViewInjectorType: nil)
+        view.setUpLayoutIfNeeded(options: layoutOptions, attachmentViewInjectorType: attachmentInjector)
         view.content = message
         view.channel = channel
         return view
