@@ -64,7 +64,7 @@ open class ChatChannelListVC: _ViewController,
 
     /// View that shows when loading the Channel list.
     open private(set) lazy var chatChannelListLoadingView: ChatChannelListLoadingView = components
-        .chatChannelListLoadingView
+        .channelListLoadingView
         .init()
         .withoutAutoresizingMaskConstraints
 
@@ -212,8 +212,8 @@ open class ChatChannelListVC: _ViewController,
         }
     }
 
-    override open func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+    override open func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
 
         chatChannelListLoadingView.updateContent()
     }
