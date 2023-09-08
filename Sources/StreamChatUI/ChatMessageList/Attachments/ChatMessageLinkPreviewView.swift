@@ -40,7 +40,7 @@ open class ChatMessageLinkPreviewView: _Control, ThemeProvider {
         .withoutAutoresizingMaskConstraints
         .withAccessibilityIdentifier(identifier: "textStack")
 
-    /// Constraint for `authorLabel`.
+    /// Constraint for `authorLabel` top anchor.
     open var authorOnImageConstraint: NSLayoutConstraint?
 
     /// Constraint for `imagePreview`'s height.
@@ -102,10 +102,29 @@ open class ChatMessageLinkPreviewView: _Control, ThemeProvider {
         textStack.topAnchor.pin(equalToSystemSpacingBelow: imagePreview.bottomAnchor).isActive = true
         textStack.pin(anchors: [.leading, .bottom, .trailing], to: layoutMarginsGuide)
 
-        authorBackground.leadingAnchor.pin(equalTo: imagePreview.leadingAnchor).isActive = true
         authorBackground.bottomAnchor.pin(equalTo: imagePreview.bottomAnchor).isActive = true
         imagePreview.trailingAnchor.pin(greaterThanOrEqualToSystemSpacingAfter: authorBackground.trailingAnchor).isActive = true
         authorBackground.embed(authorLabel, insets: NSDirectionalEdgeInsets(top: 8, leading: 8, bottom: 4, trailing: 12))
+        authorLabel.leadingAnchor.pin(equalTo: textStack.leadingAnchor).isActive = true
+
+        authorOnImageConstraint = authorBackground.topAnchor
+            .pin(equalTo: topAnchor, constant: -8)
+            .with(priority: .streamLow)
+
+        NSLayoutConstraint.activate([
+            authorBackground.leadingAnchor
+                .pin(equalTo: textStack.leadingAnchor)
+                .with(priority: .streamLow),
+            authorBackground.bottomAnchor
+                .pin(equalTo: textStack.topAnchor, constant: -8)
+                .with(priority: .streamLow),
+            imagePreview.trailingAnchor
+                .pin(greaterThanOrEqualToSystemSpacingAfter: authorBackground.trailingAnchor)
+                .with(priority: .streamLow),
+            authorLabel.leadingAnchor
+                .pin(equalTo: textStack.leadingAnchor)
+                .with(priority: .streamLow)
+        ])
 
         authorLabel.setContentCompressionResistancePriority(.streamRequire, for: .vertical)
         titleLabel.setContentCompressionResistancePriority(.streamRequire, for: .vertical)
@@ -139,8 +158,8 @@ open class ChatMessageLinkPreviewView: _Control, ThemeProvider {
         bodyTextView.text = payload?.text
         bodyTextView.isHidden = payload?.text == nil
 
-        authorOnImageConstraint?.isActive = !isImageHidden && !isAuthorHidden
         imagePreviewHeightConstraint?.isActive = !isImageHidden
+        authorOnImageConstraint?.isActive = isImageHidden && !isAuthorHidden
     }
 
     override open func tintColorDidChange() {
