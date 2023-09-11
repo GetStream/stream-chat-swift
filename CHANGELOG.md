@@ -18,7 +18,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix tapping on the status bar scrolling to the bottom instead of the top [#2763](https://github.com/GetStream/stream-chat-swift/pull/2763)
 - Fix empty channel header view for new DM Channels [#2764](https://github.com/GetStream/stream-chat-swift/pull/2764)
 - Fix showing copy message action when text is empty [#2765](https://github.com/GetStream/stream-chat-swift/pull/2765)
-- Fix dummy texts UI Glitch in `ChannelListLoadingView` [#2772](https://github.com/GetStream/stream-chat-swift/pull/2772)
+- Fix link preview title covering text when image is not loaded [#2773](https://github.com/GetStream/stream-chat-swift/pull/2773)
+- Fix UI Glitch in `ChannelListLoadingView` with dummy data [#2772](https://github.com/GetStream/stream-chat-swift/pull/2772)
 ### 🔄 Changed
 - Make record button in composer, visible depending on the channel's capabilities. [#2758](https://github.com/GetStream/stream-chat-swift/pull/2758)
 - Rename`Components.chatChannelListLoadingView` -> `Components.channelListLoadingView` [#2772](https://github.com/GetStream/stream-chat-swift/pull/2772)
