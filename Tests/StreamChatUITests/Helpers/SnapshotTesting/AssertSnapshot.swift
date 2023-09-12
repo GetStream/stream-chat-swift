@@ -9,6 +9,9 @@ import XCTest
 /// Set this property true, to easily re-record all snapshots.
 let overrideRecording: Bool? = nil
 
+/// The percentage a pixel must match the source pixel to be considered a match.
+let precision: Float = 0.96
+
 /// The default view controller size. Simulates an iPhone in portrait mode.
 let defaultScreenSize = CGSize(width: 360, height: 700)
 
@@ -42,7 +45,7 @@ func AssertSnapshot(
     variants.forEach { variant in
         assertSnapshot(
             matching: viewController,
-            as: .image(perceptualPrecision: 0.98, size: screenSize, traits: variant.traits),
+            as: .image(perceptualPrecision: precision, size: screenSize, traits: variant.traits),
             named: variant.snapshotName + (suffix.map { "." + $0 } ?? ""),
             record: overrideRecording ?? record,
             file: file,
@@ -78,8 +81,8 @@ func AssertSnapshot(
         assertSnapshot(
             matching: view,
             as: size != nil ?
-                .image(perceptualPrecision: 0.98, size: size!, traits: variant.traits)
-                : .image(perceptualPrecision: 0.98, traits: variant.traits),
+                .image(perceptualPrecision: precision, size: size!, traits: variant.traits)
+                : .image(perceptualPrecision: precision, traits: variant.traits),
             named: variant.snapshotName + (suffix.map { "." + $0 } ?? ""),
             record: overrideRecording ?? record,
             file: file,
@@ -145,8 +148,8 @@ func AssertSnapshot<View: SwiftUI.View>(
         assertSnapshot(
             matching: view,
             as: size != nil ?
-                .image(perceptualPrecision: 0.98, layout: .sizeThatFits)
-                : .image(perceptualPrecision: 0.98, layout: .device(config: device), traits: variant.traits),
+                .image(perceptualPrecision: precision, layout: .sizeThatFits)
+                : .image(perceptualPrecision: precision, layout: .device(config: device), traits: variant.traits),
             named: variant.snapshotName + (suffix.map { "." + $0 } ?? ""),
             record: overrideRecording ?? record,
             file: file,

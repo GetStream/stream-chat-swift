@@ -122,6 +122,12 @@ open class InputTextView: UITextView, AppearanceProvider {
         replace(selectedRange, withText: text)
     }
 
+    override open func layoutSubviews() {
+        super.layoutSubviews()
+        handleTextChange()
+        scrollToCaretPosition(animated: false)
+    }
+
     open func textDidChangeProgrammatically() {
         delegate?.textViewDidChange?(self)
         handleTextChange()
@@ -132,9 +138,8 @@ open class InputTextView: UITextView, AppearanceProvider {
         setTextViewHeight()
 
         // If the user pasted text from the clipboard, we want to scroll to the caret position.
-        if textChangedFromClipboard, let selectedTextRange = self.selectedTextRange {
-            let caret = caretRect(for: selectedTextRange.start)
-            scrollRectToVisible(caret, animated: true)
+        if textChangedFromClipboard {
+            scrollToCaretPosition(animated: false)
             textChangedFromClipboard = false
         }
     }
@@ -186,5 +191,11 @@ open class InputTextView: UITextView, AppearanceProvider {
             // so we must call this function
             setTextViewHeight()
         }
+    }
+
+    private func scrollToCaretPosition(animated: Bool) {
+        guard let selectedTextRange = self.selectedTextRange else { return }
+        let caret = caretRect(for: selectedTextRange.start)
+        scrollRectToVisible(caret, animated: animated)
     }
 }
