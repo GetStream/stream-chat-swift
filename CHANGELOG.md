@@ -5,6 +5,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChat
 ### ✅ Added
+- Allow injecting a custom URLSessionConfiguration in ChatClientConfig [#2756](https://github.com/GetStream/stream-chat-swift/pull/2756)
+### 🐞 Fixed
+- Fix core data warnings when logging with different user [#2759](https://github.com/GetStream/stream-chat-swift/pull/2759)
+- Fix connecting user from background thread [#2762](https://github.com/GetStream/stream-chat-swift/pull/2762)
+
+## StreamChatUI
+### ✅ Added
+- Add customization support for `ChannelListLoadingView` [#2772](https://github.com/GetStream/stream-chat-swift/pull/2772)
+- Add support for disabling jumping to message animation [#2770](https://github.com/GetStream/stream-chat-swift/pull/2770)
+### 🐞 Fixed
+- Fix tapping on the status bar scrolling to the bottom instead of the top [#2763](https://github.com/GetStream/stream-chat-swift/pull/2763)
+- Fix empty channel header view for new DM Channels [#2764](https://github.com/GetStream/stream-chat-swift/pull/2764)
+- Fix showing copy message action when text is empty [#2765](https://github.com/GetStream/stream-chat-swift/pull/2765)
+- Fix link preview title covering text when image is not loaded [#2773](https://github.com/GetStream/stream-chat-swift/pull/2773)
+- Fix UI Glitch in `ChannelListLoadingView` with dummy data [#2772](https://github.com/GetStream/stream-chat-swift/pull/2772)
+- Fix composer input jumping when shrink button is tapped [#2774](https://github.com/GetStream/stream-chat-swift/pull/2774)
+### 🔄 Changed
+- Make record button in composer, visible depending on the channel's capabilities. [#2758](https://github.com/GetStream/stream-chat-swift/pull/2758)
+- Rename`Components.chatChannelListLoadingView` -> `Components.channelListLoadingView` [#2772](https://github.com/GetStream/stream-chat-swift/pull/2772)
+
+# [4.36.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.36.0)
+_August 28, 2023_
+
+## StreamChat
+### ✅ Added
 - Add XCPrivacy manifest [#2740](https://github.com/GetStream/stream-chat-swift/pull/2740)
 - Add digital signature to StreamChat XCFramework [#2740](https://github.com/GetStream/stream-chat-swift/pull/2740)
 ### 🐞 Fixed

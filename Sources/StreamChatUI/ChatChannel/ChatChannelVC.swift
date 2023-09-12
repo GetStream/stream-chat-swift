@@ -112,6 +112,9 @@ open class ChatChannelVC: _ViewController,
     /// The id of the first unread message
     private var firstUnreadMessageId: MessageId?
 
+    /// In case the given  around message id is from a thread, we need to jump to the parent message and then the reply.
+    private var initialReplyId: MessageId?
+
     override open func setUp() {
         super.setUp()
 
@@ -130,7 +133,6 @@ open class ChatChannelVC: _ViewController,
         // the thread so that we can jump to the thread reply.
         // For this, we need to manipulate the original channel controller to contain
         // the parent message id instead of the reply id.
-        var initialReplyId: MessageId?
         if let initialMessageId = channelController.channelQuery.pagination?.parameter?.aroundMessageId,
            let message = channelController.dataStore.message(id: initialMessageId),
            let parentMessageId = getParentMessageId(forMessageInsideThread: message) {
@@ -140,24 +142,7 @@ open class ChatChannelVC: _ViewController,
 
         channelController.delegate = self
         channelController.synchronize { [weak self] error in
-            if let error = error {
-                log.error("Error when synchronizing ChannelController: \(error)")
-            }
-            self?.setChannelControllerToComposerIfNeeded(cid: self?.channelController.cid)
-            self?.messageComposerVC.updateContent()
-
-            if let messageId = self?.channelController.channelQuery.pagination?.parameter?.aroundMessageId {
-                self?.jumpToMessage(id: messageId)
-            }
-
-            if let replyId = initialReplyId {
-                // The delay is necessary so that the animation does not happen to quickly.
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    self?.jumpToMessage(id: replyId)
-                }
-            }
-
-            self?.updateUnreadMessagesRelatedComponents()
+            self?.didFinishSynchronizing(with: error)
         }
 
         if channelController.channelQuery.pagination?.parameter == nil {
@@ -238,6 +223,32 @@ open class ChatChannelVC: _ViewController,
         resignFirstResponder()
     }
 
+    /// Called when the syncing of the `channelController` is finished.
+    /// - Parameter error: An `error` if the syncing failed; `nil` if it was successful.
+    open func didFinishSynchronizing(with error: Error?) {
+        if let error = error {
+            log.error("Error when synchronizing ChannelController: \(error)")
+        }
+        setChannelControllerToComposerIfNeeded(cid: channelController.cid)
+        messageComposerVC.updateContent()
+
+        if let messageId = channelController.channelQuery.pagination?.parameter?.aroundMessageId {
+            jumpToMessage(id: messageId, animated: components.shouldAnimateJumpToMessageWhenOpeningChannel)
+        }
+
+        if let replyId = initialReplyId {
+            // The delay is necessary so that the animation does not happen to quickly.
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                self.jumpToMessage(
+                    id: replyId,
+                    animated: self.components.shouldAnimateJumpToMessageWhenOpeningChannel
+                )
+            }
+        }
+
+        updateUnreadMessagesRelatedComponents()
+    }
+
     // MARK: - Actions
 
     /// Marks the channel read and updates the UI optimistically.
@@ -256,16 +267,17 @@ open class ChatChannelVC: _ViewController,
     ///
     /// - Parameters:
     ///   - id: The id of message which the message list should go to.
+    ///   - animated: `true` if you want to animate the change in position; `false` if it should be immediate.
     ///   - shouldHighlight: Whether the message should be highlighted when jumping to it. By default it is highlighted.
-    public func jumpToMessage(id: MessageId, shouldHighlight: Bool = true) {
+    public func jumpToMessage(id: MessageId, animated: Bool = true, shouldHighlight: Bool = true) {
         if shouldHighlight {
-            messageListVC.jumpToMessage(id: id) { [weak self] indexPath in
+            messageListVC.jumpToMessage(id: id, animated: animated) { [weak self] indexPath in
                 self?.messageListVC.highlightCell(at: indexPath)
             }
             return
         }
 
-        messageListVC.jumpToMessage(id: id)
+        messageListVC.jumpToMessage(id: id, animated: animated)
     }
 
     // MARK: - ChatMessageListVCDataSource
@@ -445,6 +457,11 @@ open class ChatChannelVC: _ViewController,
     ) {
         let channelUnreadCount = channelController.channel?.unreadCount ?? .noUnread
         messageListVC.scrollToBottomButton.content = channelUnreadCount
+
+        if headerView.channelController == nil, let cid = channelController.cid {
+            headerView.channelController = client.channelController(for: cid)
+        }
+
         channelAvatarView.content = (channelController.channel, client.currentUserId)
     }
 

@@ -1253,6 +1253,10 @@
 		AD8B72762908016400921C31 /* ImageDownloadRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8B72742908016400921C31 /* ImageDownloadRequest.swift */; };
 		AD8D1809268F7290004E3A5C /* TypingSuggester.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8D1808268F7290004E3A5C /* TypingSuggester.swift */; };
 		AD8D180B268F8ED4004E3A5C /* SlackComposerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8D180A268F8ED4004E3A5C /* SlackComposerVC.swift */; };
+		AD8FEE582AA8E1A100273F88 /* ChatClient+Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8FEE572AA8E1A100273F88 /* ChatClient+Environment.swift */; };
+		AD8FEE592AA8E1A100273F88 /* ChatClient+Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8FEE572AA8E1A100273F88 /* ChatClient+Environment.swift */; };
+		AD8FEE5B2AA8E1E400273F88 /* ChatClientFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8FEE5A2AA8E1E400273F88 /* ChatClientFactory.swift */; };
+		AD8FEE5C2AA8E1E400273F88 /* ChatClientFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8FEE5A2AA8E1E400273F88 /* ChatClientFactory.swift */; };
 		AD90D18525D56196001D03BB /* CurrentUserUpdater_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD90D18425D56196001D03BB /* CurrentUserUpdater_Tests.swift */; };
 		AD91C35428A5550C004D1E45 /* ChatMessageListVC+DiffKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD91C35328A5550C004D1E45 /* ChatMessageListVC+DiffKit.swift */; };
 		AD91C35528A5550C004D1E45 /* ChatMessageListVC+DiffKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD91C35328A5550C004D1E45 /* ChatMessageListVC+DiffKit.swift */; };
@@ -3661,6 +3665,8 @@
 		AD8B72742908016400921C31 /* ImageDownloadRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDownloadRequest.swift; sourceTree = "<group>"; };
 		AD8D1808268F7290004E3A5C /* TypingSuggester.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypingSuggester.swift; sourceTree = "<group>"; };
 		AD8D180A268F8ED4004E3A5C /* SlackComposerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackComposerVC.swift; sourceTree = "<group>"; };
+		AD8FEE572AA8E1A100273F88 /* ChatClient+Environment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatClient+Environment.swift"; sourceTree = "<group>"; };
+		AD8FEE5A2AA8E1E400273F88 /* ChatClientFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatClientFactory.swift; sourceTree = "<group>"; };
 		AD90D18425D56196001D03BB /* CurrentUserUpdater_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrentUserUpdater_Tests.swift; sourceTree = "<group>"; };
 		AD90D18C25D5619C001D03BB /* CurrentUserUpdater_Mock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrentUserUpdater_Mock.swift; sourceTree = "<group>"; };
 		AD91C35328A5550C004D1E45 /* ChatMessageListVC+DiffKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatMessageListVC+DiffKit.swift"; sourceTree = "<group>"; };
@@ -4577,6 +4583,8 @@
 				799C941D247D2F80001F1104 /* Sources.h */,
 				799C941E247D2F80001F1104 /* Info.plist */,
 				79A0E9AC2498BD0C00E9BD50 /* ChatClient.swift */,
+				AD8FEE572AA8E1A100273F88 /* ChatClient+Environment.swift */,
+				AD8FEE5A2AA8E1E400273F88 /* ChatClientFactory.swift */,
 				69712522260BC9B4003C7B47 /* Deprecations.swift */,
 				799C9435247D2FB9001F1104 /* APIClient */,
 				40789CFB29F6AC4F0018C2BB /* Audio */,
@@ -10227,6 +10235,7 @@
 				4042968029FAC9F80089126D /* AudioAnalysing.swift in Sources */,
 				DAD539DB250B8A9C00CFC649 /* Controller.swift in Sources */,
 				F6ED5F76250278D7005D7327 /* SyncEndpoint.swift in Sources */,
+				AD8FEE582AA8E1A100273F88 /* ChatClient+Environment.swift in Sources */,
 				AD52A2192804850700D0157E /* ChannelConfigDTO.swift in Sources */,
 				797A756824814F0D003CF16D /* Bundle+Extensions.swift in Sources */,
 				792B805024D95B5D00C2963E /* Cached.swift in Sources */,
@@ -10296,6 +10305,7 @@
 				43D3F0FC28410A0200B74921 /* CreateCallRequestBody.swift in Sources */,
 				79877A0D2498E4BC00015F8B /* CurrentUser.swift in Sources */,
 				4042967D29FAC9DA0089126D /* AudioAnalysisContext.swift in Sources */,
+				AD8FEE5B2AA8E1E400273F88 /* ChatClientFactory.swift in Sources */,
 				88D85D9A252F168B00AE1030 /* MemberController+Combine.swift in Sources */,
 				792A4F462480107A00EAF71D /* ChannelQuery.swift in Sources */,
 				88E26D5E2580E92000F55AB5 /* AttachmentId.swift in Sources */,
@@ -10852,6 +10862,7 @@
 				C121E829274544AD00023E4C /* WebSocketConnectPayload.swift in Sources */,
 				C121E82A274544AD00023E4C /* ConnectionStatus.swift in Sources */,
 				C121E82B274544AD00023E4C /* APIPathConvertible.swift in Sources */,
+				AD8FEE5C2AA8E1E400273F88 /* ChatClientFactory.swift in Sources */,
 				40789D2E29F6AC500018C2BB /* AudioRecordingState.swift in Sources */,
 				C14D27B72869EEE40063F6F2 /* Array+CompactMapLoggingError.swift in Sources */,
 				C121E82C274544AD00023E4C /* APIClient.swift in Sources */,
@@ -11142,6 +11153,7 @@
 				C121E903274544B200023E4C /* WebSocket.swift in Sources */,
 				C121E904274544B200023E4C /* Engine.swift in Sources */,
 				C121E905274544B200023E4C /* NativeEngine.swift in Sources */,
+				AD8FEE592AA8E1A100273F88 /* ChatClient+Environment.swift in Sources */,
 				C121E906274544B200023E4C /* WSEngine.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

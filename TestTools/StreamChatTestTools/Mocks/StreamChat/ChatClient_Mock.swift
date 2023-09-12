@@ -45,7 +45,8 @@ final class ChatClient_Mock: ChatClient {
 
         super.init(
             config: config,
-            environment: environment
+            environment: environment,
+            factory: ChatClientFactory(config: config, environment: environment)
         )
         if !workerBuilders.isEmpty {
             _backgroundWorkers = workerBuilders.map { $0(databaseContainer, apiClient) }
@@ -238,6 +239,16 @@ extension ChatClient.Environment {
                     environment: webSocketEnvironment
                 )
             }
+        )
+    }
+}
+
+extension ChatClient {
+    convenience init(config: ChatClientConfig, environment: ChatClient.Environment) {
+        self.init(
+            config: config,
+            environment: environment,
+            factory: ChatClientFactory(config: config, environment: environment)
         )
     }
 }

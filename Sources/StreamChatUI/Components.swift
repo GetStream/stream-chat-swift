@@ -118,6 +118,10 @@ public struct Components {
     /// of the list  when there are few messages. By default it is `false`.
     public var shouldMessagesStartAtTheTop: Bool = false
 
+    /// Whether it should animate when opening the channel with a given message around id.
+    /// Ex: When opening a channel from a push notification with a given message id.
+    public var shouldAnimateJumpToMessageWhenOpeningChannel: Bool = true
+
     /// The view that shows the date for currently visible messages on top of message list.
     public var messageListScrollOverlayView: ChatMessageListScrollOverlayView.Type =
         ChatMessageListScrollOverlayView.self
@@ -373,7 +377,13 @@ public struct Components {
     public var channelListErrorView: ChatChannelListErrorView.Type = ChatChannelListErrorView.self
 
     /// View that shows when loading the Channel list.
-    public var chatChannelListLoadingView: ChatChannelListLoadingView.Type = ChatChannelListLoadingView.self
+    public var channelListLoadingView: ChatChannelListLoadingView.Type = ChatChannelListLoadingView.self
+
+    /// The `UITableViewCell` responsible to display a skeleton loading view.
+    public var channelListLoadingViewCell: ChatChannelListLoadingViewCell.Type = ChatChannelListLoadingViewCell.self
+
+    /// The content view inside the `UITableViewCell` responsible to display a skeleton loading view.
+    public var channelListLoadingContentViewCell: ChatChannelListLoadingViewCellContentView.Type = ChatChannelListLoadingViewCellContentView.self
 
     /// A boolean value that determines whether the Channel list default loading states (empty, error and loading views) are handled by the Stream SDK. It is false by default.
     /// If it is false, it does not show empty or error views and just shows a spinner indicator for the loading state. If set to true, the empty, error and shimmer loading views are shown instead.
@@ -557,6 +567,16 @@ public extension Components {
         }
         set {
             userAvatarView = newValue
+        }
+    }
+
+    @available(*, deprecated, renamed: "channelListLoadingView")
+    var chatChannelListLoadingView: ChatChannelListLoadingView.Type {
+        get {
+            channelListLoadingView
+        }
+        set {
+            channelListLoadingView = newValue
         }
     }
 }

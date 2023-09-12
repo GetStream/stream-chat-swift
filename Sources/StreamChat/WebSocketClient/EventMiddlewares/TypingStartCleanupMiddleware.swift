@@ -14,8 +14,6 @@ class TypingStartCleanupMiddleware: EventMiddleware {
     /// A closure that will be invoked with `stop typing` event when the `incomingTypingStartEventTimeout` has passed
     /// after `start typing` event.
     let emitEvent: (Event) -> Void
-    /// A closure to get a list of user ids to skip typing events for them.
-    let excludedUserIds: () -> Set<UserId>
     /// A timer type.
     var timer: Timer.Type = DefaultTimer.self
 
@@ -25,14 +23,14 @@ class TypingStartCleanupMiddleware: EventMiddleware {
     /// Creates a new `TypingStartCleanupMiddleware`
     ///
     /// - Parameter excludedUsers: A set of users for which the `typingStart` event shouldn't be cleaned up automatically.
-    init(excludedUserIds: @escaping () -> Set<UserId>, emitEvent: @escaping (Event) -> Void) {
-        self.excludedUserIds = excludedUserIds
+    init(emitEvent: @escaping (Event) -> Void) {
         self.emitEvent = emitEvent
     }
 
     func handle(event: Event, session: DatabaseSession) -> Event? {
-        // Skip other events and typing events from `excludedUserIds`.
-        guard let typingEvent = event as? TypingEventDTO, excludedUserIds().contains(typingEvent.user.id) == false else {
+        // Skip other events and typing events from currentUserId.
+        let currentUserId = session.currentUser?.user.id
+        guard let typingEvent = event as? TypingEventDTO, currentUserId != typingEvent.user.id else {
             return event
         }
 

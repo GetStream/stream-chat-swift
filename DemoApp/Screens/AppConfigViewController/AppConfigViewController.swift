@@ -141,6 +141,7 @@ class AppConfigViewController: UITableViewController {
     enum ComponentsConfigOption: String, CaseIterable {
         case isUniqueReactionsEnabled
         case shouldMessagesStartAtTheTop
+        case shouldAnimateJumpToMessageWhenOpeningChannel
         case threadRepliesStartFromOldest
         case threadRendersParentMessageEnabled
         case isVoiceRecordingEnabled
@@ -351,6 +352,10 @@ class AppConfigViewController: UITableViewController {
         case .shouldMessagesStartAtTheTop:
             cell.accessoryView = makeSwitchButton(Components.default.shouldMessagesStartAtTheTop) { newValue in
                 Components.default.shouldMessagesStartAtTheTop = newValue
+            }
+        case .shouldAnimateJumpToMessageWhenOpeningChannel:
+            cell.accessoryView = makeSwitchButton(Components.default.shouldAnimateJumpToMessageWhenOpeningChannel) { newValue in
+                Components.default.shouldAnimateJumpToMessageWhenOpeningChannel = newValue
             }
         case .threadRepliesStartFromOldest:
             cell.accessoryView = makeSwitchButton(Components.default.threadRepliesStartFromOldest) { newValue in

@@ -979,6 +979,30 @@ final class ChatChannelVC_Tests: XCTestCase {
         XCTAssertEqual(vc.channelAvatarView.content.channel?.name, "New")
     }
 
+    func test_didUpdateChannel_whenHeaderViewHasEmptyController_shouldSetChannelController() {
+        vc.setUp()
+
+        vc.headerView.channelController = nil
+
+        let newChannel = ChatChannel.mockNonDMChannel(name: "New")
+        channelControllerMock.channel_mock = newChannel
+        vc.channelController(vc.channelController, didUpdateChannel: .update(newChannel))
+
+        XCTAssertNotNil(vc.headerView.channelController)
+    }
+
+    func test_didUpdateChannel_whenHeaderViewHasController_shouldNotSetNewController() {
+        vc.setUp()
+
+        vc.headerView.channelController = channelControllerMock
+
+        let newChannel = ChatChannel.mockNonDMChannel(name: "New")
+        channelControllerMock.channel_mock = newChannel
+        vc.channelController(vc.channelController, didUpdateChannel: .update(newChannel))
+
+        XCTAssertTrue(vc.headerView.channelController === channelControllerMock)
+    }
+
     // MARK: - setUp
 
     func test_setUp_messagesListVCAndMessageComposerVCHaveTheExpectedAudioPlayerInstance() {
@@ -1002,6 +1026,48 @@ final class ChatChannelVC_Tests: XCTestCase {
 
         XCTAssertEqual(vc.messageComposerVC.content.state, .quote)
         XCTAssertEqual(vc.messageComposerVC.content.quotingMessage?.id, expectMessage.id)
+    }
+
+    func test_setUp_whenGivenMessageAroundId_whenShouldAnimateJumpToMessageWhenOpeningChannelIsTrue_thenAnimate() {
+        var components = Components.mock
+        components.shouldAnimateJumpToMessageWhenOpeningChannel = true
+        components.messageListVC = ChatMessageListVC_Mock.self
+        vc.components = components
+        let messageListVCMock = vc.messageListVC as? ChatMessageListVC_Mock
+
+        channelControllerMock.channelQuery_mock = .init(
+            cid: .unique,
+            pageSize: 10,
+            paginationParameter: .around(.newUniqueId)
+        )
+
+        vc.setUp()
+
+        channelControllerMock.synchronize_completion?(nil)
+
+        XCTAssertEqual(messageListVCMock?.jumpToMessageCallCount, 1)
+        XCTAssertEqual(messageListVCMock?.jumpToMessageCalledWith?.animated, true)
+    }
+
+    func test_setUp_whenGivenMessageAroundId_whenShouldAnimateJumpToMessageWhenOpeningChannelIsFalse_thenDoNotAnimate() {
+        var components = Components.mock
+        components.shouldAnimateJumpToMessageWhenOpeningChannel = false
+        components.messageListVC = ChatMessageListVC_Mock.self
+        vc.components = components
+        let messageListVCMock = vc.messageListVC as? ChatMessageListVC_Mock
+
+        channelControllerMock.channelQuery_mock = .init(
+            cid: .unique,
+            pageSize: 10,
+            paginationParameter: .around(.newUniqueId)
+        )
+
+        vc.setUp()
+
+        channelControllerMock.synchronize_completion?(nil)
+
+        XCTAssertEqual(messageListVCMock?.jumpToMessageCallCount, 1)
+        XCTAssertEqual(messageListVCMock?.jumpToMessageCalledWith?.animated, false)
     }
 
     // MARK: - audioQueuePlayerNextAssetURL

@@ -47,10 +47,10 @@ final class APIClient_Tests: XCTestCase {
             sessionConfiguration: sessionConfiguration,
             requestEncoder: encoder,
             requestDecoder: decoder,
-            attachmentUploader: attachmentUploader,
-            tokenRefresher: tokenRefresher,
-            queueOfflineRequest: queueOfflineRequest
+            attachmentUploader: attachmentUploader
         )
+        apiClient.tokenRefresher = tokenRefresher
+        apiClient.queueOfflineRequest = queueOfflineRequest
     }
 
     override func tearDown() {
@@ -709,10 +709,10 @@ extension APIClient_Tests {
             sessionConfiguration: sessionConfiguration,
             requestEncoder: encoder,
             requestDecoder: decoder,
-            attachmentUploader: attachmentUploader,
-            tokenRefresher: self.tokenRefresher,
-            queueOfflineRequest: self.queueOfflineRequest
+            attachmentUploader: attachmentUploader
         )
+        apiClient.tokenRefresher = self.tokenRefresher
+        apiClient.queueOfflineRequest = self.queueOfflineRequest
     }
 
     private func executeUnmanagedRequestThatSucceeds() throws {

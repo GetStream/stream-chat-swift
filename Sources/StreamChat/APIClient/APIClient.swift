@@ -16,10 +16,10 @@ class APIClient {
     let decoder: RequestDecoder
 
     /// Used for reobtaining tokens when they expire and API client receives token expiration error
-    let tokenRefresher: (@escaping () -> Void) -> Void
+    var tokenRefresher: ((@escaping () -> Void) -> Void)?
 
     /// Used to queue requests that happen while we are offline
-    let queueOfflineRequest: QueueOfflineRequestBlock
+    var queueOfflineRequest: QueueOfflineRequestBlock?
 
     /// The attachment uploader.
     let attachmentUploader: AttachmentUploader
@@ -59,16 +59,12 @@ class APIClient {
         sessionConfiguration: URLSessionConfiguration,
         requestEncoder: RequestEncoder,
         requestDecoder: RequestDecoder,
-        attachmentUploader: AttachmentUploader,
-        tokenRefresher: @escaping (@escaping () -> Void) -> Void,
-        queueOfflineRequest: @escaping QueueOfflineRequestBlock
+        attachmentUploader: AttachmentUploader
     ) {
         encoder = requestEncoder
         decoder = requestDecoder
         session = URLSession(configuration: sessionConfiguration)
         self.attachmentUploader = attachmentUploader
-        self.tokenRefresher = tokenRefresher
-        self.queueOfflineRequest = queueOfflineRequest
     }
 
     /// Performs a network request and retries in case of network failures
@@ -167,7 +163,7 @@ class APIClient {
                         completion(.failure(ClientError.ConnectionError()))
                     } else {
                         // Offline Queuing
-                        self?.queueOfflineRequest(endpoint.withDataResponse)
+                        self?.queueOfflineRequest?(endpoint.withDataResponse)
                         completion(result)
                     }
 
@@ -277,7 +273,7 @@ class APIClient {
 
         enterTokenFetchMode()
 
-        tokenRefresher { [weak self] in
+        tokenRefresher?() { [weak self] in
             self?.exitTokenFetchMode()
             completion(ClientError.TokenRefreshed())
         }

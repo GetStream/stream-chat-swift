@@ -336,6 +336,22 @@ final class ComposerVC_Tests: XCTestCase {
         XCTAssertEqual(composerVC.composerView.attachmentButton.isHidden, false)
     }
 
+    func test_canUploadFiles_hasRecordButtonShown() {
+        composerVC.appearance = Appearance.default
+        composerVC.content = .initial()
+
+        var components = Components.default
+        components.isVoiceRecordingEnabled = true
+        composerVC.components = components
+
+        let mock = ChatChannelController_Mock.mock()
+        mock.channel_mock = .mock(cid: .unique, ownCapabilities: [.uploadFile, .sendMessage])
+        composerVC.channelController = mock
+        composerVC.updateContent()
+
+        XCTAssertEqual(composerVC.composerView.recordButton.isHidden, false)
+    }
+
     func test_canNotUploadFiles_hasAttachmentButtonHidden() {
         composerVC.appearance = Appearance.default
         composerVC.content = .initial()
@@ -348,6 +364,25 @@ final class ComposerVC_Tests: XCTestCase {
         XCTAssertEqual(composerVC.composerView.attachmentButton.isHidden, true)
     }
 
+    func test_canNotUploadFiles_hasRecordButtonHidden() {
+        composerVC.appearance = Appearance.default
+        composerVC.content = .initial()
+
+        let mock = ChatChannelController_Mock.mock()
+        mock.channel_mock = .mock(cid: .unique, ownCapabilities: [.sendMessage])
+        composerVC.channelController = mock
+        composerVC.updateContent()
+
+        XCTAssertEqual(composerVC.composerView.recordButton.isHidden, true)
+    }
+
+    func test_isAttachmentsEnabled_whenChannelIsEmpty_thenReturnsTrue() {
+        let mock = ChatChannelController_Mock.mock()
+        mock.channel_mock = nil
+        composerVC.channelController = mock
+        XCTAssertEqual(composerVC.isAttachmentsEnabled, true)
+    }
+
     func test_canNotSendMessage() {
         composerVC.appearance = Appearance.default
         composerVC.content = .initial()
@@ -357,6 +392,13 @@ final class ComposerVC_Tests: XCTestCase {
         composerVC.channelController = mock
 
         AssertSnapshot(composerVC)
+    }
+
+    func test_isSendMessageEnabled_whenChannelIsEmpty_thenReturnsTrue() {
+        let mock = ChatChannelController_Mock.mock()
+        mock.channel_mock = nil
+        composerVC.channelController = mock
+        XCTAssertEqual(composerVC.isSendMessageEnabled, true)
     }
 
     func test_canNotSendLinks() {
@@ -375,6 +417,7 @@ final class ComposerVC_Tests: XCTestCase {
         composerVC.publishMessage(sender: composerVC.composerView.sendButton)
 
         XCTAssertEqual(mock.createNewMessageCallCount, 1)
+        XCTAssertEqual(composerVC.canSendLinks, false)
     }
 
     func test_canSendLinks() {
@@ -388,6 +431,14 @@ final class ComposerVC_Tests: XCTestCase {
         composerVC.publishMessage(sender: composerVC.composerView.sendButton)
 
         XCTAssertEqual(mock.createNewMessageCallCount, 1)
+        XCTAssertEqual(composerVC.canSendLinks, true)
+    }
+
+    func test_canSendLinks_whenChannelIsEmpty() {
+        let mock = ChatChannelController_Mock.mock()
+        mock.channel_mock = nil
+        composerVC.channelController = mock
+        XCTAssertEqual(composerVC.canSendLinks, true)
     }
     
     // MARK: - audioPlayer

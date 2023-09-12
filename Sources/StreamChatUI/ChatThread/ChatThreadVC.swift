@@ -89,7 +89,7 @@ open class ChatThreadVC: _ViewController,
     open var shouldStartFromOldestReplies: Bool {
         components.threadRepliesStartFromOldest
     }
-
+    
     override open func setUp() {
         super.setUp()
 
@@ -128,42 +128,13 @@ open class ChatThreadVC: _ViewController,
         // Set the initial data
         messages = getReplies(from: messageController)
 
-        let completeSetUp: (ChatMessage?) -> Void = { [messageController, messageComposerVC] message in
-            if messageComposerVC.content.threadMessage == nil,
-               let message = messageController?.message {
-                messageComposerVC.content.threadMessage = message
-            }
-
-            // If there is an initial reply id, we should jump to it
-            if let initialReplyId = self.initialReplyId {
-                self.messageController.loadPageAroundReplyId(initialReplyId) { [weak self] error in
-                    guard error == nil else {
-                        return
-                    }
-
-                    self?.jumpToMessage(id: initialReplyId)
-                }
-                return
-            }
-
-            // When we tap on the parent message and start from oldest replies is enabled
-            if self.shouldStartFromOldestReplies, let parentMessage = self.messageController.message {
-                self.messageController.loadPageAroundReplyId(parentMessage.id) { [weak self] _ in
-                    self?.messageListVC.scrollToTop(animated: false)
-                }
-                return
-            }
-
-            self.messageController.loadPreviousReplies()
-        }
-
-        if let message = messageController.message {
-            completeSetUp(message)
+        if messageController.message != nil {
+            didFinishSynchronizing(with: nil)
             return
         }
 
-        messageController.synchronize { [weak self] _ in
-            completeSetUp(self?.messageController.message)
+        messageController.synchronize { [weak self] error in
+            self?.didFinishSynchronizing(with: error)
         }
     }
 
@@ -203,6 +174,38 @@ open class ChatThreadVC: _ViewController,
         keyboardHandler.stop()
     }
 
+    /// Called when the syncing of the `messageController` is finished.
+    /// - Parameter error: An `error` if the syncing failed; `nil` if it was successful.
+    open func didFinishSynchronizing(with error: Error?) {
+        if messageComposerVC.content.threadMessage == nil,
+           let message = messageController?.message {
+            messageComposerVC.content.threadMessage = message
+        }
+
+        // If there is an initial reply id, we should jump to it
+        if let initialReplyId = self.initialReplyId {
+            messageController.loadPageAroundReplyId(initialReplyId) { [weak self] error in
+                guard error == nil else {
+                    return
+                }
+
+                let shouldAnimate = self?.components.shouldAnimateJumpToMessageWhenOpeningChannel == true
+                self?.jumpToMessage(id: initialReplyId, animated: shouldAnimate)
+            }
+            return
+        }
+
+        // When we tap on the parent message and start from oldest replies is enabled
+        if shouldStartFromOldestReplies, let parentMessage = messageController.message {
+            messageController.loadPageAroundReplyId(parentMessage.id) { [weak self] _ in
+                self?.messageListVC.scrollToTop(animated: false)
+            }
+            return
+        }
+
+        messageController.loadPreviousReplies()
+    }
+
     /// Jump to a given message.
     /// In case the message is already loaded, it directly goes to it.
     /// If not, it will load the messages around it and go to that page.
@@ -211,16 +214,17 @@ open class ChatThreadVC: _ViewController,
     ///
     /// - Parameters:
     ///   - id: The id of message which the message list should go to.
+    ///   - animated: `true` if you want to animate the change in position; `false` if it should be immediate.
     ///   - shouldHighlight: Whether the message should be highlighted when jumping to it. By default it is highlighted.
-    public func jumpToMessage(id: MessageId, shouldHighlight: Bool = true) {
+    public func jumpToMessage(id: MessageId, animated: Bool = true, shouldHighlight: Bool = true) {
         if shouldHighlight {
-            messageListVC.jumpToMessage(id: id) { [weak self] indexPath in
+            messageListVC.jumpToMessage(id: id, animated: animated) { [weak self] indexPath in
                 self?.messageListVC.highlightCell(at: indexPath)
             }
             return
         }
 
-        messageListVC.jumpToMessage(id: id)
+        messageListVC.jumpToMessage(id: id, animated: animated)
     }
 
     // MARK: - ChatMessageListVCDataSource

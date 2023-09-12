@@ -289,11 +289,17 @@ open class ComposerVC: _ViewController,
 
     /// A Boolean value indicating whether the attachments are enabled.
     open var isAttachmentsEnabled: Bool {
-        channelController?.channel?.canUploadFile == true
+        channelController?.channel?.canUploadFile ?? true
     }
 
+    /// A Boolean value indicating whether sending message is enabled.
     open var isSendMessageEnabled: Bool {
-        channelController?.channel?.canSendMessage == true
+        channelController?.channel?.canSendMessage ?? true
+    }
+
+    /// A Boolean value indicating whether if the message being sent can contain links.
+    open var canSendLinks: Bool {
+        channelController?.channel?.canSendLinks ?? true
     }
 
     /// A Boolean value indicating whether the current input text contains links.
@@ -461,7 +467,7 @@ open class ComposerVC: _ViewController,
             Animate {
                 self.composerView.confirmButton.isHidden = true
                 self.composerView.sendButton.isHidden = self.content.isSlowModeOn
-                self.composerView.recordButton.isHidden = self.composerView.sendButton.isHidden || !self.components.isVoiceRecordingEnabled
+                self.composerView.recordButton.isHidden = self.composerView.sendButton.isHidden || !self.components.isVoiceRecordingEnabled || !self.isAttachmentsEnabled
                 self.composerView.headerView.isHidden = true
                 self.composerView.cooldownView.isHidden = !self.content.isSlowModeOn
                 self.composerView.leadingContainer.isHidden = false
@@ -487,7 +493,7 @@ open class ComposerVC: _ViewController,
             Animate {
                 self.composerView.confirmButton.isHidden = true
                 self.composerView.sendButton.isHidden = self.content.isSlowModeOn
-                self.composerView.recordButton.isHidden = self.composerView.sendButton.isHidden || !self.components.isVoiceRecordingEnabled
+                self.composerView.recordButton.isHidden = self.composerView.sendButton.isHidden || !self.components.isVoiceRecordingEnabled || !self.isAttachmentsEnabled
                 self.composerView.headerView.isHidden = false
                 self.composerView.cooldownView.isHidden = !self.content.isSlowModeOn
                 self.composerView.leadingContainer.isHidden = false
@@ -498,7 +504,7 @@ open class ComposerVC: _ViewController,
             Animate {
                 self.composerView.confirmButton.isHidden = false
                 self.composerView.sendButton.isHidden = true
-                self.composerView.recordButton.isHidden = self.composerView.confirmButton.isHidden
+                self.composerView.recordButton.isHidden = self.composerView.confirmButton.isHidden || !self.isAttachmentsEnabled
                 self.composerView.headerView.isHidden = false
                 self.composerView.cooldownView.isHidden = true
                 self.composerView.leadingContainer.isHidden = false
@@ -593,7 +599,7 @@ open class ComposerVC: _ViewController,
     // MARK: - Actions
 
     @objc open func publishMessage(sender: UIButton) {
-        if channelController?.channel?.canSendLinks == false && inputContainsLinks {
+        if !canSendLinks && inputContainsLinks {
             presentAlert(title: L10n.Composer.LinksDisabled.title, message: L10n.Composer.LinksDisabled.subtitle)
             return
         }

@@ -67,9 +67,7 @@ final class APIClient_Spy: APIClient, Spy {
         sessionConfiguration: URLSessionConfiguration,
         requestEncoder: RequestEncoder,
         requestDecoder: RequestDecoder,
-        attachmentUploader: AttachmentUploader,
-        tokenRefresher: ((@escaping () -> Void) -> Void)!,
-        queueOfflineRequest: @escaping QueueOfflineRequestBlock
+        attachmentUploader: AttachmentUploader
     ) {
         init_sessionConfiguration = sessionConfiguration
         init_requestEncoder = requestEncoder
@@ -83,9 +81,7 @@ final class APIClient_Spy: APIClient, Spy {
             sessionConfiguration: sessionConfiguration,
             requestEncoder: requestEncoder,
             requestDecoder: requestDecoder,
-            attachmentUploader: attachmentUploader,
-            tokenRefresher: tokenRefresher,
-            queueOfflineRequest: queueOfflineRequest
+            attachmentUploader: attachmentUploader
         )
     }
 
@@ -186,9 +182,7 @@ extension APIClient_Spy {
             sessionConfiguration: .ephemeral,
             requestEncoder: DefaultRequestEncoder(baseURL: .unique(), apiKey: .init(.unique)),
             requestDecoder: DefaultRequestDecoder(),
-            attachmentUploader: AttachmentUploader_Spy(),
-            tokenRefresher: { _ in },
-            queueOfflineRequest: { _ in }
+            attachmentUploader: AttachmentUploader_Spy()
         )
     }
 }

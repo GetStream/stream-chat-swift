@@ -533,3 +533,5 @@ extension NSLayoutConstraint {
         set { objc_setAssociatedObject(self, &Self.originalConstantKey, newValue, .OBJC_ASSOCIATION_RETAIN) }
     }
 }
+
+// swiftlint:enable regular_constraints_forbidden
