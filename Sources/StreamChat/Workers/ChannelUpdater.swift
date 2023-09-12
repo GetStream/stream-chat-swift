@@ -403,9 +403,22 @@ class ChannelUpdater: Worker {
     ///   - cid: The id of the channel to be marked as unread
     ///   - userId: The id of the current user
     ///   - messageId: The id of the first message id that will be marked as unread.
+    ///   - lastReadMessageId: The id of the last message that was read.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    func markUnread(cid: ChannelId, userId: UserId, from messageId: MessageId, completion: ((Error?) -> Void)? = nil) {
-        channelRepository.markUnread(for: cid, userId: userId, from: messageId, completion: completion)
+    func markUnread(
+        cid: ChannelId,
+        userId: UserId,
+        from messageId: MessageId,
+        lastReadMessageId: MessageId?,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        channelRepository.markUnread(
+            for: cid,
+            userId: userId,
+            from: messageId,
+            lastReadMessageId: lastReadMessageId,
+            completion: completion
+        )
     }
 
     ///

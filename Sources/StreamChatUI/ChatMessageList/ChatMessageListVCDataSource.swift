@@ -41,7 +41,5 @@ public protocol ChatMessageListVCDataSource: AnyObject {
 }
 
 public extension ChatMessageListVCDataSource {
-    var isFirstPageLoaded: Bool {
-        true
-    }
+    var isFirstPageLoaded: Bool { true }
 }

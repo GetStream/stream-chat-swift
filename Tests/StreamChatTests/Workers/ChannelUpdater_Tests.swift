@@ -1392,12 +1392,14 @@ final class ChannelUpdater_Tests: XCTestCase {
         let cid = ChannelId.unique
         let userId = UserId.unique
         let messageId = MessageId.unique
+        let lastReadMessageId = MessageId.unique
 
-        channelUpdater.markUnread(cid: cid, userId: userId, from: messageId)
+        channelUpdater.markUnread(cid: cid, userId: userId, from: messageId, lastReadMessageId: lastReadMessageId)
 
         XCTAssertEqual(channelRepository.markUnreadCid, cid)
         XCTAssertEqual(channelRepository.markUnreadUserId, userId)
         XCTAssertEqual(channelRepository.markUnreadMessageId, messageId)
+        XCTAssertEqual(channelRepository.markUnreadLastReadMessageId, lastReadMessageId)
     }
 
     func test_markUnread_successfulResponse_isPropagatedToCompletion() {
@@ -1405,7 +1407,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         var receivedError: Error?
 
         channelRepository.markUnreadResult = .success(())
-        channelUpdater.markUnread(cid: .unique, userId: .unique, from: .unique) { error in
+        channelUpdater.markUnread(cid: .unique, userId: .unique, from: .unique, lastReadMessageId: .unique) { error in
             receivedError = error
             expectation.fulfill()
         }
@@ -1420,7 +1422,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         var receivedError: Error?
 
         channelRepository.markUnreadResult = .failure(mockedError)
-        channelUpdater.markUnread(cid: .unique, userId: .unique, from: .unique) { error in
+        channelUpdater.markUnread(cid: .unique, userId: .unique, from: .unique, lastReadMessageId: .unique) { error in
             receivedError = error
             expectation.fulfill()
         }

@@ -200,6 +200,7 @@ final class ChannelEventsIntegration_Tests: XCTestCase {
                     payload: ChannelReadPayload(
                         user: self.dummyUser(id: "steep-moon-9"),
                         lastReadAt: .unique,
+                        lastReadMessageId: .unique,
                         unreadMessagesCount: .unique
                     ),
                     for: channelId,

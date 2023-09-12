@@ -109,13 +109,17 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         updater.paginationState.oldestFetchedMessage?.id
     }
 
-    /// The pagination cursor for loading next (new) messages.
+    /// The id if the first unread message for the current user.
+    public var firstUnreadMessageId: MessageId? {
+        getFirstUnreadMessageId()
+    }
+
+    /// A boolean indicating if the user marked the channel as unread in the current session
+    public private(set) var isMarkedAsUnread: Bool = false
+
     internal var lastNewestMessageId: MessageId? {
         updater.paginationState.newestFetchedMessage?.id
     }
-    
-    /// The first unread message id
-    public private(set) var firstUnreadMessageId: MessageId?
 
     private var markingRead: Bool = false
 
@@ -880,13 +884,16 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
         markingRead = true
 
-        let previousUnreadMessageId = firstUnreadMessageId
-        firstUnreadMessageId = messageId
-        updater.markUnread(cid: channel.cid, userId: currentUserId, from: messageId) { [weak self] error in
-            if error != nil {
-                self?.firstUnreadMessageId = previousUnreadMessageId
-            }
+        updater.markUnread(
+            cid: channel.cid,
+            userId: currentUserId,
+            from: messageId,
+            lastReadMessageId: getLastReadMessageId(firstUnreadMessageId: messageId)
+        ) { [weak self] error in
             self?.callback {
+                if error == nil {
+                    self?.isMarkedAsUnread = true
+                }
                 self?.markingRead = false
                 completion?(error)
             }
@@ -1413,6 +1420,49 @@ private extension ChatChannelController {
             // Update observing state
             self?.state = error == nil ? .localDataFetched : .localDataFetchFailed(ClientError(with: error))
         }
+    }
+
+    private func getLastReadMessageId(firstUnreadMessageId: MessageId) -> MessageId? {
+        guard let messageIndex = messages.firstIndex(where: { $0.id == firstUnreadMessageId }) else { return nil }
+
+        let newLastReadMessageIndex = messages.index(after: messageIndex)
+        return messageId(at: newLastReadMessageIndex)
+    }
+
+    private func getFirstUnreadMessageId() -> MessageId? {
+        guard let lastReadMessageId = channel?.reads.first(where: { $0.user.id == client.currentUserId })?.lastReadMessageId else {
+            // We default to the oldest message in the history
+            return messages.last?.id
+        }
+
+        guard lastReadMessageId != messages.first?.id else {
+            // No unread messages
+            return nil
+        }
+        guard let lastReadIndex = messages.firstIndex(where: { $0.id == lastReadMessageId }), lastReadIndex != 0 else { return nil }
+
+        let lookUpStartIndex = messages.index(before: lastReadIndex)
+
+        var id: MessageId?
+        for index in (0...lookUpStartIndex).reversed() {
+            let message = message(at: index)
+            guard message?.author.id != client.currentUserId, message?.deletedAt == nil else { continue }
+            id = message?.id
+            break
+        }
+
+        return id
+    }
+
+    private func message(at index: Int) -> ChatMessage? {
+        if !messages.indices.contains(index) {
+            return nil
+        }
+        return messages[index]
+    }
+
+    private func messageId(at index: Int) -> MessageId? {
+        message(at: index)?.id
     }
 }
 

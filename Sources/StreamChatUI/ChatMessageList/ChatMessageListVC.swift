@@ -72,8 +72,8 @@ open class ChatMessageListVC: _ViewController,
         dataSource?.channel(for: self)?.config.typingEventsEnabled == true
     }
 
-    /// A button to scroll the collection view to the bottom.
-    /// Visible when there is unread message and the collection view is not at the bottom already.
+    /// A button to scroll the table view to the bottom.
+    /// Visible when there is unread message and the table view is not at the bottom already.
     open private(set) lazy var scrollToBottomButton: ScrollToBottomButton = components
         .scrollToBottomButton
         .init()
@@ -84,6 +84,44 @@ open class ChatMessageListVC: _ViewController,
         let isMoreContentThanOnePage = listView.contentSize.height > listView.bounds.height
 
         return (!listView.isLastCellFullyVisible && isMoreContentThanOnePage) || dataSource?.isFirstPageLoaded == false
+    }
+
+    /// A button to scroll the table view to the first unread message.
+    /// Visible when there are unread messages outside of the bounds of the screen.
+    open private(set) lazy var jumpToUnreadMessagesButton: JumpToUnreadMessagesButton = components
+        .jumpToUnreadMessagesButton
+        .init()
+        .withoutAutoresizingMaskConstraints
+
+    /// A Boolean value indicating whether jump to unread messages button is visible.
+    open var isJumpToUnreadMessagesButtonVisible: Bool {
+        guard isJumpToUnreadEnabled,
+              let dataSource = dataSource,
+              let unreadCount = dataSource.channel(for: self)?.unreadCount,
+              unreadCount.messages > 0 else {
+            return false
+        }
+
+        guard let firstUnreadIndexPath = firstUnreadMessageIndexPath else {
+            // If there are messages, but none is read, we show the button if the first message is not on screen.
+            if !dataSource.messages.isEmpty {
+                return !isMessageVisible(at: IndexPath(item: dataSource.messages.count - 1, section: 0))
+            } else {
+                return false
+            }
+        }
+
+        // If the message is visible on screen, we don't show the button
+        return !isMessageVisible(at: firstUnreadIndexPath)
+    }
+
+    private var isJumpToUnreadEnabled: Bool {
+        components.isJumpToUnreadEnabled
+    }
+
+    private var firstUnreadMessageId: MessageId?
+    private var firstUnreadMessageIndexPath: IndexPath? {
+        firstUnreadMessageId.flatMap(getIndexPath)
     }
 
     /// A formatter that converts the message date to textual representation.
@@ -154,6 +192,8 @@ open class ChatMessageListVC: _ViewController,
         listView.addGestureRecognizer(panGestureRecognizer)
 
         scrollToBottomButton.addTarget(self, action: #selector(didTapScrollToBottomButton), for: .touchUpInside)
+        jumpToUnreadMessagesButton.addTarget(self, action: #selector(jumpToUnreadMessages))
+        jumpToUnreadMessagesButton.addDiscardButtonTarget(self, action: #selector(discardUnreadMessages))
     }
 
     override open func setUpLayout() {
@@ -177,6 +217,11 @@ open class ChatMessageListVC: _ViewController,
         scrollToBottomButton.widthAnchor.pin(equalTo: scrollToBottomButton.heightAnchor).isActive = true
         scrollToBottomButton.heightAnchor.pin(equalToConstant: 40).isActive = true
         scrollToBottomButton.isHidden = true
+
+        view.addSubview(jumpToUnreadMessagesButton)
+        jumpToUnreadMessagesButton.topAnchor.pin(equalToSystemSpacingBelow: view.safeAreaLayoutGuide.topAnchor).isActive = true
+        jumpToUnreadMessagesButton.centerXAnchor.pin(equalTo: view.layoutMarginsGuide.centerXAnchor).isActive = true
+        jumpToUnreadMessagesButton.isHidden = true
 
         if isDateOverlayEnabled {
             view.addSubview(dateOverlayView)
@@ -240,14 +285,47 @@ open class ChatMessageListVC: _ViewController,
         )
     }
 
-    /// Set the visibility of `scrollToBottomButton`.
+    /// Set the visibility of `scrollToLatestMessageButton`.
+    @available(*, deprecated, message: "use updateScrollToBottomButtonVisibility(animated:) instead.")
+    open func setScrollToLatestMessageButton(visible: Bool, animated: Bool = true) {
+        updateScrollToBottomButtonVisibility()
+    }
+
+    func updateScrollDependentButtonsVisibility(animated: Bool = true) {
+        updateScrollToBottomButtonVisibility(animated: animated)
+        updateJumpToUnreadButtonVisibility(animated: animated)
+    }
+
+    /// Set the visibility of `scrollToLatestMessageButton`.
     open func updateScrollToBottomButtonVisibility(animated: Bool = true) {
-        let isVisible = isScrollToBottomButtonVisible
-        if isVisible { scrollToBottomButton.isVisible = true }
+        updateVisibility(
+            for: scrollToBottomButton,
+            isVisible: isScrollToBottomButtonVisible,
+            animated: animated
+        )
+    }
+
+    /// Set the visibility of `jumpToUnreadMessagesButton`.
+    open func updateJumpToUnreadButtonVisibility(animated: Bool = true) {
+        guard isJumpToUnreadEnabled else { return }
+
+        if let unreadCount = dataSource?.channel(for: self)?.unreadCount,
+           unreadCount != jumpToUnreadMessagesButton.content {
+            jumpToUnreadMessagesButton.content = unreadCount
+        }
+        updateVisibility(
+            for: jumpToUnreadMessagesButton,
+            isVisible: isJumpToUnreadMessagesButtonVisible,
+            animated: animated
+        )
+    }
+
+    private func updateVisibility(for view: UIView, isVisible: Bool, animated: Bool) {
+        if isVisible { view.isVisible = true }
         Animate(isAnimated: animated, {
-            self.scrollToBottomButton.alpha = isVisible ? 1 : 0
+            view.alpha = isVisible ? 1 : 0
         }, completion: { _ in
-            if !isVisible { self.scrollToBottomButton.isVisible = false }
+            if !isVisible { view.isVisible = false }
         })
     }
 
@@ -271,14 +349,33 @@ open class ChatMessageListVC: _ViewController,
         listView.scrollToTop(animated: animated)
     }
 
-    func updateUnreadMessagesSeparator(at id: MessageId?, previousId: MessageId?) {
+    func updateUnreadMessagesSeparator(at firstUnreadId: MessageId?) {
+        let previousFirstUnreadId = firstUnreadMessageId
+        guard previousFirstUnreadId != firstUnreadId else { return }
+
         func indexPath(for id: MessageId?) -> IndexPath? {
             id.flatMap(getIndexPath)
         }
 
-        let indexPathsToReload = [indexPath(for: previousId), indexPath(for: id)].compactMap { $0 }
+        firstUnreadMessageId = firstUnreadId
+
+        let indexPathsToReload = [indexPath(for: previousFirstUnreadId), indexPath(for: firstUnreadId)].compactMap { $0 }
         guard !indexPathsToReload.isEmpty else { return }
         listView.reloadRows(at: indexPathsToReload, with: .automatic)
+    }
+
+    private func isMessageVisible(at indexPath: IndexPath) -> Bool {
+        guard let visibleIndexPaths = listView.indexPathsForVisibleRows else { return false }
+        return visibleIndexPaths.contains(indexPath)
+    }
+
+    @objc func jumpToUnreadMessages() {
+        guard let firstUnreadMessageId = firstUnreadMessageId else { return }
+        jumpToMessage(id: firstUnreadMessageId)
+    }
+
+    @objc func discardUnreadMessages() {
+        delegate?.chatMessageListDidDiscardUnreadMessages(self)
     }
 
     /// Updates the table view data with given `changes`.
@@ -628,7 +725,7 @@ open class ChatMessageListVC: _ViewController,
     open func scrollViewDidScroll(_ scrollView: UIScrollView) {
         delegate?.chatMessageListVC(self, scrollViewDidScroll: scrollView)
 
-        updateScrollToBottomButtonVisibility()
+        updateScrollDependentButtonsVisibility()
 
         // If the user scrolled to the bottom, update the UI for the skipped messages
         if listView.isLastCellFullyVisible && !listView.skippedMessages.isEmpty && isFirstPageLoaded {
@@ -648,13 +745,12 @@ open class ChatMessageListVC: _ViewController,
     }
 
     open func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
-        updateScrollToBottomButtonVisibility()
+        updateScrollDependentButtonsVisibility()
 
         // It can take some time for highlighted message to appear on screen after scrolling to it.
         // The only way to check if `scrollToRow` as finished it to wait here on delegate callback.
-        let visibleIndexPaths = listView.indexPathsForVisibleRows ?? []
         if let messageId = messageIdPendingHighlight, let indexPath = getIndexPath(forMessageId: messageId) {
-            guard visibleIndexPaths.contains(indexPath) else { return }
+            guard isMessageVisible(at: indexPath) else { return }
             DispatchQueue.main.async {
                 self.onMessageHighlight?(indexPath)
             }
@@ -668,7 +764,8 @@ open class ChatMessageListVC: _ViewController,
         _ overlay: ChatMessageListScrollOverlayView,
         textForItemAt indexPath: IndexPath
     ) -> String? {
-        guard let message = dataSource?.chatMessageListVC(self, messageAt: indexPath) else {
+        guard let message = dataSource?.chatMessageListVC(self, messageAt: indexPath),
+              !isJumpToUnreadMessagesButtonVisible else {
             return nil
         }
 
@@ -905,12 +1002,6 @@ open class ChatMessageListVC: _ViewController,
         jumpToMessage(id: message.id, onHighlight: onHighlight)
     }
 
-    /// Set the visibility of `scrollToBottomButton`.
-    @available(*, deprecated, message: "use updateScrollToBottomButtonVisibility(animated:) instead.")
-    open func setScrollToLatestMessageButton(visible: Bool, animated: Bool = true) {
-        updateScrollToBottomButtonVisibility()
-    }
-
     @available(*, deprecated, renamed: "scrollToBottom(animated:)")
     open func scrollToMostRecentMessage(animated: Bool = true) {
         listView.scrollToBottom(animated: animated)
@@ -946,7 +1037,7 @@ private extension ChatMessageListVC {
                 self?.adjustContentOffset(oldContentOffset: oldContentOffset, oldContentSize: oldContentSize)
             }
 
-            self?.updateScrollToBottomButtonVisibility()
+            self?.updateScrollDependentButtonsVisibility()
 
             UIView.performWithoutAnimation {
                 self?.scrollToBottomIfNeeded(with: changes, newestChange: newestChange)
@@ -1017,7 +1108,7 @@ private extension ChatMessageListVC {
     // message has the same index of the deleted message after the deletion has been executed.
     func reloadPreviousMessagesForVisibleRemoves(with changes: [ListChange<ChatMessage>]) {
         let visibleRemoves = changes.filter {
-            $0.isRemove && listView.indexPathsForVisibleRows?.contains($0.indexPath) == true
+            $0.isRemove && isMessageVisible(at: $0.indexPath)
         }
         visibleRemoves.forEach {
             listView.reloadRows(at: [$0.indexPath], with: .none)

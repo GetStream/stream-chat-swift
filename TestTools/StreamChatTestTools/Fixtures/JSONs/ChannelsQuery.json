@@ -9427,7 +9427,8 @@
             "online" : true,
             "name" : "broken-waterfall-5"
           },
-          "last_read" : "2020-06-10T02:33:11.760244736Z"
+          "last_read" : "2020-06-10T02:33:11.760244736Z",
+          "last_read_message_id" : "message-id-1"
         }
       ],
       "members" : [

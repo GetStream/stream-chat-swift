@@ -99,6 +99,9 @@ public struct NotificationMarkReadEvent: ChannelSpecificEvent, HasUnreadCount {
     /// The unread counts of the current user.
     public let unreadCount: UnreadCount?
 
+    /// The id of the last read message id
+    public let lastReadMessageId: MessageId?
+
     /// The event timestamp.
     public let createdAt: Date
 }
@@ -117,6 +120,9 @@ public struct NotificationMarkUnreadEvent: ChannelSpecificEvent {
     /// The id of the first unread message id
     public let firstUnreadMessageId: MessageId
 
+    /// The id of the last read message id
+    public let lastReadMessageId: MessageId?
+
     /// The timestamp of the last read message
     public let lastReadAt: Date
 
@@ -129,6 +135,7 @@ class NotificationMarkReadEventDTO: EventDTO {
     let cid: ChannelId
     let unreadCount: UnreadCount
     let createdAt: Date
+    let lastReadMessageId: MessageId?
     let payload: EventPayload
 
     init(from response: EventPayload) throws {
@@ -136,6 +143,7 @@ class NotificationMarkReadEventDTO: EventDTO {
         cid = try response.value(at: \.cid)
         createdAt = try response.value(at: \.createdAt)
         unreadCount = try response.value(at: \.unreadCount)
+        lastReadMessageId = try? response.value(at: \.lastReadMessageId)
         payload = response
     }
 
@@ -146,6 +154,7 @@ class NotificationMarkReadEventDTO: EventDTO {
             user: userDTO.asModel(),
             cid: cid,
             unreadCount: unreadCount,
+            lastReadMessageId: lastReadMessageId,
             createdAt: createdAt
         )
     }
@@ -156,6 +165,7 @@ class NotificationMarkUnreadEventDTO: EventDTO {
     let cid: ChannelId
     let createdAt: Date
     let firstUnreadMessageId: MessageId
+    let lastReadMessageId: MessageId?
     let lastReadAt: Date
     let unreadMessagesCount: Int
     let payload: EventPayload
@@ -165,6 +175,7 @@ class NotificationMarkUnreadEventDTO: EventDTO {
         cid = try response.value(at: \.cid)
         createdAt = try response.value(at: \.createdAt)
         firstUnreadMessageId = try response.value(at: \.firstUnreadMessageId)
+        lastReadMessageId = try response.value(at: \.lastReadMessageId)
         lastReadAt = try response.value(at: \.lastReadAt)
         unreadMessagesCount = try response.value(at: \.unreadMessagesCount)
         payload = response
@@ -178,6 +189,7 @@ class NotificationMarkUnreadEventDTO: EventDTO {
             cid: cid,
             createdAt: createdAt,
             firstUnreadMessageId: firstUnreadMessageId,
+            lastReadMessageId: lastReadMessageId,
             lastReadAt: lastReadAt,
             unreadMessagesCount: unreadMessagesCount
         )

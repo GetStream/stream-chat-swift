@@ -308,6 +308,7 @@ protocol ChannelReadDatabaseSession {
         for cid: ChannelId,
         userId: UserId,
         from messageId: MessageId,
+        lastReadMessageId: MessageId?,
         lastReadAt: Date?,
         unreadMessagesCount: Int?
     )

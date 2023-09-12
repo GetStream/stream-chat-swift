@@ -140,6 +140,7 @@ final class ChannelDTO_Tests: XCTestCase {
         let anotherMemberRead: ChannelReadPayload = .init(
             user: anotherMember.user!,
             lastReadAt: .init(),
+            lastReadMessageId: .unique,
             unreadMessagesCount: 0
         )
 
@@ -194,6 +195,7 @@ final class ChannelDTO_Tests: XCTestCase {
         let read1 = ChannelReadPayload(
             user: .dummy(userId: .unique),
             lastReadAt: .init(),
+            lastReadMessageId: .unique,
             unreadMessagesCount: 0
         )
 
@@ -210,6 +212,7 @@ final class ChannelDTO_Tests: XCTestCase {
         let read2 = ChannelReadPayload(
             user: .dummy(userId: .unique),
             lastReadAt: .init(),
+            lastReadMessageId: .unique,
             unreadMessagesCount: 0
         )
 
@@ -1080,6 +1083,7 @@ final class ChannelDTO_Tests: XCTestCase {
         let currentUserChannelReadPayload: ChannelReadPayload = .init(
             user: currentUserPayload,
             lastReadAt: .init(),
+            lastReadMessageId: .unique,
             unreadMessagesCount: 0
         )
 
@@ -1365,7 +1369,7 @@ final class ChannelDTO_Tests: XCTestCase {
 
         try database.writeSynchronously { session in
             try session.saveChannel(payload: channelPayload)
-            let currentUser = try session.saveCurrentUser(payload: .dummy(userId: userId, role: .user))
+            try session.saveCurrentUser(payload: .dummy(userId: userId, role: .user))
         }
 
         // WHEN

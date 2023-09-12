@@ -30,6 +30,7 @@ class EventPayload: Decodable {
         case hardDelete = "hard_delete"
         case firstUnreadMessageId = "first_unread_message_id"
         case lastReadAt = "last_read_at"
+        case lastReadMessageId = "last_read_message_id"
         case unreadMessagesCount = "unread_messages"
         case shadow
     }
@@ -55,6 +56,7 @@ class EventPayload: Decodable {
     let shadow: Bool?
     // Mark as unread properties
     let firstUnreadMessageId: MessageId?
+    let lastReadMessageId: MessageId?
     let lastReadAt: Date?
     let unreadMessagesCount: Int?
 
@@ -80,6 +82,7 @@ class EventPayload: Decodable {
         shadow: Bool? = nil,
         firstUnreadMessageId: MessageId? = nil,
         lastReadAt: Date? = nil,
+        lastReadMessageId: MessageId? = nil,
         unreadMessagesCount: Int? = nil
     ) {
         self.eventType = eventType
@@ -103,6 +106,7 @@ class EventPayload: Decodable {
         self.shadow = shadow
         self.firstUnreadMessageId = firstUnreadMessageId
         self.lastReadAt = lastReadAt
+        self.lastReadMessageId = lastReadMessageId
         self.unreadMessagesCount = unreadMessagesCount
     }
 
@@ -131,6 +135,7 @@ class EventPayload: Decodable {
         shadow = try container.decodeIfPresent(Bool.self, forKey: .shadow)
         firstUnreadMessageId = try container.decodeIfPresent(MessageId.self, forKey: .firstUnreadMessageId)
         lastReadAt = try container.decodeIfPresent(Date.self, forKey: .lastReadAt)
+        lastReadMessageId = try container.decodeIfPresent(MessageId.self, forKey: .lastReadMessageId)
         unreadMessagesCount = try container.decodeIfPresent(Int.self, forKey: .unreadMessagesCount)
     }
 

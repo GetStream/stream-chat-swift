@@ -184,6 +184,7 @@ struct ChannelReadPayload: Decodable {
     private enum CodingKeys: String, CodingKey {
         case user
         case lastReadAt = "last_read"
+        case lastReadMessageId = "last_read_message_id"
         case unreadMessagesCount = "unread_messages"
     }
 
@@ -191,6 +192,8 @@ struct ChannelReadPayload: Decodable {
     let user: UserPayload
     /// A last read date by the user.
     public let lastReadAt: Date
+    /// Id for the last message the user has read. Nil means the user has never read this channel
+    public let lastReadMessageId: MessageId?
     /// Unread message count for the user.
     public let unreadMessagesCount: Int
 }

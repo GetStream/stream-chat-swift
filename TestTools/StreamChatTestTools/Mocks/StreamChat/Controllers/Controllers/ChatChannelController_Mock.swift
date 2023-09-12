@@ -12,6 +12,11 @@ public class ChatChannelController_Mock: ChatChannelController {
         mockCid ?? super.cid
     }
 
+    var mockFirstUnreadMessageId: MessageId?
+    public override var firstUnreadMessageId: MessageId? {
+        mockFirstUnreadMessageId ?? super.firstUnreadMessageId
+    }
+
     /// Creates a new mock instance of `ChatChannelController`.
     public static func mock(chatClientConfig: ChatClientConfig? = nil) -> ChatChannelController_Mock {
         .init(
@@ -62,6 +67,11 @@ public class ChatChannelController_Mock: ChatChannelController {
         hasLoadedAllNextMessages_mock ?? super.hasLoadedAllNextMessages
     }
 
+    public var markedAsUnread_mock: Bool? = true
+    public override var isMarkedAsUnread: Bool {
+        markedAsUnread_mock ?? super.isMarkedAsUnread
+    }
+
     public var channel_mock: ChatChannel?
     override public var channel: ChatChannel? {
         channel_mock ?? super.channel
@@ -82,7 +92,7 @@ public class ChatChannelController_Mock: ChatChannelController {
         markReadCallCount += 1
     }
 
-    public private(set) var state_mock: State?
+    public var state_mock: State?
     override public var state: DataController.State {
         get { state_mock ?? super.state }
         set { super.state = newValue }

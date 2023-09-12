@@ -265,6 +265,7 @@ final class ChatChannelVC_Tests: XCTestCase {
             ],
             state: .localDataFetched
         )
+        channelControllerMock.mockFirstUnreadMessageId = "non-existent"
 
         // Load the view with the initial messages
         _ = vc.view
@@ -659,53 +660,150 @@ final class ChatChannelVC_Tests: XCTestCase {
         XCTAssertEqual(channelControllerMock.loadPageAroundMessageIdCallCount, 0)
     }
 
+    // MARK: Unread banner
+
+    func test_whenThereIsAnUnreadMessage_shouldShowABannerOnTopOfIt() {
+        let unreadMessageId = MessageId.unique
+        channelControllerMock.simulateInitial(
+            channel: .mock(cid: .unique),
+            messages: [
+                .mock(id: .unique, text: "Read message", createdAt: Date(timeIntervalSince1970: 1)),
+                .mock(id: unreadMessageId, text: "Unread message", createdAt: Date(timeIntervalSince1970: 2))
+            ].reversed(), // We reverse it because the table is inverted. This way is readable in tests.
+            state: .localDataFetched
+        )
+        channelControllerMock.mockFirstUnreadMessageId = unreadMessageId
+        vc.channelController(channelControllerMock, didUpdateMessages: [])
+
+        AssertSnapshot(
+            vc,
+            isEmbeddedInNavigationController: true,
+            variants: [.defaultLight]
+        )
+    }
+
+    // MARK: Jump to unread pill
+
+    func test_whenThereIsAnUnreadMessageOutOfScreen_shouldShowJumpToUnreadPill_whenJumpToUnreadIsEnabled() {
+        vc.components.isJumpToUnreadEnabled = true
+        let unreadMessageId = MessageId.unique
+        let longText = "Hello\nHello\nHello\nHello\nHello\nHello\nHello\nHello\nHello\nHello\nHello\nHello\nHello\nHello"
+        channelControllerMock.simulateInitial(
+            channel: .mock(cid: .unique, unreadCount: ChannelUnreadCount(messages: 4, mentions: 0)),
+            messages: [
+                .mock(id: unreadMessageId, text: longText, createdAt: Date(timeIntervalSince1970: 1)),
+                .mock(id: .unique, text: longText, createdAt: Date(timeIntervalSince1970: 2)),
+                .mock(id: .unique, text: longText, createdAt: Date(timeIntervalSince1970: 3)),
+                .mock(id: .unique, text: "All the messages above are unread", createdAt: Date(timeIntervalSince1970: 4))
+            ].reversed(), // We reverse it because the table is inverted. This way is readable in tests.
+            state: .localDataFetched
+        )
+        channelControllerMock.mockFirstUnreadMessageId = unreadMessageId
+        vc.view.layoutIfNeeded()
+        vc.channelController(channelControllerMock, didUpdateMessages: [])
+        AssertSnapshot(
+            vc,
+            isEmbeddedInNavigationController: true,
+            variants: [.defaultLight]
+        )
+    }
+
+    func test_whenThereIsAnUnreadMessageOutOfScreen_shouldShowJumpToUnreadPill_whenJumpToUnreadIsDisabled() {
+        vc.components.isJumpToUnreadEnabled = false
+        let unreadMessageId = MessageId.unique
+        let longText = "Hello\nHello\nHello\nHello\nHello\nHello\nHello\nHello\nHello\nHello\nHello\nHello\nHello\nHello"
+        channelControllerMock.simulateInitial(
+            channel: .mock(cid: .unique, unreadCount: ChannelUnreadCount(messages: 4, mentions: 0)),
+            messages: [
+                .mock(id: unreadMessageId, text: longText, createdAt: Date(timeIntervalSince1970: 1)),
+                .mock(id: .unique, text: longText, createdAt: Date(timeIntervalSince1970: 2)),
+                .mock(id: .unique, text: longText, createdAt: Date(timeIntervalSince1970: 3)),
+                .mock(id: .unique, text: "All the messages above are unread", createdAt: Date(timeIntervalSince1970: 4))
+            ].reversed(), // We reverse it because the table is inverted. This way is readable in tests.
+            state: .localDataFetched
+        )
+        channelControllerMock.mockFirstUnreadMessageId = unreadMessageId
+        vc.view.layoutIfNeeded()
+        vc.channelController(channelControllerMock, didUpdateMessages: [])
+        AssertSnapshot(
+            vc,
+            isEmbeddedInNavigationController: true,
+            variants: [.defaultLight]
+        )
+    }
+
     // MARK: Channel read
 
-    func test_shouldMarkChannelRead_whenIsLastMessageFullyVisible_whenHasLoadedAllNextMessages_thenReturnsTrue() {
+    func test_shouldMarkChannelRead_viewIsVisible_remoteDataFetched_lastMessageVisible_hasLoadedAllNextMessages_hasNotMarkedMessageAsUnread_shouldReturnTrue() {
         let mockedListView = makeMockMessageListView()
+        vc.isViewVisible = { _ in true }
+        channelControllerMock.state_mock = .remoteDataFetched
         mockedListView.mockIsLastCellFullyVisible = true
         channelControllerMock.hasLoadedAllNextMessages_mock = true
+        channelControllerMock.markedAsUnread_mock = false
+
+        // Simulate display to update hasSeenLastMessage
+        vc.chatMessageListVC(ChatMessageListVC_Mock(), willDisplayMessageAt: IndexPath(item: 0, section: 0))
 
         XCTAssertTrue(vc.shouldMarkChannelRead)
     }
 
-    func test_shouldMarkChannelRead_whenViewIsNotVisible_thenReturnsFalse() {
+    func test_shouldMarkChannelRead_viewIsNotVisible_remoteDataNotFetched_lastMessageNotVisible_hasNotLoadedAllNextMessages_hasMarkedMessageAsUnread_shouldReturnFalse() {
         let mockedListView = makeMockMessageListView()
-        mockedListView.mockIsLastCellFullyVisible = true
-        channelControllerMock.hasLoadedAllNextMessages_mock = true
         vc.isViewVisible = { _ in false }
-
-        XCTAssertFalse(vc.shouldMarkChannelRead)
-    }
-
-    func test_shouldMarkChannelRead_whenNotLastMessageFullyVisible_thenReturnsFalse() {
-        let mockedListView = makeMockMessageListView()
-        mockedListView.mockIsLastCellFullyVisible = false
-        channelControllerMock.hasLoadedAllNextMessages_mock = true
-
-        XCTAssertFalse(vc.shouldMarkChannelRead)
-    }
-
-    func test_shouldMarkChannelRead_whenHasNotLoadedAllNextMessages_thenReturnsFalse() {
-        let mockedListView = makeMockMessageListView()
-        mockedListView.mockIsLastCellFullyVisible = true
-        channelControllerMock.hasLoadedAllNextMessages_mock = false
-
-        XCTAssertFalse(vc.shouldMarkChannelRead)
-    }
-
-    func test_shouldMarkChannelRead_whenNotLastMessageFullyVisible_whenHasNotLoadedAllNextMessages_thenReturnsFalse() {
-        let mockedListView = makeMockMessageListView()
+        channelControllerMock.state_mock = .initialized
         mockedListView.mockIsLastCellFullyVisible = false
         channelControllerMock.hasLoadedAllNextMessages_mock = false
+        channelControllerMock.markedAsUnread_mock = true
+
+        // Simulate display to update hasSeenLastMessage
+        vc.chatMessageListVC(ChatMessageListVC_Mock(), willDisplayMessageAt: IndexPath(item: 0, section: 0))
 
         XCTAssertFalse(vc.shouldMarkChannelRead)
+    }
+
+    func test_shouldMarkChannelRead_otherCombinations_shouldReturnFalse() {
+        struct MarkUnreadStatePreconditions {
+            let isViewVisible: Bool, state: DataController.State, isLastCellFullyVisible: Bool, hasLoadedAllNextMessages: Bool, markedAsUnread: Bool
+        }
+        let options: [MarkUnreadStatePreconditions] = [
+            .init(isViewVisible: false, state: .remoteDataFetched, isLastCellFullyVisible: true, hasLoadedAllNextMessages: true, markedAsUnread: false),
+            .init(isViewVisible: true, state: .initialized, isLastCellFullyVisible: true, hasLoadedAllNextMessages: true, markedAsUnread: false),
+            .init(isViewVisible: true, state: .remoteDataFetched, isLastCellFullyVisible: false, hasLoadedAllNextMessages: true, markedAsUnread: false),
+            .init(isViewVisible: true, state: .remoteDataFetched, isLastCellFullyVisible: true, hasLoadedAllNextMessages: false, markedAsUnread: false),
+            .init(isViewVisible: true, state: .remoteDataFetched, isLastCellFullyVisible: true, hasLoadedAllNextMessages: true, markedAsUnread: true)
+        ]
+
+        options.forEach { option in
+            // We are recreating the vc so there is no shared state between the options
+            let vc = ChatChannelVC()
+            vc.isViewVisible = { _ in true }
+            vc.components = self.vc.components
+            vc.channelController = self.vc.channelController
+
+            let mockedListView = makeMockMessageListView()
+            vc.isViewVisible = { _ in option.isViewVisible }
+            channelControllerMock.state_mock = option.state
+            mockedListView.mockIsLastCellFullyVisible = option.isLastCellFullyVisible
+            channelControllerMock.hasLoadedAllNextMessages_mock = option.hasLoadedAllNextMessages
+            channelControllerMock.markedAsUnread_mock = option.markedAsUnread
+
+            // Simulate display to update hasSeenLastMessage
+            vc.chatMessageListVC(ChatMessageListVC_Mock(), willDisplayMessageAt: IndexPath(item: 0, section: 0))
+
+            XCTAssertFalse(vc.shouldMarkChannelRead)
+        }
     }
 
     func test_viewDidAppear_whenShouldMarkChannelRead_thenMarkRead() {
         let mockedListView = makeMockMessageListView()
         mockedListView.mockIsLastCellFullyVisible = true
         channelControllerMock.hasLoadedAllNextMessages_mock = true
+        channelControllerMock.markedAsUnread_mock = false
+        channelControllerMock.state_mock = .remoteDataFetched
+
+        // Simulate display to update hasSeenLastMessage
+        vc.chatMessageListVC(ChatMessageListVC_Mock(), willDisplayMessageAt: IndexPath(item: 0, section: 0))
 
         vc.viewDidAppear(false)
         XCTAssertEqual(channelControllerMock.markReadCallCount, 1)
@@ -715,6 +813,11 @@ final class ChatChannelVC_Tests: XCTestCase {
         let mockedListView = makeMockMessageListView()
         mockedListView.mockIsLastCellFullyVisible = false
         channelControllerMock.hasLoadedAllNextMessages_mock = false
+        channelControllerMock.markedAsUnread_mock = true
+        channelControllerMock.state_mock = .initialized
+
+        // Simulate display to update hasSeenLastMessage
+        vc.chatMessageListVC(ChatMessageListVC_Mock(), willDisplayMessageAt: IndexPath(item: 0, section: 0))
 
         vc.viewDidAppear(false)
         XCTAssertEqual(channelControllerMock.markReadCallCount, 0)
@@ -724,6 +827,11 @@ final class ChatChannelVC_Tests: XCTestCase {
         let mockedListView = makeMockMessageListView()
         mockedListView.mockIsLastCellFullyVisible = true
         channelControllerMock.hasLoadedAllNextMessages_mock = true
+        channelControllerMock.markedAsUnread_mock = false
+        channelControllerMock.state_mock = .remoteDataFetched
+
+        // Simulate display to update hasSeenLastMessage
+        vc.chatMessageListVC(ChatMessageListVC_Mock(), willDisplayMessageAt: IndexPath(item: 0, section: 0))
 
         vc.chatMessageListVC(vc.messageListVC, scrollViewDidScroll: UIScrollView())
         XCTAssertEqual(channelControllerMock.markReadCallCount, 1)
@@ -733,6 +841,11 @@ final class ChatChannelVC_Tests: XCTestCase {
         let mockedListView = makeMockMessageListView()
         mockedListView.mockIsLastCellFullyVisible = false
         channelControllerMock.hasLoadedAllNextMessages_mock = false
+        channelControllerMock.markedAsUnread_mock = true
+        channelControllerMock.state_mock = .initialized
+
+        // Simulate display to update hasSeenLastMessage
+        vc.chatMessageListVC(ChatMessageListVC_Mock(), willDisplayMessageAt: IndexPath(item: 0, section: 0))
 
         vc.chatMessageListVC(vc.messageListVC, scrollViewDidScroll: UIScrollView())
         XCTAssertEqual(channelControllerMock.markReadCallCount, 0)
@@ -742,6 +855,11 @@ final class ChatChannelVC_Tests: XCTestCase {
         let mockedListView = makeMockMessageListView()
         mockedListView.mockIsLastCellFullyVisible = true
         channelControllerMock.hasLoadedAllNextMessages_mock = true
+        channelControllerMock.markedAsUnread_mock = false
+        channelControllerMock.state_mock = .remoteDataFetched
+
+        // Simulate display to update hasSeenLastMessage
+        vc.chatMessageListVC(ChatMessageListVC_Mock(), willDisplayMessageAt: IndexPath(item: 0, section: 0))
 
         vc.channelController(channelControllerMock, didUpdateMessages: [])
         mockedListView.updateMessagesCompletion?()
@@ -752,6 +870,11 @@ final class ChatChannelVC_Tests: XCTestCase {
         let mockedListView = makeMockMessageListView()
         mockedListView.mockIsLastCellFullyVisible = false
         channelControllerMock.hasLoadedAllNextMessages_mock = false
+        channelControllerMock.markedAsUnread_mock = true
+        channelControllerMock.state_mock = .initialized
+
+        // Simulate display to update hasSeenLastMessage
+        vc.chatMessageListVC(ChatMessageListVC_Mock(), willDisplayMessageAt: IndexPath(item: 0, section: 0))
 
         vc.channelController(channelControllerMock, didUpdateMessages: [])
         mockedListView.updateMessagesCompletion?()
@@ -760,7 +883,7 @@ final class ChatChannelVC_Tests: XCTestCase {
     
     // MARK: - chatMessageListVC(_:headerViewForMessage:at)
 
-    func test_headerViewForMessage_returnsExpectedValue_whenMessageShouldShowDateSeparator_andIsNotMarkedAsUnread() throws {
+    func test_headerViewForMessage_returnsExpectedValue_whenMessageShouldShowDateSeparator() throws {
         var components = Components.mock
         components.channelHeaderView = ChatChannelHeaderViewMock.self
         components.messageComposerVC = ComposerVC_Mock.self
@@ -801,6 +924,8 @@ final class ChatChannelVC_Tests: XCTestCase {
 
         // Simulate marking a message as unread
         let firstMessageId = MessageId.unique
+        channelControllerMock.mockFirstUnreadMessageId = firstMessageId
+        vc.channelController(channelControllerMock, didUpdateMessages: [])
         vc.messages = [
             .mock(id: firstMessageId, text: "First message", createdAt: Date(timeIntervalSince1970: 0)),
             .mock(text: "Second message", createdAt: Date(timeIntervalSince1970: 86401))
@@ -836,7 +961,7 @@ final class ChatChannelVC_Tests: XCTestCase {
 
         XCTAssertEqual(
             headerDecorationView.unreadCountView.messagesCountDecorationView.textLabel.text,
-            "1 UNREAD MESSAGE"
+            "UNREAD MESSAGES"
         )
         AssertSnapshot(vc, variants: [.defaultLight])
     }

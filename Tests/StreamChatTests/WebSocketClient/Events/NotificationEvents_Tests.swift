@@ -61,6 +61,7 @@ final class NotificationsEvents_Tests: XCTestCase {
         XCTAssertEqual(event?.user.id, "luke_skywalker")
         XCTAssertEqual(event?.firstUnreadMessageId, "leia_organa-1f9b7fe0-989f-4fa6-87e8-9c9e788fb2c3")
         XCTAssertEqual(event?.lastReadAt.description, "2023-03-08 10:00:26 +0000")
+        XCTAssertEqual(event?.lastReadMessageId, "another-894bj4by4b84-1f9b7fe0-989f")
         XCTAssertEqual(event?.unreadMessagesCount, 19)
     }
 
@@ -191,7 +192,8 @@ final class NotificationsEvents_Tests: XCTestCase {
             cid: .unique,
             user: .dummy(userId: .unique),
             unreadCount: .init(channels: .unique, messages: .unique),
-            createdAt: .unique
+            createdAt: .unique,
+            lastReadMessageId: "lastRead"
         )
 
         // Create event DTO
@@ -208,6 +210,7 @@ final class NotificationsEvents_Tests: XCTestCase {
         XCTAssertEqual(event.user.id, eventPayload.user?.id)
         XCTAssertEqual(event.cid, eventPayload.cid)
         XCTAssertEqual(event.unreadCount, eventPayload.unreadCount)
+        XCTAssertEqual(event.lastReadMessageId, eventPayload.lastReadMessageId)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
 
@@ -225,6 +228,7 @@ final class NotificationsEvents_Tests: XCTestCase {
             createdAt: .unique,
             firstUnreadMessageId: "Hello",
             lastReadAt: lastReadAt,
+            lastReadMessageId: "lastRead",
             unreadMessagesCount: 6
         )
 
@@ -242,8 +246,9 @@ final class NotificationsEvents_Tests: XCTestCase {
         XCTAssertEqual(event.user.id, eventPayload.user?.id)
         XCTAssertEqual(event.cid, eventPayload.cid)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
-        XCTAssertEqual(event.firstUnreadMessageId, event.firstUnreadMessageId)
+        XCTAssertEqual(event.firstUnreadMessageId, eventPayload.firstUnreadMessageId)
         XCTAssertEqual(event.lastReadAt, eventPayload.lastReadAt)
+        XCTAssertEqual(event.lastReadMessageId, eventPayload.lastReadMessageId)
         XCTAssertEqual(event.unreadMessagesCount, eventPayload.unreadMessagesCount)
     }
 

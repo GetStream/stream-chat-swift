@@ -15,7 +15,11 @@ class ChannelRepository {
     /// - Parameters:
     ///   - cid: Channel id of the channel to be marked as read
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    func markRead(cid: ChannelId, userId: UserId, completion: ((Error?) -> Void)? = nil) {
+    func markRead(
+        cid: ChannelId,
+        userId: UserId,
+        completion: ((Error?) -> Void)? = nil
+    ) {
         apiClient.request(endpoint: .markRead(cid: cid)) { [weak self] result in
             if let error = result.error {
                 completion?(error)
@@ -35,12 +39,14 @@ class ChannelRepository {
     /// - Parameters:
     ///   - cid: The id of the channel to be marked as unread
     ///   - userId: The id of the current user
-    ///   - messageId: The id of the first message id that will be marked as unread.
+    ///   - messageId: The id of the first message that will be marked as unread.
+    ///   - lastReadMessageId: The id of the last message that was read.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func markUnread(
         for cid: ChannelId,
         userId: UserId,
         from messageId: MessageId,
+        lastReadMessageId: MessageId?,
         completion: ((Error?) -> Void)? = nil
     ) {
         apiClient.request(
@@ -56,6 +62,7 @@ class ChannelRepository {
                     for: cid,
                     userId: userId,
                     from: messageId,
+                    lastReadMessageId: lastReadMessageId,
                     lastReadAt: nil,
                     unreadMessagesCount: nil
                 )

@@ -35,16 +35,34 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
             )
 
         case let event as MessageReadEventDTO:
-            resetChannelRead(for: event.cid, userId: event.user.id, lastReadAt: event.createdAt, session: session)
+            resetChannelRead(
+                for: event.cid,
+                userId: event.user.id,
+                lastReadAt: event.createdAt,
+                session: session
+            )
 
         case let event as NotificationMarkReadEventDTO:
-            resetChannelRead(for: event.cid, userId: event.user.id, lastReadAt: event.createdAt, session: session)
+            resetChannelRead(
+                for: event.cid,
+                userId: event.user.id,
+                lastReadAt: event.createdAt,
+                session: session
+            )
+            updateLastReadMessage(
+                for: event.cid,
+                userId: event.user.id,
+                lastReadMessageId: event.lastReadMessageId,
+                lastReadAt: event.createdAt,
+                session: session
+            )
 
         case let event as NotificationMarkUnreadEventDTO:
             markChannelAsUnread(
                 for: event.cid,
                 userId: event.user.id,
                 from: event.firstUnreadMessageId,
+                lastReadMessageId: event.lastReadMessageId,
                 lastReadAt: event.lastReadAt,
                 unreadMessages: event.unreadMessagesCount,
                 session: session
@@ -72,15 +90,34 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
         session.markChannelAsRead(cid: cid, userId: userId, at: lastReadAt)
     }
 
+    private func updateLastReadMessage(
+        for cid: ChannelId,
+        userId: UserId,
+        lastReadMessageId: MessageId?,
+        lastReadAt: Date,
+        session: DatabaseSession
+    ) {
+        guard let read = session.loadChannelRead(cid: cid, userId: userId) else { return }
+        read.lastReadMessageId = lastReadMessageId
+    }
+
     private func markChannelAsUnread(
         for cid: ChannelId,
         userId: UserId,
         from messageId: MessageId,
+        lastReadMessageId: MessageId?,
         lastReadAt: Date,
         unreadMessages: Int,
         session: DatabaseSession
     ) {
-        session.markChannelAsUnread(for: cid, userId: userId, from: messageId, lastReadAt: lastReadAt, unreadMessagesCount: unreadMessages)
+        session.markChannelAsUnread(
+            for: cid,
+            userId: userId,
+            from: messageId,
+            lastReadMessageId: lastReadMessageId,
+            lastReadAt: lastReadAt,
+            unreadMessagesCount: unreadMessages
+        )
     }
 
     private func incrementUnreadCountIfNeeded(
