@@ -1193,6 +1193,7 @@
 		AD552E0228F46CE700199A6F /* ImageLoaderOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD552E0028F46CE700199A6F /* ImageLoaderOptions.swift */; };
 		AD57979E2978C4F7006CC435 /* UploadedAttachmentPostProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD57979D2978C4F7006CC435 /* UploadedAttachmentPostProcessor.swift */; };
 		AD57979F2978C4F7006CC435 /* UploadedAttachmentPostProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD57979D2978C4F7006CC435 /* UploadedAttachmentPostProcessor.swift */; };
+		AD5BCCC92AB22A6600456CD9 /* Logger_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD5BCCC82AB22A6600456CD9 /* Logger_Tests.swift */; };
 		AD61F3D92A27A9FB00247B5D /* ChannelMemberUnbanRequestPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD61F3D82A27A9FB00247B5D /* ChannelMemberUnbanRequestPayload_Tests.swift */; };
 		AD6A248A280DA890003BA1E4 /* PushDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6A2489280DA88F003BA1E4 /* PushDevice.swift */; };
 		AD6A248B280DA890003BA1E4 /* PushDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6A2489280DA88F003BA1E4 /* PushDevice.swift */; };
@@ -3628,6 +3629,7 @@
 		AD552E0028F46CE700199A6F /* ImageLoaderOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLoaderOptions.swift; sourceTree = "<group>"; };
 		AD57979D2978C4F7006CC435 /* UploadedAttachmentPostProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadedAttachmentPostProcessor.swift; sourceTree = "<group>"; };
 		AD57DE752A77D5A2005408B6 /* ChannelListSearchStrategy_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListSearchStrategy_Tests.swift; sourceTree = "<group>"; };
+		AD5BCCC82AB22A6600456CD9 /* Logger_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger_Tests.swift; sourceTree = "<group>"; };
 		AD61F3D82A27A9FB00247B5D /* ChannelMemberUnbanRequestPayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelMemberUnbanRequestPayload_Tests.swift; sourceTree = "<group>"; };
 		AD6A2489280DA88F003BA1E4 /* PushDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushDevice.swift; sourceTree = "<group>"; };
 		AD6BEFEF2786070800E184B4 /* SwitchButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchButton.swift; sourceTree = "<group>"; };
@@ -6616,6 +6618,7 @@
 				79CD959324F9381700E87377 /* MulticastDelegate_Tests.swift */,
 				C163ECFD2992B06C006D6124 /* NotificationExtensionLifecycle_Tests.swift */,
 				C14A46552845064E00EF498E /* ThreadSafeWeakCollection_Tests.swift */,
+				AD5BCCC82AB22A6600456CD9 /* Logger_Tests.swift */,
 				ADF617662A09925300E70307 /* MessagesPaginationStateHandling */,
 				A364D0BD27D12C600029857A /* Database */,
 				A3F65E3B27EB7357003F6256 /* EquatableEvent */,
@@ -10558,6 +10561,7 @@
 				79B5517C24E6A1CA00CE9FEC /* MessagePayloads_Tests.swift in Sources */,
 				F6D61D9D2510B57F00EB0624 /* NSManagedObject_Tests.swift in Sources */,
 				79D6CE9525F7D72E00BE2EEC /* ChatChannelWatcherListController_Tests.swift in Sources */,
+				AD5BCCC92AB22A6600456CD9 /* Logger_Tests.swift in Sources */,
 				A34ECB5027F5CAF200A804C1 /* PinnedMessagesQuery_IntegrationTests.swift in Sources */,
 				79896D66250A6D1800BA8F1C /* ChannelReadUpdaterMiddleware_Tests.swift in Sources */,
 				AC82033C28C61F640002EFDD /* CreateCallPayload_Tests.swift in Sources */,
