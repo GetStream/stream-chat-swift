@@ -6,11 +6,11 @@ import Foundation
 
 class ConnectionRepository {
     private let connectionQueue: DispatchQueue = DispatchQueue(label: "io.getstream.connection-repository", attributes: .concurrent)
-    private var _connectionIdWaiters: [String: (String?) -> Void] = [:]
+    private var _connectionIdWaiters: [String: (Result<ConnectionId, Error>) -> Void] = [:]
     private var _connectionId: ConnectionId?
     private var _connectionStatus: ConnectionStatus = .initialized
 
-    private var connectionIdWaiters: [String: (String?) -> Void] {
+    private var connectionIdWaiters: [String: (Result<ConnectionId, Error>) -> Void] {
         get { connectionQueue.sync { _connectionIdWaiters } }
         set { connectionQueue.async(flags: .barrier) { self._connectionIdWaiters = newValue }}
     }
@@ -180,11 +180,13 @@ class ConnectionRepository {
         }
 
         let waiterToken = String.newUniqueId
-        let completion = timerType.addTimeout(timeout, to: completion, noValueError: ClientError.MissingConnectionId()) { [weak self] in
-            self?.invalidateConnectionIdWaiter(waiterToken)
-        }
-
         connectionIdWaiters[waiterToken] = completion
+
+        timerType.schedule(timeInterval: timeout, queue: connectionQueue) { [weak self] in
+            guard let completion = self?._connectionIdWaiters[waiterToken] else { return }
+            completion(.failure(ClientError.WaiterTimeout()))
+            self?._connectionIdWaiters[waiterToken] = nil
+        }
     }
 
     func completeConnectionIdWaiters(connectionId: String?) {
@@ -204,7 +206,7 @@ class ConnectionRepository {
         connectionId: String?,
         shouldNotifyWaiters: Bool
     ) {
-        let waiters: [String: (String?) -> Void] = connectionQueue.sync {
+        let waiters: [String: (Result<ConnectionId, Error>) -> Void] = connectionQueue.sync {
             _connectionId = connectionId
             guard shouldNotifyWaiters else { return [:] }
             let waiters = _connectionIdWaiters
@@ -212,7 +214,13 @@ class ConnectionRepository {
             return waiters
         }
 
-        waiters.forEach { $0.value(connectionId) }
+        waiters.forEach { waiter in
+            if let connectionId = connectionId {
+                waiter.value(.success(connectionId))
+            } else {
+                waiter.value(.failure(ClientError.MissingConnectionId()))
+            }
+        }
     }
 
     private func invalidateConnectionIdWaiter(_ waiter: WaiterToken) {
