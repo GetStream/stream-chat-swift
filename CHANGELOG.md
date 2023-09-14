@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - Fix core data warnings when logging with different user [#2759](https://github.com/GetStream/stream-chat-swift/pull/2759)
 - Fix connecting user from background thread [#2762](https://github.com/GetStream/stream-chat-swift/pull/2762)
+- Fix memory leak caused by `Timer.addTimeout()` [#2777](https://github.com/GetStream/stream-chat-swift/pull/2777)
 
 ## StreamChatUI
 ### ✅ Added
