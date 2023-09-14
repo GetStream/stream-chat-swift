@@ -36,32 +36,6 @@ extension Timer {
     static func currentTime() -> Date {
         Date()
     }
-
-    static func addTimeout<T>(
-        _ timeout: TimeInterval,
-        to block: @escaping (Result<T, Error>) -> Void,
-        noValueError: Error,
-        onTimeout: @escaping () -> Void
-    ) -> (T?) -> Void {
-        var timer: TimerControl?
-        let completionCancellingTimer: (Result<T, Error>) -> Void = { result in
-            timer?.cancel()
-            block(result)
-        }
-
-        timer = schedule(timeInterval: timeout, queue: .global()) {
-            onTimeout()
-            completionCancellingTimer(.failure(ClientError.WaiterTimeout()))
-        }
-
-        return { value in
-            if let value = value {
-                completionCancellingTimer(.success(value))
-            } else {
-                completionCancellingTimer(.failure(noValueError))
-            }
-        }
-    }
 }
 
 /// Allows resuming and suspending of a timer.
