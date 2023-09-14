@@ -1142,6 +1142,24 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             }
         }
     }
+    
+    public func deleteFile(url: String, completion: ((Error?) -> Void)? = nil) {
+        guard let cid = cid, isChannelAlreadyCreated else {
+            channelModificationFailed(completion)
+            return
+        }
+        
+        updater.deleteFile(in: cid, url: url, completion: completion)
+    }
+    
+    public func deleteImage(url: String, completion: ((Error?) -> Void)? = nil) {
+        guard let cid = cid, isChannelAlreadyCreated else {
+            channelModificationFailed(completion)
+            return
+        }
+        
+        updater.deleteImage(in: cid, url: url, completion: completion)
+    }
 
     // MARK: - Internal
 
