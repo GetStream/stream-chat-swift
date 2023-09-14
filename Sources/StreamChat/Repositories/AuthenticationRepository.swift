@@ -46,7 +46,7 @@ class AuthenticationRepository {
     private var _currentToken: Token?
     private var _tokenProvider: TokenProvider?
     private var _tokenRequestCompletions: [(Error?) -> Void] = []
-    private var _tokenWaiters: [String: (Token?) -> Void] = [:]
+    private var _tokenWaiters: [String: (Result<Token, Error>) -> Void] = [:]
 
     private var isGettingToken: Bool {
         get { tokenQueue.sync { _isGettingToken } }
@@ -82,7 +82,7 @@ class AuthenticationRepository {
     }
 
     /// An array of requests waiting for the token
-    private(set) var tokenWaiters: [String: (Token?) -> Void] {
+    private(set) var tokenWaiters: [String: (Result<Token, Error>) -> Void] {
         get { tokenQueue.sync { _tokenWaiters } }
         set { tokenQueue.async(flags: .barrier) { self._tokenWaiters = newValue }}
     }
@@ -251,11 +251,13 @@ class AuthenticationRepository {
         }
 
         let waiterToken = String.newUniqueId
-        let completion = timerType.addTimeout(timeout, to: completion, noValueError: ClientError.MissingToken()) { [weak self] in
-            self?.invalidateTokenWaiter(waiterToken)
-        }
-
         tokenWaiters[waiterToken] = completion
+
+        timerType.schedule(timeInterval: timeout, queue: tokenQueue) { [weak self] in
+            guard let completion = self?._tokenWaiters[waiterToken] else { return }
+            completion(.failure(ClientError.WaiterTimeout()))
+            self?._tokenWaiters[waiterToken] = nil
+        }
     }
 
     func completeTokenWaiters(token: Token?) {
@@ -263,7 +265,7 @@ class AuthenticationRepository {
     }
 
     private func updateToken(token: Token?, notifyTokenWaiters: Bool) {
-        let waiters: [String: (Token?) -> Void] = tokenQueue.sync {
+        let waiters: [String: (Result<Token, Error>) -> Void] = tokenQueue.sync {
             _currentToken = token
             _currentUserId = token?.userId
             guard notifyTokenWaiters else { return [:] }
@@ -272,7 +274,13 @@ class AuthenticationRepository {
             return waiters
         }
 
-        waiters.forEach { $0.value(token) }
+        waiters.forEach { waiter in
+            if let token = token {
+                waiter.value(.success(token))
+            } else {
+                waiter.value(.failure(ClientError.MissingToken()))
+            }
+        }
     }
 
     private func scheduleTokenFetch(isRetry: Bool, userInfo: UserInfo?, tokenProvider: @escaping TokenProvider, completion: @escaping (Error?) -> Void) {
