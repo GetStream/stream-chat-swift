@@ -1142,6 +1142,34 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             }
         }
     }
+    
+    /// Deletes a file associated with the given URL in the channel.
+    /// - Parameters:
+    ///   - url: The URL of the file to be deleted.
+    ///   - completion: An optional closure to be called when the delete operation is complete.
+    ///                 If an error occurs during deletion, the error will be passed to this closure.
+    public func deleteFile(url: String, completion: ((Error?) -> Void)? = nil) {
+        guard let cid = cid, isChannelAlreadyCreated else {
+            channelModificationFailed(completion)
+            return
+        }
+        
+        updater.deleteFile(in: cid, url: url, completion: completion)
+    }
+    
+    /// Deletes an image associated with the given URL in the channel.
+    /// - Parameters:
+    ///   - url: The URL of the image to be deleted.
+    ///   - completion: An optional closure to be called when the delete operation is complete.
+    ///                 If an error occurs during deletion, the error will be passed to this closure.
+    public func deleteImage(url: String, completion: ((Error?) -> Void)? = nil) {
+        guard let cid = cid, isChannelAlreadyCreated else {
+            channelModificationFailed(completion)
+            return
+        }
+        
+        updater.deleteImage(in: cid, url: url, completion: completion)
+    }
 
     // MARK: - Internal
 
