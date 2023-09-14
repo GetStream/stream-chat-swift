@@ -7,7 +7,6 @@
 import XCTest
 
 final class FileEndpoints_Tests: XCTestCase {
-
     func test_deleteFile_buildsCorrectly() {
         // Given
         let channelId: ChannelId = .unique
@@ -47,5 +46,4 @@ final class FileEndpoints_Tests: XCTestCase {
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
         XCTAssertEqual("channels/\(channelId.apiPath)/image", endpoint.path.value)
     }
-
 }

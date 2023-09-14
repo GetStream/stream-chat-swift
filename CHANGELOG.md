@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChat
 ### ✅ Added
 - Allow injecting a custom URLSessionConfiguration in ChatClientConfig [#2756](https://github.com/GetStream/stream-chat-swift/pull/2756)
+- Methods for deleting file and image in `ChatChannelController` [#2776](https://github.com/GetStream/stream-chat-swift/pull/2776)
 ### 🐞 Fixed
 - Fix core data warnings when logging with different user [#2759](https://github.com/GetStream/stream-chat-swift/pull/2759)
 - Fix connecting user from background thread [#2762](https://github.com/GetStream/stream-chat-swift/pull/2762)
