@@ -81,6 +81,7 @@ Whenever your users leave the chat component, you should use disconnect to stop 
 
 ```swift
 chatClient.disconnect {
+    // dismiss the current screen or go to another screen
     print("disconnect completed")
 }
 ```
@@ -89,6 +90,7 @@ If your users logout form their account you should use logout instead for comple
 
 ```swift
 chatClient.logout {
+    // dismiss the current screen or go to another screen
     print("logout completed")
 }
 ```
