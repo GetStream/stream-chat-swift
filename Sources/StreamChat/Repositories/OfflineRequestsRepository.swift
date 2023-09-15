@@ -24,7 +24,7 @@ extension Endpoint {
 /// When running the queued requests, it basically passes the requests on to the APIClient, and waits for its result.
 class OfflineRequestsRepository {
     enum Constants {
-        static let secondsInHour: CGFloat = 3600
+        static let secondsInHour: Double = 3600
     }
     
     private let messageRepository: MessageRepository
@@ -86,7 +86,7 @@ class OfflineRequestsRepository {
             }
             
             let hoursQueued = currentDate.timeIntervalSince(date) / Constants.secondsInHour
-            let shouldBeDiscarded = hoursQueued > CGFloat(maxHoursThreshold)
+            let shouldBeDiscarded = hoursQueued > Double(maxHoursThreshold)
 
             guard endpoint.shouldBeQueuedOffline && !shouldBeDiscarded else {
                 log.error("Queued request for /\(endpoint.path.value) should not be queued", subsystems: .offlineSupport)
