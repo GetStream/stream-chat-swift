@@ -287,7 +287,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         
         // Create one recent.
         let id = "request\(count)"
-        try self.createRequest(
+        try createRequest(
             id: id,
             path: .sendMessage(.init(type: .messaging, id: id)),
             body: ["some\(id)": 123],
@@ -303,7 +303,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         
         XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 1)
         
-        apiClient.recoveryRequest_allRecordedCalls.forEach { endpoint, completion in
+        apiClient.recoveryRequest_allRecordedCalls.forEach { _, completion in
             let completion = completion as? ((Result<Data, Error>) -> Void)
             completion?(.success(Data()))
         }
