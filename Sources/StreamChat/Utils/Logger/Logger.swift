@@ -178,20 +178,26 @@ public enum LogConfig {
     /// Underlying logger instance to control singleton.
     private static var _logger: Logger?
 
+    private static var queue = DispatchQueue(label: "io.getstream.logconfig", attributes: .concurrent)
+
     /// Logger instance to be used by StreamChat.
     ///
     /// - Important: Other options in `LogConfig` will not take affect if this is changed.
     public static var logger: Logger {
         get {
-            if let logger = _logger {
-                return logger
-            } else {
-                _logger = Logger(identifier: identifier, destinations: destinations)
-                return _logger!
+            queue.sync {
+                if let logger = _logger {
+                    return logger
+                } else {
+                    _logger = Logger(identifier: identifier, destinations: destinations)
+                    return _logger!
+                }
             }
         }
         set {
-            _logger = newValue
+            queue.async(flags: .barrier) {
+                _logger = newValue
+            }
         }
     }
 
@@ -209,14 +215,27 @@ public class Logger {
 
     /// Destinations for this logger.
     /// See `LogDestination` protocol for details.
-    public var destinations: [LogDestination]
+    public var destinations: [LogDestination] {
+        get {
+            loggerQueue.sync {
+                _destinations
+            }
+        }
+        set {
+            loggerQueue.async(flags: .barrier) { [weak self] in
+                self?._destinations = newValue
+            }
+        }
+    }
 
-    private let loggerQueue = DispatchQueue(label: "LoggerQueue \(UUID())")
+    private var _destinations: [LogDestination]
+
+    private let loggerQueue = DispatchQueue(label: "io.getstream.logger", attributes: .concurrent)
 
     /// Init a logger with a given identifier and destinations.
     public init(identifier: String = "", destinations: [LogDestination] = []) {
         self.identifier = identifier
-        self.destinations = destinations
+        _destinations = destinations
     }
 
     /// Allows logger to be called as function.
@@ -266,18 +285,25 @@ public class Logger {
         let enabledDestinations = destinations.filter { $0.isEnabled(level: level, subsystems: subsystems) }
         guard !enabledDestinations.isEmpty else { return }
 
-        let logDetails = LogDetails(
-            loggerIdentifier: identifier,
-            level: level,
-            date: Date(),
-            message: String(describing: message()),
-            threadName: threadName,
-            functionName: functionName,
-            fileName: fileName,
-            lineNumber: lineNumber
-        )
-        for destination in enabledDestinations {
-            loggerQueue.async {
+        // The message() closure should be done from the thread it was called.
+        // In some scenarios message() will print out managedObjectContexts and in this case
+        // it is important the closure is performed in the managedObjectContext's thread.
+        let messageString = String(describing: message())
+
+        loggerQueue.async(flags: .barrier) { [weak self] in
+            guard let self = self else { return }
+
+            let logDetails = LogDetails(
+                loggerIdentifier: self.identifier,
+                level: level,
+                date: Date(),
+                message: messageString,
+                threadName: self.threadName,
+                functionName: functionName,
+                fileName: fileName,
+                lineNumber: lineNumber
+            )
+            for destination in enabledDestinations {
                 destination.process(logDetails: logDetails)
             }
         }

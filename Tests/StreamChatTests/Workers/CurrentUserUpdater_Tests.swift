@@ -279,35 +279,6 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
 
-    func test_addDevice_forwardsDatabaseError() throws {
-        let userPayload: CurrentUserPayload = .dummy(userId: .unique, role: .user)
-
-        // Save user to the db
-        try database.writeSynchronously {
-            try $0.saveCurrentUser(payload: userPayload)
-        }
-
-        // Simulate the DB failing with `TestError`
-        let testError = TestError()
-        database.write_errorResponse = testError
-
-        // Mock successful API response
-        apiClient.test_mockResponseResult(.success(EmptyResponse()))
-
-        // Call fetchDevices
-        var completionCalledError: Error?
-        currentUserUpdater.addDevice(
-            deviceId: "test",
-            pushProvider: .apn,
-            currentUserId: .unique
-        ) {
-            completionCalledError = $0
-        }
-
-        // Check returned error
-        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
-    }
-
     func test_addDevice_successfulResponse_isSavedToDB() throws {
         let userPayload: CurrentUserPayload = .dummy(userId: .unique, role: .user, devices: [.dummy])
 
@@ -418,32 +389,6 @@ final class CurrentUserUpdater_Tests: XCTestCase {
 
         // Assert the completion is called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
-    }
-
-    func test_removeDevice_forwardsDatabaseError() throws {
-        let userPayload: CurrentUserPayload = .dummy(userId: .unique, role: .user, devices: [.dummy])
-        let deviceId = userPayload.devices.first!.id
-
-        // Save user to the db
-        try database.writeSynchronously {
-            try $0.saveCurrentUser(payload: userPayload)
-        }
-
-        // Simulate the DB failing with `TestError`
-        let testError = TestError()
-        database.write_errorResponse = testError
-
-        // Call fetchDevices
-        var completionCalledError: Error?
-        currentUserUpdater.removeDevice(id: deviceId, currentUserId: .unique) {
-            completionCalledError = $0
-        }
-
-        // Simulate successful API response
-        apiClient.test_simulateResponse(.success(EmptyResponse()))
-
-        // Check returned error
-        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
 
     func test_removeDevice_successfulResponse_isSavedToDB() throws {

@@ -47,6 +47,9 @@ enum EndpointPath: Codable {
 
     case callToken(String)
     case createCall(String)
+    
+    case deleteFile(String)
+    case deleteImage(String)
 
     var value: String {
         switch self {
@@ -91,6 +94,8 @@ enum EndpointPath: Codable {
         case let .muteUser(mute): return "moderation/\(mute ? "mute" : "unmute")"
         case let .callToken(callId): return "calls/\(callId)"
         case let .createCall(queryString): return "channels/\(queryString)/call"
+        case let .deleteFile(channelId): return "channels/\(channelId)/file"
+        case let .deleteImage(channelId): return "channels/\(channelId)/image"
         }
     }
 
@@ -100,7 +105,7 @@ enum EndpointPath: Codable {
         case connect, sync, users, guest, members, search, devices, channels, createChannel, updateChannel, deleteChannel,
              channelUpdate, muteChannel, showChannel, truncateChannel, markChannelRead, markAllChannelsRead, channelEvent,
              stopWatchingChannel, pinnedMessages, uploadAttachment, sendMessage, message, editMessage, deleteMessage, replies,
-             reactions, addReaction, deleteReaction, messageAction, translate, banMember, flagUser, flagMessage, muteUser
+             reactions, addReaction, deleteReaction, messageAction, translate, banMember, flagUser, flagMessage, muteUser, deleteFile, deleteImage, markChannelUnread, callToken, createCall
     }
 
     init(from decoder: Decoder) throws {
@@ -165,6 +170,10 @@ enum EndpointPath: Codable {
                 channelId: nestedContainer.decode(String.self),
                 type: nestedContainer.decode(String.self)
             )
+        case .deleteFile:
+            self = try .deleteFile(container.decode(String.self, forKey: key))
+        case .deleteImage:
+            self = try .deleteImage(container.decode(String.self, forKey: key))
         case .sendMessage:
             self = try .sendMessage(container.decode(ChannelId.self, forKey: key))
         case .message:
@@ -197,6 +206,12 @@ enum EndpointPath: Codable {
             self = try .flagMessage(container.decode(Bool.self, forKey: key))
         case .muteUser:
             self = try .muteUser(container.decode(Bool.self, forKey: key))
+        case .markChannelUnread:
+            self = try .markChannelUnread(container.decode(String.self, forKey: key))
+        case .callToken:
+            self = try .callToken(container.decode(String.self, forKey: key))
+        case .createCall:
+            self = try .createCall(container.decode(String.self, forKey: key))
         }
     }
 
@@ -250,6 +265,10 @@ enum EndpointPath: Codable {
             var nestedContainer = container.nestedUnkeyedContainer(forKey: .uploadAttachment)
             try nestedContainer.encode(channelId)
             try nestedContainer.encode(type)
+        case let .deleteFile(channelId):
+            try container.encode(channelId, forKey: .deleteFile)
+        case let .deleteImage(channelId):
+            try container.encode(channelId, forKey: .deleteImage)
         case let .sendMessage(channelId):
             try container.encode(channelId, forKey: .sendMessage)
         case let .message(messageId):
@@ -280,6 +299,12 @@ enum EndpointPath: Codable {
             try container.encode(bool, forKey: .flagMessage)
         case let .muteUser(bool):
             try container.encode(bool, forKey: .muteUser)
+        case let .markChannelUnread(channelId):
+            try container.encode(channelId, forKey: .markChannelUnread)
+        case let .callToken(callToken):
+            try container.encode(callToken, forKey: .callToken)
+        case let .createCall(callId):
+            try container.encode(callId, forKey: .createCall)
         }
     }
     #endif

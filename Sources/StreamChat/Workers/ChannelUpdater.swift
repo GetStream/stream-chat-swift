@@ -576,4 +576,16 @@ class ChannelUpdater: Worker {
     func createCall(in cid: ChannelId, callId: String, type: String, completion: @escaping (Result<CallWithToken, Error>) -> Void) {
         callRepository.createCall(in: cid, callId: callId, type: type, completion: completion)
     }
+    
+    func deleteFile(in cid: ChannelId, url: String, completion: ((Error?) -> Void)? = nil) {
+        apiClient.request(endpoint: .deleteFile(cid: cid, url: url), completion: {
+            completion?($0.error)
+        })
+    }
+    
+    func deleteImage(in cid: ChannelId, url: String, completion: ((Error?) -> Void)? = nil) {
+        apiClient.request(endpoint: .deleteImage(cid: cid, url: url), completion: {
+            completion?($0.error)
+        })
+    }
 }
