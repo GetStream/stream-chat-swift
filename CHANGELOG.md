@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix core data warnings when logging with different user [#2759](https://github.com/GetStream/stream-chat-swift/pull/2759)
 - Fix connecting user from background thread [#2762](https://github.com/GetStream/stream-chat-swift/pull/2762)
 - Improve `addDevice()` and `removeDevice()` with optimistic updates [#2778](https://github.com/GetStream/stream-chat-swift/pull/2778)
+- Added threshold for queued messages before being sent [#2780](https://github.com/GetStream/stream-chat-swift/pull/2780)
 
 ## StreamChatUI
 ### ✅ Added

@@ -151,7 +151,8 @@ public class ChatClient {
         let offlineRequestsRepository = environment.offlineRequestsRepositoryBuilder(
             messageRepository,
             databaseContainer,
-            apiClient
+            apiClient,
+            config.unsentMessagesRetryHoursThreshold
         )
         let syncRepository = environment.syncRepositoryBuilder(
             config,

@@ -16,8 +16,18 @@ final class OfflineRequestsRepository_Mock: OfflineRequestsRepository, Spy {
                   apiClient: apiClient)
     }
 
-    override init(messageRepository: MessageRepository, database: DatabaseContainer, apiClient: APIClient) {
-        super.init(messageRepository: messageRepository, database: database, apiClient: apiClient)
+    override init(
+        messageRepository: MessageRepository,
+        database: DatabaseContainer,
+        apiClient: APIClient,
+        retryHoursThreshold: CGFloat = 12
+    ) {
+        super.init(
+            messageRepository: messageRepository,
+            database: database,
+            apiClient: apiClient,
+            retryHoursThreshold: retryHoursThreshold
+        )
     }
 
     override func runQueuedRequests(completion: @escaping () -> Void) {

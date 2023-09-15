@@ -24,20 +24,27 @@ extension Endpoint {
 /// When running the queued requests, it basically passes the requests on to the APIClient, and waits for its result.
 class OfflineRequestsRepository {
     enum Constants {
-        static let retryHoursThreshold: CGFloat = 12
         static let secondsInHour: CGFloat = 3600
     }
+    
     private let messageRepository: MessageRepository
     private let database: DatabaseContainer
     private let apiClient: APIClient
+    private let retryHoursThreshold: CGFloat
 
     /// Serial queue used to enqueue pending requests one after another
     private let retryQueue = DispatchQueue(label: "io.getstream.queue-requests")
 
-    init(messageRepository: MessageRepository, database: DatabaseContainer, apiClient: APIClient) {
+    init(
+        messageRepository: MessageRepository,
+        database: DatabaseContainer,
+        apiClient: APIClient,
+        retryHoursThreshold: CGFloat
+    ) {
         self.messageRepository = messageRepository
         self.database = database
         self.apiClient = apiClient
+        self.retryHoursThreshold = retryHoursThreshold
     }
 
     /// - If the requests succeeds -> The request is removed from the pending ones
@@ -47,7 +54,7 @@ class OfflineRequestsRepository {
         let readContext = database.backgroundReadOnlyContext
         readContext.perform { [weak self] in
             let requests = QueuedRequestDTO.loadAllPendingRequests(context: readContext).map {
-                ($0.id, $0.endpoint, $0.date as Date)                
+                ($0.id, $0.endpoint, $0.date as Date)
             }
             DispatchQueue.main.async {
                 self?.executeRequests(requests, completion: completion)
@@ -79,7 +86,7 @@ class OfflineRequestsRepository {
             }
             
             let hoursQueued = currentDate.timeIntervalSince(date) / Constants.secondsInHour
-            let shouldBeDiscarded = hoursQueued > Constants.retryHoursThreshold
+            let shouldBeDiscarded = hoursQueued > retryHoursThreshold
 
             guard endpoint.shouldBeQueuedOffline && !shouldBeDiscarded else {
                 log.error("Queued request for /\(endpoint.path.value) should not be queued", subsystems: .offlineSupport)
