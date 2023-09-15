@@ -152,7 +152,7 @@ public class ChatClient {
             messageRepository,
             databaseContainer,
             apiClient,
-            config.unsentMessagesMaxHoursThreshold
+            config.queuedActionsMaxHoursThreshold
         )
         let syncRepository = environment.syncRepositoryBuilder(
             config,
