@@ -352,6 +352,84 @@ final class ChannelListController_Tests: XCTestCase {
         XCTAssertEqual(env.channelListUpdater?.startWatchingChannels_callCount, 1)
     }
 
+    func test_didReceiveEvent_whenNotificationAddedToChannelEvent_whenChannelAlreadyPresent_shouldNotLinkChannelToQuery() throws {
+        controller.synchronize()
+
+        // Save channel to the current query
+        let cid: ChannelId = .unique
+        try database.writeSynchronously { session in
+            try session.saveChannel(
+                payload: self.dummyPayload(
+                    with: cid,
+                    members: [.dummy(user: .dummy(userId: self.memberId))]
+                ),
+                query: self.query,
+                cache: nil
+            )
+        }
+
+        let event = makeAddedChannelEvent(with: .mock(cid: cid))
+
+        controller.eventsController(controller.eventsController, didReceiveEvent: event)
+
+        env.channelListUpdater?.link_completion?(nil)
+
+        XCTAssertEqual(env.channelListUpdater?.link_callCount, 0)
+        XCTAssertEqual(env.channelListUpdater?.startWatchingChannels_callCount, 0)
+    }
+
+    func test_didReceiveEvent_whenMessageNewEvent_whenChannelAlreadyPresent_shouldNotLinkChannelToQuery() throws {
+        controller.synchronize()
+
+        // Save channel to the current query
+        let cid: ChannelId = .unique
+        try database.writeSynchronously { session in
+            try session.saveChannel(
+                payload: self.dummyPayload(
+                    with: cid,
+                    members: [.dummy(user: .dummy(userId: self.memberId))]
+                ),
+                query: self.query,
+                cache: nil
+            )
+        }
+
+        let event = makeMessageNewEvent(with: .mock(cid: cid))
+
+        controller.eventsController(controller.eventsController, didReceiveEvent: event)
+
+        env.channelListUpdater?.link_completion?(nil)
+
+        XCTAssertEqual(env.channelListUpdater?.link_callCount, 0)
+        XCTAssertEqual(env.channelListUpdater?.startWatchingChannels_callCount, 0)
+    }
+
+    func test_didReceiveEvent_whenNotificationMessageNewEvent_whenChannelAlreadyPresent_shouldNotLinkChannelToQuery() throws {
+        controller.synchronize()
+        
+        // Save channel to the current query
+        let cid: ChannelId = .unique
+        try database.writeSynchronously { session in
+            try session.saveChannel(
+                payload: self.dummyPayload(
+                    with: cid,
+                    members: [.dummy(user: .dummy(userId: self.memberId))]
+                ),
+                query: self.query,
+                cache: nil
+            )
+        }
+
+        let event = makeNotificationMessageNewEvent(with: .mock(cid: cid))
+
+        controller.eventsController(controller.eventsController, didReceiveEvent: event)
+
+        env.channelListUpdater?.link_completion?(nil)
+
+        XCTAssertEqual(env.channelListUpdater?.link_callCount, 0)
+        XCTAssertEqual(env.channelListUpdater?.startWatchingChannels_callCount, 0)
+    }
+
     func test_didReceiveEvent_whenFilterMatches_shouldLinkChannelToQuery() {
         let filter: (ChatChannel) -> Bool = { channel in
             channel.memberCount == 4
@@ -366,6 +444,35 @@ final class ChannelListController_Tests: XCTestCase {
 
         XCTAssertEqual(env.channelListUpdater?.link_callCount, 1)
         XCTAssertEqual(env.channelListUpdater?.startWatchingChannels_callCount, 1)
+    }
+
+    func test_didReceiveEvent_whenFilterMatches_whenChannelAlreadyPresent_shouldNotLinkChannelToQuery() throws {
+        let filter: (ChatChannel) -> Bool = { channel in
+            channel.memberCount == 4
+        }
+        setupControllerWithFilter(filter)
+
+        // Save channel to the current query
+        let cid: ChannelId = .unique
+        try database.writeSynchronously { session in
+            try session.saveChannel(
+                payload: self.dummyPayload(
+                    with: cid,
+                    members: [.dummy(user: .dummy(userId: self.memberId))]
+                ),
+                query: self.query,
+                cache: nil
+            )
+        }
+
+        let event = makeAddedChannelEvent(with: .mock(cid: cid, memberCount: 4))
+
+        controller.eventsController(controller.eventsController, didReceiveEvent: event)
+
+        env.channelListUpdater?.link_completion?(nil)
+
+        XCTAssertEqual(env.channelListUpdater?.link_callCount, 0)
+        XCTAssertEqual(env.channelListUpdater?.startWatchingChannels_callCount, 0)
     }
 
     func test_didReceiveEvent_whenFilterDoesNotMatch_shouldNotLinkChannelToQuery() {
@@ -384,22 +491,60 @@ final class ChannelListController_Tests: XCTestCase {
         XCTAssertEqual(env.channelListUpdater?.startWatchingChannels_callCount, 0)
     }
 
-    func test_didReceiveEvent_whenChannelUpdatedEvent_whenFilterDoesNotMatch_shouldUnlinkChannelFromQuery() {
+    func test_didReceiveEvent_whenChannelUpdatedEvent_whenFilterDoesNotMatch_shouldUnlinkChannelFromQuery() throws {
         let filter: (ChatChannel) -> Bool = { channel in
             channel.memberCount == 1
         }
         setupControllerWithFilter(filter)
 
-        let event = makeChannelUpdatedEvent(with: .mock(cid: .unique, memberCount: 4))
+        // Save channel to the current query
+        let cid: ChannelId = .unique
+        try database.writeSynchronously { session in
+            try session.saveChannel(
+                payload: self.dummyPayload(
+                    with: cid,
+                    members: [.dummy(user: .dummy(userId: self.memberId))]
+                ),
+                query: self.query,
+                cache: nil
+            )
+        }
+
+        let event = makeChannelUpdatedEvent(with: .mock(cid: cid, memberCount: 4))
 
         controller.eventsController(controller.eventsController, didReceiveEvent: event)
 
         XCTAssertEqual(env.channelListUpdater?.unlink_callCount, 1)
     }
 
-    func test_didReceiveEvent_whenChannelUpdatedEvent__whenFilterMatches_shouldNotUnlinkChannelFromQuery() {
+    func test_didReceiveEvent_whenChannelUpdatedEvent__whenFilterMatches_shouldNotUnlinkChannelFromQuery() throws {
         let filter: (ChatChannel) -> Bool = { channel in
             channel.memberCount == 4
+        }
+        setupControllerWithFilter(filter)
+
+        let cid: ChannelId = .unique
+        try database.writeSynchronously { session in
+            try session.saveChannel(
+                payload: self.dummyPayload(
+                    with: cid,
+                    members: [.dummy(user: .dummy(userId: self.memberId))]
+                ),
+                query: self.query,
+                cache: nil
+            )
+        }
+
+        let event = makeChannelUpdatedEvent(with: .mock(cid: cid, memberCount: 4))
+
+        controller.eventsController(controller.eventsController, didReceiveEvent: event)
+
+        XCTAssertEqual(env.channelListUpdater?.unlink_callCount, 0)
+    }
+
+    func test_didReceiveEvent_whenChannelUpdatedEvent__whenFilterDoesNotMatch_whenChannelNotPresent_shouldNotUnlinkChannelFromQuery() throws {
+        let filter: (ChatChannel) -> Bool = { channel in
+            channel.memberCount == 1
         }
         setupControllerWithFilter(filter)
 

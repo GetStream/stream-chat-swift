@@ -275,16 +275,16 @@ extension ChatChannelListController: EventsControllerDelegate {
 
     /// Handles if a channel should be linked to the current query or not.
     private func linkChannelIfNeeded(_ channel: ChatChannel) {
-        if shouldChannelBelongToCurrentQuery(channel) {
-            link(channel: channel)
-        }
+        guard !channels.contains(channel) else { return }
+        guard shouldChannelBelongToCurrentQuery(channel) else { return }
+        link(channel: channel)
     }
 
     /// Handles if a channel should be unlinked from the current query or not.
     private func unlinkChannelIfNeeded(_ channel: ChatChannel) {
-        if !shouldChannelBelongToCurrentQuery(channel) {
-            worker.unlink(channel: channel, with: query)
-        }
+        guard channels.contains(channel) else { return }
+        guard !shouldChannelBelongToCurrentQuery(channel) else { return }
+        worker.unlink(channel: channel, with: query)
     }
 
     /// Checks if the given channel should belong to the current query or not.
