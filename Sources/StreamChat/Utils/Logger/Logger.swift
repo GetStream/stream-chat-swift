@@ -178,7 +178,7 @@ public enum LogConfig {
     /// Underlying logger instance to control singleton.
     private static var _logger: Logger?
 
-    private static var queue = DispatchQueue(label: "io.getstream.logconfig")
+    private static var queue = DispatchQueue(label: "io.getstream.logconfig", attributes: .concurrent)
 
     /// Logger instance to be used by StreamChat.
     ///
@@ -222,8 +222,8 @@ public class Logger {
             }
         }
         set {
-            loggerQueue.async(flags: .barrier) {
-                self._destinations = newValue
+            loggerQueue.async(flags: .barrier) { [weak self] in
+                self?._destinations = newValue
             }
         }
     }
