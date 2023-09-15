@@ -21,7 +21,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
             messageRepository: messageRepository,
             database: database,
             apiClient: apiClient,
-            retryHoursThreshold: 12
+            maxHoursThreshold: 12
         )
     }
 
@@ -309,7 +309,6 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         }
 
         waitForExpectations(timeout: defaultTimeout, handler: nil)
-
 
         // Queued requests should be deleted.
         let pendingRequests = QueuedRequestDTO.loadAllPendingRequests(context: database.viewContext)

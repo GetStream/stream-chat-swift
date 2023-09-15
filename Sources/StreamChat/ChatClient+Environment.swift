@@ -166,13 +166,13 @@ extension ChatClient {
             _ messageRepository: MessageRepository,
             _ database: DatabaseContainer,
             _ apiClient: APIClient,
-            _ retryHoursThreshold: CGFloat
+            _ maxHoursThreshold: Int
         ) -> OfflineRequestsRepository = {
             OfflineRequestsRepository(
                 messageRepository: $0,
                 database: $1,
                 apiClient: $2,
-                retryHoursThreshold: $3
+                maxHoursThreshold: $3
             )
         }
     }

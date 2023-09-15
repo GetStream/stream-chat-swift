@@ -30,7 +30,7 @@ class OfflineRequestsRepository {
     private let messageRepository: MessageRepository
     private let database: DatabaseContainer
     private let apiClient: APIClient
-    private let retryHoursThreshold: CGFloat
+    private let maxHoursThreshold: Int
 
     /// Serial queue used to enqueue pending requests one after another
     private let retryQueue = DispatchQueue(label: "io.getstream.queue-requests")
@@ -39,12 +39,12 @@ class OfflineRequestsRepository {
         messageRepository: MessageRepository,
         database: DatabaseContainer,
         apiClient: APIClient,
-        retryHoursThreshold: CGFloat
+        maxHoursThreshold: Int
     ) {
         self.messageRepository = messageRepository
         self.database = database
         self.apiClient = apiClient
-        self.retryHoursThreshold = retryHoursThreshold
+        self.maxHoursThreshold = maxHoursThreshold
     }
 
     /// - If the requests succeeds -> The request is removed from the pending ones
@@ -86,7 +86,7 @@ class OfflineRequestsRepository {
             }
             
             let hoursQueued = currentDate.timeIntervalSince(date) / Constants.secondsInHour
-            let shouldBeDiscarded = hoursQueued > retryHoursThreshold
+            let shouldBeDiscarded = hoursQueued > CGFloat(maxHoursThreshold)
 
             guard endpoint.shouldBeQueuedOffline && !shouldBeDiscarded else {
                 log.error("Queued request for /\(endpoint.path.value) should not be queued", subsystems: .offlineSupport)

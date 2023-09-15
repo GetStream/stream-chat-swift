@@ -20,13 +20,13 @@ final class OfflineRequestsRepository_Mock: OfflineRequestsRepository, Spy {
         messageRepository: MessageRepository,
         database: DatabaseContainer,
         apiClient: APIClient,
-        retryHoursThreshold: CGFloat = 12
+        maxHoursThreshold: Int = 12
     ) {
         super.init(
             messageRepository: messageRepository,
             database: database,
             apiClient: apiClient,
-            retryHoursThreshold: retryHoursThreshold
+            maxHoursThreshold: maxHoursThreshold
         )
     }
 

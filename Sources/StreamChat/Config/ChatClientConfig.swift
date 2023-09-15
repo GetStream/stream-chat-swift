@@ -192,7 +192,7 @@ public struct ChatClientConfig {
     public var urlSessionConfiguration: URLSessionConfiguration = .default
     
     /// How many hours the unsent messages should be queued for sending when the internet connection is available.
-    public var unsentMessagesRetryHoursThreshold: CGFloat = 12
+    public var unsentMessagesMaxHoursThreshold: Int = 12
 
     public init(
         apiKey: APIKey
