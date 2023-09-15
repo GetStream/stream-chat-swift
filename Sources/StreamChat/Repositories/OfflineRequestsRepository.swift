@@ -23,6 +23,10 @@ extension Endpoint {
 /// OfflineRequestsRepository handles both the enqueuing and the execution of offline requests when needed.
 /// When running the queued requests, it basically passes the requests on to the APIClient, and waits for its result.
 class OfflineRequestsRepository {
+    enum Constants {
+        static let retryHoursThreshold: CGFloat = 12
+        static let secondsInHour: CGFloat = 3600
+    }
     private let messageRepository: MessageRepository
     private let database: DatabaseContainer
     private let apiClient: APIClient
@@ -42,19 +46,22 @@ class OfflineRequestsRepository {
     func runQueuedRequests(completion: @escaping () -> Void) {
         let readContext = database.backgroundReadOnlyContext
         readContext.perform { [weak self] in
-            let requests = QueuedRequestDTO.loadAllPendingRequests(context: readContext).map { ($0.id, $0.endpoint) }
+            let requests = QueuedRequestDTO.loadAllPendingRequests(context: readContext).map {
+                ($0.id, $0.endpoint, $0.date as Date)                
+            }
             DispatchQueue.main.async {
                 self?.executeRequests(requests, completion: completion)
             }
         }
     }
 
-    private func executeRequests(_ requests: [(String, Data)], completion: @escaping () -> Void) {
+    private func executeRequests(_ requests: [(String, Data, Date)], completion: @escaping () -> Void) {
         log.info("\(requests.count) pending offline requests", subsystems: .offlineSupport)
 
         let database = self.database
+        let currentDate = Date()
         let group = DispatchGroup()
-        for (id, endpoint) in requests {
+        for (id, endpoint, date) in requests {
             group.enter()
             let leave = {
                 group.leave()
@@ -70,8 +77,11 @@ class OfflineRequestsRepository {
                 deleteQueuedRequestAndComplete()
                 continue
             }
+            
+            let hoursQueued = currentDate.timeIntervalSince(date) / Constants.secondsInHour
+            let shouldBeDiscarded = hoursQueued > Constants.retryHoursThreshold
 
-            guard endpoint.shouldBeQueuedOffline else {
+            guard endpoint.shouldBeQueuedOffline && !shouldBeDiscarded else {
                 log.error("Queued request for /\(endpoint.path.value) should not be queued", subsystems: .offlineSupport)
                 deleteQueuedRequestAndComplete()
                 continue
