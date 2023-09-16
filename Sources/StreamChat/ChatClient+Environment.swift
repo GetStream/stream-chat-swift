@@ -165,12 +165,14 @@ extension ChatClient {
         var offlineRequestsRepositoryBuilder: (
             _ messageRepository: MessageRepository,
             _ database: DatabaseContainer,
-            _ apiClient: APIClient
+            _ apiClient: APIClient,
+            _ maxHoursThreshold: Int
         ) -> OfflineRequestsRepository = {
             OfflineRequestsRepository(
                 messageRepository: $0,
                 database: $1,
-                apiClient: $2
+                apiClient: $2,
+                maxHoursThreshold: $3
             )
         }
     }
