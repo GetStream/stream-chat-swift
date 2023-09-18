@@ -178,7 +178,7 @@ public enum LogConfig {
     /// Underlying logger instance to control singleton.
     private static var _logger: Logger?
 
-    private static var queue = DispatchQueue(label: "io.getstream.logconfig", attributes: .concurrent)
+    private static var queue = DispatchQueue(label: "io.getstream.logconfig")
 
     /// Logger instance to be used by StreamChat.
     ///
@@ -195,7 +195,7 @@ public enum LogConfig {
             }
         }
         set {
-            queue.async(flags: .barrier) {
+            queue.async {
                 _logger = newValue
             }
         }
@@ -222,7 +222,7 @@ public class Logger {
             }
         }
         set {
-            loggerQueue.async(flags: .barrier) { [weak self] in
+            loggerQueue.async { [weak self] in
                 self?._destinations = newValue
             }
         }
@@ -230,7 +230,7 @@ public class Logger {
 
     private var _destinations: [LogDestination]
 
-    private let loggerQueue = DispatchQueue(label: "io.getstream.logger", attributes: .concurrent)
+    private let loggerQueue = DispatchQueue(label: "io.getstream.logger")
 
     /// Init a logger with a given identifier and destinations.
     public init(identifier: String = "", destinations: [LogDestination] = []) {
@@ -290,7 +290,7 @@ public class Logger {
         // it is important the closure is performed in the managedObjectContext's thread.
         let messageString = String(describing: message())
 
-        loggerQueue.async(flags: .barrier) { [weak self] in
+        loggerQueue.async { [weak self] in
             guard let self = self else { return }
 
             let logDetails = LogDetails(

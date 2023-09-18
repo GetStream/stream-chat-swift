@@ -17,7 +17,12 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         database = client.mockDatabaseContainer
         apiClient = client.mockAPIClient
         messageRepository = MessageRepository_Mock(database: database, apiClient: apiClient)
-        repository = OfflineRequestsRepository(messageRepository: messageRepository, database: database, apiClient: apiClient)
+        repository = OfflineRequestsRepository(
+            messageRepository: messageRepository,
+            database: database,
+            apiClient: apiClient,
+            maxHoursThreshold: 12
+        )
     }
 
     override func tearDown() {
@@ -253,19 +258,79 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         let pendingRequests = QueuedRequestDTO.loadAllPendingRequests(context: database.viewContext)
         XCTAssertEqual(pendingRequests.count, 0)
     }
+    
+    func test_runQueuedRequestsSkipOldOnes() throws {
+        // We put 3 .sendMessage requests in the queue, 20 hours old.
+        let count = 3
+        let date = Date(timeIntervalSinceNow: -3600 * 20)
+        try createSendMessageRequests(count: count, date: date)
 
-    private func createSendMessageRequests(count: Int) throws {
+        let expectation = self.expectation(description: "Running completes")
+        repository.runQueuedRequests {
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: defaultTimeout, handler: nil)
+
+        XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 0)
+
+        // Queued requests should be deleted.
+        let pendingRequests = QueuedRequestDTO.loadAllPendingRequests(context: database.viewContext)
+        XCTAssertEqual(pendingRequests.count, 0)
+    }
+    
+    func test_runQueuedRequestsMixOldAndNew() throws {
+        // We put 3 .sendMessage requests in the queue, 20 hours old.
+        let count = 3
+        let date = Date(timeIntervalSinceNow: -3600 * 20)
+        try createSendMessageRequests(count: count, date: date)
+        
+        // Create one recent.
+        let id = "request\(count)"
+        try createRequest(
+            id: id,
+            path: .sendMessage(.init(type: .messaging, id: id)),
+            body: ["some\(id)": 123],
+            date: Date()
+        )
+
+        let expectation = self.expectation(description: "Running completes")
+        repository.runQueuedRequests {
+            expectation.fulfill()
+        }
+        
+        apiClient.waitForRecoveryRequest()
+        
+        XCTAssertEqual(apiClient.recoveryRequest_allRecordedCalls.count, 1)
+        
+        apiClient.recoveryRequest_allRecordedCalls.forEach { _, completion in
+            let completion = completion as? ((Result<Data, Error>) -> Void)
+            completion?(.success(Data()))
+        }
+
+        waitForExpectations(timeout: defaultTimeout, handler: nil)
+
+        // Queued requests should be deleted.
+        let pendingRequests = QueuedRequestDTO.loadAllPendingRequests(context: database.viewContext)
+        XCTAssertEqual(pendingRequests.count, 0)
+    }
+
+    private func createSendMessageRequests(count: Int, date: Date = Date()) throws {
         try (1...count).forEach {
             let id = "request\($0)"
-            try self.createRequest(id: id, path: .sendMessage(.init(type: .messaging, id: id)), body: ["some\($0)": 123])
+            try self.createRequest(
+                id: id,
+                path: .sendMessage(.init(type: .messaging, id: id)),
+                body: ["some\($0)": 123],
+                date: date
+            )
         }
 
         let allRequests = QueuedRequestDTO.loadAllPendingRequests(context: database.viewContext)
         XCTAssertEqual(allRequests.count, count)
     }
 
-    private func createRequest(id: String, path: EndpointPath, body: Encodable? = nil) throws {
-        let date = Date()
+    private func createRequest(id: String, path: EndpointPath, body: Encodable? = nil, date: Date = Date()) throws {
         let endpoint = Endpoint<EmptyResponse>(
             path: path,
             method: .post,
