@@ -50,8 +50,6 @@ _August 28, 2023_
 - Add XCPrivacy manifest [#2740](https://github.com/GetStream/stream-chat-swift/pull/2740)
 - Add digital signature to StreamChatUI XCFramework [#2740](https://github.com/GetStream/stream-chat-swift/pull/2740)
 - Apply channel capabilities in UI components [#2747](https://github.com/GetStream/stream-chat-swift/pull/2747)
-- Add unread messages floating pill to `ChatChannelVC` when the first unread message is not on screen [#2592](https://github.com/GetStream/stream-chat-swift/pull/2592)
-    - Feature flagged behind `Components.default.isJumpToUnreadEnabled`
 
 ### 🐞 Fixed
 - Fix Channel Header View not updating when user info changes [#2742](https://github.com/GetStream/stream-chat-swift/pull/2742)
