@@ -122,12 +122,6 @@ open class InputTextView: UITextView, AppearanceProvider {
         replace(selectedRange, withText: text)
     }
 
-    override open func layoutSubviews() {
-        super.layoutSubviews()
-        handleTextChange()
-        scrollToCaretPosition(animated: false)
-    }
-
     open func textDidChangeProgrammatically() {
         delegate?.textViewDidChange?(self)
         handleTextChange()
@@ -193,7 +187,8 @@ open class InputTextView: UITextView, AppearanceProvider {
         }
     }
 
-    private func scrollToCaretPosition(animated: Bool) {
+    /// Scrolls the text view to to the caret's position.
+    public func scrollToCaretPosition(animated: Bool) {
         guard let selectedTextRange = self.selectedTextRange else { return }
         let caret = caretRect(for: selectedTextRange.start)
         scrollRectToVisible(caret, animated: animated)
