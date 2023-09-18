@@ -80,14 +80,22 @@ ChatClient.shared.connectUser(userInfo: userInfo, tokenProvider: tokenProvider) 
 Whenever your users leave the chat component, you should use disconnect to stop receiving chat updates and events while using other features of your app. You disconnect by calling:
 
 ```swift
-chatClient.disconnect()
+chatClient.disconnect {
+    // dismiss the current screen or go to another screen
+    print("disconnect completed")
+}
 ```
 
 If your users logout form their account you should use logout instead for completely logging out from the session. You logout by calling:
 
 ```swift
-chatClient.logout()
+chatClient.logout {
+    // dismiss the current screen or go to another screen
+    print("logout completed")
+}
 ```
+
+It's important that you wait for the completion handler to be called before trying to login with a different user.
 
 ### Show Channel List
 

@@ -190,6 +190,9 @@ public struct ChatClientConfig {
     /// The `URLSessionConfiguration` being used as default configuration for the `APIClient` and
     /// `WebSocketClient`
     public var urlSessionConfiguration: URLSessionConfiguration = .default
+    
+    /// How many hours the unsent actions should be queued for sending when the internet connection is available.
+    public var queuedActionsMaxHoursThreshold: Int = 12
 
     public init(
         apiKey: APIKey
