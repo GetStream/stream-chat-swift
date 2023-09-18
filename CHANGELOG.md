@@ -12,6 +12,7 @@ _September 18, 2023_
 ### ✅ Added
 - Allow injecting a custom URLSessionConfiguration in ChatClientConfig [#2756](https://github.com/GetStream/stream-chat-swift/pull/2756)
 - Methods for deleting file and image in `ChatChannelController` [#2776](https://github.com/GetStream/stream-chat-swift/pull/2776)
+- Adds `firstUnreadMessageId` to ChannelControler [#2592](https://github.com/GetStream/stream-chat-swift/pull/2592)
 ### 🐞 Fixed
 - Fix core data warnings when logging with different user [#2759](https://github.com/GetStream/stream-chat-swift/pull/2759)
 - Fix connecting user from background thread [#2762](https://github.com/GetStream/stream-chat-swift/pull/2762)
@@ -24,6 +25,8 @@ _September 18, 2023_
 ## StreamChatUI
 ### ✅ Added
 - Add customization support for `ChannelListLoadingView` [#2772](https://github.com/GetStream/stream-chat-swift/pull/2772)
+- Add unread messages floating pill to `ChatChannelVC` when the first unread message is not on screen [#2592](https://github.com/GetStream/stream-chat-swift/pull/2592)
+    - Feature flagged behind `Components.default.isJumpToUnreadEnabled`
 - Add support for disabling jumping to message animation [#2770](https://github.com/GetStream/stream-chat-swift/pull/2770)
 ### 🐞 Fixed
 - Fix tapping on the status bar scrolling to the bottom instead of the top [#2763](https://github.com/GetStream/stream-chat-swift/pull/2763)
@@ -47,7 +50,6 @@ _August 28, 2023_
 - Fix Message List not updating when user info changes [#2738](https://github.com/GetStream/stream-chat-swift/pull/2738)
 - Fix Channel List items online presence not updating when user info changes [#2742](https://github.com/GetStream/stream-chat-swift/pull/2742)
 - Fix Channel name not updating when member name changes [#2742](https://github.com/GetStream/stream-chat-swift/pull/2742)
-- Adds `firstUnreadMessageId` to ChannelControler [#2592](https://github.com/GetStream/stream-chat-swift/pull/2592)
 
 
 ## StreamChatUI
@@ -55,8 +57,6 @@ _August 28, 2023_
 - Add XCPrivacy manifest [#2740](https://github.com/GetStream/stream-chat-swift/pull/2740)
 - Add digital signature to StreamChatUI XCFramework [#2740](https://github.com/GetStream/stream-chat-swift/pull/2740)
 - Apply channel capabilities in UI components [#2747](https://github.com/GetStream/stream-chat-swift/pull/2747)
-- Add unread messages floating pill to `ChatChannelVC` when the first unread message is not on screen [#2592](https://github.com/GetStream/stream-chat-swift/pull/2592)
-    - Feature flagged behind `Components.default.isJumpToUnreadEnabled`
 
 ### 🐞 Fixed
 - Fix Channel Header View not updating when user info changes [#2742](https://github.com/GetStream/stream-chat-swift/pull/2742)
