@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Improve `addDevice()` and `removeDevice()` with optimistic updates [#2778](https://github.com/GetStream/stream-chat-swift/pull/2778)
 - Fix critical issue causing a query channel call for every new message [#2781](https://github.com/GetStream/stream-chat-swift/tree/fix/calling-watch-channel-on-every-new-message)
 - Added threshold for queued messages before being sent [#2780](https://github.com/GetStream/stream-chat-swift/pull/2780)
+- Fix memory leak caused by `Timer.addTimeout()` [#2777](https://github.com/GetStream/stream-chat-swift/pull/2777)
 
 ## StreamChatUI
 ### ✅ Added
