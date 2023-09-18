@@ -25,6 +25,8 @@ jobs:
           VERSION=${BRANCH_NAME#release/}
           echo "RELEASE_VERSION=$VERSION" >> $GITHUB_ENV
       - uses: ./.github/actions/bootstrap
+        env:
+          XCODE_ACTIONS: false
       - name: "Fastlane - Publish Release"
         if: startsWith(github.event.pull_request.head.ref, 'release/')
         env:
