@@ -1458,6 +1458,10 @@ private extension ChatChannelController {
     }
 
     private func getFirstUnreadMessageId() -> MessageId? {
+        let messages = self.messages.filter {
+            $0.type == .regular || $0.type == .reply
+        }
+
         let currentUserUnread = channel?.reads
             .filter { $0.unreadMessagesCount > 0 }
             .first(where: { $0.user.id == client.currentUserId })
