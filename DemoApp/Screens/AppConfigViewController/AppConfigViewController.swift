@@ -147,6 +147,7 @@ class AppConfigViewController: UITableViewController {
         case isVoiceRecordingEnabled
         case isVoiceRecordingConfirmationRequiredEnabled
         case channelListSearchStrategy
+        case isJumpToUnreadEnabled
     }
 
     enum ChatClientConfigOption: String, CaseIterable {
@@ -376,6 +377,10 @@ class AppConfigViewController: UITableViewController {
         case .channelListSearchStrategy:
             cell.detailTextLabel?.text = channelListSearchStrategy?.name ?? "none"
             cell.accessoryType = .disclosureIndicator
+        case .isJumpToUnreadEnabled:
+            cell.accessoryView = makeSwitchButton(Components.default.isJumpToUnreadEnabled) { newValue in
+                Components.default.isJumpToUnreadEnabled = newValue
+            }
         }
     }
 
