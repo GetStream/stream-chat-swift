@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.37.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.37.0)
+_September 18, 2023_
+
 ## StreamChat
 ### ✅ Added
 - Allow injecting a custom URLSessionConfiguration in ChatClientConfig [#2756](https://github.com/GetStream/stream-chat-swift/pull/2756)
@@ -42,7 +47,6 @@ _August 28, 2023_
 - Fix Message List not updating when user info changes [#2738](https://github.com/GetStream/stream-chat-swift/pull/2738)
 - Fix Channel List items online presence not updating when user info changes [#2742](https://github.com/GetStream/stream-chat-swift/pull/2742)
 - Fix Channel name not updating when member name changes [#2742](https://github.com/GetStream/stream-chat-swift/pull/2742)
-- Adds `firstUnreadMessageId` to ChannelControler [#2592](https://github.com/GetStream/stream-chat-swift/pull/2592)
 
 
 ## StreamChatUI
