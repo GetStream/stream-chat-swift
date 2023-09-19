@@ -110,7 +110,9 @@ open class ChatChannelVC: _ViewController,
     private var hasSeenLastMessage: Bool = false
 
     /// The id of the first unread message
-    private var firstUnreadMessageId: MessageId?
+    private var firstUnreadMessageId: MessageId? {
+        channelController.firstUnreadMessageId
+    }
 
     /// In case the given  around message id is from a thread, we need to jump to the parent message and then the reply.
     private var initialReplyId: MessageId?
@@ -245,17 +247,13 @@ open class ChatChannelVC: _ViewController,
                 )
             }
         }
-
-        updateUnreadMessagesRelatedComponents()
     }
 
     // MARK: - Actions
 
     /// Marks the channel read and updates the UI optimistically.
     public func markRead() {
-        channelController.markRead { [weak self] _ in
-            self?.updateUnreadMessagesRelatedComponents()
-        }
+        channelController.markRead()
         messageListVC.scrollToBottomButton.content = .noUnread
     }
 
@@ -370,9 +368,7 @@ open class ChatChannelVC: _ViewController,
             }
         case is MarkUnreadActionItem:
             dismiss(animated: true) { [weak self] in
-                self?.channelController.markUnread(from: message.id) { _ in
-                    self?.updateUnreadMessagesRelatedComponents()
-                }
+                self?.channelController.markUnread(from: message.id)
             }
         default:
             return
@@ -463,6 +459,8 @@ open class ChatChannelVC: _ViewController,
         }
 
         channelAvatarView.content = (channelController.channel, client.currentUserId)
+
+        updateUnreadMessagesRelatedComponents()
     }
 
     open func channelController(
@@ -531,7 +529,6 @@ private extension ChatChannelVC {
     }
 
     func updateUnreadMessagesRelatedComponents() {
-        firstUnreadMessageId = channelController.firstUnreadMessageId
         messageListVC.updateUnreadMessagesSeparator(at: firstUnreadMessageId)
         messageListVC.updateJumpToUnreadButtonVisibility()
     }
