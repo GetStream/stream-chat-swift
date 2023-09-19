@@ -1462,9 +1462,9 @@ private extension ChatChannelController {
             $0.type == .regular || $0.type == .reply
         }
 
-        let currentUserUnread = channel?.reads
-            .filter { $0.unreadMessagesCount > 0 }
-            .first(where: { $0.user.id == client.currentUserId })
+        let currentUserUnread = channel?.reads.first(where: {
+            $0.unreadMessagesCount > 0 && $0.user.id == client.currentUserId
+        })
 
         guard let lastReadMessageId = currentUserUnread?.lastReadMessageId else {
             // We default to the oldest message in the history
