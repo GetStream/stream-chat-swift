@@ -3,7 +3,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+## StreamChatUI
+### 🐞 Fixed
+- Fix the unread messages banner showing on every new message [#2793](https://github.com/GetStream/stream-chat-swift/pull/2793)
+- Fix the unread messages banner showing on system messages [#2793](https://github.com/GetStream/stream-chat-swift/pull/2793)
 
 # [4.37.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.37.0)
 _September 18, 2023_
