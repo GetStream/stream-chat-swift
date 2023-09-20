@@ -1458,10 +1458,16 @@ private extension ChatChannelController {
     }
 
     private func getFirstUnreadMessageId() -> MessageId? {
+        // Return the oldest regular message if all messages are unread in the message list.
+        let oldestRegularMessage: () -> MessageId? = { [weak self] in
+            // We need to make sure we discard system messages etc...
+            self?.messages.last(where: { $0.type == .regular || $0.type == .reply })?.id
+        }
+
         guard let currentUserRead = channel?.reads.first(where: {
             $0.user.id == client.currentUserId
         }) else {
-            return nil
+            return oldestRegularMessage()
         }
 
         // If there are no unreads, then return nil.
@@ -1472,8 +1478,7 @@ private extension ChatChannelController {
         // If there unreads but no `lastReadMessageId`, it means the whole message list is unread.
         // So the top message (oldest one) is the first unread message id.
         guard let lastReadMessageId = currentUserRead.lastReadMessageId else {
-            // We need to make sure we discard system messages etc...
-            return messages.last(where: { $0.type == .regular || $0.type == .reply })?.id
+            return oldestRegularMessage()
         }
 
         guard lastReadMessageId != messages.first?.id else {
