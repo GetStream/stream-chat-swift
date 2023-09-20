@@ -1458,16 +1458,22 @@ private extension ChatChannelController {
     }
 
     private func getFirstUnreadMessageId() -> MessageId? {
-        let messages = self.messages.filter {
-            $0.type == .regular || $0.type == .reply
+        guard let currentUserRead = channel?.reads.first(where: {
+            $0.user.id == client.currentUserId
+        }) else {
+            return nil
         }
 
-        let currentUserUnread = channel?.reads.first(where: {
-            $0.unreadMessagesCount > 0 && $0.user.id == client.currentUserId
-        })
-
-        guard let lastReadMessageId = currentUserUnread?.lastReadMessageId else {
+        // If there are no unreads, then return nil.
+        guard currentUserRead.unreadMessagesCount > 0 else {
             return nil
+        }
+
+        // If there unreads but no `lastReadMessageId`, it means the whole message list is unread.
+        // So the top message (oldest one) is the first unread message id.
+        guard let lastReadMessageId = currentUserRead.lastReadMessageId else {
+            // We need to make sure we discard system messages etc...
+            return messages.last(where: { $0.type == .regular || $0.type == .reply })?.id
         }
 
         guard lastReadMessageId != messages.first?.id else {
