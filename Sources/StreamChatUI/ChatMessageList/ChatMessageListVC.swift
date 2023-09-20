@@ -308,11 +308,13 @@ open class ChatMessageListVC: _ViewController,
     /// Set the visibility of `jumpToUnreadMessagesButton`.
     open func updateJumpToUnreadButtonVisibility(animated: Bool = true) {
         guard isJumpToUnreadEnabled else { return }
+        guard firstUnreadMessageId != nil else { return }
 
         if let unreadCount = dataSource?.channel(for: self)?.unreadCount,
            unreadCount != jumpToUnreadMessagesButton.content {
             jumpToUnreadMessagesButton.content = unreadCount
         }
+
         updateVisibility(
             for: jumpToUnreadMessagesButton,
             isVisible: isJumpToUnreadMessagesButtonVisible,
