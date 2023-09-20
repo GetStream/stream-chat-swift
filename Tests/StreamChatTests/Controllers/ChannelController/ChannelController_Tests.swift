@@ -298,7 +298,7 @@ final class ChannelController_Tests: XCTestCase {
         let newestMessageId = MessageId.unique
         try createChannel(oldestMessageId: oldestMessageId, newestMessageId: newestMessageId)
 
-        XCTAssertEqual(controller.firstUnreadMessageId, nil)
+        XCTAssertEqual(controller.firstUnreadMessageId, oldestMessageId)
     }
 
     func test_firstUnreadMessageId_whenReadsContainsCurrentUserId_whenUnreadMessageCountIsZero() throws {
@@ -318,9 +318,7 @@ final class ChannelController_Tests: XCTestCase {
             ]
         )
 
-        try client.databaseContainer.writeSynchronously {
-            try $0.saveCurrentUser(payload: .dummy(userId: userId, role: .user))
-        }
+        client.currentUserId_mock = userId
 
         XCTAssertEqual(controller.firstUnreadMessageId, nil)
     }
