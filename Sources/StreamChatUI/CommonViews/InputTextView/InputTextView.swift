@@ -133,7 +133,7 @@ open class InputTextView: UITextView, AppearanceProvider {
 
         // If the user pasted text from the clipboard, we want to scroll to the caret position.
         if textChangedFromClipboard {
-            scrollToCaretPosition(animated: false)
+            scrollToCaretPosition(animated: true)
             textChangedFromClipboard = false
         }
     }

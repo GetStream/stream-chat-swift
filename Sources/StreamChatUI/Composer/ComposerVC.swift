@@ -704,7 +704,7 @@ open class ComposerVC: _ViewController,
 
         // Makes sure the text view remains in the same position when it changes size.
         composerView.inputMessageView.textView.setTextViewHeight()
-        composerView.inputMessageView.textView.scrollToCaretPosition(animated: false)
+        composerView.inputMessageView.textView.scrollToCaretPosition(animated: true)
     }
 
     @objc open func showAvailableCommands(sender: UIButton) {
