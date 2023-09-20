@@ -1458,16 +1458,36 @@ private extension ChatChannelController {
     }
 
     private func getFirstUnreadMessageId() -> MessageId? {
-        guard let lastReadMessageId = channel?.reads.first(where: { $0.user.id == client.currentUserId })?.lastReadMessageId else {
-            // We default to the oldest message in the history
-            return messages.last?.id
+        // Return the oldest regular message if all messages are unread in the message list.
+        let oldestRegularMessage: () -> MessageId? = { [weak self] in
+            // We need to make sure we discard system messages etc...
+            self?.messages.last(where: { $0.type == .regular || $0.type == .reply })?.id
+        }
+
+        guard let currentUserRead = channel?.reads.first(where: {
+            $0.user.id == client.currentUserId
+        }) else {
+            return oldestRegularMessage()
+        }
+
+        // If there are no unreads, then return nil.
+        guard currentUserRead.unreadMessagesCount > 0 else {
+            return nil
+        }
+
+        // If there unreads but no `lastReadMessageId`, it means the whole message list is unread.
+        // So the top message (oldest one) is the first unread message id.
+        guard let lastReadMessageId = currentUserRead.lastReadMessageId else {
+            return oldestRegularMessage()
         }
 
         guard lastReadMessageId != messages.first?.id else {
-            // No unread messages
             return nil
         }
-        guard let lastReadIndex = messages.firstIndex(where: { $0.id == lastReadMessageId }), lastReadIndex != 0 else { return nil }
+
+        guard let lastReadIndex = messages.firstIndex(where: { $0.id == lastReadMessageId }), lastReadIndex != 0 else {
+            return nil
+        }
 
         let lookUpStartIndex = messages.index(before: lastReadIndex)
 

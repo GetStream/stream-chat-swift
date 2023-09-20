@@ -301,6 +301,28 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(controller.firstUnreadMessageId, oldestMessageId)
     }
 
+    func test_firstUnreadMessageId_whenReadsContainsCurrentUserId_whenUnreadMessageCountIsZero() throws {
+        let userId = UserId.unique
+        let oldestMessageId = MessageId.unique
+        let newestMessageId = MessageId.unique
+        try createChannel(
+            oldestMessageId: oldestMessageId,
+            newestMessageId: newestMessageId,
+            channelReads: [
+                ChannelReadPayload(
+                    user: .dummy(userId: userId),
+                    lastReadAt: .unique,
+                    lastReadMessageId: nil,
+                    unreadMessagesCount: 0
+                )
+            ]
+        )
+
+        client.currentUserId_mock = userId
+
+        XCTAssertEqual(controller.firstUnreadMessageId, nil)
+    }
+
     func test_firstUnreadMessageId_whenReadsContainsCurrentUserId_whenLastReadMessageIdIsNil() throws {
         let userId = UserId.unique
         let channelRead = ChannelReadPayload(
@@ -320,6 +342,22 @@ final class ChannelController_Tests: XCTestCase {
         }
 
         XCTAssertEqual(controller.firstUnreadMessageId, oldestMessageId)
+    }
+
+    func test_firstUnreadMessageId_whenReadsContainsCurrentUserId_whenLastReadMessageIdIsNil_whenOldestMessageIsDeleted() throws {
+        try AssertFirstUnreadMessageIsOldestRegularMessageId(oldestMessageType: .deleted)
+    }
+
+    func test_firstUnreadMessageId_whenReadsContainsCurrentUserId_whenLastReadMessageIdIsNil_whenOldestMessageIsEphemeral() throws {
+        try AssertFirstUnreadMessageIsOldestRegularMessageId(oldestMessageType: .ephemeral)
+    }
+
+    func test_firstUnreadMessageId_whenReadsContainsCurrentUserId_whenLastReadMessageIdIsNil_whenOldestMessageIsError() throws {
+        try AssertFirstUnreadMessageIsOldestRegularMessageId(oldestMessageType: .error)
+    }
+
+    func test_firstUnreadMessageId_whenReadsContainsCurrentUserId_whenLastReadMessageIdIsNil_whenOldestMessageIsSystem() throws {
+        try AssertFirstUnreadMessageIsOldestRegularMessageId(oldestMessageType: .system)
     }
 
     func test_firstUnreadMessageId_whenReadsContainsCurrentUserId_whenLastReadMessageIdIsTheSameAsTheLastMessage() throws {
@@ -5050,6 +5088,51 @@ extension ChannelController_Tests {
         try client.databaseContainer.writeSynchronously {
             try $0.saveChannel(payload: payload, query: nil, cache: nil)
         }
+    }
+
+    private func AssertFirstUnreadMessageIsOldestRegularMessageId(
+        oldestMessageType: MessageType,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) throws {
+        let userId = UserId.unique
+        let channelRead = ChannelReadPayload(
+            user: .dummy(userId: userId),
+            lastReadAt: .unique,
+            lastReadMessageId: nil,
+            unreadMessagesCount: 3
+        )
+        let token = Token(rawValue: "", userId: userId, expiration: nil)
+        controller.client.authenticationRepository.setMockToken(token)
+
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveCurrentUser(payload: .dummy(userId: userId, role: .user))
+        }
+
+        let oldestMessageId = MessageId.unique
+        let newestMessageId = MessageId.unique
+        let newestMessage = MessagePayload.dummy(
+            messageId: newestMessageId,
+            text: "new",
+            createdAt: Date().addingTimeInterval(1000)
+        )
+
+        let oldestMessage = MessagePayload.dummy(
+            type: oldestMessageType,
+            messageId: oldestMessageId,
+            text: "old",
+            createdAt: Date().addingTimeInterval(-1000)
+        )
+        let oldestRegularMessage = MessagePayload.dummy(
+            type: .regular,
+            messageId: .unique,
+            text: "old regular",
+            createdAt: Date().addingTimeInterval(-500)
+        )
+
+        try createChannel(messages: [oldestMessage, oldestRegularMessage, newestMessage], channelReads: [channelRead])
+
+        XCTAssertEqual(controller.firstUnreadMessageId, oldestRegularMessage.id, file: file, line: line)
     }
 }
 
