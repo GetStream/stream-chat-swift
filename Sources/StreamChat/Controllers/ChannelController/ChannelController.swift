@@ -721,7 +721,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// Add users to the channel as members.
     ///
     /// - Parameters:
-    ///   - users: Users Id to add to a channel.
+    ///   - userIds: User ids that will be added to a channel.
     ///   - hideHistory: Hide the history of the channel to the added member. By default, it is false.
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
@@ -743,7 +743,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// Remove users to the channel as members.
     ///
     /// - Parameters:
-    ///   - users: Users Id to add to a channel.
+    ///   - userIds: User ids that will be removed from a channel.
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
     ///
