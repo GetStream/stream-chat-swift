@@ -7,6 +7,7 @@ import UIKit
 
 /// An abstract class responsible to handle the channel list search logic.
 /// It is a subclass of the Channel List since most of the logic is reused from the original Channel List.
+@available(iOSApplicationExtension, unavailable)
 open class ChatChannelListSearchVC: ChatChannelListVC, UISearchResultsUpdating {
     /// The component responsible to debounce search requests.
     public var debouncer = Debouncer(0.3, queue: .main)
