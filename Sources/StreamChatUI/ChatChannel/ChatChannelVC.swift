@@ -342,7 +342,7 @@ open class ChatChannelVC: _ViewController,
         willDisplayMessageAt indexPath: IndexPath
     ) {
         let message = chatMessageListVC(vc, messageAt: indexPath)
-        if message?.id == firstUnreadMessageId || firstUnreadMessageId == nil {
+        if message?.id == firstUnreadMessageId {
             hasSeenAllUnreadMessages = true
         }
         if isLastMessageFullyVisible {
