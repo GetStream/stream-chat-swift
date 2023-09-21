@@ -287,14 +287,16 @@ final class ComposerVC_Tests: XCTestCase {
         let containerVC = ComposerContainerVC()
         containerVC.composerVC = composerVC
         containerVC.textWithMention = "@Yo"
+        containerVC.composerVC.composerView.inputMessageView.textView.placeholderLabel.isHidden = true
         
         AssertSnapshot(containerVC, variants: [.defaultLight])
     }
     
     func test_channelWithSlowModeActive_messageIsSent_SlowModeIsOnWithCountdownShown() {
         composerVC.appearance = Appearance.default
-        composerVC.content.slowMode(cooldown: 120)
         composerVC.content.text = "Test text"
+        composerVC.content.slowMode(cooldown: 120)
+        composerVC.composerView.inputMessageView.textView.placeholderLabel.isHidden = true
         
         AssertSnapshot(composerVC)
     }
