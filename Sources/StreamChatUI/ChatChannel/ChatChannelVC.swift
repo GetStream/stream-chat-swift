@@ -246,6 +246,10 @@ open class ChatChannelVC: _ViewController,
             }
         }
 
+        if !hasSeenAllUnreadMessages && channelController.firstUnreadMessageId == nil {
+            hasSeenAllUnreadMessages = true
+        }
+
         updateUnreadMessagesBannerRelatedComponents()
         updateJumpToUnreadRelatedComponents()
     }
@@ -443,8 +447,11 @@ open class ChatChannelVC: _ViewController,
         messageListVC.setPreviousMessagesSnapshot(messages)
         messageListVC.setNewMessagesSnapshot(Array(channelController.messages))
         messageListVC.updateMessages(with: changes) { [weak self] in
-            if self?.shouldMarkChannelRead == true {
-                self?.markRead()
+            guard let self = self else { return }
+            if self.shouldMarkChannelRead {
+                self.markRead()
+            } else {
+                self.updateJumpToUnreadRelatedComponents()
             }
         }
     }
@@ -461,7 +468,6 @@ open class ChatChannelVC: _ViewController,
         }
 
         channelAvatarView.content = (channelController.channel, client.currentUserId)
-        updateJumpToUnreadRelatedComponents()
     }
 
     open func channelController(
@@ -530,6 +536,7 @@ private extension ChatChannelVC {
     }
 
     func updateJumpToUnreadRelatedComponents() {
+        messageListVC.updateJumpToUnread(at: channelController.firstUnreadMessageId)
         messageListVC.updateJumpToUnreadButtonVisibility()
     }
 

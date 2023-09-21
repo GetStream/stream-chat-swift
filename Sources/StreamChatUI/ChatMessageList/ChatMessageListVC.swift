@@ -102,13 +102,8 @@ open class ChatMessageListVC: _ViewController,
             return false
         }
 
-        guard let firstUnreadIndexPath = firstUnreadMessageIndexPath else {
-            // If there are messages, but none is read, we show the button if the first message is not on screen.
-            if !dataSource.messages.isEmpty {
-                return !isMessageVisible(at: IndexPath(item: dataSource.messages.count - 1, section: 0))
-            } else {
-                return false
-            }
+        guard let firstUnreadIndexPath = jumpToUnreadMessageIndexPath else {
+            return false
         }
 
         // If the message is visible on screen, we don't show the button
@@ -119,9 +114,10 @@ open class ChatMessageListVC: _ViewController,
         components.isJumpToUnreadEnabled
     }
 
-    private var firstUnreadMessageId: MessageId?
-    private var firstUnreadMessageIndexPath: IndexPath? {
-        firstUnreadMessageId.flatMap(getIndexPath)
+    private var unreadBannerMessageId: MessageId?
+    private var jumpToUnreadMessageId: MessageId?
+    private var jumpToUnreadMessageIndexPath: IndexPath? {
+        jumpToUnreadMessageId.flatMap(getIndexPath)
     }
 
     /// A formatter that converts the message date to textual representation.
@@ -351,18 +347,22 @@ open class ChatMessageListVC: _ViewController,
     }
 
     func updateUnreadMessagesSeparator(at firstUnreadId: MessageId?) {
-        let previousFirstUnreadId = firstUnreadMessageId
+        let previousFirstUnreadId = unreadBannerMessageId
         guard previousFirstUnreadId != firstUnreadId else { return }
 
         func indexPath(for id: MessageId?) -> IndexPath? {
             id.flatMap(getIndexPath)
         }
 
-        firstUnreadMessageId = firstUnreadId
+        unreadBannerMessageId = firstUnreadId
 
         let indexPathsToReload = [indexPath(for: previousFirstUnreadId), indexPath(for: firstUnreadId)].compactMap { $0 }
         guard !indexPathsToReload.isEmpty else { return }
         listView.reloadRows(at: indexPathsToReload, with: .automatic)
+    }
+
+    func updateJumpToUnread(at jumpToUnreadMessageId: MessageId?) {
+        self.jumpToUnreadMessageId = jumpToUnreadMessageId
     }
 
     private func isMessageVisible(at indexPath: IndexPath) -> Bool {
@@ -371,7 +371,7 @@ open class ChatMessageListVC: _ViewController,
     }
 
     @objc func jumpToUnreadMessages() {
-        guard let firstUnreadMessageId = firstUnreadMessageId else { return }
+        guard let firstUnreadMessageId = unreadBannerMessageId else { return }
         jumpToMessage(id: firstUnreadMessageId)
     }
 
