@@ -7,6 +7,7 @@ import UIKit
 
 /// The view controller responsible to search channels.
 /// It implements the required functions of the `ChatChannelListSearchVC` abstract class.
+@available(iOSApplicationExtension, unavailable)
 open class ChatChannelSearchVC: ChatChannelListSearchVC {
     /// The closure that is triggered whenever a channel is selected from the search result.
     public var didSelectChannel: ((ChatChannel) -> Void)?
