@@ -24,9 +24,7 @@ jobs:
           BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
           VERSION=${BRANCH_NAME#release/}
           echo "RELEASE_VERSION=$VERSION" >> $GITHUB_ENV
-      - uses: ./.github/actions/bootstrap
-        env:
-          XCODE_ACTIONS: false
+      - uses: ./.github/actions/ruby-cache
       - name: "Fastlane - Publish Release"
         if: startsWith(github.event.pull_request.head.ref, 'release/')
         env:

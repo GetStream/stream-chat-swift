@@ -17,7 +17,7 @@ end
 
 desc 'Create launch on Allure TestOps'
 lane :allure_launch do |options|
-  next unless is_check_required(sources: sources_matrix[:e2e])
+  next unless is_check_required(sources: sources_matrix[:e2e], force_check: @force_check)
 
   launch_id = allure_create_launch(
     url: allure_url,
