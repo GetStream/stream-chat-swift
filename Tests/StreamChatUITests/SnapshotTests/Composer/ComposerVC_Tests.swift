@@ -13,6 +13,15 @@ final class ComposerVC_Tests: XCTestCase {
     
     // MARK: - Lifecycle
 
+    /// Static setUp() is only run once. Which is what we want in this case to preload the images.
+    override class func setUp() {
+        /// Dummy snapshot to preload the TestImages.r2.url image
+        /// This was the only workaround to make sure the image always appears in the snapshots.
+        let view = UIImageView(frame: .init(center: .zero, size: .init(width: 100, height: 100)))
+        Components.default.imageLoader.loadImage(into: view, from: TestImages.r2.url)
+        AssertSnapshot(view, variants: [.defaultLight])
+    }
+
     override func setUp() {
         super.setUp()
         mockedChatChannelController = ChatChannelController_Mock.mock()
