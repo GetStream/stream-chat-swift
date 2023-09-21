@@ -700,11 +700,11 @@ open class ComposerVC: _ViewController,
             if !self.isAttachmentsEnabled {
                 self.composerView.attachmentButton.isHidden = true
             }
-        }
 
-        // Makes sure the text view remains in the same position when it changes size.
-        composerView.inputMessageView.textView.setTextViewHeight()
-        composerView.inputMessageView.textView.scrollToCaretPosition(animated: true)
+            // Makes sure the text view remains in the same position when it changes size.
+            self.composerView.inputMessageView.textView.setTextViewHeight()
+            self.composerView.inputMessageView.textView.scrollToCaretPosition(animated: true)
+        }
     }
 
     @objc open func showAvailableCommands(sender: UIButton) {
