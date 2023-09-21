@@ -245,11 +245,6 @@ open class ChatChannelVC: _ViewController,
                 )
             }
         }
-
-        if !hasSeenAllUnreadMessages && channelController.firstUnreadMessageId == nil {
-            hasSeenAllUnreadMessages = true
-        }
-
         updateUnreadMessagesBannerRelatedComponents()
         updateJumpToUnreadRelatedComponents()
     }
@@ -448,10 +443,15 @@ open class ChatChannelVC: _ViewController,
         messageListVC.setNewMessagesSnapshot(Array(channelController.messages))
         messageListVC.updateMessages(with: changes) { [weak self] in
             guard let self = self else { return }
+
+            if let unreadCount = channelController.channel?.unreadCount.messages, channelController.firstUnreadMessageId == nil && unreadCount == 0 {
+                self.hasSeenAllUnreadMessages = true
+            }
+
             if self.shouldMarkChannelRead {
                 self.markRead()
-            } else {
-                self.updateJumpToUnreadRelatedComponents()
+            } else if !self.hasSeenAllUnreadMessages {
+                self.updateUnreadMessagesBannerRelatedComponents()
             }
         }
     }
@@ -468,6 +468,7 @@ open class ChatChannelVC: _ViewController,
         }
 
         channelAvatarView.content = (channelController.channel, client.currentUserId)
+        updateJumpToUnreadRelatedComponents()
     }
 
     open func channelController(
@@ -542,8 +543,6 @@ private extension ChatChannelVC {
 
     func updateUnreadMessagesBannerRelatedComponents() {
         firstUnreadMessageId = channelController.firstUnreadMessageId
-
-        let message = messages.first(where: { $0.id == firstUnreadMessageId })
         messageListVC.updateUnreadMessagesSeparator(at: firstUnreadMessageId)
     }
 }

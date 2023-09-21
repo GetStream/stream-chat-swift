@@ -1486,7 +1486,8 @@ private extension ChatChannelController {
         }
 
         guard let lastReadIndex = messages.firstIndex(where: { $0.id == lastReadMessageId }), lastReadIndex != 0 else {
-            return nil
+            // This is the best approximation we can make given that the first unread messageId is not yet loaded.
+            return lastReadMessageId
         }
 
         let lookUpStartIndex = messages.index(before: lastReadIndex)
