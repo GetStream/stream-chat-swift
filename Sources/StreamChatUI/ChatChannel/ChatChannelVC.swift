@@ -461,6 +461,7 @@ open class ChatChannelVC: _ViewController,
         }
 
         channelAvatarView.content = (channelController.channel, client.currentUserId)
+        updateJumpToUnreadRelatedComponents()
     }
 
     open func channelController(
