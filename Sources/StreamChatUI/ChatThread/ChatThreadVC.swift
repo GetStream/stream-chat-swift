@@ -302,6 +302,7 @@ open class ChatThreadVC: _ViewController,
         case is EditActionItem:
             dismiss(animated: true) { [weak self] in
                 self?.messageComposerVC.content.editMessage(message)
+                self?.messageComposerVC.composerView.inputMessageView.textView.becomeFirstResponder()
             }
         case is InlineReplyActionItem:
             dismiss(animated: true) { [weak self] in

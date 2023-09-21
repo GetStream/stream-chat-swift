@@ -121,7 +121,9 @@ open class InputTextView: UITextView, AppearanceProvider {
 
     open func textDidChangeProgrammatically() {
         delegate?.textViewDidChange?(self)
-        handleTextChange()
+        DispatchQueue.main.async {
+            self.handleTextChange()
+        }
     }
 
     @objc open func handleTextChange() {
