@@ -313,6 +313,7 @@ open class ChatMessageListVC: _ViewController,
            unreadCount != jumpToUnreadMessagesButton.content {
             jumpToUnreadMessagesButton.content = unreadCount
         }
+
         updateVisibility(
             for: jumpToUnreadMessagesButton,
             isVisible: isJumpToUnreadMessagesButtonVisible,
