@@ -185,7 +185,11 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                         self.rootViewController.presentAlert(title: "User ID is not valid")
                         return
                     }
-                    channelController.addMembers(userIds: [id], hideHistory: true) { error in
+                    channelController.addMembers(
+                        userIds: [id],
+                        hideHistory: true,
+                        message: "Members added to the channel"
+                    ) { error in
                         if let error = error {
                             self.rootViewController.presentAlert(
                                 title: "Couldn't add user \(id) to channel \(cid)",
@@ -198,7 +202,10 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
             .init(title: "Remove a member", isEnabled: canUpdateChannelMembers, handler: { [unowned self] _ in
                 let actions = channelController.channel?.lastActiveMembers.map { member in
                     UIAlertAction(title: member.id, style: .default) { _ in
-                        channelController.removeMembers(userIds: [member.id]) { [unowned self] error in
+                        channelController.removeMembers(
+                            userIds: [member.id],
+                            message: "Members removed from the channel"
+                        ) { [unowned self] error in
                             if let error = error {
                                 self.rootViewController.presentAlert(
                                     title: "Couldn't remove user \(member.id) from channel \(cid)",

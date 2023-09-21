@@ -329,8 +329,23 @@ class ChannelUpdater: Worker {
     ///   - users: User Ids to add to the channel.
     ///   - hideHistory: Hide the history of the channel to the added member.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    func addMembers(cid: ChannelId, userIds: Set<UserId>, hideHistory: Bool, completion: ((Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .addMembers(cid: cid, userIds: userIds, hideHistory: hideHistory)) {
+    func addMembers(
+        currentUserId: UserId?,
+        cid: ChannelId,
+        userIds: Set<UserId>,
+        message: String?,
+        hideHistory: Bool,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        let messagePayload = messagePayload(text: message, currentUserId: currentUserId)
+        apiClient.request(
+            endpoint: .addMembers(
+                cid: cid,
+                userIds: userIds,
+                hideHistory: hideHistory,
+                messagePayload: messagePayload
+            )
+        ) {
             completion?($0.error)
         }
     }
@@ -340,8 +355,21 @@ class ChannelUpdater: Worker {
     ///   - cid: The Id of the channel where you want to remove the users.
     ///   - users: User Ids to remove from the channel.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    func removeMembers(cid: ChannelId, userIds: Set<UserId>, completion: ((Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .removeMembers(cid: cid, userIds: userIds)) {
+    func removeMembers(
+        currentUserId: UserId?,
+        cid: ChannelId,
+        userIds: Set<UserId>,
+        message: String?,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        let messagePayload = messagePayload(text: message, currentUserId: currentUserId)
+        apiClient.request(
+            endpoint: .removeMembers(
+                cid: cid, 
+                userIds: userIds,
+                messagePayload: messagePayload
+            )
+        ) {
             completion?($0.error)
         }
     }
@@ -587,5 +615,25 @@ class ChannelUpdater: Worker {
         apiClient.request(endpoint: .deleteImage(cid: cid, url: url), completion: {
             completion?($0.error)
         })
+    }
+    
+    private func messagePayload(text: String?, currentUserId: UserId?) -> MessageRequestBody? {
+        var messagePayload: MessageRequestBody?
+        if let text, let currentUserId {
+            let userRequestBody = UserRequestBody(
+                id: currentUserId,
+                name: nil,
+                imageURL: nil,
+                extraData: [:]
+            )
+            messagePayload = MessageRequestBody(
+                id: .newUniqueId,
+                user: userRequestBody,
+                text: text,
+                extraData: [:]
+            )
+            return messagePayload
+        }
+        return nil
     }
 }
