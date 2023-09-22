@@ -110,6 +110,15 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     }
 
     /// The id if the first unread message for the current user.
+    ///
+    /// *Warning*:
+    /// When no messages have been read, this value returns:
+    ///     - `nil` if not all the messages have been loaded locally. Paginate to get a valid value for it
+    ///     - The oldest valid message in the history when all the messages have been loaded.
+    ///
+    /// When there are unread messages, but we don't have all of them in memory, we return the LAST READ message id,
+    /// instead of the FIRST UNREAD. This is because we cannot calculate the accurate value until we have all he messages in memory.
+    /// Paginate to get the most accurate value.
     public var firstUnreadMessageId: MessageId? {
         getFirstUnreadMessageId()
     }
