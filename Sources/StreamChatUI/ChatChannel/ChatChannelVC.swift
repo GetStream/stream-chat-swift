@@ -448,6 +448,7 @@ open class ChatChannelVC: _ViewController,
                 self.hasSeenAllUnreadMessages = true
             }
 
+            updateJumpToUnreadRelatedComponents()
             if self.shouldMarkChannelRead {
                 self.markRead()
             } else if !self.hasSeenAllUnreadMessages {
@@ -468,7 +469,6 @@ open class ChatChannelVC: _ViewController,
         }
 
         channelAvatarView.content = (channelController.channel, client.currentUserId)
-        updateJumpToUnreadRelatedComponents()
     }
 
     open func channelController(
