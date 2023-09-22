@@ -360,7 +360,7 @@ open class ChatMessageListVC: _ViewController,
         listView.reloadRows(at: indexPathsToReload, with: .automatic)
     }
 
-    func updateJumpToUnread(at jumpToUnreadMessageId: MessageId?) {
+    func updateJumpToUnreadMessageId(_ jumpToUnreadMessageId: MessageId?) {
         self.jumpToUnreadMessageId = jumpToUnreadMessageId
     }
 

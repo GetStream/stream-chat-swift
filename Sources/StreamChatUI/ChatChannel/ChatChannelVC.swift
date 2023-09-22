@@ -537,7 +537,7 @@ private extension ChatChannelVC {
     }
 
     func updateJumpToUnreadRelatedComponents() {
-        messageListVC.updateJumpToUnread(at: channelController.firstUnreadMessageId)
+        messageListVC.updateJumpToUnreadMessageId(channelController.firstUnreadMessageId)
         messageListVC.updateJumpToUnreadButtonVisibility()
     }
 
