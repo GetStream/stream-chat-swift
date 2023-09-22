@@ -97,13 +97,12 @@ open class ChatMessageListVC: _ViewController,
     open var isJumpToUnreadMessagesButtonVisible: Bool {
         guard isJumpToUnreadEnabled,
               let dataSource = dataSource,
-              let unreadCount = dataSource.channel(for: self)?.unreadCount,
-              unreadCount.messages > 0 else {
+              let unreadCount = dataSource.channel(for: self)?.unreadCount else {
             return false
         }
 
         guard let firstUnreadIndexPath = jumpToUnreadMessageIndexPath else {
-            return false
+            return unreadCount.messages > 0
         }
 
         // If the message is visible on screen, we don't show the button
