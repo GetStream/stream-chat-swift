@@ -30,9 +30,6 @@ open class InputTextView: UITextView, AppearanceProvider {
         .withBidirectionalLanguagesSupport
         .withAdjustingFontForContentSizeCategory
 
-    /// A boolean value to control whether the text was changed by pasting a text from the clipboard.
-    private var textChangedFromClipboard = false
-
     override open var text: String! {
         didSet {
             textDidChangeProgrammatically()
@@ -124,18 +121,15 @@ open class InputTextView: UITextView, AppearanceProvider {
 
     open func textDidChangeProgrammatically() {
         delegate?.textViewDidChange?(self)
-        handleTextChange()
+        DispatchQueue.main.async {
+            self.handleTextChange()
+        }
     }
 
     @objc open func handleTextChange() {
         placeholderLabel.isHidden = !text.isEmpty
         setTextViewHeight()
-
-        // If the user pasted text from the clipboard, we want to scroll to the caret position.
-        if textChangedFromClipboard {
-            scrollToCaretPosition(animated: false)
-            textChangedFromClipboard = false
-        }
+        scrollToCaretPosition(animated: true)
     }
 
     open func setTextViewHeight() {
@@ -176,10 +170,6 @@ open class InputTextView: UITextView, AppearanceProvider {
         if let pasteboardImage = UIPasteboard.general.image {
             clipboardAttachmentDelegate?.inputTextView(self, didPasteImage: pasteboardImage)
         } else {
-            if UIPasteboard.general.string != nil {
-                textChangedFromClipboard = true
-            }
-
             super.paste(sender)
             // On text paste, textView height will not change automatically
             // so we must call this function
@@ -189,8 +179,11 @@ open class InputTextView: UITextView, AppearanceProvider {
 
     /// Scrolls the text view to to the caret's position.
     public func scrollToCaretPosition(animated: Bool) {
-        guard let selectedTextRange = self.selectedTextRange else { return }
-        let caret = caretRect(for: selectedTextRange.start)
-        scrollRectToVisible(caret, animated: animated)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            guard let selectedTextRange = self.selectedTextRange else { return }
+            var caret = self.caretRect(for: selectedTextRange.start)
+            guard !self.bounds.contains(caret.origin) else { return }
+            self.scrollRectToVisible(caret, animated: animated)
+        }
     }
 }
