@@ -103,7 +103,8 @@ open class InputTextView: UITextView, AppearanceProvider {
         placeholderLabel.widthAnchor.pin(equalTo: widthAnchor, multiplier: 0.95).isActive = true
 
         heightConstraint = heightAnchor.pin(equalToConstant: minimumHeight)
-        isScrollEnabled = false
+        heightConstraint?.isActive = true
+        isScrollEnabled = true
     }
 
     /// Sets the given text in the current caret position.
@@ -143,15 +144,13 @@ open class InputTextView: UITextView, AppearanceProvider {
             heightToSet = contentSize.height
         }
 
-        heightConstraint?.constant = heightToSet
-        heightConstraint?.isActive = true
-        layoutIfNeeded()
-
         // This is due to bug in UITextView where the scroll sometimes disables
         // when a very long text is pasted in it.
         // Doing this ensures that it doesn't happen
-        // Reference: https://stackoverflow.com/a/33194525/3825788
+        // Reference: https://stackoverflow.com/a/62386088/5493299
         isScrollEnabled = false
+        heightConstraint?.constant = heightToSet
+        layoutIfNeeded()
         isScrollEnabled = true
     }
 
@@ -181,7 +180,7 @@ open class InputTextView: UITextView, AppearanceProvider {
     public func scrollToCaretPosition(animated: Bool) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             guard let selectedTextRange = self.selectedTextRange else { return }
-            var caret = self.caretRect(for: selectedTextRange.start)
+            let caret = self.caretRect(for: selectedTextRange.start)
             guard !self.bounds.contains(caret.origin) else { return }
             self.scrollRectToVisible(caret, animated: animated)
         }
