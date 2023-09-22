@@ -703,7 +703,6 @@ open class ComposerVC: _ViewController,
 
             // Makes sure the text view remains in the same position when it changes size.
             self.composerView.inputMessageView.textView.setTextViewHeight()
-            self.composerView.inputMessageView.textView.scrollToCaretPosition(animated: true)
         }
     }
 
