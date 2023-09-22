@@ -84,6 +84,11 @@ open class InputTextView: UITextView, AppearanceProvider {
         textAlignment = .natural
         adjustsFontForContentSizeCategory = true
 
+        // This makes scrollToCaretPosition() more precise.
+        // This should be disabled by default according to Apple, but in some iOS versions is not.
+        // Reference: https://stackoverflow.com/a/48602171/5493299
+        layoutManager.allowsNonContiguousLayout = false
+
         placeholderLabel.font = font
         placeholderLabel.textColor = appearance.colorPalette.subtitleText
         placeholderLabel.adjustsFontSizeToFitWidth = true
