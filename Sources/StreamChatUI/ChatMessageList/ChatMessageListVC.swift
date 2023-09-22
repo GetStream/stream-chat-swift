@@ -113,7 +113,7 @@ open class ChatMessageListVC: _ViewController,
         components.isJumpToUnreadEnabled
     }
 
-    private var unreadBannerMessageId: MessageId?
+    private var unreadSeparatorMessageId: MessageId?
     private var jumpToUnreadMessageId: MessageId?
     private var jumpToUnreadMessageIndexPath: IndexPath? {
         jumpToUnreadMessageId.flatMap(getIndexPath)
@@ -346,14 +346,14 @@ open class ChatMessageListVC: _ViewController,
     }
 
     func updateUnreadMessagesSeparator(at firstUnreadId: MessageId?) {
-        let previousFirstUnreadId = unreadBannerMessageId
+        let previousFirstUnreadId = unreadSeparatorMessageId
         guard previousFirstUnreadId != firstUnreadId else { return }
 
         func indexPath(for id: MessageId?) -> IndexPath? {
             id.flatMap(getIndexPath)
         }
 
-        unreadBannerMessageId = firstUnreadId
+        unreadSeparatorMessageId = firstUnreadId
 
         let indexPathsToReload = [indexPath(for: previousFirstUnreadId), indexPath(for: firstUnreadId)].compactMap { $0 }
         guard !indexPathsToReload.isEmpty else { return }
@@ -370,7 +370,7 @@ open class ChatMessageListVC: _ViewController,
     }
 
     @objc func jumpToUnreadMessages() {
-        guard let firstUnreadMessageId = unreadBannerMessageId else { return }
+        guard let firstUnreadMessageId = unreadSeparatorMessageId else { return }
         jumpToMessage(id: firstUnreadMessageId)
     }
 

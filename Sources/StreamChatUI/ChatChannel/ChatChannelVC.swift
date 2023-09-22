@@ -408,7 +408,7 @@ open class ChatChannelVC: _ViewController,
         at indexPath: IndexPath
     ) -> ChatMessageDecorationView? {
         let shouldShowDate = vc.shouldShowDateSeparator(forMessage: message, at: indexPath)
-        let shouldShowUnreadMessages = message.id == firstUnreadMessageId
+        let shouldShowUnreadMessages = components.isUnreadMessagesSeparatorEnabled && message.id == firstUnreadMessageId
 
         guard (shouldShowDate || shouldShowUnreadMessages), let channel = channelController.channel else {
             return nil
