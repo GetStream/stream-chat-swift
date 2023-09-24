@@ -7,6 +7,7 @@ import UIKit
 
 /// The view controller responsible to search messages.
 /// It implements the required functions of the `ChatChannelListSearchVC` abstract class.
+@available(iOSApplicationExtension, unavailable)
 open class ChatMessageSearchVC: ChatChannelListSearchVC, ChatMessageSearchControllerDelegate {
     /// The data of the message list.
     public private(set) var messages: [ChatMessage] = []

@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChatUI
 ### 🐞 Fixed
 - Fix the unread messages banner showing on system messages [#2793](https://github.com/GetStream/stream-chat-swift/pull/2793)
+- Fix compilation issues on NSEs when using Cocoapods [#2798](https://github.com/GetStream/stream-chat-swift/pull/2798)
+- Fix frozen input view when editing a large message [#2800](https://github.com/GetStream/stream-chat-swift/pull/2800)
+- Fix not scrolling to the caret position when typing a message and the caret is out of view [#2800](https://github.com/GetStream/stream-chat-swift/pull/2800)
+- Fix not scrolling to the caret position when tapping on the shrink button [#2800](https://github.com/GetStream/stream-chat-swift/pull/2800)
+- Fix composer input scrolling getting disabled on iOS 17 [#2802](https://github.com/GetStream/stream-chat-swift/pull/2802)
 
 # [4.37.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.37.0)
 _September 18, 2023_
