@@ -136,8 +136,9 @@ extension Endpoint {
 
     static func addMembers(
         cid: ChannelId,
-        userIds: Set<UserId>, hideHistory: Bool,
-        messagePayload: MessageRequestBody?
+        userIds: Set<UserId>,
+        hideHistory: Bool,
+        messagePayload: MessageRequestBody? = nil
     ) -> Endpoint<EmptyResponse> {
         var body: [String: AnyEncodable] = [
             "add_members": AnyEncodable(userIds),
@@ -158,7 +159,7 @@ extension Endpoint {
     static func removeMembers(
         cid: ChannelId,
         userIds: Set<UserId>,
-        messagePayload: MessageRequestBody?
+        messagePayload: MessageRequestBody? = nil
     ) -> Endpoint<EmptyResponse> {
         var body: [String: AnyEncodable] = [
             "remove_members": AnyEncodable(userIds)

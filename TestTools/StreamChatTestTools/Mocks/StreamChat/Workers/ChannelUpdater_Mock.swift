@@ -299,7 +299,15 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         createNewMessage_completion = completion
     }
 
-    override func addMembers(cid: ChannelId, userIds: Set<UserId>, hideHistory: Bool, completion: ((Error?) -> Void)? = nil) {
+    override func addMembers(
+        currentUserId: UserId?,
+        cid: ChannelId,
+        userIds: Set<UserId>,
+        message: String?,
+        messageId: String? = nil,
+        hideHistory: Bool,
+        completion: ((Error?) -> Void)? = nil
+    ) {
         addMembers_cid = cid
         addMembers_userIds = userIds
         addMembers_hideHistory = hideHistory
@@ -334,7 +342,14 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         rejectInvite_completion = completion
     }
 
-    override func removeMembers(cid: ChannelId, userIds: Set<UserId>, completion: ((Error?) -> Void)? = nil) {
+    override func removeMembers(
+        currentUserId: UserId?,
+        cid: ChannelId,
+        userIds: Set<UserId>,
+        message: String?,
+        messageId: String? = nil,
+        completion: ((Error?) -> Void)? = nil
+    ) {
         removeMembers_cid = cid
         removeMembers_userIds = userIds
         removeMembers_completion = completion

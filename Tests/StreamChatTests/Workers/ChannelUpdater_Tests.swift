@@ -1111,6 +1111,39 @@ final class ChannelUpdater_Tests: XCTestCase {
         let referenceEndpoint: Endpoint<EmptyResponse> = .addMembers(cid: channelID, userIds: userIds, hideHistory: false)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
+    
+    func test_addMembersWithMessage_makesCorrectAPICall() {
+        let channelID = ChannelId.unique
+        let userIds: Set<UserId> = Set([UserId.unique])
+        let message: String = "Someone joined the channel"
+        let senderId: String = .unique
+        let messageId: String = .newUniqueId
+
+        // Simulate `addMembers(cid:, mute:, userIds:)` call
+        channelUpdater.addMembers(
+            currentUserId: senderId,
+            cid: channelID,
+            userIds: userIds,
+            message: message,
+            messageId: messageId,
+            hideHistory: false
+        )
+
+        // Assert correct endpoint is called
+        let messageRequestBody = MessageRequestBody(
+            id: messageId,
+            user: UserRequestBody(id: senderId, name: nil, imageURL: nil, extraData: [:]),
+            text: message,
+            extraData: [:]
+        )
+        let referenceEndpoint: Endpoint<EmptyResponse> = .addMembers(
+            cid: channelID,
+            userIds: userIds,
+            hideHistory: false,
+            messagePayload: messageRequestBody
+        )
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+    }
 
     func test_addMembers_successfulResponse_isPropagatedToCompletion() {
         let channelID = ChannelId.unique
@@ -1305,6 +1338,37 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         // Assert correct endpoint is called
         let referenceEndpoint: Endpoint<EmptyResponse> = .removeMembers(cid: channelID, userIds: userIds)
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+    }
+    
+    func test_removeMembersWithMessage_makesCorrectAPICall() {
+        let channelID = ChannelId.unique
+        let userIds: Set<UserId> = Set([UserId.unique])
+        let message: String = "Someone left the channel"
+        let senderId: String = .unique
+        let messageId: String = .newUniqueId
+
+        // Simulate `addMembers(cid:, mute:, userIds:)` call
+        channelUpdater.removeMembers(
+            currentUserId: senderId,
+            cid: channelID,
+            userIds: userIds,
+            message: message,
+            messageId: messageId
+        )
+
+        // Assert correct endpoint is called
+        let messageRequestBody = MessageRequestBody(
+            id: messageId,
+            user: UserRequestBody(id: senderId, name: nil, imageURL: nil, extraData: [:]),
+            text: message,
+            extraData: [:]
+        )
+        let referenceEndpoint: Endpoint<EmptyResponse> = .removeMembers(
+            cid: channelID,
+            userIds: userIds,
+            messagePayload: messageRequestBody
+        )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
 

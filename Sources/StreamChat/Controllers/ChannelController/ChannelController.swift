@@ -723,6 +723,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// - Parameters:
     ///   - userIds: User ids that will be added to a channel.
     ///   - hideHistory: Hide the history of the channel to the added member. By default, it is false.
+    ///   - message: Optional system message sent when adding members.
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
     ///
@@ -741,7 +742,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         updater.addMembers(
             currentUserId: client.currentUserId,
             cid: cid,
-            userIds: userIds, 
+            userIds: userIds,
             message: message,
             hideHistory: hideHistory
         ) { error in
@@ -755,6 +756,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///
     /// - Parameters:
     ///   - userIds: User ids that will be removed from a channel.
+    ///   - message: Optional system message sent when removing members.
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
     ///
@@ -770,7 +772,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         }
 
         updater.removeMembers(
-            currentUserId: client.currentUserId, 
+            currentUserId: client.currentUserId,
             cid: cid,
             userIds: userIds,
             message: message

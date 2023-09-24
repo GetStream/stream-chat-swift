@@ -325,19 +325,23 @@ class ChannelUpdater: Worker {
 
     /// Add users to the channel as members.
     /// - Parameters:
+    ///   - currentUserId: the id of the current user.
     ///   - cid: The Id of the channel where you want to add the users.
-    ///   - users: User Ids to add to the channel.
+    ///   - userIds: User ids to add to the channel.
+    ///   - message: Optional system message sent when adding a member.
+    ///   - messageId: Optional id of the message.
     ///   - hideHistory: Hide the history of the channel to the added member.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func addMembers(
-        currentUserId: UserId?,
+        currentUserId: UserId? = nil,
         cid: ChannelId,
         userIds: Set<UserId>,
-        message: String?,
+        message: String? = nil,
+        messageId: String? = nil,
         hideHistory: Bool,
         completion: ((Error?) -> Void)? = nil
     ) {
-        let messagePayload = messagePayload(text: message, currentUserId: currentUserId)
+        let messagePayload = messagePayload(text: message, messageId: messageId, currentUserId: currentUserId)
         apiClient.request(
             endpoint: .addMembers(
                 cid: cid,
@@ -352,17 +356,21 @@ class ChannelUpdater: Worker {
 
     /// Remove users to the channel as members.
     /// - Parameters:
+    ///   - currentUserId: the id of the current user.
     ///   - cid: The Id of the channel where you want to remove the users.
-    ///   - users: User Ids to remove from the channel.
+    ///   - userIds: User ids to remove from the channel.
+    ///   - message: Optional system message sent when removing a member.
+    ///   - messageId: Optional id of the message.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func removeMembers(
-        currentUserId: UserId?,
+        currentUserId: UserId? = nil,
         cid: ChannelId,
         userIds: Set<UserId>,
-        message: String?,
+        message: String? = nil,
+        messageId: String? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
-        let messagePayload = messagePayload(text: message, currentUserId: currentUserId)
+        let messagePayload = messagePayload(text: message, messageId: messageId, currentUserId: currentUserId)
         apiClient.request(
             endpoint: .removeMembers(
                 cid: cid, 
@@ -617,7 +625,7 @@ class ChannelUpdater: Worker {
         })
     }
     
-    private func messagePayload(text: String?, currentUserId: UserId?) -> MessageRequestBody? {
+    private func messagePayload(text: String?, messageId: String? = nil, currentUserId: UserId?) -> MessageRequestBody? {
         var messagePayload: MessageRequestBody?
         if let text, let currentUserId {
             let userRequestBody = UserRequestBody(
@@ -627,7 +635,7 @@ class ChannelUpdater: Worker {
                 extraData: [:]
             )
             messagePayload = MessageRequestBody(
-                id: .newUniqueId,
+                id: messageId ?? .newUniqueId,
                 user: userRequestBody,
                 text: text,
                 extraData: [:]
