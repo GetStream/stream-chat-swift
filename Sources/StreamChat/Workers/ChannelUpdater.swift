@@ -373,7 +373,7 @@ class ChannelUpdater: Worker {
         let messagePayload = messagePayload(text: message, messageId: messageId, currentUserId: currentUserId)
         apiClient.request(
             endpoint: .removeMembers(
-                cid: cid, 
+                cid: cid,
                 userIds: userIds,
                 messagePayload: messagePayload
             )
@@ -627,7 +627,7 @@ class ChannelUpdater: Worker {
     
     private func messagePayload(text: String?, messageId: String? = nil, currentUserId: UserId?) -> MessageRequestBody? {
         var messagePayload: MessageRequestBody?
-        if let text, let currentUserId {
+        if let text = text, let currentUserId = currentUserId {
             let userRequestBody = UserRequestBody(
                 id: currentUserId,
                 name: nil,
