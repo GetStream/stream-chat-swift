@@ -168,6 +168,8 @@ open class ChatChannelVC: _ViewController,
         messageListVC.swipeToReplyGestureHandler.onReply = { [weak self] message in
             self?.messageComposerVC.content.quoteMessage(message)
         }
+
+        updateScrollToBottomButtonCount()
     }
 
     private func setChannelControllerToComposerIfNeeded(cid: ChannelId?) {
@@ -245,8 +247,7 @@ open class ChatChannelVC: _ViewController,
                 )
             }
         }
-        updateUnreadMessagesBannerRelatedComponents()
-        updateJumpToUnreadRelatedComponents()
+        updateAllUnreadMessagesRelatedComponents()
     }
 
     // MARK: - Actions
@@ -255,9 +256,7 @@ open class ChatChannelVC: _ViewController,
     public func markRead() {
         channelController.markRead { [weak self] _ in
             self?.updateJumpToUnreadRelatedComponents()
-            if let unreadCount = self?.channelController.channel?.unreadCount {
-                self?.messageListVC.scrollToBottomButton.content = unreadCount
-            }
+            self?.updateScrollToBottomButtonCount()
         }
     }
 
@@ -374,8 +373,7 @@ open class ChatChannelVC: _ViewController,
         case is MarkUnreadActionItem:
             dismiss(animated: true) { [weak self] in
                 self?.channelController.markUnread(from: message.id) { _ in
-                    self?.updateUnreadMessagesBannerRelatedComponents()
-                    self?.updateJumpToUnreadRelatedComponents()
+                    self?.updateAllUnreadMessagesRelatedComponents()
                 }
             }
         default:
@@ -467,8 +465,7 @@ open class ChatChannelVC: _ViewController,
         _ channelController: ChatChannelController,
         didUpdateChannel channel: EntityChange<ChatChannel>
     ) {
-        let channelUnreadCount = channelController.channel?.unreadCount ?? .noUnread
-        messageListVC.scrollToBottomButton.content = channelUnreadCount
+        updateScrollToBottomButtonCount()
 
         if headerView.channelController == nil, let cid = channelController.cid {
             headerView.channelController = client.channelController(for: cid)
@@ -540,6 +537,17 @@ private extension ChatChannelVC {
             channelListQuery: channelController.channelListQuery,
             messageOrdering: channelController.messageOrdering
         )
+    }
+
+    func updateAllUnreadMessagesRelatedComponents() {
+        updateScrollToBottomButtonCount()
+        updateJumpToUnreadRelatedComponents()
+        updateUnreadMessagesBannerRelatedComponents()
+    }
+
+    func updateScrollToBottomButtonCount() {
+        let channelUnreadCount = channelController.channel?.unreadCount ?? .noUnread
+        messageListVC.scrollToBottomButton.content = channelUnreadCount
     }
 
     func updateJumpToUnreadRelatedComponents() {
