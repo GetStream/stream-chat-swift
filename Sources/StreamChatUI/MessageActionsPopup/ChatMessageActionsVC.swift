@@ -112,6 +112,7 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
             let canUpdateOwnMessage = channel?.canUpdateOwnMessage ?? true
             let canDeleteAnyMessage = channel?.canDeleteAnyMessage ?? false
             let canDeleteOwnMessage = channel?.canDeleteOwnMessage ?? true
+            let isSentByCurrentUser = message.isSentByCurrentUser
 
             if canQuoteMessage {
                 actions.append(inlineReplyActionItem())
@@ -121,7 +122,7 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
                 actions.append(threadReplyActionItem())
             }
 
-            if canReceiveReadEvents && (!message.isPartOfThread || message.showReplyInChannel) {
+            if canReceiveReadEvents && !isSentByCurrentUser && (!message.isPartOfThread || message.showReplyInChannel) {
                 actions.append(markUnreadActionItem())
             }
 
@@ -141,7 +142,7 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
                 actions.append(deleteActionItem())
             }
 
-            if !message.isSentByCurrentUser {
+            if !isSentByCurrentUser {
                 actions.append(flagActionItem())
             }
 

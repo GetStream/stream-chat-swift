@@ -168,6 +168,8 @@ open class ChatChannelVC: _ViewController,
         messageListVC.swipeToReplyGestureHandler.onReply = { [weak self] message in
             self?.messageComposerVC.content.quoteMessage(message)
         }
+
+        updateScrollToBottomButtonCount()
     }
 
     private func setChannelControllerToComposerIfNeeded(cid: ChannelId?) {
@@ -245,8 +247,7 @@ open class ChatChannelVC: _ViewController,
                 )
             }
         }
-
-        updateUnreadMessagesRelatedComponents()
+        updateAllUnreadMessagesRelatedComponents()
     }
 
     // MARK: - Actions
@@ -254,9 +255,9 @@ open class ChatChannelVC: _ViewController,
     /// Marks the channel read and updates the UI optimistically.
     public func markRead() {
         channelController.markRead { [weak self] _ in
-            self?.updateUnreadMessagesRelatedComponents()
+            self?.updateJumpToUnreadRelatedComponents()
+            self?.updateScrollToBottomButtonCount()
         }
-        messageListVC.scrollToBottomButton.content = .noUnread
     }
 
     /// Jump to a given message.
@@ -372,12 +373,16 @@ open class ChatChannelVC: _ViewController,
         case is MarkUnreadActionItem:
             dismiss(animated: true) { [weak self] in
                 self?.channelController.markUnread(from: message.id) { _ in
-                    self?.updateUnreadMessagesRelatedComponents()
+                    self?.updateAllUnreadMessagesRelatedComponents()
                 }
             }
         default:
             return
         }
+    }
+
+    public func chatMessageListShouldShowJumpToUnread(_ vc: ChatMessageListVC) -> Bool {
+        true
     }
 
     public func chatMessageListDidDiscardUnreadMessages(_ vc: ChatMessageListVC) {
@@ -407,7 +412,7 @@ open class ChatChannelVC: _ViewController,
         at indexPath: IndexPath
     ) -> ChatMessageDecorationView? {
         let shouldShowDate = vc.shouldShowDateSeparator(forMessage: message, at: indexPath)
-        let shouldShowUnreadMessages = message.id == firstUnreadMessageId
+        let shouldShowUnreadMessages = components.isUnreadMessagesSeparatorEnabled && message.id == firstUnreadMessageId
 
         guard (shouldShowDate || shouldShowUnreadMessages), let channel = channelController.channel else {
             return nil
@@ -434,20 +439,24 @@ open class ChatChannelVC: _ViewController,
 
     // MARK: - ChatChannelControllerDelegate
 
-    private var firstMessagesUpdate: Bool = true
     open func channelController(
         _ channelController: ChatChannelController,
         didUpdateMessages changes: [ListChange<ChatMessage>]
     ) {
-        if firstMessagesUpdate {
-            updateUnreadMessagesRelatedComponents()
-            firstMessagesUpdate = false
-        }
         messageListVC.setPreviousMessagesSnapshot(messages)
         messageListVC.setNewMessagesSnapshot(Array(channelController.messages))
         messageListVC.updateMessages(with: changes) { [weak self] in
-            if self?.shouldMarkChannelRead == true {
-                self?.markRead()
+            guard let self = self else { return }
+
+            if let unreadCount = channelController.channel?.unreadCount.messages, channelController.firstUnreadMessageId == nil && unreadCount == 0 {
+                self.hasSeenAllUnreadMessages = true
+            }
+
+            self.updateJumpToUnreadRelatedComponents()
+            if self.shouldMarkChannelRead {
+                self.markRead()
+            } else if !self.hasSeenAllUnreadMessages {
+                self.updateUnreadMessagesBannerRelatedComponents()
             }
         }
     }
@@ -456,8 +465,7 @@ open class ChatChannelVC: _ViewController,
         _ channelController: ChatChannelController,
         didUpdateChannel channel: EntityChange<ChatChannel>
     ) {
-        let channelUnreadCount = channelController.channel?.unreadCount ?? .noUnread
-        messageListVC.scrollToBottomButton.content = channelUnreadCount
+        updateScrollToBottomButtonCount()
 
         if headerView.channelController == nil, let cid = channelController.cid {
             headerView.channelController = client.channelController(for: cid)
@@ -531,9 +539,24 @@ private extension ChatChannelVC {
         )
     }
 
-    func updateUnreadMessagesRelatedComponents() {
+    func updateAllUnreadMessagesRelatedComponents() {
+        updateScrollToBottomButtonCount()
+        updateJumpToUnreadRelatedComponents()
+        updateUnreadMessagesBannerRelatedComponents()
+    }
+
+    func updateScrollToBottomButtonCount() {
+        let channelUnreadCount = channelController.channel?.unreadCount ?? .noUnread
+        messageListVC.scrollToBottomButton.content = channelUnreadCount
+    }
+
+    func updateJumpToUnreadRelatedComponents() {
+        messageListVC.updateJumpToUnreadMessageId(channelController.firstUnreadMessageId)
+        messageListVC.updateJumpToUnreadButtonVisibility()
+    }
+
+    func updateUnreadMessagesBannerRelatedComponents() {
         firstUnreadMessageId = channelController.firstUnreadMessageId
         messageListVC.updateUnreadMessagesSeparator(at: firstUnreadMessageId)
-        messageListVC.updateJumpToUnreadButtonVisibility()
     }
 }

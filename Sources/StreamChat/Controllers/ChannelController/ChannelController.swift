@@ -110,6 +110,15 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     }
 
     /// The id if the first unread message for the current user.
+    ///
+    /// *Warning*:
+    /// When no messages have been read, this value returns:
+    ///     - `nil` if not all the messages have been loaded locally. Paginate to get a valid value for it
+    ///     - The oldest valid message in the history when all the messages have been loaded.
+    ///
+    /// When there are unread messages, but we don't have all of them in memory, we return `nil` message id.
+    /// This is because we cannot calculate the accurate value until we have all he messages in memory.
+    /// Paginate to get the most accurate value.
     public var firstUnreadMessageId: MessageId? {
         getFirstUnreadMessageId()
     }
@@ -1460,8 +1469,10 @@ private extension ChatChannelController {
     private func getFirstUnreadMessageId() -> MessageId? {
         // Return the oldest regular message if all messages are unread in the message list.
         let oldestRegularMessage: () -> MessageId? = { [weak self] in
-            // We need to make sure we discard system messages etc...
-            self?.messages.last(where: { $0.type == .regular || $0.type == .reply })?.id
+            guard self?.hasLoadedAllPreviousMessages == true else {
+                return nil
+            }
+            return self?.messages.last(where: { $0.type == .regular || $0.type == .reply })?.id
         }
 
         guard let currentUserRead = channel?.reads.first(where: {
