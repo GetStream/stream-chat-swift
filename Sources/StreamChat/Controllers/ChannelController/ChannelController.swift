@@ -116,8 +116,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///     - `nil` if not all the messages have been loaded locally. Paginate to get a valid value for it
     ///     - The oldest valid message in the history when all the messages have been loaded.
     ///
-    /// When there are unread messages, but we don't have all of them in memory, we return the LAST READ message id,
-    /// instead of the FIRST UNREAD. This is because we cannot calculate the accurate value until we have all he messages in memory.
+    /// When there are unread messages, but we don't have all of them in memory, we return `nil` message id.
+    /// This is because we cannot calculate the accurate value until we have all he messages in memory.
     /// Paginate to get the most accurate value.
     public var firstUnreadMessageId: MessageId? {
         getFirstUnreadMessageId()
@@ -1497,10 +1497,7 @@ private extension ChatChannelController {
         }
 
         guard let lastReadIndex = messages.firstIndex(where: { $0.id == lastReadMessageId }), lastReadIndex != 0 else {
-            // If we reach this point, it means we are failing to find the lastReadMessageId. And this is because
-            // we have not loaded enough pages to reach it. Therefore, we cannot use the local data to calculate the
-            // real firstUnreadMessageId. This is, therefore, the best approximation we can make give.
-            return lastReadMessageId
+            return nil
         }
 
         let lookUpStartIndex = messages.index(before: lastReadIndex)

@@ -422,7 +422,7 @@ final class ChannelController_Tests: XCTestCase {
             try $0.saveCurrentUser(payload: .dummy(userId: userId, role: .user))
         }
 
-        XCTAssertEqual(controller.firstUnreadMessageId, notLoadedLastReadMessageId)
+        XCTAssertNil(controller.firstUnreadMessageId)
     }
 
     func test_firstUnreadMessageId_whenReadsContainsCurrentUserId_whenLastReadMessageIdIsTheSameAsTheLastMessage() throws {
