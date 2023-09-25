@@ -144,7 +144,7 @@ extension Endpoint {
             "add_members": AnyEncodable(userIds),
             "hide_history": AnyEncodable(hideHistory)
         ]
-        if let messagePayload {
+        if let messagePayload = messagePayload {
             body["message"] = AnyEncodable(messagePayload)
         }
         return .init(
@@ -164,7 +164,7 @@ extension Endpoint {
         var body: [String: AnyEncodable] = [
             "remove_members": AnyEncodable(userIds)
         ]
-        if let messagePayload {
+        if let messagePayload = messagePayload {
             body["message"] = AnyEncodable(messagePayload)
         }
         return .init(
