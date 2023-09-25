@@ -358,7 +358,6 @@ class ChannelUpdater: Worker {
     ///   - cid: The Id of the channel where you want to remove the users.
     ///   - userIds: User ids to remove from the channel.
     ///   - message: Optional system message sent when removing a member.
-    ///   - messageId: Optional id of the message.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func removeMembers(
         currentUserId: UserId? = nil,
@@ -621,6 +620,8 @@ class ChannelUpdater: Worker {
             completion?($0.error)
         })
     }
+    
+    // MARK: - private
     
     private func messagePayload(text: String?, currentUserId: UserId?) -> MessageRequestBody? {
         var messagePayload: MessageRequestBody?
