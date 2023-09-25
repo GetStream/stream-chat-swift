@@ -637,12 +637,14 @@ final class ChatMessageListVC_Tests: XCTestCase {
 
     func test_isJumpToUnreadMessagesButtonVisible_whenFeatureIsDisabled() {
         sut.components.isJumpToUnreadEnabled = false
+        mockedDelegate.mockedShouldShowJumpToUnread = false
 
         XCTAssertFalse(sut.isJumpToUnreadMessagesButtonVisible)
     }
 
     func test_isJumpToUnreadMessagesButtonVisible_whenThereIsNoDataSource() {
         sut.components.isJumpToUnreadEnabled = true
+        mockedDelegate.mockedShouldShowJumpToUnread = true
         mockedDataSource = nil
 
         XCTAssertFalse(sut.isJumpToUnreadMessagesButtonVisible)
@@ -650,6 +652,7 @@ final class ChatMessageListVC_Tests: XCTestCase {
 
     func test_isJumpToUnreadMessagesButtonVisible_whenThereIsNoChannel() {
         sut.components.isJumpToUnreadEnabled = true
+        mockedDelegate.mockedShouldShowJumpToUnread = true
         mockedDataSource.mockedChannel = nil
 
         XCTAssertFalse(sut.isJumpToUnreadMessagesButtonVisible)
@@ -657,6 +660,7 @@ final class ChatMessageListVC_Tests: XCTestCase {
 
     func test_isJumpToUnreadMessagesButtonVisible_whenTheIndexPathDoesNotExist_whenUnreadCountIsZero() {
         sut.components.isJumpToUnreadEnabled = true
+        mockedDelegate.mockedShouldShowJumpToUnread = true
         mockedDataSource.mockedChannel = .mock(cid: .unique, unreadCount: .mock(messages: 0))
         let unreadMessageId = MessageId.unique
         sut.updateJumpToUnreadMessageId(unreadMessageId)
@@ -667,6 +671,7 @@ final class ChatMessageListVC_Tests: XCTestCase {
 
     func test_isJumpToUnreadMessagesButtonVisible_whenTheIndexPathDoesNotExist_whenUnreadCountIsPositive() {
         sut.components.isJumpToUnreadEnabled = true
+        mockedDelegate.mockedShouldShowJumpToUnread = true
         mockedDataSource.mockedChannel = .mock(cid: .unique, unreadCount: .mock(messages: 1))
         let unreadMessageId = MessageId.unique
         sut.updateJumpToUnreadMessageId(unreadMessageId)
@@ -677,6 +682,7 @@ final class ChatMessageListVC_Tests: XCTestCase {
 
     func test_isJumpToUnreadMessagesButtonVisible_whenTheIndexPathIsVisible() {
         sut.components.isJumpToUnreadEnabled = true
+        mockedDelegate.mockedShouldShowJumpToUnread = true
         mockedDataSource.mockedChannel = .mock(cid: .unique, unreadCount: .mock(messages: 1))
         let unreadMessageId = MessageId.unique
         sut.updateJumpToUnreadMessageId(unreadMessageId)
@@ -692,6 +698,7 @@ final class ChatMessageListVC_Tests: XCTestCase {
 
     func test_isJumpToUnreadMessagesButtonVisible_whenTheIndexPathIsNotVisible() {
         sut.components.isJumpToUnreadEnabled = true
+        mockedDelegate.mockedShouldShowJumpToUnread = true
         mockedDataSource.mockedChannel = .mock(cid: .unique, unreadCount: .mock(messages: 1))
         let unreadMessageId = MessageId.unique
         sut.updateJumpToUnreadMessageId(unreadMessageId)

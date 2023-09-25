@@ -255,8 +255,8 @@ open class ChatChannelVC: _ViewController,
     public func markRead() {
         channelController.markRead { [weak self] _ in
             self?.updateJumpToUnreadRelatedComponents()
+            self?.messageListVC.scrollToBottomButton.content = .noUnread
         }
-        messageListVC.scrollToBottomButton.content = .noUnread
     }
 
     /// Jump to a given message.
