@@ -381,6 +381,10 @@ open class ChatChannelVC: _ViewController,
         }
     }
 
+    public func chatMessageListShouldShowJumpToUnread(_ vc: ChatMessageListVC) -> Bool {
+        true
+    }
+
     public func chatMessageListDidDiscardUnreadMessages(_ vc: ChatMessageListVC) {
         markRead()
     }

@@ -110,7 +110,9 @@ open class ChatMessageListVC: _ViewController,
     }
 
     private var isJumpToUnreadEnabled: Bool {
-        components.isJumpToUnreadEnabled
+        let isEnabled = components.isJumpToUnreadEnabled
+        guard let delegate = delegate else { return isEnabled }
+        return isEnabled && delegate.chatMessageListShouldShowJumpToUnread(self)
     }
 
     private var unreadSeparatorMessageId: MessageId?
