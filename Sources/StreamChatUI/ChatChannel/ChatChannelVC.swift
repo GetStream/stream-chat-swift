@@ -452,7 +452,7 @@ open class ChatChannelVC: _ViewController,
                 self.hasSeenAllUnreadMessages = true
             }
 
-            updateJumpToUnreadRelatedComponents()
+            self.updateJumpToUnreadRelatedComponents()
             if self.shouldMarkChannelRead {
                 self.markRead()
             } else if !self.hasSeenAllUnreadMessages {
