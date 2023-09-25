@@ -1127,7 +1127,7 @@ final class ChannelUpdater_Tests: XCTestCase {
             hideHistory: false
         )
         
-        let body = self.apiClient.request_endpoint?.body?.encodable as? [String: AnyEncodable]
+        let body = apiClient.request_endpoint?.body?.encodable as? [String: AnyEncodable]
         let messageId = (body?["message"]?.encodable as? MessageRequestBody)?.id ?? .newUniqueId
         
         // Assert correct endpoint is called
@@ -1356,7 +1356,7 @@ final class ChannelUpdater_Tests: XCTestCase {
             message: message
         )
         
-        let body = self.apiClient.request_endpoint?.body?.encodable as? [String: AnyEncodable]
+        let body = apiClient.request_endpoint?.body?.encodable as? [String: AnyEncodable]
         let messageId = (body?["message"]?.encodable as? MessageRequestBody)?.id ?? .newUniqueId
         
         // Assert correct endpoint is called
