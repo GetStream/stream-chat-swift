@@ -255,7 +255,9 @@ open class ChatChannelVC: _ViewController,
     public func markRead() {
         channelController.markRead { [weak self] _ in
             self?.updateJumpToUnreadRelatedComponents()
-            self?.messageListVC.scrollToBottomButton.content = .noUnread
+            if let unreadCount = self?.channelController.channel?.unreadCount {
+                self?.messageListVC.scrollToBottomButton.content = unreadCount
+            }
         }
     }
 
