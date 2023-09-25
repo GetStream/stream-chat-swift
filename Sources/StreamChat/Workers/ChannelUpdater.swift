@@ -329,7 +329,6 @@ class ChannelUpdater: Worker {
     ///   - cid: The Id of the channel where you want to add the users.
     ///   - userIds: User ids to add to the channel.
     ///   - message: Optional system message sent when adding a member.
-    ///   - messageId: Optional id of the message.
     ///   - hideHistory: Hide the history of the channel to the added member.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func addMembers(
@@ -337,11 +336,10 @@ class ChannelUpdater: Worker {
         cid: ChannelId,
         userIds: Set<UserId>,
         message: String? = nil,
-        messageId: String? = nil,
         hideHistory: Bool,
         completion: ((Error?) -> Void)? = nil
     ) {
-        let messagePayload = messagePayload(text: message, messageId: messageId, currentUserId: currentUserId)
+        let messagePayload = messagePayload(text: message, currentUserId: currentUserId)
         apiClient.request(
             endpoint: .addMembers(
                 cid: cid,
@@ -367,10 +365,9 @@ class ChannelUpdater: Worker {
         cid: ChannelId,
         userIds: Set<UserId>,
         message: String? = nil,
-        messageId: String? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
-        let messagePayload = messagePayload(text: message, messageId: messageId, currentUserId: currentUserId)
+        let messagePayload = messagePayload(text: message, currentUserId: currentUserId)
         apiClient.request(
             endpoint: .removeMembers(
                 cid: cid,
@@ -625,7 +622,7 @@ class ChannelUpdater: Worker {
         })
     }
     
-    private func messagePayload(text: String?, messageId: String? = nil, currentUserId: UserId?) -> MessageRequestBody? {
+    private func messagePayload(text: String?, currentUserId: UserId?) -> MessageRequestBody? {
         var messagePayload: MessageRequestBody?
         if let text = text, let currentUserId = currentUserId {
             let userRequestBody = UserRequestBody(
@@ -635,7 +632,7 @@ class ChannelUpdater: Worker {
                 extraData: [:]
             )
             messagePayload = MessageRequestBody(
-                id: messageId ?? .newUniqueId,
+                id: .newUniqueId,
                 user: userRequestBody,
                 text: text,
                 extraData: [:]

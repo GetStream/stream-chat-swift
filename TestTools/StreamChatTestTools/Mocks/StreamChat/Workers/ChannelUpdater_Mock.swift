@@ -304,7 +304,6 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         cid: ChannelId,
         userIds: Set<UserId>,
         message: String?,
-        messageId: String? = nil,
         hideHistory: Bool,
         completion: ((Error?) -> Void)? = nil
     ) {
@@ -347,7 +346,6 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         cid: ChannelId,
         userIds: Set<UserId>,
         message: String?,
-        messageId: String? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
         removeMembers_cid = cid

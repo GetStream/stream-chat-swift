@@ -1117,7 +1117,6 @@ final class ChannelUpdater_Tests: XCTestCase {
         let userIds: Set<UserId> = Set([UserId.unique])
         let message: String = "Someone joined the channel"
         let senderId: String = .unique
-        let messageId: String = .newUniqueId
 
         // Simulate `addMembers(cid:, mute:, userIds:)` call
         channelUpdater.addMembers(
@@ -1125,10 +1124,12 @@ final class ChannelUpdater_Tests: XCTestCase {
             cid: channelID,
             userIds: userIds,
             message: message,
-            messageId: messageId,
             hideHistory: false
         )
-
+        
+        let body = self.apiClient.request_endpoint?.body?.encodable as? [String: AnyEncodable]
+        let messageId = (body?["message"]?.encodable as? MessageRequestBody)?.id ?? .newUniqueId
+        
         // Assert correct endpoint is called
         let messageRequestBody = MessageRequestBody(
             id: messageId,
@@ -1346,17 +1347,18 @@ final class ChannelUpdater_Tests: XCTestCase {
         let userIds: Set<UserId> = Set([UserId.unique])
         let message: String = "Someone left the channel"
         let senderId: String = .unique
-        let messageId: String = .newUniqueId
 
-        // Simulate `addMembers(cid:, mute:, userIds:)` call
+        // Simulate `removeMembers(cid:, mute:, userIds:)` call
         channelUpdater.removeMembers(
             currentUserId: senderId,
             cid: channelID,
             userIds: userIds,
-            message: message,
-            messageId: messageId
+            message: message
         )
-
+        
+        let body = self.apiClient.request_endpoint?.body?.encodable as? [String: AnyEncodable]
+        let messageId = (body?["message"]?.encodable as? MessageRequestBody)?.id ?? .newUniqueId
+        
         // Assert correct endpoint is called
         let messageRequestBody = MessageRequestBody(
             id: messageId,
