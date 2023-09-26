@@ -766,8 +766,9 @@ final class ChatChannelVC_Tests: XCTestCase {
         channelControllerMock.hasLoadedAllNextMessages_mock = true
         channelControllerMock.markedAsUnread_mock = false
 
-        // Simulate display to update hasSeenLastMessage
+        // Simulate display to update hasSeenLastMessage && hasSeenFirstUnreadMessage
         vc.chatMessageListVC(ChatMessageListVC_Mock(), willDisplayMessageAt: IndexPath(item: 0, section: 0))
+        vc.chatMessageListVC(ChatMessageListVC_Mock(), scrollViewDidScroll: UIScrollView())
 
         XCTAssertTrue(vc.shouldMarkChannelRead)
     }
@@ -826,8 +827,10 @@ final class ChatChannelVC_Tests: XCTestCase {
         channelControllerMock.markedAsUnread_mock = false
         channelControllerMock.state_mock = .remoteDataFetched
 
-        // Simulate display to update hasSeenLastMessage
+        // Simulate display to update hasSeenLastMessage && hasSeenFirstUnreadMessage
         vc.chatMessageListVC(ChatMessageListVC_Mock(), willDisplayMessageAt: IndexPath(item: 0, section: 0))
+        vc.chatMessageListVC(ChatMessageListVC_Mock(), scrollViewDidScroll: UIScrollView())
+        channelControllerMock.markReadCallCount = 0
 
         vc.viewDidAppear(false)
         XCTAssertEqual(channelControllerMock.markReadCallCount, 1)
@@ -882,8 +885,10 @@ final class ChatChannelVC_Tests: XCTestCase {
         channelControllerMock.markedAsUnread_mock = false
         channelControllerMock.state_mock = .remoteDataFetched
 
-        // Simulate display to update hasSeenLastMessage
+        // Simulate display to update hasSeenLastMessage && hasSeenFirstUnreadMessage
         vc.chatMessageListVC(ChatMessageListVC_Mock(), willDisplayMessageAt: IndexPath(item: 0, section: 0))
+        vc.chatMessageListVC(ChatMessageListVC_Mock(), scrollViewDidScroll: UIScrollView())
+        channelControllerMock.markReadCallCount = 0
 
         vc.channelController(channelControllerMock, didUpdateMessages: [])
         mockedListView.updateMessagesCompletion?()

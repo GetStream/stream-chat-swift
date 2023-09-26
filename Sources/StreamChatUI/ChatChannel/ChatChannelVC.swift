@@ -90,7 +90,7 @@ open class ChatChannelVC: _ViewController,
             return false
         }
 
-        return hasSeenLastMessage && hasSeenAllUnreadMessages && channelController.hasLoadedAllNextMessages && !hasMarkedMessageAsUnread
+        return hasSeenLastMessage && hasSeenFirstUnreadMessage && channelController.hasLoadedAllNextMessages && !hasMarkedMessageAsUnread
     }
 
     /// A component responsible to handle when to load new or old messages.
@@ -103,8 +103,8 @@ open class ChatChannelVC: _ViewController,
         channelController.isMarkedAsUnread
     }
 
-    /// Determines whether all unread messages have been seen
-    private var hasSeenAllUnreadMessages: Bool = false
+    /// Determines whether first unread message has been seen
+    private var hasSeenFirstUnreadMessage: Bool = false
 
     /// Determines whether last cell has been seen
     private var hasSeenLastMessage: Bool = false
@@ -254,7 +254,10 @@ open class ChatChannelVC: _ViewController,
 
     /// Marks the channel read and updates the UI optimistically.
     public func markRead() {
-        channelController.markRead { [weak self] _ in
+        channelController.markRead { [weak self] error in
+            if error == nil {
+                self?.hasSeenLastMessage = false
+            }
             self?.updateJumpToUnreadRelatedComponents()
             self?.updateScrollToBottomButtonCount()
         }
@@ -342,12 +345,11 @@ open class ChatChannelVC: _ViewController,
         _ vc: ChatMessageListVC,
         willDisplayMessageAt indexPath: IndexPath
     ) {
+        guard !hasSeenFirstUnreadMessage else { return }
+
         let message = chatMessageListVC(vc, messageAt: indexPath)
         if message?.id == firstUnreadMessageId {
-            hasSeenAllUnreadMessages = true
-        }
-        if isLastMessageFullyVisible {
-            hasSeenLastMessage = true
+            hasSeenFirstUnreadMessage = true
         }
     }
 
@@ -393,6 +395,9 @@ open class ChatChannelVC: _ViewController,
         _ vc: ChatMessageListVC,
         scrollViewDidScroll scrollView: UIScrollView
     ) {
+        if !hasSeenLastMessage && isLastMessageFullyVisible {
+            hasSeenLastMessage = true
+        }
         if shouldMarkChannelRead {
             markRead()
         }
@@ -449,13 +454,13 @@ open class ChatChannelVC: _ViewController,
             guard let self = self else { return }
 
             if let unreadCount = channelController.channel?.unreadCount.messages, channelController.firstUnreadMessageId == nil && unreadCount == 0 {
-                self.hasSeenAllUnreadMessages = true
+                self.hasSeenFirstUnreadMessage = true
             }
 
             self.updateJumpToUnreadRelatedComponents()
             if self.shouldMarkChannelRead {
                 self.markRead()
-            } else if !self.hasSeenAllUnreadMessages {
+            } else if !self.hasSeenFirstUnreadMessage {
                 self.updateUnreadMessagesBannerRelatedComponents()
             }
         }
