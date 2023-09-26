@@ -1039,8 +1039,6 @@ private extension ChatMessageListVC {
                 self?.adjustContentOffset(oldContentOffset: oldContentOffset, oldContentSize: oldContentSize)
             }
 
-            self?.updateScrollDependentButtonsVisibility()
-
             UIView.performWithoutAnimation {
                 self?.scrollToBottomIfNeeded(with: changes, newestChange: newestChange)
                 self?.reloadMovedMessage(newestChange: newestChange)
