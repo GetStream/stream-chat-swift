@@ -345,12 +345,11 @@ open class ChatChannelVC: _ViewController,
         _ vc: ChatMessageListVC,
         willDisplayMessageAt indexPath: IndexPath
     ) {
+        guard !hasSeenFirstUnreadMessage else { return }
+
         let message = chatMessageListVC(vc, messageAt: indexPath)
         if message?.id == firstUnreadMessageId {
             hasSeenFirstUnreadMessage = true
-        }
-        if isLastMessageFullyVisible {
-            hasSeenLastMessage = true
         }
     }
 
@@ -396,6 +395,9 @@ open class ChatChannelVC: _ViewController,
         _ vc: ChatMessageListVC,
         scrollViewDidScroll scrollView: UIScrollView
     ) {
+        if !hasSeenLastMessage && isLastMessageFullyVisible {
+            hasSeenLastMessage = true
+        }
         if shouldMarkChannelRead {
             markRead()
         }
