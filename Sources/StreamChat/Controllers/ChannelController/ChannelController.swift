@@ -883,6 +883,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         updater.markRead(cid: channel.cid, userId: currentUserId) { error in
             self.callback {
                 self.markingRead = false
+                self.isMarkedAsUnread = false
                 completion?(error)
             }
         }

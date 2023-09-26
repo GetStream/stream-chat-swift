@@ -90,7 +90,11 @@ open class ChatChannelVC: _ViewController,
             return false
         }
 
-        return hasSeenLastMessage && hasSeenFirstUnreadMessage && channelController.hasLoadedAllNextMessages && !hasMarkedMessageAsUnread
+        return isLastMessageVisibleOrSeen && hasSeenFirstUnreadMessage && channelController.hasLoadedAllNextMessages && !hasMarkedMessageAsUnread
+    }
+
+    private var isLastMessageVisibleOrSeen: Bool {
+        hasSeenLastMessage || isLastMessageFullyVisible
     }
 
     /// A component responsible to handle when to load new or old messages.
@@ -106,7 +110,7 @@ open class ChatChannelVC: _ViewController,
     /// Determines whether first unread message has been seen
     private var hasSeenFirstUnreadMessage: Bool = false
 
-    /// Determines whether last cell has been seen
+    /// Determines whether last cell has been seen since the last time it was marked as read
     private var hasSeenLastMessage: Bool = false
 
     /// The id of the first unread message
