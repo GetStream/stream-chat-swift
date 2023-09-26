@@ -539,6 +539,13 @@
 		8440861928FFE9D40027849C /* ChatUser+CustomFields.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43016E1526B734410054E805 /* ChatUser+CustomFields.swift */; };
 		845CEE53270F032A002C7EBD /* MessageSearchQuery_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CEE52270F032A002C7EBD /* MessageSearchQuery_Tests.swift */; };
 		845CEE5A270F2A06002C7EBD /* ChatReactionsBubbleView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CEE59270F2A06002C7EBD /* ChatReactionsBubbleView_Tests.swift */; };
+		84748F892AC37F40007E3285 /* StreamChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; };
+		84748F8D2AC37F40007E3285 /* StreamChatUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; };
+		84748F922AC38276007E3285 /* ChatUser+CustomFields.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43016E1526B734410054E805 /* ChatUser+CustomFields.swift */; };
+		84790E982AC1D346003AFF1C /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84790E972AC1D346003AFF1C /* ShareViewController.swift */; };
+		84790E9F2AC1D346003AFF1C /* DemoShare.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 84790E952AC1D346003AFF1C /* DemoShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		84790EA52AC1D8B4003AFF1C /* UserDefaults+Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849C1B69283686EE00F9DC42 /* UserDefaults+Shared.swift */; };
+		84790EA62AC1D8DC003AFF1C /* DemoUsers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7933064825712C8B00FBB586 /* DemoUsers.swift */; };
 		8479C7A92812FCC000FC8CFD /* ChatMessageListVC_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8479C7A82812FCC000FC8CFD /* ChatMessageListVC_Tests.swift */; };
 		847D60292679EDD300FB701D /* GalleryCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847D60282679EDD300FB701D /* GalleryCollectionViewCell.swift */; };
 		847D602B2679EED400FB701D /* VideoAttachmentGalleryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847D602A2679EED400FB701D /* VideoAttachmentGalleryCell.swift */; };
@@ -574,6 +581,9 @@
 		84AD17DF28F857A5008C69BF /* StreamChatWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3227E64284A4A5C00EBE6CC /* StreamChatWrapper.swift */; };
 		84AD17E028F8582C008C69BF /* DemoUsers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7933064825712C8B00FBB586 /* DemoUsers.swift */; };
 		84AD17E128F85870008C69BF /* ChatUser+CustomFields.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43016E1526B734410054E805 /* ChatUser+CustomFields.swift */; };
+		84B8779E2AC30F0E009EF76A /* DemoShareViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B8779D2AC30F0E009EF76A /* DemoShareViewModel.swift */; };
+		84B877A02AC31AB8009EF76A /* StreamChat+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B8779F2AC31AB8009EF76A /* StreamChat+Extensions.swift */; };
+		84BE85DA2AC30E88007DD47C /* DemoShareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84BE85D92AC30E88007DD47C /* DemoShareView.swift */; };
 		84C11BDF27FB2B4600000A9E /* ChannelPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C11BDE27FB2B4600000A9E /* ChannelPayload.swift */; };
 		84C11BE127FB2C2B00000A9E /* ChannelReadDTO_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C11BE027FB2C2B00000A9E /* ChannelReadDTO_Tests.swift */; };
 		84C11BE527FB459900000A9E /* ChatMessageDeliveryStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C11BE427FB459900000A9E /* ChatMessageDeliveryStatusView.swift */; };
@@ -2327,6 +2337,27 @@
 			remoteGlobalIDString = 790881FC25432B7200896F03;
 			remoteInfo = StreamChatUI;
 		};
+		84748F8B2AC37F40007E3285 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 799C941A247D2F80001F1104;
+			remoteInfo = StreamChat;
+		};
+		84748F8F2AC37F40007E3285 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 790881FC25432B7200896F03;
+			remoteInfo = StreamChatUI;
+		};
+		84790E9D2AC1D346003AFF1C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 84790E942AC1D346003AFF1C;
+			remoteInfo = DemoShare;
+		};
 		A327D4B827E0D59300CFEC3F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
@@ -2505,6 +2536,7 @@
 			dstSubfolderSpec = 13;
 			files = (
 				437FCA0B26D67BE40000223C /* DemoAppPush.appex in Embed App Extensions */,
+				84790E9F2AC1D346003AFF1C /* DemoShare.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3107,6 +3139,10 @@
 		845CEE59270F2A06002C7EBD /* ChatReactionsBubbleView_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatReactionsBubbleView_Tests.swift; sourceTree = "<group>"; };
 		84698637274FE79200B22258 /* ConnectionRecoveryHandler_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionRecoveryHandler_Mock.swift; sourceTree = "<group>"; };
 		846C633B26FC834800F7518B /* MessageDeleted+MissingUser.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "MessageDeleted+MissingUser.json"; sourceTree = "<group>"; };
+		84790E952AC1D346003AFF1C /* DemoShare.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = DemoShare.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		84790E972AC1D346003AFF1C /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
+		84790E9C2AC1D346003AFF1C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		84790EA42AC1D862003AFF1C /* DemoShare.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DemoShare.entitlements; sourceTree = "<group>"; };
 		8479C7A82812FCC000FC8CFD /* ChatMessageListVC_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageListVC_Tests.swift; sourceTree = "<group>"; };
 		847D60282679EDD300FB701D /* GalleryCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryCollectionViewCell.swift; sourceTree = "<group>"; };
 		847D602A2679EED400FB701D /* VideoAttachmentGalleryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoAttachmentGalleryCell.swift; sourceTree = "<group>"; };
@@ -3140,6 +3176,9 @@
 		84ABB014269F0A84003A4585 /* EventsController+Combine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "EventsController+Combine.swift"; sourceTree = "<group>"; };
 		84ABF699274E570600EDDA68 /* EventBatcher_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventBatcher_Tests.swift; sourceTree = "<group>"; };
 		84ABF69B274E66AA00EDDA68 /* EventBatcher_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventBatcher_Mock.swift; sourceTree = "<group>"; };
+		84B8779D2AC30F0E009EF76A /* DemoShareViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoShareViewModel.swift; sourceTree = "<group>"; };
+		84B8779F2AC31AB8009EF76A /* StreamChat+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StreamChat+Extensions.swift"; sourceTree = "<group>"; };
+		84BE85D92AC30E88007DD47C /* DemoShareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoShareView.swift; sourceTree = "<group>"; };
 		84C11BDE27FB2B4600000A9E /* ChannelPayload.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelPayload.swift; sourceTree = "<group>"; };
 		84C11BE027FB2C2B00000A9E /* ChannelReadDTO_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelReadDTO_Tests.swift; sourceTree = "<group>"; };
 		84C11BE427FB459900000A9E /* ChatMessageDeliveryStatusView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatMessageDeliveryStatusView.swift; sourceTree = "<group>"; };
@@ -4223,6 +4262,15 @@
 				F8788F81261DE9B0006019DD /* StreamChatTestTools.framework in Frameworks */,
 				A3147EB927F6E50F00BA9972 /* StreamChatTestHelpers in Frameworks */,
 				799C9456247D59B1001F1104 /* StreamChat.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		84790E922AC1D346003AFF1C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				84748F8D2AC37F40007E3285 /* StreamChatUI.framework in Frameworks */,
+				84748F892AC37F40007E3285 /* StreamChat.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5345,6 +5393,19 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
+		84790E962AC1D346003AFF1C /* DemoShare */ = {
+			isa = PBXGroup;
+			children = (
+				84790EA42AC1D862003AFF1C /* DemoShare.entitlements */,
+				84790E972AC1D346003AFF1C /* ShareViewController.swift */,
+				84BE85D92AC30E88007DD47C /* DemoShareView.swift */,
+				84B8779D2AC30F0E009EF76A /* DemoShareViewModel.swift */,
+				84B8779F2AC31AB8009EF76A /* StreamChat+Extensions.swift */,
+				84790E9C2AC1D346003AFF1C /* Info.plist */,
+			);
+			path = DemoShare;
+			sourceTree = "<group>";
+		};
 		847DD2D9267233CF0084E14B /* GradientView */ = {
 			isa = PBXGroup;
 			children = (
@@ -5696,6 +5757,7 @@
 				823F5B192A8D0294000C3081 /* PrivacyInfo.xcprivacy */,
 				792DDA58256FB69E001DB91B /* DemoApp */,
 				437FCA0526D67BE40000223C /* DemoAppPush */,
+				84790E962AC1D346003AFF1C /* DemoShare */,
 				E3D5D2142701F0450054ECE5 /* Examples */,
 				8AD5ECA722E9B3C4005CFAC9 /* Frameworks */,
 				8AD5EC9022E9A3E8005CFAC9 /* Products */,
@@ -5731,6 +5793,7 @@
 				A34407DC27D8C3400044F150 /* StreamChatUITestsAppUITests.xctest */,
 				A3A0C999283E952900B18DA4 /* StreamChatTestMockServer.framework */,
 				C11B575B29D43FD800D5A248 /* EdgeCases.app */,
+				84790E952AC1D346003AFF1C /* DemoShare.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -8588,6 +8651,7 @@
 				437FCA0A26D67BE40000223C /* PBXTargetDependency */,
 				C121EC602746AC8C00023E4C /* PBXTargetDependency */,
 				C121EC642746AC8C00023E4C /* PBXTargetDependency */,
+				84790E9E2AC1D346003AFF1C /* PBXTargetDependency */,
 			);
 			name = DemoApp;
 			packageProductDependencies = (
@@ -8686,6 +8750,25 @@
 			productName = StreamChatClientTests;
 			productReference = 799C9451247D59B1001F1104 /* StreamChatTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		84790E942AC1D346003AFF1C /* DemoShare */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 84790EA32AC1D346003AFF1C /* Build configuration list for PBXNativeTarget "DemoShare" */;
+			buildPhases = (
+				84790E912AC1D346003AFF1C /* Sources */,
+				84790E922AC1D346003AFF1C /* Frameworks */,
+				84790E932AC1D346003AFF1C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				84748F8C2AC37F40007E3285 /* PBXTargetDependency */,
+				84748F902AC37F40007E3285 /* PBXTargetDependency */,
+			);
+			name = DemoShare;
+			productName = DemoShare;
+			productReference = 84790E952AC1D346003AFF1C /* DemoShare.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 		A34407B927D8C33F0044F150 /* StreamChatUITestsApp */ = {
 			isa = PBXNativeTarget;
@@ -8923,7 +9006,7 @@
 		8AD5EC8622E9A3E8005CFAC9 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1420;
+				LastSwiftUpdateCheck = 1500;
 				LastUpgradeCheck = 1340;
 				ORGANIZATIONNAME = "Stream.io Inc";
 				TargetAttributes = {
@@ -8953,6 +9036,9 @@
 					};
 					799C9450247D59B1001F1104 = {
 						CreatedOnToolsVersion = 11.4.1;
+					};
+					84790E942AC1D346003AFF1C = {
+						CreatedOnToolsVersion = 15.0;
 					};
 					A34407B927D8C33F0044F150 = {
 						CreatedOnToolsVersion = 13.2.1;
@@ -9028,6 +9114,7 @@
 				C121E9262746A19400023E4C /* StreamChatUIStatic */,
 				A34407B927D8C33F0044F150 /* StreamChatUITestsApp */,
 				A34407DB27D8C3400044F150 /* StreamChatUITestsAppUITests */,
+				84790E942AC1D346003AFF1C /* DemoShare */,
 			);
 		};
 /* End PBXProject section */
@@ -9211,6 +9298,13 @@
 				7908824A25432CC600896F03 /* StreamChatStressTestPlan.xctestplan in Resources */,
 				7908824B25432CC600896F03 /* StreamChatTestPlan.xctestplan in Resources */,
 				4042967A29FAC7770089126D /* test_audio_file.m4a in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		84790E932AC1D346003AFF1C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10694,6 +10788,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		84790E912AC1D346003AFF1C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				84790E982AC1D346003AFF1C /* ShareViewController.swift in Sources */,
+				84B877A02AC31AB8009EF76A /* StreamChat+Extensions.swift in Sources */,
+				84BE85DA2AC30E88007DD47C /* DemoShareView.swift in Sources */,
+				84748F922AC38276007E3285 /* ChatUser+CustomFields.swift in Sources */,
+				84790EA62AC1D8DC003AFF1C /* DemoUsers.swift in Sources */,
+				84790EA52AC1D8B4003AFF1C /* UserDefaults+Shared.swift in Sources */,
+				84B8779E2AC30F0E009EF76A /* DemoShareViewModel.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A34407B627D8C33F0044F150 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -11617,6 +11725,21 @@
 			target = 790881FC25432B7200896F03 /* StreamChatUI */;
 			targetProxy = 82DCB3AF2A4AE8FB00738933 /* PBXContainerItemProxy */;
 		};
+		84748F8C2AC37F40007E3285 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 799C941A247D2F80001F1104 /* StreamChat */;
+			targetProxy = 84748F8B2AC37F40007E3285 /* PBXContainerItemProxy */;
+		};
+		84748F902AC37F40007E3285 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 790881FC25432B7200896F03 /* StreamChatUI */;
+			targetProxy = 84748F8F2AC37F40007E3285 /* PBXContainerItemProxy */;
+		};
+		84790E9E2AC1D346003AFF1C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 84790E942AC1D346003AFF1C /* DemoShare */;
+			targetProxy = 84790E9D2AC1D346003AFF1C /* PBXContainerItemProxy */;
+		};
 		A327D4B927E0D59300CFEC3F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 799C941A247D2F80001F1104 /* StreamChat */;
@@ -12438,6 +12561,109 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
+		};
+		84790EA02AC1D346003AFF1C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = DemoShare/DemoShare.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = EHV7XZLAHA;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = DemoShare/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = DemoShare;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Stream.io Inc. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.iOS.ChatDemoApp.DemoShare;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		84790EA12AC1D346003AFF1C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = DemoShare/DemoShare.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Distribution: Stream.io Inc (EHV7XZLAHA)";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = EHV7XZLAHA;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = DemoShare/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = DemoShare;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Stream.io Inc. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.iOS.ChatDemoApp.DemoShare;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "AdHoc io.getstream.iOS.ChatDemoApp.DemoShare";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		84790EA22AC1D346003AFF1C /* ReleaseTests */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = DemoShare/DemoShare.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = EHV7XZLAHA;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = DemoShare/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = DemoShare;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Stream.io Inc. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.iOS.ChatDemoApp.DemoShare;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = ReleaseTests;
 		};
 		8AD5EC9522E9A3E8005CFAC9 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -13597,6 +13823,16 @@
 				799C945A247D59B1001F1104 /* Debug */,
 				799C945B247D59B1001F1104 /* Release */,
 				A57E5C7624C6FA3900187DC2 /* ReleaseTests */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		84790EA32AC1D346003AFF1C /* Build configuration list for PBXNativeTarget "DemoShare" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				84790EA02AC1D346003AFF1C /* Debug */,
+				84790EA12AC1D346003AFF1C /* Release */,
+				84790EA22AC1D346003AFF1C /* ReleaseTests */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
