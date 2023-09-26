@@ -9,6 +9,7 @@ import UIKit
 class ChatMessageListVCDelegate_Mock: ChatMessageListVCDelegate {
     var mockedHeaderView: ChatMessageDecorationView?
     var mockedFooterView: ChatMessageDecorationView?
+    var mockedShouldShowJumpToUnread: Bool = false
 
     func chatMessageListVC(_ vc: ChatMessageListVC, willDisplayMessageAt indexPath: IndexPath) {}
 
@@ -46,5 +47,9 @@ class ChatMessageListVCDelegate_Mock: ChatMessageListVCDelegate {
         at indexPath: IndexPath
     ) -> ChatMessageDecorationView? {
         mockedFooterView
+    }
+
+    func chatMessageListShouldShowJumpToUnread(_ vc: ChatMessageListVC) -> Bool {
+        mockedShouldShowJumpToUnread
     }
 }

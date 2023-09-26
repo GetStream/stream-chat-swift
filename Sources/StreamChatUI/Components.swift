@@ -276,6 +276,9 @@ public struct Components {
     public var messageDeliveryStatusCheckmarkView: ChatMessageDeliveryStatusCheckmarkView.Type =
         ChatMessageDeliveryStatusCheckmarkView.self
 
+    /// A flag which determines if an unread messages separator should be displayed when there are new messages.
+    public var isUnreadMessagesSeparatorEnabled = true
+
     /// The view that displays the number of unread messages in the chat.
     public var unreadMessagesCounterDecorationView: ChatUnreadMessagesCountDecorationView.Type = ChatUnreadMessagesCountDecorationView.self
 
