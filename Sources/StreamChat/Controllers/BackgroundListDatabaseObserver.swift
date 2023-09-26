@@ -125,6 +125,14 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
         }
     }
 
+    private lazy var processingQueue: OperationQueue = {
+        let operationQueue = OperationQueue()
+        operationQueue.underlyingQueue = queue
+        operationQueue.name = "com.stream.background-list-database-observer"
+        operationQueue.maxConcurrentOperationCount = 1
+        return operationQueue
+    }()
+
     deinit {
         releaseNotificationObservers?()
     }
@@ -236,11 +244,26 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
     }
 
     private func processItems(_ changes: [ListChange<Item>]?) {
-        mapItems { [weak self] items in
-            self?._items = items
-            let changes = changes ?? items.enumerated().map { .insert($1, index: IndexPath(item: $0, section: 0)) }
-            self?.notifyDidChange(changes: changes)
+        let operation = AsyncOperation { [weak self] _, done in
+            guard let self = self else {
+                done(.continue)
+                return
+            }
+
+            self.mapItems { [weak self] items in
+                self?._items = items
+                let returnedChanges: [ListChange<Item>]
+                if let existingChanges = changes {
+                    returnedChanges = existingChanges
+                } else {
+                    returnedChanges = items.enumerated().map { .insert($1, index: IndexPath(item: $0, section: 0)) }
+                }
+                self?.notifyDidChange(changes: returnedChanges)
+                done(.continue)
+            }
         }
+
+        processingQueue.addOperation(operation)
     }
 
     /// Listens for `Will/DidRemoveAllData` notifications from the context and simulates the callback when the notifications
