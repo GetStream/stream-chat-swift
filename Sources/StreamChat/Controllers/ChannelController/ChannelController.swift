@@ -732,17 +732,29 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// - Parameters:
     ///   - userIds: User ids that will be added to a channel.
     ///   - hideHistory: Hide the history of the channel to the added member. By default, it is false.
+    ///   - message: Optional system message sent when adding members.
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
     ///
-    public func addMembers(userIds: Set<UserId>, hideHistory: Bool = false, completion: ((Error?) -> Void)? = nil) {
+    public func addMembers(
+        userIds: Set<UserId>,
+        hideHistory: Bool = false,
+        message: String? = nil,
+        completion: ((Error?) -> Void)? = nil
+    ) {
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed(completion)
             return
         }
 
-        updater.addMembers(cid: cid, userIds: userIds, hideHistory: hideHistory) { error in
+        updater.addMembers(
+            currentUserId: client.currentUserId,
+            cid: cid,
+            userIds: userIds,
+            message: message,
+            hideHistory: hideHistory
+        ) { error in
             self.callback {
                 completion?(error)
             }
@@ -753,17 +765,27 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///
     /// - Parameters:
     ///   - userIds: User ids that will be removed from a channel.
+    ///   - message: Optional system message sent when removing members.
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
     ///
-    public func removeMembers(userIds: Set<UserId>, completion: ((Error?) -> Void)? = nil) {
+    public func removeMembers(
+        userIds: Set<UserId>,
+        message: String? = nil,
+        completion: ((Error?) -> Void)? = nil
+    ) {
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed(completion)
             return
         }
 
-        updater.removeMembers(cid: cid, userIds: userIds) { error in
+        updater.removeMembers(
+            currentUserId: client.currentUserId,
+            cid: cid,
+            userIds: userIds,
+            message: message
+        ) { error in
             self.callback {
                 completion?(error)
             }
