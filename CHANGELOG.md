@@ -3,7 +3,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+### ✅ Added
+- Message parameter in adding/removing members methods
 
 # [4.37.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.37.1)
 _September 25, 2023_
