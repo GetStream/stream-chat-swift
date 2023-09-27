@@ -293,10 +293,22 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertNil(controller.firstUnreadMessageId)
     }
 
-    func test_firstUnreadMessageId_whenReadsDoesNotContainCurrentUserId() throws {
+    func test_firstUnreadMessageId_whenReadsDoesNotContainCurrentUserId_whenNOTAllPreviousMessagesAreLoaded() throws {
         let oldestMessageId = MessageId.unique
         let newestMessageId = MessageId.unique
         try createChannel(oldestMessageId: oldestMessageId, newestMessageId: newestMessageId)
+
+        try mockHasLoadedAllPreviousMessages(false)
+
+        XCTAssertNil(controller.firstUnreadMessageId)
+    }
+
+    func test_firstUnreadMessageId_whenReadsDoesNotContainCurrentUserId_whenAllPreviousMessagesAreLoaded() throws {
+        let oldestMessageId = MessageId.unique
+        let newestMessageId = MessageId.unique
+        try createChannel(oldestMessageId: oldestMessageId, newestMessageId: newestMessageId)
+
+        try mockHasLoadedAllPreviousMessages(true)
 
         XCTAssertEqual(controller.firstUnreadMessageId, oldestMessageId)
     }
@@ -323,7 +335,7 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(controller.firstUnreadMessageId, nil)
     }
 
-    func test_firstUnreadMessageId_whenReadsContainsCurrentUserId_whenLastReadMessageIdIsNil() throws {
+    func test_firstUnreadMessageId_whenReadsContainsCurrentUserId_whenLastReadMessageIdIsNil_whenNotAllPreviousMessagesAreLoaded() throws {
         let userId = UserId.unique
         let channelRead = ChannelReadPayload(
             user: .dummy(userId: userId),
@@ -341,23 +353,76 @@ final class ChannelController_Tests: XCTestCase {
             try $0.saveCurrentUser(payload: .dummy(userId: userId, role: .user))
         }
 
+        try mockHasLoadedAllPreviousMessages(false)
+
+        XCTAssertNil(controller.firstUnreadMessageId)
+    }
+
+    func test_firstUnreadMessageId_whenReadsContainsCurrentUserId_whenLastReadMessageIdIsNil_whenAllPreviousMessagesAreLoaded() throws {
+        let userId = UserId.unique
+        let channelRead = ChannelReadPayload(
+            user: .dummy(userId: userId),
+            lastReadAt: .unique,
+            lastReadMessageId: nil,
+            unreadMessagesCount: 3
+        )
+        let token = Token(rawValue: "", userId: userId, expiration: nil)
+        controller.client.authenticationRepository.setMockToken(token)
+
+        let oldestMessageId = MessageId.unique
+        let newestMessageId = MessageId.unique
+        try createChannel(oldestMessageId: oldestMessageId, newestMessageId: newestMessageId, channelReads: [channelRead])
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveCurrentUser(payload: .dummy(userId: userId, role: .user))
+        }
+
+        try mockHasLoadedAllPreviousMessages(true)
+
         XCTAssertEqual(controller.firstUnreadMessageId, oldestMessageId)
     }
 
     func test_firstUnreadMessageId_whenReadsContainsCurrentUserId_whenLastReadMessageIdIsNil_whenOldestMessageIsDeleted() throws {
+        try mockHasLoadedAllPreviousMessages(true)
         try AssertFirstUnreadMessageIsOldestRegularMessageId(oldestMessageType: .deleted)
     }
 
     func test_firstUnreadMessageId_whenReadsContainsCurrentUserId_whenLastReadMessageIdIsNil_whenOldestMessageIsEphemeral() throws {
+        try mockHasLoadedAllPreviousMessages(true)
         try AssertFirstUnreadMessageIsOldestRegularMessageId(oldestMessageType: .ephemeral)
     }
 
     func test_firstUnreadMessageId_whenReadsContainsCurrentUserId_whenLastReadMessageIdIsNil_whenOldestMessageIsError() throws {
+        try mockHasLoadedAllPreviousMessages(true)
         try AssertFirstUnreadMessageIsOldestRegularMessageId(oldestMessageType: .error)
     }
 
     func test_firstUnreadMessageId_whenReadsContainsCurrentUserId_whenLastReadMessageIdIsNil_whenOldestMessageIsSystem() throws {
+        try mockHasLoadedAllPreviousMessages(true)
         try AssertFirstUnreadMessageIsOldestRegularMessageId(oldestMessageType: .system)
+    }
+
+    func test_firstUnreadMessageId_whenReadsContainsCurrentUserId_whenLastReadMessageIdDoesNotExist() throws {
+        let oldestMessageId = MessageId.unique
+        let newestMessageId = MessageId.unique
+        let notLoadedLastReadMessageId = MessageId.unique
+
+        let userId = UserId.unique
+        let channelRead = ChannelReadPayload(
+            user: .dummy(userId: userId),
+            lastReadAt: .unique,
+            lastReadMessageId: notLoadedLastReadMessageId,
+            unreadMessagesCount: 3
+        )
+        let token = Token(rawValue: "", userId: userId, expiration: nil)
+        controller.client.authenticationRepository.setMockToken(token)
+
+        try createChannel(oldestMessageId: oldestMessageId, newestMessageId: newestMessageId, channelReads: [channelRead])
+
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveCurrentUser(payload: .dummy(userId: userId, role: .user))
+        }
+
+        XCTAssertNil(controller.firstUnreadMessageId)
     }
 
     func test_firstUnreadMessageId_whenReadsContainsCurrentUserId_whenLastReadMessageIdIsTheSameAsTheLastMessage() throws {
@@ -5088,6 +5153,12 @@ extension ChannelController_Tests {
         try client.databaseContainer.writeSynchronously {
             try $0.saveChannel(payload: payload, query: nil, cache: nil)
         }
+    }
+
+    private func mockHasLoadedAllPreviousMessages(_ value: Bool) throws {
+        var pagination = try XCTUnwrap(env.channelUpdater?.mockPaginationState)
+        pagination.hasLoadedAllPreviousMessages = value
+        env.channelUpdater?.mockPaginationState = pagination
     }
 
     private func AssertFirstUnreadMessageIsOldestRegularMessageId(

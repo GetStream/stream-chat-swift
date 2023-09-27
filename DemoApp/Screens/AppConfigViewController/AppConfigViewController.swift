@@ -147,6 +147,7 @@ class AppConfigViewController: UITableViewController {
         case isVoiceRecordingEnabled
         case isVoiceRecordingConfirmationRequiredEnabled
         case channelListSearchStrategy
+        case isUnreadMessageSeparatorEnabled
         case isJumpToUnreadEnabled
     }
 
@@ -377,6 +378,10 @@ class AppConfigViewController: UITableViewController {
         case .channelListSearchStrategy:
             cell.detailTextLabel?.text = channelListSearchStrategy?.name ?? "none"
             cell.accessoryType = .disclosureIndicator
+        case .isUnreadMessageSeparatorEnabled:
+            cell.accessoryView = makeSwitchButton(Components.default.isUnreadMessagesSeparatorEnabled) { newValue in
+                Components.default.isUnreadMessagesSeparatorEnabled = newValue
+            }
         case .isJumpToUnreadEnabled:
             cell.accessoryView = makeSwitchButton(Components.default.isJumpToUnreadEnabled) { newValue in
                 Components.default.isJumpToUnreadEnabled = newValue

@@ -662,8 +662,9 @@ final class ChatChannelVC_Tests: XCTestCase {
 
     // MARK: Unread banner
 
-    func test_whenThereIsAnUnreadMessage_shouldShowABannerOnTopOfIt() {
+    func test_whenThereIsAnUnreadMessage_whenFeatureIsEnabled_shouldShowABannerOnTopOfIt() {
         let unreadMessageId = MessageId.unique
+        vc.components.isUnreadMessagesSeparatorEnabled = true
         channelControllerMock.simulateInitial(
             channel: .mock(cid: .unique),
             messages: [
@@ -673,6 +674,29 @@ final class ChatChannelVC_Tests: XCTestCase {
             state: .localDataFetched
         )
         channelControllerMock.mockFirstUnreadMessageId = unreadMessageId
+        vc.didFinishSynchronizing(with: nil)
+        vc.channelController(channelControllerMock, didUpdateMessages: [])
+
+        AssertSnapshot(
+            vc,
+            isEmbeddedInNavigationController: true,
+            variants: [.defaultLight]
+        )
+    }
+
+    func test_whenThereIsAnUnreadMessage_whenFeatureIsDisabled_shouldShowABannerOnTopOfIt() {
+        let unreadMessageId = MessageId.unique
+        vc.components.isUnreadMessagesSeparatorEnabled = false
+        channelControllerMock.simulateInitial(
+            channel: .mock(cid: .unique),
+            messages: [
+                .mock(id: .unique, text: "Read message", createdAt: Date(timeIntervalSince1970: 1)),
+                .mock(id: unreadMessageId, text: "Unread message", createdAt: Date(timeIntervalSince1970: 2))
+            ].reversed(), // We reverse it because the table is inverted. This way is readable in tests.
+            state: .localDataFetched
+        )
+        channelControllerMock.mockFirstUnreadMessageId = unreadMessageId
+        vc.didFinishSynchronizing(with: nil)
         vc.channelController(channelControllerMock, didUpdateMessages: [])
 
         AssertSnapshot(
@@ -742,8 +766,9 @@ final class ChatChannelVC_Tests: XCTestCase {
         channelControllerMock.hasLoadedAllNextMessages_mock = true
         channelControllerMock.markedAsUnread_mock = false
 
-        // Simulate display to update hasSeenLastMessage
+        // Simulate display to update hasSeenLastMessage && hasSeenFirstUnreadMessage
         vc.chatMessageListVC(ChatMessageListVC_Mock(), willDisplayMessageAt: IndexPath(item: 0, section: 0))
+        vc.chatMessageListVC(ChatMessageListVC_Mock(), scrollViewDidScroll: UIScrollView())
 
         XCTAssertTrue(vc.shouldMarkChannelRead)
     }
@@ -802,8 +827,10 @@ final class ChatChannelVC_Tests: XCTestCase {
         channelControllerMock.markedAsUnread_mock = false
         channelControllerMock.state_mock = .remoteDataFetched
 
-        // Simulate display to update hasSeenLastMessage
+        // Simulate display to update hasSeenLastMessage && hasSeenFirstUnreadMessage
         vc.chatMessageListVC(ChatMessageListVC_Mock(), willDisplayMessageAt: IndexPath(item: 0, section: 0))
+        vc.chatMessageListVC(ChatMessageListVC_Mock(), scrollViewDidScroll: UIScrollView())
+        channelControllerMock.markReadCallCount = 0
 
         vc.viewDidAppear(false)
         XCTAssertEqual(channelControllerMock.markReadCallCount, 1)
@@ -858,8 +885,10 @@ final class ChatChannelVC_Tests: XCTestCase {
         channelControllerMock.markedAsUnread_mock = false
         channelControllerMock.state_mock = .remoteDataFetched
 
-        // Simulate display to update hasSeenLastMessage
+        // Simulate display to update hasSeenLastMessage && hasSeenFirstUnreadMessage
         vc.chatMessageListVC(ChatMessageListVC_Mock(), willDisplayMessageAt: IndexPath(item: 0, section: 0))
+        vc.chatMessageListVC(ChatMessageListVC_Mock(), scrollViewDidScroll: UIScrollView())
+        channelControllerMock.markReadCallCount = 0
 
         vc.channelController(channelControllerMock, didUpdateMessages: [])
         mockedListView.updateMessagesCompletion?()
@@ -899,6 +928,7 @@ final class ChatChannelVC_Tests: XCTestCase {
             messages: vc.messages,
             state: .remoteDataFetched
         )
+        vc.didFinishSynchronizing(with: nil)
         let header = vc.chatMessageListVC(
             vc.messageListVC,
             headerViewForMessage: .mock(createdAt: Date(timeIntervalSince1970: 0)),
@@ -914,11 +944,12 @@ final class ChatChannelVC_Tests: XCTestCase {
         XCTAssertTrue(headerDecorationView.unreadCountView.isHidden)
     }
 
-    func test_headerViewForMessage_returnsExpectedValue_whenMessageShouldShowDateSeparator_AndIsMarkedAsUnread() throws {
+    func test_headerViewForMessage_returnsExpectedValue_whenUnreadSeparatorIsEnabled_whenMessageShouldShowDateSeparator_AndIsMarkedAsUnread() throws {
         var components = Components.mock
         components.channelHeaderView = ChatChannelHeaderViewMock.self
         components.messageComposerVC = ComposerVC_Mock.self
         components.messageListDateSeparatorEnabled = true
+        components.isUnreadMessagesSeparatorEnabled = true
         vc.components = components
         vc.messageListVC.components = components
 
@@ -930,6 +961,7 @@ final class ChatChannelVC_Tests: XCTestCase {
             .mock(id: firstMessageId, text: "First message", createdAt: Date(timeIntervalSince1970: 0)),
             .mock(text: "Second message", createdAt: Date(timeIntervalSince1970: 86401))
         ]
+        vc.didFinishSynchronizing(with: nil)
         vc.channelController.client.authenticationRepository.setMockToken()
         channelControllerMock.simulateInitial(
             channel: .mock(cid: .unique, ownCapabilities: [.sendMessage, .readEvents], unreadCount: ChannelUnreadCount(messages: 1, mentions: 0)),
@@ -962,6 +994,54 @@ final class ChatChannelVC_Tests: XCTestCase {
         XCTAssertEqual(
             headerDecorationView.unreadCountView.messagesCountDecorationView.textLabel.text,
             "UNREAD MESSAGES"
+        )
+        AssertSnapshot(vc, variants: [.defaultLight])
+    }
+
+    func test_headerViewForMessage_returnsExpectedValue_whenUnreadSeparatorIsDisabled_whenMessageShouldShowDateSeparator_AndIsMarkedAsUnread() throws {
+        var components = Components.mock
+        components.channelHeaderView = ChatChannelHeaderViewMock.self
+        components.messageComposerVC = ComposerVC_Mock.self
+        components.messageListDateSeparatorEnabled = true
+        components.isUnreadMessagesSeparatorEnabled = false
+        vc.components = components
+        vc.messageListVC.components = components
+
+        // Simulate marking a message as unread
+        let firstMessageId = MessageId.unique
+        channelControllerMock.mockFirstUnreadMessageId = firstMessageId
+        vc.channelController(channelControllerMock, didUpdateMessages: [])
+        vc.messages = [
+            .mock(id: firstMessageId, text: "First message", createdAt: Date(timeIntervalSince1970: 0)),
+            .mock(text: "Second message", createdAt: Date(timeIntervalSince1970: 86401))
+        ]
+        vc.channelController.client.authenticationRepository.setMockToken()
+        channelControllerMock.simulateInitial(
+            channel: .mock(cid: .unique, ownCapabilities: [.sendMessage, .readEvents], unreadCount: ChannelUnreadCount(messages: 1, mentions: 0)),
+            messages: vc.messages,
+            state: .remoteDataFetched
+        )
+        let channel = try XCTUnwrap(vc.channelController.channel)
+        vc.channelController.markUnread(from: firstMessageId)
+        vc.channelController(vc.channelController, didUpdateChannel: EntityChange<ChatChannel>.update(channel))
+
+        let header = vc.chatMessageListVC(
+            vc.messageListVC,
+            headerViewForMessage: .mock(id: firstMessageId, createdAt: Date(timeIntervalSince1970: 0)),
+            at: .init(row: 0, section: 0)
+        )
+        let headerDecorationView = try XCTUnwrap(header as? ChatChannelMessageHeaderDecoratorView)
+        let headerDecorationViewContent = try XCTUnwrap(headerDecorationView.content)
+        XCTAssertTrue(headerDecorationViewContent.shouldShowDate)
+        XCTAssertFalse(headerDecorationViewContent.shouldShowUnreadMessages)
+
+        // Based on our implementation, views are not fully set up until they have a superview. We are forcing it here.
+        let view = UIView()
+        view.addSubview(headerDecorationView)
+
+        XCTAssertEqual(
+            headerDecorationView.dateView.textLabel.text,
+            "Jan 01"
         )
         AssertSnapshot(vc, variants: [.defaultLight])
     }
