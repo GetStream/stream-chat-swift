@@ -166,12 +166,14 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
             cacheName: nil
         )
 
+        _ = processingQueue
+
         changeAggregator.onWillChange = { [weak self] in
             self?.notifyWillChange()
         }
 
         changeAggregator.onDidChange = { [weak self] changes in
-            self?.processItems(changes)
+            self?.updateItems(changes)
         }
 
         listenForRemoveAllDataNotifications()
@@ -196,9 +198,7 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
 
         frc.delegate = changeAggregator
 
-        frc.managedObjectContext.perform {
-            self.processInitialItems()
-        }
+        getInitialItems()
     }
 
     private func notifyWillChange() {
@@ -218,15 +218,14 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
         let objects = frc.fetchedObjects ?? []
         let context = frc.managedObjectContext
 
-        var items = [Item?](repeating: nil, count: objects.count)
-
+        var items: [Item?] = []
         let group = DispatchGroup()
-        for (i, dto) in objects.enumerated() {
-            group.enter()
-            context.perform { [weak self] in
-                items[i] = try? self?.itemCreator(dto)
-                group.leave()
+        group.enter()
+        context.perform {
+            items = objects.map { [weak self] in
+                try? self?.itemCreator($0)
             }
+            group.leave()
         }
 
         let sorting = self.sorting
@@ -239,31 +238,39 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
         }
     }
 
-    private func processInitialItems() {
-        processItems(nil)
+    private func getInitialItems() {
+        updateItems(nil)
     }
 
-    private func processItems(_ changes: [ListChange<Item>]?) {
+    private func updateItems(_ changes: [ListChange<Item>]?) {
         let operation = AsyncOperation { [weak self] _, done in
             guard let self = self else {
                 done(.continue)
                 return
             }
 
-            self.mapItems { [weak self] items in
-                self?._items = items
-                let returnedChanges: [ListChange<Item>]
-                if let existingChanges = changes {
-                    returnedChanges = existingChanges
-                } else {
-                    returnedChanges = items.enumerated().map { .insert($1, index: IndexPath(item: $0, section: 0)) }
+            frc.managedObjectContext.perform {
+                self.processItems(changes) {
+                    done(.continue)
                 }
-                self?.notifyDidChange(changes: returnedChanges)
-                done(.continue)
             }
         }
 
         processingQueue.addOperation(operation)
+    }
+
+    private func processItems(_ changes: [ListChange<Item>]?, onCompletion: @escaping () -> Void) {
+        mapItems { [weak self] items in
+            self?._items = items
+            let returnedChanges: [ListChange<Item>]
+            if let existingChanges = changes {
+                returnedChanges = existingChanges
+            } else {
+                returnedChanges = items.enumerated().map { .insert($1, index: IndexPath(item: $0, section: 0)) }
+            }
+            self?.notifyDidChange(changes: returnedChanges)
+            onCompletion()
+        }
     }
 
     /// Listens for `Will/DidRemoveAllData` notifications from the context and simulates the callback when the notifications
