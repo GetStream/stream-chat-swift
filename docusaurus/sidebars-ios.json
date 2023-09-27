@@ -155,7 +155,8 @@
             "guides/migrating-from-3-to-4",
             "guides/migrating-from-1.x-and-2.x"
           ]
-        }
+        },
+        "guides/share-extension"
       ]
     },
     {
