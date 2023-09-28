@@ -22,6 +22,7 @@ final class ChatChannelVC_Tests: XCTestCase {
         vc = ChatChannelVC()
         vc.isViewVisible = { _ in true }
         vc.components = components
+        vc.throttler = ThrottlerMock()
         cid = .unique
         channelControllerMock = ChatChannelController_Mock.mock()
         channelControllerMock.mockCid = cid
@@ -1259,5 +1260,15 @@ class ComposerVC_Mock: ComposerVC {
         super.setUp()
 
         super.channelController = mockChannelController
+    }
+}
+
+class ThrottlerMock: Throttler {
+    init() {
+        super.init(interval: 0)
+    }
+
+    override func throttle(_ action: @escaping () -> Void) {
+        action()
     }
 }
