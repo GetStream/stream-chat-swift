@@ -1135,6 +1135,7 @@ private extension ChatMessage {
             )
         }, dto.managedObjectContext)
 
+        $_threadParticipantsCount = ({ dto.threadParticipants.count }, nil)
         if dto.threadParticipants.array.isEmpty {
             $_threadParticipants = ({ [] }, nil)
         } else {
