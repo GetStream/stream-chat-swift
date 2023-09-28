@@ -1059,13 +1059,13 @@ private extension ChatMessageListVC {
         let isNewestChangeInsertion = newestChange?.isInsertion == true
         let isNewestChangeNotByCurrentUser = newestChange?.item.isSentByCurrentUser == false
         let isNewestChangeNotVisible = !listView.isLastCellFullyVisible && !listView.previousMessagesSnapshot.isEmpty
-        let isNewPageLoading = insertions.count > 1 && insertions.count == changes.count
+        let isLoadingNewPage = insertions.count > 1 && insertions.count == changes.count
         let shouldSkipMessages =
             isFirstPageLoaded
                 && isNewestChangeNotVisible
                 && isNewestChangeInsertion
                 && isNewestChangeNotByCurrentUser
-                && !isNewPageLoading
+                && !isLoadingNewPage
 
         guard shouldSkipMessages else {
             return false
