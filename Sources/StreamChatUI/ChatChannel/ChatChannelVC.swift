@@ -453,7 +453,7 @@ open class ChatChannelVC: _ViewController,
         didUpdateMessages changes: [ListChange<ChatMessage>]
     ) {
         messageListVC.setPreviousMessagesSnapshot(messages)
-        messageListVC.setNewMessagesSnapshot(Array(channelController.messages))
+        messageListVC.setNewMessagesSnapshot(channelController.messages)
         messageListVC.updateMessages(with: changes) { [weak self] in
             guard let self = self else { return }
 
