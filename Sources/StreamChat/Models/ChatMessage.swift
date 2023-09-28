@@ -102,6 +102,10 @@ public struct ChatMessage {
 
     @CoreDataLazy internal var _threadParticipants: [ChatUser]
 
+    public var threadParticipantsCount: Int { _threadParticipantsCount }
+
+    @CoreDataLazy internal var _threadParticipantsCount: Int
+
     @CoreDataLazy internal var _attachments: [AnyChatMessageAttachment]
 
     /// The overall attachment count by attachment type.
@@ -201,6 +205,7 @@ public struct ChatMessage {
         author: @escaping () -> ChatUser,
         mentionedUsers: @escaping () -> Set<ChatUser>,
         threadParticipants: @escaping () -> [ChatUser],
+        threadParticipantsCount: @escaping () -> Int,
         attachments: @escaping () -> [AnyChatMessageAttachment],
         latestReplies: @escaping () -> [ChatMessage],
         localState: LocalMessageState?,
@@ -243,6 +248,7 @@ public struct ChatMessage {
         $_author = (author, underlyingContext)
         $_mentionedUsers = (mentionedUsers, underlyingContext)
         $_threadParticipants = (threadParticipants, underlyingContext)
+        $_threadParticipantsCount = (threadParticipantsCount, underlyingContext)
         $_attachments = (attachments, underlyingContext)
         $_latestReplies = (latestReplies, underlyingContext)
         $_latestReactions = (latestReactions, underlyingContext)
