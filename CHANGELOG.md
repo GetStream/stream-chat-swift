@@ -4,12 +4,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
+### ✅ Added
+- Message parameter in adding/removing members methods [#2799](https://github.com/GetStream/stream-chat-swift/pull/2799)
 ### 🐞 Fixed
 - Fix thread-safety issues when connection waiters time out [#2814](https://github.com/GetStream/stream-chat-swift/pull/2814)
 
 ## StreamChatUI
-### ✅ Added
-- Message parameter in adding/removing members methods
+### ⚡ Performance
+- Add throttling to mark as read [#2808](https://github.com/GetStream/stream-chat-swift/pull/2808)
+- Improve efficiency when skipping messages [#2809](https://github.com/GetStream/stream-chat-swift/pull/2809)
+- Revert message updates whenever user info changes [#2810](https://github.com/GetStream/stream-chat-swift/pull/2810)
+- Improve efficiency when diffing `ChatMessage` [#2811](https://github.com/GetStream/stream-chat-swift/pull/2811)
+### 🐞 Fixed
+- Fix skipping messages logic when not scrolled fully to the bottom [#2809](https://github.com/GetStream/stream-chat-swift/pull/2809)
+### 🔄 Changed
+- When there are user updates the message list won't update the authors instantly [#2810](https://github.com/GetStream/stream-chat-swift/pull/2810)
+  - This was recently introduced [here](https://github.com/GetStream/stream-chat-swift/pull/2738) but impacted too much the performance.
 
 # [4.37.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.37.1)
 _September 25, 2023_
