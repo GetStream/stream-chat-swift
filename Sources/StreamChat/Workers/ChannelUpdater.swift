@@ -325,23 +325,55 @@ class ChannelUpdater: Worker {
 
     /// Add users to the channel as members.
     /// - Parameters:
+    ///   - currentUserId: the id of the current user.
     ///   - cid: The Id of the channel where you want to add the users.
-    ///   - users: User Ids to add to the channel.
+    ///   - userIds: User ids to add to the channel.
+    ///   - message: Optional system message sent when adding a member.
     ///   - hideHistory: Hide the history of the channel to the added member.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    func addMembers(cid: ChannelId, userIds: Set<UserId>, hideHistory: Bool, completion: ((Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .addMembers(cid: cid, userIds: userIds, hideHistory: hideHistory)) {
+    func addMembers(
+        currentUserId: UserId? = nil,
+        cid: ChannelId,
+        userIds: Set<UserId>,
+        message: String? = nil,
+        hideHistory: Bool,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        let messagePayload = messagePayload(text: message, currentUserId: currentUserId)
+        apiClient.request(
+            endpoint: .addMembers(
+                cid: cid,
+                userIds: userIds,
+                hideHistory: hideHistory,
+                messagePayload: messagePayload
+            )
+        ) {
             completion?($0.error)
         }
     }
 
     /// Remove users to the channel as members.
     /// - Parameters:
+    ///   - currentUserId: the id of the current user.
     ///   - cid: The Id of the channel where you want to remove the users.
-    ///   - users: User Ids to remove from the channel.
+    ///   - userIds: User ids to remove from the channel.
+    ///   - message: Optional system message sent when removing a member.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    func removeMembers(cid: ChannelId, userIds: Set<UserId>, completion: ((Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .removeMembers(cid: cid, userIds: userIds)) {
+    func removeMembers(
+        currentUserId: UserId? = nil,
+        cid: ChannelId,
+        userIds: Set<UserId>,
+        message: String? = nil,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        let messagePayload = messagePayload(text: message, currentUserId: currentUserId)
+        apiClient.request(
+            endpoint: .removeMembers(
+                cid: cid,
+                userIds: userIds,
+                messagePayload: messagePayload
+            )
+        ) {
             completion?($0.error)
         }
     }
@@ -587,5 +619,27 @@ class ChannelUpdater: Worker {
         apiClient.request(endpoint: .deleteImage(cid: cid, url: url), completion: {
             completion?($0.error)
         })
+    }
+    
+    // MARK: - private
+    
+    private func messagePayload(text: String?, currentUserId: UserId?) -> MessageRequestBody? {
+        var messagePayload: MessageRequestBody?
+        if let text = text, let currentUserId = currentUserId {
+            let userRequestBody = UserRequestBody(
+                id: currentUserId,
+                name: nil,
+                imageURL: nil,
+                extraData: [:]
+            )
+            messagePayload = MessageRequestBody(
+                id: .newUniqueId,
+                user: userRequestBody,
+                text: text,
+                extraData: [:]
+            )
+            return messagePayload
+        }
+        return nil
     }
 }
