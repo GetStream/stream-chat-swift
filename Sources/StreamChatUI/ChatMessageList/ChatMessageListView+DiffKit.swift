@@ -47,10 +47,10 @@ extension ChatMessage: Differentiable {
             && reactionScores == source.reactionScores
             && extraData == source.extraData
             && currentUserReactionsCount == source.currentUserReactionsCount
+            && threadParticipantsCount == source.threadParticipantsCount
             && readByCount == source.readByCount
-            && quotedMessage == source.quotedMessage // 0.01
-            && author == source.author // 0.01
-            && allAttachments == source.allAttachments // 0.008
-            && threadParticipants.count == source.threadParticipants.count // 0.003
+            && quotedMessage == source.quotedMessage
+            && author == source.author
+            && allAttachments == source.allAttachments
     }
 }

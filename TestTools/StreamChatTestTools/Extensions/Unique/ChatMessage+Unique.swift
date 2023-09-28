@@ -31,6 +31,7 @@ extension ChatMessage {
             author: { .mock(id: .unique) },
             mentionedUsers: { [] },
             threadParticipants: { [] },
+            threadParticipantsCount: { 0 },
             attachments: { [] },
             latestReplies: { [] },
             localState: nil,

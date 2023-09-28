@@ -102,7 +102,7 @@ open class ChatChannelVC: _ViewController,
         InvertedScrollViewPaginationHandler.make(scrollView: messageListVC.listView)
     }()
 
-    private lazy var throttler: Throttler = Throttler(interval: 3, broadcastLatestEvent: true)
+    var throttler: Throttler = Throttler(interval: 3, broadcastLatestEvent: true)
 
     /// Determines if a messaged had been marked as unread in the current session
     private var hasMarkedMessageAsUnread: Bool {

@@ -12,17 +12,17 @@ final class ChatMessage_Equatable_Tests: XCTestCase {
     let numberOfMessages = 100
 
     func test_allTests() throws {
-        _ = try test_isContentEqual_sameArray()
+        try XCTSkipIf(true, "Meant to be used locally")
+
         let base: ContinuousClock.Instant.Duration = try test_isContentEqual_sameArray()
 
         print("📊 Results -------------")
         try [
-            ("Same array", base),
-            ("Same array", try test_isContentEqual_sameArray()),
-            ("Same array", try test_isContentEqual_sameArray())
-//            ("Reversed array", test_isContentEqual_reversedArray()),
-//            ("Changing text", test_isContentEqual_changingText()),
-//            ("Changing reads", test_isContentEqual_changingReads())
+            ("Same array (1)", base),
+            ("Same array (2)", try test_isContentEqual_sameArray()),
+            ("Same array (3)", try test_isContentEqual_sameArray()),
+            ("Reversed array", test_isContentEqual_reversedArray()),
+            ("Changing text", test_isContentEqual_changingText())
         ].forEach {
             print("\($0), \($1), \(base - $1)")
         }
@@ -81,26 +81,9 @@ final class ChatMessage_Equatable_Tests: XCTestCase {
         return duration
     }
 
-    func test_isContentEqual_changingReads() throws -> ContinuousClock.Instant.Duration {
-        database = DatabaseContainer_Spy()
-
-        let clock = ContinuousClock()
-        let lhs = try createMessages(numberOfMessages: numberOfMessages, changingReads: false)
-        let rhs = try createMessages(numberOfMessages: numberOfMessages, changingReads: true)
-
-        var results: [Bool] = []
-        let duration = clock.measure {
-            results.append(lhs.isContentEqual(to: rhs))
-        }
-        XCTAssertFalse(results.reduce(true) { $0 && $1 })
-
-        return duration
-    }
-
     private func createMessages(
         numberOfMessages: Int,
         changingText: Bool = false,
-        changingReads: Bool = false,
         file: StaticString = #filePath,
         line: UInt = #line
     ) throws -> [ChatMessage] {
@@ -158,7 +141,6 @@ final class ChatMessage_Equatable_Tests: XCTestCase {
                     )
                 }
 
-                let numberOfReads = changingReads ? numberOfReads / 2 : numberOfReads
                 let reads = try (1...numberOfReads).map { index in
                     try session.saveChannelRead(
                         payload: .init(
