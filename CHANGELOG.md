@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### 🐞 Fixed
+- Fix thread-safety issues when connection waiters time out [#2814](https://github.com/GetStream/stream-chat-swift/pull/2814)
+
+## StreamChatUI
 ### ✅ Added
 - Message parameter in adding/removing members methods
 

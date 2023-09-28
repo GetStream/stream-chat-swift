@@ -425,6 +425,18 @@ final class ConnectionRepository_Tests: XCTestCase {
         XCTAssertTrue(result?.error is ClientError.WaiterTimeout)
     }
 
+    func test_connectionId_returnsErrorOnTimeout_threadSafe() {
+        let expectation = self.expectation(description: "Provide Token Completion")
+        expectation.expectedFulfillmentCount = 100
+
+        DispatchQueue.concurrentPerform(iterations: 100) { _ in
+            expectation.fulfill()
+            repository.provideConnectionId(timeout: 0.1) { _ in }
+        }
+
+        waitForExpectations(timeout: defaultTimeout)
+    }
+
     func test_connectionId_returnsErrorOnMissingValue() {
         var result: Result<ConnectionId, Error>?
         let expectation = self.expectation(description: "Provide Token Completion")
