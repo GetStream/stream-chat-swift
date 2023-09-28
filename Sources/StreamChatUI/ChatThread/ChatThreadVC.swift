@@ -125,6 +125,9 @@ open class ChatThreadVC: _ViewController,
             queueAudioPlayer.dataSource = self
         }
 
+        // Set the initial data
+        messages = Array(getReplies(from: messageController))
+
         if messageController.message != nil {
             didFinishSynchronizing(with: nil)
             return
@@ -439,7 +442,9 @@ open class ChatThreadVC: _ViewController,
         let isFirstPage = messages.count < messageController.repliesPageSize
         let shouldAddRootMessageAtTheTop = isFirstPage || messageController.hasLoadedAllPreviousReplies
         if shouldAddRootMessageAtTheTop, let threadRootMessage = messageController.message {
-            messages.append(threadRootMessage)
+            if messages.last?.id != threadRootMessage.id {
+                messages.append(threadRootMessage)
+            }
         }
         return messages
     }
