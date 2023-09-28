@@ -146,6 +146,10 @@ public struct ChatMessage {
 
     @CoreDataLazy internal var _currentUserReactions: Set<ChatMessageReaction>
 
+    public var currentUserReactionsCount: Int { _currentUserReactionsCount }
+
+    @CoreDataLazy internal var _currentUserReactionsCount: Int
+
     /// `true` if the author of the message is the currently logged-in user.
     public let isSentByCurrentUser: Bool
 
@@ -169,7 +173,7 @@ public struct ChatMessage {
     /// who has read this message (excluding the current user).
     ///
     /// - Note: For the message authored by other channel members this field always returns `0`.
-    public var readByCount: Int { readBy.count }
+    public var readByCount: Int { _readByCount }
 
     @CoreDataLazy(forceLazy: true) internal var _readByCount: Int
 
@@ -203,6 +207,7 @@ public struct ChatMessage {
         isFlaggedByCurrentUser: Bool,
         latestReactions: @escaping () -> Set<ChatMessageReaction>,
         currentUserReactions: @escaping () -> Set<ChatMessageReaction>,
+        currentUserReactionsCount: @escaping () -> Int,
         isSentByCurrentUser: Bool,
         pinDetails: MessagePinDetails?,
         translations: [TranslationLanguage: String]?,
@@ -242,6 +247,7 @@ public struct ChatMessage {
         $_latestReplies = (latestReplies, underlyingContext)
         $_latestReactions = (latestReactions, underlyingContext)
         $_currentUserReactions = (currentUserReactions, underlyingContext)
+        $_currentUserReactionsCount = (currentUserReactionsCount, underlyingContext)
         $_quotedMessage = (quotedMessage, underlyingContext)
         $_readBy = (readBy, underlyingContext)
         $_readByCount = (readByCount, underlyingContext)
