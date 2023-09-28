@@ -70,6 +70,10 @@ public struct LazyCachedMapCollection<Element>: RandomAccessCollection {
             return value
         }
     }
+
+    public func append(_ element: Element) {
+        cache.values.append(element)
+    }
 }
 
 extension LazyCachedMapCollection: ExpressibleByArrayLiteral {
