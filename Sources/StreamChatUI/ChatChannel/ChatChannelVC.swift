@@ -102,6 +102,8 @@ open class ChatChannelVC: _ViewController,
         InvertedScrollViewPaginationHandler.make(scrollView: messageListVC.listView)
     }()
 
+    private lazy var throttler: Throttler = Throttler(interval: 3, broadcastLatestEvent: true)
+
     /// Determines if a messaged had been marked as unread in the current session
     private var hasMarkedMessageAsUnread: Bool {
         channelController.isMarkedAsUnread
@@ -258,12 +260,14 @@ open class ChatChannelVC: _ViewController,
 
     /// Marks the channel read and updates the UI optimistically.
     public func markRead() {
-        channelController.markRead { [weak self] error in
-            if error == nil {
-                self?.hasSeenLastMessage = false
+        throttler.throttle { [weak self] in
+            self?.channelController.markRead { error in
+                if error == nil {
+                    self?.hasSeenLastMessage = false
+                }
+                self?.updateJumpToUnreadRelatedComponents()
+                self?.updateScrollToBottomButtonCount()
             }
-            self?.updateJumpToUnreadRelatedComponents()
-            self?.updateScrollToBottomButtonCount()
         }
     }
 
