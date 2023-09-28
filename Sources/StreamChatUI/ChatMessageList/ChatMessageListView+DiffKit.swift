@@ -33,24 +33,24 @@ extension ChatMessageListView {
 extension ChatMessage: Differentiable {
     public func isContentEqual(to source: ChatMessage) -> Bool {
         id == source.id
+            && replyCount == source.replyCount
+            && isShadowed == source.isShadowed
+            && showReplyInChannel == source.showReplyInChannel
             && text == source.text
+            && localState == source.localState
             && type == source.type
             && command == source.command
             && arguments == source.arguments
             && parentMessageId == source.parentMessageId
-            && showReplyInChannel == source.showReplyInChannel
-            && replyCount == source.replyCount
-            && extraData == source.extraData
-            && quotedMessage == source.quotedMessage
-            && isShadowed == source.isShadowed
-            && currentUserReactions.count == source.currentUserReactions.count
+            && isFlaggedByCurrentUser == source.isFlaggedByCurrentUser
             && reactionCounts == source.reactionCounts
             && reactionScores == source.reactionScores
-            && threadParticipants.count == source.threadParticipants.count
-            && localState == source.localState
-            && isFlaggedByCurrentUser == source.isFlaggedByCurrentUser
-            && readBy.count == source.readBy.count
-            && author == source.author
-            && allAttachments == source.allAttachments
+            && extraData == source.extraData
+            && currentUserReactionsCount == source.currentUserReactionsCount
+            && readByCount == source.readByCount
+            && quotedMessage == source.quotedMessage // 0.01
+            && author == source.author // 0.01
+            && allAttachments == source.allAttachments // 0.008
+            && threadParticipants.count == source.threadParticipants.count // 0.003
     }
 }

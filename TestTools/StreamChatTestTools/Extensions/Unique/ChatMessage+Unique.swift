@@ -37,6 +37,7 @@ extension ChatMessage {
             isFlaggedByCurrentUser: false,
             latestReactions: { [] },
             currentUserReactions: { [] },
+            currentUserReactionsCount: { 0 },
             isSentByCurrentUser: false,
             pinDetails: nil,
             translations: nil,
