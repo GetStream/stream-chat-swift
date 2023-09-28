@@ -23,17 +23,11 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
     /// This property is especially useful when resetting the skipped messages
     /// since we want to reload the data and insert back the skipped messages, for this,
     /// we update the messages data with the one originally reported by the data controller.
-    internal var currentMessagesFromDataSource: [ChatMessage] = []
+    internal var currentMessagesFromDataSource: LazyCachedMapCollection<ChatMessage> = []
 
     /// The new messages snapshot reported by the channel or message controller.
     /// If messages are being skipped, this snapshot doesn't include skipped messages.
-    internal var newMessagesSnapshot: [ChatMessage] = [] {
-        didSet {
-            newMessagesSnapshot = newMessagesSnapshot.filter {
-                !self.skippedMessages.contains($0.id)
-            }
-        }
-    }
+    internal var newMessagesSnapshot: LazyCachedMapCollection<ChatMessage> = []
 
     /// When inserting messages at the bottom, if the user is scrolled up,
     /// we skip adding the message to the UI until the user scrolls back
@@ -203,11 +197,15 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
         with changes: [ListChange<ChatMessage>],
         completion: (() -> Void)? = nil
     ) {
+        let previousMessagesSnapshot = self.previousMessagesSnapshot
+        let newMessagesWithoutSkipped = newMessagesSnapshot.filter {
+            !self.skippedMessages.contains($0.id)
+        }
         adjustContentInsetToPositionMessagesAtTheTop()
         UIView.performWithoutAnimation {
             reloadMessages(
                 previousSnapshot: previousMessagesSnapshot,
-                newSnapshot: newMessagesSnapshot,
+                newSnapshot: newMessagesWithoutSkipped,
                 with: .fade,
                 completion: { [weak self] in
                     completion?()
@@ -222,7 +220,7 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
     internal func reloadSkippedMessages() {
         skippedMessages = []
         newMessagesSnapshot = currentMessagesFromDataSource
-        onNewDataSource?(newMessagesSnapshot)
+        onNewDataSource?(Array(newMessagesSnapshot))
         reloadData()
         scrollToBottom()
     }
