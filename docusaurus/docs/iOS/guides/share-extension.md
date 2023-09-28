@@ -454,3 +454,87 @@ class DemoShareViewModel: ObservableObject, ChatChannelControllerDelegate {
     }
 }
 ```
+
+When we create the view model, we are connecting the user and creating and synchronizing a channel list controller. We need this controller in order to fetch the latest channels and present them in a list to the user for selection. 
+
+Note that in this example, for simplicity, we are not paginating through the channels. You can do that by using the `loadPreviousMessages` from the `ChatChannelController`.
+
+The other important bits of this code are the `loadImages` method, that loads the images provided from the extension context, as well as the methods for uploading the attachments and sending the message to Stream chat.
+
+We also implement the `channelController.didUpdateMessages` delegate method, to dismiss the extension when the message is successfully sent, in order to avoid inconsistent local state.
+
+To make the implementation more readable and robust, we are also wrapping the completion handlers from the `ChatClient` and `ChatChannelController` in async/await syntax.
+
+```swift
+import Foundation
+import StreamChat
+
+extension ChatClient {
+    func connect(userInfo: UserInfo, token: Token) async throws {
+        return try await withCheckedThrowingContinuation { continuation in
+            connectUser(userInfo: userInfo, token: token) { error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume(returning: ())
+                }
+            }
+        }
+    }
+}
+
+extension ChatChannelController {
+    func synchronize() async throws {
+        return try await withCheckedThrowingContinuation { continuation in
+            self.synchronize { error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume(returning: ())
+                }
+            }
+        }
+    }
+    
+    func uploadAttachment(
+        localFileURL: URL,
+        type: AttachmentType
+    ) async throws -> UploadedAttachment {
+        return try await withCheckedThrowingContinuation { continuation in
+            uploadAttachment(localFileURL: localFileURL, type: type) { result in
+                switch result {
+                case .success(let uploaded):
+                    continuation.resume(returning: uploaded)
+                case .failure(let error):
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+    }
+    
+    @discardableResult
+    func createNewMessage(text: String, attachments: [AnyAttachmentPayload]) async throws -> MessageId {
+        return try await withCheckedThrowingContinuation { continuation in
+            createNewMessage(
+                text: text,
+                attachments: attachments
+            ) { result in
+                switch result {
+                case .success(let messageId):
+                    continuation.resume(returning: messageId)
+                case .failure(let error):
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+    }
+}
+```
+
+With that, image attachments can successfully be sent to Stream chat from a Share extension.
+
+#### Donating intents
+
+If you want to have your extension appear in the suggestions of the share sheet, you should donate a `INSendMessage` intent to `SiriKit`, when you send a message.
+
+You can find more details about this [here](https://developer.apple.com/documentation/foundation/app_extension_support/supporting_suggestions_in_your_app_s_share_extension).
