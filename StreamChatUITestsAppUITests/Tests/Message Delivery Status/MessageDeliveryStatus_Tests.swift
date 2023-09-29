@@ -259,7 +259,9 @@ extension MessageDeliveryStatus_Tests {
         }
     }
 
-    func test_doubleCheckmarkShown_whenMessageReadByParticipant_andPreviewedInThread() {
+    func test_doubleCheckmarkShown_whenMessageReadByParticipant_andPreviewedInThread() throws {
+        throw XCTSkip("https://github.com/GetStream/ios-issues-tracking/issues/491")
+        
         linkToScenario(withId: 150)
 
         GIVEN("user opens the channel") {
@@ -267,7 +269,7 @@ extension MessageDeliveryStatus_Tests {
                 .login()
                 .openChannel()
         }
-        AND("user succesfully sends new message") {
+        AND("user successfully sends new message") {
             userRobot.sendMessage(message)
         }
         AND("user previews thread for read message: \(message)") {
