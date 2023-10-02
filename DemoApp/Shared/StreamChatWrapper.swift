@@ -21,6 +21,8 @@ final class StreamChatWrapper {
         var config = ChatClientConfig(apiKeyString: apiKeyString)
         config.shouldShowShadowedMessages = true
         config.applicationGroupIdentifier = applicationGroupIdentifier
+        config.urlSessionConfiguration = URLSessionConfiguration.default
+        config.urlSessionConfiguration.httpAdditionalHeaders = ["Custom": "Example"]
         return config
     }()
 
