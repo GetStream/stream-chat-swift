@@ -88,11 +88,6 @@ public class ChatClient {
     /// required header auth parameters to make a successful request.
     private var urlSessionConfiguration: URLSessionConfiguration
 
-    /// Stream-specific request headers.
-    private let sessionHeaders: [String: String] = [
-        "X-Stream-Client": SystemEnvironment.xStreamClientHeader
-    ]
-
     /// Creates a new instance of `ChatClient`.
     /// - Parameter config: The config object for the `Client`. See `ChatClientConfig` for all configuration options.
     public convenience init(
@@ -124,19 +119,14 @@ public class ChatClient {
     ) {
         self.config = config
         self.environment = environment
-
-        let configuration = config.urlSessionConfiguration
-        configuration.waitsForConnectivity = false
-        configuration.httpAdditionalHeaders = sessionHeaders
-        configuration.timeoutIntervalForRequest = config.timeoutIntervalForRequest
-        urlSessionConfiguration = configuration
-
+        
+        urlSessionConfiguration = factory.makeUrlSessionConfiguration()
         var apiClientEncoder = factory.makeApiClientRequestEncoder()
         var webSocketEncoder = factory.makeWebSocketRequestEncoder()
         let databaseContainer = factory.makeDatabaseContainer()
         let apiClient = factory.makeApiClient(
             encoder: apiClientEncoder,
-            urlSessionConfiguration: configuration
+            urlSessionConfiguration: urlSessionConfiguration
         )
         let eventNotificationCenter = factory.makeEventNotificationCenter(
             databaseContainer: databaseContainer,
