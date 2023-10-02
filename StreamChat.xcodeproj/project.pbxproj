@@ -1164,6 +1164,7 @@
 		AD17CDFA27E4DB2700E0D092 /* PushProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD17CDF827E4DB2700E0D092 /* PushProvider.swift */; };
 		AD1D7A8526A2131D00494CA5 /* ChatChannelVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD1D7A8326A212D000494CA5 /* ChatChannelVC.swift */; };
 		AD25070D272C0C8D00BC14C4 /* ChatMessageReactionAuthorsVC_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD25070B272C0C8800BC14C4 /* ChatMessageReactionAuthorsVC_Tests.swift */; };
+		AD2525212ACB3C0800F1433C /* ChatClientFactory_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2525202ACB3C0800F1433C /* ChatClientFactory_Tests.swift */; };
 		AD29395D2A2E36FE00533CA7 /* SwipeToReplyGestureHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD29395C2A2E36FE00533CA7 /* SwipeToReplyGestureHandler.swift */; };
 		AD29395E2A2E36FE00533CA7 /* SwipeToReplyGestureHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD29395C2A2E36FE00533CA7 /* SwipeToReplyGestureHandler.swift */; };
 		AD2C94DC29CB8CC40096DCA1 /* PartiallyFailingChannelListPayload.json in Sources */ = {isa = PBXBuildFile; fileRef = AD2C94DB29CB8CC40096DCA1 /* PartiallyFailingChannelListPayload.json */; };
@@ -3645,6 +3646,7 @@
 		AD17CDF827E4DB2700E0D092 /* PushProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushProvider.swift; sourceTree = "<group>"; };
 		AD1D7A8326A212D000494CA5 /* ChatChannelVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelVC.swift; sourceTree = "<group>"; };
 		AD25070B272C0C8800BC14C4 /* ChatMessageReactionAuthorsVC_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageReactionAuthorsVC_Tests.swift; sourceTree = "<group>"; };
+		AD2525202ACB3C0800F1433C /* ChatClientFactory_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatClientFactory_Tests.swift; sourceTree = "<group>"; };
 		AD29395C2A2E36FE00533CA7 /* SwipeToReplyGestureHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeToReplyGestureHandler.swift; sourceTree = "<group>"; };
 		AD2C94DB29CB8CC40096DCA1 /* PartiallyFailingChannelListPayload.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = PartiallyFailingChannelListPayload.json; sourceTree = "<group>"; };
 		AD2C94DE29CB93C40096DCA1 /* FailingChannelListPayload.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = FailingChannelListPayload.json; sourceTree = "<group>"; };
@@ -4725,6 +4727,7 @@
 		7908824625432CC600896F03 /* StreamChatTests */ = {
 			isa = PBXGroup;
 			children = (
+				799C942F247D2FB9001F1104 /* ChatClient_Tests.swift */,
 				AD2525202ACB3C0800F1433C /* ChatClientFactory_Tests.swift */,
 				8A0D64AD24E5853F0017A3C0 /* DataController_Tests.swift */,
 				A34ECB5527F5CC1E00A804C1 /* EntityChange_Tests.swift */,
@@ -4748,7 +4751,6 @@
 				A364D0A027D0C8690029857A /* Models */,
 				A364D0B727D12A520029857A /* Query */,
 				A364D0A327D126490029857A /* Repositories */,
-				A364D08A27D0BC2B0029857A /* StreamChat */,
 				A34ECB4427F5C9AD00A804C1 /* StreamChatIntegrationTests */,
 				A34ECB4327F5C93C00A804C1 /* StreamChatStressTests */,
 				40FC028E29BE9B0600E2A1CD /* Audio */,
@@ -6103,14 +6105,6 @@
 				A364D09027D0BE660029857A /* StreamChat */,
 			);
 			path = Mocks;
-			sourceTree = "<group>";
-		};
-		A364D08A27D0BC2B0029857A /* StreamChat */ = {
-			isa = PBXGroup;
-			children = (
-				799C942F247D2FB9001F1104 /* ChatClient_Tests.swift */,
-			);
-			path = StreamChat;
 			sourceTree = "<group>";
 		};
 		A364D08B27D0BD650029857A /* Config */ = {
