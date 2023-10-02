@@ -11,11 +11,17 @@ xcode_project = 'StreamChat.xcodeproj'
 sdk_names = ['StreamChat', 'StreamChatUI']
 github_repo = ENV['GITHUB_REPOSITORY'] || 'GetStream/stream-chat-swift'
 stress_tests_cycles = 50
+derived_data_path = 'derived_data'
+source_packages_path = 'spm_cache'
+buildcache_xcargs = 'CC=clang CPLUSPLUS=clang++ LD=clang LDPLUSPLUS=clang++'
+is_localhost = !is_ci
+@force_check = false
 
 before_all do |lane|
   if is_ci
     setup_ci
     ENV['FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT'] = '180'
+    ENV['FASTLANE_XCODEBUILD_SETTINGS_RETRIES'] = '10'
     xcversion(version: xcode_version) unless [:publish_release, :allure_launch].include?(lane)
   end
 end
@@ -277,7 +283,7 @@ end
 
 desc 'Runs tests in Debug config'
 lane :test do |options|
-  next unless is_check_required(sources: sources_matrix[:unit])
+  next unless is_check_required(sources: sources_matrix[:unit], force_check: @force_check)
 
   update_testplan_on_ci(path: 'Tests/StreamChatTests/StreamChatFlakyTests.xctestplan')
 
@@ -285,10 +291,14 @@ lane :test do |options|
     project: xcode_project,
     scheme: 'StreamChat',
     testplan: 'StreamChatFlakyTests',
-    clean: true,
+    clean: is_localhost,
+    derived_data_path: derived_data_path,
+    cloned_source_packages_path: source_packages_path,
     devices: options[:device],
+    number_of_retries: 5,
     build_for_testing: options[:build_for_testing],
-    number_of_retries: 5
+    skip_build: options[:skip_build],
+    xcargs: buildcache_xcargs
   )
 
   next if options[:build_for_testing]
@@ -299,8 +309,11 @@ lane :test do |options|
     project: xcode_project,
     scheme: 'StreamChat',
     testplan: 'StreamChatTestPlan',
+    derived_data_path: derived_data_path,
+    cloned_source_packages_path: source_packages_path,
     devices: options[:device],
-    skip_build: true
+    skip_build: true,
+    xcargs: buildcache_xcargs
   )
 end
 
@@ -314,12 +327,25 @@ lane :stop_sinatra do
   sh('lsof -t -i:4567 | xargs kill -9')
 end
 
+lane :build_test_app_and_frameworks do
+  scan(
+    project: xcode_project,
+    scheme: 'StreamChatUITestsApp',
+    testplan: 'StreamChatUITestsApp',
+    result_bundle: true,
+    derived_data_path: derived_data_path,
+    cloned_source_packages_path: source_packages_path,
+    clean: is_localhost,
+    build_for_testing: true,
+    xcargs: buildcache_xcargs
+  )
+end
+
 desc 'Runs e2e ui tests using mock server in Debug config'
 lane :test_e2e_mock do |options|
-  next unless is_check_required(sources: sources_matrix[:e2e])
+  next unless is_check_required(sources: sources_matrix[:e2e], force_check: @force_check)
 
   start_sinatra
-
   prepare_simulator(device: options[:device]) if is_ci
 
   scan_options = {
@@ -327,24 +353,25 @@ lane :test_e2e_mock do |options|
     scheme: 'StreamChatUITestsApp',
     testplan: 'StreamChatUITestsApp',
     result_bundle: true,
+    derived_data_path: derived_data_path,
+    cloned_source_packages_path: source_packages_path,
+    clean: is_localhost,
+    test_without_building: options[:test_without_building],
+    xcargs: buildcache_xcargs,
     devices: options[:device],
     number_of_retries: 3 # TODO: CIS-1737
   }
 
-  build_for_testing = is_ci && options[:cron].nil?
-  scan(scan_options.merge(clean: true, build_for_testing: build_for_testing))
-
-  if build_for_testing
-    parallelize_tests_on_ci(
-      scan: scan_options,
-      derived_data: lane_context[SharedValues::SCAN_DERIVED_DATA_PATH],
-      batch: options[:batch]
-    )
+  if is_localhost || options[:cron]
+    scan(scan_options)
+  else
+    parallelize_tests_on_ci(scan: scan_options, batch: options[:batch])
   end
 end
 
 private_lane :parallelize_tests_on_ci do |options|
-  xctestrun = Dir.glob("#{options[:derived_data]}/Build/Products/*.xctestrun").first
+  products_dir = File.expand_path("../#{derived_data_path}/Build/Products")
+  xctestrun = Dir.glob(File.expand_path("#{products_dir}/*.xctestrun")).first
   tests = retrieve_xctest_names(xctestrun: xctestrun).values.flatten
   slice_size = (tests.size / ENV['MATRIX_SIZE'].to_f).ceil
   only_testing = []
@@ -352,18 +379,12 @@ private_lane :parallelize_tests_on_ci do |options|
   only_testing_batch = only_testing[options[:batch].to_i]
 
   UI.success("Tests in total: #{only_testing.flatten.size}. Running #{only_testing_batch.size} of them ⌛️")
-  scan(
-    options[:scan].merge(
-      test_without_building: true,
-      derived_data_path: options[:derived_data],
-      only_testing: only_testing_batch
-    )
-  )
+  scan(options[:scan].merge(only_testing: only_testing_batch))
 end
 
 desc 'Runs ui tests in Debug config'
 lane :test_ui do |options|
-  next unless is_check_required(sources: sources_matrix[:ui])
+  next unless is_check_required(sources: sources_matrix[:ui], force_check: @force_check)
 
   remove_snapshots if options[:record]
 
@@ -373,71 +394,13 @@ lane :test_ui do |options|
     project: xcode_project,
     scheme: 'StreamChatUI',
     testplan: 'StreamChatUITestPlan',
-    clean: true,
+    cloned_source_packages_path: source_packages_path,
+    clean: is_localhost,
     result_bundle: true,
     devices: options[:device],
-    build_for_testing: options[:build_for_testing]
-  )
-end
-
-desc 'Runs ui tests in Release config'
-lane :test_ui_release do |options|
-  update_testplan_on_ci(path: 'Tests/StreamChatUITests/StreamChatUITestPlan.xctestplan')
-
-  scan(
-    project: xcode_project,
-    scheme: 'StreamChatUI',
-    testplan: 'StreamChatUITestPlan',
-    configuration: 'ReleaseTests',
-    clean: true,
-    devices: options[:device]
-  )
-end
-
-desc 'Runs tests in Release config'
-lane :test_release do |options|
-  update_testplan_on_ci(path: 'Tests/StreamChatTests/StreamChatTestPlan.xctestplan')
-
-  scan(
-    project: xcode_project,
-    scheme: 'StreamChat',
-    testplan: 'StreamChatTestPlan',
-    configuration: 'ReleaseTests',
-    clean: true,
-    devices: options[:device]
-  )
-end
-
-desc 'Runs tests in Release config on macOS'
-lane :test_release_macos do
-  update_testplan_on_ci(path: 'Tests/StreamChatTests/StreamChatTestPlan.xctestplan')
-
-  match_macos
-
-  scan(
-    project: xcode_project,
-    scheme: 'StreamChat',
-    testplan: 'StreamChatTestPlan',
-    configuration: 'ReleaseTests',
-    clean: true,
-    disable_xcpretty: true,
-    destination: 'platform=macOS,arch=x86_64' # will select first from macOS and macOS Catalyst. Let's hope it always will be macOS
-  )
-end
-
-desc 'Runs tests in Debug config on macOS'
-lane :test_debug_macos do
-  update_testplan_on_ci(path: 'Tests/StreamChatTests/StreamChatTestPlan.xctestplan')
-
-  match_macos
-
-  scan(
-    project: xcode_project,
-    scheme: 'StreamChat',
-    testplan: 'StreamChatTestPlan',
-    clean: true,
-    disable_xcpretty: true,
-    destination: 'platform=macOS,arch=x86_64' # will select first from macOS and macOS Catalyst. Let's hope it always will be macOS
+    build_for_testing: options[:build_for_testing],
+    skip_build: options[:skip_build],
+    xcargs: buildcache_xcargs
   )
 end
 
@@ -467,32 +430,6 @@ lane :stress_test do
     scan(
       project: xcode_project,
       scheme: 'StreamChat',
-      test_without_building: true,
-      testplan: 'StreamChatStressTestPlan',
-      devices: options[:device],
-      xcpretty_args: '--test' # simplify logs
-    )
-  end
-end
-
-desc 'Runs stress tests in Release config'
-lane :stress_test_release do |options|
-  scan(
-    project: xcode_project,
-    scheme: 'StreamChat',
-    configuration: 'ReleaseTests',
-    clean: true,
-    build_for_testing: true,
-    devices: options[:device]
-  )
-
-  update_testplan_on_ci(path: 'Tests/StreamChatTests/StreamChatStressTestPlan.xctestplan')
-
-  stress_tests_cycles.times do
-    scan(
-      project: xcode_project,
-      scheme: 'StreamChat',
-      configuration: 'ReleaseTests',
       test_without_building: true,
       testplan: 'StreamChatStressTestPlan',
       devices: options[:device],
@@ -532,52 +469,62 @@ lane :build_youtube_clone do |options|
 end
 
 private_lane :build_example_app do |options|
-  next unless is_check_required(sources: sources_matrix[:sample_apps])
+  next unless is_check_required(sources: sources_matrix[:sample_apps], force_check: @force_check)
 
   scan(
     project: xcode_project,
     scheme: options[:scheme],
-    clean: true,
+    clean: is_localhost,
+    derived_data_path: derived_data_path,
+    cloned_source_packages_path: source_packages_path,
     build_for_testing: true,
-    devices: options[:device]
+    devices: options[:device],
+    xcargs: buildcache_xcargs
   )
 end
 
 desc 'Test SPM Integration'
 lane :spm_integration do
-  next unless is_check_required(sources: sources_matrix[:integration])
+  next unless is_check_required(sources: sources_matrix[:integration], force_check: @force_check)
 
-  build_app(
+  gym(
     project: 'Integration/SPM/SwiftPackageManager.xcodeproj',
     scheme: 'SwiftPackageManager',
     skip_package_ipa: true,
     skip_archive: true,
-    destination: 'generic/platform=iOS Simulator'
+    clean: is_localhost,
+    derived_data_path: derived_data_path,
+    cloned_source_packages_path: source_packages_path,
+    destination: 'generic/platform=iOS Simulator',
+    xcargs: buildcache_xcargs
   )
 end
 
 desc 'Test CocoaPods Integration'
 lane :cocoapods_integration do
-  next unless is_check_required(sources: sources_matrix[:integration])
+  next unless is_check_required(sources: sources_matrix[:integration], force_check: @force_check)
 
   cocoapods(
     clean_install: true,
     podfile: 'Integration/CocoaPods/'
   )
 
-  build_app(
+  gym(
     workspace: 'Integration/CocoaPods/CocoaPods.xcworkspace',
     scheme: 'CocoaPods',
     skip_package_ipa: true,
     skip_archive: true,
-    clean: true,
-    destination: 'generic/platform=iOS Simulator'
+    clean: is_localhost,
+    derived_data_path: derived_data_path,
+    cloned_source_packages_path: source_packages_path,
+    destination: 'generic/platform=iOS Simulator',
+    xcargs: buildcache_xcargs
   )
 end
 
 desc 'Build and upload DemoApp to Emerge'
 lane :emerge_upload do
-  next unless is_check_required(sources: sources_matrix[:emerge])
+  next unless is_check_required(sources: sources_matrix[:emerge], force_check: @force_check)
 
   gym(
     export_method: 'ad-hoc',
@@ -585,7 +532,8 @@ lane :emerge_upload do
     scheme: 'DemoApp',
     skip_package_ipa: true,
     skip_archive: false,
-    clean: true
+    clean: is_localhost,
+    xcargs: buildcache_xcargs
   )
 
   emerge(
@@ -624,9 +572,23 @@ end
 
 desc 'Run fastlane linting'
 lane :rubocop do
-  next unless is_check_required(sources: sources_matrix[:ruby])
+  next unless is_check_required(sources: sources_matrix[:ruby], force_check: @force_check)
 
   sh('bundle exec rubocop')
+end
+
+lane :install_sim do |options|
+  xcode_install_cache_dir = File.expand_path('~/Library/Caches/XcodeInstall')
+  sim_dmg_path = Dir["#{xcode_install_cache_dir}/*.dmg"].first
+  sim_pkg_path = Dir["#{xcode_install_cache_dir}/*.pkg"].first
+  if is_localhost || sim_dmg_path.nil? || sim_pkg_path.nil?
+    sh("bundle exec xcversion simulators --install='iOS #{options[:ios]}'")
+  else
+    sh("hdiutil attach '#{sim_dmg_path}'")
+    sh("sudo installer -pkg '#{sim_pkg_path}' -target /")
+    mount_point = sh("hdiutil attach '#{sim_dmg_path}' | grep Volumes | cut -f 3").strip
+    sh("hdiutil detach '#{mount_point}'")
+  end
 end
 
 desc 'Remove UI snapshots'

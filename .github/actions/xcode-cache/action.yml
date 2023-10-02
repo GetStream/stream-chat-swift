@@ -1,0 +1,19 @@
+name: 'Xcode Cache'
+description: 'Cache Xcode dependencies'
+runs:
+  using: "composite"
+  steps:
+    - run: echo "IMAGE=${ImageOS}-${ImageVersion}" >> $GITHUB_ENV
+      shell: bash
+    - run: echo "$HOME/.mint/bin" >> $GITHUB_PATH
+      shell: bash
+    - name: Cache SPM
+      uses: actions/cache@v3
+      id: spm-cache
+      with:
+        path: spm_cache
+        key: ${{ env.IMAGE }}-spm-${{ hashFiles('**/Package.resolved') }}
+        restore-keys: ${{ env.IMAGE }}-spm-
+    - uses: mikehardy/buildcache-action@v2
+      with:
+        cache_key: ${{ env.IMAGE }}-buildcache-

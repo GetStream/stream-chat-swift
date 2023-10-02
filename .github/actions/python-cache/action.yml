@@ -1,0 +1,11 @@
+name: 'Python Cache'
+description: 'Cache Python dependencies'
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/setup-python@v4
+      with:
+        python-version: 3.11
+        cache: 'pip'
+    - run: pip install -r requirements.txt
+      shell: bash

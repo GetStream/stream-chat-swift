@@ -8718,7 +8718,7 @@
 				799C9418247D2F80001F1104 /* Frameworks */,
 				799C9419247D2F80001F1104 /* Resources */,
 				E3C7A0E42858BB10006133C3 /* SwiftLint */,
-				4A5122FF29D30BE0005CEA9B /* Run Vale */,
+				4A5122FF29D30BE0005CEA9B /* Vale */,
 			);
 			buildRules = (
 			);
@@ -9410,7 +9410,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		4A5122FF29D30BE0005CEA9B /* Run Vale */ = {
+		4A5122FF29D30BE0005CEA9B /* Vale */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -9420,7 +9420,7 @@
 			);
 			inputPaths = (
 			);
-			name = "Run Vale";
+			name = Vale;
 			outputFileListPaths = (
 			);
 			outputPaths = (
@@ -12837,6 +12837,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
+				GCC_OPTIMIZATION_LEVEL = s;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = StreamChatUITestsApp/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Chat UI Tests";
@@ -12854,6 +12855,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG TESTS";
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -12929,6 +12931,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
+				GCC_OPTIMIZATION_LEVEL = s;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Tests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -12938,6 +12941,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG TESTS";
 				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = StreamChatUITestsApp;
