@@ -7,13 +7,6 @@ runs:
       shell: bash
     - run: echo "$HOME/.mint/bin" >> $GITHUB_PATH
       shell: bash
-    - name: Cache RubyGems
-      uses: actions/cache@v3
-      id: rubygem-cache
-      with:
-        path: vendor/bundle
-        key: ${{ env.IMAGE }}-gem-${{ hashFiles('**/Gemfile.lock') }}
-        restore-keys: ${{ env.IMAGE }}-gem-
     - name: Cache Mint
       uses: actions/cache@v3
       id: mint-cache
@@ -21,5 +14,18 @@ runs:
         path: ~/.mint
         key: ${{ env.IMAGE }}-mint-${{ hashFiles('**/Mintfile') }}
         restore-keys: ${{ env.IMAGE }}-mint-
+    - name: Cache brew
+      uses: actions/cache@v3
+      id: brew-cache
+      with:
+        path: |
+          ~/Library/Caches/Homebrew/mint*
+          ~/Library/Caches/Homebrew/vale*
+          ~/Library/Caches/Homebrew/xcparse*
+          ~/Library/Caches/Homebrew/sonar-scanner*
+        key: ${{ env.IMAGE }}-brew-${{ hashFiles('**/Brewfile.lock.json') }}
+        restore-keys: ${{ env.IMAGE }}-brew-
+    - uses: ./.github/actions/ruby-cache
+    - uses: ./.github/actions/xcode-cache
     - run: ./Scripts/bootstrap.sh
       shell: bash

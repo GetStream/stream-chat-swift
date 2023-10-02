@@ -24,7 +24,7 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.BOT_SSH_PRIVATE_KEY }}
       - uses: actions/checkout@v3.1.0
-      - uses: ./.github/actions/bootstrap
+      - uses: ./.github/actions/ruby-cache
       - name: Run match_me
         env:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}

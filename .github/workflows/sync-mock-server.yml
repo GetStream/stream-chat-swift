@@ -14,13 +14,9 @@ jobs:
     runs-on: macos-13
     steps:
     - uses: actions/checkout@v3.1.0
-    - uses: actions/setup-python@v4
-      with:
-        python-version: 3.11
-        cache: 'pip'
     - uses: ./.github/actions/bootstrap
-      env:
-        SYNC_MOCK_SERVER: true
+    - uses: ./.github/actions/ruby-cache
+    - uses: ./.github/actions/python-cache
     - run: bundle exec fastlane sync_mock_server
       timeout-minutes: 5
       env:

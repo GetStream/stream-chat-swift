@@ -5,11 +5,7 @@
 #   - install Mint and bootstrap its dependencies
 #   - install Vale
 #   - link git hooks
-#   - install required ruby gems
-#   - install sonar dependencies if `INSTALL_SONAR` environment variable is provided
 #   - install allure dependencies if `INSTALL_ALLURE` environment variable is provided
-#   - install xcparse if `INSTALL_XCPARSE` environment variable is provided
-#   - install pythond dependencies if `SYNC_MOCK_SERVER` environment variable is provided
 # You should have homebrew installed.
 # If you get `zsh: permission denied: ./bootstrap.sh` error, please run `chmod +x bootstrap.sh` first
 
@@ -41,29 +37,15 @@ ln -sf ../../hooks/pre-commit.sh .git/hooks/pre-commit
 chmod +x .git/hooks/pre-commit
 chmod +x ./hooks/git-format-staged
 
-puts "Install Vale if needed"
-brew install vale
+puts "Install brew dependencies"
+brew bundle -d
 
-puts "Install bundle dependencies"
-bundle install
+puts "Bootstrap Mint dependencies"
+mint bootstrap --link
 
-if [[ ${XCODE_ACTIONS-default} == default ]]; then
-  puts "Install Mint if needed"
-  brew install mint
-
-  puts "Bootstrap Mint dependencies"
-  mint bootstrap --link
-
-  # Copy internal Xcode scheme to the right folder for
-  puts "Adding DemoApp-StreamDevelopers.xcscheme to the Xcode project"
-  cp Scripts/DemoApp-StreamDevelopers.xcscheme StreamChat.xcodeproj/xcshareddata/xcschemes/DemoApp-StreamDevelopers.xcscheme
-fi
-
-if [[ ${INSTALL_SONAR-default} == true ]]; then
-  puts "Install sonar dependencies"
-  pip install lizard
-  brew install sonar-scanner
-fi
+# Copy internal Xcode scheme to the right folder for
+puts "Adding DemoApp-StreamDevelopers.xcscheme to the Xcode project"
+cp Scripts/DemoApp-StreamDevelopers.xcscheme StreamChat.xcodeproj/xcshareddata/xcschemes/DemoApp-StreamDevelopers.xcscheme
 
 if [[ ${INSTALL_ALLURE-default} == true ]]; then
   puts "Install allurectl"
@@ -75,12 +57,4 @@ if [[ ${INSTALL_ALLURE-default} == true ]]; then
   DOWNLOAD_URL="https://github.com/eroshenkoam/xcresults/releases/download/${XCRESULTS_VERSION}/xcresults"
   curl -sL "${DOWNLOAD_URL}" -o ./fastlane/xcresults
   chmod +x ./fastlane/xcresults
-fi
-
-if [[ ${INSTALL_XCPARSE-default} == true ]]; then
-  brew install chargepoint/xcparse/xcparse
-fi
-
-if [[ ${SYNC_MOCK_SERVER-default} == true ]]; then
-  pip install -r requirements.txt
 fi

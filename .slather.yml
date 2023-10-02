@@ -1,6 +1,7 @@
 coverage_service: sonarqube_xml
 xcodeproj: StreamChat.xcodeproj
 scheme: StreamChat
+build_directory: derived_data/
 source_directory: Sources/
 output_directory: reports
 ignore:
