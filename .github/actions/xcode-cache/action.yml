@@ -1,5 +1,5 @@
 name: 'Xcode Cache'
-description: 'Run bootstrap.sh'
+description: 'Cache Xcode dependencies'
 runs:
   using: "composite"
   steps:

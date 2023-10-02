@@ -1,5 +1,5 @@
 name: 'Python Cache'
-description: 'Run bootstrap.sh'
+description: 'Cache Python dependencies'
 runs:
   using: "composite"
   steps:

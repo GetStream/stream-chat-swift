@@ -1,5 +1,5 @@
 name: 'Ruby Cache'
-description: 'Run bootstrap.sh'
+description: 'Cache Ruby dependencies'
 runs:
   using: "composite"
   steps:
