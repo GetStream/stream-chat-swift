@@ -4725,6 +4725,7 @@
 		7908824625432CC600896F03 /* StreamChatTests */ = {
 			isa = PBXGroup;
 			children = (
+				AD2525202ACB3C0800F1433C /* ChatClientFactory_Tests.swift */,
 				8A0D64AD24E5853F0017A3C0 /* DataController_Tests.swift */,
 				A34ECB5527F5CC1E00A804C1 /* EntityChange_Tests.swift */,
 				7922F30924DAE3B600C364BC /* EntityDatabaseObserver_Tests.swift */,
@@ -10650,6 +10651,7 @@
 				792921C924C056F400116BBB /* ChannelListController_Tests.swift in Sources */,
 				790A4C58252F2AF2001F4A23 /* DeviceDTO_Tests.swift in Sources */,
 				8A0D64AB24E57BF20017A3C0 /* ChannelListPayload_Tests.swift in Sources */,
+				AD2525212ACB3C0800F1433C /* ChatClientFactory_Tests.swift in Sources */,
 				A34ECB5627F5CC1E00A804C1 /* EntityChange_Tests.swift in Sources */,
 				88089A0226529FD1007D3493 /* ChatMessageAttachment_Tests.swift in Sources */,
 				ADF617692A09927000E70307 /* MessagesPaginationStateHandler_Tests.swift in Sources */,
