@@ -386,7 +386,7 @@ open class ChatMessageListVC: _ViewController,
         // the UI is not updated for the next inserted messages.
         guard #available(iOS 13.0, *) else {
             if listView.previousMessagesSnapshot.count < 2 {
-                dataSource?.messages = listView.newMessagesSnapshot
+                dataSource?.messages = Array(listView.newMessagesSnapshot)
                 listView.reloadData()
                 completion?()
                 return
@@ -1026,7 +1026,9 @@ private extension ChatMessageListVC {
     func handleMessageUpdates(with changes: [ListChange<ChatMessage>], completion: (() -> Void)?) {
         let newestChange = changes.first(where: { $0.indexPath.item == 0 })
 
-        addSkippedMessagesIfNeeded(with: changes, newestChange: newestChange)
+        if shouldSkipMessages(with: changes, newestChange: newestChange) {
+            return
+        }
 
         // The old content offset and size should be stored before updating the list view.
         let oldContentOffset = listView.contentOffset
@@ -1052,31 +1054,28 @@ private extension ChatMessageListVC {
         }
     }
 
-    func addSkippedMessagesIfNeeded(with changes: [ListChange<ChatMessage>], newestChange: ListChange<ChatMessage>?) {
+    func shouldSkipMessages(with changes: [ListChange<ChatMessage>], newestChange: ListChange<ChatMessage>?) -> Bool {
         let insertions = changes.filter(\.isInsertion)
         let isNewestChangeInsertion = newestChange?.isInsertion == true
         let isNewestChangeNotByCurrentUser = newestChange?.item.isSentByCurrentUser == false
         let isNewestChangeNotVisible = !listView.isLastCellFullyVisible && !listView.previousMessagesSnapshot.isEmpty
-        let hasMultipleInsertions = insertions.count > 1
+        let isLoadingNewPage = insertions.count > 1 && insertions.count == changes.count
         let shouldSkipMessages =
             isFirstPageLoaded
                 && isNewestChangeNotVisible
                 && isNewestChangeInsertion
                 && isNewestChangeNotByCurrentUser
-                && !hasMultipleInsertions
+                && !isLoadingNewPage
 
         guard shouldSkipMessages else {
-            return
+            return false
         }
 
         changes.filter(\.isInsertion).forEach {
             listView.skippedMessages.insert($0.item.id)
         }
 
-        // By setting the new snapshots to itself, it will
-        // trigger didSet and remove the newly skipped messages.
-        let newMessageSnapshot = listView.newMessagesSnapshot
-        listView.newMessagesSnapshot = newMessageSnapshot
+        return true
     }
 
     func scrollPendingMessageIfNeeded() {

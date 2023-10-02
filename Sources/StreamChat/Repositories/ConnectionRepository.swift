@@ -183,9 +183,9 @@ class ConnectionRepository {
         connectionIdWaiters[waiterToken] = completion
 
         timerType.schedule(timeInterval: timeout, queue: connectionQueue) { [weak self] in
-            guard let completion = self?._connectionIdWaiters[waiterToken] else { return }
+            guard let completion = self?.connectionIdWaiters[waiterToken] else { return }
             completion(.failure(ClientError.WaiterTimeout()))
-            self?._connectionIdWaiters[waiterToken] = nil
+            self?.connectionIdWaiters[waiterToken] = nil
         }
     }
 

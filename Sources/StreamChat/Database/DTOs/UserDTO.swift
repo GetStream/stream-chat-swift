@@ -57,12 +57,6 @@ class UserDTO: NSManagedObject {
                     member.channel.cid = fakeNewCid
                 }
             }
-            for message in messages ?? [] {
-                if !message.hasChanges, !message.isDeleted {
-                    let fakeNewText = message.text
-                    message.text = fakeNewText
-                }
-            }
         }
     }
 }

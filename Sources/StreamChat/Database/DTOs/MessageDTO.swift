@@ -1120,9 +1120,11 @@ private extension ChatMessage {
                         .compactMap { try? $0.asModel() }
                 )
             }, dto.managedObjectContext)
+            $_currentUserReactionsCount = ({ dto.ownReactions.count }, dto.managedObjectContext)
         } else {
             isSentByCurrentUser = false
             $_currentUserReactions = ({ [] }, nil)
+            $_currentUserReactionsCount = ({ 0 }, nil)
         }
 
         $_latestReactions = ({
@@ -1133,6 +1135,7 @@ private extension ChatMessage {
             )
         }, dto.managedObjectContext)
 
+        $_threadParticipantsCount = ({ dto.threadParticipants.count }, nil)
         if dto.threadParticipants.array.isEmpty {
             $_threadParticipants = ({ [] }, nil)
         } else {
@@ -1172,12 +1175,7 @@ private extension ChatMessage {
         }
 
         $_readBy = (readBy, dto.managedObjectContext)
-
-        let readByCount = {
-            MessageDTO.numberOfReads(for: dto.id, context: context)
-        }
-
-        $_readByCount = (readByCount, dto.managedObjectContext)
+        $_readByCount = ({ dto.reads.count }, dto.managedObjectContext)
     }
 }
 

@@ -1896,6 +1896,9 @@
 		C121EC612746AC8C00023E4C /* StreamChatUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; platformFilter = ios; };
 		C121EC622746AC8C00023E4C /* StreamChatUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C121EC662746AD0E00023E4C /* StreamChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; };
+		C12297D32AC57A3200C5FF04 /* Throttler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C12297D22AC57A3200C5FF04 /* Throttler.swift */; };
+		C12297D42AC57A3200C5FF04 /* Throttler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C12297D22AC57A3200C5FF04 /* Throttler.swift */; };
+		C12297D62AC57F7C00C5FF04 /* ChatMessage+Equatable_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C12297D52AC57F7C00C5FF04 /* ChatMessage+Equatable_Tests.swift */; };
 		C122B8812A02645200D27F41 /* ChannelReadPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C122B8802A02645200D27F41 /* ChannelReadPayload_Tests.swift */; };
 		C12D0A6028FD59B60099895A /* AuthenticationRepository_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = C12D0A5F28FD59B60099895A /* AuthenticationRepository_Mock.swift */; };
 		C12DBE5C2A614F310045D9F0 /* ListDatabaseObserver+Sorting.swift in Sources */ = {isa = PBXBuildFile; fileRef = C12DBE5B2A614F310045D9F0 /* ListDatabaseObserver+Sorting.swift */; };
@@ -3828,6 +3831,8 @@
 		C11BAA4C2907EC7B004C5EA4 /* AuthenticationRepository_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationRepository_Tests.swift; sourceTree = "<group>"; };
 		C121E758274543D000023E4C /* libStreamChat.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libStreamChat.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C121EA2F2746A19400023E4C /* libStreamChatUI.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libStreamChatUI.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		C12297D22AC57A3200C5FF04 /* Throttler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Throttler.swift; sourceTree = "<group>"; };
+		C12297D52AC57F7C00C5FF04 /* ChatMessage+Equatable_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatMessage+Equatable_Tests.swift"; sourceTree = "<group>"; };
 		C122B8802A02645200D27F41 /* ChannelReadPayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelReadPayload_Tests.swift; sourceTree = "<group>"; };
 		C12D0A5F28FD59B60099895A /* AuthenticationRepository_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationRepository_Mock.swift; sourceTree = "<group>"; };
 		C12DBE5B2A614F310045D9F0 /* ListDatabaseObserver+Sorting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ListDatabaseObserver+Sorting.swift"; sourceTree = "<group>"; };
@@ -5489,6 +5494,7 @@
 			isa = PBXGroup;
 			children = (
 				843F0BC226775CDB00B342CB /* Cache.swift */,
+				C12297D22AC57A3200C5FF04 /* Throttler.swift */,
 				ACF73D7726CFE07900372DC0 /* Cancellable.swift */,
 				ACA3C98526CA23F300EB8B07 /* DateUtils.swift */,
 				22C23599259CA87B00DC805A /* Animation.swift */,
@@ -7395,6 +7401,7 @@
 			isa = PBXGroup;
 			children = (
 				A3D9D68B27EDE54900725066 /* UIView+SimulateViewAddedToHierarchy.swift */,
+				C12297D52AC57F7C00C5FF04 /* ChatMessage+Equatable_Tests.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -9720,6 +9727,7 @@
 				C1FC2F7D27416E150062530F /* ImageRequest.swift in Sources */,
 				79205857264C2D6C002B145B /* TitleContainerView.swift in Sources */,
 				AD793F49270B767500B05456 /* ChatMessageReactionAuthorsVC.swift in Sources */,
+				C12297D32AC57A3200C5FF04 /* Throttler.swift in Sources */,
 				C1FC2F7527416E150062530F /* Operation.swift in Sources */,
 				AD447443263AC6A10030E583 /* ChatMentionSuggestionView.swift in Sources */,
 				ADCB578728A42D7700B81AE8 /* DifferentiableSection.swift in Sources */,
@@ -9855,6 +9863,7 @@
 				79567F35266F6F12007EADD3 /* CommandLabelView_Tests.swift in Sources */,
 				ADE88A142949453200C0F084 /* ChatMessageListRouter_Mock.swift in Sources */,
 				40824D352A1271D7003B61FD /* PillButton_Tests.swift in Sources */,
+				C12297D62AC57F7C00C5FF04 /* ChatMessage+Equatable_Tests.swift in Sources */,
 				849AE666270CB55F00423A20 /* VideoAttachmentGalleryCell_Tests.swift in Sources */,
 				CF38F5B4287DB64B00E24D10 /* ChatChannelListErrorView_Tests.swift in Sources */,
 				AD71131225F138D500932AEE /* ChatUserAvatarView_Tests.swift in Sources */,
@@ -11350,6 +11359,7 @@
 				C121EB932746A1E800023E4C /* ChatCommandSuggestionView.swift in Sources */,
 				C121EB942746A1E800023E4C /* ChatCommandSuggestionCollectionViewCell.swift in Sources */,
 				40824D4A2A1271EF003B61FD /* PlayPauseButton_Tests.swift in Sources */,
+				C12297D42AC57A3200C5FF04 /* Throttler.swift in Sources */,
 				C121EB952746A1E800023E4C /* AttachmentsPreviewVC.swift in Sources */,
 				C121EB962746A1E800023E4C /* AttachmentPreviewContainer.swift in Sources */,
 				C121EB972746A1E800023E4C /* AttachmentPreviewProvider.swift in Sources */,

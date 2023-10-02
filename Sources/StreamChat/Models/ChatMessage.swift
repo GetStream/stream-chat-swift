@@ -102,6 +102,10 @@ public struct ChatMessage {
 
     @CoreDataLazy internal var _threadParticipants: [ChatUser]
 
+    public var threadParticipantsCount: Int { _threadParticipantsCount }
+
+    @CoreDataLazy internal var _threadParticipantsCount: Int
+
     @CoreDataLazy internal var _attachments: [AnyChatMessageAttachment]
 
     /// The overall attachment count by attachment type.
@@ -146,6 +150,10 @@ public struct ChatMessage {
 
     @CoreDataLazy internal var _currentUserReactions: Set<ChatMessageReaction>
 
+    public var currentUserReactionsCount: Int { _currentUserReactionsCount }
+
+    @CoreDataLazy internal var _currentUserReactionsCount: Int
+
     /// `true` if the author of the message is the currently logged-in user.
     public let isSentByCurrentUser: Bool
 
@@ -169,7 +177,7 @@ public struct ChatMessage {
     /// who has read this message (excluding the current user).
     ///
     /// - Note: For the message authored by other channel members this field always returns `0`.
-    public var readByCount: Int { readBy.count }
+    public var readByCount: Int { _readByCount }
 
     @CoreDataLazy(forceLazy: true) internal var _readByCount: Int
 
@@ -197,12 +205,14 @@ public struct ChatMessage {
         author: @escaping () -> ChatUser,
         mentionedUsers: @escaping () -> Set<ChatUser>,
         threadParticipants: @escaping () -> [ChatUser],
+        threadParticipantsCount: @escaping () -> Int,
         attachments: @escaping () -> [AnyChatMessageAttachment],
         latestReplies: @escaping () -> [ChatMessage],
         localState: LocalMessageState?,
         isFlaggedByCurrentUser: Bool,
         latestReactions: @escaping () -> Set<ChatMessageReaction>,
         currentUserReactions: @escaping () -> Set<ChatMessageReaction>,
+        currentUserReactionsCount: @escaping () -> Int,
         isSentByCurrentUser: Bool,
         pinDetails: MessagePinDetails?,
         translations: [TranslationLanguage: String]?,
@@ -238,10 +248,12 @@ public struct ChatMessage {
         $_author = (author, underlyingContext)
         $_mentionedUsers = (mentionedUsers, underlyingContext)
         $_threadParticipants = (threadParticipants, underlyingContext)
+        $_threadParticipantsCount = (threadParticipantsCount, underlyingContext)
         $_attachments = (attachments, underlyingContext)
         $_latestReplies = (latestReplies, underlyingContext)
         $_latestReactions = (latestReactions, underlyingContext)
         $_currentUserReactions = (currentUserReactions, underlyingContext)
+        $_currentUserReactionsCount = (currentUserReactionsCount, underlyingContext)
         $_quotedMessage = (quotedMessage, underlyingContext)
         $_readBy = (readBy, underlyingContext)
         $_readByCount = (readByCount, underlyingContext)
