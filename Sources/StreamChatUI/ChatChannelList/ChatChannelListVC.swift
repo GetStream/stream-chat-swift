@@ -430,10 +430,10 @@ open class ChatChannelListVC: _ViewController,
 
             switch controller.state {
             case .initialized, .localDataFetched:
-                isLoading = channels.isEmpty
+                isLoading = controller.channels.isEmpty
             case .remoteDataFetched:
                 isLoading = false
-                shouldHideEmptyView = !channels.isEmpty
+                shouldHideEmptyView = !controller.channels.isEmpty
             case .localDataFetchFailed, .remoteDataFetchFailed:
                 shouldHideEmptyView = emptyView.isHidden
                 isLoading = false
@@ -445,7 +445,7 @@ open class ChatChannelListVC: _ViewController,
         } else {
             switch controller.state {
             case .initialized, .localDataFetched:
-                if channels.isEmpty {
+                if controller.channels.isEmpty {
                     loadingIndicator.startAnimating()
                 } else {
                     loadingIndicator.stopAnimating()
