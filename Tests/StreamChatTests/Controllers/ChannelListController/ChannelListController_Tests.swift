@@ -340,6 +340,19 @@ final class ChannelListController_Tests: XCTestCase {
         XCTAssertEqual(env.channelListUpdater?.link_callCount, 1)
         XCTAssertEqual(env.channelListUpdater?.startWatchingChannels_callCount, 1)
     }
+    
+    func test_didReceiveEvent_whenChannelVisibleEvent_shouldLinkChannelToQuery() {
+        let channel = ChatChannel.mock(cid: .unique)
+        try? database.createChannel(cid: channel.cid, channelReads: [])
+        let event = makeChannelVisibleEvent(with: channel)
+
+        controller.eventsController(controller.eventsController, didReceiveEvent: event)
+
+        env.channelListUpdater?.link_completion?(nil)
+
+        XCTAssertEqual(env.channelListUpdater?.link_callCount, 1)
+        XCTAssertEqual(env.channelListUpdater?.startWatchingChannels_callCount, 1)
+    }
 
     func test_didReceiveEvent_whenNotificationMessageNewEvent_shouldLinkChannelToQuery() {
         let event = makeNotificationMessageNewEvent(with: .mock(cid: .unique))
@@ -1649,6 +1662,14 @@ final class ChannelListController_Tests: XCTestCase {
             createdAt: .unique,
             watcherCount: nil,
             unreadCount: nil
+        )
+    }
+    
+    private func makeChannelVisibleEvent(with channel: ChatChannel) -> ChannelVisibleEvent {
+        ChannelVisibleEvent(
+            cid: channel.cid,
+            user: .unique,
+            createdAt: .unique
         )
     }
 
