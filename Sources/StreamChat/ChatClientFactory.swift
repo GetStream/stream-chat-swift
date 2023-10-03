@@ -11,9 +11,26 @@ class ChatClientFactory {
     // since it is a bit redundant now that we have a factory.
     let environment: ChatClient.Environment
 
+    /// Stream-specific request headers.
+    private let streamHeaders: [String: String] = [
+        "X-Stream-Client": SystemEnvironment.xStreamClientHeader
+    ]
+
     init(config: ChatClientConfig, environment: ChatClient.Environment) {
         self.config = config
         self.environment = environment
+    }
+
+    func makeUrlSessionConfiguration() -> URLSessionConfiguration {
+        let configuration = config.urlSessionConfiguration
+        configuration.waitsForConnectivity = false
+        configuration.timeoutIntervalForRequest = config.timeoutIntervalForRequest
+        if let customHeaders = configuration.httpAdditionalHeaders {
+            configuration.httpAdditionalHeaders = customHeaders.merging(streamHeaders) { _, stream in stream }
+        } else {
+            configuration.httpAdditionalHeaders = streamHeaders
+        }
+        return configuration
     }
 
     func makeApiClientRequestEncoder() -> RequestEncoder {
