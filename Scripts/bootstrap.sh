@@ -58,3 +58,12 @@ if [[ ${INSTALL_ALLURE-default} == true ]]; then
   curl -sL "${DOWNLOAD_URL}" -o ./fastlane/xcresults
   chmod +x ./fastlane/xcresults
 fi
+
+if [[ ${INSTALL_YEETD-default} == true ]]; then
+  PACKAGE="yeetd-normal.pkg"
+  if [ ! -e "${PACKAGE}" ]; then
+    wget "https://github.com/biscuitehh/yeetd/releases/download/${YEETD_VERSION}/${PACKAGE}"
+  fi
+  sudo installer -pkg yeetd-normal.pkg -target /
+  yeetd &
+fi
