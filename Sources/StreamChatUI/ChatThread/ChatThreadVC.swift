@@ -438,7 +438,7 @@ open class ChatThreadVC: _ViewController,
         guard shouldRenderParentMessage else {
             return messageController.replies
         }
-        var messages = messageController.replies
+        let messages = messageController.replies
         let isFirstPage = messages.count < messageController.repliesPageSize
         let shouldAddRootMessageAtTheTop = isFirstPage || messageController.hasLoadedAllPreviousReplies
         if shouldAddRootMessageAtTheTop, let threadRootMessage = messageController.message {

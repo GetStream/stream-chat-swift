@@ -66,7 +66,7 @@ class DemoShareViewModel: ObservableObject, ChatChannelControllerDelegate {
             throw ClientError.Unexpected("Can't upload attachment")
         }
         channelController.delegate = self
-        loading = true        
+        loading = true
         try await channelController.synchronize()
         let remoteUrls = await withThrowingTaskGroup(of: URL.self) { taskGroup in
             for url in imageURLs {
@@ -107,7 +107,6 @@ class DemoShareViewModel: ObservableObject, ChatChannelControllerDelegate {
             selectedChannel = channel
         }
     }
-    
     
     func dismissShareSheet() {
         loading = false
