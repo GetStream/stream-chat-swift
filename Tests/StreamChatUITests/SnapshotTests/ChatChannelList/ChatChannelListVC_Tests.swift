@@ -213,6 +213,46 @@ final class ChatChannelListVC_Tests: XCTestCase {
         XCTAssertEqual(errorViewHidden, vc.channelListErrorView.isHidden)
     }
 
+    func test_didChangeState_whenLocalDataFetched_whenChannelsNotEmpty_shouldHideLoadingView() {
+        vc.components.isChatChannelListStatesEnabled = true
+        mockedChannelListController.channels_mock = [.mock(cid: .unique)]
+        vc.chatChannelListLoadingView.isHidden = false
+
+        vc.controller(mockedChannelListController, didChangeState: .localDataFetched)
+
+        XCTAssertEqual(vc.chatChannelListLoadingView.isHidden, true)
+    }
+
+    func test_didChangeState_whenLocalDataFetched_whenChannelsEmpty_shouldShowLoadingView() {
+        vc.components.isChatChannelListStatesEnabled = true
+        mockedChannelListController.channels_mock = []
+        vc.chatChannelListLoadingView.isHidden = true
+
+        vc.controller(mockedChannelListController, didChangeState: .localDataFetched)
+
+        XCTAssertEqual(vc.chatChannelListLoadingView.isHidden, false)
+    }
+
+    func test_didChangeState_whenInitialized_whenChannelsNotEmpty_shouldHideLoadingView() {
+        vc.components.isChatChannelListStatesEnabled = true
+        mockedChannelListController.channels_mock = [.mock(cid: .unique)]
+        vc.chatChannelListLoadingView.isHidden = false
+
+        vc.controller(mockedChannelListController, didChangeState: .initialized)
+
+        XCTAssertEqual(vc.chatChannelListLoadingView.isHidden, true)
+    }
+
+    func test_didChangeState_whenInitialized_whenChannelsEmpty_shouldShowLoadingView() {
+        vc.components.isChatChannelListStatesEnabled = true
+        mockedChannelListController.channels_mock = []
+        vc.chatChannelListLoadingView.isHidden = true
+
+        vc.controller(mockedChannelListController, didChangeState: .initialized)
+
+        XCTAssertEqual(vc.chatChannelListLoadingView.isHidden, false)
+    }
+
     func test_shouldAddNewChannelToList_whenCurrentUserIsMember_shouldReturnTrue() {
         let channelListVC = FakeChatChannelListVC()
         channelListVC.controller = mockedChannelListController
