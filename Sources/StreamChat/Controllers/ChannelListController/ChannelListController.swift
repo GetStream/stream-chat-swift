@@ -270,6 +270,9 @@ extension ChatChannelListController: EventsControllerDelegate {
             linkChannelIfNeeded(messageNewEvent.channel)
         } else if let updatedChannelEvent = event as? ChannelUpdatedEvent {
             unlinkChannelIfNeeded(updatedChannelEvent.channel)
+        } else if let channelVisibleEvent = event as? ChannelVisibleEvent,
+                    let channel = dataStore.channel(cid: channelVisibleEvent.cid) {
+            linkChannelIfNeeded(channel)
         }
     }
 
