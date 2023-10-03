@@ -245,7 +245,8 @@ lane :match_me do |options|
     'io.getstream.iOS.SlackClone',
     'io.getstream.iOS.MessengerClone',
     'io.getstream.iOS.YouTubeClone',
-    'io.getstream.iOS.DemoAppUIKit'
+    'io.getstream.iOS.DemoAppUIKit',
+    'io.getstream.iOS.ChatDemoApp.DemoShare'
   ]
   custom_match(
     api_key: appstore_api_key,
@@ -598,10 +599,10 @@ end
 
 lane :sources_matrix do
   {
-    e2e: ['Sources', 'StreamChatUITestsAppUITests', 'StreamChatUITestsApp', 'TestTools/StreamChatTestMockServer'],
+    e2e: ['Sources', 'StreamChatUITestsAppUITests', 'StreamChatUITestsApp', 'TestTools/StreamChatTestMockServer', xcode_project],
     unit: ['Sources', 'Tests/StreamChatTests', 'Tests/Shared', 'TestTools/StreamChatTestTools', xcode_project],
     ui: ['Sources', 'Tests/StreamChatUITests', 'Tests/Shared', xcode_project],
-    emerge: ['Sources'],
+    emerge: ['Sources', 'DemoApp', xcode_project],
     sample_apps: ['Sources', 'Examples', 'DemoApp', xcode_project],
     integration: ['Sources', 'Integration', xcode_project],
     ruby: ['fastlane', 'Gemfile', 'Gemfile.lock']
