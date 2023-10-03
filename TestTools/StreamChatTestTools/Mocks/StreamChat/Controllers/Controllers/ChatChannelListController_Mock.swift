@@ -22,7 +22,7 @@ public class ChatChannelListController_Mock: ChatChannelListController, Spy {
         channels_mock.map { $0.lazyCachedMap { $0 } } ?? super.channels
     }
 
-    public private(set) var state_mock: State?
+    public var state_mock: State?
     override public var state: DataController.State {
         get { state_mock ?? super.state }
         set { super.state = newValue }
