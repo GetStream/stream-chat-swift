@@ -402,7 +402,7 @@ open class ChatChannelListVC: _ViewController,
             return
         }
         reloadChannels()
-        handleChannelStateChanges()
+        handleStateChanges(controller.state)
     }
 
     @available(*, deprecated, message: "Please use `filter` when initializing a `ChatChannelListController`")
@@ -418,17 +418,17 @@ open class ChatChannelListVC: _ViewController,
     // MARK: - DataControllerStateDelegate
 
     open func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        handleChannelStateChanges()
+        handleStateChanges(state)
     }
 
     /// Called whenever the channels data changes or the controller.state changes.
     /// It controls the visibility of the channel list state views.
-    open func handleChannelStateChanges() {
+    open func handleStateChanges(_ newState: DataController.State) {
         if isChatChannelListStatesEnabled {
             var shouldHideEmptyView = true
             var isLoading = true
 
-            switch controller.state {
+            switch newState {
             case .initialized, .localDataFetched:
                 isLoading = controller.channels.isEmpty
             case .remoteDataFetched:
@@ -443,7 +443,7 @@ open class ChatChannelListVC: _ViewController,
             emptyView.isHidden = shouldHideEmptyView
             chatChannelListLoadingView.isHidden = !isLoading
         } else {
-            switch controller.state {
+            switch newState {
             case .initialized, .localDataFetched:
                 if controller.channels.isEmpty {
                     loadingIndicator.startAnimating()
