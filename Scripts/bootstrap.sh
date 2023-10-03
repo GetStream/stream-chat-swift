@@ -61,9 +61,8 @@ fi
 
 if [[ ${INSTALL_YEETD-default} == true ]]; then
   PACKAGE="yeetd-normal.pkg"
-  if [ ! -e "${PACKAGE}" ]; then
-    wget "https://github.com/biscuitehh/yeetd/releases/download/${YEETD_VERSION}/${PACKAGE}"
-  fi
-  sudo installer -pkg yeetd-normal.pkg -target /
+  wget "https://github.com/biscuitehh/yeetd/releases/download/${YEETD_VERSION}/${PACKAGE}"
+  sudo installer -pkg ${PACKAGE} -target /
+  puts "Running yeetd daemon"
   yeetd &
 fi
