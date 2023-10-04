@@ -4,7 +4,7 @@
 
 import Foundation
 @testable import StreamChat
-import StreamChatTestHelpers
+@testable import StreamChatTestHelpers
 import XCTest
 
 final class CreateCallPayload_Tests: XCTestCase {

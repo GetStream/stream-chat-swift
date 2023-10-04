@@ -4,7 +4,7 @@
 
 import Foundation
 @testable import StreamChat
-import StreamChatTestHelpers
+@testable import StreamChatTestHelpers
 
 public class ChatChannelListController_Mock: ChatChannelListController, Spy {
     public var recordedFunctions: [String] = []

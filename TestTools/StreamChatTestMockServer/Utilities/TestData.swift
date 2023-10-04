@@ -5,7 +5,7 @@
 @testable import StreamChat
 import Swifter
 import XCTest
-import StreamChatTestHelpers
+@testable import StreamChatTestHelpers
 
 public enum TestData {
 

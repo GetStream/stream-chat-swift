@@ -3,7 +3,7 @@
 //
 
 import StreamChat
-import StreamChatTestHelpers
+@testable import StreamChatTestHelpers
 import StreamChatUI
 import XCTest
 

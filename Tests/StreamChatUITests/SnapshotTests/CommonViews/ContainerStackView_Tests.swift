@@ -3,6 +3,7 @@
 //
 
 @testable import StreamChatUI
+@testable import StreamChatTestHelpers
 import XCTest
 
 final class ContainerStackView_Tests: XCTestCase {

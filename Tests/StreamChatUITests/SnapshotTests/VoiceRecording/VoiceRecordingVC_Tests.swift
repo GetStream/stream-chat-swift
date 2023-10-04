@@ -4,7 +4,7 @@
 
 import AVFoundation
 @testable import StreamChat
-import StreamChatTestHelpers
+@testable import StreamChatTestHelpers
 @testable import StreamChatTestTools
 @testable import StreamChatUI
 import XCTest

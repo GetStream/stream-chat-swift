@@ -4,6 +4,7 @@
 
 @testable import StreamChat
 import StreamChatTestTools
+@testable import StreamChatTestHelpers
 @testable import StreamChatUI
 import XCTest
 
