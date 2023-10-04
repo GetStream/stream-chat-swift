@@ -28,8 +28,11 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(name: "StreamChatTestHelpers", url: "https://github.com/GetStream/stream-chat-swift-test-helpers.git", .exact("0.2.11")),
-        .package(name: "Swifter", url: "https://github.com/httpswift/swifter", .exact("1.5.0"))
+        .package(
+            name: "StreamChatTestHelpers",
+            url: "https://github.com/GetStream/stream-chat-swift-test-helpers.git",
+            .exact("0.3.0")
+        )
     ],
     targets: [
         .target(
