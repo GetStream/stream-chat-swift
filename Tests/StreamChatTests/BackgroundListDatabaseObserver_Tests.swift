@@ -14,10 +14,6 @@ final class BackgroundListDatabaseObserver_Tests: XCTestCase {
 
     var testFRC: TestFetchedResultsController { observer.frc as! TestFetchedResultsController }
 
-    var dummyUpdates: [ListChange<String>] {
-        [.insert("Something", index: IndexPath(item: 0, section: 0))]
-    }
-
     override func setUp() {
         super.setUp()
 
@@ -90,7 +86,7 @@ final class BackgroundListDatabaseObserver_Tests: XCTestCase {
 
         // Simulate callbacks from the aggregator
         observer.changeAggregator.onWillChange?()
-        observer.changeAggregator.onDidChange?(dummyUpdates)
+        observer.changeAggregator.onDidChange?([])
 
         waitForExpectations(timeout: defaultTimeout)
 
@@ -120,9 +116,7 @@ final class BackgroundListDatabaseObserver_Tests: XCTestCase {
         XCTAssertEqual(Array(observer.items), reference1.map(\.uniqueValue))
 
         // Simulate the change aggregator callback and check the items get updated
-        observer.changeAggregator.onDidChange?(dummyUpdates)
-        try waitForOnDidChange()
-        XCTAssertEqual(Array(observer.items), reference2.map(\.uniqueValue))
+        assertItemsAfterUpdate(reference2.map(\.uniqueValue))
     }
 
     func test_startObserving_startsFRC() throws {
@@ -237,15 +231,25 @@ final class BackgroundListDatabaseObserver_Tests: XCTestCase {
         // Start observing to ensure everything is set up
         try observer.startObserving()
 
-        try waitForOnDidChange()
+        waitForItemsUpdate()
     }
 
-    private func waitForOnDidChange(file: StaticString = #filePath, line: UInt = #line) throws {
-        let startObservingDidChangeExpectation = expectation(description: "startObservingDidChange")
+    private func assertItemsAfterUpdate(_ items: [String], file: StaticString = #file, line: UInt = #line) {
+        waitForItemsUpdate()
+        let sutItems = Array(observer.items)
+        XCTAssertEqual(sutItems, items, file: file, line: line)
+    }
+
+    private func waitForItemsUpdate() {
+        let expectation = self.expectation(description: "Get items")
         observer.onDidChange = { _ in
-            startObservingDidChangeExpectation.fulfill()
+            expectation.fulfill()
         }
-        // We wait for the startObserving to call onDidChange
+
+        let changeAggregator = observer.frc.delegate as? ListChangeAggregator<TestManagedObject, String>
+
+        changeAggregator?.onDidChange?([])
+
         waitForExpectations(timeout: defaultTimeout)
     }
 }
