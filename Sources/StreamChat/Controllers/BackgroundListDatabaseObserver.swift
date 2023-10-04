@@ -173,7 +173,7 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
         }
 
         changeAggregator.onDidChange = { [weak self] changes in
-            self?.updateItems(changes)
+            self?.updateItems(changes, notify: true)
         }
 
         listenForRemoveAllDataNotifications()
@@ -186,8 +186,6 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
     func startObserving() throws {
         guard !isInitialized else { return }
         isInitialized = true
-
-        onWillChange?()
 
         do {
             try frc.performFetch()
@@ -208,7 +206,6 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
     }
 
     private func notifyDidChange(changes: [ListChange<Item>]) {
-        guard !changes.isEmpty else { return }
         DispatchQueue.main.async { [weak self] in
             self?.onDidChange?(changes)
         }
@@ -239,10 +236,10 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
     }
 
     private func getInitialItems() {
-        updateItems(nil)
+        updateItems(nil, notify: false)
     }
 
-    private func updateItems(_ changes: [ListChange<Item>]?) {
+    private func updateItems(_ changes: [ListChange<Item>]?, notify: Bool) {
         let operation = AsyncOperation { [weak self] _, done in
             guard let self = self else {
                 done(.continue)
@@ -250,7 +247,7 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
             }
 
             frc.managedObjectContext.perform {
-                self.processItems(changes) {
+                self.processItems(changes, notify: notify) {
                     done(.continue)
                 }
             }
@@ -259,16 +256,21 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
         processingQueue.addOperation(operation)
     }
 
-    private func processItems(_ changes: [ListChange<Item>]?, onCompletion: @escaping () -> Void) {
+    private func processItems(_ changes: [ListChange<Item>]?, notify: Bool, onCompletion: @escaping () -> Void) {
         mapItems { [weak self] items in
-            self?._items = items
-            let returnedChanges: [ListChange<Item>]
-            if let existingChanges = changes {
-                returnedChanges = existingChanges
-            } else {
-                returnedChanges = items.enumerated().map { .insert($1, index: IndexPath(item: $0, section: 0)) }
+            guard let self else {
+                onCompletion()
+                return
             }
-            self?.notifyDidChange(changes: returnedChanges)
+
+            self.queue.async(flags: .barrier) {
+                self._items = items
+            }
+
+            let returnedChanges = changes ?? items.enumerated().map { .insert($1, index: IndexPath(item: $0, section: 0)) }
+            if notify {
+                self.notifyDidChange(changes: returnedChanges)
+            }
             onCompletion()
         }
     }
@@ -307,7 +309,7 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
 
             // Remove the cached items since they're now deleted, technically. It is important for it to be reset before
             // calling `controllerDidChangeContent` so it properly reflects the state
-            self.queue.sync {
+            self.queue.async(flags: .barrier) {
                 self._items = []
             }
 
