@@ -442,15 +442,28 @@ final class UserDTO_Tests: XCTestCase {
         // Assert: Messages should be updated
         XCTAssertNotNil(receivedChange)
 
+        // Reset
+        receivedChange = nil
+
         // Act: Update user image
         try database.writeSynchronously { session in
             let loadedUser: UserDTO = try XCTUnwrap(session.user(id: userId))
             loadedUser.imageURL = .localYodaImage
         }
 
-        receivedChange = nil
-
         // Assert: Messages should be updated
         XCTAssertNotNil(receivedChange)
+
+        // Reset
+        receivedChange = nil
+
+        // Act: Update user lastActivityAt
+        try database.writeSynchronously { session in
+            let loadedUser: UserDTO = try XCTUnwrap(session.user(id: userId))
+            loadedUser.lastActivityAt = .unique
+        }
+
+        // Assert: Messages should not update
+        XCTAssertNil(receivedChange)
     }
 }
