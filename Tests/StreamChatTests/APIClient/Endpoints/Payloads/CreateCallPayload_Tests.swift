@@ -46,7 +46,7 @@ final class CreateCallPayload_Tests: XCTestCase {
                     "room_id": roomId,
                     "room_name": roomName
                 ]
-            ],
+            ] as [String: Any],
             "token": token,
             "agora_uid": agoraUid,
             "agora_app_id": agoraAppId

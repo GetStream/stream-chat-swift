@@ -78,13 +78,13 @@ extension Dictionary {
                 "id": userId,
                 "banned": false,
                 "unread_channels": 0,
-                "mutes": [],
+                "mutes": [String](),
                 "last_active": "2020-05-02T13:21:03.849219Z",
                 "created_at": "2019-06-05T15:01:52.847807Z",
-                "devices": [],
+                "devices": [String](),
                 "invisible": false,
                 "unread_count": 0,
-                "channel_mutes": [],
+                "channel_mutes": [String](),
                 "image": "https://i.imgur.com/EgEPqWZ.jpg",
                 "updated_at": "2020-05-02T13:21:03.855468Z",
                 "role": "user",
@@ -92,7 +92,7 @@ extension Dictionary {
                 "online": true,
                 "name": "Steep Moon",
                 "test": 1
-            ],
+            ] as [String : Any],
             "type": "health.check",
             "connection_id": connectionId
         ]

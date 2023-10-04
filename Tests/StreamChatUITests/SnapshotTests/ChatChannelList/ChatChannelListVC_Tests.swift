@@ -213,6 +213,46 @@ final class ChatChannelListVC_Tests: XCTestCase {
         XCTAssertEqual(errorViewHidden, vc.channelListErrorView.isHidden)
     }
 
+    func test_didChangeState_whenLocalDataFetched_whenChannelsNotEmpty_shouldHideLoadingView() {
+        vc.components.isChatChannelListStatesEnabled = true
+        mockedChannelListController.channels_mock = [.mock(cid: .unique)]
+        vc.chatChannelListLoadingView.isHidden = false
+
+        vc.controller(mockedChannelListController, didChangeState: .localDataFetched)
+
+        XCTAssertEqual(vc.chatChannelListLoadingView.isHidden, true)
+    }
+
+    func test_didChangeState_whenLocalDataFetched_whenChannelsEmpty_shouldShowLoadingView() {
+        vc.components.isChatChannelListStatesEnabled = true
+        mockedChannelListController.channels_mock = []
+        vc.chatChannelListLoadingView.isHidden = true
+
+        vc.controller(mockedChannelListController, didChangeState: .localDataFetched)
+
+        XCTAssertEqual(vc.chatChannelListLoadingView.isHidden, false)
+    }
+
+    func test_didChangeState_whenInitialized_whenChannelsNotEmpty_shouldHideLoadingView() {
+        vc.components.isChatChannelListStatesEnabled = true
+        mockedChannelListController.channels_mock = [.mock(cid: .unique)]
+        vc.chatChannelListLoadingView.isHidden = false
+
+        vc.controller(mockedChannelListController, didChangeState: .initialized)
+
+        XCTAssertEqual(vc.chatChannelListLoadingView.isHidden, true)
+    }
+
+    func test_didChangeState_whenInitialized_whenChannelsEmpty_shouldShowLoadingView() {
+        vc.components.isChatChannelListStatesEnabled = true
+        mockedChannelListController.channels_mock = []
+        vc.chatChannelListLoadingView.isHidden = true
+
+        vc.controller(mockedChannelListController, didChangeState: .initialized)
+
+        XCTAssertEqual(vc.chatChannelListLoadingView.isHidden, false)
+    }
+
     func test_shouldAddNewChannelToList_whenCurrentUserIsMember_shouldReturnTrue() {
         let channelListVC = FakeChatChannelListVC()
         channelListVC.controller = mockedChannelListController
@@ -256,6 +296,32 @@ final class ChatChannelListVC_Tests: XCTestCase {
         XCTAssertEqual(channelListVC.mockedCollectionView.performBatchUpdatesCallCount, 0)
         XCTAssertEqual(channelListVC.mockedCollectionView.reloadDataCallCount, 0)
         XCTAssertEqual(channelListVC.skippedRendering, true)
+    }
+
+    func test_didChangeChannels_whenEmptyViewVisible_whenNewChannelsNotEmpty_shouldHideEmptyView() {
+        let channelListVC = FakeChatChannelListVC()
+        channelListVC.components.isChatChannelListStatesEnabled = true
+        channelListVC.controller = mockedChannelListController
+        mockedChannelListController.state_mock = .remoteDataFetched
+        mockedChannelListController.channels_mock = [.mock(cid: .unique)]
+        channelListVC.emptyView.isHidden = false
+
+        channelListVC.controller(mockedChannelListController, didChangeChannels: [])
+
+        XCTAssertEqual(channelListVC.emptyView.isHidden, true)
+    }
+
+    func test_didChangeChannels_whenEmptyViewHidden_whenNewChannelsIsEmpty_shouldShowEmptyView() {
+        let channelListVC = FakeChatChannelListVC()
+        channelListVC.components.isChatChannelListStatesEnabled = true
+        channelListVC.controller = mockedChannelListController
+        mockedChannelListController.state_mock = .remoteDataFetched
+        mockedChannelListController.channels_mock = []
+        channelListVC.emptyView.isHidden = true
+
+        channelListVC.controller(mockedChannelListController, didChangeChannels: [])
+
+        XCTAssertEqual(channelListVC.emptyView.isHidden, false)
     }
 
     func test_viewWillAppear_whenSkippedRendering_shouldReloadData() {

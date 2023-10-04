@@ -1388,7 +1388,7 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Delete the message from the database.
         try database.writeSynchronously {
-            let session = $0 as! NSManagedObjectContext
+            let session = try XCTUnwrap($0 as? NSManagedObjectContext)
             let messageDTO = try XCTUnwrap(session.message(id: messageId))
             session.delete(messageDTO)
         }

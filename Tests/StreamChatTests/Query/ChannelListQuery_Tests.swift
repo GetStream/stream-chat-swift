@@ -29,7 +29,7 @@ final class ChannelListQuery_Tests: XCTestCase {
             "limit": pageSize,
             "message_limit": messagesLimit,
             "member_limit": membersLimit,
-            "sort": [["field": "cid", "direction": -1]],
+            "sort": [["field": "cid", "direction": -1] as [String: Any]],
             "filter_conditions": ["cid": ["$eq": cid.rawValue]],
             "watch": true
         ]

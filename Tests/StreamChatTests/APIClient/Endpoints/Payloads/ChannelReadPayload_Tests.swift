@@ -59,7 +59,7 @@ final class ChannelReadPayload_Tests: XCTestCase {
                 "total_unread_count": 0,
                 "online": true,
                 "name": "broken-waterfall-5"
-            ],
+            ] as [String: Any],
             "last_read": "2020-06-10T02:33:11.760244736Z",
             "last_read_message_id": "message-id-1"
         ]
