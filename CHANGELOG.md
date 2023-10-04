@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add support for custom HTTP headers in `ChatClientConfig.urlSessionConfiguration` [#2818](https://github.com/GetStream/stream-chat-swift/pull/2818)
 ### 🐞 Fixed
 - Fix showing channel outside of the channel list [#2819](https://github.com/GetStream/stream-chat-swift/pull/2819)
+- Fix messages not updated when user name and image change [#2822](https://github.com/GetStream/stream-chat-swift/pull/2822)
 
 # [4.38.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.38.0)
 _September 29, 2023_
