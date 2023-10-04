@@ -159,8 +159,12 @@ final class ListDatabaseObserver_Tests: XCTestCase {
         XCTAssertEqual(Array(observer.items), objects.map(\.uniqueValue))
 
         // Listen to callbacks
+        let exp = expectation(description: "Received Changes")
         var receivedChanges: [ListChange<String>]?
-        observer.onChange = { receivedChanges = $0 }
+        observer.onChange = {
+            receivedChanges = $0
+            exp.fulfill()
+        }
 
         // Reset test FRC's `performFetch` called flag
         testFRC.test_performFetchCalled = false
@@ -180,7 +184,8 @@ final class ListDatabaseObserver_Tests: XCTestCase {
         XCTAssertTrue(testFRC.test_performFetchCalled)
 
         // Assert callback is called with removed entities
-        AssertAsync.willBeEqual(
+        waitForExpectations(timeout: defaultTimeout)
+        XCTAssertEqual(
             receivedChanges,
             [.remove(objects[0].uniqueValue, index: [0, 0]), .remove(objects[1].uniqueValue, index: [0, 1])]
         )
