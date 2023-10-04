@@ -2,10 +2,10 @@
 // Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
-import SnapshotTesting
 import StreamChat
 @testable import StreamChatTestTools
 @testable import StreamChatUI
+@testable import StreamSwiftTestHelpers
 import XCTest
 
 final class ChatThreadVC_Tests: XCTestCase {

@@ -3,8 +3,8 @@
 //
 
 import StreamChat
-import StreamChatTestHelpers
 @testable import StreamChatUI
+@testable import StreamSwiftTestHelpers
 import XCTest
 
 final class SlideToCancelView_Tests: XCTestCase {

@@ -5,7 +5,7 @@
 import AVFoundation
 import Foundation
 @testable import StreamChat
-import StreamChatTestTools
+@testable import StreamChatTestTools
 import XCTest
 
 final class StreamAssetPropertyLoader_Tests: XCTestCase {

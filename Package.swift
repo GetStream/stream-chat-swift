@@ -27,10 +27,6 @@ let package = Package(
             targets: ["StreamChatTestMockServer"]
         ),
     ],
-    dependencies: [
-        .package(name: "StreamChatTestHelpers", url: "https://github.com/GetStream/stream-chat-swift-test-helpers.git", .exact("0.2.11")),
-        .package(name: "Swifter", url: "https://github.com/httpswift/swifter", .exact("1.5.0"))
-    ],
     targets: [
         .target(
             name: "StreamChat",
@@ -43,21 +39,16 @@ let package = Package(
             exclude: ["Info.plist", "Generated/L10n_template.stencil"],
             resources: [.process("Resources")]
         ),
-        .target(name: "StreamChatTestTools",
-            dependencies: [
-                .target(name: "StreamChat"),
-                .product(name: "StreamChatTestHelpers", package: "StreamChatTestHelpers"),
-            ],
+        .target(
+            name: "StreamChatTestTools",
+            dependencies: ["StreamChat"],
             path: "TestTools/StreamChatTestTools",
             exclude: ["Info.plist"],
             resources: [.process("Fixtures")]
         ),
-        .target(name: "StreamChatTestMockServer",
-            dependencies: [
-                .target(name: "StreamChat"),
-                .product(name: "StreamChatTestHelpers", package: "StreamChatTestHelpers"),
-                .product(name: "Swifter", package: "Swifter")
-            ],
+        .target(
+            name: "StreamChatTestMockServer",
+            dependencies: ["StreamChat"],
             path: "TestTools/StreamChatTestMockServer",
             exclude: ["Info.plist"],
             resources: [.process("Fixtures")]

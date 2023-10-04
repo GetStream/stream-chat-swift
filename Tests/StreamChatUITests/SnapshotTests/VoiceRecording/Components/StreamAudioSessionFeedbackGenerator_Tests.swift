@@ -4,7 +4,7 @@
 
 import Foundation
 @testable import StreamChat
-import StreamChatTestTools
+@testable import StreamChatTestTools
 @testable import StreamChatUI
 import UIKit
 import XCTest

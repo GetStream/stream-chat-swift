@@ -4,7 +4,7 @@
 
 import Foundation
 @testable import StreamChat
-import StreamChatTestTools
+@testable import StreamChatTestTools
 import XCTest
 
 final class AudioAnalysisEngine_Tests: XCTestCase {

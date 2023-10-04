@@ -3,7 +3,7 @@
 //
 
 import Foundation
-@_exported import StreamChatTestHelpers
+@_exported import StreamSwiftTestHelpers
 import XCTest
 
 extension Bundle {

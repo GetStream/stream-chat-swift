@@ -3,8 +3,9 @@
 //
 
 import StreamChat
-import StreamChatTestTools
+@testable import StreamChatTestTools
 @testable import StreamChatUI
+@testable import StreamSwiftTestHelpers
 import XCTest
 
 class ChatChannelListErrorView_Tests: XCTestCase {
