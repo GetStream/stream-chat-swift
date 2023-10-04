@@ -34,7 +34,7 @@ final class PinnedMessagesQuery_IntegrationTests: XCTestCase {
         // Create request encoder.
         let baseURL = BaseURL.dublin.restAPIBaseURL
         let apiKey = String.unique
-        var requestEncoder = DefaultRequestEncoder(
+        let requestEncoder = DefaultRequestEncoder(
             baseURL: baseURL,
             apiKey: .init(apiKey)
         )
@@ -68,7 +68,7 @@ final class PinnedMessagesQuery_IntegrationTests: XCTestCase {
                 [
                     "direction": 1,
                     "field": "pinned_at"
-                ]
+                ] as [String: Any]
             ] as NSArray
         ])
     }

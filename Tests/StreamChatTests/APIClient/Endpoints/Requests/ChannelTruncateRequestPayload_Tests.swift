@@ -38,7 +38,7 @@ final class ChannelTruncateRequestPayload_Tests: XCTestCase {
                 "pinned": false,
                 "show_in_channel": false,
                 "silent": false
-            ]
+            ] as [String: Any]
         ])
     }
 

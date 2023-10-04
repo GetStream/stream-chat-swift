@@ -26,7 +26,7 @@ final class ChannelQuery_Tests: XCTestCase {
             "presence": true,
             "watch": true,
             "state": true,
-            "messages": ["limit": 25, "id_lt": "testId"],
+            "messages": ["limit": 25, "id_lt": "testId"] as [String: Any],
             "members": ["limit": 10],
             "watchers": ["limit": 10]
         ]

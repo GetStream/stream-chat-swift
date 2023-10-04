@@ -74,11 +74,11 @@ final class PinnedMessagesQuery_Tests: XCTestCase {
                 [
                     "field": "pinned_at",
                     "direction": 1
-                ],
+                ] as [String: Any],
                 [
                     "field": "custom",
                     "direction": -1
-                ]
+                ] as [String: Any]
             ] as NSArray
         ])
     }

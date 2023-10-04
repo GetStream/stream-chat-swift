@@ -23,7 +23,7 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
         AssertJSONEqual(json, [
             "id": query.cid.id,
             "type": query.cid.type.rawValue,
-            "sort": [["field": "created_at", "direction": 1]] as NSArray,
+            "sort": [["field": "created_at", "direction": 1] as [String: Any]] as NSArray,
             "filter_conditions": ["id": ["$eq": "luke"]],
             "limit": 30
         ])
