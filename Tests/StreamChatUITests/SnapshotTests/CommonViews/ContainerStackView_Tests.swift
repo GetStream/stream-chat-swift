@@ -1,7 +1,6 @@
 //
 // Copyright © 2023 Stream.io Inc. All rights reserved.
 //
-
 @testable import StreamChatUI
 @testable import StreamSwiftTestHelpers
 import XCTest

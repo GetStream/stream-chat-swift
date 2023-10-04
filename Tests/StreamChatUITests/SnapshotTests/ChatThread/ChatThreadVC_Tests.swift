@@ -5,8 +5,8 @@
 import SnapshotTesting
 import StreamChat
 @testable import StreamChatTestTools
-@testable import StreamSwiftTestHelpers
 @testable import StreamChatUI
+@testable import StreamSwiftTestHelpers
 import XCTest
 
 final class ChatThreadVC_Tests: XCTestCase {

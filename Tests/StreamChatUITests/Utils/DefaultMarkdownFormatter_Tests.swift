@@ -2,8 +2,8 @@
 // Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
-@testable import StreamSwiftTestHelpers
 @testable import StreamChatUI
+@testable import StreamSwiftTestHelpers
 import XCTest
 
 final class DefaultMarkdownFormatter_Tests: XCTestCase {

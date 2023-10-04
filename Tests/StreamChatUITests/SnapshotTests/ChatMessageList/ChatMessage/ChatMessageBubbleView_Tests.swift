@@ -3,9 +3,9 @@
 //
 
 @testable import StreamChat
-import StreamChatTestTools
-@testable import StreamSwiftTestHelpers
+@testable import StreamChatTestTools
 @testable import StreamChatUI
+@testable import StreamSwiftTestHelpers
 import XCTest
 
 final class ChatMessageBubbleView_Tests: XCTestCase {
