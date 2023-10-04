@@ -58,6 +58,10 @@ class UserDTO: NSManagedObject {
                 }
             }
 
+            /// When a user updates, we want to trigger message updates, so that changes
+            /// are reflected in the UI and the message authors are updated.
+            /// It is important we only do this for name and images changes since this
+            /// will trigger an event for every message that this user owns.
             let hasNameChanged = changedValues().keys.contains(#keyPath(UserDTO.name))
             let hasImageUrlChanged = changedValues().keys.contains(#keyPath(UserDTO.imageURL))
             if hasNameChanged || hasImageUrlChanged {
