@@ -39,12 +39,16 @@ let package = Package(
             exclude: ["Info.plist", "Generated/L10n_template.stencil"],
             resources: [.process("Resources")]
         ),
-        .target(name: "StreamChatTestTools",
+        .target(
+            name: "StreamChatTestTools",
+            dependencies: ["StreamChat"],
             path: "TestTools/StreamChatTestTools",
             exclude: ["Info.plist"],
             resources: [.process("Fixtures")]
         ),
-        .target(name: "StreamChatTestMockServer",
+        .target(
+            name: "StreamChatTestMockServer",
+            dependencies: ["StreamChat"],
             path: "TestTools/StreamChatTestMockServer",
             exclude: ["Info.plist"],
             resources: [.process("Fixtures")]
