@@ -4,7 +4,7 @@
 
 import StreamChat
 @testable import StreamChatTestTools
-@testable import StreamChatTestHelpers
+@testable import StreamSwiftTestHelpers
 import StreamChatUI
 import SwiftUI
 import XCTest

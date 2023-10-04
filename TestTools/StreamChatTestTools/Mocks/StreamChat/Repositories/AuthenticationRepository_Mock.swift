@@ -3,7 +3,7 @@
 //
 
 import Foundation
-@testable import StreamChatTestHelpers
+@testable import StreamSwiftTestHelpers
 @testable import StreamChat
 
 class AuthenticationRepository_Mock: AuthenticationRepository, Spy {

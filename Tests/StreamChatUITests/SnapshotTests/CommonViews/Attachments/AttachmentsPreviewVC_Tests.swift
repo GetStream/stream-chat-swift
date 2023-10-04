@@ -4,7 +4,7 @@
 
 import StreamChat
 @testable import StreamChatUI
-@testable import StreamChatTestHelpers
+@testable import StreamSwiftTestHelpers
 import XCTest
 
 final class AttachmentsPreviewVC_Tests: XCTestCase {

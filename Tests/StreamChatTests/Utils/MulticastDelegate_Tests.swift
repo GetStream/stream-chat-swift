@@ -3,7 +3,7 @@
 //
 
 @testable import StreamChat
-@testable import StreamChatTestHelpers
+@testable import StreamSwiftTestHelpers
 import XCTest
 
 final class MulticastDelegate_Tests: XCTestCase {

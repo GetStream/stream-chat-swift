@@ -5,7 +5,7 @@
 @testable import StreamChat
 import Foundation
 import Swifter
-@testable import StreamChatTestHelpers
+@testable import StreamSwiftTestHelpers
 
 public extension StreamMockServer {
 
