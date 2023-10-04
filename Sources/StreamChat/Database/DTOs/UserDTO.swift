@@ -57,6 +57,16 @@ class UserDTO: NSManagedObject {
                     member.channel.cid = fakeNewCid
                 }
             }
+
+            let hasNameChanged = changedValues().keys.contains(#keyPath(UserDTO.name))
+            let hasImageUrlChanged = changedValues().keys.contains(#keyPath(UserDTO.imageURL))
+            if hasNameChanged || hasImageUrlChanged {
+                for message in messages ?? [] {
+                    if !message.hasChanges && !message.isDeleted {
+                        message.user = self
+                    }
+                }
+            }
         }
     }
 }
