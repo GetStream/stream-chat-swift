@@ -264,7 +264,8 @@ lane :uikit_testflight_build do
     xcode_project: xcode_project,
     sdk_target: 'StreamChat',
     app_target: 'DemoApp',
-    app_identifier: 'io.getstream.iOS.ChatDemoApp'
+    app_identifier: 'io.getstream.iOS.ChatDemoApp',
+    extensions: ['DemoShare']
   )
 end
 
