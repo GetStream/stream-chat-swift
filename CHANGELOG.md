@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - Fix showing channel outside of the channel list [#2819](https://github.com/GetStream/stream-chat-swift/pull/2819)
 - Fix messages not updated when user name and image change [#2822](https://github.com/GetStream/stream-chat-swift/pull/2822)
+- Avoid deadlock in ConnectionRepository when timing out [#2827](https://github.com/GetStream/stream-chat-swift/pull/2827)
 
 ## StreamChatUI
 ### 🐞 Fixed
