@@ -10,7 +10,7 @@ class ConnectionRepository {
     private var _connectionId: ConnectionId?
     private var _connectionStatus: ConnectionStatus = .initialized
 
-    private var connectionIdWaiters: [String: (Result<ConnectionId, Error>) -> Void] {
+    private(set) var connectionIdWaiters: [String: (Result<ConnectionId, Error>) -> Void] {
         get { connectionQueue.sync { _connectionIdWaiters } }
         set { connectionQueue.async(flags: .barrier) { self._connectionIdWaiters = newValue }}
     }
@@ -183,9 +183,11 @@ class ConnectionRepository {
         connectionIdWaiters[waiterToken] = completion
 
         timerType.schedule(timeInterval: timeout, queue: connectionQueue) { [weak self] in
-            guard let completion = self?.connectionIdWaiters[waiterToken] else { return }
-            completion(.failure(ClientError.WaiterTimeout()))
-            self?.connectionIdWaiters[waiterToken] = nil
+            self?.connectionQueue.async(flags: .barrier) {
+                guard let completion = self?._connectionIdWaiters[waiterToken] else { return }
+                completion(.failure(ClientError.WaiterTimeout()))
+                self?._connectionIdWaiters[waiterToken] = nil
+            }
         }
     }
 
