@@ -8,6 +8,8 @@
         <string>match AppStore io.getstream.iOS.ChatDemoApp</string>
         <key>io.getstream.iOS.ChatDemoApp.DemoAppPush</key>
         <string>match AppStore io.getstream.iOS.ChatDemoApp.DemoAppPush</string>
+        <key>io.getstream.iOS.ChatDemoApp.DemoShare</key>
+        <string>match AppStore io.getstream.iOS.ChatDemoApp.DemoShare</string>
     </dict>
 </dict>
 </plist>
