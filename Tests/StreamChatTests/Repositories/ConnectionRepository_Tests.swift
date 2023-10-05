@@ -470,6 +470,16 @@ final class ConnectionRepository_Tests: XCTestCase {
         XCTAssertEqual(result?.value, connectionId)
     }
 
+    func test_connectionId_doesNotDeadlock() {
+        DispatchQueue.concurrentPerform(iterations: 100) { _ in
+            repository.provideConnectionId(timeout: 0) { _ in }
+        }
+
+        DispatchQueue.concurrentPerform(iterations: 100) { _ in
+            repository.connectionIdWaiters.forEach { _ in }
+        }
+    }
+
     // MARK: Complete ConnectionId Waiters
 
     func test_completeConnectionIdWaiters_nil_connectionId() {
