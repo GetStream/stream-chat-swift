@@ -182,11 +182,21 @@ class ConnectionRepository {
         let waiterToken = String.newUniqueId
         connectionIdWaiters[waiterToken] = completion
 
-        timerType.schedule(timeInterval: timeout, queue: connectionQueue) { [weak self] in
-            self?.connectionQueue.async(flags: .barrier) {
-                guard let completion = self?._connectionIdWaiters[waiterToken] else { return }
-                completion(.failure(ClientError.WaiterTimeout()))
-                self?._connectionIdWaiters[waiterToken] = nil
+        timerType.schedule(timeInterval: timeout, queue: .global()) { [weak self] in
+            guard let self = self else { return }
+
+            // Not the nicest, but we need to ensure the read and write below are treated as an atomic operation,
+            // in a queue that is concurrent, whilst the completion needs to be called outside of the barrier'ed operation.
+            // If we call the block as part of the barrier'ed operation, and by any chance this ends up synchronously
+            // calling any queue protected property in this class before the operation is completed, we can potentially crash the app.
+            self.connectionQueue.async(flags: .barrier) {
+                guard let completion = self._connectionIdWaiters[waiterToken] else { return }
+
+                self.connectionQueue.async {
+                    completion(.failure(ClientError.WaiterTimeout()))
+                }
+
+                self._connectionIdWaiters[waiterToken] = nil
             }
         }
     }
