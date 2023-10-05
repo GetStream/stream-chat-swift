@@ -182,7 +182,8 @@ class ConnectionRepository {
         let waiterToken = String.newUniqueId
         connectionIdWaiters[waiterToken] = completion
 
-        timerType.schedule(timeInterval: timeout, queue: .global()) { [weak self] in
+        let globalQueue = DispatchQueue.global()
+        timerType.schedule(timeInterval: timeout, queue: globalQueue) { [weak self] in
             guard let self = self else { return }
 
             // Not the nicest, but we need to ensure the read and write below are treated as an atomic operation,
@@ -192,7 +193,7 @@ class ConnectionRepository {
             self.connectionQueue.async(flags: .barrier) {
                 guard let completion = self._connectionIdWaiters[waiterToken] else { return }
 
-                self.connectionQueue.async {
+                globalQueue.async {
                     completion(.failure(ClientError.WaiterTimeout()))
                 }
 
