@@ -5123,15 +5123,19 @@ extension ChannelController_Tests {
         withAllNextMessagesLoaded: Bool = true
     ) throws -> ChannelPayload {
         let channelPayload = channelPayload ?? dummyPayload(with: channelId, numberOfMessages: 1)
-        let error = try waitFor {
-            client.databaseContainer.write({ session in
-                // Create a channel with the provided payload
-                let dummyUserPayload: CurrentUserPayload = .dummy(userId: .unique, role: .user)
-                try session.saveCurrentUser(payload: dummyUserPayload)
-                try session.saveChannel(payload: channelPayload)
-                self.env.channelUpdater?.mockPaginationState.hasLoadedAllNextMessages = withAllNextMessagesLoaded
+        let error = try waitFor { done in
+            var error: Error?
+            waitForMessagesUpdate(shouldWait: !channelPayload.messages.isEmpty) {
+                client.databaseContainer.write({ session in
+                    // Create a channel with the provided payload
+                    let dummyUserPayload: CurrentUserPayload = .dummy(userId: .unique, role: .user)
+                    try session.saveCurrentUser(payload: dummyUserPayload)
+                    try session.saveChannel(payload: channelPayload)
+                    self.env?.channelUpdater?.mockPaginationState.hasLoadedAllNextMessages = withAllNextMessagesLoaded
 
-            }, completion: $0)
+                }, completion: { error = $0 })
+            }
+            done(error)
         }
 
         if let error = error {
@@ -5204,6 +5208,30 @@ extension ChannelController_Tests {
         try createChannel(messages: [oldestMessage, oldestRegularMessage, newestMessage], channelReads: [channelRead])
 
         XCTAssertEqual(controller.firstUnreadMessageId, oldestRegularMessage.id, file: file, line: line)
+    }
+
+    private func waitForMessagesUpdate(shouldWait: Bool, block: () -> Void) {
+        guard shouldWait else {
+            block()
+            return
+        }
+
+        let expectation = self.expectation(description: "Messages update")
+        controller.delegate = MessagesUpdateWaiter(expectation: expectation)
+        block()
+        wait(for: [expectation], timeout: defaultTimeout)
+    }
+}
+
+private class MessagesUpdateWaiter: ChatChannelControllerDelegate {
+    weak var expectation: XCTestExpectation?
+
+    init(expectation: XCTestExpectation) {
+        self.expectation = expectation
+    }
+
+    func channelController(_ channelController: ChatChannelController, didUpdateMessages changes: [ListChange<ChatMessage>]) {
+        expectation?.fulfill()
     }
 }
 
