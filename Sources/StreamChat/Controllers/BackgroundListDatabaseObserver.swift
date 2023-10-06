@@ -246,7 +246,7 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
                 return
             }
 
-            frc.managedObjectContext.perform {
+            self.frc.managedObjectContext.perform {
                 self.processItems(changes, notify: notify) {
                     done(.continue)
                 }
@@ -258,7 +258,7 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
 
     private func processItems(_ changes: [ListChange<Item>]?, notify: Bool, onCompletion: @escaping () -> Void) {
         mapItems { [weak self] items in
-            guard let self else {
+            guard let self = self else {
                 onCompletion()
                 return
             }

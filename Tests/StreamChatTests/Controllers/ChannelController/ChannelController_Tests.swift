@@ -5123,7 +5123,7 @@ extension ChannelController_Tests {
         withAllNextMessagesLoaded: Bool = true
     ) throws -> ChannelPayload {
         let channelPayload = channelPayload ?? dummyPayload(with: channelId, numberOfMessages: 1)
-        let error = try waitFor { done in
+        let error: Error? = try waitFor { done in
             var error: Error?
             waitForMessagesUpdate(shouldWait: !channelPayload.messages.isEmpty) {
                 client.databaseContainer.write({ session in
