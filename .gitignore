@@ -75,6 +75,7 @@ fastlane/recordings
 StreamChatCore.framework.coverage.txt
 StreamChatCoreTests.xctest.coverage.txt
 vendor/bundle/
+.bundle/
 .swiftpm
 Example/Carthage/.env
 Example/Carthage/fastlane/report.xml
