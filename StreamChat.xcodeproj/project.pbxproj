@@ -12558,7 +12558,7 @@
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = DemoShare/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = DemoShare;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Stream.io Inc. All rights reserved.";
@@ -12593,7 +12593,7 @@
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = EHV7XZLAHA;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = DemoShare/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = DemoShare;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Stream.io Inc. All rights reserved.";
@@ -12628,7 +12628,7 @@
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = DemoShare/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = DemoShare;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Stream.io Inc. All rights reserved.";
