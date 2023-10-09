@@ -30,7 +30,10 @@ This action will generate a new target and a starting point to implement the sha
 				<string>INSendMessageIntent</string>
 			</array>
 			<key>NSExtensionActivationRule</key>
-			<string>TRUEPREDICATE</string>
+			<dict>
+                <key>NSExtensionActivationSupportsImageWithMaxCount</key>
+                <integer>10</integer>
+            </dict>
 		</dict>
 		<key>NSExtensionPointIdentifier</key>
 		<string>com.apple.share-services</string>
@@ -40,6 +43,8 @@ This action will generate a new target and a starting point to implement the sha
 ```
 
 Note that the `NSExtensionPrincipalClass`'s name consists of the target name and the name of the class that will be called when the user selects our extension from Apple's native share sheet.
+
+In the `NSExtensionActivationRule`, we specify how our extension can be activated. Since we want to share images, we will use `NSExtensionActivationSupportsImageWithMaxCount`, with the value of 10. That means that our extension would be shown when up to 10 images are selected in the photos app. You can configure this value according to your requirements.
 
 #### Setting up App Groups
 
