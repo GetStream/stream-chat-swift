@@ -866,7 +866,7 @@ final class ChannelController_Tests: XCTestCase {
         // Save channel with some messages
         let channelPayload: ChannelPayload = dummyPayload(with: channelId, numberOfMessages: 5)
         let originalLastMessageAt: Date = channelPayload.channel.lastMessageAt ?? channelPayload.channel.createdAt
-        try client.databaseContainer.writeSynchronously {
+        writeAndWaitForMessageUpdates {
             try $0.saveChannel(payload: channelPayload)
         }
 
@@ -881,7 +881,7 @@ final class ChannelController_Tests: XCTestCase {
         )
         var oldMessageId: MessageId?
         // Save the message payload and check `channel.lastMessageAt` is not updated by older message
-        try client.databaseContainer.writeSynchronously {
+        writeAndWaitForMessageUpdates {
             let dto = try $0.createNewMessage(
                 in: channelId,
                 messageId: .unique,
@@ -914,7 +914,7 @@ final class ChannelController_Tests: XCTestCase {
             createdAt: .unique(after: channelPayload.channel.lastMessageAt!)
         )
         // Save the message payload and check `channel.lastMessageAt` is updated
-        try client.databaseContainer.writeSynchronously {
+        writeAndWaitForMessageUpdates {
             try $0.saveMessage(payload: newerMessagePayload, for: channelId, syncOwnReactions: true, cache: nil)
         }
         channel = try XCTUnwrap(client.databaseContainer.viewContext.channel(cid: channelId))
@@ -1063,7 +1063,7 @@ final class ChannelController_Tests: XCTestCase {
         let message1: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
         let message2: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
 
-        try client.databaseContainer.writeSynchronously {
+        writeAndWaitForMessageUpdates {
             try $0.saveMessage(payload: message1, for: self.channelId, syncOwnReactions: true, cache: nil)
             try $0.saveMessage(payload: message2, for: self.channelId, syncOwnReactions: true, cache: nil)
         }
@@ -1089,7 +1089,7 @@ final class ChannelController_Tests: XCTestCase {
         let message1: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
         let message2: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
 
-        try client.databaseContainer.writeSynchronously {
+        writeAndWaitForMessageUpdates {
             try $0.saveMessage(payload: message1, for: self.channelId, syncOwnReactions: true, cache: nil)
             try $0.saveMessage(payload: message2, for: self.channelId, syncOwnReactions: true, cache: nil)
         }
@@ -1127,7 +1127,7 @@ final class ChannelController_Tests: XCTestCase {
             authorUserId: .unique
         )
 
-        try client.databaseContainer.writeSynchronously {
+        writeAndWaitForMessageUpdates {
             try $0.saveMessage(payload: message1, for: self.channelId, syncOwnReactions: true, cache: nil)
             try $0.saveMessage(payload: message2, for: self.channelId, syncOwnReactions: true, cache: nil)
             try $0.saveMessage(payload: reply1, for: self.channelId, syncOwnReactions: true, cache: nil)
@@ -1158,7 +1158,7 @@ final class ChannelController_Tests: XCTestCase {
             authorUserId: .unique
         )
 
-        try client.databaseContainer.writeSynchronously {
+        writeAndWaitForMessageUpdates {
             try $0.saveMessage(payload: message1, for: self.channelId, syncOwnReactions: true, cache: nil)
             try $0.saveMessage(payload: ephemeralMessage, for: self.channelId, syncOwnReactions: true, cache: nil)
         }
@@ -1193,7 +1193,7 @@ final class ChannelController_Tests: XCTestCase {
             deletedAt: .unique
         )
 
-        try client.databaseContainer.writeSynchronously {
+        writeAndWaitForMessageUpdates {
             try $0.saveMessage(payload: incomingDeletedMessage, for: self.channelId, syncOwnReactions: true, cache: nil)
             try $0.saveMessage(payload: outgoingDeletedMessage, for: self.channelId, syncOwnReactions: true, cache: nil)
         }
@@ -1263,7 +1263,7 @@ final class ChannelController_Tests: XCTestCase {
             deletedAt: .unique
         )
 
-        try client.databaseContainer.writeSynchronously {
+        writeAndWaitForMessageUpdates {
             try $0.saveMessage(payload: incomingDeletedMessage, for: self.channelId, syncOwnReactions: true, cache: nil)
             try $0.saveMessage(payload: outgoingDeletedMessage, for: self.channelId, syncOwnReactions: true, cache: nil)
         }
@@ -1298,7 +1298,7 @@ final class ChannelController_Tests: XCTestCase {
             isShadowed: false
         )
 
-        try client.databaseContainer.writeSynchronously {
+        writeAndWaitForMessageUpdates {
             try $0.saveMessage(payload: shadowedMessage, for: self.channelId, syncOwnReactions: true, cache: nil)
             try $0.saveMessage(payload: nonShadowedMessage, for: self.channelId, syncOwnReactions: true, cache: nil)
         }
@@ -1330,7 +1330,7 @@ final class ChannelController_Tests: XCTestCase {
             isShadowed: false
         )
 
-        try client.databaseContainer.writeSynchronously {
+        writeAndWaitForMessageUpdates {
             try $0.saveMessage(payload: shadowedMessage, for: self.channelId, syncOwnReactions: true, cache: nil)
             try $0.saveMessage(payload: nonShadowedMessage, for: self.channelId, syncOwnReactions: true, cache: nil)
         }
@@ -1566,10 +1566,6 @@ final class ChannelController_Tests: XCTestCase {
         // Create controller for the non-existent new DM channel
         setupControllerForNewDirectMessageChannel(currentUserId: currentUserId, otherUserId: otherUserId)
 
-        // Create and set delegate
-        let delegate = ChannelController_Delegate(expectedQueueId: controllerCallbackQueueID)
-        controller.delegate = delegate
-
         // Simulate synchronize
         controller.synchronize()
 
@@ -1587,7 +1583,7 @@ final class ChannelController_Tests: XCTestCase {
         env.channelUpdater!.update_onChannelCreated?(dummyChannel.channel.cid)
         
         // Simulate new channel creation in DB
-        try client.databaseContainer.writeSynchronously { session in
+        writeAndWaitForMessageUpdates { session in
             try session.saveChannel(payload: dummyChannel)
         }
 
@@ -1599,8 +1595,9 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(controller.messages.count, dummyChannel.messages.count)
 
         // Assert the delegate is called for initial values
-        XCTAssertEqual(delegate.didUpdateChannel_channel?.item.cid, dummyChannel.channel.cid)
-        XCTAssertEqual(delegate.didUpdateMessages_messages?.count, dummyChannel.messages.count)
+        let delegate = try XCTUnwrap(controller.delegate as? MessagesUpdateWaiter)
+        XCTAssertEqual(delegate.didUpdateChannel?.cid, dummyChannel.channel.cid)
+        XCTAssertEqual(delegate.didUpdateMessagesCount, dummyChannel.messages.count)
     }
 
     func test_controller_reportsInitialValues_forDMChannel_ifChannelExistsLocally() throws {
@@ -1626,26 +1623,28 @@ final class ChannelController_Tests: XCTestCase {
         // Create controller for the existing new DM channel
         setupControllerForNewDirectMessageChannel(currentUserId: currentUserId, otherUserId: otherUserId)
 
-        // Create and set delegate
-        let delegate = ChannelController_Delegate(expectedQueueId: controllerCallbackQueueID)
-        controller.delegate = delegate
-
+        let expectation = self.expectation(description: "Synchronize completes")
         // Simulate synchronize
-        controller.synchronize()
+        controller.synchronize { _ in
+            expectation.fulfill()
+        }
 
-        // Simulate successful backend channel creation
-        env.channelUpdater!.update_onChannelCreated?(dummyChannel.channel.cid)
-        
-        // Simulate successful network call.
-        env.channelUpdater!.update_completion?(.success(dummyPayload(with: .unique)))
+        waitForChannelAndMessagesUpdate {
+            // Simulate successful backend channel creation
+            env.channelUpdater!.update_onChannelCreated?(dummyChannel.channel.cid)
+
+            // Simulate successful network call.
+            env.channelUpdater!.update_completion?(.success(dummyChannel))
+        }
+
+        wait(for: [expectation], timeout: defaultTimeout)
 
         // Since initially the controller doesn't know it's final `cid`, it can't report correct initial values.
         // That's why we simulate delegate callbacks for initial values.
         // Assert that delegate gets initial values as callback
-        AssertAsync {
-            Assert.willBeEqual(delegate.didUpdateChannel_channel?.item.cid, dummyChannel.channel.cid)
-            Assert.willBeEqual(delegate.didUpdateMessages_messages?.count, dummyChannel.messages.count)
-        }
+        let delegate = controller.delegate as? MessagesUpdateWaiter
+        XCTAssertEqual(delegate?.didUpdateChannel?.cid, dummyChannel.channel.cid)
+        XCTAssertEqual(controller.messages.count, dummyChannel.messages.count)
     }
 
     // MARK: - New channel creation tests
@@ -1668,7 +1667,7 @@ final class ChannelController_Tests: XCTestCase {
         env.channelUpdater!.update_onChannelCreated?(dummyChannel.channel.cid)
         
         // Simulate new channel creation in DB
-        try client.databaseContainer.writeSynchronously { session in
+        writeAndWaitForMessageUpdates { session in
             try session.saveChannel(payload: dummyChannel)
         }
 
@@ -1700,7 +1699,7 @@ final class ChannelController_Tests: XCTestCase {
         // from DB, without the `synchronize` call
         // Assert that initial reported values are correct
         XCTAssertEqual(controller.channel?.cid, dummyChannel.channel.cid)
-        XCTAssertEqual(controller.messages.count, dummyChannel.messages.count)
+        AssertAsync.willBeTrue(controller.messages.count == dummyChannel.messages.count)
     }
 
     // MARK: - Updating channel
@@ -2520,20 +2519,21 @@ final class ChannelController_Tests: XCTestCase {
             )
         ]
         let payload = dummyPayload(with: channelId, messages: messages)
-        try client.databaseContainer.writeSynchronously { session in
+        writeAndWaitForMessageUpdates { session in
             try session.saveChannel(payload: payload)
             let pendingMessage = session.message(id: oldestPendingId)
             pendingMessage?.localMessageState = .pendingSend
         }
 
-        let expectation2 = expectation(description: "loadPreviousMessage completes")
+        let error = TestError()
         var receivedError: Error?
+
+        let expectation2 = expectation(description: "loadPreviousMessage completes")
         controller.loadPreviousMessages() { error in
             receivedError = error
             expectation2.fulfill()
         }
 
-        let error = TestError()
         env.channelUpdater!.update_completion?(.failure(error))
 
         waitForExpectations(timeout: defaultTimeout)
@@ -5145,6 +5145,16 @@ extension ChannelController_Tests {
         return channelPayload
     }
 
+    private func writeAndWaitForMessageUpdates(_ actions: @escaping (DatabaseSession) throws -> Void, completion: ((Error?) -> Void)? = nil, file: StaticString = #file, line: UInt = #line) {
+        waitForMessagesUpdate(shouldWait: true, file: file, line: line) {
+            if let completion = completion {
+                client.databaseContainer.write(actions, completion: completion)
+            } else {
+                client.databaseContainer.write(actions)
+            }
+        }
+    }
+
     private func createChannel(oldestMessageId: MessageId, newestMessageId: MessageId, channelReads: [ChannelReadPayload] = []) throws {
         let oldestMessage = MessagePayload.dummy(messageId: oldestMessageId, createdAt: Date().addingTimeInterval(-1000))
         let newestMessage = MessagePayload.dummy(messageId: newestMessageId, createdAt: Date().addingTimeInterval(1000))
@@ -5210,28 +5220,56 @@ extension ChannelController_Tests {
         XCTAssertEqual(controller.firstUnreadMessageId, oldestRegularMessage.id, file: file, line: line)
     }
 
-    private func waitForMessagesUpdate(shouldWait: Bool, block: () -> Void) {
+    private func waitForMessagesUpdate(shouldWait: Bool = true, file: StaticString = #file, line: UInt = #line, block: () -> Void) {
         guard shouldWait else {
             block()
             return
         }
 
         let expectation = self.expectation(description: "Messages update")
-        controller.delegate = MessagesUpdateWaiter(expectation: expectation)
+        controller.delegate = MessagesUpdateWaiter(messagesExpectation: expectation, channelExpectation: nil)
         block()
         wait(for: [expectation], timeout: defaultTimeout)
+    }
+
+    private func waitForChannelAndMessagesUpdate(shouldWait: Bool = true, file: StaticString = #file, line: UInt = #line, block: () -> Void) {
+        guard shouldWait else {
+            block()
+            return
+        }
+
+        let channelExpectation = expectation(description: "Channel update")
+        let messagesExpectation = expectation(description: "Messages update")
+        controller.delegate = MessagesUpdateWaiter(messagesExpectation: messagesExpectation, channelExpectation: channelExpectation)
+        block()
+        wait(for: [channelExpectation, messagesExpectation], timeout: defaultTimeout)
     }
 }
 
 private class MessagesUpdateWaiter: ChatChannelControllerDelegate {
-    weak var expectation: XCTestExpectation?
+    weak var messagesExpectation: XCTestExpectation?
+    weak var channelExpectation: XCTestExpectation?
 
-    init(expectation: XCTestExpectation) {
-        self.expectation = expectation
+    var didUpdateChannel: ChatChannel?
+    var didUpdateMessagesCount: Int?
+
+    init(messagesExpectation: XCTestExpectation?, channelExpectation: XCTestExpectation?) {
+        self.messagesExpectation = messagesExpectation
+        self.channelExpectation = channelExpectation
     }
 
     func channelController(_ channelController: ChatChannelController, didUpdateMessages changes: [ListChange<ChatMessage>]) {
-        expectation?.fulfill()
+        DispatchQueue.main.async {
+            self.didUpdateMessagesCount = channelController.messages.count
+            self.messagesExpectation?.fulfill()
+        }
+    }
+
+    func channelController(_ channelController: ChatChannelController, didUpdateChannel channel: EntityChange<ChatChannel>) {
+        DispatchQueue.main.async {
+            self.didUpdateChannel = channel.item
+            self.channelExpectation?.fulfill()
+        }
     }
 }
 
