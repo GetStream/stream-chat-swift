@@ -4,6 +4,6 @@
 
 import Foundation
 
-@_exported import StreamChatTestHelpers
+@_exported import StreamSwiftTestHelpers
 
 final class StreamChatTests {}
