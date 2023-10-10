@@ -179,7 +179,7 @@ public struct ChatMessage {
     /// - Note: For the message authored by other channel members this field always returns `0`.
     public var readByCount: Int { _readByCount }
 
-    @CoreDataLazy(forceLazy: true) internal var _readByCount: Int
+    @CoreDataLazy internal var _readByCount: Int
 
     internal init(
         id: MessageId,
