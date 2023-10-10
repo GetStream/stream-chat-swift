@@ -81,7 +81,8 @@ open class ChatChannelVC: _ViewController,
     }
 
     internal var isViewVisible: ((ChatChannelVC) -> Bool) = { channelVC in
-        channelVC.viewIfLoaded?.window != nil
+        guard UIApplication.shared.applicationState == .active else { return false }
+        return channelVC.viewIfLoaded?.window != nil
     }
 
     /// A boolean value indicating whether it should mark the channel read.
