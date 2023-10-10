@@ -4,6 +4,7 @@
 
 @testable import StreamChat
 @testable import StreamChatUI
+@testable import StreamSwiftTestHelpers
 import XCTest
 
 final class ChatCommandSuggestionView_Tests: XCTestCase {

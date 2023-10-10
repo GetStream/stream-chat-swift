@@ -3,7 +3,7 @@
 //
 
 import Foundation
-import StreamChatTestTools
+@testable import StreamChatTestTools
 import StreamChatUI
 
 public final class MockAudioSessionFeedbackGenerator: AudioSessionFeedbackGenerator, Spy {

@@ -5,6 +5,7 @@
 import StreamChat
 @testable import StreamChatTestTools
 @testable import StreamChatUI
+@testable import StreamSwiftTestHelpers
 import XCTest
 
 final class ChatChannelListVC_Tests: XCTestCase {

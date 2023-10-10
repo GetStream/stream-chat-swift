@@ -3,8 +3,9 @@
 //
 
 import StreamChat
-import StreamChatTestTools
+@testable import StreamChatTestTools
 @testable import StreamChatUI
+@testable import StreamSwiftTestHelpers
 import XCTest
 
 final class PlayPauseButton_Tests: XCTestCase {

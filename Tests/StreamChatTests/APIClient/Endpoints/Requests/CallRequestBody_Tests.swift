@@ -4,7 +4,7 @@
 
 import Foundation
 @testable import StreamChat
-import StreamChatTestHelpers
+@testable import StreamSwiftTestHelpers
 import XCTest
 
 final class CallRequestBody_Tests: XCTestCase {
