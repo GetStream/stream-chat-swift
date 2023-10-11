@@ -197,14 +197,16 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
     }
 
     private func notifyWillChange() {
-        DispatchQueue.main.async { [weak self] in
-            self?.onWillChange?()
+        guard let onWillChange = onWillChange else { return }
+        DispatchQueue.main.async {
+            onWillChange()
         }
     }
 
     private func notifyDidChange(changes: [ListChange<Item>]) {
-        DispatchQueue.main.async { [weak self] in
-            self?.onDidChange?(changes)
+        guard let onDidChange = onDidChange else { return }
+        DispatchQueue.main.async {
+            onDidChange(changes)
         }
     }
 
