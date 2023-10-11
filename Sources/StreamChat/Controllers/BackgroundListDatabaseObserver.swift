@@ -203,10 +203,11 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
         }
     }
 
-    private func notifyDidChange(changes: [ListChange<Item>]) {
+    private func notifyDidChange(changes: [ListChange<Item>], onCompletion: @escaping () -> Void) {
         guard let onDidChange = onDidChange else { return }
         DispatchQueue.main.async {
             onDidChange(changes)
+            onCompletion()
         }
     }
 
@@ -246,11 +247,9 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
             /// We want to make sure that nothing else but this block is happening in this queue when updating `_items`
             self.queue.async(flags: .barrier) {
                 self._items = items
+                let returnedChanges = changes ?? items.enumerated().map { .insert($1, index: IndexPath(item: $0, section: 0)) }
+                self.notifyDidChange(changes: returnedChanges, onCompletion: onCompletion)
             }
-
-            let returnedChanges = changes ?? items.enumerated().map { .insert($1, index: IndexPath(item: $0, section: 0)) }
-            self.notifyDidChange(changes: returnedChanges)
-            onCompletion()
         }
     }
 
