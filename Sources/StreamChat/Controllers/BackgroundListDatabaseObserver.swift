@@ -170,7 +170,7 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
         }
 
         changeAggregator.onDidChange = { [weak self] changes in
-            self?.updateItems(changes, notify: true)
+            self?.updateItems(changes: changes)
         }
 
         listenForRemoveAllDataNotifications()
@@ -211,12 +211,13 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
     }
 
     private func getInitialItems() {
-        updateItems(nil, notify: false)
+        notifyWillChange()
+        updateItems(changes: nil)
     }
 
     /// This method will add a new operation to the `processingQueue`, where operations are executed one-by-one.
     /// The operation added to the queue will start the process of getting new results for the observer.
-    private func updateItems(_ changes: [ListChange<Item>]?, notify: Bool) {
+    private func updateItems(changes: [ListChange<Item>]?) {
         let operation = AsyncOperation { [weak self] _, done in
             guard let self = self else {
                 done(.continue)
@@ -224,7 +225,7 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
             }
 
             self.frc.managedObjectContext.perform {
-                self.processItems(changes, notify: notify) {
+                self.processItems(changes) {
                     done(.continue)
                 }
             }
@@ -233,9 +234,9 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
         processingQueue.addOperation(operation)
     }
 
-    /// This method will process  the currently fetched objects, and will notify the listeners based on the `notify` flag.
+    /// This method will process  the currently fetched objects, and will notify the listeners.
     /// When the process is done, it also updates the `_items`, which is the locally cached list of mapped items
-    private func processItems(_ changes: [ListChange<Item>]?, notify: Bool, onCompletion: @escaping () -> Void) {
+    private func processItems(_ changes: [ListChange<Item>]?, onCompletion: @escaping () -> Void) {
         mapItems { [weak self] items in
             guard let self = self else {
                 onCompletion()
@@ -248,9 +249,7 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
             }
 
             let returnedChanges = changes ?? items.enumerated().map { .insert($1, index: IndexPath(item: $0, section: 0)) }
-            if notify {
-                self.notifyDidChange(changes: returnedChanges)
-            }
+            self.notifyDidChange(changes: returnedChanges)
             onCompletion()
         }
     }
