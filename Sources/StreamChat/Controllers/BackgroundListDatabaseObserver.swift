@@ -107,6 +107,7 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
     private(set) var releaseNotificationObservers: (() -> Void)?
 
     private let queue = DispatchQueue(label: "io.getstream.list-database-observer", qos: .userInitiated, attributes: .concurrent)
+    private let processingQueue: OperationQueue
 
     private var _items: [Item] = []
     var items: LazyCachedMapCollection<Item> {
@@ -124,14 +125,6 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
             }
         }
     }
-
-    private lazy var processingQueue: OperationQueue = {
-        let operationQueue = OperationQueue()
-        operationQueue.underlyingQueue = queue
-        operationQueue.name = "com.stream.background-list-database-observer"
-        operationQueue.maxConcurrentOperationCount = 1
-        return operationQueue
-    }()
 
     deinit {
         releaseNotificationObservers?()
@@ -166,7 +159,11 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
             cacheName: nil
         )
 
-        _ = processingQueue
+        let operationQueue = OperationQueue()
+        operationQueue.underlyingQueue = queue
+        operationQueue.name = "com.stream.background-list-database-observer"
+        operationQueue.maxConcurrentOperationCount = 1
+        processingQueue = operationQueue
 
         changeAggregator.onWillChange = { [weak self] in
             self?.notifyWillChange()
@@ -211,6 +208,55 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
         }
     }
 
+    private func getInitialItems() {
+        updateItems(nil, notify: false)
+    }
+
+    /// This method will add a new operation to the `processingQueue`, where operations are executed one-by-one.
+    /// The operation added to the queue will start the process of getting new results for the observer.
+    private func updateItems(_ changes: [ListChange<Item>]?, notify: Bool) {
+        let operation = AsyncOperation { [weak self] _, done in
+            guard let self = self else {
+                done(.continue)
+                return
+            }
+
+            self.frc.managedObjectContext.perform {
+                self.processItems(changes, notify: notify) {
+                    done(.continue)
+                }
+            }
+        }
+
+        processingQueue.addOperation(operation)
+    }
+
+    /// This method will process  the currently fetched objects, and will notify the listeners based on the `notify` flag.
+    /// When the process is done, it also updates the `_items`, which is the locally cached list of mapped items
+    private func processItems(_ changes: [ListChange<Item>]?, notify: Bool, onCompletion: @escaping () -> Void) {
+        mapItems { [weak self] items in
+            guard let self = self else {
+                onCompletion()
+                return
+            }
+
+            /// We want to make sure that nothing else but this block is happening in this queue when updating `_items`
+            self.queue.async(flags: .barrier) {
+                self._items = items
+            }
+
+            let returnedChanges = changes ?? items.enumerated().map { .insert($1, index: IndexPath(item: $0, section: 0)) }
+            if notify {
+                self.notifyDidChange(changes: returnedChanges)
+            }
+            onCompletion()
+        }
+    }
+
+    /// This method will asynchronously convert all the fetched objects into models.
+    /// This method is intended to be called from the `managedObjectContext` that is publishing the changes (The one linked to the `NSFetchedResultsController`
+    /// in this case).
+    /// Once the objects are mapped, those are sorted based on `sorting`
     private func mapItems(completion: @escaping ([Item]) -> Void) {
         let objects = frc.fetchedObjects ?? []
         let context = frc.managedObjectContext
@@ -232,46 +278,6 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
                 result = result.sort(using: sorting)
             }
             completion(result)
-        }
-    }
-
-    private func getInitialItems() {
-        updateItems(nil, notify: false)
-    }
-
-    private func updateItems(_ changes: [ListChange<Item>]?, notify: Bool) {
-        let operation = AsyncOperation { [weak self] _, done in
-            guard let self = self else {
-                done(.continue)
-                return
-            }
-
-            self.frc.managedObjectContext.perform {
-                self.processItems(changes, notify: notify) {
-                    done(.continue)
-                }
-            }
-        }
-
-        processingQueue.addOperation(operation)
-    }
-
-    private func processItems(_ changes: [ListChange<Item>]?, notify: Bool, onCompletion: @escaping () -> Void) {
-        mapItems { [weak self] items in
-            guard let self = self else {
-                onCompletion()
-                return
-            }
-
-            self.queue.async(flags: .barrier) {
-                self._items = items
-            }
-
-            let returnedChanges = changes ?? items.enumerated().map { .insert($1, index: IndexPath(item: $0, section: 0)) }
-            if notify {
-                self.notifyDidChange(changes: returnedChanges)
-            }
-            onCompletion()
         }
     }
 
