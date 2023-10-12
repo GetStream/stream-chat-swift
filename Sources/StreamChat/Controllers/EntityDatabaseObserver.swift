@@ -155,7 +155,7 @@ class EntityDatabaseObserverWrapper<Item, DTO: NSManagedObject> {
 }
 
 /// Observes changes of a single entity specified using an `NSFetchRequest`in the provided `NSManagedObjectContext`.
-private class EntityDatabaseObserver<Item, DTO: NSManagedObject> {
+class EntityDatabaseObserver<Item, DTO: NSManagedObject> {
     /// The observed item. `nil` of no item matches the predicate or the item was deleted.
     @Cached var item: Item?
 
@@ -365,7 +365,7 @@ private extension ListChangeAggregator {
 }
 
 /// Observes changes of a single entity specified using an `NSFetchRequest`in the provided `NSManagedObjectContext`.
-private class BackgroundEntityDatabaseObserver<Item, DTO: NSManagedObject> {
+class BackgroundEntityDatabaseObserver<Item, DTO: NSManagedObject> {
     private let queue = DispatchQueue(label: "io.getstream.entity-database-observer", qos: .userInitiated, attributes: .concurrent)
 
     private var _item: Item?
@@ -614,7 +614,7 @@ private class BackgroundEntityDatabaseObserver<Item, DTO: NSManagedObject> {
     }
 }
 
-extension BackgroundEntityDatabaseObserver {
+private extension BackgroundEntityDatabaseObserver {
     /// A builder-function that adds new listener to the current instance and returns it
     @discardableResult
     func onChange(do listener: @escaping (EntityChange<Item>) -> Void) -> BackgroundEntityDatabaseObserver {
