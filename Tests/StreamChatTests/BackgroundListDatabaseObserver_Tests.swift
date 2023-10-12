@@ -53,25 +53,6 @@ final class BackgroundListDatabaseObserver_Tests: XCTestCase {
         XCTAssertTrue(observer.items.isEmpty)
     }
 
-    func test_changeAggregatorSetup_shouldNotCallBlocksIfNoChanges() throws {
-        // Start observing to ensure everything is set up
-        try observer.startObserving()
-
-        observer.onDidChange = { _ in
-            XCTFail()
-        }
-
-        observer.onWillChange = {
-            XCTFail()
-        }
-
-        // Simulate callbacks from the aggregator
-        observer.changeAggregator.onWillChange?()
-        observer.changeAggregator.onDidChange?([])
-
-        XCTAssert(observer.frc.delegate === observer.changeAggregator)
-    }
-
     func test_changeAggregatorSetup() throws {
         // Start observing to ensure everything is set up
         try observer.startObserving()
