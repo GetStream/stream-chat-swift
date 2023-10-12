@@ -981,6 +981,18 @@ final class AuthenticationRepository_Tests: XCTestCase {
         XCTAssertEqual(result?.value, token)
     }
 
+    func test_provideToken_doesNotDeadlock() {
+        DispatchQueue.concurrentPerform(iterations: 100) { _ in
+            repository.provideToken(timeout: 0) { _ in
+                self.repository.tokenWaiters.forEach { _ in }
+            }
+        }
+
+        DispatchQueue.concurrentPerform(iterations: 100) { _ in
+            repository.tokenWaiters.forEach { _ in }
+        }
+    }
+
     // MARK: EnvironmentState
 
     func test_environmentState_nilCurrentUserId() {

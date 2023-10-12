@@ -472,7 +472,9 @@ final class ConnectionRepository_Tests: XCTestCase {
 
     func test_connectionId_doesNotDeadlock() {
         DispatchQueue.concurrentPerform(iterations: 100) { _ in
-            repository.provideConnectionId(timeout: 0) { _ in }
+            repository.provideConnectionId(timeout: 0) { _ in
+                self.repository.connectionIdWaiters.forEach { _ in }
+            }
         }
 
         DispatchQueue.concurrentPerform(iterations: 100) { _ in
