@@ -383,7 +383,8 @@ extension ChatChannelListItemView {
         let text = previewMessage.textContent ?? previewMessage.text
         switch attachment.type {
         case .audio:
-            return "🎧 \(text.isEmpty ? "Audio" : text)"
+            let defaultAudioText = L10n.Channel.Item.audio
+            return "🎧 \(text.isEmpty ? defaultAudioText : text)"
         case .file:
             guard let fileAttachment = previewMessage.fileAttachments.first else {
                 return nil
@@ -391,9 +392,11 @@ extension ChatChannelListItemView {
             let title = fileAttachment.payload.title
             return "📄 \(title ?? text)"
         case .image:
-            return "📷 \(text.isEmpty ? "Photo" : text)"
+            let defaultPhotoText = L10n.Channel.Item.photo
+            return "📷 \(text.isEmpty ? defaultPhotoText : text)"
         case .video:
-            return "📹 \(text.isEmpty ? "Video" : text)"
+            let defaultVideoText = L10n.Channel.Item.video
+            return "📹 \(text.isEmpty ? defaultVideoText : text)"
         case .giphy:
             return "/giphy"
         default:
