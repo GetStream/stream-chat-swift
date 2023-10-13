@@ -102,13 +102,12 @@ final class ChannelUserTypingStateUpdaterMiddleware_Tests: XCTestCase {
             channel.currentlyTypingUsers.insert(user)
         }
 
-        // Load the channel
-        let channel = try self.channel(with: cid)
-
         // Simulate stop typing events
         let event = TypingEventDTO.stopTyping(cid: cid, userId: userId)
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
+        // Load the channel
+        let channel = try self.channel(with: cid)
         // Assert `TypingEvent` is forwarded as it is
         XCTAssertEqual(forwardedEvent as! TypingEventDTO, event)
         // Assert channel's currentlyTypingUsers are updated correctly
@@ -130,12 +129,12 @@ final class ChannelUserTypingStateUpdaterMiddleware_Tests: XCTestCase {
             channel.currentlyTypingUsers.insert(user)
         }
 
-        // Load the channel
-        let channel = try self.channel(with: cid)
-
         // Simulate CleanUpTypingEvent
         let event = CleanUpTypingEvent(cid: cid, userId: userId)
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
+
+        // Load the channel
+        let channel = try self.channel(with: cid)
 
         // Assert `CleanUpTypingEvent` is forwarded as it is
         XCTAssertEqual(forwardedEvent as! CleanUpTypingEvent, event)
