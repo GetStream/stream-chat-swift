@@ -277,6 +277,390 @@ final class ChatChannelListItemView_Tests: XCTestCase {
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
 
+    func test_appearance_audioPreviewMessage() throws {
+        let message: ChatMessage = try mockAudioMessage(
+            text: "Example message",
+            isSentByCurrentUser: false
+        )
+
+        let view = channelItemView(
+            content: .init(
+                channel: channel(
+                    previewMessage: message,
+                    readEventsEnabled: true,
+                    memberCount: 2
+                ),
+                currentUserId: currentUser.id
+            )
+        )
+
+        AssertSnapshot(view, variants: [.defaultLight])
+    }
+
+    func test_appearance_audioPreviewMessage_whenTextIsEmpty() throws {
+        let message: ChatMessage = try mockAudioMessage(
+            text: "",
+            isSentByCurrentUser: false
+        )
+
+        let view = channelItemView(
+            content: .init(
+                channel: channel(
+                    previewMessage: message,
+                    readEventsEnabled: true,
+                    memberCount: 2
+                ),
+                currentUserId: currentUser.id
+            )
+        )
+
+        AssertSnapshot(view, variants: [.defaultLight])
+    }
+
+    func test_appearance_audioPreviewMessage_whenSentByCurrentUser() throws {
+        let message: ChatMessage = try mockAudioMessage(
+            text: "Example message",
+            isSentByCurrentUser: true
+        )
+
+        let view = channelItemView(
+            content: .init(
+                channel: channel(
+                    previewMessage: message,
+                    readEventsEnabled: true,
+                    memberCount: 2
+                ),
+                currentUserId: currentUser.id
+            )
+        )
+
+        AssertSnapshot(view, variants: [.defaultLight])
+    }
+
+    func test_appearance_audioPreviewMessage_whenMultipleMembers() throws {
+        let message: ChatMessage = try mockAudioMessage(
+            text: "Example message",
+            isSentByCurrentUser: false
+        )
+
+        let view = channelItemView(
+            content: .init(
+                channel: channel(
+                    previewMessage: message,
+                    readEventsEnabled: true,
+                    memberCount: 4
+                ),
+                currentUserId: currentUser.id
+            )
+        )
+
+        AssertSnapshot(view, variants: [.defaultLight])
+    }
+
+    func test_appearance_imagePreviewMessage() throws {
+        let message: ChatMessage = try mockImageMessage(
+            text: "Example message",
+            isSentByCurrentUser: false
+        )
+
+        let view = channelItemView(
+            content: .init(
+                channel: channel(
+                    previewMessage: message,
+                    readEventsEnabled: true,
+                    memberCount: 2
+                ),
+                currentUserId: currentUser.id
+            )
+        )
+
+        AssertSnapshot(view, variants: [.defaultLight])
+    }
+
+    func test_appearance_imagePreviewMessage_whenTextIsEmpty() throws {
+        let message: ChatMessage = try mockImageMessage(
+            text: "",
+            isSentByCurrentUser: false
+        )
+
+        let view = channelItemView(
+            content: .init(
+                channel: channel(
+                    previewMessage: message,
+                    readEventsEnabled: true,
+                    memberCount: 2
+                ),
+                currentUserId: currentUser.id
+            )
+        )
+
+        AssertSnapshot(view, variants: [.defaultLight])
+    }
+
+    func test_appearance_imagePreviewMessage_whenSentByCurrentUser() throws {
+        let message: ChatMessage = try mockImageMessage(
+            text: "Example message",
+            isSentByCurrentUser: true
+        )
+
+        let view = channelItemView(
+            content: .init(
+                channel: channel(
+                    previewMessage: message,
+                    readEventsEnabled: true,
+                    memberCount: 2
+                ),
+                currentUserId: currentUser.id
+            )
+        )
+
+        AssertSnapshot(view, variants: [.defaultLight])
+    }
+
+    func test_appearance_imagePreviewMessage_whenMultipleMembers() throws {
+        let message: ChatMessage = try mockImageMessage(
+            text: "Example message",
+            isSentByCurrentUser: false
+        )
+
+        let view = channelItemView(
+            content: .init(
+                channel: channel(
+                    previewMessage: message,
+                    readEventsEnabled: true,
+                    memberCount: 4
+                ),
+                currentUserId: currentUser.id
+            )
+        )
+
+        AssertSnapshot(view, variants: [.defaultLight])
+    }
+
+    func test_appearance_videoPreviewMessage() throws {
+        let message: ChatMessage = try mockVideoMessage(
+            text: "Example message",
+            isSentByCurrentUser: false
+        )
+
+        let view = channelItemView(
+            content: .init(
+                channel: channel(
+                    previewMessage: message,
+                    readEventsEnabled: true,
+                    memberCount: 2
+                ),
+                currentUserId: currentUser.id
+            )
+        )
+
+        AssertSnapshot(view, variants: [.defaultLight])
+    }
+
+    func test_appearance_videoPreviewMessage_whenTextIsEmpty() throws {
+        let message: ChatMessage = try mockVideoMessage(
+            text: "",
+            isSentByCurrentUser: false
+        )
+
+        let view = channelItemView(
+            content: .init(
+                channel: channel(
+                    previewMessage: message,
+                    readEventsEnabled: true,
+                    memberCount: 2
+                ),
+                currentUserId: currentUser.id
+            )
+        )
+
+        AssertSnapshot(view, variants: [.defaultLight])
+    }
+
+    func test_appearance_videoPreviewMessage_whenSentByCurrentUser() throws {
+        let message: ChatMessage = try mockVideoMessage(
+            text: "Example message",
+            isSentByCurrentUser: true
+        )
+
+        let view = channelItemView(
+            content: .init(
+                channel: channel(
+                    previewMessage: message,
+                    readEventsEnabled: true,
+                    memberCount: 2
+                ),
+                currentUserId: currentUser.id
+            )
+        )
+
+        AssertSnapshot(view, variants: [.defaultLight])
+    }
+
+    func test_appearance_videoPreviewMessage_whenMultipleMembers() throws {
+        let message: ChatMessage = try mockVideoMessage(
+            text: "Example message",
+            isSentByCurrentUser: false
+        )
+
+        let view = channelItemView(
+            content: .init(
+                channel: channel(
+                    previewMessage: message,
+                    readEventsEnabled: true,
+                    memberCount: 4
+                ),
+                currentUserId: currentUser.id
+            )
+        )
+
+        AssertSnapshot(view, variants: [.defaultLight])
+    }
+
+    func test_appearance_filePreviewMessage() throws {
+        let message: ChatMessage = try mockFileMessage(
+            title: "File.pdf",
+            text: "Example message",
+            isSentByCurrentUser: false
+        )
+
+        let view = channelItemView(
+            content: .init(
+                channel: channel(
+                    previewMessage: message,
+                    readEventsEnabled: true,
+                    memberCount: 2
+                ),
+                currentUserId: currentUser.id
+            )
+        )
+
+        AssertSnapshot(view, variants: [.defaultLight])
+    }
+
+    func test_appearance_filePreviewMessage_whenTitleIsNil() throws {
+        let message: ChatMessage = try mockFileMessage(
+            title: nil,
+            text: "Example Message",
+            isSentByCurrentUser: false
+        )
+
+        let view = channelItemView(
+            content: .init(
+                channel: channel(
+                    previewMessage: message,
+                    readEventsEnabled: true,
+                    memberCount: 2
+                ),
+                currentUserId: currentUser.id
+            )
+        )
+
+        AssertSnapshot(view, variants: [.defaultLight])
+    }
+
+    func test_appearance_filePreviewMessage_whenSentByCurrentUser() throws {
+        let message: ChatMessage = try mockFileMessage(
+            title: "File.pdf",
+            text: "Example message",
+            isSentByCurrentUser: true
+        )
+
+        let view = channelItemView(
+            content: .init(
+                channel: channel(
+                    previewMessage: message,
+                    readEventsEnabled: true,
+                    memberCount: 2
+                ),
+                currentUserId: currentUser.id
+            )
+        )
+
+        AssertSnapshot(view, variants: [.defaultLight])
+    }
+
+    func test_appearance_filePreviewMessage_whenMultipleMembers() throws {
+        let message: ChatMessage = try mockFileMessage(
+            title: "File.pdf",
+            text: "Example message",
+            isSentByCurrentUser: false
+        )
+
+        let view = channelItemView(
+            content: .init(
+                channel: channel(
+                    previewMessage: message,
+                    readEventsEnabled: true,
+                    memberCount: 4
+                ),
+                currentUserId: currentUser.id
+            )
+        )
+
+        AssertSnapshot(view, variants: [.defaultLight])
+    }
+
+    func test_appearance_giphyPreviewMessage() throws {
+        let message: ChatMessage = try mockGiphyMessage(
+            text: "Example message",
+            isSentByCurrentUser: false
+        )
+
+        let view = channelItemView(
+            content: .init(
+                channel: channel(
+                    previewMessage: message,
+                    readEventsEnabled: true,
+                    memberCount: 2
+                ),
+                currentUserId: currentUser.id
+            )
+        )
+
+        AssertSnapshot(view, variants: [.defaultLight])
+    }
+
+    func test_appearance_giphyPreviewMessage_whenSentByCurrentUser() throws {
+        let message: ChatMessage = try mockGiphyMessage(
+            text: "Example message",
+            isSentByCurrentUser: true
+        )
+
+        let view = channelItemView(
+            content: .init(
+                channel: channel(
+                    previewMessage: message,
+                    readEventsEnabled: true,
+                    memberCount: 2
+                ),
+                currentUserId: currentUser.id
+            )
+        )
+
+        AssertSnapshot(view, variants: [.defaultLight])
+    }
+
+    func test_appearance_giphyPreviewMessage_whenMultipleMembers() throws {
+        let message: ChatMessage = try mockGiphyMessage(
+            text: "Example message",
+            isSentByCurrentUser: false
+        )
+
+        let view = channelItemView(
+            content: .init(
+                channel: channel(
+                    previewMessage: message,
+                    readEventsEnabled: true,
+                    memberCount: 4
+                ),
+                currentUserId: currentUser.id
+            )
+        )
+
+        AssertSnapshot(view, variants: [.defaultLight])
+    }
+
     func test_appearance_searchedMessage() {
         let searchedMessage: ChatMessage = .mock(
             id: .unique,
@@ -1133,6 +1517,122 @@ final class ChatChannelListItemView_Tests: XCTestCase {
             config: .mock(readEventsEnabled: readEventsEnabled),
             memberCount: memberCount,
             previewMessage: previewMessage
+        )
+    }
+
+    private func mockAudioMessage(text: String, isSentByCurrentUser: Bool) throws -> ChatMessage {
+        .mock(
+            id: .unique,
+            cid: .unique,
+            text: text,
+            type: .regular,
+            author: .mock(id: "user", name: "User"),
+            createdAt: Date(timeIntervalSince1970: 100),
+            attachments: [
+                .dummy(
+                    type: .audio,
+                    payload: try JSONEncoder().encode(AudioAttachmentPayload(
+                        title: "Some Audio",
+                        audioRemoteURL: URL(string: "url")!,
+                        file: .init(type: .mp3, size: 123, mimeType: nil),
+                        extraData: nil
+                    ))
+                )
+            ],
+            localState: nil,
+            isSentByCurrentUser: isSentByCurrentUser
+        )
+    }
+
+    private func mockImageMessage(text: String, isSentByCurrentUser: Bool) throws -> ChatMessage {
+        .mock(
+            id: .unique,
+            cid: .unique,
+            text: text,
+            type: .regular,
+            author: .mock(id: "user", name: "User"),
+            createdAt: Date(timeIntervalSince1970: 100),
+            attachments: [
+                .dummy(
+                    type: .image,
+                    payload: try JSONEncoder().encode(ImageAttachmentPayload(
+                        title: "Test",
+                        imageRemoteURL: URL(string: "Url")!
+                    ))
+                )
+            ],
+            localState: nil,
+            isSentByCurrentUser: isSentByCurrentUser
+        )
+    }
+
+    private func mockVideoMessage(text: String, isSentByCurrentUser: Bool) throws -> ChatMessage {
+        .mock(
+            id: .unique,
+            cid: .unique,
+            text: text,
+            type: .regular,
+            author: .mock(id: "user", name: "User"),
+            createdAt: Date(timeIntervalSince1970: 100),
+            attachments: [
+                .dummy(
+                    type: .video,
+                    payload: try JSONEncoder().encode(VideoAttachmentPayload(
+                        title: "Test",
+                        videoRemoteURL: URL(string: "Url")!,
+                        file: .init(type: .mp4, size: 123, mimeType: nil),
+                        extraData: nil
+                    ))
+                )
+            ],
+            localState: nil,
+            isSentByCurrentUser: isSentByCurrentUser
+        )
+    }
+
+    private func mockFileMessage(title: String?, text: String, isSentByCurrentUser: Bool) throws -> ChatMessage {
+        .mock(
+            id: .unique,
+            cid: .unique,
+            text: text,
+            type: .regular,
+            author: .mock(id: "user", name: "User"),
+            createdAt: Date(timeIntervalSince1970: 100),
+            attachments: [
+                .dummy(
+                    type: .file,
+                    payload: try JSONEncoder().encode(FileAttachmentPayload(
+                        title: title,
+                        assetRemoteURL: URL(string: "Url")!,
+                        file: .init(type: .pdf, size: 123, mimeType: nil),
+                        extraData: nil
+                    ))
+                )
+            ],
+            localState: nil,
+            isSentByCurrentUser: isSentByCurrentUser
+        )
+    }
+
+    private func mockGiphyMessage(text: String, isSentByCurrentUser: Bool) throws -> ChatMessage {
+        .mock(
+            id: .unique,
+            cid: .unique,
+            text: text,
+            type: .regular,
+            author: .mock(id: "user", name: "User"),
+            createdAt: Date(timeIntervalSince1970: 100),
+            attachments: [
+                .dummy(
+                    type: .giphy,
+                    payload: try JSONEncoder().encode(GiphyAttachmentPayload(
+                        title: "Test",
+                        previewURL: URL(string: "Url")!
+                    ))
+                )
+            ],
+            localState: nil,
+            isSentByCurrentUser: isSentByCurrentUser
         )
     }
 }
