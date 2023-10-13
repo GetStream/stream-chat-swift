@@ -46,12 +46,18 @@ internal enum L10n {
 
   internal enum Channel {
     internal enum Item {
+      /// Audio
+      internal static var audio: String { L10n.tr("Localizable", "channel.item.audio") }
       /// No messages
       internal static var emptyMessages: String { L10n.tr("Localizable", "channel.item.empty-messages") }
+      /// Photo
+      internal static var photo: String { L10n.tr("Localizable", "channel.item.photo") }
       /// are typing ...
       internal static var typingPlural: String { L10n.tr("Localizable", "channel.item.typing-plural") }
       /// is typing ...
       internal static var typingSingular: String { L10n.tr("Localizable", "channel.item.typing-singular") }
+      /// Video
+      internal static var video: String { L10n.tr("Localizable", "channel.item.video") }
       internal enum Search {
         ///  in %@
         internal static func `in`(_ p1: Any) -> String {

@@ -156,11 +156,15 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
         } else if isLastMessageVoiceRecording {
             return L10n.ChannelList.Preview.Voice.recording
         } else if let previewMessage = content.channel.previewMessage {
-            guard previewMessage.type != .system else {
+            if previewMessage.type == .system {
                 return previewMessage.text
             }
 
-            let text = previewMessage.textContent ?? previewMessage.text
+            var text = previewMessage.textContent ?? previewMessage.text
+
+            if let attachmentPreviewText = attachmentPreviewText(for: previewMessage) {
+                text = attachmentPreviewText
+            }
 
             if previewMessage.isSentByCurrentUser {
                 return "\(L10n.you): \(text)"
@@ -367,5 +371,36 @@ extension ChatChannelListItemView {
 
     var isLastMessageVoiceRecording: Bool {
         content?.channel.previewMessage?.voiceRecordingAttachments.isEmpty == false && typingUserString == nil
+    }
+
+    /// The message preview text in case it contains attachments.
+    /// - Parameter previewMessage: The preview message of the channel.
+    /// - Returns: A string representing the message preview text.
+    func attachmentPreviewText(for previewMessage: ChatMessage) -> String? {
+        guard let attachment = previewMessage.allAttachments.first else {
+            return nil
+        }
+        let text = previewMessage.textContent ?? previewMessage.text
+        switch attachment.type {
+        case .audio:
+            let defaultAudioText = L10n.Channel.Item.audio
+            return "🎧 \(text.isEmpty ? defaultAudioText : text)"
+        case .file:
+            guard let fileAttachment = previewMessage.fileAttachments.first else {
+                return nil
+            }
+            let title = fileAttachment.payload.title
+            return "📄 \(title ?? text)"
+        case .image:
+            let defaultPhotoText = L10n.Channel.Item.photo
+            return "📷 \(text.isEmpty ? defaultPhotoText : text)"
+        case .video:
+            let defaultVideoText = L10n.Channel.Item.video
+            return "📹 \(text.isEmpty ? defaultVideoText : text)"
+        case .giphy:
+            return "/giphy"
+        default:
+            return nil
+        }
     }
 }

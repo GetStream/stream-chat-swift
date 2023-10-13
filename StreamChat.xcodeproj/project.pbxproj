@@ -4662,7 +4662,6 @@
 		7908823025432C6400896F03 /* StreamChatUI */ = {
 			isa = PBXGroup;
 			children = (
-				401105252A12734800F877C7 /* VoiceRecording */,
 				7908823125432C6400896F03 /* StreamChatUI.h */,
 				7908823225432C6400896F03 /* Info.plist */,
 				BDDD1EA22632C50200BA007B /* Appearance.swift */,
@@ -4684,6 +4683,7 @@
 				888123E5255D51BD00070D5A /* CommonViews */,
 				AD4EA229264ADE0100DF8EE2 /* Composer */,
 				F833D64326393E4800651D14 /* Gallery */,
+				401105252A12734800F877C7 /* VoiceRecording */,
 				88F8364E2578D1590039AEC8 /* MessageActionsPopup */,
 				7973CE48265413B4004C7CE5 /* Navigation */,
 				888123D0255D42F000070D5A /* Utils */,
