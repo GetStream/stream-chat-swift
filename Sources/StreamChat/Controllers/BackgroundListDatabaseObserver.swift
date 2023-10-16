@@ -193,6 +193,7 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
 
         frc.delegate = changeAggregator
 
+        /// Because this observer does not get items synchronously, we start a process to get the items, which will then notify via its blocks.
         getInitialItems()
     }
 
@@ -237,6 +238,7 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
 
     /// This method will process  the currently fetched objects, and will notify the listeners.
     /// When the process is done, it also updates the `_items`, which is the locally cached list of mapped items
+    /// This method will be called through an operation on `processingQueue`, which will serialize the execution until `onCompletion` is called.
     private func processItems(_ changes: [ListChange<Item>]?, onCompletion: @escaping () -> Void) {
         mapItems { [weak self] items in
             guard let self = self else {
@@ -245,6 +247,7 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
             }
 
             /// We want to make sure that nothing else but this block is happening in this queue when updating `_items`
+            /// This also includes finishing the operation and notifying about the update. Only once everything is done, we conclude the operation.
             self.queue.async(flags: .barrier) {
                 self._items = items
                 let returnedChanges = changes ?? items.enumerated().map { .insert($1, index: IndexPath(item: $0, section: 0)) }
