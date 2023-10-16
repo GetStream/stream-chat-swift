@@ -22,12 +22,6 @@ class CoreDataLazy<T> {
     /// This is used to detect when there are lingering models in the memory, which will cause a crash when tried to materialize.
     var persistentStoreIdentifier: String?
 
-    let forceLazy: Bool
-
-    init(forceLazy: Bool = false) {
-        self.forceLazy = forceLazy
-    }
-
     var wrappedValue: T {
         var returnValue: T!
 
@@ -77,7 +71,7 @@ class CoreDataLazy<T> {
             computeValue = newValue.0
             context = newValue.1
             persistentStoreIdentifier = context?.persistentStoreCoordinator?.persistentStores.first?.identifier
-            if StreamRuntimeCheck._isBackgroundMappingEnabled && !forceLazy {
+            if StreamRuntimeCheck._isBackgroundMappingEnabled {
                 _cached = computeValue()
             } else {
                 _cached = nil
