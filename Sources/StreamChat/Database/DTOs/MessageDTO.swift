@@ -48,6 +48,7 @@ class MessageDTO: NSManagedObject {
     @NSManaged var ownReactions: [ReactionString]
 
     @NSManaged var translations: [String: String]?
+    @NSManaged var moderationDetails: MessageModerationDetailsDTO?
 
     // Boolean flag that determines if the reply will be shown inside the thread query.
     // This boolean is used to control the pagination of the replies of a thread.
@@ -774,6 +775,10 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         }
 
         dto.translations = payload.translations?.mapKeys { $0.languageCode }
+
+        payload.moderationDetails.map {
+            dto.moderationDetails = MessageModerationDetailsDTO.create(from: $0, context: self)
+        }
 
         // Calculate reads if the message is authored by the current user.
         if payload.user.id == currentUser?.user.id {
