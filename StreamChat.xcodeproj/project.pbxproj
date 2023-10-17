@@ -1217,6 +1217,8 @@
 		AD6CA1C22A7820FA0034AC2F /* ChatChannelSearchVC_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6CA1BD2A7820440034AC2F /* ChatChannelSearchVC_Tests.swift */; };
 		AD6CA1C32A7820FE0034AC2F /* ChatMessageSearchVC_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6CA1BF2A7820560034AC2F /* ChatMessageSearchVC_Tests.swift */; };
 		AD6F531927175FDB00D428B4 /* ChatMessageGiphyView+GiphyBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6F531827175FDB00D428B4 /* ChatMessageGiphyView+GiphyBadge.swift */; };
+		AD70DC362ADEC0F600CFC3B7 /* MessageModerationDetailsPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD70DC352ADEC0F600CFC3B7 /* MessageModerationDetailsPayload.swift */; };
+		AD70DC372ADEC0F600CFC3B7 /* MessageModerationDetailsPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD70DC352ADEC0F600CFC3B7 /* MessageModerationDetailsPayload.swift */; };
 		AD7112F325F12AA800932AEE /* ChatUserAvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7112F225F12AA800932AEE /* ChatUserAvatarView.swift */; };
 		AD71130225F138BA00932AEE /* ChatChannelAvatarView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E791E4D525D3E2DA00B0E076 /* ChatChannelAvatarView_Tests.swift */; };
 		AD71131225F138D500932AEE /* ChatUserAvatarView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD71131125F138D500932AEE /* ChatUserAvatarView_Tests.swift */; };
@@ -3683,6 +3685,7 @@
 		AD6CA1BD2A7820440034AC2F /* ChatChannelSearchVC_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelSearchVC_Tests.swift; sourceTree = "<group>"; };
 		AD6CA1BF2A7820560034AC2F /* ChatMessageSearchVC_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageSearchVC_Tests.swift; sourceTree = "<group>"; };
 		AD6F531827175FDB00D428B4 /* ChatMessageGiphyView+GiphyBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatMessageGiphyView+GiphyBadge.swift"; sourceTree = "<group>"; };
+		AD70DC352ADEC0F600CFC3B7 /* MessageModerationDetailsPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageModerationDetailsPayload.swift; sourceTree = "<group>"; };
 		AD7112F225F12AA800932AEE /* ChatUserAvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatUserAvatarView.swift; sourceTree = "<group>"; };
 		AD71131125F138D500932AEE /* ChatUserAvatarView_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatUserAvatarView_Tests.swift; sourceTree = "<group>"; };
 		AD75CB6A27886746005F5FF7 /* OptionsSelectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionsSelectorViewController.swift; sourceTree = "<group>"; };
@@ -5033,6 +5036,7 @@
 				79682C4824BF37650071578E /* MessagePayloads.swift */,
 				8899BC3E2542FFA1003CB98B /* MessageReactionPayload.swift */,
 				79D5CDD327EA1BE300BE7D8B /* MessageTranslationsPayload.swift */,
+				AD70DC352ADEC0F600CFC3B7 /* MessageModerationDetailsPayload.swift */,
 				F6ED5F792502791F005D7327 /* MissingEventsPayload.swift */,
 				88DA57DF2631E80D00FA8C53 /* MutedChannelPayload.swift */,
 				22B54C3E25C80E940041B357 /* RawJSON.swift */,
@@ -10214,6 +10218,7 @@
 				8A0D649724E579A50017A3C0 /* GuestEndpoints.swift in Sources */,
 				8899BC47254305F8003CB98B /* MessageReactionRequestPayload.swift in Sources */,
 				8A62705024B867190040BFD6 /* EventPayload.swift in Sources */,
+				AD70DC362ADEC0F600CFC3B7 /* MessageModerationDetailsPayload.swift in Sources */,
 				40789D2529F6AC500018C2BB /* AudioSessionConfiguring.swift in Sources */,
 				F6778F9A24F5144F005E7D22 /* EventNotificationCenter.swift in Sources */,
 				8AE335A924FCF999002B6677 /* InternetConnection.swift in Sources */,
@@ -10928,6 +10933,7 @@
 				C121E80A274544AC00023E4C /* EventMiddleware.swift in Sources */,
 				C121E80B274544AC00023E4C /* TypingStartCleanupMiddleware.swift in Sources */,
 				40789D2A29F6AC500018C2BB /* AudioRecordingContextAccessor.swift in Sources */,
+				AD70DC372ADEC0F600CFC3B7 /* MessageModerationDetailsPayload.swift in Sources */,
 				C1B49B3E2822A7AD00F4E89E /* StreamRuntimeCheck.swift in Sources */,
 				C121E80C274544AC00023E4C /* EventDataProcessorMiddleware.swift in Sources */,
 				C121E80D274544AC00023E4C /* ChannelReadUpdaterMiddleware.swift in Sources */,

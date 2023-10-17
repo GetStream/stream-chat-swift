@@ -39,6 +39,7 @@ enum MessagePayloadsCodingKeys: String, CodingKey, CaseIterable {
     case mml
     case imageLabels = "image_labels"
     case shadowed
+    case moderationDetails = "moderation_details"
 }
 
 extension MessagePayload {
@@ -84,6 +85,7 @@ class MessagePayload: Decodable {
     let isSilent: Bool
     let isShadowed: Bool
     let translations: [TranslationLanguage: String]?
+    let moderationDetails: MessageModerationDetailsPayload?
 
     var pinned: Bool
     var pinnedBy: UserPayload?
@@ -147,6 +149,7 @@ class MessagePayload: Decodable {
         quotedMessageId = try container.decodeIfPresent(MessageId.self, forKey: .quotedMessageId)
         // Translations are only available for messages returned via `message.translate()`
         translations = (try container.decodeIfPresent(MessageTranslationsPayload.self, forKey: .i18n))?.translated
+        moderationDetails = try container.decodeIfPresent(MessageModerationDetailsPayload.self, forKey: .moderationDetails)
     }
 
     init(
@@ -180,7 +183,8 @@ class MessagePayload: Decodable {
         pinnedBy: UserPayload? = nil,
         pinnedAt: Date? = nil,
         pinExpires: Date? = nil,
-        translations: [TranslationLanguage: String]? = nil
+        translations: [TranslationLanguage: String]? = nil,
+        moderationDetails: MessageModerationDetailsPayload? = nil
     ) {
         self.id = id
         self.cid = cid
@@ -213,6 +217,7 @@ class MessagePayload: Decodable {
         self.pinExpires = pinExpires
         self.quotedMessageId = quotedMessageId
         self.translations = translations
+        self.moderationDetails = moderationDetails
     }
 }
 
@@ -303,8 +308,6 @@ struct MessageListPayload: Decodable {
 struct MessageReactionsPayload: Decodable {
     let reactions: [MessageReactionPayload]
 }
-
-// TODO: Command???
 
 /// A command in a message, e.g. /giphy.
 public struct Command: Codable, Hashable {
