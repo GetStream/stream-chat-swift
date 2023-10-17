@@ -36,7 +36,6 @@ class MessageDTO: NSManagedObject {
     @NSManaged var showReplyInChannel: Bool
     @NSManaged var replyCount: Int32
     @NSManaged var extraData: Data?
-    @NSManaged var isBounced: Bool
     @NSManaged var isSilent: Bool
     @NSManaged var skipPush: Bool
     @NSManaged var skipEnrichUrl: Bool
@@ -49,6 +48,10 @@ class MessageDTO: NSManagedObject {
 
     @NSManaged var translations: [String: String]?
     @NSManaged var moderationDetails: MessageModerationDetailsDTO?
+
+    var isBounced: Bool {
+        moderationDetails?.action == MessageModerationAction.bounce.rawValue
+    }
 
     // Boolean flag that determines if the reply will be shown inside the thread query.
     // This boolean is used to control the pagination of the replies of a thread.
@@ -1086,6 +1089,12 @@ private extension ChatMessage {
         reactionScores = dto.reactionScores.mapKeys { MessageReactionType(rawValue: $0) }
         reactionCounts = dto.reactionCounts.mapKeys { MessageReactionType(rawValue: $0) }
         translations = dto.translations?.mapKeys { TranslationLanguage(languageCode: $0) }
+        moderationDetails = dto.moderationDetails.map {
+            MessageModerationDetails(
+                originalText: $0.originalText,
+                action: MessageModerationAction(rawValue: $0.action)
+            )
+        }
 
         if let extraData = dto.extraData, !extraData.isEmpty {
             do {

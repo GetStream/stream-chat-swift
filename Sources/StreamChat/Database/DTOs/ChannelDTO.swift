@@ -527,7 +527,7 @@ extension ChannelDTO {
         let failedEditAttempts = messages.filter { $0.failedToBeEditedDueToModeration }
 
         failedEditAttempts.forEach {
-            $0.isBounced = false
+            $0.moderationDetails = nil
             $0.localMessageState = nil
         }
     }

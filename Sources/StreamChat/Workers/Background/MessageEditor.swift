@@ -80,12 +80,9 @@ class MessageEditor: Worker {
                 self?.apiClient.request(endpoint: .editMessage(payload: requestBody)) {
                     let newMessageState: LocalMessageState? = $0.error == nil ? nil : .syncingFailed
 
-                    let isBounced = ($0.error as? ClientError)?.isBouncedMessageError ?? false
-
                     messageRepository?.updateMessage(
                         withID: messageId,
-                        localState: newMessageState,
-                        isBounced: isBounced
+                        localState: newMessageState
                     ) {
                         self?.removeMessageIDAndContinue(messageId)
                     }
