@@ -149,6 +149,11 @@ class MessageUpdater: Worker {
                 )
             }
 
+            if messageDTO.isBounced {
+                try updateMessage(localState: .pendingSend)
+                return
+            }
+
             switch messageDTO.localMessageState {
             case nil, .pendingSync, .syncingFailed, .deletingFailed:
                 try updateMessage(localState: .pendingSync)
