@@ -156,8 +156,9 @@ open class ComposerVC: _ViewController,
         ///
         /// - Parameter message: The message that the composer will edit.
         public mutating func editMessage(_ message: ChatMessage) {
+            let moderatedText = message.moderationDetails?.originalText ?? message.text
             self = .init(
-                text: message.text,
+                text: message.isBounced ? moderatedText : message.text,
                 state: .edit,
                 editingMessage: message,
                 quotingMessage: nil,
