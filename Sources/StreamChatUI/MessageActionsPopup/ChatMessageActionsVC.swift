@@ -83,15 +83,6 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
         }
     }
 
-    open var messageActionsForAlertMenu: [ChatMessageActionItem] {
-        var actions = messageActions
-
-        actions.removeAll(where: { $0 is DeleteActionItem })
-        actions.append(deleteWithoutWarningActionItem())
-
-        return actions
-    }
-
     /// Array of `ChatMessageActionItem`s - override this to setup your own custom actions
     open var messageActions: [ChatMessageActionItem] {
         guard
@@ -187,20 +178,6 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
                     self.messageController.deleteMessage { _ in
                         self.delegate?.chatMessageActionsVCDidFinish(self)
                     }
-                }
-            },
-            appearance: appearance
-        )
-    }
-
-    /// Returns `ChatMessageActionItem` for delete action without warning
-    open func deleteWithoutWarningActionItem() -> ChatMessageActionItem {
-        DeleteActionItem(
-            action: { [weak self] _ in
-                guard let self = self else { return }
-
-                self.messageController.deleteMessage { _ in
-                    self.delegate?.chatMessageActionsVCDidFinish(self)
                 }
             },
             appearance: appearance
