@@ -3,11 +3,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### ✅ Added
+- Add message moderation details to `ChatMessage` [#2846](https://github.com/GetStream/stream-chat-swift/pull/2846)
+- Add support for resending bounced messages [#2846](https://github.com/GetStream/stream-chat-swift/pull/2846)
+- Add support for editing bounced messages [#2846](https://github.com/GetStream/stream-chat-swift/pull/2846)
+- Add support for deleting bounced messages [#2846](https://github.com/GetStream/stream-chat-swift/pull/2846)
+### 🐞 Fixed
+- Fix not being able to delete local-only messages [#2846](https://github.com/GetStream/stream-chat-swift/pull/2846)
+
 ## StreamChatUI
 ### ✅ Added
 - Add message attachment preview in the channel list [#2838](https://github.com/GetStream/stream-chat-swift/pull/2838)
 ### 🐞 Fixed
 - Do not mark a channel as read if the app is in background [#2832](https://github.com/GetStream/stream-chat-swift/pull/2832)
+- Fixes bounced message displayed as a system message instead of an error [#2846](https://github.com/GetStream/stream-chat-swift/pull/2846)
+- Fix not showing bounced actions when long pressing bounced message [#2846](https://github.com/GetStream/stream-chat-swift/pull/2846)
+### 🔄 Changed
+- Removed `messageActionsForAlertMenu` and `deleteWithoutWarningActionItem` from  `ChatMessageActionsVC` [#2846](https://github.com/GetStream/stream-chat-swift/pull/2846)
+    - This is now controlled by `ChatMessageListVC.messageActions(forDebouncedMessage:)`
 
 # [4.39.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.39.0)
 _October 05, 2023_
