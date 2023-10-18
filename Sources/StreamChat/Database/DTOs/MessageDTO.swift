@@ -779,8 +779,13 @@ extension NSManagedObjectContext: MessageDatabaseSession {
 
         dto.translations = payload.translations?.mapKeys { $0.languageCode }
 
-        payload.moderationDetails.map {
-            dto.moderationDetails = MessageModerationDetailsDTO.create(from: $0, context: self)
+        if let moderationDetailsPayload = payload.moderationDetails {
+            dto.moderationDetails = MessageModerationDetailsDTO.create(
+                from: moderationDetailsPayload,
+                context: self
+            )
+        } else {
+            dto.moderationDetails = nil
         }
 
         // Calculate reads if the message is authored by the current user.
