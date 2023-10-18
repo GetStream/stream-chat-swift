@@ -53,7 +53,7 @@ class MessageUpdater: Worker {
     func deleteMessage(messageId: MessageId, hard: Bool, completion: ((Error?) -> Void)? = nil) {
         var shouldDeleteOnBackend = true
 
-        database.write({ [isLocalStorageEnabled] session in
+        database.write({ session in
             guard let messageDTO = session.message(id: messageId) else {
                 // Even though the message does not exist locally
                 // we don't throw any error because we still want
@@ -63,14 +63,10 @@ class MessageUpdater: Worker {
 
             // Hard Deleting is necessary for bounced messages, since these messages are never stored on the cloud
             // an apiClient request to delete them would never be triggered.
-            let shouldBeHardDeleted = hard || messageDTO.failedToBeSentDueToModeration
-            let shouldAllowLocallyStoredMessagesToBeDeleted = !isLocalStorageEnabled
-                || messageDTO.localMessageState == .pendingSend
-                || messageDTO.failedToBeSentDueToModeration
-            
+            let shouldBeHardDeleted = hard || messageDTO.isLocalOnly
             messageDTO.isHardDeleted = shouldBeHardDeleted
 
-            if messageDTO.existsOnlyLocally && shouldAllowLocallyStoredMessagesToBeDeleted {
+            if messageDTO.isLocalOnly {
                 messageDTO.type = MessageType.deleted.rawValue
                 messageDTO.deletedAt = DBDate()
                 shouldDeleteOnBackend = false
@@ -695,12 +691,6 @@ extension ClientError {
         init(messageId: String, reason: String) {
             super.init("Message with id: \(messageId) can't be edited (\(reason)")
         }
-    }
-}
-
-private extension MessageDTO {
-    var existsOnlyLocally: Bool {
-        localMessageState == .pendingSend || localMessageState == .sendingFailed
     }
 }
 
