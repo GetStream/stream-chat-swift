@@ -240,9 +240,15 @@ internal enum L10n {
       }
     }
     internal enum Moderation {
-      /// Please select any of the following options to proceed
+      /// Delete Message
+      internal static var delete: String { L10n.tr("Localizable", "message.moderation.delete") }
+      /// Edit Message
+      internal static var edit: String { L10n.tr("Localizable", "message.moderation.edit") }
+      /// Consider how your comment might make others feel and be sure to follow our Community Guidelines.
       internal static var message: String { L10n.tr("Localizable", "message.moderation.message") }
-      /// This message has been moderated
+      /// Send Anyway
+      internal static var resend: String { L10n.tr("Localizable", "message.moderation.resend") }
+      /// Are you sure?
       internal static var title: String { L10n.tr("Localizable", "message.moderation.title") }
     }
     internal enum Sending {
