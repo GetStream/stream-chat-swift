@@ -9,9 +9,13 @@ public extension ChatMessage {
     /// A boolean value that checks if actions are available on the message (e.g. `edit`, `delete`, `resend`, etc.).
     var isInteractionEnabled: Bool {
         guard
-            type != .ephemeral, type != .system, type != .error,
+            type != .ephemeral, type != .system,
             isDeleted == false
         else { return false }
+
+        if type == .error && isBounced == false {
+            return false
+        }
 
         return localState == nil || isLastActionFailed
     }
