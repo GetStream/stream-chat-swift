@@ -18,7 +18,13 @@ public extension ChatMessage {
 
     /// A boolean value that checks if the last action (`send`, `edit` or `delete`) on the message failed.
     var isLastActionFailed: Bool {
-        guard isDeleted == false else { return false }
+        guard isDeleted == false else {
+            return false
+        }
+
+        if isBounced {
+            return true
+        }
 
         switch localState {
         case .sendingFailed, .syncingFailed, .deletingFailed:
