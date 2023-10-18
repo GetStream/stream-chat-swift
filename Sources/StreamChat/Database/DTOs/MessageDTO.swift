@@ -541,16 +541,6 @@ extension MessageDTO {
 
         return type == MessageType.ephemeral.rawValue || type == MessageType.error.rawValue
     }
-
-    /// When a message that has been synced gets edited but is bounced by the moderation API it will return true to this state.
-    var failedToBeEditedDueToModeration: Bool {
-        localMessageState == .syncingFailed && isBounced == true
-    }
-
-    /// When a message fails to get synced because it was bounced by the moderation API it will return true to this state.
-    var failedToBeSentDueToModeration: Bool {
-        localMessageState == .sendingFailed && isBounced == true
-    }
 }
 
 extension NSManagedObjectContext: MessageDatabaseSession {

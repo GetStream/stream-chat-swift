@@ -264,10 +264,6 @@ class MessageUpdater: Worker {
             switch $0 {
             case let .success(payload):
                 self.database.write({ session in
-                    if let channelDTO = session.channel(cid: cid) {
-                        channelDTO.cleanMessagesThatFailedToBeEditedDueToModeration()
-                    }
-
                     // If it is first page or jumping to a message, clear the current messages.
                     if let parentMessage = session.message(id: messageId) {
                         if didJumpToMessage || didLoadFirstPage {

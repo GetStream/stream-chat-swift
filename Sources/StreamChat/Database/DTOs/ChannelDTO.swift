@@ -522,16 +522,6 @@ extension ChatChannel {
 // MARK: - Helpers
 
 extension ChannelDTO {
-    /// Whenever a synced message fails being edited due to moderation it remains on a stale state, this ensures to restore messages to a clean state.
-    func cleanMessagesThatFailedToBeEditedDueToModeration() {
-        let failedEditAttempts = messages.filter { $0.failedToBeEditedDueToModeration }
-
-        failedEditAttempts.forEach {
-            $0.moderationDetails = nil
-            $0.localMessageState = nil
-        }
-    }
-
     func cleanAllMessagesExcludingLocalOnly() {
         messages = messages.filter { $0.isLocalOnly }
     }
