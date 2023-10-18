@@ -10,8 +10,15 @@ import Foundation
 /// Works like a "classic" lazy wrapper. The only different is that the `computeValue` closure is evaluated on the queue
 /// of the provided `NSManagedObjectContext`.
 ///
+/// Its execution when Background Mapping is enabled avoids all the caching and locking mechanisms, as well as the lazy mapping. It basically
+/// acts as a wrapper around an already mapped value.
 @propertyWrapper
 class CoreDataLazy<T> {
+    /// The already evaluated value when background mapping is enabled.
+    private var value: T?
+
+    // ----------Only needed when `_isBackgroundMappingEnabled` is disabled ---------
+
     /// When the cached value is reset, this closure is used to lazily get a new value which is then cached again.
     var computeValue: (() -> T)!
 
@@ -22,7 +29,15 @@ class CoreDataLazy<T> {
     /// This is used to detect when there are lingering models in the memory, which will cause a crash when tried to materialize.
     var persistentStoreIdentifier: String?
 
+    // ----------------------------------------------------------------------------
+
     var wrappedValue: T {
+        /// When background mapping is enabled, there is no need to use the `_cached`, as this one adds performance degradation
+        /// due to the lock mechanism it internally uses.
+        if StreamRuntimeCheck._isBackgroundMappingEnabled, let value = value {
+            return value
+        }
+
         var returnValue: T!
 
         // We need to make the changes inside the `mutate` block to ensure the wrapper is thread-safe.
@@ -70,10 +85,10 @@ class CoreDataLazy<T> {
         set {
             computeValue = newValue.0
             context = newValue.1
-            persistentStoreIdentifier = context?.persistentStoreCoordinator?.persistentStores.first?.identifier
             if StreamRuntimeCheck._isBackgroundMappingEnabled {
-                _cached = computeValue()
+                value = computeValue()
             } else {
+                persistentStoreIdentifier = context?.persistentStoreCoordinator?.persistentStores.first?.identifier
                 _cached = nil
             }
         }
