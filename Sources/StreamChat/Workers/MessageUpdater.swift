@@ -534,15 +534,23 @@ class MessageUpdater: Worker {
     /// - Parameters:
     ///   - messageId: The message identifier.
     ///   - completion: Called when the message database entity is updated. Called with `Error` if update fails.
-    func resendMessage(with messageId: MessageId, completion: @escaping (Error?) -> Void) {
+    func resendMessage(
+        with messageId: MessageId,
+        completion: @escaping (Error?
+        ) -> Void
+    ) {
         database.write({
             let messageDTO = try $0.messageEditableByCurrentUser(messageId)
 
-            guard messageDTO.localMessageState == .sendingFailed else {
+            guard messageDTO.localMessageState == .sendingFailed || messageDTO.isBounced else {
                 throw ClientError.MessageEditing(
                     messageId: messageId,
-                    reason: "only message in `.sendingFailed` can be resent"
+                    reason: "only failed or bounced messages can be resent."
                 )
+            }
+
+            if messageDTO.isBounced {
+                messageDTO.text = messageDTO.moderationDetails?.originalText ?? messageDTO.text
             }
 
             messageDTO.localMessageState = .pendingSend
