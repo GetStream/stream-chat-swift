@@ -127,7 +127,7 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
             return jumbomojiMessageFont
         }
 
-        if content?.type == .system || content?.type == .error {
+        if content?.shouldRenderAsSystemMessage == true {
             return systemMessageFont
         }
 
@@ -140,7 +140,7 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
             return appearance.colorPalette.textLowEmphasis
         }
 
-        if content?.type == .system || content?.type == .error {
+        if content?.shouldRenderAsSystemMessage == true {
             return appearance.colorPalette.textLowEmphasis
         }
 

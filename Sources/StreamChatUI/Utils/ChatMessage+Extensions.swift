@@ -73,6 +73,10 @@ public extension ChatMessage {
         return textContent.count <= 3 && textContent.containsOnlyEmoji
     }
 
+    var shouldRenderAsSystemMessage: Bool {
+        type == .system || (type == .error && isBounced == false)
+    }
+
     /// When a message that has been synced gets edited but is bounced by the moderation API it will return true to this state.
     var failedToBeEditedDueToModeration: Bool {
         localState == .syncingFailed && isBounced == true
