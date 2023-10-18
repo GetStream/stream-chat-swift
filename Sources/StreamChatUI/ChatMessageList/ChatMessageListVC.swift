@@ -460,6 +460,11 @@ open class ChatMessageListVC: _ViewController,
             let cid = dataSource?.channel(for: self)?.cid
         else { return }
 
+        if message.isBounced {
+            showActions(forDebouncedMessage: message)
+            return
+        }
+
         let messageController = client.messageController(
             cid: cid,
             messageId: message.id
@@ -798,11 +803,6 @@ open class ChatMessageListVC: _ViewController,
 
         guard let message = dataSource?.chatMessageListVC(self, messageAt: indexPath) else {
             return log.error("DataSource not found for the message list.")
-        }
-
-        if message.isBounced {
-            showActions(forDebouncedMessage: message)
-            return
         }
 
         didSelectMessageCell(at: indexPath)
