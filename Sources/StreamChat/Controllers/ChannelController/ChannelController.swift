@@ -508,7 +508,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         }
 
         guard !hasLoadedAllNextMessages && !isLoadingNextMessages else {
-            completion?(nil)
+            callback { completion?(nil) }
             return
         }
 

@@ -108,6 +108,7 @@ final class ChannelListController_Tests: XCTestCase {
         let cidMatchingQueryDeleted = ChannelId.unique
         let cidNotMatchingQuery = ChannelId.unique
 
+        waitForInitialChannelsUpdate()
         writeAndWaitForChannelsUpdates { session in
             // Insert a channel matching the query
             try session.saveChannel(payload: self.dummyPayload(with: cidMatchingQuery, members: [.dummy(user: .dummy(userId: self.memberId))]), query: self.query, cache: nil)
@@ -245,6 +246,8 @@ final class ChannelListController_Tests: XCTestCase {
         // Simulate `synchronize` call
         controller.synchronize()
 
+        waitForInitialChannelsUpdate()
+
         // Create a channel in the DB matching the query
         let channelId = ChannelId.unique
         writeAndWaitForChannelsUpdates {
@@ -278,6 +281,8 @@ final class ChannelListController_Tests: XCTestCase {
     }
 
     func test_hiddenChannel_isExcluded_whenFilterDoesntContainHiddenKey() throws {
+        waitForInitialChannelsUpdate()
+
         // Add 2 channels to the DB
         let cid: ChannelId = .unique
         writeAndWaitForChannelsUpdates { session in
@@ -299,6 +304,8 @@ final class ChannelListController_Tests: XCTestCase {
         // Create controller with hidden filter
         query = .init(filter: .equal(.hidden, to: true))
         controller = .init(query: query, client: client)
+
+        waitForInitialChannelsUpdate()
 
         // Add 2 channels to the DB
         let cid: ChannelId = .unique
@@ -367,6 +374,7 @@ final class ChannelListController_Tests: XCTestCase {
 
     func test_didReceiveEvent_whenNotificationAddedToChannelEvent_whenChannelAlreadyPresent_shouldNotLinkChannelToQuery() throws {
         controller.synchronize()
+        waitForInitialChannelsUpdate()
 
         // Save channel to the current query
         let cid: ChannelId = .unique
@@ -393,6 +401,7 @@ final class ChannelListController_Tests: XCTestCase {
 
     func test_didReceiveEvent_whenMessageNewEvent_whenChannelAlreadyPresent_shouldNotLinkChannelToQuery() throws {
         controller.synchronize()
+        waitForInitialChannelsUpdate()
 
         // Save channel to the current query
         let cid: ChannelId = .unique
@@ -419,7 +428,8 @@ final class ChannelListController_Tests: XCTestCase {
 
     func test_didReceiveEvent_whenNotificationMessageNewEvent_whenChannelAlreadyPresent_shouldNotLinkChannelToQuery() throws {
         controller.synchronize()
-        
+        waitForInitialChannelsUpdate()
+
         // Save channel to the current query
         let cid: ChannelId = .unique
         writeAndWaitForChannelsUpdates { session in
@@ -751,6 +761,8 @@ final class ChannelListController_Tests: XCTestCase {
                 true
             }
         }
+
+        waitForInitialChannelsUpdate()
 
         let cid: ChannelId = .unique
         let delegate = Delegate(cid: cid)
@@ -1087,6 +1099,7 @@ final class ChannelListController_Tests: XCTestCase {
 
         // Simulate `synchronize` call
         controller.synchronize()
+        waitForInitialChannelsUpdate()
 
         XCTAssertEqual(controller.channels.map(\.cid), [], file: file, line: line)
 
@@ -1700,12 +1713,18 @@ final class ChannelListController_Tests: XCTestCase {
             environment: env.environment
         )
         controller.synchronize()
+        waitForInitialChannelsUpdate()
     }
 
     private func setUpChatClientWithoutAutoFiltering() {
         var config = ChatClientConfig(apiKey: .init(.unique))
         config.isChannelAutomaticFilteringEnabled = false
         client = ChatClient.mock(config: config)
+    }
+
+    private func waitForInitialChannelsUpdate(file: StaticString = #file, line: UInt = #line) {
+        guard StreamRuntimeCheck._isBackgroundMappingEnabled else { return }
+        waitForChannelsUpdate {}
     }
 
     private func writeAndWaitForChannelsUpdates(_ actions: @escaping (DatabaseSession) throws -> Void, completion: ((Error?) -> Void)? = nil, file: StaticString = #file, line: UInt = #line) {
