@@ -95,7 +95,7 @@ final class ListDatabaseObserverWrapper_Tests: XCTestCase {
         prepare(isBackground: isBackground)
         
         // Call startObserving to set everything up
-        try observer.startObserving()
+        try startObservingWaitingForInitialResults()
 
         // Simulate objects fetched by FRC
         let reference1 = [
@@ -187,7 +187,7 @@ final class ListDatabaseObserverWrapper_Tests: XCTestCase {
         prepare(isBackground: isBackground)
 
         // Call startObserving to set everything up
-        try observer.startObserving()
+        try startObservingWaitingForInitialResults()
         let frc = try XCTUnwrap(frc)
 
         // Simulate objects fetched by FRC
@@ -199,8 +199,16 @@ final class ListDatabaseObserverWrapper_Tests: XCTestCase {
         assertItemsAfterUpdate(objects.map(\.uniqueValue), isBackground: isBackground)
 
         // Listen to callbacks
+        let onDidChangeExpectation = expectation(description: "onDidChange is called")
         var receivedChanges: [ListChange<String>]?
-        observer.onDidChange = { receivedChanges = $0 }
+        // When sending `DatabaseContainer.DidRemoveAllDataNotification` we call `startObserving`, which will call again `onDidChange` with 0 changes. We are not interested in this later part for this test.
+        var callsCount = 0
+        observer.onDidChange = {
+            guard callsCount == 0 else { return }
+            callsCount += 1
+            receivedChanges = $0
+            onDidChangeExpectation.fulfill()
+        }
 
         // Reset test FRC's `performFetch` called flag
         frc.performFetchCalled = false
@@ -219,8 +227,9 @@ final class ListDatabaseObserverWrapper_Tests: XCTestCase {
         // Assert `performFetch` was called again on the FRC
         XCTAssertTrue(frc.performFetchCalled)
 
+        waitForExpectations(timeout: defaultTimeout)
         // Assert callback is called with removed entities
-        AssertAsync.willBeEqual(
+        XCTAssertEqual(
             receivedChanges,
             [.remove(objects[0].uniqueValue, index: [0, 0]), .remove(objects[1].uniqueValue, index: [0, 1])]
         )
@@ -236,6 +245,10 @@ extension ListDatabaseObserverWrapper_Tests {
             itemCreator: { $0.uniqueValue },
             fetchedResultsControllerType: FRC.self
         )
+    }
+
+    private func startObservingWaitingForInitialResults(file: StaticString = #file, line: UInt = #line) throws {
+        try observer.startObservingAndWaitForInitialUpdate(on: self, file: file, line: line)
     }
 
     private func assertItemsAfterUpdate(_ items: [String], isBackground: Bool, file: StaticString = #file, line: UInt = #line) {

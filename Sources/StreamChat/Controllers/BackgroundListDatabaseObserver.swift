@@ -170,7 +170,7 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
         }
 
         changeAggregator.onDidChange = { [weak self] changes in
-            self?.updateItems(changes, notify: true)
+            self?.updateItems(changes: changes)
         }
 
         listenForRemoveAllDataNotifications()
@@ -193,6 +193,7 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
 
         frc.delegate = changeAggregator
 
+        /// Because this observer does not get items synchronously, we start a process to get the items, which will then notify via its blocks.
         getInitialItems()
     }
 
@@ -203,20 +204,22 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
         }
     }
 
-    private func notifyDidChange(changes: [ListChange<Item>]) {
+    private func notifyDidChange(changes: [ListChange<Item>], onCompletion: @escaping () -> Void) {
         guard let onDidChange = onDidChange else { return }
         DispatchQueue.main.async {
             onDidChange(changes)
+            onCompletion()
         }
     }
 
     private func getInitialItems() {
-        updateItems(nil, notify: false)
+        notifyWillChange()
+        updateItems(changes: nil)
     }
 
     /// This method will add a new operation to the `processingQueue`, where operations are executed one-by-one.
     /// The operation added to the queue will start the process of getting new results for the observer.
-    private func updateItems(_ changes: [ListChange<Item>]?, notify: Bool) {
+    private func updateItems(changes: [ListChange<Item>]?) {
         let operation = AsyncOperation { [weak self] _, done in
             guard let self = self else {
                 done(.continue)
@@ -224,7 +227,7 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
             }
 
             self.frc.managedObjectContext.perform {
-                self.processItems(changes, notify: notify) {
+                self.processItems(changes) {
                     done(.continue)
                 }
             }
@@ -233,9 +236,10 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
         processingQueue.addOperation(operation)
     }
 
-    /// This method will process  the currently fetched objects, and will notify the listeners based on the `notify` flag.
+    /// This method will process  the currently fetched objects, and will notify the listeners.
     /// When the process is done, it also updates the `_items`, which is the locally cached list of mapped items
-    private func processItems(_ changes: [ListChange<Item>]?, notify: Bool, onCompletion: @escaping () -> Void) {
+    /// This method will be called through an operation on `processingQueue`, which will serialize the execution until `onCompletion` is called.
+    private func processItems(_ changes: [ListChange<Item>]?, onCompletion: @escaping () -> Void) {
         mapItems { [weak self] items in
             guard let self = self else {
                 onCompletion()
@@ -243,15 +247,12 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
             }
 
             /// We want to make sure that nothing else but this block is happening in this queue when updating `_items`
+            /// This also includes finishing the operation and notifying about the update. Only once everything is done, we conclude the operation.
             self.queue.async(flags: .barrier) {
                 self._items = items
+                let returnedChanges = changes ?? items.enumerated().map { .insert($1, index: IndexPath(item: $0, section: 0)) }
+                self.notifyDidChange(changes: returnedChanges, onCompletion: onCompletion)
             }
-
-            let returnedChanges = changes ?? items.enumerated().map { .insert($1, index: IndexPath(item: $0, section: 0)) }
-            if notify {
-                self.notifyDidChange(changes: returnedChanges)
-            }
-            onCompletion()
         }
     }
 
