@@ -7,7 +7,7 @@ import CoreData
 @testable import StreamChatTestTools
 import XCTest
 
-final class ListDatabaseObserver_Sorting: XCTestCase {
+final class ListDatabaseObserver_Sorting_Tests: XCTestCase {
     let dateNow = Date()
     let datePast = Date().addingTimeInterval(-60 * 60 * 3)
     let dateWayPast = Date().addingTimeInterval(-60 * 60 * 100)
@@ -61,7 +61,7 @@ final class ListDatabaseObserver_Sorting: XCTestCase {
             .init(key: .default, isAscending: false)
         ], isBackground: isBackground)
 
-        try startObservingAndWaitForInitialUpdate(isBackground: isBackground)
+        try startObservingAndWaitForInitialUpdate()
 
         let expectation = self.expectation(description: "Observer notifies")
         observer.onDidChange = { changes in
@@ -99,7 +99,7 @@ final class ListDatabaseObserver_Sorting: XCTestCase {
             .init(key: .custom(keyPath: \.defaultSortingAt, key: "defaultSortingAt"), isAscending: false)
         ], isBackground: isBackground)
 
-        try startObservingAndWaitForInitialUpdate(isBackground: isBackground)
+        try startObservingAndWaitForInitialUpdate()
 
         let expectation = self.expectation(description: "Observer notifies")
         observer.onDidChange = { changes in
@@ -135,7 +135,7 @@ final class ListDatabaseObserver_Sorting: XCTestCase {
         createObserver(with: [
             .init(key: .custom(keyPath: \.name, key: "name"), isAscending: false)
         ], isBackground: isBackground)
-        try startObservingAndWaitForInitialUpdate(isBackground: isBackground)
+        try startObservingAndWaitForInitialUpdate()
 
         let expectation = self.expectation(description: "Observer notifies")
         observer.onDidChange = { changes in
@@ -164,7 +164,7 @@ final class ListDatabaseObserver_Sorting: XCTestCase {
             .init(key: .custom(keyPath: \.isPinned, key: "is_pinned"), isAscending: true),
             .init(key: .custom(keyPath: \.name, key: "name"), isAscending: true)
         ], isBackground: isBackground)
-        try startObservingAndWaitForInitialUpdate(isBackground: isBackground)
+        try startObservingAndWaitForInitialUpdate()
 
         let expectation = self.expectation(description: "Observer notifies")
         expectation.expectedFulfillmentCount = 2
@@ -206,7 +206,7 @@ final class ListDatabaseObserver_Sorting: XCTestCase {
             .init(key: .createdAt, isAscending: false),
             .init(key: .custom(keyPath: \.name, key: "name"), isAscending: false)
         ], isBackground: isBackground)
-        try startObservingAndWaitForInitialUpdate(isBackground: isBackground)
+        try startObservingAndWaitForInitialUpdate()
 
         let expectation = self.expectation(description: "Observer notifies")
         observer.onDidChange = { changes in
@@ -261,7 +261,7 @@ final class ListDatabaseObserver_Sorting: XCTestCase {
         ]
 
         createObserver(with: sorting, isBackground: isBackground)
-        try startObservingAndWaitForInitialUpdate(isBackground: isBackground)
+        try startObservingAndWaitForInitialUpdate()
 
         observer.onDidChange = { changes in
             expectation.fulfill()
@@ -314,7 +314,7 @@ final class ListDatabaseObserver_Sorting: XCTestCase {
         ]
 
         createObserver(with: sorting, isBackground: isBackground)
-        try startObservingAndWaitForInitialUpdate(isBackground: isBackground)
+        try startObservingAndWaitForInitialUpdate()
 
         observer.onDidChange = { changes in
             expectation.fulfill()
@@ -385,18 +385,8 @@ final class ListDatabaseObserver_Sorting: XCTestCase {
         })
     }
 
-    private func startObservingAndWaitForInitialUpdate(isBackground: Bool, file: StaticString = #file, line: UInt = #line) throws {
-        guard isBackground else {
-            try observer.startObserving()
-            return
-        }
-
-        let expectation = self.expectation(description: "Messages update")
-        observer.onDidChange = { _ in
-            expectation.fulfill()
-        }
-        try observer.startObserving()
-        wait(for: [expectation], timeout: defaultTimeout)
+    private func startObservingAndWaitForInitialUpdate(file: StaticString = #file, line: UInt = #line) throws {
+        try observer.startObservingAndWaitForInitialUpdate(on: self, file: file, line: line)
     }
 }
 

@@ -247,20 +247,8 @@ extension ListDatabaseObserverWrapper_Tests {
         )
     }
 
-    private func startObservingWaitingForInitialResults() throws {
-        guard observer.isBackground else {
-            try observer.startObserving()
-            return
-        }
-
-        // Because when in background initial results are not returned instantly, we need to
-        // wait for the first call to `onDidChange` to have the initial results.
-        let expectation = self.expectation(description: "Get items")
-        observer.onDidChange = { _ in
-            expectation.fulfill()
-        }
-        try observer.startObserving()
-        waitForExpectations(timeout: defaultTimeout)
+    private func startObservingWaitingForInitialResults(file: StaticString = #file, line: UInt = #line) throws {
+        try observer.startObservingAndWaitForInitialUpdate(on: self, file: file, line: line)
     }
 
     private func assertItemsAfterUpdate(_ items: [String], isBackground: Bool, file: StaticString = #file, line: UInt = #line) {
