@@ -24,6 +24,7 @@ enum UserPayloadsCodingKeys: String, CodingKey, CaseIterable {
     case isAnonymous = "anon"
     case devices
     case unreadCount = "unread_count"
+    case language
 }
 
 // MARK: - GET users
@@ -42,6 +43,7 @@ class UserPayload: Decodable {
     let isInvisible: Bool
     let isBanned: Bool
     let teams: [TeamId]
+    let language: String?
     let extraData: [String: RawJSON]
 
     init(
@@ -57,6 +59,7 @@ class UserPayload: Decodable {
         isInvisible: Bool,
         isBanned: Bool,
         teams: [TeamId] = [],
+        language: String?,
         extraData: [String: RawJSON]
     ) {
         self.id = id
@@ -71,6 +74,7 @@ class UserPayload: Decodable {
         self.isInvisible = isInvisible
         self.isBanned = isBanned
         self.teams = teams
+        self.language = language
         self.extraData = extraData
     }
 
@@ -90,6 +94,7 @@ class UserPayload: Decodable {
         isInvisible = try container.decodeIfPresent(Bool.self, forKey: .isInvisible) ?? false
         isBanned = try container.decodeIfPresent(Bool.self, forKey: .isBanned) ?? false
         teams = try container.decodeIfPresent([String].self, forKey: .teams) ?? []
+        language = try container.decodeIfPresent(String.self, forKey: .language)
 
         do {
             var payload = try [String: RawJSON](from: decoder)

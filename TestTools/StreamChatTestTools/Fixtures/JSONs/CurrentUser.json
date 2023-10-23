@@ -10,6 +10,7 @@
   "role" : "user",
   "total_unread_count" : 2,
   "online" : true,
+  "language": "pt",
   "invisible": true,
   "name" : "Broken Waterfall",
   "secret_note" : "Anaking is Vader!",
