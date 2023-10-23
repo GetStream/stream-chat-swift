@@ -51,7 +51,7 @@ extension StreamChatWrapper {
                 name: userCredentials.userInfo.name,
                 imageURL: userCredentials.userInfo.imageURL,
                 isInvisible: UserConfig.shared.isInvisible,
-                language: "es",
+                language: UserConfig.shared.language,
                 extraData: userCredentials.userInfo.extraData
             )
             guard AppConfig.shared.demoAppConfig.isTokenRefreshEnabled else {
