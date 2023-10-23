@@ -12,8 +12,10 @@ public struct UserInfo {
     public let name: String?
     /// The avatar url of the user.
     public let imageURL: URL?
-    /// whether the user wants to share his online status or not.
+    /// Whether the user wants to share his online status or not.
     public let isInvisible: Bool
+    /// The language of the user. This is required for the auto translation feature.
+    public let language: String?
     /// Custom extra data of the user.
     public let extraData: [String: RawJSON]
 
@@ -22,12 +24,14 @@ public struct UserInfo {
         name: String? = nil,
         imageURL: URL? = nil,
         isInvisible: Bool = false,
+        language: String? = nil,
         extraData: [String: RawJSON] = [:]
     ) {
         self.id = id
         self.name = name
         self.imageURL = imageURL
         self.isInvisible = isInvisible
+        self.language = language
         self.extraData = extraData
     }
 }

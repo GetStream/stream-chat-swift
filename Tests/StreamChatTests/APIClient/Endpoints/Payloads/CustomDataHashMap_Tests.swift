@@ -10,14 +10,21 @@ final class CustomDataHashMap_Tests: XCTestCase {
     func test_UserWebSocketPayloadEncodeWithCustomMap() throws {
         let extraData: [String: RawJSON] = ["how-many-roads": .number(42)]
         let imageURL = URL.unique()
-        let userInfo = UserInfo(id: "44", name: "tommaso", imageURL: imageURL, isInvisible: false, extraData: extraData)
+        let userInfo = UserInfo(
+            id: "44",
+            name: "tommaso",
+            imageURL: imageURL,
+            isInvisible: false,
+            language: "en",
+            extraData: extraData
+        )
         let payload = UserWebSocketPayload(userInfo: userInfo)
         let encoded = try! JSONEncoder.default.encode(payload)
         let jsonStr = String(data: encoded, encoding: .utf8)
         let imageStr = imageURL.debugDescription.replacingOccurrences(of: "/", with: "\\/")
         XCTAssertEqual(
             jsonStr,
-            "{\"id\":\"44\",\"invisible\":false,\"name\":\"tommaso\",\"image\":\"\(imageStr)\",\"how-many-roads\":42}"
+            "{\"language\":\"en\",\"id\":\"44\",\"invisible\":false,\"name\":\"tommaso\",\"image\":\"\(imageStr)\",\"how-many-roads\":42}"
         )
     }
 
