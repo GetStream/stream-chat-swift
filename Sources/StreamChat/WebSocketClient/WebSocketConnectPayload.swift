@@ -43,7 +43,7 @@ struct UserWebSocketPayload: Encodable {
         name = userInfo.name
         imageURL = userInfo.imageURL
         isInvisible = userInfo.isInvisible
-        language = userInfo.language
+        language = userInfo.language?.languageCode
         extraData = userInfo.extraData
     }
 

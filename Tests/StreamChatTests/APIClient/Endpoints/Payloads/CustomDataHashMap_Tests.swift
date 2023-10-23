@@ -15,7 +15,7 @@ final class CustomDataHashMap_Tests: XCTestCase {
             name: "tommaso",
             imageURL: imageURL,
             isInvisible: false,
-            language: "en",
+            language: .english,
             extraData: extraData
         )
         let payload = UserWebSocketPayload(userInfo: userInfo)
