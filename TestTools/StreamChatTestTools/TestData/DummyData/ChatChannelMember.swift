@@ -20,6 +20,7 @@ extension ChatChannelMember {
             deactivatedAt: nil,
             lastActiveAt: .unique,
             teams: [],
+            language: nil,
             extraData: [:],
             memberRole: .member,
             memberCreatedAt: .unique,

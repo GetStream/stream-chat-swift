@@ -21,6 +21,7 @@ final class User_Tests: XCTestCase {
             deactivatedAt: nil,
             lastActiveAt: .unique,
             teams: [],
+            language: nil,
             extraData: [:]
         )
 
@@ -41,6 +42,7 @@ final class User_Tests: XCTestCase {
             deactivatedAt: Date(),
             lastActiveAt: .unique,
             teams: [],
+            language: nil,
             extraData: [:]
         )
 

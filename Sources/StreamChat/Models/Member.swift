@@ -55,6 +55,7 @@ public class ChatChannelMember: ChatUser {
         deactivatedAt: Date?,
         lastActiveAt: Date?,
         teams: Set<TeamId>,
+        language: TranslationLanguage?,
         extraData: [String: RawJSON],
         memberRole: MemberRole,
         memberCreatedAt: Date,
@@ -89,6 +90,7 @@ public class ChatChannelMember: ChatUser {
             deactivatedAt: deactivatedAt,
             lastActiveAt: lastActiveAt,
             teams: teams,
+            language: language,
             extraData: extraData
         )
     }

@@ -245,6 +245,8 @@ extension ChatUser {
             extraData = [:]
         }
 
+        let language: TranslationLanguage? = dto.language.map(TranslationLanguage.init)
+
         return ChatUser(
             id: dto.id,
             name: dto.name,
@@ -258,6 +260,7 @@ extension ChatUser {
             deactivatedAt: dto.userDeactivatedAt?.bridgeDate,
             lastActiveAt: dto.lastActivityAt?.bridgeDate,
             teams: Set(dto.teams),
+            language: language,
             extraData: extraData
         )
     }
