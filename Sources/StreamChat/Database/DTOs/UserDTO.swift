@@ -26,6 +26,7 @@ class UserDTO: NSManagedObject {
     @NSManaged var messages: Set<MessageDTO>?
     @NSManaged var currentUser: CurrentUserDTO?
     @NSManaged var teams: [TeamId]
+    @NSManaged var language: String?
 
     /// Returns a fetch request for the dto with the provided `userId`.
     static func user(withID userId: UserId) -> NSFetchRequest<UserDTO> {
@@ -148,6 +149,7 @@ extension NSManagedObjectContext: UserDatabaseSession {
         dto.userRoleRaw = payload.role.rawValue
         dto.userUpdatedAt = payload.updatedAt.bridgeDate
         dto.userDeactivatedAt = payload.deactivatedAt?.bridgeDate
+        dto.language = payload.language
 
         do {
             dto.extraData = try JSONEncoder.default.encode(payload.extraData)

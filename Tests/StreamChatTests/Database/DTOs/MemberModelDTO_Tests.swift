@@ -37,6 +37,7 @@ final class MemberModelDTO_Tests: XCTestCase {
             isInvisible: true,
             isBanned: true,
             teams: ["RED", "GREEN"],
+            language: nil,
             extraData: ["k": .string("v")]
         )
 
@@ -97,6 +98,7 @@ final class MemberModelDTO_Tests: XCTestCase {
             isOnline: true,
             isInvisible: true,
             isBanned: true,
+            language: nil,
             extraData: .init()
         )
 

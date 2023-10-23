@@ -82,6 +82,7 @@ final class DatabaseSession_Tests: XCTestCase {
             isOnline: true,
             isInvisible: true,
             isBanned: true,
+            language: nil,
             extraData: [:]
         )
 

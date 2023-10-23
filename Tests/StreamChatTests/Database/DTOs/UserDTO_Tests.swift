@@ -23,7 +23,7 @@ final class UserDTO_Tests: XCTestCase {
     func test_userPayload_isStoredAndLoadedFromDB() throws {
         let userId = UUID().uuidString
 
-        let payload: UserPayload = .dummy(userId: userId)
+        let payload: UserPayload = .dummy(userId: userId, language: "pt")
 
         // Asynchronously save the payload to the db
         try database.writeSynchronously { session in
@@ -44,6 +44,7 @@ final class UserDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.updatedAt, loadedUserDTO.userUpdatedAt.bridgeDate)
             Assert.willBeEqual(payload.lastActiveAt, loadedUserDTO.lastActivityAt?.bridgeDate)
             Assert.willBeEqual(payload.teams, loadedUserDTO.teams)
+            Assert.willBeEqual(loadedUserDTO.language, "pt")
             Assert.willBeEqual(
                 payload.extraData,
                 try? JSONDecoder.default.decode([String: RawJSON].self, from: loadedUserDTO.extraData)
@@ -67,6 +68,7 @@ final class UserDTO_Tests: XCTestCase {
             isInvisible: true,
             isBanned: true,
             teams: [],
+            language: nil,
             extraData: [:]
         )
 
