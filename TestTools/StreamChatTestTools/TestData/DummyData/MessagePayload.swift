@@ -43,6 +43,7 @@ extension MessagePayload {
         reactionScores: [MessageReactionType: Int] = ["like": 1],
         reactionCounts: [MessageReactionType: Int] = ["like": 1],
         translations: [TranslationLanguage: String]? = nil,
+        originalLanguage: String? = nil,
         mentionedUsers: [UserPayload] = [.dummy(userId: .unique)]
     ) -> MessagePayload {
         .init(
@@ -77,7 +78,8 @@ extension MessagePayload {
             pinnedBy: pinnedByUserId != nil ? UserPayload.dummy(userId: pinnedByUserId!) as UserPayload : nil,
             pinnedAt: pinnedAt,
             pinExpires: pinExpires,
-            translations: translations
+            translations: translations,
+            originalLanguage: originalLanguage
         )
     }
 

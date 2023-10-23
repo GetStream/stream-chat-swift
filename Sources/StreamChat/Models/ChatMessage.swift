@@ -160,8 +160,11 @@ public struct ChatMessage {
     /// The message pinning information. Is `nil` if the message is not pinned.
     public let pinDetails: MessagePinDetails?
 
-    /// Internationalization and localization for the message. Only available for translated messages.
+    /// The available automatic translations for this message.
     public let translations: [TranslationLanguage: String]?
+
+    /// The original language of the message.
+    public let originalLanguage: TranslationLanguage?
 
     /// If the message is authored by the current user this field contains the list of channel members
     /// who read this message (excluding the current user).
@@ -216,6 +219,7 @@ public struct ChatMessage {
         isSentByCurrentUser: Bool,
         pinDetails: MessagePinDetails?,
         translations: [TranslationLanguage: String]?,
+        originalLanguage: TranslationLanguage?,
         readBy: @escaping () -> Set<ChatUser>,
         readByCount: @escaping () -> Int,
         underlyingContext: NSManagedObjectContext?
@@ -244,6 +248,7 @@ public struct ChatMessage {
         self.isSentByCurrentUser = isSentByCurrentUser
         self.pinDetails = pinDetails
         self.translations = translations
+        self.originalLanguage = originalLanguage
 
         $_author = (author, underlyingContext)
         $_mentionedUsers = (mentionedUsers, underlyingContext)
