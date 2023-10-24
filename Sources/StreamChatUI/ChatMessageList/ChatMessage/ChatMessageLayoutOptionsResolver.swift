@@ -249,7 +249,6 @@ private extension ChatMessageLayoutOptionsResolver {
               let translatedText = translations[currentUserLang] else {
             return false
         }
-        let isLanguageDiffThanOriginal = currentUserLang.languageCode != message.originalLanguage?.languageCode
-        return isLanguageDiffThanOriginal && translatedText != message.text
+        return translatedText != message.text
     }
 }
