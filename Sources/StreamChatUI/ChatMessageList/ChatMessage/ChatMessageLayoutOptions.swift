@@ -62,6 +62,9 @@ public extension ChatMessageLayoutOption {
     /// If set the message timestamp will be shown.
     static let timestamp: Self = "timestamp"
 
+    /// If set the translation label will be shown.
+    static let translation: Self = "translation"
+
     /// If set the message author name will be shown in metadata.
     static let authorName: Self = "authorName"
 

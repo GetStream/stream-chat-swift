@@ -169,6 +169,10 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
     /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options containing `.timestamp`.
     public private(set) var timestampLabel: UILabel?
 
+    /// Shows which language the message was translated to, if it was translated.
+    /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options containing `.translation`.
+    public private(set) var translationLabel: UILabel?
+
     /// Shows message author name.
     /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options containing `.authorName`.
     public private(set) var authorNameLabel: UILabel?
@@ -366,29 +370,30 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
         }
 
         // Metadata
-        if options.hasFootnoteOptions {
-            var footnoteSubviews: [UIView] = []
-
-            if options.contains(.authorName) {
-                footnoteSubviews.append(createAuthorNameLabel())
-            }
-            if options.contains(.timestamp) {
-                footnoteSubviews.append(createTimestampLabel())
-            }
-            if options.contains(.onlyVisibleToYouIndicator) {
-                onlyVisibleToYouContainer = ContainerStackView()
-                    .withAccessibilityIdentifier(identifier: "onlyVisibleToYouContainer")
-                onlyVisibleToYouContainer!.addArrangedSubview(createOnlyVisibleToYouImageView())
-                onlyVisibleToYouContainer!.addArrangedSubview(createOnlyVisibleToYouLabel())
-                footnoteSubviews.append(onlyVisibleToYouContainer!)
-            }
-            if options.contains(.deliveryStatusIndicator) {
-                footnoteSubviews.append(createDeliveryStatusView())
-            }
-            if attachmentViewInjector?.fillAllAvailableWidth == true {
-                footnoteSubviews.append(.spacer(axis: .horizontal))
-            }
-
+        var footnoteSubviews: [UIView] = []
+        if options.contains(.authorName) {
+            footnoteSubviews.append(createAuthorNameLabel())
+        }
+        if options.contains(.timestamp) {
+            footnoteSubviews.append(createTimestampLabel())
+        }
+        if options.contains(.translation) {
+            footnoteSubviews.append(createTranslationLabel())
+        }
+        if options.contains(.onlyVisibleToYouIndicator) {
+            onlyVisibleToYouContainer = ContainerStackView()
+                .withAccessibilityIdentifier(identifier: "onlyVisibleToYouContainer")
+            onlyVisibleToYouContainer!.addArrangedSubview(createOnlyVisibleToYouImageView())
+            onlyVisibleToYouContainer!.addArrangedSubview(createOnlyVisibleToYouLabel())
+            footnoteSubviews.append(onlyVisibleToYouContainer!)
+        }
+        if options.contains(.deliveryStatusIndicator) {
+            footnoteSubviews.append(createDeliveryStatusView())
+        }
+        if attachmentViewInjector?.fillAllAvailableWidth == true {
+            footnoteSubviews.append(.spacer(axis: .horizontal))
+        }
+        if !footnoteSubviews.isEmpty {
             footnoteContainer = ContainerStackView(
                 spacing: 4,
                 arrangedSubviews: options.contains(.flipped) ? footnoteSubviews.reversed() : footnoteSubviews
@@ -563,7 +568,16 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
             setNeedsLayout()
         }
 
-        let text = content?.textContent ?? ""
+        var text = content?.textContent ?? ""
+
+        if let currentUserLang = channel?.membership?.language,
+           let translatedText = content?.translations?[currentUserLang] {
+            text = translatedText
+            if let languageText = Locale.current.localizedString(forLanguageCode: currentUserLang.languageCode) {
+                translationLabel?.text = "Translated to \(languageText)"
+            }
+        }
+
         let attributedText = NSAttributedString(
             string: text,
             attributes: [
@@ -928,6 +942,20 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
         return timestampLabel!
     }
 
+    open func createTranslationLabel() -> UILabel {
+        if translationLabel == nil {
+            translationLabel = UILabel()
+                .withAdjustingFontForContentSizeCategory
+                .withBidirectionalLanguagesSupport
+                .withoutAutoresizingMaskConstraints
+                .withAccessibilityIdentifier(identifier: "translationLabel")
+
+            translationLabel?.textColor = appearance.colorPalette.subtitleText
+            translationLabel?.font = appearance.fonts.footnote
+        }
+        return translationLabel!
+    }
+
     /// Instantiates, configures and assigns `authorNameLabel` when called for the first time.
     /// - Returns: The `authorNameLabel` subview.
     open func createAuthorNameLabel() -> UILabel {
@@ -999,19 +1027,6 @@ private extension ChatMessage {
                 score: $0.value,
                 isChosenByCurrentUser: userReactionIDs.contains($0.key)
             ) }
-    }
-}
-
-private extension ChatMessageLayoutOptions {
-    static let footnote: Self = [
-        .onlyVisibleToYouIndicator,
-        .authorName,
-        .timestamp,
-        .deliveryStatusIndicator
-    ]
-
-    var hasFootnoteOptions: Bool {
-        !isDisjoint(with: .footnote)
     }
 }
 
