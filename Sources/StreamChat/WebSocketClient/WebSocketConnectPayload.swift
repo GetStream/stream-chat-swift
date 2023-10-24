@@ -53,7 +53,7 @@ struct UserWebSocketPayload: Encodable {
         try container.encodeIfPresent(name, forKey: .name)
         try container.encodeIfPresent(imageURL, forKey: .imageURL)
         try container.encode(isInvisible, forKey: .isInvisible)
-        try container.encode(language, forKey: .language)
+        try container.encodeIfPresent(language, forKey: .language)
         try extraData.encode(to: encoder)
     }
 }
