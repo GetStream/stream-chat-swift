@@ -377,9 +377,6 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
         if options.contains(.timestamp) {
             footnoteSubviews.append(createTimestampLabel())
         }
-        if options.contains(.translation) {
-            footnoteSubviews.append(createTranslationLabel())
-        }
         if options.contains(.onlyVisibleToYouIndicator) {
             onlyVisibleToYouContainer = ContainerStackView()
                 .withAccessibilityIdentifier(identifier: "onlyVisibleToYouContainer")
@@ -393,10 +390,19 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
         if attachmentViewInjector?.fillAllAvailableWidth == true {
             footnoteSubviews.append(.spacer(axis: .horizontal))
         }
+
+        if options.contains(.flipped) {
+            footnoteSubviews = footnoteSubviews.reversed()
+        }
+
+        if options.contains(.translation) {
+            footnoteSubviews.append(createTranslationLabel())
+        }
+
         if !footnoteSubviews.isEmpty {
             footnoteContainer = ContainerStackView(
                 spacing: 4,
-                arrangedSubviews: options.contains(.flipped) ? footnoteSubviews.reversed() : footnoteSubviews
+                arrangedSubviews: footnoteSubviews
             ).withAccessibilityIdentifier(identifier: "footnoteContainer")
             bubbleThreadFootnoteContainer.addArrangedSubview(footnoteContainer!)
         }
@@ -571,7 +577,8 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
         var text = content?.textContent ?? ""
 
         // Translated text
-        if let currentUserLang = channel?.membership?.language,
+        if layoutOptions?.contains(.translation) == true,
+           let currentUserLang = channel?.membership?.language,
            let translatedText = content?.translations?[currentUserLang] {
             text = translatedText
 
