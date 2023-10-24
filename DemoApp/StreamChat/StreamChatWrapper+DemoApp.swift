@@ -38,6 +38,7 @@ extension StreamChatWrapper {
         // Customize UI configuration
         Components.default.messageListDateSeparatorEnabled = true
         Components.default.messageListDateOverlayEnabled = true
+        Components.default.messageAutoTranslationEnabled = true
         Components.default.isVoiceRecordingEnabled = true
         Components.default.isJumpToUnreadEnabled = true
         Components.default.messageSwipeToReplyEnabled = true

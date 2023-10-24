@@ -13,6 +13,8 @@ open class ChatMessageLayoutOptionsResolver {
     // TODO: Propagate via `init` in v5, make it non-optional.
     /// The config of the `ChatClient` used.
     public internal(set) var config: ChatClientConfig?
+    /// The components config in use.
+    public internal(set) var components: Components?
 
     /// Creates new `ChatMessageLayoutOptionsResolver`.
     ///
@@ -239,6 +241,9 @@ private extension ChatMessageLayoutOptionsResolver {
     }
 
     func shouldRenderTranslation(message: ChatMessage, channel: ChatChannel) -> Bool {
+        guard components?.messageAutoTranslationEnabled == true else {
+            return false
+        }
         guard let translations = message.translations,
               let currentUserLang = channel.membership?.language,
               let translatedText = translations[currentUserLang] else {
