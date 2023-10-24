@@ -383,7 +383,7 @@ extension ChannelDTO {
     /// limit has not been reached
     func relationshipAsModel(depth: Int) throws -> ChatChannel? {
         do {
-            return try .create(fromDTO: self, depth: depth)
+            return try .create(fromDTO: self, depth: depth + 1)
         } catch {
             if error is RecursionLimitError { return nil }
             throw error
@@ -394,7 +394,7 @@ extension ChannelDTO {
 extension ChatChannel {
     /// Create a ChannelModel struct from its DTO
     fileprivate static func create(fromDTO dto: ChannelDTO, depth: Int) throws -> ChatChannel {
-        guard depth <= StreamRuntimeCheck._backgroundMappingRelationshipsMaxDepth else {
+        guard StreamRuntimeCheck._canFetchRelationship(currentDepth: depth) else {
             throw RecursionLimitError()
         }
         guard dto.isValid, let cid = try? ChannelId(cid: dto.cid), let context = dto.managedObjectContext else {

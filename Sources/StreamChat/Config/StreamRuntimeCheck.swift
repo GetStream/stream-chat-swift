@@ -20,7 +20,17 @@ public enum StreamRuntimeCheck {
     ///  Established the maximum depth of relationships to fetch when performing a mapping
     ///
     ///  Eg.
-    ///  Relationship:    Message ---> QuotedMessage ---> Channel ---X---
-    ///  Depth:                     0                         1                           2
+    ///  Relationship:    Message --->  QuotedMessage --->    QuotedMessage   ---X---     NIL
+    ///  Relationship:    Channel  --->      Message         --->     QuotedMessage  ---X---     NIL
+    ///  Depth:                     0                         1                                     2                               3
     public static var _backgroundMappingRelationshipsMaxDepth = 2
+
+    /// For *internal use* only
+    ///
+    ///  Returns true if the maximum depth of relationships to fetch when performing a mapping is not yet met
+    public static func _canFetchRelationship(currentDepth: Int) -> Bool {
+        guard _isBackgroundMappingEnabled else { return true }
+
+        return currentDepth <= _backgroundMappingRelationshipsMaxDepth
+    }
 }

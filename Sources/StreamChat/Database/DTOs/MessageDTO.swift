@@ -1021,7 +1021,7 @@ extension MessageDTO {
     /// limit has not been reached
     func relationshipAsModel(depth: Int) throws -> ChatMessage? {
         do {
-            return try ChatMessage(fromDTO: self, depth: depth)
+            return try ChatMessage(fromDTO: self, depth: depth + 1)
         } catch {
             if error is RecursionLimitError { return nil }
             throw error
@@ -1069,7 +1069,7 @@ extension MessageDTO {
 
 private extension ChatMessage {
     init(fromDTO dto: MessageDTO, depth: Int) throws {
-        guard depth <= StreamRuntimeCheck._backgroundMappingRelationshipsMaxDepth else {
+        guard StreamRuntimeCheck._canFetchRelationship(currentDepth: depth) else {
             throw RecursionLimitError()
         }
         guard dto.isValid, let context = dto.managedObjectContext else {
