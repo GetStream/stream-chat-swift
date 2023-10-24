@@ -45,7 +45,7 @@ public extension ChatChannelMember {
             deactivatedAt: userDeactivatedAt,
             lastActiveAt: lastActiveAt,
             teams: teams,
-            language: nil,
+            language: language,
             extraData: extraData,
             memberRole: memberRole,
             memberCreatedAt: memberCreatedAt,

@@ -1717,6 +1717,174 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         XCTAssertFalse(layoutOptions.contains(.deliveryStatusIndicator))
     }
 
+    func test_optionsForMessage_whenMessageAutoTranslatedEnabled_whenShouldRenderTranslation_thenIncludesTranslationOption() {
+        let sut = createOptionsResolver()
+        sut.components = .mock
+        sut.components?.messageAutoTranslationEnabled = true
+
+        let channel: ChatChannel = .mock(
+            cid: .unique,
+            config: .mock(readEventsEnabled: true),
+            membership: .mock(id: .unique, language: .portuguese)
+        )
+
+        let message: ChatMessage = .mock(
+            id: .unique,
+            text: "Hello",
+            translations: [.portuguese: "Olá"],
+            originalLanguage: .english
+        )
+
+        let layoutOptions = sut.optionsForMessage(
+            at: .init(item: 0, section: 0),
+            in: channel,
+            with: .init([message]),
+            appearance: appearance
+        )
+
+        XCTAssertTrue(layoutOptions.contains(.translation))
+    }
+
+    func test_optionsForMessage_whenMessageAutoTranslatedDisabled_whenShouldRenderTranslation_thenDoesNotIncludeTranslationOption() {
+        let sut = createOptionsResolver()
+        sut.components = .mock
+        sut.components?.messageAutoTranslationEnabled = false
+
+        let channel: ChatChannel = .mock(
+            cid: .unique,
+            config: .mock(readEventsEnabled: true),
+            membership: .mock(id: .unique, language: .portuguese)
+        )
+
+        let message: ChatMessage = .mock(
+            id: .unique,
+            text: "Hello",
+            translations: [.portuguese: "Olá"],
+            originalLanguage: .english
+        )
+
+        let layoutOptions = sut.optionsForMessage(
+            at: .init(item: 0, section: 0),
+            in: channel,
+            with: .init([message]),
+            appearance: appearance
+        )
+
+        XCTAssertFalse(layoutOptions.contains(.translation))
+    }
+
+    func test_optionsForMessage_whenNoTranslations_thenDoesNotIncludeTranslationOption() {
+        let sut = createOptionsResolver()
+        sut.components = .mock
+        sut.components?.messageAutoTranslationEnabled = true
+
+        let channel: ChatChannel = .mock(
+            cid: .unique,
+            config: .mock(readEventsEnabled: true),
+            membership: .mock(id: .unique, language: .portuguese)
+        )
+
+        let message: ChatMessage = .mock(
+            id: .unique,
+            text: "Hello",
+            translations: nil,
+            originalLanguage: .english
+        )
+
+        let layoutOptions = sut.optionsForMessage(
+            at: .init(item: 0, section: 0),
+            in: channel,
+            with: .init([message]),
+            appearance: appearance
+        )
+
+        XCTAssertFalse(layoutOptions.contains(.translation))
+    }
+
+    func test_optionsForMessage_whenCurrentUserTranslationNotAvailable_thenDoesNotIncludeTranslationOption() {
+        let sut = createOptionsResolver()
+        sut.components = .mock
+        sut.components?.messageAutoTranslationEnabled = true
+
+        let channel: ChatChannel = .mock(
+            cid: .unique,
+            config: .mock(readEventsEnabled: true),
+            membership: .mock(id: .unique, language: .portuguese)
+        )
+
+        let message: ChatMessage = .mock(
+            id: .unique,
+            text: "Hello",
+            translations: [.french: "Bonjour"],
+            originalLanguage: .english
+        )
+
+        let layoutOptions = sut.optionsForMessage(
+            at: .init(item: 0, section: 0),
+            in: channel,
+            with: .init([message]),
+            appearance: appearance
+        )
+
+        XCTAssertFalse(layoutOptions.contains(.translation))
+    }
+
+    func test_optionsForMessage_whenCurrentUserLanguageIsTheSame_thenDoesNotIncludeTranslationOption() {
+        let sut = createOptionsResolver()
+        sut.components = .mock
+        sut.components?.messageAutoTranslationEnabled = true
+
+        let channel: ChatChannel = .mock(
+            cid: .unique,
+            config: .mock(readEventsEnabled: true),
+            membership: .mock(id: .unique, language: .french)
+        )
+
+        let message: ChatMessage = .mock(
+            id: .unique,
+            text: "Bonjour",
+            translations: [.french: "Bonjourrr"],
+            originalLanguage: .french
+        )
+
+        let layoutOptions = sut.optionsForMessage(
+            at: .init(item: 0, section: 0),
+            in: channel,
+            with: .init([message]),
+            appearance: appearance
+        )
+
+        XCTAssertFalse(layoutOptions.contains(.translation))
+    }
+
+    func test_optionsForMessage_whenMessageHasNoTranslation_thenDoesNotIncludeTranslationOption() {
+        let sut = createOptionsResolver()
+        sut.components = .mock
+        sut.components?.messageAutoTranslationEnabled = true
+
+        let channel: ChatChannel = .mock(
+            cid: .unique,
+            config: .mock(readEventsEnabled: true),
+            membership: .mock(id: .unique, language: .portuguese)
+        )
+
+        let message: ChatMessage = .mock(
+            id: .unique,
+            text: "Asd",
+            translations: [.portuguese: "Asd"],
+            originalLanguage: .english
+        )
+
+        let layoutOptions = sut.optionsForMessage(
+            at: .init(item: 0, section: 0),
+            in: channel,
+            with: .init([message]),
+            appearance: appearance
+        )
+
+        XCTAssertFalse(layoutOptions.contains(.translation))
+    }
+
     // MARK: - Helpers
 
     private func createOptionsResolver(
