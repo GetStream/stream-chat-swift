@@ -3,9 +3,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### ✅ Added
+- Add `language` parameter to `connectUser()` [#2847](https://github.com/GetStream/stream-chat-swift/pull/2847)
+- Expose `language` in users [#2847](https://github.com/GetStream/stream-chat-swift/pull/2847)
+- Expose `originalLanguage` in messages [#2847](https://github.com/GetStream/stream-chat-swift/pull/2847)
+
 ## StreamChatUI
 ### ✅ Added
 - Add message attachment preview in the channel list [#2838](https://github.com/GetStream/stream-chat-swift/pull/2838)
+- Add support for automatic translations [#2847](https://github.com/GetStream/stream-chat-swift/pull/2847)
+    - Enabled by `Components.default.messageAutoTranslationEnabled`
 ### 🐞 Fixed
 - Do not mark a channel as read if the app is in background [#2832](https://github.com/GetStream/stream-chat-swift/pull/2832)
 
