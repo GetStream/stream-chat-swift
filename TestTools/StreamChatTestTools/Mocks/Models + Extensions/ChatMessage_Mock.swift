@@ -28,6 +28,8 @@ public extension ChatMessage {
         isBounced: Bool = false,
         isSilent: Bool = false,
         isShadowed: Bool = false,
+        translations: [TranslationLanguage: String]? = nil,
+        originalLanguage: TranslationLanguage? = nil,
         reactionScores: [MessageReactionType: Int] = [:],
         reactionCounts: [MessageReactionType: Int] = [:],
         mentionedUsers: Set<ChatUser> = [],
@@ -79,7 +81,8 @@ public extension ChatMessage {
             currentUserReactionsCount: { currentUserReactionsCount },
             isSentByCurrentUser: isSentByCurrentUser,
             pinDetails: pinDetails,
-            translations: nil,
+            translations: translations,
+            originalLanguage: originalLanguage,
             readBy: { readBy },
             readByCount: { readBy.count },
             underlyingContext: underlyingContext
