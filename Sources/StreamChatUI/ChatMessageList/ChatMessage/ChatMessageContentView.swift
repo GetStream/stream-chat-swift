@@ -570,11 +570,13 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
 
         var text = content?.textContent ?? ""
 
+        // Translated text
         if let currentUserLang = channel?.membership?.language,
            let translatedText = content?.translations?[currentUserLang] {
             text = translatedText
+
             if let languageText = Locale.current.localizedString(forLanguageCode: currentUserLang.languageCode) {
-                translationLabel?.text = "Translated to \(languageText)"
+                translationLabel?.text = L10n.Message.translatedTo(languageText)
             }
         }
 
