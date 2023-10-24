@@ -46,4 +46,4 @@ Components.default.messageAutoTranslationEnabled = true
 connectUser(userInfo: UserInfo(id:"userId", language: .english))
 ```
 
-For more information, see the full guide to adding [automatic translation](https://getstream.io/chat/docs/ios/translation/).
+For more information, see the full guide to adding [automatic translation](https://getstream.io/chat/docs/ios-swift/translation/?language=swift).
