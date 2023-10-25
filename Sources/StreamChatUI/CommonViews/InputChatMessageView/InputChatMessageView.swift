@@ -13,6 +13,8 @@ open class InputChatMessageView: _View, ComponentsProvider, AppearanceProvider {
         var quotingMessage: ChatMessage?
         /// The command that the message produces.
         var command: Command?
+        /// The channel which the new message will belong to.
+        var channel: ChatChannel?
     }
 
     /// The content of the view
@@ -118,7 +120,8 @@ open class InputChatMessageView: _View, ComponentsProvider, AppearanceProvider {
         if let quotingMessage = content.quotingMessage {
             quotedMessageView.content = .init(
                 message: quotingMessage,
-                avatarAlignment: .leading
+                avatarAlignment: .leading,
+                channel: content.channel
             )
         }
 
