@@ -659,7 +659,11 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
 
         // Quoted message view
         quotedMessageView?.content = content?.quotedMessage.map {
-            .init(message: $0, avatarAlignment: $0.isSentByCurrentUser ? .trailing : .leading)
+            .init(
+                message: $0,
+                avatarAlignment: $0.isSentByCurrentUser ? .trailing : .leading,
+                channel: channel
+            )
         }
 
         // Thread info

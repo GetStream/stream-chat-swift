@@ -491,6 +491,29 @@ final class ChatMessageContentView_Tests: XCTestCase {
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
 
+    func test_appearance_whenQuoteMessageHasTranslation() throws {
+        let quotedMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "Hello",
+            author: me,
+            createdAt: createdAt,
+            translations: [.portuguese: "Olá"],
+            localState: nil,
+            isSentByCurrentUser: true
+        )
+
+        let message: ChatMessage = .mock(id: .unique, text: "Reply Text", quotedMessage: quotedMessage)
+
+        let view = contentView(
+            message: message,
+            channel: .mock(cid: .unique, membership: .mock(id: .unique, language: .portuguese))
+        )
+        view.layoutOptions?.insert(.translation)
+
+        AssertSnapshot(view, variants: [.defaultLight])
+    }
+
     func test_chatReactionsBubbleViewInjectable() {
         let testMessage: ChatMessage = .mock(
             id: .unique,

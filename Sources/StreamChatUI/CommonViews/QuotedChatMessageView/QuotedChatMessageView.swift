@@ -29,13 +29,17 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
         public let message: ChatMessage
         /// The avatar position in relation with the text message.
         public let avatarAlignment: QuotedAvatarAlignment
+        /// The channel which the message belongs to.
+        public let channel: ChatChannel?
 
         public init(
             message: ChatMessage,
-            avatarAlignment: QuotedAvatarAlignment
+            avatarAlignment: QuotedAvatarAlignment,
+            channel: ChatChannel? = nil
         ) {
             self.message = message
             self.avatarAlignment = avatarAlignment
+            self.channel = channel
         }
     }
 
@@ -164,7 +168,12 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
         guard let message = content?.message else { return }
         guard let avatarAlignment = content?.avatarAlignment else { return }
 
-        textView.text = message.text
+        if let currentUserLang = content?.channel?.membership?.language,
+           let translatedText = content?.message.translations?[currentUserLang] {
+            textView.text = translatedText
+        } else {
+            textView.text = message.text
+        }
 
         contentContainerView.backgroundColor = message.linkAttachments.isEmpty
             ? appearance.colorPalette.popoverBackground
