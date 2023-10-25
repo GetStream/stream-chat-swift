@@ -529,7 +529,8 @@ open class ComposerVC: _ViewController,
 
         composerView.inputMessageView.content = .init(
             quotingMessage: content.quotingMessage,
-            command: content.command
+            command: content.command,
+            channel: channelController?.channel
         )
 
         attachmentsVC.content = content.attachments.map {

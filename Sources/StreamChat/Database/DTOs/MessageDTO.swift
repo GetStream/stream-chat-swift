@@ -48,6 +48,7 @@ class MessageDTO: NSManagedObject {
     @NSManaged var ownReactions: [ReactionString]
 
     @NSManaged var translations: [String: String]?
+    @NSManaged var originalLanguage: String?
 
     // Boolean flag that determines if the reply will be shown inside the thread query.
     // This boolean is used to control the pagination of the replies of a thread.
@@ -774,6 +775,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         }
 
         dto.translations = payload.translations?.mapKeys { $0.languageCode }
+        dto.originalLanguage = payload.originalLanguage
 
         // Calculate reads if the message is authored by the current user.
         if payload.user.id == currentUser?.user.id {
@@ -1081,6 +1083,7 @@ private extension ChatMessage {
         reactionScores = dto.reactionScores.mapKeys { MessageReactionType(rawValue: $0) }
         reactionCounts = dto.reactionCounts.mapKeys { MessageReactionType(rawValue: $0) }
         translations = dto.translations?.mapKeys { TranslationLanguage(languageCode: $0) }
+        originalLanguage = dto.originalLanguage.map(TranslationLanguage.init)
 
         if let extraData = dto.extraData, !extraData.isEmpty {
             do {

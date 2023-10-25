@@ -24,6 +24,7 @@ final class MissingEventsPayload_Tests: XCTestCase {
             isOnline: true,
             isInvisible: false,
             isBanned: false,
+            language: nil,
             extraData: [:]
         )
 

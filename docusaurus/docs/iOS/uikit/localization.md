@@ -31,3 +31,19 @@ Every string included in StreamChat can be changed and translated to a different
 
 - [`Localizable.strings`](https://github.com/GetStream/stream-chat-swift/blob/main/Sources/StreamChatUI/Resources/en.lproj/Localizable.strings) 
 - [`Localizable.stringsdict`](https://github.com/GetStream/stream-chat-swift/blob/main/Sources/StreamChatUI/Resources/en.lproj/Localizable.stringsdict)
+
+## Automatic Translation
+
+Stream Chat provides the ability to run users' messages through automatic translation. While machine translation is never perfect it can enable two users to communicate with each other without speaking the same language.
+
+In order to enable automatic translation, the following steps are required to do in the Client SDKs:
+#### Enabling the feature in the UIKit SDK through:
+```swift
+Components.default.messageAutoTranslationEnabled = true
+```
+#### Providing the language when connecting the user:
+```swift
+connectUser(userInfo: UserInfo(id:"userId", language: .english))
+```
+
+For more information, see the full guide to adding [automatic translation](https://getstream.io/chat/docs/ios-swift/translation/?language=swift).

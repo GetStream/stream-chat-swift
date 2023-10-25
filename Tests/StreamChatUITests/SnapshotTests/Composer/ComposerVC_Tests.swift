@@ -413,6 +413,19 @@ final class ComposerVC_Tests: XCTestCase {
         XCTAssertEqual(composerVC.isSendMessageEnabled, true)
     }
 
+    func test_quotedTranslatedMessage() {
+        composerVC.appearance = Appearance.default
+        composerVC.content = .initial()
+        composerVC.content.text = "Reply"
+        composerVC.content.quoteMessage(.mock(id: .unique, translations: [.portuguese: "Olá"]))
+
+        let mock = ChatChannelController_Mock.mock()
+        mock.channel_mock = .mock(cid: .unique, membership: .mock(id: .unique, language: .portuguese))
+        composerVC.channelController = mock
+
+        AssertSnapshot(composerVC)
+    }
+
     func test_canNotSendLinks() {
         composerVC.appearance = Appearance.default
         composerVC.content = .initial()
