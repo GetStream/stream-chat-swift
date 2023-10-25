@@ -62,10 +62,6 @@ open class ChatMessageLayoutOptionsResolver {
             options.insert(.bubble)
         }
 
-        if shouldRenderTranslation(message: message, channel: channel) {
-            options.insert(.translation)
-        }
-
         if message.isSentByCurrentUser {
             options.insert(.flipped)
         }
@@ -98,6 +94,10 @@ open class ChatMessageLayoutOptionsResolver {
 
         guard message.isDeleted == false else {
             return options
+        }
+
+        if shouldRenderTranslation(message: message, channel: channel) {
+            options.insert(.translation)
         }
 
         if hasQuotedMessage(message) {
