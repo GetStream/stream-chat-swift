@@ -387,16 +387,19 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
         if options.contains(.deliveryStatusIndicator) {
             footnoteSubviews.append(createDeliveryStatusView())
         }
-        if attachmentViewInjector?.fillAllAvailableWidth == true {
-            footnoteSubviews.append(.spacer(axis: .horizontal))
-        }
-
         if options.contains(.flipped) {
             footnoteSubviews = footnoteSubviews.reversed()
         }
-
         if options.contains(.translation) {
             footnoteSubviews.append(createTranslationLabel())
+        }
+
+        let shouldRenderSpacer = attachmentViewInjector?.fillAllAvailableWidth == true
+        let spacer = UIView.spacer(axis: .horizontal)
+        if shouldRenderSpacer && options.contains(.flipped) {
+            footnoteSubviews.insert(spacer, at: 0)
+        } else if shouldRenderSpacer {
+            footnoteSubviews.append(spacer)
         }
 
         if !footnoteSubviews.isEmpty {
