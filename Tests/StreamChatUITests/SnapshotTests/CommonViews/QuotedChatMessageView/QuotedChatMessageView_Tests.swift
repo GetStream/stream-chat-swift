@@ -136,6 +136,23 @@ final class QuotedChatMessageView_Tests: XCTestCase {
         AssertSnapshot(view, variants: [.defaultLight])
     }
 
+    func test_withTranslatedText_whenHasAttachments() {
+        let attachment = ChatMessageImageAttachment.mock(
+            id: .unique,
+            imageURL: TestImages.yoda.url,
+            title: ""
+        )
+
+        view.content = makeContent(
+            text: "Hello!",
+            translations: [.portuguese: "Olá"],
+            channel: .mock(cid: .unique, membership: .mock(id: .unique, language: .portuguese)),
+            attachments: [attachment.asAnyAttachment]
+        )
+
+        AssertSnapshot(view, variants: [.defaultLight])
+    }
+
     func test_withAvatarAlignmentRightAppearance() {
         view.content = makeContent(text: "Hello Vader!", avatarAlignment: .trailing)
 

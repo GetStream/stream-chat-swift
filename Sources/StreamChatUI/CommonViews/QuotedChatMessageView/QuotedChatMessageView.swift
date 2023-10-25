@@ -234,14 +234,15 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
     /// the attachments preview of the message, or if you want to support your custom attachment.
     /// - Parameter message: The message that contains all the attachments.
     open func setAttachmentPreview(for message: ChatMessage) {
+        let currentMessageText = textView.text
         if let filePayload = message.fileAttachments.first?.payload {
             attachmentPreviewView.contentMode = .scaleAspectFit
             attachmentPreviewView.image = appearance.images.fileIcons[filePayload.file.type] ?? appearance.images.fileFallback
-            textView.text = message.text.isEmpty ? filePayload.title : message.text
+            textView.text = message.text.isEmpty ? filePayload.title : currentMessageText
         } else if let imagePayload = message.imageAttachments.first?.payload {
             attachmentPreviewView.contentMode = .scaleAspectFill
             setAttachmentPreviewImage(url: imagePayload.imageURL)
-            textView.text = message.text.isEmpty ? "Photo" : message.text
+            textView.text = message.text.isEmpty ? "Photo" : currentMessageText
         } else if let linkPayload = message.linkAttachments.first?.payload {
             attachmentPreviewView.contentMode = .scaleAspectFill
             setAttachmentPreviewImage(url: linkPayload.previewURL)
@@ -249,7 +250,7 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
         } else if let giphyPayload = message.giphyAttachments.first?.payload {
             attachmentPreviewView.contentMode = .scaleAspectFill
             setAttachmentPreviewImage(url: giphyPayload.previewURL)
-            textView.text = message.text.isEmpty ? "Giphy" : message.text
+            textView.text = message.text.isEmpty ? "Giphy" : currentMessageText
         } else if let videoPayload = message.videoAttachments.first?.payload {
             attachmentPreviewView.contentMode = .scaleAspectFill
             if let thumbnailURL = videoPayload.thumbnailURL {
@@ -257,7 +258,7 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
             } else {
                 setVideoAttachmentPreviewImage(url: videoPayload.videoURL)
             }
-            textView.text = message.text.isEmpty ? videoPayload.title : message.text
+            textView.text = message.text.isEmpty ? videoPayload.title : currentMessageText
         } else if let voiceRecordingPayload = message.voiceRecordingAttachments.first?.payload {
             voiceRecordingAttachmentQuotedPreview.content = .init(
                 title: voiceRecordingPayload.title ?? message.text,
