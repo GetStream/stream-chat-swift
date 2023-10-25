@@ -1166,6 +1166,8 @@
 		AD1D7A8526A2131D00494CA5 /* ChatChannelVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD1D7A8326A212D000494CA5 /* ChatChannelVC.swift */; };
 		AD25070D272C0C8D00BC14C4 /* ChatMessageReactionAuthorsVC_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD25070B272C0C8800BC14C4 /* ChatMessageReactionAuthorsVC_Tests.swift */; };
 		AD2525212ACB3C0800F1433C /* ChatClientFactory_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2525202ACB3C0800F1433C /* ChatClientFactory_Tests.swift */; };
+		AD2891AF2AE991D2004CC3E0 /* ChatMessageTextRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2891AE2AE991D2004CC3E0 /* ChatMessageTextRenderer.swift */; };
+		AD2891B02AE991D2004CC3E0 /* ChatMessageTextRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2891AE2AE991D2004CC3E0 /* ChatMessageTextRenderer.swift */; };
 		AD29395D2A2E36FE00533CA7 /* SwipeToReplyGestureHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD29395C2A2E36FE00533CA7 /* SwipeToReplyGestureHandler.swift */; };
 		AD29395E2A2E36FE00533CA7 /* SwipeToReplyGestureHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD29395C2A2E36FE00533CA7 /* SwipeToReplyGestureHandler.swift */; };
 		AD2C94DC29CB8CC40096DCA1 /* PartiallyFailingChannelListPayload.json in Sources */ = {isa = PBXBuildFile; fileRef = AD2C94DB29CB8CC40096DCA1 /* PartiallyFailingChannelListPayload.json */; };
@@ -3644,6 +3646,7 @@
 		AD1D7A8326A212D000494CA5 /* ChatChannelVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelVC.swift; sourceTree = "<group>"; };
 		AD25070B272C0C8800BC14C4 /* ChatMessageReactionAuthorsVC_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageReactionAuthorsVC_Tests.swift; sourceTree = "<group>"; };
 		AD2525202ACB3C0800F1433C /* ChatClientFactory_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatClientFactory_Tests.swift; sourceTree = "<group>"; };
+		AD2891AE2AE991D2004CC3E0 /* ChatMessageTextRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageTextRenderer.swift; sourceTree = "<group>"; };
 		AD29395C2A2E36FE00533CA7 /* SwipeToReplyGestureHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeToReplyGestureHandler.swift; sourceTree = "<group>"; };
 		AD2C94DB29CB8CC40096DCA1 /* PartiallyFailingChannelListPayload.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = PartiallyFailingChannelListPayload.json; sourceTree = "<group>"; };
 		AD2C94DE29CB93C40096DCA1 /* FailingChannelListPayload.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = FailingChannelListPayload.json; sourceTree = "<group>"; };
@@ -8355,6 +8358,7 @@
 				A39A8AE6263825F4003453D9 /* ChatMessageLayoutOptionsResolver.swift */,
 				8830518D263038190069D731 /* ChatReactionsBubbleView.swift */,
 				883051C72630579D0069D731 /* ChatThreadArrowView.swift */,
+				AD2891AE2AE991D2004CC3E0 /* ChatMessageTextRenderer.swift */,
 			);
 			path = ChatMessage;
 			sourceTree = "<group>";
@@ -9675,6 +9679,7 @@
 				40FA4DD72A12A0C300DA21D2 /* RecordingIndicatorView.swift in Sources */,
 				C1FC2F6727416E150062530F /* ResumableData.swift in Sources */,
 				BD4016362638411D00F09774 /* Deprecations.swift in Sources */,
+				AD2891AF2AE991D2004CC3E0 /* ChatMessageTextRenderer.swift in Sources */,
 				7844B14E25EF9F5700B87E89 /* ChatChannelAvatarView+SwiftUI.swift in Sources */,
 				ADA5A0F8276790C100E1C465 /* ChatMessageListDateSeparatorView.swift in Sources */,
 				BDC80CB5265CF4B800F62CE2 /* ImageCDN.swift in Sources */,
@@ -11571,6 +11576,7 @@
 				C121EC2F2746A1ED00023E4C /* Deprecated.swift in Sources */,
 				C121EC302746A1ED00023E4C /* Combine.swift in Sources */,
 				C121EC312746A1ED00023E4C /* Operation.swift in Sources */,
+				AD2891B02AE991D2004CC3E0 /* ChatMessageTextRenderer.swift in Sources */,
 				C121EC322746A1ED00023E4C /* ImageRequestKeys.swift in Sources */,
 				C121EC332746A1ED00023E4C /* LinkedList.swift in Sources */,
 				ADCB577E28A42D7700B81AE8 /* UIKitExtension.swift in Sources */,

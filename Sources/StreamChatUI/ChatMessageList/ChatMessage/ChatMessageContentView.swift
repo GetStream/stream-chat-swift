@@ -69,6 +69,9 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
     /// The component responsible to get the tapped mentioned user in a UITextView
     var textViewUserMentionsHandler = TextViewMentionedUsersHandler()
 
+    /// The component responsible for getting the text content of a message.
+    let messageTextRenderer = ChatMessageTextRenderer()
+
     // MARK: Content && Actions
 
     /// The provider of cell index path which displays the current content view.
@@ -577,19 +580,10 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
             setNeedsLayout()
         }
 
-        var text = content?.textContent ?? ""
-
-        // Translated text
-        if layoutOptions?.contains(.translation) == true,
-           let currentUserLang = channel?.membership?.language,
-           let translatedText = content?.translatedText(for: currentUserLang) {
-            text = translatedText
-
-            if let languageText = Locale.current.localizedString(forLanguageCode: currentUserLang.languageCode) {
-                translationLabel?.text = L10n.Message.translatedTo(languageText)
-            }
+        var text = content?.text ?? ""
+        if let message = content, let channel = channel {
+            text = messageTextRenderer.text(for: message, channel: channel)
         }
-
         let attributedText = NSAttributedString(
             string: text,
             attributes: [
@@ -598,6 +592,12 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
             ]
         )
         textView?.attributedText = attributedText
+
+        // Translated label text
+        if let currentUserLang = channel?.membership?.language,
+           let languageText = Locale.current.localizedString(forLanguageCode: currentUserLang.languageCode) {
+            translationLabel?.text = L10n.Message.translatedTo(languageText)
+        }
 
         // Markdown
         if isMarkdownEnabled, markdownFormatter.containsMarkdown(text) {

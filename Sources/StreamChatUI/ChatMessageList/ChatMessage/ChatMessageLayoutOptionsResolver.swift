@@ -77,7 +77,7 @@ open class ChatMessageLayoutOptionsResolver {
         if showOnlyVisibleToYouIndicator(for: message) {
             options.insert(.onlyVisibleToYouIndicator)
         }
-        if message.textContent?.isEmpty == false {
+        if !message.text.isEmpty && message.type != .ephemeral {
             options.insert(.text)
         }
         if isLastInSequence && !message.isSentByCurrentUser {

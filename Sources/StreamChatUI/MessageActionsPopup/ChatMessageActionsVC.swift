@@ -36,6 +36,9 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
         messageController.message
     }
 
+    /// The component responsible for getting the text content of a message.
+    let messageTextRenderer = ChatMessageTextRenderer()
+
     /// The `AlertsRouter` instance responsible for presenting alerts.
     open lazy var alertsRouter = components
         .alertsRouter
@@ -283,16 +286,13 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
         CopyActionItem(
             action: { [weak self] _ in
                 guard let self = self else { return }
-
-                let text: String?
-                if let currentUserLang = self.channel?.membership?.language,
-                   let translatedText = self.message?.translatedText(for: currentUserLang) {
-                    text = translatedText
-                } else {
-                    text = self.message?.text
+                guard let message = self.message, let channel = self.channel else {
+                    return
                 }
 
+                let text = messageTextRenderer.text(for: message, channel: channel)
                 UIPasteboard.general.string = text
+
                 self.delegate?.chatMessageActionsVCDidFinish(self)
             },
             appearance: appearance

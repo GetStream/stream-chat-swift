@@ -541,7 +541,6 @@ final class ChatMessageContentView_Tests: XCTestCase {
             message: message,
             channel: .mock(cid: .unique, membership: .mock(id: .unique, language: .portuguese))
         )
-        view.layoutOptions?.insert(.translation)
 
         AssertSnapshot(view, variants: [.defaultLight])
     }
@@ -945,7 +944,7 @@ extension ChatMessage {
         if isLastInGroup, isSentByCurrentUser, type == .deleted || type == .ephemeral {
             options.insert(.onlyVisibleToYouIndicator)
         }
-        if textContent?.isEmpty == false {
+        if text.isEmpty == false {
             options.insert(.text)
         }
 

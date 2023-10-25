@@ -124,6 +124,9 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
         .withoutAutoresizingMaskConstraints
         .withAccessibilityIdentifier(identifier: "unreadCountView")
 
+    /// The component responsible for getting the text content of a message.
+    let messageTextRenderer = ChatMessageTextRenderer()
+
     /// Text of `titleLabel` which contains the channel name.
     open var titleText: String? {
         if let searchedMessage = content?.searchedMessage {
@@ -160,12 +163,7 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
                 return previewMessage.text
             }
 
-            var text = previewMessage.textContent ?? previewMessage.text
-
-            if let currentUserLang = content.channel.membership?.language,
-               let translatedText = previewMessage.translatedText(for: currentUserLang) {
-                text = translatedText
-            }
+            var text = messageTextRenderer.text(for: previewMessage, channel: content.channel)
 
             if let attachmentPreviewText = attachmentPreviewText(
                 for: previewMessage,

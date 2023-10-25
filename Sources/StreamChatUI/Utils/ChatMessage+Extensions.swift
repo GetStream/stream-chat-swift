@@ -38,7 +38,7 @@ public extension ChatMessage {
         parentMessageId != nil
     }
 
-    /// The text which should be shown in a text view inside the message bubble.
+    @available(*, deprecated, message: "this has now been replaced by ChatMessageTextRenderer()")
     var textContent: String? {
         guard type != .ephemeral else {
             return nil
@@ -69,8 +69,8 @@ public extension ChatMessage {
     ///
     /// Note that for messages sent with attachments, large emojis aren's rendered
     var shouldRenderAsJumbomoji: Bool {
-        guard attachmentCounts.isEmpty, let textContent = textContent, !textContent.isEmpty else { return false }
-        return textContent.count <= 3 && textContent.containsOnlyEmoji
+        guard attachmentCounts.isEmpty, !text.isEmpty else { return false }
+        return text.count <= 3 && text.containsOnlyEmoji
     }
 
     /// When a message that has been synced gets edited but is bounced by the moderation API it will return true to this state.
