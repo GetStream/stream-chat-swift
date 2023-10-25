@@ -99,7 +99,8 @@
         {
           "SwiftUI Cookbook": [
             "swiftui/swiftui-cookbook/overview",
-            "swiftui/swiftui-cookbook/custom-channel-header"
+            "swiftui/swiftui-cookbook/custom-channel-header",
+            "swiftui/swiftui-cookbook/custom-composer"
           ]
         }
       ]
