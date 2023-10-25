@@ -32,7 +32,7 @@ public extension ChatClient {
     /// Creates a new `ChatChannelController` for the channel with the provided channel query.
     ///
     /// - Parameters:
-    ///   - channelQuery: The ChannelQuery this controller represents
+    ///   - channelQuery: The ChannelQuery this controller represents.
     ///   - channelListQuery: The channel list query this controller is part of.
     ///   - messageOrdering: Describes the ordering the messages are presented.
     ///
@@ -45,6 +45,29 @@ public extension ChatClient {
     ) -> ChatChannelController {
         .init(
             channelQuery: channelQuery,
+            channelListQuery: channelListQuery,
+            client: self,
+            messageOrdering: messageOrdering
+        )
+    }
+
+    /// Creates a new `ChatChannelController` for the channel with an async channel query.
+    ///
+    /// - Parameters:
+    ///   - asyncQuery: An async closure that is responsible to retrieve a Channel Query.
+    ///   - channelListQuery: The channel list query this controller is part of.
+    ///   - messageOrdering: Describes the ordering the messages are presented.
+    ///
+    /// - Returns: A new instance of `ChatChannelController`.
+    ///
+    func channelController(
+        asyncQuery: AsyncQuery<ChannelQuery>,
+        channelListQuery: ChannelListQuery? = nil,
+        messageOrdering: MessageOrdering = .topToBottom
+    ) -> ChatChannelController {
+        .init(
+            channelQuery: .init(cid: asyncQuery.dummyCid),
+            asyncQuery: asyncQuery,
             channelListQuery: channelListQuery,
             client: self,
             messageOrdering: messageOrdering

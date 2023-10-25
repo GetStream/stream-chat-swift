@@ -3,10 +3,24 @@
 //
 
 import Foundation
+import StreamChat
 import StreamChatUI
 import UIKit
 
 final class DemoChatChannelVC: ChatChannelVC {
+    override func setUp() {
+        let asyncQuery = AsyncQuery<ChannelQuery> { [weak self] completion in
+            self?.messageComposerVC.composerView.inputMessageView.textView.isUserInteractionEnabled = false
+            self?.getChannelId { channelId in
+                self?.messageComposerVC.composerView.inputMessageView.textView.isUserInteractionEnabled = true
+                self?.messageComposerVC.channelController = self?.client.channelController(for: channelId)
+                completion(.success(ChannelQuery(cid: channelId)))
+            }
+        }
+        channelController = client.channelController(asyncQuery: asyncQuery)
+        super.setUp()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -33,5 +47,11 @@ final class DemoChatChannelVC: ChatChannelVC {
         }
 
         channelListVC.demoRouter?.didTapMoreButton(for: cid)
+    }
+
+    func getChannelId(completion: @escaping (ChannelId) -> Void) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
+            completion(try! ChannelId(cid: "messaging:!members-gZvIpUUNpv-adclg-zxhJjCb7a3KvwYBBQHvCqynCeQ"))
+        }
     }
 }

@@ -14,6 +14,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// The ChannelQuery this controller observes.
     @Atomic public private(set) var channelQuery: ChannelQuery
 
+    private var asyncQuery: AsyncQuery<ChannelQuery>?
+
     /// The channel list query the channel is related to.
     /// It's `nil` when this controller wasn't created by a `ChannelListController`
     public let channelListQuery: ChannelListQuery?
@@ -179,6 +181,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///   - isChannelAlreadyCreated: Flag indicating whether channel is created on backend.
     init(
         channelQuery: ChannelQuery,
+        asyncQuery: AsyncQuery<ChannelQuery>? = nil,
         channelListQuery: ChannelListQuery?,
         client: ChatClient,
         environment: Environment = .init(),
@@ -186,6 +189,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         messageOrdering: MessageOrdering = .topToBottom
     ) {
         self.channelQuery = channelQuery
+        self.asyncQuery = asyncQuery
         self.channelListQuery = channelListQuery
         self.client = client
         self.environment = environment
@@ -208,7 +212,22 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     }
 
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
-        synchronize(isInRecoveryMode: false, completion)
+        if let asyncQuery = self.asyncQuery {
+            asyncQuery.execute { [weak self] result in
+                switch result {
+                case let .success(query):
+                    self?.channelQuery = query
+                    self?.synchronize(isInRecoveryMode: false, completion)
+                case let .failure(error):
+                    self?.state = .remoteDataFetchFailed(ClientError(with: error))
+                    self?.callback {
+                        completion?(error)
+                    }
+                }
+            }
+        } else {
+            synchronize(isInRecoveryMode: false, completion)
+        }
     }
 
     // MARK: - Actions
