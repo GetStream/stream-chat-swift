@@ -579,7 +579,7 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
         // Translated text
         if layoutOptions?.contains(.translation) == true,
            let currentUserLang = channel?.membership?.language,
-           let translatedText = content?.translations?[currentUserLang] {
+           let translatedText = content?.translatedText(for: currentUserLang) {
             text = translatedText
 
             if let languageText = Locale.current.localizedString(forLanguageCode: currentUserLang.languageCode) {

@@ -286,7 +286,7 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
 
                 let text: String?
                 if let currentUserLang = channel?.membership?.language,
-                   let translatedText = message?.translations?[currentUserLang] {
+                   let translatedText = message?.translatedText(for: currentUserLang) {
                     text = translatedText
                 } else {
                     text = self.message?.text

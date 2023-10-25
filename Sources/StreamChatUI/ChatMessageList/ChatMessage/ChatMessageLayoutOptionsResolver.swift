@@ -244,11 +244,11 @@ private extension ChatMessageLayoutOptionsResolver {
         guard components?.messageAutoTranslationEnabled == true else {
             return false
         }
-        guard let translations = message.translations,
-              let currentUserLang = channel.membership?.language,
-              let translatedText = translations[currentUserLang] else {
+
+        guard let currentUserLang = channel.membership?.language else {
             return false
         }
-        return translatedText != message.text
+
+        return message.translatedText(for: currentUserLang) != nil
     }
 }

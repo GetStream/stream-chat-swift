@@ -169,7 +169,7 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
         guard let avatarAlignment = content?.avatarAlignment else { return }
 
         if let currentUserLang = content?.channel?.membership?.language,
-           let translatedText = content?.message.translations?[currentUserLang] {
+           let translatedText = content?.message.translatedText(for: currentUserLang) {
             textView.text = translatedText
         } else {
             textView.text = message.text

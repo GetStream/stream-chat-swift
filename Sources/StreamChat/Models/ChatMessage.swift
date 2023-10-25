@@ -163,6 +163,16 @@ public struct ChatMessage {
     /// The available automatic translations for this message.
     public let translations: [TranslationLanguage: String]?
 
+    /// Gets the translated text given the desired language in case the translation is valid.
+    public func translatedText(for language: TranslationLanguage) -> String? {
+        guard let translatedText = translations?[language] else { return nil }
+        guard translatedText != text else { return nil }
+        guard language != originalLanguage else { return nil }
+        guard !text.isEmpty else { return nil }
+        guard command == nil else { return nil }
+        return translatedText
+    }
+
     /// The original language of the message.
     public let originalLanguage: TranslationLanguage?
 
