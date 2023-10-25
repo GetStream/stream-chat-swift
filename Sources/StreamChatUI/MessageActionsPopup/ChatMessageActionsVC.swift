@@ -290,7 +290,7 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
                     return
                 }
 
-                let text = messageTextRenderer.text(for: message, channel: channel)
+                let text = self.messageTextRenderer.text(for: message, channel: channel)
                 UIPasteboard.general.string = text
 
                 self.delegate?.chatMessageActionsVCDidFinish(self)
