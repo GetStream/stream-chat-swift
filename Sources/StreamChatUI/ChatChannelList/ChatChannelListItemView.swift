@@ -162,7 +162,15 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
 
             var text = previewMessage.textContent ?? previewMessage.text
 
-            if let attachmentPreviewText = attachmentPreviewText(for: previewMessage) {
+            if let currentUserLang = content.channel.membership?.language,
+               let translatedText = previewMessage.translatedText(for: currentUserLang) {
+                text = translatedText
+            }
+
+            if let attachmentPreviewText = attachmentPreviewText(
+                for: previewMessage,
+                messageText: text
+            ) {
                 text = attachmentPreviewText
             }
 
@@ -375,12 +383,13 @@ extension ChatChannelListItemView {
 
     /// The message preview text in case it contains attachments.
     /// - Parameter previewMessage: The preview message of the channel.
+    /// - Parameter currentText: The text
     /// - Returns: A string representing the message preview text.
-    func attachmentPreviewText(for previewMessage: ChatMessage) -> String? {
+    func attachmentPreviewText(for previewMessage: ChatMessage, messageText: String) -> String? {
         guard let attachment = previewMessage.allAttachments.first else {
             return nil
         }
-        let text = previewMessage.textContent ?? previewMessage.text
+        let text = messageText
         switch attachment.type {
         case .audio:
             let defaultAudioText = L10n.Channel.Item.audio
