@@ -148,45 +148,44 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
         guard let content = content else { return nil }
 
         if let searchedMessage = content.searchedMessage {
-            return searchedMessage.text
+            return previewMessageTextForSearchedMessage(messageText: searchedMessage.text)
         }
 
         if let typingUsersInfo = typingUserString {
             return typingUsersInfo
-        } else if isLastMessageVoiceRecording {
-            return L10n.ChannelList.Preview.Voice.recording
-        } else if let previewMessage = content.channel.previewMessage {
+        }
+
+        if let previewMessage = content.channel.previewMessage {
+            if isLastMessageVoiceRecording {
+                return previewMessageForAudioRecordingMessage(messageText: previewMessage.text)
+            }
+
             if previewMessage.type == .system {
-                return previewMessage.text
+                return previewMessageTextForSystemMessage(messageText: previewMessage.text)
             }
 
             var text = previewMessage.textContent ?? previewMessage.text
 
-            if let currentUserLang = content.channel.membership?.language,
-               let translatedText = previewMessage.translatedText(for: currentUserLang) {
+            if let translatedText = translatedPreviewText(for: previewMessage, messageText: text) {
                 text = translatedText
             }
 
-            if let attachmentPreviewText = attachmentPreviewText(
-                for: previewMessage,
-                messageText: text
-            ) {
-                text = attachmentPreviewText
+            if let attachmentText = attachmentPreviewText(for: previewMessage, messageText: text) {
+                text = attachmentText
             }
 
             if previewMessage.isSentByCurrentUser {
-                return "\(L10n.you): \(text)"
+                return previewMessageTextForCurrentUser(messageText: text)
             }
 
             if content.channel.memberCount == 2 {
-                return text
+                return previewMessageTextFor1on1Channel(messageText: text)
             }
 
-            let authorName = previewMessage.author.name ?? previewMessage.author.id
-            return "\(authorName): \(text)"
-        } else {
-            return L10n.Channel.Item.emptyMessages
+            return previewMessageTextFromAnotherUser(previewMessage.author, messageText: text)
         }
+
+        return previewMessageTextForEmptyMessage()
     }
 
     open var subtitleIcon: UIImage? {
@@ -357,35 +356,75 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
             )
         }
     }
-}
 
-extension ChatChannelListItemView {
-    /// The formatted string containing the typing member.
-    var typingUserString: String? {
-        guard let users = content?.channel.currentlyTypingUsers.filter({ $0.id != content?.currentUserId }),
-              !users.isEmpty
-        else { return nil }
+    // MARK: - Preview message text rendering
 
-        let names = users
-            .compactMap(\.name)
-            .sorted()
-            .joined(separator: ", ")
-
-        let typingSingularText = L10n.Channel.Item.typingSingular
-        let typingPluralText = L10n.Channel.Item.typingPlural
-
-        return names + " \(users.count == 1 ? typingSingularText : typingPluralText)"
+    /// The message preview text in case the message is empty.
+    /// - Returns:  A string representing the message preview text.
+    open func previewMessageTextForEmptyMessage() -> String {
+        L10n.Channel.Item.emptyMessages
     }
 
-    var isLastMessageVoiceRecording: Bool {
-        content?.channel.previewMessage?.voiceRecordingAttachments.isEmpty == false && typingUserString == nil
+    /// The message preview text in case the message is an audio recording message.
+    /// - Parameter messageText: The current text of the message.
+    /// - Returns:  A string representing the message preview text.
+    open func previewMessageForAudioRecordingMessage(messageText: String) -> String {
+        L10n.ChannelList.Preview.Voice.recording
+    }
+
+    /// The message preview text in case the message is a system message.
+    /// - Parameter messageText: The current text of the message.
+    /// - Returns:  A string representing the message preview text.
+    open func previewMessageTextForSystemMessage(messageText: String) -> String {
+        messageText
+    }
+
+    /// The message preview text in case the message is a search result.
+    /// - Parameter messageText: The current text of the message.
+    /// - Returns:  A string representing the message preview text.
+    open func previewMessageTextForSearchedMessage(messageText: String) -> String {
+        messageText
+    }
+
+    /// The message preview text in case the message is from the current user.
+    /// - Parameter messageText: The current text of the message.
+    /// - Returns:  A string representing the message preview text.
+    open func previewMessageTextForCurrentUser(messageText: String) -> String {
+        "\(L10n.you): \(messageText)"
+    }
+
+    /// The message preview text in case the message is a 1on1 channel.
+    /// - Parameter messageText: The current text of the message.
+    /// - Returns:  A string representing the message preview text.
+    open func previewMessageTextFor1on1Channel(messageText: String) -> String {
+        messageText
+    }
+
+    /// The message preview text in case the message is from another user and it is not a 1on1 channel.
+    /// - Parameter messageText: The current text of the message.
+    /// - Returns:  A string representing the message preview text.
+    open func previewMessageTextFromAnotherUser(_ user: ChatUser, messageText: String) -> String {
+        let authorName = user.name ?? user.id
+        return "\(authorName): \(messageText)"
+    }
+
+    /// The message preview text in case the message is translated.
+    /// - Parameter previewMessage: The preview message of the channel.
+    /// - Parameter messageText: The current text of the message.
+    /// - Returns: A string representing the message preview text.
+    open func translatedPreviewText(for previewMessage: ChatMessage, messageText: String) -> String? {
+        guard let currentUserLang = content?.channel.membership?.language,
+              let translatedText = previewMessage.translatedText(for: currentUserLang) else {
+            return nil
+        }
+        return translatedText
     }
 
     /// The message preview text in case it contains attachments.
     /// - Parameter previewMessage: The preview message of the channel.
-    /// - Parameter currentText: The text
+    /// - Parameter messageText: The current text of the message.
     /// - Returns: A string representing the message preview text.
-    func attachmentPreviewText(for previewMessage: ChatMessage, messageText: String) -> String? {
+    open func attachmentPreviewText(for previewMessage: ChatMessage, messageText: String) -> String? {
         guard let attachment = previewMessage.allAttachments.first else {
             return nil
         }
@@ -411,5 +450,30 @@ extension ChatChannelListItemView {
         default:
             return nil
         }
+    }
+
+    // MARK: - Channel preview when user is typing
+
+    /// The formatted string containing the typing member.
+    open var typingUserString: String? {
+        guard let users = content?.channel.currentlyTypingUsers.filter({ $0.id != content?.currentUserId }),
+              !users.isEmpty
+        else { return nil }
+
+        let names = users
+            .compactMap(\.name)
+            .sorted()
+            .joined(separator: ", ")
+
+        let typingSingularText = L10n.Channel.Item.typingSingular
+        let typingPluralText = L10n.Channel.Item.typingPlural
+
+        return names + " \(users.count == 1 ? typingSingularText : typingPluralText)"
+    }
+}
+
+extension ChatChannelListItemView {
+    var isLastMessageVoiceRecording: Bool {
+        content?.channel.previewMessage?.voiceRecordingAttachments.isEmpty == false && typingUserString == nil
     }
 }
