@@ -30,8 +30,9 @@ output_directory=$2
 
 function removeUnneededSymbols() {
 	arch=$1
-	path="$output_directory/$library.xcframework/$arch/BCSymbolMaps"
-	cd $path
+	current_directory=$(pwd)
+
+	cd "$output_directory/$library.xcframework/$arch/BCSymbolMaps"
 
 	# Looking for [...]/DerivedSources/[LIBRARY-NAME]_vers.c
 	regex="(\/DerivedSources\/)([a-zA-Z_]*)(_vers.c)"
@@ -48,7 +49,7 @@ function removeUnneededSymbols() {
 	    fi
 	done
 
-	cd - >/dev/null
+	cd "$current_directory"
 }
 
 removeUnneededSymbols "ios-arm64"
