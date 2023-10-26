@@ -22,7 +22,7 @@ before_all do |lane|
     setup_ci
     ENV['FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT'] = '180'
     ENV['FASTLANE_XCODEBUILD_SETTINGS_RETRIES'] = '10'
-    xcversion(version: xcode_version) unless [:publish_release, :allure_launch].include?(lane)
+    xcversion(version: xcode_version) unless [:publish_release, :allure_launch, :pod_lint].include?(lane)
   end
 end
 
@@ -82,7 +82,7 @@ end
 
 desc 'Completes an SDK Release'
 lane :publish_release do |options|
-  xcversion(version: '13.0')
+  xcversion(version: '14.0.1')
 
   clean_products
   build_xcframeworks
@@ -90,6 +90,7 @@ lane :publish_release do |options|
   clean_products
 
   publish_ios_sdk(
+    skip_git_status_check: false,
     version: options[:version],
     sdk_names: sdk_names,
     podspec_names: ['StreamChat', 'StreamChat-XCFramework', 'StreamChatUI', 'StreamChatUI-XCFramework'],
