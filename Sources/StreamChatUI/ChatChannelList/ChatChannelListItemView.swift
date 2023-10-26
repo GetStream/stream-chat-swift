@@ -127,17 +127,11 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
     /// Text of `titleLabel` which contains the channel name.
     open var titleText: String? {
         if let searchedMessage = content?.searchedMessage {
-            var title = "\(searchedMessage.author.name ?? searchedMessage.author.id)"
-            if let channelName = content?.channel.name, !channelName.isEmpty {
-                title += L10n.Channel.Item.Search.in(channelName)
-            }
-            return title
+            return channelTitleTextForSearchedMessage(searchedMessage)
         }
 
         if let channel = content?.channel {
-            return appearance.formatters
-                .channelName
-                .format(channel: channel, forCurrentUserId: channel.membership?.id)
+            return channelTitleText(for: channel)
         }
 
         return nil
@@ -355,6 +349,24 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
                 at: status == .pending || status == .failed ? 0 : 1
             )
         }
+    }
+
+    // MARK: - Channel title rendering
+
+    /// The channel title text in case the channel is part of a search result.
+    open func channelTitleTextForSearchedMessage(_ message: ChatMessage) -> String {
+        var title = "\(message.author.name ?? message.author.id)"
+        if let channelName = content?.channel.name, !channelName.isEmpty {
+            title += L10n.Channel.Item.Search.in(channelName)
+        }
+        return title
+    }
+
+    /// The default channel title text.
+    open func channelTitleText(for channel: ChatChannel) -> String? {
+        appearance.formatters
+            .channelName
+            .format(channel: channel, forCurrentUserId: channel.membership?.id)
     }
 
     // MARK: - Preview message text rendering
