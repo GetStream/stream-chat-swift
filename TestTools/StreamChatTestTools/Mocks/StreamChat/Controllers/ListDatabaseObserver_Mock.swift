@@ -30,7 +30,7 @@ extension ListDatabaseObserverWrapper {
             return
         }
 
-        let expectation = testCase.expectation(description: "Messages update")
+        let expectation = testCase.expectation(description: "List update")
         onDidChange = { _ in
             expectation.fulfill()
         }
