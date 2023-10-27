@@ -205,7 +205,10 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
     }
 
     private func notifyDidChange(changes: [ListChange<Item>], onCompletion: @escaping () -> Void) {
-        guard let onDidChange = onDidChange else { return }
+        guard let onDidChange = onDidChange else {
+            onCompletion()
+            return
+        }
         DispatchQueue.main.async {
             onDidChange(changes)
             onCompletion()
@@ -303,30 +306,32 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject> {
             guard let self = self else { return }
             guard let fetchResultsController = self.frc as? NSFetchedResultsController<NSFetchRequestResult> else { return }
 
-            // Simulate ChangeObserver callbacks like all data are being removed
-            self.changeAggregator.controllerWillChangeContent(fetchResultsController)
+            fetchResultsController.managedObjectContext.perform {
+                // Simulate ChangeObserver callbacks like all data are being removed
+                self.changeAggregator.controllerWillChangeContent(fetchResultsController)
 
-            self.frc.fetchedObjects?.enumerated().forEach { index, item in
-                self.changeAggregator.controller(
-                    fetchResultsController,
-                    didChange: item,
-                    at: IndexPath(item: index, section: 0),
-                    for: .delete,
-                    newIndexPath: nil
-                )
+                self.frc.fetchedObjects?.enumerated().forEach { index, item in
+                    self.changeAggregator.controller(
+                        fetchResultsController,
+                        didChange: item,
+                        at: IndexPath(item: index, section: 0),
+                        for: .delete,
+                        newIndexPath: nil
+                    )
+                }
+
+                // Remove the cached items since they're now deleted, technically. It is important for it to be reset before
+                // calling `controllerDidChangeContent` so it properly reflects the state
+                self.queue.async(flags: .barrier) {
+                    self._items = []
+                }
+
+                // Publish the changes
+                self.changeAggregator.controllerDidChangeContent(fetchResultsController)
+
+                // Remove delegate so it doesn't get further removal updates
+                self.frc.delegate = nil
             }
-
-            // Remove the cached items since they're now deleted, technically. It is important for it to be reset before
-            // calling `controllerDidChangeContent` so it properly reflects the state
-            self.queue.async(flags: .barrier) {
-                self._items = []
-            }
-
-            // Publish the changes
-            self.changeAggregator.controllerDidChangeContent(fetchResultsController)
-
-            // Remove delegate so it doesn't get further removal updates
-            self.frc.delegate = nil
         }
 
         // When `DidRemoveAllDataNotification` is received, we need to reset the FRC. At this point, the entities are removed but
