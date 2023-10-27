@@ -5,7 +5,7 @@
 import Foundation
 
 public struct TranslationLanguage: Hashable {
-    let languageCode: String
+    public let languageCode: String
 
     public init(languageCode: String) {
         self.languageCode = languageCode

@@ -160,9 +160,22 @@ public struct ChatMessage {
     /// The message pinning information. Is `nil` if the message is not pinned.
     public let pinDetails: MessagePinDetails?
 
-    /// Internationalization and localization for the message. Only available for translated messages.
+    /// The available automatic translations for this message.
     public let translations: [TranslationLanguage: String]?
 
+    /// Gets the translated text given the desired language in case the translation is valid.
+    public func translatedText(for language: TranslationLanguage) -> String? {
+        guard let translatedText = translations?[language] else { return nil }
+        guard translatedText != text else { return nil }
+        guard language != originalLanguage else { return nil }
+        guard !text.isEmpty else { return nil }
+        guard command == nil else { return nil }
+        return translatedText
+    }
+
+    /// The original language of the message.
+    public let originalLanguage: TranslationLanguage?
+  
     /// The moderation details in case the message was moderated.
     public let moderationDetails: MessageModerationDetails?
 
@@ -219,6 +232,7 @@ public struct ChatMessage {
         isSentByCurrentUser: Bool,
         pinDetails: MessagePinDetails?,
         translations: [TranslationLanguage: String]?,
+        originalLanguage: TranslationLanguage?,
         moderationDetails: MessageModerationDetails?,
         readBy: @escaping () -> Set<ChatUser>,
         readByCount: @escaping () -> Int,
@@ -248,6 +262,7 @@ public struct ChatMessage {
         self.isSentByCurrentUser = isSentByCurrentUser
         self.pinDetails = pinDetails
         self.translations = translations
+        self.originalLanguage = originalLanguage
         self.moderationDetails = moderationDetails
 
         $_author = (author, underlyingContext)

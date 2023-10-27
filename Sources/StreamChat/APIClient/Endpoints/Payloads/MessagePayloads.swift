@@ -85,6 +85,7 @@ class MessagePayload: Decodable {
     let isSilent: Bool
     let isShadowed: Bool
     let translations: [TranslationLanguage: String]?
+    let originalLanguage: String?
     let moderationDetails: MessageModerationDetailsPayload?
 
     var pinned: Bool
@@ -147,8 +148,9 @@ class MessagePayload: Decodable {
         pinnedAt = try container.decodeIfPresent(Date.self, forKey: .pinnedAt)
         pinExpires = try container.decodeIfPresent(Date.self, forKey: .pinExpires)
         quotedMessageId = try container.decodeIfPresent(MessageId.self, forKey: .quotedMessageId)
-        // Translations are only available for messages returned via `message.translate()`
-        translations = (try container.decodeIfPresent(MessageTranslationsPayload.self, forKey: .i18n))?.translated
+        let i18n = try container.decodeIfPresent(MessageTranslationsPayload.self, forKey: .i18n)
+        translations = i18n?.translated
+        originalLanguage = i18n?.originalLanguage
         moderationDetails = try container.decodeIfPresent(MessageModerationDetailsPayload.self, forKey: .moderationDetails)
     }
 
@@ -184,6 +186,7 @@ class MessagePayload: Decodable {
         pinnedAt: Date? = nil,
         pinExpires: Date? = nil,
         translations: [TranslationLanguage: String]? = nil,
+        originalLanguage: String? = nil,
         moderationDetails: MessageModerationDetailsPayload? = nil
     ) {
         self.id = id
@@ -217,6 +220,7 @@ class MessagePayload: Decodable {
         self.pinExpires = pinExpires
         self.quotedMessageId = quotedMessageId
         self.translations = translations
+        self.originalLanguage = originalLanguage
         self.moderationDetails = moderationDetails
     }
 }

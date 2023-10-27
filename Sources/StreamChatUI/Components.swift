@@ -138,6 +138,9 @@ public struct Components {
     /// A boolean value that determines whether swiping to quote reply is available.
     public var messageSwipeToReplyEnabled = false
 
+    /// A boolean value that determines whether automatic translation is enabled.
+    public var messageAutoTranslationEnabled = false
+
     /// The view controller used to perform message actions.
     public var messageActionsVC: ChatMessageActionsVC.Type = ChatMessageActionsVC.self
 

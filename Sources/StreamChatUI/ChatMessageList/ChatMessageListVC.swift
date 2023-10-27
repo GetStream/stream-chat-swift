@@ -174,6 +174,7 @@ open class ChatMessageListVC: _ViewController,
         }
 
         components.messageLayoutOptionsResolver.config = client.config
+        components.messageLayoutOptionsResolver.components = components
 
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress))
         longPress.minimumPressDuration = 0.33

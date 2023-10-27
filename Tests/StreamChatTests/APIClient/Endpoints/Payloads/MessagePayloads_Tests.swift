@@ -47,6 +47,7 @@ final class MessagePayload_Tests: XCTestCase {
         XCTAssertEqual(payload.pinnedBy?.id, "broken-waterfall-5")
         XCTAssertEqual(payload.quotedMessageId, "4C0CC2DA-8AB5-421F-808E-50DC7E40653D")
         XCTAssertEqual(payload.translations, [.italian: "si sono qui", .dutch: "ja ik ben hier"])
+        XCTAssertEqual(payload.originalLanguage, "it")
     }
 
     func test_messagePayload_isSerialized_withDefaultExtraData_withBrokenAttachmentPayload() throws {

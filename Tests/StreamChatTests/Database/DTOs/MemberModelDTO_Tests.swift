@@ -37,6 +37,7 @@ final class MemberModelDTO_Tests: XCTestCase {
             isInvisible: true,
             isBanned: true,
             teams: ["RED", "GREEN"],
+            language: "pt",
             extraData: ["k": .string("v")]
         )
 
@@ -78,6 +79,7 @@ final class MemberModelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.user!.lastActiveAt, loadedMember?.lastActiveAt)
             Assert.willBeEqual(payload.user!.extraData, loadedMember?.extraData)
             Assert.willBeEqual(Set(payload.user!.teams), loadedMember?.teams)
+            Assert.willBeEqual(payload.user!.language!, loadedMember?.language?.languageCode)
         }
     }
 
@@ -97,6 +99,7 @@ final class MemberModelDTO_Tests: XCTestCase {
             isOnline: true,
             isInvisible: true,
             isBanned: true,
+            language: nil,
             extraData: .init()
         )
 

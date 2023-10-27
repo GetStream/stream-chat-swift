@@ -47,8 +47,9 @@ class MessageDTO: NSManagedObject {
     @NSManaged var ownReactions: [ReactionString]
 
     @NSManaged var translations: [String: String]?
+    @NSManaged var originalLanguage: String?
+    
     @NSManaged var moderationDetails: MessageModerationDetailsDTO?
-
     var isBounced: Bool {
         moderationDetails?.action == MessageModerationAction.bounce.rawValue
     }
@@ -768,6 +769,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         }
 
         dto.translations = payload.translations?.mapKeys { $0.languageCode }
+        dto.originalLanguage = payload.originalLanguage
 
         if let moderationDetailsPayload = payload.moderationDetails {
             dto.moderationDetails = MessageModerationDetailsDTO.create(
@@ -1084,6 +1086,7 @@ private extension ChatMessage {
         reactionScores = dto.reactionScores.mapKeys { MessageReactionType(rawValue: $0) }
         reactionCounts = dto.reactionCounts.mapKeys { MessageReactionType(rawValue: $0) }
         translations = dto.translations?.mapKeys { TranslationLanguage(languageCode: $0) }
+        originalLanguage = dto.originalLanguage.map(TranslationLanguage.init)
         moderationDetails = dto.moderationDetails.map {
             MessageModerationDetails(
                 originalText: $0.originalText,

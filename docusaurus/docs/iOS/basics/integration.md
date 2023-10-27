@@ -27,7 +27,7 @@ Open your `.xcodeproj`, select the option "Add Package..." in the File menu, and
 <p>
 
 :::caution
-Our XCFrameworks are built with **Swift 5.5**. In order to use them you need **Xcode 13** or above
+Our XCFrameworks are built with **Swift 5.7**. In order to use them you need **Xcode 14** or above
 :::
 
 You can learn more about [our Module Stable XCFrameworks here](#xcframeworks)
@@ -76,7 +76,7 @@ In your project's `Podfile`, add one of these options
 <p>
 
 :::caution
-Our XCFrameworks are built with **Swift 5.5**. In order to use them you need **Xcode 13** or above
+Our XCFrameworks are built with **Swift 5.7**. In order to use them you need **Xcode 14** or above
 :::
 
 You can learn more about [our Module Stable XCFrameworks here](#xcframeworks)
@@ -116,7 +116,7 @@ _More information about CocoaPods [can be found here](https://cocoapods.org/)._
 
 ### Carthage
 
-If you are using **Swift 5.5 / Xcode 13** or above, the recommended method for Carthage is to use **pre-built XCFrameworks**.
+If you are using **Swift 5.7 / Xcode 14** or above, the recommended method for Carthage is to use **pre-built XCFrameworks**.
 
 :::note
 Our SwiftUI components library is not yet available using Carthage, please use Swift Package Manager or CocoaPods.
@@ -126,7 +126,7 @@ Our SwiftUI components library is not yet available using Carthage, please use S
 <p>
 
 :::caution
-Our XCFrameworks are built with **Swift 5.5**. In order to use them you need **Xcode 13** or above
+Our XCFrameworks are built with **Swift 5.7**. In order to use them you need **Xcode 14** or above
 :::
 
 You can learn more about [our Module Stable XCFrameworks here](#xcframeworks)
@@ -183,7 +183,7 @@ _More information about Carthage [can be found here](https://github.com/Carthage
 In an effort to have [**Module Stability**](https://www.swift.org/blog/library-evolution/), we have started distributing **pre-built XCFrameworks** starting ***4.6.0***
 
 :::info
-Our XCFrameworks are built with Swift 5.5. In order to use them you need Xcode 13 or above.
+Our XCFrameworks are built with Swift 5.7. In order to use them you need Xcode 14 or above.
 :::
 
 An **XCFramework** is a package that contains binaries for multiple architectures/platforms, but only the particular slice of that package required for your architecture/platform will be used.

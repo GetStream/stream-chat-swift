@@ -260,8 +260,16 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
         CopyActionItem(
             action: { [weak self] _ in
                 guard let self = self else { return }
-                UIPasteboard.general.string = self.message?.text
 
+                let text: String?
+                if let currentUserLang = self.channel?.membership?.language,
+                   let translatedText = self.message?.translatedText(for: currentUserLang) {
+                    text = translatedText
+                } else {
+                    text = self.message?.text
+                }
+
+                UIPasteboard.general.string = text
                 self.delegate?.chatMessageActionsVCDidFinish(self)
             },
             appearance: appearance

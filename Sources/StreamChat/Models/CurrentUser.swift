@@ -69,6 +69,7 @@ public class CurrentChatUser: ChatUser {
         deactivatedAt: Date?,
         lastActiveAt: Date?,
         teams: Set<TeamId>,
+        language: TranslationLanguage?,
         extraData: [String: RawJSON],
         devices: [Device],
         currentDevice: Device?,
@@ -100,6 +101,7 @@ public class CurrentChatUser: ChatUser {
             deactivatedAt: deactivatedAt,
             lastActiveAt: lastActiveAt,
             teams: teams,
+            language: language,
             extraData: extraData
         )
 

@@ -49,6 +49,7 @@
 
 "message.threads.reply" = "Thread Reply";
 "message.threads.replyWith" = "with %@";
+"message.translatedTo" = "Translated to %@";
 
 "alert.actions.cancel" = "Cancel";
 "alert.actions.delete" = "Delete";

@@ -60,6 +60,9 @@ public class ChatUser {
     /// [docs](https://getstream.io/chat/docs/multi_tenant_chat/?language=swift) for more info.
     public let teams: Set<TeamId>
 
+    /// The language code of the user.
+    public let language: TranslationLanguage?
+
     public let extraData: [String: RawJSON]
 
     init(
@@ -75,6 +78,7 @@ public class ChatUser {
         deactivatedAt: Date?,
         lastActiveAt: Date?,
         teams: Set<TeamId>,
+        language: TranslationLanguage?,
         extraData: [String: RawJSON]
     ) {
         self.id = id
@@ -89,6 +93,7 @@ public class ChatUser {
         userDeactivatedAt = deactivatedAt
         self.lastActiveAt = lastActiveAt
         self.teams = teams
+        self.language = language
         self.extraData = extraData
     }
 }

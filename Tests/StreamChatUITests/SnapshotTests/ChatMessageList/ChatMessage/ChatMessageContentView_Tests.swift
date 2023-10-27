@@ -23,6 +23,7 @@ final class ChatMessageContentView_Tests: XCTestCase {
         /// Dummy snapshot to preload the TestImages.r2.url image
         /// This was the only workaround to make sure the image always appears in the snapshots.
         let view = UIImageView(frame: .init(center: .zero, size: .init(width: 100, height: 100)))
+        Components.default.imageLoader.loadImage(into: view, from: TestImages.yoda.url)
         Components.default.imageLoader.loadImage(into: view, from: TestImages.r2.url)
         AssertSnapshot(view, variants: [.defaultLight])
     }
@@ -424,6 +425,125 @@ final class ChatMessageContentView_Tests: XCTestCase {
         )
 
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
+
+    func test_appearance_whenMessageHasTranslation_whenIsSentByCurrentUser() throws {
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "Hello",
+            author: me,
+            createdAt: createdAt,
+            translations: [.portuguese: "Olá"],
+            localState: nil,
+            isSentByCurrentUser: true
+        )
+
+        let view = contentView(
+            message: message,
+            channel: .mock(cid: .unique, membership: .mock(id: .unique, language: .portuguese))
+        )
+        view.layoutOptions?.insert(.translation)
+
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
+
+    func test_appearance_whenMessageHasTranslation_whenNotSentByCurrentUser() throws {
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "Hello",
+            author: .unique,
+            createdAt: createdAt,
+            translations: [.portuguese: "Olá"],
+            localState: nil,
+            isSentByCurrentUser: false
+        )
+
+        let view = contentView(
+            message: message,
+            channel: .mock(cid: .unique, membership: .mock(id: .unique, language: .portuguese))
+        )
+        view.layoutOptions?.insert(.translation)
+
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
+
+    func test_appearance_whenMessageHasTranslation_whenHasAttachment() throws {
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "Hello",
+            author: .unique,
+            createdAt: createdAt,
+            translations: [.portuguese: "Olá"],
+            attachments: [.dummy(
+                id: .unique,
+                type: .image,
+                payload: try JSONEncoder.stream.encode(ImageAttachmentPayload(
+                    title: nil,
+                    imageRemoteURL: TestImages.r2.url
+                )
+                ),
+                uploadingState: nil
+            )],
+            localState: nil,
+            isSentByCurrentUser: false
+        )
+
+        let view = contentView(
+            message: message,
+            channel: .mock(cid: .unique, membership: .mock(id: .unique, language: .portuguese)),
+            attachmentInjector: GalleryAttachmentViewInjector.self
+        )
+        view.layoutOptions?.insert(.translation)
+
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
+
+    func test_appearance_whenMessageHasTranslation_whenNotLastInGroup() throws {
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "Hello",
+            author: .unique,
+            createdAt: createdAt,
+            translations: [.portuguese: "Olá"],
+            localState: nil,
+            isSentByCurrentUser: true
+        )
+
+        let view = contentView(
+            message: message,
+            channel: .mock(cid: .unique, membership: .mock(id: .unique, language: .portuguese)),
+            layout: message.layout(isLastInGroup: false)
+        )
+        view.layoutOptions?.insert(.translation)
+
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
+
+    func test_appearance_whenQuoteMessageHasTranslation() throws {
+        let quotedMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "Hello",
+            author: .unique,
+            createdAt: createdAt,
+            translations: [.portuguese: "Olá"],
+            localState: nil,
+            isSentByCurrentUser: true
+        )
+
+        let message: ChatMessage = .mock(id: .unique, text: "Reply Text", quotedMessage: quotedMessage)
+
+        let view = contentView(
+            message: message,
+            channel: .mock(cid: .unique, membership: .mock(id: .unique, language: .portuguese))
+        )
+        view.layoutOptions?.insert(.translation)
+
+        AssertSnapshot(view, variants: [.defaultLight])
     }
 
     func test_chatReactionsBubbleViewInjectable() {

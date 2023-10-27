@@ -199,6 +199,7 @@
         <attribute name="locallyCreatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="localMessageStateRaw" optional="YES" attributeType="String"/>
         <attribute name="newestReplyAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="originalLanguage" optional="YES" attributeType="String"/>
         <attribute name="ownReactions" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformer"/>
         <attribute name="parentMessageId" optional="YES" attributeType="String"/>
         <attribute name="pinExpires" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -299,6 +300,7 @@
         <attribute name="imageURL" optional="YES" attributeType="URI"/>
         <attribute name="isBanned" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="isOnline" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="language" optional="YES" attributeType="String"/>
         <attribute name="lastActivityAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="teams" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformer"/>

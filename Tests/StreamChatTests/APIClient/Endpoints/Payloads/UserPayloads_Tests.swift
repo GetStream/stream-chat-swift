@@ -26,6 +26,7 @@ final class UserPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.role, .user)
         XCTAssertEqual(payload.isOnline, true)
         XCTAssertEqual(payload.teams.count, 3)
+        XCTAssertEqual(payload.language, "pt")
     }
 
     func test_currentUserJSON_isSerialized_withCustomExtraData() throws {
@@ -39,6 +40,7 @@ final class UserPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.role, .user)
         XCTAssertEqual(payload.isOnline, true)
         XCTAssertEqual(payload.teams.count, 3)
+        XCTAssertEqual(payload.language, "pt")
 
         XCTAssertEqual(payload.extraData, ["secret_note": .string("Anaking is Vader!")])
     }
@@ -58,6 +60,7 @@ final class UserPayload_Tests: XCTestCase {
             URL(string: "https://getstream.io/random_png/?name=Bitter+cloud")!
         )
         XCTAssertEqual(payload.teams.count, 3)
+        XCTAssertEqual(payload.language, "pt")
         XCTAssertEqual(payload.role, .guest)
         XCTAssertEqual(payload.isOnline, true)
     }
