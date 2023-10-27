@@ -1953,6 +1953,8 @@
 		C186BFAF27AADB410099CCA6 /* SyncOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = C186BFAE27AADB410099CCA6 /* SyncOperations.swift */; };
 		C186BFB027AADB410099CCA6 /* SyncOperations.swift in Sources */ = {isa = PBXBuildFile; fileRef = C186BFAE27AADB410099CCA6 /* SyncOperations.swift */; };
 		C186BFB627AAFDAB0099CCA6 /* SyncOperations_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C186BFB527AAFDAB0099CCA6 /* SyncOperations_Tests.swift */; };
+		C189D7782AEBC6CD00D4B966 /* BackgroundDatabaseObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = C189D7772AEBC6CD00D4B966 /* BackgroundDatabaseObserver.swift */; };
+		C189D7792AEBC6CD00D4B966 /* BackgroundDatabaseObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = C189D7772AEBC6CD00D4B966 /* BackgroundDatabaseObserver.swift */; };
 		C18F5B522840BD2C00527915 /* DBDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C18F5B512840BD2C00527915 /* DBDate.swift */; };
 		C18F5B532840BD2C00527915 /* DBDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C18F5B512840BD2C00527915 /* DBDate.swift */; };
 		C19B9C3227D0FB0800D308C0 /* EndpointPath_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C19B9C3127D0FB0800D308C0 /* EndpointPath_Tests.swift */; };
@@ -3901,6 +3903,7 @@
 		C186BFAE27AADB410099CCA6 /* SyncOperations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncOperations.swift; sourceTree = "<group>"; };
 		C186BFB127AAF7E00099CCA6 /* ChatChannelController_Spy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelController_Spy.swift; sourceTree = "<group>"; };
 		C186BFB527AAFDAB0099CCA6 /* SyncOperations_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncOperations_Tests.swift; sourceTree = "<group>"; };
+		C189D7772AEBC6CD00D4B966 /* BackgroundDatabaseObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundDatabaseObserver.swift; sourceTree = "<group>"; };
 		C18F5B512840BD2C00527915 /* DBDate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DBDate.swift; sourceTree = "<group>"; };
 		C19B9C3127D0FB0800D308C0 /* EndpointPath_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndpointPath_Tests.swift; sourceTree = "<group>"; };
 		C1A25D5F29E70DEB00DAE933 /* FetchCache_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchCache_Tests.swift; sourceTree = "<group>"; };
@@ -5206,6 +5209,7 @@
 				79280F4E2485308100CDEB89 /* DataController.swift */,
 				792AF91524D812440010097B /* EntityDatabaseObserver.swift */,
 				C15C8837286C7BF300E6A72C /* BackgroundListDatabaseObserver.swift */,
+				C189D7772AEBC6CD00D4B966 /* BackgroundDatabaseObserver.swift */,
 				79E2B83F24CAC8D60024752F /* ListDatabaseObserver.swift */,
 				DAE566F22500F97E00E39431 /* ChannelController */,
 				DAE566F32500F98D00E39431 /* ChannelListController */,
@@ -10494,6 +10498,7 @@
 				79877A092498E4BC00015F8B /* User.swift in Sources */,
 				79B5517324E593C200CE9FEC /* UserPayloads.swift in Sources */,
 				79D6CF1825FA671C00BE2EEC /* MemberEventMiddleware.swift in Sources */,
+				C189D7782AEBC6CD00D4B966 /* BackgroundDatabaseObserver.swift in Sources */,
 				649968D5264E66EB000515AB /* CDNClient.swift in Sources */,
 				40A458ED2A03AC7C00C198F7 /* AVAsset+TotalAudioSamples.swift in Sources */,
 				8899BC53254318CC003CB98B /* MessageReaction.swift in Sources */,
@@ -11076,6 +11081,7 @@
 				C121E877274544AF00023E4C /* MemberModelDTO.swift in Sources */,
 				C121E878274544AF00023E4C /* ChannelDTO.swift in Sources */,
 				40C20EB329F69E1D00702EEE /* ChatMessageVoiceRecordingAttachment.swift in Sources */,
+				C189D7792AEBC6CD00D4B966 /* BackgroundDatabaseObserver.swift in Sources */,
 				40789D1A29F6AC500018C2BB /* AudioPlayerObserving.swift in Sources */,
 				4042969329FBF84B0089126D /* AudioSamplesProcessor_Tests.swift in Sources */,
 				C173538F27D9F804008AC412 /* KeyedDecodingContainer+Array.swift in Sources */,
