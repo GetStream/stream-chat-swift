@@ -546,10 +546,6 @@ class MessageUpdater: Worker {
                 )
             }
 
-            if messageDTO.isBounced {
-                messageDTO.text = messageDTO.moderationDetails?.originalText ?? messageDTO.text
-            }
-
             messageDTO.localMessageState = .pendingSend
         }, completion: completion)
     }
