@@ -445,7 +445,7 @@ class BackgroundEntityDatabaseObserver<Item, DTO: NSManagedObject> {
 
         changeAggregator.onDidChange = { [weak self] changes in
             log.assert(changes.count <= 1, "EntityDatabaseObserver predicate shouldn't produce more than one change")
-            self?.updateItem(changes, notify: true)
+            self?.updateItem(changes: changes)
         }
 
         listenForRemoveAllDataNotifications()
@@ -468,14 +468,15 @@ class BackgroundEntityDatabaseObserver<Item, DTO: NSManagedObject> {
 
         frc.delegate = changeAggregator
 
+        /// Because this observer does not get items synchronously, we start a process to get the items, which will then notify via its blocks.
         getInitialItems()
     }
 
     private func getInitialItems() {
-        updateItem(nil, notify: false)
+        updateItem(changes: nil)
     }
 
-    private func updateItem(_ changes: [ListChange<Item>]?, notify: Bool) {
+    private func updateItem(changes: [ListChange<Item>]?) {
         let operation = AsyncOperation { [weak self] _, done in
             guard let self = self else {
                 done(.continue)
@@ -483,7 +484,7 @@ class BackgroundEntityDatabaseObserver<Item, DTO: NSManagedObject> {
             }
 
             self.frc.managedObjectContext.perform {
-                self.processItem(changes, notify: notify) {
+                self.processItem(changes) {
                     done(.continue)
                 }
             }
@@ -492,7 +493,7 @@ class BackgroundEntityDatabaseObserver<Item, DTO: NSManagedObject> {
         processingQueue.addOperation(operation)
     }
 
-    private func processItem(_ changes: [ListChange<Item>]?, notify: Bool, onCompletion: @escaping () -> Void) {
+    private func processItem(_ changes: [ListChange<Item>]?, onCompletion: @escaping () -> Void) {
         mapItem { [weak self] item in
             guard let self = self else {
                 onCompletion()
@@ -501,13 +502,9 @@ class BackgroundEntityDatabaseObserver<Item, DTO: NSManagedObject> {
 
             self.queue.async(flags: .barrier) {
                 self._item = item
+                let returnedChanges = changes ?? (item.map { [.insert($0, index: IndexPath(item: 0, section: 0))] } ?? [])
+                self.notifyDidChange(changes: returnedChanges, onCompletion: onCompletion)
             }
-
-            let returnedChanges = changes ?? (item.map { [.insert($0, index: IndexPath(item: 0, section: 0))] } ?? [])
-            if notify {
-                self.notifyDidChange(changes: returnedChanges)
-            }
-            onCompletion()
         }
     }
 
@@ -536,10 +533,14 @@ class BackgroundEntityDatabaseObserver<Item, DTO: NSManagedObject> {
         }
     }
 
-    private func notifyDidChange(changes: [ListChange<Item>]) {
-        guard let change = changes.first.map(EntityChange.init) else { return }
+    private func notifyDidChange(changes: [ListChange<Item>], onCompletion: @escaping () -> Void) {
+        guard let change = changes.first.map(EntityChange.init) else {
+            onCompletion()
+            return
+        }
         DispatchQueue.main.async { [weak self] in
             self?.listeners.forEach { $0(change) }
+            onCompletion()
         }
     }
 
