@@ -54,10 +54,6 @@ public extension ChatMessage {
             return nil
         }
 
-        if isBounced {
-            return moderationDetails?.originalText
-        }
-
         return isDeleted ? L10n.Message.deletedMessagePlaceholder : text
     }
 
