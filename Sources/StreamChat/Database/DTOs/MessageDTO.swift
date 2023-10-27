@@ -1015,7 +1015,18 @@ extension NSManagedObjectContext: MessageDatabaseSession {
 
 extension MessageDTO {
     /// Snapshots the current state of `MessageDTO` and returns an immutable model object from it.
-    func asModel() throws -> ChatMessage { try .init(fromDTO: self) }
+    func asModel() throws -> ChatMessage { try .init(fromDTO: self, depth: 0) }
+
+    /// Snapshots the current state of `MessageDTO` and returns an immutable model object from it if the dependency depth
+    /// limit has not been reached
+    func relationshipAsModel(depth: Int) throws -> ChatMessage? {
+        do {
+            return try ChatMessage(fromDTO: self, depth: depth + 1)
+        } catch {
+            if error is RecursionLimitError { return nil }
+            throw error
+        }
+    }
 
     /// Snapshots the current state of `MessageDTO` and returns its representation for the use in API calls.
     func asRequestBody() -> MessageRequestBody {
@@ -1057,7 +1068,10 @@ extension MessageDTO {
 }
 
 private extension ChatMessage {
-    init(fromDTO dto: MessageDTO) throws {
+    init(fromDTO dto: MessageDTO, depth: Int) throws {
+        guard StreamRuntimeCheck._canFetchRelationship(currentDepth: depth) else {
+            throw RecursionLimitError()
+        }
         guard dto.isValid, let context = dto.managedObjectContext else {
             throw InvalidModel(dto)
         }
@@ -1164,11 +1178,11 @@ private extension ChatMessage {
             $_latestReplies = ({
                 MessageDTO
                     .loadReplies(for: dto.id, limit: 5, context: context)
-                    .compactMap { try? ChatMessage(fromDTO: $0) }
+                    .compactMap { try? ChatMessage(fromDTO: $0, depth: depth) }
             }, dto.managedObjectContext)
         }
 
-        $_quotedMessage = ({ try? dto.quotedMessage?.asModel() }, dto.managedObjectContext)
+        $_quotedMessage = ({ try? dto.quotedMessage?.relationshipAsModel(depth: depth) }, dto.managedObjectContext)
 
         let readBy = {
             Set(dto.reads.compactMap { try? $0.user.asModel() })

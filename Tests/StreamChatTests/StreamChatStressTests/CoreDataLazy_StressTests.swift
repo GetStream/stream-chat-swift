@@ -21,7 +21,6 @@ final class CoreDataLazy_Tests: StressTestCase {
     override func tearDown() {
         AssertAsync.canBeReleased(&database)
         database = nil
-        StreamRuntimeCheck._isBackgroundMappingEnabled = false
         super.tearDown()
     }
 
@@ -113,6 +112,7 @@ final class CoreDataLazy_Tests: StressTestCase {
     }
 
     func test_lazyHasEffectWhen_backgroundMappingDisabled() throws {
+        let originalIsBackgroundMappingEnabled = StreamRuntimeCheck._isBackgroundMappingEnabled
         StreamRuntimeCheck._isBackgroundMappingEnabled = false
 
         let context = SpyContext(persistenStore: database.persistentStoreCoordinator)
@@ -131,9 +131,11 @@ final class CoreDataLazy_Tests: StressTestCase {
         context.performAndWaitCount = 0
         _ = chatMessage.attachmentCounts
         XCTAssertEqual(context.performAndWaitCount, 1)
+        StreamRuntimeCheck._isBackgroundMappingEnabled = originalIsBackgroundMappingEnabled
     }
 
     func test_lazyHasNoEffectWhen_backgroundMappingEnabled() throws {
+        let originalIsBackgroundMappingEnabled = StreamRuntimeCheck._isBackgroundMappingEnabled
         StreamRuntimeCheck._isBackgroundMappingEnabled = true
 
         let context = SpyContext(persistenStore: database.persistentStoreCoordinator)
@@ -152,48 +154,7 @@ final class CoreDataLazy_Tests: StressTestCase {
         context.performAndWaitCount = 0
         _ = chatMessage.attachmentCounts
         XCTAssertEqual(context.performAndWaitCount, 0)
-    }
-
-    func test_lazyIsRespectedWhen_forcedLazy_backgroundMappingDisabled() throws {
-        StreamRuntimeCheck._isBackgroundMappingEnabled = false
-
-        let context = SpyContext(persistenStore: database.persistentStoreCoordinator)
-        let messageDTO = try createMessageDTO(in: context)
-
-        var chatMessage: ChatMessage!
-        context.performAndWait {
-            do {
-                chatMessage = try messageDTO.asModel()
-            } catch {
-                XCTFail()
-                return
-            }
-        }
-
-        context.performAndWaitCount = 0
-        _ = chatMessage.quotedMessage
-        XCTAssertEqual(context.performAndWaitCount, 1)
-    }
-
-    func test_lazyIsRespectedWhen_forcedLazy_backgroundMappingEnabled() throws {
-        StreamRuntimeCheck._isBackgroundMappingEnabled = true
-
-        let context = SpyContext(persistenStore: database.persistentStoreCoordinator)
-        let messageDTO = try createMessageDTO(in: context)
-
-        var chatMessage: ChatMessage!
-        context.performAndWait {
-            do {
-                chatMessage = try messageDTO.asModel()
-            } catch {
-                XCTFail()
-                return
-            }
-        }
-
-        context.performAndWaitCount = 0
-        _ = chatMessage.quotedMessage
-        XCTAssertEqual(context.performAndWaitCount, 1)
+        StreamRuntimeCheck._isBackgroundMappingEnabled = originalIsBackgroundMappingEnabled
     }
 
     private func createMessageDTO(in context: NSManagedObjectContext) throws -> MessageDTO {

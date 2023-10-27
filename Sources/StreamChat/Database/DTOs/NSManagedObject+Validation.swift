@@ -30,3 +30,5 @@ struct InvalidModel: LocalizedError {
         "\(entityName ?? "Unknown") object with ID \(id) is invalid"
     }
 }
+
+struct RecursionLimitError: LocalizedError {}
