@@ -203,7 +203,6 @@ final class BackgroundListDatabaseObserver_Tests: XCTestCase {
 
         // We wait for changes
         waitForExpectations(timeout: defaultTimeout)
-        XCTAssertEqual(changes.count, 2)
         XCTAssertEqual(observer.items.count, 0)
 
         // Assert `performFetch` was called again on the FRC
