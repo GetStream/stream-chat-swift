@@ -682,7 +682,10 @@ final class MessageUpdater_Tests: XCTestCase {
         try database.writeSynchronously { session in
             guard let messageDTO = session.message(id: messageId) else { return }
 
-            messageDTO.isBounced = true
+            messageDTO.moderationDetails = MessageModerationDetailsDTO.create(
+                from: .init(originalText: "", action: MessageModerationAction.bounce.rawValue),
+                context: self.database.writableContext
+            )
             messageDTO.localMessageState = .sendingFailed
         }
 
@@ -691,9 +694,6 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Load the message
         let message = try XCTUnwrap(database.viewContext.message(id: messageId))
-
-        // Assert Bounced Message Gets marked as failedToBeSentDueToModeration as expected
-        AssertAsync.willBeEqual(message.failedToBeSentDueToModeration, true)
 
         // Assert Bounced Message Gets locally deleted
         AssertAsync.willBeEqual(message.type, MessageType.deleted.rawValue)
@@ -726,7 +726,10 @@ final class MessageUpdater_Tests: XCTestCase {
         try database.writeSynchronously { session in
             guard let messageDTO = session.message(id: messageId) else { return }
 
-            messageDTO.isBounced = true
+            messageDTO.moderationDetails = MessageModerationDetailsDTO.create(
+                from: .init(originalText: "", action: MessageModerationAction.bounce.rawValue),
+                context: self.database.writableContext
+            )
         }
 
         // Simulate `deleteMessage(messageId:)` call
@@ -734,9 +737,6 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Load the message
         let message = try XCTUnwrap(database.viewContext.message(id: messageId))
-
-        // Assert Bounced Message is not marked as failedToBeSentDueToModeration
-        AssertAsync.willBeEqual(message.failedToBeSentDueToModeration, false)
 
         // Assert Bounced Message Does not get deleted locally
         AssertAsync.willBeEqual(message.type, MessageType.regular.rawValue)
@@ -781,15 +781,15 @@ final class MessageUpdater_Tests: XCTestCase {
 
             guard let messageDTO = session.message(id: secondMessageId) else { return }
 
-            messageDTO.isBounced = true
+            messageDTO.moderationDetails = MessageModerationDetailsDTO.create(
+                from: .init(originalText: "", action: MessageModerationAction.bounce.rawValue),
+                context: self.database.writableContext
+            )
             messageDTO.localMessageState = .sendingFailed
         }
 
         // Load the message
         let message = try XCTUnwrap(database.viewContext.message(id: secondMessageId))
-
-        // Assert message is marked as failedToBeSentDueToModeration
-        XCTAssertTrue(message.failedToBeSentDueToModeration)
 
         // Delete second message
         let expectation = expectation(description: "deleteMessage completes")

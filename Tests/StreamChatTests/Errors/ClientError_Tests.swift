@@ -43,28 +43,6 @@ final class ClientError_Tests: XCTestCase {
         XCTAssertFalse(clientError.isInvalidTokenError)
     }
 
-    func test_isBouncedMessageError_whenUnderlayingErrorIsAccurate_returnsTrue() {
-        let error = ErrorPayload(
-            code: 73,
-            message: .unique,
-            statusCode: .unique
-        )
-
-        // Assert `isBouncedMessageError` returns true
-        XCTAssertTrue(error.isBouncedMessageError)
-    }
-
-    func test_isBouncedMessageError_whenUnderlayingErrorIsNotAccurate_returnsFalse() {
-        let error = ErrorPayload(
-            code: 72,
-            message: .unique,
-            statusCode: .unique
-        )
-
-        // Assert `isBouncedMessageError` returns false
-        XCTAssertFalse(error.isBouncedMessageError)
-    }
-
     func test_rateLimitError_isEphemeralError() {
         let errorPayload = ErrorPayload(
             code: 9,
