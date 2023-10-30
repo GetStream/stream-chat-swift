@@ -509,7 +509,11 @@ final class MessageDTO_Tests: XCTestCase {
             pinExpires: .unique,
             isShadowed: true,
             translations: [.english: .unique],
-            originalLanguage: "es"
+            originalLanguage: "es",
+            moderationDetails: .init(
+                originalText: "Original",
+                action: "BOUNCE"
+            )
         )
 
         try! database.writeSynchronously { session in
@@ -614,6 +618,8 @@ final class MessageDTO_Tests: XCTestCase {
         )
         XCTAssertEqual(messagePayload.translations?.mapKeys(\.languageCode), loadedMessage?.translations)
         XCTAssertEqual("es", loadedMessage?.originalLanguage)
+        XCTAssertEqual("Original", loadedMessage?.moderationDetails?.originalText)
+        XCTAssertEqual("BOUNCE", loadedMessage?.moderationDetails?.action)
     }
 
     func test_message_isNotOverwrittenWhenAlreadyInDatabase_andIsPending() throws {
