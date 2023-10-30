@@ -205,6 +205,31 @@ final class ChatMessage_Tests: XCTestCase {
         }
     }
 
+    func test_isLastActionFailed_whenMessageIsBounced_returnsTrue() {
+        for localState: LocalMessageState? in [
+            nil,
+            .pendingSync,
+            .syncing,
+            .syncingFailed,
+            .pendingSend,
+            .sending,
+            .sendingFailed,
+            .deleting,
+            .deletingFailed
+        ] {
+            let message: ChatMessage = .mock(
+                id: .unique,
+                cid: .unique,
+                text: .unique,
+                author: .mock(id: .unique),
+                isBounced: true,
+                localState: localState
+            )
+
+            XCTAssertTrue(message.isLastActionFailed)
+        }
+    }
+
     // MARK: - isRootOfThread
 
     func test_isRootOfThread_whenMessageIsPartOfThread_returnsFalse() {
