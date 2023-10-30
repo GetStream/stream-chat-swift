@@ -950,7 +950,10 @@ final class MessageDTO_Tests: XCTestCase {
             pinned: true,
             pinnedByUserId: .unique,
             pinnedAt: .unique,
-            pinExpires: .unique
+            pinExpires: .unique,
+            moderationDetails: .init(
+                originalText: "Original", action: "MESSAGE_RESPONSE_ACTION_BOUNCE"
+            )
         )
 
         // Asynchronously save the payload to the db
@@ -994,6 +997,10 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedMessage.quotedMessage?.id, messagePayload.quotedMessage?.id)
         XCTAssertEqual(loadedMessage.quotedMessage?.author.id, messagePayload.quotedMessage?.user.id)
         XCTAssertEqual(loadedMessage.quotedMessage?.extraData, messagePayload.quotedMessage?.extraData)
+        // Moderation
+        XCTAssertEqual(loadedMessage.moderationDetails?.originalText, "Original")
+        XCTAssertEqual(loadedMessage.moderationDetails?.action, MessageModerationAction.bounce)
+        XCTAssertEqual(loadedMessage.isBounced, true)
 
         // Attachments
         XCTAssertEqual(
