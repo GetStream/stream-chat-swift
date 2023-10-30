@@ -1231,6 +1231,50 @@ final class MessageDTO_Tests: XCTestCase {
         }
     }
 
+    func test_moderationDetails_whenIsNil_shouldResetCurrentModerationDetails() throws {
+        let messageId: MessageId = .unique
+        let channelId: ChannelId = .unique
+        let userId: UserId = .unique
+        let messagePayload: MessagePayload = .dummy(
+            messageId: messageId,
+            authorUserId: userId,
+            moderationDetails: .init(originalText: "original", action: "dummy")
+        )
+
+        let messagePayloadResetModeration: MessagePayload = .dummy(
+            messageId: messageId,
+            authorUserId: userId,
+            moderationDetails: nil
+        )
+
+        var loadedMessage: ChatMessage? {
+            try? database.viewContext.message(id: messageId)?.asModel()
+        }
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: channelId)))
+            try session.saveMessage(
+                payload: messagePayload,
+                for: channelId,
+                syncOwnReactions: true,
+                cache: nil
+            )
+        }
+
+        XCTAssertNotNil(loadedMessage?.moderationDetails)
+
+        try database.writeSynchronously { session in
+            try session.saveMessage(
+                payload: messagePayloadResetModeration,
+                for: channelId,
+                syncOwnReactions: true,
+                cache: nil
+            )
+        }
+
+        XCTAssertNil(loadedMessage?.moderationDetails)
+    }
+
     func test_DTO_updateFromSamePayload_doNotProduceChanges() throws {
         // Arrange: Store random message payload to db
         let channelId: ChannelId = .unique
