@@ -455,49 +455,9 @@ final class MessageUpdater_Tests: XCTestCase {
         XCTAssertEqual(completionCalledError as? TestError, databaseError)
     }
 
-    func test_deleteMessage_softlyRemovesMessageThatExistOnlyLocally_localStorageDisabled() throws {
-        recreateUpdater(isLocalStorageEnabled: false)
-
-        for state in [LocalMessageState.pendingSend, .sendingFailed] {
-            let currentUserId: UserId = .unique
-            let messageId: MessageId = .unique
-
-            // Flush the database
-            let exp = expectation(description: "removeAllData completion")
-            database.removeAllData { error in
-                if let error = error {
-                    XCTFail("removeAllData failed with \(error)")
-                }
-                exp.fulfill()
-            }
-            wait(for: [exp], timeout: defaultTimeout)
-
-            // Create current user in the database
-            try database.createCurrentUser(id: currentUserId)
-
-            // Create a new message in the database
-            try database.createMessage(id: messageId, authorId: currentUserId, localState: state)
-
-            let expectation = expectation(description: "deleteMessage")
-
-            // Simulate `deleteMessage(messageId:)` call
-            messageUpdater.deleteMessage(messageId: messageId, hard: false) { error in
-                XCTAssertNil(error)
-                expectation.fulfill()
-            }
-
-            wait(for: [expectation], timeout: defaultTimeout)
-            let message = try XCTUnwrap(database.viewContext.message(id: messageId))
-
-            XCTAssertNotNil(message.deletedAt)
-            XCTAssertEqual(message.type, MessageType.deleted.rawValue)
-            XCTAssertNil(apiClient.request_endpoint)
-        }
-    }
-
-    func test_deleteMessage_softlyRemovesMessageThatExistOnlyLocally_localStorageEnabled() throws {
+    func test_deleteMessage_whenIsLocalOnly_shouldNotCallAPI_shouldHardDelete() throws {
         recreateUpdater(isLocalStorageEnabled: true)
-        let state = LocalMessageState.sendingFailed
+
         let currentUserId: UserId = .unique
         let messageId: MessageId = .unique
 
@@ -510,57 +470,12 @@ final class MessageUpdater_Tests: XCTestCase {
             exp.fulfill()
         }
         wait(for: [exp], timeout: defaultTimeout)
-        messageRepository.clear()
 
         // Create current user in the database
         try database.createCurrentUser(id: currentUserId)
 
         // Create a new message in the database
-        try database.createMessage(id: messageId, authorId: currentUserId, localState: state)
-
-        let expectation = expectation(description: "deleteMessage")
-
-        // Simulate `deleteMessage(messageId:)` call
-        messageUpdater.deleteMessage(messageId: messageId, hard: false) { error in
-            XCTAssertNil(error)
-            expectation.fulfill()
-        }
-
-        // Assert correct endpoint is called
-        let expectedEndpoint: Endpoint<MessagePayload.Boxed> = .deleteMessage(messageId: messageId, hard: false)
-        AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
-
-        // Simulate API response with success
-        let response: Result<MessagePayload.Boxed, Error> =
-            .success(.init(message: .dummy(messageId: .unique, authorUserId: .unique)))
-        apiClient.test_simulateResponse(response)
-
-        wait(for: [expectation], timeout: defaultTimeout)
-        XCTAssertCall("saveSuccessfullyDeletedMessage(message:completion:)", on: messageRepository, times: 1)
-    }
-    
-    func test_deleteMessage_softlyRemovesMessageThatExistOnlyLocally_pendingSend() throws {
-        recreateUpdater(isLocalStorageEnabled: true)
-        let state = LocalMessageState.pendingSend
-        let currentUserId: UserId = .unique
-        let messageId: MessageId = .unique
-
-        // Flush the database
-        let exp = expectation(description: "removeAllData completion")
-        database.removeAllData { error in
-            if let error = error {
-                XCTFail("removeAllData failed with \(error)")
-            }
-            exp.fulfill()
-        }
-        wait(for: [exp], timeout: defaultTimeout)
-        messageRepository.clear()
-
-        // Create current user in the database
-        try database.createCurrentUser(id: currentUserId)
-
-        // Create a new message in the database
-        try database.createMessage(id: messageId, authorId: currentUserId, localState: state)
+        try database.createMessage(id: messageId, authorId: currentUserId, type: .ephemeral)
 
         let expectation = expectation(description: "deleteMessage")
 
@@ -575,6 +490,7 @@ final class MessageUpdater_Tests: XCTestCase {
 
         XCTAssertNotNil(message.deletedAt)
         XCTAssertEqual(message.type, MessageType.deleted.rawValue)
+        XCTAssertEqual(message.isHardDeleted, true)
         XCTAssertNil(apiClient.request_endpoint)
     }
 
