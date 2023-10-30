@@ -291,6 +291,20 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                     }
                 }
             }),
+            .init(title: "Cool channel", isEnabled: canMuteChannel, handler: { [unowned self] _ in
+                channelController.partialChannelUpdate(extraData: ["is_cool": true]) { error in
+                    if let error = error {
+                        self.rootViewController.presentAlert(title: "Couldn't make a channel \(cid) cool", message: "\(error)")
+                    }
+                }
+            }),
+            .init(title: "Uncool channel", isEnabled: canMuteChannel, handler: { [unowned self] _ in
+                channelController.partialChannelUpdate(extraData: ["is_cool": false]) { error in
+                    if let error = error {
+                        self.rootViewController.presentAlert(title: "Couldn't make a channel \(cid) uncool", message: "\(error)")
+                    }
+                }
+            }),
             .init(title: "Unmute channel", isEnabled: canMuteChannel, handler: { [unowned self] _ in
                 channelController.unmuteChannel { error in
                     if let error = error {
