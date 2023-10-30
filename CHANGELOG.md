@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChatUI
 ### ✅ Added
 - Allow easier customisation of the `ChatChannelListItemView` [#2855](https://github.com/GetStream/stream-chat-swift/pull/2855)
+### 🐞 Fixed
+- Always use `reloadChannels()` in the Channel List to improve stability [#2858](https://github.com/GetStream/stream-chat-swift/pull/2858)
 
 ## ⚠️ Important
 - From now on, our XCFrameworks will be built with Swift 5.7. In order to use them, you need Xcode 14 or above.
