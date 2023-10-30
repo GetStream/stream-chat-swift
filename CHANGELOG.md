@@ -3,9 +3,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### ⚠️ Important
+## StreamChatUI
+### ✅ Added
+- Allow easier customisation of the `ChatChannelListItemView` [#2855](https://github.com/GetStream/stream-chat-swift/pull/2855)
 
-- From now on, our XCFrameworks are built with Swift 5.7. In order to use them you need Xcode 14 or above.
+## ⚠️ Important
+- From now on, our XCFrameworks will be built with Swift 5.7. In order to use them, you need Xcode 14 or above.
 
 # [4.40.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.40.0)
 _October 25, 2023_
