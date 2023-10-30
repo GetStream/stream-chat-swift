@@ -143,6 +143,61 @@ final class MessageUpdater_Tests: XCTestCase {
         }
     }
 
+    func test_editMessage_whenBounced_shouldResendMessage() throws {
+        let currentUserId: UserId = .unique
+        let messageId: MessageId = .unique
+        let updatedText: String = .unique
+
+        // Flush the database
+        let exp = expectation(description: "removeAllData completion")
+        database.removeAllData { error in
+            if let error = error {
+                XCTFail("removeAllData failed with \(error)")
+            }
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: defaultTimeout)
+
+        // Create current user is the database
+        try database.createCurrentUser(id: currentUserId)
+
+        // Create a new bounced message in the database
+        let channelId = ChannelId.unique
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: channelId)))
+            try session.saveMessage(
+                payload: .dummy(
+                    messageId: messageId,
+                    moderationDetails: .init(
+                        originalText: "",
+                        action: MessageModerationAction.bounce.rawValue
+                    )
+                ),
+                for: channelId,
+                syncOwnReactions: false,
+                cache: nil
+            )
+        }
+
+        // Load the message
+        let message = try XCTUnwrap(database.viewContext.message(id: messageId))
+
+        // Edit created message with new text
+        let completionError = try waitFor {
+            messageUpdater.editMessage(messageId: messageId, text: updatedText, completion: $0)
+        }
+
+        // Load the edited message
+        let editedMessage = try XCTUnwrap(database.viewContext.message(id: messageId))
+
+        // Assert completion is called without any error
+        XCTAssertNil(completionError)
+        // Assert message still has expected local state
+        XCTAssertEqual(message.localMessageState, .pendingSend)
+        // Assert message text is updated correctly
+        XCTAssertEqual(message.text, updatedText)
+    }
+
     func test_editMessage_propogatesMessageEditingError_ifLocalStateIsInvalidForEditing() throws {
         let invalidStates: [LocalMessageState] = [
             .deleting,
