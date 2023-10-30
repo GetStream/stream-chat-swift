@@ -8,12 +8,11 @@ import StreamChat
 public extension ChatMessage {
     /// A boolean value that checks if actions are available on the message (e.g. `edit`, `delete`, `resend`, etc.).
     var isInteractionEnabled: Bool {
-        guard
-            type != .ephemeral, type != .system,
-            isDeleted == false
-        else { return false }
+        if isDeleted {
+            return false
+        }
 
-        if type == .error && isBounced == false {
+        if shouldRenderAsSystemMessage {
             return false
         }
 

@@ -133,6 +133,33 @@ final class ChatMessage_Tests: XCTestCase {
         }
     }
 
+    func test_isInteractionEnabled_whenMessageHasError_returnsFalse() {
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: .unique,
+            type: .error,
+            author: .mock(id: .unique),
+            localState: nil
+        )
+
+        XCTAssertFalse(message.isInteractionEnabled)
+    }
+
+    func test_isInteractionEnabled_whenMessageHasError_whenBounced_returnsTrue() {
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: .unique,
+            type: .error,
+            author: .mock(id: .unique),
+            isBounced: true,
+            localState: nil
+        )
+
+        XCTAssertTrue(message.isInteractionEnabled)
+    }
+
     // MARK: - isLastActionFailed
 
     func test_isLastActionFailed_whenNonDeletedMessageWithFailedLocalState_returnsTrue() {
