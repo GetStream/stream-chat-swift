@@ -2199,7 +2199,7 @@ final class MessageUpdater_Tests: XCTestCase {
         AssertAsync.willBeEqual(completionError as? TestError, databaseError)
     }
 
-    func test_resendMessage_happyPath() throws {
+    func test_resendMessage_whenSendingFailed_thenStateChangedToPendingSync() throws {
         let currentUserId: UserId = .unique
         let messageId: MessageId = .unique
 
@@ -2210,6 +2210,45 @@ final class MessageUpdater_Tests: XCTestCase {
         try database.createMessage(id: messageId, authorId: currentUserId, localState: .sendingFailed)
 
         // Resend failed message
+        let completionError = try waitFor {
+            messageUpdater.resendMessage(with: messageId, completion: $0)
+        }
+
+        // Load the message
+        let message = try XCTUnwrap(database.viewContext.message(id: messageId))
+
+        // Assert completion is called without any error
+        XCTAssertNil(completionError)
+        // Assert message state is changed to `.pendingSend`
+        XCTAssertEqual(message.localMessageState, .pendingSend)
+    }
+
+    func test_resendMessage_whenBounced_thenStateChangedToPendingSync() throws {
+        let currentUserId: UserId = .unique
+        let messageId: MessageId = .unique
+
+        // Create current user is the database
+        try database.createCurrentUser(id: currentUserId)
+
+        // Create a new message in the database
+        try database.writeSynchronously { session in
+            let channelId = ChannelId.unique
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: channelId)))
+            try session.saveMessage(
+                payload: .dummy(
+                    messageId: messageId,
+                    moderationDetails: .init(
+                        originalText: "",
+                        action: MessageModerationAction.bounce.rawValue
+                    )
+                ),
+                for: channelId,
+                syncOwnReactions: false,
+                cache: nil
+            )
+        }
+
+        // Resend bounced message
         let completionError = try waitFor {
             messageUpdater.resendMessage(with: messageId, completion: $0)
         }
