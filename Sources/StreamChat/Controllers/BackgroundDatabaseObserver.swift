@@ -18,19 +18,21 @@ class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
     private let itemCreator: (DTO) throws -> Item
     private let sorting: [SortValue<Item>]
 
-    /// Used for observing the changes in the DB.
+    /// Used to observe the changes in the DB.
     let frc: NSFetchedResultsController<DTO>
 
     /// Acts like the `NSFetchedResultsController`'s delegate and aggregates the reported changes into easily consumable form.
     let changeAggregator: ListChangeAggregator<DTO, Item>
 
-    /// When called, release the notification observers
+    /// When called, notification observers are released
     private(set) var releaseNotificationObservers: (() -> Void)?
 
     private let queue = DispatchQueue(label: "io.getstream.list-database-observer", qos: .userInitiated, attributes: .concurrent)
     private let processingQueue: OperationQueue
 
     private var _items: [Item] = []
+
+    /// The items that have been fetched and mapped
     var rawItems: [Item] {
         queue.sync { _items }
     }
@@ -51,7 +53,7 @@ class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
         releaseNotificationObservers?()
     }
 
-    /// Creates a new `ListObserver`.
+    /// Creates a new `BackgroundDatabaseObserver`.
     ///
     /// Please note that no updates are reported until you call `startUpdating`.
     ///
@@ -61,7 +63,9 @@ class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
     /// - Parameters:
     ///   - fetchRequest: The `NSFetchRequest` that specifies the elements of the list.
     ///   - context: The `NSManagedObjectContext` the observer observes.
-    ///   - fetchedResultsControllerType: The `NSFetchedResultsController` subclass the observe uses to create its FRC. You can
+    ///   - itemCreator: A closure the observer uses to convert DTO objects into Model objects.
+    ///   - sorting: An array of SortValue that define the order of the elements in the list.
+    ///   - fetchedResultsControllerType: The `NSFetchedResultsController` subclass the observer uses to create its FRC. You can
     ///    inject your custom subclass if needed, i.e. when testing.
     init(
         context: NSManagedObjectContext,
@@ -97,10 +101,8 @@ class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
         listenForRemoveAllDataNotifications()
     }
 
-    /// Starts observing the changes in the database. The current items in the list are synchronously available in the
-    /// `item` variable, after this function returns.
-    ///
-    /// - Throws: An error if the provided fetch request fails.
+    /// Starts observing the changes in the database.
+    /// - Throws: An error if the fetch  fails.
     func startObserving() throws {
         guard !isInitialized else { return }
         isInitialized = true
@@ -208,8 +210,8 @@ class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
         let notificationCenter = NotificationCenter.default
         let context = frc.managedObjectContext
 
-        // When `WillRemoveAllDataNotification` is received, we need to simulate the callback from change observer, like all
-        // existing entities are being removed. At this point, these entities still existing in the context, and it's safe to
+        // When `WillRemoveAllDataNotification` is received, we need to simulate that the elements are being removed.
+        // At this point, these entities still existing in the context, and it's safe to
         // access and serialize them.
         let willRemoveAllDataNotificationObserver = notificationCenter.addObserver(
             forName: DatabaseContainer.WillRemoveAllDataNotification,
@@ -222,7 +224,7 @@ class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
             guard let fetchResultsController = self.frc as? NSFetchedResultsController<NSFetchRequestResult> else { return }
 
             fetchResultsController.managedObjectContext.perform {
-                // Simulate ChangeObserver callbacks like all data are being removed
+                // Simulate ChangeObserver callbacks like if all data were to be removed
                 self.changeAggregator.controllerWillChangeContent(fetchResultsController)
 
                 self.frc.fetchedObjects?.enumerated().forEach { index, item in
@@ -250,7 +252,7 @@ class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
         }
 
         // When `DidRemoveAllDataNotification` is received, we need to reset the FRC. At this point, the entities are removed but
-        // the FRC doesn't know about it yet. Resetting the FRC removes the content of `FRC.fetchedObjects`.
+        // the FRC doesn't know about it yet. Resetting the FRC clears its `fetchedObjects`.
         let didRemoveAllDataNotificationObserver = notificationCenter.addObserver(
             forName: DatabaseContainer.DidRemoveAllDataNotification,
             object: context,
@@ -260,7 +262,7 @@ class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
             // cause a race condition when the notification observers are not removed at the right time.
             guard let self = self else { return }
 
-            // Reset FRC which causes the current `frc.fetchedObjects` to be reloaded
+            // Resetting the FRC which causes the current `frc.fetchedObjects` to be reloaded
             do {
                 self.isInitialized = false
                 try self.startObserving()

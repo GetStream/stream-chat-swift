@@ -1,9 +1,5 @@
 //
-//  EntityDatabaseObserverWrapper_Mock.swift
-//  StreamChatTestTools
-//
-//  Created by Pol Quintana on 12/10/23.
-//  Copyright © 2023 Stream.io Inc. All rights reserved.
+// Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
