@@ -40,6 +40,7 @@ class AppConfig {
 
 class UserConfig {
     var isInvisible = false
+    var language: TranslationLanguage?
 
     static var shared = UserConfig()
 
@@ -161,6 +162,7 @@ class AppConfigViewController: UITableViewController {
 
     enum UserConfigOption: String, CaseIterable {
         case isInvisible
+        case language
     }
 
     let options: [ConfigOption] = [
@@ -218,14 +220,14 @@ class AppConfigViewController: UITableViewController {
         guard let cell = tableView.cellForRow(at: indexPath) else { return }
 
         switch options[indexPath.section] {
-        case .info, .user, .demoApp:
+        case .info, .demoApp:
             break
-
         case let .components(options):
             didSelectComponentsOptionsCell(cell, at: indexPath, options: options)
-
         case let .chatClient(options):
             didSelectChatClientOptionsCell(cell, at: indexPath, options: options)
+        case let .user(options):
+            didSelectUserOptionsCell(cell, at: indexPath, options: options)
         }
     }
 
@@ -333,6 +335,9 @@ class AppConfigViewController: UITableViewController {
             cell.accessoryView = makeSwitchButton(UserConfig.shared.isInvisible) { newValue in
                 UserConfig.shared.isInvisible = newValue
             }
+        case .language:
+            cell.detailTextLabel?.text = UserConfig.shared.language?.languageCode
+            cell.accessoryType = .disclosureIndicator
         }
     }
 
@@ -403,6 +408,20 @@ class AppConfigViewController: UITableViewController {
         }
     }
 
+    private func didSelectUserOptionsCell(
+        _ cell: UITableViewCell,
+        at indexPath: IndexPath,
+        options: [UserConfigOption]
+    ) {
+        let option = options[indexPath.row]
+        switch option {
+        case .language:
+            pushUserLanguageSelectorVC()
+        default:
+            break
+        }
+    }
+
     // MARK: - Helpers
 
     private func makeSwitchButton(_ initialValue: Bool, _ didChangeValue: @escaping (Bool) -> Void) -> SwitchButton {
@@ -444,6 +463,24 @@ class AppConfigViewController: UITableViewController {
             } else {
                 self?.channelListSearchStrategy = nil
             }
+            self?.tableView.reloadData()
+        }
+
+        navigationController?.pushViewController(selectorViewController, animated: true)
+    }
+
+    private func pushUserLanguageSelectorVC() {
+        let selectorViewController = OptionsSelectorViewController(
+            options: TranslationLanguage.allCases,
+            initialSelectedOptions: [nil],
+            allowsMultipleSelection: false,
+            optionFormatter: { option in
+                option?.languageCode ?? "nil"
+            }
+        )
+        selectorViewController.didChangeSelectedOptions = { [weak self] options in
+            guard let selectedOption = options.first else { return }
+            UserConfig.shared.language = selectedOption
             self?.tableView.reloadData()
         }
 

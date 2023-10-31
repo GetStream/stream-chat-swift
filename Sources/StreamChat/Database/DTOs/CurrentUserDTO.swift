@@ -200,6 +200,8 @@ extension CurrentChatUser {
             Set(dto.channelMutes.compactMap { try? $0.channel.asModel() })
         }
 
+        let language: TranslationLanguage? = dto.user.language.map(TranslationLanguage.init)
+
         return try CurrentChatUser(
             id: user.id,
             name: user.name,
@@ -213,6 +215,7 @@ extension CurrentChatUser {
             deactivatedAt: user.userDeactivatedAt?.bridgeDate,
             lastActiveAt: user.lastActivityAt?.bridgeDate,
             teams: Set(user.teams),
+            language: language,
             extraData: extraData,
             devices: dto.devices.map { try $0.asModel() },
             currentDevice: dto.currentDevice?.asModel(),

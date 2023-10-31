@@ -508,7 +508,8 @@ final class MessageDTO_Tests: XCTestCase {
             pinnedAt: .unique,
             pinExpires: .unique,
             isShadowed: true,
-            translations: [.english: .unique]
+            translations: [.english: .unique],
+            originalLanguage: "es"
         )
 
         try! database.writeSynchronously { session in
@@ -612,6 +613,7 @@ final class MessageDTO_Tests: XCTestCase {
             loadedMessage.flatMap { Set($0.attachments.map(\.attachmentID)) }
         )
         XCTAssertEqual(messagePayload.translations?.mapKeys(\.languageCode), loadedMessage?.translations)
+        XCTAssertEqual("es", loadedMessage?.originalLanguage)
     }
 
     func test_message_isNotOverwrittenWhenAlreadyInDatabase_andIsPending() throws {

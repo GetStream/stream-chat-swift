@@ -25,6 +25,7 @@ extension MutedUserPayload {
                 isInvisible: true,
                 isBanned: true,
                 teams: [],
+                language: nil,
                 extraData: extraData
             ),
             created: .unique,

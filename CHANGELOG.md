@@ -5,7 +5,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChatUI
 ### ✅ Added
+- Allow easier customisation of the `ChatChannelListItemView` [#2855](https://github.com/GetStream/stream-chat-swift/pull/2855)
+
+## ⚠️ Important
+- From now on, our XCFrameworks will be built with Swift 5.7. In order to use them, you need Xcode 14 or above.
+
+# [4.40.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.40.0)
+_October 25, 2023_
+
+## StreamChat
+### ✅ Added
+- Add `language` parameter to `connectUser()` [#2847](https://github.com/GetStream/stream-chat-swift/pull/2847)
+- Expose `language` in users [#2847](https://github.com/GetStream/stream-chat-swift/pull/2847)
+- Expose `originalLanguage` in messages [#2847](https://github.com/GetStream/stream-chat-swift/pull/2847)
+
+## StreamChatUI
+### ✅ Added
 - Add message attachment preview in the channel list [#2838](https://github.com/GetStream/stream-chat-swift/pull/2838)
+- Add support for automatic translations [#2847](https://github.com/GetStream/stream-chat-swift/pull/2847)
+    - Enabled by `Components.default.messageAutoTranslationEnabled`
 ### 🐞 Fixed
 - Do not mark a channel as read if the app is in background [#2832](https://github.com/GetStream/stream-chat-swift/pull/2832)
 

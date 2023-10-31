@@ -10,6 +10,7 @@
   "role" : "user",
   "total_unread_count" : 2,
   "online" : true,
+  "language": "pt",
   "name" : "Broken Waterfall",
   "teams" : [
       "RED",

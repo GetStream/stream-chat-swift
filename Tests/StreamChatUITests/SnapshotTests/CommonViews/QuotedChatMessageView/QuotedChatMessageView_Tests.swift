@@ -126,6 +126,33 @@ final class QuotedChatMessageView_Tests: XCTestCase {
         AssertSnapshot(view)
     }
 
+    func test_withTranslatedText() {
+        view.content = makeContent(
+            text: "Hello!",
+            translations: [.portuguese: "Olá"],
+            channel: .mock(cid: .unique, membership: .mock(id: .unique, language: .portuguese))
+        )
+
+        AssertSnapshot(view, variants: [.defaultLight])
+    }
+
+    func test_withTranslatedText_whenHasAttachments() {
+        let attachment = ChatMessageImageAttachment.mock(
+            id: .unique,
+            imageURL: TestImages.yoda.url,
+            title: ""
+        )
+
+        view.content = makeContent(
+            text: "Hello!",
+            translations: [.portuguese: "Olá"],
+            channel: .mock(cid: .unique, membership: .mock(id: .unique, language: .portuguese)),
+            attachments: [attachment.asAnyAttachment]
+        )
+
+        AssertSnapshot(view, variants: [.defaultLight])
+    }
+
     func test_withAvatarAlignmentRightAppearance() {
         view.content = makeContent(text: "Hello Vader!", avatarAlignment: .trailing)
 
@@ -239,6 +266,8 @@ private extension QuotedChatMessageView {
 extension QuotedChatMessageView_Tests {
     func makeContent(
         text: String,
+        translations: [TranslationLanguage: String]? = nil,
+        channel: ChatChannel? = nil,
         isSentByCurrentUser: Bool = false,
         avatarAlignment: QuotedAvatarAlignment = .leading,
         attachments: [AnyChatMessageAttachment] = []
@@ -248,9 +277,10 @@ extension QuotedChatMessageView_Tests {
             cid: .unique,
             text: text,
             author: .mock(id: .unique),
+            translations: translations,
             attachments: attachments,
             isSentByCurrentUser: isSentByCurrentUser
         )
-        return .init(message: message, avatarAlignment: avatarAlignment)
+        return .init(message: message, avatarAlignment: avatarAlignment, channel: channel)
     }
 }

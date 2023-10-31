@@ -28,12 +28,14 @@ struct UserWebSocketPayload: Encodable {
         case name
         case isInvisible = "invisible"
         case imageURL = "image"
+        case language
     }
 
     let id: String
     let name: String?
     let imageURL: URL?
     let isInvisible: Bool
+    let language: String?
     let extraData: [String: RawJSON]
 
     init(userInfo: UserInfo) {
@@ -41,6 +43,7 @@ struct UserWebSocketPayload: Encodable {
         name = userInfo.name
         imageURL = userInfo.imageURL
         isInvisible = userInfo.isInvisible
+        language = userInfo.language?.languageCode
         extraData = userInfo.extraData
     }
 
@@ -50,6 +53,7 @@ struct UserWebSocketPayload: Encodable {
         try container.encodeIfPresent(name, forKey: .name)
         try container.encodeIfPresent(imageURL, forKey: .imageURL)
         try container.encode(isInvisible, forKey: .isInvisible)
+        try container.encodeIfPresent(language, forKey: .language)
         try extraData.encode(to: encoder)
     }
 }
