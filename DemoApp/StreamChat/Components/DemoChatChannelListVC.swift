@@ -46,6 +46,11 @@ final class DemoChatChannelListVC: ChatChannelListVC, EventsControllerDelegate {
         .equal(.muted, to: true)
     ]))
 
+    lazy var coolChannelsQuery: ChannelListQuery = .init(filter: .and([
+        .containMembers(userIds: [currentUserId]),
+        .equal("is_cool", to: true)
+    ]))
+
     var demoRouter: DemoChatChannelListRouter? {
         router as? DemoChatChannelListRouter
     }
@@ -96,6 +101,15 @@ final class DemoChatChannelListVC: ChatChannelListVC, EventsControllerDelegate {
             }
         )
 
+        let coolChannelsAction = UIAlertAction(
+            title: "Cool Channels",
+            style: .default,
+            handler: { [weak self] _ in
+                self?.title = "Cool Channels"
+                self?.setCoolChannelsQuery()
+            }
+        )
+
         let mutedChannelsAction = UIAlertAction(
             title: "Muted Channels",
             style: .default,
@@ -107,7 +121,7 @@ final class DemoChatChannelListVC: ChatChannelListVC, EventsControllerDelegate {
 
         presentAlert(
             title: "Filter Channels",
-            actions: [defaultChannelsAction, hiddenChannelsAction, mutedChannelsAction],
+            actions: [defaultChannelsAction, hiddenChannelsAction, mutedChannelsAction, coolChannelsAction],
             preferredStyle: .actionSheet,
             sourceView: filterChannelsButton
         )
@@ -119,6 +133,16 @@ final class DemoChatChannelListVC: ChatChannelListVC, EventsControllerDelegate {
 
     func setMutedChannelsQuery() {
         replaceQuery(mutedChannelsQuery)
+    }
+
+    func setCoolChannelsQuery() {
+        let controller = self.controller.client.channelListController(
+            query: coolChannelsQuery,
+            filter: { channel in
+                channel.extraData["is_cool"]?.boolValue ?? false
+            }
+        )
+        replaceChannelListController(controller)
     }
 
     func setInitialChannelsQuery() {
