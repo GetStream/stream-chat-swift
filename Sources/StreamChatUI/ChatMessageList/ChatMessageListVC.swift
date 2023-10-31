@@ -597,7 +597,7 @@ open class ChatMessageListVC: _ViewController,
                 title: L10n.Message.Moderation.edit,
                 action: { [weak self] item in
                     guard let self = self else { return }
-                    delegate?.chatMessageListVC(self, didTapOnAction: item, for: message)
+                    self.delegate?.chatMessageListVC(self, didTapOnAction: item, for: message)
                 }
             ),
             DeleteActionItem(
