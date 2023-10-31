@@ -198,36 +198,38 @@ final class ListDatabaseObserverWrapper_Tests: XCTestCase {
         frc.mockedFetchedObjects = objects
         assertItemsAfterUpdate(objects.map(\.uniqueValue), isBackground: isBackground)
 
+        // Reset test FRC's `performFetch` called flag
+        frc.performFetchCalled = false
+
         // Listen to callbacks
-        let onDidChangeExpectation = expectation(description: "onDidChange is called")
+        let expectation = expectation(description: "onDidChange is called")
         var receivedChanges: [ListChange<String>]?
         // When sending `DatabaseContainer.DidRemoveAllDataNotification` we call `startObserving`, which will call again `onDidChange` with 0 changes. We are not interested in this later part for this test.
         var callsCount = 0
         observer.onDidChange = {
             guard callsCount == 0 else { return }
-            callsCount += 1
-            receivedChanges = $0
-            onDidChangeExpectation.fulfill()
-        }
 
-        // Reset test FRC's `performFetch` called flag
-        frc.performFetchCalled = false
+            // Simulate all entities are removed after processing the notification
+            frc.mockedFetchedObjects = []
+
+            // Simulate `DidRemoveAllDataNotification` is posted by the observed context
+            NotificationCenter.default
+                .post(name: DatabaseContainer.DidRemoveAllDataNotification, object: frc.managedObjectContext)
+
+            receivedChanges = $0
+            callsCount += 1
+            expectation.fulfill()
+        }
 
         // Simulate `WillRemoveAllDataNotification` is posted by the observed context
         NotificationCenter.default
             .post(name: DatabaseContainer.WillRemoveAllDataNotification, object: frc.managedObjectContext)
 
-        // Simulate all entities are removed
-        frc.mockedFetchedObjects = []
-
-        // Simulate `DidRemoveAllDataNotification` is posted by the observed context
-        NotificationCenter.default
-            .post(name: DatabaseContainer.DidRemoveAllDataNotification, object: frc.managedObjectContext)
+        waitForExpectations(timeout: defaultTimeout)
 
         // Assert `performFetch` was called again on the FRC
         XCTAssertTrue(frc.performFetchCalled)
 
-        waitForExpectations(timeout: defaultTimeout)
         // Assert callback is called with removed entities
         XCTAssertEqual(
             receivedChanges,

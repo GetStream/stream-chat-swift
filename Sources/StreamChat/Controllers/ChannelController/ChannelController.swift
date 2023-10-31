@@ -151,7 +151,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
     /// Database observers.
     /// Will be `nil` when observing channel with backend generated `id` is not yet created.
-    @Cached private var channelObserver: EntityDatabaseObserver<ChatChannel, ChannelDTO>?
+    private var channelObserver: EntityDatabaseObserverWrapper<ChatChannel, ChannelDTO>?
     private var messagesObserver: ListDatabaseObserverWrapper<ChatMessage, MessageDTO>?
 
     private var eventObservers: [EventObserver] = []
@@ -1321,7 +1321,7 @@ private extension ChatChannelController {
     }
 
     private func startChannelObserver() -> Error? {
-        _channelObserver.reset()
+        setChannelObserver()
 
         do {
             try channelObserver?.startObserving()
@@ -1363,7 +1363,7 @@ private extension ChatChannelController {
     }
 
     private func setChannelObserver() {
-        _channelObserver.computeValue = { [weak self] in
+        channelObserver = { [weak self] in
             guard let self = self else {
                 log.warning("Callback called while self is nil")
                 return nil
@@ -1372,8 +1372,10 @@ private extension ChatChannelController {
             guard let cid = self.cid else {
                 return nil
             }
-            let observer = EntityDatabaseObserver(
-                context: self.client.databaseContainer.viewContext,
+
+            let observer = EntityDatabaseObserverWrapper(
+                isBackground: StreamRuntimeCheck._isBackgroundMappingEnabled,
+                database: self.client.databaseContainer,
                 fetchRequest: ChannelDTO.fetchRequest(for: cid),
                 itemCreator: { try $0.asModel() as ChatChannel }
             ).onChange { [weak self] change in
@@ -1396,7 +1398,7 @@ private extension ChatChannelController {
             }
 
             return observer
-        }
+        }()
     }
 
     private func setMessagesObserver() {
