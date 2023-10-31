@@ -61,18 +61,20 @@ class MessageUpdater: Worker {
                 return
             }
 
-            // Hard Deleting is necessary for bounced messages, since these messages are never stored on the cloud
-            // an apiClient request to delete them would never be triggered.
+            // Hard Deleting is necessary for messages which are only available locally in the DB
+            // or if we want to explicitly hard delete the message with hard == true.
             let shouldBeHardDeleted = hard || messageDTO.isLocalOnly
             messageDTO.isHardDeleted = shouldBeHardDeleted
 
             if messageDTO.isLocalOnly {
                 messageDTO.type = MessageType.deleted.rawValue
                 messageDTO.deletedAt = DBDate()
+
+                // If a message is local only, it means it is not in the server, so we should
+                // not make any call to the server.
                 shouldDeleteOnBackend = false
 
-                // Ensures bounced message deletion updates the channel preview. Bounced messages are not stored on the backend,
-                // so there would be no incoming websocket payload event `.messageDeleted` to trigger that update.
+                // Ensures bounced message deletion updates the channel preview.
                 if let channelDTO = messageDTO.previewOfChannel, let channelId = try? ChannelId(cid: channelDTO.cid) {
                     channelDTO.previewMessage = session.preview(for: channelId)
                 }
