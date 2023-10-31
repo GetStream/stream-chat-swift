@@ -41,7 +41,9 @@ if ! [[ -d "$dependency_directory" ]]; then
     git clone $dependency_url $dependency_directory
 fi
 
-cd $dependency_directory
+current_directory=$(pwd)
+
+cd "$dependency_directory"
 
 ensure_clean_git
 
@@ -50,7 +52,7 @@ git checkout $version
 
 ensure_clean_git
 
-cd -
+cd "$current_directory"
 
 echo "→ Copying source files"
 rm -rf $output_directory
