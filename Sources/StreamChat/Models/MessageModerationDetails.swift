@@ -14,16 +14,16 @@ public struct MessageModerationDetails {
 
 /// The type of moderation performed to a message.
 public struct MessageModerationAction: RawRepresentable, Equatable {
-    public var rawValue: String
+    public let rawValue: String
 
     public init(rawValue: String) {
         self.rawValue = rawValue
     }
 
     /// A bounced message means it needs to be rephrased and sent again.
-    static var bounce = Self(rawValue: "MESSAGE_RESPONSE_ACTION_BOUNCE")
+    static let bounce = Self(rawValue: "MESSAGE_RESPONSE_ACTION_BOUNCE")
     /// A flagged message means it was sent for review in the dashboard but the message was still published.
-    static var flag = Self(rawValue: "MESSAGE_RESPONSE_ACTION_FLAG")
+    static let flag = Self(rawValue: "MESSAGE_RESPONSE_ACTION_FLAG")
     /// A blocked message means it was not published and it was sent for review in the dashboard.
-    static var block = Self(rawValue: "MESSAGE_RESPONSE_ACTION_BLOCK")
+    static let block = Self(rawValue: "MESSAGE_RESPONSE_ACTION_BLOCK")
 }
