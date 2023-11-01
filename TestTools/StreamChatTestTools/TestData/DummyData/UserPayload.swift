@@ -14,6 +14,7 @@ extension UserPayload {
         role: UserRole = .admin,
         extraData: [String: RawJSON] = [:],
         teams: [TeamId] = [.unique, .unique, .unique],
+        language: String? = nil,
         isBanned: Bool = false,
         updatedAt: Date = .unique,
         deactivatedAt: Date? = nil
@@ -31,6 +32,7 @@ extension UserPayload {
             isInvisible: true,
             isBanned: isBanned,
             teams: teams,
+            language: language,
             extraData: extraData
         )
     }

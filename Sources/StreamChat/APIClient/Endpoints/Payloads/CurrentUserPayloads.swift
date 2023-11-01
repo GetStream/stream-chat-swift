@@ -28,6 +28,7 @@ class CurrentUserPayload: UserPayload {
         isInvisible: Bool,
         isBanned: Bool,
         teams: [TeamId] = [],
+        language: String?,
         extraData: [String: RawJSON],
         devices: [DevicePayload] = [],
         mutedUsers: [MutedUserPayload] = [],
@@ -52,6 +53,7 @@ class CurrentUserPayload: UserPayload {
             isInvisible: isInvisible,
             isBanned: isBanned,
             teams: teams,
+            language: language,
             extraData: extraData
         )
     }

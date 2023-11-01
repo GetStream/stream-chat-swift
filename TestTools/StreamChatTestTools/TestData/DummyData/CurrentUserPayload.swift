@@ -24,6 +24,7 @@ extension CurrentUserPayload {
         devices: [DevicePayload] = [],
         mutedUsers: [MutedUserPayload] = [],
         teams: [TeamId] = [],
+        language: String? = nil,
         mutedChannels: [MutedChannelPayload] = []
     ) -> CurrentUserPayload {
         .init(
@@ -39,6 +40,7 @@ extension CurrentUserPayload {
             isInvisible: isInvisible,
             isBanned: isBanned,
             teams: teams,
+            language: language,
             extraData: extraData,
             devices: devices,
             mutedUsers: mutedUsers,
@@ -68,6 +70,7 @@ extension CurrentUserPayload {
             isInvisible: userPayload.isInvisible,
             isBanned: userPayload.isBanned,
             teams: userPayload.teams,
+            language: userPayload.language,
             extraData: userPayload.extraData,
             devices: devices,
             mutedUsers: mutedUsers,

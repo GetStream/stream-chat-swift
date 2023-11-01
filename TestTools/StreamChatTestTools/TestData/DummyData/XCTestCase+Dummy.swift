@@ -24,6 +24,7 @@ extension XCTestCase {
             isOnline: true,
             isInvisible: false,
             isBanned: false,
+            language: nil,
             extraData: [:]
         )
     }
@@ -46,6 +47,7 @@ extension XCTestCase {
             isInvisible: true,
             isBanned: true,
             teams: [],
+            language: nil,
             extraData: [:]
         )
     }
@@ -244,6 +246,7 @@ extension XCTestCase {
                     isInvisible: true,
                     isBanned: true,
                     teams: [],
+                    language: nil,
                     extraData: [:]
                 ),
                 userId: .unique,
@@ -333,6 +336,7 @@ private extension MemberPayload {
                 isInvisible: true,
                 isBanned: true,
                 teams: [],
+                language: nil,
                 extraData: [:]
             ),
             userId: userId,
@@ -358,6 +362,7 @@ private extension UserPayload {
             isInvisible: true,
             isBanned: true,
             teams: [],
+            language: nil,
             extraData: [:]
         )
     }

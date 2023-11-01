@@ -42,6 +42,7 @@ extension ChatMessage {
             isSentByCurrentUser: false,
             pinDetails: nil,
             translations: nil,
+            originalLanguage: nil,
             readBy: { [] },
             readByCount: { 0 },
             underlyingContext: nil

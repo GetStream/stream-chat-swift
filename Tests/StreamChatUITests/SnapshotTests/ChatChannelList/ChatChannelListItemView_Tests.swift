@@ -695,6 +695,64 @@ final class ChatChannelListItemView_Tests: XCTestCase {
         AssertSnapshot(viewWithoutChannelName, variants: [.defaultLight], suffix: "without-channel-name")
     }
 
+    func test_appearance_translatedMessage() {
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "Hello",
+            author: .mock(id: .unique, name: "Vader", language: .english),
+            createdAt: Date(timeIntervalSince1970: 100),
+            translations: [.portuguese: "Olá"]
+        )
+
+        let view = channelItemView(
+            content: .init(
+                channel: channel(
+                    previewMessage: message,
+                    readEventsEnabled: false,
+                    membership: .mock(id: .unique, language: .portuguese)
+                ),
+                currentUserId: currentUser.id
+            )
+        )
+
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
+
+    func test_appearance_translatedMessage_whenHasAttachment() throws {
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "Hello",
+            author: .mock(id: .unique, name: "Vader", language: .english),
+            createdAt: Date(timeIntervalSince1970: 100),
+            translations: [.portuguese: "Olá"],
+            attachments: [
+                .dummy(
+                    type: .image,
+                    payload: try JSONEncoder().encode(ImageAttachmentPayload(
+                        title: nil,
+                        imageRemoteURL: .localYodaImage
+                    )
+                    )
+                )
+            ]
+        )
+
+        let view = channelItemView(
+            content: .init(
+                channel: channel(
+                    previewMessage: message,
+                    readEventsEnabled: false,
+                    membership: .mock(id: .unique, language: .portuguese)
+                ),
+                currentUserId: currentUser.id
+            )
+        )
+
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
+
     func test_appearanceCustomization_usingAppearance() {
         var appearance = Appearance()
         appearance.fonts.bodyBold = .italicSystemFont(ofSize: 20)
@@ -1507,7 +1565,8 @@ final class ChatChannelListItemView_Tests: XCTestCase {
     private func channel(
         previewMessage: ChatMessage? = nil,
         readEventsEnabled: Bool,
-        memberCount: Int = 0
+        memberCount: Int = 0,
+        membership: ChatChannelMember? = nil
     ) -> ChatChannel {
         .mock(
             cid: previewMessage?.cid ?? .unique,
@@ -1515,6 +1574,7 @@ final class ChatChannelListItemView_Tests: XCTestCase {
             imageURL: TestImages.yoda.url,
             createdAt: Date(timeIntervalSince1970: 1),
             config: .mock(readEventsEnabled: readEventsEnabled),
+            membership: membership,
             memberCount: memberCount,
             previewMessage: previewMessage
         )

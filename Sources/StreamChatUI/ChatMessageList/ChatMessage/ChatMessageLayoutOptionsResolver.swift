@@ -13,6 +13,8 @@ open class ChatMessageLayoutOptionsResolver {
     // TODO: Propagate via `init` in v5, make it non-optional.
     /// The config of the `ChatClient` used.
     public internal(set) var config: ChatClientConfig?
+    /// The components config in use.
+    public internal(set) var components: Components?
 
     /// Creates new `ChatMessageLayoutOptionsResolver`.
     ///
@@ -94,6 +96,10 @@ open class ChatMessageLayoutOptionsResolver {
             return options
         }
 
+        if shouldRenderTranslation(message: message, channel: channel) {
+            options.insert(.translation)
+        }
+
         if hasQuotedMessage(message) {
             options.insert(.quotedMessage)
         }
@@ -108,29 +114,6 @@ open class ChatMessageLayoutOptionsResolver {
         }
 
         return options
-    }
-
-    func hasQuotedMessage(_ message: ChatMessage) -> Bool {
-        message.quotedMessage?.id != nil
-    }
-
-    func hasReactions(_ channel: ChatChannel, _ message: ChatMessage, _ appearance: Appearance) -> Bool {
-        if !channel.config.reactionsEnabled {
-            return false
-        }
-
-        if message.reactionScores.isEmpty {
-            return false
-        }
-
-        let unhandledReactionTypes = message.latestReactions.filter { appearance.images.availableReactions[$0.type] == nil }
-            .map(\.type)
-
-        if !unhandledReactionTypes.isEmpty {
-            log.warning("message contains unhandled reaction types \(unhandledReactionTypes)")
-        }
-
-        return !message.latestReactions.filter { appearance.images.availableReactions[$0.type] != nil }.isEmpty
     }
 
     /// Says whether the message at given `indexPath` is the last one in a sequence of messages
@@ -228,5 +211,44 @@ open class ChatMessageLayoutOptionsResolver {
         default:
             return false
         }
+    }
+}
+
+// MARK: Helpers
+
+private extension ChatMessageLayoutOptionsResolver {
+    func hasQuotedMessage(_ message: ChatMessage) -> Bool {
+        message.quotedMessage?.id != nil
+    }
+
+    func hasReactions(_ channel: ChatChannel, _ message: ChatMessage, _ appearance: Appearance) -> Bool {
+        if !channel.config.reactionsEnabled {
+            return false
+        }
+
+        if message.reactionScores.isEmpty {
+            return false
+        }
+
+        let unhandledReactionTypes = message.latestReactions.filter { appearance.images.availableReactions[$0.type] == nil }
+            .map(\.type)
+
+        if !unhandledReactionTypes.isEmpty {
+            log.warning("message contains unhandled reaction types \(unhandledReactionTypes)")
+        }
+
+        return !message.latestReactions.filter { appearance.images.availableReactions[$0.type] != nil }.isEmpty
+    }
+
+    func shouldRenderTranslation(message: ChatMessage, channel: ChatChannel) -> Bool {
+        guard components?.messageAutoTranslationEnabled == true else {
+            return false
+        }
+
+        guard let currentUserLang = channel.membership?.language else {
+            return false
+        }
+
+        return message.translatedText(for: currentUserLang) != nil
     }
 }

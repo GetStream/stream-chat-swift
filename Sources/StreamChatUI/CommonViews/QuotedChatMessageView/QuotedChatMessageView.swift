@@ -29,13 +29,17 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
         public let message: ChatMessage
         /// The avatar position in relation with the text message.
         public let avatarAlignment: QuotedAvatarAlignment
+        /// The channel which the message belongs to.
+        public let channel: ChatChannel?
 
         public init(
             message: ChatMessage,
-            avatarAlignment: QuotedAvatarAlignment
+            avatarAlignment: QuotedAvatarAlignment,
+            channel: ChatChannel? = nil
         ) {
             self.message = message
             self.avatarAlignment = avatarAlignment
+            self.channel = channel
         }
     }
 
@@ -164,7 +168,12 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
         guard let message = content?.message else { return }
         guard let avatarAlignment = content?.avatarAlignment else { return }
 
-        textView.text = message.text
+        if let currentUserLang = content?.channel?.membership?.language,
+           let translatedText = content?.message.translatedText(for: currentUserLang) {
+            textView.text = translatedText
+        } else {
+            textView.text = message.text
+        }
 
         contentContainerView.backgroundColor = message.linkAttachments.isEmpty
             ? appearance.colorPalette.popoverBackground
@@ -228,11 +237,15 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
         if let filePayload = message.fileAttachments.first?.payload {
             attachmentPreviewView.contentMode = .scaleAspectFit
             attachmentPreviewView.image = appearance.images.fileIcons[filePayload.file.type] ?? appearance.images.fileFallback
-            textView.text = message.text.isEmpty ? filePayload.title : message.text
+            if textView.text.isEmpty {
+                textView.text = filePayload.title
+            }
         } else if let imagePayload = message.imageAttachments.first?.payload {
             attachmentPreviewView.contentMode = .scaleAspectFill
             setAttachmentPreviewImage(url: imagePayload.imageURL)
-            textView.text = message.text.isEmpty ? "Photo" : message.text
+            if textView.text.isEmpty {
+                textView.text = "Photo"
+            }
         } else if let linkPayload = message.linkAttachments.first?.payload {
             attachmentPreviewView.contentMode = .scaleAspectFill
             setAttachmentPreviewImage(url: linkPayload.previewURL)
@@ -240,7 +253,9 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
         } else if let giphyPayload = message.giphyAttachments.first?.payload {
             attachmentPreviewView.contentMode = .scaleAspectFill
             setAttachmentPreviewImage(url: giphyPayload.previewURL)
-            textView.text = message.text.isEmpty ? "Giphy" : message.text
+            if textView.text.isEmpty {
+                textView.text = "Giphy"
+            }
         } else if let videoPayload = message.videoAttachments.first?.payload {
             attachmentPreviewView.contentMode = .scaleAspectFill
             if let thumbnailURL = videoPayload.thumbnailURL {
@@ -248,7 +263,9 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
             } else {
                 setVideoAttachmentPreviewImage(url: videoPayload.videoURL)
             }
-            textView.text = message.text.isEmpty ? videoPayload.title : message.text
+            if textView.text.isEmpty {
+                textView.text = videoPayload.title
+            }
         } else if let voiceRecordingPayload = message.voiceRecordingAttachments.first?.payload {
             voiceRecordingAttachmentQuotedPreview.content = .init(
                 title: voiceRecordingPayload.title ?? message.text,

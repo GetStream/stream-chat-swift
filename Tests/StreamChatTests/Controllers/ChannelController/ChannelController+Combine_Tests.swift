@@ -141,6 +141,7 @@ final class ChannelController_Combine_Tests: iOS13TestCase {
             deactivatedAt: nil,
             lastActiveAt: .unique,
             teams: [],
+            language: nil,
             extraData: [:]
         )
 

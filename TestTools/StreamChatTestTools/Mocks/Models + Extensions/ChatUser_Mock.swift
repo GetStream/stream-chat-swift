@@ -20,6 +20,7 @@ public extension ChatUser {
         deactivatedAt: Date? = nil,
         lastActiveAt: Date? = nil,
         teams: Set<TeamId> = [],
+        language: TranslationLanguage? = nil,
         extraData: [String: RawJSON] = [:]
     ) -> ChatUser {
         .init(
@@ -35,6 +36,7 @@ public extension ChatUser {
             deactivatedAt: deactivatedAt,
             lastActiveAt: lastActiveAt,
             teams: teams,
+            language: language,
             extraData: extraData
         )
     }

@@ -38,7 +38,11 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
     }
 
     func test_currentUserPayload_isStoredAndLoadedFromDB() throws {
-        let userPayload: UserPayload = .dummy(userId: .unique, extraData: ["k": .string("v")])
+        let userPayload: UserPayload = .dummy(
+            userId: .unique,
+            extraData: ["k": .string("v")],
+            language: "pt"
+        )
 
         let payload: CurrentUserPayload = .dummy(
             userPayload: userPayload,
@@ -92,6 +96,7 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
         XCTAssertEqual(payload.devices.first?.id, loadedCurrentUser.devices.first?.id)
         XCTAssertEqual(Set(payload.teams), loadedCurrentUser.teams)
         XCTAssertEqual(mutedChannelIDs, Set(loadedCurrentUser.mutedChannels.map(\.cid)))
+        XCTAssertEqual(payload.language, loadedCurrentUser.language?.languageCode)
     }
 
     func test_savingCurrentUser_removesCurrentDevice() throws {

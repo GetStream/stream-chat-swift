@@ -1,22 +1,27 @@
 {
-    "channel_id": "3cbff826-5fef-11ee-9ecc-9aa9a3f9b2ed",
+    "channel_id": "5b99d2de-784b-11ee-8aa2-920bc7cfce9a",
     "channel_type": "messaging",
-    "cid": "messaging:3cbff826-5fef-11ee-9ecc-9aa9a3f9b2ed",
-    "created_at": "2023-10-01T00:12:43.426866162Z",
+    "cid": "messaging:5b99d2de-784b-11ee-8aa2-920bc7cfce9a",
+    "created_at": "2023-11-01T00:12:36.604580023Z",
     "message": {
         "attachments": [],
-        "cid": "messaging:3cbff826-5fef-11ee-9ecc-9aa9a3f9b2ed",
-        "created_at": "2023-10-01T00:12:43.206621Z",
+        "cid": "messaging:5b99d2de-784b-11ee-8aa2-920bc7cfce9a",
+        "created_at": "2023-11-01T00:12:36.479109Z",
         "deleted_reply_count": 0,
         "html": "<p>Test</p>\n",
-        "id": "3d78178a-5fef-11ee-9ecc-9aa9a3f9b2ed",
+        "i18n": {
+            "en_text": "Test",
+            "language": "en",
+            "ru_text": "Тест"
+        },
+        "id": "5c4895da-784b-11ee-8aa2-920bc7cfce9a",
         "latest_reactions": [
             {
-                "created_at": "2023-10-01T00:12:43.408102Z",
-                "message_id": "3d78178a-5fef-11ee-9ecc-9aa9a3f9b2ed",
+                "created_at": "2023-11-01T00:12:36.589524Z",
+                "message_id": "5c4895da-784b-11ee-8aa2-920bc7cfce9a",
                 "score": 1,
                 "type": "like",
-                "updated_at": "2023-10-01T00:12:43.408102Z",
+                "updated_at": "2023-11-01T00:12:36.589524Z",
                 "user": {
                     "banned": false,
                     "birthland": "Tatooine",
@@ -25,11 +30,12 @@
                     "id": "luke_skywalker",
                     "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
                     "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
-                    "last_active": "2023-10-01T00:12:41.593745569Z",
+                    "language": "en",
+                    "last_active": "2023-11-01T00:12:34.949360153Z",
                     "name": "Luke Skywalker",
                     "online": true,
                     "role": "user",
-                    "updated_at": "2023-09-28T16:00:45.534347Z"
+                    "updated_at": "2023-10-31T14:42:19.29679Z"
                 },
                 "user_id": "luke_skywalker"
             }
@@ -51,7 +57,7 @@
         "silent": false,
         "text": "Test",
         "type": "regular",
-        "updated_at": "2023-10-01T00:12:43.419036961Z",
+        "updated_at": "2023-11-01T00:12:36.597545971Z",
         "user": {
             "banned": false,
             "birthland": "Tatooine",
@@ -60,19 +66,20 @@
             "id": "luke_skywalker",
             "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
             "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
-            "last_active": "2023-10-01T00:12:41.593745569Z",
+            "language": "en",
+            "last_active": "2023-11-01T00:12:34.949360153Z",
             "name": "Luke Skywalker",
             "online": true,
             "role": "user",
-            "updated_at": "2023-09-28T16:00:45.534347Z"
+            "updated_at": "2023-10-31T14:42:19.29679Z"
         }
     },
     "reaction": {
-        "created_at": "2023-10-01T00:12:43.408102Z",
-        "message_id": "3d78178a-5fef-11ee-9ecc-9aa9a3f9b2ed",
+        "created_at": "2023-11-01T00:12:36.589524Z",
+        "message_id": "5c4895da-784b-11ee-8aa2-920bc7cfce9a",
         "score": 1,
         "type": "like",
-        "updated_at": "2023-10-01T00:12:43.408102Z",
+        "updated_at": "2023-11-01T00:12:36.589524Z",
         "user": {
             "banned": false,
             "birthland": "Tatooine",
@@ -81,11 +88,12 @@
             "id": "luke_skywalker",
             "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
             "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
-            "last_active": "2023-10-01T00:12:41.593745569Z",
+            "language": "en",
+            "last_active": "2023-11-01T00:12:34.949360153Z",
             "name": "Luke Skywalker",
             "online": true,
             "role": "user",
-            "updated_at": "2023-09-28T16:00:45.534347Z"
+            "updated_at": "2023-10-31T14:42:19.29679Z"
         },
         "user_id": "luke_skywalker"
     },
@@ -98,10 +106,11 @@
         "id": "luke_skywalker",
         "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
         "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
-        "last_active": "2023-10-01T00:12:41.593745569Z",
+        "language": "en",
+        "last_active": "2023-11-01T00:12:34.949360153Z",
         "name": "Luke Skywalker",
         "online": true,
         "role": "user",
-        "updated_at": "2023-09-28T16:00:45.534347Z"
+        "updated_at": "2023-10-31T14:42:19.29679Z"
     }
 }

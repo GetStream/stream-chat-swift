@@ -223,6 +223,7 @@ final class ChatMessage_Equatable_Tests: XCTestCase {
             isInvisible: true,
             isBanned: false,
             teams: [],
+            language: nil,
             extraData: [:]
         )
     }
