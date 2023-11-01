@@ -1,6 +1,6 @@
 {
     "channel": {
-        "cid": "messaging:3cbff826-5fef-11ee-9ecc-9aa9a3f9b2ed",
+        "cid": "messaging:5b99d2de-784b-11ee-8aa2-920bc7cfce9a",
         "config": {
             "automod": "AI",
             "automod_behavior": "block",
@@ -44,24 +44,24 @@
             "replies": true,
             "search": true,
             "typing_events": true,
-            "updated_at": "2023-09-27T11:15:37.053716Z",
+            "updated_at": "2023-10-11T15:32:43.916111Z",
             "uploads": true,
             "url_enrichment": true
         },
-        "created_at": "2023-10-01T00:12:42.109634Z",
+        "created_at": "2023-11-01T00:12:35.365795Z",
         "created_by": null,
-        "deleted_at": "2023-10-01T00:12:45.190512Z",
+        "deleted_at": "2023-11-01T00:12:38.333182Z",
         "disabled": false,
         "frozen": false,
-        "id": "3cbff826-5fef-11ee-9ecc-9aa9a3f9b2ed",
+        "id": "5b99d2de-784b-11ee-8aa2-920bc7cfce9a",
         "members": [
             {
                 "banned": false,
                 "channel_role": "channel_member",
-                "created_at": "2023-10-01T00:12:42.123619Z",
+                "created_at": "2023-11-01T00:12:35.375873Z",
                 "role": "member",
                 "shadow_banned": false,
-                "updated_at": "2023-10-01T00:12:42.123619Z",
+                "updated_at": "2023-11-01T00:12:35.375873Z",
                 "user": {
                     "banned": false,
                     "birthland": "Serenno",
@@ -82,10 +82,10 @@
             {
                 "banned": false,
                 "channel_role": "channel_member",
-                "created_at": "2023-10-01T00:12:42.123619Z",
+                "created_at": "2023-11-01T00:12:35.375873Z",
                 "role": "member",
                 "shadow_banned": false,
-                "updated_at": "2023-10-01T00:12:42.123619Z",
+                "updated_at": "2023-11-01T00:12:35.375873Z",
                 "user": {
                     "banned": false,
                     "birthland": "Corellia",
@@ -94,21 +94,22 @@
                     "id": "han_solo",
                     "image": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
                     "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
-                    "last_active": "2023-09-30T00:18:35.830555725Z",
+                    "language": "ru",
+                    "last_active": "2023-10-31T19:26:48.676375999Z",
                     "name": "Han Solo",
                     "online": false,
                     "role": "user",
-                    "updated_at": "2023-05-10T12:02:05.481359Z"
+                    "updated_at": "2023-10-25T13:07:23.055265Z"
                 },
                 "user_id": "han_solo"
             },
             {
                 "banned": false,
                 "channel_role": "channel_member",
-                "created_at": "2023-10-01T00:12:42.123619Z",
+                "created_at": "2023-11-01T00:12:35.375873Z",
                 "role": "owner",
                 "shadow_banned": false,
-                "updated_at": "2023-10-01T00:12:42.123619Z",
+                "updated_at": "2023-11-01T00:12:35.375873Z",
                 "user": {
                     "banned": false,
                     "birthland": "Tatooine",
@@ -117,37 +118,38 @@
                     "id": "luke_skywalker",
                     "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
                     "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
-                    "last_active": "2023-10-01T00:12:41.593745569Z",
+                    "language": "en",
+                    "last_active": "2023-11-01T00:12:34.949360153Z",
                     "name": "Luke Skywalker",
                     "online": true,
                     "role": "user",
-                    "updated_at": "2023-09-28T16:00:45.534347Z"
+                    "updated_at": "2023-10-31T14:42:19.29679Z"
                 },
                 "user_id": "luke_skywalker"
             },
             {
                 "banned": false,
                 "channel_role": "channel_member",
-                "created_at": "2023-10-01T00:12:43.567752Z",
+                "created_at": "2023-11-01T00:12:36.688254Z",
                 "role": "member",
                 "shadow_banned": false,
-                "updated_at": "2023-10-01T00:12:43.567752Z",
+                "updated_at": "2023-11-01T00:12:36.688254Z",
                 "user": {
                     "banned": false,
                     "birthland": "Polis Massa",
                     "created_at": "2020-12-07T11:37:33.78879Z",
                     "id": "leia_organa",
                     "image": "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png",
-                    "last_active": "2023-09-30T17:25:29.180982Z",
+                    "last_active": "2023-10-31T17:12:34.450095982Z",
                     "name": "Leia Organa",
                     "online": false,
                     "role": "user",
-                    "updated_at": "2023-09-28T18:28:13.253137Z"
+                    "updated_at": "2023-10-06T10:03:10.182564Z"
                 },
                 "user_id": "leia_organa"
             }
         ],
-        "truncated_at": "2023-10-01T00:12:45.190512Z",
+        "truncated_at": "2023-11-01T00:12:38.333182Z",
         "truncated_by": {
             "banned": false,
             "birthland": "Tatooine",
@@ -156,14 +158,15 @@
             "id": "luke_skywalker",
             "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
             "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
-            "last_active": "2023-10-01T00:12:41.593745569Z",
+            "language": "en",
+            "last_active": "2023-11-01T00:12:34.949360153Z",
             "name": "Luke Skywalker",
             "online": true,
             "role": "user",
-            "updated_at": "2023-09-28T16:00:45.534347Z"
+            "updated_at": "2023-10-31T14:42:19.29679Z"
         },
         "type": "messaging",
-        "updated_at": "2023-10-01T00:12:44.983066Z"
+        "updated_at": "2023-11-01T00:12:38.204726Z"
     },
-    "duration": "28.69ms"
+    "duration": "26.26ms"
 }
