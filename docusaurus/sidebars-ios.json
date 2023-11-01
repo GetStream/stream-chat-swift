@@ -95,6 +95,16 @@
             "swiftui/message-components/typing-indicators",
             "swiftui/message-components/read-indicators"
           ]
+        },
+        {
+          "SwiftUI Cookbook": [
+            "swiftui/swiftui-cookbook/overview",
+            "swiftui/swiftui-cookbook/custom-channel-header",
+            "swiftui/swiftui-cookbook/custom-composer",
+            "swiftui/swiftui-cookbook/reactions-reordering",
+            "swiftui/swiftui-cookbook/list-alignment",
+            "swiftui/swiftui-cookbook/custom-message-list"
+          ]
         }
       ]
     },
