@@ -52,7 +52,7 @@ Next, let's define few properties that we are going to use in our implementation
 ```
 
 The `@Injected` properties provide access to `StreamChat`'s SDK specific objects, such as fonts and colors.
-The `@State` properties track the view state, such as the the size of the composer popup and whether it's expanded or not. Additonally, we create a `MessageComposerViewModel` view model that handles the entered text, validation, presentation logic, as well as the sending of a message.
+The `@State` properties track the view state, such as the size of the composer popup and whether it's expanded or not. We also create a `MessageComposerViewModel` view model that handles the entered text, validation, presentation logic, as well as the sending of a message.
 
 Let's add the `init` method next.
 
@@ -212,7 +212,7 @@ struct ComposerAction: Equatable, Identifiable {
 
 This struct will provide information about the items shown in the list of actions.
 
-Next, we can create the `ComposerActionsView`. The composer actions view consists of a blurred background, and a list of different composer actions. Additionally, it contains the bouncy animation, which animates the scalling of the list, as well as its offset.
+Next, we can create the `ComposerActionsView`. The composer actions view consists of a blurred background, and a list of different composer actions. Additionally, it contains the bouncy animation, which animates the scaling of the list, as well as its offset.
 
 ```swift
 struct ComposerActionsView: View {
