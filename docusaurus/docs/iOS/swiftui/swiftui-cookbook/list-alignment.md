@@ -7,7 +7,7 @@ Some apps, like Slack, have all the messages aligned on the left - they don't pu
 
 ![Screenshot of the left aligned message list.](../../assets/swiftui-left-aligned.png)
 
-Stream's SwiftUI chat SDK can also support this case, with a simple config change.
+Stream's SwiftUI chat SDK can also support this case, with a simple configuration change.
 
 The change needs to be done in the `MessageListConfig`, more specifically the `messageListAlignment`, which needs to be set to `.leftAligned`.
 

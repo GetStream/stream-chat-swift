@@ -12,7 +12,7 @@ To showcase the usage of our low-level client, we will build a simple livestream
 
 The state for a given channel is available via the [ChatChannelController](https://getstream.io/chat/docs/sdk/ios/client/controllers/channels/#channelcontroller). 
 You can create a channel controller using the `ChatClient` for a given channel id. In this example, for simplicity we will use a hardcoded channel id.
-If you want to listen to the changes of the channel controller (e.g. messages changes), you need to implement methods from the `ChatChannelControllerDelegate` or listen to the Combine publisher changes.
+If you want to listen to the changes of the channel controller (for example messages changes), you need to implement methods from the `ChatChannelControllerDelegate` or listen to the Combine publisher changes.
 
 To make the usage easier from SwiftUI views, we will create a view model that will manage the state and listen for the channel controller state updates.
 

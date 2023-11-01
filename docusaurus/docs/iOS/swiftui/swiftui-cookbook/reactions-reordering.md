@@ -85,7 +85,7 @@ struct CustomBottomReactionsView: View {
 }
 ```
 
-With the `@Injected` properties, we provide access to the SDK's fonts, colors, images and the chat client. Then, we also add the values passed from the factory method, as well as we create a `ReactionsOverlayViewModel` that handles the business logic for adding and removing reactions.
+With the `@Injected` properties, we provide access to the fonts, colors, images and the chat client. Then, we also add the values passed from the factory method, as well as we create a `ReactionsOverlayViewModel` that handles the business logic for adding and removing reactions.
 
 Next, let's implement the `body` of the SwiftUI view.
 

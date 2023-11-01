@@ -37,7 +37,7 @@ Therefore, we will need an `HStack` for the columns, and a `VStack` for the titl
 
 For the channel icon, we can use the `ChannelAvatarView` from our SwiftUI SDK as a building block. You can easily provide your custom implementation if you look for a different UI.
 
-The `ChannelAvatarView` needs an `avatar`, which is the actual image that will be displayed. To fetch this image, you can use our `ChannelHeaderLoader`, which is an observable object that will trigger view updates whenever the image is available. Additionally, we will need few other objects from the SwiftUI SDK, for getting the user info, fonts, colors and utils. To use these, add the following lines at the top of your struct:
+The `ChannelAvatarView` needs an `avatar`, which is the actual image that will be displayed. To fetch this image, you can use our `ChannelHeaderLoader`, which is an observable object that will trigger view updates whenever the image is available. Additionally, we will need few other objects from the SwiftUI SDK, for getting the user info, fonts, colors and utilities. To use these, add the following lines at the top of your struct:
 
 ```swift
 @ObservedObject private var channelHeaderLoader = InjectedValues[\.utils].channelHeaderLoader
