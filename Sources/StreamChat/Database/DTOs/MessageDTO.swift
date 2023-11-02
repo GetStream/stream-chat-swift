@@ -36,7 +36,6 @@ class MessageDTO: NSManagedObject {
     @NSManaged var showReplyInChannel: Bool
     @NSManaged var replyCount: Int32
     @NSManaged var extraData: Data?
-    @NSManaged var isBounced: Bool
     @NSManaged var isSilent: Bool
     @NSManaged var skipPush: Bool
     @NSManaged var skipEnrichUrl: Bool
@@ -49,6 +48,11 @@ class MessageDTO: NSManagedObject {
 
     @NSManaged var translations: [String: String]?
     @NSManaged var originalLanguage: String?
+    
+    @NSManaged var moderationDetails: MessageModerationDetailsDTO?
+    var isBounced: Bool {
+        moderationDetails?.action == MessageModerationAction.bounce.rawValue
+    }
 
     // Boolean flag that determines if the reply will be shown inside the thread query.
     // This boolean is used to control the pagination of the replies of a thread.
@@ -538,16 +542,6 @@ extension MessageDTO {
 
         return type == MessageType.ephemeral.rawValue || type == MessageType.error.rawValue
     }
-
-    /// When a message that has been synced gets edited but is bounced by the moderation API it will return true to this state.
-    var failedToBeEditedDueToModeration: Bool {
-        localMessageState == .syncingFailed && isBounced == true
-    }
-
-    /// When a message fails to get synced because it was bounced by the moderation API it will return true to this state.
-    var failedToBeSentDueToModeration: Bool {
-        localMessageState == .sendingFailed && isBounced == true
-    }
 }
 
 extension NSManagedObjectContext: MessageDatabaseSession {
@@ -776,6 +770,15 @@ extension NSManagedObjectContext: MessageDatabaseSession {
 
         dto.translations = payload.translations?.mapKeys { $0.languageCode }
         dto.originalLanguage = payload.originalLanguage
+
+        if let moderationDetailsPayload = payload.moderationDetails {
+            dto.moderationDetails = MessageModerationDetailsDTO.create(
+                from: moderationDetailsPayload,
+                context: self
+            )
+        } else {
+            dto.moderationDetails = nil
+        }
 
         // Calculate reads if the message is authored by the current user.
         if payload.user.id == currentUser?.user.id {
@@ -1084,6 +1087,12 @@ private extension ChatMessage {
         reactionCounts = dto.reactionCounts.mapKeys { MessageReactionType(rawValue: $0) }
         translations = dto.translations?.mapKeys { TranslationLanguage(languageCode: $0) }
         originalLanguage = dto.originalLanguage.map(TranslationLanguage.init)
+        moderationDetails = dto.moderationDetails.map {
+            MessageModerationDetails(
+                originalText: $0.originalText,
+                action: MessageModerationAction(rawValue: $0.action)
+            )
+        }
 
         if let extraData = dto.extraData, !extraData.isEmpty {
             do {

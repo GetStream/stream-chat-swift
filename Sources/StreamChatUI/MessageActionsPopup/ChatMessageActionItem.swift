@@ -32,18 +32,21 @@ extension ChatMessageActionItem {
 
 /// Instance of `ChatMessageActionItem` for inline reply.
 public struct InlineReplyActionItem: ChatMessageActionItem {
-    public var title: String { L10n.Message.Actions.inlineReply }
+    public var title: String
     public let icon: UIImage
     public let action: (ChatMessageActionItem) -> Void
 
     /// Init of `InlineReplyActionItem`.
     /// - Parameters:
+    ///     - title: The name of the action. Provide a value in case you want to override the default title.
     ///     - action: Action to be triggered when `InlineReplyActionItem` is tapped.
     ///     - appearance: `Appearance` that is used to configure UI properties.
     public init(
+        title: String? = nil,
         action: @escaping (ChatMessageActionItem) -> Void,
         appearance: Appearance = .default
     ) {
+        self.title = title ?? L10n.Message.Actions.inlineReply
         self.action = action
         icon = appearance.images.messageActionInlineReply
     }
@@ -51,18 +54,21 @@ public struct InlineReplyActionItem: ChatMessageActionItem {
 
 /// Instance of `ChatMessageActionItem` for thread reply.
 public struct ThreadReplyActionItem: ChatMessageActionItem {
-    public var title: String { L10n.Message.Actions.threadReply }
+    public var title: String
     public let icon: UIImage
     public let action: (ChatMessageActionItem) -> Void
 
     /// Init of `ThreadReplyActionItem`.
     /// - Parameters:
+    ///     - title: The name of the action. Provide a value in case you want to override the default title.
     ///     - action: Action to be triggered when `ThreadReplyActionItem` is tapped.
     ///     - appearance: `Appearance` that is used to configure UI properties.
     public init(
+        title: String? = nil,
         action: @escaping (ChatMessageActionItem) -> Void,
         appearance: Appearance = .default
     ) {
+        self.title = title ?? L10n.Message.Actions.threadReply
         self.action = action
         icon = appearance.images.messageActionThreadReply
     }
@@ -70,18 +76,21 @@ public struct ThreadReplyActionItem: ChatMessageActionItem {
 
 /// Instance of `ChatMessageActionItem` for edit message action.
 public struct EditActionItem: ChatMessageActionItem {
-    public var title: String { L10n.Message.Actions.edit }
+    public var title: String
     public let icon: UIImage
     public let action: (ChatMessageActionItem) -> Void
 
     /// Init of `EditActionItem`.
     /// - Parameters:
+    ///     - title: The name of the action. Provide a value in case you want to override the default title.
     ///     - action: Action to be triggered when `EditActionItem` is tapped.
     ///     - appearance: `Appearance` that is used to configure UI properties.
     public init(
+        title: String? = nil,
         action: @escaping (ChatMessageActionItem) -> Void,
         appearance: Appearance = .default
     ) {
+        self.title = title ?? L10n.Message.Actions.edit
         self.action = action
         icon = appearance.images.messageActionEdit
     }
@@ -89,18 +98,21 @@ public struct EditActionItem: ChatMessageActionItem {
 
 /// Instance of `ChatMessageActionItem` for copy message action.
 public struct CopyActionItem: ChatMessageActionItem {
-    public var title: String { L10n.Message.Actions.copy }
+    public var title: String
     public let icon: UIImage
     public let action: (ChatMessageActionItem) -> Void
 
     /// Init of `CopyActionItem`
     /// - Parameters:
+    ///     - title: The name of the action. Provide a value in case you want to override the default title.
     ///     - action: Action to be triggered when `CopyActionItem` is tapped.
     ///     - appearance: `Appearance` that is used to configure UI properties.
     public init(
+        title: String? = nil,
         action: @escaping (ChatMessageActionItem) -> Void,
         appearance: Appearance = .default
     ) {
+        self.title = title ?? L10n.Message.Actions.copy
         self.action = action
         icon = appearance.images.messageActionCopy
     }
@@ -108,18 +120,21 @@ public struct CopyActionItem: ChatMessageActionItem {
 
 /// Instance of `ChatMessageActionItem` for mark a message as unread action.
 public struct MarkUnreadActionItem: ChatMessageActionItem {
-    public var title: String { L10n.Message.Actions.markUnread }
+    public var title: String
     public let icon: UIImage
     public let action: (ChatMessageActionItem) -> Void
 
     /// Init of `MarkUnreadActionItem`
     /// - Parameters:
+    ///     - title: The name of the action. Provide a value in case you want to override the default title.
     ///     - action: Action to be triggered when `MarkUnreadActionItem` is tapped.
     ///     - appearance: `Appearance` that is used to configure UI properties.
     public init(
+        title: String? = nil,
         action: @escaping (ChatMessageActionItem) -> Void,
         appearance: Appearance = .default
     ) {
+        self.title = title ?? L10n.Message.Actions.markUnread
         self.action = action
         icon = appearance.images.messageActionMarkUnread
     }
@@ -127,18 +142,21 @@ public struct MarkUnreadActionItem: ChatMessageActionItem {
 
 /// Instance of `ChatMessageActionItem` for unblocking user.
 public struct UnblockUserActionItem: ChatMessageActionItem {
-    public var title: String { L10n.Message.Actions.userUnblock }
+    public var title: String
     public let icon: UIImage
     public let action: (ChatMessageActionItem) -> Void
 
     /// Init of `UnblockUserActionItem`.
     /// - Parameters:
+    ///     - title: The name of the action. Provide a value in case you want to override the default title.
     ///     - action: Action to be triggered when `UnblockUserActionItem` is tapped.
     ///     - appearance: `Appearance` that is used to configure UI properties.
     public init(
+        title: String? = nil,
         action: @escaping (ChatMessageActionItem) -> Void,
         appearance: Appearance = .default
     ) {
+        self.title = title ?? L10n.Message.Actions.userUnblock
         self.action = action
         icon = appearance.images.messageActionBlockUser
     }
@@ -146,18 +164,21 @@ public struct UnblockUserActionItem: ChatMessageActionItem {
 
 /// Instance of `ChatMessageActionItem` for blocking user.
 public struct BlockUserActionItem: ChatMessageActionItem {
-    public var title: String { L10n.Message.Actions.userBlock }
+    public var title: String
     public let icon: UIImage
     public let action: (ChatMessageActionItem) -> Void
 
     /// Init of `BlockUserActionItem`.
     /// - Parameters:
+    ///     - title: The name of the action. Provide a value in case you want to override the default title.
     ///     - action: Action to be triggered when `BlockUserActionItem` is tapped.
     ///     - appearance: `Appearance` that is used to configure UI properties.
     public init(
+        title: String? = nil,
         action: @escaping (ChatMessageActionItem) -> Void,
         appearance: Appearance = .default
     ) {
+        self.title = title ?? L10n.Message.Actions.userBlock
         self.action = action
         icon = appearance.images.messageActionBlockUser
     }
@@ -165,18 +186,21 @@ public struct BlockUserActionItem: ChatMessageActionItem {
 
 /// Instance of `ChatMessageActionItem` for muting user.
 public struct MuteUserActionItem: ChatMessageActionItem {
-    public var title: String { L10n.Message.Actions.userMute }
+    public var title: String
     public let icon: UIImage
     public let action: (ChatMessageActionItem) -> Void
 
     /// Init of `MuteUserActionItem`.
     /// - Parameters:
+    ///     - title: The name of the action. Provide a value in case you want to override the default title.
     ///     - action: Action to be triggered when `MuteUserActionItem` is tapped.
     ///     - appearance: `Appearance` that is used to configure UI properties.
     public init(
+        title: String? = nil,
         action: @escaping (ChatMessageActionItem) -> Void,
         appearance: Appearance = .default
     ) {
+        self.title = title ?? L10n.Message.Actions.userMute
         self.action = action
         icon = appearance.images.messageActionMuteUser
     }
@@ -184,18 +208,21 @@ public struct MuteUserActionItem: ChatMessageActionItem {
 
 /// Instance of `ChatMessageActionItem` for unmuting user.
 public struct UnmuteUserActionItem: ChatMessageActionItem {
-    public var title: String { L10n.Message.Actions.userUnmute }
+    public var title: String
     public let icon: UIImage
     public let action: (ChatMessageActionItem) -> Void
 
     /// Init of `UnmuteUserActionItem`.
     /// - Parameters:
+    ///     - title: The name of the action. Provide a value in case you want to override the default title.
     ///     - action: Action to be triggered when `UnmuteUserActionItem` is tapped.
     ///     - appearance: `Appearance` that is used to configure UI properties.
     public init(
+        title: String? = nil,
         action: @escaping (ChatMessageActionItem) -> Void,
         appearance: Appearance = .default
     ) {
+        self.title = title ?? L10n.Message.Actions.userUnmute
         self.action = action
         icon = appearance.images.messageActionMuteUser
     }
@@ -203,19 +230,22 @@ public struct UnmuteUserActionItem: ChatMessageActionItem {
 
 /// Instance of `ChatMessageActionItem` for deleting message action.
 public struct DeleteActionItem: ChatMessageActionItem {
-    public var title: String { L10n.Message.Actions.delete }
+    public var title: String
     public var isDestructive: Bool { true }
     public let icon: UIImage
     public let action: (ChatMessageActionItem) -> Void
 
     /// Init of `DeleteActionItem`.
     /// - Parameters:
+    ///     - title: The name of the action. Provide a value in case you want to override the default title.
     ///     - action: Action to be triggered when `DeleteActionItem` is tapped.
     ///     - appearance: `Appearance` that is used to configure UI properties.
     public init(
+        title: String? = nil,
         action: @escaping (ChatMessageActionItem) -> Void,
         appearance: Appearance = .default
     ) {
+        self.title = title ?? L10n.Message.Actions.delete
         self.action = action
         icon = appearance.images.messageActionDelete
     }
@@ -223,19 +253,22 @@ public struct DeleteActionItem: ChatMessageActionItem {
 
 /// Instance of `ChatMessageActionItem` for resending message action.
 public struct ResendActionItem: ChatMessageActionItem {
-    public var title: String { L10n.Message.Actions.resend }
+    public var title: String
     public var isPrimary: Bool { true }
     public let icon: UIImage
     public let action: (ChatMessageActionItem) -> Void
 
     /// Init of `ResendActionItem`.
     /// - Parameters:
+    ///     - title: The name of the action. Provide a value in case you want to override the default title.
     ///     - action: Action to be triggered when `ResendActionItem` is tapped.
     ///     - appearance: `Appearance` that is used to configure UI properties.
     public init(
+        title: String? = nil,
         action: @escaping (ChatMessageActionItem) -> Void,
         appearance: Appearance = .default
     ) {
+        self.title = title ?? L10n.Message.Actions.resend
         self.action = action
         icon = appearance.images.messageActionResend
     }
@@ -243,18 +276,21 @@ public struct ResendActionItem: ChatMessageActionItem {
 
 /// Instance of `FlagActionItem` for flagging a message action.
 public struct FlagActionItem: ChatMessageActionItem {
-    public var title: String { L10n.Message.Actions.flag }
+    public var title: String
     public let icon: UIImage
     public let action: (ChatMessageActionItem) -> Void
 
     /// Init of `FlagActionItem`.
     /// - Parameters:
+    ///     - title: The name of the action. Provide a value in case you want to override the default title.
     ///     - action: Action to be triggered when `FlagActionItem` is tapped.
     ///     - appearance: `Appearance` that is used to configure UI properties.
     public init(
+        title: String? = nil,
         action: @escaping (ChatMessageActionItem) -> Void,
         appearance: Appearance = .default
     ) {
+        self.title = title ?? L10n.Message.Actions.flag
         self.action = action
         icon = appearance.images.messageActionFlag
     }

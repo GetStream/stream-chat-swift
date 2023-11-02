@@ -509,7 +509,11 @@ final class MessageDTO_Tests: XCTestCase {
             pinExpires: .unique,
             isShadowed: true,
             translations: [.english: .unique],
-            originalLanguage: "es"
+            originalLanguage: "es",
+            moderationDetails: .init(
+                originalText: "Original",
+                action: "BOUNCE"
+            )
         )
 
         try! database.writeSynchronously { session in
@@ -614,6 +618,8 @@ final class MessageDTO_Tests: XCTestCase {
         )
         XCTAssertEqual(messagePayload.translations?.mapKeys(\.languageCode), loadedMessage?.translations)
         XCTAssertEqual("es", loadedMessage?.originalLanguage)
+        XCTAssertEqual("Original", loadedMessage?.moderationDetails?.originalText)
+        XCTAssertEqual("BOUNCE", loadedMessage?.moderationDetails?.action)
     }
 
     func test_message_isNotOverwrittenWhenAlreadyInDatabase_andIsPending() throws {
@@ -944,7 +950,10 @@ final class MessageDTO_Tests: XCTestCase {
             pinned: true,
             pinnedByUserId: .unique,
             pinnedAt: .unique,
-            pinExpires: .unique
+            pinExpires: .unique,
+            moderationDetails: .init(
+                originalText: "Original", action: "MESSAGE_RESPONSE_ACTION_BOUNCE"
+            )
         )
 
         // Asynchronously save the payload to the db
@@ -988,6 +997,10 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedMessage.quotedMessage?.id, messagePayload.quotedMessage?.id)
         XCTAssertEqual(loadedMessage.quotedMessage?.author.id, messagePayload.quotedMessage?.user.id)
         XCTAssertEqual(loadedMessage.quotedMessage?.extraData, messagePayload.quotedMessage?.extraData)
+        // Moderation
+        XCTAssertEqual(loadedMessage.moderationDetails?.originalText, "Original")
+        XCTAssertEqual(loadedMessage.moderationDetails?.action, MessageModerationAction.bounce)
+        XCTAssertEqual(loadedMessage.isBounced, true)
 
         // Attachments
         XCTAssertEqual(
@@ -1216,6 +1229,50 @@ final class MessageDTO_Tests: XCTestCase {
             // Message 2 should have `createdAt` as `defaultSortingKey`
             Assert.willBeEqual(message2.defaultSortingKey, message2.createdAt)
         }
+    }
+
+    func test_moderationDetails_whenIsNil_shouldResetCurrentModerationDetails() throws {
+        let messageId: MessageId = .unique
+        let channelId: ChannelId = .unique
+        let userId: UserId = .unique
+        let messagePayload: MessagePayload = .dummy(
+            messageId: messageId,
+            authorUserId: userId,
+            moderationDetails: .init(originalText: "original", action: "dummy")
+        )
+
+        let messagePayloadResetModeration: MessagePayload = .dummy(
+            messageId: messageId,
+            authorUserId: userId,
+            moderationDetails: nil
+        )
+
+        var loadedMessage: ChatMessage? {
+            try? database.viewContext.message(id: messageId)?.asModel()
+        }
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: channelId)))
+            try session.saveMessage(
+                payload: messagePayload,
+                for: channelId,
+                syncOwnReactions: true,
+                cache: nil
+            )
+        }
+
+        XCTAssertNotNil(loadedMessage?.moderationDetails)
+
+        try database.writeSynchronously { session in
+            try session.saveMessage(
+                payload: messagePayloadResetModeration,
+                for: channelId,
+                syncOwnReactions: true,
+                cache: nil
+            )
+        }
+
+        XCTAssertNil(loadedMessage?.moderationDetails)
     }
 
     func test_DTO_updateFromSamePayload_doNotProduceChanges() throws {

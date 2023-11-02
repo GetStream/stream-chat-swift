@@ -546,6 +546,27 @@ final class ChatMessageContentView_Tests: XCTestCase {
         AssertSnapshot(view, variants: [.defaultLight])
     }
 
+    func test_appearance_whenMessageIsBounced() throws {
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "Hello",
+            type: .error,
+            author: .unique,
+            createdAt: createdAt,
+            isBounced: true,
+            localState: nil,
+            isSentByCurrentUser: true
+        )
+
+        let view = contentView(
+            message: message,
+            channel: .mock(cid: .unique)
+        )
+
+        AssertSnapshot(view, variants: [.defaultLight])
+    }
+
     func test_chatReactionsBubbleViewInjectable() {
         let testMessage: ChatMessage = .mock(
             id: .unique,

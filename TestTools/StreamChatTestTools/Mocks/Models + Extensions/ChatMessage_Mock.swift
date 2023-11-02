@@ -30,6 +30,7 @@ public extension ChatMessage {
         isShadowed: Bool = false,
         translations: [TranslationLanguage: String]? = nil,
         originalLanguage: TranslationLanguage? = nil,
+        moderationsDetails: MessageModerationDetails? = nil,
         reactionScores: [MessageReactionType: Int] = [:],
         reactionCounts: [MessageReactionType: Int] = [:],
         mentionedUsers: Set<ChatUser> = [],
@@ -83,6 +84,7 @@ public extension ChatMessage {
             pinDetails: pinDetails,
             translations: translations,
             originalLanguage: originalLanguage,
+            moderationDetails: moderationsDetails,
             readBy: { readBy },
             readByCount: { readBy.count },
             underlyingContext: underlyingContext

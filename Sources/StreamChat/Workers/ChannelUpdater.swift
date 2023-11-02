@@ -65,7 +65,6 @@ class ChannelUpdater: Worker {
 
                 database?.write { session in
                     if let channelDTO = session.channel(cid: payload.channel.cid) {
-                        channelDTO.cleanMessagesThatFailedToBeEditedDueToModeration()
                         if didJumpToMessage || didLoadFirstPage {
                             channelDTO.cleanAllMessagesExcludingLocalOnly()
                         }

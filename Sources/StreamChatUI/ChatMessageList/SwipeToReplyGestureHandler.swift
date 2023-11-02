@@ -85,6 +85,11 @@ open class SwipeToReplyGestureHandler {
             return
         }
 
+        // Local only messages should be allowed to quote reply.
+        if message.isLocalOnly {
+            return
+        }
+
         // When we are swiping, move the message views and determine if it should reply
         if gesture.state == .changed {
             let translation = gesture.translation(in: messageCell)
