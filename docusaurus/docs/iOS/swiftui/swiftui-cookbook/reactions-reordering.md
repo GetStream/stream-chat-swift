@@ -25,10 +25,10 @@ Additionally, you can swap the reactions view with your own implementation. To d
 
 ```swift
 public func makeBottomReactionsView(
-        message: ChatMessage,
-        showsAllInfo: Bool,
-        onTap: @escaping () -> (),
-        onLongPress: @escaping () -> ()
+    message: ChatMessage,
+    showsAllInfo: Bool,
+    onTap: @escaping () -> (),
+    onLongPress: @escaping () -> ()
 ) -> some View {
     CustomReactionsView(
         message: message,
