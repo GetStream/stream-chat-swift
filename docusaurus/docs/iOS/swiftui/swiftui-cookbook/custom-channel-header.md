@@ -31,7 +31,7 @@ The channel header from above consists of three sections:
 ### Principal section
 
 First, let's implement the principal section. If you take a closer look at the UI, you will notice that it has two columns:
-- the channel icon
+- the channel icon.
 - the channel info, which in turn has two rows.
 Therefore, we will need an `HStack` for the columns, and a `VStack` for the title rows.
 
