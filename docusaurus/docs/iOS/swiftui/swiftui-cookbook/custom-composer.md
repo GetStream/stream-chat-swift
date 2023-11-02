@@ -229,7 +229,7 @@ struct ComposerActionsView: View {
             Color.white.opacity(state == .initial ? 0.2 : 0.5)
             
             BlurredBackground()
-                .opacity(state == .initial ? 0.0 : 1)
+                .opacity(state == .initial ? 0.0 : 1.0)
             
             VStack(alignment: .leading, spacing: 30) {
                 ForEach(composerActions) { composerAction in
