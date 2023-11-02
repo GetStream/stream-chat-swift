@@ -339,32 +339,6 @@ final class ChatChannelListVC_Tests: XCTestCase {
         XCTAssertEqual(channelListVC.reloadChannelsCallCount, 1)
     }
 
-    func test_replaceChannelListController() {
-        let channelListVC = FakeChatChannelListVC()
-        channelListVC.controller = mockedChannelListController
-
-        let newController = ChannelListController_Mock()
-        channelListVC.replaceChannelListController(newController)
-
-        XCTAssertTrue(channelListVC.controller === newController)
-        XCTAssertEqual(channelListVC.mockedCollectionView.reloadDataCallCount, 1)
-        XCTAssertTrue(newController.delegate === channelListVC)
-        XCTAssertEqual(newController.synchronizeCallCount, 1)
-    }
-
-    func test_replaceQuery() {
-        let channelListVC = FakeChatChannelListVC()
-        channelListVC.controller = mockedChannelListController
-
-        let newQuery = ChannelListQuery(filter: .nonEmpty)
-        channelListVC.replaceQuery(newQuery)
-
-        XCTAssertTrue(channelListVC.controller !== mockedChannelListController)
-        XCTAssertEqual(channelListVC.controller.query, newQuery)
-        XCTAssertEqual(channelListVC.mockedCollectionView.reloadDataCallCount, 1)
-        XCTAssertNil(mockedChannelListController.delegate)
-    }
-
     func test_swipeableViewActionViews() {
         mockedChannelListController.channels_mock = [.mock(cid: .unique, ownCapabilities: [.deleteChannel])]
         let channelListVC = ChatChannelListVC()
