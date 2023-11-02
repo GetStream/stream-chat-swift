@@ -23,7 +23,7 @@ In this section, we will re-create Apple's composer, introduced in iOS 17.
 
 Here we will show you how to move the reactions to the bottom of the message, instead of the default top.
 
-![Screenshot of the left aligned message list.](../../assets/bottom-reactions.png)
+![Screenshot of the bottom reactions.](../../assets/bottom-reactions.png)
 
 ### Left alignment of messages
 
