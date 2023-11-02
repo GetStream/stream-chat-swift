@@ -401,7 +401,7 @@ final class ChannelController_Tests: XCTestCase {
         try AssertFirstUnreadMessageIsOldestRegularMessageId(oldestMessageType: .system)
     }
 
-    func test_firstUnreadMessageId_whenReadsContainsCurrentUserId_whenLastReadMessageIdDoesNotExist() throws {
+    func test_firstUnreadMessageId_whenReadsContainsCurrentUserId_whenLastReadMessageIdNotFoundLocally() throws {
         let oldestMessageId = MessageId.unique
         let newestMessageId = MessageId.unique
         let notLoadedLastReadMessageId = MessageId.unique
@@ -423,6 +423,34 @@ final class ChannelController_Tests: XCTestCase {
         }
 
         XCTAssertNil(controller.firstUnreadMessageId)
+    }
+
+    func test_firstUnreadMessageId_whenReadsContainsCurrentUserId_whenLastReadMessageIdNotFoundLocally_whenAllPreviousMessagesAreLoaded() throws {
+        let oldestMessageId = MessageId.unique
+        let newestMessageId = MessageId.unique
+        let notLoadedLastReadMessageId = MessageId.unique
+
+        let userId = UserId.unique
+        let channelRead = ChannelReadPayload(
+            user: .dummy(userId: userId),
+            lastReadAt: .unique,
+            lastReadMessageId: notLoadedLastReadMessageId,
+            unreadMessagesCount: 3
+        )
+        let token = Token(rawValue: "", userId: userId, expiration: nil)
+        controller.client.authenticationRepository.setMockToken(token)
+
+        try createChannel(oldestMessageId: oldestMessageId, newestMessageId: newestMessageId, channelReads: [channelRead])
+
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveCurrentUser(payload: .dummy(userId: userId, role: .user))
+        }
+
+        // When LastReadMessageId exists, and all messages are fetched, but still the LastReadMessageId
+        // is never fetched, it means this message is unreachable because the history was cleared.
+        // so the unread message id is the top message of the message list (the oldest one).
+        try mockHasLoadedAllPreviousMessages(true)
+        XCTAssertEqual(controller.firstUnreadMessageId, oldestMessageId)
     }
 
     func test_firstUnreadMessageId_whenReadsContainsCurrentUserId_whenLastReadMessageIdIsTheSameAsTheLastMessage() throws {
