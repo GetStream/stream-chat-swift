@@ -78,11 +78,11 @@ public init(
 
 Now, we can implement the `body` of the SwiftUI view. The composer's visible part consists of a horizontal stack with a plus button and a text input field. When a certain attachment picker is selected, the composer expands and moves up, providing users with the possibility to pick the attachment they need.
 
- ![Screenshot of the message composer.](../../assets/composer-attachments.png)
+![Screenshot of the message composer.](../../assets/composer-attachments.png)
 
- This means that we need to use a vertical stack as a container, where we would hide the picker in a compacted state and move it up with an animation when needed.
+This means that we need to use a vertical stack as a container, where we would hide the picker in a compacted state and move it up with an animation when needed.
 
- Therefore, the key components of the composer are the plus button, the input view, and the bottom attachment picker. Here's how this looks like in code.
+Therefore, the key components of the composer are the plus button, the input view, and the bottom attachment picker. Here's how this looks like in code.
 
 ```swift
 var body: some View {
