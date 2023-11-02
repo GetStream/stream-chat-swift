@@ -8,17 +8,22 @@ import StreamChat
 public extension ChatMessage {
     /// A boolean value that checks if actions are available on the message (e.g. `edit`, `delete`, `resend`, etc.).
     var isInteractionEnabled: Bool {
-        guard
-            type != .ephemeral, type != .system, type != .error,
-            isDeleted == false
-        else { return false }
+        if type == .ephemeral || isDeleted || shouldRenderAsSystemMessage {
+            return false
+        }
 
         return localState == nil || isLastActionFailed
     }
 
     /// A boolean value that checks if the last action (`send`, `edit` or `delete`) on the message failed.
     var isLastActionFailed: Bool {
-        guard isDeleted == false else { return false }
+        guard isDeleted == false else {
+            return false
+        }
+
+        if isBounced {
+            return true
+        }
 
         switch localState {
         case .sendingFailed, .syncingFailed, .deletingFailed:
@@ -71,6 +76,10 @@ public extension ChatMessage {
     var shouldRenderAsJumbomoji: Bool {
         guard attachmentCounts.isEmpty, let textContent = textContent, !textContent.isEmpty else { return false }
         return textContent.count <= 3 && textContent.containsOnlyEmoji
+    }
+
+    var shouldRenderAsSystemMessage: Bool {
+        type == .system || (type == .error && isBounced == false)
     }
 
     /// When a message that has been synced gets edited but is bounced by the moderation API it will return true to this state.

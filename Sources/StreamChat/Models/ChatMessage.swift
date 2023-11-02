@@ -175,6 +175,9 @@ public struct ChatMessage {
 
     /// The original language of the message.
     public let originalLanguage: TranslationLanguage?
+  
+    /// The moderation details in case the message was moderated.
+    public let moderationDetails: MessageModerationDetails?
 
     /// If the message is authored by the current user this field contains the list of channel members
     /// who read this message (excluding the current user).
@@ -230,6 +233,7 @@ public struct ChatMessage {
         pinDetails: MessagePinDetails?,
         translations: [TranslationLanguage: String]?,
         originalLanguage: TranslationLanguage?,
+        moderationDetails: MessageModerationDetails?,
         readBy: @escaping () -> Set<ChatUser>,
         readByCount: @escaping () -> Int,
         underlyingContext: NSManagedObjectContext?
@@ -259,6 +263,7 @@ public struct ChatMessage {
         self.pinDetails = pinDetails
         self.translations = translations
         self.originalLanguage = originalLanguage
+        self.moderationDetails = moderationDetails
 
         $_author = (author, underlyingContext)
         $_mentionedUsers = (mentionedUsers, underlyingContext)

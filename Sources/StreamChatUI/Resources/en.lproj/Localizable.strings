@@ -39,6 +39,12 @@
 "message.actions.flag.confirmation-message" = "Do you want to send a copy of this message to a moderator for further investigation?";
 "message.actions.mark-unread" = "Mark as unread";
 
+"message.moderation.title" = "Are you sure?";
+"message.moderation.message" = "Consider how your comment might make others feel and be sure to follow our Community Guidelines.";
+"message.moderation.resend" = "Send Anyway";
+"message.moderation.edit" = "Edit Message";
+"message.moderation.delete" = "Delete Message";
+
 "messageList.typingIndicator.typing-unknown" = "Someone is typing";
 
 "message.threads.reply" = "Thread Reply";
@@ -75,9 +81,6 @@
 "message.title.online" = "Online";
 "message.title.offline" = "Offline";
 "message.title.group" = "%d members, %d online";
-
-"message.moderation.title" = "This message has been moderated";
-"message.moderation.message" = "Please select any of the following options to proceed";
 
 "current-selection" = "%d of %d";
 

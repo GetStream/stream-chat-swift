@@ -98,7 +98,6 @@ class MessageRepository {
             if messageDTO.localMessageState == .sending || messageDTO.localMessageState == .sendingFailed {
                 messageDTO.locallyCreatedAt = nil
                 messageDTO.localMessageState = nil
-                messageDTO.isBounced = false
             }
 
             messageModel = try? messageDTO.asModel()
@@ -117,22 +116,16 @@ class MessageRepository {
     ) {
         log.error("Sending the message with id \(messageId) failed with error: \(error)")
 
-        let isBounced = (error as? ClientError)?.isBouncedMessageError ?? false
-
-        markMessageAsFailedToSend(id: messageId, isBounced: isBounced) {
+        markMessageAsFailedToSend(id: messageId) {
             completion(.failure(.failedToSendMessage))
         }
     }
 
-    private func markMessageAsFailedToSend(id: MessageId, isBounced: Bool? = nil, completion: @escaping () -> Void) {
+    private func markMessageAsFailedToSend(id: MessageId, completion: @escaping () -> Void) {
         database.write({
             let dto = $0.message(id: id)
             if dto?.localMessageState == .sending {
                 dto?.localMessageState = .sendingFailed
-            }
-
-            if let isBounced = isBounced {
-                dto?.isBounced = isBounced
             }
         }, completion: {
             if let error = $0 {
@@ -201,15 +194,10 @@ class MessageRepository {
         }
     }
 
-    func updateMessage(withID id: MessageId, localState: LocalMessageState?, isBounced: Bool? = nil, completion: @escaping () -> Void) {
+    func updateMessage(withID id: MessageId, localState: LocalMessageState?, completion: @escaping () -> Void) {
         database.write({
             let dto = $0.message(id: id)
-
             dto?.localMessageState = localState
-
-            if let isBounced = isBounced {
-                dto?.isBounced = isBounced
-            }
         }, completion: { error in
             if let error = error {
                 log

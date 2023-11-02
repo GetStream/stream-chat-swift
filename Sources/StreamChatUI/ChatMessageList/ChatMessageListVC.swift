@@ -461,6 +461,11 @@ open class ChatMessageListVC: _ViewController,
             let cid = dataSource?.channel(for: self)?.cid
         else { return }
 
+        if message.isBounced {
+            showActions(forDebouncedMessage: message)
+            return
+        }
+
         let messageController = client.messageController(
             cid: cid,
             messageId: message.id
@@ -552,37 +557,56 @@ open class ChatMessageListVC: _ViewController,
 
     /// Show the actions that can be performed in a debounced message.
     open func showActions(forDebouncedMessage message: ChatMessage) {
-        guard let cid = message.cid else {
-            return log.error("Message cid not found.")
-        }
+        let messageActions = messageActions(forDebouncedMessage: message)
 
-        let messageController = client.messageController(
-            cid: cid,
-            messageId: message.id
+        let alert = UIAlertController(
+            title: L10n.Message.Moderation.title,
+            message: L10n.Message.Moderation.message,
+            preferredStyle: .alert
         )
 
-        messageActionsVC = components.messageActionsVC.init()
-        messageActionsVC?.messageController = messageController
-        messageActionsVC?.channel = dataSource?.channel(for: self)
-        messageActionsVC?.delegate = self
-
-        guard let messageActions = messageActionsVC?.messageActionsForAlertMenu else {
-            return log.error("messageActionsVC: messageActionsForAlertMenu not found.")
-        }
-
-        let alert = UIAlertController(title: L10n.Message.Moderation.title, message: L10n.Message.Moderation.message, preferredStyle: .alert)
-
         messageActions.forEach { messageAction in
-            alert.addAction(UIAlertAction(title: messageAction.title, style: messageAction.isDestructive ? .destructive : .default) { _ in
-                messageAction.action(messageAction)
-            })
+            let action = UIAlertAction(
+                title: messageAction.title,
+                style: messageAction.isDestructive ? .destructive : .default,
+                handler: { _ in messageAction.action(messageAction) }
+            )
+            alert.addAction(action)
         }
-
-        alert.addAction(UIAlertAction(title: L10n.Alert.Actions.cancel, style: .destructive) { _ in
-            self.messageActionsVC = nil
-        })
+        alert.addAction(UIAlertAction(title: L10n.Alert.Actions.cancel, style: .destructive))
 
         navigationController?.present(alert, animated: true)
+    }
+
+    /// The message actions for a message which was debounced.
+    open func messageActions(forDebouncedMessage message: ChatMessage) -> [ChatMessageActionItem] {
+        guard let cid = message.cid else {
+            log.error("Message cid not found.")
+            return []
+        }
+
+        let messageController = client.messageController(cid: cid, messageId: message.id)
+        return [
+            ResendActionItem(
+                title: L10n.Message.Moderation.resend,
+                action: { _ in
+                    messageController.resendMessage()
+                }
+            ),
+            EditActionItem(
+                title: L10n.Message.Moderation.edit,
+                action: { [weak self] item in
+                    guard let self = self else { return }
+                    self.delegate?.chatMessageListVC(self, didTapOnAction: item, for: message)
+                }
+            ),
+            DeleteActionItem(
+                title: L10n.Message.Moderation.delete,
+                action: { _ in
+                    messageController.deleteMessage()
+                }
+            )
+        ]
     }
 
     /// Jump to a given message.
@@ -795,15 +819,6 @@ open class ChatMessageListVC: _ViewController,
     open func messageContentViewDidTapOnErrorIndicator(_ indexPath: IndexPath?) {
         guard let indexPath = indexPath else {
             return log.error("IndexPath is not available")
-        }
-
-        guard let message = dataSource?.chatMessageListVC(self, messageAt: indexPath) else {
-            return log.error("DataSource not found for the message list.")
-        }
-
-        if message.isBounced {
-            showActions(forDebouncedMessage: message)
-            return
         }
 
         didSelectMessageCell(at: indexPath)

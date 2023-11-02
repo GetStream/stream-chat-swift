@@ -53,7 +53,7 @@ class MessageUpdater: Worker {
     func deleteMessage(messageId: MessageId, hard: Bool, completion: ((Error?) -> Void)? = nil) {
         var shouldDeleteOnBackend = true
 
-        database.write({ [isLocalStorageEnabled] session in
+        database.write({ session in
             guard let messageDTO = session.message(id: messageId) else {
                 // Even though the message does not exist locally
                 // we don't throw any error because we still want
@@ -61,22 +61,20 @@ class MessageUpdater: Worker {
                 return
             }
 
-            // Hard Deleting is necessary for bounced messages, since these messages are never stored on the cloud
-            // an apiClient request to delete them would never be triggered.
-            let shouldBeHardDeleted = hard || messageDTO.failedToBeSentDueToModeration
-            let shouldAllowLocallyStoredMessagesToBeDeleted = !isLocalStorageEnabled
-                || messageDTO.localMessageState == .pendingSend
-                || messageDTO.failedToBeSentDueToModeration
-            
+            // Hard Deleting is necessary for messages which are only available locally in the DB
+            // or if we want to explicitly hard delete the message with hard == true.
+            let shouldBeHardDeleted = hard || messageDTO.isLocalOnly
             messageDTO.isHardDeleted = shouldBeHardDeleted
 
-            if messageDTO.existsOnlyLocally && shouldAllowLocallyStoredMessagesToBeDeleted {
+            if messageDTO.isLocalOnly {
                 messageDTO.type = MessageType.deleted.rawValue
                 messageDTO.deletedAt = DBDate()
+
+                // If a message is local only, it means it is not in the server, so we should
+                // not make any call to the server.
                 shouldDeleteOnBackend = false
 
-                // Ensures bounced message deletion updates the channel preview. Bounced messages are not stored on the backend,
-                // so there would be no incoming websocket payload event `.messageDeleted` to trigger that update.
+                // Ensures bounced message deletion updates the channel preview.
                 if let channelDTO = messageDTO.previewOfChannel, let channelId = try? ChannelId(cid: channelDTO.cid) {
                     channelDTO.previewMessage = session.preview(for: channelId)
                 }
@@ -147,6 +145,11 @@ class MessageUpdater: Worker {
                         return try session.createNewAttachment(attachment: attachment, id: id)
                     }
                 )
+            }
+
+            if messageDTO.isBounced {
+                try updateMessage(localState: .pendingSend)
+                return
             }
 
             switch messageDTO.localMessageState {
@@ -259,10 +262,6 @@ class MessageUpdater: Worker {
             switch $0 {
             case let .success(payload):
                 self.database.write({ session in
-                    if let channelDTO = session.channel(cid: cid) {
-                        channelDTO.cleanMessagesThatFailedToBeEditedDueToModeration()
-                    }
-
                     // If it is first page or jumping to a message, clear the current messages.
                     if let parentMessage = session.message(id: messageId) {
                         if didJumpToMessage || didLoadFirstPage {
@@ -534,14 +533,18 @@ class MessageUpdater: Worker {
     /// - Parameters:
     ///   - messageId: The message identifier.
     ///   - completion: Called when the message database entity is updated. Called with `Error` if update fails.
-    func resendMessage(with messageId: MessageId, completion: @escaping (Error?) -> Void) {
+    func resendMessage(
+        with messageId: MessageId,
+        completion: @escaping (Error?
+        ) -> Void
+    ) {
         database.write({
             let messageDTO = try $0.messageEditableByCurrentUser(messageId)
 
-            guard messageDTO.localMessageState == .sendingFailed else {
+            guard messageDTO.localMessageState == .sendingFailed || messageDTO.isBounced else {
                 throw ClientError.MessageEditing(
                     messageId: messageId,
-                    reason: "only message in `.sendingFailed` can be resent"
+                    reason: "only failed or bounced messages can be resent."
                 )
             }
 
@@ -686,12 +689,6 @@ extension ClientError {
         init(messageId: String, reason: String) {
             super.init("Message with id: \(messageId) can't be edited (\(reason)")
         }
-    }
-}
-
-private extension MessageDTO {
-    var existsOnlyLocally: Bool {
-        localMessageState == .pendingSend || localMessageState == .sendingFailed
     }
 }
 

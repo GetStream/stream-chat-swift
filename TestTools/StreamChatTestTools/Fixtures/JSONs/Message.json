@@ -273,6 +273,29 @@
             "total_unread_count" : 0,
             "online" : true,
             "name" : "John Doe"
+        },
+        "moderation_details": {
+            "original_text": "click here to win a new iphone!!",
+            "action": "MESSAGE_RESPONSE_ACTION_BOUNCE",
+            "harms": [
+                {
+                    "name": "spam_commercial",
+                    "phrase_list_ids": [],
+                    "details": [
+                        {
+                            "spam_commercial": {
+                                "threshold": 0.7,
+                                "language": "en",
+                                "lang_score": 0.8456407,
+                                "clean_msg": "click here to win a new iphone!!",
+                                "pred_score": {
+                                    "spam_commercial": 0.969
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
         }
     }
 }
