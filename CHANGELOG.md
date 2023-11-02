@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix not being able to delete local-only messages [#2846](https://github.com/GetStream/stream-chat-swift/pull/2846)
 - Fix bounced message displayed as a system message instead of an error [#2846](https://github.com/GetStream/stream-chat-swift/pull/2846)
 - Fix not showing bounced actions when long pressing bounced message [#2846](https://github.com/GetStream/stream-chat-swift/pull/2846)
+- Fix empty channel list when querying both hidden or shown channels [#2865](https://github.com/GetStream/stream-chat-swift/pull/2865)
 
 ## StreamChatUI
 ### ✅ Added
