@@ -233,7 +233,7 @@ var body: some Scene {
 }
 ```
 
-If you now run your app now, you should see the updated channel header, as shown on the screenshot.
+If you run your app now, you should see the updated channel header, as shown on the screenshot.
 
 ![Screenshot of the channel header.](../../assets/whatsapp-header.png)
 
