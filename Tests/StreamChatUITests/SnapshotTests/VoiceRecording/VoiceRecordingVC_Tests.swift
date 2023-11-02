@@ -6,7 +6,7 @@ import AVFoundation
 @testable import StreamChat
 @testable import StreamChatTestTools
 @testable import StreamChatUI
-@testable import StreamSwiftTestHelpers
+import StreamSwiftTestHelpers
 import XCTest
 
 final class VoiceRecordingVC_Tests: XCTestCase {

@@ -3,7 +3,7 @@
 //
 
 @testable import StreamChatUI
-@testable import StreamSwiftTestHelpers
+import StreamSwiftTestHelpers
 import XCTest
 
 final class DefaultMarkdownFormatter_Tests: XCTestCase {
