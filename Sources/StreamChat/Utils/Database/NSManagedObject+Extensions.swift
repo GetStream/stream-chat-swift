@@ -148,7 +148,10 @@ class FetchCache {
 extension NSManagedObjectContext {
     func fetch<T>(_ request: NSFetchRequest<T>, using cache: FetchCache) throws -> [T] where T: NSFetchRequestResult {
         if let objectIds = cache.get(request) {
-            return try objectIds.compactMap { try existingObject(with: $0) as? T }
+            return try objectIds.compactMap {
+                guard !$0.isTemporaryID else { return nil }
+                return try existingObject(with: $0) as? T
+            }
         }
 
         // We haven't `fetch`ed the request yet
