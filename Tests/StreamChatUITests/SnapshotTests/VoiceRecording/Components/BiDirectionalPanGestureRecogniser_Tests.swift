@@ -4,7 +4,7 @@
 
 import StreamChat
 import StreamChatUI
-@testable import StreamSwiftTestHelpers
+import StreamSwiftTestHelpers
 import XCTest
 
 final class BiDirectionalPanGestureRecogniser_Tests: XCTestCase {
