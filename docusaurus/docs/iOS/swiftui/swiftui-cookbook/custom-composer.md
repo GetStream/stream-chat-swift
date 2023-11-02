@@ -421,7 +421,7 @@ var body: some Scene {
 }
 ```
 
-If you now run your app now, you should see the updated composer, as shown on the screenshot.
+If you run your app now, you should see the updated composer, as shown on the screenshot.
 
 ![Screenshot of the message composer.](../../assets/apple-composer-1.png)
 
