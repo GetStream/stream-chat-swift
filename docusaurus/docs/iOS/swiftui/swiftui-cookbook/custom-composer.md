@@ -32,7 +32,7 @@ The `AppleMessageComposerView` is a SwiftUI view that's generic over a `ViewFact
 Next, let's define few properties that we are going to use in our implementation.
 
 ```swift
-	@Injected(\.colors) private var colors
+    @Injected(\.colors) private var colors
     @Injected(\.fonts) private var fonts
         
     // Initial popup size, before the keyboard is shown.
