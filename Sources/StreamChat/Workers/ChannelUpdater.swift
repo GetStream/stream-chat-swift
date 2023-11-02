@@ -45,6 +45,8 @@ class ChannelUpdater: Worker {
         onChannelCreated: ((ChannelId) -> Void)? = nil,
         completion: ((Result<ChannelPayload, Error>) -> Void)? = nil
     ) {
+        log.info("ChannelUpdater.update call - \(completion == nil ? "completion is nil" : "")", subsystems: .synchronizeTesting)
+
         if let pagination = channelQuery.pagination {
             paginationStateHandler.begin(pagination: pagination)
         }
@@ -59,11 +61,19 @@ class ChannelUpdater: Worker {
                     self.paginationStateHandler.end(pagination: pagination, with: result.map(\.messages))
                 }
 
+                log.info("ChannelUpdater.update - API Completion - Getting result", subsystems: .synchronizeTesting)
                 let payload = try result.get()
 
                 onChannelCreated?(payload.channel.cid)
 
-                database?.write { session in
+                guard let database = database else {
+                    log.error("ChannelUpdater.update - API Completion - No database", subsystems: .synchronizeTesting)
+                    completion?(.failure(ClientError("No database")))
+                    return
+                }
+
+                log.info("ChannelUpdater.update - Start DB write", subsystems: .synchronizeTesting)
+                database.write { session in
                     if let channelDTO = session.channel(cid: payload.channel.cid) {
                         if didJumpToMessage || didLoadFirstPage {
                             channelDTO.cleanAllMessagesExcludingLocalOnly()
@@ -76,12 +86,15 @@ class ChannelUpdater: Worker {
 
                 } completion: { error in
                     if let error = error {
+                        log.error("ChannelUpdater.update - DB Write - ERROR \(error)", subsystems: .synchronizeTesting)
                         completion?(.failure(error))
-                        return
+                    } else {
+                        log.info("ChannelUpdater.update - DB Write - Success", subsystems: .synchronizeTesting)
+                        completion?(.success(payload))
                     }
-                    completion?(.success(payload))
                 }
             } catch {
+                log.error("ChannelUpdater.update - ERROR \(error) ", subsystems: .synchronizeTesting)
                 completion?(.failure(error))
             }
         }
@@ -90,8 +103,10 @@ class ChannelUpdater: Worker {
             .updateChannel(query: channelQuery)
 
         if isInRecoveryMode {
+            log.info("ChannelUpdater.update - Start API Call - recovery mode", subsystems: .synchronizeTesting)
             apiClient.recoveryRequest(endpoint: endpoint, completion: completion)
         } else {
+            log.info("ChannelUpdater.update - Start API Call - NON recovery mode", subsystems: .synchronizeTesting)
             apiClient.request(endpoint: endpoint, completion: completion)
         }
     }

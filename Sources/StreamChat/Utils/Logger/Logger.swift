@@ -17,7 +17,7 @@ public struct LogSubsystem: OptionSet {
     }
 
     /// All subsystems within the SDK.
-    public static let all: LogSubsystem = [.database, .httpRequests, .webSocket, .other, .offlineSupport, .authentication, .audioPlayback]
+    public static let all: LogSubsystem = [.database, .httpRequests, .webSocket, .other, .offlineSupport, .authentication, .audioPlayback, .synchronizeTesting]
 
     /// The subsystem responsible for any other part of the SDK.
     /// This is the default subsystem value for logging, to be used when `subsystem` is not specified.
@@ -37,6 +37,8 @@ public struct LogSubsystem: OptionSet {
     public static let audioPlayback = Self(rawValue: 1 << 6)
     /// The subsystem responsible for audio recording.
     public static let audioRecording = Self(rawValue: 1 << 7)
+    /// The subsystem responsible for audio recording.
+    public static let synchronizeTesting = Self(rawValue: 1 << 10)
 }
 
 public enum LogConfig {
@@ -298,7 +300,7 @@ public class Logger {
                 level: level,
                 date: Date(),
                 message: messageString,
-                threadName: self.threadName,
+                threadName: subsystems == .synchronizeTesting ? "[synchronize-testing] " : self.threadName,
                 functionName: functionName,
                 fileName: fileName,
                 lineNumber: lineNumber

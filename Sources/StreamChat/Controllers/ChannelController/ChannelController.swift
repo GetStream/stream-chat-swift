@@ -1254,6 +1254,18 @@ public enum MessageOrdering {
 
 private extension ChatChannelController {
     func synchronize(isInRecoveryMode: Bool, _ completion: ((_ error: Error?) -> Void)? = nil) {
+        log.info("ChatChannelController.synchronize call", subsystems: .synchronizeTesting)
+
+        /// Setup observers if we know the channel `cid` (if it's missing, it'll be set in `set(cid:)`
+        /// Otherwise they will be set up after channel creation, in `set(cid:)`.
+        if let cid = cid {
+            log.info("ChatChannelController.synchronize cid \(cid)", subsystems: .synchronizeTesting)
+            setupEventObservers(for: cid)
+            setLocalStateBasedOnError(startDatabaseObservers())
+        } else {
+            log.info("ChatChannelController.synchronize no cid", subsystems: .synchronizeTesting)
+        }
+
         let channelCreatedCallback = isChannelAlreadyCreated ? nil : channelCreated(forwardErrorTo: setLocalStateBasedOnError)
         updater.update(
             channelQuery: channelQuery,
@@ -1262,21 +1274,22 @@ private extension ChatChannelController {
             completion: { result in
                 switch result {
                 case .success:
+                    log.info("ChatChannelController.synchronize - success", subsystems: .synchronizeTesting)
                     self.state = .remoteDataFetched
-                    self.callback { completion?(nil) }
+                    self.callback {
+                        completion?(nil)
+                        log.info("ChatChannelController.synchronize - success - completion called", subsystems: .synchronizeTesting)
+                    }
                 case let .failure(error):
+                    log.error("ChatChannelController.synchronize - error \(error)", subsystems: .synchronizeTesting)
                     self.state = .remoteDataFetchFailed(ClientError(with: error))
-                    self.callback { completion?(error) }
+                    self.callback {
+                        completion?(error)
+                        log.info("ChatChannelController.synchronize - error - completion called", subsystems: .synchronizeTesting)
+                    }
                 }
             }
         )
-
-        /// Setup observers if we know the channel `cid` (if it's missing, it'll be set in `set(cid:)`
-        /// Otherwise they will be set up after channel creation, in `set(cid:)`.
-        if let cid = cid {
-            setupEventObservers(for: cid)
-            setLocalStateBasedOnError(startDatabaseObservers())
-        }
     }
 
     /// Sets new cid of the query if necessary, and resets event and database observers.
@@ -1290,13 +1303,19 @@ private extension ChatChannelController {
     /// - Parameter cid: New cid for the channel
     /// - Returns: Error if it occurs while setting up database observers.
     private func set(cid: ChannelId) -> Error? {
-        guard self.cid != cid else { return nil }
+        guard self.cid != cid else {
+            log.info("ChatChannelController.set(cid:) - same cid", subsystems: .synchronizeTesting)
+            return nil
+        }
 
         channelQuery = ChannelQuery(cid: cid, channelQuery: channelQuery)
         setupEventObservers(for: cid)
 
         let error = startDatabaseObservers()
-        guard error == nil else { return error }
+        guard error == nil else {
+            log.error("ChatChannelController.set(cid:) - error \(error)", subsystems: .synchronizeTesting)
+            return error
+        }
 
         // If there's a channel already in the database, we must
         // simulate the existing data callbacks.
@@ -1304,20 +1323,26 @@ private extension ChatChannelController {
 
         // The reason is, when we don't have the cid, the initial fetches return empty/nil entities
         // and only following updates are reported, hence initial values are ignored.
-        guard let channel = channel else { return nil }
+        guard let channel = channel else {
+            log.error("ChatChannelController.set(cid:) - no channel", subsystems: .synchronizeTesting)
+            return nil
+        }
         delegateCallback {
+            log.info("ChatChannelController.set(cid:) - delegateCallback start", subsystems: .synchronizeTesting)
             $0.channelController(self, didUpdateChannel: .create(channel))
             $0.channelController(
                 self,
                 didUpdateMessages: self.messages.enumerated()
                     .map { ListChange.insert($1, index: IndexPath(item: $0, section: 0)) }
             )
+            log.info("ChatChannelController.set(cid:) - delegateCallback end", subsystems: .synchronizeTesting)
         }
         return nil
     }
 
     private func startDatabaseObservers() -> Error? {
-        startChannelObserver() ?? startMessagesObserver()
+        log.info("ChatChannelController.startDatabaseObservers call", subsystems: .synchronizeTesting)
+        return startChannelObserver() ?? startMessagesObserver()
     }
 
     private func startChannelObserver() -> Error? {
@@ -1327,7 +1352,7 @@ private extension ChatChannelController {
             try channelObserver?.startObserving()
             return nil
         } catch {
-            log.error("Failed to perform fetch request with error: \(error). This is an internal error.")
+            log.error("Failed to perform fetch request with error: \(error). This is an internal error.", subsystems: .synchronizeTesting)
             return ClientError.FetchFailed()
         }
     }
@@ -1339,7 +1364,7 @@ private extension ChatChannelController {
             try messagesObserver?.startObserving()
             return nil
         } catch {
-            log.error("Failed to perform fetch request with error: \(error). This is an internal error.")
+            log.error("Failed to perform fetch request with error: \(error). This is an internal error.", subsystems: .synchronizeTesting)
             return ClientError.FetchFailed()
         }
     }
@@ -1353,7 +1378,7 @@ private extension ChatChannelController {
             MemberEventObserver(notificationCenter: center, cid: cid) { [weak self] event in
                 self?.delegateCallback { [weak self] in
                     guard let self = self else {
-                        log.warning("Callback called while self is nil")
+                        log.warning("Callback called while self is nil", subsystems: .synchronizeTesting)
                         return
                     }
                     $0.channelController(self, didReceiveMemberEvent: event)
@@ -1402,16 +1427,19 @@ private extension ChatChannelController {
     private func setMessagesObserver() {
         messagesObserver = { [weak self] in
             guard let self = self else {
-                log.warning("Callback called while self is nil")
+                log.info("messagesObserver creation - no `self` - start", subsystems: .synchronizeTesting)
                 return nil
             }
-            guard let cid = self.cid else { return nil }
+            guard let cid = self.cid else {
+                log.error("messagesObserver creation - no `cid`", subsystems: .synchronizeTesting)
+                return nil
+            }
             let sortAscending = self.messageOrdering == .topToBottom ? false : true
             var deletedMessageVisibility: ChatClientConfig.DeletedMessageVisibility?
             var shouldShowShadowedMessages: Bool?
             self.client.databaseContainer.viewContext.performAndWait { [weak self] in
                 guard let self = self else {
-                    log.warning("Callback called while self is nil")
+                    log.warning("messagesObserver creation - no `self` - performAndWait", subsystems: .synchronizeTesting)
                     return
                 }
                 deletedMessageVisibility = self.client.databaseContainer.viewContext.deletedMessagesVisibility
@@ -1432,10 +1460,15 @@ private extension ChatChannelController {
                 itemCreator: { try $0.asModel() as ChatMessage }
             )
             observer.onDidChange = { [weak self] changes in
+                if self == nil {
+                    log.warning("messagesObserver onDidChange - no `self` - before delegateCallback", subsystems: .synchronizeTesting)
+                }
                 self?.delegateCallback {
-                    guard let self = self else { return }
-                    log.debug("didUpdateMessages: \(changes.map(\.debugDescription))")
-
+                    guard let self = self else {
+                        log.warning("messagesObserver onDidChange - no `self` - delegateCallback", subsystems: .synchronizeTesting)
+                        return
+                    }
+                    log.debug("messagesObserver onDidChange - \(changes.map(\.debugDescription))")
                     $0.channelController(self, didUpdateMessages: changes)
                 }
             }
@@ -1468,6 +1501,7 @@ private extension ChatChannelController {
     /// Completion will be called if DB fetch will fail after setting new `ChannelQuery`.
     private func channelCreated(forwardErrorTo completion: ((_ error: Error?) -> Void)?) -> ((ChannelId) -> Void) {
         return { [weak self] cid in
+            log.info("ChatChannelController.channelCreated", subsystems: .synchronizeTesting)
             guard let self = self else { return }
             self.isChannelAlreadyCreated = true
             completion?(self.set(cid: cid))
