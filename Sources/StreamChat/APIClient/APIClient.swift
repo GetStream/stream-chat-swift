@@ -118,14 +118,19 @@ class APIClient {
         completion: @escaping (Result<Response, Error>) -> Void
     ) -> AsyncOperation {
         AsyncOperation(maxRetries: maximumRequestRetries) { [weak self] operation, done in
-            guard self?.isRefreshingToken == false else {
-                // Requeue request
-                self?.request(endpoint: endpoint, completion: completion)
+            guard let self = self else {
                 done(.continue)
                 return
             }
 
-            self?.executeRequest(endpoint: endpoint) { [weak self] result in
+            guard !self.isRefreshingToken else {
+                // Requeue request
+                self.request(endpoint: endpoint, completion: completion)
+                done(.continue)
+                return
+            }
+
+            self.executeRequest(endpoint: endpoint) { [weak self] result in
                 switch result {
                 case .failure(_ as ClientError.RefreshingToken):
                     // Requeue request

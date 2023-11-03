@@ -14,10 +14,6 @@ final class BackgroundListDatabaseObserver_Tests: XCTestCase {
 
     var testFRC: TestFetchedResultsController { observer.frc as! TestFetchedResultsController }
 
-    var dummyUpdates: [ListChange<String>] {
-        [.insert("Something", index: IndexPath(item: 0, section: 0))]
-    }
-
     override func setUp() {
         super.setUp()
 
@@ -57,40 +53,19 @@ final class BackgroundListDatabaseObserver_Tests: XCTestCase {
         XCTAssertTrue(observer.items.isEmpty)
     }
 
-    func test_changeAggregatorSetup_shouldNotCallBlocksIfNoChanges() throws {
-        // Start observing to ensure everything is set up
-        try observer.startObserving()
-
-        observer.onDidChange = { _ in
-            XCTFail()
-        }
-
-        observer.onWillChange = {
-            XCTFail()
-        }
-
-        // Simulate callbacks from the aggregator
-        observer.changeAggregator.onWillChange?()
-        observer.changeAggregator.onDidChange?([])
-
-        XCTAssert(observer.frc.delegate === observer.changeAggregator)
-    }
-
     func test_changeAggregatorSetup() throws {
-        // Start observing to ensure everything is set up
-        try observer.startObserving()
-
-        let onDidChangeExpectation = expectation(description: "onDidChange")
-        observer.onDidChange = { _ in
-            onDidChangeExpectation.fulfill()
+        let expectation1 = expectation(description: "onWillChange is called")
+        observer.onWillChange = {
+            expectation1.fulfill()
         }
 
-        let onWillChangeExpectation = expectation(description: "onWillChange")
-        observer.onWillChange = { onWillChangeExpectation.fulfill() }
+        let expectation2 = expectation(description: "onDidChange is called")
+        observer.onDidChange = { _ in
+            expectation2.fulfill()
+        }
 
-        // Simulate callbacks from the aggregator
-        observer.changeAggregator.onWillChange?()
-        observer.changeAggregator.onDidChange?(dummyUpdates)
+        // Start observing to ensure everything is set up
+        try observer.startObserving()
 
         waitForExpectations(timeout: defaultTimeout)
 
@@ -120,9 +95,7 @@ final class BackgroundListDatabaseObserver_Tests: XCTestCase {
         XCTAssertEqual(Array(observer.items), reference1.map(\.uniqueValue))
 
         // Simulate the change aggregator callback and check the items get updated
-        observer.changeAggregator.onDidChange?(dummyUpdates)
-        try waitForOnDidChange()
-        XCTAssertEqual(Array(observer.items), reference2.map(\.uniqueValue))
+        assertItemsAfterUpdate(reference2.map(\.uniqueValue))
     }
 
     func test_startObserving_startsFRC() throws {
@@ -142,7 +115,7 @@ final class BackgroundListDatabaseObserver_Tests: XCTestCase {
 
     func test_updateStillReported_whenSamePropertyAssigned() throws {
         // For this test, we need an actual NSFetchedResultsController, not the test one
-        let observer = BackgroundListDatabaseObserver<String, TestManagedObject>(
+        observer = BackgroundListDatabaseObserver<String, TestManagedObject>(
             context: database.backgroundReadOnlyContext,
             fetchRequest: fetchRequest,
             itemCreator: { $0.testId },
@@ -150,7 +123,7 @@ final class BackgroundListDatabaseObserver_Tests: XCTestCase {
         )
 
         // We call startObserving
-        try observer.startObserving()
+        try startObservingAndWaitForInitialResults()
 
         let onDidChangeExpectation = expectation(description: "onDidChange")
         onDidChangeExpectation.expectedFulfillmentCount = 2
@@ -207,7 +180,11 @@ final class BackgroundListDatabaseObserver_Tests: XCTestCase {
 
         let startObservingDidChangeExpectation = expectation(description: "onDidChange")
         var changes: [ListChange<String>] = []
+        // When sending `DatabaseContainer.DidRemoveAllDataNotification` we call `startObserving`, which will call again `onDidChange` with 0 changes. We are not interested in this later part for this test.
+        var callsCount = 0
         observer.onDidChange = { incomingChanges in
+            guard callsCount == 0 else { return }
+            callsCount += 1
             changes = incomingChanges
             changes.forEach {
                 switch $0 {
@@ -226,7 +203,6 @@ final class BackgroundListDatabaseObserver_Tests: XCTestCase {
 
         // We wait for changes
         waitForExpectations(timeout: defaultTimeout)
-        XCTAssertEqual(changes.count, 2)
         XCTAssertEqual(observer.items.count, 0)
 
         // Assert `performFetch` was called again on the FRC
@@ -234,18 +210,28 @@ final class BackgroundListDatabaseObserver_Tests: XCTestCase {
     }
 
     private func startObservingAndWaitForInitialResults() throws {
-        // Start observing to ensure everything is set up
-        try observer.startObserving()
-
-        try waitForOnDidChange()
+        try waitForItemsUpdate {
+            // Start observing to ensure everything is set up
+            try observer.startObserving()
+        }
     }
 
-    private func waitForOnDidChange(file: StaticString = #filePath, line: UInt = #line) throws {
-        let startObservingDidChangeExpectation = expectation(description: "startObservingDidChange")
-        observer.onDidChange = { _ in
-            startObservingDidChangeExpectation.fulfill()
+    private func assertItemsAfterUpdate(_ items: [String], file: StaticString = #file, line: UInt = #line) {
+        try? waitForItemsUpdate {
+            let changeAggregator = observer.frc.delegate as? ListChangeAggregator<TestManagedObject, String>
+            changeAggregator?.onDidChange?([])
         }
-        // We wait for the startObserving to call onDidChange
+        let sutItems = Array(observer.items)
+        XCTAssertEqual(sutItems, items, file: file, line: line)
+    }
+
+    private func waitForItemsUpdate(block: () throws -> Void) throws {
+        let expectation = self.expectation(description: "Get items")
+        observer.onDidChange = { _ in
+            expectation.fulfill()
+        }
+
+        try block()
         waitForExpectations(timeout: defaultTimeout)
     }
 }
