@@ -353,16 +353,15 @@ extension ChannelDTO {
         let matchingQuery = NSPredicate(format: "ANY queries.filterHash == %@", query.filter.filterHash)
         let notDeleted = NSPredicate(format: "deletedAt == nil")
 
-        // If the query contains a filter for the `isHidden` property,
-        // we use the filter here
-        // This is safe to do since backend appends a `hidden: false` filter when it's not specified
-        // (so backend never returns hidden channels unless `hidden: true` is explicitly passed)
-        // We can't pass bools directly to NSPredicate so we have to use integers
-        let isHidden = NSPredicate(format: "isHidden == %i", query.filter.hiddenFilterValue == true ? 1 : 0)
-
         var subpredicates: [NSPredicate] = [
-            matchingQuery, notDeleted, isHidden
+            matchingQuery, notDeleted
         ]
+
+        // If a hidden filter is not provided, we add a default hidden filter == 0.
+        // The backend appends a `hidden: false` filter when it's not specified, so we need to do the same.
+        if query.filter.hiddenFilterValue == nil {
+            subpredicates.append(NSPredicate(format: "\(#keyPath(ChannelDTO.isHidden)) == 0"))
+        }
 
         if chatClientConfig.isChannelAutomaticFilteringEnabled, let filterPredicate = query.filter.predicate {
             subpredicates.append(filterPredicate)

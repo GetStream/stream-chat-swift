@@ -1373,6 +1373,73 @@ final class ChannelListController_Tests: XCTestCase {
         )
     }
 
+    func test_filterPredicate_whenHiddenTrueOrFalse_containsExpectedItems() throws {
+        let cid1 = ChannelId(type: .messaging, id: "1")
+        let cid2 = ChannelId(type: .messaging, id: "2")
+        let cid3 = ChannelId(type: .messaging, id: "3")
+
+        try assertFilterPredicate(
+            .or([
+                .equal(.hidden, to: true),
+                .equal(.hidden, to: false)
+            ]),
+            channelsInDB: [
+                .dummy(channel: .dummy(cid: cid1, name: "streamOriginal", isHidden: true)),
+                .dummy(channel: .dummy(cid: cid2, name: "teamDream", isHidden: true)),
+                .dummy(channel: .dummy(cid: cid3, name: "team", isHidden: false))
+            ],
+            expectedResult: [cid1, cid2, cid3]
+        )
+    }
+
+    func test_filterPredicate_whenHiddenTrue_containsExpectedItems() throws {
+        let cid1 = ChannelId(type: .messaging, id: "1")
+        let cid2 = ChannelId(type: .messaging, id: "2")
+        let cid3 = ChannelId(type: .messaging, id: "3")
+
+        try assertFilterPredicate(
+            .equal(.hidden, to: true),
+            channelsInDB: [
+                .dummy(channel: .dummy(cid: cid1, name: "streamOriginal", isHidden: true)),
+                .dummy(channel: .dummy(cid: cid2, name: "teamDream", isHidden: true)),
+                .dummy(channel: .dummy(cid: cid3, name: "team", isHidden: false))
+            ],
+            expectedResult: [cid1, cid2]
+        )
+    }
+
+    func test_filterPredicate_whenHiddenFalse_containsExpectedItems() throws {
+        let cid1 = ChannelId(type: .messaging, id: "1")
+        let cid2 = ChannelId(type: .messaging, id: "2")
+        let cid3 = ChannelId(type: .messaging, id: "3")
+
+        try assertFilterPredicate(
+            .equal(.hidden, to: false),
+            channelsInDB: [
+                .dummy(channel: .dummy(cid: cid1, name: "streamOriginal", isHidden: true)),
+                .dummy(channel: .dummy(cid: cid2, name: "teamDream", isHidden: true)),
+                .dummy(channel: .dummy(cid: cid3, name: "team", isHidden: false))
+            ],
+            expectedResult: [cid3]
+        )
+    }
+
+    func test_filterPredicate_whenHiddenNotSpecified_containsExpectedItems() throws {
+        let cid1 = ChannelId(type: .messaging, id: "1")
+        let cid2 = ChannelId(type: .messaging, id: "2")
+        let cid3 = ChannelId(type: .messaging, id: "3")
+
+        try assertFilterPredicate(
+            .noTeam,
+            channelsInDB: [
+                .dummy(channel: .dummy(cid: cid1, name: "streamOriginal", isHidden: true)),
+                .dummy(channel: .dummy(cid: cid2, name: "teamDream", isHidden: true)),
+                .dummy(channel: .dummy(cid: cid3, name: "team", isHidden: false))
+            ],
+            expectedResult: [cid3]
+        )
+    }
+
     func test_filterPredicate_nor_containsExpectedItems() throws {
         let memberId1 = UserId.unique
         let memberId2 = UserId.unique
