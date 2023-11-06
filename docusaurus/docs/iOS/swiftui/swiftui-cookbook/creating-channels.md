@@ -121,7 +121,7 @@ It's an implementation of the `ToolbarContent` protocol for creating navigation 
 
 Now that we have our header setup, let's implement the view that is displayed when the button is tapped.
 
-To do this, create a new file, called `NewChatView`, and add the following content.
+To do this, create a new file called `NewChatView` and add the following content.
 
 ```swift
 import StreamChat
