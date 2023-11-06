@@ -44,6 +44,7 @@ extension MessagePayload {
         reactionCounts: [MessageReactionType: Int] = ["like": 1],
         translations: [TranslationLanguage: String]? = nil,
         originalLanguage: String? = nil,
+        moderationDetails: MessageModerationDetailsPayload? = nil,
         mentionedUsers: [UserPayload] = [.dummy(userId: .unique)]
     ) -> MessagePayload {
         .init(
@@ -79,7 +80,8 @@ extension MessagePayload {
             pinnedAt: pinnedAt,
             pinExpires: pinExpires,
             translations: translations,
-            originalLanguage: originalLanguage
+            originalLanguage: originalLanguage,
+            moderationDetails: moderationDetails
         )
     }
 

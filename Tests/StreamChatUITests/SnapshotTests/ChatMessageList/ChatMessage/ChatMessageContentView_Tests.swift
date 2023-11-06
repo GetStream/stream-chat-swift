@@ -5,7 +5,7 @@
 @testable import StreamChat
 @testable import StreamChatTestTools
 @testable import StreamChatUI
-@testable import StreamSwiftTestHelpers
+import StreamSwiftTestHelpers
 import XCTest
 
 final class ChatMessageContentView_Tests: XCTestCase {
@@ -542,6 +542,27 @@ final class ChatMessageContentView_Tests: XCTestCase {
             channel: .mock(cid: .unique, membership: .mock(id: .unique, language: .portuguese))
         )
         view.layoutOptions?.insert(.translation)
+
+        AssertSnapshot(view, variants: [.defaultLight])
+    }
+
+    func test_appearance_whenMessageIsBounced() throws {
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "Hello",
+            type: .error,
+            author: .unique,
+            createdAt: createdAt,
+            isBounced: true,
+            localState: nil,
+            isSentByCurrentUser: true
+        )
+
+        let view = contentView(
+            message: message,
+            channel: .mock(cid: .unique)
+        )
 
         AssertSnapshot(view, variants: [.defaultLight])
     }

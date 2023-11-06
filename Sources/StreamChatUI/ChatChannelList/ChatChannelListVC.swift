@@ -237,8 +237,7 @@ open class ChatChannelListVC: _ViewController,
         self.controller = controller
         self.controller.delegate = self
         self.controller.synchronize()
-        channels = Array(self.controller.channels)
-        collectionView.reloadData()
+        reloadChannels()
     }
 
     /// Updates the list view with the most updated channels.

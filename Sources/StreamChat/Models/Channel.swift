@@ -111,7 +111,7 @@ public struct ChatChannel {
     /// - Important: The `latestMessages` property is loaded and evaluated lazily to maintain high performance.
     public var latestMessages: [ChatMessage] { _latestMessages }
     // stream:annotation "Move to async"
-    @CoreDataLazy(forceLazy: true) private var _latestMessages: [ChatMessage]
+    @CoreDataLazy private var _latestMessages: [ChatMessage]
 
     /// Latest message present on the channel sent by current user even if sent on a thread.
     ///
@@ -127,7 +127,7 @@ public struct ChatChannel {
     /// - Important: The `pinnedMessages` property is loaded and evaluated lazily to maintain high performance.
     public var pinnedMessages: [ChatMessage] { _pinnedMessages }
     // stream:annotation "Move to async"
-    @CoreDataLazy(forceLazy: true) private var _pinnedMessages: [ChatMessage]
+    @CoreDataLazy private var _pinnedMessages: [ChatMessage]
 
     /// Read states of the users for this channel.
     ///
@@ -162,7 +162,7 @@ public struct ChatChannel {
     /// because the preview message is the last `non-deleted` message sent to the channel.
     public var previewMessage: ChatMessage? { _previewMessage }
     // stream:annotation "Move to async?"
-    @CoreDataLazy(forceLazy: true) private var _previewMessage: ChatMessage?
+    @CoreDataLazy private var _previewMessage: ChatMessage?
 
     // MARK: - Internal
 

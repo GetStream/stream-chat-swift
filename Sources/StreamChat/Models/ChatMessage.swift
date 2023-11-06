@@ -59,7 +59,7 @@ public struct ChatMessage {
     /// If message is inline reply this property will contain the message quoted by this reply.
     ///
     public var quotedMessage: ChatMessage? { _quotedMessage }
-    @CoreDataLazy(forceLazy: true) internal var _quotedMessage: ChatMessage?
+    @CoreDataLazy internal var _quotedMessage: ChatMessage?
 
     /// A flag indicating whether the message was bounced due to moderation.
     public let isBounced: Bool
@@ -120,7 +120,7 @@ public struct ChatMessage {
     /// - Important: The `latestReplies` property is loaded and evaluated lazily to maintain high performance.
     public var latestReplies: [ChatMessage] { _latestReplies }
     // stream:annotation "Move to async"
-    @CoreDataLazy(forceLazy: true) internal var _latestReplies: [ChatMessage]
+    @CoreDataLazy internal var _latestReplies: [ChatMessage]
 
     /// A possible additional local state of the message. Applies only for the messages of the current user.
     ///
@@ -175,6 +175,9 @@ public struct ChatMessage {
 
     /// The original language of the message.
     public let originalLanguage: TranslationLanguage?
+  
+    /// The moderation details in case the message was moderated.
+    public let moderationDetails: MessageModerationDetails?
 
     /// If the message is authored by the current user this field contains the list of channel members
     /// who read this message (excluding the current user).
@@ -184,7 +187,7 @@ public struct ChatMessage {
     /// it's recommended to use `readByCount` instead of `readBy.count` for better performance.
     public var readBy: Set<ChatUser> { _readBy }
 
-    @CoreDataLazy(forceLazy: true) internal var _readBy: Set<ChatUser>
+    @CoreDataLazy internal var _readBy: Set<ChatUser>
 
     /// For the message authored by the current user this field contains number of channel members
     /// who has read this message (excluding the current user).
@@ -192,7 +195,7 @@ public struct ChatMessage {
     /// - Note: For the message authored by other channel members this field always returns `0`.
     public var readByCount: Int { _readByCount }
 
-    @CoreDataLazy(forceLazy: true) internal var _readByCount: Int
+    @CoreDataLazy internal var _readByCount: Int
 
     internal init(
         id: MessageId,
@@ -230,6 +233,7 @@ public struct ChatMessage {
         pinDetails: MessagePinDetails?,
         translations: [TranslationLanguage: String]?,
         originalLanguage: TranslationLanguage?,
+        moderationDetails: MessageModerationDetails?,
         readBy: @escaping () -> Set<ChatUser>,
         readByCount: @escaping () -> Int,
         underlyingContext: NSManagedObjectContext?
@@ -259,6 +263,7 @@ public struct ChatMessage {
         self.pinDetails = pinDetails
         self.translations = translations
         self.originalLanguage = originalLanguage
+        self.moderationDetails = moderationDetails
 
         $_author = (author, underlyingContext)
         $_mentionedUsers = (mentionedUsers, underlyingContext)

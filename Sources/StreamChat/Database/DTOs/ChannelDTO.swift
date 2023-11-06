@@ -353,16 +353,15 @@ extension ChannelDTO {
         let matchingQuery = NSPredicate(format: "ANY queries.filterHash == %@", query.filter.filterHash)
         let notDeleted = NSPredicate(format: "deletedAt == nil")
 
-        // If the query contains a filter for the `isHidden` property,
-        // we use the filter here
-        // This is safe to do since backend appends a `hidden: false` filter when it's not specified
-        // (so backend never returns hidden channels unless `hidden: true` is explicitly passed)
-        // We can't pass bools directly to NSPredicate so we have to use integers
-        let isHidden = NSPredicate(format: "isHidden == %i", query.filter.hiddenFilterValue == true ? 1 : 0)
-
         var subpredicates: [NSPredicate] = [
-            matchingQuery, notDeleted, isHidden
+            matchingQuery, notDeleted
         ]
+
+        // If a hidden filter is not provided, we add a default hidden filter == 0.
+        // The backend appends a `hidden: false` filter when it's not specified, so we need to do the same.
+        if query.filter.hiddenFilterValue == nil {
+            subpredicates.append(NSPredicate(format: "\(#keyPath(ChannelDTO.isHidden)) == 0"))
+        }
 
         if chatClientConfig.isChannelAutomaticFilteringEnabled, let filterPredicate = query.filter.predicate {
             subpredicates.append(filterPredicate)
@@ -377,12 +376,26 @@ extension ChannelDTO {
 
 extension ChannelDTO {
     /// Snapshots the current state of `ChannelDTO` and returns an immutable model object from it.
-    func asModel() throws -> ChatChannel { try .create(fromDTO: self) }
+    func asModel() throws -> ChatChannel { try .create(fromDTO: self, depth: 0) }
+
+    /// Snapshots the current state of `ChannelDTO` and returns an immutable model object from it if the dependency depth
+    /// limit has not been reached
+    func relationshipAsModel(depth: Int) throws -> ChatChannel? {
+        do {
+            return try .create(fromDTO: self, depth: depth + 1)
+        } catch {
+            if error is RecursionLimitError { return nil }
+            throw error
+        }
+    }
 }
 
 extension ChatChannel {
     /// Create a ChannelModel struct from its DTO
-    fileprivate static func create(fromDTO dto: ChannelDTO) throws -> ChatChannel {
+    fileprivate static func create(fromDTO dto: ChannelDTO, depth: Int) throws -> ChatChannel {
+        guard StreamRuntimeCheck._canFetchRelationship(currentDepth: depth) else {
+            throw RecursionLimitError()
+        }
         guard dto.isValid, let cid = try? ChannelId(cid: dto.cid), let context = dto.managedObjectContext else {
             throw InvalidModel(dto)
         }
@@ -447,7 +460,7 @@ extension ChatChannel {
                     shouldShowShadowedMessages: dto.managedObjectContext?.shouldShowShadowedMessages ?? false,
                     context: context
                 )
-                .compactMap { try? $0.asModel() }
+                .compactMap { try? $0.relationshipAsModel(depth: depth) }
         }
 
         let fetchLatestMessageFromUser: () -> ChatMessage? = {
@@ -459,7 +472,7 @@ extension ChatChannel {
                     in: dto.cid,
                     context: context
                 )?
-                .asModel()
+                .relationshipAsModel(depth: depth)
         }
 
         let fetchWatchers: () -> [ChatUser] = {
@@ -511,9 +524,9 @@ extension ChatChannel {
             //            invitedMembers: [],
             latestMessages: { fetchMessages() },
             lastMessageFromCurrentUser: { fetchLatestMessageFromUser() },
-            pinnedMessages: { dto.pinnedMessages.compactMap { try? $0.asModel() } },
+            pinnedMessages: { dto.pinnedMessages.compactMap { try? $0.relationshipAsModel(depth: depth) } },
             muteDetails: fetchMuteDetails,
-            previewMessage: { try? dto.previewMessage?.asModel() },
+            previewMessage: { try? dto.previewMessage?.relationshipAsModel(depth: depth) },
             underlyingContext: dto.managedObjectContext
         )
     }
@@ -522,16 +535,6 @@ extension ChatChannel {
 // MARK: - Helpers
 
 extension ChannelDTO {
-    /// Whenever a synced message fails being edited due to moderation it remains on a stale state, this ensures to restore messages to a clean state.
-    func cleanMessagesThatFailedToBeEditedDueToModeration() {
-        let failedEditAttempts = messages.filter { $0.failedToBeEditedDueToModeration }
-
-        failedEditAttempts.forEach {
-            $0.isBounced = false
-            $0.localMessageState = nil
-        }
-    }
-
     func cleanAllMessagesExcludingLocalOnly() {
         messages = messages.filter { $0.isLocalOnly }
     }

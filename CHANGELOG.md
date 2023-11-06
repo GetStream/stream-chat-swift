@@ -3,9 +3,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.41.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.41.0)
+_November 03, 2023_
+
+## StreamChat
+### ✅ Added
+- Add message moderation details to `ChatMessage` [#2846](https://github.com/GetStream/stream-chat-swift/pull/2846)
+- Add support for resending, editing and deleting bounced messages [#2846](https://github.com/GetStream/stream-chat-swift/pull/2846)
+### 🐞 Fixed
+- Fix not being able to delete local-only messages [#2846](https://github.com/GetStream/stream-chat-swift/pull/2846)
+- Fix bounced message displayed as a system message instead of an error [#2846](https://github.com/GetStream/stream-chat-swift/pull/2846)
+- Fix not showing bounced actions when long pressing bounced message [#2846](https://github.com/GetStream/stream-chat-swift/pull/2846)
+- Fix empty channel list when querying both hidden or shown channels [#2865](https://github.com/GetStream/stream-chat-swift/pull/2865)
+
 ## StreamChatUI
 ### ✅ Added
 - Allow easier customisation of the `ChatChannelListItemView` [#2855](https://github.com/GetStream/stream-chat-swift/pull/2855)
+### 🐞 Fixed
+- Always use `reloadChannels()` in the Channel List to improve stability [#2858](https://github.com/GetStream/stream-chat-swift/pull/2858)
 
 ## ⚠️ Important
 - From now on, our XCFrameworks will be built with Swift 5.7. In order to use them, you need Xcode 14 or above.
@@ -26,6 +43,9 @@ _October 25, 2023_
     - Enabled by `Components.default.messageAutoTranslationEnabled`
 ### 🐞 Fixed
 - Do not mark a channel as read if the app is in background [#2832](https://github.com/GetStream/stream-chat-swift/pull/2832)
+### 🔄 Changed
+- Removed `messageActionsForAlertMenu` and `deleteWithoutWarningActionItem` from  `ChatMessageActionsVC` [#2846](https://github.com/GetStream/stream-chat-swift/pull/2846)
+    - This is now controlled by `ChatMessageListVC.messageActions(forDebouncedMessage:)`
 
 # [4.39.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.39.0)
 _October 05, 2023_
