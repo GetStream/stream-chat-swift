@@ -7,7 +7,7 @@ import CoreData
 @testable import StreamChatTestTools
 import XCTest
 
-final class ListDatabaseObserver_Sorting: XCTestCase {
+final class ListDatabaseObserver_Sorting_Tests: XCTestCase {
     let dateNow = Date()
     let datePast = Date().addingTimeInterval(-60 * 60 * 3)
     let dateWayPast = Date().addingTimeInterval(-60 * 60 * 100)
@@ -29,6 +29,18 @@ final class ListDatabaseObserver_Sorting: XCTestCase {
     var query: ChannelListQuery!
     var observer: ListDatabaseObserverWrapper<ChatChannel, ChannelDTO>!
 
+    private static var originalIsBackgroundMappingEnabled = StreamRuntimeCheck._isBackgroundMappingEnabled
+
+    override class func setUp() {
+        super.setUp()
+        originalIsBackgroundMappingEnabled = StreamRuntimeCheck._isBackgroundMappingEnabled
+    }
+
+    override class func tearDown() {
+        super.tearDown()
+        StreamRuntimeCheck._isBackgroundMappingEnabled = originalIsBackgroundMappingEnabled
+    }
+
     override func tearDown() {
         super.tearDown()
         database = nil
@@ -44,12 +56,12 @@ final class ListDatabaseObserver_Sorting: XCTestCase {
         try assert_channelsAreSortedAccordingToDefaultSorting(isBackground: true)
     }
 
-    func assert_channelsAreSortedAccordingToDefaultSorting(isBackground: Bool, file: StaticString = #filePath, line: UInt = #line) throws {
+    func assert_channelsAreSortedAccordingToDefaultSorting(isBackground: Bool) throws {
         createObserver(with: [
             .init(key: .default, isAscending: false)
         ], isBackground: isBackground)
 
-        try observer.startObserving()
+        try startObservingAndWaitForInitialUpdate()
 
         let expectation = self.expectation(description: "Observer notifies")
         observer.onDidChange = { changes in
@@ -87,7 +99,7 @@ final class ListDatabaseObserver_Sorting: XCTestCase {
             .init(key: .custom(keyPath: \.defaultSortingAt, key: "defaultSortingAt"), isAscending: false)
         ], isBackground: isBackground)
 
-        try observer.startObserving()
+        try startObservingAndWaitForInitialUpdate()
 
         let expectation = self.expectation(description: "Observer notifies")
         observer.onDidChange = { changes in
@@ -123,7 +135,7 @@ final class ListDatabaseObserver_Sorting: XCTestCase {
         createObserver(with: [
             .init(key: .custom(keyPath: \.name, key: "name"), isAscending: false)
         ], isBackground: isBackground)
-        try observer.startObserving()
+        try startObservingAndWaitForInitialUpdate()
 
         let expectation = self.expectation(description: "Observer notifies")
         observer.onDidChange = { changes in
@@ -152,7 +164,7 @@ final class ListDatabaseObserver_Sorting: XCTestCase {
             .init(key: .custom(keyPath: \.isPinned, key: "is_pinned"), isAscending: true),
             .init(key: .custom(keyPath: \.name, key: "name"), isAscending: true)
         ], isBackground: isBackground)
-        try observer.startObserving()
+        try startObservingAndWaitForInitialUpdate()
 
         let expectation = self.expectation(description: "Observer notifies")
         expectation.expectedFulfillmentCount = 2
@@ -194,7 +206,7 @@ final class ListDatabaseObserver_Sorting: XCTestCase {
             .init(key: .createdAt, isAscending: false),
             .init(key: .custom(keyPath: \.name, key: "name"), isAscending: false)
         ], isBackground: isBackground)
-        try observer.startObserving()
+        try startObservingAndWaitForInitialUpdate()
 
         let expectation = self.expectation(description: "Observer notifies")
         observer.onDidChange = { changes in
@@ -249,7 +261,7 @@ final class ListDatabaseObserver_Sorting: XCTestCase {
         ]
 
         createObserver(with: sorting, isBackground: isBackground)
-        try observer.startObserving()
+        try startObservingAndWaitForInitialUpdate()
 
         observer.onDidChange = { changes in
             expectation.fulfill()
@@ -302,7 +314,7 @@ final class ListDatabaseObserver_Sorting: XCTestCase {
         ]
 
         createObserver(with: sorting, isBackground: isBackground)
-        try observer.startObserving()
+        try startObservingAndWaitForInitialUpdate()
 
         observer.onDidChange = { changes in
             expectation.fulfill()
@@ -320,6 +332,7 @@ final class ListDatabaseObserver_Sorting: XCTestCase {
     // MARK: - Helpers
 
     private func createObserver(with sorting: [Sorting<ChannelListSortingKey>], isBackground: Bool) {
+        StreamRuntimeCheck._isBackgroundMappingEnabled = isBackground
         database = DatabaseContainer_Spy(
             kind: .onDisk(databaseFileURL: .newTemporaryFileURL()),
             modelName: "StreamChatModel",
@@ -370,6 +383,10 @@ final class ListDatabaseObserver_Sorting: XCTestCase {
         try createChannels(mapping: mapping.map {
             ($0, $1, $1)
         })
+    }
+
+    private func startObservingAndWaitForInitialUpdate(file: StaticString = #file, line: UInt = #line) throws {
+        try observer.startObservingAndWaitForInitialUpdate(on: self, file: file, line: line)
     }
 }
 
