@@ -5,6 +5,7 @@
 @testable import StreamChat
 import Swifter
 import Foundation
+import XCTest
 
 public final class StreamMockServer {
 
@@ -56,6 +57,7 @@ public final class StreamMockServer {
         configureReactionEndpoints()
         configureMessagingEndpoints()
         configureAttachmentEndpoints()
+        configureMembersEndpoints()
     }
 
     public func writeText(_ text: String) {
@@ -78,6 +80,27 @@ public final class StreamMockServer {
 
     private func healthCheck() {
         writeText(TestData.getMockResponse(fromFile: .wsHealthCheck))
+    }
+}
+
+// MARK: Shared
+
+extension StreamMockServer {
+    func findChannelById(_ id: String) -> [String: Any]? {
+        try? XCTUnwrap(waitForChannelWithId(id))
+    }
+    
+    func waitForChannelWithId(_ id: String) -> [String: Any]? {
+        let endTime = TestData.waitingEndTime
+        var newChannelList: [[String: Any]] = []
+        while newChannelList.isEmpty && endTime > TestData.currentTimeInterval {
+            guard let channels = channelList[JSONKey.channels] as? [[String: Any]] else { return nil }
+            newChannelList = channels.filter {
+                let channel = $0[JSONKey.channel] as? [String: Any]
+                return id == channel?[channelKey.id.rawValue] as? String
+            }
+        }
+        return newChannelList.first
     }
 }
 

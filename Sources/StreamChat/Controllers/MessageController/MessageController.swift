@@ -715,11 +715,12 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
 extension ChatMessageController {
     struct Environment {
         var messageObserverBuilder: (
-            _ context: NSManagedObjectContext,
+            _ isBackgroundMappingEnabled: Bool,
+            _ databaseContainer: DatabaseContainer,
             _ fetchRequest: NSFetchRequest<MessageDTO>,
             _ itemCreator: @escaping (MessageDTO) throws -> ChatMessage,
             _ fetchedResultsControllerType: NSFetchedResultsController<MessageDTO>.Type
-        ) -> EntityDatabaseObserver<ChatMessage, MessageDTO> = EntityDatabaseObserver.init
+        ) -> EntityDatabaseObserverWrapper<ChatMessage, MessageDTO> = EntityDatabaseObserverWrapper.init
 
         var repliesObserverBuilder: (
             _ context: NSManagedObjectContext,
@@ -741,9 +742,10 @@ extension ChatMessageController {
 // MARK: - Private
 
 private extension ChatMessageController {
-    func createMessageObserver() -> EntityDatabaseObserver<ChatMessage, MessageDTO> {
+    func createMessageObserver() -> EntityDatabaseObserverWrapper<ChatMessage, MessageDTO> {
         let observer = environment.messageObserverBuilder(
-            client.databaseContainer.viewContext,
+            StreamRuntimeCheck._isBackgroundMappingEnabled,
+            client.databaseContainer,
             MessageDTO.message(withID: messageId),
             { try $0.asModel() },
             NSFetchedResultsController<MessageDTO>.self

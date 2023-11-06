@@ -1369,6 +1369,69 @@ final class ChannelDTO_Tests: XCTestCase {
             Set([message1.id, deletedMessageFromCurrentUser.id, shadowedMessageFromAnotherUser.id])
         )
     }
+
+    // MARK: Max depth
+
+    func test_asModel_onlyFetchesUntilCertainRelationship() throws {
+        let originalIsBackgroundMappingEnabled = StreamRuntimeCheck._isBackgroundMappingEnabled
+        try test_asModel_onlyFetchesUntilCertainRelationship(isBackgroundMappingEnabled: false)
+        try test_asModel_onlyFetchesUntilCertainRelationship(isBackgroundMappingEnabled: true)
+        StreamRuntimeCheck._isBackgroundMappingEnabled = originalIsBackgroundMappingEnabled
+    }
+
+    private func test_asModel_onlyFetchesUntilCertainRelationship(isBackgroundMappingEnabled: Bool) throws {
+        StreamRuntimeCheck._isBackgroundMappingEnabled = isBackgroundMappingEnabled
+        let cid = ChannelId.unique
+
+        // GIVEN
+        let quoted3MessagePayload: MessagePayload = .dummy(
+            messageId: .unique,
+            cid: cid
+        )
+
+        let quoted2MessagePayload: MessagePayload = .dummy(
+            messageId: .unique,
+            quotedMessageId: quoted3MessagePayload.id,
+            quotedMessage: quoted3MessagePayload,
+            cid: cid
+        )
+
+        let message1Payload: MessagePayload = .dummy(
+            messageId: .unique,
+            quotedMessageId: quoted2MessagePayload.id,
+            quotedMessage: quoted2MessagePayload,
+            cid: cid
+        )
+
+        let channelPayload: ChannelPayload = .dummy(
+            channel: .dummy(cid: cid),
+            messages: [
+                message1Payload
+            ]
+        )
+        let userId = UserId.unique
+
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: .dummy(userId: userId, role: .user))
+            try session.saveChannel(payload: channelPayload)
+        }
+
+        // WHEN
+        let channel = try XCTUnwrap(database.viewContext.channel(cid: cid)?.asModel())
+
+        // THEN
+        let message1 = try XCTUnwrap(channel.latestMessages.first { $0.id == message1Payload.id })
+        let quoted2Message = try XCTUnwrap(message1.quotedMessage)
+        XCTAssertEqual(quoted2Message.id, quoted2MessagePayload.id)
+
+        let quoted3Message = quoted2Message.quotedMessage
+        if isBackgroundMappingEnabled {
+            // 3rd level of depth is not mapped
+            XCTAssertNil(quoted3Message)
+        } else {
+            XCTAssertEqual(quoted3Message?.id, quoted3MessagePayload.id)
+        }
+    }
 }
 
 private extension ChannelDTO_Tests {

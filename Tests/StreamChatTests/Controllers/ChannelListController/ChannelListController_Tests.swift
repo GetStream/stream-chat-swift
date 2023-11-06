@@ -108,7 +108,8 @@ final class ChannelListController_Tests: XCTestCase {
         let cidMatchingQueryDeleted = ChannelId.unique
         let cidNotMatchingQuery = ChannelId.unique
 
-        try client.databaseContainer.writeSynchronously { session in
+        waitForInitialChannelsUpdate()
+        writeAndWaitForChannelsUpdates { session in
             // Insert a channel matching the query
             try session.saveChannel(payload: self.dummyPayload(with: cidMatchingQuery, members: [.dummy(user: .dummy(userId: self.memberId))]), query: self.query, cache: nil)
 
@@ -245,9 +246,11 @@ final class ChannelListController_Tests: XCTestCase {
         // Simulate `synchronize` call
         controller.synchronize()
 
+        waitForInitialChannelsUpdate()
+
         // Create a channel in the DB matching the query
         let channelId = ChannelId.unique
-        try client.databaseContainer.writeSynchronously {
+        writeAndWaitForChannelsUpdates {
             try $0.saveChannel(payload: .dummy(cid: channelId, members: [.dummy(user: .dummy(userId: self.memberId))]), query: self.query, cache: nil)
         }
 
@@ -278,9 +281,11 @@ final class ChannelListController_Tests: XCTestCase {
     }
 
     func test_hiddenChannel_isExcluded_whenFilterDoesntContainHiddenKey() throws {
+        waitForInitialChannelsUpdate()
+
         // Add 2 channels to the DB
         let cid: ChannelId = .unique
-        try database.writeSynchronously { session in
+        writeAndWaitForChannelsUpdates { session in
             try session.saveChannel(payload: self.dummyPayload(with: cid, members: [.dummy(user: .dummy(userId: self.memberId))]), query: self.query, cache: nil)
             let dto = try session.saveChannel(payload: self.dummyPayload(with: .unique, members: [.dummy(user: .dummy(userId: self.memberId))]), query: self.query, cache: nil)
             dto.isHidden = true
@@ -300,9 +305,11 @@ final class ChannelListController_Tests: XCTestCase {
         query = .init(filter: .equal(.hidden, to: true))
         controller = .init(query: query, client: client)
 
+        waitForInitialChannelsUpdate()
+
         // Add 2 channels to the DB
         let cid: ChannelId = .unique
-        try database.writeSynchronously { session in
+        writeAndWaitForChannelsUpdates { session in
             try session.saveChannel(payload: self.dummyPayload(with: .unique), query: self.query, cache: nil)
             let dto = try session.saveChannel(payload: self.dummyPayload(with: cid), query: self.query, cache: nil)
             dto.isHidden = true
@@ -367,10 +374,11 @@ final class ChannelListController_Tests: XCTestCase {
 
     func test_didReceiveEvent_whenNotificationAddedToChannelEvent_whenChannelAlreadyPresent_shouldNotLinkChannelToQuery() throws {
         controller.synchronize()
+        waitForInitialChannelsUpdate()
 
         // Save channel to the current query
         let cid: ChannelId = .unique
-        try database.writeSynchronously { session in
+        writeAndWaitForChannelsUpdates { session in
             try session.saveChannel(
                 payload: self.dummyPayload(
                     with: cid,
@@ -393,10 +401,11 @@ final class ChannelListController_Tests: XCTestCase {
 
     func test_didReceiveEvent_whenMessageNewEvent_whenChannelAlreadyPresent_shouldNotLinkChannelToQuery() throws {
         controller.synchronize()
+        waitForInitialChannelsUpdate()
 
         // Save channel to the current query
         let cid: ChannelId = .unique
-        try database.writeSynchronously { session in
+        writeAndWaitForChannelsUpdates { session in
             try session.saveChannel(
                 payload: self.dummyPayload(
                     with: cid,
@@ -419,10 +428,11 @@ final class ChannelListController_Tests: XCTestCase {
 
     func test_didReceiveEvent_whenNotificationMessageNewEvent_whenChannelAlreadyPresent_shouldNotLinkChannelToQuery() throws {
         controller.synchronize()
-        
+        waitForInitialChannelsUpdate()
+
         // Save channel to the current query
         let cid: ChannelId = .unique
-        try database.writeSynchronously { session in
+        writeAndWaitForChannelsUpdates { session in
             try session.saveChannel(
                 payload: self.dummyPayload(
                     with: cid,
@@ -467,7 +477,7 @@ final class ChannelListController_Tests: XCTestCase {
 
         // Save channel to the current query
         let cid: ChannelId = .unique
-        try database.writeSynchronously { session in
+        writeAndWaitForChannelsUpdates { session in
             try session.saveChannel(
                 payload: self.dummyPayload(
                     with: cid,
@@ -512,7 +522,7 @@ final class ChannelListController_Tests: XCTestCase {
 
         // Save channel to the current query
         let cid: ChannelId = .unique
-        try database.writeSynchronously { session in
+        writeAndWaitForChannelsUpdates { session in
             try session.saveChannel(
                 payload: self.dummyPayload(
                     with: cid,
@@ -537,7 +547,7 @@ final class ChannelListController_Tests: XCTestCase {
         setupControllerWithFilter(filter)
 
         let cid: ChannelId = .unique
-        try database.writeSynchronously { session in
+        writeAndWaitForChannelsUpdates { session in
             try session.saveChannel(
                 payload: self.dummyPayload(
                     with: cid,
@@ -751,6 +761,8 @@ final class ChannelListController_Tests: XCTestCase {
                 true
             }
         }
+
+        waitForInitialChannelsUpdate()
 
         let cid: ChannelId = .unique
         let delegate = Delegate(cid: cid)
@@ -1087,12 +1099,13 @@ final class ChannelListController_Tests: XCTestCase {
 
         // Simulate `synchronize` call
         controller.synchronize()
+        waitForInitialChannelsUpdate()
 
         XCTAssertEqual(controller.channels.map(\.cid), [], file: file, line: line)
 
         // Simulate changes in the DB:
-        _ = try waitFor { [unowned client] in
-            client?.databaseContainer.write({ [query] session in
+        _ = try waitFor {
+            writeAndWaitForChannelsUpdates({ [query] session in
                 try channelsInDB().forEach { payload in
                     try session.saveChannel(payload: payload, query: query, cache: nil)
                 }
@@ -1357,6 +1370,73 @@ final class ChannelListController_Tests: XCTestCase {
                 .dummy(channel: .dummy(cid: cid3, name: "team"))
             ],
             expectedResult: [cid1, cid2, cid3]
+        )
+    }
+
+    func test_filterPredicate_whenHiddenTrueOrFalse_containsExpectedItems() throws {
+        let cid1 = ChannelId(type: .messaging, id: "1")
+        let cid2 = ChannelId(type: .messaging, id: "2")
+        let cid3 = ChannelId(type: .messaging, id: "3")
+
+        try assertFilterPredicate(
+            .or([
+                .equal(.hidden, to: true),
+                .equal(.hidden, to: false)
+            ]),
+            channelsInDB: [
+                .dummy(channel: .dummy(cid: cid1, name: "streamOriginal", isHidden: true)),
+                .dummy(channel: .dummy(cid: cid2, name: "teamDream", isHidden: true)),
+                .dummy(channel: .dummy(cid: cid3, name: "team", isHidden: false))
+            ],
+            expectedResult: [cid1, cid2, cid3]
+        )
+    }
+
+    func test_filterPredicate_whenHiddenTrue_containsExpectedItems() throws {
+        let cid1 = ChannelId(type: .messaging, id: "1")
+        let cid2 = ChannelId(type: .messaging, id: "2")
+        let cid3 = ChannelId(type: .messaging, id: "3")
+
+        try assertFilterPredicate(
+            .equal(.hidden, to: true),
+            channelsInDB: [
+                .dummy(channel: .dummy(cid: cid1, name: "streamOriginal", isHidden: true)),
+                .dummy(channel: .dummy(cid: cid2, name: "teamDream", isHidden: true)),
+                .dummy(channel: .dummy(cid: cid3, name: "team", isHidden: false))
+            ],
+            expectedResult: [cid1, cid2]
+        )
+    }
+
+    func test_filterPredicate_whenHiddenFalse_containsExpectedItems() throws {
+        let cid1 = ChannelId(type: .messaging, id: "1")
+        let cid2 = ChannelId(type: .messaging, id: "2")
+        let cid3 = ChannelId(type: .messaging, id: "3")
+
+        try assertFilterPredicate(
+            .equal(.hidden, to: false),
+            channelsInDB: [
+                .dummy(channel: .dummy(cid: cid1, name: "streamOriginal", isHidden: true)),
+                .dummy(channel: .dummy(cid: cid2, name: "teamDream", isHidden: true)),
+                .dummy(channel: .dummy(cid: cid3, name: "team", isHidden: false))
+            ],
+            expectedResult: [cid3]
+        )
+    }
+
+    func test_filterPredicate_whenHiddenNotSpecified_containsExpectedItems() throws {
+        let cid1 = ChannelId(type: .messaging, id: "1")
+        let cid2 = ChannelId(type: .messaging, id: "2")
+        let cid3 = ChannelId(type: .messaging, id: "3")
+
+        try assertFilterPredicate(
+            .noTeam,
+            channelsInDB: [
+                .dummy(channel: .dummy(cid: cid1, name: "streamOriginal", isHidden: true)),
+                .dummy(channel: .dummy(cid: cid2, name: "teamDream", isHidden: true)),
+                .dummy(channel: .dummy(cid: cid3, name: "team", isHidden: false))
+            ],
+            expectedResult: [cid3]
         )
     }
 
@@ -1700,12 +1780,53 @@ final class ChannelListController_Tests: XCTestCase {
             environment: env.environment
         )
         controller.synchronize()
+        waitForInitialChannelsUpdate()
     }
 
     private func setUpChatClientWithoutAutoFiltering() {
         var config = ChatClientConfig(apiKey: .init(.unique))
         config.isChannelAutomaticFilteringEnabled = false
         client = ChatClient.mock(config: config)
+    }
+
+    private func waitForInitialChannelsUpdate(file: StaticString = #file, line: UInt = #line) {
+        guard StreamRuntimeCheck._isBackgroundMappingEnabled else { return }
+        waitForChannelsUpdate {}
+    }
+
+    private func writeAndWaitForChannelsUpdates(_ actions: @escaping (DatabaseSession) throws -> Void, completion: ((Error?) -> Void)? = nil, file: StaticString = #file, line: UInt = #line) {
+        waitForChannelsUpdate(file: file, line: line) {
+            if let completion = completion {
+                client.databaseContainer.write(actions, completion: completion)
+            } else {
+                client.databaseContainer.write(actions)
+            }
+        }
+    }
+
+    private func waitForChannelsUpdate(file: StaticString = #file, line: UInt = #line, block: () -> Void) {
+        let channelsExpectation = expectation(description: "Channels update")
+        let delegate = ChannelsUpdateWaiter(channelsExpectation: channelsExpectation)
+        controller.delegate = delegate
+        block()
+        wait(for: [channelsExpectation], timeout: defaultTimeout)
+    }
+}
+
+private class ChannelsUpdateWaiter: ChatChannelListControllerDelegate {
+    weak var channelsExpectation: XCTestExpectation?
+
+    var didChangeChannelsCount: Int?
+
+    init(channelsExpectation: XCTestExpectation?) {
+        self.channelsExpectation = channelsExpectation
+    }
+
+    func controller(_ controller: ChatChannelListController, didChangeChannels changes: [ListChange<ChatChannel>]) {
+        DispatchQueue.main.async {
+            self.didChangeChannelsCount = controller.channels.count
+            self.channelsExpectation?.fulfill()
+        }
     }
 }
 

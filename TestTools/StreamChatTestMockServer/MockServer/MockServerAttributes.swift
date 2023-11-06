@@ -52,18 +52,20 @@ public enum MockEndpoint {
     public static let channels = "/channels"
     public static let channel = "/channels/messaging/\(EndpointQuery.channelId)"
     public static let event = "/channels/messaging/\(EndpointQuery.channelId)/event"
-    public static let query = "/channels/messaging/\(EndpointQuery.channelId)/query"
+    public static let query = "/channels/\(EndpointQuery.channelType)/\(EndpointQuery.channelId)/query"
     public static let messageRead = "/channels/messaging/\(EndpointQuery.channelId)/read"
     public static let message = "/channels/messaging/\(EndpointQuery.channelId)/message"
     public static let image = "/channels/messaging/\(EndpointQuery.channelId)/image"
     public static let file = "/channels/messaging/\(EndpointQuery.channelId)/file"
     public static let truncate = "/channels/messaging/\(EndpointQuery.channelId)/truncate"
     public static let sync = "/sync"
+    public static let members = "/members"
 }
 
 public enum EndpointQuery {
     public static let messageId = ":message_id"
     public static let channelId = ":channel_id"
+    public static let channelType = ":channel_type"
     public static let reactionType = ":reaction_type"
 }
 

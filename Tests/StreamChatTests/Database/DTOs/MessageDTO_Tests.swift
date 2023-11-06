@@ -3439,6 +3439,75 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertNotNil(messageModel.cid)
     }
 
+    // MARK: Max depth
+
+    func test_asModel_onlyFetchesUntilCertainRelationship() throws {
+        let originalIsBackgroundMappingEnabled = StreamRuntimeCheck._isBackgroundMappingEnabled
+        try test_asModel_onlyFetchesUntilCertainRelationship(isBackgroundMappingEnabled: false)
+        try test_asModel_onlyFetchesUntilCertainRelationship(isBackgroundMappingEnabled: true)
+        StreamRuntimeCheck._isBackgroundMappingEnabled = originalIsBackgroundMappingEnabled
+    }
+
+    private func test_asModel_onlyFetchesUntilCertainRelationship(isBackgroundMappingEnabled: Bool) throws {
+        StreamRuntimeCheck._isBackgroundMappingEnabled = isBackgroundMappingEnabled
+        let cid = ChannelId.unique
+
+        // GIVEN
+        let quoted3MessagePayload: MessagePayload = .dummy(messageId: .unique, cid: cid)
+        let quoted2MessagePayload: MessagePayload = .dummy(
+            messageId: .unique,
+            quotedMessageId: quoted3MessagePayload.id,
+            quotedMessage: quoted3MessagePayload,
+            cid: cid
+        )
+
+        let quoted1MessagePayload: MessagePayload = .dummy(
+            messageId: .unique,
+            quotedMessageId: quoted2MessagePayload.id,
+            quotedMessage: quoted2MessagePayload,
+            cid: cid
+        )
+
+        let messagePayload: MessagePayload = .dummy(
+            messageId: .unique,
+            quotedMessageId: quoted1MessagePayload.id,
+            quotedMessage: quoted1MessagePayload,
+            cid: cid
+        )
+
+        let channelPayload: ChannelPayload = .dummy(
+            channel: .dummy(cid: cid),
+            messages: [
+                messagePayload
+            ]
+        )
+        let userId = UserId.unique
+
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: .dummy(userId: userId, role: .user))
+            try session.saveChannel(payload: channelPayload)
+        }
+
+        // WHEN
+        let message = try XCTUnwrap(
+            database.viewContext.message(id: messagePayload.id)?.asModel()
+        )
+
+        // THEN
+        let quoted1Message = try XCTUnwrap(message.quotedMessage)
+        XCTAssertEqual(quoted1Message.id, quoted1MessagePayload.id)
+        let quoted2Message = try XCTUnwrap(quoted1Message.quotedMessage)
+        XCTAssertEqual(quoted2Message.id, quoted2MessagePayload.id)
+
+        let quoted3Message = quoted2Message.quotedMessage
+        if isBackgroundMappingEnabled {
+            // 3rd level of depth is not mapped
+            XCTAssertNil(quoted3Message)
+        } else {
+            XCTAssertEqual(quoted3Message?.id, quoted3MessagePayload.id)
+        }
+    }
+
     // MARK: - Helpers:
 
     private func createMessage(with message: MessagePayload) throws -> MessageDTO {

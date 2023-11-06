@@ -574,11 +574,11 @@ open class ComposerVC: _ViewController,
 
         if !isSendMessageEnabled {
             composerView.inputMessageView.textView.placeholderLabel.text = L10n.Composer.Placeholder.messageDisabled
-            composerView.inputMessageView.isUserInteractionEnabled = false
             composerView.recordButton.isHidden = true
             composerView.attachmentButton.isHidden = true
             composerView.commandsButton.isHidden = true
         }
+        composerView.inputMessageView.isUserInteractionEnabled = isSendMessageEnabled
 
         dismissSuggestions()
     }
