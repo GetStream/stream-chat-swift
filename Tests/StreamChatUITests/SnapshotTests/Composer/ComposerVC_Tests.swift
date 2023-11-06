@@ -413,6 +413,31 @@ final class ComposerVC_Tests: XCTestCase {
         XCTAssertEqual(composerVC.isSendMessageEnabled, true)
     }
 
+    func test_updateContent_whenSendMessageEnabledAfterBeingDisabled_thenComposerViewIsInteractable() {
+        let mock = ChatChannelController_Mock.mock()
+        composerVC.components.isVoiceRecordingEnabled = true
+
+        // When disabled
+        mock.channel_mock = .mock(cid: .unique, ownCapabilities: [.uploadFile])
+        composerVC.channelController = mock
+        composerVC.updateContent()
+        XCTAssertEqual(composerVC.isSendMessageEnabled, false)
+        XCTAssertEqual(composerVC.composerView.inputMessageView.isUserInteractionEnabled, false)
+        XCTAssertEqual(composerVC.composerView.recordButton.isHidden, true)
+        XCTAssertEqual(composerVC.composerView.attachmentButton.isHidden, true)
+        XCTAssertEqual(composerVC.composerView.commandsButton.isHidden, true)
+
+        // After enabling it
+        mock.channel_mock = .mock(cid: .unique, ownCapabilities: [.uploadFile, .sendMessage])
+        composerVC.channelController = mock
+        composerVC.updateContent()
+        XCTAssertEqual(composerVC.isSendMessageEnabled, true)
+        XCTAssertEqual(composerVC.composerView.inputMessageView.isUserInteractionEnabled, true)
+        XCTAssertEqual(composerVC.composerView.recordButton.isHidden, false)
+        XCTAssertEqual(composerVC.composerView.attachmentButton.isHidden, false)
+        XCTAssertEqual(composerVC.composerView.commandsButton.isHidden, false)
+    }
+
     func test_quotedTranslatedMessage() {
         composerVC.appearance = Appearance.default
         composerVC.content = .initial()

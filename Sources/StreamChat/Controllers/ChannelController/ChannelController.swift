@@ -1522,6 +1522,13 @@ private extension ChatChannelController {
         }
 
         guard let lastReadIndex = messages.firstIndex(where: { $0.id == lastReadMessageId }), lastReadIndex != 0 else {
+            // If there is a lastReadMessageId, and we loaded all messages, but can't find firstUnreadMessageId,
+            // then it means the lastReadMessageId is not reachable because the channel was truncated or hidden.
+            // So we return the oldest regular message already fetched.
+            if hasLoadedAllPreviousMessages {
+                return oldestRegularMessage()
+            }
+
             return nil
         }
 
