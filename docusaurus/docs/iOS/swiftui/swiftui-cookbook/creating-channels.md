@@ -3,7 +3,7 @@ title: Creating Channels Flow
 description: How to build your own UI for creating channels
 ---
 
-Different apps have different UI for starting a chat with other users. For example, there can be a way to search through the available users, or show a button to invoke a chat with a user, from their profile.
+Different apps have different UI for starting a chat with other users. For example, there can be a way to search through the available users, or show a button to invoke a chat with a user from their profile.
 
 In this cookbook, we will build a UI that will allow creation of channels by searching the users on the platform.
 
