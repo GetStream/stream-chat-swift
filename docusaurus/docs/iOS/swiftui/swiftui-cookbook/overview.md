@@ -36,3 +36,9 @@ This example will show you how to always align the messages to the left.
 We will build a message list using the low-level client state in this section.
 
 ![Screenshot of the custom message list.](../../assets/custom-message-list.png)
+
+### Creating Channels Flow
+
+In this section, we will build a view that allows you to create new chats.
+
+![Screenshot of the view for creating chats.](../../assets/creating-channels.png)
