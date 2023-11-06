@@ -143,9 +143,9 @@ public struct WorkoutAttachmentPayload: AttachmentPayload {
 
 Here we extended `AttachmentType` to include the `workout` type and afterwards we introduced a new struct to match the payload data that we expect.
 
-1. WorkoutAttachmentPayload.type is used to match message attachments to this struct
+1. `WorkoutAttachmentPayload.type` is used to match message attachments to this struct
 1. All attachment fields are optional, this is highly recommended for all custom data
-1. We use CodingKeys to map JSON field names to struct fields
+1. We use `CodingKeys` to map JSON field names to struct fields
 
 Let's now create a custom view injector to handle the workout attachment.
 
@@ -238,9 +238,9 @@ open class WorkoutAttachmentViewInjector: AttachmentViewInjector {
 }
 ```
 
-The `WorkoutAttachmentView` class is where all layout and content logic happens. In `contentViewDidLayout` we add `WorkoutAttachmentView` as a subview of `bubbleContentContainer` using `insertArrangedSubview`, more information about layout customizations is available [here](../custom-components.md). The last interesting bit happens in `contentViewDidUpdateContent`, there we use the `attachments` method to retrieve all attachments for this messages with type `WorkoutAttachmentPayload` and then pick the first one. This allows us to have the type we defined earlier as the content to render in our custom view.
+The `WorkoutAttachmentView` class is where all layout and content logic happens. In `contentViewDidLayout` we add `WorkoutAttachmentView` as a subview of `bubbleContentContainer` using `insertArrangedSubview`. More information about layout customizations is available [here](../custom-components.md). The last interesting bit happens in `contentViewDidUpdateContent`, where we use the `attachments` method to retrieve all attachments for these messages with type `WorkoutAttachmentPayload` and then pick the first one. This allows us to have the type we defined earlier as the content to render in our custom view.
 
-Now that we have data and view ready we only need to configure the SDK to use `WorkoutAttachmentViewInjector` for workout attachments, this is done by changing the default `AttachmentViewCatalog` with our own.
+Now that we have data and view ready we only need to configure the SDK to use `WorkoutAttachmentViewInjector` for workout attachments. This is done by changing the default `AttachmentViewCatalog` with our own.
 
 ```swift
 class MyAttachmentViewCatalog: AttachmentViewCatalog {
@@ -269,7 +269,7 @@ controller.createNewMessage(text: "work-out-test", attachments: [.init(payload: 
 
 In case you need to interact with your custom attachment, there are a couple of steps required:
 1. Create a delegate for your custom attachment view which extends from `ChatMessageContentViewDelegate`.
-2. Create a custom `ChatMessageListVC` if you didn't already, and make it conform to the delegate created in step 1.
+2. Create a custom `ChatMessageListVC` if you haven't already, and make it conform to the delegate created in step 1.
 3. Change your custom injector and add a tap gesture recognizer to your custom view. The delegate can be called by accessing `contentView.delegate` and casting it to your custom delegate.
 
 Below is the full example on how to add a interaction to the custom workout attachment:
@@ -320,7 +320,7 @@ class WorkoutAttachmentViewInjector: AttachmentViewInjector {
 }
 ```
 
-Finally, don't forget to assign the custom message list if you didn't yet:
+Finally, don't forget to assign the custom message list if you haven't yet:
 ```swift
 Components.default.messageListVC = CustomChatMessageListVC.self
 ```

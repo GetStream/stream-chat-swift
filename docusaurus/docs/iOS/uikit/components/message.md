@@ -269,7 +269,7 @@ final class DemoChatThreadRepliesCountDecorationView: ChatThreadRepliesCountDeco
 
 ## Advanced Customizations
 
-Creating a subclass of [`ChatMessageContentView`](#chatmessagecontentview) is the best way do more advanced customizations since you have access to all the message subviews. By customizing this component you can not only change the existing views but add new ones and add new functionality.
+Creating a subclass of [`ChatMessageContentView`](#chatmessagecontentview) is the best way to do more advanced customizations since you have access to all the message subviews. By customizing this component you can not only change the existing views, but add new ones and add new functionality.
 
 :::note
 `ChatMessageContentView` sets up its own layout on the `layout(options: ChatMessageLayoutOptions)` method and not in `setupLayout()` like other regular views. This view is different from the other ones since the layout is calculated based on the `ChatMessageLayoutOptions`.
@@ -371,7 +371,7 @@ extension ChatMessageLayoutOption {
     static let shareAttachments: Self = "shareAttachments"
 }
 ```
-The `ChatMessageLayoutOption` has a similar usage of an `enum` but it is not an `enum`. Instead, it is a struct that holds a string raw value. The advantage of this approach is that it is extendable while the `enum` is not.
+The `ChatMessageLayoutOption` has a similar usage as an `enum`, but it is not an `enum`. Instead, it is a struct that holds a string raw value. The advantage of this approach is that it is extendable, while the `enum` is not.
 
 The next step is to subclass the `ChatMessageLayoutOptionsResolver` so that we can add the new `.shareAttachments` option if the message has attachments:
 ```swift

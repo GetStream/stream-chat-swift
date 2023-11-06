@@ -5,7 +5,7 @@ title: Message Composer Custom Attachments
 import ComponentsNote from '../../common-content/components-note.md'
 import ThemingNote from '../../common-content/theming-note.md'
 
-The `ComposerVC` can be customized in order to change the built-in attachments or can be extended to support your own custom attachments. By default the composer handles images, videos, giphy's and files, but you can create your own custom attachments. Some examples of common custom attachments are: location sharing, contact details, workouts and voice memos. You can read more about how attachments work in the [Working with Attachments](../../uikit/guides/working-with-attachments) guide.
+The `ComposerVC` can be customized in order to change the built-in attachments or can be extended to support your own custom attachments. By default the composer handles images, videos, giphys and files, but you can also create your own custom attachments. Some examples of common custom attachments are: location sharing, contact details, workouts and voice memos. You can read more about how attachments work in the [Working with Attachments](../../uikit/guides/working-with-attachments) guide.
 
 All the provided attachments are customizable in the composer in terms of style changes, layout changes or how they are presented. For example, you can change the clip button styling responsible for opening the attachments picker, you can replace the built-in attachments picker with your own, or even change all the flow and render the attachments picker in a subview instead of being presented in a view controller.
 
@@ -107,7 +107,7 @@ Components.default.messageComposerVC = CustomComposerVC.self
 With the new action added, now if the user selects the Camera action it will present the native iOS Camera so the user can directly add a photo to the attachments.
 
 ## How to support a custom attachment
-In order for the composer to support your own custom attachments we will go through the full process of creating a custom **Contact** attachment and adding the necessary changes for the composer to support it. The process can be breakdown into these steps:
+In order for the composer to support your own custom attachments we will go through the full process of creating a custom **Contact** attachment and adding the necessary changes for the composer to support it. The process consists of the following steps:
 
 1. Extend `AttachmentType` to include the new contact custom type.
 2. Create a new `ContactAttachmentPayload` struct to define the contact data.
@@ -124,7 +124,7 @@ extension AttachmentType {
 ```
 
 ### Adding the contact attachment payload
-To add custom data to your custom attachment you need to create a `ContactAttachmentPayload` which implements the `AttachmentPayload` protocol. This protocol has only one requirement, and is to have a `static let type: AttachmentType` property.
+To add custom data to your custom attachment you need to create a `ContactAttachmentPayload` which implements the `AttachmentPayload` protocol. This protocol has only one requirement, which is the `static let type: AttachmentType` property.
 ```swift
 struct ContactAttachmentPayload: AttachmentPayload {
     static let type: AttachmentType = .contact
@@ -275,7 +275,7 @@ The close button is automatically added by the `AttachmentPreviewContainer` comp
 :::
 
 ## Advanced customization of the attachments picker
-You can totally customize the flow of how the attachments picker is presented. Not only you can replace any default picker with your custom one but also can bypass the action sheet and present the attachments picker directly in a different view.
+You can totally customize the flow of how the attachments picker is presented. Not only you can replace any default picker with your custom one, but you can also bypass the action sheet and present the attachments picker directly in a different view.
 
 ### Replace the default media picker
 To replace the default `UIImagePickerController` with your own custom `UIViewController` you just need to override the `var mediaPickerVC: UIViewController` property and replace with your own, and make sure your custom view controller sends events to the composer. When the composer receives the selected attachments from your custom media picker, you need to update the attachments of the composer's content which is represented by the `ComposerVC.Content`.
