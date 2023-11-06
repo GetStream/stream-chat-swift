@@ -3,6 +3,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### 🐞 Fixed
+- Fix not able to mark channel read after clearing history [#2867](https://github.com/GetStream/stream-chat-swift/pull/2867)
+
 ## StreamChatUI
 ### 🐞 Fixed
 - Fix composer not interactable after enabling send-message capability [#2866](https://github.com/GetStream/stream-chat-swift/pull/2866)
