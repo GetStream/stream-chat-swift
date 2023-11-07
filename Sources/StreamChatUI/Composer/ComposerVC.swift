@@ -567,11 +567,6 @@ open class ComposerVC: _ViewController,
             return
         }
 
-        // If we have files in attachments, do not allow images to be pasted in the text view.
-        // This is due to the limitation of UI(files and images cannot be shown together)
-        let filesExistInAttachments = content.attachments.contains(where: { $0.type == .file })
-        composerView.inputMessageView.textView.isPastingImagesEnabled = !filesExistInAttachments
-
         if !isSendMessageEnabled {
             composerView.inputMessageView.textView.placeholderLabel.text = L10n.Composer.Placeholder.messageDisabled
             composerView.recordButton.isHidden = true
