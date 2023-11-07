@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - Fix not able to mark channel read after clearing history [#2867](https://github.com/GetStream/stream-chat-swift/pull/2867)
 - Fix pasting images from browser when isPastingImagesEnabled is false [#2874](https://github.com/GetStream/stream-chat-swift/pull/2874)
+- Fix not being able to paste images when multiple attachments are present [#2874](https://github.com/GetStream/stream-chat-swift/pull/2874)
 
 ## StreamChatUI
 ### 🐞 Fixed
