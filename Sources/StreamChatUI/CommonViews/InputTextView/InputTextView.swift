@@ -171,7 +171,7 @@ open class InputTextView: UITextView, AppearanceProvider {
     }
 
     override open func paste(_ sender: Any?) {
-        if let pasteboardImage = UIPasteboard.general.image {
+        if isPastingImagesEnabled, let pasteboardImage = UIPasteboard.general.image {
             clipboardAttachmentDelegate?.inputTextView(self, didPasteImage: pasteboardImage)
         } else {
             super.paste(sender)
