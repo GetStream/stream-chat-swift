@@ -120,7 +120,7 @@ open class InputChatMessageView: _View, ComponentsProvider, AppearanceProvider {
         if let quotingMessage = content.quotingMessage {
             quotedMessageView.content = .init(
                 message: quotingMessage,
-                avatarAlignment: .leading,
+                avatarAlignment: quotingMessage.isSentByCurrentUser ? .trailing : .leading,
                 channel: content.channel
             )
         }
