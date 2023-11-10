@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix not being able to paste images when multiple attachments are present [#2874](https://github.com/GetStream/stream-chat-swift/pull/2874)
 
 ## StreamChatUI
+### ✅ Added
+- Add support for editing custom attachments [#2879](https://github.com/GetStream/stream-chat-swift/pull/2879)
 ### 🐞 Fixed
 - Fix composer not interactable after enabling send-message capability [#2866](https://github.com/GetStream/stream-chat-swift/pull/2866)
 
