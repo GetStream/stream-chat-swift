@@ -179,15 +179,14 @@ class DatabaseContainer: NSPersistentContainer {
         switch kind {
         case .inMemory:
             // So, it seems that on iOS 13, we have to use SQLite store with /dev/null URL, but on iOS 11 & 12
-            // we have to use `NSInMemoryStoreType`. This is not, of course, documented anywhere because no one in
-            // Apple is obviously that crazy, to write tests with CoreData stack.
+            // we have to use `NSInMemoryStoreType`.
             if #available(iOS 13, *) {
                 description.url = URL(fileURLWithPath: "/dev/null")
             } else {
                 description.type = NSInMemoryStoreType
             }
 
-        case let .onDisk(databaseFileURL: databaseFileURL):
+        case let .onDisk(databaseFileURL):
             description.url = databaseFileURL
         }
 
@@ -257,12 +256,12 @@ class DatabaseContainer: NSPersistentContainer {
             fatalError("Non-force flush is not implemented yet.")
         }
 
-        writableContext.perform {
-            self.sendNotificationForAllContexts(name: Self.WillRemoveAllDataNotification)
+        writableContext.perform { [weak self] in
+            self?.sendNotificationForAllContexts(name: Self.WillRemoveAllDataNotification)
 
             // If the current persistent store is a SQLite store, this method will reset and recreate it.
-            self.recreatePersistentStore { error in
-                self.sendNotificationForAllContexts(name: Self.DidRemoveAllDataNotification)
+            self?.recreatePersistentStore { error in
+                self?.sendNotificationForAllContexts(name: Self.DidRemoveAllDataNotification)
                 completion?(error)
             }
         }
