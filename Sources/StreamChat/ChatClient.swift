@@ -51,6 +51,10 @@ public class ChatClient {
     /// The notification center used to send and receive notifications about incoming events.
     private(set) var eventNotificationCenter: EventNotificationCenter
 
+    /// The register that contains all the attachment payloads associated with their attachment types.
+    /// For the meantime this is a static property to avoid breaking changes. On v5, this can be changed.
+    private(set) static var customAttachmentTypes: [AttachmentType: AttachmentPayload.Type] = [:]
+
     let connectionRepository: ConnectionRepository
 
     let authenticationRepository: AuthenticationRepository
@@ -233,6 +237,18 @@ public class ChatClient {
             environment.internetConnection(eventNotificationCenter, environment.internetMonitor),
             config.staysConnectedInBackground
         )
+    }
+
+    /// Register a custom attachment payload.
+    ///
+    /// Example:
+    /// ```
+    /// registerCustomAttachment(CustomAttachmentPayload.self)
+    /// ```
+    ///
+    /// - Parameter payloadType: The payload type of the attachment.
+    public func registerCustomAttachment<Payload: AttachmentPayload>(_ payloadType: Payload.Type) {
+        Self.customAttachmentTypes[Payload.type] = payloadType
     }
 
     /// Connects the client with the given user.

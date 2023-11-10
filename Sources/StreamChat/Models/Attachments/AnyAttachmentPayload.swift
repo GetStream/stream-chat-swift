@@ -193,21 +193,27 @@ extension AttachmentPayload {
 public extension Array where Element == ChatMessageAttachment<Data> {
     func toAnyAttachmentPayload() -> [AnyAttachmentPayload] {
         compactMap { attachment in
-            func anyAttachmentPayload<T: Decodable & AttachmentPayload>(for type: T.Type) -> AnyAttachmentPayload? {
-                guard let payload = try? JSONDecoder.default.decode(T.self, from: attachment.payload) else { return nil }
-                return AnyAttachmentPayload(payload: payload)
-            }
+            /// Currently supported editable attachments
+            let types: [AttachmentType: AttachmentPayload.Type] = [
+                .image: ImageAttachmentPayload.self,
+                .video: VideoAttachmentPayload.self,
+                .audio: AudioAttachmentPayload.self,
+                .file: FileAttachmentPayload.self,
+                .voiceRecording: VideoAttachmentPayload.self
+            ].merging(
+                ChatClient.customAttachmentTypes,
+                uniquingKeysWith: { defaultType, _ in defaultType }
+            ) // Merge editable attachments with custom types
 
-            switch attachment.type {
-            case .image: return anyAttachmentPayload(for: ImageAttachmentPayload.self)
-            case .video: return anyAttachmentPayload(for: VideoAttachmentPayload.self)
-            case .audio: return anyAttachmentPayload(for: AudioAttachmentPayload.self)
-            case .file: return anyAttachmentPayload(for: FileAttachmentPayload.self)
-            case .voiceRecording: return anyAttachmentPayload(for: VoiceRecordingAttachmentPayload.self)
-            default:
-                log.assertionFailure("Unsupported attachment")
+            guard let payloadType = types[attachment.type] else { return nil }
+            guard let payload = try? JSONDecoder.default.decode(
+                payloadType,
+                from: attachment.payload
+            ) else {
                 return nil
             }
+
+            return AnyAttachmentPayload(payload: payload)
         }
     }
 }
