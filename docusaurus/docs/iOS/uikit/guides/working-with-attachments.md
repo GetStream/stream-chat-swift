@@ -114,7 +114,7 @@ Let's assume we want to attach a workout session to a message, the payload of th
 }
 ```
 
-Here's how we get around the first four steps:
+In the code, the payload and attachment type should look something like this:
 
 ```swift
 public extension AttachmentType {
@@ -152,7 +152,7 @@ Then, you should register your custom attachment type when creating the `ChatCli
 
 ```swift
 let client = ChatClient(config: config)
-let client.registerAttachment(WorkoutAttachmentPayload.self)
+client.registerAttachment(WorkoutAttachmentPayload.self)
 ```
 
 :::note
