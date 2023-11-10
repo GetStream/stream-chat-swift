@@ -24,8 +24,9 @@ class MessageSender: Worker {
     /// every cid. These queues can send messages in parallel.
     @Atomic private var sendingQueueByCid: [ChannelId: MessageSendingQueue] = [:]
 
-    private lazy var observer = ListDatabaseObserver<MessageDTO, MessageDTO>(
-        context: self.database.backgroundReadOnlyContext,
+    private lazy var observer = ListDatabaseObserverWrapper<MessageDTO, MessageDTO>(
+        isBackground: StreamRuntimeCheck._isBackgroundMappingEnabled,
+        database: self.database,
         fetchRequest: MessageDTO
             .messagesPendingSendFetchRequest(),
         itemCreator: { $0 }
@@ -47,7 +48,7 @@ class MessageSender: Worker {
 
         // The rest can be done on a background queue
         sendingDispatchQueue.async { [weak self] in
-            self?.observer.onChange = { self?.handleChanges(changes: $0) }
+            self?.observer.onDidChange = { self?.handleChanges(changes: $0) }
             do {
                 try self?.observer.startObserving()
 

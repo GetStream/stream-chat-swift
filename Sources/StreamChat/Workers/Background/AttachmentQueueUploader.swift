@@ -22,7 +22,7 @@ import Foundation
 class AttachmentQueueUploader: Worker {
     @Atomic private var pendingAttachmentIDs: Set<AttachmentId> = []
 
-    private let observer: ListDatabaseObserver<AttachmentDTO, AttachmentDTO>
+    private let observer: ListDatabaseObserverWrapper<AttachmentDTO, AttachmentDTO>
     private let attachmentPostProcessor: UploadedAttachmentPostProcessor?
     private let attachmentUpdater = AnyAttachmentUpdater()
     private let attachmentStorage = AttachmentStorage()
@@ -31,7 +31,8 @@ class AttachmentQueueUploader: Worker {
 
     init(database: DatabaseContainer, apiClient: APIClient, attachmentPostProcessor: UploadedAttachmentPostProcessor?) {
         observer = .init(
-            context: database.backgroundReadOnlyContext,
+            isBackground: StreamRuntimeCheck._isBackgroundMappingEnabled,
+            database: database,
             fetchRequest: AttachmentDTO.pendingUploadFetchRequest(),
             itemCreator: { $0 }
         )
@@ -48,7 +49,7 @@ class AttachmentQueueUploader: Worker {
     private func startObserving() {
         do {
             try observer.startObserving()
-            observer.onChange = { [weak self] in self?.handleChanges(changes: $0) }
+            observer.onDidChange = { [weak self] in self?.handleChanges(changes: $0) }
             let changes = observer.items.map { ListChange.insert($0, index: .init(item: 0, section: 0)) }
             handleChanges(changes: changes)
         } catch {
