@@ -143,6 +143,12 @@ internal enum L10n {
       /// Slow mode ON
       internal static var slowMode: String { L10n.tr("Localizable", "composer.placeholder.slowMode") }
     }
+    internal enum QuotedMessage {
+      /// Giphy
+      internal static var giphy: String { L10n.tr("Localizable", "composer.quoted-message.giphy") }
+      /// Photo
+      internal static var photo: String { L10n.tr("Localizable", "composer.quoted-message.photo") }
+    }
     internal enum Suggestions {
       internal enum Commands {
         /// Instant Commands
