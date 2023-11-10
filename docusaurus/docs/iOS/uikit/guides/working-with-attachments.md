@@ -325,6 +325,38 @@ Finally, don't forget to assign the custom message list if you haven't yet:
 Components.default.messageListVC = CustomChatMessageListVC.self
 ```
 
+### Quoted Message View Preview
+
+A preview of the custom attachment view while a message containing such attachment is being quoted, needs to be provided as well.
+
+In order to do this, you need to subclass the `QuotedChatMessageView` and provide your own implementation for the custom attachment type.
+
+For example, let's create a `CustomQuotedMessageView` with the following implementation.
+
+```swift
+class CustomQuotedMessageView: QuotedChatMessageView {
+    
+    override func setAttachmentPreview(for message: ChatMessage) {
+        if let customPayload = message.attachments(payloadType: WorkoutAttachmentPayload.self).first?.payload {
+            attachmentPreviewView.contentMode = .scaleAspectFit
+            attachmentPreviewView.image = appearance.images.fileFallback
+            if textView.text.isEmpty {
+                textView.text = customPayload.workoutType
+            }
+        }
+        return super.setAttachmentPreview(for: message)
+    }
+}
+```
+
+In the subclass, we are overriding the implementation of the `setAttachmentPreview` method. We are checking if the message contains a custom attachment of type `WorkoutAttachmentPayload`. If it does, we are providing an image and a text available from the message payload.
+
+Finally, you need to inject your custom implementation of the `CustomQuotedMessageView` in our `Components`'s property `quotedMessageView`.
+
+```
+Components.default.quotedMessageView = CustomQuotedMessageView.self
+```
+
 ### Tracking custom attachment upload progress
 In the previous examples, we assumed that you already have the custom attachment remote URL available. But, you can also upload the custom attachment through the Stream's SDK and observe the uploading progress.
 

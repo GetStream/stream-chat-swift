@@ -53,12 +53,7 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
     /// A Boolean value that checks if all attachments are empty.
     open var isAttachmentsEmpty: Bool {
         guard let content = self.content else { return true }
-        return content.message.fileAttachments.isEmpty
-            && content.message.imageAttachments.isEmpty
-            && content.message.linkAttachments.isEmpty
-            && content.message.giphyAttachments.isEmpty
-            && content.message.videoAttachments.isEmpty
-            && content.message.voiceRecordingAttachments.isEmpty
+        return content.message.allAttachments.isEmpty
     }
 
     /// The container view that holds the `authorAvatarView` and the `contentContainerView`.
@@ -244,7 +239,7 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
             attachmentPreviewView.contentMode = .scaleAspectFill
             setAttachmentPreviewImage(url: imagePayload.imageURL)
             if textView.text.isEmpty {
-                textView.text = "Photo"
+                textView.text = L10n.Composer.QuotedMessage.photo
             }
         } else if let linkPayload = message.linkAttachments.first?.payload {
             attachmentPreviewView.contentMode = .scaleAspectFill
@@ -254,7 +249,7 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
             attachmentPreviewView.contentMode = .scaleAspectFill
             setAttachmentPreviewImage(url: giphyPayload.previewURL)
             if textView.text.isEmpty {
-                textView.text = "Giphy"
+                textView.text = L10n.Composer.QuotedMessage.giphy
             }
         } else if let videoPayload = message.videoAttachments.first?.payload {
             attachmentPreviewView.contentMode = .scaleAspectFill

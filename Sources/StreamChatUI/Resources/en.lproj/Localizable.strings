@@ -75,6 +75,9 @@
 "composer.links-disabled.title" = "Links are disabled";
 "composer.links-disabled.subtitle" = "Sending links is not allowed in this conversation.";
 
+"composer.quoted-message.photo" = "Photo";
+"composer.quoted-message.giphy" = "Giphy";
+
 "composer.suggestions.commands.header" = "Instant Commands";
 "message.sending.attachment-uploading-failed" = "UPLOADING FAILED";
 
