@@ -210,6 +210,7 @@ extension BackgroundDatabaseObserver: DatabaseObserverRemovalListener {
     /// are received.
     private func listenForRemoveAllDataNotifications() {
         listenForRemoveAllDataNotifications(
+            isBackground: true,
             frc: frc,
             changeAggregator: changeAggregator,
             onItemsRemoval: { [weak self] changes in

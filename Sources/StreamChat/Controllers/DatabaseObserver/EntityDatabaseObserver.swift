@@ -260,10 +260,10 @@ extension EntityDatabaseObserver: DatabaseObserverRemovalListener {
     /// are received.
     private func listenForRemoveAllDataNotifications() {
         listenForRemoveAllDataNotifications(
+            isBackground: false,
             frc: frc,
             changeAggregator: changeAggregator,
-            onItemsRemoval: { [weak self] listChanges in
-                self?.changeAggregator.onDidChange?(listChanges)
+            onItemsRemoval: { [weak self] _ in
                 self?._item.computeValue = { nil }
                 self?._item.reset()
             },

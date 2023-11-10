@@ -288,14 +288,14 @@ extension ListDatabaseObserver: DatabaseObserverRemovalListener {
     /// are received.
     private func listenForRemoveAllDataNotifications() {
         listenForRemoveAllDataNotifications(
+            isBackground: false,
             frc: frc,
             changeAggregator: changeAggregator,
-            onItemsRemoval: { changes in
+            onItemsRemoval: { _ in
                 // Remove the cached items since they're now deleted, technically. It is important for it to be reset before
                 // calling `controllerDidChangeContent` so it properly reflects the state
                 self._items.computeValue = { [] }
                 self._items.reset()
-                self.onChange?(changes)
             },
             onCompletion: { [weak self] in
                 do {

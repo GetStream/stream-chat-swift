@@ -11,6 +11,7 @@ protocol DatabaseObserverRemovalListener: AnyObject {
 
 extension DatabaseObserverRemovalListener {
     func listenForRemoveAllDataNotifications<Item, DTO: NSManagedObject>(
+        isBackground: Bool,
         frc: NSFetchedResultsController<DTO>,
         changeAggregator: ListChangeAggregator<DTO, Item>,
         onItemsRemoval: @escaping ([ListChange<Item>]) -> Void,
@@ -28,23 +29,36 @@ extension DatabaseObserverRemovalListener {
             queue: .main
         ) { [weak frc, weak context, weak changeAggregator] _ in
             guard let frc = frc, let context = context, let changeAggregator = changeAggregator else { return }
+            guard let fetchResultsController = frc as? NSFetchedResultsController<NSFetchRequestResult> else { return }
 
-            context.performAndWait { context.reset() }
-            context.perform {
-                let objects = frc.fetchedObjects?.filter { $0.isValid }
-                let changes = objects?.enumerated().compactMap { index, item in
-                    changeAggregator.listChange(
-                        for: item,
+            let removeItems = {
+                // Simulate ChangeObserver callbacks like all data are being removed
+                changeAggregator.controllerWillChangeContent(fetchResultsController)
+
+                frc.fetchedObjects?.enumerated().forEach { index, item in
+                    changeAggregator.controller(
+                        fetchResultsController,
+                        didChange: item,
                         at: IndexPath(item: index, section: 0),
-                        newIndexPath: nil,
-                        type: .delete
+                        for: .delete,
+                        newIndexPath: nil
                     )
-                } ?? []
+                }
 
-                onItemsRemoval(changes)
+                onItemsRemoval([])
+
+                // Publish the changes
+                changeAggregator.controllerDidChangeContent(fetchResultsController)
 
                 // Remove delegate so it doesn't get further removal updates
                 frc.delegate = nil
+            }
+
+            if isBackground {
+                context.performAndWait { context.reset() }
+                context.perform { removeItems() }
+            } else {
+                removeItems()
             }
         }
 
