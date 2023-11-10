@@ -94,10 +94,11 @@ Components.default.filesAttachmentInjector = MyCustomAttachmentViewInjector.self
 Stream chat allows you to create your own types of attachments as well. The steps to follow to add support for a custom attachment type are the following:
 
 1. Extend `AttachmentType` to include the custom type
-1. Create a new `AttachmentPayload` struct to handle your custom attachment data
-1. Create a `typealias` for `ChatMessageAttachment<AttachmentPayload>` which will be used for the content of the view
-1. Create a new `AttachmentViewInjector`
-1. Configure the SDK to use your view injector class to render custom attachments
+2. Create a new `AttachmentPayload` struct to handle your custom attachment data
+3. Register the new attachment payload type in `ChatClient`
+4. Create a `typealias` for `ChatMessageAttachment<AttachmentPayload>` which will be used for the content of the view
+5. Create a new `AttachmentViewInjector`
+6. Configure the SDK to use your view injector class to render custom attachments
 
 Let's assume we want to attach a workout session to a message, the payload of the attachment will look like this:
 
@@ -113,7 +114,7 @@ Let's assume we want to attach a workout session to a message, the payload of th
 }
 ```
 
-Here's how we get around the first three steps:
+In the code, the payload and attachment type should look something like this:
 
 ```swift
 public extension AttachmentType {
@@ -144,10 +145,21 @@ public struct WorkoutAttachmentPayload: AttachmentPayload {
 Here we extended `AttachmentType` to include the `workout` type and afterwards we introduced a new struct to match the payload data that we expect.
 
 1. `WorkoutAttachmentPayload.type` is used to match message attachments to this struct
-1. All attachment fields are optional, this is highly recommended for all custom data
-1. We use `CodingKeys` to map JSON field names to struct fields
+2. All attachment fields are optional, this is highly recommended for all custom data
+3. We use `CodingKeys` to map JSON field names to struct fields
 
-Let's now create a custom view injector to handle the workout attachment.
+Then, you should register your custom attachment type when creating the `ChatClient`, example:
+
+```swift
+let client = ChatClient(config: config)
+client.registerAttachment(WorkoutAttachmentPayload.self)
+```
+
+:::note
+The `ChatClient.registerAttachment()` is only available after the 4.42.0 release. This one was added to make sure that editing custom attachments is also supported.
+:::
+
+Let's now create a custom view injector to handle the workout attachment view.
 
 ```swift
 import StreamChat
