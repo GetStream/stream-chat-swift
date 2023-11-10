@@ -19,13 +19,13 @@ class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
     private let sorting: [SortValue<Item>]
 
     /// Used to observe the changes in the DB.
-    let frc: NSFetchedResultsController<DTO>
+    private(set) var frc: NSFetchedResultsController<DTO>
 
     /// Acts like the `NSFetchedResultsController`'s delegate and aggregates the reported changes into easily consumable form.
     let changeAggregator: ListChangeAggregator<DTO, Item>
 
     /// When called, notification observers are released
-    private(set) var releaseNotificationObservers: (() -> Void)?
+    var releaseNotificationObservers: (() -> Void)?
 
     private let queue = DispatchQueue(label: "io.getstream.list-database-observer", qos: .userInitiated, attributes: .concurrent)
     private let processingQueue: OperationQueue
@@ -203,77 +203,35 @@ class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
             completion(result)
         }
     }
+}
 
+extension BackgroundDatabaseObserver: DatabaseObserverRemovalListener {
     /// Listens for `Will/DidRemoveAllData` notifications from the context and simulates the callback when the notifications
     /// are received.
     private func listenForRemoveAllDataNotifications() {
-        let notificationCenter = NotificationCenter.default
-        let context = frc.managedObjectContext
-
-        // When `WillRemoveAllDataNotification` is received, we need to simulate that the elements are being removed.
-        // At this point, these entities still existing in the context, and it's safe to
-        // access and serialize them.
-        let willRemoveAllDataNotificationObserver = notificationCenter.addObserver(
-            forName: DatabaseContainer.WillRemoveAllDataNotification,
-            object: context,
-            queue: .main
-        ) { [weak self] _ in
-            // Technically, this should rather be `unowned`, however, `deinit` is not always called on the main thread which can
-            // cause a race condition when the notification observers are not removed at the right time.
-            guard let self = self else { return }
-            guard let fetchResultsController = self.frc as? NSFetchedResultsController<NSFetchRequestResult> else { return }
-
-            fetchResultsController.managedObjectContext.perform {
-                // Simulate ChangeObserver callbacks like if all data were to be removed
-                self.changeAggregator.controllerWillChangeContent(fetchResultsController)
-
-                self.frc.fetchedObjects?.enumerated().forEach { index, item in
-                    self.changeAggregator.controller(
-                        fetchResultsController,
-                        didChange: item,
-                        at: IndexPath(item: index, section: 0),
-                        for: .delete,
-                        newIndexPath: nil
-                    )
+        listenForRemoveAllDataNotifications(
+            frc: frc,
+            changeAggregator: changeAggregator,
+            onItemsRemoval: { [weak self] changes in
+                self?.queue.async(flags: .barrier) {
+                    self?._items = []
+                    self?.notifyDidChange(changes: changes, onCompletion: {})
                 }
-
-                // Remove the cached items since they're now deleted, technically. It is important for it to be reset before
-                // calling `controllerDidChangeContent` so it properly reflects the state
+            },
+            onCompletion: { [weak self] in
+                guard let self = self else { return }
                 self.queue.async(flags: .barrier) {
-                    self._items = []
+                    self._isInitialized = false
+
+                    DispatchQueue.main.async {
+                        do {
+                            try self.startObserving()
+                        } catch {
+                            log.error("Error when starting observing: \(error)")
+                        }
+                    }
                 }
-
-                // Publish the changes
-                self.changeAggregator.controllerDidChangeContent(fetchResultsController)
-
-                // Remove delegate so it doesn't get further removal updates
-                self.frc.delegate = nil
             }
-        }
-
-        // When `DidRemoveAllDataNotification` is received, we need to reset the FRC. At this point, the entities are removed but
-        // the FRC doesn't know about it yet. Resetting the FRC clears its `fetchedObjects`.
-        let didRemoveAllDataNotificationObserver = notificationCenter.addObserver(
-            forName: DatabaseContainer.DidRemoveAllDataNotification,
-            object: context,
-            queue: .main
-        ) { [weak self] _ in
-            // Technically, this should rather be `unowned`, however, `deinit` is not always called on the main thread which can
-            // cause a race condition when the notification observers are not removed at the right time.
-            guard let self = self else { return }
-
-            // Resetting the FRC which causes the current `frc.fetchedObjects` to be reloaded
-            do {
-                self.isInitialized = false
-                try self.startObserving()
-            } catch {
-                log.error("Error when starting observing: \(error)")
-            }
-        }
-
-        releaseNotificationObservers = { [weak notificationCenter] in
-            notificationCenter?.removeObserver(willRemoveAllDataNotificationObserver)
-            notificationCenter?.removeObserver(didRemoveAllDataNotificationObserver)
-        }
+        )
     }
 }
