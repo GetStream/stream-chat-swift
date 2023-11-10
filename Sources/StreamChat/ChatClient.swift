@@ -51,7 +51,7 @@ public class ChatClient {
     /// The notification center used to send and receive notifications about incoming events.
     private(set) var eventNotificationCenter: EventNotificationCenter
 
-    /// The register that contains all the attachment payloads associated with their attachment types.
+    /// The registry that contains all the attachment payloads associated with their attachment types.
     /// For the meantime this is a static property to avoid breaking changes. On v5, this can be changed.
     private(set) static var customAttachmentTypes: [AttachmentType: AttachmentPayload.Type] = [:]
 
