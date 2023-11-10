@@ -152,11 +152,11 @@ Then, you should register your custom attachment type when creating the `ChatCli
 
 ```swift
 let client = ChatClient(config: config)
-let client.registerCustomAttachment(WorkoutAttachmentPayload.self)
+let client.registerAttachment(WorkoutAttachmentPayload.self)
 ```
 
 :::note
-The `ChatClient.registerCustomAttachment()` is only available after the 4.42.0 release. This one was added to make sure that editing custom attachments is also supported.
+The `ChatClient.registerAttachment()` is only available after the 4.42.0 release. This one was added to make sure that editing custom attachments is also supported.
 :::
 
 Let's now create a custom view injector to handle the workout attachment view.

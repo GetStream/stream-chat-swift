@@ -193,18 +193,7 @@ extension AttachmentPayload {
 public extension Array where Element == ChatMessageAttachment<Data> {
     func toAnyAttachmentPayload() -> [AnyAttachmentPayload] {
         compactMap { attachment in
-            /// Currently supported editable attachments
-            let types: [AttachmentType: AttachmentPayload.Type] = [
-                .image: ImageAttachmentPayload.self,
-                .video: VideoAttachmentPayload.self,
-                .audio: AudioAttachmentPayload.self,
-                .file: FileAttachmentPayload.self,
-                .voiceRecording: VideoAttachmentPayload.self
-            ].merging(
-                ChatClient.customAttachmentTypes,
-                uniquingKeysWith: { defaultType, _ in defaultType }
-            ) // Merge editable attachments with custom types
-
+            let types = ChatClient.attachmentTypesRegistry
             guard let payloadType = types[attachment.type] else { return nil }
             guard let payload = try? JSONDecoder.default.decode(
                 payloadType,

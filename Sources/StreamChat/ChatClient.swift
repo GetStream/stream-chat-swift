@@ -53,7 +53,13 @@ public class ChatClient {
 
     /// The registry that contains all the attachment payloads associated with their attachment types.
     /// For the meantime this is a static property to avoid breaking changes. On v5, this can be changed.
-    private(set) static var customAttachmentTypes: [AttachmentType: AttachmentPayload.Type] = [:]
+    private(set) static var attachmentTypesRegistry: [AttachmentType: AttachmentPayload.Type] = [
+        .image: ImageAttachmentPayload.self,
+        .video: VideoAttachmentPayload.self,
+        .audio: AudioAttachmentPayload.self,
+        .file: FileAttachmentPayload.self,
+        .voiceRecording: VideoAttachmentPayload.self
+    ]
 
     let connectionRepository: ConnectionRepository
 
@@ -243,12 +249,12 @@ public class ChatClient {
     ///
     /// Example:
     /// ```
-    /// registerCustomAttachment(CustomAttachmentPayload.self)
+    /// registerAttachment(CustomAttachmentPayload.self)
     /// ```
     ///
     /// - Parameter payloadType: The payload type of the attachment.
-    public func registerCustomAttachment<Payload: AttachmentPayload>(_ payloadType: Payload.Type) {
-        Self.customAttachmentTypes[Payload.type] = payloadType
+    public func registerAttachment<Payload: AttachmentPayload>(_ payloadType: Payload.Type) {
+        Self.attachmentTypesRegistry[Payload.type] = payloadType
     }
 
     /// Connects the client with the given user.
