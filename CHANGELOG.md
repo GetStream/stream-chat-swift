@@ -4,6 +4,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
+### ✅ Added
+- Add new `NewMessageErrorEvent` when observing `EventsController` [#2885](https://github.com/GetStream/stream-chat-swift/pull/2885)
 ### 🐞 Fixed
 - Fix not able to mark channel read after clearing history [#2867](https://github.com/GetStream/stream-chat-swift/pull/2867)
 - Fix pasting images from browser when isPastingImagesEnabled is false [#2874](https://github.com/GetStream/stream-chat-swift/pull/2874)
