@@ -36,6 +36,9 @@ open class InputTextView: UITextView, AppearanceProvider {
         }
     }
 
+    /// The placeholder's container, that it's used to allow,
+    /// the placeholder to expand to the full size of the container
+    /// without constraining the textView.
     open var placeholderContainer: UIStackView = .init()
 
     /// The minimum height of the text view.
