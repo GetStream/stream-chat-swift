@@ -36,11 +36,6 @@ open class InputTextView: UITextView, AppearanceProvider {
         }
     }
 
-    /// The placeholder's container, that it's used to allow,
-    /// the placeholder to expand to the full size of the container
-    /// without constraining the textView.
-    open var placeholderContainer: UIStackView = .init()
-
     /// The minimum height of the text view.
     /// When there is no content in the text view OR the height of the content is less than this value,
     /// the text view will be of this height
@@ -142,20 +137,15 @@ open class InputTextView: UITextView, AppearanceProvider {
     }
 
     open func setUpLayout() {
-        placeholderContainer.embed(
-            placeholderLabel,
-            insets: .init(
-                top: .zero,
-                leading: directionalLayoutMargins.leading,
-                bottom: .zero,
-                trailing: .zero
-            )
-        )
-
-        placeholderContainer.translatesAutoresizingMaskIntoConstraints = true
-        placeholderContainer.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        placeholderContainer.isUserInteractionEnabled = false
-        addSubview(placeholderContainer)
+        addSubview(placeholderLabel)
+        NSLayoutConstraint.activate([
+            placeholderLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: directionalLayoutMargins.leading),
+            placeholderLabel.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor),
+            placeholderLabel.topAnchor.constraint(equalTo: topAnchor),
+            placeholderLabel.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor),
+            
+            placeholderLabel.centerYAnchor.constraint(equalTo: centerYAnchor)
+        ])
 
         heightConstraint = heightAnchor.pin(equalToConstant: minimumHeight)
         heightConstraint?.isActive = true
