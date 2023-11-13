@@ -16,7 +16,6 @@ final class ComposerVC_Tests: XCTestCase {
 
     /// Static setUp() is only run once. Which is what we want in this case to preload the images.
     override class func setUp() {
-        StreamChatTestTools.overrideRecording = true
         /// Dummy snapshot to preload the TestImages.yoda.url image
         /// This was the only workaround to make sure the image always appears in the snapshots.
         let view = UIImageView(frame: .init(center: .zero, size: .init(width: 100, height: 100)))
