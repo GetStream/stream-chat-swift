@@ -9492,7 +9492,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Adds support for Apple Silicon brew directory\nexport PATH=\"$PATH:/opt/homebrew/bin\"\n\nif which mint; then\n  echo \"Runnning SwiftLint\"\n  # mkdir -p reports && mint run swiftlint | tee reports/swiftlint.txt\nelse\n  echo \"Warning: Mint not installed\"\nfi\n";
+			shellScript = "# Adds support for Apple Silicon brew directory\nexport PATH=\"$PATH:/opt/homebrew/bin\"\n\nif which mint; then\n  echo \"Runnning SwiftLint\"\n  mkdir -p reports && mint run swiftlint | tee reports/swiftlint.txt\nelse\n  echo \"Warning: Mint not installed\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
