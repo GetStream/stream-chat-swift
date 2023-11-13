@@ -291,11 +291,12 @@ extension ListDatabaseObserver: DatabaseObserverRemovalListener {
             isBackground: false,
             frc: frc,
             changeAggregator: changeAggregator,
-            onItemsRemoval: { _ in
+            onItemsRemoval: { completion in
                 // Remove the cached items since they're now deleted, technically. It is important for it to be reset before
                 // calling `controllerDidChangeContent` so it properly reflects the state
                 self._items.computeValue = { [] }
                 self._items.reset()
+                completion()
             },
             onCompletion: { [weak self] in
                 do {
@@ -349,55 +350,42 @@ class ListChangeAggregator<DTO: NSManagedObject, Item>: NSObject, NSFetchedResul
         for type: NSFetchedResultsChangeType,
         newIndexPath: IndexPath?
     ) {
-        guard let listChange = self.listChange(for: anObject, at: indexPath, newIndexPath: newIndexPath, type: type) else {
-            return
-        }
-
-        currentChanges.append(listChange)
-    }
-
-    func listChange(
-        for object: Any,
-        at indexPath: IndexPath?,
-        newIndexPath: IndexPath?,
-        type: NSFetchedResultsChangeType
-    ) -> ListChange<Item>? {
-        guard let dto = object as? DTO, let item = try? itemCreator(dto) else {
+        guard let dto = anObject as? DTO, let item = try? itemCreator(dto) else {
             log.debug("Skipping the update from DB because the DTO can't be converted to the model object.")
-            return nil
+            return
         }
 
         switch type {
         case .insert:
             guard let index = newIndexPath else {
                 log.warning("Skipping the update from DB because `newIndexPath` is missing for `.insert` change.")
-                return nil
+                return
             }
-            return .insert(item, index: index)
+            currentChanges.append(.insert(item, index: index))
 
         case .move:
             guard let fromIndex = indexPath, let toIndex = newIndexPath else {
                 log.warning("Skipping the update from DB because `indexPath` or `newIndexPath` are missing for `.move` change.")
-                return nil
+                return
             }
-            return .move(item, fromIndex: fromIndex, toIndex: toIndex)
+            currentChanges.append(.move(item, fromIndex: fromIndex, toIndex: toIndex))
 
         case .update:
             guard let index = indexPath else {
                 log.warning("Skipping the update from DB because `indexPath` is missing for `.update` change.")
-                return nil
+                return
             }
-            return .update(item, index: index)
+            currentChanges.append(.update(item, index: index))
 
         case .delete:
             guard let index = indexPath else {
                 log.warning("Skipping the update from DB because `indexPath` is missing for `.delete` change.")
-                return nil
+                return
             }
-            return .remove(item, index: index)
+            currentChanges.append(.remove(item, index: index))
 
         default:
-            return nil
+            break
         }
     }
 

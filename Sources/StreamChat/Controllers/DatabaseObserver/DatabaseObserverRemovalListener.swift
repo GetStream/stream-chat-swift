@@ -14,7 +14,7 @@ extension DatabaseObserverRemovalListener {
         isBackground: Bool,
         frc: NSFetchedResultsController<DTO>,
         changeAggregator: ListChangeAggregator<DTO, Item>,
-        onItemsRemoval: @escaping ([ListChange<Item>]) -> Void,
+        onItemsRemoval: @escaping (@escaping () -> Void) -> Void,
         onCompletion: @escaping () -> Void
     ) {
         let notificationCenter = NotificationCenter.default
@@ -45,17 +45,16 @@ extension DatabaseObserverRemovalListener {
                     )
                 }
 
-                onItemsRemoval([])
+                onItemsRemoval {
+                    // Publish the changes
+                    changeAggregator.controllerDidChangeContent(fetchResultsController)
 
-                // Publish the changes
-                changeAggregator.controllerDidChangeContent(fetchResultsController)
-
-                // Remove delegate so it doesn't get further removal updates
-                frc.delegate = nil
+                    // Remove delegate so it doesn't get further removal updates
+                    frc.delegate = nil
+                }
             }
 
             if isBackground {
-                context.performAndWait { context.reset() }
                 context.perform { removeItems() }
             } else {
                 removeItems()

@@ -263,9 +263,10 @@ extension EntityDatabaseObserver: DatabaseObserverRemovalListener {
             isBackground: false,
             frc: frc,
             changeAggregator: changeAggregator,
-            onItemsRemoval: { [weak self] _ in
+            onItemsRemoval: { [weak self] completion in
                 self?._item.computeValue = { nil }
                 self?._item.reset()
+                completion()
             },
             onCompletion: { [weak self] in
                 do {

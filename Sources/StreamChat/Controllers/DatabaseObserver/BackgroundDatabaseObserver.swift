@@ -213,10 +213,12 @@ extension BackgroundDatabaseObserver: DatabaseObserverRemovalListener {
             isBackground: true,
             frc: frc,
             changeAggregator: changeAggregator,
-            onItemsRemoval: { [weak self] changes in
+            onItemsRemoval: { [weak self] completion in
                 self?.queue.async(flags: .barrier) {
                     self?._items = []
-                    self?.notifyDidChange(changes: changes, onCompletion: {})
+                    DispatchQueue.main.async {
+                        completion()
+                    }
                 }
             },
             onCompletion: { [weak self] in
