@@ -38,9 +38,16 @@ class MessageSender: Worker {
     )
 
     let messageRepository: MessageRepository
+    let eventsNotificationCenter: EventNotificationCenter
 
-    init(messageRepository: MessageRepository, database: DatabaseContainer, apiClient: APIClient) {
+    init(
+        messageRepository: MessageRepository,
+        eventsNotificationCenter: EventNotificationCenter,
+        database: DatabaseContainer,
+        apiClient: APIClient
+    ) {
         self.messageRepository = messageRepository
+        self.eventsNotificationCenter = eventsNotificationCenter
         super.init(database: database, apiClient: apiClient)
         // We need to initialize the observer synchronously
         _ = observer
@@ -97,6 +104,7 @@ class MessageSender: Worker {
                 if sendingQueueByCid[cid] == nil {
                     sendingQueueByCid[cid] = MessageSendingQueue(
                         messageRepository: self.messageRepository,
+                        eventsNotificationCenter: self.eventsNotificationCenter,
                         dispatchQueue: sendingDispatchQueue
                     )
                 }
@@ -110,10 +118,16 @@ class MessageSender: Worker {
 /// This objects takes care of sending messages to the server in the order they have been enqueued.
 private class MessageSendingQueue {
     let messageRepository: MessageRepository
+    let eventsNotificationCenter: EventNotificationCenter
     let dispatchQueue: DispatchQueue
 
-    init(messageRepository: MessageRepository, dispatchQueue: DispatchQueue) {
+    init(
+        messageRepository: MessageRepository,
+        eventsNotificationCenter: EventNotificationCenter,
+        dispatchQueue: DispatchQueue
+    ) {
         self.messageRepository = messageRepository
+        self.eventsNotificationCenter = eventsNotificationCenter
         self.dispatchQueue = dispatchQueue
     }
 
@@ -143,8 +157,20 @@ private class MessageSendingQueue {
             // switch to using a custom `OrderedSet`
             guard let request = self?.requests.sorted(by: { $0.createdLocallyAt < $1.createdLocallyAt }).first else { return }
 
-            self?.messageRepository.sendMessage(with: request.messageId) { _ in
+            self?.messageRepository.sendMessage(with: request.messageId) { [weak self] result in
                 self?.removeRequestAndContinue(request)
+                if let error = result.error {
+                    switch error {
+                    case .messageDoesNotExist,
+                         .messageNotPendingSend,
+                         .messageDoesNotHaveValidChannel:
+                        let event = NewMessageErrorEvent(messageId: request.messageId, error: error)
+                        self?.eventsNotificationCenter.process(event)
+                    case let .failedToSendMessage(error):
+                        let event = NewMessageErrorEvent(messageId: request.messageId, error: error)
+                        self?.eventsNotificationCenter.process(event)
+                    }
+                }
             }
         }
     }

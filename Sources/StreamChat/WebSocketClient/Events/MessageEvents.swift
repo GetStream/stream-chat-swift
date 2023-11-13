@@ -224,3 +224,9 @@ class MessageReadEventDTO: EventDTO {
 public struct NewMessagePendingEvent: Event {
     public var message: ChatMessage
 }
+
+// Triggered when a message failed being sent.
+public struct NewMessageErrorEvent: Event {
+    public var messageId: MessageId
+    public var error: Error
+}

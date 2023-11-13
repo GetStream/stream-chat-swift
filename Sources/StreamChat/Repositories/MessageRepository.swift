@@ -8,7 +8,7 @@ enum MessageRepositoryError: LocalizedError {
     case messageDoesNotExist
     case messageNotPendingSend
     case messageDoesNotHaveValidChannel
-    case failedToSendMessage
+    case failedToSendMessage(Error)
 }
 
 class MessageRepository {
@@ -57,7 +57,7 @@ class MessageRepository {
                 if let error = error {
                     log.error("Error changing localMessageState message with id \(messageId) to `sending`: \(error)")
                     self?.markMessageAsFailedToSend(id: messageId) {
-                        completion(.failure(.failedToSendMessage))
+                        completion(.failure(.failedToSendMessage(error)))
                     }
                     return
                 }
@@ -71,11 +71,11 @@ class MessageRepository {
                 self?.apiClient.request(endpoint: endpoint) {
                     switch $0 {
                     case let .success(payload):
-                        self?.saveSuccessfullySentMessage(cid: cid, message: payload.message) { message in
-                            if let message = message {
+                        self?.saveSuccessfullySentMessage(cid: cid, message: payload.message) { result in
+                            if let message = result.value {
                                 completion(.success(message))
-                            } else {
-                                completion(.failure(.failedToSendMessage))
+                            } else if let error = result.error {
+                                completion(.failure(.failedToSendMessage(error)))
                             }
                         }
 
@@ -90,9 +90,8 @@ class MessageRepository {
     func saveSuccessfullySentMessage(
         cid: ChannelId,
         message: MessagePayload,
-        completion: @escaping (ChatMessage?) -> Void
+        completion: @escaping (Result<ChatMessage, Error>) -> Void
     ) {
-        var messageModel: ChatMessage?
         database.write({
             let messageDTO = try $0.saveMessage(payload: message, for: cid, syncOwnReactions: false, cache: nil)
             if messageDTO.localMessageState == .sending || messageDTO.localMessageState == .sendingFailed {
@@ -100,12 +99,13 @@ class MessageRepository {
                 messageDTO.localMessageState = nil
             }
 
-            messageModel = try? messageDTO.asModel()
+            let messageModel = try messageDTO.asModel()
+            completion(.success(messageModel))
         }, completion: {
             if let error = $0 {
                 log.error("Error saving sent message with id \(message.id): \(error)", subsystems: .offlineSupport)
+                completion(.failure(error))
             }
-            completion(messageModel)
         })
     }
 
@@ -117,7 +117,7 @@ class MessageRepository {
         log.error("Sending the message with id \(messageId) failed with error: \(error)")
 
         markMessageAsFailedToSend(id: messageId) {
-            completion(.failure(.failedToSendMessage))
+            completion(.failure(.failedToSendMessage(error)))
         }
     }
 
