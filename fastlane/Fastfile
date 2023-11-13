@@ -389,7 +389,7 @@ desc 'Runs ui tests in Debug config'
 lane :test_ui do |options|
   next unless is_check_required(sources: sources_matrix[:ui], force_check: @force_check)
 
-  remove_snapshots if options[:record]
+  remove_snapshots unless options[:record].to_s.empty?
 
   update_testplan_on_ci(path: 'Tests/StreamChatUITests/StreamChatUITestPlan.xctestplan')
 
@@ -403,8 +403,30 @@ lane :test_ui do |options|
     devices: options[:device],
     build_for_testing: options[:build_for_testing],
     skip_build: options[:skip_build],
-    xcargs: buildcache_xcargs
+    xcargs: buildcache_xcargs,
+    fail_build: options[:record].to_s.empty?
   )
+
+  if options[:record] && is_ci
+    png_files = git_status(ext: '.png').map { |_, png| png }.flatten
+    next if png_files.empty?
+
+    title = "[CI] Snapshots"
+    base = current_branch
+    head = "#{base}-snapshots"
+    sh("git checkout -b #{head}")
+    png_files.each { |png| sh("git add #{png}") || true }
+    sh("git commit -m '#{title}'")
+    push_to_git_remote(tags: false)
+    create_pull_request(
+      api_token: ENV.fetch('GITHUB_TOKEN', nil),
+      repo: github_repo,
+      title: title,
+      head: head,
+      base: base,
+      body: 'This PR was created automatically by CI.'
+    )
+  end
 end
 
 private_lane :match_macos do
@@ -595,8 +617,15 @@ lane :install_sim do |options|
 end
 
 desc 'Remove UI snapshots'
-private_lane :remove_snapshots do
-  Dir.glob("../Tests/StreamChatUITests/**/__Snapshots__/**/*.png").select { |file| File.delete(file) }
+private_lane :remove_snapshots do |options|
+  snapshots_path = "../Tests/StreamChatUITests/**/__Snapshots__/**/*.png"
+  if options[:only_unchanged]
+    pnf_files = git_status(ext: '.png')
+    changed_snapshots = (pnf_files[:a] + pnf_files[:m]).map { |f| File.expand_path(f) }
+    Dir.glob(snapshots_path).select { |f| File.delete(f) unless changed_snapshots.include?(File.expand_path(f)) }
+  else
+    Dir.glob(snapshots_path).select { |f| File.delete(f) }
+  end
 end
 
 lane :sources_matrix do
@@ -613,4 +642,33 @@ end
 
 private_lane :current_branch do
   ENV['BRANCH_NAME'] || git_branch
+end
+
+private_lane :git_status do |options|
+  UI.user_error!('Extension should be provided') unless options[:ext]
+
+  untracked_files = sh('git status -s', log: false).split("\n").map(&:strip)
+  UI.important("Git Status: #{untracked_files}")
+
+  deleted_files = select_files_from(files: untracked_files, with_extension: options[:ext], that_start_with: 'D')
+  added_files = select_files_from(files: untracked_files, with_extension: options[:ext], that_start_with: ['A', '??'])
+  renamed_files = select_files_from(files: untracked_files, with_extension: options[:ext], that_start_with: 'R')
+  modified_files = select_files_from(files: untracked_files, with_extension: options[:ext], that_start_with: 'M')
+
+  renamed_files.each do |renamed_file|
+    content = renamed_file.split.drop(1).join.split('->').map(&:strip)
+    deleted_files << content.first
+    added_files << content.last
+  end
+  { a: added_files, d: deleted_files, m: modified_files }
+end
+
+def select_files_from(files:, with_extension:, that_start_with:)
+  files.select do |f|
+    f.start_with?(*that_start_with)
+  end.map do |f|
+    f.split.drop(1).join(' ')
+  end.select do |f|
+    f.gsub(/['"]/, '').end_with?(with_extension)
+  end
 end
