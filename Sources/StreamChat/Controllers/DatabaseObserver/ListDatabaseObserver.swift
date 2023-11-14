@@ -291,11 +291,11 @@ extension ListDatabaseObserver: DatabaseObserverRemovalListener {
             isBackground: false,
             frc: frc,
             changeAggregator: changeAggregator,
-            onItemsRemoval: { completion in
+            onItemsRemoval: { [weak self] completion in
                 // Remove the cached items since they're now deleted, technically. It is important for it to be reset before
                 // calling `controllerDidChangeContent` so it properly reflects the state
-                self._items.computeValue = { [] }
-                self._items.reset()
+                self?._items.computeValue = { [] }
+                self?._items.reset()
                 completion()
             },
             onCompletion: { [weak self] in
