@@ -58,6 +58,14 @@ open class InputTextView: UITextView, AppearanceProvider {
         }
     }
 
+    override open var intrinsicContentSize: CGSize {
+        .init(width: UIView.noIntrinsicMetric, height: minimumHeight)
+    }
+
+    private var oldText: String = ""
+    private var oldSize: CGSize = .zero
+    private var shouldScrollAfterHeightChanged = false
+
     override open func didMoveToSuperview() {
         super.didMoveToSuperview()
         guard superview != nil else { return }
@@ -67,12 +75,46 @@ open class InputTextView: UITextView, AppearanceProvider {
         setUpAppearance()
     }
 
+    override open func layoutSubviews() {
+        super.layoutSubviews()
+
+        if text == oldText, bounds.size == oldSize { return }
+        oldText = text
+        oldSize = bounds.size
+
+        let size = sizeThatFits(CGSize(width: bounds.size.width, height: CGFloat.greatestFiniteMagnitude))
+        var height = size.height
+
+        // Constrain minimum height
+        height = minimumHeight > 0 ? max(height, minimumHeight) : height
+
+        // Constrain maximum height
+        height = maximumHeight > 0 ? min(height, maximumHeight) : height
+
+        // Update height constraint if needed
+        if height != heightConstraint!.constant {
+            shouldScrollAfterHeightChanged = true
+            heightConstraint!.constant = height
+        } else if shouldScrollAfterHeightChanged {
+            shouldScrollAfterHeightChanged = false
+            scrollToCaretPosition(animated: true)
+        }
+    }
+
     open func setUp() {
+        contentMode = .redraw
+
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(handleTextChange),
             name: UITextView.textDidChangeNotification,
             object: self
+        )
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(textDidEndEditing),
+            name: UITextView.textDidEndEditingNotification, object: self
         )
     }
 
@@ -95,17 +137,15 @@ open class InputTextView: UITextView, AppearanceProvider {
     }
 
     open func setUpLayout() {
-        embed(
-            placeholderLabel,
-            insets: .init(
-                top: .zero,
-                leading: directionalLayoutMargins.leading,
-                bottom: .zero,
-                trailing: .zero
-            )
-        )
-        placeholderLabel.pin(anchors: [.centerY], to: self)
-        placeholderLabel.widthAnchor.pin(equalTo: widthAnchor, multiplier: 0.95).isActive = true
+        addSubview(placeholderLabel)
+        NSLayoutConstraint.activate([
+            placeholderLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: directionalLayoutMargins.leading),
+            placeholderLabel.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor),
+            placeholderLabel.topAnchor.constraint(equalTo: topAnchor),
+            placeholderLabel.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor),
+            
+            placeholderLabel.centerYAnchor.constraint(equalTo: centerYAnchor)
+        ])
 
         heightConstraint = heightAnchor.pin(equalToConstant: minimumHeight)
         heightConstraint?.isActive = true
@@ -127,17 +167,21 @@ open class InputTextView: UITextView, AppearanceProvider {
 
     open func textDidChangeProgrammatically() {
         delegate?.textViewDidChange?(self)
-        DispatchQueue.main.async {
-            self.handleTextChange()
-        }
+        handleTextChange()
     }
 
     @objc open func handleTextChange() {
         placeholderLabel.isHidden = !text.isEmpty
-        setTextViewHeight()
-        scrollToCaretPosition(animated: true)
+        setNeedsDisplay()
     }
 
+    @objc func textDidEndEditing(notification: Notification) {
+        if let sender = notification.object as? InputTextView, sender == self {
+            scrollToCaretPosition(animated: true)
+        }
+    }
+
+    @available(*, deprecated, message: "The calculations made by this method are now happening in a more consistent way inside layoutSubviews. This method is not being used now.")
     open func setTextViewHeight() {
         var heightToSet = minimumHeight
 
@@ -175,10 +219,8 @@ open class InputTextView: UITextView, AppearanceProvider {
             clipboardAttachmentDelegate?.inputTextView(self, didPasteImage: pasteboardImage)
         } else {
             super.paste(sender)
-            // On text paste, textView height will not change automatically
-            // so we must call this function
-            setTextViewHeight()
         }
+        setNeedsDisplay()
     }
 
     /// Scrolls the text view to to the caret's position.

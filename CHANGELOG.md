@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix not able to mark channel read after clearing history [#2867](https://github.com/GetStream/stream-chat-swift/pull/2867)
 - Fix pasting images from browser when isPastingImagesEnabled is false [#2874](https://github.com/GetStream/stream-chat-swift/pull/2874)
 - Fix not being able to paste images when multiple attachments are present [#2874](https://github.com/GetStream/stream-chat-swift/pull/2874)
+- Fix ComposerVC InputTextView caret's position issues [#2878](https://github.com/GetStream/stream-chat-swift/pull/2878)
 - Fix avatar alignment in quoted messages [#2876](https://github.com/GetStream/stream-chat-swift/pull/2876)
 
 ## StreamChatUI
