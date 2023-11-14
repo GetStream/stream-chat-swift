@@ -49,11 +49,11 @@ jobs:
             os: macos-12
             device: "iPhone 14 Pro Max"
             setup_runtime: false
-          - ios: 15.5
-            xcode: 13.4.1
+          - ios: 15.4
+            xcode: 14.2
             os: macos-12
             device: "iPhone 8"
-            setup_runtime: false
+            setup_runtime: true
           - ios: 14.5
             xcode: 14.2
             os: macos-12
@@ -138,11 +138,11 @@ jobs:
             os: macos-13
             device: "iPhone 14 Pro Max"
             setup_runtime: false
-          - ios: 15.5
-            xcode: 13.4.1
+          - ios: 15.4
+            xcode: 14.2
             os: macos-12
             device: "iPhone 8"
-            setup_runtime: false
+            setup_runtime: true
           - ios: 14.5
             xcode: 14.2
             os: macos-12

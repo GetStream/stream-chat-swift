@@ -55,6 +55,31 @@ final class QuotedChatMessageView_Tests: XCTestCase {
 
         AssertSnapshot(view, suffix: "-emptyText")
     }
+    
+    func test_withImageAttachmentAppearance_currentUser() {
+        let attachment = ChatMessageImageAttachment.mock(
+            id: .unique,
+            imageURL: TestImages.yoda.url,
+            title: ""
+        )
+        view.content = makeContent(
+            text: "Hello Vader!",
+            isSentByCurrentUser: true,
+            avatarAlignment: .trailing,
+            attachments: [attachment.asAnyAttachment]
+        )
+
+        AssertSnapshot(view)
+
+        view.content = makeContent(
+            text: "",
+            isSentByCurrentUser: true,
+            avatarAlignment: .trailing,
+            attachments: [attachment.asAnyAttachment]
+        )
+
+        AssertSnapshot(view, suffix: "-emptyText")
+    }
 
     func test_withFileAttachmentAppearance() {
         let attachment = ChatMessageFileAttachment.mock(
@@ -73,6 +98,34 @@ final class QuotedChatMessageView_Tests: XCTestCase {
 
         AssertSnapshot(view, suffix: "-emptyText")
     }
+    
+    func test_withFileAttachmentAppearance_currentUser() {
+        let attachment = ChatMessageFileAttachment.mock(
+            id: .unique,
+            title: "Data.csv",
+            assetURL: .unique(),
+            file: AttachmentFile(type: .csv, size: 0, mimeType: "text/csv"),
+            localState: nil
+        )
+
+        view.content = makeContent(
+            text: "Hello Vader!",
+            isSentByCurrentUser: true,
+            avatarAlignment: .trailing,
+            attachments: [attachment.asAnyAttachment]
+        )
+
+        AssertSnapshot(view)
+
+        view.content = makeContent(
+            text: "",
+            isSentByCurrentUser: true,
+            avatarAlignment: .trailing,
+            attachments: [attachment.asAnyAttachment]
+        )
+
+        AssertSnapshot(view, suffix: "-emptyText")
+    }
 
     func test_withLinkAttachmentAppearance() {
         let attachment = ChatMessageLinkAttachment.mock(
@@ -83,6 +136,24 @@ final class QuotedChatMessageView_Tests: XCTestCase {
         )
 
         view.content = makeContent(text: "Hello Vader!", attachments: [attachment.asAnyAttachment])
+
+        AssertSnapshot(view)
+    }
+    
+    func test_withLinkAttachmentAppearance_currentUser() {
+        let attachment = ChatMessageLinkAttachment.mock(
+            id: .unique,
+            originalURL: URL(string: "https://www.yoda.com")!,
+            assetURL: .unique(),
+            previewURL: TestImages.yoda.url
+        )
+
+        view.content = makeContent(
+            text: "Hello Vader!",
+            isSentByCurrentUser: true,
+            avatarAlignment: .trailing,
+            attachments: [attachment.asAnyAttachment]
+        )
 
         AssertSnapshot(view)
     }
