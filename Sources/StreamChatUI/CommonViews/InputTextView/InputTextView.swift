@@ -172,7 +172,17 @@ open class InputTextView: UITextView, AppearanceProvider {
 
     @objc open func handleTextChange() {
         placeholderLabel.isHidden = !text.isEmpty
-        setNeedsDisplay()
+        setNeedsLayout()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+            // This is due to bug in UITextView where the scroll sometimes disables
+            // when a very long text is pasted in it.
+            // Doing this ensures that it doesn't happen
+            // Reference: https://stackoverflow.com/a/62386088/5493299
+
+            self?.isScrollEnabled = false
+            self?.layoutIfNeeded()
+            self?.isScrollEnabled = true
+        }
     }
 
     @objc func textDidEndEditing(notification: Notification) {
