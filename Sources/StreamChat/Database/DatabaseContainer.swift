@@ -259,10 +259,13 @@ class DatabaseContainer: NSPersistentContainer {
         writableContext.perform { [weak self] in
             self?.sendNotificationForAllContexts(name: Self.WillRemoveAllDataNotification)
 
-            // Before we remove the persistent store, we need to reset the state of the `NSManagedObjectContext`s to
-            // avoid a context from trying to access data from a previous store
-            self?.allContext.forEach { context in
-                context.performAndWait { context.reset() }
+            // Because this is a critical part of Stream, we don't want to make such changes unless it is in a controlled environment
+            if StreamRuntimeCheck._isBackgroundMappingEnabled {
+                // Before we remove the persistent store, we need to reset the state of the `NSManagedObjectContext`s to
+                // avoid a context from trying to access data from a previous store
+                self?.allContext.forEach { context in
+                    context.performAndWait { context.reset() }
+                }
             }
             // If the current persistent store is a SQLite store, this method will reset and recreate it.
             self?.recreatePersistentStore { error in
