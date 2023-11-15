@@ -72,9 +72,10 @@ class MessageRepository {
                     switch $0 {
                     case let .success(payload):
                         self?.saveSuccessfullySentMessage(cid: cid, message: payload.message) { result in
-                            if let message = result.value {
+                            switch result {
+                            case let .success(message):
                                 completion(.success(message))
-                            } else if let error = result.error {
+                            case let .failure(error):
                                 completion(.failure(.failedToSendMessage(error)))
                             }
                         }
