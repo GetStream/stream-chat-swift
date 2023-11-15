@@ -1,18 +1,13 @@
 {
-    "duration": "211.01ms",
+    "duration": "173.64ms",
     "message": {
         "attachments": [],
         "before_message_send_failed": true,
-        "cid": "messaging:5b99d2de-784b-11ee-8aa2-920bc7cfce9a",
-        "created_at": "2023-11-01T00:12:36.479109Z",
+        "cid": "messaging:cb3c193c-834d-11ee-bdff-067c57e250f4",
+        "created_at": "2023-11-15T00:27:46.027246Z",
         "deleted_reply_count": 0,
         "html": "<p>Test</p>\n",
-        "i18n": {
-            "en_text": "Test",
-            "language": "en",
-            "ru_text": "Тест"
-        },
-        "id": "5c4895da-784b-11ee-8aa2-920bc7cfce9a",
+        "id": "cc30e296-834d-11ee-bdff-067c57e250f4",
         "latest_reactions": [],
         "mentioned_users": [],
         "own_reactions": [],
@@ -27,7 +22,7 @@
         "silent": false,
         "text": "Test",
         "type": "regular",
-        "updated_at": "2023-11-01T00:12:36.479109Z",
+        "updated_at": "2023-11-15T00:27:46.027246Z",
         "user": {
             "banned": false,
             "birthland": "Tatooine",
@@ -37,11 +32,11 @@
             "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
             "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
             "language": "en",
-            "last_active": "2023-11-01T00:12:34.949360153Z",
+            "last_active": "2023-11-15T00:27:43.886025469Z",
             "name": "Luke Skywalker",
             "online": true,
             "role": "user",
-            "updated_at": "2023-10-31T14:42:19.29679Z"
+            "updated_at": "2023-11-14T15:34:20.696818Z"
         }
     }
 }
