@@ -566,6 +566,7 @@
 		847E946E269C687300E31D0C /* EventsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847E946D269C687300E31D0C /* EventsController.swift */; };
 		847F3CEA2689FDEB00D240E0 /* ChatMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847F3CE92689FDEB00D240E0 /* ChatMessageCell.swift */; };
 		8486CAF926FA51EE00A9AD96 /* EventDTOConverterMiddleware_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8486CAF826FA51EE00A9AD96 /* EventDTOConverterMiddleware_Tests.swift */; };
+		8496C8752B04DB5900DD0169 /* new_format_v3.json in Resources */ = {isa = PBXBuildFile; fileRef = 8496C8742B04DB5900DD0169 /* new_format_v3.json */; };
 		849980F1277246DB00ABA58B /* UIScrollView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849980F0277246DB00ABA58B /* UIScrollView+Extensions.swift */; };
 		849AE664270CB14000423A20 /* VideoAttachmentComposerPreview_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849AE663270CB14000423A20 /* VideoAttachmentComposerPreview_Tests.swift */; };
 		849AE666270CB55F00423A20 /* VideoAttachmentGalleryCell_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849AE665270CB55F00423A20 /* VideoAttachmentGalleryCell_Tests.swift */; };
@@ -3165,6 +3166,7 @@
 		847E946D269C687300E31D0C /* EventsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsController.swift; sourceTree = "<group>"; };
 		847F3CE92689FDEB00D240E0 /* ChatMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageCell.swift; sourceTree = "<group>"; };
 		8486CAF826FA51EE00A9AD96 /* EventDTOConverterMiddleware_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDTOConverterMiddleware_Tests.swift; sourceTree = "<group>"; };
+		8496C8742B04DB5900DD0169 /* new_format_v3.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = new_format_v3.json; sourceTree = "<group>"; };
 		849980F0277246DB00ABA58B /* UIScrollView+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIScrollView+Extensions.swift"; sourceTree = "<group>"; };
 		849AE661270CB00000423A20 /* VideoLoader_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoLoader_Mock.swift; sourceTree = "<group>"; };
 		849AE663270CB14000423A20 /* VideoAttachmentComposerPreview_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoAttachmentComposerPreview_Tests.swift; sourceTree = "<group>"; };
@@ -7270,6 +7272,7 @@
 		A3C729552840BA4800FFE8B4 /* JSONs */ = {
 			isa = PBXGroup;
 			children = (
+				8496C8742B04DB5900DD0169 /* new_format_v3.json */,
 				798779F72498E47700015F8B /* Channel.json */,
 				792C87892853B25500B68630 /* BigChannelListPayload.json */,
 				AD2C94DB29CB8CC40096DCA1 /* PartiallyFailingChannelListPayload.json */,
@@ -9176,6 +9179,7 @@
 				AD2C94DD29CB8FF20096DCA1 /* PartiallyFailingChannelListPayload.json in Resources */,
 				ADEED08127F202C100A42B52 /* yoda_with_long_file_name.txt in Resources */,
 				A311B3F527E8B99D00CFCF6D /* HealthCheck.json in Resources */,
+				8496C8752B04DB5900DD0169 /* new_format_v3.json in Resources */,
 				A311B40727E8B9AD00CFCF6D /* NotificationRemovedFromChannel.json in Resources */,
 				A311B41727E8B9B900CFCF6D /* UserStartTypingThread.json in Resources */,
 				799EC85F2853B3BE00F18770 /* BigChannelListPayload.json in Resources */,
