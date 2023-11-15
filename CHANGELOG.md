@@ -7,6 +7,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### ✅ Added
 - Add new `NewMessageErrorEvent` when observing `EventsController` [#2885](https://github.com/GetStream/stream-chat-swift/pull/2885)
 
+## StreamChatUI
+### 🐞 Fixed
+- Fix Message List UI not updated when message.updatedAt changes [#2884](https://github.com/GetStream/stream-chat-swift/pull/2884)
+
 # [4.42.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.42.0)
 _November 14, 2023_
 

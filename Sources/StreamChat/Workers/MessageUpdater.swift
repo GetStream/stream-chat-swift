@@ -128,6 +128,8 @@ class MessageUpdater: Worker {
 
                 messageDTO.localMessageState = localState
 
+                messageDTO.updatedAt = DBDate()
+
                 messageDTO.quotedBy.forEach { message in
                     message.updatedAt = messageDTO.updatedAt
                 }
