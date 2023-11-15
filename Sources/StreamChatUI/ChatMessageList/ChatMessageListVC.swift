@@ -309,7 +309,8 @@ open class ChatMessageListVC: _ViewController,
         guard isJumpToUnreadEnabled else { return }
 
         if let unreadCount = dataSource?.channel(for: self)?.unreadCount,
-           unreadCount != jumpToUnreadMessagesButton.content {
+           unreadCount != jumpToUnreadMessagesButton.content,
+           unreadCount.messages > 0 {
             jumpToUnreadMessagesButton.content = unreadCount
         }
 
