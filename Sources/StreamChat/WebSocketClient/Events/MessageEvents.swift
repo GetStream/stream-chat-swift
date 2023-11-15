@@ -227,6 +227,6 @@ public struct NewMessagePendingEvent: Event {
 
 // Triggered when a message failed being sent.
 public struct NewMessageErrorEvent: Event {
-    public var messageId: MessageId
-    public var error: Error
+    public let messageId: MessageId
+    public let error: Error
 }
