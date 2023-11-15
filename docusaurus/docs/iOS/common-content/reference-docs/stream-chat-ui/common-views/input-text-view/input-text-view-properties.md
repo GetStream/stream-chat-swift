@@ -115,7 +115,7 @@ open func textDidChangeProgrammatically()
 @objc open func handleTextChange() 
 ```
 
-### `setTextViewHeight()`
+### `setTextViewHeight()` - deprecated
 
 ``` swift
 open func setTextViewHeight() 
