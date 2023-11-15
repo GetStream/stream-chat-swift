@@ -139,12 +139,12 @@ open class InputTextView: UITextView, AppearanceProvider {
     open func setUpLayout() {
         addSubview(placeholderLabel)
         NSLayoutConstraint.activate([
-            placeholderLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: directionalLayoutMargins.leading),
-            placeholderLabel.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor),
-            placeholderLabel.topAnchor.constraint(equalTo: topAnchor),
-            placeholderLabel.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor),
+            placeholderLabel.leadingAnchor.pin(equalTo: leadingAnchor, constant: directionalLayoutMargins.leading),
+            placeholderLabel.trailingAnchor.pin(lessThanOrEqualTo: trailingAnchor),
+            placeholderLabel.topAnchor.pin(equalTo: topAnchor),
+            placeholderLabel.bottomAnchor.pin(lessThanOrEqualTo: bottomAnchor),
             
-            placeholderLabel.centerYAnchor.constraint(equalTo: centerYAnchor)
+            placeholderLabel.centerYAnchor.pin(equalTo: centerYAnchor)
         ])
 
         heightConstraint = heightAnchor.pin(equalToConstant: minimumHeight)
@@ -172,7 +172,17 @@ open class InputTextView: UITextView, AppearanceProvider {
 
     @objc open func handleTextChange() {
         placeholderLabel.isHidden = !text.isEmpty
-        setNeedsDisplay()
+        setNeedsLayout()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+            // This is due to bug in UITextView where the scroll sometimes disables
+            // when a very long text is pasted in it.
+            // Doing this ensures that it doesn't happen
+            // Reference: https://stackoverflow.com/a/62386088/5493299
+
+            self?.isScrollEnabled = false
+            self?.layoutIfNeeded()
+            self?.isScrollEnabled = true
+        }
     }
 
     @objc func textDidEndEditing(notification: Notification) {

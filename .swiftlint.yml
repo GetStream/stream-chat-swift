@@ -15,6 +15,7 @@ excluded:
   - Carthage
   - Pods
   - .build
+  - spm_cache
 
 disabled_rules:
   - large_tuple
