@@ -123,6 +123,21 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         getFirstUnreadMessageId()
     }
 
+    /// The id of the message which the current user last read.
+    public var lastReadMessageId: MessageId? {
+        guard let currentUserRead = channel?.reads.first(where: {
+            $0.user.id == client.currentUserId
+        }) else {
+            return nil
+        }
+
+        guard let lastReadMessageId = currentUserRead.lastReadMessageId else {
+            return nil
+        }
+
+        return lastReadMessageId
+    }
+
     /// A boolean indicating if the user marked the channel as unread in the current session
     public private(set) var isMarkedAsUnread: Bool = false
 

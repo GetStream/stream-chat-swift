@@ -119,7 +119,7 @@ open class ChatChannelVC: _ViewController,
     /// The id of the first unread message
     private var firstUnreadMessageId: MessageId?
 
-    /// In case the given  around message id is from a thread, we need to jump to the parent message and then the reply.
+    /// In case the given around message id is from a thread, we need to jump to the parent message and then the reply.
     private var initialReplyId: MessageId?
 
     override open func setUp() {
@@ -254,7 +254,11 @@ open class ChatChannelVC: _ViewController,
                 )
             }
         }
+
         updateAllUnreadMessagesRelatedComponents()
+        
+        // TODO: Add flag
+        // messageListVC.jumpToUnreadMessage()
     }
 
     // MARK: - Actions
@@ -339,7 +343,10 @@ open class ChatChannelVC: _ViewController,
             return
         }
 
-        channelController.loadPageAroundMessageId(messageId, completion: completion)
+        channelController.loadPageAroundMessageId(messageId) { [weak self] error in
+            self?.updateJumpToUnreadRelatedComponents()
+            completion(error)
+        }
     }
 
     open func chatMessageListVCShouldLoadFirstPage(
@@ -565,7 +572,10 @@ private extension ChatChannelVC {
     }
 
     func updateJumpToUnreadRelatedComponents() {
-        messageListVC.updateJumpToUnreadMessageId(channelController.firstUnreadMessageId)
+        messageListVC.updateJumpToUnreadMessageId(
+            channelController.firstUnreadMessageId,
+            lastReadMessageId: channelController.lastReadMessageId
+        )
         messageListVC.updateJumpToUnreadButtonVisibility()
     }
 
