@@ -37,10 +37,10 @@ final class MessageRepository_Mock: MessageRepository, Spy {
     override func saveSuccessfullySentMessage(
         cid: ChannelId,
         message: MessagePayload,
-        completion: @escaping (ChatMessage?) -> Void
+        completion: @escaping (Result<ChatMessage, Error>) -> Void
     ) {
         record()
-        completion(nil)
+        completion(.failure(MessageRepositoryError.messageDoesNotExist))
     }
 
     override func saveSuccessfullyEditedMessage(for id: MessageId, completion: @escaping () -> Void) {
