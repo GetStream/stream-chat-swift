@@ -3,7 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+## StreamChatUI
+### 🐞 Fixed
+- Fix Message List UI not updated when message.updatedAt changes [#2884](https://github.com/GetStream/stream-chat-swift/pull/2884)
 
 # [4.42.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.42.0)
 _November 14, 2023_
@@ -21,7 +23,6 @@ _November 14, 2023_
 - Add support for editing custom attachments [#2879](https://github.com/GetStream/stream-chat-swift/pull/2879)
 ### 🐞 Fixed
 - Fix composer not interactable after enabling send-message capability [#2866](https://github.com/GetStream/stream-chat-swift/pull/2866)
-- Fix Message List UI not updated when message.updatedAt changes [#2884](https://github.com/GetStream/stream-chat-swift/pull/2884)
 
 # [4.41.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.41.0)
 _November 03, 2023_
