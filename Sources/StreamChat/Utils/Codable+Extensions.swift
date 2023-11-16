@@ -52,7 +52,7 @@ final class StreamJSONDecoder: JSONDecoder {
 
 extension JSONDecoder {
     /// A default `JSONDecoder`.
-    static var `default`: JSONDecoder = stream
+    public static var `default`: JSONDecoder = stream
 
     /// A Stream Chat JSON decoder.
     static let stream: StreamJSONDecoder = {

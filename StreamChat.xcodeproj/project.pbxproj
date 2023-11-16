@@ -567,6 +567,10 @@
 		847F3CEA2689FDEB00D240E0 /* ChatMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847F3CE92689FDEB00D240E0 /* ChatMessageCell.swift */; };
 		8486CAF926FA51EE00A9AD96 /* EventDTOConverterMiddleware_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8486CAF826FA51EE00A9AD96 /* EventDTOConverterMiddleware_Tests.swift */; };
 		8496C8752B04DB5900DD0169 /* new_format_v3.json in Resources */ = {isa = PBXBuildFile; fileRef = 8496C8742B04DB5900DD0169 /* new_format_v3.json */; };
+		8496C8772B050C9400DD0169 /* V3Payloads.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8496C8762B050C9400DD0169 /* V3Payloads.swift */; };
+		8496C8782B050C9400DD0169 /* V3Payloads.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8496C8762B050C9400DD0169 /* V3Payloads.swift */; };
+		8496C8792B050D2900DD0169 /* new_format_v3.json in Resources */ = {isa = PBXBuildFile; fileRef = 8496C8742B04DB5900DD0169 /* new_format_v3.json */; };
+		8496C87A2B050E5B00DD0169 /* BigChannelListPayload.json in Resources */ = {isa = PBXBuildFile; fileRef = 792C87892853B25500B68630 /* BigChannelListPayload.json */; };
 		849980F1277246DB00ABA58B /* UIScrollView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849980F0277246DB00ABA58B /* UIScrollView+Extensions.swift */; };
 		849AE664270CB14000423A20 /* VideoAttachmentComposerPreview_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849AE663270CB14000423A20 /* VideoAttachmentComposerPreview_Tests.swift */; };
 		849AE666270CB55F00423A20 /* VideoAttachmentGalleryCell_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849AE665270CB55F00423A20 /* VideoAttachmentGalleryCell_Tests.swift */; };
@@ -3167,6 +3171,7 @@
 		847F3CE92689FDEB00D240E0 /* ChatMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageCell.swift; sourceTree = "<group>"; };
 		8486CAF826FA51EE00A9AD96 /* EventDTOConverterMiddleware_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDTOConverterMiddleware_Tests.swift; sourceTree = "<group>"; };
 		8496C8742B04DB5900DD0169 /* new_format_v3.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = new_format_v3.json; sourceTree = "<group>"; };
+		8496C8762B050C9400DD0169 /* V3Payloads.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = V3Payloads.swift; sourceTree = "<group>"; };
 		849980F0277246DB00ABA58B /* UIScrollView+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIScrollView+Extensions.swift"; sourceTree = "<group>"; };
 		849AE661270CB00000423A20 /* VideoLoader_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoLoader_Mock.swift; sourceTree = "<group>"; };
 		849AE663270CB14000423A20 /* VideoAttachmentComposerPreview_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoAttachmentComposerPreview_Tests.swift; sourceTree = "<group>"; };
@@ -6270,6 +6275,7 @@
 				DA8407222525E871005A0F62 /* UserListPayload_Tests.swift */,
 				79B5517024E593C200CE9FEC /* UserPayloads_Tests.swift */,
 				AD61F3D82A27A9FB00247B5D /* ChannelMemberUnbanRequestPayload_Tests.swift */,
+				8496C8762B050C9400DD0169 /* V3Payloads.swift */,
 			);
 			path = Payloads;
 			sourceTree = "<group>";
@@ -9165,9 +9171,11 @@
 			files = (
 				792DDA66256FB69F001DB91B /* LaunchScreen.storyboard in Resources */,
 				E7D68C5A26B1BE4500FCF3B8 /* Localizable.strings in Resources */,
+				8496C8792B050D2900DD0169 /* new_format_v3.json in Resources */,
 				792DDA63256FB69F001DB91B /* Assets.xcassets in Resources */,
 				E7D68C6026B1CBA400FCF3B8 /* Localizable.stringsdict in Resources */,
 				792DDA61256FB69E001DB91B /* Main.storyboard in Resources */,
+				8496C87A2B050E5B00DD0169 /* BigChannelListPayload.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9973,6 +9981,7 @@
 				A3227E72284A4BF700EBE6CC /* HiddenChannelListVC.swift in Sources */,
 				AD75CB6B27886746005F5FF7 /* OptionsSelectorViewController.swift in Sources */,
 				648EC576261EF9D400B8F05F /* DemoAppCoordinator.swift in Sources */,
+				8496C8782B050C9400DD0169 /* V3Payloads.swift in Sources */,
 				A3227E70284A4BC700EBE6CC /* DemoChatChannelVC.swift in Sources */,
 				849C1B6A283686EE00F9DC42 /* UserDefaults+Shared.swift in Sources */,
 				A3227E7A284A4CE000EBE6CC /* DemoChatChannelListVC.swift in Sources */,
@@ -10662,6 +10671,7 @@
 				790A4C58252F2AF2001F4A23 /* DeviceDTO_Tests.swift in Sources */,
 				8A0D64AB24E57BF20017A3C0 /* ChannelListPayload_Tests.swift in Sources */,
 				AD2525212ACB3C0800F1433C /* ChatClientFactory_Tests.swift in Sources */,
+				8496C8772B050C9400DD0169 /* V3Payloads.swift in Sources */,
 				A34ECB5627F5CC1E00A804C1 /* EntityChange_Tests.swift in Sources */,
 				88089A0226529FD1007D3493 /* ChatMessageAttachment_Tests.swift in Sources */,
 				ADF617692A09927000E70307 /* MessagesPaginationStateHandler_Tests.swift in Sources */,

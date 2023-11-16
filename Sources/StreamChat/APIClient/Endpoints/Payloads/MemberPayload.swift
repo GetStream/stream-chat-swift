@@ -26,7 +26,7 @@ struct MemberContainerPayload: Decodable {
     }
 }
 
-struct MemberPayload: Decodable {
+public struct MemberPayload: Decodable {
     private enum CodingKeys: String, CodingKey {
         case user
         case userId = "user_id"
@@ -89,7 +89,7 @@ struct MemberPayload: Decodable {
         self.inviteRejectedAt = inviteRejectedAt
     }
 
-    init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         user = try container.decodeIfPresent(UserPayload.self, forKey: .user)
         role = try container.decodeIfPresent(MemberRole.self, forKey: .role)

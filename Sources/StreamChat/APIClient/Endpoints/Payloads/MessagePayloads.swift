@@ -56,7 +56,7 @@ struct MessageSearchResultsPayload: Decodable {
 }
 
 /// An object describing the incoming message JSON payload.
-class MessagePayload: Decodable {
+public class MessagePayload: Decodable {
     let id: String
     /// Only messages from `translate` endpoint contain `cid`
     let cid: ChannelId?
@@ -97,7 +97,7 @@ class MessagePayload: Decodable {
     /// make an extra call do get channel details.
     let channel: ChannelDetailPayload?
 
-    required init(from decoder: Decoder) throws {
+    public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: MessagePayloadsCodingKeys.self)
         id = try container.decode(String.self, forKey: .id)
         cid = try container.decodeIfPresent(ChannelId.self, forKey: .cid)

@@ -4,7 +4,7 @@
 
 import Foundation
 
-struct ChannelListPayload {
+public struct ChannelListPayload {
     /// A list of channels response (see `ChannelQuery`).
     let channels: [ChannelPayload]
 }
@@ -14,7 +14,7 @@ extension ChannelListPayload: Decodable {
         case channels
     }
 
-    init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let channels = try container
             .decodeArrayIgnoringFailures([ChannelPayload].self, forKey: .channels)
@@ -25,7 +25,7 @@ extension ChannelListPayload: Decodable {
     }
 }
 
-struct ChannelPayload {
+public struct ChannelPayload {
     let channel: ChannelDetailPayload
 
     let watcherCount: Int?
@@ -67,7 +67,7 @@ extension ChannelPayload: Decodable {
         case hidden
     }
 
-    init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         self.init(
@@ -84,7 +84,7 @@ extension ChannelPayload: Decodable {
     }
 }
 
-struct ChannelDetailPayload {
+public struct ChannelDetailPayload {
     let cid: ChannelId
 
     let name: String?
@@ -140,7 +140,7 @@ struct ChannelDetailPayload {
 }
 
 extension ChannelDetailPayload: Decodable {
-    init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: ChannelCodingKeys.self)
 
         let extraData: [String: RawJSON]
@@ -180,7 +180,7 @@ extension ChannelDetailPayload: Decodable {
     }
 }
 
-struct ChannelReadPayload: Decodable {
+public struct ChannelReadPayload: Decodable {
     private enum CodingKeys: String, CodingKey {
         case user
         case lastReadAt = "last_read"

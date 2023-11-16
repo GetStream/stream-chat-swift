@@ -18,6 +18,36 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Sentry
         DemoAppConfiguration.configureSentry()
 
+        print("===== new")
+        
+        for _ in 0..<9 {
+            let url = Bundle.main.url(forResource: "new_format_v3", withExtension: "json")!
+
+            do {
+                let json = try Data(contentsOf: url)
+                let start = Date()
+                let data = try JSONDecoder.default.decode(QueryChannels_V3.self, from: json)
+                let end = Date()
+                let diff = end.timeIntervalSince(start)
+                print("time: \(diff)")
+            } catch {}
+        }
+        
+        print("===== old")
+        
+        for _ in 0..<9 {
+            let url = Bundle.main.url(forResource: "BigChannelListPayload", withExtension: "json")!
+
+            do {
+                let json = try Data(contentsOf: url)
+                let start = Date()
+                let data = try JSONDecoder.default.decode(ChannelListPayload.self, from: json)
+                let end = Date()
+                let diff = end.timeIntervalSince(start)
+                print("time: \(diff)")
+            } catch {}
+        }
+        
         return true
     }
 
