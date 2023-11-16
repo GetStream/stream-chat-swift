@@ -6,10 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChat
 ### ✅ Added
 - Add new `NewMessageErrorEvent` when observing `EventsController` [#2885](https://github.com/GetStream/stream-chat-swift/pull/2885)
+- Add support for jump to unread messages interaction [#2894](https://github.com/GetStream/stream-chat-swift/pull/2894)
+- Add support for opening a channel in the unread messages page with `Components.shouldJumpToUnreadWhenOpeningChannel` [#2894](https://github.com/GetStream/stream-chat-swift/pull/2894)
 
 ## StreamChatUI
 ### 🐞 Fixed
 - Fix Message List UI not updated when message.updatedAt changes [#2884](https://github.com/GetStream/stream-chat-swift/pull/2884)
+- Fix jump to unread button showing "0" unread counts [#2894](https://github.com/GetStream/stream-chat-swift/pull/2894)
 
 # [4.42.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.42.0)
 _November 14, 2023_
