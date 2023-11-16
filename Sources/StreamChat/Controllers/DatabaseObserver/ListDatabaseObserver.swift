@@ -281,73 +281,31 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
             onChange = nil
         }
     }
+}
 
+extension ListDatabaseObserver: DatabaseObserverRemovalListener {
     /// Listens for `Will/DidRemoveAllData` notifications from the context and simulates the callback when the notifications
     /// are received.
     private func listenForRemoveAllDataNotifications() {
-        let notificationCenter = NotificationCenter.default
-
-        // When `WillRemoveAllDataNotification` is received, we need to simulate the callback from change observer, like all
-        // existing entities are being removed. At this point, these entities still existing in the context, and it's safe to
-        // access and serialize them.
-        let willRemoveAllDataNotificationObserver = notificationCenter.addObserver(
-            forName: DatabaseContainer.WillRemoveAllDataNotification,
-            object: context,
-            queue: .main
-        ) { [weak self] _ in
-            // Technically, this should rather be `unowned`, however, `deinit` is not always called on the main thread which can
-            // cause a race condition when the notification observers are not removed at the right time.
-            guard let self = self else { return }
-            guard let fetchResultsController = self.frc as? NSFetchedResultsController<NSFetchRequestResult> else { return }
-
-            // Simulate ChangeObserver callbacks like all data are being removed
-            self.changeAggregator.controllerWillChangeContent(fetchResultsController)
-
-            self.frc.fetchedObjects?.enumerated().forEach { index, item in
-                self.changeAggregator.controller(
-                    fetchResultsController,
-                    didChange: item,
-                    at: IndexPath(item: index, section: 0),
-                    for: .delete,
-                    newIndexPath: nil
-                )
+        listenForRemoveAllDataNotifications(
+            isBackground: false,
+            frc: frc,
+            changeAggregator: changeAggregator,
+            onItemsRemoval: { [weak self] completion in
+                // Remove the cached items since they're now deleted, technically. It is important for it to be reset before
+                // calling `controllerDidChangeContent` so it properly reflects the state
+                self?._items.computeValue = { [] }
+                self?._items.reset()
+                completion()
+            },
+            onCompletion: { [weak self] in
+                do {
+                    try self?.startObserving()
+                } catch {
+                    log.error("Error when starting observing: \(error)")
+                }
             }
-
-            // Remove the cached items since they're now deleted, technically. It is important for it to be reset before
-            // calling `controllerDidChangeContent` so it properly reflects the state
-            self._items.computeValue = { [] }
-            self._items.reset()
-
-            // Publish the changes
-            self.changeAggregator.controllerDidChangeContent(fetchResultsController)
-
-            // Remove delegate so it doesn't get further removal updates
-            self.frc.delegate = nil
-        }
-
-        // When `DidRemoveAllDataNotification` is received, we need to reset the FRC. At this point, the entities are removed but
-        // the FRC doesn't know about it yet. Resetting the FRC removes the content of `FRC.fetchedObjects`.
-        let didRemoveAllDataNotificationObserver = notificationCenter.addObserver(
-            forName: DatabaseContainer.DidRemoveAllDataNotification,
-            object: context,
-            queue: .main
-        ) { [weak self] _ in
-            // Technically, this should rather be `unowned`, however, `deinit` is not always called on the main thread which can
-            // cause a race condition when the notification observers are not removed at the right time.
-            guard let self = self else { return }
-
-            // Reset FRC which causes the current `frc.fetchedObjects` to be reloaded
-            do {
-                try self.startObserving()
-            } catch {
-                log.error("Error when starting observing: \(error)")
-            }
-        }
-
-        releaseNotificationObservers = { [weak notificationCenter] in
-            notificationCenter?.removeObserver(willRemoveAllDataNotificationObserver)
-            notificationCenter?.removeObserver(didRemoveAllDataNotificationObserver)
-        }
+        )
     }
 }
 

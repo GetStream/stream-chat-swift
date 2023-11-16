@@ -1174,7 +1174,10 @@ private extension ChatMessage {
             )
         }
 
-        $_mentionedUsers = ({ Set(dto.mentionedUsers.compactMap { try? $0.asModel() }) }, dto.managedObjectContext)
+        $_mentionedUsers = ({
+            guard dto.isValid else { return [] }
+            return Set(dto.mentionedUsers.compactMap { try? $0.asModel() })
+        }, dto.managedObjectContext)
 
         let user = try dto.user.asModel()
         $_author = ({ user }, nil)

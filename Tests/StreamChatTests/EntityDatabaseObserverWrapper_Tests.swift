@@ -274,18 +274,23 @@ final class EntityDatabaseObserverWrapper_Tests: XCTestCase {
         XCTAssertEqual(observer.item, testItem)
 
         // Add a listener
+        let expectation1 = expectation(description: "onDidChange is called with removals")
         var listener: [EntityChange<TestItem>] = []
-        observer.onChange { listener.append($0) }
+        observer.onChange {
+            listener.append($0)
+            expectation1.fulfill()
+        }
 
         // Call `removeAllData` on the database container
-        let expectation = expectation(description: "removeAllData completion")
+        let expectation2 = expectation(description: "removeAllData completion")
         database.removeAllData { error in
             if let error = error {
                 XCTFail("removeAllData failed with \(error)")
             }
-            expectation.fulfill()
+            expectation2.fulfill()
         }
-        wait(for: [expectation], timeout: defaultTimeout)
+
+        waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertEqual(listener, [.remove(testItem)])
     }
