@@ -472,7 +472,7 @@ open class ChatChannelVC: _ViewController,
 
             self.updateJumpToUnreadRelatedComponents()
             if self.shouldMarkChannelRead {
-                throttler.execute {
+                self.throttler.execute {
                     self.markRead()
                 }
             } else if !self.hasSeenFirstUnreadMessage {
