@@ -94,7 +94,12 @@ final class MessageRepositoryTests: XCTestCase {
         }
 
         XCTAssertEqual(currentMessageState, .sendingFailed)
-        XCTAssertEqual(result?.error, MessageRepositoryError.failedToSendMessage)
+        switch result?.error {
+        case .failedToSendMessage:
+            break
+        default:
+            XCTFail()
+        }
     }
 
     func test_sendMessage_APISuccess() throws {
@@ -244,7 +249,7 @@ final class MessageRepositoryTests: XCTestCase {
         let expectation = self.expectation(description: "Save Message completes")
         var result: ChatMessage?
         repository.saveSuccessfullySentMessage(cid: cid, message: payload) {
-            result = $0
+            result = $0.value
             expectation.fulfill()
         }
         waitForExpectations(timeout: defaultTimeout, handler: nil)

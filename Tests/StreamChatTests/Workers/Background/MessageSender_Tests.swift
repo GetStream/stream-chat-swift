@@ -11,6 +11,7 @@ final class MessageSender_Tests: XCTestCase {
     var webSocketClient: WebSocketClient_Mock!
     var apiClient: APIClient_Spy!
     var database: DatabaseContainer_Spy!
+    var eventsNotificationCenter: EventNotificationCenter_Mock!
 
     var sender: MessageSender!
 
@@ -23,7 +24,13 @@ final class MessageSender_Tests: XCTestCase {
         apiClient = APIClient_Spy()
         database = DatabaseContainer_Spy()
         messageRepository = MessageRepository_Mock(database: database, apiClient: apiClient)
-        sender = MessageSender(messageRepository: messageRepository, database: database, apiClient: apiClient)
+        eventsNotificationCenter = EventNotificationCenter_Mock(database: database)
+        sender = MessageSender(
+            messageRepository: messageRepository,
+            eventsNotificationCenter: eventsNotificationCenter,
+            database: database,
+            apiClient: apiClient
+        )
 
         cid = .unique
 
@@ -40,6 +47,7 @@ final class MessageSender_Tests: XCTestCase {
             Assert.canBeReleased(&webSocketClient)
             Assert.canBeReleased(&messageRepository)
             Assert.canBeReleased(&apiClient)
+            Assert.canBeReleased(&eventsNotificationCenter)
             Assert.canBeReleased(&database)
         }
 
@@ -47,6 +55,7 @@ final class MessageSender_Tests: XCTestCase {
         webSocketClient = nil
         messageRepository = nil
         apiClient = nil
+        eventsNotificationCenter = nil
         database = nil
 
         super.tearDown()
@@ -365,6 +374,38 @@ final class MessageSender_Tests: XCTestCase {
         }
     }
 
+    func test_sender_sendsMessage_whenError_sendsEvent() throws {
+        var messageId: MessageId!
+
+        try database.writeSynchronously { session in
+            let message = try session.createNewMessage(
+                in: self.cid,
+                messageId: .unique,
+                text: "Message pending send",
+                pinning: nil,
+                quotedMessageId: nil,
+                isSilent: false,
+                skipPush: false,
+                skipEnrichUrl: false,
+                attachments: [
+                    .init(payload: TestAttachmentPayload.unique),
+                    .init(payload: TestAttachmentPayload.unique)
+                ],
+                extraData: [:]
+            )
+            message.localMessageState = .pendingSend
+            messageId = message.id
+        }
+
+        struct MockError: Error {}
+
+        messageRepository.sendMessageResult = .failure(.failedToSendMessage(MockError()))
+
+        AssertAsync.willBeTrue(messageRepository.sendMessageIds.contains(where: { $0 == messageId }))
+        AssertAsync.willBeTrue(eventsNotificationCenter.mock_process.input.0.first is NewMessageErrorEvent)
+        XCTAssertCall("sendMessage(with:completion:)", on: messageRepository, times: 1)
+    }
+
     // MARK: - Life cycle tests
 
     func test_sender_doesNotRetainItself() throws {
@@ -406,7 +447,12 @@ final class MessageSender_Tests: XCTestCase {
         // When
         let sessionMock = DatabaseSessionRescueListener(underlyingSession: database.writableContext)
         let mockDatabase = DatabaseContainer_Spy(sessionMock: sessionMock)
-        sender = .init(messageRepository: messageRepository, database: mockDatabase, apiClient: apiClient)
+        sender = .init(
+            messageRepository: messageRepository,
+            eventsNotificationCenter: EventNotificationCenter_Mock(database: mockDatabase),
+            database: mockDatabase,
+            apiClient: apiClient
+        )
 
         // Then
         wait(for: [sessionMock.rescueMessagesExpectation], timeout: defaultTimeout)

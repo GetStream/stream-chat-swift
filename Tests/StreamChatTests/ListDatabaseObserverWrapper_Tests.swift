@@ -138,32 +138,41 @@ final class ListDatabaseObserverWrapper_Tests: XCTestCase {
 
     func test_updateStillReported_whenSamePropertyAssigned(isBackground: Bool) throws {
         // For this test, we need an actual NSFetchedResultsController, not the test one
-        let observer = ListDatabaseObserver<String, TestManagedObject>(
-            context: database.viewContext,
+        setUp()
+        observer = ListDatabaseObserverWrapper<String, TestManagedObject>(
+            isBackground: isBackground,
+            database: database,
             fetchRequest: fetchRequest,
             itemCreator: { $0.testId }
         )
 
-        let onDidChangeExpectation = expectation(description: "onDidChange")
-        onDidChangeExpectation.expectedFulfillmentCount = 2
-
-        var receivedChanges: [ListChange<String>] = []
-        observer.onChange = {
-            receivedChanges.append(contentsOf: $0)
-            onDidChangeExpectation.fulfill()
-        }
-
         // Call startObserving to set everything up
-        try observer.startObserving()
+        try startObservingWaitingForInitialResults()
+
+        let firstExpectation = expectation(description: "onDidChange1_\(isBackground ? "B" : "F")")
+        var receivedChanges: [ListChange<String>] = []
+        observer.onDidChange = {
+            receivedChanges.append(contentsOf: $0)
+            firstExpectation.fulfill()
+        }
 
         // Insert the test object
         let testValue = String.unique
         var item: TestManagedObject!
+
         try database.writeSynchronously { _ in
             let context = self.database.writableContext
             item = NSEntityDescription.insertNewObject(forEntityName: "TestManagedObject", into: context) as? TestManagedObject
             item.testId = testValue
             item.testValue = testValue
+        }
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        let secondExpectation = expectation(description: "onDidChange2_\(isBackground ? "B" : "F")")
+        observer.onDidChange = {
+            receivedChanges.append(contentsOf: $0)
+            secondExpectation.fulfill()
         }
 
         // Assign the same testValue to the same entity
@@ -176,6 +185,7 @@ final class ListDatabaseObserverWrapper_Tests: XCTestCase {
         XCTAssertEqual(receivedChanges.count, 2)
         XCTAssertEqual(receivedChanges.first?.isInsertion, true)
         XCTAssertEqual(receivedChanges.last?.isUpdate, true)
+        tearDown()
     }
 
     func test_allItemsAreRemoved_whenDatabaseContainerRemovesAllData() throws {
@@ -184,6 +194,7 @@ final class ListDatabaseObserverWrapper_Tests: XCTestCase {
     }
 
     func test_allItemsAreRemoved_whenDatabaseContainerRemovesAllData(isBackground: Bool) throws {
+        setUp()
         prepare(isBackground: isBackground)
 
         // Call startObserving to set everything up
@@ -202,30 +213,38 @@ final class ListDatabaseObserverWrapper_Tests: XCTestCase {
         frc.performFetchCalled = false
 
         // Listen to callbacks
-        let expectation = expectation(description: "onDidChange is called")
+        let expectation = expectation(description: "onDidChange is called with removals")
+        let expectation2 = self.expectation(description: "onDidChange is called when restarting the observer")
         var receivedChanges: [ListChange<String>]?
         // When sending `DatabaseContainer.DidRemoveAllDataNotification` we call `startObserving`, which will call again `onDidChange` with 0 changes. We are not interested in this later part for this test.
         var callsCount = 0
         observer.onDidChange = {
-            guard callsCount == 0 else { return }
-
-            // Simulate all entities are removed after processing the notification
-            frc.mockedFetchedObjects = []
-
-            // Simulate `DidRemoveAllDataNotification` is posted by the observed context
-            NotificationCenter.default
-                .post(name: DatabaseContainer.DidRemoveAllDataNotification, object: frc.managedObjectContext)
-
-            receivedChanges = $0
+            if callsCount == 0 {
+                receivedChanges = $0
+                expectation.fulfill()
+            } else {
+                expectation2.fulfill()
+            }
             callsCount += 1
-            expectation.fulfill()
         }
 
         // Simulate `WillRemoveAllDataNotification` is posted by the observed context
         NotificationCenter.default
             .post(name: DatabaseContainer.WillRemoveAllDataNotification, object: frc.managedObjectContext)
 
-        waitForExpectations(timeout: defaultTimeout)
+        wait(for: [expectation], timeout: defaultTimeout)
+
+        // Simulate all entities are removed after processing the notification
+        frc.mockedFetchedObjects = []
+
+        // Simulate `DidRemoveAllDataNotification` is posted by the observed context
+        NotificationCenter.default
+            .post(name: DatabaseContainer.DidRemoveAllDataNotification, object: frc.managedObjectContext)
+
+        if !isBackground {
+            expectation2.fulfill()
+        }
+        wait(for: [expectation2], timeout: defaultTimeout)
 
         // Assert `performFetch` was called again on the FRC
         XCTAssertTrue(frc.performFetchCalled)

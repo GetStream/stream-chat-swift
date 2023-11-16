@@ -33,6 +33,7 @@ extension ChatMessageListView {
 extension ChatMessage: Differentiable {
     public func isContentEqual(to source: ChatMessage) -> Bool {
         id == source.id
+            && updatedAt == source.updatedAt
             && replyCount == source.replyCount
             && isShadowed == source.isShadowed
             && showReplyInChannel == source.showReplyInChannel

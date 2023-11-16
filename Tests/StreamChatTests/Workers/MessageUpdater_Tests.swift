@@ -112,10 +112,16 @@ final class MessageUpdater_Tests: XCTestCase {
             try database.createCurrentUser(id: currentUserId)
 
             // Create a new message in the database
-            try database.createMessage(id: messageId, authorId: currentUserId, localState: initialState)
+            try database.createMessage(
+                id: messageId,
+                authorId: currentUserId,
+                updatedAt: .distantPast,
+                localState: initialState
+            )
 
             // Load the message
             let message = try XCTUnwrap(database.viewContext.message(id: messageId))
+            let originalMessageUpdatedAt = message.updatedAt
 
             // Create a new message quoting the message that will be edited
             let quotingMessageId = MessageId.unique
@@ -140,6 +146,8 @@ final class MessageUpdater_Tests: XCTestCase {
             XCTAssertEqual(message.text, updatedText)
             // The quoting message should have the same updatedAt so that it triggers a DB Update
             XCTAssertEqual(editedMessage.updatedAt, quotingMessage.updatedAt)
+            // The edited message should have a different updatedAt than the original one
+            XCTAssertTrue(editedMessage.updatedAt != originalMessageUpdatedAt)
         }
     }
 

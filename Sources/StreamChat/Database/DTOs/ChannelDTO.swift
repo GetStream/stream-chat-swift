@@ -439,6 +439,8 @@ extension ChatChannel {
                 NSPredicate(format: "%@ IN mentionedUsers", currentUser.user)
             ])
 
+            guard dto.isValid, currentUser.user.isValid else { return .noUnread }
+
             do {
                 return ChannelUnreadCount(
                     messages: allUnreadMessages,
