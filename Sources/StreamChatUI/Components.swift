@@ -122,6 +122,10 @@ public struct Components {
     /// Ex: When opening a channel from a push notification with a given message id.
     public var shouldAnimateJumpToMessageWhenOpeningChannel: Bool = true
 
+    /// Whether it should jump to the unread message when the channel is initially opened.
+    /// By default it is disabled.
+    public var shouldJumpToUnreadWhenOpeningChannel: Bool = false
+
     /// The view that shows the date for currently visible messages on top of message list.
     public var messageListScrollOverlayView: ChatMessageListScrollOverlayView.Type =
         ChatMessageListScrollOverlayView.self

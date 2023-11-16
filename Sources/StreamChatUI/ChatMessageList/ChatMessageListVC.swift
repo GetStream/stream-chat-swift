@@ -612,14 +612,15 @@ open class ChatMessageListVC: _ViewController,
     }
 
     /// Jump to the current unread message if there is one.
+    /// - Parameter animated: `true` if you want to animate the change in position; `false` if it should be immediate.
     /// - Parameter onHighlight: An optional closure to provide highlighting style when the message appears on screen.
-    open func jumpToUnreadMessage(onHighlight: ((IndexPath) -> Void)? = nil) {
+    open func jumpToUnreadMessage(animated: Bool = true, onHighlight: ((IndexPath) -> Void)? = nil) {
         getCurrentUnreadMessageId { [weak self] messageId in
             guard let jumpToUnreadMessageId = messageId else { return }
 
             // The delay helps having a smoother scrolling animation.
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                self?.jumpToMessage(id: jumpToUnreadMessageId, onHighlight: onHighlight)
+                self?.jumpToMessage(id: jumpToUnreadMessageId, animated: animated, onHighlight: onHighlight)
             }
         }
     }
@@ -629,8 +630,8 @@ open class ChatMessageListVC: _ViewController,
     /// If not, it will load the messages around it and go to that page.
     ///
     /// - Parameter id: The id of message which the message list should go to.
-    /// - Parameter onHighlight: An optional closure to provide highlighting style when the message appears on screen.
     /// - Parameter animated: `true` if you want to animate the change in position; `false` if it should be immediate.
+    /// - Parameter onHighlight: An optional closure to provide highlighting style when the message appears on screen.
     public func jumpToMessage(id: MessageId, animated: Bool = true, onHighlight: ((IndexPath) -> Void)? = nil) {
         if let indexPath = getIndexPath(forMessageId: id) {
             messagePendingScrolling = (id, animated)

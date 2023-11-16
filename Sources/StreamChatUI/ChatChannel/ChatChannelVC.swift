@@ -241,11 +241,13 @@ open class ChatChannelVC: _ViewController,
         setChannelControllerToComposerIfNeeded(cid: channelController.cid)
         messageComposerVC.updateContent()
 
-        if let messageId = channelController.channelQuery.pagination?.parameter?.aroundMessageId {
-            jumpToMessage(id: messageId, animated: components.shouldAnimateJumpToMessageWhenOpeningChannel)
-        }
+        updateAllUnreadMessagesRelatedComponents()
 
-        if let replyId = initialReplyId {
+        if let messageId = channelController.channelQuery.pagination?.parameter?.aroundMessageId {
+            // Jump to a message when opening the channel.
+            jumpToMessage(id: messageId, animated: components.shouldAnimateJumpToMessageWhenOpeningChannel)
+        } else if let replyId = initialReplyId {
+            // Jump to a parent message when opening the channel, and then to the reply.
             // The delay is necessary so that the animation does not happen to quickly.
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 self.jumpToMessage(
@@ -253,12 +255,10 @@ open class ChatChannelVC: _ViewController,
                     animated: self.components.shouldAnimateJumpToMessageWhenOpeningChannel
                 )
             }
+        } else if components.shouldJumpToUnreadWhenOpeningChannel {
+            // Jump to the unread message.
+            messageListVC.jumpToUnreadMessage(animated: components.shouldAnimateJumpToMessageWhenOpeningChannel)
         }
-
-        updateAllUnreadMessagesRelatedComponents()
-        
-        // TODO: Add flag
-        // messageListVC.jumpToUnreadMessage()
     }
 
     // MARK: - Actions
