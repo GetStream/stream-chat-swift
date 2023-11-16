@@ -201,7 +201,7 @@ final class ChatMessageListVC_Tests: XCTestCase {
 
     // MARK: - isContentEqual (Message Diffing)
 
-    func test_messageIsContentEqual_whenCustomAttachmentDataDifferent_returnsFalse() throws {
+    func test_messageIsContentEqual_whenCustomAttachmentDataDifferent() throws {
         struct CustomAttachment: AttachmentPayload {
             static var type: AttachmentType = .unknown
             
@@ -242,7 +242,7 @@ final class ChatMessageListVC_Tests: XCTestCase {
         XCTAssertFalse(messageDiff1.isContentEqual(to: messageDiff2))
     }
 
-    func test_messageIsContentEqual_whenAuthorIsDifferent_returnsFalse() throws {
+    func test_messageIsContentEqual_whenAuthorIsDifferent() throws {
         let userId = UserId.unique
         let sameUser = ChatUser.mock(id: userId, name: "Leia Organa")
 
@@ -254,6 +254,21 @@ final class ChatMessageListVC_Tests: XCTestCase {
         // When author is different, should not be equal
         let messageDiff1 = ChatMessage.mock(id: "1", text: "same", author: sameUser)
         let messageDiff2 = ChatMessage.mock(id: "1", text: "same", author: .mock(id: userId, name: "Leia"))
+        XCTAssertFalse(messageDiff1.isContentEqual(to: messageDiff2))
+    }
+
+    func test_messageIsContentEqual_whenUpdatedAtIsDifferent() throws {
+        let userId = UserId.unique
+        let sameUser = ChatUser.mock(id: userId, name: "Leia Organa")
+
+        // When author is the same, should be equal
+        let messageSame1 = ChatMessage.mock(id: "1", text: "same", author: sameUser)
+        let messageSame2 = ChatMessage.mock(id: "1", text: "same", author: sameUser)
+        XCTAssert(messageSame1.isContentEqual(to: messageSame2))
+
+        // When author is different, should not be equal
+        let messageDiff1 = ChatMessage.mock(id: "1", text: "same", author: sameUser, updatedAt: .unique)
+        let messageDiff2 = ChatMessage.mock(id: "1", text: "same", author: sameUser, updatedAt: .unique)
         XCTAssertFalse(messageDiff1.isContentEqual(to: messageDiff2))
     }
 

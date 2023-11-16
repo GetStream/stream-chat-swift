@@ -383,7 +383,12 @@ public class ChatClient {
 
         // All production workers
         backgroundWorkers = [
-            MessageSender(messageRepository: messageRepository, database: databaseContainer, apiClient: apiClient),
+            MessageSender(
+                messageRepository: messageRepository,
+                eventsNotificationCenter: eventNotificationCenter,
+                database: databaseContainer,
+                apiClient: apiClient
+            ),
             NewUserQueryUpdater(database: databaseContainer, apiClient: apiClient),
             MessageEditor(messageRepository: messageRepository, database: databaseContainer, apiClient: apiClient),
             AttachmentQueueUploader(

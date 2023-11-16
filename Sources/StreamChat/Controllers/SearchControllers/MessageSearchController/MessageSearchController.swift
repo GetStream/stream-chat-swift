@@ -74,7 +74,7 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
         )
 
     /// Used for observing the database for changes.
-    @Cached private var messagesObserver: ListDatabaseObserver<ChatMessage, MessageDTO>?
+    private var messagesObserver: ListDatabaseObserverWrapper<ChatMessage, MessageDTO>?
 
     private func startObserversIfNeeded() {
         guard state == .initialized else { return }
@@ -89,26 +89,25 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
     }
 
     private func setMessagesObserver() {
-        _messagesObserver.computeValue = { [unowned self] in
-            let observer = ListDatabaseObserver(
-                context: self.client.databaseContainer.viewContext,
-                fetchRequest: MessageDTO.messagesFetchRequest(
-                    for: lastQuery ?? query
-                ),
-                itemCreator: { try $0.asModel() as ChatMessage }
-            )
-            observer.onChange = { [weak self] changes in
-                self?.delegateCallback { [weak self] in
-                    guard let self = self else {
-                        log.warning("Callback called while self is nil")
-                        return
-                    }
-                    $0.controller(self, didChangeMessages: changes)
+        let observer = ListDatabaseObserverWrapper(
+            isBackground: StreamRuntimeCheck._isBackgroundMappingEnabled,
+            database: client.databaseContainer,
+            fetchRequest: MessageDTO.messagesFetchRequest(
+                for: lastQuery ?? query
+            ),
+            itemCreator: { try $0.asModel() as ChatMessage }
+        )
+        observer.onDidChange = { [weak self] changes in
+            self?.delegateCallback { [weak self] in
+                guard let self = self else {
+                    log.warning("Callback called while self is nil")
+                    return
                 }
+                $0.controller(self, didChangeMessages: changes)
             }
-
-            return observer
         }
+
+        messagesObserver = observer
     }
 
     var _basePublishers: Any?
@@ -172,7 +171,6 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
     }
 
     private func resetMessagesObserver() {
-        _messagesObserver.reset()
         setMessagesObserver()
         state = .initialized
         startObserversIfNeeded()
@@ -258,14 +256,6 @@ extension ChatMessageSearchController {
             _ database: DatabaseContainer,
             _ apiClient: APIClient
         ) -> MessageUpdater = MessageUpdater.init
-
-        var createMessageDatabaseObserver: (
-            _ context: NSManagedObjectContext,
-            _ fetchRequest: NSFetchRequest<MessageDTO>,
-            _ itemCreator: @escaping (MessageDTO) -> ChatMessage
-        ) -> ListDatabaseObserver<ChatMessage, MessageDTO> = {
-            ListDatabaseObserver(context: $0, fetchRequest: $1, itemCreator: $2)
-        }
     }
 }
 

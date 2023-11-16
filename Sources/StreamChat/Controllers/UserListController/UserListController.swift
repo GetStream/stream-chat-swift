@@ -54,16 +54,17 @@ public class ChatUserListController: DataController, DelegateCallable, DataStore
     }
 
     /// Used for observing the database for changes.
-    private(set) lazy var userListObserver: ListDatabaseObserver<ChatUser, UserDTO> = {
+    private(set) lazy var userListObserver: ListDatabaseObserverWrapper<ChatUser, UserDTO> = {
         let request = UserDTO.userListFetchRequest(query: self.query)
 
         let observer = self.environment.createUserListDabaseObserver(
-            client.databaseContainer.viewContext,
+            StreamRuntimeCheck._isBackgroundMappingEnabled,
+            client.databaseContainer,
             request,
             { try $0.asModel() }
         )
 
-        observer.onChange = { [weak self] changes in
+        observer.onDidChange = { [weak self] changes in
             self?.delegateCallback { [weak self] in
                 guard let self = self else {
                     log.warning("Callback called while self is nil")
@@ -160,12 +161,13 @@ extension ChatUserListController {
         ) -> UserListUpdater = UserListUpdater.init
 
         var createUserListDabaseObserver: (
-            _ context: NSManagedObjectContext,
+            _ isBackgroundMappingEnabled: Bool,
+            _ database: DatabaseContainer,
             _ fetchRequest: NSFetchRequest<UserDTO>,
             _ itemCreator: @escaping (UserDTO) throws -> ChatUser
         )
-            -> ListDatabaseObserver<ChatUser, UserDTO> = {
-                ListDatabaseObserver(context: $0, fetchRequest: $1, itemCreator: $2)
+            -> ListDatabaseObserverWrapper<ChatUser, UserDTO> = {
+                ListDatabaseObserverWrapper(isBackground: $0, database: $1, fetchRequest: $2, itemCreator: $3)
             }
     }
 }
