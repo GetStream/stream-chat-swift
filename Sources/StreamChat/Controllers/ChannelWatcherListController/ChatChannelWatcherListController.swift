@@ -56,7 +56,7 @@ public class ChatChannelWatcherListController: DataController, DelegateCallable,
     }
 
     /// The observer used to observe the changes in the database.
-    private lazy var watchersObserver: ListDatabaseObserver<ChatUser, UserDTO> = createWatchersObserver()
+    private lazy var watchersObserver: ListDatabaseObserverWrapper<ChatUser, UserDTO> = createWatchersObserver()
 
     /// The worker used to fetch the remote data and communicate with servers.
     private lazy var updater: ChannelUpdater = self.environment.channelUpdaterBuilder(
@@ -97,15 +97,16 @@ public class ChatChannelWatcherListController: DataController, DelegateCallable,
         }
     }
 
-    private func createWatchersObserver() -> ListDatabaseObserver<ChatUser, UserDTO> {
+    private func createWatchersObserver() -> ListDatabaseObserverWrapper<ChatUser, UserDTO> {
         let observer = environment.watcherListObserverBuilder(
-            client.databaseContainer.viewContext,
+            StreamRuntimeCheck._isBackgroundMappingEnabled,
+            client.databaseContainer,
             UserDTO.watcherFetchRequest(cid: query.cid),
             { try $0.asModel() as ChatUser },
             NSFetchedResultsController<UserDTO>.self
         )
 
-        observer.onChange = { [weak self] changes in
+        observer.onDidChange = { [weak self] changes in
             self?.delegateCallback { [weak self] in
                 guard let self = self else {
                     log.warning("Callback called while self is nil")
@@ -142,11 +143,20 @@ extension ChatChannelWatcherListController {
         ) -> ChannelUpdater = ChannelUpdater.init
 
         var watcherListObserverBuilder: (
-            _ context: NSManagedObjectContext,
+            _ isBackgroundMappingEnabled: Bool,
+            _ database: DatabaseContainer,
             _ fetchRequest: NSFetchRequest<UserDTO>,
             _ itemCreator: @escaping (UserDTO) throws -> ChatUser,
             _ controllerType: NSFetchedResultsController<UserDTO>.Type
-        ) -> ListDatabaseObserver<ChatUser, UserDTO> = ListDatabaseObserver.init
+        ) -> ListDatabaseObserverWrapper<ChatUser, UserDTO> = {
+            ListDatabaseObserverWrapper(
+                isBackground: $0,
+                database: $1,
+                fetchRequest: $2,
+                itemCreator: $3,
+                fetchedResultsControllerType: $4
+            )
+        }
     }
 }
 

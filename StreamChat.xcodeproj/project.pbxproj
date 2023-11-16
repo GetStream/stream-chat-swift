@@ -1957,6 +1957,7 @@
 		C1788F6029C33A1000149883 /* ChatThreadRepliesCountDecorationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1788F5E29C33A1000149883 /* ChatThreadRepliesCountDecorationView.swift */; };
 		C1788F6229C33A2C00149883 /* ChatUnreadMessagesCountDecorationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1788F6129C33A2C00149883 /* ChatUnreadMessagesCountDecorationView.swift */; };
 		C1788F6329C33A2C00149883 /* ChatUnreadMessagesCountDecorationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1788F6129C33A2C00149883 /* ChatUnreadMessagesCountDecorationView.swift */; };
+		C17E0AF72B04D190007188F1 /* ListDatabaseObserverWrapper_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = C17E0AF62B04D190007188F1 /* ListDatabaseObserverWrapper_Mock.swift */; };
 		C18514FD292E34E10033387E /* ConnectionRepository_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C18514FC292E34E10033387E /* ConnectionRepository_Tests.swift */; };
 		C186BFA627A7F4E10099CCA6 /* AsyncOperation_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C186BFA527A7F4E10099CCA6 /* AsyncOperation_Tests.swift */; };
 		C186BFAA27AA979B0099CCA6 /* SyncRepository_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C186BFA927AA979B0099CCA6 /* SyncRepository_Tests.swift */; };
@@ -3912,6 +3913,7 @@
 		C1788F5A29B9E4D900149883 /* NotificationMarkUnread.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = NotificationMarkUnread.json; sourceTree = "<group>"; };
 		C1788F5E29C33A1000149883 /* ChatThreadRepliesCountDecorationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatThreadRepliesCountDecorationView.swift; sourceTree = "<group>"; };
 		C1788F6129C33A2C00149883 /* ChatUnreadMessagesCountDecorationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatUnreadMessagesCountDecorationView.swift; sourceTree = "<group>"; };
+		C17E0AF62B04D190007188F1 /* ListDatabaseObserverWrapper_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListDatabaseObserverWrapper_Mock.swift; sourceTree = "<group>"; };
 		C18514FC292E34E10033387E /* ConnectionRepository_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionRepository_Tests.swift; sourceTree = "<group>"; };
 		C186BFA227A048690099CCA6 /* SyncRepository_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncRepository_Mock.swift; sourceTree = "<group>"; };
 		C186BFA527A7F4E10099CCA6 /* AsyncOperation_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncOperation_Tests.swift; sourceTree = "<group>"; };
@@ -6488,6 +6490,7 @@
 				F649B2382500FD56008F98C8 /* EntityDatabaseObserver_Mock.swift */,
 				C10AB8D32AD7DFFB001A4644 /* EntityDatabaseObserverWrapper_Mock.swift */,
 				88D85DAD252F468B00AE1030 /* ListDatabaseObserver_Mock.swift */,
+				C17E0AF62B04D190007188F1 /* ListDatabaseObserverWrapper_Mock.swift */,
 				A3C7BAB327E4D80200BBF4FA /* ChannelListController */,
 				A364D0AB27D128DB0029857A /* ChannelWatcherListController */,
 				A344076A27D753530044F150 /* Controllers */,
@@ -10108,6 +10111,7 @@
 				A311B43327E8BC8400CFCF6D /* ConnectionController_Delegate.swift in Sources */,
 				40D484032A1264F1009E4134 /* MockAudioAnalyser.swift in Sources */,
 				A3C3BC2B27E87F2000224761 /* DatabaseSession_Mock.swift in Sources */,
+				C17E0AF72B04D190007188F1 /* ListDatabaseObserverWrapper_Mock.swift in Sources */,
 				A344077827D753530044F150 /* CurrentChatUser_Mock.swift in Sources */,
 				A3C3BC6027E8AA0A00224761 /* Date+Unique.swift in Sources */,
 				A3C3BC2827E87F2000224761 /* UserRequestBody.swift in Sources */,
