@@ -486,6 +486,7 @@ open class ChatChannelVC: _ViewController,
         didUpdateChannel channel: EntityChange<ChatChannel>
     ) {
         updateScrollToBottomButtonCount()
+        updateJumpToUnreadRelatedComponents()
 
         if headerView.channelController == nil, let cid = channelController.cid {
             headerView.channelController = client.channelController(for: cid)
