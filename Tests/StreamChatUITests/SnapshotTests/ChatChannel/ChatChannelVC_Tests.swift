@@ -1269,7 +1269,7 @@ class ThrottlerMock: Throttler {
         super.init(interval: 0)
     }
 
-    override func throttle(_ action: @escaping () -> Void) {
+    override func execute(_ action: @escaping () -> Void) {
         action()
     }
 }
