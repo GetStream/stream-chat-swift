@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChat
 ### ✅ Added
 - Add new `NewMessageErrorEvent` when observing `EventsController` [#2885](https://github.com/GetStream/stream-chat-swift/pull/2885)
+
+## StreamChatUI
+### ✅ Added
 - Add jump to unread messages interaction [#2894](https://github.com/GetStream/stream-chat-swift/pull/2894)
 - Add support for opening a channel in the unread messages page with `Components.shouldJumpToUnreadWhenOpeningChannel` [#2894](https://github.com/GetStream/stream-chat-swift/pull/2894)
 
