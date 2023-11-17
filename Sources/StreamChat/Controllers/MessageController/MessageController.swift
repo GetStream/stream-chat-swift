@@ -80,7 +80,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     public var listOrdering: MessageOrdering = .topToBottom {
         didSet {
             if state != .initialized {
-                _repliesObserver.reset()
+                setRepliesObserver()
 
                 do {
                     try repliesObserver?.startObserving()
@@ -179,7 +179,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
 
     /// The observer used to listen replies updates.
     /// It will be reset on `listOrdering` changes.
-    @Cached private var repliesObserver: ListDatabaseObserver<ChatMessage, MessageDTO>?
+    private var repliesObserver: ListDatabaseObserverWrapper<ChatMessage, MessageDTO>?
 
     /// The worker used to fetch the remote data and communicate with servers.
     private let messageUpdater: MessageUpdater
@@ -723,11 +723,14 @@ extension ChatMessageController {
         ) -> EntityDatabaseObserverWrapper<ChatMessage, MessageDTO> = EntityDatabaseObserverWrapper.init
 
         var repliesObserverBuilder: (
-            _ context: NSManagedObjectContext,
+            _ isBackgroundMappingEnabled: Bool,
+            _ database: DatabaseContainer,
             _ fetchRequest: NSFetchRequest<MessageDTO>,
             _ itemCreator: @escaping (MessageDTO) throws -> ChatMessage,
             _ fetchedResultsControllerType: NSFetchedResultsController<MessageDTO>.Type
-        ) -> ListDatabaseObserver<ChatMessage, MessageDTO> = ListDatabaseObserver.init
+        ) -> ListDatabaseObserverWrapper<ChatMessage, MessageDTO> = {
+            .init(isBackground: $0, database: $1, fetchRequest: $2, itemCreator: $3, fetchedResultsControllerType: $4)
+        }
 
         var messageUpdaterBuilder: (
             _ isLocalStorageEnabled: Bool,
@@ -755,43 +758,37 @@ private extension ChatMessageController {
     }
 
     func setRepliesObserver() {
-        _repliesObserver.computeValue = { [weak self] in
-            guard let self = self else {
-                log.warning("Callback called while self is nil")
-                return nil
-            }
+        let sortAscending = listOrdering == .topToBottom ? false : true
+        let deletedMessageVisibility = client.databaseContainer.viewContext
+            .deletedMessagesVisibility ?? .visibleForCurrentUser
+        let shouldShowShadowedMessages = client.databaseContainer.viewContext.shouldShowShadowedMessages ?? false
 
-            let sortAscending = self.listOrdering == .topToBottom ? false : true
-            let deletedMessageVisibility = self.client.databaseContainer.viewContext
-                .deletedMessagesVisibility ?? .visibleForCurrentUser
-            let shouldShowShadowedMessages = self.client.databaseContainer.viewContext.shouldShowShadowedMessages ?? false
-
-            let pageSize: Int = self.repliesPageSize
-            let observer = self.environment.repliesObserverBuilder(
-                self.client.databaseContainer.viewContext,
-                MessageDTO.repliesFetchRequest(
-                    for: self.messageId,
-                    pageSize: pageSize,
-                    sortAscending: sortAscending,
-                    deletedMessagesVisibility: deletedMessageVisibility,
-                    shouldShowShadowedMessages: shouldShowShadowedMessages
-                ),
-                { try $0.asModel() as ChatMessage },
-                NSFetchedResultsController<MessageDTO>.self
-            )
-            observer.onChange = { [weak self] changes in
-                self?.delegateCallback { [weak self] in
-                    guard let self = self else {
-                        log.warning("Callback called while self is nil")
-                        return
-                    }
-                    log.debug("didChangeReplies: \(changes.map(\.debugDescription))")
-                    $0.messageController(self, didChangeReplies: changes)
+        let pageSize: Int = repliesPageSize
+        let observer = environment.repliesObserverBuilder(
+            StreamRuntimeCheck._isBackgroundMappingEnabled,
+            client.databaseContainer,
+            MessageDTO.repliesFetchRequest(
+                for: messageId,
+                pageSize: pageSize,
+                sortAscending: sortAscending,
+                deletedMessagesVisibility: deletedMessageVisibility,
+                shouldShowShadowedMessages: shouldShowShadowedMessages
+            ),
+            { try $0.asModel() as ChatMessage },
+            NSFetchedResultsController<MessageDTO>.self
+        )
+        observer.onDidChange = { [weak self] changes in
+            self?.delegateCallback { [weak self] in
+                guard let self = self else {
+                    log.warning("Callback called while self is nil")
+                    return
                 }
+                log.debug("didChangeReplies: \(changes.map(\.debugDescription))")
+                $0.messageController(self, didChangeReplies: changes)
             }
-
-            return observer
         }
+
+        repliesObserver = observer
     }
 }
 

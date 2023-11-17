@@ -8,7 +8,7 @@ import Foundation
 /// Based on the implementation from Apple: https://developer.apple.com/documentation/combine/anypublisher/throttle(for:scheduler:latest:)
 class Throttler {
     private var workItem: DispatchWorkItem?
-    private let queue = DispatchQueue(label: "com.stream.throttler", qos: .background)
+    private let queue: DispatchQueue
     private var previousRun: Date = Date.distantPast
     let interval: TimeInterval
     let broadcastLatestEvent: Bool
@@ -16,16 +16,22 @@ class Throttler {
     /// - Parameters:
     ///   - interval: The interval that an action can be executed.
     ///   - broadcastLatestEvent: A Boolean value that indicates whether we should be using the first or last event of the ones that are being throttled.
+    ///   - queue: The queue where the work will be executed.
     ///   This last action will have a delay of the provided interval until it is executed.
-    init(interval: TimeInterval, broadcastLatestEvent: Bool = true) {
+    init(
+        interval: TimeInterval,
+        broadcastLatestEvent: Bool = true,
+        queue: DispatchQueue = .init(label: "com.stream.throttler", qos: .background)
+    ) {
         self.interval = interval
         self.broadcastLatestEvent = broadcastLatestEvent
+        self.queue = queue
     }
 
     /// Throttle an action. It will cancel the previous action if exists, and it will execute the action immediately
     /// if the last action executed was past the interval provided. If not, it will only be executed after a delay.
     /// - Parameter action: The closure to be performed.
-    func throttle(_ action: @escaping () -> Void) {
+    func execute(_ action: @escaping () -> Void) {
         workItem?.cancel()
 
         let workItem = DispatchWorkItem { [weak self] in

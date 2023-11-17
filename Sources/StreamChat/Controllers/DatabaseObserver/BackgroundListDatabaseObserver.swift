@@ -86,7 +86,7 @@ class ListDatabaseObserverWrapper<Item, DTO: NSManagedObject> {
 
 class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject>: BackgroundDatabaseObserver<Item, DTO> {
     var items: LazyCachedMapCollection<Item> {
-        LazyCachedMapCollection(source: rawItems, map: { $0 }, context: self.frc.managedObjectContext)
+        LazyCachedMapCollection(source: rawItems, map: { $0 }, context: nil)
     }
 
     override init(

@@ -185,7 +185,7 @@ class EntityDatabaseObserver<Item, DTO: NSManagedObject> {
     let context: NSManagedObjectContext
 
     /// When called, notification observers are released
-    private var releaseNotificationObservers: (() -> Void)?
+    internal var releaseNotificationObservers: (() -> Void)?
 
     /// Creates a new `EntityDatabaseObserver`.
     ///
@@ -253,71 +253,29 @@ class EntityDatabaseObserver<Item, DTO: NSManagedObject> {
 
         _item.reset()
     }
+}
 
+extension EntityDatabaseObserver: DatabaseObserverRemovalListener {
     /// Listens for `Will/DidRemoveAllData` notifications from the context and simulates the callback when the notifications
     /// are received.
     private func listenForRemoveAllDataNotifications() {
-        let notificationCenter = NotificationCenter.default
-
-        // When `WillRemoveAllDataNotification` is received, we need to simulate that the element is being removed.
-        // At this point, the entity still exists in the context, and it's safe to access and serialize it.
-        let willRemoveAllDataNotificationObserver = notificationCenter.addObserver(
-            forName: DatabaseContainer.WillRemoveAllDataNotification,
-            object: context,
-            queue: .main
-        ) { [weak self] _ in
-            // Technically, this should rather be `unowned`, however, `deinit` is not always called on the main thread which can
-            // cause a race condition when the notification observers are not removed at the right time.
-            guard let self = self else { return }
-            guard let fetchResultsController = self.frc as? NSFetchedResultsController<NSFetchRequestResult> else { return }
-
-            // Simulate ChangeObserver callbacks like if all data were to be removed
-            self.changeAggregator.controllerWillChangeContent(fetchResultsController)
-
-            self.frc.fetchedObjects?.enumerated().forEach { index, item in
-                self.changeAggregator.controller(
-                    fetchResultsController,
-                    didChange: item,
-                    at: IndexPath(item: index, section: 0),
-                    for: .delete,
-                    newIndexPath: nil
-                )
+        listenForRemoveAllDataNotifications(
+            isBackground: false,
+            frc: frc,
+            changeAggregator: changeAggregator,
+            onItemsRemoval: { [weak self] completion in
+                self?._item.computeValue = { nil }
+                self?._item.reset()
+                completion()
+            },
+            onCompletion: { [weak self] in
+                do {
+                    try self?.startObserving()
+                } catch {
+                    log.error("Error when starting observing: \(error)")
+                }
             }
-
-            // Publish the changes
-            self.changeAggregator.controllerDidChangeContent(fetchResultsController)
-
-            // Remove delegate so it doesn't get further removal updates
-            self.frc.delegate = nil
-
-            // Remove the cached item since it's now deleted, technically
-            self._item.computeValue = { nil }
-            self._item.reset()
-        }
-
-        // When `DidRemoveAllDataNotification` is received, we need to reset the FRC. At this point, the entity is removed but
-        // the FRC doesn't know about it yet. Resetting the FRC clears its `fetchedObjects`.
-        let didRemoveAllDataNotificationObserver = notificationCenter.addObserver(
-            forName: DatabaseContainer.DidRemoveAllDataNotification,
-            object: context,
-            queue: .main
-        ) { [weak self] _ in
-            // Technically, this should rather be `unowned`, however, `deinit` is not always called on the main thread which can
-            // cause a race condition when the notification observers are not removed at the right time.
-            guard let self = self else { return }
-
-            // Resetting the FRC which causes the current `frc.fetchedObjects` to be reloaded
-            do {
-                try self.startObserving()
-            } catch {
-                log.error("Error when starting observing: \(error)")
-            }
-        }
-
-        releaseNotificationObservers = { [weak notificationCenter] in
-            notificationCenter?.removeObserver(willRemoveAllDataNotificationObserver)
-            notificationCenter?.removeObserver(didRemoveAllDataNotificationObserver)
-        }
+        )
     }
 }
 

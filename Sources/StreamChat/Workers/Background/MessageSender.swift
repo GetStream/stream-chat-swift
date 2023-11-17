@@ -24,8 +24,9 @@ class MessageSender: Worker {
     /// every cid. These queues can send messages in parallel.
     @Atomic private var sendingQueueByCid: [ChannelId: MessageSendingQueue] = [:]
 
-    private lazy var observer = ListDatabaseObserver<MessageDTO, MessageDTO>(
-        context: self.database.backgroundReadOnlyContext,
+    private lazy var observer = ListDatabaseObserverWrapper<MessageDTO, MessageDTO>(
+        isBackground: StreamRuntimeCheck._isBackgroundMappingEnabled,
+        database: self.database,
         fetchRequest: MessageDTO
             .messagesPendingSendFetchRequest(),
         itemCreator: { $0 }
@@ -38,16 +39,23 @@ class MessageSender: Worker {
     )
 
     let messageRepository: MessageRepository
+    let eventsNotificationCenter: EventNotificationCenter
 
-    init(messageRepository: MessageRepository, database: DatabaseContainer, apiClient: APIClient) {
+    init(
+        messageRepository: MessageRepository,
+        eventsNotificationCenter: EventNotificationCenter,
+        database: DatabaseContainer,
+        apiClient: APIClient
+    ) {
         self.messageRepository = messageRepository
+        self.eventsNotificationCenter = eventsNotificationCenter
         super.init(database: database, apiClient: apiClient)
         // We need to initialize the observer synchronously
         _ = observer
 
         // The rest can be done on a background queue
         sendingDispatchQueue.async { [weak self] in
-            self?.observer.onChange = { self?.handleChanges(changes: $0) }
+            self?.observer.onDidChange = { self?.handleChanges(changes: $0) }
             do {
                 try self?.observer.startObserving()
 
@@ -97,6 +105,7 @@ class MessageSender: Worker {
                 if sendingQueueByCid[cid] == nil {
                     sendingQueueByCid[cid] = MessageSendingQueue(
                         messageRepository: self.messageRepository,
+                        eventsNotificationCenter: self.eventsNotificationCenter,
                         dispatchQueue: sendingDispatchQueue
                     )
                 }
@@ -110,10 +119,16 @@ class MessageSender: Worker {
 /// This objects takes care of sending messages to the server in the order they have been enqueued.
 private class MessageSendingQueue {
     let messageRepository: MessageRepository
+    let eventsNotificationCenter: EventNotificationCenter
     let dispatchQueue: DispatchQueue
 
-    init(messageRepository: MessageRepository, dispatchQueue: DispatchQueue) {
+    init(
+        messageRepository: MessageRepository,
+        eventsNotificationCenter: EventNotificationCenter,
+        dispatchQueue: DispatchQueue
+    ) {
         self.messageRepository = messageRepository
+        self.eventsNotificationCenter = eventsNotificationCenter
         self.dispatchQueue = dispatchQueue
     }
 
@@ -143,8 +158,20 @@ private class MessageSendingQueue {
             // switch to using a custom `OrderedSet`
             guard let request = self?.requests.sorted(by: { $0.createdLocallyAt < $1.createdLocallyAt }).first else { return }
 
-            self?.messageRepository.sendMessage(with: request.messageId) { _ in
+            self?.messageRepository.sendMessage(with: request.messageId) { [weak self] result in
                 self?.removeRequestAndContinue(request)
+                if let error = result.error {
+                    switch error {
+                    case .messageDoesNotExist,
+                         .messageNotPendingSend,
+                         .messageDoesNotHaveValidChannel:
+                        let event = NewMessageErrorEvent(messageId: request.messageId, error: error)
+                        self?.eventsNotificationCenter.process(event)
+                    case let .failedToSendMessage(error):
+                        let event = NewMessageErrorEvent(messageId: request.messageId, error: error)
+                        self?.eventsNotificationCenter.process(event)
+                    }
+                }
             }
         }
     }

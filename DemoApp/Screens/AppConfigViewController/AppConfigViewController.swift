@@ -143,6 +143,7 @@ class AppConfigViewController: UITableViewController {
         case isUniqueReactionsEnabled
         case shouldMessagesStartAtTheTop
         case shouldAnimateJumpToMessageWhenOpeningChannel
+        case shouldJumpToUnreadWhenOpeningChannel
         case threadRepliesStartFromOldest
         case threadRendersParentMessageEnabled
         case isVoiceRecordingEnabled
@@ -363,6 +364,10 @@ class AppConfigViewController: UITableViewController {
         case .shouldAnimateJumpToMessageWhenOpeningChannel:
             cell.accessoryView = makeSwitchButton(Components.default.shouldAnimateJumpToMessageWhenOpeningChannel) { newValue in
                 Components.default.shouldAnimateJumpToMessageWhenOpeningChannel = newValue
+            }
+        case .shouldJumpToUnreadWhenOpeningChannel:
+            cell.accessoryView = makeSwitchButton(Components.default.shouldJumpToUnreadWhenOpeningChannel) { newValue in
+                Components.default.shouldJumpToUnreadWhenOpeningChannel = newValue
             }
         case .threadRepliesStartFromOldest:
             cell.accessoryView = makeSwitchButton(Components.default.threadRepliesStartFromOldest) { newValue in

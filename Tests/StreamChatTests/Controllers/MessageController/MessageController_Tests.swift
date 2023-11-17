@@ -467,6 +467,7 @@ final class MessageController_Tests: XCTestCase {
 
         try client.databaseContainer.createCurrentUser(id: currentUserId)
         client.databaseContainer.viewContext.deletedMessagesVisibility = .visibleForCurrentUser
+        controller = ChatMessageController(client: client, cid: cid, messageId: messageId, environment: env.controllerEnvironment)
 
         // Insert own deleted reply
         let ownReply: MessagePayload = .dummy(
@@ -502,6 +503,7 @@ final class MessageController_Tests: XCTestCase {
 
         try client.databaseContainer.createCurrentUser(id: currentUserId)
         client.databaseContainer.viewContext.deletedMessagesVisibility = .alwaysHidden
+        controller = ChatMessageController(client: client, cid: cid, messageId: messageId, environment: env.controllerEnvironment)
 
         // Save channel
         try client.databaseContainer.writeSynchronously {
@@ -546,6 +548,7 @@ final class MessageController_Tests: XCTestCase {
 
         try client.databaseContainer.createCurrentUser(id: currentUserId)
         client.databaseContainer.viewContext.deletedMessagesVisibility = .alwaysVisible
+        controller = ChatMessageController(client: client, cid: cid, messageId: messageId, environment: env.controllerEnvironment)
 
         // Save channel
         try client.databaseContainer.writeSynchronously {
@@ -591,6 +594,7 @@ final class MessageController_Tests: XCTestCase {
 
         try client.databaseContainer.createCurrentUser(id: currentUserId)
         client.databaseContainer.viewContext.shouldShowShadowedMessages = true
+        controller = ChatMessageController(client: client, cid: cid, messageId: messageId, environment: env.controllerEnvironment)
 
         // Save channel
         try client.databaseContainer.writeSynchronously {
@@ -2338,7 +2342,7 @@ private class TestDelegate: QueueAwareDelegate, ChatMessageControllerDelegate {
 private class TestEnvironment {
     var messageUpdater: MessageUpdater_Mock!
     var messageObserver: EntityDatabaseObserverWrapper_Mock<ChatMessage, MessageDTO>!
-    var repliesObserver: ListDatabaseObserver_Mock<ChatMessage, MessageDTO>!
+    var repliesObserver: ListDatabaseObserverWrapper_Mock<ChatMessage, MessageDTO>!
 
     var messageObserver_synchronizeError: Error?
 
@@ -2356,7 +2360,13 @@ private class TestEnvironment {
                 return self.messageObserver!
             },
             repliesObserverBuilder: { [unowned self] in
-                self.repliesObserver = .init(context: $0, fetchRequest: $1, itemCreator: $2, fetchedResultsControllerType: $3)
+                self.repliesObserver = .init(
+                    isBackground: $0,
+                    database: $1,
+                    fetchRequest: $2,
+                    itemCreator: $3,
+                    fetchedResultsControllerType: $4
+                )
                 return self.repliesObserver!
             },
             messageUpdaterBuilder: { [unowned self] in

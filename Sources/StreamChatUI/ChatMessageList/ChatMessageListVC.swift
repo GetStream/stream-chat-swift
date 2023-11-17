@@ -116,6 +116,7 @@ open class ChatMessageListVC: _ViewController,
     }
 
     private var unreadSeparatorMessageId: MessageId?
+    private var lastReadMessageId: MessageId?
     private var jumpToUnreadMessageId: MessageId?
     private var jumpToUnreadMessageIndexPath: IndexPath? {
         jumpToUnreadMessageId.flatMap(getIndexPath)
@@ -190,8 +191,8 @@ open class ChatMessageListVC: _ViewController,
         listView.addGestureRecognizer(panGestureRecognizer)
 
         scrollToBottomButton.addTarget(self, action: #selector(didTapScrollToBottomButton), for: .touchUpInside)
-        jumpToUnreadMessagesButton.addTarget(self, action: #selector(jumpToUnreadMessages))
-        jumpToUnreadMessagesButton.addDiscardButtonTarget(self, action: #selector(discardUnreadMessages))
+        jumpToUnreadMessagesButton.addTarget(self, action: #selector(didTapJumpToUnreadButton))
+        jumpToUnreadMessagesButton.addDiscardButtonTarget(self, action: #selector(didTapDiscardJumpToUnreadButton))
     }
 
     override open func setUpLayout() {
@@ -308,7 +309,8 @@ open class ChatMessageListVC: _ViewController,
         guard isJumpToUnreadEnabled else { return }
 
         if let unreadCount = dataSource?.channel(for: self)?.unreadCount,
-           unreadCount != jumpToUnreadMessagesButton.content {
+           unreadCount != jumpToUnreadMessagesButton.content,
+           unreadCount.messages > 0 {
             jumpToUnreadMessagesButton.content = unreadCount
         }
 
@@ -363,8 +365,9 @@ open class ChatMessageListVC: _ViewController,
         listView.reloadRows(at: indexPathsToReload, with: .automatic)
     }
 
-    func updateJumpToUnreadMessageId(_ jumpToUnreadMessageId: MessageId?) {
+    func updateJumpToUnreadMessageId(_ jumpToUnreadMessageId: MessageId?, lastReadMessageId: MessageId?) {
         self.jumpToUnreadMessageId = jumpToUnreadMessageId
+        self.lastReadMessageId = lastReadMessageId
     }
 
     private func isMessageVisible(at indexPath: IndexPath) -> Bool {
@@ -372,12 +375,11 @@ open class ChatMessageListVC: _ViewController,
         return visibleIndexPaths.contains(indexPath)
     }
 
-    @objc func jumpToUnreadMessages() {
-        guard let firstUnreadMessageId = unreadSeparatorMessageId else { return }
-        jumpToMessage(id: firstUnreadMessageId)
+    @objc func didTapJumpToUnreadButton() {
+        jumpToUnreadMessage()
     }
 
-    @objc func discardUnreadMessages() {
+    @objc func didTapDiscardJumpToUnreadButton() {
         delegate?.chatMessageListDidDiscardUnreadMessages(self)
     }
 
@@ -609,13 +611,27 @@ open class ChatMessageListVC: _ViewController,
         ]
     }
 
+    /// Jump to the current unread message if there is one.
+    /// - Parameter animated: `true` if you want to animate the change in position; `false` if it should be immediate.
+    /// - Parameter onHighlight: An optional closure to provide highlighting style when the message appears on screen.
+    open func jumpToUnreadMessage(animated: Bool = true, onHighlight: ((IndexPath) -> Void)? = nil) {
+        getCurrentUnreadMessageId { [weak self] messageId in
+            guard let jumpToUnreadMessageId = messageId else { return }
+
+            // The delay helps having a smoother scrolling animation.
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                self?.jumpToMessage(id: jumpToUnreadMessageId, animated: animated, onHighlight: onHighlight)
+            }
+        }
+    }
+
     /// Jump to a given message.
     /// In case the message is already loaded, it directly goes to it.
     /// If not, it will load the messages around it and go to that page.
     ///
     /// - Parameter id: The id of message which the message list should go to.
-    /// - Parameter onHighlight: An optional closure to provide highlighting style when the message appears on screen.
     /// - Parameter animated: `true` if you want to animate the change in position; `false` if it should be immediate.
+    /// - Parameter onHighlight: An optional closure to provide highlighting style when the message appears on screen.
     public func jumpToMessage(id: MessageId, animated: Bool = true, onHighlight: ((IndexPath) -> Void)? = nil) {
         if let indexPath = getIndexPath(forMessageId: id) {
             messagePendingScrolling = (id, animated)
@@ -691,6 +707,36 @@ open class ChatMessageListVC: _ViewController,
         delegate?.chatMessageListVCShouldLoadFirstPage(self)
         scrollToBottomButton.isHidden = true
         listView.reloadSkippedMessages()
+    }
+
+    /// Fetch the current unread message id.
+    ///
+    /// If the message is available locally, we get it instantly.
+    /// If not, we need to fetch the page of messages where the `lastReadMessageId` is,
+    /// so that we can find the first unread message id next to it.
+    ///
+    /// Note: This is a current backend limitation. Ideally, in the future,
+    /// we will get the `unreadMessageId` directly from the backend.
+    private func getCurrentUnreadMessageId(completion: @escaping (MessageId?) -> Void) {
+        if let jumpToUnreadMessageId = self.jumpToUnreadMessageId {
+            return completion(jumpToUnreadMessageId)
+        }
+
+        guard let lastReadMessageId = self.lastReadMessageId else {
+            return completion(nil)
+        }
+
+        delegate?.chatMessageListVC(self, shouldLoadPageAroundMessageId: lastReadMessageId) { error in
+            guard error == nil else {
+                return completion(nil)
+            }
+
+            guard let jumpToUnreadMessageId = self.jumpToUnreadMessageId else {
+                return completion(nil)
+            }
+
+            completion(jumpToUnreadMessageId)
+        }
     }
 
     // MARK: - UITableViewDataSource & UITableViewDelegate

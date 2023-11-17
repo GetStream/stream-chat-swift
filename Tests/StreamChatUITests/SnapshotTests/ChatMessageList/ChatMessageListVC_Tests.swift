@@ -201,7 +201,7 @@ final class ChatMessageListVC_Tests: XCTestCase {
 
     // MARK: - isContentEqual (Message Diffing)
 
-    func test_messageIsContentEqual_whenCustomAttachmentDataDifferent_returnsFalse() throws {
+    func test_messageIsContentEqual_whenCustomAttachmentDataDifferent() throws {
         struct CustomAttachment: AttachmentPayload {
             static var type: AttachmentType = .unknown
             
@@ -242,7 +242,7 @@ final class ChatMessageListVC_Tests: XCTestCase {
         XCTAssertFalse(messageDiff1.isContentEqual(to: messageDiff2))
     }
 
-    func test_messageIsContentEqual_whenAuthorIsDifferent_returnsFalse() throws {
+    func test_messageIsContentEqual_whenAuthorIsDifferent() throws {
         let userId = UserId.unique
         let sameUser = ChatUser.mock(id: userId, name: "Leia Organa")
 
@@ -254,6 +254,21 @@ final class ChatMessageListVC_Tests: XCTestCase {
         // When author is different, should not be equal
         let messageDiff1 = ChatMessage.mock(id: "1", text: "same", author: sameUser)
         let messageDiff2 = ChatMessage.mock(id: "1", text: "same", author: .mock(id: userId, name: "Leia"))
+        XCTAssertFalse(messageDiff1.isContentEqual(to: messageDiff2))
+    }
+
+    func test_messageIsContentEqual_whenUpdatedAtIsDifferent() throws {
+        let userId = UserId.unique
+        let sameUser = ChatUser.mock(id: userId, name: "Leia Organa")
+
+        // When author is the same, should be equal
+        let messageSame1 = ChatMessage.mock(id: "1", text: "same", author: sameUser)
+        let messageSame2 = ChatMessage.mock(id: "1", text: "same", author: sameUser)
+        XCTAssert(messageSame1.isContentEqual(to: messageSame2))
+
+        // When author is different, should not be equal
+        let messageDiff1 = ChatMessage.mock(id: "1", text: "same", author: sameUser, updatedAt: .unique)
+        let messageDiff2 = ChatMessage.mock(id: "1", text: "same", author: sameUser, updatedAt: .unique)
         XCTAssertFalse(messageDiff1.isContentEqual(to: messageDiff2))
     }
 
@@ -633,6 +648,66 @@ final class ChatMessageListVC_Tests: XCTestCase {
         XCTAssertEqual(mockedListView.scrollToRowCallCount, 0)
     }
 
+    // MARK: jumpToUnreadMessage()
+
+    func test_jumpToUnreadMessage_whenUnreadMessageIsLocallyAvailable() {
+        // Given
+        mockedDataSource.messages = [
+            .mock(id: "0"),
+            .mock(id: "1"),
+            .mock(id: "2"),
+            .mock(id: "3"),
+            .mock(id: "4")
+        ]
+
+        // When
+        sut.updateJumpToUnreadMessageId("2", lastReadMessageId: nil)
+
+        // Then
+        sut.jumpToUnreadMessage()
+        AssertAsync.willBeEqual(mockedListView.scrollToRowCallCount, 1)
+        AssertAsync.willBeEqual(mockedListView.scrollToRowCalledWith?.row, 2)
+        AssertAsync.willBeEqual(mockedDelegate.shouldLoadPageAroundMessageCallCount, 0)
+    }
+
+    func test_jumpToUnreadMessage_whenUnreadMessageIsRemotelyAvailable() {
+        // Given
+        mockedDataSource.messages = [
+            .mock(id: "0"),
+            .mock(id: "1"),
+            .mock(id: "2"),
+            .mock(id: "3"),
+            .mock(id: "4")
+        ]
+
+        // When
+        sut.updateJumpToUnreadMessageId(nil, lastReadMessageId: "5")
+
+        // Then
+        sut.jumpToUnreadMessage()
+        AssertAsync.willBeEqual(mockedListView.scrollToRowCallCount, 0)
+        AssertAsync.willBeEqual(mockedDelegate.shouldLoadPageAroundMessageCallCount, 1)
+    }
+
+    func test_jumpToUnreadMessage_whenNoUnreadMessage() {
+        // Given
+        mockedDataSource.messages = [
+            .mock(id: "0"),
+            .mock(id: "1"),
+            .mock(id: "2"),
+            .mock(id: "3"),
+            .mock(id: "4")
+        ]
+
+        // When
+        sut.updateJumpToUnreadMessageId(nil, lastReadMessageId: nil)
+
+        // Then
+        sut.jumpToUnreadMessage()
+        AssertAsync.willBeEqual(mockedListView.scrollToRowCallCount, 0)
+        AssertAsync.willBeEqual(mockedDelegate.shouldLoadPageAroundMessageCallCount, 0)
+    }
+
     // MARK: isJumpToUnreadMessagesButtonVisible
 
     func test_isJumpToUnreadMessagesButtonVisible_whenFeatureIsDisabled() {
@@ -663,7 +738,7 @@ final class ChatMessageListVC_Tests: XCTestCase {
         mockedDelegate.mockedShouldShowJumpToUnread = true
         mockedDataSource.mockedChannel = .mock(cid: .unique, unreadCount: .mock(messages: 0))
         let unreadMessageId = MessageId.unique
-        sut.updateJumpToUnreadMessageId(unreadMessageId)
+        sut.updateJumpToUnreadMessageId(unreadMessageId, lastReadMessageId: nil)
         mockedDataSource.messages = []
 
         XCTAssertFalse(sut.isJumpToUnreadMessagesButtonVisible)
@@ -674,7 +749,7 @@ final class ChatMessageListVC_Tests: XCTestCase {
         mockedDelegate.mockedShouldShowJumpToUnread = true
         mockedDataSource.mockedChannel = .mock(cid: .unique, unreadCount: .mock(messages: 1))
         let unreadMessageId = MessageId.unique
-        sut.updateJumpToUnreadMessageId(unreadMessageId)
+        sut.updateJumpToUnreadMessageId(unreadMessageId, lastReadMessageId: nil)
         mockedDataSource.messages = []
 
         XCTAssertTrue(sut.isJumpToUnreadMessagesButtonVisible)
@@ -685,7 +760,7 @@ final class ChatMessageListVC_Tests: XCTestCase {
         mockedDelegate.mockedShouldShowJumpToUnread = true
         mockedDataSource.mockedChannel = .mock(cid: .unique, unreadCount: .mock(messages: 1))
         let unreadMessageId = MessageId.unique
-        sut.updateJumpToUnreadMessageId(unreadMessageId)
+        sut.updateJumpToUnreadMessageId(unreadMessageId, lastReadMessageId: nil)
         mockedDataSource.messages = [
             ChatMessage.mock(id: unreadMessageId) // IndexPath: 0 - 0
         ]
@@ -701,7 +776,7 @@ final class ChatMessageListVC_Tests: XCTestCase {
         mockedDelegate.mockedShouldShowJumpToUnread = true
         mockedDataSource.mockedChannel = .mock(cid: .unique, unreadCount: .mock(messages: 1))
         let unreadMessageId = MessageId.unique
-        sut.updateJumpToUnreadMessageId(unreadMessageId)
+        sut.updateJumpToUnreadMessageId(unreadMessageId, lastReadMessageId: nil)
         mockedDataSource.messages = [
             ChatMessage.mock(id: unreadMessageId) // IndexPath: 0 - 0
         ]
