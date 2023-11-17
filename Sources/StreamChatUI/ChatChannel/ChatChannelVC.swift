@@ -120,7 +120,7 @@ open class ChatChannelVC: _ViewController,
     private var firstUnreadMessageId: MessageId?
 
     /// In case the given around message id is from a thread, we need to jump to the parent message and then the reply.
-    private var initialReplyId: MessageId?
+    internal var initialReplyId: MessageId?
 
     override open func setUp() {
         super.setUp()
