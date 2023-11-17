@@ -41,9 +41,9 @@ open class ChatThreadVC: _ViewController,
     )
 
     /// A component responsible to handle when to load new or old messages.
-    private lazy var viewPaginationHandler: ViewPaginationHandling = {
-        InvertedScrollViewPaginationHandler.make(scrollView: messageListVC.listView)
-    }()
+    private lazy var viewPaginationHandler: ViewPaginationHandling = InvertedListViewPaginationHandler(
+        paginationHandler: ListViewPaginationHandler(scrollView: messageListVC.listView)
+    )
 
     /// User search controller passed directly to the composer
     open lazy var userSuggestionSearchController: ChatUserSearchController =
@@ -288,9 +288,7 @@ open class ChatThreadVC: _ViewController,
         _ vc: ChatMessageListVC,
         willDisplayMessageAt indexPath: IndexPath
     ) {
-        // No-op. By default the thread component is not interested in this event,
-        // but you as customer can override this function and provide an implementation.
-        // Ex: Provide an animation when the cell is being displayed.
+        viewPaginationHandler.willDisplayItem(at: indexPath, totalItemsCount: replies.count)
     }
 
     open func chatMessageListVC(

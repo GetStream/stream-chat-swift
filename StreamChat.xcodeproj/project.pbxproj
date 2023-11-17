@@ -1365,10 +1365,10 @@
 		ADD738482A8D312B0011FE81 /* ChannelListMessageTimestampFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD738462A8D312B0011FE81 /* ChannelListMessageTimestampFormatter.swift */; };
 		ADDB2F592954CBF500BF80DA /* ViewPaginationHandling.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDB2F572954CBA200BF80DA /* ViewPaginationHandling.swift */; };
 		ADDB2F5A2954CBF700BF80DA /* ViewPaginationHandling.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDB2F572954CBA200BF80DA /* ViewPaginationHandling.swift */; };
-		ADDB2F5F2954D43D00BF80DA /* ScrollViewPaginationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDB2F5B2954CC0A00BF80DA /* ScrollViewPaginationHandler.swift */; };
-		ADDB2F602954D43E00BF80DA /* ScrollViewPaginationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDB2F5B2954CC0A00BF80DA /* ScrollViewPaginationHandler.swift */; };
-		ADDB2F612954D48A00BF80DA /* InvertedScrollViewPaginationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDB2F5D2954CC1700BF80DA /* InvertedScrollViewPaginationHandler.swift */; };
-		ADDB2F632954D48D00BF80DA /* InvertedScrollViewPaginationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDB2F5D2954CC1700BF80DA /* InvertedScrollViewPaginationHandler.swift */; };
+		ADDB2F5F2954D43D00BF80DA /* ListViewPaginationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDB2F5B2954CC0A00BF80DA /* ListViewPaginationHandler.swift */; };
+		ADDB2F602954D43E00BF80DA /* ListViewPaginationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDB2F5B2954CC0A00BF80DA /* ListViewPaginationHandler.swift */; };
+		ADDB2F612954D48A00BF80DA /* InvertedListViewPaginationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDB2F5D2954CC1700BF80DA /* InvertedListViewPaginationHandler.swift */; };
+		ADDB2F632954D48D00BF80DA /* InvertedListViewPaginationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDB2F5D2954CC1700BF80DA /* InvertedListViewPaginationHandler.swift */; };
 		ADDFDE2B2779EC8A003B3B07 /* Atlantis in Frameworks */ = {isa = PBXBuildFile; productRef = ADDFDE2A2779EC8A003B3B07 /* Atlantis */; };
 		ADE2093D29FC022D007D0FF3 /* MessagesPaginationStateHandling.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADE2093C29FC022D007D0FF3 /* MessagesPaginationStateHandling.swift */; };
 		ADE40043291B1A510000C98B /* AttachmentUploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADE40042291B1A510000C98B /* AttachmentUploader.swift */; };
@@ -3792,8 +3792,8 @@
 		ADD5A9E725DE8AF6006DC88A /* ChatSuggestionsVC_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatSuggestionsVC_Tests.swift; sourceTree = "<group>"; };
 		ADD738462A8D312B0011FE81 /* ChannelListMessageTimestampFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListMessageTimestampFormatter.swift; sourceTree = "<group>"; };
 		ADDB2F572954CBA200BF80DA /* ViewPaginationHandling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewPaginationHandling.swift; sourceTree = "<group>"; };
-		ADDB2F5B2954CC0A00BF80DA /* ScrollViewPaginationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollViewPaginationHandler.swift; sourceTree = "<group>"; };
-		ADDB2F5D2954CC1700BF80DA /* InvertedScrollViewPaginationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvertedScrollViewPaginationHandler.swift; sourceTree = "<group>"; };
+		ADDB2F5B2954CC0A00BF80DA /* ListViewPaginationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListViewPaginationHandler.swift; sourceTree = "<group>"; };
+		ADDB2F5D2954CC1700BF80DA /* InvertedListViewPaginationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvertedListViewPaginationHandler.swift; sourceTree = "<group>"; };
 		ADE2093C29FC022D007D0FF3 /* MessagesPaginationStateHandling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesPaginationStateHandling.swift; sourceTree = "<group>"; };
 		ADE40042291B1A510000C98B /* AttachmentUploader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentUploader.swift; sourceTree = "<group>"; };
 		ADE88A132949453200C0F084 /* ChatMessageListRouter_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageListRouter_Mock.swift; sourceTree = "<group>"; };
@@ -7910,8 +7910,8 @@
 			isa = PBXGroup;
 			children = (
 				ADDB2F572954CBA200BF80DA /* ViewPaginationHandling.swift */,
-				ADDB2F5B2954CC0A00BF80DA /* ScrollViewPaginationHandler.swift */,
-				ADDB2F5D2954CC1700BF80DA /* InvertedScrollViewPaginationHandler.swift */,
+				ADDB2F5B2954CC0A00BF80DA /* ListViewPaginationHandler.swift */,
+				ADDB2F5D2954CC1700BF80DA /* InvertedListViewPaginationHandler.swift */,
 			);
 			path = ViewPaginationHandling;
 			sourceTree = "<group>";
@@ -9616,7 +9616,7 @@
 				AD8B72752908016400921C31 /* ImageDownloadRequest.swift in Sources */,
 				8825334C258CE82500B77352 /* AlertsRouter.swift in Sources */,
 				ADDB2F592954CBF500BF80DA /* ViewPaginationHandling.swift in Sources */,
-				ADDB2F612954D48A00BF80DA /* InvertedScrollViewPaginationHandler.swift in Sources */,
+				ADDB2F612954D48A00BF80DA /* InvertedListViewPaginationHandler.swift in Sources */,
 				AD95FD0D28F991ED00DBDF41 /* ImageResize.swift in Sources */,
 				AD4474FD263B19F90030E583 /* ImageAttachmentComposerPreview.swift in Sources */,
 				88BA7F87258B97C9006CE0C5 /* UploadingOverlayView.swift in Sources */,
@@ -9685,7 +9685,7 @@
 				790882F725486B8000896F03 /* ChatChannelListCollectionViewDelegate.swift in Sources */,
 				43F4750C26F4E4FF0009487D /* ChatMessageReactionItemView.swift in Sources */,
 				DBF12128258BAFC1001919C6 /* OnlyLinkTappableTextView.swift in Sources */,
-				ADDB2F5F2954D43D00BF80DA /* ScrollViewPaginationHandler.swift in Sources */,
+				ADDB2F5F2954D43D00BF80DA /* ListViewPaginationHandler.swift in Sources */,
 				ADEE888D289C3CC0007DF3F8 /* ChatMessageListView+DiffKit.swift in Sources */,
 				E79AC10B25831A1500C3CE5D /* ChatCommandSuggestionView.swift in Sources */,
 				40FA4DD82A12A0C700DA21D2 /* VoiceRecordingVC.swift in Sources */,
@@ -11417,7 +11417,7 @@
 				AD78F9FE28EC735700BC0FCE /* Token.swift in Sources */,
 				ADDB2F5A2954CBF700BF80DA /* ViewPaginationHandling.swift in Sources */,
 				40FA4DE82A12A45400DA21D2 /* VoiceRecordingAttachmentQuotedPreview.swift in Sources */,
-				ADDB2F632954D48D00BF80DA /* InvertedScrollViewPaginationHandler.swift in Sources */,
+				ADDB2F632954D48D00BF80DA /* InvertedListViewPaginationHandler.swift in Sources */,
 				C121EBA62746A1E800023E4C /* ChatPresenceAvatarView.swift in Sources */,
 				C121EBA72746A1E800023E4C /* ChatAvatarView.swift in Sources */,
 				AD552E0228F46CE700199A6F /* ImageLoaderOptions.swift in Sources */,
@@ -11485,7 +11485,7 @@
 				ADD2A99B28FF4F4B00A83305 /* StreamCDN.swift in Sources */,
 				ADCB578A28A42D7700B81AE8 /* Changeset.swift in Sources */,
 				C121EBD42746A1EA00023E4C /* ChatMessageReactionAuthorViewCell.swift in Sources */,
-				ADDB2F602954D43E00BF80DA /* ScrollViewPaginationHandler.swift in Sources */,
+				ADDB2F602954D43E00BF80DA /* ListViewPaginationHandler.swift in Sources */,
 				AD78F9F728EC735700BC0FCE /* SwiftyMarkdown.swift in Sources */,
 				C121EBD52746A1EA00023E4C /* ChatMessageReactionAuthorsFlowLayout.swift in Sources */,
 				ADBBDA20279F0CEA00E47B1C /* VideoDurationFormatter.swift in Sources */,

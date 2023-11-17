@@ -10,4 +10,6 @@ protocol ViewPaginationHandling {
 
     var onNewTopPage: (() -> Void)? { get set }
     var onNewBottomPage: (() -> Void)? { get set }
+
+    func willDisplayItem(at indexPath: IndexPath, totalItemsCount: Int)
 }

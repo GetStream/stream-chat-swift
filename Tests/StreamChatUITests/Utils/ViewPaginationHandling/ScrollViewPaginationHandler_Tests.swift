@@ -12,7 +12,7 @@ final class ScrollViewPaginationHandler_Tests: XCTestCase {
         let scrollView = MockScrollView()
         scrollView.contentSize.height = 100
 
-        let sut = ScrollViewPaginationHandler(scrollView: scrollView)
+        let sut = ListViewPaginationHandler(scrollView: scrollView)
         sut.onNewBottomPage = {
             exp.fulfill()
         }
@@ -27,7 +27,7 @@ final class ScrollViewPaginationHandler_Tests: XCTestCase {
         let scrollView = MockScrollView()
         scrollView.contentSize.height = 1000
 
-        let sut = ScrollViewPaginationHandler(scrollView: scrollView)
+        let sut = ListViewPaginationHandler(scrollView: scrollView)
         sut.bottomThreshold = 100
         sut.onNewBottomPage = {
             exp.fulfill()
@@ -44,7 +44,7 @@ final class ScrollViewPaginationHandler_Tests: XCTestCase {
         let scrollView = MockScrollView()
         scrollView.contentSize.height = 0
 
-        let sut = ScrollViewPaginationHandler(scrollView: scrollView)
+        let sut = ListViewPaginationHandler(scrollView: scrollView)
         sut.bottomThreshold = 100
         sut.onNewBottomPage = {
             exp.fulfill()
@@ -61,7 +61,7 @@ final class ScrollViewPaginationHandler_Tests: XCTestCase {
         let scrollView = MockScrollView()
         scrollView.contentSize.height = 1000
 
-        let sut = ScrollViewPaginationHandler(scrollView: scrollView)
+        let sut = ListViewPaginationHandler(scrollView: scrollView)
         sut.bottomThreshold = 100
         sut.onNewBottomPage = {
             exp.fulfill()
@@ -77,7 +77,7 @@ final class ScrollViewPaginationHandler_Tests: XCTestCase {
         let scrollView = MockScrollView()
         scrollView.contentSize = .init(width: 50, height: 50)
 
-        let sut = ScrollViewPaginationHandler(scrollView: scrollView)
+        let sut = ListViewPaginationHandler(scrollView: scrollView)
         sut.onNewTopPage = {
             exp.fulfill()
         }
@@ -92,7 +92,7 @@ final class ScrollViewPaginationHandler_Tests: XCTestCase {
         let scrollView = MockScrollView()
         scrollView.contentSize.height = 1000
 
-        let sut = ScrollViewPaginationHandler(scrollView: scrollView)
+        let sut = ListViewPaginationHandler(scrollView: scrollView)
         sut.topThreshold = 100
         sut.onNewTopPage = {
             exp.fulfill()
@@ -112,7 +112,7 @@ final class ScrollViewPaginationHandler_Tests: XCTestCase {
         let scrollView = MockScrollView()
         scrollView.contentSize.height = 1000
 
-        let sut = ScrollViewPaginationHandler(scrollView: scrollView)
+        let sut = ListViewPaginationHandler(scrollView: scrollView)
         sut.topThreshold = 100
         sut.onNewTopPage = {
             exp.fulfill()
@@ -132,7 +132,7 @@ final class ScrollViewPaginationHandler_Tests: XCTestCase {
         let scrollView = MockScrollView()
         scrollView.contentSize.height = 1000
 
-        let sut = ScrollViewPaginationHandler(scrollView: scrollView)
+        let sut = ListViewPaginationHandler(scrollView: scrollView)
         sut.topThreshold = 100
         sut.onNewTopPage = {
             exp.fulfill()
@@ -152,7 +152,7 @@ final class ScrollViewPaginationHandler_Tests: XCTestCase {
         let scrollView = MockScrollView()
         scrollView.contentSize = .init(width: 0, height: 0)
 
-        let sut = ScrollViewPaginationHandler(scrollView: scrollView)
+        let sut = ListViewPaginationHandler(scrollView: scrollView)
         sut.onNewTopPage = {
             exp.fulfill()
         }
@@ -169,7 +169,7 @@ final class ScrollViewPaginationHandler_Tests: XCTestCase {
         scrollView.contentSize.height = 100
         scrollView.isTrackingOrDeceleratingMocked = false
 
-        let sut = ScrollViewPaginationHandler(scrollView: scrollView)
+        let sut = ListViewPaginationHandler(scrollView: scrollView)
         sut.onNewBottomPage = {
             exp.fulfill()
         }
@@ -186,7 +186,7 @@ final class ScrollViewPaginationHandler_Tests: XCTestCase {
         scrollView.contentSize = .init(width: 0, height: 50)
         scrollView.isTrackingOrDeceleratingMocked = false
 
-        let sut = ScrollViewPaginationHandler(scrollView: scrollView)
+        let sut = ListViewPaginationHandler(scrollView: scrollView)
         sut.onNewTopPage = {
             exp.fulfill()
         }
@@ -203,7 +203,7 @@ final class ScrollViewPaginationHandler_Tests: XCTestCase {
         scrollView.isTrackingOrDeceleratingMocked = false
         scrollView.contentSize.height = 100
 
-        let sut = ScrollViewPaginationHandler(scrollView: scrollView)
+        let sut = ListViewPaginationHandler(scrollView: scrollView)
         sut.onNewBottomPage = {
             exp.fulfill()
         }

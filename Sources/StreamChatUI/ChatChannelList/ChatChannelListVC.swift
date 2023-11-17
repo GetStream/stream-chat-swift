@@ -85,9 +85,9 @@ open class ChatChannelListVC: _ViewController,
     private(set) var skippedRendering = false
 
     /// A component responsible to handle when to load new channels.
-    private lazy var viewPaginationHandler: ViewPaginationHandling = {
-        ScrollViewPaginationHandler(scrollView: collectionView)
-    }()
+    private lazy var viewPaginationHandler: ViewPaginationHandling = ListViewPaginationHandler(
+        scrollView: collectionView
+    )
 
     /// Create a new `ChatChannelListViewController`
     /// - Parameters:
@@ -174,7 +174,7 @@ open class ChatChannelListVC: _ViewController,
         willDisplay cell: UICollectionViewCell,
         forItemAt indexPath: IndexPath
     ) {
-        // no-op
+        viewPaginationHandler.willDisplayItem(at: indexPath, totalItemsCount: channels.count)
     }
 
     override open func setUpLayout() {

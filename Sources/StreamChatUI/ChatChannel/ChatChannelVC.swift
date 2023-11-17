@@ -99,9 +99,9 @@ open class ChatChannelVC: _ViewController,
     }
 
     /// A component responsible to handle when to load new or old messages.
-    private lazy var viewPaginationHandler: ViewPaginationHandling = {
-        InvertedScrollViewPaginationHandler.make(scrollView: messageListVC.listView)
-    }()
+    private lazy var viewPaginationHandler: ViewPaginationHandling = InvertedListViewPaginationHandler(
+        paginationHandler: ListViewPaginationHandler(scrollView: messageListVC.listView)
+    )
 
     var throttler: Throttler = Throttler(interval: 3, broadcastLatestEvent: true)
 
@@ -158,6 +158,7 @@ open class ChatChannelVC: _ViewController,
         }
 
         // Handle pagination
+        viewPaginationHandler.bottomThreshold = 5
         viewPaginationHandler.onNewTopPage = { [weak self] in
             self?.channelController.loadPreviousMessages()
         }
@@ -354,6 +355,8 @@ open class ChatChannelVC: _ViewController,
         _ vc: ChatMessageListVC,
         willDisplayMessageAt indexPath: IndexPath
     ) {
+        viewPaginationHandler.willDisplayItem(at: indexPath, totalItemsCount: messages.count)
+
         guard !hasSeenFirstUnreadMessage else { return }
 
         let message = chatMessageListVC(vc, messageAt: indexPath)

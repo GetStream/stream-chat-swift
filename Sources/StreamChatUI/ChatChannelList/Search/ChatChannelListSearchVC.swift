@@ -16,9 +16,9 @@ open class ChatChannelListSearchVC: ChatChannelListVC, UISearchResultsUpdating {
     public var currentSearchText: String = ""
 
     /// A component responsible to handle when to load new search results.
-    private lazy var viewPaginationHandler: ViewPaginationHandling = {
-        ScrollViewPaginationHandler(scrollView: collectionView)
-    }()
+    private lazy var viewPaginationHandler: ViewPaginationHandling = ListViewPaginationHandler(
+        scrollView: collectionView
+    )
 
     override open var isChatChannelListStatesEnabled: Bool {
         false
