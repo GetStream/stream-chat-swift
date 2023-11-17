@@ -15,6 +15,7 @@ final class EventNotificationCenter_Mock: EventNotificationCenter {
     var newMessageIdsMock: Set<MessageId>?
 
     lazy var mock_process = MockFunc<([Event], Bool, (() -> Void)?), Void>.mock(for: process)
+    var mock_processCalledWithEvents: [Event] = []
 
     override func process(
         _ events: [Event],
@@ -22,7 +23,8 @@ final class EventNotificationCenter_Mock: EventNotificationCenter {
         completion: (() -> Void)? = nil
     ) {
         super.process(events, postNotifications: postNotifications, completion: completion)
-
+        
+        mock_processCalledWithEvents = events
         mock_process.call(with: (events, postNotifications, completion))
     }
 }
