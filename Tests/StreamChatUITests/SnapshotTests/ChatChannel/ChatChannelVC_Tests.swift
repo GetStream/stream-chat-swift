@@ -1152,6 +1152,95 @@ final class ChatChannelVC_Tests: XCTestCase {
         XCTAssertEqual(messageListVCMock?.jumpToMessageCalledWith?.animated, false)
     }
 
+    // MARK: - didFinishSynchronizing()
+
+    func test_didFinishSynchronizing_whenPaginationParameterIsAroundMessageId_shouldJumpToMessage() {
+        var components = Components.mock
+        components.messageListVC = ChatMessageListVC_Mock.self
+        vc.components = components
+        let messageListVCMock = vc.messageListVC as? ChatMessageListVC_Mock
+
+        channelControllerMock.channelQuery_mock = .init(
+            cid: .unique,
+            paginationParameter: .around(.newUniqueId)
+        )
+
+        vc.didFinishSynchronizing(with: nil)
+        
+        XCTAssertEqual(messageListVCMock?.jumpToMessageCallCount, 1)
+    }
+
+    func test_didFinishSynchronizing_whenPaginationParameterIsAroundMessageId_whenInitialReplyId_shouldJumpToParentAndReply() {
+        var components = Components.mock
+        components.messageListVC = ChatMessageListVC_Mock.self
+        vc.components = components
+        let messageListVCMock = vc.messageListVC as? ChatMessageListVC_Mock
+
+        channelControllerMock.channelQuery_mock = .init(
+            cid: .unique,
+            paginationParameter: .around(.newUniqueId)
+        )
+
+        vc.initialReplyId = .newUniqueId
+
+        vc.didFinishSynchronizing(with: nil)
+
+        AssertAsync.willBeEqual(messageListVCMock?.jumpToMessageCallCount, 2)
+    }
+
+    func test_didFinishSynchronizing_whenPaginationParameterNotAroundMessage_whenShouldJumpToUnreadWhenOpeningChannel_shouldJumpToUnreadMessage() {
+        var components = Components.mock
+        components.shouldJumpToUnreadWhenOpeningChannel = true
+        components.messageListVC = ChatMessageListVC_Mock.self
+        vc.components = components
+        let messageListVCMock = vc.messageListVC as? ChatMessageListVC_Mock
+
+        channelControllerMock.channelQuery_mock = .init(
+            cid: .unique
+        )
+
+        vc.didFinishSynchronizing(with: nil)
+
+        AssertAsync.willBeEqual(messageListVCMock?.jumpToMessageCallCount, 0)
+        XCTAssertEqual(messageListVCMock?.jumpToUnreadMessageCallCount, 1)
+    }
+
+    func test_didFinishSynchronizing_whenPaginationParameterNotAroundMessage_whenNotJumpToUnreadWhenOpeningChannel_shouldNotJumpToUnreadMessage() {
+        var components = Components.mock
+        components.shouldJumpToUnreadWhenOpeningChannel = false
+        components.messageListVC = ChatMessageListVC_Mock.self
+        vc.components = components
+        let messageListVCMock = vc.messageListVC as? ChatMessageListVC_Mock
+
+        channelControllerMock.channelQuery_mock = .init(
+            cid: .unique
+        )
+
+        vc.didFinishSynchronizing(with: nil)
+
+        AssertAsync.willBeEqual(messageListVCMock?.jumpToMessageCallCount, 0)
+        XCTAssertEqual(messageListVCMock?.jumpToUnreadMessageCallCount, 0)
+    }
+
+    func test_didFinishSynchronizing_whenPaginationParameterIsAroundMessage_whenShouldJumpToUnreadWhenOpeningChannel_shouldNotJumpToUnreadMessage() {
+        var components = Components.mock
+        components.shouldJumpToUnreadWhenOpeningChannel = false
+        components.messageListVC = ChatMessageListVC_Mock.self
+        vc.components = components
+        let messageListVCMock = vc.messageListVC as? ChatMessageListVC_Mock
+
+        channelControllerMock.channelQuery_mock = .init(
+            cid: .unique,
+            paginationParameter: .around(.unique)
+        )
+
+        vc.didFinishSynchronizing(with: nil)
+
+        /// If there is a message id to jump, ignore the jump to unread messages.
+        AssertAsync.willBeEqual(messageListVCMock?.jumpToMessageCallCount, 1)
+        XCTAssertEqual(messageListVCMock?.jumpToUnreadMessageCallCount, 0)
+    }
+
     // MARK: - audioQueuePlayerNextAssetURL
 
     func test_audioQueuePlayerNextAssetURL_callsNextAvailableVoiceRecordingProvideWithExpectedInputAndReturnsValue() throws {
