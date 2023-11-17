@@ -3,8 +3,8 @@
 //
 
 import StreamChat
-import StreamChatUI
 import StreamChatTestTools
+import StreamChatUI
 import XCTest
 
 final class BiDirectionalPanGestureRecogniser_Tests: XCTestCase {
