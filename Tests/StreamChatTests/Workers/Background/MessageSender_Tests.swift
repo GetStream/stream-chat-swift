@@ -377,6 +377,9 @@ final class MessageSender_Tests: XCTestCase {
     func test_sender_sendsMessage_whenError_sendsEvent() throws {
         var messageId: MessageId!
 
+        struct MockError: Error {}
+        messageRepository.sendMessageResult = .failure(.failedToSendMessage(MockError()))
+
         try database.writeSynchronously { session in
             let message = try session.createNewMessage(
                 in: self.cid,
@@ -397,12 +400,8 @@ final class MessageSender_Tests: XCTestCase {
             messageId = message.id
         }
 
-        struct MockError: Error {}
-
-        messageRepository.sendMessageResult = .failure(.failedToSendMessage(MockError()))
-
         AssertAsync.willBeTrue(messageRepository.sendMessageIds.contains(where: { $0 == messageId }))
-        AssertAsync.willBeTrue(eventsNotificationCenter.mock_process.input.0.first is NewMessageErrorEvent)
+        AssertAsync.willBeTrue(eventsNotificationCenter.mock_processCalledWithEvents.first is NewMessageErrorEvent)
         XCTAssertCall("sendMessage(with:completion:)", on: messageRepository, times: 1)
     }
 
