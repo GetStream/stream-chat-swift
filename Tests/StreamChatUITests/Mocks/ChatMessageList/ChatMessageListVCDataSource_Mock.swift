@@ -11,6 +11,11 @@ class ChatMessageListVCDataSource_Mock: ChatMessageListVCDataSource {
     var isFirstPageLoaded: Bool {
         mockedIsFirstPageLoaded
     }
+    
+    var mockedIsLastPageLoaded: Bool = true
+    var isLastPageLoaded: Bool {
+        mockedIsLastPageLoaded
+    }
 
     var mockedChannel: ChatChannel?
     func channel(for vc: ChatMessageListVC) -> ChatChannel? {

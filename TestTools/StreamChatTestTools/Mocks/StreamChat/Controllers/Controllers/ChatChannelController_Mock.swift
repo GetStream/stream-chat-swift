@@ -67,6 +67,11 @@ public class ChatChannelController_Mock: ChatChannelController {
         hasLoadedAllNextMessages_mock ?? super.hasLoadedAllNextMessages
     }
 
+    public var hasLoadedAllPreviousMessages_mock: Bool? = true
+    public override var hasLoadedAllPreviousMessages: Bool {
+        hasLoadedAllPreviousMessages_mock ?? super.hasLoadedAllPreviousMessages
+    }
+
     public var markedAsUnread_mock: Bool? = true
     public override var isMarkedAsUnread: Bool {
         markedAsUnread_mock ?? super.isMarkedAsUnread
