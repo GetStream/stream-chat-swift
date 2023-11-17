@@ -34,7 +34,7 @@ They are not suitable for production usage. Therefore, it's important that you u
 
 For additional security, we recommend using tokens with expiry date, and our [token provider](https://getstream.io/chat/docs/ios-swift/tokens_and_authentication/?language=swift#how-to-refresh-expired-tokens) mechanism for refreshing tokens.
 
-### Don't Store Sensitive Data
+### Sensitive Data Storage
 
 Sensitive data like your Stream secret should not be stored locally in your app. 
 
