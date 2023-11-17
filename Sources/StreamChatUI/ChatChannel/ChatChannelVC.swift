@@ -91,7 +91,11 @@ open class ChatChannelVC: _ViewController,
             return false
         }
 
-        return isLastMessageVisibleOrSeen && hasSeenFirstUnreadMessage && channelController.hasLoadedAllNextMessages && !hasMarkedMessageAsUnread
+        guard components.isJumpToUnreadEnabled else {
+            return isLastMessageFullyVisible && isFirstPageLoaded
+        }
+
+        return isLastMessageVisibleOrSeen && hasSeenFirstUnreadMessage && isFirstPageLoaded && !hasMarkedMessageAsUnread
     }
 
     private var isLastMessageVisibleOrSeen: Bool {

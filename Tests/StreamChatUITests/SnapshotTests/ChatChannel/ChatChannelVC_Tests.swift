@@ -760,9 +760,22 @@ final class ChatChannelVC_Tests: XCTestCase {
 
     // MARK: Channel read
 
-    func test_shouldMarkChannelRead_viewIsVisible_remoteDataFetched_lastMessageVisible_hasLoadedAllNextMessages_hasNotMarkedMessageAsUnread_shouldReturnTrue() {
+    func test_shouldMarkChannelRead_jumpToUnreadDisabled_viewIsVisible_remoteDataFetched_lastMessageVisible_hasLoadedAllNextMessages_hasNotMarkedMessageAsUnread_shouldReturnTrue() {
         let mockedListView = makeMockMessageListView()
         vc.isViewVisible = { _ in true }
+        vc.components.isJumpToUnreadEnabled = false
+        channelControllerMock.state_mock = .remoteDataFetched
+        mockedListView.mockIsLastCellFullyVisible = true
+        channelControllerMock.hasLoadedAllNextMessages_mock = true
+        channelControllerMock.markedAsUnread_mock = false
+
+        XCTAssertTrue(vc.shouldMarkChannelRead)
+    }
+
+    func test_shouldMarkChannelRead_jumpToUnreadEnabled_viewIsVisible_remoteDataFetched_lastMessageVisible_hasLoadedAllNextMessages_hasNotMarkedMessageAsUnread_shouldReturnTrue() {
+        let mockedListView = makeMockMessageListView()
+        vc.isViewVisible = { _ in true }
+        vc.components.isJumpToUnreadEnabled = true
         channelControllerMock.state_mock = .remoteDataFetched
         mockedListView.mockIsLastCellFullyVisible = true
         channelControllerMock.hasLoadedAllNextMessages_mock = true
@@ -773,6 +786,18 @@ final class ChatChannelVC_Tests: XCTestCase {
         vc.chatMessageListVC(ChatMessageListVC_Mock(), scrollViewDidScroll: UIScrollView())
 
         XCTAssertTrue(vc.shouldMarkChannelRead)
+    }
+
+    func test_shouldMarkChannelRead_jumpToUnreadEnabled_whenNotSeenLastMessage_whenNotSeenFirstUnreadMessage_shouldReturnFalse() {
+        let mockedListView = makeMockMessageListView()
+        vc.isViewVisible = { _ in true }
+        vc.components.isJumpToUnreadEnabled = true
+        channelControllerMock.state_mock = .remoteDataFetched
+        mockedListView.mockIsLastCellFullyVisible = true
+        channelControllerMock.hasLoadedAllNextMessages_mock = true
+        channelControllerMock.markedAsUnread_mock = false
+
+        XCTAssertFalse(vc.shouldMarkChannelRead)
     }
 
     func test_shouldMarkChannelRead_viewIsNotVisible_remoteDataNotFetched_lastMessageNotVisible_hasNotLoadedAllNextMessages_hasMarkedMessageAsUnread_shouldReturnFalse() {
@@ -789,10 +814,15 @@ final class ChatChannelVC_Tests: XCTestCase {
         XCTAssertFalse(vc.shouldMarkChannelRead)
     }
 
-    func test_shouldMarkChannelRead_otherCombinations_shouldReturnFalse() {
+    func test_shouldMarkChannelRead_whenJumpToUnreadDisabled_otherCombinations_shouldReturnFalse() {
         struct MarkUnreadStatePreconditions {
-            let isViewVisible: Bool, state: DataController.State, isLastCellFullyVisible: Bool, hasLoadedAllNextMessages: Bool, markedAsUnread: Bool
+            let isViewVisible: Bool
+            let state: DataController.State
+            let isLastCellFullyVisible: Bool
+            let hasLoadedAllNextMessages: Bool
+            let markedAsUnread: Bool
         }
+
         let options: [MarkUnreadStatePreconditions] = [
             .init(isViewVisible: false, state: .remoteDataFetched, isLastCellFullyVisible: true, hasLoadedAllNextMessages: true, markedAsUnread: false),
             .init(isViewVisible: true, state: .initialized, isLastCellFullyVisible: true, hasLoadedAllNextMessages: true, markedAsUnread: false),
@@ -806,9 +836,10 @@ final class ChatChannelVC_Tests: XCTestCase {
             let vc = ChatChannelVC()
             vc.isViewVisible = { _ in true }
             vc.components = self.vc.components
+            vc.components.isJumpToUnreadEnabled = true
             vc.channelController = self.vc.channelController
 
-            let mockedListView = makeMockMessageListView()
+            let mockedListView = makeMockMessageListView(channelVC: vc)
             vc.isViewVisible = { _ in option.isViewVisible }
             channelControllerMock.state_mock = option.state
             mockedListView.mockIsLastCellFullyVisible = option.isLastCellFullyVisible
@@ -818,7 +849,42 @@ final class ChatChannelVC_Tests: XCTestCase {
             // Simulate display to update hasSeenLastMessage
             vc.chatMessageListVC(ChatMessageListVC_Mock(), willDisplayMessageAt: IndexPath(item: 0, section: 0))
 
+            if vc.shouldMarkChannelRead {
+                debugPrint(option)
+            }
             XCTAssertFalse(vc.shouldMarkChannelRead)
+        }
+    }
+    
+    func test_shouldMarkChannelRead_whenJumpToUnreadDisabled_whenMarkedAsUnreadTrueOrFalse_shouldReturnTrue() {
+        struct MarkUnreadStatePreconditions {
+            let isViewVisible: Bool
+            let state: DataController.State
+            let isLastCellFullyVisible: Bool
+            let hasLoadedAllNextMessages: Bool
+            let markedAsUnread: Bool
+        }
+
+        let options: [MarkUnreadStatePreconditions] = [
+            .init(isViewVisible: true, state: .remoteDataFetched, isLastCellFullyVisible: true, hasLoadedAllNextMessages: true, markedAsUnread: false),
+            .init(isViewVisible: true, state: .remoteDataFetched, isLastCellFullyVisible: true, hasLoadedAllNextMessages: true, markedAsUnread: true)
+        ]
+
+        options.forEach { option in
+            let vc = ChatChannelVC()
+            vc.isViewVisible = { _ in true }
+            vc.components = self.vc.components
+            vc.components.isJumpToUnreadEnabled = false
+            vc.channelController = self.vc.channelController
+
+            let mockedListView = makeMockMessageListView(channelVC: vc)
+            vc.isViewVisible = { _ in option.isViewVisible }
+            channelControllerMock.state_mock = option.state
+            mockedListView.mockIsLastCellFullyVisible = option.isLastCellFullyVisible
+            channelControllerMock.hasLoadedAllNextMessages_mock = option.hasLoadedAllNextMessages
+            channelControllerMock.markedAsUnread_mock = option.markedAsUnread
+
+            XCTAssertTrue(vc.shouldMarkChannelRead)
         }
     }
 
@@ -1300,7 +1366,8 @@ private extension ChatChannelVC_Tests {
         )
     }
 
-    func makeMockMessageListView() -> ChatMessageListView_Mock {
+    func makeMockMessageListView(channelVC: ChatChannelVC? = nil) -> ChatMessageListView_Mock {
+        let vc = channelVC ?? self.vc!
         vc.messageListVC.components.messageListView = ChatMessageListView_Mock.self
         return vc.messageListVC.listView as! ChatMessageListView_Mock
     }
