@@ -246,14 +246,16 @@ open class ChatChannelVC: _ViewController,
         if let messageId = channelController.channelQuery.pagination?.parameter?.aroundMessageId {
             // Jump to a message when opening the channel.
             jumpToMessage(id: messageId, animated: components.shouldAnimateJumpToMessageWhenOpeningChannel)
-        } else if let replyId = initialReplyId {
-            // Jump to a parent message when opening the channel, and then to the reply.
-            // The delay is necessary so that the animation does not happen to quickly.
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                self.jumpToMessage(
-                    id: replyId,
-                    animated: self.components.shouldAnimateJumpToMessageWhenOpeningChannel
-                )
+
+            if let replyId = initialReplyId {
+                // Jump to a parent message when opening the channel, and then to the reply.
+                // The delay is necessary so that the animation does not happen to quickly.
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    self.jumpToMessage(
+                        id: replyId,
+                        animated: self.components.shouldAnimateJumpToMessageWhenOpeningChannel
+                    )
+                }
             }
         } else if components.shouldJumpToUnreadWhenOpeningChannel {
             // Jump to the unread message.
