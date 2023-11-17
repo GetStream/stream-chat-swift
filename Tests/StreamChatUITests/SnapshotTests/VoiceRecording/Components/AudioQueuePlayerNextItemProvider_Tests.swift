@@ -4,7 +4,7 @@
 
 @testable import StreamChat
 @testable import StreamChatUI
-import StreamSwiftTestHelpers
+import StreamChatTestTools
 import XCTest
 
 final class AudioQueuePlayerNextItemProvider_Tests: XCTestCase {

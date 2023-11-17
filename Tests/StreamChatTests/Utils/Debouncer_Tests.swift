@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 @testable import StreamChatTestTools
-import StreamSwiftTestHelpers
+import StreamChatTestTools
 import XCTest
 
 final class Debouncer_Tests: XCTestCase {

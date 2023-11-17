@@ -3,6 +3,7 @@
 //
 
 @testable import StreamChat
+import StreamChatTestTools
 import XCTest
 
 final class AnyAttachmentUpdater_Tests: XCTestCase {

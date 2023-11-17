@@ -3,8 +3,16 @@
 //
 
 import Foundation
-@_exported import StreamSwiftTestHelpers
 import XCTest
+
+/// The default timeout value used by the `willBe___` family of assertions.
+public let defaultTimeout: TimeInterval = TestRunnerEnvironment.isCI || TestRunnerEnvironment.isStressTest ? 10 : 1
+
+/// The default timeout value used by the `stays___` family of assertions.
+public let defaultTimeoutForInversedExpecations: TimeInterval = TestRunnerEnvironment.isCI || TestRunnerEnvironment.isStressTest ? 1 : 0.1
+
+/// How big is the period between expression evaluations.
+public let evaluationPeriod: TimeInterval = 0.00001
 
 extension Bundle {
 
