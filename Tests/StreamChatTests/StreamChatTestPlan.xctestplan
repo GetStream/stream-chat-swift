@@ -43,6 +43,7 @@
         "MessageSender_Tests\/test_sender_doesNotRetainItself()",
         "MessageSender_Tests\/test_sender_sendsMessage_withBothNotUploadableAttachmentAndUploadedAttachments()",
         "MessageSender_Tests\/test_sender_sendsMessage_withUploadedAttachments()",
+        "MessageSender_Tests\/test_sender_sendsMessage_whenError_sendsEvent()",
         "MessageUpdater_Tests\/test_flagMessage_happyPath()",
         "MessageUpdater_Tests\/test_unpinMessage_propogatesMessageEditingError_ifLocalStateIsInvalidForUnpinning()",
         "MessageUpdater_Tests\/test_deleteBouncedMessage_isDeletedLocally_whenLocalStateIsSendingFailed()",

@@ -64,8 +64,7 @@ open class JumpToUnreadMessagesButton: _Button, ThemeProvider {
     }
 
     open func addTarget(_ target: Any?, action: Selector) {
-        // TODO: https://github.com/GetStream/ios-issues-tracking/issues/529
-        // addTarget(target, action: action, for: .touchUpInside)
+        addTarget(target, action: action, for: .touchUpInside)
     }
 
     open func addDiscardButtonTarget(_ target: Any?, action: Selector) {

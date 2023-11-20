@@ -91,7 +91,11 @@ open class ChatChannelVC: _ViewController,
             return false
         }
 
-        return isLastMessageVisibleOrSeen && hasSeenFirstUnreadMessage && channelController.hasLoadedAllNextMessages && !hasMarkedMessageAsUnread
+        guard components.isJumpToUnreadEnabled else {
+            return isLastMessageFullyVisible && isFirstPageLoaded
+        }
+
+        return isLastMessageVisibleOrSeen && hasSeenFirstUnreadMessage && isFirstPageLoaded && !hasMarkedMessageAsUnread
     }
 
     private var isLastMessageVisibleOrSeen: Bool {
@@ -103,7 +107,7 @@ open class ChatChannelVC: _ViewController,
         InvertedScrollViewPaginationHandler.make(scrollView: messageListVC.listView)
     }()
 
-    var throttler: Throttler = Throttler(interval: 3, broadcastLatestEvent: true)
+    var throttler: Throttler = Throttler(interval: 3, queue: .main)
 
     /// Determines if a messaged had been marked as unread in the current session
     private var hasMarkedMessageAsUnread: Bool {
@@ -119,8 +123,8 @@ open class ChatChannelVC: _ViewController,
     /// The id of the first unread message
     private var firstUnreadMessageId: MessageId?
 
-    /// In case the given  around message id is from a thread, we need to jump to the parent message and then the reply.
-    private var initialReplyId: MessageId?
+    /// In case the given around message id is from a thread, we need to jump to the parent message and then the reply.
+    internal var initialReplyId: MessageId?
 
     override open func setUp() {
         super.setUp()
@@ -241,35 +245,36 @@ open class ChatChannelVC: _ViewController,
         setChannelControllerToComposerIfNeeded(cid: channelController.cid)
         messageComposerVC.updateContent()
 
-        if let messageId = channelController.channelQuery.pagination?.parameter?.aroundMessageId {
-            jumpToMessage(id: messageId, animated: components.shouldAnimateJumpToMessageWhenOpeningChannel)
-        }
-
-        if let replyId = initialReplyId {
-            // The delay is necessary so that the animation does not happen to quickly.
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                self.jumpToMessage(
-                    id: replyId,
-                    animated: self.components.shouldAnimateJumpToMessageWhenOpeningChannel
-                )
-            }
-        }
         updateAllUnreadMessagesRelatedComponents()
+
+        if let messageId = channelController.channelQuery.pagination?.parameter?.aroundMessageId {
+            // Jump to a message when opening the channel.
+            jumpToMessage(id: messageId, animated: components.shouldAnimateJumpToMessageWhenOpeningChannel)
+
+            if let replyId = initialReplyId {
+                // Jump to a parent message when opening the channel, and then to the reply.
+                // The delay is necessary so that the animation does not happen to quickly.
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    self.jumpToMessage(
+                        id: replyId,
+                        animated: self.components.shouldAnimateJumpToMessageWhenOpeningChannel
+                    )
+                }
+            }
+        } else if components.shouldJumpToUnreadWhenOpeningChannel {
+            // Jump to the unread message.
+            messageListVC.jumpToUnreadMessage(animated: components.shouldAnimateJumpToMessageWhenOpeningChannel)
+        }
     }
 
     // MARK: - Actions
 
     /// Marks the channel read and updates the UI optimistically.
     public func markRead() {
-        throttler.throttle { [weak self] in
-            self?.channelController.markRead { error in
-                if error == nil {
-                    self?.hasSeenLastMessage = false
-                }
-                self?.updateJumpToUnreadRelatedComponents()
-                self?.updateScrollToBottomButtonCount()
-            }
-        }
+        channelController.markRead()
+        hasSeenLastMessage = false
+        updateJumpToUnreadRelatedComponents()
+        updateScrollToBottomButtonCount()
     }
 
     /// Jump to a given message.
@@ -339,7 +344,10 @@ open class ChatChannelVC: _ViewController,
             return
         }
 
-        channelController.loadPageAroundMessageId(messageId, completion: completion)
+        channelController.loadPageAroundMessageId(messageId) { [weak self] error in
+            self?.updateJumpToUnreadRelatedComponents()
+            completion(error)
+        }
     }
 
     open func chatMessageListVCShouldLoadFirstPage(
@@ -408,7 +416,9 @@ open class ChatChannelVC: _ViewController,
             hasSeenLastMessage = true
         }
         if shouldMarkChannelRead {
-            markRead()
+            throttler.execute { [weak self] in
+                self?.markRead()
+            }
         }
     }
 
@@ -468,7 +478,9 @@ open class ChatChannelVC: _ViewController,
 
             self.updateJumpToUnreadRelatedComponents()
             if self.shouldMarkChannelRead {
-                self.markRead()
+                self.throttler.execute {
+                    self.markRead()
+                }
             } else if !self.hasSeenFirstUnreadMessage {
                 self.updateUnreadMessagesBannerRelatedComponents()
             }
@@ -480,6 +492,7 @@ open class ChatChannelVC: _ViewController,
         didUpdateChannel channel: EntityChange<ChatChannel>
     ) {
         updateScrollToBottomButtonCount()
+        updateJumpToUnreadRelatedComponents()
 
         if headerView.channelController == nil, let cid = channelController.cid {
             headerView.channelController = client.channelController(for: cid)
@@ -575,7 +588,10 @@ private extension ChatChannelVC {
     }
 
     func updateJumpToUnreadRelatedComponents() {
-        messageListVC.updateJumpToUnreadMessageId(channelController.firstUnreadMessageId)
+        messageListVC.updateJumpToUnreadMessageId(
+            channelController.firstUnreadMessageId,
+            lastReadMessageId: channelController.lastReadMessageId
+        )
         messageListVC.updateJumpToUnreadButtonVisibility()
     }
 
