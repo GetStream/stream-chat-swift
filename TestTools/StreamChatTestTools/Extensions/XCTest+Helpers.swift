@@ -4,7 +4,6 @@
 
 import Foundation
 import XCTest
-import Difference
 
 /// Asserts diff between the expected and received values
 public func XCTAssertEqual<T: Equatable>(_ expected: T,

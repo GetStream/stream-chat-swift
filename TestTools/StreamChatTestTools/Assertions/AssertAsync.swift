@@ -3,7 +3,6 @@
 //
 
 import XCTest
-import Difference
 
 // MARK: - Assertions
 

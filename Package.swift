@@ -27,10 +27,6 @@ let package = Package(
             targets: ["StreamChatTestMockServer"]
         ),
     ],
-    dependencies: [
-        .package(name: "Difference", url: "https://github.com/krzysztofzablocki/Difference.git", .exact("1.0.1")),
-        .package(name: "Swifter", url: "https://github.com/httpswift/swifter", .exact("1.5.0"))
-    ],
     targets: [
         .target(
             name: "StreamChat",
@@ -45,20 +41,14 @@ let package = Package(
         ),
         .target(
             name: "StreamChatTestTools",
-            dependencies: [
-                "StreamChat",
-                .product(name: "Difference", package: "Difference")
-            ],
+            dependencies: ["StreamChat"],
             path: "TestTools/StreamChatTestTools",
             exclude: ["Info.plist"],
             resources: [.process("Fixtures")]
         ),
         .target(
             name: "StreamChatTestMockServer",
-            dependencies: [
-                "StreamChat",
-                .product(name: "Swifter", package: "Swifter")
-            ],
+            dependencies: ["StreamChat"],
             path: "TestTools/StreamChatTestMockServer",
             exclude: ["Info.plist"],
             resources: [.process("Fixtures")]
