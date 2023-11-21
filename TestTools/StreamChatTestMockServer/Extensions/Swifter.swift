@@ -2,7 +2,6 @@
 // Copyright © 2023 Stream.io Inc. All rights reserved.
 //
 
-import Swifter
 import Foundation
 
 public extension HttpServer {

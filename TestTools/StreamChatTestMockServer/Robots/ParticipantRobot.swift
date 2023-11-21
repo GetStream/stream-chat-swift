@@ -3,7 +3,6 @@
 //
 
 @testable import StreamChat
-import Swifter
 import XCTest
 
 public class ParticipantRobot {

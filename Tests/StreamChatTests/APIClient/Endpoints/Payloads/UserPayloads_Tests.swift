@@ -151,10 +151,7 @@ final class UserUpdateResponse_Tests: XCTestCase {
     }
 
     func test_currentUserUpdateResponseJSON_whenMissingUser_failsSerialization() {
-        let currentUserUpdateResponseJSON = XCTestCase.mockData(
-            fromFile: "UserUpdateResponse+MissingUser",
-            bundle: .testTools
-        )
+        let currentUserUpdateResponseJSON = XCTestCase.mockData(fromJSONFile: "UserUpdateResponse+MissingUser")
         XCTAssertThrowsError(try JSONDecoder.default.decode(
             UserUpdateResponse.self, from: currentUserUpdateResponseJSON
         ))
