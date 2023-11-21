@@ -120,22 +120,12 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// This is because we cannot calculate the accurate value until we have all he messages in memory.
     /// Paginate to get the most accurate value.
     public var firstUnreadMessageId: MessageId? {
-        getFirstUnreadMessageId()
+        getFirstUnreadMessageId(for: channel)
     }
 
     /// The id of the message which the current user last read.
     public var lastReadMessageId: MessageId? {
-        guard let currentUserRead = channel?.reads.first(where: {
-            $0.user.id == client.currentUserId
-        }) else {
-            return nil
-        }
-
-        guard let lastReadMessageId = currentUserRead.lastReadMessageId else {
-            return nil
-        }
-
-        return lastReadMessageId
+        channel?.lastReadMessageId(userId: client.currentUserId)
     }
 
     /// A boolean indicating if the user marked the channel as unread in the current session
@@ -909,22 +899,30 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// - Parameters:
     ///   - messageId: The id of the first message id that will be marked as unread.
     ///   - completion: The completion will be called on a **callbackQueue** when the network request is finished.
-    public func markUnread(from messageId: MessageId, completion: ((Error?) -> Void)? = nil) {
+    public func markUnread(from messageId: MessageId, completion: ((Result<ChatChannel, Error>) -> Void)? = nil) {
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let channel = channel else {
-            channelModificationFailed(completion)
+            let error = ClientError.ChannelNotCreatedYet()
+            log.error(error.localizedDescription)
+            callback {
+                completion?(.failure(error))
+            }
             return
         }
 
         /// Read events are not enabled for this channel
         guard channel.canReceiveReadEvents == true else {
-            channelFeatureDisabled(feature: "read events", completion: completion)
+            let error = ClientError.ChannelFeatureDisabled("Channel feature: read events is disabled for this channel.")
+            log.error(error.localizedDescription)
+            callback {
+                completion?(.failure(error))
+            }
             return
         }
 
         guard !markingRead, let currentUserId = client.currentUserId else {
             callback {
-                completion?(nil)
+                completion?(.success(channel))
             }
             return
         }
@@ -936,13 +934,13 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             userId: currentUserId,
             from: messageId,
             lastReadMessageId: getLastReadMessageId(firstUnreadMessageId: messageId)
-        ) { [weak self] error in
+        ) { [weak self] result in
             self?.callback {
-                if error == nil {
+                if case .success = result {
                     self?.isMarkedAsUnread = true
                 }
                 self?.markingRead = false
-                completion?(error)
+                completion?(result)
             }
         }
     }
@@ -1217,6 +1215,60 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         }
         
         updater.deleteImage(in: cid, url: url, completion: completion)
+    }
+
+    public func getFirstUnreadMessageId(for channel: ChatChannel?) -> MessageId? {
+        // Return the oldest regular message if all messages are unread in the message list.
+        let oldestRegularMessage: () -> MessageId? = { [weak self] in
+            guard self?.hasLoadedAllPreviousMessages == true else {
+                return nil
+            }
+            return self?.messages.last(where: { $0.type == .regular || $0.type == .reply })?.id
+        }
+
+        guard let currentUserRead = channel?.reads.first(where: {
+            $0.user.id == client.currentUserId
+        }) else {
+            return oldestRegularMessage()
+        }
+
+        // If there are no unreads, then return nil.
+        guard currentUserRead.unreadMessagesCount > 0 else {
+            return nil
+        }
+
+        // If there unreads but no `lastReadMessageId`, it means the whole message list is unread.
+        // So the top message (oldest one) is the first unread message id.
+        guard let lastReadMessageId = currentUserRead.lastReadMessageId else {
+            return oldestRegularMessage()
+        }
+
+        guard lastReadMessageId != messages.first?.id else {
+            return nil
+        }
+
+        guard let lastReadIndex = messages.firstIndex(where: { $0.id == lastReadMessageId }), lastReadIndex != 0 else {
+            // If there is a lastReadMessageId, and we loaded all messages, but can't find firstUnreadMessageId,
+            // then it means the lastReadMessageId is not reachable because the channel was truncated or hidden.
+            // So we return the oldest regular message already fetched.
+            if hasLoadedAllPreviousMessages {
+                return oldestRegularMessage()
+            }
+
+            return nil
+        }
+
+        let lookUpStartIndex = messages.index(before: lastReadIndex)
+
+        var id: MessageId?
+        for index in (0...lookUpStartIndex).reversed() {
+            let message = message(at: index)
+            guard message?.author.id != client.currentUserId, message?.deletedAt == nil else { continue }
+            id = message?.id
+            break
+        }
+
+        return id
     }
 
     // MARK: - Internal
@@ -1507,60 +1559,6 @@ private extension ChatChannelController {
         return messageId(at: newLastReadMessageIndex)
     }
 
-    private func getFirstUnreadMessageId() -> MessageId? {
-        // Return the oldest regular message if all messages are unread in the message list.
-        let oldestRegularMessage: () -> MessageId? = { [weak self] in
-            guard self?.hasLoadedAllPreviousMessages == true else {
-                return nil
-            }
-            return self?.messages.last(where: { $0.type == .regular || $0.type == .reply })?.id
-        }
-
-        guard let currentUserRead = channel?.reads.first(where: {
-            $0.user.id == client.currentUserId
-        }) else {
-            return oldestRegularMessage()
-        }
-
-        // If there are no unreads, then return nil.
-        guard currentUserRead.unreadMessagesCount > 0 else {
-            return nil
-        }
-
-        // If there unreads but no `lastReadMessageId`, it means the whole message list is unread.
-        // So the top message (oldest one) is the first unread message id.
-        guard let lastReadMessageId = currentUserRead.lastReadMessageId else {
-            return oldestRegularMessage()
-        }
-
-        guard lastReadMessageId != messages.first?.id else {
-            return nil
-        }
-
-        guard let lastReadIndex = messages.firstIndex(where: { $0.id == lastReadMessageId }), lastReadIndex != 0 else {
-            // If there is a lastReadMessageId, and we loaded all messages, but can't find firstUnreadMessageId,
-            // then it means the lastReadMessageId is not reachable because the channel was truncated or hidden.
-            // So we return the oldest regular message already fetched.
-            if hasLoadedAllPreviousMessages {
-                return oldestRegularMessage()
-            }
-
-            return nil
-        }
-
-        let lookUpStartIndex = messages.index(before: lastReadIndex)
-
-        var id: MessageId?
-        for index in (0...lookUpStartIndex).reversed() {
-            let message = message(at: index)
-            guard message?.author.id != client.currentUserId, message?.deletedAt == nil else { continue }
-            id = message?.id
-            break
-        }
-
-        return id
-    }
-
     private func message(at index: Int) -> ChatMessage? {
         if !messages.indices.contains(index) {
             return nil
@@ -1676,5 +1674,21 @@ public extension ChatChannelController {
         uploadAttachment(localFileURL: localFileURL, type: .image, progress: progress) { result in
             completion(result.map(\.remoteURL))
         }
+    }
+}
+
+public extension ChatChannel {
+    func lastReadMessageId(userId: UserId?) -> MessageId? {
+        guard let currentUserRead = reads.first(where: {
+            $0.user.id == userId
+        }) else {
+            return nil
+        }
+
+        guard let lastReadMessageId = currentUserRead.lastReadMessageId else {
+            return nil
+        }
+
+        return lastReadMessageId
     }
 }

@@ -391,8 +391,10 @@ open class ChatChannelVC: _ViewController,
             }
         case is MarkUnreadActionItem:
             dismiss(animated: true) { [weak self] in
-                self?.channelController.markUnread(from: message.id) { _ in
-                    self?.updateAllUnreadMessagesRelatedComponents()
+                self?.channelController.markUnread(from: message.id) { result in
+                    if case let .success(channel) = result {
+                        self?.updateAllUnreadMessagesRelatedComponents(channel: channel)
+                    }
                 }
             }
         default:
@@ -576,27 +578,32 @@ private extension ChatChannelVC {
         )
     }
 
-    func updateAllUnreadMessagesRelatedComponents() {
-        updateScrollToBottomButtonCount()
-        updateJumpToUnreadRelatedComponents()
-        updateUnreadMessagesBannerRelatedComponents()
+    func updateAllUnreadMessagesRelatedComponents(channel: ChatChannel? = nil) {
+        let firstUnreadMessageId = channelController.getFirstUnreadMessageId(for: channel)
+        updateScrollToBottomButtonCount(channel: channel)
+        updateJumpToUnreadRelatedComponents(channel: channel)
+        updateUnreadMessagesBannerRelatedComponents(channel: channel)
     }
 
-    func updateScrollToBottomButtonCount() {
-        let channelUnreadCount = channelController.channel?.unreadCount ?? .noUnread
+    func updateScrollToBottomButtonCount(channel: ChatChannel? = nil) {
+        let channelUnreadCount = (channel ?? channelController.channel)?.unreadCount ?? .noUnread
         messageListVC.scrollToBottomButton.content = channelUnreadCount
     }
 
-    func updateJumpToUnreadRelatedComponents() {
+    func updateJumpToUnreadRelatedComponents(channel: ChatChannel? = nil) {
+        let firstUnreadMessageId = channelController.getFirstUnreadMessageId(for: channel) ?? channelController.firstUnreadMessageId
+        let lastReadMessageId = channel?.lastReadMessageId(userId: client.currentUserId) ?? channelController.lastReadMessageId
+
         messageListVC.updateJumpToUnreadMessageId(
-            channelController.firstUnreadMessageId,
-            lastReadMessageId: channelController.lastReadMessageId
+            firstUnreadMessageId,
+            lastReadMessageId: lastReadMessageId
         )
         messageListVC.updateJumpToUnreadButtonVisibility()
     }
 
-    func updateUnreadMessagesBannerRelatedComponents() {
-        firstUnreadMessageId = channelController.firstUnreadMessageId
+    func updateUnreadMessagesBannerRelatedComponents(channel: ChatChannel? = nil) {
+        let firstUnreadMessageId = channelController.getFirstUnreadMessageId(for: channel) ?? channelController.firstUnreadMessageId
+        self.firstUnreadMessageId = firstUnreadMessageId
         messageListVC.updateUnreadMessagesSeparator(at: firstUnreadMessageId)
     }
 }
