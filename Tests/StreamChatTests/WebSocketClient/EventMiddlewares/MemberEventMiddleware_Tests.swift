@@ -151,7 +151,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         XCTAssertEqual(memberListQueryDTO?.members.map(\.user.id).sorted(), [existingMember.user!.id, newMemberId].sorted())
     }
 
-    func test_memberAddedEvent_marksChannelAsRead() throws {
+    func test_memberAddedEvent_doesNotMarkChannelAsRead() throws {
         let mockSession = DatabaseSession_Mock(underlyingSession: database.viewContext)
 
         // GIVEN
@@ -175,9 +175,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         _ = middleware.handle(event: event, session: mockSession)
 
         // THEN
-        XCTAssertEqual(mockSession.markChannelAsReadParams?.cid, event.cid)
-        XCTAssertEqual(mockSession.markChannelAsReadParams?.userId, event.member.userId)
-        XCTAssertEqual(mockSession.markChannelAsReadParams?.at, event.createdAt)
+        XCTAssertNil(mockSession.markChannelAsReadParams?.cid)
     }
 
     // MARK: - MemberRemovedEvent
