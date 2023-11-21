@@ -16,6 +16,8 @@ excluded:
   - Pods
   - .build
   - spm_cache
+  - vendor/bundle
+  - .ruby-lsp
 
 disabled_rules:
   - large_tuple

@@ -5,7 +5,6 @@
 import Foundation
 
 @testable import StreamChat
-import Swifter
 import XCTest
 
 // MARK: - Config
