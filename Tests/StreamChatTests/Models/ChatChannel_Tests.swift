@@ -285,6 +285,36 @@ final class ChatChannel_Tests: XCTestCase {
         XCTAssertEqual(channelWithoutCapability.isSlowMode, false)
     }
 
+    func test_lastReadMessageId_readsDontContainUser() {
+        let userId: UserId = "current"
+        let channel = ChatChannel.mock(cid: .unique, reads: [
+            .init(lastReadAt: Date(), lastReadMessageId: .unique, unreadMessagesCount: 3, user: .mock(id: "other"))
+        ])
+
+        XCTAssertNil(channel.lastReadMessageId(userId: userId))
+    }
+
+    func test_lastReadMessageId_userReadDoesNotHaveLastRead() {
+        let userId: UserId = "current"
+        let channel = ChatChannel.mock(cid: .unique, reads: [
+            .init(lastReadAt: Date(), lastReadMessageId: nil, unreadMessagesCount: 3, user: .mock(id: userId)),
+            .init(lastReadAt: Date(), lastReadMessageId: .unique, unreadMessagesCount: 3, user: .mock(id: "other"))
+        ])
+
+        XCTAssertNil(channel.lastReadMessageId(userId: userId))
+    }
+
+    func test_lastReadMessageId_userReadHasLastRead() {
+        let userId: UserId = "current"
+        let lastReadId = MessageId.unique
+        let channel = ChatChannel.mock(cid: .unique, reads: [
+            .init(lastReadAt: Date(), lastReadMessageId: lastReadId, unreadMessagesCount: 3, user: .mock(id: userId)),
+            .init(lastReadAt: Date(), lastReadMessageId: .unique, unreadMessagesCount: 3, user: .mock(id: "other"))
+        ])
+
+        XCTAssertEqual(channel.lastReadMessageId(userId: userId), lastReadId)
+    }
+
     private func setupChannel(withCapabilities capabilities: Set<ChannelCapability>) -> ChatChannel {
         .mock(
             cid: .unique,

@@ -125,7 +125,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
     /// The id of the message which the current user last read.
     public var lastReadMessageId: MessageId? {
-        channel?.lastReadMessageId(userId: client.currentUserId)
+        client.currentUserId.flatMap { channel?.lastReadMessageId(userId: $0) }
     }
 
     /// A boolean indicating if the user marked the channel as unread in the current session
@@ -1678,7 +1678,7 @@ public extension ChatChannelController {
 }
 
 public extension ChatChannel {
-    func lastReadMessageId(userId: UserId?) -> MessageId? {
+    func lastReadMessageId(userId: UserId) -> MessageId? {
         guard let currentUserRead = reads.first(where: {
             $0.user.id == userId
         }) else {
