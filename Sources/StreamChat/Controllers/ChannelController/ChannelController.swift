@@ -120,7 +120,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// This is because we cannot calculate the accurate value until we have all he messages in memory.
     /// Paginate to get the most accurate value.
     public var firstUnreadMessageId: MessageId? {
-        getFirstUnreadMessageId(for: channel)
+        channel.flatMap { getFirstUnreadMessageId(for: $0) }
     }
 
     /// The id of the message which the current user last read.
@@ -1217,7 +1217,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         updater.deleteImage(in: cid, url: url, completion: completion)
     }
 
-    public func getFirstUnreadMessageId(for channel: ChatChannel?) -> MessageId? {
+    public func getFirstUnreadMessageId(for channel: ChatChannel) -> MessageId? {
         // Return the oldest regular message if all messages are unread in the message list.
         let oldestRegularMessage: () -> MessageId? = { [weak self] in
             guard self?.hasLoadedAllPreviousMessages == true else {
@@ -1226,7 +1226,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return self?.messages.last(where: { $0.type == .regular || $0.type == .reply })?.id
         }
 
-        guard let currentUserRead = channel?.reads.first(where: {
+        guard let currentUserRead = channel.reads.first(where: {
             $0.user.id == client.currentUserId
         }) else {
             return oldestRegularMessage()

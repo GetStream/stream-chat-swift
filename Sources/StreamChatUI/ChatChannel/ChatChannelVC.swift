@@ -590,7 +590,7 @@ private extension ChatChannelVC {
     }
 
     func updateJumpToUnreadRelatedComponents(channel: ChatChannel? = nil) {
-        let firstUnreadMessageId = channelController.getFirstUnreadMessageId(for: channel) ?? channelController.firstUnreadMessageId
+        let firstUnreadMessageId = channel.flatMap { channelController.getFirstUnreadMessageId(for: $0) } ?? channelController.firstUnreadMessageId
         let lastReadMessageId = client.currentUserId.flatMap { channel?.lastReadMessageId(userId: $0) } ?? channelController.lastReadMessageId
 
         messageListVC.updateJumpToUnreadMessageId(
@@ -601,7 +601,7 @@ private extension ChatChannelVC {
     }
 
     func updateUnreadMessagesBannerRelatedComponents(channel: ChatChannel? = nil) {
-        let firstUnreadMessageId = channelController.getFirstUnreadMessageId(for: channel) ?? channelController.firstUnreadMessageId
+        let firstUnreadMessageId = channel.flatMap { channelController.getFirstUnreadMessageId(for: $0) } ?? channelController.firstUnreadMessageId
         self.firstUnreadMessageId = firstUnreadMessageId
         messageListVC.updateUnreadMessagesSeparator(at: firstUnreadMessageId)
     }
