@@ -3,8 +3,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChatUI
 ### 🐞 Fixed
 - Fix skip slow mode capability not handled [#2904](https://github.com/GetStream/stream-chat-swift/pull/2904)
+
+### 🔄 Changed
+- `ChannelController.markUnread`'s `completion`'s argument is now a `(Result<ChatChannel, Error>` instead of `Error?`
 
 # [4.43.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.43.0)
 _November 17, 2023_
