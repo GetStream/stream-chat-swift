@@ -13,11 +13,43 @@ final class ScrollViewPaginationHandler_Tests: XCTestCase {
         scrollView.contentSize.height = 100
 
         let sut = ScrollViewPaginationHandler(scrollView: scrollView)
-        sut.onNewBottomPage = {
+        sut.onNewBottomPage = { _ in
             exp.fulfill()
         }
 
         scrollView.contentOffset = .init(x: 0, y: 100)
+
+        waitForExpectations(timeout: defaultTimeout)
+    }
+
+    func test_whenScrollViewContentOffsetReachesContentSizeHeightMultipleTimes_onNewBottomPageIsCalledOnce() {
+        let exp = expectation(description: "on new bottom page closure is called")
+        let scrollView = MockScrollView()
+        scrollView.contentSize.height = 100
+
+        let sut = ScrollViewPaginationHandler(scrollView: scrollView)
+        var receivedCompletion: (() -> Void)?
+        sut.onNewBottomPage = { completion in
+            receivedCompletion = completion
+            exp.fulfill()
+        }
+
+        scrollView.contentOffset = .init(x: 0, y: 100)
+        scrollView.contentOffset = .init(x: 0, y: 150)
+        scrollView.contentOffset = .init(x: 0, y: 200)
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        // We complete first new page request
+        receivedCompletion?()
+
+        let exp2 = expectation(description: "on new top page closure can be called again")
+
+        sut.onNewBottomPage = { _ in
+            exp2.fulfill()
+        }
+
+        scrollView.contentOffset = .init(x: 0, y: 250)
 
         waitForExpectations(timeout: defaultTimeout)
     }
@@ -29,7 +61,7 @@ final class ScrollViewPaginationHandler_Tests: XCTestCase {
 
         let sut = ScrollViewPaginationHandler(scrollView: scrollView)
         sut.bottomThreshold = 100
-        sut.onNewBottomPage = {
+        sut.onNewBottomPage = { _ in
             exp.fulfill()
         }
 
@@ -46,7 +78,7 @@ final class ScrollViewPaginationHandler_Tests: XCTestCase {
 
         let sut = ScrollViewPaginationHandler(scrollView: scrollView)
         sut.bottomThreshold = 100
-        sut.onNewBottomPage = {
+        sut.onNewBottomPage = { _ in
             exp.fulfill()
         }
 
@@ -63,7 +95,7 @@ final class ScrollViewPaginationHandler_Tests: XCTestCase {
 
         let sut = ScrollViewPaginationHandler(scrollView: scrollView)
         sut.bottomThreshold = 100
-        sut.onNewBottomPage = {
+        sut.onNewBottomPage = { _ in
             exp.fulfill()
         }
 
@@ -78,7 +110,7 @@ final class ScrollViewPaginationHandler_Tests: XCTestCase {
         scrollView.contentSize = .init(width: 50, height: 50)
 
         let sut = ScrollViewPaginationHandler(scrollView: scrollView)
-        sut.onNewTopPage = {
+        sut.onNewTopPage = { _ in
             exp.fulfill()
         }
 
@@ -94,7 +126,7 @@ final class ScrollViewPaginationHandler_Tests: XCTestCase {
 
         let sut = ScrollViewPaginationHandler(scrollView: scrollView)
         sut.topThreshold = 100
-        sut.onNewTopPage = {
+        sut.onNewTopPage = { _ in
             exp.fulfill()
         }
 
@@ -102,6 +134,42 @@ final class ScrollViewPaginationHandler_Tests: XCTestCase {
         scrollView.contentOffset = .init(x: 0, y: 120)
         
         scrollView.contentOffset = .init(x: 0, y: 90)
+
+        waitForExpectations(timeout: defaultTimeout)
+    }
+
+    func test_whenScrollViewContentOffsetWithinTopThreshold_whenIsScrollingTopMultipleTimes_onNewTopPageIsCalledOnce() {
+        let exp = expectation(description: "on new top page closure is called once")
+        let scrollView = MockScrollView()
+        scrollView.contentSize.height = 1000
+
+        let sut = ScrollViewPaginationHandler(scrollView: scrollView)
+        sut.topThreshold = 100
+        var receivedCompletion: (() -> Void)?
+        sut.onNewTopPage = { completion in
+            receivedCompletion = completion
+            exp.fulfill()
+        }
+
+        // Simulate previous position (Scrolling top)
+        scrollView.contentOffset = .init(x: 0, y: 120)
+
+        scrollView.contentOffset = .init(x: 0, y: 90)
+        scrollView.contentOffset = .init(x: 0, y: 80)
+        scrollView.contentOffset = .init(x: 0, y: 70)
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        // We complete first new page request
+        receivedCompletion?()
+
+        let exp2 = expectation(description: "on new top page closure can be called again")
+
+        sut.onNewTopPage = { _ in
+            exp2.fulfill()
+        }
+
+        scrollView.contentOffset = .init(x: 0, y: 60)
 
         waitForExpectations(timeout: defaultTimeout)
     }
@@ -114,7 +182,7 @@ final class ScrollViewPaginationHandler_Tests: XCTestCase {
 
         let sut = ScrollViewPaginationHandler(scrollView: scrollView)
         sut.topThreshold = 100
-        sut.onNewTopPage = {
+        sut.onNewTopPage = { _ in
             exp.fulfill()
         }
 
@@ -134,7 +202,7 @@ final class ScrollViewPaginationHandler_Tests: XCTestCase {
 
         let sut = ScrollViewPaginationHandler(scrollView: scrollView)
         sut.topThreshold = 100
-        sut.onNewTopPage = {
+        sut.onNewTopPage = { _ in
             exp.fulfill()
         }
 
@@ -153,7 +221,7 @@ final class ScrollViewPaginationHandler_Tests: XCTestCase {
         scrollView.contentSize = .init(width: 0, height: 0)
 
         let sut = ScrollViewPaginationHandler(scrollView: scrollView)
-        sut.onNewTopPage = {
+        sut.onNewTopPage = { _ in
             exp.fulfill()
         }
 
@@ -170,7 +238,7 @@ final class ScrollViewPaginationHandler_Tests: XCTestCase {
         scrollView.isTrackingOrDeceleratingMocked = false
 
         let sut = ScrollViewPaginationHandler(scrollView: scrollView)
-        sut.onNewBottomPage = {
+        sut.onNewBottomPage = { _ in
             exp.fulfill()
         }
 
@@ -187,7 +255,7 @@ final class ScrollViewPaginationHandler_Tests: XCTestCase {
         scrollView.isTrackingOrDeceleratingMocked = false
 
         let sut = ScrollViewPaginationHandler(scrollView: scrollView)
-        sut.onNewTopPage = {
+        sut.onNewTopPage = { _ in
             exp.fulfill()
         }
 
@@ -204,7 +272,7 @@ final class ScrollViewPaginationHandler_Tests: XCTestCase {
         scrollView.contentSize.height = 100
 
         let sut = ScrollViewPaginationHandler(scrollView: scrollView)
-        sut.onNewBottomPage = {
+        sut.onNewBottomPage = { _ in
             exp.fulfill()
         }
 

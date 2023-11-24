@@ -20,11 +20,11 @@ final class InvertedScrollViewPaginationHandler_Tests: XCTestCase {
         let scrollViewPaginationHandler = ScrollViewPaginationHandler(scrollView: UIScrollView())
         let sut = InvertedScrollViewPaginationHandler(scrollViewPaginationHandler: scrollViewPaginationHandler)
 
-        sut.onNewTopPage = {
+        sut.onNewTopPage = { _ in
             exp.fulfill()
         }
 
-        scrollViewPaginationHandler.onNewBottomPage?()
+        scrollViewPaginationHandler.onNewBottomPage? {}
 
         waitForExpectations(timeout: defaultTimeout)
     }
@@ -42,11 +42,11 @@ final class InvertedScrollViewPaginationHandler_Tests: XCTestCase {
         let scrollViewPaginationHandler = ScrollViewPaginationHandler(scrollView: UIScrollView())
         let sut = InvertedScrollViewPaginationHandler(scrollViewPaginationHandler: scrollViewPaginationHandler)
 
-        sut.onNewBottomPage = {
+        sut.onNewBottomPage = { _ in
             exp.fulfill()
         }
 
-        scrollViewPaginationHandler.onNewTopPage?()
+        scrollViewPaginationHandler.onNewTopPage? {}
 
         waitForExpectations(timeout: defaultTimeout)
     }
