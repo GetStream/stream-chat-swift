@@ -3,6 +3,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### 🐞 Fixed
+- Fix pagination requesting more than one page at a time in some edge cases [#2910](https://github.com/GetStream/stream-chat-swift/pull/2910)
+
 ## StreamChatUI
 ### 🐞 Fixed
 - Fix skip slow mode capability not handled [#2904](https://github.com/GetStream/stream-chat-swift/pull/2904)
