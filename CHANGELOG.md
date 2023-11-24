@@ -17,12 +17,14 @@ _November 17, 2023_
 ### ✅ Added
 - Add new `NewMessageErrorEvent` when observing `EventsController` [#2885](https://github.com/GetStream/stream-chat-swift/pull/2885)
 
+### 🐞 Fixed
+- Fix channel history being marked as read for new members [#2905](https://github.com/GetStream/stream-chat-swift/pull/2905)
+
 ## StreamChatUI
 ### ✅ Added
 - Add jump to unread messages interaction [#2894](https://github.com/GetStream/stream-chat-swift/pull/2894)
 - Add support for opening a channel in the unread messages page with `Components.shouldJumpToUnreadWhenOpeningChannel` [#2894](https://github.com/GetStream/stream-chat-swift/pull/2894)
 
-## StreamChatUI
 ### 🐞 Fixed
 - Fix Message List UI not updated when message.updatedAt changes [#2884](https://github.com/GetStream/stream-chat-swift/pull/2884)
 - Fix jump to unread button showing "0" unread counts [#2894](https://github.com/GetStream/stream-chat-swift/pull/2894)

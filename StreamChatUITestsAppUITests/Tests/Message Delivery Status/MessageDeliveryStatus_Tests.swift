@@ -101,7 +101,7 @@ final class MessageDeliveryStatus_Tests: StreamTestCase {
         }
     }
 
-    func test_doubleCheckmarkShown_whenNewParticipantAdded() {
+    func test_noDoubleCheckmarkShown_whenNewParticipantAdded() {
         linkToScenario(withId: 143)
 
         GIVEN("user opens the channel") {
@@ -124,8 +124,8 @@ final class MessageDeliveryStatus_Tests: StreamTestCase {
         THEN("user spots double checkmark below the message") {
             userRobot.assertMessageDeliveryStatus(.read)
         }
-        AND("user see read count 2 below the message") {
-            userRobot.assertMessageReadCount(readBy: 2)
+        AND("user see read count 1 below the message") {
+            userRobot.assertMessageReadCount(readBy: 1)
         }
     }
 
@@ -358,7 +358,7 @@ extension MessageDeliveryStatus_Tests {
         }
     }
 
-    func test_doubleCheckmarkShownInThreadReply_whenNewParticipantAdded() throws {
+    func test_noDoubleCheckmarkShownInThreadReply_whenNewParticipantAdded() throws {
         linkToScenario(withId: 154)
         
         try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12, "Flaky on iOS 12")
@@ -378,10 +378,10 @@ extension MessageDeliveryStatus_Tests {
             userRobot.addParticipant()
         }
         THEN("user spots double checkmark below the thread reply") {
-            userRobot.assertMessageDeliveryStatus(.read)
+            userRobot.assertMessageDeliveryStatus(.sent)
         }
         AND("user see read count 2 below the message") {
-            userRobot.assertMessageReadCount(readBy: 1)
+            userRobot.assertMessageReadCount(readBy: 0)
         }
     }
 
