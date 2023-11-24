@@ -1472,9 +1472,9 @@ final class ChannelUpdater_Tests: XCTestCase {
         let expectation = self.expectation(description: "markUnread completes")
         var receivedError: Error?
 
-        channelRepository.markUnreadResult = .success(())
-        channelUpdater.markUnread(cid: .unique, userId: .unique, from: .unique, lastReadMessageId: .unique) { error in
-            receivedError = error
+        channelRepository.markUnreadResult = .success(.mock(cid: .unique))
+        channelUpdater.markUnread(cid: .unique, userId: .unique, from: .unique, lastReadMessageId: .unique) { result in
+            receivedError = result.error
             expectation.fulfill()
         }
 
@@ -1488,8 +1488,8 @@ final class ChannelUpdater_Tests: XCTestCase {
         var receivedError: Error?
 
         channelRepository.markUnreadResult = .failure(mockedError)
-        channelUpdater.markUnread(cid: .unique, userId: .unique, from: .unique, lastReadMessageId: .unique) { error in
-            receivedError = error
+        channelUpdater.markUnread(cid: .unique, userId: .unique, from: .unique, lastReadMessageId: .unique) { result in
+            receivedError = result.error
             expectation.fulfill()
         }
 

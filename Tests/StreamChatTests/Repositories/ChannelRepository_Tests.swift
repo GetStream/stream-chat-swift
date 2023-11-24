@@ -72,15 +72,21 @@ final class ChannelRepository_Tests: XCTestCase {
 
     // MARK: - Mark as unread
 
-    func test_markUnread_successfulResponse() {
+    func test_markUnread_successfulResponse() throws {
         let cid = ChannelId.unique
         let userId = UserId.unique
         let messageId = MessageId.unique
 
+        try database.createCurrentUser()
+        try database.writeSynchronously {
+            try $0.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
+        }
+        database.writeSessionCounter = 0
+
         let expectation = self.expectation(description: "markUnread completes")
         var receivedError: Error?
-        repository.markUnread(for: cid, userId: userId, from: messageId, lastReadMessageId: .unique) { error in
-            receivedError = error
+        repository.markUnread(for: cid, userId: userId, from: messageId, lastReadMessageId: .unique) { result in
+            receivedError = result.error
             expectation.fulfill()
         }
 
@@ -100,8 +106,8 @@ final class ChannelRepository_Tests: XCTestCase {
 
         let expectation = self.expectation(description: "markUnread completes")
         var receivedError: Error?
-        repository.markUnread(for: cid, userId: userId, from: messageId, lastReadMessageId: .unique) { error in
-            receivedError = error
+        repository.markUnread(for: cid, userId: userId, from: messageId, lastReadMessageId: .unique) { result in
+            receivedError = result.error
             expectation.fulfill()
         }
 
