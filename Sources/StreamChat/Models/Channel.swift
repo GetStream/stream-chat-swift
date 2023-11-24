@@ -359,6 +359,8 @@ public struct ChannelCapability: RawRepresentable, ExpressibleByStringLiteral, H
     public static var typingEvents: Self = "typing-events"
     /// Indicates that channel slow mode is active.
     public static var slowMode: Self = "slow-mode"
+    /// Ability to skip the slow mode when it's active.
+    public static var skipSlowMode: Self = "skip-slow-mode"
     /// Ability to join a call.
     public static var joinCall: Self = "join-call"
     /// Ability to create a call.

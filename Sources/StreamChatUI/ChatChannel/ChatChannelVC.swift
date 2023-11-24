@@ -91,7 +91,11 @@ open class ChatChannelVC: _ViewController,
             return false
         }
 
-        return isLastMessageVisibleOrSeen && hasSeenFirstUnreadMessage && channelController.hasLoadedAllNextMessages && !hasMarkedMessageAsUnread
+        guard components.isJumpToUnreadEnabled else {
+            return isLastMessageFullyVisible && isFirstPageLoaded
+        }
+
+        return isLastMessageVisibleOrSeen && hasSeenFirstUnreadMessage && isFirstPageLoaded && !hasMarkedMessageAsUnread
     }
 
     private var isLastMessageVisibleOrSeen: Bool {
@@ -120,7 +124,7 @@ open class ChatChannelVC: _ViewController,
     private var firstUnreadMessageId: MessageId?
 
     /// In case the given around message id is from a thread, we need to jump to the parent message and then the reply.
-    private var initialReplyId: MessageId?
+    internal var initialReplyId: MessageId?
 
     override open func setUp() {
         super.setUp()
@@ -246,14 +250,16 @@ open class ChatChannelVC: _ViewController,
         if let messageId = channelController.channelQuery.pagination?.parameter?.aroundMessageId {
             // Jump to a message when opening the channel.
             jumpToMessage(id: messageId, animated: components.shouldAnimateJumpToMessageWhenOpeningChannel)
-        } else if let replyId = initialReplyId {
-            // Jump to a parent message when opening the channel, and then to the reply.
-            // The delay is necessary so that the animation does not happen to quickly.
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                self.jumpToMessage(
-                    id: replyId,
-                    animated: self.components.shouldAnimateJumpToMessageWhenOpeningChannel
-                )
+
+            if let replyId = initialReplyId {
+                // Jump to a parent message when opening the channel, and then to the reply.
+                // The delay is necessary so that the animation does not happen to quickly.
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    self.jumpToMessage(
+                        id: replyId,
+                        animated: self.components.shouldAnimateJumpToMessageWhenOpeningChannel
+                    )
+                }
             }
         } else if components.shouldJumpToUnreadWhenOpeningChannel {
             // Jump to the unread message.

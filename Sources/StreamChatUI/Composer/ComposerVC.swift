@@ -617,7 +617,9 @@ open class ComposerVC: _ViewController,
         } else {
             createNewMessage(text: text)
 
-            if !content.hasCommand, let cooldownDuration = channelController?.channel?.cooldownDuration {
+            let channel = channelController?.channel
+            let skipSlowMode = channel?.ownCapabilities.contains(.skipSlowMode) == true
+            if !content.hasCommand, !skipSlowMode, let cooldownDuration = channel?.cooldownDuration {
                 cooldownTracker.start(with: cooldownDuration)
             }
 

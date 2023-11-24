@@ -3,6 +3,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🐞 Fixed
+- Fix skip slow mode capability not handled [#2904](https://github.com/GetStream/stream-chat-swift/pull/2904)
+
+# [4.43.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.43.0)
+_November 17, 2023_
+
 ## StreamChat
 ### ✅ Added
 - Add new `NewMessageErrorEvent` when observing `EventsController` [#2885](https://github.com/GetStream/stream-chat-swift/pull/2885)
@@ -16,6 +22,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - Fix Message List UI not updated when message.updatedAt changes [#2884](https://github.com/GetStream/stream-chat-swift/pull/2884)
 - Fix jump to unread button showing "0" unread counts [#2894](https://github.com/GetStream/stream-chat-swift/pull/2894)
+- Fix not able to mark channel read when isJumpToUnread is disabled [#2902](https://github.com/GetStream/stream-chat-swift/pull/2902)
 
 # [4.42.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.42.0)
 _November 14, 2023_

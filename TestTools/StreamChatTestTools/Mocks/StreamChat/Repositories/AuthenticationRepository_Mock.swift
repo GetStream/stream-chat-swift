@@ -4,7 +4,6 @@
 
 import Foundation
 @testable import StreamChat
-import StreamSwiftTestHelpers
 
 class AuthenticationRepository_Mock: AuthenticationRepository, Spy {
     enum Signature {

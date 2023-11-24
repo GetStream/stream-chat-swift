@@ -134,6 +134,7 @@
       "Advanced Guides": [
         "client/push-notifications",
         "client/custom-cdn",
+        "guides/go-live-checklist",
         "guides/share-extension",
         "advanced/assertions",
         {

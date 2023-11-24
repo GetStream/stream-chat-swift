@@ -1161,7 +1161,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// Returns the current cooldown time for the channel. Returns 0 in case there is no cooldown active.
     public func currentCooldownTime() -> Int {
         guard let cooldownDuration = channel?.cooldownDuration, cooldownDuration > 0,
-              let currentUserLastMessage = channel?.lastMessageFromCurrentUser else {
+              let currentUserLastMessage = channel?.lastMessageFromCurrentUser,
+              channel?.ownCapabilities.contains(.skipSlowMode) == false else {
             return 0
         }
 

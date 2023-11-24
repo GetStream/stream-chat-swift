@@ -3,7 +3,6 @@
 //
 
 @testable import StreamChat
-import Swifter
 import Foundation
 import XCTest
 
