@@ -114,11 +114,11 @@ open class ChatThreadVC: _ViewController,
         }
 
         // Handle pagination
-        viewPaginationHandler.onNewTopPage = { [weak self] in
-            self?.messageController.loadPreviousReplies()
+        viewPaginationHandler.onNewTopPage = { [weak self] completion in
+            self?.messageController.loadPreviousReplies { _ in completion() }
         }
-        viewPaginationHandler.onNewBottomPage = { [weak self] in
-            self?.messageController.loadNextReplies()
+        viewPaginationHandler.onNewBottomPage = { [weak self] completion in
+            self?.messageController.loadNextReplies { _ in completion() }
         }
 
         if let queueAudioPlayer = audioPlayer as? StreamAudioQueuePlayer {

@@ -26,7 +26,7 @@ final class InvertedScrollViewPaginationHandler: ViewPaginationHandling {
         }
     }
 
-    var onNewTopPage: (() -> Void)? {
+    var onNewTopPage: ((@escaping () -> Void) -> Void)? {
         get {
             scrollViewPaginationHandler.onNewBottomPage
         }
@@ -35,7 +35,7 @@ final class InvertedScrollViewPaginationHandler: ViewPaginationHandling {
         }
     }
 
-    var onNewBottomPage: (() -> Void)? {
+    var onNewBottomPage: ((@escaping () -> Void) -> Void)? {
         get {
             scrollViewPaginationHandler.onNewTopPage
         }

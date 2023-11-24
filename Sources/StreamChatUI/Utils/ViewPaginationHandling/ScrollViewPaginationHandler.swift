@@ -10,11 +10,14 @@ final class ScrollViewPaginationHandler: ViewPaginationHandling {
     private var observation: NSKeyValueObservation?
     private var previousPosition: CGFloat = 0.0
 
+    private var isLoadingTopPage: Bool = false
+    private var isLoadingBottomPage: Bool = false
+
     var topThreshold: Int = 100
     var bottomThreshold: Int = 400
 
-    var onNewTopPage: (() -> Void)?
-    var onNewBottomPage: (() -> Void)?
+    var onNewTopPage: ((@escaping () -> Void) -> Void)?
+    var onNewBottomPage: ((@escaping () -> Void) -> Void)?
 
     init(scrollView: UIScrollView) {
         self.scrollView = scrollView
@@ -31,13 +34,19 @@ final class ScrollViewPaginationHandler: ViewPaginationHandling {
 
         let bottomThreshold = CGFloat(bottomThreshold)
         let position = scrollView.contentOffset.y
-        if position > scrollView.contentSize.height - bottomThreshold - scrollView.frame.size.height {
-            onNewBottomPage?()
+        if !isLoadingBottomPage, position > scrollView.contentSize.height - bottomThreshold - scrollView.frame.size.height {
+            isLoadingBottomPage = true
+            onNewBottomPage? { [weak self] in
+                self?.isLoadingBottomPage = false
+            }
         }
 
         let topThreshold = CGFloat(topThreshold)
-        if position >= 0 && position <= topThreshold && position <= max(0, previousPosition) {
-            onNewTopPage?()
+        if !isLoadingTopPage, position >= 0 && position <= topThreshold && position <= max(0, previousPosition) {
+            isLoadingTopPage = true
+            onNewTopPage? { [weak self] in
+                self?.isLoadingTopPage = false
+            }
         }
 
         previousPosition = position

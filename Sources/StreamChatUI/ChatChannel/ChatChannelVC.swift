@@ -162,11 +162,11 @@ open class ChatChannelVC: _ViewController,
         }
 
         // Handle pagination
-        viewPaginationHandler.onNewTopPage = { [weak self] in
-            self?.channelController.loadPreviousMessages()
+        viewPaginationHandler.onNewTopPage = { [weak self] completion in
+            self?.channelController.loadPreviousMessages { _ in completion() }
         }
-        viewPaginationHandler.onNewBottomPage = { [weak self] in
-            self?.channelController.loadNextMessages()
+        viewPaginationHandler.onNewBottomPage = { [weak self] completion in
+            self?.channelController.loadNextMessages { _ in completion() }
         }
 
         messageListVC.audioPlayer = audioPlayer
