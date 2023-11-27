@@ -10,7 +10,9 @@ The message list is the place to show a list of the messages of a specific chann
 
 A message can come in **many different forms**. If you are looking for the different types of messages and how to customize them the place to look for is the [Message Components](../../message-components/message-display-options/) section. The Message List is really handling the **list of the messages** that a channel contains.
 
-The **default message list implementation** in the SDK follows the style of **other messaging apps** such as Apple's iMessage, Facebook Messenger, WhatsApp, Viber, and many other. In these kinds of apps, the **current sender's messages** are displayed on the **right side**, while the **other participants' messages** are displayed on the **left side**. In addition to that, there is an **avatar** of the user sending a message shown.
+The **default message list implementation** in the SDK follows the style of **other messaging apps** such as Apple's iMessage, Facebook Messenger, WhatsApp, Telegram, and many others. In these kinds of apps, the **current sender's messages** are displayed on the **right side**, while the **other participants' messages** are displayed on the **left side**. In addition to that, there is an **avatar** of the user sending a message shown.
+
+The message list has many different customization options, and you can support many different layouts with it. We highly recommend to customize our message list component (by implementing your own message views) over building one from scratch. 
 
 ## Customization options
 
