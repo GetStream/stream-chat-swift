@@ -3,8 +3,7 @@
     {
       "Basics": [
         "basics/overview",
-        "basics/integration",
-        "basics/logs"
+        "basics/integration"
       ]
     },
     {
@@ -12,6 +11,7 @@
         "client/llc-client-overview",
         "client/offline-support",
         "client/extra-data",
+        "basics/logs",
         "client/importance-of-synchronize",
         {
           "Audio Support": [

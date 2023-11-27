@@ -3,7 +3,7 @@ title: Low Level Client Overview
 slug: /client
 ---
 
-Our low-level client provides the main chat functionality including offline storage and optimistic updates. You can use it directly in case you want to build your own UI layer for the chat.
+Our [low-level client](https://getstream.io/chat/docs/ios-swift/?language=swift) provides the main chat functionality including offline storage and optimistic updates. You can use it directly in case you want to build your own UI layer for the chat.
 
 Both our [UIKit](../uikit) and [SwiftUI](../swiftui) UI component libraries use the low-level client. This way we are able to share common functionality across both our UI components libraries and increase performance and stability with every release.
 
