@@ -84,6 +84,7 @@
           "Channel List": [
             "swiftui/channel-list-components/channel-list-header",
             "swiftui/channel-list-components/helper-views",
+            "swiftui/channel-list-components/channel-list-search",
             "swiftui/channel-list-components/list-tap-events",
             "swiftui/channel-list-components/swipe-actions-channels",
             "swiftui/channel-list-components/query-filters"
