@@ -47,16 +47,17 @@ class ChannelRepository {
         userId: UserId,
         from messageId: MessageId,
         lastReadMessageId: MessageId?,
-        completion: ((Error?) -> Void)? = nil
+        completion: ((Result<ChatChannel, Error>) -> Void)? = nil
     ) {
         apiClient.request(
             endpoint: .markUnread(cid: cid, messageId: messageId, userId: userId)
         ) { [weak self] result in
             if let error = result.error {
-                completion?(error)
+                completion?(.failure(error))
                 return
             }
 
+            var channel: ChatChannel?
             self?.database.write({ session in
                 session.markChannelAsUnread(
                     for: cid,
@@ -66,8 +67,13 @@ class ChannelRepository {
                     lastReadAt: nil,
                     unreadMessagesCount: nil
                 )
+                channel = try session.channel(cid: cid)?.asModel()
             }, completion: { error in
-                completion?(error)
+                if let channel = channel, error == nil {
+                    completion?(.success(channel))
+                } else {
+                    completion?(.failure(error ?? ClientError.ChannelNotCreatedYet()))
+                }
             })
         }
     }

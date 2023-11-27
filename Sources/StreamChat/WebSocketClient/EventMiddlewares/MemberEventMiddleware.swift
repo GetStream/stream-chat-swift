@@ -16,9 +16,6 @@ struct MemberEventMiddleware: EventMiddleware {
                 if let channel = session.channel(cid: event.cid) {
                     let member = try session.saveMember(payload: event.member, channelId: event.cid)
 
-                    // Mark all messages in channel as read
-                    session.markChannelAsRead(cid: event.cid, userId: event.member.userId, at: event.createdAt)
-
                     insertMemberToMemberListQueries(channel, member)
                 }
 
