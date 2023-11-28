@@ -150,9 +150,8 @@ open class ChatChannelListVC: _ViewController,
         }
 
         viewPaginationHandler.bottomThreshold = 800
-        viewPaginationHandler.onNewBottomPage = { [weak self] completion in
+        viewPaginationHandler.onNewBottomPage = { [weak self] in
             self?.loadMoreChannels()
-            completion()
         }
 
         let searchStrategy = components.channelListSearchStrategy

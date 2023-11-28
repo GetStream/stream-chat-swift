@@ -1982,6 +1982,8 @@
 		C174E0F6284DFA5A0040B936 /* IdentifiablePayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = C174E0F5284DFA5A0040B936 /* IdentifiablePayload.swift */; };
 		C174E0F7284DFA5A0040B936 /* IdentifiablePayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = C174E0F5284DFA5A0040B936 /* IdentifiablePayload.swift */; };
 		C174E0F9284DFD660040B936 /* IdentifiablePayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C174E0F8284DFD660040B936 /* IdentifiablePayload_Tests.swift */; };
+		C17546A72B1652C100129DF7 /* StatefulScrollViewPaginationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C17546A62B1652C100129DF7 /* StatefulScrollViewPaginationHandler.swift */; };
+		C17546A82B1652C100129DF7 /* StatefulScrollViewPaginationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C17546A62B1652C100129DF7 /* StatefulScrollViewPaginationHandler.swift */; };
 		C1788F5829B8C1B400149883 /* ChatMessageHeaderDecoratorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1788F5729B8C1B400149883 /* ChatMessageHeaderDecoratorView.swift */; };
 		C1788F5929B8C1B400149883 /* ChatMessageHeaderDecoratorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1788F5729B8C1B400149883 /* ChatMessageHeaderDecoratorView.swift */; };
 		C1788F5B29B9E4D900149883 /* NotificationMarkUnread.json in Resources */ = {isa = PBXBuildFile; fileRef = C1788F5A29B9E4D900149883 /* NotificationMarkUnread.json */; };
@@ -3977,6 +3979,7 @@
 		C173538D27D9F804008AC412 /* KeyedDecodingContainer+Array.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyedDecodingContainer+Array.swift"; sourceTree = "<group>"; };
 		C174E0F5284DFA5A0040B936 /* IdentifiablePayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifiablePayload.swift; sourceTree = "<group>"; };
 		C174E0F8284DFD660040B936 /* IdentifiablePayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifiablePayload_Tests.swift; sourceTree = "<group>"; };
+		C17546A62B1652C100129DF7 /* StatefulScrollViewPaginationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatefulScrollViewPaginationHandler.swift; sourceTree = "<group>"; };
 		C1788F5729B8C1B400149883 /* ChatMessageHeaderDecoratorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageHeaderDecoratorView.swift; sourceTree = "<group>"; };
 		C1788F5A29B9E4D900149883 /* NotificationMarkUnread.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = NotificationMarkUnread.json; sourceTree = "<group>"; };
 		C1788F5E29C33A1000149883 /* ChatThreadRepliesCountDecorationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatThreadRepliesCountDecorationView.swift; sourceTree = "<group>"; };
@@ -8043,6 +8046,7 @@
 			children = (
 				ADDB2F572954CBA200BF80DA /* ViewPaginationHandling.swift */,
 				ADDB2F5B2954CC0A00BF80DA /* ScrollViewPaginationHandler.swift */,
+				C17546A62B1652C100129DF7 /* StatefulScrollViewPaginationHandler.swift */,
 				ADDB2F5D2954CC1700BF80DA /* InvertedScrollViewPaginationHandler.swift */,
 			);
 			path = ViewPaginationHandling;
@@ -9949,6 +9953,7 @@
 				882AE124257A7FFE004095B3 /* UIViewController+Extensions.swift in Sources */,
 				E768AA892625C18D00328E6E /* TypingIndicatorView.swift in Sources */,
 				C1FC2F7227416E150062530F /* ImageCache.swift in Sources */,
+				C17546A72B1652C100129DF7 /* StatefulScrollViewPaginationHandler.swift in Sources */,
 				224FF6972562F5AE00725DD1 /* Bundle+Extensions.swift in Sources */,
 				C1FC2F8A27416E1F0062530F /* UIImageView+SwiftyGif.swift in Sources */,
 				A3C50229284F9CF70048753E /* SwiftyTokeniser.swift in Sources */,
@@ -11546,6 +11551,7 @@
 				C121EB8B2746A1E700023E4C /* AttachmentActionButton.swift in Sources */,
 				C121EB8C2746A1E700023E4C /* ChatSuggestionsVC.swift in Sources */,
 				C121EB8D2746A1E700023E4C /* ChatSuggestionsHeaderView.swift in Sources */,
+				C17546A82B1652C100129DF7 /* StatefulScrollViewPaginationHandler.swift in Sources */,
 				C121EB8E2746A1E700023E4C /* ChatSuggestionsCollectionView.swift in Sources */,
 				C121EB8F2746A1E700023E4C /* ChatSuggestionsCollectionViewLayout.swift in Sources */,
 				AD76CE362A5F1138003CA182 /* ChatMessageSearchVC.swift in Sources */,

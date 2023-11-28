@@ -51,9 +51,8 @@ open class ChatChannelListSearchVC: ChatChannelListVC, UISearchResultsUpdating {
         collectionView.delegate = self
 
         viewPaginationHandler.bottomThreshold = 800
-        viewPaginationHandler.onNewBottomPage = { [weak self] completion in
+        viewPaginationHandler.onNewBottomPage = { [weak self] in
             self?.loadMoreSearchResults()
-            completion()
         }
     }
 

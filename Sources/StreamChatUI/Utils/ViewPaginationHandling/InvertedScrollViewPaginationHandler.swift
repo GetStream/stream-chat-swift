@@ -5,8 +5,8 @@
 import UIKit
 
 /// For inverted scroll views, we switch the top with the bottom and vice-versa.
-final class InvertedScrollViewPaginationHandler: ViewPaginationHandling {
-    private let scrollViewPaginationHandler: ScrollViewPaginationHandler
+final class InvertedScrollViewPaginationHandler: StatefulViewPaginationHandling {
+    private let scrollViewPaginationHandler: StatefulScrollViewPaginationHandler
 
     var topThreshold: Int {
         get {
@@ -26,7 +26,7 @@ final class InvertedScrollViewPaginationHandler: ViewPaginationHandling {
         }
     }
 
-    var onNewTopPage: ((@escaping () -> Void) -> Void)? {
+    var onNewTopPage: StatefulViewPaginationHandlingBlock? {
         get {
             scrollViewPaginationHandler.onNewBottomPage
         }
@@ -35,7 +35,7 @@ final class InvertedScrollViewPaginationHandler: ViewPaginationHandling {
         }
     }
 
-    var onNewBottomPage: ((@escaping () -> Void) -> Void)? {
+    var onNewBottomPage: StatefulViewPaginationHandlingBlock? {
         get {
             scrollViewPaginationHandler.onNewTopPage
         }
@@ -44,13 +44,17 @@ final class InvertedScrollViewPaginationHandler: ViewPaginationHandling {
         }
     }
 
-    init(scrollViewPaginationHandler: ScrollViewPaginationHandler) {
+    init(scrollViewPaginationHandler: StatefulScrollViewPaginationHandler) {
         self.scrollViewPaginationHandler = scrollViewPaginationHandler
+    }
+
+    func updateElementsCount(with newCount: Int) {
+        scrollViewPaginationHandler.updateElementsCount(with: newCount)
     }
 
     /// Factory method to easily create an instance with the required dependencies.
     static func make(scrollView: UIScrollView) -> InvertedScrollViewPaginationHandler {
-        let paginationHandler = ScrollViewPaginationHandler(scrollView: scrollView)
+        let paginationHandler = StatefulScrollViewPaginationHandler(scrollView: scrollView)
         return InvertedScrollViewPaginationHandler(scrollViewPaginationHandler: paginationHandler)
     }
 }

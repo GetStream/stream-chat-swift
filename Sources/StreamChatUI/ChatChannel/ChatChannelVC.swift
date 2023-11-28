@@ -103,7 +103,7 @@ open class ChatChannelVC: _ViewController,
     }
 
     /// A component responsible to handle when to load new or old messages.
-    private lazy var viewPaginationHandler: ViewPaginationHandling = {
+    private lazy var viewPaginationHandler: StatefulViewPaginationHandling = {
         InvertedScrollViewPaginationHandler.make(scrollView: messageListVC.listView)
     }()
 
@@ -162,11 +162,13 @@ open class ChatChannelVC: _ViewController,
         }
 
         // Handle pagination
-        viewPaginationHandler.onNewTopPage = { [weak self] completion in
-            self?.channelController.loadPreviousMessages { _ in completion() }
+        viewPaginationHandler.onNewTopPage = { [weak self] notifyElementsCount, completion in
+            notifyElementsCount(self?.channelController.messages.count ?? 0)
+            self?.channelController.loadPreviousMessages(completion: completion)
         }
-        viewPaginationHandler.onNewBottomPage = { [weak self] completion in
-            self?.channelController.loadNextMessages { _ in completion() }
+        viewPaginationHandler.onNewBottomPage = { [weak self] notifyElementsCount, completion in
+            notifyElementsCount(self?.channelController.messages.count ?? 0)
+            self?.channelController.loadNextMessages(completion: completion)
         }
 
         messageListVC.audioPlayer = audioPlayer
@@ -487,6 +489,7 @@ open class ChatChannelVC: _ViewController,
                 self.updateUnreadMessagesBannerRelatedComponents()
             }
         }
+        viewPaginationHandler.updateElementsCount(with: channelController.messages.count)
     }
 
     open func channelController(
