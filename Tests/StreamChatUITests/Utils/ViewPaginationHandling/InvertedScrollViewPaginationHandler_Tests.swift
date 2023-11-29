@@ -8,7 +8,7 @@ import XCTest
 
 final class InvertedScrollViewPaginationHandler_Tests: XCTestCase {
     func test_topThreshold_shouldReturnBottomThresholdOfRegularPaginationHandler() {
-        let scrollViewPaginationHandler = ScrollViewPaginationHandler(scrollView: UIScrollView())
+        let scrollViewPaginationHandler = StatefulScrollViewPaginationHandler(scrollView: UIScrollView())
         scrollViewPaginationHandler.bottomThreshold = 150
         let sut = InvertedScrollViewPaginationHandler(scrollViewPaginationHandler: scrollViewPaginationHandler)
 
@@ -17,20 +17,20 @@ final class InvertedScrollViewPaginationHandler_Tests: XCTestCase {
 
     func test_onNewTopPage_shouldBeCalledWhenNewBottomPageIsCalled() {
         let exp = expectation(description: "should call on new top page")
-        let scrollViewPaginationHandler = ScrollViewPaginationHandler(scrollView: UIScrollView())
+        let scrollViewPaginationHandler = StatefulScrollViewPaginationHandler(scrollView: UIScrollView())
         let sut = InvertedScrollViewPaginationHandler(scrollViewPaginationHandler: scrollViewPaginationHandler)
 
-        sut.onNewTopPage = {
+        sut.onNewTopPage = { _, _ in
             exp.fulfill()
         }
 
-        scrollViewPaginationHandler.onNewBottomPage?()
+        scrollViewPaginationHandler.onNewBottomPage?({ _ in }, { _ in })
 
         waitForExpectations(timeout: defaultTimeout)
     }
 
     func test_bottomThreshold_shouldReturnTopThresholdOfRegularPaginationHandler() {
-        let scrollViewPaginationHandler = ScrollViewPaginationHandler(scrollView: UIScrollView())
+        let scrollViewPaginationHandler = StatefulScrollViewPaginationHandler(scrollView: UIScrollView())
         scrollViewPaginationHandler.topThreshold = 150
         let sut = InvertedScrollViewPaginationHandler(scrollViewPaginationHandler: scrollViewPaginationHandler)
 
@@ -39,14 +39,14 @@ final class InvertedScrollViewPaginationHandler_Tests: XCTestCase {
 
     func test_onNewBottomPage_shouldBeCalledWhenNewTopPageIsCalled() {
         let exp = expectation(description: "should call on new bottom page")
-        let scrollViewPaginationHandler = ScrollViewPaginationHandler(scrollView: UIScrollView())
+        let scrollViewPaginationHandler = StatefulScrollViewPaginationHandler(scrollView: UIScrollView())
         let sut = InvertedScrollViewPaginationHandler(scrollViewPaginationHandler: scrollViewPaginationHandler)
 
-        sut.onNewBottomPage = {
+        sut.onNewBottomPage = { _, _ in
             exp.fulfill()
         }
 
-        scrollViewPaginationHandler.onNewTopPage?()
+        scrollViewPaginationHandler.onNewTopPage?({ _ in }, { _ in })
 
         waitForExpectations(timeout: defaultTimeout)
     }

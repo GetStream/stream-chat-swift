@@ -100,7 +100,7 @@ final class ScrollViewPaginationHandler_Tests: XCTestCase {
 
         // Simulate previous position (Scrolling top)
         scrollView.contentOffset = .init(x: 0, y: 120)
-        
+
         scrollView.contentOffset = .init(x: 0, y: 90)
 
         waitForExpectations(timeout: defaultTimeout)
