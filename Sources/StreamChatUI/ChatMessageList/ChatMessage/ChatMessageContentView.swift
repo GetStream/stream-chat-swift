@@ -714,6 +714,7 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
     override open func tintColorDidChange() {
         super.tintColorDidChange()
 
+        guard UIApplication.shared.applicationState == .active else { return }
         // We need to update the content and manually apply the updated `tintColor`
         // to the subviews which don't listen for `tintColor` updates.
         updateContentIfNeeded()

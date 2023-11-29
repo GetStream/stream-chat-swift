@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChatUI
 ### 🐞 Fixed
 - Fix skip slow mode capability not handled [#2904](https://github.com/GetStream/stream-chat-swift/pull/2904)
+- Fix layout crash when sending an app to background and ChatMessageGalleryView is visible [#2907](https://github.com/GetStream/stream-chat-swift/pull/2907)
 
 ### 🔄 Changed
 - `ChannelController.markUnread`'s `completion`'s argument is now a `(Result<ChatChannel, Error>` instead of `Error?`
