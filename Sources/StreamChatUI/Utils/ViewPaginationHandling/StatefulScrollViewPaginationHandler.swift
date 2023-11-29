@@ -62,7 +62,13 @@ final class StatefulScrollViewPaginationHandler: StatefulViewPaginationHandling 
     }
 
     func updateElementsCount(with newCount: Int) {
-        guard bottomPageRequestItemCount != newCount || topPageRequestItemCount != newCount else { return }
+        var shouldReset = false
+        if let topCount = topPageRequestItemCount, topCount != newCount {
+            shouldReset = true
+        } else if let bottomCount = bottomPageRequestItemCount, bottomCount != newCount {
+            shouldReset = true
+        }
+        guard shouldReset else { return }
 
         topPageRequestItemCount = nil
         bottomPageRequestItemCount = nil
