@@ -21,13 +21,12 @@ import Foundation
 class MessageEditor: Worker {
     @Atomic private var pendingMessageIDs: Set<MessageId> = []
 
-    private let observer: ListDatabaseObserverWrapper<MessageDTO, MessageDTO>
+    private let observer: ListDatabaseObserver<MessageDTO, MessageDTO>
     private let messageRepository: MessageRepository
 
     init(messageRepository: MessageRepository, database: DatabaseContainer, apiClient: APIClient) {
         observer = .init(
-            isBackground: StreamRuntimeCheck._isBackgroundMappingEnabled,
-            database: database,
+            context: database.backgroundReadOnlyContext,
             fetchRequest: MessageDTO.messagesPendingSyncFetchRequest(),
             itemCreator: { $0 }
         )
@@ -42,7 +41,7 @@ class MessageEditor: Worker {
     private func startObserving() {
         do {
             try observer.startObserving()
-            observer.onDidChange = { [weak self] in self?.handleChanges(changes: $0) }
+            observer.onChange = { [weak self] in self?.handleChanges(changes: $0) }
             let changes = observer.items.map { ListChange.insert($0, index: .init(item: 0, section: 0)) }
             handleChanges(changes: changes)
         } catch {
