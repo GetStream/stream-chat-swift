@@ -12,6 +12,7 @@ _November 30, 2023_
 ### 🐞 Fixed
 - Fix skip slow mode capability not handled [#2904](https://github.com/GetStream/stream-chat-swift/pull/2904)
 - Fix layout crash when sending an app to background and ChatMessageGalleryView is visible [#2907](https://github.com/GetStream/stream-chat-swift/pull/2907)
+- Fix channel history being marked as read for new members [#2905](https://github.com/GetStream/stream-chat-swift/pull/2905)
 
 ### 🔄 Changed
 - `ChannelController.markUnread`'s `completion`'s argument is now a `(Result<ChatChannel, Error>` instead of `Error?`
@@ -22,9 +23,6 @@ _November 17, 2023_
 ## StreamChat
 ### ✅ Added
 - Add new `NewMessageErrorEvent` when observing `EventsController` [#2885](https://github.com/GetStream/stream-chat-swift/pull/2885)
-
-### 🐞 Fixed
-- Fix channel history being marked as read for new members [#2905](https://github.com/GetStream/stream-chat-swift/pull/2905)
 
 ## StreamChatUI
 ### ✅ Added
