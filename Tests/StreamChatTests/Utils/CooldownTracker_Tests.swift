@@ -4,7 +4,6 @@
 
 @testable import StreamChat
 @testable import StreamChatTestTools
-import StreamSwiftTestHelpers
 import XCTest
 
 final class CooldownTracker_Tests: XCTestCase {

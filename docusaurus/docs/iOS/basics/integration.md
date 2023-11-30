@@ -1,8 +1,8 @@
 ---
-title: Integration
+title: Installation
 ---
 
-# Integration
+# Installation
 
 To integrate Stream Chat in your app, you can use one of the following dependency managers:
 

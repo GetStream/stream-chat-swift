@@ -3,7 +3,6 @@
 //
 
 @testable import StreamChat
-import Swifter
 
 public let userKey = UserPayloadsCodingKeys.self
 

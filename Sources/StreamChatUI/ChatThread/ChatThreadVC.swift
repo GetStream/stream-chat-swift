@@ -41,7 +41,7 @@ open class ChatThreadVC: _ViewController,
     )
 
     /// A component responsible to handle when to load new or old messages.
-    private lazy var viewPaginationHandler: ViewPaginationHandling = {
+    private lazy var viewPaginationHandler: StatefulViewPaginationHandling = {
         InvertedScrollViewPaginationHandler.make(scrollView: messageListVC.listView)
     }()
 
@@ -114,11 +114,13 @@ open class ChatThreadVC: _ViewController,
         }
 
         // Handle pagination
-        viewPaginationHandler.onNewTopPage = { [weak self] in
-            self?.messageController.loadPreviousReplies()
+        viewPaginationHandler.onNewTopPage = { [weak self] notifyElementsCount, completion in
+            notifyElementsCount(self?.messages.count ?? 0)
+            self?.messageController.loadPreviousReplies(completion: completion)
         }
-        viewPaginationHandler.onNewBottomPage = { [weak self] in
-            self?.messageController.loadNextReplies()
+        viewPaginationHandler.onNewBottomPage = { [weak self] notifyElementsCount, completion in
+            notifyElementsCount(self?.messages.count ?? 0)
+            self?.messageController.loadNextReplies(completion: completion)
         }
 
         if let queueAudioPlayer = audioPlayer as? StreamAudioQueuePlayer {
@@ -436,6 +438,7 @@ open class ChatThreadVC: _ViewController,
         let messages = getReplies(from: messageController)
         messageListVC.setNewMessagesSnapshot(messages)
         messageListVC.updateMessages(with: changes)
+        viewPaginationHandler.updateElementsCount(with: messages.count)
     }
 
     private func getReplies(from messageController: ChatMessageController) -> LazyCachedMapCollection<ChatMessage> {

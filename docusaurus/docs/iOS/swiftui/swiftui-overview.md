@@ -7,7 +7,7 @@ The SwiftUI SDK is built on top of the `StreamChat` framework, and it's a SwiftU
 
 ## Installation
 
-To start integrating Stream Chat in your iOS app, check our [Integration](../basics/integration) page
+To start integrating Stream Chat in your iOS app, check our [Installation](../basics/integration) page
 
 
 :::tip

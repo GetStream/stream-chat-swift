@@ -302,6 +302,18 @@ final class ComposerVC_Tests: XCTestCase {
         AssertSnapshot(composerVC)
     }
     
+    func test_channelWithSlowModeActive_messageIsSent_SkipSlowModeIsOnWithCountdownShown() {
+        let channel = ChatChannel.mock(cid: .unique, ownCapabilities: [.skipSlowMode, .sendMessage], cooldownDuration: 10)
+        mockedChatChannelController.channel_mock = channel
+        composerVC.channelController = mockedChatChannelController
+        composerVC.appearance = Appearance.default
+        composerVC.publishMessage(sender: UIButton())
+        composerVC.content.text = "Test text"
+        composerVC.composerView.inputMessageView.textView.placeholderLabel.isHidden = true
+        
+        AssertSnapshot(composerVC, variants: [.defaultLight])
+    }
+    
     func test_didUpdateMessages_startsCooldown() {
         let mockedCooldownTracker = CooldownTracker_Mock(timer: ScheduledStreamTimer_Mock())
         composerVC.cooldownTracker = mockedCooldownTracker

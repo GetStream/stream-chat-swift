@@ -75,6 +75,7 @@ open class ChatMessageReactionItemView: _Button, AppearanceProvider {
     override open func tintColorDidChange() {
         super.tintColorDidChange()
 
+        guard UIApplication.shared.applicationState == .active else { return }
         updateContentIfNeeded()
     }
 

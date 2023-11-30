@@ -440,7 +440,7 @@ final class ChannelController_Tests: XCTestCase {
         let token = Token(rawValue: "", userId: userId, expiration: nil)
         controller.client.authenticationRepository.setMockToken(token)
 
-        try createChannel(oldestMessageId: oldestMessageId, newestMessageId: newestMessageId, channelReads: [channelRead])
+        createChannel(oldestMessageId: oldestMessageId, newestMessageId: newestMessageId, channelReads: [channelRead])
 
         try client.databaseContainer.writeSynchronously {
             try $0.saveCurrentUser(payload: .dummy(userId: userId, role: .user))
@@ -3958,8 +3958,8 @@ final class ChannelController_Tests: XCTestCase {
     func test_markUnread_whenChannelDoesNotExist() {
         var receivedError: Error?
         let expectation = self.expectation(description: "Mark Unread completes")
-        controller.markUnread(from: .unique) { error in
-            receivedError = error
+        controller.markUnread(from: .unique) { result in
+            receivedError = result.error
             expectation.fulfill()
         }
 
@@ -3979,8 +3979,8 @@ final class ChannelController_Tests: XCTestCase {
 
         var receivedError: Error?
         let expectation = self.expectation(description: "Mark Unread completes")
-        controller.markUnread(from: .unique) { error in
-            receivedError = error
+        controller.markUnread(from: .unique) { result in
+            receivedError = result.error
             expectation.fulfill()
         }
 
@@ -4034,8 +4034,8 @@ final class ChannelController_Tests: XCTestCase {
 
         var receivedError: Error?
         let expectation = self.expectation(description: "Mark Unread completes")
-        controller.markUnread(from: .unique) { error in
-            receivedError = error
+        controller.markUnread(from: .unique) { result in
+            receivedError = result.error
             expectation.fulfill()
         }
 
@@ -4055,8 +4055,8 @@ final class ChannelController_Tests: XCTestCase {
 
         var receivedError: Error?
         let expectation = self.expectation(description: "Mark Unread completes")
-        controller.markUnread(from: .unique) { error in
-            receivedError = error
+        controller.markUnread(from: .unique) { result in
+            receivedError = result.error
             expectation.fulfill()
         }
 
@@ -4076,12 +4076,12 @@ final class ChannelController_Tests: XCTestCase {
 
         var receivedError: Error?
         let expectation = self.expectation(description: "Mark Unread completes")
-        controller.markUnread(from: .unique) { error in
-            receivedError = error
+        controller.markUnread(from: .unique) { result in
+            receivedError = result.error
             expectation.fulfill()
         }
         let mockedError = TestError()
-        env.channelUpdater?.markUnread_completion?(mockedError)
+        env.channelUpdater?.markUnread_completion?(.failure(mockedError))
 
         waitForExpectations(timeout: defaultTimeout)
 
@@ -4100,13 +4100,13 @@ final class ChannelController_Tests: XCTestCase {
         var receivedError: Error?
         let messageId = MessageId.unique
         let expectation = self.expectation(description: "Mark Unread completes")
-        controller.markUnread(from: messageId) { error in
-            receivedError = error
+        controller.markUnread(from: messageId) { result in
+            receivedError = result.error
             expectation.fulfill()
         }
         let updater = try XCTUnwrap(env.channelUpdater)
 
-        updater.markUnread_completion?(nil)
+        updater.markUnread_completion?(.success(ChatChannel.mock(cid: .unique)))
 
         waitForExpectations(timeout: defaultTimeout)
 
@@ -4130,13 +4130,13 @@ final class ChannelController_Tests: XCTestCase {
 
         var receivedError: Error?
         let expectation = self.expectation(description: "Mark Unread completes")
-        controller.markUnread(from: messageId) { error in
-            receivedError = error
+        controller.markUnread(from: messageId) { result in
+            receivedError = result.error
             expectation.fulfill()
         }
         let updater = try XCTUnwrap(env.channelUpdater)
 
-        updater.markUnread_completion?(nil)
+        updater.markUnread_completion?(.success(ChatChannel.mock(cid: .unique)))
 
         waitForExpectations(timeout: defaultTimeout)
 
