@@ -3,7 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+## StreamChatUI
+### 🐞 Fixed
+- Fix `JumpToUnreadMessagesButton` not localizable [#2917](https://github.com/GetStream/stream-chat-swift/pull/2917)
 
 # [4.44.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.44.0)
 _November 30, 2023_
