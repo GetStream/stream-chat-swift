@@ -304,6 +304,10 @@ internal enum L10n {
   }
 
   internal enum MessageList {
+    /// %d unread
+    internal static func jumpToUnreadButton(_ p1: Int) -> String {
+      return L10n.tr("Localizable", "messageList.jump-to-unread-button", p1)
+    }
     internal enum TypingIndicator {
       /// Someone is typing
       internal static var typingUnknown: String { L10n.tr("Localizable", "messageList.typingIndicator.typing-unknown") }
