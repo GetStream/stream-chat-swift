@@ -307,7 +307,11 @@ open class ChatChannelVC: _ViewController,
     public var isFirstPageLoaded: Bool {
         channelController.hasLoadedAllNextMessages
     }
-    
+
+    public var isLastPageLoaded: Bool {
+        channelController.hasLoadedAllPreviousMessages
+    }
+
     open func channel(for vc: ChatMessageListVC) -> ChatChannel? {
         channelController.channel
     }

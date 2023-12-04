@@ -247,6 +247,10 @@ open class ChatThreadVC: _ViewController,
         messageController.hasLoadedAllNextReplies
     }
 
+    public var isLastPageLoaded: Bool {
+        messageController.hasLoadedAllPreviousReplies
+    }
+
     open func channel(for vc: ChatMessageListVC) -> ChatChannel? {
         channelController.channel
     }

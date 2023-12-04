@@ -980,7 +980,7 @@ final class ChatChannelVC_Tests: XCTestCase {
     
     // MARK: - chatMessageListVC(_:headerViewForMessage:at)
 
-    func test_headerViewForMessage_returnsExpectedValue_whenMessageShouldShowDateSeparator() throws {
+    func test_headerViewForMessage_whenMessageShouldShowDateSeparator() throws {
         var components = Components.mock
         components.channelHeaderView = ChatChannelHeaderViewMock.self
         components.messageComposerVC = ComposerVC_Mock.self
@@ -997,6 +997,7 @@ final class ChatChannelVC_Tests: XCTestCase {
             state: .remoteDataFetched
         )
         vc.didFinishSynchronizing(with: nil)
+        vc.messageListVC.dataSource = vc
         let header = vc.chatMessageListVC(
             vc.messageListVC,
             headerViewForMessage: .mock(createdAt: Date(timeIntervalSince1970: 0)),
@@ -1012,7 +1013,63 @@ final class ChatChannelVC_Tests: XCTestCase {
         XCTAssertTrue(headerDecorationView.unreadCountView.isHidden)
     }
 
-    func test_headerViewForMessage_returnsExpectedValue_whenUnreadSeparatorIsEnabled_whenMessageShouldShowDateSeparator_AndIsMarkedAsUnread() throws {
+    func test_headerViewForMessage_whenPreviousMessageNil_whenNotLoadedAllPreviousMessages() throws {
+        var components = Components.mock
+        components.channelHeaderView = ChatChannelHeaderViewMock.self
+        components.messageComposerVC = ComposerVC_Mock.self
+        components.messageListDateSeparatorEnabled = true
+        vc.components = components
+        vc.messageListVC.components = components
+        vc.messages = [
+            .mock(createdAt: Date(timeIntervalSince1970: 86401))
+        ]
+        channelControllerMock.simulateInitial(
+            channel: .mock(cid: .unique, unreadCount: ChannelUnreadCount(messages: 1, mentions: 0)),
+            messages: vc.messages,
+            state: .remoteDataFetched
+        )
+        vc.didFinishSynchronizing(with: nil)
+        channelControllerMock.hasLoadedAllPreviousMessages_mock = false
+        vc.messageListVC.dataSource = vc
+        let header = vc.chatMessageListVC(
+            vc.messageListVC,
+            headerViewForMessage: .mock(createdAt: Date(timeIntervalSince1970: 0)),
+            at: .init(row: 0, section: 0)
+        )
+        XCTAssertNil(header)
+    }
+
+    func test_headerViewForMessage_whenPreviousMessageNil_whenLoadedAllPreviousMessages() throws {
+        var components = Components.mock
+        components.channelHeaderView = ChatChannelHeaderViewMock.self
+        components.messageComposerVC = ComposerVC_Mock.self
+        components.messageListDateSeparatorEnabled = true
+        vc.components = components
+        vc.messageListVC.components = components
+        vc.messages = [
+            .mock(createdAt: Date(timeIntervalSince1970: 86401))
+        ]
+        channelControllerMock.simulateInitial(
+            channel: .mock(cid: .unique, unreadCount: ChannelUnreadCount(messages: 1, mentions: 0)),
+            messages: vc.messages,
+            state: .remoteDataFetched
+        )
+        vc.didFinishSynchronizing(with: nil)
+        channelControllerMock.hasLoadedAllPreviousMessages_mock = true
+        vc.messageListVC.dataSource = vc
+        let header = vc.chatMessageListVC(
+            vc.messageListVC,
+            headerViewForMessage: .mock(createdAt: Date(timeIntervalSince1970: 0)),
+            at: .init(row: 0, section: 0)
+        )
+        let headerDecorationView = try XCTUnwrap(header as? ChatChannelMessageHeaderDecoratorView)
+        let view = UIView()
+        view.addSubview(headerDecorationView)
+        XCTAssertEqual(headerDecorationView.dateView.textLabel.text, "Jan 01")
+        XCTAssertTrue(headerDecorationView.unreadCountView.isHidden)
+    }
+
+    func test_headerViewForMessage_whenUnreadSeparatorIsEnabled_whenMessageShouldShowDateSeparator_AndIsMarkedAsUnread() throws {
         var components = Components.mock
         components.channelHeaderView = ChatChannelHeaderViewMock.self
         components.messageComposerVC = ComposerVC_Mock.self
@@ -1039,7 +1096,7 @@ final class ChatChannelVC_Tests: XCTestCase {
         let channel = try XCTUnwrap(vc.channelController.channel)
         vc.channelController.markUnread(from: firstMessageId)
         vc.channelController(vc.channelController, didUpdateChannel: EntityChange<ChatChannel>.update(channel))
-
+        vc.messageListVC.dataSource = vc
         let header = vc.chatMessageListVC(
             vc.messageListVC,
             headerViewForMessage: .mock(id: firstMessageId, createdAt: Date(timeIntervalSince1970: 0)),
@@ -1066,7 +1123,7 @@ final class ChatChannelVC_Tests: XCTestCase {
         AssertSnapshot(vc, variants: [.defaultLight])
     }
 
-    func test_headerViewForMessage_returnsExpectedValue_whenUnreadSeparatorIsDisabled_whenMessageShouldShowDateSeparator_AndIsMarkedAsUnread() throws {
+    func test_headerViewForMessage_whenUnreadSeparatorIsDisabled_whenMessageShouldShowDateSeparator_AndIsMarkedAsUnread() throws {
         var components = Components.mock
         components.channelHeaderView = ChatChannelHeaderViewMock.self
         components.messageComposerVC = ComposerVC_Mock.self
@@ -1092,7 +1149,7 @@ final class ChatChannelVC_Tests: XCTestCase {
         let channel = try XCTUnwrap(vc.channelController.channel)
         vc.channelController.markUnread(from: firstMessageId)
         vc.channelController(vc.channelController, didUpdateChannel: EntityChange<ChatChannel>.update(channel))
-
+        vc.messageListVC.dataSource = vc
         let header = vc.chatMessageListVC(
             vc.messageListVC,
             headerViewForMessage: .mock(id: firstMessageId, createdAt: Date(timeIntervalSince1970: 0)),

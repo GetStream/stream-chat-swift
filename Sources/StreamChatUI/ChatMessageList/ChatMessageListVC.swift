@@ -544,8 +544,8 @@ open class ChatMessageListVC: _ViewController,
 
         let previousIndexPath = IndexPath(row: indexPath.row + 1, section: indexPath.section)
         guard let previousMessage = dataSource?.chatMessageListVC(self, messageAt: previousIndexPath) else {
-            // If previous message doesn't exist show the separator as well.
-            return true
+            // If previous message doesn't and all messages are loaded, show the date separator.
+            return dataSource?.isLastPageLoaded == true
         }
 
         // Only show the separator if the previous message has a different day.
