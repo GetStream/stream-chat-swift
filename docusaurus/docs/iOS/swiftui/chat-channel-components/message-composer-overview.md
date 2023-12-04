@@ -114,7 +114,7 @@ public func makeComposerInputView(
 The following parameters are provided to this method:
 - `text` - the binding of the text that's entered in the input view.
 - `selectedRangeLocation` - the location of the cursor.
-- `command` - optional, if a command is selected in the composer (for example giphy).
+- `command` - optional, if a command is selected in the composer (for example `giphy`).
 - `addedAssets` - a list of the added assets.
 - `addedFileURLs` - a list of the added file URLs.
 - `addedCustomAttachments` - a list of the added custom attachments.
