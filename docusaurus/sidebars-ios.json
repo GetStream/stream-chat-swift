@@ -110,6 +110,7 @@
             },
             {
               "Message Composer": [
+                "swiftui/chat-channel-components/message-composer-overview",
                 "swiftui/chat-channel-components/message-composer",
                 "swiftui/chat-channel-components/composer-commands"
               ]
