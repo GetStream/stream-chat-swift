@@ -1,8 +1,7 @@
 ---
-title: Message Composer
+title: Message Composer Overview
 ---
 
-## Message Composer Overview
 
 The message composer is the component that allows you to send messages consisting of text, images, video, files and links. The composer is customizable - you can provide your own views for several slots. The default component consists of several parts:
 
