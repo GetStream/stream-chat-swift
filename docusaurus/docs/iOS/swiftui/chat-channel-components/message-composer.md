@@ -1,80 +1,18 @@
 ---
-title: Message Composer
+title: Custom Attachments
 ---
 
-## Message Composer Overview
+It's common for apps to have their own custom attachments that can be shared in the chat. For example, fitness tracking apps can share custom attachments with the user's running route, payment apps can provide a way to execute a payment in the chat and so on.
 
-The message composer is the component that allows you to send messages consisting of text, images, video, files and links. The composer is customizable - you can provide your own views for several slots. The default component consists of several parts:
+Custom attachments are a great way to enhance the chat experience with features unique to your application. 
 
-- Leading composer view - displayed in the left part of the component. The default implementation shows buttons for displaying media picker and giphy commands.
-- Composer input view - the view that displays the input for the message. The default component allows adding text, as well as images, files and videos.
-- Trailing composer view - displayed in the right part of the component. Usually used for sending the message.
-- Attachment picker view - component that allows you to pick several different types of attachments. The default component has three types of attachments (images and videos from the photo library, files and camera input). When an attachment is selected, by default it is added to the composer's input view. You can inject custom views (alternative pickers) in the component itself as well.
+Stream's iOS SDK has support for providing custom attachments. In this guide, we will see how we can add a simple contacts picker, that will allow users to share contacts in the chat.
 
-## Applying a Custom Modifier
+Before proceeding, make sure you introduce yourself with the basic message composer components [here](./message-composer-overview.md).
 
-If you want to customize the background, padding and other styling properties of the composer view, you can apply a custom modifier by implementing the method `makeComposerViewModifier` in the `ViewFactory`. Here's an example that changes the background of the composer view.
+## Custom Attachments Steps
 
-```swift
-func makeComposerViewModifier() -> some ViewModifier {
-    BackgroundViewModifier()
-}
-
-struct BackgroundViewModifier: ViewModifier {
-
-    public func body(content: Content) -> some View {
-        content
-            .background(Color.red)
-    }
-}
-```
-
-## Customizing the Trailing Composer View
-
-If you want to change the button for sending messages (or add additional content alongside it), you will need to implement the `makeTrailingComposerView` method in the `ViewFactory`. Here's an example usage:
-
-```swift
-public func makeTrailingComposerView(
-    enabled: Bool,
-    cooldownDuration: Int,
-    onTap: @escaping () -> Void
-) -> some View {
-    CustomSendMessageButton(enabled: enabled, onTap: onTap)
-}
-```
-
-The method provides the following parameters:
-- `enabled` - whether there's content (text / attachment) for the message to be sent.
-- `cooldownDuration` - if the channel is in cooldown mode, use this property to show a timer with the duration (in seconds) until the user can send messages again.
-- `onTap` - the action to be executed when the user taps on the button to send a message. You should attach this action to your custom button, in order for the message to be sent.
-
-## Customizing the Leading Composer View
-
-You can also swap the leading composer view with your own implementation. This might be useful if you want to change the behaviour of the attachment picker (provide a different one), or even just hide the component.
-
-In order to do this, you need to implement the `makeLeadingComposerView`, which receives a binding of the `PickerTypeState`. Having the `PickerTypeState` as a parameter allows you to control the visibility of the attachment picker view. The `PickerTypeState` has two states - expanded and collapsed. If the state is collapsed, the composer is in the minimal mode (only the text input and leading and trailing areas are shown). If the `enum` state is expanded, it has associated value with it, which is of type `AttachmentPickerType`. This defines the type of picker which is currently displayed in the attachment picker view. The possible states are `none` (nothing is selected), `media` (media picker is selected), `giphy` (giphy commands picker is shown) and custom (for your own custom pickers).
-
-Apart from the `PickerTypeState`, you also receive the `ChannelConfig` as a parameter. This configuration allows you to control the display of some elements from the channel response from the backend, such as enabling / disabling of the attachments, max message length, typing indicators, etc. More details about the available settings in the channel configuration can be found [here](https://getstream.io/chat/docs/ios-swift/channel_features/?language=swift).
-
-Here's an example on how to provide a view for the leading composer view:
-
-```swift
-public func makeLeadingComposerView(
-        state: Binding<PickerTypeState>,
-        channelConfig: ChannelConfig?
-) -> some View {
-    AttachmentPickerTypeView(
-        pickerTypeState: state,
-        channelConfig: channelConfig
-    )
-}
-```
-
-## Customizing the AttachmentPickerTypeView
-
-The `AttachmentPickerTypeView` comes with a lot of functionalities, in terms of image and video picker, file picker and selecting media from the camera. While you can just swap this component if it doesn't fit your needs (like shown above), it's also possible to extend it with additional message attachment types to fit your needs.
-
-For example, let's say we want to add additional contacts picker, which will allow us to send contacts via the chat. We also want to keep the existing functionalities, therefore we will explore ways to customize the existing component.
+As mentioned above, we will add an additional contacts picker, which will allow us to send contacts via the chat. We also want to keep the existing functionalities, therefore we will explore ways to customize the existing component.
 
 There are few things we need to do in order to accomplish this:
 
@@ -85,7 +23,7 @@ There are few things we need to do in order to accomplish this:
 - Update the message resolving logic of the message list to include the contact payload
 - Provide UI for the contacts attachment in the message list
 
-Let's explore these steps in more details
+Let's explore these steps in more details.
 
 ### Contact Payload
 
