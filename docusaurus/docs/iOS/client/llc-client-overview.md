@@ -9,7 +9,7 @@ Both our [UIKit](../uikit) and [SwiftUI](../swiftui) UI component libraries use 
 
 ## Accessing State with Controllers
 
-The `StreamChat` framework ships with controllers and delegates that you can use to build your own views.
+The `StreamChat` framework comes with controllers and delegates that you can use to build your own views.
 
 Each controller exposes API functionality and supports delegation. Controllers and their delegates are documented here based on the kind of data they control and allow you to observe. You can find examples on how to build your own view as well.
 
