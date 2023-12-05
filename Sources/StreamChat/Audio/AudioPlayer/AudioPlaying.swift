@@ -78,7 +78,6 @@ open class StreamAudioPlayer: AudioPlaying, AppStateObserverDelegate {
 
     // MARK: - Lifecycle
 
-    @available(*, deprecated, message: "You can use the Builder API to create a new instance of the player.")
     public required convenience init() {
         self.init(
             assetPropertyLoader: StreamAssetPropertyLoader(),
