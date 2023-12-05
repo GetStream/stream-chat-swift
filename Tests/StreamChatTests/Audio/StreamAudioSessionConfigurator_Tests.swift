@@ -171,7 +171,7 @@ final class StreamAudioSessionConfigurator_Tests: XCTestCase {
 
         try subject.activatePlaybackSession()
 
-        XCTAssertEqual(stubAudioSession.setCategoryWasCalledWithCategory, .playAndRecord)
+        XCTAssertEqual(stubAudioSession.setCategoryWasCalledWithCategory, .playback)
         XCTAssertEqual(stubAudioSession.setCategoryWasCalledWithMode, .default)
         XCTAssertEqual(stubAudioSession.setCategoryWasCalledWithPolicy, .default)
         XCTAssertEqual(stubAudioSession.setCategoryWasCalledWithOptions, [])
