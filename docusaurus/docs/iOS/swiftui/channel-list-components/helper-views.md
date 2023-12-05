@@ -112,7 +112,7 @@ We also have a more in-detail [article on customization of the channel list](htt
 
 ## Changing the Background of the Channel List
 
-You can change the background of the channel list to be any SwiftUI `View` (`Color`, `LinearGradient`, `Image` etc.). In order to do this, you will need to implement the `makeChannelListBackground` in the `ViewFactory`.
+You can change the background of the channel list to be any SwiftUI `View` (`Color`, `LinearGradient`, `Image`, etc.). In order to do this, you will need to implement the `makeChannelListBackground` in the `ViewFactory`.
 
 ```swift
 func makeChannelListBackground(colors: ColorPalette) -> some View {
