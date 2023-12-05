@@ -42,6 +42,10 @@ Updates the loaded asset's playback rate to the provided one.
 #### `func seek(to:)`
 Performs a seek in the loaded asset's timeline at the provided time.
 
+#### `configure(_ audioSessionConfigurator: AudioSessionConfiguring)`
+
+The default object that interacts with the `AVAudioSession`, assumes that it's the only one that manages the `AVAudioSession` shared instance. In scenarios where that's not the case (for example, you have an active audio session going on because of audio/video call), you can use this method to provide a another instance that will be aware of all related features and will act as the central point of `AVAudioSession` configuration between Stream VoiceRecording feature and any other feature that uses the `AVAudioSession`.
+
 ### Receiving updates
 
 By calling `subscribe(_ subscriber: AudioPlayingDelegate)` we are subscribing to receive updates from the `AudioPlaying` instance. Those updates include information about:

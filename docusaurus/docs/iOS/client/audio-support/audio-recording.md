@@ -62,6 +62,10 @@ It will stop the current recording and inform the `AVAudioSession` that recordin
 
 They will pause and resume respectively, the current recording.
 
+#### `configure(_ audioSessionConfigurator: AudioSessionConfiguring)`
+
+The default object that interacts with the `AVAudioSession`, assumes that it's the only one that manages the `AVAudioSession` shared instance. In scenarios where that's not the case (for example, you have an active audio session going on because of audio/video call), you can use this method to provide a another instance that will be aware of all related features and will act as the central point of `AVAudioSession` configuration between Stream VoiceRecording feature and any other feature that uses the `AVAudioSession`.
+
 ### Receiving updates
 By calling `subscribe(_ subscriber: AudioRecordingDelegate)` we are subscribing to receive updates from the `AudioRecording` instance. Those updates include information about:
 - Active recording and its properties (for example its duration, state and [average power](https://developer.apple.com/documentation/avfaudio/avaudiorecorder/1387176-averagepowerforchannel))
