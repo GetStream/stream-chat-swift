@@ -1,5 +1,5 @@
 ---
-title: ChatChannelHeaderView
+title: Channel Header
 ---
 
 import ComponentsNote from '../../common-content/components-note.md'

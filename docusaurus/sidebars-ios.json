@@ -10,41 +10,41 @@
       "UIKit Components": [
         "uikit/getting-started",
         "uikit/theming",
-        "uikit/custom-components",    
+        "uikit/custom-components",
         {
           "Channel List": [
             "uikit/components/channel-list",
             "uikit/views/channel-list-item-view"
-          ],
-          "Channel": [
-            "uikit/views/channel-header-view",
-            "uikit/components/channel",
-            {
-              "Message List": [
-                  "uikit/components/message-list",
-                  "uikit/components/thread",
-                  "uikit/components/message",
-                  "uikit/views/thread-header-view",
-                  "uikit/views/message-layout-options-resolver",
-                  "uikit/views/avatar",
-                  "uikit/views/reactions",
-                  "uikit/guides/customize-message-actions",
-                  "uikit/guides/message-list-delivery-status",
-                  "uikit/guides/customize-message-delivery-status"
-              ],
-              "Message Composer": [
-                "uikit/components/message-composer",
-                "uikit/guides/working-with-attachments",
-                "uikit/guides/customize-message-composer",
-                "uikit/guides/message-composer-custom-attachments"
-              ]
-            },
-            "uikit/components/voice-recording"
           ]
         },
+        "uikit/components/channel",
+        "uikit/views/channel-header-view",
+        {
+          "Message List": [
+            "uikit/components/message-list",
+            "uikit/components/thread",
+            "uikit/components/message",
+            "uikit/views/thread-header-view",
+            "uikit/views/message-layout-options-resolver",
+            "uikit/views/avatar",
+            "uikit/views/reactions",
+            "uikit/guides/customize-message-actions",
+            "uikit/guides/message-list-delivery-status",
+            "uikit/guides/customize-message-delivery-status"
+          ]
+        },
+        {
+          "Message Composer": [
+            "uikit/components/message-composer",
+            "uikit/guides/working-with-attachments",
+            "uikit/guides/customize-message-composer",
+            "uikit/guides/message-composer-custom-attachments"
+          ]
+        },  
         "uikit/navigation",
         "uikit/localization",            
-        "uikit/data-formatting"
+        "uikit/data-formatting",
+        "uikit/components/voice-recording"
       ]
     },
     {
