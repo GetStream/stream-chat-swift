@@ -35,6 +35,8 @@ We suggest using either [`StreamChatUI`](./uikit) or [`StreamChatSwiftUI`](./swi
 
 The UI SDKs provide both ready-made components that you can directly integrate (and customize) in your apps, or you can build your own, by reacting to the state we expose and re-using our components as building blocks, if needed.
 
+You can learn more about how the state is exposed on [this page](../client/llc-client-overview.md) and in the [low-level client docs](https://getstream.io/chat/docs/ios-swift/?language=swift).
+
 :::note
 You can use this library to develop OSX application by using the `StreamChat` framework
 :::
@@ -47,18 +49,18 @@ The SDK tries to keep the list of external dependencies to a minimum, these are 
 
 - [Nuke](https://github.com/kean/Nuke) for loading images  
 - [SwiftyGif](https://github.com/kirualex/SwiftyGif) for high performance gif rendering
-- StreamChat the low-level client to Stream Chat API
+- [StreamChat]((https://getstream.io/chat/docs/ios-swift/?language=swift)) the low-level client for the Stream Chat API
 
 #### StreamChatSwiftUI
 
 - [Nuke](https://github.com/kean/Nuke) for loading images  
 - [NukeUI](https://github.com/kean/Nuke) for loading images  
 - [Gifu](https://github.com/kaishin/Gifu) for high performance gif rendering
-- StreamChat the low-level client to Stream Chat API
+- [StreamChat]((https://getstream.io/chat/docs/ios-swift/?language=swift)) the low-level client for the Stream Chat API
 
 #### StreamChat
 
-- [Starscream](https://github.com/daltoniam/Starscream) to handle WebSocket connections
+- [Starscream](https://github.com/daltoniam/Starscream) to handle WebSocket connections (used only on iOS 11 and 12)
 
 :::note
 Starting **4.6.0**, and in order to improve the developer experience, dependencies are hidden inside our libraries.
