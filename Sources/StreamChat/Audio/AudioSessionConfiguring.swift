@@ -86,14 +86,15 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring {
         try deactivateSession()
     }
 
-    /// Calling this method should activate the provided `AVAudioSession` for playback.
+    /// Calling this method should activate the provided `AVAudioSession` for playback and record.
     ///
-    /// - Note: The method will check if the audioSession's category contains the `playback` capability
-    /// and if it doesn't it will activate it using the `.playback` category and `.default` for both mode
-    /// and policy.  OverrideOutputAudioPort is set to `.speaker`.
+    /// - Note: The method will check if the audioSession's category contains the `playAndRecord` capability
+    /// and if it doesn't it will activate it using the `.playbackAndRecord` category and `.default` for both mode
+    /// and policy.  OverrideOutputAudioPort is set to `.speaker`. The `record` capability is required
+    /// ensure that the output port can be set to `.speaker`.
     open func activatePlaybackSession() throws {
         try audioSession.setCategory(
-            .playback,
+            .playAndRecord,
             mode: .default,
             policy: .default,
             options: []
