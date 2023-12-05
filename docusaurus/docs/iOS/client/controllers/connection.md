@@ -1,5 +1,5 @@
 ---
-title: Connection Controllers
+title: Connection Status
 ---
 
 ## ConnectionController

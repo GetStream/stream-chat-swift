@@ -1,5 +1,5 @@
 ---
-title: Events Controllers
+title: Listening to Events
 ---
 
 ## EventsController

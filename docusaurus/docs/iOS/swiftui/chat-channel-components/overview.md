@@ -1,5 +1,5 @@
 ---
-title: Overview
+title: Channel
 ---
 
 ## What is the Chat Channel?

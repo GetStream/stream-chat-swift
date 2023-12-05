@@ -1,5 +1,5 @@
 ---
-title: Channel Controllers
+title: Channels State and Filtering
 ---
 
 import SingletonNote from '../../common-content/chat-client.md'
@@ -58,7 +58,7 @@ The `query.sort` is an array of sorting options. Sorting options are applied bas
 
 When sorting using a property that is not by default available in `ChannelListSortingKey`, you can create a custom one as such:
 
-```
+```swift
 let key = ChannelListSortingKey.custom(keyPath: \.myCustomValue, key: "custom_score.value")
 let customValueSorting = Sorting<ChannelListSortingKey>(key: key, isAscending: false)
 let query = ChannelListQuery(filter: filter, sort: [customValueSorting])
@@ -66,7 +66,7 @@ let query = ChannelListQuery(filter: filter, sort: [customValueSorting])
 ```
 
 In order for the above to work, you need to create a computed property to access the custom value that you want to use to sort:
-```
+```swift
 extension ChatChannel {
     var myCustomValue: Double {
         return extraData["custom_score"]?["value"]?.numberValue ?? 0
@@ -76,6 +76,7 @@ extension ChatChannel {
 ```
 
 ### 2. Create a controller
+
 The simplest way to create a controller is by using the method `channelListController(query:)` on your `ChatClient`.
 ```swift
 let controller = ChatClient.shared.channelListController(query: query)
@@ -87,6 +88,7 @@ In cases, though, where the query provided contains extra data or custom filters
 :::
 
 #### Filtering with extra data
+
 Currently the SDK doesn't support filtering on values in the extra data dictionary. In this case, we will need to evaluate manually the part of the query that checks the dictionary. In the code below you can see an example:
 :::note
 Notice how we are only evaluating manually, the part of the query regarding the `myCustomBooleanKey`. The rest of the query has been already evaluated by the SDK and the results have been partially filtered.
@@ -106,6 +108,7 @@ let controller = ChatClient.shared.channelListController(query: .and([
 })
 ```
 #### Manual Filtering
+
 First we need to disable the Channel auto-filtering. We can do that by turning the `isChannelAutomaticFilteringEnabled` in your `ChatClient` configuration, to `false`.
 ```swift
 extension ChatClient {
@@ -191,69 +194,6 @@ func channelController(
 func channelController(_ channelController: ChatChannelController, didReceiveMemberEvent: MemberEvent) {}
 ```
 
-### Example: Typing Indicator
-
-Let's build a simple UIView that shows the current unread count for the current user.
-
-```swift
-class TypingIndicatorView: UIView, ChatChannelControllerDelegate {
-    var labelView: UILabel = {
-        var label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-
-    override public init(frame: CGRect) {
-        super.init(frame: frame)
-        
-        addSubview(labelView)
-
-        NSLayoutConstraint.activate([
-            labelView.topAnchor.constraint(equalTo: topAnchor),
-            labelView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            labelView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            labelView.trailingAnchor.constraint(equalTo: trailingAnchor)
-        ])
-    }
-    
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-    }
-
-    func channelController(_ channelController: ChatChannelController, didChangeTypingUsers typingUsers: Set<ChatUser>) {
-        let otherUsersTyping = typingUsers.filter({ $0.id != channelController.client.currentUserId })
-        
-        guard let typingUser = otherUsersTyping.first else {
-            labelView.text = ""
-            return
-        }
-        
-        labelView.text = "\(typingUser.name ?? typingUser.id) is typing ..."
-    }
-}
-
-class ViewController: UIViewController {
-    var controller: ChatChannelController!
-
-    var typingIndicatorView: TypingIndicatorView = {
-        var view = TypingIndicatorView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        let cid = ChannelId.init(type:.messaging, id:"the-id-of-the-channel")
-        controller = ChatClient.shared.channelController(for: cid)
-        controller.synchronize()
-
-        controller.delegate = typingIndicatorView
-        navigationItem.titleView = typingIndicatorView
-    }
-}
-```
-
 ## ChannelMemberListController
 
 `ChatChannelMemberListController` allows you to observe and mutate data and observing changes for a list of channel members based on the provided query.
@@ -267,72 +207,6 @@ func memberListController(
     _ controller: ChatChannelMemberListController,
     didChangeMembers changes: [ListChange<ChatChannelMember>]
 )
-```
-
-### Example: Listing Members
-
-This example uses the `ChatChannelMemberListController` to fetch all members on the channel `messaging:123` and sets a view as its delegate.
-
-```swift
-class MembersSearchResultsView: UIView, ChatChannelMemberListControllerDelegate {
-    var labelView: UILabel = {
-        var label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-
-    override public init(frame: CGRect) {
-        super.init(frame: frame)
-        
-        addSubview(labelView)
-
-        NSLayoutConstraint.activate([
-            labelView.topAnchor.constraint(equalTo: topAnchor),
-            labelView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            labelView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            labelView.trailingAnchor.constraint(equalTo: trailingAnchor)
-        ])
-    }
-    
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-    }
-
-    func memberListController(_ controller: ChatChannelMemberListController, didChangeMembers changes: [ListChange<ChatChannelMember>]) {
-        let membersStr = controller.members.map { $0.name ?? $0.id }.joined(separator: ", ")
-        labelView.text = membersStr
-
-        print("\(changes.count) members changed (added/inserted/deleted)")
-    }
-}
-
-class ViewController: UIViewController {
-    var controller: ChatChannelMemberListController!
-
-    var membersSearchResultsView: MembersSearchResultsView = {
-        var view = MembersSearchResultsView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        let cid = ChannelId.init(type:.messaging, id:"123")
-        let query = ChannelMemberListQuery.init(cid: cid)
-        
-        controller = ChatClient.shared.memberListController(query: query)
-        controller.delegate = membersSearchResultsView
-
-        controller.synchronize {error in
-            if error != nil {
-                log.assertionFailure(error!)
-            }
-        }
-
-        navigationItem.titleView = membersSearchResultsView
-    }
-}
 ```
 
 ## ChannelMemberController
