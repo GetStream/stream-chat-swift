@@ -36,6 +36,8 @@ public protocol AudioSessionConfiguring {
 #if os(macOS) && !targetEnvironment(macCatalyst)
 /// An implementation where for macOS we don't have interactions with AVAudioSession as it's not available.
 open class StreamAudioSessionConfigurator: AudioSessionConfiguring {
+    public required init() {}
+
     public func activateRecordingSession() throws { /* No-op */ }
 
     public func deactivateRecordingSession() throws { /* No-op */ }
