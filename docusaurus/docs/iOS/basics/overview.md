@@ -27,11 +27,11 @@ Before getting started with our docs, we recommend going through our tutorials f
 
 StreamChat Swift SDK consists of three separate frameworks:
 
-- [`StreamChatUI`](./uikit) provides a set of reusable and customizable UI components to add chat to your UIKit application.
-- [`StreamChatSwiftUI`](./swiftui) provides a set of reusable and customizable UI components to add chat to your SwiftUI application.
+- [`StreamChatUI`](../uikit/getting-started.md) provides a set of reusable and customizable UI components to add chat to your UIKit application.
+- [`StreamChatSwiftUI`](../swiftui/getting-started.md) provides a set of reusable and customizable UI components to add chat to your SwiftUI application.
 - [`StreamChat`](https://getstream.io/chat/docs/ios-swift/?language=swift) is the low-level client that provides the main chat functionality, including offline storage and optimistic updates. You can use it directly in case you want to build your own UI layer for the chat.
 
-We suggest using either [`StreamChatUI`](./uikit) or [`StreamChatSwiftUI`](./swiftui) to most of our customers. Unless your UI is completely different from the common industry standard, you should be able to customize the built-in components to match your needs.
+We suggest using either [`StreamChatUI`](../uikit/getting-started.md) or [`StreamChatSwiftUI`](../swiftui/getting-started.md) to most of our customers. Unless your UI is completely different from the common industry standard, you should be able to customize the built-in components to match your needs.
 
 The UI SDKs provide both ready-made components that you can directly integrate (and customize) in your apps, or you can build your own, by reacting to the state we expose and re-using our components as building blocks, if needed.
 
