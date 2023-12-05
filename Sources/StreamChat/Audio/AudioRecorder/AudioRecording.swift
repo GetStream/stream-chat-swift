@@ -99,7 +99,7 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
 
     /// The `audioSessionConfigurator` will be called when the recorder needs to request or resign
     /// the permission to record from the current `AudioSession`
-    private let audioSessionConfigurator: AudioSessionConfiguring
+    private var audioSessionConfigurator: AudioSessionConfiguring
 
     /// A normaliser that will be responsible to polish the powering meters as they will be send by
     /// the AVAudioRecorder
@@ -181,6 +181,15 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
         super.init()
 
         setUp()
+    }
+
+    /// Provides a way to customise of the underline audioSessionConfiguration, in order to allow extension
+    /// on the logic that handles the `AVAudioSession.shared`.
+    /// - Parameters:
+    ///     - audioSessionConfiguration: The new instance of the audioSessionConfigurator that will
+    ///     be used whenever the player needs to interact with the `AVAudioSession.shared`.
+    public func configure(_ audioSessionConfigurator: AudioSessionConfiguring) {
+        self.audioSessionConfigurator = audioSessionConfigurator
     }
 
     // MARK: - AudioRecording
