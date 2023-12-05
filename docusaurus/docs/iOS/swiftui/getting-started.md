@@ -2,11 +2,13 @@
 title: Getting Started
 ---
 
-This section provides a high-level overview of the SwiftUI components library. It is a great starting point for discovering how to use Stream's SwiftUI components in your app. For a complete, step-by-step guide check out [iOS Chat tutorial](https://getstream.io/tutorials/swiftui-chat/).
+The SwiftUI SDK is built on top of the `StreamChat` framework, and it's a SwiftUI alternative to the `StreamChatUI` SDK. It's made entirely in SwiftUI, using declarative patterns that will be familiar to developers working with SwiftUI. 
+
+This section provides a high-level overview of the SwiftUI components library. It is a great starting point for discovering how to use Stream's SwiftUI components in your app. For a complete step-by-step guide, check out [iOS Chat tutorial](https://getstream.io/tutorials/ios-chat/).
 
 ## Your First App with Stream Chat
 
-Before starting, make sure you have installed `StreamChatSwiftUI` as explained in the [Installation](./swiftui-overview.md#installation) section.
+Before starting, make sure you have installed `StreamChatSwiftUI` as explained in the [Installation](../../basics/integration) section.
 
 ## Creating the SwiftUI Context Provider Object
 

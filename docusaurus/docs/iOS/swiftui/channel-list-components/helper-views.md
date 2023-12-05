@@ -2,68 +2,7 @@
 title: Channel List Views
 ---
 
-## Changing the Loading View
-
-While the channels are loaded, a loading view is displayed, with a simple animating activity indicator. If you want to change this view, with your own custom view, you will need to implement the `makeLoadingView` of the `ViewFactory` protocol.
-
-```swift
-class CustomFactory: ViewFactory {
-
-    @Injected(\.chatClient) public var chatClient
-
-    private init() {}
-
-    public static let shared = CustomFactory()
-
-    func makeLoadingView() -> some View {
-        VStack {
-            Text("This is custom loading view")
-            ProgressView()
-        }
-    }
-}
-```
-
-Afterwards, you will need to inject the newly created `CustomFactory` into our view hierarchy.
-
-```swift
-var body: some Scene {
-    WindowGroup {
-        ChatChannelListView(viewFactory: CustomFactory.shared)
-    }
-}
-```
-
-## Changing the No Channels Available View
-
-When there are no channels available, the SDK displays a screen with a button to start a chat. If you want to replace this screen, you will just need to implement the `makeNoChannelsView` in the `ViewFactory`.
-
-```swift
-func makeNoChannelsView() -> some View {
-    VStack {
-        Spacer()
-        Text("This is our own custom no channels view.")
-        Spacer()
-    }
-}
-```
-
-:::info
-We also have a more in-detail [article on customization of the channel list](https://getstream.io/blog/customize-chat-channel-list-with-swiftui/) and you can find an example of how to provide a no channels available view [here](https://getstream.io/blog/customize-chat-channel-list-with-swiftui/#how-to-customize-the-no-channels-view).
-:::
-
-## Changing the Background of the Channel List
-
-You can change the background of the channel list to be any SwiftUI `View` (`Color`, `LinearGradient`, `Image` etc.). In order to do this, you will need to implement the `makeChannelListBackground` in the `ViewFactory`.
-
-```swift
-func makeChannelListBackground(colors: ColorPalette) -> some View {
-    Color(colors.background)
-        .edgesIgnoringSafeArea(.bottom)
-}
-```
-
-In this method, you receive the `colors` used in the SDK, but you can ignore them if you want to use custom colors that are not setup via the SDK.
+This section shows how you can customize the channel list, by replacing components with your own implementation.
 
 ## Changing the Chat Channel List Item
 
@@ -120,6 +59,69 @@ In the channel list item creation method, you are provided with several paramete
 - `leadingSwipeButtonTapped`: called when the button of the leading swiped area is tapped.
 
 The last three parameters have no effect if you have specified `EmptyView` for the leading and trailing swipe area of a channel list item. By default, the leading area returns `EmptyView`. In one of the following sections, we will see how these areas can be customized.
+
+To integrate your customization into the SDK, you will need to create a new `CustomFactory` (or any name you prefer), and provide your implementation of the method there. Afterwards, you will need to inject the newly created `CustomFactory` into our view hierarchy.
+
+```swift
+var body: some Scene {
+    WindowGroup {
+        ChatChannelListView(viewFactory: CustomFactory.shared)
+    }
+}
+```
+
+## Changing the Loading View
+
+While the channels are loaded, a loading view is displayed, with a simple animating activity indicator. If you want to change this view, with your own custom view, you will need to implement the `makeLoadingView` of the `ViewFactory` protocol.
+
+```swift
+class CustomFactory: ViewFactory {
+
+    @Injected(\.chatClient) public var chatClient
+
+    private init() {}
+
+    public static let shared = CustomFactory()
+
+    func makeLoadingView() -> some View {
+        VStack {
+            Text("This is custom loading view")
+            ProgressView()
+        }
+    }
+}
+```
+
+## Changing the No Channels Available View
+
+When there are no channels available, the SDK displays a screen with a button to start a chat. If you want to replace this screen, you will just need to implement the `makeNoChannelsView` in the `ViewFactory`.
+
+```swift
+func makeNoChannelsView() -> some View {
+    VStack {
+        Spacer()
+        Text("This is our own custom no channels view.")
+        Spacer()
+    }
+}
+```
+
+:::info
+We also have a more in-detail [article on customization of the channel list](https://getstream.io/blog/customize-chat-channel-list-with-swiftui/) and you can find an example of how to provide a no channels available view [here](https://getstream.io/blog/customize-chat-channel-list-with-swiftui/#how-to-customize-the-no-channels-view).
+:::
+
+## Changing the Background of the Channel List
+
+You can change the background of the channel list to be any SwiftUI `View` (`Color`, `LinearGradient`, `Image`, etc.). In order to do this, you will need to implement the `makeChannelListBackground` in the `ViewFactory`.
+
+```swift
+func makeChannelListBackground(colors: ColorPalette) -> some View {
+    Color(colors.background)
+        .edgesIgnoringSafeArea(.bottom)
+}
+```
+
+In this method, you receive the `colors` used in the SDK, but you can ignore them if you want to use custom colors that are not setup via the SDK.
 
 ## Changing the Divider of the Chat Channel List
 

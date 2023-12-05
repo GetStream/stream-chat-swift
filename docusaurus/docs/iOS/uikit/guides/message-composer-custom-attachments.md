@@ -1,5 +1,5 @@
 ---
-title: Message Composer Custom Attachments
+title: Custom Attachments
 ---
 
 import ComponentsNote from '../../common-content/components-note.md'

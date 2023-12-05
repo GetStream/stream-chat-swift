@@ -2,11 +2,11 @@
 title: Getting Started
 ---
 
-This section provides a high-level overview of the library, core components, and how they fit together. It's a great starting point that you can follow along in your code editor. For a complete, step-by-step guide check our [iOS Chat tutorial](https://getstream.io/tutorials/ios-chat/).
+This section provides a high-level overview of the library, core components, and how they fit together. It's a great starting point that you can follow along in your code editor. For a complete, step-by-step guide check our [iOS Chat tutorial](https://getstream.io/tutorials/ios-uikit-chat/).
 
 ## Your First App with Stream Chat
 
-Before starting, make sure you have installed `StreamChatUI` as explained in the [Installation](./uikit-overview.md#installation) section.
+Before starting, make sure you have installed `StreamChatUI` as explained in the [Installation](../../basics/integration) section.
 
 ### Chat Setup
 
