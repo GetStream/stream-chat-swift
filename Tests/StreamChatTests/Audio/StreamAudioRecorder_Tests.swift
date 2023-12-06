@@ -37,6 +37,22 @@ final class StreamAudioRecorder_Tests: XCTestCase {
         super.tearDown()
     }
 
+    // MARK: - configureAudioSessionConfigurator
+
+    func test_configureAudioSessionConfigurator_onlyNewInstanceIsInvoked() {
+        setAudioRecorder()
+        let newAudioSessionConfigurator = MockAudioSessionConfigurator()
+        subject.configure(newAudioSessionConfigurator)
+
+        subject.beginRecording {}
+
+        XCTAssertEqual(newAudioSessionConfigurator.recordedFunctions, [
+            "activateRecordingSession()",
+            "requestRecordPermission(_:)"
+        ])
+        XCTAssertTrue(audioSessionConfigurator.recordedFunctions.isEmpty)
+    }
+
     // MARK: - beginRecording
 
     func test_beginRecording_audioSessionConfiguratorThrowsAnError_callsDidFailWithErrorOnDelegate() throws {

@@ -61,7 +61,7 @@ open class StreamAudioPlayer: AudioPlaying, AppStateObserverDelegate {
     /// The player that will be used for the playback of the audio files
     fileprivate let player: AVPlayer
 
-    private let audioSessionConfigurator: AudioSessionConfiguring
+    private var audioSessionConfigurator: AudioSessionConfiguring
 
     /// The assetPropertyLoader is being used during the loading of an asset with non-nil URL, to provide
     /// async information about the asset's properties. Currently, we are only loading the `duration`
@@ -102,6 +102,15 @@ open class StreamAudioPlayer: AudioPlaying, AppStateObserverDelegate {
         self.appStateObserver = appStateObserver
 
         setUp()
+    }
+
+    /// Provides a way to customise of the underline audioSessionConfiguration, in order to allow extension
+    /// on the logic that handles the `AVAudioSession.shared`.
+    /// - Parameters:
+    ///     - audioSessionConfiguration: The new instance of the audioSessionConfigurator that will
+    ///     be used whenever the player needs to interact with the `AVAudioSession.shared`.
+    public func configure(_ audioSessionConfigurator: AudioSessionConfiguring) {
+        self.audioSessionConfigurator = audioSessionConfigurator
     }
 
     // MARK: - AudioPlaying

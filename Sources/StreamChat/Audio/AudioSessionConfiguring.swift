@@ -7,7 +7,7 @@ import AVFoundation
 // MARK: - Protocol
 
 /// A protocol describing an object that can configure/interact with `AVAudioSession`
-protocol AudioSessionConfiguring {
+public protocol AudioSessionConfiguring {
     /// The required initialiser
     init()
 
@@ -35,19 +35,21 @@ protocol AudioSessionConfiguring {
 
 #if os(macOS) && !targetEnvironment(macCatalyst)
 /// An implementation where for macOS we don't have interactions with AVAudioSession as it's not available.
-final class StreamAudioSessionConfigurator: AudioSessionConfiguring {
-    func activateRecordingSession() throws { /* No-op */ }
+open class StreamAudioSessionConfigurator: AudioSessionConfiguring {
+    public required init() {}
 
-    func deactivateRecordingSession() throws { /* No-op */ }
+    public func activateRecordingSession() throws { /* No-op */ }
 
-    func activatePlaybackSession() throws { /* No-op */ }
+    public func deactivateRecordingSession() throws { /* No-op */ }
 
-    func deactivatePlaybackSession() throws { /* No-op */ }
+    public func activatePlaybackSession() throws { /* No-op */ }
 
-    func requestRecordPermission(_ completionHandler: @escaping (Bool) -> Void) { completionHandler(true) }
+    public func deactivatePlaybackSession() throws { /* No-op */ }
+
+    public func requestRecordPermission(_ completionHandler: @escaping (Bool) -> Void) { completionHandler(true) }
 }
 #else
-final class StreamAudioSessionConfigurator: AudioSessionConfiguring {
+open class StreamAudioSessionConfigurator: AudioSessionConfiguring {
     /// The audioSession with which the configurator will interact.
     private let audioSession: AudioSessionProtocol
 
@@ -59,13 +61,15 @@ final class StreamAudioSessionConfigurator: AudioSessionConfiguring {
 
     // MARK: - AudioSessionConfigurator
 
-    required convenience init() {
+    public required convenience init() {
         self.init(AVAudioSession.sharedInstance())
     }
 
+    /// Calling this method should activate the provided `AVAudioSession` for recording and playback.
+    ///
     /// - Note: This method is using the `.playAndRecord` category with the `.spokenAudio` mode.
     /// The preferredInput will be set to `.buildInMic` and overrideOutputAudioPort to `.speaker`.
-    func activateRecordingSession() throws {
+    open func activateRecordingSession() throws {
         try audioSession.setCategory(
             .playAndRecord,
             mode: .spokenAudio,
@@ -76,16 +80,21 @@ final class StreamAudioSessionConfigurator: AudioSessionConfiguring {
         try activateSession()
     }
 
+    /// Calling this method should deactivate the provided `AVAudioSession`.
+    ///
     /// - Note: The method will check if the audioSession's category contains the `record` capability
     /// and if it does it will deactivate it. Otherwise, no action will be performed.
-    func deactivateRecordingSession() throws {
+    open func deactivateRecordingSession() throws {
         try deactivateSession()
     }
 
-    /// - Note: The method will check if the audioSession's category contains the `playback` capability
-    /// and if it doesn't it will activate it using the `.playback` category and `.default` for both mode
-    /// and policy.  OverrideOutputAudioPort is set to `.speaker`.
-    func activatePlaybackSession() throws {
+    /// Calling this method should activate the provided `AVAudioSession` for playback and record.
+    ///
+    /// - Note: The method will check if the audioSession's category contains the `playAndRecord` capability
+    /// and if it doesn't it will activate it using the `.playbackAndRecord` category and `.default` for both mode
+    /// and policy.  OverrideOutputAudioPort is set to `.speaker`. The `record` capability is required
+    /// ensure that the output port can be set to `.speaker`.
+    open func activatePlaybackSession() throws {
         try audioSession.setCategory(
             .playAndRecord,
             mode: .default,
@@ -95,13 +104,22 @@ final class StreamAudioSessionConfigurator: AudioSessionConfiguring {
         try activateSession()
     }
 
+    /// Calling this method should deactivate the provided `AVAudioSession`.
+    ///
     /// - Note: The method will check if the audioSession's category contains the `playback` capability
     /// and if it does it will deactivate it. Otherwise, no action will be performed.
-    func deactivatePlaybackSession() throws {
+    open func deactivatePlaybackSession() throws {
         try deactivateSession()
     }
 
-    func requestRecordPermission(
+    /// Requests recording permission from the underline `AVAudioSession` and invokes the provided
+    /// completionHandler whenever there is an available response.
+    ///
+    /// - Parameters:
+    ///     - completionHandler: The closure to call on the the `AVAudioSession` request returns
+    ///     with a response.
+    ///     - Note: The closure's invocation will be dispatched on the MainThread.
+    open func requestRecordPermission(
         _ completionHandler: @escaping (Bool) -> Void
     ) {
         audioSession.requestRecordPermission { [weak self] in

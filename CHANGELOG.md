@@ -3,6 +3,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### ✅ Added
+- A way to configure the object that configures the AudioSession when using VoiceRecordings. [#2919](https://github.com/GetStream/stream-chat-swift/pull/2919)
+
 ## StreamChatUI
 ### 🐞 Fixed
 - Fix date separator decoration view showing in the last message of the current page [#2899](https://github.com/GetStream/stream-chat-swift/pull/2899)

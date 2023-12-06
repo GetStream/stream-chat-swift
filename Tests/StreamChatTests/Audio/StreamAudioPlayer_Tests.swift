@@ -80,6 +80,18 @@ final class StreamAudioPlayer_Tests: XCTestCase {
         XCTAssertNil(playerObserver.addStoppedPlaybackObserverWasCalledWithQueue)
     }
 
+    // MARK: - configureAudioSessionConfigurator
+
+    func test_configureAudioSessionConfigurator_onlyNewInstanceIsInvoked() {
+        let newAudioSessionConfigurator = MockAudioSessionConfigurator()
+        subject.configure(newAudioSessionConfigurator)
+
+        subject.play()
+
+        XCTAssertEqual(newAudioSessionConfigurator.recordedFunctions, ["activatePlaybackSession()"])
+        XCTAssertTrue(audioSessionConfigurator.recordedFunctions.isEmpty)
+    }
+
     // MARK: - periodicTimerObserver
 
     func test_periodicTimerObserver_isSeekingIsFalse_delegateWasUpdatedWithExpectedContext() {
