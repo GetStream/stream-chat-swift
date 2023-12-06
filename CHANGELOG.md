@@ -5,7 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChat
 ### ✅ Added
-- A way to configure the object that configures the AudioSession when using VoiceRecordings. [#2919](https://github.com/GetStream/stream-chat-swift/pull/2919)
+- Add an option to configure the AudioSession when using VoiceRecordings [#2919](https://github.com/GetStream/stream-chat-swift/pull/2919)
+### 🐞 Fixed
+- Fix `UserInfo.isInvisible` not nullable [#2920](https://github.com/GetStream/stream-chat-swift/pull/2920)
+### 🔄 Changed
+- The `UserInfo.isInvisible` is now nullable and `nil` by default [#2920](https://github.com/GetStream/stream-chat-swift/pull/2920)
 
 ## StreamChatUI
 ### 🐞 Fixed
