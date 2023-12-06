@@ -46,7 +46,6 @@
 "message.moderation.delete" = "Delete Message";
 
 "messageList.typingIndicator.typing-unknown" = "Someone is typing";
-"messageList.jump-to-unread-button" = "%d unread";
 
 "message.threads.reply" = "Thread Reply";
 "message.threads.replyWith" = "with %@";

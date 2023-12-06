@@ -304,7 +304,7 @@ internal enum L10n {
   }
 
   internal enum MessageList {
-    /// %d unread
+    /// Plural format key: "%#@unreads@"
     internal static func jumpToUnreadButton(_ p1: Int) -> String {
       return L10n.tr("Localizable", "messageList.jump-to-unread-button", p1)
     }
