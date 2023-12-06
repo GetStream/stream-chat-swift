@@ -60,7 +60,7 @@ open class JumpToUnreadMessagesButton: _Button, ThemeProvider {
     override open func updateContent() {
         super.updateContent()
 
-        textLabel.text = "\(content.messages) unread"
+        textLabel.text = L10n.MessageList.jumpToUnreadButton(content.messages)
     }
 
     open func addTarget(_ target: Any?, action: Selector) {
