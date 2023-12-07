@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - Fix date separator decoration view showing in the last message of the current page [#2899](https://github.com/GetStream/stream-chat-swift/pull/2899)
 - Fix `JumpToUnreadMessagesButton` not localizable [#2917](https://github.com/GetStream/stream-chat-swift/pull/2917)
+- Fix quoting message without bubble view when text is only emojis [#2925](https://github.com/GetStream/stream-chat-swift/pull/2925)
 
 # [4.44.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.44.0)
 _November 30, 2023_
