@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add an option to configure the AudioSession when using VoiceRecordings [#2919](https://github.com/GetStream/stream-chat-swift/pull/2919)
 ### 🐞 Fixed
 - Fix `UserInfo.isInvisible` not nullable [#2920](https://github.com/GetStream/stream-chat-swift/pull/2920)
+- Fix CocoaPods minimum iOS target not in sync with the Xcode project [#2924](https://github.com/GetStream/stream-chat-swift/pull/2924)
 ### 🔄 Changed
 - The `UserInfo.isInvisible` is now nullable and `nil` by default [#2920](https://github.com/GetStream/stream-chat-swift/pull/2920)
 
@@ -15,6 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - Fix date separator decoration view showing in the last message of the current page [#2899](https://github.com/GetStream/stream-chat-swift/pull/2899)
 - Fix `JumpToUnreadMessagesButton` not localizable [#2917](https://github.com/GetStream/stream-chat-swift/pull/2917)
+- Fix CocoaPods minimum iOS target not in sync with the Xcode project [#2924](https://github.com/GetStream/stream-chat-swift/pull/2924)
 
 # [4.44.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.44.0)
 _November 30, 2023_
