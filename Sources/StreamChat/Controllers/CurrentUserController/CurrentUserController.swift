@@ -256,12 +256,11 @@ public extension CurrentChatUserController {
 extension CurrentChatUserController {
     struct Environment {
         var currentUserObserverBuilder: (
-            _ isBackgroundMappingEnabled: Bool,
-            _ databaseContainer: DatabaseContainer,
+            _ context: NSManagedObjectContext,
             _ fetchRequest: NSFetchRequest<CurrentUserDTO>,
             _ itemCreator: @escaping (CurrentUserDTO) throws -> CurrentChatUser,
             _ fetchedResultsControllerType: NSFetchedResultsController<CurrentUserDTO>.Type
-        ) -> EntityDatabaseObserverWrapper<CurrentChatUser, CurrentUserDTO> = EntityDatabaseObserverWrapper.init
+        ) -> EntityDatabaseObserver<CurrentChatUser, CurrentUserDTO> = EntityDatabaseObserver.init
 
         var currentUserUpdaterBuilder = CurrentUserUpdater.init
     }
@@ -283,10 +282,9 @@ private extension EntityChange where Item == UnreadCount {
 }
 
 private extension CurrentChatUserController {
-    func createUserObserver() -> EntityDatabaseObserverWrapper<CurrentChatUser, CurrentUserDTO> {
+    func createUserObserver() -> EntityDatabaseObserver<CurrentChatUser, CurrentUserDTO> {
         environment.currentUserObserverBuilder(
-            StreamRuntimeCheck._isBackgroundMappingEnabled,
-            client.databaseContainer,
+            client.databaseContainer.viewContext,
             CurrentUserDTO.defaultFetchRequest,
             { try $0.asModel() },
             NSFetchedResultsController<CurrentUserDTO>.self
