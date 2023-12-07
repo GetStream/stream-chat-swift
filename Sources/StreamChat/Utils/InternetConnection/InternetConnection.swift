@@ -149,9 +149,6 @@ extension InternetConnection.Status {
 // MARK: - Internet Connection Monitor
 
 extension InternetConnection {
-    /// The default Internet connection monitor for iOS 12+.
-    /// It uses Apple Network API.
-    @available(iOS 12, *)
     class Monitor: InternetConnectionMonitor {
         private var monitor: NWPathMonitor?
         private let queue = DispatchQueue(label: "io.getstream.internet-monitor")
@@ -212,86 +209,6 @@ extension InternetConnection {
 
         deinit {
             stop()
-        }
-    }
-}
-
-// MARK: Legacy Internet Connection Monitor for iOS 11 only
-
-extension InternetConnection {
-    class LegacyMonitor: InternetConnectionMonitor {
-        /// A Reachability instance for Internet connection monitoring.
-        private lazy var reachability = createReachability()
-
-        weak var delegate: InternetConnectionDelegate?
-
-        var status: InternetConnection.Status {
-            if let reachability = reachability {
-                return status(from: reachability)
-            }
-
-            return .unknown
-        }
-
-        func start() {
-            do {
-                try reachability?.startNotifier()
-            } catch {
-                log.error(error)
-            }
-        }
-
-        func stop() {
-            reachability?.stopNotifier()
-        }
-
-        private func createReachability() -> Reachability? {
-            var reachability: Reachability?
-
-            do {
-                reachability = try Reachability()
-                reachability?.whenReachable = { [weak self] in self?.updateStatus(with: $0) }
-                reachability?.whenUnreachable = { [weak self] in self?.updateStatus(with: $0) }
-            } catch {
-                log.error(error)
-            }
-
-            return reachability
-        }
-
-        private func updateStatus(with reachability: Reachability) {
-            log.info("Internet Connection info: \(reachability.description)")
-
-            if case .unavailable = reachability.connection {
-                delegate?.internetConnectionStatusDidChange(status: .unavailable)
-                return
-            }
-
-            let quality: InternetConnection.Quality
-
-            if case .cellular = reachability.connection {
-                quality = .expensive
-            } else {
-                quality = .great
-            }
-
-            delegate?.internetConnectionStatusDidChange(status: .available(quality))
-        }
-
-        private func status(from reachability: Reachability) -> InternetConnection.Status {
-            if case .unavailable = reachability.connection {
-                return .unavailable
-            }
-
-            let quality: InternetConnection.Quality
-
-            if case .cellular = reachability.connection {
-                quality = .expensive
-            } else {
-                quality = .great
-            }
-
-            return .available(quality)
         }
     }
 }
