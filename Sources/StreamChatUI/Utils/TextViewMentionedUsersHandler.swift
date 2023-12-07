@@ -23,7 +23,7 @@ class TextViewMentionedUsersHandler {
         else {
             return nil
         }
-        let name = String(text[range].replacingOccurrences(of: "@", with: ""))
+        let name = String(text[range].dropFirst())
         return mentionedUsers.first(where: { $0.name == name })
     }
 }
