@@ -1048,8 +1048,8 @@ extension UserRobot {
         XCTAssertEqual(UserDetails.lukeSkywalkerId, id)
         
         let isInvisible = userDetails?[UserWebSocketPayload.CodingKeys.isInvisible.rawValue] as? Bool
-        XCTAssertEqual(false, isInvisible)
-        
+        XCTAssertEqual(nil, isInvisible)
+
         let name = userDetails?[UserWebSocketPayload.CodingKeys.name.rawValue] as? String
         XCTAssertEqual(UserDetails.lukeSkywalkerName, name)
         
