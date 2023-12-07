@@ -18,6 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix `JumpToUnreadMessagesButton` not localizable [#2917](https://github.com/GetStream/stream-chat-swift/pull/2917)
 - Fix CocoaPods minimum iOS target not in sync with the Xcode project [#2924](https://github.com/GetStream/stream-chat-swift/pull/2924)
 - Fix user mention not tappable when contains "@" character [#2928](https://github.com/GetStream/stream-chat-swift/pull/2928)
+- Fix user mention not tappable if user does not have a name [#2928](https://github.com/GetStream/stream-chat-swift/pull/2928)
 
 # [4.44.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.44.0)
 _November 30, 2023_
