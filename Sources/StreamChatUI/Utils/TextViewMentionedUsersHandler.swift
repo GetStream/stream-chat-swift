@@ -23,7 +23,11 @@ class TextViewMentionedUsersHandler {
         else {
             return nil
         }
-        let name = String(text[range].dropFirst())
-        return mentionedUsers.first(where: { $0.name == name })
+
+        let mention = String(text[range])
+        return mentionedUsers.first(where: {
+            let name = $0.name ?? $0.id
+            return mention.contains(name)
+        })
     }
 }
