@@ -34,7 +34,7 @@ struct UserWebSocketPayload: Encodable {
     let id: String
     let name: String?
     let imageURL: URL?
-    let isInvisible: Bool
+    let isInvisible: Bool?
     let language: String?
     let extraData: [String: RawJSON]
 
@@ -48,11 +48,11 @@ struct UserWebSocketPayload: Encodable {
     }
 
     func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: Self.CodingKeys)
+        var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(id, forKey: .id)
         try container.encodeIfPresent(name, forKey: .name)
         try container.encodeIfPresent(imageURL, forKey: .imageURL)
-        try container.encode(isInvisible, forKey: .isInvisible)
+        try container.encodeIfPresent(isInvisible, forKey: .isInvisible)
         try container.encodeIfPresent(language, forKey: .language)
         try extraData.encode(to: encoder)
     }
