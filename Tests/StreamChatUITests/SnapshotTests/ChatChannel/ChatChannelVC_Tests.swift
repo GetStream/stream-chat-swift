@@ -192,6 +192,31 @@ final class ChatChannelVC_Tests: XCTestCase {
         )
     }
 
+    func test_onlyEmojiMessageAppearance_whenQuotingMessage() {
+        let quotedMessage = ChatMessage.mock(text: "Hello")
+        channelControllerMock.simulateInitial(
+            channel: .mock(cid: .unique),
+            messages: [
+                .mock(id: .unique, cid: .unique, text: "👍🏻💯", author: .mock(id: .unique), quotedMessage: quotedMessage),
+                .mock(id: .unique, cid: .unique, text: "Simple text", author: .mock(id: .unique), isSentByCurrentUser: true),
+                .mock(
+                    id: .unique,
+                    cid: .unique,
+                    text: "🚀",
+                    author: .mock(id: .unique),
+                    quotedMessage: quotedMessage,
+                    isSentByCurrentUser: true
+                ),
+                quotedMessage
+            ],
+            state: .localDataFetched
+        )
+        AssertSnapshot(
+            vc,
+            isEmbeddedInNavigationController: true
+        )
+    }
+
     func test_whenShouldMessagesStartAtTheTopIsTrue() {
         var components = Components.mock
         components.shouldMessagesStartAtTheTop = true
