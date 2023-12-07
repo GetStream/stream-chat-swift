@@ -56,8 +56,9 @@ open class ChatMessageLayoutOptionsResolver {
             return [.text, .centered]
         }
 
-        // Do not show bubble if the message is to be rendered as large emoji
-        if !message.shouldRenderAsJumbomoji {
+        // Do not show bubble if the message is to be rendered as large emoji.
+        // Unless we are quoting a message, in this case the bubble should still be rendered.
+        if !message.shouldRenderAsJumbomoji || message.quotedMessage != nil {
             options.insert(.bubble)
         }
 
