@@ -154,6 +154,7 @@ extension InternetConnection {
     @available(iOS 12, *)
     class Monitor: InternetConnectionMonitor {
         private var monitor: NWPathMonitor?
+        private let queue = DispatchQueue(label: "io.getstream.internet-monitor")
 
         weak var delegate: InternetConnectionDelegate?
 
@@ -169,7 +170,7 @@ extension InternetConnection {
             guard monitor == nil else { return }
 
             monitor = createMonitor()
-            monitor?.start(queue: .global())
+            monitor?.start(queue: queue)
         }
 
         func stop() {
