@@ -17,6 +17,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix date separator decoration view showing in the last message of the current page [#2899](https://github.com/GetStream/stream-chat-swift/pull/2899)
 - Fix `JumpToUnreadMessagesButton` not localizable [#2917](https://github.com/GetStream/stream-chat-swift/pull/2917)
 - Fix CocoaPods minimum iOS target not in sync with the Xcode project [#2924](https://github.com/GetStream/stream-chat-swift/pull/2924)
+- Fix quoting message without bubble view when text is only emojis [#2925](https://github.com/GetStream/stream-chat-swift/pull/2925)
 - Fix user mention not tappable when contains "@" character [#2928](https://github.com/GetStream/stream-chat-swift/pull/2928)
 - Fix user mention not tappable if user does not have a name [#2928](https://github.com/GetStream/stream-chat-swift/pull/2928)
 
