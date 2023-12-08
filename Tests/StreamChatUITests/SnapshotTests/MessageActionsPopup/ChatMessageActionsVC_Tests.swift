@@ -207,6 +207,18 @@ final class ChatMessageActionsVC_Tests: XCTestCase {
         XCTAssertFalse(vc.messageActions.contains(where: { $0 is EditActionItem }))
     }
 
+    func test_messageActions_whenUpdateOwnMessage_whenGiphy_thenDoesNotContainEditAction() {
+        chatMessageController.simulateInitial(
+            message: ChatMessage.mock(attachments: [makeGiphyAttachmentPayload()], isSentByCurrentUser: true),
+            replies: [],
+            state: .remoteDataFetched
+        )
+
+        vc.channel = .mock(cid: .unique, ownCapabilities: [.updateOwnMessage])
+
+        XCTAssertFalse(vc.messageActions.contains(where: { $0 is EditActionItem }))
+    }
+
     func test_messageActions_whenUpdateAnyMessage_messageIsSentByCurrentUser_thenContainsEditAction() {
         chatMessageController.simulateInitial(
             message: ChatMessage.mock(isSentByCurrentUser: true),
@@ -217,6 +229,18 @@ final class ChatMessageActionsVC_Tests: XCTestCase {
         vc.channel = .mock(cid: .unique, ownCapabilities: [.updateAnyMessage])
 
         XCTAssertTrue(vc.messageActions.contains(where: { $0 is EditActionItem }))
+    }
+
+    func test_messageActions_whenUpdateAnyMessage_whenGiphy_thenDoesNotContainEditAction() {
+        chatMessageController.simulateInitial(
+            message: ChatMessage.mock(attachments: [makeGiphyAttachmentPayload()], isSentByCurrentUser: true),
+            replies: [],
+            state: .remoteDataFetched
+        )
+
+        vc.channel = .mock(cid: .unique, ownCapabilities: [.updateAnyMessage])
+
+        XCTAssertFalse(vc.messageActions.contains(where: { $0 is EditActionItem }))
     }
 
     func test_messageActions_whenUpdateAnyMessage_messageIsSentByAnotherUser_thenContainsEditAction() {
@@ -382,6 +406,20 @@ final class ChatMessageActionsVC_Tests: XCTestCase {
         )
 
         AssertSnapshot(vc.embedded(), variants: [.defaultLight])
+    }
+}
+
+// MARK: - Helpers
+
+private extension ChatMessageActionsVC_Tests {
+    func makeGiphyAttachmentPayload() -> AnyChatMessageAttachment {
+        .dummy(
+            type: .giphy,
+            payload: try! JSONEncoder.stream.encode(GiphyAttachmentPayload(
+                title: nil,
+                previewURL: URL.localYodaImage
+            ))
+        )
     }
 }
 
