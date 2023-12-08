@@ -121,9 +121,9 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
                 actions.append(copyActionItem())
             }
 
-            if canUpdateAnyMessage {
+            if canUpdateAnyMessage && message.giphyAttachments.isEmpty {
                 actions.append(editActionItem())
-            } else if canUpdateOwnMessage && message.isSentByCurrentUser {
+            } else if canUpdateOwnMessage && message.isSentByCurrentUser && message.giphyAttachments.isEmpty {
                 actions.append(editActionItem())
             }
 
