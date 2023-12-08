@@ -69,10 +69,8 @@ extension ChatClient {
         var internetMonitor: InternetConnectionMonitor {
             if let monitor = monitor {
                 return monitor
-            } else if #available(iOS 12, *) {
-                return InternetConnection.Monitor()
             } else {
-                return InternetConnection.LegacyMonitor()
+                return InternetConnection.Monitor()
             }
         }
 
