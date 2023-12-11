@@ -633,7 +633,7 @@ extension UserRobot {
 
     @discardableResult
     func assertMentionWasApplied(file: StaticString = #filePath, line: UInt = #line) -> Self {
-        let expectedText = "@\(UserDetails.hanSoloName)"
+        let expectedText = "@\(UserDetails.hanSoloName) "
         let actualText = MessageListPage.Composer.textView.waitForText(expectedText).text
         XCTAssertEqual(expectedText, actualText, file: file, line: line)
         return self
