@@ -901,7 +901,8 @@ open class ComposerVC: _ViewController,
             let text = textView.text as NSString
             let mentionText = self.mentionText(for: user)
             let newText = text.replacingCharacters(in: mentionRange, with: mentionText)
-            self.content.text = newText
+            // Add additional spacing to help continue writing the message
+            self.content.text = newText + " "
             self.content.mentionedUsers.insert(user)
 
             let caretLocation = textView.selectedRange.location

@@ -22,6 +22,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix user mention not tappable when contains "@" character [#2928](https://github.com/GetStream/stream-chat-swift/pull/2928)
 - Fix user mention not tappable if user does not have a name [#2928](https://github.com/GetStream/stream-chat-swift/pull/2928)
 - Fix edit action possible in giphy messages [#2926](https://github.com/GetStream/stream-chat-swift/pull/2926)
+- Fix not adding a space in the message input when mentioning a user [#2927](https://github.com/GetStream/stream-chat-swift/pull/2927)
 
 # [4.44.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.44.0)
 _November 30, 2023_
