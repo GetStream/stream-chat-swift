@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - Fix `UserInfo.isInvisible` not nullable [#2920](https://github.com/GetStream/stream-chat-swift/pull/2920)
 - Fix CocoaPods minimum iOS target not in sync with the Xcode project [#2924](https://github.com/GetStream/stream-chat-swift/pull/2924)
+- Improve `InternetConnection.Monitor` stability [#2923](https://github.com/GetStream/stream-chat-swift/pull/2923)
 ### 🔄 Changed
 - The `UserInfo.isInvisible` is now nullable and `nil` by default [#2920](https://github.com/GetStream/stream-chat-swift/pull/2920)
 
