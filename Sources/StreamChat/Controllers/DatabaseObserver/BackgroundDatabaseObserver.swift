@@ -191,7 +191,8 @@ class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
 
         var items: [Item?] = []
         items = objects.map { [weak self] in
-            try? self?.itemCreator($0)
+            guard $0.isValid else { return nil }
+            return try? self?.itemCreator($0)
         }
 
         let sorting = self.sorting
