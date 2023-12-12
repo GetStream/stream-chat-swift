@@ -108,7 +108,7 @@ extension StreamChatWrapper {
             }
         }
 
-        client.logout(completion: completion)
+        completion()
 
         self.client = nil
     }
