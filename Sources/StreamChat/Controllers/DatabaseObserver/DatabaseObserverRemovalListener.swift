@@ -11,6 +11,7 @@ protocol DatabaseObserverRemovalListener: AnyObject {
 
 extension DatabaseObserverRemovalListener {
     func listenForRemoveAllDataNotifications<Item, DTO: NSManagedObject>(
+        updateIsDeleting: @escaping (Bool) -> Void,
         isBackground: Bool,
         frc: NSFetchedResultsController<DTO>,
         changeAggregator: ListChangeAggregator<DTO, Item>,
@@ -28,6 +29,7 @@ extension DatabaseObserverRemovalListener {
             object: context,
             queue: .main
         ) { [weak frc, weak context, weak changeAggregator] _ in
+            updateIsDeleting(true)
             guard let frc = frc, let context = context, let changeAggregator = changeAggregator else { return }
             guard let fetchResultsController = frc as? NSFetchedResultsController<NSFetchRequestResult> else { return }
 
@@ -68,6 +70,7 @@ extension DatabaseObserverRemovalListener {
             object: context,
             queue: .main
         ) { _ in
+            updateIsDeleting(false)
             onCompletion()
         }
 
@@ -75,5 +78,22 @@ extension DatabaseObserverRemovalListener {
             notificationCenter?.removeObserver(willRemoveAllDataNotificationObserver)
             notificationCenter?.removeObserver(didRemoveAllDataNotificationObserver)
         }
+    }
+
+    func listenForRemoveAllDataNotifications<Item, DTO: NSManagedObject>(
+        isBackground: Bool,
+        frc: NSFetchedResultsController<DTO>,
+        changeAggregator: ListChangeAggregator<DTO, Item>,
+        onItemsRemoval: @escaping (@escaping () -> Void) -> Void,
+        onCompletion: @escaping () -> Void
+    ) {
+        listenForRemoveAllDataNotifications(
+            updateIsDeleting: { _ in },
+            isBackground: isBackground,
+            frc: frc,
+            changeAggregator: changeAggregator,
+            onItemsRemoval: onItemsRemoval,
+            onCompletion: onCompletion
+        )
     }
 }

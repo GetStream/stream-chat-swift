@@ -49,6 +49,18 @@ class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
         }
     }
 
+    private var _deletingDatabase: Bool = false
+    private var deletingDatabase: Bool {
+        get {
+            queue.sync { _deletingDatabase }
+        }
+        set {
+            queue.async(flags: .barrier) {
+                self._deletingDatabase = newValue
+            }
+        }
+    }
+
     deinit {
         releaseNotificationObservers?()
     }
@@ -104,7 +116,7 @@ class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
     /// Starts observing the changes in the database.
     /// - Throws: An error if the fetch  fails.
     func startObserving() throws {
-        guard !isInitialized else { return }
+        guard !isInitialized && !deletingDatabase else { return }
         isInitialized = true
 
         do {
@@ -191,7 +203,7 @@ class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
 
         var items: [Item?] = []
         items = objects.map { [weak self] in
-            guard $0.isValid else { return nil }
+            guard self?.deletingDatabase == false else { return nil }
             return try? self?.itemCreator($0)
         }
 
@@ -211,6 +223,11 @@ extension BackgroundDatabaseObserver: DatabaseObserverRemovalListener {
     /// are received.
     private func listenForRemoveAllDataNotifications() {
         listenForRemoveAllDataNotifications(
+            updateIsDeleting: { [weak self] isDeleting in
+                self?.queue.async(flags: .barrier) {
+                    self?._deletingDatabase = isDeleting
+                }
+            },
             isBackground: true,
             frc: frc,
             changeAggregator: changeAggregator,
