@@ -14,6 +14,7 @@ extension DatabaseObserverRemovalListener {
         isBackground: Bool,
         frc: NSFetchedResultsController<DTO>,
         changeAggregator: ListChangeAggregator<DTO, Item>,
+        onStart: @escaping () -> Void,
         onItemsRemoval: @escaping (@escaping () -> Void) -> Void,
         onCompletion: @escaping () -> Void
     ) {
@@ -30,6 +31,7 @@ extension DatabaseObserverRemovalListener {
         ) { [weak frc, weak context, weak changeAggregator] _ in
             guard let frc = frc, let context = context, let changeAggregator = changeAggregator else { return }
             guard let fetchResultsController = frc as? NSFetchedResultsController<NSFetchRequestResult> else { return }
+            onStart()
 
             let removeItems = {
                 // Simulate ChangeObserver callbacks like all data are being removed
@@ -75,5 +77,22 @@ extension DatabaseObserverRemovalListener {
             notificationCenter?.removeObserver(willRemoveAllDataNotificationObserver)
             notificationCenter?.removeObserver(didRemoveAllDataNotificationObserver)
         }
+    }
+
+    func listenForRemoveAllDataNotifications<Item, DTO: NSManagedObject>(
+        isBackground: Bool,
+        frc: NSFetchedResultsController<DTO>,
+        changeAggregator: ListChangeAggregator<DTO, Item>,
+        onItemsRemoval: @escaping (@escaping () -> Void) -> Void,
+        onCompletion: @escaping () -> Void
+    ) {
+        listenForRemoveAllDataNotifications(
+            isBackground: isBackground,
+            frc: frc,
+            changeAggregator: changeAggregator,
+            onStart: {},
+            onItemsRemoval: onItemsRemoval,
+            onCompletion: onCompletion
+        )
     }
 }
