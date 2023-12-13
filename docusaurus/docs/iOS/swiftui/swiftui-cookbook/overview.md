@@ -31,6 +31,12 @@ This example will show you how to always align the messages to the left.
 
 ![Screenshot of the left aligned message list.](../../assets/swiftui-left-aligned.png)
 
+### Custom Channel List
+
+We will build a channel list using the low-level client state in this section.
+
+![Screenshot of the custom channel list.](../../assets/custom-channel-list.png)
+
 ### Custom Message List
 
 We will build a message list using the low-level client state in this section.
