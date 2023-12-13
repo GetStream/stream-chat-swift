@@ -11,10 +11,10 @@ protocol DatabaseObserverRemovalListener: AnyObject {
 
 extension DatabaseObserverRemovalListener {
     func listenForRemoveAllDataNotifications<Item, DTO: NSManagedObject>(
-        updateIsDeleting: @escaping (Bool) -> Void,
         isBackground: Bool,
         frc: NSFetchedResultsController<DTO>,
         changeAggregator: ListChangeAggregator<DTO, Item>,
+        onStart: @escaping () -> Void,
         onItemsRemoval: @escaping (@escaping () -> Void) -> Void,
         onCompletion: @escaping () -> Void
     ) {
@@ -29,9 +29,9 @@ extension DatabaseObserverRemovalListener {
             object: context,
             queue: .main
         ) { [weak frc, weak context, weak changeAggregator] _ in
-            updateIsDeleting(true)
             guard let frc = frc, let context = context, let changeAggregator = changeAggregator else { return }
             guard let fetchResultsController = frc as? NSFetchedResultsController<NSFetchRequestResult> else { return }
+            onStart()
 
             let removeItems = {
                 // Simulate ChangeObserver callbacks like all data are being removed
@@ -70,7 +70,6 @@ extension DatabaseObserverRemovalListener {
             object: context,
             queue: .main
         ) { _ in
-            updateIsDeleting(false)
             onCompletion()
         }
 
@@ -88,10 +87,10 @@ extension DatabaseObserverRemovalListener {
         onCompletion: @escaping () -> Void
     ) {
         listenForRemoveAllDataNotifications(
-            updateIsDeleting: { _ in },
             isBackground: isBackground,
             frc: frc,
             changeAggregator: changeAggregator,
+            onStart: {},
             onItemsRemoval: onItemsRemoval,
             onCompletion: onCompletion
         )

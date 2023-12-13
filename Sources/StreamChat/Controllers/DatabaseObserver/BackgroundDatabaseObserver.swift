@@ -39,26 +39,14 @@ class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
 
     private var _isInitialized: Bool = false
     private var isInitialized: Bool {
-        get {
-            queue.sync { _isInitialized }
-        }
-        set {
-            queue.async(flags: .barrier) {
-                self._isInitialized = newValue
-            }
-        }
+        get { queue.sync { _isInitialized } }
+        set { queue.async(flags: .barrier) { self._isInitialized = newValue } }
     }
 
-    private var _deletingDatabase: Bool = false
-    private var deletingDatabase: Bool {
-        get {
-            queue.sync { _deletingDatabase }
-        }
-        set {
-            queue.async(flags: .barrier) {
-                self._deletingDatabase = newValue
-            }
-        }
+    private var _isDeletingDatabase: Bool = false
+    private var isDeletingDatabase: Bool {
+        get { queue.sync { _isDeletingDatabase }}
+        set { queue.async(flags: .barrier) { self._isDeletingDatabase = newValue } }
     }
 
     deinit {
@@ -116,7 +104,7 @@ class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
     /// Starts observing the changes in the database.
     /// - Throws: An error if the fetch  fails.
     func startObserving() throws {
-        guard !isInitialized && !deletingDatabase else { return }
+        guard !isInitialized && !isDeletingDatabase else { return }
         isInitialized = true
 
         do {
@@ -203,7 +191,7 @@ class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
 
         var items: [Item?] = []
         items = objects.map { [weak self] in
-            guard self?.deletingDatabase == false else { return nil }
+            guard self?.isDeletingDatabase == false else { return nil }
             return try? self?.itemCreator($0)
         }
 
@@ -223,14 +211,14 @@ extension BackgroundDatabaseObserver: DatabaseObserverRemovalListener {
     /// are received.
     private func listenForRemoveAllDataNotifications() {
         listenForRemoveAllDataNotifications(
-            updateIsDeleting: { [weak self] isDeleting in
-                self?.queue.async(flags: .barrier) {
-                    self?._deletingDatabase = isDeleting
-                }
-            },
             isBackground: true,
             frc: frc,
             changeAggregator: changeAggregator,
+            onStart: { [weak self] in
+                self?.queue.async(flags: .barrier) {
+                    self?._isDeletingDatabase = true
+                }
+            },
             onItemsRemoval: { [weak self] completion in
                 self?.queue.async(flags: .barrier) {
                     self?._items = []
@@ -242,6 +230,7 @@ extension BackgroundDatabaseObserver: DatabaseObserverRemovalListener {
             onCompletion: { [weak self] in
                 guard let self = self else { return }
                 self.queue.async(flags: .barrier) {
+                    self._isDeletingDatabase = false
                     self._isInitialized = false
 
                     DispatchQueue.main.async {
