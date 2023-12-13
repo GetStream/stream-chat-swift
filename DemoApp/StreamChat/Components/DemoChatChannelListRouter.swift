@@ -169,7 +169,10 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                         self.rootViewController.presentAlert(title: "User ID is not valid")
                         return
                     }
-                    channelController.addMembers(userIds: [id]) { error in
+                    channelController.addMembers(
+                        userIds: [id],
+                        message: "Members added to the channel"
+                    ) { error in
                         if let error = error {
                             self.rootViewController.presentAlert(
                                 title: "Couldn't add user \(id) to channel \(cid)",
