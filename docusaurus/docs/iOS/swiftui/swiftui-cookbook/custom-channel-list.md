@@ -145,7 +145,7 @@ class CustomChannelListViewModel: ObservableObject, ChatChannelListControllerDel
 
 Next, let's implement the channel list view. We will call it `CustomChannelListView`.
 
-Since the list of channels is exposed via a view model, you can easily build any UI your prefer with SwiftUI. Our implementation is a pretty simple one.
+Since the list of channels is exposed via a view model, you can easily build any UI you prefer with SwiftUI. Our implementation is a pretty simple one.
 
 Here's the code.
 
