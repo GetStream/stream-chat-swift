@@ -19,7 +19,7 @@ We will keep the channels as a published variable in the view model.
 @Published public var channels = LazyCachedMapCollection<ChatChannel>()
 ```
 
-The `ChatChannelListControllerDelegate` has a method called `didChangeChannels`, that sends updates when the channels are updated.
+The `ChatChannelListControllerDelegate` has a method called `controller:didChangeChannels`, that sends updates when the channels are updated.
 
 ```swift
 public func controller(
@@ -119,7 +119,6 @@ class CustomChannelListViewModel: ObservableObject, ChatChannelListControllerDel
         controller?.synchronize { [weak self] error in
             guard let self = self else { return }
             if error != nil {
-                // handle error
                 print("handle error here")
             } else {
                 self.updateChannels()
