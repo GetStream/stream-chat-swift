@@ -51,6 +51,16 @@ final class WebSocketPingController_Tests: XCTestCase {
         XCTAssertEqual(delegate.sendPing_calledCount, oldPingCount)
     }
 
+    func test_concurrent() {
+        DispatchQueue.concurrentPerform(iterations: 20000) { _ in
+            let repeatingTimer: RepeatingTimerControl? = DefaultTimer.scheduleRepeating(timeInterval: 0.4, queue: .main) {
+                print("test")
+            }
+            repeatingTimer?.resume()
+            repeatingTimer?.suspend()
+        }
+    }
+
     func test_disconnectOnNoPongReceived_called_whenNoPongReceived() throws {
         // Set the connection state as connected
         pingController.connectionStateDidChange(.connected(connectionId: .unique))
