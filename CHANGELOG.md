@@ -29,6 +29,9 @@ _December 11, 2023_
 - Fix edit action possible in giphy messages [#2926](https://github.com/GetStream/stream-chat-swift/pull/2926)
 - Fix not adding a space in the message input when mentioning a user [#2927](https://github.com/GetStream/stream-chat-swift/pull/2927)
 
+## ⚠️ Important
+- iOS 11 support has been dropped since Xcode 15 does not allow publishing apps with iOS 11.
+
 # [4.44.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.44.0)
 _November 30, 2023_
 

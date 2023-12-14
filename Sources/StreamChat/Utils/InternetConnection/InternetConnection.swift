@@ -22,9 +22,6 @@ extension Notification {
 }
 
 /// An Internet Connection monitor.
-///
-/// Basically, it's a wrapper over legacy monitor based on `Reachability` (iOS 11 only)
-/// and default monitor based on `Network`.`NWPathMonitor` (iOS 12+).
 class InternetConnection {
     /// The current Internet connection status.
     private(set) var status: InternetConnection.Status {
