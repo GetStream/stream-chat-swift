@@ -12282,6 +12282,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				OTHER_LDFLAGS = "-Wl,-no_warn_duplicate_libraries";
 				PRODUCT_BUNDLE_IDENTIFIER = io.stream.StreamChatUI;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -12314,6 +12315,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				OTHER_LDFLAGS = "-Wl,-no_warn_duplicate_libraries";
 				PRODUCT_BUNDLE_IDENTIFIER = io.stream.StreamChatUI;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -12346,6 +12348,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				OTHER_LDFLAGS = "-Wl,-no_warn_duplicate_libraries";
 				PRODUCT_BUNDLE_IDENTIFIER = io.stream.StreamChatUI;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -12683,6 +12686,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				OTHER_LDFLAGS = "-Wl,-no_warn_duplicate_libraries";
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.StreamChat;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -12717,6 +12721,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				OTHER_LDFLAGS = "-Wl,-no_warn_duplicate_libraries";
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.StreamChat;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -13405,6 +13410,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				OTHER_LDFLAGS = "-Wl,-no_warn_duplicate_libraries";
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.StreamChat;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
