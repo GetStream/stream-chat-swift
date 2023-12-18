@@ -270,8 +270,7 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
             )
             textView.text = nil
         } else {
-            voiceRecordingAttachmentQuotedPreview.isHidden = true
-            contentContainerView.isHidden = false
+            setUnsupportedAttachmentPreview(for: message)
         }
     }
 
@@ -328,6 +327,15 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
         Animate {
             self.attachmentPreviewView.isHidden = true
             self.voiceRecordingAttachmentQuotedPreview.isHidden = true
+        }
+    }
+
+    /// Sets the unsupported attachment content to the preview view.
+    open func setUnsupportedAttachmentPreview(for message: ChatMessage) {
+        attachmentPreviewView.contentMode = .scaleAspectFit
+        attachmentPreviewView.image = appearance.images.fileFallback
+        if textView.text.isEmpty {
+            textView.text = L10n.Message.unsupportedAttachment
         }
     }
 }

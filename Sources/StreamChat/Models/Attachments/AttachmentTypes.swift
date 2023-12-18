@@ -119,17 +119,13 @@ public struct AttachmentType: RawRepresentable, Codable, Hashable, ExpressibleBy
 }
 
 public extension AttachmentType {
-    /// Backend specified types.
     static let image = Self(rawValue: "image")
     static let file = Self(rawValue: "file")
     static let giphy = Self(rawValue: "giphy")
     static let video = Self(rawValue: "video")
     static let audio = Self(rawValue: "audio")
     static let voiceRecording = Self(rawValue: "voiceRecording")
-
-    /// Application custom types.
     static let linkPreview = Self(rawValue: "linkPreview")
-    /// Is used when attachment with missing `type` comes.
     static let unknown = Self(rawValue: "unknown")
 }
 
@@ -218,6 +214,8 @@ public enum AttachmentFileType: String, Codable, Equatable, CaseIterable {
     case mov, avi, wmv, webm
     /// Image
     case jpeg, png, gif, bmp, webp
+    /// Unknown
+    case unknown
 
     private static let mimeTypes: [String: AttachmentFileType] = [
         "application/octet-stream": .generic,
@@ -298,6 +296,15 @@ public enum AttachmentFileType: String, Codable, Equatable, CaseIterable {
     public var isAudio: Bool {
         switch self {
         case .mp3, .wav, .ogg, .m4a, .aac:
+            return true
+        default:
+            return false
+        }
+    }
+
+    public var isUnknown: Bool {
+        switch self {
+        case .unknown:
             return true
         default:
             return false

@@ -20,7 +20,9 @@ open class AttachmentViewCatalog {
         let attachmentCounts = message.attachmentCounts
 
         if attachmentCounts.keys.contains(.image) || attachmentCounts.keys.contains(.video) {
-            if attachmentCounts.keys.contains(.file) || attachmentCounts.keys.contains(.voiceRecording) {
+            if attachmentCounts.keys.contains(.file)
+                || attachmentCounts.keys.contains(.voiceRecording)
+                || attachmentCounts.keys.contains(.unknown) {
                 return components.mixedAttachmentInjector
             } else {
                 return components.galleryAttachmentInjector
@@ -37,8 +39,10 @@ open class AttachmentViewCatalog {
             return components.isVoiceRecordingEnabled
                 ? components.voiceRecordingAttachmentInjector
                 : components.filesAttachmentInjector
+        } else if attachmentCounts.keys.contains(.unknown) {
+            return components.unsupportedAttachmentInjector
         } else {
-            return nil
+            return components.unsupportedAttachmentInjector
         }
     }
 }

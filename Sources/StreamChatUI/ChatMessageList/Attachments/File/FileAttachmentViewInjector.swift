@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-/// The delegate used `GiphyAttachmentViewInjector` to communicate user interactions.
+/// The delegate used `FileAttachmentViewInjector` to communicate user interactions.
 public protocol FileActionContentViewDelegate: ChatMessageContentViewDelegate {
     /// Called when the user taps on attachment action
     func didTapOnAttachment(_ attachment: ChatMessageFileAttachment, at indexPath: IndexPath?)
@@ -37,7 +37,7 @@ public class FilesAttachmentViewInjector: AttachmentViewInjector {
     }
 }
 
-private extension FilesAttachmentViewInjector {
+public extension FilesAttachmentViewInjector {
     var fileAttachments: [ChatMessageFileAttachment] {
         if fileAttachmentView.components.isVoiceRecordingEnabled {
             return contentView.content?.fileAttachments ?? []
