@@ -1,0 +1,65 @@
+name: Performance Benchmarks
+
+on:
+  schedule:
+    # Runs "At 03:00 every night"
+    - cron: '0 3 * * *'
+
+  pull_request_review:
+    types: [submitted, edited]
+
+  workflow_dispatch:
+
+env:
+  HOMEBREW_NO_INSTALL_CLEANUP: 1 # Disable cleanup for homebrew, we don't need it on CI
+
+jobs:
+  xcmetrics:
+    name: XCMetrics
+    runs-on: macos-14
+    if: ${{ github.event_name != 'pull_request_review' || github.event.review.state == 'approved' }}
+    env:
+      GITHUB_TOKEN: '${{ secrets.CI_BOT_GITHUB_TOKEN }}'
+    steps:
+      - name: Install Bot SSH Key
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.BOT_SSH_PRIVATE_KEY }}
+
+      - uses: actions/checkout@v3.1.0
+        with:
+          fetch-depth: 0 # to fetch git tags
+
+      - uses: ./.github/actions/pr-approvals
+        if: ${{ github.event_name == 'pull_request_review' }}
+
+      - name: Check if the PR was already measured
+        if: ${{ github.event_name == 'pull_request_review' }}
+        run: |
+          xcmetrics=$(gh api "${GITHUB_API_URL}/repos/GetStream/stream-swift-performance-benchmarks/contents/stream-chat-swift.json?ref=main")
+          already_measured=$(printf "%s" "$xcmetrics" | jq -r '.content' | base64 -d | jq "has(\"${{ github.event.pull_request.head.ref }}\")")
+          echo "already_measured=$already_measured" >> $GITHUB_ENV
+
+      - uses: ./.github/actions/bootstrap
+        if: ${{ github.event_name != 'pull_request_review' || (env.pr_approvals == 1 && env.already_measured == 'false') }}
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+          INSTALL_GCLOUD: true
+
+      - name: Run Performance Metrics
+        if: ${{ github.event_name != 'pull_request_review' || (env.pr_approvals == 1 && env.already_measured == 'false') }}
+        run: bundle exec fastlane xcmetrics
+        timeout-minutes: 60
+        env:
+          GITHUB_PR_NUM: ${{ github.event.pull_request.number }}
+          BRANCH_NAME: ${{ github.event.pull_request.head.ref }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          APPSTORE_API_KEY: ${{ secrets.APPSTORE_API_KEY }}
+
+      - uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: Test Data
+          path: |
+            derived_data/Build/Products/xcodebuild_output.log
+            fastlane/performance/stream-chat-swift.json

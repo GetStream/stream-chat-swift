@@ -1,0 +1,28 @@
+{
+  "configurations" : [
+    {
+      "id" : "EAB375C7-2684-48E5-B7BA-A5DE434B144D",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "selectedTests" : [
+        "ChannelListScrollTime\/testChannelListScrollTime()",
+        "MessageListScrollTime\/testMessageListScrollTime()"
+      ],
+      "target" : {
+        "containerPath" : "container:StreamChat.xcodeproj",
+        "identifier" : "A34407DB27D8C3400044F150",
+        "name" : "StreamChatUITestsAppUITests"
+      }
+    }
+  ],
+  "version" : 1
+}
