@@ -29,6 +29,20 @@ final class ChatFileAttachmentListViewItemView_Tests: XCTestCase {
         AssertSnapshot(fileAttachmentView, variants: [.defaultLight])
     }
 
+    func test_appearance_pdf_whenUploadingStateIsNil() {
+        fileAttachmentView.content = .mock(id: .unique, localState: nil)
+        AssertSnapshot(fileAttachmentView, variants: [.defaultLight])
+    }
+
+    func test_appearance_pdf_whenSizeIsZero() {
+        fileAttachmentView.content = .mock(
+            id: .unique,
+            file: AttachmentFile(type: .pdf, size: 0, mimeType: "application/pdf"),
+            localState: nil
+        )
+        AssertSnapshot(fileAttachmentView, variants: [.defaultLight])
+    }
+
     func test_appearanceCustomization_usingAppearance() {
         var appearance = Appearance()
         appearance.colorPalette.subtitleText = .red
