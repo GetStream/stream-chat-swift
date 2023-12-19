@@ -5,7 +5,7 @@ title: Voice Recording
 Stream Chat's SwiftUI SDK allows you to record and share async voice messages in your channels. The voice recordings have a built-in attachment type (as defined [here](https://getstream.io/chat/docs/sdk/ios/uikit/guides/working-with-attachments/)).
 
 :::note
-Voice Recordings on SwiftUI are available since version 4.46.0.
+Voice Recordings on SwiftUI are available since version [4.46.0](https://github.com/GetStream/stream-chat-swiftui/releases/tag/4.46.0).
 :::
 
 Voice recording is disabled by default. In order to enable it, you should setup the `isVoiceRecordingEnabled` property to `true`, when setting up the `StreamChat` client:
@@ -43,8 +43,8 @@ public func makeComposerRecordingView(
 ### Locked View
 
 When the user decides to lock the recording, `LockedView` is presented. It provides the user the following actions:
-- discard the recording - you are back to the initial state.
-- stop the recording - you go into the recording preview state.
+- discard the recording - the user is back to the initial state.
+- stop the recording - the user goes into the recording preview state.
 - confirm the recording - the recording is added to the composer input.
 
 If you want to replace this view with your own implementation, you can implement the following method.
