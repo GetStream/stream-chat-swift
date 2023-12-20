@@ -57,6 +57,7 @@ extension StreamChatWrapper {
         Components.default.messageActionsVC = DemoChatMessageActionsVC.self
         Components.default.reactionsSorting = { $0.type.position < $1.type.position }
         Components.default.messageLayoutOptionsResolver = DemoChatMessageLayoutOptionsResolver()
+        Components.default.mixedAttachmentInjector.register(type: .location, for: LocationAttachmentViewInjector.self)
     }
 }
 
@@ -247,6 +248,12 @@ class DemoAttachmentViewCatalog: AttachmentViewCatalog {
         guard message.attachmentCounts.keys.contains(.location) else {
             return super.attachmentViewInjectorClassFor(message: message, components: components)
         }
+
+        let hasOtherAttachmentTypes = message.attachmentCounts.keys.count > 1
+        if hasOtherAttachmentTypes {
+            return MixedAttachmentViewInjector.self
+        }
+
         return LocationAttachmentViewInjector.self
     }
 }
@@ -282,9 +289,13 @@ class DemoComposerVC: ComposerVC {
         let locationAttachmentPayload = LocationAttachmentPayload(
             coordinate: .init(latitude: location.latitude, longitude: location.longitude)
         )
-        channelController?.createNewMessage(text: "", attachments: [.init(
-            payload: locationAttachmentPayload
-        )])
+
+        content.attachments.append(AnyAttachmentPayload(payload: locationAttachmentPayload))
+
+        // In case you would want to send the location directly, without composer preview:
+//        channelController?.createNewMessage(text: "", attachments: [.init(
+//            payload: locationAttachmentPayload
+//        )])
     }
 }
 
