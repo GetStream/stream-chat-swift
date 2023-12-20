@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - Fix duplicated Runpath Search Paths [#2937](https://github.com/GetStream/stream-chat-swift/pull/2937)
 - Fix file attachments not rendering file size [#2941](https://github.com/GetStream/stream-chat-swift/pull/2941)
+- Fix jumping to bottom when loading new messages [#2945](https://github.com/GetStream/stream-chat-swift/pull/2945)
 
 # [4.45.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.45.0)
 _December 11, 2023_
