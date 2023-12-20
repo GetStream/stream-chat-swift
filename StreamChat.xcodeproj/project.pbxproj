@@ -1407,6 +1407,7 @@
 		ADE40043291B1A510000C98B /* AttachmentUploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADE40042291B1A510000C98B /* AttachmentUploader.swift */; };
 		ADE40044291B1A510000C98B /* AttachmentUploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADE40042291B1A510000C98B /* AttachmentUploader.swift */; };
 		ADE88A142949453200C0F084 /* ChatMessageListRouter_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADE88A132949453200C0F084 /* ChatMessageListRouter_Mock.swift */; };
+		ADEDA1FA2B2BC46C00020460 /* RepeatingTimer_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADEDA1F92B2BC46C00020460 /* RepeatingTimer_Tests.swift */; };
 		ADEE651829BF712D00186129 /* ChatMessageListView_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADEE651429BF711200186129 /* ChatMessageListView_Mock.swift */; };
 		ADEE651929BF713200186129 /* ChatMessageCell_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADEE651629BF712500186129 /* ChatMessageCell_Mock.swift */; };
 		ADEE651E29BF715600186129 /* ChatMessageListVCDelegate_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADEE651C29BF715300186129 /* ChatMessageListVCDelegate_Mock.swift */; };
@@ -3872,6 +3873,7 @@
 		ADE88A132949453200C0F084 /* ChatMessageListRouter_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageListRouter_Mock.swift; sourceTree = "<group>"; };
 		ADEA7F21261D2F8C00CA2289 /* chewbacca.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = chewbacca.jpg; sourceTree = "<group>"; };
 		ADEA7F22261D2F8C00CA2289 /* r2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = r2.jpg; sourceTree = "<group>"; };
+		ADEDA1F92B2BC46C00020460 /* RepeatingTimer_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepeatingTimer_Tests.swift; sourceTree = "<group>"; };
 		ADEE651429BF711200186129 /* ChatMessageListView_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageListView_Mock.swift; sourceTree = "<group>"; };
 		ADEE651629BF712500186129 /* ChatMessageCell_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageCell_Mock.swift; sourceTree = "<group>"; };
 		ADEE651A29BF714300186129 /* ChatMessageListVCDataSource_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageListVCDataSource_Mock.swift; sourceTree = "<group>"; };
@@ -6833,6 +6835,7 @@
 		A364D0BB27D12AD50029857A /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				ADEDA1F92B2BC46C00020460 /* RepeatingTimer_Tests.swift */,
 				40D3962B2A0910CF0020DDC9 /* ArraySampling_Tests.swift */,
 				CF1F1D442824243F002E2977 /* CooldownTracker_Tests.swift */,
 				40789D3E29F6AFC40018C2BB /* Debouncer_Tests.swift */,
@@ -10806,6 +10809,7 @@
 				AD45333A25D153CF00CD9D47 /* ConnectionController+SwiftUI_Tests.swift in Sources */,
 				8A0D64AE24E5853F0017A3C0 /* DataController_Tests.swift in Sources */,
 				8486CAF926FA51EE00A9AD96 /* EventDTOConverterMiddleware_Tests.swift in Sources */,
+				ADEDA1FA2B2BC46C00020460 /* RepeatingTimer_Tests.swift in Sources */,
 				C14A46562845064E00EF498E /* ThreadSafeWeakCollection_Tests.swift in Sources */,
 				ADC40C3226E26E9F005B616C /* UserSearchController_Tests.swift in Sources */,
 				40D3962C2A0910CF0020DDC9 /* ArraySampling_Tests.swift in Sources */,
