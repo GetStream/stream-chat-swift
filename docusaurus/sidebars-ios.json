@@ -85,7 +85,8 @@
           ]
         },
         "swiftui/localization",
-        "swiftui/dependency-injection"        
+        "swiftui/dependency-injection",
+        "swiftui/voice-recording"        
       ]
     },
     {
