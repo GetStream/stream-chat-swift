@@ -57,7 +57,7 @@ extension StreamChatWrapper {
         Components.default.messageActionsVC = DemoChatMessageActionsVC.self
         Components.default.reactionsSorting = { $0.type.position < $1.type.position }
         Components.default.messageLayoutOptionsResolver = DemoChatMessageLayoutOptionsResolver()
-        Components.default.mixedAttachmentInjector.register(type: .location, for: LocationAttachmentViewInjector.self)
+        Components.default.mixedAttachmentInjector.register(.location, with: LocationAttachmentViewInjector.self)
     }
 }
 
