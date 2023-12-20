@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - Fix duplicated Runpath Search Paths [#2937](https://github.com/GetStream/stream-chat-swift/pull/2937)
 - Fix `_dispatch_lane_resume` crash in `RepeatingTimer` [#2938](https://github.com/GetStream/stream-chat-swift/pull/2938)
+- Fix editing of async voice messages [#2943](https://github.com/GetStream/stream-chat-swift/pull/2943)
 
 ## StreamChatUI
 ### 🐞 Fixed
