@@ -35,8 +35,16 @@ class AppConfig {
             isAtlantisEnabled: false,
             isTokenRefreshEnabled: false,
             isMessageDebuggerEnabled: false,
-            isChannelPinningEnabled: false
+            isChannelPinningEnabled: false,
+            isLocationAttachmentsEnabled: false
         )
+
+        if DemoAppConfiguration.isStreamInternalConfiguration {
+            demoAppConfig.isAtlantisEnabled = true
+            demoAppConfig.isMessageDebuggerEnabled = true
+            demoAppConfig.isLocationAttachmentsEnabled = true
+            demoAppConfig.isTokenRefreshEnabled = true
+        }
     }
 }
 

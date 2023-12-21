@@ -28,15 +28,12 @@ enum DemoAppConfiguration {
     // This function is called from `DemoAppCoordinator` before the Chat UI is created
     static func setInternalConfiguration() {
         StreamRuntimeCheck.assertionsEnabled = isStreamInternalConfiguration
-        StreamRuntimeCheck._isBackgroundMappingEnabled = true
-        AppConfig.shared.demoAppConfig.isTokenRefreshEnabled = isStreamInternalConfiguration
-
         configureAtlantisIfNeeded()
     }
 
     // HTTP and WebSocket Proxy with Proxyman.app
     private static func configureAtlantisIfNeeded() {
-        if isStreamInternalConfiguration || AppConfig.shared.demoAppConfig.isAtlantisEnabled {
+        if AppConfig.shared.demoAppConfig.isAtlantisEnabled {
             Atlantis.start()
         } else {
             Atlantis.stop()
