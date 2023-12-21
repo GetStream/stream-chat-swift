@@ -10,6 +10,9 @@ class DemoComposerVC: ComposerVC {
     /// For demo purposes the locations are hard-coded.
     var dummyLocations: [(latitude: Double, longitude: Double)] = [
         (38.708442, -9.136822), // Lisbon, Portugal
+        (37.983810, 23.727539), // Athens, Greece
+        (53.149118, -6.079341), // Greystones, Ireland
+        (41.11722, 20.80194), // Ohrid, Macedonia
         (51.5074, -0.1278), // London, United Kingdom
         (52.5200, 13.4050), // Berlin, Germany
         (40.4168, -3.7038), // Madrid, Spain
