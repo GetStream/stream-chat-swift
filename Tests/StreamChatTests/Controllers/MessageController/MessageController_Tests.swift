@@ -2341,7 +2341,7 @@ private class TestDelegate: QueueAwareDelegate, ChatMessageControllerDelegate {
 
 private class TestEnvironment {
     var messageUpdater: MessageUpdater_Mock!
-    var messageObserver: EntityDatabaseObserverWrapper_Mock<ChatMessage, MessageDTO>!
+    var messageObserver: EntityDatabaseObserver_Mock<ChatMessage, MessageDTO>!
     var repliesObserver: ListDatabaseObserverWrapper_Mock<ChatMessage, MessageDTO>!
 
     var messageObserver_synchronizeError: Error?
@@ -2350,11 +2350,10 @@ private class TestEnvironment {
         .Environment = .init(
             messageObserverBuilder: { [unowned self] in
                 self.messageObserver = .init(
-                    isBackground: $0,
-                    database: $1,
-                    fetchRequest: $2,
-                    itemCreator: $3,
-                    fetchedResultsControllerType: $4
+                    context: $0,
+                    fetchRequest: $1,
+                    itemCreator: $2,
+                    fetchedResultsControllerType: $3
                 )
                 self.messageObserver.synchronizeError = self.messageObserver_synchronizeError
                 return self.messageObserver!
