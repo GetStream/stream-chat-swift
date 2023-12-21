@@ -151,7 +151,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         try database.createChannel(cid: cid, withMessages: false)
         // Local only message
         try database.createMessage(cid: cid, localState: .sendingFailed)
-        try database.createMessage(cid: cid, localState: .deletingFailed)
+        try database.createMessage(cid: cid, localState: .pendingSend)
         // Not local only message
         try database.createMessage(cid: cid, localState: .syncing)
 
@@ -187,7 +187,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         try database.createChannel(cid: cid, withMessages: false)
         // Local only message
         try database.createMessage(cid: cid, localState: .sendingFailed)
-        try database.createMessage(cid: cid, localState: .deletingFailed)
+        try database.createMessage(cid: cid, localState: .pendingSend)
         // Not local only message
         try database.createMessage(cid: cid, localState: .syncing)
 

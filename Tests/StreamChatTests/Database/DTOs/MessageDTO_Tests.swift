@@ -3387,7 +3387,7 @@ final class MessageDTO_Tests: XCTestCase {
 
     func test_isLocalOnly_whenLocalMessageStateIsLocalOnly_returnsTrue() throws {
         let message = try createMessage(with: .dummy(channel: .dummy()))
-        message.localMessageState = .pendingSync
+        message.localMessageState = .pendingSend
 
         XCTAssertEqual(message.isLocalOnly, true)
     }
