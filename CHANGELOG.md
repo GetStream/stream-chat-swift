@@ -15,8 +15,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - Fix duplicated Runpath Search Paths [#2937](https://github.com/GetStream/stream-chat-swift/pull/2937)
 - Fix file attachments not rendering file size [#2941](https://github.com/GetStream/stream-chat-swift/pull/2941)
+- Fix deleted messages always showing custom attachments
 
-# [4.45.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.45.0)
+# [4.45.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.45.0) [#2947](https://github.com/GetStream/stream-chat-swift/pull/2947)
 _December 11, 2023_
 
 ## StreamChat
