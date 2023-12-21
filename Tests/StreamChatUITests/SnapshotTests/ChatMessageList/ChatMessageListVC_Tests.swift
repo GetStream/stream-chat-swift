@@ -42,6 +42,7 @@ final class ChatMessageListVC_Tests: XCTestCase {
     override func tearDown() {
         mockedDataSource = nil
         mockedDelegate = nil
+        AttachmentViewCatalog_Mock.attachmentViewInjectorClassForCallCount = 0
         super.tearDown()
     }
 
@@ -1081,5 +1082,43 @@ final class ChatMessageListVC_Tests: XCTestCase {
         // Then
         sut.handlePan(.init())
         XCTAssertEqual(handlerMock.handleCallCount, 0)
+    }
+
+    // MARK: - attachmentViewInjectorClassForMessage
+
+    func test_attachmentViewInjectorClassForMessage_shouldAskForAttachmentInjector() {
+        sut.components.attachmentViewCatalog = AttachmentViewCatalog_Mock.self
+        mockedDataSource.messages = [.unique]
+
+        _ = sut.attachmentViewInjectorClassForMessage(at: .init(item: 0, section: 0))
+
+        XCTAssertEqual(AttachmentViewCatalog_Mock.attachmentViewInjectorClassForCallCount, 1)
+    }
+
+    func test_attachmentViewInjectorClassForMessage_whenMessageIsNil_returnsNil() {
+        sut.components.attachmentViewCatalog = AttachmentViewCatalog_Mock.self
+        mockedDataSource.messages = []
+
+        _ = sut.attachmentViewInjectorClassForMessage(at: .init(item: 0, section: 0))
+
+        XCTAssertEqual(AttachmentViewCatalog_Mock.attachmentViewInjectorClassForCallCount, 0)
+    }
+
+    func test_attachmentViewInjectorClassForMessage_whenMessageIsDeleted_returnsNil() {
+        sut.components.attachmentViewCatalog = AttachmentViewCatalog_Mock.self
+        mockedDataSource.messages = [.mock(deletedAt: .unique)]
+
+        _ = sut.attachmentViewInjectorClassForMessage(at: .init(item: 0, section: 0))
+
+        XCTAssertEqual(AttachmentViewCatalog_Mock.attachmentViewInjectorClassForCallCount, 0)
+    }
+}
+
+class AttachmentViewCatalog_Mock: AttachmentViewCatalog {
+    static var mockedInjector: AttachmentViewInjector.Type?
+    static var attachmentViewInjectorClassForCallCount = 0
+    override class func attachmentViewInjectorClassFor(message: ChatMessage, components: Components) -> AttachmentViewInjector.Type? {
+        attachmentViewInjectorClassForCallCount += 1
+        return mockedInjector
     }
 }
