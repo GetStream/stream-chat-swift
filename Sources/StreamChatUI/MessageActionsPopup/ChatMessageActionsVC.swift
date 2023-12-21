@@ -87,9 +87,10 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
     open var messageActions: [ChatMessageActionItem] {
         guard
             let currentUser = messageController.dataStore.currentUser(),
-            let message = message,
-            message.isDeleted == false
-        else { return [] }
+            let message = message
+        else {
+            return []
+        }
 
         switch message.localState {
         case nil:
@@ -149,13 +150,17 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
                 editActionItem(),
                 deleteActionItem()
             ]
-        case .pendingSend, .pendingSync, .syncingFailed, .deletingFailed:
+        case .pendingSend,
+             .pendingSync,
+             .syncingFailed,
+             .deletingFailed,
+             .sending,
+             .syncing,
+             .deleting:
             return [
                 editActionItem(),
                 deleteActionItem()
             ]
-        case .sending, .syncing, .deleting:
-            return []
         }
     }
 
