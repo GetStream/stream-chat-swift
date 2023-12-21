@@ -87,7 +87,8 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
     open var messageActions: [ChatMessageActionItem] {
         guard
             let currentUser = messageController.dataStore.currentUser(),
-            let message = message
+            let message = message,
+            message.isDeleted == false
         else {
             return []
         }
