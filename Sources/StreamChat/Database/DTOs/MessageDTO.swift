@@ -537,7 +537,7 @@ extension MessageDTO {
 
     var isLocalOnly: Bool {
         if let localMessageState = self.localMessageState {
-            return localMessageState.isWaitingToBeSentToServer
+            return localMessageState.isLocalOnly
         }
 
         return type == MessageType.ephemeral.rawValue || type == MessageType.error.rawValue
