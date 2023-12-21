@@ -15,6 +15,8 @@ open class AttachmentViewCatalog {
         message: ChatMessage,
         components: Components
     ) -> AttachmentViewInjector.Type? {
+        if message.isDeleted { return nil }
+
         let attachmentCounts = message.attachmentCounts
 
         if attachmentCounts.keys.contains(.image) || attachmentCounts.keys.contains(.video) {

@@ -22,7 +22,6 @@ extension StreamChatWrapper {
 
         // Create Client
         client = ChatClient(config: config)
-        client?.registerAttachment(LocationAttachmentPayload.self)
 
         // L10N
         let localizationProvider = Appearance.default.localizationProvider
@@ -46,10 +45,6 @@ extension StreamChatWrapper {
         Components.default.channelListSearchStrategy = .messages
 
         // Customize UI components
-        Components.default.attachmentViewCatalog = DemoAttachmentViewCatalog.self
-        Components.default.messageListVC = DemoChatMessageListVC.self
-        Components.default.quotedMessageView = DemoQuotedChatMessageView.self
-        Components.default.messageComposerVC = DemoComposerVC.self
         Components.default.channelContentView = DemoChatChannelListItemView.self
         Components.default.channelListRouter = DemoChatChannelListRouter.self
         Components.default.channelVC = DemoChatChannelVC.self
@@ -57,6 +52,5 @@ extension StreamChatWrapper {
         Components.default.messageActionsVC = DemoChatMessageActionsVC.self
         Components.default.reactionsSorting = { $0.type.position < $1.type.position }
         Components.default.messageLayoutOptionsResolver = DemoChatMessageLayoutOptionsResolver()
-        Components.default.mixedAttachmentInjector.register(.location, with: LocationAttachmentViewInjector.self)
     }
 }

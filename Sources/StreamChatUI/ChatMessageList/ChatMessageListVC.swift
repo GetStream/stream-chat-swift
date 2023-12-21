@@ -278,10 +278,6 @@ open class ChatMessageListVC: _ViewController,
             return nil
         }
 
-        if message.isDeleted {
-            return nil
-        }
-
         return components.attachmentViewCatalog.attachmentViewInjectorClassFor(
             message: message,
             components: components
