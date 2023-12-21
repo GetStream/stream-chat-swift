@@ -389,7 +389,7 @@ public extension ChatMessage {
 
     var isLocalOnly: Bool {
         if let localState = self.localState {
-            return localState.isWaitingToBeSentToServer
+            return localState.isLocalOnly
         }
         
         return type == .ephemeral || type == .error
@@ -463,13 +463,9 @@ public enum LocalMessageState: String {
     /// Deleting of the message failed after multiple of tries. The system is not trying to delete this message anymore.
     case deletingFailed
 
-    var isWaitingToBeSentToServer: Bool {
-        switch self {
-        case .pendingSync, .syncing, .syncingFailed, .pendingSend, .sending, .sendingFailed:
-            return true
-        case .deleting, .deletingFailed:
-            return false
-        }
+    /// If the message is available only locally. The message is not on the server.
+    var isLocalOnly: Bool {
+        self == .pendingSend || self == .sendingFailed || self == .sending
     }
 }
 
