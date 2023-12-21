@@ -18,6 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix quoted chat message view with wrong text [#2946](https://github.com/GetStream/ios-issues-tracking/issues/683)
 - Fix jumping to bottom when loading new messages [#2945](https://github.com/GetStream/stream-chat-swift/pull/2945)
 - Fix deleted messages always showing custom attachments [#2947](https://github.com/GetStream/stream-chat-swift/pull/2947)
+- Fix messages failing to be deleted when pending updates to the server [#2949](https://github.com/GetStream/stream-chat-swift/pull/2949)
 
 # [4.45.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.45.0)
 _December 11, 2023_
