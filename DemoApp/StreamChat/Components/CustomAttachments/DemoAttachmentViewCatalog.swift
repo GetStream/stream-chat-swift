@@ -13,7 +13,6 @@ class DemoAttachmentViewCatalog: AttachmentViewCatalog {
             if hasMultipleAttachmentTypes {
                 return MixedAttachmentViewInjector.self
             }
-
             return LocationAttachmentViewInjector.self
         }
 

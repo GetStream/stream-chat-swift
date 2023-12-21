@@ -41,7 +41,10 @@ class LocationAttachmentSnapshotView: _View {
     override func setUp() {
         super.setUp()
 
-        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTapOnWorkoutAttachment))
+        let tapGestureRecognizer = UITapGestureRecognizer(
+            target: self,
+            action: #selector(handleTapOnWorkoutAttachment)
+        )
         imageView.addGestureRecognizer(tapGestureRecognizer)
     }
 
