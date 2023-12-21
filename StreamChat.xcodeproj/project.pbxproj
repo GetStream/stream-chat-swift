@@ -1266,6 +1266,8 @@
 		AD70DC3A2ADEC3C400CFC3B7 /* MessageModerationDetailsDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD70DC382ADEC3C400CFC3B7 /* MessageModerationDetailsDTO.swift */; };
 		AD70DC3C2ADEF09C00CFC3B7 /* MessageModerationDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD70DC3B2ADEF09C00CFC3B7 /* MessageModerationDetails.swift */; };
 		AD70DC3D2ADEF09C00CFC3B7 /* MessageModerationDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD70DC3B2ADEF09C00CFC3B7 /* MessageModerationDetails.swift */; };
+		AD7110C42B3434F700AFFE28 /* StreamRuntimeCheck+StreamInternal.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7110C32B3434F700AFFE28 /* StreamRuntimeCheck+StreamInternal.swift */; };
+		AD7110C52B34351800AFFE28 /* StreamRuntimeCheck+StreamInternal.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7110C32B3434F700AFFE28 /* StreamRuntimeCheck+StreamInternal.swift */; };
 		AD7112F325F12AA800932AEE /* ChatUserAvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7112F225F12AA800932AEE /* ChatUserAvatarView.swift */; };
 		AD71130225F138BA00932AEE /* ChatChannelAvatarView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E791E4D525D3E2DA00B0E076 /* ChatChannelAvatarView_Tests.swift */; };
 		AD71131225F138D500932AEE /* ChatUserAvatarView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD71131125F138D500932AEE /* ChatUserAvatarView_Tests.swift */; };
@@ -3794,6 +3796,7 @@
 		AD70DC352ADEC0F600CFC3B7 /* MessageModerationDetailsPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageModerationDetailsPayload.swift; sourceTree = "<group>"; };
 		AD70DC382ADEC3C400CFC3B7 /* MessageModerationDetailsDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageModerationDetailsDTO.swift; sourceTree = "<group>"; };
 		AD70DC3B2ADEF09C00CFC3B7 /* MessageModerationDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageModerationDetails.swift; sourceTree = "<group>"; };
+		AD7110C32B3434F700AFFE28 /* StreamRuntimeCheck+StreamInternal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StreamRuntimeCheck+StreamInternal.swift"; sourceTree = "<group>"; };
 		AD7112F225F12AA800932AEE /* ChatUserAvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatUserAvatarView.swift; sourceTree = "<group>"; };
 		AD71131125F138D500932AEE /* ChatUserAvatarView_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatUserAvatarView_Tests.swift; sourceTree = "<group>"; };
 		AD75CB6A27886746005F5FF7 /* OptionsSelectorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionsSelectorViewController.swift; sourceTree = "<group>"; };
@@ -5062,6 +5065,7 @@
 				792DDA67256FB69F001DB91B /* Info.plist */,
 				792DDA59256FB69E001DB91B /* AppDelegate.swift */,
 				A3227E7D284A511200EBE6CC /* DemoAppConfiguration.swift */,
+				AD7110C32B3434F700AFFE28 /* StreamRuntimeCheck+StreamInternal.swift */,
 				792DDA5B256FB69E001DB91B /* SceneDelegate.swift */,
 				8440861528FFE85F0027849C /* Shared */,
 				A3227E56284A47F700EBE6CC /* StreamChat */,
@@ -10183,6 +10187,7 @@
 				792DDA5A256FB69E001DB91B /* AppDelegate.swift in Sources */,
 				792DDAA125711AF2001DB91B /* CreateChatViewController.swift in Sources */,
 				A3227E7E284A511200EBE6CC /* DemoAppConfiguration.swift in Sources */,
+				AD7110C42B3434F700AFFE28 /* StreamRuntimeCheck+StreamInternal.swift in Sources */,
 				AD6BEFF227862F9300E184B4 /* AppConfigViewController.swift in Sources */,
 				792DDA5C256FB69E001DB91B /* SceneDelegate.swift in Sources */,
 				C1CEF9072A1BC4E800414931 /* UserProfileViewController.swift in Sources */,
@@ -11059,6 +11064,7 @@
 				A3698DD828215E2F00814143 /* Settings.swift in Sources */,
 				A3813B4C2825C8030076E838 /* CustomChatMessageListRouter.swift in Sources */,
 				84A33ABD28F86C3700CEC8FD /* Bundle+PushProvider.swift in Sources */,
+				AD7110C52B34351800AFFE28 /* StreamRuntimeCheck+StreamInternal.swift in Sources */,
 				A3698D802820187200814143 /* DebugMenu.swift in Sources */,
 				A34407C127D8C33F0044F150 /* ViewController.swift in Sources */,
 				A3BD4850281AC16C0090D511 /* ChannelVC.swift in Sources */,

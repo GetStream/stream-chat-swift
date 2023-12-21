@@ -41,7 +41,7 @@ class AppConfig {
 
         StreamRuntimeCheck._isBackgroundMappingEnabled = true
 
-        if DemoAppConfiguration.isStreamInternalConfiguration {
+        if StreamRuntimeCheck.isStreamInternalConfiguration {
             demoAppConfig.isAtlantisEnabled = true
             demoAppConfig.isMessageDebuggerEnabled = true
             demoAppConfig.isLocationAttachmentsEnabled = true
