@@ -1181,12 +1181,14 @@ private extension ChatMessageListVC {
     }
 
     // Scroll to the bottom if the new message was sent by
-    // the current user, or moved by the current user, and the first page is loaded.
+    // the current user, or moved by the current user (ex: Giphy publish),
+    // and the first page is loaded.
     func scrollToBottomIfNeeded(with changes: [ListChange<ChatMessage>], newestChange: ListChange<ChatMessage>?) {
         guard isFirstPageLoaded else { return }
         guard let newMessage = newestChange?.item else { return }
-        let newestChangeIsInsertionOrMove = newestChange?.isInsertion == true || newestChange?.isMove == true
-        if newestChangeIsInsertionOrMove && newMessage.isSentByCurrentUser {
+        let numberOfInsertions = changes.filter(\.isInsertion).count
+        let isNewMessage = newestChange?.isInsertion == true && numberOfInsertions == 1
+        if (isNewMessage || newestChange?.isMove == true) && newMessage.isSentByCurrentUser {
             scrollToBottom()
         }
     }
