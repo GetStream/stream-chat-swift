@@ -25,13 +25,22 @@ open class MixedAttachmentViewInjector: AttachmentViewInjector {
     ]
 
     private var _injectors: [AttachmentViewInjector] {
-        Self.injectorsRegistry
+        let injectorsForCurrentMessage = Self.injectorsRegistry
             .filter {
                 contentView.content?.attachmentCounts.keys.contains($0.type) == true
             }
-            .map {
-                $0.injector.init(contentView)
+
+        var injectorsFound: Set<String> = []
+        var injectorsWithoutDuplicates: [AttachmentViewInjector] = []
+        injectorsForCurrentMessage.map(\.injector).forEach { injector in
+            let injectorId = String(describing: injector)
+            if !injectorsFound.contains(injectorId) {
+                injectorsWithoutDuplicates.append(injector.init(contentView))
+                injectorsFound.insert(injectorId)
             }
+        }
+
+        return injectorsWithoutDuplicates
     }
 
     // This property needs to be lazy so that we only create the injectors once.
