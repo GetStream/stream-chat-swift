@@ -11,7 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChatUI
 ### ✅ Added
-- Makes it easier for custom attachments to support mixed attachments rendering [#2947](https://github.com/GetStream/stream-chat-swift/pull/2947)
+- Better support for custom mixed attachments rendering [#2947](https://github.com/GetStream/stream-chat-swift/pull/2947)
 ### 🐞 Fixed
 - Fix duplicated Runpath Search Paths [#2937](https://github.com/GetStream/stream-chat-swift/pull/2937)
 - Fix file attachments not rendering file size [#2941](https://github.com/GetStream/stream-chat-swift/pull/2941)
