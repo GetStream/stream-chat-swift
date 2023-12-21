@@ -24,7 +24,8 @@ class DemoComposerVC: ComposerVC {
     override var attachmentsPickerActions: [UIAlertAction] {
         var actions = super.attachmentsPickerActions
         
-        if AppConfig.shared.demoAppConfig.isLocationAttachmentsEnabled {
+        let alreadyHasLocation = content.attachments.map(\.type).contains(.location)
+        if AppConfig.shared.demoAppConfig.isLocationAttachmentsEnabled && !alreadyHasLocation {
             let sendLocationAction = UIAlertAction(
                 title: "Location",
                 style: .default,
