@@ -270,7 +270,30 @@ Components.default.attachmentViewCatalog = MyAttachmentViewCatalog.self
 
 The `AttachmentViewCatalog` class is used to pick the `AttachmentViewInjector` for a message, in our case we only need to check if the message contains a workout attachment.
 
-If needed you can also send a message with a workout attachment directly from Swift just to test that everything works correctly:
+In case you want your attachments to be rendered along with other types of attachments, you can do this by adhering your custom injector to the `MixedAttachmentViewInjector`. For this, first, you need to register your custom injector to the `MixedAttachmentViewInjector` registry like so:
+
+```swift
+Components.default.mixedAttachmentInjector.register(.workout, with: WorkoutAttachmentViewInjector.self)
+```
+
+Then, you need to change your Catalog implementation to return the Mixed injector in case there are multiple types of attachments:
+
+```swift
+class MyAttachmentViewCatalog: AttachmentViewCatalog {
+    override class func attachmentViewInjectorClassFor(message: ChatMessage, components: Components) -> AttachmentViewInjector.Type? {
+        let hasMultipleTypesOfAttachments = message.attachmentCounts.keys.count > 1
+        if message.attachmentCounts.keys.contains(.workout) {
+            if hasMultipleTypesOfAttachments {
+                return MixedAttachmentViewInjector.self
+            }
+            return WorkoutAttachmentViewInjector.self
+        }
+        return super.attachmentViewInjectorClassFor(message: message, components: components)
+    }
+}
+```
+
+If needed you can send a message with a workout attachment directly from Swift just to test that everything works correctly:
 
 ```swift
 let controller = client.channelController(for: ChannelId(type: .messaging, id: "my-test-channel"))

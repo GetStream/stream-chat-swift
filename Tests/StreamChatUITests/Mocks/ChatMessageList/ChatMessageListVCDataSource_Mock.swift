@@ -29,7 +29,7 @@ class ChatMessageListVCDataSource_Mock: ChatMessageListVCDataSource {
     }
 
     func chatMessageListVC(_ vc: StreamChatUI.ChatMessageListVC, messageAt indexPath: IndexPath) -> StreamChat.ChatMessage? {
-        messages[indexPath.item]
+        messages[safe: indexPath.item]
     }
 
     func chatMessageListVC(_ vc: StreamChatUI.ChatMessageListVC, messageLayoutOptionsAt indexPath: IndexPath) -> StreamChatUI.ChatMessageLayoutOptions {
