@@ -22,14 +22,18 @@ class DemoComposerVC: ComposerVC {
     ]
 
     override var attachmentsPickerActions: [UIAlertAction] {
-        let sendLocationAction = UIAlertAction(
-            title: "Location",
-            style: .default,
-            handler: { [weak self] _ in self?.sendLocation() }
-        )
+        var actions = super.attachmentsPickerActions
+        
+        if AppConfig.shared.demoAppConfig.isLocationAttachmentsEnabled {
+            let sendLocationAction = UIAlertAction(
+                title: "Location",
+                style: .default,
+                handler: { [weak self] _ in self?.sendLocation() }
+            )
+            actions.append(sendLocationAction)
+        }
 
-        let actions = super.attachmentsPickerActions
-        return actions + [sendLocationAction]
+        return actions
     }
 
     func sendLocation() {
