@@ -26,7 +26,7 @@ final class DefaultAudioPlaybackRateFormatter_Tests: XCTestCase {
 
     func test_format_valueWithDecimals_returnsExpectedResult() {
         let value: Float = 5.4567
-        let expected = "5,46"
+        let expected = "5.46"
 
         let actual = subject.format(value)
 
