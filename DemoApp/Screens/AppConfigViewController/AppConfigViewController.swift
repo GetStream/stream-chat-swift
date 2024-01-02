@@ -46,6 +46,8 @@ class AppConfig {
             demoAppConfig.isMessageDebuggerEnabled = true
             demoAppConfig.isLocationAttachmentsEnabled = true
             demoAppConfig.isTokenRefreshEnabled = true
+            demoAppConfig.isLocationAttachmentsEnabled = true
+            demoAppConfig.isHardDeleteEnabled = true
         }
     }
 }
