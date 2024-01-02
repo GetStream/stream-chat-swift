@@ -48,6 +48,7 @@ class AppConfig {
             demoAppConfig.isTokenRefreshEnabled = true
             demoAppConfig.isLocationAttachmentsEnabled = true
             demoAppConfig.isHardDeleteEnabled = true
+            StreamRuntimeCheck.assertionsEnabled = true
         }
     }
 }

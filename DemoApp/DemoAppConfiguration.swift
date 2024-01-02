@@ -20,7 +20,6 @@ enum DemoAppConfiguration {
 
     // This function is called from `DemoAppCoordinator` before the Chat UI is created
     static func setInternalConfiguration() {
-        StreamRuntimeCheck.assertionsEnabled = StreamRuntimeCheck.isStreamInternalConfiguration
         configureAtlantisIfNeeded()
     }
 
