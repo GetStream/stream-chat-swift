@@ -270,7 +270,7 @@ Components.default.attachmentViewCatalog = MyAttachmentViewCatalog.self
 
 The `AttachmentViewCatalog` class is used to pick the `AttachmentViewInjector` for a message, in our case we only need to check if the message contains a workout attachment.
 
-In case you want your attachments to be rendered along with other types of attachments, you can do this by adhering your custom injector to the `MixedAttachmentViewInjector`. For this, first, you need to register your custom injector to the `MixedAttachmentViewInjector` registry like so:
+In case you want your attachments to be rendered along with other types of attachments, you need to register your custom injector to the `MixedAttachmentViewInjector` registry like so:
 
 ```swift
 Components.default.mixedAttachmentInjector.register(.workout, with: WorkoutAttachmentViewInjector.self)
