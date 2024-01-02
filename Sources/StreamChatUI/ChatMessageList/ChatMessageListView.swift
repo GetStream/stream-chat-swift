@@ -96,7 +96,7 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
         
         /// If the message should render mixed attachments, the id should be based on the underlying injectors.
         if let mixedAttachmentInjector = attachmentViewInjectorType as? MixedAttachmentViewInjector.Type {
-            let injectors = MixedAttachmentViewInjector.injectors(for: message)
+            let injectors = mixedAttachmentInjector.injectors(for: message)
             components.append(contentsOf: injectors.map(String.init(describing:)))
         } else {
             components.append(String(describing: attachmentViewInjectorType))
