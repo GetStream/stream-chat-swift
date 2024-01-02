@@ -77,6 +77,20 @@ class LocationAttachmentSnapshotView: _View {
             return
         }
 
+        configureMapPosition(coordinate: coordinate)
+
+        if imageView.image == nil {
+            activityIndicatorView.startAnimating()
+        }
+
+        if let snapshotImage = Self.snapshotsCache.object(forKey: coordinate.cachingKey) {
+            imageView.image = snapshotImage
+        } else {
+            loadMapSnapshotImage(coordinate: coordinate)
+        }
+    }
+
+    private func configureMapPosition(coordinate: LocationCoordinate) {
         mapOptions.region = .init(
             center: CLLocationCoordinate2D(
                 latitude: coordinate.latitude,
@@ -88,44 +102,48 @@ class LocationAttachmentSnapshotView: _View {
             )
         )
         mapOptions.size = CGSize(width: 250, height: 150)
+    }
 
-        if imageView.image == nil {
-            activityIndicatorView.startAnimating()
-        }
-
-        let key = NSString(string: "\(coordinate.latitude),\(coordinate.longitude)")
-        if let snapshotImage = Self.snapshotsCache.object(forKey: key) {
-            imageView.image = snapshotImage
-        } else {
-            snapshotter?.cancel()
-            snapshotter = MKMapSnapshotter(options: mapOptions)
-            snapshotter?.start { snapshot, _ in
-                guard let snapshot = snapshot else { return }
-
-                let image = UIGraphicsImageRenderer(size: self.mapOptions.size).image { _ in
-                    snapshot.image.draw(at: .zero)
-
-                    let pinView = MKPinAnnotationView(annotation: nil, reuseIdentifier: nil)
-                    let pinImage = pinView.image
-
-                    var point = snapshot.point(for: CLLocationCoordinate2D(
-                        latitude: coordinate.latitude,
-                        longitude: coordinate.longitude
-                    ))
-
-                    point.x -= pinView.bounds.width / 2
-                    point.y -= pinView.bounds.height / 2
-                    point.x += pinView.centerOffset.x
-                    point.y += pinView.centerOffset.y
-                    pinImage?.draw(at: point)
-                }
-
-                DispatchQueue.main.async {
-                    self.activityIndicatorView.stopAnimating()
-                    self.imageView.image = image
-                    Self.snapshotsCache.setObject(image, forKey: key)
-                }
+    private func loadMapSnapshotImage(coordinate: LocationCoordinate) {
+        snapshotter?.cancel()
+        snapshotter = MKMapSnapshotter(options: mapOptions)
+        snapshotter?.start { snapshot, _ in
+            guard let snapshot = snapshot else { return }
+            let image = self.generatePinAnnotation(for: snapshot, with: coordinate)
+            DispatchQueue.main.async {
+                self.activityIndicatorView.stopAnimating()
+                self.imageView.image = image
+                Self.snapshotsCache.setObject(image, forKey: coordinate.cachingKey)
             }
         }
+    }
+
+    private func generatePinAnnotation(
+        for snapshot: MKMapSnapshotter.Snapshot,
+        with coordinate: LocationCoordinate
+    ) -> UIImage {
+        let image = UIGraphicsImageRenderer(size: mapOptions.size).image { _ in
+            snapshot.image.draw(at: .zero)
+
+            let pinView = MKPinAnnotationView(annotation: nil, reuseIdentifier: nil)
+            let pinImage = pinView.image
+
+            var point = snapshot.point(for: CLLocationCoordinate2D(
+                latitude: coordinate.latitude,
+                longitude: coordinate.longitude
+            ))
+            point.x -= pinView.bounds.width / 2
+            point.y -= pinView.bounds.height / 2
+            point.x += pinView.centerOffset.x
+            point.y += pinView.centerOffset.y
+            pinImage?.draw(at: point)
+        }
+        return image
+    }
+}
+
+private extension LocationCoordinate {
+    var cachingKey: NSString {
+        NSString(string: "\(latitude),\(longitude)")
     }
 }

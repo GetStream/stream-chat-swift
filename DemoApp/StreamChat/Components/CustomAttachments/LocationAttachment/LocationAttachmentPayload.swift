@@ -8,7 +8,7 @@ public extension AttachmentType {
     static let location = Self(rawValue: "custom_location")
 }
 
-struct LocationCoordinate: Codable {
+struct LocationCoordinate: Codable, Hashable {
     let latitude: Double
     let longitude: Double
 }
