@@ -1126,6 +1126,24 @@ final class ChatMessageListVC_Tests: XCTestCase {
 
         XCTAssertEqual(AttachmentViewCatalog_Mock.attachmentViewInjectorClassForCallCount, 0)
     }
+
+    func test_attachmentViewInjectorClassForMessage_whenMessageIsSystem_returnsNil() {
+        sut.components.attachmentViewCatalog = AttachmentViewCatalog_Mock.self
+        mockedDataSource.messages = [.mock(type: .system)]
+
+        _ = sut.attachmentViewInjectorClassForMessage(at: .init(item: 0, section: 0))
+
+        XCTAssertEqual(AttachmentViewCatalog_Mock.attachmentViewInjectorClassForCallCount, 0)
+    }
+
+    func test_attachmentViewInjectorClassForMessage_whenMessageIsError_returnsNil() {
+        sut.components.attachmentViewCatalog = AttachmentViewCatalog_Mock.self
+        mockedDataSource.messages = [.mock(type: .error, isBounced: false)]
+
+        _ = sut.attachmentViewInjectorClassForMessage(at: .init(item: 0, section: 0))
+
+        XCTAssertEqual(AttachmentViewCatalog_Mock.attachmentViewInjectorClassForCallCount, 0)
+    }
 }
 
 class AttachmentViewCatalog_Mock: AttachmentViewCatalog {

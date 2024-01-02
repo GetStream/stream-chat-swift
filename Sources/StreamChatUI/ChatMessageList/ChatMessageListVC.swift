@@ -278,7 +278,7 @@ open class ChatMessageListVC: _ViewController,
             return nil
         }
 
-        if message.isDeleted {
+        if message.isDeleted || message.shouldRenderAsSystemMessage {
             return nil
         }
 
