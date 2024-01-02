@@ -1,5 +1,5 @@
 //
-// Copyright © 2023 Stream.io Inc. All rights reserved.
+// Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -24,27 +24,10 @@ open class MixedAttachmentViewInjector: AttachmentViewInjector {
         (.voiceRecording, VoiceRecordingAttachmentViewInjector.self)
     ]
 
-    private var _injectors: [AttachmentViewInjector] {
-        let injectorsForCurrentMessage = Self.injectorsRegistry
-            .filter {
-                contentView.content?.attachmentCounts.keys.contains($0.type) == true
-            }
-
-        var injectorsFound: Set<String> = []
-        var injectorsWithoutDuplicates: [AttachmentViewInjector] = []
-        injectorsForCurrentMessage.map(\.injector).forEach { injector in
-            let injectorId = String(describing: injector)
-            if !injectorsFound.contains(injectorId) {
-                injectorsWithoutDuplicates.append(injector.init(contentView))
-                injectorsFound.insert(injectorId)
-            }
-        }
-
-        return injectorsWithoutDuplicates
-    }
-
     // This property needs to be lazy so that we only create the injectors once.
-    open lazy var injectors: [AttachmentViewInjector] = _injectors
+    open lazy var injectors: [AttachmentViewInjector] = Self.injectors(for: contentView.content).map {
+        $0.init(contentView)
+    }
 
     public required init(_ contentView: ChatMessageContentView) {
         super.init(contentView)
@@ -56,6 +39,28 @@ open class MixedAttachmentViewInjector: AttachmentViewInjector {
     /// of how different types of attachments are rendered.
     public static func register(_ type: AttachmentType, with injector: AttachmentViewInjector.Type) {
         injectorsRegistry.append((type, injector))
+    }
+
+    /// The mixed injectors for the given message.
+    ///
+    /// Given a message, it determines which injectors it should use to render the attachments.
+    public static func injectors(for message: ChatMessage?) -> [AttachmentViewInjector.Type] {
+        let injectorsForMessage = Self.injectorsRegistry
+            .filter {
+                message?.attachmentCounts.keys.contains($0.type) == true
+            }
+
+        var injectorsFound: Set<String> = []
+        var injectorsWithoutDuplicates: [AttachmentViewInjector.Type] = []
+        injectorsForMessage.map(\.injector).forEach { injector in
+            let injectorId = String(describing: injector)
+            if !injectorsFound.contains(injectorId) {
+                injectorsWithoutDuplicates.append(injector)
+                injectorsFound.insert(injectorId)
+            }
+        }
+
+        return injectorsWithoutDuplicates
     }
 
     override open func contentViewDidLayout(options: ChatMessageLayoutOptions) {
