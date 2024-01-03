@@ -560,6 +560,14 @@
 		82F714A92B0785D900442A74 /* XCTest+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82F714A82B0785D900442A74 /* XCTest+Helpers.swift */; };
 		82F714AB2B078AE800442A74 /* StreamSwiftTestHelpers in Frameworks */ = {isa = PBXBuildFile; productRef = 82F714AA2B078AE800442A74 /* StreamSwiftTestHelpers */; };
 		840B4FCF26A9E53100D5EFAB /* CustomEventRequestBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840B4FCE26A9E53100D5EFAB /* CustomEventRequestBody.swift */; };
+		8413C45A2B45559000190AF4 /* DefaultAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8413C4592B45559000190AF4 /* DefaultAPI.swift */; };
+		8413C45C2B455BFC00190AF4 /* APIHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8413C45B2B455BFC00190AF4 /* APIHelper.swift */; };
+		8413C45E2B4562CE00190AF4 /* URLSessionTransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8413C45D2B4562CE00190AF4 /* URLSessionTransport.swift */; };
+		8413C4602B4563C100190AF4 /* APIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8413C45F2B4563C100190AF4 /* APIError.swift */; };
+		8413C4622B4563E700190AF4 /* JSONEncodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8413C4612B4563E700190AF4 /* JSONEncodable.swift */; };
+		8413C4642B4564FD00190AF4 /* Retries.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8413C4632B4564FD00190AF4 /* Retries.swift */; };
+		8413C4662B4569C200190AF4 /* AuthMiddlewares.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8413C4652B4569C200190AF4 /* AuthMiddlewares.swift */; };
+		8413C4682B45747400190AF4 /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8413C4672B45747400190AF4 /* Helpers.swift */; };
 		84196FA32805892500185E99 /* LocalMessageState+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84196FA22805892500185E99 /* LocalMessageState+Extensions.swift */; };
 		842F9745277A09B10060A489 /* PinnedMessagesQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842F9744277A09B10060A489 /* PinnedMessagesQuery.swift */; };
 		842F9746277A09B10060A489 /* PinnedMessagesQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842F9744277A09B10060A489 /* PinnedMessagesQuery.swift */; };
@@ -3211,6 +3219,14 @@
 		82F714A62B0784D900442A74 /* UnwrapAsync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnwrapAsync.swift; sourceTree = "<group>"; };
 		82F714A82B0785D900442A74 /* XCTest+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTest+Helpers.swift"; sourceTree = "<group>"; };
 		840B4FCE26A9E53100D5EFAB /* CustomEventRequestBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomEventRequestBody.swift; sourceTree = "<group>"; };
+		8413C4592B45559000190AF4 /* DefaultAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultAPI.swift; sourceTree = "<group>"; };
+		8413C45B2B455BFC00190AF4 /* APIHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIHelper.swift; sourceTree = "<group>"; };
+		8413C45D2B4562CE00190AF4 /* URLSessionTransport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSessionTransport.swift; sourceTree = "<group>"; };
+		8413C45F2B4563C100190AF4 /* APIError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIError.swift; sourceTree = "<group>"; };
+		8413C4612B4563E700190AF4 /* JSONEncodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONEncodable.swift; sourceTree = "<group>"; };
+		8413C4632B4564FD00190AF4 /* Retries.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Retries.swift; sourceTree = "<group>"; };
+		8413C4652B4569C200190AF4 /* AuthMiddlewares.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthMiddlewares.swift; sourceTree = "<group>"; };
+		8413C4672B45747400190AF4 /* Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
 		8414A81B2767944B001BA9D7 /* RetryStrategy_Spy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetryStrategy_Spy.swift; sourceTree = "<group>"; };
 		84196FA22805892500185E99 /* LocalMessageState+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LocalMessageState+Extensions.swift"; sourceTree = "<group>"; };
 		842F9744277A09B10060A489 /* PinnedMessagesQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinnedMessagesQuery.swift; sourceTree = "<group>"; };
@@ -4736,6 +4752,7 @@
 		790881AB254327C800896F03 /* StreamChat */ = {
 			isa = PBXGroup;
 			children = (
+				8413C4582B45557700190AF4 /* OpenAPI */,
 				799C941D247D2F80001F1104 /* Sources.h */,
 				799C941E247D2F80001F1104 /* Info.plist */,
 				79A0E9AC2498BD0C00E9BD50 /* ChatClient.swift */,
@@ -5510,6 +5527,21 @@
 				82E6554A2B067ED700D64906 /* WaitUntil.swift */,
 			);
 			path = Wait;
+			sourceTree = "<group>";
+		};
+		8413C4582B45557700190AF4 /* OpenAPI */ = {
+			isa = PBXGroup;
+			children = (
+				8413C4592B45559000190AF4 /* DefaultAPI.swift */,
+				8413C45B2B455BFC00190AF4 /* APIHelper.swift */,
+				8413C45D2B4562CE00190AF4 /* URLSessionTransport.swift */,
+				8413C45F2B4563C100190AF4 /* APIError.swift */,
+				8413C4612B4563E700190AF4 /* JSONEncodable.swift */,
+				8413C4632B4564FD00190AF4 /* Retries.swift */,
+				8413C4652B4569C200190AF4 /* AuthMiddlewares.swift */,
+				8413C4672B45747400190AF4 /* Helpers.swift */,
+			);
+			path = OpenAPI;
 			sourceTree = "<group>";
 		};
 		842F9747277A1CBE0060A489 /* PinnedMessages */ = {
@@ -10417,6 +10449,8 @@
 				F6ED5F7825027907005D7327 /* MissingEventsRequestBody.swift in Sources */,
 				7964F3B7249A314D002A09EC /* LogFormatter.swift in Sources */,
 				84CF9C73274D473D00BCDE2D /* EventBatcher.swift in Sources */,
+				8413C4662B4569C200190AF4 /* AuthMiddlewares.swift in Sources */,
+				8413C4622B4563E700190AF4 /* JSONEncodable.swift in Sources */,
 				40789D1B29F6AC500018C2BB /* AudioPlaybackState.swift in Sources */,
 				C1E8AD57278C8A6E0041B775 /* SyncRepository.swift in Sources */,
 				F63CC36F24E591840052844D /* EventObserver.swift in Sources */,
@@ -10444,6 +10478,7 @@
 				C1FC2F942742579D0062530F /* Security.swift in Sources */,
 				AD52A21C2804851600D0157E /* CommandDTO.swift in Sources */,
 				792AF91624D812440010097B /* EntityDatabaseObserver.swift in Sources */,
+				8413C4642B4564FD00190AF4 /* Retries.swift in Sources */,
 				C1FC2F9D2742579D0062530F /* FoundationHTTPHandler.swift in Sources */,
 				404296EB2A011B050089126D /* AudioSessionProtocol.swift in Sources */,
 				C186BFAF27AADB410099CCA6 /* SyncOperations.swift in Sources */,
@@ -10487,6 +10522,7 @@
 				43D3F0FF28410B4800B74921 /* Call.swift in Sources */,
 				88A00DD02525F08000259AB4 /* ModerationEndpoints.swift in Sources */,
 				79A0E9B02498C09900E9BD50 /* ConnectionStatus.swift in Sources */,
+				8413C4682B45747400190AF4 /* Helpers.swift in Sources */,
 				799C9439247D2FB9001F1104 /* ChannelDTO.swift in Sources */,
 				799C9443247D3DA7001F1104 /* APIClient.swift in Sources */,
 				79200D4C25025B81002F4EB1 /* Error+InternetNotAvailable.swift in Sources */,
@@ -10506,6 +10542,7 @@
 				792A4F3F247FFDE700EAF71D /* Codable+Extensions.swift in Sources */,
 				8819DFCF2525F3C600FD1A50 /* UserUpdater.swift in Sources */,
 				79C750BB248FC4100023F0B7 /* ErrorPayload.swift in Sources */,
+				8413C45A2B45559000190AF4 /* DefaultAPI.swift in Sources */,
 				799BE2EA248A8C9D00DAC8A0 /* RetryStrategy.swift in Sources */,
 				DA84070C25250581005A0F62 /* UserListPayload.swift in Sources */,
 				79877A272498E50D00015F8B /* MemberModelDTO.swift in Sources */,
@@ -10537,6 +10574,7 @@
 				DAD539DB250B8A9C00CFC649 /* Controller.swift in Sources */,
 				F6ED5F76250278D7005D7327 /* SyncEndpoint.swift in Sources */,
 				AD8FEE582AA8E1A100273F88 /* ChatClient+Environment.swift in Sources */,
+				8413C45E2B4562CE00190AF4 /* URLSessionTransport.swift in Sources */,
 				AD52A2192804850700D0157E /* ChannelConfigDTO.swift in Sources */,
 				797A756824814F0D003CF16D /* Bundle+Extensions.swift in Sources */,
 				792B805024D95B5D00C2963E /* Cached.swift in Sources */,
@@ -10599,6 +10637,7 @@
 				A3B0CFA227BBF52600F352F9 /* ChannelTruncateRequestPayload.swift in Sources */,
 				88F6DF91252C8845009A8AF0 /* ChannelMemberUpdater.swift in Sources */,
 				79BF83F2248F8F60007611A1 /* Logger.swift in Sources */,
+				8413C45C2B455BFC00190AF4 /* APIHelper.swift in Sources */,
 				799C943B247D2FB9001F1104 /* MessageDTO.swift in Sources */,
 				40789D1729F6AC500018C2BB /* AudioPlaybackContextAccessor.swift in Sources */,
 				79D5CDD427EA1BE300BE7D8B /* MessageTranslationsPayload.swift in Sources */,
@@ -10711,6 +10750,7 @@
 				F6FF1DAA24FD23D300151735 /* MessageEndpoints.swift in Sources */,
 				DA8407002524F778005A0F62 /* UserListController.swift in Sources */,
 				799C943E247D2FB9001F1104 /* ChatMessage.swift in Sources */,
+				8413C4602B4563C100190AF4 /* APIError.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -12288,7 +12328,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Sources/StreamChatUI/Info.plist";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = io.stream.StreamChatUI;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -12316,7 +12356,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Sources/StreamChatUI/Info.plist";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = io.stream.StreamChatUI;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -12344,7 +12384,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Sources/StreamChatUI/Info.plist";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = io.stream.StreamChatUI;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -12667,7 +12707,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Sources/StreamChat/Info.plist";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.StreamChat;
@@ -12697,7 +12737,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Sources/StreamChat/Info.plist";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.StreamChat;
@@ -12928,7 +12968,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = Sources/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
@@ -13003,7 +13043,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = Sources/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
@@ -13344,7 +13384,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = Sources/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
@@ -13381,7 +13421,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Sources/StreamChat/Info.plist";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.StreamChat;

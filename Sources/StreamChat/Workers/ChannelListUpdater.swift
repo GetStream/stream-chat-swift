@@ -133,10 +133,15 @@ class ChannelListUpdater: Worker {
         channelListQuery: ChannelListQuery,
         completion: @escaping (Result<ChannelListPayload, Error>) -> Void
     ) {
-        apiClient.request(
-            endpoint: .channels(query: channelListQuery),
-            completion: completion
-        )
+//        apiClient.request(
+//            endpoint: .channels(query: channelListQuery),
+//            completion: completion
+//        )
+        execute {
+            try await self.defaultAPI.queryChannels(query: channelListQuery)
+        } completion: { result in
+            completion(result)
+        }
     }
 
     /// Marks all channels for a user as read.

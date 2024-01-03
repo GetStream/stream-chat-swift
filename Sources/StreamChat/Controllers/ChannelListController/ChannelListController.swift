@@ -54,7 +54,8 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     private lazy var worker: ChannelListUpdater = self.environment
         .channelQueryUpdaterBuilder(
             client.databaseContainer,
-            client.apiClient
+            client.apiClient,
+            client.defaultAPI
         )
 
     /// A Boolean value that returns whether pagination is finished
@@ -331,8 +332,9 @@ extension ChatChannelListController {
     struct Environment {
         var channelQueryUpdaterBuilder: (
             _ database: DatabaseContainer,
-            _ apiClient: APIClient
-        ) -> ChannelListUpdater = ChannelListUpdater.init
+            _ apiClient: APIClient,
+            _ defaultAPI: DefaultAPI
+        ) -> ChannelListUpdater = { ChannelListUpdater(database: $0, apiClient: $1, defaultAPI: $2) }
 
         var createChannelListDatabaseObserver: (
             _ isBackground: Bool,
