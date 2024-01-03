@@ -316,7 +316,7 @@ public extension ChatMessage {
 
     /// Returns the attachments of `.file` type.
     ///
-    /// - Important: The `unknownAttachments` are loaded lazily and cached to maintain high performance.
+    /// - Important: The `fileAttachments` are loaded lazily and cached to maintain high performance.
     var fileAttachments: [ChatMessageFileAttachment] {
         attachments(payloadType: FileAttachmentPayload.self)
     }

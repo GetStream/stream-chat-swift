@@ -43,6 +43,15 @@ final class ChatFileAttachmentListViewItemView_Tests: XCTestCase {
         AssertSnapshot(fileAttachmentView, variants: [.defaultLight])
     }
 
+    func test_appearance_whenUnknown() {
+        fileAttachmentView.content = .mock(
+            id: .unique,
+            file: AttachmentFile(type: .unknown, size: 0, mimeType: "weird"),
+            localState: nil
+        )
+        AssertSnapshot(fileAttachmentView, variants: [.defaultLight])
+    }
+
     func test_appearanceCustomization_usingAppearance() {
         var appearance = Appearance()
         appearance.colorPalette.subtitleText = .red

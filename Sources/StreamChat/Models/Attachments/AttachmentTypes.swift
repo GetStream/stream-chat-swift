@@ -303,12 +303,7 @@ public enum AttachmentFileType: String, Codable, Equatable, CaseIterable {
     }
 
     public var isUnknown: Bool {
-        switch self {
-        case .unknown:
-            return true
-        default:
-            return false
-        }
+        self == .unknown
     }
 }
 
