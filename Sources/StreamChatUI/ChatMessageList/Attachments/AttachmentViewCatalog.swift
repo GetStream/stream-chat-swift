@@ -39,8 +39,10 @@ open class AttachmentViewCatalog {
                 : components.filesAttachmentInjector
         } else if attachmentCounts.keys.contains(.unknown) {
             return components.unsupportedAttachmentInjector
-        } else {
+        } else if attachmentCounts.isEmpty == false {
             return components.unsupportedAttachmentInjector
+        } else {
+            return nil
         }
     }
 }
