@@ -278,6 +278,10 @@ open class ChatMessageListVC: _ViewController,
             return nil
         }
 
+        if message.isDeleted || message.shouldRenderAsSystemMessage {
+            return nil
+        }
+
         return components.attachmentViewCatalog.attachmentViewInjectorClassFor(
             message: message,
             components: components
@@ -754,15 +758,17 @@ open class ChatMessageListVC: _ViewController,
     }
 
     open func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let message = dataSource?.chatMessageListVC(self, messageAt: indexPath)
         let cell: ChatMessageCell = listView.dequeueReusableCell(
             contentViewClass: cellContentClassForMessage(at: indexPath),
             attachmentViewInjectorType: attachmentViewInjectorClassForMessage(at: indexPath),
             layoutOptions: cellLayoutOptionsForMessage(at: indexPath),
-            for: indexPath
+            for: indexPath,
+            message: message
         )
 
         guard
-            let message = dataSource?.chatMessageListVC(self, messageAt: indexPath),
+            let message = message,
             let channel = dataSource?.channel(for: self)
         else {
             return cell
