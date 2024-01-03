@@ -1,5 +1,5 @@
 //
-// Copyright © 2023 Stream.io Inc. All rights reserved.
+// Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -48,7 +48,6 @@ public class UnsupportedAttachmentViewInjector: AttachmentViewInjector {
             )
         }
 
-        let attachments = filesAttachmentInjector.fileAttachments + unsupportedFileAttachments
-        filesAttachmentInjector.fileAttachmentView.content = attachments
+        filesAttachmentInjector.fileAttachmentView.content = unsupportedFileAttachments
     }
 }
