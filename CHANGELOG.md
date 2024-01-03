@@ -3,14 +3,32 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChatUI
+### ✅ Added
+- Better support for custom mixed attachments rendering [#2947](https://github.com/GetStream/stream-chat-swift/pull/2947)
+### 🐞 Fixed
+- Fix deleted messages showing custom attachments [#2947](https://github.com/GetStream/stream-chat-swift/pull/2947)
+- Fix blocked messages showing attachments [#2947](https://github.com/GetStream/stream-chat-swift/pull/2947)
+### 🔄 Changed
+- Minor breaking change in the `ChatMessageListView.reuseIdentifier()` function. It has a new `message` parameter. [#2947](https://github.com/GetStream/stream-chat-swift/pull/2947)
+- Minor breaking change in the `ChatMessageListView.dequeueReusableCell()` function. It has a new `message` parameter. [#2947](https://github.com/GetStream/stream-chat-swift/pull/2947)
+
+# [4.46.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.46.0)
+_December 21, 2023_
+
 ## StreamChat
 ### 🐞 Fixed
 - Fix duplicated Runpath Search Paths [#2937](https://github.com/GetStream/stream-chat-swift/pull/2937)
 - Fix `_dispatch_lane_resume` crash in `RepeatingTimer` [#2938](https://github.com/GetStream/stream-chat-swift/pull/2938)
+- Fix editing of async voice messages [#2943](https://github.com/GetStream/stream-chat-swift/pull/2943)
 
 ## StreamChatUI
 ### 🐞 Fixed
 - Fix duplicated Runpath Search Paths [#2937](https://github.com/GetStream/stream-chat-swift/pull/2937)
+- Fix file attachments not rendering file size [#2941](https://github.com/GetStream/stream-chat-swift/pull/2941)
+- Fix quoted chat message view with wrong text [#2946](https://github.com/GetStream/ios-issues-tracking/issues/683)
+- Fix jumping to bottom when loading new messages [#2945](https://github.com/GetStream/stream-chat-swift/pull/2945)
+- Fix messages failing to be deleted when pending updates to the server [#2949](https://github.com/GetStream/stream-chat-swift/pull/2949)
 
 # [4.45.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.45.0)
 _December 11, 2023_

@@ -66,6 +66,10 @@ config.customCDNClient = CustomCDNClient(uploadFileApi: YourUploadFileApi())
 In case your API does not support progress updates, you can simple ignore the argument.
 :::
 
+### Custom Firebase CDN
+
+You can also use `FirebaseStorage` as your custom CDN. There is a Swift Package called `StreamFirebaseCDN`, built by the community to facilitate this, which can be found [here](https://github.com/pzmudzinski/StreamFirebaseCDN).
+
 ## Custom AttachmentUploader implementation
 
 If you require changing more details of the attachment, in case your upload file API supports more features, you can provide a custom `AttachmentUploader`.

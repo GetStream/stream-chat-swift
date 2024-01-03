@@ -1,5 +1,5 @@
 //
-// Copyright © 2023 Stream.io Inc. All rights reserved.
+// Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -108,7 +108,7 @@ extension ChatMessageFileAttachmentListView {
             fileNameLabel.text = content?.payload.title ?? content?.type.rawValue
 
             switch content?.uploadingState?.state {
-            case .uploaded:
+            case .uploaded, .none:
                 fileSizeLabel.text = content?.payload.file.sizeString
             case .uploadingFailed:
                 fileSizeLabel.text = L10n.Message.Sending.attachmentUploadingFailed

@@ -1,5 +1,5 @@
 //
-// Copyright © 2023 Stream.io Inc. All rights reserved.
+// Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
 import AVKit
@@ -163,17 +163,11 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
         guard let message = content?.message else { return }
         guard let avatarAlignment = content?.avatarAlignment else { return }
 
-        if let currentUserLang = content?.channel?.membership?.language,
-           let translatedText = content?.message.translatedText(for: currentUserLang) {
-            textView.text = translatedText
-        } else {
-            textView.text = message.text
-        }
-
         contentContainerView.backgroundColor = message.linkAttachments.isEmpty
             ? appearance.colorPalette.popoverBackground
             : appearance.colorPalette.highlightedAccentBackground1
-
+        
+        textView.text = message.text
         setAvatar(imageUrl: message.author.imageURL)
         setAvatarAlignment(avatarAlignment)
 
@@ -182,6 +176,11 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
         } else {
             setAttachmentPreview(for: message)
             showAttachmentPreview()
+        }
+
+        if let currentUserLang = content?.channel?.membership?.language,
+           let translatedText = content?.message.translatedText(for: currentUserLang) {
+            textView.text = translatedText
         }
     }
 
@@ -232,15 +231,11 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
         if let filePayload = message.fileAttachments.first?.payload {
             attachmentPreviewView.contentMode = .scaleAspectFit
             attachmentPreviewView.image = appearance.images.fileIcons[filePayload.file.type] ?? appearance.images.fileFallback
-            if textView.text.isEmpty {
-                textView.text = filePayload.title
-            }
+            textView.text = message.text.isEmpty ? filePayload.title : message.text
         } else if let imagePayload = message.imageAttachments.first?.payload {
             attachmentPreviewView.contentMode = .scaleAspectFill
             setAttachmentPreviewImage(url: imagePayload.imageURL)
-            if textView.text.isEmpty {
-                textView.text = L10n.Composer.QuotedMessage.photo
-            }
+            textView.text = message.text.isEmpty ? L10n.Composer.QuotedMessage.photo : message.text
         } else if let linkPayload = message.linkAttachments.first?.payload {
             attachmentPreviewView.contentMode = .scaleAspectFill
             setAttachmentPreviewImage(url: linkPayload.previewURL)
@@ -248,18 +243,14 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
         } else if let giphyPayload = message.giphyAttachments.first?.payload {
             attachmentPreviewView.contentMode = .scaleAspectFill
             setAttachmentPreviewImage(url: giphyPayload.previewURL)
-            if textView.text.isEmpty {
-                textView.text = L10n.Composer.QuotedMessage.giphy
-            }
+            textView.text = message.text.isEmpty ? L10n.Composer.QuotedMessage.giphy : message.text
         } else if let videoPayload = message.videoAttachments.first?.payload {
             attachmentPreviewView.contentMode = .scaleAspectFill
+            textView.text = message.text.isEmpty ? videoPayload.title : message.text
             if let thumbnailURL = videoPayload.thumbnailURL {
                 setVideoAttachmentThumbnail(url: thumbnailURL)
             } else {
                 setVideoAttachmentPreviewImage(url: videoPayload.videoURL)
-            }
-            if textView.text.isEmpty {
-                textView.text = videoPayload.title
             }
         } else if let voiceRecordingPayload = message.voiceRecordingAttachments.first?.payload {
             voiceRecordingAttachmentQuotedPreview.content = .init(
@@ -334,8 +325,6 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
     open func setUnsupportedAttachmentPreview(for message: ChatMessage) {
         attachmentPreviewView.contentMode = .scaleAspectFit
         attachmentPreviewView.image = appearance.images.fileFallback
-        if textView.text.isEmpty {
-            textView.text = L10n.Message.unsupportedAttachment
-        }
+        textView.text = message.text.isEmpty ? L10n.Message.unsupportedAttachment : message.text
     }
 }

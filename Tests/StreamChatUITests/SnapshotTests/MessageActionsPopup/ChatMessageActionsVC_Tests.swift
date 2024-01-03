@@ -1,5 +1,5 @@
 //
-// Copyright © 2023 Stream.io Inc. All rights reserved.
+// Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -315,22 +315,6 @@ final class ChatMessageActionsVC_Tests: XCTestCase {
         XCTAssertTrue(vc.messageActions.contains(where: { $0 is FlagActionItem }))
     }
 
-    func test_messageActions_whenSendingOrSyncingOrDeleting_thenContainsEmptyActions() {
-        let states: [LocalMessageState] = [.sending, .syncing, .deleting]
-
-        states.forEach {
-            chatMessageController.simulateInitial(
-                message: .mock(localState: $0, isSentByCurrentUser: false),
-                replies: [],
-                state: .remoteDataFetched
-            )
-
-            vc.channel = .mock(cid: .unique, ownCapabilities: [])
-
-            XCTAssertTrue(vc.messageActions.isEmpty)
-        }
-    }
-
     func test_messageActions_whenSendingFailed_thenContainsResendActionEditActionDeleteAction() {
         chatMessageController.simulateInitial(
             message: .mock(localState: .sendingFailed, isSentByCurrentUser: false),
@@ -369,8 +353,16 @@ final class ChatMessageActionsVC_Tests: XCTestCase {
         XCTAssertFalse(vc.messageActions.contains(where: { $0 is CopyActionItem }))
     }
 
-    func test_messageActions_whenPendingOrSyncingFailedOrDeletingFailed_thenContainsEditActionDeleteAction() {
-        let states: [LocalMessageState] = [.pendingSend, .pendingSync, .syncingFailed, .deletingFailed]
+    func test_messageActions_whenLocalStateNotNilOrSendingFailed_thenContainsEditActionDeleteAction() {
+        let states: [LocalMessageState] = [
+            .pendingSend,
+            .pendingSync,
+            .syncingFailed,
+            .deletingFailed,
+            .sending,
+            .syncing,
+            .deleting
+        ]
 
         states.forEach {
             chatMessageController.simulateInitial(

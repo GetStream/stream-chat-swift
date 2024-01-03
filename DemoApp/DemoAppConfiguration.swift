@@ -1,9 +1,8 @@
 //
-// Copyright © 2023 Stream.io Inc. All rights reserved.
+// Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
 import Atlantis
-import Foundation
 import GDPerformanceView_Swift
 import Sentry
 import StreamChat
@@ -19,24 +18,14 @@ enum DemoAppConfiguration {
         #endif
     }
 
-    // MARK: Internal configuration
-
-    static var isStreamInternalConfiguration: Bool {
-        ProcessInfo.processInfo.environment["STREAM_DEV"] != nil
-    }
-
     // This function is called from `DemoAppCoordinator` before the Chat UI is created
     static func setInternalConfiguration() {
-        StreamRuntimeCheck.assertionsEnabled = isStreamInternalConfiguration
-        StreamRuntimeCheck._isBackgroundMappingEnabled = true
-        AppConfig.shared.demoAppConfig.isTokenRefreshEnabled = isStreamInternalConfiguration
-
         configureAtlantisIfNeeded()
     }
 
     // HTTP and WebSocket Proxy with Proxyman.app
     private static func configureAtlantisIfNeeded() {
-        if isStreamInternalConfiguration || AppConfig.shared.demoAppConfig.isAtlantisEnabled {
+        if AppConfig.shared.demoAppConfig.isAtlantisEnabled {
             Atlantis.start()
         } else {
             Atlantis.stop()
@@ -45,7 +34,7 @@ enum DemoAppConfiguration {
 
     // Performance tracker
     static func showPerformanceTracker() {
-        guard isStreamInternalConfiguration else { return }
+        guard StreamRuntimeCheck.isStreamInternalConfiguration else { return }
         // PerformanceMonitor seems to have a bug where it cannot find the hierarchy when trying to place its view
         DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
             PerformanceMonitor.shared().performanceViewConfigurator.options = [.performance]

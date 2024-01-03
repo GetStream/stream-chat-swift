@@ -1,5 +1,5 @@
 //
-// Copyright © 2023 Stream.io Inc. All rights reserved.
+// Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -144,6 +144,13 @@ public extension StreamMockServer {
 
     func setCooldown(in channel: inout [String: Any]) {
         let cooldown = channelConfigs.coolDown
-        channel[channelKey.cooldownDuration.rawValue] = cooldown.isEnabled ? cooldown.duration : nil
+        if cooldown.isEnabled {
+            channel[channelKey.cooldownDuration.rawValue] = cooldown.duration
+            var ownCapabilities = channel[channelKey.ownCapabilities.rawValue] as? [String]
+            ownCapabilities?.removeAll { $0 == ChannelCapability.skipSlowMode.rawValue }
+            channel[channelKey.ownCapabilities.rawValue] = ownCapabilities
+        } else {
+            channel[channelKey.cooldownDuration.rawValue] = nil
+        }
     }
 }

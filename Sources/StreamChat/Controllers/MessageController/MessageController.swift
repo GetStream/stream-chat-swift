@@ -1,5 +1,5 @@
 //
-// Copyright © 2023 Stream.io Inc. All rights reserved.
+// Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -715,12 +715,11 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
 extension ChatMessageController {
     struct Environment {
         var messageObserverBuilder: (
-            _ isBackgroundMappingEnabled: Bool,
-            _ databaseContainer: DatabaseContainer,
+            _ context: NSManagedObjectContext,
             _ fetchRequest: NSFetchRequest<MessageDTO>,
             _ itemCreator: @escaping (MessageDTO) throws -> ChatMessage,
             _ fetchedResultsControllerType: NSFetchedResultsController<MessageDTO>.Type
-        ) -> EntityDatabaseObserverWrapper<ChatMessage, MessageDTO> = EntityDatabaseObserverWrapper.init
+        ) -> EntityDatabaseObserver<ChatMessage, MessageDTO> = EntityDatabaseObserver.init
 
         var repliesObserverBuilder: (
             _ isBackgroundMappingEnabled: Bool,
@@ -745,10 +744,9 @@ extension ChatMessageController {
 // MARK: - Private
 
 private extension ChatMessageController {
-    func createMessageObserver() -> EntityDatabaseObserverWrapper<ChatMessage, MessageDTO> {
+    func createMessageObserver() -> EntityDatabaseObserver<ChatMessage, MessageDTO> {
         let observer = environment.messageObserverBuilder(
-            StreamRuntimeCheck._isBackgroundMappingEnabled,
-            client.databaseContainer,
+            client.databaseContainer.viewContext,
             MessageDTO.message(withID: messageId),
             { try $0.asModel() },
             NSFetchedResultsController<MessageDTO>.self

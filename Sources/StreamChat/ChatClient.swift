@@ -1,5 +1,5 @@
 //
-// Copyright © 2023 Stream.io Inc. All rights reserved.
+// Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -58,7 +58,7 @@ public class ChatClient {
         .video: VideoAttachmentPayload.self,
         .audio: AudioAttachmentPayload.self,
         .file: FileAttachmentPayload.self,
-        .voiceRecording: VideoAttachmentPayload.self
+        .voiceRecording: VoiceRecordingAttachmentPayload.self
     ]
 
     let connectionRepository: ConnectionRepository

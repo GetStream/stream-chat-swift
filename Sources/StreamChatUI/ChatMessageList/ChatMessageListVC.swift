@@ -1,5 +1,5 @@
 //
-// Copyright © 2023 Stream.io Inc. All rights reserved.
+// Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -275,6 +275,10 @@ open class ChatMessageListVC: _ViewController,
     /// Returns the attachment view injector for the message at given `indexPath`
     open func attachmentViewInjectorClassForMessage(at indexPath: IndexPath) -> AttachmentViewInjector.Type? {
         guard let message = dataSource?.chatMessageListVC(self, messageAt: indexPath) else {
+            return nil
+        }
+
+        if message.isDeleted || message.shouldRenderAsSystemMessage {
             return nil
         }
 
@@ -754,15 +758,17 @@ open class ChatMessageListVC: _ViewController,
     }
 
     open func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let message = dataSource?.chatMessageListVC(self, messageAt: indexPath)
         let cell: ChatMessageCell = listView.dequeueReusableCell(
             contentViewClass: cellContentClassForMessage(at: indexPath),
             attachmentViewInjectorType: attachmentViewInjectorClassForMessage(at: indexPath),
             layoutOptions: cellLayoutOptionsForMessage(at: indexPath),
-            for: indexPath
+            for: indexPath,
+            message: message
         )
 
         guard
-            let message = dataSource?.chatMessageListVC(self, messageAt: indexPath),
+            let message = message,
             let channel = dataSource?.channel(for: self)
         else {
             return cell
@@ -1177,12 +1183,14 @@ private extension ChatMessageListVC {
     }
 
     // Scroll to the bottom if the new message was sent by
-    // the current user, or moved by the current user, and the first page is loaded.
+    // the current user, or moved by the current user (ex: Giphy publish),
+    // and the first page is loaded.
     func scrollToBottomIfNeeded(with changes: [ListChange<ChatMessage>], newestChange: ListChange<ChatMessage>?) {
         guard isFirstPageLoaded else { return }
         guard let newMessage = newestChange?.item else { return }
-        let newestChangeIsInsertionOrMove = newestChange?.isInsertion == true || newestChange?.isMove == true
-        if newestChangeIsInsertionOrMove && newMessage.isSentByCurrentUser {
+        let numberOfInsertions = changes.filter(\.isInsertion).count
+        let isNewMessage = newestChange?.isInsertion == true && numberOfInsertions == 1
+        if (isNewMessage || newestChange?.isMove == true) && newMessage.isSentByCurrentUser {
             scrollToBottom()
         }
     }

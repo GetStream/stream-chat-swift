@@ -1,5 +1,5 @@
 //
-// Copyright © 2023 Stream.io Inc. All rights reserved.
+// Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -302,27 +302,27 @@ final class ChatMessage_Tests: XCTestCase {
         XCTAssertEqual(message.deliveryStatus, .read)
     }
 
-    func test_isWaitingToBeSentToServer_returnsTheCorrectValue() {
+    func test_isLocalOnly_returnsTheCorrectValue() {
         let stateToLocalOnly: [LocalMessageState: Bool] = [
-            .pendingSync: true,
-            .syncing: true,
-            .syncingFailed: true,
             .pendingSend: true,
             .sending: true,
             .sendingFailed: true,
+            .pendingSync: false,
+            .syncing: false,
+            .syncingFailed: false,
             .deleting: false,
             .deletingFailed: false
         ]
 
         stateToLocalOnly.forEach { state, value in
-            XCTAssertEqual(state.isWaitingToBeSentToServer, value)
+            XCTAssertEqual(state.isLocalOnly, value)
         }
     }
 
-    func test_isLocalOnly_whenLocalStateIsWaitingToBeSentToServer_returnsTrue() {
+    func test_isLocalOnly_whenLocalStateIsLocalOnly_returnsTrue() {
         let message: ChatMessage = .mock(
             type: .regular,
-            localState: .pendingSync
+            localState: .pendingSend
         )
 
         XCTAssertEqual(message.isLocalOnly, true)
