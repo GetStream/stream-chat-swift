@@ -236,6 +236,18 @@ final class QuotedChatMessageView_Tests: XCTestCase {
         AssertSnapshot(view)
     }
 
+    func test_withUnsupportedAttachment() {
+        view.content = makeContent(text: "Hello!", attachments: [.dummy(type: "location")])
+
+        AssertSnapshot(view)
+    }
+
+    func test_withUnsupportedAttachment_whenEmptyText() {
+        view.content = makeContent(text: "", attachments: [.dummy(type: "location")])
+
+        AssertSnapshot(view, variants: [.defaultLight])
+    }
+
     func test_appearanceCustomization_usingComponents() {
         class TestView: ChatAvatarView {
             override func setUpAppearance() {

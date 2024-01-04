@@ -15,6 +15,7 @@ final class AttachmentTypes_Tests: XCTestCase {
             .voiceRecording,
             .file,
             .giphy,
+            .unknown,
             .linkPreview,
             "sticker"
         ]

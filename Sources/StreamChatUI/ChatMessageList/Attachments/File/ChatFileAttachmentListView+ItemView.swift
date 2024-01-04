@@ -128,6 +128,11 @@ extension ChatMessageFileAttachmentListView {
             default:
                 loadingIndicator.isVisible = false
             }
+
+            if content?.file.type == .unknown {
+                fileNameLabel.text = L10n.Message.unsupportedAttachment
+                fileSizeLabel.isHidden = true
+            }
         }
 
         @objc open func didTapOnAttachment(_ recognizer: UITapGestureRecognizer) {

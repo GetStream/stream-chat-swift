@@ -184,13 +184,16 @@ public struct Components {
     @available(iOSApplicationExtension, unavailable)
     public var linkAttachmentInjector: AttachmentViewInjector.Type = LinkAttachmentViewInjector.self
 
-    /// The injector used for injecting giphy attachment views
+    /// The injector used for injecting giphy attachment views.
     public var giphyAttachmentInjector: AttachmentViewInjector.Type = GiphyAttachmentViewInjector.self
 
-    /// The injector used for injecting file attachment views
+    /// The injector used for injecting file attachment views.
     public var filesAttachmentInjector: AttachmentViewInjector.Type = FilesAttachmentViewInjector.self
 
-    /// The injector used for injecting voice recording attachment views
+    /// The injector used for injecting unsupported attachment views.
+    public var unsupportedAttachmentInjector: AttachmentViewInjector.Type = UnsupportedAttachmentViewInjector.self
+
+    /// The injector used for injecting voice recording attachment views.
     public var voiceRecordingAttachmentInjector: AttachmentViewInjector.Type = VoiceRecordingAttachmentViewInjector.self
 
     /// The injector used to combine multiple types of attachment views.

@@ -21,7 +21,8 @@ open class MixedAttachmentViewInjector: AttachmentViewInjector {
         (.video, GalleryAttachmentViewInjector.self),
         (.image, GalleryAttachmentViewInjector.self),
         (.file, FilesAttachmentViewInjector.self),
-        (.voiceRecording, VoiceRecordingAttachmentViewInjector.self)
+        (.voiceRecording, VoiceRecordingAttachmentViewInjector.self),
+        (.unknown, UnsupportedAttachmentViewInjector.self)
     ]
 
     // This property needs to be lazy so that we only create the injectors once.
@@ -58,6 +59,13 @@ open class MixedAttachmentViewInjector: AttachmentViewInjector {
                 injectorsWithoutDuplicates.append(injector)
                 injectorsFound.insert(injectorId)
             }
+        }
+
+        let hasUnsupportedAttachments = message?.unsupportedAttachments.isEmpty == false
+        let unsupportedInjectorId = String(describing: UnsupportedAttachmentViewInjector.self)
+        let isUnsupportedInjectorRegistered = injectorsFound.contains(unsupportedInjectorId)
+        if hasUnsupportedAttachments && isUnsupportedInjectorRegistered == false {
+            injectorsWithoutDuplicates.append(UnsupportedAttachmentViewInjector.self)
         }
 
         return injectorsWithoutDuplicates
