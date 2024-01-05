@@ -3,10 +3,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### ✅ Added
+- Allow restarting pending attachments [#2958](https://github.com/GetStream/stream-chat-swift/pull/2958)
+
 ## StreamChatUI
 ### ✅ Added
 - Better support for custom mixed attachments rendering [#2947](https://github.com/GetStream/stream-chat-swift/pull/2947)
 - Add default rendering for unsupported attachments [#2948](https://github.com/GetStream/stream-chat-swift/pull/2948)
+- Allow editing pending messages [#2958](https://github.com/GetStream/stream-chat-swift/pull/2958)
 ### 🐞 Fixed
 - Fix deleted messages showing custom attachments [#2947](https://github.com/GetStream/stream-chat-swift/pull/2947)
 - Fix blocked messages showing attachments [#2947](https://github.com/GetStream/stream-chat-swift/pull/2947)

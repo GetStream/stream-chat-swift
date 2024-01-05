@@ -663,7 +663,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         with id: AttachmentId,
         completion: ((Error?) -> Void)? = nil
     ) {
-        messageUpdater.restartFailedAttachmentUploading(with: id) { error in
+        messageUpdater.restartAttachmentUploading(with: id) { error in
             self.callback {
                 completion?(error)
             }
