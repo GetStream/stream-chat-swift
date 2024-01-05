@@ -114,7 +114,7 @@ public struct UserListQuery: Encodable {
     }
 }
 
-extension UserListQuery {
+public extension UserListQuery {
     /// Builds `UserListQuery` for a user with the provided `userId`
     /// - Parameter userId: The user identifier
     /// - Returns: `UserListQuery` for a specific user
