@@ -5,7 +5,7 @@ on:
     # Runs "At 08:00 on day-of-month 1 in January"
     - cron: '0 8 1 1 *'
 
-  workflow_dispatch:
+  push:
 
 env:
   HOMEBREW_NO_INSTALL_CLEANUP: 1 # Disable cleanup for homebrew, we don't need it on CI
