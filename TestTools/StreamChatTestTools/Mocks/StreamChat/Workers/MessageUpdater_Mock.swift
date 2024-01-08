@@ -1,5 +1,5 @@
 //
-// Copyright © 2023 Stream.io Inc. All rights reserved.
+// Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -320,7 +320,7 @@ final class MessageUpdater_Mock: MessageUpdater {
         unpinMessage_completion = completion
     }
 
-    override func restartFailedAttachmentUploading(
+    override func restartAttachmentUploading(
         with id: AttachmentId,
         completion: @escaping (Error?) -> Void
     ) {

@@ -1,5 +1,5 @@
 //
-// Copyright © 2023 Stream.io Inc. All rights reserved.
+// Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -38,6 +38,15 @@ final class ChatFileAttachmentListViewItemView_Tests: XCTestCase {
         fileAttachmentView.content = .mock(
             id: .unique,
             file: AttachmentFile(type: .pdf, size: 0, mimeType: "application/pdf"),
+            localState: nil
+        )
+        AssertSnapshot(fileAttachmentView, variants: [.defaultLight])
+    }
+
+    func test_appearance_whenUnknown() {
+        fileAttachmentView.content = .mock(
+            id: .unique,
+            file: AttachmentFile(type: .unknown, size: 0, mimeType: "weird"),
             localState: nil
         )
         AssertSnapshot(fileAttachmentView, variants: [.defaultLight])

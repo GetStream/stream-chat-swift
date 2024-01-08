@@ -1,5 +1,5 @@
 //
-// Copyright © 2023 Stream.io Inc. All rights reserved.
+// Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -228,12 +228,6 @@ extension ClientError {
     class AttachmentDoesNotExist: ClientError {
         init(id: AttachmentId) {
             super.init("There is no `AttachmentDTO` instance in the DB matching id: \(id).")
-        }
-    }
-
-    class AttachmentEditing: ClientError {
-        init(id: AttachmentId, reason: String) {
-            super.init("`AttachmentDTO` with id: \(id) can't be edited (\(reason))")
         }
     }
 

@@ -1,5 +1,5 @@
 //
-// Copyright © 2023 Stream.io Inc. All rights reserved.
+// Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -15,6 +15,7 @@ final class AttachmentTypes_Tests: XCTestCase {
             .voiceRecording,
             .file,
             .giphy,
+            .unknown,
             .linkPreview,
             "sticker"
         ]

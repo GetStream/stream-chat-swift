@@ -1,5 +1,5 @@
 //
-// Copyright © 2023 Stream.io Inc. All rights reserved.
+// Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -275,6 +275,10 @@ open class ChatMessageListVC: _ViewController,
     /// Returns the attachment view injector for the message at given `indexPath`
     open func attachmentViewInjectorClassForMessage(at indexPath: IndexPath) -> AttachmentViewInjector.Type? {
         guard let message = dataSource?.chatMessageListVC(self, messageAt: indexPath) else {
+            return nil
+        }
+
+        if message.isDeleted || message.shouldRenderAsSystemMessage {
             return nil
         }
 
@@ -754,15 +758,17 @@ open class ChatMessageListVC: _ViewController,
     }
 
     open func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let message = dataSource?.chatMessageListVC(self, messageAt: indexPath)
         let cell: ChatMessageCell = listView.dequeueReusableCell(
             contentViewClass: cellContentClassForMessage(at: indexPath),
             attachmentViewInjectorType: attachmentViewInjectorClassForMessage(at: indexPath),
             layoutOptions: cellLayoutOptionsForMessage(at: indexPath),
-            for: indexPath
+            for: indexPath,
+            message: message
         )
 
         guard
-            let message = dataSource?.chatMessageListVC(self, messageAt: indexPath),
+            let message = message,
             let channel = dataSource?.channel(for: self)
         else {
             return cell

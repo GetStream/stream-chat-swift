@@ -1,5 +1,5 @@
 //
-// Copyright © 2023 Stream.io Inc. All rights reserved.
+// Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -21,5 +21,12 @@ final class AttachmentFileType_Tests: XCTestCase {
         AttachmentFileType.allCases.forEach { subject in
             XCTAssertEqual(subject.isAudio, expectedValues.contains(subject))
         }
+    }
+
+    func test_isUnknown() {
+        XCTAssertEqual(AttachmentFileType.aac.isUnknown, false)
+        XCTAssertEqual(AttachmentFileType.doc.isUnknown, false)
+        XCTAssertEqual(AttachmentFileType.generic.isUnknown, false)
+        XCTAssertEqual(AttachmentFileType.unknown.isUnknown, true)
     }
 }

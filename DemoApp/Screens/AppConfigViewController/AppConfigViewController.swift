@@ -1,5 +1,5 @@
 //
-// Copyright © 2023 Stream.io Inc. All rights reserved.
+// Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -18,6 +18,8 @@ struct DemoAppConfig {
     var isMessageDebuggerEnabled: Bool
     /// A Boolean value to define if channel pinning example is enabled.
     var isChannelPinningEnabled: Bool
+    /// A Boolean value to define if custom location attachments are enabled.
+    var isLocationAttachmentsEnabled: Bool
 }
 
 class AppConfig {
@@ -33,8 +35,21 @@ class AppConfig {
             isAtlantisEnabled: false,
             isTokenRefreshEnabled: false,
             isMessageDebuggerEnabled: false,
-            isChannelPinningEnabled: false
+            isChannelPinningEnabled: false,
+            isLocationAttachmentsEnabled: false
         )
+
+        StreamRuntimeCheck._isBackgroundMappingEnabled = true
+
+        if StreamRuntimeCheck.isStreamInternalConfiguration {
+            demoAppConfig.isAtlantisEnabled = true
+            demoAppConfig.isMessageDebuggerEnabled = true
+            demoAppConfig.isLocationAttachmentsEnabled = true
+            demoAppConfig.isTokenRefreshEnabled = true
+            demoAppConfig.isLocationAttachmentsEnabled = true
+            demoAppConfig.isHardDeleteEnabled = true
+            StreamRuntimeCheck.assertionsEnabled = true
+        }
     }
 }
 
@@ -137,6 +152,8 @@ class AppConfigViewController: UITableViewController {
         case isAtlantisEnabled
         case isMessageDebuggerEnabled
         case isChannelPinningEnabled
+        case isLocationAttachmentsEnabled
+        case isBackgroundMappingEnabled
     }
 
     enum ComponentsConfigOption: String, CaseIterable {
@@ -269,6 +286,14 @@ class AppConfigViewController: UITableViewController {
         case .isChannelPinningEnabled:
             cell.accessoryView = makeSwitchButton(demoAppConfig.isChannelPinningEnabled) { [weak self] newValue in
                 self?.demoAppConfig.isChannelPinningEnabled = newValue
+            }
+        case .isLocationAttachmentsEnabled:
+            cell.accessoryView = makeSwitchButton(demoAppConfig.isLocationAttachmentsEnabled) { [weak self] newValue in
+                self?.demoAppConfig.isLocationAttachmentsEnabled = newValue
+            }
+        case .isBackgroundMappingEnabled:
+            cell.accessoryView = makeSwitchButton(StreamRuntimeCheck._isBackgroundMappingEnabled) { newValue in
+                StreamRuntimeCheck._isBackgroundMappingEnabled = newValue
             }
         }
     }

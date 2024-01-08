@@ -1,5 +1,5 @@
 //
-// Copyright © 2023 Stream.io Inc. All rights reserved.
+// Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -12,7 +12,7 @@ public extension ChatMessage {
             return false
         }
 
-        return localState == nil || isLastActionFailed
+        return true
     }
 
     /// A boolean value that checks if the last action (`send`, `edit` or `delete`) on the message failed.

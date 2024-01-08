@@ -1,5 +1,5 @@
 //
-// Copyright © 2023 Stream.io Inc. All rights reserved.
+// Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -1989,59 +1989,18 @@ final class MessageUpdater_Tests: XCTestCase {
         }
     }
 
-    // MARK: - Restart failed attachment uploading
+    // MARK: - Restart attachment uploading
 
-    func test_restartFailedAttachmentUploading_propagatesAttachmentDoesNotExistError() throws {
+    func test_restartAttachmentUploading_propagatesAttachmentDoesNotExistError() throws {
         let error = try waitFor {
-            messageUpdater.restartFailedAttachmentUploading(with: .unique, completion: $0)
+            messageUpdater.restartAttachmentUploading(with: .unique, completion: $0)
         }
 
         // Assert `ClientError.AttachmentDoesNotExist` is propagated.
         XCTAssertTrue(error is ClientError.AttachmentDoesNotExist)
     }
 
-    func test_restartFailedAttachmentUploading_propagatesAttachmentEditingError() throws {
-        let cid: ChannelId = .unique
-        let messageId: MessageId = .unique
-        let attachmentId: AttachmentId = .init(cid: cid, messageId: messageId, index: 0)
-
-        // Create channel in database.
-        try database.createChannel(cid: cid, withMessages: false)
-        // Create message in database.
-        try database.createMessage(id: messageId, cid: cid)
-        // Create attachment in database.
-        try database.writeSynchronously {
-            try $0.createNewAttachment(
-                attachment: .mockFile,
-                id: attachmentId
-            )
-        }
-
-        let rejectedStates: [LocalAttachmentState?] = [
-            .pendingUpload,
-            .uploading(progress: .random(in: 0...1)),
-            .uploaded,
-            nil
-        ]
-
-        // Iterate through rejected for uploading restart states.
-        for state in rejectedStates {
-            // Apply rejected state.
-            try database.writeSynchronously {
-                $0.attachment(id: attachmentId)?.localState = state
-            }
-
-            // Try to restart uploading and catch the error.
-            let error = try waitFor {
-                messageUpdater.restartFailedAttachmentUploading(with: attachmentId, completion: $0)
-            }
-
-            // Assert `ClientError.AttachmentEditing` is propagated.
-            XCTAssertTrue(error is ClientError.AttachmentEditing)
-        }
-    }
-
-    func test_restartFailedAttachmentUploading_propagatesDatabaseError() throws {
+    func test_restartAttachmentUploading_propagatesDatabaseError() throws {
         let cid: ChannelId = .unique
         let messageId: MessageId = .unique
         let attachmentId: AttachmentId = .init(cid: cid, messageId: messageId, index: 0)
@@ -2065,7 +2024,7 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Try to restart uploading and catch the error.
         let error = try waitFor {
-            messageUpdater.restartFailedAttachmentUploading(with: attachmentId, completion: $0)
+            messageUpdater.restartAttachmentUploading(with: attachmentId, completion: $0)
         }
 
         // Assert database error is propagated.
@@ -2083,16 +2042,15 @@ final class MessageUpdater_Tests: XCTestCase {
         try database.createMessage(id: messageId, cid: cid)
         // Create attachment in database in `.uploadingFailed` state.
         try database.writeSynchronously {
-            let attachmentDTO = try $0.createNewAttachment(
+            try $0.createNewAttachment(
                 attachment: .mockFile,
                 id: attachmentId
             )
-            attachmentDTO.localState = .uploadingFailed
         }
 
         // Try to restart uploading and catch the error.
         let error = try waitFor {
-            messageUpdater.restartFailedAttachmentUploading(with: attachmentId, completion: $0)
+            messageUpdater.restartAttachmentUploading(with: attachmentId, completion: $0)
         }
 
         // Assert successful result is propagated.

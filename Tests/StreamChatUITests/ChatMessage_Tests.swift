@@ -1,5 +1,5 @@
 //
-// Copyright © 2023 Stream.io Inc. All rights reserved.
+// Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -99,38 +99,6 @@ final class ChatMessage_Tests: XCTestCase {
         )
 
         XCTAssertFalse(deletedMessage.isInteractionEnabled)
-    }
-
-    func test_isInteractionEnabled_whenMessageWithoutLocalState_returnsTrue() {
-        let nonDeletedNonEphemeralMessageWithoutLocalState: ChatMessage = .mock(
-            id: .unique,
-            cid: .unique,
-            text: .unique,
-            author: .mock(id: .unique),
-            localState: nil
-        )
-
-        XCTAssertTrue(nonDeletedNonEphemeralMessageWithoutLocalState.isInteractionEnabled)
-    }
-
-    func test_isInteractionEnabled_whenMessageWithFailedLocalState_returnsTrue() {
-        let failedLocalStates: [LocalMessageState] = [
-            .deletingFailed,
-            .sendingFailed,
-            .syncingFailed
-        ]
-
-        for localState in failedLocalStates {
-            let nonDeletedNonEphemeralMessageWithFailedLocalState: ChatMessage = .mock(
-                id: .unique,
-                cid: .unique,
-                text: .unique,
-                author: .mock(id: .unique),
-                localState: localState
-            )
-
-            XCTAssertTrue(nonDeletedNonEphemeralMessageWithFailedLocalState.isInteractionEnabled)
-        }
     }
 
     func test_isInteractionEnabled_whenMessageHasError_returnsFalse() {

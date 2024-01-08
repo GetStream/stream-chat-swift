@@ -1,5 +1,5 @@
 //
-// Copyright © 2023 Stream.io Inc. All rights reserved.
+// Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -15,12 +15,12 @@ open class AttachmentViewCatalog {
         message: ChatMessage,
         components: Components
     ) -> AttachmentViewInjector.Type? {
-        if message.isDeleted { return nil }
-
         let attachmentCounts = message.attachmentCounts
 
         if attachmentCounts.keys.contains(.image) || attachmentCounts.keys.contains(.video) {
-            if attachmentCounts.keys.contains(.file) || attachmentCounts.keys.contains(.voiceRecording) {
+            if attachmentCounts.keys.contains(.file)
+                || attachmentCounts.keys.contains(.voiceRecording)
+                || attachmentCounts.keys.contains(.unknown) {
                 return components.mixedAttachmentInjector
             } else {
                 return components.galleryAttachmentInjector
@@ -37,6 +37,10 @@ open class AttachmentViewCatalog {
             return components.isVoiceRecordingEnabled
                 ? components.voiceRecordingAttachmentInjector
                 : components.filesAttachmentInjector
+        } else if attachmentCounts.keys.contains(.unknown) {
+            return components.unsupportedAttachmentInjector
+        } else if attachmentCounts.isEmpty == false {
+            return components.unsupportedAttachmentInjector
         } else {
             return nil
         }

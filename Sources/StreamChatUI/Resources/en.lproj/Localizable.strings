@@ -1,5 +1,5 @@
 //
-// Copyright © 2023 Stream.io Inc. All rights reserved.
+// Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
 "channel.name.and" = "and";
@@ -21,6 +21,8 @@
 
 "channelList.error.message" = "Error loading channels";
 "channelList.preview.voice.recording" = "Voice message";
+
+"messageList.typingIndicator.typing-unknown" = "Someone is typing";
 
 "message.actions.inline-reply" = "Reply";
 "message.actions.thread-reply" = "Thread Reply";
@@ -45,19 +47,24 @@
 "message.moderation.edit" = "Edit Message";
 "message.moderation.delete" = "Delete Message";
 
-"messageList.typingIndicator.typing-unknown" = "Someone is typing";
-
+"message.title.online" = "Online";
+"message.title.offline" = "Offline";
+"message.title.group" = "%d members, %d online";
 "message.threads.reply" = "Thread Reply";
 "message.threads.replyWith" = "with %@";
 "message.translatedTo" = "Translated to %@";
+"message.only-visible-to-you" = "Only visible to you";
+"message.deleted-message-placeholder" = "Message deleted";
+"message.sending.attachment-uploading-failed" = "UPLOADING FAILED";
+"message.unsupported-attachment" = "Unsupported Attachment";
+
+"attachment.max-size-exceeded" = "Attachment size exceed the limit.";
+"attachment.max-count-exceeded" = "The max number of attachments per message is %d.";
 
 "alert.actions.cancel" = "Cancel";
 "alert.actions.delete" = "Delete";
 "alert.actions.flag" = "Flag";
 "alert.actions.ok" = "Ok";
-
-"message.only-visible-to-you" = "Only visible to you";
-"message.deleted-message-placeholder" = "Message deleted";
 
 "composer.title.edit" = "Edit Message";
 "composer.title.reply" = "Reply to Message";
@@ -74,21 +81,11 @@
 "composer.picker.cancel" = "Cancel";
 "composer.links-disabled.title" = "Links are disabled";
 "composer.links-disabled.subtitle" = "Sending links is not allowed in this conversation.";
-
 "composer.quoted-message.photo" = "Photo";
 "composer.quoted-message.giphy" = "Giphy";
-
 "composer.suggestions.commands.header" = "Instant Commands";
-"message.sending.attachment-uploading-failed" = "UPLOADING FAILED";
-
-"message.title.online" = "Online";
-"message.title.offline" = "Offline";
-"message.title.group" = "%d members, %d online";
 
 "current-selection" = "%d of %d";
-
-"attachment.max-size-exceeded" = "Attachment size exceed the limit.";
-"attachment.max-count-exceeded" = "The max number of attachments per message is %d.";
 
 "dates.time-ago-seconds-plural" = "last seen %d seconds ago";
 "dates.time-ago-seconds-singular" = "last seen just one second ago";

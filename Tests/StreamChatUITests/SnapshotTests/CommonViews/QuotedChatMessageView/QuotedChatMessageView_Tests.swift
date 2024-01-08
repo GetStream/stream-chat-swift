@@ -1,5 +1,5 @@
 //
-// Copyright © 2023 Stream.io Inc. All rights reserved.
+// Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -234,6 +234,18 @@ final class QuotedChatMessageView_Tests: XCTestCase {
         view.content = makeContent(text: "Hello Vader!", avatarAlignment: .leading)
 
         AssertSnapshot(view)
+    }
+
+    func test_withUnsupportedAttachment() {
+        view.content = makeContent(text: "Hello!", attachments: [.dummy(type: "location")])
+
+        AssertSnapshot(view)
+    }
+
+    func test_withUnsupportedAttachment_whenEmptyText() {
+        view.content = makeContent(text: "", attachments: [.dummy(type: "location")])
+
+        AssertSnapshot(view, variants: [.defaultLight])
     }
 
     func test_appearanceCustomization_usingComponents() {

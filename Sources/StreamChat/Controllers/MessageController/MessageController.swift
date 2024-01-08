@@ -1,5 +1,5 @@
 //
-// Copyright © 2023 Stream.io Inc. All rights reserved.
+// Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -663,7 +663,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         with id: AttachmentId,
         completion: ((Error?) -> Void)? = nil
     ) {
-        messageUpdater.restartFailedAttachmentUploading(with: id) { error in
+        messageUpdater.restartAttachmentUploading(with: id) { error in
             self.callback {
                 completion?(error)
             }

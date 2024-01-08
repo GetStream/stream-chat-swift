@@ -1,5 +1,5 @@
 //
-// Copyright © 2023 Stream.io Inc. All rights reserved.
+// Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -127,6 +127,11 @@ extension ChatMessageFileAttachmentListView {
                 loadingIndicator.isVisible = true
             default:
                 loadingIndicator.isVisible = false
+            }
+
+            if content?.file.type == .unknown {
+                fileNameLabel.text = L10n.Message.unsupportedAttachment
+                fileSizeLabel.isHidden = true
             }
         }
 

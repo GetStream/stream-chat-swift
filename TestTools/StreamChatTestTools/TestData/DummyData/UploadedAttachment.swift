@@ -2,7 +2,7 @@
 //  UploadedAttachment.swift
 //  StreamChat
 //
-// Copyright © 2023 Stream.io Inc. All rights reserved.
+// Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
 import Foundation

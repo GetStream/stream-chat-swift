@@ -1,5 +1,5 @@
 //
-// Copyright © 2023 Stream.io Inc. All rights reserved.
+// Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -24,6 +24,18 @@ public struct ChatMessageAttachment<Payload> {
     ///
     /// Becomes `nil` when the message with the current attachment is sent.
     public let uploadingState: AttachmentUploadingState?
+
+    public init(
+        id: AttachmentId,
+        type: AttachmentType,
+        payload: Payload,
+        uploadingState: AttachmentUploadingState?
+    ) {
+        self.id = id
+        self.type = type
+        self.payload = payload
+        self.uploadingState = uploadingState
+    }
 }
 
 public extension ChatMessageAttachment {
