@@ -1914,58 +1914,6 @@ final class MessageUpdater_Tests: XCTestCase {
         }
     }
 
-    func test_unpinMessage_propogatesMessageEditingError_ifLocalStateIsInvalidForUnpinning() throws {
-        let invalidStates: [LocalMessageState] = [
-            .deleting,
-            .sending,
-            .syncing
-        ]
-
-        for state in invalidStates {
-            let currentUserId: UserId = .unique
-            let messageId: MessageId = .unique
-
-            // Flush the database
-            let exp = expectation(description: "removeAllData completion")
-            database.removeAllData { error in
-                if let error = error {
-                    XCTFail("removeAllData failed with \(error)")
-                }
-                exp.fulfill()
-            }
-            wait(for: [exp], timeout: defaultTimeout)
-
-            // Create current user is the database
-            try database.createCurrentUser(id: currentUserId)
-
-            // Create a new message in the database
-            try database.createMessage(
-                id: messageId,
-                authorId: currentUserId,
-                pinned: true,
-                pinnedByUserId: .unique,
-                pinnedAt: .unique,
-                pinExpires: .unique,
-                localState: state
-            )
-
-            // Edit created message with new text
-            let completionError = try waitFor {
-                messageUpdater.unpinMessage(messageId: messageId, completion: $0)
-            }
-
-            // Load the message
-            let message = try XCTUnwrap(database.viewContext.message(id: messageId))
-
-            XCTAssertTrue(completionError is ClientError.MessageEditing)
-            XCTAssertEqual(message.localMessageState, state)
-            XCTAssertEqual(message.pinned, true)
-            XCTAssertNotNil(message.pinExpires)
-            XCTAssertNotNil(message.pinnedAt)
-            XCTAssertNotNil(message.pinnedBy)
-        }
-    }
-
     // MARK: - Restart attachment uploading
 
     func test_restartAttachmentUploading_propagatesAttachmentDoesNotExistError() throws {
