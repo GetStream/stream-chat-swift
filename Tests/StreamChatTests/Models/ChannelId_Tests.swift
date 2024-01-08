@@ -14,6 +14,13 @@ final class ChannelId_Tests: XCTestCase {
         XCTAssertEqual(channelId.id, "123")
     }
 
+    func test_channelId_malformed_init_with_type() {
+        let channelId = ChannelId(type: .messaging, id: "")
+        XCTAssertEqual(channelId.rawValue, "messaging:")
+        XCTAssertEqual(channelId.type, ChannelType.messaging)
+        XCTAssertEqual(channelId.id, "")
+    }
+
     func test_invalidChannelId() {
         // Channel with invalid character
         XCTAssertThrowsError(try ChannelId(cid: "*"))
