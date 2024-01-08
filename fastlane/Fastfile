@@ -641,7 +641,7 @@ lane :sources_matrix do
 end
 
 lane :copyright do
-  update_copyright(ignore: [derived_data_path, source_packages_path])
+  update_copyright(ignore: [derived_data_path, source_packages_path, 'vendor/'])
   next unless is_ci
 
   branch_name = "ci/update-copyright-#{Time.now.to_i}"
