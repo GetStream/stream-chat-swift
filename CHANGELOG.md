@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.47.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.47.0)
+_January 08, 2024_
+
 ## StreamChat
 ### ✅ Added
 - Expose `UserListQuery.search(term:)` and `UserListQuery.user(withID:)` [#2959](https://github.com/GetStream/stream-chat-swift/pull/2959)
