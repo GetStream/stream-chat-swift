@@ -640,6 +640,27 @@ lane :sources_matrix do
   }
 end
 
+lane :copyright do
+  update_copyright(ignore: [derived_data_path, source_packages_path, 'vendor/'])
+  next unless is_ci
+
+  branch_name = "ci/update-copyright-#{Time.now.to_i}"
+  commit_message = '[CI] Update Copyright'
+  sh("git checkout -b #{branch_name}")
+  sh('git add -A')
+  sh("git commit -m '#{commit_message}'")
+  push_to_git_remote(tags: false)
+
+  create_pull_request(
+    api_token: ENV.fetch('GITHUB_TOKEN', nil),
+    repo: github_repo,
+    title: commit_message,
+    head: branch_name,
+    base: 'develop',
+    body: 'This PR was created automatically by CI.'
+  )
+end
+
 private_lane :current_branch do
   ENV['BRANCH_NAME'] || git_branch
 end
