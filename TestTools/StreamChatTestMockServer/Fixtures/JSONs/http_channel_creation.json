@@ -1,6 +1,6 @@
 {
     "channel": {
-        "cid": "messaging:a2debd8e-9ade-11ee-b565-5690af276325",
+        "cid": "messaging:c84a8cf4-a83c-11ee-902e-7e68e04a64f5",
         "config": {
             "automod": "AI",
             "automod_behavior": "block",
@@ -48,7 +48,7 @@
             "uploads": true,
             "url_enrichment": true
         },
-        "created_at": "2023-12-15T00:12:30.38985Z",
+        "created_at": "2024-01-01T00:29:11.323282Z",
         "created_by": {
             "banned": false,
             "birthland": "Tatooine",
@@ -57,17 +57,16 @@
             "id": "luke_skywalker",
             "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
             "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
-            "language": "en",
-            "last_active": "2023-12-15T00:12:30.011341522Z",
+            "last_active": "2024-01-01T00:29:10.68489128Z",
             "name": "Luke Skywalker",
             "online": true,
             "role": "user",
-            "updated_at": "2023-12-11T18:27:14.887862Z"
+            "updated_at": "2023-12-31T17:04:15.657835Z"
         },
         "disabled": false,
         "frozen": false,
         "hidden": false,
-        "id": "a2debd8e-9ade-11ee-b565-5690af276325",
+        "id": "c84a8cf4-a83c-11ee-902e-7e68e04a64f5",
         "member_count": 3,
         "name": "Sync Mock Server",
         "own_capabilities": [
@@ -98,19 +97,19 @@
             "upload-file"
         ],
         "type": "messaging",
-        "updated_at": "2023-12-15T00:12:30.38985Z"
+        "updated_at": "2024-01-01T00:29:11.323282Z"
     },
-    "duration": "92.12ms",
+    "duration": "107.25ms",
     "members": [
         {
             "banned": false,
             "channel_role": "channel_member",
-            "created_at": "2023-12-15T00:12:30.397536Z",
+            "created_at": "2024-01-01T00:29:11.334673Z",
             "notifications_muted": false,
             "role": "member",
             "shadow_banned": false,
             "status": "member",
-            "updated_at": "2023-12-15T00:12:30.397536Z",
+            "updated_at": "2024-01-01T00:29:11.334673Z",
             "user": {
                 "banned": false,
                 "birthland": "Serenno",
@@ -131,12 +130,12 @@
         {
             "banned": false,
             "channel_role": "channel_member",
-            "created_at": "2023-12-15T00:12:30.397536Z",
+            "created_at": "2024-01-01T00:29:11.334673Z",
             "notifications_muted": false,
             "role": "member",
             "shadow_banned": false,
             "status": "member",
-            "updated_at": "2023-12-15T00:12:30.397536Z",
+            "updated_at": "2024-01-01T00:29:11.334673Z",
             "user": {
                 "banned": false,
                 "birthland": "Corellia",
@@ -145,24 +144,23 @@
                 "id": "han_solo",
                 "image": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
                 "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
-                "language": "en",
-                "last_active": "2023-12-14T20:51:08.102314Z",
+                "last_active": "2023-12-31T20:30:11.551466Z",
                 "name": "Han Solo",
                 "online": false,
                 "role": "user",
-                "updated_at": "2023-11-22T08:53:16.760416Z"
+                "updated_at": "2023-12-31T17:21:32.780091Z"
             },
             "user_id": "han_solo"
         },
         {
             "banned": false,
             "channel_role": "channel_member",
-            "created_at": "2023-12-15T00:12:30.397536Z",
+            "created_at": "2024-01-01T00:29:11.334673Z",
             "notifications_muted": false,
             "role": "owner",
             "shadow_banned": false,
             "status": "member",
-            "updated_at": "2023-12-15T00:12:30.397536Z",
+            "updated_at": "2024-01-01T00:29:11.334673Z",
             "user": {
                 "banned": false,
                 "birthland": "Tatooine",
@@ -171,12 +169,11 @@
                 "id": "luke_skywalker",
                 "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
                 "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
-                "language": "en",
-                "last_active": "2023-12-15T00:12:30.011341522Z",
+                "last_active": "2024-01-01T00:29:10.68489128Z",
                 "name": "Luke Skywalker",
                 "online": true,
                 "role": "user",
-                "updated_at": "2023-12-11T18:27:14.887862Z"
+                "updated_at": "2023-12-31T17:04:15.657835Z"
             },
             "user_id": "luke_skywalker"
         }
@@ -184,12 +181,12 @@
     "membership": {
         "banned": false,
         "channel_role": "channel_member",
-        "created_at": "2023-12-15T00:12:30.397536Z",
+        "created_at": "2024-01-01T00:29:11.334673Z",
         "notifications_muted": false,
         "role": "owner",
         "shadow_banned": false,
         "status": "member",
-        "updated_at": "2023-12-15T00:12:30.397536Z",
+        "updated_at": "2024-01-01T00:29:11.334673Z",
         "user": {
             "banned": false,
             "birthland": "Tatooine",
@@ -198,19 +195,18 @@
             "id": "luke_skywalker",
             "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
             "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
-            "language": "en",
-            "last_active": "2023-12-15T00:12:30.011341522Z",
+            "last_active": "2024-01-01T00:29:10.68489128Z",
             "name": "Luke Skywalker",
             "online": true,
             "role": "user",
-            "updated_at": "2023-12-11T18:27:14.887862Z"
+            "updated_at": "2023-12-31T17:04:15.657835Z"
         }
     },
     "messages": [],
     "pinned_messages": [],
     "read": [
         {
-            "last_read": "2023-12-15T00:12:30.434248893Z",
+            "last_read": "2024-01-01T00:29:11.374071012Z",
             "unread_messages": 0,
             "user": {
                 "banned": false,
@@ -229,7 +225,7 @@
             }
         },
         {
-            "last_read": "2023-12-15T00:12:30.434248893Z",
+            "last_read": "2024-01-01T00:29:11.374071012Z",
             "unread_messages": 0,
             "user": {
                 "banned": false,
@@ -239,16 +235,15 @@
                 "id": "han_solo",
                 "image": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
                 "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
-                "language": "en",
-                "last_active": "2023-12-14T20:51:08.102314Z",
+                "last_active": "2023-12-31T20:30:11.551466Z",
                 "name": "Han Solo",
                 "online": false,
                 "role": "user",
-                "updated_at": "2023-11-22T08:53:16.760416Z"
+                "updated_at": "2023-12-31T17:21:32.780091Z"
             }
         },
         {
-            "last_read": "2023-12-15T00:12:30.434248893Z",
+            "last_read": "2024-01-01T00:29:11.374071012Z",
             "unread_messages": 0,
             "user": {
                 "banned": false,
@@ -258,12 +253,11 @@
                 "id": "luke_skywalker",
                 "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
                 "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
-                "language": "en",
-                "last_active": "2023-12-15T00:12:30.011341522Z",
+                "last_active": "2024-01-01T00:29:10.68489128Z",
                 "name": "Luke Skywalker",
                 "online": true,
                 "role": "user",
-                "updated_at": "2023-12-11T18:27:14.887862Z"
+                "updated_at": "2023-12-31T17:04:15.657835Z"
             }
         }
     ],
