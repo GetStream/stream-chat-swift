@@ -5,27 +5,27 @@
 import Foundation
 
 public struct StreamChatLabelThresholds: Codable, Hashable {
-    public var flag: Double?
-    
     public var block: Double?
     
-    public init(flag: Double?, block: Double?) {
-        self.flag = flag
-        
+    public var flag: Double?
+    
+    public init(block: Double?, flag: Double?) {
         self.block = block
-    }
-
-    public enum CodingKeys: String, CodingKey, CaseIterable {
-        case flag
         
-        case block
+        self.flag = flag
     }
-
+    
+    public enum CodingKeys: String, CodingKey, CaseIterable {
+        case block
+        
+        case flag
+    }
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(flag, forKey: .flag)
-        
         try container.encode(block, forKey: .block)
+        
+        try container.encode(flag, forKey: .flag)
     }
 }

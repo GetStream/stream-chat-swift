@@ -38,7 +38,7 @@ public struct StreamChatReaction: Codable, Hashable {
         
         self.score = score
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case type
         
@@ -56,7 +56,7 @@ public struct StreamChatReaction: Codable, Hashable {
         
         case score
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

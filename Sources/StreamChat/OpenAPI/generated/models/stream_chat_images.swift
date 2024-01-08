@@ -34,7 +34,7 @@ public struct StreamChatImages: Codable, Hashable {
         
         self.fixedWidthStill = fixedWidthStill
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case original
         
@@ -50,7 +50,7 @@ public struct StreamChatImages: Codable, Hashable {
         
         case fixedWidthStill = "fixed_width_still"
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

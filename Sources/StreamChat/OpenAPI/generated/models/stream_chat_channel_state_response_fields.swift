@@ -5,17 +5,9 @@
 import Foundation
 
 public struct StreamChatChannelStateResponseFields: Codable, Hashable {
-    public var hidden: Bool?
-    
-    public var members: [StreamChatChannelMember?]
-    
-    public var messages: [StreamChatMessage]
-    
-    public var read: [StreamChatRead?]?
-    
     public var watchers: [StreamChatUserObject]?
     
-    public var channel: StreamChatChannelResponse?
+    public var members: [StreamChatChannelMember?]
     
     public var membership: StreamChatChannelMember?
     
@@ -25,20 +17,20 @@ public struct StreamChatChannelStateResponseFields: Codable, Hashable {
     
     public var watcherCount: Int?
     
+    public var channel: StreamChatChannelResponse?
+    
+    public var hidden: Bool?
+    
     public var hideMessagesBefore: String?
     
-    public init(hidden: Bool?, members: [StreamChatChannelMember?], messages: [StreamChatMessage], read: [StreamChatRead?]?, watchers: [StreamChatUserObject]?, channel: StreamChatChannelResponse?, membership: StreamChatChannelMember?, pendingMessages: [StreamChatPendingMessage?]?, pinnedMessages: [StreamChatMessage], watcherCount: Int?, hideMessagesBefore: String?) {
-        self.hidden = hidden
-        
-        self.members = members
-        
-        self.messages = messages
-        
-        self.read = read
-        
+    public var messages: [StreamChatMessage]
+    
+    public var read: [StreamChatRead?]?
+    
+    public init(watchers: [StreamChatUserObject]?, members: [StreamChatChannelMember?], membership: StreamChatChannelMember?, pendingMessages: [StreamChatPendingMessage?]?, pinnedMessages: [StreamChatMessage], watcherCount: Int?, channel: StreamChatChannelResponse?, hidden: Bool?, hideMessagesBefore: String?, messages: [StreamChatMessage], read: [StreamChatRead?]?) {
         self.watchers = watchers
         
-        self.channel = channel
+        self.members = members
         
         self.membership = membership
         
@@ -48,21 +40,21 @@ public struct StreamChatChannelStateResponseFields: Codable, Hashable {
         
         self.watcherCount = watcherCount
         
+        self.channel = channel
+        
+        self.hidden = hidden
+        
         self.hideMessagesBefore = hideMessagesBefore
+        
+        self.messages = messages
+        
+        self.read = read
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case hidden
-        
-        case members
-        
-        case messages
-        
-        case read
-        
         case watchers
         
-        case channel
+        case members
         
         case membership
         
@@ -72,23 +64,23 @@ public struct StreamChatChannelStateResponseFields: Codable, Hashable {
         
         case watcherCount = "watcher_count"
         
+        case channel
+        
+        case hidden
+        
         case hideMessagesBefore = "hide_messages_before"
+        
+        case messages
+        
+        case read
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(hidden, forKey: .hidden)
-        
-        try container.encode(members, forKey: .members)
-        
-        try container.encode(messages, forKey: .messages)
-        
-        try container.encode(read, forKey: .read)
-        
         try container.encode(watchers, forKey: .watchers)
         
-        try container.encode(channel, forKey: .channel)
+        try container.encode(members, forKey: .members)
         
         try container.encode(membership, forKey: .membership)
         
@@ -98,6 +90,14 @@ public struct StreamChatChannelStateResponseFields: Codable, Hashable {
         
         try container.encode(watcherCount, forKey: .watcherCount)
         
+        try container.encode(channel, forKey: .channel)
+        
+        try container.encode(hidden, forKey: .hidden)
+        
         try container.encode(hideMessagesBefore, forKey: .hideMessagesBefore)
+        
+        try container.encode(messages, forKey: .messages)
+        
+        try container.encode(read, forKey: .read)
     }
 }

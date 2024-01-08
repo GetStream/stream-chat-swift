@@ -14,13 +14,13 @@ public struct StreamChatDeleteChannelsRequest: Codable, Hashable {
         
         self.hardDelete = hardDelete
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case cids
         
         case hardDelete = "hard_delete"
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

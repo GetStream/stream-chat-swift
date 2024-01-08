@@ -5,8 +5,6 @@
 import Foundation
 
 public struct StreamChatMemberRemovedEvent: Codable, Hashable {
-    public var channelType: String
-    
     public var cid: String
     
     public var createdAt: String
@@ -19,9 +17,9 @@ public struct StreamChatMemberRemovedEvent: Codable, Hashable {
     
     public var channelId: String
     
-    public init(channelType: String, cid: String, createdAt: String, member: StreamChatChannelMember?, type: String, user: StreamChatUserObject?, channelId: String) {
-        self.channelType = channelType
-        
+    public var channelType: String
+    
+    public init(cid: String, createdAt: String, member: StreamChatChannelMember?, type: String, user: StreamChatUserObject?, channelId: String, channelType: String) {
         self.cid = cid
         
         self.createdAt = createdAt
@@ -33,11 +31,11 @@ public struct StreamChatMemberRemovedEvent: Codable, Hashable {
         self.user = user
         
         self.channelId = channelId
-    }
-
-    public enum CodingKeys: String, CodingKey, CaseIterable {
-        case channelType = "channel_type"
         
+        self.channelType = channelType
+    }
+    
+    public enum CodingKeys: String, CodingKey, CaseIterable {
         case cid
         
         case createdAt = "created_at"
@@ -49,12 +47,12 @@ public struct StreamChatMemberRemovedEvent: Codable, Hashable {
         case user
         
         case channelId = "channel_id"
+        
+        case channelType = "channel_type"
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
-        try container.encode(channelType, forKey: .channelType)
         
         try container.encode(cid, forKey: .cid)
         
@@ -67,5 +65,7 @@ public struct StreamChatMemberRemovedEvent: Codable, Hashable {
         try container.encode(user, forKey: .user)
         
         try container.encode(channelId, forKey: .channelId)
+        
+        try container.encode(channelType, forKey: .channelType)
     }
 }

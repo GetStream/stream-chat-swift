@@ -7,20 +7,20 @@ import Foundation
 public struct StreamChatEventResponse: Codable, Hashable {
     public var duration: String
     
-    public var event: StreamChatEvent?
+    public var event: StreamChatWSEvent
     
-    public init(duration: String, event: StreamChatEvent?) {
+    public init(duration: String, event: StreamChatWSEvent) {
         self.duration = duration
         
         self.event = event
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case duration
         
         case event
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

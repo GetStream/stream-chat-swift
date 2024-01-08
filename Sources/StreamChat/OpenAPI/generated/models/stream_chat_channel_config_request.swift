@@ -5,99 +5,99 @@
 import Foundation
 
 public struct StreamChatChannelConfigRequest: Codable, Hashable {
+    public var urlEnrichment: Bool?
+    
     public var blocklist: String?
     
-    public var grants: [String: RawJSON]?
+    public var blocklistBehavior: String?
     
-    public var maxMessageLength: Int?
+    public var replies: Bool?
     
     public var typingEvents: Bool?
     
     public var uploads: Bool?
     
-    public var blocklistBehavior: String?
-    
     public var commands: [String]?
+    
+    public var grants: [String: RawJSON]?
+    
+    public var maxMessageLength: Int?
     
     public var quotes: Bool?
     
     public var reactions: Bool?
     
-    public var replies: Bool?
-    
-    public var urlEnrichment: Bool?
-    
-    public init(blocklist: String?, grants: [String: RawJSON]?, maxMessageLength: Int?, typingEvents: Bool?, uploads: Bool?, blocklistBehavior: String?, commands: [String]?, quotes: Bool?, reactions: Bool?, replies: Bool?, urlEnrichment: Bool?) {
+    public init(urlEnrichment: Bool?, blocklist: String?, blocklistBehavior: String?, replies: Bool?, typingEvents: Bool?, uploads: Bool?, commands: [String]?, grants: [String: RawJSON]?, maxMessageLength: Int?, quotes: Bool?, reactions: Bool?) {
+        self.urlEnrichment = urlEnrichment
+        
         self.blocklist = blocklist
         
-        self.grants = grants
+        self.blocklistBehavior = blocklistBehavior
         
-        self.maxMessageLength = maxMessageLength
+        self.replies = replies
         
         self.typingEvents = typingEvents
         
         self.uploads = uploads
         
-        self.blocklistBehavior = blocklistBehavior
-        
         self.commands = commands
+        
+        self.grants = grants
+        
+        self.maxMessageLength = maxMessageLength
         
         self.quotes = quotes
         
         self.reactions = reactions
-        
-        self.replies = replies
-        
-        self.urlEnrichment = urlEnrichment
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
+        case urlEnrichment = "url_enrichment"
+        
         case blocklist
         
-        case grants
+        case blocklistBehavior = "blocklist_behavior"
         
-        case maxMessageLength = "max_message_length"
+        case replies
         
         case typingEvents = "typing_events"
         
         case uploads
         
-        case blocklistBehavior = "blocklist_behavior"
-        
         case commands
+        
+        case grants
+        
+        case maxMessageLength = "max_message_length"
         
         case quotes
         
         case reactions
-        
-        case replies
-        
-        case urlEnrichment = "url_enrichment"
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
+        try container.encode(urlEnrichment, forKey: .urlEnrichment)
+        
         try container.encode(blocklist, forKey: .blocklist)
         
-        try container.encode(grants, forKey: .grants)
+        try container.encode(blocklistBehavior, forKey: .blocklistBehavior)
         
-        try container.encode(maxMessageLength, forKey: .maxMessageLength)
+        try container.encode(replies, forKey: .replies)
         
         try container.encode(typingEvents, forKey: .typingEvents)
         
         try container.encode(uploads, forKey: .uploads)
         
-        try container.encode(blocklistBehavior, forKey: .blocklistBehavior)
-        
         try container.encode(commands, forKey: .commands)
+        
+        try container.encode(grants, forKey: .grants)
+        
+        try container.encode(maxMessageLength, forKey: .maxMessageLength)
         
         try container.encode(quotes, forKey: .quotes)
         
         try container.encode(reactions, forKey: .reactions)
-        
-        try container.encode(replies, forKey: .replies)
-        
-        try container.encode(urlEnrichment, forKey: .urlEnrichment)
     }
 }

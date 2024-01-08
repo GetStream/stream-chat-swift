@@ -5,35 +5,35 @@
 import Foundation
 
 public struct StreamChatDeleteChannelsResponse: Codable, Hashable {
-    public var taskId: String?
-    
     public var duration: String
     
     public var result: [String: RawJSON]?
     
-    public init(taskId: String?, duration: String, result: [String: RawJSON]?) {
-        self.taskId = taskId
-        
+    public var taskId: String?
+    
+    public init(duration: String, result: [String: RawJSON]?, taskId: String?) {
         self.duration = duration
         
         self.result = result
-    }
-
-    public enum CodingKeys: String, CodingKey, CaseIterable {
-        case taskId = "task_id"
         
+        self.taskId = taskId
+    }
+    
+    public enum CodingKeys: String, CodingKey, CaseIterable {
         case duration
         
         case result
+        
+        case taskId = "task_id"
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
-        try container.encode(taskId, forKey: .taskId)
         
         try container.encode(duration, forKey: .duration)
         
         try container.encode(result, forKey: .result)
+        
+        try container.encode(taskId, forKey: .taskId)
     }
 }

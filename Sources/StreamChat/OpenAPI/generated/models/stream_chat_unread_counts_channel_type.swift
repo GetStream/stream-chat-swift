@@ -18,7 +18,7 @@ public struct StreamChatUnreadCountsChannelType: Codable, Hashable {
         
         self.unreadCount = unreadCount
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case channelCount = "channel_count"
         
@@ -26,7 +26,7 @@ public struct StreamChatUnreadCountsChannelType: Codable, Hashable {
         
         case unreadCount = "unread_count"
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

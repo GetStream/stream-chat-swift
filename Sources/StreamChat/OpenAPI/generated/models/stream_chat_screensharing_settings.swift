@@ -14,13 +14,13 @@ public struct StreamChatScreensharingSettings: Codable, Hashable {
         
         self.enabled = enabled
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case accessRequestEnabled = "access_request_enabled"
         
         case enabled
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

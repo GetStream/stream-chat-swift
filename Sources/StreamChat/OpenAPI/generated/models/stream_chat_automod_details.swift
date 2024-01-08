@@ -26,7 +26,7 @@ public struct StreamChatAutomodDetails: Codable, Hashable {
         
         self.result = result
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case action
         
@@ -38,7 +38,7 @@ public struct StreamChatAutomodDetails: Codable, Hashable {
         
         case result
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

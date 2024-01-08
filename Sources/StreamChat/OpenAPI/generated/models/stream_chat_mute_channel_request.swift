@@ -22,7 +22,7 @@ public struct StreamChatMuteChannelRequest: Codable, Hashable {
         
         self.userId = userId
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case channelCids = "channel_cids"
         
@@ -32,7 +32,7 @@ public struct StreamChatMuteChannelRequest: Codable, Hashable {
         
         case userId = "user_id"
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

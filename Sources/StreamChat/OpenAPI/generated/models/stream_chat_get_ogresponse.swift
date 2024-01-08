@@ -5,195 +5,195 @@
 import Foundation
 
 public struct StreamChatGetOGResponse: Codable, Hashable {
-    public var authorIcon: String?
+    public var footerIcon: String?
     
-    public var fields: [StreamChatField?]?
-    
-    public var giphy: StreamChatImages?
+    public var ogScrapeUrl: String?
     
     public var originalWidth: Int?
     
-    public var thumbUrl: String?
-    
-    public var color: String?
-    
-    public var fallback: String?
-    
-    public var imageUrl: String?
-    
-    public var text: String?
-    
-    public var originalHeight: Int?
-    
     public var pretext: String?
     
-    public var title: String?
+    public var thumbUrl: String?
+    
+    public var titleLink: String?
     
     public var actions: [StreamChatAction?]?
-    
-    public var assetUrl: String?
     
     public var authorLink: String?
     
     public var authorName: String?
     
-    public var ogScrapeUrl: String?
-    
-    public var type: String?
-    
-    public var custom: [String: RawJSON]
-    
-    public var duration: String
+    public var fallback: String?
     
     public var footer: String?
     
-    public var footerIcon: String?
+    public var text: String?
     
-    public var titleLink: String?
+    public var custom: [String: RawJSON]
     
-    public init(authorIcon: String?, fields: [StreamChatField?]?, giphy: StreamChatImages?, originalWidth: Int?, thumbUrl: String?, color: String?, fallback: String?, imageUrl: String?, text: String?, originalHeight: Int?, pretext: String?, title: String?, actions: [StreamChatAction?]?, assetUrl: String?, authorLink: String?, authorName: String?, ogScrapeUrl: String?, type: String?, custom: [String: RawJSON], duration: String, footer: String?, footerIcon: String?, titleLink: String?) {
-        self.authorIcon = authorIcon
+    public var color: String?
+    
+    public var fields: [StreamChatField?]?
+    
+    public var title: String?
+    
+    public var type: String?
+    
+    public var authorIcon: String?
+    
+    public var duration: String
+    
+    public var giphy: StreamChatImages?
+    
+    public var imageUrl: String?
+    
+    public var originalHeight: Int?
+    
+    public var assetUrl: String?
+    
+    public init(footerIcon: String?, ogScrapeUrl: String?, originalWidth: Int?, pretext: String?, thumbUrl: String?, titleLink: String?, actions: [StreamChatAction?]?, authorLink: String?, authorName: String?, fallback: String?, footer: String?, text: String?, custom: [String: RawJSON], color: String?, fields: [StreamChatField?]?, title: String?, type: String?, authorIcon: String?, duration: String, giphy: StreamChatImages?, imageUrl: String?, originalHeight: Int?, assetUrl: String?) {
+        self.footerIcon = footerIcon
         
-        self.fields = fields
-        
-        self.giphy = giphy
+        self.ogScrapeUrl = ogScrapeUrl
         
         self.originalWidth = originalWidth
         
-        self.thumbUrl = thumbUrl
-        
-        self.color = color
-        
-        self.fallback = fallback
-        
-        self.imageUrl = imageUrl
-        
-        self.text = text
-        
-        self.originalHeight = originalHeight
-        
         self.pretext = pretext
         
-        self.title = title
+        self.thumbUrl = thumbUrl
+        
+        self.titleLink = titleLink
         
         self.actions = actions
-        
-        self.assetUrl = assetUrl
         
         self.authorLink = authorLink
         
         self.authorName = authorName
         
-        self.ogScrapeUrl = ogScrapeUrl
-        
-        self.type = type
-        
-        self.custom = custom
-        
-        self.duration = duration
+        self.fallback = fallback
         
         self.footer = footer
         
-        self.footerIcon = footerIcon
+        self.text = text
         
-        self.titleLink = titleLink
+        self.custom = custom
+        
+        self.color = color
+        
+        self.fields = fields
+        
+        self.title = title
+        
+        self.type = type
+        
+        self.authorIcon = authorIcon
+        
+        self.duration = duration
+        
+        self.giphy = giphy
+        
+        self.imageUrl = imageUrl
+        
+        self.originalHeight = originalHeight
+        
+        self.assetUrl = assetUrl
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case authorIcon = "author_icon"
+        case footerIcon = "footer_icon"
         
-        case fields
-        
-        case giphy
+        case ogScrapeUrl = "og_scrape_url"
         
         case originalWidth = "original_width"
         
-        case thumbUrl = "thumb_url"
-        
-        case color
-        
-        case fallback
-        
-        case imageUrl = "image_url"
-        
-        case text
-        
-        case originalHeight = "original_height"
-        
         case pretext
         
-        case title
+        case thumbUrl = "thumb_url"
+        
+        case titleLink = "title_link"
         
         case actions
-        
-        case assetUrl = "asset_url"
         
         case authorLink = "author_link"
         
         case authorName = "author_name"
         
-        case ogScrapeUrl = "og_scrape_url"
-        
-        case type
-        
-        case custom = "Custom"
-        
-        case duration
+        case fallback
         
         case footer
         
-        case footerIcon = "footer_icon"
+        case text
         
-        case titleLink = "title_link"
+        case custom = "Custom"
+        
+        case color
+        
+        case fields
+        
+        case title
+        
+        case type
+        
+        case authorIcon = "author_icon"
+        
+        case duration
+        
+        case giphy
+        
+        case imageUrl = "image_url"
+        
+        case originalHeight = "original_height"
+        
+        case assetUrl = "asset_url"
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(authorIcon, forKey: .authorIcon)
+        try container.encode(footerIcon, forKey: .footerIcon)
         
-        try container.encode(fields, forKey: .fields)
-        
-        try container.encode(giphy, forKey: .giphy)
+        try container.encode(ogScrapeUrl, forKey: .ogScrapeUrl)
         
         try container.encode(originalWidth, forKey: .originalWidth)
         
-        try container.encode(thumbUrl, forKey: .thumbUrl)
-        
-        try container.encode(color, forKey: .color)
-        
-        try container.encode(fallback, forKey: .fallback)
-        
-        try container.encode(imageUrl, forKey: .imageUrl)
-        
-        try container.encode(text, forKey: .text)
-        
-        try container.encode(originalHeight, forKey: .originalHeight)
-        
         try container.encode(pretext, forKey: .pretext)
         
-        try container.encode(title, forKey: .title)
+        try container.encode(thumbUrl, forKey: .thumbUrl)
+        
+        try container.encode(titleLink, forKey: .titleLink)
         
         try container.encode(actions, forKey: .actions)
-        
-        try container.encode(assetUrl, forKey: .assetUrl)
         
         try container.encode(authorLink, forKey: .authorLink)
         
         try container.encode(authorName, forKey: .authorName)
         
-        try container.encode(ogScrapeUrl, forKey: .ogScrapeUrl)
-        
-        try container.encode(type, forKey: .type)
-        
-        try container.encode(custom, forKey: .custom)
-        
-        try container.encode(duration, forKey: .duration)
+        try container.encode(fallback, forKey: .fallback)
         
         try container.encode(footer, forKey: .footer)
         
-        try container.encode(footerIcon, forKey: .footerIcon)
+        try container.encode(text, forKey: .text)
         
-        try container.encode(titleLink, forKey: .titleLink)
+        try container.encode(custom, forKey: .custom)
+        
+        try container.encode(color, forKey: .color)
+        
+        try container.encode(fields, forKey: .fields)
+        
+        try container.encode(title, forKey: .title)
+        
+        try container.encode(type, forKey: .type)
+        
+        try container.encode(authorIcon, forKey: .authorIcon)
+        
+        try container.encode(duration, forKey: .duration)
+        
+        try container.encode(giphy, forKey: .giphy)
+        
+        try container.encode(imageUrl, forKey: .imageUrl)
+        
+        try container.encode(originalHeight, forKey: .originalHeight)
+        
+        try container.encode(assetUrl, forKey: .assetUrl)
     }
 }

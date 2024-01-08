@@ -18,7 +18,7 @@ public struct StreamChatXiaomiConfigFields: Codable, Hashable {
         
         self.secret = secret
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case enabled
         
@@ -26,7 +26,7 @@ public struct StreamChatXiaomiConfigFields: Codable, Hashable {
         
         case secret
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

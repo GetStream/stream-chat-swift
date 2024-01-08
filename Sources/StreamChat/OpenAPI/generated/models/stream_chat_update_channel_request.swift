@@ -9,96 +9,84 @@ public struct StreamChatUpdateChannelRequest: Codable, Hashable {
     
     public var addModerators: [String]
     
-    public var cooldown: Int?
+    public var demoteModerators: [String]
     
     public var hideHistory: Bool?
     
-    public var message: StreamChatMessageRequest?
-    
-    public var assignRoles: [StreamChatChannelMemberRequest?]?
-    
-    public var data: StreamChatChannelRequest?
-    
-    public var rejectInvite: Bool?
-    
-    public var acceptInvite: Bool?
-    
-    public var demoteModerators: [String]
-    
     public var removeMembers: [String]
-    
-    public var userId: String?
-    
-    public var invites: [StreamChatChannelMemberRequest?]?
     
     public var skipPush: Bool?
     
-    public var user: StreamChatUserObjectRequest?
+    public var assignRoles: [StreamChatChannelMemberRequest?]?
     
-    public init(addMembers: [StreamChatChannelMemberRequest?]?, addModerators: [String], cooldown: Int?, hideHistory: Bool?, message: StreamChatMessageRequest?, assignRoles: [StreamChatChannelMemberRequest?]?, data: StreamChatChannelRequest?, rejectInvite: Bool?, acceptInvite: Bool?, demoteModerators: [String], removeMembers: [String], userId: String?, invites: [StreamChatChannelMemberRequest?]?, skipPush: Bool?, user: StreamChatUserObjectRequest?) {
+    public var cooldown: Int?
+    
+    public var message: StreamChatMessageRequest?
+    
+    public var acceptInvite: Bool?
+    
+    public var data: StreamChatChannelRequest?
+    
+    public var invites: [StreamChatChannelMemberRequest?]?
+    
+    public var rejectInvite: Bool?
+    
+    public init(addMembers: [StreamChatChannelMemberRequest?]?, addModerators: [String], demoteModerators: [String], hideHistory: Bool?, removeMembers: [String], skipPush: Bool?, assignRoles: [StreamChatChannelMemberRequest?]?, cooldown: Int?, message: StreamChatMessageRequest?, acceptInvite: Bool?, data: StreamChatChannelRequest?, invites: [StreamChatChannelMemberRequest?]?, rejectInvite: Bool?) {
         self.addMembers = addMembers
         
         self.addModerators = addModerators
         
-        self.cooldown = cooldown
+        self.demoteModerators = demoteModerators
         
         self.hideHistory = hideHistory
         
-        self.message = message
-        
-        self.assignRoles = assignRoles
-        
-        self.data = data
-        
-        self.rejectInvite = rejectInvite
-        
-        self.acceptInvite = acceptInvite
-        
-        self.demoteModerators = demoteModerators
-        
         self.removeMembers = removeMembers
-        
-        self.userId = userId
-        
-        self.invites = invites
         
         self.skipPush = skipPush
         
-        self.user = user
+        self.assignRoles = assignRoles
+        
+        self.cooldown = cooldown
+        
+        self.message = message
+        
+        self.acceptInvite = acceptInvite
+        
+        self.data = data
+        
+        self.invites = invites
+        
+        self.rejectInvite = rejectInvite
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case addMembers = "add_members"
         
         case addModerators = "add_moderators"
         
-        case cooldown
+        case demoteModerators = "demote_moderators"
         
         case hideHistory = "hide_history"
         
-        case message
-        
-        case assignRoles = "assign_roles"
-        
-        case data
-        
-        case rejectInvite = "reject_invite"
-        
-        case acceptInvite = "accept_invite"
-        
-        case demoteModerators = "demote_moderators"
-        
         case removeMembers = "remove_members"
-        
-        case userId = "user_id"
-        
-        case invites
         
         case skipPush = "skip_push"
         
-        case user
+        case assignRoles = "assign_roles"
+        
+        case cooldown
+        
+        case message
+        
+        case acceptInvite = "accept_invite"
+        
+        case data
+        
+        case invites
+        
+        case rejectInvite = "reject_invite"
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
@@ -106,30 +94,26 @@ public struct StreamChatUpdateChannelRequest: Codable, Hashable {
         
         try container.encode(addModerators, forKey: .addModerators)
         
-        try container.encode(cooldown, forKey: .cooldown)
+        try container.encode(demoteModerators, forKey: .demoteModerators)
         
         try container.encode(hideHistory, forKey: .hideHistory)
         
-        try container.encode(message, forKey: .message)
-        
-        try container.encode(assignRoles, forKey: .assignRoles)
-        
-        try container.encode(data, forKey: .data)
-        
-        try container.encode(rejectInvite, forKey: .rejectInvite)
-        
-        try container.encode(acceptInvite, forKey: .acceptInvite)
-        
-        try container.encode(demoteModerators, forKey: .demoteModerators)
-        
         try container.encode(removeMembers, forKey: .removeMembers)
-        
-        try container.encode(userId, forKey: .userId)
-        
-        try container.encode(invites, forKey: .invites)
         
         try container.encode(skipPush, forKey: .skipPush)
         
-        try container.encode(user, forKey: .user)
+        try container.encode(assignRoles, forKey: .assignRoles)
+        
+        try container.encode(cooldown, forKey: .cooldown)
+        
+        try container.encode(message, forKey: .message)
+        
+        try container.encode(acceptInvite, forKey: .acceptInvite)
+        
+        try container.encode(data, forKey: .data)
+        
+        try container.encode(invites, forKey: .invites)
+        
+        try container.encode(rejectInvite, forKey: .rejectInvite)
     }
 }

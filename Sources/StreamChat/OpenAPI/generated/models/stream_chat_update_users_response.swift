@@ -14,13 +14,13 @@ public struct StreamChatUpdateUsersResponse: Codable, Hashable {
         
         self.users = users
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case duration
         
         case users
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

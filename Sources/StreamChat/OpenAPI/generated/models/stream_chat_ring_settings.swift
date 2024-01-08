@@ -14,13 +14,13 @@ public struct StreamChatRingSettings: Codable, Hashable {
         
         self.incomingCallTimeoutMs = incomingCallTimeoutMs
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case autoCancelTimeoutMs = "auto_cancel_timeout_ms"
         
         case incomingCallTimeoutMs = "incoming_call_timeout_ms"
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

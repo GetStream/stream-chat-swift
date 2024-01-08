@@ -30,7 +30,7 @@ public struct StreamChatAudioSettings: Codable, Hashable {
         
         self.speakerDefaultOn = speakerDefaultOn
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case accessRequestEnabled = "access_request_enabled"
         
@@ -44,7 +44,7 @@ public struct StreamChatAudioSettings: Codable, Hashable {
         
         case speakerDefaultOn = "speaker_default_on"
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

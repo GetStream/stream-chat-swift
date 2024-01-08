@@ -5,6 +5,8 @@
 import Foundation
 
 public struct StreamChatUserMute: Codable, Hashable {
+    public var createdAt: String
+    
     public var expires: String?
     
     public var target: StreamChatUserObject?
@@ -13,9 +15,9 @@ public struct StreamChatUserMute: Codable, Hashable {
     
     public var user: StreamChatUserObject?
     
-    public var createdAt: String
-    
-    public init(expires: String?, target: StreamChatUserObject?, updatedAt: String, user: StreamChatUserObject?, createdAt: String) {
+    public init(createdAt: String, expires: String?, target: StreamChatUserObject?, updatedAt: String, user: StreamChatUserObject?) {
+        self.createdAt = createdAt
+        
         self.expires = expires
         
         self.target = target
@@ -23,11 +25,11 @@ public struct StreamChatUserMute: Codable, Hashable {
         self.updatedAt = updatedAt
         
         self.user = user
-        
-        self.createdAt = createdAt
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
+        case createdAt = "created_at"
+        
         case expires
         
         case target
@@ -35,12 +37,12 @@ public struct StreamChatUserMute: Codable, Hashable {
         case updatedAt = "updated_at"
         
         case user
-        
-        case createdAt = "created_at"
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(createdAt, forKey: .createdAt)
         
         try container.encode(expires, forKey: .expires)
         
@@ -49,7 +51,5 @@ public struct StreamChatUserMute: Codable, Hashable {
         try container.encode(updatedAt, forKey: .updatedAt)
         
         try container.encode(user, forKey: .user)
-        
-        try container.encode(createdAt, forKey: .createdAt)
     }
 }

@@ -14,13 +14,13 @@ public struct StreamChatAnyEvent: Codable, Hashable {
         
         self.createdAt = createdAt
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case type
         
         case createdAt = "created_at"
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

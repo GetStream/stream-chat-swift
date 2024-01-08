@@ -7,96 +7,96 @@ import Foundation
 public struct StreamChatQueryBannedUsersRequest: Codable, Hashable {
     public var createdAtAfter: String?
     
-    public var createdAtAfterOrEqual: String?
-    
     public var createdAtBeforeOrEqual: String?
     
-    public var sort: [StreamChatSortParam?]?
+    public var filterConditions: [String: RawJSON]
+    
+    public var offset: Int?
     
     public var user: StreamChatUserObject?
+    
+    public var createdAtAfterOrEqual: String?
     
     public var createdAtBefore: String?
     
     public var excludeExpiredBans: Bool?
     
-    public var filterConditions: [String: RawJSON]
-    
     public var limit: Int?
     
-    public var offset: Int?
+    public var sort: [StreamChatSortParam?]?
     
     public var userId: String?
     
-    public init(createdAtAfter: String?, createdAtAfterOrEqual: String?, createdAtBeforeOrEqual: String?, sort: [StreamChatSortParam?]?, user: StreamChatUserObject?, createdAtBefore: String?, excludeExpiredBans: Bool?, filterConditions: [String: RawJSON], limit: Int?, offset: Int?, userId: String?) {
+    public init(createdAtAfter: String?, createdAtBeforeOrEqual: String?, filterConditions: [String: RawJSON], offset: Int?, user: StreamChatUserObject?, createdAtAfterOrEqual: String?, createdAtBefore: String?, excludeExpiredBans: Bool?, limit: Int?, sort: [StreamChatSortParam?]?, userId: String?) {
         self.createdAtAfter = createdAtAfter
-        
-        self.createdAtAfterOrEqual = createdAtAfterOrEqual
         
         self.createdAtBeforeOrEqual = createdAtBeforeOrEqual
         
-        self.sort = sort
+        self.filterConditions = filterConditions
+        
+        self.offset = offset
         
         self.user = user
+        
+        self.createdAtAfterOrEqual = createdAtAfterOrEqual
         
         self.createdAtBefore = createdAtBefore
         
         self.excludeExpiredBans = excludeExpiredBans
         
-        self.filterConditions = filterConditions
-        
         self.limit = limit
         
-        self.offset = offset
+        self.sort = sort
         
         self.userId = userId
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case createdAtAfter = "created_at_after"
         
-        case createdAtAfterOrEqual = "created_at_after_or_equal"
-        
         case createdAtBeforeOrEqual = "created_at_before_or_equal"
         
-        case sort
+        case filterConditions = "filter_conditions"
+        
+        case offset
         
         case user
+        
+        case createdAtAfterOrEqual = "created_at_after_or_equal"
         
         case createdAtBefore = "created_at_before"
         
         case excludeExpiredBans = "exclude_expired_bans"
         
-        case filterConditions = "filter_conditions"
-        
         case limit
         
-        case offset
+        case sort
         
         case userId = "user_id"
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
         try container.encode(createdAtAfter, forKey: .createdAtAfter)
         
-        try container.encode(createdAtAfterOrEqual, forKey: .createdAtAfterOrEqual)
-        
         try container.encode(createdAtBeforeOrEqual, forKey: .createdAtBeforeOrEqual)
         
-        try container.encode(sort, forKey: .sort)
+        try container.encode(filterConditions, forKey: .filterConditions)
+        
+        try container.encode(offset, forKey: .offset)
         
         try container.encode(user, forKey: .user)
+        
+        try container.encode(createdAtAfterOrEqual, forKey: .createdAtAfterOrEqual)
         
         try container.encode(createdAtBefore, forKey: .createdAtBefore)
         
         try container.encode(excludeExpiredBans, forKey: .excludeExpiredBans)
         
-        try container.encode(filterConditions, forKey: .filterConditions)
-        
         try container.encode(limit, forKey: .limit)
         
-        try container.encode(offset, forKey: .offset)
+        try container.encode(sort, forKey: .sort)
         
         try container.encode(userId, forKey: .userId)
     }

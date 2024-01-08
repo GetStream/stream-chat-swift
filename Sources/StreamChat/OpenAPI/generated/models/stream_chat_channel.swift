@@ -5,19 +5,13 @@
 import Foundation
 
 public struct StreamChatChannel: Codable, Hashable {
-    public var custom: [String: RawJSON]
+    public var autoTranslationLanguage: String
     
     public var cid: String
     
+    public var config: StreamChatChannelConfig?
+    
     public var configOverrides: StreamChatChannelConfig?
-    
-    public var id: String
-    
-    public var lastMessageAt: String?
-    
-    public var members: [StreamChatChannelMember?]?
-    
-    public var autoTranslationEnabled: Bool?
     
     public var createdBy: StreamChatUserObject?
     
@@ -25,42 +19,42 @@ public struct StreamChatChannel: Codable, Hashable {
     
     public var disabled: Bool
     
-    public var autoTranslationLanguage: String
+    public var truncatedBy: StreamChatUserObject?
     
-    public var config: StreamChatChannelConfig?
+    public var type: String
+    
+    public var autoTranslationEnabled: Bool?
     
     public var cooldown: Int?
     
-    public var team: String?
+    public var memberCount: Int?
     
-    public var type: String
+    public var members: [StreamChatChannelMember?]?
+    
+    public var updatedAt: String
+    
+    public var custom: [String: RawJSON]
     
     public var createdAt: String
     
     public var frozen: Bool
     
+    public var id: String
+    
     public var invites: [StreamChatChannelMember?]?
     
-    public var memberCount: Int?
+    public var lastMessageAt: String?
     
-    public var truncatedBy: StreamChatUserObject?
+    public var team: String?
     
-    public var updatedAt: String
-    
-    public init(custom: [String: RawJSON], cid: String, configOverrides: StreamChatChannelConfig?, id: String, lastMessageAt: String?, members: [StreamChatChannelMember?]?, autoTranslationEnabled: Bool?, createdBy: StreamChatUserObject?, deletedAt: String?, disabled: Bool, autoTranslationLanguage: String, config: StreamChatChannelConfig?, cooldown: Int?, team: String?, type: String, createdAt: String, frozen: Bool, invites: [StreamChatChannelMember?]?, memberCount: Int?, truncatedBy: StreamChatUserObject?, updatedAt: String) {
-        self.custom = custom
+    public init(autoTranslationLanguage: String, cid: String, config: StreamChatChannelConfig?, configOverrides: StreamChatChannelConfig?, createdBy: StreamChatUserObject?, deletedAt: String?, disabled: Bool, truncatedBy: StreamChatUserObject?, type: String, autoTranslationEnabled: Bool?, cooldown: Int?, memberCount: Int?, members: [StreamChatChannelMember?]?, updatedAt: String, custom: [String: RawJSON], createdAt: String, frozen: Bool, id: String, invites: [StreamChatChannelMember?]?, lastMessageAt: String?, team: String?) {
+        self.autoTranslationLanguage = autoTranslationLanguage
         
         self.cid = cid
         
+        self.config = config
+        
         self.configOverrides = configOverrides
-        
-        self.id = id
-        
-        self.lastMessageAt = lastMessageAt
-        
-        self.members = members
-        
-        self.autoTranslationEnabled = autoTranslationEnabled
         
         self.createdBy = createdBy
         
@@ -68,43 +62,43 @@ public struct StreamChatChannel: Codable, Hashable {
         
         self.disabled = disabled
         
-        self.autoTranslationLanguage = autoTranslationLanguage
+        self.truncatedBy = truncatedBy
         
-        self.config = config
+        self.type = type
+        
+        self.autoTranslationEnabled = autoTranslationEnabled
         
         self.cooldown = cooldown
         
-        self.team = team
+        self.memberCount = memberCount
         
-        self.type = type
+        self.members = members
+        
+        self.updatedAt = updatedAt
+        
+        self.custom = custom
         
         self.createdAt = createdAt
         
         self.frozen = frozen
         
+        self.id = id
+        
         self.invites = invites
         
-        self.memberCount = memberCount
+        self.lastMessageAt = lastMessageAt
         
-        self.truncatedBy = truncatedBy
-        
-        self.updatedAt = updatedAt
+        self.team = team
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case custom = "Custom"
+        case autoTranslationLanguage = "auto_translation_language"
         
         case cid
         
+        case config
+        
         case configOverrides = "config_overrides"
-        
-        case id
-        
-        case lastMessageAt = "last_message_at"
-        
-        case members
-        
-        case autoTranslationEnabled = "auto_translation_enabled"
         
         case createdBy = "created_by"
         
@@ -112,45 +106,45 @@ public struct StreamChatChannel: Codable, Hashable {
         
         case disabled
         
-        case autoTranslationLanguage = "auto_translation_language"
+        case truncatedBy = "truncated_by"
         
-        case config
+        case type
+        
+        case autoTranslationEnabled = "auto_translation_enabled"
         
         case cooldown
         
-        case team
+        case memberCount = "member_count"
         
-        case type
+        case members
+        
+        case updatedAt = "updated_at"
+        
+        case custom = "Custom"
         
         case createdAt = "created_at"
         
         case frozen
         
+        case id
+        
         case invites
         
-        case memberCount = "member_count"
+        case lastMessageAt = "last_message_at"
         
-        case truncatedBy = "truncated_by"
-        
-        case updatedAt = "updated_at"
+        case team
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(custom, forKey: .custom)
+        try container.encode(autoTranslationLanguage, forKey: .autoTranslationLanguage)
         
         try container.encode(cid, forKey: .cid)
         
+        try container.encode(config, forKey: .config)
+        
         try container.encode(configOverrides, forKey: .configOverrides)
-        
-        try container.encode(id, forKey: .id)
-        
-        try container.encode(lastMessageAt, forKey: .lastMessageAt)
-        
-        try container.encode(members, forKey: .members)
-        
-        try container.encode(autoTranslationEnabled, forKey: .autoTranslationEnabled)
         
         try container.encode(createdBy, forKey: .createdBy)
         
@@ -158,26 +152,32 @@ public struct StreamChatChannel: Codable, Hashable {
         
         try container.encode(disabled, forKey: .disabled)
         
-        try container.encode(autoTranslationLanguage, forKey: .autoTranslationLanguage)
+        try container.encode(truncatedBy, forKey: .truncatedBy)
         
-        try container.encode(config, forKey: .config)
+        try container.encode(type, forKey: .type)
+        
+        try container.encode(autoTranslationEnabled, forKey: .autoTranslationEnabled)
         
         try container.encode(cooldown, forKey: .cooldown)
         
-        try container.encode(team, forKey: .team)
+        try container.encode(memberCount, forKey: .memberCount)
         
-        try container.encode(type, forKey: .type)
+        try container.encode(members, forKey: .members)
+        
+        try container.encode(updatedAt, forKey: .updatedAt)
+        
+        try container.encode(custom, forKey: .custom)
         
         try container.encode(createdAt, forKey: .createdAt)
         
         try container.encode(frozen, forKey: .frozen)
         
+        try container.encode(id, forKey: .id)
+        
         try container.encode(invites, forKey: .invites)
         
-        try container.encode(memberCount, forKey: .memberCount)
+        try container.encode(lastMessageAt, forKey: .lastMessageAt)
         
-        try container.encode(truncatedBy, forKey: .truncatedBy)
-        
-        try container.encode(updatedAt, forKey: .updatedAt)
+        try container.encode(team, forKey: .team)
     }
 }

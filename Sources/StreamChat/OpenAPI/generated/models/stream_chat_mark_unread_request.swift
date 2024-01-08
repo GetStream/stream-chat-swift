@@ -18,7 +18,7 @@ public struct StreamChatMarkUnreadRequest: Codable, Hashable {
         
         self.userId = userId
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case messageId = "message_id"
         
@@ -26,7 +26,7 @@ public struct StreamChatMarkUnreadRequest: Codable, Hashable {
         
         case userId = "user_id"
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

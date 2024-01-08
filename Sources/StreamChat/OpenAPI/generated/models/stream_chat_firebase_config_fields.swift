@@ -5,6 +5,8 @@
 import Foundation
 
 public struct StreamChatFirebaseConfigFields: Codable, Hashable {
+    public var credentialsJson: String?
+    
     public var dataTemplate: String
     
     public var enabled: Bool
@@ -15,9 +17,9 @@ public struct StreamChatFirebaseConfigFields: Codable, Hashable {
     
     public var apnTemplate: String
     
-    public var credentialsJson: String?
-    
-    public init(dataTemplate: String, enabled: Bool, notificationTemplate: String, serverKey: String?, apnTemplate: String, credentialsJson: String?) {
+    public init(credentialsJson: String?, dataTemplate: String, enabled: Bool, notificationTemplate: String, serverKey: String?, apnTemplate: String) {
+        self.credentialsJson = credentialsJson
+        
         self.dataTemplate = dataTemplate
         
         self.enabled = enabled
@@ -27,11 +29,11 @@ public struct StreamChatFirebaseConfigFields: Codable, Hashable {
         self.serverKey = serverKey
         
         self.apnTemplate = apnTemplate
-        
-        self.credentialsJson = credentialsJson
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
+        case credentialsJson = "credentials_json"
+        
         case dataTemplate = "data_template"
         
         case enabled
@@ -41,12 +43,12 @@ public struct StreamChatFirebaseConfigFields: Codable, Hashable {
         case serverKey = "server_key"
         
         case apnTemplate = "apn_template"
-        
-        case credentialsJson = "credentials_json"
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(credentialsJson, forKey: .credentialsJson)
         
         try container.encode(dataTemplate, forKey: .dataTemplate)
         
@@ -57,7 +59,5 @@ public struct StreamChatFirebaseConfigFields: Codable, Hashable {
         try container.encode(serverKey, forKey: .serverKey)
         
         try container.encode(apnTemplate, forKey: .apnTemplate)
-        
-        try container.encode(credentialsJson, forKey: .credentialsJson)
     }
 }

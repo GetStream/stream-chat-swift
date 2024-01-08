@@ -22,7 +22,7 @@ public struct StreamChatLayoutSettings: Codable, Hashable {
         
         self.externalAppUrl = externalAppUrl
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case externalCssUrl = "external_css_url"
         
@@ -32,7 +32,7 @@ public struct StreamChatLayoutSettings: Codable, Hashable {
         
         case externalAppUrl = "external_app_url"
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

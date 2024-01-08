@@ -5,6 +5,10 @@
 import Foundation
 
 public struct StreamChatCommand: Codable, Hashable {
+    public var createdAt: String?
+    
+    public var description: String
+    
     public var name: String
     
     public var set: String
@@ -13,11 +17,11 @@ public struct StreamChatCommand: Codable, Hashable {
     
     public var args: String
     
-    public var createdAt: String?
-    
-    public var description: String
-    
-    public init(name: String, set: String, updatedAt: String?, args: String, createdAt: String?, description: String) {
+    public init(createdAt: String?, description: String, name: String, set: String, updatedAt: String?, args: String) {
+        self.createdAt = createdAt
+        
+        self.description = description
+        
         self.name = name
         
         self.set = set
@@ -25,13 +29,13 @@ public struct StreamChatCommand: Codable, Hashable {
         self.updatedAt = updatedAt
         
         self.args = args
-        
-        self.createdAt = createdAt
-        
-        self.description = description
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
+        case createdAt = "created_at"
+        
+        case description
+        
         case name
         
         case set
@@ -39,14 +43,14 @@ public struct StreamChatCommand: Codable, Hashable {
         case updatedAt = "updated_at"
         
         case args
-        
-        case createdAt = "created_at"
-        
-        case description
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(createdAt, forKey: .createdAt)
+        
+        try container.encode(description, forKey: .description)
         
         try container.encode(name, forKey: .name)
         
@@ -55,9 +59,5 @@ public struct StreamChatCommand: Codable, Hashable {
         try container.encode(updatedAt, forKey: .updatedAt)
         
         try container.encode(args, forKey: .args)
-        
-        try container.encode(createdAt, forKey: .createdAt)
-        
-        try container.encode(description, forKey: .description)
     }
 }

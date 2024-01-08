@@ -5,6 +5,8 @@
 import Foundation
 
 public struct StreamChatNotificationInviteAcceptedEvent: Codable, Hashable {
+    public var type: String
+    
     public var user: StreamChatUserObject?
     
     public var channel: StreamChatChannelResponse?
@@ -19,9 +21,9 @@ public struct StreamChatNotificationInviteAcceptedEvent: Codable, Hashable {
     
     public var member: StreamChatChannelMember?
     
-    public var type: String
-    
-    public init(user: StreamChatUserObject?, channel: StreamChatChannelResponse?, channelId: String, channelType: String, cid: String, createdAt: String, member: StreamChatChannelMember?, type: String) {
+    public init(type: String, user: StreamChatUserObject?, channel: StreamChatChannelResponse?, channelId: String, channelType: String, cid: String, createdAt: String, member: StreamChatChannelMember?) {
+        self.type = type
+        
         self.user = user
         
         self.channel = channel
@@ -35,11 +37,11 @@ public struct StreamChatNotificationInviteAcceptedEvent: Codable, Hashable {
         self.createdAt = createdAt
         
         self.member = member
-        
-        self.type = type
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
+        case type
+        
         case user
         
         case channel
@@ -53,12 +55,12 @@ public struct StreamChatNotificationInviteAcceptedEvent: Codable, Hashable {
         case createdAt = "created_at"
         
         case member
-        
-        case type
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(type, forKey: .type)
         
         try container.encode(user, forKey: .user)
         
@@ -73,7 +75,5 @@ public struct StreamChatNotificationInviteAcceptedEvent: Codable, Hashable {
         try container.encode(createdAt, forKey: .createdAt)
         
         try container.encode(member, forKey: .member)
-        
-        try container.encode(type, forKey: .type)
     }
 }

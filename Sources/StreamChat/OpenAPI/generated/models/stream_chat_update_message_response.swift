@@ -18,7 +18,7 @@ public struct StreamChatUpdateMessageResponse: Codable, Hashable {
         
         self.pendingMessageMetadata = pendingMessageMetadata
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case duration
         
@@ -26,7 +26,7 @@ public struct StreamChatUpdateMessageResponse: Codable, Hashable {
         
         case pendingMessageMetadata = "pending_message_metadata"
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

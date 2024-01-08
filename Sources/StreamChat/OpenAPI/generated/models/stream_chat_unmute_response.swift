@@ -14,13 +14,13 @@ public struct StreamChatUnmuteResponse: Codable, Hashable {
         
         self.nonExistingUsers = nonExistingUsers
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case duration
         
         case nonExistingUsers = "non_existing_users"
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

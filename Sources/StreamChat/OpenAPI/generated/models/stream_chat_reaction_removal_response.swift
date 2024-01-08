@@ -18,7 +18,7 @@ public struct StreamChatReactionRemovalResponse: Codable, Hashable {
         
         self.reaction = reaction
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case duration
         
@@ -26,7 +26,7 @@ public struct StreamChatReactionRemovalResponse: Codable, Hashable {
         
         case reaction
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

@@ -22,7 +22,7 @@ public struct StreamChatImageSize: Codable, Hashable {
         
         self.width = width
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case crop
         
@@ -32,7 +32,7 @@ public struct StreamChatImageSize: Codable, Hashable {
         
         case width
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

@@ -14,13 +14,13 @@ public struct StreamChatDeleteChannelsResult: Codable, Hashable {
         
         self.status = status
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case error
         
         case status
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

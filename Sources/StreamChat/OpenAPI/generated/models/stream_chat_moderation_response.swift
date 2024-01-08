@@ -7,7 +7,7 @@ import Foundation
 public struct StreamChatModerationResponse: Codable, Hashable {
     public var action: String
     
-//    public var automodResponse: StreamChat
+    public var automodResponse: [String: RawJSON]
     
     public var explicit: Double
     
@@ -15,10 +15,10 @@ public struct StreamChatModerationResponse: Codable, Hashable {
     
     public var toxic: Double
     
-    public init(action: String, explicit: Double, spam: Double, toxic: Double) {
+    public init(action: String, automodResponse: [String: RawJSON], explicit: Double, spam: Double, toxic: Double) {
         self.action = action
         
-//        self.automodResponse = automodResponse
+        self.automodResponse = automodResponse
         
         self.explicit = explicit
         
@@ -26,11 +26,11 @@ public struct StreamChatModerationResponse: Codable, Hashable {
         
         self.toxic = toxic
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case action
         
-//        case automodResponse = "automod_response"
+        case automodResponse = "automod_response"
         
         case explicit
         
@@ -38,13 +38,13 @@ public struct StreamChatModerationResponse: Codable, Hashable {
         
         case toxic
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
         try container.encode(action, forKey: .action)
         
-//        try container.encode(automodResponse, forKey: .automodResponse)
+        try container.encode(automodResponse, forKey: .automodResponse)
         
         try container.encode(explicit, forKey: .explicit)
         

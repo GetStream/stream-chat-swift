@@ -22,7 +22,7 @@ public struct StreamChatCreateDeviceRequest: Codable, Hashable {
         
         self.voipToken = voipToken
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case id
         
@@ -32,7 +32,7 @@ public struct StreamChatCreateDeviceRequest: Codable, Hashable {
         
         case voipToken = "voip_token"
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

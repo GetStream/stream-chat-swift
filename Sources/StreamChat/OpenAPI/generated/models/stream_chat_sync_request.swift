@@ -34,7 +34,7 @@ public struct StreamChatSyncRequest: Codable, Hashable {
         
         self.lastSyncAt = lastSyncAt
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case user
         
@@ -50,7 +50,7 @@ public struct StreamChatSyncRequest: Codable, Hashable {
         
         case lastSyncAt = "last_sync_at"
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

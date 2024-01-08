@@ -18,7 +18,7 @@ public struct StreamChatFlagFeedback: Codable, Hashable {
         
         self.messageId = messageId
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case createdAt = "created_at"
         
@@ -26,7 +26,7 @@ public struct StreamChatFlagFeedback: Codable, Hashable {
         
         case messageId = "message_id"
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

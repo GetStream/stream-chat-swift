@@ -5,6 +5,10 @@
 import Foundation
 
 public struct StreamChatNotificationInviteRejectedEvent: Codable, Hashable {
+    public var type: String
+    
+    public var user: StreamChatUserObject?
+    
     public var channel: StreamChatChannelResponse?
     
     public var channelId: String
@@ -17,11 +21,11 @@ public struct StreamChatNotificationInviteRejectedEvent: Codable, Hashable {
     
     public var member: StreamChatChannelMember?
     
-    public var type: String
-    
-    public var user: StreamChatUserObject?
-    
-    public init(channel: StreamChatChannelResponse?, channelId: String, channelType: String, cid: String, createdAt: String, member: StreamChatChannelMember?, type: String, user: StreamChatUserObject?) {
+    public init(type: String, user: StreamChatUserObject?, channel: StreamChatChannelResponse?, channelId: String, channelType: String, cid: String, createdAt: String, member: StreamChatChannelMember?) {
+        self.type = type
+        
+        self.user = user
+        
         self.channel = channel
         
         self.channelId = channelId
@@ -33,13 +37,13 @@ public struct StreamChatNotificationInviteRejectedEvent: Codable, Hashable {
         self.createdAt = createdAt
         
         self.member = member
-        
-        self.type = type
-        
-        self.user = user
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
+        case type
+        
+        case user
+        
         case channel
         
         case channelId = "channel_id"
@@ -51,14 +55,14 @@ public struct StreamChatNotificationInviteRejectedEvent: Codable, Hashable {
         case createdAt = "created_at"
         
         case member
-        
-        case type
-        
-        case user
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(type, forKey: .type)
+        
+        try container.encode(user, forKey: .user)
         
         try container.encode(channel, forKey: .channel)
         
@@ -71,9 +75,5 @@ public struct StreamChatNotificationInviteRejectedEvent: Codable, Hashable {
         try container.encode(createdAt, forKey: .createdAt)
         
         try container.encode(member, forKey: .member)
-        
-        try container.encode(type, forKey: .type)
-        
-        try container.encode(user, forKey: .user)
     }
 }

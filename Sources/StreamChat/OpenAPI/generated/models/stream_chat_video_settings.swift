@@ -26,7 +26,7 @@ public struct StreamChatVideoSettings: Codable, Hashable {
         
         self.accessRequestEnabled = accessRequestEnabled
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case cameraDefaultOn = "camera_default_on"
         
@@ -38,7 +38,7 @@ public struct StreamChatVideoSettings: Codable, Hashable {
         
         case accessRequestEnabled = "access_request_enabled"
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

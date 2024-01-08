@@ -22,7 +22,7 @@ public struct StreamChatUserUnreadReminderEvent: Codable, Hashable {
         
         self.user = user
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case channels
         
@@ -32,7 +32,7 @@ public struct StreamChatUserUnreadReminderEvent: Codable, Hashable {
         
         case user
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

@@ -5,6 +5,8 @@
 import Foundation
 
 public struct StreamChatCallType: Codable, Hashable {
+    public var settings: StreamChatCallSettings?
+    
     public var updatedAt: String
     
     public var appPK: Int
@@ -17,9 +19,9 @@ public struct StreamChatCallType: Codable, Hashable {
     
     public var pK: Int
     
-    public var settings: StreamChatCallSettings?
-    
-    public init(updatedAt: String, appPK: Int, createdAt: String, name: String, notificationSettings: StreamChatNotificationSettings?, pK: Int, settings: StreamChatCallSettings?) {
+    public init(settings: StreamChatCallSettings?, updatedAt: String, appPK: Int, createdAt: String, name: String, notificationSettings: StreamChatNotificationSettings?, pK: Int) {
+        self.settings = settings
+        
         self.updatedAt = updatedAt
         
         self.appPK = appPK
@@ -31,11 +33,11 @@ public struct StreamChatCallType: Codable, Hashable {
         self.notificationSettings = notificationSettings
         
         self.pK = pK
-        
-        self.settings = settings
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
+        case settings = "Settings"
+        
         case updatedAt = "UpdatedAt"
         
         case appPK = "AppPK"
@@ -47,12 +49,12 @@ public struct StreamChatCallType: Codable, Hashable {
         case notificationSettings = "NotificationSettings"
         
         case pK = "PK"
-        
-        case settings = "Settings"
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(settings, forKey: .settings)
         
         try container.encode(updatedAt, forKey: .updatedAt)
         
@@ -65,7 +67,5 @@ public struct StreamChatCallType: Codable, Hashable {
         try container.encode(notificationSettings, forKey: .notificationSettings)
         
         try container.encode(pK, forKey: .pK)
-        
-        try container.encode(settings, forKey: .settings)
     }
 }

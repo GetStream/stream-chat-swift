@@ -10,11 +10,11 @@ public struct StreamChatUpdateUsersRequest: Codable, Hashable {
     public init(users: [String: RawJSON]) {
         self.users = users
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case users
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

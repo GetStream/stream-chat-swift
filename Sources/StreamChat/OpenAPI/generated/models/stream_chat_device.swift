@@ -34,7 +34,7 @@ public struct StreamChatDevice: Codable, Hashable {
         
         self.pushProvider = pushProvider
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case pushProviderName = "push_provider_name"
         
@@ -50,7 +50,7 @@ public struct StreamChatDevice: Codable, Hashable {
         
         case pushProvider = "push_provider"
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

@@ -38,7 +38,7 @@ public struct StreamChatNotificationRemovedFromChannelEvent: Codable, Hashable {
         
         self.type = type
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case user
         
@@ -56,7 +56,7 @@ public struct StreamChatNotificationRemovedFromChannelEvent: Codable, Hashable {
         
         case type
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

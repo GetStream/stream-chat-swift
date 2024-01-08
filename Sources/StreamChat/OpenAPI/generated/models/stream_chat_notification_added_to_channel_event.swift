@@ -5,8 +5,6 @@
 import Foundation
 
 public struct StreamChatNotificationAddedToChannelEvent: Codable, Hashable {
-    public var cid: String
-    
     public var createdAt: String
     
     public var member: StreamChatChannelMember?
@@ -19,9 +17,9 @@ public struct StreamChatNotificationAddedToChannelEvent: Codable, Hashable {
     
     public var channelType: String
     
-    public init(cid: String, createdAt: String, member: StreamChatChannelMember?, type: String, channel: StreamChatChannelResponse?, channelId: String, channelType: String) {
-        self.cid = cid
-        
+    public var cid: String
+    
+    public init(createdAt: String, member: StreamChatChannelMember?, type: String, channel: StreamChatChannelResponse?, channelId: String, channelType: String, cid: String) {
         self.createdAt = createdAt
         
         self.member = member
@@ -33,11 +31,11 @@ public struct StreamChatNotificationAddedToChannelEvent: Codable, Hashable {
         self.channelId = channelId
         
         self.channelType = channelType
-    }
-
-    public enum CodingKeys: String, CodingKey, CaseIterable {
-        case cid
         
+        self.cid = cid
+    }
+    
+    public enum CodingKeys: String, CodingKey, CaseIterable {
         case createdAt = "created_at"
         
         case member
@@ -49,12 +47,12 @@ public struct StreamChatNotificationAddedToChannelEvent: Codable, Hashable {
         case channelId = "channel_id"
         
         case channelType = "channel_type"
+        
+        case cid
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
-        try container.encode(cid, forKey: .cid)
         
         try container.encode(createdAt, forKey: .createdAt)
         
@@ -67,5 +65,7 @@ public struct StreamChatNotificationAddedToChannelEvent: Codable, Hashable {
         try container.encode(channelId, forKey: .channelId)
         
         try container.encode(channelType, forKey: .channelType)
+        
+        try container.encode(cid, forKey: .cid)
     }
 }

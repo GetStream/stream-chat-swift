@@ -14,13 +14,13 @@ public struct StreamChatLabel: Codable, Hashable {
         
         self.phraseListIds = phraseListIds
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case name
         
         case phraseListIds = "phrase_list_ids"
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

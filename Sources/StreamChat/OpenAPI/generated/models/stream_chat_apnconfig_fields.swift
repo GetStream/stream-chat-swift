@@ -5,9 +5,13 @@
 import Foundation
 
 public struct StreamChatAPNConfigFields: Codable, Hashable {
-    public var authKey: String?
+    public var teamId: String?
     
-    public var development: Bool
+    public var authType: String?
+    
+    public var bundleId: String?
+    
+    public var enabled: Bool
     
     public var host: String?
     
@@ -17,18 +21,18 @@ public struct StreamChatAPNConfigFields: Codable, Hashable {
     
     public var p12Cert: String?
     
-    public var teamId: String?
+    public var authKey: String?
     
-    public var authType: String?
+    public var development: Bool
     
-    public var bundleId: String?
-    
-    public var enabled: Bool
-    
-    public init(authKey: String?, development: Bool, host: String?, keyId: String?, notificationTemplate: String, p12Cert: String?, teamId: String?, authType: String?, bundleId: String?, enabled: Bool) {
-        self.authKey = authKey
+    public init(teamId: String?, authType: String?, bundleId: String?, enabled: Bool, host: String?, keyId: String?, notificationTemplate: String, p12Cert: String?, authKey: String?, development: Bool) {
+        self.teamId = teamId
         
-        self.development = development
+        self.authType = authType
+        
+        self.bundleId = bundleId
+        
+        self.enabled = enabled
         
         self.host = host
         
@@ -38,19 +42,19 @@ public struct StreamChatAPNConfigFields: Codable, Hashable {
         
         self.p12Cert = p12Cert
         
-        self.teamId = teamId
+        self.authKey = authKey
         
-        self.authType = authType
-        
-        self.bundleId = bundleId
-        
-        self.enabled = enabled
+        self.development = development
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case authKey = "auth_key"
+        case teamId = "team_id"
         
-        case development
+        case authType = "auth_type"
+        
+        case bundleId = "bundle_id"
+        
+        case enabled
         
         case host
         
@@ -60,21 +64,21 @@ public struct StreamChatAPNConfigFields: Codable, Hashable {
         
         case p12Cert = "p12_cert"
         
-        case teamId = "team_id"
+        case authKey = "auth_key"
         
-        case authType = "auth_type"
-        
-        case bundleId = "bundle_id"
-        
-        case enabled
+        case development
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(authKey, forKey: .authKey)
+        try container.encode(teamId, forKey: .teamId)
         
-        try container.encode(development, forKey: .development)
+        try container.encode(authType, forKey: .authType)
+        
+        try container.encode(bundleId, forKey: .bundleId)
+        
+        try container.encode(enabled, forKey: .enabled)
         
         try container.encode(host, forKey: .host)
         
@@ -84,12 +88,8 @@ public struct StreamChatAPNConfigFields: Codable, Hashable {
         
         try container.encode(p12Cert, forKey: .p12Cert)
         
-        try container.encode(teamId, forKey: .teamId)
+        try container.encode(authKey, forKey: .authKey)
         
-        try container.encode(authType, forKey: .authType)
-        
-        try container.encode(bundleId, forKey: .bundleId)
-        
-        try container.encode(enabled, forKey: .enabled)
+        try container.encode(development, forKey: .development)
     }
 }

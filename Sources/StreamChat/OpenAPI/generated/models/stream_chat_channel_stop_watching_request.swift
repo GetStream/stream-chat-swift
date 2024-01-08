@@ -10,11 +10,11 @@ public struct StreamChatChannelStopWatchingRequest: Codable, Hashable {
     public init(connectionId: String?) {
         self.connectionId = connectionId
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case connectionId = "connection_id"
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

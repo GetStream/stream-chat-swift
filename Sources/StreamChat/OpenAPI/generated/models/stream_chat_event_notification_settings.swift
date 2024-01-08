@@ -14,13 +14,13 @@ public struct StreamChatEventNotificationSettings: Codable, Hashable {
         
         self.apns = apns
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case enabled
         
         case apns
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

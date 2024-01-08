@@ -5,27 +5,27 @@
 import Foundation
 
 public struct StreamChatUpdateMessageRequest: Codable, Hashable {
+    public var message: StreamChatMessageRequest
+    
     public var skipEnrichUrl: Bool?
     
-    public var message: StreamChatMessageRequest1
-    
-    public init(skipEnrichUrl: Bool?, message: StreamChatMessageRequest1) {
-        self.skipEnrichUrl = skipEnrichUrl
-        
+    public init(message: StreamChatMessageRequest, skipEnrichUrl: Bool?) {
         self.message = message
-    }
-
-    public enum CodingKeys: String, CodingKey, CaseIterable {
-        case skipEnrichUrl = "skip_enrich_url"
         
-        case message
+        self.skipEnrichUrl = skipEnrichUrl
     }
-
+    
+    public enum CodingKeys: String, CodingKey, CaseIterable {
+        case message
+        
+        case skipEnrichUrl = "skip_enrich_url"
+    }
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(skipEnrichUrl, forKey: .skipEnrichUrl)
-        
         try container.encode(message, forKey: .message)
+        
+        try container.encode(skipEnrichUrl, forKey: .skipEnrichUrl)
     }
 }

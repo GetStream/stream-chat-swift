@@ -13,11 +13,7 @@ public struct StreamChatTruncateChannelRequest: Codable, Hashable {
     
     public var truncatedAt: String?
     
-    public var user: StreamChatUserObjectRequest?
-    
-    public var userId: String?
-    
-    public init(hardDelete: Bool?, message: StreamChatMessageRequest?, skipPush: Bool?, truncatedAt: String?, user: StreamChatUserObjectRequest?, userId: String?) {
+    public init(hardDelete: Bool?, message: StreamChatMessageRequest?, skipPush: Bool?, truncatedAt: String?) {
         self.hardDelete = hardDelete
         
         self.message = message
@@ -25,12 +21,8 @@ public struct StreamChatTruncateChannelRequest: Codable, Hashable {
         self.skipPush = skipPush
         
         self.truncatedAt = truncatedAt
-        
-        self.user = user
-        
-        self.userId = userId
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case hardDelete = "hard_delete"
         
@@ -39,12 +31,8 @@ public struct StreamChatTruncateChannelRequest: Codable, Hashable {
         case skipPush = "skip_push"
         
         case truncatedAt = "truncated_at"
-        
-        case user
-        
-        case userId = "user_id"
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
@@ -55,9 +43,5 @@ public struct StreamChatTruncateChannelRequest: Codable, Hashable {
         try container.encode(skipPush, forKey: .skipPush)
         
         try container.encode(truncatedAt, forKey: .truncatedAt)
-        
-        try container.encode(user, forKey: .user)
-        
-        try container.encode(userId, forKey: .userId)
     }
 }

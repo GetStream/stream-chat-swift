@@ -5,35 +5,35 @@
 import Foundation
 
 public struct StreamChatTargetResolution: Codable, Hashable {
-    public var width: Int
-    
     public var bitrate: Int
     
     public var height: Int
     
-    public init(width: Int, bitrate: Int, height: Int) {
-        self.width = width
-        
+    public var width: Int
+    
+    public init(bitrate: Int, height: Int, width: Int) {
         self.bitrate = bitrate
         
         self.height = height
-    }
-
-    public enum CodingKeys: String, CodingKey, CaseIterable {
-        case width
         
+        self.width = width
+    }
+    
+    public enum CodingKeys: String, CodingKey, CaseIterable {
         case bitrate
         
         case height
+        
+        case width
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
-        try container.encode(width, forKey: .width)
         
         try container.encode(bitrate, forKey: .bitrate)
         
         try container.encode(height, forKey: .height)
+        
+        try container.encode(width, forKey: .width)
     }
 }

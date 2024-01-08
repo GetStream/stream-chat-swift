@@ -14,13 +14,13 @@ public struct StreamChatQueryBannedUsersResponse: Codable, Hashable {
         
         self.duration = duration
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case bans
         
         case duration
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

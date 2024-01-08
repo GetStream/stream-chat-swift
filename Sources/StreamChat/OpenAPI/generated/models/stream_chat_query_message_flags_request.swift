@@ -34,7 +34,7 @@ public struct StreamChatQueryMessageFlagsRequest: Codable, Hashable {
         
         self.limit = limit
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case offset
         
@@ -50,7 +50,7 @@ public struct StreamChatQueryMessageFlagsRequest: Codable, Hashable {
         
         case limit
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

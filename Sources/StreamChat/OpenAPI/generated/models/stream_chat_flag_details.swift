@@ -14,13 +14,13 @@ public struct StreamChatFlagDetails: Codable, Hashable {
         
         self.automod = automod
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case extra = "Extra"
         
         case automod
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

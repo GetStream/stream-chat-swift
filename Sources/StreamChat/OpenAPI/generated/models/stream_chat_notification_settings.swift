@@ -26,7 +26,7 @@ public struct StreamChatNotificationSettings: Codable, Hashable {
         
         self.sessionStarted = sessionStarted
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case callLiveStarted = "call_live_started"
         
@@ -38,7 +38,7 @@ public struct StreamChatNotificationSettings: Codable, Hashable {
         
         case sessionStarted = "session_started"
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

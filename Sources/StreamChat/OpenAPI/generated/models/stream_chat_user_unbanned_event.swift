@@ -5,10 +5,6 @@
 import Foundation
 
 public struct StreamChatUserUnbannedEvent: Codable, Hashable {
-    public var team: String?
-    
-    public var type: String
-    
     public var user: StreamChatUserObject?
     
     public var channelId: String
@@ -21,11 +17,11 @@ public struct StreamChatUserUnbannedEvent: Codable, Hashable {
     
     public var shadow: Bool
     
-    public init(team: String?, type: String, user: StreamChatUserObject?, channelId: String, channelType: String, cid: String, createdAt: String, shadow: Bool) {
-        self.team = team
-        
-        self.type = type
-        
+    public var team: String?
+    
+    public var type: String
+    
+    public init(user: StreamChatUserObject?, channelId: String, channelType: String, cid: String, createdAt: String, shadow: Bool, team: String?, type: String) {
         self.user = user
         
         self.channelId = channelId
@@ -37,13 +33,13 @@ public struct StreamChatUserUnbannedEvent: Codable, Hashable {
         self.createdAt = createdAt
         
         self.shadow = shadow
+        
+        self.team = team
+        
+        self.type = type
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case team
-        
-        case type
-        
         case user
         
         case channelId = "channel_id"
@@ -55,14 +51,14 @@ public struct StreamChatUserUnbannedEvent: Codable, Hashable {
         case createdAt = "created_at"
         
         case shadow
+        
+        case team
+        
+        case type
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
-        try container.encode(team, forKey: .team)
-        
-        try container.encode(type, forKey: .type)
         
         try container.encode(user, forKey: .user)
         
@@ -75,5 +71,9 @@ public struct StreamChatUserUnbannedEvent: Codable, Hashable {
         try container.encode(createdAt, forKey: .createdAt)
         
         try container.encode(shadow, forKey: .shadow)
+        
+        try container.encode(team, forKey: .team)
+        
+        try container.encode(type, forKey: .type)
     }
 }

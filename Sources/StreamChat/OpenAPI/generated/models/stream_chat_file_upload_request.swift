@@ -14,13 +14,13 @@ public struct StreamChatFileUploadRequest: Codable, Hashable {
         
         self.user = user
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case file
         
         case user
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

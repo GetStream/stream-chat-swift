@@ -7,18 +7,18 @@ import Foundation
 public struct StreamChatSyncResponse: Codable, Hashable {
     public var duration: String
     
-    public var events: [StreamChatEvent?]
+    public var events: [StreamChatWSEvent]
     
     public var inaccessibleCids: [String]?
     
-    public init(duration: String, events: [StreamChatEvent?], inaccessibleCids: [String]?) {
+    public init(duration: String, events: [StreamChatWSEvent], inaccessibleCids: [String]?) {
         self.duration = duration
         
         self.events = events
         
         self.inaccessibleCids = inaccessibleCids
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case duration
         
@@ -26,7 +26,7 @@ public struct StreamChatSyncResponse: Codable, Hashable {
         
         case inaccessibleCids = "inaccessible_cids"
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

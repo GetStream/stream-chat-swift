@@ -5,91 +5,91 @@
 import Foundation
 
 public struct StreamChatCallSettings: Codable, Hashable {
-    public var geofencing: StreamChatGeofenceSettings?
+    public var thumbnails: StreamChatThumbnailsSettings?
+    
+    public var audio: StreamChatAudioSettings?
+    
+    public var backstage: StreamChatBackstageSettings?
     
     public var recording: StreamChatRecordSettings?
     
     public var ring: StreamChatRingSettings?
     
-    public var thumbnails: StreamChatThumbnailsSettings?
-    
-    public var video: StreamChatVideoSettings?
-    
-    public var audio: StreamChatAudioSettings?
-    
-    public var broadcasting: StreamChatBroadcastSettings?
-    
     public var screensharing: StreamChatScreensharingSettings?
     
     public var transcription: StreamChatTranscriptionSettings?
     
-    public var backstage: StreamChatBackstageSettings?
+    public var video: StreamChatVideoSettings?
     
-    public init(geofencing: StreamChatGeofenceSettings?, recording: StreamChatRecordSettings?, ring: StreamChatRingSettings?, thumbnails: StreamChatThumbnailsSettings?, video: StreamChatVideoSettings?, audio: StreamChatAudioSettings?, broadcasting: StreamChatBroadcastSettings?, screensharing: StreamChatScreensharingSettings?, transcription: StreamChatTranscriptionSettings?, backstage: StreamChatBackstageSettings?) {
-        self.geofencing = geofencing
+    public var broadcasting: StreamChatBroadcastSettings?
+    
+    public var geofencing: StreamChatGeofenceSettings?
+    
+    public init(thumbnails: StreamChatThumbnailsSettings?, audio: StreamChatAudioSettings?, backstage: StreamChatBackstageSettings?, recording: StreamChatRecordSettings?, ring: StreamChatRingSettings?, screensharing: StreamChatScreensharingSettings?, transcription: StreamChatTranscriptionSettings?, video: StreamChatVideoSettings?, broadcasting: StreamChatBroadcastSettings?, geofencing: StreamChatGeofenceSettings?) {
+        self.thumbnails = thumbnails
+        
+        self.audio = audio
+        
+        self.backstage = backstage
         
         self.recording = recording
         
         self.ring = ring
         
-        self.thumbnails = thumbnails
-        
-        self.video = video
-        
-        self.audio = audio
-        
-        self.broadcasting = broadcasting
-        
         self.screensharing = screensharing
         
         self.transcription = transcription
         
-        self.backstage = backstage
+        self.video = video
+        
+        self.broadcasting = broadcasting
+        
+        self.geofencing = geofencing
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case geofencing
+        case thumbnails
+        
+        case audio
+        
+        case backstage
         
         case recording
         
         case ring
         
-        case thumbnails
-        
-        case video
-        
-        case audio
-        
-        case broadcasting
-        
         case screensharing
         
         case transcription
         
-        case backstage
+        case video
+        
+        case broadcasting
+        
+        case geofencing
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(geofencing, forKey: .geofencing)
+        try container.encode(thumbnails, forKey: .thumbnails)
+        
+        try container.encode(audio, forKey: .audio)
+        
+        try container.encode(backstage, forKey: .backstage)
         
         try container.encode(recording, forKey: .recording)
         
         try container.encode(ring, forKey: .ring)
         
-        try container.encode(thumbnails, forKey: .thumbnails)
-        
-        try container.encode(video, forKey: .video)
-        
-        try container.encode(audio, forKey: .audio)
-        
-        try container.encode(broadcasting, forKey: .broadcasting)
-        
         try container.encode(screensharing, forKey: .screensharing)
         
         try container.encode(transcription, forKey: .transcription)
         
-        try container.encode(backstage, forKey: .backstage)
+        try container.encode(video, forKey: .video)
+        
+        try container.encode(broadcasting, forKey: .broadcasting)
+        
+        try container.encode(geofencing, forKey: .geofencing)
     }
 }

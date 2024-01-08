@@ -30,7 +30,7 @@ public struct StreamChatChannelVisibleEvent: Codable, Hashable {
         
         self.user = user
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case channelId = "channel_id"
         
@@ -44,7 +44,7 @@ public struct StreamChatChannelVisibleEvent: Codable, Hashable {
         
         case user
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

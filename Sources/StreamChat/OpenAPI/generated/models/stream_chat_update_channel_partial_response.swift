@@ -18,7 +18,7 @@ public struct StreamChatUpdateChannelPartialResponse: Codable, Hashable {
         
         self.members = members
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case channel
         
@@ -26,7 +26,7 @@ public struct StreamChatUpdateChannelPartialResponse: Codable, Hashable {
         
         case members
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

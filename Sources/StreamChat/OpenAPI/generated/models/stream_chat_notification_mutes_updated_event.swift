@@ -18,7 +18,7 @@ public struct StreamChatNotificationMutesUpdatedEvent: Codable, Hashable {
         
         self.type = type
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case createdAt = "created_at"
         
@@ -26,7 +26,7 @@ public struct StreamChatNotificationMutesUpdatedEvent: Codable, Hashable {
         
         case type
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

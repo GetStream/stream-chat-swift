@@ -5,8 +5,6 @@
 import Foundation
 
 public struct StreamChatBanResponse: Codable, Hashable {
-    public var user: StreamChatUserObject?
-    
     public var bannedBy: StreamChatUserObject?
     
     public var channel: StreamChatChannelResponse?
@@ -19,9 +17,9 @@ public struct StreamChatBanResponse: Codable, Hashable {
     
     public var shadow: Bool?
     
-    public init(user: StreamChatUserObject?, bannedBy: StreamChatUserObject?, channel: StreamChatChannelResponse?, createdAt: String, expires: String?, reason: String?, shadow: Bool?) {
-        self.user = user
-        
+    public var user: StreamChatUserObject?
+    
+    public init(bannedBy: StreamChatUserObject?, channel: StreamChatChannelResponse?, createdAt: String, expires: String?, reason: String?, shadow: Bool?, user: StreamChatUserObject?) {
         self.bannedBy = bannedBy
         
         self.channel = channel
@@ -33,11 +31,11 @@ public struct StreamChatBanResponse: Codable, Hashable {
         self.reason = reason
         
         self.shadow = shadow
-    }
-
-    public enum CodingKeys: String, CodingKey, CaseIterable {
-        case user
         
+        self.user = user
+    }
+    
+    public enum CodingKeys: String, CodingKey, CaseIterable {
         case bannedBy = "banned_by"
         
         case channel
@@ -49,12 +47,12 @@ public struct StreamChatBanResponse: Codable, Hashable {
         case reason
         
         case shadow
+        
+        case user
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
-        try container.encode(user, forKey: .user)
         
         try container.encode(bannedBy, forKey: .bannedBy)
         
@@ -67,5 +65,7 @@ public struct StreamChatBanResponse: Codable, Hashable {
         try container.encode(reason, forKey: .reason)
         
         try container.encode(shadow, forKey: .shadow)
+        
+        try container.encode(user, forKey: .user)
     }
 }

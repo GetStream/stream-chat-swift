@@ -14,13 +14,13 @@ public struct StreamChatSortParam: Codable, Hashable {
         
         self.field = field
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case direction
         
         case field
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

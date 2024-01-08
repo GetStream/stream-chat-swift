@@ -5,6 +5,8 @@
 import Foundation
 
 public struct StreamChatAction: Codable, Hashable {
+    public var value: String?
+    
     public var name: String
     
     public var style: String?
@@ -13,9 +15,9 @@ public struct StreamChatAction: Codable, Hashable {
     
     public var type: String
     
-    public var value: String?
-    
-    public init(name: String, style: String?, text: String, type: String, value: String?) {
+    public init(value: String?, name: String, style: String?, text: String, type: String) {
+        self.value = value
+        
         self.name = name
         
         self.style = style
@@ -23,11 +25,11 @@ public struct StreamChatAction: Codable, Hashable {
         self.text = text
         
         self.type = type
-        
-        self.value = value
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
+        case value
+        
         case name
         
         case style
@@ -35,12 +37,12 @@ public struct StreamChatAction: Codable, Hashable {
         case text
         
         case type
-        
-        case value
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(value, forKey: .value)
         
         try container.encode(name, forKey: .name)
         
@@ -49,7 +51,5 @@ public struct StreamChatAction: Codable, Hashable {
         try container.encode(text, forKey: .text)
         
         try container.encode(type, forKey: .type)
-        
-        try container.encode(value, forKey: .value)
     }
 }

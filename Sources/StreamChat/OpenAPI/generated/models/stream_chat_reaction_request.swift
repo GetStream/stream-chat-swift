@@ -5,10 +5,6 @@
 import Foundation
 
 public struct StreamChatReactionRequest: Codable, Hashable {
-    public var custom: [String: RawJSON]?
-    
-    public var messageId: String?
-    
     public var score: Int?
     
     public var type: String
@@ -17,11 +13,11 @@ public struct StreamChatReactionRequest: Codable, Hashable {
     
     public var userId: String?
     
-    public init(custom: [String: RawJSON]?, messageId: String?, score: Int?, type: String, user: StreamChatUserObjectRequest?, userId: String?) {
-        self.custom = custom
-        
-        self.messageId = messageId
-        
+    public var custom: [String: RawJSON]?
+    
+    public var messageId: String?
+    
+    public init(score: Int?, type: String, user: StreamChatUserObjectRequest?, userId: String?, custom: [String: RawJSON]?, messageId: String?) {
         self.score = score
         
         self.type = type
@@ -29,13 +25,13 @@ public struct StreamChatReactionRequest: Codable, Hashable {
         self.user = user
         
         self.userId = userId
+        
+        self.custom = custom
+        
+        self.messageId = messageId
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case custom = "Custom"
-        
-        case messageId = "message_id"
-        
         case score
         
         case type
@@ -43,14 +39,14 @@ public struct StreamChatReactionRequest: Codable, Hashable {
         case user
         
         case userId = "user_id"
+        
+        case custom = "Custom"
+        
+        case messageId = "message_id"
     }
-
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
-        try container.encode(custom, forKey: .custom)
-        
-        try container.encode(messageId, forKey: .messageId)
         
         try container.encode(score, forKey: .score)
         
@@ -59,5 +55,9 @@ public struct StreamChatReactionRequest: Codable, Hashable {
         try container.encode(user, forKey: .user)
         
         try container.encode(userId, forKey: .userId)
+        
+        try container.encode(custom, forKey: .custom)
+        
+        try container.encode(messageId, forKey: .messageId)
     }
 }
