@@ -656,7 +656,7 @@ lane :copyright do
     repo: github_repo,
     title: commit_message,
     head: branch_name,
-    base: 'develop',
+    base: 'test-copyright-update', # originaly develop
     body: 'This PR was created automatically by CI.'
   )
 end
