@@ -102,6 +102,37 @@ final class MessageRepositoryTests: XCTestCase {
         }
     }
 
+    func test_sendMessage_APIFailure_whenMessageAlreadyExists_DoNotMarkMessageAsFailed() throws {
+        let id = MessageId.unique
+        try createMessage(id: id, localState: .pendingSend)
+        let expectation = self.expectation(description: "Send Message completes")
+        var result: Result<ChatMessage, MessageRepositoryError>?
+        repository.sendMessage(with: id) {
+            result = $0
+            expectation.fulfill()
+        }
+
+        wait(for: [apiClient.request_expectation], timeout: defaultTimeout)
+
+        let alreadyExistsError = ClientError(with: ErrorPayload(code: 4, message: "", statusCode: 400))
+        (apiClient.request_completion as? (Result<MessagePayload.Boxed, Error>) -> Void)?(.failure(alreadyExistsError))
+
+        wait(for: [expectation], timeout: defaultTimeout)
+
+        var currentMessageState: LocalMessageState?
+        try database.writeSynchronously { session in
+            currentMessageState = session.message(id: id)?.localMessageState
+        }
+
+        XCTAssertFalse(currentMessageState == .sendingFailed)
+        switch result?.error {
+        case .messageAlreadyExists:
+            break
+        default:
+            XCTFail()
+        }
+    }
+
     func test_sendMessage_APISuccess() throws {
         let id = MessageId.unique
         try createMessage(id: id, localState: .pendingSend)
@@ -196,6 +227,16 @@ final class MessageRepositoryTests: XCTestCase {
     func test_saveSuccessfullySentMessage_channelPayload_sendingFailed() throws {
         let id = MessageId.unique
         try createMessage(id: id, localState: .sendingFailed)
+        let payload = MessagePayload.dummy(messageId: id, authorUserId: .anonymous, channel: nil)
+
+        let message = runSaveSuccessfullySentMessageAndWait(payload: payload)
+        XCTAssertNotNil(message)
+        XCTAssertNil(message?.localState)
+    }
+
+    func test_saveSuccessfullySentMessage_channelPayload_pendingSend() throws {
+        let id = MessageId.unique
+        try createMessage(id: id, localState: .pendingSend)
         let payload = MessagePayload.dummy(messageId: id, authorUserId: .anonymous, channel: nil)
 
         let message = runSaveSuccessfullySentMessageAndWait(payload: payload)

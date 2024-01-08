@@ -9,6 +9,7 @@ enum MessageRepositoryError: LocalizedError {
     case messageNotPendingSend
     case messageDoesNotHaveValidChannel
     case failedToSendMessage(Error)
+    case messageAlreadyExists
 }
 
 class MessageRepository {
@@ -95,7 +96,7 @@ class MessageRepository {
     ) {
         database.write({
             let messageDTO = try $0.saveMessage(payload: message, for: cid, syncOwnReactions: false, cache: nil)
-            if messageDTO.localMessageState == .sending || messageDTO.localMessageState == .sendingFailed {
+            if messageDTO.localMessageState?.isLocalOnly == true {
                 messageDTO.locallyCreatedAt = nil
                 messageDTO.localMessageState = nil
             }
@@ -116,6 +117,11 @@ class MessageRepository {
         completion: @escaping (Result<ChatMessage, MessageRepositoryError>) -> Void
     ) {
         log.error("Sending the message with id \(messageId) failed with error: \(error)")
+
+        if let clientError = error as? ClientError, clientError.isMessageAlreadyExists {
+            completion(.failure(.messageAlreadyExists))
+            return
+        }
 
         markMessageAsFailedToSend(id: messageId) {
             completion(.failure(.failedToSendMessage(error)))

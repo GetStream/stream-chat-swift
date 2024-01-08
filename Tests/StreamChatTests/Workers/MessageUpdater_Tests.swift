@@ -187,8 +187,59 @@ final class MessageUpdater_Tests: XCTestCase {
             )
         }
 
-        // Load the message
-        let message = try XCTUnwrap(database.viewContext.message(id: messageId))
+        // Edit created message with new text
+        let completionError = try waitFor {
+            messageUpdater.editMessage(messageId: messageId, text: updatedText, completion: $0)
+        }
+
+        // Load the edited message
+        let editedMessage = try XCTUnwrap(database.viewContext.message(id: messageId))
+
+        // Assert completion is called without any error
+        XCTAssertNil(completionError)
+        // Assert message still has expected local state
+        XCTAssertEqual(editedMessage.localMessageState, .pendingSend)
+        // Assert message text is updated correctly
+        XCTAssertEqual(editedMessage.text, updatedText)
+    }
+
+    func test_editMessage_whenIsLocalOnly_shouldResendMessage() throws {
+        let currentUserId: UserId = .unique
+        let messageId: MessageId = .unique
+        let updatedText: String = .unique
+        let localStates: [LocalMessageState] = [.sending, .sendingFailed, .pendingSend]
+
+        // Flush the database
+        let exp = expectation(description: "removeAllData completion")
+        database.removeAllData { error in
+            if let error = error {
+                XCTFail("removeAllData failed with \(error)")
+            }
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: defaultTimeout)
+
+        // Create current user is the database
+        try database.createCurrentUser(id: currentUserId)
+
+        // Create a new bounced message in the database
+        let channelId = ChannelId.unique
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: channelId)))
+            let messageDTO = try session.saveMessage(
+                payload: .dummy(
+                    messageId: messageId,
+                    moderationDetails: .init(
+                        originalText: "",
+                        action: MessageModerationAction.bounce.rawValue
+                    )
+                ),
+                for: channelId,
+                syncOwnReactions: false,
+                cache: nil
+            )
+            messageDTO.localMessageState = localStates.randomElement()
+        }
 
         // Edit created message with new text
         let completionError = try waitFor {
@@ -201,61 +252,9 @@ final class MessageUpdater_Tests: XCTestCase {
         // Assert completion is called without any error
         XCTAssertNil(completionError)
         // Assert message still has expected local state
-        XCTAssertEqual(message.localMessageState, .pendingSend)
+        XCTAssertEqual(editedMessage.localMessageState, .pendingSend)
         // Assert message text is updated correctly
-        XCTAssertEqual(message.text, updatedText)
-    }
-
-    func test_editMessage_propogatesMessageEditingError_ifLocalStateIsInvalidForEditing() throws {
-        let invalidStates: [LocalMessageState] = [
-            .deleting,
-            .sending,
-            .syncing
-        ]
-
-        for state in invalidStates {
-            let currentUserId: UserId = .unique
-            let messageId: MessageId = .unique
-            let initialText: String = .unique
-            let updatedText: String = .unique
-
-            // Flush the database
-            let exp = expectation(description: "removeAllData completion")
-            database.removeAllData { error in
-                if let error = error {
-                    XCTFail("removeAllData failed with \(error)")
-                }
-                exp.fulfill()
-            }
-            wait(for: [exp], timeout: defaultTimeout)
-
-            // Create current user is the database
-            try database.createCurrentUser(id: currentUserId)
-
-            // Create a new message in the database
-            try database.createMessage(id: messageId, authorId: currentUserId, text: initialText, localState: state)
-
-            // Edit created message with new text
-            let completionError = try waitFor {
-                messageUpdater.editMessage(messageId: messageId, text: updatedText, completion: $0)
-            }
-
-            // Load the message
-            let message = try XCTUnwrap(database.viewContext.message(id: messageId))
-            let extraData = try XCTUnwrap(
-                message.extraData
-                    .map { try? JSONDecoder.default.decode([String: RawJSON].self, from: $0) }
-            )
-
-            // Assert `MessageEditing` error is received
-            XCTAssertTrue(completionError is ClientError.MessageEditing)
-            // Assert message stays in the same state
-            XCTAssertEqual(message.localMessageState, state)
-            // Assert message's text stays the same
-            XCTAssertEqual(message.text, initialText)
-            // Assert message's extra data stays the same
-            XCTAssertEqual(extraData, [:])
-        }
+        XCTAssertEqual(editedMessage.text, updatedText)
     }
 
     func test_editMessage_updatesLocalMessageCorrectlyWithExtraData() throws {
@@ -766,9 +765,6 @@ final class MessageUpdater_Tests: XCTestCase {
             )
             messageDTO.localMessageState = .sendingFailed
         }
-
-        // Load the message
-        let message = try XCTUnwrap(database.viewContext.message(id: secondMessageId))
 
         // Delete second message
         let expectation = expectation(description: "deleteMessage completes")
@@ -1788,11 +1784,24 @@ final class MessageUpdater_Tests: XCTestCase {
     }
 
     func test_pinMessage_updatesLocalMessageCorrectly() throws {
-        let pairs: [(LocalMessageState?, LocalMessageState?)] = [
+        var pairs: [(LocalMessageState?, LocalMessageState?)] = []
+
+        // Local only states:
+        pairs.append(contentsOf: [
+            (.pendingSend, .pendingSend),
+            (.sending, .pendingSend),
+            (.sendingFailed, .pendingSend)
+        ])
+
+        // Other states:
+        pairs.append(contentsOf: [
             (nil, .pendingSync),
             (.pendingSync, .pendingSync),
-            (.pendingSend, .pendingSend)
-        ]
+            (.syncing, .pendingSync),
+            (.syncingFailed, .pendingSync),
+            (.deleting, .pendingSync),
+            (.deletingFailed, .pendingSync)
+        ])
 
         for (initialState, expectedState) in pairs {
             let currentUserId: UserId = .unique
@@ -1831,51 +1840,6 @@ final class MessageUpdater_Tests: XCTestCase {
         }
     }
 
-    func test_pinMessage_propogatesMessageEditingError_ifLocalStateIsInvalidForPinning() throws {
-        let invalidStates: [LocalMessageState] = [
-            .deleting,
-            .sending,
-            .syncing
-        ]
-
-        for state in invalidStates {
-            let currentUserId: UserId = .unique
-            let messageId: MessageId = .unique
-            let initialText: String = .unique
-
-            // Flush the database
-            let exp = expectation(description: "removeAllData completion")
-            database.removeAllData { error in
-                if let error = error {
-                    XCTFail("removeAllData failed with \(error)")
-                }
-                exp.fulfill()
-            }
-            wait(for: [exp], timeout: defaultTimeout)
-
-            // Create current user is the database
-            try database.createCurrentUser(id: currentUserId)
-
-            // Create a new message in the database
-            try database.createMessage(id: messageId, authorId: currentUserId, text: initialText, localState: state)
-
-            let completionError = try waitFor {
-                messageUpdater.pinMessage(messageId: messageId, pinning: MessagePinning(expirationDate: .unique), completion: $0)
-            }
-
-            // Load the message
-            let message = try XCTUnwrap(database.viewContext.message(id: messageId))
-
-            XCTAssertTrue(completionError is ClientError.MessageEditing)
-            XCTAssertEqual(message.localMessageState, state)
-            XCTAssertEqual(message.text, initialText)
-            XCTAssertEqual(message.pinned, false)
-            XCTAssertNil(message.pinExpires)
-            XCTAssertNil(message.pinnedAt)
-            XCTAssertNil(message.pinnedBy)
-        }
-    }
-
     func test_unpinMessage_propogates_MessageDoesNotExist_Error() throws {
         try database.createCurrentUser()
 
@@ -1887,11 +1851,24 @@ final class MessageUpdater_Tests: XCTestCase {
     }
 
     func test_unpinMessage_updatesLocalMessageCorrectly() throws {
-        let pairs: [(LocalMessageState?, LocalMessageState?)] = [
+        var pairs: [(LocalMessageState?, LocalMessageState?)] = []
+
+        // Local only states:
+        pairs.append(contentsOf: [
+            (.pendingSend, .pendingSend),
+            (.sending, .pendingSend),
+            (.sendingFailed, .pendingSend)
+        ])
+
+        // Other states:
+        pairs.append(contentsOf: [
             (nil, .pendingSync),
             (.pendingSync, .pendingSync),
-            (.pendingSend, .pendingSend)
-        ]
+            (.syncing, .pendingSync),
+            (.syncingFailed, .pendingSync),
+            (.deleting, .pendingSync),
+            (.deletingFailed, .pendingSync)
+        ])
 
         for (initialState, expectedState) in pairs {
             let currentUserId: UserId = .unique

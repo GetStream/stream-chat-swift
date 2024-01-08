@@ -33,6 +33,10 @@ extension Error {
         return false
     }
 
+    var isMessageAlreadyExists: Bool {
+        ((self as? ClientError)?.underlyingError as? ErrorPayload)?.code == 4
+    }
+
     var isRateLimitError: Bool {
         if let error = (self as? ClientError)?.underlyingError as? ErrorPayload,
            error.statusCode == 429 {

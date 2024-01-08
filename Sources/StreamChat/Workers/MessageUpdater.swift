@@ -154,17 +154,13 @@ class MessageUpdater: Worker {
                 return
             }
 
-            switch messageDTO.localMessageState {
-            case nil, .pendingSync, .syncingFailed, .deletingFailed:
-                try updateMessage(localState: .pendingSync)
-            case .pendingSend, .sendingFailed:
+            if messageDTO.isLocalOnly {
                 try updateMessage(localState: .pendingSend)
-            case .sending, .syncing, .deleting:
-                throw ClientError.MessageEditing(
-                    messageId: messageId,
-                    reason: "message is in `\(messageDTO.localMessageState!)` state"
-                )
+                return
             }
+
+            try updateMessage(localState: .pendingSync)
+
         }, completion: {
             completion?($0)
         })
@@ -461,19 +457,8 @@ class MessageUpdater: Worker {
                 throw ClientError.MessageDoesNotExist(messageId: messageId)
             }
 
-            switch messageDTO.localMessageState {
-            case nil, .pendingSync, .syncingFailed, .deletingFailed:
-                try session.pin(message: messageDTO, pinning: pinning)
-                messageDTO.localMessageState = .pendingSync
-            case .pendingSend, .sendingFailed:
-                try session.pin(message: messageDTO, pinning: pinning)
-                messageDTO.localMessageState = .pendingSend
-            case .sending, .syncing, .deleting:
-                throw ClientError.MessageEditing(
-                    messageId: messageId,
-                    reason: "message is in `\(messageDTO.localMessageState!)` state"
-                )
-            }
+            try session.pin(message: messageDTO, pinning: pinning)
+            messageDTO.localMessageState = messageDTO.isLocalOnly ? .pendingSend : .pendingSync
         }, completion: {
             completion?($0)
         })
@@ -489,19 +474,8 @@ class MessageUpdater: Worker {
                 throw ClientError.MessageDoesNotExist(messageId: messageId)
             }
 
-            switch messageDTO.localMessageState {
-            case nil, .pendingSync, .syncingFailed, .deletingFailed:
-                session.unpin(message: messageDTO)
-                messageDTO.localMessageState = .pendingSync
-            case .pendingSend, .sendingFailed:
-                session.unpin(message: messageDTO)
-                messageDTO.localMessageState = .pendingSend
-            case .sending, .syncing, .deleting:
-                throw ClientError.MessageEditing(
-                    messageId: messageId,
-                    reason: "message is in `\(messageDTO.localMessageState!)` state"
-                )
-            }
+            session.unpin(message: messageDTO)
+            messageDTO.localMessageState = messageDTO.isLocalOnly ? .pendingSend : .pendingSync
         }, completion: {
             completion?($0)
         })

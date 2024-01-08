@@ -163,7 +163,8 @@ private class MessageSendingQueue {
                     switch error {
                     case .messageDoesNotExist,
                          .messageNotPendingSend,
-                         .messageDoesNotHaveValidChannel:
+                         .messageDoesNotHaveValidChannel,
+                         .messageAlreadyExists:
                         let event = NewMessageErrorEvent(messageId: request.messageId, error: error)
                         self?.eventsNotificationCenter.process(event)
                     case let .failedToSendMessage(error):
