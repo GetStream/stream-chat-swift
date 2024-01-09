@@ -16,6 +16,8 @@ class MessageRepository {
     let database: DatabaseContainer
     let apiClient: APIClient
 
+    var messageSendingOperations: [MessageId: Cancellable] = [:]
+
     init(database: DatabaseContainer, apiClient: APIClient) {
         self.database = database
         self.apiClient = apiClient
@@ -69,7 +71,8 @@ class MessageRepository {
                     skipPush: skipPush,
                     skipEnrichUrl: skipEnrichUrl
                 )
-                self?.apiClient.request(endpoint: endpoint) {
+
+                self?.messageSendingOperations[messageId] = self?.apiClient.request(endpoint: endpoint) {
                     switch $0 {
                     case let .success(payload):
                         self?.saveSuccessfullySentMessage(cid: cid, message: payload.message) { result in
@@ -84,6 +87,8 @@ class MessageRepository {
                     case let .failure(error):
                         self?.handleSendingMessageError(error, messageId: messageId, completion: completion)
                     }
+
+                    self?.messageSendingOperations[messageId] = nil
                 }
             })
         }

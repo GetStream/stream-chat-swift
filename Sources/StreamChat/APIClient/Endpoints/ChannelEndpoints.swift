@@ -130,7 +130,8 @@ extension Endpoint {
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
-            body: body
+            body: body,
+            cancellableId: messagePayload.id
         )
     }
 

@@ -4,7 +4,7 @@
 
 import Foundation
 
-class AsyncOperation: BaseOperation {
+class AsyncOperation: BaseOperation, Cancellable {
     enum Output {
         case retry
         case `continue`

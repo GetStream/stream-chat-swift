@@ -4,6 +4,12 @@
 
 import Foundation
 
+protocol Cancellable {
+    func cancel()
+}
+
+extension URLSessionTask: Cancellable {}
+
 /// An object allowing making request to Stream Chat servers.
 class APIClient {
     /// The URL session used for all requests.
@@ -23,6 +29,8 @@ class APIClient {
 
     /// The attachment uploader.
     let attachmentUploader: AttachmentUploader
+
+    var cancellableRequests: [String: Cancellable] = [:]
 
     /// Queue in charge of handling incoming requests
     private let operationQueue: OperationQueue = {
@@ -75,9 +83,10 @@ class APIClient {
     func request<Response: Decodable>(
         endpoint: Endpoint<Response>,
         completion: @escaping (Result<Response, Error>) -> Void
-    ) {
+    ) -> Cancellable {
         let requestOperation = operation(endpoint: endpoint, isRecoveryOperation: false, completion: completion)
         operationQueue.addOperation(requestOperation)
+        return requestOperation
     }
 
     /// Performs a network request and retries in case of network failures
@@ -241,6 +250,10 @@ class APIClient {
             }
 
             let task = self.session.dataTask(with: urlRequest) { [decoder = self.decoder] (data, response, error) in
+                if let cancellableId = endpoint.cancellableId {
+                    self.cancellableRequests[cancellableId] = nil
+                }
+                
                 do {
                     let decodedResponse: Response = try decoder.decodeRequestResponse(
                         data: data,
@@ -267,6 +280,9 @@ class APIClient {
                 }
             }
             task.resume()
+            if let cancellableId = endpoint.cancellableId {
+                cancellableRequests[cancellableId] = task
+            }
         }
     }
 

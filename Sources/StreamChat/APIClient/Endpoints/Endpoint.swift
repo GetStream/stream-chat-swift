@@ -11,6 +11,7 @@ struct Endpoint<ResponseType: Decodable>: Codable {
     let requiresConnectionId: Bool
     let requiresToken: Bool
     let body: Encodable?
+    let cancellableId: String? // If the request is cancellable
 
     init(
         path: EndpointPath,
@@ -18,7 +19,8 @@ struct Endpoint<ResponseType: Decodable>: Codable {
         queryItems: Encodable? = nil,
         requiresConnectionId: Bool = false,
         requiresToken: Bool = true,
-        body: Encodable? = nil
+        body: Encodable? = nil,
+        cancellableId: String? = nil
     ) {
         self.path = path
         self.method = method
@@ -26,6 +28,7 @@ struct Endpoint<ResponseType: Decodable>: Codable {
         self.requiresConnectionId = requiresConnectionId
         self.requiresToken = requiresToken
         self.body = body
+        self.cancellableId = cancellableId
     }
 
     // MARK: - Codable
@@ -47,6 +50,7 @@ struct Endpoint<ResponseType: Decodable>: Codable {
         requiresConnectionId = try container.decode(Bool.self, forKey: .requiresConnectionId)
         requiresToken = try container.decode(Bool.self, forKey: .requiresToken)
         body = try container.decodeIfPresent(Data.self, forKey: .body)
+        cancellableId = nil
     }
 
     func encode(to encoder: Encoder) throws {
