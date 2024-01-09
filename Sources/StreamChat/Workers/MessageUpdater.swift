@@ -154,14 +154,14 @@ class MessageUpdater: Worker {
                 return
             }
 
-            if messageDTO.isLocalOnly {
+            if messageDTO.localMessageState == .pendingSend || messageDTO.localMessageState == .sending {
                 if let messageSendingRequest = self.apiClient.cancellableRequests[messageId] {
                     messageSendingRequest.cancel()
                 }
                 if let messageSendingOperation = self.repository.messageSendingOperations[messageId] {
                     messageSendingOperation.cancel()
                 }
-                try updateMessage(localState: .pendingSend)
+                try updateMessage(localState: .pendingSync)
                 return
             }
 

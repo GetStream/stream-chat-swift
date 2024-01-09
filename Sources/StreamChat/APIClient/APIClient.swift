@@ -80,6 +80,7 @@ class APIClient {
     /// - Parameters:
     ///   - endpoint: The `Endpoint` used to create the network request.
     ///   - completion: Called when the networking request is finished.
+    @discardableResult
     func request<Response: Decodable>(
         endpoint: Endpoint<Response>,
         completion: @escaping (Result<Response, Error>) -> Void
