@@ -4,6 +4,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
+### 🐞 Fixed
+- Fix Channel ID initializer crashing with an empty string [#2964](https://github.com/GetStream/stream-chat-swift/pull/2964)
 ### ✅ Added
 - Expose `UserListQuery.search(term:)` and `UserListQuery.user(withID:)` [#2959](https://github.com/GetStream/stream-chat-swift/pull/2959)
 - Allow restarting pending attachments [#2958](https://github.com/GetStream/stream-chat-swift/pull/2958)
