@@ -320,7 +320,7 @@ final class MessageUpdater_Mock: MessageUpdater {
         unpinMessage_completion = completion
     }
 
-    override func restartAttachmentUploading(
+    override func restartFailedAttachmentUploading(
         with id: AttachmentId,
         completion: @escaping (Error?) -> Void
     ) {

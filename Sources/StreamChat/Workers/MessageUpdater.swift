@@ -511,13 +511,20 @@ class MessageUpdater: Worker {
     /// - Parameters:
     ///   - id: The attachment identifier.
     ///   - completion: Called when the attachment database entity is updated. Called with `Error` if update fails.
-    func restartAttachmentUploading(
+    func restartFailedAttachmentUploading(
         with id: AttachmentId,
         completion: @escaping (Error?) -> Void
     ) {
         database.write({
             guard let attachmentDTO = $0.attachment(id: id) else {
                 throw ClientError.AttachmentDoesNotExist(id: id)
+            }
+
+            guard case .uploadingFailed = attachmentDTO.localState else {
+                throw ClientError.AttachmentEditing(
+                    id: id,
+                    reason: "uploading can be restarted for attachments in `.uploadingFailed` state only"
+                )
             }
 
             attachmentDTO.localState = .pendingUpload
