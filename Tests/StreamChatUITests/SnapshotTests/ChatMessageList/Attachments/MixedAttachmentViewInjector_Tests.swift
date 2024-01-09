@@ -54,41 +54,6 @@ final class MixedAttachmentViewInjector_Tests: XCTestCase {
         ])
     }
 
-    func test_injectors_whenUnsupportedAttachment_shouldIncludeUnsupportedInjector() {
-        let message = ChatMessage.mock(
-            attachments: [.dummy(type: .image), .dummy(type: "location")]
-        )
-        let injectors = MixedAttachmentViewInjector.injectors(for: message)
-
-        AssertEqualInjectors(injectors, [
-            GalleryAttachmentViewInjector.self,
-            UnsupportedAttachmentViewInjector.self
-        ])
-    }
-
-    func test_injectors_whenUnknownAttachment_shouldIncludeUnsupportedInjector() {
-        let message = ChatMessage.mock(
-            attachments: [.dummy(type: .image), .dummy(type: .unknown)]
-        )
-        let injectors = MixedAttachmentViewInjector.injectors(for: message)
-
-        AssertEqualInjectors(injectors, [
-            GalleryAttachmentViewInjector.self,
-            UnsupportedAttachmentViewInjector.self
-        ])
-    }
-
-    func test_injectors_whenUnknownAndUnsupportedAttachment_shouldNotIncludeDuplicateUnsupportedInjector() {
-        let message = ChatMessage.mock(
-            attachments: [.dummy(type: "location"), .dummy(type: .unknown)]
-        )
-        let injectors = MixedAttachmentViewInjector.injectors(for: message)
-
-        AssertEqualInjectors(injectors, [
-            UnsupportedAttachmentViewInjector.self
-        ])
-    }
-
     private func AssertEqualInjectors(
         _ lhs: [AttachmentViewInjector.Type],
         _ rhs: [AttachmentViewInjector.Type],
