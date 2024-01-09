@@ -10,6 +10,7 @@ import Foundation
 ///
 public struct ChannelId: Hashable, CustomStringConvertible {
     private static let separator: Character = ":"
+    private static let separatorCharSet = CharacterSet(charactersIn: String(separator))
 
     public let rawValue: String
 
@@ -24,7 +25,7 @@ public struct ChannelId: Hashable, CustomStringConvertible {
     }
 
     public init(cid: String) throws {
-        let channelPair = cid.split(separator: ChannelId.separator)
+        let channelPair = cid.components(separatedBy: Self.separatorCharSet)
 
         guard
             channelPair.count == 2,
@@ -43,13 +44,13 @@ public struct ChannelId: Hashable, CustomStringConvertible {
 public extension ChannelId {
     /// The type of the channel the id belongs to.
     var type: ChannelType {
-        let channelPair = rawValue.split(separator: ChannelId.separator)
+        let channelPair = rawValue.components(separatedBy: Self.separatorCharSet)
         return ChannelType(rawValue: String(channelPair[0]))
     }
 
     /// The id of the channel without the encoded type information.
     var id: String {
-        let channelPair = rawValue.split(separator: ChannelId.separator)
+        let channelPair = rawValue.components(separatedBy: Self.separatorCharSet)
         return String(channelPair[1])
     }
 }
