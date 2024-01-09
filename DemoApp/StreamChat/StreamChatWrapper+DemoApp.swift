@@ -9,6 +9,8 @@ import StreamChatUI
 extension StreamChatWrapper {
     // Instantiates chat client
     func setUpChat() {
+        configureUI()
+
         guard client == nil else {
             log.error("Client was already instantiated")
             return
