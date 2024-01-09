@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.47.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.47.0)
+_January 09, 2024_
+
 ## StreamChat
 ### 🐞 Fixed
 - Fix Channel ID initializer crashing with an empty string [#2964](https://github.com/GetStream/stream-chat-swift/pull/2964)
