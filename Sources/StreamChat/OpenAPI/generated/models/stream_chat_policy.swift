@@ -5,12 +5,6 @@
 import Foundation
 
 public struct StreamChatPolicy: Codable, Hashable {
-    public var roles: [String]
-    
-    public var updatedAt: String
-    
-    public var action: Int
-    
     public var createdAt: String
     
     public var name: String
@@ -21,13 +15,13 @@ public struct StreamChatPolicy: Codable, Hashable {
     
     public var resources: [String]
     
-    public init(roles: [String], updatedAt: String, action: Int, createdAt: String, name: String, owner: Bool, priority: Int, resources: [String]) {
-        self.roles = roles
-        
-        self.updatedAt = updatedAt
-        
-        self.action = action
-        
+    public var roles: [String]
+    
+    public var updatedAt: String
+    
+    public var action: Int
+    
+    public init(createdAt: String, name: String, owner: Bool, priority: Int, resources: [String], roles: [String], updatedAt: String, action: Int) {
         self.createdAt = createdAt
         
         self.name = name
@@ -37,15 +31,15 @@ public struct StreamChatPolicy: Codable, Hashable {
         self.priority = priority
         
         self.resources = resources
+        
+        self.roles = roles
+        
+        self.updatedAt = updatedAt
+        
+        self.action = action
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case roles
-        
-        case updatedAt = "updated_at"
-        
-        case action
-        
         case createdAt = "created_at"
         
         case name
@@ -55,16 +49,16 @@ public struct StreamChatPolicy: Codable, Hashable {
         case priority
         
         case resources
+        
+        case roles
+        
+        case updatedAt = "updated_at"
+        
+        case action
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
-        try container.encode(roles, forKey: .roles)
-        
-        try container.encode(updatedAt, forKey: .updatedAt)
-        
-        try container.encode(action, forKey: .action)
         
         try container.encode(createdAt, forKey: .createdAt)
         
@@ -75,5 +69,11 @@ public struct StreamChatPolicy: Codable, Hashable {
         try container.encode(priority, forKey: .priority)
         
         try container.encode(resources, forKey: .resources)
+        
+        try container.encode(roles, forKey: .roles)
+        
+        try container.encode(updatedAt, forKey: .updatedAt)
+        
+        try container.encode(action, forKey: .action)
     }
 }

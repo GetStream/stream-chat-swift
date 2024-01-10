@@ -26,7 +26,7 @@ public struct StreamChatTruncateChannelResponse: Codable, Hashable {
         
         case message
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

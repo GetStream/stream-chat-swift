@@ -5,107 +5,107 @@
 import Foundation
 
 public struct StreamChatQueryChannelsRequest: Codable, Hashable {
+    public var user: StreamChatUserObjectRequest?
+    
     public var userId: String?
     
-    public var filterConditions: [String: RawJSON]?
+    public var watch: Bool?
     
-    public var presence: Bool?
-    
-    public var memberLimit: Int?
-    
-    public var messageLimit: Int?
+    public var limit: Int?
     
     public var offset: Int?
+    
+    public var presence: Bool?
     
     public var sort: [StreamChatSortParamRequest?]?
     
     public var state: Bool?
     
-    public var user: StreamChatUserObjectRequest?
-    
     public var connectionId: String?
     
-    public var limit: Int?
+    public var filterConditions: [String: RawJSON]?
     
-    public var watch: Bool?
+    public var memberLimit: Int?
     
-    public init(userId: String?, filterConditions: [String: RawJSON]?, presence: Bool?, memberLimit: Int?, messageLimit: Int?, offset: Int?, sort: [StreamChatSortParamRequest?]?, state: Bool?, user: StreamChatUserObjectRequest?, connectionId: String?, limit: Int?, watch: Bool?) {
+    public var messageLimit: Int?
+    
+    public init(user: StreamChatUserObjectRequest?, userId: String?, watch: Bool?, limit: Int?, offset: Int?, presence: Bool?, sort: [StreamChatSortParamRequest?]?, state: Bool?, connectionId: String?, filterConditions: [String: RawJSON]?, memberLimit: Int?, messageLimit: Int?) {
+        self.user = user
+        
         self.userId = userId
         
-        self.filterConditions = filterConditions
+        self.watch = watch
         
-        self.presence = presence
-        
-        self.memberLimit = memberLimit
-        
-        self.messageLimit = messageLimit
+        self.limit = limit
         
         self.offset = offset
+        
+        self.presence = presence
         
         self.sort = sort
         
         self.state = state
         
-        self.user = user
-        
         self.connectionId = connectionId
         
-        self.limit = limit
+        self.filterConditions = filterConditions
         
-        self.watch = watch
+        self.memberLimit = memberLimit
+        
+        self.messageLimit = messageLimit
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
+        case user
+        
         case userId = "user_id"
         
-        case filterConditions = "filter_conditions"
+        case watch
         
-        case presence
-        
-        case memberLimit = "member_limit"
-        
-        case messageLimit = "message_limit"
+        case limit
         
         case offset
+        
+        case presence
         
         case sort
         
         case state
         
-        case user
-        
         case connectionId = "connection_id"
         
-        case limit
+        case filterConditions = "filter_conditions"
         
-        case watch
+        case memberLimit = "member_limit"
+        
+        case messageLimit = "message_limit"
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
+        try container.encode(user, forKey: .user)
+        
         try container.encode(userId, forKey: .userId)
         
-        try container.encode(filterConditions, forKey: .filterConditions)
+        try container.encode(watch, forKey: .watch)
         
-        try container.encode(presence, forKey: .presence)
-        
-        try container.encode(memberLimit, forKey: .memberLimit)
-        
-        try container.encode(messageLimit, forKey: .messageLimit)
+        try container.encode(limit, forKey: .limit)
         
         try container.encode(offset, forKey: .offset)
+        
+        try container.encode(presence, forKey: .presence)
         
         try container.encode(sort, forKey: .sort)
         
         try container.encode(state, forKey: .state)
         
-        try container.encode(user, forKey: .user)
-        
         try container.encode(connectionId, forKey: .connectionId)
         
-        try container.encode(limit, forKey: .limit)
+        try container.encode(filterConditions, forKey: .filterConditions)
         
-        try container.encode(watch, forKey: .watch)
+        try container.encode(memberLimit, forKey: .memberLimit)
+        
+        try container.encode(messageLimit, forKey: .messageLimit)
     }
 }

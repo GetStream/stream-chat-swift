@@ -32,7 +32,7 @@ public struct StreamChatFlagMessageDetails: Codable, Hashable {
         
         case shouldEnrich = "should_enrich"
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

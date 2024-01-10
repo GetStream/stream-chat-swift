@@ -5,11 +5,11 @@
 import Foundation
 
 public struct StreamChatUserResponse: Codable, Hashable {
-    public var lastActive: String?
+    public var role: String
     
-    public var pushNotifications: StreamChatPushNotificationSettings?
+    public var shadowBanned: Bool
     
-    public var deletedAt: String?
+    public var createdAt: String?
     
     public var invisible: Bool?
     
@@ -17,34 +17,34 @@ public struct StreamChatUserResponse: Codable, Hashable {
     
     public var revokeTokensIssuedBefore: String?
     
-    public var updatedAt: String?
+    public var banExpires: String?
     
     public var deactivatedAt: String?
     
-    public var online: Bool
-    
-    public var role: String
-    
-    public var shadowBanned: Bool
+    public var id: String
     
     public var teams: [String]?
     
     public var custom: [String: RawJSON]
     
-    public var banExpires: String?
+    public var deletedAt: String?
+    
+    public var online: Bool
     
     public var banned: Bool
     
-    public var createdAt: String?
+    public var lastActive: String?
     
-    public var id: String
+    public var pushNotifications: StreamChatPushNotificationSettings?
     
-    public init(lastActive: String?, pushNotifications: StreamChatPushNotificationSettings?, deletedAt: String?, invisible: Bool?, language: String?, revokeTokensIssuedBefore: String?, updatedAt: String?, deactivatedAt: String?, online: Bool, role: String, shadowBanned: Bool, teams: [String]?, custom: [String: RawJSON], banExpires: String?, banned: Bool, createdAt: String?, id: String) {
-        self.lastActive = lastActive
+    public var updatedAt: String?
+    
+    public init(role: String, shadowBanned: Bool, createdAt: String?, invisible: Bool?, language: String?, revokeTokensIssuedBefore: String?, banExpires: String?, deactivatedAt: String?, id: String, teams: [String]?, custom: [String: RawJSON], deletedAt: String?, online: Bool, banned: Bool, lastActive: String?, pushNotifications: StreamChatPushNotificationSettings?, updatedAt: String?) {
+        self.role = role
         
-        self.pushNotifications = pushNotifications
+        self.shadowBanned = shadowBanned
         
-        self.deletedAt = deletedAt
+        self.createdAt = createdAt
         
         self.invisible = invisible
         
@@ -52,35 +52,35 @@ public struct StreamChatUserResponse: Codable, Hashable {
         
         self.revokeTokensIssuedBefore = revokeTokensIssuedBefore
         
-        self.updatedAt = updatedAt
+        self.banExpires = banExpires
         
         self.deactivatedAt = deactivatedAt
         
-        self.online = online
-        
-        self.role = role
-        
-        self.shadowBanned = shadowBanned
+        self.id = id
         
         self.teams = teams
         
         self.custom = custom
         
-        self.banExpires = banExpires
+        self.deletedAt = deletedAt
+        
+        self.online = online
         
         self.banned = banned
         
-        self.createdAt = createdAt
+        self.lastActive = lastActive
         
-        self.id = id
+        self.pushNotifications = pushNotifications
+        
+        self.updatedAt = updatedAt
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case lastActive = "last_active"
+        case role
         
-        case pushNotifications = "push_notifications"
+        case shadowBanned = "shadow_banned"
         
-        case deletedAt = "deleted_at"
+        case createdAt = "created_at"
         
         case invisible
         
@@ -88,37 +88,37 @@ public struct StreamChatUserResponse: Codable, Hashable {
         
         case revokeTokensIssuedBefore = "revoke_tokens_issued_before"
         
-        case updatedAt = "updated_at"
+        case banExpires = "ban_expires"
         
         case deactivatedAt = "deactivated_at"
         
-        case online
-        
-        case role
-        
-        case shadowBanned = "shadow_banned"
+        case id
         
         case teams
         
         case custom = "Custom"
         
-        case banExpires = "ban_expires"
+        case deletedAt = "deleted_at"
+        
+        case online
         
         case banned
         
-        case createdAt = "created_at"
+        case lastActive = "last_active"
         
-        case id
+        case pushNotifications = "push_notifications"
+        
+        case updatedAt = "updated_at"
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(lastActive, forKey: .lastActive)
+        try container.encode(role, forKey: .role)
         
-        try container.encode(pushNotifications, forKey: .pushNotifications)
+        try container.encode(shadowBanned, forKey: .shadowBanned)
         
-        try container.encode(deletedAt, forKey: .deletedAt)
+        try container.encode(createdAt, forKey: .createdAt)
         
         try container.encode(invisible, forKey: .invisible)
         
@@ -126,26 +126,26 @@ public struct StreamChatUserResponse: Codable, Hashable {
         
         try container.encode(revokeTokensIssuedBefore, forKey: .revokeTokensIssuedBefore)
         
-        try container.encode(updatedAt, forKey: .updatedAt)
+        try container.encode(banExpires, forKey: .banExpires)
         
         try container.encode(deactivatedAt, forKey: .deactivatedAt)
         
-        try container.encode(online, forKey: .online)
-        
-        try container.encode(role, forKey: .role)
-        
-        try container.encode(shadowBanned, forKey: .shadowBanned)
+        try container.encode(id, forKey: .id)
         
         try container.encode(teams, forKey: .teams)
         
         try container.encode(custom, forKey: .custom)
         
-        try container.encode(banExpires, forKey: .banExpires)
+        try container.encode(deletedAt, forKey: .deletedAt)
+        
+        try container.encode(online, forKey: .online)
         
         try container.encode(banned, forKey: .banned)
         
-        try container.encode(createdAt, forKey: .createdAt)
+        try container.encode(lastActive, forKey: .lastActive)
         
-        try container.encode(id, forKey: .id)
+        try container.encode(pushNotifications, forKey: .pushNotifications)
+        
+        try container.encode(updatedAt, forKey: .updatedAt)
     }
 }

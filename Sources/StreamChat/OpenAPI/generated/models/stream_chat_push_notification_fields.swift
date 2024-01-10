@@ -5,6 +5,10 @@
 import Foundation
 
 public struct StreamChatPushNotificationFields: Codable, Hashable {
+    public var offlineOnly: Bool
+    
+    public var providers: [StreamChatPushProvider?]?
+    
     public var version: String
     
     public var xiaomi: StreamChatXiaomiConfigFields
@@ -15,11 +19,11 @@ public struct StreamChatPushNotificationFields: Codable, Hashable {
     
     public var huawei: StreamChatHuaweiConfigFields
     
-    public var offlineOnly: Bool
-    
-    public var providers: [StreamChatPushProvider?]?
-    
-    public init(version: String, xiaomi: StreamChatXiaomiConfigFields, apn: StreamChatAPNConfigFields, firebase: StreamChatFirebaseConfigFields, huawei: StreamChatHuaweiConfigFields, offlineOnly: Bool, providers: [StreamChatPushProvider?]?) {
+    public init(offlineOnly: Bool, providers: [StreamChatPushProvider?]?, version: String, xiaomi: StreamChatXiaomiConfigFields, apn: StreamChatAPNConfigFields, firebase: StreamChatFirebaseConfigFields, huawei: StreamChatHuaweiConfigFields) {
+        self.offlineOnly = offlineOnly
+        
+        self.providers = providers
+        
         self.version = version
         
         self.xiaomi = xiaomi
@@ -29,13 +33,13 @@ public struct StreamChatPushNotificationFields: Codable, Hashable {
         self.firebase = firebase
         
         self.huawei = huawei
-        
-        self.offlineOnly = offlineOnly
-        
-        self.providers = providers
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
+        case offlineOnly = "offline_only"
+        
+        case providers
+        
         case version
         
         case xiaomi
@@ -45,14 +49,14 @@ public struct StreamChatPushNotificationFields: Codable, Hashable {
         case firebase
         
         case huawei
-        
-        case offlineOnly = "offline_only"
-        
-        case providers
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(offlineOnly, forKey: .offlineOnly)
+        
+        try container.encode(providers, forKey: .providers)
         
         try container.encode(version, forKey: .version)
         
@@ -63,9 +67,5 @@ public struct StreamChatPushNotificationFields: Codable, Hashable {
         try container.encode(firebase, forKey: .firebase)
         
         try container.encode(huawei, forKey: .huawei)
-        
-        try container.encode(offlineOnly, forKey: .offlineOnly)
-        
-        try container.encode(providers, forKey: .providers)
     }
 }

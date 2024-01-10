@@ -20,7 +20,7 @@ public struct StreamChatUsersResponse: Codable, Hashable {
         
         case users
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

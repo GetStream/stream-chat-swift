@@ -38,7 +38,7 @@ public struct StreamChatChannelUnFrozenEvent: Codable, Hashable {
         
         case type
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

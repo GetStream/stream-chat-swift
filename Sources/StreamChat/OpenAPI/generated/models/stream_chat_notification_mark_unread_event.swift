@@ -7,17 +7,7 @@ import Foundation
 public struct StreamChatNotificationMarkUnreadEvent: Codable, Hashable {
     public var firstUnreadMessageId: String
     
-    public var team: String?
-    
-    public var totalUnreadCount: Int
-    
-    public var user: StreamChatUserObject?
-    
-    public var channelType: String
-    
-    public var cid: String
-    
-    public var lastReadMessageId: String?
+    public var lastReadAt: String
     
     public var type: String
     
@@ -27,28 +17,28 @@ public struct StreamChatNotificationMarkUnreadEvent: Codable, Hashable {
     
     public var unreadMessages: Int
     
-    public var channel: StreamChatChannelResponse?
+    public var createdAt: String
+    
+    public var user: StreamChatUserObject?
     
     public var channelId: String
     
-    public var createdAt: String
+    public var channelType: String
     
-    public var lastReadAt: String
+    public var team: String?
     
-    public init(firstUnreadMessageId: String, team: String?, totalUnreadCount: Int, user: StreamChatUserObject?, channelType: String, cid: String, lastReadMessageId: String?, type: String, unreadChannels: Int, unreadCount: Int, unreadMessages: Int, channel: StreamChatChannelResponse?, channelId: String, createdAt: String, lastReadAt: String) {
+    public var totalUnreadCount: Int
+    
+    public var channel: StreamChatChannelResponse?
+    
+    public var cid: String
+    
+    public var lastReadMessageId: String?
+    
+    public init(firstUnreadMessageId: String, lastReadAt: String, type: String, unreadChannels: Int, unreadCount: Int, unreadMessages: Int, createdAt: String, user: StreamChatUserObject?, channelId: String, channelType: String, team: String?, totalUnreadCount: Int, channel: StreamChatChannelResponse?, cid: String, lastReadMessageId: String?) {
         self.firstUnreadMessageId = firstUnreadMessageId
         
-        self.team = team
-        
-        self.totalUnreadCount = totalUnreadCount
-        
-        self.user = user
-        
-        self.channelType = channelType
-        
-        self.cid = cid
-        
-        self.lastReadMessageId = lastReadMessageId
+        self.lastReadAt = lastReadAt
         
         self.type = type
         
@@ -58,29 +48,29 @@ public struct StreamChatNotificationMarkUnreadEvent: Codable, Hashable {
         
         self.unreadMessages = unreadMessages
         
-        self.channel = channel
+        self.createdAt = createdAt
+        
+        self.user = user
         
         self.channelId = channelId
         
-        self.createdAt = createdAt
+        self.channelType = channelType
         
-        self.lastReadAt = lastReadAt
+        self.team = team
+        
+        self.totalUnreadCount = totalUnreadCount
+        
+        self.channel = channel
+        
+        self.cid = cid
+        
+        self.lastReadMessageId = lastReadMessageId
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case firstUnreadMessageId = "first_unread_message_id"
         
-        case team
-        
-        case totalUnreadCount = "total_unread_count"
-        
-        case user
-        
-        case channelType = "channel_type"
-        
-        case cid
-        
-        case lastReadMessageId = "last_read_message_id"
+        case lastReadAt = "last_read_at"
         
         case type
         
@@ -90,31 +80,31 @@ public struct StreamChatNotificationMarkUnreadEvent: Codable, Hashable {
         
         case unreadMessages = "unread_messages"
         
-        case channel
+        case createdAt = "created_at"
+        
+        case user
         
         case channelId = "channel_id"
         
-        case createdAt = "created_at"
+        case channelType = "channel_type"
         
-        case lastReadAt = "last_read_at"
+        case team
+        
+        case totalUnreadCount = "total_unread_count"
+        
+        case channel
+        
+        case cid
+        
+        case lastReadMessageId = "last_read_message_id"
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
         try container.encode(firstUnreadMessageId, forKey: .firstUnreadMessageId)
         
-        try container.encode(team, forKey: .team)
-        
-        try container.encode(totalUnreadCount, forKey: .totalUnreadCount)
-        
-        try container.encode(user, forKey: .user)
-        
-        try container.encode(channelType, forKey: .channelType)
-        
-        try container.encode(cid, forKey: .cid)
-        
-        try container.encode(lastReadMessageId, forKey: .lastReadMessageId)
+        try container.encode(lastReadAt, forKey: .lastReadAt)
         
         try container.encode(type, forKey: .type)
         
@@ -124,12 +114,22 @@ public struct StreamChatNotificationMarkUnreadEvent: Codable, Hashable {
         
         try container.encode(unreadMessages, forKey: .unreadMessages)
         
-        try container.encode(channel, forKey: .channel)
+        try container.encode(createdAt, forKey: .createdAt)
+        
+        try container.encode(user, forKey: .user)
         
         try container.encode(channelId, forKey: .channelId)
         
-        try container.encode(createdAt, forKey: .createdAt)
+        try container.encode(channelType, forKey: .channelType)
         
-        try container.encode(lastReadAt, forKey: .lastReadAt)
+        try container.encode(team, forKey: .team)
+        
+        try container.encode(totalUnreadCount, forKey: .totalUnreadCount)
+        
+        try container.encode(channel, forKey: .channel)
+        
+        try container.encode(cid, forKey: .cid)
+        
+        try container.encode(lastReadMessageId, forKey: .lastReadMessageId)
     }
 }

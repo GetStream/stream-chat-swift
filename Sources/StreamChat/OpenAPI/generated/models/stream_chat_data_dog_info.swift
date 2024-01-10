@@ -5,27 +5,27 @@
 import Foundation
 
 public struct StreamChatDataDogInfo: Codable, Hashable {
-    public var apiKey: String
-    
     public var site: String
     
-    public init(apiKey: String, site: String) {
-        self.apiKey = apiKey
-        
+    public var apiKey: String
+    
+    public init(site: String, apiKey: String) {
         self.site = site
+        
+        self.apiKey = apiKey
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case apiKey = "api_key"
-        
         case site
+        
+        case apiKey = "api_key"
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(apiKey, forKey: .apiKey)
-        
         try container.encode(site, forKey: .site)
+        
+        try container.encode(apiKey, forKey: .apiKey)
     }
 }

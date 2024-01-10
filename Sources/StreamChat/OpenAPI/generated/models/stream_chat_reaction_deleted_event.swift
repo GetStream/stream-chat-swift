@@ -5,11 +5,9 @@
 import Foundation
 
 public struct StreamChatReactionDeletedEvent: Codable, Hashable {
-    public var reaction: StreamChatReaction?
+    public var createdAt: String
     
-    public var threadParticipants: [StreamChatUserObject]?
-    
-    public var user: StreamChatUserObject?
+    public var channelId: String
     
     public var channelType: String
     
@@ -17,20 +15,20 @@ public struct StreamChatReactionDeletedEvent: Codable, Hashable {
     
     public var message: StreamChatMessage?
     
-    public var type: String
-    
-    public var channelId: String
-    
-    public var createdAt: String
+    public var reaction: StreamChatReaction?
     
     public var team: String?
     
-    public init(reaction: StreamChatReaction?, threadParticipants: [StreamChatUserObject]?, user: StreamChatUserObject?, channelType: String, cid: String, message: StreamChatMessage?, type: String, channelId: String, createdAt: String, team: String?) {
-        self.reaction = reaction
+    public var threadParticipants: [StreamChatUserObject]?
+    
+    public var type: String
+    
+    public var user: StreamChatUserObject?
+    
+    public init(createdAt: String, channelId: String, channelType: String, cid: String, message: StreamChatMessage?, reaction: StreamChatReaction?, team: String?, threadParticipants: [StreamChatUserObject]?, type: String, user: StreamChatUserObject?) {
+        self.createdAt = createdAt
         
-        self.threadParticipants = threadParticipants
-        
-        self.user = user
+        self.channelId = channelId
         
         self.channelType = channelType
         
@@ -38,21 +36,21 @@ public struct StreamChatReactionDeletedEvent: Codable, Hashable {
         
         self.message = message
         
-        self.type = type
-        
-        self.channelId = channelId
-        
-        self.createdAt = createdAt
+        self.reaction = reaction
         
         self.team = team
+        
+        self.threadParticipants = threadParticipants
+        
+        self.type = type
+        
+        self.user = user
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case reaction
+        case createdAt = "created_at"
         
-        case threadParticipants = "thread_participants"
-        
-        case user
+        case channelId = "channel_id"
         
         case channelType = "channel_type"
         
@@ -60,23 +58,23 @@ public struct StreamChatReactionDeletedEvent: Codable, Hashable {
         
         case message
         
-        case type
-        
-        case channelId = "channel_id"
-        
-        case createdAt = "created_at"
+        case reaction
         
         case team
+        
+        case threadParticipants = "thread_participants"
+        
+        case type
+        
+        case user
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(reaction, forKey: .reaction)
+        try container.encode(createdAt, forKey: .createdAt)
         
-        try container.encode(threadParticipants, forKey: .threadParticipants)
-        
-        try container.encode(user, forKey: .user)
+        try container.encode(channelId, forKey: .channelId)
         
         try container.encode(channelType, forKey: .channelType)
         
@@ -84,12 +82,14 @@ public struct StreamChatReactionDeletedEvent: Codable, Hashable {
         
         try container.encode(message, forKey: .message)
         
-        try container.encode(type, forKey: .type)
-        
-        try container.encode(channelId, forKey: .channelId)
-        
-        try container.encode(createdAt, forKey: .createdAt)
+        try container.encode(reaction, forKey: .reaction)
         
         try container.encode(team, forKey: .team)
+        
+        try container.encode(threadParticipants, forKey: .threadParticipants)
+        
+        try container.encode(type, forKey: .type)
+        
+        try container.encode(user, forKey: .user)
     }
 }

@@ -56,7 +56,7 @@ public struct StreamChatNotificationInviteRejectedEvent: Codable, Hashable {
         
         case member
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

@@ -5,179 +5,179 @@
 import Foundation
 
 public struct StreamChatChannel: Codable, Hashable {
-    public var autoTranslationLanguage: String
-    
-    public var cid: String
+    public var autoTranslationEnabled: Bool?
     
     public var config: StreamChatChannelConfig?
     
-    public var configOverrides: StreamChatChannelConfig?
+    public var updatedAt: String
+    
+    public var cooldown: Int?
+    
+    public var createdAt: String
     
     public var createdBy: StreamChatUserObject?
     
-    public var deletedAt: String?
-    
-    public var disabled: Bool
-    
-    public var truncatedBy: StreamChatUserObject?
-    
-    public var type: String
-    
-    public var autoTranslationEnabled: Bool?
-    
-    public var cooldown: Int?
+    public var frozen: Bool
     
     public var memberCount: Int?
     
     public var members: [StreamChatChannelMember?]?
     
-    public var updatedAt: String
+    public var team: String?
+    
+    public var type: String
     
     public var custom: [String: RawJSON]
     
-    public var createdAt: String
-    
-    public var frozen: Bool
-    
-    public var id: String
+    public var cid: String
     
     public var invites: [StreamChatChannelMember?]?
     
     public var lastMessageAt: String?
     
-    public var team: String?
+    public var autoTranslationLanguage: String
     
-    public init(autoTranslationLanguage: String, cid: String, config: StreamChatChannelConfig?, configOverrides: StreamChatChannelConfig?, createdBy: StreamChatUserObject?, deletedAt: String?, disabled: Bool, truncatedBy: StreamChatUserObject?, type: String, autoTranslationEnabled: Bool?, cooldown: Int?, memberCount: Int?, members: [StreamChatChannelMember?]?, updatedAt: String, custom: [String: RawJSON], createdAt: String, frozen: Bool, id: String, invites: [StreamChatChannelMember?]?, lastMessageAt: String?, team: String?) {
-        self.autoTranslationLanguage = autoTranslationLanguage
-        
-        self.cid = cid
+    public var configOverrides: StreamChatChannelConfig?
+    
+    public var deletedAt: String?
+    
+    public var disabled: Bool
+    
+    public var id: String
+    
+    public var truncatedBy: StreamChatUserObject?
+    
+    public init(autoTranslationEnabled: Bool?, config: StreamChatChannelConfig?, updatedAt: String, cooldown: Int?, createdAt: String, createdBy: StreamChatUserObject?, frozen: Bool, memberCount: Int?, members: [StreamChatChannelMember?]?, team: String?, type: String, custom: [String: RawJSON], cid: String, invites: [StreamChatChannelMember?]?, lastMessageAt: String?, autoTranslationLanguage: String, configOverrides: StreamChatChannelConfig?, deletedAt: String?, disabled: Bool, id: String, truncatedBy: StreamChatUserObject?) {
+        self.autoTranslationEnabled = autoTranslationEnabled
         
         self.config = config
         
-        self.configOverrides = configOverrides
+        self.updatedAt = updatedAt
+        
+        self.cooldown = cooldown
+        
+        self.createdAt = createdAt
         
         self.createdBy = createdBy
         
-        self.deletedAt = deletedAt
-        
-        self.disabled = disabled
-        
-        self.truncatedBy = truncatedBy
-        
-        self.type = type
-        
-        self.autoTranslationEnabled = autoTranslationEnabled
-        
-        self.cooldown = cooldown
+        self.frozen = frozen
         
         self.memberCount = memberCount
         
         self.members = members
         
-        self.updatedAt = updatedAt
+        self.team = team
+        
+        self.type = type
         
         self.custom = custom
         
-        self.createdAt = createdAt
-        
-        self.frozen = frozen
-        
-        self.id = id
+        self.cid = cid
         
         self.invites = invites
         
         self.lastMessageAt = lastMessageAt
         
-        self.team = team
+        self.autoTranslationLanguage = autoTranslationLanguage
+        
+        self.configOverrides = configOverrides
+        
+        self.deletedAt = deletedAt
+        
+        self.disabled = disabled
+        
+        self.id = id
+        
+        self.truncatedBy = truncatedBy
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case autoTranslationLanguage = "auto_translation_language"
-        
-        case cid
+        case autoTranslationEnabled = "auto_translation_enabled"
         
         case config
         
-        case configOverrides = "config_overrides"
+        case updatedAt = "updated_at"
+        
+        case cooldown
+        
+        case createdAt = "created_at"
         
         case createdBy = "created_by"
         
-        case deletedAt = "deleted_at"
-        
-        case disabled
-        
-        case truncatedBy = "truncated_by"
-        
-        case type
-        
-        case autoTranslationEnabled = "auto_translation_enabled"
-        
-        case cooldown
+        case frozen
         
         case memberCount = "member_count"
         
         case members
         
-        case updatedAt = "updated_at"
+        case team
+        
+        case type
         
         case custom = "Custom"
         
-        case createdAt = "created_at"
-        
-        case frozen
-        
-        case id
+        case cid
         
         case invites
         
         case lastMessageAt = "last_message_at"
         
-        case team
+        case autoTranslationLanguage = "auto_translation_language"
+        
+        case configOverrides = "config_overrides"
+        
+        case deletedAt = "deleted_at"
+        
+        case disabled
+        
+        case id
+        
+        case truncatedBy = "truncated_by"
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(autoTranslationLanguage, forKey: .autoTranslationLanguage)
-        
-        try container.encode(cid, forKey: .cid)
+        try container.encode(autoTranslationEnabled, forKey: .autoTranslationEnabled)
         
         try container.encode(config, forKey: .config)
         
-        try container.encode(configOverrides, forKey: .configOverrides)
+        try container.encode(updatedAt, forKey: .updatedAt)
+        
+        try container.encode(cooldown, forKey: .cooldown)
+        
+        try container.encode(createdAt, forKey: .createdAt)
         
         try container.encode(createdBy, forKey: .createdBy)
         
-        try container.encode(deletedAt, forKey: .deletedAt)
-        
-        try container.encode(disabled, forKey: .disabled)
-        
-        try container.encode(truncatedBy, forKey: .truncatedBy)
-        
-        try container.encode(type, forKey: .type)
-        
-        try container.encode(autoTranslationEnabled, forKey: .autoTranslationEnabled)
-        
-        try container.encode(cooldown, forKey: .cooldown)
+        try container.encode(frozen, forKey: .frozen)
         
         try container.encode(memberCount, forKey: .memberCount)
         
         try container.encode(members, forKey: .members)
         
-        try container.encode(updatedAt, forKey: .updatedAt)
+        try container.encode(team, forKey: .team)
+        
+        try container.encode(type, forKey: .type)
         
         try container.encode(custom, forKey: .custom)
         
-        try container.encode(createdAt, forKey: .createdAt)
-        
-        try container.encode(frozen, forKey: .frozen)
-        
-        try container.encode(id, forKey: .id)
+        try container.encode(cid, forKey: .cid)
         
         try container.encode(invites, forKey: .invites)
         
         try container.encode(lastMessageAt, forKey: .lastMessageAt)
         
-        try container.encode(team, forKey: .team)
+        try container.encode(autoTranslationLanguage, forKey: .autoTranslationLanguage)
+        
+        try container.encode(configOverrides, forKey: .configOverrides)
+        
+        try container.encode(deletedAt, forKey: .deletedAt)
+        
+        try container.encode(disabled, forKey: .disabled)
+        
+        try container.encode(id, forKey: .id)
+        
+        try container.encode(truncatedBy, forKey: .truncatedBy)
     }
 }

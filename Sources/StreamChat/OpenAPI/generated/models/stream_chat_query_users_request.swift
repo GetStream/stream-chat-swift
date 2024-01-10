@@ -5,9 +5,11 @@
 import Foundation
 
 public struct StreamChatQueryUsersRequest: Codable, Hashable {
-    public var user: StreamChatUserObject?
+    public var offset: Int?
     
-    public var userId: String?
+    public var sort: [StreamChatSortParam?]?
+    
+    public var connectionId: String?
     
     public var filterConditions: [String: RawJSON]
     
@@ -15,24 +17,24 @@ public struct StreamChatQueryUsersRequest: Codable, Hashable {
     
     public var idGte: String?
     
-    public var idLt: String?
-    
     public var idLte: String?
-    
-    public var offset: Int?
-    
-    public var connectionId: String?
     
     public var limit: Int?
     
+    public var user: StreamChatUserObject?
+    
+    public var userId: String?
+    
+    public var idLt: String?
+    
     public var presence: Bool?
     
-    public var sort: [StreamChatSortParam?]?
-    
-    public init(user: StreamChatUserObject?, userId: String?, filterConditions: [String: RawJSON], idGt: String?, idGte: String?, idLt: String?, idLte: String?, offset: Int?, connectionId: String?, limit: Int?, presence: Bool?, sort: [StreamChatSortParam?]?) {
-        self.user = user
+    public init(offset: Int?, sort: [StreamChatSortParam?]?, connectionId: String?, filterConditions: [String: RawJSON], idGt: String?, idGte: String?, idLte: String?, limit: Int?, user: StreamChatUserObject?, userId: String?, idLt: String?, presence: Bool?) {
+        self.offset = offset
         
-        self.userId = userId
+        self.sort = sort
+        
+        self.connectionId = connectionId
         
         self.filterConditions = filterConditions
         
@@ -40,25 +42,25 @@ public struct StreamChatQueryUsersRequest: Codable, Hashable {
         
         self.idGte = idGte
         
-        self.idLt = idLt
-        
         self.idLte = idLte
-        
-        self.offset = offset
-        
-        self.connectionId = connectionId
         
         self.limit = limit
         
-        self.presence = presence
+        self.user = user
         
-        self.sort = sort
+        self.userId = userId
+        
+        self.idLt = idLt
+        
+        self.presence = presence
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case user
+        case offset
         
-        case userId = "user_id"
+        case sort
+        
+        case connectionId = "connection_id"
         
         case filterConditions = "filter_conditions"
         
@@ -66,27 +68,27 @@ public struct StreamChatQueryUsersRequest: Codable, Hashable {
         
         case idGte = "id_gte"
         
-        case idLt = "id_lt"
-        
         case idLte = "id_lte"
-        
-        case offset
-        
-        case connectionId = "connection_id"
         
         case limit
         
-        case presence
+        case user
         
-        case sort
+        case userId = "user_id"
+        
+        case idLt = "id_lt"
+        
+        case presence
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(user, forKey: .user)
+        try container.encode(offset, forKey: .offset)
         
-        try container.encode(userId, forKey: .userId)
+        try container.encode(sort, forKey: .sort)
+        
+        try container.encode(connectionId, forKey: .connectionId)
         
         try container.encode(filterConditions, forKey: .filterConditions)
         
@@ -94,18 +96,16 @@ public struct StreamChatQueryUsersRequest: Codable, Hashable {
         
         try container.encode(idGte, forKey: .idGte)
         
-        try container.encode(idLt, forKey: .idLt)
-        
         try container.encode(idLte, forKey: .idLte)
-        
-        try container.encode(offset, forKey: .offset)
-        
-        try container.encode(connectionId, forKey: .connectionId)
         
         try container.encode(limit, forKey: .limit)
         
-        try container.encode(presence, forKey: .presence)
+        try container.encode(user, forKey: .user)
         
-        try container.encode(sort, forKey: .sort)
+        try container.encode(userId, forKey: .userId)
+        
+        try container.encode(idLt, forKey: .idLt)
+        
+        try container.encode(presence, forKey: .presence)
     }
 }

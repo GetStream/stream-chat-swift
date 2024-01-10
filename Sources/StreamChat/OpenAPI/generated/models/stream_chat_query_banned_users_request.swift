@@ -5,99 +5,99 @@
 import Foundation
 
 public struct StreamChatQueryBannedUsersRequest: Codable, Hashable {
+    public var userId: String?
+    
     public var createdAtAfter: String?
-    
-    public var createdAtBeforeOrEqual: String?
-    
-    public var filterConditions: [String: RawJSON]
-    
-    public var offset: Int?
-    
-    public var user: StreamChatUserObject?
     
     public var createdAtAfterOrEqual: String?
     
     public var createdAtBefore: String?
     
-    public var excludeExpiredBans: Bool?
+    public var user: StreamChatUserObject?
     
-    public var limit: Int?
+    public var offset: Int?
     
     public var sort: [StreamChatSortParam?]?
     
-    public var userId: String?
+    public var createdAtBeforeOrEqual: String?
     
-    public init(createdAtAfter: String?, createdAtBeforeOrEqual: String?, filterConditions: [String: RawJSON], offset: Int?, user: StreamChatUserObject?, createdAtAfterOrEqual: String?, createdAtBefore: String?, excludeExpiredBans: Bool?, limit: Int?, sort: [StreamChatSortParam?]?, userId: String?) {
+    public var excludeExpiredBans: Bool?
+    
+    public var filterConditions: [String: RawJSON]
+    
+    public var limit: Int?
+    
+    public init(userId: String?, createdAtAfter: String?, createdAtAfterOrEqual: String?, createdAtBefore: String?, user: StreamChatUserObject?, offset: Int?, sort: [StreamChatSortParam?]?, createdAtBeforeOrEqual: String?, excludeExpiredBans: Bool?, filterConditions: [String: RawJSON], limit: Int?) {
+        self.userId = userId
+        
         self.createdAtAfter = createdAtAfter
-        
-        self.createdAtBeforeOrEqual = createdAtBeforeOrEqual
-        
-        self.filterConditions = filterConditions
-        
-        self.offset = offset
-        
-        self.user = user
         
         self.createdAtAfterOrEqual = createdAtAfterOrEqual
         
         self.createdAtBefore = createdAtBefore
         
-        self.excludeExpiredBans = excludeExpiredBans
+        self.user = user
         
-        self.limit = limit
+        self.offset = offset
         
         self.sort = sort
         
-        self.userId = userId
+        self.createdAtBeforeOrEqual = createdAtBeforeOrEqual
+        
+        self.excludeExpiredBans = excludeExpiredBans
+        
+        self.filterConditions = filterConditions
+        
+        self.limit = limit
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
+        case userId = "user_id"
+        
         case createdAtAfter = "created_at_after"
-        
-        case createdAtBeforeOrEqual = "created_at_before_or_equal"
-        
-        case filterConditions = "filter_conditions"
-        
-        case offset
-        
-        case user
         
         case createdAtAfterOrEqual = "created_at_after_or_equal"
         
         case createdAtBefore = "created_at_before"
         
-        case excludeExpiredBans = "exclude_expired_bans"
+        case user
         
-        case limit
+        case offset
         
         case sort
         
-        case userId = "user_id"
+        case createdAtBeforeOrEqual = "created_at_before_or_equal"
+        
+        case excludeExpiredBans = "exclude_expired_bans"
+        
+        case filterConditions = "filter_conditions"
+        
+        case limit
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
+        try container.encode(userId, forKey: .userId)
+        
         try container.encode(createdAtAfter, forKey: .createdAtAfter)
-        
-        try container.encode(createdAtBeforeOrEqual, forKey: .createdAtBeforeOrEqual)
-        
-        try container.encode(filterConditions, forKey: .filterConditions)
-        
-        try container.encode(offset, forKey: .offset)
-        
-        try container.encode(user, forKey: .user)
         
         try container.encode(createdAtAfterOrEqual, forKey: .createdAtAfterOrEqual)
         
         try container.encode(createdAtBefore, forKey: .createdAtBefore)
         
-        try container.encode(excludeExpiredBans, forKey: .excludeExpiredBans)
+        try container.encode(user, forKey: .user)
         
-        try container.encode(limit, forKey: .limit)
+        try container.encode(offset, forKey: .offset)
         
         try container.encode(sort, forKey: .sort)
         
-        try container.encode(userId, forKey: .userId)
+        try container.encode(createdAtBeforeOrEqual, forKey: .createdAtBeforeOrEqual)
+        
+        try container.encode(excludeExpiredBans, forKey: .excludeExpiredBans)
+        
+        try container.encode(filterConditions, forKey: .filterConditions)
+        
+        try container.encode(limit, forKey: .limit)
     }
 }

@@ -5,43 +5,43 @@
 import Foundation
 
 public struct StreamChatRead: Codable, Hashable {
-    public var unreadMessages: Int
-    
-    public var user: StreamChatUserObject?
-    
     public var lastRead: String
     
     public var lastReadMessageId: String?
     
-    public init(unreadMessages: Int, user: StreamChatUserObject?, lastRead: String, lastReadMessageId: String?) {
-        self.unreadMessages = unreadMessages
-        
-        self.user = user
-        
+    public var unreadMessages: Int
+    
+    public var user: StreamChatUserObject?
+    
+    public init(lastRead: String, lastReadMessageId: String?, unreadMessages: Int, user: StreamChatUserObject?) {
         self.lastRead = lastRead
         
         self.lastReadMessageId = lastReadMessageId
+        
+        self.unreadMessages = unreadMessages
+        
+        self.user = user
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case unreadMessages = "unread_messages"
-        
-        case user
-        
         case lastRead = "last_read"
         
         case lastReadMessageId = "last_read_message_id"
+        
+        case unreadMessages = "unread_messages"
+        
+        case user
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
-        try container.encode(unreadMessages, forKey: .unreadMessages)
-        
-        try container.encode(user, forKey: .user)
         
         try container.encode(lastRead, forKey: .lastRead)
         
         try container.encode(lastReadMessageId, forKey: .lastReadMessageId)
+        
+        try container.encode(unreadMessages, forKey: .unreadMessages)
+        
+        try container.encode(user, forKey: .user)
     }
 }

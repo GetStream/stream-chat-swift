@@ -32,7 +32,7 @@ public struct StreamChatSearchWarning: Codable, Hashable {
         
         case warningDescription = "warning_description"
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

@@ -26,7 +26,7 @@ public struct StreamChatSyncResponse: Codable, Hashable {
         
         case inaccessibleCids = "inaccessible_cids"
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

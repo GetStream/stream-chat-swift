@@ -5,27 +5,27 @@
 import Foundation
 
 public struct StreamChatBlockListOptions: Codable, Hashable {
-    public var behavior: String
-    
     public var blocklist: String
     
-    public init(behavior: String, blocklist: String) {
-        self.behavior = behavior
-        
+    public var behavior: String
+    
+    public init(blocklist: String, behavior: String) {
         self.blocklist = blocklist
+        
+        self.behavior = behavior
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case behavior
-        
         case blocklist
+        
+        case behavior
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(behavior, forKey: .behavior)
-        
         try container.encode(blocklist, forKey: .blocklist)
+        
+        try container.encode(behavior, forKey: .behavior)
     }
 }

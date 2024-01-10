@@ -5,6 +5,8 @@
 import Foundation
 
 public struct StreamChatFirebaseConfigFields: Codable, Hashable {
+    public var apnTemplate: String
+    
     public var credentialsJson: String?
     
     public var dataTemplate: String
@@ -15,9 +17,9 @@ public struct StreamChatFirebaseConfigFields: Codable, Hashable {
     
     public var serverKey: String?
     
-    public var apnTemplate: String
-    
-    public init(credentialsJson: String?, dataTemplate: String, enabled: Bool, notificationTemplate: String, serverKey: String?, apnTemplate: String) {
+    public init(apnTemplate: String, credentialsJson: String?, dataTemplate: String, enabled: Bool, notificationTemplate: String, serverKey: String?) {
+        self.apnTemplate = apnTemplate
+        
         self.credentialsJson = credentialsJson
         
         self.dataTemplate = dataTemplate
@@ -27,11 +29,11 @@ public struct StreamChatFirebaseConfigFields: Codable, Hashable {
         self.notificationTemplate = notificationTemplate
         
         self.serverKey = serverKey
-        
-        self.apnTemplate = apnTemplate
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
+        case apnTemplate = "apn_template"
+        
         case credentialsJson = "credentials_json"
         
         case dataTemplate = "data_template"
@@ -41,12 +43,12 @@ public struct StreamChatFirebaseConfigFields: Codable, Hashable {
         case notificationTemplate = "notification_template"
         
         case serverKey = "server_key"
-        
-        case apnTemplate = "apn_template"
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(apnTemplate, forKey: .apnTemplate)
         
         try container.encode(credentialsJson, forKey: .credentialsJson)
         
@@ -57,7 +59,5 @@ public struct StreamChatFirebaseConfigFields: Codable, Hashable {
         try container.encode(notificationTemplate, forKey: .notificationTemplate)
         
         try container.encode(serverKey, forKey: .serverKey)
-        
-        try container.encode(apnTemplate, forKey: .apnTemplate)
     }
 }

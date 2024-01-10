@@ -38,7 +38,7 @@ public struct StreamChatNotificationSettings: Codable, Hashable {
         
         case sessionStarted = "session_started"
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

@@ -20,7 +20,7 @@ public struct StreamChatUnmuteResponse: Codable, Hashable {
         
         case nonExistingUsers = "non_existing_users"
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

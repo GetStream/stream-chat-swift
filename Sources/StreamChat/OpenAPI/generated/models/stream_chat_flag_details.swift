@@ -20,7 +20,7 @@ public struct StreamChatFlagDetails: Codable, Hashable {
         
         case automod
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

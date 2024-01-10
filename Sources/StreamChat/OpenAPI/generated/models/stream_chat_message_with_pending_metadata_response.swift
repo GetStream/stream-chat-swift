@@ -5,35 +5,35 @@
 import Foundation
 
 public struct StreamChatMessageWithPendingMetadataResponse: Codable, Hashable {
+    public var duration: String
+    
     public var message: StreamChatMessage?
     
     public var pendingMessageMetadata: [String: RawJSON]?
     
-    public var duration: String
-    
-    public init(message: StreamChatMessage?, pendingMessageMetadata: [String: RawJSON]?, duration: String) {
+    public init(duration: String, message: StreamChatMessage?, pendingMessageMetadata: [String: RawJSON]?) {
+        self.duration = duration
+        
         self.message = message
         
         self.pendingMessageMetadata = pendingMessageMetadata
-        
-        self.duration = duration
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
+        case duration
+        
         case message
         
         case pendingMessageMetadata = "pending_message_metadata"
-        
-        case duration
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(duration, forKey: .duration)
         
         try container.encode(message, forKey: .message)
         
         try container.encode(pendingMessageMetadata, forKey: .pendingMessageMetadata)
-        
-        try container.encode(duration, forKey: .duration)
     }
 }

@@ -26,7 +26,7 @@ public struct StreamChatHuaweiConfigFields: Codable, Hashable {
         
         case secret
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

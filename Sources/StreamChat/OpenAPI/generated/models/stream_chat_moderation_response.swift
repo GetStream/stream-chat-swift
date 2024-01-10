@@ -38,7 +38,7 @@ public struct StreamChatModerationResponse: Codable, Hashable {
         
         case toxic
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

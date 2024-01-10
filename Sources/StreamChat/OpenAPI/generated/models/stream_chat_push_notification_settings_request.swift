@@ -5,11 +5,11 @@
 import Foundation
 
 public struct StreamChatPushNotificationSettingsRequest: Codable, Hashable {
-    public var disabled: StreamChatNullBoolRequest?
+    public var disabled: Bool?
     
-    public var disabledUntil: StreamChatNullTimeRequest?
+    public var disabledUntil: String?
     
-    public init(disabled: StreamChatNullBoolRequest?, disabledUntil: StreamChatNullTimeRequest?) {
+    public init(disabled: Bool?, disabledUntil: String?) {
         self.disabled = disabled
         
         self.disabledUntil = disabledUntil
@@ -20,7 +20,7 @@ public struct StreamChatPushNotificationSettingsRequest: Codable, Hashable {
         
         case disabledUntil = "disabled_until"
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

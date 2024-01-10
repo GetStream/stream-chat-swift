@@ -93,8 +93,6 @@ public enum StreamChatWSEvent: Codable, Hashable {
     
     case typeUserUnbannedEvent(StreamChatUserUnbannedEvent)
     
-    case typeUserUnreadReminderEvent(StreamChatUserUnreadReminderEvent)
-    
     case typeUserUpdatedEvent(StreamChatUserUpdatedEvent)
     
     case typeUserWatchingStartEvent(StreamChatUserWatchingStartEvent)
@@ -186,8 +184,6 @@ public enum StreamChatWSEvent: Codable, Hashable {
         case let .typeUserReactivatedEvent(value):
             return value.type
         case let .typeUserUnbannedEvent(value):
-            return value.type
-        case let .typeUserUnreadReminderEvent(value):
             return value.type
         case let .typeUserUpdatedEvent(value):
             return value.type
@@ -284,8 +280,6 @@ public enum StreamChatWSEvent: Codable, Hashable {
         case let .typeUserReactivatedEvent(value):
             try container.encode(value)
         case let .typeUserUnbannedEvent(value):
-            try container.encode(value)
-        case let .typeUserUnreadReminderEvent(value):
             try container.encode(value)
         case let .typeUserUpdatedEvent(value):
             try container.encode(value)
@@ -425,9 +419,6 @@ public enum StreamChatWSEvent: Codable, Hashable {
         } else if dto.type == "user.unbanned" {
             let value = try container.decode(StreamChatUserUnbannedEvent.self)
             self = .typeUserUnbannedEvent(value)
-        } else if dto.type == "user.unread_message_reminder" {
-            let value = try container.decode(StreamChatUserUnreadReminderEvent.self)
-            self = .typeUserUnreadReminderEvent(value)
         } else if dto.type == "user.updated" {
             let value = try container.decode(StreamChatUserUpdatedEvent.self)
             self = .typeUserUpdatedEvent(value)

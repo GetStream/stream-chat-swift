@@ -50,7 +50,7 @@ public struct StreamChatNotificationAddedToChannelEvent: Codable, Hashable {
         
         case cid
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

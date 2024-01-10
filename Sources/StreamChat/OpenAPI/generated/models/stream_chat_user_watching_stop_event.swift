@@ -5,10 +5,6 @@
 import Foundation
 
 public struct StreamChatUserWatchingStopEvent: Codable, Hashable {
-    public var type: String
-    
-    public var user: StreamChatUserObject?
-    
     public var watcherCount: Int
     
     public var channelId: String
@@ -19,11 +15,11 @@ public struct StreamChatUserWatchingStopEvent: Codable, Hashable {
     
     public var createdAt: String
     
-    public init(type: String, user: StreamChatUserObject?, watcherCount: Int, channelId: String, channelType: String, cid: String, createdAt: String) {
-        self.type = type
-        
-        self.user = user
-        
+    public var type: String
+    
+    public var user: StreamChatUserObject?
+    
+    public init(watcherCount: Int, channelId: String, channelType: String, cid: String, createdAt: String, type: String, user: StreamChatUserObject?) {
         self.watcherCount = watcherCount
         
         self.channelId = channelId
@@ -33,13 +29,13 @@ public struct StreamChatUserWatchingStopEvent: Codable, Hashable {
         self.cid = cid
         
         self.createdAt = createdAt
+        
+        self.type = type
+        
+        self.user = user
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case type
-        
-        case user
-        
         case watcherCount = "watcher_count"
         
         case channelId = "channel_id"
@@ -49,14 +45,14 @@ public struct StreamChatUserWatchingStopEvent: Codable, Hashable {
         case cid
         
         case createdAt = "created_at"
+        
+        case type
+        
+        case user
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
-        try container.encode(type, forKey: .type)
-        
-        try container.encode(user, forKey: .user)
         
         try container.encode(watcherCount, forKey: .watcherCount)
         
@@ -67,5 +63,9 @@ public struct StreamChatUserWatchingStopEvent: Codable, Hashable {
         try container.encode(cid, forKey: .cid)
         
         try container.encode(createdAt, forKey: .createdAt)
+        
+        try container.encode(type, forKey: .type)
+        
+        try container.encode(user, forKey: .user)
     }
 }

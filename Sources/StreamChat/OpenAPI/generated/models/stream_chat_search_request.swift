@@ -5,12 +5,6 @@
 import Foundation
 
 public struct StreamChatSearchRequest: Codable, Hashable {
-    public var offset: Int?
-    
-    public var query: String?
-    
-    public var sort: [StreamChatSortParam?]?
-    
     public var filterConditions: [String: RawJSON]
     
     public var limit: Int?
@@ -19,13 +13,13 @@ public struct StreamChatSearchRequest: Codable, Hashable {
     
     public var next: String?
     
-    public init(offset: Int?, query: String?, sort: [StreamChatSortParam?]?, filterConditions: [String: RawJSON], limit: Int?, messageFilterConditions: [String: RawJSON]?, next: String?) {
-        self.offset = offset
-        
-        self.query = query
-        
-        self.sort = sort
-        
+    public var offset: Int?
+    
+    public var query: String?
+    
+    public var sort: [StreamChatSortParam?]?
+    
+    public init(filterConditions: [String: RawJSON], limit: Int?, messageFilterConditions: [String: RawJSON]?, next: String?, offset: Int?, query: String?, sort: [StreamChatSortParam?]?) {
         self.filterConditions = filterConditions
         
         self.limit = limit
@@ -33,15 +27,15 @@ public struct StreamChatSearchRequest: Codable, Hashable {
         self.messageFilterConditions = messageFilterConditions
         
         self.next = next
+        
+        self.offset = offset
+        
+        self.query = query
+        
+        self.sort = sort
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case offset
-        
-        case query
-        
-        case sort
-        
         case filterConditions = "filter_conditions"
         
         case limit
@@ -49,16 +43,16 @@ public struct StreamChatSearchRequest: Codable, Hashable {
         case messageFilterConditions = "message_filter_conditions"
         
         case next
+        
+        case offset
+        
+        case query
+        
+        case sort
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
-        try container.encode(offset, forKey: .offset)
-        
-        try container.encode(query, forKey: .query)
-        
-        try container.encode(sort, forKey: .sort)
         
         try container.encode(filterConditions, forKey: .filterConditions)
         
@@ -67,5 +61,11 @@ public struct StreamChatSearchRequest: Codable, Hashable {
         try container.encode(messageFilterConditions, forKey: .messageFilterConditions)
         
         try container.encode(next, forKey: .next)
+        
+        try container.encode(offset, forKey: .offset)
+        
+        try container.encode(query, forKey: .query)
+        
+        try container.encode(sort, forKey: .sort)
     }
 }

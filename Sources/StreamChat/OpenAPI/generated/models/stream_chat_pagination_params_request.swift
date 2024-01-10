@@ -44,7 +44,7 @@ public struct StreamChatPaginationParamsRequest: Codable, Hashable {
         
         case offset
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

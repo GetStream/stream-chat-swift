@@ -20,7 +20,7 @@ public struct StreamChatLabelThresholds: Codable, Hashable {
         
         case flag
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

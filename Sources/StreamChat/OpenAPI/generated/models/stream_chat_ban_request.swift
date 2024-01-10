@@ -5,50 +5,42 @@
 import Foundation
 
 public struct StreamChatBanRequest: Codable, Hashable {
-    public var bannedBy: StreamChatUserObjectRequest?
+    public var bannedBy: StreamChatUserRequest?
     
     public var bannedById: String?
     
-    public var id: String?
-    
     public var ipBan: Bool?
-    
-    public var user: StreamChatUserObjectRequest?
-    
-    public var reason: String?
-    
-    public var shadow: Bool?
     
     public var targetUserId: String
     
     public var timeout: Int?
     
+    public var id: String?
+    
+    public var reason: String?
+    
+    public var shadow: Bool?
+    
     public var type: String?
     
-    public var userId: String?
-    
-    public init(bannedBy: StreamChatUserObjectRequest?, bannedById: String?, id: String?, ipBan: Bool?, user: StreamChatUserObjectRequest?, reason: String?, shadow: Bool?, targetUserId: String, timeout: Int?, type: String?, userId: String?) {
+    public init(bannedBy: StreamChatUserRequest?, bannedById: String?, ipBan: Bool?, targetUserId: String, timeout: Int?, id: String?, reason: String?, shadow: Bool?, type: String?) {
         self.bannedBy = bannedBy
         
         self.bannedById = bannedById
         
-        self.id = id
-        
         self.ipBan = ipBan
-        
-        self.user = user
-        
-        self.reason = reason
-        
-        self.shadow = shadow
         
         self.targetUserId = targetUserId
         
         self.timeout = timeout
         
-        self.type = type
+        self.id = id
         
-        self.userId = userId
+        self.reason = reason
+        
+        self.shadow = shadow
+        
+        self.type = type
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
@@ -56,25 +48,21 @@ public struct StreamChatBanRequest: Codable, Hashable {
         
         case bannedById = "banned_by_id"
         
-        case id
-        
         case ipBan = "ip_ban"
-        
-        case user
-        
-        case reason
-        
-        case shadow
         
         case targetUserId = "target_user_id"
         
         case timeout
         
-        case type
+        case id
         
-        case userId = "user_id"
+        case reason
+        
+        case shadow
+        
+        case type
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
@@ -82,22 +70,18 @@ public struct StreamChatBanRequest: Codable, Hashable {
         
         try container.encode(bannedById, forKey: .bannedById)
         
-        try container.encode(id, forKey: .id)
-        
         try container.encode(ipBan, forKey: .ipBan)
-        
-        try container.encode(user, forKey: .user)
-        
-        try container.encode(reason, forKey: .reason)
-        
-        try container.encode(shadow, forKey: .shadow)
         
         try container.encode(targetUserId, forKey: .targetUserId)
         
         try container.encode(timeout, forKey: .timeout)
         
-        try container.encode(type, forKey: .type)
+        try container.encode(id, forKey: .id)
         
-        try container.encode(userId, forKey: .userId)
+        try container.encode(reason, forKey: .reason)
+        
+        try container.encode(shadow, forKey: .shadow)
+        
+        try container.encode(type, forKey: .type)
     }
 }

@@ -20,7 +20,7 @@ public struct StreamChatDeleteChannelsRequest: Codable, Hashable {
         
         case hardDelete = "hard_delete"
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

@@ -50,7 +50,7 @@ public struct StreamChatCallType: Codable, Hashable {
         
         case pK = "PK"
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

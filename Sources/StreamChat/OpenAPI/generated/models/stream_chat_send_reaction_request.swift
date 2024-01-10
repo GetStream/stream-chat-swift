@@ -32,7 +32,7 @@ public struct StreamChatSendReactionRequest: Codable, Hashable {
         
         case skipPush = "skip_push"
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

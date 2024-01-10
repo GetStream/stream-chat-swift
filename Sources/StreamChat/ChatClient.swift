@@ -91,7 +91,7 @@ public class ChatClient {
     /// Used as a bridge to communicate between the host app and the notification extension. Holds the state for the app lifecycle.
     let extensionLifecycle: NotificationExtensionLifecycle
     
-    let defaultAPI: DefaultAPI
+    let api: API
     
     let defaultParams: DefaultParams
 
@@ -237,7 +237,7 @@ public class ChatClient {
             return connectionRepository.connectionId ?? ""
         }
 
-        defaultAPI = DefaultAPI(
+        api = API(
             basePath: BaseURL.default.restAPIBaseURL.absoluteString,
             transport: transport,
             middlewares: [defaultParams, userAuth]

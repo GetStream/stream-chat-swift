@@ -56,7 +56,7 @@ public struct StreamChatMemberUpdatedEvent: Codable, Hashable {
         
         case team
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

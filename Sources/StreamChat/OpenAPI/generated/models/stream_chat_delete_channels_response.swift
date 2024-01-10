@@ -26,7 +26,7 @@ public struct StreamChatDeleteChannelsResponse: Codable, Hashable {
         
         case taskId = "task_id"
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

@@ -138,7 +138,12 @@ class ChannelListUpdater: Worker {
 //            completion: completion
 //        )
         execute {
-            try await self.defaultAPI.queryChannels(query: channelListQuery)
+//            let request = StreamChatQueryChannelsRequest(user: nil, userId: nil, watch: nil, limit: nil, offset: nil, presence: nil, sort: nil, state: nil, connectionId: nil, filterConditions: nil, memberLimit: nil, messageLimit: nil)
+//            let result = try await self.api.queryChannels(queryChannelsRequest: request, connectionId: nil)
+//            print("result")
+            let queryUsers = StreamChatQueryUsersRequest(offset: 5, sort: [.init(direction: 1, field: "role")], connectionId: "123", filterConditions: ["test": .string("test")], idGt: nil, idGte: nil, idLte: nil, limit: 25, user: nil, userId: "luke_skywalker", idLt: nil, presence: false)
+            let resut = try await self.api.queryUsers(payload: queryUsers)
+            return ChannelListPayload(channels: [])
         } completion: { result in
             completion(result)
         }

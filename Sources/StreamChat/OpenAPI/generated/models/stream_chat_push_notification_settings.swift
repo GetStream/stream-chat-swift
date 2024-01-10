@@ -20,7 +20,7 @@ public struct StreamChatPushNotificationSettings: Codable, Hashable {
         
         case disabledUntil = "disabled_until"
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

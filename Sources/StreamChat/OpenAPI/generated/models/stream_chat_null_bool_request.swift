@@ -20,7 +20,7 @@ public struct StreamChatNullBoolRequest: Codable, Hashable {
         
         case value = "Value"
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

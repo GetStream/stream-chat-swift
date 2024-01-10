@@ -13,24 +13,24 @@ typealias WorkerBuilder = (
 class Worker {
     let database: DatabaseContainer
     let apiClient: APIClient
-    let defaultAPI: DefaultAPI
+    let api: API
     
     public init(database: DatabaseContainer, apiClient: APIClient) {
         self.database = database
         self.apiClient = apiClient
         // TODO: fix this.
-        defaultAPI = DefaultAPI(
+        api = API(
             basePath: "TODO",
             transport: URLSessionTransport(urlSession: .shared),
             middlewares: []
         )
     }
 
-    public init(database: DatabaseContainer, apiClient: APIClient, defaultAPI: DefaultAPI? = nil) {
+    public init(database: DatabaseContainer, apiClient: APIClient, api: API? = nil) {
         self.database = database
         self.apiClient = apiClient
         // TODO: fix this.
-        self.defaultAPI = defaultAPI ?? DefaultAPI(
+        self.api = api ?? API(
             basePath: "TODO",
             transport: URLSessionTransport(urlSession: .shared),
             middlewares: []

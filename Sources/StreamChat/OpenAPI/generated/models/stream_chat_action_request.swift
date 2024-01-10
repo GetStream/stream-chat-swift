@@ -38,7 +38,7 @@ public struct StreamChatActionRequest: Codable, Hashable {
         
         case value
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

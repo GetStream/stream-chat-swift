@@ -20,7 +20,7 @@ public struct StreamChatRingSettings: Codable, Hashable {
         
         case incomingCallTimeoutMs = "incoming_call_timeout_ms"
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

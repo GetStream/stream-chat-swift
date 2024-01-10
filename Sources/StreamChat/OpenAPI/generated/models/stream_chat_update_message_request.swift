@@ -20,7 +20,7 @@ public struct StreamChatUpdateMessageRequest: Codable, Hashable {
         
         case skipEnrichUrl = "skip_enrich_url"
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

@@ -5,8 +5,6 @@
 import Foundation
 
 public struct StreamChatImages: Codable, Hashable {
-    public var original: StreamChatImageData
-    
     public var fixedHeight: StreamChatImageData
     
     public var fixedHeightDownsampled: StreamChatImageData
@@ -19,9 +17,9 @@ public struct StreamChatImages: Codable, Hashable {
     
     public var fixedWidthStill: StreamChatImageData
     
-    public init(original: StreamChatImageData, fixedHeight: StreamChatImageData, fixedHeightDownsampled: StreamChatImageData, fixedHeightStill: StreamChatImageData, fixedWidth: StreamChatImageData, fixedWidthDownsampled: StreamChatImageData, fixedWidthStill: StreamChatImageData) {
-        self.original = original
-        
+    public var original: StreamChatImageData
+    
+    public init(fixedHeight: StreamChatImageData, fixedHeightDownsampled: StreamChatImageData, fixedHeightStill: StreamChatImageData, fixedWidth: StreamChatImageData, fixedWidthDownsampled: StreamChatImageData, fixedWidthStill: StreamChatImageData, original: StreamChatImageData) {
         self.fixedHeight = fixedHeight
         
         self.fixedHeightDownsampled = fixedHeightDownsampled
@@ -33,11 +31,11 @@ public struct StreamChatImages: Codable, Hashable {
         self.fixedWidthDownsampled = fixedWidthDownsampled
         
         self.fixedWidthStill = fixedWidthStill
+        
+        self.original = original
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case original
-        
         case fixedHeight = "fixed_height"
         
         case fixedHeightDownsampled = "fixed_height_downsampled"
@@ -49,12 +47,12 @@ public struct StreamChatImages: Codable, Hashable {
         case fixedWidthDownsampled = "fixed_width_downsampled"
         
         case fixedWidthStill = "fixed_width_still"
+        
+        case original
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
-        try container.encode(original, forKey: .original)
         
         try container.encode(fixedHeight, forKey: .fixedHeight)
         
@@ -67,5 +65,7 @@ public struct StreamChatImages: Codable, Hashable {
         try container.encode(fixedWidthDownsampled, forKey: .fixedWidthDownsampled)
         
         try container.encode(fixedWidthStill, forKey: .fixedWidthStill)
+        
+        try container.encode(original, forKey: .original)
     }
 }

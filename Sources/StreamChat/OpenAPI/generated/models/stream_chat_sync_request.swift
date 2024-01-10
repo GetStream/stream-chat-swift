@@ -5,12 +5,6 @@
 import Foundation
 
 public struct StreamChatSyncRequest: Codable, Hashable {
-    public var user: StreamChatUserObjectRequest?
-    
-    public var userId: String?
-    
-    public var watch: Bool?
-    
     public var withInaccessibleCids: Bool?
     
     public var channelCids: [String]?
@@ -19,13 +13,13 @@ public struct StreamChatSyncRequest: Codable, Hashable {
     
     public var lastSyncAt: String
     
-    public init(user: StreamChatUserObjectRequest?, userId: String?, watch: Bool?, withInaccessibleCids: Bool?, channelCids: [String]?, connectionId: String?, lastSyncAt: String) {
-        self.user = user
-        
-        self.userId = userId
-        
-        self.watch = watch
-        
+    public var user: StreamChatUserObjectRequest?
+    
+    public var userId: String?
+    
+    public var watch: Bool?
+    
+    public init(withInaccessibleCids: Bool?, channelCids: [String]?, connectionId: String?, lastSyncAt: String, user: StreamChatUserObjectRequest?, userId: String?, watch: Bool?) {
         self.withInaccessibleCids = withInaccessibleCids
         
         self.channelCids = channelCids
@@ -33,15 +27,15 @@ public struct StreamChatSyncRequest: Codable, Hashable {
         self.connectionId = connectionId
         
         self.lastSyncAt = lastSyncAt
+        
+        self.user = user
+        
+        self.userId = userId
+        
+        self.watch = watch
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case user
-        
-        case userId = "user_id"
-        
-        case watch
-        
         case withInaccessibleCids = "with_inaccessible_cids"
         
         case channelCids = "channel_cids"
@@ -49,16 +43,16 @@ public struct StreamChatSyncRequest: Codable, Hashable {
         case connectionId = "connection_id"
         
         case lastSyncAt = "last_sync_at"
+        
+        case user
+        
+        case userId = "user_id"
+        
+        case watch
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
-        try container.encode(user, forKey: .user)
-        
-        try container.encode(userId, forKey: .userId)
-        
-        try container.encode(watch, forKey: .watch)
         
         try container.encode(withInaccessibleCids, forKey: .withInaccessibleCids)
         
@@ -67,5 +61,11 @@ public struct StreamChatSyncRequest: Codable, Hashable {
         try container.encode(connectionId, forKey: .connectionId)
         
         try container.encode(lastSyncAt, forKey: .lastSyncAt)
+        
+        try container.encode(user, forKey: .user)
+        
+        try container.encode(userId, forKey: .userId)
+        
+        try container.encode(watch, forKey: .watch)
     }
 }

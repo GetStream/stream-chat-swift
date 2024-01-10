@@ -14,7 +14,7 @@ public struct StreamChatGuestRequest: Codable, Hashable {
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case user
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
