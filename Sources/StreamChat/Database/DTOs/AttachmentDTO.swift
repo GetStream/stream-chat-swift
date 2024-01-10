@@ -231,6 +231,12 @@ extension ClientError {
         }
     }
 
+    class AttachmentEditing: ClientError {
+        init(id: AttachmentId, reason: String) {
+            super.init("`AttachmentDTO` with id: \(id) can't be edited (\(reason))")
+        }
+    }
+
     class AttachmentDecoding: ClientError {}
 
     class AttachmentUploading: ClientError {

@@ -9,6 +9,10 @@ import StreamChatUI
 extension StreamChatWrapper {
     // Instantiates chat client
     func setUpChat() {
+        if AppConfig.shared.demoAppConfig.isLocationAttachmentsEnabled {
+            Components.default.mixedAttachmentInjector.register(.location, with: LocationAttachmentViewInjector.self)
+        }
+
         guard client == nil else {
             log.error("Client was already instantiated")
             return
@@ -57,9 +61,5 @@ extension StreamChatWrapper {
         Components.default.messageActionsVC = DemoChatMessageActionsVC.self
         Components.default.reactionsSorting = { $0.type.position < $1.type.position }
         Components.default.messageLayoutOptionsResolver = DemoChatMessageLayoutOptionsResolver()
-        
-        if AppConfig.shared.demoAppConfig.isLocationAttachmentsEnabled {
-            Components.default.mixedAttachmentInjector.register(.location, with: LocationAttachmentViewInjector.self)
-        }
     }
 }

@@ -3,16 +3,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.47.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.47.0)
+_January 09, 2024_
+
 ## StreamChat
+### 🐞 Fixed
+- Fix Channel ID initializer crashing with an empty string [#2964](https://github.com/GetStream/stream-chat-swift/pull/2964)
 ### ✅ Added
 - Expose `UserListQuery.search(term:)` and `UserListQuery.user(withID:)` [#2959](https://github.com/GetStream/stream-chat-swift/pull/2959)
-- Allow restarting pending attachments [#2958](https://github.com/GetStream/stream-chat-swift/pull/2958)
 
 ## StreamChatUI
 ### ✅ Added
 - Better support for custom mixed attachments rendering [#2947](https://github.com/GetStream/stream-chat-swift/pull/2947)
 - Add default rendering for unsupported attachments [#2948](https://github.com/GetStream/stream-chat-swift/pull/2948)
-- Allow editing pending messages [#2958](https://github.com/GetStream/stream-chat-swift/pull/2958)
 ### 🐞 Fixed
 - Fix deleted messages showing custom attachments [#2947](https://github.com/GetStream/stream-chat-swift/pull/2947)
 - Fix blocked messages showing attachments [#2947](https://github.com/GetStream/stream-chat-swift/pull/2947)
