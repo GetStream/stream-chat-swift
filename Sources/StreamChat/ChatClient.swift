@@ -93,8 +93,6 @@ public class ChatClient {
     
     let api: API
     
-    let defaultParams: DefaultParams
-
     /// The environment object containing all dependencies of this `Client` instance.
     private let environment: Environment
 
@@ -195,52 +193,11 @@ public class ChatClient {
         self.connectionRepository = connectionRepository
         self.messageRepository = messageRepository
         self.syncRepository = syncRepository
-        let defaultParams = DefaultParams(apiKey: config.apiKey.apiKeyString)
-        self.defaultParams = defaultParams
         
-        let transport = URLSessionTransport(urlSession: .shared)
-        let userAuth = UserAuth {
-            // TODO: solve this.
-            authRepository.currentToken?.rawValue ?? ""
-        } connectionId: {
-            // TODO: solve this.
-            if let connectionId = connectionRepository.connectionId {
-                return connectionId
-            }
-            var connected = false
-            var timeout = false
-            let control = DefaultTimer.schedule(timeInterval: 30, queue: .main) {
-                timeout = true
-            }
-            log.debug("Listening for WS connection")
-            if let connectionId = connectionRepository.connectionId {
-                control.cancel()
-                connected = true
-                log.debug("WS connected")
-                return connectionId
-            }
-
-            while !connected && !timeout {
-                try await Task.sleep(nanoseconds: 100_000)
-                if let connectionId = connectionRepository.connectionId {
-                    control.cancel()
-                    connected = true
-                    log.debug("WS connected")
-                    return connectionId
-                }
-            }
-            
-            if timeout {
-                log.debug("Timeout while waiting for WS connection opening")
-            }
-            
-            return connectionRepository.connectionId ?? ""
-        }
-
         api = API(
-            basePath: BaseURL.default.restAPIBaseURL.absoluteString,
-            transport: transport,
-            middlewares: [defaultParams, userAuth]
+            apiClient: apiClient,
+            basePath: BaseURL.default.restAPIBaseURLv2.absoluteString,
+            apiKey: config.apiKey
         )
         
         authenticationRepository = authRepository

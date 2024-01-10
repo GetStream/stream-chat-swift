@@ -22,6 +22,7 @@ public struct BaseURL: CustomStringConvertible {
     public static let sydney = BaseURL(urlString: "https://chat-proxy-sydney.stream-io-api.com/")!
 
     let restAPIBaseURL: URL
+    let restAPIBaseURLv2: URL
     let webSocketBaseURL: URL
 
     public var description: String { restAPIBaseURL.absoluteString }
@@ -59,12 +60,14 @@ public struct BaseURL: CustomStringConvertible {
             let mockServerUrls = Self.mockServerUrls(with: urlString)
             restAPIBaseURL = mockServerUrls.restAPIBaseURL
             webSocketBaseURL = mockServerUrls.webSocketBaseURL
+            restAPIBaseURLv2 = mockServerUrls.restAPIBaseURL
             return
         }
         #endif
 
         restAPIBaseURL = URL(string: "https://\(urlString)/")!
         webSocketBaseURL = URL(string: "wss://\(urlString)/")!
+        restAPIBaseURLv2 = URL(string: "https://\(urlString)")!
     }
 }
 

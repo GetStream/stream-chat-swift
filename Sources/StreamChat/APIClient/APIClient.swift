@@ -79,6 +79,14 @@ class APIClient {
         let requestOperation = operation(endpoint: endpoint, isRecoveryOperation: false, completion: completion)
         operationQueue.addOperation(requestOperation)
     }
+    
+    func request<Response: Decodable>(
+        _ request: URLRequest,
+        completion: @escaping (Result<Response, Error>) -> Void
+    ) {
+        let requestOperation = operation(request: request, isRecoveryOperation: false, completion: completion)
+        operationQueue.addOperation(requestOperation)
+    }
 
     /// Performs a network request and retries in case of network failures
     ///
@@ -181,6 +189,77 @@ class APIClient {
             }
         }
     }
+    
+    private func operation<Response: Decodable>(
+        request: URLRequest,
+        isRecoveryOperation: Bool,
+        completion: @escaping (Result<Response, Error>) -> Void
+    ) -> AsyncOperation {
+        AsyncOperation(maxRetries: maximumRequestRetries) { [weak self] operation, done in
+            guard let self = self else {
+                done(.continue)
+                return
+            }
+
+            guard !self.isRefreshingToken else {
+                // Requeue request
+                self.request(request, completion: completion)
+                done(.continue)
+                return
+            }
+
+            self.execute(urlRequest: request) { [weak self] (result: Result<Response, Error>) -> Void in
+                switch result {
+                case .failure(_ as ClientError.RefreshingToken):
+                    // Requeue request
+                    self?.request(request, completion: completion)
+                    done(.continue)
+                case .failure(_ as ClientError.TokenRefreshed):
+                    // Retry request. Expired token has been refreshed
+                    operation.resetRetries()
+                    done(.retry)
+                case .failure(_ as ClientError.WaiterTimeout):
+                    // When waiters timeout, chances are that we are still connecting. We are going to retry until we reach max retries
+                    if operation.canRetry {
+                        done(.retry)
+                    } else {
+                        completion(result)
+                        done(.continue)
+                    }
+                case let .failure(error) where self?.isConnectionError(error) == true:
+                    // If a non recovery request comes in while we are in recovery mode, we want to queue if still has
+                    // retries left
+                    let inRecoveryMode = self?.isInRecoveryMode == true
+                    if inRecoveryMode && !isRecoveryOperation && operation.canRetry {
+                        self?.request(request, completion: completion)
+                        done(.continue)
+                        return
+                    }
+
+                    // Do not retry unless its a connection problem and we still have retries left
+                    if operation.canRetry {
+                        done(.retry)
+                        return
+                    }
+
+                    if inRecoveryMode {
+                        completion(.failure(ClientError.ConnectionError()))
+                    } else {
+                        // Offline Queuing
+                        // TODO: Fix this!
+//                        self?.queueOfflineRequest?(endpoint.withDataResponse)
+                        completion(result)
+                    }
+
+                    done(.continue)
+                case .success, .failure:
+//                    log.debug("Request completed for /\(endpoint.path)", subsystems: .offlineSupport)
+                    completion(result)
+                    done(.continue)
+                }
+            }
+        }
+    }
 
     private func unmanagedOperation<Response: Decodable>(
         endpoint: Endpoint<Response>,
@@ -239,6 +318,33 @@ class APIClient {
                 completion(.failure(ClientError("APIClient was deallocated")))
                 return
             }
+
+            execute(urlRequest: urlRequest, completion: completion)
+        }
+    }
+    
+    private func execute<Response: Decodable>(
+        urlRequest: URLRequest,
+        completion: @escaping (Result<Response, Error>) -> Void
+    ) {
+        encoder.encode(request: urlRequest) { [weak self] (requestResult) in
+            guard let self else { return }
+            let urlRequest: URLRequest
+            do {
+                urlRequest = try requestResult.get()
+            } catch {
+                log.error(error, subsystems: .httpRequests)
+                completion(.failure(error))
+                return
+            }
+            
+            log.debug(
+                "Making URL request: \(String(describing: urlRequest.httpMethod?.uppercased())) \(String(describing: urlRequest.url?.relativePath))\n"
+                    + "Headers:\n\(String(describing: urlRequest.allHTTPHeaderFields))\n"
+                    + "Body:\n\(urlRequest.httpBody?.debugPrettyPrintedJSON ?? "<Empty>")\n"
+                    + "Query items:\n\(urlRequest.queryItems.prettyPrinted)",
+                subsystems: .httpRequests
+            )
 
             let task = self.session.dataTask(with: urlRequest) { [decoder = self.decoder] (data, response, error) in
                 do {

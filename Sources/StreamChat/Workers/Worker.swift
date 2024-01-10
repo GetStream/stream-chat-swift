@@ -20,9 +20,9 @@ class Worker {
         self.apiClient = apiClient
         // TODO: fix this.
         api = API(
+            apiClient: apiClient,
             basePath: "TODO",
-            transport: URLSessionTransport(urlSession: .shared),
-            middlewares: []
+            apiKey: .init("empty")
         )
     }
 
@@ -31,9 +31,9 @@ class Worker {
         self.apiClient = apiClient
         // TODO: fix this.
         self.api = api ?? API(
+            apiClient: apiClient,
             basePath: "TODO",
-            transport: URLSessionTransport(urlSession: .shared),
-            middlewares: []
+            apiKey: .init("empty")
         )
     }
 }

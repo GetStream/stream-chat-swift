@@ -21,6 +21,11 @@ protocol RequestEncoder {
         for endpoint: Endpoint<ResponsePayload>,
         completion: @escaping (Result<URLRequest, Error>) -> Void
     )
+    
+    func encode(
+        request: URLRequest,
+        completion: @escaping (Result<URLRequest, Error>) -> Void
+    )
 
     /// Creates a new `RequestEncoder`.
     ///
@@ -111,12 +116,31 @@ class DefaultRequestEncoder: RequestEncoder {
             return
         }
 
-        addAuthorizationHeader(request: request, endpoint: endpoint) {
+        addAuthorizationHeader(request: request, requiresToken: endpoint.requiresToken) {
             switch $0 {
             case let .success(requestWithAuth):
                 self.addConnectionIdIfNeeded(
                     request: requestWithAuth,
-                    endpoint: endpoint,
+                    requiresConnectionId: endpoint.requiresConnectionId,
+                    completion: completion
+                )
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+    
+    func encode(
+        request: URLRequest,
+        completion: @escaping (Result<URLRequest, Error>) -> Void
+    ) {
+        // TODO: fix this
+        addAuthorizationHeader(request: request, requiresToken: true) {
+            switch $0 {
+            case let .success(requestWithAuth):
+                self.addConnectionIdIfNeeded(
+                    request: requestWithAuth,
+                    requiresConnectionId: true, // TODO: fix this.
                     completion: completion
                 )
             case let .failure(error):
@@ -132,12 +156,12 @@ class DefaultRequestEncoder: RequestEncoder {
 
     // MARK: - Private
 
-    private func addAuthorizationHeader<T: Decodable>(
+    private func addAuthorizationHeader(
         request: URLRequest,
-        endpoint: Endpoint<T>,
+        requiresToken: Bool,
         completion: @escaping (Result<URLRequest, Error>) -> Void
     ) {
-        guard endpoint.requiresToken else {
+        guard requiresToken else {
             var updatedRequest = request
             updatedRequest.setHTTPHeaders(.anonymousStreamAuth)
             completion(.success(updatedRequest))
@@ -172,12 +196,12 @@ class DefaultRequestEncoder: RequestEncoder {
         }
     }
 
-    private func addConnectionIdIfNeeded<T: Decodable>(
+    private func addConnectionIdIfNeeded(
         request: URLRequest,
-        endpoint: Endpoint<T>,
+        requiresConnectionId: Bool,
         completion: @escaping (Result<URLRequest, Error>) -> Void
     ) {
-        guard endpoint.requiresConnectionId else {
+        guard requiresConnectionId else {
             completion(.success(request))
             return
         }
