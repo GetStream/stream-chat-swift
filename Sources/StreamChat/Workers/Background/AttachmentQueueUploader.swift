@@ -154,6 +154,15 @@ class AttachmentQueueUploader: Worker {
             // Update attachment local state.
             attachmentDTO.localState = newState
 
+            // When all attachments finish uploading, mark message pending send
+            if newState == .uploaded {
+                let message = attachmentDTO.message
+                let allAttachmentsAreUploaded = message.attachments.filter { $0.localState != .uploaded }.isEmpty
+                if allAttachmentsAreUploaded {
+                    message.localMessageState = .pendingSend
+                }
+            }
+
             if var uploadedAttachment = uploadedAttachment {
                 self?.updateRemoteUrl(of: &uploadedAttachment)
                 if let processedAttachment = self?.attachmentPostProcessor?.process(uploadedAttachment: uploadedAttachment) {
