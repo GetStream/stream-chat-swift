@@ -96,7 +96,7 @@ public struct StreamChatUserResponse: Codable, Hashable {
         
         case teams
         
-        case custom = "Custom"
+        case custom
         
         case deletedAt = "deleted_at"
         

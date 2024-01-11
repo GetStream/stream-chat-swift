@@ -204,7 +204,7 @@ public struct StreamChatSearchResultMessage: Codable, Hashable {
         
         case showInChannel = "show_in_channel"
         
-        case custom = "Custom"
+        case custom
         
         case i18n
         

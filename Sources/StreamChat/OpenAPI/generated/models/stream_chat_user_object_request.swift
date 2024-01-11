@@ -58,7 +58,7 @@ public struct StreamChatUserObjectRequest: Codable, Hashable {
         
         case role
         
-        case custom = "Custom"
+        case custom
         
         case banExpires = "ban_expires"
         

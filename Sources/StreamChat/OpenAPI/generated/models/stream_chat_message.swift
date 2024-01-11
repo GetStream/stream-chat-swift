@@ -5,9 +5,9 @@
 import Foundation
 
 public class StreamChatMessage: Codable, Hashable {
-    public var updatedAt: String
+    public var updatedAt: Date
     
-    public var pinExpires: String?
+    public var pinExpires: Date?
     
     public var quotedMessageId: String?
     
@@ -43,9 +43,9 @@ public class StreamChatMessage: Codable, Hashable {
     
     public var type: String
     
-    public var createdAt: String
+    public var createdAt: Date
     
-    public var deletedAt: String?
+    public var deletedAt: Date?
     
     public var command: String?
     
@@ -65,7 +65,7 @@ public class StreamChatMessage: Codable, Hashable {
     
     public var user: StreamChatUserObject?
     
-    public var pinnedAt: String?
+    public var pinnedAt: Date?
     
     public var threadParticipants: [StreamChatUserObject]?
     
@@ -213,7 +213,7 @@ public class StreamChatMessage: Codable, Hashable {
         hasher.combine(mentionedUsers)
     }
 
-    public init(updatedAt: String, pinExpires: String?, quotedMessageId: String?, text: String, imageLabels: [String: RawJSON]?, silent: Bool, ownReactions: [StreamChatReaction?], parentId: String?, reactionCounts: [String: RawJSON], replyCount: Int, showInChannel: Bool?, attachments: [StreamChatAttachment?], deletedReplyCount: Int, shadowed: Bool, i18n: [String: RawJSON]?, reactionScores: [String: RawJSON], latestReactions: [StreamChatReaction?], quotedMessage: StreamChatMessage?, type: String, createdAt: String, deletedAt: String?, command: String?, html: String, id: String, mml: String?, pinned: Bool, pinnedBy: StreamChatUserObject?, custom: [String: RawJSON], cid: String, user: StreamChatUserObject?, pinnedAt: String?, threadParticipants: [StreamChatUserObject]?, beforeMessageSendFailed: Bool?, mentionedUsers: [StreamChatUserObject]) {
+    public init(updatedAt: Date, pinExpires: Date?, quotedMessageId: String?, text: String, imageLabels: [String: RawJSON]?, silent: Bool, ownReactions: [StreamChatReaction?], parentId: String?, reactionCounts: [String: RawJSON], replyCount: Int, showInChannel: Bool?, attachments: [StreamChatAttachment?], deletedReplyCount: Int, shadowed: Bool, i18n: [String: RawJSON]?, reactionScores: [String: RawJSON], latestReactions: [StreamChatReaction?], quotedMessage: StreamChatMessage?, type: String, createdAt: Date, deletedAt: Date?, command: String?, html: String, id: String, mml: String?, pinned: Bool, pinnedBy: StreamChatUserObject?, custom: [String: RawJSON], cid: String, user: StreamChatUserObject?, pinnedAt: Date?, threadParticipants: [StreamChatUserObject]?, beforeMessageSendFailed: Bool?, mentionedUsers: [StreamChatUserObject]) {
         self.updatedAt = updatedAt
         
         self.pinExpires = pinExpires
@@ -338,7 +338,7 @@ public class StreamChatMessage: Codable, Hashable {
         
         case pinnedBy = "pinned_by"
         
-        case custom = "Custom"
+        case custom
         
         case cid
         

@@ -122,7 +122,7 @@ public struct StreamChatGetOGResponse: Codable, Hashable {
         
         case pretext
         
-        case custom = "Custom"
+        case custom
         
         case duration
         

@@ -396,7 +396,8 @@ protocol DatabaseSession: UserDatabaseSession,
     MemberListQueryDatabaseSession,
     AttachmentDatabaseSession,
     ChannelMuteDatabaseSession,
-    QueuedRequestDatabaseSession {}
+    QueuedRequestDatabaseSession,
+    ChannelDatabaseSessionV2 {}
 
 extension DatabaseSession {
     @discardableResult

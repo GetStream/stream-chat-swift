@@ -11,13 +11,13 @@ public struct StreamChatChannelResponse: Codable, Hashable {
     
     public var autoTranslationEnabled: Bool?
     
-    public var createdAt: String?
+    public var createdAt: Date?
     
     public var disabled: Bool
     
-    public var truncatedAt: String?
+    public var truncatedAt: Date?
     
-    public var updatedAt: String?
+    public var updatedAt: Date?
     
     public var autoTranslationLanguage: String?
     
@@ -37,9 +37,9 @@ public struct StreamChatChannelResponse: Codable, Hashable {
     
     public var config: StreamChatChannelConfigWithInfo?
     
-    public var deletedAt: String?
+    public var deletedAt: Date?
     
-    public var lastMessageAt: String?
+    public var lastMessageAt: Date?
     
     public var muted: Bool?
     
@@ -49,13 +49,13 @@ public struct StreamChatChannelResponse: Codable, Hashable {
     
     public var truncatedBy: StreamChatUserObject?
     
-    public var muteExpiresAt: String?
+    public var muteExpiresAt: Date?
     
     public var type: String
     
     public var members: [StreamChatChannelMember?]?
     
-    public init(id: String, custom: [String: RawJSON], autoTranslationEnabled: Bool?, createdAt: String?, disabled: Bool, truncatedAt: String?, updatedAt: String?, autoTranslationLanguage: String?, cooldown: Int?, createdBy: StreamChatUserObject?, memberCount: Int?, ownCapabilities: [String]?, cid: String, frozen: Bool, hideMessagesBefore: String?, config: StreamChatChannelConfigWithInfo?, deletedAt: String?, lastMessageAt: String?, muted: Bool?, hidden: Bool?, team: String?, truncatedBy: StreamChatUserObject?, muteExpiresAt: String?, type: String, members: [StreamChatChannelMember?]?) {
+    public init(id: String, custom: [String: RawJSON], autoTranslationEnabled: Bool?, createdAt: Date?, disabled: Bool, truncatedAt: Date?, updatedAt: Date?, autoTranslationLanguage: String?, cooldown: Int?, createdBy: StreamChatUserObject?, memberCount: Int?, ownCapabilities: [String]?, cid: String, frozen: Bool, hideMessagesBefore: String?, config: StreamChatChannelConfigWithInfo?, deletedAt: Date?, lastMessageAt: Date?, muted: Bool?, hidden: Bool?, team: String?, truncatedBy: StreamChatUserObject?, muteExpiresAt: Date?, type: String, members: [StreamChatChannelMember?]?) {
         self.id = id
         
         self.custom = custom
@@ -110,7 +110,7 @@ public struct StreamChatChannelResponse: Codable, Hashable {
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case id
         
-        case custom = "Custom"
+        case custom
         
         case autoTranslationEnabled = "auto_translation_enabled"
         

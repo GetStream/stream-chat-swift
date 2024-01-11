@@ -136,7 +136,7 @@ public struct StreamChatAttachmentRequest: Codable, Hashable {
         
         case giphy
         
-        case custom = "Custom"
+        case custom
         
         case color
     }

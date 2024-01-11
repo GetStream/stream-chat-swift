@@ -593,6 +593,8 @@
 		8440861928FFE9D40027849C /* ChatUser+CustomFields.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43016E1526B734410054E805 /* ChatUser+CustomFields.swift */; };
 		845CEE53270F032A002C7EBD /* MessageSearchQuery_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CEE52270F032A002C7EBD /* MessageSearchQuery_Tests.swift */; };
 		845CEE5A270F2A06002C7EBD /* ChatReactionsBubbleView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CEE59270F2A06002C7EBD /* ChatReactionsBubbleView_Tests.swift */; };
+		846A595E2B4FEF8400D60EF2 /* ChannelDatabaseSessionV2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846A595D2B4FEF8400D60EF2 /* ChannelDatabaseSessionV2.swift */; };
+		846A595F2B4FEF8400D60EF2 /* ChannelDatabaseSessionV2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846A595D2B4FEF8400D60EF2 /* ChannelDatabaseSessionV2.swift */; };
 		84748F892AC37F40007E3285 /* StreamChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; };
 		84748F8D2AC37F40007E3285 /* StreamChatUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; };
 		84748F922AC38276007E3285 /* ChatUser+CustomFields.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43016E1526B734410054E805 /* ChatUser+CustomFields.swift */; };
@@ -3481,6 +3483,7 @@
 		845CEE52270F032A002C7EBD /* MessageSearchQuery_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageSearchQuery_Tests.swift; sourceTree = "<group>"; };
 		845CEE59270F2A06002C7EBD /* ChatReactionsBubbleView_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatReactionsBubbleView_Tests.swift; sourceTree = "<group>"; };
 		84698637274FE79200B22258 /* ConnectionRecoveryHandler_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionRecoveryHandler_Mock.swift; sourceTree = "<group>"; };
+		846A595D2B4FEF8400D60EF2 /* ChannelDatabaseSessionV2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelDatabaseSessionV2.swift; sourceTree = "<group>"; };
 		846C633B26FC834800F7518B /* MessageDeleted+MissingUser.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "MessageDeleted+MissingUser.json"; sourceTree = "<group>"; };
 		84790E952AC1D346003AFF1C /* DemoShare.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = DemoShare.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		84790E972AC1D346003AFF1C /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
@@ -5732,6 +5735,7 @@
 				799C9477247E3DEA001F1104 /* StreamChatModel.xcdatamodeld */,
 				799C945D247D7283001F1104 /* DatabaseContainer.swift */,
 				792FCB4A24A3D52A000290C7 /* DatabaseSession.swift */,
+				846A595D2B4FEF8400D60EF2 /* ChannelDatabaseSessionV2.swift */,
 				797EEA4524FFAF4F00C81203 /* DataStore.swift */,
 				792A4F18247EA97000EAF71D /* DTOs */,
 			);
@@ -11625,6 +11629,7 @@
 				E7AD954F25D536AA00076DC3 /* SystemEnvironment+Version.swift in Sources */,
 				797E10A824EAF6DE00353791 /* UniqueId.swift in Sources */,
 				8484C45F2B4C2067000065E3 /* stream_chat_action_request.swift in Sources */,
+				846A595E2B4FEF8400D60EF2 /* ChannelDatabaseSessionV2.swift in Sources */,
 				8484C5212B4C2067000065E3 /* stream_chat_channel_request.swift in Sources */,
 				ADE2093D29FC022D007D0FF3 /* MessagesPaginationStateHandling.swift in Sources */,
 				8484C4882B4C2067000065E3 /* stream_chat_call_type.swift in Sources */,
@@ -12195,6 +12200,7 @@
 				C135A1CC28F45F6B0058EFB6 /* AuthenticationRepository.swift in Sources */,
 				C121E827274544AD00023E4C /* WebSocketPingController.swift in Sources */,
 				C121E828274544AD00023E4C /* RetryStrategy.swift in Sources */,
+				846A595F2B4FEF8400D60EF2 /* ChannelDatabaseSessionV2.swift in Sources */,
 				C121E829274544AD00023E4C /* WebSocketConnectPayload.swift in Sources */,
 				C121E82A274544AD00023E4C /* ConnectionStatus.swift in Sources */,
 				C121E82B274544AD00023E4C /* APIPathConvertible.swift in Sources */,

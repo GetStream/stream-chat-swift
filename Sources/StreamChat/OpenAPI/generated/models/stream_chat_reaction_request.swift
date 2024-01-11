@@ -32,7 +32,7 @@ public struct StreamChatReactionRequest: Codable, Hashable {
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case custom = "Custom"
+        case custom
         
         case messageId = "message_id"
         

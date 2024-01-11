@@ -132,7 +132,7 @@ public struct StreamChatAttachment: Codable, Hashable {
         
         case footer
         
-        case custom = "Custom"
+        case custom
         
         case footerIcon = "footer_icon"
         

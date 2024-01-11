@@ -114,7 +114,7 @@ public struct StreamChatChannel: Codable, Hashable {
         
         case type
         
-        case custom = "Custom"
+        case custom
         
         case cid
         

@@ -5,23 +5,23 @@
 import Foundation
 
 public struct StreamChatUserObject: Codable, Hashable {
-    public var updatedAt: String?
+    public var updatedAt: Date?
     
-    public var createdAt: String?
+    public var createdAt: Date?
     
-    public var deactivatedAt: String?
+    public var deactivatedAt: Date?
     
     public var invisible: Bool?
     
     public var online: Bool
     
-    public var banExpires: String?
+    public var banExpires: Date?
     
     public var role: String
     
     public var custom: [String: RawJSON]?
     
-    public var deletedAt: String?
+    public var deletedAt: Date?
     
     public var pushNotifications: StreamChatPushNotificationSettings?
     
@@ -35,9 +35,9 @@ public struct StreamChatUserObject: Codable, Hashable {
     
     public var language: String?
     
-    public var lastActive: String?
+    public var lastActive: Date?
     
-    public init(updatedAt: String?, createdAt: String?, deactivatedAt: String?, invisible: Bool?, online: Bool, banExpires: String?, role: String, custom: [String: RawJSON], deletedAt: String?, pushNotifications: StreamChatPushNotificationSettings?, teams: [String]?, revokeTokensIssuedBefore: String?, banned: Bool, id: String, language: String?, lastActive: String?) {
+    public init(updatedAt: Date?, createdAt: Date?, deactivatedAt: Date?, invisible: Bool?, online: Bool, banExpires: Date?, role: String, custom: [String: RawJSON], deletedAt: Date?, pushNotifications: StreamChatPushNotificationSettings?, teams: [String]?, revokeTokensIssuedBefore: String?, banned: Bool, id: String, language: String?, lastActive: Date?) {
         self.updatedAt = updatedAt
         
         self.createdAt = createdAt
@@ -86,7 +86,7 @@ public struct StreamChatUserObject: Codable, Hashable {
         
         case role
         
-        case custom = "Custom"
+        case custom
         
         case deletedAt = "deleted_at"
         

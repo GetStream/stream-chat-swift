@@ -110,7 +110,7 @@ public struct StreamChatOwnUser: Codable, Hashable {
         
         case updatedAt = "updated_at"
         
-        case custom = "Custom"
+        case custom
         
         case devices
         

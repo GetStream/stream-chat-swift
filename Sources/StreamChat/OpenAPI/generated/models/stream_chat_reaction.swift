@@ -7,7 +7,7 @@ import Foundation
 public struct StreamChatReaction: Codable, Hashable {
     public var userId: String?
     
-    public var custom: [String: RawJSON]
+    public var custom: [String: RawJSON]?
     
     public var createdAt: String
     
@@ -42,7 +42,7 @@ public struct StreamChatReaction: Codable, Hashable {
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case userId = "user_id"
         
-        case custom = "Custom"
+        case custom
         
         case createdAt = "created_at"
         

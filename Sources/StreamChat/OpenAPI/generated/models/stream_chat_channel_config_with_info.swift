@@ -27,13 +27,13 @@ public struct StreamChatChannelConfigWithInfo: Codable, Hashable {
     
     public var replies: Bool
     
-    public var updatedAt: String
+    public var updatedAt: Date
     
     public var uploads: Bool
     
     public var automodThresholds: StreamChatThresholds?
     
-    public var createdAt: String
+    public var createdAt: Date
     
     public var maxMessageLength: Int
     
@@ -61,7 +61,7 @@ public struct StreamChatChannelConfigWithInfo: Codable, Hashable {
     
     public var name: String
     
-    public init(reminders: Bool, search: Bool, typingEvents: Bool, blocklists: [StreamChatBlockListOptions]?, customEvents: Bool, pushNotifications: Bool, reactions: Bool, markMessagesPending: Bool, messageRetention: String, urlEnrichment: Bool, replies: Bool, updatedAt: String, uploads: Bool, automodThresholds: StreamChatThresholds?, createdAt: String, maxMessageLength: Int, readEvents: Bool, mutes: Bool, grants: [String: RawJSON]?, quotes: Bool, allowedFlagReasons: [String]?, automod: String, blocklist: String?, commands: [StreamChatCommand?], automodBehavior: String, connectEvents: Bool, blocklistBehavior: String?, name: String) {
+    public init(reminders: Bool, search: Bool, typingEvents: Bool, blocklists: [StreamChatBlockListOptions]?, customEvents: Bool, pushNotifications: Bool, reactions: Bool, markMessagesPending: Bool, messageRetention: String, urlEnrichment: Bool, replies: Bool, updatedAt: Date, uploads: Bool, automodThresholds: StreamChatThresholds?, createdAt: Date, maxMessageLength: Int, readEvents: Bool, mutes: Bool, grants: [String: RawJSON]?, quotes: Bool, allowedFlagReasons: [String]?, automod: String, blocklist: String?, commands: [StreamChatCommand?], automodBehavior: String, connectEvents: Bool, blocklistBehavior: String?, name: String) {
         self.reminders = reminders
         
         self.search = search

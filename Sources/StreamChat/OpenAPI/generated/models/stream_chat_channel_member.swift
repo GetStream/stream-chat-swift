@@ -5,17 +5,17 @@
 import Foundation
 
 public struct StreamChatChannelMember: Codable, Hashable {
-    public var deletedAt: String?
+    public var deletedAt: Date?
     
-    public var inviteRejectedAt: String?
+    public var inviteRejectedAt: Date?
     
     public var notificationsMuted: Bool
     
-    public var banExpires: String?
+    public var banExpires: Date?
     
     public var banned: Bool
     
-    public var createdAt: String
+    public var createdAt: Date
     
     public var channelRole: String
     
@@ -27,17 +27,17 @@ public struct StreamChatChannelMember: Codable, Hashable {
     
     public var user: StreamChatUserObject?
     
-    public var updatedAt: String
+    public var updatedAt: Date
     
     public var userId: String?
     
-    public var inviteAcceptedAt: String?
+    public var inviteAcceptedAt: Date?
     
     public var invited: Bool?
     
     public var isModerator: Bool?
     
-    public init(deletedAt: String?, inviteRejectedAt: String?, notificationsMuted: Bool, banExpires: String?, banned: Bool, createdAt: String, channelRole: String, status: String?, role: String?, shadowBanned: Bool, user: StreamChatUserObject?, updatedAt: String, userId: String?, inviteAcceptedAt: String?, invited: Bool?, isModerator: Bool?) {
+    public init(deletedAt: Date?, inviteRejectedAt: Date?, notificationsMuted: Bool, banExpires: Date?, banned: Bool, createdAt: Date, channelRole: String, status: String?, role: String?, shadowBanned: Bool, user: StreamChatUserObject?, updatedAt: Date, userId: String?, inviteAcceptedAt: Date?, invited: Bool?, isModerator: Bool?) {
         self.deletedAt = deletedAt
         
         self.inviteRejectedAt = inviteRejectedAt

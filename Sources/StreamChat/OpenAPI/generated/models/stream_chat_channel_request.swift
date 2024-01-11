@@ -52,7 +52,7 @@ public struct StreamChatChannelRequest: Codable, Hashable {
         
         case frozen
         
-        case custom = "Custom"
+        case custom
         
         case autoTranslationLanguage = "auto_translation_language"
         
