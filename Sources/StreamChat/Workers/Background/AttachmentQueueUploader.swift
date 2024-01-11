@@ -160,7 +160,7 @@ class AttachmentQueueUploader: Worker {
             if newState == .uploaded {
                 let allAttachmentsAreUploaded = message.attachments.filter { $0.localState != .uploaded }.isEmpty
                 // We only want to make a message to be resent when it is in failed state
-                // If we did not check the sate, when editing a message, it would retry send an existing message
+                // If we did not check the state, when editing a message, it would resend an existing message
                 if allAttachmentsAreUploaded && message.localMessageState == .sendingFailed {
                     message.localMessageState = .pendingSend
                 }
