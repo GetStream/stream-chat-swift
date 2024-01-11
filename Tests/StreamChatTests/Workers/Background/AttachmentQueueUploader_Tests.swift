@@ -144,7 +144,7 @@ final class AttachmentQueueUploader_Tests: XCTestCase {
         }
     }
 
-    func test_uploader_whenAllAttachmentsFinishUploading_markMessagePendingSend() throws {
+    func test_uploader_whenAllAttachmentsFinishUploading_whenMessageSendingFailed_markMessagePendingSend() throws {
         let cid: ChannelId = .unique
         let messageId: MessageId = .unique
 
@@ -200,6 +200,62 @@ final class AttachmentQueueUploader_Tests: XCTestCase {
         }
     }
 
+    func test_uploader_whenAllAttachmentsFinishUploading_whenMessageNotSendingFailed_doNotMarkMessagePendingSend() throws {
+        let cid: ChannelId = .unique
+        let messageId: MessageId = .unique
+
+        // Create channel in the database.
+        try database.createChannel(cid: cid, withMessages: false)
+        // Create message in the database.
+        try database.createMessage(id: messageId, cid: cid, localState: .pendingSync)
+
+        var message: MessageDTO? { database.viewContext.message(id: messageId) }
+
+        XCTAssertEqual(message?.localMessageState, .pendingSync)
+
+        // Create the successful attachments in the database
+        try database.writeSynchronously { session in
+            let attachment1 = try session.createNewAttachment(
+                attachment: .mockAudio,
+                id: .init(cid: cid, messageId: messageId, index: 1)
+            )
+            let attachment2 = try session.createNewAttachment(
+                attachment: .mockAudio,
+                id: .init(cid: cid, messageId: messageId, index: 2)
+            )
+            attachment1.localState = .uploaded
+            attachment2.localState = .uploaded
+        }
+
+        let attachmentPayload: AnyAttachmentPayload = .mockImage
+        let attachmentId = AttachmentId(cid: cid, messageId: messageId, index: 1)
+        try database.writeSynchronously { session in
+            try session.createNewAttachment(attachment: attachmentPayload, id: attachmentId)
+        }
+
+        // Load attachment from the database.
+        let attachment = try XCTUnwrap(database.viewContext.attachment(id: attachmentId))
+
+        // Assert attachment is in `.pendingUpload` state.
+        XCTAssertEqual(attachment.localState, .pendingUpload)
+
+        // Wait attachment uploading begins.
+        let attachmentModelId = try XCTUnwrap(attachment.asAnyModel()).id
+        AssertAsync.willBeEqual(
+            apiClient.uploadFile_attachment?.id,
+            attachmentModelId
+        )
+
+        // Simulate successful backend response with remote file URL.
+        let response = UploadedAttachment.dummy(attachment: attachment.asAnyModel(), remoteURL: .fakeFile)
+        let remoteUrl = response.remoteURL
+        apiClient.uploadFile_completion?(.success(response))
+
+        AssertAsync {
+            Assert.willBeEqual(message?.localMessageState, .pendingSync)
+        }
+    }
+
     func test_uploader_whenHasFailedAttachments_doNotMarkMessagePendingSend() throws {
         let cid: ChannelId = .unique
         let messageId: MessageId = .unique
@@ -207,7 +263,7 @@ final class AttachmentQueueUploader_Tests: XCTestCase {
         // Create channel in the database.
         try database.createChannel(cid: cid, withMessages: false)
         // Create message in the database.
-        try database.createMessage(id: messageId, cid: cid, localState: .syncing)
+        try database.createMessage(id: messageId, cid: cid, localState: .sendingFailed)
 
         var message: MessageDTO? { database.viewContext.message(id: messageId) }
 
@@ -252,7 +308,7 @@ final class AttachmentQueueUploader_Tests: XCTestCase {
         apiClient.uploadFile_completion?(.success(response))
 
         AssertAsync {
-            Assert.willBeEqual(message?.localMessageState, .syncing)
+            Assert.willBeEqual(message?.localMessageState, .sendingFailed)
         }
     }
 
