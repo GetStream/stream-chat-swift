@@ -201,6 +201,7 @@ extension ChatMessageAttachment<Data> {
             return nil
         }
 
+        // If the attachment is local, we should create the payload as a local file
         if let uploadingState = self.uploadingState, uploadingState.state != .uploaded {
             return AnyAttachmentPayload(type: type, payload: payload, localFileURL: uploadingState.localFileURL)
         }
