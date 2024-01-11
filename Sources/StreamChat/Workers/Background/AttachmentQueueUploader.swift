@@ -154,13 +154,19 @@ class AttachmentQueueUploader: Worker {
             // Update attachment local state.
             attachmentDTO.localState = newState
 
+            let message = attachmentDTO.message
+
             // When all attachments finish uploading, mark message pending send
             if newState == .uploaded {
-                let message = attachmentDTO.message
                 let allAttachmentsAreUploaded = message.attachments.filter { $0.localState != .uploaded }.isEmpty
                 if allAttachmentsAreUploaded {
                     message.localMessageState = .pendingSend
                 }
+            }
+            
+            // If attachment failed upload, mark message as failed
+            if newState == .uploadingFailed {
+                message.localMessageState = .sendingFailed
             }
 
             if var uploadedAttachment = uploadedAttachment {

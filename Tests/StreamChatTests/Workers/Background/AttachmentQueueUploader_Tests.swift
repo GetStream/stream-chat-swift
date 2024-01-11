@@ -207,7 +207,7 @@ final class AttachmentQueueUploader_Tests: XCTestCase {
         // Create channel in the database.
         try database.createChannel(cid: cid, withMessages: false)
         // Create message in the database.
-        try database.createMessage(id: messageId, cid: cid, localState: .sendingFailed)
+        try database.createMessage(id: messageId, cid: cid, localState: .syncing)
 
         var message: MessageDTO? { database.viewContext.message(id: messageId) }
 
@@ -250,6 +250,46 @@ final class AttachmentQueueUploader_Tests: XCTestCase {
         let response = UploadedAttachment.dummy(attachment: attachment.asAnyModel(), remoteURL: .fakeFile)
         let remoteUrl = response.remoteURL
         apiClient.uploadFile_completion?(.success(response))
+
+        AssertAsync {
+            Assert.willBeEqual(message?.localMessageState, .syncing)
+        }
+    }
+
+    func test_uploader_whenUploadFails_markMessageAsFailed() throws {
+        let cid: ChannelId = .unique
+        let messageId: MessageId = .unique
+
+        // Create channel in the database.
+        try database.createChannel(cid: cid, withMessages: false)
+        // Create message in the database.
+        try database.createMessage(id: messageId, cid: cid, localState: .pendingSend)
+
+        var message: MessageDTO? { database.viewContext.message(id: messageId) }
+
+        XCTAssertEqual(message?.localMessageState, .pendingSend)
+
+        let attachmentPayload: AnyAttachmentPayload = .mockImage
+        let attachmentId = AttachmentId(cid: cid, messageId: messageId, index: 1)
+        try database.writeSynchronously { session in
+            try session.createNewAttachment(attachment: attachmentPayload, id: attachmentId)
+        }
+
+        // Load attachment from the database.
+        let attachment = try XCTUnwrap(database.viewContext.attachment(id: attachmentId))
+
+        // Assert attachment is in `.pendingUpload` state.
+        XCTAssertEqual(attachment.localState, .pendingUpload)
+
+        // Wait attachment uploading begins.
+        let attachmentModelId = try XCTUnwrap(attachment.asAnyModel()).id
+        AssertAsync.willBeEqual(
+            apiClient.uploadFile_attachment?.id,
+            attachmentModelId
+        )
+
+        // Simulate error backend response
+        apiClient.uploadFile_completion?(.failure(ClientError("Upload failed")))
 
         AssertAsync {
             Assert.willBeEqual(message?.localMessageState, .sendingFailed)
