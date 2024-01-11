@@ -192,7 +192,6 @@ final class AttachmentQueueUploader_Tests: XCTestCase {
 
         // Simulate successful backend response with remote file URL.
         let response = UploadedAttachment.dummy(attachment: attachment.asAnyModel(), remoteURL: .fakeFile)
-        let remoteUrl = response.remoteURL
         apiClient.uploadFile_completion?(.success(response))
 
         AssertAsync {
@@ -248,7 +247,6 @@ final class AttachmentQueueUploader_Tests: XCTestCase {
 
         // Simulate successful backend response with remote file URL.
         let response = UploadedAttachment.dummy(attachment: attachment.asAnyModel(), remoteURL: .fakeFile)
-        let remoteUrl = response.remoteURL
         apiClient.uploadFile_completion?(.success(response))
 
         AssertAsync {
@@ -304,7 +302,6 @@ final class AttachmentQueueUploader_Tests: XCTestCase {
 
         // Simulate successful backend response with remote file URL.
         let response = UploadedAttachment.dummy(attachment: attachment.asAnyModel(), remoteURL: .fakeFile)
-        let remoteUrl = response.remoteURL
         apiClient.uploadFile_completion?(.success(response))
 
         AssertAsync {
