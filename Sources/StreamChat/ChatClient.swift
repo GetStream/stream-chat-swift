@@ -136,6 +136,7 @@ public class ChatClient {
         let databaseContainer = factory.makeDatabaseContainer()
         let apiClient = factory.makeApiClient(
             encoder: apiClientEncoder,
+            databaseContainer: databaseContainer,
             urlSessionConfiguration: urlSessionConfiguration
         )
         let eventNotificationCenter = factory.makeEventNotificationCenter(

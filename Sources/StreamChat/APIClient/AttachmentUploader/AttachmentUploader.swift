@@ -20,9 +20,11 @@ public protocol AttachmentUploader {
 
 public class StreamAttachmentUploader: AttachmentUploader {
     let cdnClient: CDNClient
+    let database: DatabaseContainer
 
-    init(cdnClient: CDNClient) {
+    init(cdnClient: CDNClient, database: DatabaseContainer) {
         self.cdnClient = cdnClient
+        self.database = database
     }
 
     public func upload(
@@ -30,15 +32,23 @@ public class StreamAttachmentUploader: AttachmentUploader {
         progress: ((Double) -> Void)?,
         completion: @escaping (Result<UploadedAttachment, Error>) -> Void
     ) {
-        cdnClient.uploadAttachment(attachment, progress: progress) { (result: Result<UploadedFile, Error>) in
-            completion(result.map { file in
-                let uploadedAttachment = UploadedAttachment(
+        cdnClient.uploadAttachment(attachment, progress: progress) { [weak self] result in
+            switch result {
+            case let .success(file):
+                completion(.success(UploadedAttachment(
                     attachment: attachment,
                     remoteURL: file.fileURL,
                     thumbnailURL: file.thumbnailURL
-                )
-                return uploadedAttachment
-            })
+                )))
+            case let .failure(error):
+                let messageId = attachment.id.messageId
+                self?.database.write({ session in
+                    let messageDTO = session.message(id: messageId)
+                    messageDTO?.localMessageState = .sendingFailed
+                }, completion: { _ in
+                    completion(.failure(error))
+                })
+            }
         }
     }
 }

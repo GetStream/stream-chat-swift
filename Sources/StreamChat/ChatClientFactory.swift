@@ -43,6 +43,7 @@ class ChatClientFactory {
 
     func makeApiClient(
         encoder: RequestEncoder,
+        databaseContainer: DatabaseContainer,
         urlSessionConfiguration: URLSessionConfiguration
     ) -> APIClient {
         let decoder = environment.requestDecoderBuilder()
@@ -51,7 +52,8 @@ class ChatClientFactory {
                 encoder: encoder,
                 decoder: decoder,
                 sessionConfiguration: urlSessionConfiguration
-            )
+            ),
+            database: databaseContainer
         )
         let apiClient = environment.apiClientBuilder(
             urlSessionConfiguration,
