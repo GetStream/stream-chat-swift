@@ -9,6 +9,8 @@ public struct StreamChatChannelResponse: Codable, Hashable {
     
     public var custom: [String: RawJSON]?
     
+    public var name: String?
+    
     public var autoTranslationEnabled: Bool?
     
     public var createdAt: Date?
@@ -109,6 +111,8 @@ public struct StreamChatChannelResponse: Codable, Hashable {
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case id
+        
+        case name
         
         case custom
         

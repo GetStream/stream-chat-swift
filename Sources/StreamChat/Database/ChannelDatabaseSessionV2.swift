@@ -43,7 +43,8 @@ extension NSManagedObjectContext {
         let cid = try ChannelId(cid: payload.cid)
         let dto = ChannelDTO.loadOrCreate(cid: cid, context: self, cache: cache)
 
-        dto.name = payload.custom?["name"]?.stringValue
+        dto.name = payload.name
+        // TODO: revisit this.
         dto.imageURL = URL(string: payload.custom?["image"]?.stringValue ?? "")
         do {
             dto.extraData = try JSONEncoder.default.encode(payload.custom ?? [:])
@@ -134,11 +135,11 @@ extension NSManagedObjectContext {
 
         try payload.messages.forEach { _ = try saveMessage(payload: $0, channelDTO: dto, syncOwnReactions: true, cache: cache) }
 
-//        if dto.needsPreviewUpdate(payload) {
-//            dto.previewMessage = preview(for: payload.channel.cid)
-//        }
-//
-//        dto.updateOldestMessageAt(payload: payload)
+        if dto.needsPreviewUpdate(payload), let payloadCid = payload.channel?.cid, let cid = try? ChannelId(cid: payloadCid) {
+            dto.previewMessage = preview(for: cid)
+        }
+
+        dto.updateOldestMessageAt(payload: payload)
 
         try payload.pinnedMessages.forEach {
             _ = try saveMessage(payload: $0, channelDTO: dto, syncOwnReactions: true, cache: cache)
@@ -493,5 +494,27 @@ extension NSManagedObjectContext {
         }
 
         return dto
+    }
+}
+
+extension ChannelDTO {
+    func needsPreviewUpdate(_ payload: StreamChatChannelStateResponseFields) -> Bool {
+        guard let first = payload.messages.first, let last = payload.messages.last else { return false }
+
+        let newestMessage = first.createdAt > last.createdAt ? first : last
+        
+        guard let preview = previewMessage else {
+            return true
+        }
+
+        return newestMessage.createdAt > preview.createdAt.bridgeDate
+    }
+    
+    func updateOldestMessageAt(payload: StreamChatChannelStateResponseFields) {
+        guard let payloadOldestMessageAt = payload.messages.map(\.createdAt).min() else { return }
+        let isOlderThanCurrentOldestMessage = payloadOldestMessageAt < (oldestMessageAt?.bridgeDate ?? Date.distantFuture)
+        if isOlderThanCurrentOldestMessage {
+            oldestMessageAt = payloadOldestMessageAt.bridgeDate
+        }
     }
 }
