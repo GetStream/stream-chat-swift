@@ -133,11 +133,28 @@ class ChannelListUpdater: Worker {
         channelListQuery: ChannelListQuery,
         completion: @escaping (Result<StreamChatChannelsResponse, Error>) -> Void
     ) {
-//        apiClient.request(
-//            endpoint: .channels(query: channelListQuery),
-//            completion: completion
-//        )
-        let request = StreamChatQueryChannelsRequest(user: nil, userId: nil, watch: nil, limit: nil, offset: nil, presence: nil, sort: nil, state: nil, connectionId: nil, filterConditions: nil, memberLimit: nil, messageLimit: nil)
+        var filter: [String: RawJSON]?
+        if let data = try? JSONEncoder.default.encode(channelListQuery.filter) {
+            filter = try? JSONDecoder.default.decode([String: RawJSON].self, from: data)
+        }
+        
+        let sort = channelListQuery.sort.map { sortingKey in
+            StreamChatSortParamRequest(field: sortingKey.key.remoteKey, direction: sortingKey.direction)
+        }
+        let request = StreamChatQueryChannelsRequest(
+            user: nil,
+            userId: nil,
+            watch: channelListQuery.options.contains(.watch),
+            limit: channelListQuery.pagination.pageSize,
+            offset: channelListQuery.pagination.offset,
+            presence: channelListQuery.options.contains(.presence),
+            sort: sort,
+            state: channelListQuery.options.contains(.state),
+            connectionId: nil,
+            filterConditions: filter,
+            memberLimit: channelListQuery.membersLimit,
+            messageLimit: channelListQuery.messagesLimit
+        )
         api.queryChannels(queryChannelsRequest: request, connectionId: nil, completion: completion)
     }
 
