@@ -132,4 +132,40 @@ final class AnyAttachmentPayload_Tests: XCTestCase {
         XCTAssertEqual(sut.type, "custom")
         XCTAssertEqual(payload.calories, 20)
     }
+
+    func test_toAnyAttachmentPayload_whenRemoteAttachment_thenLocalFileShouldBeNil() throws {
+        let remoteAttachment = ChatMessageImageAttachment(
+            id: .unique,
+            type: .image,
+            payload: .init(title: nil, imageRemoteURL: .localYodaImage),
+            uploadingState: nil
+        ).asAnyAttachment
+
+        let anyAttachmentPayload = try XCTUnwrap(remoteAttachment.toAnyAttachmentPayload())
+        XCTAssertNil(anyAttachmentPayload.localFileURL)
+    }
+
+    func test_toAnyAttachmentPayload_whenLocalAttachment_whenUploaded_thenLocalFileShouldBeNil() throws {
+        let localAttachment = ChatMessageImageAttachment(
+            id: .unique,
+            type: .image,
+            payload: .init(title: nil, imageRemoteURL: .localYodaImage),
+            uploadingState: try .mock(localFileURL: .localYodaImage, state: .uploaded)
+        ).asAnyAttachment
+
+        let anyAttachmentPayload = try XCTUnwrap(localAttachment.toAnyAttachmentPayload())
+        XCTAssertNil(anyAttachmentPayload.localFileURL)
+    }
+
+    func test_toAnyAttachmentPayload_whenLocalAttachment_whenNotUploaded_thenLocalFileExists() throws {
+        let localAttachment = ChatMessageImageAttachment(
+            id: .unique,
+            type: .image,
+            payload: .init(title: nil, imageRemoteURL: .localYodaImage),
+            uploadingState: try .mock(localFileURL: .localYodaImage, state: .uploadingFailed)
+        ).asAnyAttachment
+
+        let anyAttachmentPayload = try XCTUnwrap(localAttachment.toAnyAttachmentPayload())
+        XCTAssertEqual(anyAttachmentPayload.localFileURL, .localYodaImage)
+    }
 }
