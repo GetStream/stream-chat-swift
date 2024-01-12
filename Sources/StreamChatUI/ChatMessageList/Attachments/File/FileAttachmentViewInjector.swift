@@ -7,8 +7,11 @@ import UIKit
 
 /// The delegate used `FileAttachmentViewInjector` to communicate user interactions.
 public protocol FileActionContentViewDelegate: ChatMessageContentViewDelegate {
-    /// Called when the user taps on attachment action
+    /// Called when the user taps on the attachment.
     func didTapOnAttachment(_ attachment: ChatMessageFileAttachment, at indexPath: IndexPath?)
+    
+    /// Called when the user taps on the action of the attachment. (Ex: Retry)
+    func didTapActionOnAttachment(_ attachment: ChatMessageFileAttachment, at indexPath: IndexPath?)
 }
 
 public class FilesAttachmentViewInjector: AttachmentViewInjector {
@@ -23,6 +26,13 @@ public class FilesAttachmentViewInjector: AttachmentViewInjector {
                 let delegate = self?.contentView.delegate as? FileActionContentViewDelegate
             else { return }
             delegate.didTapOnAttachment(attachment, at: self?.contentView.indexPath?())
+        }
+
+        attachmentListView.didTapActionOnAttachment = { [weak self] attachment in
+            guard
+                let delegate = self?.contentView.delegate as? FileActionContentViewDelegate
+            else { return }
+            delegate.didTapActionOnAttachment(attachment, at: self?.contentView.indexPath?())
         }
 
         return attachmentListView.withoutAutoresizingMaskConstraints

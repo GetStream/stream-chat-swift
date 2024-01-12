@@ -233,7 +233,8 @@ public extension Appearance {
         public var fileAttachmentActionIcons: [LocalAttachmentState?: UIImage] {
             get { _fileAttachmentActionIcons ??
                 [
-                    .uploaded: download,
+                    // Uncomment when download feature is done
+                    // .uploaded: download,
                     .uploadingFailed: restart,
                     nil: folder
                 ]
