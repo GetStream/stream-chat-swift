@@ -114,7 +114,8 @@ open class InputTextView: UITextView, AppearanceProvider {
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(textDidEndEditing),
-            name: UITextView.textDidEndEditingNotification, object: self
+            name: UITextView.textDidEndEditingNotification,
+            object: self
         )
     }
 
