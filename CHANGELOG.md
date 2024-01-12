@@ -7,6 +7,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - Fix not possible to resend messages with failed attachments [#2966](https://github.com/GetStream/stream-chat-swift/pull/2966)
 
+## StreamChatUI
+### 🐞 Fixed
+- Fix file attachments retry button not retrying upload [#2966](https://github.com/GetStream/stream-chat-swift/pull/2966)
+
 # [4.47.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.47.0)
 _January 09, 2024_
 
