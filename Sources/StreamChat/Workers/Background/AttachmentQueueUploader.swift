@@ -109,7 +109,7 @@ class AttachmentQueueUploader: Worker {
 
             if let temporaryURL = attachment.localURL {
                 do {
-                    let localURL = try attachmentStorage.storeAttachment(at: temporaryURL)
+                    let localURL = try attachmentStorage.storeAttachment(id: id, temporaryURL: temporaryURL)
                     attachment.localURL = localURL
                 } catch {
                     log.error("Could not copy attachment to local storage: \(error.localizedDescription)", subsystems: .offlineSupport)
@@ -260,9 +260,12 @@ private class AttachmentStorage {
     /// Since iOS 8, we cannot use absolute paths to access resources because the intermediate folders can change between sessions/app runs. The content of it, when
     /// using `.documentsDirectory`, is stable though.
     /// Because of that, if the file is already in our storage, the only thing we will do is to return a fresh and valid url to access it.
-    func storeAttachment(at temporaryURL: URL) throws -> URL {
-        let id = temporaryURL.lastPathComponent
-        let sandboxedURL = baseURL.appendingPathComponent(id)
+    func storeAttachment(id: AttachmentId, temporaryURL: URL) throws -> URL {
+        let fileExtension = temporaryURL.pathExtension
+        let fileName = temporaryURL.deletingPathExtension().lastPathComponent
+        let attachmentId = [id.cid.rawValue, id.messageId, String(id.index)].joined(separator: "-")
+        let fileId = "\(fileName)-\(attachmentId).\(fileExtension)"
+        let sandboxedURL = baseURL.appendingPathComponent(fileId)
 
         guard !fileExists(at: sandboxedURL) else {
             return sandboxedURL

@@ -472,8 +472,8 @@ final class AttachmentQueueUploader_Tests: XCTestCase {
 
     func test_attachmentsAreCopiedToSandbox_beforeBeingSent() throws {
         // GIVEN
-        let cid: ChannelId = .unique
-        let messageId: MessageId = .unique
+        let cid: ChannelId = .init(type: .messaging, id: "dummy")
+        let messageId: MessageId = "fake"
         let attachmentId: AttachmentId = .init(cid: cid, messageId: messageId, index: 0)
 
         let fileManager = FileManager.default
@@ -509,7 +509,10 @@ final class AttachmentQueueUploader_Tests: XCTestCase {
         wait(for: [apiClient.uploadRequest_expectation], timeout: defaultTimeout)
 
         XCTAssertEqual(locallyStoredAttachments.count, 1)
-        XCTAssertEqual(locallyStoredAttachments.first?.lastPathComponent, fileName)
+        XCTAssertEqual(
+            locallyStoredAttachments.first?.lastPathComponent,
+            "Test-messaging:dummy-fake-0.txt"
+        )
         XCTAssertEqual(attachmentDTO.localState, .pendingUpload)
 
         // Simulate attachment upload
@@ -523,8 +526,8 @@ final class AttachmentQueueUploader_Tests: XCTestCase {
     func test_multipleAttachmentsAreCopiedToSandbox_onlySuccessfulOnesAreRemoved() throws {
         let fileManager = FileManager.default
         // GIVEN
-        let cid: ChannelId = .unique
-        let messageId: MessageId = .unique
+        let cid: ChannelId = .init(type: .messaging, id: "dummy")
+        let messageId: MessageId = "fake"
 
         let documentsURL = try XCTUnwrap(fileManager.urls(for: .documentDirectory, in: .userDomainMask).first)
         var locallyStoredAttachments: [URL] {
@@ -588,7 +591,10 @@ final class AttachmentQueueUploader_Tests: XCTestCase {
         AssertAsync.willBeTrue(attachmentDTO2.localState == .uploaded)
 
         XCTAssertEqual(locallyStoredAttachments.count, 1)
-        XCTAssertEqual(locallyStoredAttachments.first?.lastPathComponent, fileName1)
+        XCTAssertEqual(
+            locallyStoredAttachments.first?.lastPathComponent,
+            "Test0-messaging:dummy-fake-0.txt"
+        )
     }
 }
 
