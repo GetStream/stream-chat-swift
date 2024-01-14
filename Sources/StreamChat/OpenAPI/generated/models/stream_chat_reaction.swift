@@ -9,7 +9,7 @@ public struct StreamChatReaction: Codable, Hashable {
     
     public var custom: [String: RawJSON]?
     
-    public var createdAt: String
+    public var createdAt: Date
     
     public var messageId: String
     
@@ -17,11 +17,11 @@ public struct StreamChatReaction: Codable, Hashable {
     
     public var type: String
     
-    public var updatedAt: String
+    public var updatedAt: Date
     
     public var user: StreamChatUserObject?
     
-    public init(userId: String?, custom: [String: RawJSON], createdAt: String, messageId: String, score: Int, type: String, updatedAt: String, user: StreamChatUserObject?) {
+    public init(userId: String?, custom: [String: RawJSON], createdAt: Date, messageId: String, score: Int, type: String, updatedAt: Date, user: StreamChatUserObject?) {
         self.userId = userId
         
         self.custom = custom

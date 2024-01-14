@@ -124,14 +124,12 @@ extension NSManagedObjectContext {
         guard let channel = payload.channel else { throw ClientError.Unknown() }
         let dto = try saveChannel(payload: channel, query: query, cache: cache)
 
-        // TODO: Fix this.
-//        let reads = Set(
-//            try payload.read.map {
-//                try saveChannelRead(payload: $0, for: payload.channel.cid, cache: cache)
-//            }
-//        )
-//        dto.reads.subtracting(reads).forEach { delete($0) }
-//        dto.reads = reads
+        let readsArray = try payload.read?.compactMap {
+            try saveChannelRead(payload: $0, for: payload.channel?.cid, cache: cache)
+        } ?? []
+        let reads = Set(readsArray)
+        dto.reads.subtracting(reads).forEach { delete($0) }
+        dto.reads = reads
 
         try payload.messages.forEach { _ = try saveMessage(payload: $0, channelDTO: dto, syncOwnReactions: true, cache: cache) }
 
@@ -377,10 +375,9 @@ extension NSManagedObjectContext {
         dto.pinned = payload.pinned
         dto.pinExpires = payload.pinExpires?.bridgeDate
         dto.pinnedAt = payload.pinnedAt?.bridgeDate
-        // TODO: fix this
-//        if let pinnedByUser = payload.pinnedBy {
-//            dto.pinnedBy = try saveUser(payload: pinnedByUser)
-//        }
+        if let pinnedByUser = payload.pinnedBy {
+            dto.pinnedBy = try saveUser(payload: pinnedByUser, query: nil, cache: nil)
+        }
 
         if dto.pinned && !channelDTO.pinnedMessages.contains(dto) {
             channelDTO.pinnedMessages.insert(dto)
@@ -409,11 +406,23 @@ extension NSManagedObjectContext {
             dto.user = user
         }
 
-        // TODO: Fix this.
-//        dto.reactionScores = payload.reactionScores.mapKeys { $0.rawValue }
-//        dto.reactionCounts = payload.reactionScores.mapKeys { $0.rawValue }
-        dto.reactionScores = [:]
-        dto.reactionCounts = [:]
+        dto.reactionScores = payload.reactionScores
+            .compactMapValues {
+                if let value = $0.numberValue {
+                    return Int(value)
+                } else {
+                    return nil
+                }
+            }
+        // TODO: check why was this scores.
+        dto.reactionCounts = payload.reactionCounts
+            .compactMapValues {
+                if let value = $0.numberValue {
+                    return Int(value)
+                } else {
+                    return nil
+                }
+            }
 
         // If user edited their message to remove mentioned users, we need to get rid of it
         // as backend does
@@ -423,35 +432,36 @@ extension NSManagedObjectContext {
         })
 
         // If user participated in thread, but deleted message later, we need to get rid of it if backends does
-//        dto.threadParticipants = try NSOrderedSet(
-//            array: payload.threadParticipants.map { try saveUser(payload: $0) }
-//        )
+        let threadParticipants = try payload.threadParticipants?.map {
+            try saveUser(payload: $0, query: nil, cache: nil)
+        } ?? []
+        dto.threadParticipants = NSOrderedSet(array: threadParticipants)
 
         channelDTO.lastMessageAt = max(channelDTO.lastMessageAt?.bridgeDate ?? payload.createdAt, payload.createdAt).bridgeDate
         
         dto.channel = channelDTO
 
         // TODO: fix these.
-//        dto.latestReactions = payload
-//            .latestReactions
-//            .compactMap { try? saveReaction(payload: $0, cache: cache) }
-//            .map(\.id)
+        dto.latestReactions = payload
+            .latestReactions
+            .compactMap { try? saveReaction(payload: $0, cache: cache) }
+            .map(\.id)
 
-//        if syncOwnReactions {
-//            dto.ownReactions = payload
-//                .ownReactions
-//                .compactMap { try? saveReaction(payload: $0, cache: cache) }
-//                .map(\.id)
-//        }
+        if syncOwnReactions {
+            dto.ownReactions = payload
+                .ownReactions
+                .compactMap { try? saveReaction(payload: $0, cache: cache) }
+                .map(\.id)
+        }
 
-//        let attachments: Set<AttachmentDTO> = try Set(
-//            payload.attachments.enumerated().map { index, attachment in
-//                let id = AttachmentId(cid: cid, messageId: payload.id, index: index)
-//                let dto = try saveAttachment(payload: attachment, id: id)
-//                return dto
-//            }
-//        )
-//        dto.attachments = attachments
+        let attachments: Set<AttachmentDTO> = try Set(
+            payload.attachments.enumerated().map { index, attachment in
+                let id = AttachmentId(cid: cid, messageId: payload.id, index: index)
+                let dto = try saveAttachment(payload: attachment, id: id)
+                return dto
+            }
+        )
+        dto.attachments = attachments
 
         // Only insert message into Parent's replies if not already present.
         // This in theory would not be needed since replies is a Set, but
@@ -477,13 +487,13 @@ extension NSManagedObjectContext {
 //        }
 
         // Calculate reads if the message is authored by the current user.
-//        if payload.user?.id == currentUser?.user.id {
-//            dto.reads = Set(
-//                channelDTO.reads.filter {
-//                    $0.lastReadAt.bridgeDate >= payload.createdAt && $0.user.id != payload.user.id
-//                }
-//            )
-//        }
+        if payload.user?.id == currentUser?.user.id {
+            dto.reads = Set(
+                channelDTO.reads.filter {
+                    $0.lastReadAt.bridgeDate >= payload.createdAt && $0.user.id != payload.user?.id
+                }
+            )
+        }
 
         // Refetch channel preview if the current preview has changed.
         //
@@ -516,5 +526,79 @@ extension ChannelDTO {
         if isOlderThanCurrentOldestMessage {
             oldestMessageAt = payloadOldestMessageAt.bridgeDate
         }
+    }
+}
+
+extension NSManagedObjectContext {
+    func saveChannelRead(
+        payload: StreamChatRead?,
+        for cid: String?,
+        cache: PreWarmedCache?
+    ) throws -> ChannelReadDTO {
+        guard let payload, let user = payload.user, let cid else { throw ClientError.Unknown() }
+        
+        let channelId = try ChannelId(cid: cid)
+        let dto = ChannelReadDTO.loadOrCreate(cid: channelId, userId: user.id, context: self, cache: cache)
+
+        dto.user = try saveUser(payload: user, query: nil, cache: cache)
+
+        dto.lastReadAt = payload.lastRead.bridgeDate
+        dto.lastReadMessageId = payload.lastReadMessageId
+        dto.unreadMessageCount = Int32(payload.unreadMessages)
+
+        return dto
+    }
+}
+
+extension NSManagedObjectContext {
+    @discardableResult
+    func saveReaction(
+        payload: StreamChatReaction?,
+        cache: PreWarmedCache?
+    ) throws -> MessageReactionDTO {
+        guard let payload, let user = payload.user, let messageDTO = message(id: payload.messageId) else {
+            throw ClientError.MessageDoesNotExist(messageId: payload?.messageId ?? "")
+        }
+
+        let dto = MessageReactionDTO.loadOrCreate(
+            message: messageDTO,
+            type: MessageReactionType(rawValue: payload.type),
+            user: try saveUser(payload: user, query: nil, cache: cache),
+            context: self,
+            cache: cache
+        )
+
+        dto.score = Int64(clamping: payload.score)
+        dto.createdAt = payload.createdAt.bridgeDate
+        dto.updatedAt = payload.updatedAt.bridgeDate
+        dto.extraData = try JSONEncoder.default.encode(payload.custom)
+        dto.localState = nil
+        dto.version = nil
+
+        return dto
+    }
+}
+
+extension NSManagedObjectContext {
+    func saveAttachment(
+        payload: StreamChatAttachment?,
+        id: AttachmentId
+    ) throws -> AttachmentDTO {
+        guard let payload, let messageDTO = message(id: id.messageId) else {
+            throw ClientError.MessageDoesNotExist(messageId: id.messageId)
+        }
+
+        let dto = AttachmentDTO.loadOrCreate(id: id, context: self)
+
+        if let type = payload.type {
+            dto.attachmentType = AttachmentType(rawValue: type)
+        }
+        dto.data = try JSONEncoder.default.encode(payload)
+        dto.message = messageDTO
+
+        dto.localURL = nil
+        dto.localState = nil
+
+        return dto
     }
 }

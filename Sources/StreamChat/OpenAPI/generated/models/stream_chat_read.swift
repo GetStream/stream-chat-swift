@@ -5,7 +5,7 @@
 import Foundation
 
 public struct StreamChatRead: Codable, Hashable {
-    public var lastRead: String
+    public var lastRead: Date
     
     public var lastReadMessageId: String?
     
@@ -13,7 +13,7 @@ public struct StreamChatRead: Codable, Hashable {
     
     public var user: StreamChatUserObject?
     
-    public init(lastRead: String, lastReadMessageId: String?, unreadMessages: Int, user: StreamChatUserObject?) {
+    public init(lastRead: Date, lastReadMessageId: String?, unreadMessages: Int, user: StreamChatUserObject?) {
         self.lastRead = lastRead
         
         self.lastReadMessageId = lastReadMessageId
