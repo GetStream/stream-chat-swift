@@ -411,20 +411,12 @@ lane :test_ui do |options|
     png_files = git_status(ext: '.png').map { |_, png| png }.flatten
     next if png_files.empty?
 
-    title = "[CI] Snapshots"
-    base = current_branch
-    head = "#{base}-snapshots"
-    sh("git checkout -b #{head}")
     png_files.each { |png| sh("git add #{png}") || true }
-    sh("git commit -m '#{title}'")
-    push_to_git_remote(tags: false)
-    create_pull_request(
-      api_token: ENV.fetch('GITHUB_TOKEN', nil),
-      repo: github_repo,
-      title: title,
-      head: head,
-      base: base,
-      body: 'This PR was created automatically by CI.'
+
+    create_pr(
+      title: '[CI] Snapshots',
+      base_branch: current_branch,
+      head_branch: "#{current_branch}-snapshots"
     )
   end
 end
@@ -578,20 +570,9 @@ lane :sync_mock_server do
   sh('python3 sync_mock_server.py')
   next unless is_ci
 
-  branch_name = "ci/sync-mock-server-#{Time.now.to_i}"
-  commit_message = '[CI] Sync Mock Server'
-  sh("git checkout -b #{branch_name}")
-  sh('git add -A')
-  sh("git commit -m '#{commit_message}'")
-  push_to_git_remote(tags: false)
-
-  create_pull_request(
-    api_token: ENV.fetch('GITHUB_TOKEN', nil),
-    repo: github_repo,
-    title: commit_message,
-    head: branch_name,
-    base: 'develop',
-    body: 'This PR was created automatically by CI.'
+  create_pr(
+    title: '[CI] Sync Mock Server',
+    head_branch: "ci/sync-mock-server-#{Time.now.to_i}"
   )
 end
 
@@ -638,6 +619,33 @@ lane :sources_matrix do
     integration: ['Sources', 'Integration', xcode_project],
     ruby: ['fastlane', 'Gemfile', 'Gemfile.lock']
   }
+end
+
+lane :copyright do
+  update_copyright(ignore: [derived_data_path, source_packages_path, 'vendor/'])
+  next unless is_ci
+
+  create_pr(
+    title: '[CI] Update Copyright',
+    head_branch: "ci/update-copyright-#{Time.now.to_i}"
+  )
+end
+
+private_lane :create_pr do |options|
+  options[:base_branch] ||= 'develop'
+  sh("git checkout -b #{options[:head_branch]}")
+  sh('git add -A')
+  sh("git commit -m '#{options[:title]}'")
+  push_to_git_remote(tags: false)
+
+  create_pull_request(
+    api_token: ENV.fetch('GITHUB_TOKEN', nil),
+    repo: github_repo,
+    title: options[:title],
+    head: options[:head_branch],
+    base: options[:base_branch],
+    body: 'This PR was created automatically by CI.'
+  )
 end
 
 private_lane :current_branch do
