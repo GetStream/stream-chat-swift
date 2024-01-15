@@ -20,12 +20,14 @@ final class CustomDataHashMap_Tests: XCTestCase {
         )
         let payload = UserWebSocketPayload(userInfo: userInfo)
         let encoded = try! JSONEncoder.default.encode(payload)
-        let jsonStr = String(data: encoded, encoding: .utf8)
-        let imageStr = imageURL.debugDescription.replacingOccurrences(of: "/", with: "\\/")
-        XCTAssertEqual(
-            jsonStr,
-            "{\"language\":\"en\",\"id\":\"44\",\"invisible\":false,\"name\":\"tommaso\",\"image\":\"\(imageStr)\",\"how-many-roads\":42}"
-        )
+        AssertJSONEqual(encoded, [
+            "language": "en",
+            "id": "44",
+            "invisible": false,
+            "name": "tommaso",
+            "image": imageURL.absoluteString,
+            "how-many-roads": 42
+        ])
     }
 
     func test_channelDetailJSONDecodeWithoutAnyCustomData() throws {

@@ -15,7 +15,7 @@ env:
 
 jobs:
   deploy:
-    runs-on: macos-13
+    runs-on: macos-14
     steps:
     - name: Install Bot SSH Key
       uses: webfactory/ssh-agent@v0.7.0

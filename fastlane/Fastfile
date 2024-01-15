@@ -6,7 +6,7 @@ require 'net/http'
 import 'Sonarfile'
 import 'Allurefile'
 
-xcode_version = ENV['XCODE_VERSION'] || '14.3.1'
+xcode_version = ENV['XCODE_VERSION'] || '15.2'
 xcode_project = 'StreamChat.xcodeproj'
 sdk_names = ['StreamChat', 'StreamChatUI']
 github_repo = ENV['GITHUB_REPOSITORY'] || 'GetStream/stream-chat-swift'
@@ -22,7 +22,7 @@ before_all do |lane|
     setup_ci
     ENV['FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT'] = '180'
     ENV['FASTLANE_XCODEBUILD_SETTINGS_RETRIES'] = '10'
-    xcversion(version: xcode_version) unless [:publish_release, :allure_launch, :pod_lint].include?(lane)
+    xcversion(version: xcode_version) unless [:publish_release, :allure_launch, :allure_upload, :pod_lint, :sync_mock_server, :copyright].include?(lane)
   end
 end
 
@@ -91,6 +91,7 @@ lane :publish_release do |options|
 
   publish_ios_sdk(
     skip_git_status_check: false,
+    extensions: ['DemoShare'],
     version: options[:version],
     sdk_names: sdk_names,
     podspec_names: ['StreamChat', 'StreamChat-XCFramework', 'StreamChatUI', 'StreamChatUI-XCFramework'],
@@ -349,7 +350,6 @@ lane :test_e2e_mock do |options|
   next unless is_check_required(sources: sources_matrix[:e2e], force_check: @force_check)
 
   start_sinatra
-  prepare_simulator(device: options[:device]) if is_ci
 
   scan_options = {
     project: xcode_project,
@@ -362,6 +362,7 @@ lane :test_e2e_mock do |options|
     test_without_building: options[:test_without_building],
     xcargs: buildcache_xcargs,
     devices: options[:device],
+    prelaunch_simulator: is_ci,
     number_of_retries: 3 # TODO: CIS-1737
   }
 
@@ -389,7 +390,8 @@ desc 'Runs ui tests in Debug config'
 lane :test_ui do |options|
   next unless is_check_required(sources: sources_matrix[:ui], force_check: @force_check)
 
-  remove_snapshots unless options[:record].to_s.empty?
+  record_mode = !options[:record].to_s.empty?
+  remove_snapshots if record_mode
 
   update_testplan_on_ci(path: 'Tests/StreamChatUITests/StreamChatUITestPlan.xctestplan')
 
@@ -397,21 +399,24 @@ lane :test_ui do |options|
     project: xcode_project,
     scheme: 'StreamChatUI',
     testplan: 'StreamChatUITestPlan',
-    cloned_source_packages_path: source_packages_path,
     clean: is_localhost,
-    result_bundle: true,
-    devices: options[:device],
+    derived_data_path: derived_data_path,
+    cloned_source_packages_path: source_packages_path,
     build_for_testing: options[:build_for_testing],
     skip_build: options[:skip_build],
+    result_bundle: true,
+    devices: options[:device],
     xcargs: buildcache_xcargs,
-    fail_build: options[:record].to_s.empty?
+    fail_build: !record_mode
   )
 
-  if options[:record] && is_ci
+  if record_mode && is_ci
     png_files = git_status(ext: '.png').map { |_, png| png }.flatten
     next if png_files.empty?
 
+    # Discard all files apart from the snapshots
     png_files.each { |png| sh("git add #{png}") || true }
+    sh('git restore .')
 
     create_pr(
       title: '[CI] Snapshots',
@@ -626,7 +631,7 @@ private_lane :create_pr do |options|
 end
 
 private_lane :current_branch do
-  ENV['BRANCH_NAME'] || git_branch
+  ENV['BRANCH_NAME'].to_s.empty? ? git_branch : ENV.fetch('BRANCH_NAME')
 end
 
 private_lane :git_status do |options|
