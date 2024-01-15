@@ -64,10 +64,9 @@ class MessageDTO: NSManagedObject {
 
     @NSManaged var user: UserDTO
 
-    /// The mentionedUsers property is used for reading the mentioned users.
-    /// The mentionedUserIds property is used for creating a new message,
-    /// so that it is not needed to load users from DB.
+    /// Use this property in case you want to read the mentioned users in the message.
     @NSManaged var mentionedUsers: Set<UserDTO>
+    /// Use this property ONLY when creating/updating a message with new mentioned users.
     @NSManaged var mentionedUserIds: [String]
 
     @NSManaged var threadParticipants: NSOrderedSet
