@@ -668,6 +668,35 @@ final class ChatMessageContentView_Tests: XCTestCase {
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
 
+    func test_appearance_whenMessageWithAMentionedUserIsSent_whenDuplicatedMentions() {
+        let channelWithReadsEnabled: ChatChannel = .mock(
+            cid: .unique,
+            config: .mock(readEventsEnabled: true)
+        )
+
+        let mentionedUser = ChatUser.mock(id: .unique, name: "Leia")
+        let messageWithMention = "Hello @\(mentionedUser.name ?? "")!, how are you @\(mentionedUser.name ?? "")?"
+
+        let sentMessageFromCurrentUser: ChatMessage = .mock(
+            id: .unique,
+            cid: channelWithReadsEnabled.cid,
+            text: messageWithMention,
+            author: me,
+            createdAt: createdAt,
+            mentionedUsers: [mentionedUser, mentionedUser],
+            localState: nil,
+            isSentByCurrentUser: true,
+            readBy: []
+        )
+
+        let view = contentView(
+            message: sentMessageFromCurrentUser,
+            channel: channelWithReadsEnabled
+        )
+
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
+
     func test_textViewShouldInteractWithUrl_whenMentionedUserTapped_callsDelegate_returnsFalse() {
         let mentionedUser = myFriend
         mentionedUser.name = "MyFriend"
