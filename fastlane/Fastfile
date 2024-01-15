@@ -6,7 +6,7 @@ require 'net/http'
 import 'Sonarfile'
 import 'Allurefile'
 
-xcode_version = ENV['XCODE_VERSION'] || '15.0'
+xcode_version = ENV['XCODE_VERSION'] || '15.2'
 xcode_project = 'StreamChat.xcodeproj'
 sdk_names = ['StreamChat', 'StreamChatUI']
 github_repo = ENV['GITHUB_REPOSITORY'] || 'GetStream/stream-chat-swift'
@@ -15,7 +15,7 @@ derived_data_path = 'derived_data'
 source_packages_path = 'spm_cache'
 buildcache_xcargs = 'CC=clang CPLUSPLUS=clang++ LD=clang LDPLUSPLUS=clang++'
 is_localhost = !is_ci
-@force_check = false
+@force_check = true
 
 before_all do |lane|
   if is_ci

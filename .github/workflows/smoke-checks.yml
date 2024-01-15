@@ -14,7 +14,7 @@ concurrency:
 
 env:
   HOMEBREW_NO_INSTALL_CLEANUP: 1 # Disable cleanup for homebrew, we don't need it on CI
-  IOS_SIMULATOR_DEVICE: "iPhone 15 Pro (17.0)"
+  IOS_SIMULATOR_DEVICE: "iPhone 15 Pro (17.2)"
 
 jobs:
   automated-code-review:
@@ -135,15 +135,13 @@ jobs:
 
   test-e2e-debug:
     name: Test E2E UI (Debug)
-    runs-on: macos-12 # TODO: bump macos version to 13 when Xcode 15.0 is released
+    runs-on: macos-13
     if: ${{ github.event_name != 'push' }}
     needs:
       - allure_testops_launch
       - build-test-app-and-frameworks
     env:
       LAUNCH_ID: ${{ needs.allure_testops_launch.outputs.launch_id }}
-      XCODE_VERSION: "14.2.0"                      # TODO: delete these two lines
-      IOS_SIMULATOR_DEVICE: "iPhone 14 Pro (16.2)" # when Xcode 15.0 is released
     strategy:
       matrix:
         batch: [0, 1, 2]
