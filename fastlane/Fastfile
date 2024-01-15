@@ -628,6 +628,33 @@ private_lane :remove_snapshots do |options|
   end
 end
 
+lane :copyright do
+  update_copyright(ignore: [derived_data_path, source_packages_path, 'vendor/'])
+  next unless is_ci
+
+  create_pr(
+    title: '[CI] Update Copyright',
+    head_branch: "ci/update-copyright-#{Time.now.to_i}"
+  )
+end
+
+private_lane :create_pr do |options|
+  options[:base_branch] ||= 'develop'
+  sh("git checkout -b #{options[:head_branch]}")
+  sh('git add -A')
+  sh("git commit -m '#{options[:title]}'")
+  push_to_git_remote(tags: false)
+
+  create_pull_request(
+    api_token: ENV.fetch('GITHUB_TOKEN', nil),
+    repo: github_repo,
+    title: options[:title],
+    head: options[:head_branch],
+    base: options[:base_branch],
+    body: 'This PR was created automatically by CI.'
+  )
+end
+
 lane :sources_matrix do
   {
     e2e: ['Sources', 'StreamChatUITestsAppUITests', 'StreamChatUITestsApp', 'TestTools/StreamChatTestMockServer', xcode_project],
