@@ -549,6 +549,11 @@ class MessageUpdater: Worker {
                     reason: "only failed or bounced messages can be resent."
                 )
             }
+            
+            let failedAttachments = messageDTO.attachments.filter { $0.localState == .uploadingFailed }
+            failedAttachments.forEach {
+                $0.localState = .pendingUpload
+            }
 
             messageDTO.localMessageState = .pendingSend
         }, completion: completion)

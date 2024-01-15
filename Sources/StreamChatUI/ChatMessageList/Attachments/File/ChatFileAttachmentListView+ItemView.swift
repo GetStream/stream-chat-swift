@@ -12,8 +12,11 @@ extension ChatMessageFileAttachmentListView {
             didSet { updateContentIfNeeded() }
         }
 
-        /// Closure what should happen on tapping the given attachment.
+        /// Closure which notifies when the user tapped the attachment.
         open var didTapOnAttachment: ((ChatMessageFileAttachment) -> Void)?
+
+        /// Closure which notifies when the user tapped an attachment action. (Ex: Retry)
+        open var didTapActionOnAttachment: ((ChatMessageFileAttachment) -> Void)?
 
         /// Label which shows name of the file, usually with extension (file.pdf)
         open private(set) lazy var fileNameLabel = UILabel()
@@ -62,7 +65,11 @@ extension ChatMessageFileAttachmentListView {
             super.setUp()
 
             let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapOnAttachment(_:)))
-            addGestureRecognizer(tapRecognizer)
+            mainContainerStackView.addGestureRecognizer(tapRecognizer)
+
+            let actionTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapActionOnAttachment(_:)))
+            actionIconImageView.addGestureRecognizer(actionTapRecognizer)
+            actionIconImageView.isUserInteractionEnabled = true
         }
 
         override open func setUpAppearance() {
@@ -138,6 +145,11 @@ extension ChatMessageFileAttachmentListView {
         @objc open func didTapOnAttachment(_ recognizer: UITapGestureRecognizer) {
             guard let attachment = content else { return }
             didTapOnAttachment?(attachment)
+        }
+
+        @objc open func didTapActionOnAttachment(_ recognizer: UITapGestureRecognizer) {
+            guard let attachment = content else { return }
+            didTapActionOnAttachment?(attachment)
         }
 
         private var fileIcon: UIImage? {

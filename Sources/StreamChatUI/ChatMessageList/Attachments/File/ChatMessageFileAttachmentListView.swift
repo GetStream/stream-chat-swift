@@ -12,8 +12,11 @@ open class ChatMessageFileAttachmentListView: _View, ComponentsProvider {
         didSet { updateContentIfNeeded() }
     }
 
-    /// Closure what should happen on tapping the given attachment.
+    /// Closure which notifies when the user tapped the attachment.
     open var didTapOnAttachment: ((ChatMessageFileAttachment) -> Void)?
+
+    /// Closure which notifies when the user tapped an attachment action. (Ex: Retry)
+    open var didTapActionOnAttachment: ((ChatMessageFileAttachment) -> Void)?
 
     /// Container which holds one or multiple attachment views in self.
     open private(set) lazy var containerStackView: ContainerStackView = ContainerStackView()
@@ -35,6 +38,7 @@ open class ChatMessageFileAttachmentListView: _View, ComponentsProvider {
         content.forEach { attachment in
             let item = components.fileAttachmentView.init()
             item.didTapOnAttachment = { [weak self] in self?.didTapOnAttachment?($0) }
+            item.didTapActionOnAttachment = { [weak self] in self?.didTapActionOnAttachment?($0) }
             item.content = attachment
             containerStackView.addArrangedSubview(item)
         }

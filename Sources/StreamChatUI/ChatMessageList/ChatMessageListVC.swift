@@ -969,7 +969,7 @@ open class ChatMessageListVC: _ViewController,
         }
     }
 
-    // MARK: - Attachment Action Delegates
+    // MARK: - Link Action Delegates
 
     open func didTapOnLinkAttachment(
         _ attachment: ChatMessageLinkAttachment,
@@ -978,11 +978,24 @@ open class ChatMessageListVC: _ViewController,
         router.showLinkPreview(link: attachment.url)
     }
 
+    // MARK: - File Action Delegates
+
     open func didTapOnAttachment(
         _ attachment: ChatMessageFileAttachment,
         at indexPath: IndexPath?
     ) {
         router.showFilePreview(fileURL: attachment.assetURL)
+    }
+
+    open func didTapActionOnAttachment(_ attachment: ChatMessageFileAttachment, at indexPath: IndexPath?) {
+        switch attachment.uploadingState?.state {
+        case .uploadingFailed:
+            client
+                .messageController(cid: attachment.id.cid, messageId: attachment.id.messageId)
+                .restartFailedAttachmentUploading(with: attachment.id)
+        default:
+            break
+        }
     }
 
     /// Executes the provided action on the message
