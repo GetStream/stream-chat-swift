@@ -639,7 +639,7 @@ lane :copyright do
 end
 
 private_lane :create_pr do |options|
-  options[:base_branch] ||= 'develop'
+  options[:base_branch] ||= 'ci/test-copyright'
   sh("git checkout -b #{options[:head_branch]}")
   sh('git add -A')
   sh("git commit -m '#{options[:title]}'")
