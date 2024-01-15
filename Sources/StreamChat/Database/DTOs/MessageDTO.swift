@@ -63,7 +63,13 @@ class MessageDTO: NSManagedObject {
     @NSManaged var newestReplyAt: DBDate?
 
     @NSManaged var user: UserDTO
+
+    /// The mentionedUsers property is used for reading the mentioned users.
+    /// The mentionedUserIds property is used for creating a new message,
+    /// so that it is not needed to load users from DB.
     @NSManaged var mentionedUsers: Set<UserDTO>
+    @NSManaged var mentionedUserIds: [String]
+
     @NSManaged var threadParticipants: NSOrderedSet
     @NSManaged var channel: ChannelDTO?
     @NSManaged var replies: Set<MessageDTO>
@@ -607,13 +613,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             }
         )
 
-        // If a user is able to mention someone,
-        // most probably we have that user already saved in DB.
-        // Ideally, this should be `loadOrCreate` but then
-        // we miss non-optional fields of DTO and fail to save.
-        message.mentionedUsers = Set(
-            mentionedUserIds.compactMap { UserDTO.load(id: $0, context: self) }
-        )
+        message.mentionedUserIds = mentionedUserIds
 
         message.showReplyInChannel = showReplyInChannel
         message.quotedMessage = quotedMessageId.flatMap { MessageDTO.load(id: $0, context: self) }
@@ -727,6 +727,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             let user = try saveUser(payload: $0)
             return user
         })
+        dto.mentionedUserIds = payload.mentionedUsers.map(\.id)
 
         // If user participated in thread, but deleted message later, we need to get rid of it if backends does
         dto.threadParticipants = try NSOrderedSet(
@@ -1064,7 +1065,7 @@ extension MessageDTO {
             attachments: attachments
                 .sorted { $0.attachmentID.index < $1.attachmentID.index }
                 .compactMap { $0.asRequestPayload() },
-            mentionedUserIds: mentionedUsers.map(\.id),
+            mentionedUserIds: mentionedUserIds,
             pinned: pinned,
             pinExpires: pinExpires?.bridgeDate,
             extraData: decodedExtraData

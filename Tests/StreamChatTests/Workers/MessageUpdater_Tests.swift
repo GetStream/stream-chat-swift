@@ -885,6 +885,7 @@ final class MessageUpdater_Tests: XCTestCase {
         XCTAssertEqual(messageDTO.skipPush, true)
         XCTAssertEqual(messageDTO.skipEnrichUrl, false)
         XCTAssertEqual(messageDTO.showInsideThread, true)
+        XCTAssertEqual(messageDTO.mentionedUserIds, [currentUserId])
 
         let message: ChatMessage = try messageDTO.asModel()
         XCTAssertEqual(message.text, text)
@@ -903,7 +904,6 @@ final class MessageUpdater_Tests: XCTestCase {
         XCTAssertEqual(message.localState, .pendingSend)
         XCTAssertTrue(message.isPinned)
         XCTAssertEqual(message.isSilent, isSilent)
-        XCTAssertEqual(message.mentionedUsers.map(\.id), mentionedUserIds)
     }
 
     func test_createNewMessage_propagatesErrorWhenSavingFails() throws {
