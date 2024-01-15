@@ -37,6 +37,10 @@ public struct StreamChatUserObject: Codable, Hashable {
     
     public var lastActive: Date?
     
+    public var name: String?
+    
+    public var imageURL: String?
+    
     public init(updatedAt: Date?, createdAt: Date?, deactivatedAt: Date?, invisible: Bool?, online: Bool, banExpires: Date?, role: String, custom: [String: RawJSON], deletedAt: Date?, pushNotifications: StreamChatPushNotificationSettings?, teams: [String]?, revokeTokensIssuedBefore: String?, banned: Bool, id: String, language: String?, lastActive: Date?) {
         self.updatedAt = updatedAt
         
@@ -103,6 +107,10 @@ public struct StreamChatUserObject: Codable, Hashable {
         case language
         
         case lastActive = "last_active"
+        
+        case imageURL = "image_url"
+        
+        case name
     }
 
     public func encode(to encoder: Encoder) throws {

@@ -255,8 +255,8 @@ extension NSManagedObjectContext {
     ) throws -> UserDTO {
         let dto = UserDTO.loadOrCreate(id: payload.id, context: self, cache: cache)
 
-        dto.name = payload.custom?["name"]?.stringValue
-        dto.imageURL = URL(string: payload.custom?["imageURL"]?.stringValue ?? "")
+        dto.name = payload.name
+        dto.imageURL = URL(string: payload.imageURL ?? "")
         dto.isBanned = payload.banned
         dto.isOnline = payload.online
         dto.lastActivityAt = payload.lastActive?.bridgeDate
@@ -441,7 +441,6 @@ extension NSManagedObjectContext {
         
         dto.channel = channelDTO
 
-        // TODO: fix these.
         dto.latestReactions = payload
             .latestReactions
             .compactMap { try? saveReaction(payload: $0, cache: cache) }
@@ -473,10 +472,9 @@ extension NSManagedObjectContext {
             parentMessageDTO.replies.insert(dto)
         }
 
-        // TODO: the i18n stuff
-//        dto.translations = payload.translations?.mapKeys { $0.languageCode }
-//        dto.originalLanguage = payload.originalLanguage
-
+        dto.translations = payload.i18n?.compactMapValues { $0.stringValue }
+        dto.originalLanguage = payload.i18n?["language"] as? String
+        
 //        if let moderationDetailsPayload = payload.moderationDetails {
 //            dto.moderationDetails = MessageModerationDetailsDTO.create(
 //                from: moderationDetailsPayload,
