@@ -13,5 +13,5 @@ fi
 if which vale >/dev/null; then
     vale --output=./.styles/xcode-line.tmpl docusaurus
 else
-    echo "warning: Vale not installed, download from https://vale.sh"
+    echo "warning: if building locally, download Vale from https://vale.sh"
 fi
