@@ -608,7 +608,7 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
         // Mentions
         if let mentionedUsers = content?.mentionedUsers, !mentionedUsers.isEmpty {
             mentionedUsers.forEach {
-                let mention = "@\($0.name ?? "")"
+                let mention = "@\($0.name ?? $0.id)"
                 textView?.highlightMention(mention: mention)
             }
         }
