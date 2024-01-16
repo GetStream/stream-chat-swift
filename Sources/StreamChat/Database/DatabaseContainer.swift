@@ -239,31 +239,20 @@ class DatabaseContainer: NSPersistentContainer {
         }
 
         writableContext.perform { [weak self] in
-            self?.sendNotificationForAllContexts(name: Self.WillRemoveAllDataNotification)
-
-            // Because this is a critical part of Stream, we don't want to make such changes unless it is in a controlled environment
-            if StreamRuntimeCheck._isBackgroundMappingEnabled {
-                // Before we remove the persistent store, we need to reset the state of the `NSManagedObjectContext`s to
-                // avoid a context from trying to access data from a previous store
-                self?.allContext.forEach { context in
-                    context.performAndWait { context.reset() }
+            let entityNames = self?.managedObjectModel.entities.compactMap(\.name)
+            var deleteError: Error?
+            entityNames?.forEach { [weak self] entityName in
+                let deleteFetch = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
+                let deleteRequest = NSBatchDeleteRequest(fetchRequest: deleteFetch)
+                do {
+                    try self?.writableContext.execute(deleteRequest)
+                    try self?.writableContext.save()
+                } catch {
+                    log.error("Batch delete request failed with error \(error)")
+                    deleteError = error
                 }
             }
-            // If the current persistent store is a SQLite store, this method will reset and recreate it.
-            self?.recreatePersistentStore { error in
-                self?.sendNotificationForAllContexts(name: Self.DidRemoveAllDataNotification)
-                completion?(error)
-            }
-        }
-    }
-
-    private func sendNotificationForAllContexts(name: Notification.Name) {
-        // Make sure the notifications are sent synchronously on the main thread to give enough time to notification
-        // listeners to react on it.
-        DispatchQueue.performSynchronouslyOnMainQueue {
-            allContext.forEach {
-                NotificationCenter.default.post(.init(name: name, object: $0, userInfo: nil))
-            }
+            completion?(deleteError)
         }
     }
 

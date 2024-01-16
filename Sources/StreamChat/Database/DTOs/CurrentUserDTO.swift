@@ -139,35 +139,8 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
         }
     }
 
-    private static let currentUserKey = "io.getStream.chat.core.context.current_user_key"
-    private static let removeAllDataToken = "io.getStream.chat.core.context.remove_all_data_token"
-
     var currentUser: CurrentUserDTO? {
-        // we already have cached value in `userInfo` so all setup is complete
-        // so we can just return cached value
-        if let currentUser = userInfo[Self.currentUserKey] as? CurrentUserDTO {
-            return currentUser
-        }
-
-        // we do not have cached value in `userInfo` so we try to load current user from DB
-        if let currentUser = CurrentUserDTO.load(context: self) {
-            // if we have current user we save it to `userInfo` so we do not have to load it again
-            userInfo[Self.currentUserKey] = currentUser
-
-            // When all data is removed it should this code's responsibility to clear `userInfo`
-            userInfo[Self.removeAllDataToken] = NotificationCenter.default.addObserver(
-                forName: DatabaseContainer.WillRemoveAllDataNotification,
-                object: nil,
-                queue: nil
-            ) { [userInfo] _ in
-                userInfo[Self.currentUserKey] = nil
-            }
-
-            return currentUser
-        }
-
-        // we really don't have current user
-        return nil
+        CurrentUserDTO.load(context: self)
     }
 }
 
