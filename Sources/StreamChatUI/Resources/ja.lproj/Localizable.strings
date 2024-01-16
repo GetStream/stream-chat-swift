@@ -1,0 +1,108 @@
+//
+// Copyright © 2024 Stream.io Inc. All rights reserved.
+//
+
+"channel.name.and" = "and";
+"channel.name.andXMore" = "and %@ more";
+"channel.name.missing" = "NoChannel";
+"channel.item.empty-messages" = "No messages";
+"channel.item.typing-singular" = "is typing ...";
+"channel.item.typing-plural" = "are typing ...";
+"channel.item.search.in" = " in %@";
+"channel.item.audio" = "Audio";
+"channel.item.photo" = "Photo";
+"channel.item.video" = "Video";
+
+"channelList.empty.title" = "Let's start chatting!";
+"channelList.empty.subtitle" = "How about sending your first message to a friend?";
+"channelList.empty.button" = "Start a chat";
+"channelList.search" = "Search";
+"channelList.search.empty.subtitle" = "No results for %@";
+
+"channelList.error.message" = "Error loading channels";
+"channelList.preview.voice.recording" = "Voice message";
+
+"messageList.typingIndicator.typing-unknown" = "Someone is typing";
+
+"message.actions.inline-reply" = "Reply";
+"message.actions.thread-reply" = "Thread Reply";
+"message.actions.edit" = "Edit Message";
+"message.actions.copy" = "Copy Message";
+"message.actions.delete" = "Delete Message";
+"message.actions.delete.confirmation-title" = "Delete Message";
+"message.actions.delete.confirmation-message" = "Are you sure you want to permanently delete this message?";
+"message.actions.user-unblock" = "Unblock User";
+"message.actions.user-block" = "Block User";
+"message.actions.user-unmute" = "Unmute User";
+"message.actions.user-mute" = "Mute User";
+"message.actions.resend" = "Resend";
+"message.actions.flag" = "Flag Message";
+"message.actions.flag.confirmation-title" = "Flag Message";
+"message.actions.flag.confirmation-message" = "Do you want to send a copy of this message to a moderator for further investigation?";
+"message.actions.mark-unread" = "Mark as unread";
+
+"message.moderation.title" = "Are you sure?";
+"message.moderation.message" = "Consider how your comment might make others feel and be sure to follow our Community Guidelines.";
+"message.moderation.resend" = "Send Anyway";
+"message.moderation.edit" = "Edit Message";
+"message.moderation.delete" = "Delete Message";
+
+"message.title.online" = "Online";
+"message.title.offline" = "Offline";
+"message.title.group" = "%d members, %d online";
+"message.threads.reply" = "Thread Reply";
+"message.threads.replyWith" = "with %@";
+"message.translatedTo" = "Translated to %@";
+"message.only-visible-to-you" = "Only visible to you";
+"message.deleted-message-placeholder" = "Message deleted";
+"message.sending.attachment-uploading-failed" = "UPLOADING FAILED";
+"message.unsupported-attachment" = "Unsupported Attachment";
+
+"attachment.max-size-exceeded" = "Attachment size exceed the limit.";
+"attachment.max-count-exceeded" = "The max number of attachments per message is %d.";
+
+"alert.actions.cancel" = "Cancel";
+"alert.actions.delete" = "Delete";
+"alert.actions.flag" = "Flag";
+"alert.actions.ok" = "Ok";
+
+"composer.title.edit" = "Edit Message";
+"composer.title.reply" = "Reply to Message";
+"composer.placeholder.message" = "Send a message";
+"composer.placeholder.messageDisabled" = "You can't send messages in this channel";
+"composer.placeholder.slowMode" = "Slow mode ON";
+"composer.placeholder.giphy" = "Search GIFs";
+"composer.checkmark.direct-message-reply" = "Also send as direct message";
+"composer.checkmark.channel-reply" = "Also send in channel";
+"composer.picker.title" = "Choose attachment type: ";
+"composer.picker.file" = "File";
+"composer.picker.media" = "Photo or Video";
+"composer.picker.camera" = "Camera";
+"composer.picker.cancel" = "Cancel";
+"composer.links-disabled.title" = "Links are disabled";
+"composer.links-disabled.subtitle" = "Sending links is not allowed in this conversation.";
+"composer.quoted-message.photo" = "Photo";
+"composer.quoted-message.giphy" = "Giphy";
+"composer.suggestions.commands.header" = "Instant Commands";
+
+"current-selection" = "%d of %d";
+
+"dates.time-ago-seconds-plural" = "last seen %d seconds ago";
+"dates.time-ago-seconds-singular" = "last seen just one second ago";
+"dates.time-ago-minutes-singular" = "last seen one minute ago";
+"dates.time-ago-minutes-plural" = "last seen %d minutes ago";
+"dates.time-ago-hours-singular" = "last seen one hour ago";
+"dates.time-ago-hours-plural" = "last seen %d hours ago";
+"dates.time-ago-days-singular" = "last seen one day ago";
+"dates.time-ago-days-plural" = "last seen %d days ago";
+"dates.time-ago-weeks-singular" = "last seen one week ago";
+"dates.time-ago-weeks-plural" = "last seen %d weeks ago";
+"dates.time-ago-months-singular" = "last seen one month ago";
+"dates.time-ago-months-plural" = "last seen %d months ago";
+
+"you" = "You";
+
+"recording.tip" = "Hold to record, release to send";
+"recording.slideToCancel" = "Slide to cancel";
+
+"audio.player.rate" = "x%@";
