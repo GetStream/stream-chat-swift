@@ -16,24 +16,6 @@ class DatabaseContainer: NSPersistentContainer {
         case onDisk(databaseFileURL: URL)
     }
 
-    /// A notification with this name is posted by every `NSManagedObjectContext` before all its data is flushed.
-    ///
-    /// This is needed because flushing all data is done by resetting the persistent store, and it's not reflected in the contexts.
-    /// All observers of the context should listen to this notification, and generate a deletion callback when the notification
-    /// is received.
-    ///
-    static let WillRemoveAllDataNotification =
-        Notification.Name(rawValue: "co.getStream.iOSChatSDK.DabaseContainer.WillRemoveAllDataNotification")
-
-    /// A notification with this name is posted by every `NSManagedObjectContext` after all its data is flushed.
-    ///
-    /// This is needed because flushing all data is done by resetting the persistent store, and it's not reflected in the contexts.
-    /// All observers of the context should listen to this notification, and reset all NSFetchedResultControllers observing
-    /// the contexts.
-    ///
-    static let DidRemoveAllDataNotification =
-        Notification.Name(rawValue: "co.getStream.iOSChatSDK.DabaseContainer.DidRemoveAllDataNotification")
-
     /// We use `writableContext` for having just one place to save changes
     /// so it’s not possible to have conflicts when saving payloads from various sources.
     /// All writes are happening serially using this context and its `write { }` methods.
