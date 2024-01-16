@@ -9,9 +9,9 @@ import Foundation
 class AttachmentDTO: NSManagedObject {
     /// An attachment id.
     @NSManaged private var id: String
-    var attachmentID: AttachmentId {
-        get { AttachmentId(rawValue: id)! }
-        set { id = newValue.rawValue }
+    var attachmentID: AttachmentId? {
+        get { AttachmentId(rawValue: id) }
+        set { id = newValue?.rawValue ?? "" }
     }
 
     /// An attachment type.
@@ -146,8 +146,9 @@ private extension AttachmentDTO {
                 file: try AttachmentFile(url: localURL)
             )
         } catch {
+            let id = attachmentID?.rawValue ?? ""
             log.error("""
-                Failed to build uploading state for attachment with id: \(attachmentID) at \(localURL)
+                Failed to build uploading state for attachment with id: \(id) at \(localURL)
                 Error: \(error.localizedDescription)
             """)
             return nil
@@ -157,9 +158,12 @@ private extension AttachmentDTO {
 
 extension AttachmentDTO {
     /// Snapshots the current state of `AttachmentDTO` and returns an immutable model object from it.
-    func asAnyModel() -> AnyChatMessageAttachment {
-        .init(
-            id: attachmentID,
+    func asAnyModel() -> AnyChatMessageAttachment? {
+        guard let id = attachmentID else {
+            return nil
+        }
+        return .init(
+            id: id,
             type: attachmentType,
             payload: data,
             uploadingState: uploadingState
