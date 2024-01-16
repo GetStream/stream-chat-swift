@@ -4,7 +4,7 @@
 
 import Foundation
 
-public struct StreamChatChannelCreatedEvent: Codable, Hashable {
+public struct StreamChatChannelCreatedEvent: Codable, Hashable, Event {
     public var createdAt: String
     
     public var type: String

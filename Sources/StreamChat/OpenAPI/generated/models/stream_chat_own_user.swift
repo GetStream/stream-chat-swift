@@ -23,7 +23,7 @@ public struct StreamChatOwnUser: Codable, Hashable {
     
     public var updatedAt: String
     
-    public var custom: [String: RawJSON]
+    public var custom: [String: RawJSON]?
     
     public var devices: [StreamChatDevice?]
     

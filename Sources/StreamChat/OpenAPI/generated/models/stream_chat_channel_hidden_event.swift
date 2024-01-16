@@ -4,7 +4,13 @@
 
 import Foundation
 
-public struct StreamChatChannelHiddenEvent: Codable, Hashable {
+public struct StreamChatChannelHiddenEvent: Codable, Hashable, Event {
+    public var channelId: String
+    
+    public var channelType: String
+    
+    public var cid: String
+    
     public var clearHistory: Bool
     
     public var createdAt: String
@@ -15,13 +21,13 @@ public struct StreamChatChannelHiddenEvent: Codable, Hashable {
     
     public var channel: StreamChatChannelResponse?
     
-    public var channelId: String
-    
-    public var channelType: String
-    
-    public var cid: String
-    
-    public init(clearHistory: Bool, createdAt: String, type: String, user: StreamChatUserObject?, channel: StreamChatChannelResponse?, channelId: String, channelType: String, cid: String) {
+    public init(channelId: String, channelType: String, cid: String, clearHistory: Bool, createdAt: String, type: String, user: StreamChatUserObject?, channel: StreamChatChannelResponse?) {
+        self.channelId = channelId
+        
+        self.channelType = channelType
+        
+        self.cid = cid
+        
         self.clearHistory = clearHistory
         
         self.createdAt = createdAt
@@ -31,15 +37,15 @@ public struct StreamChatChannelHiddenEvent: Codable, Hashable {
         self.user = user
         
         self.channel = channel
-        
-        self.channelId = channelId
-        
-        self.channelType = channelType
-        
-        self.cid = cid
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
+        case channelId = "channel_id"
+        
+        case channelType = "channel_type"
+        
+        case cid
+        
         case clearHistory = "clear_history"
         
         case createdAt = "created_at"
@@ -49,16 +55,16 @@ public struct StreamChatChannelHiddenEvent: Codable, Hashable {
         case user
         
         case channel
-        
-        case channelId = "channel_id"
-        
-        case channelType = "channel_type"
-        
-        case cid
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(channelId, forKey: .channelId)
+        
+        try container.encode(channelType, forKey: .channelType)
+        
+        try container.encode(cid, forKey: .cid)
         
         try container.encode(clearHistory, forKey: .clearHistory)
         
@@ -69,11 +75,5 @@ public struct StreamChatChannelHiddenEvent: Codable, Hashable {
         try container.encode(user, forKey: .user)
         
         try container.encode(channel, forKey: .channel)
-        
-        try container.encode(channelId, forKey: .channelId)
-        
-        try container.encode(channelType, forKey: .channelType)
-        
-        try container.encode(cid, forKey: .cid)
     }
 }

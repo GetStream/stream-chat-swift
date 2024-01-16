@@ -4,9 +4,7 @@
 
 import Foundation
 
-public struct StreamChatChannelKickedEvent: Codable, Hashable {
-    public var channelId: String
-    
+public struct StreamChatChannelKickedEvent: Codable, Hashable, Event {
     public var channelType: String
     
     public var cid: String
@@ -17,9 +15,9 @@ public struct StreamChatChannelKickedEvent: Codable, Hashable {
     
     public var channel: StreamChatChannelResponse?
     
-    public init(channelId: String, channelType: String, cid: String, createdAt: String, type: String, channel: StreamChatChannelResponse?) {
-        self.channelId = channelId
-        
+    public var channelId: String
+    
+    public init(channelType: String, cid: String, createdAt: String, type: String, channel: StreamChatChannelResponse?, channelId: String) {
         self.channelType = channelType
         
         self.cid = cid
@@ -29,11 +27,11 @@ public struct StreamChatChannelKickedEvent: Codable, Hashable {
         self.type = type
         
         self.channel = channel
+        
+        self.channelId = channelId
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case channelId = "channel_id"
-        
         case channelType = "channel_type"
         
         case cid
@@ -43,12 +41,12 @@ public struct StreamChatChannelKickedEvent: Codable, Hashable {
         case type
         
         case channel
+        
+        case channelId = "channel_id"
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
-        try container.encode(channelId, forKey: .channelId)
         
         try container.encode(channelType, forKey: .channelType)
         
@@ -59,5 +57,7 @@ public struct StreamChatChannelKickedEvent: Codable, Hashable {
         try container.encode(type, forKey: .type)
         
         try container.encode(channel, forKey: .channel)
+        
+        try container.encode(channelId, forKey: .channelId)
     }
 }

@@ -4,7 +4,7 @@
 
 import Foundation
 
-public struct StreamChatUserDeletedEvent: Codable, Hashable {
+public struct StreamChatUserDeletedEvent: Codable, Hashable, Event {
     public var createdAt: String
     
     public var deleteConversationChannels: Bool

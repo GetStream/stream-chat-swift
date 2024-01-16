@@ -194,6 +194,101 @@ public enum StreamChatWSEvent: Codable, Hashable {
         }
     }
 
+    public var rawValue: Event {
+        switch self {
+        case let .typeChannelCreatedEvent(value):
+            return value
+        case let .typeChannelDeletedEvent(value):
+            return value
+        case let .typeChannelFrozenEvent(value):
+            return value
+        case let .typeChannelHiddenEvent(value):
+            return value
+        case let .typeChannelKickedEvent(value):
+            return value
+        case let .typeChannelTruncatedEvent(value):
+            return value
+        case let .typeChannelUnFrozenEvent(value):
+            return value
+        case let .typeChannelUpdatedEvent(value):
+            return value
+        case let .typeChannelVisibleEvent(value):
+            return value
+        case let .typeAnyEvent(value):
+            return value
+        case let .typeHealthCheckEvent(value):
+            return value
+        case let .typeMemberAddedEvent(value):
+            return value
+        case let .typeMemberRemovedEvent(value):
+            return value
+        case let .typeMemberUpdatedEvent(value):
+            return value
+        case let .typeMessageDeletedEvent(value):
+            return value
+        case let .typeMessageNewEvent(value):
+            return value
+        case let .typeMessageReadEvent(value):
+            return value
+        case let .typeMessageUpdatedEvent(value):
+            return value
+        case let .typeNotificationAddedToChannelEvent(value):
+            return value
+        case let .typeNotificationChannelDeletedEvent(value):
+            return value
+        case let .typeNotificationChannelMutesUpdatedEvent(value):
+            return value
+        case let .typeNotificationChannelTruncatedEvent(value):
+            return value
+        case let .typeNotificationInviteAcceptedEvent(value):
+            return value
+        case let .typeNotificationInviteRejectedEvent(value):
+            return value
+        case let .typeNotificationInvitedEvent(value):
+            return value
+        case let .typeNotificationMarkReadEvent(value):
+            return value
+        case let .typeNotificationMarkUnreadEvent(value):
+            return value
+        case let .typeNotificationNewMessageEvent(value):
+            return value
+        case let .typeNotificationMutesUpdatedEvent(value):
+            return value
+        case let .typeNotificationRemovedFromChannelEvent(value):
+            return value
+        case let .typeReactionDeletedEvent(value):
+            return value
+        case let .typeReactionNewEvent(value):
+            return value
+        case let .typeReactionUpdatedEvent(value):
+            return value
+        case let .typeTypingStartEvent(value):
+            return value
+        case let .typeTypingStopEvent(value):
+            return value
+        case let .typeUserBannedEvent(value):
+            return value
+        case let .typeUserDeactivatedEvent(value):
+            return value
+        case let .typeUserDeletedEvent(value):
+            return value
+        case let .typeUserMutedEvent(value):
+            return value
+        case let .typeUserPresenceChangedEvent(value):
+            return value
+        case let .typeUserReactivatedEvent(value):
+            return value
+        case let .typeUserUnbannedEvent(value):
+            return value
+        case let .typeUserUpdatedEvent(value):
+            return value
+        case let .typeUserWatchingStartEvent(value):
+            return value
+        case let .typeUserWatchingStopEvent(value):
+            return value
+        }
+    }
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         switch self {

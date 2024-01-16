@@ -4,7 +4,9 @@
 
 import Foundation
 
-public struct StreamChatMemberAddedEvent: Codable, Hashable {
+public struct StreamChatMemberAddedEvent: Codable, Hashable, Event {
+    public var channelType: String
+    
     public var cid: String
     
     public var createdAt: String
@@ -19,9 +21,9 @@ public struct StreamChatMemberAddedEvent: Codable, Hashable {
     
     public var channelId: String
     
-    public var channelType: String
-    
-    public init(cid: String, createdAt: String, member: StreamChatChannelMember?, team: String?, type: String, user: StreamChatUserObject?, channelId: String, channelType: String) {
+    public init(channelType: String, cid: String, createdAt: String, member: StreamChatChannelMember?, team: String?, type: String, user: StreamChatUserObject?, channelId: String) {
+        self.channelType = channelType
+        
         self.cid = cid
         
         self.createdAt = createdAt
@@ -35,11 +37,11 @@ public struct StreamChatMemberAddedEvent: Codable, Hashable {
         self.user = user
         
         self.channelId = channelId
-        
-        self.channelType = channelType
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
+        case channelType = "channel_type"
+        
         case cid
         
         case createdAt = "created_at"
@@ -53,12 +55,12 @@ public struct StreamChatMemberAddedEvent: Codable, Hashable {
         case user
         
         case channelId = "channel_id"
-        
-        case channelType = "channel_type"
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(channelType, forKey: .channelType)
         
         try container.encode(cid, forKey: .cid)
         
@@ -73,7 +75,5 @@ public struct StreamChatMemberAddedEvent: Codable, Hashable {
         try container.encode(user, forKey: .user)
         
         try container.encode(channelId, forKey: .channelId)
-        
-        try container.encode(channelType, forKey: .channelType)
     }
 }

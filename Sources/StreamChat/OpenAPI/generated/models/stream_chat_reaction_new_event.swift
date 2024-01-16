@@ -4,92 +4,92 @@
 
 import Foundation
 
-public struct StreamChatReactionNewEvent: Codable, Hashable {
-    public var reaction: StreamChatReaction?
+public struct StreamChatReactionNewEvent: Codable, Hashable, Event {
+    public var channelId: String
     
-    public var user: StreamChatUserObject?
-    
-    public var cid: String
+    public var channelType: String
     
     public var createdAt: String
     
     public var message: StreamChatMessage?
     
+    public var type: String
+    
+    public var cid: String
+    
+    public var reaction: StreamChatReaction?
+    
     public var team: String?
     
     public var threadParticipants: [StreamChatUserObject]?
     
-    public var type: String
+    public var user: StreamChatUserObject?
     
-    public var channelId: String
-    
-    public var channelType: String
-    
-    public init(reaction: StreamChatReaction?, user: StreamChatUserObject?, cid: String, createdAt: String, message: StreamChatMessage?, team: String?, threadParticipants: [StreamChatUserObject]?, type: String, channelId: String, channelType: String) {
-        self.reaction = reaction
+    public init(channelId: String, channelType: String, createdAt: String, message: StreamChatMessage?, type: String, cid: String, reaction: StreamChatReaction?, team: String?, threadParticipants: [StreamChatUserObject]?, user: StreamChatUserObject?) {
+        self.channelId = channelId
         
-        self.user = user
-        
-        self.cid = cid
+        self.channelType = channelType
         
         self.createdAt = createdAt
         
         self.message = message
         
+        self.type = type
+        
+        self.cid = cid
+        
+        self.reaction = reaction
+        
         self.team = team
         
         self.threadParticipants = threadParticipants
         
-        self.type = type
-        
-        self.channelId = channelId
-        
-        self.channelType = channelType
+        self.user = user
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case reaction
+        case channelId = "channel_id"
         
-        case user
-        
-        case cid
+        case channelType = "channel_type"
         
         case createdAt = "created_at"
         
         case message
         
+        case type
+        
+        case cid
+        
+        case reaction
+        
         case team
         
         case threadParticipants = "thread_participants"
         
-        case type
-        
-        case channelId = "channel_id"
-        
-        case channelType = "channel_type"
+        case user
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(reaction, forKey: .reaction)
+        try container.encode(channelId, forKey: .channelId)
         
-        try container.encode(user, forKey: .user)
-        
-        try container.encode(cid, forKey: .cid)
+        try container.encode(channelType, forKey: .channelType)
         
         try container.encode(createdAt, forKey: .createdAt)
         
         try container.encode(message, forKey: .message)
         
+        try container.encode(type, forKey: .type)
+        
+        try container.encode(cid, forKey: .cid)
+        
+        try container.encode(reaction, forKey: .reaction)
+        
         try container.encode(team, forKey: .team)
         
         try container.encode(threadParticipants, forKey: .threadParticipants)
         
-        try container.encode(type, forKey: .type)
-        
-        try container.encode(channelId, forKey: .channelId)
-        
-        try container.encode(channelType, forKey: .channelType)
+        try container.encode(user, forKey: .user)
     }
 }
