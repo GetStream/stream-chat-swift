@@ -152,6 +152,11 @@ class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
                 return
             }
 
+            guard !self.isDeletingDatabase else {
+                done(.continue)
+                return
+            }
+
             self.frc.managedObjectContext.perform {
                 self.processItems(changes) {
                     done(.continue)
