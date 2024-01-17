@@ -364,7 +364,7 @@ public class ChatClient {
         }
 
         group.enter()
-        databaseContainer.removeAllData(force: true) { error in
+        databaseContainer.removeAllData { error in
             if let error = error {
                 log.error("Logging out current user failed with error \(error)", subsystems: .all)
             } else {

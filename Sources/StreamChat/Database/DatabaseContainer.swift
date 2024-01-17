@@ -223,21 +223,7 @@ class DatabaseContainer: NSPersistentContainer {
     }
 
     /// Removes all data from the local storage.
-    ///
-    /// Invoking this method will cause `WillRemoveAllDataNotification` being send by all contexts of the container.
-    ///
-    /// - Warning: ⚠️ This is a non-recoverable operation. All data will be lost after calling this method.
-    ///
-    /// - Parameters:
-    ///   - force: If sets to `false`, the method fails if there are unsynced data in to local storage, for example
-    /// messages pedning sent. You can use this option to warn a user about potential data loss.
-    ///   - completion: Called when the operation is completed. If the error is present, the operation failed.
-    ///
-    func removeAllData(force: Bool = true, completion: ((Error?) -> Void)? = nil) {
-        if !force {
-            fatalError("Non-force flush is not implemented yet.")
-        }
-
+    func removeAllData(completion: ((Error?) -> Void)? = nil) {
         writableContext.perform { [weak self] in
             let entityNames = self?.managedObjectModel.entities.compactMap(\.name)
             var deleteError: Error?
