@@ -224,7 +224,7 @@ class DatabaseContainer: NSPersistentContainer {
 
     /// Removes all data from the local storage.
     func removeAllData(completion: ((Error?) -> Void)? = nil) {
-        writableContext.perform { [weak self] in
+        writableContext.performAndWait { [weak self] in
             let entityNames = self?.managedObjectModel.entities.compactMap(\.name)
             var deleteError: Error?
             entityNames?.forEach { [weak self] entityName in
