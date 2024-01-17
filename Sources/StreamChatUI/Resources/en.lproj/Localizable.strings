@@ -41,8 +41,8 @@
 "message.actions.flag.confirmation-message" = "Do you want to send a copy of this message to a moderator for further investigation?";
 "message.actions.mark-unread" = "Mark as unread";
 
-"message.moderation.title" = "Are you sure?";
-"message.moderation.message" = "Consider how your comment might make others feel and be sure to follow our Community Guidelines.";
+"message.moderation.title" = "Failed to send message";
+"message.moderation.message" = "This message might violate our moderation policy. Are you sure you want to send it? Please take a look at our Community Guidelines.";
 "message.moderation.resend" = "Send Anyway";
 "message.moderation.edit" = "Edit Message";
 "message.moderation.delete" = "Delete Message";
@@ -59,7 +59,7 @@
 "message.unsupported-attachment" = "Unsupported Attachment";
 
 "attachment.max-size-exceeded" = "Attachment size exceed the limit.";
-"attachment.max-count-exceeded" = "The max number of attachments per message is %d.";
+"attachment.max-count-exceeded" = "Attachments count (%d) exceeded";
 
 "alert.actions.cancel" = "Cancel";
 "alert.actions.delete" = "Delete";
@@ -73,7 +73,7 @@
 "composer.placeholder.slowMode" = "Slow mode ON";
 "composer.placeholder.giphy" = "Search GIFs";
 "composer.checkmark.direct-message-reply" = "Also send as direct message";
-"composer.checkmark.channel-reply" = "Also send in channel";
+"composer.checkmark.channel-reply" = "Also send to channel";
 "composer.picker.title" = "Choose attachment type: ";
 "composer.picker.file" = "File";
 "composer.picker.media" = "Photo or Video";
@@ -102,7 +102,7 @@
 
 "you" = "You";
 
-"recording.tip" = "Hold to record, release to send";
+"recording.tip" = "Hold to start, release to send";
 "recording.slideToCancel" = "Slide to cancel";
 
 "audio.player.rate" = "x%@";
