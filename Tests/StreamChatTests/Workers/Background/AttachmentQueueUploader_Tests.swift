@@ -83,14 +83,15 @@ final class AttachmentQueueUploader_Tests: XCTestCase {
             }
 
             // Simulate successful backend response with remote file URL.
-            let response = UploadedAttachment.dummy(attachment: attachment.asAnyModel(), remoteURL: .fakeFile)
+            let attachmentModel = try XCTUnwrap(attachment.asAnyModel())
+            let response = UploadedAttachment.dummy(attachment: attachmentModel, remoteURL: .fakeFile)
             let remoteUrl = response.remoteURL
             apiClient.uploadFile_completion?(.success(response))
 
             switch envelope.type {
             case .image:
                 var imageModel: ChatMessageImageAttachment? {
-                    attachment.asAnyModel().attachment(payloadType: ImageAttachmentPayload.self)
+                    attachment.asAnyModel()?.attachment(payloadType: ImageAttachmentPayload.self)
                 }
                 AssertAsync {
                     // Assert attachment state eventually becomes `.uploaded`.
@@ -100,7 +101,7 @@ final class AttachmentQueueUploader_Tests: XCTestCase {
                 }
             case .file:
                 var fileModel: ChatMessageFileAttachment? {
-                    attachment.asAnyModel().attachment(payloadType: FileAttachmentPayload.self)
+                    attachment.asAnyModel()?.attachment(payloadType: FileAttachmentPayload.self)
                 }
                 AssertAsync {
                     // Assert attachment state eventually becomes `.uploaded`.
@@ -110,7 +111,7 @@ final class AttachmentQueueUploader_Tests: XCTestCase {
                 }
             case .video:
                 var videoModel: ChatMessageVideoAttachment? {
-                    attachment.asAnyModel().attachment(payloadType: VideoAttachmentPayload.self)
+                    attachment.asAnyModel()?.attachment(payloadType: VideoAttachmentPayload.self)
                 }
                 AssertAsync {
                     // Assert attachment state eventually becomes `.uploaded`.
@@ -120,7 +121,7 @@ final class AttachmentQueueUploader_Tests: XCTestCase {
                 }
             case .audio:
                 var audioModel: ChatMessageAudioAttachment? {
-                    attachment.asAnyModel().attachment(payloadType: AudioAttachmentPayload.self)
+                    attachment.asAnyModel()?.attachment(payloadType: AudioAttachmentPayload.self)
                 }
                 AssertAsync {
                     // Assert attachment state eventually becomes `.uploaded`.
@@ -130,7 +131,7 @@ final class AttachmentQueueUploader_Tests: XCTestCase {
                 }
             case .voiceRecording:
                 var audioModel: ChatMessageVoiceRecordingAttachment? {
-                    attachment.asAnyModel().attachment(payloadType: VoiceRecordingAttachmentPayload.self)
+                    attachment.asAnyModel()?.attachment(payloadType: VoiceRecordingAttachmentPayload.self)
                 }
                 AssertAsync {
                     // Assert attachment state eventually becomes `.uploaded`.
@@ -191,7 +192,8 @@ final class AttachmentQueueUploader_Tests: XCTestCase {
         )
 
         // Simulate successful backend response with remote file URL.
-        let response = UploadedAttachment.dummy(attachment: attachment.asAnyModel(), remoteURL: .fakeFile)
+        let attachmentModel = try XCTUnwrap(attachment.asAnyModel())
+        let response = UploadedAttachment.dummy(attachment: attachmentModel, remoteURL: .fakeFile)
         apiClient.uploadFile_completion?(.success(response))
 
         AssertAsync {
@@ -246,7 +248,8 @@ final class AttachmentQueueUploader_Tests: XCTestCase {
         )
 
         // Simulate successful backend response with remote file URL.
-        let response = UploadedAttachment.dummy(attachment: attachment.asAnyModel(), remoteURL: .fakeFile)
+        let attachmentModel = try XCTUnwrap(attachment.asAnyModel())
+        let response = UploadedAttachment.dummy(attachment: attachmentModel, remoteURL: .fakeFile)
         apiClient.uploadFile_completion?(.success(response))
 
         AssertAsync {
@@ -301,7 +304,8 @@ final class AttachmentQueueUploader_Tests: XCTestCase {
         )
 
         // Simulate successful backend response with remote file URL.
-        let response = UploadedAttachment.dummy(attachment: attachment.asAnyModel(), remoteURL: .fakeFile)
+        let attachmentModel = try XCTUnwrap(attachment.asAnyModel())
+        let response = UploadedAttachment.dummy(attachment: attachmentModel, remoteURL: .fakeFile)
         apiClient.uploadFile_completion?(.success(response))
 
         AssertAsync {
@@ -455,12 +459,13 @@ final class AttachmentQueueUploader_Tests: XCTestCase {
         )
 
         // Simulate successful backend response with remote file URL.
-        let response = UploadedAttachment.dummy(attachment: attachment.asAnyModel(), remoteURL: .fakeFile)
+        let attachmentModel = try XCTUnwrap(attachment.asAnyModel())
+        let response = UploadedAttachment.dummy(attachment: attachmentModel, remoteURL: .fakeFile)
         let remoteUrl = response.remoteURL
         apiClient.uploadFile_completion?(.success(response))
 
         var imageModel: ChatMessageImageAttachment? {
-            attachment.asAnyModel().attachment(payloadType: ImageAttachmentPayload.self)
+            attachment.asAnyModel()?.attachment(payloadType: ImageAttachmentPayload.self)
         }
         AssertAsync {
             Assert.willBeEqual(imageModel?.uploadingState?.state, .uploaded)

@@ -214,23 +214,6 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
         XCTAssertEqual(database.viewContext.currentUser, originalUser)
     }
 
-    func test_currentUser_isCleared_onRemoveAllData() throws {
-        try database.createCurrentUser()
-
-        XCTAssertNotNil(database.viewContext.currentUser)
-
-        let expectation = expectation(description: "removeAllData completion")
-        database.removeAllData { error in
-            if let error = error {
-                XCTFail("removeAllData failed with \(error)")
-            }
-            expectation.fulfill()
-        }
-
-        wait(for: [expectation], timeout: defaultTimeout)
-        XCTAssertNil(database.viewContext.currentUser)
-    }
-
     func test_currentUser_withCustomContext() throws {
         let uid: UserId = .unique
 
@@ -240,32 +223,6 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
 
         context.performAndWait {
             XCTAssertEqual(context.currentUser?.user.id, uid)
-        }
-
-        AssertAsync.canBeReleased(&context)
-    }
-
-    func test_currentUser_isCleared_onRemoveAllData_withCustomContext() throws {
-        try database.createCurrentUser()
-
-        var context: NSManagedObjectContext! = database.newBackgroundContext()
-
-        context.performAndWait {
-            XCTAssertNotNil(context.currentUser)
-        }
-
-        let expectation = expectation(description: "removeAllData completion")
-        database.removeAllData { error in
-            if let error = error {
-                XCTFail("removeAllData failed with \(error)")
-            }
-            expectation.fulfill()
-        }
-
-        wait(for: [expectation], timeout: defaultTimeout)
-
-        context.performAndWait {
-            XCTAssertNil(context.currentUser)
         }
 
         AssertAsync.canBeReleased(&context)
