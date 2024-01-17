@@ -70,6 +70,8 @@ extension CurrentUserDTO {
 
 extension NSManagedObjectContext: CurrentUserDatabaseSession {
     func saveCurrentUser(payload: CurrentUserPayload) throws -> CurrentUserDTO {
+        invalidateCurrentUserCache()
+        
         let dto = CurrentUserDTO.loadOrCreate(context: self)
         dto.user = try saveUser(payload: payload)
         dto.isInvisible = payload.isInvisible
@@ -93,6 +95,8 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
     }
 
     func saveCurrentUserUnreadCount(count: UnreadCount) throws {
+        invalidateCurrentUserCache()
+
         guard let dto = currentUser else {
             throw ClientError.CurrentUserDoesNotExist()
         }
@@ -102,6 +106,8 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
     }
 
     func saveCurrentUserDevices(_ devices: [DevicePayload], clearExisting: Bool) throws -> [DeviceDTO] {
+        invalidateCurrentUserCache()
+
         guard let currentUser = currentUser else {
             throw ClientError.CurrentUserDoesNotExist()
         }
@@ -124,6 +130,8 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
     }
 
     func saveCurrentDevice(_ deviceId: String) throws {
+        invalidateCurrentUserCache()
+
         guard let currentUser = currentUser else {
             throw ClientError.CurrentUserDoesNotExist()
         }
@@ -139,8 +147,27 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
         }
     }
 
+    private static let currentUserKey = "io.getStream.chat.core.context.current_user_key"
     var currentUser: CurrentUserDTO? {
-        CurrentUserDTO.load(context: self)
+        // we already have cached value in `userInfo` so all setup is complete
+        // so we can just return cached value
+        if let currentUser = userInfo[Self.currentUserKey] as? CurrentUserDTO {
+            return currentUser
+        }
+
+        // we do not have cached value in `userInfo` so we try to load current user from DB
+        if let currentUser = CurrentUserDTO.load(context: self) {
+            // if we have current user we save it to `userInfo` so we do not have to load it again
+            userInfo[Self.currentUserKey] = currentUser
+            return currentUser
+        }
+
+        // we really don't have current user
+        return nil
+    }
+
+    func invalidateCurrentUserCache() {
+        userInfo[Self.currentUserKey] = nil
     }
 }
 
