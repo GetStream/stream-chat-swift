@@ -160,6 +160,7 @@ extension AttachmentDTO {
     /// Snapshots the current state of `AttachmentDTO` and returns an immutable model object from it.
     func asAnyModel() -> AnyChatMessageAttachment? {
         guard let id = attachmentID else {
+            log.debug("Attachment failed to be converted to model because ID is invalid.")
             return nil
         }
         return .init(
