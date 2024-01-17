@@ -5,7 +5,7 @@
 "channel.name.and" = "and";
 "channel.name.andXMore" = "and %@ more";
 "channel.name.missing" = "NoChannel";
-"channel.item.empty-messages" = "No messages";
+"channel.item.empty-messages" = "Sin mensajes";
 "channel.item.typing-singular" = "is typing ...";
 "channel.item.typing-plural" = "are typing ...";
 "channel.item.search.in" = " in %@";
@@ -16,74 +16,74 @@
 "channelList.empty.title" = "Let's start chatting!";
 "channelList.empty.subtitle" = "How about sending your first message to a friend?";
 "channelList.empty.button" = "Start a chat";
-"channelList.search" = "Search";
-"channelList.search.empty.subtitle" = "No results for %@";
+"channelList.search" = "Buscar";
+"channelList.search.empty.subtitle" = "No se encontraron resultados para %@";
 
 "channelList.error.message" = "Error loading channels";
-"channelList.preview.voice.recording" = "Voice message";
+"channelList.preview.voice.recording" = "Mensaje de voz";
 
 "messageList.typingIndicator.typing-unknown" = "Someone is typing";
 
-"message.actions.inline-reply" = "Reply";
-"message.actions.thread-reply" = "Thread Reply";
-"message.actions.edit" = "Edit Message";
-"message.actions.copy" = "Copy Message";
-"message.actions.delete" = "Delete Message";
-"message.actions.delete.confirmation-title" = "Delete Message";
-"message.actions.delete.confirmation-message" = "Are you sure you want to permanently delete this message?";
+"message.actions.inline-reply" = "Responder";
+"message.actions.thread-reply" = "Respuestas en el hilo";
+"message.actions.edit" = "Editar mensaje";
+"message.actions.copy" = "Copiar Mensaje";
+"message.actions.delete" = "Eliminar mensaje";
+"message.actions.delete.confirmation-title" = "Eliminar mensaje";
+"message.actions.delete.confirmation-message" = "¿Estás seguro de que quieres eliminar permanentemente el mensaje?";
 "message.actions.user-unblock" = "Unblock User";
-"message.actions.user-block" = "Block User";
-"message.actions.user-unmute" = "Unmute User";
-"message.actions.user-mute" = "Mute User";
-"message.actions.resend" = "Resend";
-"message.actions.flag" = "Flag Message";
-"message.actions.flag.confirmation-title" = "Flag Message";
-"message.actions.flag.confirmation-message" = "Do you want to send a copy of this message to a moderator for further investigation?";
+"message.actions.user-block" = "Bloquear usuario";
+"message.actions.user-unmute" = "Dejar de silenciar al usuario";
+"message.actions.user-mute" = "Silenciar usuario";
+"message.actions.resend" = "Reenviar";
+"message.actions.flag" = "Marcar Mensaje";
+"message.actions.flag.confirmation-title" = "Marcar Mensaje";
+"message.actions.flag.confirmation-message" = "¿Quieres enviar una copia de este mensaje al moderador para una mejor investigación?";
 "message.actions.mark-unread" = "Mark as unread";
 
-"message.moderation.title" = "Are you sure?";
-"message.moderation.message" = "Consider how your comment might make others feel and be sure to follow our Community Guidelines.";
-"message.moderation.resend" = "Send Anyway";
-"message.moderation.edit" = "Edit Message";
-"message.moderation.delete" = "Delete Message";
+"message.moderation.title" = "No se pudo enviar el mensaje";
+"message.moderation.message" = "Este mensaje puede infringir nuestra política de moderación. ¿Estás seguro de que quieres enviarlo? Eche un vistazo a nuestras Pautas de la comunidad.";
+"message.moderation.resend" = "Enviar de todos modos";
+"message.moderation.edit" = "Editar mensaje";
+"message.moderation.delete" = "Eliminar mensaje";
 
-"message.title.online" = "Online";
+"message.title.online" = "Conectado";
 "message.title.offline" = "Offline";
 "message.title.group" = "%d members, %d online";
-"message.threads.reply" = "Thread Reply";
-"message.threads.replyWith" = "with %@";
+"message.threads.reply" = "Respuestas en el hilo";
+"message.threads.replyWith" = "con %@";
 "message.translatedTo" = "Translated to %@";
-"message.only-visible-to-you" = "Only visible to you";
-"message.deleted-message-placeholder" = "Message deleted";
+"message.only-visible-to-you" = "Sólo visible para ti";
+"message.deleted-message-placeholder" = "Mensaje eliminado";
 "message.sending.attachment-uploading-failed" = "UPLOADING FAILED";
-"message.unsupported-attachment" = "Unsupported Attachment";
+"message.unsupported-attachment" = "Archivo adjunto no compatible";
 
 "attachment.max-size-exceeded" = "Attachment size exceed the limit.";
-"attachment.max-count-exceeded" = "The max number of attachments per message is %d.";
+"attachment.max-count-exceeded" = "No es posible añadir más de %1$d archivos adjuntos.";
 
-"alert.actions.cancel" = "Cancel";
-"alert.actions.delete" = "Delete";
-"alert.actions.flag" = "Flag";
+"alert.actions.cancel" = "Cancelar";
+"alert.actions.delete" = "Eliminar";
+"alert.actions.flag" = "Marcar";
 "alert.actions.ok" = "Ok";
 
-"composer.title.edit" = "Edit Message";
-"composer.title.reply" = "Reply to Message";
+"composer.title.edit" = "Editar mensaje";
+"composer.title.reply" = "Contestar al mensaje";
 "composer.placeholder.message" = "Send a message";
-"composer.placeholder.messageDisabled" = "You can't send messages in this channel";
+"composer.placeholder.messageDisabled" = "No puedes enviar mensajes en este canal";
 "composer.placeholder.slowMode" = "Slow mode ON";
 "composer.placeholder.giphy" = "Search GIFs";
-"composer.checkmark.direct-message-reply" = "Also send as direct message";
-"composer.checkmark.channel-reply" = "Also send in channel";
+"composer.checkmark.direct-message-reply" = "También enviar cómo mensaje directo";
+"composer.checkmark.channel-reply" = "También enviar al canal";
 "composer.picker.title" = "Choose attachment type: ";
-"composer.picker.file" = "File";
+"composer.picker.file" = "Archivo";
 "composer.picker.media" = "Photo or Video";
 "composer.picker.camera" = "Camera";
-"composer.picker.cancel" = "Cancel";
+"composer.picker.cancel" = "Cancelar";
 "composer.links-disabled.title" = "Links are disabled";
-"composer.links-disabled.subtitle" = "Sending links is not allowed in this conversation.";
+"composer.links-disabled.subtitle" = "No se permite enviar enlaces en esta conversación.";
 "composer.quoted-message.photo" = "Photo";
 "composer.quoted-message.giphy" = "Giphy";
-"composer.suggestions.commands.header" = "Instant Commands";
+"composer.suggestions.commands.header" = "Comandos instantáneos";
 
 "current-selection" = "%d of %d";
 
@@ -100,9 +100,9 @@
 "dates.time-ago-months-singular" = "last seen one month ago";
 "dates.time-ago-months-plural" = "last seen %d months ago";
 
-"you" = "You";
+"you" = "Tú";
 
-"recording.tip" = "Hold to record, release to send";
-"recording.slideToCancel" = "Slide to cancel";
+"recording.tip" = "Mantén pulsado para empezar, suelta para enviar.";
+"recording.slideToCancel" = "Deslizar para cancelar";
 
 "audio.player.rate" = "x%@";

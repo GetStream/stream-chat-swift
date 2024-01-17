@@ -5,7 +5,7 @@
 "channel.name.and" = "and";
 "channel.name.andXMore" = "and %@ more";
 "channel.name.missing" = "NoChannel";
-"channel.item.empty-messages" = "No messages";
+"channel.item.empty-messages" = "메시지 없음";
 "channel.item.typing-singular" = "is typing ...";
 "channel.item.typing-plural" = "are typing ...";
 "channel.item.search.in" = " in %@";
@@ -16,41 +16,41 @@
 "channelList.empty.title" = "Let's start chatting!";
 "channelList.empty.subtitle" = "How about sending your first message to a friend?";
 "channelList.empty.button" = "Start a chat";
-"channelList.search" = "Search";
-"channelList.search.empty.subtitle" = "No results for %@";
+"channelList.search" = "검색";
+"channelList.search.empty.subtitle" = "%s에 대한 검색결과가 없습니다.";
 
 "channelList.error.message" = "Error loading channels";
-"channelList.preview.voice.recording" = "Voice message";
+"channelList.preview.voice.recording" = "음성 메시지";
 
 "messageList.typingIndicator.typing-unknown" = "Someone is typing";
 
-"message.actions.inline-reply" = "Reply";
-"message.actions.thread-reply" = "Thread Reply";
-"message.actions.edit" = "Edit Message";
-"message.actions.copy" = "Copy Message";
-"message.actions.delete" = "Delete Message";
-"message.actions.delete.confirmation-title" = "Delete Message";
-"message.actions.delete.confirmation-message" = "Are you sure you want to permanently delete this message?";
+"message.actions.inline-reply" = "답장";
+"message.actions.thread-reply" = "스레드 답장";
+"message.actions.edit" = "메세지 수정";
+"message.actions.copy" = "메세지 복사";
+"message.actions.delete" = "메시지를 삭제합니다";
+"message.actions.delete.confirmation-title" = "메시지를 삭제합니다";
+"message.actions.delete.confirmation-message" = "이 메시지를 삭제하시겠습니까?";
 "message.actions.user-unblock" = "Unblock User";
-"message.actions.user-block" = "Block User";
-"message.actions.user-unmute" = "Unmute User";
-"message.actions.user-mute" = "Mute User";
-"message.actions.resend" = "Resend";
-"message.actions.flag" = "Flag Message";
-"message.actions.flag.confirmation-title" = "Flag Message";
-"message.actions.flag.confirmation-message" = "Do you want to send a copy of this message to a moderator for further investigation?";
+"message.actions.user-block" = "사용자 차단";
+"message.actions.user-unmute" = "사용자 음소거 해제";
+"message.actions.user-mute" = "사용자 음소거";
+"message.actions.resend" = "재전송";
+"message.actions.flag" = "메시지 신고";
+"message.actions.flag.confirmation-title" = "메시지 신고";
+"message.actions.flag.confirmation-message" = "추가 조사를 위해 관리자에게 이 메시지의 복사본을 전송하시겠습니까?";
 "message.actions.mark-unread" = "Mark as unread";
 
 "message.moderation.title" = "Are you sure?";
 "message.moderation.message" = "Consider how your comment might make others feel and be sure to follow our Community Guidelines.";
 "message.moderation.resend" = "Send Anyway";
-"message.moderation.edit" = "Edit Message";
-"message.moderation.delete" = "Delete Message";
+"message.moderation.edit" = "메세지 수정";
+"message.moderation.delete" = "메시지를 삭제합니다";
 
-"message.title.online" = "Online";
+"message.title.online" = "온라인";
 "message.title.offline" = "Offline";
 "message.title.group" = "%d members, %d online";
-"message.threads.reply" = "Thread Reply";
+"message.threads.reply" = "스레드 답장";
 "message.threads.replyWith" = "with %@";
 "message.translatedTo" = "Translated to %@";
 "message.only-visible-to-you" = "Only visible to you";
@@ -59,31 +59,31 @@
 "message.unsupported-attachment" = "Unsupported Attachment";
 
 "attachment.max-size-exceeded" = "Attachment size exceed the limit.";
-"attachment.max-count-exceeded" = "The max number of attachments per message is %d.";
+"attachment.max-count-exceeded" = "첨부파일 개수가 (%1$d) 개를 초과하였습니다.";
 
-"alert.actions.cancel" = "Cancel";
-"alert.actions.delete" = "Delete";
-"alert.actions.flag" = "Flag";
+"alert.actions.cancel" = "취소";
+"alert.actions.delete" = "삭제";
+"alert.actions.flag" = "신고";
 "alert.actions.ok" = "Ok";
 
-"composer.title.edit" = "Edit Message";
+"composer.title.edit" = "메세지 수정";
 "composer.title.reply" = "Reply to Message";
 "composer.placeholder.message" = "Send a message";
 "composer.placeholder.messageDisabled" = "You can't send messages in this channel";
 "composer.placeholder.slowMode" = "Slow mode ON";
 "composer.placeholder.giphy" = "Search GIFs";
-"composer.checkmark.direct-message-reply" = "Also send as direct message";
-"composer.checkmark.channel-reply" = "Also send in channel";
+"composer.checkmark.direct-message-reply" = "상대방에게도 전송하기";
+"composer.checkmark.channel-reply" = "채널에도 전송";
 "composer.picker.title" = "Choose attachment type: ";
 "composer.picker.file" = "File";
 "composer.picker.media" = "Photo or Video";
 "composer.picker.camera" = "Camera";
-"composer.picker.cancel" = "Cancel";
+"composer.picker.cancel" = "취소";
 "composer.links-disabled.title" = "Links are disabled";
 "composer.links-disabled.subtitle" = "Sending links is not allowed in this conversation.";
 "composer.quoted-message.photo" = "Photo";
 "composer.quoted-message.giphy" = "Giphy";
-"composer.suggestions.commands.header" = "Instant Commands";
+"composer.suggestions.commands.header" = "인스턴트 명령어";
 
 "current-selection" = "%d of %d";
 
@@ -100,7 +100,7 @@
 "dates.time-ago-months-singular" = "last seen one month ago";
 "dates.time-ago-months-plural" = "last seen %d months ago";
 
-"you" = "You";
+"you" = "나";
 
 "recording.tip" = "Hold to record, release to send";
 "recording.slideToCancel" = "Slide to cancel";
