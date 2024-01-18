@@ -58,7 +58,7 @@ localization_keys = [
   { ios: '"recording.slideToCancel"', android: '"stream_ui_message_composer_slide_to_cancel"' },
 ]
 
-['es', 'fr', 'hi', 'it', 'ja', 'ko' ].each do |lang|
+['es', 'fr', 'it' ].each do |lang|
   ios_strings_path = "#{ios_repo_path}/Sources/StreamChatUI/Resources/#{lang}.lproj/Localizable.strings"
   android_strings_path = "#{android_repo_path}/stream-chat-android/*/src/main/res/values-#{lang}"
   ios_content = File.read(ios_strings_path)
