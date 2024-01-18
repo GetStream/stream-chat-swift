@@ -58,7 +58,7 @@
 "message.sending.attachment-uploading-failed" = "UPLOADING FAILED";
 "message.unsupported-attachment" = "Unsupported Attachment";
 
-"attachment.max-size-exceeded" = "Attachment size exceed the limit.";
+"attachment.max-size-exceeded" = "Attachment size exceeds the limit.";
 "attachment.max-count-exceeded" = "Attachments count (%d) exceeded";
 
 "alert.actions.cancel" = "Cancel";
@@ -69,7 +69,7 @@
 "composer.title.edit" = "Edit Message";
 "composer.title.reply" = "Reply to Message";
 "composer.placeholder.message" = "Send a message";
-"composer.placeholder.messageDisabled" = "You can't send messages in this channel";
+"composer.placeholder.messageDisabled" = "You can't send messages to this channel";
 "composer.placeholder.slowMode" = "Slow mode ON";
 "composer.placeholder.giphy" = "Search GIFs";
 "composer.checkmark.direct-message-reply" = "Also send as direct message";

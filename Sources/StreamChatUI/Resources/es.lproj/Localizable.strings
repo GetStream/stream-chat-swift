@@ -2,15 +2,15 @@
 // Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
-"channel.name.and" = "and";
-"channel.name.andXMore" = "and %@ more";
+"channel.name.and" = "y";
+"channel.name.andXMore" = "y %@ más";
 "channel.name.missing" = "NoChannel";
 "channel.item.empty-messages" = "Sin mensajes";
-"channel.item.typing-singular" = "is typing ...";
-"channel.item.typing-plural" = "are typing ...";
+"channel.item.typing-singular" = "está escribiendo ...";
+"channel.item.typing-plural" = "están escribiendo ...";
 "channel.item.search.in" = " in %@";
 "channel.item.audio" = "Audio";
-"channel.item.photo" = "Photo";
+"channel.item.photo" = "Foto";
 "channel.item.video" = "Video";
 
 "channelList.empty.title" = "Let's start chatting!";
@@ -49,7 +49,7 @@
 
 "message.title.online" = "Conectado";
 "message.title.offline" = "Offline";
-"message.title.group" = "%d members, %d online";
+"message.title.group" = "%d miembros, %d conectados";
 "message.threads.reply" = "Respuestas en el hilo";
 "message.threads.replyWith" = "con %@";
 "message.translatedTo" = "Translated to %@";
@@ -58,7 +58,7 @@
 "message.sending.attachment-uploading-failed" = "UPLOADING FAILED";
 "message.unsupported-attachment" = "Archivo adjunto no compatible";
 
-"attachment.max-size-exceeded" = "Attachment size exceed the limit.";
+"attachment.max-size-exceeded" = "Attachment size exceeds the limit.";
 "attachment.max-count-exceeded" = "No es posible añadir más de %1$d archivos adjuntos.";
 
 "alert.actions.cancel" = "Cancelar";
@@ -79,26 +79,26 @@
 "composer.picker.media" = "Photo or Video";
 "composer.picker.camera" = "Camera";
 "composer.picker.cancel" = "Cancelar";
-"composer.links-disabled.title" = "Links are disabled";
+"composer.links-disabled.title" = "Los enlaces están deshabilitados";
 "composer.links-disabled.subtitle" = "No se permite enviar enlaces en esta conversación.";
-"composer.quoted-message.photo" = "Photo";
+"composer.quoted-message.photo" = "Foto";
 "composer.quoted-message.giphy" = "Giphy";
 "composer.suggestions.commands.header" = "Comandos instantáneos";
 
-"current-selection" = "%d of %d";
+"current-selection" = "%d/%d";
 
-"dates.time-ago-seconds-plural" = "last seen %d seconds ago";
-"dates.time-ago-seconds-singular" = "last seen just one second ago";
-"dates.time-ago-minutes-singular" = "last seen one minute ago";
-"dates.time-ago-minutes-plural" = "last seen %d minutes ago";
-"dates.time-ago-hours-singular" = "last seen one hour ago";
-"dates.time-ago-hours-plural" = "last seen %d hours ago";
-"dates.time-ago-days-singular" = "last seen one day ago";
-"dates.time-ago-days-plural" = "last seen %d days ago";
-"dates.time-ago-weeks-singular" = "last seen one week ago";
-"dates.time-ago-weeks-plural" = "last seen %d weeks ago";
-"dates.time-ago-months-singular" = "last seen one month ago";
-"dates.time-ago-months-plural" = "last seen %d months ago";
+"dates.time-ago-seconds-plural" = "visto por última vez hace %d segundos";
+"dates.time-ago-seconds-singular" = "visto por última vez hace apenas un segundo";
+"dates.time-ago-minutes-singular" = "visto por última vez hace un minuto";
+"dates.time-ago-minutes-plural" = "visto por última vez hace %d minutos";
+"dates.time-ago-hours-singular" = "visto por última vez hace una hora";
+"dates.time-ago-hours-plural" = "visto por última vez hace %d horas";
+"dates.time-ago-days-singular" = "visto por última vez hace un día";
+"dates.time-ago-days-plural" = "visto por última vez hace %d días";
+"dates.time-ago-weeks-singular" = "visto por última vez hace una semana";
+"dates.time-ago-weeks-plural" = "visto por última vez hace %d semanas";
+"dates.time-ago-months-singular" = "visto por última vez hace un mes";
+"dates.time-ago-months-plural" = "visto por última vez hace %d meses";
 
 "you" = "Tú";
 

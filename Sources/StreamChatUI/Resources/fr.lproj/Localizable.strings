@@ -2,12 +2,12 @@
 // Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
-"channel.name.and" = "and";
-"channel.name.andXMore" = "and %@ more";
+"channel.name.and" = "et";
+"channel.name.andXMore" = "et %@ sont";
 "channel.name.missing" = "NoChannel";
 "channel.item.empty-messages" = "Pas de messages";
-"channel.item.typing-singular" = "is typing ...";
-"channel.item.typing-plural" = "are typing ...";
+"channel.item.typing-singular" = "est en train d'écrire ...";
+"channel.item.typing-plural" = "entrain d'écrire ...";
 "channel.item.search.in" = " in %@";
 "channel.item.audio" = "Audio";
 "channel.item.photo" = "Photo";
@@ -49,7 +49,7 @@
 
 "message.title.online" = "En ligne";
 "message.title.offline" = "Offline";
-"message.title.group" = "%d members, %d online";
+"message.title.group" = "%d membres, %d en ligne";
 "message.threads.reply" = "Réponse au fil de discussion";
 "message.threads.replyWith" = "with %@";
 "message.translatedTo" = "Translated to %@";
@@ -58,7 +58,7 @@
 "message.sending.attachment-uploading-failed" = "UPLOADING FAILED";
 "message.unsupported-attachment" = "Unsupported Attachment";
 
-"attachment.max-size-exceeded" = "Attachment size exceed the limit.";
+"attachment.max-size-exceeded" = "Attachment size exceeds the limit.";
 "attachment.max-count-exceeded" = "Limite de pièces jointes dépassée : il nest pas possible dajouter plus de %1$d pièces jointes";
 
 "alert.actions.cancel" = "Annuler";
@@ -69,7 +69,7 @@
 "composer.title.edit" = "Modifier le message";
 "composer.title.reply" = "Reply to Message";
 "composer.placeholder.message" = "Send a message";
-"composer.placeholder.messageDisabled" = "You can't send messages in this channel";
+"composer.placeholder.messageDisabled" = "You can't send messages to this channel";
 "composer.placeholder.slowMode" = "Slow mode ON";
 "composer.placeholder.giphy" = "Search GIFs";
 "composer.checkmark.direct-message-reply" = "Envoyer aussi comme message direct";
@@ -79,26 +79,26 @@
 "composer.picker.media" = "Photo or Video";
 "composer.picker.camera" = "Camera";
 "composer.picker.cancel" = "Annuler";
-"composer.links-disabled.title" = "Links are disabled";
-"composer.links-disabled.subtitle" = "Sending links is not allowed in this conversation.";
+"composer.links-disabled.title" = "Les liens sont désactivés";
+"composer.links-disabled.subtitle" = "L'envoi de liens n'est pas autorisé dans cette conversation.";
 "composer.quoted-message.photo" = "Photo";
 "composer.quoted-message.giphy" = "Giphy";
 "composer.suggestions.commands.header" = "Commandes instantanées";
 
-"current-selection" = "%d of %d";
+"current-selection" = "%d/%d";
 
-"dates.time-ago-seconds-plural" = "last seen %d seconds ago";
-"dates.time-ago-seconds-singular" = "last seen just one second ago";
-"dates.time-ago-minutes-singular" = "last seen one minute ago";
-"dates.time-ago-minutes-plural" = "last seen %d minutes ago";
-"dates.time-ago-hours-singular" = "last seen one hour ago";
-"dates.time-ago-hours-plural" = "last seen %d hours ago";
-"dates.time-ago-days-singular" = "last seen one day ago";
-"dates.time-ago-days-plural" = "last seen %d days ago";
-"dates.time-ago-weeks-singular" = "last seen one week ago";
-"dates.time-ago-weeks-plural" = "last seen %d weeks ago";
-"dates.time-ago-months-singular" = "last seen one month ago";
-"dates.time-ago-months-plural" = "last seen %d months ago";
+"dates.time-ago-seconds-plural" = "vu pour la dernière fois il y a %d secondes";
+"dates.time-ago-seconds-singular" = "vu pour la dernière fois il y a juste une seconde";
+"dates.time-ago-minutes-singular" = "vu pour la dernière fois il y a une minute";
+"dates.time-ago-minutes-plural" = "vu pour la dernière fois il y a %d minutes";
+"dates.time-ago-hours-singular" = "vu pour la dernière fois il y a une heure";
+"dates.time-ago-hours-plural" = "vu pour la dernière fois il y a %d heures";
+"dates.time-ago-days-singular" = "vu pour la dernière fois il y a un jour";
+"dates.time-ago-days-plural" = "vu pour la dernière fois il y a %d jours";
+"dates.time-ago-weeks-singular" = "vu pour la dernière fois il y a une semaine";
+"dates.time-ago-weeks-plural" = "vu pour la dernière fois il y a %d semaines";
+"dates.time-ago-months-singular" = "vu pour la dernière fois il y a un mois";
+"dates.time-ago-months-plural" = "vu pour la dernière fois il y a %d mois";
 
 "you" = "Vous";
 

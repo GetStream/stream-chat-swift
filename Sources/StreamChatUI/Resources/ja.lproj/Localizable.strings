@@ -2,27 +2,27 @@
 // Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
-"channel.name.and" = "and";
-"channel.name.andXMore" = "and %@ more";
+"channel.name.and" = "と";
+"channel.name.andXMore" = "と %@ 人が";
 "channel.name.missing" = "NoChannel";
 "channel.item.empty-messages" = "メッセージはありません";
-"channel.item.typing-singular" = "is typing ...";
-"channel.item.typing-plural" = "are typing ...";
+"channel.item.typing-singular" = "が入力しています ...";
+"channel.item.typing-plural" = "入力しています ...";
 "channel.item.search.in" = " in %@";
-"channel.item.audio" = "Audio";
-"channel.item.photo" = "Photo";
-"channel.item.video" = "Video";
+"channel.item.audio" = "オーディオ";
+"channel.item.photo" = "写真";
+"channel.item.video" = "ビデオ";
 
-"channelList.empty.title" = "Let's start chatting!";
-"channelList.empty.subtitle" = "How about sending your first message to a friend?";
-"channelList.empty.button" = "Start a chat";
+"channelList.empty.title" = "チャットを始めましょう!";
+"channelList.empty.subtitle" = "初めてのメッセージを友達に送ってみてはいかがでしょうか?";
+"channelList.empty.button" = "チャットを開始する";
 "channelList.search" = "検索";
 "channelList.search.empty.subtitle" = "%sの結果はありません";
 
-"channelList.error.message" = "Error loading channels";
+"channelList.error.message" = "チャンネルの読み込みエラー";
 "channelList.preview.voice.recording" = "ボイスメッセージ";
 
-"messageList.typingIndicator.typing-unknown" = "Someone is typing";
+"messageList.typingIndicator.typing-unknown" = "誰かが入力しています";
 
 "message.actions.inline-reply" = "返信";
 "message.actions.thread-reply" = "スレッド返信";
@@ -31,7 +31,7 @@
 "message.actions.delete" = "メッセージを削除する";
 "message.actions.delete.confirmation-title" = "メッセージを削除する";
 "message.actions.delete.confirmation-message" = "このメッセージを完全に削除してもよろしいですか？";
-"message.actions.user-unblock" = "Unblock User";
+"message.actions.user-unblock" = "ユーザーのブロックを解除する";
 "message.actions.user-block" = "ユーザをブロックする";
 "message.actions.user-unmute" = "ユーザーのミュートを解除する";
 "message.actions.user-mute" = "ユーザーをミュートする";
@@ -39,26 +39,26 @@
 "message.actions.flag" = "メッセージをフラグする";
 "message.actions.flag.confirmation-title" = "メッセージをフラグする";
 "message.actions.flag.confirmation-message" = "このメッセージのコピーをモデレーターに送って、さらに調査してもらいますか？";
-"message.actions.mark-unread" = "Mark as unread";
+"message.actions.mark-unread" = "未読としてマーク";
 
-"message.moderation.title" = "Are you sure?";
-"message.moderation.message" = "Consider how your comment might make others feel and be sure to follow our Community Guidelines.";
-"message.moderation.resend" = "Send Anyway";
+"message.moderation.title" = "本気ですか？";
+"message.moderation.message" = "自分のコメントが他の人にどのように感じられるかを考慮し、必ずコミュニティ ガイドラインに従ってください.";
+"message.moderation.resend" = "とにかく送る";
 "message.moderation.edit" = "メッセージを編集する";
 "message.moderation.delete" = "メッセージを削除する";
 
 "message.title.online" = "オンライン";
-"message.title.offline" = "Offline";
-"message.title.group" = "%d members, %d online";
+"message.title.offline" = "オフライン";
+"message.title.group" = "%d 人のメンバー, %d 人がオンライン";
 "message.threads.reply" = "スレッド返信";
 "message.threads.replyWith" = "with %@";
-"message.translatedTo" = "Translated to %@";
-"message.only-visible-to-you" = "Only visible to you";
-"message.deleted-message-placeholder" = "Message deleted";
-"message.sending.attachment-uploading-failed" = "UPLOADING FAILED";
-"message.unsupported-attachment" = "Unsupported Attachment";
+"message.translatedTo" = "%@ に翻訳";
+"message.only-visible-to-you" = "あなただけに表示されます";
+"message.deleted-message-placeholder" = "メッセージが削除されました";
+"message.sending.attachment-uploading-failed" = "アップロードに失敗しました";
+"message.unsupported-attachment" = "サポートされていない添付ファイル";
 
-"attachment.max-size-exceeded" = "Attachment size exceed the limit.";
+"attachment.max-size-exceeded" = "添付ファイルのサイズが制限を超えています.";
 "attachment.max-count-exceeded" = "添付ファイルの制限を超えました：%1$d個のファイル以上を添付することはできません";
 
 "alert.actions.cancel" = "キャンセル";
@@ -67,42 +67,42 @@
 "alert.actions.ok" = "Ok";
 
 "composer.title.edit" = "メッセージを編集する";
-"composer.title.reply" = "Reply to Message";
-"composer.placeholder.message" = "Send a message";
-"composer.placeholder.messageDisabled" = "You can't send messages in this channel";
-"composer.placeholder.slowMode" = "Slow mode ON";
-"composer.placeholder.giphy" = "Search GIFs";
+"composer.title.reply" = "メッセージに返信";
+"composer.placeholder.message" = "メッセージを送ります";
+"composer.placeholder.messageDisabled" = "このチャンネルにはメッセージを送信できません";
+"composer.placeholder.slowMode" = "スローモードオン";
+"composer.placeholder.giphy" = "GIFを検索";
 "composer.checkmark.direct-message-reply" = "ダイレクトメッセージでも送信";
 "composer.checkmark.channel-reply" = "チャネルにも送ります";
-"composer.picker.title" = "Choose attachment type: ";
-"composer.picker.file" = "File";
-"composer.picker.media" = "Photo or Video";
-"composer.picker.camera" = "Camera";
+"composer.picker.title" = "添付ファイルの種類を選択してください: ";
+"composer.picker.file" = "ファイル";
+"composer.picker.media" = "写真またはビデオ";
+"composer.picker.camera" = "カメラ";
 "composer.picker.cancel" = "キャンセル";
-"composer.links-disabled.title" = "Links are disabled";
-"composer.links-disabled.subtitle" = "Sending links is not allowed in this conversation.";
-"composer.quoted-message.photo" = "Photo";
+"composer.links-disabled.title" = "リンクが無効になっています";
+"composer.links-disabled.subtitle" = "この会話ではリンクの送信は許可されていません.";
+"composer.quoted-message.photo" = "写真";
 "composer.quoted-message.giphy" = "ギフィー";
 "composer.suggestions.commands.header" = "インスタントコマンド";
 
-"current-selection" = "%d of %d";
+"current-selection" = "%d/%d";
 
-"dates.time-ago-seconds-plural" = "last seen %d seconds ago";
-"dates.time-ago-seconds-singular" = "last seen just one second ago";
-"dates.time-ago-minutes-singular" = "last seen one minute ago";
-"dates.time-ago-minutes-plural" = "last seen %d minutes ago";
-"dates.time-ago-hours-singular" = "last seen one hour ago";
-"dates.time-ago-hours-plural" = "last seen %d hours ago";
-"dates.time-ago-days-singular" = "last seen one day ago";
-"dates.time-ago-days-plural" = "last seen %d days ago";
-"dates.time-ago-weeks-singular" = "last seen one week ago";
-"dates.time-ago-weeks-plural" = "last seen %d weeks ago";
-"dates.time-ago-months-singular" = "last seen one month ago";
-"dates.time-ago-months-plural" = "last seen %d months ago";
+"dates.time-ago-seconds-plural" = "最後に見たのは %d 秒前";
+"dates.time-ago-seconds-singular" = "最後に見たのはほんの 1 秒前";
+"dates.time-ago-minutes-singular" = "最後に見たのは1分前";
+"dates.time-ago-minutes-plural" = "最後に見たのは %d 分前";
+"dates.time-ago-hours-singular" = "最後に見たのは1時間前";
+"dates.time-ago-hours-plural" = "最後に見たのは %d 時間前";
+"dates.time-ago-days-singular" = "最後に見たのは 1 日前";
+"dates.time-ago-days-plural" = "最後に見たのは %d 日前";
+"dates.time-ago-weeks-singular" = "最後に見たのは1週間前";
+"dates.time-ago-weeks-plural" = "最後に見たのは %d 週間前";
+"dates.time-ago-months-singular" = "最後に見たのは1か月前";
+"dates.time-ago-months-plural" = "最後に見たのは %d か月前";
 
 "you" = "あなた";
 
-"recording.tip" = "Hold to record, release to send";
-"recording.slideToCancel" = "Slide to cancel";
+"recording.tip" = "押し続けると録音、放すと送信";
+"recording.slideToCancel" = "スライドしてキャンセル";
 
 "audio.player.rate" = "x%@";

@@ -31,7 +31,7 @@ internal enum L10n {
     internal static func maxCountExceeded(_ p1: Int) -> String {
       return L10n.tr("Localizable", "attachment.max-count-exceeded", p1)
     }
-    /// Attachment size exceed the limit.
+    /// Attachment size exceeds the limit.
     internal static var maxSizeExceeded: String { L10n.tr("Localizable", "attachment.max-size-exceeded") }
   }
 
@@ -138,7 +138,7 @@ internal enum L10n {
       internal static var giphy: String { L10n.tr("Localizable", "composer.placeholder.giphy") }
       /// Send a message
       internal static var message: String { L10n.tr("Localizable", "composer.placeholder.message") }
-      /// You can't send messages in this channel
+      /// You can't send messages to this channel
       internal static var messageDisabled: String { L10n.tr("Localizable", "composer.placeholder.messageDisabled") }
       /// Slow mode ON
       internal static var slowMode: String { L10n.tr("Localizable", "composer.placeholder.slowMode") }

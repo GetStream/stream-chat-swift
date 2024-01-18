@@ -57,4 +57,4 @@
 
 "current-selection" = "%d of %d";
 
-"attachment.max-size-exceeded" = "Attachment size exceed the limit.";
+"attachment.max-size-exceeded" = "Attachment size exceeds the limit.";

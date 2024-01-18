@@ -2,27 +2,27 @@
 // Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
-"channel.name.and" = "and";
-"channel.name.andXMore" = "and %@ more";
+"channel.name.and" = "e";
+"channel.name.andXMore" = "e altri %@";
 "channel.name.missing" = "NoChannel";
 "channel.item.empty-messages" = "Nessun messaggio";
-"channel.item.typing-singular" = "is typing ...";
-"channel.item.typing-plural" = "are typing ...";
+"channel.item.typing-singular" = "sta scrivendo ...";
+"channel.item.typing-plural" = "stanno scrivendo ...";
 "channel.item.search.in" = " in %@";
 "channel.item.audio" = "Audio";
-"channel.item.photo" = "Photo";
+"channel.item.photo" = "Foto";
 "channel.item.video" = "Video";
 
-"channelList.empty.title" = "Let's start chatting!";
-"channelList.empty.subtitle" = "How about sending your first message to a friend?";
-"channelList.empty.button" = "Start a chat";
+"channelList.empty.title" = "Iniziamo a chattare!";
+"channelList.empty.subtitle" = "Che ne dici di inviare il tuo primo messaggio ad un amico?";
+"channelList.empty.button" = "Avvia una chat";
 "channelList.search" = "Cerca";
 "channelList.search.empty.subtitle" = "Nessun risultato per %@";
 
-"channelList.error.message" = "Error loading channels";
+"channelList.error.message" = "Errore durante il caricamento dei canali";
 "channelList.preview.voice.recording" = "Messaggio vocale";
 
-"messageList.typingIndicator.typing-unknown" = "Someone is typing";
+"messageList.typingIndicator.typing-unknown" = "Qualcuno sta scrivendo";
 
 "message.actions.inline-reply" = "Rispondi";
 "message.actions.thread-reply" = "Rispondi nella conversazione";
@@ -31,7 +31,7 @@
 "message.actions.delete" = "Cancella messaggio";
 "message.actions.delete.confirmation-title" = "Cancella messaggio";
 "message.actions.delete.confirmation-message" = "Sei sicuro di voler definitivamente cancellare questo messaggio?";
-"message.actions.user-unblock" = "Unblock User";
+"message.actions.user-unblock" = "Sblocca utente";
 "message.actions.user-block" = "Blocca Utente";
 "message.actions.user-unmute" = "Riattiva Utente";
 "message.actions.user-mute" = "Silenzia Utente";
@@ -39,26 +39,26 @@
 "message.actions.flag" = "Segnala messaggio";
 "message.actions.flag.confirmation-title" = "Segnala messaggio";
 "message.actions.flag.confirmation-message" = "Vuoi mandare una copia di questo messaggio ad un moderatore?";
-"message.actions.mark-unread" = "Mark as unread";
+"message.actions.mark-unread" = "Segna come non letto";
 
-"message.moderation.title" = "Are you sure?";
-"message.moderation.message" = "Consider how your comment might make others feel and be sure to follow our Community Guidelines.";
-"message.moderation.resend" = "Send Anyway";
+"message.moderation.title" = "Sei sicuro?";
+"message.moderation.message" = "Considera come il tuo commento potrebbe far sentire gli altri e assicurati di seguire le nostre Linee guida della community.";
+"message.moderation.resend" = "Invia comunque";
 "message.moderation.edit" = "Modifica messaggio";
 "message.moderation.delete" = "Cancella messaggio";
 
 "message.title.online" = "Online";
 "message.title.offline" = "Offline";
-"message.title.group" = "%d members, %d online";
+"message.title.group" = "%d membri, %d online";
 "message.threads.reply" = "Rispondi nella conversazione";
 "message.threads.replyWith" = "with %@";
-"message.translatedTo" = "Translated to %@";
-"message.only-visible-to-you" = "Only visible to you";
-"message.deleted-message-placeholder" = "Message deleted";
-"message.sending.attachment-uploading-failed" = "UPLOADING FAILED";
-"message.unsupported-attachment" = "Unsupported Attachment";
+"message.translatedTo" = "Tradotto in %@";
+"message.only-visible-to-you" = "Visibile solo a te";
+"message.deleted-message-placeholder" = "Messaggio cancellato";
+"message.sending.attachment-uploading-failed" = "CARICAMENTO NON FALLITO";
+"message.unsupported-attachment" = "Allegato non supportato";
 
-"attachment.max-size-exceeded" = "Attachment size exceed the limit.";
+"attachment.max-size-exceeded" = "La dimensione dell'allegato supera il limite.";
 "attachment.max-count-exceeded" = "Attenzione: il limite massimo di %1$d file è stato superato.";
 
 "alert.actions.cancel" = "Annulla";
@@ -67,42 +67,42 @@
 "alert.actions.ok" = "Ok";
 
 "composer.title.edit" = "Modifica messaggio";
-"composer.title.reply" = "Reply to Message";
-"composer.placeholder.message" = "Send a message";
-"composer.placeholder.messageDisabled" = "You can't send messages in this channel";
-"composer.placeholder.slowMode" = "Slow mode ON";
-"composer.placeholder.giphy" = "Search GIFs";
+"composer.title.reply" = "Rispondi al messaggio";
+"composer.placeholder.message" = "Mandare un messaggio";
+"composer.placeholder.messageDisabled" = "Non puoi inviare messaggi a questo canale";
+"composer.placeholder.slowMode" = "Modalità lenta attivata";
+"composer.placeholder.giphy" = "Cerca GIF";
 "composer.checkmark.direct-message-reply" = "Inviato anche come messaggio diretto";
 "composer.checkmark.channel-reply" = "Inviato anche al canale";
-"composer.picker.title" = "Choose attachment type: ";
+"composer.picker.title" = "Scegli il tipo di allegato: ";
 "composer.picker.file" = "File";
-"composer.picker.media" = "Photo or Video";
+"composer.picker.media" = "Foto o video";
 "composer.picker.camera" = "Camera";
 "composer.picker.cancel" = "Annulla";
-"composer.links-disabled.title" = "Links are disabled";
-"composer.links-disabled.subtitle" = "Sending links is not allowed in this conversation.";
-"composer.quoted-message.photo" = "Photo";
+"composer.links-disabled.title" = "I collegamenti sono disabilitati";
+"composer.links-disabled.subtitle" = "Non è consentito inviare link in questa conversazione.";
+"composer.quoted-message.photo" = "Foto";
 "composer.quoted-message.giphy" = "Giphy";
 "composer.suggestions.commands.header" = "Commandi istantanei";
 
-"current-selection" = "%d of %d";
+"current-selection" = "%d/%d";
 
-"dates.time-ago-seconds-plural" = "last seen %d seconds ago";
-"dates.time-ago-seconds-singular" = "last seen just one second ago";
-"dates.time-ago-minutes-singular" = "last seen one minute ago";
-"dates.time-ago-minutes-plural" = "last seen %d minutes ago";
-"dates.time-ago-hours-singular" = "last seen one hour ago";
-"dates.time-ago-hours-plural" = "last seen %d hours ago";
-"dates.time-ago-days-singular" = "last seen one day ago";
-"dates.time-ago-days-plural" = "last seen %d days ago";
-"dates.time-ago-weeks-singular" = "last seen one week ago";
-"dates.time-ago-weeks-plural" = "last seen %d weeks ago";
-"dates.time-ago-months-singular" = "last seen one month ago";
-"dates.time-ago-months-plural" = "last seen %d months ago";
+"dates.time-ago-seconds-plural" = "visto l'ultima volta %d secondi fa";
+"dates.time-ago-seconds-singular" = "visto l'ultima volta solo un secondo fa";
+"dates.time-ago-minutes-singular" = "visto l'ultima volta un minuto fa";
+"dates.time-ago-minutes-plural" = "visto l'ultima volta %d minuti fa";
+"dates.time-ago-hours-singular" = "visto l'ultima volta un'ora fa";
+"dates.time-ago-hours-plural" = "visto l'ultima volta %d ore fa";
+"dates.time-ago-days-singular" = "visto l'ultima volta un giorno fa";
+"dates.time-ago-days-plural" = "visto l'ultima volta %d giorni fa";
+"dates.time-ago-weeks-singular" = "visto l'ultima volta una settimana fa";
+"dates.time-ago-weeks-plural" = "visto l'ultima volta %d settimane fa";
+"dates.time-ago-months-singular" = "visto l'ultima volta un mese fa";
+"dates.time-ago-months-plural" = "visto l'ultima volta %d mesi fa";
 
 "you" = "Tu";
 
-"recording.tip" = "Hold to record, release to send";
-"recording.slideToCancel" = "Slide to cancel";
+"recording.tip" = "Tieni premuto per registrare, rilascia per inviare";
+"recording.slideToCancel" = "Scorri per annullare";
 
 "audio.player.rate" = "x%@";
