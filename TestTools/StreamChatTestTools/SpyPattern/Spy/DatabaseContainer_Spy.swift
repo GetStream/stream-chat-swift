@@ -81,7 +81,7 @@ public final class DatabaseContainer_Spy: DatabaseContainer, Spy {
         }
     }
 
-    override public func removeAllData(force: Bool = true, completion: ((Error?) -> Void)? = nil) {
+    override public func removeAllData(completion: ((Error?) -> Void)? = nil) {
         removeAllData_called = true
 
         if let error = removeAllData_errorResponse {
@@ -89,7 +89,7 @@ public final class DatabaseContainer_Spy: DatabaseContainer, Spy {
             return
         }
 
-        super.removeAllData(force: force, completion: completion)
+        super.removeAllData(completion: completion)
     }
 
     override public func recreatePersistentStore(completion: ((Error?) -> Void)? = nil) {

@@ -70,12 +70,70 @@ final class DatabaseContainer_Tests: XCTestCase {
     func test_removingAllData() throws {
         let container = DatabaseContainer(kind: .inMemory)
 
-        // Add some random objects and for completion block
+        // // Create data for all our entities in the DB
         try container.writeSynchronously { session in
+            let cid = ChannelId.unique
+            let currentUserId = UserId.unique
+            try session.saveChannel(payload: self.dummyPayload(with: cid), query: .init(filter: .nonEmpty), cache: nil)
             try session.saveChannel(payload: self.dummyPayload(with: .unique), query: nil, cache: nil)
             try session.saveChannel(payload: self.dummyPayload(with: .unique), query: nil, cache: nil)
-            try session.saveChannel(payload: self.dummyPayload(with: .unique), query: nil, cache: nil)
+            try session.saveMember(payload: .dummy(), channelId: cid, query: .init(cid: cid), cache: nil)
+            try session.saveCurrentUser(payload: .dummy(userId: currentUserId, role: .admin))
+            try session.saveCurrentDevice("123")
+            try session.saveChannelMute(payload: .init(
+                mutedChannel: .dummy(cid: cid),
+                user: .dummy(userId: currentUserId),
+                createdAt: .unique,
+                updatedAt: .unique
+            ))
+            try session.saveUser(payload: .dummy(userId: .unique), query: .user(withID: currentUserId), cache: nil)
+            try session.saveUser(payload: .dummy(userId: .unique))
+            let messages: [MessagePayload] = [
+                .dummy(moderationDetails: .init(originalText: "yo", action: "spam")),
+                .dummy(),
+                .dummy(),
+                .dummy(),
+                .dummy()
+            ]
+            try messages.forEach {
+                let message = try session.saveMessage(payload: $0, for: cid, syncOwnReactions: true, cache: nil)
+                try session.saveReaction(
+                    payload: .dummy(messageId: message.id, user: .dummy(userId: currentUserId)), cache: nil
+                )
+            }
+            try session.saveMessage(
+                payload: .dummy(channel: .dummy(cid: cid)),
+                for: MessageSearchQuery(channelFilter: .noTeam, messageFilter: .withoutAttachments),
+                cache: nil
+            )
+            
+            QueuedRequestDTO.createRequest(date: .unique, endpoint: Data(), context: container.writableContext)
         }
+
+        // Fetch the data from all out entities
+        let totalEntities = container.managedObjectModel.entities.count
+        var entitiesWithData: [String] = []
+        var entitiesWithoutData: [String] = []
+        container.managedObjectModel.entities.forEach { entityDescription in
+            let entityName = entityDescription.name ?? ""
+            let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: entityName)
+            do {
+                let fetchedObjects = try container.viewContext.fetch(fetchRequest)
+                if fetchedObjects.isEmpty {
+                    entitiesWithoutData.append(entityName)
+                } else {
+                    entitiesWithData.append(entityName)
+                }
+            } catch {
+                XCTFail(error.localizedDescription)
+            }
+        }
+
+        // Here we test that we inserted all DB Entities that we have.
+        // Whenever we create a new entities, we will need to add to the random data
+        // generator to make sure there are no issues when removing all data.
+        XCTAssertEqual(entitiesWithData.count, totalEntities)
+        XCTAssertTrue(entitiesWithoutData.isEmpty, "The following entities were not added \(entitiesWithoutData)")
 
         // Delete the data
         let expectation = expectation(description: "removeAllData completion")
@@ -94,31 +152,6 @@ final class DatabaseContainer_Tests: XCTestCase {
             let fetchedObjects = try container.viewContext.fetch(fetchRequrest)
             XCTAssertTrue(fetchedObjects.isEmpty)
         }
-    }
-
-    func test_removingAllData_generatesRemoveAllDataNotifications() throws {
-        let container = DatabaseContainer(kind: .inMemory)
-
-        // Set up notification expectations for all contexts
-        let contexts = [container.viewContext, container.backgroundReadOnlyContext, container.writableContext]
-        contexts.forEach {
-            expectation(forNotification: DatabaseContainer.WillRemoveAllDataNotification, object: $0)
-            expectation(forNotification: DatabaseContainer.DidRemoveAllDataNotification, object: $0)
-        }
-
-        // Delete the data
-        let exp = expectation(description: "removeAllData completion")
-        container.removeAllData { error in
-            if let error = error {
-                XCTFail("removeAllData failed with \(error)")
-            }
-            exp.fulfill()
-        }
-
-        wait(for: [exp], timeout: defaultTimeout)
-
-        // All expectations should be fulfilled by now
-        waitForExpectations(timeout: 0)
     }
 
     func test_databaseContainer_callsResetEphemeralValues_onAllEphemeralValuesContainerEntities() throws {

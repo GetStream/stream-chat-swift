@@ -97,8 +97,6 @@ class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
         changeAggregator.onDidChange = { [weak self] changes in
             self?.updateItems(changes: changes)
         }
-
-        listenForRemoveAllDataNotifications()
     }
 
     /// Starts observing the changes in the database.
@@ -203,45 +201,5 @@ class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
             }
             completion(result)
         }
-    }
-}
-
-extension BackgroundDatabaseObserver: DatabaseObserverRemovalListener {
-    /// Listens for `Will/DidRemoveAllData` notifications from the context and simulates the callback when the notifications
-    /// are received.
-    private func listenForRemoveAllDataNotifications() {
-        listenForRemoveAllDataNotifications(
-            isBackground: true,
-            frc: frc,
-            changeAggregator: changeAggregator,
-            onStart: { [weak self] in
-                self?.queue.async(flags: .barrier) {
-                    self?._isDeletingDatabase = true
-                }
-            },
-            onItemsRemoval: { [weak self] completion in
-                self?.queue.async(flags: .barrier) {
-                    self?._items = []
-                    DispatchQueue.main.async {
-                        completion()
-                    }
-                }
-            },
-            onCompletion: { [weak self] in
-                guard let self = self else { return }
-                self.queue.async(flags: .barrier) {
-                    self._isDeletingDatabase = false
-                    self._isInitialized = false
-
-                    DispatchQueue.main.async {
-                        do {
-                            try self.startObserving()
-                        } catch {
-                            log.error("Error when starting observing: \(error)")
-                        }
-                    }
-                }
-            }
-        )
     }
 }

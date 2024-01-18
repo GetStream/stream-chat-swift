@@ -251,49 +251,6 @@ final class EntityDatabaseObserverWrapper_Tests: XCTestCase {
         // Assert correct field change is received
         AssertAsync.willBeEqual(lastChange, .remove(testItem.value))
     }
-
-    func test_itemIsRemoved_whenDatabaseContainerRemovesAllData() throws {
-        try test_itemIsRemoved_whenDatabaseContainerRemovesAllData(isBackground: false)
-        try test_itemIsRemoved_whenDatabaseContainerRemovesAllData(isBackground: true)
-    }
-
-    private func test_itemIsRemoved_whenDatabaseContainerRemovesAllData(isBackground: Bool) throws {
-        prepare(isBackground: isBackground)
-        let testItem = TestItem(id: .unique, value: .unique)
-
-        // Insert a new entity matching the predicate
-        try database.writeSynchronously {
-            let new = TestManagedObject(context: $0 as! NSManagedObjectContext)
-            new.testValue = testItem.value
-            new.testId = testItem.id
-        }
-
-        // Start observing
-        try startObservingWaitingForInitialResults()
-
-        XCTAssertEqual(observer.item, testItem)
-
-        // Add a listener
-        let expectation1 = expectation(description: "onDidChange is called with removals")
-        var listener: [EntityChange<TestItem>] = []
-        observer.onChange {
-            listener.append($0)
-            expectation1.fulfill()
-        }
-
-        // Call `removeAllData` on the database container
-        let expectation2 = expectation(description: "removeAllData completion")
-        database.removeAllData { error in
-            if let error = error {
-                XCTFail("removeAllData failed with \(error)")
-            }
-            expectation2.fulfill()
-        }
-
-        waitForExpectations(timeout: defaultTimeout)
-
-        XCTAssertEqual(listener, [.remove(testItem)])
-    }
 }
 
 extension EntityDatabaseObserverWrapper_Tests {

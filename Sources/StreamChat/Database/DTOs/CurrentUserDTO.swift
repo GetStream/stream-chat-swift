@@ -70,6 +70,8 @@ extension CurrentUserDTO {
 
 extension NSManagedObjectContext: CurrentUserDatabaseSession {
     func saveCurrentUser(payload: CurrentUserPayload) throws -> CurrentUserDTO {
+        invalidateCurrentUserCache()
+        
         let dto = CurrentUserDTO.loadOrCreate(context: self)
         dto.user = try saveUser(payload: payload)
         dto.isInvisible = payload.isInvisible
@@ -93,6 +95,8 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
     }
 
     func saveCurrentUserUnreadCount(count: UnreadCount) throws {
+        invalidateCurrentUserCache()
+
         guard let dto = currentUser else {
             throw ClientError.CurrentUserDoesNotExist()
         }
@@ -102,6 +106,8 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
     }
 
     func saveCurrentUserDevices(_ devices: [DevicePayload], clearExisting: Bool) throws -> [DeviceDTO] {
+        invalidateCurrentUserCache()
+
         guard let currentUser = currentUser else {
             throw ClientError.CurrentUserDoesNotExist()
         }
@@ -124,6 +130,8 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
     }
 
     func saveCurrentDevice(_ deviceId: String) throws {
+        invalidateCurrentUserCache()
+
         guard let currentUser = currentUser else {
             throw ClientError.CurrentUserDoesNotExist()
         }
@@ -140,8 +148,6 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
     }
 
     private static let currentUserKey = "io.getStream.chat.core.context.current_user_key"
-    private static let removeAllDataToken = "io.getStream.chat.core.context.remove_all_data_token"
-
     var currentUser: CurrentUserDTO? {
         // we already have cached value in `userInfo` so all setup is complete
         // so we can just return cached value
@@ -153,21 +159,15 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
         if let currentUser = CurrentUserDTO.load(context: self) {
             // if we have current user we save it to `userInfo` so we do not have to load it again
             userInfo[Self.currentUserKey] = currentUser
-
-            // When all data is removed it should this code's responsibility to clear `userInfo`
-            userInfo[Self.removeAllDataToken] = NotificationCenter.default.addObserver(
-                forName: DatabaseContainer.WillRemoveAllDataNotification,
-                object: nil,
-                queue: nil
-            ) { [userInfo] _ in
-                userInfo[Self.currentUserKey] = nil
-            }
-
             return currentUser
         }
 
         // we really don't have current user
         return nil
+    }
+
+    func invalidateCurrentUserCache() {
+        userInfo[Self.currentUserKey] = nil
     }
 }
 

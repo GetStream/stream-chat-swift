@@ -29,7 +29,7 @@
         <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="uploadsEnabled" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="urlEnrichmentEnabled" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
-        <relationship name="channel" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="config" inverseEntity="ChannelDTO"/>
+        <relationship name="channel" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="ChannelDTO" inverseName="config" inverseEntity="ChannelDTO"/>
         <relationship name="commands" optional="YES" toMany="YES" deletionRule="Cascade" ordered="YES" destinationEntity="CommandDTO" inverseName="channelConfig" inverseEntity="CommandDTO"/>
     </entity>
     <entity name="ChannelDTO" representedClassName="ChannelDTO" syncable="YES">
@@ -140,7 +140,7 @@
         <relationship name="devices" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="DeviceDTO" inverseName="user" inverseEntity="DeviceDTO"/>
         <relationship name="flaggedMessages" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="flaggedBy" inverseEntity="MessageDTO"/>
         <relationship name="flaggedUsers" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="flaggedBy" inverseEntity="UserDTO"/>
-        <relationship name="mutedUsers" toMany="YES" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="mutedBy" inverseEntity="UserDTO"/>
+        <relationship name="mutedUsers" toMany="YES" deletionRule="Cascade" destinationEntity="UserDTO" inverseName="mutedBy" inverseEntity="UserDTO"/>
         <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="currentUser" inverseEntity="UserDTO"/>
         <uniquenessConstraints>
             <uniquenessConstraint>

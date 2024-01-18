@@ -1062,7 +1062,7 @@ extension MessageDTO {
             isSilent: isSilent,
             quotedMessageId: quotedMessage?.id,
             attachments: attachments
-                .sorted { $0.attachmentID.index < $1.attachmentID.index }
+                .sorted { ($0.attachmentID?.index ?? 0) < ($1.attachmentID?.index ?? 0) }
                 .compactMap { $0.asRequestPayload() },
             mentionedUserIds: mentionedUserIds,
             pinned: pinned,
@@ -1183,7 +1183,7 @@ private extension ChatMessage {
         $_author = ({ user }, nil)
         $_attachments = ({
             dto.attachments
-                .map { $0.asAnyModel() }
+                .compactMap { $0.asAnyModel() }
                 .sorted { $0.id.index < $1.id.index }
         }, dto.managedObjectContext)
 
