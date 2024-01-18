@@ -5,115 +5,115 @@
 import Foundation
 
 public struct StreamChatMessageRequest: Codable, Hashable {
-    public var type: String?
+    public var pinExpires: Date?
     
-    public var id: String?
-    
-    public var parentId: String?
-    
-    public var showInChannel: Bool?
-    
-    public var custom: [String: RawJSON]?
-    
-    public var mentionedUsers: [String]?
+    public var pinned: Bool?
     
     public var quotedMessageId: String?
+    
+    public var custom: [String: RawJSON]?
     
     public var silent: Bool?
     
     public var text: String?
     
+    public var id: String?
+    
+    public var type: String?
+    
     public var attachments: [StreamChatAttachmentRequest?]
     
-    public var pinned: Bool?
+    public var mentionedUsers: [String]?
     
-    public var pinnedAt: String?
+    public var parentId: String?
     
-    public var pinExpires: String?
+    public var pinnedAt: Date?
     
-    public init(type: String?, id: String?, parentId: String?, showInChannel: Bool?, custom: [String: RawJSON]?, mentionedUsers: [String]?, quotedMessageId: String?, silent: Bool?, text: String?, attachments: [StreamChatAttachmentRequest?], pinned: Bool?, pinnedAt: String?, pinExpires: String?) {
-        self.type = type
+    public var showInChannel: Bool?
+    
+    public init(pinExpires: Date?, pinned: Bool?, quotedMessageId: String?, custom: [String: RawJSON]?, silent: Bool?, text: String?, id: String?, type: String?, attachments: [StreamChatAttachmentRequest?], mentionedUsers: [String]?, parentId: String?, pinnedAt: Date?, showInChannel: Bool?) {
+        self.pinExpires = pinExpires
         
-        self.id = id
-        
-        self.parentId = parentId
-        
-        self.showInChannel = showInChannel
-        
-        self.custom = custom
-        
-        self.mentionedUsers = mentionedUsers
+        self.pinned = pinned
         
         self.quotedMessageId = quotedMessageId
+        
+        self.custom = custom
         
         self.silent = silent
         
         self.text = text
         
+        self.id = id
+        
+        self.type = type
+        
         self.attachments = attachments
         
-        self.pinned = pinned
+        self.mentionedUsers = mentionedUsers
+        
+        self.parentId = parentId
         
         self.pinnedAt = pinnedAt
         
-        self.pinExpires = pinExpires
+        self.showInChannel = showInChannel
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case type
+        case pinExpires = "pin_expires"
         
-        case id
-        
-        case parentId = "parent_id"
-        
-        case showInChannel = "show_in_channel"
-        
-        case custom
-        
-        case mentionedUsers = "mentioned_users"
+        case pinned
         
         case quotedMessageId = "quoted_message_id"
+        
+        case custom
         
         case silent
         
         case text
         
+        case id
+        
+        case type
+        
         case attachments
         
-        case pinned
+        case mentionedUsers = "mentioned_users"
+        
+        case parentId = "parent_id"
         
         case pinnedAt = "pinned_at"
         
-        case pinExpires = "pin_expires"
+        case showInChannel = "show_in_channel"
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(type, forKey: .type)
+        try container.encode(pinExpires, forKey: .pinExpires)
         
-        try container.encode(id, forKey: .id)
-        
-        try container.encode(parentId, forKey: .parentId)
-        
-        try container.encode(showInChannel, forKey: .showInChannel)
-        
-        try container.encode(custom, forKey: .custom)
-        
-        try container.encode(mentionedUsers, forKey: .mentionedUsers)
+        try container.encode(pinned, forKey: .pinned)
         
         try container.encode(quotedMessageId, forKey: .quotedMessageId)
+        
+        try container.encode(custom, forKey: .custom)
         
         try container.encode(silent, forKey: .silent)
         
         try container.encode(text, forKey: .text)
         
+        try container.encode(id, forKey: .id)
+        
+        try container.encode(type, forKey: .type)
+        
         try container.encode(attachments, forKey: .attachments)
         
-        try container.encode(pinned, forKey: .pinned)
+        try container.encode(mentionedUsers, forKey: .mentionedUsers)
+        
+        try container.encode(parentId, forKey: .parentId)
         
         try container.encode(pinnedAt, forKey: .pinnedAt)
         
-        try container.encode(pinExpires, forKey: .pinExpires)
+        try container.encode(showInChannel, forKey: .showInChannel)
     }
 }

@@ -5,91 +5,91 @@
 import Foundation
 
 public struct StreamChatMessageDeletedEvent: Codable, Hashable, Event {
-    public var team: String?
-    
     public var channelType: String
     
     public var cid: String
     
-    public var hardDelete: Bool
+    public var createdAt: Date
     
     public var message: StreamChatMessage?
     
-    public var user: StreamChatUserObject?
+    public var type: String
     
     public var channelId: String
     
-    public var createdAt: String
+    public var team: String?
     
     public var threadParticipants: [StreamChatUserObject]?
     
-    public var type: String
+    public var user: StreamChatUserObject?
     
-    public init(team: String?, channelType: String, cid: String, hardDelete: Bool, message: StreamChatMessage?, user: StreamChatUserObject?, channelId: String, createdAt: String, threadParticipants: [StreamChatUserObject]?, type: String) {
-        self.team = team
-        
+    public var hardDelete: Bool
+    
+    public init(channelType: String, cid: String, createdAt: Date, message: StreamChatMessage?, type: String, channelId: String, team: String?, threadParticipants: [StreamChatUserObject]?, user: StreamChatUserObject?, hardDelete: Bool) {
         self.channelType = channelType
         
         self.cid = cid
         
-        self.hardDelete = hardDelete
+        self.createdAt = createdAt
         
         self.message = message
         
-        self.user = user
+        self.type = type
         
         self.channelId = channelId
         
-        self.createdAt = createdAt
+        self.team = team
         
         self.threadParticipants = threadParticipants
         
-        self.type = type
+        self.user = user
+        
+        self.hardDelete = hardDelete
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case team
-        
         case channelType = "channel_type"
         
         case cid
         
-        case hardDelete = "hard_delete"
+        case createdAt = "created_at"
         
         case message
         
-        case user
+        case type
         
         case channelId = "channel_id"
         
-        case createdAt = "created_at"
+        case team
         
         case threadParticipants = "thread_participants"
         
-        case type
+        case user
+        
+        case hardDelete = "hard_delete"
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(team, forKey: .team)
-        
         try container.encode(channelType, forKey: .channelType)
         
         try container.encode(cid, forKey: .cid)
         
-        try container.encode(hardDelete, forKey: .hardDelete)
+        try container.encode(createdAt, forKey: .createdAt)
         
         try container.encode(message, forKey: .message)
         
-        try container.encode(user, forKey: .user)
+        try container.encode(type, forKey: .type)
         
         try container.encode(channelId, forKey: .channelId)
         
-        try container.encode(createdAt, forKey: .createdAt)
+        try container.encode(team, forKey: .team)
         
         try container.encode(threadParticipants, forKey: .threadParticipants)
         
-        try container.encode(type, forKey: .type)
+        try container.encode(user, forKey: .user)
+        
+        try container.encode(hardDelete, forKey: .hardDelete)
     }
 }

@@ -5,17 +5,11 @@
 import Foundation
 
 public struct StreamChatChannelUpdatedEvent: Codable, Hashable, Event {
-    public var type: String
-    
-    public var user: StreamChatUserObject?
-    
-    public var createdAt: String
-    
-    public var message: StreamChatMessage?
+    public var cid: String
     
     public var team: String?
     
-    public var cid: String
+    public var user: StreamChatUserObject?
     
     public var channel: StreamChatChannelResponse?
     
@@ -23,65 +17,71 @@ public struct StreamChatChannelUpdatedEvent: Codable, Hashable, Event {
     
     public var channelType: String
     
-    public init(type: String, user: StreamChatUserObject?, createdAt: String, message: StreamChatMessage?, team: String?, cid: String, channel: StreamChatChannelResponse?, channelId: String, channelType: String) {
-        self.type = type
-        
-        self.user = user
-        
-        self.createdAt = createdAt
-        
-        self.message = message
+    public var createdAt: Date
+    
+    public var message: StreamChatMessage?
+    
+    public var type: String
+    
+    public init(cid: String, team: String?, user: StreamChatUserObject?, channel: StreamChatChannelResponse?, channelId: String, channelType: String, createdAt: Date, message: StreamChatMessage?, type: String) {
+        self.cid = cid
         
         self.team = team
         
-        self.cid = cid
+        self.user = user
         
         self.channel = channel
         
         self.channelId = channelId
         
         self.channelType = channelType
+        
+        self.createdAt = createdAt
+        
+        self.message = message
+        
+        self.type = type
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case type
-        
-        case user
-        
-        case createdAt = "created_at"
-        
-        case message
+        case cid
         
         case team
         
-        case cid
+        case user
         
         case channel
         
         case channelId = "channel_id"
         
         case channelType = "channel_type"
+        
+        case createdAt = "created_at"
+        
+        case message
+        
+        case type
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(type, forKey: .type)
-        
-        try container.encode(user, forKey: .user)
-        
-        try container.encode(createdAt, forKey: .createdAt)
-        
-        try container.encode(message, forKey: .message)
+        try container.encode(cid, forKey: .cid)
         
         try container.encode(team, forKey: .team)
         
-        try container.encode(cid, forKey: .cid)
+        try container.encode(user, forKey: .user)
         
         try container.encode(channel, forKey: .channel)
         
         try container.encode(channelId, forKey: .channelId)
         
         try container.encode(channelType, forKey: .channelType)
+        
+        try container.encode(createdAt, forKey: .createdAt)
+        
+        try container.encode(message, forKey: .message)
+        
+        try container.encode(type, forKey: .type)
     }
 }

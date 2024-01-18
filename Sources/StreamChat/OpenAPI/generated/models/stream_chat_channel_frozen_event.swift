@@ -7,7 +7,7 @@ import Foundation
 public struct StreamChatChannelFrozenEvent: Codable, Hashable, Event {
     public var cid: String
     
-    public var createdAt: String
+    public var createdAt: Date
     
     public var type: String
     
@@ -15,7 +15,7 @@ public struct StreamChatChannelFrozenEvent: Codable, Hashable, Event {
     
     public var channelType: String
     
-    public init(cid: String, createdAt: String, type: String, channelId: String, channelType: String) {
+    public init(cid: String, createdAt: Date, type: String, channelId: String, channelType: String) {
         self.cid = cid
         
         self.createdAt = createdAt

@@ -5,11 +5,11 @@
 import Foundation
 
 public struct StreamChatAnyEvent: Codable, Hashable, Event {
-    public var createdAt: String
+    public var createdAt: Date
     
     public var type: String
     
-    public init(createdAt: String, type: String) {
+    public init(createdAt: Date, type: String) {
         self.createdAt = createdAt
         
         self.type = type

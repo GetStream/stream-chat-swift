@@ -5,7 +5,11 @@
 import Foundation
 
 public struct StreamChatUserDeletedEvent: Codable, Hashable, Event {
-    public var createdAt: String
+    public var type: String
+    
+    public var user: StreamChatUserObject?
+    
+    public var createdAt: Date
     
     public var deleteConversationChannels: Bool
     
@@ -13,11 +17,11 @@ public struct StreamChatUserDeletedEvent: Codable, Hashable, Event {
     
     public var markMessagesDeleted: Bool
     
-    public var type: String
-    
-    public var user: StreamChatUserObject?
-    
-    public init(createdAt: String, deleteConversationChannels: Bool, hardDelete: Bool, markMessagesDeleted: Bool, type: String, user: StreamChatUserObject?) {
+    public init(type: String, user: StreamChatUserObject?, createdAt: Date, deleteConversationChannels: Bool, hardDelete: Bool, markMessagesDeleted: Bool) {
+        self.type = type
+        
+        self.user = user
+        
         self.createdAt = createdAt
         
         self.deleteConversationChannels = deleteConversationChannels
@@ -25,13 +29,13 @@ public struct StreamChatUserDeletedEvent: Codable, Hashable, Event {
         self.hardDelete = hardDelete
         
         self.markMessagesDeleted = markMessagesDeleted
-        
-        self.type = type
-        
-        self.user = user
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
+        case type
+        
+        case user
+        
         case createdAt = "created_at"
         
         case deleteConversationChannels = "delete_conversation_channels"
@@ -39,14 +43,14 @@ public struct StreamChatUserDeletedEvent: Codable, Hashable, Event {
         case hardDelete = "hard_delete"
         
         case markMessagesDeleted = "mark_messages_deleted"
-        
-        case type
-        
-        case user
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(type, forKey: .type)
+        
+        try container.encode(user, forKey: .user)
         
         try container.encode(createdAt, forKey: .createdAt)
         
@@ -55,9 +59,5 @@ public struct StreamChatUserDeletedEvent: Codable, Hashable, Event {
         try container.encode(hardDelete, forKey: .hardDelete)
         
         try container.encode(markMessagesDeleted, forKey: .markMessagesDeleted)
-        
-        try container.encode(type, forKey: .type)
-        
-        try container.encode(user, forKey: .user)
     }
 }

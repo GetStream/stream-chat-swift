@@ -5,6 +5,10 @@
 import Foundation
 
 public struct StreamChatPaginationParamsRequest: Codable, Hashable {
+    public var limit: Int?
+    
+    public var offset: Int?
+    
     public var idGt: Int?
     
     public var idGte: Int?
@@ -13,11 +17,11 @@ public struct StreamChatPaginationParamsRequest: Codable, Hashable {
     
     public var idLte: Int?
     
-    public var limit: Int?
-    
-    public var offset: Int?
-    
-    public init(idGt: Int?, idGte: Int?, idLt: Int?, idLte: Int?, limit: Int?, offset: Int?) {
+    public init(limit: Int?, offset: Int?, idGt: Int?, idGte: Int?, idLt: Int?, idLte: Int?) {
+        self.limit = limit
+        
+        self.offset = offset
+        
         self.idGt = idGt
         
         self.idGte = idGte
@@ -25,13 +29,13 @@ public struct StreamChatPaginationParamsRequest: Codable, Hashable {
         self.idLt = idLt
         
         self.idLte = idLte
-        
-        self.limit = limit
-        
-        self.offset = offset
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
+        case limit
+        
+        case offset
+        
         case idGt = "id_gt"
         
         case idGte = "id_gte"
@@ -39,14 +43,14 @@ public struct StreamChatPaginationParamsRequest: Codable, Hashable {
         case idLt = "id_lt"
         
         case idLte = "id_lte"
-        
-        case limit
-        
-        case offset
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(limit, forKey: .limit)
+        
+        try container.encode(offset, forKey: .offset)
         
         try container.encode(idGt, forKey: .idGt)
         
@@ -55,9 +59,5 @@ public struct StreamChatPaginationParamsRequest: Codable, Hashable {
         try container.encode(idLt, forKey: .idLt)
         
         try container.encode(idLte, forKey: .idLte)
-        
-        try container.encode(limit, forKey: .limit)
-        
-        try container.encode(offset, forKey: .offset)
     }
 }

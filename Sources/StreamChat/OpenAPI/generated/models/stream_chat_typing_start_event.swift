@@ -11,7 +11,7 @@ public struct StreamChatTypingStartEvent: Codable, Hashable, Event {
     
     public var cid: String
     
-    public var createdAt: String
+    public var createdAt: Date
     
     public var parentId: String?
     
@@ -19,7 +19,7 @@ public struct StreamChatTypingStartEvent: Codable, Hashable, Event {
     
     public var user: StreamChatUserObject?
     
-    public init(channelId: String, channelType: String, cid: String, createdAt: String, parentId: String?, type: String, user: StreamChatUserObject?) {
+    public init(channelId: String, channelType: String, cid: String, createdAt: Date, parentId: String?, type: String, user: StreamChatUserObject?) {
         self.channelId = channelId
         
         self.channelType = channelType

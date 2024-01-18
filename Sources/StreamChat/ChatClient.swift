@@ -196,7 +196,7 @@ public class ChatClient {
         
         api = API(
             apiClient: apiClient,
-            basePath: BaseURL.default.restAPIBaseURLv2.absoluteString,
+            basePath: BaseURL.localhost.restAPIBaseURLv2.absoluteString,
             apiKey: config.apiKey
         )
         

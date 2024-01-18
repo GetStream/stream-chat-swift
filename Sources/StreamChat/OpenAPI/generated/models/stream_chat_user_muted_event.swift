@@ -5,7 +5,9 @@
 import Foundation
 
 public struct StreamChatUserMutedEvent: Codable, Hashable, Event {
-    public var createdAt: String
+    public var user: StreamChatUserObject?
+    
+    public var createdAt: Date
     
     public var targetUser: String?
     
@@ -13,9 +15,9 @@ public struct StreamChatUserMutedEvent: Codable, Hashable, Event {
     
     public var type: String
     
-    public var user: StreamChatUserObject?
-    
-    public init(createdAt: String, targetUser: String?, targetUsers: [String]?, type: String, user: StreamChatUserObject?) {
+    public init(user: StreamChatUserObject?, createdAt: Date, targetUser: String?, targetUsers: [String]?, type: String) {
+        self.user = user
+        
         self.createdAt = createdAt
         
         self.targetUser = targetUser
@@ -23,11 +25,11 @@ public struct StreamChatUserMutedEvent: Codable, Hashable, Event {
         self.targetUsers = targetUsers
         
         self.type = type
-        
-        self.user = user
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
+        case user
+        
         case createdAt = "created_at"
         
         case targetUser = "target_user"
@@ -35,12 +37,12 @@ public struct StreamChatUserMutedEvent: Codable, Hashable, Event {
         case targetUsers = "target_users"
         
         case type
-        
-        case user
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(user, forKey: .user)
         
         try container.encode(createdAt, forKey: .createdAt)
         
@@ -49,7 +51,5 @@ public struct StreamChatUserMutedEvent: Codable, Hashable, Event {
         try container.encode(targetUsers, forKey: .targetUsers)
         
         try container.encode(type, forKey: .type)
-        
-        try container.encode(user, forKey: .user)
     }
 }

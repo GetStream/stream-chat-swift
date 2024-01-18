@@ -5,91 +5,91 @@
 import Foundation
 
 public struct StreamChatMessageNewEvent: Codable, Hashable, Event {
-    public var watcherCount: Int
-    
-    public var channelType: String
-    
     public var cid: String
-    
-    public var createdAt: String
     
     public var message: StreamChatMessage?
     
-    public var threadParticipants: [StreamChatUserObject]?
+    public var user: StreamChatUserObject?
     
     public var type: String
     
+    public var watcherCount: Int
+    
     public var channelId: String
+    
+    public var channelType: String
+    
+    public var createdAt: Date
     
     public var team: String?
     
-    public var user: StreamChatUserObject?
+    public var threadParticipants: [StreamChatUserObject]?
     
-    public init(watcherCount: Int, channelType: String, cid: String, createdAt: String, message: StreamChatMessage?, threadParticipants: [StreamChatUserObject]?, type: String, channelId: String, team: String?, user: StreamChatUserObject?) {
-        self.watcherCount = watcherCount
-        
-        self.channelType = channelType
-        
+    public init(cid: String, message: StreamChatMessage?, user: StreamChatUserObject?, type: String, watcherCount: Int, channelId: String, channelType: String, createdAt: Date, team: String?, threadParticipants: [StreamChatUserObject]?) {
         self.cid = cid
-        
-        self.createdAt = createdAt
         
         self.message = message
         
-        self.threadParticipants = threadParticipants
+        self.user = user
         
         self.type = type
         
+        self.watcherCount = watcherCount
+        
         self.channelId = channelId
+        
+        self.channelType = channelType
+        
+        self.createdAt = createdAt
         
         self.team = team
         
-        self.user = user
+        self.threadParticipants = threadParticipants
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case watcherCount = "watcher_count"
-        
-        case channelType = "channel_type"
-        
         case cid
-        
-        case createdAt = "created_at"
         
         case message
         
-        case threadParticipants = "thread_participants"
+        case user
         
         case type
         
+        case watcherCount = "watcher_count"
+        
         case channelId = "channel_id"
+        
+        case channelType = "channel_type"
+        
+        case createdAt = "created_at"
         
         case team
         
-        case user
+        case threadParticipants = "thread_participants"
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(watcherCount, forKey: .watcherCount)
-        
-        try container.encode(channelType, forKey: .channelType)
-        
         try container.encode(cid, forKey: .cid)
-        
-        try container.encode(createdAt, forKey: .createdAt)
         
         try container.encode(message, forKey: .message)
         
-        try container.encode(threadParticipants, forKey: .threadParticipants)
+        try container.encode(user, forKey: .user)
         
         try container.encode(type, forKey: .type)
         
+        try container.encode(watcherCount, forKey: .watcherCount)
+        
         try container.encode(channelId, forKey: .channelId)
+        
+        try container.encode(channelType, forKey: .channelType)
+        
+        try container.encode(createdAt, forKey: .createdAt)
         
         try container.encode(team, forKey: .team)
         
-        try container.encode(user, forKey: .user)
+        try container.encode(threadParticipants, forKey: .threadParticipants)
     }
 }

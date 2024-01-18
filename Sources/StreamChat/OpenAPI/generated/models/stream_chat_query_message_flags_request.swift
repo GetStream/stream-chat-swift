@@ -5,8 +5,6 @@
 import Foundation
 
 public struct StreamChatQueryMessageFlagsRequest: Codable, Hashable {
-    public var userId: String?
-    
     public var filterConditions: [String: RawJSON]?
     
     public var limit: Int?
@@ -19,9 +17,9 @@ public struct StreamChatQueryMessageFlagsRequest: Codable, Hashable {
     
     public var user: StreamChatUserObject?
     
-    public init(userId: String?, filterConditions: [String: RawJSON]?, limit: Int?, offset: Int?, showDeletedMessages: Bool?, sort: [StreamChatSortParam?]?, user: StreamChatUserObject?) {
-        self.userId = userId
-        
+    public var userId: String?
+    
+    public init(filterConditions: [String: RawJSON]?, limit: Int?, offset: Int?, showDeletedMessages: Bool?, sort: [StreamChatSortParam?]?, user: StreamChatUserObject?, userId: String?) {
         self.filterConditions = filterConditions
         
         self.limit = limit
@@ -33,11 +31,11 @@ public struct StreamChatQueryMessageFlagsRequest: Codable, Hashable {
         self.sort = sort
         
         self.user = user
+        
+        self.userId = userId
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case userId = "user_id"
-        
         case filterConditions = "filter_conditions"
         
         case limit
@@ -49,12 +47,12 @@ public struct StreamChatQueryMessageFlagsRequest: Codable, Hashable {
         case sort
         
         case user
+        
+        case userId = "user_id"
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
-        try container.encode(userId, forKey: .userId)
         
         try container.encode(filterConditions, forKey: .filterConditions)
         
@@ -67,5 +65,7 @@ public struct StreamChatQueryMessageFlagsRequest: Codable, Hashable {
         try container.encode(sort, forKey: .sort)
         
         try container.encode(user, forKey: .user)
+        
+        try container.encode(userId, forKey: .userId)
     }
 }

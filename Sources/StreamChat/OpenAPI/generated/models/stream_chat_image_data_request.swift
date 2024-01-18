@@ -5,8 +5,6 @@
 import Foundation
 
 public struct StreamChatImageDataRequest: Codable, Hashable {
-    public var size: String?
-    
     public var url: String?
     
     public var width: String?
@@ -15,9 +13,9 @@ public struct StreamChatImageDataRequest: Codable, Hashable {
     
     public var height: String?
     
-    public init(size: String?, url: String?, width: String?, frames: String?, height: String?) {
-        self.size = size
-        
+    public var size: String?
+    
+    public init(url: String?, width: String?, frames: String?, height: String?, size: String?) {
         self.url = url
         
         self.width = width
@@ -25,11 +23,11 @@ public struct StreamChatImageDataRequest: Codable, Hashable {
         self.frames = frames
         
         self.height = height
+        
+        self.size = size
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case size
-        
         case url
         
         case width
@@ -37,12 +35,12 @@ public struct StreamChatImageDataRequest: Codable, Hashable {
         case frames
         
         case height
+        
+        case size
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
-        try container.encode(size, forKey: .size)
         
         try container.encode(url, forKey: .url)
         
@@ -51,5 +49,7 @@ public struct StreamChatImageDataRequest: Codable, Hashable {
         try container.encode(frames, forKey: .frames)
         
         try container.encode(height, forKey: .height)
+        
+        try container.encode(size, forKey: .size)
     }
 }

@@ -5,7 +5,11 @@
 import Foundation
 
 public struct StreamChatChannelRequest: Codable, Hashable {
-    public var autoTranslationEnabled: Bool?
+    public var truncatedById: String?
+    
+    public var custom: [String: RawJSON]?
+    
+    public var autoTranslationLanguage: String?
     
     public var configOverrides: StreamChatChannelConfigRequest?
     
@@ -13,18 +17,18 @@ public struct StreamChatChannelRequest: Codable, Hashable {
     
     public var frozen: Bool?
     
-    public var custom: [String: RawJSON]?
-    
-    public var autoTranslationLanguage: String?
+    public var autoTranslationEnabled: Bool?
     
     public var members: [StreamChatChannelMemberRequest?]?
     
     public var team: String?
     
-    public var truncatedById: String?
-    
-    public init(autoTranslationEnabled: Bool?, configOverrides: StreamChatChannelConfigRequest?, disabled: Bool?, frozen: Bool?, custom: [String: RawJSON]?, autoTranslationLanguage: String?, members: [StreamChatChannelMemberRequest?]?, team: String?, truncatedById: String?) {
-        self.autoTranslationEnabled = autoTranslationEnabled
+    public init(truncatedById: String?, custom: [String: RawJSON]?, autoTranslationLanguage: String?, configOverrides: StreamChatChannelConfigRequest?, disabled: Bool?, frozen: Bool?, autoTranslationEnabled: Bool?, members: [StreamChatChannelMemberRequest?]?, team: String?) {
+        self.truncatedById = truncatedById
+        
+        self.custom = custom
+        
+        self.autoTranslationLanguage = autoTranslationLanguage
         
         self.configOverrides = configOverrides
         
@@ -32,19 +36,19 @@ public struct StreamChatChannelRequest: Codable, Hashable {
         
         self.frozen = frozen
         
-        self.custom = custom
-        
-        self.autoTranslationLanguage = autoTranslationLanguage
+        self.autoTranslationEnabled = autoTranslationEnabled
         
         self.members = members
         
         self.team = team
-        
-        self.truncatedById = truncatedById
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case autoTranslationEnabled = "auto_translation_enabled"
+        case truncatedById = "truncated_by_id"
+        
+        case custom = "Custom"
+        
+        case autoTranslationLanguage = "auto_translation_language"
         
         case configOverrides = "config_overrides"
         
@@ -52,21 +56,21 @@ public struct StreamChatChannelRequest: Codable, Hashable {
         
         case frozen
         
-        case custom
-        
-        case autoTranslationLanguage = "auto_translation_language"
+        case autoTranslationEnabled = "auto_translation_enabled"
         
         case members
         
         case team
-        
-        case truncatedById = "truncated_by_id"
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(autoTranslationEnabled, forKey: .autoTranslationEnabled)
+        try container.encode(truncatedById, forKey: .truncatedById)
+        
+        try container.encode(custom, forKey: .custom)
+        
+        try container.encode(autoTranslationLanguage, forKey: .autoTranslationLanguage)
         
         try container.encode(configOverrides, forKey: .configOverrides)
         
@@ -74,14 +78,10 @@ public struct StreamChatChannelRequest: Codable, Hashable {
         
         try container.encode(frozen, forKey: .frozen)
         
-        try container.encode(custom, forKey: .custom)
-        
-        try container.encode(autoTranslationLanguage, forKey: .autoTranslationLanguage)
+        try container.encode(autoTranslationEnabled, forKey: .autoTranslationEnabled)
         
         try container.encode(members, forKey: .members)
         
         try container.encode(team, forKey: .team)
-        
-        try container.encode(truncatedById, forKey: .truncatedById)
     }
 }

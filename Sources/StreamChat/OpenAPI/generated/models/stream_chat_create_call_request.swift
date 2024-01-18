@@ -5,6 +5,8 @@
 import Foundation
 
 public struct StreamChatCreateCallRequest: Codable, Hashable {
+    public var userId: String?
+    
     public var id: String
     
     public var options: [String: RawJSON]?
@@ -13,9 +15,9 @@ public struct StreamChatCreateCallRequest: Codable, Hashable {
     
     public var user: StreamChatUserObjectRequest?
     
-    public var userId: String?
-    
-    public init(id: String, options: [String: RawJSON]?, type: String, user: StreamChatUserObjectRequest?, userId: String?) {
+    public init(userId: String?, id: String, options: [String: RawJSON]?, type: String, user: StreamChatUserObjectRequest?) {
+        self.userId = userId
+        
         self.id = id
         
         self.options = options
@@ -23,11 +25,11 @@ public struct StreamChatCreateCallRequest: Codable, Hashable {
         self.type = type
         
         self.user = user
-        
-        self.userId = userId
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
+        case userId = "user_id"
+        
         case id
         
         case options
@@ -35,12 +37,12 @@ public struct StreamChatCreateCallRequest: Codable, Hashable {
         case type
         
         case user
-        
-        case userId = "user_id"
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(userId, forKey: .userId)
         
         try container.encode(id, forKey: .id)
         
@@ -49,7 +51,5 @@ public struct StreamChatCreateCallRequest: Codable, Hashable {
         try container.encode(type, forKey: .type)
         
         try container.encode(user, forKey: .user)
-        
-        try container.encode(userId, forKey: .userId)
     }
 }

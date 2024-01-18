@@ -5,139 +5,139 @@
 import Foundation
 
 public struct StreamChatChannelMember: Codable, Hashable {
-    public var deletedAt: Date?
-    
-    public var inviteRejectedAt: Date?
-    
-    public var notificationsMuted: Bool
-    
-    public var banExpires: Date?
-    
-    public var banned: Bool
-    
-    public var createdAt: Date
-    
-    public var channelRole: String
-    
-    public var status: String?
-    
-    public var role: String?
-    
     public var shadowBanned: Bool
     
-    public var user: StreamChatUserObject?
-    
-    public var updatedAt: Date
-    
     public var userId: String?
-    
-    public var inviteAcceptedAt: Date?
     
     public var invited: Bool?
     
     public var isModerator: Bool?
     
-    public init(deletedAt: Date?, inviteRejectedAt: Date?, notificationsMuted: Bool, banExpires: Date?, banned: Bool, createdAt: Date, channelRole: String, status: String?, role: String?, shadowBanned: Bool, user: StreamChatUserObject?, updatedAt: Date, userId: String?, inviteAcceptedAt: Date?, invited: Bool?, isModerator: Bool?) {
-        self.deletedAt = deletedAt
-        
-        self.inviteRejectedAt = inviteRejectedAt
-        
-        self.notificationsMuted = notificationsMuted
-        
-        self.banExpires = banExpires
-        
-        self.banned = banned
-        
-        self.createdAt = createdAt
-        
-        self.channelRole = channelRole
-        
-        self.status = status
-        
-        self.role = role
-        
+    public var notificationsMuted: Bool
+    
+    public var role: String?
+    
+    public var updatedAt: Date
+    
+    public var inviteRejectedAt: Date?
+    
+    public var inviteAcceptedAt: Date?
+    
+    public var createdAt: Date
+    
+    public var banned: Bool
+    
+    public var channelRole: String
+    
+    public var deletedAt: Date?
+    
+    public var status: String?
+    
+    public var user: StreamChatUserObject?
+    
+    public var banExpires: Date?
+    
+    public init(shadowBanned: Bool, userId: String?, invited: Bool?, isModerator: Bool?, notificationsMuted: Bool, role: String?, updatedAt: Date, inviteRejectedAt: Date?, inviteAcceptedAt: Date?, createdAt: Date, banned: Bool, channelRole: String, deletedAt: Date?, status: String?, user: StreamChatUserObject?, banExpires: Date?) {
         self.shadowBanned = shadowBanned
         
-        self.user = user
-        
-        self.updatedAt = updatedAt
-        
         self.userId = userId
-        
-        self.inviteAcceptedAt = inviteAcceptedAt
         
         self.invited = invited
         
         self.isModerator = isModerator
+        
+        self.notificationsMuted = notificationsMuted
+        
+        self.role = role
+        
+        self.updatedAt = updatedAt
+        
+        self.inviteRejectedAt = inviteRejectedAt
+        
+        self.inviteAcceptedAt = inviteAcceptedAt
+        
+        self.createdAt = createdAt
+        
+        self.banned = banned
+        
+        self.channelRole = channelRole
+        
+        self.deletedAt = deletedAt
+        
+        self.status = status
+        
+        self.user = user
+        
+        self.banExpires = banExpires
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case deletedAt = "deleted_at"
-        
-        case inviteRejectedAt = "invite_rejected_at"
-        
-        case notificationsMuted = "notifications_muted"
-        
-        case banExpires = "ban_expires"
-        
-        case banned
-        
-        case createdAt = "created_at"
-        
-        case channelRole = "channel_role"
-        
-        case status
-        
-        case role
-        
         case shadowBanned = "shadow_banned"
         
-        case user
-        
-        case updatedAt = "updated_at"
-        
         case userId = "user_id"
-        
-        case inviteAcceptedAt = "invite_accepted_at"
         
         case invited
         
         case isModerator = "is_moderator"
+        
+        case notificationsMuted = "notifications_muted"
+        
+        case role
+        
+        case updatedAt = "updated_at"
+        
+        case inviteRejectedAt = "invite_rejected_at"
+        
+        case inviteAcceptedAt = "invite_accepted_at"
+        
+        case createdAt = "created_at"
+        
+        case banned
+        
+        case channelRole = "channel_role"
+        
+        case deletedAt = "deleted_at"
+        
+        case status
+        
+        case user
+        
+        case banExpires = "ban_expires"
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(deletedAt, forKey: .deletedAt)
-        
-        try container.encode(inviteRejectedAt, forKey: .inviteRejectedAt)
-        
-        try container.encode(notificationsMuted, forKey: .notificationsMuted)
-        
-        try container.encode(banExpires, forKey: .banExpires)
-        
-        try container.encode(banned, forKey: .banned)
-        
-        try container.encode(createdAt, forKey: .createdAt)
-        
-        try container.encode(channelRole, forKey: .channelRole)
-        
-        try container.encode(status, forKey: .status)
-        
-        try container.encode(role, forKey: .role)
-        
         try container.encode(shadowBanned, forKey: .shadowBanned)
         
-        try container.encode(user, forKey: .user)
-        
-        try container.encode(updatedAt, forKey: .updatedAt)
-        
         try container.encode(userId, forKey: .userId)
-        
-        try container.encode(inviteAcceptedAt, forKey: .inviteAcceptedAt)
         
         try container.encode(invited, forKey: .invited)
         
         try container.encode(isModerator, forKey: .isModerator)
+        
+        try container.encode(notificationsMuted, forKey: .notificationsMuted)
+        
+        try container.encode(role, forKey: .role)
+        
+        try container.encode(updatedAt, forKey: .updatedAt)
+        
+        try container.encode(inviteRejectedAt, forKey: .inviteRejectedAt)
+        
+        try container.encode(inviteAcceptedAt, forKey: .inviteAcceptedAt)
+        
+        try container.encode(createdAt, forKey: .createdAt)
+        
+        try container.encode(banned, forKey: .banned)
+        
+        try container.encode(channelRole, forKey: .channelRole)
+        
+        try container.encode(deletedAt, forKey: .deletedAt)
+        
+        try container.encode(status, forKey: .status)
+        
+        try container.encode(user, forKey: .user)
+        
+        try container.encode(banExpires, forKey: .banExpires)
     }
 }

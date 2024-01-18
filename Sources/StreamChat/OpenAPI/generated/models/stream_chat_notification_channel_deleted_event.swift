@@ -11,7 +11,7 @@ public struct StreamChatNotificationChannelDeletedEvent: Codable, Hashable, Even
     
     public var cid: String
     
-    public var createdAt: String
+    public var createdAt: Date
     
     public var team: String?
     
@@ -19,7 +19,7 @@ public struct StreamChatNotificationChannelDeletedEvent: Codable, Hashable, Even
     
     public var channel: StreamChatChannelResponse?
     
-    public init(channelId: String, channelType: String, cid: String, createdAt: String, team: String?, type: String, channel: StreamChatChannelResponse?) {
+    public init(channelId: String, channelType: String, cid: String, createdAt: Date, team: String?, type: String, channel: StreamChatChannelResponse?) {
         self.channelId = channelId
         
         self.channelType = channelType

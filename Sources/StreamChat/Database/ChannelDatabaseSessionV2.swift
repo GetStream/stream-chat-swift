@@ -43,7 +43,7 @@ extension NSManagedObjectContext {
         let cid = try ChannelId(cid: payload.cid)
         let dto = ChannelDTO.loadOrCreate(cid: cid, context: self, cache: cache)
 
-        dto.name = payload.name
+        dto.name = "test"
         // TODO: revisit this.
         dto.imageURL = URL(string: payload.custom?["image"]?.stringValue ?? "")
         do {
@@ -62,9 +62,9 @@ extension NSManagedObjectContext {
         if let ownCapabilities = payload.ownCapabilities {
             dto.ownCapabilities = ownCapabilities
         }
-        dto.createdAt = (payload.createdAt ?? Date()).bridgeDate
+        dto.createdAt = payload.createdAt.bridgeDate
         dto.deletedAt = payload.deletedAt?.bridgeDate
-        dto.updatedAt = (payload.updatedAt ?? Date()).bridgeDate
+        dto.updatedAt = payload.updatedAt.bridgeDate
         dto.defaultSortingAt = (payload.lastMessageAt ?? payload.createdAt)?.bridgeDate ?? Date().bridgeDate
         dto.lastMessageAt = payload.lastMessageAt?.bridgeDate
         dto.memberCount = Int64(clamping: payload.memberCount ?? 0)
@@ -255,7 +255,7 @@ extension NSManagedObjectContext {
     ) throws -> UserDTO {
         let dto = UserDTO.loadOrCreate(id: payload.id, context: self, cache: cache)
 
-        dto.name = payload.name
+//        dto.name = payload.name
         dto.imageURL = URL(string: payload.imageURL ?? "")
         dto.isBanned = payload.banned
         dto.isOnline = payload.online

@@ -5,17 +5,19 @@
 import Foundation
 
 public struct StreamChatAttachmentRequest: Codable, Hashable {
-    public var authorName: String?
-    
-    public var fields: [StreamChatFieldRequest?]?
-    
-    public var footer: String?
-    
-    public var text: String?
+    public var assetUrl: String?
     
     public var authorIcon: String?
     
-    public var authorLink: String?
+    public var footerIcon: String?
+    
+    public var imageUrl: String?
+    
+    public var custom: [String: RawJSON]?
+    
+    public var actions: [StreamChatActionRequest?]?
+    
+    public var fields: [StreamChatFieldRequest?]?
     
     public var ogScrapeUrl: String?
     
@@ -23,44 +25,44 @@ public struct StreamChatAttachmentRequest: Codable, Hashable {
     
     public var originalWidth: Int?
     
-    public var title: String?
-    
-    public var titleLink: String?
-    
-    public var assetUrl: String?
-    
-    public var imageUrl: String?
-    
-    public var footerIcon: String?
-    
     public var pretext: String?
     
     public var thumbUrl: String?
     
+    public var authorLink: String?
+    
+    public var authorName: String?
+    
     public var type: String?
     
-    public var actions: [StreamChatActionRequest?]?
+    public var text: String?
     
-    public var fallback: String?
-    
-    public var giphy: StreamChatImagesRequest?
-    
-    public var custom: [String: RawJSON]?
+    public var title: String?
     
     public var color: String?
     
-    public init(authorName: String?, fields: [StreamChatFieldRequest?]?, footer: String?, text: String?, authorIcon: String?, authorLink: String?, ogScrapeUrl: String?, originalHeight: Int?, originalWidth: Int?, title: String?, titleLink: String?, assetUrl: String?, imageUrl: String?, footerIcon: String?, pretext: String?, thumbUrl: String?, type: String?, actions: [StreamChatActionRequest?]?, fallback: String?, giphy: StreamChatImagesRequest?, custom: [String: RawJSON]?, color: String?) {
-        self.authorName = authorName
-        
-        self.fields = fields
-        
-        self.footer = footer
-        
-        self.text = text
+    public var giphy: StreamChatImagesRequest?
+    
+    public var titleLink: String?
+    
+    public var fallback: String?
+    
+    public var footer: String?
+    
+    public init(assetUrl: String?, authorIcon: String?, footerIcon: String?, imageUrl: String?, custom: [String: RawJSON]?, actions: [StreamChatActionRequest?]?, fields: [StreamChatFieldRequest?]?, ogScrapeUrl: String?, originalHeight: Int?, originalWidth: Int?, pretext: String?, thumbUrl: String?, authorLink: String?, authorName: String?, type: String?, text: String?, title: String?, color: String?, giphy: StreamChatImagesRequest?, titleLink: String?, fallback: String?, footer: String?) {
+        self.assetUrl = assetUrl
         
         self.authorIcon = authorIcon
         
-        self.authorLink = authorLink
+        self.footerIcon = footerIcon
+        
+        self.imageUrl = imageUrl
+        
+        self.custom = custom
+        
+        self.actions = actions
+        
+        self.fields = fields
         
         self.ogScrapeUrl = ogScrapeUrl
         
@@ -68,45 +70,45 @@ public struct StreamChatAttachmentRequest: Codable, Hashable {
         
         self.originalWidth = originalWidth
         
-        self.title = title
-        
-        self.titleLink = titleLink
-        
-        self.assetUrl = assetUrl
-        
-        self.imageUrl = imageUrl
-        
-        self.footerIcon = footerIcon
-        
         self.pretext = pretext
         
         self.thumbUrl = thumbUrl
         
+        self.authorLink = authorLink
+        
+        self.authorName = authorName
+        
         self.type = type
         
-        self.actions = actions
+        self.text = text
         
-        self.fallback = fallback
+        self.title = title
+        
+        self.color = color
         
         self.giphy = giphy
         
-        self.custom = custom
+        self.titleLink = titleLink
         
-        self.color = color
+        self.fallback = fallback
+        
+        self.footer = footer
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case authorName = "author_name"
-        
-        case fields
-        
-        case footer
-        
-        case text
+        case assetUrl = "asset_url"
         
         case authorIcon = "author_icon"
         
-        case authorLink = "author_link"
+        case footerIcon = "footer_icon"
+        
+        case imageUrl = "image_url"
+        
+        case custom = "Custom"
+        
+        case actions
+        
+        case fields
         
         case ogScrapeUrl = "og_scrape_url"
         
@@ -114,47 +116,47 @@ public struct StreamChatAttachmentRequest: Codable, Hashable {
         
         case originalWidth = "original_width"
         
-        case title
-        
-        case titleLink = "title_link"
-        
-        case assetUrl = "asset_url"
-        
-        case imageUrl = "image_url"
-        
-        case footerIcon = "footer_icon"
-        
         case pretext
         
         case thumbUrl = "thumb_url"
         
+        case authorLink = "author_link"
+        
+        case authorName = "author_name"
+        
         case type
         
-        case actions
+        case text
         
-        case fallback
+        case title
+        
+        case color
         
         case giphy
         
-        case custom
+        case titleLink = "title_link"
         
-        case color
+        case fallback
+        
+        case footer
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(authorName, forKey: .authorName)
-        
-        try container.encode(fields, forKey: .fields)
-        
-        try container.encode(footer, forKey: .footer)
-        
-        try container.encode(text, forKey: .text)
+        try container.encode(assetUrl, forKey: .assetUrl)
         
         try container.encode(authorIcon, forKey: .authorIcon)
         
-        try container.encode(authorLink, forKey: .authorLink)
+        try container.encode(footerIcon, forKey: .footerIcon)
+        
+        try container.encode(imageUrl, forKey: .imageUrl)
+        
+        try container.encode(custom, forKey: .custom)
+        
+        try container.encode(actions, forKey: .actions)
+        
+        try container.encode(fields, forKey: .fields)
         
         try container.encode(ogScrapeUrl, forKey: .ogScrapeUrl)
         
@@ -162,30 +164,28 @@ public struct StreamChatAttachmentRequest: Codable, Hashable {
         
         try container.encode(originalWidth, forKey: .originalWidth)
         
-        try container.encode(title, forKey: .title)
-        
-        try container.encode(titleLink, forKey: .titleLink)
-        
-        try container.encode(assetUrl, forKey: .assetUrl)
-        
-        try container.encode(imageUrl, forKey: .imageUrl)
-        
-        try container.encode(footerIcon, forKey: .footerIcon)
-        
         try container.encode(pretext, forKey: .pretext)
         
         try container.encode(thumbUrl, forKey: .thumbUrl)
         
+        try container.encode(authorLink, forKey: .authorLink)
+        
+        try container.encode(authorName, forKey: .authorName)
+        
         try container.encode(type, forKey: .type)
         
-        try container.encode(actions, forKey: .actions)
+        try container.encode(text, forKey: .text)
         
-        try container.encode(fallback, forKey: .fallback)
+        try container.encode(title, forKey: .title)
+        
+        try container.encode(color, forKey: .color)
         
         try container.encode(giphy, forKey: .giphy)
         
-        try container.encode(custom, forKey: .custom)
+        try container.encode(titleLink, forKey: .titleLink)
         
-        try container.encode(color, forKey: .color)
+        try container.encode(fallback, forKey: .fallback)
+        
+        try container.encode(footer, forKey: .footer)
     }
 }

@@ -5,21 +5,23 @@
 import Foundation
 
 public struct StreamChatMemberRemovedEvent: Codable, Hashable, Event {
+    public var user: StreamChatUserObject?
+    
     public var channelId: String
     
     public var channelType: String
     
     public var cid: String
     
-    public var createdAt: String
+    public var createdAt: Date
     
     public var member: StreamChatChannelMember?
     
     public var type: String
     
-    public var user: StreamChatUserObject?
-    
-    public init(channelId: String, channelType: String, cid: String, createdAt: String, member: StreamChatChannelMember?, type: String, user: StreamChatUserObject?) {
+    public init(user: StreamChatUserObject?, channelId: String, channelType: String, cid: String, createdAt: Date, member: StreamChatChannelMember?, type: String) {
+        self.user = user
+        
         self.channelId = channelId
         
         self.channelType = channelType
@@ -31,11 +33,11 @@ public struct StreamChatMemberRemovedEvent: Codable, Hashable, Event {
         self.member = member
         
         self.type = type
-        
-        self.user = user
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
+        case user
+        
         case channelId = "channel_id"
         
         case channelType = "channel_type"
@@ -47,12 +49,12 @@ public struct StreamChatMemberRemovedEvent: Codable, Hashable, Event {
         case member
         
         case type
-        
-        case user
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(user, forKey: .user)
         
         try container.encode(channelId, forKey: .channelId)
         
@@ -65,7 +67,5 @@ public struct StreamChatMemberRemovedEvent: Codable, Hashable, Event {
         try container.encode(member, forKey: .member)
         
         try container.encode(type, forKey: .type)
-        
-        try container.encode(user, forKey: .user)
     }
 }

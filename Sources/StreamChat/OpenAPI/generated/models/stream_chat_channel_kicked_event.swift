@@ -9,7 +9,7 @@ public struct StreamChatChannelKickedEvent: Codable, Hashable, Event {
     
     public var cid: String
     
-    public var createdAt: String
+    public var createdAt: Date
     
     public var type: String
     
@@ -17,7 +17,7 @@ public struct StreamChatChannelKickedEvent: Codable, Hashable, Event {
     
     public var channelId: String
     
-    public init(channelType: String, cid: String, createdAt: String, type: String, channel: StreamChatChannelResponse?, channelId: String) {
+    public init(channelType: String, cid: String, createdAt: Date, type: String, channel: StreamChatChannelResponse?, channelId: String) {
         self.channelType = channelType
         
         self.cid = cid

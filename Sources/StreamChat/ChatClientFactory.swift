@@ -34,7 +34,7 @@ class ChatClientFactory {
     }
 
     func makeApiClientRequestEncoder() -> RequestEncoder {
-        environment.requestEncoderBuilder(config.baseURL.restAPIBaseURL, config.apiKey)
+        environment.requestEncoderBuilder(config.baseURL.restAPIBaseURLv2, config.apiKey)
     }
 
     func makeWebSocketRequestEncoder() -> RequestEncoder {

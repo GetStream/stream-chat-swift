@@ -5,8 +5,6 @@
 import Foundation
 
 public struct StreamChatBanResponse: Codable, Hashable {
-    public var reason: String?
-    
     public var shadow: Bool?
     
     public var user: StreamChatUserObject?
@@ -15,13 +13,13 @@ public struct StreamChatBanResponse: Codable, Hashable {
     
     public var channel: StreamChatChannelResponse?
     
-    public var createdAt: String
+    public var createdAt: Date
     
-    public var expires: String?
+    public var expires: Date?
     
-    public init(reason: String?, shadow: Bool?, user: StreamChatUserObject?, bannedBy: StreamChatUserObject?, channel: StreamChatChannelResponse?, createdAt: String, expires: String?) {
-        self.reason = reason
-        
+    public var reason: String?
+    
+    public init(shadow: Bool?, user: StreamChatUserObject?, bannedBy: StreamChatUserObject?, channel: StreamChatChannelResponse?, createdAt: Date, expires: Date?, reason: String?) {
         self.shadow = shadow
         
         self.user = user
@@ -33,11 +31,11 @@ public struct StreamChatBanResponse: Codable, Hashable {
         self.createdAt = createdAt
         
         self.expires = expires
+        
+        self.reason = reason
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case reason
-        
         case shadow
         
         case user
@@ -49,12 +47,12 @@ public struct StreamChatBanResponse: Codable, Hashable {
         case createdAt = "created_at"
         
         case expires
+        
+        case reason
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
-        try container.encode(reason, forKey: .reason)
         
         try container.encode(shadow, forKey: .shadow)
         
@@ -67,5 +65,7 @@ public struct StreamChatBanResponse: Codable, Hashable {
         try container.encode(createdAt, forKey: .createdAt)
         
         try container.encode(expires, forKey: .expires)
+        
+        try container.encode(reason, forKey: .reason)
     }
 }

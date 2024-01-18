@@ -5,21 +5,19 @@
 import Foundation
 
 public struct StreamChatChannelTruncatedEvent: Codable, Hashable, Event {
-    public var channel: StreamChatChannelResponse?
-    
     public var channelId: String
     
     public var channelType: String
     
     public var cid: String
     
-    public var createdAt: String
+    public var createdAt: Date
     
     public var type: String
     
-    public init(channel: StreamChatChannelResponse?, channelId: String, channelType: String, cid: String, createdAt: String, type: String) {
-        self.channel = channel
-        
+    public var channel: StreamChatChannelResponse?
+    
+    public init(channelId: String, channelType: String, cid: String, createdAt: Date, type: String, channel: StreamChatChannelResponse?) {
         self.channelId = channelId
         
         self.channelType = channelType
@@ -29,11 +27,11 @@ public struct StreamChatChannelTruncatedEvent: Codable, Hashable, Event {
         self.createdAt = createdAt
         
         self.type = type
+        
+        self.channel = channel
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case channel
-        
         case channelId = "channel_id"
         
         case channelType = "channel_type"
@@ -43,12 +41,12 @@ public struct StreamChatChannelTruncatedEvent: Codable, Hashable, Event {
         case createdAt = "created_at"
         
         case type
+        
+        case channel
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
-        try container.encode(channel, forKey: .channel)
         
         try container.encode(channelId, forKey: .channelId)
         
@@ -59,5 +57,7 @@ public struct StreamChatChannelTruncatedEvent: Codable, Hashable, Event {
         try container.encode(createdAt, forKey: .createdAt)
         
         try container.encode(type, forKey: .type)
+        
+        try container.encode(channel, forKey: .channel)
     }
 }

@@ -5,110 +5,110 @@
 import Foundation
 
 public struct StreamChatQueryMembersRequest: Codable, Hashable {
-    public var createdAtAfter: String?
+    public var createdAtAfter: Date?
     
-    public var user: StreamChatUserObject?
+    public var limit: Int?
+    
+    public var members: [StreamChatChannelMember?]?
+    
+    public var type: String
+    
+    public var userIdGte: String?
+    
+    public var userIdLt: String?
+    
+    public var createdAtBefore: Date?
+    
+    public var sort: [StreamChatSortParam?]?
+    
+    public var createdAtAfterOrEqual: Date?
+    
+    public var createdAtBeforeOrEqual: Date?
+    
+    public var offset: Int?
+    
+    public var userIdGt: String?
+    
+    public var userIdLte: String?
     
     public var filterConditions: [String: RawJSON]
     
     public var id: String?
     
-    public var members: [StreamChatChannelMember?]?
-    
-    public var userIdLt: String?
-    
-    public var userIdLte: String?
-    
-    public var createdAtAfterOrEqual: String?
-    
-    public var createdAtBeforeOrEqual: String?
-    
-    public var limit: Int?
-    
-    public var sort: [StreamChatSortParam?]?
-    
-    public var type: String
-    
-    public var createdAtBefore: String?
-    
-    public var offset: Int?
+    public var user: StreamChatUserObject?
     
     public var userId: String?
     
-    public var userIdGt: String?
-    
-    public var userIdGte: String?
-    
-    public init(createdAtAfter: String?, user: StreamChatUserObject?, filterConditions: [String: RawJSON], id: String?, members: [StreamChatChannelMember?]?, userIdLt: String?, userIdLte: String?, createdAtAfterOrEqual: String?, createdAtBeforeOrEqual: String?, limit: Int?, sort: [StreamChatSortParam?]?, type: String, createdAtBefore: String?, offset: Int?, userId: String?, userIdGt: String?, userIdGte: String?) {
+    public init(createdAtAfter: Date?, limit: Int?, members: [StreamChatChannelMember?]?, type: String, userIdGte: String?, userIdLt: String?, createdAtBefore: Date?, sort: [StreamChatSortParam?]?, createdAtAfterOrEqual: Date?, createdAtBeforeOrEqual: Date?, offset: Int?, userIdGt: String?, userIdLte: String?, filterConditions: [String: RawJSON], id: String?, user: StreamChatUserObject?, userId: String?) {
         self.createdAtAfter = createdAtAfter
         
-        self.user = user
-        
-        self.filterConditions = filterConditions
-        
-        self.id = id
+        self.limit = limit
         
         self.members = members
         
+        self.type = type
+        
+        self.userIdGte = userIdGte
+        
         self.userIdLt = userIdLt
         
-        self.userIdLte = userIdLte
+        self.createdAtBefore = createdAtBefore
+        
+        self.sort = sort
         
         self.createdAtAfterOrEqual = createdAtAfterOrEqual
         
         self.createdAtBeforeOrEqual = createdAtBeforeOrEqual
         
-        self.limit = limit
-        
-        self.sort = sort
-        
-        self.type = type
-        
-        self.createdAtBefore = createdAtBefore
-        
         self.offset = offset
-        
-        self.userId = userId
         
         self.userIdGt = userIdGt
         
-        self.userIdGte = userIdGte
+        self.userIdLte = userIdLte
+        
+        self.filterConditions = filterConditions
+        
+        self.id = id
+        
+        self.user = user
+        
+        self.userId = userId
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case createdAtAfter = "created_at_after"
         
-        case user
-        
-        case filterConditions = "filter_conditions"
-        
-        case id
+        case limit
         
         case members
         
+        case type
+        
+        case userIdGte = "user_id_gte"
+        
         case userIdLt = "user_id_lt"
         
-        case userIdLte = "user_id_lte"
+        case createdAtBefore = "created_at_before"
+        
+        case sort
         
         case createdAtAfterOrEqual = "created_at_after_or_equal"
         
         case createdAtBeforeOrEqual = "created_at_before_or_equal"
         
-        case limit
-        
-        case sort
-        
-        case type
-        
-        case createdAtBefore = "created_at_before"
-        
         case offset
-        
-        case userId = "user_id"
         
         case userIdGt = "user_id_gt"
         
-        case userIdGte = "user_id_gte"
+        case userIdLte = "user_id_lte"
+        
+        case filterConditions = "filter_conditions"
+        
+        case id
+        
+        case user
+        
+        case userId = "user_id"
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -116,36 +116,36 @@ public struct StreamChatQueryMembersRequest: Codable, Hashable {
         
         try container.encode(createdAtAfter, forKey: .createdAtAfter)
         
-        try container.encode(user, forKey: .user)
-        
-        try container.encode(filterConditions, forKey: .filterConditions)
-        
-        try container.encode(id, forKey: .id)
+        try container.encode(limit, forKey: .limit)
         
         try container.encode(members, forKey: .members)
         
+        try container.encode(type, forKey: .type)
+        
+        try container.encode(userIdGte, forKey: .userIdGte)
+        
         try container.encode(userIdLt, forKey: .userIdLt)
         
-        try container.encode(userIdLte, forKey: .userIdLte)
+        try container.encode(createdAtBefore, forKey: .createdAtBefore)
+        
+        try container.encode(sort, forKey: .sort)
         
         try container.encode(createdAtAfterOrEqual, forKey: .createdAtAfterOrEqual)
         
         try container.encode(createdAtBeforeOrEqual, forKey: .createdAtBeforeOrEqual)
         
-        try container.encode(limit, forKey: .limit)
-        
-        try container.encode(sort, forKey: .sort)
-        
-        try container.encode(type, forKey: .type)
-        
-        try container.encode(createdAtBefore, forKey: .createdAtBefore)
-        
         try container.encode(offset, forKey: .offset)
-        
-        try container.encode(userId, forKey: .userId)
         
         try container.encode(userIdGt, forKey: .userIdGt)
         
-        try container.encode(userIdGte, forKey: .userIdGte)
+        try container.encode(userIdLte, forKey: .userIdLte)
+        
+        try container.encode(filterConditions, forKey: .filterConditions)
+        
+        try container.encode(id, forKey: .id)
+        
+        try container.encode(user, forKey: .user)
+        
+        try container.encode(userId, forKey: .userId)
     }
 }

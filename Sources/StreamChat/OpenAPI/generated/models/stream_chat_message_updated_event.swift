@@ -5,11 +5,7 @@
 import Foundation
 
 public struct StreamChatMessageUpdatedEvent: Codable, Hashable, Event {
-    public var cid: String
-    
-    public var createdAt: String
-    
-    public var team: String?
+    public var threadParticipants: [StreamChatUserObject]?
     
     public var type: String
     
@@ -17,18 +13,18 @@ public struct StreamChatMessageUpdatedEvent: Codable, Hashable, Event {
     
     public var channelId: String
     
-    public var channelType: String
+    public var cid: String
+    
+    public var createdAt: Date
     
     public var message: StreamChatMessage?
     
-    public var threadParticipants: [StreamChatUserObject]?
+    public var team: String?
     
-    public init(cid: String, createdAt: String, team: String?, type: String, user: StreamChatUserObject?, channelId: String, channelType: String, message: StreamChatMessage?, threadParticipants: [StreamChatUserObject]?) {
-        self.cid = cid
-        
-        self.createdAt = createdAt
-        
-        self.team = team
+    public var channelType: String
+    
+    public init(threadParticipants: [StreamChatUserObject]?, type: String, user: StreamChatUserObject?, channelId: String, cid: String, createdAt: Date, message: StreamChatMessage?, team: String?, channelType: String) {
+        self.threadParticipants = threadParticipants
         
         self.type = type
         
@@ -36,19 +32,19 @@ public struct StreamChatMessageUpdatedEvent: Codable, Hashable, Event {
         
         self.channelId = channelId
         
-        self.channelType = channelType
+        self.cid = cid
+        
+        self.createdAt = createdAt
         
         self.message = message
         
-        self.threadParticipants = threadParticipants
+        self.team = team
+        
+        self.channelType = channelType
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case cid
-        
-        case createdAt = "created_at"
-        
-        case team
+        case threadParticipants = "thread_participants"
         
         case type
         
@@ -56,21 +52,21 @@ public struct StreamChatMessageUpdatedEvent: Codable, Hashable, Event {
         
         case channelId = "channel_id"
         
-        case channelType = "channel_type"
+        case cid
+        
+        case createdAt = "created_at"
         
         case message
         
-        case threadParticipants = "thread_participants"
+        case team
+        
+        case channelType = "channel_type"
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(cid, forKey: .cid)
-        
-        try container.encode(createdAt, forKey: .createdAt)
-        
-        try container.encode(team, forKey: .team)
+        try container.encode(threadParticipants, forKey: .threadParticipants)
         
         try container.encode(type, forKey: .type)
         
@@ -78,10 +74,14 @@ public struct StreamChatMessageUpdatedEvent: Codable, Hashable, Event {
         
         try container.encode(channelId, forKey: .channelId)
         
-        try container.encode(channelType, forKey: .channelType)
+        try container.encode(cid, forKey: .cid)
+        
+        try container.encode(createdAt, forKey: .createdAt)
         
         try container.encode(message, forKey: .message)
         
-        try container.encode(threadParticipants, forKey: .threadParticipants)
+        try container.encode(team, forKey: .team)
+        
+        try container.encode(channelType, forKey: .channelType)
     }
 }

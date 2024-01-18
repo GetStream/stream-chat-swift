@@ -5,27 +5,27 @@
 import Foundation
 
 public struct StreamChatMessageResponse: Codable, Hashable {
-    public var message: StreamChatMessage?
-    
     public var duration: String
     
-    public init(message: StreamChatMessage?, duration: String) {
-        self.message = message
-        
+    public var message: StreamChatMessage?
+    
+    public init(duration: String, message: StreamChatMessage?) {
         self.duration = duration
+        
+        self.message = message
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case message
-        
         case duration
+        
+        case message
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(message, forKey: .message)
-        
         try container.encode(duration, forKey: .duration)
+        
+        try container.encode(message, forKey: .message)
     }
 }

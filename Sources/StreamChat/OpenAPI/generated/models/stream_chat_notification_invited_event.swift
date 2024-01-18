@@ -15,13 +15,13 @@ public struct StreamChatNotificationInvitedEvent: Codable, Hashable, Event {
     
     public var cid: String
     
-    public var createdAt: String
+    public var createdAt: Date
     
     public var member: StreamChatChannelMember?
     
     public var type: String
     
-    public init(user: StreamChatUserObject?, channel: StreamChatChannelResponse?, channelId: String, channelType: String, cid: String, createdAt: String, member: StreamChatChannelMember?, type: String) {
+    public init(user: StreamChatUserObject?, channel: StreamChatChannelResponse?, channelId: String, channelType: String, cid: String, createdAt: Date, member: StreamChatChannelMember?, type: String) {
         self.user = user
         
         self.channel = channel

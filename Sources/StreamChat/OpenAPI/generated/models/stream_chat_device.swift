@@ -19,9 +19,9 @@ public struct StreamChatDevice: Codable, Hashable {
     
     public var voip: Bool?
     
-    public var createdAt: String
+    public var createdAt: Date
     
-    public init(disabled: Bool?, disabledReason: String?, id: String, pushProvider: String, pushProviderName: String?, userId: String, voip: Bool?, createdAt: String) {
+    public init(disabled: Bool?, disabledReason: String?, id: String, pushProvider: String, pushProviderName: String?, userId: String, voip: Bool?, createdAt: Date) {
         self.disabled = disabled
         
         self.disabledReason = disabledReason

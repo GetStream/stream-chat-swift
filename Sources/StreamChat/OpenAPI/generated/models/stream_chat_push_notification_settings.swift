@@ -7,9 +7,9 @@ import Foundation
 public struct StreamChatPushNotificationSettings: Codable, Hashable {
     public var disabled: Bool?
     
-    public var disabledUntil: String?
+    public var disabledUntil: Date?
     
-    public init(disabled: Bool?, disabledUntil: String?) {
+    public init(disabled: Bool?, disabledUntil: Date?) {
         self.disabled = disabled
         
         self.disabledUntil = disabledUntil

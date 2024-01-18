@@ -5,9 +5,11 @@
 import Foundation
 
 public struct StreamChatChannelGetOrCreateRequest: Codable, Hashable {
-    public var data: StreamChatChannelRequest?
-    
     public var presence: Bool?
+    
+    public var state: Bool?
+    
+    public var watchers: StreamChatPaginationParamsRequest?
     
     public var connectionId: String?
     
@@ -15,18 +17,18 @@ public struct StreamChatChannelGetOrCreateRequest: Codable, Hashable {
     
     public var members: StreamChatPaginationParamsRequest?
     
-    public var messages: StreamChatMessagePaginationParamsRequest?
+    public var data: StreamChatChannelRequest?
     
-    public var state: Bool?
+    public var messages: StreamChatMessagePaginationParamsRequest?
     
     public var watch: Bool?
     
-    public var watchers: StreamChatPaginationParamsRequest?
-    
-    public init(data: StreamChatChannelRequest?, presence: Bool?, connectionId: String?, hideForCreator: Bool?, members: StreamChatPaginationParamsRequest?, messages: StreamChatMessagePaginationParamsRequest?, state: Bool?, watch: Bool?, watchers: StreamChatPaginationParamsRequest?) {
-        self.data = data
-        
+    public init(presence: Bool?, state: Bool?, watchers: StreamChatPaginationParamsRequest?, connectionId: String?, hideForCreator: Bool?, members: StreamChatPaginationParamsRequest?, data: StreamChatChannelRequest?, messages: StreamChatMessagePaginationParamsRequest?, watch: Bool?) {
         self.presence = presence
+        
+        self.state = state
+        
+        self.watchers = watchers
         
         self.connectionId = connectionId
         
@@ -34,19 +36,19 @@ public struct StreamChatChannelGetOrCreateRequest: Codable, Hashable {
         
         self.members = members
         
+        self.data = data
+        
         self.messages = messages
         
-        self.state = state
-        
         self.watch = watch
-        
-        self.watchers = watchers
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case data
-        
         case presence
+        
+        case state
+        
+        case watchers
         
         case connectionId = "connection_id"
         
@@ -54,21 +56,21 @@ public struct StreamChatChannelGetOrCreateRequest: Codable, Hashable {
         
         case members
         
+        case data
+        
         case messages
         
-        case state
-        
         case watch
-        
-        case watchers
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(data, forKey: .data)
-        
         try container.encode(presence, forKey: .presence)
+        
+        try container.encode(state, forKey: .state)
+        
+        try container.encode(watchers, forKey: .watchers)
         
         try container.encode(connectionId, forKey: .connectionId)
         
@@ -76,12 +78,10 @@ public struct StreamChatChannelGetOrCreateRequest: Codable, Hashable {
         
         try container.encode(members, forKey: .members)
         
+        try container.encode(data, forKey: .data)
+        
         try container.encode(messages, forKey: .messages)
         
-        try container.encode(state, forKey: .state)
-        
         try container.encode(watch, forKey: .watch)
-        
-        try container.encode(watchers, forKey: .watchers)
     }
 }
