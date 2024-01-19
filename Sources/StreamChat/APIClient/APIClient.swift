@@ -253,7 +253,7 @@ class APIClient {
 
                     done(.continue)
                 case .success, .failure:
-//                    log.debug("Request completed for /\(endpoint.path)", subsystems: .offlineSupport)
+                    log.debug("Request completed for /\(request.url?.absoluteString ?? "")", subsystems: .offlineSupport)
                     completion(result)
                     done(.continue)
                 }

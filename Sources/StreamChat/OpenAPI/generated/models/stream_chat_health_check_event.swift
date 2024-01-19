@@ -13,6 +13,8 @@ public struct StreamChatHealthCheckEvent: Codable, Hashable, Event {
     
     public var me: StreamChatOwnUser?
     
+    public var connectionId: String
+    
     public init(type: String, cid: String, createdAt: Date, me: StreamChatOwnUser?) {
         self.type = type
         
@@ -21,6 +23,8 @@ public struct StreamChatHealthCheckEvent: Codable, Hashable, Event {
         self.createdAt = createdAt
         
         self.me = me
+        
+        connectionId = ""
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
@@ -31,6 +35,8 @@ public struct StreamChatHealthCheckEvent: Codable, Hashable, Event {
         case createdAt = "created_at"
         
         case me
+        
+        case connectionId = "connection_id"
     }
 
     public func encode(to encoder: Encoder) throws {
