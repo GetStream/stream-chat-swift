@@ -8,7 +8,15 @@ import Foundation
 struct EventDataProcessorMiddleware: EventMiddleware {
     func handle(event: Event, session: DatabaseSession) -> Event? {
         guard let payload = (event as? EventDTO)?.payload else {
-            return event
+            // TODO: handle this better
+            do {
+                try session.saveEvent(event: event)
+                log.debug("Event data saved to db")
+                return event
+            } catch {
+                log.error("Failed saving incoming `Event` data to DB. Error: \(error)")
+                return nil
+            }
         }
 
         do {

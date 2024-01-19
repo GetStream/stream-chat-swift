@@ -17,6 +17,18 @@ struct EventDecoderV2: AnyEventDecoder {
             return try decoder.decode(UnknownUserEvent.self, from: data)
         } catch let error as ClientError.IgnoredEventType {
             throw error
+        } catch {
+            throw error
         }
     }
 }
+
+protocol EventContainsMessage {
+    var message: StreamChatMessage? { get }
+    var type: String { get }
+    var channelId: String { get }
+    var cid: String { get }
+}
+
+extension StreamChatMessageNewEvent: EventContainsMessage {}
+extension StreamChatChannelUpdatedEvent: EventContainsMessage {}

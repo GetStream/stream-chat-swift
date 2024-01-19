@@ -70,7 +70,7 @@ class ChatClientFactory {
         environment.webSocketClientBuilder?(
             urlSessionConfiguration,
             requestEncoder,
-            EventDecoder(),
+            EventDecoderV2(),
             eventNotificationCenter
         )
     }

@@ -15,7 +15,7 @@ public struct StreamChatOwnUser: Codable, Hashable {
     
     public var totalUnreadCount: Int
     
-    public var custom: [String: RawJSON]
+    public var custom: [String: RawJSON]?
     
     public var createdAt: Date
     
@@ -102,7 +102,7 @@ public struct StreamChatOwnUser: Codable, Hashable {
         
         case totalUnreadCount = "total_unread_count"
         
-        case custom = "Custom"
+        case custom
         
         case createdAt = "created_at"
         

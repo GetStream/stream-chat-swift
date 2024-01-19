@@ -482,6 +482,113 @@ extension DatabaseSession {
 
         updateChannelPreview(from: payload)
     }
+    
+    func saveEvent(event: Event) throws {
+//        // Save a user data.
+//        if let userPayload = payload.user {
+//            try saveUser(payload: userPayload)
+//        }
+//
+//        // Member events are handled in `MemberEventMiddleware`
+//
+//        // Save a channel detail data.
+//        if let channelDetailPayload = payload.channel {
+//            try saveChannel(payload: channelDetailPayload, query: nil, cache: nil)
+//        }
+//
+//        if let currentUserPayload = payload.currentUser {
+//            try saveCurrentUser(payload: currentUserPayload)
+//        }
+//
+//        if let unreadCount = payload.unreadCount {
+//            try saveCurrentUserUnreadCount(count: unreadCount)
+//        }
+//
+//        try saveMessageIfNeeded(from: payload)
+//
+//        // handle reaction events for messages that already exist in the database and for this user
+//        // this is needed because WS events do not contain message.own_reactions
+//        if let currentUser = self.currentUser, currentUser.user.id == payload.user?.id {
+//            do {
+//                switch try? payload.event() {
+//                case let event as ReactionNewEventDTO:
+//                    let reaction = try saveReaction(payload: event.reaction, cache: nil)
+//                    if !reaction.message.ownReactions.contains(reaction.id) {
+//                        reaction.message.ownReactions.append(reaction.id)
+//                    }
+//                case let event as ReactionUpdatedEventDTO:
+//                    try saveReaction(payload: event.reaction, cache: nil)
+//                case let event as ReactionDeletedEventDTO:
+//                    if let dto = reaction(
+//                        messageId: event.message.id,
+//                        userId: event.user.id,
+//                        type: event.reaction.type
+//                    ) {
+//                        dto.message.ownReactions.removeAll(where: { $0 == dto.id })
+//                        delete(reaction: dto)
+//                    }
+//                default:
+//                    break
+//                }
+//            } catch {
+//                log.warning("Failed to update message reaction in the database, error: \(error)")
+//            }
+//        }
+//
+//        updateChannelPreview(from: payload)
+        if let newMessageEvent = event as? EventContainsMessage {
+            try saveMessageIfNeeded(from: newMessageEvent)
+        }
+    }
+    
+    func saveMessageIfNeeded(from event: EventContainsMessage) throws {
+        guard let messagePayload = event.message else {
+            // Event does not contain message
+            return
+        }
+
+        guard let cid = try? ChannelId(cid: event.cid) else {
+            // Channel does not exist locally
+            return
+        }
+
+        let messageExistsLocally = message(id: messagePayload.id) != nil
+        let eventType = EventType(rawValue: event.type)
+        let messageMustBeCreated = eventType.shouldCreateMessageInDatabase
+
+        guard messageExistsLocally || messageMustBeCreated else {
+            // Message does not exits locally and should not be saved
+            return
+        }
+
+        let savedMessage = try saveMessage(
+            payload: messagePayload,
+            for: cid,
+            syncOwnReactions: false,
+            cache: nil
+        )
+
+//        if eventType == .messageDeleted && payload.hardDelete {
+//            // We should in fact delete it from the DB, but right now this produces a crash
+//            // This should be fixed in this ticket: https://stream-io.atlassian.net/browse/CIS-1963
+//            savedMessage.isHardDeleted = true
+//            return
+//        }
+
+        // When a message is updated, make sure to update
+        // the messages quoting the edited message by triggering a DB Update.
+        if eventType == .messageUpdated {
+            savedMessage.quotedBy.forEach { message in
+                message.updatedAt = savedMessage.updatedAt
+            }
+        }
+
+        let isNewMessage = eventType == .messageNew || eventType == .notificationMessageNew
+        let isThreadReply = savedMessage.parentMessageId != nil
+        if isNewMessage && isThreadReply {
+            savedMessage.showInsideThread = true
+        }
+    }
 
     func saveMessageIfNeeded(from payload: EventPayload) throws {
         guard let messagePayload = payload.message else {

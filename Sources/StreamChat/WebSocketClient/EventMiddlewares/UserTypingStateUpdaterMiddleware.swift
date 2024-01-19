@@ -8,18 +8,24 @@ import CoreData
 struct UserTypingStateUpdaterMiddleware: EventMiddleware {
     func handle(event: Event, session: DatabaseSession) -> Event? {
         switch event {
-        case let event as TypingEventDTO:
+        case let event as StreamChatTypingStartEvent:
             guard
-                let channelDTO = session.channel(cid: event.cid),
-                let userDTO = session.user(id: event.user.id)
+                let cid = try? ChannelId(cid: event.cid),
+                let channelDTO = session.channel(cid: cid),
+                let userId = event.user?.id,
+                let userDTO = session.user(id: userId)
             else { break }
 
-            if event.isTyping {
-                channelDTO.currentlyTypingUsers.insert(userDTO)
-            } else {
-                channelDTO.currentlyTypingUsers.remove(userDTO)
-            }
+            channelDTO.currentlyTypingUsers.insert(userDTO)
+        case let event as StreamChatTypingStopEvent:
+            guard
+                let cid = try? ChannelId(cid: event.cid),
+                let channelDTO = session.channel(cid: cid),
+                let userId = event.user?.id,
+                let userDTO = session.user(id: userId)
+            else { break }
 
+            channelDTO.currentlyTypingUsers.remove(userDTO)
         case let event as CleanUpTypingEvent:
             guard
                 let channelDTO = session.channel(cid: event.cid),
