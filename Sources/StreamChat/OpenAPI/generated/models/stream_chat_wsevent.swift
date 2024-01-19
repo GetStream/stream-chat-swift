@@ -9,6 +9,66 @@ internal class ChatEventMapping: Decodable {
 }
 
 public enum StreamChatWSEvent: Codable, Hashable {
+    case typeCallAcceptedEvent(StreamChatCallAcceptedEvent)
+    
+    case typeBlockedUserEvent(StreamChatBlockedUserEvent)
+    
+    case typeCallCreatedEvent(StreamChatCallCreatedEvent)
+    
+    case typeCallDeletedEvent(StreamChatCallDeletedEvent)
+    
+    case typeCallEndedEvent(StreamChatCallEndedEvent)
+    
+    case typeCallHLSBroadcastingFailedEvent(StreamChatCallHLSBroadcastingFailedEvent)
+    
+    case typeCallHLSBroadcastingStartedEvent(StreamChatCallHLSBroadcastingStartedEvent)
+    
+    case typeCallHLSBroadcastingStoppedEvent(StreamChatCallHLSBroadcastingStoppedEvent)
+    
+    case typeCallLiveStartedEvent(StreamChatCallLiveStartedEvent)
+    
+    case typeCallMemberAddedEvent(StreamChatCallMemberAddedEvent)
+    
+    case typeCallMemberRemovedEvent(StreamChatCallMemberRemovedEvent)
+    
+    case typeCallMemberUpdatedEvent(StreamChatCallMemberUpdatedEvent)
+    
+    case typeCallMemberUpdatedPermissionEvent(StreamChatCallMemberUpdatedPermissionEvent)
+    
+    case typeCallNotificationEvent(StreamChatCallNotificationEvent)
+    
+    case typePermissionRequestEvent(StreamChatPermissionRequestEvent)
+    
+    case typeUpdatedCallPermissionsEvent(StreamChatUpdatedCallPermissionsEvent)
+    
+    case typeCallReactionEvent(StreamChatCallReactionEvent)
+    
+    case typeCallRecordingFailedEvent(StreamChatCallRecordingFailedEvent)
+    
+    case typeCallRecordingReadyEvent(StreamChatCallRecordingReadyEvent)
+    
+    case typeCallRecordingStartedEvent(StreamChatCallRecordingStartedEvent)
+    
+    case typeCallRecordingStoppedEvent(StreamChatCallRecordingStoppedEvent)
+    
+    case typeCallRejectedEvent(StreamChatCallRejectedEvent)
+    
+    case typeCallRingEvent(StreamChatCallRingEvent)
+    
+    case typeCallSessionEndedEvent(StreamChatCallSessionEndedEvent)
+    
+    case typeCallSessionParticipantJoinedEvent(StreamChatCallSessionParticipantJoinedEvent)
+    
+    case typeCallSessionParticipantLeftEvent(StreamChatCallSessionParticipantLeftEvent)
+    
+    case typeCallSessionStartedEvent(StreamChatCallSessionStartedEvent)
+    
+    case typeUnblockedUserEvent(StreamChatUnblockedUserEvent)
+    
+    case typeCallUpdatedEvent(StreamChatCallUpdatedEvent)
+    
+    case typeCallUserMuted(StreamChatCallUserMuted)
+    
     case typeChannelCreatedEvent(StreamChatChannelCreatedEvent)
     
     case typeChannelDeletedEvent(StreamChatChannelDeletedEvent)
@@ -26,6 +86,10 @@ public enum StreamChatWSEvent: Codable, Hashable {
     case typeChannelUpdatedEvent(StreamChatChannelUpdatedEvent)
     
     case typeChannelVisibleEvent(StreamChatChannelVisibleEvent)
+    
+    case typeConnectionErrorEvent(StreamChatConnectionErrorEvent)
+    
+    case typeConnectedEvent(StreamChatConnectedEvent)
     
     case typeAnyEvent(StreamChatAnyEvent)
     
@@ -101,6 +165,66 @@ public enum StreamChatWSEvent: Codable, Hashable {
     
     public var type: String {
         switch self {
+        case let .typeCallAcceptedEvent(value):
+            return value.type
+        case let .typeBlockedUserEvent(value):
+            return value.type
+        case let .typeCallCreatedEvent(value):
+            return value.type
+        case let .typeCallDeletedEvent(value):
+            return value.type
+        case let .typeCallEndedEvent(value):
+            return value.type
+        case let .typeCallHLSBroadcastingFailedEvent(value):
+            return value.type
+        case let .typeCallHLSBroadcastingStartedEvent(value):
+            return value.type
+        case let .typeCallHLSBroadcastingStoppedEvent(value):
+            return value.type
+        case let .typeCallLiveStartedEvent(value):
+            return value.type
+        case let .typeCallMemberAddedEvent(value):
+            return value.type
+        case let .typeCallMemberRemovedEvent(value):
+            return value.type
+        case let .typeCallMemberUpdatedEvent(value):
+            return value.type
+        case let .typeCallMemberUpdatedPermissionEvent(value):
+            return value.type
+        case let .typeCallNotificationEvent(value):
+            return value.type
+        case let .typePermissionRequestEvent(value):
+            return value.type
+        case let .typeUpdatedCallPermissionsEvent(value):
+            return value.type
+        case let .typeCallReactionEvent(value):
+            return value.type
+        case let .typeCallRecordingFailedEvent(value):
+            return value.type
+        case let .typeCallRecordingReadyEvent(value):
+            return value.type
+        case let .typeCallRecordingStartedEvent(value):
+            return value.type
+        case let .typeCallRecordingStoppedEvent(value):
+            return value.type
+        case let .typeCallRejectedEvent(value):
+            return value.type
+        case let .typeCallRingEvent(value):
+            return value.type
+        case let .typeCallSessionEndedEvent(value):
+            return value.type
+        case let .typeCallSessionParticipantJoinedEvent(value):
+            return value.type
+        case let .typeCallSessionParticipantLeftEvent(value):
+            return value.type
+        case let .typeCallSessionStartedEvent(value):
+            return value.type
+        case let .typeUnblockedUserEvent(value):
+            return value.type
+        case let .typeCallUpdatedEvent(value):
+            return value.type
+        case let .typeCallUserMuted(value):
+            return value.type
         case let .typeChannelCreatedEvent(value):
             return value.type
         case let .typeChannelDeletedEvent(value):
@@ -118,6 +242,10 @@ public enum StreamChatWSEvent: Codable, Hashable {
         case let .typeChannelUpdatedEvent(value):
             return value.type
         case let .typeChannelVisibleEvent(value):
+            return value.type
+        case let .typeConnectionErrorEvent(value):
+            return value.type
+        case let .typeConnectedEvent(value):
             return value.type
         case let .typeAnyEvent(value):
             return value.type
@@ -214,6 +342,10 @@ public enum StreamChatWSEvent: Codable, Hashable {
             return value
         case let .typeChannelVisibleEvent(value):
             return value
+        case let .typeConnectionErrorEvent(value):
+            return value
+        case let .typeConnectedEvent(value):
+            return value
         case let .typeAnyEvent(value):
             return value
         case let .typeHealthCheckEvent(value):
@@ -286,12 +418,74 @@ public enum StreamChatWSEvent: Codable, Hashable {
             return value
         case let .typeUserWatchingStopEvent(value):
             return value
+        default:
+            return HealthCheckEvent(connectionId: "test")
         }
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         switch self {
+        case let .typeCallAcceptedEvent(value):
+            try container.encode(value)
+        case let .typeBlockedUserEvent(value):
+            try container.encode(value)
+        case let .typeCallCreatedEvent(value):
+            try container.encode(value)
+        case let .typeCallDeletedEvent(value):
+            try container.encode(value)
+        case let .typeCallEndedEvent(value):
+            try container.encode(value)
+        case let .typeCallHLSBroadcastingFailedEvent(value):
+            try container.encode(value)
+        case let .typeCallHLSBroadcastingStartedEvent(value):
+            try container.encode(value)
+        case let .typeCallHLSBroadcastingStoppedEvent(value):
+            try container.encode(value)
+        case let .typeCallLiveStartedEvent(value):
+            try container.encode(value)
+        case let .typeCallMemberAddedEvent(value):
+            try container.encode(value)
+        case let .typeCallMemberRemovedEvent(value):
+            try container.encode(value)
+        case let .typeCallMemberUpdatedEvent(value):
+            try container.encode(value)
+        case let .typeCallMemberUpdatedPermissionEvent(value):
+            try container.encode(value)
+        case let .typeCallNotificationEvent(value):
+            try container.encode(value)
+        case let .typePermissionRequestEvent(value):
+            try container.encode(value)
+        case let .typeUpdatedCallPermissionsEvent(value):
+            try container.encode(value)
+        case let .typeCallReactionEvent(value):
+            try container.encode(value)
+        case let .typeCallRecordingFailedEvent(value):
+            try container.encode(value)
+        case let .typeCallRecordingReadyEvent(value):
+            try container.encode(value)
+        case let .typeCallRecordingStartedEvent(value):
+            try container.encode(value)
+        case let .typeCallRecordingStoppedEvent(value):
+            try container.encode(value)
+        case let .typeCallRejectedEvent(value):
+            try container.encode(value)
+        case let .typeCallRingEvent(value):
+            try container.encode(value)
+        case let .typeCallSessionEndedEvent(value):
+            try container.encode(value)
+        case let .typeCallSessionParticipantJoinedEvent(value):
+            try container.encode(value)
+        case let .typeCallSessionParticipantLeftEvent(value):
+            try container.encode(value)
+        case let .typeCallSessionStartedEvent(value):
+            try container.encode(value)
+        case let .typeUnblockedUserEvent(value):
+            try container.encode(value)
+        case let .typeCallUpdatedEvent(value):
+            try container.encode(value)
+        case let .typeCallUserMuted(value):
+            try container.encode(value)
         case let .typeChannelCreatedEvent(value):
             try container.encode(value)
         case let .typeChannelDeletedEvent(value):
@@ -309,6 +503,10 @@ public enum StreamChatWSEvent: Codable, Hashable {
         case let .typeChannelUpdatedEvent(value):
             try container.encode(value)
         case let .typeChannelVisibleEvent(value):
+            try container.encode(value)
+        case let .typeConnectionErrorEvent(value):
+            try container.encode(value)
+        case let .typeConnectedEvent(value):
             try container.encode(value)
         case let .typeAnyEvent(value):
             try container.encode(value)
@@ -388,7 +586,97 @@ public enum StreamChatWSEvent: Codable, Hashable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         let dto = try container.decode(ChatEventMapping.self)
-        if dto.type == "channel.created" {
+        if dto.type == "call.accepted" {
+            let value = try container.decode(StreamChatCallAcceptedEvent.self)
+            self = .typeCallAcceptedEvent(value)
+        } else if dto.type == "call.blocked_user" {
+            let value = try container.decode(StreamChatBlockedUserEvent.self)
+            self = .typeBlockedUserEvent(value)
+        } else if dto.type == "call.created" {
+            let value = try container.decode(StreamChatCallCreatedEvent.self)
+            self = .typeCallCreatedEvent(value)
+        } else if dto.type == "call.deleted" {
+            let value = try container.decode(StreamChatCallDeletedEvent.self)
+            self = .typeCallDeletedEvent(value)
+        } else if dto.type == "call.ended" {
+            let value = try container.decode(StreamChatCallEndedEvent.self)
+            self = .typeCallEndedEvent(value)
+        } else if dto.type == "call.hls_broadcasting_failed" {
+            let value = try container.decode(StreamChatCallHLSBroadcastingFailedEvent.self)
+            self = .typeCallHLSBroadcastingFailedEvent(value)
+        } else if dto.type == "call.hls_broadcasting_started" {
+            let value = try container.decode(StreamChatCallHLSBroadcastingStartedEvent.self)
+            self = .typeCallHLSBroadcastingStartedEvent(value)
+        } else if dto.type == "call.hls_broadcasting_stopped" {
+            let value = try container.decode(StreamChatCallHLSBroadcastingStoppedEvent.self)
+            self = .typeCallHLSBroadcastingStoppedEvent(value)
+        } else if dto.type == "call.live_started" {
+            let value = try container.decode(StreamChatCallLiveStartedEvent.self)
+            self = .typeCallLiveStartedEvent(value)
+        } else if dto.type == "call.member_added" {
+            let value = try container.decode(StreamChatCallMemberAddedEvent.self)
+            self = .typeCallMemberAddedEvent(value)
+        } else if dto.type == "call.member_removed" {
+            let value = try container.decode(StreamChatCallMemberRemovedEvent.self)
+            self = .typeCallMemberRemovedEvent(value)
+        } else if dto.type == "call.member_updated" {
+            let value = try container.decode(StreamChatCallMemberUpdatedEvent.self)
+            self = .typeCallMemberUpdatedEvent(value)
+        } else if dto.type == "call.member_updated_permission" {
+            let value = try container.decode(StreamChatCallMemberUpdatedPermissionEvent.self)
+            self = .typeCallMemberUpdatedPermissionEvent(value)
+        } else if dto.type == "call.notification" {
+            let value = try container.decode(StreamChatCallNotificationEvent.self)
+            self = .typeCallNotificationEvent(value)
+        } else if dto.type == "call.permission_request" {
+            let value = try container.decode(StreamChatPermissionRequestEvent.self)
+            self = .typePermissionRequestEvent(value)
+        } else if dto.type == "call.permissions_updated" {
+            let value = try container.decode(StreamChatUpdatedCallPermissionsEvent.self)
+            self = .typeUpdatedCallPermissionsEvent(value)
+        } else if dto.type == "call.reaction_new" {
+            let value = try container.decode(StreamChatCallReactionEvent.self)
+            self = .typeCallReactionEvent(value)
+        } else if dto.type == "call.recording_failed" {
+            let value = try container.decode(StreamChatCallRecordingFailedEvent.self)
+            self = .typeCallRecordingFailedEvent(value)
+        } else if dto.type == "call.recording_ready" {
+            let value = try container.decode(StreamChatCallRecordingReadyEvent.self)
+            self = .typeCallRecordingReadyEvent(value)
+        } else if dto.type == "call.recording_started" {
+            let value = try container.decode(StreamChatCallRecordingStartedEvent.self)
+            self = .typeCallRecordingStartedEvent(value)
+        } else if dto.type == "call.recording_stopped" {
+            let value = try container.decode(StreamChatCallRecordingStoppedEvent.self)
+            self = .typeCallRecordingStoppedEvent(value)
+        } else if dto.type == "call.rejected" {
+            let value = try container.decode(StreamChatCallRejectedEvent.self)
+            self = .typeCallRejectedEvent(value)
+        } else if dto.type == "call.ring" {
+            let value = try container.decode(StreamChatCallRingEvent.self)
+            self = .typeCallRingEvent(value)
+        } else if dto.type == "call.session_ended" {
+            let value = try container.decode(StreamChatCallSessionEndedEvent.self)
+            self = .typeCallSessionEndedEvent(value)
+        } else if dto.type == "call.session_participant_joined" {
+            let value = try container.decode(StreamChatCallSessionParticipantJoinedEvent.self)
+            self = .typeCallSessionParticipantJoinedEvent(value)
+        } else if dto.type == "call.session_participant_left" {
+            let value = try container.decode(StreamChatCallSessionParticipantLeftEvent.self)
+            self = .typeCallSessionParticipantLeftEvent(value)
+        } else if dto.type == "call.session_started" {
+            let value = try container.decode(StreamChatCallSessionStartedEvent.self)
+            self = .typeCallSessionStartedEvent(value)
+        } else if dto.type == "call.unblocked_user" {
+            let value = try container.decode(StreamChatUnblockedUserEvent.self)
+            self = .typeUnblockedUserEvent(value)
+        } else if dto.type == "call.updated" {
+            let value = try container.decode(StreamChatCallUpdatedEvent.self)
+            self = .typeCallUpdatedEvent(value)
+        } else if dto.type == "call.user_muted" {
+            let value = try container.decode(StreamChatCallUserMuted.self)
+            self = .typeCallUserMuted(value)
+        } else if dto.type == "channel.created" {
             let value = try container.decode(StreamChatChannelCreatedEvent.self)
             self = .typeChannelCreatedEvent(value)
         } else if dto.type == "channel.deleted" {
@@ -415,6 +703,12 @@ public enum StreamChatWSEvent: Codable, Hashable {
         } else if dto.type == "channel.visible" {
             let value = try container.decode(StreamChatChannelVisibleEvent.self)
             self = .typeChannelVisibleEvent(value)
+        } else if dto.type == "connection.error" {
+            let value = try container.decode(StreamChatConnectionErrorEvent.self)
+            self = .typeConnectionErrorEvent(value)
+        } else if dto.type == "connection.ok" {
+            let value = try container.decode(StreamChatConnectedEvent.self)
+            self = .typeConnectedEvent(value)
         } else if dto.type == "custom" {
             let value = try container.decode(StreamChatAnyEvent.self)
             self = .typeAnyEvent(value)

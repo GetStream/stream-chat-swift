@@ -70,19 +70,19 @@ class MessageRepository {
                     .map { StreamChatAttachmentRequest(type: $0.type, payload: $0.payload) }
                 
                 let messageRequest = StreamChatMessageRequest(
+                    attachments: attachments,
+                    custom: requestBody.extraData,
+                    parentId: requestBody.parentId,
                     pinExpires: requestBody.pinExpires,
                     pinned: requestBody.pinned,
-                    quotedMessageId: requestBody.quotedMessageId,
-                    custom: requestBody.extraData,
-                    silent: requestBody.isSilent,
-                    text: requestBody.text,
+                    pinnedAt: nil,
+                    showInChannel: requestBody.showReplyInChannel,
                     id: requestBody.id,
-                    type: nil, // TODO: check this
-                    attachments: attachments,
+                    quotedMessageId: requestBody.quotedMessageId,
+                    text: requestBody.text,
                     mentionedUsers: requestBody.mentionedUserIds,
-                    parentId: requestBody.parentId,
-                    pinnedAt: nil, // TODO: check
-                    showInChannel: requestBody.showReplyInChannel
+                    silent: requestBody.isSilent,
+                    type: nil
                 )
                 
                 let sendMessageRequest = StreamChatSendMessageRequest(

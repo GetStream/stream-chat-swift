@@ -5,8 +5,6 @@
 import Foundation
 
 public struct StreamChatSyncRequest: Codable, Hashable {
-    public var connectionId: String?
-    
     public var lastSyncAt: Date
     
     public var user: StreamChatUserObjectRequest?
@@ -19,9 +17,9 @@ public struct StreamChatSyncRequest: Codable, Hashable {
     
     public var channelCids: [String]?
     
-    public init(connectionId: String?, lastSyncAt: Date, user: StreamChatUserObjectRequest?, userId: String?, watch: Bool?, withInaccessibleCids: Bool?, channelCids: [String]?) {
-        self.connectionId = connectionId
-        
+    public var connectionId: String?
+    
+    public init(lastSyncAt: Date, user: StreamChatUserObjectRequest?, userId: String?, watch: Bool?, withInaccessibleCids: Bool?, channelCids: [String]?, connectionId: String?) {
         self.lastSyncAt = lastSyncAt
         
         self.user = user
@@ -33,11 +31,11 @@ public struct StreamChatSyncRequest: Codable, Hashable {
         self.withInaccessibleCids = withInaccessibleCids
         
         self.channelCids = channelCids
+        
+        self.connectionId = connectionId
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case connectionId = "connection_id"
-        
         case lastSyncAt = "last_sync_at"
         
         case user
@@ -49,12 +47,12 @@ public struct StreamChatSyncRequest: Codable, Hashable {
         case withInaccessibleCids = "with_inaccessible_cids"
         
         case channelCids = "channel_cids"
+        
+        case connectionId = "connection_id"
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
-        try container.encode(connectionId, forKey: .connectionId)
         
         try container.encode(lastSyncAt, forKey: .lastSyncAt)
         
@@ -67,5 +65,7 @@ public struct StreamChatSyncRequest: Codable, Hashable {
         try container.encode(withInaccessibleCids, forKey: .withInaccessibleCids)
         
         try container.encode(channelCids, forKey: .channelCids)
+        
+        try container.encode(connectionId, forKey: .connectionId)
     }
 }

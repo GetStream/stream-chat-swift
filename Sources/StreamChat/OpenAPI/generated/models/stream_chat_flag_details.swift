@@ -9,16 +9,22 @@ public struct StreamChatFlagDetails: Codable, Hashable {
     
     public var automod: StreamChatAutomodDetails?
     
-    public init(extra: [String: RawJSON], automod: StreamChatAutomodDetails?) {
+    public var originalText: String
+    
+    public init(extra: [String: RawJSON], automod: StreamChatAutomodDetails?, originalText: String) {
         self.extra = extra
         
         self.automod = automod
+        
+        self.originalText = originalText
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case extra = "Extra"
         
         case automod
+        
+        case originalText = "original_text"
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -27,5 +33,7 @@ public struct StreamChatFlagDetails: Codable, Hashable {
         try container.encode(extra, forKey: .extra)
         
         try container.encode(automod, forKey: .automod)
+        
+        try container.encode(originalText, forKey: .originalText)
     }
 }

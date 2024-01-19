@@ -256,12 +256,12 @@ extension NSManagedObjectContext {
         let dto = UserDTO.loadOrCreate(id: payload.id, context: self, cache: cache)
 
 //        dto.name = payload.name
-        dto.imageURL = URL(string: payload.imageURL ?? "")
-        dto.isBanned = payload.banned
-        dto.isOnline = payload.online
+//        dto.imageURL = URL(string: payload.imageURL ?? "")
+        dto.isBanned = payload.banned ?? false
+        dto.isOnline = payload.online ?? false
         dto.lastActivityAt = payload.lastActive?.bridgeDate
         dto.userCreatedAt = (payload.createdAt ?? Date()).bridgeDate
-        dto.userRoleRaw = payload.role
+        dto.userRoleRaw = payload.role ?? "member"
         dto.userUpdatedAt = (payload.updatedAt ?? Date()).bridgeDate
         dto.userDeactivatedAt = payload.deactivatedAt?.bridgeDate
         dto.language = payload.language

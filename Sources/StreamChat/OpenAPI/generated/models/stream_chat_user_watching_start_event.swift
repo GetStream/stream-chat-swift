@@ -5,6 +5,12 @@
 import Foundation
 
 public struct StreamChatUserWatchingStartEvent: Codable, Hashable, Event {
+    public var type: String
+    
+    public var user: StreamChatUserObject?
+    
+    public var watcherCount: Int
+    
     public var channelId: String
     
     public var channelType: String
@@ -15,13 +21,13 @@ public struct StreamChatUserWatchingStartEvent: Codable, Hashable, Event {
     
     public var team: String?
     
-    public var type: String
-    
-    public var user: StreamChatUserObject?
-    
-    public var watcherCount: Int
-    
-    public init(channelId: String, channelType: String, cid: String, createdAt: Date, team: String?, type: String, user: StreamChatUserObject?, watcherCount: Int) {
+    public init(type: String, user: StreamChatUserObject?, watcherCount: Int, channelId: String, channelType: String, cid: String, createdAt: Date, team: String?) {
+        self.type = type
+        
+        self.user = user
+        
+        self.watcherCount = watcherCount
+        
         self.channelId = channelId
         
         self.channelType = channelType
@@ -31,15 +37,15 @@ public struct StreamChatUserWatchingStartEvent: Codable, Hashable, Event {
         self.createdAt = createdAt
         
         self.team = team
-        
-        self.type = type
-        
-        self.user = user
-        
-        self.watcherCount = watcherCount
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
+        case type
+        
+        case user
+        
+        case watcherCount = "watcher_count"
+        
         case channelId = "channel_id"
         
         case channelType = "channel_type"
@@ -49,16 +55,16 @@ public struct StreamChatUserWatchingStartEvent: Codable, Hashable, Event {
         case createdAt = "created_at"
         
         case team
-        
-        case type
-        
-        case user
-        
-        case watcherCount = "watcher_count"
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(type, forKey: .type)
+        
+        try container.encode(user, forKey: .user)
+        
+        try container.encode(watcherCount, forKey: .watcherCount)
         
         try container.encode(channelId, forKey: .channelId)
         
@@ -69,11 +75,5 @@ public struct StreamChatUserWatchingStartEvent: Codable, Hashable, Event {
         try container.encode(createdAt, forKey: .createdAt)
         
         try container.encode(team, forKey: .team)
-        
-        try container.encode(type, forKey: .type)
-        
-        try container.encode(user, forKey: .user)
-        
-        try container.encode(watcherCount, forKey: .watcherCount)
     }
 }

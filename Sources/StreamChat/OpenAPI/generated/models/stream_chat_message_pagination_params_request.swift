@@ -5,17 +5,19 @@
 import Foundation
 
 public struct StreamChatMessagePaginationParamsRequest: Codable, Hashable {
-    public var idLt: String?
+    public var createdAtAfterOrEqual: Date?
+    
+    public var createdAtAround: Date?
+    
+    public var createdAtBeforeOrEqual: Date?
+    
+    public var idAround: String?
     
     public var idLte: String?
     
     public var limit: Int?
     
-    public var offset: Int?
-    
     public var createdAtAfter: Date?
-    
-    public var createdAtAround: Date?
     
     public var createdAtBefore: Date?
     
@@ -23,24 +25,24 @@ public struct StreamChatMessagePaginationParamsRequest: Codable, Hashable {
     
     public var idGte: String?
     
-    public var createdAtAfterOrEqual: Date?
+    public var idLt: String?
     
-    public var createdAtBeforeOrEqual: Date?
+    public var offset: Int?
     
-    public var idAround: String?
-    
-    public init(idLt: String?, idLte: String?, limit: Int?, offset: Int?, createdAtAfter: Date?, createdAtAround: Date?, createdAtBefore: Date?, idGt: String?, idGte: String?, createdAtAfterOrEqual: Date?, createdAtBeforeOrEqual: Date?, idAround: String?) {
-        self.idLt = idLt
+    public init(createdAtAfterOrEqual: Date?, createdAtAround: Date?, createdAtBeforeOrEqual: Date?, idAround: String?, idLte: String?, limit: Int?, createdAtAfter: Date?, createdAtBefore: Date?, idGt: String?, idGte: String?, idLt: String?, offset: Int?) {
+        self.createdAtAfterOrEqual = createdAtAfterOrEqual
+        
+        self.createdAtAround = createdAtAround
+        
+        self.createdAtBeforeOrEqual = createdAtBeforeOrEqual
+        
+        self.idAround = idAround
         
         self.idLte = idLte
         
         self.limit = limit
         
-        self.offset = offset
-        
         self.createdAtAfter = createdAtAfter
-        
-        self.createdAtAround = createdAtAround
         
         self.createdAtBefore = createdAtBefore
         
@@ -48,25 +50,25 @@ public struct StreamChatMessagePaginationParamsRequest: Codable, Hashable {
         
         self.idGte = idGte
         
-        self.createdAtAfterOrEqual = createdAtAfterOrEqual
+        self.idLt = idLt
         
-        self.createdAtBeforeOrEqual = createdAtBeforeOrEqual
-        
-        self.idAround = idAround
+        self.offset = offset
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case idLt = "id_lt"
+        case createdAtAfterOrEqual = "created_at_after_or_equal"
+        
+        case createdAtAround = "created_at_around"
+        
+        case createdAtBeforeOrEqual = "created_at_before_or_equal"
+        
+        case idAround = "id_around"
         
         case idLte = "id_lte"
         
         case limit
         
-        case offset
-        
         case createdAtAfter = "created_at_after"
-        
-        case createdAtAround = "created_at_around"
         
         case createdAtBefore = "created_at_before"
         
@@ -74,27 +76,27 @@ public struct StreamChatMessagePaginationParamsRequest: Codable, Hashable {
         
         case idGte = "id_gte"
         
-        case createdAtAfterOrEqual = "created_at_after_or_equal"
+        case idLt = "id_lt"
         
-        case createdAtBeforeOrEqual = "created_at_before_or_equal"
-        
-        case idAround = "id_around"
+        case offset
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(idLt, forKey: .idLt)
+        try container.encode(createdAtAfterOrEqual, forKey: .createdAtAfterOrEqual)
+        
+        try container.encode(createdAtAround, forKey: .createdAtAround)
+        
+        try container.encode(createdAtBeforeOrEqual, forKey: .createdAtBeforeOrEqual)
+        
+        try container.encode(idAround, forKey: .idAround)
         
         try container.encode(idLte, forKey: .idLte)
         
         try container.encode(limit, forKey: .limit)
         
-        try container.encode(offset, forKey: .offset)
-        
         try container.encode(createdAtAfter, forKey: .createdAtAfter)
-        
-        try container.encode(createdAtAround, forKey: .createdAtAround)
         
         try container.encode(createdAtBefore, forKey: .createdAtBefore)
         
@@ -102,10 +104,8 @@ public struct StreamChatMessagePaginationParamsRequest: Codable, Hashable {
         
         try container.encode(idGte, forKey: .idGte)
         
-        try container.encode(createdAtAfterOrEqual, forKey: .createdAtAfterOrEqual)
+        try container.encode(idLt, forKey: .idLt)
         
-        try container.encode(createdAtBeforeOrEqual, forKey: .createdAtBeforeOrEqual)
-        
-        try container.encode(idAround, forKey: .idAround)
+        try container.encode(offset, forKey: .offset)
     }
 }

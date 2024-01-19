@@ -5,17 +5,15 @@
 import Foundation
 
 public struct StreamChatReactionDeletedEvent: Codable, Hashable, Event {
-    public var team: String?
-    
-    public var threadParticipants: [StreamChatUserObject]?
+    public var channelType: String
     
     public var createdAt: Date
     
     public var message: StreamChatMessage?
     
-    public var cid: String
+    public var team: String?
     
-    public var reaction: StreamChatReaction?
+    public var threadParticipants: [StreamChatUserObject]?
     
     public var type: String
     
@@ -23,20 +21,20 @@ public struct StreamChatReactionDeletedEvent: Codable, Hashable, Event {
     
     public var channelId: String
     
-    public var channelType: String
+    public var reaction: StreamChatReaction?
     
-    public init(team: String?, threadParticipants: [StreamChatUserObject]?, createdAt: Date, message: StreamChatMessage?, cid: String, reaction: StreamChatReaction?, type: String, user: StreamChatUserObject?, channelId: String, channelType: String) {
-        self.team = team
-        
-        self.threadParticipants = threadParticipants
+    public var cid: String
+    
+    public init(channelType: String, createdAt: Date, message: StreamChatMessage?, team: String?, threadParticipants: [StreamChatUserObject]?, type: String, user: StreamChatUserObject?, channelId: String, reaction: StreamChatReaction?, cid: String) {
+        self.channelType = channelType
         
         self.createdAt = createdAt
         
         self.message = message
         
-        self.cid = cid
+        self.team = team
         
-        self.reaction = reaction
+        self.threadParticipants = threadParticipants
         
         self.type = type
         
@@ -44,21 +42,21 @@ public struct StreamChatReactionDeletedEvent: Codable, Hashable, Event {
         
         self.channelId = channelId
         
-        self.channelType = channelType
+        self.reaction = reaction
+        
+        self.cid = cid
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case team
-        
-        case threadParticipants = "thread_participants"
+        case channelType = "channel_type"
         
         case createdAt = "created_at"
         
         case message
         
-        case cid
+        case team
         
-        case reaction
+        case threadParticipants = "thread_participants"
         
         case type
         
@@ -66,23 +64,23 @@ public struct StreamChatReactionDeletedEvent: Codable, Hashable, Event {
         
         case channelId = "channel_id"
         
-        case channelType = "channel_type"
+        case reaction
+        
+        case cid
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(team, forKey: .team)
-        
-        try container.encode(threadParticipants, forKey: .threadParticipants)
+        try container.encode(channelType, forKey: .channelType)
         
         try container.encode(createdAt, forKey: .createdAt)
         
         try container.encode(message, forKey: .message)
         
-        try container.encode(cid, forKey: .cid)
+        try container.encode(team, forKey: .team)
         
-        try container.encode(reaction, forKey: .reaction)
+        try container.encode(threadParticipants, forKey: .threadParticipants)
         
         try container.encode(type, forKey: .type)
         
@@ -90,6 +88,8 @@ public struct StreamChatReactionDeletedEvent: Codable, Hashable, Event {
         
         try container.encode(channelId, forKey: .channelId)
         
-        try container.encode(channelType, forKey: .channelType)
+        try container.encode(reaction, forKey: .reaction)
+        
+        try container.encode(cid, forKey: .cid)
     }
 }

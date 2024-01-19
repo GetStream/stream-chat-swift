@@ -5,6 +5,10 @@
 import Foundation
 
 public struct StreamChatReaction: Codable, Hashable {
+    public var messageId: String
+    
+    public var score: Int
+    
     public var type: String
     
     public var updatedAt: Date
@@ -17,11 +21,11 @@ public struct StreamChatReaction: Codable, Hashable {
     
     public var createdAt: Date
     
-    public var messageId: String
-    
-    public var score: Int
-    
-    public init(type: String, updatedAt: Date, user: StreamChatUserObject?, userId: String?, custom: [String: RawJSON], createdAt: Date, messageId: String, score: Int) {
+    public init(messageId: String, score: Int, type: String, updatedAt: Date, user: StreamChatUserObject?, userId: String?, custom: [String: RawJSON], createdAt: Date) {
+        self.messageId = messageId
+        
+        self.score = score
+        
         self.type = type
         
         self.updatedAt = updatedAt
@@ -33,13 +37,13 @@ public struct StreamChatReaction: Codable, Hashable {
         self.custom = custom
         
         self.createdAt = createdAt
-        
-        self.messageId = messageId
-        
-        self.score = score
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
+        case messageId = "message_id"
+        
+        case score
+        
         case type
         
         case updatedAt = "updated_at"
@@ -51,14 +55,14 @@ public struct StreamChatReaction: Codable, Hashable {
         case custom = "Custom"
         
         case createdAt = "created_at"
-        
-        case messageId = "message_id"
-        
-        case score
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(messageId, forKey: .messageId)
+        
+        try container.encode(score, forKey: .score)
         
         try container.encode(type, forKey: .type)
         
@@ -71,9 +75,5 @@ public struct StreamChatReaction: Codable, Hashable {
         try container.encode(custom, forKey: .custom)
         
         try container.encode(createdAt, forKey: .createdAt)
-        
-        try container.encode(messageId, forKey: .messageId)
-        
-        try container.encode(score, forKey: .score)
     }
 }

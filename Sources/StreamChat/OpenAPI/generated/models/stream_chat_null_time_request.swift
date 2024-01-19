@@ -7,9 +7,9 @@ import Foundation
 public struct StreamChatNullTimeRequest: Codable, Hashable {
     public var hasValue: Bool?
     
-    public var value: String?
+    public var value: Date?
     
-    public init(hasValue: Bool?, value: String?) {
+    public init(hasValue: Bool?, value: Date?) {
         self.hasValue = hasValue
         
         self.value = value

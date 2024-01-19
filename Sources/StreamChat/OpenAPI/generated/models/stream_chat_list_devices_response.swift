@@ -5,11 +5,11 @@
 import Foundation
 
 public struct StreamChatListDevicesResponse: Codable, Hashable {
-    public var devices: [StreamChatDevice?]
+    public var devices: [StreamChatDevice]
     
     public var duration: String
     
-    public init(devices: [StreamChatDevice?], duration: String) {
+    public init(devices: [StreamChatDevice], duration: String) {
         self.devices = devices
         
         self.duration = duration

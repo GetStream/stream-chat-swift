@@ -5,6 +5,8 @@
 import Foundation
 
 public struct StreamChatCallSettings: Codable, Hashable {
+    public var audio: StreamChatAudioSettings?
+    
     public var geofencing: StreamChatGeofenceSettings?
     
     public var ring: StreamChatRingSettings?
@@ -12,8 +14,6 @@ public struct StreamChatCallSettings: Codable, Hashable {
     public var transcription: StreamChatTranscriptionSettings?
     
     public var video: StreamChatVideoSettings?
-    
-    public var audio: StreamChatAudioSettings?
     
     public var backstage: StreamChatBackstageSettings?
     
@@ -25,7 +25,9 @@ public struct StreamChatCallSettings: Codable, Hashable {
     
     public var thumbnails: StreamChatThumbnailsSettings?
     
-    public init(geofencing: StreamChatGeofenceSettings?, ring: StreamChatRingSettings?, transcription: StreamChatTranscriptionSettings?, video: StreamChatVideoSettings?, audio: StreamChatAudioSettings?, backstage: StreamChatBackstageSettings?, broadcasting: StreamChatBroadcastSettings?, recording: StreamChatRecordSettings?, screensharing: StreamChatScreensharingSettings?, thumbnails: StreamChatThumbnailsSettings?) {
+    public init(audio: StreamChatAudioSettings?, geofencing: StreamChatGeofenceSettings?, ring: StreamChatRingSettings?, transcription: StreamChatTranscriptionSettings?, video: StreamChatVideoSettings?, backstage: StreamChatBackstageSettings?, broadcasting: StreamChatBroadcastSettings?, recording: StreamChatRecordSettings?, screensharing: StreamChatScreensharingSettings?, thumbnails: StreamChatThumbnailsSettings?) {
+        self.audio = audio
+        
         self.geofencing = geofencing
         
         self.ring = ring
@@ -33,8 +35,6 @@ public struct StreamChatCallSettings: Codable, Hashable {
         self.transcription = transcription
         
         self.video = video
-        
-        self.audio = audio
         
         self.backstage = backstage
         
@@ -48,6 +48,8 @@ public struct StreamChatCallSettings: Codable, Hashable {
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
+        case audio
+        
         case geofencing
         
         case ring
@@ -55,8 +57,6 @@ public struct StreamChatCallSettings: Codable, Hashable {
         case transcription
         
         case video
-        
-        case audio
         
         case backstage
         
@@ -72,6 +72,8 @@ public struct StreamChatCallSettings: Codable, Hashable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
+        try container.encode(audio, forKey: .audio)
+        
         try container.encode(geofencing, forKey: .geofencing)
         
         try container.encode(ring, forKey: .ring)
@@ -79,8 +81,6 @@ public struct StreamChatCallSettings: Codable, Hashable {
         try container.encode(transcription, forKey: .transcription)
         
         try container.encode(video, forKey: .video)
-        
-        try container.encode(audio, forKey: .audio)
         
         try container.encode(backstage, forKey: .backstage)
         

@@ -5,147 +5,147 @@
 import Foundation
 
 public struct StreamChatUserResponse: Codable, Hashable {
-    public var online: Bool
+    public var banExpires: Date?
     
-    public var revokeTokensIssuedBefore: Date?
+    public var banned: Bool
     
-    public var shadowBanned: Bool
-    
-    public var custom: [String: RawJSON]
-    
-    public var lastActive: Date?
-    
-    public var updatedAt: Date?
+    public var teams: [String]?
     
     public var deactivatedAt: Date?
     
+    public var online: Bool
+    
+    public var shadowBanned: Bool
+    
+    public var updatedAt: Date?
+    
+    public var pushNotifications: StreamChatPushNotificationSettings?
+    
+    public var custom: [String: RawJSON]
+    
     public var deletedAt: Date?
+    
+    public var language: String?
+    
+    public var lastActive: Date?
+    
+    public var role: String
     
     public var createdAt: Date?
     
     public var id: String
     
-    public var language: String?
-    
-    public var teams: [String]?
-    
-    public var banExpires: Date?
-    
-    public var banned: Bool
-    
-    public var role: String
-    
     public var invisible: Bool?
     
-    public var pushNotifications: StreamChatPushNotificationSettings?
+    public var revokeTokensIssuedBefore: Date?
     
-    public init(online: Bool, revokeTokensIssuedBefore: Date?, shadowBanned: Bool, custom: [String: RawJSON], lastActive: Date?, updatedAt: Date?, deactivatedAt: Date?, deletedAt: Date?, createdAt: Date?, id: String, language: String?, teams: [String]?, banExpires: Date?, banned: Bool, role: String, invisible: Bool?, pushNotifications: StreamChatPushNotificationSettings?) {
-        self.online = online
+    public init(banExpires: Date?, banned: Bool, teams: [String]?, deactivatedAt: Date?, online: Bool, shadowBanned: Bool, updatedAt: Date?, pushNotifications: StreamChatPushNotificationSettings?, custom: [String: RawJSON], deletedAt: Date?, language: String?, lastActive: Date?, role: String, createdAt: Date?, id: String, invisible: Bool?, revokeTokensIssuedBefore: Date?) {
+        self.banExpires = banExpires
         
-        self.revokeTokensIssuedBefore = revokeTokensIssuedBefore
+        self.banned = banned
         
-        self.shadowBanned = shadowBanned
-        
-        self.custom = custom
-        
-        self.lastActive = lastActive
-        
-        self.updatedAt = updatedAt
+        self.teams = teams
         
         self.deactivatedAt = deactivatedAt
         
+        self.online = online
+        
+        self.shadowBanned = shadowBanned
+        
+        self.updatedAt = updatedAt
+        
+        self.pushNotifications = pushNotifications
+        
+        self.custom = custom
+        
         self.deletedAt = deletedAt
+        
+        self.language = language
+        
+        self.lastActive = lastActive
+        
+        self.role = role
         
         self.createdAt = createdAt
         
         self.id = id
         
-        self.language = language
-        
-        self.teams = teams
-        
-        self.banExpires = banExpires
-        
-        self.banned = banned
-        
-        self.role = role
-        
         self.invisible = invisible
         
-        self.pushNotifications = pushNotifications
+        self.revokeTokensIssuedBefore = revokeTokensIssuedBefore
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case online
+        case banExpires = "ban_expires"
         
-        case revokeTokensIssuedBefore = "revoke_tokens_issued_before"
+        case banned
         
-        case shadowBanned = "shadow_banned"
-        
-        case custom = "Custom"
-        
-        case lastActive = "last_active"
-        
-        case updatedAt = "updated_at"
+        case teams
         
         case deactivatedAt = "deactivated_at"
         
+        case online
+        
+        case shadowBanned = "shadow_banned"
+        
+        case updatedAt = "updated_at"
+        
+        case pushNotifications = "push_notifications"
+        
+        case custom = "Custom"
+        
         case deletedAt = "deleted_at"
+        
+        case language
+        
+        case lastActive = "last_active"
+        
+        case role
         
         case createdAt = "created_at"
         
         case id
         
-        case language
-        
-        case teams
-        
-        case banExpires = "ban_expires"
-        
-        case banned
-        
-        case role
-        
         case invisible
         
-        case pushNotifications = "push_notifications"
+        case revokeTokensIssuedBefore = "revoke_tokens_issued_before"
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(online, forKey: .online)
+        try container.encode(banExpires, forKey: .banExpires)
         
-        try container.encode(revokeTokensIssuedBefore, forKey: .revokeTokensIssuedBefore)
+        try container.encode(banned, forKey: .banned)
         
-        try container.encode(shadowBanned, forKey: .shadowBanned)
-        
-        try container.encode(custom, forKey: .custom)
-        
-        try container.encode(lastActive, forKey: .lastActive)
-        
-        try container.encode(updatedAt, forKey: .updatedAt)
+        try container.encode(teams, forKey: .teams)
         
         try container.encode(deactivatedAt, forKey: .deactivatedAt)
         
+        try container.encode(online, forKey: .online)
+        
+        try container.encode(shadowBanned, forKey: .shadowBanned)
+        
+        try container.encode(updatedAt, forKey: .updatedAt)
+        
+        try container.encode(pushNotifications, forKey: .pushNotifications)
+        
+        try container.encode(custom, forKey: .custom)
+        
         try container.encode(deletedAt, forKey: .deletedAt)
+        
+        try container.encode(language, forKey: .language)
+        
+        try container.encode(lastActive, forKey: .lastActive)
+        
+        try container.encode(role, forKey: .role)
         
         try container.encode(createdAt, forKey: .createdAt)
         
         try container.encode(id, forKey: .id)
         
-        try container.encode(language, forKey: .language)
-        
-        try container.encode(teams, forKey: .teams)
-        
-        try container.encode(banExpires, forKey: .banExpires)
-        
-        try container.encode(banned, forKey: .banned)
-        
-        try container.encode(role, forKey: .role)
-        
         try container.encode(invisible, forKey: .invisible)
         
-        try container.encode(pushNotifications, forKey: .pushNotifications)
+        try container.encode(revokeTokensIssuedBefore, forKey: .revokeTokensIssuedBefore)
     }
 }

@@ -5,27 +5,27 @@
 import Foundation
 
 public struct StreamChatDeleteChannelsRequest: Codable, Hashable {
-    public var cids: [String]?
-    
     public var hardDelete: Bool?
     
-    public init(cids: [String]?, hardDelete: Bool?) {
-        self.cids = cids
-        
+    public var cids: [String]?
+    
+    public init(hardDelete: Bool?, cids: [String]?) {
         self.hardDelete = hardDelete
+        
+        self.cids = cids
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case cids
-        
         case hardDelete = "hard_delete"
+        
+        case cids
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(cids, forKey: .cids)
-        
         try container.encode(hardDelete, forKey: .hardDelete)
+        
+        try container.encode(cids, forKey: .cids)
     }
 }

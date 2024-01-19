@@ -5,219 +5,219 @@
 import Foundation
 
 public struct StreamChatPushProvider: Codable, Hashable {
-    public var name: String
-    
-    public var apnKeyId: String?
-    
-    public var disabledAt: Date?
+    public var firebaseApnTemplate: String?
     
     public var firebaseCredentials: String?
     
-    public var apnTopic: String?
-    
-    public var type: Int
-    
-    public var updatedAt: Date
-    
-    public var disabledReason: String?
-    
-    public var firebaseApnTemplate: String?
+    public var description: String?
     
     public var firebaseNotificationTemplate: String?
     
-    public var huaweiAppSecret: String?
-    
-    public var xiaomiPackageName: String?
-    
-    public var apnDevelopment: Bool?
-    
-    public var apnHost: String?
-    
-    public var apnP12Cert: String?
-    
-    public var createdAt: Date
-    
-    public var firebaseHost: String?
-    
-    public var xiaomiAppSecret: String?
-    
-    public var apnAuthKey: String?
-    
-    public var apnNotificationTemplate: String?
-    
-    public var description: String?
-    
-    public var firebaseDataTemplate: String?
-    
     public var huaweiAppId: String?
     
-    public var apnAuthType: String?
+    public var huaweiAppSecret: String?
+    
+    public var disabledAt: Date?
+    
+    public var apnNotificationTemplate: String?
     
     public var apnTeamId: String?
     
     public var firebaseServerKey: String?
     
-    public init(name: String, apnKeyId: String?, disabledAt: Date?, firebaseCredentials: String?, apnTopic: String?, type: Int, updatedAt: Date, disabledReason: String?, firebaseApnTemplate: String?, firebaseNotificationTemplate: String?, huaweiAppSecret: String?, xiaomiPackageName: String?, apnDevelopment: Bool?, apnHost: String?, apnP12Cert: String?, createdAt: Date, firebaseHost: String?, xiaomiAppSecret: String?, apnAuthKey: String?, apnNotificationTemplate: String?, description: String?, firebaseDataTemplate: String?, huaweiAppId: String?, apnAuthType: String?, apnTeamId: String?, firebaseServerKey: String?) {
-        self.name = name
-        
-        self.apnKeyId = apnKeyId
-        
-        self.disabledAt = disabledAt
+    public var firebaseHost: String?
+    
+    public var type: Int
+    
+    public var updatedAt: Date
+    
+    public var apnAuthKey: String?
+    
+    public var name: String
+    
+    public var xiaomiAppSecret: String?
+    
+    public var apnKeyId: String?
+    
+    public var disabledReason: String?
+    
+    public var firebaseDataTemplate: String?
+    
+    public var apnHost: String?
+    
+    public var apnDevelopment: Bool?
+    
+    public var apnTopic: String?
+    
+    public var createdAt: Date
+    
+    public var apnAuthType: String?
+    
+    public var xiaomiPackageName: String?
+    
+    public var apnP12Cert: String?
+    
+    public init(firebaseApnTemplate: String?, firebaseCredentials: String?, description: String?, firebaseNotificationTemplate: String?, huaweiAppId: String?, huaweiAppSecret: String?, disabledAt: Date?, apnNotificationTemplate: String?, apnTeamId: String?, firebaseServerKey: String?, firebaseHost: String?, type: Int, updatedAt: Date, apnAuthKey: String?, name: String, xiaomiAppSecret: String?, apnKeyId: String?, disabledReason: String?, firebaseDataTemplate: String?, apnHost: String?, apnDevelopment: Bool?, apnTopic: String?, createdAt: Date, apnAuthType: String?, xiaomiPackageName: String?, apnP12Cert: String?) {
+        self.firebaseApnTemplate = firebaseApnTemplate
         
         self.firebaseCredentials = firebaseCredentials
         
-        self.apnTopic = apnTopic
+        self.description = description
+        
+        self.firebaseNotificationTemplate = firebaseNotificationTemplate
+        
+        self.huaweiAppId = huaweiAppId
+        
+        self.huaweiAppSecret = huaweiAppSecret
+        
+        self.disabledAt = disabledAt
+        
+        self.apnNotificationTemplate = apnNotificationTemplate
+        
+        self.apnTeamId = apnTeamId
+        
+        self.firebaseServerKey = firebaseServerKey
+        
+        self.firebaseHost = firebaseHost
         
         self.type = type
         
         self.updatedAt = updatedAt
         
-        self.disabledReason = disabledReason
+        self.apnAuthKey = apnAuthKey
         
-        self.firebaseApnTemplate = firebaseApnTemplate
-        
-        self.firebaseNotificationTemplate = firebaseNotificationTemplate
-        
-        self.huaweiAppSecret = huaweiAppSecret
-        
-        self.xiaomiPackageName = xiaomiPackageName
-        
-        self.apnDevelopment = apnDevelopment
-        
-        self.apnHost = apnHost
-        
-        self.apnP12Cert = apnP12Cert
-        
-        self.createdAt = createdAt
-        
-        self.firebaseHost = firebaseHost
+        self.name = name
         
         self.xiaomiAppSecret = xiaomiAppSecret
         
-        self.apnAuthKey = apnAuthKey
+        self.apnKeyId = apnKeyId
         
-        self.apnNotificationTemplate = apnNotificationTemplate
-        
-        self.description = description
+        self.disabledReason = disabledReason
         
         self.firebaseDataTemplate = firebaseDataTemplate
         
-        self.huaweiAppId = huaweiAppId
+        self.apnHost = apnHost
+        
+        self.apnDevelopment = apnDevelopment
+        
+        self.apnTopic = apnTopic
+        
+        self.createdAt = createdAt
         
         self.apnAuthType = apnAuthType
         
-        self.apnTeamId = apnTeamId
+        self.xiaomiPackageName = xiaomiPackageName
         
-        self.firebaseServerKey = firebaseServerKey
+        self.apnP12Cert = apnP12Cert
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case name
-        
-        case apnKeyId = "apn_key_id"
-        
-        case disabledAt = "disabled_at"
+        case firebaseApnTemplate = "firebase_apn_template"
         
         case firebaseCredentials = "firebase_credentials"
         
-        case apnTopic = "apn_topic"
+        case description
+        
+        case firebaseNotificationTemplate = "firebase_notification_template"
+        
+        case huaweiAppId = "huawei_app_id"
+        
+        case huaweiAppSecret = "huawei_app_secret"
+        
+        case disabledAt = "disabled_at"
+        
+        case apnNotificationTemplate = "apn_notification_template"
+        
+        case apnTeamId = "apn_team_id"
+        
+        case firebaseServerKey = "firebase_server_key"
+        
+        case firebaseHost = "firebase_host"
         
         case type
         
         case updatedAt = "updated_at"
         
-        case disabledReason = "disabled_reason"
+        case apnAuthKey = "apn_auth_key"
         
-        case firebaseApnTemplate = "firebase_apn_template"
-        
-        case firebaseNotificationTemplate = "firebase_notification_template"
-        
-        case huaweiAppSecret = "huawei_app_secret"
-        
-        case xiaomiPackageName = "xiaomi_package_name"
-        
-        case apnDevelopment = "apn_development"
-        
-        case apnHost = "apn_host"
-        
-        case apnP12Cert = "apn_p12_cert"
-        
-        case createdAt = "created_at"
-        
-        case firebaseHost = "firebase_host"
+        case name
         
         case xiaomiAppSecret = "xiaomi_app_secret"
         
-        case apnAuthKey = "apn_auth_key"
+        case apnKeyId = "apn_key_id"
         
-        case apnNotificationTemplate = "apn_notification_template"
-        
-        case description
+        case disabledReason = "disabled_reason"
         
         case firebaseDataTemplate = "firebase_data_template"
         
-        case huaweiAppId = "huawei_app_id"
+        case apnHost = "apn_host"
+        
+        case apnDevelopment = "apn_development"
+        
+        case apnTopic = "apn_topic"
+        
+        case createdAt = "created_at"
         
         case apnAuthType = "apn_auth_type"
         
-        case apnTeamId = "apn_team_id"
+        case xiaomiPackageName = "xiaomi_package_name"
         
-        case firebaseServerKey = "firebase_server_key"
+        case apnP12Cert = "apn_p12_cert"
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(name, forKey: .name)
-        
-        try container.encode(apnKeyId, forKey: .apnKeyId)
-        
-        try container.encode(disabledAt, forKey: .disabledAt)
+        try container.encode(firebaseApnTemplate, forKey: .firebaseApnTemplate)
         
         try container.encode(firebaseCredentials, forKey: .firebaseCredentials)
         
-        try container.encode(apnTopic, forKey: .apnTopic)
+        try container.encode(description, forKey: .description)
+        
+        try container.encode(firebaseNotificationTemplate, forKey: .firebaseNotificationTemplate)
+        
+        try container.encode(huaweiAppId, forKey: .huaweiAppId)
+        
+        try container.encode(huaweiAppSecret, forKey: .huaweiAppSecret)
+        
+        try container.encode(disabledAt, forKey: .disabledAt)
+        
+        try container.encode(apnNotificationTemplate, forKey: .apnNotificationTemplate)
+        
+        try container.encode(apnTeamId, forKey: .apnTeamId)
+        
+        try container.encode(firebaseServerKey, forKey: .firebaseServerKey)
+        
+        try container.encode(firebaseHost, forKey: .firebaseHost)
         
         try container.encode(type, forKey: .type)
         
         try container.encode(updatedAt, forKey: .updatedAt)
         
-        try container.encode(disabledReason, forKey: .disabledReason)
+        try container.encode(apnAuthKey, forKey: .apnAuthKey)
         
-        try container.encode(firebaseApnTemplate, forKey: .firebaseApnTemplate)
-        
-        try container.encode(firebaseNotificationTemplate, forKey: .firebaseNotificationTemplate)
-        
-        try container.encode(huaweiAppSecret, forKey: .huaweiAppSecret)
-        
-        try container.encode(xiaomiPackageName, forKey: .xiaomiPackageName)
-        
-        try container.encode(apnDevelopment, forKey: .apnDevelopment)
-        
-        try container.encode(apnHost, forKey: .apnHost)
-        
-        try container.encode(apnP12Cert, forKey: .apnP12Cert)
-        
-        try container.encode(createdAt, forKey: .createdAt)
-        
-        try container.encode(firebaseHost, forKey: .firebaseHost)
+        try container.encode(name, forKey: .name)
         
         try container.encode(xiaomiAppSecret, forKey: .xiaomiAppSecret)
         
-        try container.encode(apnAuthKey, forKey: .apnAuthKey)
+        try container.encode(apnKeyId, forKey: .apnKeyId)
         
-        try container.encode(apnNotificationTemplate, forKey: .apnNotificationTemplate)
-        
-        try container.encode(description, forKey: .description)
+        try container.encode(disabledReason, forKey: .disabledReason)
         
         try container.encode(firebaseDataTemplate, forKey: .firebaseDataTemplate)
         
-        try container.encode(huaweiAppId, forKey: .huaweiAppId)
+        try container.encode(apnHost, forKey: .apnHost)
+        
+        try container.encode(apnDevelopment, forKey: .apnDevelopment)
+        
+        try container.encode(apnTopic, forKey: .apnTopic)
+        
+        try container.encode(createdAt, forKey: .createdAt)
         
         try container.encode(apnAuthType, forKey: .apnAuthType)
         
-        try container.encode(apnTeamId, forKey: .apnTeamId)
+        try container.encode(xiaomiPackageName, forKey: .xiaomiPackageName)
         
-        try container.encode(firebaseServerKey, forKey: .firebaseServerKey)
+        try container.encode(apnP12Cert, forKey: .apnP12Cert)
     }
 }

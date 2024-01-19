@@ -5,8 +5,6 @@
 import Foundation
 
 public struct StreamChatMuteUserResponse: Codable, Hashable {
-    public var duration: String
-    
     public var mute: StreamChatUserMute?
     
     public var mutes: [StreamChatUserMute?]?
@@ -15,9 +13,9 @@ public struct StreamChatMuteUserResponse: Codable, Hashable {
     
     public var ownUser: StreamChatOwnUser?
     
-    public init(duration: String, mute: StreamChatUserMute?, mutes: [StreamChatUserMute?]?, nonExistingUsers: [String]?, ownUser: StreamChatOwnUser?) {
-        self.duration = duration
-        
+    public var duration: String
+    
+    public init(mute: StreamChatUserMute?, mutes: [StreamChatUserMute?]?, nonExistingUsers: [String]?, ownUser: StreamChatOwnUser?, duration: String) {
         self.mute = mute
         
         self.mutes = mutes
@@ -25,11 +23,11 @@ public struct StreamChatMuteUserResponse: Codable, Hashable {
         self.nonExistingUsers = nonExistingUsers
         
         self.ownUser = ownUser
+        
+        self.duration = duration
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case duration
-        
         case mute
         
         case mutes
@@ -37,12 +35,12 @@ public struct StreamChatMuteUserResponse: Codable, Hashable {
         case nonExistingUsers = "non_existing_users"
         
         case ownUser = "own_user"
+        
+        case duration
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
-        try container.encode(duration, forKey: .duration)
         
         try container.encode(mute, forKey: .mute)
         
@@ -51,5 +49,7 @@ public struct StreamChatMuteUserResponse: Codable, Hashable {
         try container.encode(nonExistingUsers, forKey: .nonExistingUsers)
         
         try container.encode(ownUser, forKey: .ownUser)
+        
+        try container.encode(duration, forKey: .duration)
     }
 }

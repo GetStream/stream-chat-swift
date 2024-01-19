@@ -5,21 +5,21 @@
 import Foundation
 
 public struct StreamChatChannelStateResponse: Codable, Hashable {
-    public var membership: StreamChatChannelMember?
-    
-    public var pendingMessages: [StreamChatPendingMessage?]?
-    
     public var pinnedMessages: [StreamChatMessage]
     
     public var watcherCount: Int?
     
-    public var duration: String
+    public var hidden: Bool?
+    
+    public var messages: [StreamChatMessage]
     
     public var hideMessagesBefore: Date?
     
     public var members: [StreamChatChannelMember?]
     
-    public var messages: [StreamChatMessage]
+    public var membership: StreamChatChannelMember?
+    
+    public var pendingMessages: [StreamChatPendingMessage?]?
     
     public var read: [StreamChatRead?]?
     
@@ -27,24 +27,24 @@ public struct StreamChatChannelStateResponse: Codable, Hashable {
     
     public var channel: StreamChatChannelResponse?
     
-    public var hidden: Bool?
+    public var duration: String
     
-    public init(membership: StreamChatChannelMember?, pendingMessages: [StreamChatPendingMessage?]?, pinnedMessages: [StreamChatMessage], watcherCount: Int?, duration: String, hideMessagesBefore: Date?, members: [StreamChatChannelMember?], messages: [StreamChatMessage], read: [StreamChatRead?]?, watchers: [StreamChatUserObject]?, channel: StreamChatChannelResponse?, hidden: Bool?) {
-        self.membership = membership
-        
-        self.pendingMessages = pendingMessages
-        
+    public init(pinnedMessages: [StreamChatMessage], watcherCount: Int?, hidden: Bool?, messages: [StreamChatMessage], hideMessagesBefore: Date?, members: [StreamChatChannelMember?], membership: StreamChatChannelMember?, pendingMessages: [StreamChatPendingMessage?]?, read: [StreamChatRead?]?, watchers: [StreamChatUserObject]?, channel: StreamChatChannelResponse?, duration: String) {
         self.pinnedMessages = pinnedMessages
         
         self.watcherCount = watcherCount
         
-        self.duration = duration
+        self.hidden = hidden
+        
+        self.messages = messages
         
         self.hideMessagesBefore = hideMessagesBefore
         
         self.members = members
         
-        self.messages = messages
+        self.membership = membership
+        
+        self.pendingMessages = pendingMessages
         
         self.read = read
         
@@ -52,25 +52,25 @@ public struct StreamChatChannelStateResponse: Codable, Hashable {
         
         self.channel = channel
         
-        self.hidden = hidden
+        self.duration = duration
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case membership
-        
-        case pendingMessages = "pending_messages"
-        
         case pinnedMessages = "pinned_messages"
         
         case watcherCount = "watcher_count"
         
-        case duration
+        case hidden
+        
+        case messages
         
         case hideMessagesBefore = "hide_messages_before"
         
         case members
         
-        case messages
+        case membership
+        
+        case pendingMessages = "pending_messages"
         
         case read
         
@@ -78,27 +78,27 @@ public struct StreamChatChannelStateResponse: Codable, Hashable {
         
         case channel
         
-        case hidden
+        case duration
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(membership, forKey: .membership)
-        
-        try container.encode(pendingMessages, forKey: .pendingMessages)
-        
         try container.encode(pinnedMessages, forKey: .pinnedMessages)
         
         try container.encode(watcherCount, forKey: .watcherCount)
         
-        try container.encode(duration, forKey: .duration)
+        try container.encode(hidden, forKey: .hidden)
+        
+        try container.encode(messages, forKey: .messages)
         
         try container.encode(hideMessagesBefore, forKey: .hideMessagesBefore)
         
         try container.encode(members, forKey: .members)
         
-        try container.encode(messages, forKey: .messages)
+        try container.encode(membership, forKey: .membership)
+        
+        try container.encode(pendingMessages, forKey: .pendingMessages)
         
         try container.encode(read, forKey: .read)
         
@@ -106,6 +106,6 @@ public struct StreamChatChannelStateResponse: Codable, Hashable {
         
         try container.encode(channel, forKey: .channel)
         
-        try container.encode(hidden, forKey: .hidden)
+        try container.encode(duration, forKey: .duration)
     }
 }

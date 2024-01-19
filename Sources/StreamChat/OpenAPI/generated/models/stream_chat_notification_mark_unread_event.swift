@@ -5,131 +5,131 @@
 import Foundation
 
 public struct StreamChatNotificationMarkUnreadEvent: Codable, Hashable, Event {
-    public var cid: String
+    public var channel: StreamChatChannelResponse?
     
     public var createdAt: Date
     
-    public var totalUnreadCount: Int
-    
-    public var lastReadAt: Date
+    public var unreadChannels: Int
     
     public var unreadMessages: Int
     
     public var channelId: String
     
+    public var cid: String
+    
+    public var totalUnreadCount: Int
+    
+    public var user: StreamChatUserObject?
+    
+    public var channelType: String
+    
     public var firstUnreadMessageId: String
     
     public var lastReadMessageId: String?
     
-    public var user: StreamChatUserObject?
+    public var unreadCount: Int
     
-    public var channel: StreamChatChannelResponse?
-    
-    public var channelType: String
+    public var lastReadAt: Date
     
     public var team: String?
     
     public var type: String
     
-    public var unreadChannels: Int
-    
-    public var unreadCount: Int
-    
-    public init(cid: String, createdAt: Date, totalUnreadCount: Int, lastReadAt: Date, unreadMessages: Int, channelId: String, firstUnreadMessageId: String, lastReadMessageId: String?, user: StreamChatUserObject?, channel: StreamChatChannelResponse?, channelType: String, team: String?, type: String, unreadChannels: Int, unreadCount: Int) {
-        self.cid = cid
+    public init(channel: StreamChatChannelResponse?, createdAt: Date, unreadChannels: Int, unreadMessages: Int, channelId: String, cid: String, totalUnreadCount: Int, user: StreamChatUserObject?, channelType: String, firstUnreadMessageId: String, lastReadMessageId: String?, unreadCount: Int, lastReadAt: Date, team: String?, type: String) {
+        self.channel = channel
         
         self.createdAt = createdAt
         
-        self.totalUnreadCount = totalUnreadCount
-        
-        self.lastReadAt = lastReadAt
+        self.unreadChannels = unreadChannels
         
         self.unreadMessages = unreadMessages
         
         self.channelId = channelId
         
+        self.cid = cid
+        
+        self.totalUnreadCount = totalUnreadCount
+        
+        self.user = user
+        
+        self.channelType = channelType
+        
         self.firstUnreadMessageId = firstUnreadMessageId
         
         self.lastReadMessageId = lastReadMessageId
         
-        self.user = user
+        self.unreadCount = unreadCount
         
-        self.channel = channel
-        
-        self.channelType = channelType
+        self.lastReadAt = lastReadAt
         
         self.team = team
         
         self.type = type
-        
-        self.unreadChannels = unreadChannels
-        
-        self.unreadCount = unreadCount
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case cid
+        case channel
         
         case createdAt = "created_at"
         
-        case totalUnreadCount = "total_unread_count"
-        
-        case lastReadAt = "last_read_at"
+        case unreadChannels = "unread_channels"
         
         case unreadMessages = "unread_messages"
         
         case channelId = "channel_id"
         
+        case cid
+        
+        case totalUnreadCount = "total_unread_count"
+        
+        case user
+        
+        case channelType = "channel_type"
+        
         case firstUnreadMessageId = "first_unread_message_id"
         
         case lastReadMessageId = "last_read_message_id"
         
-        case user
+        case unreadCount = "unread_count"
         
-        case channel
-        
-        case channelType = "channel_type"
+        case lastReadAt = "last_read_at"
         
         case team
         
         case type
-        
-        case unreadChannels = "unread_channels"
-        
-        case unreadCount = "unread_count"
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(cid, forKey: .cid)
+        try container.encode(channel, forKey: .channel)
         
         try container.encode(createdAt, forKey: .createdAt)
         
-        try container.encode(totalUnreadCount, forKey: .totalUnreadCount)
-        
-        try container.encode(lastReadAt, forKey: .lastReadAt)
+        try container.encode(unreadChannels, forKey: .unreadChannels)
         
         try container.encode(unreadMessages, forKey: .unreadMessages)
         
         try container.encode(channelId, forKey: .channelId)
         
+        try container.encode(cid, forKey: .cid)
+        
+        try container.encode(totalUnreadCount, forKey: .totalUnreadCount)
+        
+        try container.encode(user, forKey: .user)
+        
+        try container.encode(channelType, forKey: .channelType)
+        
         try container.encode(firstUnreadMessageId, forKey: .firstUnreadMessageId)
         
         try container.encode(lastReadMessageId, forKey: .lastReadMessageId)
         
-        try container.encode(user, forKey: .user)
+        try container.encode(unreadCount, forKey: .unreadCount)
         
-        try container.encode(channel, forKey: .channel)
-        
-        try container.encode(channelType, forKey: .channelType)
+        try container.encode(lastReadAt, forKey: .lastReadAt)
         
         try container.encode(team, forKey: .team)
         
         try container.encode(type, forKey: .type)
-        
-        try container.encode(unreadChannels, forKey: .unreadChannels)
-        
-        try container.encode(unreadCount, forKey: .unreadCount)
     }
 }

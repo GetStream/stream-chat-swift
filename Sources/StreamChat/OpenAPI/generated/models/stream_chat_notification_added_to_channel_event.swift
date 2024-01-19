@@ -5,12 +5,6 @@
 import Foundation
 
 public struct StreamChatNotificationAddedToChannelEvent: Codable, Hashable, Event {
-    public var createdAt: Date
-    
-    public var member: StreamChatChannelMember?
-    
-    public var type: String
-    
     public var channel: StreamChatChannelResponse?
     
     public var channelId: String
@@ -19,13 +13,13 @@ public struct StreamChatNotificationAddedToChannelEvent: Codable, Hashable, Even
     
     public var cid: String
     
-    public init(createdAt: Date, member: StreamChatChannelMember?, type: String, channel: StreamChatChannelResponse?, channelId: String, channelType: String, cid: String) {
-        self.createdAt = createdAt
-        
-        self.member = member
-        
-        self.type = type
-        
+    public var createdAt: Date
+    
+    public var member: StreamChatChannelMember?
+    
+    public var type: String
+    
+    public init(channel: StreamChatChannelResponse?, channelId: String, channelType: String, cid: String, createdAt: Date, member: StreamChatChannelMember?, type: String) {
         self.channel = channel
         
         self.channelId = channelId
@@ -33,15 +27,15 @@ public struct StreamChatNotificationAddedToChannelEvent: Codable, Hashable, Even
         self.channelType = channelType
         
         self.cid = cid
+        
+        self.createdAt = createdAt
+        
+        self.member = member
+        
+        self.type = type
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case createdAt = "created_at"
-        
-        case member
-        
-        case type
-        
         case channel
         
         case channelId = "channel_id"
@@ -49,16 +43,16 @@ public struct StreamChatNotificationAddedToChannelEvent: Codable, Hashable, Even
         case channelType = "channel_type"
         
         case cid
+        
+        case createdAt = "created_at"
+        
+        case member
+        
+        case type
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
-        try container.encode(createdAt, forKey: .createdAt)
-        
-        try container.encode(member, forKey: .member)
-        
-        try container.encode(type, forKey: .type)
         
         try container.encode(channel, forKey: .channel)
         
@@ -67,5 +61,11 @@ public struct StreamChatNotificationAddedToChannelEvent: Codable, Hashable, Even
         try container.encode(channelType, forKey: .channelType)
         
         try container.encode(cid, forKey: .cid)
+        
+        try container.encode(createdAt, forKey: .createdAt)
+        
+        try container.encode(member, forKey: .member)
+        
+        try container.encode(type, forKey: .type)
     }
 }

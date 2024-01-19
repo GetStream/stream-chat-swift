@@ -143,19 +143,20 @@ class ChannelListUpdater: Worker {
         }
 
         let request = StreamChatQueryChannelsRequest(
+            offset: channelListQuery.pagination.offset,
+            presence: channelListQuery.options.contains(.presence),
             sort: sort,
             state: channelListQuery.options.contains(.state),
-            user: nil,
-            watch: channelListQuery.options.contains(.watch),
             connectionId: nil,
             limit: channelListQuery.pagination.pageSize,
-            presence: channelListQuery.options.contains(.presence),
-            offset: channelListQuery.pagination.offset,
-            userId: nil,
-            filterConditions: filter,
             memberLimit: channelListQuery.membersLimit,
-            messageLimit: channelListQuery.messagesLimit
+            userId: nil,
+            watch: channelListQuery.options.contains(.watch),
+            filterConditions: filter,
+            messageLimit: channelListQuery.messagesLimit,
+            user: nil
         )
+        
         let requiresConnectionId = channelListQuery.options.contains(oneOf: [.presence, .state, .watch])
         api.queryChannels(
             queryChannelsRequest: request,

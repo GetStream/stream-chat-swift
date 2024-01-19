@@ -5,35 +5,35 @@
 import Foundation
 
 public struct StreamChatHideChannelRequest: Codable, Hashable {
+    public var userId: String?
+    
     public var clearHistory: Bool?
     
     public var user: StreamChatUserObjectRequest?
     
-    public var userId: String?
-    
-    public init(clearHistory: Bool?, user: StreamChatUserObjectRequest?, userId: String?) {
+    public init(userId: String?, clearHistory: Bool?, user: StreamChatUserObjectRequest?) {
+        self.userId = userId
+        
         self.clearHistory = clearHistory
         
         self.user = user
-        
-        self.userId = userId
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
+        case userId = "user_id"
+        
         case clearHistory = "clear_history"
         
         case user
-        
-        case userId = "user_id"
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
+        try container.encode(userId, forKey: .userId)
+        
         try container.encode(clearHistory, forKey: .clearHistory)
         
         try container.encode(user, forKey: .user)
-        
-        try container.encode(userId, forKey: .userId)
     }
 }

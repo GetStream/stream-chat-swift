@@ -5,291 +5,291 @@
 import Foundation
 
 public struct StreamChatSearchResultMessage: Codable, Hashable {
-    public var custom: [String: RawJSON]
+    public var pinExpires: Date?
+    
+    public var pinnedAt: Date?
+    
+    public var cid: String
     
     public var deletedReplyCount: Int
     
-    public var reactionCounts: [String: RawJSON]
+    public var ownReactions: [StreamChatReaction?]
     
-    public var showInChannel: Bool?
+    public var i18n: [String: RawJSON]?
+    
+    public var pinnedBy: StreamChatUserObject?
+    
+    public var updatedAt: Date
     
     public var silent: Bool
     
-    public var pinned: Bool
+    public var channel: StreamChatChannelResponse?
     
-    public var pinnedAt: Date?
+    public var quotedMessageId: String?
+    
+    public var reactionCounts: [String: RawJSON]
+    
+    public var mml: String?
+    
+    public var beforeMessageSendFailed: Bool?
+    
+    public var createdAt: Date
+    
+    public var latestReactions: [StreamChatReaction?]
+    
+    public var pinned: Bool
     
     public var text: String
     
     public var user: StreamChatUserObject?
     
-    public var createdAt: Date
-    
-    public var id: String
+    public var imageLabels: [String: RawJSON]?
     
     public var mentionedUsers: [StreamChatUserObject]
     
-    public var ownReactions: [StreamChatReaction?]
+    public var parentId: String?
     
-    public var attachments: [StreamChatAttachment?]
-    
-    public var imageLabels: [String: RawJSON]?
-    
-    public var mml: String?
-    
-    public var pinnedBy: StreamChatUserObject?
-    
-    public var replyCount: Int
-    
-    public var html: String
-    
-    public var i18n: [String: RawJSON]?
-    
-    public var type: String
-    
-    public var command: String?
-    
-    public var latestReactions: [StreamChatReaction?]
+    public var showInChannel: Bool?
     
     public var threadParticipants: [StreamChatUserObject]?
     
-    public var updatedAt: Date
+    public var custom: [String: RawJSON]
     
-    public var beforeMessageSendFailed: Bool?
-    
-    public var deletedAt: Date?
-    
-    public var pinExpires: Date?
-    
-    public var quotedMessageId: String?
-    
-    public var shadowed: Bool
-    
-    public var channel: StreamChatChannelResponse?
-    
-    public var cid: String
-    
-    public var parentId: String?
-    
-    public var quotedMessage: StreamChatMessage?
+    public var id: String
     
     public var reactionScores: [String: RawJSON]
     
-    public init(custom: [String: RawJSON], deletedReplyCount: Int, reactionCounts: [String: RawJSON], showInChannel: Bool?, silent: Bool, pinned: Bool, pinnedAt: Date?, text: String, user: StreamChatUserObject?, createdAt: Date, id: String, mentionedUsers: [StreamChatUserObject], ownReactions: [StreamChatReaction?], attachments: [StreamChatAttachment?], imageLabels: [String: RawJSON]?, mml: String?, pinnedBy: StreamChatUserObject?, replyCount: Int, html: String, i18n: [String: RawJSON]?, type: String, command: String?, latestReactions: [StreamChatReaction?], threadParticipants: [StreamChatUserObject]?, updatedAt: Date, beforeMessageSendFailed: Bool?, deletedAt: Date?, pinExpires: Date?, quotedMessageId: String?, shadowed: Bool, channel: StreamChatChannelResponse?, cid: String, parentId: String?, quotedMessage: StreamChatMessage?, reactionScores: [String: RawJSON]) {
-        self.custom = custom
+    public var shadowed: Bool
+    
+    public var type: String
+    
+    public var attachments: [StreamChatAttachment?]
+    
+    public var html: String
+    
+    public var replyCount: Int
+    
+    public var command: String?
+    
+    public var deletedAt: Date?
+    
+    public var quotedMessage: StreamChatMessage?
+    
+    public init(pinExpires: Date?, pinnedAt: Date?, cid: String, deletedReplyCount: Int, ownReactions: [StreamChatReaction?], i18n: [String: RawJSON]?, pinnedBy: StreamChatUserObject?, updatedAt: Date, silent: Bool, channel: StreamChatChannelResponse?, quotedMessageId: String?, reactionCounts: [String: RawJSON], mml: String?, beforeMessageSendFailed: Bool?, createdAt: Date, latestReactions: [StreamChatReaction?], pinned: Bool, text: String, user: StreamChatUserObject?, imageLabels: [String: RawJSON]?, mentionedUsers: [StreamChatUserObject], parentId: String?, showInChannel: Bool?, threadParticipants: [StreamChatUserObject]?, custom: [String: RawJSON], id: String, reactionScores: [String: RawJSON], shadowed: Bool, type: String, attachments: [StreamChatAttachment?], html: String, replyCount: Int, command: String?, deletedAt: Date?, quotedMessage: StreamChatMessage?) {
+        self.pinExpires = pinExpires
+        
+        self.pinnedAt = pinnedAt
+        
+        self.cid = cid
         
         self.deletedReplyCount = deletedReplyCount
         
-        self.reactionCounts = reactionCounts
+        self.ownReactions = ownReactions
         
-        self.showInChannel = showInChannel
+        self.i18n = i18n
+        
+        self.pinnedBy = pinnedBy
+        
+        self.updatedAt = updatedAt
         
         self.silent = silent
         
-        self.pinned = pinned
+        self.channel = channel
         
-        self.pinnedAt = pinnedAt
+        self.quotedMessageId = quotedMessageId
+        
+        self.reactionCounts = reactionCounts
+        
+        self.mml = mml
+        
+        self.beforeMessageSendFailed = beforeMessageSendFailed
+        
+        self.createdAt = createdAt
+        
+        self.latestReactions = latestReactions
+        
+        self.pinned = pinned
         
         self.text = text
         
         self.user = user
         
-        self.createdAt = createdAt
-        
-        self.id = id
+        self.imageLabels = imageLabels
         
         self.mentionedUsers = mentionedUsers
         
-        self.ownReactions = ownReactions
+        self.parentId = parentId
         
-        self.attachments = attachments
-        
-        self.imageLabels = imageLabels
-        
-        self.mml = mml
-        
-        self.pinnedBy = pinnedBy
-        
-        self.replyCount = replyCount
-        
-        self.html = html
-        
-        self.i18n = i18n
-        
-        self.type = type
-        
-        self.command = command
-        
-        self.latestReactions = latestReactions
+        self.showInChannel = showInChannel
         
         self.threadParticipants = threadParticipants
         
-        self.updatedAt = updatedAt
+        self.custom = custom
         
-        self.beforeMessageSendFailed = beforeMessageSendFailed
+        self.id = id
         
-        self.deletedAt = deletedAt
-        
-        self.pinExpires = pinExpires
-        
-        self.quotedMessageId = quotedMessageId
+        self.reactionScores = reactionScores
         
         self.shadowed = shadowed
         
-        self.channel = channel
+        self.type = type
         
-        self.cid = cid
+        self.attachments = attachments
         
-        self.parentId = parentId
+        self.html = html
+        
+        self.replyCount = replyCount
+        
+        self.command = command
+        
+        self.deletedAt = deletedAt
         
         self.quotedMessage = quotedMessage
-        
-        self.reactionScores = reactionScores
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case custom = "Custom"
+        case pinExpires = "pin_expires"
+        
+        case pinnedAt = "pinned_at"
+        
+        case cid
         
         case deletedReplyCount = "deleted_reply_count"
         
-        case reactionCounts = "reaction_counts"
+        case ownReactions = "own_reactions"
         
-        case showInChannel = "show_in_channel"
+        case i18n
+        
+        case pinnedBy = "pinned_by"
+        
+        case updatedAt = "updated_at"
         
         case silent
         
-        case pinned
+        case channel
         
-        case pinnedAt = "pinned_at"
+        case quotedMessageId = "quoted_message_id"
+        
+        case reactionCounts = "reaction_counts"
+        
+        case mml
+        
+        case beforeMessageSendFailed = "before_message_send_failed"
+        
+        case createdAt = "created_at"
+        
+        case latestReactions = "latest_reactions"
+        
+        case pinned
         
         case text
         
         case user
         
-        case createdAt = "created_at"
-        
-        case id
+        case imageLabels = "image_labels"
         
         case mentionedUsers = "mentioned_users"
         
-        case ownReactions = "own_reactions"
+        case parentId = "parent_id"
         
-        case attachments
-        
-        case imageLabels = "image_labels"
-        
-        case mml
-        
-        case pinnedBy = "pinned_by"
-        
-        case replyCount = "reply_count"
-        
-        case html
-        
-        case i18n
-        
-        case type
-        
-        case command
-        
-        case latestReactions = "latest_reactions"
+        case showInChannel = "show_in_channel"
         
         case threadParticipants = "thread_participants"
         
-        case updatedAt = "updated_at"
+        case custom = "Custom"
         
-        case beforeMessageSendFailed = "before_message_send_failed"
+        case id
         
-        case deletedAt = "deleted_at"
-        
-        case pinExpires = "pin_expires"
-        
-        case quotedMessageId = "quoted_message_id"
+        case reactionScores = "reaction_scores"
         
         case shadowed
         
-        case channel
+        case type
         
-        case cid
+        case attachments
         
-        case parentId = "parent_id"
+        case html
+        
+        case replyCount = "reply_count"
+        
+        case command
+        
+        case deletedAt = "deleted_at"
         
         case quotedMessage = "quoted_message"
-        
-        case reactionScores = "reaction_scores"
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(custom, forKey: .custom)
+        try container.encode(pinExpires, forKey: .pinExpires)
+        
+        try container.encode(pinnedAt, forKey: .pinnedAt)
+        
+        try container.encode(cid, forKey: .cid)
         
         try container.encode(deletedReplyCount, forKey: .deletedReplyCount)
         
-        try container.encode(reactionCounts, forKey: .reactionCounts)
+        try container.encode(ownReactions, forKey: .ownReactions)
         
-        try container.encode(showInChannel, forKey: .showInChannel)
+        try container.encode(i18n, forKey: .i18n)
+        
+        try container.encode(pinnedBy, forKey: .pinnedBy)
+        
+        try container.encode(updatedAt, forKey: .updatedAt)
         
         try container.encode(silent, forKey: .silent)
         
-        try container.encode(pinned, forKey: .pinned)
+        try container.encode(channel, forKey: .channel)
         
-        try container.encode(pinnedAt, forKey: .pinnedAt)
+        try container.encode(quotedMessageId, forKey: .quotedMessageId)
+        
+        try container.encode(reactionCounts, forKey: .reactionCounts)
+        
+        try container.encode(mml, forKey: .mml)
+        
+        try container.encode(beforeMessageSendFailed, forKey: .beforeMessageSendFailed)
+        
+        try container.encode(createdAt, forKey: .createdAt)
+        
+        try container.encode(latestReactions, forKey: .latestReactions)
+        
+        try container.encode(pinned, forKey: .pinned)
         
         try container.encode(text, forKey: .text)
         
         try container.encode(user, forKey: .user)
         
-        try container.encode(createdAt, forKey: .createdAt)
-        
-        try container.encode(id, forKey: .id)
+        try container.encode(imageLabels, forKey: .imageLabels)
         
         try container.encode(mentionedUsers, forKey: .mentionedUsers)
         
-        try container.encode(ownReactions, forKey: .ownReactions)
+        try container.encode(parentId, forKey: .parentId)
         
-        try container.encode(attachments, forKey: .attachments)
-        
-        try container.encode(imageLabels, forKey: .imageLabels)
-        
-        try container.encode(mml, forKey: .mml)
-        
-        try container.encode(pinnedBy, forKey: .pinnedBy)
-        
-        try container.encode(replyCount, forKey: .replyCount)
-        
-        try container.encode(html, forKey: .html)
-        
-        try container.encode(i18n, forKey: .i18n)
-        
-        try container.encode(type, forKey: .type)
-        
-        try container.encode(command, forKey: .command)
-        
-        try container.encode(latestReactions, forKey: .latestReactions)
+        try container.encode(showInChannel, forKey: .showInChannel)
         
         try container.encode(threadParticipants, forKey: .threadParticipants)
         
-        try container.encode(updatedAt, forKey: .updatedAt)
+        try container.encode(custom, forKey: .custom)
         
-        try container.encode(beforeMessageSendFailed, forKey: .beforeMessageSendFailed)
+        try container.encode(id, forKey: .id)
         
-        try container.encode(deletedAt, forKey: .deletedAt)
-        
-        try container.encode(pinExpires, forKey: .pinExpires)
-        
-        try container.encode(quotedMessageId, forKey: .quotedMessageId)
+        try container.encode(reactionScores, forKey: .reactionScores)
         
         try container.encode(shadowed, forKey: .shadowed)
         
-        try container.encode(channel, forKey: .channel)
+        try container.encode(type, forKey: .type)
         
-        try container.encode(cid, forKey: .cid)
+        try container.encode(attachments, forKey: .attachments)
         
-        try container.encode(parentId, forKey: .parentId)
+        try container.encode(html, forKey: .html)
+        
+        try container.encode(replyCount, forKey: .replyCount)
+        
+        try container.encode(command, forKey: .command)
+        
+        try container.encode(deletedAt, forKey: .deletedAt)
         
         try container.encode(quotedMessage, forKey: .quotedMessage)
-        
-        try container.encode(reactionScores, forKey: .reactionScores)
     }
 }

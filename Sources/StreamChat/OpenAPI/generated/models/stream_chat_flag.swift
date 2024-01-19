@@ -5,11 +5,19 @@
 import Foundation
 
 public struct StreamChatFlag: Codable, Hashable {
+    public var createdAt: Date
+    
     public var rejectedAt: Date?
     
-    public var reviewedAt: Date?
+    public var targetMessageId: String?
+    
+    public var approvedAt: Date?
+    
+    public var createdByAutomod: Bool
     
     public var targetMessage: StreamChatMessage?
+    
+    public var targetUser: StreamChatUserObject?
     
     public var updatedAt: Date
     
@@ -17,26 +25,26 @@ public struct StreamChatFlag: Codable, Hashable {
     
     public var custom: [String: RawJSON]?
     
-    public var reason: String?
-    
-    public var createdByAutomod: Bool
-    
     public var details: StreamChatFlagDetails?
     
-    public var targetMessageId: String?
+    public var reason: String?
     
-    public var targetUser: StreamChatUserObject?
+    public var reviewedAt: Date?
     
-    public var approvedAt: Date?
-    
-    public var createdAt: Date
-    
-    public init(rejectedAt: Date?, reviewedAt: Date?, targetMessage: StreamChatMessage?, updatedAt: Date, user: StreamChatUserObject?, custom: [String: RawJSON]?, reason: String?, createdByAutomod: Bool, details: StreamChatFlagDetails?, targetMessageId: String?, targetUser: StreamChatUserObject?, approvedAt: Date?, createdAt: Date) {
+    public init(createdAt: Date, rejectedAt: Date?, targetMessageId: String?, approvedAt: Date?, createdByAutomod: Bool, targetMessage: StreamChatMessage?, targetUser: StreamChatUserObject?, updatedAt: Date, user: StreamChatUserObject?, custom: [String: RawJSON]?, details: StreamChatFlagDetails?, reason: String?, reviewedAt: Date?) {
+        self.createdAt = createdAt
+        
         self.rejectedAt = rejectedAt
         
-        self.reviewedAt = reviewedAt
+        self.targetMessageId = targetMessageId
+        
+        self.approvedAt = approvedAt
+        
+        self.createdByAutomod = createdByAutomod
         
         self.targetMessage = targetMessage
+        
+        self.targetUser = targetUser
         
         self.updatedAt = updatedAt
         
@@ -44,27 +52,27 @@ public struct StreamChatFlag: Codable, Hashable {
         
         self.custom = custom
         
-        self.reason = reason
-        
-        self.createdByAutomod = createdByAutomod
-        
         self.details = details
         
-        self.targetMessageId = targetMessageId
+        self.reason = reason
         
-        self.targetUser = targetUser
-        
-        self.approvedAt = approvedAt
-        
-        self.createdAt = createdAt
+        self.reviewedAt = reviewedAt
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
+        case createdAt = "created_at"
+        
         case rejectedAt = "rejected_at"
         
-        case reviewedAt = "reviewed_at"
+        case targetMessageId = "target_message_id"
+        
+        case approvedAt = "approved_at"
+        
+        case createdByAutomod = "created_by_automod"
         
         case targetMessage = "target_message"
+        
+        case targetUser = "target_user"
         
         case updatedAt = "updated_at"
         
@@ -72,29 +80,29 @@ public struct StreamChatFlag: Codable, Hashable {
         
         case custom
         
-        case reason
-        
-        case createdByAutomod = "created_by_automod"
-        
         case details
         
-        case targetMessageId = "target_message_id"
+        case reason
         
-        case targetUser = "target_user"
-        
-        case approvedAt = "approved_at"
-        
-        case createdAt = "created_at"
+        case reviewedAt = "reviewed_at"
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
+        try container.encode(createdAt, forKey: .createdAt)
+        
         try container.encode(rejectedAt, forKey: .rejectedAt)
         
-        try container.encode(reviewedAt, forKey: .reviewedAt)
+        try container.encode(targetMessageId, forKey: .targetMessageId)
+        
+        try container.encode(approvedAt, forKey: .approvedAt)
+        
+        try container.encode(createdByAutomod, forKey: .createdByAutomod)
         
         try container.encode(targetMessage, forKey: .targetMessage)
+        
+        try container.encode(targetUser, forKey: .targetUser)
         
         try container.encode(updatedAt, forKey: .updatedAt)
         
@@ -102,18 +110,10 @@ public struct StreamChatFlag: Codable, Hashable {
         
         try container.encode(custom, forKey: .custom)
         
-        try container.encode(reason, forKey: .reason)
-        
-        try container.encode(createdByAutomod, forKey: .createdByAutomod)
-        
         try container.encode(details, forKey: .details)
         
-        try container.encode(targetMessageId, forKey: .targetMessageId)
+        try container.encode(reason, forKey: .reason)
         
-        try container.encode(targetUser, forKey: .targetUser)
-        
-        try container.encode(approvedAt, forKey: .approvedAt)
-        
-        try container.encode(createdAt, forKey: .createdAt)
+        try container.encode(reviewedAt, forKey: .reviewedAt)
     }
 }

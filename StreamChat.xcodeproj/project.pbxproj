@@ -570,6 +570,128 @@
 		8413C4682B45747400190AF4 /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8413C4672B45747400190AF4 /* Helpers.swift */; };
 		8413CC462B4616E400190AF4 /* ChatAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8413CAC42B4616E300190AF4 /* ChatAPI.swift */; };
 		84196FA32805892500185E99 /* LocalMessageState+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84196FA22805892500185E99 /* LocalMessageState+Extensions.swift */; };
+		8419CED42B5AA432007F2CB3 /* stream_chat_update_call_response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE5A2B5AA426007F2CB3 /* stream_chat_update_call_response.swift */; };
+		8419CED52B5AA432007F2CB3 /* stream_chat_request_permission_response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE5B2B5AA426007F2CB3 /* stream_chat_request_permission_response.swift */; };
+		8419CED62B5AA432007F2CB3 /* stream_chat_transcription_settings_request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE5C2B5AA426007F2CB3 /* stream_chat_transcription_settings_request.swift */; };
+		8419CED72B5AA432007F2CB3 /* stream_chat_updated_call_permissions_event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE5D2B5AA426007F2CB3 /* stream_chat_updated_call_permissions_event.swift */; };
+		8419CED82B5AA432007F2CB3 /* stream_chat_target_resolution_request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE5E2B5AA426007F2CB3 /* stream_chat_target_resolution_request.swift */; };
+		8419CED92B5AA432007F2CB3 /* stream_chat_blocked_user_event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE5F2B5AA427007F2CB3 /* stream_chat_blocked_user_event.swift */; };
+		8419CEDA2B5AA432007F2CB3 /* stream_chat_stop_hlsbroadcasting_response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE602B5AA427007F2CB3 /* stream_chat_stop_hlsbroadcasting_response.swift */; };
+		8419CEDB2B5AA432007F2CB3 /* stream_chat_audio_settings_request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE612B5AA427007F2CB3 /* stream_chat_audio_settings_request.swift */; };
+		8419CEDC2B5AA432007F2CB3 /* stream_chat_mute_users_request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE622B5AA427007F2CB3 /* stream_chat_mute_users_request.swift */; };
+		8419CEDD2B5AA432007F2CB3 /* stream_chat_call_settings_request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE632B5AA427007F2CB3 /* stream_chat_call_settings_request.swift */; };
+		8419CEDE2B5AA432007F2CB3 /* stream_chat_member_response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE642B5AA427007F2CB3 /* stream_chat_member_response.swift */; };
+		8419CEDF2B5AA433007F2CB3 /* stream_chat_join_call_request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE652B5AA427007F2CB3 /* stream_chat_join_call_request.swift */; };
+		8419CEE02B5AA433007F2CB3 /* stream_chat_go_live_request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE662B5AA427007F2CB3 /* stream_chat_go_live_request.swift */; };
+		8419CEE12B5AA433007F2CB3 /* stream_chat_video_settings_request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE672B5AA427007F2CB3 /* stream_chat_video_settings_request.swift */; };
+		8419CEE22B5AA433007F2CB3 /* stream_chat_call_session_participant_left_event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE682B5AA428007F2CB3 /* stream_chat_call_session_participant_left_event.swift */; };
+		8419CEE32B5AA433007F2CB3 /* stream_chat_call_session_started_event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE692B5AA428007F2CB3 /* stream_chat_call_session_started_event.swift */; };
+		8419CEE42B5AA433007F2CB3 /* stream_chat_own_capability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE6A2B5AA428007F2CB3 /* stream_chat_own_capability.swift */; };
+		8419CEE52B5AA433007F2CB3 /* stream_chat_call_updated_event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE6B2B5AA428007F2CB3 /* stream_chat_call_updated_event.swift */; };
+		8419CEE62B5AA433007F2CB3 /* stream_chat_block_user_request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE6C2B5AA428007F2CB3 /* stream_chat_block_user_request.swift */; };
+		8419CEE72B5AA433007F2CB3 /* stream_chat_call_notification_event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE6D2B5AA428007F2CB3 /* stream_chat_call_notification_event.swift */; };
+		8419CEE82B5AA433007F2CB3 /* stream_chat_geofence_settings_request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE6E2B5AA428007F2CB3 /* stream_chat_geofence_settings_request.swift */; };
+		8419CEE92B5AA433007F2CB3 /* stream_chat_call_hlsbroadcasting_started_event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE6F2B5AA428007F2CB3 /* stream_chat_call_hlsbroadcasting_started_event.swift */; };
+		8419CEEA2B5AA433007F2CB3 /* stream_chat_call_member_updated_permission_event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE702B5AA428007F2CB3 /* stream_chat_call_member_updated_permission_event.swift */; };
+		8419CEEB2B5AA433007F2CB3 /* stream_chat_get_or_create_call_response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE712B5AA429007F2CB3 /* stream_chat_get_or_create_call_response.swift */; };
+		8419CEEC2B5AA433007F2CB3 /* stream_chat_call_state_response_fields.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE722B5AA429007F2CB3 /* stream_chat_call_state_response_fields.swift */; };
+		8419CEED2B5AA433007F2CB3 /* stream_chat_block_user_response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE732B5AA429007F2CB3 /* stream_chat_block_user_response.swift */; };
+		8419CEEE2B5AA433007F2CB3 /* stream_chat_call_settings_response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE742B5AA429007F2CB3 /* stream_chat_call_settings_response.swift */; };
+		8419CEEF2B5AA433007F2CB3 /* stream_chat_own_user_response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE752B5AA429007F2CB3 /* stream_chat_own_user_response.swift */; };
+		8419CEF02B5AA433007F2CB3 /* stream_chat_query_members_response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE762B5AA429007F2CB3 /* stream_chat_query_members_response.swift */; };
+		8419CEF12B5AA433007F2CB3 /* stream_chat_get_call_response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE772B5AA429007F2CB3 /* stream_chat_get_call_response.swift */; };
+		8419CEF22B5AA433007F2CB3 /* stream_chat_call_ended_event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE782B5AA429007F2CB3 /* stream_chat_call_ended_event.swift */; };
+		8419CEF32B5AA433007F2CB3 /* stream_chat_call_recording_started_event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE792B5AA429007F2CB3 /* stream_chat_call_recording_started_event.swift */; };
+		8419CEF42B5AA433007F2CB3 /* stream_chat_query_calls_response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE7A2B5AA42A007F2CB3 /* stream_chat_query_calls_response.swift */; };
+		8419CEF52B5AA433007F2CB3 /* stream_chat_stop_recording_request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE7B2B5AA42A007F2CB3 /* stream_chat_stop_recording_request.swift */; };
+		8419CEF62B5AA433007F2CB3 /* stream_chat_call_accepted_event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE7C2B5AA42A007F2CB3 /* stream_chat_call_accepted_event.swift */; };
+		8419CEF72B5AA433007F2CB3 /* stream_chat_call_member_updated_event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE7D2B5AA42A007F2CB3 /* stream_chat_call_member_updated_event.swift */; };
+		8419CEF82B5AA433007F2CB3 /* stream_chat_egress_rtmpresponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE7E2B5AA42A007F2CB3 /* stream_chat_egress_rtmpresponse.swift */; };
+		8419CEF92B5AA433007F2CB3 /* stream_chat_thumbnail_response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE7F2B5AA42A007F2CB3 /* stream_chat_thumbnail_response.swift */; };
+		8419CEFA2B5AA433007F2CB3 /* stream_chat_send_event_response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE802B5AA42A007F2CB3 /* stream_chat_send_event_response.swift */; };
+		8419CEFB2B5AA433007F2CB3 /* stream_chat_request_permission_request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE812B5AA42A007F2CB3 /* stream_chat_request_permission_request.swift */; };
+		8419CEFC2B5AA433007F2CB3 /* stream_chat_accept_call_response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE822B5AA42A007F2CB3 /* stream_chat_accept_call_response.swift */; };
+		8419CEFD2B5AA433007F2CB3 /* stream_chat_start_transcription_request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE832B5AA42B007F2CB3 /* stream_chat_start_transcription_request.swift */; };
+		8419CEFE2B5AA433007F2CB3 /* stream_chat_call_ring_event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE842B5AA42B007F2CB3 /* stream_chat_call_ring_event.swift */; };
+		8419CEFF2B5AA433007F2CB3 /* stream_chat_call_recording_failed_event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE852B5AA42B007F2CB3 /* stream_chat_call_recording_failed_event.swift */; };
+		8419CF002B5AA433007F2CB3 /* stream_chat_sfuresponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE862B5AA42B007F2CB3 /* stream_chat_sfuresponse.swift */; };
+		8419CF012B5AA433007F2CB3 /* stream_chat_start_hlsbroadcasting_request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE872B5AA42B007F2CB3 /* stream_chat_start_hlsbroadcasting_request.swift */; };
+		8419CF022B5AA433007F2CB3 /* stream_chat_egress_response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE882B5AA42B007F2CB3 /* stream_chat_egress_response.swift */; };
+		8419CF032B5AA433007F2CB3 /* stream_chat_screensharing_settings_request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE892B5AA42B007F2CB3 /* stream_chat_screensharing_settings_request.swift */; };
+		8419CF042B5AA433007F2CB3 /* stream_chat_unblock_user_request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE8A2B5AA42B007F2CB3 /* stream_chat_unblock_user_request.swift */; };
+		8419CF052B5AA433007F2CB3 /* stream_chat_update_user_permissions_request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE8B2B5AA42B007F2CB3 /* stream_chat_update_user_permissions_request.swift */; };
+		8419CF062B5AA433007F2CB3 /* stream_chat_query_calls_request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE8C2B5AA42C007F2CB3 /* stream_chat_query_calls_request.swift */; };
+		8419CF072B5AA433007F2CB3 /* stream_chat_call_member_removed_event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE8D2B5AA42C007F2CB3 /* stream_chat_call_member_removed_event.swift */; };
+		8419CF082B5AA433007F2CB3 /* stream_chat_list_recordings_response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE8E2B5AA42C007F2CB3 /* stream_chat_list_recordings_response.swift */; };
+		8419CF092B5AA433007F2CB3 /* stream_chat_call_response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE8F2B5AA42C007F2CB3 /* stream_chat_call_response.swift */; };
+		8419CF0A2B5AA433007F2CB3 /* stream_chat_hlssettings_response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE902B5AA42C007F2CB3 /* stream_chat_hlssettings_response.swift */; };
+		8419CF0B2B5AA433007F2CB3 /* stream_chat_call_hlsbroadcasting_stopped_event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE912B5AA42C007F2CB3 /* stream_chat_call_hlsbroadcasting_stopped_event.swift */; };
+		8419CF0C2B5AA433007F2CB3 /* stream_chat_call_recording.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE922B5AA42C007F2CB3 /* stream_chat_call_recording.swift */; };
+		8419CF0D2B5AA433007F2CB3 /* stream_chat_join_call_response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE932B5AA42C007F2CB3 /* stream_chat_join_call_response.swift */; };
+		8419CF0E2B5AA433007F2CB3 /* stream_chat_call_session_response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE942B5AA42C007F2CB3 /* stream_chat_call_session_response.swift */; };
+		8419CF0F2B5AA433007F2CB3 /* stream_chat_go_live_response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE952B5AA42C007F2CB3 /* stream_chat_go_live_response.swift */; };
+		8419CF102B5AA433007F2CB3 /* stream_chat_connected_event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE962B5AA42D007F2CB3 /* stream_chat_connected_event.swift */; };
+		8419CF112B5AA433007F2CB3 /* stream_chat_unpin_response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE972B5AA42D007F2CB3 /* stream_chat_unpin_response.swift */; };
+		8419CF122B5AA433007F2CB3 /* stream_chat_send_reaction_response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE982B5AA42D007F2CB3 /* stream_chat_send_reaction_response.swift */; };
+		8419CF132B5AA433007F2CB3 /* stream_chat_connection_error_event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE992B5AA42D007F2CB3 /* stream_chat_connection_error_event.swift */; };
+		8419CF142B5AA433007F2CB3 /* stream_chat_update_user_permissions_response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE9A2B5AA42D007F2CB3 /* stream_chat_update_user_permissions_response.swift */; };
+		8419CF152B5AA433007F2CB3 /* stream_chat_get_edges_response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE9B2B5AA42D007F2CB3 /* stream_chat_get_edges_response.swift */; };
+		8419CF162B5AA433007F2CB3 /* stream_chat_rtmpingress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE9C2B5AA42D007F2CB3 /* stream_chat_rtmpingress.swift */; };
+		8419CF172B5AA433007F2CB3 /* stream_chat_call_recording_stopped_event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE9D2B5AA42D007F2CB3 /* stream_chat_call_recording_stopped_event.swift */; };
+		8419CF182B5AA433007F2CB3 /* stream_chat_call_session_participant_joined_event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE9E2B5AA42D007F2CB3 /* stream_chat_call_session_participant_joined_event.swift */; };
+		8419CF192B5AA433007F2CB3 /* stream_chat_get_or_create_call_request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE9F2B5AA42D007F2CB3 /* stream_chat_get_or_create_call_request.swift */; };
+		8419CF1A2B5AA433007F2CB3 /* stream_chat_stop_live_request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CEA02B5AA42D007F2CB3 /* stream_chat_stop_live_request.swift */; };
+		8419CF1B2B5AA433007F2CB3 /* stream_chat_call_request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CEA12B5AA42E007F2CB3 /* stream_chat_call_request.swift */; };
+		8419CF1C2B5AA433007F2CB3 /* stream_chat_stop_transcription_request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CEA22B5AA42E007F2CB3 /* stream_chat_stop_transcription_request.swift */; };
+		8419CF1D2B5AA433007F2CB3 /* stream_chat_call_ingress_response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CEA32B5AA42E007F2CB3 /* stream_chat_call_ingress_response.swift */; };
+		8419CF1E2B5AA433007F2CB3 /* stream_chat_backstage_settings_request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CEA42B5AA42E007F2CB3 /* stream_chat_backstage_settings_request.swift */; };
+		8419CF1F2B5AA433007F2CB3 /* stream_chat_call_recording_ready_event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CEA52B5AA42E007F2CB3 /* stream_chat_call_recording_ready_event.swift */; };
+		8419CF202B5AA433007F2CB3 /* stream_chat_ring_settings_request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CEA62B5AA42E007F2CB3 /* stream_chat_ring_settings_request.swift */; };
+		8419CF212B5AA433007F2CB3 /* stream_chat_record_settings_request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CEA72B5AA42E007F2CB3 /* stream_chat_record_settings_request.swift */; };
+		8419CF222B5AA433007F2CB3 /* stream_chat_update_call_request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CEA82B5AA42E007F2CB3 /* stream_chat_update_call_request.swift */; };
+		8419CF232B5AA433007F2CB3 /* stream_chat_call_participant_response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CEA92B5AA42E007F2CB3 /* stream_chat_call_participant_response.swift */; };
+		8419CF242B5AA433007F2CB3 /* stream_chat_member_request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CEAA2B5AA42E007F2CB3 /* stream_chat_member_request.swift */; };
+		8419CF252B5AA433007F2CB3 /* stream_chat_edge_response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CEAB2B5AA42F007F2CB3 /* stream_chat_edge_response.swift */; };
+		8419CF262B5AA433007F2CB3 /* stream_chat_call_rejected_event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CEAC2B5AA42F007F2CB3 /* stream_chat_call_rejected_event.swift */; };
+		8419CF272B5AA433007F2CB3 /* stream_chat_call_hlsbroadcasting_failed_event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CEAD2B5AA42F007F2CB3 /* stream_chat_call_hlsbroadcasting_failed_event.swift */; };
+		8419CF282B5AA433007F2CB3 /* stream_chat_call_user_muted.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CEAE2B5AA42F007F2CB3 /* stream_chat_call_user_muted.swift */; };
+		8419CF292B5AA433007F2CB3 /* stream_chat_credentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CEAF2B5AA42F007F2CB3 /* stream_chat_credentials.swift */; };
+		8419CF2A2B5AA433007F2CB3 /* stream_chat_permission_request_event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CEB02B5AA42F007F2CB3 /* stream_chat_permission_request_event.swift */; };
+		8419CF2B2B5AA433007F2CB3 /* stream_chat_stop_live_response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CEB12B5AA42F007F2CB3 /* stream_chat_stop_live_response.swift */; };
+		8419CF2C2B5AA433007F2CB3 /* stream_chat_call_live_started_event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CEB22B5AA42F007F2CB3 /* stream_chat_call_live_started_event.swift */; };
+		8419CF2D2B5AA433007F2CB3 /* stream_chat_thumbnails_settings_request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CEB32B5AA42F007F2CB3 /* stream_chat_thumbnails_settings_request.swift */; };
+		8419CF2E2B5AA433007F2CB3 /* stream_chat_call_deleted_event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CEB42B5AA42F007F2CB3 /* stream_chat_call_deleted_event.swift */; };
+		8419CF2F2B5AA433007F2CB3 /* stream_chat_unpin_request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CEB52B5AA42F007F2CB3 /* stream_chat_unpin_request.swift */; };
+		8419CF302B5AA433007F2CB3 /* stream_chat_unblock_user_response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CEB62B5AA430007F2CB3 /* stream_chat_unblock_user_response.swift */; };
+		8419CF312B5AA433007F2CB3 /* stream_chat_update_call_members_response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CEB72B5AA430007F2CB3 /* stream_chat_update_call_members_response.swift */; };
+		8419CF322B5AA433007F2CB3 /* stream_chat_update_call_members_request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CEB82B5AA430007F2CB3 /* stream_chat_update_call_members_request.swift */; };
+		8419CF332B5AA433007F2CB3 /* stream_chat_end_call_response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CEB92B5AA430007F2CB3 /* stream_chat_end_call_response.swift */; };
+		8419CF342B5AA433007F2CB3 /* stream_chat_reject_call_request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CEBA2B5AA430007F2CB3 /* stream_chat_reject_call_request.swift */; };
+		8419CF352B5AA433007F2CB3 /* stream_chat_broadcast_settings_response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CEBB2B5AA430007F2CB3 /* stream_chat_broadcast_settings_response.swift */; };
+		8419CF362B5AA433007F2CB3 /* stream_chat_call_created_event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CEBC2B5AA430007F2CB3 /* stream_chat_call_created_event.swift */; };
+		8419CF372B5AA433007F2CB3 /* stream_chat_pin_response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CEBD2B5AA430007F2CB3 /* stream_chat_pin_response.swift */; };
+		8419CF382B5AA433007F2CB3 /* stream_chat_start_transcription_response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CEBE2B5AA430007F2CB3 /* stream_chat_start_transcription_response.swift */; };
+		8419CF392B5AA433007F2CB3 /* stream_chat_call_session_ended_event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CEBF2B5AA430007F2CB3 /* stream_chat_call_session_ended_event.swift */; };
+		8419CF3A2B5AA433007F2CB3 /* stream_chat_unblocked_user_event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CEC02B5AA431007F2CB3 /* stream_chat_unblocked_user_event.swift */; };
+		8419CF3B2B5AA433007F2CB3 /* stream_chat_start_hlsbroadcasting_response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CEC12B5AA431007F2CB3 /* stream_chat_start_hlsbroadcasting_response.swift */; };
+		8419CF3C2B5AA433007F2CB3 /* stream_chat_hlssettings_request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CEC22B5AA431007F2CB3 /* stream_chat_hlssettings_request.swift */; };
+		8419CF3D2B5AA433007F2CB3 /* stream_chat_stop_hlsbroadcasting_request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CEC32B5AA431007F2CB3 /* stream_chat_stop_hlsbroadcasting_request.swift */; };
+		8419CF3E2B5AA433007F2CB3 /* stream_chat_call_member_added_event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CEC42B5AA431007F2CB3 /* stream_chat_call_member_added_event.swift */; };
+		8419CF3F2B5AA433007F2CB3 /* stream_chat_query_members_request1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CEC52B5AA431007F2CB3 /* stream_chat_query_members_request1.swift */; };
+		8419CF402B5AA433007F2CB3 /* stream_chat_mute_users_response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CEC62B5AA431007F2CB3 /* stream_chat_mute_users_response.swift */; };
+		8419CF412B5AA433007F2CB3 /* stream_chat_egress_hlsresponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CEC72B5AA431007F2CB3 /* stream_chat_egress_hlsresponse.swift */; };
+		8419CF422B5AA433007F2CB3 /* stream_chat_stop_recording_response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CEC82B5AA431007F2CB3 /* stream_chat_stop_recording_response.swift */; };
+		8419CF432B5AA433007F2CB3 /* stream_chat_iceserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CEC92B5AA431007F2CB3 /* stream_chat_iceserver.swift */; };
+		8419CF442B5AA433007F2CB3 /* stream_chat_stop_transcription_response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CECA2B5AA432007F2CB3 /* stream_chat_stop_transcription_response.swift */; };
+		8419CF452B5AA433007F2CB3 /* stream_chat_pin_request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CECB2B5AA432007F2CB3 /* stream_chat_pin_request.swift */; };
+		8419CF462B5AA433007F2CB3 /* stream_chat_record_settings_response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CECC2B5AA432007F2CB3 /* stream_chat_record_settings_response.swift */; };
+		8419CF472B5AA433007F2CB3 /* stream_chat_end_call_request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CECD2B5AA432007F2CB3 /* stream_chat_end_call_request.swift */; };
+		8419CF482B5AA433007F2CB3 /* stream_chat_start_recording_response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CECE2B5AA432007F2CB3 /* stream_chat_start_recording_response.swift */; };
+		8419CF492B5AA433007F2CB3 /* stream_chat_start_recording_request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CECF2B5AA432007F2CB3 /* stream_chat_start_recording_request.swift */; };
+		8419CF4A2B5AA433007F2CB3 /* stream_chat_broadcast_settings_request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CED02B5AA432007F2CB3 /* stream_chat_broadcast_settings_request.swift */; };
+		8419CF4B2B5AA433007F2CB3 /* stream_chat_call_reaction_event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CED12B5AA432007F2CB3 /* stream_chat_call_reaction_event.swift */; };
+		8419CF4C2B5AA433007F2CB3 /* stream_chat_reject_call_response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CED22B5AA432007F2CB3 /* stream_chat_reject_call_response.swift */; };
+		8419CF4D2B5AA433007F2CB3 /* stream_chat_accept_call_request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CED32B5AA432007F2CB3 /* stream_chat_accept_call_request.swift */; };
 		842F9745277A09B10060A489 /* PinnedMessagesQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842F9744277A09B10060A489 /* PinnedMessagesQuery.swift */; };
 		842F9746277A09B10060A489 /* PinnedMessagesQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842F9744277A09B10060A489 /* PinnedMessagesQuery.swift */; };
 		842F9749277A1CCF0060A489 /* PinnedMessagesPagination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842F9748277A1CCF0060A489 /* PinnedMessagesPagination.swift */; };
@@ -3467,6 +3589,128 @@
 		8413CAC42B4616E300190AF4 /* ChatAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatAPI.swift; sourceTree = "<group>"; };
 		8414A81B2767944B001BA9D7 /* RetryStrategy_Spy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetryStrategy_Spy.swift; sourceTree = "<group>"; };
 		84196FA22805892500185E99 /* LocalMessageState+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LocalMessageState+Extensions.swift"; sourceTree = "<group>"; };
+		8419CE5A2B5AA426007F2CB3 /* stream_chat_update_call_response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_update_call_response.swift; sourceTree = "<group>"; };
+		8419CE5B2B5AA426007F2CB3 /* stream_chat_request_permission_response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_request_permission_response.swift; sourceTree = "<group>"; };
+		8419CE5C2B5AA426007F2CB3 /* stream_chat_transcription_settings_request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_transcription_settings_request.swift; sourceTree = "<group>"; };
+		8419CE5D2B5AA426007F2CB3 /* stream_chat_updated_call_permissions_event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_updated_call_permissions_event.swift; sourceTree = "<group>"; };
+		8419CE5E2B5AA426007F2CB3 /* stream_chat_target_resolution_request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_target_resolution_request.swift; sourceTree = "<group>"; };
+		8419CE5F2B5AA427007F2CB3 /* stream_chat_blocked_user_event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_blocked_user_event.swift; sourceTree = "<group>"; };
+		8419CE602B5AA427007F2CB3 /* stream_chat_stop_hlsbroadcasting_response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_stop_hlsbroadcasting_response.swift; sourceTree = "<group>"; };
+		8419CE612B5AA427007F2CB3 /* stream_chat_audio_settings_request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_audio_settings_request.swift; sourceTree = "<group>"; };
+		8419CE622B5AA427007F2CB3 /* stream_chat_mute_users_request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_mute_users_request.swift; sourceTree = "<group>"; };
+		8419CE632B5AA427007F2CB3 /* stream_chat_call_settings_request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_call_settings_request.swift; sourceTree = "<group>"; };
+		8419CE642B5AA427007F2CB3 /* stream_chat_member_response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_member_response.swift; sourceTree = "<group>"; };
+		8419CE652B5AA427007F2CB3 /* stream_chat_join_call_request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_join_call_request.swift; sourceTree = "<group>"; };
+		8419CE662B5AA427007F2CB3 /* stream_chat_go_live_request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_go_live_request.swift; sourceTree = "<group>"; };
+		8419CE672B5AA427007F2CB3 /* stream_chat_video_settings_request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_video_settings_request.swift; sourceTree = "<group>"; };
+		8419CE682B5AA428007F2CB3 /* stream_chat_call_session_participant_left_event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_call_session_participant_left_event.swift; sourceTree = "<group>"; };
+		8419CE692B5AA428007F2CB3 /* stream_chat_call_session_started_event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_call_session_started_event.swift; sourceTree = "<group>"; };
+		8419CE6A2B5AA428007F2CB3 /* stream_chat_own_capability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_own_capability.swift; sourceTree = "<group>"; };
+		8419CE6B2B5AA428007F2CB3 /* stream_chat_call_updated_event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_call_updated_event.swift; sourceTree = "<group>"; };
+		8419CE6C2B5AA428007F2CB3 /* stream_chat_block_user_request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_block_user_request.swift; sourceTree = "<group>"; };
+		8419CE6D2B5AA428007F2CB3 /* stream_chat_call_notification_event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_call_notification_event.swift; sourceTree = "<group>"; };
+		8419CE6E2B5AA428007F2CB3 /* stream_chat_geofence_settings_request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_geofence_settings_request.swift; sourceTree = "<group>"; };
+		8419CE6F2B5AA428007F2CB3 /* stream_chat_call_hlsbroadcasting_started_event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_call_hlsbroadcasting_started_event.swift; sourceTree = "<group>"; };
+		8419CE702B5AA428007F2CB3 /* stream_chat_call_member_updated_permission_event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_call_member_updated_permission_event.swift; sourceTree = "<group>"; };
+		8419CE712B5AA429007F2CB3 /* stream_chat_get_or_create_call_response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_get_or_create_call_response.swift; sourceTree = "<group>"; };
+		8419CE722B5AA429007F2CB3 /* stream_chat_call_state_response_fields.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_call_state_response_fields.swift; sourceTree = "<group>"; };
+		8419CE732B5AA429007F2CB3 /* stream_chat_block_user_response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_block_user_response.swift; sourceTree = "<group>"; };
+		8419CE742B5AA429007F2CB3 /* stream_chat_call_settings_response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_call_settings_response.swift; sourceTree = "<group>"; };
+		8419CE752B5AA429007F2CB3 /* stream_chat_own_user_response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_own_user_response.swift; sourceTree = "<group>"; };
+		8419CE762B5AA429007F2CB3 /* stream_chat_query_members_response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_query_members_response.swift; sourceTree = "<group>"; };
+		8419CE772B5AA429007F2CB3 /* stream_chat_get_call_response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_get_call_response.swift; sourceTree = "<group>"; };
+		8419CE782B5AA429007F2CB3 /* stream_chat_call_ended_event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_call_ended_event.swift; sourceTree = "<group>"; };
+		8419CE792B5AA429007F2CB3 /* stream_chat_call_recording_started_event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_call_recording_started_event.swift; sourceTree = "<group>"; };
+		8419CE7A2B5AA42A007F2CB3 /* stream_chat_query_calls_response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_query_calls_response.swift; sourceTree = "<group>"; };
+		8419CE7B2B5AA42A007F2CB3 /* stream_chat_stop_recording_request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_stop_recording_request.swift; sourceTree = "<group>"; };
+		8419CE7C2B5AA42A007F2CB3 /* stream_chat_call_accepted_event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_call_accepted_event.swift; sourceTree = "<group>"; };
+		8419CE7D2B5AA42A007F2CB3 /* stream_chat_call_member_updated_event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_call_member_updated_event.swift; sourceTree = "<group>"; };
+		8419CE7E2B5AA42A007F2CB3 /* stream_chat_egress_rtmpresponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_egress_rtmpresponse.swift; sourceTree = "<group>"; };
+		8419CE7F2B5AA42A007F2CB3 /* stream_chat_thumbnail_response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_thumbnail_response.swift; sourceTree = "<group>"; };
+		8419CE802B5AA42A007F2CB3 /* stream_chat_send_event_response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_send_event_response.swift; sourceTree = "<group>"; };
+		8419CE812B5AA42A007F2CB3 /* stream_chat_request_permission_request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_request_permission_request.swift; sourceTree = "<group>"; };
+		8419CE822B5AA42A007F2CB3 /* stream_chat_accept_call_response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_accept_call_response.swift; sourceTree = "<group>"; };
+		8419CE832B5AA42B007F2CB3 /* stream_chat_start_transcription_request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_start_transcription_request.swift; sourceTree = "<group>"; };
+		8419CE842B5AA42B007F2CB3 /* stream_chat_call_ring_event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_call_ring_event.swift; sourceTree = "<group>"; };
+		8419CE852B5AA42B007F2CB3 /* stream_chat_call_recording_failed_event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_call_recording_failed_event.swift; sourceTree = "<group>"; };
+		8419CE862B5AA42B007F2CB3 /* stream_chat_sfuresponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_sfuresponse.swift; sourceTree = "<group>"; };
+		8419CE872B5AA42B007F2CB3 /* stream_chat_start_hlsbroadcasting_request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_start_hlsbroadcasting_request.swift; sourceTree = "<group>"; };
+		8419CE882B5AA42B007F2CB3 /* stream_chat_egress_response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_egress_response.swift; sourceTree = "<group>"; };
+		8419CE892B5AA42B007F2CB3 /* stream_chat_screensharing_settings_request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_screensharing_settings_request.swift; sourceTree = "<group>"; };
+		8419CE8A2B5AA42B007F2CB3 /* stream_chat_unblock_user_request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_unblock_user_request.swift; sourceTree = "<group>"; };
+		8419CE8B2B5AA42B007F2CB3 /* stream_chat_update_user_permissions_request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_update_user_permissions_request.swift; sourceTree = "<group>"; };
+		8419CE8C2B5AA42C007F2CB3 /* stream_chat_query_calls_request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_query_calls_request.swift; sourceTree = "<group>"; };
+		8419CE8D2B5AA42C007F2CB3 /* stream_chat_call_member_removed_event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_call_member_removed_event.swift; sourceTree = "<group>"; };
+		8419CE8E2B5AA42C007F2CB3 /* stream_chat_list_recordings_response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_list_recordings_response.swift; sourceTree = "<group>"; };
+		8419CE8F2B5AA42C007F2CB3 /* stream_chat_call_response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_call_response.swift; sourceTree = "<group>"; };
+		8419CE902B5AA42C007F2CB3 /* stream_chat_hlssettings_response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_hlssettings_response.swift; sourceTree = "<group>"; };
+		8419CE912B5AA42C007F2CB3 /* stream_chat_call_hlsbroadcasting_stopped_event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_call_hlsbroadcasting_stopped_event.swift; sourceTree = "<group>"; };
+		8419CE922B5AA42C007F2CB3 /* stream_chat_call_recording.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_call_recording.swift; sourceTree = "<group>"; };
+		8419CE932B5AA42C007F2CB3 /* stream_chat_join_call_response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_join_call_response.swift; sourceTree = "<group>"; };
+		8419CE942B5AA42C007F2CB3 /* stream_chat_call_session_response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_call_session_response.swift; sourceTree = "<group>"; };
+		8419CE952B5AA42C007F2CB3 /* stream_chat_go_live_response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_go_live_response.swift; sourceTree = "<group>"; };
+		8419CE962B5AA42D007F2CB3 /* stream_chat_connected_event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_connected_event.swift; sourceTree = "<group>"; };
+		8419CE972B5AA42D007F2CB3 /* stream_chat_unpin_response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_unpin_response.swift; sourceTree = "<group>"; };
+		8419CE982B5AA42D007F2CB3 /* stream_chat_send_reaction_response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_send_reaction_response.swift; sourceTree = "<group>"; };
+		8419CE992B5AA42D007F2CB3 /* stream_chat_connection_error_event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_connection_error_event.swift; sourceTree = "<group>"; };
+		8419CE9A2B5AA42D007F2CB3 /* stream_chat_update_user_permissions_response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_update_user_permissions_response.swift; sourceTree = "<group>"; };
+		8419CE9B2B5AA42D007F2CB3 /* stream_chat_get_edges_response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_get_edges_response.swift; sourceTree = "<group>"; };
+		8419CE9C2B5AA42D007F2CB3 /* stream_chat_rtmpingress.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_rtmpingress.swift; sourceTree = "<group>"; };
+		8419CE9D2B5AA42D007F2CB3 /* stream_chat_call_recording_stopped_event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_call_recording_stopped_event.swift; sourceTree = "<group>"; };
+		8419CE9E2B5AA42D007F2CB3 /* stream_chat_call_session_participant_joined_event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_call_session_participant_joined_event.swift; sourceTree = "<group>"; };
+		8419CE9F2B5AA42D007F2CB3 /* stream_chat_get_or_create_call_request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_get_or_create_call_request.swift; sourceTree = "<group>"; };
+		8419CEA02B5AA42D007F2CB3 /* stream_chat_stop_live_request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_stop_live_request.swift; sourceTree = "<group>"; };
+		8419CEA12B5AA42E007F2CB3 /* stream_chat_call_request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_call_request.swift; sourceTree = "<group>"; };
+		8419CEA22B5AA42E007F2CB3 /* stream_chat_stop_transcription_request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_stop_transcription_request.swift; sourceTree = "<group>"; };
+		8419CEA32B5AA42E007F2CB3 /* stream_chat_call_ingress_response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_call_ingress_response.swift; sourceTree = "<group>"; };
+		8419CEA42B5AA42E007F2CB3 /* stream_chat_backstage_settings_request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_backstage_settings_request.swift; sourceTree = "<group>"; };
+		8419CEA52B5AA42E007F2CB3 /* stream_chat_call_recording_ready_event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_call_recording_ready_event.swift; sourceTree = "<group>"; };
+		8419CEA62B5AA42E007F2CB3 /* stream_chat_ring_settings_request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_ring_settings_request.swift; sourceTree = "<group>"; };
+		8419CEA72B5AA42E007F2CB3 /* stream_chat_record_settings_request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_record_settings_request.swift; sourceTree = "<group>"; };
+		8419CEA82B5AA42E007F2CB3 /* stream_chat_update_call_request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_update_call_request.swift; sourceTree = "<group>"; };
+		8419CEA92B5AA42E007F2CB3 /* stream_chat_call_participant_response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_call_participant_response.swift; sourceTree = "<group>"; };
+		8419CEAA2B5AA42E007F2CB3 /* stream_chat_member_request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_member_request.swift; sourceTree = "<group>"; };
+		8419CEAB2B5AA42F007F2CB3 /* stream_chat_edge_response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_edge_response.swift; sourceTree = "<group>"; };
+		8419CEAC2B5AA42F007F2CB3 /* stream_chat_call_rejected_event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_call_rejected_event.swift; sourceTree = "<group>"; };
+		8419CEAD2B5AA42F007F2CB3 /* stream_chat_call_hlsbroadcasting_failed_event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_call_hlsbroadcasting_failed_event.swift; sourceTree = "<group>"; };
+		8419CEAE2B5AA42F007F2CB3 /* stream_chat_call_user_muted.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_call_user_muted.swift; sourceTree = "<group>"; };
+		8419CEAF2B5AA42F007F2CB3 /* stream_chat_credentials.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_credentials.swift; sourceTree = "<group>"; };
+		8419CEB02B5AA42F007F2CB3 /* stream_chat_permission_request_event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_permission_request_event.swift; sourceTree = "<group>"; };
+		8419CEB12B5AA42F007F2CB3 /* stream_chat_stop_live_response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_stop_live_response.swift; sourceTree = "<group>"; };
+		8419CEB22B5AA42F007F2CB3 /* stream_chat_call_live_started_event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_call_live_started_event.swift; sourceTree = "<group>"; };
+		8419CEB32B5AA42F007F2CB3 /* stream_chat_thumbnails_settings_request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_thumbnails_settings_request.swift; sourceTree = "<group>"; };
+		8419CEB42B5AA42F007F2CB3 /* stream_chat_call_deleted_event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_call_deleted_event.swift; sourceTree = "<group>"; };
+		8419CEB52B5AA42F007F2CB3 /* stream_chat_unpin_request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_unpin_request.swift; sourceTree = "<group>"; };
+		8419CEB62B5AA430007F2CB3 /* stream_chat_unblock_user_response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_unblock_user_response.swift; sourceTree = "<group>"; };
+		8419CEB72B5AA430007F2CB3 /* stream_chat_update_call_members_response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_update_call_members_response.swift; sourceTree = "<group>"; };
+		8419CEB82B5AA430007F2CB3 /* stream_chat_update_call_members_request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_update_call_members_request.swift; sourceTree = "<group>"; };
+		8419CEB92B5AA430007F2CB3 /* stream_chat_end_call_response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_end_call_response.swift; sourceTree = "<group>"; };
+		8419CEBA2B5AA430007F2CB3 /* stream_chat_reject_call_request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_reject_call_request.swift; sourceTree = "<group>"; };
+		8419CEBB2B5AA430007F2CB3 /* stream_chat_broadcast_settings_response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_broadcast_settings_response.swift; sourceTree = "<group>"; };
+		8419CEBC2B5AA430007F2CB3 /* stream_chat_call_created_event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_call_created_event.swift; sourceTree = "<group>"; };
+		8419CEBD2B5AA430007F2CB3 /* stream_chat_pin_response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_pin_response.swift; sourceTree = "<group>"; };
+		8419CEBE2B5AA430007F2CB3 /* stream_chat_start_transcription_response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_start_transcription_response.swift; sourceTree = "<group>"; };
+		8419CEBF2B5AA430007F2CB3 /* stream_chat_call_session_ended_event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_call_session_ended_event.swift; sourceTree = "<group>"; };
+		8419CEC02B5AA431007F2CB3 /* stream_chat_unblocked_user_event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_unblocked_user_event.swift; sourceTree = "<group>"; };
+		8419CEC12B5AA431007F2CB3 /* stream_chat_start_hlsbroadcasting_response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_start_hlsbroadcasting_response.swift; sourceTree = "<group>"; };
+		8419CEC22B5AA431007F2CB3 /* stream_chat_hlssettings_request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_hlssettings_request.swift; sourceTree = "<group>"; };
+		8419CEC32B5AA431007F2CB3 /* stream_chat_stop_hlsbroadcasting_request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_stop_hlsbroadcasting_request.swift; sourceTree = "<group>"; };
+		8419CEC42B5AA431007F2CB3 /* stream_chat_call_member_added_event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_call_member_added_event.swift; sourceTree = "<group>"; };
+		8419CEC52B5AA431007F2CB3 /* stream_chat_query_members_request1.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_query_members_request1.swift; sourceTree = "<group>"; };
+		8419CEC62B5AA431007F2CB3 /* stream_chat_mute_users_response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_mute_users_response.swift; sourceTree = "<group>"; };
+		8419CEC72B5AA431007F2CB3 /* stream_chat_egress_hlsresponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_egress_hlsresponse.swift; sourceTree = "<group>"; };
+		8419CEC82B5AA431007F2CB3 /* stream_chat_stop_recording_response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_stop_recording_response.swift; sourceTree = "<group>"; };
+		8419CEC92B5AA431007F2CB3 /* stream_chat_iceserver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_iceserver.swift; sourceTree = "<group>"; };
+		8419CECA2B5AA432007F2CB3 /* stream_chat_stop_transcription_response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_stop_transcription_response.swift; sourceTree = "<group>"; };
+		8419CECB2B5AA432007F2CB3 /* stream_chat_pin_request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_pin_request.swift; sourceTree = "<group>"; };
+		8419CECC2B5AA432007F2CB3 /* stream_chat_record_settings_response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_record_settings_response.swift; sourceTree = "<group>"; };
+		8419CECD2B5AA432007F2CB3 /* stream_chat_end_call_request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_end_call_request.swift; sourceTree = "<group>"; };
+		8419CECE2B5AA432007F2CB3 /* stream_chat_start_recording_response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_start_recording_response.swift; sourceTree = "<group>"; };
+		8419CECF2B5AA432007F2CB3 /* stream_chat_start_recording_request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_start_recording_request.swift; sourceTree = "<group>"; };
+		8419CED02B5AA432007F2CB3 /* stream_chat_broadcast_settings_request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_broadcast_settings_request.swift; sourceTree = "<group>"; };
+		8419CED12B5AA432007F2CB3 /* stream_chat_call_reaction_event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_call_reaction_event.swift; sourceTree = "<group>"; };
+		8419CED22B5AA432007F2CB3 /* stream_chat_reject_call_response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_reject_call_response.swift; sourceTree = "<group>"; };
+		8419CED32B5AA432007F2CB3 /* stream_chat_accept_call_request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_accept_call_request.swift; sourceTree = "<group>"; };
 		842F9744277A09B10060A489 /* PinnedMessagesQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinnedMessagesQuery.swift; sourceTree = "<group>"; };
 		842F9748277A1CCF0060A489 /* PinnedMessagesPagination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinnedMessagesPagination.swift; sourceTree = "<group>"; };
 		8431843A26FB53B400B5B25E /* NotificationMessageNew+MissingFields.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "NotificationMessageNew+MissingFields.json"; sourceTree = "<group>"; };
@@ -6108,6 +6352,128 @@
 		8484C36D2B4C2066000065E3 /* models */ = {
 			isa = PBXGroup;
 			children = (
+				8419CED32B5AA432007F2CB3 /* stream_chat_accept_call_request.swift */,
+				8419CE822B5AA42A007F2CB3 /* stream_chat_accept_call_response.swift */,
+				8419CE612B5AA427007F2CB3 /* stream_chat_audio_settings_request.swift */,
+				8419CEA42B5AA42E007F2CB3 /* stream_chat_backstage_settings_request.swift */,
+				8419CE6C2B5AA428007F2CB3 /* stream_chat_block_user_request.swift */,
+				8419CE732B5AA429007F2CB3 /* stream_chat_block_user_response.swift */,
+				8419CE5F2B5AA427007F2CB3 /* stream_chat_blocked_user_event.swift */,
+				8419CED02B5AA432007F2CB3 /* stream_chat_broadcast_settings_request.swift */,
+				8419CEBB2B5AA430007F2CB3 /* stream_chat_broadcast_settings_response.swift */,
+				8419CE7C2B5AA42A007F2CB3 /* stream_chat_call_accepted_event.swift */,
+				8419CEBC2B5AA430007F2CB3 /* stream_chat_call_created_event.swift */,
+				8419CEB42B5AA42F007F2CB3 /* stream_chat_call_deleted_event.swift */,
+				8419CE782B5AA429007F2CB3 /* stream_chat_call_ended_event.swift */,
+				8419CEAD2B5AA42F007F2CB3 /* stream_chat_call_hlsbroadcasting_failed_event.swift */,
+				8419CE6F2B5AA428007F2CB3 /* stream_chat_call_hlsbroadcasting_started_event.swift */,
+				8419CE912B5AA42C007F2CB3 /* stream_chat_call_hlsbroadcasting_stopped_event.swift */,
+				8419CEA32B5AA42E007F2CB3 /* stream_chat_call_ingress_response.swift */,
+				8419CEB22B5AA42F007F2CB3 /* stream_chat_call_live_started_event.swift */,
+				8419CEC42B5AA431007F2CB3 /* stream_chat_call_member_added_event.swift */,
+				8419CE8D2B5AA42C007F2CB3 /* stream_chat_call_member_removed_event.swift */,
+				8419CE7D2B5AA42A007F2CB3 /* stream_chat_call_member_updated_event.swift */,
+				8419CE702B5AA428007F2CB3 /* stream_chat_call_member_updated_permission_event.swift */,
+				8419CE6D2B5AA428007F2CB3 /* stream_chat_call_notification_event.swift */,
+				8419CEA92B5AA42E007F2CB3 /* stream_chat_call_participant_response.swift */,
+				8419CED12B5AA432007F2CB3 /* stream_chat_call_reaction_event.swift */,
+				8419CE852B5AA42B007F2CB3 /* stream_chat_call_recording_failed_event.swift */,
+				8419CEA52B5AA42E007F2CB3 /* stream_chat_call_recording_ready_event.swift */,
+				8419CE792B5AA429007F2CB3 /* stream_chat_call_recording_started_event.swift */,
+				8419CE9D2B5AA42D007F2CB3 /* stream_chat_call_recording_stopped_event.swift */,
+				8419CE922B5AA42C007F2CB3 /* stream_chat_call_recording.swift */,
+				8419CEAC2B5AA42F007F2CB3 /* stream_chat_call_rejected_event.swift */,
+				8419CEA12B5AA42E007F2CB3 /* stream_chat_call_request.swift */,
+				8419CE8F2B5AA42C007F2CB3 /* stream_chat_call_response.swift */,
+				8419CE842B5AA42B007F2CB3 /* stream_chat_call_ring_event.swift */,
+				8419CEBF2B5AA430007F2CB3 /* stream_chat_call_session_ended_event.swift */,
+				8419CE9E2B5AA42D007F2CB3 /* stream_chat_call_session_participant_joined_event.swift */,
+				8419CE682B5AA428007F2CB3 /* stream_chat_call_session_participant_left_event.swift */,
+				8419CE942B5AA42C007F2CB3 /* stream_chat_call_session_response.swift */,
+				8419CE692B5AA428007F2CB3 /* stream_chat_call_session_started_event.swift */,
+				8419CE632B5AA427007F2CB3 /* stream_chat_call_settings_request.swift */,
+				8419CE742B5AA429007F2CB3 /* stream_chat_call_settings_response.swift */,
+				8419CE722B5AA429007F2CB3 /* stream_chat_call_state_response_fields.swift */,
+				8419CE6B2B5AA428007F2CB3 /* stream_chat_call_updated_event.swift */,
+				8419CEAE2B5AA42F007F2CB3 /* stream_chat_call_user_muted.swift */,
+				8419CE962B5AA42D007F2CB3 /* stream_chat_connected_event.swift */,
+				8419CE992B5AA42D007F2CB3 /* stream_chat_connection_error_event.swift */,
+				8419CEAF2B5AA42F007F2CB3 /* stream_chat_credentials.swift */,
+				8419CEAB2B5AA42F007F2CB3 /* stream_chat_edge_response.swift */,
+				8419CEC72B5AA431007F2CB3 /* stream_chat_egress_hlsresponse.swift */,
+				8419CE882B5AA42B007F2CB3 /* stream_chat_egress_response.swift */,
+				8419CE7E2B5AA42A007F2CB3 /* stream_chat_egress_rtmpresponse.swift */,
+				8419CECD2B5AA432007F2CB3 /* stream_chat_end_call_request.swift */,
+				8419CEB92B5AA430007F2CB3 /* stream_chat_end_call_response.swift */,
+				8419CE6E2B5AA428007F2CB3 /* stream_chat_geofence_settings_request.swift */,
+				8419CE772B5AA429007F2CB3 /* stream_chat_get_call_response.swift */,
+				8419CE9B2B5AA42D007F2CB3 /* stream_chat_get_edges_response.swift */,
+				8419CE9F2B5AA42D007F2CB3 /* stream_chat_get_or_create_call_request.swift */,
+				8419CE712B5AA429007F2CB3 /* stream_chat_get_or_create_call_response.swift */,
+				8419CE662B5AA427007F2CB3 /* stream_chat_go_live_request.swift */,
+				8419CE952B5AA42C007F2CB3 /* stream_chat_go_live_response.swift */,
+				8419CEC22B5AA431007F2CB3 /* stream_chat_hlssettings_request.swift */,
+				8419CE902B5AA42C007F2CB3 /* stream_chat_hlssettings_response.swift */,
+				8419CEC92B5AA431007F2CB3 /* stream_chat_iceserver.swift */,
+				8419CE652B5AA427007F2CB3 /* stream_chat_join_call_request.swift */,
+				8419CE932B5AA42C007F2CB3 /* stream_chat_join_call_response.swift */,
+				8419CE8E2B5AA42C007F2CB3 /* stream_chat_list_recordings_response.swift */,
+				8419CEAA2B5AA42E007F2CB3 /* stream_chat_member_request.swift */,
+				8419CE642B5AA427007F2CB3 /* stream_chat_member_response.swift */,
+				8419CE622B5AA427007F2CB3 /* stream_chat_mute_users_request.swift */,
+				8419CEC62B5AA431007F2CB3 /* stream_chat_mute_users_response.swift */,
+				8419CE6A2B5AA428007F2CB3 /* stream_chat_own_capability.swift */,
+				8419CE752B5AA429007F2CB3 /* stream_chat_own_user_response.swift */,
+				8419CEB02B5AA42F007F2CB3 /* stream_chat_permission_request_event.swift */,
+				8419CECB2B5AA432007F2CB3 /* stream_chat_pin_request.swift */,
+				8419CEBD2B5AA430007F2CB3 /* stream_chat_pin_response.swift */,
+				8419CE8C2B5AA42C007F2CB3 /* stream_chat_query_calls_request.swift */,
+				8419CE7A2B5AA42A007F2CB3 /* stream_chat_query_calls_response.swift */,
+				8419CEC52B5AA431007F2CB3 /* stream_chat_query_members_request1.swift */,
+				8419CE762B5AA429007F2CB3 /* stream_chat_query_members_response.swift */,
+				8419CEA72B5AA42E007F2CB3 /* stream_chat_record_settings_request.swift */,
+				8419CECC2B5AA432007F2CB3 /* stream_chat_record_settings_response.swift */,
+				8419CEBA2B5AA430007F2CB3 /* stream_chat_reject_call_request.swift */,
+				8419CED22B5AA432007F2CB3 /* stream_chat_reject_call_response.swift */,
+				8419CE812B5AA42A007F2CB3 /* stream_chat_request_permission_request.swift */,
+				8419CE5B2B5AA426007F2CB3 /* stream_chat_request_permission_response.swift */,
+				8419CEA62B5AA42E007F2CB3 /* stream_chat_ring_settings_request.swift */,
+				8419CE9C2B5AA42D007F2CB3 /* stream_chat_rtmpingress.swift */,
+				8419CE892B5AA42B007F2CB3 /* stream_chat_screensharing_settings_request.swift */,
+				8419CE802B5AA42A007F2CB3 /* stream_chat_send_event_response.swift */,
+				8419CE982B5AA42D007F2CB3 /* stream_chat_send_reaction_response.swift */,
+				8419CE862B5AA42B007F2CB3 /* stream_chat_sfuresponse.swift */,
+				8419CE872B5AA42B007F2CB3 /* stream_chat_start_hlsbroadcasting_request.swift */,
+				8419CEC12B5AA431007F2CB3 /* stream_chat_start_hlsbroadcasting_response.swift */,
+				8419CECF2B5AA432007F2CB3 /* stream_chat_start_recording_request.swift */,
+				8419CECE2B5AA432007F2CB3 /* stream_chat_start_recording_response.swift */,
+				8419CE832B5AA42B007F2CB3 /* stream_chat_start_transcription_request.swift */,
+				8419CEBE2B5AA430007F2CB3 /* stream_chat_start_transcription_response.swift */,
+				8419CEC32B5AA431007F2CB3 /* stream_chat_stop_hlsbroadcasting_request.swift */,
+				8419CE602B5AA427007F2CB3 /* stream_chat_stop_hlsbroadcasting_response.swift */,
+				8419CEA02B5AA42D007F2CB3 /* stream_chat_stop_live_request.swift */,
+				8419CEB12B5AA42F007F2CB3 /* stream_chat_stop_live_response.swift */,
+				8419CE7B2B5AA42A007F2CB3 /* stream_chat_stop_recording_request.swift */,
+				8419CEC82B5AA431007F2CB3 /* stream_chat_stop_recording_response.swift */,
+				8419CEA22B5AA42E007F2CB3 /* stream_chat_stop_transcription_request.swift */,
+				8419CECA2B5AA432007F2CB3 /* stream_chat_stop_transcription_response.swift */,
+				8419CE5E2B5AA426007F2CB3 /* stream_chat_target_resolution_request.swift */,
+				8419CE7F2B5AA42A007F2CB3 /* stream_chat_thumbnail_response.swift */,
+				8419CEB32B5AA42F007F2CB3 /* stream_chat_thumbnails_settings_request.swift */,
+				8419CE5C2B5AA426007F2CB3 /* stream_chat_transcription_settings_request.swift */,
+				8419CE8A2B5AA42B007F2CB3 /* stream_chat_unblock_user_request.swift */,
+				8419CEB62B5AA430007F2CB3 /* stream_chat_unblock_user_response.swift */,
+				8419CEC02B5AA431007F2CB3 /* stream_chat_unblocked_user_event.swift */,
+				8419CEB52B5AA42F007F2CB3 /* stream_chat_unpin_request.swift */,
+				8419CE972B5AA42D007F2CB3 /* stream_chat_unpin_response.swift */,
+				8419CEB82B5AA430007F2CB3 /* stream_chat_update_call_members_request.swift */,
+				8419CEB72B5AA430007F2CB3 /* stream_chat_update_call_members_response.swift */,
+				8419CEA82B5AA42E007F2CB3 /* stream_chat_update_call_request.swift */,
+				8419CE5A2B5AA426007F2CB3 /* stream_chat_update_call_response.swift */,
+				8419CE8B2B5AA42B007F2CB3 /* stream_chat_update_user_permissions_request.swift */,
+				8419CE9A2B5AA42D007F2CB3 /* stream_chat_update_user_permissions_response.swift */,
+				8419CE5D2B5AA426007F2CB3 /* stream_chat_updated_call_permissions_event.swift */,
+				8419CE672B5AA427007F2CB3 /* stream_chat_video_settings_request.swift */,
 				8484C5332B4C3961000065E3 /* stream_chat_agora_call.swift */,
 				8484C5322B4C3961000065E3 /* stream_chat_call.swift */,
 				8484C5352B4C3961000065E3 /* stream_chat_create_call_request.swift */,
@@ -11121,6 +11487,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8419CF232B5AA433007F2CB3 /* stream_chat_call_participant_response.swift in Sources */,
 				DA8407032524F7E6005A0F62 /* UserListUpdater.swift in Sources */,
 				8484C4802B4C2067000065E3 /* stream_chat_firebase_config_fields.swift in Sources */,
 				DAE566E724FFD22300E39431 /* ChannelController+SwiftUI.swift in Sources */,
@@ -11134,18 +11501,24 @@
 				8484C5082B4C2067000065E3 /* stream_chat_user_mute.swift in Sources */,
 				8484C4942B4C2067000065E3 /* stream_chat_user_muted_event.swift in Sources */,
 				8484C4DC2B4C2067000065E3 /* stream_chat_attachment.swift in Sources */,
+				8419CF3A2B5AA433007F2CB3 /* stream_chat_unblocked_user_event.swift in Sources */,
 				8484C50D2B4C2067000065E3 /* stream_chat_ban_response.swift in Sources */,
 				79896D5E25065ECD00BA8F1C /* ChannelRead.swift in Sources */,
 				8484C4C92B4C2067000065E3 /* stream_chat_user_deactivated_event.swift in Sources */,
+				8419CF312B5AA433007F2CB3 /* stream_chat_update_call_members_response.swift in Sources */,
 				C1FC2F972742579D0062530F /* Compression.swift in Sources */,
 				C1B49B3D2822A7AD00F4E89E /* StreamRuntimeCheck.swift in Sources */,
 				40789D1529F6AC500018C2BB /* AudioPlaybackRate.swift in Sources */,
 				8484C4652B4C2067000065E3 /* stream_chat_notification_mark_unread_event.swift in Sources */,
 				C1B0B38627BFE8AB00C8207D /* MessageRepository.swift in Sources */,
 				847E946E269C687300E31D0C /* EventsController.swift in Sources */,
+				8419CF3C2B5AA433007F2CB3 /* stream_chat_hlssettings_request.swift in Sources */,
+				8419CF1A2B5AA433007F2CB3 /* stream_chat_stop_live_request.swift in Sources */,
 				79DDF80E249CB920002F4412 /* RequestDecoder.swift in Sources */,
 				40789D2929F6AC500018C2BB /* AudioRecordingContextAccessor.swift in Sources */,
+				8419CF162B5AA433007F2CB3 /* stream_chat_rtmpingress.swift in Sources */,
 				8484C47B2B4C2067000065E3 /* stream_chat_get_replies_response.swift in Sources */,
+				8419CF082B5AA433007F2CB3 /* stream_chat_list_recordings_response.swift in Sources */,
 				84D5BC6F277B619D00A65C75 /* PinnedMessagesSortingKey.swift in Sources */,
 				C1FC2FA22742579D0062530F /* WSCompression.swift in Sources */,
 				8484C48A2B4C2067000065E3 /* stream_chat_action.swift in Sources */,
@@ -11155,7 +11528,9 @@
 				84DCB853269F569A006CDF32 /* EventsController+SwiftUI.swift in Sources */,
 				40789D3129F6AC500018C2BB /* AudioRecording.swift in Sources */,
 				88381E65258258C20047A6A3 /* FileUploadPayload.swift in Sources */,
+				8419CF132B5AA433007F2CB3 /* stream_chat_connection_error_event.swift in Sources */,
 				7978FBBF26E1667C002CA2DF /* MessageSearchController.swift in Sources */,
+				8419CEDF2B5AA433007F2CB3 /* stream_chat_join_call_request.swift in Sources */,
 				DAF1BED1250660F8003CEDC0 /* MessageController+SwiftUI.swift in Sources */,
 				AD70DC3C2ADEF09C00CFC3B7 /* MessageModerationDetails.swift in Sources */,
 				796CBC2B25F7CDAC003299B0 /* UserChannelBanEventsMiddleware.swift in Sources */,
@@ -11175,6 +11550,7 @@
 				7985BDAA252B1E53002B8C30 /* MainQueue+Synchronous.swift in Sources */,
 				ADF9E1F72A03E7E400109108 /* MessagesPaginationState.swift in Sources */,
 				79983C8126663436000995F6 /* ChatMessageVideoAttachment.swift in Sources */,
+				8419CEEA2B5AA433007F2CB3 /* stream_chat_call_member_updated_permission_event.swift in Sources */,
 				8484C5242B4C2067000065E3 /* stream_chat_channel_mute.swift in Sources */,
 				79877A0A2498E4BC00015F8B /* Device.swift in Sources */,
 				DABC6AC8254707CB00A8FC78 /* AttachmentDTO.swift in Sources */,
@@ -11186,6 +11562,7 @@
 				DBF17AE825D48865004517B3 /* BackgroundTaskScheduler.swift in Sources */,
 				79280F4F2485308100CDEB89 /* DataController.swift in Sources */,
 				ADC40C3426E294EB005B616C /* MessageSearchController+Combine.swift in Sources */,
+				8419CF142B5AA433007F2CB3 /* stream_chat_update_user_permissions_response.swift in Sources */,
 				F6ED5F7825027907005D7327 /* MissingEventsRequestBody.swift in Sources */,
 				8484C45A2B4C2067000065E3 /* stream_chat_broadcast_settings.swift in Sources */,
 				8484C5002B4C2067000065E3 /* stream_chat_config.swift in Sources */,
@@ -11200,6 +11577,7 @@
 				F63CC36F24E591840052844D /* EventObserver.swift in Sources */,
 				DA84070925250528005A0F62 /* UserEndpoints.swift in Sources */,
 				8484C48F2B4C2067000065E3 /* stream_chat_notification_mark_read_event.swift in Sources */,
+				8419CF3D2B5AA433007F2CB3 /* stream_chat_stop_hlsbroadcasting_request.swift in Sources */,
 				8484C4762B4C2067000065E3 /* stream_chat_message_deleted_event.swift in Sources */,
 				AD70DC392ADEC3C400CFC3B7 /* MessageModerationDetailsDTO.swift in Sources */,
 				ADC40C3626E2980D005B616C /* MessageSearchController+SwiftUI.swift in Sources */,
@@ -11208,6 +11586,7 @@
 				8484C4A12B4C2067000065E3 /* stream_chat_flag_response.swift in Sources */,
 				8A0D649724E579A50017A3C0 /* GuestEndpoints.swift in Sources */,
 				8899BC47254305F8003CB98B /* MessageReactionRequestPayload.swift in Sources */,
+				8419CED52B5AA432007F2CB3 /* stream_chat_request_permission_response.swift in Sources */,
 				8A62705024B867190040BFD6 /* EventPayload.swift in Sources */,
 				AD70DC362ADEC0F600CFC3B7 /* MessageModerationDetailsPayload.swift in Sources */,
 				40789D2529F6AC500018C2BB /* AudioSessionConfiguring.swift in Sources */,
@@ -11215,6 +11594,7 @@
 				8484C4BF2B4C2067000065E3 /* stream_chat_member_added_event.swift in Sources */,
 				8AE335A924FCF999002B6677 /* InternetConnection.swift in Sources */,
 				F6ED5F7A2502791F005D7327 /* MissingEventsPayload.swift in Sources */,
+				8419CF262B5AA433007F2CB3 /* stream_chat_call_rejected_event.swift in Sources */,
 				8484C4A22B4C2067000065E3 /* stream_chat_device.swift in Sources */,
 				8484C4F62B4C2067000065E3 /* stream_chat_reaction.swift in Sources */,
 				8484C4C62B4C2067000065E3 /* stream_chat_mark_read_response.swift in Sources */,
@@ -11222,22 +11602,27 @@
 				88EA9AEE254721C0007EE76B /* MessageReactionType.swift in Sources */,
 				8484C4FA2B4C2067000065E3 /* stream_chat_channel_response.swift in Sources */,
 				79E2B84024CAC8D60024752F /* ListDatabaseObserver.swift in Sources */,
+				8419CF222B5AA433007F2CB3 /* stream_chat_update_call_request.swift in Sources */,
 				796610B9248E651800761629 /* EventMiddleware.swift in Sources */,
 				79A9EB4D2625793000F2A72D /* CoreDataLazy.swift in Sources */,
+				8419CEF32B5AA433007F2CB3 /* stream_chat_call_recording_started_event.swift in Sources */,
 				DABC6AC22546FFB600A8FC78 /* AttachmentTypes.swift in Sources */,
 				8484C53A2B4C3961000065E3 /* stream_chat_agora_call.swift in Sources */,
 				4042968329FACA0E0089126D /* AudioSamplesProcessor.swift in Sources */,
 				8484C46A2B4C2067000065E3 /* stream_chat_device_fields.swift in Sources */,
 				846A59612B557BAC00D60EF2 /* EventDecoderV2.swift in Sources */,
+				8419CF402B5AA433007F2CB3 /* stream_chat_mute_users_response.swift in Sources */,
 				8484C4662B4C2067000065E3 /* stream_chat_moderation_response.swift in Sources */,
 				84355D882AB2FCAC00FD5838 /* FilesEndpoints.swift in Sources */,
 				7964F3B9249A314D002A09EC /* BaseLogDestination.swift in Sources */,
 				C1FC2F942742579D0062530F /* Security.swift in Sources */,
 				AD52A21C2804851600D0157E /* CommandDTO.swift in Sources */,
+				8419CF032B5AA433007F2CB3 /* stream_chat_screensharing_settings_request.swift in Sources */,
 				792AF91624D812440010097B /* EntityDatabaseObserver.swift in Sources */,
 				8484C4A42B4C2067000065E3 /* stream_chat_user_watching_stop_event.swift in Sources */,
 				8484C4C32B4C2067000065E3 /* stream_chat_image_size.swift in Sources */,
 				8413C4642B4564FD00190AF4 /* Retries.swift in Sources */,
+				8419CEFE2B5AA433007F2CB3 /* stream_chat_call_ring_event.swift in Sources */,
 				C1FC2F9D2742579D0062530F /* FoundationHTTPHandler.swift in Sources */,
 				404296EB2A011B050089126D /* AudioSessionProtocol.swift in Sources */,
 				8484C4BE2B4C2067000065E3 /* stream_chat_image_upload_response.swift in Sources */,
@@ -11248,13 +11633,19 @@
 				8484C4522B4C2067000065E3 /* stream_chat_notification_settings.swift in Sources */,
 				8484C5102B4C2067000065E3 /* stream_chat_notification_mutes_updated_event.swift in Sources */,
 				8484C4972B4C2067000065E3 /* stream_chat_send_event_request.swift in Sources */,
+				8419CEEE2B5AA433007F2CB3 /* stream_chat_call_settings_response.swift in Sources */,
+				8419CF002B5AA433007F2CB3 /* stream_chat_sfuresponse.swift in Sources */,
 				79B5517524E595CC00CE9FEC /* CurrentUserPayloads.swift in Sources */,
 				79D5CDD127EA1BA100BE7D8B /* TranslationLanguage.swift in Sources */,
+				8419CEFF2B5AA433007F2CB3 /* stream_chat_call_recording_failed_event.swift in Sources */,
 				8484C4E92B4C2067000065E3 /* stream_chat_get_many_messages_response.swift in Sources */,
 				8A0CC9E524C5FEA900705CF9 /* MemberEvents.swift in Sources */,
+				8419CED42B5AA432007F2CB3 /* stream_chat_update_call_response.swift in Sources */,
 				8484C4682B4C2067000065E3 /* stream_chat_typing_start_event.swift in Sources */,
 				DA4AA3BA2502731900FAAF6E /* Publisher+Extensions.swift in Sources */,
+				8419CED82B5AA432007F2CB3 /* stream_chat_target_resolution_request.swift in Sources */,
 				8484C4BD2B4C2067000065E3 /* stream_chat_message.swift in Sources */,
+				8419CF1F2B5AA433007F2CB3 /* stream_chat_call_recording_ready_event.swift in Sources */,
 				8484C5182B4C2067000065E3 /* stream_chat_channel_visible_event.swift in Sources */,
 				881506EC258212BF0013935B /* MultipartFormData.swift in Sources */,
 				C1FC2F952742579D0062530F /* WebSocketServer.swift in Sources */,
@@ -11267,6 +11658,7 @@
 				792A4F472480107A00EAF71D /* Filter.swift in Sources */,
 				8484C45E2B4C2067000065E3 /* stream_chat_unread_counts_channel.swift in Sources */,
 				8484C4542B4C2067000065E3 /* stream_chat_mute_user_response.swift in Sources */,
+				8419CF1E2B5AA433007F2CB3 /* stream_chat_backstage_settings_request.swift in Sources */,
 				C1FC2F912742579D0062530F /* FoundationHTTPServerHandler.swift in Sources */,
 				22692C8F25D18097007C41D0 /* ChatMessageGiphyAttachment.swift in Sources */,
 				8484C4CD2B4C2067000065E3 /* stream_chat_query_message_flags_response.swift in Sources */,
@@ -11278,17 +11670,22 @@
 				8484C5162B4C2067000065E3 /* stream_chat_member_removed_event.swift in Sources */,
 				8899BC4D25430E40003CB98B /* MessageReactionDTO.swift in Sources */,
 				8484C49B2B4C2067000065E3 /* stream_chat_channel_deleted_event.swift in Sources */,
+				8419CEFA2B5AA433007F2CB3 /* stream_chat_send_event_response.swift in Sources */,
 				8484C4CE2B4C2067000065E3 /* stream_chat_guest_response.swift in Sources */,
 				79280F49248520B300CDEB89 /* EventDecoder.swift in Sources */,
 				8A0D649B24E579E90017A3C0 /* GuestUserTokenPayload.swift in Sources */,
+				8419CF2C2B5AA433007F2CB3 /* stream_chat_call_live_started_event.swift in Sources */,
 				DA84071025250720005A0F62 /* UserListQueryDTO.swift in Sources */,
 				799C9449247D5211001F1104 /* MessageSender.swift in Sources */,
 				792A4F4D248011E500EAF71D /* ChannelListQuery.swift in Sources */,
 				882C5746252C6FDF00E60C44 /* ChannelMemberListQuery.swift in Sources */,
 				8484C4D62B4C2067000065E3 /* stream_chat_channel_kicked_event.swift in Sources */,
+				8419CEEB2B5AA433007F2CB3 /* stream_chat_get_or_create_call_response.swift in Sources */,
 				8484C5232B4C2067000065E3 /* stream_chat_search_result.swift in Sources */,
 				7964F3B8249A314D002A09EC /* ConsoleLogDestination.swift in Sources */,
 				799C9445247D3DD2001F1104 /* WebSocketClient.swift in Sources */,
+				8419CF472B5AA433007F2CB3 /* stream_chat_end_call_request.swift in Sources */,
+				8419CF072B5AA433007F2CB3 /* stream_chat_call_member_removed_event.swift in Sources */,
 				8484C4A72B4C2067000065E3 /* stream_chat_mark_channels_read_request.swift in Sources */,
 				8484C4DF2B4C2067000065E3 /* stream_chat_guest_request.swift in Sources */,
 				8484C4822B4C2067000065E3 /* stream_chat_update_message_partial_request.swift in Sources */,
@@ -11298,12 +11695,17 @@
 				6971257E260CA503003C7B47 /* NSManagedObjectContext+Extensions.swift in Sources */,
 				8413CC462B4616E400190AF4 /* ChatAPI.swift in Sources */,
 				C15C8838286C7BF300E6A72C /* BackgroundListDatabaseObserver.swift in Sources */,
+				8419CF3F2B5AA433007F2CB3 /* stream_chat_query_members_request1.swift in Sources */,
 				DA640FBB2535CF8500D32944 /* ChannelListSortingKey.swift in Sources */,
+				8419CF332B5AA433007F2CB3 /* stream_chat_end_call_response.swift in Sources */,
+				8419CEF72B5AA433007F2CB3 /* stream_chat_call_member_updated_event.swift in Sources */,
 				8484C4DB2B4C2067000065E3 /* stream_chat_update_message_request.swift in Sources */,
+				8419CF3B2B5AA433007F2CB3 /* stream_chat_start_hlsbroadcasting_response.swift in Sources */,
 				8484C52F2B4C2067000065E3 /* client.swift in Sources */,
 				C1FC2F8F2742579D0062530F /* Data+Extensions.swift in Sources */,
 				8899BC3F2542FFA1003CB98B /* MessageReactionPayload.swift in Sources */,
 				797A756624814EF8003CF16D /* SystemEnvironment.swift in Sources */,
+				8419CF272B5AA433007F2CB3 /* stream_chat_call_hlsbroadcasting_failed_event.swift in Sources */,
 				8484C4602B4C2067000065E3 /* stream_chat_update_message_partial_response.swift in Sources */,
 				799C9438247D2FB9001F1104 /* ChatClientConfig.swift in Sources */,
 				C1FC2F992742579D0062530F /* StringHTTPHandler.swift in Sources */,
@@ -11311,6 +11713,7 @@
 				8484C5022B4C2067000065E3 /* stream_chat_reaction_removal_response.swift in Sources */,
 				7964F3B6249A314D002A09EC /* PrefixLogFormatter.swift in Sources */,
 				84A1D2E626AACDBE00014712 /* ChannelEventsController.swift in Sources */,
+				8419CF242B5AA433007F2CB3 /* stream_chat_member_request.swift in Sources */,
 				88BDCA8A2642B02D0099AD74 /* ChatMessageAttachment.swift in Sources */,
 				8484C51F2B4C2067000065E3 /* stream_chat_user_response.swift in Sources */,
 				88E26D6E2580F34B00F55AB5 /* AttachmentQueueUploader.swift in Sources */,
@@ -11329,13 +11732,16 @@
 				8484C5012B4C2067000065E3 /* stream_chat_notification_removed_from_channel_event.swift in Sources */,
 				8484C4D12B4C2067000065E3 /* stream_chat_message_flag.swift in Sources */,
 				79200D4C25025B81002F4EB1 /* Error+InternetNotAvailable.swift in Sources */,
+				8419CF052B5AA433007F2CB3 /* stream_chat_update_user_permissions_request.swift in Sources */,
 				C12DBE5F2A67DFE80045D9F0 /* SortValue.swift in Sources */,
 				8A0CC9F124C606EF00705CF9 /* ReactionEvents.swift in Sources */,
 				8484C4842B4C2067000065E3 /* stream_chat_xiaomi_config_fields.swift in Sources */,
 				C143788D27BBEBB700E23965 /* OfflineRequestsRepository.swift in Sources */,
 				79877A0F2498E4BC00015F8B /* ChannelId.swift in Sources */,
 				8484C4F22B4C2067000065E3 /* stream_chat_null_time_request.swift in Sources */,
+				8419CEF02B5AA433007F2CB3 /* stream_chat_query_members_response.swift in Sources */,
 				8484C5062B4C2067000065E3 /* stream_chat_user_unbanned_event.swift in Sources */,
+				8419CED92B5AA432007F2CB3 /* stream_chat_blocked_user_event.swift in Sources */,
 				8484C53D2B4C3961000065E3 /* stream_chat_get_call_token_request.swift in Sources */,
 				882C5760252C7CC400E60C44 /* ChannelMemberListQueryDTO.swift in Sources */,
 				8484C4E02B4C2067000065E3 /* stream_chat_command.swift in Sources */,
@@ -11347,12 +11753,15 @@
 				8484C50A2B4C2067000065E3 /* stream_chat_notification_new_message_event.swift in Sources */,
 				792A4F492480107A00EAF71D /* Sorting.swift in Sources */,
 				7937282A2498FFD300E13FE5 /* MemberPayload.swift in Sources */,
+				8419CF492B5AA433007F2CB3 /* stream_chat_start_recording_request.swift in Sources */,
 				AD6A248A280DA890003BA1E4 /* PushDevice.swift in Sources */,
 				799C944C247D5766001F1104 /* ChannelController.swift in Sources */,
 				8484C47C2B4C2067000065E3 /* stream_chat_pending_message.swift in Sources */,
+				8419CEFD2B5AA433007F2CB3 /* stream_chat_start_transcription_request.swift in Sources */,
 				8484C53C2B4C3961000065E3 /* stream_chat_create_call_request.swift in Sources */,
 				842F9749277A1CCF0060A489 /* PinnedMessagesPagination.swift in Sources */,
 				79C5CBF125F66E9700D98001 /* ChannelWatcherListQuery.swift in Sources */,
+				8419CF432B5AA433007F2CB3 /* stream_chat_iceserver.swift in Sources */,
 				792A4F3F247FFDE700EAF71D /* Codable+Extensions.swift in Sources */,
 				8819DFCF2525F3C600FD1A50 /* UserUpdater.swift in Sources */,
 				8484C4732B4C2067000065E3 /* stream_chat_unmute_channel_request.swift in Sources */,
@@ -11360,16 +11769,19 @@
 				8484C5122B4C2067000065E3 /* stream_chat_thresholds.swift in Sources */,
 				8413C45A2B45559000190AF4 /* DefaultAPI.swift in Sources */,
 				799BE2EA248A8C9D00DAC8A0 /* RetryStrategy.swift in Sources */,
+				8419CEDB2B5AA432007F2CB3 /* stream_chat_audio_settings_request.swift in Sources */,
 				DA84070C25250581005A0F62 /* UserListPayload.swift in Sources */,
 				8484C4E32B4C2067000065E3 /* stream_chat_channel_truncated_event.swift in Sources */,
 				79877A272498E50D00015F8B /* MemberModelDTO.swift in Sources */,
 				8484C4E22B4C2067000065E3 /* stream_chat_event_notification_settings.swift in Sources */,
 				8484C4A32B4C2067000065E3 /* stream_chat_user_reactivated_event.swift in Sources */,
+				8419CF2B2B5AA433007F2CB3 /* stream_chat_stop_live_response.swift in Sources */,
 				ADB951B2291C3CE900800554 /* AnyAttachmentUpdater.swift in Sources */,
 				79617CB125F236B600D54E61 /* UserWatchingEventMiddleware.swift in Sources */,
 				8484C4EB2B4C2067000065E3 /* stream_chat_image_size_request.swift in Sources */,
 				ADB951A1291BD7CC00800554 /* UploadedAttachment.swift in Sources */,
 				8484C47F2B4C2067000065E3 /* stream_chat_update_user_partial_request.swift in Sources */,
+				8419CEF42B5AA433007F2CB3 /* stream_chat_query_calls_response.swift in Sources */,
 				8484C4F42B4C2067000065E3 /* stream_chat_response.swift in Sources */,
 				7962958C248147430078EB53 /* BaseURL.swift in Sources */,
 				8802F9EF25AF3D4200475159 /* HTTPHeader.swift in Sources */,
@@ -11387,16 +11799,24 @@
 				7964F3BC249A5E60002A09EC /* RequestEncoder.swift in Sources */,
 				79896D64250A63A200BA8F1C /* ChannelReadUpdaterMiddleware.swift in Sources */,
 				88E26D7D2580F95300F55AB5 /* AttachmentEndpoints.swift in Sources */,
+				8419CF062B5AA433007F2CB3 /* stream_chat_query_calls_request.swift in Sources */,
 				F6D61D9B2510B3FC00EB0624 /* NSManagedObject+Extensions.swift in Sources */,
 				8484C4C12B4C2067000065E3 /* stream_chat_unmute_user_request.swift in Sources */,
 				DA4AA3B8250271BD00FAAF6E /* CurrentUserController+Combine.swift in Sources */,
 				79280F712487CD2B00CDEB89 /* Atomic.swift in Sources */,
 				8484C5292B4C2067000065E3 /* stream_chat_send_message_response.swift in Sources */,
+				8419CF462B5AA433007F2CB3 /* stream_chat_record_settings_response.swift in Sources */,
+				8419CEED2B5AA433007F2CB3 /* stream_chat_block_user_response.swift in Sources */,
+				8419CF172B5AA433007F2CB3 /* stream_chat_call_recording_stopped_event.swift in Sources */,
 				AD7AC99B260A9572004AADA5 /* MessagePinning.swift in Sources */,
 				8484C4E62B4C2067000065E3 /* stream_chat_message_pagination_params_request.swift in Sources */,
+				8419CED72B5AA432007F2CB3 /* stream_chat_updated_call_permissions_event.swift in Sources */,
 				88DA57642631CF1F00FA8C53 /* MuteDetails.swift in Sources */,
+				8419CEDA2B5AA432007F2CB3 /* stream_chat_stop_hlsbroadcasting_response.swift in Sources */,
 				7978FBBA26E15A58002CA2DF /* MessageSearchQuery.swift in Sources */,
 				797EEA4624FFAF4F00C81203 /* DataStore.swift in Sources */,
+				8419CF0D2B5AA433007F2CB3 /* stream_chat_join_call_response.swift in Sources */,
+				8419CF182B5AA433007F2CB3 /* stream_chat_call_session_participant_joined_event.swift in Sources */,
 				8484C4722B4C2067000065E3 /* stream_chat_query_users_request.swift in Sources */,
 				8484C5032B4C2067000065E3 /* stream_chat_connect_request_query_request.swift in Sources */,
 				79CDE1DD24B321FE0003BD1D /* CurrentUserDTO.swift in Sources */,
@@ -11405,8 +11825,12 @@
 				ADF34F9E25CDD8E600AD637C /* ConnectionController+SwiftUI.swift in Sources */,
 				4042968029FAC9F80089126D /* AudioAnalysing.swift in Sources */,
 				DAD539DB250B8A9C00CFC649 /* Controller.swift in Sources */,
+				8419CF372B5AA433007F2CB3 /* stream_chat_pin_response.swift in Sources */,
+				8419CEF82B5AA433007F2CB3 /* stream_chat_egress_rtmpresponse.swift in Sources */,
 				8484C4EF2B4C2067000065E3 /* stream_chat_label.swift in Sources */,
+				8419CF092B5AA433007F2CB3 /* stream_chat_call_response.swift in Sources */,
 				F6ED5F76250278D7005D7327 /* SyncEndpoint.swift in Sources */,
+				8419CEF12B5AA433007F2CB3 /* stream_chat_get_call_response.swift in Sources */,
 				8484C4572B4C2067000065E3 /* stream_chat_channel_config_request.swift in Sources */,
 				AD8FEE582AA8E1A100273F88 /* ChatClient+Environment.swift in Sources */,
 				8484C4B52B4C2067000065E3 /* stream_chat_data_dog_info.swift in Sources */,
@@ -11415,20 +11839,25 @@
 				AD52A2192804850700D0157E /* ChannelConfigDTO.swift in Sources */,
 				797A756824814F0D003CF16D /* Bundle+Extensions.swift in Sources */,
 				792B805024D95B5D00C2963E /* Cached.swift in Sources */,
+				8419CF012B5AA433007F2CB3 /* stream_chat_start_hlsbroadcasting_request.swift in Sources */,
 				8484C4FF2B4C2067000065E3 /* stream_chat_reaction_new_event.swift in Sources */,
 				7908829C2546D95A00896F03 /* FlagMessagePayload.swift in Sources */,
+				8419CF4D2B5AA433007F2CB3 /* stream_chat_accept_call_request.swift in Sources */,
 				8484C4CC2B4C2067000065E3 /* stream_chat_geofence_settings.swift in Sources */,
 				DA0BB1612513B5F200CAEFBD /* StringInterpolation+Extensions.swift in Sources */,
+				8419CF1B2B5AA433007F2CB3 /* stream_chat_call_request.swift in Sources */,
 				64C8C86E26934C6100329F82 /* UserInfo.swift in Sources */,
 				8484C4E42B4C2067000065E3 /* stream_chat_ring_settings.swift in Sources */,
 				C1FFD9F927ECC7C7008A6848 /* Filter+ChatChannel.swift in Sources */,
 				C1FC2F962742579D0062530F /* Transport.swift in Sources */,
+				8419CF102B5AA433007F2CB3 /* stream_chat_connected_event.swift in Sources */,
 				8484C5192B4C2067000065E3 /* stream_chat_channel_stop_watching_request.swift in Sources */,
 				C1FC2F9A2742579D0062530F /* WSEngine.swift in Sources */,
 				799C9479247E3DEA001F1104 /* StreamChatModel.xcdatamodeld in Sources */,
 				888E8C55252B525300195E03 /* MemberController.swift in Sources */,
 				8484C4AD2B4C2067000065E3 /* stream_chat_query_banned_users_request.swift in Sources */,
 				79877A1C2498E4EE00015F8B /* Endpoint.swift in Sources */,
+				8419CEEF2B5AA433007F2CB3 /* stream_chat_own_user_response.swift in Sources */,
 				DA4EE59E252B43B700CB26D4 /* NewUserQueryUpdater.swift in Sources */,
 				882C5759252C794900E60C44 /* MemberEndpoints.swift in Sources */,
 				8484C4F92B4C2067000065E3 /* stream_chat_users_response.swift in Sources */,
@@ -11444,8 +11873,11 @@
 				8484C4AA2B4C2067000065E3 /* stream_chat_images.swift in Sources */,
 				8484C44F2B4C2067000065E3 /* stream_chat_user_presence_changed_event.swift in Sources */,
 				F688643624E6DA8700A71361 /* CurrentUserController.swift in Sources */,
+				8419CF342B5AA433007F2CB3 /* stream_chat_reject_call_request.swift in Sources */,
 				88BEBCD32536FD7600D9E8B7 /* MemberListController+Combine.swift in Sources */,
+				8419CF4C2B5AA433007F2CB3 /* stream_chat_reject_call_response.swift in Sources */,
 				888E8C36252B2AAF00195E03 /* UserController+SwiftUI.swift in Sources */,
+				8419CF192B5AA433007F2CB3 /* stream_chat_get_or_create_call_request.swift in Sources */,
 				C143789027BC03EE00E23965 /* EndpointPath.swift in Sources */,
 				C10C7552299D1D67008C8F78 /* ChannelRepository.swift in Sources */,
 				790A4C45252DD4F1001F4A23 /* DevicePayloads.swift in Sources */,
@@ -11463,41 +11895,58 @@
 				79877A282498E50D00015F8B /* UserDTO.swift in Sources */,
 				DBCAFE2425C44B920015AD58 /* LazyCachedMapCollection.swift in Sources */,
 				79280F47248515FA00CDEB89 /* ChannelEvents.swift in Sources */,
+				8419CF2A2B5AA433007F2CB3 /* stream_chat_permission_request_event.swift in Sources */,
 				7978FBBC26E16295002CA2DF /* MessageSearchQueryDTO.swift in Sources */,
 				DA640FBE2535CF9200D32944 /* UserListSortingKey.swift in Sources */,
 				79877A182498E4EE00015F8B /* ChannelEndpoints.swift in Sources */,
+				8419CF1D2B5AA433007F2CB3 /* stream_chat_call_ingress_response.swift in Sources */,
 				8484C46B2B4C2067000065E3 /* stream_chat_read.swift in Sources */,
 				8484C4EA2B4C2067000065E3 /* stream_chat_channel_member_request.swift in Sources */,
+				8419CF0E2B5AA433007F2CB3 /* stream_chat_call_session_response.swift in Sources */,
 				8484C4642B4C2067000065E3 /* stream_chat_health_check_event.swift in Sources */,
 				40789D2D29F6AC500018C2BB /* AudioRecordingState.swift in Sources */,
+				8419CEDD2B5AA432007F2CB3 /* stream_chat_call_settings_request.swift in Sources */,
 				8484C4CA2B4C2067000065E3 /* stream_chat_screensharing_settings.swift in Sources */,
 				8484C4C72B4C2067000065E3 /* stream_chat_message_updated_event.swift in Sources */,
 				40789D3529F6AC500018C2BB /* AudioAnalysisEngine.swift in Sources */,
 				8484C4552B4C2067000065E3 /* stream_chat_apierror.swift in Sources */,
 				7964F3BA249A314D002A09EC /* LogDestination.swift in Sources */,
 				F63CC37324E592D30052844D /* MemberEventObserver.swift in Sources */,
+				8419CF022B5AA433007F2CB3 /* stream_chat_egress_response.swift in Sources */,
 				8484C53B2B4C3961000065E3 /* stream_chat_create_call_response.swift in Sources */,
 				88EA9AD825470F6A007EE76B /* Dictionary+Extensions.swift in Sources */,
+				8419CF392B5AA433007F2CB3 /* stream_chat_call_session_ended_event.swift in Sources */,
 				8AE335A824FCF999002B6677 /* Reachability_Vendor.swift in Sources */,
+				8419CEE32B5AA433007F2CB3 /* stream_chat_call_session_started_event.swift in Sources */,
 				79D6CE2725F7C83C00BE2EEC /* ChatChannelWatcherListController+Combine.swift in Sources */,
+				8419CEE72B5AA433007F2CB3 /* stream_chat_call_notification_event.swift in Sources */,
 				C1B49B402822C01C00F4E89E /* NSManagedObject+Validation.swift in Sources */,
 				8484C4502B4C2067000065E3 /* stream_chat_message_response.swift in Sources */,
 				40B735072A1273D5008BE681 /* Array+Sampling.swift in Sources */,
+				8419CEDC2B5AA432007F2CB3 /* stream_chat_mute_users_request.swift in Sources */,
 				79877A0C2498E4BC00015F8B /* ChannelType.swift in Sources */,
+				8419CF122B5AA433007F2CB3 /* stream_chat_send_reaction_response.swift in Sources */,
+				8419CEE62B5AA433007F2CB3 /* stream_chat_block_user_request.swift in Sources */,
+				8419CF0A2B5AA433007F2CB3 /* stream_chat_hlssettings_response.swift in Sources */,
+				8419CF4B2B5AA433007F2CB3 /* stream_chat_call_reaction_event.swift in Sources */,
 				DABC6ABC2546FD0100A8FC78 /* MessageAttachmentPayload.swift in Sources */,
 				8484C51E2B4C2067000065E3 /* stream_chat_truncate_channel_response.swift in Sources */,
 				8484C4782B4C2067000065E3 /* stream_chat_app.swift in Sources */,
 				C1E8AD5E278EF5F30041B775 /* AsyncOperation.swift in Sources */,
 				C1FC2FA02742579D0062530F /* FoundationSecurity.swift in Sources */,
 				8484C4932B4C2067000065E3 /* stream_chat_update_message_response.swift in Sources */,
+				8419CEF62B5AA433007F2CB3 /* stream_chat_call_accepted_event.swift in Sources */,
 				8484C51C2B4C2067000065E3 /* stream_chat_get_reactions_response.swift in Sources */,
 				8484C4C02B4C2067000065E3 /* stream_chat_channel_state_response_fields.swift in Sources */,
 				8484C50E2B4C2067000065E3 /* stream_chat_hide_channel_response.swift in Sources */,
 				8484C5112B4C2067000065E3 /* stream_chat_sync_response.swift in Sources */,
 				88D85DA7252F3C1D00AE1030 /* MemberListController.swift in Sources */,
+				8419CF112B5AA433007F2CB3 /* stream_chat_unpin_response.swift in Sources */,
 				79280F4B248523C000CDEB89 /* ConnectionEvents.swift in Sources */,
 				8484C4712B4C2067000065E3 /* stream_chat_label_thresholds.swift in Sources */,
+				8419CF0B2B5AA433007F2CB3 /* stream_chat_call_hlsbroadcasting_stopped_event.swift in Sources */,
 				79158CF425F133FB00186102 /* ChannelTruncatedEventMiddleware.swift in Sources */,
+				8419CF292B5AA433007F2CB3 /* stream_chat_credentials.swift in Sources */,
 				882C574A252C767E00E60C44 /* ChannelMemberListPayload.swift in Sources */,
 				8484C4982B4C2067000065E3 /* stream_chat_push_notification_settings.swift in Sources */,
 				8484C4BA2B4C2067000065E3 /* stream_chat_huawei_config_fields.swift in Sources */,
@@ -11507,15 +11956,18 @@
 				DAFAD6A324DD8E1A0043ED06 /* ChannelEditDetailPayload.swift in Sources */,
 				84A43CB326A9A54700302763 /* EventSender.swift in Sources */,
 				8484C5272B4C2067000065E3 /* stream_chat_sort_param_request.swift in Sources */,
+				8419CF2E2B5AA433007F2CB3 /* stream_chat_call_deleted_event.swift in Sources */,
 				88BEBCD62536FDBF00D9E8B7 /* MemberListController+SwiftUI.swift in Sources */,
 				8484C52C2B4C2067000065E3 /* stream_chat_channel_created_event.swift in Sources */,
 				A3B0CFA227BBF52600F352F9 /* ChannelTruncateRequestPayload.swift in Sources */,
+				8419CEF52B5AA433007F2CB3 /* stream_chat_stop_recording_request.swift in Sources */,
 				88F6DF91252C8845009A8AF0 /* ChannelMemberUpdater.swift in Sources */,
 				79BF83F2248F8F60007611A1 /* Logger.swift in Sources */,
 				8413C45C2B455BFC00190AF4 /* APIHelper.swift in Sources */,
 				799C943B247D2FB9001F1104 /* MessageDTO.swift in Sources */,
 				40789D1729F6AC500018C2BB /* AudioPlaybackContextAccessor.swift in Sources */,
 				79D5CDD427EA1BE300BE7D8B /* MessageTranslationsPayload.swift in Sources */,
+				8419CED62B5AA432007F2CB3 /* stream_chat_transcription_settings_request.swift in Sources */,
 				8484C4D22B4C2067000065E3 /* stream_chat_search_request.swift in Sources */,
 				8484C4D32B4C2067000065E3 /* stream_chat_user_request.swift in Sources */,
 				8484C4DE2B4C2067000065E3 /* stream_chat_layout_settings.swift in Sources */,
@@ -11531,12 +11983,16 @@
 				79877A0D2498E4BC00015F8B /* CurrentUser.swift in Sources */,
 				4042967D29FAC9DA0089126D /* AudioAnalysisContext.swift in Sources */,
 				AD8FEE5B2AA8E1E400273F88 /* ChatClientFactory.swift in Sources */,
+				8419CF362B5AA433007F2CB3 /* stream_chat_call_created_event.swift in Sources */,
 				88D85D9A252F168B00AE1030 /* MemberController+Combine.swift in Sources */,
 				8484C4FE2B4C2067000065E3 /* stream_chat_search_warning.swift in Sources */,
 				792A4F462480107A00EAF71D /* ChannelQuery.swift in Sources */,
+				8419CEFC2B5AA433007F2CB3 /* stream_chat_accept_call_response.swift in Sources */,
 				8484C4AE2B4C2067000065E3 /* stream_chat_image_data_request.swift in Sources */,
+				8419CF152B5AA433007F2CB3 /* stream_chat_get_edges_response.swift in Sources */,
 				88E26D5E2580E92000F55AB5 /* AttachmentId.swift in Sources */,
 				799C9447247D50F3001F1104 /* Worker.swift in Sources */,
+				8419CEDE2B5AA432007F2CB3 /* stream_chat_member_response.swift in Sources */,
 				79280F782489181200CDEB89 /* URLSessionWebSocketEngine.swift in Sources */,
 				8484C5382B4C3961000065E3 /* stream_chat_hmscall.swift in Sources */,
 				792A4F3C247FFBB400EAF71D /* Timers.swift in Sources */,
@@ -11544,10 +12000,12 @@
 				8484C4A82B4C2067000065E3 /* stream_chat_mute_user_request.swift in Sources */,
 				8484C49E2B4C2067000065E3 /* stream_chat_wsevent.swift in Sources */,
 				79682C4624BC9DAF0071578E /* ChannelUpdater.swift in Sources */,
+				8419CF252B5AA433007F2CB3 /* stream_chat_edge_response.swift in Sources */,
 				792A4F482480107A00EAF71D /* Pagination.swift in Sources */,
 				8484C46C2B4C2067000065E3 /* stream_chat_create_device_request.swift in Sources */,
 				79AF43B42632AF1C00E75CDA /* ChannelVisibilityEventMiddleware.swift in Sources */,
 				DAF1BED525066114003CEDC0 /* MessageController+Combine.swift in Sources */,
+				8419CF202B5AA433007F2CB3 /* stream_chat_ring_settings_request.swift in Sources */,
 				A36C39F52860680A0004EB7E /* URL+EnrichedURL.swift in Sources */,
 				8484C4852B4C2067000065E3 /* stream_chat_null_bool_request.swift in Sources */,
 				C1FC2F9B2742579D0062530F /* FrameCollector.swift in Sources */,
@@ -11558,6 +12016,7 @@
 				C18F5B522840BD2C00527915 /* DBDate.swift in Sources */,
 				AD483B962A2658970004B406 /* ChannelMemberUnbanRequestPayload.swift in Sources */,
 				43D3F0F62841052600B74921 /* CallPayloads.swift in Sources */,
+				8419CF2D2B5AA433007F2CB3 /* stream_chat_thumbnails_settings_request.swift in Sources */,
 				8484C52E2B4C2067000065E3 /* stream_chat_file_upload_config.swift in Sources */,
 				8484C4B62B4C2067000065E3 /* stream_chat_image_upload_request.swift in Sources */,
 				8484C4A62B4C2067000065E3 /* stream_chat_call_settings.swift in Sources */,
@@ -11565,9 +12024,11 @@
 				8484C4792B4C2067000065E3 /* stream_chat_mute_channel_response.swift in Sources */,
 				40789D2129F6AC500018C2BB /* AppStateObserving.swift in Sources */,
 				79280F7A248918FD00CDEB89 /* StarscreamWebSocketEngine.swift in Sources */,
+				8419CEE82B5AA433007F2CB3 /* stream_chat_geofence_settings_request.swift in Sources */,
 				8484C4B92B4C2067000065E3 /* stream_chat_reaction_updated_event.swift in Sources */,
 				8484C4832B4C2067000065E3 /* stream_chat_delete_channels_result.swift in Sources */,
 				8484C5072B4C2067000065E3 /* stream_chat_record_settings.swift in Sources */,
+				8419CEE92B5AA433007F2CB3 /* stream_chat_call_hlsbroadcasting_started_event.swift in Sources */,
 				7963BD6926B0208900281F8C /* ChatMessageAudioAttachment.swift in Sources */,
 				697C6F90260CFA37000E9023 /* Deprecations.swift in Sources */,
 				8484C51D2B4C2067000065E3 /* stream_chat_pagination_params_request.swift in Sources */,
@@ -11575,7 +12036,10 @@
 				7964F3A4249A0ACF002A09EC /* ChannelListQueryDTO.swift in Sources */,
 				8484C4E82B4C2067000065E3 /* stream_chat_update_users_response.swift in Sources */,
 				79280F3F2484E3BA00CDEB89 /* ClientError.swift in Sources */,
+				8419CF422B5AA433007F2CB3 /* stream_chat_stop_recording_response.swift in Sources */,
 				C174E0F6284DFA5A0040B936 /* IdentifiablePayload.swift in Sources */,
+				8419CEEC2B5AA433007F2CB3 /* stream_chat_call_state_response_fields.swift in Sources */,
+				8419CF1C2B5AA433007F2CB3 /* stream_chat_stop_transcription_request.swift in Sources */,
 				884C61222594A449008B70DC /* AttachmentActionRequestBody.swift in Sources */,
 				8484C51B2B4C2067000065E3 /* stream_chat_update_channel_partial_response.swift in Sources */,
 				8484C46F2B4C2067000065E3 /* stream_chat_file_upload_request.swift in Sources */,
@@ -11585,6 +12049,7 @@
 				84A43CAF26A9A25000302763 /* UnknownChannelEvent.swift in Sources */,
 				C1B0B38327BFC08900C8207D /* EndpointPath+OfflineRequest.swift in Sources */,
 				C1EFF3F3285E459C0057B91B /* IdentifiableModel.swift in Sources */,
+				8419CF352B5AA433007F2CB3 /* stream_chat_broadcast_settings_response.swift in Sources */,
 				DAFAD6A124DC476A0043ED06 /* Result+Extensions.swift in Sources */,
 				C1FC2F982742579D0062530F /* TCPTransport.swift in Sources */,
 				8484C5042B4C2067000065E3 /* stream_chat_message_request.swift in Sources */,
@@ -11593,14 +12058,18 @@
 				8484C4D92B4C2067000065E3 /* stream_chat_update_channel_response.swift in Sources */,
 				8484C4F32B4C2067000065E3 /* stream_chat_stop_watching_response.swift in Sources */,
 				8484C50C2B4C2067000065E3 /* stream_chat_truncate_channel_request.swift in Sources */,
+				8419CF3E2B5AA433007F2CB3 /* stream_chat_call_member_added_event.swift in Sources */,
 				8484C4B02B4C2067000065E3 /* stream_chat_own_user.swift in Sources */,
 				AD7DFC3625D2FA8100DD9DA3 /* CurrentUserUpdater.swift in Sources */,
 				88206FC425B18C88009D086A /* ConnectionRepository.swift in Sources */,
 				8484C4922B4C2067000065E3 /* stream_chat_reaction_response.swift in Sources */,
+				8419CF442B5AA433007F2CB3 /* stream_chat_stop_transcription_response.swift in Sources */,
 				8484C5132B4C2067000065E3 /* stream_chat_attachment_request.swift in Sources */,
 				7991D83B24F5427E00D21BA3 /* EphemeralValuesContainer.swift in Sources */,
 				8484C4B22B4C2067000065E3 /* stream_chat_reaction_request.swift in Sources */,
 				79682C4B24BF37CB0071578E /* ChannelListPayload.swift in Sources */,
+				8419CEE42B5AA433007F2CB3 /* stream_chat_own_capability.swift in Sources */,
+				8419CF0F2B5AA433007F2CB3 /* stream_chat_go_live_response.swift in Sources */,
 				79D6CE3725F7C84600BE2EEC /* ChatChannelWatcherListController+SwiftUI.swift in Sources */,
 				4042968929FACA6A0089126D /* AudioValuePercentageNormaliser.swift in Sources */,
 				DA9985EE24E175AA000E9885 /* ChannelCodingKeys.swift in Sources */,
@@ -11611,11 +12080,13 @@
 				8484C5172B4C2067000065E3 /* stream_chat_show_channel_request.swift in Sources */,
 				8484C4C42B4C2067000065E3 /* stream_chat_channel.swift in Sources */,
 				8484C4B32B4C2067000065E3 /* stream_chat_audio_settings.swift in Sources */,
+				8419CEE12B5AA433007F2CB3 /* stream_chat_video_settings_request.swift in Sources */,
 				40789D1F29F6AC500018C2BB /* AudioPlaying.swift in Sources */,
 				79FC85E724ACCBC500A665ED /* Token.swift in Sources */,
 				79877A0E2498E4BC00015F8B /* Channel.swift in Sources */,
 				DA4AA3B22502718600FAAF6E /* ChannelController+Combine.swift in Sources */,
 				8484C4FC2B4C2067000065E3 /* stream_chat_channel_member.swift in Sources */,
+				8419CEE52B5AA433007F2CB3 /* stream_chat_call_updated_event.swift in Sources */,
 				8484C5152B4C2067000065E3 /* stream_chat_channel_config.swift in Sources */,
 				8484C4612B4C2067000065E3 /* stream_chat_typing_stop_event.swift in Sources */,
 				8484C4C22B4C2067000065E3 /* stream_chat_query_banned_users_response.swift in Sources */,
@@ -11629,16 +12100,21 @@
 				790A4C42252DD377001F4A23 /* DeviceEndpoints.swift in Sources */,
 				C1CEF9092A1CDF7600414931 /* UserUpdateMiddleware.swift in Sources */,
 				8484C45C2B4C2067000065E3 /* stream_chat_file_delete_response.swift in Sources */,
+				8419CEE22B5AA433007F2CB3 /* stream_chat_call_session_participant_left_event.swift in Sources */,
+				8419CF4A2B5AA433007F2CB3 /* stream_chat_broadcast_settings_request.swift in Sources */,
 				797A756424814E7A003CF16D /* WebSocketConnectPayload.swift in Sources */,
 				F6FF1DA624FD17B400151735 /* MessageController.swift in Sources */,
 				E7AD954F25D536AA00076DC3 /* SystemEnvironment+Version.swift in Sources */,
 				797E10A824EAF6DE00353791 /* UniqueId.swift in Sources */,
 				8484C45F2B4C2067000065E3 /* stream_chat_action_request.swift in Sources */,
+				8419CF452B5AA433007F2CB3 /* stream_chat_pin_request.swift in Sources */,
 				846A595E2B4FEF8400D60EF2 /* ChannelDatabaseSessionV2.swift in Sources */,
 				8484C5212B4C2067000065E3 /* stream_chat_channel_request.swift in Sources */,
 				ADE2093D29FC022D007D0FF3 /* MessagesPaginationStateHandling.swift in Sources */,
 				8484C4882B4C2067000065E3 /* stream_chat_call_type.swift in Sources */,
 				DA4EE5B8252B69E300CB26D4 /* UserListController+Combine.swift in Sources */,
+				8419CF412B5AA433007F2CB3 /* stream_chat_egress_hlsresponse.swift in Sources */,
+				8419CEF92B5AA433007F2CB3 /* stream_chat_thumbnail_response.swift in Sources */,
 				F6ED5F7425023EB4005D7327 /* ConnectionRecoveryHandler.swift in Sources */,
 				8484C4EE2B4C2067000065E3 /* stream_chat_delete_channel_response.swift in Sources */,
 				8484C4FD2B4C2067000065E3 /* stream_chat_field.swift in Sources */,
@@ -11646,10 +12122,15 @@
 				79877A0B2498E4BC00015F8B /* Member.swift in Sources */,
 				8484C4D02B4C2067000065E3 /* stream_chat_message_action_request.swift in Sources */,
 				8484C4562B4C2067000065E3 /* stream_chat_connect_request.swift in Sources */,
+				8419CF302B5AA433007F2CB3 /* stream_chat_unblock_user_response.swift in Sources */,
 				84ABB015269F0A84003A4585 /* EventsController+Combine.swift in Sources */,
 				F670B50F24FE6EA900003B1A /* MessageEditor.swift in Sources */,
 				7991D83D24F7E93900D21BA3 /* ChannelListController+SwiftUI.swift in Sources */,
+				8419CF0C2B5AA433007F2CB3 /* stream_chat_call_recording.swift in Sources */,
+				8419CF482B5AA433007F2CB3 /* stream_chat_start_recording_response.swift in Sources */,
 				225D7FE225D191400094E555 /* ChatMessageImageAttachment.swift in Sources */,
+				8419CF382B5AA433007F2CB3 /* stream_chat_start_transcription_response.swift in Sources */,
+				8419CF2F2B5AA433007F2CB3 /* stream_chat_unpin_request.swift in Sources */,
 				8A0D64A724E57A520017A3C0 /* GuestUserTokenRequestPayload.swift in Sources */,
 				888E8C39252B2ABB00195E03 /* UserController+Combine.swift in Sources */,
 				792FCB4524A33B5B000290C7 /* EventDataProcessorMiddleware.swift in Sources */,
@@ -11666,6 +12147,7 @@
 				8484C4902B4C2067000065E3 /* stream_chat_apnconfig_fields.swift in Sources */,
 				F6CCA24D251235F7004C1859 /* UserTypingStateUpdaterMiddleware.swift in Sources */,
 				8A618E4524D19D510003D83C /* WebSocketPingController.swift in Sources */,
+				8419CEFB2B5AA433007F2CB3 /* stream_chat_request_permission_request.swift in Sources */,
 				8A62704E24B8660A0040BFD6 /* EventType.swift in Sources */,
 				C135A1CB28F45F6B0058EFB6 /* AuthenticationRepository.swift in Sources */,
 				CFE616BB28348AC500AE2ABF /* StreamTimer.swift in Sources */,
@@ -11674,6 +12156,7 @@
 				F65D9091250A5989000B8CEB /* WebSocketConnectEndpoint.swift in Sources */,
 				4A4E184728D06F260062378D /* Documentation.docc in Sources */,
 				842F9745277A09B10060A489 /* PinnedMessagesQuery.swift in Sources */,
+				8419CEF22B5AA433007F2CB3 /* stream_chat_call_ended_event.swift in Sources */,
 				DAE566EB24FFD26C00E39431 /* CurrentUserController+SwiftUI.swift in Sources */,
 				ADE40043291B1A510000C98B /* AttachmentUploader.swift in Sources */,
 				8484C5372B4C3961000065E3 /* stream_chat_get_call_token_response.swift in Sources */,
@@ -11683,7 +12166,9 @@
 				C173538E27D9F804008AC412 /* KeyedDecodingContainer+Array.swift in Sources */,
 				8484C4E12B4C2067000065E3 /* stream_chat_notification_added_to_channel_event.swift in Sources */,
 				8484C4B12B4C2067000065E3 /* stream_chat_channel_frozen_event.swift in Sources */,
+				8419CF212B5AA433007F2CB3 /* stream_chat_record_settings_request.swift in Sources */,
 				84AA4E3626F264610056A684 /* EventDTOConverterMiddleware.swift in Sources */,
+				8419CF282B5AA433007F2CB3 /* stream_chat_call_user_muted.swift in Sources */,
 				ADF34FA625CDD8F600AD637C /* ConnectionController+Combine.swift in Sources */,
 				799C945E247D7283001F1104 /* DatabaseContainer.swift in Sources */,
 				22692C8725D176F4007C41D0 /* ChatMessageLinkAttachment.swift in Sources */,
@@ -11700,14 +12185,17 @@
 				8484C52D2B4C2067000065E3 /* stream_chat_notification_channel_mutes_updated_event.swift in Sources */,
 				E7DD8EC125E4083B0059A322 /* OptionalDecodable.swift in Sources */,
 				F6FF1DAA24FD23D300151735 /* MessageEndpoints.swift in Sources */,
+				8419CF322B5AA433007F2CB3 /* stream_chat_update_call_members_request.swift in Sources */,
 				DA8407002524F778005A0F62 /* UserListController.swift in Sources */,
 				8484C4BB2B4C2067000065E3 /* stream_chat_backstage_settings.swift in Sources */,
 				799C943E247D2FB9001F1104 /* ChatMessage.swift in Sources */,
 				8484C4862B4C2067000065E3 /* stream_chat_channels_response.swift in Sources */,
+				8419CF042B5AA433007F2CB3 /* stream_chat_unblock_user_request.swift in Sources */,
 				8413C4602B4563C100190AF4 /* APIError.swift in Sources */,
 				8484C4F72B4C2067000065E3 /* stream_chat_sort_param.swift in Sources */,
 				8484C4D52B4C2067000065E3 /* stream_chat_notification_invite_accepted_event.swift in Sources */,
 				8484C4F02B4C2067000065E3 /* stream_chat_geofence_response.swift in Sources */,
+				8419CEE02B5AA433007F2CB3 /* stream_chat_go_live_request.swift in Sources */,
 				8484C4D82B4C2067000065E3 /* stream_chat_push_notification_fields.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

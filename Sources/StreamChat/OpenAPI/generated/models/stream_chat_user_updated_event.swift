@@ -5,35 +5,35 @@
 import Foundation
 
 public struct StreamChatUserUpdatedEvent: Codable, Hashable, Event {
-    public var user: StreamChatUserObject?
-    
     public var createdAt: Date
     
     public var type: String
     
-    public init(user: StreamChatUserObject?, createdAt: Date, type: String) {
-        self.user = user
-        
+    public var user: StreamChatUserObject?
+    
+    public init(createdAt: Date, type: String, user: StreamChatUserObject?) {
         self.createdAt = createdAt
         
         self.type = type
+        
+        self.user = user
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case user
-        
         case createdAt = "created_at"
         
         case type
+        
+        case user
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(user, forKey: .user)
-        
         try container.encode(createdAt, forKey: .createdAt)
         
         try container.encode(type, forKey: .type)
+        
+        try container.encode(user, forKey: .user)
     }
 }
