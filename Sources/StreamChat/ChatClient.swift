@@ -146,9 +146,18 @@ public class ChatClient {
                 nil
             }
         )
+        
+        api = API(
+            apiClient: apiClient,
+            encoder: apiClientEncoder,
+            basePath: BaseURL.localhost.restAPIBaseURLv2.absoluteString,
+            apiKey: config.apiKey
+        )
+        
         let messageRepository = environment.messageRepositoryBuilder(
             databaseContainer,
-            apiClient
+            apiClient,
+            api
         )
         let offlineRequestsRepository = environment.offlineRequestsRepositoryBuilder(
             messageRepository,
@@ -193,13 +202,6 @@ public class ChatClient {
         self.connectionRepository = connectionRepository
         self.messageRepository = messageRepository
         self.syncRepository = syncRepository
-        
-        api = API(
-            apiClient: apiClient,
-            encoder: apiClientEncoder,
-            basePath: BaseURL.localhost.restAPIBaseURLv2.absoluteString,
-            apiKey: config.apiKey
-        )
         
         authenticationRepository = authRepository
         extensionLifecycle = environment.extensionLifecycleBuilder(config.applicationGroupIdentifier)

@@ -108,6 +108,14 @@ protocol MessageDatabaseSession {
         syncOwnReactions: Bool,
         cache: PreWarmedCache?
     ) throws -> MessageDTO
+    
+    @discardableResult
+    func saveMessage(
+        payload: StreamChatMessage,
+        for cid: ChannelId?,
+        syncOwnReactions: Bool,
+        cache: PreWarmedCache?
+    ) throws -> MessageDTO
 
     /// Saves the provided message payload to the DB. Return's the matching `MessageDTO` if the save was successful.
     /// Throws an error if the save fails.

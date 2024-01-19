@@ -600,3 +600,30 @@ extension NSManagedObjectContext {
         return dto
     }
 }
+
+extension NSManagedObjectContext {
+    func saveMessage(
+        payload: StreamChatMessage,
+        for cid: ChannelId?,
+        syncOwnReactions: Bool = true,
+        cache: PreWarmedCache?
+    ) throws -> MessageDTO {
+        guard let cid else {
+            throw ClientError.MessagePayloadSavingFailure("""
+            `cid` must be provided to sucessfuly save the message payload.
+            - `cid` value: \(String(describing: cid))
+            """)
+        }
+
+        var channelDTO: ChannelDTO?
+        channelDTO = ChannelDTO.load(cid: cid, context: self)
+
+        guard let channel = channelDTO else {
+            let description = "Should never happen, a channel should have been fetched."
+            log.assertionFailure(description)
+            throw ClientError.MessagePayloadSavingFailure(description)
+        }
+
+        return try saveMessage(payload: payload, channelDTO: channel, syncOwnReactions: syncOwnReactions, cache: cache)
+    }
+}

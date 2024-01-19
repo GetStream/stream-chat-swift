@@ -27,7 +27,7 @@ public struct StreamChatAttachment: Codable, Hashable {
     
     public var imageUrl: String?
     
-    public var custom: [String: RawJSON]
+    public var custom: [String: RawJSON]?
     
     public var footerIcon: String?
     
@@ -118,7 +118,7 @@ public struct StreamChatAttachment: Codable, Hashable {
         
         case imageUrl = "image_url"
         
-        case custom = "Custom"
+        case custom
         
         case footerIcon = "footer_icon"
         

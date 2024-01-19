@@ -14,10 +14,12 @@ enum MessageRepositoryError: LocalizedError {
 class MessageRepository {
     let database: DatabaseContainer
     let apiClient: APIClient
+    let api: API
 
-    init(database: DatabaseContainer, apiClient: APIClient) {
+    init(database: DatabaseContainer, apiClient: APIClient, api: API) {
         self.database = database
         self.apiClient = apiClient
+        self.api = api
     }
 
     func sendMessage(
@@ -61,14 +63,39 @@ class MessageRepository {
                     }
                     return
                 }
-
-                let endpoint: Endpoint<MessagePayload.Boxed> = .sendMessage(
-                    cid: cid,
-                    messagePayload: requestBody,
-                    skipPush: skipPush,
-                    skipEnrichUrl: skipEnrichUrl
+                
+                // TODO: temp implementation.
+                let attachments = requestBody
+                    .attachments
+                    .map { StreamChatAttachmentRequest(type: $0.type, payload: $0.payload) }
+                
+                let messageRequest = StreamChatMessageRequest(
+                    pinExpires: requestBody.pinExpires,
+                    pinned: requestBody.pinned,
+                    quotedMessageId: requestBody.quotedMessageId,
+                    custom: requestBody.extraData,
+                    silent: requestBody.isSilent,
+                    text: requestBody.text,
+                    id: requestBody.id,
+                    type: nil, // TODO: check this
+                    attachments: attachments,
+                    mentionedUsers: requestBody.mentionedUserIds,
+                    parentId: requestBody.parentId,
+                    pinnedAt: nil, // TODO: check
+                    showInChannel: requestBody.showReplyInChannel
                 )
-                self?.apiClient.request(endpoint: endpoint) {
+                
+                let sendMessageRequest = StreamChatSendMessageRequest(
+                    message: messageRequest,
+                    skipEnrichUrl: skipEnrichUrl,
+                    skipPush: skipPush
+                )
+                
+                self?.api.sendMessage(
+                    type: cid.type.rawValue,
+                    id: cid.id,
+                    sendMessageRequest: sendMessageRequest
+                ) {
                     switch $0 {
                     case let .success(payload):
                         self?.saveSuccessfullySentMessage(cid: cid, message: payload.message) { result in
@@ -91,6 +118,28 @@ class MessageRepository {
     func saveSuccessfullySentMessage(
         cid: ChannelId,
         message: MessagePayload,
+        completion: @escaping (Result<ChatMessage, Error>) -> Void
+    ) {
+        database.write({
+            let messageDTO = try $0.saveMessage(payload: message, for: cid, syncOwnReactions: false, cache: nil)
+            if messageDTO.localMessageState == .sending || messageDTO.localMessageState == .sendingFailed {
+                messageDTO.locallyCreatedAt = nil
+                messageDTO.localMessageState = nil
+            }
+
+            let messageModel = try messageDTO.asModel()
+            completion(.success(messageModel))
+        }, completion: {
+            if let error = $0 {
+                log.error("Error saving sent message with id \(message.id): \(error)", subsystems: .offlineSupport)
+                completion(.failure(error))
+            }
+        })
+    }
+    
+    func saveSuccessfullySentMessage(
+        cid: ChannelId,
+        message: StreamChatMessage,
         completion: @escaping (Result<ChatMessage, Error>) -> Void
     ) {
         database.write({
