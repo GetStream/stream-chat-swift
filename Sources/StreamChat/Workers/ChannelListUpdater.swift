@@ -156,7 +156,12 @@ class ChannelListUpdater: Worker {
             memberLimit: channelListQuery.membersLimit,
             messageLimit: channelListQuery.messagesLimit
         )
-        api.queryChannels(queryChannelsRequest: request, connectionId: nil, completion: completion)
+        let requiresConnectionId = channelListQuery.options.contains(oneOf: [.presence, .state, .watch])
+        api.queryChannels(
+            queryChannelsRequest: request,
+            requiresConnectionId: requiresConnectionId,
+            completion: completion
+        )
     }
 
     /// Marks all channels for a user as read.

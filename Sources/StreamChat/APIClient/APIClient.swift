@@ -327,53 +327,41 @@ class APIClient {
         urlRequest: URLRequest,
         completion: @escaping (Result<Response, Error>) -> Void
     ) {
-        encoder.encode(request: urlRequest) { [weak self] (requestResult) in
-            guard let self else { return }
-            let urlRequest: URLRequest
+        log.debug(
+            "Making URL request: \(String(describing: urlRequest.httpMethod?.uppercased())) \(String(describing: urlRequest.url?.relativePath))\n"
+                + "Headers:\n\(String(describing: urlRequest.allHTTPHeaderFields))\n"
+                + "Body:\n\(urlRequest.httpBody?.debugPrettyPrintedJSON ?? "<Empty>")\n"
+                + "Query items:\n\(urlRequest.queryItems.prettyPrinted)",
+            subsystems: .httpRequests
+        )
+
+        let task = session.dataTask(with: urlRequest) { [decoder = self.decoder] (data, response, error) in
             do {
-                urlRequest = try requestResult.get()
+                let decodedResponse: Response = try decoder.decodeRequestResponse(
+                    data: data,
+                    response: response,
+                    error: error
+                )
+                completion(.success(decodedResponse))
             } catch {
-                log.error(error, subsystems: .httpRequests)
-                completion(.failure(error))
-                return
-            }
-            
-            log.debug(
-                "Making URL request: \(String(describing: urlRequest.httpMethod?.uppercased())) \(String(describing: urlRequest.url?.relativePath))\n"
-                    + "Headers:\n\(String(describing: urlRequest.allHTTPHeaderFields))\n"
-                    + "Body:\n\(urlRequest.httpBody?.debugPrettyPrintedJSON ?? "<Empty>")\n"
-                    + "Query items:\n\(urlRequest.queryItems.prettyPrinted)",
-                subsystems: .httpRequests
-            )
+                if error is ClientError.ExpiredToken == false {
+                    completion(.failure(error))
+                    return
+                }
 
-            let task = self.session.dataTask(with: urlRequest) { [decoder = self.decoder] (data, response, error) in
-                do {
-                    let decodedResponse: Response = try decoder.decodeRequestResponse(
-                        data: data,
-                        response: response,
-                        error: error
-                    )
-                    completion(.success(decodedResponse))
-                } catch {
-                    if error is ClientError.ExpiredToken == false {
-                        completion(.failure(error))
-                        return
-                    }
-
-                    /// If the error is ExpiredToken, we need to refresh it. There are 2 possibilities here:
-                    /// 1. The token is not being refreshed, so we start the refresh, and we wait until it is completed. Then the request will be retried.
-                    /// 2. The token is already being refreshed, so we just put back the request to the queue (Cannot happen when running the queue in serial)
-                    ///
-                    /// This is done leveraging 2 error types. When ClientError.RefreshingToken is returned, we put back the request on the queue.
-                    /// But when ClientError.TokenRefreshed is returned, just retry the execution.
-                    /// This is done because we want to make sure that when the queue is running serial, there order is kept.
-                    self.refreshToken { refreshResult in
-                        completion(.failure(refreshResult))
-                    }
+                /// If the error is ExpiredToken, we need to refresh it. There are 2 possibilities here:
+                /// 1. The token is not being refreshed, so we start the refresh, and we wait until it is completed. Then the request will be retried.
+                /// 2. The token is already being refreshed, so we just put back the request to the queue (Cannot happen when running the queue in serial)
+                ///
+                /// This is done leveraging 2 error types. When ClientError.RefreshingToken is returned, we put back the request on the queue.
+                /// But when ClientError.TokenRefreshed is returned, just retry the execution.
+                /// This is done because we want to make sure that when the queue is running serial, there order is kept.
+                self.refreshToken { refreshResult in
+                    completion(.failure(refreshResult))
                 }
             }
-            task.resume()
         }
+        task.resume()
     }
 
     private func refreshToken(completion: @escaping (ClientError) -> Void) {

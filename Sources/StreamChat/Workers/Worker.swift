@@ -21,6 +21,7 @@ class Worker {
         // TODO: fix this.
         api = API(
             apiClient: apiClient,
+            encoder: DefaultRequestEncoder(baseURL: URL(string: "https://google.com")!, apiKey: .init("empty")),
             basePath: "TODO",
             apiKey: .init("empty")
         )
@@ -32,6 +33,7 @@ class Worker {
         // TODO: fix this.
         self.api = api ?? API(
             apiClient: apiClient,
+            encoder: DefaultRequestEncoder(baseURL: URL(string: "https://google.com")!, apiKey: .init("empty")),
             basePath: "TODO",
             apiKey: .init("empty")
         )

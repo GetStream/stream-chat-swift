@@ -196,6 +196,7 @@ public class ChatClient {
         
         api = API(
             apiClient: apiClient,
+            encoder: apiClientEncoder,
             basePath: BaseURL.localhost.restAPIBaseURLv2.absoluteString,
             apiKey: config.apiKey
         )

@@ -24,6 +24,8 @@ protocol RequestEncoder {
     
     func encode(
         request: URLRequest,
+        requiresConnectionId: Bool,
+        requiresToken: Bool,
         completion: @escaping (Result<URLRequest, Error>) -> Void
     )
 
@@ -132,15 +134,16 @@ class DefaultRequestEncoder: RequestEncoder {
     
     func encode(
         request: URLRequest,
+        requiresConnectionId: Bool,
+        requiresToken: Bool,
         completion: @escaping (Result<URLRequest, Error>) -> Void
     ) {
-        // TODO: fix this
-        addAuthorizationHeader(request: request, requiresToken: true) {
+        addAuthorizationHeader(request: request, requiresToken: requiresToken) {
             switch $0 {
             case let .success(requestWithAuth):
                 self.addConnectionIdIfNeeded(
                     request: requestWithAuth,
-                    requiresConnectionId: true, // TODO: fix this.
+                    requiresConnectionId: requiresConnectionId,
                     completion: completion
                 )
             case let .failure(error):
