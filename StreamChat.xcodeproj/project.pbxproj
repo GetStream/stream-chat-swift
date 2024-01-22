@@ -5713,7 +5713,6 @@
 				ADB3C478261638C500A69B66 /* QuotedChatMessageView */,
 				AD447496263AFC4A0030E583 /* SendButton */,
 				AD87D095263C74A4008B466C /* ShrinkInputButton */,
-				AD4473F6263AC4A50030E583 /* Suggestions */,
 				ADA35730269C9B3B004AD8E9 /* TitleContainerView */,
 				CF62AD9828944D4700392893 /* SkeletonLoadable.swift */,
 			);
@@ -7821,6 +7820,7 @@
 				E73A8B2A2578EB2B00FBDC56 /* ComposerVC.swift */,
 				22ADD681256C40410098EFEB /* ComposerView.swift */,
 				AD8D1808268F7290004E3A5C /* TypingSuggester.swift */,
+				AD4473F6263AC4A50030E583 /* Suggestions */,
 			);
 			path = Composer;
 			sourceTree = "<group>";
