@@ -14,12 +14,14 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
 
     func handle(event: Event, session: DatabaseSession) -> Event? {
         switch event {
-        case let event as MessageNewEventDTO:
-            incrementUnreadCountIfNeeded(
-                for: event.cid,
-                message: event.message,
-                session: session
-            )
+        case let event as StreamChatMessageNewEvent:
+            if let cid = try? ChannelId(cid: event.cid), let message = event.message {
+                incrementUnreadCountIfNeeded(
+                    for: cid,
+                    message: message,
+                    session: session
+                )
+            }
 
         case let event as NotificationMessageNewEventDTO:
             incrementUnreadCountIfNeeded(
@@ -157,6 +159,44 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
 
         channelRead.unreadMessageCount += 1
     }
+    
+    private func incrementUnreadCountIfNeeded(
+        for cid: ChannelId,
+        message: StreamChatMessage,
+        session: DatabaseSession
+    ) {
+        guard let currentUser = session.currentUser else {
+            return log.error("Current user is missing", subsystems: .webSocket)
+        }
+
+        // If the message exists in the database before processing the current batch of events, it means it was
+        // already processed and we don't have to increase the unread count
+        guard newProcessedMessageIds().contains(message.id) else {
+            return log.debug("Not incrementing count for \(message.id) as this message has already been processed")
+        }
+
+        guard let channelRead = session.loadOrCreateChannelRead(cid: cid, userId: currentUser.user.id) else {
+            return log.error("Channel read is missing", subsystems: .webSocket)
+        }
+
+        if let skipReason = unreadCountUpdateSkippingReason(
+            currentUser: currentUser,
+            channelRead: channelRead,
+            message: message
+        ) {
+            return log.debug(
+                "Message \(message.id) does not increment unread counts for channel \(cid): \(skipReason)",
+                subsystems: .webSocket
+            )
+        }
+
+        log.debug(
+            "Message \(message.id) increments unread counts for channel \(cid)",
+            subsystems: .webSocket
+        )
+
+        channelRead.unreadMessageCount += 1
+    }
 
     private func decrementUnreadCountIfNeeded(
         event: MessageDeletedEventDTO,
@@ -217,6 +257,43 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
         }
 
         if message.type == .system {
+            return .messageIsSystem
+        }
+
+        if message.createdAt <= channelRead.lastReadAt.bridgeDate {
+            return .messageIsSeen
+        }
+
+        return nil
+    }
+    
+    private func unreadCountUpdateSkippingReason(
+        currentUser: CurrentUserDTO,
+        channelRead: ChannelReadDTO,
+        message: StreamChatMessage
+    ) -> UnreadSkippingReason? {
+        if channelRead.channel.mute != nil {
+            return .channelIsMuted
+        }
+
+        if message.user?.id == currentUser.user.id {
+            return .messageIsOwn
+        }
+
+        if currentUser.mutedUsers.contains(where: { message.user?.id == $0.id }) {
+            return .authorIsMuted
+        }
+
+        if message.silent {
+            return .messageIsSilent
+        }
+
+        if message.parentId != nil && !(message.showInChannel ?? false) {
+            return .messageIsThreadReply
+        }
+
+        // TODO: check this.
+        if message.type == "system" {
             return .messageIsSystem
         }
 

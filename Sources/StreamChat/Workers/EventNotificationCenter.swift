@@ -40,7 +40,7 @@ class EventNotificationCenter: NotificationCenter {
         log.debug(processingEventsDebugMessage(), subsystems: .webSocket)
 
         let messageIds: [MessageId] = events.compactMap {
-            ($0 as? MessageNewEventDTO)?.message.id ?? ($0 as? NotificationMessageNewEventDTO)?.message.id
+            ($0 as? StreamChatMessageNewEvent)?.message?.id ?? ($0 as? NotificationMessageNewEventDTO)?.message.id
         }
 
         var eventsToPost = [Event]()

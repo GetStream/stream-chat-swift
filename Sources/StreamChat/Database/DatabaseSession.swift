@@ -539,6 +539,8 @@ extension DatabaseSession {
         if let newMessageEvent = event as? EventContainsMessage {
             try saveMessageIfNeeded(from: newMessageEvent)
         }
+        
+        updateChannelPreview(from: event)
     }
     
     func saveMessageIfNeeded(from event: EventContainsMessage) throws {
@@ -568,6 +570,7 @@ extension DatabaseSession {
             cache: nil
         )
 
+        // TODO: handle this.
 //        if eventType == .messageDeleted && payload.hardDelete {
 //            // We should in fact delete it from the DB, but right now this produces a crash
 //            // This should be fixed in this ticket: https://stream-io.atlassian.net/browse/CIS-1963
@@ -670,6 +673,21 @@ extension DatabaseSession {
         default:
             break
         }
+    }
+    
+    func updateChannelPreview(from event: Event) {
+        if let newMessage = event as? StreamChatMessageNewEvent,
+           let cid = try? ChannelId(cid: newMessage.cid),
+           let channelDTO = channel(cid: cid) {
+            let newPreview = preview(for: cid)
+            let newPreviewCreatedAt = newPreview?.createdAt.bridgeDate ?? .distantFuture
+            let currentPreviewCreatedAt = channelDTO.previewMessage?.createdAt.bridgeDate ?? .distantPast
+            if newPreviewCreatedAt > currentPreviewCreatedAt {
+                channelDTO.previewMessage = newPreview
+            }
+        }
+
+        // TODO: handle other events
     }
 }
 
