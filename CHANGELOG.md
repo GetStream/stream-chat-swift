@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix not possible to resend messages with failed attachments [#2966](https://github.com/GetStream/stream-chat-swift/pull/2966)
 - Fix not mentioning users if they are not fetched in the local device [#2967](https://github.com/GetStream/stream-chat-swift/pull/2967)
 - Fix rare crash in `startObserver()` in login/logout flow [#2972](https://github.com/GetStream/stream-chat-swift/pull/2972)
+### 🔄 Changed
+- Bump `maxAttachmentCountPerMessage` from `10` to `30` to align with the backend. [#2977](https://github.com/GetStream/stream-chat-swift/pull/2977)
 
 ## StreamChatUI
 ### 🐞 Fixed
