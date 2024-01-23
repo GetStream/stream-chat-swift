@@ -7,24 +7,24 @@ import Foundation
 public struct StreamChatNotificationChannelMutesUpdatedEvent: Codable, Hashable, Event {
     public var createdAt: Date
     
-    public var me: StreamChatOwnUser
-    
     public var type: String
     
-    public init(createdAt: Date, me: StreamChatOwnUser, type: String) {
+    public var me: StreamChatOwnUser
+    
+    public init(createdAt: Date, type: String, me: StreamChatOwnUser) {
         self.createdAt = createdAt
         
-        self.me = me
-        
         self.type = type
+        
+        self.me = me
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case createdAt = "created_at"
         
-        case me
-        
         case type
+        
+        case me
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -32,8 +32,8 @@ public struct StreamChatNotificationChannelMutesUpdatedEvent: Codable, Hashable,
         
         try container.encode(createdAt, forKey: .createdAt)
         
-        try container.encode(me, forKey: .me)
-        
         try container.encode(type, forKey: .type)
+        
+        try container.encode(me, forKey: .me)
     }
 }

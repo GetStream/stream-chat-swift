@@ -43,11 +43,11 @@ extension NSManagedObjectContext {
         let cid = try ChannelId(cid: payload.cid)
         let dto = ChannelDTO.loadOrCreate(cid: cid, context: self, cache: cache)
 
-        dto.name = payload.custom?["name"]?.stringValue
+        dto.name = payload.custom["name"]?.stringValue
         // TODO: revisit this.
-        dto.imageURL = URL(string: payload.custom?["image"]?.stringValue ?? "")
+        dto.imageURL = URL(string: payload.custom["image"]?.stringValue ?? "")
         do {
-            dto.extraData = try JSONEncoder.default.encode(payload.custom ?? [:])
+            dto.extraData = try JSONEncoder.default.encode(payload.custom)
         } catch {
             log.error(
                 "Failed to decode extra payload for Channel with cid: <\(dto.cid)>, using default value instead. "
@@ -299,9 +299,7 @@ extension NSManagedObjectContext {
         }
 
         // Save member specific data
-        if let role = payload.role {
-            dto.channelRoleRaw = role
-        }
+        dto.channelRoleRaw = payload.channelRole
 
         dto.memberCreatedAt = payload.createdAt.bridgeDate
         dto.memberUpdatedAt = payload.updatedAt.bridgeDate
@@ -352,7 +350,7 @@ extension NSManagedObjectContext {
         dto.replyCount = Int32(payload.replyCount)
 
         do {
-            dto.extraData = try JSONEncoder.default.encode(payload.custom ?? [:])
+            dto.extraData = try JSONEncoder.default.encode(payload.custom)
         } catch {
             log.error(
                 "Failed to decode extra payload for Message with id: <\(dto.id)>, using default value instead. "
@@ -407,22 +405,8 @@ extension NSManagedObjectContext {
         }
 
         dto.reactionScores = payload.reactionScores
-            .compactMapValues {
-                if let value = $0.numberValue {
-                    return Int(value)
-                } else {
-                    return nil
-                }
-            }
         // TODO: check why was this scores.
         dto.reactionCounts = payload.reactionCounts
-            .compactMapValues {
-                if let value = $0.numberValue {
-                    return Int(value)
-                } else {
-                    return nil
-                }
-            }
 
         // If user edited their message to remove mentioned users, we need to get rid of it
         // as backend does
@@ -472,7 +456,7 @@ extension NSManagedObjectContext {
             parentMessageDTO.replies.insert(dto)
         }
 
-        dto.translations = payload.i18n?.compactMapValues { $0.stringValue }
+        dto.translations = payload.i18n
         dto.originalLanguage = payload.i18n?["language"] as? String
         
 //        if let moderationDetailsPayload = payload.moderationDetails {

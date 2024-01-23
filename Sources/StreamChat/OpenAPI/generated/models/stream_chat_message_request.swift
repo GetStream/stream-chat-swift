@@ -7,34 +7,34 @@ import Foundation
 public struct StreamChatMessageRequest: Codable, Hashable {
     public var attachments: [StreamChatAttachmentRequest?]
     
-    public var custom: [String: RawJSON]?
+    public var id: String? = nil
     
-    public var parentId: String?
+    public var parentId: String? = nil
     
-    public var pinExpires: Date?
+    public var pinExpires: Date? = nil
     
-    public var pinned: Bool?
+    public var pinned: Bool? = nil
     
-    public var pinnedAt: Date?
+    public var pinnedAt: Date? = nil
     
-    public var showInChannel: Bool?
+    public var quotedMessageId: String? = nil
     
-    public var id: String?
+    public var showInChannel: Bool? = nil
     
-    public var quotedMessageId: String?
+    public var silent: Bool? = nil
     
-    public var text: String?
+    public var text: String? = nil
     
-    public var mentionedUsers: [String]?
+    public var type: String? = nil
     
-    public var silent: Bool?
+    public var mentionedUsers: [String]? = nil
     
-    public var type: String?
+    public var custom: [String: RawJSON]? = nil
     
-    public init(attachments: [StreamChatAttachmentRequest?], custom: [String: RawJSON]?, parentId: String?, pinExpires: Date?, pinned: Bool?, pinnedAt: Date?, showInChannel: Bool?, id: String?, quotedMessageId: String?, text: String?, mentionedUsers: [String]?, silent: Bool?, type: String?) {
+    public init(attachments: [StreamChatAttachmentRequest?], id: String? = nil, parentId: String? = nil, pinExpires: Date? = nil, pinned: Bool? = nil, pinnedAt: Date? = nil, quotedMessageId: String? = nil, showInChannel: Bool? = nil, silent: Bool? = nil, text: String? = nil, type: String? = nil, mentionedUsers: [String]? = nil, custom: [String: RawJSON]? = nil) {
         self.attachments = attachments
         
-        self.custom = custom
+        self.id = id
         
         self.parentId = parentId
         
@@ -44,25 +44,25 @@ public struct StreamChatMessageRequest: Codable, Hashable {
         
         self.pinnedAt = pinnedAt
         
-        self.showInChannel = showInChannel
-        
-        self.id = id
-        
         self.quotedMessageId = quotedMessageId
         
-        self.text = text
-        
-        self.mentionedUsers = mentionedUsers
+        self.showInChannel = showInChannel
         
         self.silent = silent
         
+        self.text = text
+        
         self.type = type
+        
+        self.mentionedUsers = mentionedUsers
+        
+        self.custom = custom
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case attachments
         
-        case custom
+        case id
         
         case parentId = "parent_id"
         
@@ -72,19 +72,19 @@ public struct StreamChatMessageRequest: Codable, Hashable {
         
         case pinnedAt = "pinned_at"
         
-        case showInChannel = "show_in_channel"
-        
-        case id
-        
         case quotedMessageId = "quoted_message_id"
         
-        case text
-        
-        case mentionedUsers = "mentioned_users"
+        case showInChannel = "show_in_channel"
         
         case silent
         
+        case text
+        
         case type
+        
+        case mentionedUsers = "mentioned_users"
+        
+        case custom
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -92,7 +92,7 @@ public struct StreamChatMessageRequest: Codable, Hashable {
         
         try container.encode(attachments, forKey: .attachments)
         
-        try container.encode(custom, forKey: .custom)
+        try container.encode(id, forKey: .id)
         
         try container.encode(parentId, forKey: .parentId)
         
@@ -102,18 +102,18 @@ public struct StreamChatMessageRequest: Codable, Hashable {
         
         try container.encode(pinnedAt, forKey: .pinnedAt)
         
-        try container.encode(showInChannel, forKey: .showInChannel)
-        
-        try container.encode(id, forKey: .id)
-        
         try container.encode(quotedMessageId, forKey: .quotedMessageId)
         
-        try container.encode(text, forKey: .text)
-        
-        try container.encode(mentionedUsers, forKey: .mentionedUsers)
+        try container.encode(showInChannel, forKey: .showInChannel)
         
         try container.encode(silent, forKey: .silent)
         
+        try container.encode(text, forKey: .text)
+        
         try container.encode(type, forKey: .type)
+        
+        try container.encode(mentionedUsers, forKey: .mentionedUsers)
+        
+        try container.encode(custom, forKey: .custom)
     }
 }

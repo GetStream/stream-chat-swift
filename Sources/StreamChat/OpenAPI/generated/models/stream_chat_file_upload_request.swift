@@ -5,11 +5,11 @@
 import Foundation
 
 public struct StreamChatFileUploadRequest: Codable, Hashable {
-    public var file: String?
+    public var file: String? = nil
     
-    public var user: StreamChatOnlyUserIDRequest?
+    public var user: StreamChatOnlyUserIDRequest? = nil
     
-    public init(file: String?, user: StreamChatOnlyUserIDRequest?) {
+    public init(file: String? = nil, user: StreamChatOnlyUserIDRequest? = nil) {
         self.file = file
         
         self.user = user

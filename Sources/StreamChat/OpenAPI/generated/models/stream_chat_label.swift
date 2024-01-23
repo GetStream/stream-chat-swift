@@ -7,9 +7,9 @@ import Foundation
 public struct StreamChatLabel: Codable, Hashable {
     public var name: String
     
-    public var phraseListIds: [Int]?
+    public var phraseListIds: [Int]? = nil
     
-    public init(name: String, phraseListIds: [Int]?) {
+    public init(name: String, phraseListIds: [Int]? = nil) {
         self.name = name
         
         self.phraseListIds = phraseListIds

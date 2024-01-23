@@ -5,48 +5,50 @@
 import Foundation
 
 public struct StreamChatHealthCheckEvent: Codable, Hashable, Event {
-    public var type: String
-    
     public var cid: String
-    
-    public var createdAt: Date
-    
-    public var me: StreamChatOwnUser?
     
     public var connectionId: String
     
-    public init(type: String, cid: String, createdAt: Date, me: StreamChatOwnUser?) {
-        self.type = type
-        
+    public var createdAt: Date
+    
+    public var type: String
+    
+    public var me: StreamChatOwnUser? = nil
+    
+    public init(cid: String, connectionId: String, createdAt: Date, type: String, me: StreamChatOwnUser? = nil) {
         self.cid = cid
+        
+        self.connectionId = connectionId
         
         self.createdAt = createdAt
         
-        self.me = me
+        self.type = type
         
-        connectionId = ""
+        self.me = me
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case type
-        
         case cid
+        
+        case connectionId = "connection_id"
         
         case createdAt = "created_at"
         
-        case me
+        case type
         
-        case connectionId = "connection_id"
+        case me
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(type, forKey: .type)
-        
         try container.encode(cid, forKey: .cid)
         
+        try container.encode(connectionId, forKey: .connectionId)
+        
         try container.encode(createdAt, forKey: .createdAt)
+        
+        try container.encode(type, forKey: .type)
         
         try container.encode(me, forKey: .me)
     }

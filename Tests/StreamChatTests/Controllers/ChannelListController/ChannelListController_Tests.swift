@@ -1837,7 +1837,8 @@ private class TestEnvironment {
         .init(channelQueryUpdaterBuilder: { [unowned self] in
             self.channelListUpdater = ChannelListUpdater_Spy(
                 database: $0,
-                apiClient: $1
+                apiClient: $1,
+                api: $2
             )
             return self.channelListUpdater!
         })

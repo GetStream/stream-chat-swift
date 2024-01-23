@@ -5,11 +5,11 @@
 import Foundation
 
 public struct StreamChatLabelThresholds: Codable, Hashable {
-    public var block: Double?
+    public var block: Double? = nil
     
-    public var flag: Double?
+    public var flag: Double? = nil
     
-    public init(block: Double?, flag: Double?) {
+    public init(block: Double? = nil, flag: Double? = nil) {
         self.block = block
         
         self.flag = flag

@@ -5,7 +5,9 @@
 import Foundation
 
 public struct StreamChatAPIError: Codable, Hashable {
-    public var exceptionFields: [String: RawJSON]?
+    public var code: Int
+    
+    public var duration: String
     
     public var message: String
     
@@ -13,14 +15,14 @@ public struct StreamChatAPIError: Codable, Hashable {
     
     public var statusCode: Int
     
-    public var code: Int
-    
     public var details: [Int]
     
-    public var duration: String
+    public var exceptionFields: [String: String]? = nil
     
-    public init(exceptionFields: [String: RawJSON]?, message: String, moreInfo: String, statusCode: Int, code: Int, details: [Int], duration: String) {
-        self.exceptionFields = exceptionFields
+    public init(code: Int, duration: String, message: String, moreInfo: String, statusCode: Int, details: [Int], exceptionFields: [String: String]? = nil) {
+        self.code = code
+        
+        self.duration = duration
         
         self.message = message
         
@@ -28,15 +30,15 @@ public struct StreamChatAPIError: Codable, Hashable {
         
         self.statusCode = statusCode
         
-        self.code = code
-        
         self.details = details
         
-        self.duration = duration
+        self.exceptionFields = exceptionFields
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case exceptionFields = "exception_fields"
+        case code
+        
+        case duration
         
         case message
         
@@ -44,17 +46,17 @@ public struct StreamChatAPIError: Codable, Hashable {
         
         case statusCode = "StatusCode"
         
-        case code
-        
         case details
         
-        case duration
+        case exceptionFields = "exception_fields"
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(exceptionFields, forKey: .exceptionFields)
+        try container.encode(code, forKey: .code)
+        
+        try container.encode(duration, forKey: .duration)
         
         try container.encode(message, forKey: .message)
         
@@ -62,10 +64,8 @@ public struct StreamChatAPIError: Codable, Hashable {
         
         try container.encode(statusCode, forKey: .statusCode)
         
-        try container.encode(code, forKey: .code)
-        
         try container.encode(details, forKey: .details)
         
-        try container.encode(duration, forKey: .duration)
+        try container.encode(exceptionFields, forKey: .exceptionFields)
     }
 }

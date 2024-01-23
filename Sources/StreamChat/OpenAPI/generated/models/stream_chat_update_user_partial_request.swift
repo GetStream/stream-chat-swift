@@ -7,24 +7,24 @@ import Foundation
 public struct StreamChatUpdateUserPartialRequest: Codable, Hashable {
     public var id: String
     
-    public var set: [String: RawJSON]
-    
     public var unset: [String]
     
-    public init(id: String, set: [String: RawJSON], unset: [String]) {
+    public var set: [String: RawJSON]
+    
+    public init(id: String, unset: [String], set: [String: RawJSON]) {
         self.id = id
         
-        self.set = set
-        
         self.unset = unset
+        
+        self.set = set
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case id
         
-        case set
-        
         case unset
+        
+        case set
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -32,8 +32,8 @@ public struct StreamChatUpdateUserPartialRequest: Codable, Hashable {
         
         try container.encode(id, forKey: .id)
         
-        try container.encode(set, forKey: .set)
-        
         try container.encode(unset, forKey: .unset)
+        
+        try container.encode(set, forKey: .set)
     }
 }

@@ -7,11 +7,11 @@ import Foundation
 public struct StreamChatFileUploadResponse: Codable, Hashable {
     public var duration: String
     
-    public var file: String?
+    public var file: String? = nil
     
-    public var thumbUrl: String?
+    public var thumbUrl: String? = nil
     
-    public init(duration: String, file: String?, thumbUrl: String?) {
+    public init(duration: String, file: String? = nil, thumbUrl: String? = nil) {
         self.duration = duration
         
         self.file = file

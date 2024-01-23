@@ -7,11 +7,11 @@ import Foundation
 public struct StreamChatSendMessageRequest: Codable, Hashable {
     public var message: StreamChatMessageRequest
     
-    public var skipEnrichUrl: Bool?
+    public var skipEnrichUrl: Bool? = nil
     
-    public var skipPush: Bool?
+    public var skipPush: Bool? = nil
     
-    public init(message: StreamChatMessageRequest, skipEnrichUrl: Bool?, skipPush: Bool?) {
+    public init(message: StreamChatMessageRequest, skipEnrichUrl: Bool? = nil, skipPush: Bool? = nil) {
         self.message = message
         
         self.skipEnrichUrl = skipEnrichUrl

@@ -5,51 +5,51 @@
 import Foundation
 
 public struct StreamChatUserMute: Codable, Hashable {
-    public var user: StreamChatUserObject?
-    
     public var createdAt: Date
-    
-    public var expires: Date?
-    
-    public var target: StreamChatUserObject?
     
     public var updatedAt: Date
     
-    public init(user: StreamChatUserObject?, createdAt: Date, expires: Date?, target: StreamChatUserObject?, updatedAt: Date) {
-        self.user = user
-        
+    public var expires: Date? = nil
+    
+    public var target: StreamChatUserObject? = nil
+    
+    public var user: StreamChatUserObject? = nil
+    
+    public init(createdAt: Date, updatedAt: Date, expires: Date? = nil, target: StreamChatUserObject? = nil, user: StreamChatUserObject? = nil) {
         self.createdAt = createdAt
+        
+        self.updatedAt = updatedAt
         
         self.expires = expires
         
         self.target = target
         
-        self.updatedAt = updatedAt
+        self.user = user
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case user
-        
         case createdAt = "created_at"
+        
+        case updatedAt = "updated_at"
         
         case expires
         
         case target
         
-        case updatedAt = "updated_at"
+        case user
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(user, forKey: .user)
-        
         try container.encode(createdAt, forKey: .createdAt)
+        
+        try container.encode(updatedAt, forKey: .updatedAt)
         
         try container.encode(expires, forKey: .expires)
         
         try container.encode(target, forKey: .target)
         
-        try container.encode(updatedAt, forKey: .updatedAt)
+        try container.encode(user, forKey: .user)
     }
 }

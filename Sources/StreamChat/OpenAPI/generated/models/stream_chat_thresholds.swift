@@ -5,13 +5,13 @@
 import Foundation
 
 public struct StreamChatThresholds: Codable, Hashable {
-    public var explicit: StreamChatLabelThresholds?
+    public var explicit: StreamChatLabelThresholds? = nil
     
-    public var spam: StreamChatLabelThresholds?
+    public var spam: StreamChatLabelThresholds? = nil
     
-    public var toxic: StreamChatLabelThresholds?
+    public var toxic: StreamChatLabelThresholds? = nil
     
-    public init(explicit: StreamChatLabelThresholds?, spam: StreamChatLabelThresholds?, toxic: StreamChatLabelThresholds?) {
+    public init(explicit: StreamChatLabelThresholds? = nil, spam: StreamChatLabelThresholds? = nil, toxic: StreamChatLabelThresholds? = nil) {
         self.explicit = explicit
         
         self.spam = spam

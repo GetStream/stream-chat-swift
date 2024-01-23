@@ -5,60 +5,54 @@
 import Foundation
 
 public struct StreamChatCallType: Codable, Hashable {
-    public var pK: Int
-    
-    public var settings: StreamChatCallSettings?
-    
-    public var updatedAt: Date
-    
     public var appPK: Int
     
     public var createdAt: Date
     
     public var name: String
     
-    public var notificationSettings: StreamChatNotificationSettings?
+    public var pK: Int
     
-    public init(pK: Int, settings: StreamChatCallSettings?, updatedAt: Date, appPK: Int, createdAt: Date, name: String, notificationSettings: StreamChatNotificationSettings?) {
-        self.pK = pK
-        
-        self.settings = settings
-        
-        self.updatedAt = updatedAt
-        
+    public var updatedAt: Date
+    
+    public var notificationSettings: StreamChatNotificationSettings? = nil
+    
+    public var settings: StreamChatCallSettings? = nil
+    
+    public init(appPK: Int, createdAt: Date, name: String, pK: Int, updatedAt: Date, notificationSettings: StreamChatNotificationSettings? = nil, settings: StreamChatCallSettings? = nil) {
         self.appPK = appPK
         
         self.createdAt = createdAt
         
         self.name = name
         
+        self.pK = pK
+        
+        self.updatedAt = updatedAt
+        
         self.notificationSettings = notificationSettings
+        
+        self.settings = settings
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case pK = "PK"
-        
-        case settings = "Settings"
-        
-        case updatedAt = "UpdatedAt"
-        
         case appPK = "AppPK"
         
         case createdAt = "CreatedAt"
         
         case name = "Name"
         
+        case pK = "PK"
+        
+        case updatedAt = "UpdatedAt"
+        
         case notificationSettings = "NotificationSettings"
+        
+        case settings = "Settings"
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
-        try container.encode(pK, forKey: .pK)
-        
-        try container.encode(settings, forKey: .settings)
-        
-        try container.encode(updatedAt, forKey: .updatedAt)
         
         try container.encode(appPK, forKey: .appPK)
         
@@ -66,6 +60,12 @@ public struct StreamChatCallType: Codable, Hashable {
         
         try container.encode(name, forKey: .name)
         
+        try container.encode(pK, forKey: .pK)
+        
+        try container.encode(updatedAt, forKey: .updatedAt)
+        
         try container.encode(notificationSettings, forKey: .notificationSettings)
+        
+        try container.encode(settings, forKey: .settings)
     }
 }

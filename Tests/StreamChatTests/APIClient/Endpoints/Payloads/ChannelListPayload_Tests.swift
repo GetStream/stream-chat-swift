@@ -22,13 +22,34 @@ final class ChannelListPayload_Tests: XCTestCase {
         // 3MB JSON Channel List from Watercooler
         let url = XCTestCase.mockData(fromJSONFile: "BigChannelListPayload")
 
-        measure {
-            do {
-                _ = try JSONDecoder.default.decode(ChannelListPayload.self, from: url)
-            } catch {
-                XCTFail("Failed to parse JSON: \(error)")
-            }
-        }
+//        measure {
+//            do {
+//                _ = try JSONDecoder.default.decode(StreamChatChannelsResponse.self, from: url)
+//            } catch {
+//                XCTFail("Failed to parse JSON: \(error)")
+//            }
+//        }
+        let start = Date()
+        _ = try! JSONDecoder.default.decode(ChannelListPayload.self, from: url)
+        let end = Date()
+        print("======== \(end.timeIntervalSince(start))")
+    }
+    
+    func test_decode_bigChannelListPayload_Timestamps() {
+        // 3MB JSON Channel List from Watercooler
+        let url = XCTestCase.mockData(fromJSONFile: "test")
+
+//        measure {
+//            do {
+//                _ = try JSONDecoder.default.decode(StreamChatChannelsResponse.self, from: url)
+//            } catch {
+//                XCTFail("Failed to parse JSON: \(error)")
+//            }
+//        }
+        let start = Date()
+        _ = try! JSONDecoder.default.decode(StreamChatChannelsResponse.self, from: url)
+        let end = Date()
+        print("======== \(end.timeIntervalSince(start))")
     }
 
     func test_decode_shouldReturnChannelsIfOneChannelHasMissingRequiredProperties() throws {

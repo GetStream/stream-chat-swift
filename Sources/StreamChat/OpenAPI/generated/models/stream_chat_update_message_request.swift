@@ -7,9 +7,9 @@ import Foundation
 public struct StreamChatUpdateMessageRequest: Codable, Hashable {
     public var message: StreamChatMessageRequest
     
-    public var skipEnrichUrl: Bool?
+    public var skipEnrichUrl: Bool? = nil
     
-    public init(message: StreamChatMessageRequest, skipEnrichUrl: Bool?) {
+    public init(message: StreamChatMessageRequest, skipEnrichUrl: Bool? = nil) {
         self.message = message
         
         self.skipEnrichUrl = skipEnrichUrl

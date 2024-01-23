@@ -28,24 +28,31 @@ final class StreamJSONDecoder: JSONDecoder {
 
         dateDecodingStrategy = .custom { [weak self] decoder throws -> Date in
             let container = try decoder.singleValueContainer()
-            let dateString: String = try container.decode(String.self)
-
-            if let date = self?.dateCache.object(forKey: dateString as NSString) {
-                return date.bridgeDate
-            }
-
-            if let date = self?.iso8601formatter.date(from: dateString) {
-                self?.dateCache.setObject(date.bridgeDate, forKey: dateString as NSString)
+            
+            do {
+                let interval: Double = try container.decode(Double.self) / 1_000_000_000
+                let date = Date(timeIntervalSince1970: interval)
                 return date
-            }
+            } catch {
+                let dateString: String = try container.decode(String.self)
 
-            if let date = DateFormatter.Stream.rfc3339Date(from: dateString) {
-                self?.dateCache.setObject(date.bridgeDate, forKey: dateString as NSString)
-                return date
-            }
+                if let date = self?.dateCache.object(forKey: dateString as NSString) {
+                    return date.bridgeDate
+                }
 
-            // Fail
-            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Invalid date: \(dateString)")
+                if let date = self?.iso8601formatter.date(from: dateString) {
+                    self?.dateCache.setObject(date.bridgeDate, forKey: dateString as NSString)
+                    return date
+                }
+
+                if let date = DateFormatter.Stream.rfc3339Date(from: dateString) {
+                    self?.dateCache.setObject(date.bridgeDate, forKey: dateString as NSString)
+                    return date
+                }
+
+                // Fail
+                throw DecodingError.dataCorruptedError(in: container, debugDescription: "Invalid date: \(dateString)")
+            }
         }
     }
 }

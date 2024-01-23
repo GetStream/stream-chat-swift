@@ -5,179 +5,179 @@
 import Foundation
 
 public struct StreamChatOwnUser: Codable, Hashable {
-    public var channelMutes: [StreamChatChannelMute?]
-    
-    public var id: String
-    
-    public var unreadChannels: Int
-    
-    public var teams: [String]?
-    
-    public var totalUnreadCount: Int
-    
-    public var custom: [String: RawJSON]?
+    public var banned: Bool
     
     public var createdAt: Date
     
-    public var deletedAt: Date?
+    public var id: String
     
     public var language: String
     
-    public var latestHiddenChannels: [String]?
-    
     public var online: Bool
-    
-    public var updatedAt: Date
-    
-    public var banned: Bool
-    
-    public var deactivatedAt: Date?
-    
-    public var lastActive: Date?
-    
-    public var mutes: [StreamChatUserMute?]
-    
-    public var pushNotifications: StreamChatPushNotificationSettings?
-    
-    public var devices: [StreamChatDevice]
-    
-    public var invisible: Bool?
     
     public var role: String
     
+    public var totalUnreadCount: Int
+    
+    public var unreadChannels: Int
+    
     public var unreadCount: Int
     
-    public init(channelMutes: [StreamChatChannelMute?], id: String, unreadChannels: Int, teams: [String]?, totalUnreadCount: Int, custom: [String: RawJSON], createdAt: Date, deletedAt: Date?, language: String, latestHiddenChannels: [String]?, online: Bool, updatedAt: Date, banned: Bool, deactivatedAt: Date?, lastActive: Date?, mutes: [StreamChatUserMute?], pushNotifications: StreamChatPushNotificationSettings?, devices: [StreamChatDevice], invisible: Bool?, role: String, unreadCount: Int) {
-        self.channelMutes = channelMutes
-        
-        self.id = id
-        
-        self.unreadChannels = unreadChannels
-        
-        self.teams = teams
-        
-        self.totalUnreadCount = totalUnreadCount
-        
-        self.custom = custom
+    public var updatedAt: Date
+    
+    public var channelMutes: [StreamChatChannelMute?]
+    
+    public var devices: [StreamChatDevice]
+    
+    public var mutes: [StreamChatUserMute?]
+    
+    public var custom: [String: RawJSON]?
+    
+    public var deactivatedAt: Date? = nil
+    
+    public var deletedAt: Date? = nil
+    
+    public var invisible: Bool? = nil
+    
+    public var lastActive: Date? = nil
+    
+    public var latestHiddenChannels: [String]? = nil
+    
+    public var teams: [String]? = nil
+    
+    public var pushNotifications: StreamChatPushNotificationSettings? = nil
+    
+    public init(banned: Bool, createdAt: Date, id: String, language: String, online: Bool, role: String, totalUnreadCount: Int, unreadChannels: Int, unreadCount: Int, updatedAt: Date, channelMutes: [StreamChatChannelMute?], devices: [StreamChatDevice], mutes: [StreamChatUserMute?], custom: [String: RawJSON], deactivatedAt: Date? = nil, deletedAt: Date? = nil, invisible: Bool? = nil, lastActive: Date? = nil, latestHiddenChannels: [String]? = nil, teams: [String]? = nil, pushNotifications: StreamChatPushNotificationSettings? = nil) {
+        self.banned = banned
         
         self.createdAt = createdAt
         
-        self.deletedAt = deletedAt
+        self.id = id
         
         self.language = language
         
-        self.latestHiddenChannels = latestHiddenChannels
-        
         self.online = online
-        
-        self.updatedAt = updatedAt
-        
-        self.banned = banned
-        
-        self.deactivatedAt = deactivatedAt
-        
-        self.lastActive = lastActive
-        
-        self.mutes = mutes
-        
-        self.pushNotifications = pushNotifications
-        
-        self.devices = devices
-        
-        self.invisible = invisible
         
         self.role = role
         
+        self.totalUnreadCount = totalUnreadCount
+        
+        self.unreadChannels = unreadChannels
+        
         self.unreadCount = unreadCount
+        
+        self.updatedAt = updatedAt
+        
+        self.channelMutes = channelMutes
+        
+        self.devices = devices
+        
+        self.mutes = mutes
+        
+        self.custom = custom
+        
+        self.deactivatedAt = deactivatedAt
+        
+        self.deletedAt = deletedAt
+        
+        self.invisible = invisible
+        
+        self.lastActive = lastActive
+        
+        self.latestHiddenChannels = latestHiddenChannels
+        
+        self.teams = teams
+        
+        self.pushNotifications = pushNotifications
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case channelMutes = "channel_mutes"
-        
-        case id
-        
-        case unreadChannels = "unread_channels"
-        
-        case teams
-        
-        case totalUnreadCount = "total_unread_count"
-        
-        case custom
+        case banned
         
         case createdAt = "created_at"
         
-        case deletedAt = "deleted_at"
+        case id
         
         case language
         
-        case latestHiddenChannels = "latest_hidden_channels"
-        
         case online
-        
-        case updatedAt = "updated_at"
-        
-        case banned
-        
-        case deactivatedAt = "deactivated_at"
-        
-        case lastActive = "last_active"
-        
-        case mutes
-        
-        case pushNotifications = "push_notifications"
-        
-        case devices
-        
-        case invisible
         
         case role
         
+        case totalUnreadCount = "total_unread_count"
+        
+        case unreadChannels = "unread_channels"
+        
         case unreadCount = "unread_count"
+        
+        case updatedAt = "updated_at"
+        
+        case channelMutes = "channel_mutes"
+        
+        case devices
+        
+        case mutes
+        
+        case custom
+        
+        case deactivatedAt = "deactivated_at"
+        
+        case deletedAt = "deleted_at"
+        
+        case invisible
+        
+        case lastActive = "last_active"
+        
+        case latestHiddenChannels = "latest_hidden_channels"
+        
+        case teams
+        
+        case pushNotifications = "push_notifications"
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(channelMutes, forKey: .channelMutes)
-        
-        try container.encode(id, forKey: .id)
-        
-        try container.encode(unreadChannels, forKey: .unreadChannels)
-        
-        try container.encode(teams, forKey: .teams)
-        
-        try container.encode(totalUnreadCount, forKey: .totalUnreadCount)
-        
-        try container.encode(custom, forKey: .custom)
+        try container.encode(banned, forKey: .banned)
         
         try container.encode(createdAt, forKey: .createdAt)
         
-        try container.encode(deletedAt, forKey: .deletedAt)
+        try container.encode(id, forKey: .id)
         
         try container.encode(language, forKey: .language)
         
-        try container.encode(latestHiddenChannels, forKey: .latestHiddenChannels)
-        
         try container.encode(online, forKey: .online)
-        
-        try container.encode(updatedAt, forKey: .updatedAt)
-        
-        try container.encode(banned, forKey: .banned)
-        
-        try container.encode(deactivatedAt, forKey: .deactivatedAt)
-        
-        try container.encode(lastActive, forKey: .lastActive)
-        
-        try container.encode(mutes, forKey: .mutes)
-        
-        try container.encode(pushNotifications, forKey: .pushNotifications)
-        
-        try container.encode(devices, forKey: .devices)
-        
-        try container.encode(invisible, forKey: .invisible)
         
         try container.encode(role, forKey: .role)
         
+        try container.encode(totalUnreadCount, forKey: .totalUnreadCount)
+        
+        try container.encode(unreadChannels, forKey: .unreadChannels)
+        
         try container.encode(unreadCount, forKey: .unreadCount)
+        
+        try container.encode(updatedAt, forKey: .updatedAt)
+        
+        try container.encode(channelMutes, forKey: .channelMutes)
+        
+        try container.encode(devices, forKey: .devices)
+        
+        try container.encode(mutes, forKey: .mutes)
+        
+        try container.encode(custom, forKey: .custom)
+        
+        try container.encode(deactivatedAt, forKey: .deactivatedAt)
+        
+        try container.encode(deletedAt, forKey: .deletedAt)
+        
+        try container.encode(invisible, forKey: .invisible)
+        
+        try container.encode(lastActive, forKey: .lastActive)
+        
+        try container.encode(latestHiddenChannels, forKey: .latestHiddenChannels)
+        
+        try container.encode(teams, forKey: .teams)
+        
+        try container.encode(pushNotifications, forKey: .pushNotifications)
     }
 }

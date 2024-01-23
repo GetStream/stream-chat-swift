@@ -7,11 +7,11 @@ import Foundation
 public struct StreamChatHuaweiConfigFields: Codable, Hashable {
     public var enabled: Bool
     
-    public var id: String?
+    public var id: String? = nil
     
-    public var secret: String?
+    public var secret: String? = nil
     
-    public init(enabled: Bool, id: String?, secret: String?) {
+    public init(enabled: Bool, id: String? = nil, secret: String? = nil) {
         self.enabled = enabled
         
         self.id = id

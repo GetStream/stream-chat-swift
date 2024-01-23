@@ -9,9 +9,9 @@ public struct StreamChatUpdateChannelPartialResponse: Codable, Hashable {
     
     public var members: [StreamChatChannelMember?]
     
-    public var channel: StreamChatChannelResponse?
+    public var channel: StreamChatChannelResponse? = nil
     
-    public init(duration: String, members: [StreamChatChannelMember?], channel: StreamChatChannelResponse?) {
+    public init(duration: String, members: [StreamChatChannelMember?], channel: StreamChatChannelResponse? = nil) {
         self.duration = duration
         
         self.members = members

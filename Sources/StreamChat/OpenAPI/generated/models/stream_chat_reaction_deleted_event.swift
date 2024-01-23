@@ -5,91 +5,91 @@
 import Foundation
 
 public struct StreamChatReactionDeletedEvent: Codable, Hashable, Event {
-    public var channelType: String
-    
-    public var createdAt: Date
-    
-    public var message: StreamChatMessage?
-    
-    public var team: String?
-    
-    public var threadParticipants: [StreamChatUserObject]?
-    
-    public var type: String
-    
-    public var user: StreamChatUserObject?
-    
     public var channelId: String
     
-    public var reaction: StreamChatReaction?
+    public var channelType: String
     
     public var cid: String
     
-    public init(channelType: String, createdAt: Date, message: StreamChatMessage?, team: String?, threadParticipants: [StreamChatUserObject]?, type: String, user: StreamChatUserObject?, channelId: String, reaction: StreamChatReaction?, cid: String) {
+    public var createdAt: Date
+    
+    public var type: String
+    
+    public var team: String? = nil
+    
+    public var threadParticipants: [StreamChatUserObject]? = nil
+    
+    public var message: StreamChatMessage? = nil
+    
+    public var reaction: StreamChatReaction? = nil
+    
+    public var user: StreamChatUserObject? = nil
+    
+    public init(channelId: String, channelType: String, cid: String, createdAt: Date, type: String, team: String? = nil, threadParticipants: [StreamChatUserObject]? = nil, message: StreamChatMessage? = nil, reaction: StreamChatReaction? = nil, user: StreamChatUserObject? = nil) {
+        self.channelId = channelId
+        
         self.channelType = channelType
+        
+        self.cid = cid
         
         self.createdAt = createdAt
         
-        self.message = message
+        self.type = type
         
         self.team = team
         
         self.threadParticipants = threadParticipants
         
-        self.type = type
-        
-        self.user = user
-        
-        self.channelId = channelId
+        self.message = message
         
         self.reaction = reaction
         
-        self.cid = cid
+        self.user = user
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
+        case channelId = "channel_id"
+        
         case channelType = "channel_type"
+        
+        case cid
         
         case createdAt = "created_at"
         
-        case message
+        case type
         
         case team
         
         case threadParticipants = "thread_participants"
         
-        case type
-        
-        case user
-        
-        case channelId = "channel_id"
+        case message
         
         case reaction
         
-        case cid
+        case user
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
+        try container.encode(channelId, forKey: .channelId)
+        
         try container.encode(channelType, forKey: .channelType)
+        
+        try container.encode(cid, forKey: .cid)
         
         try container.encode(createdAt, forKey: .createdAt)
         
-        try container.encode(message, forKey: .message)
+        try container.encode(type, forKey: .type)
         
         try container.encode(team, forKey: .team)
         
         try container.encode(threadParticipants, forKey: .threadParticipants)
         
-        try container.encode(type, forKey: .type)
-        
-        try container.encode(user, forKey: .user)
-        
-        try container.encode(channelId, forKey: .channelId)
+        try container.encode(message, forKey: .message)
         
         try container.encode(reaction, forKey: .reaction)
         
-        try container.encode(cid, forKey: .cid)
+        try container.encode(user, forKey: .user)
     }
 }

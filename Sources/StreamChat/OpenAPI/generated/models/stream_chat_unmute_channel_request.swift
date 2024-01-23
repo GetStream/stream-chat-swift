@@ -9,22 +9,22 @@ public struct StreamChatUnmuteChannelRequest: Codable, Hashable {
     
     public var channelCids: [String]
     
-    public var expiration: Int?
+    public var expiration: Int? = nil
     
-    public var user: StreamChatUserObjectRequest?
+    public var userId: String? = nil
     
-    public var userId: String?
+    public var user: StreamChatUserObjectRequest? = nil
     
-    public init(channelCid: String, channelCids: [String], expiration: Int?, user: StreamChatUserObjectRequest?, userId: String?) {
+    public init(channelCid: String, channelCids: [String], expiration: Int? = nil, userId: String? = nil, user: StreamChatUserObjectRequest? = nil) {
         self.channelCid = channelCid
         
         self.channelCids = channelCids
         
         self.expiration = expiration
         
-        self.user = user
-        
         self.userId = userId
+        
+        self.user = user
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
@@ -34,9 +34,9 @@ public struct StreamChatUnmuteChannelRequest: Codable, Hashable {
         
         case expiration
         
-        case user
-        
         case userId = "user_id"
+        
+        case user
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -48,8 +48,8 @@ public struct StreamChatUnmuteChannelRequest: Codable, Hashable {
         
         try container.encode(expiration, forKey: .expiration)
         
-        try container.encode(user, forKey: .user)
-        
         try container.encode(userId, forKey: .userId)
+        
+        try container.encode(user, forKey: .user)
     }
 }

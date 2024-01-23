@@ -5,43 +5,43 @@
 import Foundation
 
 public struct StreamChatSearchWarning: Codable, Hashable {
-    public var warningDescription: String
-    
-    public var channelSearchCids: [String]?
-    
-    public var channelSearchCount: Int?
-    
     public var warningCode: Int
     
-    public init(warningDescription: String, channelSearchCids: [String]?, channelSearchCount: Int?, warningCode: Int) {
-        self.warningDescription = warningDescription
+    public var warningDescription: String
+    
+    public var channelSearchCount: Int? = nil
+    
+    public var channelSearchCids: [String]? = nil
+    
+    public init(warningCode: Int, warningDescription: String, channelSearchCount: Int? = nil, channelSearchCids: [String]? = nil) {
+        self.warningCode = warningCode
         
-        self.channelSearchCids = channelSearchCids
+        self.warningDescription = warningDescription
         
         self.channelSearchCount = channelSearchCount
         
-        self.warningCode = warningCode
+        self.channelSearchCids = channelSearchCids
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case warningDescription = "warning_description"
+        case warningCode = "warning_code"
         
-        case channelSearchCids = "channel_search_cids"
+        case warningDescription = "warning_description"
         
         case channelSearchCount = "channel_search_count"
         
-        case warningCode = "warning_code"
+        case channelSearchCids = "channel_search_cids"
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(warningDescription, forKey: .warningDescription)
+        try container.encode(warningCode, forKey: .warningCode)
         
-        try container.encode(channelSearchCids, forKey: .channelSearchCids)
+        try container.encode(warningDescription, forKey: .warningDescription)
         
         try container.encode(channelSearchCount, forKey: .channelSearchCount)
         
-        try container.encode(warningCode, forKey: .warningCode)
+        try container.encode(channelSearchCids, forKey: .channelSearchCids)
     }
 }

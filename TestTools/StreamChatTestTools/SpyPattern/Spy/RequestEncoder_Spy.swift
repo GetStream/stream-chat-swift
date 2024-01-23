@@ -7,6 +7,10 @@ import Foundation
 import XCTest
 
 final class RequestEncoder_Spy: RequestEncoder, Spy {
+    func encode(request: URLRequest, requiresConnectionId: Bool, requiresToken: Bool, completion: @escaping (Result<URLRequest, Error>) -> Void) {
+        
+    }
+    
     var recordedFunctions: [String] = []
     let init_baseURL: URL
     let init_apiKey: APIKey

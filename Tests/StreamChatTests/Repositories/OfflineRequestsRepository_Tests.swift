@@ -16,7 +16,8 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         let client = ChatClient.mock
         database = client.mockDatabaseContainer
         apiClient = client.mockAPIClient
-        messageRepository = MessageRepository_Mock(database: database, apiClient: apiClient)
+        let api = API(apiClient: apiClient, encoder: DefaultRequestEncoder(baseURL: URL(string: "https://test.com")!, apiKey: .init("test")), basePath: "test", apiKey: .init("test"))
+        messageRepository = MessageRepository_Mock(database: database, apiClient: apiClient, api: api)
         repository = OfflineRequestsRepository(
             messageRepository: messageRepository,
             database: database,

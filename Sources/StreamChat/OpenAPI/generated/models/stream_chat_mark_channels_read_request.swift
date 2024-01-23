@@ -5,11 +5,11 @@
 import Foundation
 
 public struct StreamChatMarkChannelsReadRequest: Codable, Hashable {
-    public var userId: String?
+    public var userId: String? = nil
     
-    public var user: StreamChatUserObjectRequest?
+    public var user: StreamChatUserObjectRequest? = nil
     
-    public init(userId: String?, user: StreamChatUserObjectRequest?) {
+    public init(userId: String? = nil, user: StreamChatUserObjectRequest? = nil) {
         self.userId = userId
         
         self.user = user

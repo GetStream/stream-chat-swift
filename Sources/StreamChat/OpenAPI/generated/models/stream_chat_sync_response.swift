@@ -9,9 +9,9 @@ public struct StreamChatSyncResponse: Codable, Hashable {
     
     public var events: [StreamChatWSEvent]
     
-    public var inaccessibleCids: [String]?
+    public var inaccessibleCids: [String]? = nil
     
-    public init(duration: String, events: [StreamChatWSEvent], inaccessibleCids: [String]?) {
+    public init(duration: String, events: [StreamChatWSEvent], inaccessibleCids: [String]? = nil) {
         self.duration = duration
         
         self.events = events

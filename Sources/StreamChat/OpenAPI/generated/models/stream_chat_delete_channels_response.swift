@@ -7,24 +7,24 @@ import Foundation
 public struct StreamChatDeleteChannelsResponse: Codable, Hashable {
     public var duration: String
     
-    public var result: [String: RawJSON]?
+    public var taskId: String? = nil
     
-    public var taskId: String?
+    public var result: [String: StreamChatDeleteChannelsResult?]? = nil
     
-    public init(duration: String, result: [String: RawJSON]?, taskId: String?) {
+    public init(duration: String, taskId: String? = nil, result: [String: StreamChatDeleteChannelsResult?]? = nil) {
         self.duration = duration
         
-        self.result = result
-        
         self.taskId = taskId
+        
+        self.result = result
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case duration
         
-        case result
-        
         case taskId = "task_id"
+        
+        case result
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -32,8 +32,8 @@ public struct StreamChatDeleteChannelsResponse: Codable, Hashable {
         
         try container.encode(duration, forKey: .duration)
         
-        try container.encode(result, forKey: .result)
-        
         try container.encode(taskId, forKey: .taskId)
+        
+        try container.encode(result, forKey: .result)
     }
 }

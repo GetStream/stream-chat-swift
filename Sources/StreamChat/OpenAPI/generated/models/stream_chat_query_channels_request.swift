@@ -5,78 +5,78 @@
 import Foundation
 
 public struct StreamChatQueryChannelsRequest: Codable, Hashable {
-    public var offset: Int?
+    public var connectionId: String? = nil
     
-    public var presence: Bool?
+    public var limit: Int? = nil
     
-    public var sort: [StreamChatSortParamRequest?]?
+    public var memberLimit: Int? = nil
     
-    public var state: Bool?
+    public var messageLimit: Int? = nil
     
-    public var connectionId: String?
+    public var offset: Int? = nil
     
-    public var limit: Int?
+    public var presence: Bool? = nil
     
-    public var memberLimit: Int?
+    public var state: Bool? = nil
     
-    public var userId: String?
+    public var userId: String? = nil
     
-    public var watch: Bool?
+    public var watch: Bool? = nil
     
-    public var filterConditions: [String: RawJSON]?
+    public var sort: [StreamChatSortParamRequest?]? = nil
     
-    public var messageLimit: Int?
+    public var filterConditions: [String: RawJSON]? = nil
     
-    public var user: StreamChatUserObjectRequest?
+    public var user: StreamChatUserObjectRequest? = nil
     
-    public init(offset: Int?, presence: Bool?, sort: [StreamChatSortParamRequest?]?, state: Bool?, connectionId: String?, limit: Int?, memberLimit: Int?, userId: String?, watch: Bool?, filterConditions: [String: RawJSON]?, messageLimit: Int?, user: StreamChatUserObjectRequest?) {
-        self.offset = offset
-        
-        self.presence = presence
-        
-        self.sort = sort
-        
-        self.state = state
-        
+    public init(connectionId: String? = nil, limit: Int? = nil, memberLimit: Int? = nil, messageLimit: Int? = nil, offset: Int? = nil, presence: Bool? = nil, state: Bool? = nil, userId: String? = nil, watch: Bool? = nil, sort: [StreamChatSortParamRequest?]? = nil, filterConditions: [String: RawJSON]? = nil, user: StreamChatUserObjectRequest? = nil) {
         self.connectionId = connectionId
         
         self.limit = limit
         
         self.memberLimit = memberLimit
         
+        self.messageLimit = messageLimit
+        
+        self.offset = offset
+        
+        self.presence = presence
+        
+        self.state = state
+        
         self.userId = userId
         
         self.watch = watch
         
-        self.filterConditions = filterConditions
+        self.sort = sort
         
-        self.messageLimit = messageLimit
+        self.filterConditions = filterConditions
         
         self.user = user
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case offset
-        
-        case presence
-        
-        case sort
-        
-        case state
-        
         case connectionId = "connection_id"
         
         case limit
         
         case memberLimit = "member_limit"
         
+        case messageLimit = "message_limit"
+        
+        case offset
+        
+        case presence
+        
+        case state
+        
         case userId = "user_id"
         
         case watch
         
-        case filterConditions = "filter_conditions"
+        case sort
         
-        case messageLimit = "message_limit"
+        case filterConditions = "filter_conditions"
         
         case user
     }
@@ -84,27 +84,27 @@ public struct StreamChatQueryChannelsRequest: Codable, Hashable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(offset, forKey: .offset)
-        
-        try container.encode(presence, forKey: .presence)
-        
-        try container.encode(sort, forKey: .sort)
-        
-        try container.encode(state, forKey: .state)
-        
         try container.encode(connectionId, forKey: .connectionId)
         
         try container.encode(limit, forKey: .limit)
         
         try container.encode(memberLimit, forKey: .memberLimit)
         
+        try container.encode(messageLimit, forKey: .messageLimit)
+        
+        try container.encode(offset, forKey: .offset)
+        
+        try container.encode(presence, forKey: .presence)
+        
+        try container.encode(state, forKey: .state)
+        
         try container.encode(userId, forKey: .userId)
         
         try container.encode(watch, forKey: .watch)
         
-        try container.encode(filterConditions, forKey: .filterConditions)
+        try container.encode(sort, forKey: .sort)
         
-        try container.encode(messageLimit, forKey: .messageLimit)
+        try container.encode(filterConditions, forKey: .filterConditions)
         
         try container.encode(user, forKey: .user)
     }

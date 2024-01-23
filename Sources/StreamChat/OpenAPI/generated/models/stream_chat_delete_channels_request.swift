@@ -5,11 +5,11 @@
 import Foundation
 
 public struct StreamChatDeleteChannelsRequest: Codable, Hashable {
-    public var hardDelete: Bool?
+    public var hardDelete: Bool? = nil
     
-    public var cids: [String]?
+    public var cids: [String]? = nil
     
-    public init(hardDelete: Bool?, cids: [String]?) {
+    public init(hardDelete: Bool? = nil, cids: [String]? = nil) {
         self.hardDelete = hardDelete
         
         self.cids = cids

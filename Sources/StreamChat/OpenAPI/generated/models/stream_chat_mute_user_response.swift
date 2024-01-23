@@ -5,51 +5,51 @@
 import Foundation
 
 public struct StreamChatMuteUserResponse: Codable, Hashable {
-    public var mute: StreamChatUserMute?
-    
-    public var mutes: [StreamChatUserMute?]?
-    
-    public var nonExistingUsers: [String]?
-    
-    public var ownUser: StreamChatOwnUser?
-    
     public var duration: String
     
-    public init(mute: StreamChatUserMute?, mutes: [StreamChatUserMute?]?, nonExistingUsers: [String]?, ownUser: StreamChatOwnUser?, duration: String) {
-        self.mute = mute
+    public var mutes: [StreamChatUserMute?]? = nil
+    
+    public var nonExistingUsers: [String]? = nil
+    
+    public var mute: StreamChatUserMute? = nil
+    
+    public var ownUser: StreamChatOwnUser? = nil
+    
+    public init(duration: String, mutes: [StreamChatUserMute?]? = nil, nonExistingUsers: [String]? = nil, mute: StreamChatUserMute? = nil, ownUser: StreamChatOwnUser? = nil) {
+        self.duration = duration
         
         self.mutes = mutes
         
         self.nonExistingUsers = nonExistingUsers
         
-        self.ownUser = ownUser
+        self.mute = mute
         
-        self.duration = duration
+        self.ownUser = ownUser
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case mute
+        case duration
         
         case mutes
         
         case nonExistingUsers = "non_existing_users"
         
-        case ownUser = "own_user"
+        case mute
         
-        case duration
+        case ownUser = "own_user"
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(mute, forKey: .mute)
+        try container.encode(duration, forKey: .duration)
         
         try container.encode(mutes, forKey: .mutes)
         
         try container.encode(nonExistingUsers, forKey: .nonExistingUsers)
         
-        try container.encode(ownUser, forKey: .ownUser)
+        try container.encode(mute, forKey: .mute)
         
-        try container.encode(duration, forKey: .duration)
+        try container.encode(ownUser, forKey: .ownUser)
     }
 }

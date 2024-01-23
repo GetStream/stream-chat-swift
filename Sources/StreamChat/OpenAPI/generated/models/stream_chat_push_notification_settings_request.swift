@@ -5,11 +5,11 @@
 import Foundation
 
 public struct StreamChatPushNotificationSettingsRequest: Codable, Hashable {
-    public var disabled: StreamChatNullBoolRequest?
+    public var disabled: StreamChatNullBoolRequest? = nil
     
-    public var disabledUntil: StreamChatNullTimeRequest?
+    public var disabledUntil: StreamChatNullTimeRequest? = nil
     
-    public init(disabled: StreamChatNullBoolRequest?, disabledUntil: StreamChatNullTimeRequest?) {
+    public init(disabled: StreamChatNullBoolRequest? = nil, disabledUntil: StreamChatNullTimeRequest? = nil) {
         self.disabled = disabled
         
         self.disabledUntil = disabledUntil

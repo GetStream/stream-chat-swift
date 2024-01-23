@@ -5,15 +5,15 @@
 import Foundation
 
 public struct StreamChatFlagMessageDetails: Codable, Hashable {
-    public var pinChanged: Bool?
+    public var pinChanged: Bool? = nil
     
-    public var shouldEnrich: Bool?
+    public var shouldEnrich: Bool? = nil
     
-    public var skipPush: Bool?
+    public var skipPush: Bool? = nil
     
-    public var updatedById: String?
+    public var updatedById: String? = nil
     
-    public init(pinChanged: Bool?, shouldEnrich: Bool?, skipPush: Bool?, updatedById: String?) {
+    public init(pinChanged: Bool? = nil, shouldEnrich: Bool? = nil, skipPush: Bool? = nil, updatedById: String? = nil) {
         self.pinChanged = pinChanged
         
         self.shouldEnrich = shouldEnrich

@@ -5,6 +5,8 @@
 import Foundation
 
 public struct StreamChatReaction: Codable, Hashable {
+    public var createdAt: Date
+    
     public var messageId: String
     
     public var score: Int
@@ -13,15 +15,15 @@ public struct StreamChatReaction: Codable, Hashable {
     
     public var updatedAt: Date
     
-    public var user: StreamChatUserObject?
-    
-    public var userId: String?
-    
     public var custom: [String: RawJSON]
     
-    public var createdAt: Date
+    public var userId: String? = nil
     
-    public init(messageId: String, score: Int, type: String, updatedAt: Date, user: StreamChatUserObject?, userId: String?, custom: [String: RawJSON], createdAt: Date) {
+    public var user: StreamChatUserObject? = nil
+    
+    public init(createdAt: Date, messageId: String, score: Int, type: String, updatedAt: Date, custom: [String: RawJSON], userId: String? = nil, user: StreamChatUserObject? = nil) {
+        self.createdAt = createdAt
+        
         self.messageId = messageId
         
         self.score = score
@@ -30,16 +32,16 @@ public struct StreamChatReaction: Codable, Hashable {
         
         self.updatedAt = updatedAt
         
-        self.user = user
+        self.custom = custom
         
         self.userId = userId
         
-        self.custom = custom
-        
-        self.createdAt = createdAt
+        self.user = user
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
+        case createdAt = "created_at"
+        
         case messageId = "message_id"
         
         case score
@@ -48,17 +50,17 @@ public struct StreamChatReaction: Codable, Hashable {
         
         case updatedAt = "updated_at"
         
-        case user
+        case custom
         
         case userId = "user_id"
         
-        case custom = "Custom"
-        
-        case createdAt = "created_at"
+        case user
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(createdAt, forKey: .createdAt)
         
         try container.encode(messageId, forKey: .messageId)
         
@@ -68,12 +70,10 @@ public struct StreamChatReaction: Codable, Hashable {
         
         try container.encode(updatedAt, forKey: .updatedAt)
         
-        try container.encode(user, forKey: .user)
+        try container.encode(custom, forKey: .custom)
         
         try container.encode(userId, forKey: .userId)
         
-        try container.encode(custom, forKey: .custom)
-        
-        try container.encode(createdAt, forKey: .createdAt)
+        try container.encode(user, forKey: .user)
     }
 }

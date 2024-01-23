@@ -5,26 +5,26 @@
 import Foundation
 
 public struct StreamChatMarkReadRequest: Codable, Hashable {
-    public var messageId: String?
+    public var messageId: String? = nil
     
-    public var user: StreamChatUserObjectRequest?
+    public var userId: String? = nil
     
-    public var userId: String?
+    public var user: StreamChatUserObjectRequest? = nil
     
-    public init(messageId: String?, user: StreamChatUserObjectRequest?, userId: String?) {
+    public init(messageId: String? = nil, userId: String? = nil, user: StreamChatUserObjectRequest? = nil) {
         self.messageId = messageId
         
-        self.user = user
-        
         self.userId = userId
+        
+        self.user = user
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case messageId = "message_id"
         
-        case user
-        
         case userId = "user_id"
+        
+        case user
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -32,8 +32,8 @@ public struct StreamChatMarkReadRequest: Codable, Hashable {
         
         try container.encode(messageId, forKey: .messageId)
         
-        try container.encode(user, forKey: .user)
-        
         try container.encode(userId, forKey: .userId)
+        
+        try container.encode(user, forKey: .user)
     }
 }

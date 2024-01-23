@@ -5,11 +5,7 @@
 import Foundation
 
 public struct StreamChatCommand: Codable, Hashable {
-    public var updatedAt: Date?
-    
     public var args: String
-    
-    public var createdAt: Date?
     
     public var description: String
     
@@ -17,47 +13,51 @@ public struct StreamChatCommand: Codable, Hashable {
     
     public var set: String
     
-    public init(updatedAt: Date?, args: String, createdAt: Date?, description: String, name: String, set: String) {
-        self.updatedAt = updatedAt
-        
+    public var createdAt: Date? = nil
+    
+    public var updatedAt: Date? = nil
+    
+    public init(args: String, description: String, name: String, set: String, createdAt: Date? = nil, updatedAt: Date? = nil) {
         self.args = args
-        
-        self.createdAt = createdAt
         
         self.description = description
         
         self.name = name
         
         self.set = set
+        
+        self.createdAt = createdAt
+        
+        self.updatedAt = updatedAt
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case updatedAt = "updated_at"
-        
         case args
-        
-        case createdAt = "created_at"
         
         case description
         
         case name
         
         case set
+        
+        case createdAt = "created_at"
+        
+        case updatedAt = "updated_at"
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(updatedAt, forKey: .updatedAt)
-        
         try container.encode(args, forKey: .args)
-        
-        try container.encode(createdAt, forKey: .createdAt)
         
         try container.encode(description, forKey: .description)
         
         try container.encode(name, forKey: .name)
         
         try container.encode(set, forKey: .set)
+        
+        try container.encode(createdAt, forKey: .createdAt)
+        
+        try container.encode(updatedAt, forKey: .updatedAt)
     }
 }

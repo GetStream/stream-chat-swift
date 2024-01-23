@@ -5,21 +5,27 @@
 import Foundation
 
 public struct StreamChatImagesRequest: Codable, Hashable {
-    public var fixedWidth: StreamChatImageDataRequest?
+    public var fixedHeight: StreamChatImageDataRequest? = nil
     
-    public var fixedWidthDownsampled: StreamChatImageDataRequest?
+    public var fixedHeightDownsampled: StreamChatImageDataRequest? = nil
     
-    public var fixedWidthStill: StreamChatImageDataRequest?
+    public var fixedHeightStill: StreamChatImageDataRequest? = nil
     
-    public var original: StreamChatImageDataRequest?
+    public var fixedWidth: StreamChatImageDataRequest? = nil
     
-    public var fixedHeight: StreamChatImageDataRequest?
+    public var fixedWidthDownsampled: StreamChatImageDataRequest? = nil
     
-    public var fixedHeightDownsampled: StreamChatImageDataRequest?
+    public var fixedWidthStill: StreamChatImageDataRequest? = nil
     
-    public var fixedHeightStill: StreamChatImageDataRequest?
+    public var original: StreamChatImageDataRequest? = nil
     
-    public init(fixedWidth: StreamChatImageDataRequest?, fixedWidthDownsampled: StreamChatImageDataRequest?, fixedWidthStill: StreamChatImageDataRequest?, original: StreamChatImageDataRequest?, fixedHeight: StreamChatImageDataRequest?, fixedHeightDownsampled: StreamChatImageDataRequest?, fixedHeightStill: StreamChatImageDataRequest?) {
+    public init(fixedHeight: StreamChatImageDataRequest? = nil, fixedHeightDownsampled: StreamChatImageDataRequest? = nil, fixedHeightStill: StreamChatImageDataRequest? = nil, fixedWidth: StreamChatImageDataRequest? = nil, fixedWidthDownsampled: StreamChatImageDataRequest? = nil, fixedWidthStill: StreamChatImageDataRequest? = nil, original: StreamChatImageDataRequest? = nil) {
+        self.fixedHeight = fixedHeight
+        
+        self.fixedHeightDownsampled = fixedHeightDownsampled
+        
+        self.fixedHeightStill = fixedHeightStill
+        
         self.fixedWidth = fixedWidth
         
         self.fixedWidthDownsampled = fixedWidthDownsampled
@@ -27,15 +33,15 @@ public struct StreamChatImagesRequest: Codable, Hashable {
         self.fixedWidthStill = fixedWidthStill
         
         self.original = original
-        
-        self.fixedHeight = fixedHeight
-        
-        self.fixedHeightDownsampled = fixedHeightDownsampled
-        
-        self.fixedHeightStill = fixedHeightStill
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
+        case fixedHeight = "fixed_height"
+        
+        case fixedHeightDownsampled = "fixed_height_downsampled"
+        
+        case fixedHeightStill = "fixed_height_still"
+        
         case fixedWidth = "fixed_width"
         
         case fixedWidthDownsampled = "fixed_width_downsampled"
@@ -43,16 +49,16 @@ public struct StreamChatImagesRequest: Codable, Hashable {
         case fixedWidthStill = "fixed_width_still"
         
         case original
-        
-        case fixedHeight = "fixed_height"
-        
-        case fixedHeightDownsampled = "fixed_height_downsampled"
-        
-        case fixedHeightStill = "fixed_height_still"
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(fixedHeight, forKey: .fixedHeight)
+        
+        try container.encode(fixedHeightDownsampled, forKey: .fixedHeightDownsampled)
+        
+        try container.encode(fixedHeightStill, forKey: .fixedHeightStill)
         
         try container.encode(fixedWidth, forKey: .fixedWidth)
         
@@ -61,11 +67,5 @@ public struct StreamChatImagesRequest: Codable, Hashable {
         try container.encode(fixedWidthStill, forKey: .fixedWidthStill)
         
         try container.encode(original, forKey: .original)
-        
-        try container.encode(fixedHeight, forKey: .fixedHeight)
-        
-        try container.encode(fixedHeightDownsampled, forKey: .fixedHeightDownsampled)
-        
-        try container.encode(fixedHeightStill, forKey: .fixedHeightStill)
     }
 }

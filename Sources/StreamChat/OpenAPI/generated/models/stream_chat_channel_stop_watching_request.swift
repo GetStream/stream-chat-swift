@@ -5,9 +5,9 @@
 import Foundation
 
 public struct StreamChatChannelStopWatchingRequest: Codable, Hashable {
-    public var connectionId: String?
+    public var connectionId: String? = nil
     
-    public init(connectionId: String?) {
+    public init(connectionId: String? = nil) {
         self.connectionId = connectionId
     }
     

@@ -5,147 +5,147 @@
 import Foundation
 
 public struct StreamChatQueryMembersRequest: Codable, Hashable {
-    public var createdAtAfter: Date?
-    
-    public var sort: [StreamChatSortParam?]?
-    
-    public var userId: String?
-    
-    public var userIdGte: String?
-    
-    public var userIdLte: String?
-    
-    public var createdAtAfterOrEqual: Date?
-    
-    public var createdAtBefore: Date?
+    public var type: String
     
     public var filterConditions: [String: RawJSON]
     
-    public var id: String?
+    public var createdAtAfter: Date? = nil
     
-    public var offset: Int?
+    public var createdAtAfterOrEqual: Date? = nil
     
-    public var limit: Int?
+    public var createdAtBefore: Date? = nil
     
-    public var type: String
+    public var createdAtBeforeOrEqual: Date? = nil
     
-    public var user: StreamChatUserObject?
+    public var id: String? = nil
     
-    public var createdAtBeforeOrEqual: Date?
+    public var limit: Int? = nil
     
-    public var members: [StreamChatChannelMember?]?
+    public var offset: Int? = nil
     
-    public var userIdGt: String?
+    public var userId: String? = nil
     
-    public var userIdLt: String?
+    public var userIdGt: String? = nil
     
-    public init(createdAtAfter: Date?, sort: [StreamChatSortParam?]?, userId: String?, userIdGte: String?, userIdLte: String?, createdAtAfterOrEqual: Date?, createdAtBefore: Date?, filterConditions: [String: RawJSON], id: String?, offset: Int?, limit: Int?, type: String, user: StreamChatUserObject?, createdAtBeforeOrEqual: Date?, members: [StreamChatChannelMember?]?, userIdGt: String?, userIdLt: String?) {
+    public var userIdGte: String? = nil
+    
+    public var userIdLt: String? = nil
+    
+    public var userIdLte: String? = nil
+    
+    public var members: [StreamChatChannelMember?]? = nil
+    
+    public var sort: [StreamChatSortParam?]? = nil
+    
+    public var user: StreamChatUserObject? = nil
+    
+    public init(type: String, filterConditions: [String: RawJSON], createdAtAfter: Date? = nil, createdAtAfterOrEqual: Date? = nil, createdAtBefore: Date? = nil, createdAtBeforeOrEqual: Date? = nil, id: String? = nil, limit: Int? = nil, offset: Int? = nil, userId: String? = nil, userIdGt: String? = nil, userIdGte: String? = nil, userIdLt: String? = nil, userIdLte: String? = nil, members: [StreamChatChannelMember?]? = nil, sort: [StreamChatSortParam?]? = nil, user: StreamChatUserObject? = nil) {
+        self.type = type
+        
+        self.filterConditions = filterConditions
+        
         self.createdAtAfter = createdAtAfter
-        
-        self.sort = sort
-        
-        self.userId = userId
-        
-        self.userIdGte = userIdGte
-        
-        self.userIdLte = userIdLte
         
         self.createdAtAfterOrEqual = createdAtAfterOrEqual
         
         self.createdAtBefore = createdAtBefore
         
-        self.filterConditions = filterConditions
+        self.createdAtBeforeOrEqual = createdAtBeforeOrEqual
         
         self.id = id
         
-        self.offset = offset
-        
         self.limit = limit
         
-        self.type = type
+        self.offset = offset
         
-        self.user = user
-        
-        self.createdAtBeforeOrEqual = createdAtBeforeOrEqual
-        
-        self.members = members
+        self.userId = userId
         
         self.userIdGt = userIdGt
         
+        self.userIdGte = userIdGte
+        
         self.userIdLt = userIdLt
+        
+        self.userIdLte = userIdLte
+        
+        self.members = members
+        
+        self.sort = sort
+        
+        self.user = user
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
+        case type
+        
+        case filterConditions = "filter_conditions"
+        
         case createdAtAfter = "created_at_after"
-        
-        case sort
-        
-        case userId = "user_id"
-        
-        case userIdGte = "user_id_gte"
-        
-        case userIdLte = "user_id_lte"
         
         case createdAtAfterOrEqual = "created_at_after_or_equal"
         
         case createdAtBefore = "created_at_before"
         
-        case filterConditions = "filter_conditions"
+        case createdAtBeforeOrEqual = "created_at_before_or_equal"
         
         case id
         
-        case offset
-        
         case limit
         
-        case type
+        case offset
         
-        case user
-        
-        case createdAtBeforeOrEqual = "created_at_before_or_equal"
-        
-        case members
+        case userId = "user_id"
         
         case userIdGt = "user_id_gt"
         
+        case userIdGte = "user_id_gte"
+        
         case userIdLt = "user_id_lt"
+        
+        case userIdLte = "user_id_lte"
+        
+        case members
+        
+        case sort
+        
+        case user
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
+        try container.encode(type, forKey: .type)
+        
+        try container.encode(filterConditions, forKey: .filterConditions)
+        
         try container.encode(createdAtAfter, forKey: .createdAtAfter)
-        
-        try container.encode(sort, forKey: .sort)
-        
-        try container.encode(userId, forKey: .userId)
-        
-        try container.encode(userIdGte, forKey: .userIdGte)
-        
-        try container.encode(userIdLte, forKey: .userIdLte)
         
         try container.encode(createdAtAfterOrEqual, forKey: .createdAtAfterOrEqual)
         
         try container.encode(createdAtBefore, forKey: .createdAtBefore)
         
-        try container.encode(filterConditions, forKey: .filterConditions)
+        try container.encode(createdAtBeforeOrEqual, forKey: .createdAtBeforeOrEqual)
         
         try container.encode(id, forKey: .id)
         
-        try container.encode(offset, forKey: .offset)
-        
         try container.encode(limit, forKey: .limit)
         
-        try container.encode(type, forKey: .type)
+        try container.encode(offset, forKey: .offset)
         
-        try container.encode(user, forKey: .user)
-        
-        try container.encode(createdAtBeforeOrEqual, forKey: .createdAtBeforeOrEqual)
-        
-        try container.encode(members, forKey: .members)
+        try container.encode(userId, forKey: .userId)
         
         try container.encode(userIdGt, forKey: .userIdGt)
         
+        try container.encode(userIdGte, forKey: .userIdGte)
+        
         try container.encode(userIdLt, forKey: .userIdLt)
+        
+        try container.encode(userIdLte, forKey: .userIdLte)
+        
+        try container.encode(members, forKey: .members)
+        
+        try container.encode(sort, forKey: .sort)
+        
+        try container.encode(user, forKey: .user)
     }
 }

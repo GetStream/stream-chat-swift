@@ -9,9 +9,9 @@ public struct StreamChatSendMessageResponse: Codable, Hashable {
     
     public var message: StreamChatMessage
     
-    public var pendingMessageMetadata: [String: RawJSON]?
+    public var pendingMessageMetadata: [String: String]? = nil
     
-    public init(duration: String, message: StreamChatMessage, pendingMessageMetadata: [String: RawJSON]?) {
+    public init(duration: String, message: StreamChatMessage, pendingMessageMetadata: [String: String]? = nil) {
         self.duration = duration
         
         self.message = message

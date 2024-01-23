@@ -5,27 +5,27 @@
 import Foundation
 
 public struct StreamChatConnectRequest: Codable, Hashable {
-    public var device: StreamChatDeviceFields?
-    
     public var userDetails: StreamChatUserObject
     
-    public init(device: StreamChatDeviceFields?, userDetails: StreamChatUserObject) {
-        self.device = device
-        
+    public var device: StreamChatDeviceFields? = nil
+    
+    public init(userDetails: StreamChatUserObject, device: StreamChatDeviceFields? = nil) {
         self.userDetails = userDetails
+        
+        self.device = device
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case device
-        
         case userDetails = "user_details"
+        
+        case device
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(device, forKey: .device)
-        
         try container.encode(userDetails, forKey: .userDetails)
+        
+        try container.encode(device, forKey: .device)
     }
 }

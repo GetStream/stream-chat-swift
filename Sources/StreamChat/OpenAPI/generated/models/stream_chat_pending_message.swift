@@ -5,15 +5,15 @@
 import Foundation
 
 public struct StreamChatPendingMessage: Codable, Hashable {
-    public var channel: StreamChatChannel?
+    public var channel: StreamChatChannel? = nil
     
-    public var message: StreamChatMessage?
+    public var message: StreamChatMessage? = nil
     
-    public var metadata: [String: RawJSON]?
+    public var metadata: [String: String]? = nil
     
-    public var user: StreamChatUserObject?
+    public var user: StreamChatUserObject? = nil
     
-    public init(channel: StreamChatChannel?, message: StreamChatMessage?, metadata: [String: RawJSON]?, user: StreamChatUserObject?) {
+    public init(channel: StreamChatChannel? = nil, message: StreamChatMessage? = nil, metadata: [String: String]? = nil, user: StreamChatUserObject? = nil) {
         self.channel = channel
         
         self.message = message

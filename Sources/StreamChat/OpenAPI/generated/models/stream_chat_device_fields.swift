@@ -9,11 +9,11 @@ public struct StreamChatDeviceFields: Codable, Hashable {
     
     public var pushProvider: String
     
-    public var pushProviderName: String?
+    public var pushProviderName: String? = nil
     
-    public var voip: Bool?
+    public var voip: Bool? = nil
     
-    public init(id: String, pushProvider: String, pushProviderName: String?, voip: Bool?) {
+    public init(id: String, pushProvider: String, pushProviderName: String? = nil, voip: Bool? = nil) {
         self.id = id
         
         self.pushProvider = pushProvider

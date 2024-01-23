@@ -5,31 +5,35 @@
 import Foundation
 
 public struct StreamChatQueryUsersRequest: Codable, Hashable {
-    public var idGt: String?
-    
-    public var idGte: String?
-    
-    public var idLt: String?
-    
-    public var idLte: String?
-    
-    public var limit: Int?
-    
-    public var offset: Int?
-    
-    public var presence: Bool?
-    
-    public var user: StreamChatUserObject?
-    
-    public var connectionId: String?
-    
     public var filterConditions: [String: RawJSON]
     
-    public var sort: [StreamChatSortParam?]?
+    public var connectionId: String? = nil
     
-    public var userId: String?
+    public var idGt: String? = nil
     
-    public init(idGt: String?, idGte: String?, idLt: String?, idLte: String?, limit: Int?, offset: Int?, presence: Bool?, user: StreamChatUserObject?, connectionId: String?, filterConditions: [String: RawJSON], sort: [StreamChatSortParam?]?, userId: String?) {
+    public var idGte: String? = nil
+    
+    public var idLt: String? = nil
+    
+    public var idLte: String? = nil
+    
+    public var limit: Int? = nil
+    
+    public var offset: Int? = nil
+    
+    public var presence: Bool? = nil
+    
+    public var userId: String? = nil
+    
+    public var sort: [StreamChatSortParam?]? = nil
+    
+    public var user: StreamChatUserObject? = nil
+    
+    public init(filterConditions: [String: RawJSON], connectionId: String? = nil, idGt: String? = nil, idGte: String? = nil, idLt: String? = nil, idLte: String? = nil, limit: Int? = nil, offset: Int? = nil, presence: Bool? = nil, userId: String? = nil, sort: [StreamChatSortParam?]? = nil, user: StreamChatUserObject? = nil) {
+        self.filterConditions = filterConditions
+        
+        self.connectionId = connectionId
+        
         self.idGt = idGt
         
         self.idGte = idGte
@@ -44,18 +48,18 @@ public struct StreamChatQueryUsersRequest: Codable, Hashable {
         
         self.presence = presence
         
-        self.user = user
-        
-        self.connectionId = connectionId
-        
-        self.filterConditions = filterConditions
+        self.userId = userId
         
         self.sort = sort
         
-        self.userId = userId
+        self.user = user
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
+        case filterConditions = "filter_conditions"
+        
+        case connectionId = "connection_id"
+        
         case idGt = "id_gt"
         
         case idGte = "id_gte"
@@ -70,19 +74,19 @@ public struct StreamChatQueryUsersRequest: Codable, Hashable {
         
         case presence
         
-        case user
-        
-        case connectionId = "connection_id"
-        
-        case filterConditions = "filter_conditions"
+        case userId = "user_id"
         
         case sort
         
-        case userId = "user_id"
+        case user
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(filterConditions, forKey: .filterConditions)
+        
+        try container.encode(connectionId, forKey: .connectionId)
         
         try container.encode(idGt, forKey: .idGt)
         
@@ -98,14 +102,10 @@ public struct StreamChatQueryUsersRequest: Codable, Hashable {
         
         try container.encode(presence, forKey: .presence)
         
-        try container.encode(user, forKey: .user)
-        
-        try container.encode(connectionId, forKey: .connectionId)
-        
-        try container.encode(filterConditions, forKey: .filterConditions)
+        try container.encode(userId, forKey: .userId)
         
         try container.encode(sort, forKey: .sort)
         
-        try container.encode(userId, forKey: .userId)
+        try container.encode(user, forKey: .user)
     }
 }

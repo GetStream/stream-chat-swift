@@ -5,115 +5,115 @@
 import Foundation
 
 public struct StreamChatUpdateChannelRequest: Codable, Hashable {
-    public var rejectInvite: Bool?
-    
-    public var skipPush: Bool?
-    
-    public var acceptInvite: Bool?
-    
     public var addModerators: [String]
-    
-    public var invites: [StreamChatChannelMemberRequest?]?
     
     public var demoteModerators: [String]
     
-    public var message: StreamChatMessageRequest?
-    
     public var removeMembers: [String]
     
-    public var data: StreamChatChannelRequest?
+    public var acceptInvite: Bool? = nil
     
-    public var hideHistory: Bool?
+    public var cooldown: Int? = nil
     
-    public var addMembers: [StreamChatChannelMemberRequest?]?
+    public var hideHistory: Bool? = nil
     
-    public var assignRoles: [StreamChatChannelMemberRequest?]?
+    public var rejectInvite: Bool? = nil
     
-    public var cooldown: Int?
+    public var skipPush: Bool? = nil
     
-    public init(rejectInvite: Bool?, skipPush: Bool?, acceptInvite: Bool?, addModerators: [String], invites: [StreamChatChannelMemberRequest?]?, demoteModerators: [String], message: StreamChatMessageRequest?, removeMembers: [String], data: StreamChatChannelRequest?, hideHistory: Bool?, addMembers: [StreamChatChannelMemberRequest?]?, assignRoles: [StreamChatChannelMemberRequest?]?, cooldown: Int?) {
-        self.rejectInvite = rejectInvite
-        
-        self.skipPush = skipPush
-        
-        self.acceptInvite = acceptInvite
-        
+    public var addMembers: [StreamChatChannelMemberRequest?]? = nil
+    
+    public var assignRoles: [StreamChatChannelMemberRequest?]? = nil
+    
+    public var invites: [StreamChatChannelMemberRequest?]? = nil
+    
+    public var data: StreamChatChannelRequest? = nil
+    
+    public var message: StreamChatMessageRequest? = nil
+    
+    public init(addModerators: [String], demoteModerators: [String], removeMembers: [String], acceptInvite: Bool? = nil, cooldown: Int? = nil, hideHistory: Bool? = nil, rejectInvite: Bool? = nil, skipPush: Bool? = nil, addMembers: [StreamChatChannelMemberRequest?]? = nil, assignRoles: [StreamChatChannelMemberRequest?]? = nil, invites: [StreamChatChannelMemberRequest?]? = nil, data: StreamChatChannelRequest? = nil, message: StreamChatMessageRequest? = nil) {
         self.addModerators = addModerators
-        
-        self.invites = invites
         
         self.demoteModerators = demoteModerators
         
-        self.message = message
-        
         self.removeMembers = removeMembers
         
-        self.data = data
+        self.acceptInvite = acceptInvite
+        
+        self.cooldown = cooldown
         
         self.hideHistory = hideHistory
+        
+        self.rejectInvite = rejectInvite
+        
+        self.skipPush = skipPush
         
         self.addMembers = addMembers
         
         self.assignRoles = assignRoles
         
-        self.cooldown = cooldown
+        self.invites = invites
+        
+        self.data = data
+        
+        self.message = message
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case rejectInvite = "reject_invite"
-        
-        case skipPush = "skip_push"
-        
-        case acceptInvite = "accept_invite"
-        
         case addModerators = "add_moderators"
-        
-        case invites
         
         case demoteModerators = "demote_moderators"
         
-        case message
-        
         case removeMembers = "remove_members"
         
-        case data
+        case acceptInvite = "accept_invite"
+        
+        case cooldown
         
         case hideHistory = "hide_history"
+        
+        case rejectInvite = "reject_invite"
+        
+        case skipPush = "skip_push"
         
         case addMembers = "add_members"
         
         case assignRoles = "assign_roles"
         
-        case cooldown
+        case invites
+        
+        case data
+        
+        case message
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(rejectInvite, forKey: .rejectInvite)
-        
-        try container.encode(skipPush, forKey: .skipPush)
-        
-        try container.encode(acceptInvite, forKey: .acceptInvite)
-        
         try container.encode(addModerators, forKey: .addModerators)
-        
-        try container.encode(invites, forKey: .invites)
         
         try container.encode(demoteModerators, forKey: .demoteModerators)
         
-        try container.encode(message, forKey: .message)
-        
         try container.encode(removeMembers, forKey: .removeMembers)
         
-        try container.encode(data, forKey: .data)
+        try container.encode(acceptInvite, forKey: .acceptInvite)
+        
+        try container.encode(cooldown, forKey: .cooldown)
         
         try container.encode(hideHistory, forKey: .hideHistory)
+        
+        try container.encode(rejectInvite, forKey: .rejectInvite)
+        
+        try container.encode(skipPush, forKey: .skipPush)
         
         try container.encode(addMembers, forKey: .addMembers)
         
         try container.encode(assignRoles, forKey: .assignRoles)
         
-        try container.encode(cooldown, forKey: .cooldown)
+        try container.encode(invites, forKey: .invites)
+        
+        try container.encode(data, forKey: .data)
+        
+        try container.encode(message, forKey: .message)
     }
 }

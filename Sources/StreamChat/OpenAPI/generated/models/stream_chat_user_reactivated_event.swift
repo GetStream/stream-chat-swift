@@ -9,9 +9,9 @@ public struct StreamChatUserReactivatedEvent: Codable, Hashable, Event {
     
     public var type: String
     
-    public var user: StreamChatUserObject?
+    public var user: StreamChatUserObject? = nil
     
-    public init(createdAt: Date, type: String, user: StreamChatUserObject?) {
+    public init(createdAt: Date, type: String, user: StreamChatUserObject? = nil) {
         self.createdAt = createdAt
         
         self.type = type

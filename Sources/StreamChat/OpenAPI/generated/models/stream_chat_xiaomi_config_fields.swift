@@ -7,11 +7,11 @@ import Foundation
 public struct StreamChatXiaomiConfigFields: Codable, Hashable {
     public var enabled: Bool
     
-    public var packageName: String?
+    public var packageName: String? = nil
     
-    public var secret: String?
+    public var secret: String? = nil
     
-    public init(enabled: Bool, packageName: String?, secret: String?) {
+    public init(enabled: Bool, packageName: String? = nil, secret: String? = nil) {
         self.enabled = enabled
         
         self.packageName = packageName

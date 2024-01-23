@@ -7,11 +7,11 @@ import Foundation
 public struct StreamChatMessageWithPendingMetadataResponse: Codable, Hashable {
     public var duration: String
     
-    public var message: StreamChatMessage?
+    public var message: StreamChatMessage? = nil
     
-    public var pendingMessageMetadata: [String: RawJSON]?
+    public var pendingMessageMetadata: [String: String]? = nil
     
-    public init(duration: String, message: StreamChatMessage?, pendingMessageMetadata: [String: RawJSON]?) {
+    public init(duration: String, message: StreamChatMessage? = nil, pendingMessageMetadata: [String: String]? = nil) {
         self.duration = duration
         
         self.message = message

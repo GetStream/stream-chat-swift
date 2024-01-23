@@ -7,9 +7,9 @@ import Foundation
 public struct StreamChatMessageResponse: Codable, Hashable {
     public var duration: String
     
-    public var message: StreamChatMessage?
+    public var message: StreamChatMessage? = nil
     
-    public init(duration: String, message: StreamChatMessage?) {
+    public init(duration: String, message: StreamChatMessage? = nil) {
         self.duration = duration
         
         self.message = message

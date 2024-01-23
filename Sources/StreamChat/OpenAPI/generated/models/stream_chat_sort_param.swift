@@ -5,11 +5,11 @@
 import Foundation
 
 public struct StreamChatSortParam: Codable, Hashable {
-    public var direction: Int?
+    public var direction: Int? = nil
     
-    public var field: String?
+    public var field: String? = nil
     
-    public init(direction: Int?, field: String?) {
+    public init(direction: Int? = nil, field: String? = nil) {
         self.direction = direction
         
         self.field = field

@@ -5,32 +5,32 @@
 import Foundation
 
 public struct StreamChatTruncateChannelRequest: Codable, Hashable {
-    public var hardDelete: Bool?
+    public var hardDelete: Bool? = nil
     
-    public var message: StreamChatMessageRequest?
+    public var skipPush: Bool? = nil
     
-    public var skipPush: Bool?
+    public var truncatedAt: Date? = nil
     
-    public var truncatedAt: Date?
+    public var message: StreamChatMessageRequest? = nil
     
-    public init(hardDelete: Bool?, message: StreamChatMessageRequest?, skipPush: Bool?, truncatedAt: Date?) {
+    public init(hardDelete: Bool? = nil, skipPush: Bool? = nil, truncatedAt: Date? = nil, message: StreamChatMessageRequest? = nil) {
         self.hardDelete = hardDelete
-        
-        self.message = message
         
         self.skipPush = skipPush
         
         self.truncatedAt = truncatedAt
+        
+        self.message = message
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case hardDelete = "hard_delete"
         
-        case message
-        
         case skipPush = "skip_push"
         
         case truncatedAt = "truncated_at"
+        
+        case message
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -38,10 +38,10 @@ public struct StreamChatTruncateChannelRequest: Codable, Hashable {
         
         try container.encode(hardDelete, forKey: .hardDelete)
         
-        try container.encode(message, forKey: .message)
-        
         try container.encode(skipPush, forKey: .skipPush)
         
         try container.encode(truncatedAt, forKey: .truncatedAt)
+        
+        try container.encode(message, forKey: .message)
     }
 }

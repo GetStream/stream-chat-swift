@@ -5,30 +5,32 @@
 import Foundation
 
 public struct StreamChatQueryBannedUsersRequest: Codable, Hashable {
-    public var userId: String?
-    
-    public var createdAtAfterOrEqual: Date?
-    
-    public var createdAtBefore: Date?
-    
-    public var createdAtBeforeOrEqual: Date?
-    
-    public var excludeExpiredBans: Bool?
-    
     public var filterConditions: [String: RawJSON]
     
-    public var sort: [StreamChatSortParam?]?
+    public var createdAtAfter: Date? = nil
     
-    public var user: StreamChatUserObject?
+    public var createdAtAfterOrEqual: Date? = nil
     
-    public var createdAtAfter: Date?
+    public var createdAtBefore: Date? = nil
     
-    public var limit: Int?
+    public var createdAtBeforeOrEqual: Date? = nil
     
-    public var offset: Int?
+    public var excludeExpiredBans: Bool? = nil
     
-    public init(userId: String?, createdAtAfterOrEqual: Date?, createdAtBefore: Date?, createdAtBeforeOrEqual: Date?, excludeExpiredBans: Bool?, filterConditions: [String: RawJSON], sort: [StreamChatSortParam?]?, user: StreamChatUserObject?, createdAtAfter: Date?, limit: Int?, offset: Int?) {
-        self.userId = userId
+    public var limit: Int? = nil
+    
+    public var offset: Int? = nil
+    
+    public var userId: String? = nil
+    
+    public var sort: [StreamChatSortParam?]? = nil
+    
+    public var user: StreamChatUserObject? = nil
+    
+    public init(filterConditions: [String: RawJSON], createdAtAfter: Date? = nil, createdAtAfterOrEqual: Date? = nil, createdAtBefore: Date? = nil, createdAtBeforeOrEqual: Date? = nil, excludeExpiredBans: Bool? = nil, limit: Int? = nil, offset: Int? = nil, userId: String? = nil, sort: [StreamChatSortParam?]? = nil, user: StreamChatUserObject? = nil) {
+        self.filterConditions = filterConditions
+        
+        self.createdAtAfter = createdAtAfter
         
         self.createdAtAfterOrEqual = createdAtAfterOrEqual
         
@@ -38,21 +40,21 @@ public struct StreamChatQueryBannedUsersRequest: Codable, Hashable {
         
         self.excludeExpiredBans = excludeExpiredBans
         
-        self.filterConditions = filterConditions
+        self.limit = limit
+        
+        self.offset = offset
+        
+        self.userId = userId
         
         self.sort = sort
         
         self.user = user
-        
-        self.createdAtAfter = createdAtAfter
-        
-        self.limit = limit
-        
-        self.offset = offset
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case userId = "user_id"
+        case filterConditions = "filter_conditions"
+        
+        case createdAtAfter = "created_at_after"
         
         case createdAtAfterOrEqual = "created_at_after_or_equal"
         
@@ -62,23 +64,23 @@ public struct StreamChatQueryBannedUsersRequest: Codable, Hashable {
         
         case excludeExpiredBans = "exclude_expired_bans"
         
-        case filterConditions = "filter_conditions"
+        case limit
+        
+        case offset
+        
+        case userId = "user_id"
         
         case sort
         
         case user
-        
-        case createdAtAfter = "created_at_after"
-        
-        case limit
-        
-        case offset
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(userId, forKey: .userId)
+        try container.encode(filterConditions, forKey: .filterConditions)
+        
+        try container.encode(createdAtAfter, forKey: .createdAtAfter)
         
         try container.encode(createdAtAfterOrEqual, forKey: .createdAtAfterOrEqual)
         
@@ -88,16 +90,14 @@ public struct StreamChatQueryBannedUsersRequest: Codable, Hashable {
         
         try container.encode(excludeExpiredBans, forKey: .excludeExpiredBans)
         
-        try container.encode(filterConditions, forKey: .filterConditions)
+        try container.encode(limit, forKey: .limit)
+        
+        try container.encode(offset, forKey: .offset)
+        
+        try container.encode(userId, forKey: .userId)
         
         try container.encode(sort, forKey: .sort)
         
         try container.encode(user, forKey: .user)
-        
-        try container.encode(createdAtAfter, forKey: .createdAtAfter)
-        
-        try container.encode(limit, forKey: .limit)
-        
-        try container.encode(offset, forKey: .offset)
     }
 }

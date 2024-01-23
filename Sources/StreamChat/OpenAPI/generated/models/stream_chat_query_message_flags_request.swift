@@ -5,67 +5,67 @@
 import Foundation
 
 public struct StreamChatQueryMessageFlagsRequest: Codable, Hashable {
-    public var showDeletedMessages: Bool?
+    public var limit: Int? = nil
     
-    public var sort: [StreamChatSortParam?]?
+    public var offset: Int? = nil
     
-    public var user: StreamChatUserObject?
+    public var showDeletedMessages: Bool? = nil
     
-    public var userId: String?
+    public var userId: String? = nil
     
-    public var filterConditions: [String: RawJSON]?
+    public var sort: [StreamChatSortParam?]? = nil
     
-    public var limit: Int?
+    public var filterConditions: [String: RawJSON]? = nil
     
-    public var offset: Int?
+    public var user: StreamChatUserObject? = nil
     
-    public init(showDeletedMessages: Bool?, sort: [StreamChatSortParam?]?, user: StreamChatUserObject?, userId: String?, filterConditions: [String: RawJSON]?, limit: Int?, offset: Int?) {
-        self.showDeletedMessages = showDeletedMessages
-        
-        self.sort = sort
-        
-        self.user = user
-        
-        self.userId = userId
-        
-        self.filterConditions = filterConditions
-        
+    public init(limit: Int? = nil, offset: Int? = nil, showDeletedMessages: Bool? = nil, userId: String? = nil, sort: [StreamChatSortParam?]? = nil, filterConditions: [String: RawJSON]? = nil, user: StreamChatUserObject? = nil) {
         self.limit = limit
         
         self.offset = offset
+        
+        self.showDeletedMessages = showDeletedMessages
+        
+        self.userId = userId
+        
+        self.sort = sort
+        
+        self.filterConditions = filterConditions
+        
+        self.user = user
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case showDeletedMessages = "show_deleted_messages"
-        
-        case sort
-        
-        case user
-        
-        case userId = "user_id"
-        
-        case filterConditions = "filter_conditions"
-        
         case limit
         
         case offset
+        
+        case showDeletedMessages = "show_deleted_messages"
+        
+        case userId = "user_id"
+        
+        case sort
+        
+        case filterConditions = "filter_conditions"
+        
+        case user
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(showDeletedMessages, forKey: .showDeletedMessages)
-        
-        try container.encode(sort, forKey: .sort)
-        
-        try container.encode(user, forKey: .user)
-        
-        try container.encode(userId, forKey: .userId)
-        
-        try container.encode(filterConditions, forKey: .filterConditions)
-        
         try container.encode(limit, forKey: .limit)
         
         try container.encode(offset, forKey: .offset)
+        
+        try container.encode(showDeletedMessages, forKey: .showDeletedMessages)
+        
+        try container.encode(userId, forKey: .userId)
+        
+        try container.encode(sort, forKey: .sort)
+        
+        try container.encode(filterConditions, forKey: .filterConditions)
+        
+        try container.encode(user, forKey: .user)
     }
 }

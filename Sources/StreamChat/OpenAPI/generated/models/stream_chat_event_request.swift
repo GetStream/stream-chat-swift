@@ -5,35 +5,35 @@
 import Foundation
 
 public struct StreamChatEventRequest: Codable, Hashable {
-    public var custom: [String: RawJSON]?
-    
-    public var parentId: String?
-    
     public var type: String
     
-    public init(custom: [String: RawJSON]?, parentId: String?, type: String) {
-        self.custom = custom
+    public var parentId: String? = nil
+    
+    public var custom: [String: RawJSON]? = nil
+    
+    public init(type: String, parentId: String? = nil, custom: [String: RawJSON]? = nil) {
+        self.type = type
         
         self.parentId = parentId
         
-        self.type = type
+        self.custom = custom
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case custom
+        case type
         
         case parentId = "parent_id"
         
-        case type
+        case custom
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(custom, forKey: .custom)
+        try container.encode(type, forKey: .type)
         
         try container.encode(parentId, forKey: .parentId)
         
-        try container.encode(type, forKey: .type)
+        try container.encode(custom, forKey: .custom)
     }
 }

@@ -7,84 +7,84 @@ import Foundation
 public struct StreamChatFlag: Codable, Hashable {
     public var createdAt: Date
     
-    public var rejectedAt: Date?
-    
-    public var targetMessageId: String?
-    
-    public var approvedAt: Date?
-    
     public var createdByAutomod: Bool
-    
-    public var targetMessage: StreamChatMessage?
-    
-    public var targetUser: StreamChatUserObject?
     
     public var updatedAt: Date
     
-    public var user: StreamChatUserObject?
+    public var approvedAt: Date? = nil
     
-    public var custom: [String: RawJSON]?
+    public var reason: String? = nil
     
-    public var details: StreamChatFlagDetails?
+    public var rejectedAt: Date? = nil
     
-    public var reason: String?
+    public var reviewedAt: Date? = nil
     
-    public var reviewedAt: Date?
+    public var targetMessageId: String? = nil
     
-    public init(createdAt: Date, rejectedAt: Date?, targetMessageId: String?, approvedAt: Date?, createdByAutomod: Bool, targetMessage: StreamChatMessage?, targetUser: StreamChatUserObject?, updatedAt: Date, user: StreamChatUserObject?, custom: [String: RawJSON]?, details: StreamChatFlagDetails?, reason: String?, reviewedAt: Date?) {
+    public var custom: [String: RawJSON]? = nil
+    
+    public var details: StreamChatFlagDetails? = nil
+    
+    public var targetMessage: StreamChatMessage? = nil
+    
+    public var targetUser: StreamChatUserObject? = nil
+    
+    public var user: StreamChatUserObject? = nil
+    
+    public init(createdAt: Date, createdByAutomod: Bool, updatedAt: Date, approvedAt: Date? = nil, reason: String? = nil, rejectedAt: Date? = nil, reviewedAt: Date? = nil, targetMessageId: String? = nil, custom: [String: RawJSON]? = nil, details: StreamChatFlagDetails? = nil, targetMessage: StreamChatMessage? = nil, targetUser: StreamChatUserObject? = nil, user: StreamChatUserObject? = nil) {
         self.createdAt = createdAt
-        
-        self.rejectedAt = rejectedAt
-        
-        self.targetMessageId = targetMessageId
-        
-        self.approvedAt = approvedAt
         
         self.createdByAutomod = createdByAutomod
         
-        self.targetMessage = targetMessage
-        
-        self.targetUser = targetUser
-        
         self.updatedAt = updatedAt
         
-        self.user = user
+        self.approvedAt = approvedAt
+        
+        self.reason = reason
+        
+        self.rejectedAt = rejectedAt
+        
+        self.reviewedAt = reviewedAt
+        
+        self.targetMessageId = targetMessageId
         
         self.custom = custom
         
         self.details = details
         
-        self.reason = reason
+        self.targetMessage = targetMessage
         
-        self.reviewedAt = reviewedAt
+        self.targetUser = targetUser
+        
+        self.user = user
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case createdAt = "created_at"
         
-        case rejectedAt = "rejected_at"
-        
-        case targetMessageId = "target_message_id"
-        
-        case approvedAt = "approved_at"
-        
         case createdByAutomod = "created_by_automod"
-        
-        case targetMessage = "target_message"
-        
-        case targetUser = "target_user"
         
         case updatedAt = "updated_at"
         
-        case user
+        case approvedAt = "approved_at"
+        
+        case reason
+        
+        case rejectedAt = "rejected_at"
+        
+        case reviewedAt = "reviewed_at"
+        
+        case targetMessageId = "target_message_id"
         
         case custom
         
         case details
         
-        case reason
+        case targetMessage = "target_message"
         
-        case reviewedAt = "reviewed_at"
+        case targetUser = "target_user"
+        
+        case user
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -92,28 +92,28 @@ public struct StreamChatFlag: Codable, Hashable {
         
         try container.encode(createdAt, forKey: .createdAt)
         
-        try container.encode(rejectedAt, forKey: .rejectedAt)
-        
-        try container.encode(targetMessageId, forKey: .targetMessageId)
-        
-        try container.encode(approvedAt, forKey: .approvedAt)
-        
         try container.encode(createdByAutomod, forKey: .createdByAutomod)
-        
-        try container.encode(targetMessage, forKey: .targetMessage)
-        
-        try container.encode(targetUser, forKey: .targetUser)
         
         try container.encode(updatedAt, forKey: .updatedAt)
         
-        try container.encode(user, forKey: .user)
+        try container.encode(approvedAt, forKey: .approvedAt)
+        
+        try container.encode(reason, forKey: .reason)
+        
+        try container.encode(rejectedAt, forKey: .rejectedAt)
+        
+        try container.encode(reviewedAt, forKey: .reviewedAt)
+        
+        try container.encode(targetMessageId, forKey: .targetMessageId)
         
         try container.encode(custom, forKey: .custom)
         
         try container.encode(details, forKey: .details)
         
-        try container.encode(reason, forKey: .reason)
+        try container.encode(targetMessage, forKey: .targetMessage)
         
-        try container.encode(reviewedAt, forKey: .reviewedAt)
+        try container.encode(targetUser, forKey: .targetUser)
+        
+        try container.encode(user, forKey: .user)
     }
 }

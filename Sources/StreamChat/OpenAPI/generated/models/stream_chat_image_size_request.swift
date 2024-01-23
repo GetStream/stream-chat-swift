@@ -5,43 +5,43 @@
 import Foundation
 
 public struct StreamChatImageSizeRequest: Codable, Hashable {
-    public var resize: String?
+    public var crop: String? = nil
     
-    public var width: Int?
+    public var height: Int? = nil
     
-    public var crop: String?
+    public var resize: String? = nil
     
-    public var height: Int?
+    public var width: Int? = nil
     
-    public init(resize: String?, width: Int?, crop: String?, height: Int?) {
-        self.resize = resize
-        
-        self.width = width
-        
+    public init(crop: String? = nil, height: Int? = nil, resize: String? = nil, width: Int? = nil) {
         self.crop = crop
         
         self.height = height
+        
+        self.resize = resize
+        
+        self.width = width
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case resize
-        
-        case width
-        
         case crop
         
         case height
+        
+        case resize
+        
+        case width
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(resize, forKey: .resize)
-        
-        try container.encode(width, forKey: .width)
-        
         try container.encode(crop, forKey: .crop)
         
         try container.encode(height, forKey: .height)
+        
+        try container.encode(resize, forKey: .resize)
+        
+        try container.encode(width, forKey: .width)
     }
 }

@@ -11,100 +11,100 @@ public struct StreamChatChannelResponse: Codable, Hashable {
     
     public var disabled: Bool
     
-    public var team: String?
-    
-    public var truncatedBy: StreamChatUserObject?
-    
-    public var custom: [String: RawJSON]?
-    
-    public var autoTranslationLanguage: String?
-    
-    public var cooldown: Int?
-    
-    public var ownCapabilities: [String]?
-    
-    public var type: String
-    
-    public var createdBy: StreamChatUserObject?
-    
-    public var muteExpiresAt: Date?
-    
-    public var config: StreamChatChannelConfigWithInfo?
-    
-    public var members: [StreamChatChannelMember?]?
-    
-    public var muted: Bool?
-    
-    public var updatedAt: Date
-    
-    public var autoTranslationEnabled: Bool?
-    
-    public var deletedAt: Date?
-    
-    public var hideMessagesBefore: Date?
+    public var frozen: Bool
     
     public var id: String
     
-    public var lastMessageAt: Date?
+    public var type: String
     
-    public var frozen: Bool
+    public var updatedAt: Date
     
-    public var hidden: Bool?
+    public var custom: [String: RawJSON]
     
-    public var memberCount: Int?
+    public var autoTranslationEnabled: Bool? = nil
     
-    public var truncatedAt: Date?
+    public var autoTranslationLanguage: String? = nil
     
-    public init(cid: String, createdAt: Date, disabled: Bool, team: String?, truncatedBy: StreamChatUserObject?, custom: [String: RawJSON], autoTranslationLanguage: String?, cooldown: Int?, ownCapabilities: [String]?, type: String, createdBy: StreamChatUserObject?, muteExpiresAt: Date?, config: StreamChatChannelConfigWithInfo?, members: [StreamChatChannelMember?]?, muted: Bool?, updatedAt: Date, autoTranslationEnabled: Bool?, deletedAt: Date?, hideMessagesBefore: Date?, id: String, lastMessageAt: Date?, frozen: Bool, hidden: Bool?, memberCount: Int?, truncatedAt: Date?) {
+    public var cooldown: Int? = nil
+    
+    public var deletedAt: Date? = nil
+    
+    public var hidden: Bool? = nil
+    
+    public var hideMessagesBefore: Date? = nil
+    
+    public var lastMessageAt: Date? = nil
+    
+    public var memberCount: Int? = nil
+    
+    public var muteExpiresAt: Date? = nil
+    
+    public var muted: Bool? = nil
+    
+    public var team: String? = nil
+    
+    public var truncatedAt: Date? = nil
+    
+    public var members: [StreamChatChannelMember?]? = nil
+    
+    public var ownCapabilities: [String]? = nil
+    
+    public var config: StreamChatChannelConfigWithInfo? = nil
+    
+    public var createdBy: StreamChatUserObject? = nil
+    
+    public var truncatedBy: StreamChatUserObject? = nil
+    
+    public init(cid: String, createdAt: Date, disabled: Bool, frozen: Bool, id: String, type: String, updatedAt: Date, custom: [String: RawJSON], autoTranslationEnabled: Bool? = nil, autoTranslationLanguage: String? = nil, cooldown: Int? = nil, deletedAt: Date? = nil, hidden: Bool? = nil, hideMessagesBefore: Date? = nil, lastMessageAt: Date? = nil, memberCount: Int? = nil, muteExpiresAt: Date? = nil, muted: Bool? = nil, team: String? = nil, truncatedAt: Date? = nil, members: [StreamChatChannelMember?]? = nil, ownCapabilities: [String]? = nil, config: StreamChatChannelConfigWithInfo? = nil, createdBy: StreamChatUserObject? = nil, truncatedBy: StreamChatUserObject? = nil) {
         self.cid = cid
         
         self.createdAt = createdAt
         
         self.disabled = disabled
         
-        self.team = team
+        self.frozen = frozen
         
-        self.truncatedBy = truncatedBy
+        self.id = id
+        
+        self.type = type
+        
+        self.updatedAt = updatedAt
         
         self.custom = custom
+        
+        self.autoTranslationEnabled = autoTranslationEnabled
         
         self.autoTranslationLanguage = autoTranslationLanguage
         
         self.cooldown = cooldown
         
-        self.ownCapabilities = ownCapabilities
-        
-        self.type = type
-        
-        self.createdBy = createdBy
-        
-        self.muteExpiresAt = muteExpiresAt
-        
-        self.config = config
-        
-        self.members = members
-        
-        self.muted = muted
-        
-        self.updatedAt = updatedAt
-        
-        self.autoTranslationEnabled = autoTranslationEnabled
-        
         self.deletedAt = deletedAt
-        
-        self.hideMessagesBefore = hideMessagesBefore
-        
-        self.id = id
-        
-        self.lastMessageAt = lastMessageAt
-        
-        self.frozen = frozen
         
         self.hidden = hidden
         
+        self.hideMessagesBefore = hideMessagesBefore
+        
+        self.lastMessageAt = lastMessageAt
+        
         self.memberCount = memberCount
         
+        self.muteExpiresAt = muteExpiresAt
+        
+        self.muted = muted
+        
+        self.team = team
+        
         self.truncatedAt = truncatedAt
+        
+        self.members = members
+        
+        self.ownCapabilities = ownCapabilities
+        
+        self.config = config
+        
+        self.createdBy = createdBy
+        
+        self.truncatedBy = truncatedBy
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
@@ -114,49 +114,49 @@ public struct StreamChatChannelResponse: Codable, Hashable {
         
         case disabled
         
-        case team
+        case frozen
         
-        case truncatedBy = "truncated_by"
+        case id
         
-        case custom = "Custom"
+        case type
+        
+        case updatedAt = "updated_at"
+        
+        case custom
+        
+        case autoTranslationEnabled = "auto_translation_enabled"
         
         case autoTranslationLanguage = "auto_translation_language"
         
         case cooldown
         
-        case ownCapabilities = "own_capabilities"
-        
-        case type
-        
-        case createdBy = "created_by"
-        
-        case muteExpiresAt = "mute_expires_at"
-        
-        case config
-        
-        case members
-        
-        case muted
-        
-        case updatedAt = "updated_at"
-        
-        case autoTranslationEnabled = "auto_translation_enabled"
-        
         case deletedAt = "deleted_at"
-        
-        case hideMessagesBefore = "hide_messages_before"
-        
-        case id
-        
-        case lastMessageAt = "last_message_at"
-        
-        case frozen
         
         case hidden
         
+        case hideMessagesBefore = "hide_messages_before"
+        
+        case lastMessageAt = "last_message_at"
+        
         case memberCount = "member_count"
         
+        case muteExpiresAt = "mute_expires_at"
+        
+        case muted
+        
+        case team
+        
         case truncatedAt = "truncated_at"
+        
+        case members
+        
+        case ownCapabilities = "own_capabilities"
+        
+        case config
+        
+        case createdBy = "created_by"
+        
+        case truncatedBy = "truncated_by"
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -168,48 +168,48 @@ public struct StreamChatChannelResponse: Codable, Hashable {
         
         try container.encode(disabled, forKey: .disabled)
         
-        try container.encode(team, forKey: .team)
+        try container.encode(frozen, forKey: .frozen)
         
-        try container.encode(truncatedBy, forKey: .truncatedBy)
+        try container.encode(id, forKey: .id)
+        
+        try container.encode(type, forKey: .type)
+        
+        try container.encode(updatedAt, forKey: .updatedAt)
         
         try container.encode(custom, forKey: .custom)
+        
+        try container.encode(autoTranslationEnabled, forKey: .autoTranslationEnabled)
         
         try container.encode(autoTranslationLanguage, forKey: .autoTranslationLanguage)
         
         try container.encode(cooldown, forKey: .cooldown)
         
-        try container.encode(ownCapabilities, forKey: .ownCapabilities)
-        
-        try container.encode(type, forKey: .type)
-        
-        try container.encode(createdBy, forKey: .createdBy)
-        
-        try container.encode(muteExpiresAt, forKey: .muteExpiresAt)
-        
-        try container.encode(config, forKey: .config)
-        
-        try container.encode(members, forKey: .members)
-        
-        try container.encode(muted, forKey: .muted)
-        
-        try container.encode(updatedAt, forKey: .updatedAt)
-        
-        try container.encode(autoTranslationEnabled, forKey: .autoTranslationEnabled)
-        
         try container.encode(deletedAt, forKey: .deletedAt)
-        
-        try container.encode(hideMessagesBefore, forKey: .hideMessagesBefore)
-        
-        try container.encode(id, forKey: .id)
-        
-        try container.encode(lastMessageAt, forKey: .lastMessageAt)
-        
-        try container.encode(frozen, forKey: .frozen)
         
         try container.encode(hidden, forKey: .hidden)
         
+        try container.encode(hideMessagesBefore, forKey: .hideMessagesBefore)
+        
+        try container.encode(lastMessageAt, forKey: .lastMessageAt)
+        
         try container.encode(memberCount, forKey: .memberCount)
         
+        try container.encode(muteExpiresAt, forKey: .muteExpiresAt)
+        
+        try container.encode(muted, forKey: .muted)
+        
+        try container.encode(team, forKey: .team)
+        
         try container.encode(truncatedAt, forKey: .truncatedAt)
+        
+        try container.encode(members, forKey: .members)
+        
+        try container.encode(ownCapabilities, forKey: .ownCapabilities)
+        
+        try container.encode(config, forKey: .config)
+        
+        try container.encode(createdBy, forKey: .createdBy)
+        
+        try container.encode(truncatedBy, forKey: .truncatedBy)
     }
 }

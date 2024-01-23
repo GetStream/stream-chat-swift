@@ -4,7 +4,6 @@
 
 import Foundation
 
-// TODO: only temporary
 public struct StreamChatAttachmentRequest: Equatable, Hashable {
     private enum CodingKeys: String, CodingKey {
         case type

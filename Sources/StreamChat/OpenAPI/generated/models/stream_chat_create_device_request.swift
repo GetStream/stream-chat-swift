@@ -5,15 +5,15 @@
 import Foundation
 
 public struct StreamChatCreateDeviceRequest: Codable, Hashable {
-    public var id: String?
+    public var id: String? = nil
     
-    public var pushProvider: String?
+    public var pushProvider: String? = nil
     
-    public var pushProviderName: String?
+    public var pushProviderName: String? = nil
     
-    public var voipToken: Bool?
+    public var voipToken: Bool? = nil
     
-    public init(id: String?, pushProvider: String?, pushProviderName: String?, voipToken: Bool?) {
+    public init(id: String? = nil, pushProvider: String? = nil, pushProviderName: String? = nil, voipToken: Bool? = nil) {
         self.id = id
         
         self.pushProvider = pushProvider

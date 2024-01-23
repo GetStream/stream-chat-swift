@@ -5,13 +5,13 @@
 import Foundation
 
 public struct StreamChatImageUploadRequest: Codable, Hashable {
-    public var file: String?
+    public var file: String? = nil
     
-    public var uploadSizes: [StreamChatImageSizeRequest]?
+    public var uploadSizes: [StreamChatImageSizeRequest]? = nil
     
-    public var user: StreamChatOnlyUserIDRequest?
+    public var user: StreamChatOnlyUserIDRequest? = nil
     
-    public init(file: String?, uploadSizes: [StreamChatImageSizeRequest]?, user: StreamChatOnlyUserIDRequest?) {
+    public init(file: String? = nil, uploadSizes: [StreamChatImageSizeRequest]? = nil, user: StreamChatOnlyUserIDRequest? = nil) {
         self.file = file
         
         self.uploadSizes = uploadSizes

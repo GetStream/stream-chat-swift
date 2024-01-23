@@ -5,35 +5,35 @@
 import Foundation
 
 public struct StreamChatFlagDetails: Codable, Hashable {
-    public var extra: [String: RawJSON]
-    
-    public var automod: StreamChatAutomodDetails?
-    
     public var originalText: String
     
-    public init(extra: [String: RawJSON], automod: StreamChatAutomodDetails?, originalText: String) {
+    public var extra: [String: RawJSON]
+    
+    public var automod: StreamChatAutomodDetails? = nil
+    
+    public init(originalText: String, extra: [String: RawJSON], automod: StreamChatAutomodDetails? = nil) {
+        self.originalText = originalText
+        
         self.extra = extra
         
         self.automod = automod
-        
-        self.originalText = originalText
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
+        case originalText = "original_text"
+        
         case extra = "Extra"
         
         case automod
-        
-        case originalText = "original_text"
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
+        try container.encode(originalText, forKey: .originalText)
+        
         try container.encode(extra, forKey: .extra)
         
         try container.encode(automod, forKey: .automod)
-        
-        try container.encode(originalText, forKey: .originalText)
     }
 }

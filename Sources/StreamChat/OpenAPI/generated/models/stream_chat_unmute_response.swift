@@ -7,9 +7,9 @@ import Foundation
 public struct StreamChatUnmuteResponse: Codable, Hashable {
     public var duration: String
     
-    public var nonExistingUsers: [String]?
+    public var nonExistingUsers: [String]? = nil
     
-    public init(duration: String, nonExistingUsers: [String]?) {
+    public init(duration: String, nonExistingUsers: [String]? = nil) {
         self.duration = duration
         
         self.nonExistingUsers = nonExistingUsers

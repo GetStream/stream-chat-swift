@@ -5,9 +5,9 @@
 import Foundation
 
 public struct StreamChatUpdateUsersRequest: Codable, Hashable {
-    public var users: [String: RawJSON]
+    public var users: [String: StreamChatUserObjectRequest?]
     
-    public init(users: [String: RawJSON]) {
+    public init(users: [String: StreamChatUserObjectRequest?]) {
         self.users = users
     }
     

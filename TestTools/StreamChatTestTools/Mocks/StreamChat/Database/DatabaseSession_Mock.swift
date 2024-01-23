@@ -7,6 +7,14 @@ import Foundation
 
 /// This class allows you to wrap an existing `DatabaseSession` and adjust the behavior of its methods.
 class DatabaseSession_Mock: DatabaseSession {
+    func saveMessage(payload: StreamChat.StreamChatMessage, for cid: StreamChat.ChannelId?, syncOwnReactions: Bool, cache: StreamChat.PreWarmedCache?) throws -> StreamChat.MessageDTO {
+        fatalError()
+    }
+    
+    func saveChannelList(payload: StreamChat.StreamChatChannelsResponse?, query: StreamChat.ChannelListQuery?) -> [StreamChat.ChannelDTO] {
+        fatalError()
+    }
+    
     /// The wrapped session
     let underlyingSession: DatabaseSession
 

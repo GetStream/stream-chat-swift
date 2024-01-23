@@ -5,11 +5,11 @@
 import Foundation
 
 public struct StreamChatNullBoolRequest: Codable, Hashable {
-    public var hasValue: Bool?
+    public var hasValue: Bool? = nil
     
-    public var value: Bool?
+    public var value: Bool? = nil
     
-    public init(hasValue: Bool?, value: Bool?) {
+    public init(hasValue: Bool? = nil, value: Bool? = nil) {
         self.hasValue = hasValue
         
         self.value = value

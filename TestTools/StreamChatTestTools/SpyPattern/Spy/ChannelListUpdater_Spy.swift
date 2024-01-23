@@ -53,7 +53,7 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy {
         markAllRead_completion = completion
     }
 
-    override func fetch(
+    func fetch(
         channelListQuery: ChannelListQuery,
         completion: @escaping (Result<ChannelListPayload, Error>) -> Void
     ) {

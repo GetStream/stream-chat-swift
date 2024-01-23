@@ -5,24 +5,24 @@
 import Foundation
 
 public struct StreamChatAutomodDetails: Codable, Hashable {
-    public var action: String?
+    public var action: String? = nil
     
-    public var imageLabels: [String]?
+    public var originalMessageType: String? = nil
     
-    public var messageDetails: StreamChatFlagMessageDetails?
+    public var imageLabels: [String]? = nil
     
-    public var originalMessageType: String?
+    public var messageDetails: StreamChatFlagMessageDetails? = nil
     
-    public var result: StreamChatMessageModerationResult?
+    public var result: StreamChatMessageModerationResult? = nil
     
-    public init(action: String?, imageLabels: [String]?, messageDetails: StreamChatFlagMessageDetails?, originalMessageType: String?, result: StreamChatMessageModerationResult?) {
+    public init(action: String? = nil, originalMessageType: String? = nil, imageLabels: [String]? = nil, messageDetails: StreamChatFlagMessageDetails? = nil, result: StreamChatMessageModerationResult? = nil) {
         self.action = action
+        
+        self.originalMessageType = originalMessageType
         
         self.imageLabels = imageLabels
         
         self.messageDetails = messageDetails
-        
-        self.originalMessageType = originalMessageType
         
         self.result = result
     }
@@ -30,11 +30,11 @@ public struct StreamChatAutomodDetails: Codable, Hashable {
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case action
         
+        case originalMessageType = "original_message_type"
+        
         case imageLabels = "image_labels"
         
         case messageDetails = "message_details"
-        
-        case originalMessageType = "original_message_type"
         
         case result
     }
@@ -44,11 +44,11 @@ public struct StreamChatAutomodDetails: Codable, Hashable {
         
         try container.encode(action, forKey: .action)
         
+        try container.encode(originalMessageType, forKey: .originalMessageType)
+        
         try container.encode(imageLabels, forKey: .imageLabels)
         
         try container.encode(messageDetails, forKey: .messageDetails)
-        
-        try container.encode(originalMessageType, forKey: .originalMessageType)
         
         try container.encode(result, forKey: .result)
     }

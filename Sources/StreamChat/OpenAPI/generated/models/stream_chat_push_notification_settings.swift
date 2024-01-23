@@ -5,27 +5,27 @@
 import Foundation
 
 public struct StreamChatPushNotificationSettings: Codable, Hashable {
-    public var disabledUntil: Date?
+    public var disabled: Bool? = nil
     
-    public var disabled: Bool?
+    public var disabledUntil: Date? = nil
     
-    public init(disabledUntil: Date?, disabled: Bool?) {
-        self.disabledUntil = disabledUntil
-        
+    public init(disabled: Bool? = nil, disabledUntil: Date? = nil) {
         self.disabled = disabled
+        
+        self.disabledUntil = disabledUntil
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case disabledUntil = "disabled_until"
-        
         case disabled
+        
+        case disabledUntil = "disabled_until"
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(disabledUntil, forKey: .disabledUntil)
-        
         try container.encode(disabled, forKey: .disabled)
+        
+        try container.encode(disabledUntil, forKey: .disabledUntil)
     }
 }

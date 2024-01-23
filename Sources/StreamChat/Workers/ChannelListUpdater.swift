@@ -141,20 +141,17 @@ class ChannelListUpdater: Worker {
         let sort = channelListQuery.sort.map { sortingKey in
             StreamChatSortParamRequest(direction: sortingKey.direction, field: sortingKey.key.remoteKey)
         }
-
+        
         let request = StreamChatQueryChannelsRequest(
-            offset: channelListQuery.pagination.offset,
-            presence: channelListQuery.options.contains(.presence),
-            sort: sort,
-            state: channelListQuery.options.contains(.state),
-            connectionId: nil,
             limit: channelListQuery.pagination.pageSize,
             memberLimit: channelListQuery.membersLimit,
-            userId: nil,
-            watch: channelListQuery.options.contains(.watch),
-            filterConditions: filter,
             messageLimit: channelListQuery.messagesLimit,
-            user: nil
+            offset: channelListQuery.pagination.offset,
+            presence: channelListQuery.options.contains(.presence),
+            state: channelListQuery.options.contains(.state),
+            watch: channelListQuery.options.contains(.watch),
+            sort: sort,
+            filterConditions: filter
         )
         
         let requiresConnectionId = channelListQuery.options.contains(oneOf: [.presence, .state, .watch])

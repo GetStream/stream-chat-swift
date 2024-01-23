@@ -23,7 +23,8 @@ final class MessageSender_Tests: XCTestCase {
         webSocketClient = WebSocketClient_Mock()
         apiClient = APIClient_Spy()
         database = DatabaseContainer_Spy()
-        messageRepository = MessageRepository_Mock(database: database, apiClient: apiClient)
+        let api = API(apiClient: apiClient, encoder: DefaultRequestEncoder(baseURL: URL(string: "https://test.com")!, apiKey: .init("test")), basePath: "test", apiKey: .init("test"))
+        messageRepository = MessageRepository_Mock(database: database, apiClient: apiClient, api: api)
         eventsNotificationCenter = EventNotificationCenter_Mock(database: database)
         sender = MessageSender(
             messageRepository: messageRepository,

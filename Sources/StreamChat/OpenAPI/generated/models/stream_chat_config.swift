@@ -9,11 +9,11 @@ public struct StreamChatConfig: Codable, Hashable {
     
     public var appId: String
     
-    public var defaultRole: String?
+    public var defaultRole: String? = nil
     
-    public var roleMap: [String: RawJSON]?
+    public var roleMap: [String: String]? = nil
     
-    public init(appCertificate: String, appId: String, defaultRole: String?, roleMap: [String: RawJSON]?) {
+    public init(appCertificate: String, appId: String, defaultRole: String? = nil, roleMap: [String: String]? = nil) {
         self.appCertificate = appCertificate
         
         self.appId = appId

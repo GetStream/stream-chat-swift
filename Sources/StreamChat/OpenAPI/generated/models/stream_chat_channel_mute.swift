@@ -5,36 +5,36 @@
 import Foundation
 
 public struct StreamChatChannelMute: Codable, Hashable {
-    public var channel: StreamChatChannelResponse?
-    
     public var createdAt: Date
-    
-    public var expires: Date?
     
     public var updatedAt: Date
     
-    public var user: StreamChatUserObject?
+    public var expires: Date? = nil
     
-    public init(channel: StreamChatChannelResponse?, createdAt: Date, expires: Date?, updatedAt: Date, user: StreamChatUserObject?) {
-        self.channel = channel
-        
+    public var channel: StreamChatChannelResponse? = nil
+    
+    public var user: StreamChatUserObject? = nil
+    
+    public init(createdAt: Date, updatedAt: Date, expires: Date? = nil, channel: StreamChatChannelResponse? = nil, user: StreamChatUserObject? = nil) {
         self.createdAt = createdAt
+        
+        self.updatedAt = updatedAt
         
         self.expires = expires
         
-        self.updatedAt = updatedAt
+        self.channel = channel
         
         self.user = user
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case channel
-        
         case createdAt = "created_at"
+        
+        case updatedAt = "updated_at"
         
         case expires
         
-        case updatedAt = "updated_at"
+        case channel
         
         case user
     }
@@ -42,13 +42,13 @@ public struct StreamChatChannelMute: Codable, Hashable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(channel, forKey: .channel)
-        
         try container.encode(createdAt, forKey: .createdAt)
+        
+        try container.encode(updatedAt, forKey: .updatedAt)
         
         try container.encode(expires, forKey: .expires)
         
-        try container.encode(updatedAt, forKey: .updatedAt)
+        try container.encode(channel, forKey: .channel)
         
         try container.encode(user, forKey: .user)
     }

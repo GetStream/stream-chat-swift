@@ -5,9 +5,9 @@
 import Foundation
 
 public struct StreamChatSearchResult: Codable, Hashable {
-    public var message: StreamChatSearchResultMessage?
+    public var message: StreamChatSearchResultMessage? = nil
     
-    public init(message: StreamChatSearchResultMessage?) {
+    public init(message: StreamChatSearchResultMessage? = nil) {
         self.message = message
     }
     

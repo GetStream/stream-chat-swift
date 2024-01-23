@@ -7,18 +7,18 @@ import Foundation
 public struct StreamChatUserDeactivatedEvent: Codable, Hashable, Event {
     public var createdAt: Date
     
-    public var createdBy: StreamChatUserObject
-    
     public var type: String
     
-    public var user: StreamChatUserObject?
+    public var createdBy: StreamChatUserObject
     
-    public init(createdAt: Date, createdBy: StreamChatUserObject, type: String, user: StreamChatUserObject?) {
+    public var user: StreamChatUserObject? = nil
+    
+    public init(createdAt: Date, type: String, createdBy: StreamChatUserObject, user: StreamChatUserObject? = nil) {
         self.createdAt = createdAt
         
-        self.createdBy = createdBy
-        
         self.type = type
+        
+        self.createdBy = createdBy
         
         self.user = user
     }
@@ -26,9 +26,9 @@ public struct StreamChatUserDeactivatedEvent: Codable, Hashable, Event {
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case createdAt = "created_at"
         
-        case createdBy = "created_by"
-        
         case type
+        
+        case createdBy = "created_by"
         
         case user
     }
@@ -38,9 +38,9 @@ public struct StreamChatUserDeactivatedEvent: Codable, Hashable, Event {
         
         try container.encode(createdAt, forKey: .createdAt)
         
-        try container.encode(createdBy, forKey: .createdBy)
-        
         try container.encode(type, forKey: .type)
+        
+        try container.encode(createdBy, forKey: .createdBy)
         
         try container.encode(user, forKey: .user)
     }

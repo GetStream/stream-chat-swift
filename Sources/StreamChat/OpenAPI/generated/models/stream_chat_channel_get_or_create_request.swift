@@ -5,83 +5,83 @@
 import Foundation
 
 public struct StreamChatChannelGetOrCreateRequest: Codable, Hashable {
-    public var watchers: StreamChatPaginationParamsRequest?
+    public var connectionId: String? = nil
     
-    public var connectionId: String?
+    public var hideForCreator: Bool? = nil
     
-    public var messages: StreamChatMessagePaginationParamsRequest?
+    public var presence: Bool? = nil
     
-    public var watch: Bool?
+    public var state: Bool? = nil
     
-    public var presence: Bool?
+    public var watch: Bool? = nil
     
-    public var state: Bool?
+    public var data: StreamChatChannelRequest? = nil
     
-    public var data: StreamChatChannelRequest?
+    public var members: StreamChatPaginationParamsRequest? = nil
     
-    public var hideForCreator: Bool?
+    public var messages: StreamChatMessagePaginationParamsRequest? = nil
     
-    public var members: StreamChatPaginationParamsRequest?
+    public var watchers: StreamChatPaginationParamsRequest? = nil
     
-    public init(watchers: StreamChatPaginationParamsRequest?, connectionId: String?, messages: StreamChatMessagePaginationParamsRequest?, watch: Bool?, presence: Bool?, state: Bool?, data: StreamChatChannelRequest?, hideForCreator: Bool?, members: StreamChatPaginationParamsRequest?) {
-        self.watchers = watchers
-        
+    public init(connectionId: String? = nil, hideForCreator: Bool? = nil, presence: Bool? = nil, state: Bool? = nil, watch: Bool? = nil, data: StreamChatChannelRequest? = nil, members: StreamChatPaginationParamsRequest? = nil, messages: StreamChatMessagePaginationParamsRequest? = nil, watchers: StreamChatPaginationParamsRequest? = nil) {
         self.connectionId = connectionId
         
-        self.messages = messages
-        
-        self.watch = watch
+        self.hideForCreator = hideForCreator
         
         self.presence = presence
         
         self.state = state
         
+        self.watch = watch
+        
         self.data = data
         
-        self.hideForCreator = hideForCreator
-        
         self.members = members
+        
+        self.messages = messages
+        
+        self.watchers = watchers
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case watchers
-        
         case connectionId = "connection_id"
         
-        case messages
-        
-        case watch
+        case hideForCreator = "hide_for_creator"
         
         case presence
         
         case state
         
+        case watch
+        
         case data
         
-        case hideForCreator = "hide_for_creator"
-        
         case members
+        
+        case messages
+        
+        case watchers
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(watchers, forKey: .watchers)
-        
         try container.encode(connectionId, forKey: .connectionId)
         
-        try container.encode(messages, forKey: .messages)
-        
-        try container.encode(watch, forKey: .watch)
+        try container.encode(hideForCreator, forKey: .hideForCreator)
         
         try container.encode(presence, forKey: .presence)
         
         try container.encode(state, forKey: .state)
         
+        try container.encode(watch, forKey: .watch)
+        
         try container.encode(data, forKey: .data)
         
-        try container.encode(hideForCreator, forKey: .hideForCreator)
-        
         try container.encode(members, forKey: .members)
+        
+        try container.encode(messages, forKey: .messages)
+        
+        try container.encode(watchers, forKey: .watchers)
     }
 }

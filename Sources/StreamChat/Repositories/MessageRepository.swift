@@ -71,18 +71,16 @@ class MessageRepository {
                 
                 let messageRequest = StreamChatMessageRequest(
                     attachments: attachments,
-                    custom: requestBody.extraData,
+                    id: requestBody.id,
                     parentId: requestBody.parentId,
                     pinExpires: requestBody.pinExpires,
                     pinned: requestBody.pinned,
-                    pinnedAt: nil,
-                    showInChannel: requestBody.showReplyInChannel,
-                    id: requestBody.id,
                     quotedMessageId: requestBody.quotedMessageId,
+                    showInChannel: requestBody.showReplyInChannel,
+                    silent: requestBody.isSilent,
                     text: requestBody.text,
                     mentionedUsers: requestBody.mentionedUserIds,
-                    silent: requestBody.isSilent,
-                    type: nil
+                    custom: requestBody.extraData
                 )
                 
                 let sendMessageRequest = StreamChatSendMessageRequest(

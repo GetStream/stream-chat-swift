@@ -5,10 +5,6 @@
 import Foundation
 
 public struct StreamChatPolicy: Codable, Hashable {
-    public var roles: [String]
-    
-    public var updatedAt: Date
-    
     public var action: Int
     
     public var createdAt: Date
@@ -19,13 +15,13 @@ public struct StreamChatPolicy: Codable, Hashable {
     
     public var priority: Int
     
+    public var updatedAt: Date
+    
     public var resources: [String]
     
-    public init(roles: [String], updatedAt: Date, action: Int, createdAt: Date, name: String, owner: Bool, priority: Int, resources: [String]) {
-        self.roles = roles
-        
-        self.updatedAt = updatedAt
-        
+    public var roles: [String]
+    
+    public init(action: Int, createdAt: Date, name: String, owner: Bool, priority: Int, updatedAt: Date, resources: [String], roles: [String]) {
         self.action = action
         
         self.createdAt = createdAt
@@ -36,14 +32,14 @@ public struct StreamChatPolicy: Codable, Hashable {
         
         self.priority = priority
         
+        self.updatedAt = updatedAt
+        
         self.resources = resources
+        
+        self.roles = roles
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case roles
-        
-        case updatedAt = "updated_at"
-        
         case action
         
         case createdAt = "created_at"
@@ -54,15 +50,15 @@ public struct StreamChatPolicy: Codable, Hashable {
         
         case priority
         
+        case updatedAt = "updated_at"
+        
         case resources
+        
+        case roles
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
-        try container.encode(roles, forKey: .roles)
-        
-        try container.encode(updatedAt, forKey: .updatedAt)
         
         try container.encode(action, forKey: .action)
         
@@ -74,6 +70,10 @@ public struct StreamChatPolicy: Codable, Hashable {
         
         try container.encode(priority, forKey: .priority)
         
+        try container.encode(updatedAt, forKey: .updatedAt)
+        
         try container.encode(resources, forKey: .resources)
+        
+        try container.encode(roles, forKey: .roles)
     }
 }

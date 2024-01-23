@@ -7,20 +7,20 @@ import Foundation
 public struct StreamChatMuteUserRequest: Codable, Hashable {
     public var targetIds: [String]
     
-    public var timeout: Int?
+    public var timeout: Int? = nil
     
-    public var user: StreamChatUserObjectRequest?
+    public var userId: String? = nil
     
-    public var userId: String?
+    public var user: StreamChatUserObjectRequest? = nil
     
-    public init(targetIds: [String], timeout: Int?, user: StreamChatUserObjectRequest?, userId: String?) {
+    public init(targetIds: [String], timeout: Int? = nil, userId: String? = nil, user: StreamChatUserObjectRequest? = nil) {
         self.targetIds = targetIds
         
         self.timeout = timeout
         
-        self.user = user
-        
         self.userId = userId
+        
+        self.user = user
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
@@ -28,9 +28,9 @@ public struct StreamChatMuteUserRequest: Codable, Hashable {
         
         case timeout
         
-        case user
-        
         case userId = "user_id"
+        
+        case user
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -40,8 +40,8 @@ public struct StreamChatMuteUserRequest: Codable, Hashable {
         
         try container.encode(timeout, forKey: .timeout)
         
-        try container.encode(user, forKey: .user)
-        
         try container.encode(userId, forKey: .userId)
+        
+        try container.encode(user, forKey: .user)
     }
 }

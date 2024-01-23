@@ -5,8 +5,6 @@
 import Foundation
 
 public struct StreamChatUserDeletedEvent: Codable, Hashable, Event {
-    public var user: StreamChatUserObject?
-    
     public var createdAt: Date
     
     public var deleteConversationChannels: Bool
@@ -17,9 +15,9 @@ public struct StreamChatUserDeletedEvent: Codable, Hashable, Event {
     
     public var type: String
     
-    public init(user: StreamChatUserObject?, createdAt: Date, deleteConversationChannels: Bool, hardDelete: Bool, markMessagesDeleted: Bool, type: String) {
-        self.user = user
-        
+    public var user: StreamChatUserObject? = nil
+    
+    public init(createdAt: Date, deleteConversationChannels: Bool, hardDelete: Bool, markMessagesDeleted: Bool, type: String, user: StreamChatUserObject? = nil) {
         self.createdAt = createdAt
         
         self.deleteConversationChannels = deleteConversationChannels
@@ -29,11 +27,11 @@ public struct StreamChatUserDeletedEvent: Codable, Hashable, Event {
         self.markMessagesDeleted = markMessagesDeleted
         
         self.type = type
+        
+        self.user = user
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case user
-        
         case createdAt = "created_at"
         
         case deleteConversationChannels = "delete_conversation_channels"
@@ -43,12 +41,12 @@ public struct StreamChatUserDeletedEvent: Codable, Hashable, Event {
         case markMessagesDeleted = "mark_messages_deleted"
         
         case type
+        
+        case user
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
-        try container.encode(user, forKey: .user)
         
         try container.encode(createdAt, forKey: .createdAt)
         
@@ -59,5 +57,7 @@ public struct StreamChatUserDeletedEvent: Codable, Hashable, Event {
         try container.encode(markMessagesDeleted, forKey: .markMessagesDeleted)
         
         try container.encode(type, forKey: .type)
+        
+        try container.encode(user, forKey: .user)
     }
 }

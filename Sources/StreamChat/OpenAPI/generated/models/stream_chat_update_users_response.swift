@@ -7,9 +7,9 @@ import Foundation
 public struct StreamChatUpdateUsersResponse: Codable, Hashable {
     public var duration: String
     
-    public var users: [String: RawJSON]
+    public var users: [String: StreamChatUserObject]
     
-    public init(duration: String, users: [String: RawJSON]) {
+    public init(duration: String, users: [String: StreamChatUserObject]) {
         self.duration = duration
         
         self.users = users

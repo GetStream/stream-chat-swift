@@ -5,13 +5,13 @@
 import Foundation
 
 public struct StreamChatFieldRequest: Codable, Hashable {
-    public var short: Bool?
+    public var short: Bool? = nil
     
-    public var title: String?
+    public var title: String? = nil
     
-    public var value: String?
+    public var value: String? = nil
     
-    public init(short: Bool?, title: String?, value: String?) {
+    public init(short: Bool? = nil, title: String? = nil, value: String? = nil) {
         self.short = short
         
         self.title = title

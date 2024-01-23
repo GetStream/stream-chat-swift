@@ -7,9 +7,9 @@ import Foundation
 public struct StreamChatFlagResponse: Codable, Hashable {
     public var duration: String
     
-    public var flag: StreamChatFlag?
+    public var flag: StreamChatFlag? = nil
     
-    public init(duration: String, flag: StreamChatFlag?) {
+    public init(duration: String, flag: StreamChatFlag? = nil) {
         self.duration = duration
         
         self.flag = flag

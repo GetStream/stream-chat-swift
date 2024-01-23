@@ -17,11 +17,11 @@ public struct StreamChatChannelHiddenEvent: Codable, Hashable, Event {
     
     public var type: String
     
-    public var user: StreamChatUserObject?
+    public var channel: StreamChatChannelResponse? = nil
     
-    public var channel: StreamChatChannelResponse?
+    public var user: StreamChatUserObject? = nil
     
-    public init(channelId: String, channelType: String, cid: String, clearHistory: Bool, createdAt: Date, type: String, user: StreamChatUserObject?, channel: StreamChatChannelResponse?) {
+    public init(channelId: String, channelType: String, cid: String, clearHistory: Bool, createdAt: Date, type: String, channel: StreamChatChannelResponse? = nil, user: StreamChatUserObject? = nil) {
         self.channelId = channelId
         
         self.channelType = channelType
@@ -34,9 +34,9 @@ public struct StreamChatChannelHiddenEvent: Codable, Hashable, Event {
         
         self.type = type
         
-        self.user = user
-        
         self.channel = channel
+        
+        self.user = user
     }
     
     public enum CodingKeys: String, CodingKey, CaseIterable {
@@ -52,9 +52,9 @@ public struct StreamChatChannelHiddenEvent: Codable, Hashable, Event {
         
         case type
         
-        case user
-        
         case channel
+        
+        case user
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -72,8 +72,8 @@ public struct StreamChatChannelHiddenEvent: Codable, Hashable, Event {
         
         try container.encode(type, forKey: .type)
         
-        try container.encode(user, forKey: .user)
-        
         try container.encode(channel, forKey: .channel)
+        
+        try container.encode(user, forKey: .user)
     }
 }
