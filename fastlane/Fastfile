@@ -539,29 +539,6 @@ lane :cocoapods_integration do
   )
 end
 
-desc 'Build and upload DemoApp to Emerge'
-lane :emerge_upload do
-  next unless is_check_required(sources: sources_matrix[:emerge], force_check: @force_check)
-
-  gym(
-    export_method: 'ad-hoc',
-    project: xcode_project,
-    scheme: 'DemoApp',
-    skip_package_ipa: true,
-    skip_archive: false,
-    clean: is_localhost,
-    xcargs: buildcache_xcargs
-  )
-
-  emerge(
-    build_type: 'release',
-    repo_name: github_repo,
-    pr_number: ENV['GITHUB_PR_NUM'] || nil, # If `nil` then local run or merge to develop/main
-    sha: ENV['GITHUB_COMMIT_SHA'] || last_git_commit[:commit_hash],
-    base_sha: ENV['GITHUB_BASE_SHA'] || nil
-  )
-end
-
 private_lane :update_testplan_on_ci do |options|
   update_testplan(path: options[:path], env_vars: { key: 'CI', value: 'TRUE' }) if is_ci
 end
@@ -614,7 +591,6 @@ lane :sources_matrix do
     e2e: ['Sources', 'StreamChatUITestsAppUITests', 'StreamChatUITestsApp', 'TestTools/StreamChatTestMockServer', xcode_project],
     unit: ['Sources', 'Tests/StreamChatTests', 'Tests/Shared', 'TestTools/StreamChatTestTools', xcode_project],
     ui: ['Sources', 'Tests/StreamChatUITests', 'Tests/Shared', xcode_project],
-    emerge: ['Sources', 'DemoApp', xcode_project],
     sample_apps: ['Sources', 'Examples', 'DemoApp', xcode_project],
     integration: ['Sources', 'Integration', xcode_project],
     ruby: ['fastlane', 'Gemfile', 'Gemfile.lock']
