@@ -90,7 +90,7 @@ The complete list of all the `ComposerVC`'s components.
 
 ## Composer View
 
-The `ComposerView` class holds all the composer subviews and implements the composer layout. The composer layout is built with multiple `ContainerStackView`'s, which are very similar how `UIStackView`'s work, you can read more about them [here](../../uikit/custom-components#setuplayout). This makes it very customizable since to change the layout you only need to move/remove/add views from different containers.
+The `ComposerView` class holds all the composer subviews and implements the composer layout. The composer layout is built with multiple `ContainerStackView`'s, which are very similar how `UIStackView`'s work, you can read more about them [here](../../custom-components#setuplayout). This makes it very customizable since to change the layout you only need to move/remove/add views from different containers.
 
 In the picture below you can see all the containers and main views of the composer:
 
@@ -122,7 +122,7 @@ class CustomComposerVC: UIViewController {
 }
 ```
 
-### Properties 
+### Properties
 
 Complete list of all the subviews that make the `ComposerView`.
 
