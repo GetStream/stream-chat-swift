@@ -69,8 +69,8 @@ You can add new multi-bundle configuration by tapping on `New Configuration` und
 Once created, fill in the following details:
 * `Name of your configuration` - this name will be used in `addDevice` registration call.
 * `Bundle/Topic ID` - bundle identifier of your app.
-* [Team ID](https://help.apple.com/developer-account/#/dev55c3c710c)
-* [Key ID](https://help.apple.com/developer-account/#/dev646934554)
+* [Team ID](https://developer.apple.com/help/account/manage-your-team/locate-your-team-id/)
+* [Key ID](https://developer.apple.com/help/account/manage-keys/get-a-key-identifier/)
 * `.p8 token` in raw format.
 
 and `enable` the push configuration by tapping `Enabled` toggle on top right.
