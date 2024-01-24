@@ -75,6 +75,8 @@ open class ComposerVC: _ViewController,
         public var extraData: [String: RawJSON]
         /// The current cooldown time for the Slow mode active on channel.
         public var cooldownTime: Int
+        /// A boolean value indicating if the message url enrichment should be skipped.
+        public var skipEnrichUrl: Bool
 
         /// A boolean that checks if the message contains any content.
         public var isEmpty: Bool {
@@ -106,7 +108,8 @@ open class ComposerVC: _ViewController,
             mentionedUsers: Set<ChatUser>,
             command: Command?,
             extraData: [String: RawJSON] = [:],
-            cooldownTime: Int = 0
+            cooldownTime: Int = 0,
+            skipEnrichUrl: Bool = false
         ) {
             self.text = text
             self.state = state
@@ -118,6 +121,7 @@ open class ComposerVC: _ViewController,
             self.command = command
             self.extraData = extraData
             self.cooldownTime = cooldownTime
+            self.skipEnrichUrl = skipEnrichUrl
         }
 
         /// Creates a new content struct with all empty data.
@@ -132,7 +136,8 @@ open class ComposerVC: _ViewController,
                 mentionedUsers: [],
                 command: nil,
                 extraData: [:],
-                cooldownTime: 0
+                cooldownTime: 0,
+                skipEnrichUrl: false
             )
         }
 
@@ -148,7 +153,8 @@ open class ComposerVC: _ViewController,
                 mentionedUsers: [],
                 command: nil,
                 extraData: [:],
-                cooldownTime: cooldownTime
+                cooldownTime: cooldownTime,
+                skipEnrichUrl: false
             )
         }
 
@@ -166,7 +172,8 @@ open class ComposerVC: _ViewController,
                 mentionedUsers: message.mentionedUsers,
                 command: command,
                 extraData: message.extraData,
-                cooldownTime: cooldownTime
+                cooldownTime: cooldownTime,
+                skipEnrichUrl: skipEnrichUrl
             )
         }
 
@@ -184,7 +191,8 @@ open class ComposerVC: _ViewController,
                 mentionedUsers: mentionedUsers,
                 command: command,
                 extraData: extraData,
-                cooldownTime: cooldownTime
+                cooldownTime: cooldownTime,
+                skipEnrichUrl: skipEnrichUrl
             )
         }
 
@@ -199,7 +207,8 @@ open class ComposerVC: _ViewController,
                 mentionedUsers: mentionedUsers,
                 command: command,
                 extraData: extraData,
-                cooldownTime: cooldownTime
+                cooldownTime: cooldownTime,
+                skipEnrichUrl: skipEnrichUrl
             )
         }
 
@@ -214,7 +223,8 @@ open class ComposerVC: _ViewController,
                 mentionedUsers: mentionedUsers,
                 command: command,
                 extraData: extraData,
-                cooldownTime: cooldown
+                cooldownTime: cooldown,
+                skipEnrichUrl: skipEnrichUrl
             )
         }
 
@@ -229,7 +239,8 @@ open class ComposerVC: _ViewController,
                 mentionedUsers: mentionedUsers,
                 command: command,
                 extraData: extraData,
-                cooldownTime: 0
+                cooldownTime: 0,
+                skipEnrichUrl: skipEnrichUrl
             )
         }
 
@@ -242,7 +253,8 @@ open class ComposerVC: _ViewController,
                 threadMessage: threadMessage,
                 attachments: attachments,
                 mentionedUsers: mentionedUsers,
-                command: command
+                command: command,
+                skipEnrichUrl: skipEnrichUrl
             )
         }
 
@@ -255,7 +267,8 @@ open class ComposerVC: _ViewController,
                 threadMessage: threadMessage,
                 attachments: attachments,
                 mentionedUsers: mentionedUsers,
-                command: command
+                command: command,
+                skipEnrichUrl: skipEnrichUrl
             )
         }
     }
@@ -269,7 +282,9 @@ open class ComposerVC: _ViewController,
 
     open var cooldownTracker: CooldownTracker = CooldownTracker(timer: ScheduledStreamTimer(interval: 1))
 
-    lazy var linkDetector: NSDataDetector? = try? .init(types: NSTextCheckingResult.CheckingType.link.rawValue)
+    public var enrichUrlDebouncer = Debouncer(0.3, queue: .main)
+
+    lazy var linkDetector = TextLinkDetector()
 
     /// A symbol that is used to recognise when the user is mentioning a user.
     open var mentionSymbol = "@"
@@ -304,7 +319,7 @@ open class ComposerVC: _ViewController,
 
     /// A Boolean value indicating whether the current input text contains links.
     open var inputContainsLinks: Bool {
-        linkDetector?.firstMatch(in: content.text, range: NSRange(location: 0, length: content.text.utf16.count)) != nil
+        linkDetector.hasLinks(in: content.text)
     }
 
     /// When enabled mentions search users across the entire app instead of searching
@@ -425,6 +440,13 @@ open class ComposerVC: _ViewController,
             }
 
             self?.content.slowMode(cooldown: currentTime)
+        }
+
+        composerView.inputMessageView.textView.onLinksChanged = { [weak self] links in
+            self?.didChangeLinks(links)
+        }
+        composerView.linkPreviewView.onClose = { [weak self] in
+            self?.dismissLinkPreview()
         }
     }
 
@@ -740,6 +762,7 @@ open class ComposerVC: _ViewController,
                 mentionedUserIds: content.mentionedUsers.map(\.id),
                 showReplyInChannel: composerView.checkboxControl.isSelected,
                 quotedMessageId: content.quotingMessage?.id,
+                skipEnrichUrl: content.skipEnrichUrl,
                 extraData: content.extraData
             )
             return
@@ -751,6 +774,7 @@ open class ComposerVC: _ViewController,
             attachments: content.attachments,
             mentionedUserIds: content.mentionedUsers.map(\.id),
             quotedMessageId: content.quotingMessage?.id,
+            skipEnrichUrl: content.skipEnrichUrl,
             extraData: content.extraData
         )
     }
@@ -944,6 +968,49 @@ open class ComposerVC: _ViewController,
     open func dismissSuggestions() {
         suggestionsVC.removeFromParent()
         suggestionsVC.view.removeFromSuperview()
+    }
+
+    /// The links in the current input text have changed
+    /// - Parameter links: The new parsed links from the input text.
+    open func didChangeLinks(_ links: [TextLink]) {
+        /// We only try to display the link preview of the first link.
+        guard let link = links.first else {
+            dismissLinkPreview()
+            return
+        }
+
+        enrichUrlDebouncer.execute { [weak self] in
+            self?.channelController?.client.enrichUrl(link.url) { [weak self] result in
+                switch result {
+                case let .success(linkPayload):
+                    DispatchQueue.main.async {
+                        self?.showLinkPreview(for: linkPayload)
+                    }
+                case let .failure(error):
+                    DispatchQueue.main.async {
+                        self?.dismissLinkPreview()
+                    }
+                }
+            }
+        }
+    }
+
+    /// Shows the link preview view.
+    open func showLinkPreview(for linkPayload: LinkAttachmentPayload) {
+        content.skipEnrichUrl = false
+        Animate {
+            self.composerView.linkPreviewView.isHidden = false
+            self.composerView.linkPreviewView.content = .init(linkAttachmentPayload: linkPayload)
+        }
+    }
+
+    /// Dismisses the link preview view.
+    open func dismissLinkPreview() {
+        content.skipEnrichUrl = true
+        Animate {
+            self.composerView.linkPreviewView.isHidden = true
+            self.composerView.linkPreviewView.content = nil
+        }
     }
 
     /// Creates and adds an attachment from the given URL to the `content`
