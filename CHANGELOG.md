@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.47.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.47.1)
+_January 24, 2024_
+
 ## StreamChat
 ### 🐞 Fixed
 - Fix not possible to resend messages with failed attachments [#2966](https://github.com/GetStream/stream-chat-swift/pull/2966)
