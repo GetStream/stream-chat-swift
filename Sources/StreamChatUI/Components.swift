@@ -37,13 +37,16 @@ public struct Components {
     /// A view to input content of a message.
     public var inputMessageView: InputChatMessageView.Type = InputChatMessageView.self
 
+    /// A view that displays the link metadata when typing links in the composer.
+    public var composerLinkPreviewView: ComposerLinkPreviewView.Type = ComposerLinkPreviewView.self
+
     /// A view that displays a quoted message.
     public var quotedMessageView: QuotedChatMessageView.Type = QuotedChatMessageView.self
 
     /// A button used for sending a message, or any type of content.
     public var sendButton: UIButton.Type = SendButton.self
 
-    /// A button used for recording a voice message,
+    /// A button used for recording a voice message.
     public var recordButton: RecordButton.Type = RecordButton.self
 
     /// A view for showing a cooldown when Slow Mode is active.
