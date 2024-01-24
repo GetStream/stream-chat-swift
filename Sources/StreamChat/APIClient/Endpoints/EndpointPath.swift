@@ -12,6 +12,7 @@ enum EndpointPath: Codable {
     case members
     case search
     case devices
+    case og
 
     case channels
     case createChannel(String)
@@ -60,6 +61,7 @@ enum EndpointPath: Codable {
         case .members: return "members"
         case .search: return "search"
         case .devices: return "devices"
+        case .og: return "og"
 
         case .channels: return "channels"
         case let .createChannel(queryString): return "channels/\(queryString)/query"
