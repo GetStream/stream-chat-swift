@@ -92,6 +92,19 @@ final class ChatMessageLinkPreviewView_Tests: XCTestCase {
         AssertSnapshot(linkPreviewView)
     }
 
+    func test_appearance_whenNoMetadata() {
+        linkPreviewView.content = .mock(
+            id: .unique,
+            originalURL: .unique(),
+            title: nil,
+            text: nil,
+            assetURL: nil,
+            previewURL: nil
+        )
+
+        AssertSnapshot(linkPreviewView, variants: [.defaultLight])
+    }
+
     func test_appearance_whenLongTexts() {
         let mockContent = repeatElement("Text", count: 5)
             .joined(separator: "\n")
