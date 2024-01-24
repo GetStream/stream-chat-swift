@@ -52,6 +52,21 @@ open class InputTextView: UITextView, AppearanceProvider {
         120.0
     }
 
+    /// The component responsible to detect links in text.
+    private let linkDetector = TextLinkDetector()
+
+    /// The current links found in the input text.
+    public var links: [TextLink] = [] {
+        didSet {
+            if oldValue != links {
+                onLinksChanged?(links)
+            }
+        }
+    }
+
+    /// A closure that is triggered whenever the links in the input text change.
+    public var onLinksChanged: (([TextLink]) -> Void)?
+
     override open var attributedText: NSAttributedString! {
         didSet {
             textDidChangeProgrammatically()
@@ -173,6 +188,12 @@ open class InputTextView: UITextView, AppearanceProvider {
 
     @objc open func handleTextChange() {
         placeholderLabel.isHidden = !text.isEmpty
+
+        resetAttributes()
+
+        links = linkDetector.links(in: text)
+        highlightLinks(links)
+
         setNeedsLayout()
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
             // This is due to bug in UITextView where the scroll sometimes disables
@@ -212,6 +233,22 @@ open class InputTextView: UITextView, AppearanceProvider {
         heightConstraint?.constant = heightToSet
         layoutIfNeeded()
         isScrollEnabled = true
+    }
+
+    // MARK: - Link Detection
+
+    /// Resets the text attributes whenever the text changes.
+    open func resetAttributes() {
+        let fullRange = NSRange(location: 0, length: text.utf16.count)
+        textStorage.removeAttribute(.foregroundColor, range: fullRange)
+    }
+
+    /// Highlights the links in the input text view.
+    open func highlightLinks(_ links: [TextLink]) {
+        links.forEach { link in
+            let linkColor = appearance.colorPalette.textLinkColor
+            textStorage.addAttribute(.foregroundColor, value: linkColor, range: link.range)
+        }
     }
 
     // MARK: - Actions on the UITextView
