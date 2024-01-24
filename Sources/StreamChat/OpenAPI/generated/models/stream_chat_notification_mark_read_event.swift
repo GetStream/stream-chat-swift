@@ -101,3 +101,5 @@ public struct StreamChatNotificationMarkReadEvent: Codable, Hashable, Event {
         try container.encode(user, forKey: .user)
     }
 }
+
+extension StreamChatNotificationMarkReadEvent: EventContainsUser {}

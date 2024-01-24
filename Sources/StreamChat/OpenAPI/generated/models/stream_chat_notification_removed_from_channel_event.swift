@@ -77,3 +77,5 @@ public struct StreamChatNotificationRemovedFromChannelEvent: Codable, Hashable, 
         try container.encode(user, forKey: .user)
     }
 }
+
+extension StreamChatNotificationRemovedFromChannelEvent: EventContainsUser {}

@@ -714,6 +714,7 @@
 		8440861928FFE9D40027849C /* ChatUser+CustomFields.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43016E1526B734410054E805 /* ChatUser+CustomFields.swift */; };
 		845CEE53270F032A002C7EBD /* MessageSearchQuery_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CEE52270F032A002C7EBD /* MessageSearchQuery_Tests.swift */; };
 		845CEE5A270F2A06002C7EBD /* ChatReactionsBubbleView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CEE59270F2A06002C7EBD /* ChatReactionsBubbleView_Tests.swift */; };
+		8464671C2B6108F200089FB1 /* EventProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8464671B2B6108F200089FB1 /* EventProtocols.swift */; };
 		846A595E2B4FEF8400D60EF2 /* ChannelDatabaseSessionV2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846A595D2B4FEF8400D60EF2 /* ChannelDatabaseSessionV2.swift */; };
 		846A595F2B4FEF8400D60EF2 /* ChannelDatabaseSessionV2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846A595D2B4FEF8400D60EF2 /* ChannelDatabaseSessionV2.swift */; };
 		846A59612B557BAC00D60EF2 /* EventDecoderV2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846A59602B557BAC00D60EF2 /* EventDecoderV2.swift */; };
@@ -3724,6 +3725,7 @@
 		8440860E28FBFEE10027849C /* DemoAppCoordinator+TestApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DemoAppCoordinator+TestApp.swift"; sourceTree = "<group>"; };
 		845CEE52270F032A002C7EBD /* MessageSearchQuery_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageSearchQuery_Tests.swift; sourceTree = "<group>"; };
 		845CEE59270F2A06002C7EBD /* ChatReactionsBubbleView_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatReactionsBubbleView_Tests.swift; sourceTree = "<group>"; };
+		8464671B2B6108F200089FB1 /* EventProtocols.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventProtocols.swift; sourceTree = "<group>"; };
 		84698637274FE79200B22258 /* ConnectionRecoveryHandler_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionRecoveryHandler_Mock.swift; sourceTree = "<group>"; };
 		846A595D2B4FEF8400D60EF2 /* ChannelDatabaseSessionV2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelDatabaseSessionV2.swift; sourceTree = "<group>"; };
 		846A59602B557BAC00D60EF2 /* EventDecoderV2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDecoderV2.swift; sourceTree = "<group>"; };
@@ -6300,6 +6302,14 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
+		8464671A2B6108F200089FB1 /* helpers */ = {
+			isa = PBXGroup;
+			children = (
+				8464671B2B6108F200089FB1 /* EventProtocols.swift */,
+			);
+			path = helpers;
+			sourceTree = "<group>";
+		};
 		84790E962AC1D346003AFF1C /* DemoShare */ = {
 			isa = PBXGroup;
 			children = (
@@ -6336,6 +6346,7 @@
 			isa = PBXGroup;
 			children = (
 				8484C36D2B4C2066000065E3 /* models */,
+				8464671A2B6108F200089FB1 /* helpers */,
 				8484C44E2B4C2067000065E3 /* client.swift */,
 			);
 			path = generated;
@@ -11744,6 +11755,7 @@
 				8484C49F2B4C2067000065E3 /* stream_chat_push_notification_settings_request.swift in Sources */,
 				8484C45D2B4C2067000065E3 /* stream_chat_field_request.swift in Sources */,
 				8484C50A2B4C2067000065E3 /* stream_chat_notification_new_message_event.swift in Sources */,
+				8464671C2B6108F200089FB1 /* EventProtocols.swift in Sources */,
 				792A4F492480107A00EAF71D /* Sorting.swift in Sources */,
 				7937282A2498FFD300E13FE5 /* MemberPayload.swift in Sources */,
 				8419CF492B5AA433007F2CB3 /* stream_chat_start_recording_request.swift in Sources */,

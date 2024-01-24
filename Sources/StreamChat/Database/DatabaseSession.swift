@@ -570,13 +570,12 @@ extension DatabaseSession {
             cache: nil
         )
 
-        // TODO: handle this.
-//        if eventType == .messageDeleted && payload.hardDelete {
-//            // We should in fact delete it from the DB, but right now this produces a crash
-//            // This should be fixed in this ticket: https://stream-io.atlassian.net/browse/CIS-1963
-//            savedMessage.isHardDeleted = true
-//            return
-//        }
+        if eventType == .messageDeleted, let deletedEvent = event as? StreamChatMessageDeletedEvent, deletedEvent.hardDelete {
+            // We should in fact delete it from the DB, but right now this produces a crash
+            // This should be fixed in this ticket: https://stream-io.atlassian.net/browse/CIS-1963
+            savedMessage.isHardDeleted = true
+            return
+        }
 
         // When a message is updated, make sure to update
         // the messages quoting the edited message by triggering a DB Update.

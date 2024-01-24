@@ -133,3 +133,5 @@ public struct StreamChatNotificationMarkUnreadEvent: Codable, Hashable, Event {
         try container.encode(user, forKey: .user)
     }
 }
+
+extension StreamChatNotificationMarkUnreadEvent: EventContainsUser {}

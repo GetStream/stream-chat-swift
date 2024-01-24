@@ -22,13 +22,3 @@ struct EventDecoderV2: AnyEventDecoder {
         }
     }
 }
-
-protocol EventContainsMessage {
-    var message: StreamChatMessage? { get }
-    var type: String { get }
-    var channelId: String { get }
-    var cid: String { get }
-}
-
-extension StreamChatMessageNewEvent: EventContainsMessage {}
-extension StreamChatChannelUpdatedEvent: EventContainsMessage {}

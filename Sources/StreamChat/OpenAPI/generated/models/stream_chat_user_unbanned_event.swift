@@ -77,3 +77,5 @@ public struct StreamChatUserUnbannedEvent: Codable, Hashable, Event {
         try container.encode(user, forKey: .user)
     }
 }
+
+extension StreamChatUserUnbannedEvent: EventContainsUser {}

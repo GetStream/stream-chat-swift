@@ -85,3 +85,6 @@ public struct StreamChatMessageUpdatedEvent: Codable, Hashable, Event {
         try container.encode(user, forKey: .user)
     }
 }
+
+extension StreamChatMessageUpdatedEvent: EventContainsMessage {}
+extension StreamChatMessageUpdatedEvent: EventContainsUser {}

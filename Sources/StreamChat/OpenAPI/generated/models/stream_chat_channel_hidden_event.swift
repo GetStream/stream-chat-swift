@@ -77,3 +77,5 @@ public struct StreamChatChannelHiddenEvent: Codable, Hashable, Event {
         try container.encode(user, forKey: .user)
     }
 }
+
+extension StreamChatChannelHiddenEvent: EventContainsUser {}

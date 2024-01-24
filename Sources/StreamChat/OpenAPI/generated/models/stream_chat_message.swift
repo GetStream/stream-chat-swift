@@ -37,7 +37,7 @@ public class StreamChatMessage: Codable, Hashable {
     
     public var ownReactions: [StreamChatReaction?]
     
-    public var custom: [String: RawJSON]
+    public var custom: [String: RawJSON]?
     
     public var reactionCounts: [String: Int]
     

@@ -37,3 +37,5 @@ public struct StreamChatUserUpdatedEvent: Codable, Hashable, Event {
         try container.encode(user, forKey: .user)
     }
 }
+
+extension StreamChatUserUpdatedEvent: EventContainsUser {}

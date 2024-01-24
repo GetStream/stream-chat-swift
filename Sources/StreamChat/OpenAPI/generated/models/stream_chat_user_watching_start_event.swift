@@ -77,3 +77,5 @@ public struct StreamChatUserWatchingStartEvent: Codable, Hashable, Event {
         try container.encode(user, forKey: .user)
     }
 }
+
+extension StreamChatUserWatchingStartEvent: EventContainsUser {}

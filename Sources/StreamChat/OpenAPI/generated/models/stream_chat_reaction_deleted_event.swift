@@ -93,3 +93,6 @@ public struct StreamChatReactionDeletedEvent: Codable, Hashable, Event {
         try container.encode(user, forKey: .user)
     }
 }
+
+extension StreamChatReactionDeletedEvent: EventContainsMessage {}
+extension StreamChatReactionDeletedEvent: EventContainsUser {}
