@@ -502,7 +502,85 @@ final class ComposerVC_Tests: XCTestCase {
         composerVC.channelController = mock
         XCTAssertEqual(composerVC.canSendLinks, true)
     }
-    
+
+    // MARK: - Link preview
+
+    func test_linkPreview_whenComposerLinkPreviewEnabled_thenHighlightsLinks() {
+        composerVC.content = .initial()
+        composerVC.content.text = """
+        Some link: https://github.com/GetStream/stream-chat-swift
+        Another one: www.google.com
+        """
+        composerVC.components.isComposerLinkPreviewEnabled = true
+
+        AssertSnapshot(composerVC, variants: [.defaultLight])
+    }
+
+    func test_linkPreview_whenComposerLinkPreviewDisabled_thenNoHighlighting() {
+        composerVC.content = .initial()
+        composerVC.content.text = """
+        Some link: https://github.com/GetStream/stream-chat-swift
+        Another one: www.google.com
+        """
+        composerVC.components.isComposerLinkPreviewEnabled = false
+
+        AssertSnapshot(composerVC, variants: [.defaultLight])
+    }
+
+    func test_linkPreview_whenLinksChange_thenOnLinksChangedCalled() {
+        composerVC.components.isComposerLinkPreviewEnabled = true
+        composerVC.content = .initial()
+        composerVC.content.text = """
+        Some link: https://github.com/GetStream/stream-chat-swift
+        Another one: www.google.com
+        """
+        composerVC.updateContent()
+
+        var links: [TextLink] = []
+        let exp = expectation(description: "onLinksChanged called")
+        composerVC.composerView.inputMessageView.textView.onLinksChanged = { newLinks in
+            links = newLinks
+            exp.fulfill()
+        }
+
+        composerVC.content.text = """
+        Some link: https://github.com/GetStream/stream-chat-swift
+        Another one: www.youtube.com
+        """
+        composerVC.updateContent()
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertEqual(links.map(\.url.absoluteString), [
+            "https://github.com/GetStream/stream-chat-swift",
+            "www.youtube.com"
+        ])
+    }
+
+    func test_linkPreview_whenLinksDoNotChange_thenOnLinksChangedNotCalled() {
+        composerVC.components.isComposerLinkPreviewEnabled = true
+        composerVC.content = .initial()
+        composerVC.content.text = """
+        Some link: https://github.com/GetStream/stream-chat-swift
+        Another one: www.google.com
+        """
+        composerVC.updateContent()
+
+        let exp = expectation(description: "onLinksChanged not called")
+        exp.isInverted = true
+        composerVC.composerView.inputMessageView.textView.onLinksChanged = { _ in
+            exp.fulfill()
+        }
+
+        composerVC.content.text = """
+        Same: https://github.com/GetStream/stream-chat-swift
+        Same: www.google.com
+        """
+        composerVC.updateContent()
+
+        waitForExpectations(timeout: defaultTimeout)
+    }
+
     // MARK: - audioPlayer
     
     func test_audioPlayer_voiceRecordingAndAttachmentsVCGetTheSameInstance() {

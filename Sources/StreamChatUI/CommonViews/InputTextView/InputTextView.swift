@@ -58,7 +58,7 @@ open class InputTextView: UITextView, ThemeProvider {
     /// The current links found in the input text.
     public var links: [TextLink] = [] {
         didSet {
-            if oldValue != links {
+            if oldValue.map(\.url) != links.map(\.url) {
                 onLinksChanged?(links)
             }
         }
