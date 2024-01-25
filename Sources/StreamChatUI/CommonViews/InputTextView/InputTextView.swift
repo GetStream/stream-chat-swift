@@ -159,7 +159,6 @@ open class InputTextView: UITextView, ThemeProvider {
             placeholderLabel.trailingAnchor.pin(lessThanOrEqualTo: trailingAnchor),
             placeholderLabel.topAnchor.pin(equalTo: topAnchor),
             placeholderLabel.bottomAnchor.pin(lessThanOrEqualTo: bottomAnchor),
-            
             placeholderLabel.centerYAnchor.pin(equalTo: centerYAnchor)
         ])
 
@@ -242,6 +241,7 @@ open class InputTextView: UITextView, ThemeProvider {
     open func resetAttributes() {
         let fullRange = NSRange(location: 0, length: text.utf16.count)
         textStorage.removeAttribute(.foregroundColor, range: fullRange)
+        textColor = appearance.colorPalette.text
     }
 
     /// Highlights the links in the input text view.

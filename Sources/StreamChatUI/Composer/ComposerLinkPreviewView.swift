@@ -49,10 +49,12 @@ open class ComposerLinkPreviewView: _View, ThemeProvider {
     /// The label that displays the title of the link.
     open private(set) lazy var titleLabel = UILabel()
         .withoutAutoresizingMaskConstraints
+        .withAdjustingFontForContentSizeCategory
 
     /// The label that displays the description of the link.
     open private(set) lazy var descriptionLabel = UILabel()
         .withoutAutoresizingMaskConstraints
+        .withAdjustingFontForContentSizeCategory
 
     /// The button that closes the link preview view.
     open private(set) lazy var closeButton = UIButton()

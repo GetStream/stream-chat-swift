@@ -986,7 +986,7 @@ open class ComposerVC: _ViewController,
                     DispatchQueue.main.async {
                         self?.showLinkPreview(for: linkPayload)
                     }
-                case let .failure(error):
+                case .failure:
                     DispatchQueue.main.async {
                         self?.dismissLinkPreview()
                     }

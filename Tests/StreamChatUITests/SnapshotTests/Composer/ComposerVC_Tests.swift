@@ -581,6 +581,178 @@ final class ComposerVC_Tests: XCTestCase {
         waitForExpectations(timeout: defaultTimeout)
     }
 
+    func test_showLinkPreview() {
+        composerVC.components.isComposerLinkPreviewEnabled = true
+        composerVC.content = .initial()
+        composerVC.content.text = """
+        Some link: https://github.com/GetStream/stream-chat-swift
+        Another one: www.google.com
+        """
+        composerVC.updateContent()
+        composerVC.showLinkPreview(for: .init(
+            originalURL: .init(string: "https://github.com/GetStream/stream-chat-swift")!,
+            title: "GitHub - GetStream/stream-chat-swift",
+            text: "iOS Chat SDK in Swift",
+            previewURL: .localYodaImage
+        ))
+
+        AssertSnapshot(composerVC.view, size: .init(width: 400, height: 140))
+        XCTAssertEqual(composerVC.content.skipEnrichUrl, false)
+    }
+
+    func test_showLinkPreview_whenNoImage() {
+        composerVC.components.isComposerLinkPreviewEnabled = true
+        composerVC.content = .initial()
+        composerVC.content.text = """
+        Some link: https://github.com/GetStream/stream-chat-swift
+        Another one: www.google.com
+        """
+        composerVC.updateContent()
+        composerVC.showLinkPreview(for: .init(
+            originalURL: .init(string: "https://github.com/GetStream/stream-chat-swift")!,
+            title: "GitHub - GetStream/stream-chat-swift",
+            text: "iOS Chat SDK in Swift"
+        ))
+
+        AssertSnapshot(composerVC.view, variants: [.defaultLight], size: .init(width: 400, height: 140))
+    }
+
+    func test_showLinkPreview_whenNoDescription() {
+        composerVC.components.isComposerLinkPreviewEnabled = true
+        composerVC.content = .initial()
+        composerVC.content.text = """
+        Some link: https://github.com/GetStream/stream-chat-swift
+        Another one: www.google.com
+        """
+        composerVC.updateContent()
+        composerVC.showLinkPreview(for: .init(
+            originalURL: .init(string: "https://github.com/GetStream/stream-chat-swift")!,
+            title: "GitHub - GetStream/stream-chat-swift"
+        ))
+
+        AssertSnapshot(composerVC.view, variants: [.defaultLight], size: .init(width: 400, height: 140))
+    }
+
+    func test_showLinkPreview_whenNoTitle() {
+        composerVC.components.isComposerLinkPreviewEnabled = true
+        composerVC.content = .initial()
+        composerVC.content.text = """
+        Some link: https://github.com/GetStream/stream-chat-swift
+        Another one: www.google.com
+        """
+        composerVC.updateContent()
+        composerVC.showLinkPreview(for: .init(
+            originalURL: .init(string: "https://github.com/GetStream/stream-chat-swift")!,
+            text: "iOS Chat SDK in Swift"
+        ))
+
+        AssertSnapshot(composerVC.view, variants: [.defaultLight], size: .init(width: 400, height: 140))
+    }
+
+    func test_showLinkPreview_whenNoMetadata() {
+        composerVC.components.isComposerLinkPreviewEnabled = true
+        composerVC.content = .initial()
+        composerVC.content.text = """
+        Some link: https://github.com/GetStream/stream-chat-swift
+        Another one: www.google.com
+        """
+        composerVC.updateContent()
+        composerVC.showLinkPreview(for: .init(
+            originalURL: .init(string: "https://github.com/GetStream/stream-chat-swift")!
+        ))
+
+        AssertSnapshot(composerVC.view, variants: [.defaultLight], size: .init(width: 400, height: 140))
+    }
+
+    func test_dismissLinkPreview() {
+        composerVC.components.isComposerLinkPreviewEnabled = true
+        composerVC.content = .initial()
+        composerVC.content.text = """
+        Some link: https://github.com/GetStream/stream-chat-swift
+        Another one: www.google.com
+        """
+        composerVC.updateContent()
+        composerVC.showLinkPreview(for: .init(
+            originalURL: .init(string: "https://github.com/GetStream/stream-chat-swift")!
+        ))
+        composerVC.dismissLinkPreview()
+
+        AssertSnapshot(composerVC, variants: [.defaultLight])
+        XCTAssertEqual(composerVC.content.skipEnrichUrl, true)
+    }
+
+    func test_didChangeLinks_whenEmpty_thenDismissLinkPreview() {
+        let composerVC = SpyComposerVC()
+        composerVC.components.isComposerLinkPreviewEnabled = true
+        composerVC.content = .initial()
+        composerVC.content.text = """
+        Some link: https://github.com/GetStream/stream-chat-swift
+        Another one: www.google.com
+        """
+        composerVC.updateContent()
+
+        composerVC.didChangeLinks([])
+
+        XCTAssertEqual(composerVC.dismissLinkPreviewCallCount, 1)
+    }
+
+    func test_didChangeLinks_whenEnrichSuccess_thenShowPreviewForFirstLink() {
+        let composerVC = SpyComposerVC()
+        composerVC.components.isComposerLinkPreviewEnabled = true
+        let mock = ChatChannelController_Mock.mock(client: .mock())
+        let mockAPIClient = mock.client.mockAPIClient
+        composerVC.channelController = mock
+        composerVC.enrichUrlDebouncer = .init(0, queue: .main)
+        composerVC.content = .initial()
+        composerVC.content.text = """
+        Some link: https://github.com/GetStream/stream-chat-swift
+        Another one: www.google.com
+        """
+        composerVC.updateContent()
+
+        let url = URL(string: "https://github.com/GetStream/stream-chat-swift")!
+        mockAPIClient.test_mockResponseResult(.success(LinkAttachmentPayload(
+            originalURL: url
+        )))
+
+        composerVC.didChangeLinks([
+            .init(url: url, range: .init(location: 0, length: 0)),
+            .init(url: URL(string: "www.google.com")!, range: .init(location: 0, length: 0))
+        ])
+
+        AssertAsync {
+            Assert.willBeEqual(composerVC.showLinkPreviewCallCount, 1)
+            Assert.willBeEqual(composerVC.showLinkPreviewCalledWith?.url, url)
+        }
+    }
+
+    func test_didChangeLinks_whenEnrichFails_thenDismissLinkPreview() {
+        let composerVC = SpyComposerVC()
+        composerVC.components.isComposerLinkPreviewEnabled = true
+        let mock = ChatChannelController_Mock.mock(client: .mock())
+        let mockAPIClient = mock.client.mockAPIClient
+        composerVC.channelController = mock
+        composerVC.enrichUrlDebouncer = .init(0, queue: .main)
+        composerVC.content = .initial()
+        composerVC.content.text = """
+        Some link: https://github.com/GetStream/stream-chat-swift
+        Another one: www.google.com
+        """
+        composerVC.updateContent()
+
+        let url = URL(string: "https://github.com/GetStream/stream-chat-swift")!
+        mockAPIClient.test_mockResponseResult(Result<LinkAttachmentPayload, Error>.failure(ClientError()))
+
+        composerVC.didChangeLinks([
+            .init(url: url, range: .init(location: 0, length: 0)),
+            .init(url: URL(string: "www.google.com")!, range: .init(location: 0, length: 0))
+        ])
+
+        AssertAsync {
+            Assert.willBeEqual(composerVC.dismissLinkPreviewCallCount, 1)
+        }
+    }
+
     // MARK: - audioPlayer
     
     func test_audioPlayer_voiceRecordingAndAttachmentsVCGetTheSameInstance() {
@@ -697,5 +869,19 @@ private final class SpyComposerVC: ComposerVC {
 
     override func publishMessage(sender: UIButton) {
         publishMessageWasCalledWithSender = sender
+    }
+
+    var dismissLinkPreviewCallCount = 0
+    override func dismissLinkPreview() {
+        dismissLinkPreviewCallCount += 1
+        super.dismissLinkPreview()
+    }
+
+    var showLinkPreviewCallCount = 0
+    var showLinkPreviewCalledWith: LinkAttachmentPayload?
+    override func showLinkPreview(for linkPayload: LinkAttachmentPayload) {
+        showLinkPreviewCallCount += 1
+        showLinkPreviewCalledWith = linkPayload
+        super.showLinkPreview(for: linkPayload)
     }
 }
