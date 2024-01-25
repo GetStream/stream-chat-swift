@@ -3,7 +3,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+## StreamChat
+### ✅ Added
+- Add new `ChatClient.enrichUrl()` function to get metadata from URL [#2984](https://github.com/GetStream/stream-chat-swift/pull/2984)
+- Add new `TextLinkDetector` for parsing and detecting links given a string [#2984](https://github.com/GetStream/stream-chat-swift/pull/2984)
+### 🐞 Fixed
+- Fix message link preview showing empty space when no metadata [#2984](https://github.com/GetStream/stream-chat-swift/pull/2984)
+
+## StreamChatUI
+### ✅ Added
+- Add `Components.default.isComposerLinkPreviewEnabled` flag to enable composer link previews [#2984](https://github.com/GetStream/stream-chat-swift/pull/2984)
+- Add support for showing link previews in the composer [#2984](https://github.com/GetStream/stream-chat-swift/pull/2984)
 
 # [4.47.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.47.1)
 _January 24, 2024_
@@ -28,7 +38,7 @@ _January 09, 2024_
 ## StreamChat
 ### 🐞 Fixed
 - Fix Channel ID initializer crashing with an empty string [#2964](https://github.com/GetStream/stream-chat-swift/pull/2964)
-### ✅ Added
+## StreamChatUI
 - Expose `UserListQuery.search(term:)` and `UserListQuery.user(withID:)` [#2959](https://github.com/GetStream/stream-chat-swift/pull/2959)
 
 ## StreamChatUI
