@@ -38,7 +38,7 @@ _January 09, 2024_
 ## StreamChat
 ### 🐞 Fixed
 - Fix Channel ID initializer crashing with an empty string [#2964](https://github.com/GetStream/stream-chat-swift/pull/2964)
-## StreamChatUI
+### ✅ Added
 - Expose `UserListQuery.search(term:)` and `UserListQuery.user(withID:)` [#2959](https://github.com/GetStream/stream-chat-swift/pull/2959)
 
 ## StreamChatUI
