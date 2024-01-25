@@ -17,7 +17,7 @@ public protocol InputTextViewClipboardAttachmentDelegate: AnyObject {
 /// A view for inputting text with placeholder support. Since it is a subclass
 /// of `UITextView`, the `UITextViewDelegate` can be used to observe text changes.
 @objc(StreamInputTextView)
-open class InputTextView: UITextView, AppearanceProvider {
+open class InputTextView: UITextView, ThemeProvider {
     /// The delegate which gets notified when an attachment is pasted into the text view
     open weak var clipboardAttachmentDelegate: InputTextViewClipboardAttachmentDelegate?
 
@@ -189,10 +189,11 @@ open class InputTextView: UITextView, AppearanceProvider {
     @objc open func handleTextChange() {
         placeholderLabel.isHidden = !text.isEmpty
 
-        resetAttributes()
-
-        links = linkDetector.links(in: text)
-        highlightLinks(links)
+        if components.isComposerLinkPreviewEnabled {
+            links = linkDetector.links(in: text)
+            resetAttributes()
+            highlightLinks(links)
+        }
 
         setNeedsLayout()
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in

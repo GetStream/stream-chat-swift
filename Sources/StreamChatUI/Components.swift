@@ -40,6 +40,9 @@ public struct Components {
     /// A view that displays the link metadata when typing links in the composer.
     public var composerLinkPreviewView: ComposerLinkPreviewView.Type = ComposerLinkPreviewView.self
 
+    /// A boolean value that determines whether the link preview should show when typing a message with links.
+    public var isComposerLinkPreviewEnabled = false
+
     /// A view that displays a quoted message.
     public var quotedMessageView: QuotedChatMessageView.Type = QuotedChatMessageView.self
 
