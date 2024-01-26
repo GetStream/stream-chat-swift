@@ -3,6 +3,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### 🐞 Fixed
+- Fix a possible threading issue in `ConnectionRepository` [#2985](https://github.com/GetStream/stream-chat-swift/pull/2985)
+
 ### 🔄 Changed
 
 # [4.47.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.47.1)
