@@ -10,11 +10,6 @@ class ConnectionRepository {
     private var _connectionId: ConnectionId?
     private var _connectionStatus: ConnectionStatus = .initialized
 
-    private(set) var connectionIdWaiters: [String: (Result<ConnectionId, Error>) -> Void] {
-        get { connectionQueue.sync { _connectionIdWaiters } }
-        set { connectionQueue.async(flags: .barrier) { self._connectionIdWaiters = newValue }}
-    }
-
     /// The current connection status of the client
     private(set) var connectionStatus: ConnectionStatus {
         get { connectionQueue.sync { _connectionStatus } }
@@ -180,7 +175,9 @@ class ConnectionRepository {
         }
 
         let waiterToken = String.newUniqueId
-        connectionIdWaiters[waiterToken] = completion
+        connectionQueue.async(flags: .barrier) {
+            self._connectionIdWaiters[waiterToken] = completion
+        }
 
         let globalQueue = DispatchQueue.global()
         timerType.schedule(timeInterval: timeout, queue: globalQueue) { [weak self] in
@@ -234,9 +231,5 @@ class ConnectionRepository {
                 waiter.value(.failure(ClientError.MissingConnectionId()))
             }
         }
-    }
-
-    private func invalidateConnectionIdWaiter(_ waiter: WaiterToken) {
-        connectionIdWaiters[waiter] = nil
     }
 }
