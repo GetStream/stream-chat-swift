@@ -196,7 +196,7 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
             string: text,
             attributes: [
                 .foregroundColor: appearance.colorPalette.text,
-                .font: appearance.fonts.body
+                .font: appearance.fonts.subheadline
             ]
         )
 
