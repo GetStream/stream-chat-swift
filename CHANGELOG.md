@@ -15,6 +15,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### ✅ Added
 - Add `Components.default.isComposerLinkPreviewEnabled` flag to enable composer link previews [#2984](https://github.com/GetStream/stream-chat-swift/pull/2984)
 - Add support for showing link previews in the composer [#2984](https://github.com/GetStream/stream-chat-swift/pull/2984)
+### 🐞 Fixed
+- Fix link flickering when opening a channel [#2984](https://github.com/GetStream/stream-chat-swift/pull/2984)
+- Fix link flickering when quoting a message with a link [#2984](https://github.com/GetStream/stream-chat-swift/pull/2984)
 
 # [4.47.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.47.1)
 _January 24, 2024_
