@@ -666,6 +666,10 @@ final class ComposerVC_Tests: XCTestCase {
 
     func test_dismissLinkPreview() {
         composerVC.components.isComposerLinkPreviewEnabled = true
+        let mock = ChatChannelController_Mock.mock(client: .mock())
+        mock.channel_mock = .mockNonDMChannel(config: .mock(urlEnrichmentEnabled: true))
+        let mockAPIClient = mock.client.mockAPIClient
+        composerVC.channelController = mock
         composerVC.content = .initial()
         composerVC.content.text = """
         Some link: https://github.com/GetStream/stream-chat-swift
@@ -684,6 +688,10 @@ final class ComposerVC_Tests: XCTestCase {
     func test_didChangeLinks_whenEmpty_thenDismissLinkPreview() {
         let composerVC = SpyComposerVC()
         composerVC.components.isComposerLinkPreviewEnabled = true
+        let mock = ChatChannelController_Mock.mock(client: .mock())
+        mock.channel_mock = .mockNonDMChannel(config: .mock(urlEnrichmentEnabled: true))
+        let mockAPIClient = mock.client.mockAPIClient
+        composerVC.channelController = mock
         composerVC.content = .initial()
         composerVC.content.text = """
         Some link: https://github.com/GetStream/stream-chat-swift
@@ -700,6 +708,7 @@ final class ComposerVC_Tests: XCTestCase {
         let composerVC = SpyComposerVC()
         composerVC.components.isComposerLinkPreviewEnabled = true
         let mock = ChatChannelController_Mock.mock(client: .mock())
+        mock.channel_mock = .mockNonDMChannel(config: .mock(urlEnrichmentEnabled: true))
         let mockAPIClient = mock.client.mockAPIClient
         composerVC.channelController = mock
         composerVC.enrichUrlDebouncer = .init(0, queue: .main)
@@ -730,6 +739,7 @@ final class ComposerVC_Tests: XCTestCase {
         let composerVC = SpyComposerVC()
         composerVC.components.isComposerLinkPreviewEnabled = true
         let mock = ChatChannelController_Mock.mock(client: .mock())
+        mock.channel_mock = .mockNonDMChannel(config: .mock(urlEnrichmentEnabled: true))
         let mockAPIClient = mock.client.mockAPIClient
         composerVC.channelController = mock
         composerVC.enrichUrlDebouncer = .init(0, queue: .main)
@@ -750,6 +760,36 @@ final class ComposerVC_Tests: XCTestCase {
 
         AssertAsync {
             Assert.willBeEqual(composerVC.dismissLinkPreviewCallCount, 1)
+        }
+    }
+
+    func test_didChangeLinks_whenEnrichNotEnabled_thenDoNotShowLinkPreview() {
+        let composerVC = SpyComposerVC()
+        composerVC.components.isComposerLinkPreviewEnabled = true
+        let mock = ChatChannelController_Mock.mock(client: .mock())
+        mock.channel_mock = .mockNonDMChannel(config: .mock(urlEnrichmentEnabled: false))
+        let mockAPIClient = mock.client.mockAPIClient
+        composerVC.channelController = mock
+        composerVC.enrichUrlDebouncer = .init(0, queue: .main)
+        composerVC.content = .initial()
+        composerVC.content.text = """
+        Some link: https://github.com/GetStream/stream-chat-swift
+        Another one: www.google.com
+        """
+        composerVC.updateContent()
+
+        let url = URL(string: "https://github.com/GetStream/stream-chat-swift")!
+        mockAPIClient.test_mockResponseResult(Result<LinkAttachmentPayload, Error>.failure(ClientError()))
+
+        composerVC.didChangeLinks([
+            .init(url: url, range: .init(location: 0, length: 0)),
+            .init(url: URL(string: "www.google.com")!, range: .init(location: 0, length: 0))
+        ])
+
+        AssertAsync {
+            Assert.willBeEqual(composerVC.dismissLinkPreviewCallCount, 0)
+            Assert.willBeEqual(composerVC.showLinkPreviewCallCount, 0)
+            Assert.willBeEqual(mockAPIClient.request_allRecordedCalls.count, 0)
         }
     }
 

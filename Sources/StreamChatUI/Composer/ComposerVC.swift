@@ -973,6 +973,10 @@ open class ComposerVC: _ViewController,
     /// The links in the current input text have changed
     /// - Parameter links: The new parsed links from the input text.
     open func didChangeLinks(_ links: [TextLink]) {
+        guard channelConfig?.urlEnrichmentEnabled == true else {
+            return
+        }
+
         /// We only try to display the link preview of the first link.
         guard let link = links.first else {
             dismissLinkPreview()
