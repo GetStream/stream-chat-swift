@@ -35,9 +35,8 @@ public class TextLinkDetector {
     /// - Parameter text: The string representing the provided text.
     /// - Returns: The first link found in the text. Contains the url and the location of the link.
     public func firstLink(in text: String) -> TextLink? {
-        let fullRange = NSRange(location: 0, length: text.utf16.count)
-        return detector?
-            .firstMatch(in: text, range: fullRange)?
+        detector?
+            .firstMatch(in: text, range: fullRange(of: text))?
             .toTextLink(with: text)
     }
 
@@ -46,9 +45,16 @@ public class TextLinkDetector {
     /// - Returns: An array of the parsed links that contain the url and the location of the link.
     public func links(in text: String) -> [TextLink] {
         guard let detector = self.detector else { return [] }
-        let fullRange = NSRange(location: 0, length: text.utf16.count)
-        let matches = detector.matches(in: text, options: [], range: fullRange)
+        let matches = detector.matches(in: text, options: [], range: fullRange(of: text))
         return matches.compactMap { $0.toTextLink(with: text) }
+    }
+
+    private func fullRange(of text: String) -> NSRange {
+        // utf16 is used to make sure every char counts as 1 independent of special symbols.
+        // Example: João
+        //    utf16.count == 4
+        //    utf8.count == 5
+        NSRange(location: 0, length: text.utf16.count)
     }
 }
 
