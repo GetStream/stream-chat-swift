@@ -69,3 +69,5 @@ public struct StreamChatNotificationAddedToChannelEvent: Codable, Hashable, Even
         try container.encode(member, forKey: .member)
     }
 }
+
+extension StreamChatNotificationAddedToChannelEvent: EventContainsChannel {}

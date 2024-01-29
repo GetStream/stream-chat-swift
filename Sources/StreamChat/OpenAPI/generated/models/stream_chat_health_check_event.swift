@@ -53,3 +53,5 @@ public struct StreamChatHealthCheckEvent: Codable, Hashable, Event {
         try container.encode(me, forKey: .me)
     }
 }
+
+extension StreamChatHealthCheckEvent: EventContainsCurrentUser {}

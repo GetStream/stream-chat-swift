@@ -78,4 +78,6 @@ public struct StreamChatNotificationInviteRejectedEvent: Codable, Hashable, Even
     }
 }
 
+extension StreamChatNotificationInviteRejectedEvent: EventContainsChannel {}
+
 extension StreamChatNotificationInviteRejectedEvent: EventContainsUser {}

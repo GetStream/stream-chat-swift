@@ -12,3 +12,16 @@ protocol EventContainsMessage {
 protocol EventContainsUser {
     var user: StreamChatUserObject? { get }
 }
+
+protocol EventContainsChannel {
+    var channel: StreamChatChannelResponse? { get }
+}
+
+protocol EventContainsUnreadCount {
+    var unreadChannels: Int { get }
+    var totalUnreadCount: Int { get }
+}
+
+protocol EventContainsCurrentUser {
+    var me: StreamChatOwnUser? { get }
+}

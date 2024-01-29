@@ -61,3 +61,5 @@ public struct StreamChatChannelKickedEvent: Codable, Hashable, Event {
         try container.encode(channel, forKey: .channel)
     }
 }
+
+extension StreamChatChannelKickedEvent: EventContainsChannel {}

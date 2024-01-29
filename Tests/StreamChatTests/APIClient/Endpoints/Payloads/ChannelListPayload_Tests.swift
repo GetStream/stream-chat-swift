@@ -20,7 +20,8 @@ final class ChannelListPayload_Tests: XCTestCase {
 
     func test_decode_bigChannelListPayload() {
         // 3MB JSON Channel List from Watercooler
-        let url = XCTestCase.mockData(fromJSONFile: "BigChannelListPayload")
+        let url = XCTestCase.mockData(fromJSONFile: "response")
+//        let url = XCTestCase.mockData(fromJSONFile: "BigChannelListPayload")
 
 //        measure {
 //            do {
@@ -35,6 +36,24 @@ final class ChannelListPayload_Tests: XCTestCase {
         print("======== \(end.timeIntervalSince(start))")
     }
     
+    func test_decode_bigChannelListPayloadv2() {
+        // 3MB JSON Channel List from Watercooler
+        let url = XCTestCase.mockData(fromJSONFile: "response2")
+//        let url = XCTestCase.mockData(fromJSONFile: "BigChannelListPayload")
+
+//        measure {
+//            do {
+//                _ = try JSONDecoder.default.decode(StreamChatChannelsResponse.self, from: url)
+//            } catch {
+//                XCTFail("Failed to parse JSON: \(error)")
+//            }
+//        }
+        let start = Date()
+        _ = try! JSONDecoder.default.decode(ChannelListPayload.self, from: url)
+        let end = Date()
+        print("======== \(end.timeIntervalSince(start))")
+    }
+
     func test_decode_bigChannelListPayload_Timestamps() {
         // 3MB JSON Channel List from Watercooler
         let url = XCTestCase.mockData(fromJSONFile: "test")

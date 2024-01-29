@@ -102,4 +102,8 @@ public struct StreamChatNotificationMarkReadEvent: Codable, Hashable, Event {
     }
 }
 
+extension StreamChatNotificationMarkReadEvent: EventContainsUnreadCount {}
+
+extension StreamChatNotificationMarkReadEvent: EventContainsChannel {}
+
 extension StreamChatNotificationMarkReadEvent: EventContainsUser {}

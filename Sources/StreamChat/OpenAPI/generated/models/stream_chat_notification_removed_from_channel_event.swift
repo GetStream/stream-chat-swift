@@ -78,4 +78,6 @@ public struct StreamChatNotificationRemovedFromChannelEvent: Codable, Hashable, 
     }
 }
 
+extension StreamChatNotificationRemovedFromChannelEvent: EventContainsChannel {}
+
 extension StreamChatNotificationRemovedFromChannelEvent: EventContainsUser {}

@@ -78,4 +78,6 @@ public struct StreamChatNotificationInvitedEvent: Codable, Hashable, Event {
     }
 }
 
+extension StreamChatNotificationInvitedEvent: EventContainsChannel {}
+
 extension StreamChatNotificationInvitedEvent: EventContainsUser {}

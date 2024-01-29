@@ -52,7 +52,7 @@ extension CurrentUserDTO {
     /// If the `CurrentUserDTO` entity exists in the context, fetches and returns it. Otherwise create a new `CurrentUserDTO`.
     ///
     /// - Parameter context: The context used to fetch/create `CurrentUserDTO`
-    fileprivate static func loadOrCreate(context: NSManagedObjectContext) -> CurrentUserDTO {
+    internal static func loadOrCreate(context: NSManagedObjectContext) -> CurrentUserDTO {
         let request = NSFetchRequest<CurrentUserDTO>(entityName: CurrentUserDTO.entityName)
         let result = load(by: request, context: context)
         log.assert(

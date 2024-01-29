@@ -484,61 +484,58 @@ extension DatabaseSession {
     }
     
     func saveEvent(event: Event) throws {
-//        // Save a user data.
-//        if let userPayload = payload.user {
-//            try saveUser(payload: userPayload)
-//        }
-//
-//        // Member events are handled in `MemberEventMiddleware`
-//
-//        // Save a channel detail data.
-//        if let channelDetailPayload = payload.channel {
-//            try saveChannel(payload: channelDetailPayload, query: nil, cache: nil)
-//        }
-//
-//        if let currentUserPayload = payload.currentUser {
-//            try saveCurrentUser(payload: currentUserPayload)
-//        }
-//
-//        if let unreadCount = payload.unreadCount {
-//            try saveCurrentUserUnreadCount(count: unreadCount)
-//        }
-//
-//        try saveMessageIfNeeded(from: payload)
-//
-//        // handle reaction events for messages that already exist in the database and for this user
-//        // this is needed because WS events do not contain message.own_reactions
-//        if let currentUser = self.currentUser, currentUser.user.id == payload.user?.id {
-//            do {
-//                switch try? payload.event() {
-//                case let event as ReactionNewEventDTO:
-//                    let reaction = try saveReaction(payload: event.reaction, cache: nil)
-//                    if !reaction.message.ownReactions.contains(reaction.id) {
-//                        reaction.message.ownReactions.append(reaction.id)
-//                    }
-//                case let event as ReactionUpdatedEventDTO:
-//                    try saveReaction(payload: event.reaction, cache: nil)
-//                case let event as ReactionDeletedEventDTO:
-//                    if let dto = reaction(
-//                        messageId: event.message.id,
-//                        userId: event.user.id,
-//                        type: event.reaction.type
-//                    ) {
-//                        dto.message.ownReactions.removeAll(where: { $0 == dto.id })
-//                        delete(reaction: dto)
-//                    }
-//                default:
-//                    break
-//                }
-//            } catch {
-//                log.warning("Failed to update message reaction in the database, error: \(error)")
-//            }
-//        }
-//
-//        updateChannelPreview(from: payload)
-        if let newMessageEvent = event as? EventContainsMessage {
-            try saveMessageIfNeeded(from: newMessageEvent)
+        if let userEvent = event as? EventContainsUser, let user = userEvent.user {
+            try saveUser(payload: user, query: nil, cache: nil)
         }
+        
+        if let channelEvent = event as? EventContainsChannel, let channel = channelEvent.channel {
+            try saveChannel(payload: channel, query: nil, cache: nil)
+        }
+        
+        if let messageEvent = event as? EventContainsMessage {
+            try saveMessageIfNeeded(from: messageEvent)
+        }
+        
+        if let currentUserEvent = event as? EventContainsCurrentUser, let currentUser = currentUserEvent.me {
+            try saveCurrentUser(payload: currentUser)
+        }
+        
+        if let unreadCountEvent = event as? EventContainsUnreadCount {
+            try saveCurrentUserUnreadCount(count:
+                UnreadCount(
+                    channels: unreadCountEvent.unreadChannels,
+                    messages: unreadCountEvent.totalUnreadCount
+                )
+            )
+        }
+        
+        // handle reaction events for messages that already exist in the database and for this user
+        // this is needed because WS events do not contain message.own_reactions
+        if let userEvent = event as? EventContainsUser,
+           let currentUser = self.currentUser,
+           currentUser.user.id == userEvent.user?.id {
+            if let newReaction = event as? StreamChatReactionNewEvent {
+                let reaction = try saveReaction(payload: newReaction.reaction, cache: nil)
+                if !reaction.message.ownReactions.contains(reaction.id) {
+                    reaction.message.ownReactions.append(reaction.id)
+                }
+            } else if let updatedReaction = event as? StreamChatReactionUpdatedEvent {
+                try saveReaction(payload: updatedReaction.reaction, cache: nil)
+            } else if let deletedReaction = event as? StreamChatReactionDeletedEvent,
+                      let messageId = deletedReaction.message?.id,
+                      let userId = deletedReaction.user?.id {
+                if let dto = reaction(
+                    messageId: messageId,
+                    userId: userId,
+                    type: MessageReactionType(rawValue: deletedReaction.type)
+                ) {
+                    dto.message.ownReactions.removeAll(where: { $0 == dto.id })
+                    delete(reaction: dto)
+                }
+            }
+        }
+        
+        // TODO: Handle user unread count
         
         updateChannelPreview(from: event)
     }

@@ -564,6 +564,7 @@
 		8413C4602B4563C100190AF4 /* APIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8413C45F2B4563C100190AF4 /* APIError.swift */; };
 		8413C4622B4563E700190AF4 /* JSONEncodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8413C4612B4563E700190AF4 /* JSONEncodable.swift */; };
 		8413CC462B4616E400190AF4 /* ChatAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8413CAC42B4616E300190AF4 /* ChatAPI.swift */; };
+		8417E79A2B66B7AE005EBBDF /* response2.json in Resources */ = {isa = PBXBuildFile; fileRef = 8417E7992B66B7AE005EBBDF /* response2.json */; };
 		84196FA32805892500185E99 /* LocalMessageState+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84196FA22805892500185E99 /* LocalMessageState+Extensions.swift */; };
 		8419CED42B5AA432007F2CB3 /* stream_chat_update_call_response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE5A2B5AA426007F2CB3 /* stream_chat_update_call_response.swift */; };
 		8419CED52B5AA432007F2CB3 /* stream_chat_request_permission_response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE5B2B5AA426007F2CB3 /* stream_chat_request_permission_response.swift */; };
@@ -715,6 +716,7 @@
 		845CEE53270F032A002C7EBD /* MessageSearchQuery_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CEE52270F032A002C7EBD /* MessageSearchQuery_Tests.swift */; };
 		845CEE5A270F2A06002C7EBD /* ChatReactionsBubbleView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 845CEE59270F2A06002C7EBD /* ChatReactionsBubbleView_Tests.swift */; };
 		8464671C2B6108F200089FB1 /* EventProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8464671B2B6108F200089FB1 /* EventProtocols.swift */; };
+		8464671E2B62B1D700089FB1 /* response.json in Resources */ = {isa = PBXBuildFile; fileRef = 8464671D2B62B1D700089FB1 /* response.json */; };
 		846A595E2B4FEF8400D60EF2 /* ChannelDatabaseSessionV2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846A595D2B4FEF8400D60EF2 /* ChannelDatabaseSessionV2.swift */; };
 		846A595F2B4FEF8400D60EF2 /* ChannelDatabaseSessionV2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846A595D2B4FEF8400D60EF2 /* ChannelDatabaseSessionV2.swift */; };
 		846A59612B557BAC00D60EF2 /* EventDecoderV2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846A59602B557BAC00D60EF2 /* EventDecoderV2.swift */; };
@@ -3583,6 +3585,7 @@
 		8413C4612B4563E700190AF4 /* JSONEncodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONEncodable.swift; sourceTree = "<group>"; };
 		8413CAC42B4616E300190AF4 /* ChatAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatAPI.swift; sourceTree = "<group>"; };
 		8414A81B2767944B001BA9D7 /* RetryStrategy_Spy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetryStrategy_Spy.swift; sourceTree = "<group>"; };
+		8417E7992B66B7AE005EBBDF /* response2.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = response2.json; sourceTree = "<group>"; };
 		84196FA22805892500185E99 /* LocalMessageState+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LocalMessageState+Extensions.swift"; sourceTree = "<group>"; };
 		8419CE5A2B5AA426007F2CB3 /* stream_chat_update_call_response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_update_call_response.swift; sourceTree = "<group>"; };
 		8419CE5B2B5AA426007F2CB3 /* stream_chat_request_permission_response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_request_permission_response.swift; sourceTree = "<group>"; };
@@ -3726,6 +3729,7 @@
 		845CEE52270F032A002C7EBD /* MessageSearchQuery_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageSearchQuery_Tests.swift; sourceTree = "<group>"; };
 		845CEE59270F2A06002C7EBD /* ChatReactionsBubbleView_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatReactionsBubbleView_Tests.swift; sourceTree = "<group>"; };
 		8464671B2B6108F200089FB1 /* EventProtocols.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventProtocols.swift; sourceTree = "<group>"; };
+		8464671D2B62B1D700089FB1 /* response.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = response.json; sourceTree = "<group>"; };
 		84698637274FE79200B22258 /* ConnectionRecoveryHandler_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionRecoveryHandler_Mock.swift; sourceTree = "<group>"; };
 		846A595D2B4FEF8400D60EF2 /* ChannelDatabaseSessionV2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelDatabaseSessionV2.swift; sourceTree = "<group>"; };
 		846A59602B557BAC00D60EF2 /* EventDecoderV2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDecoderV2.swift; sourceTree = "<group>"; };
@@ -8545,6 +8549,8 @@
 		A3C729552840BA4800FFE8B4 /* JSONs */ = {
 			isa = PBXGroup;
 			children = (
+				8417E7992B66B7AE005EBBDF /* response2.json */,
+				8464671D2B62B1D700089FB1 /* response.json */,
 				842E29402B5F2D1C009FB926 /* test.json */,
 				798779F72498E47700015F8B /* Channel.json */,
 				792C87892853B25500B68630 /* BigChannelListPayload.json */,
@@ -10554,6 +10560,7 @@
 				E3B987EF2844DE1200C2E101 /* MemberRole.json in Resources */,
 				A311B40427E8B9AD00CFCF6D /* NotificationInviteRejected.json in Resources */,
 				A311B3F127E8B99800CFCF6D /* ChannelUpdated_ServerSide.json in Resources */,
+				8417E79A2B66B7AE005EBBDF /* response2.json in Resources */,
 				A311B3DE27E8B98C00CFCF6D /* ChannelMembersQuery.json in Resources */,
 				C1788F5B29B9E4D900149883 /* NotificationMarkUnread.json in Resources */,
 				A311B3E827E8B99200CFCF6D /* AttachmentPayloadCustom.json in Resources */,
@@ -10566,6 +10573,7 @@
 				A311B41A27E8B9B900CFCF6D /* UserStopTypingThread.json in Resources */,
 				A344077B27D753530044F150 /* yoda.txt in Resources */,
 				A311B41B27E8B9BE00CFCF6D /* FlagMessagePayload+NoExtraData.json in Resources */,
+				8464671E2B62B1D700089FB1 /* response.json in Resources */,
 				A311B40627E8B9AD00CFCF6D /* NotificationMarkAllRead.json in Resources */,
 				A311B3E327E8B98C00CFCF6D /* MessageReactionPayload.json in Resources */,
 				A311B41127E8B9B900CFCF6D /* UserUnbanned.json in Resources */,

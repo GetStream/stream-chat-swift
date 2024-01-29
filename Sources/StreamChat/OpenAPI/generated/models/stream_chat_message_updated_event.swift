@@ -87,4 +87,5 @@ public struct StreamChatMessageUpdatedEvent: Codable, Hashable, Event {
 }
 
 extension StreamChatMessageUpdatedEvent: EventContainsMessage {}
+
 extension StreamChatMessageUpdatedEvent: EventContainsUser {}

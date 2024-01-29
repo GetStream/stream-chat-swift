@@ -36,6 +36,7 @@ struct UserCredentials {
 
 extension UserCredentials {
     static let builtInUsers: [UserCredentials] = [
+        .martin,
         .luke,
         .leia,
         .hanSolo,
@@ -72,6 +73,14 @@ extension UserCredentials {
         avatarURL: URL(string: "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png")!,
         token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibGVpYV9vcmdhbmEifQ.c4ckT6AqB72w2g07e06SqalhK0X7qd1SPVQyNABJMew",
         birthLand: "Polis Massa"
+    )
+    
+    static let martin = Self(
+        id: "martin",
+        name: "Martin",
+        avatarURL: URL(string: "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png")!,
+        token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibWFydGluIn0.-8mL49OqMdlvzXR_1IgYboVXXuXFc04r0EvYgko-X8I",
+        birthLand: "Corellia"
     )
 
     static let hanSolo = Self(

@@ -77,3 +77,5 @@ public struct StreamChatNotificationNewMessageEvent: Codable, Hashable, Event {
         try container.encode(channel, forKey: .channel)
     }
 }
+
+extension StreamChatNotificationNewMessageEvent: EventContainsChannel {}

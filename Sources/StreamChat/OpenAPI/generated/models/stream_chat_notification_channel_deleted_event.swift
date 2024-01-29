@@ -69,3 +69,5 @@ public struct StreamChatNotificationChannelDeletedEvent: Codable, Hashable, Even
         try container.encode(channel, forKey: .channel)
     }
 }
+
+extension StreamChatNotificationChannelDeletedEvent: EventContainsChannel {}

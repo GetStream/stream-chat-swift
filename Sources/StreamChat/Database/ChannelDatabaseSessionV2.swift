@@ -11,6 +11,67 @@ protocol ChannelDatabaseSessionV2 {
         payload: StreamChatChannelsResponse?,
         query: ChannelListQuery?
     ) -> [ChannelDTO]
+    
+    @discardableResult
+    func saveChannel(
+        payload: StreamChatChannelResponse,
+        query: ChannelListQuery?,
+        cache: PreWarmedCache?
+    ) throws -> ChannelDTO
+    
+    func saveChannel(
+        payload: StreamChatChannelStateResponseFields,
+        query: ChannelListQuery?,
+        cache: PreWarmedCache?
+    ) throws -> ChannelDTO
+    
+    @discardableResult
+    func saveUser(
+        payload: StreamChatUserObject,
+        query: UserListQuery?,
+        cache: PreWarmedCache?
+    ) throws -> UserDTO
+    
+    func saveMember(
+        payload: StreamChatChannelMember,
+        channelId: ChannelId,
+        query: ChannelMemberListQuery?,
+        cache: PreWarmedCache?
+    ) throws -> MemberDTO
+    
+    func saveMessage(
+        payload: StreamChatMessage,
+        channelDTO: ChannelDTO,
+        syncOwnReactions: Bool,
+        cache: PreWarmedCache?
+    ) throws -> MessageDTO
+    
+    func saveChannelRead(
+        payload: StreamChatRead?,
+        for cid: String?,
+        cache: PreWarmedCache?
+    ) throws -> ChannelReadDTO
+    
+    @discardableResult
+    func saveReaction(
+        payload: StreamChatReaction?,
+        cache: PreWarmedCache?
+    ) throws -> MessageReactionDTO
+    
+    func saveAttachment(
+        payload: StreamChatAttachment?,
+        id: AttachmentId
+    ) throws -> AttachmentDTO
+    
+    func saveMessage(
+        payload: StreamChatMessage,
+        for cid: ChannelId?,
+        syncOwnReactions: Bool,
+        cache: PreWarmedCache?
+    ) throws -> MessageDTO
+    
+    @discardableResult
+    func saveCurrentUser(payload: StreamChatOwnUser) throws -> CurrentUserDTO
 }
 
 extension NSManagedObjectContext {
@@ -35,6 +96,7 @@ extension NSManagedObjectContext {
         }
     }
 
+    @discardableResult
     func saveChannel(
         payload: StreamChatChannelResponse,
         query: ChannelListQuery?,
@@ -248,6 +310,7 @@ extension StreamChatCommand {
 }
 
 extension NSManagedObjectContext {
+    @discardableResult
     func saveUser(
         payload: StreamChatUserObject,
         query: UserListQuery?,
@@ -255,8 +318,8 @@ extension NSManagedObjectContext {
     ) throws -> UserDTO {
         let dto = UserDTO.loadOrCreate(id: payload.id, context: self, cache: cache)
 
-//        dto.name = payload.name
-//        dto.imageURL = URL(string: payload.imageURL ?? "")
+        dto.name = payload.custom?["name"]?.stringValue
+        dto.imageURL = URL(string: payload.custom?["image"]?.stringValue ?? "")
         dto.isBanned = payload.banned ?? false
         dto.isOnline = payload.online ?? false
         dto.lastActivityAt = payload.lastActive?.bridgeDate
@@ -609,5 +672,122 @@ extension NSManagedObjectContext {
         }
 
         return try saveMessage(payload: payload, channelDTO: channel, syncOwnReactions: syncOwnReactions, cache: cache)
+    }
+}
+
+extension NSManagedObjectContext {
+    func saveCurrentUser(payload: StreamChatOwnUser) throws -> CurrentUserDTO {
+        let dto = CurrentUserDTO.loadOrCreate(context: self)
+        dto.user = try saveUser(payload: payload, query: nil, cache: nil)
+        dto.isInvisible = payload.invisible ?? false
+
+        let mutedUsers = try payload.mutes.compactMap {
+            if let user = $0?.user {
+                return try saveUser(payload: user, query: nil, cache: nil)
+            } else {
+                return nil
+            }
+        }
+        dto.mutedUsers = Set(mutedUsers)
+
+        let channelMutes = Set(
+            try payload.channelMutes.map { try saveChannelMute(payload: $0) }
+        )
+        dto.channelMutes.subtracting(channelMutes).forEach { delete($0) }
+        dto.channelMutes = channelMutes
+
+        try saveCurrentUserUnreadCount(
+            count: UnreadCount(
+                channels: payload.unreadChannels,
+                messages: payload.totalUnreadCount
+            )
+        )
+
+        _ = try saveCurrentUserDevices(payload.devices, clearExisting: true)
+
+        return dto
+    }
+}
+
+extension NSManagedObjectContext {
+    @discardableResult
+    func saveChannelMute(payload: StreamChatChannelMute?) throws -> ChannelMuteDTO {
+        guard let currentUser = currentUser, let payload, let mutedChannel = payload.channel else {
+            throw ClientError.CurrentUserDoesNotExist()
+        }
+        
+        let cid = try ChannelId(cid: mutedChannel.cid)
+        let channel = try saveChannel(payload: mutedChannel, query: nil, cache: nil)
+        let dto = ChannelMuteDTO.loadOrCreate(cid: cid, context: self)
+        dto.channel = channel
+        dto.currentUser = currentUser
+        dto.createdAt = payload.createdAt.bridgeDate
+        dto.updatedAt = payload.updatedAt.bridgeDate
+
+        return dto
+    }
+}
+
+extension NSManagedObjectContext {
+    func saveCurrentUserDevices(_ devices: [StreamChatDevice], clearExisting: Bool) throws -> [DeviceDTO] {
+        guard let currentUser = currentUser else {
+            throw ClientError.CurrentUserDoesNotExist()
+        }
+
+        if clearExisting {
+            currentUser.devices.removeAll()
+            if !devices.contains(where: { $0.id == currentUser.currentDevice?.id }) {
+                currentUser.currentDevice = nil
+            }
+        }
+
+        let deviceDTOs = devices.map { device -> DeviceDTO in
+            let dto = DeviceDTO.loadOrCreate(id: device.id, context: self)
+            dto.createdAt = device.createdAt.bridgeDate
+            dto.user = currentUser
+            return dto
+        }
+
+        return deviceDTOs
+    }
+}
+
+extension NSManagedObjectContext {
+    @discardableResult
+    func saveUser(
+        payload: StreamChatOwnUser,
+        query: UserListQuery?,
+        cache: PreWarmedCache?
+    ) throws -> UserDTO {
+        let dto = UserDTO.loadOrCreate(id: payload.id, context: self, cache: cache)
+
+        dto.name = payload.custom?["name"]?.stringValue
+        dto.imageURL = URL(string: payload.custom?["image"]?.stringValue ?? "")
+        dto.isBanned = payload.banned
+        dto.isOnline = payload.online
+        dto.lastActivityAt = payload.lastActive?.bridgeDate
+        dto.userCreatedAt = payload.createdAt.bridgeDate
+        dto.userRoleRaw = payload.role
+        dto.userUpdatedAt = payload.updatedAt.bridgeDate
+        dto.userDeactivatedAt = payload.deactivatedAt?.bridgeDate
+        dto.language = payload.language
+
+        do {
+            dto.extraData = try JSONEncoder.default.encode(payload.custom)
+        } catch {
+            log.error(
+                "Failed to decode extra payload for User with id: <\(payload.id)>, using default value instead. "
+                    + "Error: \(error)"
+            )
+            dto.extraData = Data()
+        }
+
+        dto.teams = payload.teams ?? []
+
+        // payloadHash doesn't cover the query
+        if let query = query, let queryDTO = try saveQuery(query: query) {
+            queryDTO.users.insert(dto)
+        }
+        return dto
     }
 }
