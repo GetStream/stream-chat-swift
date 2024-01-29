@@ -471,15 +471,16 @@ final class ConnectionRepository_Tests: XCTestCase {
     }
 
     func test_connectionId_doesNotDeadlock() {
-        DispatchQueue.concurrentPerform(iterations: 100) { _ in
+        let iterations = 100
+        let expectations = (0..<iterations).map { XCTestExpectation(description: "\($0)") }
+        DispatchQueue.concurrentPerform(iterations: 100) { index in
             repository.provideConnectionId(timeout: 0) { _ in
-                self.repository.connectionIdWaiters.forEach { _ in }
+                expectations[index].fulfill()
             }
         }
-
-        DispatchQueue.concurrentPerform(iterations: 100) { _ in
-            repository.connectionIdWaiters.forEach { _ in }
-        }
+        // Trigger another complete for making sure that _connectionIdWaiters were correctly cleaned up as part of provideConnectionId (expectation is not fulfilled twice)
+        repository.completeConnectionIdWaiters(connectionId: "newId")
+        wait(for: expectations, timeout: defaultTimeout)
     }
 
     // MARK: Complete ConnectionId Waiters
