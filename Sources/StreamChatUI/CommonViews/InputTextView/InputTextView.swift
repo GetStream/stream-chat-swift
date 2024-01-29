@@ -187,10 +187,12 @@ open class InputTextView: UITextView, ThemeProvider {
 
     @objc open func handleTextChange() {
         placeholderLabel.isHidden = !text.isEmpty
+       
+        // Resets the text color before applying text highlights
+        textColor = appearance.colorPalette.text
 
         if components.isComposerLinkPreviewEnabled {
             links = linkDetector.links(in: text)
-            resetAttributes()
             highlightLinks(links)
         }
 
@@ -236,13 +238,6 @@ open class InputTextView: UITextView, ThemeProvider {
     }
 
     // MARK: - Link Detection
-
-    /// Resets the text attributes whenever the text changes.
-    open func resetAttributes() {
-        let fullRange = NSRange(location: 0, length: text.utf16.count)
-        textStorage.removeAttribute(.foregroundColor, range: fullRange)
-        textColor = appearance.colorPalette.text
-    }
 
     /// Highlights the links in the input text view.
     open func highlightLinks(_ links: [TextLink]) {
