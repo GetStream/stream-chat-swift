@@ -108,12 +108,14 @@ class MessageUpdater: Worker {
     ///  - Parameters:
     ///   - messageId: The message identifier.
     ///   - text: The updated message text.
+    ///   - skipEnrichUrl: If true, skips url enriching.
     ///   - attachments: An array of the attachments for the message.
     ///   - extraData: Extra Data for the message.
     ///   - completion: The completion. Will be called with an error if smth goes wrong, otherwise - will be called with `nil`.
     func editMessage(
         messageId: MessageId,
         text: String,
+        skipEnrichUrl: Bool,
         attachments: [AnyAttachmentPayload] = [],
         extraData: [String: RawJSON]? = nil,
         completion: ((Error?) -> Void)? = nil
@@ -129,6 +131,8 @@ class MessageUpdater: Worker {
                 messageDTO.localMessageState = localState
 
                 messageDTO.updatedAt = DBDate()
+
+                messageDTO.skipEnrichUrl = skipEnrichUrl
 
                 messageDTO.quotedBy.forEach { message in
                     message.updatedAt = messageDTO.updatedAt

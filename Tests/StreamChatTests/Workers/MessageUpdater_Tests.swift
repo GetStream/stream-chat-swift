@@ -63,7 +63,7 @@ final class MessageUpdater_Tests: XCTestCase {
     func test_editMessage_propagates_CurrentUserDoesNotExist_Error() throws {
         // Simulate `editMessage(messageId:, text:)` call
         let completionError = try waitFor {
-            messageUpdater.editMessage(messageId: .unique, text: .unique, completion: $0)
+            messageUpdater.editMessage(messageId: .unique, text: .unique, skipEnrichUrl: false, completion: $0)
         }
 
         // Assert `CurrentUserDoesNotExist` is received
@@ -76,7 +76,7 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Simulate `editMessage(messageId:, text:)` call
         let completionError = try waitFor {
-            messageUpdater.editMessage(messageId: .unique, text: .unique, completion: $0)
+            messageUpdater.editMessage(messageId: .unique, text: .unique, skipEnrichUrl: false, completion: $0)
         }
 
         // Assert `MessageDoesNotExist` is received
@@ -129,7 +129,7 @@ final class MessageUpdater_Tests: XCTestCase {
 
             // Edit created message with new text
             let completionError = try waitFor {
-                messageUpdater.editMessage(messageId: messageId, text: updatedText, completion: $0)
+                messageUpdater.editMessage(messageId: messageId, text: updatedText, skipEnrichUrl: true, completion: $0)
             }
 
             // Load the edited message
@@ -148,6 +148,8 @@ final class MessageUpdater_Tests: XCTestCase {
             XCTAssertEqual(editedMessage.updatedAt, quotingMessage.updatedAt)
             // The edited message should have a different updatedAt than the original one
             XCTAssertTrue(editedMessage.updatedAt != originalMessageUpdatedAt)
+            // The edited message should have the skipEnrichUrl updated.
+            XCTAssertEqual(editedMessage.skipEnrichUrl, true)
         }
     }
 
@@ -192,7 +194,7 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Edit created message with new text
         let completionError = try waitFor {
-            messageUpdater.editMessage(messageId: messageId, text: updatedText, completion: $0)
+            messageUpdater.editMessage(messageId: messageId, text: updatedText, skipEnrichUrl: false, completion: $0)
         }
 
         // Load the edited message
@@ -237,7 +239,7 @@ final class MessageUpdater_Tests: XCTestCase {
 
             // Edit created message with new text
             let completionError = try waitFor {
-                messageUpdater.editMessage(messageId: messageId, text: updatedText, completion: $0)
+                messageUpdater.editMessage(messageId: messageId, text: updatedText, skipEnrichUrl: false, completion: $0)
             }
 
             // Load the message
@@ -281,7 +283,13 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Edit created message with new text
         let completionError = try waitFor {
-            messageUpdater.editMessage(messageId: messageId, text: updatedText, extraData: updatedExtraData, completion: $0)
+            messageUpdater.editMessage(
+                messageId: messageId,
+                text: updatedText,
+                skipEnrichUrl: false,
+                extraData: updatedExtraData,
+                completion: $0
+            )
         }
 
         // Load the message
@@ -319,7 +327,13 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Edit created message with new text
         let completionError = try waitFor {
-            messageUpdater.editMessage(messageId: messageId, text: updatedText, extraData: nil, completion: $0)
+            messageUpdater.editMessage(
+                messageId: messageId,
+                text: updatedText,
+                skipEnrichUrl: false,
+                extraData: nil,
+                completion: $0
+            )
         }
 
         // Load the message
@@ -361,6 +375,7 @@ final class MessageUpdater_Tests: XCTestCase {
             messageUpdater.editMessage(
                 messageId: messageId,
                 text: updatedText,
+                skipEnrichUrl: false,
                 attachments: updatedAttachmentsTypes.map { AnyAttachmentPayload.mock(type: $0) },
                 completion: $0
             )

@@ -792,6 +792,7 @@ open class ComposerVC: _ViewController,
         // TODO: Adjust LLC to edit mentions
         messageController?.editMessage(
             text: newText,
+            skipEnrichUrl: content.skipEnrichUrl,
             attachments: content.attachments,
             extraData: content.extraData
         )
