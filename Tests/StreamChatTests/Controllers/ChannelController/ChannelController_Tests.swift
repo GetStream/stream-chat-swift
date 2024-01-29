@@ -4863,6 +4863,42 @@ final class ChannelController_Tests: XCTestCase {
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
 
+    // MARK: - enrichUrl
+
+    func test_enrichUrl_callsChannelUpdater() {
+        let url = URL(string: "www.google.com")!
+        let exp = expectation(description: "enrichUrl completes")
+        controller.enrichUrl(url) { [callbackQueueID] result in
+            AssertTestQueue(withId: callbackQueueID)
+            XCTAssertEqual(result.value?.originalURL, url)
+            exp.fulfill()
+        }
+
+        env.channelUpdater!.enrichUrl_completion?(.success(.init(originalURL: url)))
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertEqual(env.channelUpdater!.enrichUrl_url, url)
+        XCTAssertEqual(env.channelUpdater!.enrichUrl_callCount, 1)
+    }
+
+    func test_enrichUrl_propagatesErrorFromUpdater() {
+        let url = URL(string: "www.google.com")!
+        let exp = expectation(description: "enrichUrl completes")
+        controller.enrichUrl(url) { [callbackQueueID] result in
+            AssertTestQueue(withId: callbackQueueID)
+            XCTAssertNotNil(result.error)
+            exp.fulfill()
+        }
+
+        env.channelUpdater!.enrichUrl_completion?(.failure(ClientError()))
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertEqual(env.channelUpdater!.enrichUrl_url, url)
+        XCTAssertEqual(env.channelUpdater!.enrichUrl_callCount, 1)
+    }
+
     // MARK: - Load pinned messages
 
     func test_loadPinnedMessages_failsForNewChannel() throws {

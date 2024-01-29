@@ -1118,6 +1118,17 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         }
     }
 
+    /// Get the link attachment preview data from the provided url.
+    ///
+    /// This will return the data present in the OG Metadata.
+    public func enrichUrl(_ url: URL, completion: @escaping (Result<LinkAttachmentPayload, Error>) -> Void) {
+        updater.enrichUrl(url) { result in
+            self.callback {
+                completion(result)
+            }
+        }
+    }
+
     /// Loads the given number of pinned messages based on pagination parameter in the current channel.
     ///
     /// - Parameters:

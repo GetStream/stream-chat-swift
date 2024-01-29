@@ -830,51 +830,6 @@ final class ChatClient_Tests: XCTestCase {
 
         XCTAssertEqual(streamHeader, SystemEnvironment.xStreamClientHeader)
     }
-
-    // MARK: - enrichUrl
-
-    func test_enrichUrl_whenSuccess() {
-        let client = ChatClient(config: .init(), environment: .mock)
-
-        let exp = expectation(description: "enrichUrl completes")
-        let url = URL(string: "www.google.com")!
-        var linkPayload: LinkAttachmentPayload?
-        client.enrichUrl(url) { result in
-            XCTAssertNil(result.error)
-            linkPayload = result.value
-            exp.fulfill()
-        }
-
-        client.mockAPIClient.test_simulateResponse(.success(LinkAttachmentPayload(
-            originalURL: url,
-            title: "Google"
-        )))
-
-        wait(for: [exp], timeout: defaultTimeout)
-
-        XCTAssertEqual(linkPayload?.originalURL, url)
-        XCTAssertEqual(linkPayload?.title, "Google")
-    }
-
-    func test_enrichUrl_whenFailure() {
-        let client = ChatClient(config: .init(), environment: .mock)
-
-        let exp = expectation(description: "enrichUrl completes")
-        let url = URL(string: "www.google.com")!
-        var linkPayload: LinkAttachmentPayload?
-        client.enrichUrl(url) { result in
-            XCTAssertNotNil(result.error)
-            linkPayload = result.value
-            exp.fulfill()
-        }
-
-        client.mockAPIClient
-            .test_simulateResponse(Result<LinkAttachmentPayload, Error>.failure(ClientError()))
-
-        wait(for: [exp], timeout: defaultTimeout)
-
-        XCTAssertNil(linkPayload)
-    }
 }
 
 final class TestWorker: Worker {

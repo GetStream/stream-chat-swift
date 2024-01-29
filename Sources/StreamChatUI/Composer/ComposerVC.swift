@@ -985,16 +985,12 @@ open class ComposerVC: _ViewController,
         }
 
         enrichUrlDebouncer.execute { [weak self] in
-            self?.channelController?.client.enrichUrl(link.url) { [weak self] result in
+            self?.channelController?.enrichUrl(link.url) { [weak self] result in
                 switch result {
                 case let .success(linkPayload):
-                    DispatchQueue.main.async {
-                        self?.showLinkPreview(for: linkPayload)
-                    }
+                    self?.showLinkPreview(for: linkPayload)
                 case .failure:
-                    DispatchQueue.main.async {
-                        self?.dismissLinkPreview()
-                    }
+                    self?.dismissLinkPreview()
                 }
             }
         }

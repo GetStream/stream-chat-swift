@@ -575,6 +575,21 @@ class ChannelUpdater: Worker {
         }
     }
 
+    /// Get the link attachment preview data from the provided url.
+    ///
+    /// This will return the data present in the OG Metadata.
+    public func enrichUrl(_ url: URL, completion: @escaping (Result<LinkAttachmentPayload, Error>) -> Void) {
+        apiClient.request(endpoint: .enrichUrl(url: url)) { result in
+            switch result {
+            case let .success(payload):
+                completion(.success(payload))
+            case let .failure(error):
+                log.debug("Failed enriching url with error: \(error)")
+                completion(.failure(error))
+            }
+        }
+    }
+
     /// Loads messages pinned in the given channel based on the provided query.
     ///
     /// - Parameters:
