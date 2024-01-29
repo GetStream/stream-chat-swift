@@ -668,7 +668,6 @@ final class ComposerVC_Tests: XCTestCase {
         composerVC.components.isComposerLinkPreviewEnabled = true
         let mock = ChatChannelController_Mock.mock(client: .mock())
         mock.channel_mock = .mockNonDMChannel(config: .mock(urlEnrichmentEnabled: true))
-        let mockAPIClient = mock.client.mockAPIClient
         composerVC.channelController = mock
         composerVC.content = .initial()
         composerVC.content.text = """
@@ -690,7 +689,6 @@ final class ComposerVC_Tests: XCTestCase {
         composerVC.components.isComposerLinkPreviewEnabled = true
         let mock = ChatChannelController_Mock.mock(client: .mock())
         mock.channel_mock = .mockNonDMChannel(config: .mock(urlEnrichmentEnabled: true))
-        let mockAPIClient = mock.client.mockAPIClient
         composerVC.channelController = mock
         composerVC.content = .initial()
         composerVC.content.text = """
