@@ -270,7 +270,7 @@ class ChannelUpdater: Worker {
     ///   - attachments: An array of the attachments for the message.
     ///   - quotedMessageId: An id of the message new message quotes. (inline reply)
     ///   - skipPush: If true, skips sending push notification to channel members.
-    ///   - skipEnrichUrl: If true, skips url enriching.
+    ///   - skipEnrichUrl: If true, the url preview won't be attached to the message.
     ///   - extraData: Additional extra data of the message object.
     ///   - completion: Called when saving the message to the local DB finishes.
     ///

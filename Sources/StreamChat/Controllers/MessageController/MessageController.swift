@@ -243,7 +243,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     ///
     /// - Parameters:
     ///   - text: The updated message text.
-    ///   - skipEnrichUrl: If true, skips url enriching.
+    ///   - skipEnrichUrl: If true, the url preview won't be attached to the message.
     ///   - attachments: An array of the attachments for the message.
     ///   - extraData: Custom extra data. When `nil` is passed the message custom fields stay the same. Equals `nil` by default.
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
@@ -298,7 +298,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     ///   in the response thread.
     ///   - quotedMessageId: An id of the message new message quotes. (inline reply)
     ///   - skipPush: If true, skips sending push notification to channel members.
-    ///   - skipEnrichUrl: If true, skips url enriching.
+    ///   - skipEnrichUrl: If true, the url preview won't be attached to the message.
     ///   - extraData: Additional extra data of the message object.
     ///   - completion: Called when saving the message to the local DB finishes.
     ///
