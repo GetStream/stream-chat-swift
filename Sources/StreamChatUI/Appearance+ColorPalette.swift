@@ -12,6 +12,7 @@ public extension Appearance {
         public var text: UIColor = .streamBlack
         public var textInverted: UIColor = .streamWhite
         public var textLowEmphasis: UIColor = .streamGrayDisabledText
+        public var textLinkColor: UIColor = .systemBlue
 
         /// Static color which should stay the same in dark and light mode, because it's only used as text on small UI Elements
         /// such as `ChatUnreadCountView`, `GiphyBadge` or Commands icon.

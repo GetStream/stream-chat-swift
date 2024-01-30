@@ -108,12 +108,14 @@ class MessageUpdater: Worker {
     ///  - Parameters:
     ///   - messageId: The message identifier.
     ///   - text: The updated message text.
+    ///   - skipEnrichUrl: If true, the url preview won't be attached to the message.
     ///   - attachments: An array of the attachments for the message.
     ///   - extraData: Extra Data for the message.
     ///   - completion: The completion. Will be called with an error if smth goes wrong, otherwise - will be called with `nil`.
     func editMessage(
         messageId: MessageId,
         text: String,
+        skipEnrichUrl: Bool,
         attachments: [AnyAttachmentPayload] = [],
         extraData: [String: RawJSON]? = nil,
         completion: ((Error?) -> Void)? = nil
@@ -129,6 +131,8 @@ class MessageUpdater: Worker {
                 messageDTO.localMessageState = localState
 
                 messageDTO.updatedAt = DBDate()
+
+                messageDTO.skipEnrichUrl = skipEnrichUrl
 
                 messageDTO.quotedBy.forEach { message in
                     message.updatedAt = messageDTO.updatedAt
@@ -183,7 +187,7 @@ class MessageUpdater: Worker {
     ///   in the response thread.
     ///   - quotedMessageId: An id of the message new message quotes. (inline reply)
     ///   - skipPush: If true, skips sending push notification to channel members.
-    ///   - skipEnrichUrl: If true, skips url enriching.
+    ///   - skipEnrichUrl: If true, the url preview won't be attached to the message.
     ///   - extraData: Additional extra data of the message object.
     ///   - completion: Called when saving the message to the local DB finishes.
     ///

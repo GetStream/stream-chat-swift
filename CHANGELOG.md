@@ -4,10 +4,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
+### ✅ Added
+- Add new `ChatChannelController.enrichUrl()` function to get metadata from URL [#2984](https://github.com/GetStream/stream-chat-swift/pull/2984)
+- Add new `TextLinkDetector` for parsing and detecting links given a string [#2984](https://github.com/GetStream/stream-chat-swift/pull/2984)
 ### 🐞 Fixed
-- Fix a possible threading issue in `ConnectionRepository` [#2985](https://github.com/GetStream/stream-chat-swift/pull/2985)
+- Fix message link preview showing empty space when no metadata available [#2984](https://github.com/GetStream/stream-chat-swift/pull/2984)
+- Fix threading issue in `ConnectionRepository` [#2985](https://github.com/GetStream/stream-chat-swift/pull/2985)
 
-### 🔄 Changed
+## StreamChatUI
+### ✅ Added
+- Add `Components.default.isComposerLinkPreviewEnabled` flag to enable composer link previews [#2984](https://github.com/GetStream/stream-chat-swift/pull/2984)
+- Add support for showing link previews in the composer [#2984](https://github.com/GetStream/stream-chat-swift/pull/2984)
+### 🐞 Fixed
+- Fix link flickering when opening a channel [#2984](https://github.com/GetStream/stream-chat-swift/pull/2984)
+- Fix link flickering when quoting a message with a link [#2984](https://github.com/GetStream/stream-chat-swift/pull/2984)
 
 # [4.47.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.47.1)
 _January 24, 2024_
