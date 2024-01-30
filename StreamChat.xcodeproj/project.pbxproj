@@ -565,6 +565,8 @@
 		8413C4622B4563E700190AF4 /* JSONEncodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8413C4612B4563E700190AF4 /* JSONEncodable.swift */; };
 		8413CC462B4616E400190AF4 /* ChatAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8413CAC42B4616E300190AF4 /* ChatAPI.swift */; };
 		8417E79A2B66B7AE005EBBDF /* response2.json in Resources */ = {isa = PBXBuildFile; fileRef = 8417E7992B66B7AE005EBBDF /* response2.json */; };
+		8417E79C2B694B60005EBBDF /* IdentifiablePayloadV2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8417E79B2B694B60005EBBDF /* IdentifiablePayloadV2.swift */; };
+		8417E79D2B694B60005EBBDF /* IdentifiablePayloadV2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8417E79B2B694B60005EBBDF /* IdentifiablePayloadV2.swift */; };
 		84196FA32805892500185E99 /* LocalMessageState+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84196FA22805892500185E99 /* LocalMessageState+Extensions.swift */; };
 		8419CED42B5AA432007F2CB3 /* stream_chat_update_call_response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE5A2B5AA426007F2CB3 /* stream_chat_update_call_response.swift */; };
 		8419CED52B5AA432007F2CB3 /* stream_chat_request_permission_response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8419CE5B2B5AA426007F2CB3 /* stream_chat_request_permission_response.swift */; };
@@ -3586,6 +3588,7 @@
 		8413CAC42B4616E300190AF4 /* ChatAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatAPI.swift; sourceTree = "<group>"; };
 		8414A81B2767944B001BA9D7 /* RetryStrategy_Spy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetryStrategy_Spy.swift; sourceTree = "<group>"; };
 		8417E7992B66B7AE005EBBDF /* response2.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = response2.json; sourceTree = "<group>"; };
+		8417E79B2B694B60005EBBDF /* IdentifiablePayloadV2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifiablePayloadV2.swift; sourceTree = "<group>"; };
 		84196FA22805892500185E99 /* LocalMessageState+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LocalMessageState+Extensions.swift"; sourceTree = "<group>"; };
 		8419CE5A2B5AA426007F2CB3 /* stream_chat_update_call_response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_update_call_response.swift; sourceTree = "<group>"; };
 		8419CE5B2B5AA426007F2CB3 /* stream_chat_request_permission_response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = stream_chat_request_permission_response.swift; sourceTree = "<group>"; };
@@ -5868,6 +5871,7 @@
 				8A0D649924E579E90017A3C0 /* GuestUserTokenPayload.swift */,
 				C1EFF3F2285E459C0057B91B /* IdentifiableModel.swift */,
 				C174E0F5284DFA5A0040B936 /* IdentifiablePayload.swift */,
+				8417E79B2B694B60005EBBDF /* IdentifiablePayloadV2.swift */,
 				793728292498FFD300E13FE5 /* MemberPayload.swift */,
 				DABC6ABB2546FD0100A8FC78 /* MessageAttachmentPayload.swift */,
 				79682C4824BF37650071578E /* MessagePayloads.swift */,
@@ -12158,6 +12162,7 @@
 				8484C4E72B4C2067000065E3 /* stream_chat_unread_counts_response.swift in Sources */,
 				8484C4902B4C2067000065E3 /* stream_chat_apnconfig_fields.swift in Sources */,
 				F6CCA24D251235F7004C1859 /* UserTypingStateUpdaterMiddleware.swift in Sources */,
+				8417E79C2B694B60005EBBDF /* IdentifiablePayloadV2.swift in Sources */,
 				8A618E4524D19D510003D83C /* WebSocketPingController.swift in Sources */,
 				8419CEFB2B5AA433007F2CB3 /* stream_chat_request_permission_request.swift in Sources */,
 				8A62704E24B8660A0040BFD6 /* EventType.swift in Sources */,
@@ -12760,6 +12765,7 @@
 				C121E850274544AE00023E4C /* SyncEndpoint.swift in Sources */,
 				84D5BC70277B61A000A65C75 /* PinnedMessagesSortingKey.swift in Sources */,
 				C121E851274544AE00023E4C /* MessageEndpoints.swift in Sources */,
+				8417E79D2B694B60005EBBDF /* IdentifiablePayloadV2.swift in Sources */,
 				C121E852274544AE00023E4C /* ModerationEndpoints.swift in Sources */,
 				C121E853274544AE00023E4C /* WebSocketConnectEndpoint.swift in Sources */,
 				C121E854274544AE00023E4C /* MemberEndpoints.swift in Sources */,

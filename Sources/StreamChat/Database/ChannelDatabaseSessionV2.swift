@@ -80,8 +80,7 @@ extension NSManagedObjectContext {
         query: ChannelListQuery?
     ) -> [ChannelDTO] {
         guard let payload else { return [] }
-        // TODO: fix the cache.
-//        let cache = payload.getPayloadToModelIdMappings(context: self)
+        let cache = payload.getPayloadToModelIdMappings(context: self)
 
         // The query will be saved during `saveChannel` call
         // but in case this query does not have any channels,
@@ -92,7 +91,7 @@ extension NSManagedObjectContext {
         }
 
         return payload.channels.compactMapLoggingError { channelPayload in
-            try saveChannel(payload: channelPayload, query: query, cache: nil)
+            try saveChannel(payload: channelPayload, query: query, cache: cache)
         }
     }
 
@@ -159,7 +158,7 @@ extension NSManagedObjectContext {
         dto.team = payload.team
 
         if let createdByPayload = payload.createdBy {
-            let creatorDTO = try saveUser(payload: createdByPayload, query: nil, cache: nil)
+            let creatorDTO = try saveUser(payload: createdByPayload, query: nil, cache: cache)
             dto.createdBy = creatorDTO
         }
 
@@ -228,7 +227,7 @@ extension NSManagedObjectContext {
             // We don't call `removeAll` on watchers since user could've requested
             // a different page
             try watchers.forEach {
-                let user = try saveUser(payload: $0, query: nil, cache: nil)
+                let user = try saveUser(payload: $0, query: nil, cache: cache)
                 dto.watchers.insert(user)
             }
         }
@@ -437,7 +436,7 @@ extension NSManagedObjectContext {
         dto.pinExpires = payload.pinExpires?.bridgeDate
         dto.pinnedAt = payload.pinnedAt?.bridgeDate
         if let pinnedByUser = payload.pinnedBy {
-            dto.pinnedBy = try saveUser(payload: pinnedByUser, query: nil, cache: nil)
+            dto.pinnedBy = try saveUser(payload: pinnedByUser, query: nil, cache: cache)
         }
 
         if dto.pinned && !channelDTO.pinnedMessages.contains(dto) {
@@ -463,7 +462,7 @@ extension NSManagedObjectContext {
         }
 
         if let payloadUser = payload.user {
-            let user = try saveUser(payload: payloadUser, query: nil, cache: nil)
+            let user = try saveUser(payload: payloadUser, query: nil, cache: cache)
             dto.user = user
         }
 
@@ -474,13 +473,13 @@ extension NSManagedObjectContext {
         // If user edited their message to remove mentioned users, we need to get rid of it
         // as backend does
         dto.mentionedUsers = try Set(payload.mentionedUsers.map {
-            let user = try saveUser(payload: $0, query: nil, cache: nil)
+            let user = try saveUser(payload: $0, query: nil, cache: cache)
             return user
         })
 
         // If user participated in thread, but deleted message later, we need to get rid of it if backends does
         let threadParticipants = try payload.threadParticipants?.map {
-            try saveUser(payload: $0, query: nil, cache: nil)
+            try saveUser(payload: $0, query: nil, cache: cache)
         } ?? []
         dto.threadParticipants = NSOrderedSet(array: threadParticipants)
 
