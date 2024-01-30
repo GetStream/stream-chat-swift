@@ -102,19 +102,49 @@ public class API: DefaultAPIEndpoints {
         return bodyQueryItems
     }
 
-    public func showChannel(type: String, id: String, showChannelRequest: StreamChatShowChannelRequest, completion: @escaping (Result<StreamChatShowChannelResponse, Error>) -> Void) {
+    public func connect(json: StreamChatConnectRequest?, isRecoveryOperation: Bool = false, completion: @escaping (Result<EmptyResponse, Error>) -> Void) {
         var connectionIdRequired: Bool
         connectionIdRequired = false
         var tokenRequired: Bool
         tokenRequired = true
-        var path = "/api/v2/chat/channels/{type}/{id}/show"
+        let path = "/api/v2/connect"
         
-        let typePreEscape = "\(APIHelper.mapValueToPathItem(type))"
-        let typePostEscape = typePreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
-        path = path.replacingOccurrences(of: String(format: "{%@}", "type"), with: typePostEscape, options: .literal, range: nil)
-        let idPreEscape = "\(APIHelper.mapValueToPathItem(id))"
-        let idPostEscape = idPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
-        path = path.replacingOccurrences(of: String(format: "{%@}", "id"), with: idPostEscape, options: .literal, range: nil)
+        var queryParams = [URLQueryItem]()
+        
+        if let json, let jsonQueryParams = try? encodeJSONToQueryItems(data: json) {
+            queryParams.append(contentsOf: jsonQueryParams)
+        }
+        
+        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
+        queryParams.append(apiKey)
+        
+        makeRequest(
+            uriPath: path,
+            queryParams: queryParams,
+            httpMethod: "GET",
+            requiresConnectionId: connectionIdRequired,
+            requiresToken: tokenRequired
+        ) { [weak self] result in
+            guard let self else {
+                completion(.failure(ClientError.Unknown()))
+                return
+            }
+            switch result {
+            case let .success(request):
+                apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+
+    public func deleteChannels(deleteChannelsRequest: StreamChatDeleteChannelsRequest, isRecoveryOperation: Bool = false, completion: @escaping (Result<StreamChatDeleteChannelsResponse, Error>) -> Void) {
+        var connectionIdRequired: Bool
+        connectionIdRequired = false
+        var tokenRequired: Bool
+        tokenRequired = true
+        let path = "/api/v2/chat/channels/delete"
+        
         var queryParams = [URLQueryItem]()
         
         let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
@@ -126,7 +156,7 @@ public class API: DefaultAPIEndpoints {
             httpMethod: "POST",
             requiresConnectionId: connectionIdRequired,
             requiresToken: tokenRequired,
-            request: showChannelRequest
+            request: deleteChannelsRequest
         ) { [weak self] result in
             guard let self else {
                 completion(.failure(ClientError.Unknown()))
@@ -134,47 +164,14 @@ public class API: DefaultAPIEndpoints {
             }
             switch result {
             case let .success(request):
-                self.apiClient.request(request, completion: completion)
+                self.apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
             case let .failure(error):
                 completion(.failure(error))
             }
         }
     }
 
-    public func flag(flagRequest: StreamChatFlagRequest, completion: @escaping (Result<StreamChatFlagResponse, Error>) -> Void) {
-        var connectionIdRequired: Bool
-        connectionIdRequired = false
-        var tokenRequired: Bool
-        tokenRequired = true
-        let path = "/api/v2/chat/moderation/flag"
-        
-        var queryParams = [URLQueryItem]()
-        
-        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
-        queryParams.append(apiKey)
-        
-        makeRequest(
-            uriPath: path,
-            queryParams: queryParams,
-            httpMethod: "POST",
-            requiresConnectionId: connectionIdRequired,
-            requiresToken: tokenRequired,
-            request: flagRequest
-        ) { [weak self] result in
-            guard let self else {
-                completion(.failure(ClientError.Unknown()))
-                return
-            }
-            switch result {
-            case let .success(request):
-                self.apiClient.request(request, completion: completion)
-            case let .failure(error):
-                completion(.failure(error))
-            }
-        }
-    }
-
-    public func getManyMessages(type: String, id: String, ids: [String]?, completion: @escaping (Result<StreamChatGetManyMessagesResponse, Error>) -> Void) {
+    public func getManyMessages(type: String, id: String, ids: [String]?, isRecoveryOperation: Bool = false, completion: @escaping (Result<StreamChatGetManyMessagesResponse, Error>) -> Void) {
         var connectionIdRequired: Bool
         connectionIdRequired = false
         var tokenRequired: Bool
@@ -210,19 +207,121 @@ public class API: DefaultAPIEndpoints {
             }
             switch result {
             case let .success(request):
-                apiClient.request(request, completion: completion)
+                apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
             case let .failure(error):
                 completion(.failure(error))
             }
         }
     }
 
-    public func updateChannel(type: String, id: String, updateChannelRequest: StreamChatUpdateChannelRequest, completion: @escaping (Result<StreamChatUpdateChannelResponse, Error>) -> Void) {
+    public func search(payload: StreamChatSearchRequest?, isRecoveryOperation: Bool = false, completion: @escaping (Result<StreamChatSearchResponse, Error>) -> Void) {
         var connectionIdRequired: Bool
         connectionIdRequired = false
         var tokenRequired: Bool
         tokenRequired = true
-        var path = "/api/v2/chat/channels/{type}/{id}"
+        let path = "/api/v2/chat/search"
+        
+        var queryParams = [URLQueryItem]()
+        
+        if let payload, let payloadQueryParams = try? encodeJSONToQueryItems(data: payload) {
+            queryParams.append(contentsOf: payloadQueryParams)
+        }
+        
+        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
+        queryParams.append(apiKey)
+        
+        makeRequest(
+            uriPath: path,
+            queryParams: queryParams,
+            httpMethod: "GET",
+            requiresConnectionId: connectionIdRequired,
+            requiresToken: tokenRequired
+        ) { [weak self] result in
+            guard let self else {
+                completion(.failure(ClientError.Unknown()))
+                return
+            }
+            switch result {
+            case let .success(request):
+                apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+
+    public func unmuteChannel(unmuteChannelRequest: StreamChatUnmuteChannelRequest, isRecoveryOperation: Bool = false, completion: @escaping (Result<StreamChatUnmuteResponse, Error>) -> Void) {
+        var connectionIdRequired: Bool
+        connectionIdRequired = false
+        var tokenRequired: Bool
+        tokenRequired = true
+        let path = "/api/v2/chat/moderation/unmute/channel"
+        
+        var queryParams = [URLQueryItem]()
+        
+        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
+        queryParams.append(apiKey)
+        
+        makeRequest(
+            uriPath: path,
+            queryParams: queryParams,
+            httpMethod: "POST",
+            requiresConnectionId: connectionIdRequired,
+            requiresToken: tokenRequired,
+            request: unmuteChannelRequest
+        ) { [weak self] result in
+            guard let self else {
+                completion(.failure(ClientError.Unknown()))
+                return
+            }
+            switch result {
+            case let .success(request):
+                self.apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+
+    public func createGuest(guestRequest: StreamChatGuestRequest, isRecoveryOperation: Bool = false, completion: @escaping (Result<StreamChatGuestResponse, Error>) -> Void) {
+        var connectionIdRequired: Bool
+        connectionIdRequired = false
+        var tokenRequired: Bool
+        tokenRequired = true
+        let path = "/api/v2/guest"
+        
+        var queryParams = [URLQueryItem]()
+        
+        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
+        queryParams.append(apiKey)
+        tokenRequired = false
+        makeRequest(
+            uriPath: path,
+            queryParams: queryParams,
+            httpMethod: "POST",
+            requiresConnectionId: connectionIdRequired,
+            requiresToken: tokenRequired,
+            request: guestRequest
+        ) { [weak self] result in
+            guard let self else {
+                completion(.failure(ClientError.Unknown()))
+                return
+            }
+            switch result {
+            case let .success(request):
+                self.apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+
+    public func sendEvent(type: String, id: String, sendEventRequest: StreamChatSendEventRequest, isRecoveryOperation: Bool = false, completion: @escaping (Result<StreamChatEventResponse, Error>) -> Void) {
+        var connectionIdRequired: Bool
+        connectionIdRequired = false
+        var tokenRequired: Bool
+        tokenRequired = true
+        var path = "/api/v2/chat/channels/{type}/{id}/event"
         
         let typePreEscape = "\(APIHelper.mapValueToPathItem(type))"
         let typePostEscape = typePreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
@@ -241,7 +340,7 @@ public class API: DefaultAPIEndpoints {
             httpMethod: "POST",
             requiresConnectionId: connectionIdRequired,
             requiresToken: tokenRequired,
-            request: updateChannelRequest
+            request: sendEventRequest
         ) { [weak self] result in
             guard let self else {
                 completion(.failure(ClientError.Unknown()))
@@ -249,19 +348,88 @@ public class API: DefaultAPIEndpoints {
             }
             switch result {
             case let .success(request):
-                self.apiClient.request(request, completion: completion)
+                self.apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
             case let .failure(error):
                 completion(.failure(error))
             }
         }
     }
 
-    public func deleteChannel(type: String, id: String, hardDelete: Bool?, completion: @escaping (Result<StreamChatDeleteChannelResponse, Error>) -> Void) {
+    public func translateMessage(id: String, translateMessageRequest: StreamChatTranslateMessageRequest, isRecoveryOperation: Bool = false, completion: @escaping (Result<StreamChatMessageResponse, Error>) -> Void) {
         var connectionIdRequired: Bool
         connectionIdRequired = false
         var tokenRequired: Bool
         tokenRequired = true
-        var path = "/api/v2/chat/channels/{type}/{id}"
+        var path = "/api/v2/chat/messages/{id}/translate"
+        
+        let idPreEscape = "\(APIHelper.mapValueToPathItem(id))"
+        let idPostEscape = idPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        path = path.replacingOccurrences(of: String(format: "{%@}", "id"), with: idPostEscape, options: .literal, range: nil)
+        var queryParams = [URLQueryItem]()
+        
+        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
+        queryParams.append(apiKey)
+        
+        makeRequest(
+            uriPath: path,
+            queryParams: queryParams,
+            httpMethod: "POST",
+            requiresConnectionId: connectionIdRequired,
+            requiresToken: tokenRequired,
+            request: translateMessageRequest
+        ) { [weak self] result in
+            guard let self else {
+                completion(.failure(ClientError.Unknown()))
+                return
+            }
+            switch result {
+            case let .success(request):
+                self.apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+
+    public func unmuteUser(unmuteUserRequest: StreamChatUnmuteUserRequest, isRecoveryOperation: Bool = false, completion: @escaping (Result<StreamChatUnmuteResponse, Error>) -> Void) {
+        var connectionIdRequired: Bool
+        connectionIdRequired = false
+        var tokenRequired: Bool
+        tokenRequired = true
+        let path = "/api/v2/chat/moderation/unmute"
+        
+        var queryParams = [URLQueryItem]()
+        
+        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
+        queryParams.append(apiKey)
+        
+        makeRequest(
+            uriPath: path,
+            queryParams: queryParams,
+            httpMethod: "POST",
+            requiresConnectionId: connectionIdRequired,
+            requiresToken: tokenRequired,
+            request: unmuteUserRequest
+        ) { [weak self] result in
+            guard let self else {
+                completion(.failure(ClientError.Unknown()))
+                return
+            }
+            switch result {
+            case let .success(request):
+                self.apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+
+    public func markRead(type: String, id: String, markReadRequest: StreamChatMarkReadRequest, isRecoveryOperation: Bool = false, completion: @escaping (Result<StreamChatMarkReadResponse, Error>) -> Void) {
+        var connectionIdRequired: Bool
+        connectionIdRequired = false
+        var tokenRequired: Bool
+        tokenRequired = true
+        var path = "/api/v2/chat/channels/{type}/{id}/read"
         
         let typePreEscape = "\(APIHelper.mapValueToPathItem(type))"
         let typePostEscape = typePreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
@@ -271,10 +439,226 @@ public class API: DefaultAPIEndpoints {
         path = path.replacingOccurrences(of: String(format: "{%@}", "id"), with: idPostEscape, options: .literal, range: nil)
         var queryParams = [URLQueryItem]()
         
-        if let hardDelete {
-            let hardDeleteValue = String(hardDelete)
-            let hardDeleteQueryItem = URLQueryItem(name: "hard_delete", value: hardDeleteValue)
-            queryParams.append(hardDeleteQueryItem)
+        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
+        queryParams.append(apiKey)
+        
+        makeRequest(
+            uriPath: path,
+            queryParams: queryParams,
+            httpMethod: "POST",
+            requiresConnectionId: connectionIdRequired,
+            requiresToken: tokenRequired,
+            request: markReadRequest
+        ) { [weak self] result in
+            guard let self else {
+                completion(.failure(ClientError.Unknown()))
+                return
+            }
+            switch result {
+            case let .success(request):
+                self.apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+
+    public func truncateChannel(type: String, id: String, truncateChannelRequest: StreamChatTruncateChannelRequest, isRecoveryOperation: Bool = false, completion: @escaping (Result<StreamChatTruncateChannelResponse, Error>) -> Void) {
+        var connectionIdRequired: Bool
+        connectionIdRequired = false
+        var tokenRequired: Bool
+        tokenRequired = true
+        var path = "/api/v2/chat/channels/{type}/{id}/truncate"
+        
+        let typePreEscape = "\(APIHelper.mapValueToPathItem(type))"
+        let typePostEscape = typePreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        path = path.replacingOccurrences(of: String(format: "{%@}", "type"), with: typePostEscape, options: .literal, range: nil)
+        let idPreEscape = "\(APIHelper.mapValueToPathItem(id))"
+        let idPostEscape = idPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        path = path.replacingOccurrences(of: String(format: "{%@}", "id"), with: idPostEscape, options: .literal, range: nil)
+        var queryParams = [URLQueryItem]()
+        
+        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
+        queryParams.append(apiKey)
+        
+        makeRequest(
+            uriPath: path,
+            queryParams: queryParams,
+            httpMethod: "POST",
+            requiresConnectionId: connectionIdRequired,
+            requiresToken: tokenRequired,
+            request: truncateChannelRequest
+        ) { [weak self] result in
+            guard let self else {
+                completion(.failure(ClientError.Unknown()))
+                return
+            }
+            switch result {
+            case let .success(request):
+                self.apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+
+    public func flag(flagRequest: StreamChatFlagRequest, isRecoveryOperation: Bool = false, completion: @escaping (Result<StreamChatFlagResponse, Error>) -> Void) {
+        var connectionIdRequired: Bool
+        connectionIdRequired = false
+        var tokenRequired: Bool
+        tokenRequired = true
+        let path = "/api/v2/chat/moderation/flag"
+        
+        var queryParams = [URLQueryItem]()
+        
+        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
+        queryParams.append(apiKey)
+        
+        makeRequest(
+            uriPath: path,
+            queryParams: queryParams,
+            httpMethod: "POST",
+            requiresConnectionId: connectionIdRequired,
+            requiresToken: tokenRequired,
+            request: flagRequest
+        ) { [weak self] result in
+            guard let self else {
+                completion(.failure(ClientError.Unknown()))
+                return
+            }
+            switch result {
+            case let .success(request):
+                self.apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+
+    public func muteChannel(muteChannelRequest: StreamChatMuteChannelRequest, isRecoveryOperation: Bool = false, completion: @escaping (Result<StreamChatMuteChannelResponse, Error>) -> Void) {
+        var connectionIdRequired: Bool
+        connectionIdRequired = false
+        var tokenRequired: Bool
+        tokenRequired = true
+        let path = "/api/v2/chat/moderation/mute/channel"
+        
+        var queryParams = [URLQueryItem]()
+        
+        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
+        queryParams.append(apiKey)
+        
+        makeRequest(
+            uriPath: path,
+            queryParams: queryParams,
+            httpMethod: "POST",
+            requiresConnectionId: connectionIdRequired,
+            requiresToken: tokenRequired,
+            request: muteChannelRequest
+        ) { [weak self] result in
+            guard let self else {
+                completion(.failure(ClientError.Unknown()))
+                return
+            }
+            switch result {
+            case let .success(request):
+                self.apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+
+    public func markChannelsRead(markChannelsReadRequest: StreamChatMarkChannelsReadRequest, isRecoveryOperation: Bool = false, completion: @escaping (Result<StreamChatMarkReadResponse, Error>) -> Void) {
+        var connectionIdRequired: Bool
+        connectionIdRequired = false
+        var tokenRequired: Bool
+        tokenRequired = true
+        let path = "/api/v2/chat/channels/read"
+        
+        var queryParams = [URLQueryItem]()
+        
+        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
+        queryParams.append(apiKey)
+        
+        makeRequest(
+            uriPath: path,
+            queryParams: queryParams,
+            httpMethod: "POST",
+            requiresConnectionId: connectionIdRequired,
+            requiresToken: tokenRequired,
+            request: markChannelsReadRequest
+        ) { [weak self] result in
+            guard let self else {
+                completion(.failure(ClientError.Unknown()))
+                return
+            }
+            switch result {
+            case let .success(request):
+                self.apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+
+    public func uploadFile(type: String, id: String, fileUploadRequest: StreamChatFileUploadRequest, isRecoveryOperation: Bool = false, completion: @escaping (Result<StreamChatFileUploadResponse, Error>) -> Void) {
+        var connectionIdRequired: Bool
+        connectionIdRequired = false
+        var tokenRequired: Bool
+        tokenRequired = true
+        var path = "/api/v2/chat/channels/{type}/{id}/file"
+        
+        let typePreEscape = "\(APIHelper.mapValueToPathItem(type))"
+        let typePostEscape = typePreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        path = path.replacingOccurrences(of: String(format: "{%@}", "type"), with: typePostEscape, options: .literal, range: nil)
+        let idPreEscape = "\(APIHelper.mapValueToPathItem(id))"
+        let idPostEscape = idPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        path = path.replacingOccurrences(of: String(format: "{%@}", "id"), with: idPostEscape, options: .literal, range: nil)
+        var queryParams = [URLQueryItem]()
+        
+        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
+        queryParams.append(apiKey)
+        
+        makeRequest(
+            uriPath: path,
+            queryParams: queryParams,
+            httpMethod: "POST",
+            requiresConnectionId: connectionIdRequired,
+            requiresToken: tokenRequired,
+            request: fileUploadRequest
+        ) { [weak self] result in
+            guard let self else {
+                completion(.failure(ClientError.Unknown()))
+                return
+            }
+            switch result {
+            case let .success(request):
+                self.apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+
+    public func deleteFile(type: String, id: String, url: String?, isRecoveryOperation: Bool = false, completion: @escaping (Result<StreamChatFileDeleteResponse, Error>) -> Void) {
+        var connectionIdRequired: Bool
+        connectionIdRequired = false
+        var tokenRequired: Bool
+        tokenRequired = true
+        var path = "/api/v2/chat/channels/{type}/{id}/file"
+        
+        let typePreEscape = "\(APIHelper.mapValueToPathItem(type))"
+        let typePostEscape = typePreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        path = path.replacingOccurrences(of: String(format: "{%@}", "type"), with: typePostEscape, options: .literal, range: nil)
+        let idPreEscape = "\(APIHelper.mapValueToPathItem(id))"
+        let idPostEscape = idPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        path = path.replacingOccurrences(of: String(format: "{%@}", "id"), with: idPostEscape, options: .literal, range: nil)
+        var queryParams = [URLQueryItem]()
+        
+        if let url {
+            let urlValue = String(url)
+            let urlQueryItem = URLQueryItem(name: "url", value: urlValue)
+            queryParams.append(urlQueryItem)
         }
         let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
         queryParams.append(apiKey)
@@ -292,19 +676,19 @@ public class API: DefaultAPIEndpoints {
             }
             switch result {
             case let .success(request):
-                apiClient.request(request, completion: completion)
+                apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
             case let .failure(error):
                 completion(.failure(error))
             }
         }
     }
 
-    public func updateChannelPartial(type: String, id: String, updateChannelPartialRequest: StreamChatUpdateChannelPartialRequest, completion: @escaping (Result<StreamChatUpdateChannelPartialResponse, Error>) -> Void) {
+    public func uploadImage(type: String, id: String, imageUploadRequest: StreamChatImageUploadRequest, isRecoveryOperation: Bool = false, completion: @escaping (Result<StreamChatImageUploadResponse, Error>) -> Void) {
         var connectionIdRequired: Bool
         connectionIdRequired = false
         var tokenRequired: Bool
         tokenRequired = true
-        var path = "/api/v2/chat/channels/{type}/{id}"
+        var path = "/api/v2/chat/channels/{type}/{id}/image"
         
         let typePreEscape = "\(APIHelper.mapValueToPathItem(type))"
         let typePostEscape = typePreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
@@ -314,46 +698,6 @@ public class API: DefaultAPIEndpoints {
         path = path.replacingOccurrences(of: String(format: "{%@}", "id"), with: idPostEscape, options: .literal, range: nil)
         var queryParams = [URLQueryItem]()
         
-        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
-        queryParams.append(apiKey)
-        
-        makeRequest(
-            uriPath: path,
-            queryParams: queryParams,
-            httpMethod: "PATCH",
-            requiresConnectionId: connectionIdRequired,
-            requiresToken: tokenRequired,
-            request: updateChannelPartialRequest
-        ) { [weak self] result in
-            guard let self else {
-                completion(.failure(ClientError.Unknown()))
-                return
-            }
-            switch result {
-            case let .success(request):
-                self.apiClient.request(request, completion: completion)
-            case let .failure(error):
-                completion(.failure(error))
-            }
-        }
-    }
-
-    public func stopWatchingChannel(type: String, id: String, channelStopWatchingRequest: StreamChatChannelStopWatchingRequest, requiresConnectionId: Bool, completion: @escaping (Result<StreamChatStopWatchingResponse, Error>) -> Void) {
-        var connectionIdRequired: Bool
-        connectionIdRequired = false
-        var tokenRequired: Bool
-        tokenRequired = true
-        var path = "/api/v2/chat/channels/{type}/{id}/stop-watching"
-        
-        let typePreEscape = "\(APIHelper.mapValueToPathItem(type))"
-        let typePostEscape = typePreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
-        path = path.replacingOccurrences(of: String(format: "{%@}", "type"), with: typePostEscape, options: .literal, range: nil)
-        let idPreEscape = "\(APIHelper.mapValueToPathItem(id))"
-        let idPostEscape = idPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
-        path = path.replacingOccurrences(of: String(format: "{%@}", "id"), with: idPostEscape, options: .literal, range: nil)
-        var queryParams = [URLQueryItem]()
-        
-        connectionIdRequired = requiresConnectionId
         let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
         queryParams.append(apiKey)
         
@@ -363,7 +707,7 @@ public class API: DefaultAPIEndpoints {
             httpMethod: "POST",
             requiresConnectionId: connectionIdRequired,
             requiresToken: tokenRequired,
-            request: channelStopWatchingRequest
+            request: imageUploadRequest
         ) { [weak self] result in
             guard let self else {
                 completion(.failure(ClientError.Unknown()))
@@ -371,14 +715,93 @@ public class API: DefaultAPIEndpoints {
             }
             switch result {
             case let .success(request):
-                self.apiClient.request(request, completion: completion)
+                self.apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
             case let .failure(error):
                 completion(.failure(error))
             }
         }
     }
 
-    public func sync(syncRequest: StreamChatSyncRequest, withInaccessibleCids: Bool?, watch: Bool?, requiresConnectionId: Bool, completion: @escaping (Result<StreamChatSyncResponse, Error>) -> Void) {
+    public func deleteImage(type: String, id: String, url: String?, isRecoveryOperation: Bool = false, completion: @escaping (Result<StreamChatFileDeleteResponse, Error>) -> Void) {
+        var connectionIdRequired: Bool
+        connectionIdRequired = false
+        var tokenRequired: Bool
+        tokenRequired = true
+        var path = "/api/v2/chat/channels/{type}/{id}/image"
+        
+        let typePreEscape = "\(APIHelper.mapValueToPathItem(type))"
+        let typePostEscape = typePreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        path = path.replacingOccurrences(of: String(format: "{%@}", "type"), with: typePostEscape, options: .literal, range: nil)
+        let idPreEscape = "\(APIHelper.mapValueToPathItem(id))"
+        let idPostEscape = idPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        path = path.replacingOccurrences(of: String(format: "{%@}", "id"), with: idPostEscape, options: .literal, range: nil)
+        var queryParams = [URLQueryItem]()
+        
+        if let url {
+            let urlValue = String(url)
+            let urlQueryItem = URLQueryItem(name: "url", value: urlValue)
+            queryParams.append(urlQueryItem)
+        }
+        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
+        queryParams.append(apiKey)
+        
+        makeRequest(
+            uriPath: path,
+            queryParams: queryParams,
+            httpMethod: "DELETE",
+            requiresConnectionId: connectionIdRequired,
+            requiresToken: tokenRequired
+        ) { [weak self] result in
+            guard let self else {
+                completion(.failure(ClientError.Unknown()))
+                return
+            }
+            switch result {
+            case let .success(request):
+                apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+
+    public func runMessageAction(id: String, messageActionRequest: StreamChatMessageActionRequest, isRecoveryOperation: Bool = false, completion: @escaping (Result<StreamChatMessageResponse, Error>) -> Void) {
+        var connectionIdRequired: Bool
+        connectionIdRequired = false
+        var tokenRequired: Bool
+        tokenRequired = true
+        var path = "/api/v2/chat/messages/{id}/action"
+        
+        let idPreEscape = "\(APIHelper.mapValueToPathItem(id))"
+        let idPostEscape = idPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        path = path.replacingOccurrences(of: String(format: "{%@}", "id"), with: idPostEscape, options: .literal, range: nil)
+        var queryParams = [URLQueryItem]()
+        
+        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
+        queryParams.append(apiKey)
+        
+        makeRequest(
+            uriPath: path,
+            queryParams: queryParams,
+            httpMethod: "POST",
+            requiresConnectionId: connectionIdRequired,
+            requiresToken: tokenRequired,
+            request: messageActionRequest
+        ) { [weak self] result in
+            guard let self else {
+                completion(.failure(ClientError.Unknown()))
+                return
+            }
+            switch result {
+            case let .success(request):
+                self.apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+
+    public func sync(syncRequest: StreamChatSyncRequest, withInaccessibleCids: Bool?, watch: Bool?, requiresConnectionId: Bool, isRecoveryOperation: Bool = false, completion: @escaping (Result<StreamChatSyncResponse, Error>) -> Void) {
         var connectionIdRequired: Bool
         connectionIdRequired = false
         var tokenRequired: Bool
@@ -415,745 +838,14 @@ public class API: DefaultAPIEndpoints {
             }
             switch result {
             case let .success(request):
-                self.apiClient.request(request, completion: completion)
+                self.apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
             case let .failure(error):
                 completion(.failure(error))
             }
         }
     }
 
-    public func getOG(url: String?, completion: @escaping (Result<StreamChatGetOGResponse, Error>) -> Void) {
-        var connectionIdRequired: Bool
-        connectionIdRequired = false
-        var tokenRequired: Bool
-        tokenRequired = true
-        let path = "/api/v2/og"
-        
-        var queryParams = [URLQueryItem]()
-        
-        if let url {
-            let urlValue = String(url)
-            let urlQueryItem = URLQueryItem(name: "url", value: urlValue)
-            queryParams.append(urlQueryItem)
-        }
-        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
-        queryParams.append(apiKey)
-        
-        makeRequest(
-            uriPath: path,
-            queryParams: queryParams,
-            httpMethod: "GET",
-            requiresConnectionId: connectionIdRequired,
-            requiresToken: tokenRequired
-        ) { [weak self] result in
-            guard let self else {
-                completion(.failure(ClientError.Unknown()))
-                return
-            }
-            switch result {
-            case let .success(request):
-                apiClient.request(request, completion: completion)
-            case let .failure(error):
-                completion(.failure(error))
-            }
-        }
-    }
-
-    public func getOrCreateChannel(type: String, channelGetOrCreateRequest: StreamChatChannelGetOrCreateRequest, requiresConnectionId: Bool, completion: @escaping (Result<StreamChatChannelStateResponse, Error>) -> Void) {
-        var connectionIdRequired: Bool
-        connectionIdRequired = false
-        var tokenRequired: Bool
-        tokenRequired = true
-        var path = "/api/v2/chat/channels/{type}/query"
-        
-        let typePreEscape = "\(APIHelper.mapValueToPathItem(type))"
-        let typePostEscape = typePreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
-        path = path.replacingOccurrences(of: String(format: "{%@}", "type"), with: typePostEscape, options: .literal, range: nil)
-        var queryParams = [URLQueryItem]()
-        
-        connectionIdRequired = requiresConnectionId
-        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
-        queryParams.append(apiKey)
-        
-        makeRequest(
-            uriPath: path,
-            queryParams: queryParams,
-            httpMethod: "POST",
-            requiresConnectionId: connectionIdRequired,
-            requiresToken: tokenRequired,
-            request: channelGetOrCreateRequest
-        ) { [weak self] result in
-            guard let self else {
-                completion(.failure(ClientError.Unknown()))
-                return
-            }
-            switch result {
-            case let .success(request):
-                self.apiClient.request(request, completion: completion)
-            case let .failure(error):
-                completion(.failure(error))
-            }
-        }
-    }
-
-    public func hideChannel(type: String, id: String, hideChannelRequest: StreamChatHideChannelRequest, completion: @escaping (Result<StreamChatHideChannelResponse, Error>) -> Void) {
-        var connectionIdRequired: Bool
-        connectionIdRequired = false
-        var tokenRequired: Bool
-        tokenRequired = true
-        var path = "/api/v2/chat/channels/{type}/{id}/hide"
-        
-        let typePreEscape = "\(APIHelper.mapValueToPathItem(type))"
-        let typePostEscape = typePreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
-        path = path.replacingOccurrences(of: String(format: "{%@}", "type"), with: typePostEscape, options: .literal, range: nil)
-        let idPreEscape = "\(APIHelper.mapValueToPathItem(id))"
-        let idPostEscape = idPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
-        path = path.replacingOccurrences(of: String(format: "{%@}", "id"), with: idPostEscape, options: .literal, range: nil)
-        var queryParams = [URLQueryItem]()
-        
-        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
-        queryParams.append(apiKey)
-        
-        makeRequest(
-            uriPath: path,
-            queryParams: queryParams,
-            httpMethod: "POST",
-            requiresConnectionId: connectionIdRequired,
-            requiresToken: tokenRequired,
-            request: hideChannelRequest
-        ) { [weak self] result in
-            guard let self else {
-                completion(.failure(ClientError.Unknown()))
-                return
-            }
-            switch result {
-            case let .success(request):
-                self.apiClient.request(request, completion: completion)
-            case let .failure(error):
-                completion(.failure(error))
-            }
-        }
-    }
-
-    public func queryMessageFlags(payload: StreamChatQueryMessageFlagsRequest?, completion: @escaping (Result<StreamChatQueryMessageFlagsResponse, Error>) -> Void) {
-        var connectionIdRequired: Bool
-        connectionIdRequired = false
-        var tokenRequired: Bool
-        tokenRequired = true
-        let path = "/api/v2/chat/moderation/flags/message"
-        
-        var queryParams = [URLQueryItem]()
-        
-        if let payload, let payloadQueryParams = try? encodeJSONToQueryItems(data: payload) {
-            queryParams.append(contentsOf: payloadQueryParams)
-        }
-        
-        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
-        queryParams.append(apiKey)
-        
-        makeRequest(
-            uriPath: path,
-            queryParams: queryParams,
-            httpMethod: "GET",
-            requiresConnectionId: connectionIdRequired,
-            requiresToken: tokenRequired
-        ) { [weak self] result in
-            guard let self else {
-                completion(.failure(ClientError.Unknown()))
-                return
-            }
-            switch result {
-            case let .success(request):
-                apiClient.request(request, completion: completion)
-            case let .failure(error):
-                completion(.failure(error))
-            }
-        }
-    }
-
-    public func unmuteUser(unmuteUserRequest: StreamChatUnmuteUserRequest, completion: @escaping (Result<StreamChatUnmuteResponse, Error>) -> Void) {
-        var connectionIdRequired: Bool
-        connectionIdRequired = false
-        var tokenRequired: Bool
-        tokenRequired = true
-        let path = "/api/v2/chat/moderation/unmute"
-        
-        var queryParams = [URLQueryItem]()
-        
-        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
-        queryParams.append(apiKey)
-        
-        makeRequest(
-            uriPath: path,
-            queryParams: queryParams,
-            httpMethod: "POST",
-            requiresConnectionId: connectionIdRequired,
-            requiresToken: tokenRequired,
-            request: unmuteUserRequest
-        ) { [weak self] result in
-            guard let self else {
-                completion(.failure(ClientError.Unknown()))
-                return
-            }
-            switch result {
-            case let .success(request):
-                self.apiClient.request(request, completion: completion)
-            case let .failure(error):
-                completion(.failure(error))
-            }
-        }
-    }
-
-    public func search(payload: StreamChatSearchRequest?, completion: @escaping (Result<StreamChatSearchResponse, Error>) -> Void) {
-        var connectionIdRequired: Bool
-        connectionIdRequired = false
-        var tokenRequired: Bool
-        tokenRequired = true
-        let path = "/api/v2/chat/search"
-        
-        var queryParams = [URLQueryItem]()
-        
-        if let payload, let payloadQueryParams = try? encodeJSONToQueryItems(data: payload) {
-            queryParams.append(contentsOf: payloadQueryParams)
-        }
-        
-        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
-        queryParams.append(apiKey)
-        
-        makeRequest(
-            uriPath: path,
-            queryParams: queryParams,
-            httpMethod: "GET",
-            requiresConnectionId: connectionIdRequired,
-            requiresToken: tokenRequired
-        ) { [weak self] result in
-            guard let self else {
-                completion(.failure(ClientError.Unknown()))
-                return
-            }
-            switch result {
-            case let .success(request):
-                apiClient.request(request, completion: completion)
-            case let .failure(error):
-                completion(.failure(error))
-            }
-        }
-    }
-
-    public func queryUsers(payload: StreamChatQueryUsersRequest?, completion: @escaping (Result<StreamChatUsersResponse, Error>) -> Void) {
-        var connectionIdRequired: Bool
-        connectionIdRequired = false
-        var tokenRequired: Bool
-        tokenRequired = true
-        let path = "/api/v2/users"
-        
-        var queryParams = [URLQueryItem]()
-        
-        if let payload, let payloadQueryParams = try? encodeJSONToQueryItems(data: payload) {
-            queryParams.append(contentsOf: payloadQueryParams)
-        }
-        
-        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
-        queryParams.append(apiKey)
-        
-        makeRequest(
-            uriPath: path,
-            queryParams: queryParams,
-            httpMethod: "GET",
-            requiresConnectionId: connectionIdRequired,
-            requiresToken: tokenRequired
-        ) { [weak self] result in
-            guard let self else {
-                completion(.failure(ClientError.Unknown()))
-                return
-            }
-            switch result {
-            case let .success(request):
-                apiClient.request(request, completion: completion)
-            case let .failure(error):
-                completion(.failure(error))
-            }
-        }
-    }
-
-    public func updateUsers(updateUsersRequest: StreamChatUpdateUsersRequest, completion: @escaping (Result<StreamChatUpdateUsersResponse, Error>) -> Void) {
-        var connectionIdRequired: Bool
-        connectionIdRequired = false
-        var tokenRequired: Bool
-        tokenRequired = true
-        let path = "/api/v2/users"
-        
-        var queryParams = [URLQueryItem]()
-        
-        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
-        queryParams.append(apiKey)
-        
-        makeRequest(
-            uriPath: path,
-            queryParams: queryParams,
-            httpMethod: "POST",
-            requiresConnectionId: connectionIdRequired,
-            requiresToken: tokenRequired,
-            request: updateUsersRequest
-        ) { [weak self] result in
-            guard let self else {
-                completion(.failure(ClientError.Unknown()))
-                return
-            }
-            switch result {
-            case let .success(request):
-                self.apiClient.request(request, completion: completion)
-            case let .failure(error):
-                completion(.failure(error))
-            }
-        }
-    }
-
-    public func updateUsersPartial(updateUserPartialRequest: StreamChatUpdateUserPartialRequest, completion: @escaping (Result<StreamChatUpdateUsersResponse, Error>) -> Void) {
-        var connectionIdRequired: Bool
-        connectionIdRequired = false
-        var tokenRequired: Bool
-        tokenRequired = true
-        let path = "/api/v2/users"
-        
-        var queryParams = [URLQueryItem]()
-        
-        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
-        queryParams.append(apiKey)
-        
-        makeRequest(
-            uriPath: path,
-            queryParams: queryParams,
-            httpMethod: "PATCH",
-            requiresConnectionId: connectionIdRequired,
-            requiresToken: tokenRequired,
-            request: updateUserPartialRequest
-        ) { [weak self] result in
-            guard let self else {
-                completion(.failure(ClientError.Unknown()))
-                return
-            }
-            switch result {
-            case let .success(request):
-                self.apiClient.request(request, completion: completion)
-            case let .failure(error):
-                completion(.failure(error))
-            }
-        }
-    }
-
-    public func uploadFile(type: String, id: String, fileUploadRequest: StreamChatFileUploadRequest, completion: @escaping (Result<StreamChatFileUploadResponse, Error>) -> Void) {
-        var connectionIdRequired: Bool
-        connectionIdRequired = false
-        var tokenRequired: Bool
-        tokenRequired = true
-        var path = "/api/v2/chat/channels/{type}/{id}/file"
-        
-        let typePreEscape = "\(APIHelper.mapValueToPathItem(type))"
-        let typePostEscape = typePreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
-        path = path.replacingOccurrences(of: String(format: "{%@}", "type"), with: typePostEscape, options: .literal, range: nil)
-        let idPreEscape = "\(APIHelper.mapValueToPathItem(id))"
-        let idPostEscape = idPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
-        path = path.replacingOccurrences(of: String(format: "{%@}", "id"), with: idPostEscape, options: .literal, range: nil)
-        var queryParams = [URLQueryItem]()
-        
-        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
-        queryParams.append(apiKey)
-        
-        makeRequest(
-            uriPath: path,
-            queryParams: queryParams,
-            httpMethod: "POST",
-            requiresConnectionId: connectionIdRequired,
-            requiresToken: tokenRequired,
-            request: fileUploadRequest
-        ) { [weak self] result in
-            guard let self else {
-                completion(.failure(ClientError.Unknown()))
-                return
-            }
-            switch result {
-            case let .success(request):
-                self.apiClient.request(request, completion: completion)
-            case let .failure(error):
-                completion(.failure(error))
-            }
-        }
-    }
-
-    public func deleteFile(type: String, id: String, url: String?, completion: @escaping (Result<StreamChatFileDeleteResponse, Error>) -> Void) {
-        var connectionIdRequired: Bool
-        connectionIdRequired = false
-        var tokenRequired: Bool
-        tokenRequired = true
-        var path = "/api/v2/chat/channels/{type}/{id}/file"
-        
-        let typePreEscape = "\(APIHelper.mapValueToPathItem(type))"
-        let typePostEscape = typePreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
-        path = path.replacingOccurrences(of: String(format: "{%@}", "type"), with: typePostEscape, options: .literal, range: nil)
-        let idPreEscape = "\(APIHelper.mapValueToPathItem(id))"
-        let idPostEscape = idPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
-        path = path.replacingOccurrences(of: String(format: "{%@}", "id"), with: idPostEscape, options: .literal, range: nil)
-        var queryParams = [URLQueryItem]()
-        
-        if let url {
-            let urlValue = String(url)
-            let urlQueryItem = URLQueryItem(name: "url", value: urlValue)
-            queryParams.append(urlQueryItem)
-        }
-        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
-        queryParams.append(apiKey)
-        
-        makeRequest(
-            uriPath: path,
-            queryParams: queryParams,
-            httpMethod: "DELETE",
-            requiresConnectionId: connectionIdRequired,
-            requiresToken: tokenRequired
-        ) { [weak self] result in
-            guard let self else {
-                completion(.failure(ClientError.Unknown()))
-                return
-            }
-            switch result {
-            case let .success(request):
-                apiClient.request(request, completion: completion)
-            case let .failure(error):
-                completion(.failure(error))
-            }
-        }
-    }
-
-    public func sendEvent(type: String, id: String, sendEventRequest: StreamChatSendEventRequest, completion: @escaping (Result<StreamChatEventResponse, Error>) -> Void) {
-        var connectionIdRequired: Bool
-        connectionIdRequired = false
-        var tokenRequired: Bool
-        tokenRequired = true
-        var path = "/api/v2/chat/channels/{type}/{id}/event"
-        
-        let typePreEscape = "\(APIHelper.mapValueToPathItem(type))"
-        let typePostEscape = typePreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
-        path = path.replacingOccurrences(of: String(format: "{%@}", "type"), with: typePostEscape, options: .literal, range: nil)
-        let idPreEscape = "\(APIHelper.mapValueToPathItem(id))"
-        let idPostEscape = idPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
-        path = path.replacingOccurrences(of: String(format: "{%@}", "id"), with: idPostEscape, options: .literal, range: nil)
-        var queryParams = [URLQueryItem]()
-        
-        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
-        queryParams.append(apiKey)
-        
-        makeRequest(
-            uriPath: path,
-            queryParams: queryParams,
-            httpMethod: "POST",
-            requiresConnectionId: connectionIdRequired,
-            requiresToken: tokenRequired,
-            request: sendEventRequest
-        ) { [weak self] result in
-            guard let self else {
-                completion(.failure(ClientError.Unknown()))
-                return
-            }
-            switch result {
-            case let .success(request):
-                self.apiClient.request(request, completion: completion)
-            case let .failure(error):
-                completion(.failure(error))
-            }
-        }
-    }
-
-    public func getOrCreateChannel(type: String, id: String, channelGetOrCreateRequest: StreamChatChannelGetOrCreateRequest, requiresConnectionId: Bool, completion: @escaping (Result<StreamChatChannelStateResponse, Error>) -> Void) {
-        var connectionIdRequired: Bool
-        connectionIdRequired = false
-        var tokenRequired: Bool
-        tokenRequired = true
-        var path = "/api/v2/chat/channels/{type}/{id}/query"
-        
-        let typePreEscape = "\(APIHelper.mapValueToPathItem(type))"
-        let typePostEscape = typePreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
-        path = path.replacingOccurrences(of: String(format: "{%@}", "type"), with: typePostEscape, options: .literal, range: nil)
-        let idPreEscape = "\(APIHelper.mapValueToPathItem(id))"
-        let idPostEscape = idPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
-        path = path.replacingOccurrences(of: String(format: "{%@}", "id"), with: idPostEscape, options: .literal, range: nil)
-        var queryParams = [URLQueryItem]()
-        
-        connectionIdRequired = requiresConnectionId
-        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
-        queryParams.append(apiKey)
-        
-        makeRequest(
-            uriPath: path,
-            queryParams: queryParams,
-            httpMethod: "POST",
-            requiresConnectionId: connectionIdRequired,
-            requiresToken: tokenRequired,
-            request: channelGetOrCreateRequest
-        ) { [weak self] result in
-            guard let self else {
-                completion(.failure(ClientError.Unknown()))
-                return
-            }
-            switch result {
-            case let .success(request):
-                self.apiClient.request(request, completion: completion)
-            case let .failure(error):
-                completion(.failure(error))
-            }
-        }
-    }
-
-    public func markRead(type: String, id: String, markReadRequest: StreamChatMarkReadRequest, completion: @escaping (Result<StreamChatMarkReadResponse, Error>) -> Void) {
-        var connectionIdRequired: Bool
-        connectionIdRequired = false
-        var tokenRequired: Bool
-        tokenRequired = true
-        var path = "/api/v2/chat/channels/{type}/{id}/read"
-        
-        let typePreEscape = "\(APIHelper.mapValueToPathItem(type))"
-        let typePostEscape = typePreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
-        path = path.replacingOccurrences(of: String(format: "{%@}", "type"), with: typePostEscape, options: .literal, range: nil)
-        let idPreEscape = "\(APIHelper.mapValueToPathItem(id))"
-        let idPostEscape = idPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
-        path = path.replacingOccurrences(of: String(format: "{%@}", "id"), with: idPostEscape, options: .literal, range: nil)
-        var queryParams = [URLQueryItem]()
-        
-        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
-        queryParams.append(apiKey)
-        
-        makeRequest(
-            uriPath: path,
-            queryParams: queryParams,
-            httpMethod: "POST",
-            requiresConnectionId: connectionIdRequired,
-            requiresToken: tokenRequired,
-            request: markReadRequest
-        ) { [weak self] result in
-            guard let self else {
-                completion(.failure(ClientError.Unknown()))
-                return
-            }
-            switch result {
-            case let .success(request):
-                self.apiClient.request(request, completion: completion)
-            case let .failure(error):
-                completion(.failure(error))
-            }
-        }
-    }
-
-    public func queryMembers(payload: StreamChatQueryMembersRequest?, completion: @escaping (Result<StreamChatMembersResponse, Error>) -> Void) {
-        var connectionIdRequired: Bool
-        connectionIdRequired = false
-        var tokenRequired: Bool
-        tokenRequired = true
-        let path = "/api/v2/chat/members"
-        
-        var queryParams = [URLQueryItem]()
-        
-        if let payload, let payloadQueryParams = try? encodeJSONToQueryItems(data: payload) {
-            queryParams.append(contentsOf: payloadQueryParams)
-        }
-        
-        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
-        queryParams.append(apiKey)
-        
-        makeRequest(
-            uriPath: path,
-            queryParams: queryParams,
-            httpMethod: "GET",
-            requiresConnectionId: connectionIdRequired,
-            requiresToken: tokenRequired
-        ) { [weak self] result in
-            guard let self else {
-                completion(.failure(ClientError.Unknown()))
-                return
-            }
-            switch result {
-            case let .success(request):
-                apiClient.request(request, completion: completion)
-            case let .failure(error):
-                completion(.failure(error))
-            }
-        }
-    }
-
-    public func unmuteChannel(unmuteChannelRequest: StreamChatUnmuteChannelRequest, completion: @escaping (Result<StreamChatUnmuteResponse, Error>) -> Void) {
-        var connectionIdRequired: Bool
-        connectionIdRequired = false
-        var tokenRequired: Bool
-        tokenRequired = true
-        let path = "/api/v2/chat/moderation/unmute/channel"
-        
-        var queryParams = [URLQueryItem]()
-        
-        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
-        queryParams.append(apiKey)
-        
-        makeRequest(
-            uriPath: path,
-            queryParams: queryParams,
-            httpMethod: "POST",
-            requiresConnectionId: connectionIdRequired,
-            requiresToken: tokenRequired,
-            request: unmuteChannelRequest
-        ) { [weak self] result in
-            guard let self else {
-                completion(.failure(ClientError.Unknown()))
-                return
-            }
-            switch result {
-            case let .success(request):
-                self.apiClient.request(request, completion: completion)
-            case let .failure(error):
-                completion(.failure(error))
-            }
-        }
-    }
-
-    public func queryBannedUsers(payload: StreamChatQueryBannedUsersRequest?, completion: @escaping (Result<StreamChatQueryBannedUsersResponse, Error>) -> Void) {
-        var connectionIdRequired: Bool
-        connectionIdRequired = false
-        var tokenRequired: Bool
-        tokenRequired = true
-        let path = "/api/v2/chat/query_banned_users"
-        
-        var queryParams = [URLQueryItem]()
-        
-        if let payload, let payloadQueryParams = try? encodeJSONToQueryItems(data: payload) {
-            queryParams.append(contentsOf: payloadQueryParams)
-        }
-        
-        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
-        queryParams.append(apiKey)
-        
-        makeRequest(
-            uriPath: path,
-            queryParams: queryParams,
-            httpMethod: "GET",
-            requiresConnectionId: connectionIdRequired,
-            requiresToken: tokenRequired
-        ) { [weak self] result in
-            guard let self else {
-                completion(.failure(ClientError.Unknown()))
-                return
-            }
-            switch result {
-            case let .success(request):
-                apiClient.request(request, completion: completion)
-            case let .failure(error):
-                completion(.failure(error))
-            }
-        }
-    }
-
-    public func connect(json: StreamChatConnectRequest?, completion: @escaping (Result<EmptyResponse, Error>) -> Void) {
-        var connectionIdRequired: Bool
-        connectionIdRequired = false
-        var tokenRequired: Bool
-        tokenRequired = true
-        let path = "/api/v2/connect"
-        
-        var queryParams = [URLQueryItem]()
-        
-        if let json, let jsonQueryParams = try? encodeJSONToQueryItems(data: json) {
-            queryParams.append(contentsOf: jsonQueryParams)
-        }
-        
-        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
-        queryParams.append(apiKey)
-        
-        makeRequest(
-            uriPath: path,
-            queryParams: queryParams,
-            httpMethod: "GET",
-            requiresConnectionId: connectionIdRequired,
-            requiresToken: tokenRequired
-        ) { [weak self] result in
-            guard let self else {
-                completion(.failure(ClientError.Unknown()))
-                return
-            }
-            switch result {
-            case let .success(request):
-                apiClient.request(request, completion: completion)
-            case let .failure(error):
-                completion(.failure(error))
-            }
-        }
-    }
-
-    public func queryChannels(queryChannelsRequest: StreamChatQueryChannelsRequest, requiresConnectionId: Bool, completion: @escaping (Result<StreamChatChannelsResponse, Error>) -> Void) {
-        var connectionIdRequired: Bool
-        connectionIdRequired = false
-        var tokenRequired: Bool
-        tokenRequired = true
-        let path = "/api/v2/chat/channels"
-        
-        var queryParams = [URLQueryItem]()
-        
-        connectionIdRequired = requiresConnectionId
-        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
-        queryParams.append(apiKey)
-        
-        makeRequest(
-            uriPath: path,
-            queryParams: queryParams,
-            httpMethod: "POST",
-            requiresConnectionId: connectionIdRequired,
-            requiresToken: tokenRequired,
-            request: queryChannelsRequest
-        ) { [weak self] result in
-            guard let self else {
-                completion(.failure(ClientError.Unknown()))
-                return
-            }
-            switch result {
-            case let .success(request):
-                self.apiClient.request(request, completion: completion)
-            case let .failure(error):
-                completion(.failure(error))
-            }
-        }
-    }
-
-    public func translateMessage(id: String, translateMessageRequest: StreamChatTranslateMessageRequest, completion: @escaping (Result<StreamChatMessageResponse, Error>) -> Void) {
-        var connectionIdRequired: Bool
-        connectionIdRequired = false
-        var tokenRequired: Bool
-        tokenRequired = true
-        var path = "/api/v2/chat/messages/{id}/translate"
-        
-        let idPreEscape = "\(APIHelper.mapValueToPathItem(id))"
-        let idPostEscape = idPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
-        path = path.replacingOccurrences(of: String(format: "{%@}", "id"), with: idPostEscape, options: .literal, range: nil)
-        var queryParams = [URLQueryItem]()
-        
-        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
-        queryParams.append(apiKey)
-        
-        makeRequest(
-            uriPath: path,
-            queryParams: queryParams,
-            httpMethod: "POST",
-            requiresConnectionId: connectionIdRequired,
-            requiresToken: tokenRequired,
-            request: translateMessageRequest
-        ) { [weak self] result in
-            guard let self else {
-                completion(.failure(ClientError.Unknown()))
-                return
-            }
-            switch result {
-            case let .success(request):
-                self.apiClient.request(request, completion: completion)
-            case let .failure(error):
-                completion(.failure(error))
-            }
-        }
-    }
-
-    public func unreadCounts(completion: @escaping (Result<StreamChatUnreadCountsResponse, Error>) -> Void) {
+    public func unreadCounts(isRecoveryOperation: Bool = false, completion: @escaping (Result<StreamChatUnreadCountsResponse, Error>) -> Void) {
         var connectionIdRequired: Bool
         connectionIdRequired = false
         var tokenRequired: Bool
@@ -1178,275 +870,14 @@ public class API: DefaultAPIEndpoints {
             }
             switch result {
             case let .success(request):
-                apiClient.request(request, completion: completion)
+                apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
             case let .failure(error):
                 completion(.failure(error))
             }
         }
     }
 
-    public func createGuest(guestRequest: StreamChatGuestRequest, completion: @escaping (Result<StreamChatGuestResponse, Error>) -> Void) {
-        var connectionIdRequired: Bool
-        connectionIdRequired = false
-        var tokenRequired: Bool
-        tokenRequired = true
-        let path = "/api/v2/guest"
-        
-        var queryParams = [URLQueryItem]()
-        
-        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
-        queryParams.append(apiKey)
-        tokenRequired = false
-        makeRequest(
-            uriPath: path,
-            queryParams: queryParams,
-            httpMethod: "POST",
-            requiresConnectionId: connectionIdRequired,
-            requiresToken: tokenRequired,
-            request: guestRequest
-        ) { [weak self] result in
-            guard let self else {
-                completion(.failure(ClientError.Unknown()))
-                return
-            }
-            switch result {
-            case let .success(request):
-                self.apiClient.request(request, completion: completion)
-            case let .failure(error):
-                completion(.failure(error))
-            }
-        }
-    }
-
-    public func deleteReaction(id: String, type: String, userId: String?, completion: @escaping (Result<StreamChatReactionRemovalResponse, Error>) -> Void) {
-        var connectionIdRequired: Bool
-        connectionIdRequired = false
-        var tokenRequired: Bool
-        tokenRequired = true
-        var path = "/api/v2/chat/messages/{id}/reaction/{type}"
-        
-        let idPreEscape = "\(APIHelper.mapValueToPathItem(id))"
-        let idPostEscape = idPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
-        path = path.replacingOccurrences(of: String(format: "{%@}", "id"), with: idPostEscape, options: .literal, range: nil)
-        let typePreEscape = "\(APIHelper.mapValueToPathItem(type))"
-        let typePostEscape = typePreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
-        path = path.replacingOccurrences(of: String(format: "{%@}", "type"), with: typePostEscape, options: .literal, range: nil)
-        var queryParams = [URLQueryItem]()
-        
-        if let userId {
-            let userIdValue = String(userId)
-            let userIdQueryItem = URLQueryItem(name: "user_id", value: userIdValue)
-            queryParams.append(userIdQueryItem)
-        }
-        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
-        queryParams.append(apiKey)
-        
-        makeRequest(
-            uriPath: path,
-            queryParams: queryParams,
-            httpMethod: "DELETE",
-            requiresConnectionId: connectionIdRequired,
-            requiresToken: tokenRequired
-        ) { [weak self] result in
-            guard let self else {
-                completion(.failure(ClientError.Unknown()))
-                return
-            }
-            switch result {
-            case let .success(request):
-                apiClient.request(request, completion: completion)
-            case let .failure(error):
-                completion(.failure(error))
-            }
-        }
-    }
-
-    public func getMessage(id: String, completion: @escaping (Result<StreamChatMessageWithPendingMetadataResponse, Error>) -> Void) {
-        var connectionIdRequired: Bool
-        connectionIdRequired = false
-        var tokenRequired: Bool
-        tokenRequired = true
-        var path = "/api/v2/chat/messages/{id}"
-        
-        let idPreEscape = "\(APIHelper.mapValueToPathItem(id))"
-        let idPostEscape = idPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
-        path = path.replacingOccurrences(of: String(format: "{%@}", "id"), with: idPostEscape, options: .literal, range: nil)
-        var queryParams = [URLQueryItem]()
-        
-        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
-        queryParams.append(apiKey)
-        
-        makeRequest(
-            uriPath: path,
-            queryParams: queryParams,
-            httpMethod: "GET",
-            requiresConnectionId: connectionIdRequired,
-            requiresToken: tokenRequired
-        ) { [weak self] result in
-            guard let self else {
-                completion(.failure(ClientError.Unknown()))
-                return
-            }
-            switch result {
-            case let .success(request):
-                apiClient.request(request, completion: completion)
-            case let .failure(error):
-                completion(.failure(error))
-            }
-        }
-    }
-
-    public func updateMessage(id: String, updateMessageRequest: StreamChatUpdateMessageRequest, completion: @escaping (Result<StreamChatUpdateMessageResponse, Error>) -> Void) {
-        var connectionIdRequired: Bool
-        connectionIdRequired = false
-        var tokenRequired: Bool
-        tokenRequired = true
-        var path = "/api/v2/chat/messages/{id}"
-        
-        let idPreEscape = "\(APIHelper.mapValueToPathItem(id))"
-        let idPostEscape = idPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
-        path = path.replacingOccurrences(of: String(format: "{%@}", "id"), with: idPostEscape, options: .literal, range: nil)
-        var queryParams = [URLQueryItem]()
-        
-        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
-        queryParams.append(apiKey)
-        
-        makeRequest(
-            uriPath: path,
-            queryParams: queryParams,
-            httpMethod: "POST",
-            requiresConnectionId: connectionIdRequired,
-            requiresToken: tokenRequired,
-            request: updateMessageRequest
-        ) { [weak self] result in
-            guard let self else {
-                completion(.failure(ClientError.Unknown()))
-                return
-            }
-            switch result {
-            case let .success(request):
-                self.apiClient.request(request, completion: completion)
-            case let .failure(error):
-                completion(.failure(error))
-            }
-        }
-    }
-
-    public func updateMessagePartial(id: String, updateMessagePartialRequest: StreamChatUpdateMessagePartialRequest, completion: @escaping (Result<StreamChatUpdateMessagePartialResponse, Error>) -> Void) {
-        var connectionIdRequired: Bool
-        connectionIdRequired = false
-        var tokenRequired: Bool
-        tokenRequired = true
-        var path = "/api/v2/chat/messages/{id}"
-        
-        let idPreEscape = "\(APIHelper.mapValueToPathItem(id))"
-        let idPostEscape = idPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
-        path = path.replacingOccurrences(of: String(format: "{%@}", "id"), with: idPostEscape, options: .literal, range: nil)
-        var queryParams = [URLQueryItem]()
-        
-        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
-        queryParams.append(apiKey)
-        
-        makeRequest(
-            uriPath: path,
-            queryParams: queryParams,
-            httpMethod: "PUT",
-            requiresConnectionId: connectionIdRequired,
-            requiresToken: tokenRequired,
-            request: updateMessagePartialRequest
-        ) { [weak self] result in
-            guard let self else {
-                completion(.failure(ClientError.Unknown()))
-                return
-            }
-            switch result {
-            case let .success(request):
-                self.apiClient.request(request, completion: completion)
-            case let .failure(error):
-                completion(.failure(error))
-            }
-        }
-    }
-
-    public func deleteMessage(id: String, hard: Bool?, deletedBy: String?, completion: @escaping (Result<StreamChatMessageResponse, Error>) -> Void) {
-        var connectionIdRequired: Bool
-        connectionIdRequired = false
-        var tokenRequired: Bool
-        tokenRequired = true
-        var path = "/api/v2/chat/messages/{id}"
-        
-        let idPreEscape = "\(APIHelper.mapValueToPathItem(id))"
-        let idPostEscape = idPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
-        path = path.replacingOccurrences(of: String(format: "{%@}", "id"), with: idPostEscape, options: .literal, range: nil)
-        var queryParams = [URLQueryItem]()
-        
-        if let hard {
-            let hardValue = String(hard)
-            let hardQueryItem = URLQueryItem(name: "hard", value: hardValue)
-            queryParams.append(hardQueryItem)
-        }
-        if let deletedBy {
-            let deletedByValue = String(deletedBy)
-            let deletedByQueryItem = URLQueryItem(name: "deleted_by", value: deletedByValue)
-            queryParams.append(deletedByQueryItem)
-        }
-        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
-        queryParams.append(apiKey)
-        
-        makeRequest(
-            uriPath: path,
-            queryParams: queryParams,
-            httpMethod: "DELETE",
-            requiresConnectionId: connectionIdRequired,
-            requiresToken: tokenRequired
-        ) { [weak self] result in
-            guard let self else {
-                completion(.failure(ClientError.Unknown()))
-                return
-            }
-            switch result {
-            case let .success(request):
-                apiClient.request(request, completion: completion)
-            case let .failure(error):
-                completion(.failure(error))
-            }
-        }
-    }
-
-    public func muteChannel(muteChannelRequest: StreamChatMuteChannelRequest, completion: @escaping (Result<StreamChatMuteChannelResponse, Error>) -> Void) {
-        var connectionIdRequired: Bool
-        connectionIdRequired = false
-        var tokenRequired: Bool
-        tokenRequired = true
-        let path = "/api/v2/chat/moderation/mute/channel"
-        
-        var queryParams = [URLQueryItem]()
-        
-        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
-        queryParams.append(apiKey)
-        
-        makeRequest(
-            uriPath: path,
-            queryParams: queryParams,
-            httpMethod: "POST",
-            requiresConnectionId: connectionIdRequired,
-            requiresToken: tokenRequired,
-            request: muteChannelRequest
-        ) { [weak self] result in
-            guard let self else {
-                completion(.failure(ClientError.Unknown()))
-                return
-            }
-            switch result {
-            case let .success(request):
-                self.apiClient.request(request, completion: completion)
-            case let .failure(error):
-                completion(.failure(error))
-            }
-        }
-    }
-
-    public func listDevices(userId: String?, completion: @escaping (Result<StreamChatListDevicesResponse, Error>) -> Void) {
+    public func listDevices(userId: String?, isRecoveryOperation: Bool = false, completion: @escaping (Result<StreamChatListDevicesResponse, Error>) -> Void) {
         var connectionIdRequired: Bool
         connectionIdRequired = false
         var tokenRequired: Bool
@@ -1476,14 +907,14 @@ public class API: DefaultAPIEndpoints {
             }
             switch result {
             case let .success(request):
-                apiClient.request(request, completion: completion)
+                apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
             case let .failure(error):
                 completion(.failure(error))
             }
         }
     }
 
-    public func createDevice(createDeviceRequest: StreamChatCreateDeviceRequest, completion: @escaping (Result<EmptyResponse, Error>) -> Void) {
+    public func createDevice(createDeviceRequest: StreamChatCreateDeviceRequest, isRecoveryOperation: Bool = false, completion: @escaping (Result<EmptyResponse, Error>) -> Void) {
         var connectionIdRequired: Bool
         connectionIdRequired = false
         var tokenRequired: Bool
@@ -1509,14 +940,14 @@ public class API: DefaultAPIEndpoints {
             }
             switch result {
             case let .success(request):
-                self.apiClient.request(request, completion: completion)
+                self.apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
             case let .failure(error):
                 completion(.failure(error))
             }
         }
     }
 
-    public func deleteDevice(id: String?, userId: String?, completion: @escaping (Result<StreamChatResponse, Error>) -> Void) {
+    public func deleteDevice(id: String?, userId: String?, isRecoveryOperation: Bool = false, completion: @escaping (Result<StreamChatResponse, Error>) -> Void) {
         var connectionIdRequired: Bool
         connectionIdRequired = false
         var tokenRequired: Bool
@@ -1551,21 +982,26 @@ public class API: DefaultAPIEndpoints {
             }
             switch result {
             case let .success(request):
-                apiClient.request(request, completion: completion)
+                apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
             case let .failure(error):
                 completion(.failure(error))
             }
         }
     }
 
-    public func deleteChannels(deleteChannelsRequest: StreamChatDeleteChannelsRequest, completion: @escaping (Result<StreamChatDeleteChannelsResponse, Error>) -> Void) {
+    public func longPoll(requiresConnectionId: Bool, json: StreamChatConnectRequest?, isRecoveryOperation: Bool = false, completion: @escaping (Result<EmptyResponse, Error>) -> Void) {
         var connectionIdRequired: Bool
         connectionIdRequired = false
         var tokenRequired: Bool
         tokenRequired = true
-        let path = "/api/v2/chat/channels/delete"
+        let path = "/api/v2/longpoll"
         
         var queryParams = [URLQueryItem]()
+        
+        connectionIdRequired = requiresConnectionId
+        if let json, let jsonQueryParams = try? encodeJSONToQueryItems(data: json) {
+            queryParams.append(contentsOf: jsonQueryParams)
+        }
         
         let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
         queryParams.append(apiKey)
@@ -1573,90 +1009,7 @@ public class API: DefaultAPIEndpoints {
         makeRequest(
             uriPath: path,
             queryParams: queryParams,
-            httpMethod: "POST",
-            requiresConnectionId: connectionIdRequired,
-            requiresToken: tokenRequired,
-            request: deleteChannelsRequest
-        ) { [weak self] result in
-            guard let self else {
-                completion(.failure(ClientError.Unknown()))
-                return
-            }
-            switch result {
-            case let .success(request):
-                self.apiClient.request(request, completion: completion)
-            case let .failure(error):
-                completion(.failure(error))
-            }
-        }
-    }
-
-    public func uploadImage(type: String, id: String, imageUploadRequest: StreamChatImageUploadRequest, completion: @escaping (Result<StreamChatImageUploadResponse, Error>) -> Void) {
-        var connectionIdRequired: Bool
-        connectionIdRequired = false
-        var tokenRequired: Bool
-        tokenRequired = true
-        var path = "/api/v2/chat/channels/{type}/{id}/image"
-        
-        let typePreEscape = "\(APIHelper.mapValueToPathItem(type))"
-        let typePostEscape = typePreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
-        path = path.replacingOccurrences(of: String(format: "{%@}", "type"), with: typePostEscape, options: .literal, range: nil)
-        let idPreEscape = "\(APIHelper.mapValueToPathItem(id))"
-        let idPostEscape = idPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
-        path = path.replacingOccurrences(of: String(format: "{%@}", "id"), with: idPostEscape, options: .literal, range: nil)
-        var queryParams = [URLQueryItem]()
-        
-        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
-        queryParams.append(apiKey)
-        
-        makeRequest(
-            uriPath: path,
-            queryParams: queryParams,
-            httpMethod: "POST",
-            requiresConnectionId: connectionIdRequired,
-            requiresToken: tokenRequired,
-            request: imageUploadRequest
-        ) { [weak self] result in
-            guard let self else {
-                completion(.failure(ClientError.Unknown()))
-                return
-            }
-            switch result {
-            case let .success(request):
-                self.apiClient.request(request, completion: completion)
-            case let .failure(error):
-                completion(.failure(error))
-            }
-        }
-    }
-
-    public func deleteImage(type: String, id: String, url: String?, completion: @escaping (Result<StreamChatFileDeleteResponse, Error>) -> Void) {
-        var connectionIdRequired: Bool
-        connectionIdRequired = false
-        var tokenRequired: Bool
-        tokenRequired = true
-        var path = "/api/v2/chat/channels/{type}/{id}/image"
-        
-        let typePreEscape = "\(APIHelper.mapValueToPathItem(type))"
-        let typePostEscape = typePreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
-        path = path.replacingOccurrences(of: String(format: "{%@}", "type"), with: typePostEscape, options: .literal, range: nil)
-        let idPreEscape = "\(APIHelper.mapValueToPathItem(id))"
-        let idPostEscape = idPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
-        path = path.replacingOccurrences(of: String(format: "{%@}", "id"), with: idPostEscape, options: .literal, range: nil)
-        var queryParams = [URLQueryItem]()
-        
-        if let url {
-            let urlValue = String(url)
-            let urlQueryItem = URLQueryItem(name: "url", value: urlValue)
-            queryParams.append(urlQueryItem)
-        }
-        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
-        queryParams.append(apiKey)
-        
-        makeRequest(
-            uriPath: path,
-            queryParams: queryParams,
-            httpMethod: "DELETE",
+            httpMethod: "GET",
             requiresConnectionId: connectionIdRequired,
             requiresToken: tokenRequired
         ) { [weak self] result in
@@ -1666,28 +1019,58 @@ public class API: DefaultAPIEndpoints {
             }
             switch result {
             case let .success(request):
-                apiClient.request(request, completion: completion)
+                apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
             case let .failure(error):
                 completion(.failure(error))
             }
         }
     }
 
-    public func sendMessage(type: String, id: String, sendMessageRequest: StreamChatSendMessageRequest, completion: @escaping (Result<StreamChatSendMessageResponse, Error>) -> Void) {
+    public func getApp(isRecoveryOperation: Bool = false, completion: @escaping (Result<StreamChatGetApplicationResponse, Error>) -> Void) {
         var connectionIdRequired: Bool
         connectionIdRequired = false
         var tokenRequired: Bool
         tokenRequired = true
-        var path = "/api/v2/chat/channels/{type}/{id}/message"
+        let path = "/api/v2/app"
+        
+        var queryParams = [URLQueryItem]()
+        
+        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
+        queryParams.append(apiKey)
+        
+        makeRequest(
+            uriPath: path,
+            queryParams: queryParams,
+            httpMethod: "GET",
+            requiresConnectionId: connectionIdRequired,
+            requiresToken: tokenRequired
+        ) { [weak self] result in
+            guard let self else {
+                completion(.failure(ClientError.Unknown()))
+                return
+            }
+            switch result {
+            case let .success(request):
+                apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+
+    public func getOrCreateChannel(type: String, channelGetOrCreateRequest: StreamChatChannelGetOrCreateRequest, requiresConnectionId: Bool, isRecoveryOperation: Bool = false, completion: @escaping (Result<StreamChatChannelStateResponse, Error>) -> Void) {
+        var connectionIdRequired: Bool
+        connectionIdRequired = false
+        var tokenRequired: Bool
+        tokenRequired = true
+        var path = "/api/v2/chat/channels/{type}/query"
         
         let typePreEscape = "\(APIHelper.mapValueToPathItem(type))"
         let typePostEscape = typePreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
         path = path.replacingOccurrences(of: String(format: "{%@}", "type"), with: typePostEscape, options: .literal, range: nil)
-        let idPreEscape = "\(APIHelper.mapValueToPathItem(id))"
-        let idPostEscape = idPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
-        path = path.replacingOccurrences(of: String(format: "{%@}", "id"), with: idPostEscape, options: .literal, range: nil)
         var queryParams = [URLQueryItem]()
         
+        connectionIdRequired = requiresConnectionId
         let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
         queryParams.append(apiKey)
         
@@ -1697,7 +1080,7 @@ public class API: DefaultAPIEndpoints {
             httpMethod: "POST",
             requiresConnectionId: connectionIdRequired,
             requiresToken: tokenRequired,
-            request: sendMessageRequest
+            request: channelGetOrCreateRequest
         ) { [weak self] result in
             guard let self else {
                 completion(.failure(ClientError.Unknown()))
@@ -1705,19 +1088,19 @@ public class API: DefaultAPIEndpoints {
             }
             switch result {
             case let .success(request):
-                self.apiClient.request(request, completion: completion)
+                self.apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
             case let .failure(error):
                 completion(.failure(error))
             }
         }
     }
 
-    public func truncateChannel(type: String, id: String, truncateChannelRequest: StreamChatTruncateChannelRequest, completion: @escaping (Result<StreamChatTruncateChannelResponse, Error>) -> Void) {
+    public func getOrCreateChannel(type: String, id: String, channelGetOrCreateRequest: StreamChatChannelGetOrCreateRequest, requiresConnectionId: Bool, isRecoveryOperation: Bool = false, completion: @escaping (Result<StreamChatChannelStateResponse, Error>) -> Void) {
         var connectionIdRequired: Bool
         connectionIdRequired = false
         var tokenRequired: Bool
         tokenRequired = true
-        var path = "/api/v2/chat/channels/{type}/{id}/truncate"
+        var path = "/api/v2/chat/channels/{type}/{id}/query"
         
         let typePreEscape = "\(APIHelper.mapValueToPathItem(type))"
         let typePostEscape = typePreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
@@ -1727,6 +1110,7 @@ public class API: DefaultAPIEndpoints {
         path = path.replacingOccurrences(of: String(format: "{%@}", "id"), with: idPostEscape, options: .literal, range: nil)
         var queryParams = [URLQueryItem]()
         
+        connectionIdRequired = requiresConnectionId
         let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
         queryParams.append(apiKey)
         
@@ -1736,7 +1120,7 @@ public class API: DefaultAPIEndpoints {
             httpMethod: "POST",
             requiresConnectionId: connectionIdRequired,
             requiresToken: tokenRequired,
-            request: truncateChannelRequest
+            request: channelGetOrCreateRequest
         ) { [weak self] result in
             guard let self else {
                 completion(.failure(ClientError.Unknown()))
@@ -1744,14 +1128,14 @@ public class API: DefaultAPIEndpoints {
             }
             switch result {
             case let .success(request):
-                self.apiClient.request(request, completion: completion)
+                self.apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
             case let .failure(error):
                 completion(.failure(error))
             }
         }
     }
 
-    public func sendReaction(id: String, sendReactionRequest: StreamChatSendReactionRequest, completion: @escaping (Result<StreamChatReactionResponse, Error>) -> Void) {
+    public func sendReaction(id: String, sendReactionRequest: StreamChatSendReactionRequest, isRecoveryOperation: Bool = false, completion: @escaping (Result<StreamChatReactionResponse, Error>) -> Void) {
         var connectionIdRequired: Bool
         connectionIdRequired = false
         var tokenRequired: Bool
@@ -1780,14 +1164,59 @@ public class API: DefaultAPIEndpoints {
             }
             switch result {
             case let .success(request):
-                self.apiClient.request(request, completion: completion)
+                self.apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
             case let .failure(error):
                 completion(.failure(error))
             }
         }
     }
 
-    public func getReplies(parentId: String, idGte: String?, idGt: String?, idLte: String?, idLt: String?, createdAtAfterOrEqual: Date?, createdAtAfter: Date?, createdAtBeforeOrEqual: Date?, createdAtBefore: Date?, idAround: String?, createdAtAround: Date?, completion: @escaping (Result<StreamChatGetRepliesResponse, Error>) -> Void) {
+    public func getReactions(id: String, limit: Int?, offset: Int?, isRecoveryOperation: Bool = false, completion: @escaping (Result<StreamChatGetReactionsResponse, Error>) -> Void) {
+        var connectionIdRequired: Bool
+        connectionIdRequired = false
+        var tokenRequired: Bool
+        tokenRequired = true
+        var path = "/api/v2/chat/messages/{id}/reactions"
+        
+        let idPreEscape = "\(APIHelper.mapValueToPathItem(id))"
+        let idPostEscape = idPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        path = path.replacingOccurrences(of: String(format: "{%@}", "id"), with: idPostEscape, options: .literal, range: nil)
+        var queryParams = [URLQueryItem]()
+        
+        if let limit {
+            let limitValue = String(limit)
+            let limitQueryItem = URLQueryItem(name: "limit", value: limitValue)
+            queryParams.append(limitQueryItem)
+        }
+        if let offset {
+            let offsetValue = String(offset)
+            let offsetQueryItem = URLQueryItem(name: "offset", value: offsetValue)
+            queryParams.append(offsetQueryItem)
+        }
+        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
+        queryParams.append(apiKey)
+        
+        makeRequest(
+            uriPath: path,
+            queryParams: queryParams,
+            httpMethod: "GET",
+            requiresConnectionId: connectionIdRequired,
+            requiresToken: tokenRequired
+        ) { [weak self] result in
+            guard let self else {
+                completion(.failure(ClientError.Unknown()))
+                return
+            }
+            switch result {
+            case let .success(request):
+                apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+
+    public func getReplies(parentId: String, idGte: String?, idGt: String?, idLte: String?, idLt: String?, createdAtAfterOrEqual: Date?, createdAtAfter: Date?, createdAtBeforeOrEqual: Date?, createdAtBefore: Date?, idAround: String?, createdAtAround: Date?, isRecoveryOperation: Bool = false, completion: @escaping (Result<StreamChatGetRepliesResponse, Error>) -> Void) {
         var connectionIdRequired: Bool
         connectionIdRequired = false
         var tokenRequired: Bool
@@ -1865,27 +1294,27 @@ public class API: DefaultAPIEndpoints {
             }
             switch result {
             case let .success(request):
-                apiClient.request(request, completion: completion)
+                apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
             case let .failure(error):
                 completion(.failure(error))
             }
         }
     }
 
-    public func longPoll(requiresConnectionId: Bool, json: StreamChatConnectRequest?, completion: @escaping (Result<EmptyResponse, Error>) -> Void) {
+    public func getOG(url: String?, isRecoveryOperation: Bool = false, completion: @escaping (Result<StreamChatGetOGResponse, Error>) -> Void) {
         var connectionIdRequired: Bool
         connectionIdRequired = false
         var tokenRequired: Bool
         tokenRequired = true
-        let path = "/api/v2/longpoll"
+        let path = "/api/v2/og"
         
         var queryParams = [URLQueryItem]()
         
-        connectionIdRequired = requiresConnectionId
-        if let json, let jsonQueryParams = try? encodeJSONToQueryItems(data: json) {
-            queryParams.append(contentsOf: jsonQueryParams)
+        if let url {
+            let urlValue = String(url)
+            let urlQueryItem = URLQueryItem(name: "url", value: urlValue)
+            queryParams.append(urlQueryItem)
         }
-        
         let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
         queryParams.append(apiKey)
         
@@ -1902,55 +1331,20 @@ public class API: DefaultAPIEndpoints {
             }
             switch result {
             case let .success(request):
-                apiClient.request(request, completion: completion)
+                apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
             case let .failure(error):
                 completion(.failure(error))
             }
         }
     }
 
-    public func getApp(completion: @escaping (Result<StreamChatGetApplicationResponse, Error>) -> Void) {
+    public func getMessage(id: String, isRecoveryOperation: Bool = false, completion: @escaping (Result<StreamChatMessageWithPendingMetadataResponse, Error>) -> Void) {
         var connectionIdRequired: Bool
         connectionIdRequired = false
         var tokenRequired: Bool
         tokenRequired = true
-        let path = "/api/v2/app"
+        var path = "/api/v2/chat/messages/{id}"
         
-        var queryParams = [URLQueryItem]()
-        
-        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
-        queryParams.append(apiKey)
-        
-        makeRequest(
-            uriPath: path,
-            queryParams: queryParams,
-            httpMethod: "GET",
-            requiresConnectionId: connectionIdRequired,
-            requiresToken: tokenRequired
-        ) { [weak self] result in
-            guard let self else {
-                completion(.failure(ClientError.Unknown()))
-                return
-            }
-            switch result {
-            case let .success(request):
-                apiClient.request(request, completion: completion)
-            case let .failure(error):
-                completion(.failure(error))
-            }
-        }
-    }
-
-    public func markUnread(type: String, id: String, markUnreadRequest: StreamChatMarkUnreadRequest, completion: @escaping (Result<StreamChatResponse, Error>) -> Void) {
-        var connectionIdRequired: Bool
-        connectionIdRequired = false
-        var tokenRequired: Bool
-        tokenRequired = true
-        var path = "/api/v2/chat/channels/{type}/{id}/unread"
-        
-        let typePreEscape = "\(APIHelper.mapValueToPathItem(type))"
-        let typePostEscape = typePreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
-        path = path.replacingOccurrences(of: String(format: "{%@}", "type"), with: typePostEscape, options: .literal, range: nil)
         let idPreEscape = "\(APIHelper.mapValueToPathItem(id))"
         let idPostEscape = idPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
         path = path.replacingOccurrences(of: String(format: "{%@}", "id"), with: idPostEscape, options: .literal, range: nil)
@@ -1962,10 +1356,9 @@ public class API: DefaultAPIEndpoints {
         makeRequest(
             uriPath: path,
             queryParams: queryParams,
-            httpMethod: "POST",
+            httpMethod: "GET",
             requiresConnectionId: connectionIdRequired,
-            requiresToken: tokenRequired,
-            request: markUnreadRequest
+            requiresToken: tokenRequired
         ) { [weak self] result in
             guard let self else {
                 completion(.failure(ClientError.Unknown()))
@@ -1973,19 +1366,19 @@ public class API: DefaultAPIEndpoints {
             }
             switch result {
             case let .success(request):
-                self.apiClient.request(request, completion: completion)
+                apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
             case let .failure(error):
                 completion(.failure(error))
             }
         }
     }
 
-    public func runMessageAction(id: String, messageActionRequest: StreamChatMessageActionRequest, completion: @escaping (Result<StreamChatMessageResponse, Error>) -> Void) {
+    public func updateMessage(id: String, updateMessageRequest: StreamChatUpdateMessageRequest, isRecoveryOperation: Bool = false, completion: @escaping (Result<StreamChatUpdateMessageResponse, Error>) -> Void) {
         var connectionIdRequired: Bool
         connectionIdRequired = false
         var tokenRequired: Bool
         tokenRequired = true
-        var path = "/api/v2/chat/messages/{id}/action"
+        var path = "/api/v2/chat/messages/{id}"
         
         let idPreEscape = "\(APIHelper.mapValueToPathItem(id))"
         let idPostEscape = idPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
@@ -2001,7 +1394,7 @@ public class API: DefaultAPIEndpoints {
             httpMethod: "POST",
             requiresConnectionId: connectionIdRequired,
             requiresToken: tokenRequired,
-            request: messageActionRequest
+            request: updateMessageRequest
         ) { [weak self] result in
             guard let self else {
                 completion(.failure(ClientError.Unknown()))
@@ -2009,34 +1402,70 @@ public class API: DefaultAPIEndpoints {
             }
             switch result {
             case let .success(request):
-                self.apiClient.request(request, completion: completion)
+                self.apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
             case let .failure(error):
                 completion(.failure(error))
             }
         }
     }
 
-    public func getReactions(id: String, limit: Int?, offset: Int?, completion: @escaping (Result<StreamChatGetReactionsResponse, Error>) -> Void) {
+    public func updateMessagePartial(id: String, updateMessagePartialRequest: StreamChatUpdateMessagePartialRequest, isRecoveryOperation: Bool = false, completion: @escaping (Result<StreamChatUpdateMessagePartialResponse, Error>) -> Void) {
         var connectionIdRequired: Bool
         connectionIdRequired = false
         var tokenRequired: Bool
         tokenRequired = true
-        var path = "/api/v2/chat/messages/{id}/reactions"
+        var path = "/api/v2/chat/messages/{id}"
         
         let idPreEscape = "\(APIHelper.mapValueToPathItem(id))"
         let idPostEscape = idPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
         path = path.replacingOccurrences(of: String(format: "{%@}", "id"), with: idPostEscape, options: .literal, range: nil)
         var queryParams = [URLQueryItem]()
         
-        if let limit {
-            let limitValue = String(limit)
-            let limitQueryItem = URLQueryItem(name: "limit", value: limitValue)
-            queryParams.append(limitQueryItem)
+        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
+        queryParams.append(apiKey)
+        
+        makeRequest(
+            uriPath: path,
+            queryParams: queryParams,
+            httpMethod: "PUT",
+            requiresConnectionId: connectionIdRequired,
+            requiresToken: tokenRequired,
+            request: updateMessagePartialRequest
+        ) { [weak self] result in
+            guard let self else {
+                completion(.failure(ClientError.Unknown()))
+                return
+            }
+            switch result {
+            case let .success(request):
+                self.apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
+            case let .failure(error):
+                completion(.failure(error))
+            }
         }
-        if let offset {
-            let offsetValue = String(offset)
-            let offsetQueryItem = URLQueryItem(name: "offset", value: offsetValue)
-            queryParams.append(offsetQueryItem)
+    }
+
+    public func deleteMessage(id: String, hard: Bool?, deletedBy: String?, isRecoveryOperation: Bool = false, completion: @escaping (Result<StreamChatMessageResponse, Error>) -> Void) {
+        var connectionIdRequired: Bool
+        connectionIdRequired = false
+        var tokenRequired: Bool
+        tokenRequired = true
+        var path = "/api/v2/chat/messages/{id}"
+        
+        let idPreEscape = "\(APIHelper.mapValueToPathItem(id))"
+        let idPostEscape = idPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        path = path.replacingOccurrences(of: String(format: "{%@}", "id"), with: idPostEscape, options: .literal, range: nil)
+        var queryParams = [URLQueryItem]()
+        
+        if let hard {
+            let hardValue = String(hard)
+            let hardQueryItem = URLQueryItem(name: "hard", value: hardValue)
+            queryParams.append(hardQueryItem)
+        }
+        if let deletedBy {
+            let deletedByValue = String(deletedBy)
+            let deletedByQueryItem = URLQueryItem(name: "deleted_by", value: deletedByValue)
+            queryParams.append(deletedByQueryItem)
         }
         let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
         queryParams.append(apiKey)
@@ -2044,7 +1473,7 @@ public class API: DefaultAPIEndpoints {
         makeRequest(
             uriPath: path,
             queryParams: queryParams,
-            httpMethod: "GET",
+            httpMethod: "DELETE",
             requiresConnectionId: connectionIdRequired,
             requiresToken: tokenRequired
         ) { [weak self] result in
@@ -2054,14 +1483,14 @@ public class API: DefaultAPIEndpoints {
             }
             switch result {
             case let .success(request):
-                apiClient.request(request, completion: completion)
+                apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
             case let .failure(error):
                 completion(.failure(error))
             }
         }
     }
 
-    public func ban(banRequest: StreamChatBanRequest, completion: @escaping (Result<StreamChatResponse, Error>) -> Void) {
+    public func ban(banRequest: StreamChatBanRequest, isRecoveryOperation: Bool = false, completion: @escaping (Result<StreamChatResponse, Error>) -> Void) {
         var connectionIdRequired: Bool
         connectionIdRequired = false
         var tokenRequired: Bool
@@ -2087,14 +1516,14 @@ public class API: DefaultAPIEndpoints {
             }
             switch result {
             case let .success(request):
-                self.apiClient.request(request, completion: completion)
+                self.apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
             case let .failure(error):
                 completion(.failure(error))
             }
         }
     }
 
-    public func unban(targetUserId: String?, type: String?, id: String?, createdBy: String?, completion: @escaping (Result<StreamChatResponse, Error>) -> Void) {
+    public func unban(targetUserId: String?, type: String?, id: String?, createdBy: String?, isRecoveryOperation: Bool = false, completion: @escaping (Result<StreamChatResponse, Error>) -> Void) {
         var connectionIdRequired: Bool
         connectionIdRequired = false
         var tokenRequired: Bool
@@ -2139,14 +1568,316 @@ public class API: DefaultAPIEndpoints {
             }
             switch result {
             case let .success(request):
-                apiClient.request(request, completion: completion)
+                apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
             case let .failure(error):
                 completion(.failure(error))
             }
         }
     }
 
-    public func muteUser(muteUserRequest: StreamChatMuteUserRequest, completion: @escaping (Result<StreamChatMuteUserResponse, Error>) -> Void) {
+    public func queryMessageFlags(payload: StreamChatQueryMessageFlagsRequest?, isRecoveryOperation: Bool = false, completion: @escaping (Result<StreamChatQueryMessageFlagsResponse, Error>) -> Void) {
+        var connectionIdRequired: Bool
+        connectionIdRequired = false
+        var tokenRequired: Bool
+        tokenRequired = true
+        let path = "/api/v2/chat/moderation/flags/message"
+        
+        var queryParams = [URLQueryItem]()
+        
+        if let payload, let payloadQueryParams = try? encodeJSONToQueryItems(data: payload) {
+            queryParams.append(contentsOf: payloadQueryParams)
+        }
+        
+        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
+        queryParams.append(apiKey)
+        
+        makeRequest(
+            uriPath: path,
+            queryParams: queryParams,
+            httpMethod: "GET",
+            requiresConnectionId: connectionIdRequired,
+            requiresToken: tokenRequired
+        ) { [weak self] result in
+            guard let self else {
+                completion(.failure(ClientError.Unknown()))
+                return
+            }
+            switch result {
+            case let .success(request):
+                apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+
+    public func markUnread(type: String, id: String, markUnreadRequest: StreamChatMarkUnreadRequest, isRecoveryOperation: Bool = false, completion: @escaping (Result<StreamChatResponse, Error>) -> Void) {
+        var connectionIdRequired: Bool
+        connectionIdRequired = false
+        var tokenRequired: Bool
+        tokenRequired = true
+        var path = "/api/v2/chat/channels/{type}/{id}/unread"
+        
+        let typePreEscape = "\(APIHelper.mapValueToPathItem(type))"
+        let typePostEscape = typePreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        path = path.replacingOccurrences(of: String(format: "{%@}", "type"), with: typePostEscape, options: .literal, range: nil)
+        let idPreEscape = "\(APIHelper.mapValueToPathItem(id))"
+        let idPostEscape = idPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        path = path.replacingOccurrences(of: String(format: "{%@}", "id"), with: idPostEscape, options: .literal, range: nil)
+        var queryParams = [URLQueryItem]()
+        
+        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
+        queryParams.append(apiKey)
+        
+        makeRequest(
+            uriPath: path,
+            queryParams: queryParams,
+            httpMethod: "POST",
+            requiresConnectionId: connectionIdRequired,
+            requiresToken: tokenRequired,
+            request: markUnreadRequest
+        ) { [weak self] result in
+            guard let self else {
+                completion(.failure(ClientError.Unknown()))
+                return
+            }
+            switch result {
+            case let .success(request):
+                self.apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+
+    public func queryMembers(payload: StreamChatQueryMembersRequest?, isRecoveryOperation: Bool = false, completion: @escaping (Result<StreamChatMembersResponse, Error>) -> Void) {
+        var connectionIdRequired: Bool
+        connectionIdRequired = false
+        var tokenRequired: Bool
+        tokenRequired = true
+        let path = "/api/v2/chat/members"
+        
+        var queryParams = [URLQueryItem]()
+        
+        if let payload, let payloadQueryParams = try? encodeJSONToQueryItems(data: payload) {
+            queryParams.append(contentsOf: payloadQueryParams)
+        }
+        
+        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
+        queryParams.append(apiKey)
+        
+        makeRequest(
+            uriPath: path,
+            queryParams: queryParams,
+            httpMethod: "GET",
+            requiresConnectionId: connectionIdRequired,
+            requiresToken: tokenRequired
+        ) { [weak self] result in
+            guard let self else {
+                completion(.failure(ClientError.Unknown()))
+                return
+            }
+            switch result {
+            case let .success(request):
+                apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+
+    public func deleteReaction(id: String, type: String, userId: String?, isRecoveryOperation: Bool = false, completion: @escaping (Result<StreamChatReactionRemovalResponse, Error>) -> Void) {
+        var connectionIdRequired: Bool
+        connectionIdRequired = false
+        var tokenRequired: Bool
+        tokenRequired = true
+        var path = "/api/v2/chat/messages/{id}/reaction/{type}"
+        
+        let idPreEscape = "\(APIHelper.mapValueToPathItem(id))"
+        let idPostEscape = idPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        path = path.replacingOccurrences(of: String(format: "{%@}", "id"), with: idPostEscape, options: .literal, range: nil)
+        let typePreEscape = "\(APIHelper.mapValueToPathItem(type))"
+        let typePostEscape = typePreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        path = path.replacingOccurrences(of: String(format: "{%@}", "type"), with: typePostEscape, options: .literal, range: nil)
+        var queryParams = [URLQueryItem]()
+        
+        if let userId {
+            let userIdValue = String(userId)
+            let userIdQueryItem = URLQueryItem(name: "user_id", value: userIdValue)
+            queryParams.append(userIdQueryItem)
+        }
+        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
+        queryParams.append(apiKey)
+        
+        makeRequest(
+            uriPath: path,
+            queryParams: queryParams,
+            httpMethod: "DELETE",
+            requiresConnectionId: connectionIdRequired,
+            requiresToken: tokenRequired
+        ) { [weak self] result in
+            guard let self else {
+                completion(.failure(ClientError.Unknown()))
+                return
+            }
+            switch result {
+            case let .success(request):
+                apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+
+    public func queryBannedUsers(payload: StreamChatQueryBannedUsersRequest?, isRecoveryOperation: Bool = false, completion: @escaping (Result<StreamChatQueryBannedUsersResponse, Error>) -> Void) {
+        var connectionIdRequired: Bool
+        connectionIdRequired = false
+        var tokenRequired: Bool
+        tokenRequired = true
+        let path = "/api/v2/chat/query_banned_users"
+        
+        var queryParams = [URLQueryItem]()
+        
+        if let payload, let payloadQueryParams = try? encodeJSONToQueryItems(data: payload) {
+            queryParams.append(contentsOf: payloadQueryParams)
+        }
+        
+        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
+        queryParams.append(apiKey)
+        
+        makeRequest(
+            uriPath: path,
+            queryParams: queryParams,
+            httpMethod: "GET",
+            requiresConnectionId: connectionIdRequired,
+            requiresToken: tokenRequired
+        ) { [weak self] result in
+            guard let self else {
+                completion(.failure(ClientError.Unknown()))
+                return
+            }
+            switch result {
+            case let .success(request):
+                apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+
+    public func queryChannels(queryChannelsRequest: StreamChatQueryChannelsRequest, requiresConnectionId: Bool, isRecoveryOperation: Bool = false, completion: @escaping (Result<StreamChatChannelsResponse, Error>) -> Void) {
+        var connectionIdRequired: Bool
+        connectionIdRequired = false
+        var tokenRequired: Bool
+        tokenRequired = true
+        let path = "/api/v2/chat/channels"
+        
+        var queryParams = [URLQueryItem]()
+        
+        connectionIdRequired = requiresConnectionId
+        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
+        queryParams.append(apiKey)
+        
+        makeRequest(
+            uriPath: path,
+            queryParams: queryParams,
+            httpMethod: "POST",
+            requiresConnectionId: connectionIdRequired,
+            requiresToken: tokenRequired,
+            request: queryChannelsRequest
+        ) { [weak self] result in
+            guard let self else {
+                completion(.failure(ClientError.Unknown()))
+                return
+            }
+            switch result {
+            case let .success(request):
+                self.apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+
+    public func hideChannel(type: String, id: String, hideChannelRequest: StreamChatHideChannelRequest, isRecoveryOperation: Bool = false, completion: @escaping (Result<StreamChatHideChannelResponse, Error>) -> Void) {
+        var connectionIdRequired: Bool
+        connectionIdRequired = false
+        var tokenRequired: Bool
+        tokenRequired = true
+        var path = "/api/v2/chat/channels/{type}/{id}/hide"
+        
+        let typePreEscape = "\(APIHelper.mapValueToPathItem(type))"
+        let typePostEscape = typePreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        path = path.replacingOccurrences(of: String(format: "{%@}", "type"), with: typePostEscape, options: .literal, range: nil)
+        let idPreEscape = "\(APIHelper.mapValueToPathItem(id))"
+        let idPostEscape = idPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        path = path.replacingOccurrences(of: String(format: "{%@}", "id"), with: idPostEscape, options: .literal, range: nil)
+        var queryParams = [URLQueryItem]()
+        
+        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
+        queryParams.append(apiKey)
+        
+        makeRequest(
+            uriPath: path,
+            queryParams: queryParams,
+            httpMethod: "POST",
+            requiresConnectionId: connectionIdRequired,
+            requiresToken: tokenRequired,
+            request: hideChannelRequest
+        ) { [weak self] result in
+            guard let self else {
+                completion(.failure(ClientError.Unknown()))
+                return
+            }
+            switch result {
+            case let .success(request):
+                self.apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+
+    public func showChannel(type: String, id: String, showChannelRequest: StreamChatShowChannelRequest, isRecoveryOperation: Bool = false, completion: @escaping (Result<StreamChatShowChannelResponse, Error>) -> Void) {
+        var connectionIdRequired: Bool
+        connectionIdRequired = false
+        var tokenRequired: Bool
+        tokenRequired = true
+        var path = "/api/v2/chat/channels/{type}/{id}/show"
+        
+        let typePreEscape = "\(APIHelper.mapValueToPathItem(type))"
+        let typePostEscape = typePreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        path = path.replacingOccurrences(of: String(format: "{%@}", "type"), with: typePostEscape, options: .literal, range: nil)
+        let idPreEscape = "\(APIHelper.mapValueToPathItem(id))"
+        let idPostEscape = idPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        path = path.replacingOccurrences(of: String(format: "{%@}", "id"), with: idPostEscape, options: .literal, range: nil)
+        var queryParams = [URLQueryItem]()
+        
+        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
+        queryParams.append(apiKey)
+        
+        makeRequest(
+            uriPath: path,
+            queryParams: queryParams,
+            httpMethod: "POST",
+            requiresConnectionId: connectionIdRequired,
+            requiresToken: tokenRequired,
+            request: showChannelRequest
+        ) { [weak self] result in
+            guard let self else {
+                completion(.failure(ClientError.Unknown()))
+                return
+            }
+            switch result {
+            case let .success(request):
+                self.apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+
+    public func muteUser(muteUserRequest: StreamChatMuteUserRequest, isRecoveryOperation: Bool = false, completion: @escaping (Result<StreamChatMuteUserResponse, Error>) -> Void) {
         var connectionIdRequired: Bool
         connectionIdRequired = false
         var tokenRequired: Bool
@@ -2172,19 +1903,55 @@ public class API: DefaultAPIEndpoints {
             }
             switch result {
             case let .success(request):
-                self.apiClient.request(request, completion: completion)
+                self.apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
             case let .failure(error):
                 completion(.failure(error))
             }
         }
     }
 
-    public func markChannelsRead(markChannelsReadRequest: StreamChatMarkChannelsReadRequest, completion: @escaping (Result<StreamChatMarkReadResponse, Error>) -> Void) {
+    public func queryUsers(payload: StreamChatQueryUsersRequest?, isRecoveryOperation: Bool = false, completion: @escaping (Result<StreamChatUsersResponse, Error>) -> Void) {
         var connectionIdRequired: Bool
         connectionIdRequired = false
         var tokenRequired: Bool
         tokenRequired = true
-        let path = "/api/v2/chat/channels/read"
+        let path = "/api/v2/users"
+        
+        var queryParams = [URLQueryItem]()
+        
+        if let payload, let payloadQueryParams = try? encodeJSONToQueryItems(data: payload) {
+            queryParams.append(contentsOf: payloadQueryParams)
+        }
+        
+        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
+        queryParams.append(apiKey)
+        
+        makeRequest(
+            uriPath: path,
+            queryParams: queryParams,
+            httpMethod: "GET",
+            requiresConnectionId: connectionIdRequired,
+            requiresToken: tokenRequired
+        ) { [weak self] result in
+            guard let self else {
+                completion(.failure(ClientError.Unknown()))
+                return
+            }
+            switch result {
+            case let .success(request):
+                apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+
+    public func updateUsers(updateUsersRequest: StreamChatUpdateUsersRequest, isRecoveryOperation: Bool = false, completion: @escaping (Result<StreamChatUpdateUsersResponse, Error>) -> Void) {
+        var connectionIdRequired: Bool
+        connectionIdRequired = false
+        var tokenRequired: Bool
+        tokenRequired = true
+        let path = "/api/v2/users"
         
         var queryParams = [URLQueryItem]()
         
@@ -2197,7 +1964,7 @@ public class API: DefaultAPIEndpoints {
             httpMethod: "POST",
             requiresConnectionId: connectionIdRequired,
             requiresToken: tokenRequired,
-            request: markChannelsReadRequest
+            request: updateUsersRequest
         ) { [weak self] result in
             guard let self else {
                 completion(.failure(ClientError.Unknown()))
@@ -2205,7 +1972,240 @@ public class API: DefaultAPIEndpoints {
             }
             switch result {
             case let .success(request):
-                self.apiClient.request(request, completion: completion)
+                self.apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+
+    public func updateUsersPartial(updateUserPartialRequest: StreamChatUpdateUserPartialRequest, isRecoveryOperation: Bool = false, completion: @escaping (Result<StreamChatUpdateUsersResponse, Error>) -> Void) {
+        var connectionIdRequired: Bool
+        connectionIdRequired = false
+        var tokenRequired: Bool
+        tokenRequired = true
+        let path = "/api/v2/users"
+        
+        var queryParams = [URLQueryItem]()
+        
+        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
+        queryParams.append(apiKey)
+        
+        makeRequest(
+            uriPath: path,
+            queryParams: queryParams,
+            httpMethod: "PATCH",
+            requiresConnectionId: connectionIdRequired,
+            requiresToken: tokenRequired,
+            request: updateUserPartialRequest
+        ) { [weak self] result in
+            guard let self else {
+                completion(.failure(ClientError.Unknown()))
+                return
+            }
+            switch result {
+            case let .success(request):
+                self.apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+
+    public func updateChannel(type: String, id: String, updateChannelRequest: StreamChatUpdateChannelRequest, isRecoveryOperation: Bool = false, completion: @escaping (Result<StreamChatUpdateChannelResponse, Error>) -> Void) {
+        var connectionIdRequired: Bool
+        connectionIdRequired = false
+        var tokenRequired: Bool
+        tokenRequired = true
+        var path = "/api/v2/chat/channels/{type}/{id}"
+        
+        let typePreEscape = "\(APIHelper.mapValueToPathItem(type))"
+        let typePostEscape = typePreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        path = path.replacingOccurrences(of: String(format: "{%@}", "type"), with: typePostEscape, options: .literal, range: nil)
+        let idPreEscape = "\(APIHelper.mapValueToPathItem(id))"
+        let idPostEscape = idPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        path = path.replacingOccurrences(of: String(format: "{%@}", "id"), with: idPostEscape, options: .literal, range: nil)
+        var queryParams = [URLQueryItem]()
+        
+        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
+        queryParams.append(apiKey)
+        
+        makeRequest(
+            uriPath: path,
+            queryParams: queryParams,
+            httpMethod: "POST",
+            requiresConnectionId: connectionIdRequired,
+            requiresToken: tokenRequired,
+            request: updateChannelRequest
+        ) { [weak self] result in
+            guard let self else {
+                completion(.failure(ClientError.Unknown()))
+                return
+            }
+            switch result {
+            case let .success(request):
+                self.apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+
+    public func deleteChannel(type: String, id: String, hardDelete: Bool?, isRecoveryOperation: Bool = false, completion: @escaping (Result<StreamChatDeleteChannelResponse, Error>) -> Void) {
+        var connectionIdRequired: Bool
+        connectionIdRequired = false
+        var tokenRequired: Bool
+        tokenRequired = true
+        var path = "/api/v2/chat/channels/{type}/{id}"
+        
+        let typePreEscape = "\(APIHelper.mapValueToPathItem(type))"
+        let typePostEscape = typePreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        path = path.replacingOccurrences(of: String(format: "{%@}", "type"), with: typePostEscape, options: .literal, range: nil)
+        let idPreEscape = "\(APIHelper.mapValueToPathItem(id))"
+        let idPostEscape = idPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        path = path.replacingOccurrences(of: String(format: "{%@}", "id"), with: idPostEscape, options: .literal, range: nil)
+        var queryParams = [URLQueryItem]()
+        
+        if let hardDelete {
+            let hardDeleteValue = String(hardDelete)
+            let hardDeleteQueryItem = URLQueryItem(name: "hard_delete", value: hardDeleteValue)
+            queryParams.append(hardDeleteQueryItem)
+        }
+        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
+        queryParams.append(apiKey)
+        
+        makeRequest(
+            uriPath: path,
+            queryParams: queryParams,
+            httpMethod: "DELETE",
+            requiresConnectionId: connectionIdRequired,
+            requiresToken: tokenRequired
+        ) { [weak self] result in
+            guard let self else {
+                completion(.failure(ClientError.Unknown()))
+                return
+            }
+            switch result {
+            case let .success(request):
+                apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+
+    public func updateChannelPartial(type: String, id: String, updateChannelPartialRequest: StreamChatUpdateChannelPartialRequest, isRecoveryOperation: Bool = false, completion: @escaping (Result<StreamChatUpdateChannelPartialResponse, Error>) -> Void) {
+        var connectionIdRequired: Bool
+        connectionIdRequired = false
+        var tokenRequired: Bool
+        tokenRequired = true
+        var path = "/api/v2/chat/channels/{type}/{id}"
+        
+        let typePreEscape = "\(APIHelper.mapValueToPathItem(type))"
+        let typePostEscape = typePreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        path = path.replacingOccurrences(of: String(format: "{%@}", "type"), with: typePostEscape, options: .literal, range: nil)
+        let idPreEscape = "\(APIHelper.mapValueToPathItem(id))"
+        let idPostEscape = idPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        path = path.replacingOccurrences(of: String(format: "{%@}", "id"), with: idPostEscape, options: .literal, range: nil)
+        var queryParams = [URLQueryItem]()
+        
+        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
+        queryParams.append(apiKey)
+        
+        makeRequest(
+            uriPath: path,
+            queryParams: queryParams,
+            httpMethod: "PATCH",
+            requiresConnectionId: connectionIdRequired,
+            requiresToken: tokenRequired,
+            request: updateChannelPartialRequest
+        ) { [weak self] result in
+            guard let self else {
+                completion(.failure(ClientError.Unknown()))
+                return
+            }
+            switch result {
+            case let .success(request):
+                self.apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+
+    public func sendMessage(type: String, id: String, sendMessageRequest: StreamChatSendMessageRequest, isRecoveryOperation: Bool = false, completion: @escaping (Result<StreamChatSendMessageResponse, Error>) -> Void) {
+        var connectionIdRequired: Bool
+        connectionIdRequired = false
+        var tokenRequired: Bool
+        tokenRequired = true
+        var path = "/api/v2/chat/channels/{type}/{id}/message"
+        
+        let typePreEscape = "\(APIHelper.mapValueToPathItem(type))"
+        let typePostEscape = typePreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        path = path.replacingOccurrences(of: String(format: "{%@}", "type"), with: typePostEscape, options: .literal, range: nil)
+        let idPreEscape = "\(APIHelper.mapValueToPathItem(id))"
+        let idPostEscape = idPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        path = path.replacingOccurrences(of: String(format: "{%@}", "id"), with: idPostEscape, options: .literal, range: nil)
+        var queryParams = [URLQueryItem]()
+        
+        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
+        queryParams.append(apiKey)
+        
+        makeRequest(
+            uriPath: path,
+            queryParams: queryParams,
+            httpMethod: "POST",
+            requiresConnectionId: connectionIdRequired,
+            requiresToken: tokenRequired,
+            request: sendMessageRequest
+        ) { [weak self] result in
+            guard let self else {
+                completion(.failure(ClientError.Unknown()))
+                return
+            }
+            switch result {
+            case let .success(request):
+                self.apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+
+    public func stopWatchingChannel(type: String, id: String, channelStopWatchingRequest: StreamChatChannelStopWatchingRequest, requiresConnectionId: Bool, isRecoveryOperation: Bool = false, completion: @escaping (Result<StreamChatStopWatchingResponse, Error>) -> Void) {
+        var connectionIdRequired: Bool
+        connectionIdRequired = false
+        var tokenRequired: Bool
+        tokenRequired = true
+        var path = "/api/v2/chat/channels/{type}/{id}/stop-watching"
+        
+        let typePreEscape = "\(APIHelper.mapValueToPathItem(type))"
+        let typePostEscape = typePreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        path = path.replacingOccurrences(of: String(format: "{%@}", "type"), with: typePostEscape, options: .literal, range: nil)
+        let idPreEscape = "\(APIHelper.mapValueToPathItem(id))"
+        let idPostEscape = idPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        path = path.replacingOccurrences(of: String(format: "{%@}", "id"), with: idPostEscape, options: .literal, range: nil)
+        var queryParams = [URLQueryItem]()
+        
+        connectionIdRequired = requiresConnectionId
+        let apiKey = URLQueryItem(name: "api_key", value: apiKey.apiKeyString)
+        queryParams.append(apiKey)
+        
+        makeRequest(
+            uriPath: path,
+            queryParams: queryParams,
+            httpMethod: "POST",
+            requiresConnectionId: connectionIdRequired,
+            requiresToken: tokenRequired,
+            request: channelStopWatchingRequest
+        ) { [weak self] result in
+            guard let self else {
+                completion(.failure(ClientError.Unknown()))
+                return
+            }
+            switch result {
+            case let .success(request):
+                self.apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
             case let .failure(error):
                 completion(.failure(error))
             }

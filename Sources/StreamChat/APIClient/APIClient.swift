@@ -82,10 +82,15 @@ class APIClient {
     
     func request<Response: Decodable>(
         _ request: URLRequest,
+        isRecoveryOperation: Bool,
         completion: @escaping (Result<Response, Error>) -> Void
     ) {
-        let requestOperation = operation(request: request, isRecoveryOperation: false, completion: completion)
-        operationQueue.addOperation(requestOperation)
+        let requestOperation = operation(request: request, isRecoveryOperation: isRecoveryOperation, completion: completion)
+        if isRecoveryOperation {
+            recoveryQueue.addOperation(requestOperation)
+        } else {
+            operationQueue.addOperation(requestOperation)
+        }
     }
 
     /// Performs a network request and retries in case of network failures
@@ -203,7 +208,7 @@ class APIClient {
 
             guard !self.isRefreshingToken else {
                 // Requeue request
-                self.request(request, completion: completion)
+                self.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
                 done(.continue)
                 return
             }
@@ -212,7 +217,7 @@ class APIClient {
                 switch result {
                 case .failure(_ as ClientError.RefreshingToken):
                     // Requeue request
-                    self?.request(request, completion: completion)
+                    self?.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
                     done(.continue)
                 case .failure(_ as ClientError.TokenRefreshed):
                     // Retry request. Expired token has been refreshed
@@ -231,7 +236,7 @@ class APIClient {
                     // retries left
                     let inRecoveryMode = self?.isInRecoveryMode == true
                     if inRecoveryMode && !isRecoveryOperation && operation.canRetry {
-                        self?.request(request, completion: completion)
+                        self?.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
                         done(.continue)
                         return
                     }

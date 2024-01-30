@@ -53,7 +53,13 @@ class ChannelListUpdater: Worker {
 
         var unwantedCids = Set<ChannelId>()
         // Fetches the channels matching the query, and stores them in the database.
-        apiClient.recoveryRequest(endpoint: .channels(query: query)) { [weak self] result in
+        let request = request(from: updatedQuery)
+        let requiresConnectionId = updatedQuery.options.contains(oneOf: [.presence, .state, .watch])
+        api.queryChannels(
+            queryChannelsRequest: request,
+            requiresConnectionId: requiresConnectionId,
+            isRecoveryOperation: true
+        ) { [weak self] result in
             switch result {
             case let .success(channelListPayload):
                 self?.writeChannelListPayload(
@@ -63,7 +69,13 @@ class ChannelListUpdater: Worker {
                         guard let queryDTO = session.channelListQuery(filterHash: updatedQuery.filter.filterHash) else { return }
 
                         let localQueryCIDs = Set(queryDTO.channels.compactMap { try? ChannelId(cid: $0.cid) })
-                        let remoteQueryCIDs = Set(channelListPayload.channels.map(\.channel.cid))
+                        let remoteQueryCIDs = Set(channelListPayload.channels.compactMap {
+                            if let cid = $0.channel?.cid {
+                                return try? ChannelId(cid: cid)
+                            } else {
+                                return nil
+                            }
+                        })
 
                         let updatedChannels = synchedChannelIds.union(watchedAndSynchedChannelIds)
                         let localNotInRemote = localQueryCIDs.subtracting(remoteQueryCIDs)
@@ -133,27 +145,7 @@ class ChannelListUpdater: Worker {
         channelListQuery: ChannelListQuery,
         completion: @escaping (Result<StreamChatChannelsResponse, Error>) -> Void
     ) {
-        var filter: [String: RawJSON]?
-        if let data = try? JSONEncoder.default.encode(channelListQuery.filter) {
-            filter = try? JSONDecoder.default.decode([String: RawJSON].self, from: data)
-        }
-        
-        let sort = channelListQuery.sort.map { sortingKey in
-            StreamChatSortParamRequest(direction: sortingKey.direction, field: sortingKey.key.remoteKey)
-        }
-        
-        let request = StreamChatQueryChannelsRequest(
-            limit: channelListQuery.pagination.pageSize,
-            memberLimit: channelListQuery.membersLimit,
-            messageLimit: channelListQuery.messagesLimit,
-            offset: channelListQuery.pagination.offset,
-            presence: channelListQuery.options.contains(.presence),
-            state: channelListQuery.options.contains(.state),
-            watch: channelListQuery.options.contains(.watch),
-            sort: sort,
-            filterConditions: filter
-        )
-        
+        let request = request(from: channelListQuery)
         let requiresConnectionId = channelListQuery.options.contains(oneOf: [.presence, .state, .watch])
         api.queryChannels(
             queryChannelsRequest: request,
@@ -165,8 +157,13 @@ class ChannelListUpdater: Worker {
     /// Marks all channels for a user as read.
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func markAllRead(completion: ((Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .markAllRead()) {
-            completion?($0.error)
+        api.markChannelsRead(markChannelsReadRequest: StreamChatMarkChannelsReadRequest()) { result in
+            switch result {
+            case .success:
+                completion?(nil)
+            case let .failure(error):
+                completion?(error)
+            }
         }
     }
 
@@ -192,6 +189,31 @@ class ChannelListUpdater: Worker {
         } completion: { error in
             completion?(error)
         }
+    }
+    
+    private func request(from channelListQuery: ChannelListQuery) -> StreamChatQueryChannelsRequest {
+        var filter: [String: RawJSON]?
+        if let data = try? JSONEncoder.default.encode(channelListQuery.filter) {
+            filter = try? JSONDecoder.default.decode([String: RawJSON].self, from: data)
+        }
+        
+        let sort = channelListQuery.sort.map { sortingKey in
+            StreamChatSortParamRequest(direction: sortingKey.direction, field: sortingKey.key.remoteKey)
+        }
+        
+        let request = StreamChatQueryChannelsRequest(
+            limit: channelListQuery.pagination.pageSize,
+            memberLimit: channelListQuery.membersLimit,
+            messageLimit: channelListQuery.messagesLimit,
+            offset: channelListQuery.pagination.offset,
+            presence: channelListQuery.options.contains(.presence),
+            state: channelListQuery.options.contains(.state),
+            watch: channelListQuery.options.contains(.watch),
+            sort: sort,
+            filterConditions: filter
+        )
+        
+        return request
     }
 }
 

@@ -141,14 +141,9 @@ class ChannelUpdater: Worker {
             id: channelQuery.id ?? "", // TODO: check this
             channelGetOrCreateRequest: request,
             requiresConnectionId: requiresConnectionId,
+            isRecoveryOperation: isInRecoveryMode,
             completion: completion
         )
-
-//        if isInRecoveryMode {
-//            apiClient.recoveryRequest(endpoint: endpoint, completion: completion)
-//        } else {
-//            apiClient.request(endpoint: endpoint, completion: completion)
-//        }
     }
 
     /// Updates specific channel with new data.
