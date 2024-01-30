@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChat
 ### 🐞 Fixed
+- Fix threading issues in `AuthenticationRepository` [#2986](https://github.com/GetStream/stream-chat-swift/pull/2986)
 - Fix a possible threading issue in `ConnectionRepository` [#2985](https://github.com/GetStream/stream-chat-swift/pull/2985)
 
 ### 🔄 Changed
