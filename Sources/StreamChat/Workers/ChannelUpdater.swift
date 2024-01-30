@@ -15,12 +15,13 @@ class ChannelUpdater: Worker {
         callRepository: CallRepository,
         paginationStateHandler: MessagesPaginationStateHandling,
         database: DatabaseContainer,
-        apiClient: APIClient
+        apiClient: APIClient,
+        api: API
     ) {
         self.channelRepository = channelRepository
         self.callRepository = callRepository
         self.paginationStateHandler = paginationStateHandler
-        super.init(database: database, apiClient: apiClient)
+        super.init(database: database, apiClient: apiClient, api: api)
     }
 
     var paginationState: MessagesPaginationState {
@@ -43,7 +44,7 @@ class ChannelUpdater: Worker {
         channelQuery: ChannelQuery,
         isInRecoveryMode: Bool,
         onChannelCreated: ((ChannelId) -> Void)? = nil,
-        completion: ((Result<ChannelPayload, Error>) -> Void)? = nil
+        completion: ((Result<StreamChatChannelStateResponse, Error>) -> Void)? = nil
     ) {
         if let pagination = channelQuery.pagination {
             paginationStateHandler.begin(pagination: pagination)
@@ -51,26 +52,41 @@ class ChannelUpdater: Worker {
         
         let didLoadFirstPage = channelQuery.pagination?.parameter == nil
         let didJumpToMessage: Bool = channelQuery.pagination?.parameter?.isJumpingToMessage == true
-        let isChannelCreate = onChannelCreated != nil
 
-        let completion: (Result<ChannelPayload, Error>) -> Void = { [weak database] result in
+        let completion: (Result<StreamChatChannelStateResponse, Error>) -> Void = { [weak database] result in
             do {
                 if let pagination = channelQuery.pagination {
                     self.paginationStateHandler.end(pagination: pagination, with: result.map(\.messages))
                 }
 
                 let payload = try result.get()
-
-                onChannelCreated?(payload.channel.cid)
+                
+                let cid = try ChannelId(cid: payload.channel?.cid ?? "")
+                
+                onChannelCreated?(cid)
 
                 database?.write { session in
-                    if let channelDTO = session.channel(cid: payload.channel.cid) {
+                    if let channelDTO = session.channel(cid: cid) {
                         if didJumpToMessage || didLoadFirstPage {
                             channelDTO.cleanAllMessagesExcludingLocalOnly()
                         }
                     }
 
-                    let updatedChannel = try session.saveChannel(payload: payload)
+                    // TODO: introduce a protocol or other abstraction.
+                    let mappedPayload = StreamChatChannelStateResponseFields(
+                        members: payload.members,
+                        messages: payload.messages,
+                        pinnedMessages: payload.pinnedMessages,
+                        hidden: payload.hidden,
+                        hideMessagesBefore: payload.hideMessagesBefore,
+                        watcherCount: payload.watcherCount,
+                        pendingMessages: payload.pendingMessages,
+                        read: payload.read,
+                        watchers: payload.watchers,
+                        channel: payload.channel,
+                        membership: payload.membership
+                    )
+                    let updatedChannel = try session.saveChannel(payload: mappedPayload, query: nil, cache: nil)
                     updatedChannel.oldestMessageAt = self.paginationState.oldestMessageAt?.bridgeDate
                     updatedChannel.newestMessageAt = self.paginationState.newestMessageAt?.bridgeDate
 
@@ -86,14 +102,53 @@ class ChannelUpdater: Worker {
             }
         }
 
-        let endpoint: Endpoint<ChannelPayload> = isChannelCreate ? .createChannel(query: channelQuery) :
-            .updateChannel(query: channelQuery)
+        let requiresConnectionId = channelQuery.options.contains(oneOf: [.presence, .state, .watch])
+        
+        let payload = channelQuery.channelPayload
+        let members = payload?.members.map { StreamChatChannelMemberRequest(userId: $0) }
+        let data = StreamChatChannelRequest(
+            team: payload?.team,
+            members: members,
+            custom: payload?.extraData
+        )
+        
+        let membersLimit = StreamChatPaginationParamsRequest(limit: channelQuery.membersLimit)
+        
+        let parameters = channelQuery.pagination?.parameter?.parameters
+        let messages = StreamChatMessagePaginationParamsRequest(
+            idAround: parameters?["id_around"] as? String,
+            idGt: parameters?["id_gt"] as? String,
+            idGte: parameters?["id_gte"] as? String,
+            idLt: parameters?["id_lt"] as? String,
+            idLte: parameters?["id_lte"] as? String,
+            limit: channelQuery.pagination?.pageSize
+        )
+        
+        let watchersLimit = StreamChatPaginationParamsRequest(limit: channelQuery.watchersLimit)
+        
+        let request = StreamChatChannelGetOrCreateRequest(
+            presence: channelQuery.options.contains([.presence]),
+            state: channelQuery.options.contains([.state]),
+            watch: channelQuery.options.contains([.watch]),
+            data: data,
+            members: membersLimit,
+            messages: messages,
+            watchers: watchersLimit
+        )
+        
+        api.getOrCreateChannel(
+            type: channelQuery.type.rawValue,
+            id: channelQuery.id ?? "", // TODO: check this
+            channelGetOrCreateRequest: request,
+            requiresConnectionId: requiresConnectionId,
+            completion: completion
+        )
 
-        if isInRecoveryMode {
-            apiClient.recoveryRequest(endpoint: endpoint, completion: completion)
-        } else {
-            apiClient.request(endpoint: endpoint, completion: completion)
-        }
+//        if isInRecoveryMode {
+//            apiClient.recoveryRequest(endpoint: endpoint, completion: completion)
+//        } else {
+//            apiClient.request(endpoint: endpoint, completion: completion)
+//        }
     }
 
     /// Updates specific channel with new data.

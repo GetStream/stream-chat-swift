@@ -14,6 +14,9 @@ protocol MessagesPaginationStateHandling {
     /// A method that will be called to inform the object that a pagination call has finished
     /// with the provided result.
     func end(pagination: MessagesPagination, with result: Result<[MessagePayload], Error>)
+    
+    // TODO: remove the upper one.
+    func end(pagination: MessagesPagination, with result: Result<[StreamChatMessage], Error>)
 }
 
 /// A component responsible for handling the messages pagination state.
@@ -57,6 +60,51 @@ class MessagesPaginationStateHandler: MessagesPaginationStateHandling {
     }
 
     func end(pagination: MessagesPagination, with result: Result<[MessagePayload], Error>) {
+//        state.isLoadingNextMessages = false
+//        state.isLoadingMiddleMessages = false
+//        state.isLoadingPreviousMessages = false
+//
+//        guard let messages = result.value else {
+//            return
+//        }
+//
+//        let oldestFetchedMessage = messages.first
+//        let newestFetchedMessage = messages.last
+//
+//        switch pagination.parameter {
+//        case .lessThan, .lessThanOrEqual:
+//            state.oldestFetchedMessage = oldestFetchedMessage
+//            if messages.count < pagination.pageSize {
+//                state.hasLoadedAllPreviousMessages = true
+//            }
+//
+//        case .greaterThan, .greaterThanOrEqual:
+//            state.newestFetchedMessage = newestFetchedMessage
+//            if messages.count < pagination.pageSize {
+//                state.hasLoadedAllNextMessages = true
+//            }
+//
+//        case let .around(messageId):
+//            state.oldestFetchedMessage = oldestFetchedMessage
+//            state.newestFetchedMessage = newestFetchedMessage
+//
+//            calculateHasLoadedAllMessagesBasedOnTheLocation(of: messageId, given: messages)
+//
+//            if messages.count < pagination.pageSize {
+//                state.hasLoadedAllNextMessages = true
+//                state.hasLoadedAllPreviousMessages = true
+//            }
+//
+//        case .none:
+//            state.oldestFetchedMessage = oldestFetchedMessage
+//            state.hasLoadedAllNextMessages = true
+//            if messages.count < pagination.pageSize {
+//                state.hasLoadedAllPreviousMessages = true
+//            }
+//        }
+    }
+    
+    func end(pagination: MessagesPagination, with result: Result<[StreamChatMessage], Error>) {
         state.isLoadingNextMessages = false
         state.isLoadingMiddleMessages = false
         state.isLoadingPreviousMessages = false
@@ -116,7 +164,7 @@ class MessagesPaginationStateHandler: MessagesPaginationStateHandling {
     ///   from the backend, this logic wouldn't be required. But until then we need to do this.
     private func calculateHasLoadedAllMessagesBasedOnTheLocation(
         of aroundMessageId: MessageId,
-        given messages: [MessagePayload]
+        given messages: [StreamChatMessage]
     ) {
         guard !messages.isEmpty else {
             return

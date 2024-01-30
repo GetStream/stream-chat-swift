@@ -64,7 +64,8 @@ public class ChatChannelWatcherListController: DataController, DelegateCallable,
         client.callRepository,
         client.makeMessagesPaginationStateHandler(),
         client.databaseContainer,
-        client.apiClient
+        client.apiClient,
+        client.api
     )
 
     private let environment: Environment
@@ -139,7 +140,8 @@ extension ChatChannelWatcherListController {
             _ callRepository: CallRepository,
             _ paginationStateHandler: MessagesPaginationStateHandling,
             _ database: DatabaseContainer,
-            _ apiClient: APIClient
+            _ apiClient: APIClient,
+            _ api: API
         ) -> ChannelUpdater = ChannelUpdater.init
 
         var watcherListObserverBuilder: (
