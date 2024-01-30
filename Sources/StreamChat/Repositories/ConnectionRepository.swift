@@ -216,7 +216,7 @@ class ConnectionRepository {
         connectionId: String?,
         shouldNotifyWaiters: Bool
     ) {
-        let waiters: [String: (Result<ConnectionId, Error>) -> Void] = connectionQueue.sync {
+        let waiters: [String: (Result<ConnectionId, Error>) -> Void] = connectionQueue.sync(flags: .barrier) {
             _connectionId = connectionId
             guard shouldNotifyWaiters else { return [:] }
             let waiters = _connectionIdWaiters

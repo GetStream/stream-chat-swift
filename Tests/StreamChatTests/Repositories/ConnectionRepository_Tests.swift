@@ -470,7 +470,7 @@ final class ConnectionRepository_Tests: XCTestCase {
         XCTAssertEqual(result?.value, connectionId)
     }
 
-    func test_connectionId_doesNotDeadlock() {
+    func test_connectionId_triggersCompletions_whenConcurrentlyCalled() {
         let iterations = 100
         let expectations = (0..<iterations).map { XCTestExpectation(description: "\($0)") }
         DispatchQueue.concurrentPerform(iterations: 100) { index in
