@@ -603,7 +603,7 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
             )
 
             linkDetector.links(in: text).forEach { textLink in
-                attributedText.addAttribute(.link, value: textLink.url.absoluteString, range: textLink.range)
+                attributedText.addAttribute(.link, value: textLink.url, range: textLink.range)
             }
 
             textView?.attributedText = attributedText

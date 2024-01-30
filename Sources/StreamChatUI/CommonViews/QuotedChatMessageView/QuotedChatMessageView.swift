@@ -201,7 +201,7 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
         )
 
         linkDetector.links(in: text).forEach { textLink in
-            attributedText.addAttribute(.link, value: textLink.url.absoluteString, range: textLink.range)
+            attributedText.addAttribute(.link, value: textLink.url, range: textLink.range)
         }
 
         textView.attributedText = attributedText
