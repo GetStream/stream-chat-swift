@@ -791,6 +791,50 @@ final class ComposerVC_Tests: XCTestCase {
         }
     }
 
+    func test_didChangeLinks_whenMultipleAttachmentTypes_thenDismissLinkPreview() {
+        let composerVC = SpyComposerVC()
+        composerVC.components.isComposerLinkPreviewEnabled = true
+        let mock = ChatChannelController_Mock.mock(client: .mock())
+        mock.channel_mock = .mockNonDMChannel(config: .mock(urlEnrichmentEnabled: true))
+        composerVC.channelController = mock
+        composerVC.content = .initial()
+        composerVC.content.attachments = [.mockAudio, .mockFile]
+
+        composerVC.didChangeLinks([.init(url: .localYodaImage, range: .init(location: 0, length: 10))])
+
+        XCTAssertEqual(composerVC.dismissLinkPreviewCallCount, 1)
+    }
+
+    func test_updateContent_whenMultipleAttachmentTypes_whenSkipEnrichUrlIsFalse_thenDismissLinkPreview() {
+        let composerVC = SpyComposerVC()
+        composerVC.components.isComposerLinkPreviewEnabled = true
+        let mock = ChatChannelController_Mock.mock(client: .mock())
+        mock.channel_mock = .mockNonDMChannel(config: .mock(urlEnrichmentEnabled: true))
+        composerVC.channelController = mock
+        composerVC.content = .initial()
+        composerVC.content.attachments = [.mockAudio, .mockFile]
+        composerVC.content.skipEnrichUrl = false
+
+        composerVC.updateContent()
+
+        XCTAssertEqual(composerVC.dismissLinkPreviewCallCount, 1)
+    }
+
+    func test_updateContent_whenMultipleAttachmentTypes_whenSkipEnrichUrlIsTrue_thenDoNotCallDismissLinkPreview() {
+        let composerVC = SpyComposerVC()
+        composerVC.components.isComposerLinkPreviewEnabled = true
+        let mock = ChatChannelController_Mock.mock(client: .mock())
+        mock.channel_mock = .mockNonDMChannel(config: .mock(urlEnrichmentEnabled: true))
+        composerVC.channelController = mock
+        composerVC.content = .initial()
+        composerVC.content.attachments = [.mockAudio, .mockFile]
+        composerVC.content.skipEnrichUrl = true
+
+        composerVC.updateContent()
+
+        XCTAssertEqual(composerVC.dismissLinkPreviewCallCount, 0)
+    }
+
     // MARK: - audioPlayer
     
     func test_audioPlayer_voiceRecordingAndAttachmentsVCGetTheSameInstance() {
