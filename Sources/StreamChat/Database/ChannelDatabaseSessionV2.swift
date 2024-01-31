@@ -192,8 +192,20 @@ extension NSManagedObjectContext {
         dto.reads.subtracting(reads).forEach { delete($0) }
         dto.reads = reads
 
-        try payload.messages.forEach { _ = try saveMessage(payload: $0, channelDTO: dto, syncOwnReactions: true, cache: cache) }
-
+        // TODO: experimental for now.
+        if query != nil {
+            if let last = payload.messages.last {
+                _ = try saveMessage(payload: last, channelDTO: dto, syncOwnReactions: true, cache: cache)
+            }
+            let remaining = payload.messages.dropLast()
+            perform { [weak self] in
+                guard let self else { return }
+                try? remaining.forEach { _ = try self.saveMessage(payload: $0, channelDTO: dto, syncOwnReactions: true, cache: cache) }
+            }
+        } else {
+            try payload.messages.forEach { _ = try saveMessage(payload: $0, channelDTO: dto, syncOwnReactions: true, cache: cache) }
+        }
+        
         if dto.needsPreviewUpdate(payload), let payloadCid = payload.channel?.cid, let cid = try? ChannelId(cid: payloadCid) {
             dto.previewMessage = preview(for: cid)
         }
