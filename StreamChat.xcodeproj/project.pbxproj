@@ -9002,7 +9002,6 @@
 				799C9418247D2F80001F1104 /* Frameworks */,
 				799C9419247D2F80001F1104 /* Resources */,
 				E3C7A0E42858BB10006133C3 /* SwiftLint */,
-				4A5122FF29D30BE0005CEA9B /* Vale */,
 			);
 			buildRules = (
 			);
@@ -9687,25 +9686,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		4A5122FF29D30BE0005CEA9B /* Vale */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = Vale;
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n./bin/vale-lint.sh\n";
-		};
 		88F0D6EB257E40B300F4B050 /* SwiftGen */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
