@@ -104,9 +104,9 @@ extension NSManagedObjectContext {
         let cid = try ChannelId(cid: payload.cid)
         let dto = ChannelDTO.loadOrCreate(cid: cid, context: self, cache: cache)
 
-        dto.name = payload.custom["name"]?.stringValue
+        dto.name = payload.custom?["name"]?.stringValue
         // TODO: revisit this.
-        dto.imageURL = URL(string: payload.custom["image"]?.stringValue ?? "")
+        dto.imageURL = URL(string: payload.custom?["image"]?.stringValue ?? "")
         do {
             dto.extraData = try JSONEncoder.default.encode(payload.custom)
         } catch {

@@ -19,7 +19,7 @@ public struct StreamChatChannelResponse: Codable, Hashable {
     
     public var updatedAt: Date
     
-    public var custom: [String: RawJSON]
+    public var custom: [String: RawJSON]?
     
     public var autoTranslationEnabled: Bool? = nil
     

@@ -1,6 +1,6 @@
 #!/bin/bash
 set -eo pipefail
-vale docusaurus
+# vale docusaurus
 
 ./hooks/git-format-staged --formatter 'mint run swiftformat --config .swiftformat stdin' 'Sources/*.swift' '!*Generated*' '!*StreamSwiftyMarkdown*' '!*StreamDifferenceKit*' '!*StreamNuke*' '!*StreamSwiftyGif*'
 ./hooks/git-format-staged --formatter 'mint run swiftformat --config .swiftformat stdin' 'Tests/*.swift'

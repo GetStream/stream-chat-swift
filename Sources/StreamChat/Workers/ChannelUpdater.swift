@@ -151,8 +151,39 @@ class ChannelUpdater: Worker {
     ///   - channelPayload: New channel data.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func updateChannel(channelPayload: ChannelEditDetailPayload, completion: ((Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .updateChannel(channelPayload: channelPayload)) {
-            completion?($0.error)
+        var extraData = channelPayload.extraData
+        if let name = channelPayload.name {
+            extraData["name"] = .string(name)
+        }
+        if let imageURL = channelPayload.imageURL?.absoluteString {
+            extraData["image"] = .string(imageURL)
+        }
+        
+        let channelRequest = StreamChatChannelRequest(
+            team: channelPayload.team,
+            members: channelPayload.members.map { StreamChatChannelMemberRequest(userId: $0) },
+            custom: extraData
+        )
+        
+        let request = StreamChatUpdateChannelRequest(
+            addModerators: [],
+            demoteModerators: [],
+            removeMembers: [],
+            invites: channelPayload.invites.map { StreamChatChannelMemberRequest(userId: $0) },
+            data: channelRequest
+        )
+
+        api.updateChannel(
+            type: channelPayload.type.rawValue,
+            id: channelPayload.id ?? "",
+            updateChannelRequest: request
+        ) { result in
+            switch result {
+            case .success:
+                completion?(nil)
+            case let .failure(error):
+                completion?(error)
+            }
         }
     }
 
@@ -166,8 +197,18 @@ class ChannelUpdater: Worker {
         unsetProperties: [String],
         completion: ((Error?) -> Void)? = nil
     ) {
-        apiClient.request(endpoint: .partialChannelUpdate(updates: updates, unsetProperties: unsetProperties)) {
-            completion?($0.error)
+        let request = StreamChatUpdateChannelPartialRequest(unset: unsetProperties, set: updates.extraData)
+        api.updateChannelPartial(
+            type: updates.type.rawValue,
+            id: updates.id ?? "",
+            updateChannelPartialRequest: request
+        ) { result in
+            switch result {
+            case .success:
+                completion?(nil)
+            case let .failure(error):
+                completion?(error)
+            }
         }
     }
 
@@ -177,8 +218,32 @@ class ChannelUpdater: Worker {
     ///   - mute: Defines if the channel with the specified **cid** should be muted.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func muteChannel(cid: ChannelId, mute: Bool, completion: ((Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .muteChannel(cid: cid, mute: mute)) {
-            completion?($0.error)
+        if mute {
+            let request = StreamChatMuteChannelRequest(channelCids: [cid.rawValue])
+            api.muteChannel(
+                muteChannelRequest: request
+            ) { result in
+                switch result {
+                case .success:
+                    completion?(nil)
+                case let .failure(error):
+                    completion?(error)
+                }
+            }
+        } else {
+            // TODO: check why twice.
+            let request = StreamChatUnmuteChannelRequest(
+                channelCid: cid.rawValue,
+                channelCids: [cid.rawValue]
+            )
+            api.unmuteChannel(unmuteChannelRequest: request) { result in
+                switch result {
+                case .success:
+                    completion?(nil)
+                case let .failure(error):
+                    completion?(error)
+                }
+            }
         }
     }
 
@@ -187,7 +252,12 @@ class ChannelUpdater: Worker {
     ///   - cid: The channel identifier.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func deleteChannel(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .deleteChannel(cid: cid)) { [weak self] result in
+        // TODO: check hard delete.
+        api.deleteChannel(
+            type: cid.type.rawValue,
+            id: cid.id,
+            hardDelete: false
+        ) { [weak self] result in
             switch result {
             case .success:
                 self?.database.write {
@@ -226,25 +296,10 @@ class ChannelUpdater: Worker {
 
         let context = database.backgroundReadOnlyContext
         context.perform { [weak self] in
-            guard let user = context.currentUser?.user.asRequestBody() else {
-                completion?(ClientError.Unknown("Couldn't fetch current user from local cache."))
-                return
-            }
-            let requestBody = MessageRequestBody(
-                id: .newUniqueId,
-                user: user,
-                text: message,
-                command: nil,
-                args: nil,
-                parentId: nil,
-                showReplyInChannel: false,
-                isSilent: false,
-                quotedMessageId: nil,
+            let requestBody = StreamChatMessageRequest(
                 attachments: [],
-                mentionedUserIds: [],
-                pinned: false,
-                pinExpires: nil,
-                extraData: [:]
+                id: .newUniqueId,
+                text: message
             )
             self?.truncate(
                 cid: cid,
@@ -260,14 +315,23 @@ class ChannelUpdater: Worker {
         cid: ChannelId,
         skipPush: Bool = false,
         hardDelete: Bool = true,
-        requestBody: MessageRequestBody? = nil,
+        requestBody: StreamChatMessageRequest? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
-        apiClient.request(endpoint: .truncateChannel(cid: cid, skipPush: skipPush, hardDelete: hardDelete, message: requestBody)) {
-            if let error = $0.error {
+        let request = StreamChatTruncateChannelRequest(
+            hardDelete: hardDelete,
+            skipPush: skipPush,
+            message: requestBody
+        )
+        api.truncateChannel(
+            type: cid.type.rawValue,
+            id: cid.id,
+            truncateChannelRequest: request
+        ) { result in
+            if let error = result.error {
                 log.error(error)
             }
-            completion?($0.error)
+            completion?(result.error)
         }
     }
 
@@ -277,7 +341,11 @@ class ChannelUpdater: Worker {
     ///   - clearHistory: Flag to remove channel history.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func hideChannel(cid: ChannelId, clearHistory: Bool, completion: ((Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .hideChannel(cid: cid, clearHistory: clearHistory)) { [weak self] result in
+        api.hideChannel(
+            type: cid.type.rawValue,
+            id: cid.id,
+            hideChannelRequest: StreamChatHideChannelRequest(clearHistory: clearHistory)
+        ) { [weak self] result in
             if result.error == nil {
                 // If the API call is a success, we mark the channel as hidden
                 // We do this because if the channel was already hidden, but the SDK
@@ -304,7 +372,11 @@ class ChannelUpdater: Worker {
     ///   - channel: The channel you want to show.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func showChannel(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .showChannel(cid: cid)) {
+        api.showChannel(
+            type: cid.type.rawValue,
+            id: cid.id,
+            showChannelRequest: StreamChatShowChannelRequest()
+        ) {
             completion?($0.error)
         }
     }
