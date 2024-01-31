@@ -98,6 +98,13 @@ open class ComposerVC: _ViewController,
             cooldownTime > 0
         }
 
+        /// A boolean that checks if the message only contains link attachments.
+        public var hasOnlyLinkAttachments: Bool {
+            let linkAttachmentsCount = attachments.filter { $0.type == .linkPreview }.count
+            let onlyContainsLinkAttachments = attachments.count == linkAttachmentsCount
+            return onlyContainsLinkAttachments
+        }
+
         public init(
             text: String,
             state: ComposerState,
@@ -568,6 +575,12 @@ open class ComposerVC: _ViewController,
         }
         composerView.inputMessageView.attachmentsViewContainer.isHidden = content.attachments.isEmpty
 
+        // Since we don't want to show link previews with other attachment types, we dismiss the
+        // link preview in case it is being shown and there are other types of attachments in the message.
+        if content.hasOnlyLinkAttachments == false && content.skipEnrichUrl == false {
+            dismissLinkPreview()
+        }
+
         if content.isInsideThread {
             if channelController?.channel?.isDirectMessageChannel == true {
                 composerView.checkboxControl.label.text = L10n.Composer.Checkmark.directMessageReply
@@ -975,6 +988,12 @@ open class ComposerVC: _ViewController,
     /// - Parameter links: The new parsed links from the input text.
     open func didChangeLinks(_ links: [TextLink]) {
         guard channelConfig?.urlEnrichmentEnabled == true else {
+            return
+        }
+
+        // We only show the link preview if there no other types of attachments.
+        guard content.hasOnlyLinkAttachments else {
+            dismissLinkPreview()
             return
         }
 
