@@ -12376,7 +12376,7 @@
 			};
 			name = Release;
 		};
-		437FCA0E26D67BE40000223C /* ReleaseTests */ = {
+		437FCA0E26D67BE40000223C /* Profile */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = DemoAppPush/DemoAppPush.entitlements;
@@ -12397,7 +12397,7 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
-			name = ReleaseTests;
+			name = Profile;
 		};
 		7908821525432B7200896F03 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -12454,7 +12454,7 @@
 			};
 			name = Release;
 		};
-		7908821725432B7200896F03 /* ReleaseTests */ = {
+		7908821725432B7200896F03 /* Profile */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
@@ -12480,7 +12480,7 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
-			name = ReleaseTests;
+			name = Profile;
 		};
 		7908821925432B7200896F03 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -12527,7 +12527,7 @@
 			};
 			name = Release;
 		};
-		7908821B25432B7200896F03 /* ReleaseTests */ = {
+		7908821B25432B7200896F03 /* Profile */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
@@ -12547,7 +12547,7 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
-			name = ReleaseTests;
+			name = Profile;
 		};
 		792DDA68256FB69F001DB91B /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -12600,7 +12600,7 @@
 			};
 			name = Release;
 		};
-		792DDA6A256FB69F001DB91B /* ReleaseTests */ = {
+		792DDA6A256FB69F001DB91B /* Profile */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
@@ -12622,7 +12622,7 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
-			name = ReleaseTests;
+			name = Profile;
 		};
 		793060F725778897005CF846 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -12683,7 +12683,7 @@
 			};
 			name = Release;
 		};
-		793060F925778897005CF846 /* ReleaseTests */ = {
+		793060F925778897005CF846 /* Profile */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
@@ -12711,7 +12711,7 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
-			name = ReleaseTests;
+			name = Profile;
 		};
 		793060FA25778897005CF846 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -12756,7 +12756,7 @@
 			};
 			name = Release;
 		};
-		793060FC25778897005CF846 /* ReleaseTests */ = {
+		793060FC25778897005CF846 /* Profile */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
@@ -12775,7 +12775,7 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
-			name = ReleaseTests;
+			name = Profile;
 		};
 		799C9421247D2F80001F1104 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -12959,7 +12959,7 @@
 			};
 			name = Release;
 		};
-		84790EA22AC1D346003AFF1C /* ReleaseTests */ = {
+		84790EA22AC1D346003AFF1C /* Profile */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -12990,7 +12990,7 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
-			name = ReleaseTests;
+			name = Profile;
 		};
 		8AD5EC9522E9A3E8005CFAC9 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -13213,7 +13213,7 @@
 			};
 			name = Release;
 		};
-		A34407E627D8C3400044F150 /* ReleaseTests */ = {
+		A34407E627D8C3400044F150 /* Profile */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -13242,7 +13242,7 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
-			name = ReleaseTests;
+			name = Profile;
 		};
 		A34407EA27D8C3400044F150 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -13291,7 +13291,7 @@
 			};
 			name = Release;
 		};
-		A34407EC27D8C3400044F150 /* ReleaseTests */ = {
+		A34407EC27D8C3400044F150 /* Profile */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
@@ -13311,7 +13311,7 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = StreamChatUITestsApp;
 			};
-			name = ReleaseTests;
+			name = Profile;
 		};
 		A3A0C99E283E952900B18DA4 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -13381,7 +13381,7 @@
 			};
 			name = Release;
 		};
-		A3A0C9A0283E952900B18DA4 /* ReleaseTests */ = {
+		A3A0C9A0283E952900B18DA4 /* Profile */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -13412,9 +13412,9 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
-			name = ReleaseTests;
+			name = Profile;
 		};
-		A57E5C6D24C6FA3900187DC2 /* ReleaseTests */ = {
+		A57E5C6D24C6FA3900187DC2 /* Profile */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -13488,9 +13488,9 @@
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
-			name = ReleaseTests;
+			name = Profile;
 		};
-		A57E5C7524C6FA3900187DC2 /* ReleaseTests */ = {
+		A57E5C7524C6FA3900187DC2 /* Profile */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
@@ -13519,9 +13519,9 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
-			name = ReleaseTests;
+			name = Profile;
 		};
-		A57E5C7624C6FA3900187DC2 /* ReleaseTests */ = {
+		A57E5C7624C6FA3900187DC2 /* Profile */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -13545,7 +13545,7 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
-			name = ReleaseTests;
+			name = Profile;
 		};
 		AC908392268B116000ACFB8E /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -13591,7 +13591,7 @@
 			};
 			name = Release;
 		};
-		AC908394268B116000ACFB8E /* ReleaseTests */ = {
+		AC908394268B116000ACFB8E /* Profile */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -13611,7 +13611,7 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
-			name = ReleaseTests;
+			name = Profile;
 		};
 		C11B576C29D43FD900D5A248 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -13672,7 +13672,7 @@
 			};
 			name = Release;
 		};
-		C11B576E29D43FD900D5A248 /* ReleaseTests */ = {
+		C11B576E29D43FD900D5A248 /* Profile */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -13699,7 +13699,7 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
-			name = ReleaseTests;
+			name = Profile;
 		};
 		C121E75C274543D000023E4C /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -13735,7 +13735,7 @@
 			};
 			name = Release;
 		};
-		C121E75E274543D000023E4C /* ReleaseTests */ = {
+		C121E75E274543D000023E4C /* Profile */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -13750,7 +13750,7 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
-			name = ReleaseTests;
+			name = Profile;
 		};
 		C121EA2C2746A19400023E4C /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -13786,7 +13786,7 @@
 			};
 			name = Release;
 		};
-		C121EA2E2746A19400023E4C /* ReleaseTests */ = {
+		C121EA2E2746A19400023E4C /* Profile */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -13801,7 +13801,7 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
-			name = ReleaseTests;
+			name = Profile;
 		};
 		E74DB0D02656631700508D22 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -13848,7 +13848,7 @@
 			};
 			name = Release;
 		};
-		E74DB0D22656631700508D22 /* ReleaseTests */ = {
+		E74DB0D22656631700508D22 /* Profile */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
@@ -13868,7 +13868,7 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
-			name = ReleaseTests;
+			name = Profile;
 		};
 		F86C87C325F906670000BCA9 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -13918,7 +13918,7 @@
 			};
 			name = Release;
 		};
-		F86C87C525F906670000BCA9 /* ReleaseTests */ = {
+		F86C87C525F906670000BCA9 /* Profile */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -13939,7 +13939,7 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
-			name = ReleaseTests;
+			name = Profile;
 		};
 		F8933BA325FF55E50054BBFF /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -13985,7 +13985,7 @@
 			};
 			name = Release;
 		};
-		F8933BA525FF55E50054BBFF /* ReleaseTests */ = {
+		F8933BA525FF55E50054BBFF /* Profile */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -14004,7 +14004,7 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
-			name = ReleaseTests;
+			name = Profile;
 		};
 		F89C23B725E508E20082CA5B /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -14050,7 +14050,7 @@
 			};
 			name = Release;
 		};
-		F89C23B925E508E20082CA5B /* ReleaseTests */ = {
+		F89C23B925E508E20082CA5B /* Profile */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -14069,7 +14069,7 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
-			name = ReleaseTests;
+			name = Profile;
 		};
 /* End XCBuildConfiguration section */
 
@@ -14079,7 +14079,7 @@
 			buildConfigurations = (
 				437FCA0C26D67BE40000223C /* Debug */,
 				437FCA0D26D67BE40000223C /* Release */,
-				437FCA0E26D67BE40000223C /* ReleaseTests */,
+				437FCA0E26D67BE40000223C /* Profile */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -14089,7 +14089,7 @@
 			buildConfigurations = (
 				7908821525432B7200896F03 /* Debug */,
 				7908821625432B7200896F03 /* Release */,
-				7908821725432B7200896F03 /* ReleaseTests */,
+				7908821725432B7200896F03 /* Profile */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -14099,7 +14099,7 @@
 			buildConfigurations = (
 				7908821925432B7200896F03 /* Debug */,
 				7908821A25432B7200896F03 /* Release */,
-				7908821B25432B7200896F03 /* ReleaseTests */,
+				7908821B25432B7200896F03 /* Profile */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -14109,7 +14109,7 @@
 			buildConfigurations = (
 				792DDA68256FB69F001DB91B /* Debug */,
 				792DDA69256FB69F001DB91B /* Release */,
-				792DDA6A256FB69F001DB91B /* ReleaseTests */,
+				792DDA6A256FB69F001DB91B /* Profile */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -14119,7 +14119,7 @@
 			buildConfigurations = (
 				793060F725778897005CF846 /* Debug */,
 				793060F825778897005CF846 /* Release */,
-				793060F925778897005CF846 /* ReleaseTests */,
+				793060F925778897005CF846 /* Profile */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -14129,7 +14129,7 @@
 			buildConfigurations = (
 				793060FA25778897005CF846 /* Debug */,
 				793060FB25778897005CF846 /* Release */,
-				793060FC25778897005CF846 /* ReleaseTests */,
+				793060FC25778897005CF846 /* Profile */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -14139,7 +14139,7 @@
 			buildConfigurations = (
 				799C9421247D2F80001F1104 /* Debug */,
 				799C9422247D2F80001F1104 /* Release */,
-				A57E5C7524C6FA3900187DC2 /* ReleaseTests */,
+				A57E5C7524C6FA3900187DC2 /* Profile */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -14149,7 +14149,7 @@
 			buildConfigurations = (
 				799C945A247D59B1001F1104 /* Debug */,
 				799C945B247D59B1001F1104 /* Release */,
-				A57E5C7624C6FA3900187DC2 /* ReleaseTests */,
+				A57E5C7624C6FA3900187DC2 /* Profile */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -14159,7 +14159,7 @@
 			buildConfigurations = (
 				84790EA02AC1D346003AFF1C /* Debug */,
 				84790EA12AC1D346003AFF1C /* Release */,
-				84790EA22AC1D346003AFF1C /* ReleaseTests */,
+				84790EA22AC1D346003AFF1C /* Profile */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -14169,7 +14169,7 @@
 			buildConfigurations = (
 				8AD5EC9522E9A3E8005CFAC9 /* Debug */,
 				8AD5EC9622E9A3E8005CFAC9 /* Release */,
-				A57E5C6D24C6FA3900187DC2 /* ReleaseTests */,
+				A57E5C6D24C6FA3900187DC2 /* Profile */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -14179,7 +14179,7 @@
 			buildConfigurations = (
 				A34407E427D8C3400044F150 /* Debug */,
 				A34407E527D8C3400044F150 /* Release */,
-				A34407E627D8C3400044F150 /* ReleaseTests */,
+				A34407E627D8C3400044F150 /* Profile */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -14189,7 +14189,7 @@
 			buildConfigurations = (
 				A34407EA27D8C3400044F150 /* Debug */,
 				A34407EB27D8C3400044F150 /* Release */,
-				A34407EC27D8C3400044F150 /* ReleaseTests */,
+				A34407EC27D8C3400044F150 /* Profile */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -14199,7 +14199,7 @@
 			buildConfigurations = (
 				A3A0C99E283E952900B18DA4 /* Debug */,
 				A3A0C99F283E952900B18DA4 /* Release */,
-				A3A0C9A0283E952900B18DA4 /* ReleaseTests */,
+				A3A0C9A0283E952900B18DA4 /* Profile */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -14209,7 +14209,7 @@
 			buildConfigurations = (
 				AC908392268B116000ACFB8E /* Debug */,
 				AC908393268B116000ACFB8E /* Release */,
-				AC908394268B116000ACFB8E /* ReleaseTests */,
+				AC908394268B116000ACFB8E /* Profile */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -14219,7 +14219,7 @@
 			buildConfigurations = (
 				C11B576C29D43FD900D5A248 /* Debug */,
 				C11B576D29D43FD900D5A248 /* Release */,
-				C11B576E29D43FD900D5A248 /* ReleaseTests */,
+				C11B576E29D43FD900D5A248 /* Profile */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -14229,7 +14229,7 @@
 			buildConfigurations = (
 				C121E75C274543D000023E4C /* Debug */,
 				C121E75D274543D000023E4C /* Release */,
-				C121E75E274543D000023E4C /* ReleaseTests */,
+				C121E75E274543D000023E4C /* Profile */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -14239,7 +14239,7 @@
 			buildConfigurations = (
 				C121EA2C2746A19400023E4C /* Debug */,
 				C121EA2D2746A19400023E4C /* Release */,
-				C121EA2E2746A19400023E4C /* ReleaseTests */,
+				C121EA2E2746A19400023E4C /* Profile */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -14249,7 +14249,7 @@
 			buildConfigurations = (
 				E74DB0D02656631700508D22 /* Debug */,
 				E74DB0D12656631700508D22 /* Release */,
-				E74DB0D22656631700508D22 /* ReleaseTests */,
+				E74DB0D22656631700508D22 /* Profile */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -14259,7 +14259,7 @@
 			buildConfigurations = (
 				F86C87C325F906670000BCA9 /* Debug */,
 				F86C87C425F906670000BCA9 /* Release */,
-				F86C87C525F906670000BCA9 /* ReleaseTests */,
+				F86C87C525F906670000BCA9 /* Profile */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -14269,7 +14269,7 @@
 			buildConfigurations = (
 				F8933BA325FF55E50054BBFF /* Debug */,
 				F8933BA425FF55E50054BBFF /* Release */,
-				F8933BA525FF55E50054BBFF /* ReleaseTests */,
+				F8933BA525FF55E50054BBFF /* Profile */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -14279,7 +14279,7 @@
 			buildConfigurations = (
 				F89C23B725E508E20082CA5B /* Debug */,
 				F89C23B825E508E20082CA5B /* Release */,
-				F89C23B925E508E20082CA5B /* ReleaseTests */,
+				F89C23B925E508E20082CA5B /* Profile */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
