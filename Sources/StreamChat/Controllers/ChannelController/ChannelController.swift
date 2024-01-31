@@ -680,7 +680,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///     and `ChatMessageAttachmentSeed`s.
     ///   - quotedMessageId: An id of the message new message quotes. (inline reply)
     ///   - skipPush: If true, skips sending push notification to channel members.
-    ///   - skipEnrichUrl: If true, skips url enriching.
+    ///   - skipEnrichUrl: If true, the url preview won't be attached to the message.
     ///   - extraData: Additional extra data of the message object.
     ///   - completion: Called when saving the message to the local DB finishes.
     ///
@@ -1112,6 +1112,17 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         }
 
         updater.uploadFile(type: type, localFileURL: localFileURL, cid: cid, progress: progress) { result in
+            self.callback {
+                completion(result)
+            }
+        }
+    }
+
+    /// Get the link attachment preview data from the provided url.
+    ///
+    /// This will return the data present in the OG Metadata.
+    public func enrichUrl(_ url: URL, completion: @escaping (Result<LinkAttachmentPayload, Error>) -> Void) {
+        updater.enrichUrl(url) { result in
             self.callback {
                 completion(result)
             }

@@ -40,9 +40,6 @@ final class AuthenticationRepository_Tests: XCTestCase {
         DispatchQueue.concurrentPerform(iterations: 100) { _ in
             _ = repository.tokenProvider
         }
-        DispatchQueue.concurrentPerform(iterations: 100) { _ in
-            _ = repository.tokenWaiters
-        }
     }
 
     func test_currentUserId_isNil_whenNoPreviousSession() {
@@ -912,6 +909,26 @@ final class AuthenticationRepository_Tests: XCTestCase {
         XCTAssertEqual(connectionRepository.updateWebSocketEndpointToken, token)
         XCTAssertNil(connectionRepository.updateWebSocketEndpointUserInfo)
     }
+    
+    func test_refreshToken_triggersCompletions_whenConcurrentlyCalled() throws {
+        let delegate = AuthenticationRepositoryDelegateMock()
+        delegate.isCapturingStatistics = false
+        let userId = "user1"
+        let newUserInfo = UserInfo(id: userId)
+        let newToken = Token.unique(userId: userId)
+        repository.delegate = delegate
+        let error = testPrepareEnvironmentAfterConnect(existingToken: nil, newUserInfo: newUserInfo, newToken: newToken)
+        XCTAssertNil(error)
+        
+        let iteration = 100
+        let expectations = (0..<iteration).map { XCTestExpectation(description: "\($0)") }
+        DispatchQueue.concurrentPerform(iterations: iteration) { index in
+            repository.refreshToken { _ in
+                expectations[index].fulfill()
+            }
+        }
+        wait(for: expectations, timeout: defaultTimeout)
+    }
 
     // MARK: Provide Token
 
@@ -981,18 +998,17 @@ final class AuthenticationRepository_Tests: XCTestCase {
         XCTAssertEqual(result?.value, token)
     }
 
-    func test_provideToken_doesNotDeadlock() {
-        DispatchQueue.concurrentPerform(iterations: 100) { _ in
+    func test_provideToken_triggersCompletions_whenConcurrentlyCalled() {
+        let iteration = 100
+        let expectations = (0..<iteration).map { XCTestExpectation(description: "\($0)") }
+        DispatchQueue.concurrentPerform(iterations: iteration) { index in
             repository.provideToken(timeout: 0) { _ in
-                self.repository.tokenWaiters.forEach { _ in }
+                expectations[index].fulfill()
             }
         }
-
-        DispatchQueue.concurrentPerform(iterations: 100) { _ in
-            repository.tokenWaiters.forEach { _ in }
-        }
+        wait(for: expectations, timeout: defaultTimeout)
     }
-
+    
     // MARK: EnvironmentState
 
     func test_environmentState_nilCurrentUserId() {
@@ -1103,14 +1119,18 @@ private class AuthenticationRepositoryDelegateMock: AuthenticationRepositoryDele
     var newState: EnvironmentState?
     var logoutCallCount: Int = 0
     var newStateCalls: Int = 0
+    var isCapturingStatistics = true
 
     func didFinishSettingUpAuthenticationEnvironment(for state: EnvironmentState) {
+        guard isCapturingStatistics else { return }
         newStateCalls += 1
         newState = state
     }
 
     func logOutUser(completion: @escaping () -> Void) {
-        logoutCallCount += 1
+        if isCapturingStatistics {
+            logoutCallCount += 1
+        }
         completion()
     }
 }
