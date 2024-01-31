@@ -365,7 +365,7 @@ class AuthenticationRepository {
             switch result {
             case let .success(newToken) where !newToken.isExpired:
                 onTokenReceived(newToken)
-                self?.tokenQueue.async(flags: .barrier) { [weak self] in
+                self?.tokenQueue.sync(flags: .barrier) {
                     self?._tokenExpirationRetryStrategy.resetConsecutiveFailures()
                 }
             case .success:
