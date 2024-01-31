@@ -17,7 +17,7 @@ public protocol InputTextViewClipboardAttachmentDelegate: AnyObject {
 /// A view for inputting text with placeholder support. Since it is a subclass
 /// of `UITextView`, the `UITextViewDelegate` can be used to observe text changes.
 @objc(StreamInputTextView)
-open class InputTextView: UITextView, AppearanceProvider {
+open class InputTextView: UITextView, ThemeProvider {
     /// The delegate which gets notified when an attachment is pasted into the text view
     open weak var clipboardAttachmentDelegate: InputTextViewClipboardAttachmentDelegate?
 
@@ -51,6 +51,21 @@ open class InputTextView: UITextView, AppearanceProvider {
     open var maximumHeight: CGFloat {
         120.0
     }
+
+    /// The component responsible to detect links in text.
+    private let linkDetector = TextLinkDetector()
+
+    /// The current links found in the input text.
+    public var links: [TextLink] = [] {
+        didSet {
+            if oldValue.map(\.url) != links.map(\.url) {
+                onLinksChanged?(links)
+            }
+        }
+    }
+
+    /// A closure that is triggered whenever the links in the input text change.
+    public var onLinksChanged: (([TextLink]) -> Void)?
 
     override open var attributedText: NSAttributedString! {
         didSet {
@@ -144,7 +159,6 @@ open class InputTextView: UITextView, AppearanceProvider {
             placeholderLabel.trailingAnchor.pin(lessThanOrEqualTo: trailingAnchor),
             placeholderLabel.topAnchor.pin(equalTo: topAnchor),
             placeholderLabel.bottomAnchor.pin(lessThanOrEqualTo: bottomAnchor),
-            
             placeholderLabel.centerYAnchor.pin(equalTo: centerYAnchor)
         ])
 
@@ -173,6 +187,15 @@ open class InputTextView: UITextView, AppearanceProvider {
 
     @objc open func handleTextChange() {
         placeholderLabel.isHidden = !text.isEmpty
+       
+        // Resets the text color before applying text highlights
+        textColor = appearance.colorPalette.text
+
+        if components.isComposerLinkPreviewEnabled {
+            links = linkDetector.links(in: text)
+            highlightLinks(links)
+        }
+
         setNeedsLayout()
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
             // This is due to bug in UITextView where the scroll sometimes disables
@@ -212,6 +235,16 @@ open class InputTextView: UITextView, AppearanceProvider {
         heightConstraint?.constant = heightToSet
         layoutIfNeeded()
         isScrollEnabled = true
+    }
+
+    // MARK: - Link Detection
+
+    /// Highlights the links in the input text view.
+    open func highlightLinks(_ links: [TextLink]) {
+        links.forEach { link in
+            let linkColor = appearance.colorPalette.textLinkColor
+            textStorage.addAttribute(.foregroundColor, value: linkColor, range: link.range)
+        }
     }
 
     // MARK: - Actions on the UITextView

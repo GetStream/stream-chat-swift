@@ -42,6 +42,10 @@ final class EndpointPathTests: XCTestCase {
         XCTAssertFalse(EndpointPath.banMember.shouldBeQueuedOffline)
     }
 
+    func og_shouldNOTBeQueuedOffline() {
+        XCTAssertFalse(EndpointPath.og.shouldBeQueuedOffline)
+    }
+
     // MARK: - Codable
 
     func test_isProperlyEncodedAndDecoded() throws {

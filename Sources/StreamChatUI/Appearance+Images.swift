@@ -37,6 +37,7 @@ public extension Appearance {
         public var loadingIndicator: UIImage = loadImageSafely(with: "loading_indicator")
         public var close: UIImage = loadSafely(systemName: "xmark", assetsFallback: "close")
         public var discard: UIImage = loadImageSafely(with: "close")
+        public var link: UIImage = loadImageSafely(with: "link")
 
         public var closeCircleTransparent: UIImage = loadImageSafely(with: "close_circle_transparent")
         public var discardAttachment: UIImage = loadImageSafely(with: "close_circle_filled")
