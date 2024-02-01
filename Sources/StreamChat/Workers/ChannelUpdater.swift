@@ -461,16 +461,20 @@ class ChannelUpdater: Worker {
         completion: ((Error?) -> Void)? = nil
     ) {
         let messagePayload = messagePayload(text: message, currentUserId: currentUserId)
-        apiClient.request(
-            endpoint: .addMembers(
-                cid: cid,
-                userIds: userIds,
-                hideHistory: hideHistory,
-                messagePayload: messagePayload
-            )
-        ) {
-            completion?($0.error)
-        }
+        let request = StreamChatUpdateChannelRequest(
+            addModerators: [],
+            demoteModerators: [],
+            removeMembers: [],
+            hideHistory: hideHistory,
+            addMembers: userIds.map { StreamChatChannelMemberRequest(userId: $0) },
+            message: messagePayload
+        )
+        api.updateChannel(
+            type: cid.type.rawValue,
+            id: cid.id,
+            updateChannelRequest: request,
+            completion: { completion?($0.error) }
+        )
     }
 
     /// Remove users to the channel as members.
@@ -488,15 +492,18 @@ class ChannelUpdater: Worker {
         completion: ((Error?) -> Void)? = nil
     ) {
         let messagePayload = messagePayload(text: message, currentUserId: currentUserId)
-        apiClient.request(
-            endpoint: .removeMembers(
-                cid: cid,
-                userIds: userIds,
-                messagePayload: messagePayload
-            )
-        ) {
-            completion?($0.error)
-        }
+        let request = StreamChatUpdateChannelRequest(
+            addModerators: [],
+            demoteModerators: [],
+            removeMembers: Array(userIds),
+            message: messagePayload
+        )
+        api.updateChannel(
+            type: cid.type.rawValue,
+            id: cid.id,
+            updateChannelRequest: request,
+            completion: { completion?($0.error) }
+        )
     }
 
     /// Invite members to a channel. They can then accept or decline the invitation
@@ -509,9 +516,18 @@ class ChannelUpdater: Worker {
         userIds: Set<UserId>,
         completion: ((Error?) -> Void)? = nil
     ) {
-        apiClient.request(endpoint: .inviteMembers(cid: cid, userIds: userIds)) {
-            completion?($0.error)
-        }
+        let request = StreamChatUpdateChannelRequest(
+            addModerators: [],
+            demoteModerators: [],
+            removeMembers: [],
+            invites: userIds.map { StreamChatChannelMemberRequest(userId: $0) }
+        )
+        api.updateChannel(
+            type: cid.type.rawValue,
+            id: cid.id,
+            updateChannelRequest: request,
+            completion: { completion?($0.error) }
+        )
     }
 
     /// Accept invitation to a channel
@@ -524,9 +540,18 @@ class ChannelUpdater: Worker {
         message: String?,
         completion: ((Error?) -> Void)? = nil
     ) {
-        apiClient.request(endpoint: .acceptInvite(cid: cid, message: message)) {
-            completion?($0.error)
-        }
+        let request = StreamChatUpdateChannelRequest(
+            addModerators: [],
+            demoteModerators: [],
+            removeMembers: [],
+            acceptInvite: true
+        )
+        api.updateChannel(
+            type: cid.type.rawValue,
+            id: cid.id,
+            updateChannelRequest: request,
+            completion: { completion?($0.error) }
+        )
     }
 
     /// Reject invitation to a channel
@@ -537,9 +562,18 @@ class ChannelUpdater: Worker {
         cid: ChannelId,
         completion: ((Error?) -> Void)? = nil
     ) {
-        apiClient.request(endpoint: .rejectInvite(cid: cid)) {
-            completion?($0.error)
-        }
+        let request = StreamChatUpdateChannelRequest(
+            addModerators: [],
+            demoteModerators: [],
+            removeMembers: [],
+            rejectInvite: true
+        )
+        api.updateChannel(
+            type: cid.type.rawValue,
+            id: cid.id,
+            updateChannelRequest: request,
+            completion: { completion?($0.error) }
+        )
     }
 
     /// Marks a channel as read
@@ -585,9 +619,18 @@ class ChannelUpdater: Worker {
     ///   Specified in seconds. Should be between 0-120. Pass 0 to disable slow mode.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func enableSlowMode(cid: ChannelId, cooldownDuration: Int, completion: ((Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .enableSlowMode(cid: cid, cooldownDuration: cooldownDuration)) {
-            completion?($0.error)
-        }
+        let request = StreamChatUpdateChannelRequest(
+            addModerators: [],
+            demoteModerators: [],
+            removeMembers: [],
+            cooldown: cooldownDuration
+        )
+        api.updateChannel(
+            type: cid.type.rawValue,
+            id: cid.id,
+            updateChannelRequest: request,
+            completion: { completion?($0.error) }
+        )
     }
 
     /// Start watching a channel
@@ -602,6 +645,7 @@ class ChannelUpdater: Worker {
     /// - Parameter isInRecoveryMode: Determines whether the SDK is in offline recovery mode
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func startWatching(cid: ChannelId, isInRecoveryMode: Bool, completion: ((Error?) -> Void)? = nil) {
+        // TODO: revisit this.
         var query = ChannelQuery(cid: cid)
         query.options = .all
         let endpoint = Endpoint<ChannelPayload>.updateChannel(query: query)
@@ -621,9 +665,16 @@ class ChannelUpdater: Worker {
     /// - Parameter cid: Channel id of the channel to stop watching
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func stopWatching(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .stopWatching(cid: cid)) {
-            completion?($0.error)
-        }
+        // TODO: check the connection id part.
+        api.stopWatchingChannel(
+            type: cid.type.rawValue,
+            id: cid.id,
+            channelStopWatchingRequest: StreamChatChannelStopWatchingRequest(connectionId: nil),
+            requiresConnectionId: true,
+            completion: {
+                completion?($0.error)
+            }
+        )
     }
 
     /// Queries the watchers of a channel.
@@ -667,9 +718,18 @@ class ChannelUpdater: Worker {
     /// - Parameter cid: Channel id of the channel to be watched
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func freezeChannel(_ freeze: Bool, cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .freezeChannel(freeze, cid: cid)) {
-            completion?($0.error)
-        }
+        let request = StreamChatUpdateChannelRequest(
+            addModerators: [],
+            demoteModerators: [],
+            removeMembers: [],
+            data: StreamChatChannelRequest(frozen: freeze)
+        )
+        api.updateChannel(
+            type: cid.type.rawValue,
+            id: cid.id,
+            updateChannelRequest: request,
+            completion: { completion?($0.error) }
+        )
     }
 
     func uploadFile(
@@ -731,33 +791,36 @@ class ChannelUpdater: Worker {
     }
     
     func deleteFile(in cid: ChannelId, url: String, completion: ((Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .deleteFile(cid: cid, url: url), completion: {
-            completion?($0.error)
-        })
+        api.deleteFile(
+            type: cid.type.rawValue,
+            id: cid.id,
+            url: url,
+            completion: {
+                completion?($0.error)
+            }
+        )
     }
     
     func deleteImage(in cid: ChannelId, url: String, completion: ((Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .deleteImage(cid: cid, url: url), completion: {
-            completion?($0.error)
-        })
+        api.deleteImage(
+            type: cid.type.rawValue,
+            id: cid.id,
+            url: url,
+            completion: {
+                completion?($0.error)
+            }
+        )
     }
     
     // MARK: - private
     
-    private func messagePayload(text: String?, currentUserId: UserId?) -> MessageRequestBody? {
-        var messagePayload: MessageRequestBody?
-        if let text = text, let currentUserId = currentUserId {
-            let userRequestBody = UserRequestBody(
-                id: currentUserId,
-                name: nil,
-                imageURL: nil,
-                extraData: [:]
-            )
-            messagePayload = MessageRequestBody(
+    private func messagePayload(text: String?, currentUserId: UserId?) -> StreamChatMessageRequest? {
+        var messagePayload: StreamChatMessageRequest?
+        if let text = text {
+            messagePayload = StreamChatMessageRequest(
+                attachments: [],
                 id: .newUniqueId,
-                user: userRequestBody,
-                text: text,
-                extraData: [:]
+                text: text
             )
             return messagePayload
         }

@@ -5,14 +5,14 @@
 import Foundation
 
 class CallRepository {
-    private let apiClient: APIClient
+    private let api: API
 
-    init(apiClient: APIClient) {
-        self.apiClient = apiClient
+    init(api: API) {
+        self.api = api
     }
 
     func getCallToken(callId: String, completion: @escaping (Result<CallToken, Error>) -> Void) {
-        apiClient.request(endpoint: .getCallToken(callId: callId)) { result in
+        api.apiClient.request(endpoint: .getCallToken(callId: callId)) { result in
             switch result {
             case let .failure(error):
                 completion(.failure(error))
@@ -30,7 +30,7 @@ class CallRepository {
     }
 
     func createCall(in cid: ChannelId, callId: String, type: String, completion: @escaping (Result<CallWithToken, Error>) -> Void) {
-        apiClient.request(endpoint: .createCall(cid: cid, callId: callId, type: type)) { result in
+        api.apiClient.request(endpoint: .createCall(cid: cid, callId: callId, type: type)) { result in
             switch result {
             case let .success(payload):
                 var agoraCall: AgoraCall?

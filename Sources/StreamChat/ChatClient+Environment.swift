@@ -141,16 +141,16 @@ extension ChatClient {
         }
 
         var callRepositoryBuilder: (
-            _ apiClient: APIClient
+            _ api: API
         ) -> CallRepository = {
-            CallRepository(apiClient: $0)
+            CallRepository(api: $0)
         }
 
         var channelRepositoryBuilder: (
             _ database: DatabaseContainer,
-            _ apiClient: APIClient
+            _ api: API
         ) -> ChannelRepository = {
-            ChannelRepository(database: $0, apiClient: $1)
+            ChannelRepository(database: $0, api: $1)
         }
 
         var messageRepositoryBuilder: (

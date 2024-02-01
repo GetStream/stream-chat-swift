@@ -4,11 +4,11 @@
 
 class ChannelRepository {
     let database: DatabaseContainer
-    let apiClient: APIClient
+    let api: API
 
-    init(database: DatabaseContainer, apiClient: APIClient) {
+    init(database: DatabaseContainer, api: API) {
         self.database = database
-        self.apiClient = apiClient
+        self.api = api
     }
 
     /// Marks a channel as read
@@ -20,7 +20,11 @@ class ChannelRepository {
         userId: UserId,
         completion: ((Error?) -> Void)? = nil
     ) {
-        apiClient.request(endpoint: .markRead(cid: cid)) { [weak self] result in
+        api.markRead(
+            type: cid.type.rawValue,
+            id: cid.id,
+            markReadRequest: StreamChatMarkReadRequest()
+        ) { [weak self] result in
             if let error = result.error {
                 completion?(error)
                 return
@@ -49,8 +53,10 @@ class ChannelRepository {
         lastReadMessageId: MessageId?,
         completion: ((Result<ChatChannel, Error>) -> Void)? = nil
     ) {
-        apiClient.request(
-            endpoint: .markUnread(cid: cid, messageId: messageId, userId: userId)
+        api.markUnread(
+            type: cid.type.rawValue,
+            id: cid.id,
+            markUnreadRequest: StreamChatMarkUnreadRequest(messageId: messageId, userId: userId)
         ) { [weak self] result in
             if let error = result.error {
                 completion?(.failure(error))

@@ -205,10 +205,10 @@ public class ChatClient {
         
         authenticationRepository = authRepository
         extensionLifecycle = environment.extensionLifecycleBuilder(config.applicationGroupIdentifier)
-        callRepository = environment.callRepositoryBuilder(apiClient)
+        callRepository = environment.callRepositoryBuilder(api)
         channelRepository = environment.channelRepositoryBuilder(
             databaseContainer,
-            apiClient
+            api
         )
 
         authRepository.delegate = self
