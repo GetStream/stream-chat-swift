@@ -29,7 +29,7 @@ class AttachmentQueueUploader: Worker {
 
     var minSignificantUploadingProgressChange: Double = 0.05
 
-    init(database: DatabaseContainer, apiClient: APIClient, attachmentPostProcessor: UploadedAttachmentPostProcessor?) {
+    init(database: DatabaseContainer, api: API, attachmentPostProcessor: UploadedAttachmentPostProcessor?) {
         observer = .init(
             context: database.backgroundReadOnlyContext,
             fetchRequest: AttachmentDTO.pendingUploadFetchRequest(),
@@ -38,7 +38,7 @@ class AttachmentQueueUploader: Worker {
         
         self.attachmentPostProcessor = attachmentPostProcessor
 
-        super.init(database: database, apiClient: apiClient)
+        super.init(database: database, api: api)
 
         startObserving()
     }

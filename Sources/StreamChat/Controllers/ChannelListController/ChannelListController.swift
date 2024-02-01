@@ -334,7 +334,7 @@ extension ChatChannelListController {
             _ database: DatabaseContainer,
             _ apiClient: APIClient,
             _ api: API
-        ) -> ChannelListUpdater = { ChannelListUpdater(database: $0, apiClient: $1, api: $2) }
+        ) -> ChannelListUpdater = { ChannelListUpdater(database: $0, api: $2) }
 
         var createChannelListDatabaseObserver: (
             _ isBackground: Bool,

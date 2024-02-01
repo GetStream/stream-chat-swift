@@ -117,14 +117,14 @@ public class ChatChannelMemberController: DataController, DelegateCallable, Data
     private func createMemberUpdater() -> ChannelMemberUpdater {
         environment.memberUpdaterBuilder(
             client.databaseContainer,
-            client.apiClient
+            client.api
         )
     }
 
     private func createMemberListUpdater() -> ChannelMemberListUpdater {
         environment.memberListUpdaterBuilder(
             client.databaseContainer,
-            client.apiClient
+            client.api
         )
     }
 
@@ -220,12 +220,12 @@ extension ChatChannelMemberController {
     struct Environment {
         var memberUpdaterBuilder: (
             _ database: DatabaseContainer,
-            _ apiClient: APIClient
+            _ api: API
         ) -> ChannelMemberUpdater = ChannelMemberUpdater.init
 
         var memberListUpdaterBuilder: (
             _ database: DatabaseContainer,
-            _ apiClient: APIClient
+            _ api: API
         ) -> ChannelMemberListUpdater = ChannelMemberListUpdater.init
 
         var memberObserverBuilder: (

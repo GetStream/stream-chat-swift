@@ -40,7 +40,7 @@ public class ChatUserSearchController: DataController, DelegateCallable, DataSto
     lazy var userQueryUpdater = self.environment
         .userQueryUpdaterBuilder(
             client.databaseContainer,
-            client.apiClient
+            client.api
         )
 
     /// A type-erased delegate.
@@ -235,7 +235,7 @@ extension ChatUserSearchController {
     struct Environment {
         var userQueryUpdaterBuilder: (
             _ database: DatabaseContainer,
-            _ apiClient: APIClient
+            _ api: API
         ) -> UserListUpdater = UserListUpdater.init
     }
 }

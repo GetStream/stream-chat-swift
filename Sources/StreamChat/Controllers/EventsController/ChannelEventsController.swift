@@ -13,7 +13,7 @@ public extension ChatClient {
     func channelEventsController(for cid: ChannelId) -> ChannelEventsController {
         .init(
             cidProvider: { cid },
-            eventSender: .init(database: databaseContainer, apiClient: apiClient),
+            eventSender: .init(database: databaseContainer, api: api),
             notificationCenter: eventNotificationCenter
         )
     }
@@ -29,7 +29,7 @@ public extension ChatChannelController {
             cidProvider: { self.cid },
             eventSender: .init(
                 database: client.databaseContainer,
-                apiClient: client.apiClient
+                api: client.api
             ),
             notificationCenter: client.eventNotificationCenter
         )

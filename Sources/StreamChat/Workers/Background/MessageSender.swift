@@ -44,11 +44,11 @@ class MessageSender: Worker {
         messageRepository: MessageRepository,
         eventsNotificationCenter: EventNotificationCenter,
         database: DatabaseContainer,
-        apiClient: APIClient
+        api: API
     ) {
         self.messageRepository = messageRepository
         self.eventsNotificationCenter = eventsNotificationCenter
-        super.init(database: database, apiClient: apiClient)
+        super.init(database: database, api: api)
         // We need to initialize the observer synchronously
         _ = observer
 

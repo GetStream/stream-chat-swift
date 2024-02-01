@@ -69,7 +69,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
     private lazy var eventSender: TypingEventsSender = self.environment.eventSenderBuilder(
         client.databaseContainer,
-        client.apiClient
+        client.api
     )
 
     /// A Boolean value that returns whether the oldest messages have all been loaded or not.
@@ -1306,7 +1306,7 @@ extension ChatChannelController {
 
         var eventSenderBuilder: (
             _ database: DatabaseContainer,
-            _ apiClient: APIClient
+            _ api: API
         ) -> TypingEventsSender = TypingEventsSender.init
     }
 }

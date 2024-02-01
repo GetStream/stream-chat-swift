@@ -70,7 +70,7 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
             client.messageRepository,
             client.makeMessagesPaginationStateHandler(),
             client.databaseContainer,
-            client.apiClient
+            client.api
         )
 
     /// Used for observing the database for changes.
@@ -254,7 +254,7 @@ extension ChatMessageSearchController {
             _ messageRepository: MessageRepository,
             _ paginationStateHandler: MessagesPaginationStateHandling,
             _ database: DatabaseContainer,
-            _ apiClient: APIClient
+            _ api: API
         ) -> MessageUpdater = MessageUpdater.init
     }
 }

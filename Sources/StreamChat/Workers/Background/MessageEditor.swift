@@ -24,14 +24,14 @@ class MessageEditor: Worker {
     private let observer: ListDatabaseObserver<MessageDTO, MessageDTO>
     private let messageRepository: MessageRepository
 
-    init(messageRepository: MessageRepository, database: DatabaseContainer, apiClient: APIClient) {
+    init(messageRepository: MessageRepository, database: DatabaseContainer, api: API) {
         observer = .init(
             context: database.backgroundReadOnlyContext,
             fetchRequest: MessageDTO.messagesPendingSyncFetchRequest(),
             itemCreator: { $0 }
         )
         self.messageRepository = messageRepository
-        super.init(database: database, apiClient: apiClient)
+        super.init(database: database, api: api)
 
         startObserving()
     }

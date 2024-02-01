@@ -16,12 +16,12 @@ class MessageUpdater: Worker {
         messageRepository: MessageRepository,
         paginationStateHandler: MessagesPaginationStateHandling,
         database: DatabaseContainer,
-        apiClient: APIClient
+        api: API
     ) {
         self.isLocalStorageEnabled = isLocalStorageEnabled
         repository = messageRepository
         self.paginationStateHandler = paginationStateHandler
-        super.init(database: database, apiClient: apiClient)
+        super.init(database: database, api: api)
     }
 
     var paginationState: MessagesPaginationState {

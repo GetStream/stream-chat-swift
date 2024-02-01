@@ -200,7 +200,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
             client.messageRepository,
             client.makeMessagesPaginationStateHandler(),
             client.databaseContainer,
-            client.apiClient
+            client.api
         )
         super.init()
 
@@ -736,7 +736,7 @@ extension ChatMessageController {
             _ messageRepository: MessageRepository,
             _ paginationStateHandler: MessagesPaginationStateHandling,
             _ database: DatabaseContainer,
-            _ apiClient: APIClient
+            _ api: API
         ) -> MessageUpdater = MessageUpdater.init
     }
 }

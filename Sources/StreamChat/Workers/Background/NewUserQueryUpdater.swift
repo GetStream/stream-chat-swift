@@ -18,7 +18,7 @@ final class NewUserQueryUpdater: Worker {
     private lazy var userListUpdater: UserListUpdater = self.environment
         .createUserListUpdater(
             database,
-            apiClient
+            api
         )
 
     private lazy var usersObserver: ListDatabaseObserver = .init(
@@ -32,15 +32,15 @@ final class NewUserQueryUpdater: Worker {
         itemCreator: { $0 }
     )
 
-    init(database: DatabaseContainer, apiClient: APIClient, env: Environment) {
+    init(database: DatabaseContainer, api: API, env: Environment) {
         environment = env
-        super.init(database: database, apiClient: apiClient)
+        super.init(database: database, api: api)
 
         startObserving()
     }
 
-    override convenience init(database: DatabaseContainer, apiClient: APIClient) {
-        self.init(database: database, apiClient: apiClient, env: .init())
+    override convenience init(database: DatabaseContainer, api: API) {
+        self.init(database: database, api: api, env: .init())
     }
 
     private func startObserving() {
@@ -106,7 +106,7 @@ extension NewUserQueryUpdater {
     struct Environment {
         var createUserListUpdater: (
             _ database: DatabaseContainer,
-            _ apiClient: APIClient
+            _ api: API
         ) -> UserListUpdater = UserListUpdater.init
     }
 }

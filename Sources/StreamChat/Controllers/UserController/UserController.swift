@@ -109,7 +109,7 @@ public class ChatUserController: DataController, DelegateCallable, DataStoreProv
     private func createUserUpdater() -> UserUpdater {
         environment.userUpdaterBuilder(
             client.databaseContainer,
-            client.apiClient
+            client.api
         )
     }
 
@@ -188,7 +188,7 @@ extension ChatUserController {
     struct Environment {
         var userUpdaterBuilder: (
             _ database: DatabaseContainer,
-            _ apiClient: APIClient
+            _ api: API
         ) -> UserUpdater = UserUpdater.init
 
         var userObserverBuilder: (

@@ -399,13 +399,13 @@ public class ChatClient {
                 messageRepository: messageRepository,
                 eventsNotificationCenter: eventNotificationCenter,
                 database: databaseContainer,
-                apiClient: apiClient
+                api: api
             ),
-            NewUserQueryUpdater(database: databaseContainer, apiClient: apiClient),
-            MessageEditor(messageRepository: messageRepository, database: databaseContainer, apiClient: apiClient),
+            NewUserQueryUpdater(database: databaseContainer, api: api),
+            MessageEditor(messageRepository: messageRepository, database: databaseContainer, api: api),
             AttachmentQueueUploader(
                 database: databaseContainer,
-                apiClient: apiClient,
+                api: api,
                 attachmentPostProcessor: config.uploadedAttachmentPostProcessor
             )
         ]

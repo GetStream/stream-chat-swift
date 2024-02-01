@@ -21,7 +21,7 @@ class ChannelUpdater: Worker {
         self.channelRepository = channelRepository
         self.callRepository = callRepository
         self.paginationStateHandler = paginationStateHandler
-        super.init(database: database, apiClient: apiClient, api: api)
+        super.init(database: database, api: api)
     }
 
     var paginationState: MessagesPaginationState {
