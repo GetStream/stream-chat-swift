@@ -12,6 +12,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix threading issues in `ConnectionRepository` [#2985](https://github.com/GetStream/stream-chat-swift/pull/2985), [#2987](https://github.com/GetStream/stream-chat-swift/pull/2987)
 - Fix threading issues in `AuthenticationRepository` [#2986](https://github.com/GetStream/stream-chat-swift/pull/2986)
 - Fix `NewMessagePendingEvent.message` with empty `cid` [#2997](https://github.com/GetStream/stream-chat-swift/pull/2997)
+### 🔄 Changed
+- Do not check token expiration in token provider [#2998](https://github.com/GetStream/stream-chat-swift/pull/2998)
 
 ## StreamChatUI
 ### ✅ Added
