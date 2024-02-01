@@ -593,6 +593,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             try pin(message: message, pinning: pinning)
         }
 
+        message.cid = cid.rawValue
         message.type = parentMessageId == nil ? MessageType.regular.rawValue : MessageType.reply.rawValue
         message.text = text
         message.command = command

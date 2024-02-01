@@ -592,6 +592,9 @@ final class ChannelUpdater_Tests: XCTestCase {
             }
         }
 
+        // Make sure when creating a new message, the cid is locally available.
+        XCTAssertNotNil(newMessage.cid)
+
         func id(for envelope: AnyAttachmentPayload) -> AttachmentId {
             .init(cid: cid, messageId: newMessage.id, index: attachmentEnvelopes.firstIndex(of: envelope)!)
         }
