@@ -117,6 +117,12 @@ extension StreamChatRead: IdentifiablePayload {
     }
 }
 
+extension StreamChatMembersResponse: IdentifiablePayloadProxy {
+    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
+        members.compactMap { $0 }.fillIds(cache: &cache)
+    }
+}
+
 // TODO: Re-check these.
 // extension MessageListPayload: IdentifiablePayloadProxy {
 //    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
@@ -142,8 +148,3 @@ extension StreamChatRead: IdentifiablePayload {
 //    }
 // }
 //
-// extension ChannelMemberListPayload: IdentifiablePayloadProxy {
-//    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
-//        members.fillIds(cache: &cache)
-//    }
-// }

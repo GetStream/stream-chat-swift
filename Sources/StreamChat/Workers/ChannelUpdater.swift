@@ -71,22 +71,7 @@ class ChannelUpdater: Worker {
                             channelDTO.cleanAllMessagesExcludingLocalOnly()
                         }
                     }
-
-                    // TODO: introduce a protocol or other abstraction.
-                    let mappedPayload = StreamChatChannelStateResponseFields(
-                        members: payload.members,
-                        messages: payload.messages,
-                        pinnedMessages: payload.pinnedMessages,
-                        hidden: payload.hidden,
-                        hideMessagesBefore: payload.hideMessagesBefore,
-                        watcherCount: payload.watcherCount,
-                        pendingMessages: payload.pendingMessages,
-                        read: payload.read,
-                        watchers: payload.watchers,
-                        channel: payload.channel,
-                        membership: payload.membership
-                    )
-                    let updatedChannel = try session.saveChannel(payload: mappedPayload, query: nil, cache: nil)
+                    let updatedChannel = try session.saveChannel(payload: payload.toResponseFields, query: nil, cache: nil)
                     updatedChannel.oldestMessageAt = self.paginationState.oldestMessageAt?.bridgeDate
                     updatedChannel.newestMessageAt = self.paginationState.newestMessageAt?.bridgeDate
 

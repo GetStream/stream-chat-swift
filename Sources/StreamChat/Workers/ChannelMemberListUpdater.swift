@@ -17,8 +17,25 @@ class ChannelMemberListUpdater: Worker {
                 return
             }
 
-            let membersEndpoint: Endpoint<ChannelMemberListPayload> = .channelMembers(query: query)
-            self?.apiClient.request(endpoint: membersEndpoint) { membersResult in
+            var filter: [String: RawJSON]?
+            if let data = try? JSONEncoder.default.encode(query.filter) {
+                filter = try? JSONDecoder.default.decode([String: RawJSON].self, from: data)
+            }
+            
+            let sort = query.sort.map { sortingKey in
+                StreamChatSortParam(direction: sortingKey.direction, field: sortingKey.key.rawValue)
+            }
+            
+            let request = StreamChatQueryMembersRequest(
+                type: query.cid.type.rawValue,
+                filterConditions: filter ?? [:],
+                id: query.cid.id,
+                limit: query.pagination.pageSize,
+                offset: query.pagination.offset,
+                sort: sort
+            )
+            
+            self?.api.queryMembers(payload: request, completion: { membersResult in
                 switch membersResult {
                 case let .success(memberListPayload):
                     self?.database.write({ session in
@@ -32,7 +49,7 @@ class ChannelMemberListUpdater: Worker {
                 case let .failure(error):
                     completion?(error)
                 }
-            }
+            })
         }
     }
 }
@@ -48,11 +65,15 @@ private extension ChannelMemberListUpdater {
 
     func fetchAndSaveChannel(with cid: ChannelId, completion: @escaping (Error?) -> Void) {
         let query = ChannelQuery(cid: cid)
-        apiClient.request(endpoint: .updateChannel(query: query)) { [weak self] in
-            switch $0 {
+        api.getOrCreateChannel(
+            type: query.apiPath,
+            channelGetOrCreateRequest: StreamChatChannelGetOrCreateRequest(),
+            requiresConnectionId: true
+        ) { [weak self] result in
+            switch result {
             case let .success(payload):
                 self?.database.write({ session in
-                    try session.saveChannel(payload: payload)
+                    _ = try session.saveChannel(payload: payload.toResponseFields, query: nil, cache: nil)
                 }, completion: { error in
                     if let error = error {
                         log.error("Failed to save channel to the database. Error: \(error)")

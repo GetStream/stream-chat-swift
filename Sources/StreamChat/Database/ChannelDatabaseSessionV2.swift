@@ -72,6 +72,13 @@ protocol ChannelDatabaseSessionV2 {
     
     @discardableResult
     func saveCurrentUser(payload: StreamChatOwnUser) throws -> CurrentUserDTO
+    
+    @discardableResult
+    func saveMembers(
+        payload: StreamChatMembersResponse,
+        channelId: ChannelId,
+        query: ChannelMemberListQuery?
+    ) -> [MemberDTO]
 }
 
 extension NSManagedObjectContext {
@@ -800,5 +807,22 @@ extension NSManagedObjectContext {
             queryDTO.users.insert(dto)
         }
         return dto
+    }
+}
+
+extension NSManagedObjectContext {
+    func saveMembers(
+        payload: StreamChatMembersResponse,
+        channelId: ChannelId,
+        query: ChannelMemberListQuery?
+    ) -> [MemberDTO] {
+        let cache = payload.getPayloadToModelIdMappings(context: self)
+        return payload.members.compactMapLoggingError {
+            if let member = $0 {
+                return try saveMember(payload: member, channelId: channelId, query: query, cache: cache)
+            } else {
+                return nil
+            }
+        }
     }
 }
