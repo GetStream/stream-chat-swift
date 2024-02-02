@@ -142,7 +142,7 @@ open class SwipeableView: _View, ComponentsProvider, UIGestureRecognizerDelegate
         }
     }
 
-    override public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+    override open func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         guard let recognizer = gestureRecognizer as? UIPanGestureRecognizer else {
             return super.gestureRecognizerShouldBegin(gestureRecognizer)
         }
@@ -153,11 +153,21 @@ open class SwipeableView: _View, ComponentsProvider, UIGestureRecognizerDelegate
         //
         // *This practically means on panning the cell we don't accidentally scroll the list
         let translation = recognizer.translation(in: self)
+        if abs(translation.x) <= abs(translation.y) {
+            return false
+        }
 
-        return abs(translation.x) > abs(translation.y)
+        // Additionally, if the horizontal swipe is left-to-right and action items
+        // are not expanded, we'll deny this recognizer, so that it doesn't steal
+        // the gesture from another recognizer, such as a UINavigationController's
+        // interactivePopGestureRecognizer
+        if !isOpen, translation.x > 0 {
+            return false
+        }
+        return true
     }
 
-    public func gestureRecognizer(
+    open func gestureRecognizer(
         _ gestureRecognizer: UIGestureRecognizer,
         shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer
     ) -> Bool {
@@ -169,7 +179,7 @@ open class SwipeableView: _View, ComponentsProvider, UIGestureRecognizerDelegate
         true
     }
 
-    public func gestureRecognizer(
+    open func gestureRecognizer(
         _ gestureRecognizer: UIGestureRecognizer,
         shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
     ) -> Bool {
