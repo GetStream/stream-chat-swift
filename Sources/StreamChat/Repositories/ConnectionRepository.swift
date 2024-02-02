@@ -140,9 +140,11 @@ class ConnectionRepository {
         case let .connected(connectionId: id):
             shouldNotifyConnectionIdWaiters = true
             connectionId = id
-
         case let .disconnecting(source) where source.serverError?.isInvalidTokenError == true,
-             let .disconnected(source) where source.serverError?.isInvalidTokenError == true:
+             let .disconnecting(source) where source.serverError?.isExpiredTokenError == true:
+            fallthrough
+        case let .disconnected(source) where source.serverError?.isExpiredTokenError == true,
+             let .disconnected(source) where source.serverError?.isExpiredTokenError == true:
             onInvalidToken()
             shouldNotifyConnectionIdWaiters = false
             connectionId = nil
