@@ -158,11 +158,11 @@ class MessageDTO: NSManagedObject {
         return request
     }
 
-    private static func allAttachmentsAreUploadedOrEmptyPredicate() -> NSCompoundPredicate {
-        NSCompoundPredicate(orPredicateWithSubpredicates: [
-            .init(format: "NOT (ANY attachments.localStateRaw != %@)", LocalAttachmentState.uploaded.rawValue),
-            .init(format: "attachments.@count == 0")
-        ])
+    static func allAttachmentsAreUploadedOrEmptyPredicate() -> NSCompoundPredicate {
+        .init(
+            format: "SUBQUERY(attachments, $a, $a.localStateRaw == %@).@count == attachments.@count",
+            LocalAttachmentState.uploaded.rawValue
+        )
     }
 
     /// Returns a predicate that filters out deleted message by other than the current user

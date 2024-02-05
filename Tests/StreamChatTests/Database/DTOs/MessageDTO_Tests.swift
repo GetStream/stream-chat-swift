@@ -2192,7 +2192,129 @@ final class MessageDTO_Tests: XCTestCase {
 
         XCTAssertEqual(predicateCount, 1)
     }
-    
+
+    // MARK: - allAttachmentsAreUploadedOrEmptyPredicate()
+
+    func test_allAttachmentsAreUploadedOrEmptyPredicate_whenEmpty_returnsMessages() throws {
+        let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: true)]
+        request.predicate = MessageDTO.allAttachmentsAreUploadedOrEmptyPredicate()
+
+        let cid = ChannelId.unique
+        let message: MessagePayload =
+            .dummy(
+                type: .regular,
+                messageId: .unique,
+                attachments: [],
+                authorUserId: .unique,
+                createdAt: Date(timeIntervalSince1970: 1),
+                channel: .dummy(cid: cid)
+            )
+
+        try database.writeSynchronously { session in
+            try session.saveMessage(
+                payload: message,
+                for: .unique,
+                syncOwnReactions: true,
+                cache: nil
+            )
+        }
+
+        var retrievedMessages: [MessageDTO] = []
+        retrievedMessages = try database.viewContext.fetch(request)
+        XCTAssertEqual(retrievedMessages.filter { msg in msg.id == message.id }.count, 1)
+    }
+
+    func test_allAttachmentsAreUploadedOrEmptyPredicate_whenAllUploaded_returnsMessages() throws {
+        let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: true)]
+        request.predicate = MessageDTO.allAttachmentsAreUploadedOrEmptyPredicate()
+
+        let cid = ChannelId.unique
+        let message: MessagePayload =
+            .dummy(
+                type: .regular,
+                messageId: .unique,
+                attachments: [],
+                authorUserId: .unique,
+                createdAt: Date(timeIntervalSince1970: 1),
+                channel: .dummy(cid: cid)
+            )
+
+        try database.writeSynchronously { session in
+            let message = try session.saveMessage(
+                payload: message,
+                for: .unique,
+                syncOwnReactions: true,
+                cache: nil
+            )
+
+            let attachment1 = try session.saveAttachment(
+                payload: .image(),
+                id: .init(cid: cid, messageId: message.id, index: 1)
+            )
+            attachment1.localState = .uploaded
+
+            let attachment2 = try session.saveAttachment(
+                payload: .image(),
+                id: .init(cid: cid, messageId: message.id, index: 2)
+            )
+            attachment2.localState = .uploaded
+
+            message.attachments.insert(attachment1)
+            message.attachments.insert(attachment2)
+        }
+
+        var retrievedMessages: [MessageDTO] = []
+        retrievedMessages = try database.viewContext.fetch(request)
+        XCTAssertEqual(retrievedMessages.filter { msg in msg.id == message.id }.count, 1)
+    }
+
+    func test_allAttachmentsAreUploadedOrEmptyPredicate_whenSomeUploaded_shouldNotReturnMessages() throws {
+        let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: true)]
+        request.predicate = MessageDTO.allAttachmentsAreUploadedOrEmptyPredicate()
+
+        let cid = ChannelId.unique
+        let message: MessagePayload =
+            .dummy(
+                type: .regular,
+                messageId: .unique,
+                attachments: [],
+                authorUserId: .unique,
+                createdAt: Date(timeIntervalSince1970: 1),
+                channel: .dummy(cid: cid)
+            )
+
+        try database.writeSynchronously { session in
+            let message = try session.saveMessage(
+                payload: message,
+                for: .unique,
+                syncOwnReactions: true,
+                cache: nil
+            )
+
+            let attachment1 = try session.saveAttachment(
+                payload: .image(),
+                id: .init(cid: cid, messageId: message.id, index: 1)
+            )
+            attachment1.localState = .uploaded
+
+            let attachment2 = try session.saveAttachment(
+                payload: .image(),
+                id: .init(cid: cid, messageId: message.id, index: 2)
+            )
+            attachment2.localState = .pendingUpload
+
+            message.attachments.insert(attachment1)
+            message.attachments.insert(attachment2)
+        }
+
+        var retrievedMessages: [MessageDTO] = []
+        retrievedMessages = try database.viewContext.fetch(request)
+        XCTAssertEqual(retrievedMessages.filter { msg in msg.id == message.id }.count, 0)
+    }
+
     // MARK: Count Other User Messages
 
     func test_countOtherUserMessages_whenThereAreNoMessages() {
