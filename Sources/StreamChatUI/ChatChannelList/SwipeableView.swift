@@ -157,13 +157,16 @@ open class SwipeableView: _View, ComponentsProvider, UIGestureRecognizerDelegate
             return false
         }
 
-        // Additionally, if the horizontal swipe is left-to-right and action items
-        // are not expanded, we'll deny this recognizer, so that it doesn't steal
-        // the gesture from another recognizer, such as a UINavigationController's
-        // interactivePopGestureRecognizer
-        if !isOpen, translation.x > 0 {
+        // Additionally, if the gesture recognizer started from the left edge of the screen,
+        // ignore this recognizer so that it doesn't steal the gesture from UINavigationController's
+        // interactivePopGestureRecognizer.
+        let edgeThreshold: CGFloat = 30
+        let location = recognizer.location(in: self)
+        if location.x < edgeThreshold {
             return false
         }
+
+
         return true
     }
 
