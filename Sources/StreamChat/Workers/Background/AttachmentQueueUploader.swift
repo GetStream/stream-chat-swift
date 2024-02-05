@@ -59,13 +59,17 @@ class AttachmentQueueUploader: Worker {
     private func handleChanges(changes: [ListChange<AttachmentDTO>]) {
         guard !changes.isEmpty else { return }
 
-        var wasEmpty: Bool = false
-        _pendingAttachmentIDs.mutate { pendingAttachmentIDs in
-            wasEmpty = pendingAttachmentIDs.isEmpty
-            changes.pendingUploadAttachmentIDs.forEach { pendingAttachmentIDs.insert($0) }
-        }
-        if wasEmpty {
-            uploadNextAttachment()
+        database.backgroundReadOnlyContext.perform { [weak self] in
+            var wasEmpty: Bool = false
+            self?._pendingAttachmentIDs.mutate { pendingAttachmentIDs in
+                wasEmpty = pendingAttachmentIDs.isEmpty
+                changes.pendingUploadAttachmentIDs.forEach {
+                    pendingAttachmentIDs.insert($0)
+                }
+            }
+            if wasEmpty {
+                self?.uploadNextAttachment()
+            }
         }
     }
 

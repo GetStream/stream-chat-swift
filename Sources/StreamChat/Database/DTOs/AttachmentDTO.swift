@@ -8,9 +8,12 @@ import Foundation
 @objc(AttachmentDTO)
 class AttachmentDTO: NSManagedObject {
     /// An attachment id.
-    @NSManaged private var id: String
+    @NSManaged private var id: String?
     var attachmentID: AttachmentId? {
-        get { AttachmentId(rawValue: id) }
+        get {
+            guard let id = self.id else { return nil }
+            return AttachmentId(rawValue: id)
+        }
         set { id = newValue?.rawValue ?? "" }
     }
 
