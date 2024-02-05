@@ -1071,6 +1071,45 @@ extension MessageDTO {
             extraData: decodedExtraData
         )
     }
+    
+    func asRequestBody() -> StreamChatMessageRequest {
+        var decodedExtraData: [String: RawJSON]
+
+        if let extraData = self.extraData {
+            do {
+                decodedExtraData = try JSONDecoder.default.decode([String: RawJSON].self, from: extraData)
+            } catch {
+                log.assertionFailure(
+                    "Failed decoding saved extra data with error: \(error). This should never happen because"
+                        + "the extra data must be a valid JSON to be saved."
+                )
+                decodedExtraData = [:]
+            }
+        } else {
+            decodedExtraData = [:]
+        }
+
+        let attachments: [StreamChatAttachmentRequest] = attachments
+            .sorted { ($0.attachmentID?.index ?? 0) < ($1.attachmentID?.index ?? 0) }
+            .compactMap { $0.asRequestPayload() }
+        let messageRequest = StreamChatMessageRequest(
+            attachments: attachments,
+            id: id,
+            parentId: parentMessageId,
+            pinExpires: pinExpires?.bridgeDate,
+            pinned: pinned,
+            pinnedAt: pinnedAt?.bridgeDate,
+            quotedMessageId: quotedMessage?.id,
+            showInChannel: showReplyInChannel,
+            silent: isSilent,
+            text: text,
+            type: type,
+            mentionedUsers: mentionedUserIds,
+            custom: decodedExtraData
+        )
+        
+        return messageRequest
+    }
 }
 
 private extension ChatMessage {

@@ -75,9 +75,13 @@ class MessageEditor: Worker {
                 return
             }
 
-            let requestBody = dto.asRequestBody() as MessageRequestBody
+            let requestBody = dto.asRequestBody() as StreamChatMessageRequest
             messageRepository?.updateMessage(withID: messageId, localState: .syncing) {
-                self?.apiClient.request(endpoint: .editMessage(payload: requestBody, skipEnrichUrl: dto.skipEnrichUrl)) {
+                let request = StreamChatUpdateMessageRequest(
+                    message: requestBody,
+                    skipEnrichUrl: dto.skipEnrichUrl
+                )
+                self?.api.updateMessage(id: messageId, updateMessageRequest: request) {
                     let newMessageState: LocalMessageState? = $0.error == nil ? nil : .syncingFailed
 
                     messageRepository?.updateMessage(

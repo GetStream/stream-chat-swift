@@ -85,6 +85,12 @@ protocol ChannelDatabaseSessionV2 {
         _ devices: [StreamChatDevice],
         clearExisting: Bool
     ) throws -> [DeviceDTO]
+    
+    func saveMessages(
+        messagesPayload: StreamChatGetRepliesResponse,
+        for cid: ChannelId?,
+        syncOwnReactions: Bool
+    ) -> [MessageDTO]
 }
 
 extension NSManagedObjectContext {
@@ -829,6 +835,19 @@ extension NSManagedObjectContext {
             } else {
                 return nil
             }
+        }
+    }
+}
+
+extension NSManagedObjectContext {
+    func saveMessages(
+        messagesPayload: StreamChatGetRepliesResponse,
+        for cid: ChannelId?,
+        syncOwnReactions: Bool = true
+    ) -> [MessageDTO] {
+        let cache = messagesPayload.getPayloadToModelIdMappings(context: self)
+        return messagesPayload.messages.compactMapLoggingError {
+            try saveMessage(payload: $0, for: cid, syncOwnReactions: syncOwnReactions, cache: cache)
         }
     }
 }

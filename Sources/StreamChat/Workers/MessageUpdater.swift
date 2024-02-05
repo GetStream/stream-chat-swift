@@ -81,16 +81,20 @@ class MessageUpdater: Worker {
             } else {
                 messageDTO.localMessageState = .deleting
             }
-        }, completion: { [weak database, weak apiClient, weak repository] error in
+        }, completion: { [weak database, weak api, weak repository] error in
             guard shouldDeleteOnBackend, error == nil else {
                 completion?(error)
                 return
             }
 
-            apiClient?.request(endpoint: .deleteMessage(messageId: messageId, hard: hard)) { result in
+            api?.deleteMessage(id: messageId, hard: hard, deletedBy: nil) { result in
                 switch result {
                 case let .success(response):
-                    repository?.saveSuccessfullyDeletedMessage(message: response.message, completion: completion)
+                    if let message = response.message {
+                        repository?.saveSuccessfullyDeletedMessage(message: message, completion: completion)
+                    } else {
+                        completion?(ClientError.MessageDoesNotExist(messageId: messageId))
+                    }
                 case let .failure(error):
                     database?.write { session in
                         let messageDTO = session.message(id: messageId)
@@ -254,15 +258,29 @@ class MessageUpdater: Worker {
         cid: ChannelId,
         messageId: MessageId,
         pagination: MessagesPagination,
-        completion: ((Result<MessageRepliesPayload, Error>) -> Void)? = nil
+        completion: ((Result<StreamChatGetRepliesResponse, Error>) -> Void)? = nil
     ) {
         paginationStateHandler.begin(pagination: pagination)
 
         let didLoadFirstPage = pagination.parameter == nil
         let didJumpToMessage = pagination.parameter?.isJumpingToMessage == true
         let endpoint: Endpoint<MessageRepliesPayload> = .loadReplies(messageId: messageId, pagination: pagination)
-
-        apiClient.request(endpoint: endpoint) {
+                
+        let parameters = pagination.parameter?.parameters
+        
+        api.getReplies(
+            parentId: messageId,
+            idGte: parameters?["id_gte"] as? String,
+            idGt: parameters?["id_gt"] as? String,
+            idLte: parameters?["id_lte"] as? String,
+            idLt: parameters?["id_lt"] as? String,
+            createdAtAfterOrEqual: nil,
+            createdAtAfter: nil,
+            createdAtBeforeOrEqual: nil,
+            createdAtBefore: nil,
+            idAround: parameters?["id_around"] as? String,
+            createdAtAround: nil
+        ) {
             self.paginationStateHandler.end(pagination: pagination, with: $0.map(\.messages))
 
             switch $0 {

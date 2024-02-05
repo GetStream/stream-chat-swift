@@ -150,7 +150,8 @@ class OfflineRequestsRepository {
                 completion()
                 return
             }
-            messageRepository.saveSuccessfullyDeletedMessage(message: message.message) { _ in completion() }
+        // TODO: handle this!
+//            messageRepository.saveSuccessfullyDeletedMessage(message: message.message) { _ in completion() }
         case .addReaction, .deleteReaction:
             // No further action
             completion()

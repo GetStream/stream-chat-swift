@@ -123,12 +123,13 @@ extension StreamChatMembersResponse: IdentifiablePayloadProxy {
     }
 }
 
+extension StreamChatGetRepliesResponse: IdentifiablePayloadProxy {
+    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
+        messages.fillIds(cache: &cache)
+    }
+}
+
 // TODO: Re-check these.
-// extension MessageListPayload: IdentifiablePayloadProxy {
-//    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
-//        messages.fillIds(cache: &cache)
-//    }
-// }
 //
 // extension MessageReactionsPayload: IdentifiablePayloadProxy {
 //    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {

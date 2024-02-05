@@ -184,6 +184,17 @@ extension AttachmentDTO {
 
         return .init(type: attachmentType, payload: payload)
     }
+    
+    func asRequestPayload() -> StreamChatAttachmentRequest? {
+        guard
+            let payload = try? JSONDecoder.default.decode(RawJSON.self, from: data)
+        else {
+            log.error("Internal error. Unable to decode attachment `data` for sending to backend.")
+            return nil
+        }
+
+        return .init(type: attachmentType, payload: payload)
+    }
 }
 
 extension LocalAttachmentState {

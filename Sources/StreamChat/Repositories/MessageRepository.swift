@@ -47,7 +47,7 @@ class MessageRepository {
                 return
             }
 
-            let requestBody = dto.asRequestBody() as MessageRequestBody
+            let requestBody = dto.asRequestBody() as StreamChatMessageRequest
             let skipPush: Bool = dto.skipPush
             let skipEnrichUrl: Bool = dto.skipEnrichUrl
 
@@ -64,27 +64,8 @@ class MessageRepository {
                     return
                 }
                 
-                // TODO: temp implementation.
-                let attachments = requestBody
-                    .attachments
-                    .map { StreamChatAttachmentRequest(type: $0.type, payload: $0.payload) }
-                
-                let messageRequest = StreamChatMessageRequest(
-                    attachments: attachments,
-                    id: requestBody.id,
-                    parentId: requestBody.parentId,
-                    pinExpires: requestBody.pinExpires,
-                    pinned: requestBody.pinned,
-                    quotedMessageId: requestBody.quotedMessageId,
-                    showInChannel: requestBody.showReplyInChannel,
-                    silent: requestBody.isSilent,
-                    text: requestBody.text,
-                    mentionedUsers: requestBody.mentionedUserIds,
-                    custom: requestBody.extraData
-                )
-                
                 let sendMessageRequest = StreamChatSendMessageRequest(
-                    message: messageRequest,
+                    message: requestBody,
                     skipEnrichUrl: skipEnrichUrl,
                     skipPush: skipPush
                 )
@@ -190,7 +171,7 @@ class MessageRepository {
         updateMessage(withID: id, localState: nil, completion: completion)
     }
 
-    func saveSuccessfullyDeletedMessage(message: MessagePayload, completion: ((Error?) -> Void)? = nil) {
+    func saveSuccessfullyDeletedMessage(message: StreamChatMessage, completion: ((Error?) -> Void)? = nil) {
         database.write({ session in
             guard let messageDTO = session.message(id: message.id), let cid = messageDTO.channel?.cid else { return }
             let deletedMessage = try session.saveMessage(
