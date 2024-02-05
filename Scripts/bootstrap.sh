@@ -58,3 +58,8 @@ if [[ ${INSTALL_ALLURE-default} == true ]]; then
   curl -sL "${DOWNLOAD_URL}" -o ./fastlane/xcresults
   chmod +x ./fastlane/xcresults
 fi
+
+# Vale should not be installed on CI
+if [ "$GITHUB_ACTIONS" != true ]; then
+  brew install vale
+fi

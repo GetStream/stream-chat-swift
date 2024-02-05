@@ -63,7 +63,12 @@ class MessageDTO: NSManagedObject {
     @NSManaged var newestReplyAt: DBDate?
 
     @NSManaged var user: UserDTO
+
+    /// Use this property in case you want to read the mentioned users in the message.
     @NSManaged var mentionedUsers: Set<UserDTO>
+    /// Use this property ONLY when creating/updating a message with new mentioned users.
+    @NSManaged var mentionedUserIds: [String]
+
     @NSManaged var threadParticipants: NSOrderedSet
     @NSManaged var channel: ChannelDTO?
     @NSManaged var replies: Set<MessageDTO>
@@ -588,6 +593,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             try pin(message: message, pinning: pinning)
         }
 
+        message.cid = cid.rawValue
         message.type = parentMessageId == nil ? MessageType.regular.rawValue : MessageType.reply.rawValue
         message.text = text
         message.command = command
@@ -607,13 +613,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             }
         )
 
-        // If a user is able to mention someone,
-        // most probably we have that user already saved in DB.
-        // Ideally, this should be `loadOrCreate` but then
-        // we miss non-optional fields of DTO and fail to save.
-        message.mentionedUsers = Set(
-            mentionedUserIds.compactMap { UserDTO.load(id: $0, context: self) }
-        )
+        message.mentionedUserIds = mentionedUserIds
 
         message.showReplyInChannel = showReplyInChannel
         message.quotedMessage = quotedMessageId.flatMap { MessageDTO.load(id: $0, context: self) }
@@ -727,6 +727,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             let user = try saveUser(payload: $0)
             return user
         })
+        dto.mentionedUserIds = payload.mentionedUsers.map(\.id)
 
         // If user participated in thread, but deleted message later, we need to get rid of it if backends does
         dto.threadParticipants = try NSOrderedSet(
@@ -1062,9 +1063,9 @@ extension MessageDTO {
             isSilent: isSilent,
             quotedMessageId: quotedMessage?.id,
             attachments: attachments
-                .sorted { $0.attachmentID.index < $1.attachmentID.index }
+                .sorted { ($0.attachmentID?.index ?? 0) < ($1.attachmentID?.index ?? 0) }
                 .compactMap { $0.asRequestPayload() },
-            mentionedUserIds: mentionedUsers.map(\.id),
+            mentionedUserIds: mentionedUserIds,
             pinned: pinned,
             pinExpires: pinExpires?.bridgeDate,
             extraData: decodedExtraData
@@ -1183,7 +1184,7 @@ private extension ChatMessage {
         $_author = ({ user }, nil)
         $_attachments = ({
             dto.attachments
-                .map { $0.asAnyModel() }
+                .compactMap { $0.asAnyModel() }
                 .sorted { $0.id.index < $1.id.index }
         }, dto.managedObjectContext)
 

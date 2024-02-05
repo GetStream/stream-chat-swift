@@ -208,35 +208,4 @@ final class EntityDatabaseObserver_Tests: XCTestCase {
         // Assert correct field change is received
         AssertAsync.willBeEqual(lastChange, .remove(testItem.value))
     }
-
-    func test_itemIsRemoved_whenDatabaseContainerRemovesAllData() throws {
-        let testItem = TestItem(id: .unique, value: .unique)
-        fetchRequest.predicate = NSPredicate(format: "testId == %@", testItem.id)
-
-        // Insert a new entity matching the predicate
-        try database.writeSynchronously {
-            let new = TestManagedObject(context: $0 as! NSManagedObjectContext)
-            new.testValue = testItem.value
-            new.testId = testItem.id
-        }
-
-        // Add a listener
-        var listener: [EntityChange<TestItem>] = []
-        observer.onChange { listener.append($0) }
-
-        // Start observing
-        try observer.startObserving()
-
-        // Call `removeAllData` on the database container
-        let expectation = expectation(description: "removeAllData completion")
-        database.removeAllData { error in
-            if let error = error {
-                XCTFail("removeAllData failed with \(error)")
-            }
-            expectation.fulfill()
-        }
-        wait(for: [expectation], timeout: defaultTimeout)
-
-        XCTAssertEqual(listener, [.remove(testItem)])
-    }
 }

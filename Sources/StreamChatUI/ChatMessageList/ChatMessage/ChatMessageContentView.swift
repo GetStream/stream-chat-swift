@@ -69,6 +69,9 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
     /// The component responsible to get the tapped mentioned user in a UITextView
     var textViewUserMentionsHandler = TextViewMentionedUsersHandler()
 
+    /// The component responsible to detect links in the message text.
+    public let linkDetector = TextLinkDetector()
+
     // MARK: Content && Actions
 
     /// The provider of cell index path which displays the current content view.
@@ -590,14 +593,21 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
             }
         }
 
-        let attributedText = NSAttributedString(
-            string: text,
-            attributes: [
-                .foregroundColor: messageTextColor,
-                .font: messageTextFont
-            ]
-        )
-        textView?.attributedText = attributedText
+        if textView?.text != text {
+            let attributedText = NSMutableAttributedString(
+                string: text,
+                attributes: [
+                    .foregroundColor: messageTextColor,
+                    .font: messageTextFont
+                ]
+            )
+
+            linkDetector.links(in: text).forEach { textLink in
+                attributedText.addAttribute(.link, value: textLink.url, range: textLink.range)
+            }
+
+            textView?.attributedText = attributedText
+        }
 
         // Markdown
         if isMarkdownEnabled, markdownFormatter.containsMarkdown(text) {
@@ -608,7 +618,7 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
         // Mentions
         if let mentionedUsers = content?.mentionedUsers, !mentionedUsers.isEmpty {
             mentionedUsers.forEach {
-                let mention = "@\($0.name ?? "")"
+                let mention = "@\($0.name ?? $0.id)"
                 textView?.highlightMention(mention: mention)
             }
         }

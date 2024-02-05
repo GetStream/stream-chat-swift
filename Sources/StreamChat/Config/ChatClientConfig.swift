@@ -149,8 +149,8 @@ public struct ChatClientConfig {
 
     /// Returns max number of attachments that can be attached to a message.
     ///
-    /// The current limit is `10`.
-    public let maxAttachmentCountPerMessage = 10
+    /// The current limit on the backend is `30`. You can only configure a value below `30`.
+    public var maxAttachmentCountPerMessage = 30
 
     /// Specifies the visibility of deleted messages.
     public enum DeletedMessageVisibility: String, CustomStringConvertible, CustomDebugStringConvertible {

@@ -113,6 +113,10 @@ final class ChannelUpdater_Mock: ChannelUpdater {
     @Atomic var createCall_cid: ChannelId?
     @Atomic var createCall_completion: ((Result<CallWithToken, Error>) -> Void)?
 
+    @Atomic var enrichUrl_url: URL?
+    @Atomic var enrichUrl_callCount = 0
+    @Atomic var enrichUrl_completion: ((Result<LinkAttachmentPayload, Error>) -> Void)?
+
     // Cleans up all recorded values
     func cleanUp() {
         update_channelQuery = nil
@@ -202,6 +206,9 @@ final class ChannelUpdater_Mock: ChannelUpdater {
 
         createCall_cid = nil
         createCall_completion = nil
+
+        enrichUrl_url = nil
+        enrichUrl_completion = nil
     }
 
     var mockPaginationState: MessagesPaginationState = .initial
@@ -426,5 +433,11 @@ final class ChannelUpdater_Mock: ChannelUpdater {
     ) {
         createCall_cid = cid
         createCall_completion = completion
+    }
+
+    override func enrichUrl(_ url: URL, completion: @escaping (Result<LinkAttachmentPayload, Error>) -> Void) {
+        enrichUrl_callCount += 1
+        enrichUrl_url = url
+        enrichUrl_completion = completion
     }
 }

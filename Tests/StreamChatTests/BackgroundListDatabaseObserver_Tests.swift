@@ -156,59 +156,6 @@ final class BackgroundListDatabaseObserver_Tests: XCTestCase {
         XCTAssertEqual(receivedChanges.last?.isUpdate, true)
     }
 
-    func test_allItemsAreRemoved_whenDatabaseContainerRemovesAllData() throws {
-        // Simulate objects fetched by FRC
-        let objects = [
-            TestManagedObject(context: database.viewContext),
-            TestManagedObject(context: database.viewContext)
-        ]
-        testFRC.test_fetchedObjects = objects
-
-        // Call startObserving to set everything up
-        try startObservingAndWaitForInitialResults()
-        XCTAssertEqual(Array(observer.items), objects.map(\.uniqueValue))
-
-        // Reset test FRC's `performFetch` called flag
-        testFRC.test_performFetchCalled = false
-
-        // Simulate `WillRemoveAllDataNotification` is posted by the observed context
-        NotificationCenter.default
-            .post(name: DatabaseContainer.WillRemoveAllDataNotification, object: observer.frc.managedObjectContext)
-
-        // Simulate all entities are removed
-        testFRC.test_fetchedObjects = []
-
-        let startObservingDidChangeExpectation = expectation(description: "onDidChange")
-        var changes: [ListChange<String>] = []
-        // When sending `DatabaseContainer.DidRemoveAllDataNotification` we call `startObserving`, which will call again `onDidChange` with 0 changes. We are not interested in this later part for this test.
-        var callsCount = 0
-        observer.onDidChange = { incomingChanges in
-            guard callsCount == 0 else { return }
-            callsCount += 1
-            changes = incomingChanges
-            changes.forEach {
-                switch $0 {
-                case .remove:
-                    break
-                case .insert, .update, .move:
-                    XCTFail()
-                }
-            }
-            startObservingDidChangeExpectation.fulfill()
-        }
-
-        // Simulate `DidRemoveAllDataNotification` is posted by the observed context
-        NotificationCenter.default
-            .post(name: DatabaseContainer.DidRemoveAllDataNotification, object: observer.frc.managedObjectContext)
-
-        // We wait for changes
-        waitForExpectations(timeout: defaultTimeout)
-        XCTAssertEqual(observer.items.count, 0)
-
-        // Assert `performFetch` was called again on the FRC
-        XCTAssertTrue(testFRC.test_performFetchCalled)
-    }
-
     private func startObservingAndWaitForInitialResults() throws {
         try waitForItemsUpdate {
             // Start observing to ensure everything is set up

@@ -190,19 +190,28 @@ extension AttachmentPayload {
     }
 }
 
+extension ChatMessageAttachment<Data> {
+    func toAnyAttachmentPayload() -> AnyAttachmentPayload? {
+        let types = ChatClient.attachmentTypesRegistry
+        guard let payloadType = types[type] else { return nil }
+        guard let payload = try? JSONDecoder.default.decode(
+            payloadType,
+            from: self.payload
+        ) else {
+            return nil
+        }
+
+        // If the attachment is local, we should create the payload as a local file
+        if let uploadingState = self.uploadingState, uploadingState.state != .uploaded {
+            return AnyAttachmentPayload(type: type, payload: payload, localFileURL: uploadingState.localFileURL)
+        }
+
+        return AnyAttachmentPayload(payload: payload)
+    }
+}
+
 public extension Array where Element == ChatMessageAttachment<Data> {
     func toAnyAttachmentPayload() -> [AnyAttachmentPayload] {
-        compactMap { attachment in
-            let types = ChatClient.attachmentTypesRegistry
-            guard let payloadType = types[attachment.type] else { return nil }
-            guard let payload = try? JSONDecoder.default.decode(
-                payloadType,
-                from: attachment.payload
-            ) else {
-                return nil
-            }
-
-            return AnyAttachmentPayload(payload: payload)
-        }
+        compactMap { $0.toAnyAttachmentPayload() }
     }
 }

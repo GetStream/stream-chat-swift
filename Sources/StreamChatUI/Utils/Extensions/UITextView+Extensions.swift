@@ -8,14 +8,14 @@ extension UITextView {
     func highlightMention(mention: String) {
         let attributeText = NSMutableAttributedString(attributedString: attributedText)
         let string = attributeText.string
-        guard let range = string
-            .range(of: mention, options: .caseInsensitive)
-            .map({ NSRange($0, in: string) })
-        else {
-            return
-        }
 
-        attributeText.addAttribute(.link, value: "", range: range)
+        string
+            .ranges(of: mention, options: [.caseInsensitive])
+            .map { NSRange($0, in: string) }
+            .forEach {
+                attributeText.addAttribute(.link, value: "", range: $0)
+            }
+
         attributedText = attributeText
     }
 }

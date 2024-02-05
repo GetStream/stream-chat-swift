@@ -20,7 +20,6 @@ runs:
       with:
         path: |
           ~/Library/Caches/Homebrew/mint*
-          ~/Library/Caches/Homebrew/vale*
           ~/Library/Caches/Homebrew/xcparse*
           ~/Library/Caches/Homebrew/sonar-scanner*
         key: ${{ env.IMAGE }}-brew-${{ hashFiles('**/Brewfile.lock.json') }}

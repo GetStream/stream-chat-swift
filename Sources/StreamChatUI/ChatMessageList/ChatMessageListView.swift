@@ -80,18 +80,28 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
     ///   - contentViewClass: The type of message content view.
     ///   - attachmentViewInjectorType: The type of attachment injector.
     ///   - layoutOptions: The message content view layout options.
+    ///   - message: The message data.
     /// - Returns: The cell reuse identifier.
     open func reuseIdentifier(
         contentViewClass: ChatMessageContentView.Type,
         attachmentViewInjectorType: AttachmentViewInjector.Type?,
-        layoutOptions: ChatMessageLayoutOptions
+        layoutOptions: ChatMessageLayoutOptions,
+        message: ChatMessage?
     ) -> String {
-        let components = [
+        var components = [
             ChatMessageCell.reuseId,
             String(layoutOptions.id),
-            String(describing: contentViewClass),
-            String(describing: attachmentViewInjectorType)
+            String(describing: contentViewClass)
         ]
+        
+        /// If the message should render mixed attachments, the id should be based on the underlying injectors.
+        if let mixedAttachmentInjector = attachmentViewInjectorType as? MixedAttachmentViewInjector.Type {
+            let injectors = mixedAttachmentInjector.injectors(for: message)
+            components.append(contentsOf: injectors.map(String.init(describing:)))
+        } else {
+            components.append(String(describing: attachmentViewInjectorType))
+        }
+
         return components.joined(separator: "_")
     }
 
@@ -108,7 +118,8 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
         return reuseIdentifier(
             contentViewClass: type(of: messageContentView),
             attachmentViewInjectorType: messageContentView.attachmentViewInjector.map { type(of: $0) },
-            layoutOptions: layoutOptions
+            layoutOptions: layoutOptions,
+            message: messageContentView.content
         )
     }
 
@@ -118,18 +129,21 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
     ///   - contentViewClass: The type of content view the cell will be displaying.
     ///   - layoutOptions: The option set describing content view layout.
     ///   - indexPath: The cell index path.
+    ///   - message: The message data.
     /// - Returns: The instance of `ChatMessageCollectionViewCell` set up with the
     /// provided `contentViewClass` and `layoutOptions`
     open func dequeueReusableCell(
         contentViewClass: ChatMessageContentView.Type,
         attachmentViewInjectorType: AttachmentViewInjector.Type?,
         layoutOptions: ChatMessageLayoutOptions,
-        for indexPath: IndexPath
+        for indexPath: IndexPath,
+        message: ChatMessage?
     ) -> ChatMessageCell {
         let reuseIdentifier = self.reuseIdentifier(
             contentViewClass: contentViewClass,
             attachmentViewInjectorType: attachmentViewInjectorType,
-            layoutOptions: layoutOptions
+            layoutOptions: layoutOptions,
+            message: message
         )
 
         // There is no public API to find out

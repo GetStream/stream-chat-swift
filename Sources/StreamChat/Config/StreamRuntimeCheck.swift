@@ -33,4 +33,9 @@ public enum StreamRuntimeCheck {
 
         return currentDepth <= _backgroundMappingRelationshipsMaxDepth
     }
+    
+    /// For *internal use* only
+    ///
+    ///  Enables using our legacy web socket connection.
+    public static var _useLegacyWebSocketConnection = false
 }

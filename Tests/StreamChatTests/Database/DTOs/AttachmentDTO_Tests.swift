@@ -45,7 +45,7 @@ final class AttachmentDTO_Tests: XCTestCase {
         let imagePayload = attachment.decodedImagePayload
         let imageAttachmentModel = try XCTUnwrap(
             loadedAttachment
-                .asAnyModel()
+                .asAnyModel()?
                 .attachment(payloadType: ImageAttachmentPayload.self)
         )
 
@@ -79,7 +79,7 @@ final class AttachmentDTO_Tests: XCTestCase {
         let giphyPayload = attachment.decodedGiphyPayload
         let giphyAttachmentWithActionsPayload = try XCTUnwrap(
             loadedAttachment
-                .asAnyModel()
+                .asAnyModel()?
                 .attachment(payloadType: GiphyAttachmentPayload.self)
         )
 
@@ -113,7 +113,7 @@ final class AttachmentDTO_Tests: XCTestCase {
         let giphyPayload = attachment.decodedGiphyPayload
         let giphyAttachmentWithoutActionsPayload = try XCTUnwrap(
             loadedAttachment
-                .asAnyModel()
+                .asAnyModel()?
                 .attachment(payloadType: GiphyAttachmentPayload.self)
         )
 
@@ -147,7 +147,7 @@ final class AttachmentDTO_Tests: XCTestCase {
 
         let fileAttachment = try XCTUnwrap(
             loadedAttachment
-                .asAnyModel()
+                .asAnyModel()?
                 .attachment(payloadType: FileAttachmentPayload.self)
         )
 
@@ -185,7 +185,7 @@ final class AttachmentDTO_Tests: XCTestCase {
 
         let attachmentModel = try XCTUnwrap(
             loadedAttachment
-                .asAnyModel()
+                .asAnyModel()?
                 .attachment(payloadType: TestAttachmentPayload.self)
         )
 

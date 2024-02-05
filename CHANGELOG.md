@@ -3,7 +3,60 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### ✅ Added
+- Add new `ChatChannelController.enrichUrl()` function to get metadata from URL [#2984](https://github.com/GetStream/stream-chat-swift/pull/2984)
+- Add new `TextLinkDetector` for parsing and detecting links given a string [#2984](https://github.com/GetStream/stream-chat-swift/pull/2984)
+### 🐞 Fixed
+- Fix message link preview showing empty space when no metadata available [#2984](https://github.com/GetStream/stream-chat-swift/pull/2984)
+- Fix threading issues in `ConnectionRepository` [#2985](https://github.com/GetStream/stream-chat-swift/pull/2985), [#2987](https://github.com/GetStream/stream-chat-swift/pull/2987)
+- Fix threading issues in `AuthenticationRepository` [#2986](https://github.com/GetStream/stream-chat-swift/pull/2986)
+- Fix `NewMessagePendingEvent.message` with empty `cid` [#2997](https://github.com/GetStream/stream-chat-swift/pull/2997)
+
+## StreamChatUI
+### ✅ Added
+- Add `Components.default.isComposerLinkPreviewEnabled` flag to enable composer link previews [#2984](https://github.com/GetStream/stream-chat-swift/pull/2984)
+- Add support for showing link previews in the composer [#2984](https://github.com/GetStream/stream-chat-swift/pull/2984)
+### 🐞 Fixed
+- Fix link flickering when opening a channel [#2984](https://github.com/GetStream/stream-chat-swift/pull/2984)
+- Fix link flickering when quoting a message with a link [#2984](https://github.com/GetStream/stream-chat-swift/pull/2984)
+
+# [4.47.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.47.1)
+_January 24, 2024_
+
+## StreamChat
+### 🐞 Fixed
+- Fix not possible to resend messages with failed attachments [#2966](https://github.com/GetStream/stream-chat-swift/pull/2966)
+- Fix not mentioning users if they are not fetched in the local device [#2967](https://github.com/GetStream/stream-chat-swift/pull/2967)
+- Fix rare crash in `startObserver()` in login/logout flow [#2972](https://github.com/GetStream/stream-chat-swift/pull/2972)
 ### 🔄 Changed
+- Bump `maxAttachmentCountPerMessage` from `10` to `30` to align with the backend. [#2977](https://github.com/GetStream/stream-chat-swift/pull/2977)
+
+## StreamChatUI
+### 🐞 Fixed
+- Fix file attachments retry button not retrying upload [#2966](https://github.com/GetStream/stream-chat-swift/pull/2966)
+- Fix mentioned users without names not highlighted [#2967](https://github.com/GetStream/stream-chat-swift/pull/2967)
+- Fix duplicated mentioned users not highlighted [#2967](https://github.com/GetStream/stream-chat-swift/pull/2967)
+
+# [4.47.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.47.0)
+_January 09, 2024_
+
+## StreamChat
+### 🐞 Fixed
+- Fix Channel ID initializer crashing with an empty string [#2964](https://github.com/GetStream/stream-chat-swift/pull/2964)
+### ✅ Added
+- Expose `UserListQuery.search(term:)` and `UserListQuery.user(withID:)` [#2959](https://github.com/GetStream/stream-chat-swift/pull/2959)
+
+## StreamChatUI
+### ✅ Added
+- Better support for custom mixed attachments rendering [#2947](https://github.com/GetStream/stream-chat-swift/pull/2947)
+- Add default rendering for unsupported attachments [#2948](https://github.com/GetStream/stream-chat-swift/pull/2948)
+### 🐞 Fixed
+- Fix deleted messages showing custom attachments [#2947](https://github.com/GetStream/stream-chat-swift/pull/2947)
+- Fix blocked messages showing attachments [#2947](https://github.com/GetStream/stream-chat-swift/pull/2947)
+### 🔄 Changed
+- Minor breaking change in the `ChatMessageListView.reuseIdentifier()` function. It has a new `message` parameter. [#2947](https://github.com/GetStream/stream-chat-swift/pull/2947)
+- Minor breaking change in the `ChatMessageListView.dequeueReusableCell()` function. It has a new `message` parameter. [#2947](https://github.com/GetStream/stream-chat-swift/pull/2947)
 
 # [4.46.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.46.0)
 _December 21, 2023_

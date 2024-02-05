@@ -592,6 +592,9 @@ final class ChannelUpdater_Tests: XCTestCase {
             }
         }
 
+        // Make sure when creating a new message, the cid is locally available.
+        XCTAssertNotNil(newMessage.cid)
+
         func id(for envelope: AnyAttachmentPayload) -> AttachmentId {
             .init(cid: cid, messageId: newMessage.id, index: attachmentEnvelopes.firstIndex(of: envelope)!)
         }
@@ -601,6 +604,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         )
         XCTAssertEqual(messageDTO.skipPush, true)
         XCTAssertEqual(messageDTO.skipEnrichUrl, true)
+        XCTAssertEqual(messageDTO.mentionedUserIds, [currentUserId])
 
         let message = try messageDTO.asModel()
         XCTAssertEqual(message.text, text)
@@ -618,7 +622,6 @@ final class ChannelUpdater_Tests: XCTestCase {
         XCTAssertEqual(message.localState, .pendingSend)
         XCTAssertEqual(message.isPinned, true)
         XCTAssertEqual(message.isSilent, false)
-        XCTAssertEqual(message.mentionedUsers.map(\.id), [currentUserId])
     }
 
     func test_createNewMessage_propagatesErrorWhenSavingFails() throws {
@@ -1894,5 +1897,46 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         // Assert updater can be released
         AssertAsync.canBeReleased(&channelUpdater)
+    }
+
+    // MARK: - enrichUrl
+
+    func test_enrichUrl_whenSuccess() {
+        let exp = expectation(description: "enrichUrl completes")
+        let url = URL(string: "www.google.com")!
+        var linkPayload: LinkAttachmentPayload?
+        channelUpdater.enrichUrl(url) { result in
+            XCTAssertNil(result.error)
+            linkPayload = result.value
+            exp.fulfill()
+        }
+
+        apiClient.test_simulateResponse(.success(LinkAttachmentPayload(
+            originalURL: url,
+            title: "Google"
+        )))
+
+        wait(for: [exp], timeout: defaultTimeout)
+
+        XCTAssertEqual(linkPayload?.originalURL, url)
+        XCTAssertEqual(linkPayload?.title, "Google")
+    }
+
+    func test_enrichUrl_whenFailure() {
+        let exp = expectation(description: "enrichUrl completes")
+        let url = URL(string: "www.google.com")!
+        var linkPayload: LinkAttachmentPayload?
+        channelUpdater.enrichUrl(url) { result in
+            XCTAssertNotNil(result.error)
+            linkPayload = result.value
+            exp.fulfill()
+        }
+
+        apiClient
+            .test_simulateResponse(Result<LinkAttachmentPayload, Error>.failure(ClientError()))
+
+        wait(for: [exp], timeout: defaultTimeout)
+
+        XCTAssertNil(linkPayload)
     }
 }

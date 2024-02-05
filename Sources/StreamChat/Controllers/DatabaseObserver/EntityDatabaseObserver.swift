@@ -218,8 +218,6 @@ class EntityDatabaseObserver<Item, DTO: NSManagedObject> {
 
         // We want item to report nil until `startObserving` is called
         _item.computeValue = { nil }
-
-        listenForRemoveAllDataNotifications()
     }
 
     deinit {
@@ -252,30 +250,6 @@ class EntityDatabaseObserver<Item, DTO: NSManagedObject> {
         frc.delegate = changeAggregator
 
         _item.reset()
-    }
-}
-
-extension EntityDatabaseObserver: DatabaseObserverRemovalListener {
-    /// Listens for `Will/DidRemoveAllData` notifications from the context and simulates the callback when the notifications
-    /// are received.
-    private func listenForRemoveAllDataNotifications() {
-        listenForRemoveAllDataNotifications(
-            isBackground: false,
-            frc: frc,
-            changeAggregator: changeAggregator,
-            onItemsRemoval: { [weak self] completion in
-                self?._item.computeValue = { nil }
-                self?._item.reset()
-                completion()
-            },
-            onCompletion: { [weak self] in
-                do {
-                    try self?.startObserving()
-                } catch {
-                    log.error("Error when starting observing: \(error)")
-                }
-            }
-        )
     }
 }
 

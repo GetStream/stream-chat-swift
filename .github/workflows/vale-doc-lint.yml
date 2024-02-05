@@ -16,6 +16,7 @@ jobs:
           reporter: github-pr-check
           fail_on_error: true
           files: docusaurus
+          version: 3.0.3
         env:
           # Required, set by GitHub actions automatically:
           # https://docs.github.com/en/actions/security-guides/automatic-token-authentication#about-the-github_token-secret

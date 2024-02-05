@@ -411,20 +411,12 @@ lane :test_ui do |options|
     png_files = git_status(ext: '.png').map { |_, png| png }.flatten
     next if png_files.empty?
 
-    title = "[CI] Snapshots"
-    base = current_branch
-    head = "#{base}-snapshots"
-    sh("git checkout -b #{head}")
     png_files.each { |png| sh("git add #{png}") || true }
-    sh("git commit -m '#{title}'")
-    push_to_git_remote(tags: false)
-    create_pull_request(
-      api_token: ENV.fetch('GITHUB_TOKEN', nil),
-      repo: github_repo,
-      title: title,
-      head: head,
-      base: base,
-      body: 'This PR was created automatically by CI.'
+
+    create_pr(
+      title: '[CI] Snapshots',
+      base_branch: current_branch,
+      head_branch: "#{current_branch}-snapshots"
     )
   end
 end
@@ -547,29 +539,6 @@ lane :cocoapods_integration do
   )
 end
 
-desc 'Build and upload DemoApp to Emerge'
-lane :emerge_upload do
-  next unless is_check_required(sources: sources_matrix[:emerge], force_check: @force_check)
-
-  gym(
-    export_method: 'ad-hoc',
-    project: xcode_project,
-    scheme: 'DemoApp',
-    skip_package_ipa: true,
-    skip_archive: false,
-    clean: is_localhost,
-    xcargs: buildcache_xcargs
-  )
-
-  emerge(
-    build_type: 'release',
-    repo_name: github_repo,
-    pr_number: ENV['GITHUB_PR_NUM'] || nil, # If `nil` then local run or merge to develop/main
-    sha: ENV['GITHUB_COMMIT_SHA'] || last_git_commit[:commit_hash],
-    base_sha: ENV['GITHUB_BASE_SHA'] || nil
-  )
-end
-
 private_lane :update_testplan_on_ci do |options|
   update_testplan(path: options[:path], env_vars: { key: 'CI', value: 'TRUE' }) if is_ci
 end
@@ -578,20 +547,9 @@ lane :sync_mock_server do
   sh('python3 sync_mock_server.py')
   next unless is_ci
 
-  branch_name = "ci/sync-mock-server-#{Time.now.to_i}"
-  commit_message = '[CI] Sync Mock Server'
-  sh("git checkout -b #{branch_name}")
-  sh('git add -A')
-  sh("git commit -m '#{commit_message}'")
-  push_to_git_remote(tags: false)
-
-  create_pull_request(
-    api_token: ENV.fetch('GITHUB_TOKEN', nil),
-    repo: github_repo,
-    title: commit_message,
-    head: branch_name,
-    base: 'develop',
-    body: 'This PR was created automatically by CI.'
+  create_pr(
+    title: '[CI] Sync Mock Server',
+    head_branch: "ci/sync-mock-server-#{Time.now.to_i}"
   )
 end
 
@@ -633,11 +591,38 @@ lane :sources_matrix do
     e2e: ['Sources', 'StreamChatUITestsAppUITests', 'StreamChatUITestsApp', 'TestTools/StreamChatTestMockServer', xcode_project],
     unit: ['Sources', 'Tests/StreamChatTests', 'Tests/Shared', 'TestTools/StreamChatTestTools', xcode_project],
     ui: ['Sources', 'Tests/StreamChatUITests', 'Tests/Shared', xcode_project],
-    emerge: ['Sources', 'DemoApp', xcode_project],
     sample_apps: ['Sources', 'Examples', 'DemoApp', xcode_project],
     integration: ['Sources', 'Integration', xcode_project],
     ruby: ['fastlane', 'Gemfile', 'Gemfile.lock']
   }
+end
+
+lane :copyright do
+  update_copyright(ignore: [derived_data_path, source_packages_path, 'vendor/'])
+  next unless is_ci
+
+  create_pr(
+    title: '[CI] Update Copyright',
+    head_branch: "ci/update-copyright-#{Time.now.to_i}"
+  )
+end
+
+private_lane :create_pr do |options|
+  options[:base_branch] ||= 'develop'
+  sh("git checkout -b #{options[:head_branch]}")
+  sh('git restore Brewfile.lock.json')
+  sh('git add -A')
+  sh("git commit -m '#{options[:title]}'")
+  push_to_git_remote(tags: false)
+
+  create_pull_request(
+    api_token: ENV.fetch('GITHUB_TOKEN', nil),
+    repo: github_repo,
+    title: options[:title],
+    head: options[:head_branch],
+    base: options[:base_branch],
+    body: 'This PR was created automatically by CI.'
+  )
 end
 
 private_lane :current_branch do

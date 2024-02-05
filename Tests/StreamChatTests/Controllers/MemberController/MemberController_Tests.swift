@@ -302,23 +302,6 @@ final class MemberController_Tests: XCTestCase {
             Assert.willBeEqual(delegate.didUpdateMember_change?.fieldChange(\.id), .update(self.userId))
             Assert.willBeEqual(delegate.didUpdateMember_change?.fieldChange(\.memberRole), .update(updatedRole))
         }
-
-        // Simulate database flush
-        let exp = expectation(description: "removeAllData called")
-        client.databaseContainer.removeAllData { error in
-            if let error = error {
-                XCTFail("removeAllData failed with \(error)")
-            }
-            exp.fulfill()
-        }
-        wait(for: [exp], timeout: defaultTimeout)
-
-        // Assert `remove` entity change is received by the delegate
-        AssertAsync {
-            Assert.willBeEqual(delegate.didUpdateMember_change?.fieldChange(\.id), .remove(self.userId))
-            Assert.willBeEqual(delegate.didUpdateMember_change?.fieldChange(\.memberRole), .remove(updatedRole))
-            Assert.willBeNil(self.controller.member)
-        }
     }
 
     // MARK: - Ban user

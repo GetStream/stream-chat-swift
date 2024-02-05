@@ -17,6 +17,7 @@ final class MessageUpdater_Mock: MessageUpdater {
 
     @Atomic var editMessage_messageId: MessageId?
     @Atomic var editMessage_text: String?
+    @Atomic var editMessage_skipEnrichUrl: Bool?
     @Atomic var editMessage_attachments: [AnyAttachmentPayload]?
     @Atomic var editMessage_completion: ((Error?) -> Void)?
     @Atomic var editMessage_extraData: [String: RawJSON]?
@@ -194,15 +195,18 @@ final class MessageUpdater_Mock: MessageUpdater {
         deleteMessage_completion = completion
     }
 
+
     override func editMessage(
         messageId: MessageId,
         text: String,
+        skipEnrichUrl: Bool,
         attachments: [AnyAttachmentPayload] = [],
         extraData: [String: RawJSON]? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
         editMessage_messageId = messageId
         editMessage_text = text
+        editMessage_skipEnrichUrl = skipEnrichUrl
         editMessage_attachments = attachments
         editMessage_extraData = extraData
         editMessage_completion = completion

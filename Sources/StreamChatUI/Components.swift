@@ -37,13 +37,19 @@ public struct Components {
     /// A view to input content of a message.
     public var inputMessageView: InputChatMessageView.Type = InputChatMessageView.self
 
+    /// A view that displays the link metadata when typing links in the composer.
+    public var composerLinkPreviewView: ComposerLinkPreviewView.Type = ComposerLinkPreviewView.self
+
+    /// A boolean value that determines whether the link preview should show when typing a message with links.
+    public var isComposerLinkPreviewEnabled = false
+
     /// A view that displays a quoted message.
     public var quotedMessageView: QuotedChatMessageView.Type = QuotedChatMessageView.self
 
     /// A button used for sending a message, or any type of content.
     public var sendButton: UIButton.Type = SendButton.self
 
-    /// A button used for recording a voice message,
+    /// A button used for recording a voice message.
     public var recordButton: RecordButton.Type = RecordButton.self
 
     /// A view for showing a cooldown when Slow Mode is active.
@@ -184,13 +190,16 @@ public struct Components {
     @available(iOSApplicationExtension, unavailable)
     public var linkAttachmentInjector: AttachmentViewInjector.Type = LinkAttachmentViewInjector.self
 
-    /// The injector used for injecting giphy attachment views
+    /// The injector used for injecting giphy attachment views.
     public var giphyAttachmentInjector: AttachmentViewInjector.Type = GiphyAttachmentViewInjector.self
 
-    /// The injector used for injecting file attachment views
+    /// The injector used for injecting file attachment views.
     public var filesAttachmentInjector: AttachmentViewInjector.Type = FilesAttachmentViewInjector.self
 
-    /// The injector used for injecting voice recording attachment views
+    /// The injector used for injecting unsupported attachment views.
+    public var unsupportedAttachmentInjector: AttachmentViewInjector.Type = UnsupportedAttachmentViewInjector.self
+
+    /// The injector used for injecting voice recording attachment views.
     public var voiceRecordingAttachmentInjector: AttachmentViewInjector.Type = VoiceRecordingAttachmentViewInjector.self
 
     /// The injector used to combine multiple types of attachment views.

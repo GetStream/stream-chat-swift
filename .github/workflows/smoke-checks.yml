@@ -4,7 +4,6 @@ on:
   pull_request:
     branches:
       - '**'
-      - '!main'
 
   workflow_dispatch:
     inputs:
@@ -122,7 +121,7 @@ jobs:
       run: bundle exec fastlane test_ui device:"${{ env.IOS_SIMULATOR_DEVICE }}" skip_build:true record:${{ github.event.inputs.snapshots }}
       timeout-minutes: 25
       env:
-        GITHUB_TOKEN: ${{ secrets.CI_BOT_GITHUB_TOKEN }} # to open a PR
+        GITHUB_TOKEN: ${{ secrets.DANGER_GITHUB_API_TOKEN }} # to open a PR
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # to use github cli
         GITHUB_PR_NUM: ${{ github.event.number }}
     - name: Parse xcresult

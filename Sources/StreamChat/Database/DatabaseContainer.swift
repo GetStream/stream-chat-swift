@@ -16,24 +16,6 @@ class DatabaseContainer: NSPersistentContainer {
         case onDisk(databaseFileURL: URL)
     }
 
-    /// A notification with this name is posted by every `NSManagedObjectContext` before all its data is flushed.
-    ///
-    /// This is needed because flushing all data is done by resetting the persistent store, and it's not reflected in the contexts.
-    /// All observers of the context should listen to this notification, and generate a deletion callback when the notification
-    /// is received.
-    ///
-    static let WillRemoveAllDataNotification =
-        Notification.Name(rawValue: "co.getStream.iOSChatSDK.DabaseContainer.WillRemoveAllDataNotification")
-
-    /// A notification with this name is posted by every `NSManagedObjectContext` after all its data is flushed.
-    ///
-    /// This is needed because flushing all data is done by resetting the persistent store, and it's not reflected in the contexts.
-    /// All observers of the context should listen to this notification, and reset all NSFetchedResultControllers observing
-    /// the contexts.
-    ///
-    static let DidRemoveAllDataNotification =
-        Notification.Name(rawValue: "co.getStream.iOSChatSDK.DabaseContainer.DidRemoveAllDataNotification")
-
     /// We use `writableContext` for having just one place to save changes
     /// so it’s not possible to have conflicts when saving payloads from various sources.
     /// All writes are happening serially using this context and its `write { }` methods.
@@ -241,47 +223,23 @@ class DatabaseContainer: NSPersistentContainer {
     }
 
     /// Removes all data from the local storage.
-    ///
-    /// Invoking this method will cause `WillRemoveAllDataNotification` being send by all contexts of the container.
-    ///
-    /// - Warning: ⚠️ This is a non-recoverable operation. All data will be lost after calling this method.
-    ///
-    /// - Parameters:
-    ///   - force: If sets to `false`, the method fails if there are unsynced data in to local storage, for example
-    /// messages pedning sent. You can use this option to warn a user about potential data loss.
-    ///   - completion: Called when the operation is completed. If the error is present, the operation failed.
-    ///
-    func removeAllData(force: Bool = true, completion: ((Error?) -> Void)? = nil) {
-        if !force {
-            fatalError("Non-force flush is not implemented yet.")
-        }
-
-        writableContext.perform { [weak self] in
-            self?.sendNotificationForAllContexts(name: Self.WillRemoveAllDataNotification)
-
-            // Because this is a critical part of Stream, we don't want to make such changes unless it is in a controlled environment
-            if StreamRuntimeCheck._isBackgroundMappingEnabled {
-                // Before we remove the persistent store, we need to reset the state of the `NSManagedObjectContext`s to
-                // avoid a context from trying to access data from a previous store
-                self?.allContext.forEach { context in
-                    context.performAndWait { context.reset() }
+    func removeAllData(completion: ((Error?) -> Void)? = nil) {
+        writableContext.performAndWait { [weak self] in
+            self?.writableContext.invalidateCurrentUserCache()
+            let entityNames = self?.managedObjectModel.entities.compactMap(\.name)
+            var deleteError: Error?
+            entityNames?.forEach { [weak self] entityName in
+                let deleteFetch = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
+                let deleteRequest = NSBatchDeleteRequest(fetchRequest: deleteFetch)
+                do {
+                    try self?.writableContext.execute(deleteRequest)
+                    try self?.writableContext.save()
+                } catch {
+                    log.error("Batch delete request failed with error \(error)")
+                    deleteError = error
                 }
             }
-            // If the current persistent store is a SQLite store, this method will reset and recreate it.
-            self?.recreatePersistentStore { error in
-                self?.sendNotificationForAllContexts(name: Self.DidRemoveAllDataNotification)
-                completion?(error)
-            }
-        }
-    }
-
-    private func sendNotificationForAllContexts(name: Notification.Name) {
-        // Make sure the notifications are sent synchronously on the main thread to give enough time to notification
-        // listeners to react on it.
-        DispatchQueue.performSynchronouslyOnMainQueue {
-            allContext.forEach {
-                NotificationCenter.default.post(.init(name: name, object: $0, userInfo: nil))
-            }
+            completion?(deleteError)
         }
     }
 

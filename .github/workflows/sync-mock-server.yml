@@ -5,6 +5,8 @@ on:
     # Runs "At 00:00 on day-of-month 1 and 15"
     - cron: '0 0 1,15 * *'
 
+  workflow_dispatch:
+
 env:
   HOMEBREW_NO_INSTALL_CLEANUP: 1 # Disable cleanup for homebrew, we don't need it on CI
 
@@ -15,7 +17,6 @@ jobs:
     steps:
     - uses: actions/checkout@v3.1.0
     - uses: ./.github/actions/bootstrap
-    - uses: ./.github/actions/ruby-cache
     - uses: ./.github/actions/python-cache
     - run: bundle exec fastlane sync_mock_server
       timeout-minutes: 5

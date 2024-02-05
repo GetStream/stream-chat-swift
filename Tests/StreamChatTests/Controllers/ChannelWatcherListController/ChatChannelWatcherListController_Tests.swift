@@ -402,34 +402,6 @@ final class ChatChannelWatcherListController_Tests: XCTestCase {
             exp.fulfill()
         }
         wait(for: [exp], timeout: defaultTimeout)
-
-        // Assert `remove` entity changes are received by the delegate.
-        AssertAsync {
-            Assert.willBeEqual(delegate.didUpdateWatchers_changes?.count, 3)
-            Assert
-                .willBeTrue(
-                    (delegate.didUpdateWatchers_changes ?? []).map { $0.fieldChange(\.id) }
-                        .contains(where: {
-                            if case .remove(watcher1ID, index: _) = $0 {
-                                return true
-                            } else {
-                                return false
-                            }
-                        })
-                )
-            Assert
-                .willBeTrue(
-                    (delegate.didUpdateWatchers_changes ?? []).map { $0.fieldChange(\.id) }
-                        .contains(where: {
-                            if case .remove(watcher2ID, index: _) = $0 {
-                                return true
-                            } else {
-                                return false
-                            }
-                        })
-                )
-            Assert.willBeEqual(Array(self.controller.watchers), [])
-        }
     }
 
     // MARK: - Load next watchers

@@ -222,8 +222,6 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
 
         // We want items to report empty until `startObserving` is called
         _items.computeValue = { [] }
-
-        listenForRemoveAllDataNotifications()
     }
 
     convenience init(
@@ -280,32 +278,6 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
         if onChange == nil {
             onChange = nil
         }
-    }
-}
-
-extension ListDatabaseObserver: DatabaseObserverRemovalListener {
-    /// Listens for `Will/DidRemoveAllData` notifications from the context and simulates the callback when the notifications
-    /// are received.
-    private func listenForRemoveAllDataNotifications() {
-        listenForRemoveAllDataNotifications(
-            isBackground: false,
-            frc: frc,
-            changeAggregator: changeAggregator,
-            onItemsRemoval: { [weak self] completion in
-                // Remove the cached items since they're now deleted, technically. It is important for it to be reset before
-                // calling `controllerDidChangeContent` so it properly reflects the state
-                self?._items.computeValue = { [] }
-                self?._items.reset()
-                completion()
-            },
-            onCompletion: { [weak self] in
-                do {
-                    try self?.startObserving()
-                } catch {
-                    log.error("Error when starting observing: \(error)")
-                }
-            }
-        )
     }
 }
 

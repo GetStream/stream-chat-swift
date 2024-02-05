@@ -160,6 +160,9 @@ open class ChatMessageLinkPreviewView: _Control, ThemeProvider {
 
         imagePreviewHeightConstraint?.isActive = !isImageHidden
         authorOnImageConstraint?.isActive = isImageHidden && !isAuthorHidden
+
+        // If all the data is empty, hide the attachment preview view.
+        isHidden = isImageHidden && isAuthorHidden && payload?.title == nil && payload?.text == nil
     }
 
     override open func tintColorDidChange() {

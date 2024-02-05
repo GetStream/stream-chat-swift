@@ -28,6 +28,12 @@ open class ComposerView: _View, ThemeProvider {
         .withoutAutoresizingMaskConstraints
         .withAccessibilityIdentifier(identifier: "headerView")
 
+    /// A view that displays the link metadata when typing links in the composer.
+    open private(set) lazy var linkPreviewView = components
+        .composerLinkPreviewView.init()
+        .withoutAutoresizingMaskConstraints
+        .withAccessibilityIdentifier(identifier: "linkPreviewView")
+
     /// The container that displays the components below the message input view.
     public private(set) lazy var bottomContainer = UIStackView()
         .withAccessibilityIdentifier(identifier: "bottomContainer")
@@ -140,10 +146,12 @@ open class ComposerView: _View, ThemeProvider {
         container.axis = .vertical
         container.alignment = .fill
         container.addArrangedSubview(headerView)
+        container.addArrangedSubview(linkPreviewView)
         container.addArrangedSubview(centerContainer)
         container.addArrangedSubview(bottomContainer)
         bottomContainer.isHidden = true
         headerView.isHidden = true
+        linkPreviewView.isHidden = true
 
         bottomContainer.addArrangedSubview(checkboxControl)
         headerView.addSubview(titleLabel)

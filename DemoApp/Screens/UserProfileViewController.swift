@@ -40,7 +40,7 @@ class UserProfileViewController: UIViewController, CurrentChatUserControllerDele
         updateButton.backgroundColor = .systemBlue
         updateButton.contentEdgeInsets = UIEdgeInsets(top: 0.0, left: 15, bottom: 0.0, right: 15)
         updateButton.addTarget(self, action: #selector(didTapUpdateButton), for: .touchUpInside)
-        updateButton.isHidden = !DemoAppConfiguration.isStreamInternalConfiguration
+        updateButton.isHidden = !StreamRuntimeCheck.isStreamInternalConfiguration
 
         NSLayoutConstraint.activate([
             imageView.widthAnchor.constraint(equalToConstant: 60),

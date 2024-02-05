@@ -95,6 +95,9 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
     /// The size of the attachments preview.s
     open var attachmentPreviewSize: CGSize { .init(width: 34, height: 34) }
 
+    /// The component responsible to detect links in the message text.
+    public let linkDetector = TextLinkDetector()
+
     override open func setUp() {
         super.setUp()
 
@@ -167,7 +170,7 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
             ? appearance.colorPalette.popoverBackground
             : appearance.colorPalette.highlightedAccentBackground1
         
-        textView.text = message.text
+        setText(message.text)
         setAvatar(imageUrl: message.author.imageURL)
         setAvatarAlignment(avatarAlignment)
 
@@ -182,6 +185,26 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
            let translatedText = content?.message.translatedText(for: currentUserLang) {
             textView.text = translatedText
         }
+    }
+
+    /// Sets the text of the quoted message.
+    /// - Parameter text: A string representing the text of the quoted message.
+    open func setText(_ text: String) {
+        guard text != textView.text else { return }
+        
+        let attributedText = NSMutableAttributedString(
+            string: text,
+            attributes: [
+                .foregroundColor: appearance.colorPalette.text,
+                .font: appearance.fonts.subheadline
+            ]
+        )
+
+        linkDetector.links(in: text).forEach { textLink in
+            attributedText.addAttribute(.link, value: textLink.url, range: textLink.range)
+        }
+
+        textView.attributedText = attributedText
     }
 
     /// Sets the avatar image from a url or sets the placeholder image if the url is `nil`.
@@ -261,9 +284,7 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
             )
             textView.text = nil
         } else {
-            voiceRecordingAttachmentQuotedPreview.isHidden = true
-            contentContainerView.isHidden = false
-            textView.text = nil
+            setUnsupportedAttachmentPreview(for: message)
         }
     }
 
@@ -321,5 +342,12 @@ open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
             self.attachmentPreviewView.isHidden = true
             self.voiceRecordingAttachmentQuotedPreview.isHidden = true
         }
+    }
+
+    /// Sets the unsupported attachment content to the preview view.
+    open func setUnsupportedAttachmentPreview(for message: ChatMessage) {
+        attachmentPreviewView.contentMode = .scaleAspectFit
+        attachmentPreviewView.image = appearance.images.fileFallback
+        textView.text = message.text.isEmpty ? L10n.Message.unsupportedAttachment : message.text
     }
 }

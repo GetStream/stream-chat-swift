@@ -64,7 +64,7 @@ final class MessageUpdater_Tests: XCTestCase {
     func test_editMessage_propagates_CurrentUserDoesNotExist_Error() throws {
         // Simulate `editMessage(messageId:, text:)` call
         let completionError = try waitFor {
-            messageUpdater.editMessage(messageId: .unique, text: .unique, completion: $0)
+            messageUpdater.editMessage(messageId: .unique, text: .unique, skipEnrichUrl: false, completion: $0)
         }
 
         // Assert `CurrentUserDoesNotExist` is received
@@ -77,7 +77,7 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Simulate `editMessage(messageId:, text:)` call
         let completionError = try waitFor {
-            messageUpdater.editMessage(messageId: .unique, text: .unique, completion: $0)
+            messageUpdater.editMessage(messageId: .unique, text: .unique, skipEnrichUrl: false, completion: $0)
         }
 
         // Assert `MessageDoesNotExist` is received
@@ -130,7 +130,7 @@ final class MessageUpdater_Tests: XCTestCase {
 
             // Edit created message with new text
             let completionError = try waitFor {
-                messageUpdater.editMessage(messageId: messageId, text: updatedText, completion: $0)
+                messageUpdater.editMessage(messageId: messageId, text: updatedText, skipEnrichUrl: true, completion: $0)
             }
 
             // Load the edited message
@@ -149,6 +149,8 @@ final class MessageUpdater_Tests: XCTestCase {
             XCTAssertEqual(editedMessage.updatedAt, quotingMessage.updatedAt)
             // The edited message should have a different updatedAt than the original one
             XCTAssertTrue(editedMessage.updatedAt != originalMessageUpdatedAt)
+            // The edited message should have the skipEnrichUrl updated.
+            XCTAssertEqual(editedMessage.skipEnrichUrl, true)
         }
     }
 
@@ -193,7 +195,7 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Edit created message with new text
         let completionError = try waitFor {
-            messageUpdater.editMessage(messageId: messageId, text: updatedText, completion: $0)
+            messageUpdater.editMessage(messageId: messageId, text: updatedText, skipEnrichUrl: false, completion: $0)
         }
 
         // Load the edited message
@@ -238,7 +240,7 @@ final class MessageUpdater_Tests: XCTestCase {
 
             // Edit created message with new text
             let completionError = try waitFor {
-                messageUpdater.editMessage(messageId: messageId, text: updatedText, completion: $0)
+                messageUpdater.editMessage(messageId: messageId, text: updatedText, skipEnrichUrl: false, completion: $0)
             }
 
             // Load the message
@@ -282,7 +284,13 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Edit created message with new text
         let completionError = try waitFor {
-            messageUpdater.editMessage(messageId: messageId, text: updatedText, extraData: updatedExtraData, completion: $0)
+            messageUpdater.editMessage(
+                messageId: messageId,
+                text: updatedText,
+                skipEnrichUrl: false,
+                extraData: updatedExtraData,
+                completion: $0
+            )
         }
 
         // Load the message
@@ -320,7 +328,13 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Edit created message with new text
         let completionError = try waitFor {
-            messageUpdater.editMessage(messageId: messageId, text: updatedText, extraData: nil, completion: $0)
+            messageUpdater.editMessage(
+                messageId: messageId,
+                text: updatedText,
+                skipEnrichUrl: false,
+                extraData: nil,
+                completion: $0
+            )
         }
 
         // Load the message
@@ -362,6 +376,7 @@ final class MessageUpdater_Tests: XCTestCase {
             messageUpdater.editMessage(
                 messageId: messageId,
                 text: updatedText,
+                skipEnrichUrl: false,
                 attachments: updatedAttachmentsTypes.map { AnyAttachmentPayload.mock(type: $0) },
                 completion: $0
             )
@@ -886,6 +901,7 @@ final class MessageUpdater_Tests: XCTestCase {
         XCTAssertEqual(messageDTO.skipPush, true)
         XCTAssertEqual(messageDTO.skipEnrichUrl, false)
         XCTAssertEqual(messageDTO.showInsideThread, true)
+        XCTAssertEqual(messageDTO.mentionedUserIds, [currentUserId])
 
         let message: ChatMessage = try messageDTO.asModel()
         XCTAssertEqual(message.text, text)
@@ -904,7 +920,6 @@ final class MessageUpdater_Tests: XCTestCase {
         XCTAssertEqual(message.localState, .pendingSend)
         XCTAssertTrue(message.isPinned)
         XCTAssertEqual(message.isSilent, isSilent)
-        XCTAssertEqual(message.mentionedUsers.map(\.id), mentionedUserIds)
     }
 
     func test_createNewMessage_propagatesErrorWhenSavingFails() throws {
@@ -2240,6 +2255,60 @@ final class MessageUpdater_Tests: XCTestCase {
         XCTAssertNil(completionError)
         // Assert message state is changed to `.pendingSend`
         XCTAssertEqual(message.localMessageState, .pendingSend)
+    }
+
+    func test_resendMessage_whenSendingFailed_thenSetFailedAttachmentsToPendingUpload() throws {
+        let currentUserId: UserId = .unique
+        let messageId: MessageId = .unique
+        let cid: ChannelId = .unique
+        let attachmentId1 = AttachmentId(cid: cid, messageId: messageId, index: 1)
+        let attachmentId2 = AttachmentId(cid: cid, messageId: messageId, index: 2)
+        let attachmentId3 = AttachmentId(cid: cid, messageId: messageId, index: 3)
+
+        // Create current user is the database
+        try database.createCurrentUser(id: currentUserId)
+
+        // Create a new message in the database
+        try database.createMessage(id: messageId, authorId: currentUserId, cid: cid, localState: .sendingFailed)
+
+        // Create failed attachments
+        try database.writeSynchronously { session in
+            let attachment1 = try session.saveAttachment(
+                payload: .audio(),
+                id: attachmentId1
+            )
+            let attachment2 = try session.saveAttachment(
+                payload: .audio(),
+                id: attachmentId2
+            )
+            let attachment3 = try session.saveAttachment(
+                payload: .audio(),
+                id: attachmentId3
+            )
+
+            attachment1.localState = .uploadingFailed
+            attachment2.localState = .uploadingFailed
+            attachment3.localState = .uploaded
+        }
+
+        // Resend failed message
+        let completionError = try waitFor {
+            messageUpdater.resendMessage(with: messageId, completion: $0)
+        }
+
+        // Load the message
+        let message = try XCTUnwrap(database.viewContext.message(id: messageId))
+
+        // Assert completion is called without any error
+        XCTAssertNil(completionError)
+        
+        // Assert failed attachments resent
+        let attachment: (AttachmentId) -> AttachmentDTO? = { id in
+            message.attachments.first(where: { $0.attachmentID == id })
+        }
+        XCTAssertEqual(attachment(attachmentId1)?.localState, .pendingUpload)
+        XCTAssertEqual(attachment(attachmentId2)?.localState, .pendingUpload)
+        XCTAssertEqual(attachment(attachmentId3)?.localState, .uploaded)
     }
 
     // MARK: - Dispatch ephemeral message action

@@ -38,6 +38,8 @@ public extension StreamMockServer {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.httpBody = json.jsonToString().data(using: .utf8)
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        
         URLSession.shared.dataTask(with: request).resume()
     }
 

@@ -81,11 +81,14 @@ final class MessageEndpoints_Tests: XCTestCase {
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
-            body: ["message": payload]
+            body: [
+                "message": AnyEncodable(payload),
+                "skip_enrich_url": AnyEncodable(true)
+            ]
         )
 
         // Build endpoint
-        let endpoint: Endpoint<EmptyResponse> = .editMessage(payload: payload)
+        let endpoint: Endpoint<EmptyResponse> = .editMessage(payload: payload, skipEnrichUrl: true)
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))

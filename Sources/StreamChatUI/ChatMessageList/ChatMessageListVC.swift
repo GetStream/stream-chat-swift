@@ -278,6 +278,10 @@ open class ChatMessageListVC: _ViewController,
             return nil
         }
 
+        if message.isDeleted || message.shouldRenderAsSystemMessage {
+            return nil
+        }
+
         return components.attachmentViewCatalog.attachmentViewInjectorClassFor(
             message: message,
             components: components
@@ -754,15 +758,17 @@ open class ChatMessageListVC: _ViewController,
     }
 
     open func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let message = dataSource?.chatMessageListVC(self, messageAt: indexPath)
         let cell: ChatMessageCell = listView.dequeueReusableCell(
             contentViewClass: cellContentClassForMessage(at: indexPath),
             attachmentViewInjectorType: attachmentViewInjectorClassForMessage(at: indexPath),
             layoutOptions: cellLayoutOptionsForMessage(at: indexPath),
-            for: indexPath
+            for: indexPath,
+            message: message
         )
 
         guard
-            let message = dataSource?.chatMessageListVC(self, messageAt: indexPath),
+            let message = message,
             let channel = dataSource?.channel(for: self)
         else {
             return cell
@@ -963,7 +969,7 @@ open class ChatMessageListVC: _ViewController,
         }
     }
 
-    // MARK: - Attachment Action Delegates
+    // MARK: - Link Action Delegates
 
     open func didTapOnLinkAttachment(
         _ attachment: ChatMessageLinkAttachment,
@@ -972,11 +978,24 @@ open class ChatMessageListVC: _ViewController,
         router.showLinkPreview(link: attachment.url)
     }
 
+    // MARK: - File Action Delegates
+
     open func didTapOnAttachment(
         _ attachment: ChatMessageFileAttachment,
         at indexPath: IndexPath?
     ) {
         router.showFilePreview(fileURL: attachment.assetURL)
+    }
+
+    open func didTapActionOnAttachment(_ attachment: ChatMessageFileAttachment, at indexPath: IndexPath?) {
+        switch attachment.uploadingState?.state {
+        case .uploadingFailed:
+            client
+                .messageController(cid: attachment.id.cid, messageId: attachment.id.messageId)
+                .restartFailedAttachmentUploading(with: attachment.id)
+        default:
+            break
+        }
     }
 
     /// Executes the provided action on the message
