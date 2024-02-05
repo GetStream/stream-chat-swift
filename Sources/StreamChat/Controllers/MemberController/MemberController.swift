@@ -208,7 +208,7 @@ public extension ChatChannelMemberController {
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                         If request fails, the completion will be called with an error.
     func unban(completion: ((Error?) -> Void)? = nil) {
-        memberUpdater.unbanMember(userId, in: cid) { error in
+        memberUpdater.unbanMember(userId, in: cid, currentUserId: client.currentUserId) { error in
             self.callback {
                 completion?(error)
             }

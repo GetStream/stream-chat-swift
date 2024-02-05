@@ -79,6 +79,12 @@ protocol ChannelDatabaseSessionV2 {
         channelId: ChannelId,
         query: ChannelMemberListQuery?
     ) -> [MemberDTO]
+    
+    @discardableResult
+    func saveCurrentUserDevices(
+        _ devices: [StreamChatDevice],
+        clearExisting: Bool
+    ) throws -> [DeviceDTO]
 }
 
 extension NSManagedObjectContext {

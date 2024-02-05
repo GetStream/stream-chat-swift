@@ -2058,7 +2058,7 @@ public class API: DefaultAPIEndpoints {
             httpMethod: "PATCH",
             requiresConnectionId: connectionIdRequired,
             requiresToken: tokenRequired,
-            request: updateUserPartialRequest
+            request: ["users": [updateUserPartialRequest]]
         ) { [weak self] result in
             guard let self else {
                 completion(.failure(ClientError.Unknown()))

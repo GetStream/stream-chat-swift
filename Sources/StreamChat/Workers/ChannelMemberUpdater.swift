@@ -22,9 +22,15 @@ class ChannelMemberUpdater: Worker {
         reason: String? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
-        apiClient.request(
-            endpoint: .banMember(userId, cid: cid, shadow: shadow, timeoutInMinutes: timeoutInMinutes, reason: reason)
-        ) {
+        let request = StreamChatBanRequest(
+            targetUserId: userId,
+            id: cid.id,
+            reason: reason,
+            shadow: shadow,
+            timeout: timeoutInMinutes,
+            type: cid.type.rawValue
+        )
+        api.ban(banRequest: request) {
             completion?($0.error)
         }
     }
@@ -37,9 +43,10 @@ class ChannelMemberUpdater: Worker {
     func unbanMember(
         _ userId: UserId,
         in cid: ChannelId,
+        currentUserId: UserId?,
         completion: ((Error?) -> Void)? = nil
     ) {
-        apiClient.request(endpoint: .unbanMember(userId, cid: cid)) {
+        api.unban(targetUserId: userId, type: cid.type.rawValue, id: cid.id, createdBy: currentUserId) {
             completion?($0.error)
         }
     }

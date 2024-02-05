@@ -31,24 +31,30 @@ class CurrentUserUpdater: Worker {
             return
         }
 
-        let payload = UserUpdateRequestBody(
-            name: name,
-            imageURL: imageURL,
-            extraData: userExtraData
-        )
-
-        apiClient
-            .request(endpoint: .updateUser(id: currentUserId, payload: payload)) { [weak self] in
-                switch $0 {
-                case let .success(response):
-                    self?.database.write({ (session) in
-                        let userDTO = try session.saveUser(payload: response.user)
-                        session.currentUser?.user = userDTO
-                    }) { completion?($0) }
-                case let .failure(error):
-                    completion?(error)
+        var custom = userExtraData ?? [:]
+        if let name {
+            custom["name"] = .string(name)
+        }
+        if let imageURL {
+            custom["image"] = .string(imageURL.absoluteString)
+        }
+        let request = StreamChatUpdateUserPartialRequest(id: currentUserId, unset: [], set: custom)
+        // TODO: The generated request is not correct.
+        api.updateUsersPartial(updateUserPartialRequest: request) { [weak self] in
+            switch $0 {
+            case let .success(response):
+                guard let user = response.users[currentUserId] else {
+                    completion?(ClientError.UserDoesNotExist(userId: currentUserId))
+                    return
                 }
+                self?.database.write({ (session) in
+                    let userDTO = try session.saveUser(payload: user, query: nil, cache: nil)
+                    session.currentUser?.user = userDTO
+                }) { completion?($0) }
+            case let .failure(error):
+                completion?(error)
             }
+        }
     }
 
     /// Registers a device for push notifications to the current user.
@@ -70,24 +76,20 @@ class CurrentUserUpdater: Worker {
             try session.saveCurrentDevice(deviceId)
         }
 
-        apiClient
-            .request(
-                endpoint: .addDevice(
-                    userId: currentUserId,
-                    deviceId: deviceId,
-                    pushProvider: pushProvider,
-                    providerName: providerName
-                ),
-                completion: { result in
-                    if let error = result.error {
-                        log.debug("Device token \(deviceId) failed to be registered on Stream's backend.\n Reason: \(error.localizedDescription)")
-                        completion?(error)
-                        return
-                    }
-                    log.debug("Device token \(deviceId) was successfully registered on Stream's backend.")
-                    completion?(nil)
-                }
-            )
+        let request = StreamChatCreateDeviceRequest(
+            id: deviceId,
+            pushProvider: pushProvider.rawValue,
+            pushProviderName: providerName
+        )
+        api.createDevice(createDeviceRequest: request) { result in
+            if let error = result.error {
+                log.debug("Device token \(deviceId) failed to be registered on Stream's backend.\n Reason: \(error.localizedDescription)")
+                completion?(error)
+                return
+            }
+            log.debug("Device token \(deviceId) was successfully registered on Stream's backend.")
+            completion?(nil)
+        }
     }
 
     /// Removes a registered device from the current user.
@@ -102,16 +104,9 @@ class CurrentUserUpdater: Worker {
             session.deleteDevice(id: id)
         }
 
-        apiClient
-            .request(
-                endpoint: .removeDevice(
-                    userId: currentUserId,
-                    deviceId: id
-                ),
-                completion: { result in
-                    completion?(result.error)
-                }
-            )
+        api.deleteDevice(id: id, userId: currentUserId) { result in
+            completion?(result.error)
+        }
     }
 
     /// Updates the registered devices for the current user from backend.
@@ -119,7 +114,7 @@ class CurrentUserUpdater: Worker {
     ///     - currentUserId: The current user identifier.
     ///     - completion: Called when request is successfully completed, or with error.
     func fetchDevices(currentUserId: UserId, completion: ((Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .devices(userId: currentUserId)) { [weak self] result in
+        api.listDevices(userId: currentUserId) { [weak self] result in
             do {
                 let devicesPayload = try result.get()
                 self?.database.write({ (session) in
@@ -136,7 +131,7 @@ class CurrentUserUpdater: Worker {
     /// Marks all channels for a user as read.
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func markAllRead(completion: ((Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .markAllRead()) {
+        api.markChannelsRead(markChannelsReadRequest: StreamChatMarkChannelsReadRequest()) {
             completion?($0.error)
         }
     }
