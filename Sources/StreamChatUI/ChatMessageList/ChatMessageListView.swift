@@ -216,17 +216,14 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
             !self.skippedMessages.contains($0.id)
         }
         adjustContentInsetToPositionMessagesAtTheTop()
-        UIView.performWithoutAnimation {
-            reloadMessages(
-                previousSnapshot: previousMessagesSnapshot,
-                newSnapshot: newMessagesWithoutSkipped,
-                with: .fade,
-                completion: { [weak self] in
-                    completion?()
-                    self?.adjustContentInsetToPositionMessagesAtTheTop()
-                }
-            )
-        }
+        reloadMessages(
+            previousSnapshot: previousMessagesSnapshot,
+            newSnapshot: newMessagesWithoutSkipped,
+            completion: { [weak self] in
+                completion?()
+                self?.adjustContentInsetToPositionMessagesAtTheTop()
+            }
+        )
     }
 
     /// Reset the skipped messages and reload the message list

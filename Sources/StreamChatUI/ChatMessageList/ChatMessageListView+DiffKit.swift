@@ -9,25 +9,23 @@ extension ChatMessageListView {
     internal func reloadMessages(
         previousSnapshot: [ChatMessage],
         newSnapshot: [ChatMessage],
-        with animation: @autoclosure () -> RowAnimation,
         completion: (() -> Void)? = nil
     ) {
         let changeset = StagedChangeset(
             source: previousSnapshot,
             target: newSnapshot
         )
-        // This is need because DiffKit doesn't provide a completion block for when the reload is finished.
-        // The CATransaction notifies when animations are finished executing between begin() and commit().
-        CATransaction.begin()
-        CATransaction.setCompletionBlock(completion)
-        reload(
-            using: changeset,
-            with: animation(),
-            reconfigure: { _ in false }
-        ) { [weak self] newMessages in
-            self?.onNewDataSource?(newMessages)
+        UIView.performWithoutAnimation {
+            reload(
+                using: changeset,
+                with: .fade,
+                reconfigure: { _ in false },
+                setData: { [weak self] newMessages in
+                    self?.onNewDataSource?(newMessages)
+                },
+                completion: { _ in completion?() }
+            )
         }
-        CATransaction.commit()
     }
 }
 
