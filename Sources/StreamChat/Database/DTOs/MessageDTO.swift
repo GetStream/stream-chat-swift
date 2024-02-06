@@ -1052,6 +1052,11 @@ extension MessageDTO {
             decodedExtraData = [:]
         }
 
+        let uploadedAttachments: [MessageAttachmentPayload] = attachments
+            .filter { $0.localState == .uploaded || $0.localState == nil }
+            .sorted { ($0.attachmentID?.index ?? 0) < ($1.attachmentID?.index ?? 0) }
+            .compactMap { $0.asRequestPayload() }
+
         return .init(
             id: id,
             user: user.asRequestBody(),
@@ -1062,9 +1067,7 @@ extension MessageDTO {
             showReplyInChannel: showReplyInChannel,
             isSilent: isSilent,
             quotedMessageId: quotedMessage?.id,
-            attachments: attachments
-                .sorted { ($0.attachmentID?.index ?? 0) < ($1.attachmentID?.index ?? 0) }
-                .compactMap { $0.asRequestPayload() },
+            attachments: uploadedAttachments,
             mentionedUserIds: mentionedUserIds,
             pinned: pinned,
             pinExpires: pinExpires?.bridgeDate,

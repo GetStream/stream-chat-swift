@@ -1045,16 +1045,11 @@ final class MessageDTO_Tests: XCTestCase {
         // Create parent message in the database.
         try database.createMessage(id: parentMessageId, cid: cid)
 
-        var messageId: MessageId!
+        let messageId: MessageId = .unique
         let messageText: String = .unique
         let messagePinning: MessagePinning? = MessagePinning(expirationDate: .unique)
         let messageCommand: String = .unique
         let messageArguments: String = .unique
-        let attachments: [AnyAttachmentPayload] = [
-            .init(payload: TestAttachmentPayload.unique),
-            .mockFile,
-            .mockImage
-        ]
         let mentionedUserIds: [UserId] = [currentUserId]
         let messageShowReplyInChannel = true
         let messageIsSilent = true
@@ -1062,15 +1057,15 @@ final class MessageDTO_Tests: XCTestCase {
 
         // Create message with attachments in the database.
         try database.writeSynchronously { session in
-            messageId = try session.createNewMessage(
+            let message = try session.createNewMessage(
                 in: cid,
-                messageId: .unique,
+                messageId: messageId,
                 text: messageText,
                 pinning: messagePinning,
                 command: messageCommand,
                 arguments: messageArguments,
                 parentMessageId: parentMessageId,
-                attachments: attachments,
+                attachments: [],
                 mentionedUserIds: mentionedUserIds,
                 showReplyInChannel: messageShowReplyInChannel,
                 isSilent: messageIsSilent,
@@ -1079,13 +1074,42 @@ final class MessageDTO_Tests: XCTestCase {
                 skipPush: false,
                 skipEnrichUrl: false,
                 extraData: messageExtraData
-            ).id
+            )
+
+            // Save pending local attachments, these should not be sent to the server
+            let attachment1 = try session.saveAttachment(
+                payload: .audio(),
+                id: .init(cid: cid, messageId: messageId, index: 1)
+            )
+            attachment1.localState = .pendingUpload
+            let attachment2 = try session.saveAttachment(
+                payload: .audio(),
+                id: .init(cid: cid, messageId: messageId, index: 2)
+            )
+            attachment2.localState = .uploadingFailed
+            message.attachments.insert(attachment1)
+            message.attachments.insert(attachment2)
+
+            // Save finished uploading attachments
+            let attachment3 = try session.saveAttachment(
+                payload: .image(),
+                id: .init(cid: cid, messageId: messageId, index: 3)
+            )
+            attachment3.localState = .uploaded
+            let attachment4 = try session.saveAttachment(
+                payload: .video(),
+                id: .init(cid: cid, messageId: messageId, index: 4)
+            )
+            attachment4.localState = nil
+            message.attachments.insert(attachment3)
+            message.attachments.insert(attachment4)
         }
 
+        let messageDTO: MessageDTO = try XCTUnwrap(database.viewContext.message(id: messageId))
+        XCTAssertEqual(messageDTO.attachments.count, 4)
+
         // Load the message from the database and convert to request body.
-        let requestBody: MessageRequestBody = try XCTUnwrap(
-            database.viewContext.message(id: messageId)?.asRequestBody()
-        )
+        let requestBody: MessageRequestBody = messageDTO.asRequestBody()
 
         // Assert request body has correct fields.
         XCTAssertEqual(requestBody.id, messageId)
@@ -1099,7 +1123,8 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(requestBody.extraData, ["k": .string("v")])
         XCTAssertEqual(requestBody.pinned, true)
         XCTAssertEqual(requestBody.pinExpires, messagePinning!.expirationDate)
-        XCTAssertEqual(requestBody.attachments.map(\.type), attachments.map(\.type))
+        XCTAssertEqual(requestBody.attachments.map(\.type), [.image, .video])
+        XCTAssertEqual(requestBody.attachments.count, 2)
         XCTAssertEqual(requestBody.mentionedUserIds, mentionedUserIds)
     }
 
