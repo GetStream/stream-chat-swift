@@ -408,7 +408,7 @@ final class QuotedReply_Tests: StreamTestCase {
         }
     }
 
-    func test_quotedReplyNotInList_whenParticipantAddsQuotedReply_Giphy_InThread() {
+    func test_quotedReplyNotInList_whenParticipantAddsQuotedReply_Giphy_InThread() throws {
         linkToScenario(withId: 1936)
         
         try XCTSkipIf(TestRunnerEnvironment.isCI, "https://github.com/GetStream/ios-issues-tracking/issues/723")
