@@ -12,7 +12,8 @@ class UserUpdater: Worker {
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
     func muteUser(_ userId: UserId, completion: ((Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .muteUser(userId)) {
+        let request = StreamChatMuteUserRequest(targetIds: [userId])
+        api.muteUser(muteUserRequest: request) {
             completion?($0.error)
         }
     }
@@ -23,7 +24,8 @@ class UserUpdater: Worker {
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
     func unmuteUser(_ userId: UserId, completion: ((Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .unmuteUser(userId)) {
+        let request = StreamChatUnmuteUserRequest(targetId: userId, targetIds: [userId])
+        api.unmuteUser(unmuteUserRequest: request) {
             completion?($0.error)
         }
     }
@@ -35,34 +37,36 @@ class UserUpdater: Worker {
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
     func loadUser(_ userId: UserId, completion: ((Error?) -> Void)? = nil) {
-        apiClient
-            .request(endpoint: .users(query: .user(withID: userId))) { (result: Result<UserListPayload, Error>) in
-                switch result {
-                case let .success(payload):
-                    guard payload.users.count <= 1 else {
-                        completion?(ClientError.Unexpected(
-                            "UserUpdater.loadUser must fetch exactly 0 or 1 user. Fetched: \(payload.users)"
-                        ))
-                        return
-                    }
-
-                    guard let user = payload.users.first else {
-                        completion?(ClientError.UserDoesNotExist(userId: userId))
-                        return
-                    }
-
-                    self.database.write({ session in
-                        try session.saveUser(payload: user)
-                    }, completion: { error in
-                        if let error = error {
-                            log.error("Failed to save user with id: <\(userId)> to the database. Error: \(error)")
-                        }
-                        completion?(error)
-                    })
-                case let .failure(error):
-                    completion?(error)
+        let request = StreamChatQueryUsersRequest(filterConditions: ["id": ["$eq": .string(userId)]])
+        api.queryUsers(payload: request) { (result: Result<StreamChatUsersResponse, Error>) in
+            switch result {
+            case let .success(payload):
+                guard payload.users.count <= 1 else {
+                    completion?(ClientError.Unexpected(
+                        "UserUpdater.loadUser must fetch exactly 0 or 1 user. Fetched: \(payload.users)"
+                    ))
+                    return
                 }
+
+                guard let user = payload.users.first else {
+                    completion?(ClientError.UserDoesNotExist(userId: userId))
+                    return
+                }
+
+                self.database.write({ session in
+                    if let user = user?.toUser {
+                        try session.saveUser(payload: user, query: nil, cache: nil)
+                    }
+                }, completion: { error in
+                    if let error = error {
+                        log.error("Failed to save user with id: <\(userId)> to the database. Error: \(error)")
+                    }
+                    completion?(error)
+                })
+            case let .failure(error):
+                completion?(error)
             }
+        }
     }
 
     /// Flags or unflags the user with the provided `userId` depending on `flag` value.

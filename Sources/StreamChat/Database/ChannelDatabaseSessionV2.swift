@@ -102,6 +102,9 @@ protocol ChannelDatabaseSessionV2 {
         payload: StreamChatSearchResponse,
         for query: MessageSearchQuery
     ) -> [MessageDTO]
+    
+    @discardableResult
+    func saveUsers(payload: StreamChatUsersResponse, query: UserListQuery?) -> [UserDTO]
 }
 
 extension NSManagedObjectContext {
@@ -869,5 +872,19 @@ extension NSManagedObjectContext {
         let messageDTO = try saveMessage(payload: payload, for: cid, cache: cache)
         messageDTO.searches.insert(saveQuery(query: query))
         return messageDTO
+    }
+}
+
+extension NSManagedObjectContext {
+    @discardableResult
+    func saveUsers(payload: StreamChatUsersResponse, query: UserListQuery?) -> [UserDTO] {
+        let cache = payload.getPayloadToModelIdMappings(context: self)
+        return payload.users.compactMapLoggingError {
+            if let user = $0?.toUser {
+                return try saveUser(payload: user, query: query, cache: cache)
+            } else {
+                return nil
+            }
+        }
     }
 }

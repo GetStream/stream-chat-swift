@@ -62,3 +62,26 @@ extension StreamChatSearchResultMessage {
         )
     }
 }
+
+extension StreamChatUserResponse {
+    var toUser: StreamChatUserObject {
+        StreamChatUserObject(
+            id: id,
+            banExpires: banExpires,
+            banned: banned,
+            createdAt: createdAt,
+            deactivatedAt: deactivatedAt,
+            deletedAt: deletedAt,
+            invisible: invisible,
+            language: language,
+            lastActive: lastActive,
+            online: online,
+            revokeTokensIssuedBefore: revokeTokensIssuedBefore,
+            role: role,
+            updatedAt: updatedAt,
+            teams: teams,
+            custom: custom,
+            pushNotifications: pushNotifications
+        )
+    }
+}
