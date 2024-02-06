@@ -410,6 +410,8 @@ final class QuotedReply_Tests: StreamTestCase {
 
     func test_quotedReplyNotInList_whenParticipantAddsQuotedReply_Giphy_InThread() {
         linkToScenario(withId: 1936)
+        
+        try XCTSkipIf(TestRunnerEnvironment.isCI, "https://github.com/GetStream/ios-issues-tracking/issues/723")
 
         GIVEN("user opens the channel") {
             backendRobot.generateChannels(count: 1, messageText: parentText, messagesCount: 1, replyCount: messageCount)
