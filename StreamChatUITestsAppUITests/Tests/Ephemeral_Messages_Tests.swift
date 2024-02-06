@@ -8,6 +8,8 @@ final class Ephemeral_Messages_Tests: StreamTestCase {
 
     func test_userObservesAnimatedGiphy_whenUserAddsGiphyMessage() throws {
         linkToScenario(withId: 67)
+        
+        try XCTSkipIf(TestRunnerEnvironment.isCI, "https://github.com/GetStream/ios-issues-tracking/issues/723")
 
         GIVEN("user opens a channel") {
             userRobot
