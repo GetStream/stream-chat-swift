@@ -14,22 +14,18 @@ class Cached<T> {
     @Atomic var computeValue: (() -> T)!
 
     var wrappedValue: T {
-        var returnValue: T!
+        if let value = _cached {
+            return value
+        }
+        log.assert(computeValue != nil, "You must set the `computeValue` closure before accessing the cached value.")
+        let newValue = computeValue()
 
         // We need to make the changes inside the `mutate` block to ensure `Cached` is thread-safe.
         __cached.mutate { value in
-            if let value = value {
-                returnValue = value
-                return
-            }
-
-            log.assert(computeValue != nil, "You must set the `computeValue` closure before accessing the cached value.")
-
-            value = computeValue()
-            returnValue = value
+            value = newValue
         }
 
-        return returnValue
+        return newValue
     }
 
     var projectedValue: (() -> T) {

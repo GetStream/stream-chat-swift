@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix threading issues in `ConnectionRepository` [#2985](https://github.com/GetStream/stream-chat-swift/pull/2985), [#2987](https://github.com/GetStream/stream-chat-swift/pull/2987)
 - Fix threading issues in `AuthenticationRepository` [#2986](https://github.com/GetStream/stream-chat-swift/pull/2986)
 - Fix `NewMessagePendingEvent.message` with empty `cid` [#2997](https://github.com/GetStream/stream-chat-swift/pull/2997)
+- Fix a rare crash on logout [#3005](https://github.com/GetStream/stream-chat-swift/pull/3005)
 
 ## StreamChatUI
 ### ✅ Added

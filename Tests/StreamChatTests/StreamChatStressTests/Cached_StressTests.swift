@@ -6,7 +6,7 @@
 import StreamChatTestTools
 import XCTest
 
-final class Cached_Tests: StressTestCase {
+final class Cached_StressTests: StressTestCase {
     var counter: Int!
     @Cached var value: Int!
 
