@@ -14,7 +14,7 @@ class AttachmentDTO: NSManagedObject {
             guard let id = self.id else { return nil }
             return AttachmentId(rawValue: id)
         }
-        set { id = newValue?.rawValue ?? "" }
+        set { id = newValue?.rawValue }
     }
 
     /// An attachment type.
