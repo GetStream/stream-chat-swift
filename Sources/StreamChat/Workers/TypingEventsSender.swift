@@ -64,9 +64,13 @@ class TypingEventsSender: Worker {
         typingInfo = .init(channelId: cid, parentMessageId: parentMessageId)
         currentUserLastTypingDate = timer.currentTime()
 
-        apiClient.request(
-            endpoint: .startTypingEvent(cid: cid, parentMessageId: parentMessageId)
-        ) {
+        let eventRequest = StreamChatEventRequest(
+            type: EventType.userStartTyping.rawValue,
+            parentId: parentMessageId
+        )
+        let request = StreamChatSendEventRequest(event: eventRequest)
+        
+        api.sendEvent(type: cid.type.rawValue, id: cid.id, sendEventRequest: request) {
             completion?($0.error)
         }
     }
@@ -80,9 +84,13 @@ class TypingEventsSender: Worker {
 
         typingInfo = nil
 
-        apiClient.request(
-            endpoint: .stopTypingEvent(cid: cid, parentMessageId: parentMessageId)
-        ) {
+        let eventRequest = StreamChatEventRequest(
+            type: EventType.userStopTyping.rawValue,
+            parentId: parentMessageId
+        )
+        let request = StreamChatSendEventRequest(event: eventRequest)
+
+        api.sendEvent(type: cid.type.rawValue, id: cid.id, sendEventRequest: request) {
             completion?($0.error)
         }
     }
