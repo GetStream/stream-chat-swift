@@ -63,6 +63,7 @@ protocol ChannelDatabaseSessionV2 {
         id: AttachmentId
     ) throws -> AttachmentDTO
     
+    @discardableResult
     func saveMessage(
         payload: StreamChatMessage,
         for cid: ChannelId?,
@@ -90,6 +91,16 @@ protocol ChannelDatabaseSessionV2 {
         messagesPayload: StreamChatGetRepliesResponse,
         for cid: ChannelId?,
         syncOwnReactions: Bool
+    ) -> [MessageDTO]
+    
+    func saveReactions(
+        payload: StreamChatGetReactionsResponse
+    ) -> [MessageReactionDTO]
+    
+    @discardableResult
+    func saveMessageSearch(
+        payload: StreamChatSearchResponse,
+        for query: MessageSearchQuery
     ) -> [MessageDTO]
 }
 
@@ -268,33 +279,6 @@ extension NSManagedObjectContext {
 
         return dto
     }
-
-//    func channel(cid: ChannelId) -> ChannelDTO? {
-//        ChannelDTO.load(cid: cid, context: self)
-//    }
-//
-//    func delete(query: ChannelListQuery) {
-//        guard let dto = channelListQuery(filterHash: query.filter.filterHash) else { return }
-//
-//        delete(dto)
-//    }
-//
-//    func cleanChannels(cids: Set<ChannelId>) {
-//        let channels = ChannelDTO.load(cids: Array(cids), context: self)
-//        for channelDTO in channels {
-//            channelDTO.resetEphemeralValues()
-//            channelDTO.messages.removeAll()
-//            channelDTO.members.removeAll()
-//            channelDTO.pinnedMessages.removeAll()
-//            channelDTO.reads.removeAll()
-//            channelDTO.oldestMessageAt = nil
-//        }
-//    }
-//
-//    func removeChannels(cids: Set<ChannelId>) {
-//        let channels = ChannelDTO.load(cids: Array(cids), context: self)
-//        channels.forEach(delete)
-//    }
 }
 
 extension StreamChatChannelConfigWithInfo {
@@ -849,5 +833,41 @@ extension NSManagedObjectContext {
         return messagesPayload.messages.compactMapLoggingError {
             try saveMessage(payload: $0, for: cid, syncOwnReactions: syncOwnReactions, cache: cache)
         }
+    }
+}
+
+extension NSManagedObjectContext {
+    @discardableResult
+    func saveReactions(payload: StreamChatGetReactionsResponse) -> [MessageReactionDTO] {
+        let cache = payload.getPayloadToModelIdMappings(context: self)
+        return payload.reactions.compactMapLoggingError {
+            try saveReaction(payload: $0, cache: cache)
+        }
+    }
+}
+
+extension NSManagedObjectContext {
+    func saveMessageSearch(payload: StreamChatSearchResponse, for query: MessageSearchQuery) -> [MessageDTO] {
+        let cache = payload.getPayloadToModelIdMappings(context: self)
+        return payload.results.compactMapLoggingError {
+            if let message = $0?.message {
+                return try saveMessage(
+                    payload: message.toMessage,
+                    for: query,
+                    cache: cache
+                )
+            } else {
+                return nil
+            }
+        }
+    }
+}
+
+extension NSManagedObjectContext {
+    func saveMessage(payload: StreamChatMessage, for query: MessageSearchQuery, cache: PreWarmedCache?) throws -> MessageDTO {
+        let cid = try ChannelId(cid: payload.cid)
+        let messageDTO = try saveMessage(payload: payload, for: cid, cache: cache)
+        messageDTO.searches.insert(saveQuery(query: query))
+        return messageDTO
     }
 }

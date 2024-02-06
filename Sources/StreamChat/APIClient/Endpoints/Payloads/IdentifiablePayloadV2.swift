@@ -129,23 +129,20 @@ extension StreamChatGetRepliesResponse: IdentifiablePayloadProxy {
     }
 }
 
-// TODO: Re-check these.
-//
-// extension MessageReactionsPayload: IdentifiablePayloadProxy {
-//    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
-//        reactions.fillIds(cache: &cache)
-//    }
-// }
-//
-// extension MessageSearchResultsPayload: IdentifiablePayloadProxy {
-//    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
-//        results.fillIds(cache: &cache)
-//    }
-// }
-//
-// extension MessagePayload.Boxed: IdentifiablePayloadProxy {
-//    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
-//        message.fillIds(cache: &cache)
-//    }
-// }
-//
+extension StreamChatGetReactionsResponse: IdentifiablePayloadProxy {
+    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
+        reactions.compactMap { $0 }.fillIds(cache: &cache)
+    }
+}
+
+extension StreamChatSearchResponse: IdentifiablePayloadProxy {
+    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
+        results.compactMap { $0 }.fillIds(cache: &cache)
+    }
+}
+
+extension StreamChatSearchResult: IdentifiablePayloadProxy {
+    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
+        message?.toMessage.fillIds(cache: &cache)
+    }
+}

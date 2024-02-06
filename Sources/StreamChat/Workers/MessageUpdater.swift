@@ -264,8 +264,6 @@ class MessageUpdater: Worker {
 
         let didLoadFirstPage = pagination.parameter == nil
         let didJumpToMessage = pagination.parameter?.isJumpingToMessage == true
-        let endpoint: Endpoint<MessageRepliesPayload> = .loadReplies(messageId: messageId, pagination: pagination)
-                
         let parameters = pagination.parameter?.parameters
         
         api.getReplies(
@@ -316,17 +314,11 @@ class MessageUpdater: Worker {
     }
 
     func loadReactions(
-        cid: ChannelId,
         messageId: MessageId,
         pagination: Pagination,
         completion: ((Result<[ChatMessageReaction], Error>) -> Void)? = nil
     ) {
-        let endpoint: Endpoint<MessageReactionsPayload> = .loadReactions(
-            messageId: messageId,
-            pagination: pagination
-        )
-
-        apiClient.request(endpoint: endpoint) { result in
+        api.getReactions(id: messageId, limit: pagination.pageSize, offset: pagination.offset) { result in
             switch result {
             case let .success(payload):
                 var reactions: [ChatMessageReaction] = []
@@ -397,19 +389,12 @@ class MessageUpdater: Worker {
         _ type: MessageReactionType,
         score: Int,
         enforceUnique: Bool,
+        skipPush: Bool?,
         extraData: [String: RawJSON],
         messageId: MessageId,
         completion: ((Error?) -> Void)? = nil
     ) {
         let version = UUID().uuidString
-
-        let endpoint: Endpoint<EmptyResponse> = .addReaction(
-            type,
-            score: score,
-            enforceUnique: enforceUnique,
-            extraData: extraData,
-            messageId: messageId
-        )
 
         database.write { session in
             do {
@@ -426,7 +411,18 @@ class MessageUpdater: Worker {
                 log.warning("Failed to optimistically add the reaction to the database: \(error)")
             }
         } completion: { [weak self, weak repository] error in
-            self?.apiClient.request(endpoint: endpoint) { result in
+            let reactionRequest = StreamChatReactionRequest(
+                type: type.rawValue,
+                messageId: messageId,
+                score: score,
+                custom: extraData
+            )
+            let request = StreamChatSendReactionRequest(
+                reaction: reactionRequest,
+                enforceUnique: enforceUnique,
+                skipPush: skipPush
+            )
+            self?.api.sendReaction(id: messageId, sendReactionRequest: request) { result in
                 guard let error = result.error else { return }
 
                 if self?.canKeepReactionState(for: error) == true { return }
@@ -445,6 +441,7 @@ class MessageUpdater: Worker {
     func deleteReaction(
         _ type: MessageReactionType,
         messageId: MessageId,
+        currentUserId: UserId?,
         completion: ((Error?) -> Void)? = nil
     ) {
         var reactionScore: Int?
@@ -457,7 +454,7 @@ class MessageUpdater: Worker {
                 log.warning("Failed to remove the reaction from to the database: \(error)")
             }
         } completion: { [weak self, weak repository] error in
-            self?.apiClient.request(endpoint: .deleteReaction(type, messageId: messageId)) { result in
+            self?.api.deleteReaction(id: messageId, type: type.rawValue, userId: currentUserId) { result in
                 guard let error = result.error else { return }
 
                 if self?.canKeepReactionState(for: error) == true { return }
@@ -610,17 +607,16 @@ class MessageUpdater: Worker {
                 return
             }
 
-            let endpoint: Endpoint<MessagePayload.Boxed> = .dispatchEphemeralMessageAction(
-                cid: cid,
-                messageId: messageId,
-                action: action
-            )
-
-            self.apiClient.request(endpoint: endpoint) {
+            let request = StreamChatMessageActionRequest(formData: [action.name: action.value])
+            self.api.runMessageAction(id: messageId, messageActionRequest: request) {
                 switch $0 {
                 case let .success(payload):
+                    guard let message = payload.message else {
+                        completion?(ClientError.MessageDoesNotExist(messageId: messageId))
+                        return
+                    }
                     self.database.write({ session in
-                        try session.saveMessage(payload: payload.message, for: cid, syncOwnReactions: true, cache: nil)
+                        try session.saveMessage(payload: message, for: cid, syncOwnReactions: true, cache: nil)
                     }, completion: { error in
                         completion?(error)
                     })
@@ -633,8 +629,30 @@ class MessageUpdater: Worker {
         })
     }
 
-    func search(query: MessageSearchQuery, policy: UpdatePolicy = .merge, completion: ((Result<MessageSearchResultsPayload, Error>) -> Void)? = nil) {
-        apiClient.request(endpoint: .search(query: query)) { result in
+    func search(query: MessageSearchQuery, policy: UpdatePolicy = .merge, completion: ((Result<StreamChatSearchResponse, Error>) -> Void)? = nil) {
+        var channelFilter = [String: RawJSON]()
+        if let data = try? JSONEncoder.default.encode(query.channelFilter),
+           let filter = try? JSONDecoder.default.decode([String: RawJSON].self, from: data) {
+            channelFilter = filter
+        }
+        
+        var messageFilter: [String: RawJSON]?
+        if let data = try? JSONEncoder.default.encode(query.messageFilter) {
+            messageFilter = try? JSONDecoder.default.decode([String: RawJSON].self, from: data)
+        }
+        
+        let sort = query.sort.map { sortingKey in
+            StreamChatSortParam(direction: sortingKey.direction, field: sortingKey.key.rawValue)
+        }
+        let request = StreamChatSearchRequest(
+            filterConditions: channelFilter,
+            limit: query.pagination?.pageSize,
+            next: query.pagination?.cursor,
+            offset: query.pagination?.offset,
+            sort: sort,
+            messageFilterConditions: messageFilter
+        )
+        api.search(payload: request) { result in
             switch result {
             case let .success(payload):
                 self.database.write { session in
@@ -667,13 +685,19 @@ class MessageUpdater: Worker {
     }
 
     func translate(messageId: MessageId, to language: TranslationLanguage, completion: ((Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .translate(messageId: messageId, to: language), completion: { result in
+        let request = StreamChatTranslateMessageRequest(language: language.languageCode)
+        api.translateMessage(id: messageId, translateMessageRequest: request) { result in
             switch result {
             case let .success(boxedMessage):
+                guard let message = boxedMessage.message,
+                      let cid = try? ChannelId(cid: message.cid) else {
+                    completion?(ClientError.Unexpected())
+                    return
+                }
                 self.database.write { session in
                     try session.saveMessage(
-                        payload: boxedMessage.message,
-                        for: boxedMessage.message.cid,
+                        payload: message,
+                        for: cid,
                         syncOwnReactions: false,
                         cache: nil
                     )
@@ -681,7 +705,7 @@ class MessageUpdater: Worker {
             case let .failure(error):
                 completion?(error)
             }
-        })
+        }
     }
 }
 

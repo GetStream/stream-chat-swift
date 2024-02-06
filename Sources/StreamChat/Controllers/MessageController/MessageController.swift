@@ -512,7 +512,6 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
 
         // Note: For now we don't reuse the `loadReactions()` function to avoid deadlock on the callbackQueue.
         messageUpdater.loadReactions(
-            cid: cid,
             messageId: messageId,
             pagination: Pagination(pageSize: limit, offset: reactions.count)
         ) { result in
@@ -554,7 +553,6 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         completion: @escaping (Result<[ChatMessageReaction], Error>) -> Void
     ) {
         messageUpdater.loadReactions(
-            cid: cid,
             messageId: messageId,
             pagination: Pagination(pageSize: limit, offset: offset)
         ) { result in
@@ -602,6 +600,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         _ type: MessageReactionType,
         score: Int = 1,
         enforceUnique: Bool = false,
+        skipPush: Bool? = nil,
         extraData: [String: RawJSON] = [:],
         completion: ((Error?) -> Void)? = nil
     ) {
@@ -609,6 +608,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
             type,
             score: score,
             enforceUnique: enforceUnique,
+            skipPush: skipPush,
             extraData: extraData,
             messageId: messageId
         ) { error in
@@ -626,7 +626,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         _ type: MessageReactionType,
         completion: ((Error?) -> Void)? = nil
     ) {
-        messageUpdater.deleteReaction(type, messageId: messageId) { error in
+        messageUpdater.deleteReaction(type, messageId: messageId, currentUserId: client.currentUserId) { error in
             self.callback {
                 completion?(error)
             }

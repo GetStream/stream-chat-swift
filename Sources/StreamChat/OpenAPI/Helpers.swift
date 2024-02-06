@@ -21,3 +21,44 @@ extension StreamChatChannelStateResponse {
         )
     }
 }
+
+extension StreamChatSearchResultMessage {
+    var toMessage: StreamChatMessage {
+        StreamChatMessage(
+            cid: cid,
+            createdAt: createdAt,
+            deletedReplyCount: deletedReplyCount,
+            html: html,
+            id: id,
+            pinned: pinned,
+            replyCount: replyCount,
+            shadowed: shadowed,
+            silent: silent,
+            text: text,
+            type: type,
+            updatedAt: updatedAt,
+            attachments: attachments,
+            latestReactions: latestReactions,
+            mentionedUsers: mentionedUsers,
+            ownReactions: ownReactions,
+            custom: custom,
+            reactionCounts: reactionCounts,
+            reactionScores: reactionScores,
+            beforeMessageSendFailed: beforeMessageSendFailed,
+            command: command,
+            deletedAt: deletedAt,
+            mml: mml,
+            parentId: parentId,
+            pinExpires: pinExpires,
+            pinnedAt: pinnedAt,
+            quotedMessageId: quotedMessageId,
+            showInChannel: showInChannel,
+            threadParticipants: threadParticipants,
+            i18n: i18n,
+            imageLabels: imageLabels,
+            pinnedBy: pinnedBy,
+            quotedMessage: quotedMessage,
+            user: user
+        )
+    }
+}
