@@ -231,7 +231,7 @@ extension UserRobot {
         let messageCell = messageCell(withIndex: messageCellIndex)
         return tapOnMessage(messageCell)
     }
-    
+
     @discardableResult
     func tapOnQuotedMessage(_ text: String, at messageCellIndex: Int? = 0) -> Self {
         let messageCell = messageCell(withIndex: messageCellIndex)
@@ -389,7 +389,38 @@ extension UserRobot {
     @discardableResult
     func tapOnSendGiphyButton(messageCellIndex: Int = 0) -> Self {
         let messageCell = messageCell(withIndex: messageCellIndex)
-        MessageListPage.Attributes.giphySendButton(in: messageCell).wait().safeTap()
+        return tapOnGiphyButton(
+            in: messageCell,
+            giphyButton: MessageListPage.Attributes.giphySendButton(in: messageCell)
+        )
+    }
+
+    @discardableResult
+    func tapOnShuffleGiphyButton(messageCellIndex: Int = 0) -> Self {
+        let messageCell = messageCell(withIndex: messageCellIndex)
+        return tapOnGiphyButton(
+            in: messageCell,
+            giphyButton: MessageListPage.Attributes.giphyShuffleButton(in: messageCell)
+        )
+    }
+
+    @discardableResult
+    func tapOnCancelGiphyButton(messageCellIndex: Int = 0) -> Self {
+        let messageCell = messageCell(withIndex: messageCellIndex)
+        return tapOnGiphyButton(
+            in: messageCell,
+            giphyButton: MessageListPage.Attributes.giphyCancelButton(in: messageCell)
+        )
+    }
+
+    @discardableResult
+    private func tapOnGiphyButton(in messageCell: XCUIElement, giphyButton: XCUIElementQuery) -> Self {
+        MessageListPage.Attributes.giphyButtons(in: messageCell)
+            .waitCount(3, exact: true)
+        giphyButton
+            .waitCount(1, exact: true)
+            .firstMatch
+            .safeTap()
         return self
     }
 
@@ -398,12 +429,18 @@ extension UserRobot {
         for i in 1...count {
             MessageListPage.Composer.attachmentButton.wait(timeout: 10).safeTap()
             MessageListPage.AttachmentMenu.photoOrVideoButton.wait(timeout: 10).safeTap()
+
+            // Wait for privacy message to appear before proceed on iOS 17, otherwise XCTest crashes
+            if #available(iOS 17.0, *) {
+                app.otherElements["PXGSingleViewContainerView_AX"].wait()
+            }
+
             MessageListPage.AttachmentMenu.images.waitCount(1).allElementsBoundByIndex[i].safeTap()
         }
         if send { sendMessage("", waitForAppearance: false) }
         return self
     }
-    
+
     @discardableResult
     func restartImageUpload(messageCellIndex: Int = 0) -> Self {
         let messageCell = messageCell(withIndex: messageCellIndex)

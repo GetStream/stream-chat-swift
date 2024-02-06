@@ -11,19 +11,6 @@ final class QuotedReply_Tests: StreamTestCase {
     let quotedText = "1"
     let parentText = "test"
     let replyText = "quoted reply"
-    
-    override func setUpWithError() throws {
-        try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12,
-                      "Quoted Reply automated tests do not work well on iOS 12")
-        try super.setUpWithError()
-        addTags([.coreFeatures])
-    }
-    
-    override func tearDownWithError() throws {
-        if ProcessInfo().operatingSystemVersion.majorVersion > 12 {
-            try super.tearDownWithError()
-        }
-    }
 
     func test_whenSwipingMessage_thenMessageIsQuotedReply() {
         linkToScenario(withId: 2096)
@@ -421,8 +408,13 @@ final class QuotedReply_Tests: StreamTestCase {
         }
     }
 
-    func test_quotedReplyNotInList_whenParticipantAddsQuotedReply_Giphy_InThread() {
+    func test_quotedReplyNotInList_whenParticipantAddsQuotedReply_Giphy_InThread() throws {
         linkToScenario(withId: 1936)
+        
+        try XCTSkipIf(
+            ProcessInfo().operatingSystemVersion.majorVersion > 16,
+            "The test cannot tap on a `Send` button on iOS 17"
+        )
 
         GIVEN("user opens the channel") {
             backendRobot.generateChannels(count: 1, messageText: parentText, messagesCount: 1, replyCount: messageCount)
@@ -443,8 +435,8 @@ final class QuotedReply_Tests: StreamTestCase {
         }
         THEN("user is scrolled up to the quoted message") {
             userRobot
+                .assertScrollToBottomButton(isVisible: true, timeout: 15)
                 .assertMessageIsVisible(at: pageSize)
-                .assertScrollToBottomButton(isVisible: true)
         }
     }
 

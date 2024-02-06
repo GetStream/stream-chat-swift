@@ -19,36 +19,15 @@ concurrency:
 
 env:
   HOMEBREW_NO_INSTALL_CLEANUP: 1 # Disable cleanup for homebrew, we don't need it on CI
-  IOS_SIMULATOR_DEVICE: "iPhone 14 Pro (16.4)"
+  IOS_SIMULATOR_DEVICE: "iPhone 15 Pro (17.2)"
 
 jobs:
-  automated-code-review:
-    name: Automated Code Review
-    runs-on: macos-13
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      GITHUB_PR_NUM: ${{ github.event.number }}
-    if: ${{ github.event_name != 'push' && github.event.inputs.snapshots != 'true' }}
-    steps:
-      - uses: actions/checkout@v3.1.0
-        with:
-          fetch-depth: 100
-      - uses: ./.github/actions/bootstrap
-      - name: Run Danger
-        run: bundle exec danger
-      - name: Run Fastlane Linting
-        run: bundle exec fastlane rubocop
-      - name: Run SwiftFormat Linting
-        run: ./Scripts/run-linter.sh
-      - name: Run Podspec Linting
-        run: bundle exec fastlane pod_lint
-
   build-test-app-and-frameworks:
     name: Build Test App and Frameworks
-    runs-on: macos-13
+    runs-on: macos-14
     if: ${{ github.event_name != 'push' }}
     steps:
-    - uses: actions/checkout@v3.1.0
+    - uses: actions/checkout@v4.1.1
     - uses: ./.github/actions/ruby-cache
     - uses: ./.github/actions/xcode-cache
     - name: Build
@@ -65,14 +44,14 @@ jobs:
 
   test-llc-debug:
     name: Test LLC (Debug)
-    runs-on: macos-13
+    runs-on: macos-14
     if: ${{ github.event.inputs.snapshots != 'true' }}
     needs: build-test-app-and-frameworks
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_PR_NUM: ${{ github.event.number }}
     steps:
-    - uses: actions/checkout@v3.1.0
+    - uses: actions/checkout@v4.1.1
       with:
         fetch-depth: 100
     - uses: actions/download-artifact@v3
@@ -107,11 +86,11 @@ jobs:
 
   test-ui-debug:
     name: Test UI (Debug)
-    runs-on: macos-13
+    runs-on: macos-14
     needs: build-test-app-and-frameworks
     if: ${{ github.event_name != 'push' }}
     steps:
-    - uses: actions/checkout@v3.1.0
+    - uses: actions/checkout@v4.1.1
     - uses: actions/download-artifact@v3
       with:
         name: cache-derived-data
@@ -138,21 +117,19 @@ jobs:
 
   test-e2e-debug:
     name: Test E2E UI (Debug)
-    runs-on: macos-12 # TODO: bump macos version to 13 when Xcode 15.0 is released
+    runs-on: macos-14
     if: ${{ github.event_name != 'push' && github.event.inputs.snapshots != 'true' }}
     needs:
       - allure_testops_launch
       - build-test-app-and-frameworks
     env:
       LAUNCH_ID: ${{ needs.allure_testops_launch.outputs.launch_id }}
-      XCODE_VERSION: "14.2.0"                      # TODO: delete these two lines
-      IOS_SIMULATOR_DEVICE: "iPhone 14 Pro (16.2)" # when Xcode 15.0 is released
     strategy:
       matrix:
         batch: [0, 1, 2]
       fail-fast: false
     steps:
-    - uses: actions/checkout@v3.1.0
+    - uses: actions/checkout@v4.1.1
     - uses: actions/download-artifact@v3
       with:
         name: cache-derived-data
@@ -200,7 +177,7 @@ jobs:
     outputs:
       launch_id: ${{ steps.get_launch_id.outputs.launch_id }}
     steps:
-    - uses: actions/checkout@v3.1.0
+    - uses: actions/checkout@v4.1.1
     - uses: ./.github/actions/ruby-cache
     - name: Launch Allure TestOps
       run: bundle exec fastlane allure_launch
@@ -221,7 +198,7 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_PR_NUM: ${{ github.event.number }}
     steps:
-    - uses: actions/checkout@v3.1.0
+    - uses: actions/checkout@v4.1.1
     - uses: ./.github/actions/ruby-cache
     - name: List Xcode versions xcversion sees
       run: mdfind "kMDItemCFBundleIdentifier = 'com.apple.dt.Xcode'"
@@ -234,14 +211,14 @@ jobs:
 
   build-apps:
     name: Build Demo App + Example Apps
-    runs-on: macos-13
+    runs-on: macos-14
     needs: build-test-app-and-frameworks
     if: ${{ github.event_name != 'push' && github.event.inputs.snapshots != 'true' }}
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_PR_NUM: ${{ github.event.number }}
     steps:
-    - uses: actions/checkout@v3.1.0
+    - uses: actions/checkout@v4.1.1
     - uses: actions/download-artifact@v3
       with:
         name: cache-derived-data
@@ -266,14 +243,14 @@ jobs:
 
   test-integration:
     name: Test Integration
-    runs-on: macos-13
+    runs-on: macos-14
     needs: build-test-app-and-frameworks
     if: ${{ github.event_name != 'push' && github.event.inputs.snapshots != 'true' }}
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_PR_NUM: ${{ github.event.number }}
     steps:
-    - uses: actions/checkout@v3.1.0
+    - uses: actions/checkout@v4.1.1
     - uses: actions/download-artifact@v3
       with:
         name: cache-derived-data
@@ -287,3 +264,25 @@ jobs:
       if: always()
       run: bundle exec fastlane cocoapods_integration
       timeout-minutes: 25
+
+  automated-code-review:
+    name: Automated Code Review
+    runs-on: macos-12
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_PR_NUM: ${{ github.event.number }}
+      XCODE_VERSION: "14.0.1"
+    if: ${{ github.event_name != 'push' && github.event.inputs.snapshots != 'true' }}
+    steps:
+      - uses: actions/checkout@v4.1.1
+        with:
+          fetch-depth: 100
+      - uses: ./.github/actions/bootstrap
+      - name: Run Danger
+        run: bundle exec danger
+      - name: Run Fastlane Linting
+        run: bundle exec fastlane rubocop
+      - name: Run SwiftFormat Linting
+        run: ./Scripts/run-linter.sh
+      - name: Run Podspec Linting
+        run: bundle exec fastlane pod_lint

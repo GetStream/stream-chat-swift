@@ -71,12 +71,12 @@ public extension AnyChatMessageAttachment {
     ///
     /// - Parameter payloadType: The payload type the current type-erased attachment payload should be treated as.
     /// - Returns: The attachment with the requested payload type or `nil`.
-    func attachment<Payload: AttachmentPayload>(
-        payloadType: Payload.Type
-    ) -> ChatMessageAttachment<Payload>? {
+    func attachment<PayloadData: AttachmentPayload>(
+        payloadType: PayloadData.Type
+    ) -> ChatMessageAttachment<PayloadData>? {
         guard
-            Payload.type == type || type == .unknown,
-            let concretePayload = try? JSONDecoder.stream.decode(Payload.self, from: payload)
+            PayloadData.type == type || type == .unknown,
+            let concretePayload = try? JSONDecoder.stream.decode(PayloadData.self, from: payload)
         else { return nil }
 
         return .init(

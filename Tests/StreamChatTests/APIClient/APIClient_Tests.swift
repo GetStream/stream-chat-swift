@@ -88,7 +88,7 @@ final class APIClient_Tests: XCTestCase {
         let testEndpoint = Endpoint<Data>(path: .guest, method: .post, queryItems: nil, requiresConnectionId: false, body: nil)
 
         // Create a request
-        waitUntil { done in
+        waitUntil(timeout: defaultTimeout) { done in
             apiClient.request(endpoint: testEndpoint) { _ in
                 done()
             }
@@ -168,7 +168,7 @@ final class APIClient_Tests: XCTestCase {
         let testEndpoint = Endpoint<Data>.mock()
 
         // Create a request
-        waitUntil { done in
+        waitUntil(timeout: defaultTimeout) { done in
             apiClient.request(endpoint: testEndpoint) { _ in done() }
         }
 
@@ -355,7 +355,7 @@ final class APIClient_Tests: XCTestCase {
 
         var receivedProgress: Double?
         var receivedResult: Result<UploadedAttachment, Error>?
-        waitUntil { done in
+        waitUntil(timeout: defaultTimeout) { done in
             apiClient.uploadAttachment(
                 attachment,
                 progress: { receivedProgress = $0 },
@@ -504,7 +504,7 @@ final class APIClient_Tests: XCTestCase {
         completeTokenRefresh()
 
         // 5. We apply a delay to verify that only one request (the initial one) went through
-        waitUntil { done in
+        waitUntil(timeout: defaultTimeout) { done in
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
                 done()
             }
@@ -524,7 +524,7 @@ final class APIClient_Tests: XCTestCase {
         }
 
         // 5. We apply a delay to verify that no requests are going through
-        waitUntil { done in
+        waitUntil(timeout: defaultTimeout) { done in
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
                 done()
             }

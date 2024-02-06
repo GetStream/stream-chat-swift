@@ -404,11 +404,12 @@ extension UserRobot {
     @discardableResult
     func assertScrollToBottomButton(
         isVisible: Bool,
+        timeout: Double = XCUIElement.waitTimeout,
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> Self {
         var btn = MessageListPage.scrollToBottomButton
-        btn = isVisible ? btn.wait() : btn.waitForDisappearance()
+        btn = isVisible ? btn.wait(timeout: timeout) : btn.waitForDisappearance(timeout: timeout)
         XCTAssertEqual(isVisible,
                        btn.exists,
                        "Scroll to bottom button should be \(isVisible ? "visible" : "hidden")",
