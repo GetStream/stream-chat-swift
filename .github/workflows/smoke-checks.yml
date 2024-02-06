@@ -27,7 +27,7 @@ jobs:
     runs-on: macos-14
     if: ${{ github.event_name != 'push' }}
     steps:
-    - uses: actions/checkout@v3.1.0
+    - uses: actions/checkout@v4.1.1
     - uses: ./.github/actions/ruby-cache
     - uses: ./.github/actions/xcode-cache
     - name: Build
@@ -51,7 +51,7 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_PR_NUM: ${{ github.event.number }}
     steps:
-    - uses: actions/checkout@v3.1.0
+    - uses: actions/checkout@v4.1.1
       with:
         fetch-depth: 100
     - uses: actions/download-artifact@v3
@@ -90,7 +90,7 @@ jobs:
     needs: build-test-app-and-frameworks
     if: ${{ github.event_name != 'push' }}
     steps:
-    - uses: actions/checkout@v3.1.0
+    - uses: actions/checkout@v4.1.1
     - uses: actions/download-artifact@v3
       with:
         name: cache-derived-data
@@ -129,7 +129,7 @@ jobs:
         batch: [0, 1, 2]
       fail-fast: false
     steps:
-    - uses: actions/checkout@v3.1.0
+    - uses: actions/checkout@v4.1.1
     - uses: actions/download-artifact@v3
       with:
         name: cache-derived-data
@@ -177,7 +177,7 @@ jobs:
     outputs:
       launch_id: ${{ steps.get_launch_id.outputs.launch_id }}
     steps:
-    - uses: actions/checkout@v3.1.0
+    - uses: actions/checkout@v4.1.1
     - uses: ./.github/actions/ruby-cache
     - name: Launch Allure TestOps
       run: bundle exec fastlane allure_launch
@@ -198,7 +198,7 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_PR_NUM: ${{ github.event.number }}
     steps:
-    - uses: actions/checkout@v3.1.0
+    - uses: actions/checkout@v4.1.1
     - uses: ./.github/actions/ruby-cache
     - name: List Xcode versions xcversion sees
       run: mdfind "kMDItemCFBundleIdentifier = 'com.apple.dt.Xcode'"
@@ -218,7 +218,7 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_PR_NUM: ${{ github.event.number }}
     steps:
-    - uses: actions/checkout@v3.1.0
+    - uses: actions/checkout@v4.1.1
     - uses: actions/download-artifact@v3
       with:
         name: cache-derived-data
@@ -250,7 +250,7 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_PR_NUM: ${{ github.event.number }}
     steps:
-    - uses: actions/checkout@v3.1.0
+    - uses: actions/checkout@v4.1.1
     - uses: actions/download-artifact@v3
       with:
         name: cache-derived-data
@@ -274,7 +274,7 @@ jobs:
       XCODE_VERSION: "14.0.1"
     if: ${{ github.event_name != 'push' && github.event.inputs.snapshots != 'true' }}
     steps:
-      - uses: actions/checkout@v3.1.0
+      - uses: actions/checkout@v4.1.1
         with:
           fetch-depth: 100
       - uses: ./.github/actions/bootstrap

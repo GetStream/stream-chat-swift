@@ -19,7 +19,7 @@ jobs:
     name: Build Test App and Frameworks
     runs-on: macos-14
     steps:
-    - uses: actions/checkout@v3.1.0
+    - uses: actions/checkout@v4.1.1
     - uses: ./.github/actions/ruby-cache
     - uses: ./.github/actions/xcode-cache
     - name: Build
@@ -75,7 +75,7 @@ jobs:
       STREAM_DEMO_APP_SECRET: ${{ secrets.STREAM_DEMO_APP_SECRET }}
       XCODE_VERSION: ${{ matrix.xcode }}
     steps:
-    - uses: actions/checkout@v3.1.0
+    - uses: actions/checkout@v4.1.1
     - uses: actions/download-artifact@v3
       with:
         name: cache-derived-data
@@ -166,7 +166,7 @@ jobs:
       GITHUB_PR_NUM: ${{ github.event.number }}
       XCODE_VERSION: ${{ matrix.xcode }}
     steps:
-    - uses: actions/checkout@v3.1.0
+    - uses: actions/checkout@v4.1.1
     - uses: ./.github/actions/bootstrap
     - name: Cache iOS Simulator Runtime
       uses: actions/cache@v3
@@ -200,7 +200,7 @@ jobs:
       XCODE_VERSION: "14.0.1"
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-    - uses: actions/checkout@v3.1.0
+    - uses: actions/checkout@v4.1.1
     - uses: ./.github/actions/ruby-cache
     - name: List Xcode versions xcversion sees
       run: mdfind "kMDItemCFBundleIdentifier = 'com.apple.dt.Xcode'"
@@ -227,7 +227,7 @@ jobs:
     env:
       XCODE_VERSION: "14.0.1"
     steps:
-    - uses: actions/checkout@v3.1.0
+    - uses: actions/checkout@v4.1.1
     - uses: ./.github/actions/bootstrap
     - run: bundle exec fastlane rubocop
     - run: ./Scripts/run-linter.sh
