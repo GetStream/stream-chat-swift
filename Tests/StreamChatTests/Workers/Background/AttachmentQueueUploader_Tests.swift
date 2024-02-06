@@ -516,7 +516,7 @@ final class AttachmentQueueUploader_Tests: XCTestCase {
         XCTAssertEqual(locallyStoredAttachments.count, 1)
         XCTAssertEqual(
             locallyStoredAttachments.first?.lastPathComponent,
-            "Test-messaging:dummy-fake-0.txt"
+            "messaging:dummy-fake-0.txt"
         )
         XCTAssertEqual(attachmentDTO.localState, .pendingUpload)
 
@@ -598,7 +598,7 @@ final class AttachmentQueueUploader_Tests: XCTestCase {
         XCTAssertEqual(locallyStoredAttachments.count, 1)
         XCTAssertEqual(
             locallyStoredAttachments.first?.lastPathComponent,
-            "Test0-messaging:dummy-fake-0.txt"
+            "messaging:dummy-fake-0.txt"
         )
     }
 }
