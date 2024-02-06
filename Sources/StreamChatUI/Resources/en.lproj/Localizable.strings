@@ -2,107 +2,215 @@
 // Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
+/// Text used in the channel name before the last participant.
 "channel.name.and" = "and";
+/// Text used in the channel name after the last displayed participant.
+/// The text shows the remaining number of participants (the ones not displayed).
+/// E.g. John, Steve and 5 more.
 "channel.name.andXMore" = "and %@ more";
+/// Shown when the channel name is missing.
 "channel.name.missing" = "NoChannel";
+/// Shown in the channel list preview, when the channel doesn't contain any messages.
 "channel.item.empty-messages" = "No messages";
+/// Shown when a single person is typing.
 "channel.item.typing-singular" = "is typing ...";
+/// Shown when multiple people are typing.
 "channel.item.typing-plural" = "are typing ...";
+/// Shown when searching messages, the placeholder is filled with the channel name.
 "channel.item.search.in" = " in %@";
+/// Shown in the channel list preview when the last message is an audio attachment.
 "channel.item.audio" = "Audio";
+/// Shown in the channel list preview when the last message is an image attachment.
 "channel.item.photo" = "Photo";
+/// Shown in the channel list preview when the last message is a video attachment.
 "channel.item.video" = "Video";
 
+/// Shown when the channel list is empty as a title text.
 "channelList.empty.title" = "Let's start chatting!";
+/// Shown when the channel list is empty as a subtitle text.
 "channelList.empty.subtitle" = "How about sending your first message to a friend?";
+/// Shown when the channel list is empty as a an action button.
 "channelList.empty.button" = "Start a chat";
+/// Shown in the channel list search bar.
 "channelList.search" = "Search";
+/// Shown when there are no search results.
 "channelList.search.empty.subtitle" = "No results for %@";
 
+/// Shown when there's an error when loading the channels.
 "channelList.error.message" = "Error loading channels";
+/// Shown in the channel list preview when the last message is a voice recording.
 "channelList.preview.voice.recording" = "Voice message";
-
+/// Shown when the name of the person who is typing can't be determined.
 "messageList.typingIndicator.typing-unknown" = "Someone is typing";
 
+/// Shown in the message actions popup for the reply (quote) action.
 "message.actions.inline-reply" = "Reply";
+/// Shown in the message actions popup for the thread reply action.
 "message.actions.thread-reply" = "Thread Reply";
+/// Shown in the message actions popup for the edit message action.
 "message.actions.edit" = "Edit Message";
+/// Shown in the message actions popup for the copy message action.
 "message.actions.copy" = "Copy Message";
+/// Shown in the message actions popup for the delete message action.
 "message.actions.delete" = "Delete Message";
+/// Shown as a title in the confirmation popup when deleting a message.
 "message.actions.delete.confirmation-title" = "Delete Message";
+/// Shown as a text in the confirmation popup when deleting a message.
 "message.actions.delete.confirmation-message" = "Are you sure you want to permanently delete this message?";
+/// Shown in the message actions popup for the unblock user action.
 "message.actions.user-unblock" = "Unblock User";
+/// Shown in the message actions popup for the block user action.
 "message.actions.user-block" = "Block User";
+/// Shown in the message actions popup for the unmute user action.
 "message.actions.user-unmute" = "Unmute User";
+/// Shown in the message actions popup for the mute user action.
 "message.actions.user-mute" = "Mute User";
+/// Shown in the message actions popup for the resend message action.
+/// Displayed only when the message was not sent successfully.
 "message.actions.resend" = "Resend";
+/// Shown in the message actions popup for the flag message action.
 "message.actions.flag" = "Flag Message";
+/// Shown as a text in the confirmation popup when flagging a message.
 "message.actions.flag.confirmation-title" = "Flag Message";
+/// Shown as a text in the confirmation popup when flagging a message.
 "message.actions.flag.confirmation-message" = "Do you want to send a copy of this message to a moderator for further investigation?";
+/// Shown in the message actions popup for marking message as unread.
 "message.actions.mark-unread" = "Mark as unread";
 
+/// Shown as a title in the popup shown when a message was bounced due to moderation.
 "message.moderation.title" = "Are you sure?";
+/// Shown as a text in the popup shown when a message was bounced due to moderation.
 "message.moderation.message" = "Consider how your comment might make others feel and be sure to follow our Community Guidelines.";
+/// Shown as a button text in the popup shown when a message was bounced due to moderation.
 "message.moderation.resend" = "Send Anyway";
+/// Shown as an edit message action in the popup shown when a message was bounced due to moderation.
 "message.moderation.edit" = "Edit Message";
+/// Shown as a delete message action in the popup shown when a message was bounced due to moderation.
 "message.moderation.delete" = "Delete Message";
 
+/// Shown when a user is online.
 "message.title.online" = "Online";
+/// Shown when a user is offline.
 "message.title.offline" = "Offline";
+/// Shown in a group chat title.
+/// The first placeholder is the number of members, while the second one shows how many are online.
 "message.title.group" = "%d members, %d online";
+/// Shown in the message list, when a message contains thread replies.
 "message.threads.reply" = "Thread Reply";
+/// Shown as a subtitle in the navigation bar in the message thread screen.
+/// The placeholder contains the channel name.
 "message.threads.replyWith" = "with %@";
+/// Shown when a message was translated to another language.
 "message.translatedTo" = "Translated to %@";
+/// Shown when a message is visible only to the current user.
+/// Usually applies to deleted messages that can be visible to current users.
 "message.only-visible-to-you" = "Only visible to you";
+/// Shown when a message was deleted.
 "message.deleted-message-placeholder" = "Message deleted";
+/// Shown when uploading of an attachment failed.
 "message.sending.attachment-uploading-failed" = "UPLOADING FAILED";
+/// Shown when the message list contains an unknown attachment.
+/// Can appear if you haven't properly configured your custom attachments.
 "message.unsupported-attachment" = "Unsupported Attachment";
 
+/// Shown when an attachment can't be uploaded because it's bigger than the allowed limit.
 "attachment.max-size-exceeded" = "Attachment size exceed the limit.";
+/// Shown when the number of attachments in a message is bigger than the allowed limit.
 "attachment.max-count-exceeded" = "The max number of attachments per message is %d.";
 
+/// Generic cancel text in the popups.
 "alert.actions.cancel" = "Cancel";
+/// Generic delete text in the popups.
 "alert.actions.delete" = "Delete";
+/// Generic flag text in the popups.
 "alert.actions.flag" = "Flag";
+/// Generic ok text in the popups.
 "alert.actions.ok" = "Ok";
 
+/// Shown as title in the composer when editing a message.
 "composer.title.edit" = "Edit Message";
+/// Shown as title in the composer when replying to a message.
 "composer.title.reply" = "Reply to Message";
+/// Shown as a placeholder in the composer input text view.
 "composer.placeholder.message" = "Send a message";
+/// Shown in the placeholder in the composer input text view, when sending messages is disabled for the channel.
 "composer.placeholder.messageDisabled" = "You can't send messages in this channel";
+/// Shown in the placeholder in the composer input text view, when the channel is in slow mode.
 "composer.placeholder.slowMode" = "Slow mode ON";
+/// Not used at the moment.
 "composer.placeholder.giphy" = "Search GIFs";
+/// Shown after the checkbox that allows users to send a thread reply also as a direct message in a DM.
 "composer.checkmark.direct-message-reply" = "Also send as direct message";
+/// Shown after the checkbox that allows users to send a thread reply also as a direct message in a group.
 "composer.checkmark.channel-reply" = "Also send in channel";
+/// Shown as a title in the composer attachment picker.
 "composer.picker.title" = "Choose attachment type: ";
+/// Shown as an option to select a file attachment in the attachment picker.
+/// Invokes the native file picker on tap.
 "composer.picker.file" = "File";
+/// Shown as an option to select a photo or video attachment in the attachment picker.
+/// Invokes the native gallery picker on tap.
 "composer.picker.media" = "Photo or Video";
+/// Shown as an option to select the camera in the attachment picker.
+/// Invokes the native camera picker on tap.
 "composer.picker.camera" = "Camera";
+/// Text for the cancel button in the attachment picker in the composer.
 "composer.picker.cancel" = "Cancel";
+/// Shown as title in the popup shown when links are disabled in the chat.
 "composer.links-disabled.title" = "Links are disabled";
+/// Shown as message in the popup shown when links are disabled in the chat.
 "composer.links-disabled.subtitle" = "Sending links is not allowed in this conversation.";
+/// Shown while quoting a message that contains a photo attachment.
 "composer.quoted-message.photo" = "Photo";
+/// Shown while quoting a message that contains a giphy attachment.
 "composer.quoted-message.giphy" = "Giphy";
+/// Shown as a title in the commands suggestions header.
 "composer.suggestions.commands.header" = "Instant Commands";
 
+/// Shown in the gallery preview, indicating which image is currently presented.
+/// The first placeholder is the number of the selected image.
+/// The second placeholder is the total number of images in the attachment.
 "current-selection" = "%d of %d";
 
+/// Text shown when the user was last seen seconds ago.
 "dates.time-ago-seconds-plural" = "last seen %d seconds ago";
+/// Text shown when the user was last seen a second ago.
 "dates.time-ago-seconds-singular" = "last seen just one second ago";
+/// Text shown when the user was last seen a minute ago.
 "dates.time-ago-minutes-singular" = "last seen one minute ago";
+/// Text shown when the user was last seen few minutes ago.
+/// The number of minutes is provided as a placeholder.
 "dates.time-ago-minutes-plural" = "last seen %d minutes ago";
+/// Text shown when the user was last seen an hour ago.
 "dates.time-ago-hours-singular" = "last seen one hour ago";
+/// Text shown when the user was last seen few hours ago.
+/// The number of hours is provided as a placeholder.
 "dates.time-ago-hours-plural" = "last seen %d hours ago";
+/// Text shown when the user was last seen a day ago.
 "dates.time-ago-days-singular" = "last seen one day ago";
+/// Text shown when the user was last seen few days ago.
+/// The number of days is provided as a placeholder.
 "dates.time-ago-days-plural" = "last seen %d days ago";
+/// Text shown when the user was last seen a week ago.
 "dates.time-ago-weeks-singular" = "last seen one week ago";
+/// Text shown when the user was last seen few weeks ago.
+/// The number of weeks is provided as a placeholder.
 "dates.time-ago-weeks-plural" = "last seen %d weeks ago";
+/// Text shown when the user was last seen a month ago.
 "dates.time-ago-months-singular" = "last seen one month ago";
+/// Text shown when the user was last seen few months ago.
+/// The number of months is provided as a placeholder.
 "dates.time-ago-months-plural" = "last seen %d months ago";
 
+/// Text for the current user.
+/// For example, used in the channel preview when the last message was sent by the current user.
 "you" = "You";
 
+/// Tip shown when pressing on the recording attachments button in the composer.
 "recording.tip" = "Hold to record, release to send";
+/// Text shown when the voice recording is started.
+/// Provides the ability to cancel the current recording.
 "recording.slideToCancel" = "Slide to cancel";
 
+/// The rate of the player, where the placeholder is the actual rate (e.g. x2).
 "audio.player.rate" = "x%@";
