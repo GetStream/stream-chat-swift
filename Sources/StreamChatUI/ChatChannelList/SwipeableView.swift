@@ -166,7 +166,6 @@ open class SwipeableView: _View, ComponentsProvider, UIGestureRecognizerDelegate
             return false
         }
 
-
         return true
     }
 
