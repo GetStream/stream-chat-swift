@@ -67,3 +67,8 @@ do
 done
 
 rm -rf $dependency_directory
+
+if [[ $dependency_directory == *"DifferenceKit"* ]]; then
+    # We currently use customized UIKit extensions in Utils/DifferenceKit+Stream.swift
+    rm $output_directory/Extensions/UIKitExtension.swift
+fi
