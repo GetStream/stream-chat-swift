@@ -9,8 +9,11 @@ final class Ephemeral_Messages_Tests: StreamTestCase {
     func test_userObservesAnimatedGiphy_whenUserAddsGiphyMessage() throws {
         linkToScenario(withId: 67)
         
-        try XCTSkipIf(TestRunnerEnvironment.isCI, "https://github.com/GetStream/ios-issues-tracking/issues/723")
-
+        try XCTSkipIf(
+            ProcessInfo().operatingSystemVersion.majorVersion > 16,
+            "The test cannot tap on a `Send` button on iOS 17"
+        )
+            
         GIVEN("user opens a channel") {
             userRobot
                 .login()
@@ -128,7 +131,10 @@ final class Ephemeral_Messages_Tests: StreamTestCase {
     func test_userObservesAnimatedGiphy_afterAddingGiphyThroughComposerMenu() throws {
         linkToScenario(withId: 278)
         
-        try XCTSkipIf(TestRunnerEnvironment.isCI, "https://github.com/GetStream/ios-issues-tracking/issues/723")
+        try XCTSkipIf(
+            ProcessInfo().operatingSystemVersion.majorVersion > 16,
+            "The test cannot tap on a `Send` button on iOS 17"
+        )
 
         GIVEN("user opens a channel") {
             userRobot

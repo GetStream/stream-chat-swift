@@ -411,7 +411,10 @@ final class QuotedReply_Tests: StreamTestCase {
     func test_quotedReplyNotInList_whenParticipantAddsQuotedReply_Giphy_InThread() throws {
         linkToScenario(withId: 1936)
         
-        try XCTSkipIf(TestRunnerEnvironment.isCI, "https://github.com/GetStream/ios-issues-tracking/issues/723")
+        try XCTSkipIf(
+            ProcessInfo().operatingSystemVersion.majorVersion > 16,
+            "The test cannot tap on a `Send` button on iOS 17"
+        )
 
         GIVEN("user opens the channel") {
             backendRobot.generateChannels(count: 1, messageText: parentText, messagesCount: 1, replyCount: messageCount)
