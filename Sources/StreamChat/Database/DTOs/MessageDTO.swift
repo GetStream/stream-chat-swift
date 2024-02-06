@@ -1012,9 +1012,16 @@ extension NSManagedObjectContext: MessageDatabaseSession {
     /// to avoid those from being stuck there in limbo.
     /// Messages can get stuck in `.sending` state if the network request to send them takes to much, and the app is backgrounded or killed.
     func rescueMessagesStuckInSending() {
+        // Restart messages in sending state.
         let messages = MessageDTO.loadSendingMessages(context: self)
         messages.forEach {
             $0.localMessageState = .pendingSend
+        }
+
+        // Restart attachments that were in progress before the app was killed.
+        let attachments = AttachmentDTO.loadInProgressAttachments(context: self)
+        attachments.forEach {
+            $0.localState = .pendingUpload
         }
     }
 }

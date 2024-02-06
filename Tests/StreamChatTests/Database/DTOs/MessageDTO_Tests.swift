@@ -3530,6 +3530,59 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(database.viewContext.message(id: deletingMessageId)?.localMessageState, .deleting)
     }
 
+    func test_rescueMessagesStuckInSending_restartsInProgressAttachments() throws {
+        // Given
+        let channelId = ChannelId.unique
+        let messageId = MessageId.unique
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: channelId)))
+
+            let message = try session.saveMessage(
+                payload: .dummy(messageId: messageId, attachments: []),
+                for: channelId,
+                syncOwnReactions: false,
+                cache: nil
+            )
+            message.localMessageState = .sending
+
+            let attachment1 = try session.saveAttachment(
+                payload: .audio(), id: .init(cid: channelId, messageId: messageId, index: 1)
+            )
+            let attachment2 = try session.saveAttachment(
+                payload: .audio(), id: .init(cid: channelId, messageId: messageId, index: 2)
+            )
+            let attachment3 = try session.saveAttachment(
+                payload: .audio(), id: .init(cid: channelId, messageId: messageId, index: 3)
+            )
+            let attachment4 = try session.saveAttachment(
+                payload: .audio(), id: .init(cid: channelId, messageId: messageId, index: 4)
+            )
+
+            attachment1.localState = .uploading(progress: 0)
+            attachment2.localState = .uploading(progress: 0)
+            attachment3.localState = .uploaded
+            attachment4.localState = nil
+        }
+
+        let message = try XCTUnwrap(database.viewContext.message(id: messageId))
+        XCTAssertEqual(message.attachments.count, 4)
+
+        var inProgressAttachments: [AttachmentDTO] {
+            AttachmentDTO.loadInProgressAttachments(context: database.viewContext)
+        }
+        XCTAssertEqual(inProgressAttachments.count, 2)
+
+        // When
+        try database.writeSynchronously {
+            $0.rescueMessagesStuckInSending()
+        }
+
+        // Then
+        XCTAssertEqual(inProgressAttachments.count, 0)
+        XCTAssertEqual(message.attachments.filter { $0.localState == .pendingUpload }.count, 2)
+    }
+
     // MARK: - isLocalOnly
 
     func test_isLocalOnly_whenLocalMessageStateIsLocalOnly_returnsTrue() throws {
