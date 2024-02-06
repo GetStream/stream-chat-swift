@@ -1,4 +1,4 @@
 #!/bin/bash
 
-export ALLURECTL_VERSION='2.14.2'
+export ALLURECTL_VERSION='2.15.1'
 export XCRESULTS_VERSION='1.16.3'

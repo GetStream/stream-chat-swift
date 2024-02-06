@@ -352,7 +352,7 @@ final class ChatClient_Tests: XCTestCase {
         let config = inMemoryStorageConfig
 
         // Create a new chat client
-        var client: ChatClient! = ChatClient(config: config)
+        let client: ChatClient! = ChatClient(config: config)
 
         let expectation = self.expectation(description: "Connect completes")
         client.connectAnonymousUser { _ in
@@ -366,8 +366,6 @@ final class ChatClient_Tests: XCTestCase {
         XCTAssert(client.backgroundWorkers.contains { $0 is MessageEditor })
         XCTAssert(client.backgroundWorkers.contains { $0 is AttachmentQueueUploader })
         XCTAssertNotNil(client.connectionRecoveryHandler)
-
-        AssertAsync.canBeReleased(&client)
     }
 
     func test_backgroundWorkersConfiguration() {

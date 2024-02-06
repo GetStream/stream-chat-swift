@@ -15,7 +15,7 @@ jobs:
     name: Sync
     runs-on: macos-13
     steps:
-    - uses: actions/checkout@v3.1.0
+    - uses: actions/checkout@v4.1.1
     - uses: ./.github/actions/bootstrap
     - uses: ./.github/actions/python-cache
     - run: bundle exec fastlane sync_mock_server
