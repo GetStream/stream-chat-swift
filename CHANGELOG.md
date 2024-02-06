@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix threading issues in `AuthenticationRepository` [#2986](https://github.com/GetStream/stream-chat-swift/pull/2986)
 - Fix `NewMessagePendingEvent.message` with empty `cid` [#2997](https://github.com/GetStream/stream-chat-swift/pull/2997)
 - Fix attachments being sent with local URL paths [#3008](https://github.com/GetStream/stream-chat-swift/pull/3008)
+- Fix rare crash in `AttachmentDTO.id` when accessed outside of CoreData's context [#3008](https://github.com/GetStream/stream-chat-swift/pull/3008)
 
 ## StreamChatUI
 ### ✅ Added
