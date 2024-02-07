@@ -186,9 +186,11 @@ open class ChatMessageListVC: _ViewController,
         tapOnList.delegate = self
         listView.addGestureRecognizer(tapOnList)
 
-        let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:)))
-        panGestureRecognizer.delegate = self
-        listView.addGestureRecognizer(panGestureRecognizer)
+        if components.messageSwipeToReplyEnabled {
+            let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:)))
+            panGestureRecognizer.delegate = self
+            listView.addGestureRecognizer(panGestureRecognizer)
+        }
 
         scrollToBottomButton.addTarget(self, action: #selector(didTapScrollToBottomButton), for: .touchUpInside)
         jumpToUnreadMessagesButton.addTarget(self, action: #selector(didTapJumpToUnreadButton))

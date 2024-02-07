@@ -21,6 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix link flickering when opening a channel [#2984](https://github.com/GetStream/stream-chat-swift/pull/2984)
 - Fix link flickering when quoting a message with a link [#2984](https://github.com/GetStream/stream-chat-swift/pull/2984)
 - Fix channel item actions gesture overriding native swipe go-back gesture [#3000](https://github.com/GetStream/stream-chat-swift/pull/3000)
+- Fix `ChatMessageListVC` swipe-to-reply pan gesture recognizer overriding native swipe go-back gesture [#3010](https://github.com/GetStream/stream-chat-swift/pull/3010)
 
 # [4.47.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.47.1)
 _January 24, 2024_
