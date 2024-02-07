@@ -10,6 +10,12 @@ public struct Token: Decodable, Equatable, ExpressibleByStringLiteral {
     public let userId: UserId
     public let expiration: Date?
 
+    @available(
+        *,
+        deprecated,
+        
+        message: "It is not a good practice to check expiration client side since the user can change the device's time."
+    )
     public var isExpired: Bool {
         expiration.map { $0 < Date() } ?? false
     }

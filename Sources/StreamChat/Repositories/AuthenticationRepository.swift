@@ -363,13 +363,11 @@ class AuthenticationRepository {
         log.debug("Requesting a new token", subsystems: .authentication)
         tokenProvider { [weak self] result in
             switch result {
-            case let .success(newToken) where !newToken.isExpired:
+            case let .success(newToken):
                 onTokenReceived(newToken)
                 self?.tokenQueue.sync(flags: .barrier) {
                     self?._tokenExpirationRetryStrategy.resetConsecutiveFailures()
                 }
-            case .success:
-                retryFetchIfPossible(nil)
             case let .failure(error):
                 log.info("Failed fetching token with error: \(error)")
                 retryFetchIfPossible(error)
