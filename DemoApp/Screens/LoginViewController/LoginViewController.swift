@@ -7,6 +7,7 @@ import StreamChat
 import UIKit
 
 class LoginViewController: UIViewController {
+    @IBOutlet var configurationButton: UIButton!
     @IBOutlet var tableView: UITableView!
     var onUserSelection: ((DemoUserType) -> Void)!
 
@@ -19,6 +20,9 @@ class LoginViewController: UIViewController {
 
         // An old trick to force the table view to hide empty lines
         tableView.tableFooterView = UIView()
+        if #available(iOS 15.0, *) {
+            configurationButton.configuration = .filled()
+        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
