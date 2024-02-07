@@ -158,11 +158,11 @@ class MessageDTO: NSManagedObject {
         return request
     }
 
-    private static func allAttachmentsAreUploadedOrEmptyPredicate() -> NSCompoundPredicate {
-        NSCompoundPredicate(orPredicateWithSubpredicates: [
-            .init(format: "NOT (ANY attachments.localStateRaw != %@)", LocalAttachmentState.uploaded.rawValue),
-            .init(format: "attachments.@count == 0")
-        ])
+    static func allAttachmentsAreUploadedOrEmptyPredicate() -> NSCompoundPredicate {
+        .init(
+            format: "SUBQUERY(attachments, $a, $a.localStateRaw == %@).@count == attachments.@count",
+            LocalAttachmentState.uploaded.rawValue
+        )
     }
 
     /// Returns a predicate that filters out deleted message by other than the current user
@@ -1012,9 +1012,16 @@ extension NSManagedObjectContext: MessageDatabaseSession {
     /// to avoid those from being stuck there in limbo.
     /// Messages can get stuck in `.sending` state if the network request to send them takes to much, and the app is backgrounded or killed.
     func rescueMessagesStuckInSending() {
+        // Restart messages in sending state.
         let messages = MessageDTO.loadSendingMessages(context: self)
         messages.forEach {
             $0.localMessageState = .pendingSend
+        }
+
+        // Restart attachments that were in progress before the app was killed.
+        let attachments = AttachmentDTO.loadInProgressAttachments(context: self)
+        attachments.forEach {
+            $0.localState = .pendingUpload
         }
     }
 }
@@ -1052,6 +1059,11 @@ extension MessageDTO {
             decodedExtraData = [:]
         }
 
+        let uploadedAttachments: [MessageAttachmentPayload] = attachments
+            .filter { $0.localState == .uploaded || $0.localState == nil }
+            .sorted { ($0.attachmentID?.index ?? 0) < ($1.attachmentID?.index ?? 0) }
+            .compactMap { $0.asRequestPayload() }
+
         return .init(
             id: id,
             user: user.asRequestBody(),
@@ -1062,9 +1074,7 @@ extension MessageDTO {
             showReplyInChannel: showReplyInChannel,
             isSilent: isSilent,
             quotedMessageId: quotedMessage?.id,
-            attachments: attachments
-                .sorted { ($0.attachmentID?.index ?? 0) < ($1.attachmentID?.index ?? 0) }
-                .compactMap { $0.asRequestPayload() },
+            attachments: uploadedAttachments,
             mentionedUserIds: mentionedUserIds,
             pinned: pinned,
             pinExpires: pinExpires?.bridgeDate,

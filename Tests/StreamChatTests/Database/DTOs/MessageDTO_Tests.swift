@@ -1045,16 +1045,11 @@ final class MessageDTO_Tests: XCTestCase {
         // Create parent message in the database.
         try database.createMessage(id: parentMessageId, cid: cid)
 
-        var messageId: MessageId!
+        let messageId: MessageId = .unique
         let messageText: String = .unique
         let messagePinning: MessagePinning? = MessagePinning(expirationDate: .unique)
         let messageCommand: String = .unique
         let messageArguments: String = .unique
-        let attachments: [AnyAttachmentPayload] = [
-            .init(payload: TestAttachmentPayload.unique),
-            .mockFile,
-            .mockImage
-        ]
         let mentionedUserIds: [UserId] = [currentUserId]
         let messageShowReplyInChannel = true
         let messageIsSilent = true
@@ -1062,15 +1057,15 @@ final class MessageDTO_Tests: XCTestCase {
 
         // Create message with attachments in the database.
         try database.writeSynchronously { session in
-            messageId = try session.createNewMessage(
+            let message = try session.createNewMessage(
                 in: cid,
-                messageId: .unique,
+                messageId: messageId,
                 text: messageText,
                 pinning: messagePinning,
                 command: messageCommand,
                 arguments: messageArguments,
                 parentMessageId: parentMessageId,
-                attachments: attachments,
+                attachments: [],
                 mentionedUserIds: mentionedUserIds,
                 showReplyInChannel: messageShowReplyInChannel,
                 isSilent: messageIsSilent,
@@ -1079,13 +1074,42 @@ final class MessageDTO_Tests: XCTestCase {
                 skipPush: false,
                 skipEnrichUrl: false,
                 extraData: messageExtraData
-            ).id
+            )
+
+            // Save pending local attachments, these should not be sent to the server
+            let attachment1 = try session.saveAttachment(
+                payload: .audio(),
+                id: .init(cid: cid, messageId: messageId, index: 1)
+            )
+            attachment1.localState = .pendingUpload
+            let attachment2 = try session.saveAttachment(
+                payload: .audio(),
+                id: .init(cid: cid, messageId: messageId, index: 2)
+            )
+            attachment2.localState = .uploadingFailed
+            message.attachments.insert(attachment1)
+            message.attachments.insert(attachment2)
+
+            // Save finished uploading attachments
+            let attachment3 = try session.saveAttachment(
+                payload: .image(),
+                id: .init(cid: cid, messageId: messageId, index: 3)
+            )
+            attachment3.localState = .uploaded
+            let attachment4 = try session.saveAttachment(
+                payload: .video(),
+                id: .init(cid: cid, messageId: messageId, index: 4)
+            )
+            attachment4.localState = nil
+            message.attachments.insert(attachment3)
+            message.attachments.insert(attachment4)
         }
 
+        let messageDTO: MessageDTO = try XCTUnwrap(database.viewContext.message(id: messageId))
+        XCTAssertEqual(messageDTO.attachments.count, 4)
+
         // Load the message from the database and convert to request body.
-        let requestBody: MessageRequestBody = try XCTUnwrap(
-            database.viewContext.message(id: messageId)?.asRequestBody()
-        )
+        let requestBody: MessageRequestBody = messageDTO.asRequestBody()
 
         // Assert request body has correct fields.
         XCTAssertEqual(requestBody.id, messageId)
@@ -1099,7 +1123,8 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(requestBody.extraData, ["k": .string("v")])
         XCTAssertEqual(requestBody.pinned, true)
         XCTAssertEqual(requestBody.pinExpires, messagePinning!.expirationDate)
-        XCTAssertEqual(requestBody.attachments.map(\.type), attachments.map(\.type))
+        XCTAssertEqual(requestBody.attachments.map(\.type), [.image, .video])
+        XCTAssertEqual(requestBody.attachments.count, 2)
         XCTAssertEqual(requestBody.mentionedUserIds, mentionedUserIds)
     }
 
@@ -2192,7 +2217,129 @@ final class MessageDTO_Tests: XCTestCase {
 
         XCTAssertEqual(predicateCount, 1)
     }
-    
+
+    // MARK: - allAttachmentsAreUploadedOrEmptyPredicate()
+
+    func test_allAttachmentsAreUploadedOrEmptyPredicate_whenEmpty_returnsMessages() throws {
+        let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: true)]
+        request.predicate = MessageDTO.allAttachmentsAreUploadedOrEmptyPredicate()
+
+        let cid = ChannelId.unique
+        let message: MessagePayload =
+            .dummy(
+                type: .regular,
+                messageId: .unique,
+                attachments: [],
+                authorUserId: .unique,
+                createdAt: Date(timeIntervalSince1970: 1),
+                channel: .dummy(cid: cid)
+            )
+
+        try database.writeSynchronously { session in
+            try session.saveMessage(
+                payload: message,
+                for: .unique,
+                syncOwnReactions: true,
+                cache: nil
+            )
+        }
+
+        var retrievedMessages: [MessageDTO] = []
+        retrievedMessages = try database.viewContext.fetch(request)
+        XCTAssertEqual(retrievedMessages.filter { msg in msg.id == message.id }.count, 1)
+    }
+
+    func test_allAttachmentsAreUploadedOrEmptyPredicate_whenAllUploaded_returnsMessages() throws {
+        let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: true)]
+        request.predicate = MessageDTO.allAttachmentsAreUploadedOrEmptyPredicate()
+
+        let cid = ChannelId.unique
+        let message: MessagePayload =
+            .dummy(
+                type: .regular,
+                messageId: .unique,
+                attachments: [],
+                authorUserId: .unique,
+                createdAt: Date(timeIntervalSince1970: 1),
+                channel: .dummy(cid: cid)
+            )
+
+        try database.writeSynchronously { session in
+            let message = try session.saveMessage(
+                payload: message,
+                for: .unique,
+                syncOwnReactions: true,
+                cache: nil
+            )
+
+            let attachment1 = try session.saveAttachment(
+                payload: .image(),
+                id: .init(cid: cid, messageId: message.id, index: 1)
+            )
+            attachment1.localState = .uploaded
+
+            let attachment2 = try session.saveAttachment(
+                payload: .image(),
+                id: .init(cid: cid, messageId: message.id, index: 2)
+            )
+            attachment2.localState = .uploaded
+
+            message.attachments.insert(attachment1)
+            message.attachments.insert(attachment2)
+        }
+
+        var retrievedMessages: [MessageDTO] = []
+        retrievedMessages = try database.viewContext.fetch(request)
+        XCTAssertEqual(retrievedMessages.filter { msg in msg.id == message.id }.count, 1)
+    }
+
+    func test_allAttachmentsAreUploadedOrEmptyPredicate_whenSomeUploaded_shouldNotReturnMessages() throws {
+        let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: true)]
+        request.predicate = MessageDTO.allAttachmentsAreUploadedOrEmptyPredicate()
+
+        let cid = ChannelId.unique
+        let message: MessagePayload =
+            .dummy(
+                type: .regular,
+                messageId: .unique,
+                attachments: [],
+                authorUserId: .unique,
+                createdAt: Date(timeIntervalSince1970: 1),
+                channel: .dummy(cid: cid)
+            )
+
+        try database.writeSynchronously { session in
+            let message = try session.saveMessage(
+                payload: message,
+                for: .unique,
+                syncOwnReactions: true,
+                cache: nil
+            )
+
+            let attachment1 = try session.saveAttachment(
+                payload: .image(),
+                id: .init(cid: cid, messageId: message.id, index: 1)
+            )
+            attachment1.localState = .uploaded
+
+            let attachment2 = try session.saveAttachment(
+                payload: .image(),
+                id: .init(cid: cid, messageId: message.id, index: 2)
+            )
+            attachment2.localState = .pendingUpload
+
+            message.attachments.insert(attachment1)
+            message.attachments.insert(attachment2)
+        }
+
+        var retrievedMessages: [MessageDTO] = []
+        retrievedMessages = try database.viewContext.fetch(request)
+        XCTAssertEqual(retrievedMessages.filter { msg in msg.id == message.id }.count, 0)
+    }
+
     // MARK: Count Other User Messages
 
     func test_countOtherUserMessages_whenThereAreNoMessages() {
@@ -3381,6 +3528,59 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(database.viewContext.message(id: sendingMessageIdWithAttachments)?.localMessageState, .pendingSend)
         XCTAssertEqual(database.viewContext.message(id: pendingSendMessageId)?.localMessageState, .pendingSend)
         XCTAssertEqual(database.viewContext.message(id: deletingMessageId)?.localMessageState, .deleting)
+    }
+
+    func test_rescueMessagesStuckInSending_restartsInProgressAttachments() throws {
+        // Given
+        let channelId = ChannelId.unique
+        let messageId = MessageId.unique
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: channelId)))
+
+            let message = try session.saveMessage(
+                payload: .dummy(messageId: messageId, attachments: []),
+                for: channelId,
+                syncOwnReactions: false,
+                cache: nil
+            )
+            message.localMessageState = .sending
+
+            let attachment1 = try session.saveAttachment(
+                payload: .audio(), id: .init(cid: channelId, messageId: messageId, index: 1)
+            )
+            let attachment2 = try session.saveAttachment(
+                payload: .audio(), id: .init(cid: channelId, messageId: messageId, index: 2)
+            )
+            let attachment3 = try session.saveAttachment(
+                payload: .audio(), id: .init(cid: channelId, messageId: messageId, index: 3)
+            )
+            let attachment4 = try session.saveAttachment(
+                payload: .audio(), id: .init(cid: channelId, messageId: messageId, index: 4)
+            )
+
+            attachment1.localState = .uploading(progress: 0)
+            attachment2.localState = .uploading(progress: 0)
+            attachment3.localState = .uploaded
+            attachment4.localState = nil
+        }
+
+        let message = try XCTUnwrap(database.viewContext.message(id: messageId))
+        XCTAssertEqual(message.attachments.count, 4)
+
+        var inProgressAttachments: [AttachmentDTO] {
+            AttachmentDTO.loadInProgressAttachments(context: database.viewContext)
+        }
+        XCTAssertEqual(inProgressAttachments.count, 2)
+
+        // When
+        try database.writeSynchronously {
+            $0.rescueMessagesStuckInSending()
+        }
+
+        // Then
+        XCTAssertEqual(inProgressAttachments.count, 0)
+        XCTAssertEqual(message.attachments.filter { $0.localState == .pendingUpload }.count, 2)
     }
 
     // MARK: - isLocalOnly
