@@ -14,11 +14,6 @@ final class Attachments_Tests: StreamTestCase {
     func test_uploadImage() throws {
         linkToScenario(withId: 28)
 
-        try XCTSkipIf(
-            UIDevice.current.userInterfaceIdiom == .pad || ProcessInfo().operatingSystemVersion.majorVersion == 12,
-            "Flaky on iPad and iOS 12"
-        )
-
         GIVEN("user opens the channel") {
             userRobot.login().openChannel()
         }
@@ -32,11 +27,6 @@ final class Attachments_Tests: StreamTestCase {
 
     func test_participantUploadsImage() throws {
         linkToScenario(withId: 29)
-
-        try XCTSkipIf(
-            UIDevice.current.userInterfaceIdiom == .pad || ProcessInfo().operatingSystemVersion.majorVersion == 12,
-            "Flaky on iPad and iOS 12"
-        )
 
         GIVEN("user opens the channel") {
             userRobot.login().openChannel()
@@ -52,8 +42,6 @@ final class Attachments_Tests: StreamTestCase {
     func test_participantUploadsVideo() throws {
         linkToScenario(withId: 31)
 
-        try XCTSkipIf(ProcessInfo().operatingSystemVersion.majorVersion == 12, "Flaky on iOS 12")
-
         GIVEN("user opens the channel") {
             userRobot.login().openChannel()
         }
@@ -64,14 +52,9 @@ final class Attachments_Tests: StreamTestCase {
             userRobot.assertVideo(isPresent: true)
         }
     }
-    
+
     func test_restartImageUpload() throws {
         linkToScenario(withId: 2195)
-
-        try XCTSkipIf(
-            UIDevice.current.userInterfaceIdiom == .pad || ProcessInfo().operatingSystemVersion.majorVersion == 12,
-            "Flaky on iPad and iOS 12"
-        )
 
         GIVEN("user opens the channel") {
             userRobot

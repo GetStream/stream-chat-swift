@@ -8,10 +8,13 @@ import Foundation
 @objc(AttachmentDTO)
 class AttachmentDTO: NSManagedObject {
     /// An attachment id.
-    @NSManaged private var id: String
+    @NSManaged private var id: String?
     var attachmentID: AttachmentId? {
-        get { AttachmentId(rawValue: id) }
-        set { id = newValue?.rawValue ?? "" }
+        get {
+            guard let id = self.id else { return nil }
+            return AttachmentId(rawValue: id)
+        }
+        set { id = newValue?.rawValue }
     }
 
     /// An attachment type.
@@ -78,6 +81,13 @@ class AttachmentDTO: NSManagedObject {
         request.sortDescriptors = [NSSortDescriptor(keyPath: \AttachmentDTO.id, ascending: true)]
         request.predicate = NSPredicate(format: "localStateRaw == %@", LocalAttachmentState.pendingUpload.rawValue)
         return request
+    }
+    
+    static func loadInProgressAttachments(context: NSManagedObjectContext) -> [AttachmentDTO] {
+        let request = NSFetchRequest<AttachmentDTO>(entityName: AttachmentDTO.entityName)
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \AttachmentDTO.id, ascending: true)]
+        request.predicate = NSPredicate(format: "localStateRaw == %@", LocalAttachmentState.uploading(progress: 0).rawValue)
+        return load(by: request, context: context)
     }
 }
 

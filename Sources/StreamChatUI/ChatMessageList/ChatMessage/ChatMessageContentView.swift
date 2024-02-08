@@ -799,7 +799,6 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
                 .withoutAutoresizingMaskConstraints
                 .withAccessibilityIdentifier(identifier: "textView")
             textView?.isEditable = false
-            textView?.dataDetectorTypes = .link
             textView?.isScrollEnabled = false
             textView?.backgroundColor = .clear
             textView?.adjustsFontForContentSizeCategory = true

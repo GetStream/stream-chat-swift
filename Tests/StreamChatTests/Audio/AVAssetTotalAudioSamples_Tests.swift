@@ -28,7 +28,15 @@ final class AVAssetTotalAudioSamples_Tests: XCTestCase {
     // MARK: - Tests
 
     func testBufferReturnsWaveformData() throws {
-        let expectedSampleCount = 10_770_718
+        /// `audioFile.totalSamplesOfFirstAudioTrack()` returns a slightly longer duration
+        /// for the file on iOS 17 and above (the difference is 0.05 seconds).
+        let expectedSampleCount: Int = {
+            if #available(iOS 17.0, *) {
+                return 10_766_426
+            } else {
+                return 10_770_718
+            }
+        }()
 
         let totalSamples = audioFile.totalSamplesOfFirstAudioTrack()
 

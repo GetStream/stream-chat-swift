@@ -95,6 +95,7 @@ final class MessageEditor_Tests: XCTestCase {
                 payload: .dummy(),
                 id: .init(cid: cid, messageId: messageId, index: 0)
             )
+            attachmentDTO.localState = .uploaded
             let messageDTO = session.message(id: messageId)
             messageDTO?.attachments.insert(attachmentDTO)
         }

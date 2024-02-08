@@ -7,11 +7,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### ✅ Added
 - Add new `ChatChannelController.enrichUrl()` function to get metadata from URL [#2984](https://github.com/GetStream/stream-chat-swift/pull/2984)
 - Add new `TextLinkDetector` for parsing and detecting links given a string [#2984](https://github.com/GetStream/stream-chat-swift/pull/2984)
+- Automatically restart uploading suspended attachments when the app is reopened [#3008](https://github.com/GetStream/stream-chat-swift/pull/3008)
 ### 🐞 Fixed
 - Fix message link preview showing empty space when no metadata available [#2984](https://github.com/GetStream/stream-chat-swift/pull/2984)
 - Fix threading issues in `ConnectionRepository` [#2985](https://github.com/GetStream/stream-chat-swift/pull/2985), [#2987](https://github.com/GetStream/stream-chat-swift/pull/2987)
 - Fix threading issues in `AuthenticationRepository` [#2986](https://github.com/GetStream/stream-chat-swift/pull/2986)
 - Fix `NewMessagePendingEvent.message` with empty `cid` [#2997](https://github.com/GetStream/stream-chat-swift/pull/2997)
+- Fix attachments being sent with local URL paths [#3008](https://github.com/GetStream/stream-chat-swift/pull/3008)
+- Fix rare crash in `AttachmentDTO.id` when accessed outside of CoreData's context [#3008](https://github.com/GetStream/stream-chat-swift/pull/3008)
 
 ## StreamChatUI
 ### ✅ Added
@@ -20,6 +23,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - Fix link flickering when opening a channel [#2984](https://github.com/GetStream/stream-chat-swift/pull/2984)
 - Fix link flickering when quoting a message with a link [#2984](https://github.com/GetStream/stream-chat-swift/pull/2984)
+- Fix channel item actions gesture overriding native swipe go-back gesture [#3000](https://github.com/GetStream/stream-chat-swift/pull/3000)
+- Fix flashing channel list avatars and improve channel list update performance [#2996](https://github.com/GetStream/stream-chat-swift/pull/2996)
 
 # [4.47.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.47.1)
 _January 24, 2024_

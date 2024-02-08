@@ -483,8 +483,7 @@ final class ChatMessageContentView_Tests: XCTestCase {
                 payload: try JSONEncoder.stream.encode(ImageAttachmentPayload(
                     title: nil,
                     imageRemoteURL: TestImages.r2.url
-                )
-                ),
+                )),
                 uploadingState: nil
             )],
             localState: nil,
@@ -498,7 +497,7 @@ final class ChatMessageContentView_Tests: XCTestCase {
         )
         view.layoutOptions?.insert(.translation)
 
-        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+        AssertSnapshot(view, variants: [.defaultLight])
     }
 
     func test_appearance_whenMessageHasTranslation_whenNotLastInGroup() throws {

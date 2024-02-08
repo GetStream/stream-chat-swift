@@ -12,8 +12,7 @@ gem 'rubocop', '1.38', group: :rubocop_dependencies
 gem 'sinatra', group: :sinatra_dependencies
 gem 'slather'
 
-plugins_path = File.join(File.dirname(__FILE__), 'fastlane', 'Pluginfile')
-eval_gemfile(plugins_path) if File.exist?(plugins_path)
+eval_gemfile('fastlane/Pluginfile')
 
 group :fastlane_dependencies do
   gem 'cocoapods'

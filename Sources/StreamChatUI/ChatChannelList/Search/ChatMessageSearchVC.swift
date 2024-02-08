@@ -49,7 +49,7 @@ open class ChatMessageSearchVC: ChatChannelListSearchVC, ChatMessageSearchContro
         let previousMessages = messages
         let newMessages = Array(messageSearchController.messages)
         let stagedChangeset = StagedChangeset(source: previousMessages, target: newMessages)
-        collectionView.reload(using: stagedChangeset) { [weak self] newMessages in
+        collectionView.reload(using: stagedChangeset, reconfigure: { _ in true }) { [weak self] newMessages in
             self?.messages = newMessages
         }
     }

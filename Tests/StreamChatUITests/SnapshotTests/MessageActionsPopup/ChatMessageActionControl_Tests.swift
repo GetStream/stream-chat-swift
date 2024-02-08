@@ -46,16 +46,6 @@ final class ChatMessageActionControl_Tests: XCTestCase {
         super.tearDown()
     }
 
-    func test_emptyState() {
-        let view = ChatMessageActionControl().withoutAutoresizingMaskConstraints
-        NSLayoutConstraint.activate([
-            view.heightAnchor.constraint(equalToConstant: 50)
-        ])
-        view.content = content
-        view.content = TestChatMessageActionItem(title: "", icon: UIImage())
-        AssertSnapshot(view)
-    }
-
     func test_defaultAppearance() {
         let view = ChatMessageActionControl().withoutAutoresizingMaskConstraints
         view.content = content

@@ -1237,9 +1237,10 @@ final class ChatChannelListItemView_Tests: XCTestCase {
         itemView.content = .init(channel: channel, currentUserId: nil)
         itemView.appearance.formatters.channelListMessageTimestamp = DefaultMessageTimestampFormatter()
 
-        XCTAssertEqual(
-            itemView.timestampText,
-            "12:00 AM"
+        // Workaround for iOS 17 spacing issue
+        XCTAssertTrue(
+            ["12:00 AM", "12:00 AM"].contains(itemView.timestampText),
+            "Actual result: \(itemView.timestampText ?? "")"
         )
     }
 
@@ -1255,9 +1256,10 @@ final class ChatChannelListItemView_Tests: XCTestCase {
         )
         itemView.appearance.formatters.channelListMessageTimestamp = DefaultMessageTimestampFormatter()
 
-        XCTAssertEqual(
-            itemView.timestampText,
-            "12:00 AM"
+        // Workaround for iOS 17 spacing issue
+        XCTAssertTrue(
+            ["12:00 AM", "12:00 AM"].contains(itemView.timestampText),
+            "Actual result: \(itemView.timestampText ?? "")"
         )
     }
 
@@ -1278,9 +1280,10 @@ final class ChatChannelListItemView_Tests: XCTestCase {
         itemView.content = .init(channel: channel, currentUserId: nil)
         itemView.appearance.formatters.channelListMessageTimestamp = formatter
 
-        XCTAssertEqual(
-            itemView.timestampText,
-            "12:00 AM"
+        // Workaround for iOS 17 spacing issue
+        XCTAssertTrue(
+            ["12:00 AM", "12:00 AM"].contains(itemView.timestampText),
+            "Actual result: \(itemView.timestampText ?? "")"
         )
     }
 

@@ -59,13 +59,17 @@ class AttachmentQueueUploader: Worker {
     private func handleChanges(changes: [ListChange<AttachmentDTO>]) {
         guard !changes.isEmpty else { return }
 
-        var wasEmpty: Bool = false
-        _pendingAttachmentIDs.mutate { pendingAttachmentIDs in
-            wasEmpty = pendingAttachmentIDs.isEmpty
-            changes.pendingUploadAttachmentIDs.forEach { pendingAttachmentIDs.insert($0) }
-        }
-        if wasEmpty {
-            uploadNextAttachment()
+        database.backgroundReadOnlyContext.perform { [weak self] in
+            var wasEmpty: Bool = false
+            self?._pendingAttachmentIDs.mutate { pendingAttachmentIDs in
+                wasEmpty = pendingAttachmentIDs.isEmpty
+                changes.pendingUploadAttachmentIDs.forEach {
+                    pendingAttachmentIDs.insert($0)
+                }
+            }
+            if wasEmpty {
+                self?.uploadNextAttachment()
+            }
         }
     }
 
@@ -261,17 +265,18 @@ private class AttachmentStorage {
     /// using `.documentsDirectory`, is stable though.
     /// Because of that, if the file is already in our storage, the only thing we will do is to return a fresh and valid url to access it.
     func storeAttachment(id: AttachmentId, temporaryURL: URL) throws -> URL {
+        // The file name should be composed by the id of the attachment so that it is unique.
         let fileExtension = temporaryURL.pathExtension
-        let fileName = temporaryURL.deletingPathExtension().lastPathComponent
         let attachmentId = [id.cid.rawValue, id.messageId, String(id.index)].joined(separator: "-")
-        let fileId = "\(fileName)-\(attachmentId).\(fileExtension)"
+        let fileId = "\(attachmentId).\(fileExtension)"
         let sandboxedURL = baseURL.appendingPathComponent(fileId)
 
-        guard !fileExists(at: sandboxedURL) else {
+        // If the attachment is already sandboxed, return it.
+        if fileExists(at: sandboxedURL) {
             return sandboxedURL
         }
 
-        // Copy data to local path
+        // If not, copy the data of the temporary url to the sandbox directory.
         try Data(contentsOf: temporaryURL).write(to: sandboxedURL)
         return sandboxedURL
     }
