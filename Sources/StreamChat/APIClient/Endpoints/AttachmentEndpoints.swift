@@ -14,17 +14,4 @@ extension Endpoint {
             body: nil
         )
     }
-
-    static func enrichUrl(url: URL)
-        -> Endpoint<LinkAttachmentPayload> {
-        .init(
-            path: .og,
-            method: .get,
-            queryItems: [
-                "url": url.absoluteString
-            ],
-            requiresConnectionId: false,
-            body: nil
-        )
-    }
 }
