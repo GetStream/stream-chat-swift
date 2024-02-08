@@ -565,7 +565,7 @@ class AppConfigViewController: UITableViewController {
             textField.keyboardType = .numberPad
         }
 
-        alert.addAction(.init(title: "OK", style: .default, handler: { _ in
+        alert.addAction(.init(title: "Enable", style: .default, handler: { _ in
             guard let appSecret = alert.textFields?[0].text else { return }
             guard let duration = alert.textFields?[1].text else { return }
             self.demoAppConfig.tokenRefreshDetails = .init(
