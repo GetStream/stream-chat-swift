@@ -2,42 +2,41 @@
 // Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
-import Foundation
-import StreamChat
-
-extension StreamChatWrapper {
-    func refreshingTokenProvider(initialToken: Token, tokenDurationInMinutes: Double) -> TokenProvider {
-        { completion in
-            // Simulate API call delay
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                let token: Token
-                #if GENERATE_JWT
-                let timeInterval = TimeInterval(tokenDurationInMinutes * 60)
-                let generatedToken = _generateUserToken(
-                    secret: appSecret,
-                    userID: initialToken.userId,
-                    expirationDate: Date().addingTimeInterval(timeInterval)
-                )
-                if generatedToken == nil {
-                    log.warning("Unable to generate token. Falling back to initialToken")
-                }
-                token = generatedToken ?? initialToken
-                #else
-                token = initialToken
-                #endif
-                completion(.success(token))
-            }
-        }
-    }
-}
-
-#if GENERATE_JWT
-
 import CryptoKit
 import Foundation
 import StreamChat
 
-let appSecret = ""
+extension StreamChatWrapper {
+    func refreshingTokenProvider(
+        initialToken: Token,
+        appSecret: String,
+        tokenDuration: TimeInterval
+    ) -> TokenProvider {
+        { completion in
+            // Simulate API call delay
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                var generatedToken: Token?
+                
+                if #available(iOS 13.0, *) {
+                    generatedToken = _generateUserToken(
+                        secret: appSecret,
+                        userID: initialToken.userId,
+                        expirationDate: Date().addingTimeInterval(tokenDuration)
+                    )
+                }
+
+                if generatedToken == nil {
+                    print("Demo App Token Refreshing: Unable to generate token.")
+                } else {
+                    print("Demo App Token Refreshing: New token generated.")
+                }
+
+                let newToken = generatedToken ?? initialToken
+                completion(.success(newToken))
+            }
+        }
+    }
+}
 
 extension Data {
     func urlSafeBase64EncodedString() -> String {
@@ -60,6 +59,7 @@ struct JWTPayload: Encodable {
 
 // DO NOT USE THIS FOR REAL APPS! This function is only here to make it easier to
 // have expired token renewal while using the standalone demo application
+@available(iOS 13.0, *)
 func _generateUserToken(secret: String, userID: String, expirationDate: Date) -> Token? {
     guard !secret.isEmpty else { return nil }
     let privateKey = SymmetricKey(data: secret.data(using: .utf8)!)
@@ -78,5 +78,3 @@ func _generateUserToken(secret: String, userID: String, expirationDate: Date) ->
     let token = [headerBase64String, payloadBase64String, signatureBase64String].joined(separator: ".")
     return try? Token(rawValue: token)
 }
-
-#endif

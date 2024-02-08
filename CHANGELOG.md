@@ -15,6 +15,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix `NewMessagePendingEvent.message` with empty `cid` [#2997](https://github.com/GetStream/stream-chat-swift/pull/2997)
 - Fix attachments being sent with local URL paths [#3008](https://github.com/GetStream/stream-chat-swift/pull/3008)
 - Fix rare crash in `AttachmentDTO.id` when accessed outside of CoreData's context [#3008](https://github.com/GetStream/stream-chat-swift/pull/3008)
+### 🔄 Changed
+- Do not check token expiration client-side, only server-side [#3014](https://github.com/GetStream/stream-chat-swift/pull/3014)
 
 ## StreamChatUI
 ### ✅ Added

@@ -54,17 +54,23 @@ extension StreamChatWrapper {
                 language: UserConfig.shared.language,
                 extraData: userCredentials.userInfo.extraData
             )
-            guard AppConfig.shared.demoAppConfig.isTokenRefreshEnabled else {
+
+            if let tokenRefreshDetails = AppConfig.shared.demoAppConfig.tokenRefreshDetails {
                 client?.connectUser(
                     userInfo: userInfo,
-                    token: userCredentials.token,
+                    tokenProvider: refreshingTokenProvider(
+                        initialToken: userCredentials.token,
+                        appSecret: tokenRefreshDetails.appSecret,
+                        tokenDuration: tokenRefreshDetails.duration
+                    ),
                     completion: completion
                 )
                 return
             }
+
             client?.connectUser(
                 userInfo: userInfo,
-                tokenProvider: refreshingTokenProvider(initialToken: userCredentials.token, tokenDurationInMinutes: 60),
+                token: userCredentials.token,
                 completion: completion
             )
         case let .guest(userId):
