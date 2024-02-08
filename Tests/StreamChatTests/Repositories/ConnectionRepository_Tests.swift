@@ -363,7 +363,7 @@ final class ConnectionRepository_Tests: XCTestCase {
         }
     }
 
-    func test_handleConnectionUpdate_shouldExecuteInvalidTokenBlock_whenNeeded() {
+    func test_handleConnectionUpdate_whenInvalidToken_shouldExecuteInvalidTokenBlock() {
         let expectation = self.expectation(description: "Invalid Token Block Executed")
         let invalidTokenError = ClientError(with: ErrorPayload(
             code: .random(in: ClosedRange.tokenInvalidErrorCodes),
@@ -378,16 +378,27 @@ final class ConnectionRepository_Tests: XCTestCase {
         waitForExpectations(timeout: defaultTimeout)
     }
 
-    func test_handleConnectionUpdate_shouldNOTExecuteInvalidTokenBlock_whenNOTNeeded() {
-        let anotherError = ClientError(with: ErrorPayload(
-            code: 73,
+    func test_handleConnectionUpdate_whenInvalidToken_whenDisconnecting_shouldNOTExecuteInvalidTokenBlock() {
+        // We only want to refresh the token when it is actually disconnected, not while it is disconnecting, otherwise we trigger refresh token twice.
+        let invalidTokenError = ClientError(with: ErrorPayload(
+            code: .random(in: ClosedRange.tokenInvalidErrorCodes),
             message: .unique,
             statusCode: .unique
         ))
 
-        repository.handleConnectionUpdate(state: .disconnected(source: .serverInitiated(error: anotherError)), onInvalidToken: {
+        repository.handleConnectionUpdate(state: .disconnecting(source: .serverInitiated(error: invalidTokenError)), onInvalidToken: {
             XCTFail("Should not execute invalid token block")
         })
+    }
+
+    func test_handleConnectionUpdate_whenNoError_shouldNOTExecuteInvalidTokenBlock() {
+        let states: [WebSocketConnectionState] = [.connecting, .initialized, .connected(connectionId: .newUniqueId), .waitingForConnectionId]
+
+        for state in states {
+            repository.handleConnectionUpdate(state: state, onInvalidToken: {
+                XCTFail("Should not execute invalid token block")
+            })
+        }
     }
 
     // MARK: Provide ConnectionId
