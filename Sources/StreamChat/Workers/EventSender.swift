@@ -17,8 +17,24 @@ class EventSender: Worker {
         to cid: ChannelId,
         completion: ((Error?) -> Void)? = nil
     ) {
-        apiClient.request(endpoint: .sendEvent(payload, cid: cid)) {
-            completion?($0.error)
+        do {
+            let data = try JSONEncoder.default.encode(payload)
+            var json = try JSONDecoder.default.decode([String: RawJSON].self, from: data)
+            let eventRequest = StreamChatEventRequest(
+                type: Payload.eventType.rawValue,
+                custom: json
+            )
+            let request = StreamChatSendEventRequest(event: eventRequest)
+            api.sendEvent(
+                type: cid.type.rawValue,
+                id: cid.id,
+                sendEventRequest: request
+            ) {
+                completion?($0.error)
+            }
+        } catch {
+            completion?(error)
+            return
         }
     }
 }

@@ -15,7 +15,7 @@ public struct StreamChatMessageNewEvent: Codable, Hashable, Event {
     
     public var type: String
     
-    public var watcherCount: Int
+    public var watcherCount: Int?
     
     public var team: String? = nil
     
@@ -93,6 +93,8 @@ public struct StreamChatMessageNewEvent: Codable, Hashable, Event {
         try container.encode(user, forKey: .user)
     }
 }
+
+extension StreamChatMessageNewEvent: EventContainsCreationDate {}
 
 extension StreamChatMessageNewEvent: EventContainsMessage {}
 

@@ -15,7 +15,7 @@ public struct StreamChatUserWatchingStopEvent: Codable, Hashable, Event {
     
     public var type: String
     
-    public var watcherCount: Int
+    public var watcherCount: Int?
     
     public var user: StreamChatUserObject? = nil
     
@@ -69,5 +69,7 @@ public struct StreamChatUserWatchingStopEvent: Codable, Hashable, Event {
         try container.encode(user, forKey: .user)
     }
 }
+
+extension StreamChatUserWatchingStopEvent: EventContainsCreationDate {}
 
 extension StreamChatUserWatchingStopEvent: EventContainsUser {}

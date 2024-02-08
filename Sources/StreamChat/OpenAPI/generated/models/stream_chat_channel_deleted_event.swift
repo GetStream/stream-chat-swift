@@ -70,4 +70,6 @@ public struct StreamChatChannelDeletedEvent: Codable, Hashable, Event {
     }
 }
 
+extension StreamChatChannelDeletedEvent: EventContainsCreationDate {}
+
 extension StreamChatChannelDeletedEvent: EventContainsChannel {}

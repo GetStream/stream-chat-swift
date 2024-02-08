@@ -78,4 +78,6 @@ public struct StreamChatUserUnbannedEvent: Codable, Hashable, Event {
     }
 }
 
+extension StreamChatUserUnbannedEvent: EventContainsCreationDate {}
+
 extension StreamChatUserUnbannedEvent: EventContainsUser {}

@@ -38,4 +38,6 @@ public struct StreamChatUserPresenceChangedEvent: Codable, Hashable, Event {
     }
 }
 
+extension StreamChatUserPresenceChangedEvent: EventContainsCreationDate {}
+
 extension StreamChatUserPresenceChangedEvent: EventContainsUser {}

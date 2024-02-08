@@ -37,3 +37,5 @@ public struct StreamChatNotificationMutesUpdatedEvent: Codable, Hashable, Event 
         try container.encode(me, forKey: .me)
     }
 }
+
+extension StreamChatNotificationMutesUpdatedEvent: EventContainsCreationDate {}

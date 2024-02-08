@@ -172,7 +172,7 @@ public class ChatClient {
             offlineRequestsRepository,
             eventNotificationCenter,
             databaseContainer,
-            apiClient
+            api
         )
         let webSocketClient = factory.makeWebSocketClient(
             requestEncoder: webSocketEncoder,
@@ -187,7 +187,7 @@ public class ChatClient {
             environment.timerType
         )
         let authRepository = environment.authenticationRepositoryBuilder(
-            apiClient,
+            api,
             databaseContainer,
             connectionRepository,
             environment.tokenExpirationRetryStrategy,
@@ -235,8 +235,8 @@ public class ChatClient {
     }
 
     func setupOfflineRequestQueue() {
-        apiClient.queueOfflineRequest = { [weak self] endpoint in
-            self?.syncRepository.queueOfflineRequest(endpoint: endpoint)
+        apiClient.queueOfflineRequest = { [weak self] request, responseType in
+            self?.syncRepository.queueOfflineRequest(request, responseType: responseType)
         }
     }
 

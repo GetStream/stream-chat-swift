@@ -80,18 +80,20 @@ class AuthenticationRepository {
     weak var delegate: AuthenticationRepositoryDelegate?
 
     private let apiClient: APIClient
+    private let api: API
     private let databaseContainer: DatabaseContainer
     private let connectionRepository: ConnectionRepository
     private let timerType: Timer.Type
 
     init(
-        apiClient: APIClient,
+        api: API,
         databaseContainer: DatabaseContainer,
         connectionRepository: ConnectionRepository,
         tokenExpirationRetryStrategy: RetryStrategy,
         timerType: Timer.Type
     ) {
-        self.apiClient = apiClient
+        self.api = api
+        apiClient = api.apiClient
         self.databaseContainer = databaseContainer
         self.connectionRepository = connectionRepository
         _tokenExpirationRetryStrategy = tokenExpirationRetryStrategy
@@ -381,21 +383,28 @@ class AuthenticationRepository {
         userInfo: UserInfo,
         completion: @escaping (Result<Token, Error>) -> Void
     ) {
-        let endpoint: Endpoint<GuestUserTokenPayload> = .guestUserToken(
-            userId: userInfo.id,
-            name: userInfo.name,
-            imageURL: userInfo.imageURL,
-            extraData: userInfo.extraData
-        )
-
+        var custom = userInfo.extraData
+        if let name = userInfo.name {
+            custom["name"] = .string(name)
+        }
+        if let imageURL = userInfo.imageURL?.absoluteString {
+            custom["image"] = .string(imageURL)
+        }
+        let user = StreamChatUserObjectRequest(id: userInfo.id, custom: custom)
+        let request = StreamChatGuestRequest(user: user)
+        
         /// We need to ensure that the request to fetch the userToken will be executed. As APIClient's
         /// operationQueue may be suspended (due to the getToken operation) we are firing an
         /// unmanagedRequest/Operation that will be added on the `OperationQueue.main`
-        apiClient.unmanagedRequest(endpoint: endpoint) {
+        api.createGuest(guestRequest: request) {
             switch $0 {
             case let .success(payload):
-                let token = payload.token
-                completion(.success(token))
+                do {
+                    let token = try Token(rawValue: payload.accessToken)
+                    completion(.success(token))
+                } catch {
+                    completion(.failure(error))
+                }
             case let .failure(error):
                 log.error(error)
                 completion(.failure(error))

@@ -630,16 +630,18 @@ class ChannelUpdater: Worker {
     /// - Parameter isInRecoveryMode: Determines whether the SDK is in offline recovery mode
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func startWatching(cid: ChannelId, isInRecoveryMode: Bool, completion: ((Error?) -> Void)? = nil) {
-        // TODO: revisit this.
-        var query = ChannelQuery(cid: cid)
-        query.options = .all
-        let endpoint = Endpoint<ChannelPayload>.updateChannel(query: query)
-        let completion: (Result<ChannelPayload, Error>) -> Void = { completion?($0.error) }
-        if isInRecoveryMode {
-            apiClient.recoveryRequest(endpoint: endpoint, completion: completion)
-        } else {
-            apiClient.request(endpoint: endpoint, completion: completion)
-        }
+        let request = StreamChatChannelGetOrCreateRequest(
+            presence: true,
+            state: true,
+            watch: true,
+            messages: StreamChatMessagePaginationParamsRequest(limit: .messagesPageSize)
+        )
+        api.getOrCreateChannel(
+            type: cid.apiPath,
+            channelGetOrCreateRequest: request,
+            requiresConnectionId: true,
+            isRecoveryOperation: isInRecoveryMode
+        ) { completion?($0.error) }
     }
 
     /// Stop watching a channel
@@ -650,11 +652,10 @@ class ChannelUpdater: Worker {
     /// - Parameter cid: Channel id of the channel to stop watching
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func stopWatching(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
-        // TODO: check the connection id part.
         api.stopWatchingChannel(
             type: cid.type.rawValue,
             id: cid.id,
-            channelStopWatchingRequest: StreamChatChannelStopWatchingRequest(connectionId: nil),
+            channelStopWatchingRequest: StreamChatChannelStopWatchingRequest(),
             requiresConnectionId: true,
             completion: {
                 completion?($0.error)
@@ -670,7 +671,20 @@ class ChannelUpdater: Worker {
     ///   - query: Query object for watchers. See `ChannelWatcherListQuery`
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func channelWatchers(query: ChannelWatcherListQuery, completion: ((Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .channelWatchers(query: query)) { (result: Result<ChannelPayload, Error>) in
+        let watchers = StreamChatPaginationParamsRequest(
+            limit: query.pagination.pageSize,
+            offset: query.pagination.offset
+        )
+        let request = StreamChatChannelGetOrCreateRequest(
+            state: true,
+            watch: true,
+            watchers: watchers
+        )
+        api.getOrCreateChannel(
+            type: query.cid.apiPath,
+            channelGetOrCreateRequest: request,
+            requiresConnectionId: true
+        ) { (result: Result<StreamChatChannelStateResponse, Error>) in
             do {
                 let payload = try result.get()
                 self.database.write { (session) in
@@ -683,7 +697,7 @@ class ChannelUpdater: Worker {
                     }
                     // In any case (backend reported another page of watchers or no watchers)
                     // we should save the payload as it's the latest state of the channel
-                    try session.saveChannel(payload: payload)
+                    try session.saveChannel(payload: payload.toResponseFields, query: nil, cache: nil)
                 } completion: { error in
                     completion?(error)
                 }
@@ -746,10 +760,19 @@ class ChannelUpdater: Worker {
     ///
     /// This will return the data present in the OG Metadata.
     public func enrichUrl(_ url: URL, completion: @escaping (Result<LinkAttachmentPayload, Error>) -> Void) {
-        apiClient.request(endpoint: .enrichUrl(url: url)) { result in
+        api.getOG(url: url.absoluteString) { result in
             switch result {
             case let .success(payload):
-                completion(.success(payload))
+                let linkAttachment = LinkAttachmentPayload(
+                    originalURL: URL(string: payload.ogScrapeUrl ?? "") ?? url,
+                    title: payload.title,
+                    text: payload.text,
+                    author: payload.authorName,
+                    titleLink: URL(string: payload.titleLink ?? ""),
+                    assetURL: URL(string: payload.assetUrl ?? ""),
+                    previewURL: URL(string: payload.thumbUrl ?? "")
+                )
+                completion(.success(linkAttachment))
             case let .failure(error):
                 log.debug("Failed enriching url with error: \(error)")
                 completion(.failure(error))
@@ -768,22 +791,22 @@ class ChannelUpdater: Worker {
         query: PinnedMessagesQuery,
         completion: @escaping (Result<[ChatMessage], Error>) -> Void
     ) {
-        apiClient.request(
-            endpoint: .pinnedMessages(cid: cid, query: query)
-        ) { [weak self] result in
-            switch result {
-            case let .success(payload):
-                var pinnedMessages: [ChatMessage] = []
-                self?.database.write { (session) in
-                    pinnedMessages = session.saveMessages(messagesPayload: payload, for: cid, syncOwnReactions: false)
-                        .compactMap { try? $0.asModel() }
-                } completion: { _ in
-                    completion(.success(pinnedMessages.compactMap { $0 }))
-                }
-            case let .failure(error):
-                completion(.failure(error))
-            }
-        }
+//        apiClient.request(
+//            endpoint: .pinnedMessages(cid: cid, query: query)
+//        ) { [weak self] result in
+//            switch result {
+//            case let .success(payload):
+//                var pinnedMessages: [ChatMessage] = []
+//                self?.database.write { (session) in
+//                    pinnedMessages = session.saveMessages(messagesPayload: payload, for: cid, syncOwnReactions: false)
+//                        .compactMap { try? $0.asModel() }
+//                } completion: { _ in
+//                    completion(.success(pinnedMessages.compactMap { $0 }))
+//                }
+//            case let .failure(error):
+//                completion(.failure(error))
+//            }
+//        }
     }
 
     func createCall(in cid: ChannelId, callId: String, type: String, completion: @escaping (Result<CallWithToken, Error>) -> Void) {

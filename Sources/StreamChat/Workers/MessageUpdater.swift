@@ -346,35 +346,35 @@ class MessageUpdater: Worker {
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
     func flagMessage(_ flag: Bool, with messageId: MessageId, in cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
-        fetchAndSaveMessageIfNeeded(messageId, cid: cid) { error in
-            guard error == nil else {
-                completion?(error)
-                return
-            }
-
-            let endpoint: Endpoint<FlagMessagePayload> = .flagMessage(flag, with: messageId)
-            self.apiClient.request(endpoint: endpoint) { result in
-                switch result {
-                case let .success(payload):
-                    self.database.write({ session in
-                        guard let messageDTO = session.message(id: payload.flaggedMessageId) else {
-                            throw ClientError.MessageDoesNotExist(messageId: messageId)
-                        }
-
-                        let currentUserDTO = session.currentUser
-                        if flag {
-                            currentUserDTO?.flaggedMessages.insert(messageDTO)
-                        } else {
-                            currentUserDTO?.flaggedMessages.remove(messageDTO)
-                        }
-                    }, completion: { error in
-                        completion?(error)
-                    })
-                case let .failure(error):
-                    completion?(error)
-                }
-            }
-        }
+//        fetchAndSaveMessageIfNeeded(messageId, cid: cid) { error in
+//            guard error == nil else {
+//                completion?(error)
+//                return
+//            }
+//
+//            let endpoint: Endpoint<FlagMessagePayload> = .flagMessage(flag, with: messageId)
+//            self.apiClient.request(endpoint: endpoint) { result in
+//                switch result {
+//                case let .success(payload):
+//                    self.database.write({ session in
+//                        guard let messageDTO = session.message(id: payload.flaggedMessageId) else {
+//                            throw ClientError.MessageDoesNotExist(messageId: messageId)
+//                        }
+//
+//                        let currentUserDTO = session.currentUser
+//                        if flag {
+//                            currentUserDTO?.flaggedMessages.insert(messageDTO)
+//                        } else {
+//                            currentUserDTO?.flaggedMessages.remove(messageDTO)
+//                        }
+//                    }, completion: { error in
+//                        completion?(error)
+//                    })
+//                case let .failure(error):
+//                    completion?(error)
+//                }
+//            }
+//        }
     }
 
     /// Adds a new reaction to the message.

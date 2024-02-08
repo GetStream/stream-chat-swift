@@ -4,6 +4,8 @@
 
 import Foundation
 
+public struct EmptyResponse: Decodable {}
+
 extension StreamChatChannelStateResponse {
     var toResponseFields: StreamChatChannelStateResponseFields {
         StreamChatChannelStateResponseFields(

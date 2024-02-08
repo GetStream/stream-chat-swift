@@ -46,4 +46,6 @@ public struct StreamChatUserDeactivatedEvent: Codable, Hashable, Event {
     }
 }
 
+extension StreamChatUserDeactivatedEvent: EventContainsCreationDate {}
+
 extension StreamChatUserDeactivatedEvent: EventContainsUser {}

@@ -94,6 +94,8 @@ public struct StreamChatReactionDeletedEvent: Codable, Hashable, Event {
     }
 }
 
+extension StreamChatReactionDeletedEvent: EventContainsCreationDate {}
+
 extension StreamChatReactionDeletedEvent: EventContainsMessage {}
 
 extension StreamChatReactionDeletedEvent: EventContainsUser {}

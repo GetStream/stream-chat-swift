@@ -76,29 +76,30 @@ class UserUpdater: Worker {
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
     func flagUser(_ flag: Bool, with userId: UserId, completion: ((Error?) -> Void)? = nil) {
-        let endpoint: Endpoint<FlagUserPayload> = .flagUser(flag, with: userId)
-        apiClient.request(endpoint: endpoint) {
-            switch $0 {
-            case let .success(payload):
-                self.database.write({ session in
-                    let userDTO = try session.saveUser(payload: payload.flaggedUser)
-
-                    let currentUserDTO = session.currentUser
-                    if flag {
-                        currentUserDTO?.flaggedUsers.insert(userDTO)
-                    } else {
-                        currentUserDTO?.flaggedUsers.remove(userDTO)
-                    }
-                }, completion: {
-                    if let error = $0 {
-                        log.error("Failed to save flagged user with id: <\(userId)> to the database. Error: \(error)")
-                    }
-                    completion?($0)
-                })
-            case let .failure(error):
-                completion?(error)
-            }
-        }
+        // TODO: flag user is missing from the spec.
+//        let endpoint: Endpoint<FlagUserPayload> = .flagUser(flag, with: userId)
+//        apiClient.request(endpoint: endpoint) {
+//            switch $0 {
+//            case let .success(payload):
+//                self.database.write({ session in
+//                    let userDTO = try session.saveUser(payload: payload.flaggedUser)
+//
+//                    let currentUserDTO = session.currentUser
+//                    if flag {
+//                        currentUserDTO?.flaggedUsers.insert(userDTO)
+//                    } else {
+//                        currentUserDTO?.flaggedUsers.remove(userDTO)
+//                    }
+//                }, completion: {
+//                    if let error = $0 {
+//                        log.error("Failed to save flagged user with id: <\(userId)> to the database. Error: \(error)")
+//                    }
+//                    completion?($0)
+//                })
+//            case let .failure(error):
+//                completion?(error)
+//            }
+//        }
     }
 }
 

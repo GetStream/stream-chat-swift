@@ -62,4 +62,6 @@ public struct StreamChatNotificationChannelTruncatedEvent: Codable, Hashable, Ev
     }
 }
 
+extension StreamChatNotificationChannelTruncatedEvent: EventContainsCreationDate {}
+
 extension StreamChatNotificationChannelTruncatedEvent: EventContainsChannel {}

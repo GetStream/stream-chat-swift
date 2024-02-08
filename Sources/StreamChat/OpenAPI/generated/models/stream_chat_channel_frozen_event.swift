@@ -53,3 +53,5 @@ public struct StreamChatChannelFrozenEvent: Codable, Hashable, Event {
         try container.encode(type, forKey: .type)
     }
 }
+
+extension StreamChatChannelFrozenEvent: EventContainsCreationDate {}

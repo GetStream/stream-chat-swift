@@ -29,3 +29,5 @@ public struct StreamChatAnyEvent: Codable, Hashable, Event {
         try container.encode(type, forKey: .type)
     }
 }
+
+extension StreamChatAnyEvent: EventContainsCreationDate {}

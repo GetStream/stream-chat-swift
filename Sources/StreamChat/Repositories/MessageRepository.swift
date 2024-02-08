@@ -197,13 +197,15 @@ class MessageRepository {
     ///   - store: A boolean indicating if the message should be stored to database or should only be retrieved
     ///   - completion: The completion. Will be called with an error if something goes wrong, otherwise - will be called with `nil`.
     func getMessage(cid: ChannelId, messageId: MessageId, store: Bool, completion: ((Result<ChatMessage, Error>) -> Void)? = nil) {
-        let endpoint: Endpoint<MessagePayload.Boxed> = .getMessage(messageId: messageId)
-        apiClient.request(endpoint: endpoint) {
+        api.getMessage(id: messageId) {
             switch $0 {
             case let .success(boxed):
                 var message: ChatMessage?
                 self.database.write({ session in
-                    message = try session.saveMessage(payload: boxed.message, for: cid, syncOwnReactions: true, cache: nil).asModel()
+                    guard let payload = boxed.message else {
+                        throw ClientError.Unexpected()
+                    }
+                    message = try session.saveMessage(payload: payload, for: cid, syncOwnReactions: true, cache: nil).asModel()
                     if !store {
                         self.database.writableContext.discardCurrentChanges()
                     }

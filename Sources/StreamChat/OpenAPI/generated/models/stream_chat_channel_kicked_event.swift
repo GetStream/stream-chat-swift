@@ -62,4 +62,6 @@ public struct StreamChatChannelKickedEvent: Codable, Hashable, Event {
     }
 }
 
+extension StreamChatChannelKickedEvent: EventContainsCreationDate {}
+
 extension StreamChatChannelKickedEvent: EventContainsChannel {}

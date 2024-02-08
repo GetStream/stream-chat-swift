@@ -54,4 +54,6 @@ public struct StreamChatUserMutedEvent: Codable, Hashable, Event {
     }
 }
 
+extension StreamChatUserMutedEvent: EventContainsCreationDate {}
+
 extension StreamChatUserMutedEvent: EventContainsUser {}

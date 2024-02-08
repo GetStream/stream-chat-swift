@@ -19,6 +19,7 @@ protocol ChannelDatabaseSessionV2 {
         cache: PreWarmedCache?
     ) throws -> ChannelDTO
     
+    @discardableResult
     func saveChannel(
         payload: StreamChatChannelStateResponseFields,
         query: ChannelListQuery?,

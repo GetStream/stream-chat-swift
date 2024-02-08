@@ -70,4 +70,6 @@ public struct StreamChatTypingStartEvent: Codable, Hashable, Event {
     }
 }
 
+extension StreamChatTypingStartEvent: EventContainsCreationDate {}
+
 extension StreamChatTypingStartEvent: EventContainsUser {}

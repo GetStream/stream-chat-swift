@@ -1350,7 +1350,7 @@ public class API: DefaultAPIEndpoints {
             }
             switch result {
             case let .success(request):
-                self.apiClient.request(request, isRecoveryOperation: isRecoveryOperation, completion: completion)
+                self.apiClient.unmanagedRequest(request, completion: completion)
             case let .failure(error):
                 completion(.failure(error))
             }

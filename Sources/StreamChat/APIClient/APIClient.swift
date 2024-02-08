@@ -66,19 +66,6 @@ class APIClient {
         session = URLSession(configuration: sessionConfiguration)
         self.attachmentUploader = attachmentUploader
     }
-
-    /// Performs a network request and retries in case of network failures
-    ///
-    /// - Parameters:
-    ///   - endpoint: The `Endpoint` used to create the network request.
-    ///   - completion: Called when the networking request is finished.
-    func request<Response: Decodable>(
-        endpoint: Endpoint<Response>,
-        completion: @escaping (Result<Response, Error>) -> Void
-    ) {
-        let requestOperation = operation(endpoint: endpoint, isRecoveryOperation: false, completion: completion)
-        operationQueue.addOperation(requestOperation)
-    }
     
     func request<Response: Decodable>(
         _ request: URLRequest,
@@ -93,106 +80,13 @@ class APIClient {
         }
     }
 
-    /// Performs a network request and retries in case of network failures
-    ///
-    /// - Parameters:
-    ///   - endpoint: The `Endpoint` used to create the network request.
-    ///   - completion: Called when the networking request is finished.
-    func recoveryRequest<Response: Decodable>(
-        endpoint: Endpoint<Response>,
-        completion: @escaping (Result<Response, Error>) -> Void
-    ) {
-        if !isInRecoveryMode {
-            log.assertionFailure("We should not call this method if not in recovery mode")
-        }
-
-        let requestOperation = operation(endpoint: endpoint, isRecoveryOperation: true, completion: completion)
-        recoveryQueue.addOperation(requestOperation)
-    }
-
-    /// Performs a network request and retries in case of network failures. The network operation
-    /// won't be managed by the APIClient instance. Instead it will be added on the `OperationQueue.main`
-    ///
-    /// - Parameters:
-    ///   - endpoint: The `Endpoint` used to create the network request.
-    ///   - completion: Called when the networking request is finished.
     func unmanagedRequest<Response: Decodable>(
-        endpoint: Endpoint<Response>,
+        _ request: URLRequest,
         completion: @escaping (Result<Response, Error>) -> Void
     ) {
         OperationQueue.main.addOperation(
-            unmanagedOperation(endpoint: endpoint, completion: completion)
+            unmanagedOperation(request: request, completion: completion)
         )
-    }
-
-    private func operation<Response: Decodable>(
-        endpoint: Endpoint<Response>,
-        isRecoveryOperation: Bool,
-        completion: @escaping (Result<Response, Error>) -> Void
-    ) -> AsyncOperation {
-        AsyncOperation(maxRetries: maximumRequestRetries) { [weak self] operation, done in
-            guard let self = self else {
-                done(.continue)
-                return
-            }
-
-            guard !self.isRefreshingToken else {
-                // Requeue request
-                self.request(endpoint: endpoint, completion: completion)
-                done(.continue)
-                return
-            }
-
-            self.executeRequest(endpoint: endpoint) { [weak self] result in
-                switch result {
-                case .failure(_ as ClientError.RefreshingToken):
-                    // Requeue request
-                    self?.request(endpoint: endpoint, completion: completion)
-                    done(.continue)
-                case .failure(_ as ClientError.TokenRefreshed):
-                    // Retry request. Expired token has been refreshed
-                    operation.resetRetries()
-                    done(.retry)
-                case .failure(_ as ClientError.WaiterTimeout):
-                    // When waiters timeout, chances are that we are still connecting. We are going to retry until we reach max retries
-                    if operation.canRetry {
-                        done(.retry)
-                    } else {
-                        completion(result)
-                        done(.continue)
-                    }
-                case let .failure(error) where self?.isConnectionError(error) == true:
-                    // If a non recovery request comes in while we are in recovery mode, we want to queue if still has
-                    // retries left
-                    let inRecoveryMode = self?.isInRecoveryMode == true
-                    if inRecoveryMode && !isRecoveryOperation && operation.canRetry {
-                        self?.request(endpoint: endpoint, completion: completion)
-                        done(.continue)
-                        return
-                    }
-
-                    // Do not retry unless its a connection problem and we still have retries left
-                    if operation.canRetry {
-                        done(.retry)
-                        return
-                    }
-
-                    if inRecoveryMode {
-                        completion(.failure(ClientError.ConnectionError()))
-                    } else {
-                        // Offline Queuing
-                        self?.queueOfflineRequest?(endpoint.withDataResponse)
-                        completion(result)
-                    }
-
-                    done(.continue)
-                case .success, .failure:
-                    log.debug("Request completed for /\(endpoint.path)", subsystems: .offlineSupport)
-                    completion(result)
-                    done(.continue)
-                }
-            }
-        }
     }
     
     private func operation<Response: Decodable>(
@@ -251,8 +145,7 @@ class APIClient {
                         completion(.failure(ClientError.ConnectionError()))
                     } else {
                         // Offline Queuing
-                        // TODO: Fix this!
-//                        self?.queueOfflineRequest?(endpoint.withDataResponse)
+                        self?.queueOfflineRequest?(request, ResponseType(value: "\(Response.self)"))
                         completion(result)
                     }
 
@@ -267,11 +160,11 @@ class APIClient {
     }
 
     private func unmanagedOperation<Response: Decodable>(
-        endpoint: Endpoint<Response>,
+        request: URLRequest,
         completion: @escaping (Result<Response, Error>) -> Void
     ) -> AsyncOperation {
         AsyncOperation(maxRetries: maximumRequestRetries) { [weak self] operation, done in
-            self?.executeRequest(endpoint: endpoint) { [weak self] result in
+            self?.execute(urlRequest: request) { [weak self] (result: Result<Response, Error>) in
                 switch result {
                 case let .failure(error) where self?.isConnectionError(error) == true:
                     // Do not retry unless its a connection problem and we still have retries left
@@ -283,48 +176,11 @@ class APIClient {
                     completion(result)
                     done(.continue)
                 case .success, .failure:
-                    log.debug("Request succeeded /\(endpoint.path)", subsystems: .offlineSupport)
+                    log.debug("Request succeeded /\(request.url?.relativePath ?? "")", subsystems: .offlineSupport)
                     completion(result)
                     done(.continue)
                 }
             }
-        }
-    }
-
-    /// Performs a network request.
-    ///
-    /// - Parameters:
-    ///   - endpoint: The `Endpoint` used to create the network request.
-    ///   - completion: Called when the networking request is finished.
-    private func executeRequest<Response: Decodable>(
-        endpoint: Endpoint<Response>,
-        completion: @escaping (Result<Response, Error>) -> Void
-    ) {
-        encoder.encodeRequest(for: endpoint) { [weak self] (requestResult) in
-            let urlRequest: URLRequest
-            do {
-                urlRequest = try requestResult.get()
-            } catch {
-                log.error(error, subsystems: .httpRequests)
-                completion(.failure(error))
-                return
-            }
-
-            log.debug(
-                "Making URL request: \(endpoint.method.rawValue.uppercased()) \(endpoint.path)\n"
-                    + "Headers:\n\(String(describing: urlRequest.allHTTPHeaderFields))\n"
-                    + "Body:\n\(urlRequest.httpBody?.debugPrettyPrintedJSON ?? "<Empty>")\n"
-                    + "Query items:\n\(urlRequest.queryItems.prettyPrinted)",
-                subsystems: .httpRequests
-            )
-
-            guard let self = self else {
-                log.warning("Callback called while self is nil", subsystems: .httpRequests)
-                completion(.failure(ClientError("APIClient was deallocated")))
-                return
-            }
-
-            execute(urlRequest: urlRequest, completion: completion)
         }
     }
     

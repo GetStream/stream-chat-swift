@@ -70,4 +70,6 @@ public struct StreamChatNotificationAddedToChannelEvent: Codable, Hashable, Even
     }
 }
 
+extension StreamChatNotificationAddedToChannelEvent: EventContainsCreationDate {}
+
 extension StreamChatNotificationAddedToChannelEvent: EventContainsChannel {}

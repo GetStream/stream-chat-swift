@@ -127,7 +127,7 @@ extension ChatClient {
             _ offlineRequestsRepository: OfflineRequestsRepository,
             _ eventNotificationCenter: EventNotificationCenter,
             _ database: DatabaseContainer,
-            _ apiClient: APIClient
+            _ api: API
         ) -> SyncRepository = {
             SyncRepository(
                 config: $0,
@@ -136,7 +136,7 @@ extension ChatClient {
                 offlineRequestsRepository: $3,
                 eventNotificationCenter: $4,
                 database: $5,
-                apiClient: $6
+                api: $6
             )
         }
 

@@ -94,6 +94,8 @@ public struct StreamChatReactionNewEvent: Codable, Hashable, Event {
     }
 }
 
+extension StreamChatReactionNewEvent: EventContainsCreationDate {}
+
 extension StreamChatReactionNewEvent: EventContainsMessage {}
 
 extension StreamChatReactionNewEvent: EventContainsUser {}

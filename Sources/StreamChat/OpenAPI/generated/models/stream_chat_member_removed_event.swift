@@ -70,4 +70,6 @@ public struct StreamChatMemberRemovedEvent: Codable, Hashable, Event {
     }
 }
 
+extension StreamChatMemberRemovedEvent: EventContainsCreationDate {}
+
 extension StreamChatMemberRemovedEvent: EventContainsUser {}

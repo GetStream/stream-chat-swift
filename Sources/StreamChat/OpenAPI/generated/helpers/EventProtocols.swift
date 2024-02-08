@@ -2,6 +2,8 @@
 // Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
+import Foundation
+
 protocol EventContainsMessage {
     var message: StreamChatMessage? { get }
     var type: String { get }
@@ -24,4 +26,8 @@ protocol EventContainsUnreadCount {
 
 protocol EventContainsCurrentUser {
     var me: StreamChatOwnUser? { get }
+}
+
+protocol EventContainsCreationDate {
+    var createdAt: Date { get }
 }

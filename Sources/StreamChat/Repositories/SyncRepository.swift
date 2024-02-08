@@ -35,6 +35,7 @@ class SyncRepository {
     private let config: ChatClientConfig
     private let database: DatabaseContainer
     private let apiClient: APIClient
+    private let api: API
     let activeChannelControllers: ThreadSafeWeakCollection<ChatChannelController>
     let activeChannelListControllers: ThreadSafeWeakCollection<ChatChannelListController>
     let offlineRequestsRepository: OfflineRequestsRepository
@@ -54,7 +55,7 @@ class SyncRepository {
         offlineRequestsRepository: OfflineRequestsRepository,
         eventNotificationCenter: EventNotificationCenter,
         database: DatabaseContainer,
-        apiClient: APIClient
+        api: API
     ) {
         self.config = config
         self.activeChannelControllers = activeChannelControllers
@@ -62,7 +63,8 @@ class SyncRepository {
         self.offlineRequestsRepository = offlineRequestsRepository
         self.eventNotificationCenter = eventNotificationCenter
         self.database = database
-        self.apiClient = apiClient
+        self.api = api
+        apiClient = api.apiClient
     }
 
     deinit {
@@ -251,13 +253,18 @@ class SyncRepository {
             return
         }
 
-        let endpoint: Endpoint<MissingEventsPayload> = .missingEvents(since: date, cids: channelIds)
-        let requestCompletion: (Result<MissingEventsPayload, Error>) -> Void = { [weak self] result in
+        let requestCompletion: (Result<StreamChatSyncResponse, Error>) -> Void = { [weak self] result in
             switch result {
             case let .success(payload):
-                log.info("Processing pending events. Count \(payload.eventPayloads.count)", subsystems: .offlineSupport)
+                log.info("Processing pending events. Count \(payload.events.count)", subsystems: .offlineSupport)
                 self?.processMissingEventsPayload(payload) {
-                    self?.updateLastSyncAt(with: payload.eventPayloads.last?.createdAt ?? date, completion: { error in
+                    var lastSyncAt = date
+                    if let event = payload.events.last(where: { event in
+                        event.rawValue is EventContainsCreationDate
+                    }) as? EventContainsCreationDate {
+                        lastSyncAt = event.createdAt
+                    }
+                    self?.updateLastSyncAt(with: lastSyncAt, completion: { error in
                         if let error = error {
                             completion(.failure(error))
                         } else {
@@ -284,12 +291,20 @@ class SyncRepository {
                 }
             }
         }
-
-        if isRecoveryRequest {
-            apiClient.recoveryRequest(endpoint: endpoint, completion: requestCompletion)
-        } else {
-            apiClient.request(endpoint: endpoint, completion: requestCompletion)
-        }
+        
+        let request = StreamChatSyncRequest(
+            lastSyncAt: date,
+            channelCids: channelIds.map(\.rawValue)
+        )
+        
+        api.sync(
+            syncRequest: request,
+            withInaccessibleCids: nil,
+            watch: false,
+            requiresConnectionId: false,
+            isRecoveryOperation: isRecoveryRequest,
+            completion: requestCompletion
+        )
     }
 
     private func updateLastSyncAt(with date: Date, completion: @escaping (SyncError?) -> Void) {
@@ -298,10 +313,10 @@ class SyncRepository {
         }, completion: completion)
     }
 
-    private func processMissingEventsPayload(_ payload: MissingEventsPayload, completion: @escaping () -> Void) {
-        eventNotificationCenter.process(payload.eventPayloads.asEvents(), postNotifications: false) {
+    private func processMissingEventsPayload(_ payload: StreamChatSyncResponse, completion: @escaping () -> Void) {
+        eventNotificationCenter.process(payload.events.map(\.rawValue), postNotifications: false) {
             log.info(
-                "Successfully processed pending events. Count \(payload.eventPayloads.count)",
+                "Successfully processed pending events. Count \(payload.events.count)",
                 subsystems: .offlineSupport
             )
             completion()
@@ -326,9 +341,9 @@ class SyncRepository {
         }
     }
 
-    func queueOfflineRequest(endpoint: DataEndpoint) {
+    func queueOfflineRequest(_ request: URLRequest, responseType: ResponseType) {
         guard config.isLocalStorageEnabled else { return }
-        offlineRequestsRepository.queueOfflineRequest(endpoint: endpoint)
+        offlineRequestsRepository.queueOfflineRequest(request, responseType: responseType)
     }
 }
 

@@ -4,7 +4,7 @@
 
 import Foundation
 
-typealias QueueOfflineRequestBlock = (DataEndpoint) -> Void
+typealias QueueOfflineRequestBlock = (URLRequest, ResponseType) -> Void
 typealias DataEndpoint = Endpoint<Data>
 
 extension Endpoint {
@@ -61,7 +61,7 @@ class OfflineRequestsRepository {
             }
         }
     }
-
+    
     private func executeRequests(_ requests: [(String, Data, Date)], completion: @escaping () -> Void) {
         log.info("\(requests.count) pending offline requests", subsystems: .offlineSupport)
 
@@ -78,8 +78,9 @@ class OfflineRequestsRepository {
                     session.deleteQueuedRequest(id: id)
                 }, completion: { _ in leave() })
             }
-
-            guard let endpoint = try? JSONDecoder.stream.decode(DataEndpoint.self, from: endpoint) else {
+            
+            guard let queuedRequest = try? JSONDecoder.stream.decode(QueuedRequest.self, from: endpoint),
+                  let url = queuedRequest.url else {
                 log.error("Could not decode queued request \(id)", subsystems: .offlineSupport)
                 deleteQueuedRequestAndComplete()
                 continue
@@ -87,33 +88,46 @@ class OfflineRequestsRepository {
             
             let hoursQueued = currentDate.timeIntervalSince(date) / Constants.secondsInHour
             let shouldBeDiscarded = hoursQueued > Double(maxHoursThreshold)
+            
+            let queryParams = queuedRequest.queryItems.map {
+                URLQueryItem(name: $0.key, value: $0.value)
+            }
+            var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: true)!
+            var existingQueryItems = urlComponents.queryItems ?? []
+            existingQueryItems.append(contentsOf: queryParams)
+            urlComponents.queryItems = existingQueryItems
+            
+            var urlRequest = URLRequest(url: urlComponents.url ?? url)
+            urlRequest.httpMethod = queuedRequest.method
+            urlRequest.httpBody = queuedRequest.body
+            urlRequest.allHTTPHeaderFields = queuedRequest.headers
 
-            guard endpoint.shouldBeQueuedOffline && !shouldBeDiscarded else {
-                log.error("Queued request for /\(endpoint.path.value) should not be queued", subsystems: .offlineSupport)
+            guard queuedRequest.shouldBeQueuedOffline && !shouldBeDiscarded else {
+                log.error("Queued request for /\(queuedRequest.path) should not be queued", subsystems: .offlineSupport)
                 deleteQueuedRequestAndComplete()
                 continue
             }
 
-            log.info("Executing queued offline request for /\(endpoint.path)", subsystems: .offlineSupport)
-            apiClient.recoveryRequest(endpoint: endpoint) { [weak self] result in
-                log.info("Completed queued offline request /\(endpoint.path)", subsystems: .offlineSupport)
+            log.info("Executing queued offline request for /\(queuedRequest.path)", subsystems: .offlineSupport)
+            apiClient.request(urlRequest, isRecoveryOperation: true) { [weak self] (result: Result<Data, Error>) in
+                log.info("Completed queued offline request /\(queuedRequest.path)", subsystems: .offlineSupport)
                 switch result {
                 case let .success(data):
                     self?.performDatabaseRecoveryActionsUponSuccess(
-                        for: endpoint,
+                        for: queuedRequest,
                         data: data,
                         completion: deleteQueuedRequestAndComplete
                     )
                 case .failure(_ as ClientError.ConnectionError):
                     // If we failed because there is still no successful connection, we don't remove it from the queue
                     log.info(
-                        "Keeping offline request /\(endpoint.path) as there is no connection",
+                        "Keeping offline request /\(queuedRequest.path) as there is no connection",
                         subsystems: .offlineSupport
                     )
                     leave()
                 case let .failure(error):
                     log.info(
-                        "Request for /\(endpoint.path) failed: \(error)",
+                        "Request for /\(queuedRequest.path) failed: \(error)",
                         subsystems: .offlineSupport
                     )
                     deleteQueuedRequestAndComplete()
@@ -126,60 +140,134 @@ class OfflineRequestsRepository {
             completion()
         }
     }
-
+    
     private func performDatabaseRecoveryActionsUponSuccess(
-        for endpoint: DataEndpoint,
+        for queuedRequest: QueuedRequest,
         data: Data,
         completion: @escaping () -> Void
     ) {
         func decodeTo<T: Decodable>(_ type: T.Type) -> T? {
             try? JSONDecoder.stream.decode(T.self, from: data)
         }
-
-        switch endpoint.path {
-        case let .sendMessage(channelId):
-            guard let message = decodeTo(MessagePayload.Boxed.self) else {
+        
+        let responseType = queuedRequest.responseType
+        
+        if responseType.value == .sendMessageResponse {
+            guard let messageResponse = decodeTo(StreamChatSendMessageResponse.self),
+                  let cid = try? ChannelId(cid: messageResponse.message.cid) else {
                 completion()
                 return
             }
-            messageRepository.saveSuccessfullySentMessage(cid: channelId, message: message.message) { _ in completion() }
-        case let .editMessage(messageId):
-            messageRepository.saveSuccessfullyEditedMessage(for: messageId, completion: completion)
-        case .deleteMessage:
-            guard let message = decodeTo(MessagePayload.Boxed.self) else {
+            messageRepository.saveSuccessfullySentMessage(cid: cid, message: messageResponse.message) { _ in completion() }
+        } else if responseType.value == .updateMessageResponse {
+            guard let messageResponse = decodeTo(StreamChatUpdateMessageResponse.self) else {
                 completion()
                 return
             }
-        // TODO: handle this!
-//            messageRepository.saveSuccessfullyDeletedMessage(message: message.message) { _ in completion() }
-        case .addReaction, .deleteReaction:
-            // No further action
-            completion()
-        default:
-            log.assertionFailure("Should not reach here, request should not require action")
+            messageRepository.saveSuccessfullyEditedMessage(for: messageResponse.message.id) { completion() }
+        } else if responseType.value == .messageResponse && queuedRequest.method == "DELETE" {
+            guard let messageResponse = decodeTo(StreamChatMessageResponse.self),
+                  let message = messageResponse.message else {
+                completion()
+                return
+            }
+            messageRepository.saveSuccessfullyDeletedMessage(message: message)
+        } else if responseType.value == .reactionResponse || responseType.value == .reactionRemovalResponse {
             completion()
         }
     }
-
-    func queueOfflineRequest(endpoint: DataEndpoint, completion: (() -> Void)? = nil) {
-        guard endpoint.shouldBeQueuedOffline else {
+    
+    func queueOfflineRequest(_ request: URLRequest, responseType: ResponseType, completion: (() -> Void)? = nil) {
+        guard responseType.shouldBeQueuedOffline else {
             completion?()
             return
         }
-
+        
+        var requiresToken = false
+        var headers = request.allHTTPHeaderFields
+        if headers?[HTTPHeader.Key.authorization.rawValue] != nil {
+            requiresToken = true
+            headers?[HTTPHeader.Key.authorization.rawValue] = nil
+        }
+        
+        // TODO: constant
+        let requiresConnectionId = request.queryItems.filter { $0.name == "connection_id" }.isEmpty == false
+        
+        let queuedRequest = QueuedRequest(
+            baseURL: request.url?.baseURL?.absoluteString ?? "",
+            path: request.url?.relativePath ?? "",
+            method: request.httpMethod ?? "GET",
+            queryItems: request.queryItems
+                .filter { $0.name != "connection_id" }
+                .map { QueryItem(key: $0.name, value: $0.value) },
+            headers: request.allHTTPHeaderFields,
+            body: request.httpBody,
+            requiresConnectionId: requiresConnectionId,
+            requiresToken: requiresToken,
+            responseType: responseType
+        )
+        
         let date = Date()
         retryQueue.async { [database] in
-            guard let data = try? JSONEncoder.stream.encode(endpoint) else {
-                log.error("Could not encode queued request for /\(endpoint.path)", subsystems: .offlineSupport)
+            guard let data = try? JSONEncoder.stream.encode(queuedRequest) else {
+                log.error("Could not encode queued request for /\(queuedRequest.path)", subsystems: .offlineSupport)
                 completion?()
                 return
             }
 
             database.write { _ in
                 QueuedRequestDTO.createRequest(date: date, endpoint: data, context: database.writableContext)
-                log.info("Queued request for /\(endpoint.path)", subsystems: .offlineSupport)
+                log.info("Queued request for /\(queuedRequest.path)", subsystems: .offlineSupport)
                 completion?()
             }
         }
     }
+}
+
+struct QueuedRequest: Codable {
+    let baseURL: String
+    let path: String
+    let method: String
+    let queryItems: [QueryItem]
+    let headers: [String: String]?
+    let body: Data?
+    let requiresConnectionId: Bool
+    let requiresToken: Bool
+    let responseType: ResponseType
+    
+    var url: URL? {
+        URL(string: baseURL + path)
+    }
+    
+    var shouldBeQueuedOffline: Bool {
+        responseType.shouldBeQueuedOffline
+    }
+}
+
+struct ResponseType: Codable {
+    let value: String
+    var shouldBeQueuedOffline: Bool {
+        // TODO: revisit this.
+        let queuedOffline: [String] = [
+            .updateMessageResponse,
+            .sendMessageResponse,
+            .messageResponse,
+            .reactionRemovalResponse,
+            .reactionResponse
+        ]
+        return queuedOffline.contains(value)
+    }
+}
+
+extension String {
+    static let updateMessageResponse = "StreamChatUpdateMessageResponse"
+    static let sendMessageResponse = "StreamChatSendMessageResponse"
+    static let messageResponse = "StreamChatMessageResponse"
+    static let reactionRemovalResponse = "StreamChatReactionRemovalResponse"
+    static let reactionResponse = "StreamChatReactionResponse"
+}
+
+struct QueryItem: Codable {
+    let key: String
+    let value: String?
 }

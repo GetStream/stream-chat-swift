@@ -134,6 +134,8 @@ public struct StreamChatNotificationMarkUnreadEvent: Codable, Hashable, Event {
     }
 }
 
+extension StreamChatNotificationMarkUnreadEvent: EventContainsCreationDate {}
+
 extension StreamChatNotificationMarkUnreadEvent: EventContainsUnreadCount {}
 
 extension StreamChatNotificationMarkUnreadEvent: EventContainsChannel {}
