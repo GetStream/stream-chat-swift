@@ -15,19 +15,24 @@ extension StreamChatWrapper {
         { completion in
             // Simulate API call delay
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                let token: Token
-                let generatedToken = _generateUserToken(
-                    secret: appSecret,
-                    userID: initialToken.userId,
-                    expirationDate: Date().addingTimeInterval(tokenDuration)
-                )
+                var generatedToken: Token?
+                
+                if #available(iOS 13.0, *) {
+                    generatedToken = _generateUserToken(
+                        secret: appSecret,
+                        userID: initialToken.userId,
+                        expirationDate: Date().addingTimeInterval(tokenDuration)
+                    )
+                }
+
                 if generatedToken == nil {
                     print("Demo App Token Refreshing: Unable to generate token.")
                 } else {
                     print("Demo App Token Refreshing: New token generated.")
                 }
-                token = generatedToken ?? initialToken
-                completion(.success(token))
+
+                let newToken = generatedToken ?? initialToken
+                completion(.success(newToken))
             }
         }
     }
@@ -54,6 +59,7 @@ struct JWTPayload: Encodable {
 
 // DO NOT USE THIS FOR REAL APPS! This function is only here to make it easier to
 // have expired token renewal while using the standalone demo application
+@available(iOS 13.0, *)
 func _generateUserToken(secret: String, userID: String, expirationDate: Date) -> Token? {
     guard !secret.isEmpty else { return nil }
     let privateKey = SymmetricKey(data: secret.data(using: .utf8)!)
