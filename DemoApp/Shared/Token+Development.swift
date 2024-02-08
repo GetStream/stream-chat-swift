@@ -2,42 +2,36 @@
 // Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
+import CryptoKit
 import Foundation
 import StreamChat
 
 extension StreamChatWrapper {
-    func refreshingTokenProvider(initialToken: Token, tokenDurationInMinutes: Double) -> TokenProvider {
+    func refreshingTokenProvider(
+        initialToken: Token,
+        appSecret: String,
+        tokenDuration: TimeInterval
+    ) -> TokenProvider {
         { completion in
             // Simulate API call delay
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                 let token: Token
-                #if GENERATE_JWT
-                let timeInterval = TimeInterval(tokenDurationInMinutes * 60)
                 let generatedToken = _generateUserToken(
                     secret: appSecret,
                     userID: initialToken.userId,
-                    expirationDate: Date().addingTimeInterval(timeInterval)
+                    expirationDate: Date().addingTimeInterval(tokenDuration)
                 )
                 if generatedToken == nil {
-                    log.warning("Unable to generate token. Falling back to initialToken")
+                    print("Demo App Token Refreshing: Unable to generate token.")
+                } else {
+                    print("Demo App Token Refreshing: New token generated.")
                 }
                 token = generatedToken ?? initialToken
-                #else
-                token = initialToken
-                #endif
                 completion(.success(token))
             }
         }
     }
 }
-
-#if GENERATE_JWT
-
-import CryptoKit
-import Foundation
-import StreamChat
-
-let appSecret = ""
 
 extension Data {
     func urlSafeBase64EncodedString() -> String {
@@ -78,5 +72,3 @@ func _generateUserToken(secret: String, userID: String, expirationDate: Date) ->
     let token = [headerBase64String, payloadBase64String, signatureBase64String].joined(separator: ".")
     return try? Token(rawValue: token)
 }
-
-#endif
