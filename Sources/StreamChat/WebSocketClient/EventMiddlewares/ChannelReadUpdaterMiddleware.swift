@@ -30,19 +30,22 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
                 session: session
             )
 
-        case let event as MessageDeletedEventDTO:
+        case let event as StreamChatMessageDeletedEvent:
             decrementUnreadCountIfNeeded(
                 event: event,
                 session: session
             )
 
-        case let event as MessageReadEventDTO:
-            resetChannelRead(
-                for: event.cid,
-                userId: event.user.id,
-                lastReadAt: event.createdAt,
-                session: session
-            )
+        case let event as StreamChatMessageReadEvent:
+            if let cid = try? ChannelId(cid: event.cid),
+               let userId = event.user?.id {
+                resetChannelRead(
+                    for: cid,
+                    userId: userId,
+                    lastReadAt: event.createdAt,
+                    session: session
+                )
+            }
 
         case let event as NotificationMarkReadEventDTO:
             resetChannelRead(
@@ -199,15 +202,20 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
     }
 
     private func decrementUnreadCountIfNeeded(
-        event: MessageDeletedEventDTO,
+        event: StreamChatMessageDeletedEvent,
         session: DatabaseSession
     ) {
         guard let currentUser = session.currentUser else {
             return log.error("Current user is missing", subsystems: .webSocket)
         }
 
-        guard let channelRead = session.loadOrCreateChannelRead(cid: event.cid, userId: currentUser.user.id) else {
+        guard let cid = try? ChannelId(cid: event.cid),
+              let channelRead = session.loadOrCreateChannelRead(cid: cid, userId: currentUser.user.id) else {
             return log.error("Channel read is missing", subsystems: .webSocket)
+        }
+        
+        guard let message = event.message else {
+            return log.error("Message is missing", subsystems: .webSocket)
         }
 
         if let skipReason = !event.hardDelete
@@ -215,16 +223,16 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
             : unreadCountUpdateSkippingReason(
                 currentUser: currentUser,
                 channelRead: channelRead,
-                message: event.message
+                message: message
             ) {
             return log.debug(
-                "Message \(event.message.id) does not decrement unread coutns for \(event.message.user.id): \(skipReason)",
+                "Message \(message.id) does not decrement unread coutns for \(message.user?.id ?? ""): \(skipReason)",
                 subsystems: .webSocket
             )
         }
 
         log.debug(
-            "Message \(event.message.id) decrements unread counts for channel \(event.cid)",
+            "Message \(message.id) decrements unread counts for channel \(event.cid)",
             subsystems: .webSocket
         )
 

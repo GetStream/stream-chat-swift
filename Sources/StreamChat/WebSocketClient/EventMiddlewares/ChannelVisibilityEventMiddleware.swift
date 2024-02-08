@@ -29,12 +29,13 @@ struct ChannelVisibilityEventMiddleware: EventMiddleware {
 
             // New Message will unhide the channel
             // but we won't get `ChannelVisibleEvent` for this case
-            case let event as MessageNewEventDTO:
-                guard let channelDTO = session.channel(cid: event.cid) else {
-                    throw ClientError.ChannelDoesNotExist(cid: event.cid)
+            case let event as StreamChatMessageNewEvent:
+                let cid = try ChannelId(cid: event.cid)
+                guard let channelDTO = session.channel(cid: cid) else {
+                    throw ClientError.ChannelDoesNotExist(cid: cid)
                 }
 
-                if !event.message.isShadowed {
+                if event.message?.shadowed == false {
                     channelDTO.isHidden = false
                 }
 

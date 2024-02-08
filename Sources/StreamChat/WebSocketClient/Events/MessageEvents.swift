@@ -28,43 +28,6 @@ public struct MessageNewEvent: ChannelSpecificEvent, HasUnreadCount {
     public let unreadCount: UnreadCount?
 }
 
-class MessageNewEventDTO: EventDTO {
-    let user: UserPayload
-    let cid: ChannelId
-    let message: MessagePayload
-    let createdAt: Date
-    let watcherCount: Int?
-    let unreadCount: UnreadCount?
-    let payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        user = try response.value(at: \.user)
-        cid = try response.value(at: \.cid)
-        message = try response.value(at: \.message)
-        createdAt = try response.value(at: \.createdAt)
-        watcherCount = try? response.value(at: \.watcherCount)
-        unreadCount = try? response.value(at: \.unreadCount)
-        payload = response
-    }
-
-    func toDomainEvent(session: DatabaseSession) -> Event? {
-        guard
-            let userDTO = session.user(id: user.id),
-            let messageDTO = session.message(id: message.id),
-            let channelDTO = session.channel(cid: cid)
-        else { return nil }
-
-        return try? MessageNewEvent(
-            user: userDTO.asModel(),
-            message: messageDTO.asModel(),
-            channel: channelDTO.asModel(),
-            createdAt: createdAt,
-            watcherCount: watcherCount,
-            unreadCount: unreadCount
-        )
-    }
-}
-
 /// Triggered when a message is updated.
 public struct MessageUpdatedEvent: ChannelSpecificEvent {
     /// The use who updated the message.
@@ -81,37 +44,6 @@ public struct MessageUpdatedEvent: ChannelSpecificEvent {
 
     /// The event timestamp.
     public let createdAt: Date
-}
-
-class MessageUpdatedEventDTO: EventDTO {
-    let user: UserPayload
-    let cid: ChannelId
-    let message: MessagePayload
-    let createdAt: Date
-    let payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        user = try response.value(at: \.user)
-        cid = try response.value(at: \.cid)
-        message = try response.value(at: \.message)
-        createdAt = try response.value(at: \.createdAt)
-        payload = response
-    }
-
-    func toDomainEvent(session: DatabaseSession) -> Event? {
-        guard
-            let userDTO = session.user(id: user.id),
-            let messageDTO = session.message(id: message.id),
-            let channelDTO = session.channel(cid: cid)
-        else { return nil }
-
-        return try? MessageUpdatedEvent(
-            user: userDTO.asModel(),
-            channel: channelDTO.asModel(),
-            message: messageDTO.asModel(),
-            createdAt: createdAt
-        )
-    }
 }
 
 /// Triggered when a new message is deleted.
@@ -135,40 +67,6 @@ public struct MessageDeletedEvent: ChannelSpecificEvent {
     public let isHardDelete: Bool
 }
 
-class MessageDeletedEventDTO: EventDTO {
-    let user: UserPayload?
-    let cid: ChannelId
-    let message: MessagePayload
-    let createdAt: Date
-    let payload: EventPayload
-    let hardDelete: Bool
-
-    init(from response: EventPayload) throws {
-        user = try? response.value(at: \.user)
-        cid = try response.value(at: \.cid)
-        message = try response.value(at: \.message)
-        createdAt = try response.value(at: \.createdAt)
-        payload = response
-        hardDelete = response.hardDelete
-    }
-
-    func toDomainEvent(session: DatabaseSession) -> Event? {
-        guard
-            let messageDTO = session.message(id: message.id),
-            let channelDTO = session.channel(cid: cid),
-            let userDTO = user.flatMap({ session.user(id: $0.id) })
-        else { return nil }
-
-        return try? MessageDeletedEvent(
-            user: userDTO.asModel(),
-            channel: channelDTO.asModel(),
-            message: messageDTO.asModel(),
-            createdAt: createdAt,
-            isHardDelete: hardDelete
-        )
-    }
-}
-
 /// `ChannelReadEvent`, this event tells that User has mark read all messages in channel.
 public typealias ChannelReadEvent = MessageReadEvent
 
@@ -188,36 +86,6 @@ public struct MessageReadEvent: ChannelSpecificEvent {
 
     /// The unread counts of the current user.
     public let unreadCount: UnreadCount?
-}
-
-class MessageReadEventDTO: EventDTO {
-    let user: UserPayload
-    let cid: ChannelId
-    let createdAt: Date
-    let unreadCount: UnreadCount?
-    let payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        user = try response.value(at: \.user)
-        cid = try response.value(at: \.cid)
-        createdAt = try response.value(at: \.createdAt)
-        unreadCount = try? response.value(at: \.unreadCount)
-        payload = response
-    }
-
-    func toDomainEvent(session: DatabaseSession) -> Event? {
-        guard
-            let userDTO = session.user(id: user.id),
-            let channelDTO = session.channel(cid: cid)
-        else { return nil }
-
-        return try? MessageReadEvent(
-            user: userDTO.asModel(),
-            channel: channelDTO.asModel(),
-            createdAt: createdAt,
-            unreadCount: unreadCount
-        )
-    }
 }
 
 // Triggered when the current user creates a new message and is pending to be sent.

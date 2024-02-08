@@ -135,11 +135,6 @@ extension EventType {
         case .channelTruncated: return try ChannelTruncatedEventDTO(from: response)
         case .channelVisible: return try ChannelVisibleEventDTO(from: response)
 
-        case .messageNew: return try MessageNewEventDTO(from: response)
-        case .messageUpdated: return try MessageUpdatedEventDTO(from: response)
-        case .messageDeleted: return try MessageDeletedEventDTO(from: response)
-        case .messageRead: return try MessageReadEventDTO(from: response)
-
         case .memberAdded: return try MemberAddedEventDTO(from: response)
         case .memberUpdated: return try MemberUpdatedEventDTO(from: response)
         case .memberRemoved: return try MemberRemovedEventDTO(from: response)
