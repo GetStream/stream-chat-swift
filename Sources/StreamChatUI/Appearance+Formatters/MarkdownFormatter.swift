@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamChat
 import UIKit
 
 public protocol MarkdownFormatter {
@@ -27,11 +28,16 @@ open class DefaultMarkdownFormatter: MarkdownFormatter {
     private let markdownRegexPattern: String =
         "((?:\\`(.*?)\\`)|(?:\\*{1,2}(.*?)\\*{1,2})|(?:\\~{2}(.*?)\\~{2})|(?:\\_{1,2}(.*?)\\_{1,2})|^(>){1}|(#){1,6}|(=){3,10}|(-){1,3}|(\\d{1,3}\\.)|(?:\\[(.*?)\\])(?:\\((.*?)\\))|(?:\\[(.*?)\\])(?:\\[(.*?)\\])|(\\]\\:))+"
 
-    open func containsMarkdown(_ string: String) -> Bool {
+    private lazy var regex: NSRegularExpression? = {
         guard let regex = try? NSRegularExpression(pattern: markdownRegexPattern, options: .anchorsMatchLines) else {
-            return false
+            log.error("Failed to create markdown regular expression")
+            return nil
         }
-
+        return regex
+    }()
+    
+    open func containsMarkdown(_ string: String) -> Bool {
+        guard let regex = regex else { return false }
         return regex.numberOfMatches(in: string, range: .init(location: 0, length: string.utf16.count)) > 0
     }
 
