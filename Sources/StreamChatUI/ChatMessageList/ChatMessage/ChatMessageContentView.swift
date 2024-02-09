@@ -594,14 +594,16 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
         }
 
         // Set the text content
-        let attributedText = NSAttributedString(
-            string: text,
-            attributes: [
-                .foregroundColor: messageTextColor,
-                .font: messageTextFont
-            ]
-        )
-        textView?.attributedText = attributedText
+        if textView?.text != text {
+            let attributedText = NSAttributedString(
+                string: text,
+                attributes: [
+                    .foregroundColor: messageTextColor,
+                    .font: messageTextFont
+                ]
+            )
+            textView?.attributedText = attributedText
+        }
 
         // Markdown
         if isMarkdownEnabled, markdownFormatter.containsMarkdown(text) {

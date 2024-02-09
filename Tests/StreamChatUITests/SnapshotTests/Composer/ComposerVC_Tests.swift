@@ -551,7 +551,7 @@ final class ComposerVC_Tests: XCTestCase {
 
         waitForExpectations(timeout: defaultTimeout)
 
-        XCTAssertEqual(links.map(\.url.absoluteString), [
+        XCTAssertEqual(links.map(\.originalText), [
             "https://github.com/GetStream/stream-chat-swift",
             "www.youtube.com"
         ])
