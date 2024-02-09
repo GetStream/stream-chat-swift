@@ -593,26 +593,29 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
             }
         }
 
-        if textView?.text != text {
-            let attributedText = NSMutableAttributedString(
-                string: text,
-                attributes: [
-                    .foregroundColor: messageTextColor,
-                    .font: messageTextFont
-                ]
-            )
-
-            linkDetector.links(in: text).forEach { textLink in
-                attributedText.addAttribute(.link, value: textLink.url, range: textLink.range)
-            }
-
-            textView?.attributedText = attributedText
-        }
+        // Set the text content
+        let attributedText = NSAttributedString(
+            string: text,
+            attributes: [
+                .foregroundColor: messageTextColor,
+                .font: messageTextFont
+            ]
+        )
+        textView?.attributedText = attributedText
 
         // Markdown
         if isMarkdownEnabled, markdownFormatter.containsMarkdown(text) {
             let markdownText = markdownFormatter.format(text)
             textView?.attributedText = markdownText
+        }
+
+        // Link Detection (Must be after Markdown)
+        if let attributedText = textView?.attributedText {
+            let mutableAttributedText = NSMutableAttributedString(attributedString: attributedText)
+            linkDetector.links(in: mutableAttributedText.string).forEach { textLink in
+                mutableAttributedText.addAttribute(.link, value: textLink.url, range: textLink.range)
+            }
+            textView?.attributedText = mutableAttributedText
         }
 
         // Mentions
@@ -800,7 +803,6 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
                 .withAccessibilityIdentifier(identifier: "textView")
             textView?.isEditable = false
             textView?.isScrollEnabled = false
-            textView?.dataDetectorTypes = .link
             textView?.backgroundColor = .clear
             textView?.adjustsFontForContentSizeCategory = true
             textView?.textContainerInset = .init(top: 0, left: 8, bottom: 0, right: 8)
