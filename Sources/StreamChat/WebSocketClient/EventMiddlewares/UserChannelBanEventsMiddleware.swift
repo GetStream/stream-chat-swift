@@ -9,21 +9,22 @@ struct UserChannelBanEventsMiddleware: EventMiddleware {
     func handle(event: Event, session: DatabaseSession) -> Event? {
         do {
             switch event {
-            case let userBannedEvent as UserBannedEventDTO:
-                guard let memberDTO = session.member(userId: userBannedEvent.user.id, cid: userBannedEvent.cid) else {
-                    throw ClientError.MemberDoesNotExist(userId: userBannedEvent.user.id, cid: userBannedEvent.cid)
+            case let userBannedEvent as StreamChatUserBannedEvent:
+                guard let cid = try? ChannelId(cid: userBannedEvent.cid),
+                      let userId = userBannedEvent.user?.id,
+                      let memberDTO = session.member(userId: userId, cid: cid) else {
+                    throw ClientError.Unknown()
                 }
 
                 memberDTO.isBanned = true
-                memberDTO.banExpiresAt = userBannedEvent.expiredAt?.bridgeDate
+                memberDTO.banExpiresAt = userBannedEvent.expiration?.bridgeDate
+                memberDTO.isShadowBanned = userBannedEvent.shadow
 
-                if let isShadowBan = userBannedEvent.isShadowBan {
-                    memberDTO.isShadowBanned = isShadowBan
-                }
-
-            case let userUnbannedEvent as UserUnbannedEventDTO:
-                guard let memberDTO = session.member(userId: userUnbannedEvent.user.id, cid: userUnbannedEvent.cid) else {
-                    throw ClientError.MemberDoesNotExist(userId: userUnbannedEvent.user.id, cid: userUnbannedEvent.cid)
+            case let userUnbannedEvent as StreamChatUserUnbannedEvent:
+                guard let cid = try? ChannelId(cid: userUnbannedEvent.cid),
+                      let userId = userUnbannedEvent.user?.id,
+                      let memberDTO = session.member(userId: userId, cid: cid) else {
+                    throw ClientError.Unknown()
                 }
 
                 memberDTO.isBanned = false

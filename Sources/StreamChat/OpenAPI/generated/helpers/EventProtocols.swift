@@ -31,3 +31,12 @@ protocol EventContainsCurrentUser {
 protocol EventContainsCreationDate {
     var createdAt: Date { get }
 }
+
+protocol EventContainsWatchInfo {
+    var cid: String { get }
+    var user: StreamChatUserObject? { get }
+    var watcherCount: Int? { get }
+}
+
+extension StreamChatUserWatchingStartEvent: EventContainsWatchInfo {}
+extension StreamChatUserWatchingStopEvent: EventContainsWatchInfo {}

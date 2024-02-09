@@ -7,6 +7,13 @@ import Foundation
 /// An event type SDK fallbacks to if incoming event was failed to be
 /// decoded as a system event.
 public struct UnknownChannelEvent: Event, Hashable {
+    enum CodingKeys: String, CodingKey, CaseIterable {
+        case eventType = "type"
+        case cid
+        case user
+        case createdAt = "created_at"
+    }
+
     /// An event type.
     public let type: EventType
 
@@ -27,7 +34,7 @@ public struct UnknownChannelEvent: Event, Hashable {
 
 extension UnknownChannelEvent: Decodable {
     public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: EventPayload.CodingKeys.self)
+        let container = try decoder.container(keyedBy: UnknownChannelEvent.CodingKeys.self)
 
         self.init(
             type: try container.decode(EventType.self, forKey: .eventType),

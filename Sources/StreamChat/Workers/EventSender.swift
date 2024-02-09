@@ -19,7 +19,7 @@ class EventSender: Worker {
     ) {
         do {
             let data = try JSONEncoder.default.encode(payload)
-            var json = try JSONDecoder.default.decode([String: RawJSON].self, from: data)
+            let json = try JSONDecoder.default.decode([String: RawJSON].self, from: data)
             let eventRequest = StreamChatEventRequest(
                 type: Payload.eventType.rawValue,
                 custom: json

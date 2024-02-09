@@ -33,6 +33,7 @@ protocol ChannelDatabaseSessionV2 {
         cache: PreWarmedCache?
     ) throws -> UserDTO
     
+    @discardableResult
     func saveMember(
         payload: StreamChatChannelMember,
         channelId: ChannelId,

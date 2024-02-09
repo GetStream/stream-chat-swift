@@ -9,33 +9,50 @@ struct MemberEventMiddleware: EventMiddleware {
     func handle(event: Event, session: DatabaseSession) -> Event? {
         do {
             switch event {
-            case let event as MemberUpdatedEventDTO:
-                try session.saveMember(payload: event.member, channelId: event.cid)
+            case let event as StreamChatMemberUpdatedEvent:
+                let cid = try ChannelId(cid: event.cid)
+                if let member = event.member {
+                    try session.saveMember(
+                        payload: member,
+                        channelId: cid,
+                        query: nil,
+                        cache: nil
+                    )
+                }
 
-            case let event as MemberAddedEventDTO:
-                if let channel = session.channel(cid: event.cid) {
-                    let member = try session.saveMember(payload: event.member, channelId: event.cid)
+            case let event as StreamChatMemberAddedEvent:
+                let cid = try ChannelId(cid: event.cid)
+                if let channel = session.channel(cid: cid), let member = event.member {
+                    let member = try session.saveMember(
+                        payload: member,
+                        channelId: cid,
+                        query: nil,
+                        cache: nil
+                    )
 
                     insertMemberToMemberListQueries(channel, member)
                 }
 
-            case let event as MemberRemovedEventDTO:
-                guard let channel = session.channel(cid: event.cid) else {
+            case let event as StreamChatMemberRemovedEvent:
+                guard let cid = try? ChannelId(cid: event.cid),
+                      let channel = session.channel(cid: cid) else {
                     // No need to throw ChannelNotFound error here
                     break
                 }
 
-                guard let member = channel.members.first(where: { $0.user.id == event.user.id }) else {
+                guard let member = channel.members.first(where: { $0.user.id == event.user?.id }) else {
                     // No need to throw MemberNotFound error here
                     break
                 }
 
                 // Mark channel as unread
-                session.markChannelAsUnread(cid: event.cid, by: event.user.id)
+                if let user = event.user {
+                    session.markChannelAsUnread(cid: cid, by: user.id)
+                }
 
                 // We remove the member from the channel
                 channel.members.remove(member)
-                if let membership = channel.membership, membership.user.id == event.user.id {
+                if let membership = channel.membership, membership.user.id == event.user?.id {
                     channel.membership = nil
                 }
 
@@ -43,23 +60,36 @@ struct MemberEventMiddleware: EventMiddleware {
                 // we need to update them too
                 member.queries.removeAll()
 
-            case let event as NotificationAddedToChannelEventDTO:
-                let channel = try session.saveChannel(payload: event.channel, query: nil, cache: nil)
-                let member = try session.saveMember(payload: event.member, channelId: event.channel.cid)
+            case let event as StreamChatNotificationAddedToChannelEvent:
+                guard let channelResponse = event.channel,
+                      let cid = try? ChannelId(cid: channelResponse.cid),
+                      let memberResponse = event.member else { return event }
+                let channel = try session.saveChannel(
+                    payload: channelResponse,
+                    query: nil,
+                    cache: nil
+                )
+                let member = try session.saveMember(
+                    payload: memberResponse,
+                    channelId: cid,
+                    query: nil,
+                    cache: nil
+                )
                 channel.membership = member
 
                 insertMemberToMemberListQueries(channel, member)
 
-            case let event as NotificationRemovedFromChannelEventDTO:
-                guard let channel = session.channel(cid: event.cid) else {
+            case let event as StreamChatNotificationRemovedFromChannelEvent:
+                guard let cid = try? ChannelId(cid: event.cid),
+                      let channel = session.channel(cid: cid) else {
                     // No need to throw ChannelNotFound error here
                     log.debug("Channel \(event.cid) not found for NotificationRemovedFromChannelEventDTO")
                     break
                 }
 
-                guard let member = channel.members.first(where: { $0.user.id == event.member.userId }) else {
+                guard let member = channel.members.first(where: { $0.user.id == event.member?.userId }) else {
                     // No need to throw MemberNotFound error here
-                    log.debug("Member \(event.member.userId) not found for NotificationRemovedFromChannelEventDTO")
+                    log.debug("Member \(event.member?.userId ?? "") not found for NotificationRemovedFromChannelEventDTO")
                     break
                 }
 
@@ -72,22 +102,45 @@ struct MemberEventMiddleware: EventMiddleware {
                 // we need to update them too
                 member.queries.removeAll()
 
-            case let event as NotificationInviteAcceptedEventDTO:
-                let channel = try session.saveChannel(payload: event.channel, query: nil, cache: nil)
-                let member = try session.saveMember(payload: event.member, channelId: event.channel.cid)
+            case let event as StreamChatNotificationInviteAcceptedEvent:
+                guard let channelPayload = event.channel,
+                      let cid = try? ChannelId(cid: channelPayload.cid),
+                      let memberPayload = event.member else { return event }
+                let channel = try session.saveChannel(payload: channelPayload, query: nil, cache: nil)
+                let member = try session.saveMember(
+                    payload: memberPayload,
+                    channelId: cid,
+                    query: nil,
+                    cache: nil
+                )
                 channel.membership = member
 
-            case let event as NotificationInviteRejectedEventDTO:
-                let channel = try session.saveChannel(payload: event.channel, query: nil, cache: nil)
-                let member = try session.saveMember(payload: event.member, channelId: event.channel.cid)
+            case let event as StreamChatNotificationInviteRejectedEvent:
+                guard let channelPayload = event.channel,
+                      let cid = try? ChannelId(cid: channelPayload.cid),
+                      let memberPayload = event.member else { return event }
+                let channel = try session.saveChannel(payload: channelPayload, query: nil, cache: nil)
+                let member = try session.saveMember(
+                    payload: memberPayload,
+                    channelId: cid,
+                    query: nil,
+                    cache: nil
+                )
                 channel.membership = member
 
-            case let event as NotificationInvitedEventDTO:
-                guard let channel = session.channel(cid: event.cid) else {
+            case let event as StreamChatNotificationInvitedEvent:
+                guard let cid = try? ChannelId(cid: event.cid),
+                      let channel = session.channel(cid: cid),
+                      let memberPayload = event.member else {
                     // No need to throw ChannelNotFound error here
                     break
                 }
-                let member = try session.saveMember(payload: event.member, channelId: event.cid)
+                let member = try session.saveMember(
+                    payload: memberPayload,
+                    channelId: cid,
+                    query: nil,
+                    cache: nil
+                )
                 channel.membership = member
 
                 insertMemberToMemberListQueries(channel, member)

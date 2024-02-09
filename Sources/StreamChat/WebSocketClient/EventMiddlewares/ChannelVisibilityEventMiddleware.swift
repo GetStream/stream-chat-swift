@@ -9,21 +9,23 @@ struct ChannelVisibilityEventMiddleware: EventMiddleware {
     func handle(event: Event, session: DatabaseSession) -> Event? {
         do {
             switch event {
-            case let event as ChannelVisibleEventDTO:
-                guard let channelDTO = session.channel(cid: event.cid) else {
-                    throw ClientError.ChannelDoesNotExist(cid: event.cid)
+            case let event as StreamChatChannelVisibleEvent:
+                let cid = try ChannelId(cid: event.cid)
+                guard let channelDTO = session.channel(cid: cid) else {
+                    throw ClientError.ChannelDoesNotExist(cid: cid)
                 }
 
                 channelDTO.isHidden = false
 
-            case let event as ChannelHiddenEventDTO:
-                guard let channelDTO = session.channel(cid: event.cid) else {
-                    throw ClientError.ChannelDoesNotExist(cid: event.cid)
+            case let event as StreamChatChannelHiddenEvent:
+                let cid = try ChannelId(cid: event.cid)
+                guard let channelDTO = session.channel(cid: cid) else {
+                    throw ClientError.ChannelDoesNotExist(cid: cid)
                 }
 
                 channelDTO.isHidden = true
 
-                if event.isHistoryCleared {
+                if event.clearHistory {
                     channelDTO.truncatedAt = event.createdAt.bridgeDate
                 }
 
@@ -41,12 +43,14 @@ struct ChannelVisibilityEventMiddleware: EventMiddleware {
 
             // New Message will unhide the channel
             // but we won't get `ChannelVisibleEvent` for this case
-            case let event as NotificationMessageNewEventDTO:
-                guard let channelDTO = session.channel(cid: event.channel.cid) else {
-                    throw ClientError.ChannelDoesNotExist(cid: event.channel.cid)
+            case let event as StreamChatNotificationNewMessageEvent:
+                guard let channel = event.channel,
+                      let cid = try? ChannelId(cid: channel.cid),
+                      let channelDTO = session.channel(cid: cid) else {
+                    throw ClientError.Unknown()
                 }
 
-                if !event.message.isShadowed {
+                if !event.message.shadowed {
                     channelDTO.isHidden = false
                 }
 

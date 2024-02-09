@@ -114,65 +114,6 @@ public extension EventType {
     static let notificationChannelDeleted: Self = "notification.channel_deleted"
 }
 
-extension EventType {
-    func event(from response: EventPayload) throws -> Event {
-        switch self {
-        case .healthCheck: return try HealthCheckEvent(from: response)
-
-        case .userPresenceChanged: return try UserPresenceChangedEventDTO(from: response)
-        case .userUpdated: return try UserUpdatedEventDTO(from: response)
-        case .userStartWatching, .userStopWatching: return try UserWatchingEventDTO(from: response)
-        case .userStartTyping, .userStopTyping: return try TypingEventDTO(from: response)
-        case .userBanned:
-            return try (try? UserBannedEventDTO(from: response)) ?? UserGloballyBannedEventDTO(from: response)
-        case .userUnbanned:
-            return try (try? UserUnbannedEventDTO(from: response)) ?? UserGloballyUnbannedEventDTO(from: response)
-
-        case .channelCreated: throw ClientError.IgnoredEventType()
-        case .channelUpdated: return try ChannelUpdatedEventDTO(from: response)
-        case .channelDeleted: return try ChannelDeletedEventDTO(from: response)
-        case .channelHidden: return try ChannelHiddenEventDTO(from: response)
-        case .channelTruncated: return try ChannelTruncatedEventDTO(from: response)
-        case .channelVisible: return try ChannelVisibleEventDTO(from: response)
-
-        case .memberAdded: return try MemberAddedEventDTO(from: response)
-        case .memberUpdated: return try MemberUpdatedEventDTO(from: response)
-        case .memberRemoved: return try MemberRemovedEventDTO(from: response)
-
-        case .reactionNew: return try ReactionNewEventDTO(from: response)
-        case .reactionUpdated: return try ReactionUpdatedEventDTO(from: response)
-        case .reactionDeleted: return try ReactionDeletedEventDTO(from: response)
-
-        case .notificationMessageNew: return try NotificationMessageNewEventDTO(from: response)
-
-        case .notificationMarkRead:
-            return response.channel == nil
-                ? try NotificationMarkAllReadEventDTO(from: response)
-                : try NotificationMarkReadEventDTO(from: response)
-        case .notificationMarkUnread:
-            return try NotificationMarkUnreadEventDTO(from: response)
-
-        case .notificationMutesUpdated: return try NotificationMutesUpdatedEventDTO(from: response)
-        case .notificationAddedToChannel: return try NotificationAddedToChannelEventDTO(from: response)
-        case .notificationRemovedFromChannel: return try NotificationRemovedFromChannelEventDTO(from: response)
-        case .notificationChannelMutesUpdated: return try NotificationChannelMutesUpdatedEventDTO(from: response)
-        case .notificationInvited:
-            return try NotificationInvitedEventDTO(from: response)
-        case .notificationInviteAccepted:
-            return try NotificationInviteAcceptedEventDTO(from: response)
-        case .notificationInviteRejected:
-            return try NotificationInviteRejectedEventDTO(from: response)
-        case .notificationChannelDeleted: return try NotificationChannelDeletedEventDTO(from: response)
-        default:
-            if response.cid == nil {
-                throw ClientError.UnknownUserEvent(response.eventType)
-            } else {
-                throw ClientError.UnknownChannelEvent(response.eventType)
-            }
-        }
-    }
-}
-
 extension ClientError {
     class UnknownChannelEvent: ClientError {
         init(_ type: EventType) {

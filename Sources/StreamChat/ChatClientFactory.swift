@@ -136,8 +136,7 @@ class ChatClientFactory {
             UserChannelBanEventsMiddleware(),
             UserWatchingEventMiddleware(),
             UserUpdateMiddleware(),
-            ChannelVisibilityEventMiddleware(),
-            EventDTOConverterMiddleware()
+            ChannelVisibilityEventMiddleware()
         ]
 
         center.add(middlewares: middlewares)

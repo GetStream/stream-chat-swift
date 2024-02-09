@@ -7,12 +7,13 @@ import Foundation
 /// The middleware listens for `UserWatchingEvent`s and updates `ChannelDTO`s accordingly.
 struct UserWatchingEventMiddleware: EventMiddleware {
     func handle(event: Event, session: DatabaseSession) -> Event? {
-        guard let userWatchingEvent = event as? UserWatchingEventDTO else { return event }
+        guard let userWatchingEvent = event as? EventContainsWatchInfo else { return event }
 
         do {
-            guard let channelDTO = session.channel(cid: userWatchingEvent.cid) else {
+            let cid = try ChannelId(cid: userWatchingEvent.cid)
+            guard let channelDTO = session.channel(cid: cid) else {
                 let currentUserId = session.currentUser?.user.id
-                if userWatchingEvent.user.id == currentUserId {
+                if userWatchingEvent.user?.id == currentUserId {
                     log.info(
                         "Ignoring watcher event for channel \(userWatchingEvent.cid) and current user"
                             + "since Channel doesn't exist locally."
@@ -20,19 +21,20 @@ struct UserWatchingEventMiddleware: EventMiddleware {
                 } else {
                     log.error(
                         "Failed to save watcher event for channel \(userWatchingEvent.cid)"
-                            + "and user \(userWatchingEvent.user.id) since Channel doesn't exist locally."
+                            + "and user \(userWatchingEvent.user?.id ?? "") since Channel doesn't exist locally."
                     )
                 }
                 return event
             }
 
-            channelDTO.watcherCount = Int64(userWatchingEvent.watcherCount)
+            channelDTO.watcherCount = Int64(userWatchingEvent.watcherCount ?? 0)
 
-            guard let userDTO = session.user(id: userWatchingEvent.user.id) else {
-                throw ClientError.UserDoesNotExist(userId: userWatchingEvent.user.id)
+            guard let userId = userWatchingEvent.user?.id,
+                  let userDTO = session.user(id: userId) else {
+                throw ClientError.Unknown()
             }
 
-            if userWatchingEvent.isStarted {
+            if userWatchingEvent is StreamChatUserWatchingStartEvent {
                 channelDTO.watchers.insert(userDTO)
             } else {
                 channelDTO.watchers.remove(userDTO)

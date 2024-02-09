@@ -23,12 +23,14 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
                 )
             }
 
-        case let event as NotificationMessageNewEventDTO:
-            incrementUnreadCountIfNeeded(
-                for: event.channel.cid,
-                message: event.message,
-                session: session
-            )
+        case let event as StreamChatNotificationNewMessageEvent:
+            if let cid = try? ChannelId(cid: event.cid) {
+                incrementUnreadCountIfNeeded(
+                    for: cid,
+                    message: event.message,
+                    session: session
+                )
+            }
 
         case let event as StreamChatMessageDeletedEvent:
             decrementUnreadCountIfNeeded(
@@ -47,36 +49,41 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
                 )
             }
 
-        case let event as NotificationMarkReadEventDTO:
-            resetChannelRead(
-                for: event.cid,
-                userId: event.user.id,
-                lastReadAt: event.createdAt,
-                session: session
-            )
-            updateLastReadMessage(
-                for: event.cid,
-                userId: event.user.id,
-                lastReadMessageId: event.lastReadMessageId,
-                lastReadAt: event.createdAt,
-                session: session
-            )
+        case let event as StreamChatNotificationMarkReadEvent:
+            if event.channel == nil, let userId = event.user?.id {
+                session.loadChannelReads(for: userId).forEach { read in
+                    read.lastReadAt = event.createdAt.bridgeDate
+                    read.unreadMessageCount = 0
+                }
+            } else if let cid = try? ChannelId(cid: event.cid),
+                      let userId = event.user?.id {
+                resetChannelRead(
+                    for: cid,
+                    userId: userId,
+                    lastReadAt: event.createdAt,
+                    session: session
+                )
+                updateLastReadMessage(
+                    for: cid,
+                    userId: userId,
+                    lastReadMessageId: nil, // TODO: check why it's not available.
+                    lastReadAt: event.createdAt,
+                    session: session
+                )
+            }
 
-        case let event as NotificationMarkUnreadEventDTO:
-            markChannelAsUnread(
-                for: event.cid,
-                userId: event.user.id,
-                from: event.firstUnreadMessageId,
-                lastReadMessageId: event.lastReadMessageId,
-                lastReadAt: event.lastReadAt,
-                unreadMessages: event.unreadMessagesCount,
-                session: session
-            )
-
-        case let event as NotificationMarkAllReadEventDTO:
-            session.loadChannelReads(for: event.user.id).forEach { read in
-                read.lastReadAt = event.createdAt.bridgeDate
-                read.unreadMessageCount = 0
+        case let event as StreamChatNotificationMarkUnreadEvent:
+            if let cid = try? ChannelId(cid: event.cid),
+               let userId = event.user?.id {
+                markChannelAsUnread(
+                    for: cid,
+                    userId: userId,
+                    from: event.firstUnreadMessageId,
+                    lastReadMessageId: event.lastReadMessageId,
+                    lastReadAt: event.lastReadAt,
+                    unreadMessages: event.unreadMessages,
+                    session: session
+                )
             }
 
         default:

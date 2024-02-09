@@ -58,7 +58,7 @@ extension ChatClient {
         var requestEncoderBuilder: (_ baseURL: URL, _ apiKey: APIKey) -> RequestEncoder = DefaultRequestEncoder.init
         var requestDecoderBuilder: () -> RequestDecoder = DefaultRequestDecoder.init
 
-        var eventDecoderBuilder: () -> EventDecoder = EventDecoder.init
+        var eventDecoderBuilder: () -> EventDecoderV2 = EventDecoderV2.init
 
         var notificationCenterBuilder = EventNotificationCenter.init
 
