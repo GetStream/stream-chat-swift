@@ -325,6 +325,79 @@ final class ChatMessageContentView_Tests: XCTestCase {
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
 
+    func test_appearance_whenMessageHasLinkAndMention() throws {
+        let mentionedUser = myFriend
+        mentionedUser.name = "MyFriend"
+        let messageWithMentionAndLink = "Hello @\(mentionedUser.name ?? "")!, check this link: getstream.io/chat/docs"
+
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: messageWithMentionAndLink,
+            author: me,
+            createdAt: createdAt,
+            mentionedUsers: [mentionedUser],
+            attachments: [
+                .dummy(
+                    id: .unique,
+                    type: .linkPreview,
+                    payload: try JSONEncoder.stream.encode(LinkAttachmentPayload(
+                        originalURL: URL(string: "https://getstream.io/chat/docs/")!,
+                        title: "Chat API Documentation",
+                        text: "Stream, scalable news feeds and activity streams as a service.",
+                        author: "Stream",
+                        previewURL: TestImages.r2.url
+                    )),
+                    uploadingState: nil
+                )
+            ],
+            localState: nil,
+            isSentByCurrentUser: true
+        )
+
+        let view = contentView(
+            message: message,
+            channel: .mock(cid: .unique),
+            attachmentInjector: LinkAttachmentViewInjector.self
+        )
+
+        AssertSnapshot(view, variants: [.defaultLight])
+    }
+
+    func test_appearance_whenMessageHasLinkAndMarkdown() throws {
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "## Hey!, check this link: getstream.io/chat/docs",
+            author: me,
+            createdAt: createdAt,
+            attachments: [
+                .dummy(
+                    id: .unique,
+                    type: .linkPreview,
+                    payload: try JSONEncoder.stream.encode(LinkAttachmentPayload(
+                        originalURL: URL(string: "https://getstream.io/chat/docs/")!,
+                        title: "Chat API Documentation",
+                        text: "Stream, scalable news feeds and activity streams as a service.",
+                        author: "Stream",
+                        previewURL: TestImages.r2.url
+                    )),
+                    uploadingState: nil
+                )
+            ],
+            localState: nil,
+            isSentByCurrentUser: true
+        )
+
+        let view = contentView(
+            message: message,
+            channel: .mock(cid: .unique),
+            attachmentInjector: LinkAttachmentViewInjector.self
+        )
+
+        AssertSnapshot(view, variants: [.defaultLight])
+    }
+
     func test_appearance_whenMessageHasLinkWithoutImage() throws {
         let message: ChatMessage = .mock(
             id: .unique,

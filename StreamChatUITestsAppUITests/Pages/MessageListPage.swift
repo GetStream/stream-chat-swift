@@ -272,7 +272,7 @@ class MessageListPage {
 
         enum LinkPreview {
             static func link(in messageCell: XCUIElement) -> XCUIElement {
-                messageCell.links["textView"].links.firstMatch
+                messageCell.links.firstMatch
             }
 
             static func image(in messageCell: XCUIElement) -> XCUIElement {
