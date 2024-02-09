@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChatUI
 ### 🐞 Fixed
 - Fix tapping message links without http scheme not opening Safari [#3023](https://github.com/GetStream/stream-chat-swift/pull/3023)
+- Fix links not being highlighted when message text contains markdown [#3023](https://github.com/GetStream/stream-chat-swift/pull/3023)
 
 # [4.48.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.48.0)
 _February 09, 2024_
