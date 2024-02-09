@@ -22,7 +22,8 @@ final class TextLinkDetector_Tests: XCTestCase {
         let sut = TextLinkDetector()
         let text = "Hey www.google.com www.youtube.com"
         let firstLink = sut.firstLink(in: text)
-        XCTAssertEqual(firstLink?.url.absoluteString, "www.google.com")
+        XCTAssertEqual(firstLink?.url.absoluteString, "http://www.google.com")
+        XCTAssertEqual(firstLink?.originalText, "www.google.com")
         XCTAssertEqual(firstLink?.range, NSRange(location: 4, length: 14))
     }
 
@@ -38,11 +39,13 @@ final class TextLinkDetector_Tests: XCTestCase {
         let text = "Hey www.google.com www.youtube.com"
         let expectedLinks: [TextLink] = [
             .init(
-                url: URL(string: "www.google.com")!,
+                url: URL(string: "http://www.google.com")!,
+                originalText: "www.google.com",
                 range: NSRange(location: 4, length: 14)
             ),
             .init(
-                url: URL(string: "www.youtube.com")!,
+                url: URL(string: "http://www.youtube.com")!,
+                originalText: "www.youtube.com",
                 range: NSRange(location: 19, length: 15)
             )
         ]
