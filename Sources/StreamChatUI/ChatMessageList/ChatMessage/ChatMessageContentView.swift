@@ -800,6 +800,7 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
                 .withAccessibilityIdentifier(identifier: "textView")
             textView?.isEditable = false
             textView?.isScrollEnabled = false
+            textView?.dataDetectorTypes = .link
             textView?.backgroundColor = .clear
             textView?.adjustsFontForContentSizeCategory = true
             textView?.textContainerInset = .init(top: 0, left: 8, bottom: 0, right: 8)
