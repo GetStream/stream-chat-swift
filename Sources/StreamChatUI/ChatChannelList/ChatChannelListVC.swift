@@ -83,6 +83,7 @@ open class ChatChannelListVC: _ViewController,
     /// is impacting the message list performance as well, so we skip channel list
     /// updates when the channel list is not visible in the window.
     private(set) var skippedRendering = false
+    private(set) var skipChannelUpdates = true
 
     /// A component responsible to handle when to load new channels.
     private lazy var viewPaginationHandler: ViewPaginationHandling = {
@@ -162,11 +163,19 @@ open class ChatChannelListVC: _ViewController,
 
     override open func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
+        skipChannelUpdates = false
+        
         if skippedRendering {
-            reloadChannels()
+            UIView.performWithoutAnimation {
+                reloadChannels()
+            }
             skippedRendering = false
         }
+    }
+    
+    override open func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        skipChannelUpdates = true
     }
 
     open func collectionView(
@@ -395,8 +404,7 @@ open class ChatChannelListVC: _ViewController,
         _ controller: ChatChannelListController,
         didChangeChannels changes: [ListChange<ChatChannel>]
     ) {
-        let isViewNotVisible = viewIfLoaded?.window == nil
-        if isViewNotVisible {
+        if skipChannelUpdates {
             skippedRendering = true
             return
         }

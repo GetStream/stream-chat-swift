@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix native swipe-back gesture overridden by swipe-to-reply [#3029](https://github.com/GetStream/stream-chat-swift/pull/3029)
 - Fix `CGBitmapContextInfoCreate` console log warning when creating merged channel avatars [#3018](https://github.com/GetStream/stream-chat-swift/pull/3018)
 - Slight performance improvement in the message list by caching `NSRegularExpression` in `MarkdownFormatter` [#3020](https://github.com/GetStream/stream-chat-swift/pull/3020)
+- Slight performance improvement in the message list by skipping channel list updates when it is not visible [#3021](https://github.com/GetStream/stream-chat-swift/pull/3021)
 
 # [4.48.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.48.1)
 _February 09, 2024_
