@@ -3,11 +3,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### 🐞 Fixed
+- Fix `TextLink.url` in `TextLinkDetector` not having the HTTP URL [#3023](https://github.com/GetStream/stream-chat-swift/pull/3023)
+
 ## StreamChatUI
 ### 🐞 Fixed
 - Fix tapping message links without http scheme not opening Safari [#3023](https://github.com/GetStream/stream-chat-swift/pull/3023)
-
-### 🔄 Changed
 
 # [4.48.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.48.0)
 _February 09, 2024_
