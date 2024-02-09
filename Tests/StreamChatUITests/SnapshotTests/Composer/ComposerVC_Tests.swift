@@ -723,8 +723,8 @@ final class ComposerVC_Tests: XCTestCase {
         )))
 
         composerVC.didChangeLinks([
-            .init(url: url, range: .init(location: 0, length: 0)),
-            .init(url: URL(string: "www.google.com")!, range: .init(location: 0, length: 0))
+            .init(url: url, originalText: "https://github.com/GetStream/stream-chat-swift", range: .init(location: 0, length: 0)),
+            .init(url: URL(string: "http://www.google.com")!, originalText: "www.google.com", range: .init(location: 0, length: 0))
         ])
 
         AssertAsync {
@@ -752,8 +752,8 @@ final class ComposerVC_Tests: XCTestCase {
         mockAPIClient.test_mockResponseResult(Result<LinkAttachmentPayload, Error>.failure(ClientError()))
 
         composerVC.didChangeLinks([
-            .init(url: url, range: .init(location: 0, length: 0)),
-            .init(url: URL(string: "www.google.com")!, range: .init(location: 0, length: 0))
+            .init(url: url, originalText: "https://github.com/GetStream/stream-chat-swift", range: .init(location: 0, length: 0)),
+            .init(url: URL(string: "http://www.google.com")!, originalText: "www.google.com", range: .init(location: 0, length: 0))
         ])
 
         AssertAsync {
@@ -780,8 +780,8 @@ final class ComposerVC_Tests: XCTestCase {
         mockAPIClient.test_mockResponseResult(Result<LinkAttachmentPayload, Error>.failure(ClientError()))
 
         composerVC.didChangeLinks([
-            .init(url: url, range: .init(location: 0, length: 0)),
-            .init(url: URL(string: "www.google.com")!, range: .init(location: 0, length: 0))
+            .init(url: url, originalText: "https://github.com/GetStream/stream-chat-swift", range: .init(location: 0, length: 0)),
+            .init(url: URL(string: "http://www.google.com")!, originalText: "www.google.com", range: .init(location: 0, length: 0))
         ])
 
         AssertAsync {
@@ -800,7 +800,7 @@ final class ComposerVC_Tests: XCTestCase {
         composerVC.content = .initial()
         composerVC.content.attachments = [.mockAudio, .mockFile]
 
-        composerVC.didChangeLinks([.init(url: .localYodaImage, range: .init(location: 0, length: 10))])
+        composerVC.didChangeLinks([.init(url: .localYodaImage, originalText: "fake", range: .init(location: 0, length: 10))])
 
         XCTAssertEqual(composerVC.dismissLinkPreviewCallCount, 1)
     }
