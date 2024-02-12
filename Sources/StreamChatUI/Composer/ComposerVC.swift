@@ -289,7 +289,7 @@ open class ComposerVC: _ViewController,
 
     open var cooldownTracker: CooldownTracker = CooldownTracker(timer: ScheduledStreamTimer(interval: 1))
 
-    public var enrichUrlDebouncer = Debouncer(0.3, queue: .main)
+    public var enrichUrlDebouncer = Debouncer(0.4, queue: .main)
 
     lazy var linkDetector = TextLinkDetector()
 
