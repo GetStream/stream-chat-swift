@@ -686,7 +686,35 @@ extension UserRobot {
         XCTAssertTrue(link.isHittable, "Link itself is not clickable")
         return self
     }
-    
+
+    @discardableResult
+    func assertLinkOpensSafari(
+        at messageCellIndex: Int? = nil,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
+        let link = attributes.LinkPreview.link(in: messageCell)
+        link.tap()
+        assertSafariOpens()
+        return self
+    }
+
+    @discardableResult
+    func assertSafariOpens() -> Self {
+        let safari = XCUIApplication(bundleIdentifier: "com.apple.mobilesafari")
+        defer {
+            safari.terminate()
+        }
+
+        guard safari.wait(for: .runningForeground, timeout: XCUIElement.waitTimeout) else {
+            XCTFail("could not open Safari")
+            return self
+        }
+
+        return self
+    }
+
     @discardableResult
     func waitForMessageVisibility(at messageCellIndex: Int) -> Self {
         _ = messageCell(withIndex: messageCellIndex).wait().waitForHitPoint()

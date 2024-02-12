@@ -4,9 +4,13 @@
 
 import Foundation
 
-/// The url and position of a link in a text.
+/// The link details found in text.
 public struct TextLink: Equatable {
+    /// The url of the link.
     public let url: URL
+    /// The original text.
+    public let originalText: String
+    /// The position where the link was found.
     public let range: NSRange
 }
 
@@ -63,7 +67,7 @@ private extension NSTextCheckingResult {
     func toTextLink(with text: String) -> TextLink? {
         guard let range = Range(self.range, in: text) else { return nil }
         let linkText = String(text[range])
-        guard let url = URL(string: linkText) else { return nil }
-        return TextLink(url: url, range: self.range)
+        guard let url = self.url else { return nil }
+        return TextLink(url: url, originalText: linkText, range: self.range)
     }
 }

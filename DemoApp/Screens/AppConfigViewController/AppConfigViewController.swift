@@ -12,14 +12,22 @@ struct DemoAppConfig {
     var isHardDeleteEnabled: Bool
     /// A Boolean value to define if Atlantis will be started to proxy HTTP and WebSocket calls.
     var isAtlantisEnabled: Bool
-    /// A Boolean value to define if we should mimic token refresh scenarios.
-    var isTokenRefreshEnabled: Bool
     /// A Boolean value to define if an additional message debugger action will be added.
     var isMessageDebuggerEnabled: Bool
     /// A Boolean value to define if channel pinning example is enabled.
     var isChannelPinningEnabled: Bool
     /// A Boolean value to define if custom location attachments are enabled.
     var isLocationAttachmentsEnabled: Bool
+    /// Set this value to define if we should mimic token refresh scenarios.
+    var tokenRefreshDetails: TokenRefreshDetails?
+
+    /// The details to generate expirable tokens in the demo app.
+    struct TokenRefreshDetails {
+        // The app secret from the dashboard.
+        let appSecret: String
+        // The duration in seconds until the token is expired.
+        let duration: TimeInterval
+    }
 }
 
 class AppConfig {
@@ -33,10 +41,10 @@ class AppConfig {
         demoAppConfig = DemoAppConfig(
             isHardDeleteEnabled: false,
             isAtlantisEnabled: false,
-            isTokenRefreshEnabled: false,
             isMessageDebuggerEnabled: false,
             isChannelPinningEnabled: false,
-            isLocationAttachmentsEnabled: false
+            isLocationAttachmentsEnabled: false,
+            tokenRefreshDetails: nil
         )
 
         StreamRuntimeCheck._isBackgroundMappingEnabled = true
@@ -45,7 +53,6 @@ class AppConfig {
             demoAppConfig.isAtlantisEnabled = true
             demoAppConfig.isMessageDebuggerEnabled = true
             demoAppConfig.isLocationAttachmentsEnabled = true
-            demoAppConfig.isTokenRefreshEnabled = true
             demoAppConfig.isLocationAttachmentsEnabled = true
             demoAppConfig.isHardDeleteEnabled = true
             StreamRuntimeCheck.assertionsEnabled = true
@@ -154,6 +161,7 @@ class AppConfigViewController: UITableViewController {
         case isChannelPinningEnabled
         case isLocationAttachmentsEnabled
         case isBackgroundMappingEnabled
+        case tokenRefreshDetails
     }
 
     enum ComponentsConfigOption: String, CaseIterable {
@@ -238,7 +246,7 @@ class AppConfigViewController: UITableViewController {
         guard let cell = tableView.cellForRow(at: indexPath) else { return }
 
         switch options[indexPath.section] {
-        case .info, .demoApp:
+        case .info:
             break
         case let .components(options):
             didSelectComponentsOptionsCell(cell, at: indexPath, options: options)
@@ -246,6 +254,8 @@ class AppConfigViewController: UITableViewController {
             didSelectChatClientOptionsCell(cell, at: indexPath, options: options)
         case let .user(options):
             didSelectUserOptionsCell(cell, at: indexPath, options: options)
+        case let .demoApp(options):
+            didSelectDemoAppOptionsCell(cell, at: indexPath, options: options)
         }
     }
 
@@ -295,6 +305,13 @@ class AppConfigViewController: UITableViewController {
             cell.accessoryView = makeSwitchButton(StreamRuntimeCheck._isBackgroundMappingEnabled) { newValue in
                 StreamRuntimeCheck._isBackgroundMappingEnabled = newValue
             }
+        case .tokenRefreshDetails:
+            if let tokenRefreshDuration = demoAppConfig.tokenRefreshDetails?.duration {
+                cell.detailTextLabel?.text = "Duration: \(tokenRefreshDuration)s"
+            } else {
+                cell.detailTextLabel?.text = "Disabled"
+            }
+            cell.accessoryType = .none
         }
     }
 
@@ -452,6 +469,20 @@ class AppConfigViewController: UITableViewController {
         }
     }
 
+    private func didSelectDemoAppOptionsCell(
+        _ cell: UITableViewCell,
+        at indexPath: IndexPath,
+        options: [DemoAppConfigOption]
+    ) {
+        let option = options[indexPath.row]
+        switch option {
+        case .tokenRefreshDetails:
+            showTokenDetailsAlert()
+        default:
+            break
+        }
+    }
+
     // MARK: - Helpers
 
     private func makeSwitchButton(_ initialValue: Bool, _ didChangeValue: @escaping (Bool) -> Void) -> SwitchButton {
@@ -515,5 +546,38 @@ class AppConfigViewController: UITableViewController {
         }
 
         navigationController?.pushViewController(selectorViewController, animated: true)
+    }
+
+    private func showTokenDetailsAlert() {
+        let alert = UIAlertController(
+            title: "Token Refreshing",
+            message: "Input the app secret from Stream's Dashboard and the desired duration.",
+            preferredStyle: .alert
+        )
+
+        alert.addTextField { textField in
+            textField.placeholder = "App Secret"
+            textField.autocapitalizationType = .none
+            textField.autocorrectionType = .no
+        }
+        alert.addTextField { textField in
+            textField.placeholder = "Duration (Seconds)"
+            textField.keyboardType = .numberPad
+        }
+
+        alert.addAction(.init(title: "Enable", style: .default, handler: { _ in
+            guard let appSecret = alert.textFields?[0].text else { return }
+            guard let duration = alert.textFields?[1].text else { return }
+            self.demoAppConfig.tokenRefreshDetails = .init(
+                appSecret: appSecret,
+                duration: TimeInterval(duration)!
+            )
+        }))
+
+        alert.addAction(.init(title: "Disable", style: .destructive, handler: { _ in
+            self.demoAppConfig.tokenRefreshDetails = nil
+        }))
+
+        present(alert, animated: true, completion: nil)
     }
 }

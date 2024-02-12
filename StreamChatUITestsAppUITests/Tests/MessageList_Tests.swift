@@ -651,6 +651,42 @@ extension MessageList_Tests {
             userRobot.assertLinkPreview(alsoVerifyServiceName: "YouTube")
         }
     }
+
+    func test_messageWithLinkOpensSafari() {
+        linkToScenario(withId: 3119)
+
+        let message = "Some link: https://youtube.com"
+
+        GIVEN("user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        WHEN("user sends a message with YouTube link") {
+            userRobot
+                .sendMessage(message)
+                .scrollMessageListDown() // to hide the keyboard
+        }
+        THEN("user observes safari opening") {
+            userRobot.assertLinkOpensSafari()
+        }
+    }
+
+    func test_messageWithLinkOpensSafari_whenNoHttpScheme() {
+        linkToScenario(withId: 3120)
+
+        let message = "Some link: youtube.com"
+
+        GIVEN("user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        WHEN("user sends a message with YouTube link without https://") {
+            userRobot
+                .sendMessage(message)
+                .scrollMessageListDown() // to hide the keyboard
+        }
+        THEN("user observes safari opening") {
+            userRobot.assertLinkOpensSafari()
+        }
+    }
 }
 
 // MARK: - Thread replies
