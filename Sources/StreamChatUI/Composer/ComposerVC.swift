@@ -1007,7 +1007,17 @@ open class ComposerVC: _ViewController,
             self?.channelController?.enrichUrl(link.url) { [weak self] result in
                 switch result {
                 case let .success(linkPayload):
-                    self?.showLinkPreview(for: linkPayload)
+                    let enrichedUrlText = linkPayload.originalURL.absoluteString
+                    let currentLinks = self?.composerView.inputMessageView.textView.links ?? []
+                    guard let currentUrlText = currentLinks.first?.url.absoluteString else {
+                        return
+                    }
+                    // Only show enrichment if the current url is still the one
+                    // that should be shown. Since we currently do not support
+                    // cancelling previous requests, this is the current optimal solution.
+                    if enrichedUrlText == currentUrlText {
+                        self?.showLinkPreview(for: linkPayload)
+                    }
                 case .failure:
                     self?.dismissLinkPreview()
                 }
