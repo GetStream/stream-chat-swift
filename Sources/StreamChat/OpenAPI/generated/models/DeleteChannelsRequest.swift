@@ -6,26 +6,21 @@ import Foundation
 
 public struct DeleteChannelsRequest: Codable, Hashable {
     public var hardDelete: Bool? = nil
-    
     public var cids: [String]? = nil
-    
+
     public init(hardDelete: Bool? = nil, cids: [String]? = nil) {
         self.hardDelete = hardDelete
-        
         self.cids = cids
     }
-    
+
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case hardDelete = "hard_delete"
-        
         case cids
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
         try container.encode(hardDelete, forKey: .hardDelete)
-        
         try container.encode(cids, forKey: .cids)
     }
 }

@@ -6,26 +6,21 @@ import Foundation
 
 public struct MarkReadResponse: Codable, Hashable {
     public var duration: String
-    
     public var event: MessageReadEvent? = nil
-    
+
     public init(duration: String, event: MessageReadEvent? = nil) {
         self.duration = duration
-        
         self.event = event
     }
-    
+
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case duration
-        
         case event
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
         try container.encode(duration, forKey: .duration)
-        
         try container.encode(event, forKey: .event)
     }
 }

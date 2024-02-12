@@ -10,95 +10,51 @@ internal class ChatEventMapping: Decodable {
 
 public enum WSEvent: Codable, Hashable {
     case typeChannelCreatedEvent(ChannelCreatedEvent)
-    
     case typeChannelDeletedEvent(ChannelDeletedEvent)
-    
     case typeChannelFrozenEvent(ChannelFrozenEvent)
-    
     case typeChannelHiddenEvent(ChannelHiddenEvent)
-    
     case typeChannelKickedEvent(ChannelKickedEvent)
-    
     case typeChannelTruncatedEvent(ChannelTruncatedEvent)
-    
     case typeChannelUnFrozenEvent(ChannelUnFrozenEvent)
-    
     case typeChannelUpdatedEvent(ChannelUpdatedEvent)
-    
     case typeChannelVisibleEvent(ChannelVisibleEvent)
-    
     case typeAnyEvent(AnyEvent)
-    
     case typeHealthCheckEvent(HealthCheckEvent)
-    
     case typeMemberAddedEvent(MemberAddedEvent)
-    
     case typeMemberRemovedEvent(MemberRemovedEvent)
-    
     case typeMemberUpdatedEvent(MemberUpdatedEvent)
-    
     case typeMessageDeletedEvent(MessageDeletedEvent)
-    
     case typeMessageNewEvent(MessageNewEvent)
-    
     case typeMessageReadEvent(MessageReadEvent)
-    
     case typeMessageUpdatedEvent(MessageUpdatedEvent)
-    
     case typeNotificationAddedToChannelEvent(NotificationAddedToChannelEvent)
-    
     case typeNotificationChannelDeletedEvent(NotificationChannelDeletedEvent)
-    
     case typeNotificationChannelMutesUpdatedEvent(NotificationChannelMutesUpdatedEvent)
-    
     case typeNotificationChannelTruncatedEvent(NotificationChannelTruncatedEvent)
-    
     case typeNotificationInviteAcceptedEvent(NotificationInviteAcceptedEvent)
-    
     case typeNotificationInviteRejectedEvent(NotificationInviteRejectedEvent)
-    
     case typeNotificationInvitedEvent(NotificationInvitedEvent)
-    
     case typeNotificationMarkReadEvent(NotificationMarkReadEvent)
-    
     case typeNotificationMarkUnreadEvent(NotificationMarkUnreadEvent)
-    
     case typeNotificationNewMessageEvent(NotificationNewMessageEvent)
-    
     case typeNotificationMutesUpdatedEvent(NotificationMutesUpdatedEvent)
-    
     case typeNotificationRemovedFromChannelEvent(NotificationRemovedFromChannelEvent)
-    
     case typeReactionDeletedEvent(ReactionDeletedEvent)
-    
     case typeReactionNewEvent(ReactionNewEvent)
-    
     case typeReactionUpdatedEvent(ReactionUpdatedEvent)
-    
     case typeTypingStartEvent(TypingStartEvent)
-    
     case typeTypingStopEvent(TypingStopEvent)
-    
     case typeUserBannedEvent(UserBannedEvent)
-    
     case typeUserDeactivatedEvent(UserDeactivatedEvent)
-    
     case typeUserDeletedEvent(UserDeletedEvent)
-    
     case typeUserMutedEvent(UserMutedEvent)
-    
     case typeUserPresenceChangedEvent(UserPresenceChangedEvent)
-    
     case typeUserReactivatedEvent(UserReactivatedEvent)
-    
     case typeUserUnbannedEvent(UserUnbannedEvent)
-    
     case typeUserUpdatedEvent(UserUpdatedEvent)
-    
     case typeUserWatchingStartEvent(UserWatchingStartEvent)
-    
     case typeUserWatchingStopEvent(UserWatchingStopEvent)
-    
+
     public var type: String {
         switch self {
         case let .typeChannelCreatedEvent(value):
