@@ -86,7 +86,7 @@ open class ChatMessageLayoutOptionsResolver {
         if isLastInSequence && !message.isSentByCurrentUser && channel.memberCount > 2 {
             options.insert(.authorName)
         }
-        if channel.config.repliesEnabled && (message.isRootOfThread || message.isPartOfThread) {
+        if channel.config.replies && (message.isRootOfThread || message.isPartOfThread) {
             options.insert(.threadInfo)
             // The bubbles with thread look like continuous bubbles
             options.insert(.continuousBubble)
@@ -207,7 +207,7 @@ open class ChatMessageLayoutOptionsResolver {
         case .pending:
             return true
         case .sent, .read:
-            return channel.config.readEventsEnabled
+            return channel.config.readEvents
         default:
             return false
         }
@@ -222,7 +222,7 @@ private extension ChatMessageLayoutOptionsResolver {
     }
 
     func hasReactions(_ channel: ChatChannel, _ message: ChatMessage, _ appearance: Appearance) -> Bool {
-        if !channel.config.reactionsEnabled {
+        if !channel.config.reactions {
             return false
         }
 

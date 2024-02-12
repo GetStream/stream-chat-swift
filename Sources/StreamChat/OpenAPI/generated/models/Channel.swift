@@ -39,15 +39,15 @@ public struct Channel: Codable, Hashable {
     
     public var members: [ChannelMember?]? = nil
     
-    public var config: StreamChatChannelConfig? = nil
+    public var config: ChannelConfig? = nil
     
-    public var configOverrides: StreamChatChannelConfig? = nil
+    public var configOverrides: ChannelConfig? = nil
     
     public var createdBy: UserObject? = nil
     
     public var truncatedBy: UserObject? = nil
     
-    public init(autoTranslationLanguage: String, cid: String, createdAt: Date, disabled: Bool, frozen: Bool, id: String, type: String, updatedAt: Date, custom: [String: RawJSON], autoTranslationEnabled: Bool? = nil, cooldown: Int? = nil, deletedAt: Date? = nil, lastMessageAt: Date? = nil, memberCount: Int? = nil, team: String? = nil, invites: [ChannelMember?]? = nil, members: [ChannelMember?]? = nil, config: StreamChatChannelConfig? = nil, configOverrides: StreamChatChannelConfig? = nil, createdBy: UserObject? = nil, truncatedBy: UserObject? = nil) {
+    public init(autoTranslationLanguage: String, cid: String, createdAt: Date, disabled: Bool, frozen: Bool, id: String, type: String, updatedAt: Date, custom: [String: RawJSON], autoTranslationEnabled: Bool? = nil, cooldown: Int? = nil, deletedAt: Date? = nil, lastMessageAt: Date? = nil, memberCount: Int? = nil, team: String? = nil, invites: [ChannelMember?]? = nil, members: [ChannelMember?]? = nil, config: ChannelConfig? = nil, configOverrides: ChannelConfig? = nil, createdBy: UserObject? = nil, truncatedBy: UserObject? = nil) {
         self.autoTranslationLanguage = autoTranslationLanguage
         
         self.cid = cid

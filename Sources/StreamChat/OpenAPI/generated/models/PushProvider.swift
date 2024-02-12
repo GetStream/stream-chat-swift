@@ -4,7 +4,7 @@
 
 import Foundation
 
-public struct StreamChatPushProvider: Codable, Hashable {
+public struct PushProvider: Codable, Hashable {
     public var createdAt: Date
     
     public var name: String

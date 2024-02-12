@@ -4,7 +4,7 @@
 
 import Foundation
 
-public struct StreamChatChannelConfig: Codable, Hashable {
+public struct ChannelConfig: Codable, Hashable {
     public var automod: String
     
     public var automodBehavior: String
@@ -59,7 +59,7 @@ public struct StreamChatChannelConfig: Codable, Hashable {
     
     public var automodThresholds: Thresholds? = nil
     
-    public init(automod: String = "", automodBehavior: String = "", connectEvents: Bool = false, createdAt: Date = Date(), customEvents: Bool = false, markMessagesPending: Bool = false, maxMessageLength: Int = 0, messageRetention: String = "", mutes: Bool = false, name: String = "", pushNotifications: Bool = false, quotes: Bool = false, reactions: Bool = false, readEvents: Bool = false, reminders: Bool = false, replies: Bool = false, search: Bool = false, typingEvents: Bool = false, updatedAt: Date = Date(), uploads: Bool = false, urlEnrichment: Bool = false, commands: [String] = [], blocklist: String? = nil, blocklistBehavior: String? = nil, allowedFlagReasons: [String]? = nil, blocklists: [BlockListOptions]? = nil, automodThresholds: Thresholds? = nil) {
+    public init(automod: String, automodBehavior: String, connectEvents: Bool, createdAt: Date, customEvents: Bool, markMessagesPending: Bool, maxMessageLength: Int, messageRetention: String, mutes: Bool, name: String, pushNotifications: Bool, quotes: Bool, reactions: Bool, readEvents: Bool, reminders: Bool, replies: Bool, search: Bool, typingEvents: Bool, updatedAt: Date, uploads: Bool, urlEnrichment: Bool, commands: [String], blocklist: String? = nil, blocklistBehavior: String? = nil, allowedFlagReasons: [String]? = nil, blocklists: [BlockListOptions]? = nil, automodThresholds: Thresholds? = nil) {
         self.automod = automod
         
         self.automodBehavior = automodBehavior

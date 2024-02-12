@@ -5,6 +5,7 @@
 import CoreData
 import Foundation
 
+// TODO: expand the db object with missing properties.
 @objc(ChannelConfigDTO)
 final class ChannelConfigDTO: NSManagedObject {
     @NSManaged var reactionsEnabled: Bool
@@ -23,31 +24,31 @@ final class ChannelConfigDTO: NSManagedObject {
     @NSManaged var updatedAt: DBDate
     @NSManaged var commands: NSOrderedSet
 
-    func asModel() throws -> ChannelConfig {
+    func asModel() throws -> StreamChatChannelConfig {
         guard isValid else { throw InvalidModel(self) }
         return .init(
-            reactionsEnabled: reactionsEnabled,
-            typingEventsEnabled: typingEventsEnabled,
-            readEventsEnabled: readEventsEnabled,
-            connectEventsEnabled: connectEventsEnabled,
-            uploadsEnabled: uploadsEnabled,
-            repliesEnabled: repliesEnabled,
-            quotesEnabled: quotesEnabled,
-            searchEnabled: searchEnabled,
-            mutesEnabled: mutesEnabled,
-            urlEnrichmentEnabled: urlEnrichmentEnabled,
-            messageRetention: messageRetention,
-            maxMessageLength: Int(maxMessageLength),
-            commands: Array(Set(
-                commands.compactMap { try? ($0 as? CommandDTO)?.asModel() }
-            )),
+            connectEvents: connectEventsEnabled,
             createdAt: createdAt.bridgeDate,
-            updatedAt: updatedAt.bridgeDate
+            maxMessageLength: Int(maxMessageLength),
+            messageRetention: messageRetention,
+            mutes: mutesEnabled,
+            quotes: quotesEnabled,
+            reactions: reactionsEnabled,
+            readEvents: readEventsEnabled,
+            replies: repliesEnabled,
+            search: searchEnabled,
+            typingEvents: typingEventsEnabled,
+            updatedAt: updatedAt.bridgeDate,
+            uploads: uploadsEnabled,
+            urlEnrichment: urlEnrichmentEnabled,
+            commands: Array(Set(
+                commands.compactMap { ($0 as? CommandDTO)?.name }
+            ))
         )
     }
 }
 
-extension ChannelConfig {
+extension StreamChatChannelConfig {
     func asDTO(context: NSManagedObjectContext, cid: String) -> ChannelConfigDTO {
         let request = NSFetchRequest<ChannelConfigDTO>(entityName: ChannelConfigDTO.entityName)
         request.predicate = NSPredicate(format: "channel.cid == %@", cid)
@@ -59,21 +60,22 @@ extension ChannelConfig {
             dto = NSEntityDescription.insertNewObject(into: context, for: request)
         }
 
-        dto.reactionsEnabled = reactionsEnabled
-        dto.typingEventsEnabled = typingEventsEnabled
-        dto.readEventsEnabled = readEventsEnabled
-        dto.connectEventsEnabled = connectEventsEnabled
-        dto.uploadsEnabled = uploadsEnabled
-        dto.repliesEnabled = repliesEnabled
-        dto.quotesEnabled = quotesEnabled
-        dto.searchEnabled = searchEnabled
-        dto.mutesEnabled = mutesEnabled
-        dto.urlEnrichmentEnabled = urlEnrichmentEnabled
+        dto.reactionsEnabled = reactions
+        dto.typingEventsEnabled = typingEvents
+        dto.readEventsEnabled = readEvents
+        dto.connectEventsEnabled = connectEvents
+        dto.uploadsEnabled = uploads
+        dto.repliesEnabled = replies
+        dto.quotesEnabled = quotes
+        dto.searchEnabled = search
+        dto.mutesEnabled = mutes
+        dto.urlEnrichmentEnabled = urlEnrichment
         dto.messageRetention = messageRetention
         dto.maxMessageLength = Int32(maxMessageLength)
         dto.createdAt = createdAt.bridgeDate
         dto.updatedAt = updatedAt.bridgeDate
-        dto.commands = NSOrderedSet(array: commands.map { $0.asDTO(context: context) })
+        // TODO: check commands.
+//        dto.commands = NSOrderedSet(array: commands.map { $0.asDTO(context: context) })
         return dto
     }
 }

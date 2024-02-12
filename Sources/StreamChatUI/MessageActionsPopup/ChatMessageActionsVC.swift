@@ -29,7 +29,7 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
     }
 
     /// `ChannelConfig` that contains the feature flags of the channel.
-    public var channelConfig: ChannelConfig!
+    public var channelConfig: StreamChatChannelConfig!
 
     /// Message that should be shown in this view controller.
     open var message: ChatMessage? {
@@ -98,9 +98,9 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
             var actions: [ChatMessageActionItem] = []
 
             // If a channel is not set, we fallback to using channelConfig only.
-            let canQuoteMessage = channel?.canQuoteMessage ?? channelConfig.quotesEnabled
-            let canSendReply = channel?.canSendReply ?? channelConfig.repliesEnabled
-            let canReceiveReadEvents = channel?.canReceiveReadEvents ?? channelConfig.readEventsEnabled
+            let canQuoteMessage = channel?.canQuoteMessage ?? channelConfig.quotes
+            let canSendReply = channel?.canSendReply ?? channelConfig.replies
+            let canReceiveReadEvents = channel?.canReceiveReadEvents ?? channelConfig.readEvents
             let canUpdateAnyMessage = channel?.canUpdateAnyMessage ?? false
             let canUpdateOwnMessage = channel?.canUpdateOwnMessage ?? true
             let canDeleteAnyMessage = channel?.canDeleteAnyMessage ?? false
@@ -139,7 +139,7 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
                 actions.append(flagActionItem())
             }
 
-            if channelConfig.mutesEnabled && !message.isSentByCurrentUser {
+            if channelConfig.mutes && !message.isSentByCurrentUser {
                 let isMuted = currentUser.mutedUsers.map(\.id).contains(message.author.id)
                 actions.append(isMuted ? unmuteActionItem() : muteActionItem())
             }

@@ -339,7 +339,7 @@ open class ComposerVC: _ViewController,
     open var channelController: ChatChannelController?
 
     /// The channel config. If it's a new channel, an empty config should be created. (Not yet supported right now)
-    public var channelConfig: ChannelConfig? {
+    public var channelConfig: StreamChatChannelConfig? {
         channelController?.channel?.config
     }
 
@@ -484,7 +484,7 @@ open class ComposerVC: _ViewController,
             composerView.inputMessageView.textView.text = content.text
         }
 
-        if !content.isEmpty && channelConfig?.typingEventsEnabled == true {
+        if !content.isEmpty && channelConfig?.typingEvents == true {
             channelController?.sendKeystrokeEvent(parentMessageId: content.threadMessage?.id)
         }
 
@@ -838,26 +838,31 @@ open class ComposerVC: _ViewController,
         // Don't show the commands suggestion VC if there are no commands
         guard availableCommands.isEmpty == false else { return }
 
-        var commandHints: [Command] = availableCommands
+        var commandHints: [String] = availableCommands
 
         if !typingCommand.isEmpty {
             commandHints = availableCommands.filter {
-                $0.name.range(of: typingCommand, options: .caseInsensitive) != nil
+                $0.range(of: typingCommand, options: .caseInsensitive) != nil
             }
         }
 
-        let typingCommandMatches: ((Command) -> Bool) = { availableCommand in
-            availableCommand.name.compare(typingCommand, options: .caseInsensitive) == .orderedSame
+        let typingCommandMatches: ((String) -> Bool) = { availableCommand in
+            availableCommand.compare(typingCommand, options: .caseInsensitive) == .orderedSame
         }
         if let foundCommand = availableCommands.first(where: typingCommandMatches), !content.hasCommand {
-            content.addCommand(foundCommand)
+            // TODO: populate values
+            let command = Command(args: "", description: "", name: foundCommand, set: "")
+            content.addCommand(command)
 
             dismissSuggestions()
             return
         }
 
+        let hints = commandHints.map { name in
+            Command(args: "", description: "", name: name, set: "")
+        }
         let dataSource = ChatMessageComposerSuggestionsCommandDataSource(
-            with: commandHints,
+            with: hints,
             collectionView: suggestionsVC.collectionView
         )
         suggestionsVC.dataSource = dataSource
@@ -866,8 +871,8 @@ open class ComposerVC: _ViewController,
                 indexNotFoundAssertion()
                 return
             }
-
-            self?.content.addCommand(hintCommand)
+            let command = Command(args: "", description: "", name: hintCommand, set: "")
+            self?.content.addCommand(command)
 
             self?.dismissSuggestions()
         }
@@ -987,7 +992,7 @@ open class ComposerVC: _ViewController,
     /// The links in the current input text have changed
     /// - Parameter links: The new parsed links from the input text.
     open func didChangeLinks(_ links: [TextLink]) {
-        guard channelConfig?.urlEnrichmentEnabled == true else {
+        guard channelConfig?.urlEnrichment == true else {
             return
         }
 

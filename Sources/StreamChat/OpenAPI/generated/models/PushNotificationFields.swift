@@ -17,9 +17,9 @@ public struct PushNotificationFields: Codable, Hashable {
     
     public var xiaomi: XiaomiConfigFields
     
-    public var providers: [StreamChatPushProvider?]? = nil
+    public var providers: [PushProvider?]? = nil
     
-    public init(offlineOnly: Bool, version: String, apn: APNConfigFields, firebase: FirebaseConfigFields, huawei: HuaweiConfigFields, xiaomi: XiaomiConfigFields, providers: [StreamChatPushProvider?]? = nil) {
+    public init(offlineOnly: Bool, version: String, apn: APNConfigFields, firebase: FirebaseConfigFields, huawei: HuaweiConfigFields, xiaomi: XiaomiConfigFields, providers: [PushProvider?]? = nil) {
         self.offlineOnly = offlineOnly
         
         self.version = version

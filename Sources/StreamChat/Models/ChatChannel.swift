@@ -39,7 +39,7 @@ public struct ChatChannel {
     public let createdBy: ChatUser?
 
     /// A configuration struct of the channel. It contains additional information about the channel settings.
-    public let config: ChannelConfig
+    public let config: StreamChatChannelConfig
 
     /// The list of actions that the current user can perform in a channel.
     public let ownCapabilities: Set<ChannelCapability>
@@ -187,7 +187,7 @@ public struct ChatChannel {
         truncatedAt: Date? = nil,
         isHidden: Bool,
         createdBy: ChatUser? = nil,
-        config: ChannelConfig = .init(),
+        config: StreamChatChannelConfig = .init(),
         ownCapabilities: Set<ChannelCapability> = [],
         isFrozen: Bool = false,
         lastActiveMembers: @escaping (() -> [ChatChannelMember]) = { [] },

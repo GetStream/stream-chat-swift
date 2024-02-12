@@ -27,7 +27,7 @@ public struct OwnUser: Codable, Hashable {
     
     public var channelMutes: [ChannelMute?]
     
-    public var devices: [PNDevice]
+    public var devices: [Device]
     
     public var mutes: [UserMute?]
     
@@ -47,7 +47,7 @@ public struct OwnUser: Codable, Hashable {
     
     public var pushNotifications: PushNotificationSettings? = nil
     
-    public init(banned: Bool, createdAt: Date, id: String, language: String, online: Bool, role: String, totalUnreadCount: Int, unreadChannels: Int, unreadCount: Int, updatedAt: Date, channelMutes: [ChannelMute?], devices: [PNDevice], mutes: [UserMute?], custom: [String: RawJSON], deactivatedAt: Date? = nil, deletedAt: Date? = nil, invisible: Bool? = nil, lastActive: Date? = nil, latestHiddenChannels: [String]? = nil, teams: [String]? = nil, pushNotifications: PushNotificationSettings? = nil) {
+    public init(banned: Bool, createdAt: Date, id: String, language: String, online: Bool, role: String, totalUnreadCount: Int, unreadChannels: Int, unreadCount: Int, updatedAt: Date, channelMutes: [ChannelMute?], devices: [Device], mutes: [UserMute?], custom: [String: RawJSON], deactivatedAt: Date? = nil, deletedAt: Date? = nil, invisible: Bool? = nil, lastActive: Date? = nil, latestHiddenChannels: [String]? = nil, teams: [String]? = nil, pushNotifications: PushNotificationSettings? = nil) {
         self.banned = banned
         
         self.createdAt = createdAt

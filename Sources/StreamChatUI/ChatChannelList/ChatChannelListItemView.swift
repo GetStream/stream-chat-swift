@@ -215,7 +215,7 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
         case .pending, .failed:
             return deliveryStatus
         case .sent, .read:
-            guard content.channel.config.readEventsEnabled else { return nil }
+            guard content.channel.config.readEvents else { return nil }
 
             return deliveryStatus
         default:

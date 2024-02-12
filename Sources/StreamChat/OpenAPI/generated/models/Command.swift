@@ -4,7 +4,7 @@
 
 import Foundation
 
-public struct StreamChatCommand: Codable, Hashable {
+public struct Command: Codable, Hashable {
     public var args: String
     
     public var description: String

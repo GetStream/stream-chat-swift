@@ -4,7 +4,7 @@
 
 import Foundation
 
-public struct PNDevice: Codable, Hashable {
+public struct Device: Codable, Hashable {
     public var createdAt: Date
     
     public var id: String

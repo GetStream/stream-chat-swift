@@ -49,3 +49,9 @@ public struct PushDevice {
         )
     }
 }
+
+extension PushProvider {
+    // TODO: check the values.
+    static let apn = PushProvider(createdAt: Date(), name: "apn", type: 0, updatedAt: Date())
+    static let firebase = PushProvider(createdAt: Date(), name: "firebase", type: 0, updatedAt: Date())
+}

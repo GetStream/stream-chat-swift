@@ -85,7 +85,7 @@ protocol ChannelDatabaseSessionV2 {
     
     @discardableResult
     func saveCurrentUserDevices(
-        _ devices: [PNDevice],
+        _ devices: [Device],
         clearExisting: Bool
     ) throws -> [DeviceDTO]
     
@@ -313,17 +313,6 @@ extension ChannelConfigWithInfo {
         dto.createdAt = createdAt.bridgeDate
         dto.updatedAt = updatedAt.bridgeDate
         dto.commands = NSOrderedSet(array: commands.compactMap { $0?.asDTO(context: context) })
-        return dto
-    }
-}
-
-extension StreamChatCommand {
-    func asDTO(context: NSManagedObjectContext) -> CommandDTO {
-        let dto = CommandDTO(context: context)
-        dto.name = name
-        dto.desc = description
-        dto.set = set
-        dto.args = args
         return dto
     }
 }
@@ -748,7 +737,7 @@ extension NSManagedObjectContext {
 }
 
 extension NSManagedObjectContext {
-    func saveCurrentUserDevices(_ devices: [PNDevice], clearExisting: Bool) throws -> [DeviceDTO] {
+    func saveCurrentUserDevices(_ devices: [Device], clearExisting: Bool) throws -> [DeviceDTO] {
         guard let currentUser = currentUser else {
             throw ClientError.CurrentUserDoesNotExist()
         }

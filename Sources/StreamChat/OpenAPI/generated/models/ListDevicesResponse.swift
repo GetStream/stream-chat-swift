@@ -7,9 +7,9 @@ import Foundation
 public struct ListDevicesResponse: Codable, Hashable {
     public var duration: String
     
-    public var devices: [PNDevice]
+    public var devices: [Device]
     
-    public init(duration: String, devices: [PNDevice]) {
+    public init(duration: String, devices: [Device]) {
         self.duration = duration
         
         self.devices = devices

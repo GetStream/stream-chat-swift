@@ -69,7 +69,7 @@ open class ChatMessageListVC: _ViewController,
 
     /// A Boolean value indicating whether the typing events are enabled.
     open var isTypingEventsEnabled: Bool {
-        dataSource?.channel(for: self)?.config.typingEventsEnabled == true
+        dataSource?.channel(for: self)?.config.typingEvents == true
     }
 
     /// A button to scroll the table view to the bottom.

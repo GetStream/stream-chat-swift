@@ -196,7 +196,8 @@ extension NSManagedObjectContext {
             dto.extraData = Data()
         }
         dto.typeRawValue = payload.typeRawValue
-        dto.config = payload.config.asDTO(context: self, cid: dto.cid)
+        // TODO: will be removed.
+//        dto.config = payload.config.asDTO(context: self, cid: dto.cid)
         if let ownCapabilities = payload.ownCapabilities {
             dto.ownCapabilities = ownCapabilities
         }

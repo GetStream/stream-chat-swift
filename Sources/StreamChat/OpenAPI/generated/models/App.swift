@@ -57,7 +57,7 @@ public struct App: Codable, Hashable {
     
     public var callTypes: [String: CallType?]
     
-    public var channelConfigs: [String: StreamChatChannelConfig?]
+    public var channelConfigs: [String: ChannelConfig?]
     
     public var fileUploadConfig: FileUploadConfig
     
@@ -87,7 +87,7 @@ public struct App: Codable, Hashable {
     
     public var hmsOptions: Config? = nil
     
-    public init(asyncUrlEnrichEnabled: Bool, campaignEnabled: Bool, cdnExpirationSeconds: Int, customActionHandlerUrl: String, disableAuthChecks: Bool, disablePermissionsChecks: Bool, enforceUniqueUsernames: String, imageModerationEnabled: Bool, multiTenantEnabled: Bool, name: String, organization: String, permissionVersion: String, remindersInterval: Int, snsKey: String, snsSecret: String, snsTopicArn: String, sqsKey: String, sqsSecret: String, sqsUrl: String, suspended: Bool, suspendedExplanation: String, videoProvider: String, webhookUrl: String, userSearchDisallowedRoles: [String], webhookEvents: [String], callTypes: [String: CallType?], channelConfigs: [String: StreamChatChannelConfig?], fileUploadConfig: FileUploadConfig, grants: [String: [String]], imageUploadConfig: FileUploadConfig, policies: [String: [Policy]], pushNotifications: PushNotificationFields, autoTranslationEnabled: Bool? = nil, beforeMessageSendHookUrl: String? = nil, revokeTokensIssuedBefore: Date? = nil, allowedFlagReasons: [String]? = nil, geofences: [GeofenceResponse?]? = nil, imageModerationLabels: [String]? = nil, agoraOptions: Config? = nil, datadogInfo: DataDogInfo? = nil, hmsOptions: Config? = nil) {
+    public init(asyncUrlEnrichEnabled: Bool, campaignEnabled: Bool, cdnExpirationSeconds: Int, customActionHandlerUrl: String, disableAuthChecks: Bool, disablePermissionsChecks: Bool, enforceUniqueUsernames: String, imageModerationEnabled: Bool, multiTenantEnabled: Bool, name: String, organization: String, permissionVersion: String, remindersInterval: Int, snsKey: String, snsSecret: String, snsTopicArn: String, sqsKey: String, sqsSecret: String, sqsUrl: String, suspended: Bool, suspendedExplanation: String, videoProvider: String, webhookUrl: String, userSearchDisallowedRoles: [String], webhookEvents: [String], callTypes: [String: CallType?], channelConfigs: [String: ChannelConfig?], fileUploadConfig: FileUploadConfig, grants: [String: [String]], imageUploadConfig: FileUploadConfig, policies: [String: [Policy]], pushNotifications: PushNotificationFields, autoTranslationEnabled: Bool? = nil, beforeMessageSendHookUrl: String? = nil, revokeTokensIssuedBefore: Date? = nil, allowedFlagReasons: [String]? = nil, geofences: [GeofenceResponse?]? = nil, imageModerationLabels: [String]? = nil, agoraOptions: Config? = nil, datadogInfo: DataDogInfo? = nil, hmsOptions: Config? = nil) {
         self.asyncUrlEnrichEnabled = asyncUrlEnrichEnabled
         
         self.campaignEnabled = campaignEnabled

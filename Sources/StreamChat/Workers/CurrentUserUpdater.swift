@@ -78,7 +78,7 @@ class CurrentUserUpdater: Worker {
 
         let request = CreateDeviceRequest(
             id: deviceId,
-            pushProvider: pushProvider.rawValue,
+            pushProvider: pushProvider.name,
             pushProviderName: providerName
         )
         api.createDevice(createDeviceRequest: request) { result in

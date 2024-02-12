@@ -15,10 +15,10 @@ final class CommandDTO: NSManagedObject {
     func asModel() throws -> Command {
         guard isValid else { throw InvalidModel(self) }
         return .init(
-            name: name,
+            args: args,
             description: desc,
-            set: set,
-            args: args
+            name: name,
+            set: set
         )
     }
 }
