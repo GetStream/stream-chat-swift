@@ -1005,19 +1005,22 @@ open class ComposerVC: _ViewController,
 
         enrichUrlDebouncer.execute { [weak self] in
             self?.channelController?.enrichUrl(link.url) { [weak self] result in
+                let enrichedUrlText = link.url.absoluteString
+                let currentLinks = self?.composerView.inputMessageView.textView.links ?? []
+                guard let currentUrlText = currentLinks.first?.url.absoluteString else {
+                    return
+                }
+
+                // Only show/dismiss enrichment if the current url is still the one
+                // that should be shown. Since we currently do not support
+                // cancelling previous requests, this is the current optimal solution.
+                guard enrichedUrlText == currentUrlText else {
+                    return
+                }
+
                 switch result {
                 case let .success(linkPayload):
-                    let enrichedUrlText = linkPayload.originalURL.absoluteString
-                    let currentLinks = self?.composerView.inputMessageView.textView.links ?? []
-                    guard let currentUrlText = currentLinks.first?.url.absoluteString else {
-                        return
-                    }
-                    // Only show enrichment if the current url is still the one
-                    // that should be shown. Since we currently do not support
-                    // cancelling previous requests, this is the current optimal solution.
-                    if enrichedUrlText == currentUrlText {
-                        self?.showLinkPreview(for: linkPayload)
-                    }
+                    self?.showLinkPreview(for: linkPayload)
                 case .failure:
                     self?.dismissLinkPreview()
                 }
