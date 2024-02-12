@@ -187,10 +187,10 @@ final class DemoChatChannelListVC: ChatChannelListVC, EventsControllerDelegate {
     }
 
     func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
-        if let newMessageEvent = event as? MessageNewEvent {
+        if let newMessageEvent = event as? StreamChatMessageNewEvent {
             // This is a DemoApp integration test to make sure there are no deadlocks when
             // accessing CoreDataLazy properties from the EventsController.delegate
-            _ = newMessageEvent.message.author
+            _ = newMessageEvent.message?.user
         }
     }
 }

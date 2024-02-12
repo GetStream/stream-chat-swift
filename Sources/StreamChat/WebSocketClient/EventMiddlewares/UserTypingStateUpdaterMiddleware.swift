@@ -26,10 +26,11 @@ struct UserTypingStateUpdaterMiddleware: EventMiddleware {
             else { break }
 
             channelDTO.currentlyTypingUsers.remove(userDTO)
-        case let event as CleanUpTypingEvent:
+        case let event as StreamChatTypingStopEvent:
             guard
-                let channelDTO = session.channel(cid: event.cid),
-                let userDTO = session.user(id: event.userId)
+                let cid = try? ChannelId(cid: event.cid),
+                let channelDTO = session.channel(cid: cid),
+                let userDTO = session.user(id: event.user?.id ?? "")
             else { break }
 
             channelDTO.currentlyTypingUsers.remove(userDTO)

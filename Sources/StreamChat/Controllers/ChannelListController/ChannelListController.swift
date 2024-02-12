@@ -263,28 +263,38 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
 ///   We don't try to add it to the current query to not mess with pagination.
 extension ChatChannelListController: EventsControllerDelegate {
     public func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
-        if let channelAddedEvent = event as? NotificationAddedToChannelEvent {
-            linkChannelIfNeeded(channelAddedEvent.channel)
-        } else if let messageNewEvent = event as? MessageNewEvent {
-            linkChannelIfNeeded(messageNewEvent.channel)
-        } else if let messageNewEvent = event as? NotificationMessageNewEvent {
-            linkChannelIfNeeded(messageNewEvent.channel)
-        } else if let updatedChannelEvent = event as? ChannelUpdatedEvent {
-            unlinkChannelIfNeeded(updatedChannelEvent.channel)
-        } else if let channelVisibleEvent = event as? ChannelVisibleEvent, let channel = dataStore.channel(cid: channelVisibleEvent.cid) {
-            linkChannelIfNeeded(channel)
+        if let channelAddedEvent = event as? StreamChatNotificationAddedToChannelEvent {
+            linkChannelIfNeeded(channelAddedEvent.cid)
+        } else if let messageNewEvent = event as? StreamChatMessageNewEvent {
+            linkChannelIfNeeded(messageNewEvent.cid)
+        } else if let messageNewEvent = event as? StreamChatNotificationNewMessageEvent {
+            linkChannelIfNeeded(messageNewEvent.cid)
+        } else if let updatedChannelEvent = event as? StreamChatChannelUpdatedEvent {
+            unlinkChannelIfNeeded(updatedChannelEvent.cid)
+        } else if let channelVisibleEvent = event as? StreamChatChannelVisibleEvent {
+            linkChannelIfNeeded(channelVisibleEvent.cid)
         }
     }
 
     /// Handles if a channel should be linked to the current query or not.
-    private func linkChannelIfNeeded(_ channel: ChatChannel) {
+    private func linkChannelIfNeeded(_ cid: String) {
+        guard let channelCid = try? ChannelId(cid: cid),
+              let channel = dataStore.channel(cid: channelCid)
+        else {
+            return
+        }
         guard !channels.contains(channel) else { return }
         guard shouldChannelBelongToCurrentQuery(channel) else { return }
         link(channel: channel)
     }
 
     /// Handles if a channel should be unlinked from the current query or not.
-    private func unlinkChannelIfNeeded(_ channel: ChatChannel) {
+    private func unlinkChannelIfNeeded(_ cid: String) {
+        guard let channelCid = try? ChannelId(cid: cid),
+              let channel = dataStore.channel(cid: channelCid)
+        else {
+            return
+        }
         guard channels.contains(channel) else { return }
         guard !shouldChannelBelongToCurrentQuery(channel) else { return }
         worker.unlink(channel: channel, with: query)

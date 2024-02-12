@@ -87,3 +87,24 @@ extension StreamChatUserResponse {
         )
     }
 }
+
+public extension StreamChatUserObject {
+    var toChatUser: ChatUser {
+        ChatUser(
+            id: id,
+            name: custom?["name"]?.stringValue,
+            imageURL: URL(string: custom?["image"]?.stringValue ?? ""),
+            isOnline: online ?? false,
+            isBanned: banned ?? false,
+            isFlaggedByCurrentUser: false, // TODO: how we handle this.
+            userRole: UserRole(rawValue: role ?? "user"),
+            createdAt: createdAt ?? Date(),
+            updatedAt: updatedAt ?? Date(),
+            deactivatedAt: deactivatedAt,
+            lastActiveAt: lastActive,
+            teams: Set(teams ?? []),
+            language: TranslationLanguage(languageCode: language ?? "en"),
+            extraData: custom ?? [:]
+        )
+    }
+}

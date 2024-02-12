@@ -408,14 +408,19 @@ open class ChatThreadVC: _ViewController,
 
     open func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
         switch event {
-        case let event as TypingEvent:
-            guard event.parentId == messageController.messageId && event.user.id != client.currentUserId else { return }
-            if event.isTyping {
-                currentlyTypingUsers.insert(event.user)
+        case let event as StreamChatTypingStartEvent:
+            guard event.parentId == messageController.messageId && event.user?.id != client.currentUserId, let user = event.user?.toChatUser else { return }
+            currentlyTypingUsers.insert(user)
+            
+            if currentlyTypingUsers.isEmpty {
+                messageListVC.hideTypingIndicator()
             } else {
-                currentlyTypingUsers.remove(event.user)
+                messageListVC.showTypingIndicator(typingUsers: Array(currentlyTypingUsers))
             }
-
+        case let event as StreamChatTypingStopEvent:
+            guard event.parentId == messageController.messageId && event.user?.id != client.currentUserId, let user = event.user?.toChatUser else { return }
+            currentlyTypingUsers.remove(user)
+            
             if currentlyTypingUsers.isEmpty {
                 messageListVC.hideTypingIndicator()
             } else {

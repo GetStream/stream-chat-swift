@@ -42,7 +42,13 @@ class TypingStartCleanupMiddleware: EventMiddleware {
             $0[userId] = nil
 
             let stopTyping = { [weak self] in
-                let typingStopEvent = CleanUpTypingEvent(cid: cid, userId: userId)
+                let typingStopEvent = StreamChatTypingStopEvent(
+                    channelId: cid.id,
+                    channelType: cid.type.rawValue,
+                    cid: cid.rawValue,
+                    createdAt: Date(),
+                    type: EventType.userStopTyping.rawValue
+                )
                 self?.emitEvent(typingStopEvent)
             }
 
