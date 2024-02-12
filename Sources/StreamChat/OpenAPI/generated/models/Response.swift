@@ -4,7 +4,7 @@
 
 import Foundation
 
-public struct DefaultResponse: Codable, Hashable {
+public struct Response: Codable, Hashable {
     public var duration: String
     
     public init(duration: String) {

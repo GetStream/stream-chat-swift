@@ -108,3 +108,30 @@ public extension UserObject {
         )
     }
 }
+
+extension ChannelConfig {
+    static let `default` = ChannelConfig(
+        automod: "",
+        automodBehavior: "",
+        connectEvents: false,
+        createdAt: Date(),
+        customEvents: false,
+        markMessagesPending: false,
+        maxMessageLength: 0,
+        messageRetention: "",
+        mutes: false,
+        name: "",
+        pushNotifications: false,
+        quotes: false,
+        reactions: false,
+        readEvents: false,
+        reminders: false,
+        replies: false,
+        search: false,
+        typingEvents: false,
+        updatedAt: Date(),
+        uploads: false,
+        urlEnrichment: false,
+        commands: []
+    )
+}

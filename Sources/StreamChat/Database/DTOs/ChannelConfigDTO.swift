@@ -24,17 +24,24 @@ final class ChannelConfigDTO: NSManagedObject {
     @NSManaged var updatedAt: DBDate
     @NSManaged var commands: NSOrderedSet
 
-    func asModel() throws -> StreamChatChannelConfig {
+    func asModel() throws -> ChannelConfig {
         guard isValid else { throw InvalidModel(self) }
         return .init(
+            automod: "",
+            automodBehavior: "",
             connectEvents: connectEventsEnabled,
             createdAt: createdAt.bridgeDate,
+            customEvents: false,
+            markMessagesPending: false,
             maxMessageLength: Int(maxMessageLength),
             messageRetention: messageRetention,
             mutes: mutesEnabled,
+            name: "",
+            pushNotifications: false,
             quotes: quotesEnabled,
             reactions: reactionsEnabled,
             readEvents: readEventsEnabled,
+            reminders: false,
             replies: repliesEnabled,
             search: searchEnabled,
             typingEvents: typingEventsEnabled,
@@ -48,7 +55,7 @@ final class ChannelConfigDTO: NSManagedObject {
     }
 }
 
-extension StreamChatChannelConfig {
+extension ChannelConfig {
     func asDTO(context: NSManagedObjectContext, cid: String) -> ChannelConfigDTO {
         let request = NSFetchRequest<ChannelConfigDTO>(entityName: ChannelConfigDTO.entityName)
         request.predicate = NSPredicate(format: "channel.cid == %@", cid)

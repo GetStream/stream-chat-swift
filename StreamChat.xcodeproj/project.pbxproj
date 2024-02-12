@@ -834,8 +834,6 @@
 		84DC41A32B7A417A00834BC1 /* NotificationNewMessageEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DC40662B7A416A00834BC1 /* NotificationNewMessageEvent.swift */; };
 		84DC41A42B7A417A00834BC1 /* Images.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DC40672B7A416A00834BC1 /* Images.swift */; };
 		84DC41A52B7A417A00834BC1 /* Images.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DC40672B7A416A00834BC1 /* Images.swift */; };
-		84DC41A62B7A417A00834BC1 /* StreamChatChannelConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DC40682B7A416A00834BC1 /* StreamChatChannelConfig.swift */; };
-		84DC41A72B7A417A00834BC1 /* StreamChatChannelConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DC40682B7A416A00834BC1 /* StreamChatChannelConfig.swift */; };
 		84DC41A82B7A417A00834BC1 /* TypingStartEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DC40692B7A416A00834BC1 /* TypingStartEvent.swift */; };
 		84DC41A92B7A417A00834BC1 /* TypingStartEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DC40692B7A416A00834BC1 /* TypingStartEvent.swift */; };
 		84DC41AA2B7A417A00834BC1 /* ChannelStateResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DC406A2B7A416B00834BC1 /* ChannelStateResponse.swift */; };
@@ -3759,7 +3757,6 @@
 		84DC40652B7A416A00834BC1 /* CreateDeviceRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateDeviceRequest.swift; sourceTree = "<group>"; };
 		84DC40662B7A416A00834BC1 /* NotificationNewMessageEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationNewMessageEvent.swift; sourceTree = "<group>"; };
 		84DC40672B7A416A00834BC1 /* Images.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Images.swift; sourceTree = "<group>"; };
-		84DC40682B7A416A00834BC1 /* StreamChatChannelConfig.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamChatChannelConfig.swift; sourceTree = "<group>"; };
 		84DC40692B7A416A00834BC1 /* TypingStartEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TypingStartEvent.swift; sourceTree = "<group>"; };
 		84DC406A2B7A416B00834BC1 /* ChannelStateResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelStateResponse.swift; sourceTree = "<group>"; };
 		84DC406B2B7A416B00834BC1 /* MemberUpdatedEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemberUpdatedEvent.swift; sourceTree = "<group>"; };
@@ -6206,7 +6203,6 @@
 				84DC40982B7A416F00834BC1 /* CallSettings.swift */,
 				84DC40632B7A416A00834BC1 /* CallType.swift */,
 				84DC406C2B7A416B00834BC1 /* Channel.swift */,
-				84DC40682B7A416A00834BC1 /* StreamChatChannelConfig.swift */,
 				84DC403C2B7A416600834BC1 /* ChannelConfigRequest.swift */,
 				84DC40C02B7A417500834BC1 /* ChannelConfigWithInfo.swift */,
 				84DC407D2B7A416C00834BC1 /* ChannelCreatedEvent.swift */,
@@ -11371,7 +11367,6 @@
 				AD52A21C2804851600D0157E /* CommandDTO.swift in Sources */,
 				792AF91624D812440010097B /* EntityDatabaseObserver.swift in Sources */,
 				84DC41A22B7A417A00834BC1 /* NotificationNewMessageEvent.swift in Sources */,
-				84DC41A62B7A417A00834BC1 /* StreamChatChannelConfig.swift in Sources */,
 				C1FC2F9D2742579D0062530F /* FoundationHTTPHandler.swift in Sources */,
 				84DC410E2B7A417A00834BC1 /* NotificationAddedToChannelEvent.swift in Sources */,
 				404296EB2A011B050089126D /* AudioSessionProtocol.swift in Sources */,
@@ -12668,7 +12663,6 @@
 				ADB951A2291BD7CC00800554 /* UploadedAttachment.swift in Sources */,
 				84DC42A12B7A417A00834BC1 /* UpdateMessagePartialResponse.swift in Sources */,
 				C121E8E1274544B100023E4C /* OptionalDecodable.swift in Sources */,
-				84DC41A72B7A417A00834BC1 /* StreamChatChannelConfig.swift in Sources */,
 				84DC40F72B7A417A00834BC1 /* TruncateChannelResponse.swift in Sources */,
 				C1CEF90A2A1CDF7600414931 /* UserUpdateMiddleware.swift in Sources */,
 				84DC427B2B7A417A00834BC1 /* Label.swift in Sources */,

@@ -29,7 +29,7 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
     }
 
     /// `ChannelConfig` that contains the feature flags of the channel.
-    public var channelConfig: StreamChatChannelConfig!
+    public var channelConfig: ChannelConfig!
 
     /// Message that should be shown in this view controller.
     open var message: ChatMessage? {

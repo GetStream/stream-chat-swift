@@ -339,7 +339,7 @@ open class ComposerVC: _ViewController,
     open var channelController: ChatChannelController?
 
     /// The channel config. If it's a new channel, an empty config should be created. (Not yet supported right now)
-    public var channelConfig: StreamChatChannelConfig? {
+    public var channelConfig: ChannelConfig? {
         channelController?.channel?.config
     }
 
