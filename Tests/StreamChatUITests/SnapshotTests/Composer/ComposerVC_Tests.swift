@@ -792,7 +792,7 @@ final class ComposerVC_Tests: XCTestCase {
         }
     }
 
-    func test_didChangeLinks_whenUrlDoesNotEqualToCurrentInput_thenDoNotCallDismissPreview() {
+    func test_didChangeLinks_whenEnrichFails_whenUrlDoesNotEqualToCurrentInput_thenDoNotCallDismissPreview() {
         let composerVC = SpyComposerVC()
         composerVC.components.isComposerLinkPreviewEnabled = true
         let mock = ChatChannelController_Mock.mock(client: .mock())
