@@ -5,19 +5,19 @@
 import CoreData
 import Foundation
 
-extension StreamChatUsersResponse: IdentifiablePayloadProxy {
+extension UsersResponse: IdentifiablePayloadProxy {
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         users.compactMap { $0 }.fillIds(cache: &cache)
     }
 }
 
-extension StreamChatChannelsResponse: IdentifiablePayloadProxy {
+extension ChannelsResponse: IdentifiablePayloadProxy {
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         channels.fillIds(cache: &cache)
     }
 }
 
-extension StreamChatChannelStateResponseFields: IdentifiablePayloadProxy {
+extension ChannelStateResponseFields: IdentifiablePayloadProxy {
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         addId(cache: &cache)
         channel?.fillIds(cache: &cache)
@@ -29,7 +29,7 @@ extension StreamChatChannelStateResponseFields: IdentifiablePayloadProxy {
     }
 }
 
-extension StreamChatChannelResponse: IdentifiablePayload {
+extension ChannelResponse: IdentifiablePayload {
     var databaseId: DatabaseId? { cid }
     static let modelClass: (IdentifiableDatabaseObject).Type? = ChannelDTO.self
 
@@ -41,7 +41,7 @@ extension StreamChatChannelResponse: IdentifiablePayload {
     }
 }
 
-extension StreamChatUserResponse: IdentifiablePayload {
+extension UserResponse: IdentifiablePayload {
     var databaseId: DatabaseId? { id }
     static let modelClass: (IdentifiableDatabaseObject).Type? = UserDTO.self
 
@@ -50,7 +50,7 @@ extension StreamChatUserResponse: IdentifiablePayload {
     }
 }
 
-extension StreamChatUserObject: IdentifiablePayload {
+extension UserObject: IdentifiablePayload {
     var databaseId: DatabaseId? { id }
     static let modelClass: (IdentifiableDatabaseObject).Type? = UserDTO.self
 
@@ -59,7 +59,7 @@ extension StreamChatUserObject: IdentifiablePayload {
     }
 }
 
-extension StreamChatMessage: IdentifiablePayload {
+extension Message: IdentifiablePayload {
     var databaseId: DatabaseId? { id }
     static let modelClass: (IdentifiableDatabaseObject).Type? = MessageDTO.self
 
@@ -76,7 +76,7 @@ extension StreamChatMessage: IdentifiablePayload {
     }
 }
 
-extension StreamChatReaction: IdentifiablePayload {
+extension Reaction: IdentifiablePayload {
     var databaseId: DatabaseId? {
         if let userId = user?.id {
             return MessageReactionDTO.createId(
@@ -97,7 +97,7 @@ extension StreamChatReaction: IdentifiablePayload {
     }
 }
 
-extension StreamChatChannelMember: IdentifiablePayload {
+extension ChannelMember: IdentifiablePayload {
     var databaseId: DatabaseId? { nil } // Cannot build id without channel id
     static let modelClass: (IdentifiableDatabaseObject).Type? = MemberDTO.self
 
@@ -107,7 +107,7 @@ extension StreamChatChannelMember: IdentifiablePayload {
     }
 }
 
-extension StreamChatRead: IdentifiablePayload {
+extension Read: IdentifiablePayload {
     var databaseId: DatabaseId? { nil } // Needs a composed predicate 'channel.cid == %@ && user.id == %@'
     static let modelClass: (IdentifiableDatabaseObject).Type? = ChannelReadDTO.self
 
@@ -117,31 +117,31 @@ extension StreamChatRead: IdentifiablePayload {
     }
 }
 
-extension StreamChatMembersResponse: IdentifiablePayloadProxy {
+extension MembersResponse: IdentifiablePayloadProxy {
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         members.compactMap { $0 }.fillIds(cache: &cache)
     }
 }
 
-extension StreamChatGetRepliesResponse: IdentifiablePayloadProxy {
+extension GetRepliesResponse: IdentifiablePayloadProxy {
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         messages.fillIds(cache: &cache)
     }
 }
 
-extension StreamChatGetReactionsResponse: IdentifiablePayloadProxy {
+extension GetReactionsResponse: IdentifiablePayloadProxy {
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         reactions.compactMap { $0 }.fillIds(cache: &cache)
     }
 }
 
-extension StreamChatSearchResponse: IdentifiablePayloadProxy {
+extension SearchResponse: IdentifiablePayloadProxy {
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         results.compactMap { $0 }.fillIds(cache: &cache)
     }
 }
 
-extension StreamChatSearchResult: IdentifiablePayloadProxy {
+extension SearchResult: IdentifiablePayloadProxy {
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         message?.toMessage.fillIds(cache: &cache)
     }

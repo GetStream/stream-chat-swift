@@ -64,11 +64,11 @@ class TypingEventsSender: Worker {
         typingInfo = .init(channelId: cid, parentMessageId: parentMessageId)
         currentUserLastTypingDate = timer.currentTime()
 
-        let eventRequest = StreamChatEventRequest(
+        let eventRequest = EventRequest(
             type: EventType.userStartTyping.rawValue,
             parentId: parentMessageId
         )
-        let request = StreamChatSendEventRequest(event: eventRequest)
+        let request = SendEventRequest(event: eventRequest)
         
         api.sendEvent(type: cid.type.rawValue, id: cid.id, sendEventRequest: request) {
             completion?($0.error)
@@ -84,11 +84,11 @@ class TypingEventsSender: Worker {
 
         typingInfo = nil
 
-        let eventRequest = StreamChatEventRequest(
+        let eventRequest = EventRequest(
             type: EventType.userStopTyping.rawValue,
             parentId: parentMessageId
         )
-        let request = StreamChatSendEventRequest(event: eventRequest)
+        let request = SendEventRequest(event: eventRequest)
 
         api.sendEvent(type: cid.type.rawValue, id: cid.id, sendEventRequest: request) {
             completion?($0.error)

@@ -5,18 +5,18 @@
 import Foundation
 
 protocol EventContainsMessage {
-    var message: StreamChatMessage? { get }
+    var message: Message? { get }
     var type: String { get }
     var channelId: String { get }
     var cid: String { get }
 }
 
 protocol EventContainsUser {
-    var user: StreamChatUserObject? { get }
+    var user: UserObject? { get }
 }
 
 protocol EventContainsChannel {
-    var channel: StreamChatChannelResponse? { get }
+    var channel: ChannelResponse? { get }
 }
 
 protocol EventContainsUnreadCount {
@@ -25,7 +25,7 @@ protocol EventContainsUnreadCount {
 }
 
 protocol EventContainsCurrentUser {
-    var me: StreamChatOwnUser? { get }
+    var me: OwnUser? { get }
 }
 
 protocol EventContainsCreationDate {
@@ -34,9 +34,9 @@ protocol EventContainsCreationDate {
 
 protocol EventContainsWatchInfo {
     var cid: String { get }
-    var user: StreamChatUserObject? { get }
-    var watcherCount: Int? { get }
+    var user: UserObject? { get }
+    var watcherCount: Int { get }
 }
 
-extension StreamChatUserWatchingStartEvent: EventContainsWatchInfo {}
-extension StreamChatUserWatchingStopEvent: EventContainsWatchInfo {}
+extension UserWatchingStartEvent: EventContainsWatchInfo {}
+extension UserWatchingStopEvent: EventContainsWatchInfo {}

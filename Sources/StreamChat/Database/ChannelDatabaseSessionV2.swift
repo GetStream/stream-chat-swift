@@ -8,110 +8,110 @@ protocol ChannelDatabaseSessionV2 {
     /// Creates `ChannelDTO` objects for the given channel payloads and `query`. ignores items that could not be saved
     @discardableResult
     func saveChannelList(
-        payload: StreamChatChannelsResponse?,
+        payload: ChannelsResponse?,
         query: ChannelListQuery?
     ) -> [ChannelDTO]
     
     @discardableResult
     func saveChannel(
-        payload: StreamChatChannelResponse,
+        payload: ChannelResponse,
         query: ChannelListQuery?,
         cache: PreWarmedCache?
     ) throws -> ChannelDTO
     
     @discardableResult
     func saveChannel(
-        payload: StreamChatChannelStateResponseFields,
+        payload: ChannelStateResponseFields,
         query: ChannelListQuery?,
         cache: PreWarmedCache?
     ) throws -> ChannelDTO
     
     @discardableResult
     func saveUser(
-        payload: StreamChatUserObject,
+        payload: UserObject,
         query: UserListQuery?,
         cache: PreWarmedCache?
     ) throws -> UserDTO
     
     @discardableResult
     func saveMember(
-        payload: StreamChatChannelMember,
+        payload: ChannelMember,
         channelId: ChannelId,
         query: ChannelMemberListQuery?,
         cache: PreWarmedCache?
     ) throws -> MemberDTO
     
     func saveMessage(
-        payload: StreamChatMessage,
+        payload: Message,
         channelDTO: ChannelDTO,
         syncOwnReactions: Bool,
         cache: PreWarmedCache?
     ) throws -> MessageDTO
     
     func saveChannelRead(
-        payload: StreamChatRead?,
+        payload: Read?,
         for cid: String?,
         cache: PreWarmedCache?
     ) throws -> ChannelReadDTO
     
     @discardableResult
     func saveReaction(
-        payload: StreamChatReaction?,
+        payload: Reaction?,
         cache: PreWarmedCache?
     ) throws -> MessageReactionDTO
     
     func saveAttachment(
-        payload: StreamChatAttachment?,
+        payload: Attachment?,
         id: AttachmentId
     ) throws -> AttachmentDTO
     
     @discardableResult
     func saveMessage(
-        payload: StreamChatMessage,
+        payload: Message,
         for cid: ChannelId?,
         syncOwnReactions: Bool,
         cache: PreWarmedCache?
     ) throws -> MessageDTO
     
     @discardableResult
-    func saveCurrentUser(payload: StreamChatOwnUser) throws -> CurrentUserDTO
+    func saveCurrentUser(payload: OwnUser) throws -> CurrentUserDTO
     
     @discardableResult
     func saveMembers(
-        payload: StreamChatMembersResponse,
+        payload: MembersResponse,
         channelId: ChannelId,
         query: ChannelMemberListQuery?
     ) -> [MemberDTO]
     
     @discardableResult
     func saveCurrentUserDevices(
-        _ devices: [StreamChatDevice],
+        _ devices: [PNDevice],
         clearExisting: Bool
     ) throws -> [DeviceDTO]
     
     func saveMessages(
-        messagesPayload: StreamChatGetRepliesResponse,
+        messagesPayload: GetRepliesResponse,
         for cid: ChannelId?,
         syncOwnReactions: Bool
     ) -> [MessageDTO]
     
     func saveReactions(
-        payload: StreamChatGetReactionsResponse
+        payload: GetReactionsResponse
     ) -> [MessageReactionDTO]
     
     @discardableResult
     func saveMessageSearch(
-        payload: StreamChatSearchResponse,
+        payload: SearchResponse,
         for query: MessageSearchQuery
     ) -> [MessageDTO]
     
     @discardableResult
-    func saveUsers(payload: StreamChatUsersResponse, query: UserListQuery?) -> [UserDTO]
+    func saveUsers(payload: UsersResponse, query: UserListQuery?) -> [UserDTO]
 }
 
 extension NSManagedObjectContext {
     func saveChannelList(
-        payload: StreamChatChannelsResponse?,
+        payload: ChannelsResponse?,
         query: ChannelListQuery?
     ) -> [ChannelDTO] {
         guard let payload else { return [] }
@@ -132,7 +132,7 @@ extension NSManagedObjectContext {
 
     @discardableResult
     func saveChannel(
-        payload: StreamChatChannelResponse,
+        payload: ChannelResponse,
         query: ChannelListQuery?,
         cache: PreWarmedCache?
     ) throws -> ChannelDTO {
@@ -213,7 +213,7 @@ extension NSManagedObjectContext {
     }
 
     func saveChannel(
-        payload: StreamChatChannelStateResponseFields,
+        payload: ChannelStateResponseFields,
         query: ChannelListQuery?,
         cache: PreWarmedCache?
     ) throws -> ChannelDTO {
@@ -286,7 +286,7 @@ extension NSManagedObjectContext {
     }
 }
 
-extension StreamChatChannelConfigWithInfo {
+extension ChannelConfigWithInfo {
     func asDTO(context: NSManagedObjectContext, cid: String) -> ChannelConfigDTO {
         let request = NSFetchRequest<ChannelConfigDTO>(entityName: ChannelConfigDTO.entityName)
         request.predicate = NSPredicate(format: "channel.cid == %@", cid)
@@ -331,7 +331,7 @@ extension StreamChatCommand {
 extension NSManagedObjectContext {
     @discardableResult
     func saveUser(
-        payload: StreamChatUserObject,
+        payload: UserObject,
         query: UserListQuery?,
         cache: PreWarmedCache?
     ) throws -> UserDTO {
@@ -368,7 +368,7 @@ extension NSManagedObjectContext {
     }
     
     func saveMember(
-        payload: StreamChatChannelMember,
+        payload: ChannelMember,
         channelId: ChannelId,
         query: ChannelMemberListQuery?,
         cache: PreWarmedCache?
@@ -407,7 +407,7 @@ extension NSManagedObjectContext {
 
 extension NSManagedObjectContext {
     func saveMessage(
-        payload: StreamChatMessage,
+        payload: Message,
         channelDTO: ChannelDTO,
         syncOwnReactions: Bool,
         cache: PreWarmedCache?
@@ -572,7 +572,7 @@ extension NSManagedObjectContext {
 }
 
 extension ChannelDTO {
-    func needsPreviewUpdate(_ payload: StreamChatChannelStateResponseFields) -> Bool {
+    func needsPreviewUpdate(_ payload: ChannelStateResponseFields) -> Bool {
         guard let first = payload.messages.first, let last = payload.messages.last else { return false }
 
         let newestMessage = first.createdAt > last.createdAt ? first : last
@@ -584,7 +584,7 @@ extension ChannelDTO {
         return newestMessage.createdAt > preview.createdAt.bridgeDate
     }
     
-    func updateOldestMessageAt(payload: StreamChatChannelStateResponseFields) {
+    func updateOldestMessageAt(payload: ChannelStateResponseFields) {
         guard let payloadOldestMessageAt = payload.messages.map(\.createdAt).min() else { return }
         let isOlderThanCurrentOldestMessage = payloadOldestMessageAt < (oldestMessageAt?.bridgeDate ?? Date.distantFuture)
         if isOlderThanCurrentOldestMessage {
@@ -595,7 +595,7 @@ extension ChannelDTO {
 
 extension NSManagedObjectContext {
     func saveChannelRead(
-        payload: StreamChatRead?,
+        payload: Read?,
         for cid: String?,
         cache: PreWarmedCache?
     ) throws -> ChannelReadDTO {
@@ -617,7 +617,7 @@ extension NSManagedObjectContext {
 extension NSManagedObjectContext {
     @discardableResult
     func saveReaction(
-        payload: StreamChatReaction?,
+        payload: Reaction?,
         cache: PreWarmedCache?
     ) throws -> MessageReactionDTO {
         guard let payload, let user = payload.user, let messageDTO = message(id: payload.messageId) else {
@@ -645,7 +645,7 @@ extension NSManagedObjectContext {
 
 extension NSManagedObjectContext {
     func saveAttachment(
-        payload: StreamChatAttachment?,
+        payload: Attachment?,
         id: AttachmentId
     ) throws -> AttachmentDTO {
         guard let payload, let messageDTO = message(id: id.messageId) else {
@@ -669,7 +669,7 @@ extension NSManagedObjectContext {
 
 extension NSManagedObjectContext {
     func saveMessage(
-        payload: StreamChatMessage,
+        payload: Message,
         for cid: ChannelId?,
         syncOwnReactions: Bool = true,
         cache: PreWarmedCache?
@@ -695,7 +695,7 @@ extension NSManagedObjectContext {
 }
 
 extension NSManagedObjectContext {
-    func saveCurrentUser(payload: StreamChatOwnUser) throws -> CurrentUserDTO {
+    func saveCurrentUser(payload: OwnUser) throws -> CurrentUserDTO {
         let dto = CurrentUserDTO.loadOrCreate(context: self)
         dto.user = try saveUser(payload: payload, query: nil, cache: nil)
         dto.isInvisible = payload.invisible ?? false
@@ -730,7 +730,7 @@ extension NSManagedObjectContext {
 
 extension NSManagedObjectContext {
     @discardableResult
-    func saveChannelMute(payload: StreamChatChannelMute?) throws -> ChannelMuteDTO {
+    func saveChannelMute(payload: ChannelMute?) throws -> ChannelMuteDTO {
         guard let currentUser = currentUser, let payload, let mutedChannel = payload.channel else {
             throw ClientError.CurrentUserDoesNotExist()
         }
@@ -748,7 +748,7 @@ extension NSManagedObjectContext {
 }
 
 extension NSManagedObjectContext {
-    func saveCurrentUserDevices(_ devices: [StreamChatDevice], clearExisting: Bool) throws -> [DeviceDTO] {
+    func saveCurrentUserDevices(_ devices: [PNDevice], clearExisting: Bool) throws -> [DeviceDTO] {
         guard let currentUser = currentUser else {
             throw ClientError.CurrentUserDoesNotExist()
         }
@@ -774,7 +774,7 @@ extension NSManagedObjectContext {
 extension NSManagedObjectContext {
     @discardableResult
     func saveUser(
-        payload: StreamChatOwnUser,
+        payload: OwnUser,
         query: UserListQuery?,
         cache: PreWarmedCache?
     ) throws -> UserDTO {
@@ -813,7 +813,7 @@ extension NSManagedObjectContext {
 
 extension NSManagedObjectContext {
     func saveMembers(
-        payload: StreamChatMembersResponse,
+        payload: MembersResponse,
         channelId: ChannelId,
         query: ChannelMemberListQuery?
     ) -> [MemberDTO] {
@@ -830,7 +830,7 @@ extension NSManagedObjectContext {
 
 extension NSManagedObjectContext {
     func saveMessages(
-        messagesPayload: StreamChatGetRepliesResponse,
+        messagesPayload: GetRepliesResponse,
         for cid: ChannelId?,
         syncOwnReactions: Bool = true
     ) -> [MessageDTO] {
@@ -843,7 +843,7 @@ extension NSManagedObjectContext {
 
 extension NSManagedObjectContext {
     @discardableResult
-    func saveReactions(payload: StreamChatGetReactionsResponse) -> [MessageReactionDTO] {
+    func saveReactions(payload: GetReactionsResponse) -> [MessageReactionDTO] {
         let cache = payload.getPayloadToModelIdMappings(context: self)
         return payload.reactions.compactMapLoggingError {
             try saveReaction(payload: $0, cache: cache)
@@ -852,7 +852,7 @@ extension NSManagedObjectContext {
 }
 
 extension NSManagedObjectContext {
-    func saveMessageSearch(payload: StreamChatSearchResponse, for query: MessageSearchQuery) -> [MessageDTO] {
+    func saveMessageSearch(payload: SearchResponse, for query: MessageSearchQuery) -> [MessageDTO] {
         let cache = payload.getPayloadToModelIdMappings(context: self)
         return payload.results.compactMapLoggingError {
             if let message = $0?.message {
@@ -869,7 +869,7 @@ extension NSManagedObjectContext {
 }
 
 extension NSManagedObjectContext {
-    func saveMessage(payload: StreamChatMessage, for query: MessageSearchQuery, cache: PreWarmedCache?) throws -> MessageDTO {
+    func saveMessage(payload: Message, for query: MessageSearchQuery, cache: PreWarmedCache?) throws -> MessageDTO {
         let cid = try ChannelId(cid: payload.cid)
         let messageDTO = try saveMessage(payload: payload, for: cid, cache: cache)
         messageDTO.searches.insert(saveQuery(query: query))
@@ -879,7 +879,7 @@ extension NSManagedObjectContext {
 
 extension NSManagedObjectContext {
     @discardableResult
-    func saveUsers(payload: StreamChatUsersResponse, query: UserListQuery?) -> [UserDTO] {
+    func saveUsers(payload: UsersResponse, query: UserListQuery?) -> [UserDTO] {
         let cache = payload.getPayloadToModelIdMappings(context: self)
         return payload.users.compactMapLoggingError {
             if let user = $0?.toUser {

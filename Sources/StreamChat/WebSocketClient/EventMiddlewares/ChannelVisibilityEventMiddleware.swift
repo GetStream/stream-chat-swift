@@ -9,7 +9,7 @@ struct ChannelVisibilityEventMiddleware: EventMiddleware {
     func handle(event: Event, session: DatabaseSession) -> Event? {
         do {
             switch event {
-            case let event as StreamChatChannelVisibleEvent:
+            case let event as ChannelVisibleEvent:
                 let cid = try ChannelId(cid: event.cid)
                 guard let channelDTO = session.channel(cid: cid) else {
                     throw ClientError.ChannelDoesNotExist(cid: cid)
@@ -17,7 +17,7 @@ struct ChannelVisibilityEventMiddleware: EventMiddleware {
 
                 channelDTO.isHidden = false
 
-            case let event as StreamChatChannelHiddenEvent:
+            case let event as ChannelHiddenEvent:
                 let cid = try ChannelId(cid: event.cid)
                 guard let channelDTO = session.channel(cid: cid) else {
                     throw ClientError.ChannelDoesNotExist(cid: cid)
@@ -31,7 +31,7 @@ struct ChannelVisibilityEventMiddleware: EventMiddleware {
 
             // New Message will unhide the channel
             // but we won't get `ChannelVisibleEvent` for this case
-            case let event as StreamChatMessageNewEvent:
+            case let event as MessageNewEvent:
                 let cid = try ChannelId(cid: event.cid)
                 guard let channelDTO = session.channel(cid: cid) else {
                     throw ClientError.ChannelDoesNotExist(cid: cid)
@@ -43,7 +43,7 @@ struct ChannelVisibilityEventMiddleware: EventMiddleware {
 
             // New Message will unhide the channel
             // but we won't get `ChannelVisibleEvent` for this case
-            case let event as StreamChatNotificationNewMessageEvent:
+            case let event as NotificationNewMessageEvent:
                 guard let channel = event.channel,
                       let cid = try? ChannelId(cid: channel.cid),
                       let channelDTO = session.channel(cid: cid) else {

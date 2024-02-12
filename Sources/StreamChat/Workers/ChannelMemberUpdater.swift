@@ -22,7 +22,7 @@ class ChannelMemberUpdater: Worker {
         reason: String? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
-        let request = StreamChatBanRequest(
+        let request = BanRequest(
             targetUserId: userId,
             id: cid.id,
             reason: reason,

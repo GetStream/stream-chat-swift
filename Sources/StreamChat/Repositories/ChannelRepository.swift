@@ -23,7 +23,7 @@ class ChannelRepository {
         api.markRead(
             type: cid.type.rawValue,
             id: cid.id,
-            markReadRequest: StreamChatMarkReadRequest()
+            markReadRequest: MarkReadRequest()
         ) { [weak self] result in
             if let error = result.error {
                 completion?(error)
@@ -56,7 +56,7 @@ class ChannelRepository {
         api.markUnread(
             type: cid.type.rawValue,
             id: cid.id,
-            markUnreadRequest: StreamChatMarkUnreadRequest(messageId: messageId, userId: userId)
+            markUnreadRequest: MarkUnreadRequest(messageId: messageId, userId: userId)
         ) { [weak self] result in
             if let error = result.error {
                 completion?(.failure(error))

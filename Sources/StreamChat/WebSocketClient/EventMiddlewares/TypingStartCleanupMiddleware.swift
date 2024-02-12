@@ -30,7 +30,7 @@ class TypingStartCleanupMiddleware: EventMiddleware {
     func handle(event: Event, session: DatabaseSession) -> Event? {
         // Skip other events and typing events from currentUserId.
         let currentUserId = session.currentUser?.user.id
-        guard let typingEvent = event as? StreamChatTypingStartEvent,
+        guard let typingEvent = event as? TypingStartEvent,
               let userId = typingEvent.user?.id,
               let cid = try? ChannelId(cid: typingEvent.cid),
               currentUserId != userId else {
@@ -42,7 +42,7 @@ class TypingStartCleanupMiddleware: EventMiddleware {
             $0[userId] = nil
 
             let stopTyping = { [weak self] in
-                let typingStopEvent = StreamChatTypingStopEvent(
+                let typingStopEvent = TypingStopEvent(
                     channelId: cid.id,
                     channelType: cid.type.rawValue,
                     cid: cid.rawValue,

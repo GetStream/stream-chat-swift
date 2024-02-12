@@ -16,7 +16,7 @@ protocol MessagesPaginationStateHandling {
     func end(pagination: MessagesPagination, with result: Result<[MessagePayload], Error>)
     
     // TODO: remove the upper one.
-    func end(pagination: MessagesPagination, with result: Result<[StreamChatMessage], Error>)
+    func end(pagination: MessagesPagination, with result: Result<[Message], Error>)
 }
 
 /// A component responsible for handling the messages pagination state.
@@ -104,7 +104,7 @@ class MessagesPaginationStateHandler: MessagesPaginationStateHandling {
 //        }
     }
     
-    func end(pagination: MessagesPagination, with result: Result<[StreamChatMessage], Error>) {
+    func end(pagination: MessagesPagination, with result: Result<[Message], Error>) {
         state.isLoadingNextMessages = false
         state.isLoadingMiddleMessages = false
         state.isLoadingPreviousMessages = false
@@ -164,7 +164,7 @@ class MessagesPaginationStateHandler: MessagesPaginationStateHandling {
     ///   from the backend, this logic wouldn't be required. But until then we need to do this.
     private func calculateHasLoadedAllMessagesBasedOnTheLocation(
         of aroundMessageId: MessageId,
-        given messages: [StreamChatMessage]
+        given messages: [Message]
     ) {
         guard !messages.isEmpty else {
             return

@@ -408,7 +408,7 @@ open class ChatThreadVC: _ViewController,
 
     open func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
         switch event {
-        case let event as StreamChatTypingStartEvent:
+        case let event as TypingStartEvent:
             guard event.parentId == messageController.messageId && event.user?.id != client.currentUserId, let user = event.user?.toChatUser else { return }
             currentlyTypingUsers.insert(user)
             
@@ -417,7 +417,7 @@ open class ChatThreadVC: _ViewController,
             } else {
                 messageListVC.showTypingIndicator(typingUsers: Array(currentlyTypingUsers))
             }
-        case let event as StreamChatTypingStopEvent:
+        case let event as TypingStopEvent:
             guard event.parentId == messageController.messageId && event.user?.id != client.currentUserId, let user = event.user?.toChatUser else { return }
             currentlyTypingUsers.remove(user)
             

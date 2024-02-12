@@ -8,7 +8,7 @@ import CoreData
 struct UserTypingStateUpdaterMiddleware: EventMiddleware {
     func handle(event: Event, session: DatabaseSession) -> Event? {
         switch event {
-        case let event as StreamChatTypingStartEvent:
+        case let event as TypingStartEvent:
             guard
                 let cid = try? ChannelId(cid: event.cid),
                 let channelDTO = session.channel(cid: cid),
@@ -17,7 +17,7 @@ struct UserTypingStateUpdaterMiddleware: EventMiddleware {
             else { break }
 
             channelDTO.currentlyTypingUsers.insert(userDTO)
-        case let event as StreamChatTypingStopEvent:
+        case let event as TypingStopEvent:
             guard
                 let cid = try? ChannelId(cid: event.cid),
                 let channelDTO = session.channel(cid: cid),
@@ -26,7 +26,7 @@ struct UserTypingStateUpdaterMiddleware: EventMiddleware {
             else { break }
 
             channelDTO.currentlyTypingUsers.remove(userDTO)
-        case let event as StreamChatTypingStopEvent:
+        case let event as TypingStopEvent:
             guard
                 let cid = try? ChannelId(cid: event.cid),
                 let channelDTO = session.channel(cid: cid),

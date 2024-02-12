@@ -6,9 +6,9 @@ import Foundation
 
 public struct EmptyResponse: Decodable {}
 
-extension StreamChatChannelStateResponse {
-    var toResponseFields: StreamChatChannelStateResponseFields {
-        StreamChatChannelStateResponseFields(
+extension ChannelStateResponse {
+    var toResponseFields: ChannelStateResponseFields {
+        ChannelStateResponseFields(
             members: members,
             messages: messages,
             pinnedMessages: pinnedMessages,
@@ -24,9 +24,9 @@ extension StreamChatChannelStateResponse {
     }
 }
 
-extension StreamChatSearchResultMessage {
-    var toMessage: StreamChatMessage {
-        StreamChatMessage(
+extension SearchResultMessage {
+    var toMessage: Message {
+        Message(
             cid: cid,
             createdAt: createdAt,
             deletedReplyCount: deletedReplyCount,
@@ -65,9 +65,9 @@ extension StreamChatSearchResultMessage {
     }
 }
 
-extension StreamChatUserResponse {
-    var toUser: StreamChatUserObject {
-        StreamChatUserObject(
+extension UserResponse {
+    var toUser: UserObject {
+        UserObject(
             id: id,
             banExpires: banExpires,
             banned: banned,
@@ -88,7 +88,7 @@ extension StreamChatUserResponse {
     }
 }
 
-public extension StreamChatUserObject {
+public extension UserObject {
     var toChatUser: ChatUser {
         ChatUser(
             id: id,

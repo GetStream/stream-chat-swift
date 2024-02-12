@@ -192,7 +192,7 @@ extension WebSocketClient: WebSocketEngineDelegate {
             log.debug("Event received:\n\(messageData.debugPrettyPrintedJSON)", subsystems: .webSocket)
 
             let event = try eventDecoder.decode(from: messageData)
-            if let healthCheckEvent = event as? StreamChatHealthCheckEvent {
+            if let healthCheckEvent = event as? HealthCheckEvent {
                 eventNotificationCenter.process(healthCheckEvent, postNotification: false) { [weak self] in
                     self?.engineQueue.async { [weak self] in
                         self?.pingController.pongReceived()

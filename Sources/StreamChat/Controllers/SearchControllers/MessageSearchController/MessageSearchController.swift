@@ -242,7 +242,7 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
         }
     }
 
-    private func updateNextPageCursor(with payload: StreamChatSearchResponse) {
+    private func updateNextPageCursor(with payload: SearchResponse) {
         nextPageCursor = payload.next
     }
 }

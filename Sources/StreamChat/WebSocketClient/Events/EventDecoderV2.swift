@@ -9,7 +9,7 @@ struct EventDecoderV2: AnyEventDecoder {
     func decode(from data: Data) throws -> Event {
         let decoder = JSONDecoder.default
         do {
-            let response = try decoder.decode(StreamChatWSEvent.self, from: data)
+            let response = try decoder.decode(WSEvent.self, from: data)
             return response.rawValue
         } catch is ClientError.UnknownChannelEvent {
             return try decoder.decode(UnknownChannelEvent.self, from: data)

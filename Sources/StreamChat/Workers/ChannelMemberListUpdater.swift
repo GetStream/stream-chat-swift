@@ -23,10 +23,10 @@ class ChannelMemberListUpdater: Worker {
             }
             
             let sort = query.sort.map { sortingKey in
-                StreamChatSortParam(direction: sortingKey.direction, field: sortingKey.key.rawValue)
+                SortParam(direction: sortingKey.direction, field: sortingKey.key.rawValue)
             }
             
-            let request = StreamChatQueryMembersRequest(
+            let request = QueryMembersRequest(
                 type: query.cid.type.rawValue,
                 filterConditions: filter ?? [:],
                 id: query.cid.id,
@@ -67,7 +67,7 @@ private extension ChannelMemberListUpdater {
         let query = ChannelQuery(cid: cid)
         api.getOrCreateChannel(
             type: query.apiPath,
-            channelGetOrCreateRequest: StreamChatChannelGetOrCreateRequest(),
+            channelGetOrCreateRequest: ChannelGetOrCreateRequest(),
             requiresConnectionId: true
         ) { [weak self] result in
             switch result {

@@ -38,7 +38,7 @@ class CurrentUserUpdater: Worker {
         if let imageURL {
             custom["image"] = .string(imageURL.absoluteString)
         }
-        let request = StreamChatUpdateUserPartialRequest(id: currentUserId, unset: [], set: custom)
+        let request = UpdateUserPartialRequest(id: currentUserId, unset: [], set: custom)
         // TODO: The generated request is not correct.
         api.updateUsersPartial(updateUserPartialRequest: request) { [weak self] in
             switch $0 {
@@ -76,7 +76,7 @@ class CurrentUserUpdater: Worker {
             try session.saveCurrentDevice(deviceId)
         }
 
-        let request = StreamChatCreateDeviceRequest(
+        let request = CreateDeviceRequest(
             id: deviceId,
             pushProvider: pushProvider.rawValue,
             pushProviderName: providerName
@@ -131,7 +131,7 @@ class CurrentUserUpdater: Worker {
     /// Marks all channels for a user as read.
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func markAllRead(completion: ((Error?) -> Void)? = nil) {
-        api.markChannelsRead(markChannelsReadRequest: StreamChatMarkChannelsReadRequest()) {
+        api.markChannelsRead(markChannelsReadRequest: MarkChannelsReadRequest()) {
             completion?($0.error)
         }
     }

@@ -195,7 +195,7 @@ extension AttachmentDTO {
         return .init(type: attachmentType, payload: payload)
     }
     
-    func asRequestPayload() -> StreamChatAttachmentRequest? {
+    func asRequestPayload() -> AttachmentRequest? {
         guard
             let payload = try? JSONDecoder.default.decode(RawJSON.self, from: data)
         else {

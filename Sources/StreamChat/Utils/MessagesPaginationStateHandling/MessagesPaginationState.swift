@@ -9,9 +9,9 @@ struct MessagesPaginationState {
     // MARK: State
 
     /// The oldest fetched message while paginating.
-    var oldestFetchedMessage: StreamChatMessage?
+    var oldestFetchedMessage: Message?
     /// The newest fetched message while paginating.
-    var newestFetchedMessage: StreamChatMessage?
+    var newestFetchedMessage: Message?
 
     /// A Boolean value that returns whether the newest messages have all been loaded or not.
     /// If false, it means that the channel is currently in a mid-page.

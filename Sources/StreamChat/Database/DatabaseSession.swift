@@ -111,7 +111,7 @@ protocol MessageDatabaseSession {
     
     @discardableResult
     func saveMessage(
-        payload: StreamChatMessage,
+        payload: Message,
         for cid: ChannelId?,
         syncOwnReactions: Bool,
         cache: PreWarmedCache?
@@ -459,14 +459,14 @@ extension DatabaseSession {
         if let userEvent = event as? EventContainsUser,
            let currentUser = self.currentUser,
            currentUser.user.id == userEvent.user?.id {
-            if let newReaction = event as? StreamChatReactionNewEvent {
+            if let newReaction = event as? ReactionNewEvent {
                 let reaction = try saveReaction(payload: newReaction.reaction, cache: nil)
                 if !reaction.message.ownReactions.contains(reaction.id) {
                     reaction.message.ownReactions.append(reaction.id)
                 }
-            } else if let updatedReaction = event as? StreamChatReactionUpdatedEvent {
+            } else if let updatedReaction = event as? ReactionUpdatedEvent {
                 try saveReaction(payload: updatedReaction.reaction, cache: nil)
-            } else if let deletedReaction = event as? StreamChatReactionDeletedEvent,
+            } else if let deletedReaction = event as? ReactionDeletedEvent,
                       let messageId = deletedReaction.message?.id,
                       let userId = deletedReaction.user?.id {
                 if let dto = reaction(
@@ -512,7 +512,7 @@ extension DatabaseSession {
             cache: nil
         )
 
-        if eventType == .messageDeleted, let deletedEvent = event as? StreamChatMessageDeletedEvent, deletedEvent.hardDelete {
+        if eventType == .messageDeleted, let deletedEvent = event as? MessageDeletedEvent, deletedEvent.hardDelete {
             // We should in fact delete it from the DB, but right now this produces a crash
             // This should be fixed in this ticket: https://stream-io.atlassian.net/browse/CIS-1963
             savedMessage.isHardDeleted = true
@@ -535,7 +535,7 @@ extension DatabaseSession {
     }
     
     func updateChannelPreview(from event: Event) {
-        if let newMessage = event as? StreamChatMessageNewEvent,
+        if let newMessage = event as? MessageNewEvent,
            let cid = try? ChannelId(cid: newMessage.cid),
            let channelDTO = channel(cid: cid) {
             let newPreview = preview(for: cid)

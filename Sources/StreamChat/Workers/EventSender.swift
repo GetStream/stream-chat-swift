@@ -20,11 +20,11 @@ class EventSender: Worker {
         do {
             let data = try JSONEncoder.default.encode(payload)
             let json = try JSONDecoder.default.decode([String: RawJSON].self, from: data)
-            let eventRequest = StreamChatEventRequest(
+            let eventRequest = EventRequest(
                 type: Payload.eventType.rawValue,
                 custom: json
             )
-            let request = StreamChatSendEventRequest(event: eventRequest)
+            let request = SendEventRequest(event: eventRequest)
             api.sendEvent(
                 type: cid.type.rawValue,
                 id: cid.id,

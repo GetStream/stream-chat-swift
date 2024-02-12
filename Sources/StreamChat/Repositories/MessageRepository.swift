@@ -47,7 +47,7 @@ class MessageRepository {
                 return
             }
 
-            let requestBody = dto.asRequestBody() as StreamChatMessageRequest
+            let requestBody = dto.asRequestBody() as MessageRequest
             let skipPush: Bool = dto.skipPush
             let skipEnrichUrl: Bool = dto.skipEnrichUrl
 
@@ -64,7 +64,7 @@ class MessageRepository {
                     return
                 }
                 
-                let sendMessageRequest = StreamChatSendMessageRequest(
+                let sendMessageRequest = SendMessageRequest(
                     message: requestBody,
                     skipEnrichUrl: skipEnrichUrl,
                     skipPush: skipPush
@@ -118,7 +118,7 @@ class MessageRepository {
     
     func saveSuccessfullySentMessage(
         cid: ChannelId,
-        message: StreamChatMessage,
+        message: Message,
         completion: @escaping (Result<ChatMessage, Error>) -> Void
     ) {
         database.write({
@@ -171,7 +171,7 @@ class MessageRepository {
         updateMessage(withID: id, localState: nil, completion: completion)
     }
 
-    func saveSuccessfullyDeletedMessage(message: StreamChatMessage, completion: ((Error?) -> Void)? = nil) {
+    func saveSuccessfullyDeletedMessage(message: Message, completion: ((Error?) -> Void)? = nil) {
         database.write({ session in
             guard let messageDTO = session.message(id: message.id), let cid = messageDTO.channel?.cid else { return }
             let deletedMessage = try session.saveMessage(

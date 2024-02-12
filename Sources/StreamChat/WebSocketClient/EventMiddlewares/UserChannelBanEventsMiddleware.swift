@@ -9,7 +9,7 @@ struct UserChannelBanEventsMiddleware: EventMiddleware {
     func handle(event: Event, session: DatabaseSession) -> Event? {
         do {
             switch event {
-            case let userBannedEvent as StreamChatUserBannedEvent:
+            case let userBannedEvent as UserBannedEvent:
                 guard let cid = try? ChannelId(cid: userBannedEvent.cid),
                       let userId = userBannedEvent.user?.id,
                       let memberDTO = session.member(userId: userId, cid: cid) else {
@@ -20,7 +20,7 @@ struct UserChannelBanEventsMiddleware: EventMiddleware {
                 memberDTO.banExpiresAt = userBannedEvent.expiration?.bridgeDate
                 memberDTO.isShadowBanned = userBannedEvent.shadow
 
-            case let userUnbannedEvent as StreamChatUserUnbannedEvent:
+            case let userUnbannedEvent as UserUnbannedEvent:
                 guard let cid = try? ChannelId(cid: userUnbannedEvent.cid),
                       let userId = userUnbannedEvent.user?.id,
                       let memberDTO = session.member(userId: userId, cid: cid) else {

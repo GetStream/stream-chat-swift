@@ -153,20 +153,20 @@ class OfflineRequestsRepository {
         let responseType = queuedRequest.responseType
         
         if responseType.value == .sendMessageResponse {
-            guard let messageResponse = decodeTo(StreamChatSendMessageResponse.self),
+            guard let messageResponse = decodeTo(SendMessageResponse.self),
                   let cid = try? ChannelId(cid: messageResponse.message.cid) else {
                 completion()
                 return
             }
             messageRepository.saveSuccessfullySentMessage(cid: cid, message: messageResponse.message) { _ in completion() }
         } else if responseType.value == .updateMessageResponse {
-            guard let messageResponse = decodeTo(StreamChatUpdateMessageResponse.self) else {
+            guard let messageResponse = decodeTo(UpdateMessageResponse.self) else {
                 completion()
                 return
             }
             messageRepository.saveSuccessfullyEditedMessage(for: messageResponse.message.id) { completion() }
         } else if responseType.value == .messageResponse && queuedRequest.method == "DELETE" {
-            guard let messageResponse = decodeTo(StreamChatMessageResponse.self),
+            guard let messageResponse = decodeTo(MessageResponse.self),
                   let message = messageResponse.message else {
                 completion()
                 return
@@ -260,11 +260,11 @@ struct ResponseType: Codable {
 }
 
 extension String {
-    static let updateMessageResponse = "StreamChatUpdateMessageResponse"
-    static let sendMessageResponse = "StreamChatSendMessageResponse"
-    static let messageResponse = "StreamChatMessageResponse"
-    static let reactionRemovalResponse = "StreamChatReactionRemovalResponse"
-    static let reactionResponse = "StreamChatReactionResponse"
+    static let updateMessageResponse = "UpdateMessageResponse"
+    static let sendMessageResponse = "SendMessageResponse"
+    static let messageResponse = "MessageResponse"
+    static let reactionRemovalResponse = "ReactionRemovalResponse"
+    static let reactionResponse = "ReactionResponse"
 }
 
 struct QueryItem: Codable {

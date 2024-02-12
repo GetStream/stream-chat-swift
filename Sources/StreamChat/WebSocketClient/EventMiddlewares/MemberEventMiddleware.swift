@@ -9,7 +9,7 @@ struct MemberEventMiddleware: EventMiddleware {
     func handle(event: Event, session: DatabaseSession) -> Event? {
         do {
             switch event {
-            case let event as StreamChatMemberUpdatedEvent:
+            case let event as MemberUpdatedEvent:
                 let cid = try ChannelId(cid: event.cid)
                 if let member = event.member {
                     try session.saveMember(
@@ -20,7 +20,7 @@ struct MemberEventMiddleware: EventMiddleware {
                     )
                 }
 
-            case let event as StreamChatMemberAddedEvent:
+            case let event as MemberAddedEvent:
                 let cid = try ChannelId(cid: event.cid)
                 if let channel = session.channel(cid: cid), let member = event.member {
                     let member = try session.saveMember(
@@ -33,7 +33,7 @@ struct MemberEventMiddleware: EventMiddleware {
                     insertMemberToMemberListQueries(channel, member)
                 }
 
-            case let event as StreamChatMemberRemovedEvent:
+            case let event as MemberRemovedEvent:
                 guard let cid = try? ChannelId(cid: event.cid),
                       let channel = session.channel(cid: cid) else {
                     // No need to throw ChannelNotFound error here
@@ -60,7 +60,7 @@ struct MemberEventMiddleware: EventMiddleware {
                 // we need to update them too
                 member.queries.removeAll()
 
-            case let event as StreamChatNotificationAddedToChannelEvent:
+            case let event as NotificationAddedToChannelEvent:
                 guard let channelResponse = event.channel,
                       let cid = try? ChannelId(cid: channelResponse.cid),
                       let memberResponse = event.member else { return event }
@@ -79,7 +79,7 @@ struct MemberEventMiddleware: EventMiddleware {
 
                 insertMemberToMemberListQueries(channel, member)
 
-            case let event as StreamChatNotificationRemovedFromChannelEvent:
+            case let event as NotificationRemovedFromChannelEvent:
                 guard let cid = try? ChannelId(cid: event.cid),
                       let channel = session.channel(cid: cid) else {
                     // No need to throw ChannelNotFound error here
@@ -102,7 +102,7 @@ struct MemberEventMiddleware: EventMiddleware {
                 // we need to update them too
                 member.queries.removeAll()
 
-            case let event as StreamChatNotificationInviteAcceptedEvent:
+            case let event as NotificationInviteAcceptedEvent:
                 guard let channelPayload = event.channel,
                       let cid = try? ChannelId(cid: channelPayload.cid),
                       let memberPayload = event.member else { return event }
@@ -115,7 +115,7 @@ struct MemberEventMiddleware: EventMiddleware {
                 )
                 channel.membership = member
 
-            case let event as StreamChatNotificationInviteRejectedEvent:
+            case let event as NotificationInviteRejectedEvent:
                 guard let channelPayload = event.channel,
                       let cid = try? ChannelId(cid: channelPayload.cid),
                       let memberPayload = event.member else { return event }
@@ -128,7 +128,7 @@ struct MemberEventMiddleware: EventMiddleware {
                 )
                 channel.membership = member
 
-            case let event as StreamChatNotificationInvitedEvent:
+            case let event as NotificationInvitedEvent:
                 guard let cid = try? ChannelId(cid: event.cid),
                       let channel = session.channel(cid: cid),
                       let memberPayload = event.member else {

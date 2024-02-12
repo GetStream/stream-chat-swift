@@ -389,8 +389,8 @@ class AuthenticationRepository {
         if let imageURL = userInfo.imageURL?.absoluteString {
             custom["image"] = .string(imageURL)
         }
-        let user = StreamChatUserObjectRequest(id: userInfo.id, custom: custom)
-        let request = StreamChatGuestRequest(user: user)
+        let user = UserObjectRequest(id: userInfo.id, custom: custom)
+        let request = GuestRequest(user: user)
         
         /// We need to ensure that the request to fetch the userToken will be executed. As APIClient's
         /// operationQueue may be suspended (due to the getToken operation) we are firing an

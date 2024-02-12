@@ -1082,7 +1082,7 @@ extension MessageDTO {
         )
     }
     
-    func asRequestBody() -> StreamChatMessageRequest {
+    func asRequestBody() -> MessageRequest {
         var decodedExtraData: [String: RawJSON]
 
         if let extraData = self.extraData {
@@ -1099,10 +1099,10 @@ extension MessageDTO {
             decodedExtraData = [:]
         }
 
-        let attachments: [StreamChatAttachmentRequest] = attachments
+        let attachments: [AttachmentRequest] = attachments
             .sorted { ($0.attachmentID?.index ?? 0) < ($1.attachmentID?.index ?? 0) }
             .compactMap { $0.asRequestPayload() }
-        let messageRequest = StreamChatMessageRequest(
+        let messageRequest = MessageRequest(
             attachments: attachments,
             id: id,
             parentId: parentMessageId,

@@ -75,9 +75,9 @@ class MessageEditor: Worker {
                 return
             }
 
-            let requestBody = dto.asRequestBody() as StreamChatMessageRequest
+            let requestBody = dto.asRequestBody() as MessageRequest
             messageRepository?.updateMessage(withID: messageId, localState: .syncing) {
-                let request = StreamChatUpdateMessageRequest(
+                let request = UpdateMessageRequest(
                     message: requestBody,
                     skipEnrichUrl: dto.skipEnrichUrl
                 )

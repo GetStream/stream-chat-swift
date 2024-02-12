@@ -44,7 +44,7 @@ class ChannelUpdater: Worker {
         channelQuery: ChannelQuery,
         isInRecoveryMode: Bool,
         onChannelCreated: ((ChannelId) -> Void)? = nil,
-        completion: ((Result<StreamChatChannelStateResponse, Error>) -> Void)? = nil
+        completion: ((Result<ChannelStateResponse, Error>) -> Void)? = nil
     ) {
         if let pagination = channelQuery.pagination {
             paginationStateHandler.begin(pagination: pagination)
@@ -53,7 +53,7 @@ class ChannelUpdater: Worker {
         let didLoadFirstPage = channelQuery.pagination?.parameter == nil
         let didJumpToMessage: Bool = channelQuery.pagination?.parameter?.isJumpingToMessage == true
 
-        let completion: (Result<StreamChatChannelStateResponse, Error>) -> Void = { [weak database] result in
+        let completion: (Result<ChannelStateResponse, Error>) -> Void = { [weak database] result in
             do {
                 if let pagination = channelQuery.pagination {
                     self.paginationStateHandler.end(pagination: pagination, with: result.map(\.messages))
@@ -90,17 +90,17 @@ class ChannelUpdater: Worker {
         let requiresConnectionId = channelQuery.options.contains(oneOf: [.presence, .state, .watch])
         
         let payload = channelQuery.channelPayload
-        let members = payload?.members.map { StreamChatChannelMemberRequest(userId: $0) }
-        let data = StreamChatChannelRequest(
+        let members = payload?.members.map { ChannelMemberRequest(userId: $0) }
+        let data = ChannelRequest(
             team: payload?.team,
             members: members,
             custom: payload?.extraData
         )
         
-        let membersLimit = StreamChatPaginationParamsRequest(limit: channelQuery.membersLimit)
+        let membersLimit = PaginationParamsRequest(limit: channelQuery.membersLimit)
         
         let parameters = channelQuery.pagination?.parameter?.parameters
-        let messages = StreamChatMessagePaginationParamsRequest(
+        let messages = MessagePaginationParamsRequest(
             idAround: parameters?["id_around"] as? String,
             idGt: parameters?["id_gt"] as? String,
             idGte: parameters?["id_gte"] as? String,
@@ -109,9 +109,9 @@ class ChannelUpdater: Worker {
             limit: channelQuery.pagination?.pageSize
         )
         
-        let watchersLimit = StreamChatPaginationParamsRequest(limit: channelQuery.watchersLimit)
+        let watchersLimit = PaginationParamsRequest(limit: channelQuery.watchersLimit)
         
-        let request = StreamChatChannelGetOrCreateRequest(
+        let request = ChannelGetOrCreateRequest(
             presence: channelQuery.options.contains([.presence]),
             state: channelQuery.options.contains([.state]),
             watch: channelQuery.options.contains([.watch]),
@@ -144,17 +144,17 @@ class ChannelUpdater: Worker {
             extraData["image"] = .string(imageURL)
         }
         
-        let channelRequest = StreamChatChannelRequest(
+        let channelRequest = ChannelRequest(
             team: channelPayload.team,
-            members: channelPayload.members.map { StreamChatChannelMemberRequest(userId: $0) },
+            members: channelPayload.members.map { ChannelMemberRequest(userId: $0) },
             custom: extraData
         )
         
-        let request = StreamChatUpdateChannelRequest(
+        let request = UpdateChannelRequest(
             addModerators: [],
             demoteModerators: [],
             removeMembers: [],
-            invites: channelPayload.invites.map { StreamChatChannelMemberRequest(userId: $0) },
+            invites: channelPayload.invites.map { ChannelMemberRequest(userId: $0) },
             data: channelRequest
         )
 
@@ -182,7 +182,7 @@ class ChannelUpdater: Worker {
         unsetProperties: [String],
         completion: ((Error?) -> Void)? = nil
     ) {
-        let request = StreamChatUpdateChannelPartialRequest(unset: unsetProperties, set: updates.extraData)
+        let request = UpdateChannelPartialRequest(unset: unsetProperties, set: updates.extraData)
         api.updateChannelPartial(
             type: updates.type.rawValue,
             id: updates.id ?? "",
@@ -204,7 +204,7 @@ class ChannelUpdater: Worker {
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func muteChannel(cid: ChannelId, mute: Bool, completion: ((Error?) -> Void)? = nil) {
         if mute {
-            let request = StreamChatMuteChannelRequest(channelCids: [cid.rawValue])
+            let request = MuteChannelRequest(channelCids: [cid.rawValue])
             api.muteChannel(
                 muteChannelRequest: request
             ) { result in
@@ -217,7 +217,7 @@ class ChannelUpdater: Worker {
             }
         } else {
             // TODO: check why twice.
-            let request = StreamChatUnmuteChannelRequest(
+            let request = UnmuteChannelRequest(
                 channelCid: cid.rawValue,
                 channelCids: [cid.rawValue]
             )
@@ -281,7 +281,7 @@ class ChannelUpdater: Worker {
 
         let context = database.backgroundReadOnlyContext
         context.perform { [weak self] in
-            let requestBody = StreamChatMessageRequest(
+            let requestBody = MessageRequest(
                 attachments: [],
                 id: .newUniqueId,
                 text: message
@@ -300,10 +300,10 @@ class ChannelUpdater: Worker {
         cid: ChannelId,
         skipPush: Bool = false,
         hardDelete: Bool = true,
-        requestBody: StreamChatMessageRequest? = nil,
+        requestBody: MessageRequest? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
-        let request = StreamChatTruncateChannelRequest(
+        let request = TruncateChannelRequest(
             hardDelete: hardDelete,
             skipPush: skipPush,
             message: requestBody
@@ -329,7 +329,7 @@ class ChannelUpdater: Worker {
         api.hideChannel(
             type: cid.type.rawValue,
             id: cid.id,
-            hideChannelRequest: StreamChatHideChannelRequest(clearHistory: clearHistory)
+            hideChannelRequest: HideChannelRequest(clearHistory: clearHistory)
         ) { [weak self] result in
             if result.error == nil {
                 // If the API call is a success, we mark the channel as hidden
@@ -360,7 +360,7 @@ class ChannelUpdater: Worker {
         api.showChannel(
             type: cid.type.rawValue,
             id: cid.id,
-            showChannelRequest: StreamChatShowChannelRequest()
+            showChannelRequest: ShowChannelRequest()
         ) {
             completion?($0.error)
         }
@@ -446,12 +446,12 @@ class ChannelUpdater: Worker {
         completion: ((Error?) -> Void)? = nil
     ) {
         let messagePayload = messagePayload(text: message, currentUserId: currentUserId)
-        let request = StreamChatUpdateChannelRequest(
+        let request = UpdateChannelRequest(
             addModerators: [],
             demoteModerators: [],
             removeMembers: [],
             hideHistory: hideHistory,
-            addMembers: userIds.map { StreamChatChannelMemberRequest(userId: $0) },
+            addMembers: userIds.map { ChannelMemberRequest(userId: $0) },
             message: messagePayload
         )
         api.updateChannel(
@@ -477,7 +477,7 @@ class ChannelUpdater: Worker {
         completion: ((Error?) -> Void)? = nil
     ) {
         let messagePayload = messagePayload(text: message, currentUserId: currentUserId)
-        let request = StreamChatUpdateChannelRequest(
+        let request = UpdateChannelRequest(
             addModerators: [],
             demoteModerators: [],
             removeMembers: Array(userIds),
@@ -501,11 +501,11 @@ class ChannelUpdater: Worker {
         userIds: Set<UserId>,
         completion: ((Error?) -> Void)? = nil
     ) {
-        let request = StreamChatUpdateChannelRequest(
+        let request = UpdateChannelRequest(
             addModerators: [],
             demoteModerators: [],
             removeMembers: [],
-            invites: userIds.map { StreamChatChannelMemberRequest(userId: $0) }
+            invites: userIds.map { ChannelMemberRequest(userId: $0) }
         )
         api.updateChannel(
             type: cid.type.rawValue,
@@ -525,7 +525,7 @@ class ChannelUpdater: Worker {
         message: String?,
         completion: ((Error?) -> Void)? = nil
     ) {
-        let request = StreamChatUpdateChannelRequest(
+        let request = UpdateChannelRequest(
             addModerators: [],
             demoteModerators: [],
             removeMembers: [],
@@ -547,7 +547,7 @@ class ChannelUpdater: Worker {
         cid: ChannelId,
         completion: ((Error?) -> Void)? = nil
     ) {
-        let request = StreamChatUpdateChannelRequest(
+        let request = UpdateChannelRequest(
             addModerators: [],
             demoteModerators: [],
             removeMembers: [],
@@ -604,7 +604,7 @@ class ChannelUpdater: Worker {
     ///   Specified in seconds. Should be between 0-120. Pass 0 to disable slow mode.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func enableSlowMode(cid: ChannelId, cooldownDuration: Int, completion: ((Error?) -> Void)? = nil) {
-        let request = StreamChatUpdateChannelRequest(
+        let request = UpdateChannelRequest(
             addModerators: [],
             demoteModerators: [],
             removeMembers: [],
@@ -630,11 +630,11 @@ class ChannelUpdater: Worker {
     /// - Parameter isInRecoveryMode: Determines whether the SDK is in offline recovery mode
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func startWatching(cid: ChannelId, isInRecoveryMode: Bool, completion: ((Error?) -> Void)? = nil) {
-        let request = StreamChatChannelGetOrCreateRequest(
+        let request = ChannelGetOrCreateRequest(
             presence: true,
             state: true,
             watch: true,
-            messages: StreamChatMessagePaginationParamsRequest(limit: .messagesPageSize)
+            messages: MessagePaginationParamsRequest(limit: .messagesPageSize)
         )
         api.getOrCreateChannel(
             type: cid.apiPath,
@@ -655,7 +655,7 @@ class ChannelUpdater: Worker {
         api.stopWatchingChannel(
             type: cid.type.rawValue,
             id: cid.id,
-            channelStopWatchingRequest: StreamChatChannelStopWatchingRequest(),
+            channelStopWatchingRequest: ChannelStopWatchingRequest(),
             requiresConnectionId: true,
             completion: {
                 completion?($0.error)
@@ -671,11 +671,11 @@ class ChannelUpdater: Worker {
     ///   - query: Query object for watchers. See `ChannelWatcherListQuery`
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func channelWatchers(query: ChannelWatcherListQuery, completion: ((Error?) -> Void)? = nil) {
-        let watchers = StreamChatPaginationParamsRequest(
+        let watchers = PaginationParamsRequest(
             limit: query.pagination.pageSize,
             offset: query.pagination.offset
         )
-        let request = StreamChatChannelGetOrCreateRequest(
+        let request = ChannelGetOrCreateRequest(
             state: true,
             watch: true,
             watchers: watchers
@@ -684,7 +684,7 @@ class ChannelUpdater: Worker {
             type: query.cid.apiPath,
             channelGetOrCreateRequest: request,
             requiresConnectionId: true
-        ) { (result: Result<StreamChatChannelStateResponse, Error>) in
+        ) { (result: Result<ChannelStateResponse, Error>) in
             do {
                 let payload = try result.get()
                 self.database.write { (session) in
@@ -717,11 +717,11 @@ class ChannelUpdater: Worker {
     /// - Parameter cid: Channel id of the channel to be watched
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func freezeChannel(_ freeze: Bool, cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
-        let request = StreamChatUpdateChannelRequest(
+        let request = UpdateChannelRequest(
             addModerators: [],
             demoteModerators: [],
             removeMembers: [],
-            data: StreamChatChannelRequest(frozen: freeze)
+            data: ChannelRequest(frozen: freeze)
         )
         api.updateChannel(
             type: cid.type.rawValue,
@@ -837,10 +837,10 @@ class ChannelUpdater: Worker {
     
     // MARK: - private
     
-    private func messagePayload(text: String?, currentUserId: UserId?) -> StreamChatMessageRequest? {
-        var messagePayload: StreamChatMessageRequest?
+    private func messagePayload(text: String?, currentUserId: UserId?) -> MessageRequest? {
+        var messagePayload: MessageRequest?
         if let text = text {
-            messagePayload = StreamChatMessageRequest(
+            messagePayload = MessageRequest(
                 attachments: [],
                 id: .newUniqueId,
                 text: text

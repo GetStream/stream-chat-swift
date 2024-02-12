@@ -8,7 +8,7 @@ import Foundation
 struct ChannelTruncatedEventMiddleware: EventMiddleware {
     func handle(event: Event, session: DatabaseSession) -> Event? {
         guard
-            let truncatedEvent = event as? StreamChatChannelTruncatedEvent
+            let truncatedEvent = event as? ChannelTruncatedEvent
         else {
             return event
         }

@@ -253,7 +253,7 @@ class SyncRepository {
             return
         }
 
-        let requestCompletion: (Result<StreamChatSyncResponse, Error>) -> Void = { [weak self] result in
+        let requestCompletion: (Result<SyncResponse, Error>) -> Void = { [weak self] result in
             switch result {
             case let .success(payload):
                 log.info("Processing pending events. Count \(payload.events.count)", subsystems: .offlineSupport)
@@ -292,7 +292,7 @@ class SyncRepository {
             }
         }
         
-        let request = StreamChatSyncRequest(
+        let request = SyncRequest(
             lastSyncAt: date,
             channelCids: channelIds.map(\.rawValue)
         )
@@ -313,7 +313,7 @@ class SyncRepository {
         }, completion: completion)
     }
 
-    private func processMissingEventsPayload(_ payload: StreamChatSyncResponse, completion: @escaping () -> Void) {
+    private func processMissingEventsPayload(_ payload: SyncResponse, completion: @escaping () -> Void) {
         eventNotificationCenter.process(payload.events.map(\.rawValue), postNotifications: false) {
             log.info(
                 "Successfully processed pending events. Count \(payload.events.count)",

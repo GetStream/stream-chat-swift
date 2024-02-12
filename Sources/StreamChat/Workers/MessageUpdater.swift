@@ -258,7 +258,7 @@ class MessageUpdater: Worker {
         cid: ChannelId,
         messageId: MessageId,
         pagination: MessagesPagination,
-        completion: ((Result<StreamChatGetRepliesResponse, Error>) -> Void)? = nil
+        completion: ((Result<GetRepliesResponse, Error>) -> Void)? = nil
     ) {
         paginationStateHandler.begin(pagination: pagination)
 
@@ -411,13 +411,13 @@ class MessageUpdater: Worker {
                 log.warning("Failed to optimistically add the reaction to the database: \(error)")
             }
         } completion: { [weak self, weak repository] error in
-            let reactionRequest = StreamChatReactionRequest(
+            let reactionRequest = ReactionRequest(
                 type: type.rawValue,
                 messageId: messageId,
                 score: score,
                 custom: extraData
             )
-            let request = StreamChatSendReactionRequest(
+            let request = SendReactionRequest(
                 reaction: reactionRequest,
                 enforceUnique: enforceUnique,
                 skipPush: skipPush
@@ -607,7 +607,7 @@ class MessageUpdater: Worker {
                 return
             }
 
-            let request = StreamChatMessageActionRequest(formData: [action.name: action.value])
+            let request = MessageActionRequest(formData: [action.name: action.value])
             self.api.runMessageAction(id: messageId, messageActionRequest: request) {
                 switch $0 {
                 case let .success(payload):
@@ -629,7 +629,7 @@ class MessageUpdater: Worker {
         })
     }
 
-    func search(query: MessageSearchQuery, policy: UpdatePolicy = .merge, completion: ((Result<StreamChatSearchResponse, Error>) -> Void)? = nil) {
+    func search(query: MessageSearchQuery, policy: UpdatePolicy = .merge, completion: ((Result<SearchResponse, Error>) -> Void)? = nil) {
         var channelFilter = [String: RawJSON]()
         if let data = try? JSONEncoder.default.encode(query.channelFilter),
            let filter = try? JSONDecoder.default.decode([String: RawJSON].self, from: data) {
@@ -642,9 +642,9 @@ class MessageUpdater: Worker {
         }
         
         let sort = query.sort.map { sortingKey in
-            StreamChatSortParam(direction: sortingKey.direction, field: sortingKey.key.rawValue)
+            SortParam(direction: sortingKey.direction, field: sortingKey.key.rawValue)
         }
-        let request = StreamChatSearchRequest(
+        let request = SearchRequest(
             filterConditions: channelFilter,
             limit: query.pagination?.pageSize,
             next: query.pagination?.cursor,
@@ -685,7 +685,7 @@ class MessageUpdater: Worker {
     }
 
     func translate(messageId: MessageId, to language: TranslationLanguage, completion: ((Error?) -> Void)? = nil) {
-        let request = StreamChatTranslateMessageRequest(language: language.languageCode)
+        let request = TranslateMessageRequest(language: language.languageCode)
         api.translateMessage(id: messageId, translateMessageRequest: request) { result in
             switch result {
             case let .success(boxedMessage):

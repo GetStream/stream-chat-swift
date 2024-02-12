@@ -27,14 +27,14 @@ struct UserWatchingEventMiddleware: EventMiddleware {
                 return event
             }
 
-            channelDTO.watcherCount = Int64(userWatchingEvent.watcherCount ?? 0)
+            channelDTO.watcherCount = Int64(userWatchingEvent.watcherCount)
 
             guard let userId = userWatchingEvent.user?.id,
                   let userDTO = session.user(id: userId) else {
                 throw ClientError.Unknown()
             }
 
-            if userWatchingEvent is StreamChatUserWatchingStartEvent {
+            if userWatchingEvent is UserWatchingStartEvent {
                 channelDTO.watchers.insert(userDTO)
             } else {
                 channelDTO.watchers.remove(userDTO)

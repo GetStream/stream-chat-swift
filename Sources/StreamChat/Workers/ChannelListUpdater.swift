@@ -143,7 +143,7 @@ class ChannelListUpdater: Worker {
     ///   - completion: The completion to call with the results.
     func fetch(
         channelListQuery: ChannelListQuery,
-        completion: @escaping (Result<StreamChatChannelsResponse, Error>) -> Void
+        completion: @escaping (Result<ChannelsResponse, Error>) -> Void
     ) {
         let request = request(from: channelListQuery)
         let requiresConnectionId = channelListQuery.options.contains(oneOf: [.presence, .state, .watch])
@@ -157,7 +157,7 @@ class ChannelListUpdater: Worker {
     /// Marks all channels for a user as read.
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func markAllRead(completion: ((Error?) -> Void)? = nil) {
-        api.markChannelsRead(markChannelsReadRequest: StreamChatMarkChannelsReadRequest()) { result in
+        api.markChannelsRead(markChannelsReadRequest: MarkChannelsReadRequest()) { result in
             switch result {
             case .success:
                 completion?(nil)
@@ -191,17 +191,17 @@ class ChannelListUpdater: Worker {
         }
     }
     
-    private func request(from channelListQuery: ChannelListQuery) -> StreamChatQueryChannelsRequest {
+    private func request(from channelListQuery: ChannelListQuery) -> QueryChannelsRequest {
         var filter: [String: RawJSON]?
         if let data = try? JSONEncoder.default.encode(channelListQuery.filter) {
             filter = try? JSONDecoder.default.decode([String: RawJSON].self, from: data)
         }
         
         let sort = channelListQuery.sort.map { sortingKey in
-            StreamChatSortParamRequest(direction: sortingKey.direction, field: sortingKey.key.remoteKey)
+            SortParamRequest(direction: sortingKey.direction, field: sortingKey.key.remoteKey)
         }
         
-        let request = StreamChatQueryChannelsRequest(
+        let request = QueryChannelsRequest(
             limit: channelListQuery.pagination.pageSize,
             memberLimit: channelListQuery.membersLimit,
             messageLimit: channelListQuery.messagesLimit,
@@ -257,7 +257,7 @@ private extension ChannelListUpdater {
 
 private extension ChannelListUpdater {
     func writeChannelListPayload(
-        payload: StreamChatChannelsResponse?,
+        payload: ChannelsResponse?,
         query: ChannelListQuery,
         initialActions: ((DatabaseSession) -> Void)? = nil,
         completion: ((Result<[ChatChannel], Error>) -> Void)? = nil

@@ -14,7 +14,7 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
 
     func handle(event: Event, session: DatabaseSession) -> Event? {
         switch event {
-        case let event as StreamChatMessageNewEvent:
+        case let event as MessageNewEvent:
             if let cid = try? ChannelId(cid: event.cid), let message = event.message {
                 incrementUnreadCountIfNeeded(
                     for: cid,
@@ -23,7 +23,7 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
                 )
             }
 
-        case let event as StreamChatNotificationNewMessageEvent:
+        case let event as NotificationNewMessageEvent:
             if let cid = try? ChannelId(cid: event.cid) {
                 incrementUnreadCountIfNeeded(
                     for: cid,
@@ -32,13 +32,13 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
                 )
             }
 
-        case let event as StreamChatMessageDeletedEvent:
+        case let event as MessageDeletedEvent:
             decrementUnreadCountIfNeeded(
                 event: event,
                 session: session
             )
 
-        case let event as StreamChatMessageReadEvent:
+        case let event as MessageReadEvent:
             if let cid = try? ChannelId(cid: event.cid),
                let userId = event.user?.id {
                 resetChannelRead(
@@ -49,7 +49,7 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
                 )
             }
 
-        case let event as StreamChatNotificationMarkReadEvent:
+        case let event as NotificationMarkReadEvent:
             if event.channel == nil, let userId = event.user?.id {
                 session.loadChannelReads(for: userId).forEach { read in
                     read.lastReadAt = event.createdAt.bridgeDate
@@ -72,7 +72,7 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
                 )
             }
 
-        case let event as StreamChatNotificationMarkUnreadEvent:
+        case let event as NotificationMarkUnreadEvent:
             if let cid = try? ChannelId(cid: event.cid),
                let userId = event.user?.id {
                 markChannelAsUnread(
@@ -172,7 +172,7 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
     
     private func incrementUnreadCountIfNeeded(
         for cid: ChannelId,
-        message: StreamChatMessage,
+        message: Message,
         session: DatabaseSession
     ) {
         guard let currentUser = session.currentUser else {
@@ -209,7 +209,7 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
     }
 
     private func decrementUnreadCountIfNeeded(
-        event: StreamChatMessageDeletedEvent,
+        event: MessageDeletedEvent,
         session: DatabaseSession
     ) {
         guard let currentUser = session.currentUser else {
@@ -285,7 +285,7 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
     private func unreadCountUpdateSkippingReason(
         currentUser: CurrentUserDTO,
         channelRead: ChannelReadDTO,
-        message: StreamChatMessage
+        message: Message
     ) -> UnreadSkippingReason? {
         if channelRead.channel.mute != nil {
             return .channelIsMuted

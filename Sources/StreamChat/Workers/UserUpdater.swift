@@ -12,7 +12,7 @@ class UserUpdater: Worker {
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
     func muteUser(_ userId: UserId, completion: ((Error?) -> Void)? = nil) {
-        let request = StreamChatMuteUserRequest(targetIds: [userId])
+        let request = MuteUserRequest(targetIds: [userId])
         api.muteUser(muteUserRequest: request) {
             completion?($0.error)
         }
@@ -24,7 +24,7 @@ class UserUpdater: Worker {
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
     func unmuteUser(_ userId: UserId, completion: ((Error?) -> Void)? = nil) {
-        let request = StreamChatUnmuteUserRequest(targetId: userId, targetIds: [userId])
+        let request = UnmuteUserRequest(targetId: userId, targetIds: [userId])
         api.unmuteUser(unmuteUserRequest: request) {
             completion?($0.error)
         }
@@ -37,8 +37,8 @@ class UserUpdater: Worker {
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
     func loadUser(_ userId: UserId, completion: ((Error?) -> Void)? = nil) {
-        let request = StreamChatQueryUsersRequest(filterConditions: ["id": ["$eq": .string(userId)]])
-        api.queryUsers(payload: request) { (result: Result<StreamChatUsersResponse, Error>) in
+        let request = QueryUsersRequest(filterConditions: ["id": ["$eq": .string(userId)]])
+        api.queryUsers(payload: request) { (result: Result<UsersResponse, Error>) in
             switch result {
             case let .success(payload):
                 guard payload.users.count <= 1 else {
