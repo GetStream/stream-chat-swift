@@ -39,7 +39,7 @@ extension UnknownChannelEvent: Decodable {
         self.init(
             type: try container.decode(EventType.self, forKey: .eventType),
             cid: try container.decode(ChannelId.self, forKey: .cid),
-            userId: try container.decode(UserPayload.self, forKey: .user).id,
+            userId: try container.decode(UserObject.self, forKey: .user).id,
             createdAt: try container.decode(Date.self, forKey: .createdAt),
             payload: try decoder
                 .singleValueContainer()

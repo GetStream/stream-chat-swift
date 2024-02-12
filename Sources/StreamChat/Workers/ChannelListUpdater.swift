@@ -235,28 +235,6 @@ private extension DatabaseSession {
 
 private extension ChannelListUpdater {
     func writeChannelListPayload(
-        payload: ChannelListPayload,
-        query: ChannelListQuery,
-        initialActions: ((DatabaseSession) -> Void)? = nil,
-        completion: ((Result<[ChatChannel], Error>) -> Void)? = nil
-    ) {
-        var channels: [ChatChannel] = []
-        database.write { session in
-            initialActions?(session)
-            channels = session.saveChannelList(payload: payload, query: query).compactMap { try? $0.asModel() }
-        } completion: { error in
-            if let error = error {
-                log.error("Failed to save `ChannelListPayload` to the database. Error: \(error)")
-                completion?(.failure(error))
-            } else {
-                completion?(.success(channels))
-            }
-        }
-    }
-}
-
-private extension ChannelListUpdater {
-    func writeChannelListPayload(
         payload: ChannelsResponse?,
         query: ChannelListQuery,
         initialActions: ((DatabaseSession) -> Void)? = nil,

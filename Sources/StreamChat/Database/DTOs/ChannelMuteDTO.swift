@@ -35,21 +35,3 @@ final class ChannelMuteDTO: NSManagedObject {
         return new
     }
 }
-
-extension NSManagedObjectContext {
-    @discardableResult
-    func saveChannelMute(payload: MutedChannelPayload) throws -> ChannelMuteDTO {
-        guard let currentUser = currentUser else {
-            throw ClientError.CurrentUserDoesNotExist()
-        }
-
-        let channel = try saveChannel(payload: payload.mutedChannel, query: nil, cache: nil)
-        let dto = ChannelMuteDTO.loadOrCreate(cid: payload.mutedChannel.cid, context: self)
-        dto.channel = channel
-        dto.currentUser = currentUser
-        dto.createdAt = payload.createdAt.bridgeDate
-        dto.updatedAt = payload.updatedAt.bridgeDate
-
-        return dto
-    }
-}

@@ -7,15 +7,6 @@ import CoreData
 extension NSManagedObjectContext: DatabaseSession {}
 
 protocol UserDatabaseSession {
-    /// Saves the provided payload to the DB. Return's the matching `UserDTO` if the save was successful. Throws an error
-    /// if the save fails.
-    @discardableResult
-    func saveUser(payload: UserPayload, query: UserListQuery?, cache: PreWarmedCache?) throws -> UserDTO
-
-    /// Saves the provided payload to the DB. Return's the matching `UserDTO`s  if the save was successful. Ignores unsaved elements.
-    @discardableResult
-    func saveUsers(payload: UserListPayload, query: UserListQuery?) -> [UserDTO]
-
     /// Saves the provided query to the DB. Return's the matching `UserListQueryDTO` if the save was successful. Throws an error
     /// if the save fails.
     @discardableResult
@@ -33,19 +24,9 @@ protocol UserDatabaseSession {
 }
 
 protocol CurrentUserDatabaseSession {
-    /// Saves the provided payload to the DB. Return's a `CurrentUserDTO` if the save was successful. Throws an error
-    /// if the save fails.
-    @discardableResult
-    func saveCurrentUser(payload: CurrentUserPayload) throws -> CurrentUserDTO
-
     /// Updates the `CurrentUserDTO` with the provided unread.
     /// If there is no current user, the error will be thrown.
     func saveCurrentUserUnreadCount(count: UnreadCount) throws
-
-    /// Updates the `CurrentUserDTO.devices` with the provided `DevicesPayload`
-    /// If there's no current user set, an error will be thrown.
-    @discardableResult
-    func saveCurrentUserDevices(_ devices: [DevicePayload], clearExisting: Bool) throws -> [DeviceDTO]
 
     /// Saves the `currentDevice` for current user.
     func saveCurrentDevice(_ deviceId: String) throws
@@ -55,13 +36,6 @@ protocol CurrentUserDatabaseSession {
 
     /// Returns `CurrentUserDTO` from the DB. Returns `nil` if no `CurrentUserDTO` exists.
     var currentUser: CurrentUserDTO? { get }
-}
-
-extension CurrentUserDatabaseSession {
-    @discardableResult
-    func saveCurrentUserDevices(_ devices: [DevicePayload]) throws -> [DeviceDTO] {
-        try saveCurrentUserDevices(devices, clearExisting: false)
-    }
 }
 
 protocol MessageDatabaseSession {
@@ -85,29 +59,6 @@ protocol MessageDatabaseSession {
         skipEnrichUrl: Bool,
         extraData: [String: RawJSON]
     ) throws -> MessageDTO
-
-    /// Saves the provided messages list payload to the DB. Return's the matching `MessageDTO`s if the save was successful.
-    /// Ignores messages that failed to be saved
-    ///
-    /// You must either provide `cid` or `payload.channel` value must not be `nil`.
-    /// The `syncOwnReactions` should be set to `true` when the payload comes from an API response and `false` when the payload
-    /// is received via WS events. For performance reasons the API does not populate the `message.own_reactions` when sending events
-    @discardableResult
-    func saveMessages(messagesPayload: MessageListPayload, for cid: ChannelId?, syncOwnReactions: Bool) -> [MessageDTO]
-
-    /// Saves the provided message payload to the DB. Return's the matching `MessageDTO` if the save was successful.
-    /// Throws an error if the save fails.
-    ///
-    /// You must either provide `cid` or `payload.channel` value must not be `nil`.
-    /// The `syncOwnReactions` should be set to `true` when the payload comes from an API response and `false` when the payload
-    /// is received via WS events. For performance reasons the API does not populate the `message.own_reactions` when sending events
-    @discardableResult
-    func saveMessage(
-        payload: MessagePayload,
-        for cid: ChannelId?,
-        syncOwnReactions: Bool,
-        cache: PreWarmedCache?
-    ) throws -> MessageDTO
     
     @discardableResult
     func saveMessage(
@@ -116,22 +67,6 @@ protocol MessageDatabaseSession {
         syncOwnReactions: Bool,
         cache: PreWarmedCache?
     ) throws -> MessageDTO
-
-    /// Saves the provided message payload to the DB. Return's the matching `MessageDTO` if the save was successful.
-    /// Throws an error if the save fails.
-    ///
-    /// The `syncOwnReactions` should be set to `true` when the payload comes from an API response and `false` when the payload
-    /// is received via WS events. For performance reasons the API does not populate the `message.own_reactions` when sending events
-    @discardableResult
-    func saveMessage(
-        payload: MessagePayload,
-        channelDTO: ChannelDTO,
-        syncOwnReactions: Bool,
-        cache: PreWarmedCache?
-    ) throws -> MessageDTO
-
-    @discardableResult
-    func saveMessage(payload: MessagePayload, for query: MessageSearchQuery, cache: PreWarmedCache?) throws -> MessageDTO
 
     func addReaction(
         to messageId: MessageId,
@@ -171,24 +106,9 @@ protocol MessageDatabaseSession {
     /// Returns `nil` if there is no matching `MessageReactionDTO`.
     func reaction(messageId: MessageId, userId: UserId, type: MessageReactionType) -> MessageReactionDTO?
 
-    /// Saves the provided reactions payload to the DB. Ignores reactions that cannot be saved
-    /// returns saved `MessageReactionDTO` entities.
-    @discardableResult
-    func saveReactions(payload: MessageReactionsPayload) -> [MessageReactionDTO]
-
-    /// Saves the provided reaction payload to the DB. Throws an error if the save fails
-    /// else returns saved `MessageReactionDTO` entity.
-    @discardableResult
-    func saveReaction(payload: MessageReactionPayload, cache: PreWarmedCache?) throws -> MessageReactionDTO
-
     /// Deletes the provided dto from a database
     /// - Parameter reaction: The DTO to be deleted
     func delete(reaction: MessageReactionDTO)
-
-    /// Saves the message results from the search payload to the DB. Return's the `MessageDTO`s if the save was successful.
-    /// Ignores messages that could not be saved
-    @discardableResult
-    func saveMessageSearch(payload: MessageSearchResultsPayload, for query: MessageSearchQuery) -> [MessageDTO]
 
     /// Changes the state to `.pendingSend` for all messages in `.sending` state. This method is expected to be used at the beginning of the session
     /// to avoid those from being stuck there in limbo.
@@ -240,29 +160,6 @@ protocol MessageSearchDatabaseSession {
 }
 
 protocol ChannelDatabaseSession {
-    /// Creates `ChannelDTO` objects for the given channel payloads and `query`. ignores items that could not be saved
-    @discardableResult
-    func saveChannelList(
-        payload: ChannelListPayload,
-        query: ChannelListQuery?
-    ) -> [ChannelDTO]
-
-    /// Creates a new `ChannelDTO` object in the database with the given `payload` and `query`.
-    @discardableResult
-    func saveChannel(
-        payload: ChannelPayload,
-        query: ChannelListQuery?,
-        cache: PreWarmedCache?
-    ) throws -> ChannelDTO
-
-    /// Creates a new `ChannelDTO` object in the database with the given `payload` and `query`.
-    @discardableResult
-    func saveChannel(
-        payload: ChannelDetailPayload,
-        query: ChannelListQuery?,
-        cache: PreWarmedCache?
-    ) throws -> ChannelDTO
-
     /// Loads channel list query with the given filter hash from the database.
     /// - Parameter filterHash: The filter hash.
     func channelListQuery(filterHash: String) -> ChannelListQueryDTO?
@@ -288,14 +185,6 @@ protocol ChannelDatabaseSession {
 }
 
 protocol ChannelReadDatabaseSession {
-    /// Creates a new `ChannelReadDTO` object in the database. Throws an error if the ChannelRead fails to be created.
-    @discardableResult
-    func saveChannelRead(
-        payload: ChannelReadPayload,
-        for cid: ChannelId,
-        cache: PreWarmedCache?
-    ) throws -> ChannelReadDTO
-
     /// Creates (if doesn't exist) and fetches  `ChannelReadDTO` with the given `cid` and `userId`
     /// from the DB.
     func loadOrCreateChannelRead(cid: ChannelId, userId: UserId) -> ChannelReadDTO?
@@ -328,30 +217,7 @@ protocol ChannelReadDatabaseSession {
     func markChannelAsUnread(cid: ChannelId, by userId: UserId)
 }
 
-protocol ChannelMuteDatabaseSession {
-    /// Creates a new `ChannelMuteDTO` object in the database. Throws an error if the `ChannelMuteDTO` fails to be created.
-    @discardableResult
-    func saveChannelMute(payload: MutedChannelPayload) throws -> ChannelMuteDTO
-}
-
 protocol MemberDatabaseSession {
-    /// Creates a new `MemberDTO` object in the database with the given `payload` in the channel with `channelId`.
-    @discardableResult
-    func saveMember(
-        payload: MemberPayload,
-        channelId: ChannelId,
-        query: ChannelMemberListQuery?,
-        cache: PreWarmedCache?
-    ) throws -> MemberDTO
-
-    /// Creates new `MemberDTO` objects in the database with the given `payload` in the channel with `channelId`.
-    @discardableResult
-    func saveMembers(
-        payload: ChannelMemberListPayload,
-        channelId: ChannelId,
-        query: ChannelMemberListQuery?
-    ) -> [MemberDTO]
-
     /// Fetches `MemberDTO`entity for the given `userId` and `cid`.
     func member(userId: UserId, cid: ChannelId) -> MemberDTO?
 }
@@ -368,14 +234,6 @@ protocol MemberListQueryDatabaseSession {
 protocol AttachmentDatabaseSession {
     /// Fetches `AttachmentDTO`entity for the given `id`.
     func attachment(id: AttachmentId) -> AttachmentDTO?
-
-    /// Creates a new `AttachmentDTO` object in the database with the given `payload` for the message
-    /// with the given `messageId` in the channel with the given `cid`.
-    @discardableResult
-    func saveAttachment(
-        payload: MessageAttachmentPayload,
-        id: AttachmentId
-    ) throws -> AttachmentDTO
 
     /// Creates a new `AttachmentDTO` object in the database from the given model for the message
     /// with the given `messageId` in the channel with the given `cid`.
@@ -403,29 +261,10 @@ protocol DatabaseSession: UserDatabaseSession,
     MemberDatabaseSession,
     MemberListQueryDatabaseSession,
     AttachmentDatabaseSession,
-    ChannelMuteDatabaseSession,
     QueuedRequestDatabaseSession,
     ChannelDatabaseSessionV2 {}
 
 extension DatabaseSession {
-    @discardableResult
-    func saveChannel(payload: ChannelPayload) throws -> ChannelDTO {
-        try saveChannel(payload: payload, query: nil, cache: nil)
-    }
-
-    @discardableResult
-    func saveUser(payload: UserPayload) throws -> UserDTO {
-        try saveUser(payload: payload, query: nil, cache: nil)
-    }
-
-    @discardableResult
-    func saveMember(
-        payload: MemberPayload,
-        channelId: ChannelId
-    ) throws -> MemberDTO {
-        try saveMember(payload: payload, channelId: channelId, query: nil, cache: nil)
-    }
-
     // MARK: - Event
     
     func saveEvent(event: Event) throws {

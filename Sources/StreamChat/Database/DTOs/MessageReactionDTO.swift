@@ -100,41 +100,6 @@ extension NSManagedObjectContext {
         MessageReactionDTO.load(userId: userId, messageId: messageId, type: type, context: self)
     }
 
-    @discardableResult
-    func saveReactions(payload: MessageReactionsPayload) -> [MessageReactionDTO] {
-        let cache = payload.getPayloadToModelIdMappings(context: self)
-        return payload.reactions.compactMapLoggingError {
-            try saveReaction(payload: $0, cache: cache)
-        }
-    }
-
-    @discardableResult
-    func saveReaction(
-        payload: MessageReactionPayload,
-        cache: PreWarmedCache?
-    ) throws -> MessageReactionDTO {
-        guard let messageDTO = message(id: payload.messageId) else {
-            throw ClientError.MessageDoesNotExist(messageId: payload.messageId)
-        }
-
-        let dto = MessageReactionDTO.loadOrCreate(
-            message: messageDTO,
-            type: payload.type,
-            user: try saveUser(payload: payload.user),
-            context: self,
-            cache: cache
-        )
-
-        dto.score = Int64(clamping: payload.score)
-        dto.createdAt = payload.createdAt.bridgeDate
-        dto.updatedAt = payload.updatedAt.bridgeDate
-        dto.extraData = try JSONEncoder.default.encode(payload.extraData)
-        dto.localState = nil
-        dto.version = nil
-
-        return dto
-    }
-
     func delete(reaction: MessageReactionDTO) {
         delete(reaction)
     }

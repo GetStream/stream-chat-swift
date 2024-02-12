@@ -132,71 +132,11 @@ extension NSManagedObjectContext: UserDatabaseSession {
     func user(id: UserId) -> UserDTO? {
         UserDTO.load(id: id, context: self)
     }
-
-    func saveUser(
-        payload: UserPayload,
-        query: UserListQuery?,
-        cache: PreWarmedCache?
-    ) throws -> UserDTO {
-        let dto = UserDTO.loadOrCreate(id: payload.id, context: self, cache: cache)
-
-        dto.name = payload.name
-        dto.imageURL = payload.imageURL
-        dto.isBanned = payload.isBanned
-        dto.isOnline = payload.isOnline
-        dto.lastActivityAt = payload.lastActiveAt?.bridgeDate
-        dto.userCreatedAt = payload.createdAt.bridgeDate
-        dto.userRoleRaw = payload.role.rawValue
-        dto.userUpdatedAt = payload.updatedAt.bridgeDate
-        dto.userDeactivatedAt = payload.deactivatedAt?.bridgeDate
-        dto.language = payload.language
-
-        do {
-            dto.extraData = try JSONEncoder.default.encode(payload.extraData)
-        } catch {
-            log.error(
-                "Failed to decode extra payload for User with id: <\(payload.id)>, using default value instead. "
-                    + "Error: \(error)"
-            )
-            dto.extraData = Data()
-        }
-
-        dto.teams = payload.teams
-
-        // payloadHash doesn't cover the query
-        if let query = query, let queryDTO = try saveQuery(query: query) {
-            queryDTO.users.insert(dto)
-        }
-        return dto
-    }
-
-    @discardableResult
-    func saveUsers(payload: UserListPayload, query: UserListQuery?) -> [UserDTO] {
-        let cache = payload.getPayloadToModelIdMappings(context: self)
-        return payload.users.compactMapLoggingError {
-            try saveUser(payload: $0, query: query, cache: cache)
-        }
-    }
 }
 
 extension UserDTO {
     /// Snapshots the current state of `UserDTO` and returns an immutable model object from it.
     func asModel() throws -> ChatUser { try .create(fromDTO: self) }
-
-    /// Snapshots the current state of `UserDTO` and returns its representation for used in API calls.
-    func asRequestBody() -> UserRequestBody {
-        let extraData: [String: RawJSON]
-        do {
-            extraData = try JSONDecoder.default.decode([String: RawJSON].self, from: self.extraData)
-        } catch {
-            log.assertionFailure(
-                "Failed decoding saved extra data with error: \(error). This should never happen because"
-                    + "the extra data must be a valid JSON to be saved."
-            )
-            extraData = [:]
-        }
-        return .init(id: id, name: name, imageURL: imageURL, extraData: extraData)
-    }
 }
 
 extension UserDTO {

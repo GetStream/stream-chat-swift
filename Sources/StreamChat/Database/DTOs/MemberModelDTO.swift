@@ -105,54 +105,8 @@ extension MemberDTO {
 }
 
 extension NSManagedObjectContext {
-    func saveMember(
-        payload: MemberPayload,
-        channelId: ChannelId,
-        query: ChannelMemberListQuery?,
-        cache: PreWarmedCache?
-    ) throws -> MemberDTO {
-        let dto = MemberDTO.loadOrCreate(userId: payload.userId, channelId: channelId, context: self, cache: cache)
-
-        // Save user-part of member first
-        if let userPayload = payload.user {
-            dto.user = try saveUser(payload: userPayload)
-        }
-
-        // Save member specific data
-        if let role = payload.role {
-            dto.channelRoleRaw = role.rawValue
-        }
-
-        dto.memberCreatedAt = payload.createdAt.bridgeDate
-        dto.memberUpdatedAt = payload.updatedAt.bridgeDate
-        dto.isBanned = payload.isBanned ?? false
-        dto.isShadowBanned = payload.isShadowBanned ?? false
-        dto.banExpiresAt = payload.banExpiresAt?.bridgeDate
-        dto.isInvited = payload.isInvited ?? false
-        dto.inviteAcceptedAt = payload.inviteAcceptedAt?.bridgeDate
-        dto.inviteRejectedAt = payload.inviteRejectedAt?.bridgeDate
-
-        if let query = query {
-            let queryDTO = try saveQuery(query)
-            queryDTO.members.insert(dto)
-        }
-
-        if let channelDTO = channel(cid: channelId) {
-            channelDTO.members.insert(dto)
-        }
-
-        return dto
-    }
-
     func member(userId: UserId, cid: ChannelId) -> MemberDTO? {
         MemberDTO.load(userId: userId, channelId: cid, context: self)
-    }
-
-    func saveMembers(payload: ChannelMemberListPayload, channelId: ChannelId, query: ChannelMemberListQuery?) -> [MemberDTO] {
-        let cache = payload.getPayloadToModelIdMappings(context: self)
-        return payload.members.compactMapLoggingError {
-            try saveMember(payload: $0, channelId: channelId, query: query, cache: cache)
-        }
     }
 }
 

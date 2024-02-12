@@ -15,5 +15,5 @@ public struct PinnedMessagesSortingKey: RawRepresentable, Hashable, SortingKey {
 
 public extension PinnedMessagesSortingKey {
     /// When provided sorts pinned messages by `pinned_at` field.
-    static let pinnedAt = Self(rawValue: MessagePayloadsCodingKeys.pinnedAt.rawValue)
+    static let pinnedAt = Self(rawValue: "pinned_at")
 }

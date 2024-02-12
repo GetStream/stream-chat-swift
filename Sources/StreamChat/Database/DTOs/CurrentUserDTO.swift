@@ -69,31 +69,6 @@ extension CurrentUserDTO {
 }
 
 extension NSManagedObjectContext: CurrentUserDatabaseSession {
-    func saveCurrentUser(payload: CurrentUserPayload) throws -> CurrentUserDTO {
-        invalidateCurrentUserCache()
-        
-        let dto = CurrentUserDTO.loadOrCreate(context: self)
-        dto.user = try saveUser(payload: payload)
-        dto.isInvisible = payload.isInvisible
-
-        let mutedUsers = try payload.mutedUsers.map { try saveUser(payload: $0.mutedUser) }
-        dto.mutedUsers = Set(mutedUsers)
-
-        let channelMutes = Set(
-            try payload.mutedChannels.map { try saveChannelMute(payload: $0) }
-        )
-        dto.channelMutes.subtracting(channelMutes).forEach { delete($0) }
-        dto.channelMutes = channelMutes
-
-        if let unreadCount = payload.unreadCount {
-            try saveCurrentUserUnreadCount(count: unreadCount)
-        }
-
-        _ = try saveCurrentUserDevices(payload.devices, clearExisting: true)
-
-        return dto
-    }
-
     func saveCurrentUserUnreadCount(count: UnreadCount) throws {
         invalidateCurrentUserCache()
 
@@ -103,30 +78,6 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
 
         dto.unreadChannelsCount = Int64(clamping: count.channels)
         dto.unreadMessagesCount = Int64(clamping: count.messages)
-    }
-
-    func saveCurrentUserDevices(_ devices: [DevicePayload], clearExisting: Bool) throws -> [DeviceDTO] {
-        invalidateCurrentUserCache()
-
-        guard let currentUser = currentUser else {
-            throw ClientError.CurrentUserDoesNotExist()
-        }
-
-        if clearExisting {
-            currentUser.devices.removeAll()
-            if !devices.contains(where: { $0.id == currentUser.currentDevice?.id }) {
-                currentUser.currentDevice = nil
-            }
-        }
-
-        let deviceDTOs = devices.map { device -> DeviceDTO in
-            let dto = DeviceDTO.loadOrCreate(id: device.id, context: self)
-            dto.createdAt = device.createdAt?.bridgeDate
-            dto.user = currentUser
-            return dto
-        }
-
-        return deviceDTOs
     }
 
     func saveCurrentDevice(_ deviceId: String) throws {

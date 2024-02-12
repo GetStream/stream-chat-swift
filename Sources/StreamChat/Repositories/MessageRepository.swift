@@ -93,28 +93,6 @@ class MessageRepository {
             })
         }
     }
-
-    func saveSuccessfullySentMessage(
-        cid: ChannelId,
-        message: MessagePayload,
-        completion: @escaping (Result<ChatMessage, Error>) -> Void
-    ) {
-        database.write({
-            let messageDTO = try $0.saveMessage(payload: message, for: cid, syncOwnReactions: false, cache: nil)
-            if messageDTO.localMessageState == .sending || messageDTO.localMessageState == .sendingFailed {
-                messageDTO.locallyCreatedAt = nil
-                messageDTO.localMessageState = nil
-            }
-
-            let messageModel = try messageDTO.asModel()
-            completion(.success(messageModel))
-        }, completion: {
-            if let error = $0 {
-                log.error("Error saving sent message with id \(message.id): \(error)", subsystems: .offlineSupport)
-                completion(.failure(error))
-            }
-        })
-    }
     
     func saveSuccessfullySentMessage(
         cid: ChannelId,
