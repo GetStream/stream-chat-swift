@@ -3,7 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+## StreamChatUI
+### 🐞 Fixed
+- Fix composer link preview overridden by previous enrichment [#3025](https://github.com/GetStream/stream-chat-swift/pull/3025)
 
 # [4.48.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.48.1)
 _February 09, 2024_
