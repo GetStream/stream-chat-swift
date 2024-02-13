@@ -22,7 +22,7 @@ public struct TypingStartEvent: Codable, Hashable, Event {
         self.parentId = parentId
         self.user = user
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case channelId = "channel_id"
         case channelType = "channel_type"
@@ -31,17 +31,6 @@ public struct TypingStartEvent: Codable, Hashable, Event {
         case type
         case parentId = "parent_id"
         case user
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(channelId, forKey: .channelId)
-        try container.encode(channelType, forKey: .channelType)
-        try container.encode(cid, forKey: .cid)
-        try container.encode(createdAt, forKey: .createdAt)
-        try container.encode(type, forKey: .type)
-        try container.encode(parentId, forKey: .parentId)
-        try container.encode(user, forKey: .user)
     }
 }
 

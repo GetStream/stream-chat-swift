@@ -36,7 +36,7 @@ public struct ChannelMemberRequest: Codable, Hashable {
         self.userId = userId
         self.user = user
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case banExpires = "ban_expires"
         case banned
@@ -52,23 +52,5 @@ public struct ChannelMemberRequest: Codable, Hashable {
         case updatedAt = "updated_at"
         case userId = "user_id"
         case user
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(banExpires, forKey: .banExpires)
-        try container.encode(banned, forKey: .banned)
-        try container.encode(channelRole, forKey: .channelRole)
-        try container.encode(createdAt, forKey: .createdAt)
-        try container.encode(deletedAt, forKey: .deletedAt)
-        try container.encode(inviteAcceptedAt, forKey: .inviteAcceptedAt)
-        try container.encode(inviteRejectedAt, forKey: .inviteRejectedAt)
-        try container.encode(invited, forKey: .invited)
-        try container.encode(isModerator, forKey: .isModerator)
-        try container.encode(shadowBanned, forKey: .shadowBanned)
-        try container.encode(status, forKey: .status)
-        try container.encode(updatedAt, forKey: .updatedAt)
-        try container.encode(userId, forKey: .userId)
-        try container.encode(user, forKey: .user)
     }
 }

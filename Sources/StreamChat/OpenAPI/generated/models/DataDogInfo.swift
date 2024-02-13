@@ -12,15 +12,9 @@ public struct DataDogInfo: Codable, Hashable {
         self.apiKey = apiKey
         self.site = site
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case apiKey = "api_key"
         case site
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(apiKey, forKey: .apiKey)
-        try container.encode(site, forKey: .site)
     }
 }

@@ -38,7 +38,7 @@ public struct NotificationMarkUnreadEvent: Codable, Hashable, Event {
         self.channel = channel
         self.user = user
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case channelId = "channel_id"
         case channelType = "channel_type"
@@ -55,25 +55,6 @@ public struct NotificationMarkUnreadEvent: Codable, Hashable, Event {
         case team
         case channel
         case user
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(channelId, forKey: .channelId)
-        try container.encode(channelType, forKey: .channelType)
-        try container.encode(cid, forKey: .cid)
-        try container.encode(createdAt, forKey: .createdAt)
-        try container.encode(firstUnreadMessageId, forKey: .firstUnreadMessageId)
-        try container.encode(lastReadAt, forKey: .lastReadAt)
-        try container.encode(totalUnreadCount, forKey: .totalUnreadCount)
-        try container.encode(type, forKey: .type)
-        try container.encode(unreadChannels, forKey: .unreadChannels)
-        try container.encode(unreadCount, forKey: .unreadCount)
-        try container.encode(unreadMessages, forKey: .unreadMessages)
-        try container.encode(lastReadMessageId, forKey: .lastReadMessageId)
-        try container.encode(team, forKey: .team)
-        try container.encode(channel, forKey: .channel)
-        try container.encode(user, forKey: .user)
     }
 }
 

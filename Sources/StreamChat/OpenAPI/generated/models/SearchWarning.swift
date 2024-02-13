@@ -16,19 +16,11 @@ public struct SearchWarning: Codable, Hashable {
         self.channelSearchCount = channelSearchCount
         self.channelSearchCids = channelSearchCids
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case warningCode = "warning_code"
         case warningDescription = "warning_description"
         case channelSearchCount = "channel_search_count"
         case channelSearchCids = "channel_search_cids"
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(warningCode, forKey: .warningCode)
-        try container.encode(warningDescription, forKey: .warningDescription)
-        try container.encode(channelSearchCount, forKey: .channelSearchCount)
-        try container.encode(channelSearchCids, forKey: .channelSearchCids)
     }
 }

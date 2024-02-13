@@ -78,7 +78,7 @@ public struct SearchResultMessage: Codable, Hashable {
         self.quotedMessage = quotedMessage
         self.user = user
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case cid
         case createdAt = "created_at"
@@ -115,44 +115,5 @@ public struct SearchResultMessage: Codable, Hashable {
         case pinnedBy = "pinned_by"
         case quotedMessage = "quoted_message"
         case user
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(cid, forKey: .cid)
-        try container.encode(createdAt, forKey: .createdAt)
-        try container.encode(deletedReplyCount, forKey: .deletedReplyCount)
-        try container.encode(html, forKey: .html)
-        try container.encode(id, forKey: .id)
-        try container.encode(pinned, forKey: .pinned)
-        try container.encode(replyCount, forKey: .replyCount)
-        try container.encode(shadowed, forKey: .shadowed)
-        try container.encode(silent, forKey: .silent)
-        try container.encode(text, forKey: .text)
-        try container.encode(type, forKey: .type)
-        try container.encode(updatedAt, forKey: .updatedAt)
-        try container.encode(attachments, forKey: .attachments)
-        try container.encode(latestReactions, forKey: .latestReactions)
-        try container.encode(mentionedUsers, forKey: .mentionedUsers)
-        try container.encode(ownReactions, forKey: .ownReactions)
-        try container.encode(custom, forKey: .custom)
-        try container.encode(reactionCounts, forKey: .reactionCounts)
-        try container.encode(reactionScores, forKey: .reactionScores)
-        try container.encode(beforeMessageSendFailed, forKey: .beforeMessageSendFailed)
-        try container.encode(command, forKey: .command)
-        try container.encode(deletedAt, forKey: .deletedAt)
-        try container.encode(mml, forKey: .mml)
-        try container.encode(parentId, forKey: .parentId)
-        try container.encode(pinExpires, forKey: .pinExpires)
-        try container.encode(pinnedAt, forKey: .pinnedAt)
-        try container.encode(quotedMessageId, forKey: .quotedMessageId)
-        try container.encode(showInChannel, forKey: .showInChannel)
-        try container.encode(threadParticipants, forKey: .threadParticipants)
-        try container.encode(channel, forKey: .channel)
-        try container.encode(i18n, forKey: .i18n)
-        try container.encode(imageLabels, forKey: .imageLabels)
-        try container.encode(pinnedBy, forKey: .pinnedBy)
-        try container.encode(quotedMessage, forKey: .quotedMessage)
-        try container.encode(user, forKey: .user)
     }
 }

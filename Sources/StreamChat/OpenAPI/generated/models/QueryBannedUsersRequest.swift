@@ -30,7 +30,7 @@ public struct QueryBannedUsersRequest: Codable, Hashable {
         self.sort = sort
         self.user = user
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case filterConditions = "filter_conditions"
         case createdAtAfter = "created_at_after"
@@ -43,20 +43,5 @@ public struct QueryBannedUsersRequest: Codable, Hashable {
         case userId = "user_id"
         case sort
         case user
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(filterConditions, forKey: .filterConditions)
-        try container.encode(createdAtAfter, forKey: .createdAtAfter)
-        try container.encode(createdAtAfterOrEqual, forKey: .createdAtAfterOrEqual)
-        try container.encode(createdAtBefore, forKey: .createdAtBefore)
-        try container.encode(createdAtBeforeOrEqual, forKey: .createdAtBeforeOrEqual)
-        try container.encode(excludeExpiredBans, forKey: .excludeExpiredBans)
-        try container.encode(limit, forKey: .limit)
-        try container.encode(offset, forKey: .offset)
-        try container.encode(userId, forKey: .userId)
-        try container.encode(sort, forKey: .sort)
-        try container.encode(user, forKey: .user)
     }
 }

@@ -50,7 +50,7 @@ public struct OwnUser: Codable, Hashable {
         self.teams = teams
         self.pushNotifications = pushNotifications
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case banned
         case createdAt = "created_at"
@@ -73,30 +73,5 @@ public struct OwnUser: Codable, Hashable {
         case latestHiddenChannels = "latest_hidden_channels"
         case teams
         case pushNotifications = "push_notifications"
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(banned, forKey: .banned)
-        try container.encode(createdAt, forKey: .createdAt)
-        try container.encode(id, forKey: .id)
-        try container.encode(language, forKey: .language)
-        try container.encode(online, forKey: .online)
-        try container.encode(role, forKey: .role)
-        try container.encode(totalUnreadCount, forKey: .totalUnreadCount)
-        try container.encode(unreadChannels, forKey: .unreadChannels)
-        try container.encode(unreadCount, forKey: .unreadCount)
-        try container.encode(updatedAt, forKey: .updatedAt)
-        try container.encode(channelMutes, forKey: .channelMutes)
-        try container.encode(devices, forKey: .devices)
-        try container.encode(mutes, forKey: .mutes)
-        try container.encode(custom, forKey: .custom)
-        try container.encode(deactivatedAt, forKey: .deactivatedAt)
-        try container.encode(deletedAt, forKey: .deletedAt)
-        try container.encode(invisible, forKey: .invisible)
-        try container.encode(lastActive, forKey: .lastActive)
-        try container.encode(latestHiddenChannels, forKey: .latestHiddenChannels)
-        try container.encode(teams, forKey: .teams)
-        try container.encode(pushNotifications, forKey: .pushNotifications)
     }
 }

@@ -26,7 +26,7 @@ public struct ChannelRequest: Codable, Hashable {
         self.configOverrides = configOverrides
         self.custom = custom
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case autoTranslationEnabled = "auto_translation_enabled"
         case autoTranslationLanguage = "auto_translation_language"
@@ -37,18 +37,5 @@ public struct ChannelRequest: Codable, Hashable {
         case members
         case configOverrides = "config_overrides"
         case custom = "Custom"
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(autoTranslationEnabled, forKey: .autoTranslationEnabled)
-        try container.encode(autoTranslationLanguage, forKey: .autoTranslationLanguage)
-        try container.encode(disabled, forKey: .disabled)
-        try container.encode(frozen, forKey: .frozen)
-        try container.encode(team, forKey: .team)
-        try container.encode(truncatedById, forKey: .truncatedById)
-        try container.encode(members, forKey: .members)
-        try container.encode(configOverrides, forKey: .configOverrides)
-        try container.encode(custom, forKey: .custom)
     }
 }

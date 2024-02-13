@@ -16,19 +16,11 @@ public struct CreateDeviceRequest: Codable, Hashable {
         self.pushProviderName = pushProviderName
         self.voipToken = voipToken
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case id
         case pushProvider = "push_provider"
         case pushProviderName = "push_provider_name"
         case voipToken = "voip_token"
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(id, forKey: .id)
-        try container.encode(pushProvider, forKey: .pushProvider)
-        try container.encode(pushProviderName, forKey: .pushProviderName)
-        try container.encode(voipToken, forKey: .voipToken)
     }
 }

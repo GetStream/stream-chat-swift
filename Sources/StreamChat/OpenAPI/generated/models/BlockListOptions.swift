@@ -12,15 +12,9 @@ public struct BlockListOptions: Codable, Hashable {
         self.behavior = behavior
         self.blocklist = blocklist
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case behavior
         case blocklist
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(behavior, forKey: .behavior)
-        try container.encode(blocklist, forKey: .blocklist)
     }
 }

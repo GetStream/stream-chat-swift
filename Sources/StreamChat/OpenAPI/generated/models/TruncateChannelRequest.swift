@@ -16,19 +16,11 @@ public struct TruncateChannelRequest: Codable, Hashable {
         self.truncatedAt = truncatedAt
         self.message = message
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case hardDelete = "hard_delete"
         case skipPush = "skip_push"
         case truncatedAt = "truncated_at"
         case message
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(hardDelete, forKey: .hardDelete)
-        try container.encode(skipPush, forKey: .skipPush)
-        try container.encode(truncatedAt, forKey: .truncatedAt)
-        try container.encode(message, forKey: .message)
     }
 }

@@ -32,7 +32,7 @@ public struct MessagePaginationParamsRequest: Codable, Hashable {
         self.limit = limit
         self.offset = offset
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case createdAtAfter = "created_at_after"
         case createdAtAfterOrEqual = "created_at_after_or_equal"
@@ -46,21 +46,5 @@ public struct MessagePaginationParamsRequest: Codable, Hashable {
         case idLte = "id_lte"
         case limit
         case offset
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(createdAtAfter, forKey: .createdAtAfter)
-        try container.encode(createdAtAfterOrEqual, forKey: .createdAtAfterOrEqual)
-        try container.encode(createdAtAround, forKey: .createdAtAround)
-        try container.encode(createdAtBefore, forKey: .createdAtBefore)
-        try container.encode(createdAtBeforeOrEqual, forKey: .createdAtBeforeOrEqual)
-        try container.encode(idAround, forKey: .idAround)
-        try container.encode(idGt, forKey: .idGt)
-        try container.encode(idGte, forKey: .idGte)
-        try container.encode(idLt, forKey: .idLt)
-        try container.encode(idLte, forKey: .idLte)
-        try container.encode(limit, forKey: .limit)
-        try container.encode(offset, forKey: .offset)
     }
 }

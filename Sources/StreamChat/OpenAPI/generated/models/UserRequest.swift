@@ -18,21 +18,12 @@ public struct UserRequest: Codable, Hashable {
         self.name = name
         self.custom = custom
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case id
         case image
         case language
         case name
         case custom
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(id, forKey: .id)
-        try container.encode(image, forKey: .image)
-        try container.encode(language, forKey: .language)
-        try container.encode(name, forKey: .name)
-        try container.encode(custom, forKey: .custom)
     }
 }

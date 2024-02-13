@@ -26,7 +26,7 @@ public struct BanRequest: Codable, Hashable {
         self.type = type
         self.bannedBy = bannedBy
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case targetUserId = "target_user_id"
         case bannedById = "banned_by_id"
@@ -37,18 +37,5 @@ public struct BanRequest: Codable, Hashable {
         case timeout
         case type
         case bannedBy = "banned_by"
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(targetUserId, forKey: .targetUserId)
-        try container.encode(bannedById, forKey: .bannedById)
-        try container.encode(id, forKey: .id)
-        try container.encode(ipBan, forKey: .ipBan)
-        try container.encode(reason, forKey: .reason)
-        try container.encode(shadow, forKey: .shadow)
-        try container.encode(timeout, forKey: .timeout)
-        try container.encode(type, forKey: .type)
-        try container.encode(bannedBy, forKey: .bannedBy)
     }
 }

@@ -14,17 +14,10 @@ public struct UpdateMessagePartialRequest: Codable, Hashable {
         self.set = set
         self.skipEnrichUrl = skipEnrichUrl
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case unset
         case set
         case skipEnrichUrl = "skip_enrich_url"
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(unset, forKey: .unset)
-        try container.encode(set, forKey: .set)
-        try container.encode(skipEnrichUrl, forKey: .skipEnrichUrl)
     }
 }

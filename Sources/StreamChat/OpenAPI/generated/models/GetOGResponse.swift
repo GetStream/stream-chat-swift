@@ -54,7 +54,7 @@ public struct GetOGResponse: Codable, Hashable {
         self.fields = fields
         self.giphy = giphy
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case duration
         case custom
@@ -79,32 +79,5 @@ public struct GetOGResponse: Codable, Hashable {
         case actions
         case fields
         case giphy
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(duration, forKey: .duration)
-        try container.encode(custom, forKey: .custom)
-        try container.encode(assetUrl, forKey: .assetUrl)
-        try container.encode(authorIcon, forKey: .authorIcon)
-        try container.encode(authorLink, forKey: .authorLink)
-        try container.encode(authorName, forKey: .authorName)
-        try container.encode(color, forKey: .color)
-        try container.encode(fallback, forKey: .fallback)
-        try container.encode(footer, forKey: .footer)
-        try container.encode(footerIcon, forKey: .footerIcon)
-        try container.encode(imageUrl, forKey: .imageUrl)
-        try container.encode(ogScrapeUrl, forKey: .ogScrapeUrl)
-        try container.encode(originalHeight, forKey: .originalHeight)
-        try container.encode(originalWidth, forKey: .originalWidth)
-        try container.encode(pretext, forKey: .pretext)
-        try container.encode(text, forKey: .text)
-        try container.encode(thumbUrl, forKey: .thumbUrl)
-        try container.encode(title, forKey: .title)
-        try container.encode(titleLink, forKey: .titleLink)
-        try container.encode(type, forKey: .type)
-        try container.encode(actions, forKey: .actions)
-        try container.encode(fields, forKey: .fields)
-        try container.encode(giphy, forKey: .giphy)
     }
 }

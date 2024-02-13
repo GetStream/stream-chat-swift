@@ -16,19 +16,11 @@ public struct HLSSettings: Codable, Hashable {
         self.qualityTracks = qualityTracks
         self.layout = layout
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case autoOn = "auto_on"
         case enabled
         case qualityTracks = "quality_tracks"
         case layout
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(autoOn, forKey: .autoOn)
-        try container.encode(enabled, forKey: .enabled)
-        try container.encode(qualityTracks, forKey: .qualityTracks)
-        try container.encode(layout, forKey: .layout)
     }
 }

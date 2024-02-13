@@ -18,22 +18,13 @@ public struct ChannelFrozenEvent: Codable, Hashable, Event {
         self.createdAt = createdAt
         self.type = type
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case channelId = "channel_id"
         case channelType = "channel_type"
         case cid
         case createdAt = "created_at"
         case type
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(channelId, forKey: .channelId)
-        try container.encode(channelType, forKey: .channelType)
-        try container.encode(cid, forKey: .cid)
-        try container.encode(createdAt, forKey: .createdAt)
-        try container.encode(type, forKey: .type)
     }
 }
 

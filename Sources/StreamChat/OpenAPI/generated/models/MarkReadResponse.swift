@@ -12,15 +12,9 @@ public struct MarkReadResponse: Codable, Hashable {
         self.duration = duration
         self.event = event
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case duration
         case event
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(duration, forKey: .duration)
-        try container.encode(event, forKey: .event)
     }
 }

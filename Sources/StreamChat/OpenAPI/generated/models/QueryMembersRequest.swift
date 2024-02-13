@@ -42,7 +42,7 @@ public struct QueryMembersRequest: Codable, Hashable {
         self.sort = sort
         self.user = user
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case type
         case filterConditions = "filter_conditions"
@@ -61,26 +61,5 @@ public struct QueryMembersRequest: Codable, Hashable {
         case members
         case sort
         case user
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(type, forKey: .type)
-        try container.encode(filterConditions, forKey: .filterConditions)
-        try container.encode(createdAtAfter, forKey: .createdAtAfter)
-        try container.encode(createdAtAfterOrEqual, forKey: .createdAtAfterOrEqual)
-        try container.encode(createdAtBefore, forKey: .createdAtBefore)
-        try container.encode(createdAtBeforeOrEqual, forKey: .createdAtBeforeOrEqual)
-        try container.encode(id, forKey: .id)
-        try container.encode(limit, forKey: .limit)
-        try container.encode(offset, forKey: .offset)
-        try container.encode(userId, forKey: .userId)
-        try container.encode(userIdGt, forKey: .userIdGt)
-        try container.encode(userIdGte, forKey: .userIdGte)
-        try container.encode(userIdLt, forKey: .userIdLt)
-        try container.encode(userIdLte, forKey: .userIdLte)
-        try container.encode(members, forKey: .members)
-        try container.encode(sort, forKey: .sort)
-        try container.encode(user, forKey: .user)
     }
 }

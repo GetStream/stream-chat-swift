@@ -12,15 +12,9 @@ public struct ScreensharingSettings: Codable, Hashable {
         self.accessRequestEnabled = accessRequestEnabled
         self.enabled = enabled
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case accessRequestEnabled = "access_request_enabled"
         case enabled
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(accessRequestEnabled, forKey: .accessRequestEnabled)
-        try container.encode(enabled, forKey: .enabled)
     }
 }

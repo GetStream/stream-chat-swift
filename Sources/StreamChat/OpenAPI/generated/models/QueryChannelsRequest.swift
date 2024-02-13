@@ -32,7 +32,7 @@ public struct QueryChannelsRequest: Codable, Hashable {
         self.filterConditions = filterConditions
         self.user = user
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case connectionId = "connection_id"
         case limit
@@ -46,21 +46,5 @@ public struct QueryChannelsRequest: Codable, Hashable {
         case sort
         case filterConditions = "filter_conditions"
         case user
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(connectionId, forKey: .connectionId)
-        try container.encode(limit, forKey: .limit)
-        try container.encode(memberLimit, forKey: .memberLimit)
-        try container.encode(messageLimit, forKey: .messageLimit)
-        try container.encode(offset, forKey: .offset)
-        try container.encode(presence, forKey: .presence)
-        try container.encode(state, forKey: .state)
-        try container.encode(userId, forKey: .userId)
-        try container.encode(watch, forKey: .watch)
-        try container.encode(sort, forKey: .sort)
-        try container.encode(filterConditions, forKey: .filterConditions)
-        try container.encode(user, forKey: .user)
     }
 }

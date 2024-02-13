@@ -22,7 +22,7 @@ public struct Device: Codable, Hashable {
         self.pushProviderName = pushProviderName
         self.voip = voip
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case createdAt = "created_at"
         case id
@@ -31,16 +31,5 @@ public struct Device: Codable, Hashable {
         case disabledReason = "disabled_reason"
         case pushProviderName = "push_provider_name"
         case voip
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(createdAt, forKey: .createdAt)
-        try container.encode(id, forKey: .id)
-        try container.encode(pushProvider, forKey: .pushProvider)
-        try container.encode(disabled, forKey: .disabled)
-        try container.encode(disabledReason, forKey: .disabledReason)
-        try container.encode(pushProviderName, forKey: .pushProviderName)
-        try container.encode(voip, forKey: .voip)
     }
 }

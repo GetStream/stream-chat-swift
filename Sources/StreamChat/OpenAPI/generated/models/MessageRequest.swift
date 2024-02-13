@@ -34,7 +34,7 @@ public struct MessageRequest: Codable, Hashable {
         self.mentionedUsers = mentionedUsers
         self.custom = custom
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case attachments
         case id
@@ -49,22 +49,5 @@ public struct MessageRequest: Codable, Hashable {
         case type
         case mentionedUsers = "mentioned_users"
         case custom
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(attachments, forKey: .attachments)
-        try container.encode(id, forKey: .id)
-        try container.encode(parentId, forKey: .parentId)
-        try container.encode(pinExpires, forKey: .pinExpires)
-        try container.encode(pinned, forKey: .pinned)
-        try container.encode(pinnedAt, forKey: .pinnedAt)
-        try container.encode(quotedMessageId, forKey: .quotedMessageId)
-        try container.encode(showInChannel, forKey: .showInChannel)
-        try container.encode(silent, forKey: .silent)
-        try container.encode(text, forKey: .text)
-        try container.encode(type, forKey: .type)
-        try container.encode(mentionedUsers, forKey: .mentionedUsers)
-        try container.encode(custom, forKey: .custom)
     }
 }

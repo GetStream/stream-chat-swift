@@ -26,7 +26,7 @@ public struct ReactionUpdatedEvent: Codable, Hashable, Event {
         self.team = team
         self.user = user
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case channelId = "channel_id"
         case channelType = "channel_type"
@@ -37,19 +37,6 @@ public struct ReactionUpdatedEvent: Codable, Hashable, Event {
         case reaction
         case team
         case user
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(channelId, forKey: .channelId)
-        try container.encode(channelType, forKey: .channelType)
-        try container.encode(cid, forKey: .cid)
-        try container.encode(createdAt, forKey: .createdAt)
-        try container.encode(type, forKey: .type)
-        try container.encode(message, forKey: .message)
-        try container.encode(reaction, forKey: .reaction)
-        try container.encode(team, forKey: .team)
-        try container.encode(user, forKey: .user)
     }
 }
 

@@ -24,7 +24,7 @@ public struct UserUnbannedEvent: Codable, Hashable, Event {
         self.team = team
         self.user = user
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case channelId = "channel_id"
         case channelType = "channel_type"
@@ -34,18 +34,6 @@ public struct UserUnbannedEvent: Codable, Hashable, Event {
         case type
         case team
         case user
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(channelId, forKey: .channelId)
-        try container.encode(channelType, forKey: .channelType)
-        try container.encode(cid, forKey: .cid)
-        try container.encode(createdAt, forKey: .createdAt)
-        try container.encode(shadow, forKey: .shadow)
-        try container.encode(type, forKey: .type)
-        try container.encode(team, forKey: .team)
-        try container.encode(user, forKey: .user)
     }
 }
 

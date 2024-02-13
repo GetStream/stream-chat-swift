@@ -16,19 +16,11 @@ public struct MessageActionRequest: Codable, Hashable {
         self.userId = userId
         self.user = user
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case formData = "form_data"
         case iD = "ID"
         case userId = "user_id"
         case user
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(formData, forKey: .formData)
-        try container.encode(iD, forKey: .iD)
-        try container.encode(userId, forKey: .userId)
-        try container.encode(user, forKey: .user)
     }
 }

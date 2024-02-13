@@ -34,7 +34,7 @@ public struct UpdateChannelRequest: Codable, Hashable {
         self.data = data
         self.message = message
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case addModerators = "add_moderators"
         case demoteModerators = "demote_moderators"
@@ -49,22 +49,5 @@ public struct UpdateChannelRequest: Codable, Hashable {
         case invites
         case data
         case message
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(addModerators, forKey: .addModerators)
-        try container.encode(demoteModerators, forKey: .demoteModerators)
-        try container.encode(removeMembers, forKey: .removeMembers)
-        try container.encode(acceptInvite, forKey: .acceptInvite)
-        try container.encode(cooldown, forKey: .cooldown)
-        try container.encode(hideHistory, forKey: .hideHistory)
-        try container.encode(rejectInvite, forKey: .rejectInvite)
-        try container.encode(skipPush, forKey: .skipPush)
-        try container.encode(addMembers, forKey: .addMembers)
-        try container.encode(assignRoles, forKey: .assignRoles)
-        try container.encode(invites, forKey: .invites)
-        try container.encode(data, forKey: .data)
-        try container.encode(message, forKey: .message)
     }
 }

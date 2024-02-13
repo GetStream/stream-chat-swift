@@ -90,7 +90,7 @@ public struct App: Codable, Hashable {
         self.datadogInfo = datadogInfo
         self.hmsOptions = hmsOptions
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case asyncUrlEnrichEnabled = "async_url_enrich_enabled"
         case campaignEnabled = "campaign_enabled"
@@ -133,50 +133,5 @@ public struct App: Codable, Hashable {
         case agoraOptions = "agora_options"
         case datadogInfo = "datadog_info"
         case hmsOptions = "hms_options"
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(asyncUrlEnrichEnabled, forKey: .asyncUrlEnrichEnabled)
-        try container.encode(campaignEnabled, forKey: .campaignEnabled)
-        try container.encode(cdnExpirationSeconds, forKey: .cdnExpirationSeconds)
-        try container.encode(customActionHandlerUrl, forKey: .customActionHandlerUrl)
-        try container.encode(disableAuthChecks, forKey: .disableAuthChecks)
-        try container.encode(disablePermissionsChecks, forKey: .disablePermissionsChecks)
-        try container.encode(enforceUniqueUsernames, forKey: .enforceUniqueUsernames)
-        try container.encode(imageModerationEnabled, forKey: .imageModerationEnabled)
-        try container.encode(multiTenantEnabled, forKey: .multiTenantEnabled)
-        try container.encode(name, forKey: .name)
-        try container.encode(organization, forKey: .organization)
-        try container.encode(permissionVersion, forKey: .permissionVersion)
-        try container.encode(remindersInterval, forKey: .remindersInterval)
-        try container.encode(snsKey, forKey: .snsKey)
-        try container.encode(snsSecret, forKey: .snsSecret)
-        try container.encode(snsTopicArn, forKey: .snsTopicArn)
-        try container.encode(sqsKey, forKey: .sqsKey)
-        try container.encode(sqsSecret, forKey: .sqsSecret)
-        try container.encode(sqsUrl, forKey: .sqsUrl)
-        try container.encode(suspended, forKey: .suspended)
-        try container.encode(suspendedExplanation, forKey: .suspendedExplanation)
-        try container.encode(videoProvider, forKey: .videoProvider)
-        try container.encode(webhookUrl, forKey: .webhookUrl)
-        try container.encode(userSearchDisallowedRoles, forKey: .userSearchDisallowedRoles)
-        try container.encode(webhookEvents, forKey: .webhookEvents)
-        try container.encode(callTypes, forKey: .callTypes)
-        try container.encode(channelConfigs, forKey: .channelConfigs)
-        try container.encode(fileUploadConfig, forKey: .fileUploadConfig)
-        try container.encode(grants, forKey: .grants)
-        try container.encode(imageUploadConfig, forKey: .imageUploadConfig)
-        try container.encode(policies, forKey: .policies)
-        try container.encode(pushNotifications, forKey: .pushNotifications)
-        try container.encode(autoTranslationEnabled, forKey: .autoTranslationEnabled)
-        try container.encode(beforeMessageSendHookUrl, forKey: .beforeMessageSendHookUrl)
-        try container.encode(revokeTokensIssuedBefore, forKey: .revokeTokensIssuedBefore)
-        try container.encode(allowedFlagReasons, forKey: .allowedFlagReasons)
-        try container.encode(geofences, forKey: .geofences)
-        try container.encode(imageModerationLabels, forKey: .imageModerationLabels)
-        try container.encode(agoraOptions, forKey: .agoraOptions)
-        try container.encode(datadogInfo, forKey: .datadogInfo)
-        try container.encode(hmsOptions, forKey: .hmsOptions)
     }
 }

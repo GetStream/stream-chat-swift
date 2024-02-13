@@ -22,7 +22,7 @@ public struct QueryMessageFlagsRequest: Codable, Hashable {
         self.filterConditions = filterConditions
         self.user = user
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case limit
         case offset
@@ -31,16 +31,5 @@ public struct QueryMessageFlagsRequest: Codable, Hashable {
         case sort
         case filterConditions = "filter_conditions"
         case user
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(limit, forKey: .limit)
-        try container.encode(offset, forKey: .offset)
-        try container.encode(showDeletedMessages, forKey: .showDeletedMessages)
-        try container.encode(userId, forKey: .userId)
-        try container.encode(sort, forKey: .sort)
-        try container.encode(filterConditions, forKey: .filterConditions)
-        try container.encode(user, forKey: .user)
     }
 }

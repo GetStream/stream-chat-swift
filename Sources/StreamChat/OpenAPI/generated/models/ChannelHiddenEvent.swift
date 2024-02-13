@@ -24,7 +24,7 @@ public struct ChannelHiddenEvent: Codable, Hashable, Event {
         self.channel = channel
         self.user = user
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case channelId = "channel_id"
         case channelType = "channel_type"
@@ -34,18 +34,6 @@ public struct ChannelHiddenEvent: Codable, Hashable, Event {
         case type
         case channel
         case user
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(channelId, forKey: .channelId)
-        try container.encode(channelType, forKey: .channelType)
-        try container.encode(cid, forKey: .cid)
-        try container.encode(clearHistory, forKey: .clearHistory)
-        try container.encode(createdAt, forKey: .createdAt)
-        try container.encode(type, forKey: .type)
-        try container.encode(channel, forKey: .channel)
-        try container.encode(user, forKey: .user)
     }
 }
 

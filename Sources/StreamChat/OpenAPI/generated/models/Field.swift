@@ -14,17 +14,10 @@ public struct Field: Codable, Hashable {
         self.title = title
         self.value = value
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case short
         case title
         case value
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(short, forKey: .short)
-        try container.encode(title, forKey: .title)
-        try container.encode(value, forKey: .value)
     }
 }

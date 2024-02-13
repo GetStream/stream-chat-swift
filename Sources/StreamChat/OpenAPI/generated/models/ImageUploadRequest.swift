@@ -14,17 +14,10 @@ public struct ImageUploadRequest: Codable, Hashable {
         self.uploadSizes = uploadSizes
         self.user = user
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case file
         case uploadSizes = "upload_sizes"
         case user
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(file, forKey: .file)
-        try container.encode(uploadSizes, forKey: .uploadSizes)
-        try container.encode(user, forKey: .user)
     }
 }

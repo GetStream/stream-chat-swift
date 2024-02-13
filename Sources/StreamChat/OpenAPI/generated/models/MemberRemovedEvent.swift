@@ -22,7 +22,7 @@ public struct MemberRemovedEvent: Codable, Hashable, Event {
         self.member = member
         self.user = user
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case channelId = "channel_id"
         case channelType = "channel_type"
@@ -31,17 +31,6 @@ public struct MemberRemovedEvent: Codable, Hashable, Event {
         case type
         case member
         case user
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(channelId, forKey: .channelId)
-        try container.encode(channelType, forKey: .channelType)
-        try container.encode(cid, forKey: .cid)
-        try container.encode(createdAt, forKey: .createdAt)
-        try container.encode(type, forKey: .type)
-        try container.encode(member, forKey: .member)
-        try container.encode(user, forKey: .user)
     }
 }
 

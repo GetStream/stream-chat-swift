@@ -18,21 +18,12 @@ public struct SearchResponse: Codable, Hashable {
         self.previous = previous
         self.resultsWarning = resultsWarning
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case duration
         case results
         case next
         case previous
         case resultsWarning = "results_warning"
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(duration, forKey: .duration)
-        try container.encode(results, forKey: .results)
-        try container.encode(next, forKey: .next)
-        try container.encode(previous, forKey: .previous)
-        try container.encode(resultsWarning, forKey: .resultsWarning)
     }
 }

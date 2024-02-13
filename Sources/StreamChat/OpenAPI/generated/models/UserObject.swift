@@ -40,7 +40,7 @@ public struct UserObject: Codable, Hashable {
         self.custom = custom
         self.pushNotifications = pushNotifications
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case id
         case banExpires = "ban_expires"
@@ -58,25 +58,5 @@ public struct UserObject: Codable, Hashable {
         case teams
         case custom
         case pushNotifications = "push_notifications"
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(id, forKey: .id)
-        try container.encode(banExpires, forKey: .banExpires)
-        try container.encode(banned, forKey: .banned)
-        try container.encode(createdAt, forKey: .createdAt)
-        try container.encode(deactivatedAt, forKey: .deactivatedAt)
-        try container.encode(deletedAt, forKey: .deletedAt)
-        try container.encode(invisible, forKey: .invisible)
-        try container.encode(language, forKey: .language)
-        try container.encode(lastActive, forKey: .lastActive)
-        try container.encode(online, forKey: .online)
-        try container.encode(revokeTokensIssuedBefore, forKey: .revokeTokensIssuedBefore)
-        try container.encode(role, forKey: .role)
-        try container.encode(updatedAt, forKey: .updatedAt)
-        try container.encode(teams, forKey: .teams)
-        try container.encode(custom, forKey: .custom)
-        try container.encode(pushNotifications, forKey: .pushNotifications)
     }
 }

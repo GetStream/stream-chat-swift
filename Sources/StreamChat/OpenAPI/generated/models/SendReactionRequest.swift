@@ -16,19 +16,11 @@ public struct SendReactionRequest: Codable, Hashable {
         self.iD = iD
         self.skipPush = skipPush
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case reaction
         case enforceUnique = "enforce_unique"
         case iD = "ID"
         case skipPush = "skip_push"
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(reaction, forKey: .reaction)
-        try container.encode(enforceUnique, forKey: .enforceUnique)
-        try container.encode(iD, forKey: .iD)
-        try container.encode(skipPush, forKey: .skipPush)
     }
 }

@@ -22,7 +22,7 @@ public struct SearchRequest: Codable, Hashable {
         self.sort = sort
         self.messageFilterConditions = messageFilterConditions
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case filterConditions = "filter_conditions"
         case limit
@@ -31,16 +31,5 @@ public struct SearchRequest: Codable, Hashable {
         case query
         case sort
         case messageFilterConditions = "message_filter_conditions"
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(filterConditions, forKey: .filterConditions)
-        try container.encode(limit, forKey: .limit)
-        try container.encode(next, forKey: .next)
-        try container.encode(offset, forKey: .offset)
-        try container.encode(query, forKey: .query)
-        try container.encode(sort, forKey: .sort)
-        try container.encode(messageFilterConditions, forKey: .messageFilterConditions)
     }
 }

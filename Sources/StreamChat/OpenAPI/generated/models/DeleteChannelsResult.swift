@@ -12,15 +12,9 @@ public struct DeleteChannelsResult: Codable, Hashable {
         self.status = status
         self.error = error
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case status
         case error
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(status, forKey: .status)
-        try container.encode(error, forKey: .error)
     }
 }

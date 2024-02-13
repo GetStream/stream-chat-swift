@@ -20,7 +20,7 @@ public struct AudioSettings: Codable, Hashable {
         self.redundantCodingEnabled = redundantCodingEnabled
         self.speakerDefaultOn = speakerDefaultOn
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case accessRequestEnabled = "access_request_enabled"
         case defaultDevice = "default_device"
@@ -28,15 +28,5 @@ public struct AudioSettings: Codable, Hashable {
         case opusDtxEnabled = "opus_dtx_enabled"
         case redundantCodingEnabled = "redundant_coding_enabled"
         case speakerDefaultOn = "speaker_default_on"
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(accessRequestEnabled, forKey: .accessRequestEnabled)
-        try container.encode(defaultDevice, forKey: .defaultDevice)
-        try container.encode(micDefaultOn, forKey: .micDefaultOn)
-        try container.encode(opusDtxEnabled, forKey: .opusDtxEnabled)
-        try container.encode(redundantCodingEnabled, forKey: .redundantCodingEnabled)
-        try container.encode(speakerDefaultOn, forKey: .speakerDefaultOn)
     }
 }

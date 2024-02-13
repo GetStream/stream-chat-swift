@@ -60,7 +60,7 @@ public struct PushProvider: Codable, Hashable {
         self.xiaomiAppSecret = xiaomiAppSecret
         self.xiaomiPackageName = xiaomiPackageName
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case createdAt = "created_at"
         case name
@@ -88,35 +88,5 @@ public struct PushProvider: Codable, Hashable {
         case huaweiAppSecret = "huawei_app_secret"
         case xiaomiAppSecret = "xiaomi_app_secret"
         case xiaomiPackageName = "xiaomi_package_name"
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(createdAt, forKey: .createdAt)
-        try container.encode(name, forKey: .name)
-        try container.encode(type, forKey: .type)
-        try container.encode(updatedAt, forKey: .updatedAt)
-        try container.encode(apnAuthKey, forKey: .apnAuthKey)
-        try container.encode(apnAuthType, forKey: .apnAuthType)
-        try container.encode(apnDevelopment, forKey: .apnDevelopment)
-        try container.encode(apnHost, forKey: .apnHost)
-        try container.encode(apnKeyId, forKey: .apnKeyId)
-        try container.encode(apnNotificationTemplate, forKey: .apnNotificationTemplate)
-        try container.encode(apnP12Cert, forKey: .apnP12Cert)
-        try container.encode(apnTeamId, forKey: .apnTeamId)
-        try container.encode(apnTopic, forKey: .apnTopic)
-        try container.encode(description, forKey: .description)
-        try container.encode(disabledAt, forKey: .disabledAt)
-        try container.encode(disabledReason, forKey: .disabledReason)
-        try container.encode(firebaseApnTemplate, forKey: .firebaseApnTemplate)
-        try container.encode(firebaseCredentials, forKey: .firebaseCredentials)
-        try container.encode(firebaseDataTemplate, forKey: .firebaseDataTemplate)
-        try container.encode(firebaseHost, forKey: .firebaseHost)
-        try container.encode(firebaseNotificationTemplate, forKey: .firebaseNotificationTemplate)
-        try container.encode(firebaseServerKey, forKey: .firebaseServerKey)
-        try container.encode(huaweiAppId, forKey: .huaweiAppId)
-        try container.encode(huaweiAppSecret, forKey: .huaweiAppSecret)
-        try container.encode(xiaomiAppSecret, forKey: .xiaomiAppSecret)
-        try container.encode(xiaomiPackageName, forKey: .xiaomiPackageName)
     }
 }

@@ -34,7 +34,7 @@ public struct Flag: Codable, Hashable {
         self.targetUser = targetUser
         self.user = user
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case createdAt = "created_at"
         case createdByAutomod = "created_by_automod"
@@ -49,22 +49,5 @@ public struct Flag: Codable, Hashable {
         case targetMessage = "target_message"
         case targetUser = "target_user"
         case user
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(createdAt, forKey: .createdAt)
-        try container.encode(createdByAutomod, forKey: .createdByAutomod)
-        try container.encode(updatedAt, forKey: .updatedAt)
-        try container.encode(approvedAt, forKey: .approvedAt)
-        try container.encode(reason, forKey: .reason)
-        try container.encode(rejectedAt, forKey: .rejectedAt)
-        try container.encode(reviewedAt, forKey: .reviewedAt)
-        try container.encode(targetMessageId, forKey: .targetMessageId)
-        try container.encode(custom, forKey: .custom)
-        try container.encode(details, forKey: .details)
-        try container.encode(targetMessage, forKey: .targetMessage)
-        try container.encode(targetUser, forKey: .targetUser)
-        try container.encode(user, forKey: .user)
     }
 }

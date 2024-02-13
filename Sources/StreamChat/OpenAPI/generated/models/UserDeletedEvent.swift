@@ -20,7 +20,7 @@ public struct UserDeletedEvent: Codable, Hashable, Event {
         self.type = type
         self.user = user
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case createdAt = "created_at"
         case deleteConversationChannels = "delete_conversation_channels"
@@ -28,16 +28,6 @@ public struct UserDeletedEvent: Codable, Hashable, Event {
         case markMessagesDeleted = "mark_messages_deleted"
         case type
         case user
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(createdAt, forKey: .createdAt)
-        try container.encode(deleteConversationChannels, forKey: .deleteConversationChannels)
-        try container.encode(hardDelete, forKey: .hardDelete)
-        try container.encode(markMessagesDeleted, forKey: .markMessagesDeleted)
-        try container.encode(type, forKey: .type)
-        try container.encode(user, forKey: .user)
     }
 }
 

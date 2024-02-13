@@ -18,21 +18,12 @@ public struct VideoSettings: Codable, Hashable {
         self.enabled = enabled
         self.targetResolution = targetResolution
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case accessRequestEnabled = "access_request_enabled"
         case cameraDefaultOn = "camera_default_on"
         case cameraFacing = "camera_facing"
         case enabled
         case targetResolution = "target_resolution"
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(accessRequestEnabled, forKey: .accessRequestEnabled)
-        try container.encode(cameraDefaultOn, forKey: .cameraDefaultOn)
-        try container.encode(cameraFacing, forKey: .cameraFacing)
-        try container.encode(enabled, forKey: .enabled)
-        try container.encode(targetResolution, forKey: .targetResolution)
     }
 }

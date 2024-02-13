@@ -22,7 +22,7 @@ public struct CallType: Codable, Hashable {
         self.notificationSettings = notificationSettings
         self.settings = settings
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case appPK = "AppPK"
         case createdAt = "CreatedAt"
@@ -31,16 +31,5 @@ public struct CallType: Codable, Hashable {
         case updatedAt = "UpdatedAt"
         case notificationSettings = "NotificationSettings"
         case settings = "Settings"
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(appPK, forKey: .appPK)
-        try container.encode(createdAt, forKey: .createdAt)
-        try container.encode(name, forKey: .name)
-        try container.encode(pK, forKey: .pK)
-        try container.encode(updatedAt, forKey: .updatedAt)
-        try container.encode(notificationSettings, forKey: .notificationSettings)
-        try container.encode(settings, forKey: .settings)
     }
 }

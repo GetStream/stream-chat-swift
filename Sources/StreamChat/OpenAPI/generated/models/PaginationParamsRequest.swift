@@ -20,7 +20,7 @@ public struct PaginationParamsRequest: Codable, Hashable {
         self.limit = limit
         self.offset = offset
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case idGt = "id_gt"
         case idGte = "id_gte"
@@ -28,15 +28,5 @@ public struct PaginationParamsRequest: Codable, Hashable {
         case idLte = "id_lte"
         case limit
         case offset
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(idGt, forKey: .idGt)
-        try container.encode(idGte, forKey: .idGte)
-        try container.encode(idLt, forKey: .idLt)
-        try container.encode(idLte, forKey: .idLte)
-        try container.encode(limit, forKey: .limit)
-        try container.encode(offset, forKey: .offset)
     }
 }

@@ -14,17 +14,10 @@ public struct TruncateChannelResponse: Codable, Hashable {
         self.channel = channel
         self.message = message
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case duration
         case channel
         case message
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(duration, forKey: .duration)
-        try container.encode(channel, forKey: .channel)
-        try container.encode(message, forKey: .message)
     }
 }

@@ -28,7 +28,7 @@ public struct APNConfigFields: Codable, Hashable {
         self.p12Cert = p12Cert
         self.teamId = teamId
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case development
         case enabled
@@ -40,19 +40,5 @@ public struct APNConfigFields: Codable, Hashable {
         case keyId = "key_id"
         case p12Cert = "p12_cert"
         case teamId = "team_id"
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(development, forKey: .development)
-        try container.encode(enabled, forKey: .enabled)
-        try container.encode(notificationTemplate, forKey: .notificationTemplate)
-        try container.encode(authKey, forKey: .authKey)
-        try container.encode(authType, forKey: .authType)
-        try container.encode(bundleId, forKey: .bundleId)
-        try container.encode(host, forKey: .host)
-        try container.encode(keyId, forKey: .keyId)
-        try container.encode(p12Cert, forKey: .p12Cert)
-        try container.encode(teamId, forKey: .teamId)
     }
 }

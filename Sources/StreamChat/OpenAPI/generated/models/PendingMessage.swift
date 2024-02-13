@@ -16,19 +16,11 @@ public struct PendingMessage: Codable, Hashable {
         self.metadata = metadata
         self.user = user
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case channel
         case message
         case metadata
         case user
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(channel, forKey: .channel)
-        try container.encode(message, forKey: .message)
-        try container.encode(metadata, forKey: .metadata)
-        try container.encode(user, forKey: .user)
     }
 }

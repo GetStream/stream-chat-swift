@@ -26,7 +26,7 @@ public struct ChannelGetOrCreateRequest: Codable, Hashable {
         self.messages = messages
         self.watchers = watchers
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case connectionId = "connection_id"
         case hideForCreator = "hide_for_creator"
@@ -37,18 +37,5 @@ public struct ChannelGetOrCreateRequest: Codable, Hashable {
         case members
         case messages
         case watchers
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(connectionId, forKey: .connectionId)
-        try container.encode(hideForCreator, forKey: .hideForCreator)
-        try container.encode(presence, forKey: .presence)
-        try container.encode(state, forKey: .state)
-        try container.encode(watch, forKey: .watch)
-        try container.encode(data, forKey: .data)
-        try container.encode(members, forKey: .members)
-        try container.encode(messages, forKey: .messages)
-        try container.encode(watchers, forKey: .watchers)
     }
 }

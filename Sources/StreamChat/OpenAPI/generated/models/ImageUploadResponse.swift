@@ -16,19 +16,11 @@ public struct ImageUploadResponse: Codable, Hashable {
         self.thumbUrl = thumbUrl
         self.uploadSizes = uploadSizes
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case duration
         case file
         case thumbUrl = "thumb_url"
         case uploadSizes = "upload_sizes"
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(duration, forKey: .duration)
-        try container.encode(file, forKey: .file)
-        try container.encode(thumbUrl, forKey: .thumbUrl)
-        try container.encode(uploadSizes, forKey: .uploadSizes)
     }
 }

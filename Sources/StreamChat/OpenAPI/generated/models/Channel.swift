@@ -50,7 +50,7 @@ public struct Channel: Codable, Hashable {
         self.createdBy = createdBy
         self.truncatedBy = truncatedBy
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case autoTranslationLanguage = "auto_translation_language"
         case cid
@@ -73,30 +73,5 @@ public struct Channel: Codable, Hashable {
         case configOverrides = "config_overrides"
         case createdBy = "created_by"
         case truncatedBy = "truncated_by"
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(autoTranslationLanguage, forKey: .autoTranslationLanguage)
-        try container.encode(cid, forKey: .cid)
-        try container.encode(createdAt, forKey: .createdAt)
-        try container.encode(disabled, forKey: .disabled)
-        try container.encode(frozen, forKey: .frozen)
-        try container.encode(id, forKey: .id)
-        try container.encode(type, forKey: .type)
-        try container.encode(updatedAt, forKey: .updatedAt)
-        try container.encode(custom, forKey: .custom)
-        try container.encode(autoTranslationEnabled, forKey: .autoTranslationEnabled)
-        try container.encode(cooldown, forKey: .cooldown)
-        try container.encode(deletedAt, forKey: .deletedAt)
-        try container.encode(lastMessageAt, forKey: .lastMessageAt)
-        try container.encode(memberCount, forKey: .memberCount)
-        try container.encode(team, forKey: .team)
-        try container.encode(invites, forKey: .invites)
-        try container.encode(members, forKey: .members)
-        try container.encode(config, forKey: .config)
-        try container.encode(configOverrides, forKey: .configOverrides)
-        try container.encode(createdBy, forKey: .createdBy)
-        try container.encode(truncatedBy, forKey: .truncatedBy)
     }
 }

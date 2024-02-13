@@ -18,21 +18,12 @@ public struct Action: Codable, Hashable {
         self.style = style
         self.value = value
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case name
         case text
         case type
         case style
         case value
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(name, forKey: .name)
-        try container.encode(text, forKey: .text)
-        try container.encode(type, forKey: .type)
-        try container.encode(style, forKey: .style)
-        try container.encode(value, forKey: .value)
     }
 }

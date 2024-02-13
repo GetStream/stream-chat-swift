@@ -20,7 +20,7 @@ public struct FirebaseConfigFields: Codable, Hashable {
         self.credentialsJson = credentialsJson
         self.serverKey = serverKey
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case apnTemplate = "apn_template"
         case dataTemplate = "data_template"
@@ -28,15 +28,5 @@ public struct FirebaseConfigFields: Codable, Hashable {
         case notificationTemplate = "notification_template"
         case credentialsJson = "credentials_json"
         case serverKey = "server_key"
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(apnTemplate, forKey: .apnTemplate)
-        try container.encode(dataTemplate, forKey: .dataTemplate)
-        try container.encode(enabled, forKey: .enabled)
-        try container.encode(notificationTemplate, forKey: .notificationTemplate)
-        try container.encode(credentialsJson, forKey: .credentialsJson)
-        try container.encode(serverKey, forKey: .serverKey)
     }
 }

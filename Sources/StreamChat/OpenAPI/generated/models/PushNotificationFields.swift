@@ -22,7 +22,7 @@ public struct PushNotificationFields: Codable, Hashable {
         self.xiaomi = xiaomi
         self.providers = providers
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case offlineOnly = "offline_only"
         case version
@@ -31,16 +31,5 @@ public struct PushNotificationFields: Codable, Hashable {
         case huawei
         case xiaomi
         case providers
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(offlineOnly, forKey: .offlineOnly)
-        try container.encode(version, forKey: .version)
-        try container.encode(apn, forKey: .apn)
-        try container.encode(firebase, forKey: .firebase)
-        try container.encode(huawei, forKey: .huawei)
-        try container.encode(xiaomi, forKey: .xiaomi)
-        try container.encode(providers, forKey: .providers)
     }
 }

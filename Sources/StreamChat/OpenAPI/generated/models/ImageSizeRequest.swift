@@ -16,19 +16,11 @@ public struct ImageSizeRequest: Codable, Hashable {
         self.resize = resize
         self.width = width
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case crop
         case height
         case resize
         case width
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(crop, forKey: .crop)
-        try container.encode(height, forKey: .height)
-        try container.encode(resize, forKey: .resize)
-        try container.encode(width, forKey: .width)
     }
 }

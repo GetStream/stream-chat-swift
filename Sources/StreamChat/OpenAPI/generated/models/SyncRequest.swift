@@ -22,7 +22,7 @@ public struct SyncRequest: Codable, Hashable {
         self.channelCids = channelCids
         self.user = user
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case lastSyncAt = "last_sync_at"
         case connectionId = "connection_id"
@@ -31,16 +31,5 @@ public struct SyncRequest: Codable, Hashable {
         case withInaccessibleCids = "with_inaccessible_cids"
         case channelCids = "channel_cids"
         case user
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(lastSyncAt, forKey: .lastSyncAt)
-        try container.encode(connectionId, forKey: .connectionId)
-        try container.encode(userId, forKey: .userId)
-        try container.encode(watch, forKey: .watch)
-        try container.encode(withInaccessibleCids, forKey: .withInaccessibleCids)
-        try container.encode(channelCids, forKey: .channelCids)
-        try container.encode(user, forKey: .user)
     }
 }

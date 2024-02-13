@@ -22,7 +22,7 @@ public struct BanResponse: Codable, Hashable {
         self.channel = channel
         self.user = user
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case createdAt = "created_at"
         case expires
@@ -31,16 +31,5 @@ public struct BanResponse: Codable, Hashable {
         case bannedBy = "banned_by"
         case channel
         case user
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(createdAt, forKey: .createdAt)
-        try container.encode(expires, forKey: .expires)
-        try container.encode(reason, forKey: .reason)
-        try container.encode(shadow, forKey: .shadow)
-        try container.encode(bannedBy, forKey: .bannedBy)
-        try container.encode(channel, forKey: .channel)
-        try container.encode(user, forKey: .user)
     }
 }

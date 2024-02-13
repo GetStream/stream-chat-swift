@@ -14,17 +14,10 @@ public struct UnreadCountsChannelType: Codable, Hashable {
         self.channelType = channelType
         self.unreadCount = unreadCount
     }
-
+    
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case channelCount = "channel_count"
         case channelType = "channel_type"
         case unreadCount = "unread_count"
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(channelCount, forKey: .channelCount)
-        try container.encode(channelType, forKey: .channelType)
-        try container.encode(unreadCount, forKey: .unreadCount)
     }
 }
