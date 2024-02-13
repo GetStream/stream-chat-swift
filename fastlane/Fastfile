@@ -316,7 +316,8 @@ lane :test do |options|
     cloned_source_packages_path: source_packages_path,
     devices: options[:device],
     skip_build: true,
-    xcargs: buildcache_xcargs
+    xcargs: buildcache_xcargs,
+    number_of_retries: options[:cron] ? 3 : nil
   )
 end
 
