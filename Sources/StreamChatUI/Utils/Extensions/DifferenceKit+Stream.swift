@@ -29,7 +29,7 @@ extension UITableView {
     func reload<C>(
         using stagedChangeset: StagedChangeset<C>,
         with animation: @autoclosure () -> RowAnimation,
-        reconfigure: (IndexPath) -> Bool,
+        reconfigure: ((IndexPath) -> Bool)? = nil,
         interrupt: ((Changeset<C>) -> Bool)? = nil,
         setData: (C) -> Void
     ) {
@@ -74,7 +74,7 @@ extension UITableView {
         deleteRowsAnimation: @autoclosure () -> RowAnimation,
         insertRowsAnimation: @autoclosure () -> RowAnimation,
         reloadRowsAnimation: @autoclosure () -> RowAnimation,
-        reconfigure: (IndexPath) -> Bool = { _ in false },
+        reconfigure: ((IndexPath) -> Bool)? = nil,
         interrupt: ((Changeset<C>) -> Bool)? = nil,
         setData: (C) -> Void
     ) {
@@ -118,7 +118,7 @@ extension UITableView {
                 
                 if !changeset.elementUpdated.isEmpty {
                     var indexPaths = changeset.elementUpdated.map { IndexPath(row: $0.element, section: $0.section) }
-                    if #available(iOS 15.0, *) {
+                    if #available(iOS 15.0, *), let reconfigure {
                         let partitioned = indexPaths.partitionReconfigurable(by: reconfigure)
                         if !partitioned.reconfiguredIndexPaths.isEmpty {
                             reconfigureRows(at: partitioned.reconfiguredIndexPaths)
@@ -165,7 +165,7 @@ extension UICollectionView {
     ///              The collection should be set to data-source of UICollectionView.
     func reload<C>(
         using stagedChangeset: StagedChangeset<C>,
-        reconfigure: (IndexPath) -> Bool,
+        reconfigure: ((IndexPath) -> Bool)? = nil,
         interrupt: ((Changeset<C>) -> Bool)? = nil,
         setData: (C) -> Void
     ) {
@@ -210,7 +210,7 @@ extension UICollectionView {
                 if !changeset.elementUpdated.isEmpty {
                     var indexPaths = changeset.elementUpdated.map { IndexPath(row: $0.element, section: $0.section) }
                     
-                    if #available(iOS 15.0, *) {
+                    if #available(iOS 15.0, *), let reconfigure {
                         let partitioned = indexPaths.partitionReconfigurable(by: reconfigure)
                         if !partitioned.reconfiguredIndexPaths.isEmpty {
                             reconfigureItems(at: partitioned.reconfiguredIndexPaths)

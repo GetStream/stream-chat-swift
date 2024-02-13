@@ -22,8 +22,7 @@ extension ChatMessageListView {
         CATransaction.setCompletionBlock(completion)
         reload(
             using: changeset,
-            with: animation(),
-            reconfigure: { _ in false }
+            with: animation()
         ) { [weak self] newMessages in
             self?.onNewDataSource?(newMessages)
         }
