@@ -18,6 +18,10 @@ open class NukeImageLoader: ImageLoading {
     open var imageCDN: ImageCDN {
         Components.default.imageCDN
     }
+    
+    var imagePipeline: NukeImagePipelineLoading {
+        ImagePipeline.shared
+    }
 
     @discardableResult
     open func loadImage(
@@ -87,16 +91,7 @@ open class NukeImageLoader: ImageLoading {
             userInfo: [.imageIdKey: cachingKey]
         )
 
-        let imageTask = ImagePipeline.shared.loadImage(with: request) { result in
-            switch result {
-            case let .success(imageResponse):
-                completion(.success(imageResponse.image))
-            case let .failure(error):
-                completion(.failure(error))
-            }
-        }
-
-        return imageTask
+        return imagePipeline.loadImage(with: request, completion: completion)
     }
 
     open func downloadMultipleImages(
@@ -104,9 +99,9 @@ open class NukeImageLoader: ImageLoading {
         completion: @escaping (([Result<UIImage, Error>]) -> Void)
     ) {
         let group = DispatchGroup()
-        var results: [Result<UIImage, Error>] = []
-
-        for request in requests {
+        var results = [Result<UIImage, Error>](repeating: .failure(NSError.unknown), count: requests.count)
+        
+        for (index, request) in requests.enumerated() {
             let url = request.url
             let downloadOptions = request.options
 
@@ -114,7 +109,7 @@ open class NukeImageLoader: ImageLoading {
 
             let request = ImageDownloadRequest(url: url, options: downloadOptions)
             downloadImage(with: request) { result in
-                results.append(result)
+                results[index] = result
 
                 group.leave()
             }
@@ -123,6 +118,32 @@ open class NukeImageLoader: ImageLoading {
         group.notify(queue: .main) {
             completion(results)
         }
+    }
+}
+
+protocol NukeImagePipelineLoading {
+    @discardableResult func loadImage(
+        with request: ImageRequest,
+        completion: @escaping (_ result: Result<UIImage, Error>) -> Void
+    ) -> ImageTask
+}
+
+extension ImagePipeline: NukeImagePipelineLoading {
+    func loadImage(with request: ImageRequest, completion: @escaping (Result<UIImage, Swift.Error>) -> Void) -> ImageTask {
+        loadImage(with: request) { result in
+            switch result {
+            case let .success(imageResponse):
+                completion(.success(imageResponse.image))
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+}
+
+private extension NSError {
+    static var unknown: NSError {
+        NSError(domain: NSURLErrorDomain, code: URLError.Code.unknown.rawValue)
     }
 }
 
