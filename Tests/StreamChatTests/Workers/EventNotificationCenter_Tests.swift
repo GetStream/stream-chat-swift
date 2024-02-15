@@ -246,14 +246,14 @@ final class EventNotificationCenter_Tests: XCTestCase {
     // Performance tests
 
     func test_measure_processMultipleNewMessageEvents() throws {
-        let existingPayloads: [MessagePayload] = (0...200).map { _ in
-            MessagePayload.dummy(messageId: .unique, authorUserId: .unique)
+        let existingPayloads: [Message] = (0...200).map { _ in
+            Message.dummy(messageId: .unique, authorUserId: .unique)
         }
         let channelId = ChannelId.unique
 
         waitUntil(timeout: 100) { done in
             database.write({ session in
-                try session.saveChannel(payload: ChannelPayload.dummy(channel: .dummy(cid: channelId)))
+                try session.saveChannel(payload: ChannelStateResponse.dummy(channel: .dummy(cid: channelId)))
                 try existingPayloads.forEach {
                     try session.saveMessage(payload: $0, for: channelId, syncOwnReactions: false, cache: nil)
                 }
@@ -263,9 +263,16 @@ final class EventNotificationCenter_Tests: XCTestCase {
         // Check all messages were created
         XCTAssertEqual(database.viewContext.channel(cid: channelId)?.messages.count, existingPayloads.count)
 
-        let events: [MessageNewEventDTO] = try existingPayloads.map { message -> MessageNewEventDTO in
-            let payload = EventPayload(eventType: .messageNew, cid: channelId, user: UserPayload.dummy(userId: .unique), message: message, createdAt: Date())
-            return try MessageNewEventDTO(from: payload)
+        let events: [MessageNewEvent] = existingPayloads.map { message -> MessageNewEvent in
+            MessageNewEvent(
+                channelId: channelId.id,
+                channelType: channelId.type.rawValue,
+                cid: channelId.rawValue,
+                createdAt: Date(),
+                type: "message.new",
+                watcherCount: 0,
+                message: message
+            )
         }
 
         // Create a notification center

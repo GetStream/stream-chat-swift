@@ -54,7 +54,7 @@ class MessagesPaginationState_Tests: XCTestCase {
     }
 
     func test_hasLoadedAllNextMessages_whenChangesToFalse_thenDoesNotChangeNewestFetchedMessageIsNil() {
-        let expectedNewestFetchedMessage = MessagePayload.dummy()
+        let expectedNewestFetchedMessage = Message.dummy()
         var sut = MessagesPaginationState.initial
         sut.newestFetchedMessage = expectedNewestFetchedMessage
 

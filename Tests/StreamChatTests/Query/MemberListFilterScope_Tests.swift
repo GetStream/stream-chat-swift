@@ -29,3 +29,26 @@ final class MemberListFilterScope_Tests: XCTestCase {
         XCTAssertEqual(Key<Bool>.isAnonymous.rawValue, UserPayloadsCodingKeys.isAnonymous.rawValue)
     }
 }
+
+enum UserPayloadsCodingKeys: String, CodingKey, CaseIterable {
+    case id
+    case name
+    case imageURL = "image"
+    case role
+    case isOnline = "online"
+    case isBanned = "banned"
+    case createdAt = "created_at"
+    case updatedAt = "updated_at"
+    case deactivatedAt = "deactivated_at"
+    case lastActiveAt = "last_active"
+    case isInvisible = "invisible"
+    case teams
+    case unreadChannelsCount = "unread_channels"
+    case unreadMessagesCount = "total_unread_count"
+    case mutedUsers = "mutes"
+    case mutedChannels = "channel_mutes"
+    case isAnonymous = "anon"
+    case devices
+    case unreadCount = "unread_count"
+    case language
+}

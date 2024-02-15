@@ -23,7 +23,7 @@ final class MessageEvents_Tests: XCTestCase {
 
     func test_new() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MessageNew")
-        let event = try eventDecoder.decode(from: json) as? MessageNewEventDTO
+        let event = try eventDecoder.decode(from: json) as? MessageNewEvent
         XCTAssertEqual(event?.user.id, "broken-waterfall-5")
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "general"))
         XCTAssertEqual(event?.message.id, messageId)

@@ -40,7 +40,7 @@ final class ChannelEventsIntegration_Tests: XCTestCase {
 
     func test_ChannelUpdatedEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ChannelUpdated")
-        let event = try eventDecoder.decode(from: json) as? ChannelUpdatedEventDTO
+        let event = try eventDecoder.decode(from: json) as? ChannelUpdatedEvent
 
         let channelId: ChannelId = ChannelId(type: .messaging, id: "new_channel_7070")
 
@@ -57,7 +57,7 @@ final class ChannelEventsIntegration_Tests: XCTestCase {
 
     func test_ChannelDeletedEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ChannelDeleted")
-        let event = try eventDecoder.decode(from: json) as? ChannelDeletedEventDTO
+        let event = try eventDecoder.decode(from: json) as? ChannelDeletedEvent
 
         let channelId: ChannelId = ChannelId(type: .messaging, id: "default-channel-1")
 
@@ -74,7 +74,7 @@ final class ChannelEventsIntegration_Tests: XCTestCase {
 
     func test_ChannelTruncatedEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ChannelTruncated")
-        let event = try eventDecoder.decode(from: json) as? ChannelTruncatedEventDTO
+        let event = try eventDecoder.decode(from: json) as? ChannelTruncatedEvent
 
         let channelId: ChannelId = ChannelId(type: .messaging, id: "new_channel_7011")
 
@@ -91,7 +91,7 @@ final class ChannelEventsIntegration_Tests: XCTestCase {
 
     func test_ChannelVisibleEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ChannelVisible")
-        let event = try eventDecoder.decode(from: json) as? ChannelVisibleEventDTO
+        let event = try eventDecoder.decode(from: json) as? ChannelVisibleEvent
 
         let channelId: ChannelId = ChannelId(type: .messaging, id: "default-channel-6")
 
@@ -108,7 +108,7 @@ final class ChannelEventsIntegration_Tests: XCTestCase {
 
     func test_ChannelHiddenEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ChannelHidden")
-        let event = try eventDecoder.decode(from: json) as? ChannelHiddenEventDTO
+        let event = try eventDecoder.decode(from: json) as? ChannelHiddenEvent
 
         let channelId: ChannelId = ChannelId(type: .messaging, id: "default-channel-6")
 
@@ -125,23 +125,23 @@ final class ChannelEventsIntegration_Tests: XCTestCase {
 
     func test_NotificationChannelMutesUpdatedWithNoMutesEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "NotificationChannelMutesUpdatedWithNoMutedChannels")
-        let event = try eventDecoder.decode(from: json) as? NotificationChannelMutesUpdatedEventDTO
+        let event = try eventDecoder.decode(from: json) as? NotificationChannelMutesUpdatedEvent
 
         try client.databaseContainer.createCurrentUser(id: "luke_skywalker")
 
         // Create mute payloads for current user so there are some muted Channels:
-        let mutePayloads: [MutedChannelPayload] = [
+        let mutePayloads: [ChannelMute] = [
             .init(
-                mutedChannel: .dummy(cid: .unique),
-                user: dummyUser(id: "luke_skywalker"),
                 createdAt: .unique,
-                updatedAt: .unique
+                updatedAt: .unique,
+                channel: .dummy(cid: .unique),
+                user: dummyUser(id: "luke_skywalker")
             ),
             .init(
-                mutedChannel: .dummy(cid: .unique),
-                user: dummyUser(id: "luke_skywalker"),
                 createdAt: .unique,
-                updatedAt: .unique
+                updatedAt: .unique,
+                channel: .dummy(cid: .unique),
+                user: dummyUser(id: "luke_skywalker")
             )
         ]
 
@@ -165,7 +165,7 @@ final class ChannelEventsIntegration_Tests: XCTestCase {
 
     func test_NotificationChannelMutesUpdatedWithSomeMutesEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "NotificationChannelMutesUpdatedWithSomeMutedChannels")
-        let event = try eventDecoder.decode(from: json) as? NotificationChannelMutesUpdatedEventDTO
+        let event = try eventDecoder.decode(from: json) as? NotificationChannelMutesUpdatedEvent
 
         try client.databaseContainer.createCurrentUser(id: "luke_skywalker")
 
@@ -182,7 +182,7 @@ final class ChannelEventsIntegration_Tests: XCTestCase {
 
     func test_NotificationMarkAllReadEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "NotificationMarkRead")
-        let event = try eventDecoder.decode(from: json) as? NotificationMarkReadEventDTO
+        let event = try eventDecoder.decode(from: json) as? NotificationMarkReadEvent
 
         let channelId: ChannelId = .init(type: .messaging, id: "general")
         let unwrappedEvent = try XCTUnwrap(event)
@@ -197,13 +197,13 @@ final class ChannelEventsIntegration_Tests: XCTestCase {
         try client.databaseContainer.writeSynchronously { session in
             let read = try XCTUnwrap(
                 session.saveChannelRead(
-                    payload: ChannelReadPayload(
-                        user: self.dummyUser(id: "steep-moon-9"),
-                        lastReadAt: .unique,
-                        lastReadMessageId: .unique,
-                        unreadMessagesCount: .unique
+                    payload: Read(
+                        lastRead: .unique,
+                        unreadMessages: 15,
+                        lastReadMessageId: nil,
+                        user: .dummy(userId: "steep-moon-9")
                     ),
-                    for: channelId,
+                    for: channelId.rawValue,
                     cache: nil
                 )
             )

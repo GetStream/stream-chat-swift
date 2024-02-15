@@ -9,6 +9,7 @@ import XCTest
 final class AttachmentQueueUploader_Tests: XCTestCase {
     var webSocketClient: WebSocketClient_Mock!
     var apiClient: APIClient_Spy!
+    var api: API!
     var database: DatabaseContainer_Spy!
     var queueUploader: AttachmentQueueUploader!
 
@@ -19,8 +20,9 @@ final class AttachmentQueueUploader_Tests: XCTestCase {
 
         webSocketClient = WebSocketClient_Mock()
         apiClient = APIClient_Spy()
+        api = API.mock(with: apiClient)
         database = DatabaseContainer_Spy()
-        queueUploader = AttachmentQueueUploader(database: database, apiClient: apiClient, attachmentPostProcessor: nil)
+        queueUploader = AttachmentQueueUploader(database: database, api: api, attachmentPostProcessor: nil)
     }
 
     override func tearDown() {

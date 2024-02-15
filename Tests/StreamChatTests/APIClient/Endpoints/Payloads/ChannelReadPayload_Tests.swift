@@ -13,13 +13,13 @@ final class ChannelReadPayload_Tests: XCTestCase {
 
         // WHEN
         let data = try JSONSerialization.data(withJSONObject: json)
-        let payload = try JSONDecoder.default.decode(ChannelReadPayload.self, from: data)
+        let payload = try JSONDecoder.default.decode(Read.self, from: data)
 
         // THEN
-        XCTAssertEqual(payload.unreadMessagesCount, 15)
-        XCTAssertEqual(payload.user.id, "broken-waterfall-5")
+        XCTAssertEqual(payload.unreadMessages, 15)
+        XCTAssertEqual(payload.user?.id, "broken-waterfall-5")
         XCTAssertEqual(payload.lastReadMessageId, "message-id-1")
-        XCTAssertEqual(payload.lastReadAt.description, "2020-06-10 02:33:11 +0000")
+        XCTAssertEqual(payload.lastRead.description, "2020-06-10 02:33:11 +0000")
     }
 
     func test_channelReadPayload_isProperlyDecoded_whenOptionalValuesAreNotPresent() throws {
@@ -29,13 +29,13 @@ final class ChannelReadPayload_Tests: XCTestCase {
 
         // WHEN
         let data = try JSONSerialization.data(withJSONObject: json)
-        let payload = try JSONDecoder.default.decode(ChannelReadPayload.self, from: data)
+        let payload = try JSONDecoder.default.decode(Read.self, from: data)
 
         // THEN
-        XCTAssertEqual(payload.unreadMessagesCount, 15)
-        XCTAssertEqual(payload.user.id, "broken-waterfall-5")
+        XCTAssertEqual(payload.unreadMessages, 15)
+        XCTAssertEqual(payload.user?.id, "broken-waterfall-5")
         XCTAssertNil(payload.lastReadMessageId)
-        XCTAssertEqual(payload.lastReadAt.description, "2020-06-10 02:33:11 +0000")
+        XCTAssertEqual(payload.lastRead.description, "2020-06-10 02:33:11 +0000")
     }
 
     private var readJSON: [String: Any] {
