@@ -46,6 +46,6 @@ final class DemoChatChannelVC: ChatChannelVC, UIGestureRecognizerDelegate {
     }
 
     @objc private func goBack() {
-        dismiss(animated: true)
+        navigationController?.popViewController(animated: true)
     }
 }
