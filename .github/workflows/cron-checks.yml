@@ -85,6 +85,7 @@ jobs:
     - uses: ./.github/actions/bootstrap
       env:
         INSTALL_ALLURE: true
+        INSTALL_YEETD: true
     - name: Cache iOS Simulator Runtime
       uses: actions/cache@v3
       id: runtime-cache
@@ -170,6 +171,8 @@ jobs:
     steps:
     - uses: actions/checkout@v4.1.1
     - uses: ./.github/actions/bootstrap
+      env:
+        INSTALL_YEETD: true
     - name: Cache iOS Simulator Runtime
       uses: actions/cache@v3
       id: runtime-cache
