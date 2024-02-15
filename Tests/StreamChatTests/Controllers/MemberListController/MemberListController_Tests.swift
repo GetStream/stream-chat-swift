@@ -286,11 +286,11 @@ final class MemberListController_Tests: XCTestCase {
         try client.databaseContainer.createChannel(cid: query.cid)
 
         // Create 2 members, the first created more recently
-        var member1: MemberPayload = .dummy(
+        var member1: ChannelMember = .dummy(
             user: .dummy(userId: member1ID),
             createdAt: Date()
         )
-        var member2: MemberPayload = .dummy(
+        var member2: ChannelMember = .dummy(
             user: .dummy(userId: member2ID),
             createdAt: Date().addingTimeInterval(-10)
         )
@@ -451,7 +451,7 @@ private class TestEnvironment {
         memberListUpdaterBuilder: { [unowned self] in
             self.memberListUpdater = .init(
                 database: $0,
-                apiClient: $1
+                api: $1
             )
             return self.memberListUpdater!
         },

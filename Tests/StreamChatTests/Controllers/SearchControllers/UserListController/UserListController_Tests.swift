@@ -327,7 +327,7 @@ private class TestEnvironment {
         .init(userQueryUpdaterBuilder: { [unowned self] in
             self.userListUpdater = UserListUpdater_Mock(
                 database: $0,
-                apiClient: $1
+                api: $1
             )
             return self.userListUpdater!
         })

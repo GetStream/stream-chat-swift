@@ -6,15 +6,16 @@
 @testable import StreamChatTestTools
 import XCTest
 
+// TODO: revert it back.
 final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
     var middleware: ChannelReadUpdaterMiddleware!
     fileprivate var center: EventNotificationCenter_Mock!
     fileprivate var database: DatabaseContainer_Spy!
 
-    var channelPayload: ChannelPayload!
-    var currentUserPayload: CurrentUserPayload!
-    var currentUserReadPayload: ChannelReadPayload!
-    var anotherUserPayload: UserPayload!
+    var channelPayload: ChannelStateResponse!
+    var currentUserPayload: OwnUser!
+    var currentUserReadPayload: Read!
+    var anotherUserPayload: UserObject!
 
     var currentUserReadDTO: ChannelReadDTO? {
         database.viewContext.loadChannelRead(

@@ -7,14 +7,6 @@ import Foundation
 
 /// This class allows you to wrap an existing `DatabaseSession` and adjust the behavior of its methods.
 class DatabaseSession_Mock: DatabaseSession {
-    func saveMessage(payload: StreamChat.StreamChatMessage, for cid: StreamChat.ChannelId?, syncOwnReactions: Bool, cache: StreamChat.PreWarmedCache?) throws -> StreamChat.MessageDTO {
-        fatalError()
-    }
-    
-    func saveChannelList(payload: StreamChat.StreamChatChannelsResponse?, query: StreamChat.ChannelListQuery?) -> [StreamChat.ChannelDTO] {
-        fatalError()
-    }
-    
     /// The wrapped session
     let underlyingSession: DatabaseSession
 
@@ -57,30 +49,34 @@ class DatabaseSession_Mock: DatabaseSession {
         return try saveCurrentDevice(deviceId)
     }
 
-    func saveCurrentUserDevices(_ devices: [DevicePayload], clearExisting: Bool) throws -> [DeviceDTO] {
+    func saveCurrentUserDevices(_ devices: [Device], clearExisting: Bool) throws -> [DeviceDTO] {
         try throwErrorIfNeeded()
         return try underlyingSession.saveCurrentUserDevices(devices, clearExisting: clearExisting)
     }
 
-    func saveChannelList(payload: ChannelListPayload, query: ChannelListQuery?) -> [ChannelDTO] {
+    func saveChannelList(payload: ChannelsResponse?, query: ChannelListQuery?) -> [ChannelDTO] {
         return underlyingSession.saveChannelList(payload: payload, query: query)
     }
     
     func saveChannel(
-        payload: ChannelDetailPayload,
+        payload: ChannelResponse,
         query: ChannelListQuery?,
         cache: PreWarmedCache?
     ) throws -> ChannelDTO {
         try throwErrorIfNeeded()
         return try underlyingSession.saveChannel(payload: payload, query: query, cache: cache)
     }
+    
+    func saveChannel(payload: ChannelResponse) throws -> ChannelDTO {
+        try saveChannel(payload: payload, query: nil, cache: nil)
+    }
 
-    func saveUser(payload: UserPayload, query: UserListQuery?, cache: PreWarmedCache?) throws -> UserDTO {
+    func saveUser(payload: UserObject, query: UserListQuery?, cache: PreWarmedCache?) throws -> UserDTO {
         try throwErrorIfNeeded()
         return try underlyingSession.saveUser(payload: payload, query: query, cache: cache)
     }
 
-    func saveUsers(payload: UserListPayload, query: UserListQuery?) -> [UserDTO] {
+    func saveUsers(payload: UsersResponse, query: UserListQuery?) -> [UserDTO] {
         return underlyingSession.saveUsers(payload: payload, query: query)
     }
 
@@ -108,8 +104,12 @@ class DatabaseSession_Mock: DatabaseSession {
     func removeChannels(cids: Set<ChannelId>) {
         underlyingSession.removeChannels(cids: cids)
     }
+    
+    func saveUser(payload: UserObject) throws -> UserDTO {
+        try saveUser(payload: payload, query: nil, cache: nil)
+    }
 
-    func saveCurrentUser(payload: CurrentUserPayload) throws -> CurrentUserDTO {
+    func saveCurrentUser(payload: OwnUser) throws -> CurrentUserDTO {
         try throwErrorIfNeeded()
         return try saveCurrentUser(payload: payload)
     }
@@ -166,7 +166,7 @@ class DatabaseSession_Mock: DatabaseSession {
     }
 
     func saveMessage(
-        payload: MessagePayload,
+        payload: Message,
         for cid: ChannelId?,
         syncOwnReactions: Bool,
         cache: PreWarmedCache?
@@ -175,16 +175,16 @@ class DatabaseSession_Mock: DatabaseSession {
         return try underlyingSession.saveMessage(payload: payload, for: cid, syncOwnReactions: syncOwnReactions, cache: cache)
     }
 
-    func saveMessage(payload: MessagePayload, channelDTO: ChannelDTO, syncOwnReactions: Bool, cache: PreWarmedCache?) throws -> MessageDTO {
+    func saveMessage(payload: Message, channelDTO: ChannelDTO, syncOwnReactions: Bool, cache: PreWarmedCache?) throws -> MessageDTO {
         try throwErrorIfNeeded()
         return try underlyingSession.saveMessage(payload: payload, channelDTO: channelDTO, syncOwnReactions: syncOwnReactions, cache: cache)
     }
 
-    func saveMessages(messagesPayload: MessageListPayload, for cid: ChannelId?, syncOwnReactions: Bool) -> [MessageDTO] {
+    func saveMessages(messagesPayload: GetRepliesResponse, for cid: ChannelId?, syncOwnReactions: Bool) -> [MessageDTO] {
         return underlyingSession.saveMessages(messagesPayload: messagesPayload, for: cid, syncOwnReactions: syncOwnReactions)
     }
 
-    func saveMessageSearch(payload: MessageSearchResultsPayload, for query: MessageSearchQuery) -> [MessageDTO] {
+    func saveMessageSearch(payload: SearchResponse, for query: MessageSearchQuery) -> [MessageDTO] {
         return underlyingSession.saveMessageSearch(payload: payload, for: query)
     }
 
@@ -221,12 +221,12 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.reaction(messageId: messageId, userId: userId, type: type)
     }
 
-    func saveReaction(payload: MessageReactionPayload, cache: PreWarmedCache?) throws -> MessageReactionDTO {
+    func saveReaction(payload: Reaction?, cache: PreWarmedCache?) throws -> MessageReactionDTO {
         try throwErrorIfNeeded()
         return try underlyingSession.saveReaction(payload: payload, cache: cache)
     }
 
-    func saveReactions(payload: MessageReactionsPayload) -> [MessageReactionDTO] {
+    func saveReactions(payload: GetReactionsResponse) -> [MessageReactionDTO] {
         return underlyingSession.saveReactions(payload: payload)
     }
 
@@ -234,7 +234,7 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.delete(reaction: reaction)
     }
 
-    func saveChannelRead(payload: ChannelReadPayload, for cid: ChannelId, cache: PreWarmedCache?) throws -> ChannelReadDTO {
+    func saveChannelRead(payload: Read?, for cid: String?, cache: PreWarmedCache?) throws -> StreamChat.ChannelReadDTO {
         try throwErrorIfNeeded()
         return try underlyingSession.saveChannelRead(payload: payload, for: cid, cache: cache)
     }
@@ -281,7 +281,7 @@ class DatabaseSession_Mock: DatabaseSession {
     }
     
     func saveChannel(
-        payload: ChannelPayload,
+        payload: ChannelStateResponseFields,
         query: ChannelListQuery?,
         cache: PreWarmedCache?
     ) throws -> ChannelDTO {
@@ -294,7 +294,7 @@ class DatabaseSession_Mock: DatabaseSession {
     }
 
     func saveMember(
-        payload: MemberPayload,
+        payload: ChannelMember,
         channelId: ChannelId,
         query: ChannelMemberListQuery?,
         cache: PreWarmedCache?
@@ -303,7 +303,7 @@ class DatabaseSession_Mock: DatabaseSession {
         return try underlyingSession.saveMember(payload: payload, channelId: channelId, query: query, cache: cache)
     }
 
-    func saveMembers(payload: ChannelMemberListPayload, channelId: ChannelId, query: ChannelMemberListQuery?) -> [MemberDTO] {
+    func saveMembers(payload: MembersResponse, channelId: ChannelId, query: ChannelMemberListQuery?) -> [MemberDTO] {
         return underlyingSession.saveMembers(payload: payload, channelId: channelId, query: query)
     }
 
@@ -324,7 +324,7 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.attachment(id: id)
     }
 
-    func saveAttachment(payload: MessageAttachmentPayload, id: AttachmentId) throws -> AttachmentDTO {
+    func saveAttachment(payload: Attachment?, id: AttachmentId) throws -> AttachmentDTO {
         try throwErrorIfNeeded()
         return try underlyingSession.saveAttachment(payload: payload, id: id)
     }
@@ -339,7 +339,7 @@ class DatabaseSession_Mock: DatabaseSession {
     }
 
     func saveChannelMute(
-        payload: MutedChannelPayload
+        payload: ChannelMute?
     ) throws -> ChannelMuteDTO {
         try throwErrorIfNeeded()
         return try underlyingSession.saveChannelMute(payload: payload)
@@ -349,7 +349,7 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.delete(query: query)
     }
 
-    func saveMessage(payload: MessagePayload, for query: MessageSearchQuery, cache: PreWarmedCache?) throws -> MessageDTO {
+    func saveMessage(payload: Message, for query: MessageSearchQuery, cache: PreWarmedCache?) throws -> MessageDTO {
         try throwErrorIfNeeded()
         return try underlyingSession.saveMessage(payload: payload, for: query, cache: cache)
     }

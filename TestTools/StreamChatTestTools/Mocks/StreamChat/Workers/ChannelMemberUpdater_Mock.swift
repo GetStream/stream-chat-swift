@@ -46,7 +46,7 @@ final class ChannelMemberUpdater_Mock: ChannelMemberUpdater {
         banMember_completion = completion
     }
 
-    override func unbanMember(
+    func unbanMember(
         _ userId: UserId,
         in cid: ChannelId, completion: ((Error?) -> Void)? = nil
     ) {

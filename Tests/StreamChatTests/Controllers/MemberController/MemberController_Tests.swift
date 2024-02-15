@@ -495,14 +495,14 @@ private class TestEnvironment {
         memberUpdaterBuilder: { [unowned self] in
             self.memberUpdater = .init(
                 database: $0,
-                apiClient: $1
+                api: $1
             )
             return self.memberUpdater!
         },
         memberListUpdaterBuilder: { [unowned self] in
             self.memberListUpdater = .init(
                 database: $0,
-                apiClient: $1
+                api: $1
             )
             return self.memberListUpdater!
         },

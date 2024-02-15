@@ -241,7 +241,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_lastOldestMessageId_whenPaginationStateHasOldestFetchedMessage_thenReturnsItsId() {
         // Given
-        let oldestFetchedMessage = MessagePayload.dummy()
+        let oldestFetchedMessage = Message.dummy()
         env.channelUpdater?.mockPaginationState.oldestFetchedMessage = oldestFetchedMessage
 
         // When
@@ -266,7 +266,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_lastNewestMessageId_whenPaginationStateHasNewestFetchedMessage_thenReturnsItsId() {
         // Given
-        let newestFetchedMessage = MessagePayload.dummy()
+        let newestFetchedMessage = Message.dummy()
         env.channelUpdater?.mockPaginationState.newestFetchedMessage = newestFetchedMessage
 
         // When
@@ -321,11 +321,11 @@ final class ChannelController_Tests: XCTestCase {
             oldestMessageId: oldestMessageId,
             newestMessageId: newestMessageId,
             channelReads: [
-                ChannelReadPayload(
-                    user: .dummy(userId: userId),
-                    lastReadAt: .unique,
+                Read(
+                    lastRead: .unique,
+                    unreadMessages: 0,
                     lastReadMessageId: nil,
-                    unreadMessagesCount: 0
+                    user: .dummy(userId: userId)
                 )
             ]
         )
@@ -337,11 +337,11 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_firstUnreadMessageId_whenReadsContainsCurrentUserId_whenLastReadMessageIdIsNil_whenNotAllPreviousMessagesAreLoaded() throws {
         let userId = UserId.unique
-        let channelRead = ChannelReadPayload(
-            user: .dummy(userId: userId),
-            lastReadAt: .unique,
+        let channelRead = Read(
+            lastRead: .unique,
+            unreadMessages: 3,
             lastReadMessageId: nil,
-            unreadMessagesCount: 3
+            user: .dummy(userId: userId)
         )
         let token = Token(rawValue: "", userId: userId, expiration: nil)
         controller.client.authenticationRepository.setMockToken(token)
@@ -360,11 +360,11 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_firstUnreadMessageId_whenReadsContainsCurrentUserId_whenLastReadMessageIdIsNil_whenAllPreviousMessagesAreLoaded() throws {
         let userId = UserId.unique
-        let channelRead = ChannelReadPayload(
-            user: .dummy(userId: userId),
-            lastReadAt: .unique,
+        let channelRead = Read(
+            lastRead: .unique,
+            unreadMessages: 3,
             lastReadMessageId: nil,
-            unreadMessagesCount: 3
+            user: .dummy(userId: userId)
         )
         let token = Token(rawValue: "", userId: userId, expiration: nil)
         controller.client.authenticationRepository.setMockToken(token)
@@ -407,11 +407,11 @@ final class ChannelController_Tests: XCTestCase {
         let notLoadedLastReadMessageId = MessageId.unique
 
         let userId = UserId.unique
-        let channelRead = ChannelReadPayload(
-            user: .dummy(userId: userId),
-            lastReadAt: .unique,
+        let channelRead = Read(
+            lastRead: .unique,
+            unreadMessages: 3,
             lastReadMessageId: notLoadedLastReadMessageId,
-            unreadMessagesCount: 3
+            user: .dummy(userId: userId)
         )
         let token = Token(rawValue: "", userId: userId, expiration: nil)
         controller.client.authenticationRepository.setMockToken(token)
@@ -431,11 +431,11 @@ final class ChannelController_Tests: XCTestCase {
         let notLoadedLastReadMessageId = MessageId.unique
 
         let userId = UserId.unique
-        let channelRead = ChannelReadPayload(
-            user: .dummy(userId: userId),
-            lastReadAt: .unique,
+        let channelRead = Read(
+            lastRead: .unique,
+            unreadMessages: 3,
             lastReadMessageId: notLoadedLastReadMessageId,
-            unreadMessagesCount: 3
+            user: .dummy(userId: userId)
         )
         let token = Token(rawValue: "", userId: userId, expiration: nil)
         controller.client.authenticationRepository.setMockToken(token)
@@ -458,11 +458,11 @@ final class ChannelController_Tests: XCTestCase {
         let newestMessageId = MessageId.unique
 
         let userId = UserId.unique
-        let channelRead = ChannelReadPayload(
-            user: .dummy(userId: userId),
-            lastReadAt: .unique,
+        let channelRead = Read(
+            lastRead: .unique,
+            unreadMessages: 3,
             lastReadMessageId: newestMessageId,
-            unreadMessagesCount: 3
+            user: .dummy(userId: userId)
         )
         let token = Token(rawValue: "", userId: userId, expiration: nil)
         controller.client.authenticationRepository.setMockToken(token)
@@ -481,11 +481,11 @@ final class ChannelController_Tests: XCTestCase {
         let newestMessageId = MessageId.unique
 
         let userId = UserId.unique
-        let channelRead = ChannelReadPayload(
-            user: .dummy(userId: userId),
-            lastReadAt: .unique,
+        let channelRead = Read(
+            lastRead: .unique,
+            unreadMessages: 3,
             lastReadMessageId: oldestMessageId,
-            unreadMessagesCount: 3
+            user: .dummy(userId: userId)
         )
         let token = Token(rawValue: "", userId: userId, expiration: nil)
         controller.client.authenticationRepository.setMockToken(token)
@@ -505,16 +505,16 @@ final class ChannelController_Tests: XCTestCase {
         let ownMessageId = MessageId.unique
 
         let userId = UserId.unique
-        let channelRead = ChannelReadPayload(
-            user: .dummy(userId: userId),
-            lastReadAt: .unique,
+        let channelRead = Read(
+            lastRead: .unique,
+            unreadMessages: 3,
             lastReadMessageId: notOwnMessageId,
-            unreadMessagesCount: 3
+            user: .dummy(userId: userId)
         )
         let token = Token(rawValue: "", userId: userId, expiration: nil)
         controller.client.authenticationRepository.setMockToken(token)
 
-        let messages: [MessagePayload] = [
+        let messages: [Message] = [
             .dummy(messageId: notOwnMessageId, authorUserId: .unique, createdAt: Date().addingTimeInterval(-1000)),
             .dummy(messageId: deletedMessageId, authorUserId: .unique, createdAt: Date().addingTimeInterval(0), deletedAt: Date()),
             .dummy(messageId: ownMessageId, authorUserId: userId, createdAt: Date().addingTimeInterval(1000))
@@ -535,16 +535,16 @@ final class ChannelController_Tests: XCTestCase {
         let notOwnNextValidId = MessageId.unique
 
         let userId = UserId.unique
-        let channelRead = ChannelReadPayload(
-            user: .dummy(userId: userId),
-            lastReadAt: .unique,
+        let channelRead = Read(
+            lastRead: .unique,
+            unreadMessages: 3,
             lastReadMessageId: notOwnMessageId,
-            unreadMessagesCount: 3
+            user: .dummy(userId: userId)
         )
         let token = Token(rawValue: "", userId: userId, expiration: nil)
         controller.client.authenticationRepository.setMockToken(token)
 
-        let messages: [MessagePayload] = [
+        let messages: [Message] = [
             .dummy(messageId: notOwnMessageId, authorUserId: .unique, createdAt: Date().addingTimeInterval(-1000)),
             .dummy(messageId: deletedMessageId, authorUserId: .unique, createdAt: Date().addingTimeInterval(0), deletedAt: Date()),
             .dummy(messageId: ownMessageId, authorUserId: userId, createdAt: Date().addingTimeInterval(1000)),
@@ -892,8 +892,8 @@ final class ChannelController_Tests: XCTestCase {
         setupControllerForNewMessageChannel(cid: channelId)
 
         // Save channel with some messages
-        let channelPayload: ChannelPayload = dummyPayload(with: channelId, numberOfMessages: 5)
-        let originalLastMessageAt: Date = channelPayload.channel.lastMessageAt ?? channelPayload.channel.createdAt
+        let channelPayload: ChannelStateResponse = dummyPayload(with: channelId, numberOfMessages: 5)
+        let originalLastMessageAt: Date = channelPayload.channel!.lastMessageAt ?? channelPayload.channel!.createdAt
         writeAndWaitForMessageUpdates(count: 5) {
             try $0.saveChannel(payload: channelPayload)
         }
@@ -936,21 +936,21 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertNearlySameDate(channel.lastMessageAt?.bridgeDate, originalLastMessageAt)
 
         // Create a new message payload that's newer than `channel.lastMessageAt`
-        let newerMessagePayload: MessagePayload = .dummy(
+        let newerMessage: Message = .dummy(
             messageId: .unique,
             authorUserId: userId,
-            createdAt: .unique(after: channelPayload.channel.lastMessageAt!)
+            createdAt: .unique(after: channelPayload.channel!.lastMessageAt!)
         )
         // Save the message payload and check `channel.lastMessageAt` is updated
         writeAndWaitForMessageUpdates(count: 6) {
-            try $0.saveMessage(payload: newerMessagePayload, for: channelId, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: newerMessage, for: channelId, syncOwnReactions: true, cache: nil)
         }
         channel = try XCTUnwrap(client.databaseContainer.viewContext.channel(cid: channelId))
-        XCTAssertEqual(channel.lastMessageAt?.bridgeDate, newerMessagePayload.createdAt)
+        XCTAssertEqual(channel.lastMessageAt?.bridgeDate, newerMessage.createdAt)
 
         // Check if the message ordering is correct
         // First message should be the newest message
-        XCTAssertEqual(controller.messages[0].id, newerMessagePayload.id)
+        XCTAssertEqual(controller.messages[0].id, newerMessage.id)
         // Third message is the failed one
         XCTAssertEqual(controller.messages[2].id, oldMessageId)
     }
@@ -1025,7 +1025,11 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate changes in the DB:
         _ = try waitFor {
             client.databaseContainer.write({ session in
-                try session.saveChannel(payload: self.dummyPayload(with: self.channelId), query: nil, cache: nil)
+                try session.saveChannel(
+                    payload: self.dummyPayload(with: self.channelId).toResponseFields,
+                    query: nil,
+                    cache: nil
+                )
             }, completion: $0)
         }
 
@@ -1060,14 +1064,14 @@ final class ChannelController_Tests: XCTestCase {
 
         // Simulate an incoming message
         let newMessageId: MessageId = .unique
-        let newMessagePayload: MessagePayload = .dummy(
+        let newMessage: Message = .dummy(
             messageId: newMessageId,
             authorUserId: .unique,
             createdAt: Date()
         )
         _ = try waitFor {
             client.databaseContainer.write({ session in
-                try session.saveMessage(payload: newMessagePayload, for: self.channelId, syncOwnReactions: true, cache: nil)
+                try session.saveMessage(payload: newMessage, for: self.channelId, syncOwnReactions: true, cache: nil)
             }, completion: $0)
         }
 
@@ -1089,8 +1093,8 @@ final class ChannelController_Tests: XCTestCase {
         waitForInitialMessagesUpdate(count: 0)
 
         // Insert two messages
-        let message1: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
-        let message2: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
+        let message1: Message = .dummy(messageId: .unique, authorUserId: .unique)
+        let message2: Message = .dummy(messageId: .unique, authorUserId: .unique)
 
         writeAndWaitForMessageUpdates(count: 2) {
             try $0.saveMessage(payload: message1, for: self.channelId, syncOwnReactions: true, cache: nil)
@@ -1116,8 +1120,8 @@ final class ChannelController_Tests: XCTestCase {
         waitForInitialMessagesUpdate(count: 0)
 
         // Insert two messages
-        let message1: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
-        let message2: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
+        let message1: Message = .dummy(messageId: .unique, authorUserId: .unique)
+        let message2: Message = .dummy(messageId: .unique, authorUserId: .unique)
 
         writeAndWaitForMessageUpdates(count: 2) {
             try $0.saveMessage(payload: message1, for: self.channelId, syncOwnReactions: true, cache: nil)
@@ -1139,11 +1143,11 @@ final class ChannelController_Tests: XCTestCase {
         waitForInitialMessagesUpdate(count: 0)
 
         // Insert two messages
-        let message1: MessagePayload = .dummy(messageId: "msg1-" + .unique, authorUserId: .unique)
-        let message2: MessagePayload = .dummy(messageId: "msg2-" + .unique, authorUserId: .unique)
+        let message1: Message = .dummy(messageId: "msg1-" + .unique, authorUserId: .unique)
+        let message2: Message = .dummy(messageId: "msg2-" + .unique, authorUserId: .unique)
 
         // Insert reply that should be shown in channel.
-        let reply1: MessagePayload = .dummy(
+        let reply1: Message = .dummy(
             messageId: "reply1-" + .unique,
             parentId: message2.id,
             showReplyInChannel: true,
@@ -1151,7 +1155,7 @@ final class ChannelController_Tests: XCTestCase {
         )
 
         // Insert reply that should be visible only in thread.
-        let reply2: MessagePayload = .dummy(
+        let reply2: Message = .dummy(
             messageId: "reply2-" + .unique,
             parentId: message2.id,
             showReplyInChannel: false,
@@ -1180,10 +1184,10 @@ final class ChannelController_Tests: XCTestCase {
         waitForInitialMessagesUpdate(count: 0)
 
         // Insert a message
-        let message1: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
+        let message1: Message = .dummy(messageId: .unique, authorUserId: .unique)
 
         // Insert ephemeral message in message1's thread
-        let ephemeralMessage: MessagePayload = .dummy(
+        let ephemeralMessage: Message = .dummy(
             type: .ephemeral,
             messageId: .unique,
             parentId: message1.id,
@@ -1212,14 +1216,14 @@ final class ChannelController_Tests: XCTestCase {
         try client.databaseContainer.createChannel(cid: channelId, withMessages: false)
 
         // Create incoming deleted message
-        let incomingDeletedMessage: MessagePayload = .dummy(
+        let incomingDeletedMessage: Message = .dummy(
             messageId: .unique,
             authorUserId: .unique,
             deletedAt: .unique
         )
 
         // Create outgoing deleted message
-        let outgoingDeletedMessage: MessagePayload = .dummy(
+        let outgoingDeletedMessage: Message = .dummy(
             messageId: .unique,
             authorUserId: currentUserID,
             deletedAt: .unique
@@ -1247,14 +1251,14 @@ final class ChannelController_Tests: XCTestCase {
         try client.databaseContainer.createChannel(cid: channelId, withMessages: false)
 
         // Create incoming deleted message
-        let incomingDeletedMessage: MessagePayload = .dummy(
+        let incomingDeletedMessage: Message = .dummy(
             messageId: .unique,
             authorUserId: .unique,
             deletedAt: .unique
         )
 
         // Create outgoing deleted message
-        let outgoingDeletedMessage: MessagePayload = .dummy(
+        let outgoingDeletedMessage: Message = .dummy(
             messageId: .unique,
             authorUserId: currentUserID,
             deletedAt: .unique
@@ -1282,14 +1286,14 @@ final class ChannelController_Tests: XCTestCase {
         try client.databaseContainer.createChannel(cid: channelId, withMessages: false)
 
         // Create incoming deleted message
-        let incomingDeletedMessage: MessagePayload = .dummy(
+        let incomingDeletedMessage: Message = .dummy(
             messageId: .unique,
             authorUserId: .unique,
             deletedAt: .unique
         )
 
         // Create outgoing deleted message
-        let outgoingDeletedMessage: MessagePayload = .dummy(
+        let outgoingDeletedMessage: Message = .dummy(
             messageId: .unique,
             authorUserId: currentUserID,
             deletedAt: .unique
@@ -1317,14 +1321,14 @@ final class ChannelController_Tests: XCTestCase {
         try client.databaseContainer.createChannel(cid: channelId, withMessages: false)
 
         // Create incoming shadowed message
-        let shadowedMessage: MessagePayload = .dummy(
+        let shadowedMessage: Message = .dummy(
             messageId: .unique,
             authorUserId: .unique,
             isShadowed: true
         )
 
         // Create incoming non-shadowed message
-        let nonShadowedMessage: MessagePayload = .dummy(
+        let nonShadowedMessage: Message = .dummy(
             messageId: .unique,
             authorUserId: .unique,
             isShadowed: false
@@ -1349,14 +1353,14 @@ final class ChannelController_Tests: XCTestCase {
         try client.databaseContainer.createChannel(cid: channelId, withMessages: false)
 
         // Create incoming shadowed message
-        let shadowedMessage: MessagePayload = .dummy(
+        let shadowedMessage: Message = .dummy(
             messageId: .unique,
             authorUserId: .unique,
             isShadowed: true
         )
 
         // Create incoming non-shadowed message
-        let nonShadowedMessage: MessagePayload = .dummy(
+        let nonShadowedMessage: Message = .dummy(
             messageId: .unique,
             authorUserId: .unique,
             isShadowed: false
@@ -1430,7 +1434,11 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate DB update
         var error = try waitFor {
             client.databaseContainer.write({ session in
-                try session.saveChannel(payload: self.dummyPayload(with: self.channelId), query: nil, cache: nil)
+                try session.saveChannel(
+                    payload: self.dummyPayload(with: self.channelId).toResponseFields,
+                    query: nil,
+                    cache: nil
+                )
             }, completion: $0)
         }
         XCTAssertNil(error)
@@ -1452,7 +1460,11 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate DB update
         error = try waitFor {
             client.databaseContainer.write({ session in
-                try session.saveChannel(payload: self.dummyPayload(with: newCid), query: nil, cache: nil)
+                try session.saveChannel(
+                    payload: self.dummyPayload(with: newCid).toResponseFields,
+                    query: nil,
+                    cache: nil
+                )
             }, completion: $0)
         }
         XCTAssertNil(error)
@@ -1525,7 +1537,11 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate DB update
         let error = try waitFor {
             client.databaseContainer.write({ session in
-                try session.saveChannel(payload: self.dummyPayload(with: self.channelId), query: nil, cache: nil)
+                try session.saveChannel(
+                    payload: self.dummyPayload(with: self.channelId).toResponseFields,
+                    query: nil,
+                    cache: nil
+                )
             }, completion: $0)
         }
         XCTAssertNil(error)
@@ -1549,16 +1565,21 @@ final class ChannelController_Tests: XCTestCase {
 
         // Create a channel in the DB
         try client.databaseContainer.writeSynchronously {
-            try $0.saveChannel(payload: self.dummyPayload(with: self.channelId), query: nil, cache: nil)
+            try $0.saveChannel(
+                payload: self.dummyPayload(with: self.channelId).toResponseFields,
+                query: nil,
+                cache: nil
+            )
             // Create a read for the channel
+            let channelRead = Read(
+                lastRead: originalReadDate,
+                unreadMessages: .unique,
+                lastReadMessageId: .unique,
+                user: self.dummyUser(id: userId)
+            )
             try $0.saveChannelRead(
-                payload: ChannelReadPayload(
-                    user: self.dummyUser(id: userId),
-                    lastReadAt: originalReadDate,
-                    lastReadMessageId: .unique,
-                    unreadMessagesCount: .unique // This value doesn't matter at all. It's not updated by events. We cam ignore it.
-                ),
-                for: self.channelId,
+                payload: channelRead,
+                for: self.channelId.rawValue,
                 cache: nil
             )
         }
@@ -1612,7 +1633,8 @@ final class ChannelController_Tests: XCTestCase {
         )
 
         // Simulate successful backend channel creation
-        env.channelUpdater!.update_onChannelCreated?(dummyChannel.channel.cid)
+        let cid = try ChannelId(cid: dummyChannel.channel!.cid)
+        env.channelUpdater!.update_onChannelCreated?(cid)
 
         // Simulate new channel creation in DB
         writeAndWaitForMessageUpdates(count: dummyChannel.messages.count) { session in
@@ -1623,7 +1645,7 @@ final class ChannelController_Tests: XCTestCase {
         env.channelUpdater!.update_completion?(.success(dummyPayload(with: .unique)))
 
         // Assert that initial reported values are correct
-        XCTAssertEqual(controller.channel?.cid, dummyChannel.channel.cid)
+        XCTAssertEqual(controller.channel?.cid, cid)
         XCTAssertEqual(controller.messages.count, dummyChannel.messages.count)
     }
 
@@ -1656,9 +1678,10 @@ final class ChannelController_Tests: XCTestCase {
             expectation.fulfill()
         }
 
+        let cid = try ChannelId(cid: dummyChannel.channel!.cid)
         waitForMessagesUpdate(count: dummyChannel.messages.count) {
             // Simulate successful backend channel creation
-            env.channelUpdater!.update_onChannelCreated?(dummyChannel.channel.cid)
+            env.channelUpdater!.update_onChannelCreated?(cid)
 
             // Simulate successful network call.
             env.channelUpdater!.update_completion?(.success(dummyChannel))
@@ -1670,7 +1693,7 @@ final class ChannelController_Tests: XCTestCase {
         // That's why we simulate delegate callbacks for initial values.
         // Assert that delegate gets initial values as callback
         let delegate = controller.delegate as? MessagesUpdateWaiter
-        XCTAssertEqual(delegate?.didUpdateChannel?.cid, dummyChannel.channel.cid)
+        XCTAssertEqual(delegate?.didUpdateChannel?.cid, cid)
         XCTAssertEqual(controller.messages.count, dummyChannel.messages.count)
     }
 
@@ -1690,8 +1713,9 @@ final class ChannelController_Tests: XCTestCase {
             members: [.dummy()]
         )
 
+        let cid = try ChannelId(cid: dummyChannel.channel!.cid)
         // Simulate successful backend channel creation
-        env.channelUpdater!.update_onChannelCreated?(dummyChannel.channel.cid)
+        env.channelUpdater!.update_onChannelCreated?(cid)
 
         // Simulate new channel creation in DB
         writeAndWaitForMessageUpdates(count: dummyChannel.messages.count) { session in
@@ -1702,7 +1726,7 @@ final class ChannelController_Tests: XCTestCase {
         env.channelUpdater!.update_completion?(.success(dummyPayload(with: .unique)))
 
         // Assert that initial reported values are correct
-        XCTAssertEqual(controller.channel?.cid, dummyChannel.channel.cid)
+        XCTAssertEqual(controller.channel?.cid, cid)
         XCTAssertEqual(controller.messages.count, dummyChannel.messages.count)
     }
 
@@ -1714,6 +1738,7 @@ final class ChannelController_Tests: XCTestCase {
             members: [.dummy()]
         )
 
+        let cid = try ChannelId(cid: dummyChannel.channel!.cid)
         // Simulate new channel creation in DB
         try client.databaseContainer.writeSynchronously { session in
             try session.saveChannel(payload: dummyChannel)
@@ -1725,7 +1750,7 @@ final class ChannelController_Tests: XCTestCase {
         // Unlike new DM ChannelController, this ChannelController knows it's final `cid` so it should be able to fetch initial values
         // from DB, without the `synchronize` call
         // Assert that initial reported values are correct
-        XCTAssertEqual(controller.channel?.cid, dummyChannel.channel.cid)
+        XCTAssertEqual(controller.channel?.cid, cid)
         AssertAsync.willBeTrue(controller.messages.count == dummyChannel.messages.count)
     }
 
@@ -2476,8 +2501,8 @@ final class ChannelController_Tests: XCTestCase {
         }
 
         // Generate messages bigger than pageSize (25)
-        let messages: [MessagePayload] = MessagePayload.multipleDummies(amount: 30)
-        let payload = ChannelPayload.dummy(messages: messages)
+        let messages: [Message] = Message.multipleDummies(amount: 30)
+        let payload = ChannelStateResponse.dummy(messages: messages)
         env.channelUpdater?.update_completion?(.success(payload))
 
         waitForExpectations(timeout: defaultTimeout)
@@ -2533,7 +2558,7 @@ final class ChannelController_Tests: XCTestCase {
         // We store some messages in the database so those can be used to try to paginate.
         let oldestPendingId = "oldest-pending"
         let newestId = "newest-notpending"
-        let messages: [MessagePayload] = [
+        let messages: [Message] = [
             .dummy(
                 messageId: oldestPendingId,
                 authorUserId: "1",
@@ -2751,7 +2776,7 @@ final class ChannelController_Tests: XCTestCase {
         }
 
         // Simulate successful update
-        let expectedMessages: [MessagePayload] = [
+        let expectedMessages: [Message] = [
             .dummy(),
             .dummy(),
             .dummy(),
@@ -3699,17 +3724,9 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_markRead_whenChannelIsEmpty_doesNothing() throws {
         // GIVEN
-        let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
+        let currentUser: OwnUser = .dummy(userId: .unique, role: .user)
 
-        let emptyChannel: ChannelPayload = .dummy(
-            channel: .dummy(
-                cid: channelId,
-                lastMessageAt: nil,
-                ownCapabilities: [ChannelCapability.readEvents.rawValue]
-            ),
-            messages: [],
-            channelReads: []
-        )
+        let emptyChannel = ChannelStateResponse.dummy()
 
         try client.databaseContainer.writeSynchronously { session in
             try session.saveCurrentUser(payload: currentUser)
@@ -3736,23 +3753,16 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_markRead_whenCurrentUserIsMissing_doesNothing() throws {
         // GIVEN
-        let lastMessage: MessagePayload = .dummy(
+        let lastMessage: Message = .dummy(
             messageId: .unique,
             authorUserId: .unique,
             cid: channelId
         )
 
-        let channel: ChannelPayload = .dummy(
-            channel: .dummy(
-                cid: channelId,
-                lastMessageAt: lastMessage.createdAt,
-                ownCapabilities: [ChannelCapability.readEvents.rawValue]
-            ),
-            messages: [lastMessage]
-        )
+        let channelResponse = ChannelStateResponse.dummy(messages: [lastMessage])
 
         try client.databaseContainer.writeSynchronously { session in
-            try session.saveChannel(payload: channel)
+            try session.saveChannel(payload: channelResponse)
         }
 
         // WHEN
@@ -3772,28 +3782,20 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_markRead_whenCurrentUserReadIsMissing_doesNothing() throws {
         // GIVEN
-        let lastMessage: MessagePayload = .dummy(
+        let lastMessage: Message = .dummy(
             messageId: .unique,
             authorUserId: .unique,
             cid: channelId
         )
 
-        let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
+        let currentUser: OwnUser = .dummy(userId: .unique, role: .user)
 
-        let channel: ChannelPayload = .dummy(
-            channel: .dummy(
-                cid: channelId,
-                lastMessageAt: lastMessage.createdAt,
-                ownCapabilities: [ChannelCapability.readEvents.rawValue]
-            ),
-            messages: [lastMessage],
-            channelReads: []
-        )
+        let channelResponse = ChannelStateResponse.dummy(messages: [lastMessage])
 
         try client.databaseContainer.writeSynchronously { session in
             try session.saveCurrentUser(payload: currentUser)
 
-            try session.saveChannel(payload: channel)
+            try session.saveChannel(payload: channelResponse)
         }
 
         client.setToken(token: .unique(userId: currentUser.id))
@@ -3815,23 +3817,28 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_markRead_whenChannelIsRead_doesNothing() throws {
         // GIVEN
-        let lastMessage: MessagePayload = .dummy(
+        let lastMessage: Message = .dummy(
             messageId: .unique,
             authorUserId: .unique,
             cid: channelId
         )
 
-        let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
+        let currentUser: OwnUser = .dummy(userId: .unique, role: .user)
 
-        let channel: ChannelPayload = .dummy(
-            channel: .dummy(cid: channelId, lastMessageAt: lastMessage.createdAt, ownCapabilities: [ChannelCapability.readEvents.rawValue]),
+        let channelPayload = ChannelResponse.dummy(
+            cid: channelId,
+            lastMessageAt: lastMessage.createdAt,
+            ownCapabilities: [ChannelCapability.readEvents.rawValue]
+        )
+        let channel: ChannelStateResponse = .dummy(
+            channel: channelPayload,
             messages: [lastMessage],
-            channelReads: [
+            reads: [
                 .init(
-                    user: currentUser,
-                    lastReadAt: lastMessage.createdAt,
+                    lastRead: lastMessage.createdAt,
+                    unreadMessages: 0,
                     lastReadMessageId: .unique,
-                    unreadMessagesCount: 0
+                    user: UserObject(id: currentUser.id, role: UserRole.user.rawValue)
                 )
             ]
         )
@@ -3861,23 +3868,23 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_markRead_whenLastMessageInUnread_callsChannelUpdater() throws {
         // GIVEN
-        let lastMessage: MessagePayload = .dummy(
+        let lastMessage: Message = .dummy(
             messageId: .unique,
             authorUserId: .unique,
             cid: channelId
         )
 
-        let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
+        let currentUser: OwnUser = .dummy(userId: .unique, role: .user)
 
-        let channel: ChannelPayload = .dummy(
+        let channel: ChannelStateResponse = .dummy(
             channel: .dummy(cid: channelId, lastMessageAt: lastMessage.createdAt, ownCapabilities: [ChannelCapability.readEvents.rawValue]),
             messages: [lastMessage],
-            channelReads: [
+            reads: [
                 .init(
-                    user: currentUser,
-                    lastReadAt: lastMessage.createdAt.addingTimeInterval(-1),
+                    lastRead: lastMessage.createdAt.addingTimeInterval(-1),
+                    unreadMessages: 0,
                     lastReadMessageId: .unique,
-                    unreadMessagesCount: 0
+                    user: .init(id: currentUser.id)
                 )
             ]
         )
@@ -3907,7 +3914,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_markRead_propagatesErrorFromUpdater() throws {
         let payload = dummyPayload(with: channelId, numberOfMessages: 3, ownCapabilities: [ChannelCapability.readEvents.rawValue])
-        let dummyUserPayload: CurrentUserPayload = .dummy(userId: payload.channelReads.first!.user.id, role: .user)
+        let dummyUserPayload: OwnUser = .dummy(userId: payload.read![0]!.user!.id, role: .user)
 
         try client.databaseContainer.writeSynchronously { session in
             try session.saveCurrentUser(payload: dummyUserPayload)
@@ -3935,7 +3942,7 @@ final class ChannelController_Tests: XCTestCase {
     func test_markRead_keepsControllerAlive() throws {
         // GIVEN
         let channel = dummyPayload(with: channelId, numberOfMessages: 3, ownCapabilities: [ChannelCapability.readEvents.rawValue])
-        let currentUser: CurrentUserPayload = .dummy(userId: channel.channelReads.first!.user.id, role: .user)
+        let currentUser: OwnUser = .dummy(userId: channel.read![0]!.user!.id, role: .user)
         client.setToken(token: .unique(userId: currentUser.id))
 
         try client.databaseContainer.writeSynchronously { session in
@@ -3969,7 +3976,7 @@ final class ChannelController_Tests: XCTestCase {
     }
 
     func test_markUnread_whenReadEventsAreNotEnabled() throws {
-        let channel: ChannelPayload = .dummy(
+        let channel: ChannelStateResponse = .dummy(
             channel: .dummy(cid: channelId, ownCapabilities: [])
         )
 
@@ -3990,23 +3997,23 @@ final class ChannelController_Tests: XCTestCase {
     }
 
     private func simulateMarkingAsRead(userId: UserId) throws {
-        let lastMessage: MessagePayload = .dummy(
+        let lastMessage: Message = .dummy(
             messageId: .unique,
             authorUserId: .unique,
             cid: channelId
         )
 
-        let currentUser: CurrentUserPayload = .dummy(userId: userId, role: .user)
+        let currentUser: OwnUser = .dummy(userId: userId, role: .user)
 
-        let channel: ChannelPayload = .dummy(
+        let channel: ChannelStateResponse = .dummy(
             channel: .dummy(cid: channelId, lastMessageAt: lastMessage.createdAt, ownCapabilities: [ChannelCapability.readEvents.rawValue]),
             messages: [lastMessage],
-            channelReads: [
+            reads: [
                 .init(
-                    user: currentUser,
-                    lastReadAt: lastMessage.createdAt.addingTimeInterval(-1),
+                    lastRead: lastMessage.createdAt.addingTimeInterval(-1),
+                    unreadMessages: 0,
                     lastReadMessageId: nil,
-                    unreadMessagesCount: 0
+                    user: .dummy(userId: currentUser.id)
                 )
             ]
         )
@@ -4020,7 +4027,7 @@ final class ChannelController_Tests: XCTestCase {
     }
 
     func test_markUnread_whenIsMarkingAsRead_andCurrentUserIdIsPresent() throws {
-        let channel: ChannelPayload = .dummy(
+        let channel: ChannelStateResponse = .dummy(
             channel: .dummy(cid: channelId, ownCapabilities: [ChannelCapability.readEvents.rawValue])
         )
 
@@ -4045,7 +4052,7 @@ final class ChannelController_Tests: XCTestCase {
     }
 
     func test_markUnread_whenIsNotMarkingAsRead_andCurrentUserIdIsNotPresent() throws {
-        let channel: ChannelPayload = .dummy(
+        let channel: ChannelStateResponse = .dummy(
             channel: .dummy(cid: channelId, ownCapabilities: [ChannelCapability.readEvents.rawValue])
         )
 
@@ -4066,7 +4073,7 @@ final class ChannelController_Tests: XCTestCase {
     }
 
     func test_markUnread_whenIsNotMarkingAsRead_andCurrentUserIdIsPresent_whenUpdaterFails() throws {
-        let channel: ChannelPayload = .dummy(
+        let channel: ChannelStateResponse = .dummy(
             channel: .dummy(cid: channelId, ownCapabilities: [ChannelCapability.readEvents.rawValue])
         )
         try client.databaseContainer.writeSynchronously { session in
@@ -4089,7 +4096,7 @@ final class ChannelController_Tests: XCTestCase {
     }
 
     func test_markUnread_whenIsNotMarkingAsRead_andCurrentUserIdIsPresent_whenThereAreNoMessages_whenUpdaterSucceeds() throws {
-        let channel: ChannelPayload = .dummy(
+        let channel: ChannelStateResponse = .dummy(
             channel: .dummy(cid: channelId, ownCapabilities: [ChannelCapability.readEvents.rawValue])
         )
         try client.databaseContainer.writeSynchronously { session in
@@ -4120,8 +4127,8 @@ final class ChannelController_Tests: XCTestCase {
     func test_markUnread_whenIsNotMarkingAsRead_andCurrentUserIdIsPresent_whenThereAreOtherMessages_whenUpdaterSucceeds() throws {
         let messageId = MessageId.unique
         let previousMessageId = MessageId.unique
-        let markedAsUnreadMessage = MessagePayload.dummy(messageId: messageId, createdAt: Date())
-        let previousMessage = MessagePayload.dummy(messageId: previousMessageId, createdAt: Date().addingTimeInterval(-10))
+        let markedAsUnreadMessage = Message.dummy(messageId: messageId, createdAt: Date())
+        let previousMessage = Message.dummy(messageId: previousMessageId, createdAt: Date().addingTimeInterval(-10))
         let payload = dummyPayload(with: channelId, messages: [markedAsUnreadMessage, previousMessage], ownCapabilities: [ChannelCapability.readEvents.rawValue])
         try client.databaseContainer.writeSynchronously { session in
             try session.saveChannel(payload: payload)
@@ -4333,8 +4340,8 @@ final class ChannelController_Tests: XCTestCase {
     func test_currentCooldownTime_whenSlowModeIsActive_andLastMessageFromCurrentUserExists_thenCooldownTimeIsGreaterThanZero(
     ) throws {
         // GIVEN
-        let user: UserPayload = dummyCurrentUser
-        let message: MessagePayload = .dummy(messageId: .unique, authorUserId: user.id, createdAt: Date())
+        let user: OwnUser = dummyCurrentUser
+        let message: Message = .dummy(messageId: .unique, authorUserId: user.id, createdAt: Date())
         let channelPayload = dummyPayload(with: channelId, messages: [message], cooldownDuration: 5)
 
         try client.databaseContainer.createCurrentUser(id: user.id)
@@ -4352,7 +4359,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_currentCooldownTime_whenSlowModeIsNotActive_thenCooldownTimeIsZero() throws {
         // GIVEN
-        let user: UserPayload = dummyCurrentUser
+        let user: OwnUser = dummyCurrentUser
         let channelPayload = dummyPayload(with: channelId, cooldownDuration: 0)
 
         try client.databaseContainer.createCurrentUser(id: user.id)
@@ -4370,9 +4377,9 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_currentCooldownTime_doesNotReturnNegativeValues() throws {
         // GIVEN
-        let user: UserPayload = dummyCurrentUser
+        let user: OwnUser = dummyCurrentUser
 
-        let message: MessagePayload = .dummy(
+        let message: Message = .dummy(
             messageId: .unique,
             authorUserId: user.id,
             createdAt: Date().addingTimeInterval(-20)
@@ -5056,7 +5063,7 @@ final class ChannelController_Tests: XCTestCase {
             client: client,
             environment: env.environment
         )
-        let messages: [MessagePayload] = [.dummy(), .dummy(), .dummy(), .dummy()]
+        let messages: [Message] = [.dummy(), .dummy(), .dummy(), .dummy()]
         try setupChannel(
             channelPayload: .dummy(
                 channel: .dummy(cid: channelId),
@@ -5087,7 +5094,7 @@ final class ChannelController_Tests: XCTestCase {
             client: client,
             environment: env.environment
         )
-        let messages: [MessagePayload] = [.dummy(), .dummy(), .dummy(), .dummy()]
+        let messages: [Message] = [.dummy(), .dummy(), .dummy(), .dummy()]
         try setupChannel(
             channelPayload: .dummy(
                 channel: .dummy(cid: channelId),
@@ -5182,21 +5189,21 @@ extension ChannelController_Tests {
 
     @discardableResult
     func setupChannel(
-        channelPayload: ChannelPayload? = nil,
+        channelPayload: ChannelStateResponse? = nil,
         withAllNextMessagesLoaded: Bool = true
-    ) throws -> ChannelPayload {
+    ) throws -> ChannelStateResponse {
         let channelPayload = channelPayload ?? dummyPayload(with: channelId, numberOfMessages: 1)
 
         let error: Error? = try waitFor { done in
             var returnedError: Error?
             waitForInitialMessagesUpdate(count: 0)
-            guard !channelPayload.messages.isEmpty else { return done(nil) }
+            guard !channelPayload.messages.isEmpty else { return done(ClientError.Unknown()) }
 
             waitForMessagesUpdate(count: channelPayload.messages.count) {
                 do {
                     try client.databaseContainer.writeSynchronously { session in
                         // Create a channel with the provided payload
-                        let dummyUserPayload: CurrentUserPayload = .dummy(userId: .unique, role: .user)
+                        let dummyUserPayload: OwnUser = .dummy(userId: .unique, role: .user)
                         try session.saveCurrentUser(payload: dummyUserPayload)
                         try session.saveChannel(payload: channelPayload)
                         self.env?.channelUpdater?.mockPaginationState.hasLoadedAllNextMessages = withAllNextMessagesLoaded
@@ -5231,17 +5238,17 @@ extension ChannelController_Tests {
         }
     }
 
-    private func createChannel(oldestMessageId: MessageId, newestMessageId: MessageId, channelReads: [ChannelReadPayload] = []) {
-        let oldestMessage = MessagePayload.dummy(messageId: oldestMessageId, createdAt: Date().addingTimeInterval(-1000))
-        let newestMessage = MessagePayload.dummy(messageId: newestMessageId, createdAt: Date().addingTimeInterval(1000))
+    private func createChannel(oldestMessageId: MessageId, newestMessageId: MessageId, channelReads: [Read] = []) {
+        let oldestMessage = Message.dummy(messageId: oldestMessageId, createdAt: Date().addingTimeInterval(-1000))
+        let newestMessage = Message.dummy(messageId: newestMessageId, createdAt: Date().addingTimeInterval(1000))
 
         createChannel(messages: [oldestMessage, newestMessage], channelReads: channelReads)
     }
 
-    private func createChannel(messages: [MessagePayload], channelReads: [ChannelReadPayload] = []) {
+    private func createChannel(messages: [Message], channelReads: [Read] = []) {
         let payload = dummyPayload(with: channelId, messages: messages, channelReads: channelReads)
         writeAndWaitForMessageUpdates(count: messages.count) {
-            try $0.saveChannel(payload: payload, query: nil, cache: nil)
+            try $0.saveChannel(payload: payload.toResponseFields, query: nil, cache: nil)
         }
     }
 
@@ -5257,11 +5264,11 @@ extension ChannelController_Tests {
         line: UInt = #line
     ) throws {
         let userId = UserId.unique
-        let channelRead = ChannelReadPayload(
-            user: .dummy(userId: userId),
-            lastReadAt: .unique,
+        let channelRead = Read(
+            lastRead: .unique,
+            unreadMessages: 3,
             lastReadMessageId: nil,
-            unreadMessagesCount: 3
+            user: .dummy(userId: userId)
         )
         let token = Token(rawValue: "", userId: userId, expiration: nil)
         controller.client.authenticationRepository.setMockToken(token)
@@ -5272,19 +5279,19 @@ extension ChannelController_Tests {
 
         let oldestMessageId = MessageId.unique
         let newestMessageId = MessageId.unique
-        let newestMessage = MessagePayload.dummy(
+        let newestMessage = Message.dummy(
             messageId: newestMessageId,
             text: "new",
             createdAt: Date().addingTimeInterval(1000)
         )
 
-        let oldestMessage = MessagePayload.dummy(
+        let oldestMessage = Message.dummy(
             type: oldestMessageType,
             messageId: oldestMessageId,
             text: "old",
             createdAt: Date().addingTimeInterval(-1000)
         )
-        let oldestRegularMessage = MessagePayload.dummy(
+        let oldestRegularMessage = Message.dummy(
             type: .regular,
             messageId: .unique,
             text: "old regular",
@@ -5349,12 +5356,12 @@ private class TestEnvironment {
                 callRepository: $1,
                 paginationStateHandler: $2,
                 database: $3,
-                apiClient: $4
+                api: $4
             )
             return self.channelUpdater!
         },
         eventSenderBuilder: { [unowned self] in
-            self.eventSender = TypingEventsSender_Mock(database: $0, apiClient: $1)
+            self.eventSender = TypingEventsSender_Mock(database: $0, api: $1)
             return self.eventSender!
         }
     )

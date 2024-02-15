@@ -424,9 +424,10 @@ final class AttachmentQueueUploader_Tests: XCTestCase {
             }
         }
 
+        let api = API.mock(with: apiClient)
         queueUploader = AttachmentQueueUploader(
             database: database,
-            apiClient: apiClient,
+            api: api,
             attachmentPostProcessor: FakePostProcessor()
         )
 

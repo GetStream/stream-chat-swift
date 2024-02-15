@@ -146,14 +146,14 @@ extension DatabaseContainer {
     /// Synchronously creates a new UserDTO in the DB with the given id.
     func createUser(id: UserId = .unique, updatedAt: Date = .unique, extraData: [String: RawJSON] = [:]) throws {
         try writeSynchronously { session in
-            try session.saveUser(payload: .dummy(userId: id, extraData: extraData, updatedAt: updatedAt))
+            try session.saveUser(payload: .dummy(userId: id, extraData: extraData, updatedAt: updatedAt), query: nil, cache: nil)
         }
     }
 
     /// Synchronously creates a new CurrentUserDTO in the DB with the given id.
     func createCurrentUser(id: UserId = .unique, name: String = .unique) throws {
         try writeSynchronously { session in
-            let payload: CurrentUserPayload = .dummy(
+            let payload: OwnUser = .dummy(
                 userId: id,
                 name: name,
                 role: .admin,
@@ -177,7 +177,9 @@ extension DatabaseContainer {
             let dto = try session
                 .saveChannel(
                     payload: XCTestCase()
-                        .dummyPayload(with: cid, channelExtraData: channelExtraData, truncatedAt: truncatedAt)
+                        .dummyPayload(with: cid, channelExtraData: channelExtraData, truncatedAt: truncatedAt).toResponseFields,
+                    query: nil,
+                    cache: nil
                 )
 
             dto.isHidden = isHidden
@@ -247,9 +249,9 @@ extension DatabaseContainer {
         pinnedAt: Date? = nil,
         pinExpires: Date? = nil,
         updatedAt: Date = .unique,
-        latestReactions: [MessageReactionPayload] = [],
-        ownReactions: [MessageReactionPayload] = [],
-        attachments: [MessageAttachmentPayload] = [],
+        latestReactions: [Reaction] = [],
+        ownReactions: [Reaction] = [],
+        attachments: [Attachment] = [],
         reactionScores: [MessageReactionType: Int] = [:],
         reactionCounts: [MessageReactionType: Int] = [:],
         localState: LocalMessageState? = nil,
@@ -259,12 +261,12 @@ extension DatabaseContainer {
     ) throws {
         try writeSynchronously { session in
             guard let channelDTO = channel ??
-                (try? session.saveChannel(payload: XCTestCase().dummyPayload(with: cid, numberOfMessages: 0))) else {
+                    (try? session.saveChannel(payload: XCTestCase().dummyPayload(with: cid, numberOfMessages: 0).toResponseFields, query: nil, cache: nil)) else {
                 XCTFail("Failed to fetch channel when creating message")
                 return
             }
 
-            let message: MessagePayload = .dummy(
+            let message: Message = .dummy(
                 type: type,
                 messageId: id,
                 quotedMessageId: quotedMessageId,
@@ -279,8 +281,8 @@ extension DatabaseContainer {
                 pinnedByUserId: pinnedByUserId,
                 pinnedAt: pinnedAt,
                 pinExpires: pinExpires,
-                reactionScores: reactionScores,
-                reactionCounts: reactionCounts
+                reactionScores: reactionScores.mapKeys(\.rawValue),
+                reactionCounts: reactionCounts.mapKeys(\.rawValue)
             )
 
             let messageDTO = try session.saveMessage(payload: message, channelDTO: channelDTO, syncOwnReactions: true, cache: nil)
@@ -289,7 +291,7 @@ extension DatabaseContainer {
             messageDTO.reactionScores = reactionScores.mapKeys(\.rawValue)
 
             for idx in 0..<numberOfReplies {
-                let reply: MessagePayload = .dummy(
+                let reply: Message = .dummy(
                     type: .reply,
                     messageId: .unique,
                     parentId: id,
@@ -316,11 +318,11 @@ extension DatabaseContainer {
                 searchDTO.messages.removeAll()
             }
 
-            let channelPayload = XCTestCase().dummyPayload(with: cid)
+            let channelPayload = XCTestCase().dummyPayload(with: cid).toResponseFields
 
-            try session.saveChannel(payload: channelPayload)
+            try session.saveChannel(payload: channelPayload, query: nil, cache: nil)
 
-            let message: MessagePayload = .dummy(
+            let message: Message = .dummy(
                 messageId: id,
                 authorUserId: .unique,
                 channel: channelPayload.channel
@@ -342,12 +344,12 @@ extension DatabaseContainer {
                 searchDTO.messages.removeAll()
             }
 
-            let channelPayload = XCTestCase().dummyPayload(with: cid)
+            let channelPayload = XCTestCase().dummyPayload(with: cid).toResponseFields
 
-            try session.saveChannel(payload: channelPayload)
+            try session.saveChannel(payload: channelPayload, query: nil, cache: nil)
 
             try ids.forEach {
-                let message: MessagePayload = .dummy(
+                let message: Message = .dummy(
                     messageId: $0,
                     authorUserId: .unique,
                     channel: channelPayload.channel

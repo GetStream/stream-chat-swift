@@ -49,7 +49,7 @@ final class ChatClient_Mock: ChatClient {
             factory: ChatClientFactory(config: config, environment: environment)
         )
         if !workerBuilders.isEmpty {
-            _backgroundWorkers = workerBuilders.map { $0(databaseContainer, apiClient) }
+            _backgroundWorkers = workerBuilders.map { $0(databaseContainer, api) }
         }
     }
 
@@ -249,6 +249,22 @@ extension ChatClient {
             config: config,
             environment: environment,
             factory: ChatClientFactory(config: config, environment: environment)
+        )
+    }
+}
+
+extension API {
+    static func mock(with apiClient: APIClient) -> API {
+        let basePath = "http://localhost.com"
+        let apiKey = APIKey.init("")
+        return API(
+            apiClient: apiClient,
+            encoder: DefaultRequestEncoder(
+                baseURL: URL(string: basePath)!,
+                apiKey: apiKey
+            ),
+            basePath: basePath,
+            apiKey: apiKey
         )
     }
 }

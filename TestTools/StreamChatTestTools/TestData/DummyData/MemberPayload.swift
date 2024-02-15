@@ -5,32 +5,24 @@
 import Foundation
 @testable import StreamChat
 
-extension MemberPayload {
+extension ChannelMember {
     /// Returns a dummy member payload with the given `userId` and `role`
     static func dummy(
-        user: UserPayload = .dummy(userId: .unique),
+        user: UserObject = .dummy(userId: .unique),
         createdAt: Date = .unique,
         updatedAt: Date = .unique,
+        lastActive: Date = .unique,
         role: MemberRole = .member,
         isMemberBanned: Bool = false
-    ) -> MemberPayload {
-        .init(
-            user: user,
-            userId: user.id,
-            role: role,
+    ) -> ChannelMember {
+        ChannelMember(
+            banned: isMemberBanned, 
+            channelRole: role.rawValue,
             createdAt: createdAt,
+            shadowBanned: false,
             updatedAt: updatedAt,
-            isBanned: isMemberBanned
-        )
-    }
-}
-
-extension MemberContainerPayload {
-    static func dummy(userId: UserId = .unique) -> MemberContainerPayload {
-        .init(
-            member: .dummy(user: .dummy(userId: userId)),
-            invite: nil,
-            memberRole: nil
+            userId: user.id, 
+            user: user
         )
     }
 }

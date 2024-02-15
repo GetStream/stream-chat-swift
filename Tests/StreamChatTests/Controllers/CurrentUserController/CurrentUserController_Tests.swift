@@ -195,7 +195,7 @@ final class CurrentUserController_Tests: XCTestCase {
         controller.synchronize()
 
         let extraData: [String: RawJSON] = [:]
-        let currentUserPayload: CurrentUserPayload = .dummy(
+        let currentUserPayload: OwnUser = .dummy(
             userId: .unique,
             role: .user,
             extraData: extraData
@@ -222,7 +222,7 @@ final class CurrentUserController_Tests: XCTestCase {
         controller.synchronize()
 
         var extraData: [String: RawJSON] = [:]
-        var currentUserPayload: CurrentUserPayload = .dummy(
+        var currentUserPayload: OwnUser = .dummy(
             userId: .unique,
             role: .user,
             extraData: extraData
@@ -241,7 +241,7 @@ final class CurrentUserController_Tests: XCTestCase {
         extraData = [:]
         currentUserPayload = .dummy(
             userId: currentUserPayload.id,
-            role: currentUserPayload.role,
+            role: UserRole(rawValue: currentUserPayload.role),
             extraData: extraData
         )
 
@@ -269,7 +269,7 @@ final class CurrentUserController_Tests: XCTestCase {
 
         // Simulate saving current user to a database
         try client.databaseContainer.writeSynchronously {
-            let currentUserPayload: CurrentUserPayload = .dummy(
+            let currentUserPayload: OwnUser = .dummy(
                 userId: .unique,
                 role: .user,
                 unreadCount: unreadCount
@@ -759,8 +759,8 @@ private class TestEnvironment {
             self.currentUserObserver.synchronizeError = self.currentUserObserverStartUpdatingError
             self.currentUserObserver.item_mock = self.currentUserObserverItem
             return self.currentUserObserver!
-        }, currentUserUpdaterBuilder: { [unowned self] db, client in
-            self.currentUserUpdater = CurrentUserUpdater_Mock(database: db, apiClient: client)
+        }, currentUserUpdaterBuilder: { [unowned self] db, api in
+            self.currentUserUpdater = CurrentUserUpdater_Mock(database: db, api: api)
             return self.currentUserUpdater!
         })
 }

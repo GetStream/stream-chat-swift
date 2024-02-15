@@ -15,7 +15,6 @@ class ChannelUpdater: Worker {
         callRepository: CallRepository,
         paginationStateHandler: MessagesPaginationStateHandling,
         database: DatabaseContainer,
-        apiClient: APIClient,
         api: API
     ) {
         self.channelRepository = channelRepository
@@ -525,11 +524,13 @@ class ChannelUpdater: Worker {
         message: String?,
         completion: ((Error?) -> Void)? = nil
     ) {
+        let messageRequest = MessageRequest(attachments: [], text: message)
         let request = UpdateChannelRequest(
             addModerators: [],
             demoteModerators: [],
             removeMembers: [],
-            acceptInvite: true
+            acceptInvite: true,
+            message: messageRequest
         )
         api.updateChannel(
             type: cid.type.rawValue,

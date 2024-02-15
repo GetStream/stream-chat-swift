@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-extension CurrentUserPayload {
+extension OwnUser {
     /// Returns a dummy current user payload with the given UserId and extra data
     static func dummy(
         userId: UserId,
@@ -21,61 +21,34 @@ extension CurrentUserPayload {
         role: UserRole,
         unreadCount: UnreadCount? = .dummy,
         extraData: [String: RawJSON] = [:],
-        devices: [DevicePayload] = [],
-        mutedUsers: [MutedUserPayload] = [],
+        devices: [Device] = [],
+        mutedUsers: [UserMute] = [],
         teams: [TeamId] = [],
         language: String? = nil,
-        mutedChannels: [MutedChannelPayload] = []
-    ) -> CurrentUserPayload {
-        .init(
-            id: userId,
-            name: name,
-            imageURL: imageURL,
-            role: role,
+        mutedChannels: [ChannelMute] = []
+    ) -> OwnUser {
+        OwnUser(
+            banned: isBanned,
             createdAt: createdAt,
+            id: userId,
+            language: language ?? "en",
+            online: isOnline,
+            role: role.rawValue,
+            totalUnreadCount: unreadCount?.messages ?? 0,
+            unreadChannels: unreadCount?.channels ?? 0,
+            unreadCount: unreadCount?.channels ?? 0,
             updatedAt: updatedAt,
+            channelMutes: mutedChannels,
+            devices: devices,
+            mutes: mutedUsers,
+            custom: extraData,
             deactivatedAt: deactivatedAt,
-            lastActiveAt: lastActiveAt,
-            isOnline: isOnline,
-            isInvisible: isInvisible,
-            isBanned: isBanned,
+            deletedAt: nil,
+            invisible: isInvisible,
+            lastActive: lastActiveAt,
+            latestHiddenChannels: nil,
             teams: teams,
-            language: language,
-            extraData: extraData,
-            devices: devices,
-            mutedUsers: mutedUsers,
-            mutedChannels: mutedChannels,
-            unreadCount: unreadCount
-        )
-    }
-
-    /// Returns a dummy current user payload with the given user payload
-    static func dummy(
-        userPayload: UserPayload,
-        unreadCount: UnreadCount? = .dummy,
-        devices: [DevicePayload] = [],
-        mutedUsers: [MutedUserPayload] = [],
-        mutedChannels: [MutedChannelPayload] = []
-    ) -> CurrentUserPayload {
-        .init(
-            id: userPayload.id,
-            name: userPayload.name,
-            imageURL: userPayload.imageURL,
-            role: userPayload.role,
-            createdAt: userPayload.createdAt,
-            updatedAt: userPayload.updatedAt,
-            deactivatedAt: userPayload.deactivatedAt,
-            lastActiveAt: userPayload.lastActiveAt,
-            isOnline: userPayload.isOnline,
-            isInvisible: userPayload.isInvisible,
-            isBanned: userPayload.isBanned,
-            teams: userPayload.teams,
-            language: userPayload.language,
-            extraData: userPayload.extraData,
-            devices: devices,
-            mutedUsers: mutedUsers,
-            mutedChannels: mutedChannels,
-            unreadCount: unreadCount
+            pushNotifications: nil
         )
     }
 }

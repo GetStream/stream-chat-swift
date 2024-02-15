@@ -283,10 +283,10 @@ final class ChatChannelWatcherListController_Tests: XCTestCase {
         try client.databaseContainer.createChannel(cid: query.cid)
 
         // Create 2 watchers
-        var watcher1: UserPayload = .dummy(
+        var watcher1: UserObject = .dummy(
             userId: watcher1ID
         )
-        var watcher2: UserPayload = .dummy(
+        var watcher2: UserObject = .dummy(
             userId: watcher2ID
         )
 
@@ -484,7 +484,7 @@ private class TestEnvironment {
                 callRepository: $1,
                 paginationStateHandler: $2,
                 database: $3,
-                apiClient: $4
+                api: $4
             )
             return self.watcherListUpdater!
         },

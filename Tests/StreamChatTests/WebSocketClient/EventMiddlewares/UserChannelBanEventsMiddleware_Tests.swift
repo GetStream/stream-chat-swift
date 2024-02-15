@@ -38,66 +38,73 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
     }
 
     func test_middleware_forwardsBanEvent_ifDatabaseWriteGeneratesError() throws {
-        let eventPayload: EventPayload = .init(
-            eventType: .userBanned,
-            cid: .unique,
-            user: .dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: [:]),
-            createdBy: .dummy(userId: .unique, name: "Leia", imageUrl: nil, extraData: [:]),
-            createdAt: .unique,
-            banExpiredAt: .unique
-        )
-
         // Set error to be thrown on write.
         let error = TestError()
         database.write_errorResponse = error
 
         // Simulate and handle banned event.
-        let event = try UserBannedEventDTO(from: eventPayload)
+        let cid = ChannelId.unique
+        let event = UserBannedEvent(
+            channelId: cid.id,
+            channelType: cid.type.rawValue,
+            cid: cid.rawValue,
+            createdAt: .unique,
+            shadow: false,
+            type: "user.banned",
+            createdBy: .dummy(userId: .unique, name: "Leia", imageUrl: nil, extraData: [:]),
+            expiration: .unique,
+            user: .dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: [:])
+        )
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         // Assert `UserBannedEvent` is forwarded even though database error happened.
-        XCTAssertTrue(forwardedEvent is UserBannedEventDTO)
+        XCTAssertTrue(forwardedEvent is UserBannedEvent)
     }
 
     func test_middleware_forwardsUnbanEvent_ifDatabaseWriteGeneratesError() throws {
-        let eventPayload: EventPayload = .init(
-            eventType: .userUnbanned,
-            cid: .unique,
-            user: .dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: [:]),
-            createdAt: .unique
-        )
-
         // Set error to be thrown on write.
         let error = TestError()
         database.write_errorResponse = error
 
         // Simulate and handle banned event.
-        let event = try UserUnbannedEventDTO(from: eventPayload)
+        let cid = ChannelId.unique
+        let event = UserUnbannedEvent(
+            channelId: cid.id,
+            channelType: cid.type.rawValue,
+            cid: cid.rawValue,
+            createdAt: .unique,
+            shadow: false,
+            type: "user.unbanned",
+            user: .dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: [:])
+        )
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         // Assert `UserUnbannedEvent` is forwarded even though database error happened.
-        XCTAssertTrue(forwardedEvent is UserUnbannedEventDTO)
+        XCTAssertTrue(forwardedEvent is UserUnbannedEvent)
     }
 
     func test_middleware_handlesUserBannedEventCorrectly() throws {
-        // Create event payload
-        let eventPayload: EventPayload = .init(
-            eventType: .userBanned,
-            cid: .unique,
-            user: .dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: [:]),
-            createdBy: .dummy(userId: .unique, name: "Leia", imageUrl: nil, extraData: [:]),
+        // Create event with payload.
+        let cid = ChannelId.unique
+        let user = UserObject.dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: [:])
+        let banExpiration = Date.unique
+        let event = UserBannedEvent(
+            channelId: cid.id,
+            channelType: cid.type.rawValue,
+            cid: cid.rawValue,
             createdAt: .unique,
-            banExpiredAt: .unique
+            shadow: false,
+            type: "user.banned",
+            createdBy: .dummy(userId: .unique, name: "Leia", imageUrl: nil, extraData: [:]),
+            expiration: banExpiration,
+            user: user
         )
 
-        // Create event with payload.
-        let event = try UserBannedEventDTO(from: eventPayload)
-
         // Create required objects in the DB
-        try database.createChannel(cid: eventPayload.cid!)
-        try database.createMember(userId: eventPayload.user!.id, cid: eventPayload.cid!)
+        try database.createChannel(cid: cid)
+        try database.createMember(userId: user.id, cid: cid)
 
-        let member = try XCTUnwrap(database.viewContext.member(userId: eventPayload.user!.id, cid: eventPayload.cid!))
+        let member = try XCTUnwrap(database.viewContext.member(userId: user.id, cid: cid))
         XCTAssertEqual(member.isBanned, false)
         XCTAssertEqual(member.isShadowBanned, false)
         XCTAssertEqual(member.banExpiresAt, nil)
@@ -108,31 +115,33 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
         // Assert the member ban information is updated
         XCTAssertEqual(member.isBanned, true)
         XCTAssertEqual(member.isShadowBanned, false)
-        XCTAssertEqual(member.banExpiresAt?.bridgeDate, eventPayload.banExpiredAt!)
+        XCTAssertEqual(member.banExpiresAt?.bridgeDate, banExpiration)
 
-        XCTAssert(forwardedEvent is UserBannedEventDTO)
+        XCTAssert(forwardedEvent is UserBannedEvent)
     }
 
     func test_middleware_handlesUserBannedEventCorrectly_whenShadowBanned() throws {
-        // Create event payload
-        let eventPayload: EventPayload = .init(
-            eventType: .userBanned,
-            cid: .unique,
-            user: .dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: [:]),
-            createdBy: .dummy(userId: .unique, name: "Leia", imageUrl: nil, extraData: [:]),
-            createdAt: .unique,
-            banExpiredAt: .unique,
-            shadow: true
-        )
-
         // Create event with payload.
-        let event = try UserBannedEventDTO(from: eventPayload)
-
+        let cid = ChannelId.unique
+        let user = UserObject.dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: [:])
+        let banExpiration = Date.unique
+        let event = UserBannedEvent(
+            channelId: cid.id,
+            channelType: cid.type.rawValue,
+            cid: cid.rawValue,
+            createdAt: .unique,
+            shadow: true,
+            type: "user.banned",
+            createdBy: .dummy(userId: .unique, name: "Leia", imageUrl: nil, extraData: [:]),
+            expiration: banExpiration,
+            user: user
+        )
+        
         // Create required objects in the DB
-        try database.createChannel(cid: eventPayload.cid!)
-        try database.createMember(userId: eventPayload.user!.id, cid: eventPayload.cid!)
+        try database.createChannel(cid: cid)
+        try database.createMember(userId: user.id, cid: cid)
 
-        let member = try XCTUnwrap(database.viewContext.member(userId: eventPayload.user!.id, cid: eventPayload.cid!))
+        let member = try XCTUnwrap(database.viewContext.member(userId: user.id, cid: cid))
         XCTAssertEqual(member.isBanned, false)
         XCTAssertEqual(member.isShadowBanned, false)
         XCTAssertEqual(member.banExpiresAt, nil)
@@ -143,33 +152,33 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
         // Assert the member ban information is updated
         XCTAssertEqual(member.isBanned, true)
         XCTAssertEqual(member.isShadowBanned, true)
-        XCTAssertEqual(member.banExpiresAt?.bridgeDate, eventPayload.banExpiredAt!)
+        XCTAssertEqual(member.banExpiresAt?.bridgeDate, banExpiration)
 
-        XCTAssert(forwardedEvent is UserBannedEventDTO)
+        XCTAssert(forwardedEvent is UserBannedEvent)
     }
 
     func test_middleware_handlesUserUnbannedEventCorrectly() throws {
-        // Create event payload
-        let eventPayload: EventPayload = .init(
-            eventType: .userUnbanned,
-            cid: .unique,
-            user: .dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: [:]),
-            createdBy: .dummy(userId: .unique, name: "Leia", imageUrl: nil, extraData: [:]),
-            createdAt: .unique
-        )
-
         // Create event with payload.
-        let event = try UserUnbannedEventDTO(from: eventPayload)
-
+        let cid = ChannelId.unique
+        let event = UserUnbannedEvent(
+            channelId: cid.id,
+            channelType: cid.type.rawValue,
+            cid: cid.rawValue,
+            createdAt: .unique,
+            shadow: false,
+            type: "user.unbanned",
+            user: .dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: [:])
+        )
+        
         // Create required objects in the DB
-        try database.createChannel(cid: eventPayload.cid!)
+        try database.createChannel(cid: cid)
         try database.writeSynchronously { session in
             let memberDTO = try session.saveMember(
                 payload: .dummy(
-                    user: .dummy(userId: eventPayload.user!.id),
+                    user: .dummy(userId: event.user!.id),
                     role: .member
                 ),
-                channelId: eventPayload.cid!,
+                channelId: cid,
                 query: nil,
                 cache: nil
             )
@@ -180,7 +189,7 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
             memberDTO.banExpiresAt = .unique
         }
 
-        let member = try XCTUnwrap(database.viewContext.member(userId: eventPayload.user!.id, cid: eventPayload.cid!))
+        let member = try XCTUnwrap(database.viewContext.member(userId: event.user!.id, cid: cid))
         XCTAssertEqual(member.isBanned, true)
         XCTAssertEqual(member.isShadowBanned, true)
         XCTAssertNotEqual(member.banExpiresAt, nil)
@@ -193,6 +202,6 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
         XCTAssertEqual(member.isShadowBanned, false)
         XCTAssertEqual(member.banExpiresAt, nil)
 
-        XCTAssert(forwardedEvent is UserUnbannedEventDTO)
+        XCTAssert(forwardedEvent is UserUnbannedEvent)
     }
 }

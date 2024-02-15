@@ -12,7 +12,7 @@ final class UserListUpdater_Mock: UserListUpdater {
     @Atomic var update_completion: ((Error?) -> Void)?
 
     @Atomic var fetch_queries: [UserListQuery] = []
-    @Atomic var fetch_completion: ((Result<UserListPayload, Error>) -> Void)?
+    @Atomic var fetch_completion: ((Result<UsersResponse, Error>) -> Void)?
 
     func cleanUp() {
         update_queries.removeAll()
@@ -35,7 +35,7 @@ final class UserListUpdater_Mock: UserListUpdater {
 
     override func fetch(
         userListQuery: UserListQuery,
-        completion: @escaping (Result<UserListPayload, Error>) -> Void
+        completion: @escaping (Result<UsersResponse, Error>) -> Void
     ) {
         _fetch_queries.mutate { $0.append(userListQuery) }
         fetch_completion = completion

@@ -10,6 +10,7 @@ final class MessageSender_Tests: XCTestCase {
     var messageRepository: MessageRepository_Mock!
     var webSocketClient: WebSocketClient_Mock!
     var apiClient: APIClient_Spy!
+    var api: API!
     var database: DatabaseContainer_Spy!
     var eventsNotificationCenter: EventNotificationCenter_Mock!
 
@@ -23,14 +24,14 @@ final class MessageSender_Tests: XCTestCase {
         webSocketClient = WebSocketClient_Mock()
         apiClient = APIClient_Spy()
         database = DatabaseContainer_Spy()
-        let api = API(apiClient: apiClient, encoder: DefaultRequestEncoder(baseURL: URL(string: "https://test.com")!, apiKey: .init("test")), basePath: "test", apiKey: .init("test"))
+        api = API.mock(with: apiClient)
         messageRepository = MessageRepository_Mock(database: database, apiClient: apiClient, api: api)
         eventsNotificationCenter = EventNotificationCenter_Mock(database: database)
         sender = MessageSender(
             messageRepository: messageRepository,
             eventsNotificationCenter: eventsNotificationCenter,
             database: database,
-            apiClient: apiClient
+            api: api
         )
 
         cid = .unique
@@ -451,7 +452,7 @@ final class MessageSender_Tests: XCTestCase {
             messageRepository: messageRepository,
             eventsNotificationCenter: EventNotificationCenter_Mock(database: mockDatabase),
             database: mockDatabase,
-            apiClient: apiClient
+            api: api
         )
 
         // Then

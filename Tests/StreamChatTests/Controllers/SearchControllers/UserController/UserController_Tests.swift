@@ -570,7 +570,7 @@ private class TestEnvironment {
         userUpdaterBuilder: { [unowned self] in
             self.userUpdater = .init(
                 database: $0,
-                apiClient: $1
+                api: $1
             )
             return self.userUpdater!
         },

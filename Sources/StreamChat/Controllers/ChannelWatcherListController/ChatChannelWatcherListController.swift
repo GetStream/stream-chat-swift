@@ -64,7 +64,6 @@ public class ChatChannelWatcherListController: DataController, DelegateCallable,
         client.callRepository,
         client.makeMessagesPaginationStateHandler(),
         client.databaseContainer,
-        client.apiClient,
         client.api
     )
 
@@ -140,7 +139,6 @@ extension ChatChannelWatcherListController {
             _ callRepository: CallRepository,
             _ paginationStateHandler: MessagesPaginationStateHandling,
             _ database: DatabaseContainer,
-            _ apiClient: APIClient,
             _ api: API
         ) -> ChannelUpdater = ChannelUpdater.init
 

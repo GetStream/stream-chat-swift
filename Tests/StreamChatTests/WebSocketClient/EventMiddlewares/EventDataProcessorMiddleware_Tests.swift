@@ -6,6 +6,7 @@
 @testable import StreamChatTestTools
 import XCTest
 
+// TODO: needs rewrite!
 final class EventDataProcessorMiddleware_Tests: XCTestCase {
     var middleware: EventDataProcessorMiddleware!
     fileprivate var database: DatabaseContainer_Spy!

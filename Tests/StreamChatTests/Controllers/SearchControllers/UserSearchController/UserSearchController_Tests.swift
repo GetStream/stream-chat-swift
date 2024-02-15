@@ -103,8 +103,8 @@ final class UserSearchController_Tests: XCTestCase {
         }
 
         // Simulate successful API response for 1st query
-        let userPayload1 = dummyUser(id: .unique)
-        let userPayload2 = dummyUser(id: .unique)
+        let userPayload1 = dummyUser(id: .unique).toUserResponse
+        let userPayload2 = dummyUser(id: .unique).toUserResponse
         env.userListUpdater!.fetch_completion!(.success(.init(users: [userPayload1, userPayload2])))
 
         // Wait for 1st query completion to be called
@@ -139,8 +139,8 @@ final class UserSearchController_Tests: XCTestCase {
         }
 
         // Simulate successful API response for 2nd query
-        let userPayload3 = dummyUser(id: .unique)
-        let userPayload4 = dummyUser(id: .unique)
+        let userPayload3 = dummyUser(id: .unique).toUserResponse
+        let userPayload4 = dummyUser(id: .unique).toUserResponse
         env.userListUpdater!.fetch_completion!(.success(.init(users: [userPayload3, userPayload4])))
 
         // Wait for 2nd query completion to be called
@@ -182,8 +182,8 @@ final class UserSearchController_Tests: XCTestCase {
         }
 
         // Simulate successful API response for 1st query
-        let userPayload1 = dummyUser(id: .unique)
-        let userPayload2 = dummyUser(id: .unique)
+        let userPayload1 = dummyUser(id: .unique).toUserResponse
+        let userPayload2 = dummyUser(id: .unique).toUserResponse
         env.userListUpdater!.fetch_completion!(.success(.init(users: [userPayload1, userPayload2])))
 
         // Wait for 1st query completion to be called
@@ -302,8 +302,8 @@ final class UserSearchController_Tests: XCTestCase {
         }
 
         // Simulate successful API response for 1st query
-        let userPayload1 = dummyUser(id: .unique)
-        let userPayload2 = dummyUser(id: .unique)
+        let userPayload1 = dummyUser(id: .unique).toUserResponse
+        let userPayload2 = dummyUser(id: .unique).toUserResponse
         env.userListUpdater!.fetch_completion!(.success(.init(users: [userPayload1, userPayload2])))
 
         // Wait for 1st query completion to be called
@@ -338,8 +338,8 @@ final class UserSearchController_Tests: XCTestCase {
         }
 
         // Simulate successful API response for 2nd query
-        let userPayload3 = dummyUser(id: .unique)
-        let userPayload4 = dummyUser(id: .unique)
+        let userPayload3 = dummyUser(id: .unique).toUserResponse
+        let userPayload4 = dummyUser(id: .unique).toUserResponse
         env.userListUpdater!.fetch_completion!(.success(.init(users: [userPayload3, userPayload4])))
 
         // Wait for 2nd query completion to be called
@@ -380,8 +380,8 @@ final class UserSearchController_Tests: XCTestCase {
         }
 
         // Simulate successful API response for 1st query
-        let userPayload1 = dummyUser(id: .unique)
-        let userPayload2 = dummyUser(id: .unique)
+        let userPayload1 = dummyUser(id: .unique).toUserResponse
+        let userPayload2 = dummyUser(id: .unique).toUserResponse
         env.userListUpdater!.fetch_completion!(.success(.init(users: [userPayload1, userPayload2])))
 
         // Wait for 1st query completion to be called
@@ -502,7 +502,7 @@ final class UserSearchController_Tests: XCTestCase {
         }
 
         // Simulate successful API response for search call
-        let userPayload1 = dummyUser(id: .unique)
+        let userPayload1 = dummyUser(id: .unique).toUserResponse
         env.userListUpdater!.fetch_completion!(.success(.init(users: [userPayload1])))
 
         // Wait for search completion to be called
@@ -533,9 +533,9 @@ final class UserSearchController_Tests: XCTestCase {
         XCTAssertEqual(env.userListUpdater!.fetch_queries.last, expectedQuery)
 
         // Simulate successful API response for `loadNextUsers`
-        let userPayload2 = dummyUser(id: .unique)
-        let userPayload3 = dummyUser(id: .unique)
-        let nextPage = UserListPayload(users: [userPayload2, userPayload3])
+        let userPayload2 = dummyUser(id: .unique).toUserResponse
+        let userPayload3 = dummyUser(id: .unique).toUserResponse
+        let nextPage = UsersResponse(users: [userPayload2, userPayload3])
         env.userListUpdater!.fetch_completion!(.success(nextPage))
 
         // Wait for `loadNextUsers` completion to be called
@@ -568,7 +568,7 @@ final class UserSearchController_Tests: XCTestCase {
         }
 
         // Simulate successful API response for search call
-        let userPayload1 = dummyUser(id: .unique)
+        let userPayload1 = dummyUser(id: .unique).toUserResponse
         env.userListUpdater!.fetch_completion!(.success(.init(users: [userPayload1])))
 
         // Wait for search completion to be called
@@ -618,7 +618,7 @@ final class UserSearchController_Tests: XCTestCase {
         }
 
         // Simulate successful API response for search call
-        env.userListUpdater!.fetch_completion!(.success(.init(users: [])))
+        env.userListUpdater!.fetch_completion!(.success(.init(duration: "", users: [])))
 
         // Wait for search completion to be called
         AssertAsync.willBeTrue(searchCompletionCalled)
@@ -648,7 +648,7 @@ private class TestEnvironment {
         .init(userQueryUpdaterBuilder: { [unowned self] in
             self.userListUpdater = UserListUpdater_Mock(
                 database: $0,
-                apiClient: $1
+                api: $1
             )
             return self.userListUpdater!
         })
@@ -680,5 +680,35 @@ extension UserListQuery: Equatable {
             && lhs.pagination == rhs.pagination
             && lhs.options == rhs.options
             && lhs.shouldBeUpdatedInBackground == rhs.shouldBeUpdatedInBackground
+    }
+}
+
+extension UserObject {
+    var toUserResponse: UserResponse {
+        UserResponse(
+            banned: banned ?? false,
+            id: id,
+            online: online ?? false,
+            role: role ?? "user",
+            shadowBanned: false,
+            custom: custom ?? [:],
+            banExpires: banExpires,
+            createdAt: createdAt,
+            deactivatedAt: deactivatedAt,
+            deletedAt: deletedAt,
+            invisible: invisible,
+            language: language,
+            lastActive: lastActive,
+            revokeTokensIssuedBefore: revokeTokensIssuedBefore,
+            updatedAt: updatedAt,
+            teams: teams,
+            pushNotifications: pushNotifications
+        )
+    }
+}
+
+extension UsersResponse {
+    init(users: [UserResponse?]) {
+        self.init(duration: "", users: users)
     }
 }

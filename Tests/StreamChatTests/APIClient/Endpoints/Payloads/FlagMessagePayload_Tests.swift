@@ -6,6 +6,7 @@
 @testable import StreamChatTestTools
 import XCTest
 
+// TODO: flag message is missing from the spec.
 final class FlagMessagePayload_Tests: XCTestCase {
     func test_json_isDeserialized_withDefaultExtraData() throws {
         let json = XCTestCase.mockData(fromJSONFile: "FlagMessagePayload+DefaultExtraData")

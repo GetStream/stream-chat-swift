@@ -36,12 +36,12 @@ class AuthenticationRepository_Mock: AuthenticationRepository, Spy {
         return mockedToken
     }
 
-    override init(apiClient: APIClient,
+    override init(api: API,
                   databaseContainer: DatabaseContainer,
                   connectionRepository: ConnectionRepository,
                   tokenExpirationRetryStrategy: RetryStrategy = DefaultRetryStrategy(),
                   timerType: StreamChat.Timer.Type = DefaultTimer.self) {
-        super.init(apiClient: apiClient,
+        super.init(api: api,
                    databaseContainer: databaseContainer,
                    connectionRepository: connectionRepository,
                    tokenExpirationRetryStrategy: tokenExpirationRetryStrategy,

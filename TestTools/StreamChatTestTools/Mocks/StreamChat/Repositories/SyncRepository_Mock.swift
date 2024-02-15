@@ -15,17 +15,19 @@ final class SyncRepository_Mock: SyncRepository, Spy {
 
     convenience init() {
         let database = DatabaseContainer_Spy()
-        self.init(config: .init(apiKeyString: ""),
+        let apiKey = APIKey.init("")
+        let api = API.mock(with: APIClient_Spy())
+        self.init(config: .init(apiKey: apiKey),
                   activeChannelControllers: ThreadSafeWeakCollection<ChatChannelController>(),
                   activeChannelListControllers: ThreadSafeWeakCollection<ChatChannelListController>(),
                   offlineRequestsRepository: OfflineRequestsRepository_Mock(),
                   eventNotificationCenter: EventNotificationCenter_Mock(database: database),
                   database: database,
-                  apiClient: APIClient_Spy())
+                  api: api)
     }
 
-    override init(config: ChatClientConfig, activeChannelControllers: ThreadSafeWeakCollection<ChatChannelController>, activeChannelListControllers: ThreadSafeWeakCollection<ChatChannelListController>, offlineRequestsRepository: OfflineRequestsRepository, eventNotificationCenter: EventNotificationCenter, database: DatabaseContainer, apiClient: APIClient) {
-        super.init(config: config, activeChannelControllers: activeChannelControllers, activeChannelListControllers: activeChannelListControllers, offlineRequestsRepository: offlineRequestsRepository, eventNotificationCenter: eventNotificationCenter, database: database, apiClient: apiClient)
+    override init(config: ChatClientConfig, activeChannelControllers: ThreadSafeWeakCollection<ChatChannelController>, activeChannelListControllers: ThreadSafeWeakCollection<ChatChannelListController>, offlineRequestsRepository: OfflineRequestsRepository, eventNotificationCenter: EventNotificationCenter, database: DatabaseContainer, api: API) {
+        super.init(config: config, activeChannelControllers: activeChannelControllers, activeChannelListControllers: activeChannelListControllers, offlineRequestsRepository: offlineRequestsRepository, eventNotificationCenter: eventNotificationCenter, database: database, api: api)
     }
 
     override func syncLocalState(completion: @escaping () -> Void) {

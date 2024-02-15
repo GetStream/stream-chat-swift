@@ -10,7 +10,7 @@ final class DevicePayloads_Tests: XCTestCase {
     let devicesJSON = XCTestCase.mockData(fromJSONFile: "Devices")
 
     func test_devicesPayload_isSerialized() throws {
-        let payload = try JSONDecoder.default.decode(DeviceListPayload.self, from: devicesJSON)
+        let payload = try JSONDecoder.default.decode(ListDevicesResponse.self, from: devicesJSON)
 
         XCTAssertEqual(payload.devices.count, 1)
         XCTAssertEqual(

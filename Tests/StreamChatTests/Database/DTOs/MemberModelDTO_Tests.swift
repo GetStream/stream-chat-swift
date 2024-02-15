@@ -24,37 +24,36 @@ final class MemberModelDTO_Tests: XCTestCase {
         let userId = UUID().uuidString
         let channelId = ChannelId(type: .init(rawValue: "messsaging"), id: UUID().uuidString)
 
-        let userPayload: UserPayload = .init(
+        let userPayload = UserObject(
             id: userId,
-            name: .unique,
-            imageURL: .unique(),
-            role: .admin,
+            banExpires: nil,
+            banned: false,
             createdAt: .unique,
-            updatedAt: .unique,
             deactivatedAt: nil,
-            lastActiveAt: .unique,
-            isOnline: true,
-            isInvisible: true,
-            isBanned: true,
-            teams: ["RED", "GREEN"],
+            deletedAt: nil,
+            invisible: true,
             language: "pt",
-            extraData: ["k": .string("v")]
+            lastActive: .unique,
+            online: true,
+            revokeTokensIssuedBefore: nil,
+            role: "admin",
+            updatedAt: .unique,
+            teams: ["RED", "GREEN"],
+            custom: ["k": .string("v")],
+            pushNotifications: nil
         )
 
-        let payload: MemberPayload = .init(
-            user: userPayload,
-            userId: userPayload.id,
-            role: .moderator,
+        let payload = ChannelMember(
+            banned: true,
+            channelRole: "moderator",
             createdAt: .unique,
-            updatedAt: .unique,
-            banExpiresAt: .unique,
-            isBanned: true,
-            isShadowBanned: true
+            shadowBanned: true,
+            updatedAt: .unique
         )
 
         // Asynchronously save the payload to the db
         try database.writeSynchronously { session in
-            try! session.saveMember(payload: payload, channelId: channelId)
+            try! session.saveMember(payload: payload, channelId: channelId, query: nil, cache: nil)
         }
 
         // Load the member from the db and check it's the same member
@@ -63,22 +62,22 @@ final class MemberModelDTO_Tests: XCTestCase {
         }
 
         AssertAsync {
-            Assert.willBeEqual(payload.role, loadedMember?.memberRole)
+            Assert.willBeEqual(payload.channelRole, loadedMember?.memberRole.rawValue)
             Assert.willBeEqual(payload.createdAt, loadedMember?.memberCreatedAt)
             Assert.willBeEqual(payload.updatedAt, loadedMember?.memberUpdatedAt)
-            Assert.willBeEqual(payload.isBanned, loadedMember?.isBannedFromChannel)
-            Assert.willBeEqual(payload.banExpiresAt, loadedMember?.banExpiresAt)
-            Assert.willBeEqual(payload.isShadowBanned, loadedMember?.isShadowBannedFromChannel)
+            Assert.willBeEqual(payload.banned, loadedMember?.isBannedFromChannel)
+            Assert.willBeEqual(payload.banExpires, loadedMember?.banExpiresAt)
+            Assert.willBeEqual(payload.shadowBanned, loadedMember?.isShadowBannedFromChannel)
 
             Assert.willBeEqual(payload.user!.id, loadedMember?.id)
-            Assert.willBeEqual(payload.user!.isOnline, loadedMember?.isOnline)
-            Assert.willBeEqual(payload.user!.isBanned, loadedMember?.isBanned)
-            Assert.willBeEqual(payload.user!.role, loadedMember?.userRole)
+            Assert.willBeEqual(payload.user!.online, loadedMember?.isOnline)
+            Assert.willBeEqual(payload.user!.banned, loadedMember?.isBanned)
+            Assert.willBeEqual(payload.user!.role, loadedMember?.userRole.rawValue)
             Assert.willBeEqual(payload.user!.createdAt, loadedMember?.userCreatedAt)
             Assert.willBeEqual(payload.user!.updatedAt, loadedMember?.userUpdatedAt)
-            Assert.willBeEqual(payload.user!.lastActiveAt, loadedMember?.lastActiveAt)
-            Assert.willBeEqual(payload.user!.extraData, loadedMember?.extraData)
-            Assert.willBeEqual(Set(payload.user!.teams), loadedMember?.teams)
+            Assert.willBeEqual(payload.user!.lastActive, loadedMember?.lastActiveAt)
+            Assert.willBeEqual(payload.user!.custom, loadedMember?.extraData)
+            Assert.willBeEqual(Set(payload.user!.teams!), loadedMember?.teams)
             Assert.willBeEqual(payload.user!.language!, loadedMember?.language?.languageCode)
         }
     }
@@ -87,33 +86,25 @@ final class MemberModelDTO_Tests: XCTestCase {
         let userId: UserId = .unique
         let channelId: ChannelId = .unique
 
-        let userPayload: UserPayload = .init(
-            id: userId,
-            name: .unique,
-            imageURL: .unique(),
-            role: .admin,
-            createdAt: .unique,
-            updatedAt: .unique,
-            deactivatedAt: nil,
-            lastActiveAt: .unique,
-            isOnline: true,
-            isInvisible: true,
-            isBanned: true,
-            language: nil,
-            extraData: .init()
-        )
+        let userPayload = UserObject.dummy(userId: userId)
 
-        let payload: MemberPayload = .init(
-            user: userPayload,
-            userId: userPayload.id,
-            role: .moderator,
+        let payload = ChannelMember(
+            banned: true,
+            channelRole: "moderator",
             createdAt: .unique,
-            updatedAt: .unique
+            shadowBanned: true,
+            updatedAt: .unique,
+            user: userPayload
         )
 
         try database.writeSynchronously { session in
             // Save the member
-            let memberDTO = try! session.saveMember(payload: payload, channelId: channelId)
+            let memberDTO = try! session.saveMember(
+                payload: payload,
+                channelId: channelId,
+                query: nil,
+                cache: nil
+            )
             // Make the extra data JSON invalid
             memberDTO.user.extraData = #"{"invalid": json}"#.data(using: .utf8)!
         }
@@ -127,7 +118,7 @@ final class MemberModelDTO_Tests: XCTestCase {
         let cid: ChannelId = .unique
 
         // Create member and query.
-        let member: MemberPayload = .dummy(user: .dummy(userId: userId))
+        let member = ChannelMember.dummy(user: .dummy(userId: userId))
         let query = ChannelMemberListQuery(cid: cid, filter: .equal("id", to: userId))
 
         // Save channel, then member, and pass the query in.

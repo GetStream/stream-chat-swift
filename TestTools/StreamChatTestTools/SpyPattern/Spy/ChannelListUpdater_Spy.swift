@@ -13,7 +13,7 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy {
     @Atomic var update_completion: ((Result<[ChatChannel], Error>) -> Void)?
 
     @Atomic var fetch_queries: [ChannelListQuery] = []
-    @Atomic var fetch_completion: ((Result<ChannelListPayload, Error>) -> Void)?
+    @Atomic var fetch_completion: ((Result<ChannelsResponse, Error>) -> Void)?
 
     var resetChannelsQueryResult: Result<(synchedAndWatched: [ChatChannel], unwanted: Set<ChannelId>), Error>?
 
@@ -53,9 +53,9 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy {
         markAllRead_completion = completion
     }
 
-    func fetch(
+    override func fetch(
         channelListQuery: ChannelListQuery,
-        completion: @escaping (Result<ChannelListPayload, Error>) -> Void
+        completion: @escaping (Result<ChannelsResponse, Error>) -> Void
     ) {
         _fetch_queries.mutate { $0.append(channelListQuery) }
         fetch_completion = completion

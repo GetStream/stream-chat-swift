@@ -21,6 +21,11 @@ protocol ChannelDatabaseSessionV2 {
     
     @discardableResult
     func saveChannel(
+        payload: ChannelResponse
+    ) throws -> ChannelDTO
+    
+    @discardableResult
+    func saveChannel(
         payload: ChannelStateResponseFields,
         query: ChannelListQuery?,
         cache: PreWarmedCache?
@@ -34,6 +39,11 @@ protocol ChannelDatabaseSessionV2 {
     ) throws -> UserDTO
     
     @discardableResult
+    func saveUser(
+        payload: UserObject
+    ) throws -> UserDTO
+    
+    @discardableResult
     func saveMember(
         payload: ChannelMember,
         channelId: ChannelId,
@@ -41,6 +51,7 @@ protocol ChannelDatabaseSessionV2 {
         cache: PreWarmedCache?
     ) throws -> MemberDTO
     
+    @discardableResult
     func saveMessage(
         payload: Message,
         channelDTO: ChannelDTO,
@@ -48,6 +59,7 @@ protocol ChannelDatabaseSessionV2 {
         cache: PreWarmedCache?
     ) throws -> MessageDTO
     
+    @discardableResult
     func saveChannelRead(
         payload: Read?,
         for cid: String?,
@@ -60,6 +72,7 @@ protocol ChannelDatabaseSessionV2 {
         cache: PreWarmedCache?
     ) throws -> MessageReactionDTO
     
+    @discardableResult
     func saveAttachment(
         payload: Attachment?,
         id: AttachmentId
@@ -107,6 +120,12 @@ protocol ChannelDatabaseSessionV2 {
     
     @discardableResult
     func saveUsers(payload: UsersResponse, query: UserListQuery?) -> [UserDTO]
+    
+    @discardableResult
+    func saveChannelMute(payload: ChannelMute?) throws -> ChannelMuteDTO
+    
+    @discardableResult
+    func saveMessage(payload: Message, for query: MessageSearchQuery, cache: PreWarmedCache?) throws -> MessageDTO
 }
 
 extension NSManagedObjectContext {
@@ -211,6 +230,12 @@ extension NSManagedObjectContext {
 
         return dto
     }
+    
+    func saveChannel(
+        payload: ChannelResponse
+    ) throws -> ChannelDTO {
+        try saveChannel(payload: payload, query: nil, cache: nil)
+    }
 
     func saveChannel(
         payload: ChannelStateResponseFields,
@@ -306,6 +331,13 @@ extension ChannelConfigWithInfo {
 }
 
 extension NSManagedObjectContext {
+    @discardableResult
+    func saveUser(
+        payload: UserObject
+    ) throws -> UserDTO {
+        try saveUser(payload: payload, query: nil, cache: nil)
+    }
+    
     @discardableResult
     func saveUser(
         payload: UserObject,

@@ -42,7 +42,7 @@ final class MessageUpdater_Mock: MessageUpdater {
     @Atomic var loadReplies_callCount = 0
     @Atomic var loadReplies_messageId: MessageId?
     @Atomic var loadReplies_pagination: MessagesPagination?
-    @Atomic var loadReplies_completion: ((Result<MessageRepliesPayload, Error>) -> Void)?
+    @Atomic var loadReplies_completion: ((Result<GetRepliesResponse, Error>) -> Void)?
 
     @Atomic var loadReactions_cid: ChannelId?
     @Atomic var loadReactions_messageId: MessageId?
@@ -86,7 +86,7 @@ final class MessageUpdater_Mock: MessageUpdater {
 
     @Atomic var search_query: MessageSearchQuery?
     @Atomic var search_policy: UpdatePolicy?
-    @Atomic var search_completion: ((Result<MessageSearchResultsPayload, Error>) -> Void)?
+    @Atomic var search_completion: ((Result<SearchResponse, Error>) -> Void)?
 
     @Atomic var clearSearchResults_query: MessageSearchQuery?
     @Atomic var clearSearchResults_completion: ((Error?) -> Void)?
@@ -256,7 +256,7 @@ final class MessageUpdater_Mock: MessageUpdater {
         cid: ChannelId,
         messageId: MessageId,
         pagination: MessagesPagination,
-        completion: ((Result<MessageRepliesPayload, Error>) -> Void)? = nil
+        completion: ((Result<GetRepliesResponse, Error>) -> Void)? = nil
     ) {
         loadReplies_callCount += 1
         loadReplies_cid = cid
@@ -266,12 +266,10 @@ final class MessageUpdater_Mock: MessageUpdater {
     }
 
     override func loadReactions(
-        cid: ChannelId,
         messageId: MessageId,
         pagination: Pagination,
         completion: ((Result<[ChatMessageReaction], Error>) -> Void)? = nil
     ) {
-        loadReactions_cid = cid
         loadReactions_messageId = messageId
         loadReactions_pagination = pagination
         loadReactions_completion = completion
@@ -291,6 +289,7 @@ final class MessageUpdater_Mock: MessageUpdater {
         _ type: MessageReactionType,
         score: Int,
         enforceUnique: Bool = false,
+        skipPush: Bool?,
         extraData: [String: RawJSON],
         messageId: MessageId,
         completion: ((Error?) -> Void)? = nil
@@ -306,6 +305,7 @@ final class MessageUpdater_Mock: MessageUpdater {
     override func deleteReaction(
         _ type: MessageReactionType,
         messageId: MessageId,
+        currentUserId: UserId?,
         completion: ((Error?) -> Void)? = nil
     ) {
         deleteReaction_type = type
@@ -347,7 +347,7 @@ final class MessageUpdater_Mock: MessageUpdater {
     override func search(
         query: MessageSearchQuery,
         policy: UpdatePolicy = .merge,
-        completion: ((Result<MessageSearchResultsPayload, Error>) -> Void)? = nil
+        completion: ((Result<SearchResponse, Error>) -> Void)? = nil
     ) {
         search_query = query
         search_policy = policy

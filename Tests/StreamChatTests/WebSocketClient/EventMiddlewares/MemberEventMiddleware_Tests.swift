@@ -6,6 +6,7 @@
 @testable import StreamChatTestTools
 import XCTest
 
+// TODO: recheck this.
 final class MemberEventMiddleware_Tests: XCTestCase {
     var database: DatabaseContainer_Spy!
     var middleware: MemberEventMiddleware!

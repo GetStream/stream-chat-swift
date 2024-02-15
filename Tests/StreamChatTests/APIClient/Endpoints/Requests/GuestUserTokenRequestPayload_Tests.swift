@@ -8,29 +8,11 @@ import XCTest
 
 final class GuestUserTokenRequestPayload_Tests: XCTestCase {
     func test_guestUserTokenRequestPayload_isEncodedCorrectly_withDefaultExtraData() throws {
-        let payload = GuestUserTokenRequestPayload(
-            userId: .unique,
-            name: .unique,
-            imageURL: .unique(),
-            extraData: [:]
+        let payload = GuestRequest(
+            user: .init(id: .unique, custom: ["image": .string(.unique), "name": .string(.unique)])
         )
 
-        try verify(payload, isEncodedAs: ["id": payload.userId, "name": payload.name!, "image": payload.imageURL!])
-    }
-
-    func test_guestUserTokenRequestPayload_isEncodedCorrectly_withCustomExtraData() throws {
-        let company = "getstream.io"
-        let payload = GuestUserTokenRequestPayload(
-            userId: .unique,
-            name: .unique,
-            imageURL: .unique(),
-            extraData: ["company": .string(company)]
-        )
-
-        try verify(
-            payload,
-            isEncodedAs: ["id": payload.userId, "name": payload.name!, "image": payload.imageURL!, "company": company]
-        )
+        try verify(payload, isEncodedAs: ["id": payload.user.id, "custom": payload.user.custom])
     }
 }
 
@@ -38,7 +20,7 @@ extension GuestUserTokenRequestPayload_Tests {
     // MARK: - Private
 
     private func verify(
-        _ payload: GuestUserTokenRequestPayload,
+        _ payload: GuestRequest,
         isEncodedAs expected: [String: Any]
     ) throws {
         // Encode the user

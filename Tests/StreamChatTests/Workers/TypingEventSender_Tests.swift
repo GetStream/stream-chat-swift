@@ -6,6 +6,7 @@
 @testable import StreamChatTestTools
 import XCTest
 
+// TODO: needs rework.
 final class TypingEventsSender_Tests: XCTestCase {
     var webSocketClient: WebSocketClient_Mock!
     var apiClient: APIClient_Spy!

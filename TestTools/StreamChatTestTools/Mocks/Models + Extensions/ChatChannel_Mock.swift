@@ -20,26 +20,33 @@ public extension ChannelConfig {
         urlEnrichmentEnabled: Bool = true,
         messageRetention: String = "",
         maxMessageLength: Int = 0,
-        commands: [Command] = [Command(name: "Giphy", description: "", set: "", args: "")],
+        commands: [Command] = [Command(args: "", description: "", name: "Giphy", set: "")],
         createdAt: Date = .init(),
         updatedAt: Date = .init()
     ) -> Self {
-        self.init(
-            reactionsEnabled: reactionsEnabled,
-            typingEventsEnabled: typingEventsEnabled,
-            readEventsEnabled: readEventsEnabled,
-            connectEventsEnabled: connectEventsEnabled,
-            uploadsEnabled: uploadsEnabled,
-            repliesEnabled: repliesEnabled,
-            quotesEnabled: quotesEnabled,
-            searchEnabled: searchEnabled,
-            mutesEnabled: mutesEnabled,
-            urlEnrichmentEnabled: urlEnrichmentEnabled,
-            messageRetention: messageRetention,
-            maxMessageLength: maxMessageLength,
-            commands: commands,
+        ChannelConfig(
+            automod: "",
+            automodBehavior: "",
+            connectEvents: connectEventsEnabled,
             createdAt: createdAt,
-            updatedAt: updatedAt
+            customEvents: false,
+            markMessagesPending: false,
+            maxMessageLength: maxMessageLength,
+            messageRetention: messageRetention,
+            mutes: mutesEnabled,
+            name: "",
+            pushNotifications: false,
+            quotes: quotesEnabled,
+            reactions: reactionsEnabled,
+            readEvents: readEventsEnabled,
+            reminders: false,
+            replies: repliesEnabled,
+            search: searchEnabled,
+            typingEvents: typingEventsEnabled,
+            updatedAt: updatedAt,
+            uploads: uploadsEnabled,
+            urlEnrichment: urlEnrichmentEnabled,
+            commands: commands.map(\.name)
         )
     }
 }

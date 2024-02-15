@@ -9,7 +9,7 @@ import XCTest
 final class ChannelUpdater_Mock: ChannelUpdater {
     @Atomic var update_channelQuery: ChannelQuery?
     @Atomic var update_onChannelCreated: ((ChannelId) -> Void)?
-    @Atomic var update_completion: ((Result<ChannelPayload, Error>) -> Void)?
+    @Atomic var update_completion: ((Result<ChannelStateResponse, Error>) -> Void)?
     @Atomic var update_callCount = 0
 
     @Atomic var updateChannel_payload: ChannelEditDetailPayload?
@@ -220,7 +220,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         channelQuery: ChannelQuery,
         isInRecoveryMode: Bool,
         onChannelCreated: ((ChannelId) -> Void)? = nil,
-        completion: ((Result<ChannelPayload, Error>) -> Void)? = nil
+        completion: ((Result<ChannelStateResponse, Error>) -> Void)? = nil
     ) {
         update_channelQuery = channelQuery
         update_onChannelCreated = onChannelCreated

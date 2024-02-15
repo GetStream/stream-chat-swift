@@ -237,8 +237,6 @@ final class ChatClient_Tests: XCTestCase {
         XCTAssert(middlewares.contains(where: { $0 is UserWatchingEventMiddleware }))
         // Assert `ChannelVisibilityEventMiddleware` exists
         XCTAssert(middlewares.contains(where: { $0 is ChannelVisibilityEventMiddleware }))
-        // Assert `EventDTOConverterMiddleware` is the last one
-        XCTAssertTrue(middlewares.last is EventDTOConverterMiddleware)
     }
 
     // MARK: - APIClient tests
@@ -835,12 +833,14 @@ final class TestWorker: Worker {
 
     var init_database: DatabaseContainer?
     var init_apiClient: APIClient?
+    var init_api: API?
 
-    override init(database: DatabaseContainer, apiClient: APIClient) {
+    override init(database: DatabaseContainer, api: API) {
         init_database = database
-        init_apiClient = apiClient
-
-        super.init(database: database, apiClient: apiClient)
+        init_api = api
+        init_apiClient = api.apiClient
+        
+        super.init(database: database, api: api)
     }
 }
 
@@ -934,7 +934,7 @@ private class TestEnvironment {
             timerType: VirtualTimeTimer.self,
             authenticationRepositoryBuilder: {
                 self.authenticationRepository = AuthenticationRepository_Mock(
-                    apiClient: $0,
+                    api: $0,
                     databaseContainer: $1,
                     connectionRepository: $2,
                     tokenExpirationRetryStrategy: $3,

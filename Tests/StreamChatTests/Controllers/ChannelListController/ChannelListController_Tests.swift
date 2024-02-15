@@ -1076,7 +1076,7 @@ final class ChannelListController_Tests: XCTestCase {
 
     private func assertFilterPredicate(
         _ filter: @autoclosure () -> Filter<ChannelListFilterScope>,
-        channelsInDB: @escaping @autoclosure () -> [ChannelPayload],
+        channelsInDB: @escaping @autoclosure () -> [ChannelStateResponse],
         expectedResult: @autoclosure () -> [ChannelId],
         file: StaticString = #file,
         line: UInt = #line
@@ -1217,8 +1217,8 @@ final class ChannelListController_Tests: XCTestCase {
             cid2,
             cid3
         ]
-        let expectedChannels: [ChannelPayload] = expectedCids.map { .dummy(channel: .dummy(cid: $0)) }
-        let unexpectedChannels: [ChannelPayload] = [
+        let expectedChannels: [ChannelStateResponse] = expectedCids.map { .dummy(channel: .dummy(cid: $0)) }
+        let unexpectedChannels: [ChannelStateResponse] = [
             .dummy(channel: .dummy(cid: .unique)),
             .dummy(channel: .dummy(cid: .unique))
         ]
@@ -1666,7 +1666,7 @@ final class ChannelListController_Tests: XCTestCase {
         controller.synchronize()
 
         // Save Mute
-        let mutedChannel: ChannelDetailPayload = .dummy(
+        let mutedChannel: ChannelResponse = .dummy(
             cid: cid1,
             members: [.dummy(user: .dummy(userId: userId))]
         )
@@ -1677,15 +1677,15 @@ final class ChannelListController_Tests: XCTestCase {
                 role: .admin
             ))
             try session.saveChannelMute(payload: .init(
-                mutedChannel: mutedChannel,
-                user: .dummy(userId: userId),
                 createdAt: .unique,
-                updatedAt: .unique
+                updatedAt: .unique,
+                expires: .unique,
+                channel: mutedChannel
             ))
         }
 
         // Save Channels
-        let channelsInDB: [ChannelPayload] = [
+        let channelsInDB: [ChannelStateResponse] = [
             .dummy(channel: .dummy(cid: cid1), membership: .dummy()),
             .dummy(channel: .dummy(team: .unique)),
             .dummy(channel: .dummy(team: .unique)),
@@ -1727,47 +1727,53 @@ final class ChannelListController_Tests: XCTestCase {
 
     private func makeAddedChannelEvent(with channel: ChatChannel) -> NotificationAddedToChannelEvent {
         NotificationAddedToChannelEvent(
-            channel: channel,
-            unreadCount: nil,
-            member: .mock(id: .unique),
-            createdAt: .unique
+            channelId: channel.cid.id,
+            channelType: channel.type.rawValue,
+            cid: channel.cid.rawValue,
+            createdAt: channel.createdAt,
+            type: "notification.added_to_channel"
         )
     }
 
     private func makeMessageNewEvent(with channel: ChatChannel) -> MessageNewEvent {
         MessageNewEvent(
-            user: .unique,
-            message: .unique,
-            channel: channel,
-            createdAt: .unique,
-            watcherCount: nil,
-            unreadCount: nil
+            channelId: channel.cid.id,
+            channelType: channel.type.rawValue,
+            cid: channel.cid.rawValue,
+            createdAt: channel.createdAt,
+            type: "message.new",
+            watcherCount: 0
         )
     }
     
     private func makeChannelVisibleEvent(with channel: ChatChannel) -> ChannelVisibleEvent {
         ChannelVisibleEvent(
-            cid: channel.cid,
-            user: .unique,
-            createdAt: .unique
+            channelId: channel.cid.id,
+            channelType: channel.type.rawValue,
+            cid: channel.cid.rawValue,
+            createdAt: channel.createdAt,
+            type: "channel.visible"
         )
     }
 
-    private func makeNotificationMessageNewEvent(with channel: ChatChannel) -> NotificationMessageNewEvent {
-        NotificationMessageNewEvent(
-            channel: channel,
-            message: .unique,
-            createdAt: .unique,
-            unreadCount: nil
+    private func makeNotificationMessageNewEvent(with channel: ChatChannel) -> NotificationNewMessageEvent {
+        NotificationNewMessageEvent(
+            channelId: channel.cid.id,
+            channelType: channel.cid.type.rawValue,
+            cid: channel.cid.rawValue,
+            createdAt: channel.createdAt,
+            type: "notification.message_new",
+            message: .dummy()
         )
     }
 
     private func makeChannelUpdatedEvent(with channel: ChatChannel) -> ChannelUpdatedEvent {
         ChannelUpdatedEvent(
-            channel: channel,
-            user: .unique,
-            message: .unique,
-            createdAt: .unique
+            channelId: channel.cid.id,
+            channelType: channel.type.rawValue,
+            cid: channel.cid.rawValue,
+            createdAt: channel.createdAt,
+            type: "channel.updated"
         )
     }
 
@@ -1837,7 +1843,6 @@ private class TestEnvironment {
         .init(channelQueryUpdaterBuilder: { [unowned self] in
             self.channelListUpdater = ChannelListUpdater_Spy(
                 database: $0,
-                apiClient: $1,
                 api: $2
             )
             return self.channelListUpdater!

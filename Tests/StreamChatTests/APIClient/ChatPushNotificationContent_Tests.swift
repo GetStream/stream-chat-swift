@@ -18,7 +18,7 @@ final class ChatPushNotificationContent_Tests: XCTestCase {
     let apiKey: APIKey = .init("123")
     var testMessage: ChatMessage!
     var exampleMessageNotificationContent: UNMutableNotificationContent!
-    var exampleMessagePayload: MessagePayload.Boxed!
+    var exampleMessagePayload: MessageResponse!
 
     override func setUp() {
         super.setUp()
@@ -51,7 +51,8 @@ final class ChatPushNotificationContent_Tests: XCTestCase {
         let msgID: MessageId = .unique
 
         exampleMessagePayload = .init(
-            message: .dummy(messageId: msgID, authorUserId: .unique, channel: ChannelDetailPayload.dummy(cid: cid))
+            duration: "0.1",
+            message: .dummy(messageId: msgID, authorUserId: .unique, channel: .dummy(cid: cid))
         )
 
         exampleMessageNotificationContent = UNMutableNotificationContent()
@@ -155,7 +156,7 @@ final class ChatPushNotificationContent_Tests: XCTestCase {
             }
         }))
 
-        apiClient.test_simulateResponse(Result<MessagePayload.Boxed, Error>.success(exampleMessagePayload))
+        apiClient.test_simulateResponse(Result<MessageResponse, Error>.success(exampleMessagePayload))
         wait(for: [expectation], timeout: defaultTimeout)
     }
 

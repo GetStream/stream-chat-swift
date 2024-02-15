@@ -104,7 +104,7 @@ final class APIClient_Spy: APIClient, Spy {
         unmanagedRequest_result = responseResult
     }
 
-    override func request<Response>(
+    func request<Response>(
         endpoint: Endpoint<Response>,
         completion: @escaping (Result<Response, Error>) -> Void
     ) where Response: Decodable {
@@ -117,7 +117,7 @@ final class APIClient_Spy: APIClient, Spy {
         request_expectation.fulfill()
     }
 
-    override func recoveryRequest<Response>(
+    func recoveryRequest<Response>(
         endpoint: Endpoint<Response>,
         completion: @escaping (Result<Response, Error>) -> Void
     ) where Response: Decodable {
@@ -126,7 +126,7 @@ final class APIClient_Spy: APIClient, Spy {
         _recoveryRequest_allRecordedCalls.mutate { $0.append((recoveryRequest_endpoint!, recoveryRequest_completion!)) }
     }
 
-    override func unmanagedRequest<Response>(
+    func unmanagedRequest<Response>(
         endpoint: Endpoint<Response>,
         completion: @escaping (Result<Response, Error>) -> Void
     ) where Response : Decodable {

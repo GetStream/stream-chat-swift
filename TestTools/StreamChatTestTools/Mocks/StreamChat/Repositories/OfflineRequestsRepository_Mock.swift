@@ -35,7 +35,7 @@ final class OfflineRequestsRepository_Mock: OfflineRequestsRepository, Spy {
         completion()
     }
 
-    override func queueOfflineRequest(endpoint: DataEndpoint, completion: (() -> Void)? = nil) {
+    func queueOfflineRequest(endpoint: DataEndpoint, completion: (() -> Void)? = nil) {
         record()
     }
 }

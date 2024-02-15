@@ -6,6 +6,7 @@
 @testable import StreamChatTestTools
 import XCTest
 
+// TODO: flag user is missing from the spec atm.
 final class FlagUserPayload_Tests: XCTestCase {
     func test_json_isDeserialized_withDefaultExtraData() throws {
         let json = XCTestCase.mockData(fromJSONFile: "FlagUserPayload+DefaultExtraData")

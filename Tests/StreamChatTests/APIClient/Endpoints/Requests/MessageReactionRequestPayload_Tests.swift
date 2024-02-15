@@ -9,9 +9,13 @@ import XCTest
 final class MessageReactionRequestPayload_Tests: XCTestCase {
     func test_payload_isBuiltAndEncodedCorrectly() throws {
         // Build the payload.
-        let payload = MessageReactionRequestPayload(
-            enforceUnique: false,
-            reaction: ReactionRequestPayload(type: "like", score: 10, extraData: ["mood": .string("good one")])
+        let payload = SendReactionRequest(
+            reaction: ReactionRequest(
+                type: "like",
+                score: 10,
+                custom: ["mood": .string("good one")]
+            ),
+            enforceUnique: false
         )
 
         // Encode the payload.
@@ -21,7 +25,7 @@ final class MessageReactionRequestPayload_Tests: XCTestCase {
         AssertJSONEqual(json, [
             "enforce_unique": payload.enforceUnique,
             "reaction": [
-                "type": payload.reaction.type.rawValue,
+                "type": payload.reaction.type,
                 "score": payload.reaction.score,
                 "mood": "good one"
             ] as [String: Any]

@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-extension UserPayload {
+extension UserObject {
     /// Returns a dummy user payload with the given `id` and `extraData`
     static func dummy(
         userId: UserId,
@@ -17,23 +17,25 @@ extension UserPayload {
         language: String? = nil,
         isBanned: Bool = false,
         updatedAt: Date = .unique,
+        lastActive: Date = .unique,
         deactivatedAt: Date? = nil
-    ) -> UserPayload {
-        .init(
+    ) -> UserObject {
+        var custom = extraData
+        custom["name"] = .string(name)
+        custom["image"] = .string(imageUrl?.absoluteString ?? "")
+        return UserObject(
             id: userId,
-            name: name,
-            imageURL: imageUrl,
-            role: role,
+            banned: isBanned,
             createdAt: .unique,
-            updatedAt: updatedAt,
             deactivatedAt: deactivatedAt,
-            lastActiveAt: .unique,
-            isOnline: true,
-            isInvisible: true,
-            isBanned: isBanned,
-            teams: teams,
+            invisible: true,
             language: language,
-            extraData: extraData
+            lastActive: lastActive,
+            online: true,
+            role: role.rawValue,
+            updatedAt: updatedAt,
+            teams: teams,
+            custom: custom
         )
     }
 }

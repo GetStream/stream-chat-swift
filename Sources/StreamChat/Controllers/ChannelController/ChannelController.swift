@@ -201,7 +201,6 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             client.callRepository,
             client.makeMessagesPaginationStateHandler(),
             client.databaseContainer,
-            client.apiClient,
             client.api
         )
         
@@ -1311,7 +1310,6 @@ extension ChatChannelController {
             _ callRepository: CallRepository,
             _ paginationStateHandler: MessagesPaginationStateHandling,
             _ database: DatabaseContainer,
-            _ apiClient: APIClient,
             _ api: API
         ) -> ChannelUpdater = ChannelUpdater.init
 

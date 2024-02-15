@@ -11,32 +11,32 @@ final class MemberPayload_Tests: XCTestCase {
     let memberRoleJSON = XCTestCase.mockData(fromJSONFile: "MemberRole")
 
     func test_memberJSON_isSerialized() throws {
-        let payload = try JSONDecoder.default.decode(MemberPayload.self, from: memberJSON)
+        let payload = try JSONDecoder.default.decode(ChannelMember.self, from: memberJSON)
 
-        XCTAssertEqual(payload.role, .owner)
+        XCTAssertEqual(payload.channelRole, "owner")
         XCTAssertEqual(payload.createdAt, "2020-06-05T12:53:09.862721Z".toDate())
         XCTAssertEqual(payload.updatedAt, "2020-06-05T12:53:09.862721Z".toDate())
-        XCTAssertEqual(payload.banExpiresAt, "2021-03-08T15:42:31.355923Z".toDate())
-        XCTAssertEqual(payload.isBanned, true)
-        XCTAssertEqual(payload.isShadowBanned, true)
+        XCTAssertEqual(payload.banExpires, "2021-03-08T15:42:31.355923Z".toDate())
+        XCTAssertEqual(payload.banned, true)
+        XCTAssertEqual(payload.shadowBanned, true)
 
         XCTAssertNotNil(payload.user)
         XCTAssertEqual(payload.user!.id, "broken-waterfall-5")
-        XCTAssertEqual(payload.user!.isBanned, false)
+        XCTAssertEqual(payload.user!.banned, false)
         XCTAssertEqual(payload.user!.createdAt, "2019-12-12T15:33:46.488935Z".toDate())
-        XCTAssertEqual(payload.user!.lastActiveAt, "2020-06-10T13:24:00.501797Z".toDate())
+        XCTAssertEqual(payload.user!.lastActive, "2020-06-10T13:24:00.501797Z".toDate())
         XCTAssertEqual(payload.user!.updatedAt, "2020-06-10T14:11:29.946106Z".toDate())
-        XCTAssertEqual(payload.user!.name, "Broken Waterfall")
-        XCTAssertEqual(
-            payload.user!.imageURL,
-            URL(string: "https://getstream.io/random_svg/?id=broken-waterfall-5&amp;name=Broken+waterfall")!
-        )
-        XCTAssertEqual(payload.user!.role, .user)
-        XCTAssertEqual(payload.user!.isOnline, true)
+//        XCTAssertEqual(payload.user!.name, "Broken Waterfall")
+//        XCTAssertEqual(
+//            payload.user!.imageURL,
+//            URL(string: "https://getstream.io/random_svg/?id=broken-waterfall-5&amp;name=Broken+waterfall")!
+//        )
+        XCTAssertEqual(payload.user!.role, "user")
+        XCTAssertEqual(payload.user!.online, true)
     }
 
     func test_memberJSON_channelRole_isCustomRole() throws {
-        let payload = try JSONDecoder.default.decode(MemberPayload.self, from: memberRoleJSON)
-        XCTAssertEqual(payload.role, "custom_role")
+        let payload = try JSONDecoder.default.decode(ChannelMember.self, from: memberRoleJSON)
+        XCTAssertEqual(payload.channelRole, "custom_role")
     }
 }

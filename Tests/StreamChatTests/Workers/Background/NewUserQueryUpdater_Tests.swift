@@ -12,6 +12,7 @@ final class NewUserQueryUpdater_Tests: XCTestCase {
     var database: DatabaseContainer_Spy!
     var webSocketClient: WebSocketClient_Mock!
     var apiClient: APIClient_Spy!
+    var api: API!
 
     var newUserQueryUpdater: NewUserQueryUpdater?
 
@@ -22,10 +23,11 @@ final class NewUserQueryUpdater_Tests: XCTestCase {
         database = DatabaseContainer_Spy()
         webSocketClient = WebSocketClient_Mock()
         apiClient = APIClient_Spy()
+        api = API.mock(with: apiClient)
 
         newUserQueryUpdater = NewUserQueryUpdater(
             database: database,
-            apiClient: apiClient,
+            api: api,
             env: env.environment
         )
     }
@@ -74,7 +76,7 @@ final class NewUserQueryUpdater_Tests: XCTestCase {
         // Create `newUserQueryUpdater`
         newUserQueryUpdater = NewUserQueryUpdater(
             database: database,
-            apiClient: apiClient,
+            api: api,
             env: env.environment
         )
 
@@ -140,7 +142,7 @@ private class TestEnvironment {
     lazy var environment = NewUserQueryUpdater.Environment(createUserListUpdater: { [unowned self] in
         self.userListUpdater = UserListUpdater_Mock(
             database: $0,
-            apiClient: $1
+            api: $1
         )
         return self.userListUpdater!
     })
