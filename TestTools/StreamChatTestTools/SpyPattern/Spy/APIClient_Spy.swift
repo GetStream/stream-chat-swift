@@ -34,6 +34,7 @@ final class APIClient_Spy: APIClient, Spy {
     @Atomic var uploadFile_attachment: AnyChatMessageAttachment?
     @Atomic var uploadFile_progress: ((Double) -> Void)?
     @Atomic var uploadFile_completion: ((Result<UploadedAttachment, Error>) -> Void)?
+    @Atomic var uploadFile_callCount = 0
 
     @Atomic var init_sessionConfiguration: URLSessionConfiguration
     @Atomic var init_requestEncoder: RequestEncoder
@@ -143,9 +144,11 @@ final class APIClient_Spy: APIClient, Spy {
         progress: ((Double) -> Void)?,
         completion: @escaping (Result<UploadedAttachment, Error>) -> Void
     ) {
+
         uploadFile_attachment = attachment
         uploadFile_progress = progress
         uploadFile_completion = completion
+        uploadFile_callCount += 1
         uploadRequest_expectation.fulfill()
     }
 
