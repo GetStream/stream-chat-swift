@@ -441,7 +441,7 @@ open class ChatMessageListVC: _ViewController,
     }
 
     /// Handles the pan gesture recognizer not conflicting with the message list vertical scrolling.
-    public func gestureRecognizerShouldBegin(_ gesture: UIGestureRecognizer) -> Bool {
+    open func gestureRecognizerShouldBegin(_ gesture: UIGestureRecognizer) -> Bool {
         guard let panGestureRecognizer = gesture as? UIPanGestureRecognizer else {
             return true
         }
@@ -454,6 +454,11 @@ open class ChatMessageListVC: _ViewController,
 
         let translation = panGestureRecognizer.translation(in: cell)
         return abs(translation.x) > abs(translation.y)
+    }
+
+    open func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        // Do not override the native swipe-back gesture to dismiss the controller.
+        otherGestureRecognizer == navigationController?.interactivePopGestureRecognizer
     }
 
     /// The message cell was select and should show the available message actions.
