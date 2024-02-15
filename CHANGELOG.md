@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix composer link preview overridden by previous enrichment [#3025](https://github.com/GetStream/stream-chat-swift/pull/3025)
 - Fix merged avatars changing sub-image locations when opening channel list [#3013](https://github.com/GetStream/stream-chat-swift/pull/3013)
 - Fix native swipe-back gesture overridden by swipe-to-reply [#3029](https://github.com/GetStream/stream-chat-swift/pull/3029)
+- Fix `CGBitmapContextInfoCreate` console log warning when creating merged channel avatars [#3018](https://github.com/GetStream/stream-chat-swift/pull/3018)
 
 # [4.48.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.48.1)
 _February 09, 2024_

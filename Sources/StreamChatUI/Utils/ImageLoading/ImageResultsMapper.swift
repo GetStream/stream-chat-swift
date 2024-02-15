@@ -18,22 +18,25 @@ struct ImageResultsMapper {
     /// - Returns: Returns an array of UIImages without errors.
     func mapErrors(with placeholderImages: [UIImage]) -> [UIImage] {
         var placeholderImages = placeholderImages
-        var finalImages: [UIImage] = []
-
-        for result in results {
+        return mapErrors {
+            guard !placeholderImages.isEmpty else { return nil }
+            return placeholderImages.removeFirst()
+        }
+    }
+    
+    /// Replace errors with placeholder images.
+    ///
+    /// - Parameter provider: The placeholder image provider. Returning nil will skip the result with a failure.
+    ///
+    /// - Returns: Returns an array of UIImages without errors.
+    func mapErrors(with provider: () -> UIImage?) -> [UIImage] {
+        results.compactMap { result in
             switch result {
             case let .success(image):
-                finalImages.append(image)
+                return image
             case .failure:
-                guard !placeholderImages.isEmpty else {
-                    continue
-                }
-
-                let placeholder = placeholderImages.removeFirst()
-                finalImages.append(placeholder)
+                return provider()
             }
         }
-
-        return finalImages
     }
 }
