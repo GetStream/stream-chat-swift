@@ -67,7 +67,6 @@ final class MessageDeliveryStatus_ChannelList_Tests: StreamTestCase {
 
         GIVEN("user opens the channel") {
             userRobot
-                .setConnectivitySwitchVisibility(to: .on)
                 .login()
                 .openChannel()
         }
@@ -190,7 +189,6 @@ extension MessageDeliveryStatus_ChannelList_Tests {
 
         GIVEN("user opens the channel") {
             userRobot
-                .setConnectivitySwitchVisibility(to: .on)
                 .login()
                 .openChannel()
         }

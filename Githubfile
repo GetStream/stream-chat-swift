@@ -2,3 +2,4 @@
 
 export ALLURECTL_VERSION='2.15.1'
 export XCRESULTS_VERSION='1.16.3'
+export YEETD_VERSION='1.0'

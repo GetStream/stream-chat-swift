@@ -195,7 +195,6 @@ final class Reactions_Tests: StreamTestCase {
         GIVEN("user opens the channel") {
             userRobot
                 .setIsLocalStorageEnabled(to: .on)
-                .setConnectivitySwitchVisibility(to: .on)
                 .login()
                 .openChannel()
         }
