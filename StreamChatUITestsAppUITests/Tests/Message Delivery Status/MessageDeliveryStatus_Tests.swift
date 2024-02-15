@@ -60,7 +60,6 @@ final class MessageDeliveryStatus_Tests: StreamTestCase {
 
         GIVEN("user becomes offline") {
             userRobot
-                .setConnectivitySwitchVisibility(to: .on)
                 .login()
                 .setConnectivity(to: .off)
                 .openChannel()
@@ -238,7 +237,6 @@ extension MessageDeliveryStatus_Tests {
 
         GIVEN("user becomes offline") {
             userRobot
-                .setConnectivitySwitchVisibility(to: .on)
                 .login()
                 .setConnectivity(to: .off)
                 .openChannel()
@@ -315,7 +313,6 @@ extension MessageDeliveryStatus_Tests {
         GIVEN("user becomes offline") {
             backendRobot.generateChannels(count: 1, messagesCount: 1)
             userRobot
-                .setConnectivitySwitchVisibility(to: .on)
                 .login()
                 .setConnectivity(to: .off)
                 .openChannel()
@@ -544,7 +541,6 @@ extension MessageDeliveryStatus_Tests {
         GIVEN("user becomes offline") {
             backendRobot.setReadEvents(to: false)
             userRobot
-                .setConnectivitySwitchVisibility(to: .on)
                 .login()
                 .setConnectivity(to: .off)
                 .openChannel()

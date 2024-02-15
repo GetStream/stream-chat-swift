@@ -70,7 +70,6 @@ final class Authentication_Tests: StreamTestCase {
 
         GIVEN("user logs in") {
             userRobot
-                .setConnectivitySwitchVisibility(to: .on)
                 .login()
                 .assertConnectionStatus(.connected)
         }
