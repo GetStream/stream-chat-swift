@@ -43,42 +43,50 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
         database.write_errorResponse = error
 
         // Simulate and handle channel hidden event.
-        let hiddenEvent = try ChannelHiddenEventDTO(from: .init(
-            eventType: .channelHidden,
-            cid: .unique,
-            user: .dummy(userId: .unique),
+        let cid = ChannelId.unique
+        let hiddenEvent = ChannelHiddenEvent(
+            channelId: cid.id,
+            channelType: cid.type.rawValue,
+            cid: cid.rawValue,
+            clearHistory: false,
             createdAt: .unique,
-            isChannelHistoryCleared: false
-        ) as EventPayload)
+            type: EventType.channelHidden.rawValue,
+            user: .dummy(userId: .unique)
+        )
         var forwardedEvent = middleware.handle(event: hiddenEvent, session: database.viewContext)
 
         // Assert `ChannelTruncatedEvent` is forwarded even though database error happened.
-        XCTAssertTrue(forwardedEvent is ChannelHiddenEventDTO)
+        XCTAssertTrue(forwardedEvent is ChannelHiddenEvent)
 
         // Simulate and handle channel hidden event.
-        let visibleEvent = try ChannelVisibleEventDTO(from: .init(
-            eventType: .channelVisible,
-            cid: .unique,
-            user: .dummy(userId: .unique),
-            createdAt: .unique
-        ) as EventPayload)
+        let visibleCid = ChannelId.unique
+        let visibleEvent = ChannelVisibleEvent(
+            channelId: visibleCid.id,
+            channelType: visibleCid.type.rawValue,
+            cid: visibleCid.rawValue,
+            createdAt: .unique,
+            type: EventType.channelVisible.rawValue,
+            user: .dummy(userId: .unique)
+        )
         forwardedEvent = middleware.handle(event: visibleEvent, session: database.viewContext)
 
         // Assert `ChannelTruncatedEvent` is forwarded even though database error happened.
-        XCTAssertTrue(forwardedEvent is ChannelVisibleEventDTO)
+        XCTAssertTrue(forwardedEvent is ChannelVisibleEvent)
     }
 
     func test_middlewareCanSeePendingEntities() throws {
         let cid = ChannelId.unique
 
         // Create the event
-        let event = try ChannelHiddenEventDTO(from: .init(
-            eventType: .channelHidden,
-            cid: cid,
-            user: .dummy(userId: .unique),
+        let event = ChannelHiddenEvent(
+            channelId: cid.id,
+            channelType: cid.type.rawValue,
+            cid: cid.rawValue,
+            clearHistory: false,
             createdAt: .unique,
-            isChannelHistoryCleared: false
-        ) as EventPayload)
+            type: EventType.channelHidden.rawValue,
+            user: .dummy(userId: .unique)
+        )
 
         // Open a database session to simulate EventNotificationCenter
         try database.writeSynchronously {
@@ -95,13 +103,15 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
         let cid: ChannelId = .unique
 
         // Create the event
-        let event = try ChannelHiddenEventDTO(from: .init(
-            eventType: .channelHidden,
-            cid: cid,
-            user: .dummy(userId: .unique),
+        let event = ChannelHiddenEvent(
+            channelId: cid.id,
+            channelType: cid.type.rawValue,
+            cid: cid.rawValue,
+            clearHistory: false,
             createdAt: .unique,
-            isChannelHistoryCleared: false
-        ) as EventPayload)
+            type: EventType.channelHidden.rawValue,
+            user: .dummy(userId: .unique)
+        )
 
         try database.createChannel(cid: cid, withMessages: true)
 
@@ -118,20 +128,22 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
 
         // Assert the `truncatedAt` value is not touched
         XCTAssertNil(channelDTO.truncatedAt)
-        XCTAssert(forwardedEvent is ChannelHiddenEventDTO)
+        XCTAssert(forwardedEvent is ChannelHiddenEvent)
     }
 
     func test_channelHiddenEvent_truncatesChannelWhenHistoryIsCleared() throws {
         let cid: ChannelId = .unique
 
         // Create the event
-        let event = try ChannelHiddenEventDTO(from: .init(
-            eventType: .channelHidden,
-            cid: cid,
-            user: .dummy(userId: .unique),
+        let event = ChannelHiddenEvent(
+            channelId: cid.id,
+            channelType: cid.type.rawValue,
+            cid: cid.rawValue,
+            clearHistory: true,
             createdAt: .unique,
-            isChannelHistoryCleared: true
-        ) as EventPayload)
+            type: EventType.channelHidden.rawValue,
+            user: .dummy(userId: .unique)
+        )
 
         try database.createChannel(cid: cid, withMessages: true)
 
@@ -144,19 +156,22 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
         let channelDTO = try XCTUnwrap(database.viewContext.channel(cid: cid))
         // Assert the `truncatedAt` value is not touched
         XCTAssertEqual(channelDTO.truncatedAt?.bridgeDate, event.createdAt)
-        XCTAssert(forwardedEvent is ChannelHiddenEventDTO)
+        XCTAssert(forwardedEvent is ChannelHiddenEvent)
     }
 
     func test_channelVisibleEvent_resetsHiddenAtValue() throws {
         let cid: ChannelId = .unique
 
         // Create the event
-        let event = try ChannelVisibleEventDTO(from: .init(
-            eventType: .channelVisible,
-            cid: cid,
-            user: .dummy(userId: .unique),
-            createdAt: .unique
-        ) as EventPayload)
+        let event = ChannelHiddenEvent(
+            channelId: cid.id,
+            channelType: cid.type.rawValue,
+            cid: cid.rawValue,
+            clearHistory: false,
+            createdAt: .unique,
+            type: EventType.channelHidden.rawValue,
+            user: .dummy(userId: .unique)
+        )
 
         // Create a channel in the DB with `isHidden` and `truncatedAt` values
         let originalTruncatedAt = Date.unique
@@ -176,21 +191,22 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
 
         // Assert the `truncatedAt` value is not touched
         XCTAssertEqual(channelDTO.truncatedAt?.bridgeDate, originalTruncatedAt)
-        XCTAssert(forwardedEvent is ChannelVisibleEventDTO)
+        XCTAssert(forwardedEvent is ChannelVisibleEvent)
     }
 
     func test_messageNewEvent_resetsHiddenAtValue() throws {
         let cid: ChannelId = .unique
 
         // Create the event
-        let event = try MessageNewEventDTO(
-            from: .init(
-                eventType: .messageNew,
-                cid: cid,
-                user: .dummy(userId: .unique),
-                message: .dummy(messageId: .unique, authorUserId: .unique),
-                createdAt: .unique
-            ) as EventPayload
+        let event = MessageNewEvent(
+            channelId: cid.id,
+            channelType: cid.type.rawValue,
+            cid: cid.rawValue,
+            createdAt: .unique,
+            type: EventType.messageNew.rawValue,
+            watcherCount: 0,
+            message: .dummy(messageId: .unique, authorUserId: .unique),
+            user: .dummy(userId: .unique)
         )
 
         // Create a channel in the DB with `isHidden` set to true
@@ -212,14 +228,15 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
         let cid: ChannelId = .unique
 
         // Create the event
-        let event = try MessageNewEventDTO(
-            from: .init(
-                eventType: .messageNew,
-                cid: cid,
-                user: .dummy(userId: .unique),
-                message: .dummy(messageId: .unique, authorUserId: .unique, isShadowed: true),
-                createdAt: .unique
-            ) as EventPayload
+        let event = MessageNewEvent(
+            channelId: cid.id,
+            channelType: cid.type.rawValue,
+            cid: cid.rawValue,
+            createdAt: .unique,
+            type: EventType.messageNew.rawValue,
+            watcherCount: 0,
+            message: .dummy(messageId: .unique, authorUserId: .unique, isShadowed: true),
+            user: .dummy(userId: .unique)
         )
 
         // Create a channel in the DB with `isHidden` set to true
@@ -241,15 +258,14 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
         let cid: ChannelId = .unique
 
         // Create the event
-        let event = try NotificationMessageNewEventDTO(
-            from: .init(
-                eventType: .notificationMessageNew,
-                cid: cid,
-                user: .dummy(userId: .unique),
-                channel: .dummy(cid: cid),
-                message: .dummy(messageId: .unique, authorUserId: .unique),
-                createdAt: .unique
-            )
+        let event = NotificationNewMessageEvent(
+            channelId: cid.id,
+            channelType: cid.type.rawValue,
+            cid: cid.rawValue,
+            createdAt: .unique,
+            type: EventType.notificationMessageNew.rawValue,
+            message: .dummy(messageId: .unique, authorUserId: .unique),
+            channel: .dummy(cid: .unique)
         )
 
         // Create a channel in the DB with `isHidden` set to true
@@ -271,15 +287,14 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
         let cid: ChannelId = .unique
 
         // Create the event
-        let event = try NotificationMessageNewEventDTO(
-            from: .init(
-                eventType: .notificationMessageNew,
-                cid: cid,
-                user: .dummy(userId: .unique),
-                channel: .dummy(cid: cid),
-                message: .dummy(messageId: .unique, authorUserId: .unique, isShadowed: true),
-                createdAt: .unique
-            )
+        let event = NotificationNewMessageEvent(
+            channelId: cid.id,
+            channelType: cid.type.rawValue,
+            cid: cid.rawValue,
+            createdAt: .unique,
+            type: EventType.notificationMessageNew.rawValue,
+            message: .dummy(messageId: .unique, authorUserId: .unique, isShadowed: true),
+            channel: .dummy(cid: .unique)
         )
 
         // Create a channel in the DB with `isHidden` set to true

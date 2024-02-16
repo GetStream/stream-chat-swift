@@ -20,7 +20,12 @@ final class EventObserver_Tests: XCTestCase {
         super.setUp()
 
         notificationCenter = NotificationCenter()
-        eventToDeliver = HealthCheckEvent(connectionId: .unique)
+        eventToDeliver = HealthCheckEvent(
+            cid: .unique,
+            connectionId: .unique,
+            createdAt: .unique,
+            type: EventType.healthCheck.rawValue
+        )
     }
 
     override func tearDown() {

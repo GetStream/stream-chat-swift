@@ -80,16 +80,18 @@ final class DatabaseContainer_Tests: XCTestCase {
             try session.saveMember(payload: .dummy(), channelId: cid, query: .init(cid: cid), cache: nil)
             try session.saveCurrentUser(payload: .dummy(userId: currentUserId, role: .admin))
             try session.saveCurrentDevice("123")
-            try session.saveChannelMute(payload: .init(
-                mutedChannel: .dummy(cid: cid),
-                user: .dummy(userId: currentUserId),
-                createdAt: .unique,
-                updatedAt: .unique
-            ))
+            try session.saveChannelMute(payload:
+                .init(
+                    createdAt: .unique,
+                    updatedAt: .unique,
+                    channel: .dummy(cid: cid),
+                    user: .dummy(userId: currentUserId)
+                )
+            )
             try session.saveUser(payload: .dummy(userId: .unique), query: .user(withID: currentUserId), cache: nil)
             try session.saveUser(payload: .dummy(userId: .unique))
-            let messages: [MessagePayload] = [
-                .dummy(moderationDetails: .init(originalText: "yo", action: "spam")),
+            let messages: [Message] = [
+                .dummy(moderationDetails: .init(originalText: "yo", action: MessageModerationAction(rawValue: "spam"))),
                 .dummy(),
                 .dummy(),
                 .dummy(),

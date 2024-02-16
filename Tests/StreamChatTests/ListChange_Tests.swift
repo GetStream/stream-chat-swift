@@ -22,20 +22,20 @@ final class ListChange_Tests: XCTestCase {
     }
 
     func test_fieldChange() {
-        let insertedItem: MemberPayload = .dummy()
+        let insertedItem: ChannelMember = .dummy()
         let insertedAt = IndexPath(item: 1, section: 1)
 
-        let updatedItem: MemberPayload = .dummy()
+        let updatedItem: ChannelMember = .dummy()
         let updatedAt = IndexPath(item: 2, section: 3)
 
-        let removedItem: MemberPayload = .dummy()
+        let removedItem: ChannelMember = .dummy()
         let removedAt = IndexPath(item: 3, section: 4)
 
-        let movedItem: MemberPayload = .dummy()
+        let movedItem: ChannelMember = .dummy()
         let movedFrom = IndexPath(item: 5, section: 6)
         let movedTo = IndexPath(item: 7, section: 8)
 
-        let path = \MemberPayload.user?.id
+        let path = \ChannelMember.user?.id
 
         XCTAssertEqual(
             ListChange.insert(insertedItem, index: insertedAt).fieldChange(path),

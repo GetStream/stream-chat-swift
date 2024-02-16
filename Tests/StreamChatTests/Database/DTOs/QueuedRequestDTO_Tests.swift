@@ -24,15 +24,19 @@ final class QueuedRequestDTO_Tests: XCTestCase {
     func test_queuedRequestIsStoredInDatabase() throws {
         let id = String.newUniqueId
         let date = Date()
-        let endpoint = Endpoint<EmptyResponse>(
-            path: .guest,
-            method: .post,
-            queryItems: nil,
+        let body = try JSONSerialization.data(withJSONObject: ["something": 123])
+        let queuedRequest = QueuedRequest(
+            baseURL: .unique,
+            path: "guest",
+            method: "POST",
+            queryItems: [],
+            headers: [:],
+            body: body,
             requiresConnectionId: true,
             requiresToken: false,
-            body: ["something": 123]
+            responseType: ResponseType(value: "GuestResponse")
         )
-        let endpointData: Data = try JSONEncoder.stream.encode(endpoint)
+        let endpointData: Data = try JSONEncoder.stream.encode(queuedRequest)
         try database.writeSynchronously { _ in
             QueuedRequestDTO.createRequest(id: id, date: date, endpoint: endpointData, context: self.database.writableContext)
         }
@@ -98,15 +102,18 @@ final class QueuedRequestDTO_Tests: XCTestCase {
         func createRequest(index: Int) throws {
             let id = "request\(index)"
             let date = Date()
-            let endpoint = Endpoint<EmptyResponse>(
-                path: .sendMessage(.init(type: .messaging, id: "\(index)")),
-                method: .post,
-                queryItems: nil,
+            let queuedRequest = QueuedRequest(
+                baseURL: .unique,
+                path: "/api/v2/chat/channels/{type}/{id}/message",
+                method: "POST",
+                queryItems: [QueryItem(key: "test", value: "test")],
+                headers: [:],
+                body: try JSONSerialization.data(withJSONObject: ["something\(index)": 123]),
                 requiresConnectionId: true,
-                requiresToken: false,
-                body: ["something\(index)": 123]
+                requiresToken: true,
+                responseType: ResponseType(value: .sendMessageResponse)
             )
-            let endpointData: Data = try JSONEncoder.stream.encode(endpoint)
+            let endpointData: Data = try JSONEncoder.stream.encode(queuedRequest)
             QueuedRequestDTO.createRequest(id: id, date: date, endpoint: endpointData, context: database.writableContext)
         }
 

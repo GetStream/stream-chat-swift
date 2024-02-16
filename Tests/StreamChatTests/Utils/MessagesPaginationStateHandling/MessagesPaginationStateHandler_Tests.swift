@@ -90,7 +90,7 @@ class MessagesPaginationStateHandlerTests: XCTestCase {
         sut.state.hasLoadedAllNextMessages = false
         sut.state.oldestFetchedMessage = nil
         let pagination = MessagesPagination(pageSize: 2, parameter: nil)
-        let messages: [MessagePayload] = [
+        let messages: [Message] = [
             .dummy(messageId: "111"),
             .dummy(messageId: "112"),
             .dummy(messageId: "113")
@@ -108,7 +108,7 @@ class MessagesPaginationStateHandlerTests: XCTestCase {
         // Given
         sut.state.hasLoadedAllPreviousMessages = false
         let pagination = MessagesPagination(pageSize: 10, parameter: nil)
-        let messages: [MessagePayload] = [
+        let messages: [Message] = [
             .dummy(messageId: "111"),
             .dummy(messageId: "112"),
             .dummy(messageId: "113")
@@ -124,7 +124,7 @@ class MessagesPaginationStateHandlerTests: XCTestCase {
     func test_end_whenLoadingPreviousMessages_thenSetsOldestFetchedMessage() {
         // Given
         let pagination = MessagesPagination(pageSize: 10, parameter: .lessThan("123"))
-        let messages: [MessagePayload] = [
+        let messages: [Message] = [
             .dummy(messageId: "111"),
             .dummy(messageId: "112"),
             .dummy(messageId: "113")
@@ -152,7 +152,7 @@ class MessagesPaginationStateHandlerTests: XCTestCase {
     func test_end_whenLoadingNextMessages_thenSetsNewestFetchedMessage() {
         // Given
         let pagination = MessagesPagination(pageSize: 2, parameter: .greaterThan("123"))
-        let messages: [MessagePayload] = [.dummy(), .dummy(), .dummy(messageId: "126")]
+        let messages: [Message] = [.dummy(), .dummy(), .dummy(messageId: "126")]
 
         // When
         sut.end(pagination: pagination, with: .success(messages))
@@ -178,7 +178,7 @@ class MessagesPaginationStateHandlerTests: XCTestCase {
     func test_end_whenJumpingToMessage_thenSetsOldestFetchedMessageToFirstMessageAndNewestFetchedMessageToLastMessage() {
         // Given
         let pagination = MessagesPagination(pageSize: 5, parameter: .around("123"))
-        let messages: [MessagePayload] = [
+        let messages: [Message] = [
             .dummy(messageId: "121"),
             .dummy(messageId: "122"),
             .dummy(messageId: "123"),
@@ -214,7 +214,7 @@ class MessagesPaginationStateHandlerTests: XCTestCase {
         sut.state.hasLoadedAllPreviousMessages = false
         // When the given around message id is not present in the response, it means we are jumping
         // to the parent message.
-        let messages: [MessagePayload] = [.dummy(), .dummy()]
+        let messages: [Message] = [.dummy(), .dummy()]
         let pagination = MessagesPagination(pageSize: messages.count, parameter: .around("123"))
 
         // When
@@ -228,7 +228,7 @@ class MessagesPaginationStateHandlerTests: XCTestCase {
         // Given
         sut.state.hasLoadedAllNextMessages = true
         sut.state.hasLoadedAllPreviousMessages = true
-        let messages: [MessagePayload] = [
+        let messages: [Message] = [
             .dummy(messageId: "121"),
             .dummy(messageId: "122"),
             .dummy(messageId: "123"), // <-- mid point
@@ -249,7 +249,7 @@ class MessagesPaginationStateHandlerTests: XCTestCase {
         // Given
         sut.state.hasLoadedAllNextMessages = true
         sut.state.hasLoadedAllPreviousMessages = true
-        let messages: [MessagePayload] = [
+        let messages: [Message] = [
             .dummy(messageId: "121"),
             .dummy(messageId: "122"), // <-- Mid point in even response
             .dummy(messageId: "124"),
@@ -269,7 +269,7 @@ class MessagesPaginationStateHandlerTests: XCTestCase {
         // Given
         sut.state.hasLoadedAllNextMessages = false
         sut.state.hasLoadedAllPreviousMessages = false
-        let messages: [MessagePayload] = [
+        let messages: [Message] = [
             .dummy(messageId: "121"),
             .dummy(messageId: "122"), // <-- Before mid point (First Half of Response)
             .dummy(messageId: "123"), // <-- mid point
@@ -290,7 +290,7 @@ class MessagesPaginationStateHandlerTests: XCTestCase {
         // Given
         sut.state.hasLoadedAllNextMessages = false
         sut.state.hasLoadedAllPreviousMessages = false
-        let messages: [MessagePayload] = [
+        let messages: [Message] = [
             .dummy(messageId: "121"), // <-- Before mid point (First Half of Response)
             .dummy(messageId: "122"), // <-- mid point in even response
             .dummy(messageId: "123"),
@@ -310,7 +310,7 @@ class MessagesPaginationStateHandlerTests: XCTestCase {
         // Given
         sut.state.hasLoadedAllNextMessages = false
         sut.state.hasLoadedAllPreviousMessages = false
-        let messages: [MessagePayload] = [
+        let messages: [Message] = [
             .dummy(messageId: "121"),
             .dummy(messageId: "122"),
             .dummy(messageId: "123"), // <-- mid point
@@ -331,7 +331,7 @@ class MessagesPaginationStateHandlerTests: XCTestCase {
         // Given
         sut.state.hasLoadedAllNextMessages = false
         sut.state.hasLoadedAllPreviousMessages = false
-        let messages: [MessagePayload] = [
+        let messages: [Message] = [
             .dummy(messageId: "121"),
             .dummy(messageId: "122"), // <-- mid point in even response
             .dummy(messageId: "123"), // <-- after mid point (Second Half of Response)

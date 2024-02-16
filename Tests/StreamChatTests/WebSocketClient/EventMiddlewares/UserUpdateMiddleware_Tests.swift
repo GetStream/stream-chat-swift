@@ -38,10 +38,10 @@ final class UserUpdateMiddleware_Tests: XCTestCase {
     }
 
     func test_whenDatabaseWriteFails_eventIsForwarded() throws {
-        let eventPayload: EventPayload = .init(
-            eventType: .userUpdated,
-            user: .dummy(userId: .unique),
-            createdAt: Date.unique
+        let event = UserUpdatedEvent(
+            createdAt: .unique,
+            type: EventType.userUpdated.rawValue,
+            user: .dummy(userId: .unique)
         )
 
         // Set error to be thrown on write.
@@ -50,37 +50,34 @@ final class UserUpdateMiddleware_Tests: XCTestCase {
         session.errorToReturn = error
 
         // Simulate and handle user watching event.
-        let event = try UserUpdatedEventDTO(from: eventPayload)
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         // Assert `UserWatchingEvent` is forwarded even though database error happened.
-        XCTAssertTrue(forwardedEvent is UserUpdatedEventDTO)
+        XCTAssertTrue(forwardedEvent is UserUpdatedEvent)
     }
 
     func test_whenDatabaseWriteDoesNotFail_userInformationIsUpdated() throws {
         // Given
         let userId = UserId.unique
-        let initialUserPayload = UserPayload.dummy(userId: userId, name: "Initial name")
+        let initialUserPayload = UserObject.dummy(userId: userId, name: "Initial name")
         try database.writeSynchronously {
             try $0.saveUser(payload: initialUserPayload)
         }
         XCTAssertEqual(database.viewContext.user(id: userId)?.name, "Initial name")
 
         // When
-        let updatedUserPayload = UserPayload.dummy(userId: userId, name: "Updated name")
-        let eventPayload: EventPayload = .init(
-            eventType: .userUpdated,
-            user: updatedUserPayload,
-            createdAt: Date.unique
+        let event = UserUpdatedEvent(
+            createdAt: .unique,
+            type: EventType.userUpdated.rawValue,
+            user: .dummy(userId: userId, name: "Updated Name")
         )
 
         // Simulate and handle user watching event.
-        let event = try UserUpdatedEventDTO(from: eventPayload)
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         // Then
         // Assert `UserWatchingEvent` is forwarded even if all succeeded
-        XCTAssertTrue(forwardedEvent is UserUpdatedEventDTO)
+        XCTAssertTrue(forwardedEvent is UserUpdatedEvent)
         XCTAssertEqual(database.viewContext.user(id: userId)?.name, "Updated name")
         XCTAssertEqual(database.writeSessionCounter, 1)
     }
@@ -88,8 +85,10 @@ final class UserUpdateMiddleware_Tests: XCTestCase {
     func test_whenDatabaseWriteDoesNotFail_whenEventIsForCurrentUser_currentUserInformationIsUpdated() throws {
         // Given
         let currentUserId = UserId.unique
-        let initialCurrentUserPayload = CurrentUserPayload.dummy(
-            userPayload: .dummy(userId: currentUserId, name: "Name 1")
+        let initialCurrentUserPayload = OwnUser.dummy(
+            userId: currentUserId,
+            name: "Name 1",
+            role: .user
         )
         try database.writeSynchronously {
             try $0.saveCurrentUser(payload: initialCurrentUserPayload)
@@ -98,20 +97,18 @@ final class UserUpdateMiddleware_Tests: XCTestCase {
         XCTAssertEqual(database.viewContext.currentUser?.user.name, "Name 1")
 
         // When
-        let updatedUserPayload = UserPayload.dummy(userId: currentUserId, name: "Name 2")
-        let eventPayload: EventPayload = .init(
-            eventType: .userUpdated,
-            user: updatedUserPayload,
-            createdAt: Date.unique
+        let event = UserUpdatedEvent(
+            createdAt: .unique,
+            type: EventType.userUpdated.rawValue,
+            user: .dummy(userId: currentUserId, name: "Name 2")
         )
 
         // Simulate and handle user watching event.
-        let event = try UserUpdatedEventDTO(from: eventPayload)
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         // Then
         // Assert `UserWatchingEvent` is forwarded even if all succeeded
-        XCTAssertTrue(forwardedEvent is UserUpdatedEventDTO)
+        XCTAssertTrue(forwardedEvent is UserUpdatedEvent)
         XCTAssertEqual(database.viewContext.user(id: currentUserId)?.name, "Name 2")
         XCTAssertEqual(database.viewContext.currentUser?.user.name, "Name 2")
         XCTAssertEqual(database.writeSessionCounter, 1)

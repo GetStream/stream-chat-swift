@@ -103,20 +103,21 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
 
     func test_sortingByCreatedAt_ascending() throws {
         // Declare some channel member payloads
-        let member1: MemberPayload = .dummy()
-        let member2: MemberPayload = .dummy(
+        let member1: ChannelMember = .dummy()
+        let member2: ChannelMember = .dummy(
             createdAt: member1.createdAt.addingTimeInterval(10)
         )
 
         // Declare channel payload
-        let channel: ChannelDetailPayload = .dummy(
-            cid: .unique,
+        let cid = ChannelId.unique
+        let channel: ChannelResponse = .dummy(
+            cid: cid,
             members: [member1, member2]
         )
 
         // Declare channel list query sorting by `createdAt` ascending
         let memberListQuery = ChannelMemberListQuery(
-            cid: channel.cid,
+            cid: cid,
             sort: [.init(key: .createdAt, isAscending: true)]
         )
 
@@ -129,12 +130,15 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
 
             // Save members to database in random order and link to query
             try channel.members?.shuffled().forEach {
-                try session.saveMember(
-                    payload: $0,
-                    channelId: channel.cid,
-                    query: memberListQuery,
-                    cache: nil
-                )
+                if let member = $0 {
+                    let cid = try ChannelId(cid: channel.cid)
+                    try session.saveMember(
+                        payload: member,
+                        channelId: cid,
+                        query: memberListQuery,
+                        cache: nil
+                    )
+                }
             }
         }
 
@@ -152,20 +156,21 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
 
     func test_sortingByCreatedAt_descending() throws {
         // Declare some channel member payloads
-        let member1: MemberPayload = .dummy()
-        let member2: MemberPayload = .dummy(
+        let member1: ChannelMember = .dummy()
+        let member2: ChannelMember = .dummy(
             createdAt: member1.createdAt.addingTimeInterval(10)
         )
 
         // Declare channel payload
-        let channel: ChannelDetailPayload = .dummy(
-            cid: .unique,
+        let cid = ChannelId.unique
+        let channel: ChannelResponse = .dummy(
+            cid: cid,
             members: [member1, member2]
         )
 
         // Declare channel list query sorting by `createdAt` descending
         let memberListQuery = ChannelMemberListQuery(
-            cid: channel.cid,
+            cid: cid,
             sort: [.init(key: .createdAt, isAscending: false)]
         )
 
@@ -178,12 +183,15 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
 
             // Save members to database in random order and link to query
             try channel.members?.shuffled().forEach {
-                try session.saveMember(
-                    payload: $0,
-                    channelId: channel.cid,
-                    query: memberListQuery,
-                    cache: nil
-                )
+                if let member = $0 {
+                    let cid = try ChannelId(cid: channel.cid)
+                    try session.saveMember(
+                        payload: member,
+                        channelId: cid,
+                        query: memberListQuery,
+                        cache: nil
+                    )
+                }
             }
         }
 
@@ -203,18 +211,19 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
 
     func test_sortingByName_ascending() throws {
         // Declare some channel member payloads
-        let member1: MemberPayload = .dummy(user: .dummy(userId: .unique, name: "A"))
-        let member2: MemberPayload = .dummy(user: .dummy(userId: .unique, name: "B"))
+        let member1: ChannelMember = .dummy(user: .dummy(userId: .unique, name: "A"))
+        let member2: ChannelMember = .dummy(user: .dummy(userId: .unique, name: "B"))
 
         // Declare channel payload
-        let channel: ChannelDetailPayload = .dummy(
-            cid: .unique,
+        let cid = ChannelId.unique
+        let channel: ChannelResponse = .dummy(
+            cid: cid,
             members: [member1, member2]
         )
 
         // Declare channel list query sorting by `name` ascending
         let memberListQuery = ChannelMemberListQuery(
-            cid: channel.cid,
+            cid: cid,
             sort: [.init(key: .name, isAscending: true)]
         )
 
@@ -227,12 +236,15 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
 
             // Save members to database in random order and link to query
             try channel.members?.shuffled().forEach {
-                try session.saveMember(
-                    payload: $0,
-                    channelId: channel.cid,
-                    query: memberListQuery,
-                    cache: nil
-                )
+                if let member = $0 {
+                    let cid = try ChannelId(cid: channel.cid)
+                    try session.saveMember(
+                        payload: member,
+                        channelId: cid,
+                        query: memberListQuery,
+                        cache: nil
+                    )
+                }
             }
         }
 
@@ -250,27 +262,28 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
 
     func test_sortingByName_descending() throws {
         // Declare some channel member payloads
-        let member1: MemberPayload = .dummy(
+        let member1: ChannelMember = .dummy(
             user: .dummy(userId: .unique, name: "A")
         )
-        let member2: MemberPayload = .dummy(
+        let member2: ChannelMember = .dummy(
             user: .dummy(userId: .unique, name: "B"),
             createdAt: member1.createdAt.addingTimeInterval(10)
         )
-        let member3: MemberPayload = .dummy(
+        let member3: ChannelMember = .dummy(
             user: .dummy(userId: .unique, name: "B"),
             createdAt: member1.createdAt.addingTimeInterval(-10)
         )
 
         // Declare channel payload
-        let channel: ChannelDetailPayload = .dummy(
-            cid: .unique,
+        let cid = ChannelId.unique
+        let channel: ChannelResponse = .dummy(
+            cid: cid,
             members: [member1, member2, member3]
         )
 
         // Declare channel list query sorting by `name` and `createdAt`
         let memberListQuery = ChannelMemberListQuery(
-            cid: channel.cid,
+            cid: cid,
             sort: [
                 .init(key: .name, isAscending: true),
                 .init(key: .createdAt, isAscending: true)
@@ -286,12 +299,15 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
 
             // Save members to database in random order and link to query
             try channel.members?.shuffled().forEach {
-                try session.saveMember(
-                    payload: $0,
-                    channelId: channel.cid,
-                    query: memberListQuery,
-                    cache: nil
-                )
+                if let member = $0 {
+                    let cid = try ChannelId(cid: channel.cid)
+                    try session.saveMember(
+                        payload: member,
+                        channelId: cid,
+                        query: memberListQuery,
+                        cache: nil
+                    )
+                }
             }
         }
 
@@ -311,20 +327,20 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
 
     func test_sortingByNameThenCreatedAt() throws {
         // Declare some channel member payloads
-        let member1: MemberPayload = .dummy(
+        let member1: ChannelMember = .dummy(
             user: .dummy(userId: .unique, name: "A")
         )
-        let member2: MemberPayload = .dummy(
+        let member2: ChannelMember = .dummy(
             user: .dummy(userId: .unique, name: "B"),
             createdAt: member1.createdAt.addingTimeInterval(10)
         )
-        let member3: MemberPayload = .dummy(
+        let member3: ChannelMember = .dummy(
             user: .dummy(userId: .unique, name: "B"),
             createdAt: member1.createdAt.addingTimeInterval(-10)
         )
 
         // Declare channel payload
-        let channel: ChannelDetailPayload = .dummy(
+        let channel: ChannelResponse = .dummy(
             cid: .unique,
             members: [
                 member1,
@@ -334,8 +350,9 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
         )
 
         // Declare channel list query sorting by `name` and `createdAt`
+        let cid = ChannelId.unique
         let memberListQuery = ChannelMemberListQuery(
-            cid: channel.cid,
+            cid: cid,
             sort: [
                 .init(key: .name, isAscending: true),
                 .init(key: .createdAt, isAscending: true)
@@ -351,12 +368,15 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
 
             // Save members to database in random order and link to query
             try channel.members?.shuffled().forEach {
-                try session.saveMember(
-                    payload: $0,
-                    channelId: channel.cid,
-                    query: memberListQuery,
-                    cache: nil
-                )
+                if let member = $0 {
+                    let cid = try ChannelId(cid: channel.cid)
+                    try session.saveMember(
+                        payload: member,
+                        channelId: cid,
+                        query: memberListQuery,
+                        cache: nil
+                    )
+                }
             }
         }
 

@@ -8,6 +8,7 @@ import XCTest
 
 final class ChannelEventsController_Tests: XCTestCase {
     var apiClient: APIClient_Spy!
+    var api: API!
     var database: DatabaseContainer_Spy!
     var notificationCenter: EventNotificationCenter_Mock!
     var eventSender: EventSender_Mock!
@@ -20,9 +21,10 @@ final class ChannelEventsController_Tests: XCTestCase {
         super.setUp()
 
         apiClient = APIClient_Spy()
+        api = API.mock(with: apiClient)
         database = DatabaseContainer_Spy()
         notificationCenter = EventNotificationCenter_Mock(database: database)
-        eventSender = EventSender_Mock(database: database, apiClient: apiClient)
+        eventSender = EventSender_Mock(database: database, api: api)
         callbackQueueID = UUID()
         callbackQueue = .testQueue(withId: callbackQueueID)
     }
@@ -231,13 +233,16 @@ final class ChannelEventsController_Tests: XCTestCase {
         controller.callbackQueue = callbackQueue
 
         // Simulate incoming events.
-        let eventPayload = EventPayload(eventType: .channelUpdated, channel: .dummy(cid: cid), createdAt: .unique)
+        let event = ChannelUpdatedEvent(
+            channelId: cid.id,
+            channelType: cid.type.rawValue,
+            cid: cid.rawValue,
+            createdAt: .unique,
+            type: EventType.channelUpdated.rawValue
+        )
         try database.writeSynchronously {
-            try $0.saveChannel(payload: eventPayload.channel!, query: nil, cache: nil)
+            try $0.saveChannel(payload: event.channel!, query: nil, cache: nil)
         }
-        let currentChannelEvent = try ChannelUpdatedEventDTO(from: eventPayload)
-            .toDomainEvent(session: database.viewContext) as! ChannelUpdatedEvent
-
         let currentChannelCustomEvent = UnknownChannelEvent(
             type: .init(rawValue: .unique),
             cid: cid,
@@ -248,7 +253,7 @@ final class ChannelEventsController_Tests: XCTestCase {
         let anotherChannelEvent = TestMemberEvent(cid: .unique, memberUserId: .unique)
 
         let events: [Event] = [
-            currentChannelEvent,
+            event,
             anotherChannelEvent,
             currentChannelCustomEvent
         ]

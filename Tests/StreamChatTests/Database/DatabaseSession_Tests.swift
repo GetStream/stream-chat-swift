@@ -25,16 +25,18 @@ final class DatabaseSession_Tests: XCTestCase {
         let channelId: ChannelId = .unique
         let channelPayload = dummyPayload(with: channelId)
 
-        let eventPayload = EventPayload(
-            eventType: .notificationAddedToChannel,
-            connectionId: .unique,
-            cid: channelPayload.channel.cid,
+        let event = NotificationAddedToChannelEvent(
+            channelId: channelId.id,
+            channelType: channelId.type.rawValue,
+            cid: channelId.rawValue,
+            createdAt: .unique,
+            type: EventType.notificationAddedToChannel.rawValue,
             channel: channelPayload.channel
         )
 
         // Save the event payload to DB
         try database.writeSynchronously { session in
-            try session.saveEvent(payload: eventPayload)
+            try session.saveEvent(event: event)
         }
 
         // Try to load the saved channel from DB
@@ -45,7 +47,7 @@ final class DatabaseSession_Tests: XCTestCase {
         AssertAsync.willBeEqual(loadedChannel?.cid, channelId)
 
         // Try to load a saved channel owner from DB
-        if let userId = channelPayload.channel.createdBy?.id {
+        if let userId = channelPayload.channel?.createdBy?.id {
             var loadedUser: ChatUser? {
                 try? database.viewContext.user(id: userId)?.asModel()
             }
@@ -54,12 +56,15 @@ final class DatabaseSession_Tests: XCTestCase {
         }
 
         // Try to load the saved member from DB
-        if let member = channelPayload.channel.members?.first {
+        if let member = channelPayload.channel?.members?.first {
             var loadedMember: ChatUser? {
-                try? database.viewContext.member(userId: member.userId, cid: channelId)?.asModel()
+                try? database.viewContext.member(
+                    userId: member?.userId ?? .unique,
+                    cid: channelId
+                )?.asModel()
             }
 
-            AssertAsync.willBeEqual(loadedMember?.id, member.userId)
+            AssertAsync.willBeEqual(loadedMember?.id, member?.userId)
         }
     }
 
@@ -68,64 +73,33 @@ final class DatabaseSession_Tests: XCTestCase {
         let channelId: ChannelId = .unique
         let messageId: MessageId = .unique
 
-        let channelPayload: ChannelDetailPayload = dummyPayload(with: channelId).channel
+        let channelPayload = dummyPayload(with: channelId).channel
 
-        let userPayload: UserPayload = .init(
-            id: .unique,
-            name: .unique,
-            imageURL: .unique(),
-            role: .admin,
+        let userPayload = UserObject(id: .unique, role: UserRole.admin.rawValue)
+
+        let messagePayload = Message.dummy(
+            type: .init(rawValue: "regular"),
+            messageId: messageId,
+            authorUserId: userPayload.id,
+            text: "Some text",
+            createdAt: channelPayload?.createdAt.addingTimeInterval(300),
+            updatedAt: .unique
+        )
+        
+        let event = MessageNewEvent(
+            channelId: channelId.id,
+            channelType: channelId.type.rawValue,
+            cid: channelId.rawValue,
             createdAt: .unique,
-            updatedAt: .unique,
-            deactivatedAt: nil,
-            lastActiveAt: .unique,
-            isOnline: true,
-            isInvisible: true,
-            isBanned: true,
-            language: nil,
-            extraData: [:]
-        )
-
-        let messagePayload = MessagePayload(
-            id: messageId,
-            type: .regular,
-            user: userPayload,
-            createdAt: channelPayload.createdAt.addingTimeInterval(300),
-            updatedAt: .unique,
-            text: "No, I am your father 🤯",
-            showReplyInChannel: false,
-            mentionedUsers: [],
-            replyCount: 0,
-            extraData: [:],
-            reactionScores: [:],
-            reactionCounts: [:],
-            isSilent: false,
-            isShadowed: false,
-            attachments: []
-        )
-
-        let eventPayload: EventPayload = .init(
-            eventType: .messageNew,
-            connectionId: .unique,
-            cid: channelId,
-            currentUser: nil,
-            user: nil,
-            createdBy: nil,
-            memberContainer: nil,
-            channel: channelPayload,
+            type: EventType.messageNew.rawValue,
+            watcherCount: 0,
             message: messagePayload,
-            reaction: nil,
-            watcherCount: nil,
-            unreadCount: nil,
-            createdAt: nil,
-            isChannelHistoryCleared: false,
-            banReason: nil,
-            banExpiredAt: nil
+            user: userPayload
         )
 
         // Save the event payload to DB
         try database.writeSynchronously { session in
-            try session.saveEvent(payload: eventPayload)
+            try session.saveEvent(event: event)
         }
 
         // Try to load the saved message from DB
@@ -240,31 +214,6 @@ final class DatabaseSession_Tests: XCTestCase {
         XCTAssertEqual(message?.pinned, false)
     }
 
-    func test_saveEvent_unreadCountFromEventPayloadIsApplied() throws {
-        let eventPayload = EventPayload(
-            eventType: .messageNew,
-            connectionId: .unique,
-            cid: .unique,
-            currentUser: .dummy(
-                userId: .unique,
-                role: .user,
-                unreadCount: nil
-            ),
-            unreadCount: .dummy
-        )
-
-        try database.writeSynchronously { session in
-            try session.saveEvent(payload: eventPayload)
-        }
-
-        // Load current user
-        let currentUser = database.viewContext.currentUser
-
-        // Assert unread count is taken from event payload
-        XCTAssertEqual(Int64(eventPayload.unreadCount!.messages), currentUser?.unreadMessagesCount)
-        XCTAssertEqual(Int64(eventPayload.unreadCount!.channels), currentUser?.unreadChannelsCount)
-    }
-
     func test_saveCurrentUserUnreadCount_failsIfThereIsNoCurrentUser() throws {
         func saveUnreadCountWithoutUser() throws {
             try database.writeSynchronously {
@@ -278,25 +227,38 @@ final class DatabaseSession_Tests: XCTestCase {
     }
 
     func test_saveEvent_doesntResetLastReceivedEventDate_whenEventCreatedAtValueIsNil() throws {
-        // Create event payload with missing `createdAt`
-        let eventPayload = EventPayload(
-            eventType: .messageNew,
-            connectionId: .unique,
-            cid: .unique,
-            currentUser: .dummy(
-                userId: .unique,
-                role: .user,
-                unreadCount: nil
-            ),
-            unreadCount: .dummy,
-            createdAt: nil
+        let channelId: ChannelId = .unique
+        let messageId: MessageId = .unique
+
+        let channelPayload = dummyPayload(with: channelId).channel
+
+        let userPayload = UserObject(id: .unique, role: UserRole.admin.rawValue)
+
+        let messagePayload = Message.dummy(
+            type: .init(rawValue: "regular"),
+            messageId: messageId,
+            authorUserId: userPayload.id,
+            text: "Some text",
+            createdAt: channelPayload?.createdAt.addingTimeInterval(300),
+            updatedAt: .unique
+        )
+        
+        let event = MessageNewEvent(
+            channelId: channelId.id,
+            channelType: channelId.type.rawValue,
+            cid: channelId.rawValue,
+            createdAt: .unique,
+            type: EventType.messageNew.rawValue,
+            watcherCount: 0,
+            message: messagePayload,
+            user: userPayload
         )
 
-        // Save event to the database
+        // Save the event payload to DB
         try database.writeSynchronously { session in
-            try session.saveEvent(payload: eventPayload)
+            try session.saveEvent(event: event)
         }
-
+        
         // Load current user
         let currentUser = database.viewContext.currentUser
 
@@ -322,22 +284,18 @@ final class DatabaseSession_Tests: XCTestCase {
         // Save the message that is quoting the other message
         try database.createMessage(id: quotingMessageId, authorId: userId, cid: channelId, quotedMessageId: messageId)
 
-        let eventPayload = EventPayload(
-            eventType: .messageUpdated,
-            connectionId: .unique,
-            cid: channelId,
-            currentUser: .dummy(
-                userId: userId,
-                role: .user,
-                unreadCount: nil
-            ),
+        let event = MessageUpdatedEvent(
+            channelId: channelId.id,
+            channelType: channelId.type.rawValue,
+            cid: channelId.rawValue,
+            createdAt: .unique,
+            type: EventType.messageUpdated.rawValue,
             message: .dummy(messageId: messageId, authorUserId: userId),
-            unreadCount: .dummy,
-            createdAt: nil
+            user: .dummy(userId: userId)
         )
 
         try database.writeSynchronously { session in
-            try session.saveEvent(payload: eventPayload)
+            try session.saveEvent(event: event)
         }
 
         let message = try XCTUnwrap(database.viewContext.message(id: messageId))
@@ -360,20 +318,16 @@ final class DatabaseSession_Tests: XCTestCase {
 
         // Save the message to the DB
         try database.createMessage(id: messageId, authorId: userId, cid: channelId)
-
-        let eventPayload = EventPayload(
-            eventType: .messageDeleted,
-            connectionId: .unique,
-            cid: channelId,
-            currentUser: .dummy(
-                userId: userId,
-                role: .user,
-                unreadCount: nil
-            ),
+        
+        let event = MessageDeletedEvent(
+            channelId: channelId.id,
+            channelType: channelId.type.rawValue,
+            cid: channelId.rawValue,
+            createdAt: .unique,
+            hardDelete: true,
+            type: EventType.messageDeleted.rawValue,
             message: .dummy(messageId: messageId, authorUserId: userId),
-            unreadCount: .dummy,
-            createdAt: nil,
-            hardDelete: true
+            user: .dummy(userId: userId)
         )
 
         let messageBeforeEvent = database.viewContext.message(id: messageId)
@@ -381,7 +335,7 @@ final class DatabaseSession_Tests: XCTestCase {
         XCTAssertNotNil(messageBeforeEvent)
 
         try database.writeSynchronously { session in
-            try session.saveEvent(payload: eventPayload)
+            try session.saveEvent(event: event)
         }
 
         let messageAfterEvent = database.viewContext.message(id: messageId)
@@ -404,19 +358,15 @@ final class DatabaseSession_Tests: XCTestCase {
         // Save the message to the DB
         try database.createMessage(id: messageId, authorId: userId, cid: channelId)
 
-        let eventPayload = EventPayload(
-            eventType: .messageDeleted,
-            connectionId: .unique,
-            cid: channelId,
-            currentUser: .dummy(
-                userId: userId,
-                role: .user,
-                unreadCount: nil
-            ),
+        let event = MessageDeletedEvent(
+            channelId: channelId.id,
+            channelType: channelId.type.rawValue,
+            cid: channelId.rawValue,
+            createdAt: .unique,
+            hardDelete: false,
+            type: EventType.messageDeleted.rawValue,
             message: .dummy(messageId: messageId, authorUserId: userId),
-            unreadCount: .dummy,
-            createdAt: nil,
-            hardDelete: false
+            user: .dummy(userId: userId)
         )
 
         let messageBeforeEvent = database.viewContext.message(id: messageId)
@@ -424,7 +374,7 @@ final class DatabaseSession_Tests: XCTestCase {
         XCTAssertNotNil(messageBeforeEvent)
 
         try database.writeSynchronously { session in
-            try session.saveEvent(payload: eventPayload)
+            try session.saveEvent(event: event)
         }
 
         let messageAfterEvent = database.viewContext.message(id: messageId)
@@ -434,18 +384,18 @@ final class DatabaseSession_Tests: XCTestCase {
 
     func test_saveEvent_whenMessageDeletedEventHasPreviewMessage_updatesChannelPreview() throws {
         // GIVEN
-        let previousMessage: MessagePayload = .dummy(
+        let previousMessage: Message = .dummy(
             messageId: .unique,
             authorUserId: .unique
         )
 
-        let previewMessage: MessagePayload = .dummy(
+        let previewMessage: Message = .dummy(
             messageId: .unique,
             authorUserId: .unique,
             createdAt: previousMessage.createdAt.addingTimeInterval(10)
         )
 
-        let channel: ChannelPayload = .dummy(
+        let channel: ChannelStateResponse = .dummy(
             messages: [
                 previousMessage,
                 previewMessage
@@ -457,29 +407,38 @@ final class DatabaseSession_Tests: XCTestCase {
         }
 
         // WHEN
-        let messageDeletedEvent = EventPayload(
-            eventType: .messageDeleted,
-            cid: channel.channel.cid,
-            message: previewMessage
+        let event = MessageDeletedEvent(
+            channelId: channel.channel?.id ?? .unique,
+            channelType: channel.channel?.type ?? "messaging",
+            cid: channel.channel?.cid ?? .unique,
+            createdAt: .unique,
+            hardDelete: false,
+            type: EventType.messageDeleted.rawValue,
+            message: previewMessage,
+            user: .dummy(userId: .unique)
         )
 
         try database.writeSynchronously { session in
-            try session.saveEvent(payload: messageDeletedEvent)
+            try session.saveEvent(event: event)
         }
 
         // THEN
-        let channelDTO = try XCTUnwrap(database.viewContext.channel(cid: channel.channel.cid))
+        let channelDTO = try XCTUnwrap(
+            database.viewContext.channel(cid: try ChannelId(cid: channel.channel!.cid))
+        )
         XCTAssertEqual(channelDTO.previewMessage?.id, previewMessage.id)
     }
 
     func test_saveEvent_whenMessageNewEventComes_updatesChannelPreview() throws {
         // GIVEN
-        let previewMessage: MessagePayload = .dummy(
+        let previewMessage: Message = .dummy(
             messageId: .unique,
             authorUserId: .unique
         )
 
-        let channel: ChannelPayload = .dummy(
+        let cid = ChannelId.unique
+        let channel: ChannelStateResponse = .dummy(
+            cid: cid,
             messages: [previewMessage]
         )
 
@@ -488,30 +447,36 @@ final class DatabaseSession_Tests: XCTestCase {
         }
 
         // WHEN
-        let newMessage: MessagePayload = .dummy(
+        let newMessage: Message = .dummy(
             messageId: .unique,
             authorUserId: .unique,
             createdAt: previewMessage.createdAt.addingTimeInterval(10)
         )
 
-        let messageNewEvent = EventPayload(
-            eventType: .messageNew,
-            cid: channel.channel.cid,
-            message: newMessage
+        let event = MessageNewEvent(
+            channelId: cid.id,
+            channelType: cid.type.rawValue,
+            cid: cid.rawValue,
+            createdAt: .unique,
+            type: EventType.messageNew.rawValue,
+            watcherCount: 0,
+            message: .dummy()
         )
 
         try database.writeSynchronously { session in
-            try session.saveEvent(payload: messageNewEvent)
+            try session.saveEvent(event: event)
         }
 
         // THEN
-        let channelDTO = try XCTUnwrap(database.viewContext.channel(cid: channel.channel.cid))
+        let channelDTO = try XCTUnwrap(database.viewContext.channel(cid: cid))
         XCTAssertEqual(channelDTO.previewMessage?.id, newMessage.id)
     }
 
     func test_saveEvent_whenMessageNewEventComes_whenIsThreadReply_thenShowInsideThreadIsTrue() throws {
         // GIVEN
-        let channel: ChannelPayload = .dummy(
+        let cid = ChannelId.unique
+        let channel: ChannelStateResponse = .dummy(
+            cid: cid,
             messages: []
         )
 
@@ -520,21 +485,25 @@ final class DatabaseSession_Tests: XCTestCase {
         }
 
         // WHEN
-        let newMessage: MessagePayload = .dummy(
+        let newMessage: Message = .dummy(
             messageId: .unique,
             parentId: .unique,
             authorUserId: .unique,
-            cid: channel.channel.cid
+            cid: cid
         )
 
-        let messageNewEvent = EventPayload(
-            eventType: .messageNew,
-            cid: channel.channel.cid,
+        let event = MessageNewEvent(
+            channelId: cid.id,
+            channelType: cid.type.rawValue,
+            cid: cid.rawValue,
+            createdAt: .unique,
+            type: EventType.messageNew.rawValue,
+            watcherCount: 0,
             message: newMessage
         )
 
         try database.writeSynchronously { session in
-            try session.saveEvent(payload: messageNewEvent)
+            try session.saveEvent(event: event)
         }
 
         // THEN
@@ -544,7 +513,9 @@ final class DatabaseSession_Tests: XCTestCase {
 
     func test_saveEvent_whenNotificationMessageNewEventComes_whenIsThreadReply_thenShowInsideThreadIsTrue() throws {
         // GIVEN
-        let channel: ChannelPayload = .dummy(
+        let cid = ChannelId.unique
+        let channel: ChannelStateResponse = .dummy(
+            cid: cid,
             messages: []
         )
 
@@ -553,21 +524,24 @@ final class DatabaseSession_Tests: XCTestCase {
         }
 
         // WHEN
-        let newMessage: MessagePayload = .dummy(
+        let newMessage: Message = .dummy(
             messageId: .unique,
             parentId: .unique,
             authorUserId: .unique,
-            cid: channel.channel.cid
+            cid: cid
         )
 
-        let messageNewEvent = EventPayload(
-            eventType: .notificationMessageNew,
-            cid: channel.channel.cid,
+        let event = NotificationNewMessageEvent(
+            channelId: cid.id,
+            channelType: cid.type.rawValue,
+            cid: cid.rawValue,
+            createdAt: .unique,
+            type: EventType.messageNew.rawValue,
             message: newMessage
         )
 
         try database.writeSynchronously { session in
-            try session.saveEvent(payload: messageNewEvent)
+            try session.saveEvent(event: event)
         }
 
         // THEN
@@ -577,136 +551,155 @@ final class DatabaseSession_Tests: XCTestCase {
 
     func test_saveEvent_whenMessageNewEventComes_whenUpdateIsOlderThanCurrentPreview_DoesNotUpdateChannelPreview() throws {
         // GIVEN
-        let previousPreviewMessage: MessagePayload = .dummy(
+        let previousPreviewMessage: Message = .dummy(
             messageId: .unique,
             authorUserId: .unique
         )
 
-        let channel: ChannelPayload = .dummy(
+        let cid = ChannelId.unique
+        let channel: ChannelStateResponse = .dummy(
             messages: [previousPreviewMessage]
         )
 
-        let previousMessageMessageNewEvent = EventPayload(
-            eventType: .messageNew,
-            cid: channel.channel.cid,
-            channel: channel.channel,
+        let event = MessageNewEvent(
+            channelId: cid.id,
+            channelType: cid.type.rawValue,
+            cid: cid.rawValue,
+            createdAt: .unique,
+            type: EventType.messageNew.rawValue,
+            watcherCount: 0,
             message: previousPreviewMessage
         )
 
         try database.writeSynchronously { session in
-            try session.saveEvent(payload: previousMessageMessageNewEvent)
+            try session.saveEvent(event: event)
         }
 
         // WHEN
-        let newMessage: MessagePayload = .dummy(
+        let newMessage: Message = .dummy(
             messageId: .unique,
             authorUserId: .unique,
             createdAt: previousPreviewMessage.createdAt.addingTimeInterval(-10)
         )
 
-        let messageNewEvent = EventPayload(
-            eventType: .messageNew,
-            cid: channel.channel.cid,
-            channel: channel.channel,
+        let messageNewEvent = MessageNewEvent(
+            channelId: cid.id,
+            channelType: cid.type.rawValue,
+            cid: cid.rawValue,
+            createdAt: previousPreviewMessage.createdAt.addingTimeInterval(-10),
+            type: EventType.messageNew.rawValue,
+            watcherCount: 0,
             message: newMessage
         )
 
         try database.writeSynchronously { session in
-            try session.saveEvent(payload: messageNewEvent)
+            try session.saveEvent(event: messageNewEvent)
         }
 
         // THEN
-        let channelDTO = try XCTUnwrap(database.viewContext.channel(cid: channel.channel.cid))
+        let channelDTO = try XCTUnwrap(database.viewContext.channel(cid: cid))
         XCTAssertEqual(channelDTO.previewMessage?.id, previousPreviewMessage.id)
     }
 
     func test_saveEvent_whenNotificationMessageNewEventComes_updatesChannelPreview() throws {
         // GIVEN
-        let previewMessage: MessagePayload = .dummy(
+        let previewMessage: Message = .dummy(
             messageId: .unique,
             authorUserId: .unique
         )
 
-        let channel: ChannelPayload = .dummy(
+        let cid = ChannelId.unique
+        let channel: ChannelStateResponse = .dummy(
+            cid: cid,
             messages: [previewMessage]
         )
 
         // WHEN
-        let newMessage: MessagePayload = .dummy(
+        let newMessage: Message = .dummy(
             messageId: .unique,
             authorUserId: .unique,
             createdAt: previewMessage.createdAt.addingTimeInterval(10)
         )
 
-        let notificationMessageNewEvent = EventPayload(
-            eventType: .notificationMessageNew,
-            cid: channel.channel.cid,
-            channel: channel.channel,
+        let event = NotificationNewMessageEvent(
+            channelId: cid.id,
+            channelType: cid.type.rawValue,
+            cid: cid.rawValue,
+            createdAt: .unique,
+            type: EventType.messageNew.rawValue,
             message: newMessage
         )
 
         try database.writeSynchronously { session in
-            try session.saveEvent(payload: notificationMessageNewEvent)
+            try session.saveEvent(event: event)
         }
 
         // THEN
-        let channelDTO = try XCTUnwrap(database.viewContext.channel(cid: channel.channel.cid))
+        let channelDTO = try XCTUnwrap(database.viewContext.channel(cid: cid))
         XCTAssertEqual(channelDTO.previewMessage?.id, newMessage.id)
     }
 
     func test_saveEvent_whenNotificationMessageNewEventComes_whenUpdateIsOlderThanCurrentPreview_DoesNotUpdateChannelPreview() throws {
         // GIVEN
-        let previousPreviewMessage: MessagePayload = .dummy(
+        let previousPreviewMessage: Message = .dummy(
             messageId: .unique,
             authorUserId: .unique
         )
 
-        let channel: ChannelPayload = .dummy(
+        let cid = ChannelId.unique
+        let channel: ChannelStateResponse = .dummy(
+            cid: cid,
             messages: [previousPreviewMessage]
         )
 
-        let previousNotificationMessageNewEvent = EventPayload(
-            eventType: .notificationMessageNew,
-            cid: channel.channel.cid,
-            channel: channel.channel,
+        let event = NotificationNewMessageEvent(
+            channelId: cid.id,
+            channelType: cid.type.rawValue,
+            cid: cid.rawValue,
+            createdAt: .unique,
+            type: EventType.messageNew.rawValue,
             message: previousPreviewMessage
         )
 
         try database.writeSynchronously { session in
-            try session.saveEvent(payload: previousNotificationMessageNewEvent)
+            try session.saveEvent(event: event)
         }
 
         // WHEN
-        let newMessage: MessagePayload = .dummy(
+        let newMessage: Message = .dummy(
             messageId: .unique,
             authorUserId: .unique,
             createdAt: previousPreviewMessage.createdAt.addingTimeInterval(-10)
         )
 
-        let notificationMessageNewEvent = EventPayload(
-            eventType: .notificationMessageNew,
-            cid: channel.channel.cid,
-            channel: channel.channel,
+        let notificationMessageNewEvent = NotificationNewMessageEvent(
+            channelId: cid.id,
+            channelType: cid.type.rawValue,
+            cid: cid.rawValue,
+            createdAt: .unique,
+            type: EventType.messageNew.rawValue,
             message: newMessage
         )
 
         try database.writeSynchronously { session in
-            try session.saveEvent(payload: notificationMessageNewEvent)
+            try session.saveEvent(event: notificationMessageNewEvent)
         }
 
         // THEN
-        let channelDTO = try XCTUnwrap(database.viewContext.channel(cid: channel.channel.cid))
+        let channelDTO = try XCTUnwrap(database.viewContext.channel(cid: cid))
         XCTAssertEqual(channelDTO.previewMessage?.id, previousPreviewMessage.id)
     }
 
     func test_saveEvent_whenChannelTruncatedEventComesWithMessage_updatesChannelPreview() throws {
         // GIVEN
-        let previewMessage: MessagePayload = .dummy(
+        let previewMessage: Message = .dummy(
             messageId: .unique,
             authorUserId: .unique
         )
 
-        let channel: ChannelPayload = .dummy(
+        let cid = ChannelId.unique
+        let channel: ChannelStateResponse = .dummy(
+            cid: cid,
             messages: [previewMessage]
         )
 
@@ -715,37 +708,42 @@ final class DatabaseSession_Tests: XCTestCase {
         }
 
         // WHEN
-        let systemMessage: MessagePayload = .dummy(
+        let systemMessage: Message = .dummy(
             type: .system,
             messageId: .unique,
             authorUserId: .unique,
             createdAt: previewMessage.createdAt.addingTimeInterval(10)
         )
 
-        let channelTruncatedEvent = EventPayload(
-            eventType: .channelTruncated,
-            cid: channel.channel.cid,
-            channel: .dummy(truncatedAt: systemMessage.createdAt),
-            message: systemMessage
+        // TODO: missing a message.
+        let channelTruncatedEvent = ChannelTruncatedEvent(
+            channelId: cid.id,
+            channelType: cid.type.rawValue,
+            cid: cid.rawValue,
+            createdAt: .unique,
+            type: EventType.channelTruncated.rawValue,
+            channel: channel.channel
         )
 
         try database.writeSynchronously { session in
-            try session.saveEvent(payload: channelTruncatedEvent)
+            try session.saveEvent(event: channelTruncatedEvent)
         }
 
         // THEN
-        let channelDTO = try XCTUnwrap(database.viewContext.channel(cid: channel.channel.cid))
+        let channelDTO = try XCTUnwrap(database.viewContext.channel(cid: cid))
         XCTAssertEqual(channelDTO.previewMessage?.id, systemMessage.id)
     }
 
     func test_saveEvent_whenChannelTruncatedEventComesWithoutMessage_resetsChannelPreview() throws {
         // GIVEN
-        let previewMessage: MessagePayload = .dummy(
+        let previewMessage: Message = .dummy(
             messageId: .unique,
             authorUserId: .unique
         )
 
-        let channel: ChannelPayload = .dummy(
+        let cid = ChannelId.unique
+        let channel: ChannelStateResponse = .dummy(
+            cid: cid,
             messages: [previewMessage]
         )
 
@@ -754,19 +752,21 @@ final class DatabaseSession_Tests: XCTestCase {
         }
 
         // WHEN
-        let channelTruncatedEventWithoutMessage = EventPayload(
-            eventType: .channelTruncated,
-            cid: channel.channel.cid,
-            channel: .dummy(truncatedAt: previewMessage.createdAt.addingTimeInterval(1)),
-            message: nil
+        let channelTruncatedEvent = ChannelTruncatedEvent(
+            channelId: cid.id,
+            channelType: cid.type.rawValue,
+            cid: cid.rawValue,
+            createdAt: .unique,
+            type: EventType.channelTruncated.rawValue,
+            channel: channel.channel
         )
 
         try database.writeSynchronously { session in
-            try session.saveEvent(payload: channelTruncatedEventWithoutMessage)
+            try session.saveEvent(event: channelTruncatedEvent)
         }
 
         // THEN
-        let channelDTO = try XCTUnwrap(database.viewContext.channel(cid: channel.channel.cid))
+        let channelDTO = try XCTUnwrap(database.viewContext.channel(cid: cid))
         XCTAssertNil(channelDTO.previewMessage)
     }
 }

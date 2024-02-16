@@ -9,9 +9,9 @@ import XCTest
 final class MutedChannelPayload_Tests: XCTestCase {
     func test_payload_isDeserialized() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MutedChannelPayload")
-        let payload = try JSONDecoder.default.decode(MutedChannelPayload.self, from: json)
-        XCTAssertEqual(payload.user.id, "luke_skywalker")
-        XCTAssertEqual(payload.mutedChannel.cid.rawValue, "messaging:B1DFF9C5-E6A6-4BFA-9375-DC5E8C6852FF")
+        let payload = try JSONDecoder.default.decode(ChannelMute.self, from: json)
+        XCTAssertEqual(payload.user?.id, "luke_skywalker")
+        XCTAssertEqual(payload.channel?.cid, "messaging:B1DFF9C5-E6A6-4BFA-9375-DC5E8C6852FF")
         XCTAssertEqual(payload.createdAt, "2021-03-22T10:23:52.516225Z".toDate())
         XCTAssertEqual(payload.updatedAt, "2021-03-22T10:23:52.516225Z".toDate())
     }

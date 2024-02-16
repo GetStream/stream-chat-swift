@@ -47,7 +47,15 @@ final class TypingStartCleanupMiddleware_Tests: XCTestCase {
         weak var weakMiddleware = middleware
 
         // Handle a new TypingStart event for the current user and collect resulting events
-        let typingStartEvent = TypingEventDTO.startTyping(userId: currentUser.id)
+        let cid = ChannelId.unique
+        let typingStartEvent = TypingStartEvent(
+            channelId: cid.id,
+            channelType: cid.type.rawValue,
+            cid: cid.rawValue,
+            createdAt: .unique,
+            type: EventType.userStartTyping.rawValue,
+            user: .dummy(userId: currentUser.id)
+        )
         let forwardedEvent = middleware!.handle(event: typingStartEvent, session: database.viewContext)
         XCTAssertEqual(forwardedEvent?.asEquatable, typingStartEvent.asEquatable)
 
@@ -78,7 +86,14 @@ final class TypingStartCleanupMiddleware_Tests: XCTestCase {
         let otherUser = ChatUser.mock(id: .unique)
         let cid = ChannelId.unique
 
-        let startTyping = TypingEventDTO.startTyping(cid: cid, userId: otherUser.id)
+        let startTyping = TypingStartEvent(
+            channelId: cid.id,
+            channelType: cid.type.rawValue,
+            cid: cid.rawValue,
+            createdAt: .unique,
+            type: EventType.userStartTyping.rawValue,
+            user: .dummy(userId: otherUser.id)
+        )
         // Handle a new TypingStart event for the current user and collect resulting events
         let forwardedEvent = middleware!.handle(event: startTyping, session: database.viewContext)
         // Assert `TypingStart` event is propagated synchronously
@@ -90,7 +105,14 @@ final class TypingStartCleanupMiddleware_Tests: XCTestCase {
 
         // Wait for more time and expect a `CleanUpTypingEvent` event.
         time.run(numberOfSeconds: 2)
-        let stopTyping = CleanUpTypingEvent(cid: cid, userId: otherUser.id)
+        let stopTyping = TypingStopEvent(
+            channelId: cid.id,
+            channelType: cid.type.rawValue,
+            cid: cid.rawValue,
+            createdAt: .unique,
+            type: EventType.userStartTyping.rawValue,
+            user: .dummy(userId: otherUser.id)
+        )
         XCTAssertEqual(emittedEvents.map(\.asEquatable), [stopTyping.asEquatable])
 
         // Wait much longer and assert no more `typingStop` events.

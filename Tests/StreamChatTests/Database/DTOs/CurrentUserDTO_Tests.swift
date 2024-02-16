@@ -22,7 +22,7 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
     }
 
     func test_currentUserPayload_customRolesEncoding() throws {
-        let payload: CurrentUserPayload = .dummy(userPayload: .dummy(userId: .unique, role: UserRole("banana-master")))
+        let payload: OwnUser = .dummy(userId: .unique, role: UserRole("banana-master"))
 
         // Asynchronously save the payload to the db
         try database.writeSynchronously { session in
@@ -38,38 +38,40 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
     }
 
     func test_currentUserPayload_isStoredAndLoadedFromDB() throws {
-        let userPayload: UserPayload = .dummy(
+        let userPayload: UserObject = .dummy(
             userId: .unique,
             extraData: ["k": .string("v")],
             language: "pt"
         )
 
-        let payload: CurrentUserPayload = .dummy(
-            userPayload: userPayload,
-            devices: [DevicePayload.dummy],
+        let payload = OwnUser.dummy(
+            userId: userPayload.id,
+            role: UserRole(rawValue: userPayload.role!),
+            extraData: userPayload.custom ?? [:],
+            devices: [.dummy],
             mutedUsers: [
                 .dummy(userId: .unique),
                 .dummy(userId: .unique),
                 .dummy(userId: .unique)
             ],
             mutedChannels: [
-                .init(
-                    mutedChannel: .dummy(cid: .unique),
-                    user: userPayload,
+                ChannelMute(
                     createdAt: .unique,
-                    updatedAt: .unique
+                    updatedAt: .unique,
+                    channel: .dummy(cid: .unique),
+                    user: userPayload
                 ),
-                .init(
-                    mutedChannel: .dummy(cid: .unique),
-                    user: userPayload,
+                ChannelMute(
                     createdAt: .unique,
-                    updatedAt: .unique
+                    updatedAt: .unique,
+                    channel: .dummy(cid: .unique),
+                    user: userPayload
                 )
             ]
         )
 
-        let mutedUserIDs = Set(payload.mutedUsers.map(\.mutedUser.id))
-        let mutedChannelIDs = Set(payload.mutedChannels.map(\.mutedChannel.cid))
+        let mutedUserIDs = Set(payload.mutes.map(\.?.user?.id))
+        let mutedChannelIDs = Set(payload.channelMutes.map(\.?.channel?.cid))
 
         // Asynchronously save the payload to the db
         try database.writeSynchronously { session in
@@ -82,26 +84,27 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
         )
 
         XCTAssertEqual(payload.id, loadedCurrentUser.id)
-        XCTAssertEqual(payload.isOnline, loadedCurrentUser.isOnline)
-        XCTAssertEqual(payload.isInvisible, loadedCurrentUser.isInvisible)
-        XCTAssertEqual(payload.isBanned, loadedCurrentUser.isBanned)
-        XCTAssertEqual(payload.role, loadedCurrentUser.userRole)
+        XCTAssertEqual(payload.online, loadedCurrentUser.isOnline)
+        XCTAssertEqual(payload.invisible, loadedCurrentUser.isInvisible)
+        XCTAssertEqual(payload.banned, loadedCurrentUser.isBanned)
+        XCTAssertEqual(payload.role, loadedCurrentUser.userRole.rawValue)
         XCTAssertEqual(payload.createdAt, loadedCurrentUser.userCreatedAt)
         XCTAssertEqual(payload.updatedAt, loadedCurrentUser.userUpdatedAt)
-        XCTAssertEqual(payload.lastActiveAt, loadedCurrentUser.lastActiveAt)
-        XCTAssertEqual(payload.unreadCount, loadedCurrentUser.unreadCount)
-        XCTAssertEqual(payload.extraData, loadedCurrentUser.extraData)
+        XCTAssertEqual(payload.lastActive, loadedCurrentUser.lastActiveAt)
+        XCTAssertEqual(payload.unreadChannels, loadedCurrentUser.unreadCount.channels)
+        XCTAssertEqual(payload.totalUnreadCount, loadedCurrentUser.unreadCount.messages)
+        XCTAssertEqual(payload.custom, loadedCurrentUser.extraData)
         XCTAssertEqual(mutedUserIDs, Set(loadedCurrentUser.mutedUsers.map(\.id)))
         XCTAssertEqual(payload.devices.count, loadedCurrentUser.devices.count)
         XCTAssertEqual(payload.devices.first?.id, loadedCurrentUser.devices.first?.id)
-        XCTAssertEqual(Set(payload.teams), loadedCurrentUser.teams)
-        XCTAssertEqual(mutedChannelIDs, Set(loadedCurrentUser.mutedChannels.map(\.cid)))
+        XCTAssertEqual(Set(payload.teams ?? []), loadedCurrentUser.teams)
+        XCTAssertEqual(mutedChannelIDs, Set(loadedCurrentUser.mutedChannels.map(\.cid.rawValue)))
         XCTAssertEqual(payload.language, loadedCurrentUser.language?.languageCode)
     }
 
     func test_savingCurrentUser_removesCurrentDevice() throws {
-        let initialDevice = DevicePayload.dummy
-        let initialCurrentUserPayload = CurrentUserPayload.dummy(userId: .unique, role: .admin, devices: [initialDevice])
+        let initialDevice = Device.dummy
+        let initialCurrentUserPayload = OwnUser.dummy(userId: .unique, role: .admin, devices: [initialDevice])
 
         // Save the payload to the db
         try database.writeSynchronously { session in
@@ -119,7 +122,7 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
         // ..and is set to currentDevice
         XCTAssertNotEqual(currentUser?.currentDevice, nil)
 
-        let newCurrentUserPayload = CurrentUserPayload.dummy(userId: initialCurrentUserPayload.id, role: .admin, devices: [.dummy])
+        let newCurrentUserPayload = OwnUser.dummy(userId: initialCurrentUserPayload.id, role: .admin, devices: [.dummy])
 
         // Save the payload to the db
         try database.writeSynchronously { session in
@@ -136,22 +139,24 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
 
     func test_saveCurrentUser_removesChannelMutesNotInPayload() throws {
         // GIVEN
-        let userPayload: UserPayload = .dummy(userId: .unique)
-        let mute1 = MutedChannelPayload(
-            mutedChannel: .dummy(cid: .unique),
-            user: userPayload,
+        let userPayload: UserObject = .dummy(userId: .unique)
+        let mute1 = ChannelMute(
             createdAt: .unique,
-            updatedAt: .unique
+            updatedAt: .unique,
+            channel: .dummy(cid: .unique),
+            user: userPayload
         )
-        let mute2 = MutedChannelPayload(
-            mutedChannel: .dummy(cid: .unique),
-            user: userPayload,
+        let mute2 = ChannelMute(
             createdAt: .unique,
-            updatedAt: .unique
+            updatedAt: .unique,
+            channel: .dummy(cid: .unique),
+            user: userPayload
         )
 
-        let payloadWithMutes: CurrentUserPayload = .dummy(
-            userPayload: userPayload,
+        let payloadWithMutes = OwnUser.dummy(
+            userId: userPayload.id,
+            role: UserRole(rawValue: userPayload.role!),
+            extraData: userPayload.custom ?? [:],
             mutedChannels: [mute1, mute2]
         )
 
@@ -163,14 +168,16 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
         XCTAssertEqual(try! database.viewContext.count(for: allMutesRequest), 2)
 
         // WHEN
-        let mute3 = MutedChannelPayload(
-            mutedChannel: .dummy(cid: .unique),
-            user: userPayload,
+        let mute3 = ChannelMute(
             createdAt: .unique,
-            updatedAt: .unique
+            updatedAt: .unique,
+            channel: .dummy(cid: .unique),
+            user: userPayload
         )
-        let payloadWithUpdatedMutes: CurrentUserPayload = .dummy(
-            userPayload: userPayload,
+        let payloadWithUpdatedMutes = OwnUser.dummy(
+            userId: userPayload.id,
+            role: UserRole(rawValue: userPayload.role!),
+            extraData: userPayload.custom ?? [:],
             mutedChannels: [mute1, mute3]
         )
         try database.writeSynchronously { session in
@@ -181,14 +188,14 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
         XCTAssertEqual(try! database.viewContext.count(for: allMutesRequest), 2)
         XCTAssertEqual(
             Set(database.viewContext.currentUser?.channelMutes.map(\.channel.cid) ?? []),
-            Set(payloadWithUpdatedMutes.mutedChannels.map(\.mutedChannel.cid.rawValue))
+            Set(payloadWithUpdatedMutes.channelMutes.map(\.?.channel?.cid))
         )
     }
 
     func test_defaultExtraDataIsUsed_whenExtraDataDecodingFails() throws {
         let userId: UserId = .unique
 
-        let payload: CurrentUserPayload = .dummy(userId: userId, role: .user)
+        let payload: OwnUser = .dummy(userId: userId, role: .user)
 
         try database.writeSynchronously { session in
             // Save the user
