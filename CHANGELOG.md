@@ -3,6 +3,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### ✅ Added
+- Add parallel attachment uploading [#3034](https://github.com/GetStream/stream-chat-swift/pull/3034)
+
 ## StreamChatUI
 ### 🐞 Fixed
 - Fix composer link preview overridden by previous enrichment [#3025](https://github.com/GetStream/stream-chat-swift/pull/3025)
