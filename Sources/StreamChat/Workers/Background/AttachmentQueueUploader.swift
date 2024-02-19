@@ -59,26 +59,24 @@ class AttachmentQueueUploader: Worker {
     private func handleChanges(changes: [ListChange<AttachmentDTO>]) {
         guard !changes.isEmpty else { return }
 
+        // Only start uploading attachment when inserted and it is present in pendingAttachmentIds
         database.backgroundReadOnlyContext.perform { [weak self] in
-            var wasEmpty: Bool = false
             self?._pendingAttachmentIDs.mutate { pendingAttachmentIDs in
-                wasEmpty = pendingAttachmentIDs.isEmpty
-                changes.pendingUploadAttachmentIDs.forEach {
+                let newAttachmentIds = Set(changes.attachmentIDs).subtracting(pendingAttachmentIDs)
+                newAttachmentIds.forEach {
                     pendingAttachmentIDs.insert($0)
                 }
-            }
-            if wasEmpty {
-                self?.uploadNextAttachment()
+                newAttachmentIds.forEach { id in
+                    self?.uploadAttachment(with: id)
+                }
             }
         }
     }
 
-    private func uploadNextAttachment() {
-        guard let attachmentID = pendingAttachmentIDs.first else { return }
-
-        prepareAttachmentForUpload(with: attachmentID) { [weak self] attachment in
+    private func uploadAttachment(with id: AttachmentId) {
+        prepareAttachmentForUpload(with: id) { [weak self] attachment in
             guard let attachment = attachment else {
-                self?.removeAttachmentIDAndContinue(attachmentID)
+                self?.removePendingAttachment(with: id)
                 return
             }
 
@@ -86,7 +84,7 @@ class AttachmentQueueUploader: Worker {
                 attachment,
                 progress: {
                     self?.updateAttachmentIfNeeded(
-                        attachmentId: attachmentID,
+                        attachmentId: id,
                         uploadedAttachment: nil,
                         newState: .uploading(progress: $0),
                         completion: {}
@@ -94,11 +92,11 @@ class AttachmentQueueUploader: Worker {
                 },
                 completion: { result in
                     self?.updateAttachmentIfNeeded(
-                        attachmentId: attachmentID,
+                        attachmentId: id,
                         uploadedAttachment: result.value,
                         newState: result.error == nil ? .uploaded : .uploadingFailed,
                         completion: {
-                            self?.removeAttachmentIDAndContinue(attachmentID)
+                            self?.removePendingAttachment(with: id)
                         }
                     )
                 }
@@ -128,9 +126,8 @@ class AttachmentQueueUploader: Worker {
         }
     }
 
-    private func removeAttachmentIDAndContinue(_ id: AttachmentId) {
+    private func removePendingAttachment(with id: AttachmentId) {
         _pendingAttachmentIDs.mutate { $0.remove(id) }
-        uploadNextAttachment()
     }
 
     private func updateAttachmentIfNeeded(
@@ -229,7 +226,7 @@ class AttachmentQueueUploader: Worker {
 }
 
 private extension Array where Element == ListChange<AttachmentDTO> {
-    var pendingUploadAttachmentIDs: [AttachmentId] {
+    var attachmentIDs: [AttachmentId] {
         compactMap {
             switch $0 {
             case let .insert(dto, _), let .update(dto, _):
