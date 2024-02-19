@@ -29,6 +29,9 @@ final class SyncRepository_Tests: XCTestCase {
         var config = ChatClientConfig(apiKeyString: .unique)
         config.isLocalStorageEnabled = true
         client = ChatClient_Mock(config: config)
+        database = client.mockDatabaseContainer
+        apiClient = client.mockAPIClient
+        api = API.mock(with: apiClient)
 
         let messageRepository = MessageRepository_Mock(database: client.databaseContainer, apiClient: client.apiClient, api: api)
         offlineRequestsRepository = OfflineRequestsRepository_Mock(
@@ -36,9 +39,6 @@ final class SyncRepository_Tests: XCTestCase {
             database: client.databaseContainer,
             apiClient: client.apiClient
         )
-        database = client.mockDatabaseContainer
-        apiClient = client.mockAPIClient
-        api = API.mock(with: apiClient)
         
         repository = SyncRepository(
             config: client.config,

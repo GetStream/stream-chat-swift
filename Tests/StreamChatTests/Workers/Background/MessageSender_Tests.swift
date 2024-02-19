@@ -48,6 +48,7 @@ final class MessageSender_Tests: XCTestCase {
             Assert.canBeReleased(&sender)
             Assert.canBeReleased(&webSocketClient)
             Assert.canBeReleased(&messageRepository)
+            Assert.canBeReleased(&api)
             Assert.canBeReleased(&apiClient)
             Assert.canBeReleased(&eventsNotificationCenter)
             Assert.canBeReleased(&database)

@@ -12,6 +12,7 @@
   },
   "channel" : {
     "id" : "default-channel-6",
+    "disabled" : false,
     "members" : [
       {
         "created_at" : "2021-04-15T11:26:37.188158Z",
@@ -19,6 +20,7 @@
         "shadow_banned" : false,
         "user_id" : "leia_organa",
         "updated_at" : "2021-04-15T11:26:37.188158Z",
+        "channel_role" : "user",
         "user" : {
           "banned" : false,
           "online" : true,
@@ -37,6 +39,7 @@
         "shadow_banned" : false,
         "user_id" : "luke_skywalker",
         "updated_at" : "2021-04-15T11:26:37.188158Z",
+        "channel_role" : "user",
         "user" : {
           "banned" : false,
           "online" : true,
@@ -55,6 +58,7 @@
         "shadow_banned" : false,
         "user_id" : "han_solo",
         "updated_at" : "2021-04-15T11:26:37.188159Z",
+        "channel_role" : "user",
         "user" : {
           "banned" : false,
           "online" : false,
@@ -73,6 +77,7 @@
         "shadow_banned" : false,
         "user_id" : "lando_calrissian",
         "updated_at" : "2021-04-15T11:26:37.188159Z",
+        "channel_role" : "user",
         "user" : {
           "banned" : false,
           "online" : false,
@@ -91,6 +96,7 @@
         "shadow_banned" : false,
         "user_id" : "anakin_skywalker",
         "updated_at" : "2021-04-15T11:26:37.18816Z",
+        "channel_role" : "user",
         "user" : {
           "banned" : false,
           "online" : false,
@@ -109,6 +115,7 @@
         "shadow_banned" : false,
         "user_id" : "c-3po",
         "updated_at" : "2021-04-15T11:26:37.18816Z",
+        "channel_role" : "user",
         "user" : {
           "banned" : false,
           "online" : false,
@@ -127,6 +134,7 @@
         "shadow_banned" : false,
         "user_id" : "chewbacca",
         "updated_at" : "2021-04-15T11:26:37.18816Z",
+        "channel_role" : "user",
         "user" : {
           "banned" : false,
           "online" : false,
@@ -145,6 +153,7 @@
         "shadow_banned" : false,
         "user_id" : "r2-d2",
         "updated_at" : "2021-04-15T11:26:37.18816Z",
+        "channel_role" : "user",
         "user" : {
           "banned" : false,
           "online" : false,
@@ -163,6 +172,7 @@
         "shadow_banned" : false,
         "user_id" : "mace_windu",
         "updated_at" : "2021-04-15T11:26:37.188161Z",
+        "channel_role" : "user",
         "user" : {
           "banned" : false,
           "online" : false,
@@ -181,6 +191,7 @@
         "shadow_banned" : false,
         "user_id" : "obi-wan_kenobi",
         "updated_at" : "2021-04-15T11:26:37.188161Z",
+        "channel_role" : "user",
         "user" : {
           "banned" : false,
           "online" : false,
@@ -199,6 +210,7 @@
         "shadow_banned" : false,
         "user_id" : "padme_amidala",
         "updated_at" : "2021-04-15T11:26:37.188161Z",
+        "channel_role" : "user",
         "user" : {
           "banned" : false,
           "online" : false,
@@ -217,6 +229,7 @@
         "shadow_banned" : false,
         "user_id" : "qui-gon_jinn",
         "updated_at" : "2021-04-15T11:26:37.188161Z",
+        "channel_role" : "user",
         "user" : {
           "banned" : false,
           "online" : false,
@@ -235,6 +248,7 @@
         "shadow_banned" : false,
         "user_id" : "count_dooku",
         "updated_at" : "2021-04-15T11:26:37.188162Z",
+        "channel_role" : "user",
         "user" : {
           "banned" : false,
           "online" : false,
@@ -253,6 +267,7 @@
         "shadow_banned" : false,
         "user_id" : "darth_maul",
         "updated_at" : "2021-04-15T11:26:37.188162Z",
+        "channel_role" : "user",
         "user" : {
           "banned" : false,
           "online" : false,
@@ -271,6 +286,7 @@
         "shadow_banned" : false,
         "user_id" : "general_grievous",
         "updated_at" : "2021-04-15T11:26:37.188162Z",
+        "channel_role" : "user",
         "user" : {
           "banned" : false,
           "online" : false,
@@ -289,6 +305,7 @@
         "shadow_banned" : false,
         "user_id" : "jar_jar_binks",
         "updated_at" : "2021-04-15T11:26:37.188162Z",
+        "channel_role" : "user",
         "user" : {
           "banned" : false,
           "online" : false,
@@ -319,6 +336,10 @@
       "push_notifications" : true,
       "updated_at" : "2021-03-01T19:26:18.406502Z",
       "automod_behavior" : "flag",
+      "custom_events" : false,
+      "mark_messages_pending" : false,
+      "push_notifications" : false,
+      "reminders" : false,
       "commands" : [
         {
           "set" : "fun_set",

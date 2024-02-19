@@ -7,10 +7,6 @@ import Foundation
 import XCTest
 
 final class RequestEncoder_Spy: RequestEncoder, Spy {
-    func encode(request: URLRequest, requiresConnectionId: Bool, requiresToken: Bool, completion: @escaping (Result<URLRequest, Error>) -> Void) {
-        
-    }
-    
     var recordedFunctions: [String] = []
     let init_baseURL: URL
     let init_apiKey: APIKey
@@ -28,6 +24,16 @@ final class RequestEncoder_Spy: RequestEncoder, Spy {
     ) where ResponsePayload: Decodable {
         record()
         encodeRequest_endpoints.append(AnyEndpoint(endpoint))
+        encodeRequest_completion = completion
+
+        if let result = encodeRequest {
+            completion(result)
+        }
+        onEncodeRequestCall?()
+    }
+    
+    func encode(request: URLRequest, requiresConnectionId: Bool, requiresToken: Bool, completion: @escaping (Result<URLRequest, Error>) -> Void) {
+        record()
         encodeRequest_completion = completion
 
         if let result = encodeRequest {

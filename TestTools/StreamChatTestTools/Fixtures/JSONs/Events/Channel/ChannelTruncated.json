@@ -15,6 +15,7 @@
         "created_by" : null,
         "truncated_at" : "2022-02-16T08:20:13.862494Z",
         "frozen" : false,
+        "disabled" : false,
         "config" : {
             "typing_events" : true,
             "connect_events" : true,
@@ -22,6 +23,10 @@
             "replies" : true,
             "quotes" : true,
             "uploads" : true,
+            "custom_events" : false,
+            "mark_messages_pending" : false,
+            "push_notifications" : false,
+            "reminders" : false,
             "commands" : [
                 {
                     "set" : "fun_set",
@@ -85,6 +90,7 @@
                 "shadow_banned" : false,
                 "user_id" : "broken-waterfall-5",
                 "updated_at" : "2020-11-13T08:55:55.473851Z",
+                "channel_role" : "user",
                 "user" : {
                     "banned" : false,
                     "online" : true,
@@ -104,6 +110,7 @@
                 "shadow_banned" : false,
                 "user_id" : "148ff9e8-46c8-314f-89b2-9fabb685ee9f",
                 "updated_at" : "2020-11-13T08:55:55.473852Z",
+                "channel_role" : "user",
                 "user" : {
                     "banned" : false,
                     "online" : false,

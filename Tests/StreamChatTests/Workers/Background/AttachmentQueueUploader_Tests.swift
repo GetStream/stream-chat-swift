@@ -31,6 +31,7 @@ final class AttachmentQueueUploader_Tests: XCTestCase {
         AssertAsync {
             Assert.canBeReleased(&queueUploader)
             Assert.canBeReleased(&webSocketClient)
+            Assert.canBeReleased(&api)
             Assert.canBeReleased(&apiClient)
             Assert.canBeReleased(&database)
         }

@@ -259,7 +259,7 @@ extension API {
         let apiKey = APIKey.init("")
         return API(
             apiClient: apiClient,
-            encoder: DefaultRequestEncoder(
+            encoder: RequestEncoder_Spy(
                 baseURL: URL(string: basePath)!,
                 apiKey: apiKey
             ),

@@ -116,6 +116,17 @@ final class APIClient_Spy: APIClient, Spy {
         _request_allRecordedCalls.mutate { $0.append((request_endpoint!, request_completion!)) }
         request_expectation.fulfill()
     }
+    
+    override func request<Response>(
+        _ request: URLRequest,
+        isRecoveryOperation: Bool,
+        completion: @escaping (Result<Response, Error>) -> Void) where Response : Decodable {
+        if let result = request_result as? Result<Response, Error> {
+            completion(result)
+        }
+        request_completion = completion
+        request_expectation.fulfill()
+    }
 
     func recoveryRequest<Response>(
         endpoint: Endpoint<Response>,

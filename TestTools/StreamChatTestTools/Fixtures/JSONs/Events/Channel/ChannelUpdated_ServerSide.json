@@ -1,11 +1,15 @@
 {
     "channel" : {
         "id" : "new_channel_7070",
+        "disabled" : false,
         "members" : [
             {
                 "created_at" : "2020-07-16T12:50:34.79057Z",
                 "user_id" : "broken-waterfall-5",
                 "updated_at" : "2020-07-16T12:50:34.79057Z",
+                "banned": false,
+                "channel_role": "user",
+                "shadow_banned": false,
                 "user" : {
                     "id" : "broken-waterfall-5",
                     "banned" : false,
@@ -31,6 +35,9 @@
                 "created_at" : "2020-07-16T15:38:56.905657Z",
                 "user_id" : "steep-moon-9",
                 "updated_at" : "2020-07-16T15:38:56.905657Z",
+                "banned": false,
+                "channel_role": "user",
+                "shadow_banned": false,
                 "user" : {
                     "id" : "steep-moon-9",
                     "banned" : false,
@@ -101,7 +108,11 @@
             "search" : false,
             "message_retention" : "infinite",
             "uploads" : true,
-            "name" : "messaging"
+            "name" : "messaging",
+            "mark_messages_pending" : false,
+            "push_notifications" : false,
+            "reminders" : false,
+            "custom_events" : false
         },
         "name" : "7070",
         "last_message_at" : "2020-07-16T15:39:03.010717Z"

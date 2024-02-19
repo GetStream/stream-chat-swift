@@ -35,6 +35,7 @@ final class ChannelEventsController_Tests: XCTestCase {
         apiClient.cleanUp()
         eventSender.cleanUp()
         AssertAsync {
+            Assert.canBeReleased(&api)
             Assert.canBeReleased(&apiClient)
             Assert.canBeReleased(&notificationCenter)
             Assert.canBeReleased(&database)

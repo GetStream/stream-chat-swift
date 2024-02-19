@@ -33,6 +33,7 @@ final class UserUpdater_Tests: XCTestCase {
         AssertAsync {
             Assert.canBeReleased(&userUpdater)
             Assert.canBeReleased(&webSocketClient)
+            Assert.canBeReleased(&api)
             Assert.canBeReleased(&apiClient)
             Assert.canBeReleased(&database)
         }

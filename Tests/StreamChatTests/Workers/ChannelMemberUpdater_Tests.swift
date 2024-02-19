@@ -32,6 +32,7 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
         AssertAsync {
             Assert.canBeReleased(&updater)
             Assert.canBeReleased(&webSocketClient)
+            Assert.canBeReleased(&api)
             Assert.canBeReleased(&apiClient)
             Assert.canBeReleased(&database)
         }

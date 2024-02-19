@@ -6,6 +6,7 @@
   "channel": {
     "id": "default-channel-1",
     "type": "messaging",
+    "disabled": false,
     "cid": "messaging:default-channel-1",
     "created_at": "2021-04-15T11:23:42.167781Z",
     "updated_at": "2021-04-15T11:23:42.167781Z",
@@ -27,6 +28,7 @@
           "image": "./static/media/photo-1541271696563-3be2f555fc4e.4e84f363.jpeg"
         },
         "role": "owner",
+        "channel_role": "owner",
         "created_at": "2021-04-15T11:23:42.170933Z",
         "updated_at": "2021-04-15T11:23:42.170933Z",
         "banned": false,
@@ -46,6 +48,7 @@
           "name": "Han Solo"
         },
         "role": "member",
+        "channel_role": "owner",
         "created_at": "2021-04-15T11:23:42.170934Z",
         "updated_at": "2021-04-15T11:23:42.170934Z",
         "banned": false,
@@ -68,7 +71,8 @@
         "created_at": "2021-04-15T11:23:42.170934Z",
         "updated_at": "2021-04-15T11:23:42.170934Z",
         "banned": false,
-        "shadow_banned": false
+        "shadow_banned": false,
+        "channel_role": "owner"
       },
       {
         "user_id": "leia_organa",
@@ -87,7 +91,8 @@
         "created_at": "2021-04-15T11:23:42.170934Z",
         "updated_at": "2021-04-15T11:23:42.170934Z",
         "banned": false,
-        "shadow_banned": false
+        "shadow_banned": false,
+        "channel_role": "owner"
       },
       {
         "user_id": "anakin_skywalker",
@@ -106,7 +111,8 @@
         "created_at": "2021-04-15T11:23:42.170935Z",
         "updated_at": "2021-04-15T11:23:42.170935Z",
         "banned": false,
-        "shadow_banned": false
+        "shadow_banned": false,
+        "channel_role": "owner"
       },
       {
         "user_id": "c-3po",
@@ -125,7 +131,8 @@
         "created_at": "2021-04-15T11:23:42.170935Z",
         "updated_at": "2021-04-15T11:23:42.170935Z",
         "banned": false,
-        "shadow_banned": false
+        "shadow_banned": false,
+        "channel_role": "owner"
       },
       {
         "user_id": "r2-d2",
@@ -144,7 +151,8 @@
         "created_at": "2021-04-15T11:23:42.170935Z",
         "updated_at": "2021-04-15T11:23:42.170935Z",
         "banned": false,
-        "shadow_banned": false
+        "shadow_banned": false,
+        "channel_role": "owner"
       },
       {
         "user_id": "mace_windu",
@@ -163,7 +171,8 @@
         "created_at": "2021-04-15T11:23:42.170936Z",
         "updated_at": "2021-04-15T11:23:42.170936Z",
         "banned": false,
-        "shadow_banned": false
+        "shadow_banned": false,
+        "channel_role": "owner"
       },
       {
         "user_id": "obi-wan_kenobi",
@@ -182,7 +191,8 @@
         "created_at": "2021-04-15T11:23:42.170936Z",
         "updated_at": "2021-04-15T11:23:42.170936Z",
         "banned": false,
-        "shadow_banned": false
+        "shadow_banned": false,
+        "channel_role": "owner"
       },
       {
         "user_id": "qui-gon_jinn",
@@ -201,7 +211,8 @@
         "created_at": "2021-04-15T11:23:42.170936Z",
         "updated_at": "2021-04-15T11:23:42.170936Z",
         "banned": false,
-        "shadow_banned": false
+        "shadow_banned": false,
+        "channel_role": "owner"
       },
       {
         "user_id": "count_dooku",
@@ -220,7 +231,8 @@
         "created_at": "2021-04-15T11:23:42.170937Z",
         "updated_at": "2021-04-15T11:23:42.170937Z",
         "banned": false,
-        "shadow_banned": false
+        "shadow_banned": false,
+        "channel_role": "owner"
       },
       {
         "user_id": "darth_maul",
@@ -239,7 +251,8 @@
         "created_at": "2021-04-15T11:23:42.170937Z",
         "updated_at": "2021-04-15T11:23:42.170937Z",
         "banned": false,
-        "shadow_banned": false
+        "shadow_banned": false,
+        "channel_role": "owner"
       },
       {
         "user_id": "general_grievous",
@@ -258,7 +271,8 @@
         "created_at": "2021-04-15T11:23:42.170937Z",
         "updated_at": "2021-04-15T11:23:42.170937Z",
         "banned": false,
-        "shadow_banned": false
+        "shadow_banned": false,
+        "channel_role": "owner"
       },
       {
         "user_id": "jar_jar_binks",
@@ -277,13 +291,18 @@
         "created_at": "2021-04-15T11:23:42.170937Z",
         "updated_at": "2021-04-15T11:23:42.170937Z",
         "banned": false,
-        "shadow_banned": false
+        "shadow_banned": false,
+        "channel_role": "owner"
       }
     ],
     "config": {
       "created_at": "2021-03-01T19:26:18.406502Z",
       "updated_at": "2021-03-01T19:26:18.406502Z",
       "name": "messaging",
+      "custom_events" : false,
+      "mark_messages_pending" : false,
+      "push_notifications" : false,
+      "reminders" : false,
       "typing_events": true,
       "read_events": true,
       "connect_events": true,

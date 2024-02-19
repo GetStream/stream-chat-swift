@@ -46,6 +46,7 @@ final class MessageUpdater_Tests: XCTestCase {
             Assert.canBeReleased(&messageRepository)
             Assert.canBeReleased(&messageUpdater)
             Assert.canBeReleased(&webSocketClient)
+            Assert.canBeReleased(&api)
             Assert.canBeReleased(&apiClient)
             Assert.canBeReleased(&database)
         }

@@ -38,6 +38,7 @@ final class NewUserQueryUpdater_Tests: XCTestCase {
             Assert.canBeReleased(&newUserQueryUpdater)
             Assert.canBeReleased(&database)
             Assert.canBeReleased(&webSocketClient)
+            Assert.canBeReleased(&api)
             Assert.canBeReleased(&apiClient)
             Assert.canBeReleased(&env)
         }

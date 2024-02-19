@@ -9,6 +9,7 @@ import XCTest
 final class MessageEditor_Tests: XCTestCase {
     var webSocketClient: WebSocketClient_Mock!
     var apiClient: APIClient_Spy!
+    var api: API!
     var database: DatabaseContainer_Spy!
     var messageRepository: MessageRepository_Mock!
     var editor: MessageEditor!
@@ -21,7 +22,7 @@ final class MessageEditor_Tests: XCTestCase {
         webSocketClient = WebSocketClient_Mock()
         apiClient = APIClient_Spy()
         database = DatabaseContainer_Spy()
-        let api = API(apiClient: apiClient, encoder: DefaultRequestEncoder(baseURL: URL(string: "https://test.com")!, apiKey: .init("test")), basePath: "test", apiKey: .init("test"))
+        api = API.mock(with: apiClient)
         messageRepository = MessageRepository_Mock(database: database, apiClient: apiClient, api: api)
         editor = MessageEditor(messageRepository: messageRepository, database: database, api: api)
     }
@@ -34,6 +35,7 @@ final class MessageEditor_Tests: XCTestCase {
             Assert.canBeReleased(&messageRepository)
             Assert.canBeReleased(&editor)
             Assert.canBeReleased(&webSocketClient)
+            Assert.canBeReleased(&api)
             Assert.canBeReleased(&apiClient)
             Assert.canBeReleased(&database)
         }
@@ -177,8 +179,8 @@ final class MessageEditor_Tests: XCTestCase {
         AssertAsync.willBeTrue(apiClient.request_endpoint != nil)
 
         // Simulate successfull API response
-        let callback = apiClient.request_completion as! (Result<EmptyResponse, Error>) -> Void
-        callback(.success(.init()))
+        let callback = apiClient.request_completion as? (Result<EmptyResponse, Error>) -> Void
+        callback?(.success(.init()))
 
         // Check the state is eventually changed to `nil`
         AssertAsync.willBeEqual(messageRepository.updatedMessageLocalState, nil)

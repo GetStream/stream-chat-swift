@@ -30,6 +30,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         apiClient.cleanUp()
 
         AssertAsync {
+            Assert.canBeReleased(&api)
             Assert.canBeReleased(&apiClient)
             Assert.canBeReleased(&listUpdater)
             Assert.canBeReleased(&database)

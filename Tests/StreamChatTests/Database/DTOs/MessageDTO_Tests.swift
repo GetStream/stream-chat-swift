@@ -487,7 +487,10 @@ final class MessageDTO_Tests: XCTestCase {
         let channelId: ChannelId = .unique
 
         let ChannelStateResponse: ChannelResponse = .dummy(cid: channelId)
-
+        try! database.writeSynchronously { session in
+            try session.saveChannel(payload: ChannelStateResponse)
+        }
+        
         let quotedMessage: Message = .dummy(
             messageId: .unique,
             authorUserId: userId,
@@ -600,13 +603,13 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(Message.pinned, loadedMessage?.pinned)
         XCTAssertNearlySameDate(Message.pinExpires, loadedMessage?.pinExpires?.bridgeDate)
         XCTAssertNearlySameDate(Message.pinnedAt, loadedMessage?.pinnedAt?.bridgeDate)
-        XCTAssertEqual(Message.pinnedBy!.id, loadedMessage?.pinnedBy!.id)
+        XCTAssertEqual(Message.pinnedBy?.id, loadedMessage?.pinnedBy?.id)
         XCTAssertEqual(
             Message.mentionedUsers.map(\.id),
             loadedMessage?.mentionedUsers.map(\.id)
         )
         XCTAssertEqual(
-            Message.threadParticipants!.map(\.id),
+            Message.threadParticipants?.map(\.id),
             (loadedMessage?.threadParticipants.array as? [UserDTO])?.map(\.id)
         )
         XCTAssertEqual(Int32(Message.replyCount), loadedMessage?.replyCount)
@@ -731,7 +734,7 @@ final class MessageDTO_Tests: XCTestCase {
             Assert.willBeEqual(Message.pinned, loadedMessage?.pinned)
             Assert.willBeEqual(Message.pinExpires?.bridgeDate, loadedMessage?.pinExpires!)
             Assert.willBeEqual(Message.pinnedAt?.bridgeDate, loadedMessage?.pinnedAt!)
-            Assert.willBeEqual(Message.pinnedBy!.id, loadedMessage?.pinnedBy!.id)
+            Assert.willBeEqual(Message.pinnedBy?.id, loadedMessage?.pinnedBy?.id)
             Assert.willBeEqual(
                 Message.mentionedUsers.map(\.id),
                 loadedMessage?.mentionedUsers.map(\.id)
@@ -3744,8 +3747,11 @@ final class MessageDTO_Tests: XCTestCase {
             _ = try! context.saveCurrentUser(payload: .dummy(userId: message.user!.id, role: UserRole(rawValue: message.user!.role!)))
         }
 
+        let cid = try! ChannelId(cid: message.cid)
+        try! context.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
+        
         let messageDTO = try! XCTUnwrap(
-            context.saveMessage(payload: message, for: .unique, cache: nil)
+            context.saveMessage(payload: message, for: cid, cache: nil)
         )
         messageDTO.localMessageState = messageLocalState
 
