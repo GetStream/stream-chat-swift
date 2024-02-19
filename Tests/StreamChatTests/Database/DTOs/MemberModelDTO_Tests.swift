@@ -69,16 +69,16 @@ final class MemberModelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.banExpires, loadedMember?.banExpiresAt)
             Assert.willBeEqual(payload.shadowBanned, loadedMember?.isShadowBannedFromChannel)
 
-            Assert.willBeEqual(payload.user!.id, loadedMember?.id)
-            Assert.willBeEqual(payload.user!.online, loadedMember?.isOnline)
-            Assert.willBeEqual(payload.user!.banned, loadedMember?.isBanned)
-            Assert.willBeEqual(payload.user!.role, loadedMember?.userRole.rawValue)
-            Assert.willBeEqual(payload.user!.createdAt, loadedMember?.userCreatedAt)
-            Assert.willBeEqual(payload.user!.updatedAt, loadedMember?.userUpdatedAt)
-            Assert.willBeEqual(payload.user!.lastActive, loadedMember?.lastActiveAt)
-            Assert.willBeEqual(payload.user!.custom, loadedMember?.extraData)
-            Assert.willBeEqual(Set(payload.user!.teams!), loadedMember?.teams)
-            Assert.willBeEqual(payload.user!.language!, loadedMember?.language?.languageCode)
+            Assert.willBeEqual(payload.user?.id, loadedMember?.id)
+            Assert.willBeEqual(payload.user?.online, loadedMember?.isOnline)
+            Assert.willBeEqual(payload.user?.banned, loadedMember?.isBanned)
+            Assert.willBeEqual(payload.user?.role, loadedMember?.userRole.rawValue)
+            Assert.willBeEqual(payload.user?.createdAt, loadedMember?.userCreatedAt)
+            Assert.willBeEqual(payload.user?.updatedAt, loadedMember?.userUpdatedAt)
+            Assert.willBeEqual(payload.user?.lastActive, loadedMember?.lastActiveAt)
+            Assert.willBeEqual(payload.user?.custom, loadedMember?.extraData)
+            Assert.willBeEqual(Set(payload.user?.teams ?? []), loadedMember?.teams)
+            Assert.willBeEqual(payload.user?.language!, loadedMember?.language?.languageCode)
         }
     }
 

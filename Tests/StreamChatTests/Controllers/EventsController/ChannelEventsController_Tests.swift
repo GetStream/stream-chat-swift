@@ -238,7 +238,8 @@ final class ChannelEventsController_Tests: XCTestCase {
             channelType: cid.type.rawValue,
             cid: cid.rawValue,
             createdAt: .unique,
-            type: EventType.channelUpdated.rawValue
+            type: EventType.channelUpdated.rawValue,
+            channel: .dummy(cid: cid)
         )
         try database.writeSynchronously {
             try $0.saveChannel(payload: event.channel!, query: nil, cache: nil)

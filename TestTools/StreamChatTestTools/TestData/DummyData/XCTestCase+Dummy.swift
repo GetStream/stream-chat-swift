@@ -68,7 +68,7 @@ extension XCTestCase {
         includeMembership: Bool = true,
         messages: [Message]? = nil,
         pinnedMessages: [Message] = [],
-        channelConfig: ChannelConfig = .default,
+        channelConfig: ChannelConfig = .dummy,
         ownCapabilities: [String] = [],
         channelExtraData: [String: RawJSON] = [:],
         createdAt: Date = XCTestCase.channelCreatedDate,
@@ -81,20 +81,37 @@ extension XCTestCase {
             payloadMessages = messages
         } else {
             for _ in 0..<numberOfMessages {
-                payloadMessages += [dummyMessagePayload()]
+                payloadMessages += [dummyMessagePayload(cid: channelId)]
             }
         }
 
         let lastMessageAt: Date? = payloadMessages.map(\.createdAt).max()
 
-        //TODO: expand the response
-        let payload: ChannelStateResponse =
-            .init(
-                duration: "",
+        let payload: ChannelStateResponse = .init(
+            duration: "",
+            members: members,
+            messages: payloadMessages,
+            pinnedMessages: pinnedMessages,
+            hidden: false,
+            watcherCount: watchers?.count,
+            read: channelReads ?? [dummyChannelRead],
+            watchers: watchers ?? [dummyUser],
+            channel: .dummy(
+                cid: channelId,
+                extraData: channelExtraData,
+                lastMessageAt: lastMessageAt,
+                createdAt: createdAt,
+                updatedAt: .unique,
+                truncatedAt: truncatedAt,
+                createdBy: dummyUser,
+                config: channelConfig,
+                isFrozen: true,
+                isHidden: nil,
                 members: members,
-                messages: messages ?? [],
-                pinnedMessages: pinnedMessages
+                team: .unique,
+                cooldownDuration: cooldownDuration ?? .random(in: 0...120)
             )
+        )
 
         return payload
     }
@@ -137,14 +154,14 @@ extension ChannelDatabaseSessionV2 {
         query: ChannelListQuery?,
         cache: PreWarmedCache?
     ) throws -> ChannelDTO {
-        try saveChannel(payload: payload.channel!, query: query, cache: cache)
+        try saveChannel(payload: payload.toResponseFields, query: query, cache: cache)
     }
     
     @discardableResult
     func saveChannel(
         payload: ChannelStateResponse
     ) throws -> ChannelDTO {
-        try saveChannel(payload: payload.channel!, query: nil, cache: nil)
+        try saveChannel(payload: payload.toResponseFields, query: nil, cache: nil)
     }
 }
 
@@ -169,4 +186,31 @@ extension OwnUser {
             isMemberBanned: false
         )
     }
+}
+
+extension ChannelConfig {
+    static let dummy: Self = .init(
+        automod: "",
+        automodBehavior: "",
+        connectEvents: true,
+        createdAt: XCTestCase.channelCreatedDate,
+        customEvents: true,
+        markMessagesPending: true,
+        maxMessageLength: 0,
+        messageRetention: "1000",
+        mutes: true,
+        name: "",
+        pushNotifications: true,
+        quotes: true,
+        reactions: true,
+        readEvents: true,
+        reminders: true,
+        replies: true,
+        search: true,
+        typingEvents: true,
+        updatedAt: Date(),
+        uploads: true,
+        urlEnrichment: true,
+        commands: []
+    )
 }

@@ -239,7 +239,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         }
 
         let expectation = self.expectation(description: "resetChannelsQuery completion")
-        var receivedResult: Result<(synchedAndWatched: [ChatChannel], unwanted: Set<ChannelId>), Error>!
+        var receivedResult: Result<(synchedAndWatched: [ChatChannel], unwanted: Set<ChannelId>), Error>?
         listUpdater.resetChannelsQuery(
             for: query,
             pageSize: query.pagination.pageSize,
@@ -259,7 +259,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
 
         let requests = apiClient.recoveryRequest_allRecordedCalls
         XCTAssertEqual(requests.count, 1)
-        XCTAssertFalse(receivedResult.isError)
+        XCTAssertTrue(receivedResult?.isError == false)
 
         // Should reset pagination
         query.pagination = Pagination(pageSize: 20, offset: 0)
@@ -275,7 +275,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         }
 
         let expectation = self.expectation(description: "resetChannelsQuery completion")
-        var receivedResult: Result<(synchedAndWatched: [ChatChannel], unwanted: Set<ChannelId>), Error>!
+        var receivedResult: Result<(synchedAndWatched: [ChatChannel], unwanted: Set<ChannelId>), Error>?
         listUpdater.resetChannelsQuery(
             for: query,
             pageSize: query.pagination.pageSize,
@@ -297,7 +297,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
 
         let requests = apiClient.recoveryRequest_allRecordedCalls
         XCTAssertEqual(requests.count, 1)
-        XCTAssertNil(receivedResult.error)
+        XCTAssertNil(receivedResult?.error)
 
         // If the query does not exist, the payload should still be saved in database
         XCTAssertEqual(channels(for: query, database: database).count, 1)
@@ -335,7 +335,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
 
         // Reset Channels Query
         let expectation = self.expectation(description: "resetChannelsQuery completion")
-        var receivedResult: Result<(synchedAndWatched: [ChatChannel], unwanted: Set<ChannelId>), Error>!
+        var receivedResult: Result<(synchedAndWatched: [ChatChannel], unwanted: Set<ChannelId>), Error>?
         listUpdater.resetChannelsQuery(
             for: query,
             pageSize: query.pagination.pageSize,
@@ -365,15 +365,15 @@ final class ChannelListUpdater_Tests: XCTestCase {
 
         let requests = apiClient.recoveryRequest_allRecordedCalls
         XCTAssertEqual(requests.count, 1)
-        XCTAssertFalse(receivedResult.isError)
+        XCTAssertTrue(receivedResult?.isError == false)
 
         // Two channels were marked as unwanted
-        XCTAssertEqual(receivedResult.value?.unwanted.count, 2)
-        XCTAssertTrue(receivedResult.value?.unwanted.contains { $0 == outdatedId } == true)
-        XCTAssertTrue(receivedResult.value?.unwanted.contains { $0 == syncedId1 } == true)
+        XCTAssertEqual(receivedResult?.value?.unwanted.count, 2)
+        XCTAssertTrue(receivedResult?.value?.unwanted.contains { $0 == outdatedId } == true)
+        XCTAssertTrue(receivedResult?.value?.unwanted.contains { $0 == syncedId1 } == true)
 
         // Four channels were synched and watched, and are now part of the query
-        XCTAssertEqual(receivedResult.value?.synchedAndWatched.count, 4)
+        XCTAssertEqual(receivedResult?.value?.synchedAndWatched.count, 4)
         let queryChannels = channels(for: query, database: database)
         XCTAssertEqual(queryChannels.count, 4)
         [syncedId2, localId, syncedAndWatchedId, newRemoteChannel].forEach { cid in

@@ -31,19 +31,19 @@ final class CustomDataHashMap_Tests: XCTestCase {
     }
 
     func test_channelDetailJSONDecodeWithoutAnyCustomData() throws {
-        try! assertEmptyCustomData(ChannelResponse.self, "ChannelPayload")
+        try assertEmptyCustomData(ChannelResponse.self, "ChannelPayload")
     }
 
     func test_channelDetailJSONDecodeWithCustomData() throws {
-        try! assertCustomData(ChannelResponse.self, "ChannelPayloadWithCustom")
+        try assertCustomData(ChannelResponse.self, "ChannelPayloadWithCustom")
     }
 
     func test_messageJSONDecodeWithoutAnyCustomData() throws {
-        try! assertEmptyCustomData(Message.self, "MessagePayload")
+        try assertEmptyCustomData(Message.self, "MessagePayload")
     }
 
     func test_messageJSONDecodeWithCustomData() throws {
-        try! assertCustomData(Message.self, "MessagePayloadWithCustom")
+        try assertCustomData(Message.self, "MessagePayloadWithCustom")
     }
 
     // TODO: custom optionality mismatch here.
@@ -56,19 +56,19 @@ final class CustomDataHashMap_Tests: XCTestCase {
 //    }
 
     func test_userJSONDecodeWithoutAnyCustomData() throws {
-        try! assertEmptyCustomData(UserObject.self, "UserPayload")
+        try assertEmptyCustomData(UserObject.self, "UserPayload")
     }
 
     func test_userJSONDecodeWithCustomData() throws {
-        try! assertCustomData(UserObject.self, "UserPayloadWithCustom")
+        try assertCustomData(UserObject.self, "UserPayloadWithCustom")
     }
 
     func test_currentUserJSONDecodeWithoutAnyCustomData() throws {
-        try! assertEmptyCustomData(OwnUser.self, "CurrentUserPayload")
+        try assertEmptyCustomData(OwnUser.self, "CurrentUserPayload")
     }
 
     func test_currentUserJSONDecodeWithCustomData() throws {
-        try! assertCustomData(OwnUser.self, "CurrentUserPayloadWithCustom")
+        try assertCustomData(OwnUser.self, "CurrentUserPayloadWithCustom")
     }
 }
 

@@ -881,6 +881,7 @@ final class ChannelController_Tests: XCTestCase {
         }
     }
 
+    // TODO: fix.
     func test_channelControllerForNewChannel_failedMessageKeepsOrdering_whenLocalTimeIsNotSynced() throws {
         let userId: UserId = .unique
         let channelId: ChannelId = .unique

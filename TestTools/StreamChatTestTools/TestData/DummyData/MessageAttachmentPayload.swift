@@ -22,7 +22,8 @@ extension Attachment {
             "thumb_url" : "\(imageThumbnailURL.absoluteString)",
             "url" : "\(url.absoluteString)",
             "file_size": \(file.size),
-            "mime_type": "\(file.mimeType!)"
+            "mime_type": "\(file.mimeType!)",
+            "custom": {}
         }
         """.data(using: .utf8)!
 

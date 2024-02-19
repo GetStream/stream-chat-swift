@@ -440,7 +440,7 @@ final class MemberController_Tests: XCTestCase {
 
         // Simulate network response with the error.
         let networkError = TestError()
-        env.memberUpdater!.unbanMember_completion!(networkError)
+        env.memberUpdater?.unbanMember_completion?(networkError)
 
         // Assert error is propogated.
         AssertAsync.willBeEqual(completionError as? TestError, networkError)
@@ -465,9 +465,9 @@ final class MemberController_Tests: XCTestCase {
         controller = nil
 
         // Simulate successful network response.
-        env.memberUpdater!.unbanMember_completion!(nil)
+        env.memberUpdater?.unbanMember_completion?(nil)
         // Release reference of completion so we can deallocate stuff
-        env.memberUpdater!.unbanMember_completion = nil
+        env.memberUpdater?.unbanMember_completion = nil
 
         // Assert completion is called.
         AssertAsync.willBeTrue(completionIsCalled)

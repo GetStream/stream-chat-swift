@@ -376,7 +376,7 @@ final class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.channel?.updatedAt, loadedChannel.updatedAt)
             Assert.willBeEqual(payload.channel?.deletedAt, loadedChannel.deletedAt)
             Assert.willBeEqual(payload.channel?.cooldown, loadedChannel.cooldownDuration)
-            Assert.willBeEqual(payload.channel?.team!, loadedChannel.team)
+            Assert.willBeEqual(payload.channel?.team, loadedChannel.team)
 
             // Config
             Assert.willBeEqual(payload.channel?.config?.reactions, loadedChannel.config.reactions)
@@ -396,34 +396,34 @@ final class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.channel?.config?.updatedAt, loadedChannel.config.updatedAt)
 
             // Own Capabilities
-            Assert.willBeEqual(payload.channel!.ownCapabilities, ["join-channel", "delete-channel"])
+            Assert.willBeEqual(payload.channel?.ownCapabilities, ["join-channel", "delete-channel"])
 
             // Creator
-            Assert.willBeEqual(payload.channel?.createdBy!.id, loadedChannel.createdBy?.id)
-            Assert.willBeEqual(payload.channel?.createdBy!.createdAt, loadedChannel.createdBy?.userCreatedAt)
-            Assert.willBeEqual(payload.channel?.createdBy!.updatedAt, loadedChannel.createdBy?.userUpdatedAt)
-            Assert.willBeEqual(payload.channel?.createdBy!.lastActive, loadedChannel.createdBy?.lastActiveAt)
-            Assert.willBeEqual(payload.channel?.createdBy!.online, loadedChannel.createdBy?.isOnline)
-            Assert.willBeEqual(payload.channel?.createdBy!.banned, loadedChannel.createdBy?.isBanned)
-            Assert.willBeEqual(payload.channel?.createdBy!.role, loadedChannel.createdBy?.userRole.rawValue)
-            Assert.willBeEqual(payload.channel?.createdBy!.custom, loadedChannel.createdBy?.extraData)
+            Assert.willBeEqual(payload.channel?.createdBy?.id, loadedChannel.createdBy?.id)
+            Assert.willBeEqual(payload.channel?.createdBy?.createdAt, loadedChannel.createdBy?.userCreatedAt)
+            Assert.willBeEqual(payload.channel?.createdBy?.updatedAt, loadedChannel.createdBy?.userUpdatedAt)
+            Assert.willBeEqual(payload.channel?.createdBy?.lastActive, loadedChannel.createdBy?.lastActiveAt)
+            Assert.willBeEqual(payload.channel?.createdBy?.online, loadedChannel.createdBy?.isOnline)
+            Assert.willBeEqual(payload.channel?.createdBy?.banned, loadedChannel.createdBy?.isBanned)
+            Assert.willBeEqual(payload.channel?.createdBy?.role, loadedChannel.createdBy?.userRole.rawValue)
+            Assert.willBeEqual(payload.channel?.createdBy?.custom, loadedChannel.createdBy?.extraData)
 
             // Members
             Assert.willBeEqual(payload.members[0]?.channelRole, loadedChannel.lastActiveMembers.first?.memberRole.rawValue)
             Assert.willBeEqual(payload.members[0]?.createdAt, loadedChannel.lastActiveMembers.first?.memberCreatedAt)
             Assert.willBeEqual(payload.members[0]?.updatedAt, loadedChannel.lastActiveMembers.first?.memberUpdatedAt)
 
-            Assert.willBeEqual(payload.members[0]?.user!.id, loadedChannel.lastActiveMembers.first?.id)
-            Assert.willBeEqual(payload.members[0]?.user!.createdAt, loadedChannel.lastActiveMembers.first?.userCreatedAt)
-            Assert.willBeEqual(payload.members[0]?.user!.updatedAt, loadedChannel.lastActiveMembers.first?.userUpdatedAt)
-            Assert.willBeEqual(payload.members[0]?.user!.lastActive, loadedChannel.lastActiveMembers.first?.lastActiveAt)
-            Assert.willBeEqual(payload.members[0]?.user!.online, loadedChannel.lastActiveMembers.first?.isOnline)
-            Assert.willBeEqual(payload.members[0]?.user!.banned, loadedChannel.lastActiveMembers.first?.isBanned)
-            Assert.willBeEqual(payload.members[0]?.user!.role, loadedChannel.lastActiveMembers.first?.userRole.rawValue)
-            Assert.willBeEqual(payload.members[0]?.user!.custom, loadedChannel.lastActiveMembers.first?.extraData)
+            Assert.willBeEqual(payload.members[0]?.user?.id, loadedChannel.lastActiveMembers.first?.id)
+            Assert.willBeEqual(payload.members[0]?.user?.createdAt, loadedChannel.lastActiveMembers.first?.userCreatedAt)
+            Assert.willBeEqual(payload.members[0]?.user?.updatedAt, loadedChannel.lastActiveMembers.first?.userUpdatedAt)
+            Assert.willBeEqual(payload.members[0]?.user?.lastActive, loadedChannel.lastActiveMembers.first?.lastActiveAt)
+            Assert.willBeEqual(payload.members[0]?.user?.online, loadedChannel.lastActiveMembers.first?.isOnline)
+            Assert.willBeEqual(payload.members[0]?.user?.banned, loadedChannel.lastActiveMembers.first?.isBanned)
+            Assert.willBeEqual(payload.members[0]?.user?.role, loadedChannel.lastActiveMembers.first?.userRole.rawValue)
+            Assert.willBeEqual(payload.members[0]?.user?.custom, loadedChannel.lastActiveMembers.first?.extraData)
 
             // Membership
-            Assert.willBeEqual(payload.membership!.user!.id, loadedChannel.membership?.id)
+            Assert.willBeEqual(payload.membership?.user?.id, loadedChannel.membership?.id)
 
             // Messages
             Assert.willBeEqual(payload.messages[0].id, loadedChannel.latestMessages.first?.id)
@@ -443,11 +443,11 @@ final class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.messages[0].replyCount, loadedChannel.latestMessages.first?.replyCount)
 
             // Pinned Messages
-            Assert.willBeEqual(payload.pinnedMessages[0].id, loadedChannel.pinnedMessages[0].id)
-            Assert.willBeEqual(payload.pinnedMessages[0].pinned, loadedChannel.pinnedMessages[0].isPinned)
-            Assert.willBeEqual(payload.pinnedMessages[0].pinnedAt, loadedChannel.pinnedMessages[0].pinDetails?.pinnedAt)
-            Assert.willBeEqual(payload.pinnedMessages[0].pinExpires, loadedChannel.pinnedMessages[0].pinDetails?.expiresAt)
-            Assert.willBeEqual(payload.pinnedMessages[0].pinnedBy?.id, loadedChannel.pinnedMessages[0].pinDetails?.pinnedBy.id)
+            Assert.willBeEqual(payload.pinnedMessages.first?.id, loadedChannel.pinnedMessages.first?.id)
+            Assert.willBeEqual(payload.pinnedMessages.first?.pinned, loadedChannel.pinnedMessages.first?.isPinned)
+            Assert.willBeEqual(payload.pinnedMessages.first?.pinnedAt, loadedChannel.pinnedMessages.first?.pinDetails?.pinnedAt)
+            Assert.willBeEqual(payload.pinnedMessages.first?.pinExpires, loadedChannel.pinnedMessages.first?.pinDetails?.expiresAt)
+            Assert.willBeEqual(payload.pinnedMessages.first?.pinnedBy?.id, loadedChannel.pinnedMessages.first?.pinDetails?.pinnedBy.id)
 
             // Message user
             Assert.willBeEqual(payload.messages[0].user?.id, loadedChannel.latestMessages.first?.author.id)

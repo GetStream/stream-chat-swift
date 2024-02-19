@@ -47,43 +47,36 @@ extension Message {
         moderationDetails: MessageModerationDetails? = nil,
         mentionedUsers: [UserObject] = [.dummy(userId: .unique)]
     ) -> Message {
-        fatalError()
-//        .init(
-//            id: messageId,
-//            cid: cid,
-//            type: type ?? (parentId == nil ? .regular : showReplyInChannel == true ? .regular : .reply),
-//            user: UserPayload.dummy(userId: authorUserId) as UserPayload,
-//            createdAt: createdAt != nil ? createdAt! : XCTestCase.channelCreatedDate
-//                .addingTimeInterval(TimeInterval.random(in: 100...900)),
-//            updatedAt: updatedAt,
-//            deletedAt: deletedAt,
-//            text: text,
-//            command: .unique,
-//            args: .unique,
-//            parentId: parentId,
-//            showReplyInChannel: showReplyInChannel,
-//            quotedMessageId: quotedMessageId,
-//            quotedMessage: quotedMessage,
-//            mentionedUsers: mentionedUsers,
-//            threadParticipants: threadParticipants,
-//            replyCount: .random(in: 0...1000),
-//            extraData: extraData,
-//            latestReactions: latestReactions,
-//            ownReactions: ownReactions,
-//            reactionScores: reactionScores,
-//            reactionCounts: reactionCounts,
-//            isSilent: isSilent,
-//            isShadowed: isShadowed,
-//            attachments: attachments,
-//            channel: channel,
-//            pinned: pinned,
-//            pinnedBy: pinnedByUserId != nil ? UserPayload.dummy(userId: pinnedByUserId!) as UserPayload : nil,
-//            pinnedAt: pinnedAt,
-//            pinExpires: pinExpires,
-//            translations: translations,
-//            originalLanguage: originalLanguage,
-//            moderationDetails: moderationDetails
-//        )
+        .init(
+            cid: (cid ?? ChannelId.unique).rawValue,
+            createdAt: createdAt ?? .unique,
+            deletedReplyCount: 0,
+            html: "",
+            id: messageId,
+            pinned: pinned,
+            replyCount: 0,
+            shadowed: isShadowed,
+            silent: isSilent,
+            text: text,
+            type: type?.rawValue ?? "regular",
+            updatedAt: updatedAt,
+            attachments: attachments,
+            latestReactions: latestReactions,
+            mentionedUsers: mentionedUsers,
+            ownReactions: ownReactions,
+            custom: extraData,
+            reactionCounts: reactionCounts,
+            reactionScores: reactionScores,
+            deletedAt: deletedAt,
+            parentId: parentId,
+            pinExpires: pinExpires,
+            pinnedAt: pinnedAt,
+            quotedMessageId: quotedMessageId,
+            showInChannel: showReplyInChannel,
+            threadParticipants: threadParticipants,
+            i18n: translations?.mapKeys(\.languageCode),
+            quotedMessage: quotedMessage
+        )
     }
 
     static func multipleDummies(amount: Int) -> [Message] {
