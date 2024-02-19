@@ -75,7 +75,8 @@ extension Message {
             showInChannel: showReplyInChannel,
             threadParticipants: threadParticipants,
             i18n: translations?.mapKeys(\.languageCode),
-            quotedMessage: quotedMessage
+            quotedMessage: quotedMessage,
+            user: .dummy(userId: authorUserId)
         )
     }
 

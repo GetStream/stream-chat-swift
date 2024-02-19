@@ -881,7 +881,6 @@ final class ChannelController_Tests: XCTestCase {
         }
     }
 
-    // TODO: fix.
     func test_channelControllerForNewChannel_failedMessageKeepsOrdering_whenLocalTimeIsNotSynced() throws {
         let userId: UserId = .unique
         let channelId: ChannelId = .unique
@@ -2906,13 +2905,13 @@ final class ChannelController_Tests: XCTestCase {
         controller = nil
 
         // Check keystroke cid.
-        XCTAssertEqual(env.eventSender!.keystroke_cid, channelId)
+        XCTAssertEqual(env.eventSender?.keystroke_cid, channelId)
 
         // Simulate failed update
         let testError = TestError()
-        env.eventSender!.keystroke_completion!(testError)
+        env.eventSender?.keystroke_completion!(testError)
         // Release reference of completion so we can deallocate stuff
-        env.eventSender!.keystroke_completion = nil
+        env.eventSender?.keystroke_completion = nil
 
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
@@ -2940,14 +2939,14 @@ final class ChannelController_Tests: XCTestCase {
         controller = nil
 
         // Check keystroke cid and parentMessageId.
-        XCTAssertEqual(env.eventSender!.keystroke_cid, channelId)
-        XCTAssertEqual(env.eventSender!.keystroke_parentMessageId, parentMessageId)
+        XCTAssertEqual(env.eventSender?.keystroke_cid, channelId)
+        XCTAssertEqual(env.eventSender?.keystroke_parentMessageId, parentMessageId)
 
         // Simulate failed update
         let testError = TestError()
-        env.eventSender!.keystroke_completion!(testError)
+        env.eventSender?.keystroke_completion!(testError)
         // Release reference of completion so we can deallocate stuff
-        env.eventSender!.keystroke_completion = nil
+        env.eventSender?.keystroke_completion = nil
 
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
@@ -2977,13 +2976,13 @@ final class ChannelController_Tests: XCTestCase {
         controller = nil
 
         // Check `startTyping` cid.
-        XCTAssertEqual(env.eventSender!.startTyping_cid, channelId)
+        XCTAssertEqual(env.eventSender?.startTyping_cid, channelId)
 
         // Simulate failed update
         let testError = TestError()
-        env.eventSender!.startTyping_completion!(testError)
+        env.eventSender?.startTyping_completion!(testError)
         // Release reference of completion so we can deallocate stuff
-        env.eventSender!.startTyping_completion = nil
+        env.eventSender?.startTyping_completion = nil
 
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
@@ -3011,14 +3010,14 @@ final class ChannelController_Tests: XCTestCase {
         controller = nil
 
         // Check `startTyping` cid and parentMessageId.
-        XCTAssertEqual(env.eventSender!.startTyping_cid, channelId)
-        XCTAssertEqual(env.eventSender!.startTyping_parentMessageId, parentMessageId)
+        XCTAssertEqual(env.eventSender?.startTyping_cid, channelId)
+        XCTAssertEqual(env.eventSender?.startTyping_parentMessageId, parentMessageId)
 
         // Simulate failed update
         let testError = TestError()
-        env.eventSender!.startTyping_completion!(testError)
+        env.eventSender?.startTyping_completion!(testError)
         // Release reference of completion so we can deallocate stuff
-        env.eventSender!.startTyping_completion = nil
+        env.eventSender?.startTyping_completion = nil
 
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
@@ -3048,13 +3047,13 @@ final class ChannelController_Tests: XCTestCase {
         controller = nil
 
         // Check `stopTyping` cid.
-        XCTAssertEqual(env.eventSender!.stopTyping_cid, channelId)
+        XCTAssertEqual(env.eventSender?.stopTyping_cid, channelId)
 
         // Simulate failed update
         let testError = TestError()
-        env.eventSender!.stopTyping_completion!(testError)
+        env.eventSender?.stopTyping_completion!(testError)
         // Release reference of completion so we can deallocate stuff
-        env.eventSender!.stopTyping_completion = nil
+        env.eventSender?.stopTyping_completion = nil
 
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
@@ -3082,14 +3081,14 @@ final class ChannelController_Tests: XCTestCase {
         controller = nil
 
         // Check `stopTyping` cid and parentMessageId.
-        XCTAssertEqual(env.eventSender!.stopTyping_cid, channelId)
-        XCTAssertEqual(env.eventSender!.stopTyping_parentMessageId, parentMessageId)
+        XCTAssertEqual(env.eventSender?.stopTyping_cid, channelId)
+        XCTAssertEqual(env.eventSender?.stopTyping_parentMessageId, parentMessageId)
 
         // Simulate failed update
         let testError = TestError()
-        env.eventSender!.stopTyping_completion!(testError)
+        env.eventSender?.stopTyping_completion!(testError)
         // Release reference of completion so we can deallocate stuff
-        env.eventSender!.stopTyping_completion = nil
+        env.eventSender?.stopTyping_completion = nil
 
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)

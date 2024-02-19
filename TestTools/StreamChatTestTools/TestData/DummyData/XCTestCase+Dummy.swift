@@ -57,7 +57,12 @@ extension XCTestCase {
     }
 
     var dummyChannelRead: Read {
-        Read(lastRead: Date(timeIntervalSince1970: 1), unreadMessages: 10)
+        Read(
+            lastRead: Date(timeIntervalSince1970: 1),
+            unreadMessages: 10,
+            lastReadMessageId: .unique,
+            user: dummyUser
+        )
     }
 
     func dummyPayload(
