@@ -113,6 +113,7 @@ public class ChatChannelWatcherListController: DataController, DelegateCallable,
                     return
                 }
                 $0.channelWatcherListController(self, didChangeWatchers: changes)
+                $0.controller(self, didChangeState: state)
             }
         }
 

@@ -24,7 +24,9 @@ public class DataController: Controller {
     public internal(set) var state: State = .initialized {
         didSet {
             callback {
-                self.stateMulticastDelegate.invoke { $0.controller(self, didChangeState: self.state) }
+                if self.state != .remoteDataFetched {
+                    self.stateMulticastDelegate.invoke { $0.controller(self, didChangeState: self.state) }
+                }
             }
         }
     }

@@ -104,6 +104,7 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
                     return
                 }
                 $0.controller(self, didChangeMessages: changes)
+                $0.controller(self, didChangeState: state)
             }
         }
 

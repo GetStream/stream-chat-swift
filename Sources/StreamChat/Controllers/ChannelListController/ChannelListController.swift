@@ -89,6 +89,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
                 }
                 log.debug("didChangeChannels: \(changes.map(\.debugDescription))")
                 $0.controller(self, didChangeChannels: changes)
+                $0.controller(self, didChangeState: state)
             }
         }
 

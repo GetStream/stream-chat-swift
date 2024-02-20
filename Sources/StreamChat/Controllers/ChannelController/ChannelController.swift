@@ -1518,6 +1518,7 @@ private extension ChatChannelController {
                     log.debug("didUpdateMessages: \(changes.map(\.debugDescription))")
 
                     $0.channelController(self, didUpdateMessages: changes)
+                    $0.controller(self, didChangeState: self.state)
                 }
             }
             return observer
