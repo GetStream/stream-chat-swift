@@ -4,8 +4,15 @@
 
 import Foundation
 
-protocol EventContainsMessage {
+protocol EventContainsOptionalMessage {
     var message: Message? { get }
+    var type: String { get }
+    var channelId: String { get }
+    var cid: String { get }
+}
+
+protocol EventContainsMessage {
+    var message: Message { get }
     var type: String { get }
     var channelId: String { get }
     var cid: String { get }
@@ -25,6 +32,10 @@ protocol EventContainsUnreadCount {
 }
 
 protocol EventContainsCurrentUser {
+    var me: OwnUser { get }
+}
+
+protocol EventContainsOptionalCurrentUser {
     var me: OwnUser? { get }
 }
 

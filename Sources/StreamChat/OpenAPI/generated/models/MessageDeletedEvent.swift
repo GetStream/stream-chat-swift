@@ -44,5 +44,5 @@ public struct MessageDeletedEvent: Codable, Hashable, Event {
 }
 
 extension MessageDeletedEvent: EventContainsCreationDate {}
-extension MessageDeletedEvent: EventContainsMessage {}
+extension MessageDeletedEvent: EventContainsOptionalMessage {}
 extension MessageDeletedEvent: EventContainsUser {}

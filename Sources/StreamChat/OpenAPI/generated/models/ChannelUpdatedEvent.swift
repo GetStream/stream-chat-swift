@@ -42,5 +42,5 @@ public struct ChannelUpdatedEvent: Codable, Hashable, Event {
 
 extension ChannelUpdatedEvent: EventContainsCreationDate {}
 extension ChannelUpdatedEvent: EventContainsChannel {}
-extension ChannelUpdatedEvent: EventContainsMessage {}
+extension ChannelUpdatedEvent: EventContainsOptionalMessage {}
 extension ChannelUpdatedEvent: EventContainsUser {}

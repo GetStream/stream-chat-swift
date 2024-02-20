@@ -276,12 +276,20 @@ extension DatabaseSession {
             try saveChannel(payload: channel, query: nil, cache: nil)
         }
         
+        if let messageEvent = event as? EventContainsOptionalMessage {
+            try saveMessageIfNeeded(from: messageEvent)
+        }
+        
         if let messageEvent = event as? EventContainsMessage {
             try saveMessageIfNeeded(from: messageEvent)
         }
         
-        if let currentUserEvent = event as? EventContainsCurrentUser, let currentUser = currentUserEvent.me {
+        if let currentUserEvent = event as? EventContainsOptionalCurrentUser, let currentUser = currentUserEvent.me {
             try saveCurrentUser(payload: currentUser)
+        }
+        
+        if let currentUserEvent = event as? EventContainsCurrentUser {
+            try saveCurrentUser(payload: currentUserEvent.me)
         }
         
         if let unreadCountEvent = event as? EventContainsUnreadCount {
@@ -324,19 +332,47 @@ extension DatabaseSession {
         updateChannelPreview(from: event)
     }
     
-    func saveMessageIfNeeded(from event: EventContainsMessage) throws {
+    func saveMessageIfNeeded(from event: EventContainsOptionalMessage) throws {
         guard let messagePayload = event.message else {
             // Event does not contain message
             return
         }
-
-        guard let cid = try? ChannelId(cid: event.cid) else {
+        
+        var shouldHardDelete = false
+        if EventType(rawValue: event.type) == .messageDeleted,
+           let deletedEvent = event as? MessageDeletedEvent,
+           deletedEvent.hardDelete {
+            shouldHardDelete = true
+        }
+        try saveMessageIfNeeded(
+            messagePayload: messagePayload,
+            cid: event.cid,
+            type: event.type,
+            shouldHardDelete: shouldHardDelete
+        )
+    }
+    
+    func saveMessageIfNeeded(from event: EventContainsMessage) throws {
+        try saveMessageIfNeeded(
+            messagePayload: event.message,
+            cid: event.cid,
+            type: event.type
+        )
+    }
+    
+    func saveMessageIfNeeded(
+        messagePayload: Message,
+        cid: String,
+        type: String,
+        shouldHardDelete: Bool = false
+    ) throws {
+        guard let cid = try? ChannelId(cid: cid) else {
             // Channel does not exist locally
             return
         }
 
         let messageExistsLocally = message(id: messagePayload.id) != nil
-        let eventType = EventType(rawValue: event.type)
+        let eventType = EventType(rawValue: type)
         let messageMustBeCreated = eventType.shouldCreateMessageInDatabase
 
         guard messageExistsLocally || messageMustBeCreated else {
@@ -351,7 +387,7 @@ extension DatabaseSession {
             cache: nil
         )
 
-        if eventType == .messageDeleted, let deletedEvent = event as? MessageDeletedEvent, deletedEvent.hardDelete {
+        if shouldHardDelete {
             // We should in fact delete it from the DB, but right now this produces a crash
             // This should be fixed in this ticket: https://stream-io.atlassian.net/browse/CIS-1963
             savedMessage.isHardDeleted = true

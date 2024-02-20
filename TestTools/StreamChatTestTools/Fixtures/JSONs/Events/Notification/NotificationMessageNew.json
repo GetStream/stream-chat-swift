@@ -1,11 +1,15 @@
 {
     "channel" : {
         "id" : "general",
+        "disabled" : false,
         "members" : [
             {
                 "created_at" : "2020-01-20T19:15:03.911517Z",
                 "user_id" : "broken-waterfall-5",
                 "updated_at" : "2020-01-20T19:15:03.911517Z",
+                "banned" : false,
+                "channel_role" : "user",
+                "shadow_banned" : false,
                 "user" : {
                     "id" : "broken-waterfall-5",
                     "banned" : false,
@@ -31,6 +35,9 @@
                 "created_at" : "2020-06-04T13:36:44.793348Z",
                 "user_id" : "test-user-2",
                 "updated_at" : "2020-06-04T13:36:44.793348Z",
+                "banned" : false,
+                "channel_role" : "user",
+                "shadow_banned" : false,
                 "user" : {
                     "banned" : false,
                     "online" : false,
@@ -46,6 +53,9 @@
                 "created_at" : "2020-06-05T12:55:48.581959Z",
                 "user_id" : "steep-moon-9",
                 "updated_at" : "2020-06-05T12:55:48.581959Z",
+                "banned" : false,
+                "channel_role" : "user",
+                "shadow_banned" : false,
                 "user" : {
                     "id" : "steep-moon-9",
                     "banned" : false,
@@ -97,7 +107,11 @@
             "search" : false,
             "message_retention" : "infinite",
             "uploads" : true,
-            "name" : "messaging"
+            "name" : "messaging",
+            "custom_events" : false,
+            "mark_messages_pending" : false,
+            "push_notifications" : false,
+            "reminders" : false
         },
         "image" : "https:\/\/images.unsplash.com\/photo-1512138664757-360e0aad5132?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2851&q=80",
         "example" : 1,
@@ -109,8 +123,11 @@
     "created_at" : "2020-07-21T14:47:57.138121907Z",
     "total_unread_count" : 3,
     "message" : {
+        "cid" : "messaging:general",
+        "deleted_reply_count" : 0,
+        "shadowed" : false,
         "id" : "042772db-4af2-460d-beaa-1e49d1b8e3b9",
-        "reaction_counts" : null,
+        "reaction_counts" : {},
         "silent" : false,
         "created_at" : "2020-07-21T14:47:57.127921Z",
         "reaction_scores" : {

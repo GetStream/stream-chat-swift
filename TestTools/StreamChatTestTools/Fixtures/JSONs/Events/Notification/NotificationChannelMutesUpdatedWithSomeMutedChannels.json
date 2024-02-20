@@ -45,6 +45,7 @@
                 "channel": {
                     "id": "B1DFF9C5-E6A6-4BFA-9375-DC5E8C6852FF",
                     "type": "messaging",
+                    "disabled": false,
                     "cid": "messaging:B1DFF9C5-E6A6-4BFA-9375-DC5E8C6852FF",
                     "created_by": {
                         "id": "steep-moon-9",
@@ -87,6 +88,10 @@
                         "automod": "AI",
                         "automod_behavior": "flag",
                         "blocklist_behavior": "flag",
+                        "custom_events" : false,
+                        "mark_messages_pending" : false,
+                        "push_notifications" : false,
+                        "reminders" : false,
                         "automod_thresholds": {
                             "explicit": {
                                 "flag": 0.85,
@@ -129,6 +134,7 @@
                 "channel": {
                     "id": "!members-dpwtNCSGs-VaJKfAVaeosq6FNNbvDDWldf231ypDWqE",
                     "type": "messaging",
+                    "disabled": false,
                     "cid": "messaging:!members-dpwtNCSGs-VaJKfAVaeosq6FNNbvDDWldf231ypDWqE",
                     "created_by": {
                         "id": "steep-moon-9",
@@ -171,6 +177,10 @@
                         "automod": "AI",
                         "automod_behavior": "flag",
                         "blocklist_behavior": "flag",
+                        "custom_events" : false,
+                        "mark_messages_pending" : false,
+                        "push_notifications" : false,
+                        "reminders" : false,
                         "automod_thresholds": {
                             "explicit": {
                                 "flag": 0.85,

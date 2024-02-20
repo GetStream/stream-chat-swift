@@ -166,7 +166,6 @@ final class ChannelEventsIntegration_Tests: XCTestCase {
     func test_NotificationChannelMutesUpdatedWithSomeMutesEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "NotificationChannelMutesUpdatedWithSomeMutedChannels")
         let event = try eventDecoder.decode(from: json) as? NotificationChannelMutesUpdatedEvent
-
         try client.databaseContainer.createCurrentUser(id: "luke_skywalker")
 
         let unwrappedUser = try XCTUnwrap(client.databaseContainer.viewContext.currentUser)

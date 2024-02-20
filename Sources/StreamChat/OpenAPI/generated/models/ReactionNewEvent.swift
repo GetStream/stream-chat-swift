@@ -44,5 +44,5 @@ public struct ReactionNewEvent: Codable, Hashable, Event {
 }
 
 extension ReactionNewEvent: EventContainsCreationDate {}
-extension ReactionNewEvent: EventContainsMessage {}
+extension ReactionNewEvent: EventContainsOptionalMessage {}
 extension ReactionNewEvent: EventContainsUser {}

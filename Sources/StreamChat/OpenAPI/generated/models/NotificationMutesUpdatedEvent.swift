@@ -23,3 +23,4 @@ public struct NotificationMutesUpdatedEvent: Codable, Hashable, Event {
 }
 
 extension NotificationMutesUpdatedEvent: EventContainsCreationDate {}
+extension NotificationMutesUpdatedEvent: EventContainsCurrentUser {}

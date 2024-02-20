@@ -63,6 +63,7 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
                 .dummy(user: .dummy(userId: .unique))
             ]
         )
+
         apiClient.test_simulateResponse(.success(payload))
 
         AssertAsync.willBeTrue(completionCalled)
