@@ -24,6 +24,11 @@ public class DataController: Controller {
     public internal(set) var state: State = .initialized {
         didSet {
             callback {
+                // We only report state changes if not `.remoteDataFetched` because the data
+                // coming from the server will only be available once `FRC` reports changes,
+                // so when that happens, only then we report `didChangeState`. This is required
+                // mostly because of background mapping.
+                // More context here: https://github.com/GetStream/stream-chat-swift/pull/3039
                 if self.state != .remoteDataFetched {
                     self.stateMulticastDelegate.invoke { $0.controller(self, didChangeState: self.state) }
                 }
