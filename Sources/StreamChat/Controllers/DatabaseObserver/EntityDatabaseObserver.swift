@@ -76,8 +76,8 @@ extension EntityChange {
 }
 
 class EntityDatabaseObserverWrapper<Item, DTO: NSManagedObject> {
-    private var foreground: EntityDatabaseObserver<Item, DTO>?
-    private var background: BackgroundEntityDatabaseObserver<Item, DTO>?
+    internal var foreground: EntityDatabaseObserver<Item, DTO>?
+    internal var background: BackgroundEntityDatabaseObserver<Item, DTO>?
     let isBackground: Bool
 
     var item: Item? {
@@ -161,7 +161,7 @@ class EntityDatabaseObserver<Item, DTO: NSManagedObject> {
 
     /// Called with the aggregated changes after the internal `NSFetchResultsController` calls `controllerDidChangeContent`
     /// on its delegate.
-    private var listeners: [(EntityChange<Item>) -> Void] = []
+    internal var listeners: [(EntityChange<Item>) -> Void] = []
 
     /// Acts like the `NSFetchedResultsController`'s delegate and aggregates the reported changes into easily consumable form.
     private(set) lazy var changeAggregator = ListChangeAggregator<DTO, Item>(itemCreator: itemCreator)
@@ -304,7 +304,7 @@ class BackgroundEntityDatabaseObserver<Item, DTO: NSManagedObject>: BackgroundDa
 
     /// Called with the aggregated changes after the internal `NSFetchResultsController` calls `controllerDidChangeContent`
     /// on its delegate.
-    private var listeners: [(EntityChange<Item>) -> Void] = []
+    internal var listeners: [(EntityChange<Item>) -> Void] = []
 
     /// Creates a new `BackgroundEntityDatabaseObserver`.
     ///

@@ -165,7 +165,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     }
 
     /// The observer used to listen to message updates
-    private lazy var messageObserver = createMessageObserver()
+    internal lazy var messageObserver = createMessageObserver()
         .onChange { [weak self] change in
             self?.delegateCallback { [weak self] in
                 guard let self = self else {
@@ -179,7 +179,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
 
     /// The observer used to listen replies updates.
     /// It will be reset on `listOrdering` changes.
-    private var repliesObserver: ListDatabaseObserverWrapper<ChatMessage, MessageDTO>?
+    internal var repliesObserver: ListDatabaseObserverWrapper<ChatMessage, MessageDTO>?
 
     /// The worker used to fetch the remote data and communicate with servers.
     private let messageUpdater: MessageUpdater

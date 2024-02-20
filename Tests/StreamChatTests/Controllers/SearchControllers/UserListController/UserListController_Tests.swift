@@ -241,6 +241,8 @@ final class UserListController_Tests: XCTestCase {
 
         // Simulate network call response
         env.userListUpdater?.update_completion?(nil)
+        // State change is only notified when observer is called with data changes.
+        controller.userListObserver.onDidChange?([])
 
         // Assert delegate is notified about state changes
         AssertAsync.willBeEqual(delegate.state, .remoteDataFetched)

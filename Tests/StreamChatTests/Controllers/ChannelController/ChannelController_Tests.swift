@@ -1401,6 +1401,8 @@ final class ChannelController_Tests: XCTestCase {
 
         // Simulate network call response
         env.channelUpdater?.update_completion?(.success(dummyPayload(with: .unique)))
+        // State change is only notified when observer is called with data changes.
+        controller.messagesObserver?.onDidChange?([])
 
         // Assert delegate is notified about state changes
         AssertAsync.willBeEqual(delegate.state, .remoteDataFetched)

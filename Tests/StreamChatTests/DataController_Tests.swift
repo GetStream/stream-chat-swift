@@ -28,6 +28,26 @@ final class DataController_Tests: XCTestCase {
         AssertAsync.willBeEqual(delegate.state, .localDataFetched)
     }
 
+    func test_delegateMethodIsNotCalled_whenStateIsRemoteDataFetched() {
+        // GIVEN
+        let controller = DataController()
+        let delegateQueueId = UUID()
+        let delegate = DataController_Delegate(expectedQueueId: delegateQueueId)
+        delegate.didChangeStateExp.isInverted = true
+        controller.stateMulticastDelegate.add(additionalDelegate: delegate)
+        controller.callbackQueue = DispatchQueue.testQueue(withId: delegateQueueId)
+
+        // Check if state is `initialized` initially.
+        XCTAssertEqual(delegate.state, .initialized)
+
+        // WHEN
+        controller.state = .remoteDataFetched
+
+        // THEN
+        wait(for: [delegate.didChangeStateExp], timeout: defaultTimeout)
+        XCTAssertEqual(delegate.didChangeStateCallCount, 0)
+    }
+
     func test_canBeRecoveredTrueWhenStateIs_remoteDataFetched() {
         let controller = DataController()
         controller.state = .remoteDataFetched

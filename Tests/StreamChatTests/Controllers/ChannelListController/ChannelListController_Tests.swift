@@ -695,6 +695,8 @@ final class ChannelListController_Tests: XCTestCase {
 
         // Simulate network call response
         env.channelListUpdater?.update_completion?(.success([]))
+        // State change is only notified when observer is called with data changes.
+        controller.channelListObserver.onDidChange?([])
 
         // Assert delegate is notified about state changes
         AssertAsync.willBeEqual(delegate.state, .remoteDataFetched)
