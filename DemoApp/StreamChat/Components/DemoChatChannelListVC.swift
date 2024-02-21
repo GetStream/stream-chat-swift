@@ -159,7 +159,8 @@ final class DemoChatChannelListVC: ChatChannelListVC, EventsControllerDelegate {
     override func controller(_ controller: DataController, didChangeState state: DataController.State) {
         super.controller(controller, didChangeState: state)
 
-        if highlightSelectedChannel && (state == .remoteDataFetched || state == .localDataFetched) && selectedChannel == nil {
+        // TODO: This is actually a breaking change
+        if highlightSelectedChannel && (state.isRemoteDataFetched || state == .localDataFetched) && selectedChannel == nil {
             guard let channel = self.controller.channels.first else { return }
 
             router.showChannel(for: channel.cid)

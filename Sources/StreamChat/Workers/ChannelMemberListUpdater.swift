@@ -10,10 +10,10 @@ class ChannelMemberListUpdater: Worker {
     /// - Parameters:
     ///   - query: The query used in the request.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    func load(_ query: ChannelMemberListQuery, completion: ((Error?) -> Void)? = nil) {
+    func load(_ query: ChannelMemberListQuery, completion: ((Result<[ChatChannelMember], Error>) -> Void)? = nil) {
         fetchAndSaveChannelIfNeeded(query.cid) { [weak self] error in
-            guard error == nil else {
-                completion?(error)
+            if let error = error {
+                completion?(.failure(error))
                 return
             }
 
@@ -22,15 +22,18 @@ class ChannelMemberListUpdater: Worker {
                 switch membersResult {
                 case let .success(memberListPayload):
                     self?.database.write({ session in
-                        session.saveMembers(payload: memberListPayload, channelId: query.cid, query: query)
+                        let members = try session.saveMembers(payload: memberListPayload, channelId: query.cid, query: query).map {
+                            try $0.asModel()
+                        }
+                        completion?(.success(members))
                     }, completion: { error in
                         if let error = error {
                             log.error("Failed to save `ChannelMemberListQuery` related data to the database. Error: \(error)")
+                            completion?(.failure(error))
                         }
-                        completion?(error)
                     })
                 case let .failure(error):
-                    completion?(error)
+                    completion?(.failure(error))
                 }
             }
         }

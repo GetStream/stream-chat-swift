@@ -1010,7 +1010,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
         updater.startWatching(cid: cid, isInRecoveryMode: isInRecoveryMode) { error in
-            self.state = error.map { .remoteDataFetchFailed(ClientError(with: $0)) } ?? .remoteDataFetched
+            self.state = error.map { .remoteDataFetchFailed(ClientError(with: $0)) } ?? .remoteDataFetched(isEmpty: false)
             self.callback {
                 completion?(error)
             }
@@ -1340,8 +1340,8 @@ private extension ChatChannelController {
             onChannelCreated: channelCreatedCallback,
             completion: { result in
                 switch result {
-                case .success:
-                    self.state = .remoteDataFetched
+                case let .success(channel):
+                    self.state = .remoteDataFetched(isEmpty: channel.messages.isEmpty)
                     self.callback { completion?(nil) }
                 case let .failure(error):
                     self.state = .remoteDataFetchFailed(ClientError(with: error))

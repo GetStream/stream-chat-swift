@@ -438,9 +438,9 @@ open class ChatChannelListVC: _ViewController,
             switch newState {
             case .initialized, .localDataFetched:
                 isLoading = controller.channels.isEmpty
-            case .remoteDataFetched:
+            case let .remoteDataFetched(isEmpty):
                 isLoading = false
-                shouldHideEmptyView = !controller.channels.isEmpty
+                shouldHideEmptyView = !isEmpty
             case .localDataFetchFailed, .remoteDataFetchFailed:
                 shouldHideEmptyView = emptyView.isHidden
                 isLoading = false

@@ -108,10 +108,10 @@ open class ChatChannelListSearchVC: ChatChannelListVC, UISearchResultsUpdating {
             } else {
                 loadingIndicator.stopAnimating()
             }
-        case .remoteDataFetched:
+        case let .remoteDataFetched(isEmpty):
             loadingIndicator.stopAnimating()
             emptyView.subtitleLabel.text = L10n.ChannelList.Search.Empty.subtitle("\"\(currentSearchText)\"")
-            emptyView.isHidden = !hasEmptyResults
+            emptyView.isHidden = !isEmpty
         default:
             loadingIndicator.stopAnimating()
         }

@@ -15,9 +15,18 @@ public class DataController: Controller {
         /// The controller failed to fetch local data.
         case localDataFetchFailed(ClientError)
         /// The controller fetched remote data.
-        case remoteDataFetched
+        case remoteDataFetched(isEmpty: Bool)
         /// The controller failed to fetch remote data.
         case remoteDataFetchFailed(ClientError)
+
+        public var isRemoteDataFetched: Bool {
+            switch self {
+            case .remoteDataFetched:
+                return true
+            default:
+                return false
+            }
+        }
     }
 
     /// The current state of the controller.

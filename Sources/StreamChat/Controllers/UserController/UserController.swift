@@ -99,7 +99,7 @@ public class ChatUserController: DataController, DelegateCallable, DataStoreProv
         }
 
         userUpdater.loadUser(userId) { error in
-            self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
+            self.state = error == nil ? .remoteDataFetched(isEmpty: false) : .remoteDataFetchFailed(ClientError(with: error))
             self.callback { completion?(error) }
         }
     }

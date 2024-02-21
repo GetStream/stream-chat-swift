@@ -148,10 +148,10 @@ extension CreateGroupViewController: ChatUserSearchControllerDelegate {
     }
 
     func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        if case .remoteDataFetched = state {
+        if case let .remoteDataFetched(isEmpty) = state {
             print("\(users.count) users found")
             loadingIndicator.stopAnimating()
-            noMatchView.isHidden = !users.isEmpty
+            noMatchView.isHidden = !isEmpty
         }
     }
 }

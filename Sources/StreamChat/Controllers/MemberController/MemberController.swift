@@ -106,9 +106,14 @@ public class ChatChannelMemberController: DataController, DelegateCallable, Data
             return
         }
 
-        memberListUpdater.load(.channelMember(userId: userId, cid: cid)) { error in
-            self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
-            self.callback { completion?(error) }
+        memberListUpdater.load(.channelMember(userId: userId, cid: cid)) { result in
+            switch result {
+            case let .success(members):
+                self.state = .remoteDataFetched(isEmpty: members.isEmpty)
+            case let .failure(error):
+                self.state = .remoteDataFetchFailed(ClientError(with: error))
+            }
+            self.callback { completion?(result.error) }
         }
     }
 

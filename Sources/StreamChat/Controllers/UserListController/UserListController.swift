@@ -107,9 +107,14 @@ public class ChatUserListController: DataController, DelegateCallable, DataStore
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
         startUserListObserverIfNeeded()
 
-        worker.update(userListQuery: query) { error in
-            self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
-            self.callback { completion?(error) }
+        worker.update(userListQuery: query) { result in
+            switch result {
+            case let .success(users):
+                self.state = .remoteDataFetched(isEmpty: users.isEmpty)
+            case let .failure(error):
+                self.state = .remoteDataFetchFailed(ClientError(with: error))
+            }
+            self.callback { completion?(result.error) }
         }
     }
 
@@ -147,8 +152,8 @@ public extension ChatUserListController {
     ) {
         var updatedQuery = query
         updatedQuery.pagination = Pagination(pageSize: limit, offset: users.count)
-        worker.update(userListQuery: updatedQuery) { error in
-            self.callback { completion?(error) }
+        worker.update(userListQuery: updatedQuery) { result in
+            self.callback { completion?(result.error) }
         }
     }
 }

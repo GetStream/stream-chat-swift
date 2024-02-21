@@ -139,7 +139,7 @@ private extension ChatUserSearchController {
                     if let listChanges = listChanges, let users = self?.userList(after: listChanges) {
                         self?._users = users
                     }
-                    self?.state = .remoteDataFetched
+                    self?.state = .remoteDataFetched(isEmpty: self?._users.isEmpty == true)
 
                     self?.callback {
                         self?.multicastDelegate.invoke {

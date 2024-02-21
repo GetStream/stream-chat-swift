@@ -13,7 +13,11 @@ class UserListUpdater: Worker {
     ///   - policy: The update policy for the resulting user set. See `UpdatePolicy`
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
-    func update(userListQuery: UserListQuery, policy: UpdatePolicy = .merge, completion: ((Error?) -> Void)? = nil) {
+    func update(
+        userListQuery: UserListQuery,
+        policy: UpdatePolicy = .merge,
+        completion: ((Result<[ChatUser], Error>) -> Void)? = nil
+    ) {
         fetch(userListQuery: userListQuery) { [weak self] (result: Result<UserListPayload, Error>) in
             switch result {
             case let .success(userListPayload):
@@ -23,18 +27,19 @@ class UserListUpdater: Worker {
                         dto?.users.removeAll()
                     }
 
-                    session.saveUsers(payload: userListPayload, query: userListQuery)
+                    let users = try session.saveUsers(payload: userListPayload, query: userListQuery).map {
+                        try $0.asModel()
+                    }
+                    completion?(.success(users))
                 } completion: { error in
                     if let error = error {
                         log.error("Failed to save `UserListPayload` to the database. Error: \(error)")
-                        completion?(error)
-                    } else {
-                        completion?(nil)
+                        completion?(.failure(error))
                     }
                 }
 
             case let .failure(error):
-                completion?(error)
+                completion?(.failure(error))
             }
         }
     }

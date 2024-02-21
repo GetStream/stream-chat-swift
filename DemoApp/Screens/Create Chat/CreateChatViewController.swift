@@ -281,10 +281,10 @@ extension CreateChatViewController: ChatUserSearchControllerDelegate {
     }
 
     func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        if case .remoteDataFetched = state {
+        if case let .remoteDataFetched(isEmpty) = state {
             print("\(users.count) users found")
             users = searchController.userArray
-            update(for: users.isEmpty ? .noUsers : .searching)
+            update(for: isEmpty ? .noUsers : .searching)
         }
     }
 }

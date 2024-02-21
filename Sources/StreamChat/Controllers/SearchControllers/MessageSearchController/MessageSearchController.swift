@@ -205,9 +205,13 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
                 self.updateNextPageCursor(with: payload)
             }
 
-            let error = result.error
-            self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
-            self.callback { completion?(error) }
+            switch result {
+            case let .success(payload):
+                self.state = .remoteDataFetched(isEmpty: payload.results.isEmpty)
+            case let .failure(error):
+                self.state = .remoteDataFetchFailed(ClientError(with: error))
+            }
+            self.callback { completion?(result.error) }
         }
     }
 

@@ -511,7 +511,7 @@ class ChannelUpdater: Worker {
     /// - Parameters:
     ///   - query: Query object for watchers. See `ChannelWatcherListQuery`
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    func channelWatchers(query: ChannelWatcherListQuery, completion: ((Error?) -> Void)? = nil) {
+    func channelWatchers(query: ChannelWatcherListQuery, completion: ((Result<[ChatUser], Error>) -> Void)? = nil) {
         apiClient.request(endpoint: .channelWatchers(query: query)) { (result: Result<ChannelPayload, Error>) in
             do {
                 let payload = try result.get()
@@ -525,12 +525,16 @@ class ChannelUpdater: Worker {
                     }
                     // In any case (backend reported another page of watchers or no watchers)
                     // we should save the payload as it's the latest state of the channel
-                    try session.saveChannel(payload: payload)
+                    let channel = try session.saveChannel(payload: payload)
+                    let watchers = try channel.watchers.map { try $0.asModel() }
+                    completion?(.success(watchers))
                 } completion: { error in
-                    completion?(error)
+                    if let error = error {
+                        completion?(.failure(error))
+                    }
                 }
             } catch {
-                completion?(error)
+                completion?(.failure(error))
             }
         }
     }

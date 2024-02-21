@@ -83,9 +83,14 @@ public class ChatChannelMemberListController: DataController, DelegateCallable, 
             return
         }
 
-        memberListUpdater.load(query) { error in
-            self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
-            self.callback { completion?(error) }
+        memberListUpdater.load(query) { result in
+            switch result {
+            case let .success(members):
+                self.state = .remoteDataFetched(isEmpty: members.isEmpty)
+            case let .failure(error):
+                self.state = .remoteDataFetchFailed(ClientError(with: error))
+            }
+            self.callback { completion?(result.error) }
         }
     }
 
@@ -146,10 +151,10 @@ public extension ChatChannelMemberListController {
     ) {
         var updatedQuery = query
         updatedQuery.pagination = Pagination(pageSize: limit, offset: members.count)
-        memberListUpdater.load(updatedQuery) { error in
+        memberListUpdater.load(updatedQuery) { result in
             self.query = updatedQuery
             self.callback {
-                completion?(error)
+                completion?(result.error)
             }
         }
     }

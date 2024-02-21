@@ -212,7 +212,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
 
         messageUpdater.getMessage(cid: cid, messageId: messageId) { result in
             let error = result.error
-            self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
+            self.state = error == nil ? .remoteDataFetched(isEmpty: false) : .remoteDataFetchFailed(ClientError(with: error))
             self.callback { completion?(error) }
         }
     }
