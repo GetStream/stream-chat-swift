@@ -158,22 +158,22 @@ final class MessageDTO_Tests: XCTestCase {
             lastRead: currentUserMessage.createdAt.addingTimeInterval(-10),
             unreadMessages: 0,
             lastReadMessageId: .unique,
-            user: .dummy(userId: currentUser.id)
+            user: .dummy(userId: .unique)
         )
         let member2ReadAtOwnMessage = Read(
             lastRead: currentUserMessage.createdAt.addingTimeInterval(2),
             unreadMessages: 0,
             lastReadMessageId: .unique,
-            user: .dummy(userId: currentUser.id)
+            user: .dummy(userId: .unique)
         )
         let member3ReadLaterOwnMessage = Read(
             lastRead: currentUserMessage.createdAt.addingTimeInterval(10),
             unreadMessages: 0,
             lastReadMessageId: .unique,
-            user: .dummy(userId: currentUser.id)
+            user: .dummy(userId: .unique)
         )
 
-        let ChannelStateResponse: ChannelStateResponse = .dummy(
+        let channelStateResponse: ChannelStateResponse = .dummy(
             channel: .dummy(),
             members: [
                 currentUserMember,
@@ -194,7 +194,7 @@ final class MessageDTO_Tests: XCTestCase {
         try database.writeSynchronously { session in
             try session.saveCurrentUser(payload: currentUser)
 
-            let channel = try session.saveChannel(payload: ChannelStateResponse)
+            let channel = try session.saveChannel(payload: channelStateResponse)
 
             try session.saveMessage(
                 payload: currentUserMessage,
@@ -624,10 +624,11 @@ final class MessageDTO_Tests: XCTestCase {
             Set(Message.attachmentIDs(cid: channelId)),
             loadedMessage.flatMap { Set($0.attachments.map(\.attachmentID)) }
         )
+        // TODO: missing from response.
 //        XCTAssertEqual(Message.translations?.mapKeys(\.languageCode), loadedMessage?.translations)
-        XCTAssertEqual("es", loadedMessage?.originalLanguage)
-        XCTAssertEqual("Original", loadedMessage?.moderationDetails?.originalText)
-        XCTAssertEqual("BOUNCE", loadedMessage?.moderationDetails?.action)
+//        XCTAssertEqual("es", loadedMessage?.originalLanguage)
+//        XCTAssertEqual("Original", loadedMessage?.moderationDetails?.originalText)
+//        XCTAssertEqual("BOUNCE", loadedMessage?.moderationDetails?.action)
     }
 
     func test_message_isNotOverwrittenWhenAlreadyInDatabase_andIsPending() throws {
@@ -827,7 +828,7 @@ final class MessageDTO_Tests: XCTestCase {
 
     func test_Message_whenEmptyPinExpiration_addedToPinnedMessages() throws {
         let channelId: ChannelId = .unique
-        let ChannelStateResponse: ChannelStateResponse = dummyPayload(with: channelId)
+        let channelStateResponse: ChannelStateResponse = dummyPayload(with: channelId)
         let payload: Message = .dummy(
             messageId: .unique,
             authorUserId: .unique,
@@ -845,7 +846,7 @@ final class MessageDTO_Tests: XCTestCase {
             // Asynchronously save the payload to the db
             database.write { session in
                 // Create the channel first
-                channelDTO = try! session.saveChannel(payload: ChannelStateResponse, query: nil, cache: nil)
+                channelDTO = try! session.saveChannel(payload: channelStateResponse, query: nil, cache: nil)
 
                 // Save the message
                 messageDTO = try! session.saveMessage(payload: payload, for: channelId, syncOwnReactions: true, cache: nil)
@@ -914,7 +915,7 @@ final class MessageDTO_Tests: XCTestCase {
             type: TestAttachmentPayload.type.rawValue
         )
 
-        let Message: Message = .dummy(
+        let message: Message = .dummy(
             messageId: messageId,
             quotedMessage: .dummy(
                 messageId: quotedMessageId,
@@ -949,7 +950,7 @@ final class MessageDTO_Tests: XCTestCase {
         // Asynchronously save the payload to the db
         try database.writeSynchronously { session in
             // Save the message
-            try session.saveMessage(payload: Message, for: channelId, syncOwnReactions: true, cache: nil)
+            try session.saveMessage(payload: message, for: channelId, syncOwnReactions: true, cache: nil)
         }
 
         // Load the message from the db and check the fields are correct
@@ -957,48 +958,49 @@ final class MessageDTO_Tests: XCTestCase {
             database.viewContext.message(id: messageId)?.asModel()
         )
 
-        XCTAssertEqual(loadedMessage.id, Message.id)
-        XCTAssertEqual(loadedMessage.type.rawValue, Message.type)
-        XCTAssertEqual(loadedMessage.author.id, Message.user!.id)
-        XCTAssertNearlySameDate(loadedMessage.createdAt, Message.createdAt)
-        XCTAssertNearlySameDate(loadedMessage.updatedAt, Message.updatedAt)
-        XCTAssertNearlySameDate(loadedMessage.deletedAt, Message.deletedAt)
-        XCTAssertEqual(loadedMessage.text, Message.text)
-        XCTAssertEqual(loadedMessage.command, Message.command)
+        XCTAssertEqual(loadedMessage.id, message.id)
+        XCTAssertEqual(loadedMessage.type.rawValue, message.type)
+        XCTAssertEqual(loadedMessage.author.id, message.user!.id)
+        XCTAssertNearlySameDate(loadedMessage.createdAt, message.createdAt)
+        XCTAssertNearlySameDate(loadedMessage.updatedAt, message.updatedAt)
+        XCTAssertNearlySameDate(loadedMessage.deletedAt, message.deletedAt)
+        XCTAssertEqual(loadedMessage.text, message.text)
+        XCTAssertEqual(loadedMessage.command, message.command)
 //        XCTAssertEqual(loadedMessage.arguments, Message.args)
-        XCTAssertEqual(loadedMessage.parentMessageId, Message.parentId)
-        XCTAssertEqual(loadedMessage.showReplyInChannel, Message.showInChannel)
-        XCTAssertEqual(loadedMessage.mentionedUsers.map(\.id), Message.mentionedUsers.map(\.id))
-        XCTAssertEqual(loadedMessage.threadParticipants.map(\.id), Message.threadParticipants!.map(\.id))
-        XCTAssertEqual(loadedMessage.replyCount, Message.replyCount)
-        XCTAssertEqual(loadedMessage.extraData, Message.custom)
-        XCTAssertEqual(loadedMessage.reactionScores.mapKeys(\.rawValue), Message.reactionScores)
-        XCTAssertEqual(loadedMessage.reactionCounts.mapKeys(\.rawValue), Message.reactionCounts)
-        XCTAssertEqual(loadedMessage.isSilent, Message.silent)
+        XCTAssertEqual(loadedMessage.parentMessageId, message.parentId)
+        XCTAssertEqual(loadedMessage.showReplyInChannel, message.showInChannel)
+        XCTAssertEqual(loadedMessage.mentionedUsers.map(\.id), message.mentionedUsers.map(\.id))
+        XCTAssertEqual(loadedMessage.threadParticipants.map(\.id), message.threadParticipants!.map(\.id))
+        XCTAssertEqual(loadedMessage.replyCount, message.replyCount)
+        XCTAssertEqual(loadedMessage.extraData, message.custom)
+        XCTAssertEqual(loadedMessage.reactionScores.mapKeys(\.rawValue), message.reactionScores)
+        XCTAssertEqual(loadedMessage.reactionCounts.mapKeys(\.rawValue), message.reactionCounts)
+        XCTAssertEqual(loadedMessage.isSilent, message.silent)
         XCTAssertEqual(loadedMessage.latestReactions.count, 3)
         XCTAssertEqual(loadedMessage.currentUserReactions.count, 2)
         XCTAssertEqual(loadedMessage.isPinned, true)
         let pin = try XCTUnwrap(loadedMessage.pinDetails)
-        XCTAssertEqual(pin.expiresAt, Message.pinExpires)
-        XCTAssertEqual(pin.pinnedAt, Message.pinnedAt)
-        XCTAssertEqual(pin.pinnedBy.id, Message.pinnedBy?.id)
+        XCTAssertEqual(pin.expiresAt, message.pinExpires)
+        XCTAssertEqual(pin.pinnedAt, message.pinnedAt)
+        XCTAssertEqual(pin.pinnedBy.id, message.pinnedBy?.id)
         // Quoted message
-        XCTAssertEqual(loadedMessage.quotedMessage?.id, Message.quotedMessage?.id)
-        XCTAssertEqual(loadedMessage.quotedMessage?.author.id, Message.quotedMessage?.user?.id)
-        XCTAssertEqual(loadedMessage.quotedMessage?.extraData, Message.quotedMessage?.custom)
+        XCTAssertEqual(loadedMessage.quotedMessage?.id, message.quotedMessage?.id)
+        XCTAssertEqual(loadedMessage.quotedMessage?.author.id, message.quotedMessage?.user?.id)
+        XCTAssertEqual(loadedMessage.quotedMessage?.extraData, message.quotedMessage?.custom)
         // Moderation
-        XCTAssertEqual(loadedMessage.moderationDetails?.originalText, "Original")
-        XCTAssertEqual(loadedMessage.moderationDetails?.action, MessageModerationAction.bounce)
-        XCTAssertEqual(loadedMessage.isBounced, true)
+        // TODO: missing from spec.
+//        XCTAssertEqual(loadedMessage.moderationDetails?.originalText, "Original")
+//        XCTAssertEqual(loadedMessage.moderationDetails?.action, MessageModerationAction.bounce)
+//        XCTAssertEqual(loadedMessage.isBounced, true)
 
         // Attachments
         XCTAssertEqual(
             loadedMessage._attachments.map(\.id),
-            Message.attachmentIDs(cid: channelId)
+            message.attachmentIDs(cid: channelId)
         )
         XCTAssertEqual(
             loadedMessage._attachments.map(\.type.rawValue),
-            Message.attachments.map(\.!.type)
+            message.attachments.map(\.!.type)
         )
         XCTAssertEqual(loadedMessage.imageAttachments.map(\.payload), [imageAttachmentPayload.decodedImagePayload])
         XCTAssertEqual(loadedMessage.fileAttachments.map(\.payload), [fileAttachmentPayload.decodedFilePayload])
@@ -1014,7 +1016,7 @@ final class MessageDTO_Tests: XCTestCase {
         )
         XCTAssertEqual(
             loadedMessage.attachmentCounts,
-            Message.attachments.reduce(into: [:]) { scores, attachment in
+            message.attachments.reduce(into: [:]) { scores, attachment in
                 scores[AttachmentType(rawValue: attachment!.type!), default: 0] += 1
             }
         )

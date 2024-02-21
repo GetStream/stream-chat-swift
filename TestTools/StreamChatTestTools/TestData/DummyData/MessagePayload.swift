@@ -75,6 +75,7 @@ extension Message {
             showInChannel: showReplyInChannel,
             threadParticipants: threadParticipants,
             i18n: translations?.mapKeys(\.languageCode),
+            pinnedBy: pinnedByUserId != nil ? .dummy(userId: pinnedByUserId!) : nil,
             quotedMessage: quotedMessage,
             user: .dummy(userId: authorUserId)
         )

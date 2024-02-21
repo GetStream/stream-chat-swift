@@ -52,15 +52,15 @@ final class QueuedRequestDTO_Tests: XCTestCase {
         XCTAssertNearlySameDate(request?.date.bridgeDate, date)
         let databaseEndpointData = try XCTUnwrap(request?.endpoint)
         XCTAssertEqual(databaseEndpointData, endpointData)
-        let databaseEndpoint = try JSONDecoder.stream.decode(Endpoint<EmptyResponse>.self, from: databaseEndpointData)
-        XCTAssertEqual(databaseEndpoint.path.value, "guest")
-        XCTAssertEqual(databaseEndpoint.method, .post)
-        XCTAssertNil(databaseEndpoint.queryItems)
+        let databaseEndpoint = try JSONDecoder.stream.decode(QueuedRequest.self, from: databaseEndpointData)
+        XCTAssertEqual(databaseEndpoint.path, "guest")
+        XCTAssertEqual(databaseEndpoint.method, "POST")
+        XCTAssertTrue(databaseEndpoint.queryItems.isEmpty)
         XCTAssertTrue(databaseEndpoint.requiresConnectionId)
         XCTAssertFalse(databaseEndpoint.requiresToken)
 
         // We make sure decoding the body gives us the original body
-        let databaseEndpointBodyData = try XCTUnwrap(databaseEndpoint.body as? Data)
+        let databaseEndpointBodyData = try XCTUnwrap(databaseEndpoint.body)
         try XCTAssertEqual(
             JSONDecoder.stream.decode([String: Int].self, from: databaseEndpointBodyData),
             ["something": 123]
