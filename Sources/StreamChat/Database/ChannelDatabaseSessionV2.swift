@@ -663,9 +663,7 @@ extension NSManagedObjectContext {
 
         let dto = AttachmentDTO.loadOrCreate(id: id, context: self)
 
-        if let type = payload.type {
-            dto.attachmentType = AttachmentType(rawValue: type)
-        }
+        dto.attachmentType = payload.type
         dto.data = try JSONEncoder.default.encode(payload)
         dto.message = messageDTO
 

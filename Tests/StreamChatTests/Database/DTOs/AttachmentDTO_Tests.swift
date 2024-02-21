@@ -39,7 +39,7 @@ final class AttachmentDTO_Tests: XCTestCase {
         // Assert attachment has correct values.
         XCTAssertEqual(loadedAttachment.attachmentID, attachmentId)
         XCTAssertEqual(loadedAttachment.localState, nil)
-        XCTAssertEqual(loadedAttachment.attachmentType.rawValue, attachment.type)
+        XCTAssertEqual(loadedAttachment.attachmentType, attachment.type)
         XCTAssertEqual(loadedAttachment.message.id, messageId)
 
         let imagePayload = attachment.decodedImagePayload
@@ -73,7 +73,7 @@ final class AttachmentDTO_Tests: XCTestCase {
         // Assert attachment has correct values.
         XCTAssertEqual(loadedAttachment.attachmentID, attachmentId)
         XCTAssertEqual(loadedAttachment.localState, nil)
-        XCTAssertEqual(loadedAttachment.attachmentType.rawValue, attachment.type)
+        XCTAssertEqual(loadedAttachment.attachmentType, attachment.type)
         XCTAssertEqual(loadedAttachment.message.id, messageId)
 
         let giphyPayload = attachment.decodedGiphyPayload
@@ -107,7 +107,7 @@ final class AttachmentDTO_Tests: XCTestCase {
         // Assert attachment has correct values.
         XCTAssertEqual(loadedAttachment.attachmentID, attachmentId)
         XCTAssertEqual(loadedAttachment.localState, nil)
-        XCTAssertEqual(loadedAttachment.attachmentType.rawValue, attachment.type)
+        XCTAssertEqual(loadedAttachment.attachmentType, attachment.type)
         XCTAssertEqual(loadedAttachment.message.id, messageId)
 
         let giphyPayload = attachment.decodedGiphyPayload

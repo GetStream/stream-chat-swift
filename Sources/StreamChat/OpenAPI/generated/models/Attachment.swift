@@ -4,77 +4,59 @@
 
 import Foundation
 
-public struct Attachment: Codable, Hashable {
-    public var custom: [String: RawJSON]
-    public var assetUrl: String? = nil
-    public var authorIcon: String? = nil
-    public var authorLink: String? = nil
-    public var authorName: String? = nil
-    public var color: String? = nil
-    public var fallback: String? = nil
-    public var footer: String? = nil
-    public var footerIcon: String? = nil
-    public var imageUrl: String? = nil
-    public var ogScrapeUrl: String? = nil
-    public var originalHeight: Int? = nil
-    public var originalWidth: Int? = nil
-    public var pretext: String? = nil
-    public var text: String? = nil
-    public var thumbUrl: String? = nil
-    public var title: String? = nil
-    public var titleLink: String? = nil
-    public var type: String? = nil
-    public var actions: [Action?]? = nil
-    public var fields: [Field?]? = nil
-    public var giphy: Images? = nil
-
-    public init(custom: [String: RawJSON], assetUrl: String? = nil, authorIcon: String? = nil, authorLink: String? = nil, authorName: String? = nil, color: String? = nil, fallback: String? = nil, footer: String? = nil, footerIcon: String? = nil, imageUrl: String? = nil, ogScrapeUrl: String? = nil, originalHeight: Int? = nil, originalWidth: Int? = nil, pretext: String? = nil, text: String? = nil, thumbUrl: String? = nil, title: String? = nil, titleLink: String? = nil, type: String? = nil, actions: [Action?]? = nil, fields: [Field?]? = nil, giphy: Images? = nil) {
-        self.custom = custom
-        self.assetUrl = assetUrl
-        self.authorIcon = authorIcon
-        self.authorLink = authorLink
-        self.authorName = authorName
-        self.color = color
-        self.fallback = fallback
-        self.footer = footer
-        self.footerIcon = footerIcon
-        self.imageUrl = imageUrl
-        self.ogScrapeUrl = ogScrapeUrl
-        self.originalHeight = originalHeight
-        self.originalWidth = originalWidth
-        self.pretext = pretext
-        self.text = text
-        self.thumbUrl = thumbUrl
-        self.title = title
-        self.titleLink = titleLink
-        self.type = type
-        self.actions = actions
-        self.fields = fields
-        self.giphy = giphy
-    }
-    
-    public enum CodingKeys: String, CodingKey, CaseIterable {
-        case custom
-        case assetUrl = "asset_url"
-        case authorIcon = "author_icon"
-        case authorLink = "author_link"
-        case authorName = "author_name"
-        case color
-        case fallback
-        case footer
-        case footerIcon = "footer_icon"
-        case imageUrl = "image_url"
-        case ogScrapeUrl = "og_scrape_url"
-        case originalHeight = "original_height"
-        case originalWidth = "original_width"
-        case pretext
-        case text
-        case thumbUrl = "thumb_url"
-        case title
-        case titleLink = "title_link"
+/// A type that describes attachment JSON payload.
+public struct Attachment: Equatable, Hashable {
+    private enum CodingKeys: String, CodingKey {
         case type
-        case actions
-        case fields
-        case giphy
+        case ogURL = "og_scrape_url"
+    }
+
+    /// An attachment type.
+    let type: AttachmentType
+    /// A raw attachment payload data.
+    /// It's possible to have attachments of custom type with unknown structure
+    /// so we need to keep in raw data form so it will be possible to decode later.
+    let payload: RawJSON
+}
+
+extension Attachment: Encodable {
+    public func encode(to encoder: Encoder) throws {
+        var payload = self.payload
+        payload[AttachmentCodingKeys.type.rawValue] = .string(type.rawValue)
+        try payload.encode(to: encoder)
+    }
+}
+
+extension Attachment: Decodable {
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        let attachmentType: AttachmentType = try {
+            if container.contains(.ogURL) {
+                // Existence of `ogURL` means the attachment was obtained from the link sent within the message text.
+                // We treat such attachment as of `.linkPreview` type.
+                return .linkPreview
+            } else if let type = try container.decodeIfPresent(AttachmentType.self, forKey: .type) {
+                // If payload contains explicit type - take it!
+                return type
+            } else {
+                // The `type` field will become a mandatory one time. We use `.unknown` type
+                // to avoid having `type` optional until it is fixed on the backend side.
+                return .unknown
+            }
+        }()
+
+        var payload = try decoder.singleValueContainer().decode(RawJSON.self)
+
+        guard payload.dictionaryValue != nil else {
+            throw ClientError.AttachmentDecoding("Payload must be keyed container")
+        }
+
+        payload[AttachmentCodingKeys.type.rawValue] = nil
+
+        self.init(
+            type: attachmentType,
+            payload: payload
+        )
     }
 }

@@ -839,6 +839,7 @@ extension MessageDTO {
         }
 
         let attachments: [AttachmentRequest] = attachments
+            .filter { $0.localState == .uploaded || $0.localState == nil }
             .sorted { ($0.attachmentID?.index ?? 0) < ($1.attachmentID?.index ?? 0) }
             .compactMap { $0.asRequestPayload() }
         let messageRequest = MessageRequest(

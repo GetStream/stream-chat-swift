@@ -22,8 +22,7 @@ extension Attachment {
             "thumb_url" : "\(imageThumbnailURL.absoluteString)",
             "url" : "\(url.absoluteString)",
             "file_size": \(file.size),
-            "mime_type": "\(file.mimeType!)",
-            "custom": {}
+            "mime_type": "\(file.mimeType!)"
         }
         """.data(using: .utf8)!
 
@@ -31,27 +30,27 @@ extension Attachment {
     }
 
     var decodedImagePayload: ImageAttachmentPayload? {
-        let data = try! JSONEncoder.stream.encode(self)
+        let data = try! JSONEncoder.stream.encode(payload)
         return try? JSONDecoder.stream.decode(ImageAttachmentPayload.self, from: data)
     }
 
     var decodedFilePayload: FileAttachmentPayload? {
-        let data = try! JSONEncoder.stream.encode(self)
+        let data = try! JSONEncoder.stream.encode(payload)
         return try? JSONDecoder.stream.decode(FileAttachmentPayload.self, from: data)
     }
 
     var decodedGiphyPayload: GiphyAttachmentPayload? {
-        let data = try! JSONEncoder.stream.encode(self)
+        let data = try! JSONEncoder.stream.encode(payload)
         return try? JSONDecoder.stream.decode(GiphyAttachmentPayload.self, from: data)
     }
 
     var decodedLinkPayload: LinkAttachmentPayload? {
-        let data = try! JSONEncoder.stream.encode(self)
+        let data = try! JSONEncoder.stream.encode(payload)
         return try? JSONDecoder.stream.decode(LinkAttachmentPayload.self, from: data)
     }
 
     var decodedVideoPayload: VideoAttachmentPayload? {
-        let data = try! JSONEncoder.stream.encode(self)
+        let data = try! JSONEncoder.stream.encode(payload)
         return try? JSONDecoder.stream.decode(VideoAttachmentPayload.self, from: data)
     }
 
@@ -60,12 +59,13 @@ extension Attachment {
         imageURL: URL = URL(string: "https://getstream.io/some.jpg")!,
         imagePreviewURL: URL = URL(string: "https://getstream.io/some_preview.jpg")!
     ) -> Self {
-        Attachment(
-            custom: [:],
-            imageUrl: imageURL.absoluteString,
-            thumbUrl: imagePreviewURL.absoluteString,
-            title: title,
-            type: "image"
+        .init(
+            type: .image,
+            payload: .dictionary([
+                "title": .string(title),
+                "image_url": .string(imageURL.absoluteString),
+                "thumb_url": .string(imagePreviewURL.absoluteString)
+            ])
         )
     }
 
@@ -74,13 +74,14 @@ extension Attachment {
         assetURL: URL = URL(string: "https://getstream.io/some.pdf")!,
         file: AttachmentFile = .init(type: .pdf, size: 1024, mimeType: "application/pdf")
     ) -> Self {
-        Attachment(
-            custom: [
-                "mime_type": .string(file.mimeType ?? ""),
-                "file_size": .number(Double(file.size))
-            ],
-            assetUrl: assetURL.absoluteString,
-            type: "file"
+        .init(
+            type: .file,
+            payload: .dictionary([
+                "title": .string(title),
+                "asset_url": .string(assetURL.absoluteString),
+                "mime_type": .string(file.mimeType!),
+                "file_size": .string("\(file.size)")
+            ])
         )
     }
 
@@ -92,11 +93,13 @@ extension Attachment {
         let actionsData = try! JSONEncoder.default.encode(actions)
         let actionsJSON = try! JSONDecoder.default.decode(RawJSON.self, from: actionsData)
 
-        return Attachment(
-            custom: ["actions": actionsJSON],
-            thumbUrl: previewURL.absoluteString,
-            title: title,
-            type: "giphy"
+        return .init(
+            type: .giphy,
+            payload: .dictionary([
+                "title": .string(title),
+                "thumb_url": .string(previewURL.absoluteString),
+                "actions": actionsJSON
+            ])
         )
     }
 
@@ -109,15 +112,17 @@ extension Attachment {
         previewURL: URL = URL(string: "https://getstream.io/some_preview.pdf")!,
         titleURL: URL = URL(string: "https://getstream.io/page")!
     ) -> Self {
-        Attachment(
-            custom: [:],
-            authorName: author,
-            imageUrl: imageURL.absoluteString,
-            ogScrapeUrl: ogURL.absoluteString,
-            thumbUrl: previewURL.absoluteString,
-            title: title,
-            titleLink: titleURL.absoluteString,
-            type: "linkPreview"
+        .init(
+            type: .linkPreview,
+            payload: .dictionary([
+                "title": .string(title),
+                "text": .string(text),
+                "author_name": .string(author),
+                "og_scrape_url": .string(ogURL.absoluteString),
+                "image_url": .string(imageURL.absoluteString),
+                "thumb_url": .string(previewURL.absoluteString),
+                "title_link": .string(titleURL.absoluteString)
+            ])
         )
     }
 
@@ -126,14 +131,14 @@ extension Attachment {
         videoURL: URL = URL(string: "https://getstream.io/video.mov")!,
         file: AttachmentFile = .init(type: .mov, size: 1024, mimeType: "video/mov")
     ) -> Self {
-        return Attachment(
-            custom: [
-                "mime_type": .string(file.mimeType ?? ""),
-                "file_size": .number(Double(file.size))
-            ],
-            assetUrl: videoURL.absoluteString,
-            title: title,
-            type: "video"
+        .init(
+            type: .video,
+            payload: .dictionary([
+                "title": .string(title),
+                "asset_url": .string(videoURL.absoluteString),
+                "mime_type": .string(file.mimeType!),
+                "file_size": .string("\(file.size)")
+            ])
         )
     }
 
@@ -142,14 +147,14 @@ extension Attachment {
         audioURL: URL = URL(string: "https://getstream.io/audio.mp3")!,
         file: AttachmentFile = .init(type: .mov, size: 1024, mimeType: "audio/mp3")
     ) -> Self {
-        return Attachment(
-            custom: [
-                "mime_type": .string(file.mimeType ?? ""),
-                "file_size": .number(Double(file.size))
-            ],
-            assetUrl: audioURL.absoluteString,
-            title: title,
-            type: "audio"
+        .init(
+            type: .audio,
+            payload: .dictionary([
+                "title": .string(title),
+                "asset_url": .string(audioURL.absoluteString),
+                "mime_type": .string(file.mimeType!),
+                "file_size": .string("\(file.size)")
+            ])
         )
     }
 
@@ -158,14 +163,14 @@ extension Attachment {
         audioURL: URL = URL(string: "https://getstream.io/recording.aac")!,
         file: AttachmentFile = .init(type: .mov, size: 1024, mimeType: "audio/aac")
     ) -> Self {
-        return Attachment(
-            custom: [
-                "mime_type": .string(file.mimeType ?? ""),
-                "file_size": .number(Double(file.size))
-            ],
-            assetUrl: audioURL.absoluteString,
-            title: title,
-            type: "voiceRecording"
+        .init(
+            type: .voiceRecording,
+            payload: .dictionary([
+                "title": .string(title),
+                "asset_url": .string(audioURL.absoluteString),
+                "mime_type": .string(file.mimeType!),
+                "file_size": .string("\(file.size)")
+            ])
         )
     }
 }
