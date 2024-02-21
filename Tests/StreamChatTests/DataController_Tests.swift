@@ -28,7 +28,10 @@ final class DataController_Tests: XCTestCase {
         AssertAsync.willBeEqual(delegate.state, .localDataFetched)
     }
 
-    func test_delegateMethodIsNotCalled_whenStateIsRemoteDataFetched() {
+    func test_delegateMethodIsNotCalled_whenStateIsRemoteDataFetchedAndBGMappingEnabled() {
+        let originalIsBackgroundMappingEnabled = StreamRuntimeCheck._isBackgroundMappingEnabled
+        StreamRuntimeCheck._isBackgroundMappingEnabled = true
+
         // GIVEN
         let controller = DataController()
         let delegateQueueId = UUID()
@@ -46,6 +49,7 @@ final class DataController_Tests: XCTestCase {
         // THEN
         wait(for: [delegate.didChangeStateExp], timeout: defaultTimeout)
         XCTAssertEqual(delegate.didChangeStateCallCount, 0)
+        StreamRuntimeCheck._isBackgroundMappingEnabled = originalIsBackgroundMappingEnabled
     }
 
     func test_canBeRecoveredTrueWhenStateIs_remoteDataFetched() {
