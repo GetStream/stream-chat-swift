@@ -3,6 +3,8 @@
     {
       "banned" : false,
       "online" : false,
+      "shadow_banned": false,
+      "custom": {},
       "id" : "broken-bush-1",
       "role" : "user",
       "created_at" : "2020-09-30T19:55:24.097609Z",
@@ -14,6 +16,8 @@
     {
       "banned" : false,
       "online" : false,
+      "shadow_banned": false,
+      "custom": {},
       "id" : "8160ad1a-da58-42ea-8d9a-d00b53a2d98e",
       "role" : "user",
       "created_at" : "2020-09-30T19:39:51.120474Z",
@@ -24,6 +28,8 @@
     {
       "banned" : false,
       "online" : false,
+      "shadow_banned": false,
+      "custom": {},
       "id" : "winter-band-4",
       "role" : "user",
       "created_at" : "2020-09-30T19:33:32.187045Z",
@@ -34,6 +40,8 @@
     {
       "banned" : false,
       "online" : false,
+      "shadow_banned": false,
+      "custom": {},
       "id" : "b6afbb47-1e43-4fc4-b74d-1c780c0cd874",
       "role" : "user",
       "created_at" : "2020-09-30T19:51:17.461218Z",
@@ -44,6 +52,8 @@
     {
       "banned" : false,
       "online" : false,
+      "shadow_banned": false,
+      "custom": {},
       "id" : "8922d85f-f92c-4dd8-91ce-e7d37ef27323",
       "role" : "user",
       "created_at" : "2020-09-30T18:38:25.389991Z",
@@ -54,6 +64,8 @@
     {
       "banned" : false,
       "online" : false,
+      "shadow_banned": false,
+      "custom": {},
       "id" : "a33c97f2-347d-4f40-965f-d8db88001574",
       "role" : "user",
       "created_at" : "2020-09-30T19:33:32.199868Z",
@@ -64,6 +76,8 @@
     {
       "banned" : false,
       "online" : false,
+      "shadow_banned": false,
+      "custom": {},
       "id" : "c3d6b9ce-d09a-4940-abac-5333561407bb",
       "role" : "user",
       "created_at" : "2020-09-30T19:14:55.861874Z",
@@ -74,6 +88,8 @@
     {
       "banned" : false,
       "online" : false,
+      "shadow_banned": false,
+      "custom": {},
       "id" : "3e1e5bb8-d4b4-44d5-93ce-8c530dc8032e",
       "role" : "user",
       "created_at" : "2020-09-30T18:42:56.619966Z",
@@ -84,6 +100,8 @@
     {
       "banned" : false,
       "online" : false,
+      "shadow_banned": false,
+      "custom": {},
       "id" : "7cd6e46b-b4d0-4476-a28d-a0abcd3a4646",
       "role" : "user",
       "created_at" : "2020-09-30T19:16:15.023005Z",
@@ -94,6 +112,8 @@
     {
       "banned" : false,
       "online" : false,
+      "shadow_banned": false,
+      "custom": {},
       "id" : "985e581d-b0b7-4ecd-aabb-e30794bab75c",
       "role" : "user",
       "created_at" : "2020-09-30T18:44:02.668396Z",
@@ -104,6 +124,8 @@
     {
       "banned" : false,
       "online" : false,
+      "shadow_banned": false,
+      "custom": {},
       "id" : "8a9c638d-500b-41ee-a6c2-bf4af845f090",
       "role" : "user",
       "created_at" : "2020-09-30T19:45:28.494283Z",
@@ -114,6 +136,8 @@
     {
       "banned" : false,
       "online" : false,
+      "shadow_banned": false,
+      "custom": {},
       "id" : "13776120-2d1b-4933-9232-67f17058b3c8",
       "role" : "user",
       "created_at" : "2020-09-30T19:35:05.668765Z",
@@ -124,6 +148,8 @@
     {
       "banned" : false,
       "online" : false,
+      "shadow_banned": false,
+      "custom": {},
       "id" : "04128fa1-5690-47b8-a37a-062272bd7b76",
       "role" : "user",
       "created_at" : "2020-09-30T18:44:02.660322Z",
@@ -134,6 +160,8 @@
     {
       "banned" : false,
       "online" : false,
+      "shadow_banned": false,
+      "custom": {},
       "id" : "25927209-f916-4164-a2ce-8858d189ce96",
       "role" : "user",
       "created_at" : "2020-09-30T18:32:20.911162Z",
@@ -144,6 +172,8 @@
     {
       "banned" : false,
       "online" : false,
+      "shadow_banned": false,
+      "custom": {},
       "id" : "ce8d3c56-f226-47cf-93ae-6ba8e7537ddf",
       "role" : "user",
       "created_at" : "2020-09-30T18:54:16.282126Z",
@@ -154,6 +184,8 @@
     {
       "banned" : false,
       "online" : false,
+      "shadow_banned": false,
+      "custom": {},
       "id" : "8e6cea5b-033e-444a-b140-6ee20d569755",
       "role" : "user",
       "created_at" : "2020-09-30T19:53:45.160672Z",
@@ -164,6 +196,8 @@
     {
       "banned" : false,
       "online" : false,
+      "shadow_banned": false,
+      "custom": {},
       "id" : "42446476-17a9-4615-9cd4-d65bbc80af1f",
       "role" : "user",
       "created_at" : "2020-09-30T18:32:39.709712Z",
@@ -174,6 +208,8 @@
     {
       "banned" : false,
       "online" : false,
+      "shadow_banned": false,
+      "custom": {},
       "id" : "a0585152-de31-4a4b-b20e-a58f05d1f9d0",
       "role" : "user",
       "created_at" : "2020-09-30T19:01:10.792849Z",
@@ -184,6 +220,8 @@
     {
       "banned" : false,
       "online" : false,
+      "shadow_banned": false,
+      "custom": {},
       "id" : "705081b2-f9a4-4f96-9644-43568766b617",
       "role" : "user",
       "created_at" : "2020-09-30T19:46:00.842123Z",
@@ -194,6 +232,8 @@
     {
       "banned" : false,
       "online" : false,
+      "shadow_banned": false,
+      "custom": {},      
       "id" : "c42d83c1-590f-42fd-9d2d-f0f1fc876596",
       "role" : "user",
       "created_at" : "2020-09-30T19:08:22.53101Z",

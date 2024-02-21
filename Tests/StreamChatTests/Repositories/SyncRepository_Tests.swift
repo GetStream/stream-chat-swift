@@ -699,7 +699,8 @@ extension SyncRepository_Tests {
                 createdAt: $0,
                 type: "message.new",
                 watcherCount: 0,
-                message: .dummy(messageId: "\($0)")
+                message: .dummy(messageId: "\($0)", authorUserId: .unique, cid: cid),
+                user: .dummy(userId: "")
             )
             return WSEvent.typeMessageNewEvent(event)
         })

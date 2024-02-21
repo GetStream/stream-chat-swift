@@ -55,7 +55,7 @@ final class UserDTO_Tests: XCTestCase {
     func test_defaultExtraDataIsUsed_whenExtraDataDecodingFails() throws {
         let userId: UserId = .unique
 
-        let payload: UserObject = .dummy(userId: .unique)
+        let payload: UserObject = .dummy(userId: userId)
 
         try database.writeSynchronously { session in
             // Save the user

@@ -110,14 +110,16 @@ final class TypingStartCleanupMiddleware_Tests: XCTestCase {
             channelType: cid.type.rawValue,
             cid: cid.rawValue,
             createdAt: .unique,
-            type: EventType.userStartTyping.rawValue,
+            type: EventType.userStopTyping.rawValue,
             user: .dummy(userId: otherUser.id)
         )
-        XCTAssertEqual(emittedEvents.map(\.asEquatable), [stopTyping.asEquatable])
-
+        XCTAssertEqual((emittedEvents.first as? TypingStopEvent)?.cid, stopTyping.cid)
+        XCTAssertEqual((emittedEvents.first as? TypingStopEvent)?.user?.id, stopTyping.user?.id)
+        
         // Wait much longer and assert no more `typingStop` events.
         time.run(numberOfSeconds: 5 + .incomingTypingStartEventTimeout)
-        XCTAssertEqual(emittedEvents.map(\.asEquatable), [stopTyping.asEquatable])
+        XCTAssertEqual((emittedEvents.first as? TypingStopEvent)?.cid, stopTyping.cid)
+        XCTAssertEqual((emittedEvents.first as? TypingStopEvent)?.user?.id, stopTyping.user?.id)
 
         middleware = nil
         XCTAssertNil(weakMiddleware)

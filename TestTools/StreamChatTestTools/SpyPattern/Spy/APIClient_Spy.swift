@@ -125,6 +125,8 @@ final class APIClient_Spy: APIClient, Spy {
         if isRecoveryOperation {
             recoveryRequest_completion = completion
             request_expectation.fulfill()
+            recoveryRequest_endpoint = AnyEndpoint(Endpoint<Response>.dummy())
+            _recoveryRequest_allRecordedCalls.mutate { $0.append((recoveryRequest_endpoint!, recoveryRequest_completion!)) }
             return
         }
         if let result = request_result as? Result<Response, Error> {
@@ -200,6 +202,18 @@ extension APIClient_Spy {
             requestEncoder: DefaultRequestEncoder(baseURL: .unique(), apiKey: .init(.unique)),
             requestDecoder: DefaultRequestDecoder(),
             attachmentUploader: AttachmentUploader_Spy()
+        )
+    }
+}
+
+extension Endpoint {
+    static func dummy() -> Endpoint {
+        .init(
+            path: .connect,
+            method: .get,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: nil
         )
     }
 }

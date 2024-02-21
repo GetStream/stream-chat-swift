@@ -259,9 +259,7 @@ class SyncRepository {
                 log.info("Processing pending events. Count \(payload.events.count)", subsystems: .offlineSupport)
                 self?.processMissingEventsPayload(payload) {
                     var lastSyncAt = date
-                    if let event = payload.events.last(where: { event in
-                        event.rawValue is EventContainsCreationDate
-                    }) as? EventContainsCreationDate {
+                    if let event = payload.events.map(\.rawValue).last as? EventContainsCreationDate {
                         lastSyncAt = event.createdAt
                     }
                     self?.updateLastSyncAt(with: lastSyncAt, completion: { error in

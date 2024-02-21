@@ -2,6 +2,10 @@
     "user" : {
         "id" : "broken-waterfall-5",
         "banned" : false,
+        "shadow_banned": false,
+        "custom": {
+            "name" : "Tester"
+        },
         "extraData" : {
             "name" : "Tester"
         },
@@ -22,6 +26,7 @@
     "channel_type" : "messaging",
     "channel_id" : "general",
     "reaction" : {
+        "custom": {},
         "score" : 2,
         "message_id" : "0e042a9c-d648-4a28-8ed6-dbdb2b7b4779",
         "created_at" : "2020-07-20T17:09:56.702079Z",
@@ -30,6 +35,10 @@
         "updated_at" : "2020-07-20T17:09:56.702079Z",
         "user" : {
             "id" : "broken-waterfall-5",
+            "shadow_banned": false,
+            "custom": {
+                "name" : "Tester"
+            },
             "banned" : false,
             "unread_channels" : 0,
             "totalUnreadCount" : 0,
@@ -51,7 +60,10 @@
     },
     "created_at" : "2020-07-20T17:09:56.717804443Z",
     "message" : {
+        "cid": "messaging:general",
         "id" : "0e042a9c-d648-4a28-8ed6-dbdb2b7b4779",
+        "deleted_reply_count": 0,
+        "shadowed": false,
         "reaction_counts" : {
             "like" : 1
         },
@@ -63,6 +75,7 @@
         "type" : "regular",
         "latest_reactions" : [
             {
+                "custom": {},
                 "score" : 1,
                 "message_id" : "0e042a9c-d648-4a28-8ed6-dbdb2b7b4779",
                 "created_at" : "2020-07-20T17:09:56.702079Z",
@@ -71,6 +84,10 @@
                 "updated_at" : "2020-07-20T17:09:56.702079Z",
                 "user" : {
                     "id" : "broken-waterfall-5",
+                    "shadow_banned": false,
+                    "custom": {
+                        "name" : "Tester"
+                    },
                     "banned" : false,
                     "unread_channels" : 0,
                     "totalUnreadCount" : 0,
@@ -102,6 +119,10 @@
         "reply_count" : 0,
         "user" : {
             "id" : "broken-waterfall-5",
+            "shadow_banned": false,
+            "custom": {
+                "name" : "Tester"
+            },
             "banned" : false,
             "unread_channels" : 0,
             "extraData" : {

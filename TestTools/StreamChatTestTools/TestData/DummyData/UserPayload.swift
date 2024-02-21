@@ -20,9 +20,6 @@ extension UserObject {
         lastActive: Date = .unique,
         deactivatedAt: Date? = nil
     ) -> UserObject {
-        var custom = extraData
-        custom["name"] = .string(name)
-        custom["image"] = .string(imageUrl?.absoluteString ?? "")
         return UserObject(
             id: userId,
             banned: isBanned,
@@ -35,7 +32,7 @@ extension UserObject {
             role: role.rawValue,
             updatedAt: updatedAt,
             teams: teams,
-            custom: custom
+            custom: extraData
         )
     }
 }

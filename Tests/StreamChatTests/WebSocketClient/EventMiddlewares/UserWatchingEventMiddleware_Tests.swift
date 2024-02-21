@@ -72,7 +72,7 @@ final class UserWatchingEventMiddleware_Tests: XCTestCase {
             createdAt: .unique,
             type: "user.watching.start",
             watcherCount: watcherCount,
-            user: .dummy(userId: .unique)
+            user: .dummy(userId: userId)
         )
         // Channel and user must exist for the middleware to work
         try database.createChannel(cid: cid, withMessages: false)

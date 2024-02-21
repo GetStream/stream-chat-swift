@@ -47,7 +47,8 @@ class TypingStartCleanupMiddleware: EventMiddleware {
                     channelType: cid.type.rawValue,
                     cid: cid.rawValue,
                     createdAt: Date(),
-                    type: EventType.userStopTyping.rawValue
+                    type: EventType.userStopTyping.rawValue,
+                    user: typingEvent.user
                 )
                 self?.emitEvent(typingStopEvent)
             }
