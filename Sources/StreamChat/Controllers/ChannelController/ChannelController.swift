@@ -156,8 +156,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
 
     /// Database observers.
     /// Will be `nil` when observing channel with backend generated `id` is not yet created.
-    internal var channelObserver: EntityDatabaseObserverWrapper<ChatChannel, ChannelDTO>?
-    internal var messagesObserver: ListDatabaseObserverWrapper<ChatMessage, MessageDTO>?
+    private var channelObserver: EntityDatabaseObserverWrapper<ChatChannel, ChannelDTO>?
+    private var messagesObserver: ListDatabaseObserverWrapper<ChatMessage, MessageDTO>?
 
     private var eventObservers: [EventObserver] = []
     private let environment: Environment

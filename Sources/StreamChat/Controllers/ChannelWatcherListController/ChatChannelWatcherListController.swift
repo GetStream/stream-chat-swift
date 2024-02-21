@@ -56,7 +56,7 @@ public class ChatChannelWatcherListController: DataController, DelegateCallable,
     }
 
     /// The observer used to observe the changes in the database.
-    internal lazy var watchersObserver: ListDatabaseObserverWrapper<ChatUser, UserDTO> = createWatchersObserver()
+    private lazy var watchersObserver: ListDatabaseObserverWrapper<ChatUser, UserDTO> = createWatchersObserver()
 
     /// The worker used to fetch the remote data and communicate with servers.
     private lazy var updater: ChannelUpdater = self.environment.channelUpdaterBuilder(

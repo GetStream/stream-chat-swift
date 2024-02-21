@@ -49,7 +49,7 @@ public class ChatUserController: DataController, DelegateCallable, DataStoreProv
     private lazy var userUpdater = createUserUpdater()
 
     /// The observer used to track the user changes in the database.
-    internal lazy var userObserver = createUserObserver()
+    private lazy var userObserver = createUserObserver()
         .onChange { [weak self] change in
             self?.delegateCallback { [weak self] in
                 guard let self = self else {

@@ -34,10 +34,10 @@ public class ChatChannelMemberListController: DataController, DelegateCallable, 
     }
 
     /// The worker used to fetch the remote data and communicate with servers.
-    internal lazy var memberListUpdater = createMemberListUpdater()
+    private lazy var memberListUpdater = createMemberListUpdater()
 
     /// The observer used to observe the changes in the database.
-    internal lazy var memberListObserver = createMemberListObserver()
+    private lazy var memberListObserver = createMemberListObserver()
 
     /// The type-erased delegate.
     var multicastDelegate: MulticastDelegate<ChatChannelMemberListControllerDelegate> = .init() {

@@ -66,7 +66,7 @@ public class ChatChannelMemberController: DataController, DelegateCallable, Data
     private lazy var memberListUpdater = createMemberListUpdater()
 
     /// The observer used to track the user changes in the database.
-    internal lazy var memberObserver = createMemberObserver()
+    private lazy var memberObserver = createMemberObserver()
         .onChange { [weak self] change in
             self?.delegateCallback { [weak self] in
                 guard let self = self else {
