@@ -785,7 +785,7 @@ private extension ChatMessageController {
                 }
                 log.debug("didChangeReplies: \(changes.map(\.debugDescription))")
                 $0.messageController(self, didChangeReplies: changes)
-                $0.controller(self, didChangeState: state)
+                $0.controller(self, didChangeStateWhenBGMappingEnabled: self.state)
             }
         }
 

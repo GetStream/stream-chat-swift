@@ -26,12 +26,14 @@ public class DataController: Controller {
             callback {
                 // We only report state changes if not `.remoteDataFetched` because the data
                 // coming from the server will only be available once `FRC` reports changes,
-                // so when that happens, only then we report `didChangeState`. This is required
-                // mostly because of background mapping.
+                // so when that happens, only then we report `didChangeState`.
+                // This is required for background mapping only.
                 // More context here: https://github.com/GetStream/stream-chat-swift/pull/3039
-                if self.state != .remoteDataFetched {
-                    self.stateMulticastDelegate.invoke { $0.controller(self, didChangeState: self.state) }
+                if StreamRuntimeCheck._isBackgroundMappingEnabled && self.state == .remoteDataFetched {
+                    return
                 }
+
+                self.stateMulticastDelegate.invoke { $0.controller(self, didChangeState: self.state) }
             }
         }
     }
@@ -84,6 +86,17 @@ public protocol DataControllerStateDelegate: AnyObject {
 /// Default implementation of `DataControllerStateDelegate` method.
 public extension DataControllerStateDelegate {
     func controller(_ controller: DataController, didChangeState state: DataController.State) {}
+}
+
+/// Internal function to only call didChangeState if BGMappingEnabled.
+/// This is a workaround at the moment to fix some issues when BG Mapping is enabled.
+/// More context here: https://github.com/GetStream/stream-chat-swift/pull/3039
+internal extension DataControllerStateDelegate {
+    func controller(_ controller: DataController, didChangeStateWhenBGMappingEnabled state: DataController.State) {
+        if StreamRuntimeCheck._isBackgroundMappingEnabled {
+            self.controller(controller, didChangeState: state)
+        }
+    }
 }
 
 /// A helper protocol allowing calling delegate using existing `callback` method.

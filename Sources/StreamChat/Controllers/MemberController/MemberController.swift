@@ -75,7 +75,7 @@ public class ChatChannelMemberController: DataController, DelegateCallable, Data
                 }
 
                 $0.memberController(self, didUpdateMember: change)
-                $0.controller(self, didChangeState: state)
+                $0.controller(self, didChangeStateWhenBGMappingEnabled: self.state)
             }
         }
 

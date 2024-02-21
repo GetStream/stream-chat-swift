@@ -72,7 +72,7 @@ public class ChatUserListController: DataController, DelegateCallable, DataStore
                 }
 
                 $0.controller(self, didChangeUsers: changes)
-                $0.controller(self, didChangeState: state)
+                $0.controller(self, didChangeStateWhenBGMappingEnabled: self.state)
             }
         }
 

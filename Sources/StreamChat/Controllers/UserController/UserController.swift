@@ -57,7 +57,7 @@ public class ChatUserController: DataController, DelegateCallable, DataStoreProv
                     return
                 }
                 $0.userController(self, didUpdateUser: change)
-                $0.controller(self, didChangeState: state)
+                $0.controller(self, didChangeStateWhenBGMappingEnabled: self.state)
             }
         }
 
