@@ -70,7 +70,7 @@ final class ChannelMuteDTO_Tests: XCTestCase {
         let mute = ChannelMute(
             createdAt: .unique,
             updatedAt: .unique,
-            channel: .dummy(cid: .unique),
+            channel: channel,
             user: currentUser.toUser
         )
 
@@ -103,7 +103,7 @@ final class ChannelMuteDTO_Tests: XCTestCase {
         let initialMute = ChannelMute(
             createdAt: .unique,
             updatedAt: .unique,
-            channel: .dummy(cid: .unique),
+            channel: channel,
             user: currentUser.toUser
         )
         
@@ -116,7 +116,7 @@ final class ChannelMuteDTO_Tests: XCTestCase {
         let updatedMute = ChannelMute(
             createdAt: .unique,
             updatedAt: .unique,
-            channel: .dummy(cid: .unique),
+            channel: channel,
             user: currentUser.toUser
         )
         

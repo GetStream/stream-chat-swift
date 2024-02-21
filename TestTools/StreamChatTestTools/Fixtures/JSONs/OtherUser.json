@@ -1,4 +1,6 @@
 {
+  "shadow_banned": false,
+  "custom": {},
   "banned" : true,
   "online" : true,
   "id" : "bitter-cloud-0",

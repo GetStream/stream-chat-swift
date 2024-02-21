@@ -24,6 +24,17 @@
       "small": 0.001,
       "colors": ["blue", "yellow", 42]
   },
+  "custom": {
+      "secret_note": "Anakin is Vader!",
+      "good_movies_count": 3,
+      "awesome": true,
+      "nested_stuff": {
+          "how_many_times": 42,
+          "small": 0.001,
+          "colors": ["blue", "yellow", 42]
+      }
+  },
+  "language": "en",
   "mutes" : [
       {
           "created_at" : "2020-07-08T15:22:32.558759Z",
@@ -55,7 +66,8 @@
               "role" : "user",
               "total_unread_count" : 0,
               "online" : true,
-              "name" : "broken-waterfall-5"
+              "name" : "broken-waterfall-5",
+              "custom": {}
           }
       },
   ],
@@ -86,8 +98,12 @@
               "name" : "Broken Waterfall",
               "image" : "https:\/\/getstream.io\/random_svg\/?id=broken-waterfall-5&amp;name=Broken+waterfall",
               "secret_note" : "Anaking is Vader!",
+              "custom": {
+                  "secret_note" : "Anaking is Vader!",                  
+              }
           },
           "channel": {
+              "disabled": false,
               "id": "B1DFF9C5-E6A6-4BFA-9375-DC5E8C6852FF",
               "created_at": "2021-03-22T10:23:52.516225Z",
               "updated_at": "2021-04-22T10:23:52.516225Z",
@@ -116,6 +132,10 @@
                   "automod": "AI",
                   "automod_behavior": "flag",
                   "blocklist_behavior": "flag",
+                  "custom_events" : false,
+                  "mark_messages_pending" : false,
+                  "push_notifications" : false,
+                  "reminders" : false,
                   "automod_thresholds": {
                       "explicit": {
                           "flag": 0.85,

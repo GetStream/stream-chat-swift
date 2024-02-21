@@ -58,9 +58,9 @@ final class MessageAttachmentPayload_Tests: XCTestCase {
 //        XCTAssertEqual(payload.payload, expectedRawJSON)
     }
 
-    func test_unknownIsUsed_ifTypeIsMissing() throws {
+    func test_nilIsUsed_ifTypeIsMissing() throws {
         let json = XCTestCase.mockData(fromJSONFile: "AttachmentPayload+NoType")
         let payload = try JSONDecoder.default.decode(Attachment.self, from: json)
-        XCTAssertEqual(payload.type, "unknown")
+        XCTAssertEqual(payload.type, nil)
     }
 }

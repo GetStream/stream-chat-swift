@@ -1,6 +1,8 @@
 {
     "og_scrape_url" : "https:\/\/google.com",
     "title" : "Google",
+    "custom": {},
+    "type" : "linkPreview",
     "title_link" : "https:\/\/www.google.com\/",
     "text" : "Search the world's information, including webpages, images, videos and more. Google has many special features to help you find exactly what you're looking for."
 }

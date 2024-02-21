@@ -11,6 +11,7 @@ public struct ChannelTruncatedEvent: Codable, Hashable, Event {
     public var createdAt: Date
     public var type: String
     public var channel: ChannelResponse? = nil
+    public var message: Message? = nil // TODO: fix in generation
 
     public init(channelId: String, channelType: String, cid: String, createdAt: Date, type: String, channel: ChannelResponse? = nil) {
         self.channelId = channelId
@@ -28,6 +29,7 @@ public struct ChannelTruncatedEvent: Codable, Hashable, Event {
         case createdAt = "created_at"
         case type
         case channel
+        case message
     }
 }
 

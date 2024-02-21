@@ -1,7 +1,11 @@
 {
+  "duration" : "",
   "messages" : [
     {
       "id" : "broken-waterfall-5-7aede36b-b89f-4f45-baff-c40c7c1875d9",
+      "cid" : "messaging:broken-waterfall-5-7aede36b-b89f-4f45-baff-c40c7c1875d9",
+      "deleted_reply_count": 0,
+      "shadowed": false,
       "reaction_counts" : {
         
       },
@@ -52,7 +56,10 @@
       "pinned_by": null
     },
     {
+      "cid" : "messaging:jolly-base-0-8b51b803-e44c-4e2f-8178-dce0c1cb5611",
       "id" : "jolly-base-0-8b51b803-e44c-4e2f-8178-dce0c1cb5611",
+      "deleted_reply_count": 0,
+      "shadowed": false,
       "reaction_counts" : {
         
       },
@@ -95,7 +102,10 @@
       "pinned_by": null
     },
     {
+      "cid" : "messaging:jolly-base-0-2827d319-5383-4292-84bf-91288eb977a6",
       "id" : "jolly-base-0-2827d319-5383-4292-84bf-91288eb977a6",
+      "deleted_reply_count": 0,
+      "shadowed": false,
       "reaction_counts" : {
         
       },
@@ -138,7 +148,10 @@
       "pinned_by": null
     },
     {
+      "cid": "messaging:test",
       "id" : "jolly-base-0-9543fe87-8bb9-4145-8781-029661669844",
+      "deleted_reply_count": 0,
+      "shadowed": false,
       "reaction_counts" : {
         
       },
@@ -182,6 +195,9 @@
     },
     {
       "id" : "jolly-base-0-c6321eed-2d81-46c8-9c65-72f49ef0e9f2",
+      "cid" : "messaging:jolly-base-0-2827d319-5383-4292-84bf-91288eb977a6",
+      "deleted_reply_count": 0,
+      "shadowed": false,
       "reaction_counts" : {
         
       },
@@ -204,6 +220,7 @@
       "text" : "",
       "attachments" : [
         {
+          "custom": {},
           "title" : "wow",
           "title_link" : "https:\/\/giphy.com\/gifs\/nicki-minaj-1Zt3z4uEBPZQY",
           "type" : "giphy",
@@ -235,6 +252,9 @@
     },
     {
       "id" : "example-user-699e467b-580e-4c97-a8ad-117080ffdf14",
+      "cid" : "messaging:jolly-base-0-2827d319-5383-4292-84bf-91288eb977a6",
+      "deleted_reply_count": 0,
+      "shadowed": false,
       "reaction_counts" : {
         
       },
@@ -278,6 +298,9 @@
     },
     {
       "id" : "hidden-lake-6-abf534d4-08f3-4d47-886b-a7d8739f60c6",
+      "cid" : "messaging:jolly-base-0-2827d319-5383-4292-84bf-91288eb977a6",
+      "deleted_reply_count": 0,
+      "shadowed": false,
       "reaction_counts" : {
         
       },
@@ -293,6 +316,7 @@
       "text" : "",
       "attachments" : [
         {
+          "custom": {},            
           "type" : "image",
           "fallback" : "maria.jpg",
           "image_url" : "https:\/\/stream-cloud-uploads-dev.imgix.net\/images\/47574\/8dcd6243-03a0-4aec-8080-0a2e4b6cd5c7.maria.jpg?ro=0&s=a10d6725ce17c84d3127329c514939c2"
@@ -325,6 +349,9 @@
     },
     {
       "id" : "a7e192f1-0c4f-4c0d-91ad-5451403487ec",
+      "cid" : "messaging:jolly-base-0-2827d319-5383-4292-84bf-91288eb977a6",
+      "deleted_reply_count": 0,
+      "shadowed": false,
       "reaction_counts" : {
         
       },
@@ -373,6 +400,9 @@
     },
     {
       "id" : "ff3dc0c3-217b-45c3-b318-ec9631737810",
+      "cid" : "messaging:jolly-base-0-2827d319-5383-4292-84bf-91288eb977a6",
+      "deleted_reply_count": 0,
+      "shadowed": false,
       "reaction_counts" : {
         
       },
@@ -421,6 +451,9 @@
     },
     {
       "id" : "711b1eac-24ec-4482-ba2a-38f8eb91d041",
+      "cid" : "messaging:jolly-base-0-2827d319-5383-4292-84bf-91288eb977a6",
+      "deleted_reply_count": 0,
+      "shadowed": false,
       "reaction_counts" : {
         
       },
@@ -473,6 +506,9 @@
     },
     {
       "id" : "25580938-597f-42db-b5fa-a3551fce93df",
+      "cid" : "messaging:jolly-base-0-2827d319-5383-4292-84bf-91288eb977a6",
+      "deleted_reply_count": 0,
+      "shadowed": false,
       "reaction_counts" : {
         
       },
@@ -488,6 +524,7 @@
       "text" : "",
       "attachments" : [
         {
+          "custom": {},
           "type" : "image",
           "fallback" : "IMG_0007.JPG",
           "image_url" : "https:\/\/stream-cloud-uploads-dev.imgix.net\/images\/47574\/2ed6f367-7400-497b-89fb-7163518be86a.IMG_0007.JPG?ro=0&s=2fe0397ea94fcf2f1b024cf93add3887"
@@ -528,6 +565,9 @@
     },
     {
       "id" : "79eb1a37-4367-4729-bf2e-72becb16abf5",
+      "cid" : "messaging:jolly-base-0-2827d319-5383-4292-84bf-91288eb977a6",
+      "deleted_reply_count": 0,
+      "shadowed": false,
       "reaction_counts" : {
         
       },
@@ -543,6 +583,7 @@
       "text" : "",
       "attachments" : [
         {
+          "custom": {},
           "type" : "image",
           "fallback" : "IMG_0007.JPG",
           "image_url" : "https:\/\/stream-cloud-uploads-dev.imgix.net\/images\/47574\/459a6431-45ee-4cae-b24e-7fd934dfef0f.IMG_0007.JPG?ro=0&s=60e8d7d236f84fd5e42cd184dcd867f2"
@@ -583,6 +624,9 @@
     },
     {
       "id" : "2adae507-1051-435f-a4c7-232b75d5b242",
+      "cid" : "messaging:jolly-base-0-2827d319-5383-4292-84bf-91288eb977a6",
+      "deleted_reply_count": 0,
+      "shadowed": false,
       "reaction_counts" : {
         
       },
@@ -598,11 +642,13 @@
       "text" : "",
       "attachments" : [
         {
+          "custom": {},
           "type" : "image",
           "fallback" : "IMG_0004.JPG",
           "image_url" : "https:\/\/stream-cloud-uploads-dev.imgix.net\/images\/47574\/929adc2b-3adb-44e8-a05d-44db6cc7202b.IMG_0004.JPG?ro=0&s=c7e60f2a93816470e142a6f8dee6bec5"
         },
         {
+          "custom": {},
           "type" : "image",
           "fallback" : "IMG_0007.JPG",
           "image_url" : "https:\/\/stream-cloud-uploads-dev.imgix.net\/images\/47574\/5c9f3e98-f779-456e-9bd6-8678c2e81fa0.IMG_0007.JPG?ro=0&s=62c3c370051b4c2d6175c6f342d1efc1"
@@ -643,6 +689,9 @@
     },
     {
       "id" : "bitter-cloud-0-184d7818-6282-4047-977c-43102352866c",
+      "cid" : "messaging:jolly-base-0-2827d319-5383-4292-84bf-91288eb977a6",
+      "deleted_reply_count": 0,
+      "shadowed": false,
       "reaction_counts" : {
         
       },
@@ -686,6 +735,9 @@
     },
     {
       "id" : "bitter-cloud-0-6f6edd0e-06dd-406f-ac58-a4cfc63a357e",
+      "cid" : "messaging:jolly-base-0-2827d319-5383-4292-84bf-91288eb977a6",
+      "deleted_reply_count": 0,
+      "shadowed": false,
       "reaction_counts" : {
         
       },
@@ -701,6 +753,7 @@
       "text" : "",
       "attachments" : [
         {
+          "custom": {},
           "type" : "image",
           "fallback" : "hd-wallpaper-4.jpg",
           "image_url" : "https:\/\/stream-cloud-uploads-dev.imgix.net\/images\/47574\/561615f6-4d0f-4768-b41f-ae3c7a057633.hd-wallpaper-4.jpg?ro=0&s=3f89f4e177ee3e1713c126f3905e5c56"
@@ -733,6 +786,9 @@
     },
     {
       "id" : "139c8acf-e405-44a8-a8a6-7e3922a7ea7f",
+      "cid" : "messaging:jolly-base-0-2827d319-5383-4292-84bf-91288eb977a6",
+      "deleted_reply_count": 0,
+      "shadowed": false,
       "reaction_counts" : {
         
       },
@@ -785,6 +841,9 @@
     },
     {
       "id" : "0e5083af-e7d1-4278-a10c-8e9990976234",
+      "cid" : "messaging:jolly-base-0-2827d319-5383-4292-84bf-91288eb977a6",
+      "deleted_reply_count": 0,
+      "shadowed": false,
       "reaction_counts" : {
         
       },
@@ -800,6 +859,7 @@
       "text" : "http:\/\/getstream.io",
       "attachments" : [
         {
+          "custom": {},
           "title" : "Build Scalable Feeds & Chat apps with powerful APIs and front end components",
           "text" : "Scalable & Fast API for building social networks, activity feeds,activity streams and chat apps.",
           "og_scrape_url" : "http:\/\/getstream.io"
@@ -840,6 +900,9 @@
     },
     {
       "id" : "wispy-bird-9-59ad6b82-a45e-4f83-849b-01d79f3248a0",
+      "cid" : "messaging:jolly-base-0-2827d319-5383-4292-84bf-91288eb977a6",
+      "deleted_reply_count": 0,
+      "shadowed": false,
       "reaction_counts" : {
         
       },
@@ -883,6 +946,9 @@
     },
     {
       "id" : "wispy-bird-9-5252269d-4d51-4c32-acb0-985be29cf17a",
+      "cid" : "messaging:jolly-base-0-2827d319-5383-4292-84bf-91288eb977a6",
+      "deleted_reply_count": 0,
+      "shadowed": false,
       "reaction_counts" : {
         
       },
@@ -926,6 +992,9 @@
     },
     {
       "id" : "wispy-bird-9-cbb34e46-6f22-4c1d-8105-f4df78d5914a",
+      "cid" : "messaging:jolly-base-0-2827d319-5383-4292-84bf-91288eb977a6",
+      "deleted_reply_count": 0,
+      "shadowed": false,
       "reaction_counts" : {
         
       },
@@ -969,6 +1038,9 @@
     },
     {
       "id" : "throbbing-salad-6-8187e80d-88ff-468a-8670-7c60a4f11e20",
+      "cid" : "messaging:jolly-base-0-2827d319-5383-4292-84bf-91288eb977a6",
+      "deleted_reply_count": 0,
+      "shadowed": false,
       "reaction_counts" : {
         
       },
@@ -1012,6 +1084,9 @@
     },
     {
       "id" : "throbbing-salad-6-9ea5ca14-fe37-4144-87ef-345de2c72cf1",
+      "cid" : "messaging:jolly-base-0-2827d319-5383-4292-84bf-91288eb977a6",
+      "deleted_reply_count": 0,
+      "shadowed": false,
       "reaction_counts" : {
         
       },
@@ -1027,6 +1102,7 @@
       "text" : "🤐🤐🤐",
       "attachments" : [
         {
+          "custom": {},
           "type" : "image",
           "fallback" : "2 Existing user_Pre.jpg",
           "image_url" : "https:\/\/stream-cloud-uploads-dev.imgix.net\/images\/47574\/102ba84d-82de-4bd3-98d0-841581f34f40.2%20Existing%20user_Pre.jpg?ro=0&s=70840c93f8e733b33c8c5b162288cdba"
@@ -1059,6 +1135,9 @@
     },
     {
       "id" : "aged-moon-3-423c9b17-78a3-41ff-8aa7-47e6afb9157e",
+      "cid" : "messaging:jolly-base-0-2827d319-5383-4292-84bf-91288eb977a6",
+      "deleted_reply_count": 0,
+      "shadowed": false,
       "reaction_counts" : {
         
       },
@@ -1102,6 +1181,9 @@
     },
     {
       "id" : "bitter-cloud-4-988809fa-b534-4f6a-8e22-0f547fe46129",
+      "cid" : "messaging:jolly-base-0-2827d319-5383-4292-84bf-91288eb977a6",
+      "deleted_reply_count": 0,
+      "shadowed": false,
       "reaction_counts" : {
         
       },
@@ -1117,6 +1199,7 @@
       "text" : "it's a great day in the neighborhood!",
       "attachments" : [
         {
+          "custom": {},
           "type" : "image",
           "fallback" : "20200606_224446.jpg",
           "image_url" : "https:\/\/stream-cloud-uploads-dev.imgix.net\/images\/47574\/14cbb3ad-bffa-4bbb-898a-e260b1424162.20200606_224446.jpg?ro=0&s=34035399b918c6a8f6e843efa7477f78"
@@ -1149,6 +1232,9 @@
     },
     {
       "id" : "white-boat-1-c9d54585-f046-4785-9d81-72fd930bf2a3",
+      "cid" : "messaging:jolly-base-0-2827d319-5383-4292-84bf-91288eb977a6",
+      "deleted_reply_count": 0,
+      "shadowed": false,
       "reaction_counts" : {
         
       },
@@ -1194,6 +1280,9 @@
   "pinned_messages": [
       {
         "id" : "broken-waterfall-5-7aede36b-b89f-4f45-baff-c40c7c1875d9",
+        "cid" : "messaging:jolly-base-0-2827d319-5383-4292-84bf-91288eb977a6",
+        "deleted_reply_count": 0,
+        "shadowed": false,
         "reaction_counts" : {
 
         },
@@ -1245,6 +1334,7 @@
   "hidden": true,
   "channel" : {
     "id" : "general",
+    "disabled" : false,
     "created_at" : "2019-05-10T14:03:49.505006Z",
     "created_by" : {
       "banned" : false,
@@ -1272,6 +1362,10 @@
       "created_at" : "2019-03-21T15:49:15.40182Z",
       "automod" : "AI",
       "read_events" : true,
+      "custom_events" : false,
+      "mark_messages_pending" : false,
+      "push_notifications" : false,
+      "reminders" : false,
       "commands" : [
         {
           "set" : "fun_set",
@@ -1409,6 +1503,9 @@
       "created_at" : "2020-01-20T19:15:03.911517Z",
       "updated_at" : "2020-01-20T19:15:03.911517Z",
       "role" : "member",
+      "banned" : false,
+      "channel_role" : "member",
+      "shadow_banned" : false,
       "user" : {
         "id" : "broken-waterfall-5",
         "banned" : false,
@@ -1433,6 +1530,9 @@
       "created_at" : "2020-06-04T13:36:37.96589Z",
       "updated_at" : "2020-06-04T13:36:37.96589Z",
       "role" : "member",
+      "banned" : false,
+      "channel_role" : "member",
+      "shadow_banned" : false,      
       "user" : {
         "banned" : false,
         "online" : false,
@@ -1448,6 +1548,9 @@
       "created_at" : "2020-06-04T13:36:44.793348Z",
       "updated_at" : "2020-06-04T13:36:44.793348Z",
       "role" : "member",
+      "banned" : false,
+      "channel_role" : "member",
+      "shadow_banned" : false,
       "user" : {
         "banned" : false,
         "online" : false,
@@ -1463,6 +1566,9 @@
       "created_at" : "2020-06-05T12:55:48.581959Z",
       "updated_at" : "2020-06-05T12:55:48.581959Z",
       "role" : "member",
+      "banned" : false,
+      "channel_role" : "member",
+      "shadow_banned" : false,   
       "user" : {
         "id" : "steep-moon-9",
         "banned" : false,
@@ -1482,6 +1588,9 @@
     }
   ],
   "membership" : {
+    "banned": false,
+    "channel_role": "member",
+    "shadow_banned": false,
     "created_at" : "2020-01-20T19:15:03.911517Z",
     "updated_at" : "2020-01-20T19:15:03.911517Z",
     "role" : "channel_member",

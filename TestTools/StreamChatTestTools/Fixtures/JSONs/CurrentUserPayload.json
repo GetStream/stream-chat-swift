@@ -12,6 +12,7 @@
   "online" : true,
   "language": "pt",
   "name" : "Broken Waterfall",
+  "custom": {},
   "teams" : [
       "RED",
       "GREEN",
@@ -48,7 +49,8 @@
               "role" : "user",
               "total_unread_count" : 0,
               "online" : true,
-              "name" : "broken-waterfall-5"
+              "name" : "broken-waterfall-5",
+              "custom": {}
           }
       },
   ],

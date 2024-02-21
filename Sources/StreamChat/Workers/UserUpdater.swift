@@ -38,7 +38,8 @@ class UserUpdater: Worker {
     ///
     func loadUser(_ userId: UserId, completion: ((Error?) -> Void)? = nil) {
         let request = QueryUsersRequest(filterConditions: ["id": ["$eq": .string(userId)]])
-        api.queryUsers(payload: request) { (result: Result<UsersResponse, Error>) in
+        api.queryUsers(payload: request) { [weak self] (result: Result<UsersResponse, Error>) in
+            guard let self else { return }
             switch result {
             case let .success(payload):
                 guard payload.users.count <= 1 else {

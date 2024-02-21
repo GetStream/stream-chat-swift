@@ -73,7 +73,10 @@ final class DatabaseSession_Tests: XCTestCase {
         let channelId: ChannelId = .unique
         let messageId: MessageId = .unique
 
-        let channelPayload = dummyPayload(with: channelId).channel
+        let channelPayload = dummyPayload(with: channelId, messages: [])
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channelPayload)
+        }
 
         let userPayload = UserObject(id: .unique, role: UserRole.admin.rawValue)
 
@@ -82,8 +85,9 @@ final class DatabaseSession_Tests: XCTestCase {
             messageId: messageId,
             authorUserId: userPayload.id,
             text: "Some text",
-            createdAt: channelPayload?.createdAt.addingTimeInterval(300),
-            updatedAt: .unique
+            createdAt: channelPayload.channel!.createdAt.addingTimeInterval(300),
+            updatedAt: .unique,
+            cid: channelId
         )
         
         let event = MessageNewEvent(
@@ -230,7 +234,10 @@ final class DatabaseSession_Tests: XCTestCase {
         let channelId: ChannelId = .unique
         let messageId: MessageId = .unique
 
-        let channelPayload = dummyPayload(with: channelId).channel
+        let channelPayload = dummyPayload(with: channelId)
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channelPayload)
+        }
 
         let userPayload = UserObject(id: .unique, role: UserRole.admin.rawValue)
 
@@ -239,7 +246,7 @@ final class DatabaseSession_Tests: XCTestCase {
             messageId: messageId,
             authorUserId: userPayload.id,
             text: "Some text",
-            createdAt: channelPayload?.createdAt.addingTimeInterval(300),
+            createdAt: channelPayload.channel!.createdAt.addingTimeInterval(300),
             updatedAt: .unique
         )
         
@@ -457,10 +464,10 @@ final class DatabaseSession_Tests: XCTestCase {
             channelId: cid.id,
             channelType: cid.type.rawValue,
             cid: cid.rawValue,
-            createdAt: .unique,
+            createdAt: previewMessage.createdAt.addingTimeInterval(10),
             type: EventType.messageNew.rawValue,
             watcherCount: 0,
-            message: .dummy()
+            message: newMessage
         )
 
         try database.writeSynchronously { session in
@@ -551,21 +558,26 @@ final class DatabaseSession_Tests: XCTestCase {
 
     func test_saveEvent_whenMessageNewEventComes_whenUpdateIsOlderThanCurrentPreview_DoesNotUpdateChannelPreview() throws {
         // GIVEN
+        let cid = ChannelId.unique
         let previousPreviewMessage: Message = .dummy(
             messageId: .unique,
-            authorUserId: .unique
+            authorUserId: .unique,
+            cid: cid
         )
 
-        let cid = ChannelId.unique
         let channel: ChannelStateResponse = .dummy(
+            cid: cid,
             messages: [previousPreviewMessage]
         )
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channel)
+        }
 
         let event = MessageNewEvent(
             channelId: cid.id,
             channelType: cid.type.rawValue,
             cid: cid.rawValue,
-            createdAt: .unique,
+            createdAt: previousPreviewMessage.createdAt,
             type: EventType.messageNew.rawValue,
             watcherCount: 0,
             message: previousPreviewMessage
@@ -603,29 +615,34 @@ final class DatabaseSession_Tests: XCTestCase {
 
     func test_saveEvent_whenNotificationMessageNewEventComes_updatesChannelPreview() throws {
         // GIVEN
+        let cid = ChannelId.unique
         let previewMessage: Message = .dummy(
             messageId: .unique,
-            authorUserId: .unique
+            authorUserId: .unique,
+            cid: cid
         )
 
-        let cid = ChannelId.unique
         let channel: ChannelStateResponse = .dummy(
             cid: cid,
             messages: [previewMessage]
         )
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channel)
+        }
 
         // WHEN
         let newMessage: Message = .dummy(
             messageId: .unique,
             authorUserId: .unique,
-            createdAt: previewMessage.createdAt.addingTimeInterval(10)
+            createdAt: previewMessage.createdAt.addingTimeInterval(10),
+            cid: cid
         )
 
         let event = NotificationNewMessageEvent(
             channelId: cid.id,
             channelType: cid.type.rawValue,
             cid: cid.rawValue,
-            createdAt: .unique,
+            createdAt: previewMessage.createdAt.addingTimeInterval(10),
             type: EventType.messageNew.rawValue,
             message: newMessage
         )
@@ -651,6 +668,9 @@ final class DatabaseSession_Tests: XCTestCase {
             cid: cid,
             messages: [previousPreviewMessage]
         )
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channel)
+        }
 
         let event = NotificationNewMessageEvent(
             channelId: cid.id,

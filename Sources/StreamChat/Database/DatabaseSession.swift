@@ -420,6 +420,24 @@ extension DatabaseSession {
                 channelDTO.previewMessage = newPreview
             }
         }
+        
+        // TODO: refactor.
+        if let newMessage = event as? NotificationNewMessageEvent,
+           let cid = try? ChannelId(cid: newMessage.cid),
+           let channelDTO = channel(cid: cid) {
+            let newPreview = preview(for: cid)
+            let newPreviewCreatedAt = newPreview?.createdAt.bridgeDate ?? .distantFuture
+            let currentPreviewCreatedAt = channelDTO.previewMessage?.createdAt.bridgeDate ?? .distantPast
+            if newPreviewCreatedAt > currentPreviewCreatedAt {
+                channelDTO.previewMessage = newPreview
+            }
+        }
+        
+        if let channelTruncated = event as? ChannelTruncatedEvent,
+           let cid = try? ChannelId(cid: channelTruncated.cid),
+           let channelDTO = channel(cid: cid) {
+            channelDTO.previewMessage = channelTruncated.message.flatMap { message(id: $0.id) }
+        }
 
         // TODO: handle other events
     }
