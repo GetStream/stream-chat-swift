@@ -52,6 +52,27 @@ public final class Chat {
     
     public internal(set) var state: ChatState
     
+    // MARK: - Disabling/Freezing the Channel
+    
+    /// Freezes the channel which disallows sending new messages and adding or deleting reactions.
+    ///
+    /// Sending a message to a frozen channel will result in a error. Sending and deleting
+    /// reactions to frozen channels will result in a 403 (Not Allowed) error. User roles
+    /// with the `UseFrozenChannel` permission are still able to use frozen channels as if they
+    /// weren't frozen. By default no user role has the `UseFrozenChannel` permission.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    public func freeze() async throws {
+        try await channelUpdater.freezeChannel(true, cid: cid)
+    }
+    
+    /// Removes the frozen channel restriction and enables sending new messages and adding or deleting reactions.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    public func unfreeze() async throws {
+        try await channelUpdater.freezeChannel(false, cid: cid)
+    }
+    
     // MARK: - Messages
     
     /// Sends a message to channel.
@@ -155,6 +176,8 @@ public final class Chat {
     /// Keystroke events are throttled and `stopTyping(parentMessageId:)` is automatically called after a couple of seconds from the last keystroke event.
     ///
     /// - Parameter parentMessageId: A message id of the message in a thread the user is replying to.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
     public func keystroke(parentMessageId: MessageId? = nil) async throws {
         // TODO: Missing capabilities check
         try await typingEventsSender.keystroke(in: cid, parentMessageId: parentMessageId)
@@ -165,10 +188,74 @@ public final class Chat {
     /// - Note: The stop typing event is automatically sent after a few seconds since the last keystroke. Use this method only when it is required to send the event at a different time.
     ///
     /// - Parameter parentMessageId: A message id of the message in a thread the user is replying to.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
     public func stopTyping(parentMessageId: MessageId? = nil) async throws {
         // TODO: Missing capabilities check
         // TODO: Call stopTyping when sending and editing messages
         try await typingEventsSender.stopTyping(in: cid, parentMessageId: parentMessageId)
+    }
+    
+    // MARK: Updating the Channel
+    
+    /// The update operation updates all of the channel data.
+    ///
+    /// - Warning: Any data that is present on the channel and is not included in a full update will be **deleted**.
+    ///
+    /// - Parameters:
+    ///   - name: - name: The name of the channel.
+    ///   - imageURL: The channel avatar URL.
+    ///   - team: The team for the channel.
+    ///   - members: A list of members for the channel.
+    ///   - invites: A list of users who will get invites.
+    ///   - extraData: Extra data for the new channel.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    public func update(
+        name: String?,
+        imageURL: URL?,
+        team: String?,
+        members: Set<UserId> = [],
+        invites: Set<UserId> = [],
+        extraData: [String: RawJSON] = [:]
+    ) async throws {
+        try await channelUpdater.update(
+            channelPayload: .init(
+                cid: cid,
+                name: name,
+                imageURL: imageURL,
+                team: team,
+                members: members,
+                invites: invites,
+                extraData: extraData
+            )
+        )
+    }
+    
+    /// The update operation updates only specified fields and retain existing channel data.
+    ///
+    /// A partial update can be used to set and unset specific fields when it is necessary to retain additional custom data fields on the object (a patch style update).
+    public func updatePartial(
+        name: String? = nil,
+        imageURL: URL? = nil,
+        team: String? = nil,
+        members: Set<UserId> = [],
+        invites: Set<UserId> = [],
+        extraData: [String: RawJSON] = [:],
+        unsetProperties: [String] = []
+    ) async throws {
+        try await channelUpdater.updatePartial(
+            channelPayload: .init(
+                cid: cid,
+                name: name,
+                imageURL: imageURL,
+                team: team,
+                members: members,
+                invites: invites,
+                extraData: extraData
+            ),
+            unsetProperties: unsetProperties
+        )
     }
 }
 
