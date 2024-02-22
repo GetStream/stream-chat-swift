@@ -95,18 +95,6 @@ class ChannelUpdater: Worker {
             apiClient.request(endpoint: endpoint, completion: completion)
         }
     }
-    
-    @available(iOS 13.0, *)
-    func update(
-        channelQuery: ChannelQuery,
-        isInRecoveryMode: Bool
-    ) async throws -> ChannelPayload {
-        try await withCheckedThrowingContinuation { continuation in
-            update(channelQuery: channelQuery, isInRecoveryMode: isInRecoveryMode, onChannelCreated: nil) { result in
-                continuation.resume(with: result)
-            }
-        }
-    }
 
     /// Updates specific channel with new data.
     /// - Parameters:
@@ -705,5 +693,56 @@ class ChannelUpdater: Worker {
             return messagePayload
         }
         return nil
+    }
+}
+
+// MARK: - Async
+
+@available(iOS 13.0, *)
+extension ChannelUpdater {
+    func freezeChannel(_ freeze: Bool, cid: ChannelId) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            freezeChannel(freeze, cid: cid) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+
+    func update(
+        channelQuery: ChannelQuery,
+        isInRecoveryMode: Bool
+    ) async throws -> ChannelPayload {
+        try await withCheckedThrowingContinuation { continuation in
+            update(channelQuery: channelQuery, isInRecoveryMode: isInRecoveryMode, onChannelCreated: nil) { result in
+                continuation.resume(with: result)
+            }
+        }
+    }
+    
+    func update(channelPayload: ChannelEditDetailPayload) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            updateChannel(channelPayload: channelPayload) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func updatePartial(channelPayload: ChannelEditDetailPayload, unsetProperties: [String]) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            partialChannelUpdate(updates: channelPayload, unsetProperties: unsetProperties) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+}
+
+@available(iOS 13.0, *)
+private extension CheckedContinuation where T == Void, E == Error {
+    func resume(with error: Error?) {
+        if let error {
+            resume(throwing: error)
+        } else {
+            resume(returning: ())
+        }
     }
 }
