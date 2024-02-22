@@ -8,7 +8,7 @@ import Foundation
 class ChannelUpdater: Worker {
     private let channelRepository: ChannelRepository
     private let callRepository: CallRepository
-    private let paginationStateHandler: MessagesPaginationStateHandling
+    let paginationStateHandler: MessagesPaginationStateHandling
 
     init(
         channelRepository: ChannelRepository,
@@ -319,6 +319,43 @@ class ChannelUpdater: Worker {
                 completion?(.success(message))
             } else {
                 completion?(.failure(error ?? ClientError.Unknown()))
+            }
+        }
+    }
+    
+    @available(iOS 13.0.0, *)
+    func createNewMessage(
+        in cid: ChannelId,
+        messageId: MessageId?,
+        text: String,
+        pinning: MessagePinning? = nil,
+        isSilent: Bool,
+        command: String?,
+        arguments: String?,
+        attachments: [AnyAttachmentPayload] = [],
+        mentionedUserIds: [UserId],
+        quotedMessageId: MessageId?,
+        skipPush: Bool,
+        skipEnrichUrl: Bool,
+        extraData: [String: RawJSON]
+    ) async throws -> ChatMessage {
+        try await withCheckedThrowingContinuation { continuation in
+            createNewMessage(
+                in: cid,
+                messageId: messageId,
+                text: text,
+                pinning: pinning,
+                isSilent: isSilent,
+                command: command,
+                arguments: arguments,
+                attachments: attachments,
+                mentionedUserIds: mentionedUserIds,
+                quotedMessageId: quotedMessageId,
+                skipPush: skipPush,
+                skipEnrichUrl: skipEnrichUrl,
+                extraData: extraData
+            ) { result in
+                continuation.resume(with: result)
             }
         }
     }
@@ -656,5 +693,214 @@ class ChannelUpdater: Worker {
             return messagePayload
         }
         return nil
+    }
+}
+
+// MARK: - Async
+
+@available(iOS 13.0, *)
+extension ChannelUpdater {
+    func acceptInvite(cid: ChannelId, message: String?) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            acceptInvite(cid: cid, message: message) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func addMembers(currentUserId: UserId? = nil, cid: ChannelId, userIds: Set<UserId>, message: String? = nil, hideHistory: Bool) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            addMembers(currentUserId: currentUserId, cid: cid, userIds: userIds, message: message, hideHistory: hideHistory) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func deleteChannel(cid: ChannelId) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            deleteChannel(cid: cid) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func deleteFile(in cid: ChannelId, url: String) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            deleteFile(in: cid, url: url) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func deleteImage(in cid: ChannelId, url: String) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            deleteImage(in: cid, url: url) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func enableSlowMode(cid: ChannelId, cooldownDuration: Int) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            enableSlowMode(cid: cid, cooldownDuration: cooldownDuration) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func enrichUrl(_ url: URL) async throws -> LinkAttachmentPayload {
+        try await withCheckedThrowingContinuation { continuation in
+            enrichUrl(url) { result in
+                continuation.resume(with: result)
+            }
+        }
+    }
+    
+    func freezeChannel(_ freeze: Bool, cid: ChannelId) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            freezeChannel(freeze, cid: cid) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func hideChannel(cid: ChannelId, clearHistory: Bool) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            hideChannel(cid: cid, clearHistory: clearHistory) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func inviteMembers(cid: ChannelId, userIds: Set<UserId>) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            inviteMembers(cid: cid, userIds: userIds) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func loadPinnedMessages(in cid: ChannelId, query: PinnedMessagesQuery) async throws -> [ChatMessage] {
+        try await withCheckedThrowingContinuation { continuation in
+            loadPinnedMessages(in: cid, query: query) { result in
+                continuation.resume(with: result)
+            }
+        }
+    }
+    
+    func markRead(cid: ChannelId, userId: UserId) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            markRead(cid: cid, userId: userId) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    @discardableResult
+    func markUnread(cid: ChannelId, userId: UserId, from messageId: MessageId, lastReadMessageId: MessageId?) async throws -> ChatChannel {
+        try await withCheckedThrowingContinuation { continuation in
+            markUnread(cid: cid, userId: userId, from: messageId, lastReadMessageId: lastReadMessageId) { result in
+                continuation.resume(with: result)
+            }
+        }
+    }
+    
+    func muteChannel(_ mute: Bool, cid: ChannelId) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            muteChannel(cid: cid, mute: mute) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func rejectInvite(cid: ChannelId) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            rejectInvite(cid: cid) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func removeMembers(currentUserId: UserId? = nil, cid: ChannelId, userIds: Set<UserId>, message: String? = nil) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            removeMembers(currentUserId: currentUserId, cid: cid, userIds: userIds, message: message) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func showChannel(cid: ChannelId) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            showChannel(cid: cid) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func startWatching(cid: ChannelId, isInRecoveryMode: Bool) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            startWatching(cid: cid, isInRecoveryMode: isInRecoveryMode) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func stopWatching(cid: ChannelId) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            stopWatching(cid: cid) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func truncateChannel(cid: ChannelId, skipPush: Bool, hardDelete: Bool, systemMessage: String?) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            truncateChannel(cid: cid, skipPush: skipPush, hardDelete: hardDelete, systemMessage: systemMessage) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+
+    func update(channelQuery: ChannelQuery, isInRecoveryMode: Bool) async throws -> ChannelPayload {
+        try await withCheckedThrowingContinuation { continuation in
+            update(channelQuery: channelQuery, isInRecoveryMode: isInRecoveryMode, onChannelCreated: nil) { result in
+                continuation.resume(with: result)
+            }
+        }
+    }
+    
+    func update(channelPayload: ChannelEditDetailPayload) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            updateChannel(channelPayload: channelPayload) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func updatePartial(channelPayload: ChannelEditDetailPayload, unsetProperties: [String]) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            partialChannelUpdate(updates: channelPayload, unsetProperties: unsetProperties) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func uploadFile(type: AttachmentType, localFileURL: URL, cid: ChannelId, progress: ((Double) -> Void)? = nil) async throws -> UploadedAttachment {
+        try await withCheckedThrowingContinuation { continuation in
+            uploadFile(type: type, localFileURL: localFileURL, cid: cid, progress: progress) { result in
+                continuation.resume(with: result)
+            }
+        }
+    }
+}
+
+@available(iOS 13.0, *)
+extension CheckedContinuation where T == Void, E == Error {
+    func resume(with error: Error?) {
+        if let error {
+            resume(throwing: error)
+        } else {
+            resume(returning: ())
+        }
     }
 }

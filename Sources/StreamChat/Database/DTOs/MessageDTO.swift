@@ -534,6 +534,49 @@ class MessageDTO: NSManagedObject {
         request.predicate = NSPredicate(format: "localMessageStateRaw == %@", LocalMessageState.sending.rawValue)
         return load(by: request, context: context)
     }
+    
+    static func loadMessage(
+        before id: MessageId,
+        cid: String,
+        deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility,
+        shouldShowShadowedMessages: Bool,
+        context: NSManagedObjectContext
+    ) throws -> MessageDTO? {
+        guard let message = load(id: id, context: context) else { return nil }
+        
+        let request = NSFetchRequest<MessageDTO>(entityName: entityName)
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            channelMessagesPredicate(for: cid, deletedMessagesVisibility: deletedMessagesVisibility, shouldShowShadowedMessages: shouldShowShadowedMessages),
+            .init(format: "id != %@", id),
+            .init(format: "createdAt <= %@", message.createdAt)
+        ])
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.createdAt, ascending: true)]
+        request.fetchLimit = 1
+        return try context.fetch(request).first
+    }
+    
+    static func loadMessages(
+        from fromIncludingDate: Date,
+        to toIncludingDate: Date,
+        in cid: ChannelId,
+        sortAscending: Bool,
+        deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility,
+        shouldShowShadowedMessages: Bool,
+        context: NSManagedObjectContext
+    ) throws -> [MessageDTO] {
+        let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: sortAscending)]
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            channelMessagesPredicate(
+                for: cid.rawValue,
+                deletedMessagesVisibility: deletedMessagesVisibility,
+                shouldShowShadowedMessages: shouldShowShadowedMessages
+            ),
+            .init(format: "createdAt >= %@", fromIncludingDate.bridgeDate),
+            .init(format: "createdAt <= %@", toIncludingDate.bridgeDate)
+        ])
+        return try load(request, context: context)
+    }
 }
 
 // MARK: - State Helpers
