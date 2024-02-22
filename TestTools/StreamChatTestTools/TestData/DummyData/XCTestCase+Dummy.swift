@@ -216,6 +216,6 @@ extension ChannelConfig {
         updatedAt: Date(),
         uploads: true,
         urlEnrichment: true,
-        commands: []
+        commands: ["giphy"]
     )
 }

@@ -45,7 +45,8 @@ extension Message {
         translations: [TranslationLanguage: String]? = nil,
         originalLanguage: String? = nil,
         moderationDetails: MessageModerationDetails? = nil,
-        mentionedUsers: [UserObject] = [.dummy(userId: .unique)]
+        mentionedUsers: [UserObject] = [.dummy(userId: .unique)],
+        command: String? = nil
     ) -> Message {
         .init(
             cid: (cid ?? ChannelId.unique).rawValue,
@@ -67,6 +68,7 @@ extension Message {
             custom: extraData,
             reactionCounts: reactionCounts,
             reactionScores: reactionScores,
+            command: command,
             deletedAt: deletedAt,
             parentId: parentId,
             pinExpires: pinExpires,

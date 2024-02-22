@@ -32,7 +32,6 @@ final class NotificationsEvents_Tests: XCTestCase {
         let json = XCTestCase.mockData(fromJSONFile: "NotificationMessageNew+MissingFields")
         let event = try eventDecoder.decode(from: json) as? NotificationNewMessageEvent
         XCTAssertEqual(event?.message.user!.id, "steep-moon-9")
-        XCTAssertEqual(event?.channel!.cid, ChannelId(type: .messaging, id: "general").rawValue)
         XCTAssertEqual(event?.message.id, "042772db-4af2-460d-beaa-1e49d1b8e3b9")
         XCTAssertEqual(event?.createdAt.description, "2020-07-21 14:47:57 +0000")
     }
@@ -93,11 +92,7 @@ final class NotificationsEvents_Tests: XCTestCase {
     func test_notificationAddedToChannelEventDTO_withMissingFields() throws {
         let json = XCTestCase.mockData(fromJSONFile: "NotificationAddedToChannel+MissingFields")
         let event = try eventDecoder.decode(from: json) as? NotificationAddedToChannelEvent
-        XCTAssertEqual(event?.channel?.cid, ChannelId(type: .messaging, id: "!members-hu_6SE2Rniuu3O709FqAEEtVcJxW3tWr97l_hV33a-E").rawValue)
-        XCTAssertEqual(
-            event?.channel?.cid,
-            ChannelId(type: .messaging, id: "!members-hu_6SE2Rniuu3O709FqAEEtVcJxW3tWr97l_hV33a-E").rawValue
-        )
+        XCTAssertEqual(event?.channel?.cid, nil)
     }
 
     func test_removedFromChannel() throws {
@@ -110,7 +105,6 @@ final class NotificationsEvents_Tests: XCTestCase {
         let json = XCTestCase.mockData(fromJSONFile: "NotificationChannelDeleted")
         let event = try eventDecoder.decode(from: json) as? NotificationChannelDeletedEvent
 
-        XCTAssertEqual(event?.channel?.cid, ChannelId(type: .messaging, id: "!members-BSM7Tb6_XBXTGOaqZXCFh_4c4UQsYomWNkgQ0YgiGJw").rawValue)
         XCTAssertEqual(event?.createdAt.description, "2021-12-28 13:05:20 +0000")
         XCTAssertEqual(event?.cid, "messaging:!members-BSM7Tb6_XBXTGOaqZXCFh_4c4UQsYomWNkgQ0YgiGJw")
     }

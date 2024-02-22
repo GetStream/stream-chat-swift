@@ -480,10 +480,7 @@ public enum WSEvent: Codable, Hashable {
             let value = try container.decode(UserWatchingStopEvent.self)
             self = .typeUserWatchingStopEvent(value)
         } else {
-            throw DecodingError.typeMismatch(
-                Self.Type.self,
-                .init(codingPath: decoder.codingPath, debugDescription: "Unable to decode instance of chat event")
-            )
+            throw ClientError.UnknownChannelEvent(EventType(rawValue: dto.type))
         }
     }
 }

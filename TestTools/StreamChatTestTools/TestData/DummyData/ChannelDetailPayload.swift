@@ -102,7 +102,9 @@ extension ChannelConfig {
             updatedAt: updatedAt,
             uploads: uploads,
             urlEnrichment: urlEnrichment,
-            commands: []
+            commands: commands.map { name in
+                Command(args: "", description: "", name: name, set: "")
+            }
         )
     }
 }

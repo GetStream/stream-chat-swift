@@ -42,7 +42,7 @@ final class EventDecoder_Tests: XCTestCase {
 
         // Assert decoding error is thrown.
         XCTAssertThrowsError(try eventDecoder.decode(from: json)) { error in
-            XCTAssertTrue(error is ClientError.EventDecoding)
+            XCTAssertTrue(error is DecodingError)
         }
     }
 
@@ -59,6 +59,7 @@ final class EventDecoder_Tests: XCTestCase {
         let json = """
         {
             "user" : {
+                "custom": {},
                 "id" : "\(userId)",
                 "banned" : false,
                 "unread_channels" : 0,

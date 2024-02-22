@@ -11,6 +11,7 @@
         "image": null
     },
     "channel": {
+        "disabled": false,
         "id": "B1DFF9C5-E6A6-4BFA-9375-DC5E8C6852FF",
         "created_at": "2021-03-22T10:23:52.516225Z",
         "updated_at": "2021-04-22T10:23:52.516225Z",
@@ -39,6 +40,10 @@
             "automod": "AI",
             "automod_behavior": "flag",
             "blocklist_behavior": "flag",
+            "custom_events" : false,
+            "mark_messages_pending" : false,
+            "push_notifications" : false,
+            "reminders" : false,
             "automod_thresholds": {
                 "explicit": {
                     "flag": 0.85,

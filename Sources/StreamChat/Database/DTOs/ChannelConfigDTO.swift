@@ -81,8 +81,16 @@ extension ChannelConfig {
         dto.maxMessageLength = Int32(maxMessageLength)
         dto.createdAt = createdAt.bridgeDate
         dto.updatedAt = updatedAt.bridgeDate
-        // TODO: check commands.
-//        dto.commands = NSOrderedSet(array: commands.map { $0.asDTO(context: context) })
+        // TODO: re-check.
+        dto.commands = NSOrderedSet(array: commands.map { command in
+            Command(
+                args: "",
+                description: "",
+                name: command,
+                set: ""
+            )
+            .asDTO(context: context)
+        })
         return dto
     }
 }

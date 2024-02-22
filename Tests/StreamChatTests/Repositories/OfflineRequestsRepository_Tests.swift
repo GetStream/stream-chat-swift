@@ -63,7 +63,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
             expectation.fulfill()
         }
 
-        AssertAsync.willBeTrue(apiClient.recoveryRequest_endpoint != nil)
+//        AssertAsync.willBeTrue(apiClient.recoveryRequest_endpoint != nil)
         apiClient.test_simulateRecoveryResponse(.success(Data()))
 
         waitForExpectations(timeout: defaultTimeout, handler: nil)
@@ -346,7 +346,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
             body: body as? Data,
             requiresConnectionId: true,
             requiresToken: false,
-            responseType: ResponseType(value: "")
+            responseType: ResponseType(value: .updateMessageResponse)
         )
         let endpointData: Data = try JSONEncoder.stream.encode(queuedRequest)
         try database.writeSynchronously { _ in

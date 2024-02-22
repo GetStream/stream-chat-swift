@@ -583,9 +583,11 @@ final class CurrentUserUpdater_Tests: XCTestCase {
 }
 
 extension Device {
-    static var dummy: Device = Device(createdAt: .unique, id: .unique, pushProvider: .unique)
+    static var dummy: Device {
+        Device(createdAt: .unique, id: .unique, pushProvider: .unique)
+    }
 }
 
 extension ListDevicesResponse {
-    static var dummy = ListDevicesResponse(duration: "", devices: [.dummy])
+    static var dummy = ListDevicesResponse(duration: "", devices: [.dummy, .dummy])
 }

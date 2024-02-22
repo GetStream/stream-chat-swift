@@ -124,9 +124,9 @@ final class APIClient_Spy: APIClient, Spy {
     ) where Response : Decodable {
         if isRecoveryOperation {
             recoveryRequest_completion = completion
-            request_expectation.fulfill()
-            recoveryRequest_endpoint = AnyEndpoint(Endpoint<Response>.dummy())
+            recoveryRequest_endpoint = AnyEndpoint(Endpoint<Data>.dummy())
             _recoveryRequest_allRecordedCalls.mutate { $0.append((recoveryRequest_endpoint!, recoveryRequest_completion!)) }
+            recoveryRequest_expectation.fulfill()
             return
         }
         if let result = request_result as? Result<Response, Error> {
