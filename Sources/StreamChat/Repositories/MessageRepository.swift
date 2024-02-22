@@ -2,6 +2,7 @@
 // Copyright © 2024 Stream.io Inc. All rights reserved.
 //
 
+import CoreData
 import Foundation
 
 enum MessageRepositoryError: LocalizedError {
@@ -255,6 +256,24 @@ class MessageRepository {
                 log.error("Error adding reaction for message with id \(messageId): \(error)")
             }
             completion?()
+        }
+    }
+}
+
+@available(iOS 13.0.0, *)
+extension MessageRepository {
+    /// Fetches messages from the database.
+    func messages(for ids: [MessageId]) async throws -> [ChatMessage] {
+        try await database.backgroundRead { context in
+            // TODO: Use fetch request for better performance
+            try ids
+                .map { id in
+                    guard let messageDTO = context.message(id: id) else {
+                        throw ClientError.MessageDoesNotExist(messageId: id)
+                    }
+                    return messageDTO
+                }
+                .map { try $0.asModel() }
         }
     }
 }
