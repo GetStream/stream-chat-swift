@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChat
 ### ✅ Added
 - Add parallel attachment uploading [#3034](https://github.com/GetStream/stream-chat-swift/pull/3034)
+### 🐞 Fixed
+- Fix controllers having empty data when state changed to `.remoteDataFetched` with background mapping enabled [#3042](https://github.com/GetStream/stream-chat-swift/pull/3042)
+- Fix showing empty search results with background mapping enabled [#3042](https://github.com/GetStream/stream-chat-swift/pull/3042)
 
 ## StreamChatUI
 ### 🐞 Fixed
