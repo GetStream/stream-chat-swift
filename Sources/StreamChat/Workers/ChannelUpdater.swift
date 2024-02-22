@@ -707,6 +707,14 @@ extension ChannelUpdater {
             }
         }
     }
+    
+    func muteChannel(_ mute: Bool, cid: ChannelId) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            muteChannel(cid: cid, mute: mute) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
 
     func update(
         channelQuery: ChannelQuery,
