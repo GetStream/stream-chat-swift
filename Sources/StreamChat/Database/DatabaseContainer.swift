@@ -221,6 +221,37 @@ class DatabaseContainer: NSPersistentContainer {
             }
         }
     }
+    
+    @available(iOS 13.0, *)
+    func write(_ actions: @escaping (DatabaseSession) throws -> Void) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            write(actions) { error in
+                if let error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume(returning: ())
+                }
+            }
+        }
+    }
+    
+    @available(iOS 13.0, *)
+    func backgroundRead<T>(_ actions: @escaping (NSManagedObjectContext) throws -> T) async throws -> T {
+        let context = backgroundReadOnlyContext
+        return try await withCheckedThrowingContinuation { continuation in
+            context.perform {
+                do {
+                    let results = try actions(context)
+                    if context.hasChanges {
+                        assertionFailure("Background context is read only but there are changes")
+                    }
+                    continuation.resume(returning: results)
+                } catch {
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+    }
 
     /// Removes all data from the local storage.
     func removeAllData(completion: ((Error?) -> Void)? = nil) {

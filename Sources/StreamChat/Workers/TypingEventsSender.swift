@@ -57,7 +57,7 @@ class TypingEventsSender: Worker {
             return
         }
 
-        startTyping(in: cid, parentMessageId: parentMessageId)
+        startTyping(in: cid, parentMessageId: parentMessageId, completion: completion)
     }
 
     func startTyping(in cid: ChannelId, parentMessageId: MessageId?, completion: ((Error?) -> Void)? = nil) {
@@ -90,5 +90,32 @@ class TypingEventsSender: Worker {
     private func cancelScheduledTypingTimerControl() {
         currentUserTypingTimerControl?.cancel()
         currentUserTypingTimerControl = nil
+    }
+}
+
+@available(iOS 13.0, *)
+extension TypingEventsSender {
+    func keystroke(in cid: ChannelId, parentMessageId: MessageId?) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            keystroke(in: cid, parentMessageId: parentMessageId) { error in
+                if let error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume()
+                }
+            }
+        }
+    }
+    
+    func stopTyping(in cid: ChannelId, parentMessageId: MessageId?) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            stopTyping(in: cid, parentMessageId: parentMessageId) { error in
+                if let error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume()
+                }
+            }
+        }
     }
 }
