@@ -8,7 +8,7 @@ import Foundation
 class ChannelUpdater: Worker {
     private let channelRepository: ChannelRepository
     private let callRepository: CallRepository
-    private let paginationStateHandler: MessagesPaginationStateHandling
+    let paginationStateHandler: MessagesPaginationStateHandling
 
     init(
         channelRepository: ChannelRepository,
@@ -93,6 +93,18 @@ class ChannelUpdater: Worker {
             apiClient.recoveryRequest(endpoint: endpoint, completion: completion)
         } else {
             apiClient.request(endpoint: endpoint, completion: completion)
+        }
+    }
+    
+    @available(iOS 13.0, *)
+    func update(
+        channelQuery: ChannelQuery,
+        isInRecoveryMode: Bool
+    ) async throws -> ChannelPayload {
+        try await withCheckedThrowingContinuation { continuation in
+            update(channelQuery: channelQuery, isInRecoveryMode: isInRecoveryMode, onChannelCreated: nil) { result in
+                continuation.resume(with: result)
+            }
         }
     }
 
@@ -319,6 +331,43 @@ class ChannelUpdater: Worker {
                 completion?(.success(message))
             } else {
                 completion?(.failure(error ?? ClientError.Unknown()))
+            }
+        }
+    }
+    
+    @available(iOS 13.0.0, *)
+    func createNewMessage(
+        in cid: ChannelId,
+        messageId: MessageId?,
+        text: String,
+        pinning: MessagePinning? = nil,
+        isSilent: Bool,
+        command: String?,
+        arguments: String?,
+        attachments: [AnyAttachmentPayload] = [],
+        mentionedUserIds: [UserId],
+        quotedMessageId: MessageId?,
+        skipPush: Bool,
+        skipEnrichUrl: Bool,
+        extraData: [String: RawJSON]
+    ) async throws -> ChatMessage {
+        try await withCheckedThrowingContinuation { continuation in
+            createNewMessage(
+                in: cid,
+                messageId: messageId,
+                text: text,
+                pinning: pinning,
+                isSilent: isSilent,
+                command: command,
+                arguments: arguments,
+                attachments: attachments,
+                mentionedUserIds: mentionedUserIds,
+                quotedMessageId: quotedMessageId,
+                skipPush: skipPush,
+                skipEnrichUrl: skipEnrichUrl,
+                extraData: extraData
+            ) { result in
+                continuation.resume(with: result)
             }
         }
     }
