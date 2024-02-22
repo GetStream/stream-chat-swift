@@ -82,9 +82,9 @@ extension ChatClient {
     ///   - name: The name of the channel.
     ///   - imageURL: The channel avatar URL.
     ///   - team: The team for the channel.
-    ///   - members: An array of members for the channel.
+    ///   - members: A list of members for the channel.
     ///   - isCurrentUserMember: If `true`, the current user is added as member.
-    ///   - invites: An array of users who will get invites.
+    ///   - invites: A list of users who will get invites.
     ///   - messageOrdering: Describes the ordering the messages are presented.
     ///   - channelListQuery: The channel list query the channel belongs to.
     ///   - extraData: Extra data for the new channel.
