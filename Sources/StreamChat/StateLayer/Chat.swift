@@ -169,6 +169,26 @@ public final class Chat {
         try await loadMessagesInteractor.loadFirstPage(to: state, with: channelQuery)
     }
     
+    // MARK: - Muting the Channel
+    
+    /// Mutes the channel which disables push notifications and unread count for new messages.
+    ///
+    /// By default, mutes stay in place indefinitely until the user removes it.
+    ///
+    /// - Note: The list of muted channels and their expiration time is returned when the user connects.
+    ///
+    /// - Throws: An error while fetching more messages from the Stream API.
+    public func mute() async throws {
+        try await channelUpdater.muteChannel(true, cid: cid)
+    }
+    
+    /// Unmutes the channel which enables push notifications and unread count changes for new messages.
+    ///
+    /// - Throws: An error while fetching more messages from the Stream API.
+    public func unmute() async throws {
+        try await channelUpdater.muteChannel(false, cid: cid)
+    }
+    
     // MARK: - Typing Indicator
     
     /// Sends a `typing.start` event in this channel to the server.
