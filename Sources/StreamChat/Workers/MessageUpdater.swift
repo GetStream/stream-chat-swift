@@ -278,7 +278,8 @@ class MessageUpdater: Worker {
             createdAtBefore: nil,
             idAround: parameters?["id_around"] as? String,
             createdAtAround: nil
-        ) {
+        ) { [weak self] in
+            guard let self else { return }
             self.paginationStateHandler.end(pagination: pagination, with: $0.map(\.messages))
 
             switch $0 {
@@ -318,7 +319,8 @@ class MessageUpdater: Worker {
         pagination: Pagination,
         completion: ((Result<[ChatMessageReaction], Error>) -> Void)? = nil
     ) {
-        api.getReactions(id: messageId, limit: pagination.pageSize, offset: pagination.offset) { result in
+        api.getReactions(id: messageId, limit: pagination.pageSize, offset: pagination.offset) { [weak self] result in
+            guard let self else { return }
             switch result {
             case let .success(payload):
                 var reactions: [ChatMessageReaction] = []
@@ -590,7 +592,7 @@ class MessageUpdater: Worker {
         action: AttachmentAction,
         completion: ((Error?) -> Void)? = nil
     ) {
-        database.write({ session in
+        database.write({ [weak api] session in
             let messageDTO = try session.messageEditableByCurrentUser(messageId)
 
             guard messageDTO.type == MessageType.ephemeral.rawValue else {
@@ -608,7 +610,7 @@ class MessageUpdater: Worker {
             }
 
             let request = MessageActionRequest(formData: [action.name: action.value])
-            self.api.runMessageAction(id: messageId, messageActionRequest: request) {
+            api?.runMessageAction(id: messageId, messageActionRequest: request) {
                 switch $0 {
                 case let .success(payload):
                     guard let message = payload.message else {
@@ -652,7 +654,8 @@ class MessageUpdater: Worker {
             sort: sort,
             messageFilterConditions: messageFilter
         )
-        api.search(payload: request) { result in
+        api.search(payload: request) { [weak self] result in
+            guard let self else { return }
             switch result {
             case let .success(payload):
                 self.database.write { session in
@@ -686,7 +689,8 @@ class MessageUpdater: Worker {
 
     func translate(messageId: MessageId, to language: TranslationLanguage, completion: ((Error?) -> Void)? = nil) {
         let request = TranslateMessageRequest(language: language.languageCode)
-        api.translateMessage(id: messageId, translateMessageRequest: request) { result in
+        api.translateMessage(id: messageId, translateMessageRequest: request) { [weak self] result in
+            guard let self else { return }
             switch result {
             case let .success(boxedMessage):
                 guard let message = boxedMessage.message,

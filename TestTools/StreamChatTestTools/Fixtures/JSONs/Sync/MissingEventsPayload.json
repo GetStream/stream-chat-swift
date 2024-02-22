@@ -1,11 +1,17 @@
 {
+  "duration": "",
   "events": [
     {
       "type": "message.new",
       "cid": "messaging:A2F4393C-D656-46B8-9A43-6148E9E62D7F",
       "channel_id": "A2F4393C-D656-46B8-9A43-6148E9E62D7F",
       "channel_type": "messaging",
+      "watcher_count": 0,
       "message": {
+        "reaction_counts": {},
+        "shadowed": false,
+        "deleted_reply_count": 0,
+        "cid": "messaging:A2F4393C-D656-46B8-9A43-6148E9E62D7F",
         "id": "AD6B64F8-1A12-48AF-B246-09774FD1B748",
         "text": "How are you?",
         "html": "<p>How are you?</p>\n",
