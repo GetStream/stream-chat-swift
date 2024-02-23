@@ -700,6 +700,14 @@ class ChannelUpdater: Worker {
 
 @available(iOS 13.0, *)
 extension ChannelUpdater {
+    func acceptInvite(cid: ChannelId, message: String?) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            acceptInvite(cid: cid, message: message) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
     func addMembers(currentUserId: UserId? = nil, cid: ChannelId, userIds: Set<UserId>, message: String? = nil, hideHistory: Bool) async throws {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             addMembers(currentUserId: currentUserId, cid: cid, userIds: userIds, message: message, hideHistory: hideHistory) { error in
@@ -740,9 +748,25 @@ extension ChannelUpdater {
         }
     }
     
+    func inviteMembers(cid: ChannelId, userIds: Set<UserId>) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            inviteMembers(cid: cid, userIds: userIds) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
     func muteChannel(_ mute: Bool, cid: ChannelId) async throws {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             muteChannel(cid: cid, mute: mute) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func rejectInvite(cid: ChannelId) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            rejectInvite(cid: cid) { error in
                 continuation.resume(with: error)
             }
         }
