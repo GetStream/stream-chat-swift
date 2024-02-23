@@ -287,9 +287,14 @@ open class ComposerVC: _ViewController,
         }
     }
 
+    /// The component responsible for tracking cooldown timing when slow mode is enabled.
     open var cooldownTracker: CooldownTracker = CooldownTracker(timer: ScheduledStreamTimer(interval: 1))
 
+    /// The debouncer to control requests when enriching urls.
     public var enrichUrlDebouncer = Debouncer(0.4, queue: .main)
+
+    /// The debouncer to control user searching requests when mentioning users.
+    public var userMentionsDebouncer = Debouncer(0.4, queue: .main)
 
     lazy var linkDetector = TextLinkDetector()
 
@@ -598,7 +603,9 @@ open class ComposerVC: _ViewController,
         }
 
         if isMentionsEnabled, let (typingMention, mentionRange) = typingMention(in: composerView.inputMessageView.textView) {
-            showMentionSuggestions(for: typingMention, mentionRange: mentionRange)
+            userMentionsDebouncer.execute { [weak self] in
+                self?.showMentionSuggestions(for: typingMention, mentionRange: mentionRange)
+            }
             return
         }
 
@@ -875,7 +882,7 @@ open class ComposerVC: _ViewController,
         showSuggestions()
     }
 
-    /// Returns the query to be used for searching users for the given typing mention.
+    /// Returns the query to be used for searching users across the whole app.
     ///
     /// This function is called in `showMentionSuggestions` to retrieve the query
     /// that will be used to search the users. You should override this if you want to change the
