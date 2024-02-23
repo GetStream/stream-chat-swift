@@ -700,6 +700,14 @@ class ChannelUpdater: Worker {
 
 @available(iOS 13.0, *)
 extension ChannelUpdater {
+    func addMembers(currentUserId: UserId? = nil, cid: ChannelId, userIds: Set<UserId>, message: String? = nil, hideHistory: Bool) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            addMembers(currentUserId: currentUserId, cid: cid, userIds: userIds, message: message, hideHistory: hideHistory) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
     func deleteChannel(cid: ChannelId) async throws {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             deleteChannel(cid: cid) { error in
@@ -735,6 +743,14 @@ extension ChannelUpdater {
     func muteChannel(_ mute: Bool, cid: ChannelId) async throws {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             muteChannel(cid: cid, mute: mute) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func removeMembers(currentUserId: UserId? = nil, cid: ChannelId, userIds: Set<UserId>, message: String? = nil) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            removeMembers(currentUserId: currentUserId, cid: cid, userIds: userIds, message: message) { error in
                 continuation.resume(with: error)
             }
         }
