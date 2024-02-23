@@ -16,5 +16,9 @@ public final class ChatState: ObservableObject {
     
     // MARK: Messages
     
-    @Published public internal(set) var messages: [ChatMessage] = []
+    @Published public private(set) var messages: [ChatMessage] = []
+    
+    @MainActor func setMessages(_ messages: [ChatMessage]) {
+        self.messages = messages
+    }
 }
