@@ -708,6 +708,14 @@ extension ChannelUpdater {
         }
     }
     
+    func enableSlowMode(cid: ChannelId, cooldownDuration: Int) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            enableSlowMode(cid: cid, cooldownDuration: cooldownDuration) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
     func freezeChannel(_ freeze: Bool, cid: ChannelId) async throws {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             freezeChannel(freeze, cid: cid) { error in
