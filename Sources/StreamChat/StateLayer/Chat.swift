@@ -52,6 +52,19 @@ public final class Chat {
     
     public internal(set) var state: ChatState
     
+    // MARK: - Deleting the Channel
+    
+    /// Deletes the channel.
+    ///
+    /// This marks the channel as deleted and hides all the messages.
+    ///
+    /// - Note: If you recreate this channel, it will show up empty. Recovering old messages is not supported.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    public func delete() async throws {
+        try await channelUpdater.deleteChannel(cid: cid)
+    }
+    
     // MARK: - Disabling/Freezing the Channel
     
     /// Freezes the channel which disallows sending new messages and adding or deleting reactions.
@@ -213,6 +226,22 @@ public final class Chat {
         try await channelUpdater.showChannel(cid: cid)
     }
     
+    // MARK: - Truncating the Channel
+    
+    /// Truncates messages from the channel.
+    ///
+    /// Truncating the channel removes all of the messages but does not affect the channel data or channel members.
+    ///
+    /// - SeeAlso: If you want to delete both channel and message data then use the ``delete()`` method instead.
+    ///
+    /// - Parameters:
+    ///   - systemMessage: A system message to be added after truncating the channel.
+    ///   - hardDelete: If true, messages are deleted, otherwise messages are hidden. The default value is set to true.
+    ///   - skipPush: If true, push notification is not sent to channel members, otherwise push notification is sent. The default value is set to false.
+    public func truncate(systemMessage: String? = nil, hardDelete: Bool = true, skipPush: Bool = false) async throws {
+        try await channelUpdater.truncateChannel(cid: cid, skipPush: skipPush, hardDelete: hardDelete, systemMessage: systemMessage)
+    }
+    
     // MARK: - Typing Indicator
     
     /// Sends a `typing.start` event in this channel to the server.
@@ -240,7 +269,7 @@ public final class Chat {
         try await typingEventsSender.stopTyping(in: cid, parentMessageId: parentMessageId)
     }
     
-    // MARK: Updating the Channel
+    // MARK: - Updating the Channel
     
     /// The update operation updates all of the channel data.
     ///
