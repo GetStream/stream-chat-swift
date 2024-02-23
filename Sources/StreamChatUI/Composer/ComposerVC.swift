@@ -340,6 +340,9 @@ open class ComposerVC: _ViewController,
     /// A controller to search users and that is used to populate the mention suggestions.
     open var userSearchController: ChatUserSearchController!
 
+    /// A controller to search members in a channel and that is used to populate the mention suggestions.
+    open var memberListController: ChatChannelMemberListController?
+
     /// A controller that manages the channel that the composer is creating content for.
     open var channelController: ChatChannelController?
 
@@ -900,44 +903,49 @@ open class ComposerVC: _ViewController,
         )
     }
 
+    /// Returns the query to be used for searching members inside a channel.
+    ///
+    /// This function is called in `showMentionSuggestions` to retrieve the query
+    /// that will be used to search for members. You should override this if you want to change the
+    /// member searching logic.
+    ///
+    /// - Parameter typingMention: The potential user mention the current user is typing.
+    /// - Returns: `ChannelMemberListQuery` instance that will be used for searching members in a channel.
+    open func queryForChannelMentionSuggestionsSearch(typingMention term: String) -> ChannelMemberListQuery? {
+        guard let cid = channelController?.cid else {
+            return nil
+        }
+        return ChannelMemberListQuery(
+            cid: cid,
+            filter: .autocomplete(.name, text: term),
+            sort: [.init(key: .name, isAscending: true)]
+        )
+    }
+
+    /// Returns the member list controller to be used for searching members inside a channel.
+    ///
+    /// - Parameter term: The potential user mention the current user is typing.
+    /// - Returns: `ChatChannelMemberListController` instance that will be used for searching members in a channel.
+    open func makeMemberListControllerForMemberSuggestions(typingMention term: String) -> ChatChannelMemberListController? {
+        guard let query = queryForChannelMentionSuggestionsSearch(typingMention: term) else { return nil }
+        return userSearchController.client.memberListController(query: query)
+    }
+
     /// Shows the mention suggestions for the potential mention the current user is typing.
     /// - Parameters:
     ///   - typingMention: The potential user mention the current user is typing.
     ///   - mentionRange: The position where the current user is typing a mention to it can be replaced with the suggestion.
     open func showMentionSuggestions(for typingMention: String, mentionRange: NSRange) {
-        guard let channel = channelController?.channel else {
+        guard let dataSource = makeMentionSuggestionsDataSource(for: typingMention) else {
             return
         }
-        guard let currentUserId = channelController?.client.currentUserId else {
-            return
-        }
-
-        var usersCache: [ChatUser] = []
-
-        if mentionAllAppUsers {
-            userSearchController.search(
-                query: queryForMentionSuggestionsSearch(typingMention: typingMention)
-            )
-        } else {
-            usersCache = searchUsers(
-                channel.lastActiveMembers,
-                by: typingMention,
-                excludingId: currentUserId
-            )
-        }
-
-        let dataSource = ChatMessageComposerSuggestionsMentionDataSource(
-            collectionView: suggestionsVC.collectionView,
-            searchController: userSearchController,
-            usersCache: usersCache
-        )
         suggestionsVC.dataSource = dataSource
         suggestionsVC.didSelectItemAt = { [weak self] userIndex in
             guard let self = self else { return }
-            guard dataSource.usersCache.count >= userIndex else {
+            guard dataSource.users.count >= userIndex else {
                 return
             }
-            guard let user = dataSource.usersCache[safe: userIndex] else {
+            guard let user = dataSource.users[safe: userIndex] else {
                 indexNotFoundAssertion()
                 return
             }
@@ -958,6 +966,64 @@ open class ComposerVC: _ViewController,
         }
 
         showSuggestions()
+    }
+
+    /// Creates a `ChatMessageComposerSuggestionsMentionDataSource` with data from local cache, user search or channel members.
+    /// The source of the data will depend on `mentionAllAppUsers` flag and the amount of members in the channel.
+    /// - Parameter typingMention: The potential user mention the current user is typing.
+    /// - Returns: A `ChatMessageComposerSuggestionsMentionDataSource` instance.
+    public func makeMentionSuggestionsDataSource(for typingMention: String) -> ChatMessageComposerSuggestionsMentionDataSource? {
+        guard let channel = channelController?.channel else {
+            return nil
+        }
+
+        guard let currentUserId = channelController?.client.currentUserId else {
+            return nil
+        }
+
+        if mentionAllAppUsers {
+            guard typingMention.isEmpty == false else {
+                return nil
+            }
+            let previousResult = userSearchController.userArray
+            userSearchController.search(
+                query: queryForMentionSuggestionsSearch(typingMention: typingMention)
+            )
+            return ChatMessageComposerSuggestionsMentionDataSource(
+                collectionView: suggestionsVC.collectionView,
+                searchController: userSearchController,
+                memberListController: nil,
+                initialUsers: previousResult
+            )
+        }
+
+        let memberCount = channel.memberCount
+        if memberCount > channel.lastActiveMembers.count {
+            guard typingMention.isEmpty == false else {
+                return nil
+            }
+            let previousResult = Array(memberListController?.members ?? [])
+            memberListController = makeMemberListControllerForMemberSuggestions(typingMention: typingMention)
+            memberListController?.synchronize()
+            return ChatMessageComposerSuggestionsMentionDataSource(
+                collectionView: suggestionsVC.collectionView,
+                searchController: userSearchController,
+                memberListController: memberListController,
+                initialUsers: previousResult
+            )
+        }
+
+        let usersCache = searchUsers(
+            channel.lastActiveMembers,
+            by: typingMention,
+            excludingId: currentUserId
+        )
+        return ChatMessageComposerSuggestionsMentionDataSource(
+            collectionView: suggestionsVC.collectionView,
+            searchController: userSearchController,
+            memberListController: nil,
+            initialUsers: usersCache
+        )
     }
 
     /// Provides the mention text for composer text field, when the user selects a mention suggestion.

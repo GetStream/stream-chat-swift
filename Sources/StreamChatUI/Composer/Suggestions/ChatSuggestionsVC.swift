@@ -190,15 +190,19 @@ open class ChatMessageComposerSuggestionsCommandDataSource: NSObject, UICollecti
 
 open class ChatMessageComposerSuggestionsMentionDataSource: NSObject,
     UICollectionViewDataSource,
-    ChatUserSearchControllerDelegate {
-    /// internal cache for users
-    private(set) var usersCache: [ChatUser]
+    ChatUserSearchControllerDelegate,
+    ChatChannelMemberListControllerDelegate {
+    /// The current users mentions.
+    private(set) var users: [ChatUser]
 
     /// The collection view of the mentions.
     open var collectionView: ChatSuggestionsCollectionView
 
-    /// The search controller to search for mentions.
+    /// The search controller to search for mentions across the whole app.
     open var searchController: ChatUserSearchController
+
+    /// The member list controller to search for users inside a channel.
+    open var memberListController: ChatChannelMemberListController?
 
     /// The types to override ui components.
     var components: Components {
@@ -209,20 +213,24 @@ open class ChatMessageComposerSuggestionsMentionDataSource: NSObject,
     /// - Parameters:
     ///   - collectionView: The collection view of the mentions.
     ///   - searchController: The search controller to find mentions.
-    ///   - usersCache: The initial results
+    ///   - memberListController: The member list controller to search for users inside a channel.
+    ///   - usersCache: The initial results.
     init(
         collectionView: ChatSuggestionsCollectionView,
         searchController: ChatUserSearchController,
-        usersCache: [ChatUser] = []
+        memberListController: ChatChannelMemberListController?,
+        initialUsers: [ChatUser]
     ) {
         self.collectionView = collectionView
         self.searchController = searchController
-        self.usersCache = usersCache
+        self.memberListController = memberListController
+        users = initialUsers
         super.init()
         registerCollectionViewCell()
         (collectionView.collectionViewLayout as? UICollectionViewFlowLayout)?
             .headerReferenceSize = CGSize(width: self.collectionView.frame.size.width, height: 0)
         searchController.delegate = self
+        memberListController?.delegate = self
     }
 
     private func registerCollectionViewCell() {
@@ -241,13 +249,13 @@ open class ChatMessageComposerSuggestionsMentionDataSource: NSObject,
     }
 
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        usersCache.count
+        users.count
     }
 
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(with: ChatMentionSuggestionCollectionViewCell.self, for: indexPath)
 
-        guard let user = usersCache[safe: indexPath.row] else {
+        guard let user = users[safe: indexPath.row] else {
             indexNotFoundAssertion()
             return cell
         }
@@ -262,7 +270,21 @@ open class ChatMessageComposerSuggestionsMentionDataSource: NSObject,
         _ controller: ChatUserSearchController,
         didChangeUsers changes: [ListChange<ChatUser>]
     ) {
-        usersCache = searchController.userArray
+        users = searchController.userArray
+        collectionView.reloadData()
+    }
+
+    public func memberListController(
+        _ controller: ChatChannelMemberListController,
+        didChangeMembers changes: [ListChange<ChatChannelMember>]
+    ) {
+        /// With background mapping, the controller.members can be empty when `state == .localDataFetched`,
+        /// so this avoids the data being empty for a split second when creating the data source.
+        guard controller.state == .remoteDataFetched else {
+            return
+        }
+
+        users = Array(controller.members)
         collectionView.reloadData()
     }
 }
