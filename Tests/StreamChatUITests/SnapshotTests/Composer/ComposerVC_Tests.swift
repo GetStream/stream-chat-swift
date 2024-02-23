@@ -25,7 +25,9 @@ final class ComposerVC_Tests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        mockedChatChannelController = ChatChannelController_Mock.mock()
+        let chatClient = ChatClient_Mock.mock
+        chatClient.mockAuthenticationRepository.mockedCurrentUserId = .newUniqueId
+        mockedChatChannelController = ChatChannelController_Mock.mock(chatClient: chatClient)
         mockedChatChannelController.channel_mock = .mock(
             cid: .unique,
             config: .mock(commands: []),
@@ -293,7 +295,64 @@ final class ComposerVC_Tests: XCTestCase {
         
         AssertSnapshot(containerVC, variants: [.defaultLight])
     }
-    
+
+    func test_makeMentionSuggestionsDataSource_whenMentionAllAppUsers_shouldSearchUsers() throws {
+        composerVC.components.mentionAllAppUsers = true
+        composerVC.channelController = mockedChatChannelController
+        let mockedSearchController = ChatUserSearchController_Mock.mock()
+        mockedSearchController.users_mock = [.mock(id: .unique, name: "1"), .mock(id: .unique, name: "2")]
+        composerVC.userSearchController = mockedSearchController
+
+        // When empty, return nil
+        XCTAssertNil(composerVC.makeMentionSuggestionsDataSource(for: ""))
+
+        let dataSource = try XCTUnwrap(composerVC.makeMentionSuggestionsDataSource(for: "Leia"))
+
+        XCTAssertNil(dataSource.memberListController)
+        XCTAssertEqual(dataSource.users, mockedSearchController.users_mock ?? [])
+        XCTAssertEqual(mockedSearchController.searchCallCount, 1)
+    }
+
+    func test_makeMentionSuggestionsDataSource_whenMentionAllAppUsersIsFalse_whenMemberCountBiggerThanLocalMembers_shouldSearchChannelMembers() throws {
+        composerVC.components.mentionAllAppUsers = false
+        composerVC.channelController = mockedChatChannelController
+        mockedChatChannelController.channel_mock = .mock(cid: .unique, lastActiveMembers: [.dummy, .dummy], memberCount: 10)
+        let mockedSearchController = ChatUserSearchController_Mock.mock()
+        mockedSearchController.users_mock = []
+        composerVC.userSearchController = mockedSearchController
+
+        // When empty, return nil
+        XCTAssertNil(composerVC.makeMentionSuggestionsDataSource(for: ""))
+
+        let dataSource = try XCTUnwrap(composerVC.makeMentionSuggestionsDataSource(for: "Leia"))
+
+        XCTAssertNotNil(dataSource.memberListController)
+        XCTAssertEqual(mockedSearchController.searchCallCount, 0)
+    }
+
+    func test_makeMentionSuggestionsDataSource_whenMentionAllAppUsersIsFalse_whenMemberCountLowerThanLocalMembers_shoudSearchLocalMembers() throws {
+        composerVC.components.mentionAllAppUsers = false
+        composerVC.channelController = mockedChatChannelController
+        mockedChatChannelController.channel_mock = .mock(
+            cid: .unique,
+            lastActiveMembers: [.mock(id: .unique, name: "Leia Organa"), .mock(id: .unique, name: "Leia Rockstar")],
+            memberCount: 2
+        )
+        let mockedSearchController = ChatUserSearchController_Mock.mock()
+        mockedSearchController.users_mock = []
+        composerVC.userSearchController = mockedSearchController
+
+        // When empty, should still return a data source to include all local members.
+        XCTAssertNotNil(composerVC.makeMentionSuggestionsDataSource(for: ""))
+
+        let dataSource = try XCTUnwrap(composerVC.makeMentionSuggestionsDataSource(for: "Leia"))
+
+        XCTAssertNil(dataSource.memberListController)
+        XCTAssertEqual(dataSource.users, mockedChatChannelController.channel?.lastActiveMembers)
+        XCTAssertEqual(dataSource.users.isEmpty, false)
+        XCTAssertEqual(mockedSearchController.searchCallCount, 0)
+    }
+
     func test_channelWithSlowModeActive_messageIsSent_SlowModeIsOnWithCountdownShown() {
         composerVC.appearance = Appearance.default
         composerVC.content.text = "Test text"
