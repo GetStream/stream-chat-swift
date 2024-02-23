@@ -88,6 +88,40 @@ public final class Chat {
         try await channelUpdater.freezeChannel(false, cid: cid)
     }
     
+    // MARK: - Invites
+    
+    /// Accepts a pending invite and adds the current user as a member of the channel.
+    ///
+    /// - Note: Unread counts are not incremented for the channel for which the user is a member of but has a pending invite.
+    /// - Note: Pending invites can be queried by setting the ``Filter`` to `.equal("invite", to: "pending")`.
+    ///
+    /// - Parameter systemMessage: A system message to be added after accepting the invite.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    public func acceptInvite(with systemMessage: String? = nil) async throws {
+        try await channelUpdater.acceptInvite(cid: cid, message: systemMessage)
+    }
+    
+    /// Invite users to the channel.
+    ///
+    /// Upon invitation, the invited user will receive a notification that they were invited to the this channel.
+    ///
+    /// - Parameter members: An array of user ids that will be invited to the channel.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    public func inviteMembers(_ members: [UserId]) async throws {
+        try await channelUpdater.inviteMembers(cid: cid, userIds: Set(members))
+    }
+    
+    /// Rejects a pending invite and does not add the current user as a member of the channel.
+    ///
+    /// - Note: Pending invites can be queried by setting the ``Filter`` to `.equal("invite", to: "pending")`.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    public func rejectInvite() async throws {
+        try await channelUpdater.rejectInvite(cid: cid)
+    }
+    
     // MARK: - Members
     
     /// Adds the given users as members.
@@ -257,7 +291,7 @@ public final class Chat {
         try await channelUpdater.showChannel(cid: cid)
     }
     
-    // MARK: Throttling and Slow Mode
+    // MARK: - Throttling and Slow Mode
     
     /// Enables slow mode which limits how often members can post new messages to the channel.
     ///
@@ -266,7 +300,6 @@ public final class Chat {
     /// and set the cooldown interval to 30 seconds a user will be able to post at most 1 message every 30 seconds.
     ///
     /// - Note: Moderators and admins are not restricted by the cooldown period and can post messages as usual.
-    ///
     /// - Note: When a user posts a message during the cooldown period, the API returns an error message. You can
     /// avoid hitting the APIs and instead show such limitation on the send message UI directly. When slow mode is
     /// enabled, channels include a `cooldown` field containing the current cooldown period in seconds.
