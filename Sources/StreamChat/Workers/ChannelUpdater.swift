@@ -700,6 +700,14 @@ class ChannelUpdater: Worker {
 
 @available(iOS 13.0, *)
 extension ChannelUpdater {
+    func deleteChannel(cid: ChannelId) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            deleteChannel(cid: cid) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
     func freezeChannel(_ freeze: Bool, cid: ChannelId) async throws {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             freezeChannel(freeze, cid: cid) { error in
@@ -727,6 +735,20 @@ extension ChannelUpdater {
     func showChannel(cid: ChannelId) async throws {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             showChannel(cid: cid) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+    
+    func truncateChannel(
+        cid: ChannelId,
+        skipPush: Bool = false,
+        hardDelete: Bool = true,
+        systemMessage: String? = nil,
+        completion: ((Error?) -> Void)? = nil
+    ) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            truncateChannel(cid: cid, skipPush: skipPush, hardDelete: hardDelete, systemMessage: systemMessage) { error in
                 continuation.resume(with: error)
             }
         }
