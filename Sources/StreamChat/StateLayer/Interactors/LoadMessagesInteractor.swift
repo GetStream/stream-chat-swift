@@ -119,9 +119,9 @@ private extension ChatState {
         }
         switch messageOrder {
         case .topToBottom:
-            self.messages = ChatState.mergeSorted(messages.reversed(), newMessages).reversed()
+            setMessages(ChatState.mergeSorted(messages.reversed(), newMessages).reversed())
         case .bottomToTop:
-            self.messages = ChatState.mergeSorted(messages, newMessages)
+            setMessages(ChatState.mergeSorted(messages, newMessages))
         }
     }
     
