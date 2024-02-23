@@ -6,6 +6,7 @@ import Foundation
 
 @available(iOS 13.0, *)
 public final class Chat {
+    private let authenticationRepository: AuthenticationRepository
     private let channelUpdater: ChannelUpdater
     private let loadMessagesInteractor: LoadMessagesInteractor
     private let sendMessageInteractor: SendMessageInteractor
@@ -24,6 +25,7 @@ public final class Chat {
         client: ChatClient,
         environment: Environment = .init()
     ) {
+        authenticationRepository = client.authenticationRepository
         self.channelQuery = ChannelQuery(cid: cid, channelQuery: channelQuery)
         self.channelListQuery = channelListQuery
         self.cid = cid
@@ -84,6 +86,35 @@ public final class Chat {
     /// - Throws: An error while communicating with the Stream API.
     public func unfreeze() async throws {
         try await channelUpdater.freezeChannel(false, cid: cid)
+    }
+    
+    // MARK: - Members
+    
+    /// Adds the given users as members.
+    ///
+    /// - Note: You can only add up to 100 members at once.
+    ///
+    /// - Parameters:
+    ///   - members: An array of user ids that will be added to the channel.
+    ///   - systemMessage: A system message to be added after adding members.
+    ///   - hideHistory: If true, the previous history is available for added members, otherwise they do not see the history. The default value is false.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    public func addMembers(_ members: [UserId], systemMessage: String? = nil, hideHistory: Bool = false) async throws {
+        let currentUserId = authenticationRepository.currentUserId
+        try await channelUpdater.addMembers(currentUserId: currentUserId, cid: cid, userIds: Set(members), message: systemMessage, hideHistory: hideHistory)
+    }
+    
+    /// Removes the given users from the channel members.
+    ///
+    /// - Parameters:
+    ///   - members: An array of user ids that will be removed from the channel.
+    ///   - systemMessage: A system message to be added after removing members.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    public func removeMembers(_ members: [UserId], systemMessage: String? = nil) async throws {
+        let currentUserId = authenticationRepository.currentUserId
+        try await channelUpdater.removeMembers(currentUserId: currentUserId, cid: cid, userIds: Set(members), message: systemMessage)
     }
     
     // MARK: - Messages
