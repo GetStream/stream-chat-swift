@@ -287,6 +287,7 @@ final class ComposerVC_Tests: XCTestCase {
         
         let containerVC = ComposerContainerVC()
         containerVC.composerVC = composerVC
+        containerVC.composerVC.userMentionsDebouncer = .init(0, queue: .main)
         containerVC.textWithMention = "@Yo"
         containerVC.composerVC.composerView.inputMessageView.textView.placeholderLabel.isHidden = true
         
