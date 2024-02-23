@@ -169,7 +169,7 @@ public final class Chat {
         try await loadMessagesInteractor.loadFirstPage(to: state, with: channelQuery)
     }
     
-    // MARK: - Muting the Channel
+    // MARK: - Muting or Hiding the Channel
     
     /// Mutes the channel which disables push notifications and unread count for new messages.
     ///
@@ -177,16 +177,40 @@ public final class Chat {
     ///
     /// - Note: The list of muted channels and their expiration time is returned when the user connects.
     ///
-    /// - Throws: An error while fetching more messages from the Stream API.
+    /// - Throws: An error while communicating with the Stream API.
     public func mute() async throws {
         try await channelUpdater.muteChannel(true, cid: cid)
     }
     
     /// Unmutes the channel which enables push notifications and unread count changes for new messages.
     ///
-    /// - Throws: An error while fetching more messages from the Stream API.
+    /// - Throws: An error while communicating with the Stream API.
     public func unmute() async throws {
         try await channelUpdater.muteChannel(false, cid: cid)
+    }
+    
+    /// Hide the channel which removes if from the query channel requests for that user until a new message is added.
+    ///
+    /// Hiding a channel is only available to members of that channel. Hidden channels may still have unread messages
+    /// and you may wish to mark the channel as read prior to hiding it.
+    ///
+    /// Optionally you can also clear the entire message history of that channel for the user. This way,
+    /// when a new message is received, it will be the only one present in the channel.
+    ///
+    /// - Note: You can retrieve the list of hidden channels using the `hidden` query parameter (``FilterKey.hidden``).
+    ///
+    /// - Parameter clearHistory: If true, the whole channel history is deleted. The default value is false.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    public func hide(clearHistory: Bool = false) async throws {
+        try await channelUpdater.hideChannel(cid: cid, clearHistory: clearHistory)
+    }
+    
+    /// Shows a previously hidden channel.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    public func show() async throws {
+        try await channelUpdater.showChannel(cid: cid)
     }
     
     // MARK: - Typing Indicator
