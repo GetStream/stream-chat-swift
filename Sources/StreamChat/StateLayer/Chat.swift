@@ -14,7 +14,7 @@ public final class Chat {
     public let cid: ChannelId
     public let channelListQuery: ChannelListQuery?
     public let channelQuery: ChannelQuery
-
+    
     init(
         cid: ChannelId,
         channelQuery: ChannelQuery,
@@ -224,6 +224,35 @@ public final class Chat {
     /// - Throws: An error while communicating with the Stream API.
     public func show() async throws {
         try await channelUpdater.showChannel(cid: cid)
+    }
+    
+    // MARK: Throttling and Slow Mode
+    
+    /// Enables slow mode which limits how often members can post new messages to the channel.
+    ///
+    /// Slow mode helps reduce noise on a channel by limiting users to a maximum of 1 message per cooldown interval.
+    /// The cooldown interval is configurable and can be anything between 1 and 120 seconds. If you enable slow mode
+    /// and set the cooldown interval to 30 seconds a user will be able to post at most 1 message every 30 seconds.
+    ///
+    /// - Note: Moderators and admins are not restricted by the cooldown period and can post messages as usual.
+    ///
+    /// - Note: When a user posts a message during the cooldown period, the API returns an error message. You can
+    /// avoid hitting the APIs and instead show such limitation on the send message UI directly. When slow mode is
+    /// enabled, channels include a `cooldown` field containing the current cooldown period in seconds.
+    ///
+    /// - Parameter cooldownDuration: The time interval in seconds in which a user will be able to post at most 1 message.
+    ///
+    /// - Throws: An error while communicating with the Stream API or when setting an invalid duration.
+    public func enableSlowMode(cooldownDuration: Int) async throws {
+        guard cooldownDuration >= 1, cooldownDuration <= 120 else {
+            throw ClientError.InvalidCooldownDuration()
+        }
+        try await channelUpdater.enableSlowMode(cid: cid, cooldownDuration: cooldownDuration)
+    }
+    
+    /// Disables slow mode which removes the limits of how often members can post new messages to the channel.
+    public func disableSlowMode() async throws {
+        try await channelUpdater.enableSlowMode(cid: cid, cooldownDuration: 0)
     }
     
     // MARK: - Truncating the Channel
