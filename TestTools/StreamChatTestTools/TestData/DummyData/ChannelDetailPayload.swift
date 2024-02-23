@@ -11,7 +11,9 @@ extension ChannelStateResponse {
         cid: ChannelId = .unique,
         channel: ChannelResponse? = nil,
         members: [ChannelMember] = [],
+        memberCount: Int? = nil,
         messages: [Message] = [],
+        pinnedMessages: [Message] = [],
         reads: [Read] = [],
         membership: ChannelMember? = nil,
         watchers: [UserObject]? = nil
@@ -20,10 +22,10 @@ extension ChannelStateResponse {
             duration: "0.5",
             members: members,
             messages: messages,
-            pinnedMessages: [],
+            pinnedMessages: pinnedMessages,
             read: reads,
             watchers: watchers,
-            channel: channel ?? ChannelResponse.dummy(cid: cid),
+            channel: channel ?? ChannelResponse.dummy(cid: cid, memberCount: memberCount ?? members.count),
             membership: membership
         )
     }
@@ -42,11 +44,12 @@ extension ChannelResponse {
         updatedAt: Date = .init(),
         truncatedAt: Date? = nil,
         createdBy: UserObject = .dummy(userId: .unique),
-        config: ChannelConfig = .mock(),
-        ownCapabilities: [String] = [],
+        config: ChannelConfig = .dummy,
+        ownCapabilities: [String] = [ChannelCapability.readEvents.rawValue],
         isFrozen: Bool = false,
         isHidden: Bool? = nil,
         members: [ChannelMember] = [],
+        memberCount: Int? = nil,
         team: String? = nil,
         cooldownDuration: Int = 0
     ) -> Self {
@@ -67,7 +70,7 @@ extension ChannelResponse {
             hidden: isHidden,
             hideMessagesBefore: nil,
             lastMessageAt: lastMessageAt,
-            memberCount: members.count,
+            memberCount: memberCount ?? members.count,
             team: team,
             truncatedAt: truncatedAt,
             members: members,

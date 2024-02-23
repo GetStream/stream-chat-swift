@@ -69,6 +69,7 @@ extension XCTestCase {
         with channelId: ChannelId,
         numberOfMessages: Int = 1,
         members: [ChannelMember] = [.dummy()],
+        memberCount: Int = 0,
         watchers: [UserObject]? = nil,
         includeMembership: Bool = true,
         messages: [Message]? = nil,
@@ -110,9 +111,11 @@ extension XCTestCase {
                 truncatedAt: truncatedAt,
                 createdBy: dummyUser,
                 config: channelConfig,
+                ownCapabilities: ownCapabilities,
                 isFrozen: true,
                 isHidden: nil,
                 members: members,
+                memberCount: memberCount,
                 team: .unique,
                 cooldownDuration: cooldownDuration ?? .random(in: 0...120)
             )

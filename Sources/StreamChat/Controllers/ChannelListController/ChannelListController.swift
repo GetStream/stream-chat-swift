@@ -263,6 +263,10 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
 ///   We don't try to add it to the current query to not mess with pagination.
 extension ChatChannelListController: EventsControllerDelegate {
     public func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
+        // TODO: check again.
+        if let containsChannel = event as? EventContainsChannel, let channel = containsChannel.channel {
+            _ = try? dataStore.database.viewContext.saveChannel(payload: channel)
+        }
         if let channelAddedEvent = event as? NotificationAddedToChannelEvent {
             linkChannelIfNeeded(channelAddedEvent.cid)
         } else if let messageNewEvent = event as? MessageNewEvent {

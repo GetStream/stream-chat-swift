@@ -326,8 +326,12 @@ final class ChannelListController_Tests: XCTestCase {
 
     // MARK: - Linking and Unlinking Channels when channels are updated/inserted
 
-    func test_didReceiveEvent_whenNotificationAddedToChannelEvent_shouldLinkChannelToQuery() {
-        let event = makeAddedChannelEvent(with: .mock(cid: .unique))
+    func test_didReceiveEvent_whenNotificationAddedToChannelEvent_shouldLinkChannelToQuery() throws {
+        let cid = ChannelId.unique
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: .dummy(cid: cid))
+        }
+        let event = makeAddedChannelEvent(with: .mock(cid: cid))
 
         controller.eventsController(controller.eventsController, didReceiveEvent: event)
 
@@ -337,8 +341,12 @@ final class ChannelListController_Tests: XCTestCase {
         XCTAssertEqual(env.channelListUpdater?.startWatchingChannels_callCount, 1)
     }
 
-    func test_didReceiveEvent_whenMessageNewEvent_shouldLinkChannelToQuery() {
-        let event = makeMessageNewEvent(with: .mock(cid: .unique))
+    func test_didReceiveEvent_whenMessageNewEvent_shouldLinkChannelToQuery() throws {
+        let cid = ChannelId.unique
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: .dummy(cid: cid))
+        }
+        let event = makeMessageNewEvent(with: .mock(cid: cid))
 
         controller.eventsController(controller.eventsController, didReceiveEvent: event)
 
@@ -361,8 +369,12 @@ final class ChannelListController_Tests: XCTestCase {
         XCTAssertEqual(env.channelListUpdater?.startWatchingChannels_callCount, 1)
     }
 
-    func test_didReceiveEvent_whenNotificationMessageNewEvent_shouldLinkChannelToQuery() {
-        let event = makeNotificationMessageNewEvent(with: .mock(cid: .unique))
+    func test_didReceiveEvent_whenNotificationMessageNewEvent_shouldLinkChannelToQuery() throws {
+        let cid = ChannelId.unique
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: .dummy(cid: cid))
+        }
+        let event = makeNotificationMessageNewEvent(with: .mock(cid: cid))
 
         controller.eventsController(controller.eventsController, didReceiveEvent: event)
 
@@ -453,13 +465,17 @@ final class ChannelListController_Tests: XCTestCase {
         XCTAssertEqual(env.channelListUpdater?.startWatchingChannels_callCount, 0)
     }
 
-    func test_didReceiveEvent_whenFilterMatches_shouldLinkChannelToQuery() {
+    func test_didReceiveEvent_whenFilterMatches_shouldLinkChannelToQuery() throws {
         let filter: (ChatChannel) -> Bool = { channel in
             channel.memberCount == 4
         }
         setupControllerWithFilter(filter)
 
-        let event = makeAddedChannelEvent(with: .mock(cid: .unique, memberCount: 4))
+        let cid = ChannelId.unique
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: .dummy(cid: cid, memberCount: 4))
+        }
+        let event = makeAddedChannelEvent(with: .mock(cid: cid, memberCount: 4))
 
         controller.eventsController(controller.eventsController, didReceiveEvent: event)
 
@@ -526,7 +542,8 @@ final class ChannelListController_Tests: XCTestCase {
             try session.saveChannel(
                 payload: self.dummyPayload(
                     with: cid,
-                    members: [.dummy(user: .dummy(userId: self.memberId))]
+                    members: [.dummy(user: .dummy(userId: self.memberId))],
+                    memberCount: 1
                 ),
                 query: self.query,
                 cache: nil
@@ -1731,7 +1748,8 @@ final class ChannelListController_Tests: XCTestCase {
             channelType: channel.type.rawValue,
             cid: channel.cid.rawValue,
             createdAt: channel.createdAt,
-            type: "notification.added_to_channel"
+            type: "notification.added_to_channel",
+            channel: .dummy(cid: channel.cid, memberCount: channel.memberCount)
         )
     }
 
@@ -1773,7 +1791,8 @@ final class ChannelListController_Tests: XCTestCase {
             channelType: channel.type.rawValue,
             cid: channel.cid.rawValue,
             createdAt: channel.createdAt,
-            type: "channel.updated"
+            type: "channel.updated",
+            channel: .dummy(cid: channel.cid, memberCount: channel.memberCount)
         )
     }
 

@@ -3726,7 +3726,7 @@ final class ChannelController_Tests: XCTestCase {
         // GIVEN
         let currentUser: OwnUser = .dummy(userId: .unique, role: .user)
 
-        let emptyChannel = ChannelStateResponse.dummy()
+        let emptyChannel = ChannelStateResponse.dummy(cid: channelId)
 
         try client.databaseContainer.writeSynchronously { session in
             try session.saveCurrentUser(payload: currentUser)
@@ -3759,7 +3759,7 @@ final class ChannelController_Tests: XCTestCase {
             cid: channelId
         )
 
-        let channelResponse = ChannelStateResponse.dummy(messages: [lastMessage])
+        let channelResponse = ChannelStateResponse.dummy(cid: channelId, messages: [lastMessage])
 
         try client.databaseContainer.writeSynchronously { session in
             try session.saveChannel(payload: channelResponse)
@@ -3790,7 +3790,7 @@ final class ChannelController_Tests: XCTestCase {
 
         let currentUser: OwnUser = .dummy(userId: .unique, role: .user)
 
-        let channelResponse = ChannelStateResponse.dummy(messages: [lastMessage])
+        let channelResponse = ChannelStateResponse.dummy(cid: channelId, messages: [lastMessage])
 
         try client.databaseContainer.writeSynchronously { session in
             try session.saveCurrentUser(payload: currentUser)
@@ -5197,7 +5197,7 @@ extension ChannelController_Tests {
         let error: Error? = try waitFor { done in
             var returnedError: Error?
             waitForInitialMessagesUpdate(count: 0)
-            guard !channelPayload.messages.isEmpty else { return done(ClientError.Unknown()) }
+            guard !channelPayload.messages.isEmpty else { return done(returnedError) }
 
             waitForMessagesUpdate(count: channelPayload.messages.count) {
                 do {

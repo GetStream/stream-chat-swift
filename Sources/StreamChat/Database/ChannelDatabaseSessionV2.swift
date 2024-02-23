@@ -231,6 +231,7 @@ extension NSManagedObjectContext {
         return dto
     }
     
+    @discardableResult
     func saveChannel(
         payload: ChannelResponse
     ) throws -> ChannelDTO {
