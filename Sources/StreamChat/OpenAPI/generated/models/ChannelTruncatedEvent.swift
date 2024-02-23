@@ -33,5 +33,6 @@ public struct ChannelTruncatedEvent: Codable, Hashable, Event {
     }
 }
 
+extension ChannelTruncatedEvent: EventContainsCid {}
 extension ChannelTruncatedEvent: EventContainsCreationDate {}
 extension ChannelTruncatedEvent: EventContainsChannel {}

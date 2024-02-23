@@ -34,5 +34,6 @@ public struct TypingStopEvent: Codable, Hashable, Event {
     }
 }
 
+extension TypingStopEvent: EventContainsCid {}
 extension TypingStopEvent: EventContainsCreationDate {}
 extension TypingStopEvent: EventContainsUser {}

@@ -40,6 +40,7 @@ public struct MessageUpdatedEvent: Codable, Hashable, Event {
     }
 }
 
+extension MessageUpdatedEvent: EventContainsCid {}
 extension MessageUpdatedEvent: EventContainsCreationDate {}
 extension MessageUpdatedEvent: EventContainsOptionalMessage {}
 extension MessageUpdatedEvent: EventContainsUser {}

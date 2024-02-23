@@ -58,6 +58,7 @@ public struct NotificationMarkUnreadEvent: Codable, Hashable, Event {
     }
 }
 
+extension NotificationMarkUnreadEvent: EventContainsCid {}
 extension NotificationMarkUnreadEvent: EventContainsCreationDate {}
 extension NotificationMarkUnreadEvent: EventContainsUnreadCount {}
 extension NotificationMarkUnreadEvent: EventContainsChannel {}

@@ -34,5 +34,6 @@ public struct MemberRemovedEvent: Codable, Hashable, Event {
     }
 }
 
+extension MemberRemovedEvent: EventContainsCid {}
 extension MemberRemovedEvent: EventContainsCreationDate {}
 extension MemberRemovedEvent: EventContainsUser {}

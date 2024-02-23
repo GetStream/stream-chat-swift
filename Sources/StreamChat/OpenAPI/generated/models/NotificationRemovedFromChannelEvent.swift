@@ -37,6 +37,7 @@ public struct NotificationRemovedFromChannelEvent: Codable, Hashable, Event {
     }
 }
 
+extension NotificationRemovedFromChannelEvent: EventContainsCid {}
 extension NotificationRemovedFromChannelEvent: EventContainsCreationDate {}
 extension NotificationRemovedFromChannelEvent: EventContainsChannel {}
 extension NotificationRemovedFromChannelEvent: EventContainsUser {}

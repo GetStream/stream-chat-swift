@@ -34,5 +34,6 @@ public struct NotificationChannelDeletedEvent: Codable, Hashable, Event {
     }
 }
 
+extension NotificationChannelDeletedEvent: EventContainsCid {}
 extension NotificationChannelDeletedEvent: EventContainsCreationDate {}
 extension NotificationChannelDeletedEvent: EventContainsChannel {}

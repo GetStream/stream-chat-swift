@@ -28,4 +28,5 @@ public struct ChannelUnFrozenEvent: Codable, Hashable, Event {
     }
 }
 
+extension ChannelUnFrozenEvent: EventContainsCid {}
 extension ChannelUnFrozenEvent: EventContainsCreationDate {}

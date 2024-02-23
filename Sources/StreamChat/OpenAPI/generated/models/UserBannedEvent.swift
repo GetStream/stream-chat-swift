@@ -46,5 +46,6 @@ public struct UserBannedEvent: Codable, Hashable, Event {
     }
 }
 
+extension UserBannedEvent: EventContainsCid {}
 extension UserBannedEvent: EventContainsCreationDate {}
 extension UserBannedEvent: EventContainsUser {}

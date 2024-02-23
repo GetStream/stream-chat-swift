@@ -28,5 +28,6 @@ public struct HealthCheckEvent: Codable, Hashable, Event {
     }
 }
 
+extension HealthCheckEvent: EventContainsCid {}
 extension HealthCheckEvent: EventContainsCreationDate {}
 extension HealthCheckEvent: EventContainsOptionalCurrentUser {}

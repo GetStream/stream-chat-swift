@@ -37,6 +37,7 @@ public struct ChannelHiddenEvent: Codable, Hashable, Event {
     }
 }
 
+extension ChannelHiddenEvent: EventContainsCid {}
 extension ChannelHiddenEvent: EventContainsCreationDate {}
 extension ChannelHiddenEvent: EventContainsChannel {}
 extension ChannelHiddenEvent: EventContainsUser {}

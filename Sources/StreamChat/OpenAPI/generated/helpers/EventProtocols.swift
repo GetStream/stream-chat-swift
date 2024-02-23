@@ -26,6 +26,10 @@ protocol EventContainsChannel {
     var channel: ChannelResponse? { get }
 }
 
+protocol EventContainsCid {
+    var cid: String { get }
+}
+
 protocol EventContainsUnreadCount {
     var unreadChannels: Int { get }
     var totalUnreadCount: Int { get }

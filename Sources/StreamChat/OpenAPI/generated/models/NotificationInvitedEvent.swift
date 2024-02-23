@@ -37,6 +37,7 @@ public struct NotificationInvitedEvent: Codable, Hashable, Event {
     }
 }
 
+extension NotificationInvitedEvent: EventContainsCid {}
 extension NotificationInvitedEvent: EventContainsCreationDate {}
 extension NotificationInvitedEvent: EventContainsChannel {}
 extension NotificationInvitedEvent: EventContainsUser {}

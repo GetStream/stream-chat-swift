@@ -330,7 +330,36 @@ final class IdentifiablePayload_Tests: XCTestCase {
                 let messageId = "message-c:\(channelIndex)-\(messageIndex)"
                 let messageCreatedDate = Date.unique(after: Date())
                 let messageAuthor = users[channelIndex]
-                return Message.dummy()
+                return Message.dummy(
+                    messageId: messageId,
+                    authorUserId: messageAuthor.id,
+                    latestReactions: (0..<messageReactionsCount).map { _ in
+                        Reaction(
+                            createdAt: .unique,
+                            messageId: messageId,
+                            score: 1,
+                            type: "like",
+                            updatedAt: .unique,
+                            custom: [:],
+                            userId: messageAuthor.id,
+                            user: messageAuthor
+                        )
+                    },
+                    ownReactions: (0..<messageReactionsCount).map { _ in
+                        Reaction(
+                            createdAt: .unique,
+                            messageId: messageId,
+                            score: 1,
+                            type: "love",
+                            updatedAt: .unique,
+                            custom: [:],
+                            userId: messageAuthor.id,
+                            user: messageAuthor
+                        )
+                    },
+                    createdAt: messageCreatedDate,
+                    cid: cid
+                )
             }
 
             return ChannelStateResponse.dummy(

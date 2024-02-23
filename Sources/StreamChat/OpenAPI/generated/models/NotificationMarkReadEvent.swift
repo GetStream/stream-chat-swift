@@ -46,6 +46,7 @@ public struct NotificationMarkReadEvent: Codable, Hashable, Event {
     }
 }
 
+extension NotificationMarkReadEvent: EventContainsCid {}
 extension NotificationMarkReadEvent: EventContainsCreationDate {}
 extension NotificationMarkReadEvent: EventContainsUnreadCount {}
 extension NotificationMarkReadEvent: EventContainsChannel {}

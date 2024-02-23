@@ -34,5 +34,6 @@ public struct UserWatchingStopEvent: Codable, Hashable, Event {
     }
 }
 
+extension UserWatchingStopEvent: EventContainsCid {}
 extension UserWatchingStopEvent: EventContainsCreationDate {}
 extension UserWatchingStopEvent: EventContainsUser {}

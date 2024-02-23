@@ -34,5 +34,6 @@ public struct ChannelDeletedEvent: Codable, Hashable, Event {
     }
 }
 
+extension ChannelDeletedEvent: EventContainsCid {}
 extension ChannelDeletedEvent: EventContainsCreationDate {}
 extension ChannelDeletedEvent: EventContainsChannel {}

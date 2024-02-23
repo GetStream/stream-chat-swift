@@ -37,6 +37,7 @@ public struct NotificationInviteRejectedEvent: Codable, Hashable, Event {
     }
 }
 
+extension NotificationInviteRejectedEvent: EventContainsCid {}
 extension NotificationInviteRejectedEvent: EventContainsCreationDate {}
 extension NotificationInviteRejectedEvent: EventContainsChannel {}
 extension NotificationInviteRejectedEvent: EventContainsUser {}

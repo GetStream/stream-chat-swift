@@ -40,6 +40,7 @@ public struct ChannelUpdatedEvent: Codable, Hashable, Event {
     }
 }
 
+extension ChannelUpdatedEvent: EventContainsCid {}
 extension ChannelUpdatedEvent: EventContainsCreationDate {}
 extension ChannelUpdatedEvent: EventContainsChannel {}
 extension ChannelUpdatedEvent: EventContainsOptionalMessage {}

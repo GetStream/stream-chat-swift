@@ -37,5 +37,6 @@ public struct MessageReadEvent: Codable, Hashable, Event {
     }
 }
 
+extension MessageReadEvent: EventContainsCid {}
 extension MessageReadEvent: EventContainsCreationDate {}
 extension MessageReadEvent: EventContainsUser {}

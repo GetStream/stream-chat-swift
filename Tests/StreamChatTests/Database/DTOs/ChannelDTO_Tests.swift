@@ -517,7 +517,7 @@ final class ChannelDTO_Tests: XCTestCase {
         
         // Save a channel payload with 100 messages
         let channelId: ChannelId = .unique
-        let payload = dummyPayload(with: channelId, numberOfMessages: 100)
+        let payload = dummyPayload(with: channelId, numberOfMessages: 100, membership: .dummy())
 
         // Save a channel with membership to the DB
         try database.writeSynchronously { session in
@@ -666,7 +666,12 @@ final class ChannelDTO_Tests: XCTestCase {
 
     func test_channelPayload_pinnedMessagesNewerThanOldestMessageAreFetched() throws {
         let channelId: ChannelId = .unique
-        let pinnedMessage = Message.dummy(authorUserId: dummyUser.id, mentionedUsers: [dummyCurrentUser.toUser])
+        let pinnedMessage = Message.dummy(
+            authorUserId: dummyUser.id,
+            createdAt: Date(),
+            pinned: true,
+            mentionedUsers: [dummyCurrentUser.toUser]
+        )
         let payload = dummyPayload(with: channelId, numberOfMessages: 1, pinnedMessages: [pinnedMessage])
 
         try database.writeSynchronously { session in
@@ -808,7 +813,7 @@ final class ChannelDTO_Tests: XCTestCase {
     func test_DTO_updateFromSamePayload_doNotProduceChanges() throws {
         // Arrange: Store random channel payload to db
         let channelId: ChannelId = .unique
-        let payload = ChannelResponse.dummy(cid: channelId)
+        let payload = ChannelResponse.dummy(cid: channelId, createdAt: .unique)
 
         try database.writeSynchronously { session in
             try session.saveChannel(payload: payload, query: nil, cache: nil)

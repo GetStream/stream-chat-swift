@@ -37,6 +37,7 @@ public struct NotificationNewMessageEvent: Codable, Hashable, Event {
     }
 }
 
+extension NotificationNewMessageEvent: EventContainsCid {}
 extension NotificationNewMessageEvent: EventContainsCreationDate {}
 extension NotificationNewMessageEvent: EventContainsMessage {}
 extension NotificationNewMessageEvent: EventContainsChannel {}

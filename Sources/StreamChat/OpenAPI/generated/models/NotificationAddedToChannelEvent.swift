@@ -34,5 +34,6 @@ public struct NotificationAddedToChannelEvent: Codable, Hashable, Event {
     }
 }
 
+extension NotificationAddedToChannelEvent: EventContainsCid {}
 extension NotificationAddedToChannelEvent: EventContainsCreationDate {}
 extension NotificationAddedToChannelEvent: EventContainsChannel {}

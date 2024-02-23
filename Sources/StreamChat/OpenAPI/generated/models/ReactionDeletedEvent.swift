@@ -43,6 +43,7 @@ public struct ReactionDeletedEvent: Codable, Hashable, Event {
     }
 }
 
+extension ReactionDeletedEvent: EventContainsCid {}
 extension ReactionDeletedEvent: EventContainsCreationDate {}
 extension ReactionDeletedEvent: EventContainsOptionalMessage {}
 extension ReactionDeletedEvent: EventContainsUser {}

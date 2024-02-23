@@ -83,9 +83,9 @@ public class ChannelEventsController: EventsController {
     override func shouldProcessEvent(_ event: Event) -> Bool {
         guard let cid = cid else { return false }
 
-        let channelEvent = event as? ChannelSpecificEvent
+        let channelEvent = event as? EventContainsCid
         let unknownEvent = event as? UnknownChannelEvent
 
-        return channelEvent?.cid == cid || unknownEvent?.cid == cid
+        return channelEvent?.cid == cid.rawValue || unknownEvent?.cid == cid
     }
 }

@@ -31,5 +31,6 @@ public struct ChannelKickedEvent: Codable, Hashable, Event {
     }
 }
 
+extension ChannelKickedEvent: EventContainsCid {}
 extension ChannelKickedEvent: EventContainsCreationDate {}
 extension ChannelKickedEvent: EventContainsChannel {}

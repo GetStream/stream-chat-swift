@@ -80,7 +80,8 @@ extension XCTestCase {
         createdAt: Date = XCTestCase.channelCreatedDate,
         truncatedAt: Date? = nil,
         cooldownDuration: Int? = nil,
-        channelReads: [Read]? = nil
+        channelReads: [Read]? = nil,
+        membership: ChannelMember? = nil
     ) -> ChannelStateResponse {
         var payloadMessages: [Message] = []
         if let messages = messages {
@@ -118,7 +119,8 @@ extension XCTestCase {
                 memberCount: memberCount,
                 team: .unique,
                 cooldownDuration: cooldownDuration ?? .random(in: 0...120)
-            )
+            ),
+            membership: membership
         )
 
         return payload

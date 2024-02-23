@@ -31,5 +31,6 @@ public struct ChannelVisibleEvent: Codable, Hashable, Event {
     }
 }
 
+extension ChannelVisibleEvent: EventContainsCid {}
 extension ChannelVisibleEvent: EventContainsCreationDate {}
 extension ChannelVisibleEvent: EventContainsUser {}
